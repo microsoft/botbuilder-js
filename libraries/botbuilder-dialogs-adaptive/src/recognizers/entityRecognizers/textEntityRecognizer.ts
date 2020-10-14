@@ -17,12 +17,12 @@ import { TextEntity } from './textEntity';
  */
 export abstract class TextEntityRecognizer implements EntityRecognizer {
     /**
-     *
-     * @param dialogContext The `DialogContext` for the current turn of conversation.
+     * Recognizes entities from an [Entity](xref:botframework-schema.Entity) list.
+     * @param dialogContext The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
      * @param text Text to recognize.
      * @param locale Locale to use.
-     * @param entities The `Entity` array to be recognized.
-     * @returns Recognized `Entity` list Promise.
+     * @param entities The [Entity](xref:botframework-schema.Entity) array to be recognized.
+     * @returns Recognized [Entity](xref:botframework-schema.Entity) list Promise.
      */
     public async recognizeEntities(dialogContext: DialogContext, text: string, locale: string, entities: Entity[]): Promise<Entity[]> {
         const newEntities: Entity[] = [];

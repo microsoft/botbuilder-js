@@ -19,7 +19,7 @@ export class GuidEntityRecognizer extends TextEntityRecognizer {
      * GUID recognizing implementation.
      * @param text Text to recognize.
      * @param culture Culture to use.
-     * @returns The recognized `ModelResult` list.
+     * @returns The recognized [ModelResult](xref:botbuilder-dialogs.ModelResult) list.
      */
     protected recognize(text: string, culture: string): ModelResult[] {
         return recognizeGUID(text, culture);

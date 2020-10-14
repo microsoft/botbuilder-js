@@ -12,16 +12,16 @@ import { EntityRecognizer } from './entityRecognizer';
 import { TextEntity } from './textEntity';
 
 /**
- * EntityRecognizerSet - Implements a workflow against a pool of `EntityRecognizer` instances, iterating until nobody has anything new to add.
+ * EntityRecognizerSet - Implements a workflow against a pool of [EntityRecognizer](xref:botbuilder-dialogs-adaptive.EntityRecognizer) instances, iterating until nobody has anything new to add.
  */
 export class EntityRecognizerSet extends Array<EntityRecognizer> {
     /**
-     * Implement `recognizeEntities` by iterating against the Recognizer pool.
-     * @param dialogContext Context for the current turn of conversation.
+     * Implement [EntityRecognizer.recognizeEntities](xref:botbuilder-dialogs-adaptive.EntityRecognizer.recognizeEntities) by iterating against the Recognizer pool.
+     * @param dialogContext [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
      * @param text Text to recognize.
      * @param locale Locale to use.
-     * @param entities The `Entity` array to be recognized. If no entities are passed in, it will generate a `TextEntity`.
-     * @returns Recognized `Entity` list Promise.
+     * @param entities The [Entity](xref:botframework-schema.Entity) array to be recognized. If no entities are passed in, it will generate a [TextEntity](xref:botbuilder-dialogs-adaptive.TextEntity).
+     * @returns Recognized [Entity](xref:botframework-schema.Entity) list Promise.
      */
     public async recognizeEntities(dialogContext: DialogContext, text: string, locale: string, entities: Entity[] = []): Promise<Entity[]> {
         const allNewEntities: Entity[] = [];

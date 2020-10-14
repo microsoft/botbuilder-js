@@ -14,11 +14,11 @@ import { ModelResult } from 'botbuilder-dialogs';
  */
 export class RegexEntityRecognizer extends TextEntityRecognizer {
     /**
-     * Initializes a new instance of the `RegexEntityRecognizer` class.
+     * Initializes a new instance of the [RegexEntityRecognizer](xref:botbuilder-dialogs-adaptive.RegexEntityRecognizer) class.
      */
     public constructor();
     /**
-     * Initializes a new instance of the `RegexEntityRecognizer` class.
+     * Initializes a new instance of the [RegexEntityRecognizer](xref:botbuilder-dialogs-adaptive.RegexEntityRecognizer) class.
      * @param name The name match result `typeName` value.
      * @param pattern The regular expression pattern value.
      */
@@ -54,7 +54,7 @@ export class RegexEntityRecognizer extends TextEntityRecognizer {
      * Match recognizing implementation.
      * @param text Text to match.
      * @param culture Culture to use.
-     * @returns The matched `ModelResult` list.
+     * @returns The matched [ModelResult](xref:botbuilder-dialogs.ModelResult) list.
      */
     protected recognize(text: string, culture: string): ModelResult[] {
         const results: ModelResult[] = [];

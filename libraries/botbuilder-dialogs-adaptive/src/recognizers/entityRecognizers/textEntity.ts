@@ -17,7 +17,7 @@ export class TextEntity implements Entity {
     public text: string;
 
     /**
-     * Initializes a new instance of the `TextEntity` class.
+     * Initializes a new instance of the [TextEntity](xref:botbuilder-dialogs-adaptive.TextEntity) class.
      * @param text The text value.
      */
     public constructor(text?: string) {
