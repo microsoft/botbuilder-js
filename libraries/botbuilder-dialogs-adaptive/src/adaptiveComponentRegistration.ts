@@ -178,7 +178,7 @@ import {
     RandomSelector,
     TrueSelector,
 } from './selectors';
-import { CustomDialogLoader } from './customDialogLoader';
+import { DynamicBeginDialogDeserializer } from './dynamicBeginDialogDeserializer';
 import { TriggerSelectorConfiguration } from './triggerSelector';
 
 type Type<T> = {
@@ -186,9 +186,15 @@ type Type<T> = {
     new (...args: unknown[]): T;
 };
 
+/**
+ * `ComponentRegistration` implementation for adaptive components.
+ */
 export class AdaptiveComponentRegistration extends ComponentRegistration implements ComponentDeclarativeTypes {
     private _declarativeTypes: DeclarativeType<unknown, unknown>[] = [];
 
+    /**
+     * Initializes a new instance of `AdaptiveComponentRegistration`.
+     */
     public constructor() {
         super();
 
@@ -313,6 +319,11 @@ export class AdaptiveComponentRegistration extends ComponentRegistration impleme
         this._addDeclarativeType<MostSpecificSelector, MostSpecificSelectorConfiguration>(MostSpecificSelector);
     }
 
+    /**
+     * Gets adaptive `DeclarativeType` resources.
+     * @param resourceExplorer `ResourceExplorer` with expected path to get all resources.
+     * @returns Adaptive `DeclarativeType` resources.
+     */
     public getDeclarativeTypes(resourceExplorer: ResourceExplorer): DeclarativeType[] {
         const declarativeTypes: DeclarativeType[] = [...this._declarativeTypes];
         resourceExplorer.getResources('.schema').forEach((schema) => {
@@ -321,13 +332,16 @@ export class AdaptiveComponentRegistration extends ComponentRegistration impleme
                 declarativeTypes.push({
                     kind: resourceId,
                     type: DynamicBeginDialog,
-                    loader: new CustomDialogLoader(resourceExplorer),
+                    loader: new DynamicBeginDialogDeserializer(resourceExplorer, resourceId),
                 });
             }
         });
         return declarativeTypes;
     }
 
+    /**
+     * @private
+     */
     private _addDeclarativeType<T, C>(type: Type<T>, loader?: CustomDeserializer<T, C>): void {
         const declarativeType: DeclarativeType<T, C> = {
             kind: type.$kind,
