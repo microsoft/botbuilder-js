@@ -33,11 +33,11 @@ import { TeamsInfo } from './teamsInfo';
  * Adds support for Microsoft Teams specific events and interactions.
  * @remarks
  * Developers may handle activities sent from Microsoft Teams via two methods:
- *  1. Overriding methods starting with `handle...()` (e.g. `handleTeamsTaskModuleFetch()`) .
+ *  1. Overriding methods starting with `handle...()` (e.g. `handleTeamsTaskModuleFetch()`).
  *      * The only way to handle Invoke activities is to override these methods.
- *  2. Overriding methods starting with `on..` and *not* ending in `..Event()` (e.g. `onTeamsMembersAdded()`)
+ *  2. Overriding methods starting with `on..` and *not* ending in `..Event()` (e.g. `onTeamsMembersAdded()`), or instead
  *  3. Passing callbacks to methods starting with `on..` *and* ending in `...Event()` (e.g. `onTeamsMembersAddedEvent()`),
- *      to stay in line with older {@link ActivityHandler} implementation, or instead
+ *      to stay in line with older {@link ActivityHandler} implementation.
  *
  * Developers should use #1, above to handle Invoke activities.
  * Developers should use either #2 or #3, above for all other activities and not *both* #2 and #3 for the same activity. Meaning,
