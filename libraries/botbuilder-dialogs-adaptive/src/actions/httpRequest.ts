@@ -34,18 +34,12 @@ type HeadersOutput = Record<string, StringExpression>;
 
 class HttpHeadersConverter implements Converter<HeadersInput, HeadersOutput> {
     public convert(value: HeadersInput | HeadersOutput): HeadersOutput {
-        const headers = {};
-        for (const key in value) {
-            if (Object.prototype.hasOwnProperty.call(value, key)) {
-                const item = value[key];
-                if (item instanceof StringExpression) {
-                    headers[key] = item;
-                } else {
-                    headers[key] = new StringExpression(item);
-                }
-            }
-        }
-        return headers;
+        return Object.entries(value).reduce((headers, [key, value]) => {
+            return {
+                ...headers,
+                [key]: value instanceof StringExpression ? value : new StringExpression(value),
+            };
+        }, {});
     }
 }
 
