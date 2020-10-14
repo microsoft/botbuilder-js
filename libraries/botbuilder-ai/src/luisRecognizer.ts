@@ -271,30 +271,30 @@ export class LuisRecognizer implements LuisRecognizerTelemetryClient {
     private luisRecognizerInternal: LuisRecognizerV2 | LuisRecognizerV3;
 
     /**
-     * Creates a new LuisRecognizer instance.
+     * Creates a new [LuisRecognizer](xref:botbuilder-ai.LuisRecognizer) instance.
      * @param application The LUIS application endpoint, usually retrieved from https://luis.ai.
-     * @param options (Optional) Options object used to control predictions. Should conform to the `LuisRecognizerOptions` definition.
-     * @param includeApiResults (Deprecated) Flag that if set to `true` will force the inclusion of LUIS Api call in results returned by `recognize()`. Defaults to a value of `false`.
+     * @param options Optional. Options object used to control predictions. Should conform to the [LuisPredictionOptions](xref:botbuilder-ai.LuisPredictionOptions) definition.
+     * @param includeApiResults (Deprecated) Flag that if set to `true` will force the inclusion of LUIS Api call in results returned by the [LuisRecognizer.recognize](xref:botbuilder-ai.LuisRecognizer.recognize) method. Defaults to a value of `false`.
      */
     constructor(application: string, options?: LuisPredictionOptions, includeApiResults?: boolean);
     /**
-     * Creates a new LuisRecognizer instance.
-     * @param application An object conforming to the `LuisApplication` definition.
-     * @param options (Optional) Options object used to control predictions. Should conform to the `LuisRecognizerOptions` definition.
-     * @param includeApiResults (Deprecated) Flag that if set to `true` will force the inclusion of LUIS Api call in results returned by `recognize()`. Defaults to a value of `false`.
+     * Creates a new [LuisRecognizer](xref:botbuilder-ai.LuisRecognizer) instance.
+     * @param application An object conforming to the [LuisApplication](xref:botbuilder-ai.LuisApplication) definition.
+     * @param options Optional. Options object used to control predictions. Should conform to the [LuisPredictionOptions](xref:botbuilder-ai.LuisPredictionOptions) definition.
+     * @param includeApiResults (Deprecated) Flag that if set to `true` will force the inclusion of LUIS Api call in results returned by the [LuisRecognizer.recognize](xref:botbuilder-ai.LuisRecognizer.recognize) method. Defaults to a value of `false`.
      */
     constructor(application: LuisApplication, options?: LuisPredictionOptions, includeApiResults?: boolean);
     /**
-     * Creates a new LuisRecognizer instance.
-     * @param application An object conforming to the `LuisApplication` definition or a string representing a LUIS application endpoint, usually retrieved from https://luis.ai.
-     * @param options (Optional) Options object used to control predictions. Should conform to the `LuisRecognizerOptionsV3` or `LuisRecognizerOptionsV2` definition.
+     * Creates a new [LuisRecognizer](xref:botbuilder-ai.LuisRecognizer) instance.
+     * @param application An object conforming to the [LuisApplication](xref:botbuilder-ai.LuisApplication) definition or a string representing a LUIS application endpoint, usually retrieved from https://luis.ai.
+     * @param options Optional. Options object used to control predictions. Should conform to the [LuisRecognizerOptionsV3](xref:botbuilder-ai.LuisRecognizerOptionsV3) or [LuisRecognizerOptionsV2](xref:botbuilder-ai.LuisRecognizerOptionsV2) definition.
      */
     constructor(application: LuisApplication | string, options?: LuisRecognizerOptionsV3 | LuisRecognizerOptionsV2);
     /**
-     * Creates a new LuisRecognizer instance.
-     * @param application The LUIS application endpoint, usually retrieved from https://luis.ai.
-     * @param options (Optional) Options object used to control predictions. Should conform to the `LuisRecognizerOptions`, `LuisRecognizerOptionsV3` or `LuisRecognizerOptionsV2` definition.
-     * @param includeApiResults (Deprecated) Flag that if set to `true` will force the inclusion of LUIS Api call in results returned by `recognize()`. Defaults to a value of `false`.
+     * Creates a new [LuisRecognizer](xref:botbuilder-ai.LuisRecognizer) instance.
+     * @param application An object conforming to the [LuisApplication](xref:botbuilder-ai.LuisApplication) definition or a string representing a LUIS application endpoint, usually retrieved from https://luis.ai.
+     * @param options Optional. Options object used to control predictions. Should conform to the [LuisPredictionOptions](xref:botbuilder-ai.LuisPredictionOptions), [LuisRecognizerOptionsV3](xref:botbuilder-ai.LuisRecognizerOptionsV3) or [LuisRecognizerOptionsV2](xref:botbuilder-ai.LuisRecognizerOptionsV2) definition.
+     * @param includeApiResults (Deprecated) Flag that if set to `true` will force the inclusion of LUIS Api call in results returned by the [LuisRecognizer.recognize](xref:botbuilder-ai.LuisRecognizer.recognize) method. Defaults to a value of `false`.
      */
     constructor(
         application: LuisApplication | string,

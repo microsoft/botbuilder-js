@@ -20,10 +20,9 @@ const LUIS_TRACE_TYPE = 'https://www.luis.ai/schemas/trace';
 const LUIS_TRACE_NAME = 'LuisRecognizer';
 const LUIS_TRACE_LABEL = 'Luis Trace';
 
-
 /**
- * Validates if the options provided are valid LuisRecognizerOptionsV2.
- * @returns A boolean value that indicates param options is a LuisRecognizerOptionsV2.
+ * Validates if the options provided are valid [LuisRecognizerOptionsV2](xref:botbuilder-ai.LuisRecognizerOptionsV2).
+ * @returns A boolean value that indicates param options is a [LuisRecognizerOptionsV2](xref:botbuilder-ai.LuisRecognizerOptionsV2).
  */
 export function isLuisRecognizerOptionsV2(options: any): options is LuisRecognizerOptionsV2 {
     return options.apiVersion && options.apiVersion === 'v2';
@@ -34,9 +33,9 @@ export function isLuisRecognizerOptionsV2(options: any): options is LuisRecogniz
  */
 export class LuisRecognizerV2 extends LuisRecognizerInternal {
     /**
-     * Creates a new LuisRecognizerV2 instance.
-     * @param application An object conforming to the `LuisApplication` definition or a string representing a LUIS application endpoint, usually retrieved from https://luis.ai.
-     * @param options (Optional) Options object used to control predictions. Should conform to the `LuisRecognizerOptionsV2` definition.
+     * Creates a new [LuisRecognizerV2](xref:botbuilder-ai.LuisRecognizerV2) instance.
+     * @param application An object conforming to the [LuisApplication](xref:botbuilder-ai.LuisApplication) definition or a string representing a LUIS application endpoint, usually retrieved from https://luis.ai.
+     * @param options Optional. Options object used to control predictions. Should conform to the [LuisRecognizerOptionsV2](xref:botbuilder-ai.LuisRecognizerOptionsV2) definition.
      */
     constructor(application: LuisApplication, options?: LuisRecognizerOptionsV2) {
         super(application);
@@ -67,8 +66,8 @@ export class LuisRecognizerV2 extends LuisRecognizerInternal {
 
     /**
      * Calls LUIS to recognize intents and entities in a users utterance.
-     * @param context Turn context.
-     * @returns Analysis of utterance.
+     * @param context The [TurnContext](xref:botbuilder-core.TurnContext).
+     * @returns Analysis of utterance in form of [RecognizerResult](xref:botbuilder-core.RecognizerResult).
      */
     async recognizeInternal(context: TurnContext): Promise<RecognizerResult> {
         const luisPredictionOptions = this.options;
@@ -114,7 +113,7 @@ export class LuisRecognizerV2 extends LuisRecognizerInternal {
     }
 
     /**
-     * Remove role and ensure that dot and space are not a part of entity names since we want to do JSON paths
+     * Remove role and ensure that dot and space are not a part of entity names since we want to do JSON paths.
      * @param name Value to be normalized.
      * @returns Normalized string value.
      */

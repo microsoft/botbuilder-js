@@ -19,8 +19,8 @@ const _geographySubtypes = ['poi', 'city', 'countryRegion', 'continent', 'state'
 const MetadataKey = '$instance';
 
 /**
- * Validates if the options provided are valid LuisRecognizerOptionsV3.
- * @returns A boolean value that indicates param options is a LuisRecognizerOptionsV3.
+ * Validates if the options provided are valid [LuisRecognizerOptionsV3](xref:botbuilder-ai.LuisRecognizerOptionsV3).
+ * @returns A boolean value that indicates param options is a [LuisRecognizerOptionsV3](xref:botbuilder-ai.LuisRecognizerOptionsV3).
  */
 export function isLuisRecognizerOptionsV3(options: any): options is LuisRecognizerOptionsV3 {
     return options.apiVersion && options.apiVersion === 'v3';
@@ -30,11 +30,10 @@ export function isLuisRecognizerOptionsV3(options: any): options is LuisRecogniz
  * Recognize intents in a user utterance using a configured LUIS model.
  */
 export class LuisRecognizerV3 extends LuisRecognizerInternal {
-
     /**
-     * Creates a new LuisRecognizerV3 instance.
-     * @param application An object conforming to the `LuisApplication` definition or a string representing a LUIS application endpoint, usually retrieved from https://luis.ai.
-     * @param options (Optional) Options object used to control predictions. Should conform to the `LuisRecognizerOptionsV3` definition.
+     * Creates a new [LuisRecognizerV3](xref:botbuilder-ai.LuisRecognizerV3) instance.
+     * @param application An object conforming to the [LuisApplication](xref:botbuilder-ai.LuisApplication) definition or a string representing a LUIS application endpoint, usually retrieved from https://luis.ai.
+     * @param options Optional. Options object used to control predictions. Should conform to the [LuisRecognizerOptionsV3](xref:botbuilder-ai.LuisRecognizerOptionsV3) definition.
      */
     constructor(application: LuisApplication, options?: LuisRecognizerOptionsV3) {
         super(application);
@@ -57,7 +56,8 @@ export class LuisRecognizerV3 extends LuisRecognizerInternal {
 
     /**
      * Calls LUIS to recognize intents and entities in a users utterance.
-     * @param context Turn context.
+     * @param context The [TurnContext](xref:botbuilder-core.TurnContext).
+     * @returns Analysis of utterance in form of [RecognizerResult](xref:botbuilder-core.RecognizerResult).
      */
     async recognizeInternal(context: TurnContext): Promise<RecognizerResult> {
         const utterance: string = context.activity.text || '';
