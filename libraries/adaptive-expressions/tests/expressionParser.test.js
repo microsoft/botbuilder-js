@@ -495,6 +495,7 @@ const testCases = [
             ['isPresent(validNow)', true],
             ['addDays(timestamp, 1)', '2018-03-16T13:00:00.111Z'],
             ['addDays(timestamp, 1,\'MM-dd-yy\')', '03-16-18'],
+            ['addDays(timestamp, 1,\'MM/dd/yy\')', '03/16/18'],
             ['addHours(timestamp, 1)', '2018-03-15T14:00:00.111Z'],
             ['addHours(timestamp, 1,\'MM-dd-yy hh-mm\')', '03-15-18 02-00'],
             ['addMinutes(timestamp, 1)', '2018-03-15T13:01:00.111Z'],
