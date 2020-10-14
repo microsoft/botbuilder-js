@@ -10,9 +10,9 @@ import {
 /**
  * You can @mention the bot from any scope and it will reply with the mention.
  */
-export class MentionsBot  extends TeamsActivityHandler {
+export class MentionsBot extends TeamsActivityHandler {
     /**
-     * Initializes a new instance of the `MentionsBot` class.
+     * Initializes a new instance of the [MentionsBot](xref:mentions-bot.MentionsBot) class.
      */
     constructor() {
         super();

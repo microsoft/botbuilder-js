@@ -15,7 +15,7 @@ from 'botbuilder';
  */
 export class LinkUnfurlingBot extends TeamsActivityHandler {
     /**
-     * Initializes a new instance of the `LinkUnfurlingBot` class.
+     * Initializes a new instance of the [LinkUnfurlingBot](xref:teams-link-unfurling.LinkUnfurlingBot) class.
      */
     constructor() {
         super();

@@ -17,12 +17,12 @@ import {
 /**
  * After uploading the manifest you can click the dots in the extension menu at the bottom, or search for the
  * exntesion in the command bar. From the extension window or the command bar you can click on the 3 dots on the specific extension to trigger
- * the onMessage function. If you click on the "Settings" tab you will fire the handleTeamsMessagingExtensionConfigurationSetting
- * function.
+ * the [ActivityHandler.onMessage](xref:botbuilder-core.ActivityHandler.onMessage) method. If you click on the "Settings" tab you will fire the [handleTeamsMessagingExtensionConfigurationSetting](xref:messaging-extension-bot.MessagingExtensionConfigBot.handleTeamsMessagingExtensionConfigurationSetting)
+ * method.
  */
-export class MessagingExtensionConfigBot  extends TeamsActivityHandler {
+export class MessagingExtensionConfigBot extends TeamsActivityHandler {
     /**
-     * Initializes a new instance of the `MessagingExtensionConfigBot` class.
+     * Initializes a new instance of the [MessagingExtensionConfigBot](xref:messaging-extension-bot.MessagingExtensionConfigBot) class.
      */
     constructor() {
         super();

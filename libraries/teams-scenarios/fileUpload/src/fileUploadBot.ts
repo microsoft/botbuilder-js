@@ -17,7 +17,7 @@ import {
  */
 export class FileUploadBot extends TeamsActivityHandler {
     /**
-     * Initializes a new instance of the `FileUploadBot` class.
+     * Initializes a new instance of the [FileUploadBot](xref:teams-file-bot.FileUploadBot) class.
      */
     constructor() {
         super();
