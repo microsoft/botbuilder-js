@@ -22,8 +22,8 @@ import { AuthConstants, GovConstants, isSkillClaim } from './prompts/skillsHelpe
 
 /**
  * Runs a dialog from a given context and accesor.
- * @param dialog The Dialog to run.
- * @param context Context object for the current turn of conversation with the user.
+ * @param dialog The [Dialog](xref:botbuilder-dialogs.Dialog) to run.
+ * @param context [TurnContext](xref:botbuilder-core.TurnContext) object for the current turn of conversation with the user.
  * @param accessor Defined methods for accessing the state property created in a BotState object.
  */
 export async function runDialog(dialog: Dialog, context: TurnContext, accessor: StatePropertyAccessor<DialogState>): Promise<void> {
@@ -128,8 +128,8 @@ export function shouldSendEndOfConversationToParent(context: TurnContext, turnRe
 
 /**
  * Recursively walk up the DC stack to find the active DC.
- * @param dialogContext Context for the current turn of conversation with the user.
- * @returns Active dialog context.
+ * @param dialogContext [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation with the user.
+ * @returns Active [DialogContext](xref:botbuilder-dialogs.DialogContext).
  */
 export function getActiveDialogContext(dialogContext: DialogContext): DialogContext {
     const child = dialogContext.child;
@@ -142,7 +142,7 @@ export function getActiveDialogContext(dialogContext: DialogContext): DialogCont
 
 /**
  * Determines if the skill is acting as a skill parent.
- * @param context Context object for the current turn of conversation with the user.
+ * @param context [TurnContext](xref:botbuilder-core.TurnContext) object for the current turn of conversation with the user.
  * @returns A boolean representing if the skill is acting as a skill parent.
  */
 export function isFromParentToSkill(context: TurnContext): boolean {

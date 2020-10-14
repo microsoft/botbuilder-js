@@ -67,7 +67,7 @@ export class SkillDialog extends Dialog<Partial<BeginSkillDialogOptions>> {
 
     /**
      * Called when the skill dialog is started and pushed onto the dialog stack.
-     * @param dc The DialogContext for the current turn of conversation.
+     * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
      * @param options Initial information to pass to the dialog.
      * @returns A Promise representing the asynchronous operation.
      * @remarks
@@ -101,10 +101,10 @@ export class SkillDialog extends Dialog<Partial<BeginSkillDialogOptions>> {
 
     /**
      * Called when the skill dialog is _continued_, where it is the active dialog and the
-     * user replies with a new activity.
-     * @param dc The DialogContext for the current turn of conversation.
+     * user replies with a new [Activity](xref:botframework-schema.Activity).
+     * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
      * @returns A Promise representing the asynchronous operation.
-     * @remarks 
+     * @remarks
      * If the task is successful, the result indicates whether the dialog is still
      * active after the turn has been processed by the dialog. The result may also contain a
      * return value.
@@ -140,9 +140,9 @@ export class SkillDialog extends Dialog<Partial<BeginSkillDialogOptions>> {
 
     /**
      * Called when the skill dialog is ending.
-     * @param context The context object for this turn.
+     * @param context The [TurnContext](xref:botbuilder-core.TurnContext) object for this turn.
      * @param instance State information associated with the instance of this dialog on the dialog stack.
-     * @param reason Reason why the dialog ended.
+     * @param reason [Reason](xref:botbuilder-dialogs.DialogReason) why the dialog ended.
      * @returns A Promise representing the asynchronous operation.
      */
     public async endDialog(context: TurnContext, instance: DialogInstance, reason: DialogReason): Promise<void> {
@@ -166,7 +166,7 @@ export class SkillDialog extends Dialog<Partial<BeginSkillDialogOptions>> {
 
     /**
      * Called when the skill dialog should re-prompt the user for input.
-     * @param context The context object for this turn.
+     * @param context The [TurnContext](xref:botbuilder-core.TurnContext) object for this turn.
      * @param instance State information for this dialog.
      * @returns A Promise representing the asynchronous operation.
      */
@@ -186,8 +186,8 @@ export class SkillDialog extends Dialog<Partial<BeginSkillDialogOptions>> {
 
     /**
      * Called when a child skill dialog completed its turn, returning control to this dialog.
-     * @param dc The dialog context for the current turn of the conversation.
-     * @param reason Reason why the dialog resumed.
+     * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of the conversation.
+     * @param reason [Reason](xref:botbuilder-dialogs.DialogReason) why the dialog resumed.
      * @param result Optional, value returned from the dialog that was called. The type
      * of the value returned is dependent on the child dialog.
      * @returns A Promise representing the asynchronous operation.
@@ -342,9 +342,9 @@ export class SkillDialog extends Dialog<Partial<BeginSkillDialogOptions>> {
 
     /**
      * @private
-     * Create a conversationId to interact with the skill and send the activity.
-     * @param context Context for the current turn of conversation with the user.
-     * @param activity Activity to send.
+     * Create a conversationId to interact with the skill and send the [Activity](xref:botframework-schema.Activity).
+     * @param context [TurnContext](xref:botbuilder-core.TurnContext) for the current turn of conversation with the user.
+     * @param activity [Activity](xref:botframework-schema.Activity) to send.
      * @returns The Skill Conversation ID.
      */
     private async createSkillConversationId(context: TurnContext, activity: Activity) {
@@ -371,7 +371,7 @@ export class SkillDialog extends Dialog<Partial<BeginSkillDialogOptions>> {
     /**
      * @private
      * Gets the Skill Conversation ID from a given instance.
-     * @param instance Instance from which to look for its ID.
+     * @param instance [DialogInstance](xref:botbuilder-dialogs.DialogInstance) from which to look for its ID.
      * @returns Instance conversation ID.
      */
     private getSkillConversationIdFromInstance(instance: DialogInstance): string {
