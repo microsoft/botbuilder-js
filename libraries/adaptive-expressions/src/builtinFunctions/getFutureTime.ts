@@ -22,7 +22,7 @@ import { ReturnType } from '../returnType';
  */
 export class GetFutureTime extends ExpressionEvaluator {
     /**
-     * Initializes a new instance of the `GetFutureTime` class.
+     * Initializes a new instance of the [GetFutureTime](xref:adaptive-expressions.GetFutureTime) class.
      */
     public constructor() {
         super(ExpressionType.GetFutureTime, GetFutureTime.evaluator, ReturnType.String, GetFutureTime.validator);

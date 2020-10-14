@@ -21,7 +21,7 @@ import { ReturnType } from '../returnType';
  */
 export class GetProperty extends ExpressionEvaluator {
     /**
-     * Initializes a new instance of the `GetProperty` class.
+     * Initializes a new instance of the [GetProperty](xref:adaptive-expressions.GetProperty) class.
      */
     public constructor() {
         super(ExpressionType.GetProperty, GetProperty.evaluator, ReturnType.Object, GetProperty.validator);
