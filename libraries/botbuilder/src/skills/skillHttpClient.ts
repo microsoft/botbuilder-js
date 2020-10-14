@@ -54,7 +54,7 @@ export class SkillHttpClient extends BotFrameworkHttpClient {
      * @param audienceOrFromBotId The OAuth audience scope, used during token retrieval or the AppId of the bot sending the [Activity](xref:botframework-schema.Activity).
      * @param fromBotIdOrSkill The AppId of the bot sending the [Activity](xref:botframework-schema.Activity) or the skill to create the Conversation Id for.
      * @param toSkillOrCallbackUrl The skill to create the Conversation Id for or the callback Url for the skill host.
-     * @param callbackUrlOrActivity The callback Url for the skill host or the the [Activity](xref:botframework-schema.Activity) to send.
+     * @param callbackUrlOrActivity The callback Url for the skill host or the [Activity](xref:botframework-schema.Activity) to send.
      * @param activityToForward Optional. The [Activity](xref:botframework-schema.Activity) to forward.
      * @returns A `Promise` representing the [InvokeResponse](xref:botbuilder-core.InvokeResponse) for the operation.
      */

@@ -122,7 +122,7 @@ export class ChannelServiceHandler {
      * Creates a new Conversation.
      * @param authHeader The authentication header.
      * @param parameters [ConversationParameters](xref:botbuilder-core.ConversationParameters) to create the conversation from.
-     * @returns A `Promise` representation of for the operation.
+     * @returns A `Promise` representation for the operation.
      */
     public async handleCreateConversation(authHeader: string, parameters: ConversationParameters): Promise<ConversationResourceResponse> {
         const claimsIdentity = await this.authenticate(authHeader);
@@ -134,7 +134,7 @@ export class ChannelServiceHandler {
      * @param authHeader The authentication header.
      * @param conversationId The conversation Id.
      * @param continuationToken A skip or continuation token.
-     * @returns A `Promise` representation of for the operation.
+     * @returns A `Promise` representation for the operation.
      */
     public async handleGetConversations(authHeader: string, conversationId: string, continuationToken?: string /* some default */): Promise<ConversationsResult> {
         const claimsIdentity = await this.authenticate(authHeader);
