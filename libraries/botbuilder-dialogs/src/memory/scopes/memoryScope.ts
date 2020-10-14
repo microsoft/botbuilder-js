@@ -12,9 +12,9 @@ import { DialogContext } from '../../dialogContext';
  */
 export abstract class MemoryScope {
     /**
-     * Initializes a new instance of the MemoryScope class.
+     * Initializes a new instance of the [MemoryScope](xref:botbuilder-dialogs.MemoryScope) class.
      * @param name Name of the scope.
-     * @param includeInSnapshot Boolean value indicating whether this memory 
+     * @param includeInSnapshot Boolean value indicating whether this memory
      * should be included in snapshot. Default value is true.
      */
     public constructor(name: string, includeInSnapshot = true)

@@ -15,7 +15,7 @@ import { Dialog } from '../../dialog';
  */
 export class ClassMemoryScope extends MemoryScope {
     /**
-     * Initializes a new instance of the ClassMemoryScope class.
+     * Initializes a new instance of the [ClassMemoryScope](xref:botbuilder-dialogs.ClassMemoryScope) class.
      * @param name Name of the scope class.
      */
     public constructor(name = ScopePath.class) {
@@ -24,7 +24,7 @@ export class ClassMemoryScope extends MemoryScope {
 
     /**
      * Gets the backing memory for this scope.
-     * @param dc The DialogContext object for this turn.
+     * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) object for this turn.
      * @returns The memory for the scope.
      */
     public getMemory(dc: DialogContext): object {

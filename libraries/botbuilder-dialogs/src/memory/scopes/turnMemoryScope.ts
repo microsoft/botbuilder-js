@@ -19,7 +19,7 @@ const TURN_STATE = Symbol('turn');
  */
 export class TurnMemoryScope extends MemoryScope {
     /**
-     * Initializes a new instance of the TurnMemoryScope class.
+     * Initializes a new instance of the [TurnMemoryScope](xref:botbuilder-dialogs.TurnMemoryScope) class.
      */
     public constructor() {
         super(ScopePath.turn);
@@ -27,7 +27,7 @@ export class TurnMemoryScope extends MemoryScope {
 
     /**
      * Get the backing memory for this scope.
-     * @param dc The DialogContext for this turn.
+     * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for this turn.
      * @returns The memory for the scope.
      */
     public getMemory(dc: DialogContext): object {
@@ -42,7 +42,7 @@ export class TurnMemoryScope extends MemoryScope {
 
     /**
      * Changes the backing object for the memory scope.
-     * @param dc The DialogContext for this turn.
+     * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for this turn.
      * @param memory Memory object to set for the scope.
      */
     public setMemory(dc: DialogContext, memory: object): void {

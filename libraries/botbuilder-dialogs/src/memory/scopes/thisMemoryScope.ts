@@ -14,7 +14,7 @@ import { DialogContext } from '../../dialogContext';
  */
 export class ThisMemoryScope extends MemoryScope {
     /**
-     * Initializes a new instance of the ThisMemoryScope class.
+     * Initializes a new instance of the [ThisMemoryScope](xref:botbuilder-dialogs.ThisMemoryScope) class.
      */
     public constructor() {
         super(ScopePath.this);
@@ -22,7 +22,7 @@ export class ThisMemoryScope extends MemoryScope {
 
     /**
      * Gets the backing memory for this scope.
-     * @param dc The DialogContext object for this turn.
+     * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) object for this turn.
      * @returns The memory for the scope.
      */
     public getMemory(dc: DialogContext): object {
@@ -31,7 +31,7 @@ export class ThisMemoryScope extends MemoryScope {
 
     /**
      * Changes the backing object for the memory scope.
-     * @param dc The DialogContext object for this turn.
+     * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) object for this turn.
      * @param memory Memory object to set for the scope.
      */
     public setMemory(dc: DialogContext, memory: object): void {

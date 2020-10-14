@@ -14,7 +14,7 @@ import { ScopePath } from '../scopePath';
 export class UserMemoryScope extends BotStateMemoryScope {
     protected stateKey = 'UserState';
     /**
-     * Initializes a new instance of the UserMemoryScope class.
+     * Initializes a new instance of the [UserMemoryScope](xref:botbuilder-dialogs.UserMemoryScope) class.
      */
     public constructor() {
         super(ScopePath.user);
