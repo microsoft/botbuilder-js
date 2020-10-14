@@ -57,8 +57,8 @@ export class BaseInvokeDialog<O extends object = {}> extends Dialog<O> implement
     }
 
     /**
-     * Gets the child [Dialog](xref:botbuilder-dialogs.Dialog) dependencies so they can be added to the containers dialog set.
-     * @returns The child dialog dependencies.
+     * Gets the child [Dialog](xref:botbuilder-dialogs.Dialog) dependencies so they can be added to the containers [Dialog](xref:botbuilder-dialogs.Dialog) set.
+     * @returns The child [Dialog](xref:botbuilder-dialogs.Dialog) dependencies.
      */
     public getDependencies(): Dialog<{}>[] {
         if (this.dialog && this.dialog.value) {
