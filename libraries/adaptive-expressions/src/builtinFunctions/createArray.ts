@@ -16,7 +16,7 @@ import { ReturnType } from '../returnType';
  */
 export class CreateArray extends ExpressionEvaluator {
     /**
-     * Initializes a new instance of the `CreateArray` class.
+     * Initializes a new instance of the [CreateArray](xref:adaptive-expressions.CreateArray) class.
      */
     public constructor() {
         super(ExpressionType.CreateArray, CreateArray.evaluator(), ReturnType.Array);

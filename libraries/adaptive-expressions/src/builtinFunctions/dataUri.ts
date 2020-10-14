@@ -16,7 +16,7 @@ import { ReturnType } from '../returnType';
  */
 export class DataUri extends ExpressionEvaluator {
     /**
-     * Initializes a new instance of the `DataUri` class.
+     * Initializes a new instance of the [DataUri](xref:adaptive-expressions.DataUri) class.
      */
     public constructor() {
         super(ExpressionType.DataUri, DataUri.evaluator(), ReturnType.String, FunctionUtils.validateUnary);

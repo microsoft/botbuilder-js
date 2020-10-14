@@ -23,7 +23,7 @@ import { TimeZoneConverter } from '../timeZoneConverter';
  */
 export class ConvertToUTC extends ExpressionEvaluator {
     /**
-     * Initializes a new instance of the `ConvertToUTC` class.
+     * Initializes a new instance of the [ConvertToUTC](xref:adaptive-expressions.ConvertToUTC) class.
      */
     public constructor() {
         super(ExpressionType.ConvertToUTC, ConvertToUTC.evaluator, ReturnType.String, ConvertToUTC.validator);

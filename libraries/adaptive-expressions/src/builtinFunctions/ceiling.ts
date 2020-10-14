@@ -14,7 +14,7 @@ import { NumberTransformEvaluator } from './numberTransformEvaluator';
  */
 export class Ceiling extends NumberTransformEvaluator {
     /**
-     * Initializes a new instance of the `Ceiling` class.
+     * Initializes a new instance of the [Ceiling](xref:adaptive-expressions.Ceiling) class.
      */
     public constructor() {
         super(ExpressionType.Ceiling, Ceiling.func);

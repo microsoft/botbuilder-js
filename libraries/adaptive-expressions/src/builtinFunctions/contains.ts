@@ -21,7 +21,7 @@ import { ReturnType } from '../returnType';
  */
 export class Contains extends ExpressionEvaluator {
     /**
-     * Initializes a new instance of the `Contains` class.
+     * Initializes a new instance of the [Contains](xref:adaptive-expressions.Contains) class.
      */
     public constructor() {
         super(ExpressionType.Contains, Contains.evaluator, ReturnType.Boolean, FunctionUtils.validateBinary);

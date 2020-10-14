@@ -25,7 +25,7 @@ export class ConvertFromUTC extends ExpressionEvaluator {
     private static readonly NoneUtcDefaultDateTimeFormat: string = 'YYYY-MM-DDTHH:mm:ss.SSSZ';
 
     /**
-     * Initializes a new instance of the `ConvertFromUTC` class.
+     * Initializes a new instance of the [ConvertFromUTC](xref:adaptive-expressions.ConvertFromUTC) class.
      */
     public constructor() {
         super(ExpressionType.ConvertFromUTC, ConvertFromUTC.evaluator, ReturnType.String, ConvertFromUTC.validator);

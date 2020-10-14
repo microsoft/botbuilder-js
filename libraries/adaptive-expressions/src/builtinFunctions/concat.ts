@@ -16,7 +16,7 @@ import { ReturnType } from '../returnType';
  */
 export class Concat extends ExpressionEvaluator {
     /**
-     * Initializes a new instance of the `Concat` class.
+     * Initializes a new instance of the [Concat](xref:adaptive-expressions.Concat) class.
      */
     public constructor() {
         super(

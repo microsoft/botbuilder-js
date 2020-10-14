@@ -19,7 +19,7 @@ import { ReturnType } from '../returnType';
  */
 export class DayOfYear extends ExpressionEvaluator {
     /**
-     * Initializes a new instance of the `DayOfYear` class.
+     * Initializes a new instance of the [DayOfYear](xref:adaptive-expressions.DayOfYear) class.
      */
     public constructor() {
         super(ExpressionType.DayOfYear, DayOfYear.evaluator(), ReturnType.Number, FunctionUtils.validateUnaryString);
