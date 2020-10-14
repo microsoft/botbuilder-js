@@ -49,7 +49,7 @@ export interface ChoiceInputConfiguration extends InputDialogConfiguration {
     recognizerOptions?: FindChoicesOptions | string | Expression | ObjectExpression<FindChoicesOptions>;
 }
 
-export class ChoiceInput extends InputDialog {
+export class ChoiceInput extends InputDialog implements ChoiceInputConfiguration {
     public static $kind = 'Microsoft.ChoiceInput';
 
     /**

@@ -17,7 +17,7 @@ export interface TriggerSelectorConfiguration {
 /**
  * Select the trigger to execute in a given state.
  */
-export abstract class TriggerSelector extends Configurable {
+export abstract class TriggerSelector extends Configurable implements TriggerSelectorConfiguration {
     /**
      * Gets or sets the expression parser for expressions.
      */

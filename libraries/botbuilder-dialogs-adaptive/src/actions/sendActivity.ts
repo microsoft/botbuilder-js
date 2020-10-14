@@ -24,7 +24,7 @@ export interface SendActivityConfiguration extends DialogConfiguration {
     disabled?: boolean | string | Expression | BoolExpression;
 }
 
-export class SendActivity<O extends object = {}> extends Dialog<O> {
+export class SendActivity<O extends object = {}> extends Dialog<O> implements SendActivityConfiguration {
     public static $kind = 'Microsoft.SendActivity';
 
     /**

@@ -20,7 +20,7 @@ export interface BreakLoopConfiguration extends DialogConfiguration {
     disabled?: boolean | string | Expression | BoolExpression;
 }
 
-export class BreakLoop<O extends object = {}> extends Dialog<O> {
+export class BreakLoop<O extends object = {}> extends Dialog<O> implements BreakLoopConfiguration {
     public static $kind = 'Microsoft.BreakLoop';
 
     /**

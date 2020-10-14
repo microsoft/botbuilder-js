@@ -14,6 +14,7 @@ import {
 } from 'adaptive-expressions';
 import { Converter, ConverterFactory, Dialog, DialogContext, DialogTurnResult } from 'botbuilder-dialogs';
 import { ActionScope, ActionScopeConfiguration, ActionScopeResult } from './actionScope';
+import { ForEachPageConfiguration } from './forEachPage';
 
 const INDEX = 'dialog.foreach.index';
 const VALUE = 'dialog.foreach.value';
@@ -25,7 +26,7 @@ export interface ForEachConfiguration extends ActionScopeConfiguration {
     disabled?: boolean | string | Expression | BoolExpression;
 }
 
-export class ForEach<O extends object = {}> extends ActionScope<O> {
+export class ForEach<O extends object = {}> extends ActionScope<O> implements ForEachPageConfiguration {
     public static $kind = 'Microsoft.Foreach';
 
     public constructor();

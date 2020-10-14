@@ -35,7 +35,9 @@ export interface GetConversationMembersConfiguration extends DialogConfiguration
     disabled?: boolean | string | Expression | BoolExpression;
 }
 
-export class GetConversationMembers<O extends object = {}> extends Dialog<O> {
+export class GetConversationMembers<O extends object = {}>
+    extends Dialog<O>
+    implements GetConversationMembersConfiguration {
     public static $kind = 'Microsoft.GetConversationMembers';
 
     public constructor();

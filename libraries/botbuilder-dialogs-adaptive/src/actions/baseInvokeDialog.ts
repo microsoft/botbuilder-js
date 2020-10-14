@@ -32,7 +32,9 @@ export interface BaseInvokeDialogConfiguration extends DialogConfiguration {
     activityProcessed?: boolean | string | Expression | BoolExpression;
 }
 
-export class BaseInvokeDialog<O extends object = {}> extends Dialog<O> implements DialogDependencies {
+export class BaseInvokeDialog<O extends object = {}>
+    extends Dialog<O>
+    implements DialogDependencies, BaseInvokeDialogConfiguration {
     public constructor(dialogIdToCall?: string, bindingOptions?: O) {
         super();
         if (dialogIdToCall) {

@@ -37,7 +37,7 @@ export interface ConfirmInputConfiguration extends InputDialogConfiguration {
     outputFormat?: string | Expression | StringExpression;
 }
 
-export class ConfirmInput extends InputDialog {
+export class ConfirmInput extends InputDialog implements ConfirmInputConfiguration {
     public static $kind = 'Microsoft.ConfirmInput';
 
     /**

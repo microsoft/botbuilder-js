@@ -31,7 +31,7 @@ export interface UpdateActivityConfiguration extends DialogConfiguration {
     disabled?: boolean | string | Expression | BoolExpression;
 }
 
-export class UpdateActivity<O extends object = {}> extends Dialog<O> {
+export class UpdateActivity<O extends object = {}> extends Dialog<O> implements UpdateActivityConfiguration {
     public static $kind = 'Microsoft.UpdateActivity';
 
     public constructor();

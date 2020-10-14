@@ -27,7 +27,7 @@ export interface EndDialogConfiguration extends DialogConfiguration {
     disabled?: boolean | string | Expression | BoolExpression;
 }
 
-export class EndDialog<O extends object = {}> extends Dialog<O> {
+export class EndDialog<O extends object = {}> extends Dialog<O> implements EndDialogConfiguration {
     public static $kind = 'Microsoft.EndDialog';
 
     /**

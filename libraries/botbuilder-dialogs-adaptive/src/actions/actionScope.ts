@@ -36,7 +36,9 @@ export interface ActionScopeConfiguration extends DialogConfiguration {
     actions?: string[] | Dialog[];
 }
 
-export class ActionScope<O extends object = {}> extends Dialog<O> implements DialogDependencies {
+export class ActionScope<O extends object = {}>
+    extends Dialog<O>
+    implements DialogDependencies, ActionScopeConfiguration {
     /**
      * Creates a new `ActionScope` instance.
      */

@@ -17,7 +17,7 @@ export interface OnActivityConfiguration extends OnDialogEventConfiguration {
 /**
  * Actions triggered when a Activity of a given type is received.
  */
-export class OnActivity extends OnDialogEvent {
+export class OnActivity extends OnDialogEvent implements OnActivityConfiguration {
     public static $kind = 'Microsoft.OnActivity';
 
     /**

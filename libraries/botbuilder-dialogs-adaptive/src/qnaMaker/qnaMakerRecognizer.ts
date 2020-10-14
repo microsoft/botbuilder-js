@@ -55,7 +55,7 @@ export interface QnAMakerRecognizerConfiguration extends RecognizerConfiguration
 /**
  * A recognizer which uses QnAMaker KB to recognize intents.
  */
-export class QnAMakerRecognizer extends Recognizer {
+export class QnAMakerRecognizer extends Recognizer implements QnAMakerRecognizerConfiguration {
     public static $kind = 'Microsoft.QnAMakerRecognizer';
     public static readonly qnaMatchIntent = 'QnAMatch';
 

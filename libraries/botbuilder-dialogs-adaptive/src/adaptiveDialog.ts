@@ -6,7 +6,13 @@
  * Licensed under the MIT License.
  */
 
-import { IntExpression, ExpressionParser, BoolExpression, BoolExpressionConverter, Expression } from 'adaptive-expressions';
+import {
+    BoolExpression,
+    BoolExpressionConverter,
+    Expression,
+    ExpressionParser,
+    IntExpression,
+} from 'adaptive-expressions';
 import {
     Activity,
     ActivityTypes,
@@ -59,7 +65,7 @@ export interface AdaptiveDialogConfiguration extends DialogConfiguration {
     schema?: unknown;
 }
 
-export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
+export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> implements AdaptiveDialogConfiguration {
     public static $kind = 'Microsoft.AdaptiveDialog';
     public static conditionTracker = 'dialog._tracker.conditions';
 

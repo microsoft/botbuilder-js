@@ -34,7 +34,9 @@ export interface EditActionsConfiguration extends DialogConfiguration {
     disabled?: boolean | string | BoolExpression;
 }
 
-export class EditActions<O extends object = {}> extends Dialog<O> implements DialogDependencies {
+export class EditActions<O extends object = {}>
+    extends Dialog<O>
+    implements DialogDependencies, EditActionsConfiguration {
     public static $kind = 'Microsoft.EditActions';
 
     public constructor();

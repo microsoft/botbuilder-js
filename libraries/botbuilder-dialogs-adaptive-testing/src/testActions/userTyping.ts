@@ -17,7 +17,7 @@ export interface UserTypingConfiguration {
 /**
  * Action to script sending typing activity to the bot.
  */
-export class UserTyping extends Configurable implements TestAction {
+export class UserTyping extends Configurable implements TestAction, UserTypingConfiguration {
     public static $kind = 'Microsoft.Test.UserTyping';
 
     /**

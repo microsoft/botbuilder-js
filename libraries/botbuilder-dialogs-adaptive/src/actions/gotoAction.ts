@@ -27,7 +27,7 @@ export interface GotoActionConfiguration extends DialogConfiguration {
     disabled?: boolean | string | Expression | BoolExpression;
 }
 
-export class GotoAction<O extends object = {}> extends Dialog<O> {
+export class GotoAction<O extends object = {}> extends Dialog<O> implements GotoActionConfiguration {
     public static $kind = 'Microsoft.GotoAction';
 
     public constructor();

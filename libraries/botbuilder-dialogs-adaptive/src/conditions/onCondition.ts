@@ -43,7 +43,7 @@ export interface OnConditionConfiguration {
     id?: string;
 }
 
-export class OnCondition extends Configurable implements DialogDependencies {
+export class OnCondition extends Configurable implements DialogDependencies, OnConditionConfiguration {
     public static $kind = 'Microsoft.OnCondition';
 
     /**

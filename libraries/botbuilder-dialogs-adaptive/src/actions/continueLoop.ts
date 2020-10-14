@@ -20,7 +20,7 @@ export interface ContinueLoopConfiguration extends DialogConfiguration {
     disabled?: boolean | string | Expression | BoolExpression;
 }
 
-export class ContinueLoop<O extends object = {}> extends Dialog<O> {
+export class ContinueLoop<O extends object = {}> extends Dialog<O> implements ContinueLoopConfiguration {
     public static $kind = 'Microsoft.ContinueLoop';
 
     /**

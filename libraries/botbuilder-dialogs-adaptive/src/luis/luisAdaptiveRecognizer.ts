@@ -34,7 +34,7 @@ export interface LuisAdaptiveRecognizerConfiguration extends RecognizerConfigura
     predictionOptions?: LuisPredictionOptions;
 }
 
-export class LuisAdaptiveRecognizer extends Recognizer {
+export class LuisAdaptiveRecognizer extends Recognizer implements LuisAdaptiveRecognizerConfiguration {
     public static $kind = 'Microsoft.LuisRecognizer';
 
     /**

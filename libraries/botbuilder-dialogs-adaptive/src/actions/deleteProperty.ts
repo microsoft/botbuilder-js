@@ -26,7 +26,7 @@ export interface DeletePropertyConfiguration extends DialogConfiguration {
     disabled?: boolean | string | BoolExpression;
 }
 
-export class DeleteProperty<O extends object = {}> extends Dialog<O> {
+export class DeleteProperty<O extends object = {}> extends Dialog<O> implements DeletePropertyConfiguration {
     public static $kind = 'Microsoft.DeleteProperty';
 
     /**

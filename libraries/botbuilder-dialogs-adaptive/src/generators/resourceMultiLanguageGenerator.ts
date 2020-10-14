@@ -16,7 +16,9 @@ export interface ResourceMultiLanguageGeneratorConfiguration extends MultiLangua
     resourceId?: string;
 }
 
-export class ResourceMultiLanguageGenerator extends MultiLanguageGeneratorBase {
+export class ResourceMultiLanguageGenerator
+    extends MultiLanguageGeneratorBase
+    implements ResourceMultiLanguageGeneratorConfiguration {
     public static $kind = 'Microsoft.ResourceMultiLanguageGenerator';
 
     /**

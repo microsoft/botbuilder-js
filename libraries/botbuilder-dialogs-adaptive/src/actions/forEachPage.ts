@@ -37,7 +37,7 @@ export interface ForEachPageConfiguration extends ActionScopeConfiguration {
  * and defaults to a size of 10. The loop can be exited early by including either a `EndDialog` or
  * `GotoDialog` action.
  */
-export class ForEachPage<O extends object = {}> extends ActionScope<O> {
+export class ForEachPage<O extends object = {}> extends ActionScope<O> implements ForEachPageConfiguration {
     public static $kind = 'Microsoft.ForeachPage';
 
     public constructor();

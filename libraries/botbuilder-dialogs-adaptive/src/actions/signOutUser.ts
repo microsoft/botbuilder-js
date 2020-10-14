@@ -27,7 +27,7 @@ export interface SignOutUserConfiguration extends DialogConfiguration {
     disabled?: boolean | string | Expression | BoolExpression;
 }
 
-export class SignOutUser<O extends object = {}> extends Dialog<O> {
+export class SignOutUser<O extends object = {}> extends Dialog<O> implements SignOutUserConfiguration {
     public static $kind = 'Microsoft.SignOutUser';
 
     public constructor();

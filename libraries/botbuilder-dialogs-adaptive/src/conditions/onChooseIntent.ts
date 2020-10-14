@@ -14,7 +14,7 @@ export interface OnChooseIntentConfiguration extends OnIntentConfiguration {
     intents?: string[];
 }
 
-export class OnChooseIntent extends OnIntent {
+export class OnChooseIntent extends OnIntent implements OnChooseIntentConfiguration {
     public static $kind = 'Microsoft.OnChooseIntent';
 
     public intents: string[] = [];

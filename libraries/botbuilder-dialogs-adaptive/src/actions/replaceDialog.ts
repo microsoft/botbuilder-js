@@ -13,7 +13,7 @@ export interface ReplaceDialogConfiguration extends BaseInvokeDialogConfiguratio
     disabled?: boolean | string | Expression | BoolExpression;
 }
 
-export class ReplaceDialog<O extends object = {}> extends BaseInvokeDialog<O> {
+export class ReplaceDialog<O extends object = {}> extends BaseInvokeDialog<O> implements ReplaceDialogConfiguration {
     public static $kind = 'Microsoft.ReplaceDialog';
 
     /**

@@ -62,7 +62,7 @@ export interface InputDialogConfiguration extends DialogConfiguration {
     disabled?: boolean | string | Expression | BoolExpression;
 }
 
-export abstract class InputDialog extends Dialog {
+export abstract class InputDialog extends Dialog implements InputDialogConfiguration {
     public static OPTIONS_PROPERTY = 'this.options';
     public static VALUE_PROPERTY = 'this.value';
     public static TURN_COUNT_PROPERTY = 'this.turnCount';

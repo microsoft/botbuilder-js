@@ -28,7 +28,7 @@ export interface BeginDialogConfiguration extends BaseInvokeDialogConfiguration 
     disabled?: boolean | string | Expression | BoolExpression;
 }
 
-export class BeginDialog<O extends object = {}> extends BaseInvokeDialog<O> {
+export class BeginDialog<O extends object = {}> extends BaseInvokeDialog<O> implements BeginDialogConfiguration {
     public static $kind = 'Microsoft.BeginDialog';
 
     /**

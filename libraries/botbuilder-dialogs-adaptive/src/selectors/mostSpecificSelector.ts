@@ -14,7 +14,7 @@ export interface MostSpecificSelectorConfiguration extends TriggerSelectorConfig
     selector?: TriggerSelector;
 }
 
-export class MostSpecificSelector extends TriggerSelector {
+export class MostSpecificSelector extends TriggerSelector implements MostSpecificSelectorConfiguration {
     public static $kind = 'Microsoft.MostSpecificSelector';
 
     private readonly _tree = new TriggerTree();
@@ -26,7 +26,7 @@ export class MostSpecificSelector extends TriggerSelector {
 
     public selector: TriggerSelector;
 
-    public initialize(conditionals: OnCondition[], _evaluate: boolean) {
+    public initialize(conditionals: OnCondition[], _evaluate: boolean): void {
         for (const conditional of conditionals) {
             this._tree.addTrigger(conditional.getExpression(this.parser), conditional);
         }

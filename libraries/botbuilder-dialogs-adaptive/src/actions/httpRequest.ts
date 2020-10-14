@@ -151,7 +151,7 @@ export interface HttpRequestConfiguration extends DialogConfiguration {
     disabled?: boolean | string | Expression | BoolExpression;
 }
 
-export class HttpRequest<O extends object = {}> extends Dialog<O> {
+export class HttpRequest<O extends object = {}> extends Dialog<O> implements HttpRequestConfiguration {
     public static $kind = 'Microsoft.HttpRequest';
 
     public constructor();

@@ -19,7 +19,7 @@ export interface AssertReplyActivityConfiguration {
 /**
  * Basic assertion TestAction, which validates assertions against a reply activity.
  */
-export class AssertReplyActivity extends TestAction {
+export class AssertReplyActivity extends TestAction implements AssertReplyActivityConfiguration {
     public static $kind = 'Microsoft.Test.AssertReplyActivity';
 
     /**

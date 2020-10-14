@@ -18,7 +18,7 @@ export interface OnChooseEntityConfiguration extends OnDialogEventConfiguration 
 /**
  * Triggered to choose between different possible entity resolutions.
  */
-export class OnChooseEntity extends OnDialogEvent {
+export class OnChooseEntity extends OnDialogEvent implements OnChooseEntityConfiguration {
     public static $kind = 'Microsoft.OnChooseEntity';
 
     public constructor(property?: string, entity?: string, actions: Dialog[] = [], condition?: string) {

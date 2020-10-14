@@ -30,7 +30,7 @@ export interface SetPropertyConfiguration extends DialogConfiguration {
     disabled?: boolean | string | Expression | BoolExpression;
 }
 
-export class SetProperty<O extends object = {}> extends Dialog<O> {
+export class SetProperty<O extends object = {}> extends Dialog<O> implements SetPropertyConfiguration {
     public static $kind = 'Microsoft.SetProperty';
 
     public constructor();

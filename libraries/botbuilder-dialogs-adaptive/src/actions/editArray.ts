@@ -41,7 +41,7 @@ export interface EditArrayConfiguration extends DialogConfiguration {
     disabled?: boolean | string | Expression | BoolExpression;
 }
 
-export class EditArray<O extends object = {}> extends Dialog<O> {
+export class EditArray<O extends object = {}> extends Dialog<O> implements EditArrayConfiguration {
     public static $kind = 'Microsoft.EditArray';
 
     public constructor();

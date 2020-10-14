@@ -31,7 +31,7 @@ export interface EmitEventConfiguration extends DialogConfiguration {
     disabled?: boolean | string | Expression | BoolExpression;
 }
 
-export class EmitEvent<O extends object = {}> extends Dialog<O> {
+export class EmitEvent<O extends object = {}> extends Dialog<O> implements EmitEventConfiguration {
     public static $kind = 'Microsoft.EmitEvent';
 
     public constructor();

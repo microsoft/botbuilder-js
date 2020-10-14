@@ -19,7 +19,7 @@ export interface AttachmentInputConfiguration extends InputDialogConfiguration {
     outputFormat?: AttachmentOutputFormat | string | Expression | EnumExpression<AttachmentOutputFormat>;
 }
 
-export class AttachmentInput extends InputDialog {
+export class AttachmentInput extends InputDialog implements AttachmentInputConfiguration {
     public static $kind = 'Microsoft.AttachmentInput';
 
     public outputFormat: EnumExpression<AttachmentOutputFormat> = new EnumExpression<AttachmentOutputFormat>(

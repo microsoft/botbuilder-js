@@ -17,7 +17,7 @@ export interface UserActivityConfiguration {
 /**
  * Send an activity to the bot.
  */
-export class UserActivity extends TestAction {
+export class UserActivity extends TestAction implements UserActivityConfiguration {
     public static $kind = 'Microsoft.Test.UserActivity';
 
     /**

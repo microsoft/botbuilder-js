@@ -20,7 +20,7 @@ export interface RecognizerConfiguration {
     telemetryClient?: BotTelemetryClient;
 }
 
-export class Recognizer extends Configurable {
+export class Recognizer extends Configurable implements RecognizerConfiguration {
     /**
      * Recognizers unique ID.
      */

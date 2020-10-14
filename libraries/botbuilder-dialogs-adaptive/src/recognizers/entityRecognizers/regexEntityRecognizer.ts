@@ -14,7 +14,7 @@ export interface RegexEntityRecognizerConfiguration {
     pattern?: string;
 }
 
-export class RegexEntityRecognizer extends TextEntityRecognizer {
+export class RegexEntityRecognizer extends TextEntityRecognizer implements RegexEntityRecognizerConfiguration {
     public static $kind = 'Microsoft.RegexEntityRecognizer';
 
     public constructor();

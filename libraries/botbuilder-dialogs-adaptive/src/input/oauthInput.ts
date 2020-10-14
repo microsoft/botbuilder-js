@@ -77,7 +77,7 @@ export interface OAuthInputConfiguration extends InputDialogConfiguration {
     timeout?: number | string | Expression | IntExpression;
 }
 
-export class OAuthInput extends InputDialog {
+export class OAuthInput extends InputDialog implements OAuthInputConfiguration {
     public static $kind = 'Microsoft.OAuthInput';
 
     /**

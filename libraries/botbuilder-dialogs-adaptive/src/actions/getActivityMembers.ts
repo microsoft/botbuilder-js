@@ -27,7 +27,7 @@ export interface GetActivityMembersConfiguration extends DialogConfiguration {
     disabled?: boolean | string | Expression | BoolExpression;
 }
 
-export class GetActivityMembers<O extends object = {}> extends Dialog {
+export class GetActivityMembers<O extends object = {}> extends Dialog implements GetActivityMembersConfiguration {
     public static $kind = 'Microsoft.GetActivityMembers';
 
     public constructor();

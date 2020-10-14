@@ -17,7 +17,7 @@ export interface MultiLanguageRecognizerConfiguration extends RecognizerConfigur
     recognizers?: Record<string, string> | Record<string, Recognizer>;
 }
 
-export class MultiLanguageRecognizer extends Recognizer {
+export class MultiLanguageRecognizer extends Recognizer implements MultiLanguageRecognizerConfiguration {
     public static $kind = 'Microsoft.MultiLanguageRecognizer';
 
     public languagePolicy: LanguagePolicy = new LanguagePolicy();

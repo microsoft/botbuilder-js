@@ -15,7 +15,7 @@ export interface RecognizerSetConfiguration extends RecognizerConfiguration {
     recognizers?: string[] | Recognizer[];
 }
 
-export class RecognizerSet extends Recognizer {
+export class RecognizerSet extends Recognizer implements RecognizerSetConfiguration {
     public static $kind = 'Microsoft.RecognizerSet';
 
     public recognizers: Recognizer[] = [];

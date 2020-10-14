@@ -23,7 +23,7 @@ export interface CrossTrainedRecognizerSetConfiguration extends RecognizerConfig
 /**
  * Recognizer for selecting between cross trained recognizers.
  */
-export class CrossTrainedRecognizerSet extends Recognizer {
+export class CrossTrainedRecognizerSet extends Recognizer implements CrossTrainedRecognizerSetConfiguration {
     public static $kind = 'Microsoft.CrossTrainedRecognizerSet';
 
     /**

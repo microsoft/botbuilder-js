@@ -32,7 +32,9 @@ export interface CancelAllDialogsBaseConfiguration extends DialogConfiguration {
     activityProcessed?: boolean | string | Expression | BoolExpression;
 }
 
-export class CancelAllDialogsBase<O extends object = {}> extends Dialog<O> {
+export class CancelAllDialogsBase<O extends object = {}>
+    extends Dialog<O>
+    implements CancelAllDialogsBaseConfiguration {
     public constructor();
     public constructor(eventName: string, eventValue?: string, isCancelAll?: boolean);
     public constructor(eventName?: string, eventValue?: string, isCancelAll = true) {

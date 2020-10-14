@@ -22,7 +22,7 @@ export interface NumberInputConfiguration extends InputDialogConfiguration {
     outputFormat?: number | string | Expression | NumberExpression;
 }
 
-export class NumberInput extends InputDialog {
+export class NumberInput extends InputDialog implements NumberInputConfiguration {
     public static $kind = 'Microsoft.NumberInput';
 
     public defaultLocale?: StringExpression;

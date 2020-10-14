@@ -13,7 +13,7 @@ export interface TextInputConfiguration extends InputDialogConfiguration {
     outputFormat?: string | Expression | StringExpression;
 }
 
-export class TextInput extends InputDialog {
+export class TextInput extends InputDialog implements TextInputConfiguration {
     public static $kind = 'Microsoft.TextInput';
 
     public outputFormat: StringExpression;

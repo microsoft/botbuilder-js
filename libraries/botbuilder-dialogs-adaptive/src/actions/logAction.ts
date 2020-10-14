@@ -26,13 +26,13 @@ import { TextTemplate } from '../templates';
 import { TextTemplateConverter } from '../converters/textTemplateConverter';
 
 export interface LogActionConfiguration extends DialogConfiguration {
-    text?: string | TextTemplate;
+    text?: string | TemplateInterface<string>;
     traceActivity?: boolean | string | Expression | BoolExpression;
     label?: string | Expression | StringExpression;
     disabled?: boolean | string | Expression | BoolExpression;
 }
 
-export class LogAction<O extends object = {}> extends Dialog<O> {
+export class LogAction<O extends object = {}> extends Dialog<O> implements LogActionConfiguration {
     public static $kind = 'Microsoft.LogAction';
 
     /**

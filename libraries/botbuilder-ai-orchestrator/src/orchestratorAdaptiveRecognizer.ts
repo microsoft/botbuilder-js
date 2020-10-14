@@ -41,7 +41,7 @@ export interface OrchestratorAdaptiveRecognizerConfiguration extends RecognizerC
     entityRecognizers?: EntityRecognizer[];
 }
 
-export class OrchestratorAdaptiveRecognizer extends Recognizer {
+export class OrchestratorAdaptiveRecognizer extends Recognizer implements OrchestratorAdaptiveRecognizerConfiguration {
     public static $kind = 'Microsoft.OrchestratorRecognizer';
 
     /**

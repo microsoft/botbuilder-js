@@ -26,7 +26,9 @@ export interface IfConditionConfiguration extends DialogConfiguration {
     disabled?: boolean | string | Expression | BoolExpression;
 }
 
-export class IfCondition<O extends object = {}> extends Dialog<O> implements DialogDependencies {
+export class IfCondition<O extends object = {}>
+    extends Dialog<O>
+    implements DialogDependencies, IfConditionConfiguration {
     public static $kind = 'Microsoft.IfCondition';
 
     public constructor();

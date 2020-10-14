@@ -14,7 +14,7 @@ export interface RepeatDialogConfiguration extends BaseInvokeDialogConfiguration
     allowLoop?: boolean | string | Expression | BoolExpression;
 }
 
-export class RepeatDialog<O extends object = {}> extends BaseInvokeDialog<O> {
+export class RepeatDialog<O extends object = {}> extends BaseInvokeDialog<O> implements RepeatDialogConfiguration {
     public static $kind = 'Microsoft.RepeatDialog';
 
     public constructor();

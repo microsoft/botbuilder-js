@@ -20,7 +20,7 @@ export interface EndTurnConfiguration extends DialogConfiguration {
     disabled?: boolean | string | Expression | BoolExpression;
 }
 
-export class EndTurn<O extends object = {}> extends Dialog<O> {
+export class EndTurn<O extends object = {}> extends Dialog<O> implements EndTurnConfiguration {
     public static $kind = 'Microsoft.EndTurn';
 
     /**

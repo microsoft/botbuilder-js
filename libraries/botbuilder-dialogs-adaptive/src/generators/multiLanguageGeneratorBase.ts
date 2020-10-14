@@ -18,7 +18,9 @@ export interface MultiLanguageGeneratorBaseConfiguration {
 /**
  * Base class which applies language policy to tryGetGenerator.
  */
-export abstract class MultiLanguageGeneratorBase extends Configurable implements LanguageGenerator {
+export abstract class MultiLanguageGeneratorBase
+    extends Configurable
+    implements LanguageGenerator, MultiLanguageGeneratorBaseConfiguration {
     /**
      * Language policy required by language generator.
      */

@@ -20,7 +20,9 @@ export interface TemplateEngineLanguageGeneratorConfiguration {
 /**
  * LanguageGenerator implementation which uses LGFile.
  */
-export class TemplateEngineLanguageGenerator extends Configurable implements LanguageGenerator {
+export class TemplateEngineLanguageGenerator
+    extends Configurable
+    implements LanguageGenerator, TemplateEngineLanguageGeneratorConfiguration {
     public static $kind = 'Microsoft.TemplateEngineLanguageGenerator';
 
     private readonly DEFAULTLABEL: string = 'Unknown';

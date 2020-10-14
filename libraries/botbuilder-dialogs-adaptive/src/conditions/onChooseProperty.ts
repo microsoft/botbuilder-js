@@ -18,7 +18,7 @@ export interface OnChoosePropertyConfiguration extends OnDialogEventConfiguratio
 /**
  * Triggered to choose which property an entity goes to.
  */
-export class OnChooseProperty extends OnDialogEvent {
+export class OnChooseProperty extends OnDialogEvent implements OnChoosePropertyConfiguration {
     public static $kind = 'Microsoft.OnChooseProperty';
 
     public constructor(properties: string[] = [], entities: string[] = [], actions: Dialog[] = [], condition?: string) {

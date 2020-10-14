@@ -32,7 +32,7 @@ export interface TraceActivityConfiguration extends DialogConfiguration {
     disabled?: boolean | string | Expression | BoolExpression;
 }
 
-export class TraceActivity<O extends object = {}> extends Dialog<O> {
+export class TraceActivity<O extends object = {}> extends Dialog<O> implements TraceActivityConfiguration {
     public static $kind = 'Microsoft.TraceActivity';
 
     public constructor();

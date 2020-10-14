@@ -49,7 +49,9 @@ export interface SwitchConditionConfiguration extends DialogConfiguration {
     disabled?: boolean | string | Expression | BoolExpression;
 }
 
-export class SwitchCondition<O extends object = {}> extends Dialog<O> implements DialogDependencies {
+export class SwitchCondition<O extends object = {}>
+    extends Dialog<O>
+    implements DialogDependencies, SwitchConditionConfiguration {
     public static $kind = 'Microsoft.SwitchCondition';
 
     public constructor();

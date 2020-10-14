@@ -19,7 +19,7 @@ export interface OnAssignEntityConfiguration extends OnDialogEventConfiguration 
 /**
  * Triggered to assign an entity to a property.
  */
-export class OnAssignEntity extends OnDialogEvent {
+export class OnAssignEntity extends OnDialogEvent implements OnAssignEntityConfiguration {
     public static $kind = 'Microsoft.OnAssignEntity';
 
     public constructor(

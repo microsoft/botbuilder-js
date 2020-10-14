@@ -20,7 +20,7 @@ export interface UserTokenBasicMockConfiguration {
 /**
  * Mock UserToken with user id and token.
  */
-export class UserTokenBasicMock extends UserTokenMock {
+export class UserTokenBasicMock extends UserTokenMock implements UserTokenBasicMockConfiguration {
     public static $kind = 'Microsoft.Test.UserTokenBasicMock';
 
     /**

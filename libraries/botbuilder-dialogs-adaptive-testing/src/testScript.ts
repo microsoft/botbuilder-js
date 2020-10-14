@@ -46,7 +46,7 @@ export interface TestScriptConfiguration {
 /**
  * A mock Test Script that can be used for unit testing bot's logic.
  */
-export class TestScript extends Configurable {
+export class TestScript extends Configurable implements TestScriptConfiguration {
     public static $kind = 'Microsoft.Test.Script';
 
     /**

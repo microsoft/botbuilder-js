@@ -46,7 +46,7 @@ export interface BeginSkillConfiguration extends DialogConfiguration {
     allowInterruptions?: boolean | string | Expression | BoolExpression;
 }
 
-export class BeginSkill extends SkillDialog {
+export class BeginSkill extends SkillDialog implements BeginSkillConfiguration {
     public static $kind = 'Microsoft.BeginSkill';
 
     /**

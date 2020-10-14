@@ -37,7 +37,7 @@ export interface AskConfiguration extends SendActivityConfiguration {
  * It also builds in a model of the properties that are expected in response through `DialogPath.expectedProperties`.
  * `DialogPath.retries` is updated as the same question is asked multiple times.
  */
-export class Ask extends SendActivity {
+export class Ask extends SendActivity implements AskConfiguration {
     public static $kind = 'Microsoft.Ask';
 
     public constructor(text?: string, expectedProperties?: ArrayExpression<string>) {

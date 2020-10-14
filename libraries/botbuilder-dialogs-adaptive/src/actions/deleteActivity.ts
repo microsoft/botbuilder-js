@@ -26,7 +26,7 @@ export interface DeleteActivityConfiguration extends DialogConfiguration {
     disabled?: boolean | string | Expression | BoolExpression;
 }
 
-export class DeleteActivity<O extends object = {}> extends Dialog<O> {
+export class DeleteActivity<O extends object = {}> extends Dialog<O> implements DeleteActivityConfiguration {
     public static $kind = 'Microsoft.DeleteActivity';
 
     public constructor();

@@ -10,14 +10,14 @@ import { TurnContext, ActivityTypes, ChannelAccount, RoleTypes, TestAdapter } fr
 import { TestAction } from '../testAction';
 
 export interface UserConversationUpdateConfiguration {
-    memebersAdded?: string[];
-    memebersRemoved?: string[];
+    membersAdded?: string[];
+    membersRemoved?: string[];
 }
 
 /**
  * Action to script sending a conversationUpdate activity to the bot.
  */
-export class UserConversationUpdate extends TestAction {
+export class UserConversationUpdate extends TestAction implements UserConversationUpdateConfiguration {
     public static $kind = 'Microsoft.Test.UserConversationUpdate';
 
     /**
