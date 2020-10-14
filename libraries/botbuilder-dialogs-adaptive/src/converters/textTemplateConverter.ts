@@ -10,13 +10,13 @@ import { Converter } from 'botbuilder-dialogs-declarative';
 import { TextTemplate } from '../templates';
 
 /**
- * Text template converter that implements `Converter`.
+ * Text template converter that implements [Converter](xref:botbuilder-dialogs-declarative.Converter).
  */
 export class TextTemplateConverter implements Converter {
     /**
-     * Converts a string to a `TextTemplate` instance.
+     * Converts a string to a [TextTemplate](xref:botbuilder-dialogs-adaptive.TextTemplate) instance.
      * @param value The template to evaluate to create text.
-     * @returns A new `TextTemplate` instance.
+     * @returns A new [TextTemplate](xref:botbuilder-dialogs-adaptive.TextTemplate) instance.
      */
     public convert(value: string): TextTemplate {
         return new TextTemplate(value);

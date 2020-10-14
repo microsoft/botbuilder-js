@@ -13,7 +13,7 @@ import { LanguageGeneratorManager } from './languageGeneratorManager';
 import { languageGeneratorManagerKey } from '../languageGeneratorExtensions';
 
 /**
- * Multi language resource generator that extends `MultiLanguageGeneratorBase` class.
+ * Multi language resource generator that extends [MultiLanguageGeneratorBase](xref:botbuilder-dialogs-adaptive.MultiLanguageGeneratorBase) class.
  */
 export class ResourceMultiLanguageGenerator extends MultiLanguageGeneratorBase {
     /**

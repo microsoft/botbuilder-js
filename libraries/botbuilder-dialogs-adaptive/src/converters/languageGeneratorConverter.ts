@@ -10,13 +10,13 @@ import { Converter } from 'botbuilder-dialogs-declarative';
 import { ResourceMultiLanguageGenerator } from '../generators';
 
 /**
- * Language generator converter that implements `Converter`.
+ * Language generator converter that implements [Converter](xref:botbuilder-dialogs-declarative.Converter).
  */
 export class LanguageGeneratorConverter implements Converter {
     /**
-     * Creates a new `ResourceMultiLanguageGenerator` instance from Resource id value.
+     * Creates a new [ResourceMultiLanguageGenerator](xref:botbuilder-dialogs-adaptive.ResourceMultiLanguageGenerator) instance from Resource id value.
      * @param value Resource id of LG file.
-     * @returns A new `ResourceMultiLanguageGenerator` instance.
+     * @returns A new [ResourceMultiLanguageGenerator](xref:botbuilder-dialogs-adaptive.ResourceMultiLanguageGenerator) instance.
      */
     public convert(value: string|ResourceMultiLanguageGenerator): ResourceMultiLanguageGenerator {
         return typeof value === 'string' ? new ResourceMultiLanguageGenerator(value) : value;
