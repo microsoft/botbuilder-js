@@ -21,15 +21,15 @@ export class OrchestratorComponentRegistration implements ComponentRegistration 
 
     /**
      * Gets all the builder registration instances.
-     * @returns An array of `BuilderRegistration`.
+     * @returns An array of [BuilderRegistration](xref:botbuilder-dialogs-declarative.BuilderRegistration).
      */
     public getTypeBuilders(): BuilderRegistration[] {
         return this._builderRegistrations;
     }
 
     /**
-     * Initializes a new instance of the `OrchestratorComponentRegistration` class.
-     * @param resourceExplorer `ResourceExplorer` to get all schema resources.
+     * Initializes a new instance of the [OrchestratorComponentRegistration](xref:botbuilder-ai-orchestrator.OrchestratorComponentRegistration) class.
+     * @param resourceExplorer [ResourceExplorer](xref:botbuilder-dialogs-declarative.ResourceExplorer) to get all schema resources.
      */
     public constructor(resourceExplorer: ResourceExplorer) {
         this._resourceExplorer = resourceExplorer;
