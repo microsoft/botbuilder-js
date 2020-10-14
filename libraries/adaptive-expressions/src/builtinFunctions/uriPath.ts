@@ -20,7 +20,7 @@ import { ReturnType } from '../returnType';
  */
 export class UriPath extends ExpressionEvaluator {
     /**
-     * Initializes a new instance of the `UriPath` class.
+     * Initializes a new instance of the [UriPath](xref:adaptive-expressions.UriPath) class.
      */
     public constructor() {
         super(ExpressionType.UriPath, UriPath.evaluator, ReturnType.String, FunctionUtils.validateUnary);

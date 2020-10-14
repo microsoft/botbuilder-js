@@ -20,7 +20,7 @@ import { ReturnType } from '../returnType';
  */
 export class UriPathAndQuery extends ExpressionEvaluator {
     /**
-     * Initializes a new instance of the `UriPathAndQuery` class.
+     * Initializes a new instance of the [UriPathAndQuery](xref:adaptive-expressions.UriPathAndQuery) class.
      */
     public constructor() {
         super(

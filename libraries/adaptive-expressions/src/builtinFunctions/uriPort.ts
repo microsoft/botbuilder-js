@@ -20,7 +20,7 @@ import { ReturnType } from '../returnType';
  */
 export class UriPort extends ExpressionEvaluator {
     /**
-     * Initializes a new instance of the `UriPort` class.
+     * Initializes a new instance of the [UriPort](xref:adaptive-expressions.UriPort) class.
      */
     public constructor() {
         super(ExpressionType.UriPort, UriPort.evaluator, ReturnType.Number, FunctionUtils.validateUnary);

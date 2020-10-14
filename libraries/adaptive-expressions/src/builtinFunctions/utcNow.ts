@@ -19,7 +19,7 @@ import { ReturnType } from '../returnType';
  */
 export class UtcNow extends ExpressionEvaluator {
     /**
-     * Initializes a new instance of the `UtcNow` class.
+     * Initializes a new instance of the [UtcNow](xref:adaptive-expressions.UtcNow) class.
      */
     public constructor() {
         super(ExpressionType.UtcNow, UtcNow.evaluator(), ReturnType.String, UtcNow.validator);
