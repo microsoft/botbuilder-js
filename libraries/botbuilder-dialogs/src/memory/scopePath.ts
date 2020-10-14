@@ -28,6 +28,11 @@ export class ScopePath {
     static readonly dialogClass = 'dialogClass';
 
     /**
+     * DialogContext memory scope root path.
+     */
+    static readonly dialogContext = 'dialogContext';
+
+    /**
      * This memory scope root path.
      */
     static readonly this = 'this';
