@@ -21,7 +21,7 @@ import { ReturnType } from '../returnType';
  */
 export class Not extends ExpressionEvaluator {
     /**
-     * Initializes a new instance of the `Not` class.
+     * Initializes a new instance of the [Not](xref:adaptive-expressions.Not) class.
      */
     public constructor() {
         super(ExpressionType.Not, Not.evaluator, ReturnType.Boolean, FunctionUtils.validateUnary);

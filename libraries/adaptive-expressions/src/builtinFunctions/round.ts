@@ -16,7 +16,7 @@ import { ReturnType } from '../returnType';
  */
 export class Round extends ExpressionEvaluator {
     /**
-     * Initializes a new instance of the `Round` class.
+     * Initializes a new instance of the [Round](xref:adaptive-expressions.Round) class.
      */
     public constructor() {
         super(ExpressionType.Round, Round.evaluator(), ReturnType.Number, FunctionUtils.validateUnaryOrBinaryNumber);

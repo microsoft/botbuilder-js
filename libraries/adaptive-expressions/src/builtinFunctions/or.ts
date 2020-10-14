@@ -21,7 +21,7 @@ import { ReturnType } from '../returnType';
  */
 export class Or extends ExpressionEvaluator {
     /**
-     * Initializes a new instance of the `Or` class.
+     * Initializes a new instance of the [Or](xref:adaptive-expressions.Or) class.
      */
     public constructor() {
         super(ExpressionType.Or, Or.evaluator, ReturnType.Boolean, FunctionUtils.validateAtLeastOne);

@@ -16,7 +16,7 @@ import { ComparisonEvaluator } from './comparisonEvaluator';
  */
 export class NotEqual extends ComparisonEvaluator {
     /**
-     * Initializes a new instance of the `NotEqual` class.
+     * Initializes a new instance of the [NotEqual](xref:adaptive-expressions.NotEqual) class.
      */
     public constructor() {
         super(ExpressionType.NotEqual, NotEqual.func, FunctionUtils.validateBinary);
