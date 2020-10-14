@@ -19,8 +19,8 @@ export class HttpContentStream {
     public description: { id: string; type: string; length: number; };
 
     /**
-     * Initializes a new instance of the `HttpContentStream` class.
-     * @param content The content to assign to the `HttpContentStream`.
+     * Initializes a new instance of the [HttpContentStream](xref:botframework-streaming.HttpContentStream) class.
+     * @param content The [HttpContent](xref:botframework-streaming.HttpContent) to assign to the [HttpContentStream](xref:botframework-streaming.HttpContentStream).
      */
     public constructor(content: HttpContent) {
         this.id = generateGuid();
@@ -30,14 +30,14 @@ export class HttpContentStream {
 }
 
 /**
- * The HttpContent class that contains a SubscribableStream.
+ * The HttpContent class that contains a [SubscribableStream](xref:botframework-streaming.SubscribableStream).
  */
 export class HttpContent {
     public headers: IHttpContentHeaders;
     private readonly stream: SubscribableStream;
 
     /**
-     * Initializes a new instance of the `HttpContent` class.
+     * Initializes a new instance of the [HttpContent](xref:botframework-streaming.HttpContent) class.
      * @param headers The Streaming Http content header definition.
      * @param stream The stream of buffered data.
      */
@@ -47,7 +47,7 @@ export class HttpContent {
     }
 
     /**
-     * Gets the data contained within this `HttpContent`.
+     * Gets the data contained within this [HttpContent](xref:botframework-streaming.HttpContent).
      */
     public getStream(): SubscribableStream {
         return this.stream;

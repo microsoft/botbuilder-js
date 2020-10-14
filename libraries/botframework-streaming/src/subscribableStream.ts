@@ -17,7 +17,7 @@ export class SubscribableStream extends Duplex {
     private _onData: (chunk: any) => void;
 
     /**
-     * Initializes a new instance of the `SubscribableStream` class.
+     * Initializes a new instance of the [SubscribableStream](xref:botframework-streaming.SubscribableStream) class.
      * @param options The `DuplexOptions` to use when constructing this stream.
      */
     public constructor(options?: DuplexOptions) {

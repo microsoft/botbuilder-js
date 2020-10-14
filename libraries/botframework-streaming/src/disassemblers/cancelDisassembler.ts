@@ -18,8 +18,8 @@ export class CancelDisassembler {
     private readonly payloadType: PayloadTypes;
 
     /**
-     * Initializes a new instance of the `CancelDisassembler` class.
-     * @param sender The `PayloadSender` that this Cancel request will be sent by.
+     * Initializes a new instance of the [CancelDisassembler](xref:botframework-streaming.CancelDisassembler) class.
+     * @param sender The [PayloadSender](xref:botframework-streaming.PayloadSender) that this Cancel request will be sent by.
      * @param id The ID of the Stream to cancel.
      * @param payloadType The type of the Stream that is being cancelled.
      */
@@ -30,7 +30,7 @@ export class CancelDisassembler {
     }
 
     /**
-     * Initiates the process of disassembling the request and signals the `PayloadSender` to begin sending.
+     * Initiates the process of disassembling the request and signals the [PayloadSender](xref:botframework-streaming.PayloadSender) to begin sending.
      */
     public disassemble(): void {
         const header: IHeader = {payloadType: this.payloadType, payloadLength: 0, id: this.id, end: true};

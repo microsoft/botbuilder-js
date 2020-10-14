@@ -29,8 +29,8 @@ export class PayloadAssembler {
     private readonly _utf: string = 'utf8';
 
     /**
-     * Initializes a new instance of the `PayloadAssembler` class.
-     * @param streamManager The `StreamManager` managing the stream being assembled.
+     * Initializes a new instance of the [PayloadAssembler](xref:botframework-streaming.PayloadAssembler) class.
+     * @param streamManager The [StreamManager](xref:botframework-streaming.StreamManager) managing the stream being assembled.
      * @param params Parameters for a streaming assembler.
      */
     public constructor(streamManager: StreamManager, params: IAssemblerParams) {
@@ -53,7 +53,7 @@ export class PayloadAssembler {
 
     /**
      * Retrieves the assembler's payload as a stream.
-     * @returns A `SubscribableStream` of the assembler's payload.
+     * @returns A [SubscribableStream](xref:botframework-streaming.SubscribableStream) of the assembler's payload.
      */
     public getPayloadStream(): SubscribableStream {
         if (!this.stream) {
@@ -89,7 +89,7 @@ export class PayloadAssembler {
     }
 
     /**
-     * Creates a new `SubscribableStream` instance.
+     * Creates a new [SubscribableStream](xref:botframework-streaming.SubscribableStream) instance.
      * @returns The new stream ready for consumption.
      */
     private createPayloadStream(): SubscribableStream {
