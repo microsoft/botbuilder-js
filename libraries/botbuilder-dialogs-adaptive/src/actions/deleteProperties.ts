@@ -36,7 +36,7 @@ export class DeleteProperties<O extends object = {}> extends Dialog<O> {
     public disabled?: BoolExpression;
 
     /**
-     * Called when the dialog is started and pushed onto the dialog stack.
+     * Called when the [Dialog](xref:botbuilder-dialogs.Dialog) is started and pushed onto the dialog stack.
      * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
      * @param options Optional. Initial information to pass to the dialog.
      * @returns A `Promise` representing the asynchronous operation.
@@ -57,7 +57,7 @@ export class DeleteProperties<O extends object = {}> extends Dialog<O> {
 
     /**
      * @protected
-     * Builds the compute Id for the dialog.
+     * Builds the compute Id for the [Dialog](xref:botbuilder-dialogs.Dialog).
      * @returns A `string` representing the compute Id.
      */
     protected onComputeId(): string {

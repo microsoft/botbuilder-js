@@ -71,7 +71,7 @@ export class ForEachPage<O extends object = {}> extends ActionScope<O> {
     }
 
     /**
-     * Starts a new dialog and pushes it onto the dialog stack.
+     * Starts a new [Dialog](xref:botbuilder-dialogs.Dialog) and pushes it onto the dialog stack.
      * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
      * @param options Optional. Initial information to pass to the dialog.
      * @returns A `Promise` representing the asynchronous operation.
@@ -87,7 +87,7 @@ export class ForEachPage<O extends object = {}> extends ActionScope<O> {
 
     /**
      * @protected
-     * Called when the dialog continues to the next action.
+     * Called when the [Dialog](xref:botbuilder-dialogs.Dialog) continues to the next action.
      * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
      * @param result Optional. Value returned from the dialog that was called. The type 
      * of the value returned is dependent on the child dialog.
@@ -99,7 +99,7 @@ export class ForEachPage<O extends object = {}> extends ActionScope<O> {
 
     /**
      * @protected
-     * Called when returning control to this dialog with an [ActionScopeResult](xref:botbuilder-dialogs-adaptive.ActionScopeResult)
+     * Called when returning control to this [Dialog](xref:botbuilder-dialogs.Dialog) with an [ActionScopeResult](xref:botbuilder-dialogs-adaptive.ActionScopeResult)
      * with the property `ActionCommand` set to `BreakLoop`.
      * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
      * @param actionScopeResult [ActionScopeResult](xref:botbuilder-dialogs-adaptive.ActionScopeResult), contains the actions scope result.
@@ -111,7 +111,7 @@ export class ForEachPage<O extends object = {}> extends ActionScope<O> {
 
     /**
      * @protected
-     * Called when returning control to this dialog with an [ActionScopeResult](xref:botbuilder-dialogs-adaptive.ActionScopeResult)
+     * Called when returning control to this [Dialog](xref:botbuilder-dialogs.Dialog) with an [ActionScopeResult](xref:botbuilder-dialogs-adaptive.ActionScopeResult)
      * with the property `ActionCommand` set to `ContinueLoop`.
      * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
      * @param actionScopeResult [ActionScopeResult](xref:botbuilder-dialogs-adaptive.ActionScopeResult), contains the actions scope result.
@@ -123,7 +123,7 @@ export class ForEachPage<O extends object = {}> extends ActionScope<O> {
 
     /**
      * @protected
-     * Builds the compute Id for the dialog.
+     * Builds the compute Id for the [Dialog](xref:botbuilder-dialogs.Dialog).
      * @returns A `string` representing the compute Id.
      */
     protected onComputeId(): string {
