@@ -20,7 +20,7 @@ import { ReturnType } from '../returnType';
  */
 export class And extends ExpressionEvaluator {
     /**
-     * Initializes a new instance of the `And` class.
+     * Initializes a new instance of the [And](xref:adaptive-expressions.And) class.
      */
     public constructor() {
         super(ExpressionType.And, And.evaluator, ReturnType.Boolean, FunctionUtils.validateAtLeastOne);

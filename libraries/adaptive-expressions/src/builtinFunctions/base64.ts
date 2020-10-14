@@ -16,7 +16,7 @@ import { ReturnType } from '../returnType';
  */
 export class Base64 extends ExpressionEvaluator {
     /**
-     * Initializes a new instance of the `Base64` class.
+     * Initializes a new instance of the [Base64](xref:adaptive-expressions.Base64) class.
      */
     public constructor() {
         super(ExpressionType.Base64, Base64.evaluator(), ReturnType.String, FunctionUtils.validateUnary);

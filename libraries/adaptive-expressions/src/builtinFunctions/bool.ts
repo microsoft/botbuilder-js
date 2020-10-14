@@ -16,7 +16,7 @@ import { ComparisonEvaluator } from './comparisonEvaluator';
  */
 export class Bool extends ComparisonEvaluator {
     /**
-     * Initializes a new instance of the `Bool` class.
+     * Initializes a new instance of the [Bool](xref:adaptive-expressions.Bool) class.
      */
     public constructor() {
         super(ExpressionType.Bool, Bool.func, FunctionUtils.validateUnary);
