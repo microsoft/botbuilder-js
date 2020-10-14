@@ -37,6 +37,11 @@ export class RegexRecognizer extends Recognizer {
             entities: {},
         };
 
+        if (!text) {
+            // nothing to recognize, return empty result
+            return recognizerResult;
+        }
+
         const entityPool: Entity[] = [];
 
         const textEntity = new TextEntity(text);

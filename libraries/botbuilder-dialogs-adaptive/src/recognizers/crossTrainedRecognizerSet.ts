@@ -109,13 +109,13 @@ export class CrossTrainedRecognizerSet extends Recognizer {
 
             // we have a real intent and it's the first one we found
             if (!consensusRecognizedId) {
-                if (intent != 'None') {
+                if (intent && intent != 'None') {
                     consensusRecognizedId = recognizerId;
                 }
             } else {
                 // we have a second recognizer result which is either none or real
                 // if one of them is None intent, then go with the other one
-                if (intent == 'None') {
+                if (!intent || intent == 'None') {
                     // then we are fine with the one we have, just ignore this one
                     continue;
                 } else if (recognizerId == consensusRecognizedId) {
