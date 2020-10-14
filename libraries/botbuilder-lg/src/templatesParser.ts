@@ -259,7 +259,7 @@ export class TemplatesTransformer extends AbstractParseTreeVisitor<any> implemen
     private readonly templates: Templates;
 
     /**
-     * Creates a new instance of the TemplatesTransformer class.
+     * Creates a new instance of the [TemplatesTransformer](xref:botbuilder-lg.TemplatesTransformer) class.
      * @param templates Templates.
      */
     public constructor(templates: Templates) {
@@ -297,7 +297,7 @@ export class TemplatesTransformer extends AbstractParseTreeVisitor<any> implemen
     }
 
     /**
-     * Visit a parse tree produced by LGFileParser.errorDefinition.
+     * Visit a parse tree produced by `LGFileParser.errorDefinition`.
      * @param context The parse tree.
      */
     public visitErrorDefinition(context: lp.ErrorDefinitionContext): any {
@@ -309,7 +309,7 @@ export class TemplatesTransformer extends AbstractParseTreeVisitor<any> implemen
     }
 
     /**
-     * Visit a parse tree produced by LGFileParser.importDefinition.
+     * Visit a parse tree produced by `LGFileParser.importDefinition`.
      * @param context The parse tree.
      */
     public visitImportDefinition(context: lp.ImportDefinitionContext): any {
@@ -326,7 +326,7 @@ export class TemplatesTransformer extends AbstractParseTreeVisitor<any> implemen
     }
 
     /**
-     * Visit a parse tree produced by LGFileParser.optionDefinition.
+     * Visit a parse tree produced by `LGFileParser.optionDefinition`.
      * @param context The parse tree.
      */
     public visitOptionDefinition(context: lp.OptionDefinitionContext): any {
@@ -346,7 +346,7 @@ export class TemplatesTransformer extends AbstractParseTreeVisitor<any> implemen
     }
 
     /**
-     * Visit a parse tree produced by LGFileParser.templateDefinition.
+     * Visit a parse tree produced by `LGFileParser.templateDefinition`.
      * @param context The parse tree.
      */
     public visitTemplateDefinition(context: lp.TemplateDefinitionContext): any {

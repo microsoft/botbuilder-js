@@ -28,8 +28,8 @@ export class StaticChecker extends AbstractParseTreeVisitor<Diagnostic[]> implem
     private _expressionParser: ExpressionParserInterface;
 
     /**
-     * Creates a new instance of the StaticChecker class.
-     * @param templates Templates to be checked.
+     * Creates a new instance of the [StaticChecker](xref:botbuilder-lg.StaticChecker) class.
+     * @param templates [Templates](xref:botbuilder-lg.Templates) to be checked.
      */
     public constructor(templates: Templates) {
         super();
@@ -90,7 +90,7 @@ export class StaticChecker extends AbstractParseTreeVisitor<Diagnostic[]> implem
     }
 
     /**
-     * Visit a parse tree produced by LGTemplateParser.normalTemplateBody.
+     * Visit a parse tree produced by `LGTemplateParser.normalTemplateBody`.
      * @param context The parse tree.
      */
     public visitNormalTemplateBody(context: lp.NormalTemplateBodyContext): Diagnostic[] {
@@ -109,7 +109,7 @@ export class StaticChecker extends AbstractParseTreeVisitor<Diagnostic[]> implem
     }
 
     /**
-     * Visit a parse tree produced by LGTemplateParser.structuredTemplateBody.
+     * Visit a parse tree produced by `LGTemplateParser.structuredTemplateBody`.
      * @param context The parse tree.
      */
     public visitStructuredTemplateBody(context: lp.StructuredTemplateBodyContext): Diagnostic[] {
@@ -155,7 +155,7 @@ export class StaticChecker extends AbstractParseTreeVisitor<Diagnostic[]> implem
     }
 
     /**
-     * Visit a parse tree produced by the ifElseBody labeled alternative in LGTemplateParser.body.
+     * Visit a parse tree produced by the `ifElseBody` labeled alternative in `LGTemplateParser.body`.
      * @param context The parse tree.
      */
     public visitIfElseBody(context: lp.IfElseBodyContext): Diagnostic[] {
@@ -218,7 +218,7 @@ export class StaticChecker extends AbstractParseTreeVisitor<Diagnostic[]> implem
     }
 
     /**
-     * Visit a parse tree produced by the switchCaseBody labeled alternative in LGTemplateParser.body.
+     * Visit a parse tree produced by the `switchCaseBody` labeled alternative in `LGTemplateParser.body`.
      * @param context The parse tree.
      */
     public visitSwitchCaseBody(context: lp.SwitchCaseBodyContext): Diagnostic[] {
@@ -287,7 +287,7 @@ export class StaticChecker extends AbstractParseTreeVisitor<Diagnostic[]> implem
     }
 
     /**
-     * Visit a parse tree produced by LGTemplateParser.normalTemplateString.
+     * Visit a parse tree produced by `LGTemplateParser.normalTemplateString`.
      * @param context The parse tree.
      */
     public visitNormalTemplateString(context: lp.NormalTemplateStringContext): Diagnostic[] {
@@ -309,7 +309,7 @@ export class StaticChecker extends AbstractParseTreeVisitor<Diagnostic[]> implem
 
     /**
      * Gets the default value returned by visitor methods.
-     * @returns Empty Diagnostic array.
+     * @returns Empty [Diagnostic](xref:botbuilder-lg.Diagnostic) array.
      */
     protected defaultResult(): Diagnostic[] {
         return [];

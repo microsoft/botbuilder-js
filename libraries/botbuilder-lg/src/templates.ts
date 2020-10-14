@@ -88,17 +88,17 @@ export class Templates implements Iterable<Template> {
     public options: string[];
 
     /**
-     * Creates a new instance of the Templates class.
-     * @param items List of Template instances.
-     * @param imports List of TemplateImport instances.
-     * @param diagnostics List of Diagnostic instances.
-     * @param references List of Templates instances.
-     * @param content Content of the current Templates instance.
-     * @param id Id of the current Templates instance.
-     * @param expressionParser ExpressionParser to parse the expressions in the content.
-     * @param importResolverDelegate Resolver to resolve LG import id to template text.
-     * @param options List of strings representing the options during evaluation of the templates.
-     * @param source Templates source.
+     * Creates a new instance of the [Templates](xref:botbuilder-lg.Templates) class.
+     * @param items Optional. List of [Template](xref:botbuilder-lg.Template) instances.
+     * @param imports Optional. List of [TemplateImport](xref:botbuilder-lg.TemplateImport) instances.
+     * @param diagnostics Optional. List of [Diagnostic](xref:botbuilder-lg.Diagnostic) instances.
+     * @param references Optional. List of [Templates](xref:botbuilder-lg.Templates) instances.
+     * @param content Optional. Content of the current Templates instance.
+     * @param id Optional. Id of the current Templates instance.
+     * @param expressionParser Optional. [ExpressionParser](xref:adaptive-expressions.ExpressionParser) to parse the expressions in the content.
+     * @param importResolverDelegate Optional. Resolver to resolve LG import id to template text.
+     * @param options Optional. List of strings representing the options during evaluation of the templates.
+     * @param source Optional. Templates source.
      */
     public constructor(items?: Template[],
         imports?: TemplateImport[],
@@ -396,8 +396,8 @@ export class Templates implements Iterable<Template> {
     }
 
     /**
-     * Returns a string representation of a Templates content.
-     * @returns A string representation of a Templates content.
+     * Returns a string representation of a [Templates](xref:botbuilder-lg.Templates) content.
+     * @returns A string representation of a [Templates](xref:botbuilder-lg.Templates) content.
      */
     public toString(): string {
         return this.content;
