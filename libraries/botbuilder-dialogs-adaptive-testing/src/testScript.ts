@@ -32,6 +32,8 @@ export class TestScript {
      */
     public locale = 'en-us';
 
+    public languagePolicy: LanguagePolicy;
+
     /**
      * The mock data for Microsoft.OAuthInput.
      */
@@ -51,13 +53,11 @@ export class TestScript {
      * Starts the execution of the test sequence.
      * @param testName Name of the test
      * @param testAdapter (Optional) Test adapter
-     * @param languagePolicy (Optional) Language policy.
      */
     public async execute(
         resourceExplorer: ResourceExplorer,
         testName?: string,
-        testAdapter?: TestAdapter,
-        languagePolicy?: LanguagePolicy
+        testAdapter?: TestAdapter
     ): Promise<void> {
         if (!testAdapter) {
             testAdapter = new TestAdapter(TestAdapter.createConversation(testName));
@@ -72,8 +72,8 @@ export class TestScript {
         ResourceExtensions.useResourceExplorer(bot, resourceExplorer);
         LanguageGeneratorExtensions.useLanguageGeneration(bot);
 
-        if (languagePolicy) {
-            LanguageGeneratorExtensions.useLanguagePolicy(bot, languagePolicy);
+        if (this.languagePolicy) {
+            LanguageGeneratorExtensions.useLanguagePolicy(bot, this.languagePolicy);
         }
 
         this.userTokenMocks.forEach((userTokenMock) => {

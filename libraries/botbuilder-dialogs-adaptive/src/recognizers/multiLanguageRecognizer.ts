@@ -23,10 +23,14 @@ export class MultiLanguageRecognizer extends Recognizer {
         telemetryProperties?: { [key: string]: string },
         telemetryMetrics?: { [key: string]: number }
     ): Promise<RecognizerResult> {
-        let languagepolicy = this.languagePolicy;
+        let languagepolicy: LanguagePolicy = this.languagePolicy;
         if (!languagepolicy) {
             languagepolicy = dialogContext.services.get(languagePolicyKey);
-            if (!languagepolicy) {
+            if (languagepolicy) {
+                if (typeof languagepolicy === 'object') {
+                    languagepolicy = new Map(Object.entries(languagepolicy));
+                }
+            } else {
                 languagepolicy = new LanguagePolicy();
             }
         }

@@ -27,7 +27,6 @@ describe('MultiLanguageRecognizerTests', function() {
     });
 
     it('LanguagePolicy', async () => {
-        const languagePolicy = new LanguagePolicy('en-gb');
-        await testRunner.runTestScript('MultiLanguageRecognizerTest_LanguagePolicy', languagePolicy);
+        await testRunner.runTestScript('MultiLanguageRecognizerTest_LanguagePolicy');
     });
 });

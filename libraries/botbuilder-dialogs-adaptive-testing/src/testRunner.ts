@@ -36,10 +36,10 @@ export class TestRunner {
      * @param testName Test name.
      * @returns A Promise that represents the work queued to execute.
      */
-    public async runTestScript(testName: string, languagePolicy?: LanguagePolicy): Promise<any> {
+    public async runTestScript(testName: string): Promise<any> {
         const script = this.resourceExplorer.loadType(`${testName}.test.dialog`) as TestScript;
         script.description = script.description || testName;
         this.testAdapter.activeQueue.splice(0, this.testAdapter.activeQueue.length);
-        await script.execute(this.resourceExplorer, testName, this.testAdapter, languagePolicy);
+        await script.execute(this.resourceExplorer, testName, this.testAdapter);
     }
 }
