@@ -391,6 +391,8 @@ const badExpressions = [
             ['contains(\'hello world\', \'hello\', \'new\')', 'should have 2 parameter'],
             ['count(items, 1)', 'should have 1 parameter'],
             ['count(1)', 'first param should be string, array or map'],
+            ['reverse(items, 1)', 'should have 1 parameter'],
+            ['reverse(1)', 'first param should be string or array'],
             ['empty(1,2)', 'should have two params'],
             ['first(items,2)', 'should have 1 param'],
             ['last(items,2)', 'should have 1 param'],

@@ -117,6 +117,7 @@ export * from './range';
 export * from './removeProperty';
 export * from './replace';
 export * from './replaceIgnoreCase';
+export * from './reverse';
 export * from './round';
 export * from './select';
 export * from './sentenceCase';

@@ -5,11 +5,15 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { Dialog, DialogContext, DialogTurnResult } from 'botbuilder-dialogs';
+import { Dialog, DialogContext, DialogStateManager, DialogTurnResult } from 'botbuilder-dialogs';
 import { Activity, StringUtils } from 'botbuilder-core';
 import { TemplateInterface } from '../template';
 import { StringExpression, BoolExpression } from 'adaptive-expressions';
 import { ActivityTemplate, StaticActivityTemplate } from '../templates';
+
+type D = DialogStateManager & {
+    utterance: string;
+};
 
 export class UpdateActivity<O extends object = {}> extends Dialog<O> {
     public constructor();
@@ -30,7 +34,7 @@ export class UpdateActivity<O extends object = {}> extends Dialog<O> {
     /**
      * Gets or sets template for the activity.
      */
-    public activity: TemplateInterface<Partial<Activity>>;
+    public activity: TemplateInterface<Partial<Activity>, D & O>;
 
     /**
      * The expression which resolves to the activityId to update.
