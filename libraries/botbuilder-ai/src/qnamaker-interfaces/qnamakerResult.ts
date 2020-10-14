@@ -45,5 +45,5 @@ export interface QnAMakerResult {
     /**
      * Context for multi-turn responses.
      */
-    context?: QnAResponseContext; 
+    context?: QnAResponseContext;
 }

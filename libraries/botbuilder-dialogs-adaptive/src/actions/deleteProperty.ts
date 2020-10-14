@@ -16,7 +16,9 @@ export class DeleteProperty<O extends object = {}> extends Dialog<O> {
     public constructor();
     public constructor(property?: string) {
         super();
-        if (property) { this.property = new StringExpression(property); }
+        if (property) {
+            this.property = new StringExpression(property);
+        }
     }
 
     /**
@@ -39,6 +41,6 @@ export class DeleteProperty<O extends object = {}> extends Dialog<O> {
     }
 
     protected onComputeId(): string {
-        return `DeleteProperty[${ this.property.toString() }]`;
+        return `DeleteProperty[${this.property.toString()}]`;
     }
 }

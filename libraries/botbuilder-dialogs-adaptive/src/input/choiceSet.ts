@@ -5,7 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { Choice } from "botbuilder-dialogs";
+import { Choice } from 'botbuilder-dialogs';
 
 /**
  * Defines ChoiceSet collection.
@@ -17,18 +17,17 @@ export class ChoiceSet extends Array<Choice>
      * @param obj Choice values.
      */
     public constructor(obj: any) {
-        super()
+        super();
         if (obj instanceof Array) {
-            obj.forEach(o => {
+            obj.forEach((o) => {
                 if (typeof o === 'string') {
-                    this.push( {
-                        value: o
-                    } as Choice)
+                    this.push({
+                        value: o,
+                    } as Choice);
+                } else if (typeof o === 'object') {
+                    this.push(o as Choice);
                 }
-                else if (typeof o === 'object') {
-                    this.push(o as Choice)
-                }
-            })
+            });
         }
     }
 }

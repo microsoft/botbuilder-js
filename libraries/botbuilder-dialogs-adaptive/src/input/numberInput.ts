@@ -15,7 +15,6 @@ import { StringExpression, NumberExpression } from 'adaptive-expressions';
  * Input dialog for asking for numbers.
  */
 export class NumberInput extends InputDialog {
-
     public defaultLocale?: StringExpression;
 
     public outputFormat?: NumberExpression;
@@ -24,7 +23,7 @@ export class NumberInput extends InputDialog {
      * @protected
      */
     protected onComputeId(): string {
-        return `NumberInput[${ this.prompt && this.prompt.toString() }]`;
+        return `NumberInput[${this.prompt && this.prompt.toString()}]`;
     }
 
     /**

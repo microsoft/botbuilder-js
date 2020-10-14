@@ -12,7 +12,7 @@ import { FunctionUtils } from '../functionUtils';
 import { MultivariateNumericEvaluator } from './multivariateNumericEvaluator';
 
 /**
- * Return the integer result from dividing two numbers. 
+ * Return the integer result from dividing two numbers.
  */
 export class Divide extends MultivariateNumericEvaluator {
     public constructor() {
@@ -25,7 +25,7 @@ export class Divide extends MultivariateNumericEvaluator {
 
     private static verify(val: any, expression: Expression, pos: number): string {
         let error: string = FunctionUtils.verifyNumber(val, expression, pos);
-        if (!error && (pos > 0 && Number(val) === 0)) {
+        if (!error && pos > 0 && Number(val) === 0) {
             error = `Cannot divide by 0 from ${expression}`;
         }
 

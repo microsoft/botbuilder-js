@@ -14,7 +14,6 @@ import { StringExpression } from 'adaptive-expressions';
  * Input dialog to collect a datetime from the user.
  */
 export class DateTimeInput extends InputDialog {
-
     public defaultLocale: StringExpression;
 
     public outputFormat: StringExpression;
@@ -23,7 +22,7 @@ export class DateTimeInput extends InputDialog {
      * @protected
      */
     protected onComputeId(): string {
-        return `DateTimeInput[${ this.prompt && this.prompt.toString() }]`;
+        return `DateTimeInput[${this.prompt && this.prompt.toString()}]`;
     }
 
     /**
@@ -50,5 +49,4 @@ export class DateTimeInput extends InputDialog {
         }
         return InputState.valid;
     }
-
 }

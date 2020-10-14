@@ -16,7 +16,12 @@ import { ReturnType } from '../returnType';
  */
 export class UriComponentToString extends ExpressionEvaluator {
     public constructor() {
-        super(ExpressionType.UriComponentToString, UriComponentToString.evaluator(), ReturnType.String, FunctionUtils.validateUnary);
+        super(
+            ExpressionType.UriComponentToString,
+            UriComponentToString.evaluator(),
+            ReturnType.String,
+            FunctionUtils.validateUnary
+        );
     }
 
     private static evaluator(): EvaluateExpressionDelegate {

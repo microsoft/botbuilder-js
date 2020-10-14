@@ -73,7 +73,7 @@ export class MiddlewareSet implements Middleware {
      * Creates a new MiddlewareSet instance.
      * @param middleware One or more middleware handlers(s) to register.
      */
-    constructor(...middleware: (MiddlewareHandler|Middleware)[]) {
+    constructor(...middleware: (MiddlewareHandler | Middleware)[]) {
         MiddlewareSet.prototype.use.apply(this, middleware);
     }
 
@@ -96,7 +96,7 @@ export class MiddlewareSet implements Middleware {
      * ```
      * @param middleware One or more middleware handlers(s) to register.
      */
-    public use(...middleware: (MiddlewareHandler|Middleware)[]): this {
+    public use(...middleware: (MiddlewareHandler | Middleware)[]): this {
         middleware.forEach((plugin: any) => {
             if (typeof plugin === 'function') {
                 this.middleware.push(plugin);

@@ -23,7 +23,13 @@ export class StartsWith extends ExpressionEvaluator {
     }
 
     private static evaluator(): EvaluateExpressionDelegate {
-        return FunctionUtils.apply((args: any[]): boolean => InternalFunctionUtils.parseStringOrUndefined(args[0]).startsWith(InternalFunctionUtils.parseStringOrUndefined(args[1])), FunctionUtils.verifyStringOrNull);
+        return FunctionUtils.apply(
+            (args: any[]): boolean =>
+                InternalFunctionUtils.parseStringOrUndefined(args[0]).startsWith(
+                    InternalFunctionUtils.parseStringOrUndefined(args[1])
+                ),
+            FunctionUtils.verifyStringOrNull
+        );
     }
 
     private static validator(expression: Expression): void {

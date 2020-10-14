@@ -13,14 +13,13 @@ import { StringExpression } from 'adaptive-expressions';
  * Declarative text input to gather text data from users.
  */
 export class TextInput extends InputDialog {
-
     public outputFormat: StringExpression;
 
     /**
      * @protected
      */
     protected onComputeId(): string {
-        return `TextInput[${ this.prompt && this.prompt.toString() }]`;
+        return `TextInput[${this.prompt && this.prompt.toString()}]`;
     }
 
     /**

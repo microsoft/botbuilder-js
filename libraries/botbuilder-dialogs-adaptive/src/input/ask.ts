@@ -7,7 +7,14 @@
  */
 
 import { ArrayExpression, StringExpression } from 'adaptive-expressions';
-import { DialogContext, DialogTurnResult, DialogPath, DialogEvent, TurnPath, DialogTurnStatus } from 'botbuilder-dialogs';
+import {
+    DialogContext,
+    DialogTurnResult,
+    DialogPath,
+    DialogEvent,
+    TurnPath,
+    DialogTurnStatus,
+} from 'botbuilder-dialogs';
 import { SendActivity } from '../actions/sendActivity';
 
 /**
@@ -53,10 +60,19 @@ export class Ask extends SendActivity {
         const lastExpectedProperties: string[] = dc.state.getValue<string[]>(DialogPath.expectedProperties);
         const lastTrigger: DialogEvent = dc.state.getValue<DialogEvent>(DialogPath.lastTriggerEvent);
 
-        if (expected && lastExpectedProperties && lastTrigger
-            && !expected.some((prop: string): boolean => !lastExpectedProperties.some((lastProp: string): boolean => lastProp === prop))
-            && !lastExpectedProperties.some((lastProp: string): boolean => !expected.some((prop: string): boolean => prop === lastProp))
-            && lastTrigger.name === trigger.name) {
+        if (
+            expected &&
+            lastExpectedProperties &&
+            lastTrigger &&
+            !expected.some(
+                (prop: string): boolean =>
+                    !lastExpectedProperties.some((lastProp: string): boolean => lastProp === prop)
+            ) &&
+            !lastExpectedProperties.some(
+                (lastProp: string): boolean => !expected.some((prop: string): boolean => prop === lastProp)
+            ) &&
+            lastTrigger.name === trigger.name
+        ) {
             retries++;
         } else {
             retries = 0;
