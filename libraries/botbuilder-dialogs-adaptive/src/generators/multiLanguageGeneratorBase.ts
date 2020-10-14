@@ -10,10 +10,14 @@ import { DialogContext } from 'botbuilder-dialogs';
 import { LanguageGenerator } from '../languageGenerator';
 import { LanguagePolicy } from '../languagePolicy';
 import { languagePolicyKey } from '../languageGeneratorExtensions';
+
 /**
  * Base class which applies language policy to tryGetGenerator.
  */
-export abstract class MultiLanguageGeneratorBase implements LanguageGenerator {
+export abstract class MultiLanguageGeneratorBase<
+    T = unknown,
+    D extends Record<string, unknown> = Record<string, unknown>
+> implements LanguageGenerator<T, D> {
     /**
      * Language policy required by language generator.
      */
@@ -24,7 +28,10 @@ export abstract class MultiLanguageGeneratorBase implements LanguageGenerator {
      * @param dialogContext DialogContext.
      * @param locale Locale to lookup.
      */
-    public abstract tryGetGenerator(dialogContext: DialogContext, locale: string): { exist: boolean; result: LanguageGenerator };
+    public abstract tryGetGenerator(
+        dialogContext: DialogContext,
+        locale: string
+    ): { exist: boolean; result: LanguageGenerator<T, D> };
 
     /**
      * Find a language generator that matches the current context locale.
@@ -32,8 +39,10 @@ export abstract class MultiLanguageGeneratorBase implements LanguageGenerator {
      * @param template Template to use.
      * @param data Data to bind to.
      */
-    public async generate(dialogContext: DialogContext, template: string, data: object): Promise<string> {
-        const targetLocale = dialogContext.context.activity.locale ? dialogContext.context.activity.locale.toLocaleLowerCase() : '';
+    public async generate(dialogContext: DialogContext, template: string, data: D): Promise<T> {
+        const targetLocale = dialogContext.context.activity.locale
+            ? dialogContext.context.activity.locale.toLocaleLowerCase()
+            : '';
 
         // priority
         // 1. local policy
@@ -47,7 +56,7 @@ export abstract class MultiLanguageGeneratorBase implements LanguageGenerator {
         }
 
         // see if we have any locales that match
-        let fallbackLocales = [];
+        const fallbackLocales = [];
         if (this.languagePolicy.has(targetLocale)) {
             this.languagePolicy.get(targetLocale).forEach((u: string): number => fallbackLocales.push(u));
         }
@@ -58,24 +67,25 @@ export abstract class MultiLanguageGeneratorBase implements LanguageGenerator {
         }
 
         if (fallbackLocales.length === 0) {
-            throw Error(`No supported language found for ${ targetLocale }`);
+            throw Error(`No supported language found for ${targetLocale}`);
         }
 
-        const generators: LanguageGenerator[] = [];
+        const generators: LanguageGenerator<T, D>[] = [];
         for (const locale of fallbackLocales) {
-            if (this.tryGetGenerator(dialogContext, locale).exist) {
-                generators.push(this.tryGetGenerator(dialogContext, locale).result);
+            const result = this.tryGetGenerator(dialogContext, locale);
+            if (result.exist) {
+                generators.push(result.result);
             }
         }
 
         if (generators.length === 0) {
-            throw Error(`No generator found for language ${ targetLocale }`);
+            throw Error(`No generator found for language ${targetLocale}`);
         }
 
         const errors: string[] = [];
         for (const generator of generators) {
             try {
-                return generator.generate(dialogContext, template, data);
+                return await generator.generate(dialogContext, template, data);
             } catch (e) {
                 errors.push(e);
             }

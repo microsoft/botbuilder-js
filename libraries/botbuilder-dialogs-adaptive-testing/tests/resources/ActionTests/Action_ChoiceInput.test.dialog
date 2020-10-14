@@ -70,7 +70,8 @@
                         "alwaysPrompt": true,
                         "property": "user.color",
                         "prompt": "Please select a color:",
-                        "unrecognizedPrompt": "Please select a color:"
+                        "unrecognizedPrompt": "Please select a color:",
+                        "outputFormat": "index"
                     },
                     {
                         "$kind": "Microsoft.SendActivity",
@@ -117,6 +118,18 @@
         {
             "$kind": "Microsoft.Test.AssertReply",
             "text": "red"
+        },
+        {
+            "$kind": "Microsoft.Test.AssertReply",
+            "text": "Please select a color: (1) red, (2) green, or (3) blue"
+        },
+        {
+            "$kind": "Microsoft.Test.UserSays",
+            "text": "red"
+        },
+        {
+            "$kind": "Microsoft.Test.AssertReply",
+            "text": "0"
         }
     ]
 }

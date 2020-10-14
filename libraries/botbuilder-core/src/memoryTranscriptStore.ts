@@ -17,7 +17,6 @@ import { PagedResult, TranscriptInfo, TranscriptStore } from './transcriptLogger
  * non-production environments.
  */
 export class MemoryTranscriptStore implements TranscriptStore {
-
     private static readonly pageSize: number = 20;
 
     private channels: Map<string, Map<string, Activity[]>> = new Map<string, Map<string, Activity[]>>();
@@ -67,9 +66,13 @@ export class MemoryTranscriptStore implements TranscriptStore {
         continuationToken?: string,
         startDate?: Date
     ): Promise<PagedResult<Activity>> {
-        if (!channelId) { throw new Error('Missing channelId'); }
+        if (!channelId) {
+            throw new Error('Missing channelId');
+        }
 
-        if (!conversationId) { throw new Error('Missing conversationId'); }
+        if (!conversationId) {
+            throw new Error('Missing conversationId');
+        }
 
         const pagedResult: PagedResult<Activity> = { items: [], continuationToken: undefined };
         if (this.channels.has(channelId)) {
@@ -104,26 +107,32 @@ export class MemoryTranscriptStore implements TranscriptStore {
      * @param continuationToken Continuation token to page through results.
      */
     public listTranscripts(channelId: string, continuationToken?: string): Promise<PagedResult<TranscriptInfo>> {
-        if (!channelId) { throw new Error('Missing channelId'); }
+        if (!channelId) {
+            throw new Error('Missing channelId');
+        }
 
         const pagedResult: PagedResult<TranscriptInfo> = { items: [], continuationToken: undefined };
         if (this.channels.has(channelId)) {
             const channel: Map<string, Activity[]> = this.channels.get(channelId);
 
             if (continuationToken) {
-                pagedResult.items = Array.from(channel.entries()).map((kv: [string, Activity[]]) => ({
-                    channelId,
-                    id: kv[0],
-                    created: getDate(kv[1])
-                })).sort(createdSorter)
+                pagedResult.items = Array.from(channel.entries())
+                    .map((kv: [string, Activity[]]) => ({
+                        channelId,
+                        id: kv[0],
+                        created: getDate(kv[1]),
+                    }))
+                    .sort(createdSorter)
                     .filter(skipWhileExpression((a: any) => a.id !== continuationToken))
                     .slice(1, MemoryTranscriptStore.pageSize + 1);
             } else {
-                pagedResult.items = Array.from(channel.entries()).map((kv: [string, Activity[]]) => ({
-                    channelId,
-                    id: kv[0],
-                    created: getDate(kv[1])
-                })).sort(createdSorter)
+                pagedResult.items = Array.from(channel.entries())
+                    .map((kv: [string, Activity[]]) => ({
+                        channelId,
+                        id: kv[0],
+                        created: getDate(kv[1]),
+                    }))
+                    .sort(createdSorter)
                     .slice(0, MemoryTranscriptStore.pageSize);
             }
 
@@ -141,9 +150,13 @@ export class MemoryTranscriptStore implements TranscriptStore {
      * @param conversationId Id of the conversation to delete.
      */
     public deleteTranscript(channelId: string, conversationId: string): Promise<void> {
-        if (!channelId) { throw new Error('Missing channelId'); }
+        if (!channelId) {
+            throw new Error('Missing channelId');
+        }
 
-        if (!conversationId) { throw new Error('Missing conversationId'); }
+        if (!conversationId) {
+            throw new Error('Missing conversationId');
+        }
 
         if (this.channels.has(channelId)) {
             const channel: Map<string, Activity[]> = this.channels.get(channelId);
@@ -159,8 +172,10 @@ export class MemoryTranscriptStore implements TranscriptStore {
 /**
  * @private
  */
-const createdSorter: (a: TranscriptInfo, b: TranscriptInfo) => number = (a: TranscriptInfo, b: TranscriptInfo): number =>
-    a.created.getTime() - b.created.getTime();
+const createdSorter: (a: TranscriptInfo, b: TranscriptInfo) => number = (
+    a: TranscriptInfo,
+    b: TranscriptInfo
+): number => a.created.getTime() - b.created.getTime();
 
 /**
  * @private
@@ -171,11 +186,15 @@ const timestampSorter: (a: Activity, b: Activity) => number = (a: Activity, b: A
 /**
  * @private
  */
-const skipWhileExpression: (expression: any) => (item: any) => boolean = (expression: any): (item: any) => boolean => {
+const skipWhileExpression: (expression: any) => (item: any) => boolean = (
+    expression: any
+): ((item: any) => boolean) => {
     let skipping = true;
 
     return (item: any): boolean => {
-        if (!skipping) { return true; }
+        if (!skipping) {
+            return true;
+        }
         if (!expression(item)) {
             skipping = false;
         }

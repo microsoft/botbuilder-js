@@ -2,8 +2,8 @@
  * @module botframework-connector
  */
 
-import { AuthenticationError } from "./authenticationError";
-import { StatusCodes } from "botframework-schema";
+import { AuthenticationError } from './authenticationError';
+import { StatusCodes } from 'botframework-schema';
 
 /**
  * Copyright (c) Microsoft Corporation. All rights reserved.

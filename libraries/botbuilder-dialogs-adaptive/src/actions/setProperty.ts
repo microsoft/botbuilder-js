@@ -29,8 +29,12 @@ export class SetProperty<O extends object = {}> extends Dialog<O> {
      */
     public constructor(property?: string, value?: any) {
         super();
-        if (property) { this.property = new StringExpression(property); }
-        if (value) { this.value = new ValueExpression(value); }
+        if (property) {
+            this.property = new StringExpression(property);
+        }
+        if (value) {
+            this.value = new ValueExpression(value);
+        }
     }
 
     /**
@@ -59,8 +63,12 @@ export class SetProperty<O extends object = {}> extends Dialog<O> {
             return await dc.endDialog();
         }
 
-        if (!this.property) { throw new Error(`${ this.id }: no 'property' specified.`); }
-        if (!this.value) { throw new Error(`${ this.id }: no 'value' expression specified.`); }
+        if (!this.property) {
+            throw new Error(`${this.id}: no 'property' specified.`);
+        }
+        if (!this.value) {
+            throw new Error(`${this.id}: no 'value' expression specified.`);
+        }
 
         // Evaluate expression and save value
         const property = this.property.getValue(dc.state);
@@ -81,7 +89,6 @@ export class SetProperty<O extends object = {}> extends Dialog<O> {
      * @returns A `string` representing the compute Id.
      */
     protected onComputeId(): string {
-        return `SetProperty[${ this.value.toString() }]`;
+        return `SetProperty[${this.value.toString()}]`;
     }
-
 }

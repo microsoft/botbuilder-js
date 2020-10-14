@@ -83,10 +83,9 @@ export function convertCSharpDateTimeToMomentJS(fmtString: string): string {
                 throw new Error(`Universal Sortable Format not supported in MomentJS`);
         }
     }
-    
+
     const changeState = (newState): void => {
-        switch (fmtState)
-        {
+        switch (fmtState) {
             case State.LowerD1:
                 fmtResult += 'D';
                 break;
@@ -196,8 +195,7 @@ export function convertCSharpDateTimeToMomentJS(fmtString: string): string {
             case State.InSingleQuoteLiteral:
             case State.InDoubleQuoteLiteral:
             case State.EscapeSequence:
-                for (const lCharacter of lTokenBuffer)
-                {
+                for (const lCharacter of lTokenBuffer) {
                     fmtResult += lCharacter;
                 }
                 break;
@@ -207,41 +205,26 @@ export function convertCSharpDateTimeToMomentJS(fmtString: string): string {
         fmtState = newState;
     };
 
-    for(const character of fmtString) {
-        if (fmtState === State.EscapeSequence)
-        {
+    for (const character of fmtString) {
+        if (fmtState === State.EscapeSequence) {
             lTokenBuffer += character;
             changeState(State.None);
-        }
-        else if (fmtState === State.InDoubleQuoteLiteral)
-        {
-            if (character == '\`')
-            {
+        } else if (fmtState === State.InDoubleQuoteLiteral) {
+            if (character == '`') {
                 changeState(State.None);
-            }
-            else
-            {
+            } else {
                 lTokenBuffer += character;
             }
-        }
-        else if (fmtState == State.InSingleQuoteLiteral)
-        {
-            if (character == '\'')
-            {
+        } else if (fmtState == State.InSingleQuoteLiteral) {
+            if (character == "'") {
                 changeState(State.None);
-            }
-            else
-            {
+            } else {
                 lTokenBuffer += character;
             }
-        }
-        else
-        {
-            switch (character)
-            {
+        } else {
+            switch (character) {
                 case 'd':
-                    switch (fmtState)
-                    {
+                    switch (fmtState) {
                         case State.LowerD1:
                             fmtState = State.LowerD2;
                             break;
@@ -259,8 +242,7 @@ export function convertCSharpDateTimeToMomentJS(fmtString: string): string {
                     }
                     break;
                 case 'f':
-                    switch (fmtState)
-                    {
+                    switch (fmtState) {
                         case State.LowerF1:
                             fmtState = State.LowerF2;
                             break;
@@ -287,8 +269,7 @@ export function convertCSharpDateTimeToMomentJS(fmtString: string): string {
                     }
                     break;
                 case 'F':
-                    switch (fmtState)
-                    {
+                    switch (fmtState) {
                         case State.CapitalF1:
                             fmtState = State.CapitalF2;
                             break;
@@ -315,8 +296,7 @@ export function convertCSharpDateTimeToMomentJS(fmtString: string): string {
                     }
                     break;
                 case 'g':
-                    switch (fmtState)
-                    {
+                    switch (fmtState) {
                         case State.LowerG:
                             break;
                         default:
@@ -325,8 +305,7 @@ export function convertCSharpDateTimeToMomentJS(fmtString: string): string {
                     }
                     break;
                 case 'h':
-                    switch (fmtState)
-                    {
+                    switch (fmtState) {
                         case State.LowerH1:
                             fmtState = State.LowerH2;
                             break;
@@ -338,8 +317,7 @@ export function convertCSharpDateTimeToMomentJS(fmtString: string): string {
                     }
                     break;
                 case 'H':
-                    switch (fmtState)
-                    {
+                    switch (fmtState) {
                         case State.CapitalH1:
                             fmtState = State.CapitalH2;
                             break;
@@ -355,8 +333,7 @@ export function convertCSharpDateTimeToMomentJS(fmtString: string): string {
                     fmtResult += 'Z';
                     break;
                 case 'm':
-                    switch (fmtState)
-                    {
+                    switch (fmtState) {
                         case State.LowerM1:
                             fmtState = State.LowerM2;
                             break;
@@ -368,8 +345,7 @@ export function convertCSharpDateTimeToMomentJS(fmtString: string): string {
                     }
                     break;
                 case 'M':
-                    switch (fmtState)
-                    {
+                    switch (fmtState) {
                         case State.CapitalM1:
                             fmtState = State.CapitalM2;
                             break;
@@ -387,8 +363,7 @@ export function convertCSharpDateTimeToMomentJS(fmtString: string): string {
                     }
                     break;
                 case 's':
-                    switch (fmtState)
-                    {
+                    switch (fmtState) {
                         case State.LowerS1:
                             fmtState = State.LowerS2;
                             break;
@@ -400,8 +375,7 @@ export function convertCSharpDateTimeToMomentJS(fmtString: string): string {
                     }
                     break;
                 case 't':
-                    switch (fmtState)
-                    {
+                    switch (fmtState) {
                         case State.LowerT1:
                             fmtState = State.LowerT2;
                             break;
@@ -413,8 +387,7 @@ export function convertCSharpDateTimeToMomentJS(fmtString: string): string {
                     }
                     break;
                 case 'y':
-                    switch (fmtState)
-                    {
+                    switch (fmtState) {
                         case State.LowerY1:
                             fmtState = State.LowerY2;
                             break;
@@ -435,8 +408,7 @@ export function convertCSharpDateTimeToMomentJS(fmtString: string): string {
                     }
                     break;
                 case 'z':
-                    switch (fmtState)
-                    {
+                    switch (fmtState) {
                         case State.LowerZ1:
                             fmtState = State.LowerZ2;
                             break;
@@ -458,10 +430,10 @@ export function convertCSharpDateTimeToMomentJS(fmtString: string): string {
                     changeState(State.None);
                     fmtResult += ':';
                     break;
-                case '\`':
+                case '`':
                     changeState(State.InDoubleQuoteLiteral);
                     break;
-                case '\'':
+                case "'":
                     changeState(State.InSingleQuoteLiteral);
                     break;
                 case '%':
@@ -478,7 +450,11 @@ export function convertCSharpDateTimeToMomentJS(fmtString: string): string {
         }
     }
 
-    if (fmtState == State.EscapeSequence || fmtState == State.InDoubleQuoteLiteral || fmtState == State.InSingleQuoteLiteral){
+    if (
+        fmtState == State.EscapeSequence ||
+        fmtState == State.InDoubleQuoteLiteral ||
+        fmtState == State.InSingleQuoteLiteral
+    ) {
         throw Error(`Invalid Format String`);
     }
 

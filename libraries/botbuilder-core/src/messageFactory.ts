@@ -5,7 +5,15 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { Activity, ActivityTypes, Attachment, AttachmentLayoutTypes, CardAction, InputHints, SuggestedActions } from 'botframework-schema';
+import {
+    Activity,
+    ActivityTypes,
+    Attachment,
+    AttachmentLayoutTypes,
+    CardAction,
+    InputHints,
+    SuggestedActions,
+} from 'botframework-schema';
 import { CardFactory } from './cardFactory';
 
 /**
@@ -41,13 +49,15 @@ export class MessageFactory {
      * @param speak (Optional) SSML to include in the message.
      * @param inputHint (Optional) input hint for the message. Defaults to `acceptingInput`.
      */
-    public static text(text: string, speak?: string, inputHint?: InputHints|string): Partial<Activity> {
+    public static text(text: string, speak?: string, inputHint?: InputHints | string): Partial<Activity> {
         const msg: Partial<Activity> = {
             type: ActivityTypes.Message,
             text: text,
-            inputHint: inputHint || InputHints.AcceptingInput
+            inputHint: inputHint || InputHints.AcceptingInput,
         };
-        if (speak) { msg.speak = speak; }
+        if (speak) {
+            msg.speak = speak;
+        }
 
         return msg;
     }
@@ -67,19 +77,24 @@ export class MessageFactory {
      * @param inputHint (Optional) input hint for the message. Defaults to `acceptingInput`.
      */
     public static suggestedActions(
-        actions: (CardAction|string)[],
-        text?: string, speak?: string,
-        inputHint?: InputHints|string
+        actions: (CardAction | string)[],
+        text?: string,
+        speak?: string,
+        inputHint?: InputHints | string
     ): Partial<Activity> {
         const msg: Partial<Activity> = {
             type: ActivityTypes.Message,
             inputHint: inputHint || InputHints.AcceptingInput,
             suggestedActions: <SuggestedActions>{
-                actions: CardFactory.actions(actions)
-            }
+                actions: CardFactory.actions(actions),
+            },
         };
-        if (text) { msg.text = text; }
-        if (speak) { msg.speak = speak; }
+        if (text) {
+            msg.text = text;
+        }
+        if (speak) {
+            msg.speak = speak;
+        }
 
         return msg;
     }
@@ -104,7 +119,12 @@ export class MessageFactory {
      * @param speak (Optional) SSML to include with the message.
      * @param inputHint (Optional) input hint for the message. Defaults to `acceptingInput`.
      */
-    public static attachment(attachment: Attachment, text?: string, speak?: string, inputHint?: InputHints|string): Partial<Activity> {
+    public static attachment(
+        attachment: Attachment,
+        text?: string,
+        speak?: string,
+        inputHint?: InputHints | string
+    ): Partial<Activity> {
         return attachmentActivity(AttachmentLayoutTypes.List, [attachment], text, speak, inputHint);
     }
 
@@ -126,7 +146,12 @@ export class MessageFactory {
      * @param speak (Optional) SSML to include with the message.
      * @param inputHint (Optional) input hint for the message.
      */
-    public static list(attachments: Attachment[], text?: string, speak?: string, inputHint?: InputHints|string): Partial<Activity> {
+    public static list(
+        attachments: Attachment[],
+        text?: string,
+        speak?: string,
+        inputHint?: InputHints | string
+    ): Partial<Activity> {
         return attachmentActivity(AttachmentLayoutTypes.List, attachments, text, speak, inputHint);
     }
 
@@ -148,7 +173,12 @@ export class MessageFactory {
      * @param speak (Optional) SSML to include with the message.
      * @param inputHint (Optional) input hint for the message.
      */
-    public static carousel(attachments: Attachment[], text?: string, speak?: string, inputHint?: InputHints|string): Partial<Activity> {
+    public static carousel(
+        attachments: Attachment[],
+        text?: string,
+        speak?: string,
+        inputHint?: InputHints | string
+    ): Partial<Activity> {
         return attachmentActivity(AttachmentLayoutTypes.Carousel, attachments, text, speak, inputHint);
     }
 
@@ -174,10 +204,12 @@ export class MessageFactory {
         name?: string,
         text?: string,
         speak?: string,
-        inputHint?: InputHints|string
+        inputHint?: InputHints | string
     ): Partial<Activity> {
         const a: Attachment = { contentType: contentType, contentUrl: url };
-        if (name) { a.name = name; }
+        if (name) {
+            a.name = name;
+        }
 
         return attachmentActivity(AttachmentLayoutTypes.List, [a], text, speak, inputHint);
     }
@@ -196,16 +228,20 @@ function attachmentActivity(
     attachments: Attachment[],
     text?: string,
     speak?: string,
-    inputHint?: InputHints|string
+    inputHint?: InputHints | string
 ): Partial<Activity> {
     const msg: Partial<Activity> = {
         type: ActivityTypes.Message,
         attachmentLayout: attachmentLayout,
         attachments: attachments,
-        inputHint: inputHint || InputHints.AcceptingInput
+        inputHint: inputHint || InputHints.AcceptingInput,
     };
-    if (text) { msg.text = text; }
-    if (speak) { msg.speak = speak; }
+    if (text) {
+        msg.text = text;
+    }
+    if (speak) {
+        msg.speak = speak;
+    }
 
     return msg;
 }

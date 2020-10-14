@@ -33,10 +33,18 @@ export class TraceActivity<O extends object = {}> extends Dialog<O> {
      */
     public constructor(name?: string, valueType?: string, value?: any, label?: string) {
         super();
-        if (name) { this.name = new StringExpression(name); }
-        if (valueType) { this.valueType = new StringExpression(valueType); }
-        if (value) { this.value = new ValueExpression(value); }
-        if (label) { this.label = new StringExpression(label); }
+        if (name) {
+            this.name = new StringExpression(name);
+        }
+        if (valueType) {
+            this.valueType = new StringExpression(valueType);
+        }
+        if (value) {
+            this.value = new ValueExpression(value);
+        }
+        if (label) {
+            this.label = new StringExpression(label);
+        }
     }
 
     /**
@@ -85,7 +93,10 @@ export class TraceActivity<O extends object = {}> extends Dialog<O> {
 
         const name = (this.name && this.name.getValue(dc.state)) || 'Trace';
         const valueType = (this.valueType && this.valueType.getValue(dc.state)) || 'State';
-        const label = (this.label && this.label.getValue(dc.state)) || (dc.parent && dc.parent.activeDialog && dc.parent.activeDialog.id) || '';
+        const label =
+            (this.label && this.label.getValue(dc.state)) ||
+            (dc.parent && dc.parent.activeDialog && dc.parent.activeDialog.id) ||
+            '';
 
         const traceActivity: Partial<Activity> = {
             type: ActivityTypes.Trace,
@@ -93,7 +104,7 @@ export class TraceActivity<O extends object = {}> extends Dialog<O> {
             name,
             value,
             valueType,
-            label
+            label,
         };
         await dc.context.sendActivity(traceActivity);
         return await dc.endDialog(traceActivity);
@@ -105,6 +116,6 @@ export class TraceActivity<O extends object = {}> extends Dialog<O> {
      * @returns A `string` representing the compute Id.
      */
     protected onComputeId(): string {
-        return `TraceActivity[${ this.name ? this.name.toString() : '' }]`;
+        return `TraceActivity[${this.name ? this.name.toString() : ''}]`;
     }
 }

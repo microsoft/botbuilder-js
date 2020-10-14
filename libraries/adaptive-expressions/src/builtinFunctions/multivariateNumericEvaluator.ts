@@ -15,7 +15,12 @@ import { ReturnType } from '../returnType';
  */
 export class MultivariateNumericEvaluator extends ExpressionEvaluator {
     public constructor(type: string, func: (args: any[]) => number, verify?: VerifyExpression) {
-        super(type, MultivariateNumericEvaluator.evaluator(func, verify), ReturnType.Number, FunctionUtils.validateTwoOrMoreThanTwoNumbers);
+        super(
+            type,
+            MultivariateNumericEvaluator.evaluator(func, verify),
+            ReturnType.Number,
+            FunctionUtils.validateTwoOrMoreThanTwoNumbers
+        );
     }
 
     private static evaluator(func: (args: any[]) => number, verify?: VerifyExpression): EvaluateExpressionDelegate {
