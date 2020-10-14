@@ -21,9 +21,9 @@ export class DefaultLoader implements CustomDeserializer<Configurable, Record<st
                 if (typeof converter === 'function') {
                     converter = new converter(this._resourceExplorer);
                 }
-                instance[key] = converter.convert(value);
+                instance[`${key}`] = converter.convert(value);
             } else {
-                instance[key] = value;
+                instance[`${key}`] = value;
             }
         });
         return instance;

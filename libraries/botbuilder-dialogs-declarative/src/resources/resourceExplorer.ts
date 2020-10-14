@@ -165,9 +165,9 @@ export class ResourceExplorer {
     /**
      * Build type for given $kind.
      * @param kind $kind.
-     * @param obj Source object.
+     * @param config Source configuration object.
      */
-    public buildType<T extends object, C>(kind: string, config: C): T {
+    public buildType<T, C>(kind: string, config: C): T {
         this.registerComponentTypes();
 
         const type = this._kindToType.get(kind);
@@ -182,7 +182,7 @@ export class ResourceExplorer {
      * Load types from resource or resource id.
      * @param resource Resource or resource id to be parsed as a type.
      */
-    public loadType<T extends object>(resource: string | Resource): T {
+    public loadType<T>(resource: string | Resource): T {
         this.registerComponentTypes();
 
         if (typeof resource == 'string') {
@@ -194,7 +194,7 @@ export class ResourceExplorer {
         }
 
         const json = resource.readText();
-        const result = JSON.parse(json, (_key: string, value: unknown): any => {
+        const result = JSON.parse(json, (_key: string, value: unknown): unknown => {
             if (typeof value !== 'object') {
                 return value;
             }
@@ -205,7 +205,7 @@ export class ResourceExplorer {
             if (!kind) {
                 return value;
             }
-            return this.load(value);
+            return this.load(value as { $kind: string } & Record<string, unknown>);
         }) as T;
 
         const config = JSON.parse(json);
@@ -223,8 +223,8 @@ export class ResourceExplorer {
         }
     }
 
-    private load<T extends object>(value: Record<string, any>): T {
-        const kind = value['$kind'];
+    private load<T>(value: { $kind: string } & Record<string, unknown>): T {
+        const kind = value['$kind'] as string;
         const type = this._kindToType.get(kind);
         if (!type) {
             throw new Error(`Type ${kind} not registered.`);
