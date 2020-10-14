@@ -11,15 +11,15 @@ import { Expression, ExpressionParserInterface } from 'adaptive-expressions';
 import { OnIntent } from './onIntent';
 
 /**
- * Actions triggered when an Intent of "ChooseIntent" has been emitted by a recognizer.
+ * Actions triggered when an Intent of "ChooseIntent" has been emitted by a [Recognizer](xref:botbuilder-dialogs-adaptive.Recognizer).
  */
 export class OnChooseIntent extends OnIntent {
 
     public intents: string[] = [];
 
     /**
-     * Initializes a new instance of the `OnChooseIntent` class.
-     * @param actions Optional. Actions to add to the plan when the rule constraints are met.
+     * Initializes a new instance of the [OnChooseIntent](xref:botbuilder-dialogs-adaptive.OnChooseIntent) class.
+     * @param actions Optional. A [Dialog](xref:botbuilder-dialogs.Dialog) list containing the actions to add to the plan when the rule constraints are met.
      * @param condition Optional. Condition which needs to be met for the actions to be executed.
      */
     public constructor(actons: Dialog[] = [], condition?: string) {
@@ -28,8 +28,8 @@ export class OnChooseIntent extends OnIntent {
 
     /**
      * Get the expression for this rule.
-     * @param parser Used to parse a string into an `Expression`.
-     * @returns Expression which will be cached and used to evaluate this rule.
+     * @param parser [ExpressionParserInterface](xref:adaptive-expressions.ExpressionParserInterface) used to parse a string into an [Expression](xref:adaptive-expressions.Expression).
+     * @returns [Expression](xref:adaptive-expressions.Expression) which will be cached and used to evaluate this rule.
      */
     public getExpression(parser: ExpressionParserInterface): Expression {
         if (this.intents.length > 0) {

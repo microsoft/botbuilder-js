@@ -31,8 +31,8 @@ export class OnDialogEvent extends OnCondition {
 
     /**
      * Get the expression for this rule.
-     * @param parser Used to parse a string into an `Expression`.
-     * @returns Expression which will be cached and used to evaluate this rule.
+     * @param parser [ExpressionParserInterface](xref:adaptive-expressions.ExpressionParserInterface) used to parse a string into an [Expression](xref:adaptive-expressions.Expression).
+     * @returns [Expression](xref:adaptive-expressions.Expression) which will be cached and used to evaluate this rule.
      */
     public getExpression(parser: ExpressionParserInterface): Expression {
         return Expression.makeExpression(ExpressionType.And, undefined,

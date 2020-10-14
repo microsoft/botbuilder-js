@@ -15,10 +15,10 @@ import { OnDialogEvent } from './onDialogEvent';
  */
 export class OnChooseProperty extends OnDialogEvent {
     /**
-     * Initializes a new instance of the `OnChooseProperty` class.
+     * Initializes a new instance of the [OnChooseProperty](xref:botbuilder-dialogs-adaptive.OnChooseProperty) class.
      * @param properties Optional. List of properties being chosen between to filter events.
      * @param entities Optional. List of entities being chosen between to filter events.
-     * @param actions Optional. Actions to add to the plan when the rule constraints are met.
+     * @param actions Optional. A [Dialog](xref:botbuilder-dialogs.Dialog) list containing the actions to add to the plan when the rule constraints are met.
      * @param condition Optional. Condition which needs to be met for the actions to be executed.
      */
     public constructor(properties: string[] = [], entities: string[] = [], actions: Dialog[] = [], condition?: string) {
@@ -39,8 +39,8 @@ export class OnChooseProperty extends OnDialogEvent {
 
     /**
      * Get the expression for this rule.
-     * @param parser Used to parse a string into an `Expression`.
-     * @returns Expression which will be cached and used to evaluate this rule.
+     * @param parser [ExpressionParserInterface](xref:adaptive-expressions.ExpressionParserInterface) used to parse a string into an [Expression](xref:adaptive-expressions.Expression).
+     * @returns [Expression](xref:adaptive-expressions.Expression) which will be cached and used to evaluate this rule.
      */
     public getExpression(parser: ExpressionParserInterface): Expression {
         const expressions = [super.getExpression(parser)];
