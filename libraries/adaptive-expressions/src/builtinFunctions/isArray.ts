@@ -16,7 +16,7 @@ import { ReturnType } from '../returnType';
  */
 export class IsArray extends ExpressionEvaluator {
     /**
-     * Initializes a new instance of the `IsArray` class.
+     * Initializes a new instance of the [IsArray](xref:adaptive-expressions.IsArray) class.
      */
     public constructor() {
         super(ExpressionType.IsArray, IsArray.evaluator(), ReturnType.Boolean, FunctionUtils.validateUnary);

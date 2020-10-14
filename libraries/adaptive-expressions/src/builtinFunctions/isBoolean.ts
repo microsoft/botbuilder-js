@@ -16,7 +16,7 @@ import { ReturnType } from '../returnType';
  */
 export class IsBoolean extends ExpressionEvaluator {
     /**
-     * Initializes a new instance of the `IsBoolean` class.
+     * Initializes a new instance of the [IsBoolean](xref:adaptive-expressions.IsBoolean) class.
      */
     public constructor() {
         super(ExpressionType.IsBoolean, IsBoolean.evaluator(), ReturnType.Boolean, FunctionUtils.validateUnary);

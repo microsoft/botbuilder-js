@@ -20,7 +20,7 @@ import { ReturnType } from '../returnType';
  */
 export class IndicesAndValues extends ExpressionEvaluator {
     /**
-     * Initializes a new instance of the `IndicesAndValues` class.
+     * Initializes a new instance of the [IndicesAndValues](xref:adaptive-expressions.IndicesAndValues) class.
      */
     public constructor() {
         super(

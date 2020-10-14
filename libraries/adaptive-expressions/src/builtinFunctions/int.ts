@@ -16,7 +16,7 @@ import { ReturnType } from '../returnType';
  */
 export class Int extends ExpressionEvaluator {
     /**
-     * Initializes a new instance of the `Int` class.
+     * Initializes a new instance of the [Int](xref:adaptive-expressions.Int) class.
      */
     public constructor() {
         super(ExpressionType.Int, Int.evaluator(), ReturnType.Number, FunctionUtils.validateUnary);

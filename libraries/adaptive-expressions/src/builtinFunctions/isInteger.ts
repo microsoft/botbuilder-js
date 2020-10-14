@@ -16,7 +16,7 @@ import { ReturnType } from '../returnType';
  */
 export class IsInteger extends ExpressionEvaluator {
     /**
-     * Initializes a new instance of the `IsInteger` class.
+     * Initializes a new instance of the [IsInteger](xref:adaptive-expressions.IsInteger) class.
      */
     public constructor() {
         super(ExpressionType.IsInteger, IsInteger.evaluator(), ReturnType.Boolean, FunctionUtils.validateUnary);

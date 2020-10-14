@@ -17,7 +17,7 @@ import { ReturnType } from '../returnType';
  */
 export class IsFloat extends ExpressionEvaluator {
     /**
-     * Initializes a new instance of the `IsFloat` class.
+     * Initializes a new instance of the [IsFloat](xref:adaptive-expressions.IsFloat) class.
      */
     public constructor() {
         super(ExpressionType.IsFloat, IsFloat.evaluator(), ReturnType.Boolean, FunctionUtils.validateUnary);
