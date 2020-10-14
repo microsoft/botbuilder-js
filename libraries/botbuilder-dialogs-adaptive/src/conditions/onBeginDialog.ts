@@ -13,7 +13,6 @@ import { AdaptiveEvents } from '../adaptiveEvents';
  * Actions triggered when a dialog is started via BeginDialog().
  */
 export class OnBeginDialog extends OnDialogEvent {
-
     public constructor(actions: Dialog[] = [], condition?: string) {
         super(AdaptiveEvents.beginDialog, actions, condition);
     }

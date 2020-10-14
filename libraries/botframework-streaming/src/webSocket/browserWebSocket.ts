@@ -46,7 +46,6 @@ export class BrowserWebSocket implements ISocket {
             resolver = resolve;
             rejector = reject;
         });
-
     }
 
     /**
@@ -76,17 +75,17 @@ export class BrowserWebSocket implements ISocket {
      * Set the handler for text and binary messages received on the socket.
      */
     public setOnMessageHandler(handler: (x: any) => void): void {
-        const bufferKey: string = 'buffer';
+        const bufferKey = 'buffer';
         const packets = [];
         this.webSocket.onmessage = (evt): void => {
             const fileReader = new FileReader();
             const queueEntry = { buffer: null };
             packets.push(queueEntry);
             fileReader.onload = (e): void => {
-                const t = e.target as unknown as IBrowserFileReader;
+                const t = (e.target as unknown) as IBrowserFileReader;
                 queueEntry[bufferKey] = t.result;
                 if (packets[0] === queueEntry) {
-                    while(0 < packets.length && packets[0][bufferKey]) {
+                    while (0 < packets.length && packets[0][bufferKey]) {
                         handler(packets[0][bufferKey]);
                         packets.splice(0, 1);
                     }
@@ -100,9 +99,13 @@ export class BrowserWebSocket implements ISocket {
      * Set the callback to call when encountering errors.
      */
     public setOnErrorHandler(handler: (x: any) => void): void {
-        this.webSocket.onerror = (error): void => { if (error) { handler(error); } };
+        this.webSocket.onerror = (error): void => {
+            if (error) {
+                handler(error);
+            }
+        };
     }
-    
+
     /**
      * Set the callback to call when encountering socket closures.
      */

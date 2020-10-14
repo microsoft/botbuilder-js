@@ -1,7 +1,6 @@
 /**
  * @module botframework-config
- */
-/**
+ *
  * Copyright(c) Microsoft Corporation.All rights reserved.
  * Licensed under the MIT License.
  */
@@ -15,7 +14,7 @@ export {
     IFileResource,
     IGenericResource,
     IResource,
-    IUrlResource
+    IUrlResource,
 } from './botRecipe';
 export * from './models';
 export * from './schema';

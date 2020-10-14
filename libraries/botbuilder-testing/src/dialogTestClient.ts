@@ -6,14 +6,21 @@
  * Licensed under the MIT License.
  */
 
-import { Activity, TestAdapter, Middleware, ConversationState, MemoryStorage, AutoSaveStateMiddleware, TurnContext } from 'botbuilder-core';
+import {
+    Activity,
+    TestAdapter,
+    Middleware,
+    ConversationState,
+    MemoryStorage,
+    AutoSaveStateMiddleware,
+    TurnContext,
+} from 'botbuilder-core';
 import { Dialog, DialogContext, DialogSet, DialogTurnStatus, DialogTurnResult } from 'botbuilder-dialogs';
 
 /**
  * A client for testing dialogs in isolation.
  */
 export class DialogTestClient {
-
     private readonly _callback: (turnContext: TurnContext) => Promise<void>;
     private _dialogContext: DialogContext = null;
     private readonly _testAdapter: TestAdapter;
@@ -43,7 +50,13 @@ export class DialogTestClient {
      * @param middlewares Optional. A [Middleware](xref:botbuilder-core.Middleware) list to be added to the test adapter.
      * @param conversationState Optional. A [ConversationState](xref:botbuilder-core.ConversationState) instance to use in the test client.
      */
-    public constructor(channelId: string, targetDialog: Dialog, initialDialogOptions?: any, middlewares?: Middleware[], conversationState?: ConversationState);
+    public constructor(
+        channelId: string,
+        targetDialog: Dialog,
+        initialDialogOptions?: any,
+        middlewares?: Middleware[],
+        conversationState?: ConversationState
+    );
     /**
      * Creates a [DialogTestClient](xref:botbuilder-testing.DialogTestClient) to test a [Dialog](xref:botbuilder-dialogs.Dialog) without having to create a full-fledged adapter.
      * ```javascript
@@ -57,7 +70,13 @@ export class DialogTestClient {
      * @param middlewares Optional. A [Middleware](xref:botbuilder-core.Middleware) list to be added to the test adapter.
      * @param conversationState Optional. A [ConversationState](xref:botbuilder-core.ConversationState) instance to use in the test client.
      */
-    public constructor(testAdapter: TestAdapter, targetDialog: Dialog, initialDialogOptions?: any, middlewares?: Middleware[], conversationState?: ConversationState)
+    public constructor(
+        testAdapter: TestAdapter,
+        targetDialog: Dialog,
+        initialDialogOptions?: any,
+        middlewares?: Middleware[],
+        conversationState?: ConversationState
+    );
     /**
      * Creates a [DialogTestClient](xref:botbuilder-testing.DialogTestClient) to test a [Dialog](xref:botbuilder-dialogs.Dialog) without having to create a full-fledged adapter.
      * @param channelOrAdapter The `channelId` or the [TestAdapter](xref:botbuilder-core.TestAdapter) to be used for the test.
@@ -66,16 +85,24 @@ export class DialogTestClient {
      * @param middlewares Optional. A [Middleware](xref:botbuilder-core.Middleware) list to be added to the test adapter.
      * @param conversationState Optional. A [ConversationState](xref:botbuilder-core.ConversationState) instance to use in the test client.
      */
-    public constructor(channelOrAdapter: string|TestAdapter, targetDialog: Dialog, initialDialogOptions?: any, middlewares?: Middleware[], conversationState?: ConversationState) {
+    public constructor(
+        channelOrAdapter: string | TestAdapter,
+        targetDialog: Dialog,
+        initialDialogOptions?: any,
+        middlewares?: Middleware[],
+        conversationState?: ConversationState
+    ) {
         this.conversationState = conversationState || new ConversationState(new MemoryStorage());
 
-        let dialogState = this.conversationState.createProperty('DialogState');
+        const dialogState = this.conversationState.createProperty('DialogState');
 
         this._callback = this.getDefaultCallback(targetDialog, initialDialogOptions || null, dialogState);
 
         if (typeof channelOrAdapter == 'string') {
             const channelIdToUse: string = channelOrAdapter;
-            this._testAdapter = new TestAdapter(this._callback, {channelId: channelIdToUse}).use(new AutoSaveStateMiddleware(this.conversationState));
+            this._testAdapter = new TestAdapter(this._callback, { channelId: channelIdToUse }).use(
+                new AutoSaveStateMiddleware(this.conversationState)
+            );
         } else {
             const testAdapterToUse: TestAdapter = channelOrAdapter;
             this._testAdapter = testAdapterToUse;
@@ -117,10 +144,12 @@ export class DialogTestClient {
     /**
      * @private
      */
-    private getDefaultCallback(targetDialog: Dialog, initialDialogOptions: any, dialogState: any): (turnContext: TurnContext) => Promise<void> {
-
+    private getDefaultCallback(
+        targetDialog: Dialog,
+        initialDialogOptions: any,
+        dialogState: any
+    ): (turnContext: TurnContext) => Promise<void> {
         return async (turnContext: TurnContext): Promise<void> => {
-
             const dialogSet = new DialogSet(dialogState);
             dialogSet.add(targetDialog);
 

@@ -12,8 +12,12 @@ export class SignOutUser<O extends object = {}> extends Dialog<O> {
     public constructor();
     public constructor(userId?: string, connectionName?: string) {
         super();
-        if (userId) { this.userId = new StringExpression(userId); }
-        if (connectionName) { this.connectionName = new StringExpression(connectionName); }
+        if (userId) {
+            this.userId = new StringExpression(userId);
+        }
+        if (connectionName) {
+            this.connectionName = new StringExpression(connectionName);
+        }
     }
 
     /**
@@ -52,6 +56,8 @@ export class SignOutUser<O extends object = {}> extends Dialog<O> {
     }
 
     protected onComputeId(): string {
-        return `SignOutUser[${ this.connectionName ? this.connectionName.toString() : '' }, ${ this.userId ? this.userId.toString() : '' }]`;
+        return `SignOutUser[${this.connectionName ? this.connectionName.toString() : ''}, ${
+            this.userId ? this.userId.toString() : ''
+        }]`;
     }
 }

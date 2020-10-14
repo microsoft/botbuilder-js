@@ -10,11 +10,10 @@ import { InputDialog, InputState } from './inputDialog';
 import { StringExpression } from 'adaptive-expressions';
 
 export class TextInput extends InputDialog {
-
     public outputFormat: StringExpression;
 
     protected onComputeId(): string {
-        return `TextInput[${ this.prompt && this.prompt.toString() }]`;
+        return `TextInput[${this.prompt && this.prompt.toString()}]`;
     }
 
     protected async onRecognizeInput(dc: DialogContext): Promise<InputState> {

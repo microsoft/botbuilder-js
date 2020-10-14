@@ -37,16 +37,14 @@ export class GetNextViableTime extends ExpressionEvaluator {
         options: Options
     ): { value: any; error: string } {
         let parsed: TimexProperty;
-        let value: string;
-        let error: string;
-        let args: any[];
         const currentTime = moment(new Date().toISOString());
         let validHour = 0;
         let validMinute = 0;
         let validSecond = 0;
         let convertedDateTime: moment.Moment;
         const formatRegex = /TXX:[0-5][0-9]:[0-5][0-9]/g;
-        ({ args, error } = FunctionUtils.evaluateChildren(expr, state, options));
+        const { args, error: childrenError } = FunctionUtils.evaluateChildren(expr, state, options);
+        let error = childrenError;
         if (!error) {
             if (!formatRegex.test(args[0] as string)) {
                 error = `${args[0]}  must be a timex string which only contains minutes and seconds, for example: 'TXX:15:28'`;
@@ -93,7 +91,7 @@ export class GetNextViableTime extends ExpressionEvaluator {
             validSecond = parsed.second;
         }
 
-        value = TimexProperty.fromTime(new Time(validHour, validMinute, validSecond)).timex;
+        const value = TimexProperty.fromTime(new Time(validHour, validMinute, validSecond)).timex;
         return { value, error };
     }
 }

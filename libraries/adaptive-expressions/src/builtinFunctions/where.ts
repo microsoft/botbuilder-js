@@ -10,7 +10,6 @@ import { Constant } from '../constant';
 import { Expression } from '../expression';
 import { ExpressionEvaluator, ValueWithError } from '../expressionEvaluator';
 import { ExpressionType } from '../expressionType';
-import { FunctionUtils } from '../functionUtils';
 import { InternalFunctionUtils } from '../functionUtils.internal';
 import { MemoryInterface } from '../memory/memoryInterface';
 import { SimpleObjectMemory } from '../memory/simpleObjectMemory';
@@ -28,11 +27,8 @@ export class Where extends ExpressionEvaluator {
 
     private static evaluator(expression: Expression, state: MemoryInterface, options: Options): ValueWithError {
         let result: any;
-        let error: string;
-        let instance: any;
-
-        ({ value: instance, error } = expression.children[0].tryEvaluate(state, options));
-
+        const { value: instance, error: childrenError } = expression.children[0].tryEvaluate(state, options);
+        let error = childrenError;
         if (!error) {
             const iteratorName = (expression.children[1].children[0] as Constant).value as string;
             let arr: any[] = [];
