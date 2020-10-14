@@ -14,8 +14,8 @@ import { OnActivity } from './onActivity';
  */
 export class OnTypingActivity extends OnActivity {
     /**
-     * Initializes a new instance of the `OnTypingActivity` class.
-     * @param actions Optional. Actions to add to the plan when the rule constraints are met.
+     * Initializes a new instance of the [OnTypingActivity](xref:botbuilder-dialogs-adaptive.OnTypingActivity) class.
+     * @param actions Optional. A [Dialog](xref:botbuilder-dialogs.Dialog) list containing the actions to add to the plan when the rule constraints are met.
      * @param condition Optional. Condition which needs to be met for the actions to be executed.
      */
     public constructor(actions: Dialog[] = [], condition?: string) {
