@@ -6,7 +6,7 @@
 name: $(Build.BuildId)
 
 pool:
-  vmImage: 'ubuntu-18.04'
+  vmImage: 'macOS-10.15'
 
 variables:
   NodeVersion: 12.x
