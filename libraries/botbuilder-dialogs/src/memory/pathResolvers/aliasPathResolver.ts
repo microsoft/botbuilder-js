@@ -16,7 +16,7 @@ export class AliasPathResolver implements PathResolver {
     private readonly postfix: string;
 
     /**
-     * Initializes a new instance of the AliasPathResolver class.
+     * Initializes a new instance of the [AliasPathResolver](xref:botbuilder-dialogs.AliasPathResolver) class.
      * @param alias Alias name.
      * @param prefix Prefix name.
      * @param postfix Postfix name.
