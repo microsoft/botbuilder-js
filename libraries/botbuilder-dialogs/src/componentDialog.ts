@@ -189,13 +189,13 @@ export class ComponentDialog<O extends object = {}> extends DialogContainer<O> {
     }
 
     /**
-     * Called when the dialog is ending.
+     * Called when the [Dialog](xref:botbuilder-dialogs.Dialog) is ending.
      * @param context The [TurnContext](xref:botbuilder-core.TurnContext) object for this turn.
      * @param instance State information associated with the instance of this component
-     * dialog on its parent's dialog stack.
-     * @param reason Reason why the dialog ended.
+     * [Dialog](xref:botbuilder-dialogs.Dialog) on its parent's dialog stack.
+     * @param reason Reason why the [Dialog](xref:botbuilder-dialogs.Dialog) ended.
      * @returns A Promise representing the asynchronous operation.
-     * @remarks When this method is called from the parent dialog's context, the component dialog
+     * @remarks When this method is called from the parent dialog's context, the component [Dialog](xref:botbuilder-dialogs.Dialog)
      * cancels all of the dialogs on its inner dialog stack before ending.
      */
     public async endDialog(context: TurnContext, instance: DialogInstance, reason: DialogReason): Promise<void> {
@@ -210,10 +210,10 @@ export class ComponentDialog<O extends object = {}> extends DialogContainer<O> {
     }
 
     /**
-     * Adds a child dialog or prompt to the components internal `DialogSet`.
+     * Adds a child [Dialog](xref:botbuilder-dialogs.Dialog) or prompt to the components internal [DialogSet](xref:botbuilder-dialogs.DialogSet).
      * @param dialog The child [Dialog](xref:botbuilder-dialogs.Dialog) or prompt to add.
      * @remarks
-     * The [Dialog](xref:botbuilder-dialogs.Dialog.id) of the first child added to the component will be assigned to the initialDialogId property.
+     * The [Dialog.id](xref:botbuilder-dialogs.Dialog.id) of the first child added to the component will be assigned to the initialDialogId property.
      */
     public addDialog(dialog: Dialog): this {
         this.dialogs.add(dialog);
@@ -299,7 +299,7 @@ export class ComponentDialog<O extends object = {}> extends DialogContainer<O> {
     /**
      * @private
      * @param context [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation with the user.
-     * @param instance Current state information for this dialog.
+     * @param instance [DialogInstance](xref:botbuilder-dialogs.DialogInstance) which contains the current state information for this dialog.
      * @returns A new [DialogContext](xref:botbuilder-dialogs.DialogContext) instance.
      * @remarks
      * You should only call this if you don't have a dc to work with (such as OnResume())
@@ -308,7 +308,7 @@ export class ComponentDialog<O extends object = {}> extends DialogContainer<O> {
     /**
      * @private
      * @param context [TurnContext](xref:botbuilder-core.TurnContext) for the current turn of conversation with the user.
-     * @param instance Current state information for this dialog.
+     * @param instance [DialogInstance](xref:botbuilder-dialogs.DialogInstance) which contains the current state information for this dialog.
      * @returns A new [DialogContext](xref:botbuilder-dialogs.DialogContext) instance.
      * @remarks
      * You should only call this if you don't have a dc to work with (such as OnResume())
@@ -316,8 +316,8 @@ export class ComponentDialog<O extends object = {}> extends DialogContainer<O> {
     private createInnerDC(context: TurnContext, instance: DialogInstance): DialogContext;
     /**
      * @private
-     * @param context Context for the current turn of conversation with the user.
-     * @param instance Current state information for this dialog.
+     * @param context [TurnContext](xref:botbuilder-core.TurnContext) or [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation with the user.
+     * @param instance [DialogInstance](xref:botbuilder-dialogs.DialogInstance) which contains the current state information for this dialog.
      * @returns A new [DialogContext](xref:botbuilder-dialogs.DialogContext) instance.
      * @remarks
      * You should only call this if you don't have a dc to work with (such as OnResume())

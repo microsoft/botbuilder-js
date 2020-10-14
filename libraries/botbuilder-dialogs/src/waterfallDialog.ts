@@ -143,12 +143,12 @@ export class WaterfallDialog<O extends object = {}> extends Dialog<O> {
     }
 
     /**
-     * Called when the waterfall dialog is started and pushed onto the dialog stack.
+     * Called when the [WaterfallDialog](xref:botbuilder-dialogs.WaterfallDialog) is started and pushed onto the dialog stack.
      * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
-     * @param options Optional, initial information to pass to the dialog.
+     * @param options Optional, initial information to pass to the [Dialog](xref:botbuilder-dialogs.Dialog).
      * @returns A Promise representing the asynchronous operation.
      * @remarks
-     * If the task is successful, the result indicates whether the dialog is still
+     * If the task is successful, the result indicates whether the [Dialog](xref:botbuilder-dialogs.Dialog) is still
      * active after the turn has been processed by the dialog.
      */
     public async beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult> {
@@ -171,7 +171,7 @@ export class WaterfallDialog<O extends object = {}> extends Dialog<O> {
     }
 
     /**
-     * Called when the waterfall dialog is _continued_, where it is the active dialog and the
+     * Called when the [WaterfallDialog](xref:botbuilder-dialogs.WaterfallDialog) is _continued_, where it is the active dialog and the
      * user replies with a new [Activity](xref:botframework-schema.Activity).
      * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
      * @returns A Promise representing the asynchronous operation.
@@ -191,7 +191,7 @@ export class WaterfallDialog<O extends object = {}> extends Dialog<O> {
     }
 
     /**
-     * Called when a child waterfall dialog completed its turn, returning control to this dialog.
+     * Called when a child [WaterfallDialog](xref:botbuilder-dialogs.WaterfallDialog) completed its turn, returning control to this dialog.
      * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of the conversation.
      * @param reason [Reason](xref:botbuilder-dialogs.DialogReason) why the dialog resumed.
      * @param result Optional, value returned from the dialog that was called. The type
@@ -238,7 +238,7 @@ export class WaterfallDialog<O extends object = {}> extends Dialog<O> {
     }
 
     /**
-     * Executes a step of the waterfall dialog.
+     * Executes a step of the [WaterfallDialog](xref:botbuilder-dialogs.WaterfallDialog).
      * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
      * @param index The index of the current waterfall step to execute.
      * @param reason The [Reason](xref:botbuilder-dialogs.DialogReason) the waterfall step is being executed.

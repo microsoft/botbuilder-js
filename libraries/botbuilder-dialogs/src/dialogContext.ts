@@ -60,7 +60,7 @@ export class DialogContext {
      * @param contextOrDC The [TurnContext](xref:botbuilder-core.TurnContext) object for the current turn of the bot.
      * @param state The state object to use to read and write [DialogState](xref:botbuilder-dialogs.DialogState) to storage.
      * @remarks
-     * Passing in a dialog context instance will clone the dialog context.
+     * Passing in a [DialogContext](xref:botbuilder-dialogs.DialogContext) instance will clone the dialog context.
      */
     public constructor(dialogs: DialogSet, contextOrDC: TurnContext, state: DialogState);
 
@@ -70,7 +70,7 @@ export class DialogContext {
      * @param contextOrDC The [DialogContext](xref:botbuilder-dialogs.DialogContext) object for the current turn of the bot.
      * @param state The state object to use to read and write [DialogState](xref:botbuilder-dialogs.DialogState) to storage.
      * @remarks
-     * Passing in a dialog context instance will clone the dialog context.
+     * Passing in a [DialogContext](xref:botbuilder-dialogs.DialogContext) instance will clone the dialog context.
      */
     public constructor(dialogs: DialogSet, contextOrDC: DialogContext, state: DialogState);
 
@@ -79,7 +79,7 @@ export class DialogContext {
      * @param dialogs The [DialogSet](xref:botbuilder-dialogs.DialogSet) for which to create the dialog context.
      * @param contextOrDC The [TurnContext](xref:botbuilder-core.TurnContext) or [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of the bot.
      * @param state The state object to use to read and write [DialogState](xref:botbuilder-dialogs.DialogState) to storage.
-     * @remarks Passing in a dialog context instance will clone the dialog context.
+     * @remarks Passing in a [DialogContext](xref:botbuilder-dialogs.DialogContext) instance will clone the dialog context.
      */
     public constructor(dialogs: DialogSet, contextOrDC: TurnContext | DialogContext, state: DialogState) {
         this.dialogs = dialogs;
@@ -291,8 +291,8 @@ export class DialogContext {
      * Helper function to simplify formatting the options for calling a prompt dialog.
      * @param dialogId ID of the prompt dialog to start.
      * @param promptOrOptions The text of the initial prompt to send the user,
-     *      the [Activity](xref:botframework-schema.Activity) to send as the initial prompt, or
-     *      the object with which to format the prompt dialog.
+     * the [Activity](xref:botframework-schema.Activity) to send as the initial prompt, or
+     * the object with which to format the prompt dialog.
      * @remarks
      * This helper method formats the object to use as the `options` parameter, and then calls
      * [beginDialog](xref:botbuilder-dialogs.DialogContext.beginDialog) to start the specified prompt dialog.
@@ -306,10 +306,10 @@ export class DialogContext {
      * Helper function to simplify formatting the options for calling a prompt dialog.
      * @param dialogId ID of the prompt dialog to start.
      * @param promptOrOptions The text of the initial prompt to send the user,
-     *      the [Activity](xref:botframework-schema.Activity) to send as the initial prompt, or
-     *      the object with which to format the prompt dialog.
+     * the [Activity](xref:botframework-schema.Activity) to send as the initial prompt, or
+     * the object with which to format the prompt dialog.
      * @param choices Optional. Array of choices for the user to choose from,
-     *      for use with a [ChoicePrompt](xref:botbuilder-dialogs.ChoicePrompt).
+     * for use with a [ChoicePrompt](xref:botbuilder-dialogs.ChoicePrompt).
      * @remarks
      * This helper method formats the object to use as the `options` parameter, and then calls
      * [beginDialog](xref:botbuilder-dialogs.DialogContext.beginDialog) to start the specified prompt dialog.
