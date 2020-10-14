@@ -53,7 +53,7 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGTe
      * Creates a new instance of the Expander class.
      * @param templates Template list.
      * @param expressionParser Given expression parser.
-     * @param opt Options for LG including strictMode, replaceNull and lineBreakStyle.
+     * @param opt Options for LG.
      */
     public constructor(templates: Template[], expressionParser: ExpressionParser, opt: EvaluationOptions = undefined) {
         super();
@@ -99,6 +99,7 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGTe
     /**
      * Visit a parse tree produced by the normalBody labeled alternative in LGTemplateParser.body.
      * @param ctx The parse tree.
+     * @returns The result of visiting the normal body.
      */
     public visitNormalBody(ctx: lp.NormalBodyContext): any[] {
         return this.visit(ctx.normalTemplateBody());
@@ -107,6 +108,7 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGTe
     /**
      * Visit a parse tree produced by LGTemplateParser.normalTemplateBody.
      * @param ctx The parse tree.
+     * @returns The result of visiting the normal template body.
      */
     public visitNormalTemplateBody(ctx: lp.NormalTemplateBodyContext): any[] {
         const normalTemplateStrs: lp.TemplateStringContext[] = ctx.templateString();
@@ -136,6 +138,7 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGTe
     /**
      * Visit a parse tree produced by LGTemplateParser.structuredBody.
      * @param ctx The parse tree.
+     * @returns The result of visiting the structured body.
      */
     public visitStructuredBody(ctx: lp.StructuredBodyContext): any[] {
         const templateRefValues: Map<string, any> = new Map<string, any>();
@@ -253,6 +256,7 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGTe
     /**
      * Visit a parse tree produced by the switchCaseBody labeled alternative in LGTemplateParser.body.
      * @param ctx The parse tree.
+     * @returns The result of visiting the switch case body.
      */
     public visitSwitchCaseBody(ctx: lp.SwitchCaseBodyContext): any[] {
         const switchcaseNodes: lp.SwitchCaseRuleContext[] = ctx.switchCaseTemplateBody().switchCaseRule();

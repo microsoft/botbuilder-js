@@ -52,7 +52,7 @@ export class EvaluationOptions {
     public cacheScope: LGCacheScope | undefined;
 
     /**
-     * Creates a new instance of the EvaluationOptions class.
+     * Creates a new instance of the [EvaluationOptions](xref:botbuilder-lg.EvaluationOptions) class.
      * @param opt Instance to copy initial settings from.
      */
     public constructor(opt?: EvaluationOptions | string[]) {

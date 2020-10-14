@@ -26,7 +26,7 @@ export class CustomizedMemory implements MemoryInterface {
     public localMemory: MemoryInterface;
 
     /**
-     * Creates a new instance of the CustomizedMemory class.
+     * Creates a new instance of the [CustomizedMemory](xref:botbuilder-lg.CustomizedMemory) class.
      * @param scope Optional. Scope.
      * @param localMemory Optional. Local memory.
      */

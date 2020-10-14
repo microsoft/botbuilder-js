@@ -30,7 +30,7 @@ export class EvaluationTarget {
     public cachedEvaluatedChildren : Map<string, any>;
     
     /**
-     * Creates a new instance of the EvaluationTarget class.
+     * Creates a new instance of the [EvaluationTarget](xref:botbuilder-lg.EvaluationTarget) class.
      * @param templateName Template name.
      * @param scope Template scope.
      */

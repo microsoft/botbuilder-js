@@ -20,7 +20,7 @@ export class ErrorListener implements ANTLRErrorListener<any> {
     private lineOffset: number;
     
     /**
-     * Creates a new instance of the ErrorListener class.
+     * Creates a new instance of the [ErrorListener](xref:botbuilder-lg.ErrorListener) class.
      * @param errorSource String value that represents the source of the error.
      * @param lineOffset Offset of the line where the error occurred.
      */

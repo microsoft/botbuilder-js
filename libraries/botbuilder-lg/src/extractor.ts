@@ -20,7 +20,7 @@ export class Extractor extends AbstractParseTreeVisitor<Map<string, any>> implem
     public readonly templateMap: {[name: string]: Template};
     
     /**
-     * Creates a new instance of the Extractor class.
+     * Creates a new instance of the [Extractor](xref:botbuilder-lg.Extractor) class.
      * @param templates Template list.
      */
     public constructor(templates: Template[]) {
@@ -61,6 +61,7 @@ export class Extractor extends AbstractParseTreeVisitor<Map<string, any>> implem
     /**
      * Visit a parse tree produced by LGTemplateParser.normalTemplateBody.
      * @param context The parse tree.
+     * @returns The result of visiting the normal template body.
      */
     public visitNormalTemplateBody(context: lp.NormalTemplateBodyContext): Map<string, any> {
         const result: Map<string, any> = new Map<string, any>();
@@ -74,6 +75,7 @@ export class Extractor extends AbstractParseTreeVisitor<Map<string, any>> implem
     /**
      * Visit a parse tree produced by the structuredBody labeled alternative in LGTemplateParser.body.
      * @param context The parse tree.
+     * @returns The result of visiting the structured body.
      */
     public visitStructuredBody(context: lp.StructuredBodyContext): Map<string, any> {
         const result: Map<string, any> = new Map<string, any>();
@@ -90,6 +92,7 @@ export class Extractor extends AbstractParseTreeVisitor<Map<string, any>> implem
     /**
      * Visit a parse tree produced by the ifElseBody labeled alternative in LGTemplateParser.body.
      * @param context The parse tree.
+     * @returns The result of visiting the if else body.
      */
     public visitIfElseBody(context: lp.IfElseBodyContext): Map<string, any> {
         const result: Map<string, any> = new Map<string, any>();
@@ -125,6 +128,7 @@ export class Extractor extends AbstractParseTreeVisitor<Map<string, any>> implem
     /**
      * Visit a parse tree produced by the switchCaseBody labeled alternative in LGTemplateParser.body.
      * @param context The parse tree.
+     * @returns The result of visiting the switch case body.
      */
     public visitSwitchCaseBody(context: lp.SwitchCaseBodyContext): Map<string, any> {
         const result: Map<string, any> = new Map<string, any>();
