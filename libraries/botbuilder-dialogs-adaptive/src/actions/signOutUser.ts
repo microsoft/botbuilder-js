@@ -15,7 +15,7 @@ export class SignOutUser<O extends object = {}> extends Dialog<O> {
     public constructor();
 
     /**
-     * Initializes a new instance of the `SignOutUser` class.
+     * Initializes a new instance of the [SignOutUser](xref:botbuilder-dialogs-adaptive.SignOutUser) class.
      * @param userId Optional. The expression which resolves to the userId to sign out.
      * @param connectionName Optional. The name of the OAuth connection.
      */
@@ -42,7 +42,7 @@ export class SignOutUser<O extends object = {}> extends Dialog<O> {
 
     /**
      * Starts a new dialog and pushes it onto the dialog stack.
-     * @param dc The `DialogContext` for the current turn of conversation.
+     * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
      * @param options Optional. Initial information to pass to the dialog.
      * @returns A `Promise` representing the asynchronous operation.
      */

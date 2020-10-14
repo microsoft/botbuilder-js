@@ -16,14 +16,14 @@ export class ReplaceDialog<O extends object = {}> extends BaseInvokeDialog<O> {
     public constructor();
     
     /**
-     * Creates a new `ReplaceDialog` instance.
+     * Creates a new [ReplaceDialog](xref:botbuilder-dialogs-adaptive.ReplaceDialog) instance.
      * @param dialogId ID of the dialog to goto.
      * @param options Optional, static options to pass the dialog.
      */
     public constructor(dialogIdToCall: string, options?: O);
         
     /**
-     * Creates a new `ReplaceDialog` instance.
+     * Creates a new [ReplaceDialog](xref:botbuilder-dialogs-adaptive.ReplaceDialog) instance.
      * @param dialogId Optional. ID of the dialog to goto.
      * @param options Optional. Static options to pass the dialog.
      */
@@ -38,7 +38,7 @@ export class ReplaceDialog<O extends object = {}> extends BaseInvokeDialog<O> {
 
     /**
      * Starts a new dialog and pushes it onto the dialog stack.
-     * @param dc The `DialogContext` for the current turn of conversation.
+     * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
      * @param options Optional. Initial information to pass to the dialog.
      * @returns A `Promise` representing the asynchronous operation.
      */

@@ -16,9 +16,9 @@ import { Converter } from 'botbuilder-dialogs-declarative';
 export class TelemetryPropertiesConverter implements Converter {
 
     /**
-     * Converts a `string` properties into telemetry `StringExpression` configuration properties.
+     * Converts a `string` properties into telemetry [StringExpression](xref:adaptive-expressions.StringExpression) configuration properties.
      * @param properties The property collection to convert.
-     * @returns The converted `StringExpression`.
+     * @returns The converted [StringExpression](xref:adaptive-expressions.StringExpression).
      */
     public convert(properties: { [name: string]: string }): { [name: string]: StringExpression } {
         const result = {};
@@ -36,14 +36,14 @@ export class TelemetryTrackEventAction<O extends object = {}> extends Dialog {
     public constructor();
 
     /**
-     * Initializes a new instance of the `TelemetryTrackEventAction` class.
+     * Initializes a new instance of the [TelemetryTrackEventAction](xref:botbuilder-dialogs-adaptive.TelemetryTrackEventAction) class.
      * @param eventName Name to use for the event.
      * @param properties Properties to attach to the tracked event.
      */
     public constructor(eventName: string, properties: { [name: string]: string });
 
     /**
-     * Initializes a new instance of the `TelemetryTrackEventAction` class.
+     * Initializes a new instance of the [TelemetryTrackEventAction](xref:botbuilder-dialogs-adaptive.TelemetryTrackEventAction) class.
      * @param eventName Optional. Name to use for the event.
      * @param properties Optional. Properties to attach to the tracked event.
      */
@@ -75,7 +75,7 @@ export class TelemetryTrackEventAction<O extends object = {}> extends Dialog {
 
     /**
      * Starts a new dialog and pushes it onto the dialog stack.
-     * @param dc The `DialogContext` for the current turn of conversation.
+     * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
      * @param options Optional. Initial information to pass to the dialog.
      * @returns A `Promise` representing the asynchronous operation.
      */

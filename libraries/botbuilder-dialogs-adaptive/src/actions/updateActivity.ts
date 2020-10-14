@@ -18,9 +18,9 @@ export class UpdateActivity<O extends object = {}> extends Dialog<O> {
     public constructor();
 
     /**
-     * Initializes a new instance of the UpdateActivity class.
+     * Initializes a new instance of the [UpdateActivity](xref:botbuilder-dialogs-adaptive.UpdateActivity) class.
      * @param activityId Optional. The expression which resolves to the activityId to update.
-     * @param activity Optional. Template for the activity.
+     * @param activity Optional. Template for the [Activity](xref:botframework-schema.Activity).
      */
     public constructor(activityId?: string, activity?: Partial<Activity> | string) {
         super();
@@ -53,7 +53,7 @@ export class UpdateActivity<O extends object = {}> extends Dialog<O> {
 
     /**
      * Starts a new dialog and pushes it onto the dialog stack.
-     * @param dc The `DialogContext` for the current turn of conversation.
+     * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
      * @param options Optional. Initial information to pass to the dialog.
      * @returns A `Promise` representing the asynchronous operation.
      */

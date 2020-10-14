@@ -16,7 +16,7 @@ export class TraceActivity<O extends object = {}> extends Dialog<O> {
     public constructor();
 
     /**
-     * Initializes a new instance of the `TraceActivity` class.
+     * Initializes a new instance of the [TraceActivity](xref:botbuilder-dialogs-adaptive.TraceActivity) class.
      * @param name Name of the trace activity.
      * @param valueType Value type of the trace activity.
      * @param value Value expression to send as the value.
@@ -25,7 +25,7 @@ export class TraceActivity<O extends object = {}> extends Dialog<O> {
     public constructor(name: string, valueType: string, value: any, label: string);
     
     /**
-     * Initializes a new instance of the `TraceActivity` class.
+     * Initializes a new instance of the [TraceActivity](xref:botbuilder-dialogs-adaptive.TraceActivity) class.
      * @param name Optional. Name of the trace activity.
      * @param valueType Optional. Value type of the trace activity.
      * @param value Optional. Value expression to send as the value.
@@ -66,7 +66,7 @@ export class TraceActivity<O extends object = {}> extends Dialog<O> {
 
     /**
      * Starts a new dialog and pushes it onto the dialog stack.
-     * @param dc The `DialogContext` for the current turn of conversation.
+     * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
      * @param options Optional. Initial information to pass to the dialog.
      * @returns A `Promise` representing the asynchronous operation.
      */

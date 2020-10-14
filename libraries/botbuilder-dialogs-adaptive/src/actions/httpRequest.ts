@@ -19,8 +19,9 @@ import { replaceJsonRecursively } from '../jsonExtensions';
 export class HttpHeadersConverter implements Converter {
 
     /**
-     * Converts a Key - value pair to `HttpHeader`.
+     * Converts a key - value pair to [HttpHeader](xref:botbuilder-dialogs-adaptive.HttpHeader).
      * @param value Value to convert.
+     * @returns The [HttpHeader](xref:botbuilder-dialogs-adaptive.HttpHeader).
      */
     public convert(value: object): { [key: string]: StringExpression } {
         const headers = {};
@@ -129,8 +130,8 @@ export class HttpRequest<O extends object = {}> extends Dialog<O> implements Con
     public constructor();
 
     /**
-     * Initializes a new instance of the `HttpRequest` class.
-     * @param method The HTTP method, for example POST, GET, DELETE or PUT.
+     * Initializes a new instance of the [HttpRequest](xref:botbuilder-dialogs-adaptive.HttpRequest) class.
+     * @param method The [HttpMethod](xref:botbuilder-dialogs-adaptive.HttpMethod), for example POST, GET, DELETE or PUT.
      * @param url URL for the request.
      * @param headers The headers of the request.
      * @param body The raw body of the request.
@@ -138,8 +139,8 @@ export class HttpRequest<O extends object = {}> extends Dialog<O> implements Con
     public constructor(method: HttpMethod, url: string, headers: { [key: string]: string }, body: any);
 
     /**
-     * Initializes a new instance of the `HttpRequest` class.
-     * @param method Optional. The HTTP method, for example POST, GET, DELETE or PUT.
+     * Initializes a new instance of the [HttpRequest](xref:botbuilder-dialogs-adaptive.HttpRequest) class.
+     * @param method Optional. The [HttpMethod](xref:botbuilder-dialogs-adaptive.HttpMethod), for example POST, GET, DELETE or PUT.
      * @param url Optional. URL for the request.
      * @param headers Optional. The headers of the request.
      * @param body Optional. The raw body of the request.
@@ -198,7 +199,7 @@ export class HttpRequest<O extends object = {}> extends Dialog<O> implements Con
 
     /**
      * Starts a new dialog and pushes it onto the dialog stack.
-     * @param dc The `DialogContext` for the current turn of conversation.
+     * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
      * @param options Optional. Initial information to pass to the dialog.
      * @returns A `Promise` representing the asynchronous operation.
      */

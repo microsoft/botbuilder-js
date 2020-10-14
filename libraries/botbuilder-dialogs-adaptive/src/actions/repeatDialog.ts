@@ -16,7 +16,7 @@ export class RepeatDialog<O extends object = {}> extends BaseInvokeDialog<O> {
     public constructor();
 
     /**
-     * Initializes a new instance of the `RepeatDialog` class.
+     * Initializes a new instance of the [RepeatDialog](xref:botbuilder-dialogs-adaptive.RepeatDialog) class.
      * @param options Optional. Object with additional options.
      */
     public constructor(options?: O) {
@@ -35,7 +35,7 @@ export class RepeatDialog<O extends object = {}> extends BaseInvokeDialog<O> {
 
     /**
      * Starts a new dialog and pushes it onto the dialog stack.
-     * @param dc The `DialogContext` for the current turn of conversation.
+     * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
      * @param options Optional. Initial information to pass to the dialog.
      * @returns A `Promise` representing the asynchronous operation.
      */

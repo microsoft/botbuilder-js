@@ -16,14 +16,14 @@ export class SetProperty<O extends object = {}> extends Dialog<O> {
     public constructor();
 
     /**
-     * Initializes a new instance of the `SetProperty` class.
+     * Initializes a new instance of the [SetProperty](xref:botbuilder-dialogs-adaptive.SetProperty) class.
      * @param property Property path to put the value in.
      * @param value The expression to get the value to put into property path.
      */
     public constructor(property: string, value: any);
 
     /**
-     * Initializes a new instance of the `SetProperty` class.
+     * Initializes a new instance of the [SetProperty](xref:botbuilder-dialogs-adaptive.SetProperty) class.
      * @param property Optional. Property path to put the value in.
      * @param value Optional. The expression to get the value to put into property path.
      */
@@ -50,7 +50,7 @@ export class SetProperty<O extends object = {}> extends Dialog<O> {
 
     /**
      * Starts a new dialog and pushes it onto the dialog stack.
-     * @param dc The `DialogContext` for the current turn of conversation.
+     * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
      * @param options Optional. Initial information to pass to the dialog.
      * @returns A `Promise` representing the asynchronous operation.
      */

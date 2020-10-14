@@ -17,7 +17,7 @@ export class IfCondition<O extends object = {}> extends Dialog<O> implements Dia
     public constructor();
 
     /**
-     * Initializes a new instance of the `IfCondition` class.
+     * Initializes a new instance of the [IfCondition](xref:botbuilder-dialogs-adaptive.IfCondition) class.
      * @param condition Optional. Conditional expression to evaluate.
      * @param elseActions Optional. The actions to run if [condition](#condition) returns false.
      */
@@ -45,7 +45,7 @@ export class IfCondition<O extends object = {}> extends Dialog<O> implements Dia
     /**
      * @protected
      * Gets the true scope.
-     * @returns An `ActionScope` with the action scope.
+     * @returns An [ActionScope](xref:botbuilder-dialogs-adaptive.ActionScope).
      */
     protected get trueScope(): ActionScope {
         if (!this._trueScope) {
@@ -58,7 +58,7 @@ export class IfCondition<O extends object = {}> extends Dialog<O> implements Dia
     /**
      * @protected
      * Gets the false scope.
-     * @returns An `ActionScope` with the action scope.
+     * @returns An [ActionScope](xref:botbuilder-dialogs-adaptive.ActionScope).
      */
     protected get falseScope(): ActionScope {
         if (!this._falseScope) {
@@ -78,8 +78,8 @@ export class IfCondition<O extends object = {}> extends Dialog<O> implements Dia
     private _falseScope: ActionScope;
 
     /**
-     * Gets the child dialog dependencies so they can be added to the containers dialog set.
-     * @returns The child dialog dependencies.
+     * Gets the child [Dialog](xref:botbuilder-dialogs.Dialog) dependencies so they can be added to the containers [Dialog](xref:botbuilder-dialogs.Dialog) set.
+     * @returns The child [Dialog](xref:botbuilder-dialogs.Dialog) dependencies.
      */
     public getDependencies(): Dialog[] {
         return [].concat(this.trueScope, this.falseScope);
@@ -87,7 +87,7 @@ export class IfCondition<O extends object = {}> extends Dialog<O> implements Dia
 
     /**
      * Starts a new dialog and pushes it onto the dialog stack.
-     * @param dc The `DialogContext` for the current turn of conversation.
+     * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
      * @param options Optional. Initial information to pass to the dialog.
      * @returns A `Promise` representing the asynchronous operation.
      */

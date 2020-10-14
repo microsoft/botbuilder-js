@@ -17,14 +17,14 @@ export interface PropertyAssignment {
 }
 
 /**
- * `property`-`value` pair to `PropertyAssignment` converter.
+ * `property`-`value` pair to [PropertyAssignment](xref:botbuilder-dialogs-adaptive.PropertyAssignment) converter.
  */
 export class PropertyAssignmentConverter implements Converter {
 
     /**
-     * Converts a `property`-`value` pair to a `PropertyAssignment`
+     * Converts a `property`-`value` pair to a [PropertyAssignment](xref:botbuilder-dialogs-adaptive.PropertyAssignment)
      * @param assignment `property`-`value` pair.
-     * @returns The `PropertyAssignment`.
+     * @returns The [PropertyAssignment](xref:botbuilder-dialogs-adaptive.PropertyAssignment).
      */
     public convert(assignment: { property: string; value: any }): PropertyAssignment {
         const propertyAssignment: PropertyAssignment = {
@@ -42,8 +42,8 @@ export class SetProperties<O extends object = {}> extends Dialog<O> {
     public constructor();
 
     /**
-     * Initializes a new instance of the `SetProperties` class.
-     * @param assignments Optional. Additional property settings as property/value pairs.
+     * Initializes a new instance of the [SetProperties](xref:botbuilder-dialogs-adaptive.SetProperties) class.
+     * @param assignments Optional. [PropertyAssignment](xref:botbuilder-dialogs-adaptive.PropertyAssignment), additional property settings as property/value pairs.
      */
     public constructor(assignments?: PropertyAssignment[]) {
         super();
@@ -62,7 +62,7 @@ export class SetProperties<O extends object = {}> extends Dialog<O> {
 
     /**
      * Starts a new dialog and pushes it onto the dialog stack.
-     * @param dc The `DialogContext` for the current turn of conversation.
+     * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
      * @param options Optional. Initial information to pass to the dialog.
      * @returns A `Promise` representing the asynchronous operation.
      */

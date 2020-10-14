@@ -17,8 +17,8 @@ import { BoolExpression } from 'adaptive-expressions';
  */
 export class SendActivity<O extends object = {}> extends Dialog<O> {
     /**
-     * Creates a new `SendActivity` instance.
-     * @param activity Activity or message text to send the user.
+     * Creates a new [SendActivity](xref:botbuilder-dialogs-adaptive.SendActivity) instance.
+     * @param activity [Activity](xref:botframework-schema.Activity) or message text to send the user.
      */
     public constructor(activity?: Partial<Activity> | string) {
         super();
