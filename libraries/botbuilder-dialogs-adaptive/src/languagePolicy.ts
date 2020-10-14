@@ -13,7 +13,7 @@ import { Converter } from 'botbuilder-dialogs-declarative';
  */
 export class LanguagePolicy extends Map<string, string[]> {
     /**
-     * Initializes a new instance of the `LanguagePolicy` class.
+     * Initializes a new instance of the [LanguagePolicy](xref:botbuilder-dialogs-adaptive.LanguagePolicy) class.
      * @param defaultLanguages Default languages to use.
      */
     public constructor(...defaultLanguages: string[]) {
@@ -86,7 +86,7 @@ export class LanguagePolicy extends Map<string, string[]> {
     /**
      * Walk through all of the cultures and create a dictionary map with most specific to least specific.
      * @param defaultLanguages Default languages to use.
-     * @returns A `Map` object with a string array for each key.
+     * @returns A Map object with a string array for each key.
      * @example Example output "en-us" will generate fallback rule like this:
      * "en-us" -> "en" -> ""
      * "en" -> ""
@@ -128,9 +128,9 @@ export class LanguagePolicy extends Map<string, string[]> {
  */
 export class LanguagePolicyConverter implements Converter {
     /**
-     * Converts an object to a `LanguagePolicy` instance.
+     * Converts an object to a [LanguagePolicy](xref:botbuilder-dialogs-adaptive.LanguagePolicy) instance.
      * @param value Object.
-     * @returns A new `LanguagePolicy` instance.
+     * @returns A new [LanguagePolicy](xref:botbuilder-dialogs-adaptive.LanguagePolicy) instance.
      */
     public convert(value: object): LanguagePolicy {
         const policy = new LanguagePolicy();

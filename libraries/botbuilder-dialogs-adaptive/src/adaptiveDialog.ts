@@ -188,7 +188,7 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
 
     /**
      * Called when the dialog is started and pushed onto the dialog stack.
-     * @param dc The `DialogContext` for the current turn of conversation.
+     * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
      * @param options Optional, initial information to pass to the dialog.
      * @returns A Promise representing the asynchronous operation.
      */
@@ -252,7 +252,7 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
     /**
      * Called when the dialog is _continued_, where it is the active dialog and the
      * user replies with a new activity.
-     * @param dc The `DialogContext` for the current turn of conversation.
+     * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
      * @returns A Promise representing the asynchronous operation.
      */
     public async continueDialog(dc: DialogContext): Promise<DialogTurnResult> {
@@ -293,8 +293,8 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
     /**
      * @protected
      * Called before an event is bubbled to its parent.
-     * @param dc The `DialogContext` for the current turn of conversation.
-     * @param event The `DialogEvent` being raised.
+     * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
+     * @param event The [DialogEvent](xref:botbuilder-dialogs.DialogEvent) being raised.
      * @returns Whether the event is handled by the current dialog and further processing should stop.
      */
     protected async onPreBubbleEvent(dc: DialogContext, event: DialogEvent): Promise<boolean> {
@@ -307,8 +307,8 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
     /**
      * @protected
      * Called after an event was bubbled to all parents and wasn't handled.
-     * @param dc The `DialogContext` for the current turn of conversation.
-     * @param event The `DialogEvent` being raised.
+     * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
+     * @param event The [DialogEvent](xref:botbuilder-dialogs.DialogEvent) being raised.
      * @returns Whether the event is handled by the current dialog and further processing should stop.
      */
     protected async onPostBubbleEvent(dc: DialogContext, event: DialogEvent): Promise<boolean> {
@@ -361,9 +361,9 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
     }
 
     /**
-     * Creates a child `DialogContext` for the given context.
-     * @param dc The `DialogContext` for the current turn of conversation.
-     * @returns The child `DialogContext` or null if no `AdaptiveDialogState.actions` are found for the given context.
+     * Creates a child [DialogContext](xref:botbuilder-dialogs.DialogContext) for the given context.
+     * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
+     * @returns The child [DialogContext](xref:botbuilder-dialogs.DialogContext) or null if no [AdaptiveDialogState.actions](xref:botbuilder-dialogs-adaptive.AdaptiveDialogState.actions) are found for the given context.
      */
     public createChildContext(dc: DialogContext): DialogContext {
         const activeDialogState = dc.activeDialog.state;
@@ -381,8 +381,8 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
     }
 
     /**
-     * Gets `Dialog` enumerated dependencies.
-     * @returns `Dialog`'s enumerated dependencies.
+     * Gets [Dialog](xref:botbuilder-dialogs.Dialog) enumerated dependencies.
+     * @returns [Dialog](xref:botbuilder-dialogs.Dialog)'s enumerated dependencies.
      */
     public getDependencies(): Dialog[] {
         this.ensureDependenciesInstalled();
@@ -396,8 +396,8 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
     /**
      * @protected
      * Event processing implementation.
-     * @param actionContext The `ActionContext` for the current turn of conversation.
-     * @param dialogEvent The `DialogEvent` being raised.
+     * @param actionContext The [ActionContext](xref:botbuilder-dialogs-adaptive.ActionContext) for the current turn of conversation.
+     * @param dialogEvent The [DialogEvent](xref:botbuilder-dialogs.DialogEvent) being raised.
      * @param preBubble A flag indicator for preBubble processing.
      * @returns A Promise representation of a boolean indicator or the result.
      */
@@ -549,9 +549,9 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
     /**
      * @protected
      * Recognizes intent for current activity given the class recognizer set, if set is null no intent will be recognized.
-     * @param actionContext The `ActionContext` for the current turn of conversation.
-     * @param activity `Activity` to recognize.
-     * @returns A Promise representing a `RecognizerResult`.
+     * @param actionContext The [ActionContext](xref:botbuilder-dialogs-adaptive.ActionContext) for the current turn of conversation.
+     * @param activity [Activity](xref:botbuilder-schema.Activity) to recognize.
+     * @returns A Promise representing a [RecognizerResult](xref:botbuilder.RecognizerResult).
      */
     protected async onRecognize(actionContext: ActionContext, activity: Activity): Promise<RecognizerResult> {
         const { text } = activity;
@@ -614,9 +614,9 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
 
     /**
      * @protected
-     * Waits for pending actions to complete and moves on to `OnEndOfActions`.
-     * @param dc The `DialogContext` for the current turn of conversation.
-     * @returns A Promise representation of `DialogTurnResult`.
+     * Waits for pending actions to complete and moves on to [OnEndOfActions](xref:botbuilder-dialogs-adaptive.OnEndOfActions).
+     * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
+     * @returns A Promise representation of [DialogTurnResult](xref:botbuilder-dialogs.DialogTurnResult).
      */
     protected async continueActions(dc: DialogContext): Promise<DialogTurnResult> {
         // Apply any queued up changes
@@ -682,8 +682,8 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
 
     /**
      * @protected
-     * `onSetScopedServices` provides the ability to set scoped services for the current dialogContext.
-     * @param dialogContext The `DialogContext` for the current turn of conversation.
+     * Provides the ability to set scoped services for the current [DialogContext](xref:botbuilder-dialogs.DialogContext).
+     * @param dialogContext The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
      */
     protected onSetScopedServices(dialogContext: DialogContext): void {
         if (this.generator) {
@@ -693,8 +693,8 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
 
     /**
      * @protected
-     * Removes the most current action from the given `ActionContext` if there are any.
-     * @param actionContext The `ActionContext` for the current turn of conversation.
+     * Removes the most current action from the given [ActionContext](xref:botbuilder-dialogs-adaptive.ActionContext) if there are any.
+     * @param actionContext The [ActionContext](xref:botbuilder-dialogs-adaptive.ActionContext) for the current turn of conversation.
      * @returns A Promise representing a boolean indicator for the result.
      */
     protected async endCurrentAction(actionContext: ActionContext): Promise<boolean> {
@@ -708,8 +708,8 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
     /**
      * @protected
      * Awaits for completed actions to finish processing entity assignments and finishes the turn.
-     * @param actionContext The `ActionContext` for the current turn of conversation.
-     * @returns A Promise representation of `DialogTurnResult`.
+     * @param actionContext The [ActionContext](xref:botbuilder-dialogs-adaptive.ActionContext) for the current turn of conversation.
+     * @returns A Promise representation of [DialogTurnResult](xref:botbuilder-dialogs.DialogTurnResult).
      */
     protected async onEndOfActions(actionContext: ActionContext): Promise<DialogTurnResult> {
         // Is the current dialog still on the stack?

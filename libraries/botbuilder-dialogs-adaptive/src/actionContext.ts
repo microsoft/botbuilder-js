@@ -12,14 +12,14 @@ import { ActionChangeList } from './actionChangeList';
 import { ActionChangeType } from './actionChangeType';
 
 /**
- * Extends the `DialogContext` with additional methods for manipulating the
- * executing sequence of actions for an `AdaptiveDialog`.
+ * Extends the [DialogContext](xref:botbuilder-dialogs.DialogContext) with additional methods for manipulating the
+ * executing sequence of actions for an [AdaptiveDialog](xref:botbuilder-dialogs-adaptive.AdaptiveDialog).
  */
 export class ActionContext extends DialogContext {
     private readonly _changeKey: symbol;
 
     /**
-     * Initializes a new instance of the `ActionContext` class
+     * Initializes a new instance of the [ActionContext](xref:botbuilder-dialogs-adaptive.ActionContext) class
      * @param dialogs The dialog set to create the action context for.
      * @param parentDialogContext Parent dialog context.
      * @param state Current dialog state.

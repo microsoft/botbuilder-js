@@ -28,15 +28,15 @@ import { LuisAdaptiveRecognizer } from './luis';
 import { LanguagePolicyConverter } from './languagePolicy';
 
 /**
- * `ComponentRegistration` implementation for adaptive components.
+ * [ComponentRegistration](xref:botbuilder-dialogs-declarative.ComponentRegistration) implementation for adaptive components.
  */
 export class AdaptiveDialogComponentRegistration implements ComponentRegistration {
     private _resourceExplorer: ResourceExplorer;
     private _builderRegistrations: BuilderRegistration[] = [];
 
     /**
-     * Initializes a new instance of the `AdaptiveComponentRegistration` class.
-     * @param resourceExplorer `ResourceExplorer` to get all schema resources.
+     * Initializes a new instance of the [AdaptiveComponentRegistration](xref:botbuilder-dialogs-adaptive.AdaptiveComponentRegistration) class.
+     * @param resourceExplorer [ResourceExplorer](xref:botbuilder-dialogs-declarative.ResourceExplorer) to get all schema resources.
      */
     public constructor(resourceExplorer: ResourceExplorer) {
         this._resourceExplorer = resourceExplorer;
@@ -68,7 +68,7 @@ export class AdaptiveDialogComponentRegistration implements ComponentRegistratio
 
     /**
      * Gets all the builder registrations instances.
-     * @returns An array of `BuilderRegistration`.
+     * @returns An array of [BuilderRegistration](xref:botbuilder-dialogs-declarative.BuilderRegistration).
      */
     public getTypeBuilders(): BuilderRegistration[] {
         return this._builderRegistrations;
