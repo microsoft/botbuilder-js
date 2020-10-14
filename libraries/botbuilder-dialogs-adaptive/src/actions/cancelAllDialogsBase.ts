@@ -15,7 +15,7 @@ export class CancelAllDialogsBase<O extends object = {}> extends Dialog<O> {
     public constructor();
 
     /**
-     * Initializes a new instance of the `CancelAllDialogsBase` class.
+     * Initializes a new instance of the [CancelAllDialogsBase](xref:botbuilder-dialogs-adaptive.CancelAllDialogsBase) class.
      * @param eventName Expression for event name.
      * @param eventValue Optional. Expression for event value.
      * @param isCancelAll Set to `true` to cancel all dialogs; `false` otherwise.
@@ -23,7 +23,7 @@ export class CancelAllDialogsBase<O extends object = {}> extends Dialog<O> {
     public constructor(eventName: string, eventValue?: string, isCancelAll?: boolean);
 
     /**
-     * Initializes a new instance of the `CancelAllDialogsBase` class.
+     * Initializes a new instance of the [CancelAllDialogsBase](xref:botbuilder-dialogs-adaptive.CancelAllDialogsBase) class.
      * @param eventName Optional. Expression for event name.
      * @param eventValue Optional. Expression for event value.
      * @param isCancelAll Set to `true` to cancel all dialogs; `false` otherwise.
@@ -68,7 +68,7 @@ export class CancelAllDialogsBase<O extends object = {}> extends Dialog<O> {
 
     /**
      * Called when the dialog is started and pushed onto the dialog stack.
-     * @param dc The `DialogContext` for the current turn of conversation.
+     * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
      * @param options Optional. Initial information to pass to the dialog.
      * @returns A `Promise` representing the asynchronous operation.
      */

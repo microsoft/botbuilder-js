@@ -52,7 +52,7 @@ export class ActionScope<O extends object = {}> extends Dialog<O> implements Dia
     }
 
     /**
-     * Gets the child dialog dependencies so they can be added to the containers dialog set.
+     * Gets the child [Dialog](xref:botbuilder-dialogs.Dialog) dependencies so they can be added to the containers dialog set.
      * @returns The child dialog dependencies.
      */
     public getDependencies(): Dialog[] {
@@ -61,7 +61,7 @@ export class ActionScope<O extends object = {}> extends Dialog<O> implements Dia
 
     /**
      * Called when the dialog is started and pushed onto the dialog stack.
-     * @param dc The `DialogContext` for the current turn of conversation.
+     * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
      * @param options Optional. Initial information to pass to the dialog.
      * @returns A `Promise` representing the asynchronous operation.
      */
@@ -76,7 +76,7 @@ export class ActionScope<O extends object = {}> extends Dialog<O> implements Dia
     /**
      * Called when the dialog is _continued_, where it is the active dialog and the 
      * user replies with a new activity.
-     * @param dc The `DialogContext` for the current turn of conversation.
+     * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
      * @returns A `Promise` representing the asynchronous operation.
      */
     public async continueDialog(dc: DialogContext): Promise<DialogTurnResult> {
@@ -85,8 +85,8 @@ export class ActionScope<O extends object = {}> extends Dialog<O> implements Dia
 
     /**
      * Called when a child dialog completed its turn, returning control to this dialog.
-     * @param dc The `DialogContext` for the current turn of conversation.
-     * @param _reason Reason why the dialog resumed.
+     * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
+     * @param _reason [DialogReason](xref:botbuilder-dialogs.DialogReason), reason why the dialog resumed.
      * @param result Optional. Value returned from the dialog that was called. The type 
      * of the value returned is dependent on the child dialog.
      * @returns A `Promise` representing the asynchronous operation.
@@ -101,9 +101,9 @@ export class ActionScope<O extends object = {}> extends Dialog<O> implements Dia
 
     /**
      * @protected
-     * Called when returning control to this dialog with an `ActionScopeResult`.
-     * @param dc The `DialogContext` for the current turn of conversation.
-     * @param actionScopeResult Contains the actions scope result.
+     * Called when returning control to this dialog with an [ActionScopeResult](xref:botbuilder-dialogs-adaptive.ActionScopeResult)
+     * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
+     * @param actionScopeResult The [ActionScopeResult](xref:botbuilder-dialogs-adaptive.ActionScopeResult).
      * @returns A `Promise` representing the asynchronous operation.
      */
     protected async onActionScopeResult(dc: DialogContext, actionScopeResult: ActionScopeResult): Promise<DialogTurnResult> {
@@ -121,10 +121,10 @@ export class ActionScope<O extends object = {}> extends Dialog<O> implements Dia
 
     /**
      * @protected
-     * Called when returning control to this dialog with an `ActionScopeResult` 
+     * Called when returning control to this dialog with an [ActionScopeResult](xref:botbuilder-dialogs-adaptive.ActionScopeResult)
      * with the property `ActionCommand` set to `GoToAction`.
-     * @param dc The `DialogContext` for the current turn of conversation.
-     * @param actionScopeResult Contains the actions scope result.
+     * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
+     * @param actionScopeResult The [ActionScopeResult](xref:botbuilder-dialogs-adaptive.ActionScopeResult).
      * @returns A `Promise` representing the asynchronous operation.
      */
     protected async onGotoAction(dc: DialogContext, actionScopeResult: ActionScopeResult): Promise<DialogTurnResult> {
@@ -142,9 +142,9 @@ export class ActionScope<O extends object = {}> extends Dialog<O> implements Dia
 
     /**
      * @protected
-     * Called when returning control to this dialog with an `ActionScopeResult` 
+     * Called when returning control to this dialog with an [ActionScopeResult](xref:botbuilder-dialogs-adaptive.ActionScopeResult)
      * with the property `ActionCommand` set to `BreakLoop`.
-     * @param dc The `DialogContext` for the current turn of conversation.
+     * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
      * @param actionScopeResult Contains the actions scope result.
      * @returns A `Promise` representing the asynchronous operation.
      */
@@ -154,9 +154,9 @@ export class ActionScope<O extends object = {}> extends Dialog<O> implements Dia
 
     /**
      * @protected
-     * Called when returning control to this dialog with an `ActionScopeResult` 
+     * Called when returning control to this dialog with an [ActionScopeResult](xref:botbuilder-dialogs-adaptive.ActionScopeResult)
      * with the property `ActionCommand` set to `ContinueLoop`.
-     * @param dc The `DialogContext` for the current turn of conversation.
+     * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
      * @param actionScopeResult Contains the actions scope result.
      * @returns A `Promise` representing the asynchronous operation.
      */
@@ -167,7 +167,7 @@ export class ActionScope<O extends object = {}> extends Dialog<O> implements Dia
     /**
      * @protected
      * Called when the dialog continues to the next action.
-     * @param dc The `DialogContext` for the current turn of conversation.
+     * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
      * @param result Optional. Value returned from the dialog that was called. The type 
      * of the value returned is dependent on the child dialog.
      * @returns A `Promise` representing the asynchronous operation.
@@ -206,7 +206,7 @@ export class ActionScope<O extends object = {}> extends Dialog<O> implements Dia
     /**
      * @protected
      * Called when the dialog's action ends.
-     * @param dc The `DialogContext` for the current turn of conversation.
+     * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
      * @param result Optional. Value returned from the dialog that was called. The type 
      * of the value returned is dependent on the child dialog.
      * @returns A `Promise` representing the asynchronous operation.
@@ -218,7 +218,7 @@ export class ActionScope<O extends object = {}> extends Dialog<O> implements Dia
     /**
      * @protected
      * Starts a new dialog and pushes it onto the dialog stack.
-     * @param dc The `DialogContext` for the current turn of conversation.
+     * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
      * @param offset Optional, value returned from the dialog that was called. The type 
      * of the value returned is dependent on the child dialog.
      * @returns A `Promise` representing the asynchronous operation.

@@ -20,8 +20,8 @@ export class CodeAction<O extends object = {}> extends Dialog<O> {
     public disabled?: BoolExpression;
 
     /**
-     * Initializes a new instance of the `CodeAction` class.
-     * @param codeHandler Code handler for the action.
+     * Initializes a new instance of the [CodeAction](xref:botbuilder-dialogs-adaptive.CodeAction) class.
+     * @param codeHandler [CodeActionHandler](xref:botbuilder-dialogs-adaptive.CodeActionHandler), code handler for the action.
      */
     public constructor(codeHandler: CodeActionHandler) {
         super();
@@ -38,7 +38,7 @@ export class CodeAction<O extends object = {}> extends Dialog<O> {
 
     /**
      * Called when the dialog is started and pushed onto the dialog stack.
-     * @param dc The `DialogContext` for the current turn of conversation.
+     * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
      * @param options Optional. Initial information to pass to the dialog.
      * @returns A `Promise` representing the asynchronous operation.
      */

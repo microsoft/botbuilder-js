@@ -15,14 +15,14 @@ export class CancelDialog<O extends object = {}> extends CancelAllDialogsBase<O>
     public constructor();
 
     /**
-     * Initializes a new instance of the `CancelDialog` class.
+     * Initializes a new instance of the [CancelDialog](xref:botbuilder-dialogs-adaptive.CancelDialog) class.
      * @param eventName Expression for event name.
      * @param eventValue Optional. Expression for event value.
      */
     public constructor(eventName: string, eventValue?: string);
 
     /**
-     * Initializes a new instance of the `CancelDialog` class.
+     * Initializes a new instance of the [CancelDialog](xref:botbuilder-dialogs-adaptive.CancelDialog) class.
      * @param eventName Optional. Expression for event name.
      * @param eventValue Optional. Expression for event value.
      */

@@ -15,7 +15,7 @@ export class DeleteActivity<O extends object = {}> extends Dialog<O> {
     public constructor();
 
     /**
-     * Initializes a new instance of the `DeleteActivity` class.
+     * Initializes a new instance of the [DeleteActivity](xref:botbuilder-dialogs-adaptive.DeleteActivity) class.
      * @param activityId ID of the activity to update.
      */
     public constructor(activityId?: string) {
@@ -35,7 +35,7 @@ export class DeleteActivity<O extends object = {}> extends Dialog<O> {
 
     /**
      * Called when the dialog is started and pushed onto the dialog stack.
-     * @param dc The `DialogContext` for the current turn of conversation.
+     * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
      * @param options Optional. Initial information to pass to the dialog.
      * @returns A `Promise` representing the asynchronous operation.
      */

@@ -15,7 +15,7 @@ import { replaceJsonRecursively } from '../jsonExtensions';
  */
 export class BaseInvokeDialog<O extends object = {}> extends Dialog<O> implements DialogDependencies {
     /**
-     * Initializes a new instance of the `BaseInvokeDialog` class.
+     * Initializes a new instance of the [BaseInvokeDialog](xref:botbuilder-dialogs-adaptive.BaseInvokeDialog) class.
      * Expression for `dialogId` to call (allowing dynamic expression).
      * @param dialogIdToCall Optional. Id of the dialog to call.
      * @param bindingOptions Optional. Binding options for the dialog to call.
@@ -48,7 +48,7 @@ export class BaseInvokeDialog<O extends object = {}> extends Dialog<O> implement
     /**
      * Called when the dialog is started and pushed onto the dialog stack.
      * @remarks Method not implemented.
-     * @param dc The `DialogContext` for the current turn of conversation.
+     * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
      * @param options Optional. Initial information to pass to the dialog.
      * @returns A `Promise` representing the asynchronous operation.
      */
@@ -57,7 +57,7 @@ export class BaseInvokeDialog<O extends object = {}> extends Dialog<O> implement
     }
 
     /**
-     * Gets the child dialog dependencies so they can be added to the containers dialog set.
+     * Gets the child [Dialog](xref:botbuilder-dialogs.Dialog) dependencies so they can be added to the containers dialog set.
      * @returns The child dialog dependencies.
      */
     public getDependencies(): Dialog<{}>[] {
@@ -78,8 +78,8 @@ export class BaseInvokeDialog<O extends object = {}> extends Dialog<O> implement
 
     /**
      * @protected
-     * Resolve Dialog Expression as either `Dialog`, or `StringExpression` to get `dialogid`.
-     * @param dc The `DialogContext` for the current turn of conversation.
+     * Resolve Dialog Expression as either [Dialog](xref:botbuilder-dialogs.Dialog), or [StringExpression](xref:adaptive-expressions.StringExpression) to get `dialogid`.
+     * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
      */
     protected resolveDialog(dc: DialogContext): Dialog {
         if (this.dialog && this.dialog.value) {
@@ -99,7 +99,7 @@ export class BaseInvokeDialog<O extends object = {}> extends Dialog<O> implement
     /**
      * @protected
      * BindOptions - evaluate expressions in options.
-     * @param dc The `DialogContext` for the current turn of conversation.
+     * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
      * @param options Options to bind.
      * @returns The merged options with expressions bound to values.
      */

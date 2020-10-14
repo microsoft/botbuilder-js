@@ -15,7 +15,7 @@ import { ActionScope } from './actionScope';
  */
 export class Case extends ActionScope {
     /**
-     * Initializes a new instance of the `Case` class.
+     * Initializes a new instance of the [Case](xref:botbuilder-dialogs-adaptive.Case) class.
      * @param value Optional. Case's string value.
      * @param actions Optional. Numerable list of dialog actions.
      */
@@ -58,23 +58,23 @@ export class Case extends ActionScope {
 }
 
 /**
- * `config` to `Case` converter class.
+ * `config` to [Case](xref:botbuilder-dialogs-adaptive.Case) converter class.
  */
 export class CaseConverter implements Converter {
     private _resourceExplorer: ResourceExplorer;
 
     /**
-     * Initializes a new instance of the `CaseConverter` class.
-     * @param resourceExplorer `ResourceExplorer` to use.
+     * Initializes a new instance of the [CaseConverter](xref:botbuilder-dialogs-adaptive.CaseConverter) class.
+     * @param resourceExplorer [ResourceExplorer](xref:botbuilder-dialogs-declarative.ResourceExplorer) to use.
      */
     public constructor(resourceExplorer: ResourceExplorer) {
         this._resourceExplorer = resourceExplorer;
     }
 
     /**
-     * Converts a `config` object into a `Case` object.
+     * Converts a `config` object into a [Case](xref:botbuilder-dialogs-adaptive.Case) object.
      * @param config Composed of the case `string` value and an numerable list of dialog actions.
-     * @returns The `Case`.
+     * @returns The [Case](xref:botbuilder-dialogs-adaptive.Case).
      */
     public convert(config: { value: string; actions: Dialog[] }): Case {
         return new Case(config.value, config.actions);

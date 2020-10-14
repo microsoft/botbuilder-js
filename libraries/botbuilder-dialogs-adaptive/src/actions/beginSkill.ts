@@ -85,7 +85,7 @@ export class BeginSkill extends SkillDialog {
 
     /**
      * Called when the dialog is started and pushed onto the dialog stack.
-     * @param dc The `DialogContext` for the current turn of conversation.
+     * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
      * @param options Optional. Initial information to pass to the dialog.
      * @returns A `Promise` representing the asynchronous operation.
      */
@@ -137,7 +137,7 @@ export class BeginSkill extends SkillDialog {
     /**
      * Called when the dialog is _continued_, where it is the active dialog and the 
      * user replies with a new activity.
-     * @param dc The `DialogContext` for the current turn of conversation.
+     * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
      * @returns A `Promise` representing the asynchronous operation.
      */
     public async continueDialog(dc: DialogContext): Promise<DialogTurnResult> {
@@ -156,8 +156,8 @@ export class BeginSkill extends SkillDialog {
 
     /**
      * Called when the dialog should re-prompt the user for input.
-     * @param turnContext The context object for this turn.
-     * @param instance State information for this dialog.
+     * @param turnContext [TurnContext](xref:botbuilder-core.TurnContext), the context object for this turn.
+     * @param instance [DialogInstance](xref:botbuilder-dialogs.DialogInstance), state information for this dialog.
      * @returns A `Promise` representing the asynchronous operation.
      */
     public async repromptDialog(turnContext: TurnContext, instance: DialogInstance): Promise<void> {
@@ -167,8 +167,8 @@ export class BeginSkill extends SkillDialog {
 
     /**
      * Called when a child dialog completed its turn, returning control to this dialog.
-     * @param dc The `DialogContext` for the current turn of conversation.
-     * @param reason Reason why the dialog resumed.
+     * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
+     * @param reason [DialogReason](xref:botbuilder-dialogs.DialogReason), reason why the dialog resumed.
      * @param result Optional. Value returned from the dialog that was called. The type 
      * of the value returned is dependent on the child dialog.
      * @returns A `Promise` representing the asynchronous operation.
@@ -180,9 +180,9 @@ export class BeginSkill extends SkillDialog {
 
     /**
      * Called when the dialog is ending.
-     * @param turnContext The context object for this turn.
-     * @param instance State information associated with the instance of this dialog on the dialog stack.
-     * @param reason Reason why the dialog ended.
+     * @param turnContext [TurnContext](xref:botbuilder-core.TurnContext), the context object for this turn.
+     * @param instance [DialogInstance](xref:botbuilder-dialogs.DialogInstance), state information associated with the instance of this dialog on the dialog stack.
+     * @param reason [DialogReason](xref:botbuilder-dialogs.DialogReason), reason why the dialog ended.
      * @returns A `Promise` representing the asynchronous operation.
      */
     public async endDialog(turnContext: TurnContext, instance: DialogInstance, reason: DialogReason): Promise<void> {
@@ -205,10 +205,10 @@ export class BeginSkill extends SkillDialog {
 
     /**
      * @private
-     * Regenerates the `SkillDialog.DialogOptions` based on the values used during the `BeginDialog` call.
+     * Regenerates the [SkillDialog.DialogOptions](xref:botbuilder-dialogs.SkillDialog.DialogOptions) based on the values used during the `BeginDialog` call.
      * @remarks The dialog can be resumed in another server or after redeploying the bot, this code ensure that the options used are the ones
      * used to call `BeginDialog`.
-     * Also, if `ContinueConversation` or other methods are called on a server different than the one where BeginDialog was called,
+     * Also, if `ContinueConversation` or other methods are called on a server different than the one where `BeginDialog` was called,
      * `DialogOptions` will be empty and this code will make sure it has the right value.
      */
     private loadDialogOptions(context: TurnContext, instance: DialogInstance): void {
