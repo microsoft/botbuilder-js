@@ -6,10 +6,10 @@
 name: $(Build.BuildId)
 
 pool:
-  vmImage: 'macOS-10.15'
+  vmImage: 'ubuntu-18.04'
 
 variables:
-  NodeVersion: 10.x
+  NodeVersion: 12.x
 #  PackageVersion: Define this in Azure to be settable at queue time. Ex: 4.11.0-dev.{DateStamp}.{CommitHash} 
 #  PreviewPackageVersion: Define this in Azure to be settable at queue time. Ex: 4.11.0-dev.{DateStamp}.{CommitHash}
 
@@ -33,26 +33,10 @@ steps:
 - template: js-build-steps.yml
 
 - task: Npm@1
-  displayName: 'npm run eslint'
-  inputs:
-    command: custom
-    verbose: false
-    customCommand: 'run eslint'
-
-- task: Npm@1
   displayName: 'npm pack adaptive-expressions'
   inputs:
     command: custom
     workingDir: 'libraries/adaptive-expressions'
-    verbose: false
-    customCommand: pack
-    publishEndpoint: 'MyGet botbuilder JS Scratch Feed'
-
-- task: Npm@1
-  displayName: 'npm pack botframework-streaming'
-  inputs:
-    command: custom
-    workingDir: 'libraries/botframework-streaming'
     verbose: false
     customCommand: pack
     publishEndpoint: 'MyGet botbuilder JS Scratch Feed'
@@ -139,6 +123,15 @@ steps:
     publishEndpoint: 'MyGet botbuilder JS Scratch Feed'
 
 - task: Npm@1
+  displayName: 'npm pack botbuilder-lg'
+  inputs:
+    command: custom
+    workingDir: 'libraries/botbuilder-lg'
+    verbose: false
+    customCommand: pack
+    publishEndpoint: 'MyGet botbuilder JS Scratch Feed'
+
+- task: Npm@1
   displayName: 'npm pack botbuilder-testing'
   inputs:
     command: custom
@@ -175,10 +168,10 @@ steps:
     publishEndpoint: 'MyGet botbuilder JS Scratch Feed'
 
 - task: Npm@1
-  displayName: 'npm pack botbuilder-lg'
+  displayName: 'npm pack botframework-streaming'
   inputs:
     command: custom
-    workingDir: 'libraries/botbuilder-lg'
+    workingDir: 'libraries/botframework-streaming'
     verbose: false
     customCommand: pack
     publishEndpoint: 'MyGet botbuilder JS Scratch Feed'
