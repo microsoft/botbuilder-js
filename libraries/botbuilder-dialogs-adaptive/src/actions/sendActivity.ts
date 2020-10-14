@@ -5,12 +5,16 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { DialogTurnResult, DialogContext, Dialog } from 'botbuilder-dialogs';
-import { Activity, StringUtils, MessageFactory, ActivityTypes, ResourceResponse } from 'botbuilder-core';
+import { DialogTurnResult, DialogContext, Dialog, DialogStateManager } from 'botbuilder-dialogs';
+import { Activity, StringUtils, ActivityTypes, ResourceResponse } from 'botbuilder-core';
 import { TemplateInterface } from '../template';
 import { ActivityTemplate } from '../templates/activityTemplate';
 import { StaticActivityTemplate } from '../templates/staticActivityTemplate';
 import { BoolExpression } from 'adaptive-expressions';
+
+type D = DialogStateManager & {
+    utterance: string;
+};
 
 export class SendActivity<O extends object = {}> extends Dialog<O> {
     /**
@@ -31,7 +35,7 @@ export class SendActivity<O extends object = {}> extends Dialog<O> {
     /**
      * Gets or sets template for the activity.
      */
-    public activity: TemplateInterface<Partial<Activity>>;
+    public activity: TemplateInterface<Partial<Activity>, D & O>;
 
     /**
      * An optional expression which if is true will disable this action.
