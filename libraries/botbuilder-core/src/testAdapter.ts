@@ -467,10 +467,11 @@ export class TestAdapter extends BotAdapter implements ExtendedUserTokenProvider
 
     /**
      * Gets a sign-in resource.
-     * @param context Context for the current turn of conversation with the user.
+     * @param context [TurnContext](xref:botbuilder-core.TurnContext) for the current turn of conversation with the user.
      * @param connectionName Name of the auth connection to use.
      * @param userId User ID
      * @param finalRedirect Final redirect URL.
+     * @returns A `Promise` with a new [SignInUrlResponse](xref:botframework-schema.SignInUrlResponse) object.
      */
     public async getSignInResource(context: TurnContext, connectionName: string, userId?: string, finalRedirect?: string): Promise<SignInUrlResponse> {
         return {
@@ -486,7 +487,7 @@ export class TestAdapter extends BotAdapter implements ExtendedUserTokenProvider
 
     /**
      * Performs a token exchange operation such as for single sign-on.
-     * @param context Context for the current turn of conversation with the user.
+     * @param context [TurnContext](xref:botbuilder-core.TurnContext) for the current turn of conversation with the user.
      * @param connectionName Name of the auth connection to use.
      * @param userId User id associated with the token.
      * @param tokenExchangeRequest Exchange request details, either a token to exchange or a uri to exchange.

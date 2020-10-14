@@ -866,9 +866,9 @@ export class ActivityHandler extends ActivityHandlerBase {
     }
 
     /**
-     * An InvokeResponse factory that initializes the body to the parameter passed and status equal to OK.
+     * An [InvokeResponse](xref:botbuilder.InvokeResponse) factory that initializes the body to the parameter passed and status equal to OK.
      * @param body JSON serialized content from a POST response.
-     * @returns A new InvokeResponse object.
+     * @returns A new [InvokeResponse](xref:botbuilder.InvokeResponse) object.
      */
     protected static createInvokeResponse(body?: any): InvokeResponse {
         return { status: 200, body };

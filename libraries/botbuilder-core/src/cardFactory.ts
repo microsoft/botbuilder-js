@@ -47,7 +47,8 @@ export class CardFactory {
      * Returns an attachment for an Adaptive Card.
      *
      * @param card A description of the Adaptive Card to return.
-     * 
+     * @returns An [Attachment](xref:botframework-schema.Attachment).
+     *
      * @remarks
      * Adaptive Cards are an open card exchange format enabling developers to exchange UI content in a common and consistent way.
      * For channels that don't yet support Adaptive Cards natively, the Bot Framework will
@@ -85,12 +86,13 @@ export class CardFactory {
 
     /**
      * Returns an attachment for an animation card.
-     * 
+     *
      * @param title The card title.
      * @param media The media URLs for the card.
      * @param buttons Optional. The array of buttons to include on the card. Each `string` in the array
      *      is converted to an `imBack` button with a title and value set to the value of the string.
      * @param other Optional. Any additional properties to include on the card.
+     * @returns An [Attachment](xref:botframework-schema.Attachment).
      */
     public static animationCard(
         title: string,
@@ -103,12 +105,13 @@ export class CardFactory {
 
     /**
      * Returns an attachment for an audio card.
-     * 
+     *
      * @param title The card title.
      * @param media The media URL for the card.
      * @param buttons Optional. The array of buttons to include on the card. Each `string` in the array
      *      is converted to an `imBack` button with a title and value set to the value of the string.
      * @param other Optional. Any additional properties to include on the card.
+     * @returns An [Attachment](xref:botframework-schema.Attachment).
      */
     public static audioCard(
         title: string,
@@ -123,17 +126,16 @@ export class CardFactory {
      * Returns an attachment for a hero card.
      *
      * @param title The card title.
-     * @param text Optional. The card text.
      * @param images Optional. The array of images to include on the card. Each element can be a
      *      [CardImage](ref:botframework-schema.CardImage) or the URL of the image to include.
      * @param buttons Optional. The array of buttons to include on the card. Each `string` in the array
      *      is converted to an `imBack` button with a title and value set to the value of the string.
      * @param other Optional. Any additional properties to include on the card.
-     * 
+     * @returns An [Attachment](xref:botframework-schema.Attachment).
+     *
      * @remarks
      * Hero cards tend to have one dominant, full-width image.
      * Channels typically render the card's text and buttons below the image.
-     * 
      * For example:
      * ```javascript
      * const card = CardFactory.heroCard(
@@ -149,6 +151,30 @@ export class CardFactory {
         buttons?: (CardAction | string)[],
         other?: Partial<HeroCard>
     ): Attachment;
+    /**
+     * Returns an attachment for a hero card.
+     *
+     * @param title The card title.
+     * @param text The card text.
+     * @param images Optional. The array of images to include on the card. Each element can be a
+     *      [CardImage](ref:botframework-schema.CardImage) or the URL of the image to include.
+     * @param buttons Optional. The array of buttons to include on the card. Each `string` in the array
+     *      is converted to an `imBack` button with a title and value set to the value of the string.
+     * @param other Optional. Any additional properties to include on the card.
+     * @returns An [Attachment](xref:botframework-schema.Attachment).
+     *
+     * @remarks
+     * Hero cards tend to have one dominant, full-width image.
+     * Channels typically render the card's text and buttons below the image.
+     * For example:
+     * ```javascript
+     * const card = CardFactory.heroCard(
+     *      'White T-Shirt',
+     *      ['https://example.com/whiteShirt.jpg'],
+     *      ['buy']
+     * );
+     * ```
+     */
     public static heroCard(
         title: string,
         text: string,
@@ -161,9 +187,24 @@ export class CardFactory {
      *
      * @param title The card title.
      * @param text Optional. The card text.
-     * @param images Optional. Images to include on the card.
-     * @param buttons Optional. Buttons to include on the card.
+     * @param images Optional. The array of images to include on the card. Each element can be a
+     *      [CardImage](ref:botframework-schema.CardImage) or the URL of the image to include.
+     * @param buttons Optional. The array of buttons to include on the card. Each `string` in the array
+     *      is converted to an `imBack` button with a title and value set to the value of the string.
      * @param other Optional. Any additional properties to include on the card.
+     * @returns An [Attachment](xref:botframework-schema.Attachment).
+     *
+     * @remarks
+     * Hero cards tend to have one dominant, full-width image.
+     * Channels typically render the card's text and buttons below the image.
+     * For example:
+     * ```javascript
+     * const card = CardFactory.heroCard(
+     *      'White T-Shirt',
+     *      ['https://example.com/whiteShirt.jpg'],
+     *      ['buy']
+     * );
+     * ```
      */
     public static heroCard(
         title: string,
@@ -179,12 +220,13 @@ export class CardFactory {
 
     /**
      * Returns an attachment for an OAuth card.
-     * 
+     *
      * @param connectionName The name of the OAuth connection to use.
      * @param title The title for the card's sign-in button.
      * @param text Optional. Additional text to include on the card.
      * @param link Optional. The sign-in link to use.
-     * 
+     * @returns An [Attachment](xref:botframework-schema.Attachment).
+     *
      * @remarks
      * OAuth cards support the Bot Framework's single sign on (SSO) service.
      */
@@ -206,7 +248,8 @@ export class CardFactory {
     * Returns an attachment for an Office 365 connector card.
     *
     * @param card a description of the Office 365 connector card to return.
-    * 
+    * @returns An [Attachment](xref:botframework-schema.Attachment).
+    *
     * @remarks
     * For example:
     * ```JavaScript
@@ -231,8 +274,9 @@ export class CardFactory {
 
     /**
      * Returns an attachment for a receipt card.
-     * 
+     *
      * @param card A description of the receipt card to return.
+     * @returns An [Attachment](xref:botframework-schema.Attachment).
      */
     public static receiptCard(card: ReceiptCard): Attachment {
         return { contentType: CardFactory.contentTypes.receiptCard, content: card };
@@ -244,7 +288,8 @@ export class CardFactory {
      * @param title The title for the card's sign-in button.
      * @param url The URL of the sign-in page to use.
      * @param text Optional. Additional text to include on the card.
-     * 
+     * @returns An [Attachment](xref:botframework-schema.Attachment).
+     *
      * @remarks
      * For channels that don't natively support sign-in cards, an alternative message is rendered.
      */
@@ -259,13 +304,13 @@ export class CardFactory {
      * Returns an attachment for a thumbnail card.
      *
      * @param title The card title.
-     * @param text Optional. The card text.
      * @param images Optional. The array of images to include on the card. Each element can be a
      *      [CardImage](ref:botframework-schema.CardImage) or the URL of the image to include.
      * @param buttons Optional. The array of buttons to include on the card. Each `string` in the array
      *      is converted to an `imBack` button with a title and value set to the value of the string.
      * @param other Optional. Any additional properties to include on the card.
-     * 
+     * @returns An [Attachment](xref:botframework-schema.Attachment).
+     *
      * @remarks
      * Thumbnail cards are similar to hero cards but instead of a full width image,
      * they're typically rendered with a smaller thumbnail version of the image.
@@ -278,6 +323,24 @@ export class CardFactory {
         buttons?: (CardAction | string)[],
         other?: Partial<ThumbnailCard>
     ): Attachment;
+    /**
+     * Returns an attachment for a thumbnail card.
+     *
+     * @param title The card title.
+     * @param text The card text.
+     * @param images Optional. The array of images to include on the card. Each element can be a
+     *      [CardImage](ref:botframework-schema.CardImage) or the URL of the image to include.
+     * @param buttons Optional. The array of buttons to include on the card. Each `string` in the array
+     *      is converted to an `imBack` button with a title and value set to the value of the string.
+     * @param other Optional. Any additional properties to include on the card.
+     * @returns An [Attachment](xref:botframework-schema.Attachment).
+     *
+     * @remarks
+     * Thumbnail cards are similar to hero cards but instead of a full width image,
+     * they're typically rendered with a smaller thumbnail version of the image.
+     * Channels typically render the card's text to one side of the image,
+     * with any buttons displayed below the card.
+     */
     public static thumbnailCard(
         title: string,
         text: string,
@@ -290,9 +353,18 @@ export class CardFactory {
      *
      * @param title The card title.
      * @param text Optional. The card text.
-     * @param images Optional. Images to include on the card.
-     * @param buttons Optional. Buttons to include on the card.
+     * @param images Optional. The array of images to include on the card. Each element can be a
+     *      [CardImage](ref:botframework-schema.CardImage) or the URL of the image to include.
+     * @param buttons Optional. The array of buttons to include on the card. Each `string` in the array
+     *      is converted to an `imBack` button with a title and value set to the value of the string.
      * @param other Optional. Any additional properties to include on the card.
+     * @returns An [Attachment](xref:botframework-schema.Attachment).
+     *
+     * @remarks
+     * Thumbnail cards are similar to hero cards but instead of a full width image,
+     * they're typically rendered with a smaller thumbnail version of the image.
+     * Channels typically render the card's text to one side of the image,
+     * with any buttons displayed below the card.
      */
     public static thumbnailCard(
         title: string,
@@ -318,12 +390,13 @@ export class CardFactory {
 
     /**
      * Returns an attachment for a video card.
-     * 
+     *
      * @param title The card title.
      * @param media The media URLs for the card.
      * @param buttons Optional. The array of buttons to include on the card. Each `string` in the array
      *      is converted to an `imBack` button with a title and value set to the value of the string.
      * @param other Optional. Any additional properties to include on the card.
+     * @returns An [Attachment](xref:botframework-schema.Attachment).
      */
     public static videoCard(
         title: string,
@@ -355,7 +428,7 @@ export class CardFactory {
 
     /**
      * Returns a properly formatted array of card images.
-     * 
+     *
      * @param images The array of images to include on the card. Each element can be a
      *      [CardImage](ref:botframework-schema.CardImage) or the URL of the image to include.
      */
@@ -374,7 +447,7 @@ export class CardFactory {
 
     /**
      * Returns a properly formatted array of media URL objects.
-     * 
+     *
      * @param links The media URLs. Each `string` is converted to a media URL object.
      */
     public static media(links: (MediaUrl | string)[] | undefined): MediaUrl[] {
