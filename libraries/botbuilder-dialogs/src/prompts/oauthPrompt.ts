@@ -147,9 +147,11 @@ export class OAuthPrompt extends Dialog {
 
     /**
      * Called when a prompt dialog is pushed onto the dialog stack and is being activated.
-     * @param dc The DialogContext for the current turn of the conversation.
-     * @param options Optional, additional information to pass to the prompt being started.
-     * @returns A Promise representing the asynchronous operation.
+     * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current
+     * turn of the conversation.
+     * @param options Optional. [PromptOptions](xref:botbuilder-dialogs.PromptOptions),
+     * additional information to pass to the prompt being started.
+     * @returns A `Promise` representing the asynchronous operation.
      * @remarks
      * If the task is successful, the result indicates whether the prompt is still
      * active after the turn has been processed by the prompt.
@@ -187,8 +189,9 @@ export class OAuthPrompt extends Dialog {
 
     /**
      * Called when a prompt dialog is the active dialog and the user replied with a new activity.
-     * @param dc The DialogContext for the current turn of the conversation.
-     * @returns A Promise representing the asynchronous operation.
+     * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn
+     * of the conversation.
+     * @returns A `Promise` representing the asynchronous operation.
      * @remarks
      * If the task is successful, the result indicates whether the dialog is still
      * active after the turn has been processed by the dialog.
