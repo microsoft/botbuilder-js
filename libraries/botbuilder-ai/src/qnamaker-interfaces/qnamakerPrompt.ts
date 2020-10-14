@@ -5,11 +5,10 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
- /**
+/**
  * QnAMaker Prompt Object.
  */
 export interface QnAMakerPrompt {
-    
     /**
      * Display Order - index of the prompt - used in ordering of the prompts.
      */

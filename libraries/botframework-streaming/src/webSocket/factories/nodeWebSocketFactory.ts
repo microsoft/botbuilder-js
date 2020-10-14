@@ -23,10 +23,14 @@ export class NodeWebSocketFactory extends NodeWebSocketFactoryBase {
      * @param socket The Socket connecting the bot and the server, from the 'net' module in Node.js.
      * @param head The first packet of the upgraded stream which may be empty per https://nodejs.org/api/http.html#http_event_upgrade_1.
      */
-    public async createWebSocket(req: INodeIncomingMessage, socket: INodeSocket, head: INodeBuffer): Promise<NodeWebSocket> {
+    public async createWebSocket(
+        req: INodeIncomingMessage,
+        socket: INodeSocket,
+        head: INodeBuffer
+    ): Promise<NodeWebSocket> {
         const s = new NodeWebSocket();
         await s.create(req, socket, head);
-        
+
         return s;
     }
 }

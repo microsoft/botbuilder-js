@@ -25,14 +25,14 @@ export abstract class Configurable {
                         // Apply as a map update
                         for (const child in setting) {
                             if (setting.hasOwnProperty(child)) {
-                                this[key][child] = setting[child]; 
+                                this[key][child] = setting[child];
                             }
                         }
                     } else {
                         this[key] = setting;
                     }
                 } else if (setting !== undefined) {
-                    this[key] = setting; 
+                    this[key] = setting;
                 }
             }
         }

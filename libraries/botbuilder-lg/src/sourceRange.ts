@@ -24,9 +24,9 @@ export class SourceRange {
      */
     public source: string;
 
-    public constructor(parseTree: ParserRuleContext, source?: string, offset?: number)
-    public constructor(range: Range, source?: string)
-    public constructor(x: Range|ParserRuleContext, source?: string, offset?: number) {
+    public constructor(parseTree: ParserRuleContext, source?: string, offset?: number);
+    public constructor(range: Range, source?: string);
+    public constructor(x: Range | ParserRuleContext, source?: string, offset?: number) {
         this.source = source || '';
         if (x instanceof Range) {
             this.range = x;

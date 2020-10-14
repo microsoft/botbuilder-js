@@ -14,7 +14,6 @@ import { MemoryInterface } from './memoryInterface';
  * Memory variables have a hierarchical relationship.
  */
 export class StackedMemory extends Array<MemoryInterface> implements MemoryInterface {
-
     public static wrap(memory: MemoryInterface): StackedMemory {
         if (memory instanceof StackedMemory) {
             return memory;
@@ -40,10 +39,10 @@ export class StackedMemory extends Array<MemoryInterface> implements MemoryInter
     }
 
     public setValue(_path: string, _value: any): void {
-        throw new Error(`Can't set value to ${ _path }, stacked memory is read-only`);
+        throw new Error(`Can't set value to ${_path}, stacked memory is read-only`);
     }
 
     public version(): string {
         return '0';
     }
-} 
+}

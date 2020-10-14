@@ -13,40 +13,49 @@ import { ActionContext } from '../actionContext';
 /**
  * Select the first true rule implementation of TriggerSelector
  */
-export class FirstSelector implements TriggerSelector {
+export class FirstSelector extends TriggerSelector {
     private _conditionals: OnCondition[];
     private _evaluate: boolean;
 
     /**
      * Gets or sets the expression parser to use.
      */
-    public parser: ExpressionParserInterface = new ExpressionParser()
+    public parser: ExpressionParserInterface = new ExpressionParser();
 
     public initialize(conditionals: OnCondition[], evaluate: boolean) {
         this._conditionals = conditionals;
         this._evaluate = evaluate;
     }
 
-    public select(actionContext: ActionContext): Promise<number[]> {
-        let selection = -1;
+    public select(actionContext: ActionContext): Promise<OnCondition[]> {
+        let selection: OnCondition;
+        let lowestPriority = Number.MAX_SAFE_INTEGER;
         if (this._evaluate) {
             for (let i = 0; i < this._conditionals.length; i++) {
                 const conditional = this._conditionals[i];
                 const expression = conditional.getExpression(this.parser);
                 const { value, error } = expression.tryEvaluate(actionContext.state);
                 if (value && !error) {
-                    selection = i;
-                    break;
+                    const priority = conditional.currentPriority(actionContext);
+                    if (priority >= 0 && priority < lowestPriority) {
+                        selection = conditional;
+                        lowestPriority = priority;
+                    }
                 }
             }
         } else {
-            if (this._conditionals.length > 0) {
-                selection = 0;
+            for (let i = 0; i < this._conditionals.length; i++) {
+                const conditional = this._conditionals[i];
+                const priority = conditional.currentPriority(actionContext);
+                if (priority >= 0 && priority < lowestPriority) {
+                    selection = conditional;
+                    lowestPriority = priority;
+                }
             }
         }
 
         const result = [];
-        if (selection != -1) {
+        if (selection) {
             result.push(selection);
         }
 
