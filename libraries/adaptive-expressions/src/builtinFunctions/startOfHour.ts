@@ -22,7 +22,7 @@ import { ReturnType } from '../returnType';
  */
 export class StartOfHour extends ExpressionEvaluator {
     /**
-     * Initializes a new instance of the `StartOfHour` class.
+     * Initializes a new instance of the [StartOfHour](xref:adaptive-expressions.StartOfHour) class.
      */
     public constructor() {
         super(ExpressionType.StartOfHour, StartOfHour.evaluator, ReturnType.String, StartOfHour.validator);

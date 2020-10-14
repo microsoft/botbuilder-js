@@ -18,7 +18,7 @@ import { ReturnType } from '../returnType';
  */
 export class SortBy extends ExpressionEvaluator {
     /**
-     * Initializes a new instance of the `SortBy` class.
+     * Initializes a new instance of the [SortBy](xref:adaptive-expressions.SortBy) class.
      */
     public constructor() {
         super(ExpressionType.SortBy, InternalFunctionUtils.sortBy(false), ReturnType.Array, SortBy.validator);

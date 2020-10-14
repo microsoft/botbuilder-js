@@ -16,7 +16,7 @@ import { ReturnType } from '../returnType';
  */
 export class String extends ExpressionEvaluator {
     /**
-     * Initializes a new instance of the `String` class.
+     * Initializes a new instance of the [String](xref:adaptive-expressions.String) class.
      */
     public constructor() {
         super(ExpressionType.String, String.evaluator(), ReturnType.String, FunctionUtils.validateUnary);

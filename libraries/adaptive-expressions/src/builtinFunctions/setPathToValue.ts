@@ -19,7 +19,7 @@ import { ReturnType } from '../returnType';
  */
 export class SetPathToValue extends ExpressionEvaluator {
     /**
-     * Initializes a new instance of the `SetPathToValue` class.
+     * Initializes a new instance of the [SetPathToValue](xref:adaptive-expressions.SetPathToValue) class.
      */
     public constructor() {
         super(ExpressionType.SetPathToValue, SetPathToValue.evaluator, ReturnType.Object, FunctionUtils.validateBinary);

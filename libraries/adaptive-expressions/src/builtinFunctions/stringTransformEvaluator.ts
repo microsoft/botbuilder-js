@@ -15,7 +15,7 @@ import { ReturnType } from '../returnType';
  */
 export class StringTransformEvaluator extends ExpressionEvaluator {
     /**
-     * Initializes a new instance of the `StringTransformEvaluator` class.
+     * Initializes a new instance of the [StringTransformEvaluator](xref:adaptive-expressions.StringTransformEvaluator) class.
      * @param type Name of the built-in function.
      * @param func The string transformation function, it takes a list of objects and returns an string.
      */

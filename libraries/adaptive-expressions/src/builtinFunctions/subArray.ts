@@ -18,7 +18,7 @@ import { ReturnType } from '../returnType';
  */
 export class SubArray extends ExpressionEvaluator {
     /**
-     * Initializes a new instance of the `SubArray` class.
+     * Initializes a new instance of the [SubArray](xref:adaptive-expressions.SubArray) class.
      */
     public constructor() {
         super(ExpressionType.SubArray, SubArray.evaluator, ReturnType.Array, SubArray.validator);
