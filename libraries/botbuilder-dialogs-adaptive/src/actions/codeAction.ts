@@ -12,7 +12,7 @@ import { BoolExpression } from 'adaptive-expressions';
 export type CodeActionHandler = (dc: DialogContext, options?: object) => Promise<DialogTurnResult>;
 
 /**
- * Class representing a dialog code action.
+ * Class representing a [Dialog](xref:botbuilder-dialogs.Dialog) code action.
  */
 export class CodeAction<O extends object = {}> extends Dialog<O> {
     private codeHandler: CodeActionHandler;
@@ -29,7 +29,7 @@ export class CodeAction<O extends object = {}> extends Dialog<O> {
     }
 
     /**
-     * Builds the compute Id for the dialog.
+     * Builds the compute Id for the [Dialog](xref:botbuilder-dialogs.Dialog).
      * @returns A `string` representing the compute Id.
      */
     protected onComputeId(): string {
@@ -37,7 +37,7 @@ export class CodeAction<O extends object = {}> extends Dialog<O> {
     }
 
     /**
-     * Called when the dialog is started and pushed onto the dialog stack.
+     * Called when the [Dialog](xref:botbuilder-dialogs.Dialog) is started and pushed onto the dialog stack.
      * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
      * @param options Optional. Initial information to pass to the dialog.
      * @returns A `Promise` representing the asynchronous operation.

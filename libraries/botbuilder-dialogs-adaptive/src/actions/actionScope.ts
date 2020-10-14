@@ -59,7 +59,7 @@ export class ActionScope<O extends object = {}> extends Dialog<O> implements Dia
     }
 
     /**
-     * Called when the dialog is started and pushed onto the dialog stack.
+     * Called when the [Dialog](xref:botbuilder-dialogs.Dialog) is started and pushed onto the dialog stack.
      * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
      * @param options Optional. Initial information to pass to the dialog.
      * @returns A `Promise` representing the asynchronous operation.
@@ -73,7 +73,7 @@ export class ActionScope<O extends object = {}> extends Dialog<O> implements Dia
     }
 
     /**
-     * Called when the dialog is _continued_, where it is the active dialog and the 
+     * Called when the [Dialog](xref:botbuilder-dialogs.Dialog) is _continued_, where it is the active dialog and the 
      * user replies with a new activity.
      * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
      * @returns A `Promise` representing the asynchronous operation.
@@ -83,7 +83,7 @@ export class ActionScope<O extends object = {}> extends Dialog<O> implements Dia
     }
 
     /**
-     * Called when a child dialog completed its turn, returning control to this dialog.
+     * Called when a child [Dialog](xref:botbuilder-dialogs.Dialog) completed its turn, returning control to this dialog.
      * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
      * @param _reason [DialogReason](xref:botbuilder-dialogs.DialogReason), reason why the dialog resumed.
      * @param result Optional. Value returned from the dialog that was called. The type 
@@ -100,7 +100,7 @@ export class ActionScope<O extends object = {}> extends Dialog<O> implements Dia
 
     /**
      * @protected
-     * Called when returning control to this dialog with an [ActionScopeResult](xref:botbuilder-dialogs-adaptive.ActionScopeResult)
+     * Called when returning control to this [Dialog](xref:botbuilder-dialogs.Dialog) with an [ActionScopeResult](xref:botbuilder-dialogs-adaptive.ActionScopeResult)
      * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
      * @param actionScopeResult The [ActionScopeResult](xref:botbuilder-dialogs-adaptive.ActionScopeResult).
      * @returns A `Promise` representing the asynchronous operation.
@@ -123,7 +123,7 @@ export class ActionScope<O extends object = {}> extends Dialog<O> implements Dia
 
     /**
      * @protected
-     * Called when returning control to this dialog with an [ActionScopeResult](xref:botbuilder-dialogs-adaptive.ActionScopeResult)
+     * Called when returning control to this [Dialog](xref:botbuilder-dialogs.Dialog) with an [ActionScopeResult](xref:botbuilder-dialogs-adaptive.ActionScopeResult)
      * with the property `ActionCommand` set to `GoToAction`.
      * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
      * @param actionScopeResult The [ActionScopeResult](xref:botbuilder-dialogs-adaptive.ActionScopeResult).
@@ -144,7 +144,7 @@ export class ActionScope<O extends object = {}> extends Dialog<O> implements Dia
 
     /**
      * @protected
-     * Called when returning control to this dialog with an [ActionScopeResult](xref:botbuilder-dialogs-adaptive.ActionScopeResult)
+     * Called when returning control to this [Dialog](xref:botbuilder-dialogs.Dialog) with an [ActionScopeResult](xref:botbuilder-dialogs-adaptive.ActionScopeResult)
      * with the property `ActionCommand` set to `BreakLoop`.
      * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
      * @param actionScopeResult Contains the actions scope result.
@@ -156,7 +156,7 @@ export class ActionScope<O extends object = {}> extends Dialog<O> implements Dia
 
     /**
      * @protected
-     * Called when returning control to this dialog with an [ActionScopeResult](xref:botbuilder-dialogs-adaptive.ActionScopeResult)
+     * Called when returning control to this [Dialog](xref:botbuilder-dialogs.Dialog) with an [ActionScopeResult](xref:botbuilder-dialogs-adaptive.ActionScopeResult)
      * with the property `ActionCommand` set to `ContinueLoop`.
      * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
      * @param actionScopeResult Contains the actions scope result.
@@ -168,7 +168,7 @@ export class ActionScope<O extends object = {}> extends Dialog<O> implements Dia
 
     /**
      * @protected
-     * Called when the dialog continues to the next action.
+     * Called when the [Dialog](xref:botbuilder-dialogs.Dialog) continues to the next action.
      * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
      * @param result Optional. Value returned from the dialog that was called. The type 
      * of the value returned is dependent on the child dialog.
@@ -207,7 +207,7 @@ export class ActionScope<O extends object = {}> extends Dialog<O> implements Dia
 
     /**
      * @protected
-     * Called when the dialog's action ends.
+     * Called when the [Dialog](xref:botbuilder-dialogs.Dialog)'s action ends.
      * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
      * @param result Optional. Value returned from the dialog that was called. The type 
      * of the value returned is dependent on the child dialog.
@@ -219,7 +219,7 @@ export class ActionScope<O extends object = {}> extends Dialog<O> implements Dia
 
     /**
      * @protected
-     * Starts a new dialog and pushes it onto the dialog stack.
+     * Starts a new [Dialog](xref:botbuilder-dialogs.Dialog) and pushes it onto the dialog stack.
      * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
      * @param offset Optional, value returned from the dialog that was called. The type 
      * of the value returned is dependent on the child dialog.

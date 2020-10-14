@@ -9,7 +9,7 @@ import { DialogTurnResult, DialogContext, Dialog, TurnPath, DialogEvents } from 
 import { StringExpression, BoolExpression, ValueExpression } from 'adaptive-expressions';
 
 /**
- * Base class for CancelAllDialogs api.
+ * Base class for [CancelAllDialogs](xref:botbuilder-dialogs-adaptive.CancelAllDialogs) api.
  */
 export class CancelAllDialogsBase<O extends object = {}> extends Dialog<O> {
     public constructor();
@@ -26,7 +26,7 @@ export class CancelAllDialogsBase<O extends object = {}> extends Dialog<O> {
      * Initializes a new instance of the [CancelAllDialogsBase](xref:botbuilder-dialogs-adaptive.CancelAllDialogsBase) class.
      * @param eventName Optional. Expression for event name.
      * @param eventValue Optional. Expression for event value.
-     * @param isCancelAll Set to `true` to cancel all dialogs; `false` otherwise.
+     * @param isCancelAll Set to `true` to cancel all [Dialogs](xref:botbuilder-dialogs.Dialog); `false` otherwise.
      */
     public constructor(eventName?: string, eventValue?: string, isCancelAll = true) {
         super();
@@ -65,7 +65,7 @@ export class CancelAllDialogsBase<O extends object = {}> extends Dialog<O> {
     public cancelAll: boolean;
 
     /**
-     * Called when the dialog is started and pushed onto the dialog stack.
+     * Called when the [Dialog](xref:botbuilder-dialogs.Dialog) is started and pushed onto the dialog stack.
      * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
      * @param options Optional. Initial information to pass to the dialog.
      * @returns A `Promise` representing the asynchronous operation.
@@ -98,7 +98,7 @@ export class CancelAllDialogsBase<O extends object = {}> extends Dialog<O> {
     
     /**
      * @protected
-     * Builds the compute Id for the dialog.
+     * Builds the compute Id for the [Dialog](xref:botbuilder-dialogs.Dialog).
      * @returns A `string` representing the compute Id.
      */
     protected onComputeId(): string {

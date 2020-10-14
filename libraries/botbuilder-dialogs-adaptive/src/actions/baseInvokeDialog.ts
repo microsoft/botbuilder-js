@@ -11,13 +11,13 @@ import { DialogExpression } from '../expressions';
 import { replaceJsonRecursively } from '../jsonExtensions';
 
 /**
- * Action which calls another dialog.
+ * Action which calls another [Dialog](xref:botbuilder-dialogs.Dialog).
  */
 export class BaseInvokeDialog<O extends object = {}> extends Dialog<O> implements DialogDependencies {
     /**
      * Initializes a new instance of the [BaseInvokeDialog](xref:botbuilder-dialogs-adaptive.BaseInvokeDialog) class.
      * Expression for `dialogId` to call (allowing dynamic expression).
-     * @param dialogIdToCall Optional. Id of the dialog to call.
+     * @param dialogIdToCall Optional. Id of the [Dialog](xref:botbuilder-dialogs.Dialog) to call.
      * @param bindingOptions Optional. Binding options for the dialog to call.
      */
     public constructor(dialogIdToCall?: string, bindingOptions?: O) {
@@ -46,7 +46,7 @@ export class BaseInvokeDialog<O extends object = {}> extends Dialog<O> implement
     public activityProcessed: BoolExpression = new BoolExpression(true);
 
     /**
-     * Called when the dialog is started and pushed onto the dialog stack.
+     * Called when the [Dialog](xref:botbuilder-dialogs.Dialog) is started and pushed onto the dialog stack.
      * @remarks Method not implemented.
      * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
      * @param options Optional. Initial information to pass to the dialog.
@@ -69,7 +69,7 @@ export class BaseInvokeDialog<O extends object = {}> extends Dialog<O> implement
 
     /**
      * @protected
-     * Builds the compute Id for the dialog.
+     * Builds the compute Id for the [Dialog](xref:botbuilder-dialogs.Dialog).
      * @returns A `string` representing the compute Id.
      */
     protected onComputeId(): string {
