@@ -88,7 +88,7 @@ export abstract class ResourceProvider {
     /**
      * @protected
      * Actions to perform when the current object is changed.
-     * @param event Resource Change Event.
+     * @param event Resource change event.
      * @param resources A collection of changed resources.
      */
     protected onChanged(event: ResourceChangeEvent, resources: Resource[]): void {

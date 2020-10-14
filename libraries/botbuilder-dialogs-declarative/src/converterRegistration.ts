@@ -12,7 +12,7 @@ import { Converter } from './converter';
  */
 export class ConverterRegistration {
     /**
-     * Creates a new instance of the `ConverterRegistration` class.
+     * Creates a new instance of the [ConverterRegistration](xref:botbuilder-dialogs-declarative.ConverterRegistration) class.
      * @param name Name for the converter.
      * @param converter Converter.
      */
