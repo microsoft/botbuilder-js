@@ -19,7 +19,7 @@ import { ReturnType } from '../returnType';
  */
 export class EndsWith extends ExpressionEvaluator {
     /**
-     * Initializes a new instance of the `EndsWith` class.
+     * Initializes a new instance of the [EndsWith](xref:adaptive-expressions.EndsWith) class.
      */
     public constructor() {
         super(ExpressionType.EndsWith, EndsWith.evaluator(), ReturnType.Boolean, EndsWith.validator);

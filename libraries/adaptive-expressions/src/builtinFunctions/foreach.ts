@@ -16,7 +16,7 @@ import { ReturnType } from '../returnType';
  */
 export class Foreach extends ExpressionEvaluator {
     /**
-     * Initializes a new instance of the `Foreach` class.
+     * Initializes a new instance of the [Foreach](xref:adaptive-expressions.Foreach) class.
      */
     public constructor() {
         super(

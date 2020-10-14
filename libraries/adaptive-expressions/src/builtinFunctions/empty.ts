@@ -19,7 +19,7 @@ import { ComparisonEvaluator } from './comparisonEvaluator';
  */
 export class Empty extends ComparisonEvaluator {
     /**
-     * Initializes a new instance of the `Empty` class.
+     * Initializes a new instance of the [Empty](xref:adaptive-expressions.Empty) class.
      */
     public constructor() {
         super(ExpressionType.Empty, Empty.func, FunctionUtils.validateUnary, FunctionUtils.verifyContainer);
