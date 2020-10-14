@@ -95,8 +95,8 @@ export class Recognizer {
 
     /**
      * @protected
-     * Tracks an event with the event name provided using the `BotTelemetryClient` attaching the properties / metrics.
-     * @param dialogContext The `DialogContext` for the current turn of conversation.
+     * Tracks an event with the event name provided using the [BotTelemetryClient](xref:botbuilder-core.BotTelemetryClient) attaching the properties / metrics.
+     * @param dialogContext The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
      * @param eventName The name of the event to track.
      * @param telemetryProperties Optional. The properties to be included as part of the event tracking.
      * @param telemetryMetrics Optional. The metrics to be included as part of the event tracking.
@@ -119,11 +119,11 @@ export interface IntentMap {
 }
 
 /**
- * Creates a `RecognizerResult`.
+ * Creates a [RecognizerResult](xref:botbuilder-core.RecognizerResult).
  * @param text Utterance sent to recognizer.
- * @param intents A map of intent names to an object with score.
+ * @param intents An [IntentMap](xref:botbuilder-dialogs-adaptive.IntentMap) of names containing an object with a score.
  * @param entities An object to represent the entities.
- * @returns A `RecognizerResult` object.
+ * @returns A [RecognizerResult](xref:botbuilder-core.RecognizerResult) object.
  */
 export function createRecognizerResult(text: string, intents?: IntentMap, entities?: object ): RecognizerResult {
     if (!intents) {

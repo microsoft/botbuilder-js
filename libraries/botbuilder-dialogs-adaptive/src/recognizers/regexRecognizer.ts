@@ -26,12 +26,12 @@ export class RegexRecognizer extends Recognizer {
     public entities: EntityRecognizer[] = [];
 
     /**
-     * Runs current `DialogContext.context.activity` through a recognizer and returns a `RecognizerResult`.
-     * @param dialogContext The `DialogContext` for the current turn of conversation.
-     * @param activity The `Activity` to recognize.
+     * Runs current `DialogContext.context.activity` through a recognizer and returns a [RecognizerResult](xref:botbuilder-core.RecognizerResult).
+     * @param dialogContext The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
+     * @param activity The [Activity](xref:botframework-schema.Activity) to recognize.
      * @param telemetryProperties Optional. Additional properties to be logged to telemetry with the LuisResult event.
      * @param telemetryMetrics Optional. Additional metrics to be logged to telemetry with the LuisResult event.
-     * @returns Recognized `RecognizerResult` Promise.
+     * @returns Recognized [RecognizerResult](xref:botbuilder-core.RecognizerResult) Promise.
      */
     public async recognize(dialogContext: DialogContext, activity: Activity, telemetryProperties?: { [key: string]: string }, telemetryMetrics?: { [key: string]: number }): Promise<RecognizerResult> {
         const text = activity.text || '';

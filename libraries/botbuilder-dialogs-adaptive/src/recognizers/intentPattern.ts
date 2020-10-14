@@ -15,7 +15,7 @@ export class IntentPattern {
     private _pattern: string;
 
     /**
-     * Initializes a new instance of the `IntentPattern` class.
+     * Initializes a new instance of the [IntentPattern](xref:botbuilder-dialogs-adaptive.IntentPattern) class.
      * @param intent Optional. The intent.
      * @param pattern Optional. The regex pattern to match.
      */
@@ -63,13 +63,13 @@ export class IntentPattern {
 }
 
 /**
- * Input pattern converter that implements `Converter`.
+ * Input pattern converter that implements [Converter](xref:botbuilder-dialogs-declarative.Converter).
  */
 export class IntentPatternConverter implements Converter {
     /**
-     * Converts an object or string to an `IntentPattern` instance.
+     * Converts an object or string to an [IntentPattern](xref:botbuilder-dialogs-adaptive.IntentPattern) instance.
      * @param value An object composed by the `intent` and the `pattern` to match.
-     * @returns A new `IntentPattern` instance.
+     * @returns A new [IntentPattern](xref:botbuilder-dialogs-adaptive.IntentPattern) instance.
      */
     public convert(value: { intent: string; pattern: string }): IntentPattern {
         return new IntentPattern(value.intent, value.pattern);
