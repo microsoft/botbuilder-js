@@ -12,13 +12,12 @@ import { InputDialog, InputState } from './inputDialog';
 import { StringExpression, NumberExpression } from 'adaptive-expressions';
 
 export class NumberInput extends InputDialog {
-
     public defaultLocale?: StringExpression;
 
     public outputFormat?: NumberExpression;
 
     protected onComputeId(): string {
-        return `NumberInput[${ this.prompt && this.prompt.toString() }]`;
+        return `NumberInput[${this.prompt && this.prompt.toString()}]`;
     }
 
     protected async onRecognizeInput(dc: DialogContext): Promise<InputState> {

@@ -22,6 +22,7 @@ import { FuncInvokeExpContext } from "./ExpressionAntlrParser";
 import { IndexAccessExpContext } from "./ExpressionAntlrParser";
 import { UnaryOpExpContext } from "./ExpressionAntlrParser";
 import { BinaryOpExpContext } from "./ExpressionAntlrParser";
+import { TripleOpExpContext } from "./ExpressionAntlrParser";
 import { PrimaryExpContext } from "./ExpressionAntlrParser";
 import { FileContext } from "./ExpressionAntlrParser";
 import { ExpressionContext } from "./ExpressionAntlrParser";
@@ -195,6 +196,19 @@ export interface ExpressionAntlrParserListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	exitBinaryOpExp?: (ctx: BinaryOpExpContext) => void;
+
+	/**
+	 * Enter a parse tree produced by the `tripleOpExp`
+	 * labeled alternative in `ExpressionAntlrParser.expression`.
+	 * @param ctx the parse tree
+	 */
+	enterTripleOpExp?: (ctx: TripleOpExpContext) => void;
+	/**
+	 * Exit a parse tree produced by the `tripleOpExp`
+	 * labeled alternative in `ExpressionAntlrParser.expression`.
+	 * @param ctx the parse tree
+	 */
+	exitTripleOpExp?: (ctx: TripleOpExpContext) => void;
 
 	/**
 	 * Enter a parse tree produced by the `primaryExp`

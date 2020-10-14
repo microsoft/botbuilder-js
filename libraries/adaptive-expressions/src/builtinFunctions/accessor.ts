@@ -25,10 +25,7 @@ export class Accessor extends ExpressionEvaluator {
     }
 
     private static evaluator(expression: Expression, state: MemoryInterface, options: Options): ValueWithError {
-        let path: string;
-        let left: any;
-        let error: string;
-        ({ path, left, error } = FunctionUtils.tryAccumulatePath(expression, state, options));
+        const { path, left, error } = FunctionUtils.tryAccumulatePath(expression, state, options);
         if (error) {
             return { value: undefined, error };
         }
@@ -37,9 +34,7 @@ export class Accessor extends ExpressionEvaluator {
             // fully converted to path, so we just delegate to memory scope
             return { value: InternalFunctionUtils.wrapGetValue(state, path, options), error: undefined };
         } else {
-            let newScope: any;
-            let err: string;
-            ({ value: newScope, error: err } = left.tryEvaluate(state, options));
+            const { value: newScope, error: err } = left.tryEvaluate(state, options);
             if (err) {
                 return { value: undefined, error: err };
             }
@@ -52,7 +47,7 @@ export class Accessor extends ExpressionEvaluator {
     }
 
     private static validator(expression: Expression): void {
-        const children: any[] = expression.children;
+        const children = expression.children;
         if (
             children.length === 0 ||
             children[0].type !== ExpressionType.Constant ||

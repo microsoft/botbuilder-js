@@ -34,7 +34,9 @@ export class TelemetryTrackEventAction<O extends object = {}> extends Dialog {
     public constructor(eventName: string, properties: { [name: string]: string });
     public constructor(eventName?: string, properties?: { [name: string]: string }) {
         super();
-        if (eventName) { this.eventName = new StringExpression(eventName); }
+        if (eventName) {
+            this.eventName = new StringExpression(eventName);
+        }
         if (properties) {
             this.properties = {};
             for (const name in properties) {
@@ -78,6 +80,6 @@ export class TelemetryTrackEventAction<O extends object = {}> extends Dialog {
     }
 
     protected onComputeId(): string {
-        return `TelemetryTrackEventAction[${ this.eventName && this.eventName.toString() }]`;
+        return `TelemetryTrackEventAction[${this.eventName && this.eventName.toString()}]`;
     }
 }

@@ -34,11 +34,20 @@ export class ErrorListener implements ANTLRErrorListener<any> {
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         msg: string,
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        e: RecognitionException | undefined): void {
+        e: RecognitionException | undefined
+    ): void {
         const startPosition: Position = new Position(this.lineOffset + line, charPositionInLine);
-        const stopPosition: Position = new Position(this.lineOffset + line, charPositionInLine + offendingSymbol.stopIndex - offendingSymbol.startIndex + 1);
+        const stopPosition: Position = new Position(
+            this.lineOffset + line,
+            charPositionInLine + offendingSymbol.stopIndex - offendingSymbol.startIndex + 1
+        );
         const range: Range = new Range(startPosition, stopPosition);
-        const diagnostic: Diagnostic = new Diagnostic(range, TemplateErrors.syntaxError(msg), DiagnosticSeverity.Error, this.source);
+        const diagnostic: Diagnostic = new Diagnostic(
+            range,
+            TemplateErrors.syntaxError(msg),
+            DiagnosticSeverity.Error,
+            this.source
+        );
 
         throw new TemplateException(diagnostic.toString(), [diagnostic]);
     }

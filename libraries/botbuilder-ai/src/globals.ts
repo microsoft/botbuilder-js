@@ -9,10 +9,10 @@
 
 const window = require('./custom.window');
 
-export function getFetch() {    
+export function getFetch() {
     const env = (global || window) as any;
 
-    if (!env.hasOwnProperty('fetch')) {    
+    if (!env.hasOwnProperty('fetch')) {
         env.fetch = require('node-fetch');
     }
     return env.fetch;

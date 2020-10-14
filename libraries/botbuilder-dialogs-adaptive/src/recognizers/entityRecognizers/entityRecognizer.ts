@@ -10,5 +10,10 @@ import { DialogContext } from 'botbuilder-dialogs';
 import { Entity } from 'botbuilder-core';
 
 export interface EntityRecognizer {
-    recognizeEntities(dialogContext: DialogContext, text: string, locale: string, entities: Entity[]): Promise<Entity[]>;
+    recognizeEntities(
+        dialogContext: DialogContext,
+        text: string,
+        locale: string,
+        entities: Entity[]
+    ): Promise<Entity[]>;
 }
