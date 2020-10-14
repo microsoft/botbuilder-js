@@ -49,7 +49,7 @@ export interface ICredentialProvider {
 }
 
 /**
- * A simple implementation of the `ICredentialProvider` interface.
+ * A simple implementation of the [ICredentialProvider](xref:botframework-connector.ICredentialProvider) interface.
  */
 export class SimpleCredentialProvider implements ICredentialProvider {
 
@@ -57,7 +57,7 @@ export class SimpleCredentialProvider implements ICredentialProvider {
     private readonly appPassword: string;
 
     /**
-     * Initializes a new instance of the `SimpleCredentialProvider` class with the provided credentials.
+     * Initializes a new instance of the [SimpleCredentialProvider](xref:botframework-connector.SimpleCredentialProvider) class with the provided credentials.
      * @param appId The app ID.
      * @param appPassword The app password.
      */

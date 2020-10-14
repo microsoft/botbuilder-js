@@ -37,7 +37,7 @@ export abstract class AppCredentials implements msrest.ServiceClientCredentials 
     protected authenticationContext: adal.AuthenticationContext;
 
     /**
-     * Initializes a new instance of the `AppCredentials` class.
+     * Initializes a new instance of the [AppCredentials](xref:botframework-connector.AppCredentials) class.
      * @param appId The App ID.
      * @param channelAuthTenant Optional. The oauth token tenant.
      * @param oAuthScope The scope for the token.

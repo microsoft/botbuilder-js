@@ -27,7 +27,7 @@ export class JwtTokenExtractor {
     public readonly openIdMetadata: OpenIdMetadata;
 
     /**
-     * Initializes a new instance of the `JwtTokenExtractor` class. Extracts relevant data from JWT Tokens.
+     * Initializes a new instance of the [JwtTokenExtractor](xref:botframework-connector.JwtTokenExtractor) class. Extracts relevant data from JWT Tokens.
      * @param tokenValidationParameters Token validation parameters.
      * @param metadataUrl Metadata Url.
      * @param allowedSigningAlgorithms Allowed signing algorithms.
@@ -56,7 +56,7 @@ export class JwtTokenExtractor {
      * @param authorizationHeader The raw HTTP header in the format: "Bearer [longString]".
      * @param channelId The Id of the channel being validated in the original request.
      * @param requiredEndorsements The required JWT endorsements.
-     * @returns A `Promise<ClaimsIdentity>` object.
+     * @returns A `Promise` representation for either a [ClaimsIdentity](botframework-connector:module.ClaimsIdentity) or `null`.
      */
     public async getIdentityFromAuthHeader(authorizationHeader: string, channelId: string, requiredEndorsements?: string[]): Promise<ClaimsIdentity | null> {
         if (!authorizationHeader) {
@@ -77,7 +77,7 @@ export class JwtTokenExtractor {
      * @param parameter The token.
      * @param channelId The Id of the channel being validated in the original request.
      * @param requiredEndorsements The required JWT endorsements.
-     * @returns A `Promise<ClaimsIdentity>` object.
+     * @returns A `Promise` representation for either a [ClaimsIdentity](botframework-connector:module.ClaimsIdentity) or `null`.
      */
     public async getIdentity(scheme: string, parameter: string, channelId: string, requiredEndorsements: string[] = []): Promise<ClaimsIdentity | null> {
 

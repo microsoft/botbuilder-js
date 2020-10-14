@@ -16,7 +16,7 @@ export class MicrosoftAppCredentials extends AppCredentials {
     public appPassword: string;
 
     /**
-     * Initializes a new instance of the `MicrosoftAppCredentials` class.
+     * Initializes a new instance of the [MicrosoftAppCredentials](xref:botframework-connector.MicrosoftAppCredentials) class.
      * @param appId The Microsoft app ID.
      * @param appPassword The Microsoft app password.
      * @param channelAuthTenant Optional. The oauth token tenant.
