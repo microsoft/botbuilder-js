@@ -26,8 +26,8 @@ export class TextInput extends InputDialog {
     /**
      * @protected
      * Called when input has been received.
-     * @param dc The `DialogContext` for the current turn of conversation.
-     * @returns InputState which reflects whether input was recognized as valid or not.
+     * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
+     * @returns [InputState](xref:botbuilder-dialogs-adaptive.InputState) which reflects whether input was recognized as valid or not.
      */
     protected async onRecognizeInput(dc: DialogContext): Promise<InputState> {
         // Treat input as a string

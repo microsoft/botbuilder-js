@@ -90,10 +90,10 @@ export abstract class InputDialog extends Dialog {
     public disabled?: BoolExpression;
 
     /**
-     * Initializes a new instance of the `InputDialog` class
+     * Initializes a new instance of the [InputDialog](xref:botbuilder-dialogs-adaptive.InputDialog) class
      * @param property Optional. The value expression which the input will be bound to.
-     * @param prompt Optional. The `Activity` to send to the user,
-     * if a string is specified it will instantiates an `ActivityTemplate`.
+     * @param prompt Optional. The [Activity](xref:botframework-schema.Activity) to send to the user,
+     * if a string is specified it will instantiates an [ActivityTemplate](xref:botbuilder-dialogs-adaptive.ActivityTemplate).
      */
     public constructor(property?: string, prompt?: Partial<Activity> | string) {
         super();
@@ -111,9 +111,9 @@ export abstract class InputDialog extends Dialog {
 
     /**
      * Called when the dialog is started and pushed onto the dialog stack.
-     * @param dc The `DialogContext` for the current turn of conversation.
+     * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
      * @param options Optional. Initial information to pass to the dialog.
-     * @returns A `DialogTurnResult` Promise representing the asynchronous operation.
+     * @returns A [DialogTurnResult](xref:botbuilder-dialogs.DialogTurnResult) `Promise` representing the asynchronous operation.
      */
     public async beginDialog(dc: DialogContext, options?: any): Promise<DialogTurnResult> {
         if (this.disabled && this.disabled.getValue(dc.state)) {
@@ -147,8 +147,8 @@ export abstract class InputDialog extends Dialog {
 
     /**
      * Called when the dialog is _continued_, where it is the active dialog and the user replies with a new activity.
-     * @param dc The `DialogContext` for the current turn of conversation.
-     * @returns A `DialogTurnResult` Promise representing the asynchronous operation.
+     * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
+     * @returns A [DialogTurnResult](xref:botbuilder-dialogs.DialogTurnResult) `Promise` representing the asynchronous operation.
      */
     public async continueDialog(dc: DialogContext): Promise<DialogTurnResult> {
         // Filter to only message activities
@@ -197,11 +197,11 @@ export abstract class InputDialog extends Dialog {
 
     /**
      * Called when a child dialog completes its turn, returning control to this dialog.
-     * @param dc The `DialogContext` for the current turn of conversation.
-     * @param reason Reason why the dialog resumed.
+     * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
+     * @param reason [DialogReason](xref:botbuilder-dialogs.DialogReason), reason why the dialog resumed.
      * @param result Optional. Value returned from the dialog that was called.
      * The type of the value returned is dependent on the child dialog.
-     * @returns A `DialogTurnResult` Promise representing the asynchronous operation.
+     * @returns A [DialogTurnResult](xref:botbuilder-dialogs.DialogTurnResult) `Promise` representing the asynchronous operation.
      */
     public async resumeDialog(dc: DialogContext, reason: DialogReason, result?: any): Promise<DialogTurnResult> {
         // Re-send initial prompt
@@ -211,8 +211,8 @@ export abstract class InputDialog extends Dialog {
     /**
      * @protected
      * Called before an event is bubbled to its parent.
-     * @param dc The `DialogContext` for the current turn of conversation.
-     * @param event The event being raised.
+     * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
+     * @param event [DialogReason](xref:botbuilder-dialogs.DialogReason), the event being raised.
      * @returns Whether the event is handled by the current dialog and further processing should stop.
      */
     protected async onPreBubbleEvent(dc: DialogContext, event: DialogEvent): Promise<boolean> {
@@ -240,7 +240,7 @@ export abstract class InputDialog extends Dialog {
     /**
      * @protected
      * Method which processes options.
-     * @param dc The `DialogContext` for the current turn of conversation.
+     * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
      * @param options Initial information to pass to the dialog.
      */
     protected onInitializeOptions(dc: DialogContext, options: any): any {
@@ -250,9 +250,9 @@ export abstract class InputDialog extends Dialog {
     /**
      * @protected
      * Method which renders the prompt to the user given the current input state.
-     * @param dc The `DialogContext` for the current turn of conversation.
-     * @param state Dialog `InputState`
-     * @returns An `Activity` Promise representing the asynchronous operation.
+     * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
+     * @param state Dialog [InputState](xref:botbuilder-dialogs-adaptive.InputState).
+     * @returns An [Activity](xref:botframework-schema.Activity) `Promise` representing the asynchronous operation.
      */
     protected async onRenderPrompt(dc: DialogContext, state: InputState): Promise<Partial<Activity>> {
         let msg: Partial<Activity>;

@@ -13,7 +13,7 @@ import { Choice } from "botbuilder-dialogs";
 export class ChoiceSet extends Array<Choice>
 {
     /**
-     * Initializes a new instance of the `ChoiceSet` class.
+     * Initializes a new instance of the [ChoiceSet](xref:botbuilder-dialogs-adaptive.ChoiceSet) class.
      * @param obj Choice values.
      */
     public constructor(obj: any) {

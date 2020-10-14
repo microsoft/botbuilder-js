@@ -19,9 +19,9 @@ import { SendActivity } from '../actions/sendActivity';
  */
 export class Ask extends SendActivity {
     /**
-     *Initializes a new instance of the `Ask` class.
+     *Initializes a new instance of the [Ask](xref:botbuilder-dialogs-adaptive.Ask) class.
      * @param text Optional, text value.
-     * @param expectedProperties Optional, expected properties values.
+     * @param expectedProperties Optional, [ArrayExpression](xref:adaptive-expressions.ArrayExpression) of expected properties.
      */
     public constructor(text?: string, expectedProperties?: ArrayExpression<string>) {
         super(text);
@@ -40,9 +40,9 @@ export class Ask extends SendActivity {
 
     /**
      * Called when the dialog is started and pushed onto the dialog stack.
-     * @param dc The `DialogContext` for the current turn of conversation.
+     * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
      * @param options Optional, initial information to pass to the dialog.
-     * @returns A `DialogTurnResult` Promise representing the asynchronous operation.
+     * @returns A [DialogTurnResult](xref:botbuilder-dialogs.DialogTurnResult) `Promise` representing the asynchronous operation.
      */
     public async beginDialog(dc: DialogContext, options?: object): Promise<DialogTurnResult> {
         // get number of retries from memory

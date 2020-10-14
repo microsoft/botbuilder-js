@@ -62,7 +62,7 @@ export class OAuthInput extends InputDialog {
     public timeout?: IntExpression = new IntExpression(900000);
 
     /**
-     * Initializes a new instance of the `OAuthInput` class
+     * Initializes a new instance of the [OAuthInput](xref:botbuilder-dialogs-adaptive.OAuthInput) class
      * @param connectionName Optional. Name of the OAuth connection being used.
      * @param title Optional. Title of the cards signin button.
      * @param text Optional. Additional text to include on the signin card.
@@ -78,9 +78,9 @@ export class OAuthInput extends InputDialog {
 
     /**
      * Called when a prompt dialog is pushed onto the dialog stack and is being activated.
-     * @param dc The `DialogContext` for the current turn of conversation.
+     * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
      * @param options Optional. Additional information to pass to the prompt being started.
-     * @returns A `DialogTurnResult` Promise representing the asynchronous operation.
+     * @returns A [DialogTurnResult](xref:botbuilder-dialogs.DialogTurnResult) `Promise` representing the asynchronous operation.
      */
     public async beginDialog(dc: DialogContext, options?: PromptOptions): Promise<DialogTurnResult> {
         if (this.disabled && this.disabled.getValue(dc.state)) {
@@ -134,8 +134,8 @@ export class OAuthInput extends InputDialog {
 
     /**
      * Called when a prompt dialog is the active dialog and the user replied with a new activity.
-     * @param dc The `DialogContext` for the current turn of conversation.
-     * @returns A `DialogTurnResult` Promise representing the asynchronous operation.
+     * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
+     * @returns A [DialogTurnResult](xref:botbuilder-dialogs.DialogTurnResult) `Promise` representing the asynchronous operation.
      */
     public async continueDialog(dc: DialogContext): Promise<DialogTurnResult> {
         if (!dc) { throw new Error('Missing DialogContext'); }
@@ -269,8 +269,8 @@ export class OAuthInput extends InputDialog {
     /**
      * @protected
      * Called when input has been received.
-     * @param dc The `DialogContext` for the current turn of conversation.
-     * @returns InputState which reflects whether input was recognized as valid or not.
+     * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
+     * @returns [InputState](xref:botbuilder-dialogs-adaptive.InputState) which reflects whether input was recognized as valid or not.
      */
     protected onRecognizeInput(dc: DialogContext): Promise<InputState> {
         throw new Error('Method not implemented.');
