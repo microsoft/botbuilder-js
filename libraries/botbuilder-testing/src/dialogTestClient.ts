@@ -29,42 +29,42 @@ export class DialogTestClient {
     public conversationState: ConversationState;
 
     /**
-     * Creates a `DialogTestClient` to test a dialog without having to create a full-fledged adapter.
+     * Creates a [DialogTestClient](xref:botbuilder-testing.DialogTestClient) to test a [Dialog](xref:botbuilder-dialogs.Dialog) without having to create a full-fledged adapter.
      * ```javascript
      * let client = new DialogTestClient('test', MY_DIALOG, MY_OPTIONS);
      * let reply = await client.sendActivity('first message');
      * assert.strictEqual(reply.text, 'first reply', 'reply failed');
      * ```
      * @param channelId The `channelId` to be used for the test.
-	 * Use 'emulator' or 'test' if you are uncertain of the channel you are targeting.
-	 * Otherwise, it is recommended that you use the id for the channel(s) your bot will be using and write a test case for each channel.
-     * @param targetDialog The dialog to be tested. This will be the root dialog for the test client.
-     * @param initialDialogOptions Optional. Additional argument(s) to pass to the dialog being started.
-     * @param middlewares Optional. A list of middlewares to be added to the test adapter.
-     * @param conversationState Optional. A ConversationState instance to use in the test client.
+     * Use 'emulator' or 'test' if you are uncertain of the channel you are targeting.
+     * Otherwise, it is recommended that you use the id for the channel(s) your bot will be using and write a test case for each channel.
+     * @param targetDialog The [Dialog](xref:botbuilder-dialogs.Dialog) to be tested. This will be the root dialog for the test client.
+     * @param initialDialogOptions Optional. Additional argument(s) to pass to the [Dialog](xref:botbuilder-dialogs.Dialog) being started.
+     * @param middlewares Optional. A [Middleware](xref:botbuilder-core.Middleware) list to be added to the test adapter.
+     * @param conversationState Optional. A [ConversationState](xref:botbuilder-core.ConversationState) instance to use in the test client.
      */
     public constructor(channelId: string, targetDialog: Dialog, initialDialogOptions?: any, middlewares?: Middleware[], conversationState?: ConversationState);
     /**
-     * Creates a `DialogTestClient` to test a dialog without having to create a full-fledged adapter.
+     * Creates a [DialogTestClient](xref:botbuilder-testing.DialogTestClient) to test a [Dialog](xref:botbuilder-dialogs.Dialog) without having to create a full-fledged adapter.
      * ```javascript
      * let client = new DialogTestClient(MY_DIALOG, MY_OPTIONS);
      * let reply = await client.sendActivity('first message');
      * assert.strictEqual(reply.text, 'first reply', 'reply failed');
      * ```
-     * @param testAdapter The `TestAdapter` to use.
-     * @param targetDialog The dialog to be tested. This will be the root dialog for the test client.
-     * @param initialDialogOptions Optional. Additional argument(s) to pass to the dialog being started.
-     * @param middlewares Optional. A list of middlewares to be added to the test adapter.
-     * @param conversationState Optional. A ConversationState instance to use in the test client.
+     * @param testAdapter The [TestAdapter](xref:botbuilder-core.TestAdapter) to use.
+     * @param targetDialog The [Dialog](xref:botbuilder-dialogs.Dialog) to be tested. This will be the root dialog for the test client.
+     * @param initialDialogOptions Optional. Additional argument(s) to pass to the [Dialog](xref:botbuilder-dialogs.Dialog) being started.
+     * @param middlewares Optional. A [Middleware](xref:botbuilder-core.Middleware) list to be added to the test adapter.
+     * @param conversationState Optional. A [ConversationState](xref:botbuilder-core.ConversationState) instance to use in the test client.
      */
     public constructor(testAdapter: TestAdapter, targetDialog: Dialog, initialDialogOptions?: any, middlewares?: Middleware[], conversationState?: ConversationState)
     /**
-     * Creates a `DialogTestClient` to test a dialog without having to create a full-fledged adapter.
-     * @param channelOrAdapter The `channelId` or the `TestAdapter` to be used for the test.
-     * @param targetDialog The dialog to be tested. This will be the root dialog for the test client.
-     * @param initialDialogOptions Optional. Additional argument(s) to pass to the dialog being started.
-     * @param middlewares Optional. A list of middlewares to be added to the test adapter.
-     * @param conversationState Optional. A ConversationState instance to use in the test client.
+     * Creates a [DialogTestClient](xref:botbuilder-testing.DialogTestClient) to test a [Dialog](xref:botbuilder-dialogs.Dialog) without having to create a full-fledged adapter.
+     * @param channelOrAdapter The `channelId` or the [TestAdapter](xref:botbuilder-core.TestAdapter) to be used for the test.
+     * @param targetDialog The [Dialog](xref:botbuilder-dialogs.Dialog) to be tested. This will be the root dialog for the test client.
+     * @param initialDialogOptions Optional. Additional argument(s) to pass to the [Dialog](xref:botbuilder-dialogs.Dialog) being started.
+     * @param middlewares Optional. A [Middleware](xref:botbuilder-core.Middleware) list to be added to the test adapter.
+     * @param conversationState Optional. A [ConversationState](xref:botbuilder-core.ConversationState) instance to use in the test client.
      */
     public constructor(channelOrAdapter: string|TestAdapter, targetDialog: Dialog, initialDialogOptions?: any, middlewares?: Middleware[], conversationState?: ConversationState) {
         this.conversationState = conversationState || new ConversationState(new MemoryStorage());
