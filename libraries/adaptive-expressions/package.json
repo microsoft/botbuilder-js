@@ -51,7 +51,7 @@
     "test": "tsc && tsc ./tests/expressionProperty.test.ts && mocha tests/ --timeout 60000"
   },
   "files": [
-    "/lib",
-    "/src"
+    "lib",
+    "src"
   ]
 }

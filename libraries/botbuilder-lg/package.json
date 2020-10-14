@@ -42,7 +42,7 @@
     "test": "tsc && mocha tests/ --timeout 60000"
   },
   "files": [
-    "/lib",
-    "/src"
+    "lib",
+    "src"
   ]
 }

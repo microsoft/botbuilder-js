@@ -1,5 +1,6 @@
 {
   "name": "botbuilder-dialogs-adaptive-tests",
+  "private": true,
   "version": "1.0.0",
   "description": "",
   "scripts": {
