@@ -11,7 +11,7 @@
  * with the WebSocket server or client.
  */
 
-import { INodeBuffer } from "./INodeBuffer";
+import { INodeBuffer } from './INodeBuffer';
 
 export interface ISocket {
     isConnected: boolean;

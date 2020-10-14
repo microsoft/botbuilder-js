@@ -31,7 +31,9 @@ export class ForEachPage<O extends object = {}> extends ActionScope<O> {
      */
     public constructor(itemsProperty?: string, pageSize: number = 10) {
         super();
-        if (itemsProperty) { this.itemsProperty = new StringExpression(itemsProperty); }
+        if (itemsProperty) {
+            this.itemsProperty = new StringExpression(itemsProperty);
+        }
         this.pageSize = new IntExpression(pageSize);
     }
 
@@ -53,7 +55,7 @@ export class ForEachPage<O extends object = {}> extends ActionScope<O> {
     /**
      * Page size, default to 10.
      */
-    public pageSize: IntExpression = new IntExpression(10) ;
+    public pageSize: IntExpression = new IntExpression(10);
 
     /**
      * An optional expression which if is true will disable this action.
@@ -125,7 +127,7 @@ export class ForEachPage<O extends object = {}> extends ActionScope<O> {
      * @returns A `string` representing the compute Id.
      */
     protected onComputeId(): string {
-        return `ForEachPage[${ this.itemsProperty.toString() }]`;
+        return `ForEachPage[${this.itemsProperty.toString()}]`;
     }
 
     /**

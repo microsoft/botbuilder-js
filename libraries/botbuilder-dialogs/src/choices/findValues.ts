@@ -83,7 +83,11 @@ export interface SortedValue {
  * @param options (Optional) options used to tweak the search that's performed.
  */
 // tslint:disable-next-line:max-func-body-length
-export function findValues(utterance: string, values: SortedValue[], options?: FindValuesOptions): ModelResult<FoundValue>[] {
+export function findValues(
+    utterance: string,
+    values: SortedValue[],
+    options?: FindValuesOptions
+): ModelResult<FoundValue>[] {
     function indexOfToken(token: Token, startPos: number): number {
         for (let i: number = startPos; i < tokens.length; i++) {
             if (tokens[i].normalized === token.normalized) {
@@ -94,7 +98,12 @@ export function findValues(utterance: string, values: SortedValue[], options?: F
         return -1;
     }
 
-    function matchValue(index: number, value: string, vTokens: Token[], startPos: number): ModelResult<FoundValue>|undefined {
+    function matchValue(
+        index: number,
+        value: string,
+        vTokens: Token[],
+        startPos: number
+    ): ModelResult<FoundValue> | undefined {
         // Match value to utterance and calculate total deviation.
         // - The tokens are matched in order so "second last" will match in
         //   "the second from last one" but not in "the last from the second one".
@@ -103,8 +112,8 @@ export function findValues(utterance: string, values: SortedValue[], options?: F
         //   2 and the total deviation would be 1.
         let matched = 0;
         let totalDeviation = 0;
-        let start: number = -1;
-        let end: number = -1;
+        let start = -1;
+        let end = -1;
         vTokens.forEach((token: Token) => {
             // Find the position of the token in the utterance.
             const pos: number = indexOfToken(token, startPos);
@@ -119,7 +128,9 @@ export function findValues(utterance: string, values: SortedValue[], options?: F
                     startPos = pos + 1;
 
                     // Update start & end position that will track the span of the utterance that's matched.
-                    if (start < 0) { start = pos; }
+                    if (start < 0) {
+                        start = pos;
+                    }
                     end = pos;
                 }
             }
@@ -127,7 +138,7 @@ export function findValues(utterance: string, values: SortedValue[], options?: F
 
         // Calculate score and format result
         // - The start & end positions and the results text field will be corrected by the caller.
-        let result: ModelResult<FoundValue>|undefined;
+        let result: ModelResult<FoundValue> | undefined;
         if (matched > 0 && (matched === vTokens.length || opt.allowPartialMatches)) {
             // Percentage of tokens matched. If matching "second last" in
             // "the second from last one" the completeness would be 1.0 since
@@ -138,7 +149,7 @@ export function findValues(utterance: string, values: SortedValue[], options?: F
             // occurring in the value that weren't in the utterance. So an utterance
             // of "second last" matched against a value of "second from last" would
             // result in an accuracy of 0.5.
-            const accuracy: number = (matched / (matched + totalDeviation));
+            const accuracy: number = matched / (matched + totalDeviation);
 
             // The final score is simply the completeness multiplied by the accuracy.
             const score: number = completeness * accuracy;
@@ -151,8 +162,8 @@ export function findValues(utterance: string, values: SortedValue[], options?: F
                 resolution: {
                     value: value,
                     index: index,
-                    score: score
-                }
+                    score: score,
+                },
             } as ModelResult<FoundValue>;
         }
 
@@ -165,8 +176,8 @@ export function findValues(utterance: string, values: SortedValue[], options?: F
     // Search for each value within the utterance.
     let matches: ModelResult<FoundValue>[] = [];
     const opt: FindValuesOptions = options || {};
-    const tokenizer: TokenizerFunction = (opt.tokenizer || defaultTokenizer);
-    const tokens: Token[]  = tokenizer(utterance, opt.locale);
+    const tokenizer: TokenizerFunction = opt.tokenizer || defaultTokenizer;
+    const tokens: Token[] = tokenizer(utterance, opt.locale);
     const maxDistance: number = opt.maxTokenDistance !== undefined ? opt.maxTokenDistance : 2;
     list.forEach((entry: SortedValue) => {
         // Find all matches for a value
@@ -187,7 +198,9 @@ export function findValues(utterance: string, values: SortedValue[], options?: F
     });
 
     // Sort matches by score descending
-    matches = matches.sort((a: ModelResult<FoundValue>, b: ModelResult<FoundValue>) => b.resolution.score - a.resolution.score);
+    matches = matches.sort(
+        (a: ModelResult<FoundValue>, b: ModelResult<FoundValue>) => b.resolution.score - a.resolution.score
+    );
 
     // Filter out duplicate matching indexes and overlapping characters.
     // - The start & end positions are token positions and need to be translated to
@@ -198,7 +211,7 @@ export function findValues(utterance: string, values: SortedValue[], options?: F
     const usedTokens: { [index: number]: boolean } = {};
     matches.forEach((match: ModelResult<FoundValue>) => {
         // Apply filters
-        let add: boolean = !foundIndexes.hasOwnProperty(match.resolution.index);
+        let add = !foundIndexes.hasOwnProperty(match.resolution.index);
         for (let i: number = match.start; i <= match.end; i++) {
             if (usedTokens[i]) {
                 add = false;
@@ -210,7 +223,9 @@ export function findValues(utterance: string, values: SortedValue[], options?: F
         if (add) {
             // Update filter info
             foundIndexes[match.resolution.index] = true;
-            for (let i: number = match.start; i <= match.end; i++) { usedTokens[i] = true; }
+            for (let i: number = match.start; i <= match.end; i++) {
+                usedTokens[i] = true;
+            }
 
             // Translate start & end and populate text field
             match.start = tokens[match.start].start;

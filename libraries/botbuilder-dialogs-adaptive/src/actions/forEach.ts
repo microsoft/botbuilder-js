@@ -32,8 +32,12 @@ export class ForEach<O extends object = {}> extends ActionScope<O> {
      */
     public constructor(itemsProperty?: string, actions?: Dialog[]) {
         super();
-        if (itemsProperty) { this.itemsProperty = new StringExpression(itemsProperty); }
-        if (actions) { this.actions = actions; }
+        if (itemsProperty) {
+            this.itemsProperty = new StringExpression(itemsProperty);
+        }
+        if (actions) {
+            this.actions = actions;
+        }
     }
 
     /**
@@ -140,7 +144,6 @@ export class ForEach<O extends object = {}> extends ActionScope<O> {
      * @returns A `string` representing the compute Id.
      */
     protected onComputeId(): string {
-        return `ForEach[${ this.itemsProperty.toString() }]`;
+        return `ForEach[${this.itemsProperty.toString()}]`;
     }
-
 }

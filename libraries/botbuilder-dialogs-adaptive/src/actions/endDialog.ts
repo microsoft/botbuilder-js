@@ -21,7 +21,9 @@ export class EndDialog<O extends object = {}> extends Dialog<O> {
      */
     public constructor(value?: any) {
         super();
-        if (value) { this.value = new ValueExpression(value); }
+        if (value) {
+            this.value = new ValueExpression(value);
+        }
     }
 
     /**
@@ -47,7 +49,7 @@ export class EndDialog<O extends object = {}> extends Dialog<O> {
 
         if (this.value) {
             let value = this.value.getValue(dc.state);
-            
+
             if (value) {
                 value = replaceJsonRecursively(dc.state, value);
             }
@@ -81,6 +83,6 @@ export class EndDialog<O extends object = {}> extends Dialog<O> {
      * @returns A `string` representing the compute Id.
      */
     protected onComputeId(): string {
-        return `EndDialog[${ this.value ? this.value.toString() : '' }]`;
+        return `EndDialog[${this.value ? this.value.toString() : ''}]`;
     }
 }

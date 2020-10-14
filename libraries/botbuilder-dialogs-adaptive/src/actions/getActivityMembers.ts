@@ -21,8 +21,12 @@ export class GetActivityMembers<O extends object = {}> extends Dialog {
      */
     public constructor(activityId?: string, property?: string) {
         super();
-        if (activityId) { this.activityId = new StringExpression(activityId); }
-        if (property) { this.property = new StringExpression(property); }
+        if (activityId) {
+            this.activityId = new StringExpression(activityId);
+        }
+        if (property) {
+            this.property = new StringExpression(property);
+        }
     }
 
     /**
@@ -73,6 +77,8 @@ export class GetActivityMembers<O extends object = {}> extends Dialog {
      * @returns A `string` representing the compute Id.
      */
     protected onComputeId(): string {
-        return `GetActivityMembers[${ this.activityId ? this.activityId.toString() : '' }, ${ this.property ? this.property.toString() : '' }]`;
+        return `GetActivityMembers[${this.activityId ? this.activityId.toString() : ''}, ${
+            this.property ? this.property.toString() : ''
+        }]`;
     }
 }

@@ -21,7 +21,9 @@ export class GotoAction<O extends object = {}> extends Dialog<O> {
      */
     public constructor(actionId?: string) {
         super();
-        if (actionId) { this.actionId = new StringExpression(actionId); }
+        if (actionId) {
+            this.actionId = new StringExpression(actionId);
+        }
     }
 
     /**
@@ -51,7 +53,7 @@ export class GotoAction<O extends object = {}> extends Dialog<O> {
 
         const actionScopeResult: ActionScopeResult = {
             actionScopeCommand: ActionScopeCommands.GotoAction,
-            actionId: this.actionId.getValue(dc.state)
+            actionId: this.actionId.getValue(dc.state),
         };
 
         return await dc.endDialog(actionScopeResult);
@@ -63,6 +65,6 @@ export class GotoAction<O extends object = {}> extends Dialog<O> {
      * @returns A `string` representing the compute Id.
      */
     protected onComputeId(): string {
-        return `GotoAction[${ this.actionId.toString() }]`;
+        return `GotoAction[${this.actionId.toString()}]`;
     }
 }

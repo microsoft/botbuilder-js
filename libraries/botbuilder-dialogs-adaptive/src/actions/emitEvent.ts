@@ -30,8 +30,12 @@ export class EmitEvent<O extends object = {}> extends Dialog<O> {
      */
     public constructor(eventName?: string, eventValue?: string, bubbleEvent = false) {
         super();
-        if (eventName) { this.eventName = new StringExpression(eventName); }
-        if (eventValue) { this.eventValue = new ValueExpression(eventValue); }
+        if (eventName) {
+            this.eventName = new StringExpression(eventName);
+        }
+        if (eventValue) {
+            this.eventValue = new ValueExpression(eventValue);
+        }
         this.bubbleEvent = new BoolExpression(bubbleEvent);
     }
 
@@ -70,7 +74,7 @@ export class EmitEvent<O extends object = {}> extends Dialog<O> {
         if (this.eventName) {
             eventName = this.eventName.getValue(dc.state);
         }
-    
+
         let eventValue: any;
         if (this.eventValue) {
             eventValue = this.eventValue.getValue(dc.state);
@@ -97,6 +101,6 @@ export class EmitEvent<O extends object = {}> extends Dialog<O> {
      * @returns A `string` representing the compute Id.
      */
     protected onComputeId(): string {
-        return `EmitEvent[${ this.eventName.toString() || '' }]`;
+        return `EmitEvent[${this.eventName.toString() || ''}]`;
     }
 }
