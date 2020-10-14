@@ -17,6 +17,7 @@ import {
     ChoiceFactory,
     DialogEvents,
     TurnPath,
+    DialogStateManager,
 } from 'botbuilder-dialogs';
 import { ActivityTypes, Activity, InputHints, MessageFactory } from 'botbuilder-core';
 import { ExpressionParser } from 'adaptive-expressions';
@@ -61,22 +62,22 @@ export abstract class InputDialog extends Dialog {
     /**
      * The activity to send to the user.
      */
-    public prompt: TemplateInterface<Partial<Activity>>;
+    public prompt: TemplateInterface<Partial<Activity>, DialogStateManager>;
 
     /**
      * The activity template for retrying prompt.
      */
-    public unrecognizedPrompt: TemplateInterface<Partial<Activity>>;
+    public unrecognizedPrompt: TemplateInterface<Partial<Activity>, DialogStateManager>;
 
     /**
      * The activity template to send to the user whenever the value provided is invalid or not.
      */
-    public invalidPrompt: TemplateInterface<Partial<Activity>>;
+    public invalidPrompt: TemplateInterface<Partial<Activity>, DialogStateManager>;
 
     /**
      * The activity template to send when maxTurnCount has be reached and the default value is used.
      */
-    public defaultValueResponse: TemplateInterface<Partial<Activity>>;
+    public defaultValueResponse: TemplateInterface<Partial<Activity>, DialogStateManager>;
 
     /**
      * The expressions to run to validate the input.
@@ -223,7 +224,8 @@ export abstract class InputDialog extends Dialog {
 
     protected async onRenderPrompt(dc: DialogContext, state: InputState): Promise<Partial<Activity>> {
         let msg: Partial<Activity>;
-        let template: TemplateInterface<Partial<Activity>>;
+        let template: TemplateInterface<Partial<Activity>, DialogStateManager>;
+
         switch (state) {
             case InputState.unrecognized:
                 if (this.unrecognizedPrompt) {

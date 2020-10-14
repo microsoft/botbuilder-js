@@ -5,7 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { DialogTurnResult, DialogContext, Dialog } from 'botbuilder-dialogs';
+import { DialogTurnResult, DialogContext, Dialog, DialogStateManager } from 'botbuilder-dialogs';
 import { Activity, ActivityTypes } from 'botbuilder-core';
 import { TemplateInterface } from '../template';
 import { TextTemplate } from '../templates';
@@ -29,7 +29,7 @@ export class LogAction<O extends object = {}> extends Dialog<O> {
     /**
      * The text template to log.
      */
-    public text: TemplateInterface<string>;
+    public text: TemplateInterface<string, DialogStateManager>;
 
     /**
      * If true, the message will both be logged to the console and sent as a trace activity.
