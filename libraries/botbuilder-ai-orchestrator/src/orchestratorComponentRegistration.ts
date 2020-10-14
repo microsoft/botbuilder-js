@@ -24,12 +24,15 @@ export class OrchestratorComponentRegistration implements ComponentRegistration 
         this._resourceExplorer = resourceExplorer;
 
         this._builderRegistrations.push(
-            new BuilderRegistration('Microsoft.OrchestratorRecognizer', new AdaptiveTypeBuilder(OrchestratorAdaptiveRecognizer, this._resourceExplorer, {
-                modelPath: new StringExpressionConverter(),
-                snapshotPath: new StringExpressionConverter(),
-                disambiguationScoreThreshold: new NumberExpressionConverter(),
-                detectAmbiguousIntents: new BoolExpressionConverter(),
-            }))
-        );    
+            new BuilderRegistration(
+                'Microsoft.OrchestratorRecognizer',
+                new AdaptiveTypeBuilder(OrchestratorAdaptiveRecognizer, this._resourceExplorer, {
+                    modelPath: new StringExpressionConverter(),
+                    snapshotPath: new StringExpressionConverter(),
+                    disambiguationScoreThreshold: new NumberExpressionConverter(),
+                    detectAmbiguousIntents: new BoolExpressionConverter(),
+                })
+            )
+        );
     }
-};
+}

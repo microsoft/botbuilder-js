@@ -11,7 +11,6 @@ import { AliasPathResolver } from './aliasPathResolver';
  * Maps @@ => turn.recognized.entitites.xxx array.
  */
 export class AtAtPathResolver extends AliasPathResolver {
-
     constructor() {
         super('@@', 'turn.recognized.entities.');
     }

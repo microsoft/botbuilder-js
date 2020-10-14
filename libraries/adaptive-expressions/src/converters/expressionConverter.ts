@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 
-import { Expression} from '../expression';
+import { Expression } from '../expression';
 
 export class ExpressionConverter {
     public convert(value: string): Expression {

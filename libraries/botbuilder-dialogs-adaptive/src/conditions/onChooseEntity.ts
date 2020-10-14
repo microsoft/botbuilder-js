@@ -14,7 +14,6 @@ import { OnDialogEvent } from './onDialogEvent';
  * Triggered to choose between different possible entity resolutions.
  */
 export class OnChooseEntity extends OnDialogEvent {
-
     public constructor(property?: string, entity?: string, actions: Dialog[] = [], condition?: string) {
         super(AdaptiveEvents.chooseEntity, actions, condition);
         this.property = property;
@@ -34,10 +33,10 @@ export class OnChooseEntity extends OnDialogEvent {
     public getExpression(parser: ExpressionParserInterface): Expression {
         const expressions = [super.getExpression(parser)];
         if (this.property) {
-            expressions.push(parser.parse(`${ TurnPath.dialogEvent }.value.property == '${ this.property }'`));
+            expressions.push(parser.parse(`${TurnPath.dialogEvent}.value.property == '${this.property}'`));
         }
         if (this.entity) {
-            expressions.push(parser.parse(`${ TurnPath.dialogEvent }.value.entity.name == '${ this.entity }'`));
+            expressions.push(parser.parse(`${TurnPath.dialogEvent}.value.entity.name == '${this.entity}'`));
         }
 
         return Expression.andExpression.apply(Expression, expressions);

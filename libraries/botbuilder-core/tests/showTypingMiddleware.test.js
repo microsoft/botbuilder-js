@@ -1,5 +1,21 @@
 const assert = require('assert');
-const { ActivityTypes, ShowTypingMiddleware, TestAdapter } = require('../lib');
+const { ActivityTypes, ShowTypingMiddleware, TestAdapter, TurnContext } = require('../lib');
+
+class TestSkillAdapter extends TestAdapter {
+    createContext(request) {
+        const context = new TurnContext(this, request);
+
+        context.turnState.set(context.adapter.BotIdentityKey, {
+            claims: [
+                { type: 'ver', value: '2.0' },
+                { type: 'aud', value: 'skill' },
+                { type: 'azp', value: 'bot' },
+            ]
+        });
+
+        return context;
+    }
+}
 
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
@@ -66,5 +82,17 @@ describe(`ShowTypingMiddleware`, function () {
         }
 
         adapter.send('foo').assertReply(activity => assert.strictEqual(activity.type, ActivityTypes.Message))
+    });
+
+    it('should NOT send a typing indicator when bot is running as a skill', function (done) {
+        const skillAdapter = new TestSkillAdapter(async context => {
+            await sleep(100);
+            await context.sendActivity(`echo:${context.activity.text}`);
+        }).use(new ShowTypingMiddleware(1, 1000));
+
+        skillAdapter
+            .send('foo')
+            .assertReply('echo:foo')
+            .then(done);
     });
 });

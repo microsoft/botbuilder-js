@@ -13,7 +13,6 @@ import { OnActivity } from './onActivity';
  * Actions triggered when a MessageReactionActivity is received.
  */
 export class OnMessageReactionActivity extends OnActivity {
-
     public constructor(actions: Dialog[] = [], condition?: string) {
         super(ActivityTypes.MessageReaction, actions, condition);
     }

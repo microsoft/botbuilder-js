@@ -18,7 +18,6 @@ import { ReturnType } from '../returnType';
  * Convert ticks to number of days.
  */
 export class TicksToDays extends ExpressionEvaluator {
-
     private static readonly TicksPerDay: number = 24 * 60 * 60 * 10000000;
 
     public constructor() {
@@ -27,9 +26,8 @@ export class TicksToDays extends ExpressionEvaluator {
 
     private static evaluator(expr: Expression, state: MemoryInterface, options: Options): ValueWithError {
         let value: any;
-        let error: string;
-        let args: any[];
-        ({ args, error } = FunctionUtils.evaluateChildren(expr, state, options));
+        const { args, error: childrenError } = FunctionUtils.evaluateChildren(expr, state, options);
+        let error = childrenError;
         if (!error) {
             if (Number.isInteger(args[0])) {
                 value = args[0] / TicksToDays.TicksPerDay;

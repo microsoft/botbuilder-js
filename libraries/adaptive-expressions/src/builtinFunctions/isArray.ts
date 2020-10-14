@@ -20,7 +20,6 @@ export class IsArray extends ExpressionEvaluator {
     }
 
     private static evaluator(): EvaluateExpressionDelegate {
-        return FunctionUtils.apply(
-            (args: any[]): boolean => Array.isArray(args[0]));
+        return FunctionUtils.apply((args: any[]): boolean => Array.isArray(args[0]));
     }
 }

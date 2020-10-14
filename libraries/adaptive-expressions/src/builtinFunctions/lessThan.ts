@@ -16,7 +16,12 @@ import { ComparisonEvaluator } from './comparisonEvaluator';
  */
 export class LessThan extends ComparisonEvaluator {
     public constructor() {
-        super(ExpressionType.LessThan, LessThan.func, FunctionUtils.validateBinaryNumberOrString, FunctionUtils.verifyNumberOrString);
+        super(
+            ExpressionType.LessThan,
+            LessThan.func,
+            FunctionUtils.validateBinaryNumberOrString,
+            FunctionUtils.verifyNumberOrString
+        );
     }
 
     private static func(args: any[]): boolean {

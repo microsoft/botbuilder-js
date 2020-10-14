@@ -21,7 +21,10 @@ export class AddOrdinal extends ExpressionEvaluator {
     }
 
     private static evaluator(): EvaluateExpressionDelegate {
-        return FunctionUtils.apply((args: any[]): string => AddOrdinal.evalAddOrdinal(args[0]), FunctionUtils.verifyInteger);
+        return FunctionUtils.apply(
+            (args: any[]): string => AddOrdinal.evalAddOrdinal(args[0]),
+            FunctionUtils.verifyInteger
+        );
     }
 
     private static evalAddOrdinal(num: number): string {

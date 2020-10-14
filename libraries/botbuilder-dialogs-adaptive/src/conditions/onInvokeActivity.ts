@@ -13,7 +13,6 @@ import { OnActivity } from './onActivity';
  * Actions triggered when an InvokeActivity is received.
  */
 export class OnInvokeActivity extends OnActivity {
-
     public constructor(actions: Dialog[] = [], condition?: string) {
         super(ActivityTypes.Invoke, actions, condition);
     }
