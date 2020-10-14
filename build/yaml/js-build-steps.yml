@@ -91,13 +91,6 @@ steps:
     verbose: false
     customCommand: 'run test:devops'
 
-- task: Npm@1
-  displayName: 'npm run eslint'
-  inputs:
-    command: custom
-    verbose: false
-    customCommand: 'run eslint'
-
 # Publish test results to Azure Pipelines
 - task: PublishTestResults@2
   displayName: 'Publish test results to Azure DevOps'
