@@ -22,13 +22,8 @@ export class MultiLanguageRecognizerConverter implements Converter<Input, Output
     }
 
     public convert(value: Input | Output): Output {
-        const recognizers = {};
-        for (const key in value) {
-            if (Object.prototype.hasOwnProperty.call(value, key)) {
-                const item = value[key];
-                recognizers[key] = this._recognizerConverter.convert(item);
-            }
-        }
-        return recognizers;
+        return Object.entries(value).reduce((recognizers, [key, value]) => {
+            return { ...recognizers, [key]: this._recognizerConverter.convert(value) };
+        }, {});
     }
 }
