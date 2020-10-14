@@ -38,7 +38,7 @@ export class DialogStateManager {
     private readonly dialogContext: DialogContext;
 
     /**
-     * Initializes a new instance of the DialogStateManager class.
+     * Initializes a new instance of the [DialogStateManager](xref:botbuilder-dialogs.DialogStateManager) class.
      * @param dc The dialog context for the current turn of the conversation.
      * @param configuration Configuration for the dialog state manager.
      */
@@ -532,9 +532,9 @@ export class DialogStateManager {
 
     /**
      * @private
-     * Gets MemoryScope by name.
+     * Gets [MemoryScope](xref:botbuilder-dialogs.MemoryScope) by name.
      * @param name Name of scope.
-     * @returns The MemoryScope.
+     * @returns The [MemoryScope](xref:botbuilder-dialogs.MemoryScope).
      */
     private getMemoryScope(name: string): MemoryScope | undefined {
         const key = name.toLowerCase();
@@ -551,7 +551,7 @@ export class DialogStateManager {
 
     /**
      * Creates a standard dialog state manager configuration.
-     * @returns A DialogStateManagerConfiguration with the standard configuration.
+     * @returns A [DialogStateManagerConfiguration](xref:botbuilder-dialogs.DialogStateManagerConfiguration) with the standard configuration.
      */
     public static createStandardConfiguration(): DialogStateManagerConfiguration {
         const config: DialogStateManagerConfiguration = {
