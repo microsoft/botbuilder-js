@@ -21,7 +21,7 @@ export class TicksToMinutes extends ExpressionEvaluator {
     private static readonly TicksPerMinute: number = 60 * 10000000;
 
     /**
-     * Initializes a new instance of the `TicksToMinutes` class.
+     * Initializes a new instance of the [TicksToMinutes](xref:adaptive-expressions.TicksToMinutes) class.
      */
     public constructor() {
         super(

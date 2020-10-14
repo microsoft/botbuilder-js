@@ -17,7 +17,7 @@ import { ReturnType } from '../returnType';
  */
 export class Sum extends ExpressionEvaluator {
     /**
-     * Initializes a new instance of the `Sum` class.
+     * Initializes a new instance of the [Sum](xref:adaptive-expressions.Sum) class.
      */
     public constructor() {
         super(ExpressionType.Sum, Sum.evaluator(), ReturnType.Number, Sum.validator);

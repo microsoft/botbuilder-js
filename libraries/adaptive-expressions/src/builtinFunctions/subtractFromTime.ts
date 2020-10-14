@@ -22,7 +22,7 @@ import { ReturnType } from '../returnType';
  */
 export class SubtractFromTime extends ExpressionEvaluator {
     /**
-     * Initializes a new instance of the `SubtractFromTime` class.
+     * Initializes a new instance of the [SubtractFromTime](xref:adaptive-expressions.SubtractFromTime) class.
      */
     public constructor() {
         super(

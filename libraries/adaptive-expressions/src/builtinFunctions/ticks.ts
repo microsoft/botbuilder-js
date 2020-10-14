@@ -20,7 +20,7 @@ import { ReturnType } from '../returnType';
  */
 export class Ticks extends ExpressionEvaluator {
     /**
-     * Initializes a new instance of the `Ticks` class.
+     * Initializes a new instance of the [Ticks](xref:adaptive-expressions.Ticks) class.
      */
     public constructor() {
         super(ExpressionType.Ticks, Ticks.evaluator, ReturnType.Number, Ticks.validator);

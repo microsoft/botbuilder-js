@@ -19,7 +19,7 @@ import { ReturnType } from '../returnType';
  */
 export class Union extends ExpressionEvaluator {
     /**
-     * Initializes a new instance of the `Union` class.
+     * Initializes a new instance of the [Union](xref:adaptive-expressions.Union) class.
      */
     public constructor() {
         super(ExpressionType.Union, Union.evaluator(), ReturnType.Array, Union.validator);
