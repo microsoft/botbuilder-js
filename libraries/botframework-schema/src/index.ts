@@ -481,7 +481,7 @@ export interface Activity {
   /**
    * The name of the operation associated with an invoke or event activity.
    */
-  name?: string;
+  name?: ActivityEventNames | string;
   /**
    * A reference to another conversation or activity.
    */
@@ -1723,6 +1723,17 @@ export interface TokenExchangeRequest {
 export enum RoleTypes {
   User = 'user',
   Bot = 'bot',
+}
+
+/**
+ * Defines values for ActivityEventNames.
+ * Possible values include: 'continueConversation', 'createConversation'
+ * @readonly
+ * @enum {string}
+ */
+export enum ActivityEventNames {
+  ContinueConversation = 'continueConversation',
+  CreateConversation = 'createConversation'
 }
 
 /**
