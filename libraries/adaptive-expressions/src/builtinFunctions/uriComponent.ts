@@ -20,6 +20,9 @@ export class UriComponent extends ExpressionEvaluator {
     }
 
     private static evaluator(): EvaluateExpressionDelegate {
-        return FunctionUtils.apply((args: Readonly<any>): string => encodeURIComponent(args[0]), FunctionUtils.verifyString);
+        return FunctionUtils.apply(
+            (args: Readonly<any>): string => encodeURIComponent(args[0]),
+            FunctionUtils.verifyString
+        );
     }
 }

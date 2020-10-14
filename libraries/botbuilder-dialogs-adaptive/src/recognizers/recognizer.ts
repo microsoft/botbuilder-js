@@ -5,7 +5,13 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { RecognizerResult, Activity, getTopScoringIntent, BotTelemetryClient, NullTelemetryClient } from 'botbuilder-core';
+import {
+    RecognizerResult,
+    Activity,
+    getTopScoringIntent,
+    BotTelemetryClient,
+    NullTelemetryClient,
+} from 'botbuilder-core';
 import { DialogContext } from 'botbuilder-dialogs';
 import { telemetryClientKey } from '../telemetryExtensions';
 
@@ -13,12 +19,10 @@ import { telemetryClientKey } from '../telemetryExtensions';
  * Recognizer base class.
  */
 export class Recognizer {
-
     /**
      * Recognizers unique ID.
      */
     public id: string;
-
 
     /**
      * The telemetry client for logging events.
@@ -48,7 +52,12 @@ export class Recognizer {
      * @param telemetryProperties Additional properties to be logged to telemetry with event.
      * @param telemetryMetrics Additional metrics to be logged to telemetry with event.
      */
-    public recognize(dialogContext: DialogContext, activity: Partial<Activity>, telemetryProperties?: { [key: string]: string }, telemetryMetrics?: { [key: string]: number }): Promise<RecognizerResult> {
+    public recognize(
+        dialogContext: DialogContext,
+        activity: Partial<Activity>,
+        telemetryProperties?: { [key: string]: string },
+        telemetryMetrics?: { [key: string]: number }
+    ): Promise<RecognizerResult> {
         throw new Error('Please implement recognize function.');
     }
 
@@ -59,18 +68,24 @@ export class Recognizer {
      * @param dialogContext Dialog Context.
      * @returns A dictionary that can be included when calling the TrackEvent method on the TelemetryClient.
      */
-    protected fillRecognizerResultTelemetryProperties(recognizerResult: RecognizerResult, telemetryProperties: { [key: string]: string }, dialogContext?: DialogContext): { [key: string]: string } {
-
+    protected fillRecognizerResultTelemetryProperties(
+        recognizerResult: RecognizerResult,
+        telemetryProperties: { [key: string]: string },
+        dialogContext?: DialogContext
+    ): { [key: string]: string } {
         const { intent, score } = getTopScoringIntent(recognizerResult);
 
         const properties: { [key: string]: string } = {
-            'Text': recognizerResult.text,
-            'AlteredText': recognizerResult.alteredText,
-            'TopIntent': Object.entries(recognizerResult.intents).length > 0 ? intent : undefined,
-            'TopIntentScore': Object.entries(recognizerResult.intents).length > 0 ? score.toString() : undefined,
-            'Intents': Object.entries(recognizerResult.intents).length > 0 ? JSON.stringify(recognizerResult.intents) : undefined,
-            'Entities': recognizerResult.entities ? JSON.stringify(recognizerResult.entities) : undefined,
-            'AdditionalProperties': this.stringifyAdditionalPropertiesOfRecognizerResult(recognizerResult)
+            Text: recognizerResult.text,
+            AlteredText: recognizerResult.alteredText,
+            TopIntent: Object.entries(recognizerResult.intents).length > 0 ? intent : undefined,
+            TopIntentScore: Object.entries(recognizerResult.intents).length > 0 ? score.toString() : undefined,
+            Intents:
+                Object.entries(recognizerResult.intents).length > 0
+                    ? JSON.stringify(recognizerResult.intents)
+                    : undefined,
+            Entities: recognizerResult.entities ? JSON.stringify(recognizerResult.entities) : undefined,
+            AdditionalProperties: this.stringifyAdditionalPropertiesOfRecognizerResult(recognizerResult),
         };
         // Additional Properties can override "stock" properties.
         if (telemetryProperties) {
@@ -84,7 +99,7 @@ export class Recognizer {
      */
     private stringifyAdditionalPropertiesOfRecognizerResult(recognizerResult: RecognizerResult): string {
         const generalProperties = new Set(['text', 'alteredText', 'intents', 'entities']);
-        let additionalProperties: { [key: string]: string } = {};
+        const additionalProperties: { [key: string]: string } = {};
         for (const key in recognizerResult) {
             if (!generalProperties.has(key)) {
                 additionalProperties[key] = recognizerResult[key];
@@ -101,16 +116,21 @@ export class Recognizer {
      * @param telemetryProperties Optional. The properties to be included as part of the event tracking.
      * @param telemetryMetrics Optional. The metrics to be included as part of the event tracking.
      */
-    protected trackRecognizerResult(dialogContext: DialogContext, eventName: string, telemetryProperties?: { [key: string]: string }, telemetryMetrics?: { [key: string]: number }) {
+    protected trackRecognizerResult(
+        dialogContext: DialogContext,
+        eventName: string,
+        telemetryProperties?: { [key: string]: string },
+        telemetryMetrics?: { [key: string]: number }
+    ) {
         if (this.telemetryClient instanceof NullTelemetryClient) {
             const turnStateTelemetryClient = dialogContext.context.turnState.get(telemetryClientKey);
             this.telemetryClient = turnStateTelemetryClient || this.telemetryClient;
         }
         this.telemetryClient.trackEvent({
-                name: eventName,
-                properties: telemetryProperties,
-                metrics: telemetryMetrics
-            });
+            name: eventName,
+            properties: telemetryProperties,
+            metrics: telemetryMetrics,
+        });
     }
 }
 
@@ -125,13 +145,12 @@ export interface IntentMap {
  * @param entities An object to represent the entities.
  * @returns A [RecognizerResult](xref:botbuilder-core.RecognizerResult) object.
  */
-export function createRecognizerResult(text: string, intents?: IntentMap, entities?: object ): RecognizerResult {
+export function createRecognizerResult(text: string, intents?: IntentMap, entities?: object): RecognizerResult {
     if (!intents) {
-        intents = { 'None': { score: 0.0 } };
+        intents = { None: { score: 0.0 } };
     }
     if (!entities) {
         entities = {};
     }
     return { text: text, intents: intents, entities: entities };
 }
-

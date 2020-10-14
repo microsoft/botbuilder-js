@@ -1,4 +1,3 @@
-
 /**
  * @module botbuilder-lg
  */
@@ -8,7 +7,7 @@
  */
 export enum LGLineBreakStyle {
     Default = 'default',
-    Markdown = 'markdown'
+    Markdown = 'markdown',
 }
 
 /**
@@ -28,7 +27,7 @@ export enum LGCacheScope {
     /**
      * Without cache.
      */
-    None = 'none'
+    None = 'none',
 }
 
 export class EvaluationOptions {
@@ -61,9 +60,9 @@ export class EvaluationOptions {
                 this.LineBreakStyle = opt.LineBreakStyle;
                 this.cacheScope = opt.cacheScope;
             } else {
-                if(opt !== undefined && opt.length > 0) {
+                if (opt !== undefined && opt.length > 0) {
                     for (const optionStr of opt) {
-                        if(optionStr && optionStr.includes('=')) {
+                        if (optionStr && optionStr.includes('=')) {
                             const index = optionStr.indexOf('=');
                             const key = optionStr.substring(0, index).trim();
                             const value = optionStr.substring(index + 1).trim();
@@ -72,12 +71,16 @@ export class EvaluationOptions {
                                     this.strictMode = true;
                                 }
                             } else if (key === this.replaceNullKey) {
-                                this.nullSubstitution = (path): any => eval('`' + value.replace(this.nullKeyReplaceStrRegex, '${path}') + '`');
+                                this.nullSubstitution = (path): any =>
+                                    eval('`' + value.replace(this.nullKeyReplaceStrRegex, '${path}') + '`');
                             } else if (key === this.lineBreakKey) {
-                                this.LineBreakStyle = value.toLowerCase() === LGLineBreakStyle.Markdown.toString().toLowerCase()? LGLineBreakStyle.Markdown : LGLineBreakStyle.Default;
+                                this.LineBreakStyle =
+                                    value.toLowerCase() === LGLineBreakStyle.Markdown.toString().toLowerCase()
+                                        ? LGLineBreakStyle.Markdown
+                                        : LGLineBreakStyle.Default;
                             }
                         }
-                    } 
+                    }
                 }
             }
         }

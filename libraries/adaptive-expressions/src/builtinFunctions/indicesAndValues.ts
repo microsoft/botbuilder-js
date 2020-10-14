@@ -20,7 +20,12 @@ import { ReturnType } from '../returnType';
  */
 export class IndicesAndValues extends ExpressionEvaluator {
     public constructor() {
-        super(ExpressionType.IndicesAndValues, IndicesAndValues.evaluator, ReturnType.Array, FunctionUtils.validateUnary);
+        super(
+            ExpressionType.IndicesAndValues,
+            IndicesAndValues.evaluator,
+            ReturnType.Array,
+            FunctionUtils.validateUnary
+        );
     }
 
     private static evaluator(expression: Expression, state: any, options: Options): ValueWithError {
@@ -38,7 +43,7 @@ export class IndicesAndValues extends ExpressionEvaluator {
                 result = tempList;
             } else if (typeof value === 'object') {
                 const tempList = [];
-                for (let [index, val] of Object.entries(value)) {
+                for (const [index, val] of Object.entries(value)) {
                     tempList.push({ index: index, value: val });
                 }
 

@@ -16,9 +16,10 @@
 export class TimeZoneConverter {
     private static readonly ianaToWindowsMap: Map<string, string> = new Map<string, string>();
     private static readonly windowsToIanaMap: Map<string, string> = new Map<string, string>();
-    private static readonly validTimezonStr: string [] = [];
+    private static readonly validTimezonStr: string[] = [];
     private static readonly seperator: string = '    ';
-    private static readonly mappingString: string = 'AUS Central Standard Time,001,Australia/Darwin\
+    private static readonly mappingString: string =
+        'AUS Central Standard Time,001,Australia/Darwin\
     AUS Central Standard Time,AU,Australia/Darwin\
     AUS Eastern Standard Time,001,Australia/Sydney\
     AUS Eastern Standard Time,AU,Australia/Sydney Australia/Melbourne\
@@ -549,8 +550,8 @@ export class TimeZoneConverter {
      */
     public static windowsToIana(windowsTimeZoneId: string): string {
         this.loadData();
-        if (this.windowsToIanaMap.has(`001|${ windowsTimeZoneId }`)) {
-            return this.windowsToIanaMap.get(`001|${ windowsTimeZoneId }`);
+        if (this.windowsToIanaMap.has(`001|${windowsTimeZoneId}`)) {
+            return this.windowsToIanaMap.get(`001|${windowsTimeZoneId}`);
         }
 
         return windowsTimeZoneId;
@@ -569,7 +570,7 @@ export class TimeZoneConverter {
 
     private static loadData(): void {
         const data: string = this.mappingString;
-        const lines: string [] = data.split(this.seperator);
+        const lines: string[] = data.split(this.seperator);
         for (const line of lines) {
             const tokens: string[] = line.split(',');
             const windowsID: string = tokens[0];
@@ -585,8 +586,8 @@ export class TimeZoneConverter {
                 }
             }
 
-            if (!this.windowsToIanaMap.has(`${ territory }|${ windowsID }`)) {
-                this.windowsToIanaMap.set(`${ territory }|${ windowsID }`, ianaIDs[0]);
+            if (!this.windowsToIanaMap.has(`${territory}|${windowsID}`)) {
+                this.windowsToIanaMap.set(`${territory}|${windowsID}`, ianaIDs[0]);
             }
 
             if (!this.validTimezonStr.includes(windowsID)) {

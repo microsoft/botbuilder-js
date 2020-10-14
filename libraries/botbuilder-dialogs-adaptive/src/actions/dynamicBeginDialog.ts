@@ -6,12 +6,18 @@
  * Licensed under the MIT License.
  */
 
+import { ExpressionProperty } from 'adaptive-expressions';
 import { DialogContext } from 'botbuilder-dialogs';
 import { BeginDialog } from './beginDialog';
 
 export class DynamicBeginDialog extends BeginDialog {
-    protected bindOptions(dc: DialogContext, options: object): object {
-        // use overflow properties of deserialized object instead of the passed in option.
-        return super.bindOptions(dc, Object.assign({}, this));
+    protected bindOptions(dc: DialogContext, _options: object): object {
+        const options = {};
+        for (const key of Object.getOwnPropertyNames(this)) {
+            if (!(this[key] instanceof ExpressionProperty)) {
+                options[key] = this[key];
+            }
+        }
+        return super.bindOptions(dc, options);
     }
 }

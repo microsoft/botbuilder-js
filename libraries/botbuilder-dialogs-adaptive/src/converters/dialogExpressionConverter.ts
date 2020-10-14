@@ -20,7 +20,7 @@ export class DialogExpressionConverter implements Converter {
     public convert(value: string | object): DialogExpression {
         if (typeof value == 'string') {
             if (!value.startsWith('=')) {
-                const dialog = this._resourceExplorer.loadType(`${ value }.dialog`) as Dialog;
+                const dialog = this._resourceExplorer.loadType(`${value}.dialog`) as Dialog;
                 if (dialog) {
                     return new DialogExpression(dialog);
                 }

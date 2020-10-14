@@ -12,7 +12,7 @@ import { FunctionUtils } from '../functionUtils';
 import { ReturnType } from '../returnType';
 
 /**
- * Return the remainder from dividing two numbers. 
+ * Return the remainder from dividing two numbers.
  */
 export class Mod extends ExpressionEvaluator {
     public constructor() {
@@ -20,18 +20,16 @@ export class Mod extends ExpressionEvaluator {
     }
 
     private static evaluator(): EvaluateExpressionDelegate {
-        return FunctionUtils.applyWithError(
-            (args: any[]): any => {
-                let error: string;
-                let value: any;
-                if (Number(args[1]) === 0) {
-                    error = (`Cannot mod by 0.`);
-                } else {
-                    value = args[0] % args[1];
-                }
+        return FunctionUtils.applyWithError((args: any[]): any => {
+            let error: string;
+            let value: any;
+            if (Number(args[1]) === 0) {
+                error = `Cannot mod by 0.`;
+            } else {
+                value = args[0] % args[1];
+            }
 
-                return { value, error };
-            },
-            FunctionUtils.verifyInteger);
+            return { value, error };
+        }, FunctionUtils.verifyInteger);
     }
 }

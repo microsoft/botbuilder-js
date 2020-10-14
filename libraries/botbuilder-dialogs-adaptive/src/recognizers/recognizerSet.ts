@@ -14,7 +14,6 @@ import { Recognizer } from './recognizer';
  * RecognizerSet - [Recognizer](xref:botbuilder-dialogs-adaptive.Recognizer) which is the union of multiple recognizers into one RecognizerResult.
  */
 export class RecognizerSet extends Recognizer {
-
     public recognizers: Recognizer[] = [];
 
     /**
@@ -25,18 +24,27 @@ export class RecognizerSet extends Recognizer {
      * @param telemetryMetrics Optional. Additional metrics to be logged to telemetry with the LuisResult event.
      * @returns Recognized [RecognizerResult](xref:botbuilder-core.RecognizerResult) Promise.
      */
-    public async recognize(dialogContext: DialogContext, activity: Activity, telemetryProperties?: { [key: string]: string }, telemetryMetrics?: { [key: string]: number }): Promise<RecognizerResult> {
+    public async recognize(
+        dialogContext: DialogContext,
+        activity: Activity,
+        telemetryProperties?: { [key: string]: string },
+        telemetryMetrics?: { [key: string]: number }
+    ): Promise<RecognizerResult> {
         const recognizerResult: RecognizerResult = {
             text: undefined,
             alteredText: undefined,
             intents: {},
             entities: {
-                '$instance': {}
-            }
+                $instance: {},
+            },
         };
-        const results = await Promise.all(this.recognizers.map((recognizer: Recognizer): Promise<RecognizerResult> => {
-            return recognizer.recognize(dialogContext, activity, telemetryProperties, telemetryMetrics);
-        }));
+        const results = await Promise.all(
+            this.recognizers.map(
+                (recognizer: Recognizer): Promise<RecognizerResult> => {
+                    return recognizer.recognize(dialogContext, activity, telemetryProperties, telemetryMetrics);
+                }
+            )
+        );
 
         for (let i = 0; i < results.length; i++) {
             const result = results[i];
@@ -89,19 +97,28 @@ export class RecognizerSet extends Recognizer {
             }
 
             for (const property in result) {
-                if (property != 'text' && property != 'alteredText' && property != 'intents' && property != 'entities') {
+                if (
+                    property != 'text' &&
+                    property != 'alteredText' &&
+                    property != 'intents' &&
+                    property != 'entities'
+                ) {
                     // naive merge clobbers same key.
                     recognizerResult[property] = result[property];
                 }
             }
-
         }
 
         if (Object.entries(recognizerResult.intents).length == 0) {
             recognizerResult.intents['None'] = { score: 1.0 };
         }
 
-        this.trackRecognizerResult(dialogContext, 'RecognizerSetResult', this.fillRecognizerResultTelemetryProperties(recognizerResult, telemetryProperties), telemetryMetrics);
+        this.trackRecognizerResult(
+            dialogContext,
+            'RecognizerSetResult',
+            this.fillRecognizerResultTelemetryProperties(recognizerResult, telemetryProperties),
+            telemetryMetrics
+        );
 
         return recognizerResult;
     }

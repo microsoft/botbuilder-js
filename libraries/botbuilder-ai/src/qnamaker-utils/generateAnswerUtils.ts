@@ -33,7 +33,7 @@ export class GenerateAnswerUtils {
      * @param _options Settings used to configure the instance.
      * @param endpoint The endpoint of the knowledge base to query.
      */
-    constructor (public _options: QnAMakerOptions, private readonly endpoint: QnAMakerEndpoint) {
+    constructor(public _options: QnAMakerOptions, private readonly endpoint: QnAMakerEndpoint) {
         this.httpRequestUtils = new HttpRequestUtils();
 
         this.validateOptions(this._options);
@@ -45,8 +45,12 @@ export class GenerateAnswerUtils {
      * @param question Question which need to be queried.
      * @param options (Optional) The options for the QnA Maker knowledge base. If null, constructor option is used for this instance.
      */
-    public async queryQnaService(endpoint: QnAMakerEndpoint, question: string, options?: QnAMakerOptions): Promise<QnAMakerResult[]> {
-        var result = await this.queryQnaServiceRaw(endpoint, question, options);
+    public async queryQnaService(
+        endpoint: QnAMakerEndpoint,
+        question: string,
+        options?: QnAMakerOptions
+    ): Promise<QnAMakerResult[]> {
+        const result = await this.queryQnaServiceRaw(endpoint, question, options);
 
         return result.answers;
     }
@@ -57,20 +61,29 @@ export class GenerateAnswerUtils {
      * @param question Question which need to be queried.
      * @param options (Optional) The options for the QnA Maker knowledge base. If null, constructor option is used for this instance.
      */
-    public async queryQnaServiceRaw(endpoint: QnAMakerEndpoint, question: string, options?: QnAMakerOptions): Promise<QnAMakerResults> {
-        const url: string = `${ endpoint.host }/knowledgebases/${ endpoint.knowledgeBaseId }/generateanswer`;
-        var queryOptions: QnAMakerOptions = { ...this._options, ...options } as QnAMakerOptions;
+    public async queryQnaServiceRaw(
+        endpoint: QnAMakerEndpoint,
+        question: string,
+        options?: QnAMakerOptions
+    ): Promise<QnAMakerResults> {
+        const url = `${endpoint.host}/knowledgebases/${endpoint.knowledgeBaseId}/generateanswer`;
+        const queryOptions: QnAMakerOptions = { ...this._options, ...options } as QnAMakerOptions;
 
         queryOptions.rankerType = !queryOptions.rankerType ? RankerTypes.default : queryOptions.rankerType;
         this.validateOptions(queryOptions);
 
-        var payloadBody = JSON.stringify({
+        const payloadBody = JSON.stringify({
             question: question,
-             strictFiltersCompoundOperationType: queryOptions.strictFiltersJoinOperator,
-            ...queryOptions
+            strictFiltersCompoundOperationType: queryOptions.strictFiltersJoinOperator,
+            ...queryOptions,
         });
 
-        const qnaResultJson: any = await this.httpRequestUtils.executeHttpRequest(url, payloadBody, this.endpoint, queryOptions.timeout);
+        const qnaResultJson: any = await this.httpRequestUtils.executeHttpRequest(
+            url,
+            payloadBody,
+            this.endpoint,
+            queryOptions.timeout
+        );
 
         return this.formatQnaResult(qnaResultJson);
     }
@@ -82,7 +95,11 @@ export class GenerateAnswerUtils {
      * @param answers Answers returned by QnA Maker.
      * @param options (Optional) The options for the QnA Maker knowledge base. If null, constructor option is used for this instance.
      */
-    public async emitTraceInfo(turnContext: TurnContext, answers: QnAMakerResult[], queryOptions?: QnAMakerOptions): Promise<any> {
+    public async emitTraceInfo(
+        turnContext: TurnContext,
+        answers: QnAMakerResult[],
+        queryOptions?: QnAMakerOptions
+    ): Promise<any> {
         const requestOptions: QnAMakerOptions = { ...this._options, ...queryOptions };
         const { scoreThreshold, top, strictFilters, metadataBoost, context, qnaId } = requestOptions;
 
@@ -103,7 +120,7 @@ export class GenerateAnswerUtils {
             valueType: QNAMAKER_TRACE_TYPE,
             name: QNAMAKER_TRACE_NAME,
             label: QNAMAKER_TRACE_LABEL,
-            value: traceInfo
+            value: traceInfo,
         });
     }
 
@@ -131,10 +148,14 @@ export class GenerateAnswerUtils {
      * @param answers Answers returned by QnA Maker.
      * @param options (Optional) The options for the QnA Maker knowledge base. If null, constructor option is used for this instance.
      */
-    public static sortAnswersWithinThreshold(answers: QnAMakerResult[] = [] as QnAMakerResult[], queryOptions: QnAMakerOptions): QnAMakerResult[] {
+    public static sortAnswersWithinThreshold(
+        answers: QnAMakerResult[] = [] as QnAMakerResult[],
+        queryOptions: QnAMakerOptions
+    ): QnAMakerResult[] {
         const minScore: number = typeof queryOptions.scoreThreshold === 'number' ? queryOptions.scoreThreshold : 0.001;
 
-        return answers.filter((ans: QnAMakerResult) => ans.score >= minScore)
+        return answers
+            .filter((ans: QnAMakerResult) => ans.score >= minScore)
             .sort((a: QnAMakerResult, b: QnAMakerResult) => b.score - a.score);
     }
 
@@ -150,7 +171,8 @@ export class GenerateAnswerUtils {
             return ans as QnAMakerResult;
         });
 
-        qnaResult.activeLearningEnabled = (qnaResult.activeLearningEnabled != null) ? qnaResult.activeLearningEnabled : true;
+        qnaResult.activeLearningEnabled =
+            qnaResult.activeLearningEnabled != null ? qnaResult.activeLearningEnabled : true;
 
         return qnaResult;
     }
@@ -158,14 +180,16 @@ export class GenerateAnswerUtils {
     private validateScoreThreshold(scoreThreshold: number): void {
         if (typeof scoreThreshold !== 'number' || !(scoreThreshold > 0 && scoreThreshold <= 1)) {
             throw new TypeError(
-                `"${ scoreThreshold }" is an invalid scoreThreshold. QnAMakerOptions.scoreThreshold must have a value between 0 and 1.`
+                `"${scoreThreshold}" is an invalid scoreThreshold. QnAMakerOptions.scoreThreshold must have a value between 0 and 1.`
             );
         }
     }
 
     private validateTop(qnaOptionTop: number): void {
         if (!Number.isInteger(qnaOptionTop) || qnaOptionTop < 1) {
-            throw new RangeError(`"${ qnaOptionTop }" is an invalid top value. QnAMakerOptions.top must be an integer greater than 0.`);
+            throw new RangeError(
+                `"${qnaOptionTop}" is an invalid top value. QnAMakerOptions.top must be an integer greater than 0.`
+            );
         }
     }
 }
