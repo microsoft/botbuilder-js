@@ -16,14 +16,14 @@ import { NodeWebSocketFactoryBase } from './nodeWebSocketFactoryBase';
 export class NodeWebSocketFactory extends NodeWebSocketFactoryBase {
 
     /**
-     * Initializes a new instance of the `NodeWebSocketFactory` class.
+     * Initializes a new instance of the [NodeWebSocketFactory](xref:botframework-streaming.NodeWebSocketFactory) class.
      */
     constructor() {
         super();
     }
 
     /**
-     * Creates a NodeWebSocket instance.
+     * Creates a [NodeWebSocket](xref:botframework-streaming.NodeWebSocket) instance.
      * @remarks
      * The parameters for this method should be associated with an 'upgrade' event off of a Node.js HTTP Server.
      * @param req An IncomingMessage from the 'http' module in Node.js.

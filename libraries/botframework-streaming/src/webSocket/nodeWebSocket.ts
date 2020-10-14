@@ -14,7 +14,7 @@ import { INodeIncomingMessage, INodeBuffer, INodeSocket, ISocket } from '../inte
 const NONCE_LENGTH = 16;
 
 /**
- * An implementation of `ISocket` to use with a `NodeWebSocketFactory` to create a WebSocket server.
+ * An implementation of [ISocket](xref:botframework-streaming.ISocket) to use with a [NodeWebSocketFactory](xref:botframework-streaming.NodeWebSocketFactory) to create a WebSocket server.
  */
 export class NodeWebSocket implements ISocket {
     private wsSocket: WebSocket;
