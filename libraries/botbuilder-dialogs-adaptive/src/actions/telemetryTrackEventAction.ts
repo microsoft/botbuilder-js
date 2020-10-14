@@ -29,15 +29,11 @@ type PropertiesOutput = Record<string, StringExpression>;
  * Converter to convert telemetry properties configuration.
  */
 class TelemetryPropertiesConverter implements Converter<PropertiesInput, PropertiesOutput> {
-    public convert(properties: PropertiesInput | PropertiesOutput): PropertiesOutput {
-        const result = {};
-        for (const name in properties) {
-            if (Object.prototype.hasOwnProperty.call(properties, name)) {
-                const property = properties[name];
-                result[name] = property instanceof StringExpression ? property : new StringExpression(property);
-            }
-        }
-        return result;
+    public convert(value: PropertiesInput | PropertiesOutput): PropertiesOutput {
+        return Object.entries(value).reduce((properties, [key, value]) => {
+            const property = value instanceof StringExpression ? value : new StringExpression(value);
+            return { ...properties, [key]: property };
+        }, {});
     }
 }
 
