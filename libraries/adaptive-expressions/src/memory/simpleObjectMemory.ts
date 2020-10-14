@@ -18,8 +18,8 @@ export class SimpleObjectMemory implements MemoryInterface {
     private memory: any = undefined;
 
     /**
-     * Initializes a new instance of the `SimpleObjectMemory` class.
-     * This wraps a simple object as `MemoryInterface`.
+     * Initializes a new instance of the [SimpleObjectMemory](xref:adaptive-expressions.SimpleObjectMemory) class.
+     * This wraps a simple object as [MemoryInterface](xref:adaptive-expressions.MemoryInterface).
      * @param memory The object to wrap.
      */
     public constructor(memory: any) {
@@ -157,7 +157,7 @@ export class SimpleObjectMemory implements MemoryInterface {
     }
 
     /**
-     * Returns the version info of `SimpleObjectMemory`.
+     * Returns the version info of [SimpleObjectMemory](xref:adaptive-expressions.SimpleObjectMemory).
      * @returns A string value representing the version info.
      */
     public version(): string {
@@ -165,8 +165,8 @@ export class SimpleObjectMemory implements MemoryInterface {
     }
 
     /**
-     * Returns a string that represents the current SimpleObjectMemory object.
-     * @returns A string value representing the current SimpleObjectMemory object.
+     * Returns a string that represents the current [SimpleObjectMemory](xref:adaptive-expressions.SimpleObjectMemory) object.
+     * @returns A string value representing the current [SimpleObjectMemory](xref:adaptive-expressions.SimpleObjectMemory) object.
      */
     public toString(): string {
         return JSON.stringify(this.memory, this.getCircularReplacer());

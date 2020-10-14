@@ -15,9 +15,9 @@ import { MemoryInterface } from './memoryInterface';
  */
 export class StackedMemory extends Array<MemoryInterface> implements MemoryInterface {
     /**
-     * Wraps an object that implements `MemoryInterface` into a `StackedMemory` object.
-     * @param memory An object that implements `MemoryInterface`.
-     * @returns A StackedMemory object.
+     * Wraps an object that implements [MemoryInterface](xref:adaptive-expressions.MemoryInterface) into a [StackedMemory](xref:adaptive-expressions.StackedMemory) object.
+     * @param memory An object that implements [MemoryInterface](xref:adaptive-expressions.MemoryInterface).
+     * @returns A [StackedMemory](xref:adaptive-expressions.StackedMemory) object.
      */
     public static wrap(memory: MemoryInterface): StackedMemory {
         if (memory instanceof StackedMemory) {
@@ -58,7 +58,7 @@ export class StackedMemory extends Array<MemoryInterface> implements MemoryInter
     }
 
     /**
-     * Gets the version of the current StackedMemory.
+     * Gets the version of the current [StackedMemory](xref:adaptive-expressions.StackedMemory).
      * @returns A string value representing the version.
      */
     public version(): string {

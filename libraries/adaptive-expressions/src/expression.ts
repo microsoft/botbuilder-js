@@ -217,9 +217,9 @@ export class Expression {
     }
 
     /**
-     * Parse an expression string into an expression object.
+     * Parse an expression string into an [Expression](xref:adaptive-expressions.Expression) object.
      * @param expression Expression string.
-     * @param lookup Optional. Function lookup when parsing the expression. Default is Expression.lookup which uses Expression.functions table.
+     * @param lookup Optional. [EvaluatorLookup](xref:adaptive-expressions.EvaluatorLookup) function lookup when parsing the expression. Default is [Expression.lookup](xref:adaptive-expressions.Expression.lookup) which uses [Expression.functions](xref:adaptive-expressions.Expression.functions) table.
      * @returns The expression object.
      */
     public static parse(expression: string, lookup?: EvaluatorLookup): Expression {
@@ -227,9 +227,9 @@ export class Expression {
     }
 
     /**
-     * Lookup an `ExpressionEvaluator` (function) by name.
+     * Lookup an [ExpressionEvaluator](xref:adaptive-expressions.ExpressionEvaluator) function by name.
      * @param functionName Name of function to lookup.
-     * @returns An `ExpressionEvaluator` corresponding to the function name.
+     * @returns An [ExpressionEvaluator](xref:adaptive-expressions.ExpressionEvaluator) corresponding to the function name.
      */
     public static lookup(functionName: string): ExpressionEvaluator {
         const exprEvaluator = Expression.functions.get(functionName);
@@ -376,8 +376,8 @@ export class Expression {
     }
 
     /**
-     * Returns a string that represents the current Expression object.
-     * @returns A string that represents the current Expression object.
+     * Returns a string that represents the current [Expression](xref:adaptive-expressions.Expression) object.
+     * @returns A string that represents the current [Expression](xref:adaptive-expressions.Expression) object.
      */
     public toString(): string {
         let builder = '';
