@@ -15,7 +15,7 @@ export class StatusCodeError extends Error {
     public readonly statusCode: StatusCodes;
 
     /**
-     * Creates a new instance of the StatusCodeError class.
+     * Creates a new instance of the [StatusCodeError](xref:botbuilder.StatusCodeError) class.
      * @param statusCode The status code.
      * @param message Optional. The error message.
      */

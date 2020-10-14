@@ -28,10 +28,9 @@ export function teamsGetChannelId(activity: Activity): string {
 }
 
 /**
- * Gets the Team Id from the current activity.
- * @param activity The current activity.
- * 
- * @returns The current activity's team's Id, or null.
+ * Gets the Team Id from the current [Activity](xref:botframework-schema.Activity).
+ * @param activity The current [Activity](xref:botframework-schema.Activity).
+ * @returns The current [Activity](xref:botframework-schema.Activity)'s team's Id, or null.
  */
 export function teamsGetTeamId(activity: Activity): string {
     if (!activity) {
@@ -44,8 +43,8 @@ export function teamsGetTeamId(activity: Activity): string {
 }
 
 /**
- * Configures the current activity to generate a notification within Teams.
- * @param activity The current activity.
+ * Configures the current [Activity](xref:botframework-schema.Activity) to generate a notification within Teams.
+ * @param activity The current [Activity](xref:botframework-schema.Activity).
  */
 export function teamsNotifyUser(activity: Activity): void {
     if (!activity) {
@@ -61,10 +60,9 @@ export function teamsNotifyUser(activity: Activity): void {
 }
 
 /**
- * Gets the TeamsInfo object from the current activity.
- * @param activity The current activity.
- * 
- * @returns The current activity's team's info, or null.
+ * Gets the TeamsInfo object from the current [Activity](xref:botframework-schema.Activity).
+ * @param activity The current [Activity](xref:botframework-schema.Activity).
+ * @returns The current [Activity](xref:botframework-schema.Activity)'s team's info, or null.
  */
 export function teamsGetTeamInfo(activity: Activity): TeamInfo {
     if (!activity) {

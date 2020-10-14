@@ -31,11 +31,10 @@ import {
 import { TeamsInfo } from './teamsInfo';
 
 /**
- * The TeamsActivityHandler is derived from ActivityHandler. It adds support for 
- * the Microsoft Teams specific events and interactions.
+ * The [TeamsActivityHandler](xref:botbuilder.TeamsActivityHandler) is derived from [ActivityHandler](xref:botbuilder-core.ActivityHandler).
+ * It adds support for the Microsoft Teams specific events and interactions.
  */
 export class TeamsActivityHandler extends ActivityHandler {
-
     /**
      * Invoked when an invoke activity is received from the connector.
      * Invoke activities can be used to communicate many different things.
@@ -338,7 +337,7 @@ export class TeamsActivityHandler extends ActivityHandler {
     }
 
     /**
-     * Receives invoke activities with the name 'composeExtension/querySettingUrl' 
+     * Receives invoke activities with the name 'composeExtension/querySettingUrl'
      * @param context A context object for this turn.
      * @param query The Messaging extension query.
      * @returns The Messaging Extension Action Response for the query.
@@ -348,7 +347,7 @@ export class TeamsActivityHandler extends ActivityHandler {
     }
 
     /**
-     * Receives invoke activities with the name 'composeExtension/setting' 
+     * Receives invoke activities with the name 'composeExtension/setting'
      * @param context A context object for this turn.
      * @param settings Object representing the configuration settings.
      * @returns A promise that represents the work queued.
@@ -372,7 +371,7 @@ export class TeamsActivityHandler extends ActivityHandler {
                 if (context.activity.membersAdded && context.activity.membersAdded.length > 0) {
                     return await this.onTeamsMembersAdded(context);
                 }
-                
+
                 if (context.activity.membersRemoved && context.activity.membersRemoved.length > 0) {
                     return await this.onTeamsMembersRemoved(context);
                 }
@@ -380,15 +379,15 @@ export class TeamsActivityHandler extends ActivityHandler {
                 if (!channelData || !channelData.eventType) {
                     return await super.dispatchConversationUpdateActivity(context);
                 }
-        
+
                 switch (channelData.eventType)
                 {
                     case 'channelCreated':
                         return await this.onTeamsChannelCreated(context);
-        
+
                     case 'channelDeleted':
                         return await this.onTeamsChannelDeleted(context);
-        
+
                     case 'channelRenamed':
                         return await this.onTeamsChannelRenamed(context);
 
@@ -403,7 +402,7 @@ export class TeamsActivityHandler extends ActivityHandler {
 
                     case 'channelRestored':
                         return await this.onTeamsChannelRestored(context);
-                    
+
                     case 'teamRenamed':
                         return await this.onTeamsTeamRenamed(context);
 
@@ -452,14 +451,14 @@ export class TeamsActivityHandler extends ActivityHandler {
                     const errCode: string = err.body && err.body.error && err.body.error.code;
                     if (errCode === 'ConversationNotFound') {
                         // unable to find the member added in ConversationUpdate Activity in the response from the getMember call
-                        const teamsChannelAccount: TeamsChannelAccount = { 
+                        const teamsChannelAccount: TeamsChannelAccount = {
                             id: channelAccount.id,
                             name: channelAccount.name,
                             aadObjectId: channelAccount.aadObjectId,
                             role: channelAccount.role,
                         };
-    
-                        context.activity.membersAdded[i] = teamsChannelAccount;    
+
+                        context.activity.membersAdded[i] = teamsChannelAccount;
                     } else {
                         throw err;
                     }
@@ -501,7 +500,7 @@ export class TeamsActivityHandler extends ActivityHandler {
      * Invoked when a Channel Deleted event activity is received from the connector.
      * Channel Deleted correspond to the user deleting a channel.
      * @param context A context object for this turn.
-     * @returns A promise that represents the work queued. 
+     * @returns A promise that represents the work queued.
      */
     protected async onTeamsChannelDeleted(context): Promise<void> {
         await this.handle(context, 'TeamsChannelDeleted', this.defaultNextEvent(context));
@@ -545,11 +544,11 @@ export class TeamsActivityHandler extends ActivityHandler {
      */
     protected async onTeamsTeamHardDeleted(context): Promise<void> {
         await this.handle(context, 'TeamsTeamHardDeleted', this.defaultNextEvent(context));
-    }    
+    }
 
     /**
-     * 
-     * @param context 
+     *
+     * @param context
      * Invoked when a Channel Restored event activity is received from the connector.
      * Channel Restored correspond to the user restoring a previously deleted channel.
      * @param context The context for this turn.
@@ -590,10 +589,10 @@ export class TeamsActivityHandler extends ActivityHandler {
     }
 
     /**
-     * 
+     *
      * Override this in a derived class to provide logic for when members other than the bot
      * join the channel, such as your bot's welcome logic.
-     * @param handler 
+     * @param handler
      * @returns A promise that represents the work queued.
      */
     public onTeamsMembersAddedEvent(handler: (membersAdded: TeamsChannelAccount[], teamInfo: TeamInfo, context: TurnContext, next: () => Promise<void>) => Promise<void>): this {
@@ -606,7 +605,7 @@ export class TeamsActivityHandler extends ActivityHandler {
     /**
      * Override this in a derived class to provide logic for when members other than the bot
      * leave the channel, such as your bot's good-bye logic.
-     * @param handler 
+     * @param handler
      * @returns A promise that represents the work queued.
      */
     public onTeamsMembersRemovedEvent(handler: (membersRemoved: TeamsChannelAccount[], teamInfo: TeamInfo, context: TurnContext, next: () => Promise<void>) => Promise<void>): this {
@@ -618,7 +617,7 @@ export class TeamsActivityHandler extends ActivityHandler {
 
     /**
      * Override this in a derived class to provide logic for when a channel is created.
-     * @param handler 
+     * @param handler
      * @returns A promise that represents the work queued.
      */
     public onTeamsChannelCreatedEvent(handler: (channelInfo: ChannelInfo, teamInfo: TeamInfo, context: TurnContext, next: () => Promise<void>) => Promise<void>): this {
@@ -630,8 +629,8 @@ export class TeamsActivityHandler extends ActivityHandler {
 
     /**
      * Override this in a derived class to provide logic for when a channel is deleted.
-     * @param handler 
-     * @returns A promise that represents the work queued. 
+     * @param handler
+     * @returns A promise that represents the work queued.
      */
     public onTeamsChannelDeletedEvent(handler: (channelInfo: ChannelInfo, teamInfo: TeamInfo, context: TurnContext, next: () => Promise<void>) => Promise<void>): this {
         return this.on('TeamsChannelDeleted', async (context, next) => {
@@ -642,7 +641,7 @@ export class TeamsActivityHandler extends ActivityHandler {
 
     /**
      * Override this in a derived class to provide logic for when a channel is renamed.
-     * @param handler 
+     * @param handler
      * @returns A promise that represents the work queued.
      */
     public onTeamsChannelRenamedEvent(handler: (channelInfo: ChannelInfo, teamInfo: TeamInfo, context: TurnContext, next: () => Promise<void>) => Promise<void>): this {
@@ -651,10 +650,10 @@ export class TeamsActivityHandler extends ActivityHandler {
             await handler(teamsChannelData.channel, teamsChannelData.team, context, next);
         });
     }
-    
+
     /**
      * Override this in a derived class to provide logic for when a team is archived.
-     * @param handler 
+     * @param handler
      * @returns A promise that represents the work queued.
      */
     public onTeamsTeamArchivedEvent(handler: (teamInfo: TeamInfo, context: TurnContext, next: () => Promise<void>) => Promise<void>): this {
@@ -666,7 +665,7 @@ export class TeamsActivityHandler extends ActivityHandler {
 
     /**
      * Override this in a derived class to provide logic for when a team is deleted.
-     * @param handler 
+     * @param handler
      * @returns A promise that represents the work queued.
      */
     public onTeamsTeamDeletedEvent(handler: (teamInfo: TeamInfo, context: TurnContext, next: () => Promise<void>) => Promise<void>): this {
@@ -678,7 +677,7 @@ export class TeamsActivityHandler extends ActivityHandler {
 
     /**
      * Override this in a derived class to provide logic for when a team is hard-deleted.
-     * @param handler 
+     * @param handler
      * @returns A promise that represents the work queued.
      */
     public onTeamsTeamHardDeletedEvent(handler: (teamInfo: TeamInfo, context: TurnContext, next: () => Promise<void>) => Promise<void>): this {
@@ -690,7 +689,7 @@ export class TeamsActivityHandler extends ActivityHandler {
 
     /**
      * Override this in a derived class to provide logic for when a channel is restored.
-     * @param handler 
+     * @param handler
      * @returns A promise that represents the work queued.
      */
     public onTeamsChannelRestoredEvent(handler: (channelInfo: ChannelInfo, teamInfo: TeamInfo, context: TurnContext, next: () => Promise<void>) => Promise<void>): this {
@@ -702,7 +701,7 @@ export class TeamsActivityHandler extends ActivityHandler {
 
     /**
      * Override this in a derived class to provide logic for when a team is renamed.
-     * @param handler 
+     * @param handler
      * @returns A promise that represents the work queued.
      */
     public onTeamsTeamRenamedEvent(handler: (teamInfo: TeamInfo, context: TurnContext, next: () => Promise<void>) => Promise<void>): this {
@@ -714,7 +713,7 @@ export class TeamsActivityHandler extends ActivityHandler {
 
     /**
      * Override this in a derived class to provide logic for when a team is restored.
-     * @param handler 
+     * @param handler
      * @returns A promise that represents the work queued.
      */
     public onTeamsTeamRestoredEvent(handler: (teamInfo: TeamInfo, context: TurnContext, next: () => Promise<void>) => Promise<void>): this {
@@ -726,7 +725,7 @@ export class TeamsActivityHandler extends ActivityHandler {
 
     /**
      * Override this in a derived class to provide logic for when a team is unarchived.
-     * @param handler 
+     * @param handler
      * @returns A promise that represents the work queued.
      */
     public onTeamsTeamUnarchivedEvent(handler: (teamInfo: TeamInfo, context: TurnContext, next: () => Promise<void>) => Promise<void>): this {

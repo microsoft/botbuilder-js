@@ -30,7 +30,7 @@ import { BotFrameworkAdapter } from './botFrameworkAdapter';
 export class TeamsInfo {
     /**
      * Gets the details for the given team id. This only works in teams scoped conversations.
-     * @param context The context for this turn.
+     * @param context The [TurnContext](xref:botbuilder-core.TurnContext) for this turn.
      * @param teamId The id of the Teams team.
      */
     public static async getTeamDetails(context: TurnContext, teamId?: string): Promise<TeamDetails> {
@@ -43,12 +43,11 @@ export class TeamsInfo {
     }
 
     /**
-     * Creates a new thread in a Teams chat and sends an activity to that new thread.
-     * @param context The context for this turn.
-     * @param activity The activity to send.
+     * Creates a new thread in a Teams chat and sends an [Activity](xref:botframework-schema.Activity) to that new thread.
+     * @param context The [TurnContext](xref:botbuilder-core.TurnContext) for this turn.
+     * @param activity The [Activity](xref:botframework-schema.Activity) to send.
      * @param teamsChannelId Id of the Teams channel.
-     * 
-     * @returns The Conversation Reference and the id of the activity (if sent).
+     * @returns The [ConversationReference](xref:botframework-schema.ConversationReference) and the id of the [Activity](xref:botframework-schema.Activity) (if sent).
      */
     public static async sendMessageToTeamsChannel(context: TurnContext, activity: Activity, teamsChannelId: string): Promise<[ConversationReference, string]> {
         if (!context) {
@@ -81,10 +80,9 @@ export class TeamsInfo {
 
     /**
      * Returns a list of channels in a Team. This only works in teams scoped conversations.
-     * @param context The context for this turn.
+     * @param context The [TurnContext](xref:botbuilder-core.TurnContext) for this turn.
      * @param teamId ID of the Teams team.
-     * 
-     * @returns The list of ChannelInfo objects with the conversations.
+     * @returns The list of [ChannelInfo](xref:botframework-schema.ChannelInfo) objects with the conversations.
      */
     public static async getTeamChannels(context: TurnContext, teamId?: string): Promise<ChannelInfo[]> {
         const t = teamId || this.getTeamId(context);
@@ -98,9 +96,8 @@ export class TeamsInfo {
 
     /**
      * Gets the conversation members of a one-on-one or group chat.
-     * @param context The context for this turn.
-     * 
-     * @returns The list of TeamsChannelAccounts.
+     * @param context The [TurnContext](xref:botbuilder-core.TurnContext) for this turn.
+     * @returns The list of [TeamsChannelAccount](xref:botframework-schema.TeamsChannelAccount).
      */
     public static async getMembers(context: TurnContext): Promise<TeamsChannelAccount[]> {
         const teamId = this.getTeamId(context);
@@ -115,11 +112,10 @@ export class TeamsInfo {
 
     /**
      * Gets a pagined list of members of one-on-one, group, or team conversation.
-     * @param context The context for this turn.
+     * @param context The [TurnContext](xref:botbuilder-core.TurnContext) for this turn.
      * @param pageSize Suggested number of entries on a page.
      * @param continuationToken A continuation token.
-     * 
-     * @returns The TeamsPagedMembersResult with the list of members.
+     * @returns The [TeamsPagedMembersResult](xref:botframework-schema.TeamsPagedMembersResult) with the list of members.
      */
     public static async getPagedMembers(context: TurnContext, pageSize?: number, continuationToken?: string): Promise<TeamsPagedMembersResult> {
         const teamId = this.getTeamId(context);
@@ -138,10 +134,9 @@ export class TeamsInfo {
 
     /**
      * Gets the account of a single conversation member.
-     * @param context The context for this turn.
+     * @param context The [TurnContext](xref:botbuilder-core.TurnContext) for this turn.
      * @param userId ID of the user in question.
-     * 
-     * @returns The TeamsChannelAccount of the member.
+     * @returns The [TeamsChannelAccount](xref:botframework-schema.TeamsChannelAccount) of the member.
      */
     public static async getMember(context: TurnContext, userId: string): Promise<TeamsChannelAccount> {
         const teamId = this.getTeamId(context);
@@ -155,11 +150,10 @@ export class TeamsInfo {
     }
 
     /**
-     * Gets the list of TeamsChannelAccounts within a team.
-     * @param context The context for this turn.
+     * Gets the list of [TeamsChannelAccount](xref:botframework-schema.TeamsChannelAccount) within a team.
+     * @param context The [TurnContext](xref:botbuilder-core.TurnContext) for this turn.
      * @param teamId ID of the Teams team.
-     * 
-     * @returns The list of TeamsChannelAccount of the members.
+     * @returns The list of [TeamsChannelAccount](xref:botframework-schema.TeamsChannelAccount) of the members.
      */
     public static async getTeamMembers(context: TurnContext, teamId?: string): Promise<TeamsChannelAccount[]> {
         const t = teamId || this.getTeamId(context);
@@ -171,12 +165,11 @@ export class TeamsInfo {
 
     /**
      * Gets a paginated list of members of a team.
-     * @param context The context for this turn.
+     * @param context The [TurnContext](xref:botbuilder-core.TurnContext) for this turn.
      * @param teamId ID of the Teams team.
      * @param pageSize The number of entries on the page.
      * @param continuationToken The continuationToken token.
-     * 
-     * @returns A TeamsPagedMembersResult with the list of members.
+     * @returns A [TeamsPagedMembersResult](xref:botframework-schema.TeamsPagedMembersResult) with the list of members.
      */
     public static async getPagedTeamMembers(context: TurnContext, teamId?: string, pageSize?: number, continuationToken?: string): Promise<TeamsPagedMembersResult> {
         const t = teamId || this.getTeamId(context);
@@ -193,11 +186,10 @@ export class TeamsInfo {
 
     /**
      * Gets the account of a member in a teams scoped conversation.
-     * @param context The context for this turn.
+     * @param context The [TurnContext](xref:botbuilder-core.TurnContext) for this turn.
      * @param teamId ID of the Teams team.
      * @param userId ID of the Teams user.
-     * 
-     * @returns The TeamsChannelAccount of the member.
+     * @returns The [TeamsChannelAccount](xref:botframework-schema.TeamsChannelAccount) of the member.
      */
     public static async getTeamMember(context: TurnContext, teamId?: string, userId?: string): Promise<TeamsChannelAccount> {
         const t = teamId || this.getTeamId(context);

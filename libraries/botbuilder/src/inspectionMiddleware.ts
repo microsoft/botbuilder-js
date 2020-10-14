@@ -103,7 +103,7 @@ abstract class InterceptionMiddleware implements Middleware {
                 return await nextDelete();
             });
         }
-        
+
         if (shouldForwardToApplication) {
             try {
                 await next();
@@ -116,7 +116,7 @@ abstract class InterceptionMiddleware implements Middleware {
         }
 
         if (shouldIntercept) {
-        
+
             await this.invokeTraceState(turnContext);
         }
     }
@@ -158,7 +158,7 @@ abstract class InterceptionMiddleware implements Middleware {
  *
  * @remarks
  * InspectionMiddleware for emulator inspection of runtime Activities and BotState.
- * 
+ *
  */
 export class InspectionMiddleware extends InterceptionMiddleware {
 
@@ -187,8 +187,7 @@ export class InspectionMiddleware extends InterceptionMiddleware {
 
     /**
      * Indentifies open and attach commands and calls the appropriate method.
-     * @param turnContext The context for this turn.
-     * 
+     * @param turnContext The [TurnContext](xref:botbuilder-core.TurnContext) for this turn.
      * @returns True if the command is open or attached, otherwise false.
      */
     public async processCommand(turnContext: TurnContext): Promise<any> {
@@ -220,7 +219,7 @@ export class InspectionMiddleware extends InterceptionMiddleware {
 
     /**
      * Processes inbound activities.
-     * @param turnContext The context for this turn.
+     * @param turnContext The [TurnContext](xref:botbuilder-core.TurnContext) for this turn.
      * @param traceActivity The trace activity.
      */
     protected async inbound(turnContext: TurnContext, traceActivity: Partial<Activity>): Promise<any> {
@@ -231,7 +230,7 @@ export class InspectionMiddleware extends InterceptionMiddleware {
 
         var session = await this.findSession(turnContext);
         if (session !== undefined) {
-            
+
             if (await this.invokeSend(turnContext, session, traceActivity)) {
                 return { shouldForwardToApplication: true, shouldIntercept: true };
             } else {
@@ -244,7 +243,7 @@ export class InspectionMiddleware extends InterceptionMiddleware {
 
     /**
      * Processes outbound activities.
-     * @param turnContext The context for this turn.
+     * @param turnContext The [TurnContext](xref:botbuilder-core.TurnContext) for this turn.
      * @param traceActivities A collection of trace activities.
      */
     protected async outbound(turnContext: TurnContext, traceActivities: Partial<Activity>[]): Promise<any> {
@@ -263,13 +262,13 @@ export class InspectionMiddleware extends InterceptionMiddleware {
 
     /**
      * Processes the state management object.
-     * @param turnContext The context for this turn.
+     * @param turnContext The [TurnContext](xref:botbuilder-core.TurnContext) for this turn.
      */
     protected async traceState(turnContext: TurnContext): Promise<any> {
 
         var session = await this.findSession(turnContext);
         if (session !== undefined) {
-            
+
             if (this.userState !== undefined) {
                 await this.userState.load(turnContext, false);
             }
@@ -329,7 +328,7 @@ export class InspectionMiddleware extends InterceptionMiddleware {
             return s4() + s4() + '-' + s4() + '-' + s4() + '-' +
               s4() + '-' + s4() + s4() + s4();
         }
-    
+
         var sessionId = generate_guid();
         sessions.openedSessions[sessionId] = conversationReference;
         return sessionId;
@@ -436,13 +435,12 @@ class InspectionSessionsByStatus {
  *
  * @remarks
  * InspectionState for use by the InspectionMiddleware for emulator inspection of runtime Activities and BotState.
- * 
+ *
  */
 export class InspectionState extends BotState {
-
     /**
-     * Creates a new instance of the InspectionState class.
-     * @param storage The storage layer this state management object will use to store and retrieve state.
+     * Creates a new instance of the [InspectionState](xref:botbuilder.InspectionState)  class.
+     * @param storage The [Storage](xref:botbuilder-core.Storage) layer this state management object will use to store and retrieve state.
      */
     constructor(storage: Storage) {
         super(storage, (context: TurnContext) => {
@@ -452,9 +450,9 @@ export class InspectionState extends BotState {
 
     /**
      * Gets the key to use when reading and writing state to and from storage.
-     * @param turnContext The context for this turn.
+     * @param turnContext The [TurnContext](xref:botbuilder-core.TurnContext) for this turn.
      */
     protected getStorageKey(turnContext: TurnContext) {
         return 'InspectionState';
     }
-} 
+}

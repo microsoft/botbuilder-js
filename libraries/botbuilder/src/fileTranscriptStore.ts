@@ -219,8 +219,8 @@ export class FileTranscriptStore implements TranscriptStore {
     }
 
     /**
-     * Saves the activity as a JSON file.
-     * @param activity The activity to transcript.
+     * Saves the [Activity](xref:botframework-schema.Activity) as a JSON file.
+     * @param activity The [Activity](xref:botframework-schema.Activity) to transcript.
      * @param transcriptPath The path where the transcript will be saved.
      * @param activityFilename The name for the file.
      */
