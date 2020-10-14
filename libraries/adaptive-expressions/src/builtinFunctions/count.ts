@@ -21,19 +21,18 @@ export class Count extends ExpressionEvaluator {
     }
 
     private static evaluator(): EvaluateExpressionDelegate {
-        return FunctionUtils.apply(
-            (args: any[]): number => {
-                let count: number;
-                if (typeof args[0] === 'string' || Array.isArray(args[0])) {
-                    count = args[0].length;
-                } else if (args[0] instanceof Map) {
-                    count = args[0].size;
-                } else if (typeof args[0] == 'object') {
-                    count = Object.keys(args[0]).length;
-                }
+        return FunctionUtils.apply((args: any[]): number => {
+            let count: number;
+            if (typeof args[0] === 'string' || Array.isArray(args[0])) {
+                count = args[0].length;
+            } else if (args[0] instanceof Map) {
+                count = args[0].size;
+            } else if (typeof args[0] == 'object') {
+                count = Object.keys(args[0]).length;
+            }
 
-                return count;
-            }, FunctionUtils.verifyContainer);
+            return count;
+        }, FunctionUtils.verifyContainer);
     }
 
     private static validator(expression: Expression): void {

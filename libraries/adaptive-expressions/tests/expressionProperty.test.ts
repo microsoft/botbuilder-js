@@ -203,7 +203,7 @@ describe('expressionProperty tests', () => {
         val = new ValueExpression(undefined);
         result = val.getValue(data);
         assert.equal(result, undefined);
-        assert.equal(val.toExpression().toString(), 'null');
+        assert.equal(val.toExpression().toString(), 'undefined');
 
         // slashes are the chars
         val = new ValueExpression('c:\\test\\test\\test');

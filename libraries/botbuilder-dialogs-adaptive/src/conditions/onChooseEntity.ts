@@ -45,10 +45,10 @@ export class OnChooseEntity extends OnDialogEvent {
     public getExpression(parser: ExpressionParserInterface): Expression {
         const expressions = [super.getExpression(parser)];
         if (this.property) {
-            expressions.push(parser.parse(`${ TurnPath.dialogEvent }.value.property == '${ this.property }'`));
+            expressions.push(parser.parse(`${TurnPath.dialogEvent}.value.property == '${this.property}'`));
         }
         if (this.entity) {
-            expressions.push(parser.parse(`${ TurnPath.dialogEvent }.value.entity.name == '${ this.entity }'`));
+            expressions.push(parser.parse(`${TurnPath.dialogEvent}.value.entity.name == '${this.entity}'`));
         }
 
         return Expression.andExpression.apply(Expression, expressions);

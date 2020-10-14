@@ -22,7 +22,13 @@ export class OnAssignEntity extends OnDialogEvent {
      * @param actions Optional. A [Dialog](xref:botbuilder-dialogs.Dialog) list containing the actions to add to the plan when the rule constraints are met.
      * @param condition Optional. Condition which needs to be met for the actions to be executed.
      */
-    public constructor(property?: string, entity?: string, operation?: string, actions: Dialog[] = [], condition?: string) {
+    public constructor(
+        property?: string,
+        entity?: string,
+        operation?: string,
+        actions: Dialog[] = [],
+        condition?: string
+    ) {
         super(AdaptiveEvents.assignEntity, actions, condition);
         this.property = property;
         this.entity = entity;
@@ -52,13 +58,13 @@ export class OnAssignEntity extends OnDialogEvent {
     public getExpression(parser: ExpressionParserInterface): Expression {
         const expressions = [super.getExpression(parser)];
         if (this.property) {
-            expressions.push(parser.parse(`${ TurnPath.dialogEvent }.value.property == '${ this.property }'`));
+            expressions.push(parser.parse(`${TurnPath.dialogEvent}.value.property == '${this.property}'`));
         }
         if (this.entity) {
-            expressions.push(parser.parse(`${ TurnPath.dialogEvent }.value.entity.name == '${ this.entity }'`));
+            expressions.push(parser.parse(`${TurnPath.dialogEvent}.value.entity.name == '${this.entity}'`));
         }
         if (this.operation) {
-            expressions.push(parser.parse(`${ TurnPath.dialogEvent }.value.operation == '${ this.operation }'`));
+            expressions.push(parser.parse(`${TurnPath.dialogEvent}.value.operation == '${this.operation}'`));
         }
 
         return Expression.andExpression.apply(Expression, expressions);

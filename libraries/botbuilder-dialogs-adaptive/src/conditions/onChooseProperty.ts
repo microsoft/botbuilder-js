@@ -45,10 +45,18 @@ export class OnChooseProperty extends OnDialogEvent {
     public getExpression(parser: ExpressionParserInterface): Expression {
         const expressions = [super.getExpression(parser)];
         this.properties.forEach((property) => {
-            expressions.push(parser.parse(`contains(foreach(${ TurnPath.dialogEvent }.value, mapping, mapping.property), '${ property }')`));
+            expressions.push(
+                parser.parse(
+                    `contains(foreach(${TurnPath.dialogEvent}.value, mapping, mapping.property), '${property}')`
+                )
+            );
         });
         this.entities.forEach((entity) => {
-            expressions.push(parser.parse(`contains(foreach(${ TurnPath.dialogEvent }.value, mapping, mapping.entity.name), '${ entity }')`));
+            expressions.push(
+                parser.parse(
+                    `contains(foreach(${TurnPath.dialogEvent}.value, mapping, mapping.entity.name), '${entity}')`
+                )
+            );
         });
 
         return Expression.andExpression.apply(Expression, expressions);

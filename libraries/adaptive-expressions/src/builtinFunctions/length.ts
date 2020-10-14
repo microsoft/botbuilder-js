@@ -21,6 +21,9 @@ export class Length extends ExpressionEvaluator {
     }
 
     private static evaluator(): EvaluateExpressionDelegate {
-        return FunctionUtils.apply((args: any[]): number => (InternalFunctionUtils.parseStringOrUndefined(args[0])).length, FunctionUtils.verifyStringOrNull);
+        return FunctionUtils.apply(
+            (args: any[]): number => InternalFunctionUtils.parseStringOrUndefined(args[0]).length,
+            FunctionUtils.verifyStringOrNull
+        );
     }
 }
