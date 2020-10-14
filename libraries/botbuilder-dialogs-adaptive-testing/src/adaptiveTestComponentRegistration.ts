@@ -40,9 +40,15 @@ type Type<T> = {
     new (...args: unknown[]): T;
 };
 
+/**
+ * `ComponentRegistration` implementation for adaptive testing resources.
+ */
 export class AdaptiveTestComponentRegistration extends ComponentRegistration implements ComponentDeclarativeTypes {
     private _declarativeTypes: DeclarativeType<unknown, unknown>[] = [];
 
+    /**
+     * Initializes a new instance of `AdaptiveTestComponentRegistration`.
+     */
     public constructor() {
         super();
         this._addDeclarativeType<AssertCondition, AssertConditionConfiguration>(AssertCondition);
@@ -58,10 +64,18 @@ export class AdaptiveTestComponentRegistration extends ComponentRegistration imp
         this._addDeclarativeType<UserTokenBasicMock, UserTokenBasicMockConfiguration>(UserTokenBasicMock);
     }
 
+    /**
+     * Gets adaptive testing `DeclarativeType` resources.
+     * @param resourceExplorer `ResourceExplorer` with expected path to get all resources.
+     * @returns Adaptive testing `DeclarativeType` resources.
+     */
     public getDeclarativeTypes(_resourceExplorer: ResourceExplorer): DeclarativeType[] {
         return this._declarativeTypes;
     }
 
+    /**
+     * @private
+     */
     private _addDeclarativeType<T, C>(type: Type<T>, loader?: CustomDeserializer<T, C>): void {
         const declarativeType: DeclarativeType<T, C> = {
             kind: type.$kind,

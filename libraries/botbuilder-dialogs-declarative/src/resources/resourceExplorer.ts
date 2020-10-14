@@ -217,12 +217,20 @@ export class ResourceExplorer {
         return result;
     }
 
+    /**
+     * Handler for onChanged events.
+     * @param event Event name.
+     * @param resources A collection of resources changed.
+     */
     protected onChanged(event: ResourceChangeEvent, resources: Resource[]): void {
         if (this._eventEmitter) {
             this._eventEmitter.emit(event, resources);
         }
     }
 
+    /**
+     * @private
+     */
     private load<T>(value: { $kind: string } & Record<string, unknown>): T {
         const kind = value['$kind'] as string;
         const type = this._kindToType.get(kind);
@@ -233,12 +241,18 @@ export class ResourceExplorer {
         return loader.load(value, type) as T;
     }
 
+    /**
+     * @private
+     */
     private getComponentRegistrations(): ComponentRegistration[] {
         return ComponentRegistration.components.filter(
             (component: ComponentRegistration) => 'getDeclarativeTypes' in component
         );
     }
 
+    /**
+     * @private
+     */
     private registerTypeInternal<T, C>(
         kind: string,
         type: new (...args: unknown[]) => T,
@@ -248,6 +262,9 @@ export class ResourceExplorer {
         this._kindDeserializer.set(kind, loader || new DefaultLoader(this));
     }
 
+    /**
+     * @private
+     */
     private registerComponentTypes(): void {
         if (this._typesLoaded) {
             return;

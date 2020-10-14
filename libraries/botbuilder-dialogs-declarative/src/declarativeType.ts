@@ -8,6 +8,9 @@
 
 import { CustomDeserializer } from './customDeserializer';
 
+/**
+ * DeclarativeType interface maps $kind to type.
+ */
 export interface DeclarativeType<T = unknown, C = Record<string, unknown>> {
     kind: string;
     type: new (...args: unknown[]) => T;

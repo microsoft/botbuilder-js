@@ -9,6 +9,9 @@
 import { DeclarativeType } from './declarativeType';
 import { ResourceExplorer } from './resources';
 
+/**
+ * Interface for registering declarative types.
+ */
 export interface ComponentDeclarativeTypes {
     getDeclarativeTypes(resourceExplorer: ResourceExplorer): DeclarativeType[];
 }
