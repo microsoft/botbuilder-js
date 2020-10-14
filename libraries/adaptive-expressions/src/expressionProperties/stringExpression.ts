@@ -23,7 +23,7 @@ import { Expression } from '../expression';
  */
 export class StringExpression extends ExpressionProperty<string> {
     /**
-     * Initializes a new instance of the `StringExpression` class.
+     * Initializes a new instance of the [StringExpression](xref:adaptive-expressions.StringExpression) class.
      * @param value A `string` value or a `string` expression.
      */
     public constructor(value?: string | Expression) {

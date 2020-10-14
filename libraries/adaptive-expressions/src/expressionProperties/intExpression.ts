@@ -15,7 +15,7 @@ import { Expression } from '../expression';
  */
 export class IntExpression extends ExpressionProperty<number> {
     /**
-     * Initializes a new instance of the `IntExpression` class.
+     * Initializes a new instance of the [IntExpression](xref:adaptive-expressions.IntExpression) class.
      * @param value An int `number` or `string` expression which resolves to an int `number`.
      */
     public constructor(value?: number | string | Expression) {
