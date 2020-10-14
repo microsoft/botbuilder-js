@@ -15,7 +15,7 @@ export class GetActivityMembers<O extends object = {}> extends Dialog {
     public constructor();
 
     /**
-     * Initializes a new instance of the `GetActivityMembers` class.
+     * Initializes a new instance of the [GetActivityMembers](xref:botbuilder-dialogs-adaptive.GetActivityMembers) class.
      * @param activityId Optional. The expression to get the value to put into property path.
      * @param property Optional. Property path to put the value in.
      */
@@ -42,7 +42,7 @@ export class GetActivityMembers<O extends object = {}> extends Dialog {
 
     /**
      * Starts a new dialog and pushes it onto the dialog stack.
-     * @param dc The `DialogContext` for the current turn of conversation.
+     * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
      * @param options Optional. Initial information to pass to the dialog.
      * @returns A `Promise` representing the asynchronous operation.
      */

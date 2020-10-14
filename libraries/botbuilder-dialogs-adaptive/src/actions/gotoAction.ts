@@ -16,7 +16,7 @@ export class GotoAction<O extends object = {}> extends Dialog<O> {
     public constructor();
 
     /**
-     * Initializes a new instance of the `GotoAction` class.
+     * Initializes a new instance of the [GotoAction](xref:botbuilder-dialogs-adaptive.GotoAction) class.
      * @param actionId Optional. Action's unique identifier.
      */
     public constructor(actionId?: string) {
@@ -36,7 +36,7 @@ export class GotoAction<O extends object = {}> extends Dialog<O> {
 
     /**
      * Starts a new dialog and pushes it onto the dialog stack.
-     * @param dc The `DialogContext` for the current turn of conversation.
+     * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
      * @param options Optional. Initial information to pass to the dialog.
      * @returns A `Promise` representing the asynchronous operation.
      */

@@ -23,8 +23,8 @@ export class EditArray<O extends object = {}> extends Dialog<O> {
     public constructor();
 
     /**
-     * Initializes a new instance of the `EditArray` class.
-     * @param changeType Change type.
+     * Initializes a new instance of the [EditArray](xref:botbuilder-dialogs-adaptive.EditArray) class.
+     * @param changeType [ArrayChangeType](xref:botbuilder-dialogs-adaptive.ArrayChangeType), change type.
      * @param itemsProperty Array property.
      * @param value Optional. Value to insert.
      * @param resultProperty Optional. Output property to put Pop/Take into.
@@ -32,8 +32,8 @@ export class EditArray<O extends object = {}> extends Dialog<O> {
     public constructor(changeType: ArrayChangeType, itemsProperty: string, value?: any, resultProperty?: string);
 
     /**
-     * Initializes a new instance of the `EditArray` class.
-     * @param changeType Optional. Change type.
+     * Initializes a new instance of the [EditArray](xref:botbuilder-dialogs-adaptive.EditArray) class.
+     * @param changeType Optional. [ArrayChangeType](xref:botbuilder-dialogs-adaptive.ArrayChangeType), change type.
      * @param itemsProperty Optional. Array property.
      * @param value Optional. Value to insert.
      * @param resultProperty Optional. Output property to put Pop/Take into.
@@ -84,7 +84,7 @@ export class EditArray<O extends object = {}> extends Dialog<O> {
 
     /**
      * Starts a new dialog and pushes it onto the dialog stack.
-     * @param dc The `DialogContext` for the current turn of conversation.
+     * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
      * @param options Optional. Initial information to pass to the dialog.
      * @returns A `Promise` representing the asynchronous operation.
      */

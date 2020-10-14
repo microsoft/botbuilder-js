@@ -20,17 +20,17 @@ export class EditActions<O extends object = {}> extends Dialog<O> implements Dia
     public constructor();
 
     /**
-     * Initializes a new instance of the `EditActions` class.
-     * @param changeType Type of change to apply to the active actions.
-     * @param actions Optional. Child dialog dependencies so they can be added to the containers dialogset.
+     * Initializes a new instance of the [EditActions](xref:botbuilder-dialogs-adaptive.EditActions) class.
+     * @param changeType [ActionChangeType](xref:botbuilder-dialogs-adaptive.ActionChangeType), type of change to apply to the active actions.
+     * @param actions Optional. Child [Dialog](xref:botbuilder-dialogs.Dialog) dependencies so they can be added to the containers dialogset.
      */
 
     public constructor(changeType: ActionChangeType, actions?: Dialog[]);
 
     /**
-     * Initializes a new instance of the `EditActions` class.
-     * @param changeType Optional. Type of change to apply to the active actions.
-     * @param actions Optional. Child dialog dependencies so they can be added to the containers dialogset.
+     * Initializes a new instance of the [EditActions](xref:botbuilder-dialogs-adaptive.EditActions) class.
+     * @param changeType Optional. [ActionChangeType](xref:botbuilder-dialogs-adaptive.ActionChangeType), type of change to apply to the active actions.
+     * @param actions Optional. Child [Dialog](xref:botbuilder-dialogs.Dialog) dependencies so they can be added to the containers dialogset.
      */
     public constructor(changeType?: ActionChangeType, actions?: Dialog[]) {
         super();
@@ -54,8 +54,8 @@ export class EditActions<O extends object = {}> extends Dialog<O> implements Dia
     public disabled?: BoolExpression;
 
     /**
-     * Gets the child dialog dependencies so they can be added to the containers dialog set.
-     * @returns The child dialog dependencies.
+     * Gets the child [Dialog](xref:botbuilder-dialogs.Dialog) dependencies so they can be added to the containers [Dialog](xref:botbuilder-dialogs.Dialog) set.
+     * @returns The child [Dialog](xref:botbuilder-dialogs.Dialog) dependencies.
      */
     public getDependencies(): Dialog[] {
         return this.actions;
@@ -63,7 +63,7 @@ export class EditActions<O extends object = {}> extends Dialog<O> implements Dia
 
     /**
      * Starts a new dialog and pushes it onto the dialog stack.
-     * @param dc The `DialogContext` for the current turn of conversation.
+     * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
      * @param options Optional. Initial information to pass to the dialog.
      * @returns A `Promise` representing the asynchronous operation.
      */

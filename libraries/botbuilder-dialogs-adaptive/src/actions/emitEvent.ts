@@ -15,7 +15,7 @@ export class EmitEvent<O extends object = {}> extends Dialog<O> {
     public constructor();
 
     /**
-     * Initializes a new instance of the `EmitEvent` class.
+     * Initializes a new instance of the [EmitEvent](xref:botbuilder-dialogs-adaptive.EmitEvent) class.
      * @param eventName Name of the event to emit.
      * @param eventValue Optional. Memory property path to use to get the value to send as part of the event.
      * @param bubbleEvent Default = `false`. Value indicating whether the event should bubble to parents or not.
@@ -23,7 +23,7 @@ export class EmitEvent<O extends object = {}> extends Dialog<O> {
     public constructor(eventName: string, eventValue?: string, bubbleEvent?: boolean);
 
     /**
-     * Initializes a new instance of the `EmitEvent` class.
+     * Initializes a new instance of the [EmitEvent](xref:botbuilder-dialogs-adaptive.EmitEvent) class.
      * @param eventName Optional. Name of the event to emit.
      * @param eventValue Optional. Memory property path to use to get the value to send as part of the event.
      * @param bubbleEvent Default = `false`. Value indicating whether the event should bubble to parents or not.
@@ -57,7 +57,7 @@ export class EmitEvent<O extends object = {}> extends Dialog<O> {
 
     /**
      * Starts a new dialog and pushes it onto the dialog stack.
-     * @param dc The `DialogContext` for the current turn of conversation.
+     * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
      * @param options Optional. Initial information to pass to the dialog.
      * @returns A `Promise` representing the asynchronous operation.
      */

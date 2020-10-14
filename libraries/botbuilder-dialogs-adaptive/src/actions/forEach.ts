@@ -19,14 +19,14 @@ export class ForEach<O extends object = {}> extends ActionScope<O> {
     public constructor();
 
     /**
-     * Initializes a new instance of the `Foreach` class.
+     * Initializes a new instance of the [Foreach](xref:botbuilder-dialogs-adaptive.Foreach) class.
      * @param itemsProperty Property path expression to the collection of items.
      * @param actions The actions to execute.
      */
     public constructor(itemsProperty: string, actions: Dialog[]);
 
     /**
-     * Initializes a new instance of the `Foreach` class.
+     * Initializes a new instance of the [Foreach](xref:botbuilder-dialogs-adaptive.Foreach) class.
      * @param itemsProperty Optional. Property path expression to the collection of items.
      * @param actions Optional. The actions to execute.
      */
@@ -57,8 +57,8 @@ export class ForEach<O extends object = {}> extends ActionScope<O> {
     public disabled?: BoolExpression;
 
     /**
-     * Gets the child dialog dependencies so they can be added to the containers dialog set.
-     * @returns The child dialog dependencies.
+     * Gets the child [Dialog](xref:botbuilder-dialogs.Dialog) dependencies so they can be added to the containers [Dialog](xref:botbuilder-dialogs.Dialog) set.
+     * @returns The child [Dialog](xref:botbuilder-dialogs.Dialog) dependencies.
      */
     public getDependencies(): Dialog[] {
         return this.actions;
@@ -66,7 +66,7 @@ export class ForEach<O extends object = {}> extends ActionScope<O> {
 
     /**
      * Starts a new dialog and pushes it onto the dialog stack.
-     * @param dc The `DialogContext` for the current turn of conversation.
+     * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
      * @param options Optional. Initial information to pass to the dialog.
      * @returns A `Promise` representing the asynchronous operation.
      */
@@ -80,10 +80,10 @@ export class ForEach<O extends object = {}> extends ActionScope<O> {
 
     /**
      * @protected
-     * Called when returning control to this dialog with an `ActionScopeResult` 
+     * Called when returning control to this dialog with an [ActionScopeResult](xref:botbuilder-dialogs-adaptive.ActionScopeResult)
      * with the property `ActionCommand` set to `BreakLoop`.
-     * @param dc The `DialogContext` for the current turn of conversation.
-     * @param actionScopeResult Contains the actions scope result.
+     * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
+     * @param actionScopeResult The [ActionScopeResult](xref:botbuilder-dialogs-adaptive.ActionScopeResult).
      * @returns A `Promise` representing the asynchronous operation.
      */
     protected async onBreakLoop(dc: DialogContext, actionScopeResult: ActionScopeResult): Promise<DialogTurnResult> {
@@ -92,10 +92,10 @@ export class ForEach<O extends object = {}> extends ActionScope<O> {
 
     /**
      * @protected
-     * Called when returning control to this dialog with an `ActionScopeResult` 
+     * Called when returning control to this dialog with an [ActionScopeResult](xref:botbuilder-dialogs-adaptive.ActionScopeResult)
      * with the property `ActionCommand` set to `ContinueLoop`.
-     * @param dc The `DialogContext` for the current turn of conversation.
-     * @param actionScopeResult Contains the actions scope result.
+     * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
+     * @param actionScopeResult The [ActionScopeResult](xref:botbuilder-dialogs-adaptive.ActionScopeResult).
      * @returns A `Promise` representing the asynchronous operation.
      */
     protected async onContinueLoop(dc: DialogContext, actionScopeResult: ActionScopeResult): Promise<DialogTurnResult> {
@@ -105,7 +105,7 @@ export class ForEach<O extends object = {}> extends ActionScope<O> {
     /**
      * @protected
      * Called when the dialog continues to the next action.
-     * @param dc The `DialogContext` for the current turn of conversation.
+     * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
      * @param result Optional. Value returned from the dialog that was called. The type 
      * of the value returned is dependent on the child dialog.
      * @returns A `Promise` representing the asynchronous operation.
@@ -117,7 +117,7 @@ export class ForEach<O extends object = {}> extends ActionScope<O> {
     /**
      * @protected
      * Calls the next item in the stack.
-     * @param dc The `DialogContext` for the current turn of conversation.
+     * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
      * @returns A `Promise` representing the asynchronous operation.
      */
     protected async nextItem(dc: DialogContext): Promise<DialogTurnResult> {

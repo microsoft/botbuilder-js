@@ -10,7 +10,7 @@ import { ValueExpression, BoolExpression } from 'adaptive-expressions';
 import { replaceJsonRecursively } from '../jsonExtensions';
 
 /**
- * Command to end the current dialog, returning the resultProperty as the result of the dialog.
+ * Command to end the current dialog, returning the `resultProperty` as the result of the dialog.
  */
 export class EndDialog<O extends object = {}> extends Dialog<O> {
     public constructor();
@@ -36,7 +36,7 @@ export class EndDialog<O extends object = {}> extends Dialog<O> {
 
     /**
      * Starts a new dialog and pushes it onto the dialog stack.
-     * @param dc The `DialogContext` for the current turn of conversation.
+     * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
      * @param options Optional. Initial information to pass to the dialog.
      * @returns A `Promise` representing the asynchronous operation.
      */
@@ -60,7 +60,7 @@ export class EndDialog<O extends object = {}> extends Dialog<O> {
 
     /**
      * Ends the parent dialog.
-     * @param dc The `DialogContext` for the current turn of conversation.
+     * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
      * @param result Optional. Value returned from the dialog that was called. The type 
      * of the value returned is dependent on the child dialog.
      * @returns A `Promise` representing the asynchronous operation.

@@ -15,7 +15,7 @@ export class DeleteProperties<O extends object = {}> extends Dialog<O> {
     public constructor();
 
     /**
-     * Initializes a new instance of the `DeleteProperties` class.
+     * Initializes a new instance of the [DeleteProperties](xref:botbuilder-dialogs-adaptive.DeleteProperties) class.
      * @param properties Optional. Collection of property paths to remove.
      */
     public constructor(properties?: string[]) {
@@ -37,7 +37,7 @@ export class DeleteProperties<O extends object = {}> extends Dialog<O> {
 
     /**
      * Called when the dialog is started and pushed onto the dialog stack.
-     * @param dc The `DialogContext` for the current turn of conversation.
+     * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
      * @param options Optional. Initial information to pass to the dialog.
      * @returns A `Promise` representing the asynchronous operation.
      */
