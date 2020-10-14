@@ -337,12 +337,13 @@ export class LuisRecognizerV2 extends LuisRecognizerInternal {
      * @param key Property Key
      * @param value Property Value
      */
-    private addProperty(obj: any, key: string, value: any): void {
-        if (key in obj) {
-            obj[key] = obj[key].concat(value);
-        } else {
-            obj[key] = [value];
+    private addProperty<T>(obj: Record<string, Array<T>>, key: string, value: T): void {
+        if (!(key in obj)) {
+            // eslint-disable-next-line security/detect-object-injection
+            obj[key] = [];
         }
+        // eslint-disable-next-line security/detect-object-injection
+        obj[key] = obj[key].concat(value);
     }
 
     private getSentiment(luis: LuisModels.LuisResult): any {
