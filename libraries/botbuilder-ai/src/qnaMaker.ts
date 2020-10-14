@@ -168,9 +168,9 @@ export class QnAMaker implements QnAMakerTelemetryClient {
     /**
      * Generates an answer from the knowledge base.
      * @param context The [TurnContext](xref:botbuilder-core.TurnContext) that contains the user question to be queried against your knowledge base.
-     * @param options (Optional) The [QnAMakerOptions](xref:botbuilder-ai.QnAMakerOptions) for the QnA Maker knowledge base. If null, constructor option is used for this instance.
-     * @param telemetryProperties (Optional) Additional properties to be logged to telemetry with the QnaMessage event.
-     * @param telemetryMetrics (Optional) Additional metrics to be logged to telemetry with the QnaMessage event.
+     * @param options Optional. The [QnAMakerOptions](xref:botbuilder-ai.QnAMakerOptions) for the QnA Maker knowledge base. If null, constructor option is used for this instance.
+     * @param telemetryProperties Optional. Additional properties to be logged to telemetry with the QnaMessage event.
+     * @param telemetryMetrics Optional. Additional metrics to be logged to telemetry with the QnaMessage event.
      * @returns A list of answers for the user query, sorted in decreasing order of ranking score.
      */
     public async getAnswersRaw(

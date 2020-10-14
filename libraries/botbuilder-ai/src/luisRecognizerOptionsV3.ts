@@ -33,7 +33,7 @@ export class LuisRecognizerV3 extends LuisRecognizerInternal {
     /**
      * Creates a new [LuisRecognizerV3](xref:botbuilder-ai.LuisRecognizerV3) instance.
      * @param application An object conforming to the [LuisApplication](xref:botbuilder-ai.LuisApplication) definition or a string representing a LUIS application endpoint, usually retrieved from https://luis.ai.
-     * @param options (Optional) Options object used to control predictions. Should conform to the [LuisRecognizerOptionsV3](xref:botbuilder-ai.LuisRecognizerOptionsV3) definition.
+     * @param options Optional. Options object used to control predictions. Should conform to the [LuisRecognizerOptionsV3](xref:botbuilder-ai.LuisRecognizerOptionsV3) definition.
      */
     constructor(application: LuisApplication, options?: LuisRecognizerOptionsV3) {
         super(application);
