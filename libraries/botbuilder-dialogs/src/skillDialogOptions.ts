@@ -10,7 +10,7 @@ import {
     BotFrameworkClient,
     BotFrameworkSkill,
     ConversationState,
-    SkillConversationIdFactoryBase
+    SkillConversationIdFactoryBase,
 } from 'botbuilder-core';
 
 export interface SkillDialogOptions {
@@ -35,7 +35,7 @@ export interface SkillDialogOptions {
     conversationState: ConversationState;
 
     /**
-     * The BotFrameworkSkill the dialog will call. 
+     * The BotFrameworkSkill the dialog will call.
      */
     skill: BotFrameworkSkill;
 

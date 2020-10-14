@@ -73,7 +73,7 @@ export class BaseInvokeDialog<O extends object = {}> extends Dialog<O> implement
      * @returns A `string` representing the compute Id.
      */
     protected onComputeId(): string {
-        return `${ this.constructor.name }[${ this.dialog && this.dialog.toString() }]`;
+        return `${this.constructor.name}[${this.dialog && this.dialog.toString()}]`;
     }
 
     /**
@@ -90,7 +90,7 @@ export class BaseInvokeDialog<O extends object = {}> extends Dialog<O> implement
         const { value: dialogId } = expression.tryEvaluate(dc.state);
         const dialog = dc.findDialog(dialogId);
         if (!dialog) {
-            throw new Error(`${ this.dialog.toString() } not found.`);
+            throw new Error(`${this.dialog.toString()} not found.`);
         }
 
         return dialog;

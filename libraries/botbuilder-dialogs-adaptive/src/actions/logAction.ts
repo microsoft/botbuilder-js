@@ -5,7 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { DialogTurnResult, DialogContext, Dialog } from 'botbuilder-dialogs';
+import { DialogTurnResult, DialogContext, Dialog, DialogStateManager } from 'botbuilder-dialogs';
 import { Activity, ActivityTypes } from 'botbuilder-core';
 import { TemplateInterface } from '../template';
 import { TextTemplate } from '../templates';
@@ -21,13 +21,15 @@ export class LogAction<O extends object = {}> extends Dialog<O> {
     public constructor(text: string);
     public constructor(text?: string) {
         super();
-        if (text) { this.text = new TextTemplate(text); }
+        if (text) {
+            this.text = new TextTemplate(text);
+        }
     }
 
     /**
      * The text template to log.
      */
-    public text: TemplateInterface<string>;
+    public text: TemplateInterface<string, DialogStateManager>;
 
     /**
      * If true, the message will both be logged to the console and sent as a trace activity.
@@ -50,15 +52,17 @@ export class LogAction<O extends object = {}> extends Dialog<O> {
             return await dc.endDialog();
         }
 
-        if (!this.text) { throw new Error(`${ this.id }: no 'message' specified.`) }
+        if (!this.text) {
+            throw new Error(`${this.id}: no 'message' specified.`);
+        }
 
         const msg = await this.text.bind(dc, dc.state);
         this.telemetryClient.trackEvent({
             name: 'GeneratorResult',
             properties: {
-                'template':this.text,
-                'result': msg || '' 
-            }
+                template: this.text,
+                result: msg || '',
+            },
         });
 
         // Log to console and send trace if needed
@@ -67,7 +71,7 @@ export class LogAction<O extends object = {}> extends Dialog<O> {
         if (this.label) {
             label = this.label.getValue(dc.state);
         } else {
-            if (dc.parent && dc.parent.activeDialog && dc.parent.activeDialog.id)  {
+            if (dc.parent && dc.parent.activeDialog && dc.parent.activeDialog.id) {
                 label = dc.parent.activeDialog.id;
             }
         }
@@ -77,7 +81,7 @@ export class LogAction<O extends object = {}> extends Dialog<O> {
                 name: 'LogAction',
                 valueType: 'string',
                 value: msg,
-                label: label
+                label: label,
             };
             await dc.context.sendActivity(activity);
         }
@@ -86,6 +90,6 @@ export class LogAction<O extends object = {}> extends Dialog<O> {
     }
 
     protected onComputeId(): string {
-        return `LogAction[${ this.text }]`;
+        return `LogAction[${this.text}]`;
     }
 }

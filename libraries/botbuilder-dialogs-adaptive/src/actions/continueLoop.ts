@@ -30,7 +30,7 @@ export class ContinueLoop<O extends object = {}> extends Dialog<O> {
         }
 
         const actionScopeResult: ActionScopeResult = {
-            actionScopeCommand: ActionScopeCommands.ContinueLoop
+            actionScopeCommand: ActionScopeCommands.ContinueLoop,
         };
 
         return await dc.endDialog(actionScopeResult);

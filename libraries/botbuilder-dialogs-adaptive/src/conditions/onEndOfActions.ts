@@ -13,7 +13,6 @@ import { AdaptiveEvents } from '../adaptiveEvents';
  * Triggered when all actions and ambiguity events have been processed.
  */
 export class OnEndOfActions extends OnDialogEvent {
-
     /**
      * Creates a new `OnEndOfActions` instance.
      * @param event (Optional) The event to fire on.

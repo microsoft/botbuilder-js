@@ -33,7 +33,7 @@ export class CodeAction<O extends object = {}> extends Dialog<O> {
      * @returns A `string` representing the compute Id.
      */
     protected onComputeId(): string {
-        return `CodeAction[${ StringUtils.ellipsis(this.codeHandler.toString(), 50) }]`;
+        return `CodeAction[${StringUtils.ellipsis(this.codeHandler.toString(), 50)}]`;
     }
 
     /**

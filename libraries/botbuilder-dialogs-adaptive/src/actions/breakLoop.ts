@@ -30,7 +30,7 @@ export class BreakLoop<O extends object = {}> extends Dialog<O> {
         }
 
         const actionScopeResult: ActionScopeResult = {
-            actionScopeCommand: ActionScopeCommands.BreakLoop
+            actionScopeCommand: ActionScopeCommands.BreakLoop,
         };
 
         return await dc.endDialog(actionScopeResult);

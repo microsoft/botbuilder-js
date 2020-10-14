@@ -1,7 +1,6 @@
 /**
  * @module botframework-config
- */
-/**
+ *
  * Copyright(c) Microsoft Corporation.All rights reserved.
  * Licensed under the MIT License.
  */
@@ -10,6 +9,7 @@ import { ConnectedService } from './connectedService';
 
 /**
  * Base class for all azure service definitions.
+ * @deprecated See https://aka.ms/bot-file-basics for more information.
  */
 export class AzureService extends ConnectedService implements IAzureService {
     /**

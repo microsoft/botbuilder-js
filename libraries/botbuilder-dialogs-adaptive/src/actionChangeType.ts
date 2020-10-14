@@ -25,5 +25,5 @@ export enum ActionChangeType {
     /**
      * Terminate the action sequence, then add the change actions.
      */
-    replaceSequence = 'replaceSequence'
+    replaceSequence = 'replaceSequence',
 }

@@ -9,10 +9,9 @@
 import { TypeBuilder } from './typeBuilder';
 
 export class DefaultTypeBuilder implements TypeBuilder {
-
     constructor(private factory: new () => any) {}
 
-    public build(config: object) : object {
+    public build(config: object): object {
         return new this.factory();
     }
 }

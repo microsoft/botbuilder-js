@@ -42,6 +42,6 @@ export class DeleteProperties<O extends object = {}> extends Dialog<O> {
     }
 
     protected onComputeId(): string {
-        return `DeleteProperties[${ this.properties.map((property): string => property.toString()).join(',') }]`;
+        return `DeleteProperties[${this.properties.map((property): string => property.toString()).join(',')}]`;
     }
 }

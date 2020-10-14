@@ -9,7 +9,7 @@
 /**
  * Partially represents a WebSocket from the HTML Living Standard.
  * For more information, see https://html.spec.whatwg.org/multipage/web-sockets.html.
- * 
+ *
  * This interface supports the framework and is not intended to be called directly for your code.
  */
 export interface IBrowserWebSocket {

@@ -20,7 +20,9 @@ export class DeleteActivity<O extends object = {}> extends Dialog<O> {
      */
     public constructor(activityId?: string) {
         super();
-        if (activityId) { this.activityId = new StringExpression(activityId); }
+        if (activityId) {
+            this.activityId = new StringExpression(activityId);
+        }
     }
 
     /**
@@ -56,6 +58,6 @@ export class DeleteActivity<O extends object = {}> extends Dialog<O> {
      * @returns A `string` representing the compute Id.
      */
     protected onComputeId(): string {
-        return `DeleteActivity[${ this.activityId.toString() }]`;
+        return `DeleteActivity[${this.activityId.toString()}]`;
     }
 }
