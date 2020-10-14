@@ -198,7 +198,7 @@ export class HttpRequest<O extends object = {}> extends Dialog<O> implements Con
     public disabled?: BoolExpression;
 
     /**
-     * Starts a new dialog and pushes it onto the dialog stack.
+     * Starts a new [Dialog](xref:botbuilder-dialogs.Dialog) and pushes it onto the dialog stack.
      * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
      * @param options Optional. Initial information to pass to the dialog.
      * @returns A `Promise` representing the asynchronous operation.
@@ -308,7 +308,7 @@ export class HttpRequest<O extends object = {}> extends Dialog<O> implements Con
 
     /**
      * @protected
-     * Builds the compute Id for the dialog.
+     * Builds the compute Id for the [Dialog](xref:botbuilder-dialogs.Dialog).
      * @returns A `string` representing the compute Id.
      */
     protected onComputeId(): string {

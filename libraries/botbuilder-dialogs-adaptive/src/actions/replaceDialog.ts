@@ -10,22 +10,22 @@ import { BaseInvokeDialog } from './baseInvokeDialog';
 import { BoolExpression } from 'adaptive-expressions';
 
 /**
- * Action which calls another dialog, when it is done it will go to the caller's parent dialog.
+ * Action which calls another [Dialog](xref:botbuilder-dialogs.Dialog), when it is done it will go to the caller's parent dialog.
  */
 export class ReplaceDialog<O extends object = {}> extends BaseInvokeDialog<O> {
     public constructor();
     
     /**
      * Creates a new [ReplaceDialog](xref:botbuilder-dialogs-adaptive.ReplaceDialog) instance.
-     * @param dialogId ID of the dialog to goto.
-     * @param options Optional, static options to pass the dialog.
+     * @param dialogId ID of the [Dialog](xref:botbuilder-dialogs.Dialog) to goto.
+     * @param options Optional, static options to pass the [Dialog](xref:botbuilder-dialogs.Dialog).
      */
     public constructor(dialogIdToCall: string, options?: O);
         
     /**
      * Creates a new [ReplaceDialog](xref:botbuilder-dialogs-adaptive.ReplaceDialog) instance.
-     * @param dialogId Optional. ID of the dialog to goto.
-     * @param options Optional. Static options to pass the dialog.
+     * @param dialogId Optional. ID of the [Dialog](xref:botbuilder-dialogs.Dialog) to goto.
+     * @param options Optional. Static options to pass the [Dialog](xref:botbuilder-dialogs.Dialog).
      */
     public constructor(dialogIdToCall?: string, options?: O) {
         super(dialogIdToCall, options);
@@ -37,7 +37,7 @@ export class ReplaceDialog<O extends object = {}> extends BaseInvokeDialog<O> {
     public disabled?: BoolExpression;
 
     /**
-     * Starts a new dialog and pushes it onto the dialog stack.
+     * Starts a new [Dialog](xref:botbuilder-dialogs.Dialog) and pushes it onto the dialog stack.
      * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
      * @param options Optional. Initial information to pass to the dialog.
      * @returns A `Promise` representing the asynchronous operation.
