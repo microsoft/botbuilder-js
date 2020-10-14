@@ -191,9 +191,9 @@ export class AzureBlobTranscriptStore implements TranscriptStore {
     }
 
     /**
-     * Parse a BlobResult as an activity.
-     * @param blob BlobResult to parse as an activity.
-     * @returns The parsed activity.
+     * Parse a BlobResult as an [Activity](xref:botframework-schema.Activity).
+     * @param blob BlobResult to parse as an [Activity](xref:botframework-schema.Activity).
+     * @returns The parsed [Activity](xref:botframework-schema.Activity).
      */
     private async blobToActivity(blob: azure.BlobService.BlobResult): Promise<Activity> {
         const content = await this.client.getBlobToTextAsync(blob.container, blob.name);
@@ -329,8 +329,8 @@ export class AzureBlobTranscriptStore implements TranscriptStore {
     }
 
     /**
-     * Get the blob name based on the activity.
-     * @param activity Activity to get the blob name from.
+     * Get the blob name based on the [Activity](xref:botframework-schema.Activity).
+     * @param activity [Activity](xref:botframework-schema.Activity) to get the blob name from.
      * @returns The blob name.
      */
     private getBlobName(activity: Activity): string {
