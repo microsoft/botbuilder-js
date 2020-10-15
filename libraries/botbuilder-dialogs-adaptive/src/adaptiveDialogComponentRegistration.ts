@@ -132,7 +132,6 @@ import {
     ExpressionConverter,
     ArrayExpressionConverter,
     IntExpressionConverter,
-    BoolExpression,
 } from 'adaptive-expressions';
 import {
     DialogExpressionConverter,
@@ -176,6 +175,7 @@ export class AdaptiveDialogComponentRegistration implements ComponentRegistratio
                 skillAppId: new StringExpressionConverter(),
                 skillEndpoint: new StringExpressionConverter(),
                 activity: new ActivityTemplateConverter(),
+                allowInterruptions: new BoolExpressionConverter(),
                 connectionName: new StringExpressionConverter(),
             })
         );
