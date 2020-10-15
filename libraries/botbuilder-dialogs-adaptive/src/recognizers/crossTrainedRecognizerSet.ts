@@ -6,23 +6,39 @@
  * Licensed under the MIT License.
  */
 
-import { RecognizerResult, Activity, getTopScoringIntent } from 'botbuilder-core';
-import { DialogContext } from 'botbuilder-dialogs';
-import { Recognizer } from './recognizer';
+import { Activity, RecognizerResult, getTopScoringIntent } from 'botbuilder-core';
+import { Converter, ConverterFactory, DialogContext } from 'botbuilder-dialogs';
+import { RecognizerListConverter } from '../converters';
+import { Recognizer, RecognizerConfiguration } from './recognizer';
 
 /**
  * Standard cross trained intent name prefix.
  */
 const deferPrefix = 'DeferToRecognizer_';
 
+export interface CrossTrainedRecognizerSetConfiguration extends RecognizerConfiguration {
+    recognizers?: string[] | Recognizer[];
+}
+
 /**
  * Recognizer for selecting between cross trained recognizers.
  */
-export class CrossTrainedRecognizerSet extends Recognizer {
+export class CrossTrainedRecognizerSet extends Recognizer implements CrossTrainedRecognizerSetConfiguration {
+    public static $kind = 'Microsoft.CrossTrainedRecognizerSet';
+
     /**
      * Gets or sets the input recognizers.
      */
     public recognizers: Recognizer[] = [];
+
+    public getConverter(property: keyof CrossTrainedRecognizerSetConfiguration): Converter | ConverterFactory {
+        switch (property) {
+            case 'recognizers':
+                return RecognizerListConverter;
+            default:
+                return super.getConverter(property);
+        }
+    }
 
     /**
      * To recognize intents and entities in a users utterance.

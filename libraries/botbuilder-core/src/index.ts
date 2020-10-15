@@ -19,6 +19,7 @@ export * from './botStateSet';
 export * from './botTelemetryClient';
 export * from './browserStorage';
 export * from './cardFactory';
+export * from './componentRegistration';
 export * from './conversationState';
 export * from './invokeResponse';
 export * from './extendedUserTokenProvider';

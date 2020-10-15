@@ -8,12 +8,20 @@
 import { Dialog, TurnPath } from 'botbuilder-dialogs';
 import { Expression, ExpressionParserInterface } from 'adaptive-expressions';
 import { AdaptiveEvents } from '../adaptiveEvents';
-import { OnDialogEvent } from './onDialogEvent';
+import { OnDialogEvent, OnDialogEventConfiguration } from './onDialogEvent';
+
+export interface OnAssignEntityConfiguration extends OnDialogEventConfiguration {
+    property?: string;
+    entity?: string;
+    operation?: string;
+}
 
 /**
  * Triggered to assign an entity to a property.
  */
-export class OnAssignEntity extends OnDialogEvent {
+export class OnAssignEntity extends OnDialogEvent implements OnAssignEntityConfiguration {
+    public static $kind = 'Microsoft.OnAssignEntity';
+
     public constructor(
         property?: string,
         entity?: string,
