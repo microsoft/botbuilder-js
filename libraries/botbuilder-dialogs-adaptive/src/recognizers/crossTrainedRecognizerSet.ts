@@ -98,7 +98,7 @@ export class CrossTrainedRecognizerSet extends Recognizer {
                 }
 
                 // if we ended up back at the recognizer.id and we have no consensus then it's a none intent
-                if (recognizerId == recognizer.id && !consensusRecognizedId) {
+                if (recognizerId === recognizer.id && !consensusRecognizedId) {
                     const recognizerResult: RecognizerResult = {
                         text: recognizerResults[recognizer.id].text,
                         intents: { None: { score: 1.0 } },
@@ -109,16 +109,16 @@ export class CrossTrainedRecognizerSet extends Recognizer {
 
             // we have a real intent and it's the first one we found
             if (!consensusRecognizedId) {
-                if (intent != 'None') {
+                if (intent && intent !== 'None') {
                     consensusRecognizedId = recognizerId;
                 }
             } else {
                 // we have a second recognizer result which is either none or real
                 // if one of them is None intent, then go with the other one
-                if (intent == 'None') {
+                if (!intent || intent === 'None') {
                     // then we are fine with the one we have, just ignore this one
                     continue;
-                } else if (recognizerId == consensusRecognizedId) {
+                } else if (recognizerId === consensusRecognizedId) {
                     // this is more consensus for this recognizer
                     continue;
                 } else {

@@ -48,7 +48,7 @@ export class LuisRecognizerV3 extends LuisRecognizerInternal {
             // Bypass LUIS if the activity's text is null or whitespace
             return Promise.resolve({
                 text: utterance,
-                intents: { '': { score: 1 } },
+                intents: {},
                 entities: {},
             });
         }
