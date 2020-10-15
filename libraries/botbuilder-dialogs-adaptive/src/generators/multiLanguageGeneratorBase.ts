@@ -46,11 +46,7 @@ export abstract class MultiLanguageGeneratorBase implements LanguageGenerator {
         // 3. default policy
         if (!this.languagePolicy) {
             this.languagePolicy = dialogContext.services.get(languagePolicyKey);
-            if (this.languagePolicy) {
-                if (typeof this.languagePolicy === 'object') {
-                    this.languagePolicy = new Map(Object.entries(this.languagePolicy));
-                }
-            } else {
+            if (!this.languagePolicy) {
                 this.languagePolicy = new LanguagePolicy();
             }
         }

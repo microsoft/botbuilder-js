@@ -26,11 +26,7 @@ export class MultiLanguageRecognizer extends Recognizer {
         let languagepolicy: LanguagePolicy = this.languagePolicy;
         if (!languagepolicy) {
             languagepolicy = dialogContext.services.get(languagePolicyKey);
-            if (languagepolicy) {
-                if (typeof languagepolicy === 'object') {
-                    languagepolicy = new Map(Object.entries(languagepolicy));
-                }
-            } else {
+            if (!languagepolicy) {
                 languagepolicy = new LanguagePolicy();
             }
         }

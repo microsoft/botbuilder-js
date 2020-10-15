@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 import { TestAdapter } from 'botbuilder-core';
-import { AdaptiveDialogComponentRegistration, LanguagePolicy } from 'botbuilder-dialogs-adaptive';
+import { AdaptiveDialogComponentRegistration } from 'botbuilder-dialogs-adaptive';
 import { ResourceExplorer } from 'botbuilder-dialogs-declarative';
 import { AdaptiveDialogTestComponentRegistration } from './adaptiveDialogTestComponentRegistration';
 import { TestScript } from './testScript';

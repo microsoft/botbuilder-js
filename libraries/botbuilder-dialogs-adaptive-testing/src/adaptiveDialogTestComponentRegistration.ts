@@ -12,7 +12,7 @@ import {
     ResourceExplorer,
     TypeBuilder,
 } from 'botbuilder-dialogs-declarative';
-import { AdaptiveTypeBuilder, DialogExpressionConverter } from 'botbuilder-dialogs-adaptive';
+import { AdaptiveTypeBuilder, DialogExpressionConverter, LanguagePolicyConverter } from 'botbuilder-dialogs-adaptive';
 import { ExpressionConverter, StringExpressionConverter } from 'adaptive-expressions';
 import {
     AssertReply,
@@ -82,6 +82,7 @@ export class AdaptiveDialogTestComponentRegistration implements ComponentRegistr
             new AdaptiveTypeBuilder(TestScript, this._resourceExplorer, {
                 dialog: new DialogExpressionConverter(resourceExplorer),
                 userTokenMocks: new UserTokenMocksConverter(resourceExplorer),
+                languagePolicy: new LanguagePolicyConverter(),
             })
         );
         this.registerBuilder(
