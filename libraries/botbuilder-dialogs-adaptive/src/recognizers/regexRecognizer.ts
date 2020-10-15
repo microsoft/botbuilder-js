@@ -68,6 +68,11 @@ export class RegexRecognizer extends Recognizer implements RegexRecognizerConfig
             entities: {},
         };
 
+        if (!text) {
+            // nothing to recognize, return empty result
+            return recognizerResult;
+        }
+
         const entityPool: Entity[] = [];
 
         const textEntity = new TextEntity(text);
