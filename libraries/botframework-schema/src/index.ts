@@ -106,7 +106,7 @@ export interface ChannelAccount {
   aadObjectId?: string;
   /**
    * Role of the entity behind the account (Example: User, Bot, etc.). Possible values include:
-   * 'user', 'bot'
+   * 'user', 'bot', 'skill'
    */
   role?: RoleTypes | string;
 }
@@ -1716,13 +1716,14 @@ export interface TokenExchangeRequest {
 
 /**
  * Defines values for RoleTypes.
- * Possible values include: 'user', 'bot'
+ * Possible values include: 'user', 'bot', 'skill'
  * @readonly
  * @enum {string}
  */
 export enum RoleTypes {
   User = 'user',
   Bot = 'bot',
+  Skill = 'skill',
 }
 
 /**
