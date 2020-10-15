@@ -5,7 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { Activity, RoleTypes, StatusCodes } from 'botframework-schema';
+import { Activity, Channels, RoleTypes, StatusCodes } from 'botframework-schema';
 
 import { AppCredentials } from './appCredentials';
 import { AuthenticationError } from './authenticationError';
@@ -50,7 +50,11 @@ export namespace JwtTokenValidation {
             }
 
             // Check if the activity is for a skill call and is coming from the Emulator.
-            if (activity.channelData === 'Channels.Emulator' && activity.recipient.role === RoleTypes.Skill) {
+            if (
+                activity.channelId === Channels.Emulator &&
+                activity.recipient &&
+                activity.recipient.role === RoleTypes.Skill
+            ) {
                 return SkillValidation.createAnonymousSkillClaim();
             }
 
@@ -119,7 +123,7 @@ export namespace JwtTokenValidation {
             );
         }
 
-        const usingEmulator: boolean = EmulatorValidation.isTokenFromEmulator(authHeader);
+        const usingEmulator = EmulatorValidation.isTokenFromEmulator(authHeader);
 
         if (usingEmulator) {
             return await EmulatorValidation.authenticateEmulatorToken(
