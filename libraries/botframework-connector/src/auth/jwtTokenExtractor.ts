@@ -81,8 +81,14 @@ export class JwtTokenExtractor {
     }
 
     private hasAllowedIssuer(jwtToken: string): boolean {
-        const decoded: any = decode(jwtToken, { complete: true });
-        const issuer: string = decoded.payload.iss;
+        const payload = decode(jwtToken);
+
+        let issuer: string;
+        if (payload && typeof payload === 'object') {
+            issuer = payload.iss;
+        } else {
+            return false;
+        }
 
         if (Array.isArray(this.tokenValidationParameters.issuer)) {
             return this.tokenValidationParameters.issuer.indexOf(issuer) !== -1;

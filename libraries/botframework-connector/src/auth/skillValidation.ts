@@ -59,7 +59,7 @@ export namespace SkillValidation {
         const payload = decode(bearerTokens.join(' '));
 
         let claims: Claim[] = [];
-        if (typeof payload === 'object') {
+        if (payload && typeof payload === 'object') {
             claims = Object.entries(payload).map(([type, value]) => ({ type, value }));
         }
 
