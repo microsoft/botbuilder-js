@@ -20,6 +20,7 @@ import { AuthenticationError } from './authenticationError';
 /**
  * Validates JWT tokens sent to and from a Skill.
  */
+// eslint-disable-next-line @typescript-eslint/no-namespace
 export namespace SkillValidation {
     /**
      * TO SKILL FROM BOT and TO BOT FROM SKILL: Token validation parameters when connecting a bot to a skill.
@@ -52,16 +53,15 @@ export namespace SkillValidation {
         // We know is a valid token, split it and work with it:
         // [0] = "Bearer"
         // [1] = "[Big Long String]"
-        const bearerToken: string = authHeader.trim().split(' ')[1];
+        const [, ...bearerTokens] = authHeader.trim().split(' ');
 
         // Parse the Big Long String into an actual token.
-        const payload: any = decode(bearerToken);
+        const payload = decode(bearerTokens.join(' '));
 
-        const claims: Claim[] = Object.keys(payload).reduce((acc: any, key: any) => {
-            acc.push({ type: key, value: payload[key] });
-
-            return acc;
-        }, <Claim[]>[]);
+        let claims: Claim[] = [];
+        if (typeof payload === 'object') {
+            claims = Object.entries(payload).map(([type, value]) => ({ type, value }));
+        }
 
         return isSkillClaim(claims);
     }
@@ -83,14 +83,23 @@ export namespace SkillValidation {
             throw new TypeError(`SkillValidation.isSkillClaim(): missing claims.`);
         }
 
-        const versionClaim = claims.find((c) => c.type === AuthenticationConstants.VersionClaim);
+        // Group claims by type for fast lookup
+        const claimsByType = claims.reduce((acc, claim) => ({ ...acc, [claim.type]: claim }), {});
+
+        // Short circuit if this is a anonymous skill app ID (generated via createAnonymousSkillClaim)
+        const appIdClaim = claimsByType[AuthenticationConstants.AppIdClaim];
+        if (appIdClaim && appIdClaim.value === AuthenticationConstants.AnonymousSkillAppId) {
+            return true;
+        }
+
+        const versionClaim = claimsByType[AuthenticationConstants.VersionClaim];
         const versionValue = versionClaim && versionClaim.value;
         if (!versionValue) {
             // Must have a version claim.
             return false;
         }
 
-        const audClaim = claims.find((c) => c.type === AuthenticationConstants.AudienceClaim);
+        const audClaim = claimsByType[AuthenticationConstants.AudienceClaim];
         const audienceValue = audClaim && audClaim.value;
         if (
             !audClaim ||
@@ -220,5 +229,21 @@ export namespace SkillValidation {
         // Check the AppId and ensure that only works against my whitelist authConfig can have info on how to get the
         // whitelist AuthenticationConfiguration
         // We may need to add a ClaimsIdentityValidator delegate or class that allows the dev to inject a custom validator.
+    }
+
+    /**
+     * Creates a set of claims that represent an anonymous skill. Useful for testing bots locally in the emulator
+     */
+    export function createAnonymousSkillClaim(): ClaimsIdentity {
+        // return new ClaimsIdentity(new List<Claim> { new Claim(AuthenticationConstants.AppIdClaim, AuthenticationConstants.AnonymousSkillAppId) }, AuthenticationConstants.AnonymousAuthType);
+        return new ClaimsIdentity(
+            [
+                {
+                    type: AuthenticationConstants.AppIdClaim,
+                    value: AuthenticationConstants.AnonymousSkillAppId,
+                },
+            ],
+            true // TODO auth type?
+        );
     }
 }

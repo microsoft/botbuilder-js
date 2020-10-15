@@ -170,6 +170,11 @@ export abstract class AppCredentials implements msrest.ServiceClientCredentials 
     protected abstract async refreshToken(): Promise<adal.TokenResponse>;
 
     private shouldSetToken(webResource: msrest.WebResource): boolean {
+        // Don't set token if appId is falsy or set to anonymous skill appId
+        if (!this.appId || this.appId === AuthenticationConstants.AnonymousSkillAppId) {
+            return false;
+        }
+
         return AppCredentials.isTrustedServiceUrl(webResource.url);
     }
 }
