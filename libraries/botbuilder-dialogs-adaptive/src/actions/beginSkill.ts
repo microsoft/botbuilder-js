@@ -130,6 +130,8 @@ export class BeginSkill extends SkillDialog implements BeginSkillConfiguration {
                 return new ActivityTemplateConverter();
             case 'connectionName':
                 return new StringExpressionConverter();
+            case 'allowInterruptions':
+                return new BoolExpressionConverter();
             default:
                 return undefined;
         }
@@ -247,9 +249,11 @@ export class BeginSkill extends SkillDialog implements BeginSkillConfiguration {
     protected async onPreBubbleEvent(dc: DialogContext, e: DialogEvent): Promise<boolean> {
         if (e.name === DialogEvents.activityReceived && dc.context.activity.type === ActivityTypes.Message) {
             // Ask parent to perform recognition.
-            await dc.parent.emitEvent(AdaptiveEvents.recognizeUtterance, dc.context.activity, false);
+            if (dc.parent) {
+                await dc.parent.emitEvent(AdaptiveEvents.recognizeUtterance, dc.context.activity, false);
+            }
 
-            // Should we allow interruptions
+            // Should we allow interruptions.
             let canInterrupt = true;
             if (this.allowInterruptions) {
                 const { value: allowInterruptions, error } = this.allowInterruptions.tryGetValue(dc.state);

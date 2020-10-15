@@ -44,5 +44,9 @@
     "clean": "erase /q /s .\\lib",
     "set-version": "npm version --allow-same-version ${Version}",
     "test:compat": "api-extractor run --verbose"
-  }
+  },
+  "files": [
+    "lib",
+    "src"
+  ]
 }
