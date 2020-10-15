@@ -1,4 +1,3 @@
-const { LanguagePolicy } = require('botbuilder-dialogs-adaptive');
 const path = require('path');
 const { TestRunner } = require('../lib');
 

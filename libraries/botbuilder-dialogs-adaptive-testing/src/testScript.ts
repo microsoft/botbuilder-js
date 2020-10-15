@@ -8,12 +8,7 @@
 
 import { MemoryStorage, UserState, ConversationState, TestAdapter } from 'botbuilder-core';
 import { DialogManager } from 'botbuilder-dialogs';
-import {
-    DialogExpression,
-    LanguageGeneratorExtensions,
-    LanguagePolicy,
-    ResourceExtensions,
-} from 'botbuilder-dialogs-adaptive';
+import { DialogExpression, LanguageGeneratorExtensions, LanguagePolicy, ResourceExtensions } from 'botbuilder-dialogs-adaptive';
 import { ResourceExplorer } from 'botbuilder-dialogs-declarative';
 import { TestAction } from './testAction';
 import { UserTokenMock } from './userTokenMocks';
