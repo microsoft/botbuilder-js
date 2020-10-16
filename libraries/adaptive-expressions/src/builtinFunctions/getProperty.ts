@@ -20,10 +20,16 @@ import { ReturnType } from '../returnType';
  * Retrieve the value of the specified property from the JSON object.
  */
 export class GetProperty extends ExpressionEvaluator {
+    /**
+     * Initializes a new instance of the [GetProperty](xref:adaptive-expressions.GetProperty) class.
+     */
     public constructor() {
         super(ExpressionType.GetProperty, GetProperty.evaluator, ReturnType.Object, GetProperty.validator);
     }
 
+    /**
+     * @private
+     */
     private static evaluator(expression: Expression, state: MemoryInterface, options: Options): ValueWithError {
         let value: any;
         let property: any;
@@ -37,7 +43,7 @@ export class GetProperty extends ExpressionEvaluator {
                 if (typeof firstItem === 'string') {
                     value = InternalFunctionUtils.wrapGetValue(state, firstItem, options);
                 } else {
-                    error = `"Single parameter ${children[0]} is not a string."`;
+                    error = `"Single parameter ${ children[0] } is not a string."`;
                 }
             } else {
                 // get the peoperty value from the instance
@@ -56,6 +62,9 @@ export class GetProperty extends ExpressionEvaluator {
         return { value, error };
     }
 
+    /**
+     * @private
+     */
     private static validator(expression: Expression): void {
         FunctionUtils.validateOrder(expression, [ReturnType.String], ReturnType.Object);
     }

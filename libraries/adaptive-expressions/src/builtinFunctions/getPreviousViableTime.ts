@@ -22,6 +22,9 @@ import { TimexProperty, Time } from '@microsoft/recognizers-text-data-types-time
  * Return the previous viable time of a timex expression based on the current time and user's timezone.
  */
 export class GetPreviousViableTime extends ExpressionEvaluator {
+    /**
+     * Initializes a new instance of the [GetPreviousViableTime](xref:adaptive-expressions.GetPreviousViableTime) class.
+     */
     public constructor() {
         super(
             ExpressionType.GetPreviousViableTime,
@@ -30,7 +33,10 @@ export class GetPreviousViableTime extends ExpressionEvaluator {
             FunctionUtils.validateUnaryOrBinaryString
         );
     }
-
+      
+    /**
+     * @private
+     */
     private static evaluator(
         expr: Expression,
         state: MemoryInterface,
@@ -47,7 +53,7 @@ export class GetPreviousViableTime extends ExpressionEvaluator {
         let error = childrenError;
         if (!error) {
             if (!formatRegex.test(args[0] as string)) {
-                error = `${args[0]}  must be a timex string which only contains minutes and seconds, for example: 'TXX:15:28'`;
+                error = `${ args[0] }  must be a timex string which only contains minutes and seconds, for example: 'TXX:15:28'`;
             }
         }
 
@@ -55,7 +61,7 @@ export class GetPreviousViableTime extends ExpressionEvaluator {
             if (args.length === 2 && typeof args[1] === 'string') {
                 const timeZone: string = TimeZoneConverter.windowsToIana(args[1]);
                 if (!TimeZoneConverter.verifyTimeZoneStr(timeZone)) {
-                    error = `${args[1]} is not a valid timezone`;
+                    error = `${ args[1] } is not a valid timezone`;
                 }
 
                 if (!error) {
