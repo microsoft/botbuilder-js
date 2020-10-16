@@ -27,13 +27,13 @@
   "devDependencies": {
     "@microsoft/api-extractor": "^7.7.12",
     "@types/uuid": "^3.4.3",
-    "mocha": "^5.2.0",
+    "mocha": "^6.2.3",
     "typescript": "3.5.3"
   },
   "dependencies": {
-    "fs-extra": "^7.0.0",
+    "fs-extra": "^7.0.1",
     "read-text-file": "^1.1.0",
-    "uuid": "^3.3.2"
+    "uuid": "^3.4.0"
   },
   "scripts": {
     "build": "tsc",

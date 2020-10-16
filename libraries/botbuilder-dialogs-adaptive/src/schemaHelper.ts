@@ -7,12 +7,15 @@
  */
 import { PropertySchema } from './propertySchema';
 
+/**
+ * Helper class for dialog schema.
+ */
 export class SchemaHelper {
     /**
      * Creates a new `SchemaHelper` instance.
      * @param schema JSON schema to parse.
      */
-    constructor(schema: object) {
+    public constructor(schema: object) {
         this.schema = schema;
         this.property = this.createProperty(schema);
     }
@@ -38,7 +41,7 @@ export class SchemaHelper {
      * Returns the schema object for a given property path.
      * @param path Path of the properties schema to return.
      */
-    public pathToSchema(path: string): PropertySchema|undefined {
+    public pathToSchema(path: string): PropertySchema | undefined {
         let property: PropertySchema = undefined;
         const segments = path.replace('[]', '').split('.');
         if (segments.length > 0) {
@@ -54,7 +57,7 @@ export class SchemaHelper {
         return property;
     }
 
-    private createProperty(schema: object, path: string = ''): PropertySchema {
+    private createProperty(schema: object, path = ''): PropertySchema {
         // Simplify array handling by collapsing to arrays sub-type
         let type: string = schema['type'];
         if (type == 'array') {
@@ -62,6 +65,12 @@ export class SchemaHelper {
             if (Array.isArray(items)) {
                 throw new Error(`${path} has an items array which is not supported`);
             } else if (typeof items == 'object') {
+                // Copy parent $ properties like $entities
+                for (const name in schema) {
+                    if (schema.hasOwnProperty(name) && name.startsWith('$')) {
+                        items[name] = schema[name];
+                    }
+                }
                 schema = items;
                 type = schema['type'];
                 path += '[]';
@@ -72,7 +81,7 @@ export class SchemaHelper {
 
         // Create child properties
         const children: PropertySchema[] = [];
-        if (type == "object") {
+        if (type == 'object') {
             const properties = schema['properties'] || {};
             for (const name in properties) {
                 if (properties.hasOwnProperty(name) && !name.startsWith('$')) {

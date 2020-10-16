@@ -14,7 +14,6 @@ import { MemoryInterface, SimpleObjectMemory } from 'adaptive-expressions';
  * accessible at any sub evaluation process.
  */
 export class CustomizedMemory implements MemoryInterface {
-
     /**
      * Global memory.
      */
@@ -39,7 +38,7 @@ export class CustomizedMemory implements MemoryInterface {
     public getValue(path: string): any {
         if (this.localMemory) {
             const value = this.localMemory.getValue(path);
-            if (value) {
+            if (value !== undefined) {
                 return value;
             }
         }
@@ -56,7 +55,7 @@ export class CustomizedMemory implements MemoryInterface {
         return;
     }
 
-    public  version(): string {
+    public version(): string {
         let result = '';
         if (this.globalMemory) {
             const version = this.globalMemory.version();
@@ -67,7 +66,7 @@ export class CustomizedMemory implements MemoryInterface {
 
         if (this.localMemory) {
             const localVersion = this.localMemory.version();
-            if (localVersion) {
+            if (localVersion !== undefined) {
                 result = result.concat(localVersion);
             }
         }

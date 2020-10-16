@@ -1,0 +1,42 @@
+# Create a React app that uses ReactWebChat and a customized DirectLineJS
+# that uses that latest version of botframework-streaming
+
+steps:
+  - task: Cache@2
+    displayName: 'Cache create-react-app + WebChat Dependencies'
+    inputs:
+      key: '"CRA-WebChat4.10.1-Cache" | npm | "$(Agent.OS)"'
+      path: $(ReactProjectDir)/node_modules
+      cacheHitVar: 'CacheRestored'
+
+  - powershell: npm install
+    displayName: npm install in React App
+    condition: ne(variables.CacheRestored, 'true')
+    workingDirectory: $(ReactProjectDir)
+
+  - powershell: npm install react-scripts@latest
+    displayName: npm install react-scripts@latest
+    workingDirectory: $(ReactProjectDir)
+
+  - template: customize-dljs.yml
+  
+  - powershell: npm install $(DLJSDir)/botframework-directlinejs.tgz
+    displayName: 'npm install botframework-directlinejs.tgz'
+    workingDirectory: $(ReactProjectDir)
+  
+  - powershell: |
+      Rename-Item ./botframework-directlinejs botframework-directlinejs.old
+      Rename-Item ./botframework-streaming botframework-streaming.old
+      ls
+    displayName: Rename DLJS node modules
+    workingDirectory: $(ReactProjectDir)/node_modules/botframework-webchat/node_modules
+  
+  - powershell: npm run build
+    displayName: Build React App
+    workingDirectory: $(ReactProjectDir)
+  
+  - task: PublishPipelineArtifact@1
+    displayName: 'Publish Artifact: ReactApp'
+    inputs:
+      targetPath: $(ReactProjectDir)/build
+      artifactName: 'ReactApp'

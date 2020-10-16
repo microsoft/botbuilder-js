@@ -43,7 +43,6 @@ export interface WaterfallStepInfo<O extends object> {
      * @param result (Optional) result to pass to the next step.
      */
     onNext(result?: any): Promise<DialogTurnResult>;
-
 }
 
 /**
@@ -58,8 +57,8 @@ export class WaterfallStepContext<O extends object = {}> extends DialogContext {
      * @param dc The dialog context for the current turn of conversation.
      * @param info Values to initialize the step context with.
      */
-    constructor(dc: DialogContext, info: WaterfallStepInfo<O>) {
-        super(dc.dialogs, dc.context, { dialogStack: dc.stack });
+    public constructor(dc: DialogContext, info: WaterfallStepInfo<O>) {
+        super(dc.dialogs, dc, { dialogStack: dc.stack });
         this._info = info;
         this.parent = dc.parent;
     }

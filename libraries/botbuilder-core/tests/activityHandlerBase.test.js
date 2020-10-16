@@ -29,6 +29,7 @@ describe('ActivityHandlerBase', function() {
     let onEventCalled = false;
     let onEndOfConversationCalled = false;
     let onTypingCalled = false;
+    let onInstallationUpdateCalled = false;
     let onUnrecognizedActivity = false;
 
     afterEach(function() {
@@ -39,6 +40,7 @@ describe('ActivityHandlerBase', function() {
         onEventCalled = false;
         onEndOfConversationCalled = false;
         onTypingCalled = false;
+        onInstallationUpdateCalled = false;
         onUnrecognizedActivity = false;
     });
 
@@ -127,6 +129,11 @@ describe('ActivityHandlerBase', function() {
             onTypingCalled = true;
         }
 
+        async onInstallationUpdateActivity(context) {
+            assert(context, 'context not found');
+            onInstallationUpdateCalled = true;
+        }
+
         async onUnrecognizedActivity(context) {
             assert(context, 'context not found');
             onUnrecognizedActivity = true;
@@ -142,6 +149,7 @@ describe('ActivityHandlerBase', function() {
         processActivity({type: ActivityTypes.Event}, bot, done);
         processActivity({type: ActivityTypes.EndOfConversation}, bot, done);
         processActivity({type: ActivityTypes.Typing}, bot, done);
+        processActivity({type: ActivityTypes.InstallationUpdate}, bot, done);
         processActivity({ type: 'unrecognized' }, bot, done);
 
         assert(onTurnActivityCalled, 'onTurnActivity was not called');
@@ -151,6 +159,7 @@ describe('ActivityHandlerBase', function() {
         assert(onEventCalled, 'onEventActivity was not called');
         assert(onEndOfConversationCalled, 'onEndOfConversationCalled was not called');
         assert(onTypingCalled, 'onTypingCalled was not called');
+        assert(onInstallationUpdateCalled, 'onInstallationUpdateCalled was not called');
         assert(onUnrecognizedActivity, 'onUnrecognizedActivity was not called');
         done();
     });

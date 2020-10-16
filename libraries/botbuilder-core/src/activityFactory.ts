@@ -12,80 +12,120 @@ import { CardFactory } from './cardFactory';
  * to generate text and then uses simple markdown semantics like chatdown to create Activity.
  */
 export class ActivityFactory {
-
     private static readonly lgType = 'lgType';
-    private static readonly errorPrefix = '[ERROR]';
-    private static readonly warningPrefix = '[WARNING]';
     private static adaptiveCardType: string = CardFactory.contentTypes.adaptiveCard;
 
-    private static readonly genericCardTypeMapping: Map<string, string> = new Map<string, string>
-    ([
-        [ 'herocard', CardFactory.contentTypes.heroCard ],
-        [ 'thumbnailcard', CardFactory.contentTypes.thumbnailCard ],
-        [ 'audiocard', CardFactory.contentTypes.audioCard ],
-        [ 'videocard', CardFactory.contentTypes.videoCard ],
-        [ 'animationcard', CardFactory.contentTypes.animationCard ],
-        [ 'signincard', CardFactory.contentTypes.signinCard ],
-        [ 'oauthcard', CardFactory.contentTypes.oauthCard ],
-        [ 'receiptcard', CardFactory.contentTypes.receiptCard ],
+    private static readonly genericCardTypeMapping: Map<string, string> = new Map<string, string>([
+        ['herocard', CardFactory.contentTypes.heroCard],
+        ['thumbnailcard', CardFactory.contentTypes.thumbnailCard],
+        ['audiocard', CardFactory.contentTypes.audioCard],
+        ['videocard', CardFactory.contentTypes.videoCard],
+        ['animationcard', CardFactory.contentTypes.animationCard],
+        ['signincard', CardFactory.contentTypes.signinCard],
+        ['oauthcard', CardFactory.contentTypes.oauthCard],
+        ['receiptcard', CardFactory.contentTypes.receiptCard],
     ]);
 
-    private static readonly activityProperties: string[] = ['type','id','timestamp','localTimestamp','localTimezone','callerId',
-        'serviceUrl','channelId','from','conversation','recipient','textFormat','attachmentLayout','membersAdded',
-        'membersRemoved','reactionsAdded','reactionsRemoved','topicName','historyDisclosed','locale','text','speak',
-        'inputHint','summary','suggestedActions','attachments','entities','channelData','action','replyToId','label',
-        'valueType','value','name','typrelatesToe','code','expiration','importance','deliveryMode','listenFor',
-        'textHighlights','semanticAction'];
+    private static readonly activityProperties: string[] = [
+        'type',
+        'id',
+        'timestamp',
+        'localTimestamp',
+        'localTimezone',
+        'callerId',
+        'serviceUrl',
+        'channelId',
+        'from',
+        'conversation',
+        'recipient',
+        'textFormat',
+        'attachmentLayout',
+        'membersAdded',
+        'membersRemoved',
+        'reactionsAdded',
+        'reactionsRemoved',
+        'topicName',
+        'historyDisclosed',
+        'locale',
+        'text',
+        'speak',
+        'inputHint',
+        'summary',
+        'suggestedActions',
+        'attachments',
+        'entities',
+        'channelData',
+        'action',
+        'replyToId',
+        'label',
+        'valueType',
+        'value',
+        'name',
+        'typrelatesToe',
+        'code',
+        'expiration',
+        'importance',
+        'deliveryMode',
+        'listenFor',
+        'textHighlights',
+        'semanticAction',
+    ];
 
-    private static readonly cardActionProperties: string[] = ['type','title','image','text','displayText','value','channelData'];
+    private static readonly cardActionProperties: string[] = [
+        'type',
+        'title',
+        'image',
+        'text',
+        'displayText',
+        'value',
+        'channelData',
+    ];
+
+    private static readonly attachmentProperties: string[] = [
+        'contentType',
+        'contentUrl',
+        'content',
+        'name',
+        'thumbnailUrl',
+    ];
+
+    private static readonly cardProperties: string[] = [
+        'title',
+        'subtitle',
+        'text',
+        'images',
+        'image',
+        'buttons',
+        'tap',
+        'media',
+        'shareable',
+        'autoloop',
+        'autostart',
+        'aspect',
+        'duration',
+        'value',
+        'connectionName',
+        'tokenExchangeResource',
+        'facts',
+        'items',
+        'total',
+        'tax',
+        'vat',
+    ];
 
     /**
      * Generate the activity.
      * @param lgResult string result from languageGenerator.
      */
     public static fromObject(lgResult: any): Partial<Activity> {
-        const diagnostics: string[] = this.checkLGResult(lgResult);
-        const errors: string[] = diagnostics.filter((u: string): boolean => u.startsWith(this.errorPrefix));
-        if (errors !== undefined && errors.length > 0) {
-            throw new Error(`${ errors.join('\n') }`);
-        }
-
         if (typeof lgResult === 'string') {
-            const structuredLGResult: any = this.parseStructuredLGResult(lgResult.trim());
-            return structuredLGResult === undefined ?
-                this.buildActivityFromText(lgResult.trim())
-                :this.buildActivityFromLGStructuredResult(lgResult);
+            return this.buildActivityFromText(lgResult.trim());
         }
 
-        return this.buildActivityFromLGStructuredResult(lgResult);
-    }
-
-    /**
-     * check the LG result before generate an Activity.
-     * @param lgResult lg output.
-     * @returns Diagnostic list.
-     */
-    public static checkLGResult(lgResult: any): string[] {
-        if (lgResult === undefined) {
-            return [this.buildDiagnostic('LG output is empty', false)];
-        }
-
-        if (typeof lgResult === 'string') {
-            if (!lgResult.startsWith('{') || !lgResult.endsWith('}')) {
-                return [this.buildDiagnostic('LG output is not a json object, and will fallback to string format.', false)];
-            }
-
-            let lgStructuredResult: any = undefined;
-
-            try {
-                lgStructuredResult = JSON.parse(lgResult);
-            } catch (error) {
-                return [this.buildDiagnostic('LG output is not a json object, and will fallback to string format.', false)];
-            }
-
-            return this.checkStructuredResult(lgStructuredResult);
+        if (typeof lgResult === 'object') {
+            return this.buildActivityFromLGStructuredResult(lgResult);
         } else {
-            return this.checkStructuredResult(lgResult);
+            return this.buildActivityFromText(JSON.stringify(lgResult).trim());
         }
     }
 
@@ -96,9 +136,12 @@ export class ActivityFactory {
     private static buildActivityFromText(text: string): Partial<Activity> {
         const msg: Partial<Activity> = {
             type: ActivityTypes.Message,
-            text: text,
-            speak: text
         };
+
+        if (text) {
+            msg.text = text;
+            msg.speak = text;
+        }
 
         return msg;
     }
@@ -115,7 +158,7 @@ export class ActivityFactory {
             activity = MessageFactory.attachment(this.getAttachment(lgValue));
         } else if (type === 'activity') {
             activity = this.buildActivity(lgValue);
-        } else if (lgValue){
+        } else if (lgValue) {
             activity = this.buildActivityFromText(JSON.stringify(lgValue).trim());
         }
 
@@ -123,7 +166,7 @@ export class ActivityFactory {
     }
 
     private static buildActivity(messageValue: any): Partial<Activity> {
-        let activity: Partial<Activity> = { type: ActivityTypes.Message };
+        const activity: Partial<Activity> = { type: ActivityTypes.Message };
         for (const key of Object.keys(messageValue)) {
             const property: string = key.trim();
             if (property === this.lgType) {
@@ -140,14 +183,7 @@ export class ActivityFactory {
                     activity.suggestedActions = this.getSuggestions(value);
                     break;
                 default:
-                    var properties = this.activityProperties.map((u: string): string => u.toLowerCase());
-                    if (properties.includes(property.toLowerCase()))
-                    {
-                        var realPropertyName = this.activityProperties[properties.indexOf(property.toLowerCase())];
-                        activity[realPropertyName] = value;
-                    } else {
-                        activity[property.toLowerCase()] = value;
-                    }
+                    activity[this.realProperty(property, this.activityProperties)] = value;
                     break;
             }
         }
@@ -159,8 +195,8 @@ export class ActivityFactory {
         const actions: any[] = this.normalizedToList(suggestionsValue);
 
         const suggestedActions: SuggestedActions = {
-            actions : this.getCardActions(actions),
-            to: []
+            actions: this.getCardActions(actions),
+            to: [],
         };
 
         return suggestedActions;
@@ -175,8 +211,7 @@ export class ActivityFactory {
         return actions.map((u: any): CardAction => this.getCardAction(u));
     }
 
-    private static getCardAction(action: any): CardAction
-    {
+    private static getCardAction(action: any): CardAction {
         let cardAction: CardAction;
         if (typeof action === 'string') {
             cardAction = { type: ActionTypes.ImBack, value: action, title: action, channelData: undefined };
@@ -185,7 +220,7 @@ export class ActivityFactory {
             cardAction = {
                 type: ActionTypes.ImBack,
                 title: '',
-                value: ''
+                value: '',
             };
 
             if (type === 'cardaction') {
@@ -194,29 +229,13 @@ export class ActivityFactory {
                     if (property === this.lgType) {
                         continue;
                     }
-
-                    const value: any = action[key];
-
-                    switch (property.toLowerCase()) {
-                        case 'displaytext':
-                            cardAction.displayText = value;
-                            break;
-                        case 'channeldata':
-                            cardAction.channelData = value;
-                            break;
-                        default:
-                            cardAction[property.toLowerCase()] = value;
-                            break;
-                    }
+                    cardAction[this.realProperty(property, this.cardActionProperties)] = action[key];
                 }
             }
         }
 
         return cardAction;
     }
-
-
-
 
     private static getAttachments(input: any): Attachment[] {
         const attachments: Attachment[] = [];
@@ -233,7 +252,7 @@ export class ActivityFactory {
 
     private static getAttachment(input: any): Attachment {
         let attachment: Attachment = {
-            contentType: ''
+            contentType: '',
         };
         const type: string = this.getStructureType(input);
         if (this.genericCardTypeMapping.has(type)) {
@@ -243,14 +262,14 @@ export class ActivityFactory {
         } else if (type === 'attachment') {
             attachment = this.getNormalAttachment(input);
         } else {
-            attachment = {contentType: type, content: input};
+            attachment = { contentType: type, content: input };
         }
 
         return attachment;
     }
 
     private static getNormalAttachment(input: any): Attachment {
-        const attachment: Attachment = {contentType:''};
+        const attachment: Attachment = { contentType: '' };
 
         for (const key of Object.keys(input)) {
             const property: string = key.trim();
@@ -267,14 +286,8 @@ export class ActivityFactory {
                         attachment.contentType = type;
                     }
                     break;
-                case 'contenturl':
-                    attachment.contentUrl = value;
-                    break;
-                case 'thumbnailurl':
-                    attachment.thumbnailUrl = value;
-                    break;
                 default:
-                    attachment[property.toLowerCase()] = value;
+                    attachment[this.realProperty(property, this.attachmentProperties)] = value;
                     break;
             }
         }
@@ -300,10 +313,10 @@ export class ActivityFactory {
                             card['images'] = [];
                         }
 
-                        const imageList: string[] = this.normalizedToList(value).map((u): string => u.toString());
-                        imageList.forEach( (u): any => card['images'].push({url : u}));
+                        const imageList = this.normalizedToList(value);
+                        imageList.forEach((u): any => card['images'].push(this.normalizedToMediaOrImage(u)));
                     } else {
-                        card['image'] = {url: value.toString()};
+                        card['image'] = this.normalizedToMediaOrImage(value);
                     }
                     break;
                 case 'media':
@@ -311,8 +324,8 @@ export class ActivityFactory {
                         card['media'] = [];
                     }
 
-                    const mediaList: string[] = this.normalizedToList(value).map((u): string => u.toString());
-                    mediaList.forEach( (u): any => card['media'].push({url : u}));
+                    const mediaList = this.normalizedToList(value);
+                    mediaList.forEach((u): any => card['media'].push(this.normalizedToMediaOrImage(u)));
                     break;
                 case 'buttons':
                     if (!('buttons' in card)) {
@@ -320,7 +333,7 @@ export class ActivityFactory {
                     }
 
                     const buttons: any[] = this.getButtons(value);
-                    buttons.forEach( (u): any => card[property].push(u));
+                    buttons.forEach((u): any => card[property].push(u));
                     break;
                 case 'autostart':
                 case 'shareable':
@@ -328,23 +341,31 @@ export class ActivityFactory {
                     const boolValue: boolean = this.getValidBooleanValue(value.toString());
                     if (boolValue !== undefined) {
                         card[property] = boolValue;
+                    } else {
+                        card[property] = value;
                     }
                     break;
-                case 'connectionname':
-                    card['connectionName'] = value;
-                    break;
                 default:
-                    card[property.toLowerCase()] = value;
+                    card[this.realProperty(key.trim(), this.cardProperties)] = value;
                     break;
             }
         }
 
         const attachment: Attachment = {
             contentType: type,
-            content: card
+            content: card,
         };
 
         return attachment;
+    }
+
+    private static realProperty(property: string, builtinProperties: string[]): string {
+        const properties = builtinProperties.map((u: string): string => u.toLowerCase());
+        if (properties.includes(property.toLowerCase())) {
+            return builtinProperties[properties.indexOf(property.toLowerCase())];
+        } else {
+            return property;
+        }
     }
 
     private static normalizedToList(item: any): any[] {
@@ -355,240 +376,6 @@ export class ActivityFactory {
         } else {
             return [item];
         }
-    }
-
-    private static parseStructuredLGResult(lgStringResult: string): any
-    {
-        let lgStructuredResult: any = undefined;
-        if (lgStringResult === undefined || lgStringResult === '') {
-            return undefined;
-        }
-
-        lgStringResult = lgStringResult.trim();
-
-        if (lgStringResult === '' || !lgStringResult.startsWith('{') || !lgStringResult.endsWith('}')) {
-            return undefined;
-        }
-
-        try {
-            lgStructuredResult = JSON.parse(lgStringResult);
-            const type = this.getStructureType(lgStringResult);
-            if (!type || type.trim() === '') {
-                return undefined;
-            }
-        } catch (error) {
-            return undefined;
-        }
-
-        return lgStructuredResult;
-    }
-
-    private static checkStructuredResult(input: any): string[] {
-        const result: string[] = [];
-        const type: string = this.getStructureType(input);
-
-        if (!type || type.trim() === '') {
-            return result;
-        }
-
-        if (this.genericCardTypeMapping.has(type) || type === 'attachment') {
-            result.push(...this.checkAttachment(input));
-        } else if (type === 'activity') {
-            result.push(...this.checkActivity(input));
-        } else {
-            const diagnosticMessage = `Type '${ type }' is not supported currently.`;
-            result.push(this.buildDiagnostic(diagnosticMessage, false));
-        }
-
-        return result;
-    }
-
-    private static checkActivity(input: any): string[] {
-        const result: string[] = [];
-        let activityType: string = undefined;
-        if ('type' in input) {
-            activityType = input['type'].toString().trim();
-        }
-
-        result.push(...this.checkActivityType(activityType));
-        result.push(...this.checkActivityPropertyName(input));
-        result.push(...this.checkActivityProperties(input));
-
-        return result;
-    }
-
-    private static checkActivityType(activityType: string): string[] {
-        if (activityType !== undefined) {
-            if (!Object.values(ActivityTypes).map((u: string): string => u.toLowerCase()).includes(activityType.toLowerCase())) {
-                return [this.buildDiagnostic(`'${ activityType }' is not a valid activity type.`)];
-            }
-        }
-        return [];
-    }
-
-    private static checkActivityPropertyName(input: any): string[] {
-        const invalidProperties: string[] = [];
-        for (const property of Object.keys(input)) {
-            if (property === this.lgType) {
-                continue;
-            }
-            if (!this.activityProperties.map((u: string): string => u.toLowerCase()).includes(property.toLowerCase())) {
-                invalidProperties.push(property);
-            }
-        }
-        if (invalidProperties.length > 0) {
-            return [this.buildDiagnostic(`'${ invalidProperties.join(',') }' not support in Activity.`, false)];
-        }
-
-        return [];
-    }
-
-    private static checkActivityProperties(input: any): string[] {
-        const result: string[] = [];
-        for (const key of Object.keys(input)) {
-            const property: string = key.trim();
-            const value: any = input[key];
-
-            switch (property.toLowerCase()) {
-                case 'attachments':
-                    result.push(...this.checkAttachments(value));
-                    break;
-                case 'suggestedactions':
-                    result.push(...this.checkSuggestions(value));
-                    break;
-                default:
-                    break;
-            }
-        }
-
-        return result;
-    }
-
-    private static checkSuggestions(value: any): string[] {
-        const actions: any[] = this.normalizedToList(value);
-        return this.checkCardActions(actions);
-    }
-
-    private static checkButtons(value: any): string[] {
-        const actions: any[] = this.normalizedToList(value);
-        return this.checkCardActions(actions);
-    }
-
-    private static checkCardActions(actions: any[]): string[] {
-        const result: string[] = [];
-        actions.forEach((u: any): void => { result.push(...this.checkCardAction(u)); });
-        return result;
-    }
-
-    private static checkCardAction(value: any): string[] {
-        const result: string[] = [];
-        if (typeof value === 'string') {
-            return result;
-        }
-
-        if (typeof value === 'object') {
-            const type: string = this.getStructureType(value);
-            if (type !== 'cardaction') {
-                result.push(this.buildDiagnostic(`'${ type }' is not card action type.`, false));
-            } else {
-                result.push(...this.checkCardActionPropertyName(value));
-                if ('type' in value) {
-                    result.push(...this.checkCardActionType(value['type']));
-                }
-            }
-        } else {
-            result.push(this.buildDiagnostic(`'${ value }' is not a valid card action format.`, false));
-        }
-
-        return result;
-    }
-
-    
-    private static checkCardActionPropertyName(input: any): string[] {
-        const invalidProperties: string[] = [];
-        for (const property of Object.keys(input)) {
-            if (property === this.lgType) {
-                continue;
-            }
-            if (!this.cardActionProperties.map((u: string): string => u.toLowerCase()).includes(property.toLowerCase())) {
-                invalidProperties.push(property);
-            }
-        }
-        if (invalidProperties.length > 0) {
-            return [this.buildDiagnostic(`'${ invalidProperties.join(',') }' not support in card action.`, false)];
-        }
-
-        return [];
-    }
-
-    private static checkCardActionType(cardActionType: string): string[] {
-        const result: string[] = [];
-        if (!cardActionType) {
-            return result;
-        }
-
-        if (!Object.values(ActionTypes).map((u: string): string => u.toLowerCase()).includes(cardActionType.toLowerCase())) {
-            return [this.buildDiagnostic(`'${ cardActionType }' is not a valid card action type.`)];
-        }
-
-        return result;
-    }
-
-    private static checkAttachments(value: any): string[] {
-        const result: string[] = [];
-        const attachmentsJsonList: any[] = this.normalizedToList(value);
-
-        for (const attachmentsJson of attachmentsJsonList) {
-            if (typeof attachmentsJson === 'object') {
-                result.push(...this.checkAttachment(attachmentsJson));
-            }
-        }
-
-        return result;
-    }
-
-    private static checkAttachment(value: any): string[] {
-        const result: string[] = [];
-        const type: string = this.getStructureType(value);
-        if (this.genericCardTypeMapping.has(type)) {
-            result.push(...this.checkCardAttachment(value));
-        } else if (type === 'adaptivecard') {
-            // TODO
-            // check adaptivecard format
-        } else if (type === 'attachment') {
-            // TODO
-            // Check attachment format
-        } else {
-            result.push(this.buildDiagnostic(`'${ type }' is not an attachment type.`, false));
-        }
-
-        return result;
-    }
-
-    private static checkCardAttachment(input: any): string[] {
-        const result: string[] = [];
-        for (const key of Object.keys(input)) {
-            const property: string = key.trim().toLowerCase();
-            const value: any = input[key];
-
-            switch (property) {
-                case 'buttons':
-                    result.push(...this.checkButtons(value));
-                    break;
-                case 'autostart':
-                case 'shareable':
-                case 'autoloop':
-                    const boolValue: boolean = this.getValidBooleanValue(value.toString());
-                    if (boolValue === undefined) {
-                        result.push(this.buildDiagnostic(`'${ value.toString() }' is not a boolean value.`));
-                    }
-                    break;
-                default:
-                    break;
-            }
-        }
-
-        return result;
     }
 
     private static getStructureType(input: any): string {
@@ -606,22 +393,25 @@ export class ActivityFactory {
         return result.trim().toLowerCase();
     }
 
-    
-    private static getValidBooleanValue(boolValue: string): boolean{
-        if (boolValue.toLowerCase() === 'true')
-        {
-            return true;
+    private static normalizedToMediaOrImage(item: any): object {
+        if (!item) {
+            return {};
+        } else if (typeof item === 'string') {
+            return { url: item };
+        } else return item;
+    }
+
+    private static getValidBooleanValue(boolValue: any): boolean {
+        if (typeof boolValue === 'boolean') {
+            return boolValue;
         }
-        else if (boolValue.toLowerCase() === 'false')
-        {
+
+        if (boolValue.toLowerCase() === 'true') {
+            return true;
+        } else if (boolValue.toLowerCase() === 'false') {
             return false;
         }
 
         return undefined;
-    }
-
-    private static buildDiagnostic(message: string, isError: boolean = true): string {
-        message = message === undefined ? '' : message;
-        return isError ? this.errorPrefix + message : this.warningPrefix + message;
     }
 }

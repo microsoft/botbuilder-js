@@ -5,12 +5,36 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { Dialog, DialogDependencies, DialogContext, DialogTurnResult } from 'botbuilder-dialogs';
-import { ValueExpression, ObjectExpression, BoolExpression } from 'adaptive-expressions';
+import {
+    ValueExpression,
+    BoolExpression,
+    BoolExpressionConverter,
+    ObjectExpression,
+    ObjectExpressionConverter,
+    Expression,
+} from 'adaptive-expressions';
+import {
+    Dialog,
+    DialogDependencies,
+    DialogContext,
+    DialogTurnResult,
+    Converter,
+    ConverterFactory,
+    DialogConfiguration,
+} from 'botbuilder-dialogs';
 import { DialogExpression } from '../expressions';
+import { replaceJsonRecursively } from '../jsonExtensions';
+import { DialogExpressionConverter } from '../converters';
 
+export interface BaseInvokeDialogConfiguration extends DialogConfiguration {
+    options?: object | string | Expression | ObjectExpression<object>;
+    dialog?: Dialog | string | Expression | DialogExpression;
+    activityProcessed?: boolean | string | Expression | BoolExpression;
+}
 
-export class BaseInvokeDialog<O extends object = {}> extends Dialog<O> implements DialogDependencies {
+export class BaseInvokeDialog<O extends object = {}>
+    extends Dialog<O>
+    implements DialogDependencies, BaseInvokeDialogConfiguration {
     public constructor(dialogIdToCall?: string, bindingOptions?: O) {
         super();
         if (dialogIdToCall) {
@@ -36,6 +60,19 @@ export class BaseInvokeDialog<O extends object = {}> extends Dialog<O> implement
      */
     public activityProcessed: BoolExpression = new BoolExpression(true);
 
+    public getConverter(property: keyof BaseInvokeDialogConfiguration): Converter | ConverterFactory {
+        switch (property) {
+            case 'options':
+                return new ObjectExpressionConverter<object>();
+            case 'dialog':
+                return DialogExpressionConverter;
+            case 'activityProcessed':
+                return new BoolExpressionConverter();
+            default:
+                return super.getConverter(property);
+        }
+    }
+
     public beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult<any>> {
         throw new Error('Method not implemented.');
     }
@@ -48,7 +85,7 @@ export class BaseInvokeDialog<O extends object = {}> extends Dialog<O> implement
     }
 
     protected onComputeId(): string {
-        return `${ this.constructor.name }[${ this.dialog && this.dialog.toString() }]`;
+        return `${this.constructor.name}[${this.dialog && this.dialog.toString()}]`;
     }
 
     protected resolveDialog(dc: DialogContext): Dialog {
@@ -60,7 +97,7 @@ export class BaseInvokeDialog<O extends object = {}> extends Dialog<O> implement
         const { value: dialogId } = expression.tryEvaluate(dc.state);
         const dialog = dc.findDialog(dialogId);
         if (!dialog) {
-            throw new Error(`${ this.dialog.toString() } not found.`);
+            throw new Error(`${this.dialog.toString()} not found.`);
         }
 
         return dialog;
@@ -72,7 +109,12 @@ export class BaseInvokeDialog<O extends object = {}> extends Dialog<O> implement
 
         for (const key in bindingOptions) {
             const bindingValue = bindingOptions[key];
-            const value = new ValueExpression(bindingValue).getValue(dc.state);
+            let value = new ValueExpression(bindingValue).getValue(dc.state);
+
+            if (value) {
+                value = replaceJsonRecursively(dc.state, value);
+            }
+
             boundOptions[key] = value;
         }
 

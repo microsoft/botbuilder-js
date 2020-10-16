@@ -53,8 +53,9 @@ steps:
   enabled: false
 
 - bash: |
-   sed -i '' 's/${Version}/$(version)/g' package.json 
+   sed -i '' 's/${Version}/$(version)/g' package.json
    sed -i '' 's/${Version}/$(version)/g' libraries/adaptive-expressions/package.json
+   sed -i '' 's/${Version}/$(version)/g' libraries/bot-integration-tests/package.json
    sed -i '' 's/${Version}/$(version)/g' libraries/botbuilder/package.json
    sed -i '' 's/${Version}/$(version)/g' libraries/botbuilder-ai/package.json
    sed -i '' 's/${Version}/$(version)/g' libraries/botbuilder-applicationinsights/package.json

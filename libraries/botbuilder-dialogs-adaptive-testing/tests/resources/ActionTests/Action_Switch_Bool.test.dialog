@@ -1,0 +1,49 @@
+{
+    "$schema": "../../../../schemas/sdk.schema",
+    "$kind": "Microsoft.Test.Script",
+    "dialog": {
+        "$kind": "Microsoft.AdaptiveDialog",
+        "id": "planningTest",
+        "triggers": [
+            {
+                "$kind": "Microsoft.OnBeginDialog",
+                "actions": [
+                    {
+                        "$kind": "Microsoft.SetProperty",
+                        "property": "user.isVip",
+                        "value": true
+                    },
+                    {
+                        "$kind": "Microsoft.BeginDialog",
+                        "dialog": "SwitchBool"
+                    },
+                    {
+                        "$kind": "Microsoft.SetProperty",
+                        "property": "user.isVip",
+                        "value": "=false"
+                    },
+                    {
+                        "$kind": "Microsoft.BeginDialog",
+                        "dialog": "SwitchBool"
+                    }
+                ]
+            }
+        ],
+        "autoEndDialog": true,
+        "defaultResultProperty": "dialog.result"
+    },
+    "script": [
+        {
+            "$kind": "Microsoft.Test.UserSays",
+            "text": "hi"
+        },
+        {
+            "$kind": "Microsoft.Test.AssertReply",
+            "text": "User is VIP"
+        },
+        {
+            "$kind": "Microsoft.Test.AssertReply",
+            "text": "User is NOT VIP"
+        }
+    ]
+}

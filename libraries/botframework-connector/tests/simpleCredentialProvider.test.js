@@ -14,14 +14,12 @@ describe('SimpleCredentialProvider', () => {
 
     it('isValidAppId() should resolve true if appId matches appId from construction', async () => {
         const credentials = new SimpleCredentialProvider(APP_ID, APP_PASSWORD);
-        strictEqual(credentials.appId, APP_ID);
         const isValidAppId = await credentials.isValidAppId(APP_ID);
         assert(isValidAppId, `should have validated provided appId`);
     });
 
     it(`isValidAppId() should resolve false if appId doesn't match appId from construction`, async () => {
         const credentials = new SimpleCredentialProvider(APP_ID, APP_PASSWORD);
-        strictEqual(credentials.appId, APP_ID);
         const isValidAppId = await credentials.isValidAppId(NOT_APP_ID);
         assert(!isValidAppId, `should have validated provided appId`);
     });
@@ -40,7 +38,6 @@ describe('SimpleCredentialProvider', () => {
 
     it('isAuthenticationDisabled() should resolve true if appId was passed in during construction', async () => {
         const credentials = new SimpleCredentialProvider(APP_ID, APP_PASSWORD);
-        strictEqual(credentials.appId, APP_ID);
         const isAuthDisabled = await credentials.isAuthenticationDisabled();
         strictEqual(isAuthDisabled, false);
     });

@@ -756,6 +756,41 @@ describe('ChoicePrompt', function () {
             .assertReply('red');
     });
 
+    it('should not recognize, then re-prompt without error for falsy input.', async function () {
+        const adapter = new TestAdapter(async (turnContext) => {
+            const dc = await dialogs.createContext(turnContext);
+
+            const results = await dc.continueDialog();
+            if (results.status === DialogTurnStatus.empty) {
+                await dc.prompt('prompt', 'Please choose a color.', stringChoices);
+            } else if (results.status === DialogTurnStatus.complete) {
+                const selectedChoice = results.result;
+                await turnContext.sendActivity(selectedChoice.value);
+            }
+            await convoState.saveChanges(turnContext);
+        });
+        // Create new ConversationState with MemoryStorage and register the state as middleware.
+        const convoState = new ConversationState(new MemoryStorage());
+
+        // Create a DialogState property, DialogSet and ChoicePrompt.
+        const dialogState = convoState.createProperty('dialogState');
+        const dialogs = new DialogSet(dialogState);
+        const choicePrompt = new ChoicePrompt('prompt');
+        // Change the ListStyle of the prompt to ListStyle.none.
+        choicePrompt.style = ListStyle.none;
+
+        dialogs.add(choicePrompt);
+
+        await adapter.send('Hello')
+            .assertReply('Please choose a color.')
+            .send('')
+            .assertReply('Please choose a color.')
+            .send({ type: ActivityTypes.Message, text: null })
+            .assertReply('Please choose a color.')
+            .send('1')
+            .assertReply('red');
+    });
+
     it('should display choices on a hero card', async function () {
         const sizeChoices = ['large', 'medium', 'small'];
         const adapter = new TestAdapter(async (turnContext) => {

@@ -6,21 +6,58 @@
  * Licensed under the MIT License.
  */
 
-import { DialogContext } from 'botbuilder-dialogs';
+import {
+    ArrayExpression,
+    ArrayExpressionConverter,
+    BoolExpression,
+    BoolExpressionConverter,
+    Expression,
+    IntExpression,
+    IntExpressionConverter,
+    NumberExpression,
+    NumberExpressionConverter,
+    ObjectExpression,
+    ObjectExpressionConverter,
+    StringExpression,
+    StringExpressionConverter,
+} from 'adaptive-expressions';
+import {
+    JoinOperator,
+    QnAMakerMetadata,
+    QnAMaker,
+    QnAMakerEndpoint,
+    QnAMakerOptions,
+    QnAMakerResult,
+    QnARequestContext,
+    RankerTypes,
+} from 'botbuilder-ai';
 import { RecognizerResult, Activity } from 'botbuilder-core';
-import { RankerTypes, QnAMakerMetadata, QnAMaker, QnAMakerEndpoint, QnAMakerOptions, QnAMakerResult, QnARequestContext } from 'botbuilder-ai';
-import { Recognizer } from '../recognizers/recognizer';
-import { StringExpression, IntExpression, NumberExpression, BoolExpression, ArrayExpression, ObjectExpression } from 'adaptive-expressions';
+import { Converter, ConverterFactory, DialogContext } from 'botbuilder-dialogs';
+import { Recognizer, RecognizerConfiguration } from '../recognizers/recognizer';
 
 const intentPrefix = 'intent=';
 
-export class QnAMakerRecognizer implements Recognizer {
-    public static readonly qnaMatchIntent = 'QnAMatch';
+export interface QnAMakerRecognizerConfiguration extends RecognizerConfiguration {
+    knowledgeBaseId?: string | Expression | StringExpression;
+    hostname?: string | Expression | StringExpression;
+    endpointKey?: string | Expression | StringExpression;
+    top?: number | string | Expression | IntExpression;
+    threshold?: number | string | Expression | NumberExpression;
+    isTest?: boolean;
+    rankerType?: string | Expression | StringExpression;
+    strictFiltersJoinOperator?: JoinOperator;
+    includeDialogNameInMetadata?: boolean | string | Expression | BoolExpression;
+    metadata?: QnAMakerMetadata[] | string | Expression | ArrayExpression<QnAMakerMetadata>;
+    context?: QnARequestContext | string | Expression | ObjectExpression<QnARequestContext>;
+    qnaId?: number | string | Expression | IntExpression;
+}
 
-    /**
-     * Id of the recognizer.
-     */
-    public id: string;
+/**
+ * A recognizer which uses QnAMaker KB to recognize intents.
+ */
+export class QnAMakerRecognizer extends Recognizer implements QnAMakerRecognizerConfiguration {
+    public static $kind = 'Microsoft.QnAMakerRecognizer';
+    public static readonly qnaMatchIntent = 'QnAMatch';
 
     /**
      * Knowledgebase id of your QnA maker knowledgebase.
@@ -58,6 +95,11 @@ export class QnAMakerRecognizer implements Recognizer {
     public rankerType: StringExpression = new StringExpression(RankerTypes.default);
 
     /**
+     * A value used for Join operation of Metadata.
+     */
+    public strictFiltersJoinOperator: JoinOperator;
+
+    /**
      * Whether to include the dialog name metadata for QnA context.
      */
     public includeDialogNameInMetadata: BoolExpression = new BoolExpression(true);
@@ -77,18 +119,70 @@ export class QnAMakerRecognizer implements Recognizer {
      */
     public qnaId: IntExpression = new IntExpression(0);
 
-    public constructor(hostname?: string, knowledgeBaseId?: string, endpointKey?: string) {
-        if (hostname) { this.hostname = new StringExpression(hostname); }
-        if (knowledgeBaseId) { this.knowledgeBaseId = new StringExpression(knowledgeBaseId); }
-        if (endpointKey) { this.endpointKey = new StringExpression(endpointKey); }
+    public getConverter(property: keyof QnAMakerRecognizerConfiguration): Converter | ConverterFactory {
+        switch (property) {
+            case 'knowledgeBaseId':
+                return new StringExpressionConverter();
+            case 'hostname':
+                return new StringExpressionConverter();
+            case 'endpointKey':
+                return new StringExpressionConverter();
+            case 'top':
+                return new IntExpressionConverter();
+            case 'threshold':
+                return new NumberExpressionConverter();
+            case 'rankerType':
+                return new StringExpressionConverter();
+            case 'includeDialogNameInMetadata':
+                return new BoolExpressionConverter();
+            case 'metadata':
+                return new ArrayExpressionConverter();
+            case 'context':
+                return new ObjectExpressionConverter<QnARequestContext>();
+            case 'qnaId':
+                return new IntExpressionConverter();
+            default:
+                return super.getConverter(property);
+        }
     }
 
-    public async recognize(dc: DialogContext, activity: Activity): Promise<RecognizerResult> {
+    /**
+     * Initializes a new instance of `QnAMakerRecognizer`.
+     * @param hostname Hostname of QnAMaker KB.
+     * @param knowledgeBaseId Id of QnAMaker KB.
+     * @param endpointKey Endpoint key of QnAMaker KB.
+     */
+    public constructor(hostname?: string, knowledgeBaseId?: string, endpointKey?: string) {
+        super();
+        if (hostname) {
+            this.hostname = new StringExpression(hostname);
+        }
+        if (knowledgeBaseId) {
+            this.knowledgeBaseId = new StringExpression(knowledgeBaseId);
+        }
+        if (endpointKey) {
+            this.endpointKey = new StringExpression(endpointKey);
+        }
+    }
+
+    /**
+     * Gets results of the call to QnA maker KB.
+     * @param dc Context object containing information for a single turn of coversation with a user.
+     * @param activity The incoming activity received from the user. The text value is used as the query to QnA Maker.
+     * @param telemetryProperties Additional properties to be logged to telemetry.
+     * @param telemetryMetrics Additional metrics to be logged to telemetry.
+     */
+    public async recognize(
+        dc: DialogContext,
+        activity: Activity,
+        telemetryProperties?: { [key: string]: string },
+        telemetryMetrics?: { [key: string]: number }
+    ): Promise<RecognizerResult> {
         // identify matched intents
         const recognizerResult: RecognizerResult = {
             text: activity.text,
             intents: {},
-            entities: {}
+            entities: {},
         };
 
         if (!activity.text) {
@@ -100,7 +194,7 @@ export class QnAMakerRecognizer implements Recognizer {
         if (this.includeDialogNameInMetadata && this.includeDialogNameInMetadata.getValue(dc.state)) {
             const metadata: QnAMakerMetadata = {
                 name: 'dialogName',
-                value: dc.activeDialog && dc.activeDialog.id
+                value: dc.activeDialog && dc.activeDialog.id,
             };
             filters.push(metadata);
         }
@@ -120,7 +214,7 @@ export class QnAMakerRecognizer implements Recognizer {
             top: this.top && this.top.getValue(dc.state),
             qnaId: this.qnaId && this.qnaId.getValue(dc.state),
             rankerType: this.rankerType && this.rankerType.getValue(dc.state),
-            isTest: this.isTest
+            isTest: this.isTest,
         };
         const answers = await qnaMaker.getAnswers(dc.context, qnaMakerOptions);
 
@@ -128,27 +222,45 @@ export class QnAMakerRecognizer implements Recognizer {
             let topAnswer: QnAMakerResult;
             for (let i = 0; i < answers.length; i++) {
                 const answer = answers[i];
-                if (!topAnswer || (answer.score > topAnswer.score)) {
+                if (!topAnswer || answer.score > topAnswer.score) {
                     topAnswer = answer;
                 }
             }
 
             if (topAnswer.answer.trim().toLowerCase().startsWith(intentPrefix)) {
-                recognizerResult.intents[topAnswer.answer.trim().substr(intentPrefix.length).trim()] = { score: topAnswer.score };
+                recognizerResult.intents[topAnswer.answer.trim().substr(intentPrefix.length).trim()] = {
+                    score: topAnswer.score,
+                };
             } else {
                 recognizerResult.intents[QnAMakerRecognizer.qnaMatchIntent] = { score: topAnswer.score };
             }
 
             recognizerResult.entities['answer'] = [topAnswer.answer];
-            recognizerResult.entities['$instance'] = { answer: [topAnswer] };
+            recognizerResult.entities['$instance'] = {
+                answer: [
+                    Object.assign(topAnswer, {
+                        startIndex: 0,
+                        endIndex: activity.text.length,
+                    }),
+                ],
+            };
             recognizerResult['answers'] = answers;
         } else {
             recognizerResult.intents['None'] = { score: 1 };
         }
-
+        this.trackRecognizerResult(
+            dc,
+            'QnAMakerRecognizerResult',
+            this.fillRecognizerResultTelemetryProperties(recognizerResult, telemetryProperties),
+            telemetryMetrics
+        );
         return recognizerResult;
     }
 
+    /**
+     * Gets an instance of `QnAMaker`.
+     * @param dc The dialog context used to access state.
+     */
     protected getQnAMaker(dc: DialogContext): QnAMaker {
         const endpointKey = this.endpointKey && this.endpointKey.getValue(dc.state);
         const hostname = this.hostname && this.hostname.getValue(dc.state);
@@ -157,7 +269,7 @@ export class QnAMakerRecognizer implements Recognizer {
         const endpoint: QnAMakerEndpoint = {
             endpointKey: endpointKey,
             host: hostname,
-            knowledgeBaseId: knowledgeBaseId
+            knowledgeBaseId: knowledgeBaseId,
         };
         return new QnAMaker(endpoint);
     }

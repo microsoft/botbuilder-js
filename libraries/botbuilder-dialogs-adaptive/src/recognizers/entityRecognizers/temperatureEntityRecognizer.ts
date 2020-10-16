@@ -11,6 +11,8 @@ import { ModelResult } from 'botbuilder-dialogs';
 import { TextEntityRecognizer } from './textEntityRecognizer';
 
 export class TemperatureEntityRecognizer extends TextEntityRecognizer {
+    public static $kind = 'Microsoft.TemperatureEntityRecognizer';
+
     protected recognize(text: string, culture: string): ModelResult[] {
         return recognizeTemperature(text, culture);
     }

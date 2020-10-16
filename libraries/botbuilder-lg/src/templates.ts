@@ -9,7 +9,15 @@
 import { Template } from './template';
 import { TemplateImport } from './templateImport';
 import { Diagnostic, DiagnosticSeverity } from './diagnostic';
-import { ExpressionParser, Expression, ExpressionEvaluator, ExpressionFunctions, ReturnType } from 'adaptive-expressions';
+import {
+    ExpressionParser,
+    Expression,
+    ExpressionEvaluator,
+    ReturnType,
+    FunctionUtils,
+    SimpleObjectMemory,
+    StackedMemory,
+} from 'adaptive-expressions';
 import { ImportResolverDelegate, TemplatesTransformer } from './templatesParser';
 import { Evaluator } from './evaluator';
 import { Expander } from './expander';
@@ -19,18 +27,19 @@ import { AnalyzerResult } from './analyzerResult';
 import { TemplateErrors } from './templateErrors';
 import { TemplateExtensions } from './templateExtensions';
 import { EvaluationOptions, LGLineBreakStyle } from './evaluationOptions';
-import { isAbsolute, basename } from 'path';
+import { basename } from 'path';
 import { StaticChecker } from './staticChecker';
+import { LGResource } from './lgResource';
+import { CustomizedMemory } from './customizedMemory';
 
 /**
  * LG entrance, including properties that LG file has, and evaluate functions.
  */
 export class Templates implements Iterable<Template> {
-
     /**
      * Temp Template ID for inline content.
      */
-    public static readonly inlineTemplateId: string = '__temp__';
+    public static readonly inlineTemplateIdPrefix: string = '__temp__';
     private readonly newLineRegex = /(\r?\n)/g;
     private readonly newLine: string = '\r\n';
     private readonly namespaceKey = '@namespace';
@@ -61,7 +70,7 @@ export class Templates implements Iterable<Template> {
     public content: string;
 
     /**
-     * id of this lg source. For file, is full path.
+     * Id of the lg resource.
      */
     public id: string;
 
@@ -69,6 +78,11 @@ export class Templates implements Iterable<Template> {
      * expression parser.
      */
     public expressionParser: ExpressionParser;
+
+    /**
+     * Source of the lg resource. Full path for lg file.
+     */
+    public source: string;
 
     /**
      * Delegate for resolving resource id of imported lg file.
@@ -80,7 +94,8 @@ export class Templates implements Iterable<Template> {
      */
     public options: string[];
 
-    public constructor(items?: Template[],
+    public constructor(
+        items?: Template[],
         imports?: TemplateImport[],
         diagnostics?: Diagnostic[],
         references?: Templates[],
@@ -88,7 +103,9 @@ export class Templates implements Iterable<Template> {
         id?: string,
         expressionParser?: ExpressionParser,
         importResolverDelegate?: ImportResolverDelegate,
-        options?: string[]) {
+        options?: string[],
+        source?: string
+    ) {
         this.items = items || [];
         this.imports = imports || [];
         this.diagnostics = diagnostics || [];
@@ -98,6 +115,7 @@ export class Templates implements Iterable<Template> {
         this.expressionParser = expressionParser || new ExpressionParser();
         this.importResolver = importResolverDelegate;
         this.options = options || [];
+        this.source = source;
         this.injectToExpressionFunction();
     }
 
@@ -113,7 +131,7 @@ export class Templates implements Iterable<Template> {
                 } else {
                     return { done: true, value: undefined };
                 }
-            }
+            },
         };
     }
 
@@ -129,7 +147,7 @@ export class Templates implements Iterable<Template> {
      * @param args List of templates to add.
      */
     public push(...args: Template[]): void {
-        args.forEach(t => this.items.push(t));
+        args.forEach((t) => this.items.push(t));
     }
 
     /**
@@ -151,7 +169,7 @@ export class Templates implements Iterable<Template> {
      */
     public get allTemplates(): Template[] {
         let result = this.items;
-        this.references.forEach((ref): Template[] => result = result.concat(ref.items));
+        this.references.forEach((ref): Template[] => (result = result.concat(ref.items)));
         return Array.from(new Set(result));
     }
 
@@ -160,32 +178,56 @@ export class Templates implements Iterable<Template> {
      */
     public get allDiagnostics(): Diagnostic[] {
         let result = this.diagnostics;
-        this.references.forEach((ref): Diagnostic[] => result = result.concat(ref.diagnostics));
+        this.references.forEach((ref): Diagnostic[] => (result = result.concat(ref.diagnostics)));
         return Array.from(new Set(result));
     }
 
-
     /**
-    * parse a file and return LG file.
-    * @param filePath LG absolute file path..
-    * @param importResolver Resolver to resolve LG import id to template text.
-    * @param expressionParser Expression parser for evaluating expressions.
-    * @returns New lg file.
-    */
-    public static parseFile(filePath: string, importResolver?: ImportResolverDelegate, expressionParser?: ExpressionParser): Templates {
+     * parse a file and return LG file.
+     * @param filePath LG absolute file path..
+     * @param importResolver Resolver to resolve LG import id to template text.
+     * @param expressionParser Expression parser for evaluating expressions.
+     * @returns New lg file.
+     */
+    public static parseFile(
+        filePath: string,
+        importResolver?: ImportResolverDelegate,
+        expressionParser?: ExpressionParser
+    ): Templates {
         return TemplatesParser.parseFile(filePath, importResolver, expressionParser).injectToExpressionFunction();
     }
 
     /**
      * Parser to turn lg content into a Templates.
+     * @deprecated This method will soon be deprecated. Use ParseResource instead.
      * @param content Text content contains lg templates.
-     * @param id Id is the identifier of content. If importResolver is undefined, id must be a full path string. 
+     * @param id Id is the identifier of content. If importResolver is undefined, id must be a full path string.
      * @param importResolver Resolver to resolve LG import id to template text.
      * @param expressionParser Expression parser for evaluating expressions.
      * @returns Entity.
      */
-    public static parseText(content: string, id: string = '', importResolver?: ImportResolverDelegate, expressionParser?: ExpressionParser): Templates {
+    public static parseText(
+        content: string,
+        id = '',
+        importResolver?: ImportResolverDelegate,
+        expressionParser?: ExpressionParser
+    ): Templates {
         return TemplatesParser.parseText(content, id, importResolver, expressionParser).injectToExpressionFunction();
+    }
+
+    /**
+     * Parser to turn lg content into a Templates.
+     * @param aresource LG resource.
+     * @param importResolver Resolver to resolve LG import id to template text.
+     * @param expressionParser Expression parser for evaluating expressions.
+     * @returns Entity.
+     */
+    public static parseResource(
+        resource: LGResource,
+        importResolver?: ImportResolverDelegate,
+        expressionParser?: ExpressionParser
+    ): Templates {
+        return TemplatesParser.parseResource(resource, importResolver, expressionParser).injectToExpressionFunction();
     }
 
     /**
@@ -197,9 +239,9 @@ export class Templates implements Iterable<Template> {
     public evaluate(templateName: string, scope?: object, opt: EvaluationOptions = undefined): any {
         this.checkErrors();
 
-        var evalOpt = opt !== undefined ? opt.merge(this.lgOptions) : this.lgOptions;
+        const evalOpt = opt !== undefined ? opt.merge(this.lgOptions) : this.lgOptions;
         const evaluator = new Evaluator(this.allTemplates, this.expressionParser, evalOpt);
-        let result =  evaluator.evaluateTemplate(templateName, scope);
+        let result = evaluator.evaluateTemplate(templateName, scope);
         if (evalOpt.LineBreakStyle === LGLineBreakStyle.Markdown && typeof result === 'string') {
             result = result.replace(this.newLineRegex, '$1$1');
         }
@@ -217,7 +259,7 @@ export class Templates implements Iterable<Template> {
     public expandTemplate(templateName: string, scope?: object, opt: EvaluationOptions = undefined): any[] {
         this.checkErrors();
 
-        var evalOpt = opt !== undefined ? opt.merge(this.lgOptions) : this.lgOptions;
+        const evalOpt = opt !== undefined ? opt.merge(this.lgOptions) : this.lgOptions;
         const expander = new Expander(this.allTemplates, this.expressionParser, evalOpt);
         return expander.expandTemplate(templateName, scope);
     }
@@ -239,51 +281,73 @@ export class Templates implements Iterable<Template> {
      * @param inlineStr Inline string which will be evaluated.
      * @param scope Scope object or JToken.
      */
-    public evaluateText(inlineStr: string, scope?: object,  opt: EvaluationOptions = undefined): any {
+    public evaluateText(inlineStr: string, scope?: object, opt: EvaluationOptions = undefined): any {
         if (inlineStr === undefined) {
             throw Error('inline string is empty');
         }
 
         this.checkErrors();
 
+        const inlineTemplateId = `${Templates.inlineTemplateIdPrefix}${this.getramdonTemplateId()}`;
+
         // wrap inline string with "# name and -" to align the evaluation process
         const multiLineMark = '```';
 
         inlineStr = !(inlineStr.trim().startsWith(multiLineMark) && inlineStr.includes('\n'))
-            ? `${ multiLineMark }${ inlineStr }${ multiLineMark }` : inlineStr;
+            ? `${multiLineMark}${inlineStr}${multiLineMark}`
+            : inlineStr;
 
-        const newContent = `#${ Templates.inlineTemplateId } ${ this.newLine } - ${ inlineStr }`;
+        const newContent = `#${inlineTemplateId} ${this.newLine} - ${inlineStr}`;
 
         const newTemplates = TemplatesParser.parseTextWithRef(newContent, this);
-        var evalOpt = opt !== undefined ? opt.merge(this.lgOptions) : this.lgOptions;
-        return newTemplates.evaluate(Templates.inlineTemplateId, scope, evalOpt);
+        const evalOpt = opt !== undefined ? opt.merge(this.lgOptions) : this.lgOptions;
+        return newTemplates.evaluate(inlineTemplateId, scope, evalOpt);
     }
 
     /**
-    * Update a template and return LG file.
-    * @param templateName Orignial template name.
-    * @param newTemplateName New template name.
-    * @param parameters New params.
-    * @param templateBody New template body.
-    * @returns New lg file.
-    */
-    public updateTemplate(templateName: string, newTemplateName: string, parameters: string[], templateBody: string): Templates {
+     * Update a template and return LG file.
+     * @param templateName Orignial template name.
+     * @param newTemplateName New template name.
+     * @param parameters New params.
+     * @param templateBody New template body.
+     * @returns New lg file.
+     */
+    public updateTemplate(
+        templateName: string,
+        newTemplateName: string,
+        parameters: string[],
+        templateBody: string
+    ): Templates {
         const template: Template = this.items.find((u: Template): boolean => u.name === templateName);
         if (template) {
             this.clearDiagnostic();
 
             const templateNameLine: string = this.buildTemplateNameLine(newTemplateName, parameters);
             const newTemplateBody: string = this.convertTemplateBody(templateBody);
-            const content = `${ templateNameLine }${ this.newLine }${ newTemplateBody }`;
+            const content = `${templateNameLine}${this.newLine}${newTemplateBody}`;
 
             // update content
-            this.content = this.replaceRangeContent(this.content,
+            this.content = this.replaceRangeContent(
+                this.content,
                 template.sourceRange.range.start.line - 1,
                 template.sourceRange.range.end.line - 1,
-                content);
-            
-            let updatedTemplates = new Templates([], [], [], [], '', this.id, this.expressionParser, this.importResolver);
-            updatedTemplates = new TemplatesTransformer(updatedTemplates).transform(TemplatesParser.antlrParseTemplates(content, this.id));
+                content
+            );
+
+            let updatedTemplates = new Templates(
+                [],
+                [],
+                [],
+                [],
+                '',
+                this.id,
+                this.expressionParser,
+                this.importResolver
+            );
+            const resource = new LGResource(this.id, this.id, content);
+            updatedTemplates = new TemplatesTransformer(updatedTemplates).transform(
+                TemplatesParser.antlrParseTemplates(resource)
+            );
 
             const originalStartLine = template.sourceRange.range.start.line - 1;
             this.appendDiagnosticWithOffset(updatedTemplates.diagnostics, originalStartLine);
@@ -299,12 +363,12 @@ export class Templates implements Iterable<Template> {
     }
 
     /**
-    * Add a new template and return LG file.
-    * @param templateName New template name.
-    * @param parameters New params.
-    * @param templateBody New  template body.
-    * @returns New lg file.
-    */
+     * Add a new template and return LG file.
+     * @param templateName New template name.
+     * @param parameters New params.
+     * @param templateBody New  template body.
+     * @returns New lg file.
+     */
     public addTemplate(templateName: string, parameters: string[], templateBody: string): Templates {
         const template: Template = this.items.find((u: Template): boolean => u.name === templateName);
         if (template) {
@@ -315,13 +379,16 @@ export class Templates implements Iterable<Template> {
 
         const templateNameLine: string = this.buildTemplateNameLine(templateName, parameters);
         const newTemplateBody: string = this.convertTemplateBody(templateBody);
-        const content = `${ templateNameLine }${ this.newLine }${ newTemplateBody }`;
+        const content = `${templateNameLine}${this.newLine}${newTemplateBody}`;
         const originalStartLine = TemplateExtensions.readLine(this.content).length;
 
         // update content
-        this.content = `${ this.content }${ this.newLine }${ templateNameLine }${ this.newLine }${ newTemplateBody }`;
+        this.content = `${this.content}${this.newLine}${templateNameLine}${this.newLine}${newTemplateBody}`;
         let updatedTemplates = new Templates([], [], [], [], '', this.id, this.expressionParser, this.importResolver);
-        updatedTemplates = new TemplatesTransformer(updatedTemplates).transform(TemplatesParser.antlrParseTemplates(content, this.id));
+        const resource = new LGResource(this.id, this.id, content);
+        updatedTemplates = new TemplatesTransformer(updatedTemplates).transform(
+            TemplatesParser.antlrParseTemplates(resource)
+        );
 
         this.appendDiagnosticWithOffset(updatedTemplates.diagnostics, originalStartLine);
 
@@ -336,10 +403,10 @@ export class Templates implements Iterable<Template> {
     }
 
     /**
-    * Delete an exist template.
-    * @param templateName Which template should delete.
-    * @returns Return the new lg file.
-    */
+     * Delete an exist template.
+     * @param templateName Which template should delete.
+     * @returns Return the new lg file.
+     */
     public deleteTemplate(templateName: string): Templates {
         const templateIndex = this.items.findIndex((u: Template): boolean => u.name === templateName);
         if (templateIndex >= 0) {
@@ -359,6 +426,15 @@ export class Templates implements Iterable<Template> {
 
     public toString(): string {
         return this.content;
+    }
+
+    private getramdonTemplateId(): string {
+        return 'xxxxxxxxxxxx4xxxyxxxxxxxxxxxxxxx'.replace(/[xy]/g, (c: any): string => {
+            const r: number = (Math.random() * 16) | 0;
+            const v: number = c === 'x' ? r : (r & 0x3) | 0x8;
+
+            return v.toString(16);
+        });
     }
 
     private appendDiagnosticWithOffset(diagnostics: Diagnostic[], offset: number): void {
@@ -393,7 +469,7 @@ export class Templates implements Iterable<Template> {
 
     private adjustRangeForAddTemplate(newTemplate: Template, lineOffset: number): void {
         const lineLength = newTemplate.sourceRange.range.end.line - newTemplate.sourceRange.range.start.line;
-        newTemplate.sourceRange.range.start.line  = lineOffset + 1;
+        newTemplate.sourceRange.range.start.line = lineOffset + 1;
         newTemplate.sourceRange.range.end.line = lineOffset + lineLength + 1;
     }
 
@@ -414,7 +490,12 @@ export class Templates implements Iterable<Template> {
         this.diagnostics = [];
     }
 
-    private replaceRangeContent(originString: string, startLine: number, stopLine: number, replaceString: string): string {
+    private replaceRangeContent(
+        originString: string,
+        startLine: number,
+        stopLine: number,
+        replaceString: string
+    ): string {
         const originList: string[] = TemplateExtensions.readLine(originString);
         if (startLine < 0 || startLine > stopLine || stopLine >= originList.length) {
             throw new Error('index out of range.');
@@ -438,7 +519,7 @@ export class Templates implements Iterable<Template> {
 
         const replaceList: string[] = TemplateExtensions.readLine(templateBody);
         const destList: string[] = replaceList.map((u: string): string => {
-            return u.trimLeft().startsWith('#') ? `- ${ u.trimLeft() }` : u;
+            return u.trimLeft().startsWith('#') ? `- ${u.trimLeft()}` : u;
         });
 
         return destList.join(this.newLine);
@@ -447,9 +528,9 @@ export class Templates implements Iterable<Template> {
     private buildTemplateNameLine(templateName: string, parameters: string[]): string {
         // if parameters is null or undefined, ignore ()
         if (parameters === undefined || parameters === undefined) {
-            return `# ${ templateName }`;
+            return `# ${templateName}`;
         } else {
-            return `# ${ templateName }(${ parameters.join(', ') })`;
+            return `# ${templateName}(${parameters.join(', ')})`;
         }
     }
 
@@ -463,13 +544,46 @@ export class Templates implements Iterable<Template> {
     }
 
     private injectToExpressionFunction(): Templates {
-        const totalTemplates =  [ this as Templates].concat(this.references);
+        const totalTemplates = [this as Templates].concat(this.references);
         for (const curTemplates of totalTemplates) {
             const globalFuncs = curTemplates.getGlobalFunctionTable(curTemplates.options);
             for (const templateName of globalFuncs) {
-                if (curTemplates.items.find(u => u.name === templateName) !== undefined) {
-                    const newGlobalName = `${ curTemplates.namespace }.${ templateName }`;
-                    Expression.functions.add(newGlobalName, new ExpressionEvaluator(newGlobalName, ExpressionFunctions.apply(this.globalTemplateFunction(templateName)), ReturnType.Object));
+                if (curTemplates.items.find((u) => u.name === templateName) !== undefined) {
+                    const prefix =
+                        !curTemplates.namespace || !curTemplates.namespace.trim() ? '' : curTemplates.namespace + '.';
+
+                    const newGlobalName = prefix + templateName;
+                    Expression.functions.add(
+                        newGlobalName,
+                        new ExpressionEvaluator(
+                            newGlobalName,
+                            (expr, state, options): { value: any; error: string } => {
+                                let value: any;
+                                let error: string;
+                                let args: any[];
+                                const evaluator = new Evaluator(
+                                    this.allTemplates,
+                                    this.expressionParser,
+                                    this.lgOptions
+                                );
+                                ({ args, error } = FunctionUtils.evaluateChildren(expr, state, options));
+                                if (!error) {
+                                    const parameters = evaluator.templateMap[templateName].parameters;
+                                    const newScope: any = {};
+                                    parameters.map((e: string, i: number): void => (newScope[e] = args[i]));
+                                    const scope = new CustomizedMemory(state, new SimpleObjectMemory(newScope));
+                                    try {
+                                        value = evaluator.evaluateTemplate(templateName, scope);
+                                    } catch (e) {
+                                        error = e.message;
+                                    }
+                                }
+
+                                return { value, error };
+                            },
+                            ReturnType.Object
+                        )
+                    );
                 }
             }
         }
@@ -494,12 +608,8 @@ export class Templates implements Iterable<Template> {
 
     private extractNamespace(options: string[]): string {
         let result = this.extractOptionByKey(this.namespaceKey, options);
-        if(!result) {
-            if (isAbsolute(this.id)) {
-                result = basename(this.id).split('.')[0];
-            } else {
-                throw new Error('namespace is required or the id should be an absoulte path!"');
-            }
+        if (!result) {
+            result = basename(this.id || '').split('.')[0];
         }
 
         return result;
@@ -510,18 +620,11 @@ export class Templates implements Iterable<Template> {
         const value = this.extractOptionByKey(this.exportsKey, options);
         if (value) {
             const templateList = value.split(',');
-            templateList.forEach(u => {
+            templateList.forEach((u) => {
                 result.push(u.trim());
             });
         }
 
         return result;
-    }
-
-    private readonly globalTemplateFunction = (templateName: string) => (args: any[]): any => {
-        const evaluator = new Evaluator(this.allTemplates, this.expressionParser, this.lgOptions);
-        const newScope: any = evaluator.constructScope(templateName, args);
-
-        return evaluator.evaluateTemplate(templateName, newScope);
     }
 }

@@ -706,7 +706,12 @@ export const Activity: msRest.CompositeMapper = {
           element: {
             type: {
               name: "Composite",
-              className: "Entity"
+              className: "Entity",
+              additionalProperties: {
+                type: {
+                  name: "Object"
+                }
+              }
             }
           }
         }

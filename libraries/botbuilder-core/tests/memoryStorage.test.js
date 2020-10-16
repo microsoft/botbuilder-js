@@ -2,9 +2,7 @@ const assert = require('assert');
 const { MemoryStorage } = require('../');
 const { StorageBaseTests } = require('../../botbuilder-core/tests/storageBaseTests');
 
-const newStorage = new MemoryStorage();
-
-function testStorage(storage=newStorage) {
+function testStorage(storage) {
     it('return empty object when reading unknown key', async function() {
         const testRan = await StorageBaseTests.returnEmptyObjectWhenReadingUnknownKey(storage);
         

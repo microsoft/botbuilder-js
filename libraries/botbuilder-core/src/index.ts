@@ -20,6 +20,7 @@ export * from './botStateSet';
 export * from './botTelemetryClient';
 export * from './browserStorage';
 export * from './cardFactory';
+export * from './componentRegistration';
 export * from './conversationState';
 export * from './invokeResponse';
 export * from './extendedUserTokenProvider';
@@ -39,9 +40,11 @@ export {
     SkillConversationIdFactoryBase,
     SkillConversationReference,
     SkillConversationReferenceKey,
-    SkillConversationIdFactoryOptions } from './skills';
+    SkillConversationIdFactoryOptions,
+} from './skills';
 export * from './skypeMentionNormalizeMiddleware';
 export * from './storage';
+export * from './stringUtils';
 export * from './telemetryLoggerMiddleware';
 export * from './testAdapter';
 export * from './transcriptLogger';

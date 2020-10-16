@@ -1,10 +1,36 @@
 {
-    "parser": "@typescript-eslint/parser",
-    "plugins": [
-        "@typescript-eslint",
-        "only-warn"
+    "env": {    
+        "es6": true
+      },
+    "extends": [
+        "eslint:recommended",
+        "plugin:security/recommended",
+        "plugin:@typescript-eslint/recommended",
+        "plugin:@typescript-eslint/eslint-recommended",
+        "prettier",
+        "plugin:prettier/recommended",
+        "prettier/@typescript-eslint"
     ],
-    "extends": ["plugin:@typescript-eslint/recommended"],
+    "ignorePatterns": [
+        "libraries/adaptive-expressions/**/generated/**/*",
+        "libraries/botframework-connector/src/connectorApi/**/*",
+        "libraries/botframework-connector/src/tokenApi/**/*",
+        "libraries/botframework-schema/**/*",
+        "libraries/streaming-e2e-tests/**"
+    ],
+    "overrides": [
+        {
+            "files": [ "*.test.js", "*.test.ts" ],
+            "env": {
+                "mocha": true,
+                "node": true
+            },
+            "rules": {
+                "@typescript-eslint/no-var-requires": 0
+            }
+        }
+    ],
+    "parser": "@typescript-eslint/parser",
     "parserOptions": {
         "ecmaVersion": 9,
         "sourceType": "module",
@@ -12,22 +38,13 @@
             "impliedStrict": true
         }
     },
+    "plugins": [
+        "@typescript-eslint",
+        "only-warn",
+        "prettier",
+        "security"
+    ],
     "rules": {
-        "semi": ["error", "always"],
-        "no-return-await": 0,
-        "space-before-function-paren": ["error", {
-            "named": "never",
-            "anonymous": "never",
-            "asyncArrow": "always"
-        }],
-        "quotes": ["error", "single", {"allowTemplateLiterals": true}],
-        "template-curly-spacing": ["error", "always"],
-        "@typescript-eslint/indent": ["error", 4],
-        "@typescript-eslint/interface-name-prefix": 0,
-        "@typescript-eslint/no-explicit-any": 0,
-        "@typescript-eslint/no-object-literal-type-assertion": ["error", {
-            "allowAsParameter": true
-         }],
-         "@typescript-eslint/no-use-before-define": ["error", { "functions": false, "classes": true }]
+        "prettier/prettier": "error" 
     }
 }

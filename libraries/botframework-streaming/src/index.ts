@@ -24,10 +24,9 @@ export { StreamingRequest } from './streamingRequest';
 export { StreamingResponse } from './streamingResponse';
 export { SubscribableStream } from './subscribableStream';
 export {
-    BrowserWebSocket,
     NodeWebSocket,
     NodeWebSocketFactory,
     NodeWebSocketFactoryBase,
     WebSocketClient,
-    WebSocketServer
+    WebSocketServer,
 } from './webSocket';

@@ -1,14 +1,15 @@
 const assert = require('assert');
-const { TestAdapter, ActivityTypes } = require('../');
+const { TestAdapter, ActivityTypes, TestFlow, ActivityFactory, TurnContext } = require('../');
 
 const receivedMessage = { text: 'received', type: 'message' };
+const originalActivity = { text: 'original', type: 'message' };
 const updatedActivity = { text: 'update', type: 'message' };
 const deletedActivityId = '1234';
 
-describe(`TestAdapter`, function () {
+describe(`TestAdapter`, function() {
     this.timeout(5000);
 
-    it(`should call bot logic when receiveActivity() is called.`, function (done) {
+    it(`should call bot logic when receiveActivity() is called.`, function(done) {
         const adapter = new TestAdapter((context) => {
             assert(context, `context not passed to bot logic.`);
             assert(context.activity, `activity not passed through.`);
@@ -25,7 +26,7 @@ describe(`TestAdapter`, function () {
         adapter.receiveActivity('test');
     });
 
-    it(`should support receiveActivity() called with an Activity.`, function (done) {
+    it(`should support receiveActivity() called with an Activity.`, function(done) {
         const adapter = new TestAdapter((context) => {
             assert(context.activity.type === ActivityTypes.Message, `wrong type.`);
             assert(context.activity.text === 'test', `wrong text.`);
@@ -34,7 +35,7 @@ describe(`TestAdapter`, function () {
         adapter.receiveActivity({ text: 'test', type: ActivityTypes.Message });
     });
 
-    it(`should automatically set the type when receiveActivity() is called with an Activity.`, function (done) {
+    it(`should automatically set the type when receiveActivity() is called with an Activity.`, function(done) {
         const adapter = new TestAdapter((context) => {
             assert(context.activity.type === ActivityTypes.Message, `wrong type.`);
             assert(context.activity.text === 'test', `wrong text.`);
@@ -43,7 +44,7 @@ describe(`TestAdapter`, function () {
         adapter.receiveActivity({ text: 'test' });
     });
 
-    it(`should support passing your own Activity.Id to receiveActivity().`, function (done) {
+    it(`should support passing your own Activity.Id to receiveActivity().`, function(done) {
         const adapter = new TestAdapter((context) => {
             assert(context.activity.id === 'myId', `custom ID not passed through.`);
             assert(context.activity.type === ActivityTypes.Message, `wrong type.`);
@@ -54,13 +55,13 @@ describe(`TestAdapter`, function () {
     });
 
 
-    it(`should call bot logic when send() is called.`, function (done) {
+    it(`should call bot logic when send() is called.`, function(done) {
         const adapter = new TestAdapter((context) => {
             done();
         }).send('test');
     });
 
-    it(`should return a message to assertReply().`, function (done) {
+    it(`should return a message to assertReply().`, function(done) {
         const adapter = new TestAdapter((context) => {
             return context.sendActivity(receivedMessage);
         });
@@ -69,7 +70,7 @@ describe(`TestAdapter`, function () {
             .then(() => done());
     });
 
-    it(`async startTest().`, async function () {
+    it(`async startTest().`, async function() {
         const adapter = new TestAdapter((context) => {
             return context.sendActivity(receivedMessage);
         });
@@ -79,7 +80,7 @@ describe(`TestAdapter`, function () {
             .startTest();
     });
 
-    it(`should send and receive when test() is called.`, function (done) {
+    it(`should send and receive when test() is called.`, function(done) {
         const adapter = new TestAdapter((context) => {
             return context.sendActivity(receivedMessage);
         });
@@ -87,7 +88,7 @@ describe(`TestAdapter`, function () {
             .then(() => done());
     });
 
-    it(`should support multiple calls to test().`, function (done) {
+    it(`should support multiple calls to test().`, function(done) {
         let count = 0;
         const adapter = new TestAdapter((context) => {
             count++;
@@ -99,38 +100,44 @@ describe(`TestAdapter`, function () {
             .test('test', 'received')
             .test('test', 'received')
             .then(() => {
-                assert(count == 5, `incorrect count of "${count}".`);
+                assert(count == 5, `incorrect count of "${ count }".`);
                 done();
             });
     });
 
-    it(`should support context.updateActivity() calls.`, function (done) {
-        const adapter = new TestAdapter((context) => {
-            return context.updateActivity(updatedActivity)
-                .then(() => context.sendActivity(receivedMessage));
+    it(`should support context.updateActivity() calls.`, async function() {
+        let activityId;
+        const adapter = new TestAdapter(async (context) => {
+            if (context.activity.text == 'update') {
+                await context.updateActivity(Object.assign({id: activityId}, updatedActivity));
+            } else {
+                const response = await context.sendActivity(originalActivity);
+                activityId = response.id;
+            }
         });
-        adapter.test('test', 'received')
-            .then(() => {
-                assert(adapter.updatedActivities.length === 1, `no activities updated.`);
-                assert(adapter.updatedActivities[0].text === updatedActivity.text, `invalid update activity.`);
-                done();
-            });
+        await adapter.send('test')
+            .send('update')
+            .assertReply('update')
+            .startTest();
     });
 
-    it(`should support context.deleteActivity() calls.`, function (done) {
-        const adapter = new TestAdapter((context) => {
-            return context.deleteActivity({ activityId: deletedActivityId })
-                .then(() => context.sendActivity(receivedMessage));
+    it(`should support context.deleteActivity() calls.`, async function() {
+        let activityId;
+        const adapter = new TestAdapter(async (context) => {
+            if (context.activity.text == 'delete') {
+                await context.deleteActivity({activityId});
+            } else {
+                const response = await context.sendActivity(originalActivity);
+                activityId = response.id;
+            }
         });
-        adapter.test('test', 'received')
-            .then(() => {
-                assert(adapter.deletedActivities.length === 1, `no activities deleted.`);
-                assert(adapter.deletedActivities[0].activityId === deletedActivityId, `invalid deleted activity id.`);
-                done();
-            });
+        adapter.send('test')
+            .send('delete')
+            .assertNoReply()
+            .startTest();
     });
 
-    it(`should delay() before running another test.`, function (done) {
+    it(`should delay() before running another test.`, function(done) {
         const start = new Date().getTime();
         const adapter = new TestAdapter((context) => {
             return context.sendActivity(receivedMessage);
@@ -146,8 +153,7 @@ describe(`TestAdapter`, function () {
             });
     });
 
-    it(`should support calling assertReply() with an expected Activity.`, function (done) {
-        const start = new Date().getTime();
+    it(`should support calling assertReply() with an expected Activity.`, function(done) {
         const adapter = new TestAdapter((context) => {
             return context.sendActivity(receivedMessage);
         });
@@ -157,9 +163,8 @@ describe(`TestAdapter`, function () {
             .then(() => done());
     });
 
-    it(`should support calling assertReply() with a custom inspector.`, function (done) {
+    it(`should support calling assertReply() with a custom inspector.`, function(done) {
         let called = false;
-        const start = new Date().getTime();
         const adapter = new TestAdapter((context) => {
             return context.sendActivity(receivedMessage);
         });
@@ -175,8 +180,7 @@ describe(`TestAdapter`, function () {
             });
     });
 
-    it(`should timeout waiting for assertReply() when a string is expected.`, function (done) {
-        const start = new Date().getTime();
+    it(`should timeout waiting for assertReply() when a string is expected.`, function(done) {
         const adapter = new TestAdapter((context) => {
             return new Promise((resolve, reject) => {
                 setTimeout(() => resolve(), 600);
@@ -188,8 +192,7 @@ describe(`TestAdapter`, function () {
             .catch((err) => done());
     });
 
-    it(`should timeout waiting for assertReply() when an Activity is expected.`, function (done) {
-        const start = new Date().getTime();
+    it(`should timeout waiting for assertReply() when an Activity is expected.`, function(done) {
         const adapter = new TestAdapter((context) => {
             return new Promise((resolve, reject) => {
                 setTimeout(() => resolve(), 600);
@@ -201,8 +204,7 @@ describe(`TestAdapter`, function () {
             .catch((err) => done());
     });
 
-    it(`should timeout waiting for assertReply() when a custom inspector is expected.`, function (done) {
-        const start = new Date().getTime();
+    it(`should timeout waiting for assertReply() when a custom inspector is expected.`, function(done) {
         const adapter = new TestAdapter((context) => {
             return new Promise((resolve, reject) => {
                 setTimeout(() => resolve(), 600);
@@ -214,8 +216,7 @@ describe(`TestAdapter`, function () {
             .catch((err) => done());
     });
 
-    it(`should timeout waiting for assertNoReply() when an Activity is not expected.`, function (done) {
-        const start = new Date().getTime();
+    it(`should timeout waiting for assertNoReply() when an Activity is not expected.`, function(done) {
         const adapter = new TestAdapter((context) => {
             return new Promise((resolve, reject) => {
                 setTimeout(() => resolve(), 600);
@@ -227,8 +228,7 @@ describe(`TestAdapter`, function () {
             .then(() => done());
     });
     
-    it(`should validate using assertNoReply() that no reply was received, when reply Activity not expected.`, function (done) {
-        const start = new Date().getTime();
+    it(`should validate using assertNoReply() that no reply was received, when reply Activity not expected.`, function(done) {
         const adapter = new TestAdapter((context) => {
             return context.sendActivity(receivedMessage);
         });
@@ -239,8 +239,7 @@ describe(`TestAdapter`, function () {
             .then(() => done());
     });
 
-    it(`should throw an error with assertNoReply() when no reply is expected, but reply Activity was received.`, function (done) {
-        const start = new Date().getTime();
+    it(`should throw an error with assertNoReply() when no reply is expected, but reply Activity was received.`, function(done) {
         const adapter = new TestAdapter((context) => {
             const activities = [receivedMessage, receivedMessage];
             context.sendActivity(activities);
@@ -252,8 +251,7 @@ describe(`TestAdapter`, function () {
             .catch((err) => done());
     });
 
-    it(`should support calling assertReplyOneOf().`, function (done) {
-        const start = new Date().getTime();
+    it(`should support calling assertReplyOneOf().`, function(done) {
         const adapter = new TestAdapter((context) => {
             return context.sendActivity(receivedMessage);
         });
@@ -263,8 +261,7 @@ describe(`TestAdapter`, function () {
             .then(() => done());
     });
 
-    it(`should fail assertReplyOneOf() call for invalid response.`, function (done) {
-        const start = new Date().getTime();
+    it(`should fail assertReplyOneOf() call for invalid response.`, function(done) {
         const adapter = new TestAdapter((context) => {
             return context.sendActivity(receivedMessage);
         });
@@ -277,7 +274,7 @@ describe(`TestAdapter`, function () {
             .catch(() => done());
     });
 
-    it(`should return an error from continueConversation().`, function (done) {
+    it(`should return an error from continueConversation().`, function(done) {
         const adapter = new TestAdapter((context) => {
             assert(false, `shouldn't run bot logic.`);
         });
@@ -287,7 +284,7 @@ describe(`TestAdapter`, function () {
         });
     });
 
-    it(`should apply the user-defined Activity template.`, function (done) {
+    it(`should apply the user-defined Activity template.`, function(done) {
         const template = {
             channelId: 'foo',
             from: { id: 'foo', name: 'Foo' },
@@ -301,7 +298,7 @@ describe(`TestAdapter`, function () {
         }, template).send('test');
     });
 
-    it(`should test activities that have a from.role normalized value of 'bot' via testActivities().`, function (done) {
+    it(`should test activities that have a from.role normalized value of 'bot' via testActivities().`, function(done) {
         // Counter to keep track of how many times the bot logic is run.
         let counter = 0;
         const adapter = new TestAdapter((context) => {
@@ -339,7 +336,7 @@ describe(`TestAdapter`, function () {
         });
     });
 
-    it(`should run the bot's logic to activities without a from property via testActivities().`, function (done) {
+    it(`should run the bot's logic to activities without a from property via testActivities().`, function(done) {
         let counter = 0;
         const adapter = new TestAdapter((context) => {
             counter++;
@@ -374,12 +371,12 @@ describe(`TestAdapter`, function () {
         });
     });
 
-    it(`should throw error if activities is not passed to testActivities().`, function (done) {
+    it(`should throw error if activities is not passed to testActivities().`, function(done) {
         const adapter = new TestAdapter((context) => {
             return context.sendActivity(context.activity.text);
         });
         try {
-            adapter.testActivities()
+            adapter.testActivities();
         } catch (e) {
             assert(e.message === 'Missing array of activities', `wrong error thrown.`);
             done();
@@ -387,7 +384,7 @@ describe(`TestAdapter`, function () {
         throw new Error(`TestAdapter.testActivities() should not have succeeded without activities argument.`);
     });
 
-    it(`getUserToken returns null`, function (done) {
+    it(`getUserToken returns null`, function(done) {
         const adapter = new TestAdapter((context) => {
             context.adapter.getUserToken(context, 'myConnection').then(token => {
                 assert(!token);
@@ -397,7 +394,7 @@ describe(`TestAdapter`, function () {
         adapter.send('hi');
     });
 
-    it(`getUserToken returns null with code`, function (done) {
+    it(`getUserToken returns null with code`, function(done) {
         const adapter = new TestAdapter((context) => {
             context.adapter.getUserToken(context, 'myConnection', '123456').then(token => {
                 assert(!token);
@@ -407,41 +404,59 @@ describe(`TestAdapter`, function () {
         adapter.send('hi');
     });
 
-    it(`getUserToken returns token`, function (done) {
-        const adapter = new TestAdapter((context) => {
-            context.adapter.getUserToken(context, 'myConnection').then(token => {
-                assert(token);
-                assert(token.token);
-                assert(token.connectionName);
-                done();
-            });
+    it(`getUserToken returns token`, async function() {
+        const adapter = new TestAdapter();
+        const connectionName = 'myConnection';
+        const channelId = 'directline';
+        const userId = 'testUser';
+        const token = 'abc123';
+        const activity = ActivityFactory.buildActivity({
+            channelId,
+            from: {
+                id: userId
+            }
         });
-        adapter.addUserToken('myConnection', 'test', 'user', '123abc');
-        adapter.send('hi');
+        const context = new TurnContext(adapter, activity);
+        adapter.addUserToken(connectionName, channelId, userId, token);
+        
+        const tokenResponse = await adapter.getUserToken(context, connectionName);
+        assert(tokenResponse);
+        assert.strictEqual(tokenResponse.token, token);
+        assert.strictEqual(tokenResponse.connectionName, connectionName);
     });
 
-    it(`getUserToken returns token with code`, function (done) {
-        const adapter = new TestAdapter((context) => {
-            context.adapter.getUserToken(context, 'myConnection').then(token => {
-                assert(!token);
-                context.adapter.getUserToken(context, 'myConnection', '888777').then(token2 => {
-                    assert(token2);
-                    assert(token2.token);
-                    assert(token2.connectionName);
-                    context.adapter.getUserToken(context, 'myConnection').then(token3 => {
-                        assert(token3);
-                        assert(token3.token);
-                        assert(token3.connectionName);
-                        done();
-                    });
-                });
-            });
+    it(`getUserToken returns token with code`, async function() {
+        const adapter = new TestAdapter();
+        const connectionName = 'myConnection';
+        const channelId = 'directline';
+        const userId = 'testUser';
+        const token = 'abc123';
+        const magicCode = '888999';
+        const activity = ActivityFactory.buildActivity({
+            channelId,
+            from: {
+                id: userId
+            }
         });
-        adapter.addUserToken('myConnection', 'test', 'user', '123abc', '888777');
-        adapter.send('hi');
+        const context = new TurnContext(adapter, activity);
+        adapter.addUserToken(connectionName, channelId, userId, token, magicCode);
+        
+        // First it's null
+        let tokenResponse = await adapter.getUserToken(context, connectionName);
+        assert.equal(tokenResponse, undefined);
+        
+        // Can be retrieved with magic code
+        tokenResponse = await adapter.getUserToken(context, connectionName, magicCode);
+        assert(tokenResponse);
+        assert.strictEqual(tokenResponse.token, token);
+        
+        // Then can be retrieved without magic code
+        tokenResponse = await adapter.getUserToken(context, connectionName);
+        assert(tokenResponse);
+        assert.strictEqual(tokenResponse.token, token);
     });
 
-    it(`getSignInLink returns token with code`, function (done) {
+    it(`getSignInLink returns token with code`, function(done) {
         const adapter = new TestAdapter((context) => {
             context.adapter.getSignInLink(context, 'myConnection').then(link => {
                 assert(link);
@@ -451,49 +466,110 @@ describe(`TestAdapter`, function () {
         adapter.send('hi');
     });
 
-    it(`signOutUser is noop`, function (done) {
+    it(`signOutUser is noop`, function(done) {
         const adapter = new TestAdapter((context) => {
-            context.adapter.signOutUser(context, 'myConnection').then(x => {
+            context.adapter.signOutUser(context, 'myConnection').then(() => {done();});
+        });
+        adapter.send('hi');
+    });
+
+    it(`signOutUser logs out user`, async function() {
+        const adapter = new TestAdapter();
+        const connectionName = 'myConnection';
+        const channelId = 'directline';
+        const userId = 'testUser';
+        const token = 'abc123';
+        const activity = ActivityFactory.buildActivity({
+            channelId,
+            from: {
+                id: userId
+            }
+        });
+        const context = new TurnContext(adapter, activity);
+        adapter.addUserToken(connectionName, channelId, userId, token);
+
+        let tokenResponse = await adapter.getUserToken(context, connectionName);
+        assert(tokenResponse);
+        assert.strictEqual(tokenResponse.token, token);
+
+        await adapter.signOutUser(context, connectionName, userId);
+        tokenResponse = await adapter.getUserToken(context, connectionName);
+        assert.equal(tokenResponse, undefined);
+    });
+
+    it(`signOutUser with no connectionName signs all out`, async function() {
+        const adapter = new TestAdapter();
+        const channelId = 'directline';
+        const userId = 'testUser';
+        const token = 'abc123';
+        const activity = ActivityFactory.buildActivity({
+            channelId,
+            from: {
+                id: userId
+            }
+        });
+        const context = new TurnContext(adapter, activity);
+        adapter.addUserToken('ABC', channelId, userId, token);
+        adapter.addUserToken('DEF', channelId, userId, token);
+
+        let tokenResponse = await adapter.getUserToken(context, 'ABC');
+        assert(tokenResponse);
+        assert.strictEqual(tokenResponse.token, token);
+
+        tokenResponse = await adapter.getUserToken(context, 'DEF');
+        assert(tokenResponse);
+        assert.strictEqual(tokenResponse.token, token);
+        
+        await adapter.signOutUser(context);
+        tokenResponse = await adapter.getUserToken(context, 'ABC');
+        assert.equal(tokenResponse, undefined);
+        tokenResponse = await adapter.getUserToken(context, 'DEF');
+        assert.equal(tokenResponse, undefined);
+    });
+
+    it(`should return statuses from getTokenStatus`, function(done) {
+        const adapter = new TestAdapter(async (context) => {
+            try {
+                const statuses = await context.adapter.getTokenStatus(context, 'user');
+                assert(statuses);
+                assert(statuses.length == 2);
+                assert(statuses.reduce((j, status) => (j||status.ConnectionName === 'ABC'), false));
+             
                 done();
-            });
+            } catch (err) {
+                done(err);
+            }
         });
+
+        adapter.addUserToken('ABC', 'test', 'user', '123abc');
+        adapter.addUserToken('DEF', 'test', 'user', 'def456');
         adapter.send('hi');
     });
 
-    it(`signOutUser logs out user`, function (done) {
-        const adapter = new TestAdapter((context) => {
-            context.adapter.getUserToken(context, 'myConnection').then(token => {
-                assert(token);
-                assert(token.token);
-                assert(token.connectionName);
-                context.adapter.signOutUser(context, 'myConnection').then(x => {
-                    context.adapter.getUserToken(context, 'myConnection').then(token2 => {
-                        assert(!token2);
-                        done();
-                    });
-                });
-            });
+    it(`should throw when context parameter is not sent`, function(done) {
+        const adapter = new TestAdapter(async (context) => {
+            try {
+                await context.adapter.getTokenStatus();
+            } catch (err) {
+                done(assert.strictEqual(err.message, 'testAdapter.getTokenStatus(): context with activity is required'));
+            }
         });
-        adapter.addUserToken('myConnection', 'test', 'user', '123abc');
+
+        adapter.addUserToken('DEF', 'test', 'user', 'def456');
         adapter.send('hi');
     });
 
-    it(`signOutUser with no connectionName signs all out`, function (done) {
-        const adapter = new TestAdapter((context) => {
-            context.adapter.getUserToken(context, 'myConnection').then(token => {
-                assert(token);
-                assert(token.token);
-                assert(token.connectionName);
-                context.adapter.signOutUser(context, undefined).then(x => {
-                    context.adapter.getUserToken(context, 'myConnection').then(token2 => {
-                        assert(!token2);
-                        done();
-                    });
-                });
-            });
+    it(`should throw when userId parameter is not sent and context.activity.from.id is not present`, function(done) {
+        const adapter = new TestAdapter(async (context) => {
+            try {
+                context.activity.from = undefined;
+                await context.adapter.getTokenStatus(context);
+            } catch (err) {
+                done(assert.strictEqual(err.message, 'testAdapter.getTokenStatus(): missing userId, from or from.id'));
+            }
         });
-        adapter.addUserToken('myConnection', 'test', 'user', '123abc');
-        adapter.addUserToken('myConnection2', 'test', 'user', 'def456');
+
+        adapter.addUserToken('DEF', 'test', 'user', 'def456');
         adapter.send('hi');
     });
 });

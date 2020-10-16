@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 
-import { DialogEvents } from 'botbuilder-dialogs'
+import { DialogEvents } from 'botbuilder-dialogs';
 
 export class AdaptiveEvents extends DialogEvents {
     /**
@@ -38,11 +38,6 @@ export class AdaptiveEvents extends DialogEvents {
      * Raised when there are multiple possible resolutions of an entity.
      */
     public static readonly chooseEntity = 'chooseEntity';
-
-    /**
-     * Raised when a property should be cleared.
-     */
-    public static readonly clearProperty = 'clearProperty';
 
     /**
      * Raised when an entity should be assigned to a property.

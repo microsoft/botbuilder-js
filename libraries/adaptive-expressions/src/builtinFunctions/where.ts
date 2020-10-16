@@ -1,0 +1,81 @@
+/**
+ * @module adaptive-expressions
+ */
+/**
+ * Copyright (c) Microsoft Corporation. All rights reserved.
+ * Licensed under the MIT License.
+ */
+
+import { Constant } from '../constant';
+import { Expression } from '../expression';
+import { ExpressionEvaluator, ValueWithError } from '../expressionEvaluator';
+import { ExpressionType } from '../expressionType';
+import { InternalFunctionUtils } from '../functionUtils.internal';
+import { MemoryInterface } from '../memory/memoryInterface';
+import { SimpleObjectMemory } from '../memory/simpleObjectMemory';
+import { StackedMemory } from '../memory/stackedMemory';
+import { Options } from '../options';
+import { ReturnType } from '../returnType';
+
+/**
+ * Filter on each element and return the new collection of filtered elements which match a specific condition.
+ */
+export class Where extends ExpressionEvaluator {
+    public constructor() {
+        super(ExpressionType.Where, Where.evaluator, ReturnType.Array, InternalFunctionUtils.validateForeach);
+    }
+
+    private static evaluator(expression: Expression, state: MemoryInterface, options: Options): ValueWithError {
+        let result: any;
+        const { value: instance, error: childrenError } = expression.children[0].tryEvaluate(state, options);
+        let error = childrenError;
+        if (!error) {
+            const iteratorName = (expression.children[1].children[0] as Constant).value as string;
+            let arr: any[] = [];
+            let isInstanceArray = false;
+            if (Array.isArray(instance)) {
+                arr = instance;
+                isInstanceArray = true;
+            } else if (typeof instance === 'object') {
+                Object.keys(instance).forEach((u): number => arr.push({ key: u, value: instance[u] }));
+            } else {
+                error = `${expression.children[0]} is not a collection or structure object to run foreach`;
+            }
+
+            if (!error) {
+                const stackedMemory = StackedMemory.wrap(state);
+                const arrResult = [];
+                for (const item of arr) {
+                    const local: Map<string, any> = new Map<string, any>([[iteratorName, item]]);
+
+                    stackedMemory.push(SimpleObjectMemory.wrap(local));
+                    const newOptions = new Options(options);
+                    newOptions.nullSubstitution = undefined;
+                    const { value: r, error: e } = expression.children[2].tryEvaluate(stackedMemory, newOptions);
+                    stackedMemory.pop();
+                    if (e !== undefined) {
+                        return { value: undefined, error: e };
+                    }
+
+                    if (r) {
+                        arrResult.push(local.get(iteratorName));
+                    }
+                }
+
+                //reconstruct object if instance is object, otherwise, return array result
+                if (!isInstanceArray) {
+                    const objResult = {};
+                    for (const item of arrResult) {
+                        objResult[item.key] = item.value;
+                    }
+
+                    result = objResult;
+                } else {
+                    result = arrResult;
+                }
+            }
+        }
+
+        return { value: result, error };
+    }
+}

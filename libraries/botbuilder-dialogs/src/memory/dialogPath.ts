@@ -13,6 +13,9 @@ export class DialogPath {
     /// Currently expected properties.
     public static readonly expectedProperties = 'dialog.expectedProperties';
 
+    /// Default operation to use for entities where there is no identified operation entity.
+    public static readonly defaultOperation = 'dialog.defaultOperation';
+
     /// Last surfaced entity ambiguity event.
     public static readonly lastEvent = 'dialog.lastEvent';
 

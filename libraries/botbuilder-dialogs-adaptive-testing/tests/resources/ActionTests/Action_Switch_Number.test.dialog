@@ -1,0 +1,49 @@
+{
+    "$schema": "../../../../schemas/sdk.schema",
+    "$kind": "Microsoft.Test.Script",
+    "dialog": {
+        "$kind": "Microsoft.AdaptiveDialog",
+        "id": "planningTest",
+        "triggers": [
+            {
+                "$kind": "Microsoft.OnBeginDialog",
+                "actions": [
+                    {
+                        "$kind": "Microsoft.SetProperty",
+                        "property": "user.age",
+                        "value": "=22"
+                    },
+                    {
+                        "$kind": "Microsoft.BeginDialog",
+                        "dialog": "SwitchNumber"
+                    },
+                    {
+                        "$kind": "Microsoft.SetProperty",
+                        "property": "user.age",
+                        "value": "23"
+                    },
+                    {
+                        "$kind": "Microsoft.BeginDialog",
+                        "dialog": "SwitchNumber"
+                    }
+                ]
+            }
+        ],
+        "autoEndDialog": true,
+        "defaultResultProperty": "dialog.result"
+    },
+    "script": [
+        {
+            "$kind": "Microsoft.Test.UserSays",
+            "text": "hi"
+        },
+        {
+            "$kind": "Microsoft.Test.AssertReply",
+            "text": "Age is 22"
+        },
+        {
+            "$kind": "Microsoft.Test.AssertReply",
+            "text": "Age is 23"
+        }
+    ]
+}

@@ -6,18 +6,17 @@
  * Licensed under the MIT License.
  */
 
-import { TurnContext } from 'botbuilder-core';
+import { DialogContext } from 'botbuilder-dialogs';
 
 /**
  * Defines Template interface for binding data to T.
  */
-export interface TemplateInterface<T> {
-
+export interface TemplateInterface<T, D = Record<string, unknown>> {
     /**
      * Given the turn context bind to the data to create the object
-     * @param turnContext TurnContext.
-     * @param data data to bind to.
-     * @returns instance.
+     * @param dialogContext DialogContext.
+     * @param data Data to bind to.
+     * @returns Instance of T.
      */
-    bindToData(turnContext: TurnContext, data: object): Promise<T>;
+    bind(dialogContext: DialogContext, data?: D): Promise<T>;
 }

@@ -5,17 +5,34 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { RecognizerResult, Entity, Activity, ActivityTypes } from 'botbuilder-core';
-import { DialogContext } from 'botbuilder-dialogs';
+import { Activity, Entity, RecognizerResult } from 'botbuilder-core';
+import { Converter, ConverterFactory, DialogContext } from 'botbuilder-dialogs';
 import { Recognizer } from './recognizer';
 import { IntentPattern } from './intentPattern';
 import { EntityRecognizer, TextEntity, EntityRecognizerSet } from './entityRecognizers';
+import { RecognizerSetConfiguration } from './recognizerSet';
 
-export class RegexRecognizer implements Recognizer {
-    /**
-     * Id of the recognizer.
-     */
-    public id: string;
+type IntentPatternInput = {
+    intent: string;
+    pattern: string;
+};
+
+class IntentPatternsConverter implements Converter<IntentPatternInput[], IntentPattern[]> {
+    public convert(items: IntentPatternInput[] | IntentPattern[]): IntentPattern[] {
+        const results: IntentPattern[] = [];
+        items.forEach((item) => {
+            results.push(item instanceof IntentPattern ? item : new IntentPattern(item.intent, item.pattern));
+        });
+        return results;
+    }
+}
+
+export interface RegexRecognizerConfiguration extends RecognizerSetConfiguration {
+    intents?: IntentPatternInput[] | IntentPattern[];
+}
+
+export class RegexRecognizer extends Recognizer implements RegexRecognizerConfiguration {
+    public static $kind = 'Microsoft.RegexRecognizer';
 
     /**
      * Dictionary of patterns -> intent names.
@@ -27,15 +44,34 @@ export class RegexRecognizer implements Recognizer {
      */
     public entities: EntityRecognizer[] = [];
 
-    public async recognize(dialogContext: DialogContext, activity: Activity): Promise<RecognizerResult> {
+    public getConverter(property: keyof RegexRecognizerConfiguration): Converter | ConverterFactory {
+        switch (property) {
+            case 'intents':
+                return new IntentPatternsConverter();
+            default:
+                return super.getConverter(property);
+        }
+    }
+
+    public async recognize(
+        dialogContext: DialogContext,
+        activity: Activity,
+        telemetryProperties?: { [key: string]: string },
+        telemetryMetrics?: { [key: string]: number }
+    ): Promise<RecognizerResult> {
         const text = activity.text || '';
         const locale = activity.locale || 'en-us';
 
         const recognizerResult: RecognizerResult = {
             text: text,
             intents: {},
-            entities: {}
+            entities: {},
         };
+
+        if (!text) {
+            // nothing to recognize, return empty result
+            return recognizerResult;
+        }
 
         const entityPool: Entity[] = [];
 
@@ -52,7 +88,7 @@ export class RegexRecognizer implements Recognizer {
             const matches = [];
             let matched: RegExpExecArray;
             const regexp = intentPattern.regex;
-            while (matched = regexp.exec(text)) {
+            while ((matched = regexp.exec(text))) {
                 matches.push(matched);
                 if (regexp.lastIndex == text.length) {
                     break; // to avoid infinite loop
@@ -127,7 +163,7 @@ export class RegexRecognizer implements Recognizer {
                 score: 1.0,
                 text: entityResult['text'],
                 type: entityResult['type'],
-                resolution: entityResult['resolution']
+                resolution: entityResult['resolution'],
             };
             instanceData.push(instance);
         }
@@ -136,7 +172,18 @@ export class RegexRecognizer implements Recognizer {
             recognizerResult.intents['None'] = { score: 1.0 };
         }
 
-        await dialogContext.context.sendTraceActivity('RegexRecognizer', recognizerResult, 'RecognizerResult', 'Regex RecognizerResult');
+        await dialogContext.context.sendTraceActivity(
+            'RegexRecognizer',
+            recognizerResult,
+            'RecognizerResult',
+            'Regex RecognizerResult'
+        );
+        this.trackRecognizerResult(
+            dialogContext,
+            'RegexRecognizerResult',
+            this.fillRecognizerResultTelemetryProperties(recognizerResult, telemetryProperties),
+            telemetryMetrics
+        );
         return recognizerResult;
     }
 }

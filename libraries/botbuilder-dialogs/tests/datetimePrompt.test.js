@@ -1,10 +1,10 @@
-const { ConversationState, MemoryStorage, TestAdapter } = require('botbuilder-core');
+const { ActivityTypes, ConversationState, MemoryStorage, TestAdapter } = require('botbuilder-core');
 const { DateTimePrompt, DialogSet, DialogTurnStatus } = require('../');
 const assert = require('assert');
 
-const answerMessage = { text: `January 1st, 2018 at 9am`, type: 'message' };
-const answerMessage2 = { text: `September 2nd, 2012`, type: 'message' };
-const invalidMessage = { text: `I am not sure`, type: 'message' };
+const answerMessage = { text: `January 1st, 2018 at 9am`, type: ActivityTypes.Message };
+const answerMessage2 = { text: `September 2nd, 2012`, type: ActivityTypes.Message };
+const invalidMessage = { text: `I am not sure`, type: ActivityTypes.Message };
 
 describe('DatetimePrompt', function () {
     this.timeout(5000);
@@ -183,5 +183,37 @@ describe('DatetimePrompt', function () {
             .send(invalidMessage)
             .send(answerMessage2)
             .assertReply('2012-09-02');
+    });
+
+    it('should not recognize, then re-prompt without error for falsy input.', async function () {
+        // Initialize TestAdapter.
+        const adapter = new TestAdapter(async (turnContext) => {
+            const dc = await dialogs.createContext(turnContext);
+
+            const results = await dc.continueDialog();
+            if (results.status === DialogTurnStatus.empty) {
+                await dc.prompt('prompt', 'Enter a date.');
+            } else if (results.status === DialogTurnStatus.complete) {
+                const dates = results.result;
+                await turnContext.sendActivity(dates[0].timex);
+            }
+            await convoState.saveChanges(turnContext);
+        });
+        // Create new ConversationState with MemoryStorage and register the state as middleware.
+        const convoState = new ConversationState(new MemoryStorage());
+
+        // Create a DialogState property, DialogSet and DateTimePrompt.
+        const dialogState = convoState.createProperty('dialogState');
+        const dialogs = new DialogSet(dialogState);
+        dialogs.add(new DateTimePrompt('prompt'));
+
+        await adapter.send('Hello')
+            .assertReply('Enter a date.')
+            .send('')
+            .assertReply('Enter a date.')
+            .send({ type: ActivityTypes.Message, text: null })
+            .assertReply('Enter a date.')
+            .send(answerMessage)
+            .assertReply('2018-01-01T09');
     });
 });

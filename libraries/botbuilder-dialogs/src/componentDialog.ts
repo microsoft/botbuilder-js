@@ -7,7 +7,7 @@
  */
 import { telemetryTrackDialogView, TurnContext } from 'botbuilder-core';
 import { Dialog, DialogInstance, DialogReason, DialogTurnResult, DialogTurnStatus } from './dialog';
-import { DialogContext } from './dialogContext';
+import { DialogContext, DialogState } from './dialogContext';
 import { DialogContainer } from './dialogContainer';
 
 const PERSISTED_DIALOG_STATE = 'dialogs';
@@ -69,7 +69,6 @@ const PERSISTED_DIALOG_STATE = 'dialogs';
  * @param O (Optional) options that can be passed into the `DialogContext.beginDialog()` method.
  */
 export class ComponentDialog<O extends object = {}> extends DialogContainer<O> {
-
     /**
      * ID of the child dialog that should be started anytime the component is started.
      *
@@ -84,14 +83,17 @@ export class ComponentDialog<O extends object = {}> extends DialogContainer<O> {
         telemetryTrackDialogView(this.telemetryClient, this.id);
 
         // Start the inner dialog.
-        const innerDC: DialogContext = this.createChildContext(outerDC)
+        const innerDC: DialogContext = this.createChildContext(outerDC);
         const turnResult: DialogTurnResult<any> = await this.onBeginDialog(innerDC, options);
 
         // Check for end of inner dialog
         if (turnResult.status !== DialogTurnStatus.waiting) {
             if (turnResult.status === DialogTurnStatus.cancelled) {
                 await this.endComponent(outerDC, turnResult.result);
-                const cancelledTurnResult: DialogTurnResult = { status: DialogTurnStatus.cancelled, result: turnResult.result }
+                const cancelledTurnResult: DialogTurnResult = {
+                    status: DialogTurnStatus.cancelled,
+                    result: turnResult.result,
+                };
                 return cancelledTurnResult;
             }
             // Return result to calling dialog
@@ -105,7 +107,7 @@ export class ComponentDialog<O extends object = {}> extends DialogContainer<O> {
         await this.checkForVersionChange(outerDC);
 
         // Continue execution of inner dialog.
-        const innerDC: DialogContext = this.createChildContext(outerDC)
+        const innerDC: DialogContext = this.createChildContext(outerDC);
         const turnResult: DialogTurnResult<any> = await this.onContinueDialog(innerDC);
 
         // Check for end of inner dialog
@@ -161,7 +163,9 @@ export class ComponentDialog<O extends object = {}> extends DialogContainer<O> {
      */
     public addDialog(dialog: Dialog): this {
         this.dialogs.add(dialog);
-        if (this.initialDialogId === undefined) { this.initialDialogId = dialog.id; }
+        if (this.initialDialogId === undefined) {
+            this.initialDialogId = dialog.id;
+        }
 
         return this;
     }
@@ -170,11 +174,8 @@ export class ComponentDialog<O extends object = {}> extends DialogContainer<O> {
      * Creates the inner dialog context
      * @param outerDC the outer dialog context
      */
-    public createChildContext(outerDC: DialogContext) {
-        const innerDC = this.createInnerDC(outerDC.context, outerDC.activeDialog);
-        innerDC.parent = outerDC;
-
-        return innerDC;
+    public createChildContext(outerDC: DialogContext): DialogContext {
+        return this.createInnerDC(outerDC, outerDC.activeDialog);
     }
 
     /**
@@ -243,11 +244,17 @@ export class ComponentDialog<O extends object = {}> extends DialogContainer<O> {
         return outerDC.endDialog(result);
     }
 
-    private createInnerDC(context: TurnContext, instance: DialogInstance) {
-        const dialogState = instance.state[PERSISTED_DIALOG_STATE] || { dialogStack: [] };
-        instance.state[PERSISTED_DIALOG_STATE] = dialogState
-        const innerDC: DialogContext = new DialogContext(this.dialogs, context, dialogState);
+    private createInnerDC(context: DialogContext, instance: DialogInstance): DialogContext;
+    private createInnerDC(context: TurnContext, instance: DialogInstance): DialogContext;
+    private createInnerDC(context: TurnContext | DialogContext, instance: DialogInstance): DialogContext {
+        if (!instance) {
+            const dialogInstance = { state: {} };
+            instance = dialogInstance as DialogInstance;
+        }
 
-        return innerDC
+        const dialogState = instance.state[PERSISTED_DIALOG_STATE] || { dialogStack: [] };
+        instance.state[PERSISTED_DIALOG_STATE] = dialogState;
+
+        return new DialogContext(this.dialogs, context as TurnContext, dialogState);
     }
 }

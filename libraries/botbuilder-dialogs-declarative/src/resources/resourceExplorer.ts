@@ -6,66 +6,119 @@
  * Licensed under the MIT License.
  */
 
-import { normalize, dirname, join } from 'path';
+import { ComponentRegistration } from 'botbuilder-core';
+import { Dialog } from 'botbuilder-dialogs';
+import { normalize, join } from 'path';
 import { EventEmitter } from 'events';
-import { IResourceProvider } from './resourceProvider';
+import { ResourceProvider, ResourceChangeEvent } from './resourceProvider';
 import { FolderResourceProvider } from './folderResourceProvider';
-import { IResource } from './resource';
+import { Resource } from './resource';
 import { PathUtil } from '../pathUtil';
-import { TypeFactory } from '../factory/typeFactory';
-import { ComponentRegistration } from '../componentRegistration';
+import { ComponentDeclarativeTypes } from '../componentDeclarativeTypes';
+import { DeclarativeType } from '../declarativeType';
+import { CustomDeserializer } from '../customDeserializer';
+import { DefaultLoader } from '../defaultLoader';
 
+/**
+ * Class which gives standard access to content resources.
+ */
 export class ResourceExplorer {
-    private _factory: TypeFactory = new TypeFactory();
-    private _resourceProviders: IResourceProvider[] = [];
-    private _emitter: EventEmitter = new EventEmitter();
+    private _kindToType: Map<string, new () => unknown> = new Map();
+    private _kindDeserializer: Map<string, CustomDeserializer<unknown, unknown>> = new Map();
+    private _eventEmitter: EventEmitter = new EventEmitter();
+    private _typesLoaded = false;
 
-    public get resourceProviders(): IResourceProvider[] {
-        return this._resourceProviders;
+    /**
+     * Initializes a new instance of the `ResourceExplorer` class.
+     * @param providers Resource providers.
+     */
+    public constructor(providers: ResourceProvider[] = []) {
+        this.resourceProviders = providers;
     }
 
-    public get emitter(): EventEmitter {
-        return this._emitter;
+    /**
+     * Gets resource providers.
+     */
+    public readonly resourceProviders: ResourceProvider[];
+
+    /**
+     * Gets resource type id extensions managed by resource explorer.
+     */
+    public readonly resourceTypes: Set<string> = new Set(['dialog', 'lu', 'lg', 'qna', 'schema', 'json']);
+
+    /**
+     * Event which fires when a resource is changed.
+     */
+    public set changed(callback: (event: ResourceChangeEvent, resources: Resource[]) => void) {
+        this._eventEmitter.on(ResourceChangeEvent.added, (resources: Resource[]): void => {
+            callback(ResourceChangeEvent.added, resources);
+        });
+        this._eventEmitter.on(ResourceChangeEvent.changed, (resources: Resource[]): void => {
+            callback(ResourceChangeEvent.changed, resources);
+        });
+        this._eventEmitter.on(ResourceChangeEvent.removed, (resources: Resource[]): void => {
+            callback(ResourceChangeEvent.removed, resources);
+        });
     }
 
-    public loadProject(projectFile: string, ignoreFolders: string[], monitorChanges: boolean = true): ResourceExplorer {
-        projectFile = normalize(projectFile);
-        ignoreFolders = ignoreFolders.map((f): string => normalize(f));
-        const projectFolder = dirname(projectFile);
-        if (ignoreFolders) {
-            this.addFolders(projectFolder, ignoreFolders, monitorChanges);
+    /**
+     * Add a resource type to resource type set.
+     * @param type Resource type.
+     */
+    public addResourceType(type: string): void {
+        type = type.toLowerCase().replace(/^\./, '');
+        if (!this.resourceTypes.has(type)) {
+            this.resourceTypes.add(type);
+            this.refresh();
         }
-        else {
-            this.addResourceProvider(new FolderResourceProvider(projectFolder, true, monitorChanges));
+    }
+
+    /**
+     * Reload any cached data.
+     */
+    public refresh(): void {
+        this.resourceProviders.forEach((resourceProvider) => resourceProvider.refresh());
+    }
+
+    /**
+     * Add a resource provider to the resources managed by resource explorer.
+     * @param resourceProvider Resource provider to be added.
+     */
+    public addResourceProvider(resourceProvider: ResourceProvider): ResourceExplorer {
+        if (this.resourceProviders.some((r): boolean => r.id === resourceProvider.id)) {
+            throw Error(`${resourceProvider.id} has already been added as a resource`);
         }
+
+        resourceProvider.changed = this.onChanged.bind(this);
+        this.resourceProviders.push(resourceProvider);
 
         return this;
     }
 
-    public addResourceProvider(resourceProvider: IResourceProvider): ResourceExplorer {
-        if (this._resourceProviders.some((r): boolean => r.id() === resourceProvider.id())) {
-            throw Error(`${ resourceProvider.id() } has already been added as a resource`);
-        }
-
-        this._resourceProviders.push(resourceProvider);
-
-        return this;
-    }
-
-    public addFolder(folder: string, includeSubFolders: boolean = true, monitorChanges: boolean = true): ResourceExplorer {
-        let folderResourceProvider: FolderResourceProvider = new FolderResourceProvider(folder, includeSubFolders, monitorChanges);
-        folderResourceProvider.emitter = this._emitter;
-        this.addResourceProvider(folderResourceProvider);
+    /**
+     * Add a folder resource.
+     * @param folder Folder to be included as a resource.
+     * @param includeSubFolders Whether to include subfolders.
+     * @param monitorChanges Whether to track changes.
+     */
+    public addFolder(folder: string, includeSubFolders = true, monitorChanges = true): ResourceExplorer {
+        this.addResourceProvider(new FolderResourceProvider(this, folder, includeSubFolders, monitorChanges));
 
         return this;
     }
 
-    public addFolders(folder: string, ignoreFolders?: string[], monitorChanges: boolean = true): ResourceExplorer {
+    /**
+     * Add folder resources.
+     * @param folder Collection of folders to be included as resources.
+     * @param ignoreFolders Imediate subfolders to ignore.
+     * @param monitorChanges Whether to track changes.
+     */
+    public addFolders(folder: string, ignoreFolders?: string[], monitorChanges = true): ResourceExplorer {
         if (ignoreFolders) {
             folder = normalize(folder);
             this.addFolder(folder, false, monitorChanges);
             const ignoreFoldersSet = new Set<string>(ignoreFolders.map((p): string => join(folder, p)));
-            const subFolders = PathUtil.GetDirectories(folder);
+            const subFolders = PathUtil.getDirectories(folder);
             for (let i = 0; i < subFolders.length; i++) {
                 const subFolder = subFolders[i];
                 if (!ignoreFoldersSet.has(subFolder)) {
@@ -79,19 +132,13 @@ export class ResourceExplorer {
         return this;
     }
 
-    public addComponent(component: ComponentRegistration): ResourceExplorer {
-        const builders = component.getTypeBuilders();
-        for (let i = 0; i < builders.length; i++) {
-            const type = builders[i];
-            this._factory.register(type.name, type.builder);
-        }
-
-        return this;
-    }
-
-    public getResources(fileExtension: string): IResource[] {
-        let resources: IResource[] = [];
-        for (const rp of this._resourceProviders) {
+    /**
+     * Get resources of a given type extension.
+     * @param fileExtension File extension filter.
+     */
+    public getResources(fileExtension: string): Resource[] {
+        const resources: Resource[] = [];
+        for (const rp of this.resourceProviders) {
             for (const rpResources of rp.getResources(fileExtension)) {
                 resources.push(rpResources);
             }
@@ -100,9 +147,13 @@ export class ResourceExplorer {
         return resources;
     }
 
-    public getResource(id: string): IResource {
-        for (const rp of this._resourceProviders) {
-            const resource: IResource = rp.getResource(id);
+    /**
+     * Gets resource by id.
+     * @param id Resource id.
+     */
+    public getResource(id: string): Resource {
+        for (const rp of this.resourceProviders) {
+            const resource: Resource = rp.getResource(id);
             if (resource) {
                 return resource;
             }
@@ -111,27 +162,119 @@ export class ResourceExplorer {
         return undefined;
     }
 
-    public buildType(config: object): object {
-        if (typeof config == 'object') {
-            const kind = config['$kind'] || config['$type'];
-            if (kind) {
-                const result = this._factory.build(kind, config);
-                return result;
-            } else {
-                for (const key in config) {
-                    config[key] = this.buildType(config[key]);
-                }
-            }
+    /**
+     * Build type for given $kind.
+     * @param kind $kind.
+     * @param config Source configuration object.
+     */
+    public buildType<T, C>(kind: string, config: C): T {
+        this.registerComponentTypes();
+
+        const type = this._kindToType.get(kind);
+        if (!type) {
+            throw new Error(`Type ${kind} not registered.`);
         }
-        return config;
+        const loader = this._kindDeserializer.get(kind);
+        return loader.load(config, type) as T;
     }
 
-    public loadType(resource: string | IResource): object {
+    /**
+     * Load types from resource or resource id.
+     * @param resource Resource or resource id to be parsed as a type.
+     */
+    public loadType<T>(resource: string | Resource): T {
+        this.registerComponentTypes();
+
         if (typeof resource == 'string') {
             resource = this.getResource(resource);
         }
+
+        if (!resource) {
+            throw new Error(`Resource ${resource.id} not found.`);
+        }
+
         const json = resource.readText();
-        const result = JSON.parse(json);
-        return this.buildType(result as object);
+        const result = JSON.parse(json, (_key: string, value: unknown): unknown => {
+            if (typeof value !== 'object') {
+                return value;
+            }
+            if (Array.isArray(value)) {
+                return value;
+            }
+            const kind = value['$kind'];
+            if (!kind) {
+                return value;
+            }
+            return this.load(value as { $kind: string } & Record<string, unknown>);
+        }) as T;
+
+        const config = JSON.parse(json);
+        if (result instanceof Dialog && !config['id']) {
+            // If there is no id for the dialog, then the resource id would be used as dialog id.
+            result.id = resource.id;
+        }
+
+        return result;
+    }
+
+    /**
+     * Handler for onChanged events.
+     * @param event Event name.
+     * @param resources A collection of resources changed.
+     */
+    protected onChanged(event: ResourceChangeEvent, resources: Resource[]): void {
+        if (this._eventEmitter) {
+            this._eventEmitter.emit(event, resources);
+        }
+    }
+
+    /**
+     * @private
+     */
+    private load<T>(value: { $kind: string } & Record<string, unknown>): T {
+        const kind = value['$kind'] as string;
+        const type = this._kindToType.get(kind);
+        if (!type) {
+            throw new Error(`Type ${kind} not registered.`);
+        }
+        const loader = this._kindDeserializer.get(kind);
+        return loader.load(value, type) as T;
+    }
+
+    /**
+     * @private
+     */
+    private getComponentRegistrations(): ComponentRegistration[] {
+        return ComponentRegistration.components.filter(
+            (component: ComponentRegistration) => 'getDeclarativeTypes' in component
+        );
+    }
+
+    /**
+     * @private
+     */
+    private registerTypeInternal<T, C>(
+        kind: string,
+        type: new (...args: unknown[]) => T,
+        loader?: CustomDeserializer<T, C>
+    ): void {
+        this._kindToType.set(kind, type);
+        this._kindDeserializer.set(kind, loader || new DefaultLoader(this));
+    }
+
+    /**
+     * @private
+     */
+    private registerComponentTypes(): void {
+        if (this._typesLoaded) {
+            return;
+        }
+        this._typesLoaded = true;
+        this.getComponentRegistrations().forEach((component: ComponentDeclarativeTypes) => {
+            component.getDeclarativeTypes(this).forEach((declarativeType: DeclarativeType) => {
+                const { kind, type, loader } = declarativeType;
+                this.registerTypeInternal(kind, type, loader);
+            });
+        });
     }
 }

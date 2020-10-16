@@ -6,29 +6,53 @@
  * Licensed under the MIT License.
  */
 
-import { MultiLanguageGeneratorBase } from './multiLanguageGeneratorBase';
-import { TurnContext } from 'botbuilder-core';
+import { DialogContext } from 'botbuilder-dialogs';
+import { MultiLanguageGeneratorBase, MultiLanguageGeneratorBaseConfiguration } from './multiLanguageGeneratorBase';
 import { LanguageGenerator } from '../languageGenerator';
 import { LanguageGeneratorManager } from './languageGeneratorManager';
+import { languageGeneratorManagerKey } from '../languageGeneratorExtensions';
 
-/**
- * Initializes a new instance of the ResourceMultiLanguageGenerator class.
- */
-export class ResourceMultiLanguageGenerator extends MultiLanguageGeneratorBase {
-    public resourceId: string;
+export interface ResourceMultiLanguageGeneratorConfiguration extends MultiLanguageGeneratorBaseConfiguration {
+    resourceId?: string;
+}
 
-    public constructor(resourceId: string = undefined, languagePolicy: any = undefined) {
-        super(languagePolicy);
+export class ResourceMultiLanguageGenerator<T = unknown, D extends Record<string, unknown> = Record<string, unknown>>
+    extends MultiLanguageGeneratorBase<T, D>
+    implements ResourceMultiLanguageGeneratorConfiguration {
+    public static $kind = 'Microsoft.ResourceMultiLanguageGenerator';
+
+    /**
+     * Initializes a new instance of the ResourceMultiLanguageGenerator class.
+     * @param resourceId Resource id of LG file.
+     */
+    public constructor(resourceId?: string) {
+        super();
         this.resourceId = resourceId;
     }
 
-    public tryGetGenerator(context: TurnContext, locale: string): {exist: boolean; result: LanguageGenerator} {
-        const lgm: LanguageGeneratorManager = context.turnState.get('LanguageGeneratorManager');
-        const resourceId = (locale === undefined || locale === '')? this.resourceId : this.resourceId.replace('.lg', `.${ locale }.lg`);
-        if (lgm.languageGenerator.has(resourceId)) {
-            return {exist: true, result: lgm.languageGenerator.get(resourceId)};
+    /**
+     * Resource id of LG file.
+     */
+    public resourceId: string;
+
+    /**
+     * Implementation of lookup by locale.
+     * @param dialogContext Context for the current turn of conversation.
+     * @param locale Locale to lookup.
+     */
+    public tryGetGenerator(
+        dialogContext: DialogContext,
+        locale: string
+    ): { exist: boolean; result: LanguageGenerator<T, D> } {
+        const manager = dialogContext.services.get(languageGeneratorManagerKey) as LanguageGeneratorManager<T, D>;
+
+        const resourceId =
+            locale === undefined || locale === '' ? this.resourceId : this.resourceId.replace('.lg', `.${locale}.lg`);
+
+        if (manager.languageGenerators.has(resourceId)) {
+            return { exist: true, result: manager.languageGenerators.get(resourceId) as LanguageGenerator<T, D> };
         } else {
-            return {exist: false, result: undefined};
+            return { exist: false, result: undefined };
         }
     }
 }

@@ -5,8 +5,19 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { Dialog, DialogDependencies, DialogContext, DialogTurnResult, DialogReason } from 'botbuilder-dialogs';
+import { StringUtils } from 'botbuilder-core';
+import {
+    Converter,
+    ConverterFactory,
+    Dialog,
+    DialogConfiguration,
+    DialogContext,
+    DialogDependencies,
+    DialogReason,
+    DialogTurnResult,
+} from 'botbuilder-dialogs';
 import { ActionContext } from '../actionContext';
+import { DialogListConverter } from '../converters';
 
 const OFFSET_KEY = 'this.offset';
 
@@ -21,8 +32,13 @@ export interface ActionScopeResult {
     actionId?: string;
 }
 
-export class ActionScope<O extends object = {}> extends Dialog<O> implements DialogDependencies {
+export interface ActionScopeConfiguration extends DialogConfiguration {
+    actions?: string[] | Dialog[];
+}
 
+export class ActionScope<O extends object = {}>
+    extends Dialog<O>
+    implements DialogDependencies, ActionScopeConfiguration {
     /**
      * Creates a new `ActionScope` instance.
      */
@@ -35,6 +51,20 @@ export class ActionScope<O extends object = {}> extends Dialog<O> implements Dia
      * The actions to execute.
      */
     public actions: Dialog[] = [];
+
+    public getConverter(property: keyof ActionScopeConfiguration): Converter | ConverterFactory {
+        switch (property) {
+            case 'actions':
+                return DialogListConverter;
+            default:
+                return super.getConverter(property);
+        }
+    }
+
+    public getVersion(): string {
+        const versions = this.actions.map((action): string => action.getVersion() || '').join('');
+        return StringUtils.hash(versions);
+    }
 
     public getDependencies(): Dialog[] {
         return this.actions;
@@ -61,7 +91,10 @@ export class ActionScope<O extends object = {}> extends Dialog<O> implements Dia
         return await this.onNextAction(dc, result);
     }
 
-    protected async onActionScopeResult(dc: DialogContext, actionScopeResult: ActionScopeResult): Promise<DialogTurnResult> {
+    protected async onActionScopeResult(
+        dc: DialogContext,
+        actionScopeResult: ActionScopeResult
+    ): Promise<DialogTurnResult> {
         switch (actionScopeResult.actionScopeCommand) {
             case ActionScopeCommands.GotoAction:
                 return await this.onGotoAction(dc, actionScopeResult);
@@ -70,7 +103,7 @@ export class ActionScope<O extends object = {}> extends Dialog<O> implements Dia
             case ActionScopeCommands.ContinueLoop:
                 return await this.onContinueLoop(dc, actionScopeResult);
             default:
-                throw new Error(`Unknown action scope command returned: ${ actionScopeResult.actionScopeCommand }.`);
+                throw new Error(`Unknown action scope command returned: ${actionScopeResult.actionScopeCommand}.`);
         }
     }
 
@@ -83,7 +116,7 @@ export class ActionScope<O extends object = {}> extends Dialog<O> implements Dia
         } else if (dc.stack.length > 1) {
             return await dc.endDialog(actionScopeResult);
         } else {
-            throw new Error(`GotoAction: could not find an action of '${ actionScopeResult.actionId }'`);
+            throw new Error(`GotoAction: could not find an action of '${actionScopeResult.actionId}'`);
         }
     }
 
@@ -137,13 +170,21 @@ export class ActionScope<O extends object = {}> extends Dialog<O> implements Dia
             return await dc.endDialog();
         }
 
-        const actionId = this.actions[offset].id;
+        const action = this.actions[offset];
+        const actionName = action.constructor.name;
 
-        return await dc.beginDialog(actionId);
+        const properties: { [key: string]: string } = {
+            DialogId: action.id,
+            Kind: `Microsoft.${actionName}`,
+            ActionId: `Microsoft.${action.id}`,
+        };
+        this.telemetryClient.trackEvent({ name: 'AdaptiveDialogAction', properties: properties });
+
+        return await dc.beginDialog(action.id);
     }
 
     protected onComputeId(): string {
         const ids = this.actions.map((action: Dialog): string => action.id);
-        return `ActionScope[${ ids.join(',') }]`;
+        return `ActionScope[${StringUtils.ellipsisHash(ids.join(','), 50)}]`;
     }
 }

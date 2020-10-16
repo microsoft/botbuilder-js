@@ -52,7 +52,7 @@ export class TeamsSearchExtensionBot extends TeamsActivityHandler {
         const searchQuery = query.parameters[0].value;
         const composeExtension = this.createMessagingExtensionResult([
             this.createSearchResultAttachment(searchQuery), 
-            this.createDummySearchResultAttachment(), 
+            this.createDummySearchResultAttachment(searchQuery), 
             this.createSelectItemsResultAttachment(searchQuery)
         ]);
 
@@ -71,7 +71,7 @@ export class TeamsSearchExtensionBot extends TeamsActivityHandler {
         };
     }
 
-    private createMessagingExtensionResult(attachments: Attachment[]) : MessagingExtensionResult {   
+    private createMessagingExtensionResult(attachments: Attachment[]) : MessagingExtensionResult {
         return <MessagingExtensionResult> {
             type: "result",
             attachmentLayout: "list",
@@ -91,6 +91,7 @@ export class TeamsSearchExtensionBot extends TeamsActivityHandler {
 
         const heroCard = CardFactory.heroCard("You searched for:", cardText, [bfLogo], [button]);
         const preview = CardFactory.heroCard("You searched for:", cardText, [bfLogo]);
+        preview.content.tap = { type: 'invoke', value: { query: searchQuery } };
 
         return <MessagingExtensionAttachment> {
             contentType: CardFactory.contentTypes.heroCard,
@@ -99,7 +100,7 @@ export class TeamsSearchExtensionBot extends TeamsActivityHandler {
         };
     }
 
-    private createDummySearchResultAttachment() : MessagingExtensionAttachment {
+    private createDummySearchResultAttachment(searchQuery: string) : MessagingExtensionAttachment {
         const cardText = "https://docs.microsoft.com/en-us/microsoftteams/platform/concepts/bots/bots-overview";
         const bfLogo = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQtB3AwMUeNoq4gUBGe6Ocj8kyh3bXa9ZbV7u1fVKQoyKFHdkqU";
 
@@ -111,6 +112,7 @@ export class TeamsSearchExtensionBot extends TeamsActivityHandler {
 
         const heroCard = CardFactory.heroCard("Learn more about Teams:", cardText, [bfLogo], [button]);
         const preview = CardFactory.heroCard("Learn more about Teams:", cardText, [bfLogo]);
+        preview.content.tap = { type: 'invoke', value: { query: searchQuery } };
 
         return <MessagingExtensionAttachment> {
             contentType: CardFactory.contentTypes.heroCard,

@@ -234,7 +234,42 @@ describe('ConfirmPrompt', function () {
             .send({ type: ActivityTypes.Message, attachments: ['ignoreThis']})
             .assertReply(`Please reply with 'Yes' or 'No'.`)
             .send('no')
-            .assertReply(`The result found is 'false'.`)
+            .assertReply(`The result found is 'false'.`);
+    });
+
+    it('should not recognize, then re-prompt without error for falsy input.', async function () {
+        const adapter = new TestAdapter(async (turnContext) => {
+            const dc = await dialogs.createContext(turnContext);
+
+            const results = await dc.continueDialog();
+            if (results.status === DialogTurnStatus.empty) {
+                await dc.prompt('prompt', {
+                    prompt: 'Please confirm. Yes or No',
+                    retryPrompt: `Please reply with 'Yes' or 'No'.`
+                });
+            } else if (results.status === DialogTurnStatus.complete) {
+                await turnContext.sendActivity(`The result found is '${ results.result }'.`);
+            }
+            await convoState.saveChanges(turnContext);
+        });
+
+        const convoState = new ConversationState(new MemoryStorage());
+
+        const dialogState = convoState.createProperty('dialogState');
+        const dialogs = new DialogSet(dialogState);
+        const confirmPrompt = new ConfirmPrompt('prompt');
+        confirmPrompt.style = ListStyle.none;
+        dialogs.add(confirmPrompt);
+
+
+        await adapter.send('Hello')
+            .assertReply('Please confirm. Yes or No')
+            .send('')
+            .assertReply('Please reply with \'Yes\' or \'No\'.')
+            .send({ type: ActivityTypes.Message, text: null })
+            .assertReply('Please reply with \'Yes\' or \'No\'.')
+            .send('no')
+            .assertReply(`The result found is 'false'.`);
     });
 
     it('should use defaultLocale when rendering choices', async function () {

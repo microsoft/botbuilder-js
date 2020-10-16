@@ -8,7 +8,7 @@ const { RegexRecognizer, IntentPattern, EntityRecognizerSet, RegexEntityRecogniz
     GuidEntityRecognizer, HashtagEntityRecognizer, IpEntityRecognizer,
     MentionEntityRecognizer, NumberEntityRecognizer, OrdinalEntityRecognizer,
     PercentageEntityRecognizer, PhoneNumberEntityRecognizer, TemperatureEntityRecognizer,
-    UrlEntityRecognizer
+    UrlEntityRecognizer, Recognizer
 } = require('../');
 
 const user = {
@@ -91,6 +91,23 @@ describe('recognizer tests', function() {
         new RegexEntityRecognizer('backgroundColor', '(back|background) {color}'),
         new RegexEntityRecognizer('foregroundColor', '(foreground|front) {color}')
     );
+
+    const recognizerResultSample = {
+        'text': 'textValue',
+        'alteredText': 'alteredTextValue',
+        'intents': {
+            'intent1': {score: 0.03},
+            'intent2': {score: 0.95},
+            'intent3': {score: 0.02}
+        },
+        'entities': {
+            'name': ['value1','value2','value3'], 
+            '$instance': {
+                'name': [ { 'startIndex' : 15 } ] 
+            }
+        },
+        'additionalProperties': 'additionalPropertiesValue'
+    };
 
     it('recognize regex pattern with dialog context', async function() {
         const dc = createContext('');
@@ -296,4 +313,112 @@ describe('recognizer tests', function() {
         const entities = result.entities;
         assert.equal(entities.url[0], 'https://www.microsoft.com', 'should recognize url');
     });
+
+    it('basic telemetry test', () => {
+        let properties = {};
+        properties['test'] = 'testvalue';
+        properties['foo'] = 'foovalue';
+        const metrics = {};
+        const context = {};
+        const activity = {};
+
+        let callCount = 0;
+        let telemetryClient = {
+            trackEvent: (telemetry) => {
+                assert(telemetry, 'telemetry is null');
+                switch (++callCount) {
+                    case 1:
+                        assert.equal(telemetry.name, 'TestResult');
+                        assert(telemetry.properties);
+                        assert('test' in telemetry.properties);
+                        assert.equal(telemetry.properties['test'], properties['test']);
+                        assert('foo' in telemetry.properties);
+                        assert.equal(telemetry.properties['foo'], properties['foo']);
+                        assert('MyImportantProperty' in telemetry.properties);
+                        assert.equal(telemetry.properties['MyImportantProperty'], 'myImportantValue');
+                        break;
+
+                    case 2:
+                        assert.equal(telemetry.name, 'MySecondEvent');
+                        assert(telemetry.properties);
+                        assert('MyImportantProperty2' in telemetry.properties);
+                        assert.equal(telemetry.properties['MyImportantProperty2'], 'myImportantValue2');
+                        break;
+
+                    default:
+                        console.log('Call number:' + callCount);
+                        console.log(telemetry);
+                        assert(false);
+                        break;
+                }
+            }
+        };
+
+        let recognizer = new MockTelemetryInRecognizer();
+        recognizer.telemetryClient = telemetryClient;
+        recognizer.recognize(context, activity, properties, metrics);
+    });
+
+    it('check stringifyAdditionalPropertiesOfRecognizerResult', () => {
+        let recognizer = new Recognizer();
+        const additionalPropertiesInString = recognizer.stringifyAdditionalPropertiesOfRecognizerResult(recognizerResultSample);
+        if (additionalPropertiesInString){
+            const additionalProperties = JSON.parse(additionalPropertiesInString);
+            assert(!('text' in additionalProperties));
+            assert(!('alteredText' in additionalProperties));
+            assert(!('intents' in additionalProperties));
+            assert(!('entities' in additionalProperties));
+        }
+    });
+
+    it('check fillRecognizerResultTelemetryProperties', () => {
+        let recognizer = new Recognizer();
+        const telemetryProperties = {
+            'TelemetryPropertiesKey1': 'TelemetryPropertiesValue1',
+            'TelemetryPropertiesKey2': 'TelemetryPropertiesValue2'
+        };
+        const properties = recognizer.fillRecognizerResultTelemetryProperties(recognizerResultSample, telemetryProperties);
+        assert('Text' in properties);
+        assert.equal(properties['Text'], recognizerResultSample['text']);
+        assert('AlteredText' in properties);
+        assert.equal(properties['AlteredText'], recognizerResultSample['alteredText']);
+        assert('TopIntent' in properties);
+        assert.equal(properties['TopIntent'], 'intent2');
+        assert('TopIntentScore' in properties);
+        assert.equal(properties['TopIntentScore'], '0.95');
+        assert('Intents' in properties);
+        assert.equal(properties['Intents'], JSON.stringify(recognizerResultSample['intents']));
+        assert('Entities' in properties);
+        assert.equal(properties['Entities'], JSON.stringify(recognizerResultSample['entities']));
+        assert('AdditionalProperties' in properties);
+        assert.equal(properties['AdditionalProperties'], '{"additionalProperties":"additionalPropertiesValue"}');
+        assert('TelemetryPropertiesKey1' in properties);
+        assert.equal(properties['TelemetryPropertiesKey1'], telemetryProperties['TelemetryPropertiesKey1']);
+        assert('TelemetryPropertiesKey2' in properties);
+        assert.equal(properties['TelemetryPropertiesKey2'], telemetryProperties['TelemetryPropertiesKey2']);
+    });
+
 });
+
+
+class MockTelemetryInRecognizer extends Recognizer {
+    recognize(dialogContext, activity, properties, metrics) {
+        if (!('MyImportantProperty' in properties)) {
+            properties['MyImportantProperty'] = 'myImportantValue';
+        }
+        this.telemetryClient.trackEvent({
+            name: 'TestResult',
+            properties: properties,
+            metrics: metrics
+        });
+
+        // Create second event
+        const secondProperties = {};
+        secondProperties['MyImportantProperty2'] = 'myImportantValue2';
+
+        this.telemetryClient.trackEvent({
+            name: 'MySecondEvent',
+            properties: secondProperties
+        });
+    }
+}

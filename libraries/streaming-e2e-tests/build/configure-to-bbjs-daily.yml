@@ -1,0 +1,28 @@
+
+steps:
+  - task: Npm@1
+    displayName: 'npm install'
+    inputs: 
+      workingDir: '$(TargetProjectDir)'
+      
+  - task: PowerShell@2
+    displayName: 'Get latest daily version of $(PackageName)'
+    inputs:
+      targetType: 'filePath'
+      filePath: $(System.DefaultWorkingDirectory)/libraries/streaming-e2e-tests/build/get-latest-daily-ver.ps1
+      arguments:
+        -PackageName $(PackageName)
+        -WorkingDir $(TargetProjectDir)
+
+  - task: colinsalmcorner.colinsalmcorner-buildtasks.tag-build-task.tagBuildOrRelease@0
+    displayName: 'Tag Build with $(BotBuilder) version'
+    condition: eq(variables.PackageName, 'botbuilder')
+    inputs:
+      tags: 'Using $(PackageName) version $(LatestVersion_botbuilder)'
+
+  - task: colinsalmcorner.colinsalmcorner-buildtasks.tag-build-task.tagBuildOrRelease@0
+    displayName: 'Tag Build with $(BfStreaming) version'
+    condition: eq(variables.PackageName, 'botframework-streaming')
+    inputs:
+      tags: 'Using $(PackageName) version $(LatestVersion_streaming)'
+  

@@ -8,14 +8,14 @@ import { Configurable } from './configurable';
 
 /**
  * Contains state information for an instance of a dialog on the stack.
- * 
+ *
  * @typeparam T Optional. The type that represents state information for the dialog.
- * 
+ *
  * @remarks
  * This contains information for a specific instance of a dialog on a dialog stack.
  * The dialog stack is associated with a specific dialog context and dialog set.
  * Information about the dialog stack as a whole is persisted to storage using a dialog state object.
- * 
+ *
  * **See also**
  * - [DialogState](xref:botbuilder-dialogs.DialogState)
  * - [DialogContext](xref:botbuilder-dialogs.DialogContext)
@@ -25,11 +25,11 @@ import { Configurable } from './configurable';
 export interface DialogInstance<T = any> {
     /**
      * ID of this dialog
-     * 
+     *
      * @remarks
      * Dialog state is associated with a specific dialog set.
      * This ID is the the dialog's [id](xref:botbuilder-dialogs.Dialog.id) within that dialog set.
-     * 
+     *
      * **See also**
      * - [DialogState](xref:botbuilder-dialogs.DialogState)
      * - [DialogSet](xref:botbuilder-dialogs.DialogSet)
@@ -49,11 +49,11 @@ export interface DialogInstance<T = any> {
 
 /**
  * Indicates why a dialog method is being called.
- * 
+ *
  * @remarks
  * Use a dialog context to control the dialogs in a dialog set. The dialog context will pass a reference to itself
  * to the dialog method it calls. It also passes in the _reason_ why the specific method is being called.
- * 
+ *
  * **See also**
  * - [DialogContext](xref:botbuilder-dialogs.DialogContext)
  * - [DialogSet](xref:botbuilder-dialogs.DialogSet)
@@ -96,13 +96,13 @@ export enum DialogReason {
      * because the previous step in the waterfall dialog called
      * [WaterfallStepContext.next](xref:botbuilder-dialogs.WaterfallStepContext.next).
      */
-    nextCalled = 'nextCalled'
+    nextCalled = 'nextCalled',
 }
 
 /**
  * Represents the state of the dialog stack after a dialog context attempts to begin, continue,
  * or otherwise manipulate one or more dialogs.
- * 
+ *
  * **See also**
  * - [DialogContext](xref:botbuilder-dialogs.DialogContext)
  * - [Dialog](xref:botbuilder-dialogs.Dialog)
@@ -110,7 +110,7 @@ export enum DialogReason {
 export enum DialogTurnStatus {
     /**
      * The dialog stack is empty.
-     * 
+     *
      * @remarks
      * Indicates that the dialog stack was initially empty when the operation was attempted.
      */
@@ -123,10 +123,10 @@ export enum DialogTurnStatus {
 
     /**
      * The last dialog on the stack completed successfully.
-     * 
+     *
      * @remarks
      * Indicates that a result might be available and the stack is now empty.
-     * 
+     *
      * **See also**
      * - [DialogTurnResult.result](xref:botbuilder-dialogs.DialogTurnResult.result)
      */
@@ -140,12 +140,12 @@ export enum DialogTurnStatus {
     /**
      * Current dialog completed successfully, but turn should end.
      */
-    completeAndWait = 'completeAndWait'
+    completeAndWait = 'completeAndWait',
 }
 
 export interface DialogEvent {
     /**
-     * Flag indicating whether the event will be bubbled to the parent `DialogContext`. 
+     * Flag indicating whether the event will be bubbled to the parent `DialogContext`.
      */
     bubble: boolean;
 
@@ -167,65 +167,7 @@ export interface DialogConfiguration {
     id?: string;
 
     /**
-     * Telemetry client the dialog should use. 
-     */
-    telemetryClient?: BotTelemetryClient;
-}
-
-export interface DialogEvent {
-    /**
-     * Flag indicating whether the event will be bubbled to the parent `DialogContext`. 
-     */
-    bubble: boolean;
-
-    /**
-     * Name of the event being raised.
-     */
-    name: string;
-
-    /**
-     * Optional. Value associated with the event.
-     */
-    value?: any;
-}
-
-export interface DialogConfiguration {
-    /**
-     * Static id of the dialog.
-     */
-    id?: string;
-
-    /**
-     * Telemetry client the dialog should use. 
-     */
-    telemetryClient?: BotTelemetryClient;
-}
-
-export interface DialogEvent {
-    /**
-     * Flag indicating whether the event will be bubbled to the parent `DialogContext`. 
-     */
-    bubble: boolean;
-
-    /**
-     * Name of the event being raised.
-     */
-    name: string;
-
-    /**
-     * Optional. Value associated with the event.
-     */
-    value?: any;
-}
-
-export interface DialogConfiguration {
-    /**
-     * Static id of the dialog.
-     */
-    id?: string;
-
-    /**
-     * Telemetry client the dialog should use. 
+     * Telemetry client the dialog should use.
      */
     telemetryClient?: BotTelemetryClient;
 }
@@ -236,7 +178,7 @@ export interface DialogConfiguration {
  *
  * @typeparam T Optional. The type that represents a result returned by the active dialog when it
  *      successfully completes.
- * 
+ *
  * @remarks
  * This can be used to determine if a dialog completed and a result is available, or if the stack
  * was initially empty and a dialog should be started.
@@ -252,7 +194,7 @@ export interface DialogConfiguration {
  *     await dc.beginDialog('surveyDialog');
  * }
  * ```
- * 
+ *
  * **See also**
  * - [DialogContext](xref:botbuilder-dialogs.DialogContext)
  * - [DialogSet](xref:botbuilder-dialogs.DialogSet)
@@ -266,7 +208,7 @@ export interface DialogTurnResult<T = any> {
 
     /**
      * The result, if any, returned by the last dialog on the stack.
-     * 
+     *
      * @remarks
      * A result value is available only if
      * the stack is now empty,
@@ -290,7 +232,7 @@ export abstract class Dialog<O extends object = {}> extends Configurable {
 
     /**
      * Gets a default end-of-turn result.
-     * 
+     *
      * @remarks
      * This result indicates that a dialog (or a logical step within a dialog) has completed
      * processing for the current turn, is still active, and is waiting for more input.
@@ -305,7 +247,7 @@ export abstract class Dialog<O extends object = {}> extends Configurable {
 
     /**
      * Creates a new instance of the [Dialog](xref:botbuilder-dialogs.Dialog) class.
-     * 
+     *
      * @param dialogId Optional. unique ID of the dialog.
      */
     public constructor(dialogId?: string) {
@@ -315,7 +257,7 @@ export abstract class Dialog<O extends object = {}> extends Configurable {
 
     /**
      * Unique ID of the dialog.
-     * 
+     *
      * @remarks
      * This will be automatically generated if not specified.
      */
@@ -330,53 +272,51 @@ export abstract class Dialog<O extends object = {}> extends Configurable {
         this._id = value;
     }
 
-
-    /** 
+    /**
      * Gets the telemetry client for this dialog.
      */
     public get telemetryClient(): BotTelemetryClient {
         return this._telemetryClient;
     }
 
-    /** 
+    /**
      * Sets the telemetry client for this dialog.
      */
     public set telemetryClient(client: BotTelemetryClient) {
         this._telemetryClient = client ? client : new NullTelemetryClient();
     }
 
-
     /**
      * An encoded string used to aid in the detection of bot changes on re-deployment.
-     * 
+     *
      * @remarks
-     * This defaults to returning the dialogs [id](#id) but can be overridden to provide more 
-     * precise change detection logic. Any dialog on the stack that has its version change will 
+     * This defaults to returning the dialogs [id](#id) but can be overridden to provide more
+     * precise change detection logic. Any dialog on the stack that has its version change will
      * result in a `versionChanged` event will be raised. If this event is not handled by the bot,
      * an error will be thrown resulting in the bots error handler logic being run.
-     * 
-     * Returning an empty string will disable version tracking for the component all together. 
+     *
+     * Returning an empty string will disable version tracking for the component all together.
      */
     public getVersion(): string {
         return this.id;
     }
-        
+
     /**
      * When overridden in a derived class, starts the dialog.
      *
      * @param dc The context for the current dialog turn.
      * @param options Optional. Arguments to use when the dialog starts.
-     * 
+     *
      * @remarks
      * Derived dialogs must override this method.
-     * 
+     *
      * The [DialogContext](xref:botbuilder-dialogs.DialogContext) calls this method when it creates
      * a new [DialogInstance](xref:botbuilder-dialogs.DialogInstance) for this dialog, pushes it
      * onto the dialog stack, and starts the dialog.
-     * 
+     *
      * A dialog that represents a single-turn conversation should await
      * [DialogContext.endDialog](xref:botbuilder-dialogs.DialogContext.endDialog) before exiting this method.
-     * 
+     *
      * **See also**
      * - [DialogContext.beginDialog](xref:botbuilder-dialogs.DialogContext.beginDialog)
      * - [DialogContext.replaceDialog](xref:botbuilder-dialogs.DialogContext.replaceDialog)
@@ -387,17 +327,17 @@ export abstract class Dialog<O extends object = {}> extends Configurable {
      * When overridden in a derived class, continues the dialog.
      *
      * @param dc The context for the current dialog turn.
-     * 
+     *
      * @remarks
      * Derived dialogs that support multiple-turn conversations should override this method.
      * By default, this method signals that the dialog is complete and returns.
-     * 
+     *
      * The [DialogContext](xref:botbuilder-dialogs.DialogContext) calls this method when it continues
      * the dialog.
-     * 
+     *
      * To signal to the dialog context that this dialog has completed, await
      * [DialogContext.endDialog](xref:botbuilder-dialogs.DialogContext.endDialog) before exiting this method.
-     * 
+     *
      * **See also**
      * - [DialogContext.continueDialog](xref:botbuilder-dialogs.DialogContext.continueDialog)
      */
@@ -413,21 +353,21 @@ export abstract class Dialog<O extends object = {}> extends Configurable {
      * @param reason The reason the dialog is resuming. This will typically be
      *      [DialogReason.endCalled](xref:botbuilder-dialogs.DialogReason.endCalled)
      * @param result Optional. The return value, if any, from the dialog that ended.
-     * 
+     *
      * @remarks
      * Derived dialogs that support multiple-turn conversations should override this method.
      * By default, this method signals that the dialog is complete and returns.
-     * 
+     *
      * The [DialogContext](xref:botbuilder-dialogs.DialogContext) calls this method when it resumes
      * the dialog. If the previous dialog on the stack returned a value, that value is in the `result`
      * parameter.
-     * 
+     *
      * To start a _child_ dialog, use [DialogContext.beginDialog](xref:botbuilder-dialogs.DialogContext.beginDialog)
      * or [DialogContext.prompt](xref:botbuilder-dialogs.DialogContext.prompt); however, this dialog will not
      * necessarily be the one that started the child dialog.
      * To signal to the dialog context that this dialog has completed, await
      * [DialogContext.endDialog](xref:botbuilder-dialogs.DialogContext.endDialog) before exiting this method.
-     * 
+     *
      * **See also**
      * - [DialogContext.endDialog](xref:botbuilder-dialogs.DialogContext.endDialog)
      */
@@ -441,14 +381,14 @@ export abstract class Dialog<O extends object = {}> extends Configurable {
      *
      * @param context The context object for the turn.
      * @param instance Current state information for this dialog.
-     * 
+     *
      * @remarks
      * Derived dialogs that support validation and re-prompt logic should override this method.
      * By default, this method has no effect.
-     * 
+     *
      * The [DialogContext](xref:botbuilder-dialogs.DialogContext) calls this method when the current
      * dialog should re-request input from the user. This method is implemented for prompt dialogs.
-     * 
+     *
      * **See also**
      * - [DialogContext.repromptDialog](xref:botbuilder-dialogs.DialogContext.repromptDialog)
      * - [Prompt](xref:botbuilder-dialogs.Prompt)
@@ -463,14 +403,14 @@ export abstract class Dialog<O extends object = {}> extends Configurable {
      * @param context The context object for the turn.
      * @param instance Current state information for this dialog.
      * @param reason The reason the dialog is ending.
-     * 
+     *
      * @remarks
      * Derived dialogs that need to perform logging or cleanup before ending should override this method.
      * By default, this method has no effect.
-     * 
+     *
      * The [DialogContext](xref:botbuilder-dialogs.DialogContext) calls this method when the current
      * dialog is ending.
-     * 
+     *
      * **See also**
      * - [DialogContext.cancelAllDialogs](xref:botbuilder-dialogs.DialogContext.cancelAllDialogs)
      * - [DialogContext.endDialog](xref:botbuilder-dialogs.DialogContext.endDialog)
@@ -480,13 +420,13 @@ export abstract class Dialog<O extends object = {}> extends Configurable {
         // No-op by default
     }
 
-    /// <summary>
-    /// Called when an event has been raised, using `DialogContext.emitEvent()`, by either the current dialog or a dialog that the current dialog started.
-    /// </summary>
-    /// <param name="dc">The dialog context for the current turn of conversation.</param>
-    /// <param name="e">The event being raised.</param>
-    /// <param name="cancellationToken">The cancellation token.</param>
-    /// <returns>True if the event is handled by the current dialog and bubbling should stop.</returns>
+    /**
+     * Called when an event has been raised, using `DialogContext.emitEvent()`, by either the current dialog or a dialog that the current dialog started.
+     *
+     * @param dc - The dialog context for the current turn of conversation.
+     * @param e - The event being raised.
+     * @returns True if the event is handled by the current dialog and bubbling should stop.
+     */
     public async onDialogEvent(dc: DialogContext, e: DialogEvent): Promise<boolean> {
         // Before bubble
         let handled = await this.onPreBubbleEvent(dc, e);
@@ -506,7 +446,7 @@ export abstract class Dialog<O extends object = {}> extends Configurable {
 
     /**
      * Called before an event is bubbled to its parent.
-     * 
+     *
      * @remarks
      * This is a good place to perform interception of an event as returning `true` will prevent
      * any further bubbling of the event to the dialogs parents and will also prevent any child
@@ -521,7 +461,7 @@ export abstract class Dialog<O extends object = {}> extends Configurable {
 
     /**
      * Called after an event was bubbled to all parents and wasn't handled.
-     * 
+     *
      * @remarks
      * This is a good place to perform default processing logic for an event. Returning `true` will
      * prevent any processing of the event by child dialogs.
@@ -541,6 +481,6 @@ export abstract class Dialog<O extends object = {}> extends Configurable {
      * ID's is `<dialog type>(this.hashedLabel('<dialog args>'))`.
      */
     protected onComputeId(): string {
-        throw new Error(`Dialog.onComputeId(): not implemented.`)
+        throw new Error(`Dialog.onComputeId(): not implemented.`);
     }
 }

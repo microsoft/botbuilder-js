@@ -18,6 +18,11 @@ export class IntExpression extends ExpressionProperty<number> {
         super(value, 0);
     }
 
+    /**
+     * Try to get the value.
+     * @param data Data to use for expression binding.
+     * @returns Value of int number
+     */
     public tryGetValue(data: object): { value: number; error: Error } {
         const result = super.tryGetValue(data);
         if (typeof result.value == 'number') {

@@ -30,6 +30,8 @@ const createMessageActivity = (text) => {
 const validateAnswers = (result) => {
     assert.notEqual(result.answers, undefined, 'there should be answers');
     assert.equal(Object.entries(result.entities.answer).length, 1, 'if there is a match there should only be 1 top answer');
+    assert.equal(result.entities.$instance.answer[0].startIndex, 0);
+    assert(result.entities.$instance.answer[0].endIndex);
 };
 
 describe('QnAMakerRecognizer', function() {

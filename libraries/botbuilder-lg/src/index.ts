@@ -28,3 +28,4 @@ export * from './customizedMemory';
 export * from './expander';
 export * from './multiLanguageLG';
 export * from './evaluationOptions';
+export * from './lgResource';

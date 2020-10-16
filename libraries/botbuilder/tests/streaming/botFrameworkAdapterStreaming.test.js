@@ -124,7 +124,7 @@ describe('BotFrameworkAdapter Streaming tests', () => {
                 });
             } catch (err) {
                 expect(err.statusCode).to.equal(StatusCodes.UNAUTHORIZED);
-                expect(err.message).to.equal('Unauthorized. No valid identity.');
+                expect(err.message).to.equal('Unauthorized. Is not authenticated');
                 const socketResponse = MockNetSocket.createNonSuccessResponse(StatusCodes.UNAUTHORIZED, err.message);
                 expect(writeSpy.called).to.be.true;
                 expect(writeSpy.calledWithExactly(socketResponse)).to.be.true;
@@ -134,7 +134,7 @@ describe('BotFrameworkAdapter Streaming tests', () => {
 
         it('returns status code 400 when request is missing Authorization header', async () => {
             const bot = new ActivityHandler();
-            settings = new TestAdapterSettings('appId', 'password');
+            const settings = new TestAdapterSettings('appId', 'password');
             const adapter = new BotFrameworkAdapter(settings);
             const requestWithoutAuthHeader = new MockHttpRequest();
             

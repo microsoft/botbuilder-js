@@ -38,11 +38,10 @@ export interface DateTimeResolution {
  * By default the prompt will return to the calling dialog a `DateTimeResolution[]`.
  */
 export class DateTimePrompt extends Prompt<DateTimeResolution[]> {
-
     /**
      * The prompts default locale that should be recognized.
      */
-    public defaultLocale: string|undefined;
+    public defaultLocale: string | undefined;
 
     /**
      * Creates a new DateTimePrompt instance.
@@ -55,7 +54,12 @@ export class DateTimePrompt extends Prompt<DateTimeResolution[]> {
         this.defaultLocale = defaultLocale;
     }
 
-    protected async onPrompt(context: TurnContext, state: any, options: PromptOptions, isRetry: boolean): Promise<void> {
+    protected async onPrompt(
+        context: TurnContext,
+        state: any,
+        options: PromptOptions,
+        isRetry: boolean
+    ): Promise<void> {
         if (isRetry && options.retryPrompt) {
             await context.sendActivity(options.retryPrompt, undefined, InputHints.ExpectingInput);
         } else if (options.prompt) {
@@ -71,7 +75,10 @@ export class DateTimePrompt extends Prompt<DateTimeResolution[]> {
         const result: PromptRecognizerResult<DateTimeResolution[]> = { succeeded: false };
         const activity: Activity = context.activity;
         const utterance: string = activity.text;
-        const locale: string =  activity.locale || this.defaultLocale || 'en-us';
+        if (!utterance) {
+            return result;
+        }
+        const locale: string = activity.locale || this.defaultLocale || 'en-us';
         const results: any[] = Recognizers.recognizeDateTime(utterance, locale);
         if (results.length > 0 && results[0].resolution) {
             result.succeeded = true;

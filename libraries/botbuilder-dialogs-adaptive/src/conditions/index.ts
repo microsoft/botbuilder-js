@@ -12,7 +12,6 @@ export * from './onCancelDialog';
 export * from './onChooseEntity';
 export * from './onChooseIntent';
 export * from './onChooseProperty';
-export * from './onClearProperty';
 export * from './onCondition';
 export * from './onConversationUpdateActivity';
 export * from './onDialogEvent';

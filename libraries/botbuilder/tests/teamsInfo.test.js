@@ -1,17 +1,10 @@
 const assert = require('assert');
 const nock = require('nock');
-const { TurnContext, MessageFactory } = require('botbuilder-core');
+const { TurnContext, MessageFactory, ActionTypes } = require('botbuilder-core');
 const { BotFrameworkAdapter, TeamsInfo } = require('../');
-
-beforeEach(function (done) {
-    nock.cleanAll();
-    done();
-});
-
-afterEach(function (done) {
-    nock.cleanAll();
-    done();
-});
+const { MicrosoftAppCredentials, ConnectorClient } = require('botframework-connector');
+const { Conversations } = require('botframework-connector/lib/connectorApi/operations');
+const { stub } = require('sinon');
 
 class TeamsInfoAdapter extends BotFrameworkAdapter {
     constructor() {
@@ -26,6 +19,17 @@ class TestContext extends TurnContext {
 }
 
 describe('TeamsInfo', () => {
+
+    beforeEach(function (done) {
+        nock.cleanAll();
+        done();
+    });
+    
+    afterEach(function (done) {
+        nock.cleanAll();
+        done();
+    });
+
     describe('sendMessageToTeamsChannel()', () => {
         it('should work with correct information', async() => {
             const newConversation = [
@@ -429,7 +433,17 @@ describe('TeamsInfo', () => {
             assert(fetchExpectation.isDone());
             assertMemberInfo(fetchedMember, member);
         });
+    });
 
+    describe('getTeamMember()', () => {
+        it('should throw error when teamId is not present', async () => {
+            try {
+                const context = new TestContext({ type: ActionTypes.message });
+                await TeamsInfo.getTeamMember(context);
+            } catch(err) {
+                assert.strictEqual(err.message, 'This method is only valid within the scope of a MS Teams Team.');
+            }
+        });
     });
 
     describe('getTeamMembers()', () => {
@@ -567,6 +581,90 @@ describe('TeamsInfo', () => {
                 assert.strictEqual(err.message, 'The getMembers operation needs a valid conversationId.');
             }
         });
+
+        it(`getMemberInternal() should error if an invalid conversationId is passed in.`, async () => {
+            try {
+                const results = await TeamsInfo.getMemberInternal({}, undefined);
+                console.error(results)
+                throw new Error('should have thrown an error');
+            } catch (err) {
+                assert.strictEqual(err.message, 'The getMember operation needs a valid conversationId.');
+            }
+        });
+
+        it(`getMemberInternal() should error if an invalid userId is passed in.`, async () => {
+            try {
+                const results = await TeamsInfo.getMemberInternal({}, 'conversationId', undefined);
+                console.error(results)
+                throw new Error('should have thrown an error');
+            } catch (err) {
+                assert.strictEqual(err.message, 'The getMember operation needs a valid userId.');
+            }
+        });
+
+        it(`getPagedMembersInternal() should error if an invalid conversationId is passed in.`, async () => {
+            try {
+                const results = await TeamsInfo.getPagedMembersInternal({}, undefined, 'options');
+                console.error(results)
+                throw new Error('should have thrown an error');
+            } catch (err) {
+                assert.strictEqual(err.message, 'The getPagedMembers operation needs a valid conversationId.');
+            }
+        });
+
+        it(`getPagedMembersInternal() should call connectorClient.conversations.getConversationPagedMembers()`, async function () {
+            const members = [
+                {
+                    "id": "29:User-One-Id",
+                    "name": "User One",
+                    "objectId": "User-One-Object-Id",
+                    "givenName": "User",
+                    "surname": "One",
+                    "email": "User.One@microsoft.com",
+                    "userPrincipalName": "user1@microsoft.com",
+                    "tenantId": "tenantId-Guid"
+                },
+                {
+                    "id": "29:User-Two-Id",
+                    "name": "User Two",
+                    "objectId": "User-Two-Object-Id",
+                    "givenName": "User",
+                    "surname": "Two",
+                    "email": "User.Two@microsoft.com",
+                    "userPrincipalName": "user2@microsoft.com",
+                    "tenantId": "tenantId-Guid"
+                }
+            ];
+            const conversations = new Conversations({ id: 'convo1', id: 'convo2' });
+            const getPagedMembers = stub(conversations, 'getConversationPagedMembers');
+            getPagedMembers.returns({ continuationToken: 'token', members: members});
+            const connector = new ConnectorClient(new MicrosoftAppCredentials('', ''));
+            connector.conversations = conversations;
+
+            const result = await TeamsInfo.getPagedMembersInternal(connector, 'convo1');
+
+            assert.strictEqual(getPagedMembers.calledOnce, true, `should have called conversations.getConversationPagedMembers`);
+        });
+
+        it(`getTeamId() should error if an invalid context is passed in.`, async () => {
+            try {
+                const results = await TeamsInfo.getTeamId(undefined);
+                console.error(results)
+                throw new Error('should have thrown an error');
+            } catch (err) {
+                assert.strictEqual(err.message, 'Missing context parameter');
+            }
+        });
+
+        it(`getTeamId() should error if an invalid activity is passed in.`, async () => {
+            try {
+                const results = await TeamsInfo.getTeamId({ activity: undefined });
+                console.error(results)
+                throw new Error('should have thrown an error');
+            } catch (err) {
+                assert.strictEqual(err.message, 'Missing activity on context');
+            }
+        });
     });
 });
 
@@ -639,7 +737,7 @@ const groupChatActivity = {
             "id": "tenantId-Guid"
         }
     }
-}
+};
 
 const teamActivity = {
     "text": "<at>Teams Bot</at> hi\n",
@@ -691,4 +789,4 @@ const teamActivity = {
             "id": "tenantId-Guid"
         }
     }
-}
+};

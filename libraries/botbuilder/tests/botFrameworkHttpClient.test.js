@@ -1,6 +1,6 @@
 const { strictEqual } = require('assert');
 const { BotFrameworkHttpClient } = require('../');
-const { AuthenticationConstants, SimpleCredentialProvider, MicrosoftAppCredentials } = require('botframework-connector');
+const { AuthenticationConstants, GovernmentConstants, JwtTokenValidation, SimpleCredentialProvider, MicrosoftAppCredentials, AppCredentials } = require('botframework-connector');
 const nock = require('nock');
 
 class TestBotFrameworkHttpClient extends BotFrameworkHttpClient {
@@ -28,7 +28,7 @@ describe('BotFrameworkHttpClient', function() {
                 const client = new BotFrameworkHttpClient(new SimpleCredentialProvider('', ''));
                 strictEqual(client.channelService, 'envChannelService');
             } finally {
-                process.env[AuthenticationConstants.ChannelService] = undefined;
+                delete process.env[AuthenticationConstants.ChannelService];
             }
         });
         
@@ -79,6 +79,52 @@ describe('BotFrameworkHttpClient', function() {
             strictEqual(response.status, 200);
         });
 
+        it('should fail to make call with wrong credentials', async () => {
+
+            nock('http://skillUrl')
+            .post('/api/good')
+            .reply(200, { id: 'some-id' });
+
+            const credentialProvider = new SimpleCredentialProvider('test-app-id', 'test-app-Secret');
+            const client = new TestBotFrameworkHttpClient(credentialProvider, 'channels');
+            try {
+                await client.postActivity('fromBotId', 'toBotId', 'http://skillUrl/api/good', 'serviceUrl', 'conversationId', { type: 'message', conversation: { } });
+            } catch(e) {
+                strictEqual(e.message, 'BotFrameworkHttpClient.postActivity(): Unable to get appCredentials to connect to the skill');
+            }
+        });
+
+        it('should fail to make call when no activity is provided', async () => {
+            nock('http://skillUrl')
+                .post('/api/good', (body) => body.recipient)
+                .reply(200, { id: 'some-id' });
+        
+            const credentialProvider = new SimpleCredentialProvider('this-is-not-the-app-id-your-looking-for', '1');
+            const client = new TestBotFrameworkHttpClient(credentialProvider, 'channels');
+            const fromBotId = 'this-is-not-the-app-id-your-looking-for';
+            try {
+                await client.postActivity(fromBotId, 'toBotId', 'http://skillUrl/api/good', 'serviceUrl', 'conversationId');
+            } catch(e) {
+                strictEqual(e.message, 'BotFrameworkHttpClient.postActivity(): missing activity');
+            }
+        });
+
+        it('should fail to make call when activity.conversation is undefined', async () => {
+            nock('http://skillUrl')
+                .post('/api/good', (body) => body.recipient)
+                .reply(200, { id: 'some-id' });
+        
+            const credentialProvider = new SimpleCredentialProvider('this-is-not-the-app-id-your-looking-for', '1');
+            const client = new TestBotFrameworkHttpClient(credentialProvider, 'channels');
+            const fromBotId = 'this-is-not-the-app-id-your-looking-for';
+            const activity = { type: 'message' };
+            try {
+                await client.postActivity(fromBotId, 'toBotId', 'http://skillUrl/api/good', 'serviceUrl', 'conversationId', activity);
+            } catch(e) {
+                strictEqual(e.message, 'BotFrameworkHttpClient.postActivity(): Activity must have a ConversationReference');
+            }
+        });
+
         it('should add empty recipient if missing from activity', async () => {
             nock('http://skillUrl')
                 .post('/api/good', (body) => body.recipient)
@@ -105,6 +151,22 @@ describe('BotFrameworkHttpClient', function() {
             const forwardedActivity = { type: 'message', conversation: { }, relatesTo: originalRelatesTo };
             await client.postActivity(fromBotId, 'toBotId', 'http://skillUrl/api/good', 'serviceUrl', 'conversationId', forwardedActivity);
             strictEqual(forwardedActivity.relatesTo, originalRelatesTo);
+        });
+    });
+
+    describe('BuildCredentials', () => {
+        it('should return credentials when channel service is goverment', async () => {
+            const credentialProvider = new SimpleCredentialProvider('', '');
+            const client = new BotFrameworkHttpClient(credentialProvider, 'https://botframework.azure.us');
+            const credentials = await client.buildCredentials('test-app-id', 'test-scope');
+            strictEqual(credentials.oAuthEndpoint, GovernmentConstants.ToChannelFromBotLoginUrl);
+        });
+
+        it('should return credentials when channel service different than goverment', async () => {
+            const credentialProvider = new SimpleCredentialProvider('', '');
+            const client = new BotFrameworkHttpClient(credentialProvider, 'channels');
+            const credentials = await client.buildCredentials('test-app-id', 'test-scope');
+            strictEqual(credentials.oAuthEndpoint, AuthenticationConstants.ToChannelFromBotLoginUrl);
         });
     });
 });

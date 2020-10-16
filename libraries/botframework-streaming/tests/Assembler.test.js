@@ -6,64 +6,58 @@ const PayloadAssembler = require('../lib/assemblers/payloadAssembler');
 const PayloadAssemblerManager = require('../lib/payloads/payloadAssemblerManager');
 var expect = chai.expect;
 
-describe('ReceiveRequestAssembler', () => {
 
-});
+const streamManager = new StreamManager.StreamManager();
 
 describe('PayloadAssembler', () => {
     it('constructs correctly.', () => {
-        let header = {payloadType: PayloadTypes.PayloadTypes.request, payloadLength: '42', id: '100', end: true};
-        let sm = new StreamManager.StreamManager();
-        let rra = new PayloadAssembler.PayloadAssembler(sm, {header: header});
+        let header = { payloadType: PayloadTypes.PayloadTypes.request, payloadLength: '42', id: '100', end: true };
+        let rra = new PayloadAssembler.PayloadAssembler(streamManager, { header: header });
 
         expect(rra.id).equals('100');
-        expect(rra._streamManager).equals(sm);
+        expect(rra._streamManager).equals(streamManager);
     });
 
     it('closes without throwing', () => {
-        let header = {payloadType: PayloadTypes.PayloadTypes.request, payloadLength: '42', id: '100', end: true};
-        let sm = new StreamManager.StreamManager();
+        let header = { payloadType: PayloadTypes.PayloadTypes.request, payloadLength: '42', id: '99', end: true };
 
-        let rra = new PayloadAssembler.PayloadAssembler(sm, {header: header});
+        let rra = new PayloadAssembler.PayloadAssembler(streamManager, { header: header });
 
-        expect(() => {rra.close();}).to.not.throw;
+        expect(() => { rra.close(); }).to.not.throw;
     });
 
     it('returns a new stream.', () => {
-        let header = {payloadType: PayloadTypes.PayloadTypes.response, payloadLength: '42', id: '100', end: true};
-        let sm = new StreamManager.StreamManager();
+        let header = { payloadType: PayloadTypes.PayloadTypes.response, payloadLength: '42', id: '100', end: true };
 
-        let rra = new PayloadAssembler.PayloadAssembler(sm, {header: header});
+        let rra = new PayloadAssembler.PayloadAssembler(streamManager, { header: header });
 
         expect(rra.createPayloadStream()).to.be.instanceOf(SubscribableStream.SubscribableStream);
     });
 
     it('processes a Request without throwing.', (done) => {
-        let header = {payloadType: PayloadTypes.PayloadTypes.request, payloadLength: '5', id: '100', end: true};
-        let sm = new StreamManager.StreamManager();
+        let header = { payloadType: PayloadTypes.PayloadTypes.request, payloadLength: '5', id: '98', end: true };
         let s = new SubscribableStream.SubscribableStream();
         s.write('12345');
-        let rp = {verb: 'POST', path: '/some/path'};
+        let rp = { verb: 'POST', path: '/some/path' };
         rp.streams = s;
-        let rra = new PayloadAssembler.PayloadAssembler(sm, {header: header, onCompleted: function() {done();} });
+        let rra = new PayloadAssembler.PayloadAssembler(streamManager, { header: header, onCompleted: function() { done(); } });
         rra.onReceive(header, s, 5);
         rra.close();
     });
 
     it('processes a Response without throwing.', (done) => {
-        let header = {payloadType: PayloadTypes.PayloadTypes.response, payloadLength: '5', id: '100', end: true};
-        let sm = new StreamManager.StreamManager();
+        let header = { payloadType: PayloadTypes.PayloadTypes.response, payloadLength: '5', id: '100', end: true };
         let s = new SubscribableStream.SubscribableStream();
         s.write('12345');
-        let rp = {statusCode: 200};
+        let rp = { statusCode: 200 };
         rp.streams = s;
-        let rra = new PayloadAssembler.PayloadAssembler(sm, {header: header, onCompleted: function() {done();} });
+        let rra = new PayloadAssembler.PayloadAssembler(streamManager, { header: header, onCompleted: function() { done(); } });
         rra.onReceive(header, s, 5);
     });
 
     it('assigns values when constructed', () => {
-        let header = {payloadType: PayloadTypes.PayloadTypes.stream, payloadLength: 50, id: '1', end: undefined};
-        let csa = new PayloadAssembler.PayloadAssembler(new StreamManager.StreamManager(), {header: header});
+        let header = { payloadType: PayloadTypes.PayloadTypes.stream, payloadLength: 50, id: '1', end: undefined };
+        let csa = new PayloadAssembler.PayloadAssembler(streamManager, { header: header });
         expect(csa.id)
             .equals('1');
         expect(csa.contentLength)
@@ -75,15 +69,15 @@ describe('PayloadAssembler', () => {
     });
 
     it('returns a Stream', () => {
-        let header = {payloadType: PayloadTypes.PayloadTypes.stream, payloadLength: 50, id: '1', end: true};
-        let csa = new PayloadAssembler.PayloadAssembler(new StreamManager.StreamManager(), {header: header});
+        let header = { payloadType: PayloadTypes.PayloadTypes.stream, payloadLength: 50, id: '1', end: true };
+        let csa = new PayloadAssembler.PayloadAssembler(streamManager, { header: header });
         expect(csa.createPayloadStream())
             .instanceOf(SubscribableStream.SubscribableStream);
     });
 
     it('closes a Stream', () => {
-        let header = {payloadType: PayloadTypes.PayloadTypes.stream, payloadLength: 50, id: '1', end: true};
-        let csa = new PayloadAssembler.PayloadAssembler(new StreamManager.StreamManager(), {header: header});
+        let header = { payloadType: PayloadTypes.PayloadTypes.stream, payloadLength: 50, id: '97', end: true };
+        let csa = new PayloadAssembler.PayloadAssembler(streamManager, { header: header });
         expect(csa.createPayloadStream())
             .instanceOf(SubscribableStream.SubscribableStream);
         expect(csa.close()).to.not.throw;
@@ -92,23 +86,23 @@ describe('PayloadAssembler', () => {
 
 describe('PayloadAssemblerManager', () => {
     it('cretes a response stream', (done) => {
-        let p = new PayloadAssemblerManager.PayloadAssemblerManager(new StreamManager.StreamManager(), () => done(), () => done());
-        let head = {payloadType: PayloadTypes.PayloadTypes.response, payloadLength: '42', id: '100', end: true};
+        let p = new PayloadAssemblerManager.PayloadAssemblerManager(streamManager, () => done(), () => done());
+        let head = { payloadType: PayloadTypes.PayloadTypes.response, payloadLength: '42', id: '100', end: true };
         expect(p.getPayloadStream(head)).to.be.instanceOf(SubscribableStream.SubscribableStream);
         done();
     });
 
 
     it('cretes a request stream', (done) => {
-        let p = new PayloadAssemblerManager.PayloadAssemblerManager(new StreamManager.StreamManager(), () => done(), () => done());
-        let head = {payloadType: PayloadTypes.PayloadTypes.request, payloadLength: '42', id: '100', end: true};
+        let p = new PayloadAssemblerManager.PayloadAssemblerManager(streamManager, () => done(), () => done());
+        let head = { payloadType: PayloadTypes.PayloadTypes.request, payloadLength: '42', id: '100', end: true };
         expect(p.getPayloadStream(head)).to.be.instanceOf(SubscribableStream.SubscribableStream);
         done();
     });
 
     it('does not throw when receiving a request', (done) => {
-        let p = new PayloadAssemblerManager.PayloadAssemblerManager(new StreamManager.StreamManager(), () => done(), () => done());
-        let head = {payloadType: PayloadTypes.PayloadTypes.request, payloadLength: '42', id: '100', end: true};
+        let p = new PayloadAssemblerManager.PayloadAssemblerManager(streamManager, () => done(), () => done());
+        let head = { payloadType: PayloadTypes.PayloadTypes.request, payloadLength: '42', id: '100', end: true };
         let s = p.getPayloadStream(head);
         expect(s).to.be.instanceOf(SubscribableStream.SubscribableStream);
         expect(p.onReceive(head, s, 0)).to.not.throw;
@@ -116,8 +110,8 @@ describe('PayloadAssemblerManager', () => {
     });
 
     it('does not throw when receiving a stream', (done) => {
-        let p = new PayloadAssemblerManager.PayloadAssemblerManager(new StreamManager.StreamManager(), () => done(), () => done());
-        let head = {payloadType: PayloadTypes.PayloadTypes.stream, payloadLength: '42', id: '100', end: true};
+        let p = new PayloadAssemblerManager.PayloadAssemblerManager(streamManager, () => done(), () => done());
+        let head = { payloadType: PayloadTypes.PayloadTypes.stream, payloadLength: '42', id: '100', end: true };
         let s = p.getPayloadStream(head);
         expect(s).to.be.instanceOf(SubscribableStream.SubscribableStream);
         expect(p.onReceive(head, s, 0)).to.not.throw;
@@ -125,8 +119,8 @@ describe('PayloadAssemblerManager', () => {
     });
 
     it('does not throw when receiving a response', (done) => {
-        let p = new PayloadAssemblerManager.PayloadAssemblerManager(new StreamManager.StreamManager(), () => done(), () => done());
-        let head = {payloadType: PayloadTypes.PayloadTypes.response, payloadLength: '42', id: '100', end: true};
+        let p = new PayloadAssemblerManager.PayloadAssemblerManager(streamManager, () => done(), () => done());
+        let head = { payloadType: PayloadTypes.PayloadTypes.response, payloadLength: '42', id: '100', end: true };
         let s = p.getPayloadStream(head);
         expect(s).to.be.instanceOf(SubscribableStream.SubscribableStream);
         expect(p.onReceive(head, s, 0)).to.not.throw;
@@ -134,8 +128,8 @@ describe('PayloadAssemblerManager', () => {
     });
 
     it('returns undefined when asked to create an existing stream', (done) => {
-        let p = new PayloadAssemblerManager.PayloadAssemblerManager(new StreamManager.StreamManager(), () => done(), () => done());
-        let head = {payloadType: PayloadTypes.PayloadTypes.request, payloadLength: '42', id: '100', end: true};
+        let p = new PayloadAssemblerManager.PayloadAssemblerManager(streamManager, () => done(), () => done());
+        let head = { payloadType: PayloadTypes.PayloadTypes.request, payloadLength: '42', id: '100', end: true };
         let s = p.getPayloadStream(head);
         expect(s).to.be.instanceOf(SubscribableStream.SubscribableStream);
         expect(p.getPayloadStream(head)).to.be.undefined;
@@ -143,25 +137,23 @@ describe('PayloadAssemblerManager', () => {
     });
 
     it('throws if not given an ID', () => {
-        let header = {payloadType: PayloadTypes.PayloadTypes.request, payloadLength: '5', id: undefined, end: true};
-        let sm = new StreamManager.StreamManager();
-        try{
-            let rra = new PayloadAssembler.PayloadAssembler(sm, {header: header, onCompleted: function() {done();} });
-        } catch(result) {
+        let header = { payloadType: PayloadTypes.PayloadTypes.request, payloadLength: '5', id: undefined, end: true };
+        try {
+            new PayloadAssembler.PayloadAssembler(streamManager, { header: header, onCompleted: function() { done(); } });
+        } catch (result) {
             expect(result.message).to.equal('An ID must be supplied when creating an assembler.');
         }
     });
 
     it('processes a response with streams without throwing.', (done) => {
-        let header = {payloadType: PayloadTypes.PayloadTypes.response, payloadLength: '5', id: '100', end: true};
-        let sm = new StreamManager.StreamManager();
+        let header = { payloadType: PayloadTypes.PayloadTypes.response, payloadLength: '5', id: '96', end: true };
         let s = new SubscribableStream.SubscribableStream();
         s.write('{"statusCode": "12345","streams": [{"id": "1","contentType": "text","length": "2"},{"id": "2","contentType": "text","length": "2"},{"id": "3","contentType": "text","length": "2"}]}');
-        let rp = {verb: 'POST', path: '/some/path'};
+        let rp = { verb: 'POST', path: '/some/path' };
         rp.streams = [];
         rp.streams.push(s);
 
-        let rra = new PayloadAssembler.PayloadAssembler(sm, {header: header, onCompleted: function() {done();} });
+        let rra = new PayloadAssembler.PayloadAssembler(streamManager, { header: header, onCompleted: function() { done(); } });
         rra.onReceive(header, s, 5);
         rra.close();
     });

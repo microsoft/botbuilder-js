@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     "target": "es5",
-    "lib": ["es2015"],
+    "lib": ["dom", "es2015"],
     "module": "commonjs",
     "declaration": true,
     "declarationMap": true,
@@ -14,9 +14,10 @@
     "browser",
     "lib",
     "node_modules",
-    "./src/index.ts",
-    "./src/webSocket/index.ts",
-    "./src/webSocket/nodeWebSocket.ts",
-    "src/namedPipe"
+    "src/index.ts",
+    "src/namedPipe",
+    "src/webSocket/index.ts",
+    "src/webSocket/node*.ts",
+    "src/webSocket/factories"
   ]
 }

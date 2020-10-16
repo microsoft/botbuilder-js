@@ -9,7 +9,7 @@ function cachedState(context, stateKey) {
     return cached ? cached.state : undefined;
 }
 
-describe(`BotState`, function () {
+describe(`BotState`, function() {
     this.timeout(5000);
 
     const storage = new MemoryStorage();
@@ -19,13 +19,13 @@ describe(`BotState`, function () {
         assert(context, `context not passed into storage stateKey factory.`);
         return storageKey;
     });
-    it(`should return undefined from get() if nothing cached.`, function (done) {
+    it(`should return undefined from get() if nothing cached.`, function(done) {
         const state = botState.get(context);
         assert(state === undefined, `state returned.`);
         done();
     });
 
-    it(`should load and save state from storage.`, async function () {
+    it(`should load and save state from storage.`, async function() {
         await botState.load(context);
         let state = cachedState(context, botState.stateKey);
         assert(state, `State not loaded`);
@@ -37,7 +37,7 @@ describe(`BotState`, function () {
         assert(items[storageKey].test === 'foo', `Missing test value in stored state.`);        
     });
 
-    it(`should force load() of state from storage.`, function (done) {
+    it(`should force load() of state from storage.`, function(done) {
         botState.load(context, () => {
             const state = cachedState(context, botState.stateKey);
             assert(state.test === 'foo', `invalid initial state`);
@@ -48,7 +48,7 @@ describe(`BotState`, function () {
         }).then(() => done());
     });
 
-    it(`should clear() state storage.`, async function () {
+    it(`should clear() state storage.`, async function() {
         await botState.load(context);
         assert(cachedState(context, botState.stateKey).test === 'foo', `invalid initial state`);
         await botState.clear(context);
@@ -60,7 +60,7 @@ describe(`BotState`, function () {
         assert(!items[storageKey].hasOwnProperty('test'), `state not cleared from storage.`);        
     });
 
-    it(`should delete() state storage.`, async function () {
+    it(`should delete() state storage.`, async function() {
         await botState.load(context);
         assert(cachedState(context, botState.stateKey), `invalid initial state`);
         await botState.delete(context);
@@ -70,7 +70,7 @@ describe(`BotState`, function () {
         assert(!items.hasOwnProperty(storageKey), `state not removed from storage.`);        
     });
 
-    it(`should force immediate saveChanges() of state to storage.`, function (done) {
+    it(`should force immediate saveChanges() of state to storage.`, function(done) {
         botState.load(context).then(() => {
             const state = cachedState(context, botState.stateKey);
             assert(!state.hasOwnProperty('foo'), `invalid initial state`);
@@ -83,7 +83,7 @@ describe(`BotState`, function () {
         }).then(() => done());
     });
 
-    it(`should load() from storage if cached state missing.`, function (done) {
+    it(`should load() from storage if cached state missing.`, function(done) {
         context.turnState.set(botState.stateKey, undefined);
         botState.load(context).then((state) => {
             assert(state.test === 'foo', `state not loaded.`);
@@ -91,7 +91,7 @@ describe(`BotState`, function () {
         });
     });
 
-    it(`should load() from storage if cached.state missing.`, function (done) {
+    it(`should load() from storage if cached.state missing.`, function(done) {
         context.turnState.set(botState.stateKey, {});
         botState.load(context).then((state) => {
             assert(state.test === 'foo', `state not loaded.`);
@@ -99,25 +99,18 @@ describe(`BotState`, function () {
         });
     });
 
-    it(`should load() from cache.`, function (done) {
-        botState.load(context).then((state) => {
-            assert(state.test === 'foo', `state not loaded.`);
-            done();
-        });
-    });
-
-    it(`should force saveChanges() to storage of an empty state object.`, function (done) {
+    it(`should force saveChanges() to storage of an empty state object.`, function(done) {
         context.turnState.set(botState.stateKey, undefined);
         botState.saveChanges(context, true).then(() => done());
     });
 
-    it(`should no-op calls to clear() when nothing cached.`, function (done) {
+    it(`should no-op calls to clear() when nothing cached.`, function(done) {
         context.turnState.set(botState.stateKey, undefined);
         botState.clear(context);
         done();
     });
 
-    it(`should create new PropertyAccessors`, function (done) {
+    it(`should create new PropertyAccessors`, function(done) {
         let count = botState.createProperty('count', 1);
         assert(count !== undefined, `did not successfully create PropertyAccessor.`);
         done();

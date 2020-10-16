@@ -8,12 +8,18 @@
 import { Dialog, TurnPath } from 'botbuilder-dialogs';
 import { Expression, ExpressionParserInterface } from 'adaptive-expressions';
 import { AdaptiveEvents } from '../adaptiveEvents';
-import { OnDialogEvent } from './onDialogEvent';
+import { OnDialogEvent, OnDialogEventConfiguration } from './onDialogEvent';
+
+export interface OnChooseEntityConfiguration extends OnDialogEventConfiguration {
+    property?: string;
+    entity?: string;
+}
 
 /**
  * Triggered to choose between different possible entity resolutions.
  */
-export class OnChooseEntity extends OnDialogEvent {
+export class OnChooseEntity extends OnDialogEvent implements OnChooseEntityConfiguration {
+    public static $kind = 'Microsoft.OnChooseEntity';
 
     public constructor(property?: string, entity?: string, actions: Dialog[] = [], condition?: string) {
         super(AdaptiveEvents.chooseEntity, actions, condition);
@@ -34,10 +40,10 @@ export class OnChooseEntity extends OnDialogEvent {
     public getExpression(parser: ExpressionParserInterface): Expression {
         const expressions = [super.getExpression(parser)];
         if (this.property) {
-            expressions.push(parser.parse(`${ TurnPath.dialogEvent }.value.property == '${ this.property }'`));
+            expressions.push(parser.parse(`${TurnPath.dialogEvent}.value.property == '${this.property}'`));
         }
         if (this.entity) {
-            expressions.push(parser.parse(`${ TurnPath.dialogEvent }.value.entity.name == '${ this.entity }'`));
+            expressions.push(parser.parse(`${TurnPath.dialogEvent}.value.entity.name == '${this.entity}'`));
         }
 
         return Expression.andExpression.apply(Expression, expressions);

@@ -19,14 +19,16 @@ export class EnumExpression<T> extends ExpressionProperty<T> {
         super(value);
     }
 
+    /**
+     * Set an enum value.
+     * @param value value to set.
+     */
     public setValue(value: T | string | Expression): void {
-        this.value = undefined;
-        this.expression = undefined;
+        super.setValue(undefined);
 
         if (typeof value == 'string' && !value.startsWith('=')) {
             // Initialize value
             this.value = value as T;
-            this.expression = undefined;
             return;
         }
 

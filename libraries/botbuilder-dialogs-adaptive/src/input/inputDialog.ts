@@ -5,23 +5,65 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { Dialog, DialogContext, DialogTurnResult, DialogEvent, DialogReason, Choice, ListStyle, ChoiceFactoryOptions, ChoiceFactory, DialogEvents, TurnPath } from 'botbuilder-dialogs';
+import {
+    BoolExpression,
+    BoolExpressionConverter,
+    Expression,
+    ExpressionParser,
+    IntExpression,
+    IntExpressionConverter,
+    StringExpression,
+    StringExpressionConverter,
+    ValueExpression,
+    ValueExpressionConverter,
+} from 'adaptive-expressions';
 import { ActivityTypes, Activity, InputHints, MessageFactory } from 'botbuilder-core';
-import { ExpressionParser } from 'adaptive-expressions';
+import {
+    Choice,
+    ChoiceFactory,
+    ChoiceFactoryOptions,
+    Converter,
+    ConverterFactory,
+    Dialog,
+    DialogConfiguration,
+    DialogContext,
+    DialogEvent,
+    DialogEvents,
+    DialogReason,
+    DialogTurnResult,
+    ListStyle,
+    TurnPath,
+    DialogStateManager,
+} from 'botbuilder-dialogs';
 import { TemplateInterface } from '../template';
-import { ValueExpression, StringExpression, BoolExpression, IntExpression } from 'adaptive-expressions';
 import { AdaptiveEvents } from '../adaptiveEvents';
 import { ActivityTemplate } from '../templates/activityTemplate';
 import { StaticActivityTemplate } from '../templates/staticActivityTemplate';
+import { ActivityTemplateConverter } from '../converters';
 
 export enum InputState {
     missing = 'missing',
     unrecognized = 'unrecognized',
     invalid = 'invalid',
-    valid = 'valid'
+    valid = 'valid',
 }
 
-export abstract class InputDialog extends Dialog {
+export interface InputDialogConfiguration extends DialogConfiguration {
+    alwaysPrompt?: boolean | string | Expression | BoolExpression;
+    allowInterruptions?: boolean | string | Expression | BoolExpression;
+    property?: string | Expression | StringExpression;
+    value?: unknown | ValueExpression;
+    prompt?: string | Partial<Activity> | TemplateInterface<Partial<Activity>, DialogStateManager>;
+    unrecognizedPrompt?: string | Partial<Activity> | TemplateInterface<Partial<Activity>, DialogStateManager>;
+    invalidPrompt?: string | Partial<Activity> | TemplateInterface<Partial<Activity>, DialogStateManager>;
+    defaultValueResponse?: string | Partial<Activity> | TemplateInterface<Partial<Activity>, DialogStateManager>;
+    validations?: string[];
+    maxTurnCount?: number | string | Expression | IntExpression;
+    defaultValue?: unknown | ValueExpression;
+    disabled?: boolean | string | Expression | BoolExpression;
+}
+
+export abstract class InputDialog extends Dialog implements InputDialogConfiguration {
     public static OPTIONS_PROPERTY = 'this.options';
     public static VALUE_PROPERTY = 'this.value';
     public static TURN_COUNT_PROPERTY = 'this.turnCount';
@@ -49,22 +91,22 @@ export abstract class InputDialog extends Dialog {
     /**
      * The activity to send to the user.
      */
-    public prompt: TemplateInterface<Partial<Activity>>;
+    public prompt: TemplateInterface<Partial<Activity>, DialogStateManager>;
 
     /**
      * The activity template for retrying prompt.
      */
-    public unrecognizedPrompt: TemplateInterface<Partial<Activity>>;
+    public unrecognizedPrompt: TemplateInterface<Partial<Activity>, DialogStateManager>;
 
     /**
      * The activity template to send to the user whenever the value provided is invalid or not.
      */
-    public invalidPrompt: TemplateInterface<Partial<Activity>>;
+    public invalidPrompt: TemplateInterface<Partial<Activity>, DialogStateManager>;
 
     /**
      * The activity template to send when maxTurnCount has be reached and the default value is used.
      */
-    public defaultValueResponse: TemplateInterface<Partial<Activity>>;
+    public defaultValueResponse: TemplateInterface<Partial<Activity>, DialogStateManager>;
 
     /**
      * The expressions to run to validate the input.
@@ -86,16 +128,45 @@ export abstract class InputDialog extends Dialog {
      */
     public disabled?: BoolExpression;
 
+    public getConverter(property: keyof InputDialogConfiguration): Converter | ConverterFactory {
+        switch (property) {
+            case 'alwaysPrompt':
+                return new BoolExpressionConverter();
+            case 'allowInterruptions':
+                return new BoolExpressionConverter();
+            case 'property':
+                return new StringExpressionConverter();
+            case 'value':
+                return new ValueExpressionConverter();
+            case 'prompt':
+                return new ActivityTemplateConverter();
+            case 'unrecognizedPrompt':
+                return new ActivityTemplateConverter();
+            case 'invalidPrompt':
+                return new ActivityTemplateConverter();
+            case 'defaultValueResponse':
+                return new ActivityTemplateConverter();
+            case 'maxTurnCount':
+                return new IntExpressionConverter();
+            case 'defaultValue':
+                return new ValueExpressionConverter();
+            case 'disabled':
+                return new BoolExpressionConverter();
+            default:
+                return super.getConverter(property);
+        }
+    }
+
     public constructor(property?: string, prompt?: Partial<Activity> | string) {
         super();
         if (property) {
             this.property = new StringExpression(property);
         }
         if (prompt) {
-            if (typeof prompt === 'string') { 
-                this.prompt = new ActivityTemplate(prompt); 
+            if (typeof prompt === 'string') {
+                this.prompt = new ActivityTemplate(prompt);
             } else {
-                this.prompt = new StaticActivityTemplate(prompt); 
+                this.prompt = new StaticActivityTemplate(prompt);
             }
         }
     }
@@ -116,7 +187,10 @@ export abstract class InputDialog extends Dialog {
         }
 
         // Recognize input
-        const state = (this.alwaysPrompt && this.alwaysPrompt.getValue(dc.state)) ? InputState.missing : await this.recognizeInput(dc, 0);
+        const state =
+            this.alwaysPrompt && this.alwaysPrompt.getValue(dc.state)
+                ? InputState.missing
+                : await this.recognizeInput(dc, 0);
         if (state == InputState.valid) {
             // Return input
             const property = this.property.getValue(dc.state);
@@ -153,7 +227,15 @@ export abstract class InputDialog extends Dialog {
         } else {
             if (this.defaultValue) {
                 if (this.defaultValueResponse) {
-                    const response = await this.defaultValueResponse.bindToData(dc.context, dc.state);
+                    const response = await this.defaultValueResponse.bind(dc, dc.state);
+                    this.telemetryClient.trackEvent({
+                        name: 'GeneratorResult',
+                        properties: {
+                            template: this.defaultValueResponse,
+                            result: response || '',
+                        },
+                    });
+
                     await dc.context.sendActivity(response);
                 }
 
@@ -200,36 +282,46 @@ export abstract class InputDialog extends Dialog {
 
     protected async onRenderPrompt(dc: DialogContext, state: InputState): Promise<Partial<Activity>> {
         let msg: Partial<Activity>;
+        let template: TemplateInterface<Partial<Activity>, DialogStateManager>;
+
         switch (state) {
             case InputState.unrecognized:
                 if (this.unrecognizedPrompt) {
-                    msg = await this.unrecognizedPrompt.bindToData(dc.context, dc.state);
+                    template = this.unrecognizedPrompt;
+                    msg = await this.unrecognizedPrompt.bind(dc, dc.state);
                 } else if (this.invalidPrompt) {
-                    msg = await this.invalidPrompt.bindToData(dc.context, dc.state);
+                    template = this.invalidPrompt;
+                    msg = await this.invalidPrompt.bind(dc, dc.state);
                 }
                 break;
             case InputState.invalid:
                 if (this.invalidPrompt) {
-                    msg = await this.invalidPrompt.bindToData(dc.context, dc.state);
+                    template = this.invalidPrompt;
+                    msg = await this.invalidPrompt.bind(dc, dc.state);
                 } else if (this.unrecognizedPrompt) {
-                    msg = await this.unrecognizedPrompt.bindToData(dc.context, dc.state);
+                    template = this.unrecognizedPrompt;
+                    msg = await this.unrecognizedPrompt.bind(dc, dc.state);
                 }
                 break;
         }
 
         if (!msg) {
-            msg = await this.prompt.bindToData(dc.context, dc.state);
+            template = this.prompt;
+            msg = await this.prompt.bind(dc, dc.state);
         }
 
         msg.inputHint = InputHints.ExpectingInput;
-        return msg; 
-    }
 
-    protected getDefaultInput(dc: DialogContext): any {
-        const text = dc.context.activity.text;
-        return typeof text == 'string' && text.length > 0 ? text : undefined;
-    }
+        this.telemetryClient.trackEvent({
+            name: 'GeneratorResult',
+            properties: {
+                template: template,
+                result: msg,
+            },
+        });
 
+        return msg;
+    }
 
     /**
      * Helper function to compose an output activity containing a set of choices.
@@ -278,7 +370,11 @@ export abstract class InputDialog extends Dialog {
         // Update clone of prompt with text, actions and attachments
         const clone = JSON.parse(JSON.stringify(prompt)) as Activity;
         clone.text = msg.text;
-        if (msg.suggestedActions && Array.isArray(msg.suggestedActions.actions) && msg.suggestedActions.actions.length > 0) {
+        if (
+            msg.suggestedActions &&
+            Array.isArray(msg.suggestedActions.actions) &&
+            msg.suggestedActions.actions.length > 0
+        ) {
             clone.suggestedActions = msg.suggestedActions;
         }
 
@@ -308,7 +404,7 @@ export abstract class InputDialog extends Dialog {
 
         const activityProcessed = dc.state.getValue(TurnPath.activityProcessed);
         if (!activityProcessed && !input && turnCount > 0) {
-            if ((this.constructor.name) == 'AttachmentInput') {
+            if (this.constructor.name == 'AttachmentInput') {
                 input = dc.context.activity.attachments || [];
             } else {
                 input = dc.context.activity.text;

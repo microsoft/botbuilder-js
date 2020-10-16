@@ -1,5 +1,5 @@
 /**
- * @module botbuilder
+ * @module botframework-connector
  */
 /**
  * Copyright (c) Microsoft Corporation. All rights reserved.
@@ -35,7 +35,7 @@ export interface ICredentialProvider {
      * @param  {string} appId bot appid
      * @returns {Promise<string|null>} password or null for invalid appid
      */
-    getAppPassword(appId: string): Promise<string|null>;
+    getAppPassword(appId: string): Promise<string | null>;
 
     /**
      * Checks if bot authentication is disabled.
@@ -49,7 +49,6 @@ export interface ICredentialProvider {
 }
 
 export class SimpleCredentialProvider implements ICredentialProvider {
-
     private readonly appId: string;
     private readonly appPassword: string;
 
@@ -78,8 +77,8 @@ export class SimpleCredentialProvider implements ICredentialProvider {
      * @param  {string} appId bot appid
      * @returns {Promise<string|null>} password or null for invalid appid
      */
-    public getAppPassword(appId: string): Promise<string|null> {
-        return Promise.resolve((this.appId === appId) ? this.appPassword : null);
+    public getAppPassword(appId: string): Promise<string | null> {
+        return Promise.resolve(this.appId === appId ? this.appPassword : null);
     }
 
     /**

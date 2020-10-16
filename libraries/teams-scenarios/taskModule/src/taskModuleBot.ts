@@ -47,7 +47,7 @@ export class TaskModuleBot  extends TeamsActivityHandler {
     }
     
     protected async handleTeamsTaskModuleSubmit(context: TurnContext, taskModuleRequest: TaskModuleRequest): Promise<TaskModuleResponse> {
-        var reply = MessageFactory.text("handleTeamsTaskModuleFetchAsync Value: " + JSON.stringify(taskModuleRequest));
+        var reply = MessageFactory.text("handleTeamsTaskModuleSubmit Value: " + JSON.stringify(taskModuleRequest));
         await context.sendActivity(reply);
 
         return {

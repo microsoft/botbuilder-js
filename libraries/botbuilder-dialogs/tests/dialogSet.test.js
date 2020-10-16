@@ -5,12 +5,15 @@ const assert = require('assert');
 const beginMessage = { text: `begin`, type: 'message' };
 const continueMessage = { text: `continue`, type: 'message' };
 
-describe('DialogSet', function () {
+describe('DialogSet', function() {
     this.timeout(5000);
 
-    it('should throw on createContext(undefined)', async function () {
-        const convoState = new ConversationState(new MemoryStorage());
-        const dialogSet = new DialogSet(convoState.createProperty('dialogState'));
+    const storage = new MemoryStorage();
+    const conversationState = new ConversationState(storage);
+    const dialogState = conversationState.createProperty('dialogState');
+
+    it('should throw on createContext(undefined)', async function() {
+        const dialogSet = new DialogSet(dialogState);
         try {
             await dialogSet.createContext(undefined);
             assert.fail('should have thrown error on undefined');
@@ -18,43 +21,36 @@ describe('DialogSet', function () {
         }
     });
 
-    it('should add a waterfall to the dialog set.', function (done) {
-        // Create new ConversationState with MemoryStorage and instantiate DialogSet with PropertyAccessor.
-        const convoState = new ConversationState(new MemoryStorage());
-
-        const dialogState = convoState.createProperty('dialogState');
+    it('should add a waterfall to the dialog set.', function(done) {
         const dialogs = new DialogSet(dialogState);
         dialogs.add(new WaterfallDialog('a', [
-            function (step) {
+            function(step) {
                 assert(step);
             }
         ]));
         done();
     });
 
-    it('should throw an error if DialogSet.dialogState is falsey.', async function () {
+    it('should throw an error if DialogSet.dialogState is falsey.', async function() {
         const dialogs = new DialogSet();
         try {
-            const dc = await dialogs.createContext({ type: 'message', text: 'hi' });
+            await dialogs.createContext({ type: 'message', text: 'hi' });
         } catch (err) {
             assert(err.message === 'DialogSet.createContext(): the dialog set was not bound to a stateProperty when constructed.', `unexpected error thrown: ${ err.message }`);
         }
     });
 
-    it('should add fluent dialogs to the dialog set.', function (done) {
+    it('should add fluent dialogs to the dialog set.', function(done) {
         // Create new ConversationState with MemoryStorage and instantiate DialogSet with PropertyAccessor.
-        const convoState = new ConversationState(new MemoryStorage());
-
-        const dialogState = convoState.createProperty('dialogState');
         const dialogs = new DialogSet(dialogState);
         dialogs
             .add(new WaterfallDialog('A', [
-                function (dc) {
+                function(dc) {
                     assert(dc);
                 }
             ]))
             .add(new WaterfallDialog('B', [
-                function (dc) {
+                function(dc) {
                     assert(dc);
                 }
             ]));
@@ -65,17 +61,14 @@ describe('DialogSet', function () {
     });
 
 
-    it('should increment the dialog ID when adding the same dialog twice.', function (done) {
-        const convoState = new ConversationState(new MemoryStorage());
-
-        const dialogState = convoState.createProperty('dialogState');
+    it('should increment the dialog ID when adding the same dialog twice.', function(done) {
         const dialogs = new DialogSet(dialogState);
         dialogs.add(new WaterfallDialog('a', [
-            function (step) { }
+            function() { }
         ]));
 
         dialogs.add(new WaterfallDialog('a', [
-            function (step) { }
+            function() { }
         ]));
 
         assert(dialogs.find('a'));
@@ -83,13 +76,10 @@ describe('DialogSet', function () {
         done();
     });
 
-    it('should find() a dialog that was added.', function (done) {
-        const convoState = new ConversationState(new MemoryStorage());
-
-        const dialogState = convoState.createProperty('dialogState');
+    it('should find() a dialog that was added.', function(done) {
         const dialogs = new DialogSet(dialogState);
         dialogs.add(new WaterfallDialog('a', [
-            function (step) { }
+            function() { }
         ]));
 
         assert(dialogs.find('a'), `dialog not found.`);
@@ -97,7 +87,23 @@ describe('DialogSet', function () {
         done();
     });
 
-    it('should save dialog stack state between turns.', function (done) {
+    it('should save dialog stack state between turns.', function(done) {
+        const convoState = new ConversationState(new MemoryStorage());
+
+        const dialogState = convoState.createProperty('dialogState');
+        const dialogs = new DialogSet(dialogState);
+        dialogs.add(new WaterfallDialog('a', [
+            async function(step) {
+                assert(step);
+                await step.context.sendActivity(`Greetings`);
+                return Dialog.EndOfTurn;
+            },
+            async function(step) {
+                await step.context.sendActivity('Good bye!');
+                return await step.endDialog();
+            }
+        ]));
+
         const adapter = new TestAdapter(async (turnContext) => {
             const dc = await dialogs.createContext(turnContext);
 
@@ -108,22 +114,6 @@ describe('DialogSet', function () {
             await convoState.saveChanges(turnContext);
         });
 
-        const convoState = new ConversationState(new MemoryStorage());
-
-        const dialogState = convoState.createProperty('dialogState');
-        const dialogs = new DialogSet(dialogState);
-        dialogs.add(new WaterfallDialog('a', [
-            async function (step) {
-                assert(step);
-                await step.context.sendActivity(`Greetings`);
-                return Dialog.EndOfTurn;
-            },
-            async function (step) {
-                await step.context.sendActivity('Good bye!');
-                return await step.endDialog();
-            }
-        ]));
-
         adapter.send(beginMessage)
             .assertReply('Greetings')
             .send(continueMessage)
@@ -131,11 +121,7 @@ describe('DialogSet', function () {
             .then(() => done());
     });
 
-    it('should generate a version hash of added dialogs.', function (done) {
-        // Create new ConversationState with MemoryStorage and instantiate DialogSet with PropertyAccessor.
-        const convoState = new ConversationState(new MemoryStorage());
-
-        const dialogState = convoState.createProperty('dialogState');
+    it('should generate a version hash of added dialogs.', function(done) {
         const dialogs = new DialogSet(dialogState);
         dialogs
             .add(new WaterfallDialog('A'))
@@ -146,11 +132,7 @@ describe('DialogSet', function () {
         done();
     });
 
-    it('Generated version hash should change when dialog set changes.', function (done) {
-        // Create new ConversationState with MemoryStorage and instantiate DialogSet with PropertyAccessor.
-        const convoState = new ConversationState(new MemoryStorage());
-
-        const dialogState = convoState.createProperty('dialogState');
+    it('Generated version hash should change when dialog set changes.', function(done) {
         const dialogs = new DialogSet(dialogState);
         dialogs
             .add(new WaterfallDialog('A'))

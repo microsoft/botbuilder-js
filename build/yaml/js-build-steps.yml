@@ -17,7 +17,7 @@ steps:
   inputs:
     command: custom
     verbose: false
-    customCommand: 'install --global lerna@3.2.1 nyc mocha'
+    customCommand: 'install --global lerna@3.22.1 nyc mocha eslint-plugin-jsdoc'
 
 - task: Npm@1
   displayName: '/tools npm install'
@@ -25,18 +25,11 @@ steps:
     workingDir: tools
     verbose: false
 
-- task: Npm@1
-  displayName: 'npm install coveralls --save-dev'
-  inputs:
-    command: custom
-    workingDir: tools
-    verbose: false
-    customCommand: 'install coveralls --save-dev'
-
 - bash: |
     set -o xtrace
-    sed -i '' 's/${Version}/$(version)/g' package.json 
+    sed -i '' 's/${Version}/$(version)/g' package.json
     sed -i '' 's/${Version}/$(version)/g' libraries/adaptive-expressions/package.json
+    sed -i '' 's/${Version}/$(version)/g' libraries/bot-integration-tests/package.json
     sed -i '' 's/${Version}/$(version)/g' libraries/botbuilder/package.json
     sed -i '' 's/${Version}/$(version)/g' libraries/botbuilder-ai/package.json
     sed -i '' 's/${Version}/$(version)/g' libraries/botbuilder-applicationinsights/package.json
@@ -91,24 +84,31 @@ steps:
   enabled: false
 
 - task: Npm@1
-  displayName: 'npm run test-coverage'
+  displayName: 'npm run test:devops'
   inputs:
     command: custom
     verbose: false
-    customCommand: 'run test-coverage'
+    customCommand: 'run test:devops'
 
-- powershell: |
-    Write-Host "Setting environment variable COVERALLS_REPO_TOKEN"
-    "##vso[task.setvariable variable=COVERALLS_REPO_TOKEN;]$(JsCoverallsToken)"
-  displayName: 'Set COVERALLS_REPO_TOKEN'
-  continueOnError: true
-  condition: and(succeeded(), ne(variables['System.PullRequest.IsFork'], 'True'))
-
-- task: Npm@1
-  displayName: 'Upload coverage report to Coveralls https://coveralls.io/github/microsoft/botbuilder-js'
+# Publish test results to Azure Pipelines
+- task: PublishTestResults@2
+  displayName: 'Publish test results to Azure DevOps'
   inputs:
-    command: custom
-    verbose: false
-    customCommand: 'run upload-coverage'
-  continueOnError: true
-  condition: and(succeeded(), ne(variables['System.PullRequest.IsFork'], 'True'))
+    testResultsFormat: 'JUnit'
+    testResultsFiles: '**/test-results.xml' 
+    mergeTestResults: true 
+    failTaskOnFailedTests: false # All test results should be published. Default is false, never set to true.
+    testRunTitle: 'Unit Tests for $(Build.SourceVersion)'
+    #buildPlatform: # Optional
+    #buildConfiguration: # Optional - Include Node runtime version?
+    #publishRunAttachments: true # Optional
+  condition: and(succeeded(), ne(variables['System.PullRequest.IsFork'], 'True'), eq(variables['PostToDevOps'], true))
+
+- task: PublishCodeCoverageResults@1
+  inputs:
+    codeCoverageTool: 'cobertura'
+    summaryFileLocation: './coverage/cobertura-coverage.xml'
+    #pathToSources: # Optional
+    #reportDirectory: # Optional
+    #additionalCodeCoverageFiles: # Optional
+    failIfCoverageEmpty: true
