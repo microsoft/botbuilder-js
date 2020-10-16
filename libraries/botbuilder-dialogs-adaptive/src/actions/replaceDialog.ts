@@ -5,11 +5,17 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { DialogTurnResult, DialogContext, TurnPath } from 'botbuilder-dialogs';
-import { BaseInvokeDialog } from './baseInvokeDialog';
-import { BoolExpression } from 'adaptive-expressions';
+import { BoolExpression, BoolExpressionConverter, Expression } from 'adaptive-expressions';
+import { Converter, ConverterFactory, DialogContext, DialogTurnResult, TurnPath } from 'botbuilder-dialogs';
+import { BaseInvokeDialog, BaseInvokeDialogConfiguration } from './baseInvokeDialog';
 
-export class ReplaceDialog<O extends object = {}> extends BaseInvokeDialog<O> {
+export interface ReplaceDialogConfiguration extends BaseInvokeDialogConfiguration {
+    disabled?: boolean | string | Expression | BoolExpression;
+}
+
+export class ReplaceDialog<O extends object = {}> extends BaseInvokeDialog<O> implements ReplaceDialogConfiguration {
+    public static $kind = 'Microsoft.ReplaceDialog';
+
     /**
      * Creates a new `ReplaceWithDialog` instance.
      * @param dialogId ID of the dialog to goto.
@@ -25,6 +31,15 @@ export class ReplaceDialog<O extends object = {}> extends BaseInvokeDialog<O> {
      * An optional expression which if is true will disable this action.
      */
     public disabled?: BoolExpression;
+
+    public getConverter(property: keyof ReplaceDialogConfiguration): Converter | ConverterFactory {
+        switch (property) {
+            case 'disabled':
+                return new BoolExpressionConverter();
+            default:
+                return super.getConverter(property);
+        }
+    }
 
     public async beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult> {
         if (this.disabled && this.disabled.getValue(dc.state)) {

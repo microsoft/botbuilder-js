@@ -5,11 +5,32 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { DialogTurnResult, DialogContext, DialogReason, TurnPath } from 'botbuilder-dialogs';
-import { BaseInvokeDialog } from './baseInvokeDialog';
-import { StringExpression, BoolExpression } from 'adaptive-expressions';
 
-export class BeginDialog<O extends object = {}> extends BaseInvokeDialog<O> {
+import {
+    StringExpression,
+    BoolExpression,
+    StringExpressionConverter,
+    BoolExpressionConverter,
+    Expression,
+} from 'adaptive-expressions';
+import {
+    Converter,
+    ConverterFactory,
+    DialogTurnResult,
+    DialogContext,
+    DialogReason,
+    TurnPath,
+} from 'botbuilder-dialogs';
+import { BaseInvokeDialog, BaseInvokeDialogConfiguration } from './baseInvokeDialog';
+
+export interface BeginDialogConfiguration extends BaseInvokeDialogConfiguration {
+    resultProperty?: string | Expression | StringExpression;
+    disabled?: boolean | string | Expression | BoolExpression;
+}
+
+export class BeginDialog<O extends object = {}> extends BaseInvokeDialog<O> implements BeginDialogConfiguration {
+    public static $kind = 'Microsoft.BeginDialog';
+
     /**
      * Creates a new `BeginDialog` instance.
      * @param dialogIdToCall ID of the dialog to call.
@@ -30,6 +51,17 @@ export class BeginDialog<O extends object = {}> extends BaseInvokeDialog<O> {
      * An optional expression which if is true will disable this action.
      */
     public disabled?: BoolExpression;
+
+    public getConverter(property: keyof BeginDialogConfiguration): Converter | ConverterFactory {
+        switch (property) {
+            case 'resultProperty':
+                return new StringExpressionConverter();
+            case 'disabled':
+                return new BoolExpressionConverter();
+            default:
+                return super.getConverter(property);
+        }
+    }
 
     public async beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult> {
         if (this.disabled && this.disabled.getValue(dc.state)) {

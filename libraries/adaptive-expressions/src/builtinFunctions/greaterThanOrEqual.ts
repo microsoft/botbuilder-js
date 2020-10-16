@@ -15,6 +15,9 @@ import { ComparisonEvaluator } from './comparisonEvaluator';
  * or return false if the first value is less.
  */
 export class GreaterThanOrEqual extends ComparisonEvaluator {
+    /**
+     * Initializes a new instance of the [GreaterThanOrEqual](xref:adaptive-expressions.GreaterThanOrEqual) class.
+     */
     public constructor() {
         super(
             ExpressionType.GreaterThanOrEqual,
@@ -24,6 +27,9 @@ export class GreaterThanOrEqual extends ComparisonEvaluator {
         );
     }
 
+    /**
+     * @private
+     */
     private static func(args: any[]): boolean {
         return args[0] >= args[1];
     }
