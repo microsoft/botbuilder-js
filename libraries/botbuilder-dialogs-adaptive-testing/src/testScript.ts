@@ -108,8 +108,8 @@ export class TestScript extends Configurable implements TestScriptConfiguration 
         testAdapter.locale = this.locale;
 
         const storage = new MemoryStorage();
+        const userState = new UserState(storage);
         const convoState = new ConversationState(storage);
-        const userState = new ConversationState(storage);
         useBotState(testAdapter, userState, convoState);
 
         const bot = new DialogManager(this.dialog);
