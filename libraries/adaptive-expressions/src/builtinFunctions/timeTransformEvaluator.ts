@@ -11,6 +11,7 @@ import moment from 'moment';
 import { Expression } from '../expression';
 import { EvaluateExpressionDelegate, ExpressionEvaluator, ValueWithError } from '../expressionEvaluator';
 import { FunctionUtils } from '../functionUtils';
+import { InternalFunctionUtils } from '../functionUtils.internal';
 import { MemoryInterface } from '../memory/memoryInterface';
 import { Options } from '../options';
 import { ReturnType } from '../returnType';
@@ -26,16 +27,17 @@ export class TimeTransformEvaluator extends ExpressionEvaluator {
     private static evaluator(func: (timestamp: Date, numOfTransformation: any) => Date): EvaluateExpressionDelegate {
         return (expression: Expression, state: MemoryInterface, options: Options): ValueWithError => {
             let result: any;
-            let error: string;
             let value: any;
-            let args: any[];
-            ({ args, error } = FunctionUtils.evaluateChildren(expression, state, options));
+            const { args, error: childrenError } = FunctionUtils.evaluateChildren(expression, state, options);
+            let error = childrenError;
             if (!error) {
                 if (typeof args[0] === 'string' && typeof args[1] === 'number') {
-                    ({ value, error } = FunctionUtils.parseTimestamp(args[0]));
+                    ({ value, error } = InternalFunctionUtils.parseTimestamp(args[0]));
                     if (!error) {
                         if (args.length === 3 && typeof args[2] === 'string') {
-                            result = moment(func(value, args[1])).utc().format(FunctionUtils.timestampFormatter(args[2]));
+                            result = moment(func(value, args[1]))
+                                .utc()
+                                .format(FunctionUtils.timestampFormatter(args[2]));
                         } else {
                             result = func(value, args[1]).toISOString();
                         }

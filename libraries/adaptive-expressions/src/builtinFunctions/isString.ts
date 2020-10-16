@@ -20,7 +20,6 @@ export class IsString extends ExpressionEvaluator {
     }
 
     private static evaluator(): EvaluateExpressionDelegate {
-        return FunctionUtils.apply(
-            (args: any[]): boolean => typeof args[0] === 'string');
+        return FunctionUtils.apply((args: any[]): boolean => typeof args[0] === 'string');
     }
 }

@@ -9,17 +9,14 @@ import { ProtocolAdapter } from '../protocolAdapter';
 import { RequestHandler } from '../requestHandler';
 import { StreamingRequest } from '../streamingRequest';
 import { RequestManager } from '../payloads';
-import {
-    PayloadReceiver,
-    PayloadSender
-} from '../payloadTransport';
+import { PayloadReceiver, PayloadSender } from '../payloadTransport';
 import { NamedPipeTransport } from './namedPipeTransport';
 import { INodeServer, INodeSocket, IStreamingTransportServer, IReceiveResponse } from '../interfaces';
 import { createNodeServer } from '../utilities/createNodeServer';
 
 /**
-* Streaming transport server implementation that uses named pipes for inter-process communication.
-*/
+ * Streaming transport server implementation that uses named pipes for inter-process communication.
+ */
 export class NamedPipeServer implements IStreamingTransportServer {
     private _outgoingServer: INodeServer;
     private _incomingServer: INodeServer;
@@ -33,13 +30,13 @@ export class NamedPipeServer implements IStreamingTransportServer {
     private _isDisconnecting: boolean;
 
     /**
-    * Creates a new instance of the [NamedPipeServer](xref:botframework-streaming.NamedPipeServer) class.
+     * Creates a new instance of the [NamedPipeServer](xref:botframework-streaming.NamedPipeServer) class.
      *
      * @param baseName The named pipe to connect to.
      * @param requestHandler Optional [RequestHandler](xref:botframework-streaming.RequestHandler) to process incoming messages received by this client.
      * @param autoReconnect Optional setting to determine if the client sould attempt to reconnect automatically on disconnection events. Defaults to true.
      */
-    public constructor(baseName: string, requestHandler?: RequestHandler, autoReconnect: boolean = true) {
+    public constructor(baseName: string, requestHandler?: RequestHandler, autoReconnect = true) {
         if (!baseName) {
             throw new TypeError('NamedPipeServer: Missing baseName parameter');
         }
@@ -50,7 +47,12 @@ export class NamedPipeServer implements IStreamingTransportServer {
         this._requestManager = new RequestManager();
         this._sender = new PayloadSender();
         this._receiver = new PayloadReceiver();
-        this._protocolAdapter = new ProtocolAdapter(this._requestHandler, this._requestManager, this._sender, this._receiver);
+        this._protocolAdapter = new ProtocolAdapter(
+            this._requestHandler,
+            this._requestManager,
+            this._sender,
+            this._receiver
+        );
         this._sender.disconnected = this.onConnectionDisconnected.bind(this);
         this._receiver.disconnected = this.onConnectionDisconnected.bind(this);
     }
@@ -72,15 +74,14 @@ export class NamedPipeServer implements IStreamingTransportServer {
             this.disconnect();
         }
 
-        const incoming = new Promise(resolve => {
-                this._incomingServer =  createNodeServer((socket: INodeSocket): void => {
-                    this._receiver.connect(new NamedPipeTransport(socket));
-                    resolve();
-                });
-
+        const incoming = new Promise((resolve) => {
+            this._incomingServer = createNodeServer((socket: INodeSocket): void => {
+                this._receiver.connect(new NamedPipeTransport(socket));
+                resolve();
+            });
         });
 
-        const outgoing = new Promise(resolve => {
+        const outgoing = new Promise((resolve) => {
             this._outgoingServer = createNodeServer((socket: INodeSocket): void => {
                 this._sender.connect(new NamedPipeTransport(socket));
                 resolve();
@@ -120,7 +121,7 @@ export class NamedPipeServer implements IStreamingTransportServer {
             this._outgoingServer = null;
         }
     }
-    
+
     /**
      * Task used to send data over this client connection.
      *
@@ -144,11 +145,11 @@ export class NamedPipeServer implements IStreamingTransportServer {
                 }
 
                 if (this._autoReconnect) {
-                    this.start()
-                        .catch((err): void => { throw(new Error(`Unable to reconnect: ${ err.message }`)); });
+                    this.start().catch((err): void => {
+                        throw new Error(`Unable to reconnect: ${err.message}`);
+                    });
                 }
-            }
-            finally {
+            } finally {
                 this._isDisconnecting = false;
             }
         }

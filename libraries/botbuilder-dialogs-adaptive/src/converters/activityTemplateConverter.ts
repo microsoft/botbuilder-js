@@ -6,15 +6,22 @@
  * Licensed under the MIT License.
  */
 
-import { Converter } from 'botbuilder-dialogs-declarative';
-import { ActivityTemplate, StaticActivityTemplate, TextTemplate } from '../templates';
+import { Activity } from 'botbuilder-core';
+import { Converter, DialogStateManager, TemplateInterface } from 'botbuilder-dialogs';
+import { ActivityTemplate, StaticActivityTemplate } from '../templates';
 
-export class ActivityTemplateConverter implements Converter {
-    public convert(value: string): ActivityTemplate | StaticActivityTemplate | TextTemplate {
-        if (typeof value === 'string') { 
+type Input = string | Partial<Activity>;
+type Output = TemplateInterface<Partial<Activity>, DialogStateManager>;
+
+export class ActivityTemplateConverter implements Converter<Input, Output> {
+    public convert(value: Input | Output): Output {
+        if (value instanceof ActivityTemplate || value instanceof StaticActivityTemplate) {
+            return value;
+        }
+        if (typeof value === 'string') {
             return new ActivityTemplate(value);
         } else {
-            return new StaticActivityTemplate(value);
+            return new StaticActivityTemplate(value as Partial<Activity>);
         }
     }
 }

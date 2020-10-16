@@ -11,34 +11,42 @@ import { Expression } from '../expression';
 import { ReturnType } from '../returnType';
 import { ExpressionType } from '../expressionType';
 import { FunctionUtils } from '../functionUtils';
+import { InternalFunctionUtils } from '../functionUtils.internal';
 import { MemoryInterface } from '../memory/memoryInterface';
 import { Options } from '../options';
 import { TimeZoneConverter } from '../timeZoneConverter';
 import { tz } from 'moment-timezone';
 import moment from 'moment';
-import {TimexProperty} from '@microsoft/recognizers-text-data-types-timex-expression';
+import { TimexProperty } from '@microsoft/recognizers-text-data-types-timex-expression';
 
 /**
  * Return the next viable date of a timex expression based on the current date and user's timezone.
  */
 export class GetNextViableDate extends ExpressionEvaluator {
-    public constructor(){
-        super(ExpressionType.GetNextViableDate, GetNextViableDate.evaluator, ReturnType.String, FunctionUtils.validateUnaryOrBinaryString);
+    public constructor() {
+        super(
+            ExpressionType.GetNextViableDate,
+            GetNextViableDate.evaluator,
+            ReturnType.String,
+            FunctionUtils.validateUnaryOrBinaryString
+        );
     }
 
-    private static evaluator(expr: Expression, state: MemoryInterface, options: Options): {value: any; error: string} {
+    private static evaluator(
+        expr: Expression,
+        state: MemoryInterface,
+        options: Options
+    ): { value: any; error: string } {
         let parsed: TimexProperty;
-        let value: string;
-        let error: string;
-        let args: any[];
         const currentTime = moment(new Date().toISOString());
         let validYear = 0;
         let validMonth = 0;
         let validDay = 0;
         let convertedDateTime: moment.Moment;
-        ({args, error} = FunctionUtils.evaluateChildren(expr, state, options));
+        const { args, error: childrenError } = FunctionUtils.evaluateChildren(expr, state, options);
+        let error = childrenError;
         if (!error) {
-            ({timexProperty: parsed, error: error} = FunctionUtils.parseTimexProperty(args[0]));
+            ({ timexProperty: parsed, error: error } = InternalFunctionUtils.parseTimexProperty(args[0]));
         }
 
         if (parsed && !error) {
@@ -49,7 +57,7 @@ export class GetNextViableDate extends ExpressionEvaluator {
 
         if (!error) {
             if (args.length === 2 && typeof args[1] === 'string') {
-                const timeZone: string = TimeZoneConverter .windowsToIana(args[1]);
+                const timeZone: string = TimeZoneConverter.windowsToIana(args[1]);
                 if (!TimeZoneConverter.verifyTimeZoneStr(timeZone)) {
                     error = `${args[1]} is not a valid timezone`;
                 }
@@ -83,12 +91,11 @@ export class GetNextViableDate extends ExpressionEvaluator {
             }
         }
 
-        value = TimexProperty.fromDate(new Date(validYear, validMonth - 1, validDay)).timex;
-        return {value, error};
+        const value = TimexProperty.fromDate(new Date(validYear, validMonth - 1, validDay)).timex;
+        return { value, error };
     }
 
-    private static leapYear(year: number): boolean
-    {
-        return ((year % 4 == 0) && (year % 100 != 0)) || (year % 400 == 0);
+    private static leapYear(year: number): boolean {
+        return (year % 4 == 0 && year % 100 != 0) || year % 400 == 0;
     }
 }

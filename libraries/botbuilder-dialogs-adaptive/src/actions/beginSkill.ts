@@ -5,13 +5,50 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { SkillDialog, SkillDialogOptions, DialogContext, DialogTurnResult, BeginSkillDialogOptions, DialogInstance, DialogReason, TemplateInterface } from 'botbuilder-dialogs';
-import { BoolExpression, StringExpression } from 'adaptive-expressions';
+import {
+    BoolExpression,
+    BoolExpressionConverter,
+    Expression,
+    StringExpression,
+    StringExpressionConverter,
+} from 'adaptive-expressions';
 import { Activity, ActivityTypes, StringUtils, TurnContext } from 'botbuilder-core';
+import {
+    BeginSkillDialogOptions,
+    Converter,
+    ConverterFactory,
+    DialogContext,
+    DialogTurnResult,
+    DialogInstance,
+    DialogReason,
+    DialogConfiguration,
+    DialogEvent,
+    DialogEvents,
+    DialogStateManager,
+    SkillDialog,
+    SkillDialogOptions,
+    TemplateInterface,
+} from 'botbuilder-dialogs';
 import { skillClientKey, skillConversationIdFactoryKey } from '../skillExtensions';
 import { ActivityTemplate } from '../templates';
+import { ActivityTemplateConverter } from '../converters';
+import { AdaptiveEvents } from '../adaptiveEvents';
 
-export class BeginSkill extends SkillDialog {
+export interface BeginSkillConfiguration extends DialogConfiguration {
+    disabled?: boolean | string | Expression | BoolExpression;
+    activityProcessed?: boolean | string | Expression | BoolExpression;
+    resultProperty?: string | Expression | StringExpression;
+    botId?: string | Expression | StringExpression;
+    skillHostEndpoint?: string | Expression | StringExpression;
+    skillAppId?: string | Expression | StringExpression;
+    skillEndpoint?: string | Expression | StringExpression;
+    activity?: string | Partial<Activity> | TemplateInterface<Partial<Activity>, DialogStateManager>;
+    connectionName?: string | Expression | StringExpression;
+    allowInterruptions?: boolean | string | Expression | BoolExpression;
+}
+
+export class BeginSkill extends SkillDialog implements BeginSkillConfiguration {
+    public static $kind = 'Microsoft.BeginSkill';
 
     /**
      * Optional expression which if is true will disable this action.
@@ -20,9 +57,9 @@ export class BeginSkill extends SkillDialog {
 
     /**
      * Value indicating whether the new dialog should process the activity.
-     * 
+     *
      * @remarks
-     * The default for this will be true, which means the new dialog should not look at the activity. 
+     * The default for this will be true, which means the new dialog should not look at the activity.
      * You can set this to false to dispatch the activity to the new dialog.
      */
     public activityProcessed = new BoolExpression(true);
@@ -34,7 +71,7 @@ export class BeginSkill extends SkillDialog {
 
     /**
      * The Microsoft App ID that will be calling the skill.
-     * 
+     *
      * @remarks
      * Defauls to a value of `=settings.MicrosoftAppId` which retrievs the bots ID from settings.
      */
@@ -42,7 +79,7 @@ export class BeginSkill extends SkillDialog {
 
     /**
      * The callback Url for the skill host.
-     * 
+     *
      * @remarks
      * Defauls to a value of `=settings.SkillHostEndpoint` which retrieves the endpoint from settings.
      */
@@ -61,15 +98,47 @@ export class BeginSkill extends SkillDialog {
     /**
      * Template for the activity.
      */
-    public activity: TemplateInterface<Partial<Activity>>;
+    public activity: TemplateInterface<Partial<Activity>, DialogStateManager>;
 
     /**
      * Optional. The OAuth Connection Name for the Parent Bot.
      */
     public connectionName: StringExpression;
 
+    /**
+     * The interruption policy.
+     */
+    public allowInterruptions: BoolExpression;
+
+    public getConverter(property: keyof BeginSkillConfiguration): Converter | ConverterFactory {
+        switch (property) {
+            case 'disabled':
+                return new BoolExpressionConverter();
+            case 'activityProcessed':
+                return new BoolExpressionConverter();
+            case 'resultProperty':
+                return new StringExpressionConverter();
+            case 'botId':
+                return new StringExpressionConverter();
+            case 'skillHostEndpoint':
+                return new StringExpressionConverter();
+            case 'skillAppId':
+                return new StringExpressionConverter();
+            case 'skillEndpoint':
+                return new StringExpressionConverter();
+            case 'activity':
+                return new ActivityTemplateConverter();
+            case 'connectionName':
+                return new StringExpressionConverter();
+            case 'allowInterruptions':
+                return new BoolExpressionConverter();
+            default:
+                return undefined;
+        }
+    }
+
     // Used to cache DialogOptions for multi-turn calls across servers.
-    private _dialogOptionsStateKey: string = `${ this.constructor.name }.dialogOptionsData`;
+    private _dialogOptionsStateKey = `${this.constructor.name}.dialogOptionsData`;
 
     /**
      * Creates a new `BeginSkillDialog instance.
@@ -88,14 +157,30 @@ export class BeginSkill extends SkillDialog {
         // Setup the skill to call
         const botId = this.botId.getValue(dcState);
         const skillHostEndpoint = this.skillHostEndpoint.getValue(dcState);
-        if (botId) { this.dialogOptions.botId = botId; }
-        if (skillHostEndpoint) { this.dialogOptions.skillHostEndpoint = skillHostEndpoint; }
-        if (this.skillAppId) { this.dialogOptions.skill.id = this.dialogOptions.skill.appId = this.skillAppId.getValue(dcState); }
-        if (this.skillEndpoint) { this.dialogOptions.skill.skillEndpoint = this.skillEndpoint.getValue(dcState); }
-        if (this.connectionName) { this.dialogOptions.connectionName = this.connectionName.getValue(dcState); }
-        if (!this.dialogOptions.conversationState) { this.dialogOptions.conversationState = dc.dialogManager.conversationState; }
-        if (!this.dialogOptions.skillClient) { this.dialogOptions.skillClient = dc.context.turnState.get(skillClientKey); }
-        if (!this.dialogOptions.conversationIdFactory) { this.dialogOptions.conversationIdFactory = dc.context.turnState.get(skillConversationIdFactoryKey); }
+        if (botId) {
+            this.dialogOptions.botId = botId;
+        }
+        if (skillHostEndpoint) {
+            this.dialogOptions.skillHostEndpoint = skillHostEndpoint;
+        }
+        if (this.skillAppId) {
+            this.dialogOptions.skill.id = this.dialogOptions.skill.appId = this.skillAppId.getValue(dcState);
+        }
+        if (this.skillEndpoint) {
+            this.dialogOptions.skill.skillEndpoint = this.skillEndpoint.getValue(dcState);
+        }
+        if (this.connectionName) {
+            this.dialogOptions.connectionName = this.connectionName.getValue(dcState);
+        }
+        if (!this.dialogOptions.conversationState) {
+            this.dialogOptions.conversationState = dc.dialogManager.conversationState;
+        }
+        if (!this.dialogOptions.skillClient) {
+            this.dialogOptions.skillClient = dc.context.turnState.get(skillClientKey);
+        }
+        if (!this.dialogOptions.conversationIdFactory) {
+            this.dialogOptions.conversationIdFactory = dc.context.turnState.get(skillConversationIdFactoryKey);
+        }
 
         // Store the initialized dialogOptions in state so we can restore these values when the dialog is resumed.
         dc.activeDialog.state[this._dialogOptionsStateKey] = this.dialogOptions;
@@ -109,9 +194,9 @@ export class BeginSkill extends SkillDialog {
             this.telemetryClient.trackEvent({
                 name: 'GeneratorResult',
                 properties: {
-                    'template':this.activity,
-                    'result': activity || '' 
-                }
+                    template: this.activity,
+                    result: activity || '',
+                },
             });
 
             options.activity = activity;
@@ -156,9 +241,30 @@ export class BeginSkill extends SkillDialog {
     protected onComputeId(): string {
         const appId = this.skillAppId ? this.skillAppId.toString() : '';
         if (this.activity instanceof ActivityTemplate) {
-            return `BeginSkill['${ appId }','${ StringUtils.ellipsis(this.activity.template.trim(), 30) }']`;
+            return `BeginSkill['${appId}','${StringUtils.ellipsis(this.activity.template.trim(), 30)}']`;
         }
-        return `BeginSkill['${ appId }','${ StringUtils.ellipsis(this.activity && this.activity.toString().trim(), 30) }']`;
+        return `BeginSkill['${appId}','${StringUtils.ellipsis(this.activity && this.activity.toString().trim(), 30)}']`;
+    }
+
+    protected async onPreBubbleEvent(dc: DialogContext, e: DialogEvent): Promise<boolean> {
+        if (e.name === DialogEvents.activityReceived && dc.context.activity.type === ActivityTypes.Message) {
+            // Ask parent to perform recognition.
+            if (dc.parent) {
+                await dc.parent.emitEvent(AdaptiveEvents.recognizeUtterance, dc.context.activity, false);
+            }
+
+            // Should we allow interruptions.
+            let canInterrupt = true;
+            if (this.allowInterruptions) {
+                const { value: allowInterruptions, error } = this.allowInterruptions.tryGetValue(dc.state);
+                canInterrupt = !error && allowInterruptions;
+            }
+
+            // Stop bubbling if interruptions are NOT allowed
+            return !canInterrupt;
+        }
+
+        return false;
     }
 
     private loadDialogOptions(context: TurnContext, instance: DialogInstance): void {
@@ -166,16 +272,16 @@ export class BeginSkill extends SkillDialog {
 
         this.dialogOptions.botId = dialogOptions.botId;
         this.dialogOptions.skillHostEndpoint = dialogOptions.skillHostEndpoint;
-        
+
         this.dialogOptions.conversationIdFactory = context.turnState.get(skillConversationIdFactoryKey);
-        if (this.dialogOptions.conversationIdFactory == null) { 
+        if (this.dialogOptions.conversationIdFactory == null) {
             throw new ReferenceError('Unable to locate skillConversationIdFactoryBase in HostContext.');
-        };
-        
+        }
+
         this.dialogOptions.skillClient = context.turnState.get(skillClientKey);
-        if (this.dialogOptions.skillClient == null) { 
+        if (this.dialogOptions.skillClient == null) {
             throw new ReferenceError('Unable to get an instance of conversationState from turnState.');
-        };
+        }
 
         this.dialogOptions.connectionName = dialogOptions.connectionName;
 

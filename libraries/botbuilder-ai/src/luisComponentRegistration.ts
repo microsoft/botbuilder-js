@@ -6,24 +6,19 @@
  * Licensed under the MIT License.
  */
 
-import { StringExpressionConverter, ArrayExpressionConverter, BoolExpressionConverter } from 'adaptive-expressions';
+import { ComponentRegistration } from 'botbuilder-core';
 import { LuisAdaptiveRecognizer } from './luisAdaptiveRecognizer';
 
 /**
- * Declarative components in QnAMaker.
+ * Define component assets for Luis.
  */
-export class LuisComponentRegistration {
-    public getDeclarativeTypes(_resourceExplorer: any) {
-        return [{
-            kind: 'Microsoft.LuisRecognizer',
-            factory: LuisAdaptiveRecognizer,
-            converters: {
-                'applicationId': new StringExpressionConverter(),
-                'dynamicLists': new ArrayExpressionConverter(),
-                'endpoint': new StringExpressionConverter(),
-                'endpointKey': new StringExpressionConverter(),
-                'logPersonalInformation': new BoolExpressionConverter()
-            }
-        }];
+export class LuisComponentRegistration extends ComponentRegistration {
+    public getDeclarativeTypes(_resourceExplorer: unknown) {
+        return [
+            {
+                kind: LuisAdaptiveRecognizer.$kind,
+                type: LuisAdaptiveRecognizer,
+            },
+        ];
     }
 }

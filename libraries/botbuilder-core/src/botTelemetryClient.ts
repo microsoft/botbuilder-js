@@ -10,12 +10,11 @@
  * The key to get or set telemetry client from turn state.
  */
 export const telemetryClientKey = Symbol('telemetryClient');
-    
+
 /**
  * Defines the level of severity for the event.
  */
-export enum Severity
-    {
+export enum Severity {
     Verbose = 0,
     Information = 1,
     Warning = 2,
@@ -40,43 +39,42 @@ export interface TelemetryDependency {
     target: string;
     name: string;
     data: string;
-    duration: number; 
+    duration: number;
     success: boolean;
     resultCode: number;
 }
 
 export interface TelemetryEvent {
     name: string;
-    properties?: {[key: string]: any};
-    metrics?: {[key: string]: number };
+    properties?: { [key: string]: any };
+    metrics?: { [key: string]: number };
 }
 
-export interface TelemetryException { 
+export interface TelemetryException {
     exception: Error;
     handledAt?: string;
-    properties?: {[key: string]: string};
-    measurements?: {[key: string]: number};
+    properties?: { [key: string]: string };
+    measurements?: { [key: string]: number };
     severityLevel?: Severity;
 }
 
 export interface TelemetryTrace {
     message: string;
-    properties?: {[key: string]: string};
+    properties?: { [key: string]: string };
     severityLevel?: Severity;
 }
 
 export interface TelemetryPageView {
     name: string;
-    properties?: {[key: string]: string};
-    metrics?: {[key: string]: number };
+    properties?: { [key: string]: string };
+    metrics?: { [key: string]: number };
 }
 
 export class NullTelemetryClient implements BotTelemetryClient, BotPageViewTelemetryClient {
-
     constructor(settings?: any) {
         // noop
     }
-    
+
     trackPageView(telemetry: TelemetryPageView) {
         // noop
     }
@@ -85,11 +83,11 @@ export class NullTelemetryClient implements BotTelemetryClient, BotPageViewTelem
         // noop
     }
 
-    trackEvent(telemetry: TelemetryEvent)  {
+    trackEvent(telemetry: TelemetryEvent) {
         // noop
     }
 
-    trackException(telemetry: TelemetryException)  {
+    trackException(telemetry: TelemetryException) {
         // noop
     }
 
@@ -97,20 +95,24 @@ export class NullTelemetryClient implements BotTelemetryClient, BotPageViewTelem
         // noop
     }
 
-    flush()  {
+    flush() {
         // noop
     }
 }
 
-export function telemetryTrackDialogView(telemetryClient: BotTelemetryClient, dialogName: string, properties?: {[key: string]: any}, metrics?: {[key: string]: number }): void {
+export function telemetryTrackDialogView(
+    telemetryClient: BotTelemetryClient,
+    dialogName: string,
+    properties?: { [key: string]: any },
+    metrics?: { [key: string]: number }
+): void {
     if (!clientSupportsTrackDialogView(telemetryClient)) {
         throw new TypeError('"telemetryClient" parameter does not have methods trackPageView() or trackTrace()');
     }
     if (instanceOfBotPageViewTelemetryClient(telemetryClient)) {
         telemetryClient.trackPageView({ name: dialogName, properties: properties, metrics: metrics });
-    }
-    else {
-        telemetryClient.trackTrace({ message: 'Dialog View: ' + dialogName, severityLevel: Severity.Information } );
+    } else {
+        telemetryClient.trackTrace({ message: 'Dialog View: ' + dialogName, severityLevel: Severity.Information });
     }
 }
 
@@ -119,7 +121,9 @@ function instanceOfBotPageViewTelemetryClient(object: any): object is BotPageVie
 }
 
 function clientSupportsTrackDialogView(client: any): boolean {
-    if (!client) { return false; }
+    if (!client) {
+        return false;
+    }
     if (typeof client.trackPageView !== 'function' && typeof client.trackTrace !== 'function') {
         return false;
     }

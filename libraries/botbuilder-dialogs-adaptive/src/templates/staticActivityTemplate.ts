@@ -13,7 +13,6 @@ import { DialogContext, TemplateInterface } from 'botbuilder-dialogs';
  * Defines a static activity as a template.
  */
 export class StaticActivityTemplate implements TemplateInterface<Partial<Activity>> {
-
     /**
      * Intialize a new instance of StaticActivityTemplate class.
      * @param activity Activity as a template.
@@ -36,5 +35,7 @@ export class StaticActivityTemplate implements TemplateInterface<Partial<Activit
         return Promise.resolve(this.activity);
     }
 
-    public toString = (): string => { return `${ this.activity.text }`; }
+    public toString = (): string => {
+        return `${this.activity.text}`;
+    };
 }

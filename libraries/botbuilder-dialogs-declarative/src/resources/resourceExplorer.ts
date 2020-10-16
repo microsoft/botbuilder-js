@@ -6,6 +6,7 @@
  * Licensed under the MIT License.
  */
 
+import { ComponentRegistration } from 'botbuilder-core';
 import { Dialog } from 'botbuilder-dialogs';
 import { normalize, join } from 'path';
 import { EventEmitter } from 'events';
@@ -13,19 +14,19 @@ import { ResourceProvider, ResourceChangeEvent } from './resourceProvider';
 import { FolderResourceProvider } from './folderResourceProvider';
 import { Resource } from './resource';
 import { PathUtil } from '../pathUtil';
-import { ComponentRegistration } from '../componentRegistration';
-import { TypeLoader } from '../typeLoader';
+import { ComponentDeclarativeTypes } from '../componentDeclarativeTypes';
+import { DeclarativeType } from '../declarativeType';
+import { CustomDeserializer } from '../customDeserializer';
 import { DefaultLoader } from '../defaultLoader';
-import { Converter } from '../converter';
 
 /**
  * Class which gives standard access to content resources.
  */
 export class ResourceExplorer {
+    private _kindToType: Map<string, new () => unknown> = new Map();
+    private _kindDeserializer: Map<string, CustomDeserializer<unknown, unknown>> = new Map();
     private _eventEmitter: EventEmitter = new EventEmitter();
-    private _kindLoaders: { [kind: string]: TypeLoader } = {};
-    private _kindFactories: { [kind: string]: new () => object } = {};
-    private _kindConverters: { [kind: string]: { [key: string]: Converter } } = {};
+    private _typesLoaded = false;
 
     /**
      * Initializes a new instance of the `ResourceExplorer` class.
@@ -76,9 +77,7 @@ export class ResourceExplorer {
      * Reload any cached data.
      */
     public refresh(): void {
-        for (let i = 0; i < this.resourceProviders.length; i++) {
-            this.resourceProviders[i].refresh();
-        }
+        this.resourceProviders.forEach((resourceProvider) => resourceProvider.refresh());
     }
 
     /**
@@ -87,7 +86,7 @@ export class ResourceExplorer {
      */
     public addResourceProvider(resourceProvider: ResourceProvider): ResourceExplorer {
         if (this.resourceProviders.some((r): boolean => r.id === resourceProvider.id)) {
-            throw Error(`${ resourceProvider.id } has already been added as a resource`);
+            throw Error(`${resourceProvider.id} has already been added as a resource`);
         }
 
         resourceProvider.changed = this.onChanged.bind(this);
@@ -102,7 +101,7 @@ export class ResourceExplorer {
      * @param includeSubFolders Whether to include subfolders.
      * @param monitorChanges Whether to track changes.
      */
-    public addFolder(folder: string, includeSubFolders: boolean = true, monitorChanges: boolean = true): ResourceExplorer {
+    public addFolder(folder: string, includeSubFolders = true, monitorChanges = true): ResourceExplorer {
         this.addResourceProvider(new FolderResourceProvider(this, folder, includeSubFolders, monitorChanges));
 
         return this;
@@ -114,7 +113,7 @@ export class ResourceExplorer {
      * @param ignoreFolders Imediate subfolders to ignore.
      * @param monitorChanges Whether to track changes.
      */
-    public addFolders(folder: string, ignoreFolders?: string[], monitorChanges: boolean = true): ResourceExplorer {
+    public addFolders(folder: string, ignoreFolders?: string[], monitorChanges = true): ResourceExplorer {
         if (ignoreFolders) {
             folder = normalize(folder);
             this.addFolder(folder, false, monitorChanges);
@@ -134,28 +133,11 @@ export class ResourceExplorer {
     }
 
     /**
-     * Add a ComponentRegistration to resource explorer for building types.
-     * @param component Component registration to be added.
-     */
-    public addComponent(component: ComponentRegistration): ResourceExplorer {
-        const typeRegistrations = component.getDeclarativeTypes(this);
-        for (let i = 0; i < typeRegistrations.length; i++) {
-            const typeRegistration = typeRegistrations[i];
-            const kind = typeRegistration.kind;
-            this._kindFactories[kind] = typeRegistration.factory;
-            this._kindLoaders[kind] = typeRegistration.loader || new DefaultLoader(this);
-            this._kindConverters[kind] = typeRegistration.converters || {};
-        }
-
-        return this;
-    }
-
-    /**
      * Get resources of a given type extension.
      * @param fileExtension File extension filter.
      */
     public getResources(fileExtension: string): Resource[] {
-        let resources: Resource[] = [];
+        const resources: Resource[] = [];
         for (const rp of this.resourceProviders) {
             for (const rpResources of rp.getResources(fileExtension)) {
                 resources.push(rpResources);
@@ -181,64 +163,118 @@ export class ResourceExplorer {
     }
 
     /**
-     * Build types from object configuration.
-     * @param config Configuration to be parsed as a type.
+     * Build type for given $kind.
+     * @param kind $kind.
+     * @param config Source configuration object.
      */
-    public buildType(config: object): object {
-        if (typeof config == 'object') {
-            const kind = config['$kind'] || config['$type'];
-            if (kind) {
-                const factory = this._kindFactories[kind];
-                if (!factory) {
-                    throw new Error(`Type ${ kind } not registered in factory.`);
-                }
+    public buildType<T, C>(kind: string, config: C): T {
+        this.registerComponentTypes();
 
-                const loader = this._kindLoaders[kind];
-                if (!loader) {
-                    throw new Error(`Type ${ kind } not registered in factory.`);
-                }
-
-                const result = loader.load(factory, config);
-                return result;
-            } else {
-                for (const key in config) {
-                    config[key] = this.buildType(config[key]);
-                }
-            }
+        const type = this._kindToType.get(kind);
+        if (!type) {
+            throw new Error(`Type ${kind} not registered.`);
         }
-        return config;
+        const loader = this._kindDeserializer.get(kind);
+        return loader.load(config, type) as T;
     }
 
     /**
      * Load types from resource or resource id.
      * @param resource Resource or resource id to be parsed as a type.
      */
-    public loadType(resource: string | Resource): object {
+    public loadType<T>(resource: string | Resource): T {
+        this.registerComponentTypes();
+
         if (typeof resource == 'string') {
             resource = this.getResource(resource);
         }
+
+        if (!resource) {
+            throw new Error(`Resource ${resource.id} not found.`);
+        }
+
         const json = resource.readText();
-        const obj = JSON.parse(json) as object;
-        const result = this.buildType(obj);
-        if (result instanceof Dialog && !obj['id']) {
+        const result = JSON.parse(json, (_key: string, value: unknown): unknown => {
+            if (typeof value !== 'object') {
+                return value;
+            }
+            if (Array.isArray(value)) {
+                return value;
+            }
+            const kind = value['$kind'];
+            if (!kind) {
+                return value;
+            }
+            return this.load(value as { $kind: string } & Record<string, unknown>);
+        }) as T;
+
+        const config = JSON.parse(json);
+        if (result instanceof Dialog && !config['id']) {
             // If there is no id for the dialog, then the resource id would be used as dialog id.
             result.id = resource.id;
         }
+
         return result;
     }
 
     /**
-     * Get converters for a key in a declarative component of kind.
-     * @param kind The kind of declarative component.
-     * @param key THe key of declarative component.
+     * Handler for onChanged events.
+     * @param event Event name.
+     * @param resources A collection of resources changed.
      */
-    public getConverter(kind: string, key: string): Converter {
-        return kind && this._kindConverters[kind] && key && this._kindConverters[kind][key];
-    }
-
     protected onChanged(event: ResourceChangeEvent, resources: Resource[]): void {
         if (this._eventEmitter) {
             this._eventEmitter.emit(event, resources);
         }
+    }
+
+    /**
+     * @private
+     */
+    private load<T>(value: { $kind: string } & Record<string, unknown>): T {
+        const kind = value['$kind'] as string;
+        const type = this._kindToType.get(kind);
+        if (!type) {
+            throw new Error(`Type ${kind} not registered.`);
+        }
+        const loader = this._kindDeserializer.get(kind);
+        return loader.load(value, type) as T;
+    }
+
+    /**
+     * @private
+     */
+    private getComponentRegistrations(): ComponentRegistration[] {
+        return ComponentRegistration.components.filter(
+            (component: ComponentRegistration) => 'getDeclarativeTypes' in component
+        );
+    }
+
+    /**
+     * @private
+     */
+    private registerTypeInternal<T, C>(
+        kind: string,
+        type: new (...args: unknown[]) => T,
+        loader?: CustomDeserializer<T, C>
+    ): void {
+        this._kindToType.set(kind, type);
+        this._kindDeserializer.set(kind, loader || new DefaultLoader(this));
+    }
+
+    /**
+     * @private
+     */
+    private registerComponentTypes(): void {
+        if (this._typesLoaded) {
+            return;
+        }
+        this._typesLoaded = true;
+        this.getComponentRegistrations().forEach((component: ComponentDeclarativeTypes) => {
+            component.getDeclarativeTypes(this).forEach((declarativeType: DeclarativeType) => {
+                const { kind, type, loader } = declarativeType;
+                this.registerTypeInternal(kind, type, loader);
+            });
+        });
     }
 }

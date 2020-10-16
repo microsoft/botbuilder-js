@@ -6,51 +6,38 @@
  * Licensed under the MIT License.
  */
 
-import { TypeLoader } from './typeLoader';
-import { ResourceExplorer } from './resources/resourceExplorer';
+import { Configurable } from 'botbuilder-dialogs';
+import { CustomDeserializer } from './customDeserializer';
+import { ResourceExplorer } from './resources';
 
 /**
- * The default type loader to load declarative objects.
+ * A default loader for deserializing configuration objects.
  */
-export class DefaultLoader implements TypeLoader {
-    private _resourceExplorer: ResourceExplorer;
+export class DefaultLoader implements CustomDeserializer<Configurable, Record<string, unknown>> {
+    /**
+     * Intializes an instance of `DefaultLoader`.
+     * @param _resourceExplorer The `ResourceExplorer` used by the loader.
+     */
+    public constructor(private readonly _resourceExplorer: ResourceExplorer) {}
 
     /**
-     * Initialize a new `DefaultLoader`.
-     * @param resourceExplorer The resource explorer used to load declarative objects.
+     * The method that loads the configuration object to a requested type.
+     * @param config The configuration object to deserialize.
+     * @param type The object type that the configuration will be deserialized to.
+     * @returns A `Configurable` object created from the configuration.
      */
-    public constructor(resourceExplorer: ResourceExplorer) {
-        this._resourceExplorer = resourceExplorer;
-    }
-
-    /**
-     * Load and convert declarative objects.
-     * @param factory The factory to initialize new instances of declarative objects.
-     * @param config The JSON object to be loaded as configuration to declarative objects.
-     */
-    public load(factory: new () => object, config: object): object {
-        const obj = new factory();
-        const kind = config['$kind'] || config['$type'];
-        for (const key in config) {
-            if (config.hasOwnProperty(key) && key != '$kind' && key != '$type') {
-
-                const value = config[key];
-                const converter = this._resourceExplorer.getConverter(kind, key);
-                if (converter) {
-                    if (Array.isArray(value) && Array.isArray(obj[key])) {
-                        obj[key] = value.map((item): any => converter.convert(this._resourceExplorer.buildType(item)));
-                    } else {
-                        obj[key] = converter.convert(this._resourceExplorer.buildType(value));
-                    }
-                } else {
-                    if (Array.isArray(value)) {
-                        obj[key] = value.map((item): any => this._resourceExplorer.buildType(item));
-                    } else {
-                        obj[key] = this._resourceExplorer.buildType(value);
-                    }
+    public load(config: Record<string, unknown>, type: { new (...args: unknown[]): Configurable }): Configurable {
+        return Object.entries(config).reduce((instance, [key, value]) => {
+            let converter = instance.getConverter(key);
+            if (converter) {
+                if (typeof converter === 'function') {
+                    converter = new converter(this._resourceExplorer);
                 }
+                instance[`${key}`] = converter.convert(value);
+            } else {
+                instance[`${key}`] = value;
             }
-        }
-        return obj;
+            return instance;
+        }, new type());
     }
 }

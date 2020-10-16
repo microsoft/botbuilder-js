@@ -6,16 +6,20 @@
  * Licensed under the MIT License.
  */
 
-import { RecognizerResult, Activity, ActivityTypes } from 'botbuilder-core';
+import { Activity, ActivityTypes, RecognizerResult } from 'botbuilder-core';
 import { DialogContext, Recognizer } from 'botbuilder-dialogs';
 
 export class ValueRecognizer extends Recognizer {
-
-    public async recognize(dialogContext: DialogContext, activity: Activity, telemetryProperties?: { [key: string]: string }, telemetryMetrics?: { [key: string]: number }): Promise<RecognizerResult> {
+    public async recognize(
+        dialogContext: DialogContext,
+        activity: Activity,
+        telemetryProperties?: { [key: string]: string },
+        telemetryMetrics?: { [key: string]: number }
+    ): Promise<RecognizerResult> {
         const recognizerResult: RecognizerResult = {
             text: activity.text,
             intents: {},
-            entities: {}
+            entities: {},
         };
 
         if (activity.type == ActivityTypes.Message) {
@@ -33,7 +37,12 @@ export class ValueRecognizer extends Recognizer {
                 }
             }
         }
-        this.trackRecognizerResult(dialogContext, 'ValueRecognizerResult', this.fillRecognizerResultTelemetryProperties(recognizerResult, telemetryProperties), telemetryMetrics);
+        this.trackRecognizerResult(
+            dialogContext,
+            'ValueRecognizerResult',
+            this.fillRecognizerResultTelemetryProperties(recognizerResult, telemetryProperties),
+            telemetryMetrics
+        );
 
         return recognizerResult;
     }

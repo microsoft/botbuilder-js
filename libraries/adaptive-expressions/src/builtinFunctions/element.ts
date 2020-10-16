@@ -10,6 +10,7 @@ import { Expression } from '../expression';
 import { ExpressionEvaluator, ValueWithError } from '../expressionEvaluator';
 import { ExpressionType } from '../expressionType';
 import { FunctionUtils } from '../functionUtils';
+import { InternalFunctionUtils } from '../functionUtils.internal';
 import { MemoryInterface } from '../memory/memoryInterface';
 import { Options } from '../options';
 import { ReturnType } from '../returnType';
@@ -25,11 +26,10 @@ export class Element extends ExpressionEvaluator {
 
     private static evaluator(expression: Expression, state: MemoryInterface, options: Options): ValueWithError {
         let value: any;
-        let error: string;
         const instance: Expression = expression.children[0];
         const index: Expression = expression.children[1];
-        let inst: any;
-        ({ value: inst, error } = instance.tryEvaluate(state, options));
+        const { value: inst, error: evalError } = instance.tryEvaluate(state, options);
+        let error = evalError;
         if (!error) {
             let idxValue: any;
             const newOptions = new Options(options);
@@ -37,9 +37,9 @@ export class Element extends ExpressionEvaluator {
             ({ value: idxValue, error } = index.tryEvaluate(state, newOptions));
             if (!error) {
                 if (Number.isInteger(idxValue)) {
-                    ({ value, error } = FunctionUtils.accessIndex(inst, Number(idxValue)));
+                    ({ value, error } = InternalFunctionUtils.accessIndex(inst, Number(idxValue)));
                 } else if (typeof idxValue === 'string') {
-                    ({ value, error } = FunctionUtils.accessProperty(inst, idxValue.toString()));
+                    ({ value, error } = InternalFunctionUtils.accessProperty(inst, idxValue.toString()));
                 } else {
                     error = `Could not coerce ${index} to an int or string.`;
                 }

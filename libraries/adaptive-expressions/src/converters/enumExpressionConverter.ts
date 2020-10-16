@@ -7,21 +7,27 @@
  */
 
 import { EnumExpression } from '../expressionProperties';
+import { Expression } from '../expression';
 
-export class EnumExpressionConverter {
-    private _enumValue: object;
+type Input<T> = T | string | Expression;
 
-    public constructor(enumValue: object) {
+export class EnumExpressionConverter<T> {
+    private _enumValue: unknown;
+
+    public constructor(enumValue: unknown) {
         this._enumValue = enumValue;
     }
 
-    public convert(value: string): EnumExpression<any> {
-        if (typeof value == 'string') {
-            if (this._enumValue.hasOwnProperty(value)) {
-                return new EnumExpression<any>(this._enumValue[value as string]);
-            }
-            return new EnumExpression<any>(`=${ value }`);
+    public convert(value: Input<T> | EnumExpression<T>): EnumExpression<T> {
+        if (value instanceof EnumExpression) {
+            return value;
         }
-        return new EnumExpression<any>(value);
+        if (typeof value == 'string') {
+            if (Object.prototype.hasOwnProperty.call(this._enumValue, value)) {
+                return new EnumExpression<T>(this._enumValue[value as string]);
+            }
+            return new EnumExpression<T>(`=${value}`);
+        }
+        return new EnumExpression<T>(value);
     }
 }

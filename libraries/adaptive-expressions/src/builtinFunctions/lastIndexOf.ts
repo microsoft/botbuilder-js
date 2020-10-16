@@ -10,6 +10,7 @@ import { Expression } from '../expression';
 import { ExpressionEvaluator, ValueWithError } from '../expressionEvaluator';
 import { ExpressionType } from '../expressionType';
 import { FunctionUtils } from '../functionUtils';
+import { InternalFunctionUtils } from '../functionUtils.internal';
 import { MemoryInterface } from '../memory/memoryInterface';
 import { Options } from '../options';
 import { ReturnType } from '../returnType';
@@ -25,14 +26,13 @@ export class LastIndexOf extends ExpressionEvaluator {
 
     private static evaluator(expression: Expression, state: MemoryInterface, options: Options): ValueWithError {
         let value = -1;
-        let error: string;
-        let args: any[];
-        ({ args, error } = FunctionUtils.evaluateChildren(expression, state, options));
+        const { args, error: childrenError } = FunctionUtils.evaluateChildren(expression, state, options);
+        let error = childrenError;
         if (!error) {
             if (args[0] == undefined || typeof args[0] === 'string') {
                 if (args[1] === undefined || typeof args[1] === 'string') {
-                    const str = FunctionUtils.parseStringOrUndefined(args[0]);
-                    const searchValue = FunctionUtils.parseStringOrUndefined(args[1]);
+                    const str = InternalFunctionUtils.parseStringOrUndefined(args[0]);
+                    const searchValue = InternalFunctionUtils.parseStringOrUndefined(args[1]);
                     value = str.lastIndexOf(searchValue, str.length - 1);
                 } else {
                     error = `Can only look for indexof string in ${expression}`;

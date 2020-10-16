@@ -1,5 +1,5 @@
 /**
- * @module botbuilder
+ * @module botframework-connector
  */
 /**
  * Copyright (c) Microsoft Corporation. All rights reserved.
@@ -23,14 +23,18 @@ export class MicrosoftAppCredentials extends AppCredentials {
     protected async refreshToken(): Promise<adal.TokenResponse> {
         if (!this.refreshingToken) {
             this.refreshingToken = new Promise<adal.TokenResponse>((resolve, reject): void => {
-                this.authenticationContext.acquireTokenWithClientCredentials(this.oAuthScope, this.appId, this.appPassword, function(err, tokenResponse): void {
-                    if (err) {
-                        reject(err);
-                    } else {
-                        resolve(tokenResponse as adal.TokenResponse);
+                this.authenticationContext.acquireTokenWithClientCredentials(
+                    this.oAuthScope,
+                    this.appId,
+                    this.appPassword,
+                    function (err, tokenResponse): void {
+                        if (err) {
+                            reject(err);
+                        } else {
+                            resolve(tokenResponse as adal.TokenResponse);
+                        }
                     }
-                });
-
+                );
             });
         }
         return this.refreshingToken;

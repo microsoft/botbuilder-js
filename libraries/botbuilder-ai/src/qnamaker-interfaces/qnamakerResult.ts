@@ -8,7 +8,7 @@
 
 import { QnAResponseContext } from './qnaResponseContext';
 
- /**
+/**
  * An individual answer returned by a call to the QnA Maker Service.
  */
 export interface QnAMakerResult {
@@ -45,5 +45,5 @@ export interface QnAMakerResult {
     /**
      * Context for multi-turn responses.
      */
-    context?: QnAResponseContext; 
+    context?: QnAResponseContext;
 }

@@ -7,7 +7,7 @@
  */
 
 import { ExpressionType } from '../expressionType';
-import { FunctionUtils } from '../functionUtils';
+import { InternalFunctionUtils } from '../functionUtils.internal';
 import { StringTransformEvaluator } from './stringTransformEvaluator';
 
 /**
@@ -19,11 +19,14 @@ export class TitleCase extends StringTransformEvaluator {
     }
 
     private static evaluator(args: any[]): string {
-        const inputStr = String(FunctionUtils.parseStringOrUndefined(args[0])).toLowerCase();
+        const inputStr = String(InternalFunctionUtils.parseStringOrUndefined(args[0])).toLowerCase();
         if (inputStr === '') {
             return inputStr;
         } else {
-            return inputStr.replace(/\w\S*/g, (txt): string => txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase());
+            return inputStr.replace(
+                /\w\S*/g,
+                (txt): string => txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase()
+            );
         }
     }
 }

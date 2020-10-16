@@ -134,7 +134,7 @@ describe('BotFrameworkAdapter Streaming tests', () => {
 
         it('returns status code 400 when request is missing Authorization header', async () => {
             const bot = new ActivityHandler();
-            settings = new TestAdapterSettings('appId', 'password');
+            const settings = new TestAdapterSettings('appId', 'password');
             const adapter = new BotFrameworkAdapter(settings);
             const requestWithoutAuthHeader = new MockHttpRequest();
             

@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 
- /**
+/**
  * Defines an endpoint used to connect to a QnA Maker Knowledge base.
  */
 export interface QnAMakerEndpoint {

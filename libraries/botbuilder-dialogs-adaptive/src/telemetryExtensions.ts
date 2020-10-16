@@ -6,8 +6,8 @@
  * Licensed under the MIT License.
  */
 
-import { DialogManager } from 'botbuilder-dialogs';
 import { BotTelemetryClient, telemetryClientKey } from 'botbuilder-core';
+import { DialogManager } from 'botbuilder-dialogs';
 
 /**
  * Extension methods for telemetry.

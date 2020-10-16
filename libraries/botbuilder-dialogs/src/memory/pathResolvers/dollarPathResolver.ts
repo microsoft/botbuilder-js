@@ -11,7 +11,6 @@ import { AliasPathResolver } from './aliasPathResolver';
  * Maps $xxx => dialog.xxx
  */
 export class DollarPathResolver extends AliasPathResolver {
-
     constructor() {
         super('$', 'dialog.');
     }

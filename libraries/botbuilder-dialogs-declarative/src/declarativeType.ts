@@ -6,15 +6,13 @@
  * Licensed under the MIT License.
  */
 
-import { Converter } from './converter';
-import { TypeLoader } from './typeLoader';
+import { CustomDeserializer } from './customDeserializer';
 
 /**
- * Defines a declarative object which is $kind => type.
+ * DeclarativeType interface maps $kind to type.
  */
-export interface DeclarativeType {
+export interface DeclarativeType<T = unknown, C = Record<string, unknown>> {
     kind: string;
-    factory: new () => object;
-    loader?: TypeLoader;
-    converters?: { [key: string]: Converter };
+    type: new (...args: unknown[]) => T;
+    loader?: CustomDeserializer<T, C>;
 }

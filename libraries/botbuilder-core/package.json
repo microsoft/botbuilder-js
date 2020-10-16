@@ -21,6 +21,7 @@
   "typings": "./lib/index.d.ts",
   "dependencies": {
     "assert": "^1.4.1",
+    "botframework-connector": "4.1.6",
     "botframework-schema": "4.1.6"
   },
   "devDependencies": {
@@ -44,7 +45,7 @@
     "test:compat": "api-extractor run --verbose"
   },
   "files": [
-    "/lib",
-    "/src"
+    "lib",
+    "src"
   ]
 }
