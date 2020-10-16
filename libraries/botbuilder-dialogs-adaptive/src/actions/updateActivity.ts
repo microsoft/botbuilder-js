@@ -5,17 +5,40 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { Dialog, DialogContext, DialogStateManager, DialogTurnResult } from 'botbuilder-dialogs';
+import {
+    StringExpression,
+    BoolExpression,
+    BoolExpressionConverter,
+    StringExpressionConverter,
+    Expression,
+} from 'adaptive-expressions';
 import { Activity, StringUtils } from 'botbuilder-core';
+import {
+    Converter,
+    ConverterFactory,
+    Dialog,
+    DialogConfiguration,
+    DialogContext,
+    DialogStateManager,
+    DialogTurnResult,
+} from 'botbuilder-dialogs';
 import { TemplateInterface } from '../template';
-import { StringExpression, BoolExpression } from 'adaptive-expressions';
 import { ActivityTemplate, StaticActivityTemplate } from '../templates';
+import { ActivityTemplateConverter } from '../converters';
 
 type D = DialogStateManager & {
     utterance: string;
 };
 
-export class UpdateActivity<O extends object = {}> extends Dialog<O> {
+export interface UpdateActivityConfiguration extends DialogConfiguration {
+    activity?: string | Partial<Activity> | TemplateInterface<Partial<Activity>, D>;
+    activityId?: string | Expression | StringExpression;
+    disabled?: boolean | string | Expression | BoolExpression;
+}
+
+export class UpdateActivity<O extends object = {}> extends Dialog<O> implements UpdateActivityConfiguration {
+    public static $kind = 'Microsoft.UpdateActivity';
+
     public constructor();
     public constructor(activityId?: string, activity?: Partial<Activity> | string) {
         super();
@@ -45,6 +68,19 @@ export class UpdateActivity<O extends object = {}> extends Dialog<O> {
      * An optional expression which if is true will disable this action.
      */
     public disabled?: BoolExpression;
+
+    public getConverter(property: keyof UpdateActivityConfiguration): Converter | ConverterFactory {
+        switch (property) {
+            case 'activity':
+                return new ActivityTemplateConverter();
+            case 'activityId':
+                return new StringExpressionConverter();
+            case 'disabled':
+                return new BoolExpressionConverter();
+            default:
+                return super.getConverter(property);
+        }
+    }
 
     public async beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult> {
         if (this.disabled && this.disabled.getValue(dc.state)) {
