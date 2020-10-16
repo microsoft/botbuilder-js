@@ -34,3 +34,6 @@ export {
 export * from './functionUtils';
 export * from './returnType';
 export * from './triggerTrees';
+
+// Add polyfills for function which are used by library and not supported in IE
+import 'core-js/modules/es.array.find';
