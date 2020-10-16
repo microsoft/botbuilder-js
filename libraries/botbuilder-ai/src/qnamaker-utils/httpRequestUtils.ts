@@ -81,6 +81,9 @@ export class HttpRequestUtils {
         return headers;
     }
 
+    /**
+     * @private
+     */
     private getUserAgent(): string {
         const packageUserAgent = `${pjson.name}/${pjson.version}`;
         const platformUserAgent = `(${os.arch()}-${os.type()}-${os.release()}; Node.js,Version=${process.version})`;
