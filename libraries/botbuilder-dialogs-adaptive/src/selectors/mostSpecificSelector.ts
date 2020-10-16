@@ -7,10 +7,16 @@
  */
 import { ExpressionParser, ExpressionParserInterface, TriggerTree, Trigger } from 'adaptive-expressions';
 import { OnCondition } from '../conditions/onCondition';
-import { TriggerSelector } from '../triggerSelector';
+import { TriggerSelector, TriggerSelectorConfiguration } from '../triggerSelector';
 import { ActionContext } from '../actionContext';
 
-export class MostSpecificSelector extends TriggerSelector {
+export interface MostSpecificSelectorConfiguration extends TriggerSelectorConfiguration {
+    selector?: TriggerSelector;
+}
+
+export class MostSpecificSelector extends TriggerSelector implements MostSpecificSelectorConfiguration {
+    public static $kind = 'Microsoft.MostSpecificSelector';
+
     private readonly _tree = new TriggerTree();
 
     /**
@@ -20,7 +26,7 @@ export class MostSpecificSelector extends TriggerSelector {
 
     public selector: TriggerSelector;
 
-    public initialize(conditionals: OnCondition[], _evaluate: boolean) {
+    public initialize(conditionals: OnCondition[], _evaluate: boolean): void {
         for (const conditional of conditionals) {
             this._tree.addTrigger(conditional.getExpression(this.parser), conditional);
         }

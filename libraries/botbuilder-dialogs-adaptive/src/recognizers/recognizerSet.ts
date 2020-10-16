@@ -6,12 +6,28 @@
  * Licensed under the MIT License.
  */
 
-import { RecognizerResult, Activity, getTopScoringIntent } from 'botbuilder-core';
-import { DialogContext } from 'botbuilder-dialogs';
-import { Recognizer } from './recognizer';
+import { Activity, RecognizerResult, getTopScoringIntent } from 'botbuilder-core';
+import { Converter, ConverterFactory, DialogContext } from 'botbuilder-dialogs';
+import { RecognizerListConverter } from '../converters';
+import { Recognizer, RecognizerConfiguration } from './recognizer';
 
-export class RecognizerSet extends Recognizer {
+export interface RecognizerSetConfiguration extends RecognizerConfiguration {
+    recognizers?: string[] | Recognizer[];
+}
+
+export class RecognizerSet extends Recognizer implements RecognizerSetConfiguration {
+    public static $kind = 'Microsoft.RecognizerSet';
+
     public recognizers: Recognizer[] = [];
+
+    public getConverter(property: keyof RecognizerSetConfiguration): Converter | ConverterFactory {
+        switch (property) {
+            case 'recognizers':
+                return RecognizerListConverter;
+            default:
+                return super.getConverter(property);
+        }
+    }
 
     public async recognize(
         dialogContext: DialogContext,

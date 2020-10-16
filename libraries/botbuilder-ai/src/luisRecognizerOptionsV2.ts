@@ -60,7 +60,7 @@ export class LuisRecognizerV2 extends LuisRecognizerInternal {
             // Bypass LUIS if the activity's text is null or whitespace
             return {
                 text: utterance,
-                intents: { '': { score: 1 } },
+                intents: {},
                 entities: {},
             };
         }
