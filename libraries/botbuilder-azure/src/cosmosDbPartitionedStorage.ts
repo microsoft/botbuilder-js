@@ -107,7 +107,7 @@ class DocumentStoreItem {
 }
 
 /**
- * Implements an CosmosDB based storage provider using partitioning for a bot.
+ * Implements a CosmosDB based storage provider using partitioning for a bot.
  */
 export class CosmosDbPartitionedStorage implements Storage {
     private container: Container;
@@ -159,6 +159,11 @@ export class CosmosDbPartitionedStorage implements Storage {
         this.cosmosDbStorageOptions = cosmosDbStorageOptions;
     }
 
+    /**
+     * Read one or more items with matching keys from the Cosmos DB container.
+     * @param keys A collection of Ids for each item to be retrieved.
+     * @returns The read items.
+     */
     public async read(keys: string[]): Promise<StoreItems> {
         if (!keys) {
             throw new ReferenceError(`Keys are required when reading.`);
@@ -212,6 +217,10 @@ export class CosmosDbPartitionedStorage implements Storage {
         return storeItems;
     }
 
+    /**
+     * Insert or update one or more items into the Cosmos DB container. 
+     * @param changes Dictionary of items to be inserted or updated indexed by key.
+     */
     public async write(changes: StoreItems): Promise<void> {
         if (!changes) {
             throw new ReferenceError(`Changes are required when writing.`);
@@ -254,6 +263,10 @@ export class CosmosDbPartitionedStorage implements Storage {
         );
     }
 
+    /**
+     * Delete one or more items from the Cosmos DB container.
+     * @param keys Array of Ids for the items to be deleted.
+     */
     public async delete(keys: string[]): Promise<void> {
         await this.initialize();
 
@@ -342,6 +355,9 @@ export class CosmosDbPartitionedStorage implements Storage {
         }
     }
 
+    /**
+     * @private
+     */
     private getPartitionKey(key) {
         return this.compatabilityModePartitionKey ? undefined : key;
     }
