@@ -10,19 +10,17 @@ import { BotAdapter } from './botAdapter';
 import { BotState } from './botState';
 import { RegisterClassMiddleware } from './registerClassMiddleware';
 
-export class AdapterExtensions {
-    /**
-     * Adds middleware to the adapter to register one or more BotState objects on the turn context.
-     * The middleware registers the state objects on the turn context at the start of each turn.
-     * @param botAdapter The adapter on which to register the state objects.
-     * @param botStates The state objects to register.
-     */
-    public static useBotState(botAdapter: BotAdapter, ...botStates: BotState[]): BotAdapter {
-        for (const botState of botStates) {
-            const key = botState.constructor.name;
-            botAdapter.use(new RegisterClassMiddleware(botState, key));
-        }
-
-        return botAdapter;
+/**
+ * Adds middleware to the adapter to register one or more BotState objects on the turn context.
+ * The middleware registers the state objects on the turn context at the start of each turn.
+ * @param botAdapter The adapter on which to register the state objects.
+ * @param botStates The state objects to register.
+ */
+export function useBotState(botAdapter: BotAdapter, ...botStates: BotState[]): BotAdapter {
+    for (const botState of botStates) {
+        const key = botState.constructor.name;
+        botAdapter.use(new RegisterClassMiddleware(botState, key));
     }
+
+    return botAdapter;
 }
