@@ -428,7 +428,7 @@ export function convertCSharpDateTimeToMomentJS(fmtString: string): string {
                     break;
                 case '/':
                     changeState(State.None);
-                    fmtResult += ':';
+                    fmtResult += '/';
                     break;
                 case '`':
                     changeState(State.InDoubleQuoteLiteral);
