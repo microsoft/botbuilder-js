@@ -20,10 +20,16 @@ import { ReturnType } from '../returnType';
  * Used to access the variable value corresponding to the path.
  */
 export class Accessor extends ExpressionEvaluator {
+    /**
+     * Initializes a new instance of the [Accessor](xref:adaptive-expressions.Accessor) class.
+     */
     public constructor() {
         super(ExpressionType.Accessor, Accessor.evaluator, ReturnType.Object, Accessor.validator);
     }
 
+    /**
+     * @private
+     */
     private static evaluator(expression: Expression, state: MemoryInterface, options: Options): ValueWithError {
         const { path, left, error } = FunctionUtils.tryAccumulatePath(expression, state, options);
         if (error) {
@@ -46,6 +52,9 @@ export class Accessor extends ExpressionEvaluator {
         }
     }
 
+    /**
+     * @private
+     */
     private static validator(expression: Expression): void {
         const children = expression.children;
         if (
@@ -57,10 +66,10 @@ export class Accessor extends ExpressionEvaluator {
         }
 
         if (children.length > 2) {
-            throw new Error(`${expression} has more than 2 children.`);
+            throw new Error(`${ expression } has more than 2 children.`);
         }
         if (children.length === 2 && (children[1].returnType & ReturnType.Object) === 0) {
-            throw new Error(`${expression} must have an object as its second argument.`);
+            throw new Error(`${ expression } must have an object as its second argument.`);
         }
     }
 }
