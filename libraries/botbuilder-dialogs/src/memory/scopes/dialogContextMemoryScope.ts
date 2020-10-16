@@ -53,13 +53,4 @@ export class DialogContextMemoryScope extends MemoryScope {
             parent: dc.parent && dc.parent.activeDialog && dc.parent.activeDialog.id,
         };
     }
-
-    /**
-     * Changes the backing object for the memory scope (not supported).
-     * @param _dc The `DialogContext` object fot this turn.
-     * @param _memory Memory object to set for the scope.
-     */
-    public setMemory(_dc: DialogContext, _memory: unknown): void {
-        throw new Error("You can't modify the dialogcontext scope");
-    }
 }
