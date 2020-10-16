@@ -184,6 +184,7 @@ describe('TeamsInfo', () => {
         it('should error if context is null', async () => {
             try {
                 await TeamsInfo.sendMessageToTeamsChannel(null, teamActivity, 'teamID');
+                assert.fail('should have thrown');
             } catch (err) {
                 assert(err.message === 'TurnContext cannot be null');
             }
@@ -193,6 +194,7 @@ describe('TeamsInfo', () => {
             const context = new TestContext(teamActivity);
             try {
                 await TeamsInfo.sendMessageToTeamsChannel(context, null, 'teamID');
+                assert.fail('should have thrown');
             } catch (err) {
                 assert(err.message === 'Activity cannot be null');
             }
@@ -202,6 +204,7 @@ describe('TeamsInfo', () => {
             const context = new TestContext(teamActivity);
             try {
                 await TeamsInfo.sendMessageToTeamsChannel(context, teamActivity, '');
+                assert.fail('should have thrown');
             } catch (err) {
                 assert(err.message === 'The teamsChannelId cannot be null or empty');
             }
@@ -211,6 +214,7 @@ describe('TeamsInfo', () => {
             const context = new TestContext(teamActivity);
             try {
                 await TeamsInfo.sendMessageToTeamsChannel(context, teamActivity, null);
+                assert.fail('should have thrown');
             } catch (err) {
                 assert(err.message === 'The teamsChannelId cannot be null or empty');
             }
@@ -222,6 +226,7 @@ describe('TeamsInfo', () => {
             const context = new TestContext(oneOnOneActivity);
             try {
                 await TeamsInfo.getTeamChannels(context);
+                assert.fail('should have thrown');
             } catch (err) {
                 assert(
                     err.message === 'This method is only valid within the scope of a MS Teams Team.',
@@ -234,6 +239,7 @@ describe('TeamsInfo', () => {
             const context = new TestContext(groupChatActivity);
             try {
                 await TeamsInfo.getTeamChannels(context);
+                assert.fail('should have thrown');
             } catch (err) {
                 assert(
                     err.message === 'This method is only valid within the scope of a MS Teams Team.',
@@ -316,6 +322,7 @@ describe('TeamsInfo', () => {
             const context = new TestContext(oneOnOneActivity);
             try {
                 await TeamsInfo.getTeamDetails(context);
+                assert.fail('should have thrown');
             } catch (err) {
                 assert(
                     err.message === 'This method is only valid within the scope of a MS Teams Team.',
@@ -328,6 +335,7 @@ describe('TeamsInfo', () => {
             const context = new TestContext(groupChatActivity);
             try {
                 await TeamsInfo.getTeamDetails(context);
+                assert.fail('should have thrown');
             } catch (err) {
                 assert(
                     err.message === 'This method is only valid within the scope of a MS Teams Team.',
@@ -499,7 +507,7 @@ describe('TeamsInfo', () => {
             context.activity.conversation.id = undefined;
             try {
                 await TeamsInfo.getMembers(context);
-                throw new Error('should have thrown an error');
+                assert.fail('should have thrown');
             } catch (err) {
                 assert.strictEqual(err.message, 'The getMembers operation needs a valid conversationId.');
                 oneOnOneActivity.conversation.id = 'a:oneOnOneConversationId';
@@ -558,6 +566,7 @@ describe('TeamsInfo', () => {
             try {
                 const context = new TestContext({ type: ActionTypes.message });
                 await TeamsInfo.getTeamMember(context);
+                assert.fail('should have thrown');
             } catch (err) {
                 assert.strictEqual(err.message, 'This method is only valid within the scope of a MS Teams Team.');
             }
@@ -599,7 +608,7 @@ describe('TeamsInfo', () => {
         it('should throw error for missing context', async () => {
             try {
                 await TeamsInfo.getMeetingParticipant();
-                assert('should have thrown');
+                assert.fail('should have thrown');
             } catch (err) {
                 assert(err);
             }
@@ -611,6 +620,7 @@ describe('TeamsInfo', () => {
             const context = new TestContext(oneOnOneActivity);
             try {
                 await TeamsInfo.getTeamMembers(context);
+                assert.fail('should have thrown');
             } catch (err) {
                 assert(
                     err.message === 'This method is only valid within the scope of a MS Teams Team.',
@@ -623,6 +633,7 @@ describe('TeamsInfo', () => {
             const context = new TestContext(groupChatActivity);
             try {
                 await TeamsInfo.getTeamMembers(context);
+                assert.fail('should have thrown');
             } catch (err) {
                 assert(
                     err.message === 'This method is only valid within the scope of a MS Teams Team.',
@@ -735,7 +746,7 @@ describe('TeamsInfo', () => {
             it(`should error if an invalid conversationId is passed in.`, async () => {
                 try {
                     await TeamsInfo.getMembersInternal({}, undefined);
-                    throw new Error('should have thrown an error');
+                    assert.fail('should have thrown');
                 } catch (err) {
                     assert.strictEqual(err.message, 'The getMembers operation needs a valid conversationId.');
                 }
@@ -744,7 +755,7 @@ describe('TeamsInfo', () => {
             it(`should error if an invalid conversationId is passed in.`, async () => {
                 try {
                     await TeamsInfo.getMemberInternal({}, undefined);
-                    throw new Error('should have thrown an error');
+                    assert.fail('should have thrown');
                 } catch (err) {
                     assert.strictEqual(err.message, 'The getMember operation needs a valid conversationId.');
                 }
@@ -753,7 +764,7 @@ describe('TeamsInfo', () => {
             it(`should error if an invalid userId is passed in.`, async () => {
                 try {
                     await TeamsInfo.getMemberInternal({}, 'conversationId', undefined);
-                    throw new Error('should have thrown an error');
+                    assert.fail('should have thrown');
                 } catch (err) {
                     assert.strictEqual(err.message, 'The getMember operation needs a valid userId.');
                 }
@@ -773,7 +784,7 @@ describe('TeamsInfo', () => {
             it(`should error if an invalid conversationId is passed in.`, async () => {
                 try {
                     await TeamsInfo.getPagedMembersInternal({}, undefined, 'options');
-                    throw new Error('should have thrown an error');
+                    assert.fail('should have thrown');
                 } catch (err) {
                     assert.strictEqual(err.message, 'The getPagedMembers operation needs a valid conversationId.');
                 }
@@ -822,7 +833,7 @@ describe('TeamsInfo', () => {
             it(`should error if an invalid context is passed in.`, async () => {
                 try {
                     await TeamsInfo.getTeamId(undefined);
-                    throw new Error('should have thrown an error');
+                    assert.fail('should have thrown');
                 } catch (err) {
                     assert.strictEqual(err.message, 'Missing context parameter');
                 }
@@ -831,7 +842,7 @@ describe('TeamsInfo', () => {
             it(`should error if an invalid activity is passed in.`, async () => {
                 try {
                     await TeamsInfo.getTeamId({ activity: undefined });
-                    throw new Error('should have thrown an error');
+                    assert.fail('should have thrown');
                 } catch (err) {
                     assert.strictEqual(err.message, 'Missing activity on context');
                 }
