@@ -11,10 +11,10 @@ import {
     getTopScoringIntent,
     NullTelemetryClient,
     RecognizerResult,
-    telemetryClientKey,
 } from 'botbuilder-core';
 import { Configurable } from './configurable';
 import { DialogContext } from './dialogContext';
+import { DialogTurnStateConstants } from './dialogTurnStateConstants';
 
 export interface RecognizerConfiguration {
     id?: string;
@@ -113,9 +113,11 @@ export class Recognizer extends Configurable implements RecognizerConfiguration 
         eventName: string,
         telemetryProperties?: { [key: string]: string },
         telemetryMetrics?: { [key: string]: number }
-    ) {
+    ): void {
         if (this.telemetryClient instanceof NullTelemetryClient) {
-            const turnStateTelemetryClient = dialogContext.context.turnState.get(telemetryClientKey);
+            const turnStateTelemetryClient = dialogContext.context.turnState.get(
+                DialogTurnStateConstants.telemetryClient
+            );
             this.telemetryClient = turnStateTelemetryClient || this.telemetryClient;
         }
         this.telemetryClient.trackEvent({
