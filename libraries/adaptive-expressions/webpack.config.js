@@ -26,6 +26,7 @@ module.exports = (env, argv) => {
                         compilerOptions: {
                             ...defaultTSConfig.compilerOptions,
                             outDir: './dist',
+                            target: 'es5',
                         },
                     },
                     exclude: /node_modules/,
