@@ -198,7 +198,7 @@ export class QnAMaker implements QnAMakerTelemetryClient {
         }
 
         // Log telemetry
-        this.onQnaResults(queryResult, context, telemetryProperties, telemetryMetrics);
+        await this.onQnaResults(queryResult, context, telemetryProperties, telemetryMetrics);
 
         await this.generateAnswerUtils.emitTraceInfo(context, queryResult, queryOptions);
 

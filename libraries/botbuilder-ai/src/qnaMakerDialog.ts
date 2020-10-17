@@ -5,6 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
+import { BoolExpression } from 'adaptive-expressions';
 import { Activity, ActivityTypes } from 'botbuilder-core';
 import {
     WaterfallDialog,
@@ -69,6 +70,15 @@ export interface QnAMakerDialogOptions {
  * The dialog will also present user with appropriate multi-turn prompt or active learning options.
  */
 export class QnAMakerDialog extends WaterfallDialog {
+    /**
+     * Log personal information flag.
+     *
+     * @remarks
+     * Defauls to a value of `=settings.logPersonalInformation`, which retrieves
+     * `logPersonalInformation` flag from settings.
+     */
+    public logPersonalInformation = new BoolExpression('=settings.logPersonalInformation');
+
     // state and step value key constants
     /**
      * The path for storing and retrieving QnA Maker context data.
@@ -168,6 +178,7 @@ export class QnAMakerDialog extends WaterfallDialog {
         this.noAnswer = noAnswer;
         this.cardNoMatchResponse = cardNoMatchResponse;
         this.strictFiltersJoinOperator = strictFiltersJoinOperator;
+
         this.addStep(this.callGenerateAnswer.bind(this));
         this.addStep(this.callTrain.bind(this));
         this.addStep(this.checkForMultiTurnPrompt.bind(this));
@@ -261,7 +272,7 @@ export class QnAMakerDialog extends WaterfallDialog {
             }
         }
 
-        const qna = this.getQnAClient();
+        const qna = this.getQnAClient(step);
 
         const response = await qna.getAnswersRaw(step.context, dialogOptions.qnaMakerOptions);
 
@@ -342,7 +353,8 @@ export class QnAMakerDialog extends WaterfallDialog {
 
                 const feedbackRecords: FeedbackRecords = { feedbackRecords: records };
 
-                await this.getQnAClient().callTrainAsync(feedbackRecords);
+                const qnaClient = this.getQnAClient(step)
+                await qnaClient.callTrainAsync(feedbackRecords);
 
                 return await step.next(qnaResult);
             } else if (reply == dialogOptions.qnaDialogResponseOptions.cardNoMatchText) {
@@ -424,13 +436,19 @@ export class QnAMakerDialog extends WaterfallDialog {
     /**
      * Creates and returns an instance of the QnAMaker class used to query the knowledgebase.
      **/
-    private getQnAClient(): QnAMaker {
+    private getQnAClient(dc: DialogContext): QnAMaker {
         const endpoint = {
             knowledgeBaseId: this.knowledgeBaseId,
             endpointKey: this.endpointKey,
             host: this.getHost(),
         };
-        return new QnAMaker(endpoint);
+
+        return new QnAMaker(
+            endpoint,
+            this.getQnAMakerOptions(),
+            this.telemetryClient,
+            this.logPersonalInformation.getValue(dc.state),
+        );
     }
 
     /**
