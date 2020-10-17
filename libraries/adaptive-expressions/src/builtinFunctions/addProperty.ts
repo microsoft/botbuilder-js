@@ -17,10 +17,16 @@ import { ReturnType } from '../returnType';
  * If the object already exists at runtime the function throws an error.
  */
 export class AddProperty extends ExpressionEvaluator {
+    /**
+     * Initializes a new instance of the [AddProperty](xref:adaptive-expressions.AddProperty) class.
+     */
     public constructor() {
         super(ExpressionType.AddProperty, AddProperty.evaluator(), ReturnType.Object, AddProperty.validator);
     }
 
+    /**
+     * @private
+     */
     private static evaluator(): EvaluateExpressionDelegate {
         return FunctionUtils.applyWithError((args: any[]): any => {
             let error: string;
@@ -36,6 +42,9 @@ export class AddProperty extends ExpressionEvaluator {
         });
     }
 
+    /**
+     * @private
+     */
     private static validator(expression: Expression): void {
         FunctionUtils.validateOrder(expression, undefined, ReturnType.Object, ReturnType.String, ReturnType.Object);
     }

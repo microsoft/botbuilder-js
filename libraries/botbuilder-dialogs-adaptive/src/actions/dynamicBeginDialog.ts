@@ -11,6 +11,8 @@ import { DialogContext } from 'botbuilder-dialogs';
 import { BeginDialog } from './beginDialog';
 
 export class DynamicBeginDialog extends BeginDialog {
+    public static $kind = 'Microsoft.DynamicBeginDialog';
+
     protected bindOptions(dc: DialogContext, _options: object): object {
         const options = {};
         for (const key of Object.getOwnPropertyNames(this)) {

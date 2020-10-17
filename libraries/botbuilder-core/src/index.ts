@@ -8,6 +8,7 @@
 
 export * from 'botframework-schema';
 export * from './activityFactory';
+export * from './adapterExtensions';
 export * from './coreAppCredentials';
 export * from './activityHandler';
 export * from './activityHandlerBase';
@@ -19,6 +20,7 @@ export * from './botStateSet';
 export * from './botTelemetryClient';
 export * from './browserStorage';
 export * from './cardFactory';
+export * from './componentRegistration';
 export * from './conversationState';
 export * from './invokeResponse';
 export * from './extendedUserTokenProvider';
@@ -29,6 +31,7 @@ export * from './middlewareSet';
 export * from './privateConversationState';
 export * from './propertyManager';
 export * from './recognizerResult';
+export * from './registerClassMiddleware';
 export * from './showTypingMiddleware';
 export * from './signInConstants';
 export {

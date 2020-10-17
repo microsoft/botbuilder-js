@@ -14,10 +14,16 @@ import { StringTransformEvaluator } from './stringTransformEvaluator';
  * Converts the specified string to title case.
  */
 export class TitleCase extends StringTransformEvaluator {
+    /**
+     * Initializes a new instance of the [TitleCase](xref:adaptive-expressions.TitleCase) class.
+     */
     public constructor() {
         super(ExpressionType.TitleCase, TitleCase.evaluator);
     }
 
+    /**
+     * @private
+     */
     private static evaluator(args: any[]): string {
         const inputStr = String(InternalFunctionUtils.parseStringOrUndefined(args[0])).toLowerCase();
         if (inputStr === '') {

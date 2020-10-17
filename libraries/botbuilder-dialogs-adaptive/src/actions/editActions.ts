@@ -5,15 +5,40 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
+import {
+    BoolExpression,
+    BoolExpressionConverter,
+    EnumExpression,
+    EnumExpressionConverter,
+    Expression,
+} from 'adaptive-expressions';
 import { StringUtils } from 'botbuilder-core';
-import { DialogTurnResult, Dialog, DialogDependencies, DialogContext } from 'botbuilder-dialogs';
-import { BoolExpression, EnumExpression } from 'adaptive-expressions';
+import {
+    Converter,
+    ConverterFactory,
+    Dialog,
+    DialogConfiguration,
+    DialogContext,
+    DialogDependencies,
+    DialogTurnResult,
+} from 'botbuilder-dialogs';
 import { ActionContext } from '../actionContext';
 import { ActionChangeType } from '../actionChangeType';
 import { ActionState } from '../actionState';
 import { ActionChangeList } from '../actionChangeList';
+import { DialogListConverter } from '../converters';
 
-export class EditActions<O extends object = {}> extends Dialog<O> implements DialogDependencies {
+export interface EditActionsConfiguration extends DialogConfiguration {
+    actions?: string[] | Dialog[];
+    changeType?: ActionChangeType | string | Expression | EnumExpression<ActionChangeType>;
+    disabled?: boolean | string | BoolExpression;
+}
+
+export class EditActions<O extends object = {}>
+    extends Dialog<O>
+    implements DialogDependencies, EditActionsConfiguration {
+    public static $kind = 'Microsoft.EditActions';
+
     public constructor();
     public constructor(changeType: ActionChangeType, actions?: Dialog[]);
     public constructor(changeType?: ActionChangeType, actions?: Dialog[]) {
@@ -29,7 +54,7 @@ export class EditActions<O extends object = {}> extends Dialog<O> implements Dia
     /**
      * The actions to update the dialog with.
      */
-    public actions: Dialog[];
+    public actions: Dialog[] = [];
 
     /**
      * The type of change to make to the dialogs list of actions.
@@ -40,6 +65,19 @@ export class EditActions<O extends object = {}> extends Dialog<O> implements Dia
      * An optional expression which if is true will disable this action.
      */
     public disabled?: BoolExpression;
+
+    public getConverter(property: keyof EditActionsConfiguration): Converter | ConverterFactory {
+        switch (property) {
+            case 'actions':
+                return DialogListConverter;
+            case 'changeType':
+                return new EnumExpressionConverter<ActionChangeType>(ActionChangeType);
+            case 'disabled':
+                return new BoolExpressionConverter();
+            default:
+                return super.getConverter(property);
+        }
+    }
 
     public getDependencies(): Dialog[] {
         return this.actions;

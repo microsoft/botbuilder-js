@@ -14,6 +14,8 @@ import { ActionContext } from '../actionContext';
  * Select all rules which evaluate to true.
  */
 export class TrueSelector extends TriggerSelector {
+    public static $kind = 'Microsoft.TrueSelector';
+
     private _conditionals: OnCondition[];
     private _evaluate: boolean;
 

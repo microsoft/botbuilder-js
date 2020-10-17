@@ -9,7 +9,15 @@
 import { LuisApplication, LuisRecognizerOptions } from './luisRecognizer';
 import { RecognizerResult, TurnContext } from 'botbuilder-core';
 
+/**
+ * Abstract class for Luis Recognizer.
+ */
 export abstract class LuisRecognizerInternal {
+    /**
+     * Creates a new [LuisRecognizerInternal](xref:botbuilder-ai.LuisRecognizerInternal) instance.
+     * @param application An object conforming to the [LuisApplication](xref:botbuilder-ai.LuisApplication) definition.
+     * @param options Optional. Options object used to control predictions. Should conform to the [LuisRecognizerOptions](xref:botbuilder-ai.LuisRecognizerOptions) definition.
+     */
     constructor(application: LuisApplication, options?: LuisRecognizerOptions) {
         if (!application) {
             throw new Error('Null Application\n');

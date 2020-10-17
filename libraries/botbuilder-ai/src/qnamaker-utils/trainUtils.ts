@@ -43,6 +43,9 @@ export class TrainUtils {
         await this.queryTrain(feedbackRecords);
     }
 
+    /**
+     * @private
+     */
     private async queryTrain(feedbackRecords: FeedbackRecords) {
         const url = `${this.endpoint.host}/knowledgebases/${this.endpoint.knowledgeBaseId}/train`;
         const payloadBody = JSON.stringify({

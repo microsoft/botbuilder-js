@@ -7,12 +7,19 @@
  */
 
 import { Activity, ActivityTypes } from 'botbuilder-core';
-import { AssertReplyActivity } from './assertReplyActivity';
+import { AssertReplyActivity, AssertReplyActivityConfiguration } from './assertReplyActivity';
+
+export interface AssertReplyConfiguration extends AssertReplyActivityConfiguration {
+    text?: string;
+    exact?: boolean;
+}
 
 /**
  * Test Script action to assert that the bots' reply matches expectations.
  */
-export class AssertReply extends AssertReplyActivity {
+export class AssertReply extends AssertReplyActivity implements AssertReplyConfiguration {
+    public static $kind = 'Microsoft.Test.AssertReply';
+
     /**
      * The text value to look for in the reply.
      */
