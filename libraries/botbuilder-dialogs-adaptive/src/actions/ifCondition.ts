@@ -5,12 +5,32 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
+import { BoolExpression, BoolExpressionConverter, Expression } from 'adaptive-expressions';
 import { StringUtils } from 'botbuilder-core';
-import { DialogTurnResult, Dialog, DialogDependencies, DialogContext } from 'botbuilder-dialogs';
+import {
+    Converter,
+    ConverterFactory,
+    Dialog,
+    DialogConfiguration,
+    DialogContext,
+    DialogDependencies,
+    DialogTurnResult,
+} from 'botbuilder-dialogs';
 import { ActionScope } from './actionScope';
-import { BoolExpression } from 'adaptive-expressions';
+import { DialogListConverter } from '../converters';
 
-export class IfCondition<O extends object = {}> extends Dialog<O> implements DialogDependencies {
+export interface IfConditionConfiguration extends DialogConfiguration {
+    condition?: boolean | string | Expression | BoolExpression;
+    actions?: string[] | Dialog[];
+    elseActions?: string[] | Dialog[];
+    disabled?: boolean | string | Expression | BoolExpression;
+}
+
+export class IfCondition<O extends object = {}>
+    extends Dialog<O>
+    implements DialogDependencies, IfConditionConfiguration {
+    public static $kind = 'Microsoft.IfCondition';
+
     public constructor();
     public constructor(condition?: string, elseActions?: Dialog[]) {
         super();
@@ -37,6 +57,25 @@ export class IfCondition<O extends object = {}> extends Dialog<O> implements Dia
      */
     public elseActions: Dialog[] = [];
 
+    /**
+     * An optional expression which if is true will disable this action.
+     */
+    public disabled?: BoolExpression;
+
+    public getConverter(property: keyof IfConditionConfiguration): Converter | ConverterFactory {
+        switch (property) {
+            case 'condition':
+                return new BoolExpressionConverter();
+            case 'actions':
+            case 'elseActions':
+                return DialogListConverter;
+            case 'disabled':
+                return new BoolExpressionConverter();
+            default:
+                return super.getConverter(property);
+        }
+    }
+
     protected get trueScope(): ActionScope {
         if (!this._trueScope) {
             this._trueScope = new ActionScope(this.actions);
@@ -52,11 +91,6 @@ export class IfCondition<O extends object = {}> extends Dialog<O> implements Dia
         }
         return this._falseScope;
     }
-
-    /**
-     * An optional expression which if is true will disable this action.
-     */
-    public disabled?: BoolExpression;
 
     private _trueScope: ActionScope;
 

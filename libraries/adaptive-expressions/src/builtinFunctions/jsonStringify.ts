@@ -15,10 +15,16 @@ import { ReturnType } from '../returnType';
  * Return the string version of a value.
  */
 export class JsonStringify extends ExpressionEvaluator {
+    /**
+     * Initializes a new instance of the [JsonStringify](xref:adaptive-expressions.JsonStringify) class.
+     */
     public constructor() {
         super(ExpressionType.JsonStringify, JsonStringify.evaluator(), ReturnType.String, FunctionUtils.validateUnary);
     }
 
+    /**
+     * @private
+     */
     private static evaluator(): EvaluateExpressionDelegate {
         return FunctionUtils.apply((args: any[]): string => {
             return JSON.stringify(args[0]);

@@ -6,17 +6,37 @@
  * Licensed under the MIT License.
  */
 import * as Recognizers from '@microsoft/recognizers-text-date-time';
-import { DialogContext } from 'botbuilder-dialogs';
-import { InputDialog, InputState } from './inputDialog';
-import { StringExpression } from 'adaptive-expressions';
+import { Expression, StringExpression, StringExpressionConverter } from 'adaptive-expressions';
+import { Converter, ConverterFactory, DialogContext } from 'botbuilder-dialogs';
+import { InputDialog, InputDialogConfiguration, InputState } from './inputDialog';
+
+export interface DateTimeInputConfiguration extends InputDialogConfiguration {
+    defaultLocale?: string | Expression | StringExpression;
+    outputFormat?: string | Expression | StringExpression;
+}
+
+export class DateTimeInput extends InputDialog implements DateTimeInputConfiguration {
+    public static $kind = 'Microsoft.DateTimeInput';
 
 /**
  * Input dialog to collect a datetime from the user.
  */
 export class DateTimeInput extends InputDialog {
+
     public defaultLocale: StringExpression;
 
     public outputFormat: StringExpression;
+
+    public getConverter(property: keyof DateTimeInputConfiguration): Converter | ConverterFactory {
+        switch (property) {
+            case 'defaultLocale':
+                return new StringExpressionConverter();
+            case 'outputFormat':
+                return new StringExpressionConverter();
+            default:
+                return super.getConverter(property);
+        }
+    }
 
     /**
      * @protected

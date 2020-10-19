@@ -6,18 +6,39 @@
  * Licensed under the MIT License.
  */
 import * as Recognizers from '@microsoft/recognizers-text-choice';
+import {
+    EnumExpression,
+    EnumExpressionConverter,
+    Expression,
+    ObjectExpression,
+    ObjectExpressionConverter,
+    StringExpression,
+    StringExpressionConverter,
+} from 'adaptive-expressions';
 import { Activity } from 'botbuilder-core';
 import {
-    DialogContext,
     Choice,
-    ListStyle,
-    ChoiceFactoryOptions,
     ChoiceFactory,
+    ChoiceFactoryOptions,
+    Converter,
+    ConverterFactory,
+    DialogContext,
+    ListStyle,
     recognizeChoices,
 } from 'botbuilder-dialogs';
-import { InputDialog, InputState } from './inputDialog';
 import { ChoiceSet } from './choiceSet';
-import { StringExpression, ObjectExpression, ArrayExpression, EnumExpression } from 'adaptive-expressions';
+import { InputDialog, InputDialogConfiguration, InputState } from './inputDialog';
+
+export interface ConfirmInputConfiguration extends InputDialogConfiguration {
+    defaultLocale?: string | Expression | StringExpression;
+    style?: ListStyle | string | Expression | EnumExpression<ListStyle>;
+    choiceOptions?: ChoiceFactoryOptions | string | Expression | ObjectExpression<ChoiceFactoryOptions>;
+    confirmChoices?: ChoiceSet | string | Expression | ObjectExpression<ChoiceSet>;
+    outputFormat?: string | Expression | StringExpression;
+}
+
+export class ConfirmInput extends InputDialog implements ConfirmInputConfiguration {
+    public static $kind = 'Microsoft.ConfirmInput';
 
 /**
  * Declarative input control that will gather yes/no confirmation input from a set of choices.
@@ -92,7 +113,24 @@ export class ConfirmInput extends InputDialog {
      */
     public outputFormat: StringExpression;
 
-    /**
+    public getConverter(property: keyof ConfirmInputConfiguration): Converter | ConverterFactory {
+        switch (property) {
+            case 'defaultLocale':
+                return new StringExpressionConverter();
+            case 'style':
+                return new EnumExpressionConverter<ListStyle>(ListStyle);
+            case 'choiceOptions':
+                return new ObjectExpressionConverter<ChoiceFactoryOptions>();
+            case 'confirmChoices':
+                return new ObjectExpressionConverter<ChoiceSet>();
+            case 'outputFormat':
+                return new StringExpressionConverter();
+            default:
+                return super.getConverter(property);
+        }
+    }
+  
+     /**
      * @protected
      */
     protected onComputeId(): string {

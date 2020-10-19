@@ -1,5 +1,6 @@
 {
   "name": "teams-file-bot",
+  "private": true,
   "version": "1.0.0",
   "description": "",
   "main": "./lib/index.js",

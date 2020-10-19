@@ -6,26 +6,40 @@
  * Licensed under the MIT License.
  */
 import {
-    Dialog,
-    DialogContext,
-    DialogTurnResult,
-    DialogEvent,
-    DialogReason,
+    BoolExpression,
+    BoolExpressionConverter,
+    Expression,
+    ExpressionParser,
+    IntExpression,
+    IntExpressionConverter,
+    StringExpression,
+    StringExpressionConverter,
+    ValueExpression,
+    ValueExpressionConverter,
+} from 'adaptive-expressions';
+import { ActivityTypes, Activity, InputHints, MessageFactory } from 'botbuilder-core';
+import {
     Choice,
-    ListStyle,
-    ChoiceFactoryOptions,
     ChoiceFactory,
+    ChoiceFactoryOptions,
+    Converter,
+    ConverterFactory,
+    Dialog,
+    DialogConfiguration,
+    DialogContext,
+    DialogEvent,
     DialogEvents,
+    DialogReason,
+    DialogTurnResult,
+    ListStyle,
     TurnPath,
     DialogStateManager,
 } from 'botbuilder-dialogs';
-import { ActivityTypes, Activity, InputHints, MessageFactory } from 'botbuilder-core';
-import { ExpressionParser } from 'adaptive-expressions';
 import { TemplateInterface } from '../template';
-import { ValueExpression, StringExpression, BoolExpression, IntExpression } from 'adaptive-expressions';
 import { AdaptiveEvents } from '../adaptiveEvents';
 import { ActivityTemplate } from '../templates/activityTemplate';
 import { StaticActivityTemplate } from '../templates/staticActivityTemplate';
+import { ActivityTemplateConverter } from '../converters';
 
 export enum InputState {
     missing = 'missing',
@@ -34,10 +48,25 @@ export enum InputState {
     valid = 'valid',
 }
 
+export interface InputDialogConfiguration extends DialogConfiguration {
+    alwaysPrompt?: boolean | string | Expression | BoolExpression;
+    allowInterruptions?: boolean | string | Expression | BoolExpression;
+    property?: string | Expression | StringExpression;
+    value?: unknown | ValueExpression;
+    prompt?: string | Partial<Activity> | TemplateInterface<Partial<Activity>, DialogStateManager>;
+    unrecognizedPrompt?: string | Partial<Activity> | TemplateInterface<Partial<Activity>, DialogStateManager>;
+    invalidPrompt?: string | Partial<Activity> | TemplateInterface<Partial<Activity>, DialogStateManager>;
+    defaultValueResponse?: string | Partial<Activity> | TemplateInterface<Partial<Activity>, DialogStateManager>;
+    validations?: string[];
+    maxTurnCount?: number | string | Expression | IntExpression;
+    defaultValue?: unknown | ValueExpression;
+    disabled?: boolean | string | Expression | BoolExpression;
+}
+
 /**
  * Defines input dialogs.
  */
-export abstract class InputDialog extends Dialog {
+export abstract class InputDialog extends Dialog implements InputDialogConfiguration {
     public static OPTIONS_PROPERTY = 'this.options';
     public static VALUE_PROPERTY = 'this.value';
     public static TURN_COUNT_PROPERTY = 'this.turnCount';
@@ -101,6 +130,35 @@ export abstract class InputDialog extends Dialog {
      * An optional expression which if is true will disable this action.
      */
     public disabled?: BoolExpression;
+
+    public getConverter(property: keyof InputDialogConfiguration): Converter | ConverterFactory {
+        switch (property) {
+            case 'alwaysPrompt':
+                return new BoolExpressionConverter();
+            case 'allowInterruptions':
+                return new BoolExpressionConverter();
+            case 'property':
+                return new StringExpressionConverter();
+            case 'value':
+                return new ValueExpressionConverter();
+            case 'prompt':
+                return new ActivityTemplateConverter();
+            case 'unrecognizedPrompt':
+                return new ActivityTemplateConverter();
+            case 'invalidPrompt':
+                return new ActivityTemplateConverter();
+            case 'defaultValueResponse':
+                return new ActivityTemplateConverter();
+            case 'maxTurnCount':
+                return new IntExpressionConverter();
+            case 'defaultValue':
+                return new ValueExpressionConverter();
+            case 'disabled':
+                return new BoolExpressionConverter();
+            default:
+                return super.getConverter(property);
+        }
+    }
 
     /**
      * Initializes a new instance of the [InputDialog](xref:botbuilder-dialogs-adaptive.InputDialog) class

@@ -455,32 +455,41 @@ export class BotFrameworkAdapter
      */
     public async createConversation(
         reference: Partial<ConversationReference>,
+        parameters?: Partial<ConversationParameters> | ((context: TurnContext) => Promise<void>),
         logic?: (context: TurnContext) => Promise<void>
     ): Promise<void> {
         if (!reference.serviceUrl) {
             throw new Error(`BotFrameworkAdapter.createConversation(): missing serviceUrl.`);
         }
 
-        // Create conversation
-        const parameters: ConversationParameters = {
-            bot: reference.bot,
-            members: [reference.user],
-            isGroup: false,
-            activity: null,
-            channelData: null,
-        };
-        const client: ConnectorClient = this.createConnectorClient(reference.serviceUrl);
+        // Create conversation parameters, taking care to provide defaults that can be
+        // overridden by passed in parameters
+        const conversationParameters = Object.assign(
+            {},
+            {
+                bot: reference.bot,
+                members: [reference.user],
+                isGroup: false,
+                activity: null,
+                channelData: null,
+            },
+            typeof parameters === 'object' ? parameters : undefined
+        );
+
+        const callback = typeof parameters === 'function' ? parameters : logic;
+
+        const client = this.createConnectorClient(reference.serviceUrl);
 
         // Mix in the tenant ID if specified. This is required for MS Teams.
         if (reference.conversation && reference.conversation.tenantId) {
             // Putting tenantId in channelData is a temporary solution while we wait for the Teams API to be updated
-            parameters.channelData = { tenant: { id: reference.conversation.tenantId } };
+            conversationParameters.channelData = { tenant: { id: reference.conversation.tenantId } };
 
             // Permanent solution is to put tenantId in parameters.tenantId
-            parameters.tenantId = reference.conversation.tenantId;
+            conversationParameters.tenantId = reference.conversation.tenantId;
         }
 
-        const response = await client.conversations.createConversation(parameters);
+        const response = await client.conversations.createConversation(conversationParameters);
 
         // Initialize request and copy over new conversation ID and updated serviceUrl.
         const request: Partial<Activity> = TurnContext.applyConversationReference(
@@ -497,15 +506,15 @@ export class BotFrameworkAdapter
             name: null,
         };
         request.conversation = conversation;
-        request.channelData = parameters.channelData;
+        request.channelData = conversationParameters.channelData;
 
         if (response.serviceUrl) {
             request.serviceUrl = response.serviceUrl;
         }
 
         // Create context and run middleware
-        const context: TurnContext = this.createContext(request);
-        await this.runMiddleware(context, logic as any);
+        const context = this.createContext(request);
+        await this.runMiddleware(context, callback);
     }
 
     /**

@@ -6,18 +6,42 @@
  * Licensed under the MIT License.
  */
 import * as Recognizers from '@microsoft/recognizers-text-number';
+import {
+    Expression,
+    NumberExpression,
+    NumberExpressionConverter,
+    StringExpression,
+    StringExpressionConverter,
+} from 'adaptive-expressions';
 import { Activity } from 'botbuilder-core';
-import { DialogContext } from 'botbuilder-dialogs';
-import { InputDialog, InputState } from './inputDialog';
-import { StringExpression, NumberExpression } from 'adaptive-expressions';
+import { Converter, ConverterFactory, DialogContext } from 'botbuilder-dialogs';
+import { InputDialog, InputDialogConfiguration, InputState } from './inputDialog';
+
+export interface NumberInputConfiguration extends InputDialogConfiguration {
+    defaultLocale?: string | Expression | StringExpression;
+    outputFormat?: number | string | Expression | NumberExpression;
+}
 
 /**
  * Input dialog for asking for numbers.
  */
-export class NumberInput extends InputDialog {
+export class NumberInput extends InputDialog implements NumberInputConfiguration {
+    public static $kind = 'Microsoft.NumberInput';
+
     public defaultLocale?: StringExpression;
 
     public outputFormat?: NumberExpression;
+
+    public getConverter(property: keyof NumberInputConfiguration): Converter | ConverterFactory {
+        switch (property) {
+            case 'defaultLocale':
+                return new StringExpressionConverter();
+            case 'outputFormat':
+                return new NumberExpressionConverter();
+            default:
+                return super.getConverter(property);
+        }
+    }
 
     /**
      * @protected

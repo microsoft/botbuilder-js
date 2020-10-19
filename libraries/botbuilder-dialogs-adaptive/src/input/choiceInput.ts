@@ -6,20 +6,30 @@
  * Licensed under the MIT License.
  */
 import {
-    DialogContext,
-    Choice,
-    ListStyle,
-    ChoiceFactoryOptions,
-    FindChoicesOptions,
-    ChoiceFactory,
-    recognizeChoices,
-    ModelResult,
-    FoundChoice,
-} from 'botbuilder-dialogs';
+    EnumExpression,
+    EnumExpressionConverter,
+    Expression,
+    ObjectExpression,
+    ObjectExpressionConverter,
+    StringExpression,
+    StringExpressionConverter,
+} from 'adaptive-expressions';
 import { Activity } from 'botbuilder-core';
-import { InputDialog, InputState } from './inputDialog';
+import {
+    Choice,
+    ChoiceFactory,
+    ChoiceFactoryOptions,
+    Converter,
+    ConverterFactory,
+    DialogContext,
+    FindChoicesOptions,
+    FoundChoice,
+    ListStyle,
+    ModelResult,
+    recognizeChoices,
+} from 'botbuilder-dialogs';
+import { InputDialog, InputDialogConfiguration, InputState } from './inputDialog';
 import { ChoiceSet } from './choiceSet';
-import { ObjectExpression, StringExpression, ArrayExpression, EnumExpression } from 'adaptive-expressions';
 
 export enum ChoiceOutputFormat {
     value = 'value',
@@ -30,10 +40,21 @@ export interface ChoiceInputOptions {
     choices: Choice[];
 }
 
+export interface ChoiceInputConfiguration extends InputDialogConfiguration {
+    choices?: ChoiceSet | string | Expression | ObjectExpression<ChoiceSet>;
+    style?: ListStyle | string | Expression | EnumExpression<ListStyle>;
+    defaultLocale?: string | Expression | StringExpression;
+    outputFormat?: ChoiceOutputFormat | string | Expression | EnumExpression<ChoiceOutputFormat>;
+    choiceOptions?: ChoiceFactoryOptions | string | Expression | ObjectExpression<ChoiceFactoryOptions>;
+    recognizerOptions?: FindChoicesOptions | string | Expression | ObjectExpression<FindChoicesOptions>;
+}
+
 /**
  * ChoiceInput - Declarative input to gather choices from user.
  */
-export class ChoiceInput extends InputDialog {
+export class ChoiceInput extends InputDialog implements ChoiceInputConfiguration {
+    public static $kind = 'Microsoft.ChoiceInput';
+
     /**
      * Default options for rendering the choices to the user based on locale.
      */
@@ -83,6 +104,25 @@ export class ChoiceInput extends InputDialog {
      * Additional options passed to the underlying `recognizeChoices()` function.
      */
     public recognizerOptions?: ObjectExpression<FindChoicesOptions> = new ObjectExpression();
+
+    public getConverter(property: keyof ChoiceInputConfiguration): Converter | ConverterFactory {
+        switch (property) {
+            case 'choices':
+                return new ObjectExpressionConverter<ChoiceSet>();
+            case 'style':
+                return new EnumExpressionConverter<ListStyle>(ListStyle);
+            case 'defaultLocale':
+                return new StringExpressionConverter();
+            case 'outputFormat':
+                return new EnumExpressionConverter<ChoiceOutputFormat>(ChoiceOutputFormat);
+            case 'choiceOptions':
+                return new ObjectExpressionConverter<ChoiceFactoryOptions>();
+            case 'recognizerOptions':
+                return new ObjectExpressionConverter<FindChoicesOptions>();
+            default:
+                return super.getConverter(property);
+        }
+    }
 
     /**
      * @protected

@@ -5,38 +5,46 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { StringExpression, IntExpression } from 'adaptive-expressions';
 import {
-    DialogContext,
+    Expression,
+    IntExpression,
+    IntExpressionConverter,
+    StringExpression,
+    StringExpressionConverter,
+} from 'adaptive-expressions';
+import {
+    ActionTypes,
+    Activity,
+    ActivityTypes,
+    Attachment,
+    BotAdapter,
+    CardFactory,
+    Channels,
+    ExtendedUserTokenProvider,
+    InputHints,
+    IUserTokenProvider,
+    MessageFactory,
+    OAuthCard,
+    OAuthLoginTimeoutKey,
+    StatusCodes,
+    TokenExchangeInvokeRequest,
+    TokenResponse,
+    TurnContext,
+} from 'botbuilder-core';
+import {
+    Converter,
+    ConverterFactory,
     Dialog,
+    DialogContext,
     DialogTurnResult,
     PromptOptions,
     PromptRecognizerResult,
     ThisPath,
     TurnPath,
 } from 'botbuilder-dialogs';
-import {
-    Attachment,
-    InputHints,
-    TokenResponse,
-    IUserTokenProvider,
-    TurnContext,
-    ActivityTypes,
-    Activity,
-    MessageFactory,
-    CardFactory,
-    OAuthLoginTimeoutKey,
-    StatusCodes,
-    ActionTypes,
-    ExtendedUserTokenProvider,
-    OAuthCard,
-    BotAdapter,
-    Channels,
-    TokenExchangeInvokeRequest,
-} from 'botbuilder-core';
 import { SkillValidation } from 'botframework-connector';
 import { verifyStateOperationName, tokenExchangeOperationName, tokenResponseEventName } from 'botbuilder-core';
-import { InputDialog, InputState } from './inputDialog';
+import { InputDialog, InputDialogConfiguration, InputState } from './inputDialog';
 
 export const channels: any = {
     console: 'console',
@@ -62,10 +70,19 @@ const persistedState = 'state';
 const persistedExpires = 'expires';
 const attemptCountKey = 'attemptCount';
 
+export interface OAuthInputConfiguration extends InputDialogConfiguration {
+    connectionName?: string | Expression | StringExpression;
+    title?: string | Expression | StringExpression;
+    text?: string | Expression | StringExpression;
+    timeout?: number | string | Expression | IntExpression;
+}
+
 /**
  * OAuthInput prompts user to login.
  */
-export class OAuthInput extends InputDialog {
+export class OAuthInput extends InputDialog implements OAuthInputConfiguration {
+    public static $kind = 'Microsoft.OAuthInput';
+
     /**
      * Name of the OAuth connection being used.
      */
@@ -86,6 +103,21 @@ export class OAuthInput extends InputDialog {
      * Defaults to a value `900,000` (15 minutes.)
      */
     public timeout?: IntExpression = new IntExpression(900000);
+
+    public getConverter(property: keyof OAuthInputConfiguration): Converter | ConverterFactory {
+        switch (property) {
+            case 'connectionName':
+                return new StringExpressionConverter();
+            case 'title':
+                return new StringExpressionConverter();
+            case 'text':
+                return new StringExpressionConverter();
+            case 'timeout':
+                return new IntExpressionConverter();
+            default:
+                return super.getConverter(property);
+        }
+    }
 
     /**
      * Initializes a new instance of the [OAuthInput](xref:botbuilder-dialogs-adaptive.OAuthInput) class

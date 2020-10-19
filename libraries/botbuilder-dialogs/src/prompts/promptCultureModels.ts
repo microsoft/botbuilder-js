@@ -124,6 +124,9 @@ export class PromptCultureModels {
         noInLanguage: 'No',
     };
 
+    /**
+     * @private
+     */
     private static getSupportedCultureCodes(): string[] {
         return this.getSupportedCultures().map((c): string => c.locale);
     }

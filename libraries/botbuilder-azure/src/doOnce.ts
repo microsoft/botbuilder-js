@@ -6,11 +6,19 @@
  * Licensed under the MIT License.
  */
 
+ /**
+  * Task to perform only one time.
+  */
 export class DoOnce<T> {
     private task: {
         [key: string]: Promise<T>;
     } = {};
 
+    /**
+     * Wait for the task to be executed.
+     * @param key Key of the task.
+     * @param fn Function to perform.
+     */
     public waitFor(key: string, fn: () => Promise<T>): Promise<T> {
         if (!this.task[key]) {
             this.task[key] = fn();

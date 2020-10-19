@@ -6,11 +6,11 @@
  * Licensed under the MIT License.
  */
 
-import { Converter } from 'botbuilder-dialogs-declarative';
+import { Converter } from 'botbuilder-dialogs';
 import { TextTemplate } from '../templates';
 
-export class TextTemplateConverter implements Converter {
-    public convert(value: string): TextTemplate {
-        return new TextTemplate(value);
+export class TextTemplateConverter implements Converter<string, TextTemplate> {
+    public convert(value: string | TextTemplate): TextTemplate {
+        return typeof value === 'string' ? new TextTemplate(value) : value;
     }
 }

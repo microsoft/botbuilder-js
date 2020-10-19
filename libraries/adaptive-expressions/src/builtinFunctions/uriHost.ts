@@ -19,10 +19,16 @@ import { ReturnType } from '../returnType';
  * Return the host value of a unified resource identifier (URI).
  */
 export class UriHost extends ExpressionEvaluator {
+    /**
+     * Initializes a new instance of the [UriHost](xref:adaptive-expressions.UriHost) class.
+     */
     public constructor() {
         super(ExpressionType.UriHost, UriHost.evaluator, ReturnType.String, FunctionUtils.validateUnary);
     }
 
+    /**
+     * @private
+     */
     private static evaluator(expr: Expression, state: MemoryInterface, options: Options): ValueWithError {
         let value: any;
         const { args, error: childrenError } = FunctionUtils.evaluateChildren(expr, state, options);
@@ -31,13 +37,16 @@ export class UriHost extends ExpressionEvaluator {
             if (typeof args[0] === 'string') {
                 ({ value, error } = UriHost.evalUriHost(args[0]));
             } else {
-                error = `${expr} should contain a URI string.`;
+                error = `${ expr } should contain a URI string.`;
             }
         }
 
         return { value, error };
     }
 
+    /**
+     * @private
+     */
     private static evalUriHost(uri: string): ValueWithError {
         let result: string;
         const { value: parsed, error: parseError } = InternalFunctionUtils.parseUri(uri);

@@ -16,10 +16,16 @@ import { ReturnType } from '../returnType';
  * Return the month of the specified timestamp.
  */
 export class Month extends ExpressionEvaluator {
+    /**
+     * Initializes a new instance of the [Month](xref:adaptive-expressions.Month) class.
+     */
     public constructor() {
         super(ExpressionType.Month, Month.evaluator(), ReturnType.Number, FunctionUtils.validateUnaryString);
     }
 
+    /**
+     * @private
+     */
     private static evaluator(): EvaluateExpressionDelegate {
         return FunctionUtils.applyWithError(
             (args: any[]): any =>

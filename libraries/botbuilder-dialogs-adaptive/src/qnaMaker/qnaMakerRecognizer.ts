@@ -6,33 +6,57 @@
  * Licensed under the MIT License.
  */
 
-import { DialogContext } from 'botbuilder-dialogs';
-import { RecognizerResult, Activity } from 'botbuilder-core';
 import {
-    RankerTypes,
+    ArrayExpression,
+    ArrayExpressionConverter,
+    BoolExpression,
+    BoolExpressionConverter,
+    Expression,
+    IntExpression,
+    IntExpressionConverter,
+    NumberExpression,
+    NumberExpressionConverter,
+    ObjectExpression,
+    ObjectExpressionConverter,
+    StringExpression,
+    StringExpressionConverter,
+} from 'adaptive-expressions';
+import {
+    JoinOperator,
     QnAMakerMetadata,
     QnAMaker,
     QnAMakerEndpoint,
     QnAMakerOptions,
     QnAMakerResult,
     QnARequestContext,
+    RankerTypes,
 } from 'botbuilder-ai';
-import { Recognizer } from '../recognizers/recognizer';
-import {
-    StringExpression,
-    IntExpression,
-    NumberExpression,
-    BoolExpression,
-    ArrayExpression,
-    ObjectExpression,
-} from 'adaptive-expressions';
+import { RecognizerResult, Activity } from 'botbuilder-core';
+import { Converter, ConverterFactory, DialogContext } from 'botbuilder-dialogs';
+import { Recognizer, RecognizerConfiguration } from '../recognizers/recognizer';
 
 const intentPrefix = 'intent=';
+
+export interface QnAMakerRecognizerConfiguration extends RecognizerConfiguration {
+    knowledgeBaseId?: string | Expression | StringExpression;
+    hostname?: string | Expression | StringExpression;
+    endpointKey?: string | Expression | StringExpression;
+    top?: number | string | Expression | IntExpression;
+    threshold?: number | string | Expression | NumberExpression;
+    isTest?: boolean;
+    rankerType?: string | Expression | StringExpression;
+    strictFiltersJoinOperator?: JoinOperator;
+    includeDialogNameInMetadata?: boolean | string | Expression | BoolExpression;
+    metadata?: QnAMakerMetadata[] | string | Expression | ArrayExpression<QnAMakerMetadata>;
+    context?: QnARequestContext | string | Expression | ObjectExpression<QnARequestContext>;
+    qnaId?: number | string | Expression | IntExpression;
+}
 
 /**
  * A recognizer which uses QnAMaker KB to recognize intents.
  */
-export class QnAMakerRecognizer extends Recognizer {
+export class QnAMakerRecognizer extends Recognizer implements QnAMakerRecognizerConfiguration {
+    public static $kind = 'Microsoft.QnAMakerRecognizer';
     public static readonly qnaMatchIntent = 'QnAMatch';
 
     /**
@@ -71,6 +95,11 @@ export class QnAMakerRecognizer extends Recognizer {
     public rankerType: StringExpression = new StringExpression(RankerTypes.default);
 
     /**
+     * A value used for Join operation of Metadata.
+     */
+    public strictFiltersJoinOperator: JoinOperator;
+
+    /**
      * Whether to include the dialog name metadata for QnA context.
      */
     public includeDialogNameInMetadata: BoolExpression = new BoolExpression(true);
@@ -89,6 +118,33 @@ export class QnAMakerRecognizer extends Recognizer {
      * An expression to evaluate to set QnAId parameter.
      */
     public qnaId: IntExpression = new IntExpression(0);
+
+    public getConverter(property: keyof QnAMakerRecognizerConfiguration): Converter | ConverterFactory {
+        switch (property) {
+            case 'knowledgeBaseId':
+                return new StringExpressionConverter();
+            case 'hostname':
+                return new StringExpressionConverter();
+            case 'endpointKey':
+                return new StringExpressionConverter();
+            case 'top':
+                return new IntExpressionConverter();
+            case 'threshold':
+                return new NumberExpressionConverter();
+            case 'rankerType':
+                return new StringExpressionConverter();
+            case 'includeDialogNameInMetadata':
+                return new BoolExpressionConverter();
+            case 'metadata':
+                return new ArrayExpressionConverter();
+            case 'context':
+                return new ObjectExpressionConverter<QnARequestContext>();
+            case 'qnaId':
+                return new IntExpressionConverter();
+            default:
+                return super.getConverter(property);
+        }
+    }
 
     /**
      * Initializes a new instance of `QnAMakerRecognizer`.

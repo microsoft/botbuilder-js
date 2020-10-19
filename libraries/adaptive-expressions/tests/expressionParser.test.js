@@ -495,6 +495,7 @@ const testCases = [
             ['isPresent(validNow)', true],
             ['addDays(timestamp, 1)', '2018-03-16T13:00:00.111Z'],
             ['addDays(timestamp, 1,\'MM-dd-yy\')', '03-16-18'],
+            ['addDays(timestamp, 1,\'MM/dd/yy\')', '03/16/18'],
             ['addHours(timestamp, 1)', '2018-03-15T14:00:00.111Z'],
             ['addHours(timestamp, 1,\'MM-dd-yy hh-mm\')', '03-15-18 02-00'],
             ['addMinutes(timestamp, 1)', '2018-03-15T13:01:00.111Z'],
@@ -508,6 +509,8 @@ const testCases = [
             ['date(timestamp)', '3/15/2018'],//Default. TODO
             ['year(timestamp)', 2018],
             ['length(utcNow())', 24],
+            ['formatDateTime(notISOTimestamp, \'dd/MM/yyy\')', '15/03/2018'],
+            ['formatDateTime(notISOTimestamp, \'dd%MM%yyy\')', '15032018'],
             ['formatDateTime(notISOTimestamp)', '2018-03-15T13:00:00.000Z'],
             ['formatDateTime(notISOTimestamp, \'MM-dd-yy\')', '03-15-18'],
             ['formatDateTime(notISOTimestamp, \'ddd\')', 'Thu'],

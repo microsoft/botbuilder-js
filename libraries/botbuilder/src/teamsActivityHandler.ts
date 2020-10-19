@@ -8,7 +8,6 @@
 
 import {
     ActivityHandler,
-    ActivityTypes,
     AppBasedLinkQuery,
     ChannelInfo,
     FileConsentCardResponse,
@@ -30,6 +29,19 @@ import {
 } from 'botbuilder-core';
 import { TeamsInfo } from './teamsInfo';
 
+/**
+ * Adds support for Microsoft Teams specific events and interactions.
+ * @remarks
+ * Developers may handle Conversation Update activities sent from Microsoft Teams via two methods:
+ *  1. Overriding methods starting with `on..` and *not* ending in `..Event()` (e.g. `onTeamsMembersAdded()`), or instead
+ *  2. Passing callbacks to methods starting with `on..` *and* ending in `...Event()` (e.g. `onTeamsMembersAddedEvent()`),
+ *      to stay in line with older {@link ActivityHandler} implementation.
+ *
+ * Developers should use either #1 or #2, above for all Conversation Update activities and not *both* #2 and #3 for the same activity. Meaning,
+ *   developers should override `onTeamsMembersAdded()` and not use both `onTeamsMembersAdded()` and `onTeamsMembersAddedEvent()`.
+ *
+ * Developers wanting to handle Invoke activities *must* override methods starting with `handle...()` (e.g. `handleTeamsTaskModuleFetch()`).
+ */
 export class TeamsActivityHandler extends ActivityHandler {
     /**
      * Invoked when an invoke activity is received from the connector.
@@ -491,6 +503,8 @@ export class TeamsActivityHandler extends ActivityHandler {
 
     /**
      * Called in `dispatchConversationUpdateActivity()` to trigger the `'TeamsMembersAdded'` handlers.
+     * Override this in a derived class to provide logic for when members other than the bot
+     * join the channel, such as your bot's welcome logic.
      * @remarks
      * If no handlers are registered for the `'TeamsMembersAdded'` event, the `'MembersAdded'` handlers will run instead.
      * @param context A context object for this turn.
@@ -541,6 +555,8 @@ export class TeamsActivityHandler extends ActivityHandler {
 
     /**
      * Called in `dispatchConversationUpdateActivity()` to trigger the `'TeamsMembersRemoved'` handlers.
+     * Override this in a derived class to provide logic for when members other than the bot
+     * leave the channel, such as your bot's good-bye logic.
      * @remarks
      * If no handlers are registered for the `'TeamsMembersRemoved'` event, the `'MembersRemoved'` handlers will run instead.
      * @param context A context object for this turn.
@@ -556,7 +572,8 @@ export class TeamsActivityHandler extends ActivityHandler {
 
     /**
      * Invoked when a Channel Created event activity is received from the connector.
-     * Channel Created correspond to the user creating a new channel.
+     * Channel Created corresponds to the user creating a new channel.
+     * Override this in a derived class to provide logic for when a channel is created.
      * @param context A context object for this turn.
      * @returns A promise that represents the work queued.
      */
@@ -566,7 +583,8 @@ export class TeamsActivityHandler extends ActivityHandler {
 
     /**
      * Invoked when a Channel Deleted event activity is received from the connector.
-     * Channel Deleted correspond to the user deleting a channel.
+     * Channel Deleted corresponds to the user deleting a channel.
+     * Override this in a derived class to provide logic for when a channel is deleted.
      * @param context A context object for this turn.
      * @returns A promise that represents the work queued.
      */
@@ -576,7 +594,8 @@ export class TeamsActivityHandler extends ActivityHandler {
 
     /**
      * Invoked when a Channel Renamed event activity is received from the connector.
-     * Channel Renamed correspond to the user renaming a new channel.
+     * Channel Renamed corresponds to the user renaming a new channel.
+     * Override this in a derived class to provide logic for when a channel is renamed.
      * @param context A context object for this turn.
      * @returns A promise that represents the work queued.
      */
@@ -586,7 +605,8 @@ export class TeamsActivityHandler extends ActivityHandler {
 
     /**
      * Invoked when a Team Archived event activity is received from the connector.
-     * Team Archived correspond to the user archiving a team.
+     * Team Archived corresponds to the user archiving a team.
+     * Override this in a derived class to provide logic for when a team is archived.
      * @param context The context for this turn.
      * @returns A promise that represents the work queued.
      */
@@ -596,7 +616,8 @@ export class TeamsActivityHandler extends ActivityHandler {
 
     /**
      * Invoked when a Team Deleted event activity is received from the connector.
-     * Team Deleted correspond to the user deleting a team.
+     * Team Deleted corresponds to the user deleting a team.
+     * Override this in a derived class to provide logic for when a team is deleted.
      * @param context The context for this turn.
      * @returns A promise that represents the work queued.
      */
@@ -606,7 +627,8 @@ export class TeamsActivityHandler extends ActivityHandler {
 
     /**
      * Invoked when a Team Hard Deleted event activity is received from the connector.
-     * Team Hard Deleted correspond to the user hard-deleting a team.
+     * Team Hard Deleted corresponds to the user hard-deleting a team.
+     * Override this in a derived class to provide logic for when a team is hard-deleted.
      * @param context The context for this turn.
      * @returns A promise that represents the work queued.
      */
@@ -618,7 +640,8 @@ export class TeamsActivityHandler extends ActivityHandler {
      *
      * @param context
      * Invoked when a Channel Restored event activity is received from the connector.
-     * Channel Restored correspond to the user restoring a previously deleted channel.
+     * Channel Restored corresponds to the user restoring a previously deleted channel.
+     * Override this in a derived class to provide logic for when a channel is restored.
      * @param context The context for this turn.
      * @returns A promise that represents the work queued.
      */
@@ -628,7 +651,8 @@ export class TeamsActivityHandler extends ActivityHandler {
 
     /**
      * Invoked when a Team Renamed event activity is received from the connector.
-     * Team Renamed correspond to the user renaming a team.
+     * Team Renamed corresponds to the user renaming a team.
+     * Override this in a derived class to provide logic for when a team is renamed.
      * @param context The context for this turn.
      * @returns A promise that represents the work queued.
      */
@@ -638,7 +662,8 @@ export class TeamsActivityHandler extends ActivityHandler {
 
     /**
      * Invoked when a Team Restored event activity is received from the connector.
-     * Team Restored correspond to the user restoring a team.
+     * Team Restored corresponds to the user restoring a team.
+     * Override this in a derived class to provide logic for when a team is restored.
      * @param context The context for this turn.
      * @returns A promise that represents the work queued.
      */
@@ -648,7 +673,8 @@ export class TeamsActivityHandler extends ActivityHandler {
 
     /**
      * Invoked when a Team Unarchived event activity is received from the connector.
-     * Team Unarchived correspond to the user unarchiving a team.
+     * Team Unarchived corresponds to the user unarchiving a team.
+     * Override this in a derived class to provide logic for when a team is unarchived.
      * @param context The context for this turn.
      * @returns A promise that represents the work queued.
      */
@@ -658,7 +684,7 @@ export class TeamsActivityHandler extends ActivityHandler {
 
     /**
      *
-     * Override this in a derived class to provide logic for when members other than the bot
+     * Registers a handler for TeamsMembersAdded events, such as for when members other than the bot
      * join the channel, such as your bot's welcome logic.
      * @param handler
      * @returns A promise that represents the work queued.
@@ -678,7 +704,7 @@ export class TeamsActivityHandler extends ActivityHandler {
     }
 
     /**
-     * Override this in a derived class to provide logic for when members other than the bot
+     * Registers a handler for TeamsMembersRemoved events, such as for when members other than the bot
      * leave the channel, such as your bot's good-bye logic.
      * @param handler
      * @returns A promise that represents the work queued.
@@ -698,7 +724,7 @@ export class TeamsActivityHandler extends ActivityHandler {
     }
 
     /**
-     * Override this in a derived class to provide logic for when a channel is created.
+     * Registers a handler for TeamsChannelCreated events, such as for when a channel is created.
      * @param handler
      * @returns A promise that represents the work queued.
      */
@@ -717,7 +743,7 @@ export class TeamsActivityHandler extends ActivityHandler {
     }
 
     /**
-     * Override this in a derived class to provide logic for when a channel is deleted.
+     * Registers a handler for TeamsChannelDeleted events, such as for when a channel is deleted.
      * @param handler
      * @returns A promise that represents the work queued.
      */
@@ -736,7 +762,7 @@ export class TeamsActivityHandler extends ActivityHandler {
     }
 
     /**
-     * Override this in a derived class to provide logic for when a channel is renamed.
+     * Registers a handler for TeamsChannelRenamed events, such as for when a channel is renamed.
      * @param handler
      * @returns A promise that represents the work queued.
      */
@@ -755,7 +781,7 @@ export class TeamsActivityHandler extends ActivityHandler {
     }
 
     /**
-     * Override this in a derived class to provide logic for when a team is archived.
+     * Registers a handler for TeamsTeamArchived events, such as for when a team is archived.
      * @param handler
      * @returns A promise that represents the work queued.
      */
@@ -769,7 +795,7 @@ export class TeamsActivityHandler extends ActivityHandler {
     }
 
     /**
-     * Override this in a derived class to provide logic for when a team is deleted.
+     * Registers a handler for TeamsTeamDeleted events, such as for when a team is deleted.
      * @param handler
      * @returns A promise that represents the work queued.
      */
@@ -783,7 +809,7 @@ export class TeamsActivityHandler extends ActivityHandler {
     }
 
     /**
-     * Override this in a derived class to provide logic for when a team is hard-deleted.
+     * Registers a handler for TeamsTeamHardDeleted events, such as for when a team is hard-deleted.
      * @param handler
      * @returns A promise that represents the work queued.
      */
@@ -797,7 +823,7 @@ export class TeamsActivityHandler extends ActivityHandler {
     }
 
     /**
-     * Override this in a derived class to provide logic for when a channel is restored.
+     * Registers a handler for TeamsChannelRestored events, such as for when a channel is restored.
      * @param handler
      * @returns A promise that represents the work queued.
      */
@@ -816,7 +842,7 @@ export class TeamsActivityHandler extends ActivityHandler {
     }
 
     /**
-     * Override this in a derived class to provide logic for when a team is renamed.
+     * Registers a handler for TeamsTeamRenamed events, such as for when a team is renamed.
      * @param handler
      * @returns A promise that represents the work queued.
      */
@@ -830,7 +856,7 @@ export class TeamsActivityHandler extends ActivityHandler {
     }
 
     /**
-     * Override this in a derived class to provide logic for when a team is restored.
+     * Registers a handler for TeamsTeamRestored events, such as for when a team is restored.
      * @param handler
      * @returns A promise that represents the work queued.
      */
@@ -844,7 +870,7 @@ export class TeamsActivityHandler extends ActivityHandler {
     }
 
     /**
-     * Override this in a derived class to provide logic for when a team is unarchived.
+     * Registers a handler for TeamsTeamUnarchived events, such as for when a team is unarchived.
      * @param handler
      * @returns A promise that represents the work queued.
      */

@@ -24,7 +24,6 @@
     "botbuilder-core": "4.1.6",
     "botbuilder-dialogs": "4.1.6",
     "botbuilder-dialogs-adaptive": "4.1.6",
-    "botbuilder-dialogs-declarative": "4.1.6",
     "read-text-file": "1.1.0"
   },
   "devDependencies": {
@@ -47,8 +46,8 @@
     "test:compat": "api-extractor run --verbose"
   },
   "files": [
-    "/lib",
-    "/schema",
-    "/src"
+    "lib",
+    "schema",
+    "src"
   ]
 }

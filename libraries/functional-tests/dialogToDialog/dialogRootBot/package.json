@@ -1,6 +1,6 @@
 {
-  "private": true,
   "name": "dialog-root-bot",
+  "private": true,
   "version": "0.0.0-local",
   "description": "",
   "main": "lib/index.js",
