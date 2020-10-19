@@ -587,7 +587,7 @@ export class FunctionUtils {
             locale = args[maxArgsLength - 1] as string;
         }
 
-        return locale;
+        return locale ? locale : 'en-us';
     }
 
     /**
