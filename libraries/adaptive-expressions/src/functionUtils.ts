@@ -582,12 +582,12 @@ export class FunctionUtils {
      * @param locale A locale string
      * @param maxArgsLength The max length of a given function.
      */
-    public static determineLocale(args: any[], maxArgsLength: number, locale: string): string {
+    public static determineLocale(args: any[], maxArgsLength: number, locale = 'en-us'): string {
         if (args.length === maxArgsLength) {
             locale = args[maxArgsLength - 1] as string;
         }
 
-        return locale ? locale : 'en-us';
+        return locale;
     }
 
     /**
