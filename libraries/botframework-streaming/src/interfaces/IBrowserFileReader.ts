@@ -9,7 +9,7 @@
 /**
  * Partially represents a FileReader from the W3C FileAPI Working Draft.
  * For more information, see https://w3c.github.io/FileAPI/#APIASynch.
- * 
+ *
  * This interface supports the framework and is not intended to be called directly for your code.
  */
 export interface IBrowserFileReader {

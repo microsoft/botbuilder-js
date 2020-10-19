@@ -32,7 +32,7 @@ export class DialogExpression extends ExpressionProperty<Dialog> {
             // Resource Id's will be resolved to actual dialog value
             // if it's not a = then we want to convert to a constant string expressions to represent a
             // external dialog id resolved by dc.FindDialog()
-            value = `='${ value }'`;
+            value = `='${value}'`;
         }
 
         super.setValue(value);

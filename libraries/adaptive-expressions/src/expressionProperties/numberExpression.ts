@@ -14,6 +14,10 @@ import { Expression } from '../expression';
  * String values are always interpreted as an expression, whether it has '=' prefix or not.
  */
 export class NumberExpression extends ExpressionProperty<number> {
+    /**
+     * Initializes a new instance of the [NumberExpression](xref:adaptive-expressions.NumberExpression) class.
+     * @param value A float `number` or `string` expression which resolves to a float `number`.
+     */
     public constructor(value?: number | string | Expression) {
         super(value, 0);
     }

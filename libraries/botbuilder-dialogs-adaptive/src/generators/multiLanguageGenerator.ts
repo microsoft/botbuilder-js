@@ -11,10 +11,12 @@ import { MultiLanguageGeneratorBase } from './multiLanguageGeneratorBase';
 import { LanguageGenerator } from '../languageGenerator';
 
 /**
- * LanguageGenerator which uses implements a map of locale->LanguageGenerator for the locale 
+ * LanguageGenerator which uses implements a map of locale->LanguageGenerator for the locale
  * and has a policy which controls fallback (try en-us -> en -> default).
  */
 export class MultiLanguageGenerator extends MultiLanguageGeneratorBase {
+    public static $kind = 'Microsoft.MultiLanguageGenerator';
+
     /**
      * Gets or sets the language generators for multiple languages.
      */
@@ -25,12 +27,14 @@ export class MultiLanguageGenerator extends MultiLanguageGeneratorBase {
      * @param dialogContext Context for the current turn of conversation with the user.
      * @param locale Locale to lookup.
      */
-    public tryGetGenerator(dialogContext: DialogContext, locale: string): { exist: boolean; result: LanguageGenerator } {
+    public tryGetGenerator(
+        dialogContext: DialogContext,
+        locale: string
+    ): { exist: boolean; result: LanguageGenerator } {
         if (this.languageGenerators.has(locale)) {
             return { exist: true, result: this.languageGenerators.get(locale) };
         } else {
             return { exist: false, result: undefined };
         }
     }
-
 }

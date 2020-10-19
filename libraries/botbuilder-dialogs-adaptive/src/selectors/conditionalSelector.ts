@@ -5,16 +5,30 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { ExpressionParser, ExpressionParserInterface } from 'adaptive-expressions';
+import {
+    BoolExpression,
+    BoolExpressionConverter,
+    Expression,
+    ExpressionParser,
+    ExpressionParserInterface,
+} from 'adaptive-expressions';
+import { Converter, ConverterFactory } from 'botbuilder-dialogs';
 import { OnCondition } from '../conditions/onCondition';
-import { TriggerSelector } from '../triggerSelector';
-import { BoolExpression } from 'adaptive-expressions';
+import { TriggerSelector, TriggerSelectorConfiguration } from '../triggerSelector';
 import { ActionContext } from '../actionContext';
+
+export interface ConditionalSelectorConfiguration extends TriggerSelectorConfiguration {
+    condition?: boolean | string | Expression | BoolExpression;
+    ifTrue?: TriggerSelector;
+    ifFalse?: TriggerSelector;
+}
 
 /**
  * Select between two rule selectors based on a condition.
  */
-export class ConditionalSelector implements TriggerSelector {
+export class ConditionalSelector extends TriggerSelector implements ConditionalSelectorConfiguration {
+    public static $kind = 'Microsoft.ConditionalSelector';
+
     private _conditionals: OnCondition[];
     private _evaluate: boolean;
 
@@ -36,7 +50,16 @@ export class ConditionalSelector implements TriggerSelector {
     /**
      * Gets or sets the expression parser to use.
      */
-    public parser: ExpressionParserInterface = new ExpressionParser()
+    public parser: ExpressionParserInterface = new ExpressionParser();
+
+    public getConverter(property: keyof ConditionalSelectorConfiguration): Converter | ConverterFactory {
+        switch (property) {
+            case 'condition':
+                return new BoolExpressionConverter();
+            default:
+                return super.getConverter(property);
+        }
+    }
 
     /**
      * Initialize the selector with the set of rules.
@@ -53,7 +76,7 @@ export class ConditionalSelector implements TriggerSelector {
      * @param actionContext Dialog context for evaluation.
      * @returns A Promise with a number array.
      */
-    public select(actionContext: ActionContext): Promise<number[]> {
+    public select(actionContext: ActionContext): Promise<OnCondition[]> {
         let selector: TriggerSelector;
         if (this.condition && this.condition.getValue(actionContext.state)) {
             selector = this.ifTrue;

@@ -6,14 +6,19 @@
  * Licensed under the MIT License.
  */
 
-import { Converter, ResourceExplorer } from 'botbuilder-dialogs-declarative';
+import { Converter } from 'botbuilder-dialogs';
+import { ResourceExplorer } from 'botbuilder-dialogs-declarative';
 import { Recognizer } from '../recognizers';
 import { RecognizerConverter } from './recognizerConverter';
+
+type Input = Record<string, string>;
+type Output = Record<string, Recognizer>;
 
 /**
  * Language generator converter that implements [Converter](xref:botbuilder-dialogs-declarative.Converter).
  */
-export class MultiLanguageRecognizerConverter implements Converter {
+export class MultiLanguageRecognizerConverter implements Converter<Input, Output> {
+
     private _recognizerConverter: RecognizerConverter;
 
     /**
@@ -24,16 +29,9 @@ export class MultiLanguageRecognizerConverter implements Converter {
         this._recognizerConverter = new RecognizerConverter(resouceExplorer);
     }
 
-    /**
-     * Converts a recognizers object to an object with [Recognizer](xref:botbuilder-dialogs-adaptive.Recognizer) instance for each key.
-     * @param value A recognizers object.
-     * @returns The value object with [Recognizer](xref:botbuilder-dialogs-adaptive.Recognizer) instance for each key.
-     */
-    public convert(value: object): { [key: string]: Recognizer } {
-        const recognizers = {};
-        for (const key in value) {
-            recognizers[key] = this._recognizerConverter.convert(value[key]);
-        }
-        return recognizers;
+    public convert(value: Input | Output): Output {
+        return Object.entries(value).reduce((recognizers, [key, value]) => {
+            return { ...recognizers, [key]: this._recognizerConverter.convert(value) };
+        }, {});
     }
 }

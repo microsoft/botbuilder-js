@@ -5,11 +5,37 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { Recognizer } from '../recognizers';
-import { StringExpression, ArrayExpression, BoolExpression } from 'adaptive-expressions';
-import { LuisPredictionOptions, LuisRecognizerOptionsV3, LuisRecognizer, LuisApplication, LuisTelemetryConstants} from 'botbuilder-ai';
-import { DialogContext } from 'botbuilder-dialogs';
+import {
+    ArrayExpression,
+    ArrayExpressionConverter,
+    BoolExpression,
+    BoolExpressionConverter,
+    Expression,
+    StringExpression,
+    StringExpressionConverter,
+} from 'adaptive-expressions';
+import {
+    LuisPredictionOptions,
+    LuisRecognizerOptionsV3,
+    LuisRecognizer,
+    LuisApplication,
+    LuisTelemetryConstants,
+} from 'botbuilder-ai';
 import { Activity, RecognizerResult } from 'botbuilder-core';
+import { Converter, ConverterFactory, DialogContext } from 'botbuilder-dialogs';
+import { Recognizer, RecognizerConfiguration } from '../recognizers';
+
+export interface LuisAdaptiveRecognizerConfiguration extends RecognizerConfiguration {
+    applicationId?: string | Expression | StringExpression;
+    logPersonalInformation?: boolean | string | Expression | BoolExpression;
+    dynamicLists?: unknown[] | string | Expression | ArrayExpression<unknown>;
+    endpoint?: string | Expression | StringExpression;
+    endpointKey?: string | Expression | StringExpression;
+    predictionOptions?: LuisPredictionOptions;
+}
+
+export class LuisAdaptiveRecognizer extends Recognizer implements LuisAdaptiveRecognizerConfiguration {
+    public static $kind = 'Microsoft.LuisRecognizer';
 
 /**
  * Class that represents an adaptive LUIS recognizer.
@@ -54,6 +80,23 @@ export class LuisAdaptiveRecognizer extends Recognizer {
      */
     public predictionOptions: LuisPredictionOptions;
 
+    public getConverter(property: keyof LuisAdaptiveRecognizerConfiguration): Converter | ConverterFactory {
+        switch (property) {
+            case 'applicationId':
+                return new StringExpressionConverter();
+            case 'dynamicLists':
+                return new ArrayExpressionConverter();
+            case 'endpoint':
+                return new StringExpressionConverter();
+            case 'endpointKey':
+                return new StringExpressionConverter();
+            case 'logPersonalInformation':
+                return new BoolExpressionConverter();
+            default:
+                return super.getConverter(property);
+        }
+    }
+      
     /**
      * To recognize intents and entities in a users utterance.
      * @param dialogContext The [DialogContext](xref:botbuilder-dialogs.DialogContext).
@@ -61,11 +104,16 @@ export class LuisAdaptiveRecognizer extends Recognizer {
      * @param telemetryProperties Optional. Additional properties to be logged to telemetry with event.
      * @param telemetryMetrics Optional. Additional metrics to be logged to telemetry with event.
      */
-    public async recognize(dialogContext: DialogContext, activity: Activity, telemetryProperties?: { [key: string]: string }, telemetryMetrics?: { [key: string]: number }) {
+    public async recognize(
+        dialogContext: DialogContext,
+        activity: Activity,
+        telemetryProperties?: { [key: string]: string },
+        telemetryMetrics?: { [key: string]: number }
+    ) {
         // Validate passed in activity matches turn activity
         const context = dialogContext.context;
-        const utteranceMatches: boolean = !activity ||
-            (context.activity.type === activity.type &&  context.activity.text === activity.text);
+        const utteranceMatches: boolean =
+            !activity || (context.activity.type === activity.type && context.activity.text === activity.text);
 
         if (!utteranceMatches) {
             throw new Error(`TurnContext is different than text`);
@@ -76,14 +124,19 @@ export class LuisAdaptiveRecognizer extends Recognizer {
         const application: LuisApplication = {
             applicationId: this.applicationId.getValue(dcState),
             endpoint: this.endpoint.getValue(dcState),
-            endpointKey: this.endpointKey.getValue(dcState)
+            endpointKey: this.endpointKey.getValue(dcState),
         };
 
         // Create and call wrapper
         const wrapper = new LuisRecognizer(application, this.recognizerOptions(dialogContext));
 
         const result = await wrapper.recognize(context);
-        this.trackRecognizerResult(dialogContext, 'LuisResult', this.fillRecognizerResultTelemetryProperties(result, telemetryProperties, dialogContext), telemetryMetrics);
+        this.trackRecognizerResult(
+            dialogContext,
+            'LuisResult',
+            this.fillRecognizerResultTelemetryProperties(result, telemetryProperties, dialogContext),
+            telemetryMetrics
+        );
         return result;
     }
 
@@ -110,12 +163,17 @@ export class LuisAdaptiveRecognizer extends Recognizer {
      * @param dialogContext Dialog context.
      * @returns A dictionary that is sent as properties to BotTelemetryClient.trackEvent method for the LuisResult event.
      */
-    protected  fillRecognizerResultTelemetryProperties(recognizerResult: RecognizerResult, telemetryProperties: { [key: string]: string }, dialogContext: DialogContext): { [key: string]: string } {
+    protected fillRecognizerResultTelemetryProperties(
+        recognizerResult: RecognizerResult,
+        telemetryProperties: { [key: string]: string },
+        dialogContext: DialogContext
+    ): { [key: string]: string } {
         const logPersonalInfo = this.logPersonalInformation.tryGetValue(dialogContext.state);
         const applicationId = this.applicationId.tryGetValue(dialogContext.state);
 
         const topLuisIntent: string = LuisRecognizer.topIntent(recognizerResult);
-        const intentScore: number = (recognizerResult.intents[topLuisIntent] && recognizerResult.intents[topLuisIntent].score) || 0;
+        const intentScore: number =
+            (recognizerResult.intents[topLuisIntent] && recognizerResult.intents[topLuisIntent].score) || 0;
 
         // Add the intent score and conversation id properties
         const properties: { [key: string]: string } = {};

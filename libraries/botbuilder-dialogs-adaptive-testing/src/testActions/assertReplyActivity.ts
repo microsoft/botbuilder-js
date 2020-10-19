@@ -6,15 +6,22 @@
  * Licensed under the MIT License.
  */
 
-import { Activity, TurnContext } from 'botbuilder-core';
 import { ExpressionParser } from 'adaptive-expressions';
+import { Activity, TurnContext, TestAdapter } from 'botbuilder-core';
 import { TestAction } from '../testAction';
-import { AdaptiveTestAdapter } from '../adaptiveTestAdapter';
+
+export interface AssertReplyActivityConfiguration {
+    description?: string;
+    timeout?: number;
+    assertions?: string[];
+}
 
 /**
  * Basic assertion TestAction, which validates assertions against a reply activity.
  */
-export class AssertReplyActivity implements TestAction {
+export class AssertReplyActivity extends TestAction implements AssertReplyActivityConfiguration {
+    public static $kind = 'Microsoft.Test.AssertReplyActivity';
+
     /**
      * Description of what this assertion is.
      */
@@ -23,7 +30,7 @@ export class AssertReplyActivity implements TestAction {
     /**
      * The milliseconds to wait for a reply.
      */
-    public timeout: number = 3000;
+    public timeout = 3000;
 
     /**
      * The expressions for assertions.
@@ -49,7 +56,7 @@ export class AssertReplyActivity implements TestAction {
                 const assertion = this.assertions[i];
                 const { value, error } = engine.parse(assertion).tryEvaluate(activity);
                 if (!value || error) {
-                    throw new Error(`${ this.description } ${ assertion } ${ JSON.stringify(activity) }`);
+                    throw new Error(`${this.description} ${assertion} ${JSON.stringify(activity)}`);
                 }
             }
         }
@@ -61,13 +68,13 @@ export class AssertReplyActivity implements TestAction {
      * @param callback Logic for the bot to use.
      * @returns A Promise that represents the work queued to execute.
      */
-    public async execute(testAdapter: AdaptiveTestAdapter, callback: (context: TurnContext) => Promise<any>): Promise<any> {
+    public async execute(testAdapter: TestAdapter, callback: (context: TurnContext) => Promise<any>): Promise<any> {
         const start = new Date();
         while (true) {
             const current = new Date();
 
-            if ((current.getTime() - start.getTime()) > this.timeout) {
-                throw new Error(`${ this.timeout }ms Timed out waiting for: ${ this.getConditionDescription() }`);
+            if (current.getTime() - start.getTime() > this.timeout) {
+                throw new Error(`${this.timeout}ms Timed out waiting for: ${this.getConditionDescription()}`);
             }
 
             const replyActivity = testAdapter.getNextReply();
@@ -76,7 +83,7 @@ export class AssertReplyActivity implements TestAction {
                 return;
             }
 
-            await Promise.resolve(resolve => setTimeout(resolve, 100));
+            await Promise.resolve((resolve) => setTimeout(resolve, 100));
         }
     }
 }

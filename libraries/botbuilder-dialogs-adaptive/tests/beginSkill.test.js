@@ -13,8 +13,8 @@ const {
     MessageFactory
 } = require('botbuilder-core');
 const { BoolExpression, StringExpression } = require('adaptive-expressions');
-const { DialogManager, DialogTurnStatus } = require('botbuilder-dialogs');
-const { BeginSkill, SkillExtensions, StaticActivityTemplate } = require('../lib')
+const { DialogManager, DialogTurnStatus, DialogEvents, DialogSet } = require('botbuilder-dialogs');
+const { BeginSkill, SkillExtensions, StaticActivityTemplate } = require('../lib');
 
 
 class SimpleConversationIdFactory extends SkillConversationIdFactoryBase {
@@ -93,6 +93,8 @@ describe('BeginSkill', function () {
     // Setup dialog manager
     const conversationState = new ConversationState(new MemoryStorage());
     const dm = new DialogManager();
+    const dialogState = conversationState.createProperty('dialog');
+    const dialogs = new DialogSet(dialogState);
     dm.conversationState = conversationState;
     SkillExtensions.useSkillClient(dm, skillClient);
     SkillExtensions.useSkillConversationIdFactory(dm, new SimpleConversationIdFactory());
@@ -124,6 +126,18 @@ describe('BeginSkill', function () {
             ok(postActivityStub.calledOnce);
         });
 
+        await adapter.send('test');
+    });
+    
+    it('should respect allow interruptions settings', async () => {
+        dialog.allowInterruptions = new BoolExpression(false);
+        const adapter = new TestAdapter(async (context) => {
+            const dc = await dialogs.createContext(context);
+            
+            const bubbling = await dialog.onDialogEvent(dc, { name: DialogEvents.activityReceived });
+            strictEqual(bubbling, true);
+        });
+        
         await adapter.send('test');
     });
 });

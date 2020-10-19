@@ -43,7 +43,6 @@ export interface WaterfallStepInfo<O extends object> {
      * @param result (Optional) result to pass to the next step.
      */
     onNext(result?: any): Promise<DialogTurnResult>;
-
 }
 
 /**

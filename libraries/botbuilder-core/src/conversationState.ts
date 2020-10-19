@@ -10,7 +10,7 @@ import { BotState } from './botState';
 import { Storage } from './storage';
 import { TurnContext } from './turnContext';
 
-const NO_KEY: string = `ConversationState: overridden getStorageKey method did not return a key.`;
+const NO_KEY = `ConversationState: overridden getStorageKey method did not return a key.`;
 
 /**
  * Reads and writes conversation state for your bot to storage.
@@ -48,7 +48,8 @@ export class ConversationState extends BotState {
     public getStorageKey(context: TurnContext): string | undefined {
         const activity: Activity = context.activity;
         const channelId: string = activity.channelId;
-        const conversationId: string = activity && activity.conversation && activity.conversation.id ? activity.conversation.id : undefined;
+        const conversationId: string =
+            activity && activity.conversation && activity.conversation.id ? activity.conversation.id : undefined;
 
         if (!channelId) {
             throw new Error('missing activity.channelId');
@@ -58,6 +59,6 @@ export class ConversationState extends BotState {
             throw new Error('missing activity.conversation.id');
         }
 
-        return `${ channelId }/conversations/${ conversationId }/${ this.namespace }`;
+        return `${channelId}/conversations/${conversationId}/${this.namespace}`;
     }
 }

@@ -5,20 +5,40 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { DialogTurnResult, Dialog, DialogContext } from 'botbuilder-dialogs';
-import { ActionScope, ActionScopeResult } from './actionScope';
-import { StringExpression, BoolExpression } from 'adaptive-expressions';
+import {
+    StringExpression,
+    BoolExpression,
+    BoolExpressionConverter,
+    StringExpressionConverter,
+    Expression,
+} from 'adaptive-expressions';
+import { Converter, ConverterFactory, Dialog, DialogContext, DialogTurnResult } from 'botbuilder-dialogs';
+import { ActionScope, ActionScopeConfiguration, ActionScopeResult } from './actionScope';
+import { ForEachPageConfiguration } from './forEachPage';
 
 const INDEX = 'dialog.foreach.index';
 const VALUE = 'dialog.foreach.value';
 
-export class ForEach<O extends object = {}> extends ActionScope<O> {
+export interface ForEachConfiguration extends ActionScopeConfiguration {
+    itemsProperty?: string | Expression | StringExpression;
+    index?: string | Expression | StringExpression;
+    value?: string | Expression | StringExpression;
+    disabled?: boolean | string | Expression | BoolExpression;
+}
+
+export class ForEach<O extends object = {}> extends ActionScope<O> implements ForEachPageConfiguration {
+    public static $kind = 'Microsoft.Foreach';
+
     public constructor();
     public constructor(itemsProperty: string, actions: Dialog[]);
     public constructor(itemsProperty?: string, actions?: Dialog[]) {
         super();
-        if (itemsProperty) { this.itemsProperty = new StringExpression(itemsProperty); }
-        if (actions) { this.actions = actions; }
+        if (itemsProperty) {
+            this.itemsProperty = new StringExpression(itemsProperty);
+        }
+        if (actions) {
+            this.actions = actions;
+        }
     }
 
     /**
@@ -40,6 +60,21 @@ export class ForEach<O extends object = {}> extends ActionScope<O> {
      * An optional expression which if is true will disable this action.
      */
     public disabled?: BoolExpression;
+
+    public getConverter(property: keyof ForEachConfiguration): Converter | ConverterFactory {
+        switch (property) {
+            case 'itemsProperty':
+                return new StringExpressionConverter();
+            case 'index':
+                return new StringExpressionConverter();
+            case 'value':
+                return new StringExpressionConverter();
+            case 'disabled':
+                return new BoolExpressionConverter();
+            default:
+                return super.getConverter(property);
+        }
+    }
 
     public getDependencies(): Dialog[] {
         return this.actions;
@@ -80,7 +115,6 @@ export class ForEach<O extends object = {}> extends ActionScope<O> {
     }
 
     protected onComputeId(): string {
-        return `ForEach[${ this.itemsProperty.toString() }]`;
+        return `ForEach[${this.itemsProperty.toString()}]`;
     }
-
 }

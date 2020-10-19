@@ -1,4 +1,6 @@
 /**
+ * @module botframework-config
+ *
  * Copyright(c) Microsoft Corporation.All rights reserved.
  * Licensed under the MIT License.
  */
@@ -6,21 +8,11 @@ import * as fsx from 'fs-extra';
 import * as path from 'path';
 import * as process from 'process';
 import * as txtfile from 'read-text-file';
-import * as util from 'util';
 import * as uuid from 'uuid';
 import { BotConfigurationBase } from './botConfigurationBase';
 import * as encrypt from './encrypt';
-/**
- * @module botframework-config
- */
-/**
- * Copyright(c) Microsoft Corporation.All rights reserved.
- * Licensed under the MIT License.
- */
 import { ConnectedService } from './models';
 import { IBotConfiguration, IConnectedService, IDispatchService, ServiceTypes } from './schema';
-// tslint:disable-next-line:no-var-requires no-require-imports
-const exec: Function = util.promisify(require('child_process').exec);
 
 /**
  * @private
@@ -33,7 +25,6 @@ interface InternalBotConfig {
  * @deprecated See https://aka.ms/bot-file-basics for more information.
  */
 export class BotConfiguration extends BotConfigurationBase {
-
     private internal: InternalBotConfig = {};
 
     /**
@@ -42,7 +33,9 @@ export class BotConfiguration extends BotConfigurationBase {
      */
     public static fromJSON(source: Partial<IBotConfiguration> = {}): BotConfiguration {
         // tslint:disable-next-line:prefer-const
-        const services: IConnectedService[] = (source.services) ? source.services.slice().map(BotConfigurationBase.serviceFromJSON) : [];
+        const services: IConnectedService[] = source.services
+            ? source.services.slice().map(BotConfigurationBase.serviceFromJSON)
+            : [];
         const botConfig: BotConfiguration = new BotConfiguration();
         Object.assign(botConfig, source);
 
@@ -69,10 +62,12 @@ export class BotConfiguration extends BotConfigurationBase {
         files = files.sort();
         for (const file of files) {
             if (path.extname(<string>file) === '.bot') {
-                return await BotConfiguration.load(`${ folder }/${ <string>file }`, secret);
+                return await BotConfiguration.load(`${folder}/${<string>file}`, secret);
             }
         }
-        throw new Error(`Error: no bot file found in ${ folder }. Choose a different location or use msbot init to create a .bot file."`);
+        throw new Error(
+            `Error: no bot file found in ${folder}. Choose a different location or use msbot init to create a .bot file."`
+        );
     }
 
     /**
@@ -87,10 +82,12 @@ export class BotConfiguration extends BotConfigurationBase {
         files = files.sort();
         for (const file of files) {
             if (path.extname(<string>file) === '.bot') {
-                return BotConfiguration.loadSync(`${ folder }/${ <string>file }`, secret);
+                return BotConfiguration.loadSync(`${folder}/${<string>file}`, secret);
             }
         }
-        throw new Error(`Error: no bot file found in ${ folder }. Choose a different location or use msbot init to create a .bot file."`);
+        throw new Error(
+            `Error: no bot file found in ${folder}. Choose a different location or use msbot init to create a .bot file."`
+        );
     }
 
     /**
@@ -129,7 +126,7 @@ export class BotConfiguration extends BotConfigurationBase {
     private static internalLoad(json: string, secret?: string): BotConfiguration {
         const bot: BotConfiguration = BotConfiguration.fromJSON(JSON.parse(json));
 
-        const hasSecret: boolean = !!bot.padlock;
+        const hasSecret = !!bot.padlock;
         if (hasSecret) {
             bot.decrypt(secret);
         }
@@ -151,7 +148,7 @@ export class BotConfiguration extends BotConfigurationBase {
 
         this.savePrep(secret);
 
-        const hasSecret: boolean = !!this.padlock;
+        const hasSecret = !!this.padlock;
 
         if (hasSecret) {
             this.encrypt(secret);
@@ -176,7 +173,7 @@ export class BotConfiguration extends BotConfigurationBase {
 
         this.savePrep(secret);
 
-        const hasSecret: boolean = !!this.padlock;
+        const hasSecret = !!this.padlock;
 
         if (hasSecret) {
             this.encrypt(secret);
@@ -237,7 +234,6 @@ export class BotConfiguration extends BotConfigurationBase {
             }
         } catch (err) {
             try {
-
                 // legacy decryption
                 this.padlock = encrypt.legacyDecrypt(this.padlock, secret);
                 this.clearSecret();
@@ -249,7 +245,7 @@ export class BotConfiguration extends BotConfigurationBase {
                     luis: ['authoringKey', 'subscriptionKey'],
                     dispatch: ['authoringKey', 'subscriptionKey'],
                     file: [],
-                    qna: ['subscriptionKey']
+                    qna: ['subscriptionKey'],
                 };
 
                 for (const service of this.services) {
@@ -275,13 +271,12 @@ export class BotConfiguration extends BotConfigurationBase {
                 // fix up dispatch serviceIds to new ids
                 for (const service of this.services) {
                     if (service.type === ServiceTypes.Dispatch) {
-                        const dispatch: IDispatchService = (<IDispatchService>service);
+                        const dispatch: IDispatchService = <IDispatchService>service;
                         for (let i = 0; i < dispatch.serviceIds.length; i++) {
                             dispatch.serviceIds[i] = map[dispatch.serviceIds[i]];
                         }
                     }
                 }
-
             } catch (err2) {
                 throw err;
             }
@@ -301,7 +296,9 @@ export class BotConfiguration extends BotConfigurationBase {
      */
     public validateSecret(secret: string): void {
         if (!secret) {
-            throw new Error('You are attempting to perform an operation which needs access to the secret and --secret is missing');
+            throw new Error(
+                'You are attempting to perform an operation which needs access to the secret and --secret is missing'
+            );
         }
 
         try {
@@ -313,12 +310,14 @@ export class BotConfiguration extends BotConfigurationBase {
                 encrypt.decryptString(this.padlock, secret);
             }
         } catch (ex) {
-            throw new Error('You are attempting to perform an operation which needs access to the secret and --secret is incorrect.');
+            throw new Error(
+                'You are attempting to perform an operation which needs access to the secret and --secret is incorrect.'
+            );
         }
     }
 
     private savePrep(secret?: string): void {
-        if (!!secret) {
+        if (secret) {
             this.validateSecret(secret);
         }
 

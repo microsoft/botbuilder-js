@@ -13,14 +13,16 @@ import { ActionContext } from '../actionContext';
 /**
  * Select all rules which evaluate to true.
  */
-export class TrueSelector implements TriggerSelector {
+export class TrueSelector extends TriggerSelector {
+    public static $kind = 'Microsoft.TrueSelector';
+
     private _conditionals: OnCondition[];
     private _evaluate: boolean;
 
     /**
      * Gets or sets the expression parser to use.
      */
-    public parser: ExpressionParserInterface = new ExpressionParser()
+    public parser: ExpressionParserInterface = new ExpressionParser();
 
     /**
      * Initialize the selector with the set of rules.
@@ -37,23 +39,22 @@ export class TrueSelector implements TriggerSelector {
      * @param actionContext Dialog context for evaluation.
      * @returns A Promise with a number array.
      */
-    public select(actionContext: ActionContext): Promise<number[]> {
-        const candidates = [];
+    public select(actionContext: ActionContext): Promise<OnCondition[]> {
+        const candidates: OnCondition[] = [];
 
         for (let i = 0; i < this._conditionals.length; i++) {
+            const conditional = this._conditionals[i];
             if (this._evaluate) {
-                const conditional = this._conditionals[i];
                 const expression = conditional.getExpression(this.parser);
                 const { value, error } = expression.tryEvaluate(actionContext.state);
                 if (value && !error) {
-                    candidates.push(i);
+                    candidates.push(conditional);
                 }
             } else {
-                candidates.push(i);
+                candidates.push(conditional);
             }
         }
 
         return Promise.resolve(candidates);
     }
-
 }
