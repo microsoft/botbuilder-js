@@ -89,6 +89,22 @@ export class TemplatesParser {
     }
 
     /**
+     * Parser to turn lg content into a Templates.
+     * @param resource LG resource.
+     * @param importResolver Resolver to resolve LG import id to template text.
+     * @param expressionParser Expression parser for evaluating expressions.
+     * @param cachedTemplates Give the file path and templates to avoid parsing and to improve performance.
+     * @returns Entity.
+     */
+    public static parseResource(
+        resource: LGResource,
+        importResolver?: ImportResolverDelegate,
+        expressionParser?: ExpressionParser
+    ): Templates {
+        return TemplatesParser.innerParseResource(resource, importResolver, expressionParser);
+    }
+
+    /**
      * Parser to turn lg content into a Templates based on the original Templates.
      * @param content Text content contains lg templates.
      * @param originalTemplates Original templates
@@ -151,18 +167,21 @@ export class TemplatesParser {
      * @param importResolver Resolver to resolve LG import id to template text.
      * @param expressionParser Expression parser for evaluating expressions.
      * @param cachedTemplates Give the file path and templates to avoid parsing and to improve performance.
+     * @param parentTemplates Parent visited Templates.
      * @returns Entity.
      */
-    public static parseResource(
+    private static innerParseResource(
         resource: LGResource,
         importResolver?: ImportResolverDelegate,
         expressionParser?: ExpressionParser,
-        cachedTemplates?: Map<string, Templates>
+        cachedTemplates?: Map<string, Templates>,
+        parentTemplates?: Templates[]
     ): Templates {
         if (!resource) {
             throw new Error('lg resource is empty.');
         }
         cachedTemplates = cachedTemplates || new Map<string, Templates>();
+        parentTemplates = parentTemplates || [];
 
         if (cachedTemplates.has(resource.id)) {
             return cachedTemplates.get(resource.id);
@@ -181,7 +200,7 @@ export class TemplatesParser {
         try {
             // eslint-disable-next-line @typescript-eslint/no-use-before-define
             templates = new TemplatesTransformer(templates).transform(this.antlrParseTemplates(resource));
-            templates.references = this.getReferences(templates, cachedTemplates);
+            templates.references = this.getReferences(templates, cachedTemplates, parentTemplates);
             const semanticErrors = new StaticChecker(templates).check();
             templates.diagnostics.push(...semanticErrors);
         } catch (err) {
@@ -215,9 +234,9 @@ export class TemplatesParser {
         return parser.file();
     }
 
-    private static getReferences(file: Templates, cachedTemplates?: Map<string, Templates>): Templates[] {
+    private static getReferences(file: Templates, cachedTemplates?: Map<string, Templates>, parentTemplates?: Templates[]): Templates[] {
         const resourcesFound = new Set<Templates>();
-        this.resolveImportResources(file, resourcesFound, cachedTemplates || new Map<string, Templates>());
+        this.resolveImportResources(file, resourcesFound, cachedTemplates || new Map<string, Templates>(), parentTemplates || []);
 
         resourcesFound.delete(file);
         return Array.from(resourcesFound);
@@ -226,9 +245,11 @@ export class TemplatesParser {
     private static resolveImportResources(
         start: Templates,
         resourcesFound: Set<Templates>,
-        cachedTemplates?: Map<string, Templates>
+        cachedTemplates: Map<string, Templates>,
+        parentTemplates: Templates[]
     ): void {
         resourcesFound.add(start);
+        parentTemplates.push(start);
 
         for (const importItem of start.imports) {
             let resource: LGResource;
@@ -245,23 +266,39 @@ export class TemplatesParser {
                 throw new TemplateException(error.message, [diagnostic]);
             }
 
+            // Cycle reference would throw exception to avoid infinite Loop.
+            // Import self is allowed, and would ignore it.
+            const parentTemplate = parentTemplates[parentTemplates.length - 1];
+            if (parentTemplate.id !== resource.id && parentTemplates.some(u => u.id === resource.id)) {
+                const errorMsg = `${TemplateErrors.loopDetected} ${resource.id} => ${start.id}`;
+                const diagnostic = new Diagnostic(
+                    importItem.sourceRange.range,
+                    errorMsg,
+                    DiagnosticSeverity.Error,
+                    start.source
+                );
+                throw new TemplateException(errorMsg, [diagnostic]);
+            }
+
             if (Array.from(resourcesFound).every((u): boolean => u.id !== resource.id)) {
                 let childResource: Templates;
                 if (cachedTemplates.has(resource.id)) {
                     childResource = cachedTemplates.get(resource.id);
                 } else {
-                    childResource = TemplatesParser.parseResource(
+                    childResource = TemplatesParser.innerParseResource(
                         resource,
                         start.importResolver,
                         start.expressionParser,
-                        cachedTemplates
+                        cachedTemplates,
+                        parentTemplates
                     );
                     cachedTemplates.set(resource.id, childResource);
                 }
 
-                this.resolveImportResources(childResource, resourcesFound, cachedTemplates);
+                this.resolveImportResources(childResource, resourcesFound, cachedTemplates, parentTemplates);
             }
         }
+        parentTemplates.pop();
     }
 }
 
