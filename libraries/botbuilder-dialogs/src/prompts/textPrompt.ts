@@ -26,6 +26,17 @@ export class TextPrompt extends Prompt<string> {
         super(dialogId, validator);
     }
 
+    /**
+     * Prompts the user for input.
+     * @param context [TurnContext](xref:botbuilder-core.TurnContext), context for the current
+     * turn of conversation with the user.
+     * @param state Contains state for the current instance of the prompt on the dialog stack.
+     * @param options A [PromptOptions](xref:botbuilder-dialogs.PromptOptions) object constructed
+     * from the options initially provided in the call to Prompt.
+     * @param isRetry `true` if this is the first time this prompt dialog instance
+     * on the stack is prompting the user for input; otherwise, false.
+     * @returns A `Promise` representing the asynchronous operation.
+     */
     protected async onPrompt(
         context: TurnContext,
         state: any,
@@ -39,6 +50,15 @@ export class TextPrompt extends Prompt<string> {
         }
     }
 
+    /**
+     * Attempts to recognize the user's input.
+     * @param context [TurnContext](xref:botbuilder-core.TurnContext), context for the current
+     * turn of conversation with the user.
+     * @param state Contains state for the current instance of the prompt on the dialog stack.
+     * @param options A [PromptOptions](xref:botbuilder-dialogs.PromptOptions) object constructed
+     * from the options initially provided in the call to Prompt.
+     * @returns A `Promise` representing the asynchronous operation.
+     */
     protected async onRecognize(
         context: TurnContext,
         state: any,
@@ -49,6 +69,17 @@ export class TextPrompt extends Prompt<string> {
         return typeof value === 'string' && value.length > 0 ? { succeeded: true, value: value } : { succeeded: false };
     }
 
+    /**
+     * Called before an event is bubbled to its parent.
+     * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current
+     * turn of conversation.
+     * @param event [DialogEvent](xref:botbuilder-dialogs.DialogEvent), the event being raised.
+     * @returns Whether the event is handled by the current dialog and further processing should stop.
+     * @remarks
+     * This is a good place to perform interception of an event as returning `true` will prevent
+     * any further bubbling of the event to the dialogs parents and will also prevent any child
+     * dialogs from performing their default processing.
+     */
     protected async onPreBubbleEvent(dc: DialogContext, event: DialogEvent): Promise<boolean> {
         return false;
     }

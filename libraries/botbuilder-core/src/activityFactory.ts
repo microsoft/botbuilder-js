@@ -165,6 +165,11 @@ export class ActivityFactory {
         return activity;
     }
 
+    /**
+     * Builds an [Activity](xref:botframework-schema.Activity) with a given message.
+     * @param messageValue Message value on which to base the activity.
+     * @returns [Activity](xref:botframework-schema.Activity) with the given message.
+     */
     private static buildActivity(messageValue: any): Partial<Activity> {
         const activity: Partial<Activity> = { type: ActivityTypes.Message };
         for (const key of Object.keys(messageValue)) {
@@ -191,6 +196,9 @@ export class ActivityFactory {
         return activity;
     }
 
+    /**
+     * @private
+     */
     private static getSuggestions(suggestionsValue: any): SuggestedActions {
         const actions: any[] = this.normalizedToList(suggestionsValue);
 
@@ -202,15 +210,24 @@ export class ActivityFactory {
         return suggestedActions;
     }
 
+    /**
+     * @private
+     */
     private static getButtons(buttonsValue: any): CardAction[] {
         const actions: any[] = this.normalizedToList(buttonsValue);
         return this.getCardActions(actions);
     }
 
+    /**
+     * @private
+     */
     private static getCardActions(actions: any[]): CardAction[] {
         return actions.map((u: any): CardAction => this.getCardAction(u));
     }
 
+    /**
+     * @private
+     */
     private static getCardAction(action: any): CardAction {
         let cardAction: CardAction;
         if (typeof action === 'string') {
@@ -237,6 +254,9 @@ export class ActivityFactory {
         return cardAction;
     }
 
+    /**
+     * @private
+     */
     private static getAttachments(input: any): Attachment[] {
         const attachments: Attachment[] = [];
         const attachmentsJsonList: any[] = this.normalizedToList(input);
@@ -250,6 +270,9 @@ export class ActivityFactory {
         return attachments;
     }
 
+    /**
+     * @private
+     */
     private static getAttachment(input: any): Attachment {
         let attachment: Attachment = {
             contentType: '',
@@ -268,6 +291,9 @@ export class ActivityFactory {
         return attachment;
     }
 
+    /**
+     * @private
+     */
     private static getNormalAttachment(input: any): Attachment {
         const attachment: Attachment = { contentType: '' };
 
@@ -295,6 +321,9 @@ export class ActivityFactory {
         return attachment;
     }
 
+    /**
+     * @private
+     */
     private static getCardAttachment(type: string, input: any): Attachment {
         const card: any = {};
 
@@ -359,6 +388,9 @@ export class ActivityFactory {
         return attachment;
     }
 
+    /**
+     * @private
+     */
     private static realProperty(property: string, builtinProperties: string[]): string {
         const properties = builtinProperties.map((u: string): string => u.toLowerCase());
         if (properties.includes(property.toLowerCase())) {
@@ -368,6 +400,9 @@ export class ActivityFactory {
         }
     }
 
+    /**
+     * @private
+     */
     private static normalizedToList(item: any): any[] {
         if (item === undefined) {
             return [];
@@ -378,6 +413,9 @@ export class ActivityFactory {
         }
     }
 
+    /**
+     * @private
+     */
     private static getStructureType(input: any): string {
         let result = '';
 
@@ -393,6 +431,9 @@ export class ActivityFactory {
         return result.trim().toLowerCase();
     }
 
+    /**
+     * @private
+     */
     private static normalizedToMediaOrImage(item: any): object {
         if (!item) {
             return {};
@@ -401,6 +442,9 @@ export class ActivityFactory {
         } else return item;
     }
 
+    /**
+     * @private
+     */
     private static getValidBooleanValue(boolValue: any): boolean {
         if (typeof boolValue === 'boolean') {
             return boolValue;
