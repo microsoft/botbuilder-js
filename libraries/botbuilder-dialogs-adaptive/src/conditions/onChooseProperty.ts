@@ -8,12 +8,18 @@
 import { Dialog, TurnPath } from 'botbuilder-dialogs';
 import { Expression, ExpressionParserInterface } from 'adaptive-expressions';
 import { AdaptiveEvents } from '../adaptiveEvents';
-import { OnDialogEvent } from './onDialogEvent';
+import { OnDialogEvent, OnDialogEventConfiguration } from './onDialogEvent';
+
+export interface OnChoosePropertyConfiguration extends OnDialogEventConfiguration {
+    properties?: string[];
+    entities?: string[];
+}
 
 /**
- * TTriggered to choose which property an entity goes to.
+ * Triggered to choose which property an entity goes to.
  */
-export class OnChooseProperty extends OnDialogEvent {
+export class OnChooseProperty extends OnDialogEvent implements OnChoosePropertyConfiguration {
+    public static $kind = 'Microsoft.OnChooseProperty';
 
     public constructor(properties: string[] = [], entities: string[] = [], actions: Dialog[] = [], condition?: string) {
         super(AdaptiveEvents.chooseProperty, actions, condition);
@@ -34,10 +40,18 @@ export class OnChooseProperty extends OnDialogEvent {
     public getExpression(parser: ExpressionParserInterface): Expression {
         const expressions = [super.getExpression(parser)];
         this.properties.forEach((property) => {
-            expressions.push(parser.parse(`contains(foreach(${ TurnPath.dialogEvent }.value, mapping, mapping.property), '${ property }')`));
+            expressions.push(
+                parser.parse(
+                    `contains(foreach(${TurnPath.dialogEvent}.value, mapping, mapping.property), '${property}')`
+                )
+            );
         });
         this.entities.forEach((entity) => {
-            expressions.push(parser.parse(`contains(foreach(${ TurnPath.dialogEvent }.value, mapping, mapping.entity.name), '${ entity }')`));
+            expressions.push(
+                parser.parse(
+                    `contains(foreach(${TurnPath.dialogEvent}.value, mapping, mapping.entity.name), '${entity}')`
+                )
+            );
         });
 
         return Expression.andExpression.apply(Expression, expressions);

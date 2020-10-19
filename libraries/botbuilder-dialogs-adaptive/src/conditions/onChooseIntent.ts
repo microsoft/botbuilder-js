@@ -8,9 +8,14 @@
 
 import { Dialog, TurnPath } from 'botbuilder-dialogs';
 import { Expression, ExpressionParserInterface } from 'adaptive-expressions';
-import { OnIntent } from './onIntent';
+import { OnIntent, OnIntentConfiguration } from './onIntent';
 
-export class OnChooseIntent extends OnIntent {
+export interface OnChooseIntentConfiguration extends OnIntentConfiguration {
+    intents?: string[];
+}
+
+export class OnChooseIntent extends OnIntent implements OnChooseIntentConfiguration {
+    public static $kind = 'Microsoft.OnChooseIntent';
 
     public intents: string[] = [];
 
@@ -20,9 +25,11 @@ export class OnChooseIntent extends OnIntent {
 
     public getExpression(parser: ExpressionParserInterface): Expression {
         if (this.intents.length > 0) {
-            const constraints = this.intents.map((intent: string): Expression => {
-                return parser.parse(`contains(jPath(${ TurnPath.recognized }, '.candidates.intent'), '${ intent }')`);
-            });
+            const constraints = this.intents.map(
+                (intent: string): Expression => {
+                    return parser.parse(`contains(jPath(${TurnPath.recognized}, '.candidates.intent'), '${intent}')`);
+                }
+            );
             return Expression.andExpression(super.getExpression(parser), ...constraints);
         }
         return super.getExpression(parser);

@@ -1,7 +1,6 @@
 /**
  * @module botframework-config
- */
-/**
+ *
  * Copyright(c) Microsoft Corporation.All rights reserved.
  * Licensed under the MIT License.
  */
@@ -10,6 +9,7 @@ import { AzureService } from './azureService';
 
 /**
  * Defines an blob storage service connection.
+ * @deprecated See https://aka.ms/bot-file-basics for more information.
  */
 export class BlobStorageService extends AzureService implements IBlobStorageService {
     /**

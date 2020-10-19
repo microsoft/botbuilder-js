@@ -1,7 +1,6 @@
 /**
  * @module botframework-config
- */
-/**
+ *
  * Copyright(c) Microsoft Corporation.All rights reserved.
  * Licensed under the MIT License.
  */
@@ -10,6 +9,7 @@ import { ConnectedService } from './connectedService';
 
 /**
  * Defines an endpoint service connection.
+ * @deprecated See https://aka.ms/bot-file-basics for more information.
  */
 export class EndpointService extends ConnectedService implements IEndpointService {
     /**
@@ -63,5 +63,4 @@ export class EndpointService extends ConnectedService implements IEndpointServic
             this.appPassword = decryptString(this.appPassword, secret);
         }
     }
-
 }

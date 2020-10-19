@@ -30,9 +30,9 @@ export class ConvertFromUTC extends ExpressionEvaluator {
 
     private static evaluator(expression: Expression, state: MemoryInterface, options: Options): ValueWithError {
         let value: any;
-        let error: string;
-        let args: any[];
-        ({ args, error } = FunctionUtils.evaluateChildren(expression, state, options));
+
+        const { args, error: childrenError } = FunctionUtils.evaluateChildren(expression, state, options);
+        let error = childrenError;
         if (!error) {
             const format: string =
                 args.length === 3

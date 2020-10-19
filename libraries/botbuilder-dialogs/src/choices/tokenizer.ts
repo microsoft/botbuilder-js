@@ -72,7 +72,7 @@ export type TokenizerFunction = (text: string, locale?: string) => Token[];
  */
 export function defaultTokenizer(text: string, locale?: string): Token[] {
     const tokens: Token[] = [];
-    let token: Token|undefined;
+    let token: Token | undefined;
     function appendToken(end: number): void {
         if (token) {
             token.end = end;
@@ -95,7 +95,7 @@ export function defaultTokenizer(text: string, locale?: string): Token[] {
         if (isBreakingChar(codePoint)) {
             // Character is in Unicode Plane 0 and is in an excluded block
             appendToken(i - 1);
-        } else if (codePoint > 0xFFFF) {
+        } else if (codePoint > 0xffff) {
             // Character is in a Supplementary Unicode Plane. This is where emoji live so
             // we're going to just break each character in this range out as its own token.
             appendToken(i - 1);
@@ -103,7 +103,7 @@ export function defaultTokenizer(text: string, locale?: string): Token[] {
                 start: i,
                 end: i + (chr.length - 1),
                 text: chr,
-                normalized: chr
+                normalized: chr,
             });
         } else if (!token) {
             // Start a new token
@@ -124,13 +124,15 @@ export function defaultTokenizer(text: string, locale?: string): Token[] {
  * @param codePoint number of character
  */
 function isBreakingChar(codePoint: number): boolean {
-    return (isBetween(codePoint, 0x0000, 0x002F) ||
-            isBetween(codePoint, 0x003A, 0x0040) ||
-            isBetween(codePoint, 0x005B, 0x0060) ||
-            isBetween(codePoint, 0x007B, 0x00BF) ||
-            isBetween(codePoint, 0x02B9, 0x036F) ||
-            isBetween(codePoint, 0x2000, 0x2BFF) ||
-            isBetween(codePoint, 0x2E00, 0x2E7F));
+    return (
+        isBetween(codePoint, 0x0000, 0x002f) ||
+        isBetween(codePoint, 0x003a, 0x0040) ||
+        isBetween(codePoint, 0x005b, 0x0060) ||
+        isBetween(codePoint, 0x007b, 0x00bf) ||
+        isBetween(codePoint, 0x02b9, 0x036f) ||
+        isBetween(codePoint, 0x2000, 0x2bff) ||
+        isBetween(codePoint, 0x2e00, 0x2e7f)
+    );
 }
 
 /**
@@ -140,5 +142,5 @@ function isBreakingChar(codePoint: number): boolean {
  * @param to high range
  */
 function isBetween(value: number, from: number, to: number): boolean {
-    return (value >= from && value <= to);
+    return value >= from && value <= to;
 }
