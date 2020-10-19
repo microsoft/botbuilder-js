@@ -94,6 +94,11 @@ export class BotRecipe {
         // noop
     }
 
+    /**
+     * Creates a new [BotRecipe](xref:botframework-config.BotRecipe) instance from a JSON object.
+     * @param source JSON object of [BotRecipe](xref:botframework-config.BotRecipe) type.
+     * @returns A new [BotRecipe](xref:botframework-config.BotRecipe) instance.
+     */
     public static fromJSON(source: Partial<BotRecipe> = {}): BotRecipe {
         const botRecipe: BotRecipe = new BotRecipe();
         const { version, resources } = source;
@@ -103,6 +108,10 @@ export class BotRecipe {
         return botRecipe;
     }
 
+    /**
+     * Creates a JSON object from `this` class instance.
+     * @returns A JSON object of [BotRecipe](xref:botframework-config.BotRecipe) type;
+     */
     public toJSON(): Partial<BotRecipe> {
         const { version, resources } = this;
 

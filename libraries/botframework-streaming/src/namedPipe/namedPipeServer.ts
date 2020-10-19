@@ -132,6 +132,9 @@ export class NamedPipeServer implements IStreamingTransportServer {
         return this._protocolAdapter.sendRequest(request);
     }
 
+    /**
+     * @private
+     */
     private onConnectionDisconnected(): void {
         if (!this._isDisconnecting) {
             this._isDisconnecting = true;

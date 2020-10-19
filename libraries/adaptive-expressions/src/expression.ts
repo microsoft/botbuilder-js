@@ -219,14 +219,20 @@ export class Expression {
         return { path, refs };
     }
 
+    /**
+     * Parse an expression string into an [Expression](xref:adaptive-expressions.Expression) object.
+     * @param expression Expression string.
+     * @param lookup Optional. [EvaluatorLookup](xref:adaptive-expressions.EvaluatorLookup) function lookup when parsing the expression. Default is [Expression.lookup](xref:adaptive-expressions.Expression.lookup) which uses [Expression.functions](xref:adaptive-expressions.Expression.functions) table.
+     * @returns The expression object.
+     */
     public static parse(expression: string, lookup?: EvaluatorLookup): Expression {
         return new ExpressionParser(lookup || Expression.lookup).parse(expression);
     }
 
     /**
-     * Lookup a ExpressionEvaluator (function) by name.
-     * @param functionName name of function to lookup
-     * @returns a ExpressionEvaluator that corresponding to the funtion name
+     * Lookup an [ExpressionEvaluator](xref:adaptive-expressions.ExpressionEvaluator) function by name.
+     * @param functionName Name of function to lookup.
+     * @returns An [ExpressionEvaluator](xref:adaptive-expressions.ExpressionEvaluator) corresponding to the function name.
      */
     public static lookup(functionName: string): ExpressionEvaluator {
         const exprEvaluator = Expression.functions.get(functionName);
@@ -239,7 +245,7 @@ export class Expression {
 
     /**
      * Make an expression and validate it.
-     * @param type Type of expression from ExpressionType
+     * @param type Type of expression from ExpressionType.
      * @param evaluator Information about how to validate and evaluate expression.
      * @param children Child expressions.
      */
@@ -373,6 +379,10 @@ export class Expression {
         return this.evaluator.tryEvaluate(this, state, options);
     }
 
+    /**
+     * Returns a string that represents the current [Expression](xref:adaptive-expressions.Expression) object.
+     * @returns A string that represents the current [Expression](xref:adaptive-expressions.Expression) object.
+     */
     public toString(): string {
         let builder = '';
         let valid = false;
