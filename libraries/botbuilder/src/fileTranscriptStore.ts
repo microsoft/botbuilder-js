@@ -29,7 +29,7 @@ const ticksPerMillisecond = 10000;
  * @param timestamp A date used to calculate future ticks.
  */
 function getTicks(timestamp: Date): string {
-    const ticks: number = epochTicks + (timestamp.getTime() * ticksPerMillisecond);
+    const ticks: number = epochTicks + timestamp.getTime() * ticksPerMillisecond;
 
     return ticks.toString(16);
 }
@@ -50,7 +50,9 @@ function readDate(ticks: string): Date {
  * @param fileName The filename containing the timestamp string
  */
 function withDateFilter(date: Date, fileName: string): any {
-    if (!date) { return true; }
+    if (!date) {
+        return true;
+    }
 
     const ticks: string = fileName.split('-')[0];
     return readDate(ticks) >= date;
@@ -79,7 +81,6 @@ function parseActivity(json: string): Activity {
     return activity;
 }
 
-
 /**
  * The file transcript store stores transcripts in file system with each activity as a file.
  *
@@ -96,7 +97,6 @@ function parseActivity(json: string): Activity {
  * ```
  */
 export class FileTranscriptStore implements TranscriptStore {
-
     private static readonly PageSize: number = 20;
 
     private readonly rootFolder: string;
@@ -141,9 +141,13 @@ export class FileTranscriptStore implements TranscriptStore {
         continuationToken?: string,
         startDate?: Date
     ): Promise<PagedResult<Activity>> {
-        if (!channelId) { throw new Error('Missing channelId'); }
+        if (!channelId) {
+            throw new Error('Missing channelId');
+        }
 
-        if (!conversationId) { throw new Error('Missing conversationId'); }
+        if (!conversationId) {
+            throw new Error('Missing conversationId');
+        }
 
         const pagedResult: PagedResult<Activity> = { items: [], continuationToken: undefined };
         const transcriptFolder: string = this.getTranscriptFolder(channelId, conversationId);
@@ -153,20 +157,20 @@ export class FileTranscriptStore implements TranscriptStore {
             return pagedResult;
         }
 
-        let transcriptFolderContents = await readdir(transcriptFolder);
-        const include = includeWhen(fileName => !continuationToken || parse(fileName).name === continuationToken);
-        const items = transcriptFolderContents.filter(transcript =>
-            transcript.endsWith('.json') &&
-            withDateFilter(startDate, transcript) &&
-            include(transcript));
+        const transcriptFolderContents = await readdir(transcriptFolder);
+        const include = includeWhen((fileName) => !continuationToken || parse(fileName).name === continuationToken);
+        const items = transcriptFolderContents.filter(
+            (transcript) => transcript.endsWith('.json') && withDateFilter(startDate, transcript) && include(transcript)
+        );
 
-        pagedResult.items = await Promise.all(items
-            .slice(0, FileTranscriptStore.PageSize)
-            .sort()
-            .map(async activityFilename => {
-                const json = await readFile(join(transcriptFolder, activityFilename), 'utf8');
-                return parseActivity(json);
-            })
+        pagedResult.items = await Promise.all(
+            items
+                .slice(0, FileTranscriptStore.PageSize)
+                .sort()
+                .map(async (activityFilename) => {
+                    const json = await readFile(join(transcriptFolder, activityFilename), 'utf8');
+                    return parseActivity(json);
+                })
         );
         const { length } = pagedResult.items;
         if (length === FileTranscriptStore.PageSize && items[length]) {
@@ -181,7 +185,9 @@ export class FileTranscriptStore implements TranscriptStore {
      * @param continuationToken (Optional) Continuation token to page through results.
      */
     public async listTranscripts(channelId: string, continuationToken?: string): Promise<PagedResult<TranscriptInfo>> {
-        if (!channelId) { throw new Error('Missing channelId'); }
+        if (!channelId) {
+            throw new Error('Missing channelId');
+        }
 
         const pagedResult: PagedResult<TranscriptInfo> = { items: [], continuationToken: undefined };
         const channelFolder: string = this.getChannelFolder(channelId);
@@ -191,10 +197,10 @@ export class FileTranscriptStore implements TranscriptStore {
             return pagedResult;
         }
         const channels = await readdir(channelFolder);
-        const items = channels.filter(includeWhen(di => !continuationToken || di === continuationToken));
+        const items = channels.filter(includeWhen((di) => !continuationToken || di === continuationToken));
         pagedResult.items = items
             .slice(0, FileTranscriptStore.PageSize)
-            .map(i => ({ channelId: channelId, id: i, created: null }));
+            .map((i) => ({ channelId: channelId, id: i, created: null }));
         const { length } = pagedResult.items;
         if (length === FileTranscriptStore.PageSize && items[length]) {
             pagedResult.continuationToken = items[length];
@@ -209,9 +215,13 @@ export class FileTranscriptStore implements TranscriptStore {
      * @param conversationId Id of the conversation to delete.
      */
     public async deleteTranscript(channelId: string, conversationId: string): Promise<void> {
-        if (!channelId) { throw new Error('Missing channelId'); }
+        if (!channelId) {
+            throw new Error('Missing channelId');
+        }
 
-        if (!conversationId) { throw new Error('Missing conversationId'); }
+        if (!conversationId) {
+            throw new Error('Missing conversationId');
+        }
 
         const transcriptFolder: string = this.getTranscriptFolder(channelId, conversationId);
 

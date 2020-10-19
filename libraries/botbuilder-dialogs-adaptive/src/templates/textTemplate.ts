@@ -15,8 +15,7 @@ import { languageGeneratorKey } from '../languageGeneratorExtensions';
  * Defines a text template where the template expression is local aka "inline"
  * and processed through registered language generator.
  */
-export class TextTemplate implements TemplateInterface<string> {
-
+export class TextTemplate<D = Record<string, unknown>> implements TemplateInterface<string, D> {
     /**
      * Initialize a new instance of TextTemplate class.
      * @param template The template to evaluate to create text.
@@ -35,19 +34,23 @@ export class TextTemplate implements TemplateInterface<string> {
      * @param dialogContext DialogContext.
      * @param data Data to bind to.
      */
-    public async bind(dialogContext: DialogContext, data: object): Promise<string> {
+    public async bind(dialogContext: DialogContext, data: D): Promise<string> {
         if (!this.template) {
-            throw new Error(`ArgumentNullException: ${ this.template }`);
+            throw new Error(`ArgumentNullException: ${this.template}`);
         }
 
-        const languageGenerator: LanguageGenerator = dialogContext.services.get(languageGeneratorKey);
+        const languageGenerator = dialogContext.services.get(languageGeneratorKey) as LanguageGenerator<string, D>;
         if (languageGenerator !== undefined) {
-            const result = languageGenerator.generate(dialogContext, this.template, data);
+            const lgResult = await languageGenerator.generate(dialogContext, this.template, data);
+            const result = lgResult ? lgResult.toString() : '';
+
             return Promise.resolve(result);
         }
 
         return Promise.resolve(undefined);
     }
 
-    public toString = (): string => { return `TextTemplate(${ this.template })`; };
+    public toString = (): string => {
+        return `TextTemplate(${this.template})`;
+    };
 }

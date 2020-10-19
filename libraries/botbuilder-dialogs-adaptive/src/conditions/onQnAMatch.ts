@@ -13,6 +13,7 @@ import { QnAMakerRecognizer } from '../qnaMaker';
  * Actions triggered when a MessageUpdateActivity is received.
  */
 export class OnQnAMatch extends OnIntent {
+    public static $kind = 'Microsoft.OnQnAMatch';
 
     public constructor(actions: Dialog[] = [], condition?: string) {
         super(QnAMakerRecognizer.qnaMatchIntent, [], actions, condition);

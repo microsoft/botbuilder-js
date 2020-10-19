@@ -55,7 +55,7 @@
     "antlr-build-commonregex": "antlr4ts src/CommonRegex.g4 -o src/generated -visitor"
   },
   "files": [
-    "/lib",
-    "/src"
+    "lib",
+    "src"
   ]
 }

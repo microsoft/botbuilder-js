@@ -1,10 +1,11 @@
 {
   "name": "browser-functional-tests",
+  "private": true,
   "version": "1.0.0",
   "description": "Test to check browser compatibility",
   "main": "",
   "devDependencies": {
-    "chromedriver": "^83.0.0",
+    "chromedriver": "^85.0.0",
     "dotenv": "^8.0.0",
     "geckodriver": "^1.19.1",
     "nightwatch": "^1.2.4",

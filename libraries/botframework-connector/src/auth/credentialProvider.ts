@@ -35,7 +35,7 @@ export interface ICredentialProvider {
      * @param  {string} appId bot appid
      * @returns {Promise<string|null>} password or null for invalid appid
      */
-    getAppPassword(appId: string): Promise<string|null>;
+    getAppPassword(appId: string): Promise<string | null>;
 
     /**
      * Checks if bot authentication is disabled.
@@ -48,11 +48,18 @@ export interface ICredentialProvider {
     isAuthenticationDisabled(): Promise<boolean>;
 }
 
+/**
+ * A simple implementation of the [ICredentialProvider](xref:botframework-connector.ICredentialProvider) interface.
+ */
 export class SimpleCredentialProvider implements ICredentialProvider {
-
     private readonly appId: string;
     private readonly appPassword: string;
 
+    /**
+     * Initializes a new instance of the [SimpleCredentialProvider](xref:botframework-connector.SimpleCredentialProvider) class with the provided credentials.
+     * @param appId The app ID.
+     * @param appPassword The app password.
+     */
     constructor(appId: string, appPassword: string) {
         this.appId = appId;
         this.appPassword = appPassword;
@@ -78,8 +85,8 @@ export class SimpleCredentialProvider implements ICredentialProvider {
      * @param  {string} appId bot appid
      * @returns {Promise<string|null>} password or null for invalid appid
      */
-    public getAppPassword(appId: string): Promise<string|null> {
-        return Promise.resolve((this.appId === appId) ? this.appPassword : null);
+    public getAppPassword(appId: string): Promise<string | null> {
+        return Promise.resolve(this.appId === appId ? this.appPassword : null);
     }
 
     /**

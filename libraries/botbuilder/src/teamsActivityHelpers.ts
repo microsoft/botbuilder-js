@@ -6,57 +6,16 @@
  * Licensed under the MIT License.
  */
 
-import {
-    Activity,
-    ChannelInfo,
-    NotificationInfo,
-    TeamInfo,
-    TeamsChannelData
-} from 'botbuilder-core';
+import { Activity, TeamInfo, TeamsChannelData } from 'botbuilder-core';
 
-/**
- * Activity helper methods for Teams.
- */
-export function teamsGetChannelId(activity: Activity): string {
-    if (!activity) {
-        throw new Error('Missing activity parameter');
-    }
-
-    const channelData: TeamsChannelData = activity.channelData as TeamsChannelData;
-    const channel: ChannelInfo = channelData ? channelData.channel : null;
-    return channel && channel.id ? channel.id : null;
+function isTeamsChannelData(channelData: unknown): channelData is TeamsChannelData {
+    return typeof channelData === 'object';
 }
 
-/**
- * Gets the Team Id from the current [Activity](xref:botframework-schema.Activity).
- * @param activity The current [Activity](xref:botframework-schema.Activity).
- * @returns The current [Activity](xref:botframework-schema.Activity)'s team's Id, or null.
- */
-export function teamsGetTeamId(activity: Activity): string {
+function validateActivity(activity: Activity): void {
     if (!activity) {
         throw new Error('Missing activity parameter');
     }
-
-    const channelData: TeamsChannelData = activity.channelData as TeamsChannelData;
-    const team: TeamInfo = channelData ? channelData.team : null;
-    return team && team.id ? team.id : null;
-}
-
-/**
- * Configures the current [Activity](xref:botframework-schema.Activity) to generate a notification within Teams.
- * @param activity The current [Activity](xref:botframework-schema.Activity).
- */
-export function teamsNotifyUser(activity: Activity): void {
-    if (!activity) {
-        throw new Error('Missing activity parameter');
-    }
-
-    if (!activity.channelData || typeof activity.channelData !== 'object') {
-        activity.channelData = {};
-    }
-
-    const channelData: TeamsChannelData = activity.channelData as TeamsChannelData;
-    channelData.notification = { alert: true } as NotificationInfo;
 }
 
 /**
@@ -64,12 +23,55 @@ export function teamsNotifyUser(activity: Activity): void {
  * @param activity The current [Activity](xref:botframework-schema.Activity).
  * @returns The current [Activity](xref:botframework-schema.Activity)'s team's info, or null.
  */
-export function teamsGetTeamInfo(activity: Activity): TeamInfo {
-    if (!activity) {
-        throw new Error('Missing activity parameter');
+export function teamsGetTeamInfo(activity: Activity): TeamInfo | null {
+    validateActivity(activity);
+
+    const channelData = activity.channelData;
+    if (isTeamsChannelData(channelData)) {
+        const team = channelData.team;
+        return team || null;
     }
 
-    const channelData: TeamsChannelData = activity.channelData as TeamsChannelData;
-    const team: TeamInfo = channelData ? channelData.team : null;
-    return team;
+    return null;
+}
+
+/**
+ * Gets the Team Id from the current [Activity](xref:botframework-schema.Activity).
+ * @param activity The current [Activity](xref:botframework-schema.Activity).
+ * @returns The current [Activity](xref:botframework-schema.Activity)'s team's Id, or null.
+ */
+export function teamsGetTeamId(activity: Activity): string | null {
+    const team = teamsGetTeamInfo(activity);
+    return team && team.id ? team.id : null;
+}
+
+/**
+ * Activity helper methods for Teams.	 * Activity helper methods for Teams.
+ */
+export function teamsGetChannelId(activity: Activity): string | null {
+    validateActivity(activity);
+
+    const channelData = activity.channelData;
+    if (isTeamsChannelData(channelData)) {
+        const channel = channelData.channel;
+        return channel && channel.id ? channel.id : null;
+    }
+
+    return null;
+}
+
+/**
+ * Configures the current [Activity](xref:botframework-schema.Activity) to generate a notification within Teams.
+ * @param activity The current [Activity](xref:botframework-schema.Activity).
+ */
+export function teamsNotifyUser(activity: Activity, alertInMeeting?: boolean, externalResourceUrl?: string): void {
+    validateActivity(activity);
+
+    if (!isTeamsChannelData(activity.channelData)) {
+        activity.channelData = {};
+    }
+
+    if (isTeamsChannelData(activity.channelData)) {
+        activity.channelData.notification = { alert: true, alertInMeeting, externalResourceUrl };
+    }
 }
