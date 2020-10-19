@@ -20,10 +20,16 @@ import { ReturnType } from '../returnType';
  * The zero-based index position of value if that value is found, or -1 if it is not.
  */
 export class IndexOf extends ExpressionEvaluator {
+    /**
+     * Initializes a new instance of the [IndexOf](xref:adaptive-expressions.IndexOf) class.
+     */
     public constructor() {
         super(ExpressionType.IndexOf, IndexOf.evaluator, ReturnType.Number, IndexOf.validator);
     }
 
+    /**
+     * @private
+     */
     private static evaluator(expression: Expression, state: MemoryInterface, options: Options): ValueWithError {
         let value = -1;
         const { args, error: childrenError } = FunctionUtils.evaluateChildren(expression, state, options);
@@ -47,6 +53,9 @@ export class IndexOf extends ExpressionEvaluator {
         return { value, error };
     }
 
+    /**
+     * @private
+     */
     private static validator(expression: Expression): void {
         FunctionUtils.validateOrder(expression, [], ReturnType.String | ReturnType.Array, ReturnType.Object);
     }

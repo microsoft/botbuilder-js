@@ -18,11 +18,23 @@ const _dateSubtypes = ['date', 'daterange', 'datetime', 'datetimerange', 'durati
 const _geographySubtypes = ['poi', 'city', 'countryRegion', 'continent', 'state'];
 const MetadataKey = '$instance';
 
+/**
+ * Validates if the options provided are valid [LuisRecognizerOptionsV3](xref:botbuilder-ai.LuisRecognizerOptionsV3).
+ * @returns A boolean value that indicates param options is a [LuisRecognizerOptionsV3](xref:botbuilder-ai.LuisRecognizerOptionsV3).
+ */
 export function isLuisRecognizerOptionsV3(options: any): options is LuisRecognizerOptionsV3 {
     return options.apiVersion && options.apiVersion === 'v3';
 }
 
+/**
+ * Recognize intents in a user utterance using a configured LUIS model.
+ */
 export class LuisRecognizerV3 extends LuisRecognizerInternal {
+    /**
+     * Creates a new [LuisRecognizerV3](xref:botbuilder-ai.LuisRecognizerV3) instance.
+     * @param application An object conforming to the [LuisApplication](xref:botbuilder-ai.LuisApplication) definition or a string representing a LUIS application endpoint, usually retrieved from https://luis.ai.
+     * @param options Optional. Options object used to control predictions. Should conform to the [LuisRecognizerOptionsV3](xref:botbuilder-ai.LuisRecognizerOptionsV3) definition.
+     */
     constructor(application: LuisApplication, options?: LuisRecognizerOptionsV3) {
         super(application);
 
@@ -42,13 +54,18 @@ export class LuisRecognizerV3 extends LuisRecognizerInternal {
 
     public predictionOptions: LuisRecognizerOptionsV3;
 
+    /**
+     * Calls LUIS to recognize intents and entities in a users utterance.
+     * @param context The [TurnContext](xref:botbuilder-core.TurnContext).
+     * @returns Analysis of utterance in form of [RecognizerResult](xref:botbuilder-core.RecognizerResult).
+     */
     async recognizeInternal(context: TurnContext): Promise<RecognizerResult> {
         const utterance: string = context.activity.text || '';
         if (!utterance.trim()) {
             // Bypass LUIS if the activity's text is null or whitespace
             return Promise.resolve({
                 text: utterance,
-                intents: { '': { score: 1 } },
+                intents: {},
                 entities: {},
             });
         }
@@ -80,6 +97,9 @@ export class LuisRecognizerV3 extends LuisRecognizerInternal {
         return result;
     }
 
+    /**
+     * @private
+     */
     private buildUrl() {
         const baseUri = this.application.endpoint || 'https://westus.api.cognitive.microsoft.com';
         let uri = `${baseUri}/luis/prediction/v3.0/apps/${this.application.applicationId}`;
@@ -96,6 +116,9 @@ export class LuisRecognizerV3 extends LuisRecognizerInternal {
         return uri;
     }
 
+    /**
+     * @private
+     */
     private buildRequestBody(utterance: string) {
         const content = {
             query: utterance,
@@ -126,6 +149,9 @@ export class LuisRecognizerV3 extends LuisRecognizerInternal {
         };
     }
 
+    /**
+     * @private
+     */
     private emitTraceInfo(
         context: TurnContext,
         luisResult: LuisModels.LuisResult,

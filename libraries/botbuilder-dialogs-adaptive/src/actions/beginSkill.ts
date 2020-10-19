@@ -6,22 +6,50 @@
  * Licensed under the MIT License.
  */
 import {
-    SkillDialog,
-    SkillDialogOptions,
+    BoolExpression,
+    BoolExpressionConverter,
+    Expression,
+    StringExpression,
+    StringExpressionConverter,
+} from 'adaptive-expressions';
+import { Activity, ActivityTypes, StringUtils, TurnContext } from 'botbuilder-core';
+import {
+    BeginSkillDialogOptions,
+    Converter,
+    ConverterFactory,
     DialogContext,
     DialogTurnResult,
-    BeginSkillDialogOptions,
     DialogInstance,
     DialogReason,
+    DialogConfiguration,
+    DialogEvent,
+    DialogEvents,
     DialogStateManager,
+    SkillDialog,
+    SkillDialogOptions,
 } from 'botbuilder-dialogs';
-import { BoolExpression, StringExpression } from 'adaptive-expressions';
-import { Activity, ActivityTypes, StringUtils, TurnContext } from 'botbuilder-core';
 import { TemplateInterface } from '../template';
 import { skillClientKey, skillConversationIdFactoryKey } from '../skillExtensions';
 import { ActivityTemplate } from '../templates';
+import { ActivityTemplateConverter } from '../converters';
+import { AdaptiveEvents } from '../adaptiveEvents';
 
-export class BeginSkill extends SkillDialog {
+export interface BeginSkillConfiguration extends DialogConfiguration {
+    disabled?: boolean | string | Expression | BoolExpression;
+    activityProcessed?: boolean | string | Expression | BoolExpression;
+    resultProperty?: string | Expression | StringExpression;
+    botId?: string | Expression | StringExpression;
+    skillHostEndpoint?: string | Expression | StringExpression;
+    skillAppId?: string | Expression | StringExpression;
+    skillEndpoint?: string | Expression | StringExpression;
+    activity?: string | Partial<Activity> | TemplateInterface<Partial<Activity>, DialogStateManager>;
+    connectionName?: string | Expression | StringExpression;
+    allowInterruptions?: boolean | string | Expression | BoolExpression;
+}
+
+export class BeginSkill extends SkillDialog implements BeginSkillConfiguration {
+    public static $kind = 'Microsoft.BeginSkill';
+
     /**
      * Optional expression which if is true will disable this action.
      */
@@ -76,6 +104,38 @@ export class BeginSkill extends SkillDialog {
      * Optional. The OAuth Connection Name for the Parent Bot.
      */
     public connectionName: StringExpression;
+
+    /**
+     * The interruption policy.
+     */
+    public allowInterruptions: BoolExpression;
+
+    public getConverter(property: keyof BeginSkillConfiguration): Converter | ConverterFactory {
+        switch (property) {
+            case 'disabled':
+                return new BoolExpressionConverter();
+            case 'activityProcessed':
+                return new BoolExpressionConverter();
+            case 'resultProperty':
+                return new StringExpressionConverter();
+            case 'botId':
+                return new StringExpressionConverter();
+            case 'skillHostEndpoint':
+                return new StringExpressionConverter();
+            case 'skillAppId':
+                return new StringExpressionConverter();
+            case 'skillEndpoint':
+                return new StringExpressionConverter();
+            case 'activity':
+                return new ActivityTemplateConverter();
+            case 'connectionName':
+                return new StringExpressionConverter();
+            case 'allowInterruptions':
+                return new BoolExpressionConverter();
+            default:
+                return undefined;
+        }
+    }
 
     // Used to cache DialogOptions for multi-turn calls across servers.
     private _dialogOptionsStateKey = `${this.constructor.name}.dialogOptionsData`;
@@ -184,6 +244,27 @@ export class BeginSkill extends SkillDialog {
             return `BeginSkill['${appId}','${StringUtils.ellipsis(this.activity.template.trim(), 30)}']`;
         }
         return `BeginSkill['${appId}','${StringUtils.ellipsis(this.activity && this.activity.toString().trim(), 30)}']`;
+    }
+
+    protected async onPreBubbleEvent(dc: DialogContext, e: DialogEvent): Promise<boolean> {
+        if (e.name === DialogEvents.activityReceived && dc.context.activity.type === ActivityTypes.Message) {
+            // Ask parent to perform recognition.
+            if (dc.parent) {
+                await dc.parent.emitEvent(AdaptiveEvents.recognizeUtterance, dc.context.activity, false);
+            }
+
+            // Should we allow interruptions.
+            let canInterrupt = true;
+            if (this.allowInterruptions) {
+                const { value: allowInterruptions, error } = this.allowInterruptions.tryGetValue(dc.state);
+                canInterrupt = !error && allowInterruptions;
+            }
+
+            // Stop bubbling if interruptions are NOT allowed
+            return !canInterrupt;
+        }
+
+        return false;
     }
 
     private loadDialogOptions(context: TurnContext, instance: DialogInstance): void {

@@ -15,6 +15,9 @@ import { ReturnType } from '../returnType';
  * Return the string version of a data uniform resource identifier (URI).
  */
 export class DataUriToString extends ExpressionEvaluator {
+    /**
+     * Initializes a new instance of the [DataUriToString](xref:adaptive-expressions.DataUriToString) class.
+     */
     public constructor() {
         super(
             ExpressionType.DataUriToString,
@@ -24,6 +27,9 @@ export class DataUriToString extends ExpressionEvaluator {
         );
     }
 
+    /**
+     * @private
+     */
     private static evaluator(): EvaluateExpressionDelegate {
         return FunctionUtils.apply(
             (args: any[]): string => Buffer.from(args[0].slice(args[0].indexOf(',') + 1), 'base64').toString(),

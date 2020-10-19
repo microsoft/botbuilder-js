@@ -5,15 +5,37 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { DialogTurnResult, Dialog, DialogContext } from 'botbuilder-dialogs';
+import { BoolExpression, BoolExpressionConverter, Expression } from 'adaptive-expressions';
 import { ActivityTypes } from 'botbuilder-core';
-import { BoolExpression } from 'adaptive-expressions';
+import {
+    Converter,
+    ConverterFactory,
+    Dialog,
+    DialogConfiguration,
+    DialogContext,
+    DialogTurnResult,
+} from 'botbuilder-dialogs';
 
-export class EndTurn<O extends object = {}> extends Dialog<O> {
+export interface EndTurnConfiguration extends DialogConfiguration {
+    disabled?: boolean | string | Expression | BoolExpression;
+}
+
+export class EndTurn<O extends object = {}> extends Dialog<O> implements EndTurnConfiguration {
+    public static $kind = 'Microsoft.EndTurn';
+
     /**
      * An optional expression which if is true will disable this action.
      */
     public disabled?: BoolExpression;
+
+    public getConverter(property: keyof EndTurnConfiguration): Converter | ConverterFactory {
+        switch (property) {
+            case 'disabled':
+                return new BoolExpressionConverter();
+            default:
+                return super.getConverter(property);
+        }
+    }
 
     public async beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult> {
         if (this.disabled && this.disabled.getValue(dc.state)) {
