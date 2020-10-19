@@ -73,6 +73,9 @@ export class EventFactory {
         return handoffEvent;
     }
 
+    /**
+     * @private
+     */
     private static createHandoffEvent(name: string, value: any, conversation: ConversationAccount): Activity {
         const handoffEvent: Activity = {} as any;
 
