@@ -17,7 +17,7 @@ export class ValueExpressionConverter {
      * @param value `any` value to convert.
      * @returns The [ValueExpression](xref:adaptive-expressions.ValueExpression).
      */
-    public convert(value: any): ValueExpression {
-        return new ValueExpression(value);
+    public convert(value: unknown | ValueExpression): ValueExpression {
+        return value instanceof ValueExpression ? value : new ValueExpression(value);
     }
 }

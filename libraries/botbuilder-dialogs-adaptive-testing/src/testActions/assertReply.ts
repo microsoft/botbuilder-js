@@ -7,12 +7,19 @@
  */
 
 import { Activity, ActivityTypes } from 'botbuilder-core';
-import { AssertReplyActivity } from './assertReplyActivity';
+import { AssertReplyActivity, AssertReplyActivityConfiguration } from './assertReplyActivity';
+
+export interface AssertReplyConfiguration extends AssertReplyActivityConfiguration {
+    text?: string;
+    exact?: boolean;
+}
 
 /**
  * Test Script action to assert that the bots' reply matches expectations.
  */
-export class AssertReply extends AssertReplyActivity {
+export class AssertReply extends AssertReplyActivity implements AssertReplyConfiguration {
+    public static $kind = 'Microsoft.Test.AssertReply';
+
     /**
      * The text value to look for in the reply.
      */
@@ -21,7 +28,7 @@ export class AssertReply extends AssertReplyActivity {
     /**
      * A value indicating whether text should be an exact match.
      */
-    public exact: boolean = true;
+    public exact = true;
 
     /**
      * Gets the text to assert for an activity.
@@ -39,11 +46,18 @@ export class AssertReply extends AssertReplyActivity {
         if (this.text) {
             if (this.exact) {
                 if (activity.type == ActivityTypes.Message && activity.text != this.text) {
-                    throw new Error(this.description || `Text ${activity.text} didn't match expected text: ${this.text}`);
+                    throw new Error(
+                        this.description || `Text ${activity.text} didn't match expected text: ${this.text}`
+                    );
                 }
             } else {
-                if (activity.type == ActivityTypes.Message && !activity.text.toLowerCase().trim().includes(this.text.toLowerCase().trim())) {
-                    throw new Error(this.description || `Text ${activity.text} didn't match expected text: ${this.text}`);
+                if (
+                    activity.type == ActivityTypes.Message &&
+                    !activity.text.toLowerCase().trim().includes(this.text.toLowerCase().trim())
+                ) {
+                    throw new Error(
+                        this.description || `Text ${activity.text} didn't match expected text: ${this.text}`
+                    );
                 }
             }
         }

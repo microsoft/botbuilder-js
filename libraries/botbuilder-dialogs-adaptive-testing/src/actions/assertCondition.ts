@@ -6,13 +6,27 @@
  * Licensed under the MIT License.
  */
 
-import { Dialog, DialogContext, DialogTurnResult } from 'botbuilder-dialogs';
-import { Expression, StringExpression } from 'adaptive-expressions';
+import { Expression, ExpressionConverter, StringExpression, StringExpressionConverter } from 'adaptive-expressions';
+import {
+    Converter,
+    ConverterFactory,
+    Dialog,
+    DialogConfiguration,
+    DialogContext,
+    DialogTurnResult,
+} from 'botbuilder-dialogs';
+
+export interface AssertConditionConfiguration extends DialogConfiguration {
+    condition?: string | Expression;
+    description?: string | Expression | StringExpression;
+}
 
 /**
  * Dialog action which allows you to add assertions into your dialog flow.
  */
-export class AssertCondition<O extends object = {}> extends Dialog<O> {
+export class AssertCondition<O extends object = {}> extends Dialog<O> implements AssertConditionConfiguration {
+    public static $kind = 'Microsoft.Test.AssertCondition';
+
     /**
      * Condition which must be true.
      */
@@ -22,6 +36,17 @@ export class AssertCondition<O extends object = {}> extends Dialog<O> {
      * Description of assertion.
      */
     public description: StringExpression;
+
+    public getConverter(property: keyof AssertConditionConfiguration): Converter | ConverterFactory {
+        switch (property) {
+            case 'condition':
+                return new ExpressionConverter();
+            case 'description':
+                return new StringExpressionConverter();
+            default:
+                return super.getConverter(property);
+        }
+    }
 
     /**
      * Called when the dialog is started and pushed onto the dialog stack.
@@ -45,6 +70,6 @@ export class AssertCondition<O extends object = {}> extends Dialog<O> {
      * @protected
      */
     protected onComputeId(): string {
-        return `AssertCondition[${ this.condition.toString() }]`;
+        return `AssertCondition[${this.condition.toString()}]`;
     }
 }

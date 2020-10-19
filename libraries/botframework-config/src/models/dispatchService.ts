@@ -1,7 +1,6 @@
 /**
  * @module botframework-config
- */
-/**
+ *
  * Copyright(c) Microsoft Corporation.All rights reserved.
  * Licensed under the MIT License.
  */
@@ -10,6 +9,7 @@ import { LuisService } from './luisService';
 
 /**
  * Defines a dispatch service connection.
+ * @deprecated See https://aka.ms/bot-file-basics for more information.
  */
 export class DispatchService extends LuisService implements IDispatchService {
     /**
@@ -25,5 +25,4 @@ export class DispatchService extends LuisService implements IDispatchService {
         super(source, ServiceTypes.Dispatch);
         this.serviceIds = this.serviceIds || [];
     }
-
 }
