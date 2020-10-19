@@ -7,6 +7,9 @@
  */
 import { IBrowserFileReader, IBrowserWebSocket, ISocket, INodeBuffer } from '../interfaces';
 
+/**
+ * Represents a WebSocket that implements [ISocket](xref:botframework-streaming.ISocket).
+ */
 export class BrowserWebSocket implements ISocket {
     private webSocket: IBrowserWebSocket;
 
