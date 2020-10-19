@@ -46,9 +46,9 @@ export class Ask extends SendActivity {
     public defaultOperation: StringExpression;
 
     /**
-     * Called when the dialog is started and pushed onto the dialog stack.
+     * Called when the [Dialog](xref:botbuilder-dialogs.Dialog) is started and pushed onto the dialog stack.
      * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
-     * @param options Optional, initial information to pass to the dialog.
+     * @param options Optional, initial information to pass to the [Dialog](xref:botbuilder-dialogs.Dialog).
      * @returns A [DialogTurnResult](xref:botbuilder-dialogs.DialogTurnResult) `Promise` representing the asynchronous operation.
      */
     public async beginDialog(dc: DialogContext, options?: object): Promise<DialogTurnResult> {

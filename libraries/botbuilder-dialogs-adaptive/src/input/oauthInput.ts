@@ -105,7 +105,7 @@ export class OAuthInput extends InputDialog {
     }
 
     /**
-     * Called when a prompt dialog is pushed onto the dialog stack and is being activated.
+     * Called when a prompt [Dialog](xref:botbuilder-dialogs.Dialog) is pushed onto the dialog stack and is being activated.
      * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
      * @param options Optional. Additional information to pass to the prompt being started.
      * @returns A [DialogTurnResult](xref:botbuilder-dialogs.DialogTurnResult) `Promise` representing the asynchronous operation.
@@ -161,7 +161,7 @@ export class OAuthInput extends InputDialog {
     }
 
     /**
-     * Called when a prompt dialog is the active dialog and the user replied with a new activity.
+     * Called when a prompt [Dialog](xref:botbuilder-dialogs.Dialog) is the active dialog and the user replied with a new activity.
      * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
      * @returns A [DialogTurnResult](xref:botbuilder-dialogs.DialogTurnResult) `Promise` representing the asynchronous operation.
      */
