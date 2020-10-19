@@ -51,6 +51,6 @@ export class Template {
      * @returns A string representing the [Template](xref:botbuilder-lg.Template).
      */
     public toString(): string {
-        return `[${ this.name }(${ this.parameters.join(', ') })]"${ this.body }"`;
+        return `[${this.name}(${this.parameters.join(', ')})]"${this.body}"`;
     }
 }

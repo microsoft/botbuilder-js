@@ -10,8 +10,7 @@ import { Diagnostic } from './diagnostic';
 /**
  * LG Exception that contains diagnostics.
  */
-export class TemplateException  extends Error {
-
+export class TemplateException extends Error {
     private diagnostics: Diagnostic[];
     
     /**
@@ -22,7 +21,7 @@ export class TemplateException  extends Error {
     public constructor(m: string, diagnostics: Diagnostic[]) {
         super(m);
         this.diagnostics = diagnostics;
-        Object.setPrototypeOf(this, TemplateException .prototype);
+        Object.setPrototypeOf(this, TemplateException.prototype);
     }
 
     /**

@@ -6,17 +6,32 @@
  * Licensed under the MIT License.
  */
 
-import { TurnContext, ActivityTypes } from 'botbuilder-core';
+import { TurnContext, ActivityTypes, TestAdapter } from 'botbuilder-core';
+import { Configurable } from 'botbuilder-dialogs';
 import { TestAction } from '../testAction';
-import { AdaptiveTestAdapter } from '../adaptiveTestAdapter';
 
-export class UserTyping implements TestAction {
+export interface UserTypingConfiguration {
+    user?: string;
+}
+
+/**
+ * Action to script sending typing activity to the bot.
+ */
+export class UserTyping extends Configurable implements TestAction, UserTypingConfiguration {
+    public static $kind = 'Microsoft.Test.UserTyping';
+
     /**
      * If user is set then the channalAccount.id and channelAccount.name will be from user.
      */
     public user: string;
 
-    public async execute(testAdapter: AdaptiveTestAdapter, callback: (context: TurnContext) => Promise<any>): Promise<any> {
+    /**
+     * Execute the test.
+     * @param testAdapter Adapter to execute against.
+     * @param callback Logic for the bot to use.
+     * @returns A Promise that represents the work queued to execute.
+     */
+    public async execute(testAdapter: TestAdapter, callback: (context: TurnContext) => Promise<any>): Promise<any> {
         const typing = testAdapter.makeActivity();
         typing.type = ActivityTypes.Typing;
 

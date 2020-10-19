@@ -143,13 +143,16 @@ export class WaterfallDialog<O extends object = {}> extends Dialog<O> {
         const state: WaterfallDialogState = dc.activeDialog.state as WaterfallDialogState;
         state.options = options || {};
         state.values = {
-            instanceId: generate_guid()
+            instanceId: generate_guid(),
         };
 
-        this.telemetryClient.trackEvent({name: 'WaterfallStart', properties: {
-            'DialogId': this.id,
-            'InstanceId': state.values['instanceId']
-        }});
+        this.telemetryClient.trackEvent({
+            name: 'WaterfallStart',
+            properties: {
+                DialogId: this.id,
+                InstanceId: state.values['instanceId'],
+            },
+        });
 
         telemetryTrackDialogView(this.telemetryClient, this.id);
 
@@ -191,22 +194,26 @@ export class WaterfallDialog<O extends object = {}> extends Dialog<O> {
      * @param step Context object for the waterfall step to execute.
      */
     protected async onStep(step: WaterfallStepContext<O>): Promise<DialogTurnResult> {
-        // Log Waterfall Step event. 
-        var stepName = this.waterfallStepName(step.index);
+        // Log Waterfall Step event.
+        const stepName = this.waterfallStepName(step.index);
 
         const state: WaterfallDialogState = step.activeDialog.state as WaterfallDialogState;
 
-        var properties = 
-        { 
-            'DialogId': this.id,
-            'InstanceId': state.values['instanceId'],
-            'StepName': stepName,
+        const properties = {
+            DialogId: this.id,
+            InstanceId: state.values['instanceId'],
+            StepName: stepName,
         };
-        this.telemetryClient.trackEvent({name: 'WaterfallStep', properties: properties});
+        this.telemetryClient.trackEvent({ name: 'WaterfallStep', properties: properties });
         return await this.steps[step.index](step);
     }
 
-    protected async runStep(dc: DialogContext, index: number, reason: DialogReason, result?: any): Promise<DialogTurnResult> {
+    protected async runStep(
+        dc: DialogContext,
+        index: number,
+        reason: DialogReason,
+        result?: any
+    ): Promise<DialogTurnResult> {
         if (index < this.steps.length) {
             // Update persisted step index
             const state: WaterfallDialogState = dc.activeDialog.state as WaterfallDialogState;
@@ -222,11 +229,13 @@ export class WaterfallDialog<O extends object = {}> extends Dialog<O> {
                 values: state.values,
                 onNext: async (stepResult?: any): Promise<DialogTurnResult<any>> => {
                     if (nextCalled) {
-                        throw new Error(`WaterfallStepContext.next(): method already called for dialog and step '${ this.id }[${ index }]'.`);
+                        throw new Error(
+                            `WaterfallStepContext.next(): method already called for dialog and step '${this.id}[${index}]'.`
+                        );
                     }
                     nextCalled = true;
                     return await this.resumeDialog(dc, DialogReason.nextCalled, stepResult);
-                }
+                },
             });
 
             // Execute step
@@ -248,37 +257,42 @@ export class WaterfallDialog<O extends object = {}> extends Dialog<O> {
         const state: WaterfallDialogState = instance.state as WaterfallDialogState;
         const instanceId = state.values['instanceId'];
         if (reason === DialogReason.endCalled) {
-            this.telemetryClient.trackEvent({name: 'WaterfallComplete', properties: {
-                'DialogId': this.id,
-                'InstanceId': instanceId,
-            }});
+            this.telemetryClient.trackEvent({
+                name: 'WaterfallComplete',
+                properties: {
+                    DialogId: this.id,
+                    InstanceId: instanceId,
+                },
+            });
         } else if (reason === DialogReason.cancelCalled) {
-            var index = state.stepIndex;
-            var stepName = this.waterfallStepName(index);
-            this.telemetryClient.trackEvent({name: 'WaterfallCancel', properties: {
-                'DialogId': this.id,
-                'StepName': stepName,
-                'InstanceId': instanceId,
-            }});
+            const index = state.stepIndex;
+            const stepName = this.waterfallStepName(index);
+            this.telemetryClient.trackEvent({
+                name: 'WaterfallCancel',
+                properties: {
+                    DialogId: this.id,
+                    StepName: stepName,
+                    InstanceId: instanceId,
+                },
+            });
         }
     }
 
     private waterfallStepName(index: number): string {
         // Log Waterfall Step event. Each event has a distinct name to hook up
         // to the Application Insights funnel.
-        var stepName = '';
+        let stepName = '';
         if (this.steps[index]) {
             try {
                 stepName = this.steps[index].name;
             } finally {
                 if (stepName === undefined || stepName === '') {
-                    stepName = 'Step' + (index + 1) + 'of' + (this.steps.length);
+                    stepName = 'Step' + (index + 1) + 'of' + this.steps.length;
                 }
             }
         }
-        return stepName;        
+        return stepName;
     }
-
 }
 
 /**
@@ -290,17 +304,16 @@ interface WaterfallDialogState {
     values: object;
 }
 
-/* 
- * This function generates a GUID-like random number that should be sufficient for our purposes of tracking 
+/*
+ * This function generates a GUID-like random number that should be sufficient for our purposes of tracking
  * instances of a given waterfall dialog.
  * Source: https://stackoverflow.com/questions/105034/create-guid-uuid-in-javascript
- */  
+ */
 function generate_guid(): string {
     function s4(): string {
         return Math.floor((1 + Math.random()) * 0x10000)
             .toString(16)
             .substring(1);
     }
-    return s4() + s4() + '-' + s4() + '-' + s4() + '-' +
-      s4() + '-' + s4() + s4() + s4();
+    return s4() + s4() + '-' + s4() + '-' + s4() + '-' + s4() + '-' + s4() + s4() + s4();
 }

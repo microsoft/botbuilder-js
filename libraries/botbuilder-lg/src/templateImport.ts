@@ -9,10 +9,9 @@
 import { SourceRange } from './sourceRange';
 
 /**
- * Here is a data model that can help users understand and use the LG import definition in LG files easily. 
+ * Here is a data model that can help users understand and use the LG import definition in LG files easily.
  */
 export class TemplateImport {
-
     /**
      * Description of the import, what's included by '[]' in a lg file.
      */
@@ -40,5 +39,5 @@ export class TemplateImport {
         this.id = id;
     }
 
-    public toString = (): string => `[${ this.description }](${ this.id })`
+    public toString = (): string => `[${this.description}](${this.id})`;
 }

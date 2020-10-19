@@ -11,7 +11,6 @@ import { AliasPathResolver } from './aliasPathResolver';
  * Maps @@ => turn.recognized.entitites.xxx[0]
  */
 export class AtPathResolver extends AliasPathResolver {
-
     private readonly _prefix = 'turn.recognized.entities.';
     private readonly _delims = ['.', '['];
 
@@ -35,7 +34,7 @@ export class AtPathResolver extends AliasPathResolver {
             }
             const property = path.substr(1, end - 1);
             const suffix = path.substr(end);
-            path = `${ this._prefix }${ property }.first()${ suffix }`;
+            path = `${this._prefix}${property}.first()${suffix}`;
         }
 
         return path;

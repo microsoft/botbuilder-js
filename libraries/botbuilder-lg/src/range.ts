@@ -42,20 +42,19 @@ export class Range {
     public constructor(x: number|Position, y: number|Position, endLine?: number, endChar?: number){
         if (typeof x === 'number' && typeof y === 'number') {
             this.start = new Position(x, y);
-            this.end =  new Position(endLine, endChar);
-        } else if (x instanceof Position && y instanceof Position){
+            this.end = new Position(endLine, endChar);
+        } else if (x instanceof Position && y instanceof Position) {
             this.start = x;
-            this.end =  y;
+            this.end = y;
         }
-        
     }
 
     public toString = (): string => {
         let result: string = this.start.toString();
         if (this.start.line <= this.end.line && this.start.character < this.end.character) {
-            result += ` - ${ this.end.toString() }`;
+            result += ` - ${this.end.toString()}`;
         }
 
         return result;
-    }
+    };
 }

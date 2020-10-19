@@ -16,7 +16,6 @@ import { Position } from './position';
  * Extension methods for LG.
  */
 export class TemplateExtensions {
-
     /**
      * Trim expression. ${abc} => abc,  ${a == {}} => a == {}.
      * @param expression Input expression string.
@@ -29,7 +28,7 @@ export class TemplateExtensions {
         }
 
         result = result.trim();
-        
+
         if (result.startsWith('{') && result.endsWith('}')) {
             result = result.substr(1, result.length - 2);
         }
@@ -60,11 +59,9 @@ export class TemplateExtensions {
      * @param context Normal template sting context.
      * @returns Prefix error message.
      */
-    public static getPrefixErrorMessage(context: lp.NormalTemplateStringContext): string
-    {
+    public static getPrefixErrorMessage(context: lp.NormalTemplateStringContext): string {
         let errorPrefix = '';
-        if (context.parent &&  context.parent.parent && context.parent.parent.parent) {
-            
+        if (context.parent && context.parent.parent && context.parent.parent.parent) {
             if (context.parent.parent.parent instanceof lp.IfConditionRuleContext) {
                 const conditionContext = context.parent.parent.parent;
                 let tempMsg = '';
@@ -73,34 +70,27 @@ export class TemplateExtensions {
                     errorPrefix = `Condition '` + tempMsg + `': `;
                 }
             } else {
-                if (context.parent.parent.parent instanceof lp.SwitchCaseRuleContext )
-                {
+                if (context.parent.parent.parent instanceof lp.SwitchCaseRuleContext) {
                     const switchCaseContext = context.parent.parent.parent;
-                    var state = switchCaseContext.switchCaseStat();
-                    if (state && state.DEFAULT())
-                    {
+                    const state = switchCaseContext.switchCaseStat();
+                    if (state && state.DEFAULT()) {
                         errorPrefix = `Case 'Default':`;
-                    }
-                    else if (state && state.SWITCH())
-                    {
+                    } else if (state && state.SWITCH()) {
                         let tempMsg = '';
                         if (state.expression(0)) {
                             tempMsg = state.expression(0).text;
                         }
-                        errorPrefix = `Switch '${ tempMsg } ':`;
-                    }
-                    else if (state && state.CASE())
-                    {
+                        errorPrefix = `Switch '${tempMsg} ':`;
+                    } else if (state && state.CASE()) {
                         let tempMsg = '';
                         if (state.expression(0)) {
                             tempMsg = state.expression(0).text;
                         }
-                        errorPrefix = `Case '${ tempMsg }':`;
+                        errorPrefix = `Case '${tempMsg}':`;
                     }
                 }
             }
         }
-        
 
         return errorPrefix;
     }
@@ -109,7 +99,7 @@ export class TemplateExtensions {
      * If a value is pure Expression.
      * @param ctx Key value structure value context.
      */
-    public static isPureExpression(ctx: lp.KeyValueStructureValueContext):  boolean {
+    public static isPureExpression(ctx: lp.KeyValueStructureValueContext): boolean {
         if (ctx.expressionInStructure() === undefined || ctx.expressionInStructure().length != 1) {
             return false;
         }
@@ -127,18 +117,17 @@ export class TemplateExtensions {
             '\\r': '\r',
             '\\n': '\n',
             '\\t': '\t',
-            '\\\\': '\\'
+            '\\\\': '\\',
         };
 
-        return exp.replace(/\\[^\r\n]?/g, (sub: string): string => { 
+        return exp.replace(/\\[^\r\n]?/g, (sub: string): string => {
             if (sub in validCharactersDict) {
                 return validCharactersDict[sub];
             } else if (sub === '\\$') {
                 return sub.substr(1);
             } else if (sub === '\\`') {
                 return sub.substr(1);
-            }
-            else {
+            } else {
                 return sub;
             }
         });
@@ -149,8 +138,8 @@ export class TemplateExtensions {
      */
     public static newGuid(): string {
         return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c: any): string => {
-            const r: number = Math.random() * 16 | 0;
-            const v: number = c === 'x' ? r : (r & 0x3 | 0x8);
+            const r: number = (Math.random() * 16) | 0;
+            const v: number = c === 'x' ? r : (r & 0x3) | 0x8;
 
             return v.toString(16);
         });
@@ -183,7 +172,10 @@ export class TemplateExtensions {
         }
 
         const startPosition = new Position(lineOffset + context.start.line, context.start.charPositionInLine);
-        const stopPosition = new Position(lineOffset + context.stop.line, context.stop.charPositionInLine + context.stop.text.length);
+        const stopPosition = new Position(
+            lineOffset + context.stop.line,
+            context.stop.charPositionInLine + context.stop.text.length
+        );
 
         return new Range(startPosition, stopPosition);
     }
