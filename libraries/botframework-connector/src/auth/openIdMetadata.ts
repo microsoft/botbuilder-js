@@ -9,24 +9,36 @@
 import * as getPem from 'rsa-pem-from-mod-exp';
 import base64url from 'base64url';
 import fetch from 'cross-fetch';
-import { AuthenticationError } from "./authenticationError";
-import { StatusCodes } from "botframework-schema";
+import { AuthenticationError } from './authenticationError';
+import { StatusCodes } from 'botframework-schema';
 
+/**
+ * Class in charge of manage OpenId metadata.
+ */
 export class OpenIdMetadata {
     private url: string;
-    private lastUpdated: number = 0;
+    private lastUpdated = 0;
     private keys: IKey[];
 
+    /**
+     * Initializes a new instance of the [OpenIdMetadata](xref:botframework-connector.OpenIdMetadata) class.
+     * @param url Metadata Url.
+     */
     constructor(url: string) {
         this.url = url;
     }
 
+    /**
+     * Gets the Signing key.
+     * @param keyId The key ID to search for.
+     * @returns A `Promise` representation for either a [IOpenIdMetadataKey](botframework-connector:module.IOpenIdMetadataKey) or `null`.
+     */
     public async getKey(keyId: string): Promise<IOpenIdMetadataKey | null> {
         // If keys are more than 24 hours old, refresh them
-        if (this.lastUpdated < (Date.now() - 1000 * 60 * 60 * 24)) {
+        if (this.lastUpdated < Date.now() - 1000 * 60 * 60 * 24) {
             try {
                 await this.refreshCache();
-                
+
                 // Search the cache even if we failed to refresh
                 const key: IOpenIdMetadataKey = this.findKey(keyId);
                 return key;
@@ -39,7 +51,7 @@ export class OpenIdMetadata {
             // Otherwise read from cache
             const key: IOpenIdMetadataKey = this.findKey(keyId);
             // Refresh the cache if a key is not found (max once per hour)
-            if (!key && this.lastUpdated < (Date.now() - 1000 * 60 * 60)) {
+            if (!key && this.lastUpdated < Date.now() - 1000 * 60 * 60) {
                 await this.refreshCache();
                 return this.findKey(keyId);
             }
@@ -47,25 +59,36 @@ export class OpenIdMetadata {
         }
     }
 
+    /**
+     * @private
+     */
     private async refreshCache(): Promise<void> {
         const res = await fetch(this.url);
 
         if (res.ok) {
-            const openIdConfig = await res.json() as IOpenIdConfig;
+            const openIdConfig = (await res.json()) as IOpenIdConfig;
 
             const getKeyResponse = await fetch(openIdConfig.jwks_uri);
             if (getKeyResponse.ok) {
                 this.lastUpdated = new Date().getTime();
                 this.keys = (await getKeyResponse.json()).keys as IKey[];
             } else {
-                throw new AuthenticationError(`Failed to load Keys: ${ getKeyResponse.status }`, StatusCodes.INTERNAL_SERVER_ERROR);
+                throw new AuthenticationError(
+                    `Failed to load Keys: ${getKeyResponse.status}`,
+                    StatusCodes.INTERNAL_SERVER_ERROR
+                );
             }
-
         } else {
-            throw new AuthenticationError(`Failed to load openID config: ${ res.status }`, StatusCodes.INTERNAL_SERVER_ERROR);
+            throw new AuthenticationError(
+                `Failed to load openID config: ${res.status}`,
+                StatusCodes.INTERNAL_SERVER_ERROR
+            );
         }
     }
 
+    /**
+     * @private
+     */
     private findKey(keyId: string): IOpenIdMetadataKey | null {
         if (!this.keys) {
             return null;
@@ -73,7 +96,6 @@ export class OpenIdMetadata {
 
         for (const key of this.keys) {
             if (key.kid === keyId) {
-
                 if (!key.n || !key.e) {
                     // Return null for non-RSA keys
                     return null;

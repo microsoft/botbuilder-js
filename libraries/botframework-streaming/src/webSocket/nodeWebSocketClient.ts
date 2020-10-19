@@ -10,11 +10,7 @@ import { ProtocolAdapter } from '../protocolAdapter';
 import { RequestHandler } from '../requestHandler';
 import { StreamingRequest } from '../streamingRequest';
 import { RequestManager } from '../payloads';
-import {
-    PayloadReceiver,
-    PayloadSender,
-    TransportDisconnectedEvent
-} from '../payloadTransport';
+import { PayloadReceiver, PayloadSender, TransportDisconnectedEvent } from '../payloadTransport';
 import { NodeWebSocket } from './nodeWebSocket';
 import { WebSocketTransport } from './webSocketTransport';
 import { IStreamingTransportClient, IReceiveResponse } from '../interfaces';
@@ -38,7 +34,7 @@ export class WebSocketClient implements IStreamingTransportClient {
      * @param requestHandler Optional [RequestHandler](xref:botframework-streaming.RequestHandler) to process incoming messages received by this server.
      * @param disconnectionHandler Optional function to handle the disconnection message.
      */
-    public constructor({ url, requestHandler, disconnectionHandler = null}) {
+    public constructor({ url, requestHandler, disconnectionHandler = null }) {
         this._url = url;
         this._requestHandler = requestHandler;
         this._disconnectionHandler = disconnectionHandler;
@@ -50,7 +46,12 @@ export class WebSocketClient implements IStreamingTransportClient {
         this._receiver = new PayloadReceiver();
         this._receiver.disconnected = this.onConnectionDisconnected.bind(this);
 
-        this._protocolAdapter = new ProtocolAdapter(this._requestHandler, this._requestManager, this._sender, this._receiver);
+        this._protocolAdapter = new ProtocolAdapter(
+            this._requestHandler,
+            this._requestManager,
+            this._sender,
+            this._receiver
+        );
     }
 
     /**
@@ -97,6 +98,10 @@ export class WebSocketClient implements IStreamingTransportClient {
             return;
         }
 
-        throw new Error(`Unable to re-connect client to Node transport for url ${ this._url }. Sender: '${ JSON.stringify(sender) }'. Args:' ${ JSON.stringify(args) }`);
+        throw new Error(
+            `Unable to re-connect client to Node transport for url ${this._url}. Sender: '${JSON.stringify(
+                sender
+            )}'. Args:' ${JSON.stringify(args)}`
+        );
     }
 }

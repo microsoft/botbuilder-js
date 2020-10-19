@@ -18,12 +18,20 @@ export class EventFactory {
      * @param handoffContext Agent hub-specific context.
      * @param transcript Transcript of the conversation.
      */
-    public static createHandoffInitiation(context: TurnContext, handoffContext: any, transcript?: Transcript): Activity {
+    public static createHandoffInitiation(
+        context: TurnContext,
+        handoffContext: any,
+        transcript?: Transcript
+    ): Activity {
         if (!context) {
             throw new TypeError('EventFactory.createHandoffInitiation(): Missing context.');
         }
 
-        const handoffEvent = this.createHandoffEvent(HandoffEventNames.InitiateHandoff, handoffContext, context.activity.conversation);
+        const handoffEvent = this.createHandoffEvent(
+            HandoffEventNames.InitiateHandoff,
+            handoffContext,
+            context.activity.conversation
+        );
 
         handoffEvent.from = context.activity.from;
         handoffEvent.relatesTo = TurnContext.getConversationReference(context.activity) as ConversationReference;
@@ -35,7 +43,7 @@ export class EventFactory {
             const attachment: Attachment = {
                 content: transcript,
                 contentType: 'application/json',
-                name: 'Transcript'
+                name: 'Transcript',
             };
             handoffEvent.attachments.push(attachment);
         }
@@ -57,7 +65,7 @@ export class EventFactory {
         if (!state) {
             throw new TypeError('EventFactory.createHandoffStatus(): missing state.');
         }
-        
+
         const value: any = { state, message };
 
         const handoffEvent = this.createHandoffEvent(HandoffEventNames.HandoffStatus, value, conversation);
@@ -85,7 +93,8 @@ export class EventFactory {
 
 function uuid(): string {
     return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c): string => {
-        let r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+        const r = (Math.random() * 16) | 0,
+            v = c == 'x' ? r : (r & 0x3) | 0x8;
         return v.toString(16);
     });
 }

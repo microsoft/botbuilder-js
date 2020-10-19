@@ -15,6 +15,9 @@ import { ReturnType } from '../returnType';
  * Operate on each element and return the new collection.
  */
 export class Foreach extends ExpressionEvaluator {
+    /**
+     * Initializes a new instance of the [Foreach](xref:adaptive-expressions.Foreach) class.
+     */
     public constructor() {
         super(
             ExpressionType.Foreach,

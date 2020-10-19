@@ -21,12 +21,12 @@
   "typings": "./lib/index.d.ts",
   "dependencies": {
     "@microsoft/recognizers-text-suite": "1.1.4",
+    "adaptive-expressions": "4.1.6",
     "botbuilder-ai": "4.1.6",
     "botbuilder-core": "4.1.6",
     "botbuilder-dialogs": "4.1.6",
     "botbuilder-dialogs-declarative": "4.1.6",
     "botbuilder-lg": "4.1.6",
-    "adaptive-expressions": "4.1.6",
     "botframework-connector": "4.1.6",
     "botframework-schema": "4.1.6",
     "jsonpath": "^1.0.0",
@@ -53,5 +53,9 @@
     "clean": "erase /q /s .\\lib",
     "set-version": "npm version --allow-same-version ${Version}",
     "test:compat": "api-extractor run --verbose"
-  }
+  },
+  "files": [
+    "lib",
+    "src"
+  ]
 }

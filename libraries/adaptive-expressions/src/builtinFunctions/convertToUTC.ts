@@ -22,15 +22,20 @@ import { TimeZoneConverter } from '../timeZoneConverter';
  * Convert a timestamp to Universal Time Coordinated (UTC) from the source time zone.
  */
 export class ConvertToUTC extends ExpressionEvaluator {
+    /**
+     * Initializes a new instance of the [ConvertToUTC](xref:adaptive-expressions.ConvertToUTC) class.
+     */
     public constructor() {
         super(ExpressionType.ConvertToUTC, ConvertToUTC.evaluator, ReturnType.String, ConvertToUTC.validator);
     }
 
+    /**
+     * @private
+     */
     private static evaluator(expression: Expression, state: MemoryInterface, options: Options): ValueWithError {
         let value: any;
-        let error: string;
-        let args: any[];
-        ({ args, error } = FunctionUtils.evaluateChildren(expression, state, options));
+        const { args, error: childrenError } = FunctionUtils.evaluateChildren(expression, state, options);
+        let error = childrenError;
         if (!error) {
             const format: string =
                 args.length === 3 ? FunctionUtils.timestampFormatter(args[2]) : FunctionUtils.DefaultDateTimeFormat;
@@ -44,17 +49,21 @@ export class ConvertToUTC extends ExpressionEvaluator {
         return { value, error };
     }
 
-    private static verifyTimeStamp(timeStamp: string): string {
-        let parsed: any;
-        let error: string;
-        parsed = moment(timeStamp);
+    /**
+     * @private
+     */
+    private static verifyTimeStamp(timeStamp: string): string | undefined {
+        const parsed = moment(timeStamp);
         if (parsed.toString() === 'Invalid date') {
-            error = `${timeStamp} is a invalid datetime`;
+            return `${timeStamp} is a invalid datetime`;
         }
 
-        return error;
+        return undefined;
     }
 
+    /**
+     * @private
+     */
     private static evalConvertToUTC(timeStamp: string, sourceTimezone: string, format?: string): ValueWithError {
         let result: string;
         let error: string;
@@ -87,6 +96,9 @@ export class ConvertToUTC extends ExpressionEvaluator {
         return { value: result, error };
     }
 
+    /**
+     * @private
+     */
     private static validator(expr: Expression): void {
         FunctionUtils.validateOrder(expr, [ReturnType.String], ReturnType.String, ReturnType.String);
     }

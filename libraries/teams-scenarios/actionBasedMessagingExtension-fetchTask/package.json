@@ -1,5 +1,6 @@
 {
   "name": "action-based-messaging-extension-fetchtask",
+  "private": true,
   "version": "1.0.0",
   "description": "",
   "main": "./lib/index.js",

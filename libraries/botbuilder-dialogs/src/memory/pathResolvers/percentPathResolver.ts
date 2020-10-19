@@ -11,7 +11,9 @@ import { AliasPathResolver } from './aliasPathResolver';
  * Maps %xxx => class.xxx (aka activeDialog.properties.xxx)
  */
 export class PercentPathResolver extends AliasPathResolver {
-
+    /**
+     * Initializes a new instance of the [PercentPathResolver](xref:botbuilder-dialogs.PercentPathResolver) class.
+     */
     constructor() {
         super('%', 'class.');
     }

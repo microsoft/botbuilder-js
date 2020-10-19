@@ -6,6 +6,9 @@
  * Licensed under the MIT License.
  */
 
+/**
+ * Represents a property found in a JSON schema.
+ */
 export class PropertySchema {
     private _parent: PropertySchema;
     private readonly _children: PropertySchema[];
@@ -22,7 +25,7 @@ export class PropertySchema {
         this.path = path;
         this.schema = schema;
         this._children = children || [];
-        children.forEach((child) => child._parent = this);
+        children.forEach((child) => (child._parent = this));
         this._entities = schema['$entities'] || [];
         this._expectedOnly = schema['$expectedOnly'] || [];
     }
@@ -30,7 +33,7 @@ export class PropertySchema {
     /**
      * Path to schema.
      * @remarks
-     * Contains `[]` for arrays and `.` for path segments. 
+     * Contains `[]` for arrays and `.` for path segments.
      */
     public readonly path: string;
 
@@ -42,7 +45,7 @@ export class PropertySchema {
     /**
      * Parent property schema if any.
      */
-    public get parent(): PropertySchema|undefined {
+    public get parent(): PropertySchema | undefined {
         return this._parent;
     }
 

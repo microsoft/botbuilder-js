@@ -6,6 +6,9 @@
  * Licensed under the MIT License.
  */
 
+/**
+ * Defines path passed to the active dialog.
+ */
 export class ThisPath {
     /**
      * The options that were passed to the active dialog via options argument of BeginDialog.

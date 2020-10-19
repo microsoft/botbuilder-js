@@ -23,6 +23,10 @@ describe('ActionTests', function() {
         await testRunner.runTestScript('Action_CancelAllDialogs');
     });
 
+    it('CancelAllDialogs_DoubleCancel', async () => {
+        await testRunner.runTestScript('Action_CancelAllDialogs_DoubleCancel');
+    });
+
     it('CancelDialog', async () => {
         await testRunner.runTestScript('Action_CancelDialog');
     });
@@ -73,6 +77,14 @@ describe('ActionTests', function() {
 
     it('DynamicBeginDialog', async () => {
         await testRunner.runTestScript('Action_DynamicBeginDialog');
+    });
+
+    it('EditActionAppendActions', async () => {
+        await testRunner.runTestScript('Action_EditActionAppendActions');
+    });
+
+    it('EditActionInsertActions', async () => {
+        await testRunner.runTestScript('Action_EditActionInsertActions');
     });
 
     it('EditActionReplaceSequence', async () => {

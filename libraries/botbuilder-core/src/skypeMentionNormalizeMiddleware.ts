@@ -9,7 +9,6 @@ import { Activity } from 'botframework-schema';
 import { Middleware } from './middlewareSet';
 import { TurnContext } from './turnContext';
 
-
 /**
  * Middleware to patch mention Entities from Skype since they don't conform to expected values.
  * Bots that interact with Skype should use this middleware if mentions are used.
@@ -22,21 +21,30 @@ import { TurnContext } from './turnContext';
  * This will remove the <at> nodes, leaving just the name.
  */
 export class SkypeMentionNormalizeMiddleware implements Middleware {
+    /**
+     * Performs the normalization of Skype mention Entities.
+     * @param activity [Activity](xref:botframework-schema.Activity) containing the mentions to normalize.
+     */
     public static normalizeSkypeMentionText(activity: Activity): void {
-        if (activity.channelId === 'skype' && activity.type === 'message'){
+        if (activity.channelId === 'skype' && activity.type === 'message') {
             activity.entities.map((element): void => {
-                if(element.type === 'mention'){
+                if (element.type === 'mention') {
                     const text = element['text'];
                     const end = text.indexOf('>');
-                    if(end > -1){
+                    if (end > -1) {
                         const start = text.indexOf('<', end);
-                        if(start > -1) element['text'] = text.substring(end + 1, start);
+                        if (start > -1) element['text'] = text.substring(end + 1, start);
                     }
                 }
             });
         }
     }
 
+    /**
+     * Middleware implementation which corrects the Entity text of type [Mention](xref:botframework-schema.Mention) to a value that [removeMentionText](xref:botbuilder-core.TurnContext.removeMentionText) can work with.
+     * @param turnContext [TurnContext](xref:botbuilder-core.TurnContext) for the current turn of conversation.
+     * @param next Delegate to call to continue the bot middleware pipeline.
+     */
     public async onTurn(turnContext: TurnContext, next: () => Promise<void>): Promise<void> {
         SkypeMentionNormalizeMiddleware.normalizeSkypeMentionText(turnContext.activity);
         await next();

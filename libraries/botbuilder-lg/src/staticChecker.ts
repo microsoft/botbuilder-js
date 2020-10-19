@@ -21,7 +21,9 @@ import { Template } from './template';
 /**
  * LG managed code checker.
  */
-export class StaticChecker extends AbstractParseTreeVisitor<Diagnostic[]> implements LGTemplateParserVisitor<Diagnostic[]> {
+export class StaticChecker
+    extends AbstractParseTreeVisitor<Diagnostic[]>
+    implements LGTemplateParserVisitor<Diagnostic[]> {
     private readonly baseExpressionParser: ExpressionParser;
     private readonly templates: Templates;
     private currentTemplate: Template;
@@ -37,7 +39,7 @@ export class StaticChecker extends AbstractParseTreeVisitor<Diagnostic[]> implem
     private get expressionParser(): ExpressionParserInterface {
         if (this._expressionParser === undefined) {
             // create an evaluator to leverage it's customized function look up for checking
-            var evaluator = new Evaluator(this.templates.allTemplates, this.baseExpressionParser);
+            const evaluator = new Evaluator(this.templates.allTemplates, this.baseExpressionParser);
             this._expressionParser = evaluator.expressionParser;
         }
 
@@ -49,25 +51,37 @@ export class StaticChecker extends AbstractParseTreeVisitor<Diagnostic[]> implem
      * @returns Report result.
      */
     public check(): Diagnostic[] {
-        var result: Diagnostic[] = [];
+        const result: Diagnostic[] = [];
 
-        if (this.templates.allTemplates.length === 0)
-        {
-            const diagnostic = new Diagnostic(Range.DefaultRange, TemplateErrors.noTemplate, DiagnosticSeverity.Warning, this.templates.source);
+        if (this.templates.allTemplates.length === 0) {
+            const diagnostic = new Diagnostic(
+                Range.DefaultRange,
+                TemplateErrors.noTemplate,
+                DiagnosticSeverity.Warning,
+                this.templates.source
+            );
             result.push(diagnostic);
             return result;
         }
 
         for (const template of this.templates) {
             this.currentTemplate = template;
-            let templateDiagnostics: Diagnostic[] = [];
+            const templateDiagnostics: Diagnostic[] = [];
 
             for (const reference of this.templates.references) {
-                var sameTemplates = reference.toArray().filter((u): boolean => u.name === template.name);
-                for(const sameTemplate of sameTemplates) {
+                const sameTemplates = reference.toArray().filter((u): boolean => u.name === template.name);
+                for (const sameTemplate of sameTemplates) {
                     const startLine = template.sourceRange.range.start.line;
                     const range = new Range(startLine, 0, startLine, template.name.length + 1);
-                    const diagnostic = new Diagnostic(range, TemplateErrors.duplicatedTemplateInDiffTemplate(sameTemplate.name, sameTemplate.sourceRange.source), DiagnosticSeverity.Error, this.templates.source);
+                    const diagnostic = new Diagnostic(
+                        range,
+                        TemplateErrors.duplicatedTemplateInDiffTemplate(
+                            sameTemplate.name,
+                            sameTemplate.sourceRange.source
+                        ),
+                        DiagnosticSeverity.Error,
+                        this.templates.source
+                    );
                     templateDiagnostics.push(diagnostic);
                 }
             }
@@ -102,7 +116,13 @@ export class StaticChecker extends AbstractParseTreeVisitor<Diagnostic[]> implem
 
         const errorName = context.structuredBodyNameLine().errorStructuredName();
         if (errorName !== undefined) {
-            result.push(this.buildLGDiagnostic(TemplateErrors.invalidStrucName(errorName.text), undefined, context.structuredBodyNameLine()));
+            result.push(
+                this.buildLGDiagnostic(
+                    TemplateErrors.invalidStrucName(errorName.text),
+                    undefined,
+                    context.structuredBodyNameLine()
+                )
+            );
         }
 
         if (context.structuredBodyEndLine() === undefined) {
@@ -110,7 +130,7 @@ export class StaticChecker extends AbstractParseTreeVisitor<Diagnostic[]> implem
         }
 
         const errors = context.errorStructureLine();
-        if (errors && errors.length > 0){
+        if (errors && errors.length > 0) {
             for (const error of errors) {
                 result.push(this.buildLGDiagnostic(TemplateErrors.invalidStrucBody(error.text), undefined, error));
             }
@@ -135,7 +155,6 @@ export class StaticChecker extends AbstractParseTreeVisitor<Diagnostic[]> implem
             }
         }
 
-
         return result;
     }
 
@@ -150,16 +169,26 @@ export class StaticChecker extends AbstractParseTreeVisitor<Diagnostic[]> implem
             const elseIfExpr: boolean = conditionNode.ELSEIF() !== undefined;
             const elseExpr: boolean = conditionNode.ELSE() !== undefined;
 
-            const node: TerminalNode = ifExpr ? conditionNode.IF() :
-                elseIfExpr ? conditionNode.ELSEIF() :
-                    conditionNode.ELSE();
+            const node: TerminalNode = ifExpr
+                ? conditionNode.IF()
+                : elseIfExpr
+                ? conditionNode.ELSEIF()
+                : conditionNode.ELSE();
 
             if (node.text.split(' ').length - 1 > 1) {
-                result.push(this.buildLGDiagnostic(TemplateErrors.invalidWhitespaceInCondition, undefined, conditionNode));
+                result.push(
+                    this.buildLGDiagnostic(TemplateErrors.invalidWhitespaceInCondition, undefined, conditionNode)
+                );
             }
 
             if (idx === 0 && !ifExpr) {
-                result.push(this.buildLGDiagnostic(TemplateErrors.notStartWithIfInCondition, DiagnosticSeverity.Warning, conditionNode));
+                result.push(
+                    this.buildLGDiagnostic(
+                        TemplateErrors.notStartWithIfInCondition,
+                        DiagnosticSeverity.Warning,
+                        conditionNode
+                    )
+                );
             }
 
             if (idx > 0 && ifExpr) {
@@ -167,7 +196,13 @@ export class StaticChecker extends AbstractParseTreeVisitor<Diagnostic[]> implem
             }
 
             if (idx === ifRules.length - 1 && !elseExpr) {
-                result.push(this.buildLGDiagnostic(TemplateErrors.notEndWithElseInCondition, DiagnosticSeverity.Warning, conditionNode));
+                result.push(
+                    this.buildLGDiagnostic(
+                        TemplateErrors.notEndWithElseInCondition,
+                        DiagnosticSeverity.Warning,
+                        conditionNode
+                    )
+                );
             }
 
             if (idx > 0 && idx < ifRules.length - 1 && !elseIfExpr) {
@@ -176,20 +211,26 @@ export class StaticChecker extends AbstractParseTreeVisitor<Diagnostic[]> implem
 
             if (!elseExpr) {
                 if (ifRule.ifCondition().expression().length !== 1) {
-                    result.push(this.buildLGDiagnostic(TemplateErrors.invalidExpressionInCondition,undefined, conditionNode));
+                    result.push(
+                        this.buildLGDiagnostic(TemplateErrors.invalidExpressionInCondition, undefined, conditionNode)
+                    );
                 } else {
-                    const errorPrefix =  `Condition '` + conditionNode.expression(0).text + `': `;
+                    const errorPrefix = `Condition '` + conditionNode.expression(0).text + `': `;
                     result = result.concat(this.checkExpression(conditionNode.expression(0), errorPrefix));
                 }
             } else {
                 if (ifRule.ifCondition().expression().length !== 0) {
-                    result.push(this.buildLGDiagnostic(TemplateErrors.extraExpressionInCondition, undefined, conditionNode));
+                    result.push(
+                        this.buildLGDiagnostic(TemplateErrors.extraExpressionInCondition, undefined, conditionNode)
+                    );
                 }
             }
             if (ifRule.normalTemplateBody() !== undefined) {
                 result = result.concat(this.visit(ifRule.normalTemplateBody()));
             } else {
-                result.push(this.buildLGDiagnostic(TemplateErrors.missingTemplateBodyInCondition, undefined, conditionNode));
+                result.push(
+                    this.buildLGDiagnostic(TemplateErrors.missingTemplateBodyInCondition, undefined, conditionNode)
+                );
             }
 
             idx = idx + 1;
@@ -209,52 +250,88 @@ export class StaticChecker extends AbstractParseTreeVisitor<Diagnostic[]> implem
             const switchExpr: boolean = switchCaseStat.SWITCH() !== undefined;
             const caseExpr: boolean = switchCaseStat.CASE() !== undefined;
             const defaultExpr: boolean = switchCaseStat.DEFAULT() !== undefined;
-            const node: TerminalNode = switchExpr ? switchCaseStat.SWITCH() :
-                caseExpr ? switchCaseStat.CASE() :
-                    switchCaseStat.DEFAULT();
+            const node: TerminalNode = switchExpr
+                ? switchCaseStat.SWITCH()
+                : caseExpr
+                ? switchCaseStat.CASE()
+                : switchCaseStat.DEFAULT();
             if (node.text.split(' ').length - 1 > 1) {
-                result.push(this.buildLGDiagnostic(TemplateErrors.invalidWhitespaceInSwitchCase, undefined, switchCaseStat));
+                result.push(
+                    this.buildLGDiagnostic(TemplateErrors.invalidWhitespaceInSwitchCase, undefined, switchCaseStat)
+                );
             }
 
             if (idx === 0 && !switchExpr) {
-                result.push(this.buildLGDiagnostic(TemplateErrors.notStartWithSwitchInSwitchCase, undefined, switchCaseStat));
+                result.push(
+                    this.buildLGDiagnostic(TemplateErrors.notStartWithSwitchInSwitchCase, undefined, switchCaseStat)
+                );
             }
 
             if (idx > 0 && switchExpr) {
-                result.push(this.buildLGDiagnostic(TemplateErrors.multipleSwithStatementInSwitchCase, undefined, switchCaseStat));
+                result.push(
+                    this.buildLGDiagnostic(TemplateErrors.multipleSwithStatementInSwitchCase, undefined, switchCaseStat)
+                );
             }
 
             if (idx > 0 && idx < length - 1 && !caseExpr) {
-                result.push(this.buildLGDiagnostic(TemplateErrors.invalidStatementInMiddlerOfSwitchCase, undefined, switchCaseStat));
+                result.push(
+                    this.buildLGDiagnostic(
+                        TemplateErrors.invalidStatementInMiddlerOfSwitchCase,
+                        undefined,
+                        switchCaseStat
+                    )
+                );
             }
 
             if (idx === length - 1 && (caseExpr || defaultExpr)) {
                 if (caseExpr) {
-                    result.push(this.buildLGDiagnostic(TemplateErrors.notEndWithDefaultInSwitchCase, DiagnosticSeverity.Warning, switchCaseStat));
+                    result.push(
+                        this.buildLGDiagnostic(
+                            TemplateErrors.notEndWithDefaultInSwitchCase,
+                            DiagnosticSeverity.Warning,
+                            switchCaseStat
+                        )
+                    );
                 } else {
                     if (length === 2) {
-                        result.push(this.buildLGDiagnostic(TemplateErrors.missingCaseInSwitchCase, DiagnosticSeverity.Warning, switchCaseStat));
+                        result.push(
+                            this.buildLGDiagnostic(
+                                TemplateErrors.missingCaseInSwitchCase,
+                                DiagnosticSeverity.Warning,
+                                switchCaseStat
+                            )
+                        );
                     }
                 }
             }
             if (switchExpr || caseExpr) {
                 if (switchCaseStat.expression().length !== 1) {
-                    result.push(this.buildLGDiagnostic(TemplateErrors.invalidExpressionInSwiathCase, undefined, switchCaseStat));
+                    result.push(
+                        this.buildLGDiagnostic(TemplateErrors.invalidExpressionInSwiathCase, undefined, switchCaseStat)
+                    );
                 } else {
                     let errorPrefix = switchExpr ? 'Switch' : 'Case';
-                    errorPrefix += ` '${ switchCaseStat.expression(0).text }': `;
+                    errorPrefix += ` '${switchCaseStat.expression(0).text}': `;
                     result = result.concat(this.checkExpression(switchCaseStat.expression(0), errorPrefix));
                 }
             } else {
                 if (switchCaseStat.expression().length !== 0 || switchCaseStat.TEXT().length !== 0) {
-                    result.push(this.buildLGDiagnostic(TemplateErrors.extraExpressionInSwitchCase, undefined, switchCaseStat));
+                    result.push(
+                        this.buildLGDiagnostic(TemplateErrors.extraExpressionInSwitchCase, undefined, switchCaseStat)
+                    );
                 }
             }
             if (caseExpr || defaultExpr) {
                 if (iterNode.normalTemplateBody()) {
                     result = result.concat(this.visit(iterNode.normalTemplateBody()));
                 } else {
-                    result.push(this.buildLGDiagnostic(TemplateErrors.missingTemplateBodyInSwitchCase, undefined, switchCaseStat));
+                    result.push(
+                        this.buildLGDiagnostic(
+                            TemplateErrors.missingTemplateBodyInSwitchCase,
+                            undefined,
+                            switchCaseStat
+                        )
+                    );
                 }
             }
             idx = idx + 1;
@@ -273,8 +350,8 @@ export class StaticChecker extends AbstractParseTreeVisitor<Diagnostic[]> implem
 
         const multiLinePrefix = context.MULTILINE_PREFIX();
         const multiLineSuffix = context.MULTILINE_SUFFIX();
-        
-        if (multiLinePrefix !== undefined &&  multiLineSuffix === undefined) {
+
+        if (multiLinePrefix !== undefined && multiLineSuffix === undefined) {
             result.push(this.buildLGDiagnostic(TemplateErrors.noEndingInMultiline, undefined, context));
         }
         return result;
@@ -284,10 +361,10 @@ export class StaticChecker extends AbstractParseTreeVisitor<Diagnostic[]> implem
         return [];
     }
 
-    private checkExpression(expressionContext: ParserRuleContext, prefix: string = ''): Diagnostic[] {
+    private checkExpression(expressionContext: ParserRuleContext, prefix = ''): Diagnostic[] {
         const result: Diagnostic[] = [];
         let exp = expressionContext.text;
-        if(!exp.endsWith('}')) {
+        if (!exp.endsWith('}')) {
             result.push(this.buildLGDiagnostic(TemplateErrors.noCloseBracket, undefined, expressionContext));
         } else {
             exp = TemplateExtensions.trimExpression(exp);
@@ -298,7 +375,7 @@ export class StaticChecker extends AbstractParseTreeVisitor<Diagnostic[]> implem
                 const suffixErrorMsg = Evaluator.concatErrorMsg(TemplateErrors.expressionParseError(exp), e.message);
                 const errorMsg = Evaluator.concatErrorMsg(prefix, suffixErrorMsg);
                 result.push(this.buildLGDiagnostic(errorMsg, undefined, expressionContext));
-    
+
                 return result;
             }
         }
@@ -306,15 +383,25 @@ export class StaticChecker extends AbstractParseTreeVisitor<Diagnostic[]> implem
         return result;
     }
 
-    private buildLGDiagnostic( message: string, severity: DiagnosticSeverity = undefined, context: ParserRuleContext = undefined): Diagnostic {
+    private buildLGDiagnostic(
+        message: string,
+        severity: DiagnosticSeverity = undefined,
+        context: ParserRuleContext = undefined
+    ): Diagnostic {
         const lineOffset = this.currentTemplate !== undefined ? this.currentTemplate.sourceRange.range.start.line : 0;
 
         let templateNameInfo = '';
-        if (this.currentTemplate !== undefined && this.currentTemplate.name.startsWith(Templates.inlineTemplateIdPrefix)) {
-            templateNameInfo = `[${ this.currentTemplate.name }]`;
+        if (
+            this.currentTemplate !== undefined &&
+            this.currentTemplate.name.startsWith(Templates.inlineTemplateIdPrefix)
+        ) {
+            templateNameInfo = `[${this.currentTemplate.name}]`;
         }
 
-        const range = context === undefined ? new Range(lineOffset + 1, 0, lineOffset + 1, 0) : TemplateExtensions.convertToRange(context, lineOffset);
+        const range =
+            context === undefined
+                ? new Range(lineOffset + 1, 0, lineOffset + 1, 0)
+                : TemplateExtensions.convertToRange(context, lineOffset);
         return new Diagnostic(range, templateNameInfo + message, severity, this.templates.source);
     }
 }

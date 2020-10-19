@@ -12,5 +12,9 @@ import { INodeIncomingMessage, INodeBuffer, INodeSocket, ISocket } from '../../i
  * Represents an abstract NodeWebSocketFactoryBase class to create a WebSocket.
  */
 export abstract class NodeWebSocketFactoryBase {
-    public abstract createWebSocket(req: INodeIncomingMessage, socket: INodeSocket, head: INodeBuffer): Promise<ISocket>;
+    public abstract createWebSocket(
+        req: INodeIncomingMessage,
+        socket: INodeSocket,
+        head: INodeBuffer
+    ): Promise<ISocket>;
 }

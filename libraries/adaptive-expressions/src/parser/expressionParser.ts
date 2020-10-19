@@ -57,6 +57,14 @@ export class ExpressionParser implements ExpressionParserInterface {
             return this.makeExpression(binaryOperationName, left, right);
         }
 
+        public visitTripleOpExp(context: ep.TripleOpExpContext): Expression {
+            const conditionalExpression: Expression = this.visit(context.expression(0));
+            const left: Expression = this.visit(context.expression(1));
+            const right: Expression = this.visit(context.expression(2));
+
+            return this.makeExpression(ExpressionType.If, conditionalExpression, left, right);
+        }
+
         public visitFuncInvokeExp(context: ep.FuncInvokeExpContext): Expression {
             const parameters: Expression[] = this.processArgsList(context.argsList());
 
@@ -90,10 +98,9 @@ export class ExpressionParser implements ExpressionParserInterface {
         }
 
         public visitIndexAccessExp(context: ep.IndexAccessExpContext): Expression {
-            let instance: Expression;
             const property: Expression = this.visit(context.expression());
 
-            instance = this.visit(context.primaryExpression());
+            const instance = this.visit(context.primaryExpression());
 
             return this.makeExpression(ExpressionType.Element, instance, property);
         }
@@ -168,15 +175,17 @@ export class ExpressionParser implements ExpressionParserInterface {
             for (const node of context.stringInterpolation().children) {
                 if (node instanceof TerminalNode) {
                     switch ((node as TerminalNode).symbol.type) {
-                        case ep.ExpressionAntlrParser.TEMPLATE:
+                        case ep.ExpressionAntlrParser.TEMPLATE: {
                             const expressionString = this.trimExpression(node.text);
                             children.push(Expression.parse(expressionString, this._lookupFunction));
                             break;
-                        case ep.ExpressionAntlrParser.ESCAPE_CHARACTER:
+                        }
+                        case ep.ExpressionAntlrParser.ESCAPE_CHARACTER: {
                             children.push(
                                 new Constant(this.evalEscape(node.text).replace(/\\`/g, '`').replace(/\\\$/g, '$'))
                             );
                             break;
+                        }
                         default:
                             break;
                     }
@@ -256,10 +265,20 @@ export class ExpressionParser implements ExpressionParserInterface {
         }
     };
 
+    /**
+     * Initializes a new instance of the [ExpressionParser](xref:adaptive-expressions.ExpressionParser) class.
+     * @param lookup [EvaluatorLookup](xref:adaptive-expressions.EvaluatorLookup) for information from type string.
+     */
     public constructor(lookup?: EvaluatorLookup) {
         this.EvaluatorLookup = lookup || Expression.lookup;
     }
 
+    /**
+     * @protected
+     * Parse the expression to ANTLR lexer and parser.
+     * @param expression The input string expression.
+     * @returns A ParseTree.
+     */
     protected static antlrParse(expression: string): ParseTree {
         if (ExpressionParser.expressionDict.has(expression)) {
             return ExpressionParser.expressionDict.get(expression);

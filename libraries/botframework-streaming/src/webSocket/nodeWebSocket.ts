@@ -39,10 +39,15 @@ export class NodeWebSocket implements ISocket {
         this.wsServer = new WebSocket.Server({ noServer: true });
         return new Promise<void>((resolve, reject) => {
             try {
-                this.wsServer.handleUpgrade(req as IncomingMessage, socket as INodeSocket, head as INodeBuffer, (websocket) => {
-                    this.wsSocket = websocket;
-                    resolve();
-                });
+                this.wsServer.handleUpgrade(
+                    req as IncomingMessage,
+                    socket as INodeSocket,
+                    head as INodeBuffer,
+                    (websocket) => {
+                        this.wsSocket = websocket;
+                        resolve();
+                    }
+                );
             } catch (err) {
                 reject(err);
             }
@@ -81,8 +86,8 @@ export class NodeWebSocket implements ISocket {
             headers: {
                 connection: 'upgrade',
                 'Sec-WebSocket-Key': wskey,
-                'Sec-WebSocket-Version': '13'
-            }
+                'Sec-WebSocket-Version': '13',
+            },
         };
         const req = request(options);
         req.end();
@@ -130,6 +135,10 @@ export class NodeWebSocket implements ISocket {
      * Set the callback to call when encountering errors.
      */
     public setOnErrorHandler(handler: (x: any) => void): void {
-        this.wsSocket.on('error', (error): void => { if (error) { handler(error); } });
+        this.wsSocket.on('error', (error): void => {
+            if (error) {
+                handler(error);
+            }
+        });
     }
 }
