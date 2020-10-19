@@ -17,19 +17,25 @@ export class Template {
      * Name of the template, what's followed by '#' in a LG file
      */
     public name: string;
+
     /**
      * Parameter list of this template
      */
     public parameters: string[];
+
     /**
      * Text format of Body of this template. All content except Name and Parameters.
      */
     public body: string;
+
     /**
      * Source of this template
      */
     public sourceRange: SourceRange;
 
+    /**
+     * Parse tree of this template.
+     */
     public templateBodyParseTree: lp.BodyContext;
 
     /**
