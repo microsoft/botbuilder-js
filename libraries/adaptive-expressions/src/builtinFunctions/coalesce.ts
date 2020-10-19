@@ -33,8 +33,8 @@ export class Coalesce extends ExpressionEvaluator {
     /**
      * @private
      */
-    private static evalCoalesce(objetcList: object[]): any {
-        for (const obj of objetcList) {
+    private static evalCoalesce(objectList: any[]): any {
+        for (const obj of objectList) {
             if (obj !== null && obj !== undefined) {
                 return obj;
             }

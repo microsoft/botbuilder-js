@@ -16,15 +16,14 @@ import { AuthenticationError } from './authenticationError';
 import { StatusCodes } from 'botframework-schema';
 
 export namespace EnterpriseChannelValidation {
-
     /**
      * TO BOT FROM CHANNEL: Token validation parameters when connecting to a bot
      */
     export const ToBotFromEnterpriseChannelTokenValidationParameters: VerifyOptions = {
         issuer: [AuthenticationConstants.ToBotFromChannelTokenIssuer],
-        audience: undefined,                                 // Audience validation takes place manually in code.
+        audience: undefined, // Audience validation takes place manually in code.
         clockTolerance: 5 * 60,
-        ignoreExpiration: false
+        ignoreExpiration: false,
     };
 
     /**
@@ -42,8 +41,12 @@ export namespace EnterpriseChannelValidation {
         channelId: string,
         channelService: string
     ): Promise<ClaimsIdentity> {
-
-        const identity: ClaimsIdentity = await authenticateChannelToken(authHeader, credentials, channelId, channelService);
+        const identity: ClaimsIdentity = await authenticateChannelToken(
+            authHeader,
+            credentials,
+            channelId,
+            channelService
+        );
 
         const serviceUrlClaim: string = identity.getClaimValue(AuthenticationConstants.ServiceUrlClaim);
         if (serviceUrlClaim !== serviceUrl) {
@@ -68,15 +71,22 @@ export namespace EnterpriseChannelValidation {
         channelService: string,
         authConfig: AuthenticationConfiguration = new AuthenticationConfiguration()
     ): Promise<ClaimsIdentity> {
-
         const tokenExtractor: JwtTokenExtractor = new JwtTokenExtractor(
             ToBotFromEnterpriseChannelTokenValidationParameters,
-            ChannelValidation.OpenIdMetadataEndpoint ?
-                ChannelValidation.OpenIdMetadataEndpoint :
-                AuthenticationConstants.ToBotFromEnterpriseChannelOpenIdMetadataUrlFormat.replace('{channelService}', channelService),
-            AuthenticationConstants.AllowedSigningAlgorithms);
+            ChannelValidation.OpenIdMetadataEndpoint
+                ? ChannelValidation.OpenIdMetadataEndpoint
+                : AuthenticationConstants.ToBotFromEnterpriseChannelOpenIdMetadataUrlFormat.replace(
+                      '{channelService}',
+                      channelService
+                  ),
+            AuthenticationConstants.AllowedSigningAlgorithms
+        );
 
-        const identity: ClaimsIdentity = await tokenExtractor.getIdentityFromAuthHeader(authHeader, channelId, authConfig.requiredEndorsements);
+        const identity: ClaimsIdentity = await tokenExtractor.getIdentityFromAuthHeader(
+            authHeader,
+            channelId,
+            authConfig.requiredEndorsements
+        );
 
         return await validateIdentity(identity, credentials);
     }
@@ -91,7 +101,6 @@ export namespace EnterpriseChannelValidation {
         identity: ClaimsIdentity,
         credentials: ICredentialProvider
     ): Promise<ClaimsIdentity> {
-
         if (!identity) {
             // No valid identity. Not Authorized.
             throw new AuthenticationError('Unauthorized. No valid identity.', StatusCodes.UNAUTHORIZED);
@@ -108,7 +117,10 @@ export namespace EnterpriseChannelValidation {
         // Async validation.
 
         // Look for the "aud" claim, but only if issued from the Bot Framework
-        if (identity.getClaimValue(AuthenticationConstants.IssuerClaim) !== AuthenticationConstants.ToBotFromChannelTokenIssuer) {
+        if (
+            identity.getClaimValue(AuthenticationConstants.IssuerClaim) !==
+            AuthenticationConstants.ToBotFromChannelTokenIssuer
+        ) {
             // The relevant Audiance Claim MUST be present. Not Authorized.
             throw new AuthenticationError('Unauthorized. Issuer Claim MUST be present.', StatusCodes.UNAUTHORIZED);
         }
@@ -118,7 +130,10 @@ export namespace EnterpriseChannelValidation {
         const audClaim: string = identity.getClaimValue(AuthenticationConstants.AudienceClaim);
         if (!(await credentials.isValidAppId(audClaim || ''))) {
             // The AppId is not valid or not present. Not Authorized.
-            throw new AuthenticationError(`Unauthorized. Invalid AppId passed on token: ${ audClaim }`, StatusCodes.UNAUTHORIZED);
+            throw new AuthenticationError(
+                `Unauthorized. Invalid AppId passed on token: ${audClaim}`,
+                StatusCodes.UNAUTHORIZED
+            );
         }
 
         return identity;

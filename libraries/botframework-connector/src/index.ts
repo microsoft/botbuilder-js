@@ -12,5 +12,5 @@ export * from './tokenApi/models';
 export { ConnectorClient } from './connectorApi/connectorClient';
 export { ConnectorClientOptions } from './connectorApi/models/index';
 export { EmulatorApiClient } from './emulatorApiClient';
-export { SignInUrlResponse, TokenExchangeRequest } from 'botframework-schema'; 
+export { SignInUrlResponse, TokenExchangeRequest } from 'botframework-schema';
 export { TokenApiClient, TokenApiModels } from './tokenApi/tokenApiClient';

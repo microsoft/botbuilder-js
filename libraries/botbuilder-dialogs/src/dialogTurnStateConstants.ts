@@ -8,6 +8,4 @@
 
 export class DialogTurnStateConstants {
     static dialogManager = Symbol('dialogManager');
-
-    
 }
