@@ -17,7 +17,6 @@ import { DialogEvent } from '../dialog';
  * By default the prompt will return to the calling dialog a `string` representing the users reply.
  */
 export class TextPrompt extends Prompt<string> {
-
     /**
      * Creates a new TextPrompt instance.
      * @param dialogId (Optional) unique ID of the dialog within its parent `DialogSet` or `ComponentDialog`.
@@ -27,7 +26,12 @@ export class TextPrompt extends Prompt<string> {
         super(dialogId, validator);
     }
 
-    protected async onPrompt(context: TurnContext, state: any, options: PromptOptions, isRetry: boolean): Promise<void> {
+    protected async onPrompt(
+        context: TurnContext,
+        state: any,
+        options: PromptOptions,
+        isRetry: boolean
+    ): Promise<void> {
         if (isRetry && options.retryPrompt) {
             await context.sendActivity(options.retryPrompt, undefined, InputHints.ExpectingInput);
         } else if (options.prompt) {
@@ -35,7 +39,11 @@ export class TextPrompt extends Prompt<string> {
         }
     }
 
-    protected async onRecognize(context: TurnContext, state: any, options: PromptOptions): Promise<PromptRecognizerResult<string>> {
+    protected async onRecognize(
+        context: TurnContext,
+        state: any,
+        options: PromptOptions
+    ): Promise<PromptRecognizerResult<string>> {
         const value: string = context.activity.text;
 
         return typeof value === 'string' && value.length > 0 ? { succeeded: true, value: value } : { succeeded: false };

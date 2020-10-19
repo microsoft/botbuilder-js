@@ -35,9 +35,9 @@ export class ResponseDisassembler extends PayloadDisassembler {
      * @returns An [IStreamWrapper](xref:botframework-streaming.IStreamWrapper) with a Subscribable Stream.
      */
     public async getStream(): Promise<IStreamWrapper> {
-        let payload: IResponsePayload = {statusCode: this.response.statusCode, streams: []};
+        const payload: IResponsePayload = { statusCode: this.response.statusCode, streams: [] };
         if (this.response.streams) {
-            this.response.streams.forEach(function(stream){
+            this.response.streams.forEach(function (stream) {
                 payload.streams.push(stream.description);
             });
         }

@@ -25,7 +25,7 @@ export class PayloadAssembler {
     private stream: SubscribableStream;
     private readonly _onCompleted: Function;
     private readonly _streamManager: StreamManager;
-    private readonly _byteOrderMark = 0xFEFF;
+    private readonly _byteOrderMark = 0xfeff;
     private readonly _utf: string = 'utf8';
 
     /**
@@ -34,7 +34,7 @@ export class PayloadAssembler {
      * @param params Parameters for a streaming assembler.
      */
     public constructor(streamManager: StreamManager, params: IAssemblerParams) {
-        if(params.header){
+        if (params.header) {
             this.id = params.header.id;
             this.payloadType = params.header.payloadType;
             this.contentLength = params.header.payloadLength;
@@ -43,7 +43,7 @@ export class PayloadAssembler {
             this.id = params.id;
         }
 
-        if(!this.id){
+        if (!this.id) {
             throw Error('An ID must be supplied when creating an assembler.');
         }
 
@@ -73,9 +73,7 @@ export class PayloadAssembler {
         this.end = header.end;
 
         if (header.payloadType === PayloadTypes.response || header.payloadType === PayloadTypes.request) {
-            this.process(stream)
-                .then()
-                .catch();
+            this.process(stream).then().catch();
         } else if (header.end) {
             stream.end();
         }
@@ -100,30 +98,30 @@ export class PayloadAssembler {
      * @private
      */
     private payloadFromJson<T>(json: string): T {
-        return JSON.parse((json.charCodeAt(0) === this._byteOrderMark) ? json.slice(1) : json) as T;
+        return JSON.parse(json.charCodeAt(0) === this._byteOrderMark ? json.slice(1) : json) as T;
     }
 
     /**
      * @private
      */
     private stripBOM(input: string): string {
-        return (input.charCodeAt(0) === this._byteOrderMark) ? input.slice(1) : input;
+        return input.charCodeAt(0) === this._byteOrderMark ? input.slice(1) : input;
     }
 
     /**
      * @private
      */
     private async process(stream: SubscribableStream): Promise<void> {
-        let streamData: Buffer = stream.read(stream.length) as Buffer;
+        const streamData: Buffer = stream.read(stream.length) as Buffer;
         if (!streamData) {
             return;
         }
 
-        let streamDataAsString = streamData.toString(this._utf);
+        const streamDataAsString = streamData.toString(this._utf);
 
-        if(this.payloadType === PayloadTypes.request){
+        if (this.payloadType === PayloadTypes.request) {
             await this.processRequest(streamDataAsString);
-        } else if(this.payloadType === PayloadTypes.response){
+        } else if (this.payloadType === PayloadTypes.response) {
             await this.processResponse(streamDataAsString);
         }
     }
@@ -132,9 +130,8 @@ export class PayloadAssembler {
      * @private
      */
     private async processResponse(streamDataAsString: string): Promise<void> {
-
-        let responsePayload: IResponsePayload = this.payloadFromJson(this.stripBOM(streamDataAsString));
-        let receiveResponse: IReceiveResponse = { streams: [], statusCode: responsePayload.statusCode };
+        const responsePayload: IResponsePayload = this.payloadFromJson(this.stripBOM(streamDataAsString));
+        const receiveResponse: IReceiveResponse = { streams: [], statusCode: responsePayload.statusCode };
 
         await this.processStreams(responsePayload, receiveResponse);
     }
@@ -143,9 +140,8 @@ export class PayloadAssembler {
      * @private
      */
     private async processRequest(streamDataAsString: string): Promise<void> {
-
-        let requestPayload: IRequestPayload = this.payloadFromJson(streamDataAsString);
-        let receiveRequest: IReceiveRequest = { streams: [], path: requestPayload.path, verb: requestPayload.verb };
+        const requestPayload: IRequestPayload = this.payloadFromJson(streamDataAsString);
+        const receiveRequest: IReceiveRequest = { streams: [], path: requestPayload.path, verb: requestPayload.verb };
 
         await this.processStreams(requestPayload, receiveRequest);
     }
@@ -156,7 +152,7 @@ export class PayloadAssembler {
     private async processStreams(responsePayload: any, receiveResponse: any) {
         if (responsePayload.streams) {
             responsePayload.streams.forEach((responseStream): void => {
-                let contentAssembler: PayloadAssembler = this._streamManager.getPayloadAssembler(responseStream.id);
+                const contentAssembler: PayloadAssembler = this._streamManager.getPayloadAssembler(responseStream.id);
                 contentAssembler.payloadType = responseStream.contentType;
                 contentAssembler.contentLength = responseStream.length;
                 receiveResponse.streams.push(new ContentStream(responseStream.id, contentAssembler));

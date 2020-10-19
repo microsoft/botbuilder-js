@@ -12,7 +12,6 @@ import { SubscribableStream } from './subscribableStream';
  * The basic request type sent over Bot Framework Protocol 3 with Streaming Extensions transports, equivalent to HTTP request messages.
  */
 export class StreamingRequest {
-
     /**
      * Request verb, null on responses.
      */
@@ -37,7 +36,7 @@ export class StreamingRequest {
      * @returns On success returns a streaming request with appropriate status code and body.
      */
     public static create(method: string, path?: string, body?: HttpContent): StreamingRequest {
-        let request = new StreamingRequest();
+        const request = new StreamingRequest();
         request.verb = method;
         request.path = path;
         if (body) {
@@ -67,13 +66,17 @@ export class StreamingRequest {
      */
     public setBody(body: any): void {
         if (typeof body === 'string') {
-            let stream = new SubscribableStream();
+            const stream = new SubscribableStream();
             stream.write(body, 'utf8');
-            this.addStream(new HttpContent({
-                type: 'application/json; charset=utf-8',
-                contentLength: stream.length
-            },
-            stream));
+            this.addStream(
+                new HttpContent(
+                    {
+                        type: 'application/json; charset=utf-8',
+                        contentLength: stream.length,
+                    },
+                    stream
+                )
+            );
         } else if (typeof body === 'object') {
             this.addStream(body);
         }

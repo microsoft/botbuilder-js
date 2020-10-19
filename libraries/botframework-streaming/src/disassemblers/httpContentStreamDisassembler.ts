@@ -34,8 +34,8 @@ export class HttpContentStreamDisassembler extends PayloadDisassembler {
      * @returns An [IStreamWrapper](xref:botframework-streaming.IStreamWrapper) with a Subscribable Strea.
      */
     public async getStream(): Promise<IStreamWrapper> {
-        let stream: SubscribableStream = this.contentStream.content.getStream();
+        const stream: SubscribableStream = this.contentStream.content.getStream();
 
-        return {stream, streamLength: stream.length};
+        return { stream, streamLength: stream.length };
     }
 }

@@ -7,12 +7,18 @@
  */
 import { Dialog, TurnPath } from 'botbuilder-dialogs';
 import { ExpressionParserInterface, Expression, ExpressionType } from 'adaptive-expressions';
-import { OnCondition } from './onCondition';
+import { OnCondition, OnConditionConfiguration } from './onCondition';
+
+export interface OnDialogEventConfiguration extends OnConditionConfiguration {
+    event?: string;
+}
 
 /**
  * Actions triggered when a dialog event is emitted.
  */
-export class OnDialogEvent extends OnCondition {
+export class OnDialogEvent extends OnCondition implements OnDialogEventConfiguration {
+    public static $kind = 'Microsoft.OnDialogEvent';
+
     /**
      * Gets or sets the event to fire on.
      */
@@ -30,8 +36,11 @@ export class OnDialogEvent extends OnCondition {
     }
 
     public getExpression(parser: ExpressionParserInterface): Expression {
-        return Expression.makeExpression(ExpressionType.And, undefined,
-            parser.parse(`${ TurnPath.dialogEvent }.name == '${ this.event }'`),
-            super.getExpression(parser));
+        return Expression.makeExpression(
+            ExpressionType.And,
+            undefined,
+            parser.parse(`${TurnPath.dialogEvent}.name == '${this.event}'`),
+            super.getExpression(parser)
+        );
     }
 }

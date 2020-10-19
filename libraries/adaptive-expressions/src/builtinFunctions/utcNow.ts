@@ -18,10 +18,16 @@ import { ReturnType } from '../returnType';
  * Return the current timestamp.
  */
 export class UtcNow extends ExpressionEvaluator {
+    /**
+     * Initializes a new instance of the [UtcNow](xref:adaptive-expressions.UtcNow) class.
+     */
     public constructor() {
         super(ExpressionType.UtcNow, UtcNow.evaluator(), ReturnType.String, UtcNow.validator);
     }
 
+    /**
+     * @private
+     */
     private static evaluator(): EvaluateExpressionDelegate {
         return FunctionUtils.apply(
             (args: any[]): string =>
@@ -30,6 +36,9 @@ export class UtcNow extends ExpressionEvaluator {
         );
     }
 
+    /**
+     * @private
+     */
     private static validator(expression: Expression): void {
         FunctionUtils.validateOrder(expression, [ReturnType.String]);
     }

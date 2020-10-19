@@ -6,13 +6,13 @@
  * Licensed under the MIT License.
  */
 
- /**
-  * Anchor for relative position in a sequence.
-  */
+/**
+ * Anchor for relative position in a sequence.
+ */
 export enum Anchor {
-    Current = "current",
-    Start = "start",
-    End = "end",
+    Current = 'current',
+    Start = 'start',
+    End = 'end',
 }
 
 /**
@@ -20,14 +20,12 @@ export enum Anchor {
  */
 export interface OrdinalV2 {
     /**
-     * Anchor for the offset. 
+     * Anchor for the offset.
      */
     relativeTo: Anchor;
 
     /**
-       * Offset relative to position in sequence.
-       */
+     * Offset relative to position in sequence.
+     */
     offset: number;
 }
-
-

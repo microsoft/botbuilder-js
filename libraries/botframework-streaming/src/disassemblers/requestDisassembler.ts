@@ -35,9 +35,9 @@ export class RequestDisassembler extends PayloadDisassembler {
      * @returns An [IStreamWrapper](xref:botframework-streaming.IStreamWrapper) with a Subscribable Stream.
      */
     public async getStream(): Promise<IStreamWrapper> {
-        let payload: IRequestPayload = {verb: this.request.verb, path: this.request.path, streams: []};
+        const payload: IRequestPayload = { verb: this.request.verb, path: this.request.path, streams: [] };
         if (this.request.streams) {
-            this.request.streams.forEach(function(stream){
+            this.request.streams.forEach(function (stream) {
                 payload.streams.push(stream.description);
             });
         }

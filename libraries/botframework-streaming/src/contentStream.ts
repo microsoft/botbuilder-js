@@ -68,7 +68,7 @@ export class ContentStream {
      */
     public async readAsString(): Promise<string> {
         const { bufferArray } = await this.readAll();
-        return (bufferArray || []).map(result => result.toString('utf8')).join('');
+        return (bufferArray || []).map((result) => result.toString('utf8')).join('');
     }
 
     /**
@@ -76,7 +76,7 @@ export class ContentStream {
      * @returns A typed object Promise with `SubscribableStream` content.
      */
     public async readAsJson<T>(): Promise<T> {
-        let stringToParse = await this.readAsString();
+        const stringToParse = await this.readAsString();
         try {
             return <T>JSON.parse(stringToParse);
         } catch (error) {
@@ -88,21 +88,21 @@ export class ContentStream {
      * @private
      */
     private async readAll(): Promise<Record<string, any>> {
-    // do a read-all
-        let allData: INodeBuffer[] = [];
+        // do a read-all
+        const allData: INodeBuffer[] = [];
         let count = 0;
-        let stream = this.getStream();
+        const stream = this.getStream();
 
         // populate the array with any existing buffers
         while (count < stream.length) {
-            let chunk = stream.read(stream.length);
+            const chunk = stream.read(stream.length);
             allData.push(chunk);
             count += (chunk as INodeBuffer).length;
         }
 
         if (count < this.length) {
-            let readToEnd = new Promise<boolean>((resolve): void => {
-                let callback = (cs: ContentStream) => (chunk: any): void => {
+            const readToEnd = new Promise<boolean>((resolve): void => {
+                const callback = (cs: ContentStream) => (chunk: any): void => {
                     allData.push(chunk);
                     count += (chunk as INodeBuffer).length;
                     if (count === cs.length) {
@@ -116,7 +116,6 @@ export class ContentStream {
             await readToEnd;
         }
 
-        return {bufferArray: allData, size: count};
+        return { bufferArray: allData, size: count };
     }
-
 }

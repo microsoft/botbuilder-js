@@ -33,7 +33,7 @@ export class CancelDisassembler {
      * Initiates the process of disassembling the request and signals the [PayloadSender](xref:botframework-streaming.PayloadSender) to begin sending.
      */
     public disassemble(): void {
-        const header: IHeader = {payloadType: this.payloadType, payloadLength: 0, id: this.id, end: true};
+        const header: IHeader = { payloadType: this.payloadType, payloadLength: 0, id: this.id, end: true };
         this.sender.sendPayload(header);
     }
 }
