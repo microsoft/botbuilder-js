@@ -8,7 +8,7 @@
 
 /**
  * Represents a IncomingMessage from the `http` module in Node.js.
- * 
+ *
  * This interface supports the framework and is not intended to be called directly for your code.
  */
 export interface INodeIncomingMessage {

@@ -9,7 +9,6 @@ import { Activity } from 'botframework-schema';
 import { Middleware } from './middlewareSet';
 import { TurnContext } from './turnContext';
 
-
 /**
  * Middleware to patch mention Entities from Skype since they don't conform to expected values.
  * Bots that interact with Skype should use this middleware if mentions are used.
@@ -27,14 +26,14 @@ export class SkypeMentionNormalizeMiddleware implements Middleware {
      * @param activity [Activity](xref:botframework-schema.Activity) containing the mentions to normalize.
      */
     public static normalizeSkypeMentionText(activity: Activity): void {
-        if (activity.channelId === 'skype' && activity.type === 'message'){
+        if (activity.channelId === 'skype' && activity.type === 'message') {
             activity.entities.map((element): void => {
-                if(element.type === 'mention'){
+                if (element.type === 'mention') {
                     const text = element['text'];
                     const end = text.indexOf('>');
-                    if(end > -1){
+                    if (end > -1) {
                         const start = text.indexOf('<', end);
-                        if(start > -1) element['text'] = text.substring(end + 1, start);
+                        if (start > -1) element['text'] = text.substring(end + 1, start);
                     }
                 }
             });

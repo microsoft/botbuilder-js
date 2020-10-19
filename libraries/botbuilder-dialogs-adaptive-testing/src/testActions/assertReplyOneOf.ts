@@ -7,9 +7,19 @@
  */
 
 import { Activity, ActivityTypes } from 'botbuilder-core';
-import { AssertReplyActivity } from './assertReplyActivity';
+import { AssertReplyActivity, AssertReplyActivityConfiguration } from './assertReplyActivity';
 
-export class AssertReplyOneOf extends AssertReplyActivity {
+export interface AssertReplyOneOfConfiguration extends AssertReplyActivityConfiguration {
+    text?: string[];
+    exact?: boolean;
+}
+
+/**
+ * Assertion that reply from the bot matches one of options.
+ */
+export class AssertReplyOneOf extends AssertReplyActivity implements AssertReplyOneOfConfiguration {
+    public static $kind = 'Microsoft.Test.AssertReplyOneOf';
+
     /**
      * The text variations.
      */
@@ -18,13 +28,21 @@ export class AssertReplyOneOf extends AssertReplyActivity {
     /**
      * A value indicating whether exact match policy should be used.
      */
-    public exact: boolean = true;
+    public exact = true;
 
+    /**
+     * Gets the text to assert for an activity.
+     * @returns String.
+     */
     public getConditionDescription(): string {
         return this.text.join('\n');
     }
 
-    public validateReply(activity: Activity) {
+    /**
+     * Validates the reply of an activity.
+     * @param activity The activity to verify.
+     */
+    public validateReply(activity: Activity): void {
         let found = false;
 
         for (let i = 0; i < this.text.length; i++) {
@@ -35,7 +53,10 @@ export class AssertReplyOneOf extends AssertReplyActivity {
                     break;
                 }
             } else {
-                if (activity.type == ActivityTypes.Message && activity.text.toLowerCase().trim().includes(reply.toLowerCase().trim())) {
+                if (
+                    activity.type == ActivityTypes.Message &&
+                    activity.text.toLowerCase().trim().includes(reply.toLowerCase().trim())
+                ) {
                     found = true;
                     break;
                 }
@@ -43,7 +64,9 @@ export class AssertReplyOneOf extends AssertReplyActivity {
         }
 
         if (!found) {
-            throw new Error(this.description || `Text ${ activity.text } didn't match one of expected text: ${ this.text.join('\n') }`);
+            throw new Error(
+                this.description || `Text ${activity.text} didn't match one of expected text: ${this.text.join('\n')}`
+            );
         }
 
         super.validateReply(activity);

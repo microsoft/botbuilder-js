@@ -845,6 +845,17 @@ describe(`BotFrameworkAdapter`, function () {
         });
     });
 
+    it(`should createConversation() with parameters.`, async function () {
+        const adapter = new AdapterUnderTest();
+
+        let called = false;
+        await adapter.createConversation(reference, { isGroup: true }, () => {
+            called = true;
+        });
+
+        assert(called, 'bot logic called');
+    });
+
     it(`should createConversation() and assign new serviceUrl.`, function (done) {
         let called = false;
         const adapter = new AdapterUnderTest();

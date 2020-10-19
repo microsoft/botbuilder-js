@@ -2,7 +2,23 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { ActionTypes, AnimationCard, Attachment, AudioCard, CardAction, CardImage, HeroCard, MediaUrl, OAuthCard, O365ConnectorCard, ReceiptCard, SigninCard, ThumbnailCard, TokenExchangeResource, VideoCard } from 'botframework-schema';
+import {
+    ActionTypes,
+    AnimationCard,
+    Attachment,
+    AudioCard,
+    CardAction,
+    CardImage,
+    HeroCard,
+    MediaUrl,
+    OAuthCard,
+    O365ConnectorCard,
+    ReceiptCard,
+    SigninCard,
+    ThumbnailCard,
+    TokenExchangeResource,
+    VideoCard,
+} from 'botframework-schema';
 
 /**
  * Provides methods for formatting the various card types a bot can return.
@@ -40,7 +56,7 @@ export class CardFactory {
         o365ConnectorCard: 'application/vnd.microsoft.teams.card.o365connector',
         signinCard: 'application/vnd.microsoft.card.signin',
         thumbnailCard: 'application/vnd.microsoft.card.thumbnail',
-        videoCard: 'application/vnd.microsoft.card.video'
+        videoCard: 'application/vnd.microsoft.card.video',
     };
 
     /**
@@ -136,6 +152,7 @@ export class CardFactory {
      * @remarks
      * Hero cards tend to have one dominant, full-width image.
      * Channels typically render the card's text and buttons below the image.
+     *
      * For example:
      * ```javascript
      * const card = CardFactory.heroCard(
@@ -230,19 +247,24 @@ export class CardFactory {
      * @remarks
      * OAuth cards support the Bot Framework's single sign on (SSO) service.
      */
-    public static oauthCard(connectionName: string, title: string, text?: string, link?: string, tokenExchangeResource?: TokenExchangeResource): Attachment {
+    public static oauthCard(
+        connectionName: string,
+        title: string,
+        text?: string,
+        link?: string,
+        tokenExchangeResource?: TokenExchangeResource
+    ): Attachment {
         const card: Partial<OAuthCard> = {
-            buttons: [
-                { type: ActionTypes.Signin, title: title, value: link, channelData: undefined }
-            ],
+            buttons: [{ type: ActionTypes.Signin, title: title, value: link, channelData: undefined }],
             connectionName,
-            tokenExchangeResource
+            tokenExchangeResource,
         };
-        if (text) { card.text = text; }
+        if (text) {
+            card.text = text;
+        }
 
         return { contentType: CardFactory.contentTypes.oauthCard, content: card };
     }
-
 
     /**
     * Returns an attachment for an Office 365 connector card.
@@ -294,8 +316,12 @@ export class CardFactory {
      * For channels that don't natively support sign-in cards, an alternative message is rendered.
      */
     public static signinCard(title: string, url: string, text?: string): Attachment {
-        const card: SigninCard = { buttons: [{ type: ActionTypes.Signin, title: title, value: url, channelData: undefined }] };
-        if (text) { card.text = text; }
+        const card: SigninCard = {
+            buttons: [{ type: ActionTypes.Signin, title: title, value: url, channelData: undefined }],
+        };
+        if (text) {
+            card.text = text;
+        }
 
         return { contentType: CardFactory.contentTypes.signinCard, content: card };
     }
@@ -380,10 +406,18 @@ export class CardFactory {
             text = undefined;
         }
         const card: Partial<ThumbnailCard> = { ...other };
-        if (title) { card.title = title; }
-        if (text) { card.text = text; }
-        if (images) { card.images = CardFactory.images(images); }
-        if (buttons) { card.buttons = CardFactory.actions(buttons); }
+        if (title) {
+            card.title = title;
+        }
+        if (text) {
+            card.text = text;
+        }
+        if (images) {
+            card.images = CardFactory.images(images);
+        }
+        if (buttons) {
+            card.buttons = CardFactory.actions(buttons);
+        }
 
         return { contentType: CardFactory.contentTypes.thumbnailCard, content: card };
     }
@@ -415,11 +449,16 @@ export class CardFactory {
      */
     public static actions(actions: (CardAction | string)[] | undefined): CardAction[] {
         const list: CardAction[] = [];
-        (actions || []).forEach((a: (CardAction | string)) => {
+        (actions || []).forEach((a: CardAction | string) => {
             if (typeof a === 'object') {
                 list.push(a);
             } else {
-                list.push({ type: ActionTypes.ImBack, value: a.toString(), title: a.toString(), channelData: undefined });
+                list.push({
+                    type: ActionTypes.ImBack,
+                    value: a.toString(),
+                    title: a.toString(),
+                    channelData: undefined,
+                });
             }
         });
 
@@ -434,7 +473,7 @@ export class CardFactory {
      */
     public static images(images: (CardImage | string)[] | undefined): CardImage[] {
         const list: CardImage[] = [];
-        (images || []).forEach((img: (CardImage | string)) => {
+        (images || []).forEach((img: CardImage | string) => {
             if (typeof img === 'object') {
                 list.push(img);
             } else {
@@ -452,7 +491,7 @@ export class CardFactory {
      */
     public static media(links: (MediaUrl | string)[] | undefined): MediaUrl[] {
         const list: MediaUrl[] = [];
-        (links || []).forEach((lnk: (MediaUrl | string)) => {
+        (links || []).forEach((lnk: MediaUrl | string) => {
             if (typeof lnk === 'object') {
                 list.push(lnk);
             } else {
@@ -467,15 +506,21 @@ export class CardFactory {
 /**
  * @private
  */
-function mediaCard(contentType: string,
+function mediaCard(
+    contentType: string,
     title: string,
     media: (MediaUrl | string)[],
     buttons?: (CardAction | string)[],
-    other?: any): Attachment {
+    other?: any
+): Attachment {
     const card: VideoCard = { ...other };
-    if (title) { card.title = title; }
+    if (title) {
+        card.title = title;
+    }
     card.media = CardFactory.media(media);
-    if (buttons) { card.buttons = CardFactory.actions(buttons); }
+    if (buttons) {
+        card.buttons = CardFactory.actions(buttons);
+    }
 
     return { contentType: contentType, content: card };
 }

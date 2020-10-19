@@ -16,10 +16,16 @@ import { ReturnType } from '../returnType';
  * Format number into required decimal numbers.
  */
 export class FormatNumber extends ExpressionEvaluator {
+    /**
+     * Initializes a new instance of the [FormatNumber](xref:adaptive-expressions.FormatNumber) class.
+     */
     public constructor() {
         super(ExpressionType.FormatNumber, FormatNumber.evaluator(), ReturnType.String, FormatNumber.validator);
     }
 
+    /**
+     * @private
+     */
     private static evaluator(): EvaluateExpressionDelegate {
         return FunctionUtils.applyWithError((args: any[]): any => {
             let value: any = null;
@@ -47,6 +53,9 @@ export class FormatNumber extends ExpressionEvaluator {
         });
     }
 
+    /**
+     * @private
+     */
     private static validator(expr: Expression): void {
         FunctionUtils.validateOrder(expr, [ReturnType.String], ReturnType.Number, ReturnType.Number);
     }

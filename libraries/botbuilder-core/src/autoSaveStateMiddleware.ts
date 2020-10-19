@@ -44,7 +44,6 @@ import { TurnContext } from './turnContext';
  * ```
  */
 export class AutoSaveStateMiddleware implements Middleware {
-
     /**
      * Set of `BotState` plugins being automatically saved.
      */

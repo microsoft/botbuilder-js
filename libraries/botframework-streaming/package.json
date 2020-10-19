@@ -47,8 +47,8 @@
     "test:compat": "api-extractor run --verbose"
   },
   "files": [
-    "/lib",
-    "/src",
-    "/browser"
+    "lib",
+    "src",
+    "browser"
   ]
 }

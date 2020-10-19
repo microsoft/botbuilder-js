@@ -22,6 +22,10 @@ import { Expression } from '../expression';
  *     prop = "\=user" => "=user".
  */
 export class ValueExpression extends ExpressionProperty<any> {
+    /**
+     * Initializes a new instance of the [ValueExpression](xref:adaptive-expressions.ValueExpression) class.
+     * @param value An object of `any` kind or a `string` expression.
+     */
     public constructor(value?: any | string | Expression) {
         super(value);
     }

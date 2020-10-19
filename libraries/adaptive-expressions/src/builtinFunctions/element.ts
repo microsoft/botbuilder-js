@@ -20,17 +20,22 @@ import { ReturnType } from '../returnType';
  * Support number index for list or string index for object.
  */
 export class Element extends ExpressionEvaluator {
+    /**
+     * Initializes a new instance of the [Element](xref:adaptive-expressions.Element) class.
+     */
     public constructor() {
         super(ExpressionType.Element, Element.evaluator, ReturnType.Object, FunctionUtils.validateBinary);
     }
 
+    /**
+     * @private
+     */
     private static evaluator(expression: Expression, state: MemoryInterface, options: Options): ValueWithError {
         let value: any;
-        let error: string;
         const instance: Expression = expression.children[0];
         const index: Expression = expression.children[1];
-        let inst: any;
-        ({ value: inst, error } = instance.tryEvaluate(state, options));
+        const { value: inst, error: evalError } = instance.tryEvaluate(state, options);
+        let error = evalError;
         if (!error) {
             let idxValue: any;
             const newOptions = new Options(options);
@@ -42,7 +47,7 @@ export class Element extends ExpressionEvaluator {
                 } else if (typeof idxValue === 'string') {
                     ({ value, error } = InternalFunctionUtils.accessProperty(inst, idxValue.toString()));
                 } else {
-                    error = `Could not coerce ${index} to an int or string.`;
+                    error = `Could not coerce ${ index } to an int or string.`;
                 }
 
                 return { value, error };

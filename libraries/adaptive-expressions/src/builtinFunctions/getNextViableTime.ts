@@ -22,6 +22,9 @@ import { TimexProperty, Time } from '@microsoft/recognizers-text-data-types-time
  * Return the next viable time of a timex expression based on the current time and user's timezone.
  */
 export class GetNextViableTime extends ExpressionEvaluator {
+    /**
+     * Initializes a new instance of the [GetNextViableTime](xref:adaptive-expressions.GetNextViableTime) class.
+     */
     public constructor() {
         super(
             ExpressionType.GetNextViableTime,
@@ -30,26 +33,27 @@ export class GetNextViableTime extends ExpressionEvaluator {
             FunctionUtils.validateUnaryOrBinaryString
         );
     }
-
+      
+    /**
+     * @private
+     */
     private static evaluator(
         expr: Expression,
         state: MemoryInterface,
         options: Options
     ): { value: any; error: string } {
         let parsed: TimexProperty;
-        let value: string;
-        let error: string;
-        let args: any[];
         const currentTime = moment(new Date().toISOString());
         let validHour = 0;
         let validMinute = 0;
         let validSecond = 0;
         let convertedDateTime: moment.Moment;
         const formatRegex = /TXX:[0-5][0-9]:[0-5][0-9]/g;
-        ({ args, error } = FunctionUtils.evaluateChildren(expr, state, options));
+        const { args, error: childrenError } = FunctionUtils.evaluateChildren(expr, state, options);
+        let error = childrenError;
         if (!error) {
             if (!formatRegex.test(args[0] as string)) {
-                error = `${args[0]}  must be a timex string which only contains minutes and seconds, for example: 'TXX:15:28'`;
+                error = `${ args[0] }  must be a timex string which only contains minutes and seconds, for example: 'TXX:15:28'`;
             }
         }
 
@@ -57,7 +61,7 @@ export class GetNextViableTime extends ExpressionEvaluator {
             if (args.length === 2 && typeof args[1] === 'string') {
                 const timeZone: string = TimeZoneConverter.windowsToIana(args[1]);
                 if (!TimeZoneConverter.verifyTimeZoneStr(timeZone)) {
-                    error = `${args[1]} is not a valid timezone`;
+                    error = `${ args[1] } is not a valid timezone`;
                 }
 
                 if (!error) {
@@ -93,7 +97,7 @@ export class GetNextViableTime extends ExpressionEvaluator {
             validSecond = parsed.second;
         }
 
-        value = TimexProperty.fromTime(new Time(validHour, validMinute, validSecond)).timex;
+        const value = TimexProperty.fromTime(new Time(validHour, validMinute, validSecond)).timex;
         return { value, error };
     }
 }

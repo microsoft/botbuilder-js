@@ -29,7 +29,9 @@ export class TurnContextStateCollection extends Map<any, any> {
         }
 
         // Set new (or current) value and save cache
-        if (value == undefined) { value = current }
+        if (value == undefined) {
+            value = current;
+        }
         this.set(key, value);
         this.set(TURN_STATE_SCOPE_CACHE, cache);
     }
@@ -56,6 +58,4 @@ export class TurnContextStateCollection extends Map<any, any> {
 
         return current;
     }
-
-
- }
+}
