@@ -65,36 +65,74 @@ export interface TelemetryPageView {
     metrics?: { [key: string]: number };
 }
 
+/**
+ * A null bot telemetry client that implements [BotTelemetryClient](xref:botbuilder-core.BotTelemetryClient).
+ */
 export class NullTelemetryClient implements BotTelemetryClient, BotPageViewTelemetryClient {
+    /**
+     * Creates a new instance of the [NullTelemetryClient](xref:botbuilder-core.NullTelemetryClient) class.
+     * @param settings Optional. Settings for the telemetry client.
+     */
     constructor(settings?: any) {
         // noop
     }
 
+    /**
+     * Logs an Application Insights page view.
+     * @param telemetry An object implementing [TelemetryPageView](xref:botbuilder-core.TelemetryPageView).
+     */
     trackPageView(telemetry: TelemetryPageView) {
         // noop
     }
 
+    /**
+     * Sends information about an external dependency (outgoing call) in the application.
+     * @param telemetry An object implementing [TelemetryDependency](xref:botbuilder-core.TelemetryDependency).
+     */
     trackDependency(telemetry: TelemetryDependency) {
         // noop
     }
 
+    /**
+     * Logs custom events with extensible named fields.
+     * @param telemetry An object implementing [TelemetryEvent](xref:botbuilder-core.TelemetryEvent).
+     */
     trackEvent(telemetry: TelemetryEvent) {
         // noop
     }
 
+    /**
+     * Logs a system exception.
+     * @param telemetry An object implementing [TelemetryException](xref:botbuilder-core.TelemetryException).
+     */
     trackException(telemetry: TelemetryException) {
         // noop
     }
 
+    /**
+     * Sends a trace message.
+     * @param telemetry An object implementing [TelemetryTrace](xref:botbuilder-core.TelemetryTrace).
+     */
     trackTrace(telemetry: TelemetryTrace) {
         // noop
     }
 
+    /**
+     * Flushes the in-memory buffer and any metrics being pre-aggregated.
+     */
     flush() {
         // noop
     }
 }
 
+/**
+ * Logs a DialogView using the [trackPageView](xref:botbuilder-core.BotTelemetryClient.trackPageView) method on the [BotTelemetryClient](xref:botbuilder-core.BotTelemetryClient) if [BotPageViewTelemetryClient](xref:botbuilder-core.BotPageViewTelemetryClient) has been implemented.
+ * Alternatively logs the information out via TrackTrace.
+ * @param telemetryClient TelemetryClient that implements [BotTelemetryClient](xref:botbuilder-core.BotTelemetryClient).
+ * @param dialogName Name of the dialog to log the entry / start for.
+ * @param properties Named string values you can use to search and classify events.
+ * @param metrics Measurements associated with this event.
+ */
 export function telemetryTrackDialogView(
     telemetryClient: BotTelemetryClient,
     dialogName: string,
