@@ -235,7 +235,6 @@ export namespace SkillValidation {
      * Creates a set of claims that represent an anonymous skill. Useful for testing bots locally in the emulator
      */
     export function createAnonymousSkillClaim(): ClaimsIdentity {
-        // return new ClaimsIdentity(new List<Claim> { new Claim(AuthenticationConstants.AppIdClaim, AuthenticationConstants.AnonymousSkillAppId) }, AuthenticationConstants.AnonymousAuthType);
         return new ClaimsIdentity(
             [
                 {
@@ -243,7 +242,7 @@ export namespace SkillValidation {
                     value: AuthenticationConstants.AnonymousSkillAppId,
                 },
             ],
-            true // TODO auth type?
+            AuthenticationConstants.AnonymousAuthType
         );
     }
 }

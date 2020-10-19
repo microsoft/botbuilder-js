@@ -139,23 +139,31 @@ export class JwtTokenExtractor {
         channelId: string,
         requiredEndorsements: string[]
     ): Promise<ClaimsIdentity> {
-        const decodedToken: any = decode(jwtToken, { complete: true });
+        let header: Partial<Record<'kid' | 'alg', string>> = {};
+        const decodedToken = decode(jwtToken, { complete: true });
+        if (decodedToken && typeof decodedToken === 'object') {
+            header = decodedToken.header;
+        }
 
         // Update the signing tokens from the last refresh
-        const keyId: string = decodedToken.header.kid;
-        const metadata: any = await this.openIdMetadata.getKey(keyId);
+        const keyId = header.kid;
+        const metadata = await this.openIdMetadata.getKey(keyId);
         if (!metadata) {
             throw new AuthenticationError('Signing Key could not be retrieved.', StatusCodes.UNAUTHORIZED);
         }
 
         try {
-            const decodedPayload: any = verify(jwtToken, metadata.key, this.tokenValidationParameters);
+            let decodedPayload: Record<string, string> = {};
+            const verifyResults = verify(jwtToken, metadata.key, this.tokenValidationParameters);
+            if (verifyResults && typeof verifyResults === 'object') {
+                // Note: casting is necessary here, but we know `object` is loosely equivalient to a Record
+                decodedPayload = verifyResults as Record<string, string>;
+            }
 
             // enforce endorsements in openIdMetadadata if there is any endorsements associated with the key
-            const endorsements: any = metadata.endorsements;
-
+            const endorsements = metadata.endorsements;
             if (Array.isArray(endorsements) && endorsements.length !== 0) {
-                const isEndorsed: boolean = EndorsementsValidator.validate(channelId, endorsements);
+                const isEndorsed = EndorsementsValidator.validate(channelId, endorsements);
                 if (!isEndorsed) {
                     throw new AuthenticationError(
                         `Could not validate endorsement for key: ${keyId} with endorsements: ${endorsements.join(',')}`,
@@ -179,23 +187,17 @@ export class JwtTokenExtractor {
             }
 
             if (this.tokenValidationParameters.algorithms) {
-                if (this.tokenValidationParameters.algorithms.indexOf(decodedToken.header.alg) === -1) {
+                if (this.tokenValidationParameters.algorithms.indexOf(header.alg) === -1) {
                     throw new AuthenticationError(
-                        `"Token signing algorithm '${decodedToken.header.alg}' not in allowed list`,
+                        `"Token signing algorithm '${header.alg}' not in allowed list`,
                         StatusCodes.UNAUTHORIZED
                     );
                 }
             }
 
-            const claims: Claim[] = Object.keys(decodedPayload).reduce((acc: any, key: any) => {
-                acc.push({ type: key, value: decodedPayload[key] });
-
-                return acc;
-            }, <Claim[]>[]);
-
-            return new ClaimsIdentity(claims, true);
+            const claims = Object.entries(decodedPayload).map<Claim>(([type, value]) => ({ type, value }));
+            return new ClaimsIdentity(claims, true); // TODO(joshgummersall): fix true
         } catch (err) {
-            // tslint:disable-next-line:no-console
             console.error(`Error finding key for token. Available keys: ${metadata.key}`);
             throw err;
         }

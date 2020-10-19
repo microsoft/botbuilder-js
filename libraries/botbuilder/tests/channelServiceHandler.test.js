@@ -268,7 +268,7 @@ describe('ChannelServiceHandler', () => {
                     .mock(JwtTokenValidation)
                     .expects('validateAuthHeader')
                     .once()
-                    .returns(new ClaimsIdentity([], true));
+                    .returns(new ClaimsIdentity([], AuthenticationConstants.AnonymousAuthType));
 
                 const identity = await handler.authenticate(AUTH_HEADER);
                 assert(identity.isAuthenticated, 'isAuthenticated is true');

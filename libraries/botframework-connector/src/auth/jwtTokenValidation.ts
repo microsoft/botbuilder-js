@@ -61,7 +61,7 @@ export namespace JwtTokenValidation {
             // In the scenario where Auth is disabled, we still want to have the
             // IsAuthenticated flag set in the ClaimsIdentity. To do this requires
             // adding in an empty claim.
-            return new ClaimsIdentity([], true);
+            return new ClaimsIdentity([], AuthenticationConstants.AnonymousAuthType);
         }
 
         const claimsIdentity: ClaimsIdentity = await validateAuthHeader(
