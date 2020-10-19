@@ -27,18 +27,18 @@ export abstract class PayloadDisassembler {
     }
 
     protected static serialize<T>(item: T): IStreamWrapper {
-        let stream: SubscribableStream = new SubscribableStream();
+        const stream: SubscribableStream = new SubscribableStream();
 
         stream.write(JSON.stringify(item));
         stream.end();
 
-        return {stream, streamLength: stream.length};
+        return { stream, streamLength: stream.length };
     }
 
     public abstract async getStream(): Promise<IStreamWrapper>;
 
     public async disassemble(): Promise<void> {
-        let { stream, streamLength }: IStreamWrapper = await this.getStream();
+        const { stream, streamLength }: IStreamWrapper = await this.getStream();
 
         this.stream = stream;
         this.streamLength = streamLength;
@@ -47,7 +47,12 @@ export abstract class PayloadDisassembler {
     }
 
     private async send(): Promise<void> {
-        let header: IHeader = {payloadType: this.payloadType, payloadLength: this.streamLength, id: this.id, end: true};
+        const header: IHeader = {
+            payloadType: this.payloadType,
+            payloadLength: this.streamLength,
+            id: this.id,
+            end: true,
+        };
         this.sender.sendPayload(header, this.stream);
     }
 }

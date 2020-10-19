@@ -1,7 +1,6 @@
 /**
  * @module botframework-config
- */
-/**
+ *
  * Copyright(c) Microsoft Corporation.All rights reserved.
  * Licensed under the MIT License.
  */
@@ -10,6 +9,7 @@ import * as crypto from 'crypto';
 
 /**
  * @private
+ * @deprecated
  */
 export function generateKey(): string {
     // Generates 32 byte cryptographically strong pseudo-random data as a base64 encoded string
@@ -19,6 +19,7 @@ export function generateKey(): string {
 
 /**
  * @private
+ * @deprecated
  * Encrypt a string using standardized encyryption of AES256
  * @param plainText value to encrypt
  * @param secret secret to use
@@ -45,11 +46,12 @@ export function encryptString(plainText: string, secret: string): string {
     encryptedValue += cipher.final('base64');
 
     // store base64(ivBytes)!base64(encryptedValue)
-    return `${ ivText }!${ encryptedValue }`;
+    return `${ivText}!${encryptedValue}`;
 }
 
 /**
  * @private
+ * @deprecated
  * Decrypt a string using standardized encyryption of AES256
  * @param enryptedValue value to decrypt
  * @param secret secret to use
@@ -93,6 +95,7 @@ export function decryptString(encryptedValue: string, secret: string): string {
 
 /**
  * @private
+ * @deprecated
  * @param encryptedValue
  * @param secret
  */
