@@ -28,7 +28,7 @@ export class DialogMemoryScope extends MemoryScope {
      */
     public getMemory(dc: DialogContext): object {
         // If active dialog is a container dialog then "dialog" binds to it.
-        // Otherwise the "dialog" will bind to the dialogs parent assuming it 
+        // Otherwise the "dialog" will bind to the dialogs parent assuming it
         // is a container.
         let parent: DialogContext = dc;
         if (!this.isContainer(parent) && this.isContainer(parent.parent)) {
@@ -50,7 +50,7 @@ export class DialogMemoryScope extends MemoryScope {
         }
 
         // If active dialog is a container dialog then "dialog" binds to it.
-        // Otherwise the "dialog" will bind to the dialogs parent assuming it 
+        // Otherwise the "dialog" will bind to the dialogs parent assuming it
         // is a container.
         let parent: DialogContext = dc;
         if (!this.isContainer(parent) && this.isContainer(parent.parent)) {
@@ -58,7 +58,9 @@ export class DialogMemoryScope extends MemoryScope {
         }
 
         // If there's no active dialog then throw an error.
-        if (!parent.activeDialog) { throw new Error(`DialogMemoryScope.setMemory: no active dialog found.`) }
+        if (!parent.activeDialog) {
+            throw new Error(`DialogMemoryScope.setMemory: no active dialog found.`);
+        }
 
         parent.activeDialog.state = memory;
     }
@@ -70,7 +72,7 @@ export class DialogMemoryScope extends MemoryScope {
      */
     private isContainer(dc: DialogContext): boolean {
         if (dc != undefined && dc.activeDialog != undefined) {
-            var dialog = dc.findDialog(dc.activeDialog.id);
+            const dialog = dc.findDialog(dc.activeDialog.id);
             if (dialog instanceof DialogContainer) {
                 return true;
             }

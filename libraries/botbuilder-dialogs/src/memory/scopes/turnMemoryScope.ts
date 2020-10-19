@@ -34,7 +34,7 @@ export class TurnMemoryScope extends MemoryScope {
         let memory = dc.context.turnState.get(TURN_STATE);
         if (typeof memory != 'object') {
             memory = {};
-            dc.context.turnState.set(TURN_STATE, memory);    
+            dc.context.turnState.set(TURN_STATE, memory);
         }
 
         return memory;

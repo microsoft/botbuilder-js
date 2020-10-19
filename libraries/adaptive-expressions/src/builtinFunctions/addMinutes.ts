@@ -15,6 +15,9 @@ import { TimeTransformEvaluator } from './timeTransformEvaluator';
  * Add a number of minutes to a timestamp.
  */
 export class AddMinutes extends TimeTransformEvaluator {
+    /**
+     * Initializes a new instance of the [AddMinutes](xref:adaptive-expressions.AddMinutes) class.
+     */
     public constructor() {
         super(ExpressionType.AddMinutes, (ts: Date, num: any): Date => moment(ts).utc().add(num, 'minutes').toDate());
     }

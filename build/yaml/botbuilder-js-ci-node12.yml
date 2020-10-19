@@ -6,16 +6,12 @@
 name: $(Build.BuildId)
 
 pool:
-    vmImage: 'macOS-10.15'
+  vmImage: 'macOS-10.15'
 
 variables:
   NodeVersion: 12.x
-#  CI_PULL_REQUEST: define this in Azure
-#  COVERALLS_GIT_BRANCH: define this in Azure
-#  COVERALLS_GIT_COMMIT: define this in Azure
-#  COVERALLS_SERVICE_JOB_ID: define this in Azure
-#  COVERALLS_SERVICE_NAME: define this in Azure
-#  version: define this in Azure, settable at queue time
+  PackageVersion: 4.4.0-preview.$(Build.BuildNumber)
+  PreviewPackageVersion: 4.4.0-preview.$(Build.BuildNumber)
 
 stages:
 - stage: Build
@@ -30,10 +26,3 @@ stages:
       displayName: 'Dir workspace except node-modules (takes 5 seconds)'
       continueOnError: true
       condition: succeededOrFailed()
-
-- stage: CodeAnalysis
-  dependsOn: [] # Run this stage in parallel
-  jobs:
-  - job:
-    steps:
-    - template: js-analysis-steps.yml

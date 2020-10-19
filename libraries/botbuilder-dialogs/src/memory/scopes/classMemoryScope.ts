@@ -30,7 +30,7 @@ export class ClassMemoryScope extends MemoryScope {
     public getMemory(dc: DialogContext): object {
         // if active dialog is a container dialog then "dialog" binds to it
         if (dc.activeDialog) {
-            var dialog = this.onFindDialog(dc);
+            const dialog = this.onFindDialog(dc);
             if (dialog != undefined) {
                 // Clone properties
                 const clone: object = {};
@@ -65,7 +65,7 @@ export class ClassMemoryScope extends MemoryScope {
 }
 
 function isExpression(prop: any): prop is ExpressionResolver {
-    return (typeof prop == 'object' && typeof prop['tryGetValue'] == 'function');
+    return typeof prop == 'object' && typeof prop['tryGetValue'] == 'function';
 }
 
 interface ExpressionResolver {

@@ -5,23 +5,53 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { DialogContext, Choice, ListStyle, ChoiceFactoryOptions, FindChoicesOptions, ChoiceFactory, recognizeChoices, ModelResult, FoundChoice } from 'botbuilder-dialogs';
+import {
+    EnumExpression,
+    EnumExpressionConverter,
+    Expression,
+    ObjectExpression,
+    ObjectExpressionConverter,
+    StringExpression,
+    StringExpressionConverter,
+} from 'adaptive-expressions';
 import { Activity } from 'botbuilder-core';
-import { InputDialog, InputState } from './inputDialog';
+import {
+    Choice,
+    ChoiceFactory,
+    ChoiceFactoryOptions,
+    Converter,
+    ConverterFactory,
+    DialogContext,
+    FindChoicesOptions,
+    FoundChoice,
+    ListStyle,
+    ModelResult,
+    recognizeChoices,
+} from 'botbuilder-dialogs';
+import { InputDialog, InputDialogConfiguration, InputState } from './inputDialog';
 import { ChoiceSet } from './choiceSet';
-import { ObjectExpression, StringExpression, ArrayExpression, EnumExpression } from 'adaptive-expressions';
-
 
 export enum ChoiceOutputFormat {
     value = 'value',
-    index = 'index'
+    index = 'index',
 }
 
 export interface ChoiceInputOptions {
     choices: Choice[];
 }
 
-export class ChoiceInput extends InputDialog {
+export interface ChoiceInputConfiguration extends InputDialogConfiguration {
+    choices?: ChoiceSet | string | Expression | ObjectExpression<ChoiceSet>;
+    style?: ListStyle | string | Expression | EnumExpression<ListStyle>;
+    defaultLocale?: string | Expression | StringExpression;
+    outputFormat?: ChoiceOutputFormat | string | Expression | EnumExpression<ChoiceOutputFormat>;
+    choiceOptions?: ChoiceFactoryOptions | string | Expression | ObjectExpression<ChoiceFactoryOptions>;
+    recognizerOptions?: FindChoicesOptions | string | Expression | ObjectExpression<FindChoicesOptions>;
+}
+
+export class ChoiceInput extends InputDialog implements ChoiceInputConfiguration {
+    public static $kind = 'Microsoft.ChoiceInput';
+
     /**
      * Default options for rendering the choices to the user based on locale.
      */
@@ -33,13 +63,13 @@ export class ChoiceInput extends InputDialog {
         'de-de': { inlineSeparator: ', ', inlineOr: ' oder ', inlineOrMore: ', oder ', includeNumbers: true },
         'ja-jp': { inlineSeparator: '、 ', inlineOr: ' または ', inlineOrMore: '、 または ', includeNumbers: true },
         'pt-br': { inlineSeparator: ', ', inlineOr: ' ou ', inlineOrMore: ', ou ', includeNumbers: true },
-        'zh-cn': { inlineSeparator: '， ', inlineOr: ' 要么 ', inlineOrMore: '， 要么 ', includeNumbers: true }
+        'zh-cn': { inlineSeparator: '， ', inlineOr: ' 要么 ', inlineOrMore: '， 要么 ', includeNumbers: true },
     };
 
     /**
      * List of choices to present to user.
      */
-    public choices: ObjectExpression<ChoiceSet>;
+    public choices: ObjectExpression<ChoiceSet> = new ObjectExpression();
 
     /**
      * Style of the "yes" and "no" choices rendered to the user when prompting.
@@ -57,7 +87,9 @@ export class ChoiceInput extends InputDialog {
     /**
      * Control the format of the response (value or index of the choice).
      */
-    public outputFormat: EnumExpression<ChoiceOutputFormat> = new EnumExpression<ChoiceOutputFormat>(ChoiceOutputFormat.value);
+    public outputFormat: EnumExpression<ChoiceOutputFormat> = new EnumExpression<ChoiceOutputFormat>(
+        ChoiceOutputFormat.value
+    );
 
     /**
      * Additional options passed to the `ChoiceFactory` and used to tweak the style of choices
@@ -69,6 +101,25 @@ export class ChoiceInput extends InputDialog {
      * Additional options passed to the underlying `recognizeChoices()` function.
      */
     public recognizerOptions?: ObjectExpression<FindChoicesOptions> = new ObjectExpression();
+
+    public getConverter(property: keyof ChoiceInputConfiguration): Converter | ConverterFactory {
+        switch (property) {
+            case 'choices':
+                return new ObjectExpressionConverter<ChoiceSet>();
+            case 'style':
+                return new EnumExpressionConverter<ListStyle>(ListStyle);
+            case 'defaultLocale':
+                return new StringExpressionConverter();
+            case 'outputFormat':
+                return new EnumExpressionConverter<ChoiceOutputFormat>(ChoiceOutputFormat);
+            case 'choiceOptions':
+                return new ObjectExpressionConverter<ChoiceFactoryOptions>();
+            case 'recognizerOptions':
+                return new ObjectExpressionConverter<FindChoicesOptions>();
+            default:
+                return super.getConverter(property);
+        }
+    }
 
     protected onInitializeOptions(dc: DialogContext, options: ChoiceInputOptions): ChoiceInputOptions {
         if (!options || !options.choices || options.choices.length == 0) {
@@ -83,7 +134,7 @@ export class ChoiceInput extends InputDialog {
 
     protected async onRecognizeInput(dc: DialogContext): Promise<InputState> {
         // Get input and options
-        let input: string = dc.state.getValue(InputDialog.VALUE_PROPERTY).toString();
+        const input: string = dc.state.getValue(InputDialog.VALUE_PROPERTY).toString();
         const options: ChoiceInputOptions = dc.state.getValue(InputDialog.OPTIONS_PROPERTY);
 
         // Format choices
@@ -127,13 +178,13 @@ export class ChoiceInput extends InputDialog {
         // Format prompt to send
         const prompt = await super.onRenderPrompt(dc, state);
         const channelId: string = dc.context.activity.channelId;
-        const choiceOptions: ChoiceFactoryOptions = (this.choiceOptions && this.choiceOptions.getValue(dc.state)) || ChoiceInput.defaultChoiceOptions[locale];
+        const choiceOptions: ChoiceFactoryOptions =
+            (this.choiceOptions && this.choiceOptions.getValue(dc.state)) || ChoiceInput.defaultChoiceOptions[locale];
         const style = this.style.getValue(dc.state);
         return Promise.resolve(this.appendChoices(prompt, channelId, choices, style, choiceOptions));
     }
 
     protected onComputeId(): string {
-        return `ChoiceInput[${ this.prompt && this.prompt.toString() }]`;
+        return `ChoiceInput[${this.prompt && this.prompt.toString()}]`;
     }
-
 }

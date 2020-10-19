@@ -44,7 +44,7 @@ export class BotStateMemoryScope extends MemoryScope {
     public setMemory(dc: DialogContext, memory: object): void {
         const botState = dc.context.turnState.get(this.stateKey);
         if (!botState) {
-            throw new Error(`${ this.stateKey } is not available.`);
+            throw new Error(`${this.stateKey} is not available.`);
         }
         throw new Error(`You cannot replace the root BotState object.`);
     }

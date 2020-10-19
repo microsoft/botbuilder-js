@@ -9,5 +9,9 @@
 import { INodeIncomingMessage, INodeBuffer, INodeSocket, ISocket } from '../../interfaces';
 
 export abstract class NodeWebSocketFactoryBase {
-    public abstract createWebSocket(req: INodeIncomingMessage, socket: INodeSocket, head: INodeBuffer): Promise<ISocket>;
+    public abstract createWebSocket(
+        req: INodeIncomingMessage,
+        socket: INodeSocket,
+        head: INodeBuffer
+    ): Promise<ISocket>;
 }

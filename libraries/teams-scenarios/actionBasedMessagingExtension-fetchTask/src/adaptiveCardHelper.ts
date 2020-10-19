@@ -12,7 +12,15 @@ import {
 
 import { SubmitExampleData } from './submitExampleData';
 
+/**
+ * Helper for [CardFactory.adaptiveCard](xref:botbuilder-core.CardFactory.adaptiveCard).
+ */
 export class AdaptiveCardHelper {
+    /**
+     * Creates an example data.
+     * @param action Messaging extension action.
+     * @returns A [SubmitExampleData](xref:action-based-messaging-extension-fetchtask.SubmitExampleData) object.
+     */
     public static toSubmitExampleData(action: MessagingExtensionAction): SubmitExampleData {
         const activityPreview = action.botActivityPreview[0];
         const attachmentContent = activityPreview.attachments[0].content;
@@ -29,6 +37,15 @@ export class AdaptiveCardHelper {
         } as SubmitExampleData;
     }
 
+    /**
+     * Creates a [MessagingExtensionActionResponse](xref:botframework-schema.MessagingExtensionActionResponse) with an AdaptiveCard.
+     * @param userText Question text.
+     * @param isMultiSelect Multi select.
+     * @param option1 Option 1.
+     * @param option2 Option 2.
+     * @param option3 Option 3.
+     * @returns A [MessagingExtensionActionResponse](xref:botframework-schema.MessagingExtensionActionResponse) object.
+     */
     public static createTaskModuleAdaptiveCardResponse(
         userText: string = null,
         isMultiSelect: boolean = true,
@@ -106,6 +123,11 @@ export class AdaptiveCardHelper {
         } as MessagingExtensionActionResponse;
     }
 
+    /**
+     * Creates an AdaptiveCard attachment.
+     * @param data Example data.
+     * @returns An [Attachment](xref:botframework-schema.Attachment) object.
+     */
     public static toAdaptiveCardAttachment(data: SubmitExampleData): Attachment {
         return CardFactory.adaptiveCard({
             actions: [

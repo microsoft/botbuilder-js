@@ -5,49 +5,15 @@
 ```ts
 
 import { Activity } from 'botbuilder-core';
-import { BotAdapter } from 'botbuilder-core';
-import { ConversationReference } from 'botbuilder-core';
 import { Dialog } from 'botbuilder-dialogs';
 import { DialogContext } from 'botbuilder-dialogs';
 import { DialogExpression } from 'botbuilder-dialogs-adaptive';
 import { DialogTurnResult } from 'botbuilder-dialogs';
 import { Expression } from 'adaptive-expressions';
-import { IActivity } from 'botbuilder-core';
-import { IUserTokenProvider } from 'botbuilder-core';
-import { Middleware } from 'botbuilder-core';
 import { ResourceExplorer } from 'botbuilder-dialogs-declarative';
-import { ResourceResponse } from 'botbuilder-core';
 import { StringExpression } from 'adaptive-expressions';
-import { TokenResponse } from 'botbuilder-core';
+import { TestAdapter } from 'botbuilder-core';
 import { TurnContext } from 'botbuilder-core';
-
-// @public (undocumented)
-export class AdaptiveTestAdapter extends BotAdapter implements IUserTokenProvider {
-    constructor(conversation?: ConversationReference, sendTraceActivity?: boolean);
-    activeQueue: Activity[];
-    addUserToken(connectionName: string, channelId: string, userId: string, token: string, magicCode?: string): void;
-    continueConversation(reference: Partial<ConversationReference>, logic: (revocableContext: TurnContext) => Promise<void>): Promise<void>;
-    conversation: ConversationReference;
-    static createConversation(name: string, user?: string, bot?: string): ConversationReference;
-    deleteActivity(context: TurnContext, reference: ConversationReference): Promise<void>;
-    get enableTrace(): boolean;
-    set enableTrace(value: boolean);
-    getAadTokens(context: TurnContext, connectionName: string, resourceUrls: string[]): Promise<{
-        [propertyName: string]: TokenResponse;
-    }>;
-    getNextReply(): IActivity;
-    getSignInLink(context: TurnContext, connectionName: string): Promise<string>;
-    getTokenStatus(context: TurnContext, userId: string, includeFilter?: string, oAuthAppCredentials?: any): Promise<[any]>;
-    getUserToken(context: TurnContext, connectionName: string, magicCode?: string): Promise<TokenResponse>;
-    locale: string;
-    makeActivity(text?: string): Activity;
-    processActivity(activity: Activity, callback: (context: TurnContext) => Promise<any>): Promise<any>;
-    sendActivities(context: TurnContext, activities: Activity[]): Promise<ResourceResponse[]>;
-    sendTextToBot(userSays: string, callback: (context: TurnContext) => Promise<any>): Promise<any>;
-    signOutUser(context: TurnContext, connectionName: string): Promise<void>;
-    updateActivity(context: TurnContext, activity: Activity): Promise<void>;
-    use(middleware: Middleware): this;
-    }
 
 // @public (undocumented)
 export class AssertCondition<O extends object = {}> extends Dialog<O> {
@@ -74,7 +40,7 @@ export class AssertReplyActivity implements TestAction {
     assertions: string[];
     description: string;
     // (undocumented)
-    execute(testAdapter: AdaptiveTestAdapter, callback: (context: TurnContext) => Promise<any>): Promise<any>;
+    execute(testAdapter: TestAdapter, callback: (context: TurnContext) => Promise<any>): Promise<any>;
     // (undocumented)
     getConditionDescription(): string;
     timeout: number;
@@ -95,7 +61,7 @@ export class AssertReplyOneOf extends AssertReplyActivity {
 // @public (undocumented)
 export interface TestAction {
     // (undocumented)
-    execute(adapter: AdaptiveTestAdapter, callback: (context: TurnContext) => Promise<any>): any;
+    execute(adapter: TestAdapter, callback: (context: TurnContext) => Promise<any>): any;
 }
 
 // @public (undocumented)
@@ -110,16 +76,18 @@ export class TestScript {
     description: string;
     dialog: DialogExpression;
     enableTrace: boolean;
-    execute(resourceExplorer: ResourceExplorer, testName?: string, testAdapter?: AdaptiveTestAdapter): Promise<void>;
+    execute(resourceExplorer: ResourceExplorer, testName?: string, testAdapter?: TestAdapter): Promise<void>;
     locale: string;
     script: TestAction[];
+    // Warning: (ae-forgotten-export) The symbol "UserTokenMock" needs to be exported by the entry point index.d.ts
+    userTokenMocks: UserTokenMock[];
 }
 
 // @public (undocumented)
 export class UserActivity implements TestAction {
     activity: Activity;
     // (undocumented)
-    execute(testAdapter: AdaptiveTestAdapter, callback: (context: TurnContext) => Promise<any>): Promise<any>;
+    execute(testAdapter: TestAdapter, callback: (context: TurnContext) => Promise<any>): Promise<any>;
     user: string;
 }
 
@@ -134,7 +102,7 @@ export interface UserActivityConfiguration {
 // @public (undocumented)
 export class UserConversationUpdate implements TestAction {
     // (undocumented)
-    execute(testAdapter: AdaptiveTestAdapter, callback: (context: TurnContext) => Promise<any>): Promise<any>;
+    execute(testAdapter: TestAdapter, callback: (context: TurnContext) => Promise<any>): Promise<any>;
     membersAdded: string[];
     membersRemoved: string[];
 }
@@ -142,7 +110,7 @@ export class UserConversationUpdate implements TestAction {
 // @public (undocumented)
 export class UserDelay implements TestAction {
     // (undocumented)
-    execute(_testAdapter: AdaptiveTestAdapter, _callback: (context: TurnContext) => Promise<any>): Promise<any>;
+    execute(_testAdapter: TestAdapter, _callback: (context: TurnContext) => Promise<any>): Promise<any>;
     timespan: number;
 }
 
@@ -155,7 +123,7 @@ export interface UserDelayConfiguration {
 // @public (undocumented)
 export class UserSays implements TestAction {
     // (undocumented)
-    execute(testAdapter: AdaptiveTestAdapter, callback: (context: TurnContext) => Promise<any>): Promise<any>;
+    execute(testAdapter: TestAdapter, callback: (context: TurnContext) => Promise<any>): Promise<any>;
     text: string;
     user: string;
 }
@@ -163,7 +131,7 @@ export class UserSays implements TestAction {
 // @public (undocumented)
 export class UserTyping implements TestAction {
     // (undocumented)
-    execute(testAdapter: AdaptiveTestAdapter, callback: (context: TurnContext) => Promise<any>): Promise<any>;
+    execute(testAdapter: TestAdapter, callback: (context: TurnContext) => Promise<any>): Promise<any>;
     user: string;
 }
 
