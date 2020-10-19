@@ -11,6 +11,11 @@ import { EntityAssignment } from './entityAssignment';
 
 const events = 'this.events';
 
+/**
+ * Tracks entity related events to surface.
+ * @remarks When processing entities possible ambiguities are identified and when resolved they turn into assign events.
+ * This tracking persists across multiple input utterances.
+ */
 export class EntityAssignments {
     /**
      * Queue of entity assignments.
