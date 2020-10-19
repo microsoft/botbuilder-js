@@ -22,7 +22,11 @@ export class AdaptiveTypeBuilder implements TypeBuilder {
      * @param resourceExplorer Resource explorer.
      * @param converters Key value pair with converters.
      */
-    public constructor(factory: new () => object, resourceExplorer: ResourceExplorer, converters: { [key: string]: Converter }) {
+    public constructor(
+        factory: new () => object,
+        resourceExplorer: ResourceExplorer,
+        converters: { [key: string]: Converter }
+    ) {
         this._factory = factory;
         this._resourceExplorer = resourceExplorer;
         this._converters = converters;

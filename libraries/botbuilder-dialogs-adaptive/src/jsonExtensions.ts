@@ -25,7 +25,7 @@ export function replaceJsonRecursively(state: DialogStateManager, unit: object):
     }
 
     if (Array.isArray(unit)) {
-        let result = [];
+        const result = [];
         for (const child of unit) {
             result.push(replaceJsonRecursively(state, child));
         }
@@ -33,8 +33,8 @@ export function replaceJsonRecursively(state: DialogStateManager, unit: object):
     }
 
     if (typeof unit === 'object') {
-        let result = {};
-        for (let key in unit) {
+        const result = {};
+        for (const key in unit) {
             result[key] = replaceJsonRecursively(state, unit[key]);
         }
         return result;

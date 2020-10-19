@@ -41,7 +41,7 @@ export class SchemaHelper {
      * Returns the schema object for a given property path.
      * @param path Path of the properties schema to return.
      */
-    public pathToSchema(path: string): PropertySchema|undefined {
+    public pathToSchema(path: string): PropertySchema | undefined {
         let property: PropertySchema = undefined;
         const segments = path.replace('[]', '').split('.');
         if (segments.length > 0) {
@@ -60,13 +60,13 @@ export class SchemaHelper {
     /**
      * @private
      */
-    private createProperty(schema: object, path: string = ''): PropertySchema {
+    private createProperty(schema: object, path = ''): PropertySchema {
         // Simplify array handling by collapsing to arrays sub-type
         let type: string = schema['type'];
         if (type == 'array') {
             const items: any = schema['items'] || schema['contains'];
             if (Array.isArray(items)) {
-                throw new Error(`${ path } has an items array which is not supported`);
+                throw new Error(`${path} has an items array which is not supported`);
             } else if (typeof items == 'object') {
                 // Copy parent $ properties like $entities
                 for (const name in schema) {
@@ -78,7 +78,7 @@ export class SchemaHelper {
                 type = schema['type'];
                 path += '[]';
             } else {
-                throw new Error(`${ path } has an items array which is not supported`);
+                throw new Error(`${path} has an items array which is not supported`);
             }
         }
 
@@ -88,7 +88,7 @@ export class SchemaHelper {
             const properties = schema['properties'] || {};
             for (const name in properties) {
                 if (properties.hasOwnProperty(name) && !name.startsWith('$')) {
-                    const newPath = path == '' ? name : `${ path }.${ name }`;
+                    const newPath = path == '' ? name : `${path}.${name}`;
                     children.push(this.createProperty(properties[name], newPath));
                 }
             }

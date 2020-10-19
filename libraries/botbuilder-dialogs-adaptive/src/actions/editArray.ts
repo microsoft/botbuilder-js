@@ -13,7 +13,7 @@ export enum ArrayChangeType {
     pop = 'pop',
     take = 'take',
     remove = 'remove',
-    clear = 'clear'
+    clear = 'clear',
 }
 
 export class EditArray<O extends object = {}> extends Dialog<O> {
@@ -21,8 +21,12 @@ export class EditArray<O extends object = {}> extends Dialog<O> {
     public constructor(changeType: ArrayChangeType, itemsProperty: string, value?: any, resultProperty?: string);
     public constructor(changeType?: ArrayChangeType, itemsProperty?: string, value?: any, resultProperty?: string) {
         super();
-        if (changeType) { this.changeType = new EnumExpression<ArrayChangeType>(changeType); }
-        if (itemsProperty) { this.itemsProperty = new StringExpression(itemsProperty); }
+        if (changeType) {
+            this.changeType = new EnumExpression<ArrayChangeType>(changeType);
+        }
+        if (itemsProperty) {
+            this.itemsProperty = new StringExpression(itemsProperty);
+        }
         switch (changeType) {
             case ArrayChangeType.clear:
             case ArrayChangeType.pop:
@@ -69,7 +73,9 @@ export class EditArray<O extends object = {}> extends Dialog<O> {
         }
 
         if (!this.itemsProperty) {
-            throw new Error(`EditArray: "${ this.changeType.toString() }" operation couldn't be performed because the itemsProperty wasn't specified.`);
+            throw new Error(
+                `EditArray: "${this.changeType.toString()}" operation couldn't be performed because the itemsProperty wasn't specified.`
+            );
         }
 
         // Get list and ensure populated
@@ -98,7 +104,10 @@ export class EditArray<O extends object = {}> extends Dialog<O> {
                 if (evaluationResult != undefined) {
                     result = false;
                     for (let i = 0; i < list.length; i++) {
-                        if ((JSON.stringify(evaluationResult) == JSON.stringify(list[i])) || evaluationResult === list[i]) {
+                        if (
+                            JSON.stringify(evaluationResult) == JSON.stringify(list[i]) ||
+                            evaluationResult === list[i]
+                        ) {
                             list.splice(i, 1);
                             result = true;
                             break;
@@ -121,10 +130,16 @@ export class EditArray<O extends object = {}> extends Dialog<O> {
     }
 
     protected onComputeId(): string {
-        return `EditArray[${ this.changeType.toString() }: ${ this.itemsProperty.toString() }]`;
+        return `EditArray[${this.changeType.toString()}: ${this.itemsProperty.toString()}]`;
     }
 
     private ensureValue(): void {
-        if (!this.value) { throw new Error(`EditArray: "${ this.changeType.toString() }" operation couldn't be performed for list "${ this.itemsProperty }" because a value wasn't specified.`) }
+        if (!this.value) {
+            throw new Error(
+                `EditArray: "${this.changeType.toString()}" operation couldn't be performed for list "${
+                    this.itemsProperty
+                }" because a value wasn't specified.`
+            );
+        }
     }
 }

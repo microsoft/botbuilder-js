@@ -11,7 +11,6 @@ import { AliasPathResolver } from './aliasPathResolver';
  * Maps #xxx => turn.recognized.intents.xxx
  */
 export class HashPathResolver extends AliasPathResolver {
-
     constructor() {
         super('#', 'turn.recognized.intents.');
     }

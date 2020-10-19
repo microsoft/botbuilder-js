@@ -92,7 +92,7 @@ export class EntityInfo {
      * @param _this Source entity.
      */
     public static toString(_this: Partial<EntityInfo>): string {
-        return `${ _this.name }:${ _this.value } P${ _this.priority } ${ _this.score } ${ _this.coverage }`;
+        return `${_this.name}:${_this.value} P${_this.priority} ${_this.score} ${_this.coverage}`;
     }
 
     /**
@@ -119,7 +119,11 @@ export class EntityInfo {
      * @param entity Entity to compare.
      */
     public static covers(_this: Partial<EntityInfo>, entity: Partial<EntityInfo>): boolean {
-        return _this.start <= entity.start && _this.end >= entity.end && _this.end - _this.start > entity.end - entity.start;
+        return (
+            _this.start <= entity.start &&
+            _this.end >= entity.end &&
+            _this.end - _this.start > entity.end - entity.start
+        );
     }
 
     /**

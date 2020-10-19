@@ -25,7 +25,7 @@ export class PropertySchema {
         this.path = path;
         this.schema = schema;
         this._children = children || [];
-        children.forEach((child) => child._parent = this);
+        children.forEach((child) => (child._parent = this));
         this._entities = schema['$entities'] || [];
         this._expectedOnly = schema['$expectedOnly'] || [];
     }
@@ -45,7 +45,7 @@ export class PropertySchema {
     /**
      * Parent property schema if any.
      */
-    public get parent(): PropertySchema|undefined {
+    public get parent(): PropertySchema | undefined {
         return this._parent;
     }
 

@@ -26,7 +26,13 @@ export class ActionContext extends DialogContext {
      * @param actions Current list of remaining actions to execute.
      * @param changeKey TurnState key for where to persist any changes.
      */
-    public constructor(dialogs: DialogSet, parentDialogContext: DialogContext, state: DialogState, actions: ActionState[], changeKey: symbol) {
+    public constructor(
+        dialogs: DialogSet,
+        parentDialogContext: DialogContext,
+        state: DialogState,
+        actions: ActionState[],
+        changeKey: symbol
+    ) {
         super(dialogs, parentDialogContext, state);
         this.actions = actions;
         this._changeKey = changeKey;
@@ -70,12 +76,12 @@ export class ActionContext extends DialogContext {
                 // Apply memory changes to turn state
                 if (change.turn) {
                     for (const key in change.turn) {
-                        this.state.setValue(`turn.${ key }`, change.turn[key]);
+                        this.state.setValue(`turn.${key}`, change.turn[key]);
                     }
                 }
 
                 // Update sequence
-                switch(change.changeType) {
+                switch (change.changeType) {
                     case ActionChangeType.insertActions:
                         this.actions.unshift(...change.actions);
                         break;

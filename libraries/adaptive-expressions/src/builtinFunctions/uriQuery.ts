@@ -25,9 +25,8 @@ export class UriQuery extends ExpressionEvaluator {
 
     private static evaluator(expr: Expression, state: MemoryInterface, options: Options): ValueWithError {
         let value: any;
-        let error: string;
-        let args: any[];
-        ({ args, error } = FunctionUtils.evaluateChildren(expr, state, options));
+        const { args, error: childrenError } = FunctionUtils.evaluateChildren(expr, state, options);
+        let error = childrenError;
         if (!error) {
             if (typeof args[0] === 'string') {
                 ({ value, error } = UriQuery.evalUriQuery(args[0]));
@@ -41,9 +40,8 @@ export class UriQuery extends ExpressionEvaluator {
 
     private static evalUriQuery(uri: string): ValueWithError {
         let result: string;
-        let error: string;
-        let parsed: URL;
-        ({ value: parsed, error } = InternalFunctionUtils.parseUri(uri));
+        const { value: parsed, error: parseError } = InternalFunctionUtils.parseUri(uri);
+        let error = parseError;
         if (!error) {
             try {
                 result = parsed.search;

@@ -142,6 +142,7 @@ export class ExpressionFunctions {
             new BuiltinFunctions.RemoveProperty(),
             new BuiltinFunctions.Replace(),
             new BuiltinFunctions.ReplaceIgnoreCase(),
+            new BuiltinFunctions.Reverse(),
             new BuiltinFunctions.Round(),
             new BuiltinFunctions.Select(),
             new BuiltinFunctions.SentenceCase(),
@@ -190,6 +191,11 @@ export class ExpressionFunctions {
             lookup.set(func.type, func);
         });
 
+        // Attach negations
+        lookup.get(ExpressionType.LessThan).negation = lookup.get(ExpressionType.GreaterThanOrEqual);
+        lookup.get(ExpressionType.LessThanOrEqual).negation = lookup.get(ExpressionType.GreaterThan);
+        lookup.get(ExpressionType.Equal).negation = lookup.get(ExpressionType.NotEqual);
+
         // Math aliases
         lookup.set('add', lookup.get(ExpressionType.Add)); // more than 1 param
         lookup.set('mul', lookup.get(ExpressionType.Multiply)); // more than 1 param
@@ -208,6 +214,7 @@ export class ExpressionFunctions {
         lookup.set('not', lookup.get(ExpressionType.Not));
         lookup.set('or', lookup.get(ExpressionType.Or));
         lookup.set('&', lookup.get(ExpressionType.Concat));
+        lookup.set('??', lookup.get(ExpressionType.Coalesce));
 
         return lookup as ReadonlyMap<string, ExpressionEvaluator>;
     }

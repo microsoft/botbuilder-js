@@ -45,6 +45,6 @@ export class AssertCondition<O extends object = {}> extends Dialog<O> {
      * @protected
      */
     protected onComputeId(): string {
-        return `AssertCondition[${ this.condition.toString() }]`;
+        return `AssertCondition[${this.condition.toString()}]`;
     }
 }
