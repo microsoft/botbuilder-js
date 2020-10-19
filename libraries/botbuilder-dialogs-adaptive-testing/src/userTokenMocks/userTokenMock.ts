@@ -6,38 +6,41 @@
  * Licensed under the MIT License.
  */
 
-import { Converter, ResourceExplorer } from 'botbuilder-dialogs-declarative';
 import { TestAdapter } from 'botbuilder-core';
+import { Configurable, Converter } from 'botbuilder-dialogs';
+import { ResourceExplorer } from 'botbuilder-dialogs-declarative';
 
 /**
  * Interface for mocking user token flows.
  */
-export interface UserTokenMock {
+export abstract class UserTokenMock extends Configurable {
     /**
      * Method to setup this mock for an adapter.
      */
-    setup(adapter: TestAdapter): void;
+    public abstract setup(adapter: TestAdapter): void;
 }
 
 /**
  * The type converters for UserTokenMock.
  */
-export class UserTokenMocksConverter implements Converter {
-    private _resourceExplorer: ResourceExplorer;
+export class UserTokenMocksConverter implements Converter<string[], UserTokenMock[]> {
+    public constructor(private readonly _resourceExplorer: ResourceExplorer) {}
 
-    public constructor(resourceExplorer: ResourceExplorer) {
-        this._resourceExplorer = resourceExplorer;
-    }
-
-    public convert(value: string | UserTokenMock): UserTokenMock {
-        if (typeof value === 'string') {
-            const userTokenMock = this._resourceExplorer.loadType(`${value}.dialog`) as UserTokenMock;
-            if (userTokenMock) {
-                return userTokenMock;
+    public convert(value: string[] | UserTokenMock[]): UserTokenMock[] {
+        const userTokenMocks: UserTokenMock[] = [];
+        value.forEach((item: string | UserTokenMock) => {
+            if (typeof item === 'string') {
+                const userTokenMock = this._resourceExplorer.loadType<UserTokenMock>(`${item}.dialog`);
+                if (userTokenMock) {
+                    userTokenMocks.push(userTokenMock);
+                } else {
+                    userTokenMocks.push(this._resourceExplorer.loadType<UserTokenMock>(item));
+                }
+            } else {
+                const kind = item['$kind'];
+                userTokenMocks.push(this._resourceExplorer.buildType<UserTokenMock, UserTokenMock>(kind, item));
             }
-            return this._resourceExplorer.loadType(value) as UserTokenMock;
-        } else {
-            return this._resourceExplorer.buildType(value) as UserTokenMock;
-        }
+        });
+        return userTokenMocks;
     }
 }

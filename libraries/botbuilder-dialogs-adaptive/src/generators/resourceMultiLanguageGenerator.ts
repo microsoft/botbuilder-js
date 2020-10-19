@@ -7,15 +7,20 @@
  */
 
 import { DialogContext } from 'botbuilder-dialogs';
-import { MultiLanguageGeneratorBase } from './multiLanguageGeneratorBase';
+import { MultiLanguageGeneratorBase, MultiLanguageGeneratorBaseConfiguration } from './multiLanguageGeneratorBase';
 import { LanguageGenerator } from '../languageGenerator';
 import { LanguageGeneratorManager } from './languageGeneratorManager';
 import { languageGeneratorManagerKey } from '../languageGeneratorExtensions';
 
-export class ResourceMultiLanguageGenerator<
-    T = unknown,
-    D extends Record<string, unknown> = Record<string, unknown>
-> extends MultiLanguageGeneratorBase<T, D> {
+export interface ResourceMultiLanguageGeneratorConfiguration extends MultiLanguageGeneratorBaseConfiguration {
+    resourceId?: string;
+}
+
+export class ResourceMultiLanguageGenerator<T = unknown, D extends Record<string, unknown> = Record<string, unknown>>
+    extends MultiLanguageGeneratorBase<T, D>
+    implements ResourceMultiLanguageGeneratorConfiguration {
+    public static $kind = 'Microsoft.ResourceMultiLanguageGenerator';
+
     /**
      * Initializes a new instance of the ResourceMultiLanguageGenerator class.
      * @param resourceId Resource id of LG file.

@@ -5,10 +5,10 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { TestAdapter } from 'botbuilder-core';
-import { AdaptiveDialogComponentRegistration } from 'botbuilder-dialogs-adaptive';
+import { ComponentRegistration, TestAdapter } from 'botbuilder-core';
+import { AdaptiveComponentRegistration } from 'botbuilder-dialogs-adaptive';
 import { ResourceExplorer } from 'botbuilder-dialogs-declarative';
-import { AdaptiveDialogTestComponentRegistration } from './adaptiveDialogTestComponentRegistration';
+import { AdaptiveTestComponentRegistration } from './adaptiveTestComponentRegistration';
 import { TestScript } from './testScript';
 
 /**
@@ -23,10 +23,11 @@ export class TestRunner {
      * @param resourcePath Path where the `.dialog` files are located.
      */
     public constructor(resourcePath: string) {
+        ComponentRegistration.add(new AdaptiveComponentRegistration());
+        ComponentRegistration.add(new AdaptiveTestComponentRegistration());
+
         this.resourceExplorer = new ResourceExplorer();
         this.resourceExplorer.addFolder(resourcePath, true, false);
-        this.resourceExplorer.addComponent(new AdaptiveDialogComponentRegistration(this.resourceExplorer));
-        this.resourceExplorer.addComponent(new AdaptiveDialogTestComponentRegistration(this.resourceExplorer));
 
         this.testAdapter = new TestAdapter(TestAdapter.createConversation('botbuilder-dialogs-adaptive-testing'));
     }
@@ -37,7 +38,7 @@ export class TestRunner {
      * @returns A Promise that represents the work queued to execute.
      */
     public async runTestScript(testName: string): Promise<any> {
-        const script = this.resourceExplorer.loadType(`${testName}.test.dialog`) as TestScript;
+        const script = this.resourceExplorer.loadType<TestScript>(`${testName}.test.dialog`);
         script.description = script.description || testName;
         this.testAdapter.activeQueue.splice(0, this.testAdapter.activeQueue.length);
         await script.execute(this.resourceExplorer, testName, this.testAdapter);

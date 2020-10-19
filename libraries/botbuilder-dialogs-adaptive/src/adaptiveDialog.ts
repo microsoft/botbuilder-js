@@ -6,7 +6,13 @@
  * Licensed under the MIT License.
  */
 
-import { IntExpression, ExpressionParser, BoolExpression } from 'adaptive-expressions';
+import {
+    BoolExpression,
+    BoolExpressionConverter,
+    Expression,
+    ExpressionParser,
+    IntExpression,
+} from 'adaptive-expressions';
 import {
     Activity,
     ActivityTypes,
@@ -17,7 +23,10 @@ import {
     telemetryTrackDialogView,
 } from 'botbuilder-core';
 import {
+    Converter,
+    ConverterFactory,
     Dialog,
+    DialogConfiguration,
     DialogContainer,
     DialogContext,
     DialogDependencies,
@@ -34,6 +43,7 @@ import { ActionContext } from './actionContext';
 import { AdaptiveDialogState } from './adaptiveDialogState';
 import { AdaptiveEvents } from './adaptiveEvents';
 import { OnCondition } from './conditions';
+import { LanguageGeneratorConverter, RecognizerConverter } from './converters';
 import { EntityAssignment } from './entityAssignment';
 import { EntityAssignments } from './entityAssignments';
 import { EntityInfo, NormalizedEntityInfos } from './entityInfo';
@@ -45,10 +55,21 @@ import { SchemaHelper } from './schemaHelper';
 import { FirstSelector, MostSpecificSelector } from './selectors';
 import { TriggerSelector } from './triggerSelector';
 
+export interface AdaptiveDialogConfiguration extends DialogConfiguration {
+    recognizer?: string | Recognizer;
+    generator?: string | LanguageGenerator;
+    triggers?: OnCondition[];
+    autoEndDialog?: boolean | string | Expression | BoolExpression;
+    selector?: TriggerSelector;
+    defaultResultProperty?: string;
+    schema?: unknown;
+}
+
 /**
  * The Adaptive Dialog models conversation using events and events to adapt dynamically to changing conversation flow.
  */
-export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
+export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> implements AdaptiveDialogConfiguration {
+    public static $kind = 'Microsoft.AdaptiveDialog';
     public static conditionTracker = 'dialog._tracker.conditions';
 
     private readonly adaptiveKey = '_adaptive';
@@ -125,6 +146,19 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
      */
     public get schema(): object | undefined {
         return this.dialogSchema ? this.dialogSchema.schema : undefined;
+    }
+
+    public getConverter(property: keyof AdaptiveDialogConfiguration): Converter | ConverterFactory {
+        switch (property) {
+            case 'recognizer':
+                return RecognizerConverter;
+            case 'generator':
+                return new LanguageGeneratorConverter();
+            case 'autoEndDialog':
+                return new BoolExpressionConverter();
+            default:
+                return super.getConverter(property);
+        }
     }
 
     /**

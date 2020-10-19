@@ -7,12 +7,19 @@
  */
 
 import { Activity, ActivityTypes } from 'botbuilder-core';
-import { AssertReplyActivity } from './assertReplyActivity';
+import { AssertReplyActivity, AssertReplyActivityConfiguration } from './assertReplyActivity';
+
+export interface AssertReplyOneOfConfiguration extends AssertReplyActivityConfiguration {
+    text?: string[];
+    exact?: boolean;
+}
 
 /**
  * Assertion that reply from the bot matches one of options.
  */
-export class AssertReplyOneOf extends AssertReplyActivity {
+export class AssertReplyOneOf extends AssertReplyActivity implements AssertReplyOneOfConfiguration {
+    public static $kind = 'Microsoft.Test.AssertReplyOneOf';
+
     /**
      * The text variations.
      */
@@ -35,7 +42,7 @@ export class AssertReplyOneOf extends AssertReplyActivity {
      * Validates the reply of an activity.
      * @param activity The activity to verify.
      */
-    public validateReply(activity: Activity) {
+    public validateReply(activity: Activity): void {
         let found = false;
 
         for (let i = 0; i < this.text.length; i++) {

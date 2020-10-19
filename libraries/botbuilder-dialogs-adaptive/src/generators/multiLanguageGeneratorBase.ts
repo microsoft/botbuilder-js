@@ -6,22 +6,37 @@
  * Licensed under the MIT License.
  */
 
-import { DialogContext } from 'botbuilder-dialogs';
+import { Configurable, Converter, ConverterFactory, DialogContext } from 'botbuilder-dialogs';
 import { LanguageGenerator } from '../languageGenerator';
-import { LanguagePolicy } from '../languagePolicy';
+import { LanguagePolicy, LanguagePolicyConverter } from '../languagePolicy';
 import { languagePolicyKey } from '../languageGeneratorExtensions';
+
+export interface MultiLanguageGeneratorBaseConfiguration {
+    languagePolicy?: Record<string, string[]> | LanguagePolicy;
+}
 
 /**
  * Base class which applies language policy to tryGetGenerator.
  */
 export abstract class MultiLanguageGeneratorBase<
-    T = unknown,
-    D extends Record<string, unknown> = Record<string, unknown>
-> implements LanguageGenerator<T, D> {
+        T = unknown,
+        D extends Record<string, unknown> = Record<string, unknown>
+    >
+    extends Configurable
+    implements LanguageGenerator<T, D>, MultiLanguageGeneratorBaseConfiguration {
     /**
      * Language policy required by language generator.
      */
     public languagePolicy: LanguagePolicy;
+
+    public getConverter(property: keyof MultiLanguageGeneratorBaseConfiguration): Converter | ConverterFactory {
+        switch (property) {
+            case 'languagePolicy':
+                return new LanguagePolicyConverter();
+            default:
+                return super.getConverter(property);
+        }
+    }
 
     /**
      * Abstract method to get a language generator by locale.
