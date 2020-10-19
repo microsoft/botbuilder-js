@@ -1701,7 +1701,7 @@ export class BotFrameworkAdapter
      * Override this in a derived class to modify how the adapter creates a turn context.
      */
     protected createContext(request: Partial<Activity>): TurnContext {
-        return new TurnContext(this as any, request);
+        return new TurnContext(this, request);
     }
 
     /**

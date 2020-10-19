@@ -1,5 +1,16 @@
-const { ok: assert, strictEqual } = require('assert');
-const { ActivityHandler, ActivityTypes, CallerIdConstants, SkillConversationReferenceKey } = require('botbuilder-core');
+const assert = require('assert');
+const sinon = require('sinon');
+const { BotFrameworkAdapter, SkillHandler } = require('../../');
+const { ConversationIdFactory } = require('./conversationIdFactory');
+
+const {
+    ActivityHandler,
+    ActivityTypes,
+    CallerIdConstants,
+    SkillConversationReferenceKey,
+    TurnContext,
+} = require('botbuilder-core');
+
 const {
     AppCredentials,
     AuthenticationConfiguration,
@@ -7,278 +18,361 @@ const {
     ClaimsIdentity,
     SimpleCredentialProvider,
 } = require('botframework-connector');
-const { BotFrameworkAdapter, SkillHandler } = require('../../');
-const { ConversationIdFactory } = require('./conversationIdFactory');
 
 describe('SkillHandler', function () {
-    this.timeout(3000);
     const adapter = new BotFrameworkAdapter({});
     const bot = new ActivityHandler();
     const factory = new ConversationIdFactory();
-    factory.disableCreateWithOptions = true;
-    factory.disableGetSkillConversationReference = true;
     const creds = new SimpleCredentialProvider('', '');
     const authConfig = new AuthenticationConfiguration();
+    const handler = new SkillHandler(adapter, bot, factory, creds, authConfig);
 
-    it('should fail construction without required adapter', () => {
-        try {
-            const handler = new SkillHandler(undefined, {}, {}, {}, {});
-        } catch (e) {
-            strictEqual(e.message, 'missing adapter.');
-        }
+    let sandbox;
+    beforeEach(() => {
+        sandbox = sinon.createSandbox();
+    });
+    afterEach(() => {
+        sandbox.restore();
     });
 
-    it('should fail construction without required factory', () => {
-        try {
-            const handler = new SkillHandler({}, undefined, {}, {}, {});
-        } catch (e) {
-            strictEqual(e.message, 'missing conversationIdFactory.');
-        }
+    // Supports mocking the turn context and registering expectations on it
+    const expectsContext = (callback) => {
+        sandbox.replace(adapter, 'createContext', (activity) => {
+            const context = new TurnContext(adapter, activity);
+            callback(sandbox.mock(context));
+            return context;
+        });
+    };
+
+    // Registers expectations that verify a particular skill conversation is returned from the factory
+    const expectsFactoryGetSkillConversationReference = (ref) =>
+        sandbox
+            .mock(factory)
+            .expects('getSkillConversationReference')
+            .withArgs('convId')
+            .once()
+            .returns(Promise.resolve(ref));
+
+    // Mocks the handler get skill conversation reference method to return a particular conversation reference
+    const expectsGetSkillConversationReference = (conversationId, serviceUrl = 'http://localhost/api/messages') =>
+        sandbox
+            .mock(handler)
+            .expects('getSkillConversationReference')
+            .withArgs(conversationId)
+            .returns(
+                Promise.resolve({
+                    conversationReference: { serviceUrl },
+                    oAuthScope: 'oAuthScope',
+                })
+            );
+
+    // Registers expectation that handler.processActivity is invoked with a particular set of arguments
+    const expectsProcessActivity = (...args) =>
+        sandbox
+            .mock(handler)
+            .expects('processActivity')
+            .withArgs(...args)
+            .once();
+
+    // Registers expectation that bot.run is invoked with a particular set of arguments
+    const expectsBotRun = (activity, identity) =>
+        sandbox
+            .mock(bot)
+            .expects('run')
+            .withArgs(
+                sinon
+                    .match((context) => {
+                        assert.deepStrictEqual(context.turnState.get(adapter.BotIdentityKey), identity);
+                        return true;
+                    })
+                    .and(sinon.match({ activity }))
+            )
+            .once();
+
+    describe('constructor()', () => {
+        const testCases = [
+            { label: 'adapter', args: [undefined, bot, factory, {}, {}, {}] },
+            { label: 'bot', args: [adapter, undefined, factory, {}, {}, {}] },
+            { label: 'conversationIdFactory', args: [adapter, bot, undefined, {}, {}, {}] },
+        ];
+
+        testCases.forEach((testCase) => {
+            it(`should fail without required ${testCase.label}`, () => {
+                try {
+                    new SkillHandler(...testCase.args);
+                    assert.fail('should have thrown');
+                } catch (err) {
+                    assert.strictEqual(err.message, `missing ${testCase.label}.`);
+                }
+            });
+        });
+
+        it('should succeed', () => {
+            new SkillHandler(adapter, bot, factory, creds, authConfig);
+        });
     });
 
-    it('should successfully construct', () => {
-        const handler = new SkillHandler(adapter, bot, factory, creds, authConfig);
+    describe('onReplyToActivity()', () => {
+        it('should call processActivity()', async () => {
+            const identity = new ClaimsIdentity([]);
+            const convId = 'convId';
+            const activityId = 'activityId';
+            const skillActivity = { type: ActivityTypes.Message };
+
+            expectsProcessActivity(identity, convId, activityId, skillActivity);
+            await handler.onReplyToActivity(identity, convId, activityId, skillActivity);
+            sandbox.verify();
+        });
     });
 
-    it('should call processActivity() from onReplyToActivity()', async () => {
-        const identity = new ClaimsIdentity([]);
-        const convId = 'convId';
-        const actualReplyToId = '1';
-        const skillActivity = { type: ActivityTypes.Message };
+    describe('onSendToConversation()', () => {
+        it('should call processActivity()', async () => {
+            const identity = new ClaimsIdentity([]);
+            const convId = 'convId';
+            const skillActivity = { type: ActivityTypes.Message };
 
-        const handler = new SkillHandler(adapter, bot, {}, creds, authConfig);
-        handler.processActivity = async function (skillIdentity, conversationId, replyToId, activity) {
-            strictEqual(skillIdentity, identity);
-            strictEqual(conversationId, convId);
-            strictEqual(replyToId, actualReplyToId);
-            strictEqual(activity, skillActivity);
-            return { id: 1 };
-        };
-
-        const response = await handler.onReplyToActivity(identity, convId, actualReplyToId, skillActivity);
-        strictEqual(response.id, 1);
+            expectsProcessActivity(identity, convId, null, skillActivity);
+            await handler.onSendToConversation(identity, convId, skillActivity);
+            sandbox.verify();
+        });
     });
 
-    it('should call processActivity() from onSendToConversation()', async () => {
-        const identity = new ClaimsIdentity([]);
-        const convId = 'convId';
-        const skillActivity = { type: ActivityTypes.Message };
+    describe('updateActivity()', () => {
+        it('should call updateActivity on context', async () => {
+            const convId = 'convId';
+            const activityId = 'activityId';
+            const updatedActivity = {
+                type: ActivityTypes.Event,
+                name: 'eventName',
+                serviceUrl: 'http://localhost/api/messages',
+            };
 
-        const handler = new SkillHandler(adapter, bot, {}, creds, authConfig);
-        handler.processActivity = async function (skillIdentity, conversationId, replyToId, activity) {
-            strictEqual(skillIdentity, identity);
-            strictEqual(conversationId, convId);
-            strictEqual(activity, skillActivity);
-            strictEqual(replyToId, null);
-            return { id: 1 };
-        };
+            expectsGetSkillConversationReference(convId, updatedActivity.serviceUrl);
 
-        const response = await handler.onSendToConversation(identity, convId, skillActivity);
-        strictEqual(response.id, 1);
+            expectsContext((context) =>
+                context.expects('updateActivity').withArgs(sinon.match(updatedActivity)).once().resolves()
+            );
+
+            await handler.onUpdateActivity(new ClaimsIdentity([]), convId, activityId, updatedActivity);
+            sandbox.verify();
+        });
+    });
+
+    describe('deleteActivity()', () => {
+        it('should call deleteActivity on context', async () => {
+            const convId = 'convId';
+            const activityId = 'activityId';
+
+            expectsGetSkillConversationReference(convId);
+            expectsContext((context) => context.expects('deleteActivity').withArgs(activityId).once().resolves());
+
+            await handler.onDeleteActivity(new ClaimsIdentity([]), convId, activityId);
+            sandbox.verify();
+        });
     });
 
     describe('private methods', () => {
-        const handler = new SkillHandler(adapter, bot, factory, creds, authConfig);
+        describe('continueConversation()', () => {
+            const identity = new ClaimsIdentity([{ type: 'aud', value: 'audience' }]);
+            const conversationId = 'conversationId';
+            const serviceUrl = 'http://initiallyUntrusted/api/messages';
+
+            it(`should add the original activity's ServiceUrl to the TrustedServiceUrls in AppCredentials`, (done) => {
+                expectsGetSkillConversationReference(conversationId, serviceUrl);
+
+                assert(!AppCredentials.isTrustedServiceUrl(serviceUrl), 'service URL should initially be untrusted');
+
+                handler
+                    .continueConversation(identity, conversationId, () => {
+                        assert(AppCredentials.isTrustedServiceUrl(serviceUrl), 'service URL should now be trusted');
+                        sandbox.verify();
+                        done();
+                    })
+                    .catch(done);
+            });
+
+            it('should cache the ClaimsIdentity, ConnectorClient and SkillConversationReference on the turnState', (done) => {
+                expectsGetSkillConversationReference(conversationId, serviceUrl);
+
+                handler
+                    .continueConversation(identity, conversationId, async (adapter, ref, context) => {
+                        assert.deepStrictEqual(
+                            context.turnState.get(adapter.BotIdentityKey),
+                            identity,
+                            'cached identity exists'
+                        );
+
+                        assert.deepStrictEqual(
+                            context.turnState.get(handler.SkillConversationReferenceKey),
+                            ref,
+                            'cached conversation ref exists'
+                        );
+
+                        sandbox.verify();
+                        done();
+                    })
+                    .catch(done);
+            });
+        });
 
         describe('processActivity()', () => {
-            it('should fail without a conversationReference', async () => {
+            it('should fail without a skillConversationReference', async () => {
+                expectsFactoryGetSkillConversationReference(null);
+
                 try {
                     await handler.processActivity({}, 'convId', 'replyId', {});
+                    assert.fail('should have thrown');
                 } catch (e) {
-                    strictEqual(e.message, 'conversationReference not found.');
+                    assert.strictEqual(e.message, 'skillConversationReference not found');
                 }
+
+                sandbox.verify();
             });
 
-            /* This test should be the first successful test to pass using the built-in logic for SkillHandler.processActivity() */
-            it(`should add the original activity's ServiceUrl to the TrustedServiceUrls in AppCredentials`, async () => {
-                const serviceUrl = 'http://localhost/api/messages';
-                factory.refs['convId'] = { serviceUrl, conversation: { id: 'conversationId' } };
-                const skillActivity = {
-                    type: ActivityTypes.Event,
-                    serviceUrl,
-                };
-                bot.run = async (context) => {
-                    assert(context);
-                    assert(
-                        AppCredentials.isTrustedServiceUrl(serviceUrl),
-                        `ServiceUrl "${serviceUrl}" should have been trusted and added to AppCredentials ServiceUrl cache.`
-                    );
-                };
-                assert(!AppCredentials.isTrustedServiceUrl(serviceUrl));
-                await handler.processActivity(identity, 'convId', 'replyId', skillActivity);
-            });
+            it('should fail without a conversationReference', async () => {
+                expectsFactoryGetSkillConversationReference({});
 
-            const identity = new ClaimsIdentity([{ type: 'aud', value: 'audience' }]);
-            it('should cache the ClaimsIdentity, ConnectorClient and SkillConversationReference on the turnState', async () => {
-                const serviceUrl = 'http://localhost/api/messages';
-                factory.refs['convId'] = { serviceUrl, conversation: { id: 'conversationId' } };
-                const skillActivity = {
-                    type: ActivityTypes.Event,
-                    serviceUrl,
-                };
-                bot.run = async (context) => {
-                    assert(context);
-                    strictEqual(context.turnState.get(context.adapter.BotIdentityKey), identity);
-                    assert(context.turnState.get(context.adapter.ConnectorClientKey));
-                    assert(context.turnState.get(handler.SkillConversationReferenceKey));
-                };
-                const resourceResponse = await handler.processActivity(identity, 'convId', 'replyId', skillActivity);
-                assert(resourceResponse);
-                assert(resourceResponse.id);
+                try {
+                    await handler.processActivity({}, 'convId', 'replyId', {});
+                    assert.fail('should have thrown');
+                } catch (e) {
+                    assert.strictEqual(e.message, 'conversationReference not found.');
+                }
+
+                sandbox.verify();
             });
 
             it('should call bot logic for Event activities from a skill and modify context.activity', async () => {
-                const serviceUrl = 'http://localhost/api/messages';
-                const name = 'eventName';
-                const relatesTo = { activityId: 'activityId' };
-                const replyToId = 'replyToId';
-                const entities = [1];
-                const localTimestamp = '1';
-                const value = '418';
-                const timestamp = '1Z';
-                const channelData = { channelData: 'data' };
-                factory.refs['convId'] = { serviceUrl, conversation: { id: 'conversationId' } };
+                const identity = new ClaimsIdentity([{ type: 'aud', value: 'audience' }]);
+
                 const skillActivity = {
                     type: ActivityTypes.Event,
-                    name,
-                    relatesTo,
-                    entities,
-                    localTimestamp,
-                    value,
-                    timestamp,
-                    channelData,
-                    serviceUrl,
-                    replyToId,
+                    name: 'eventName',
+                    relatesTo: { activityId: 'activityId' },
+                    entities: [1],
+                    localTimestamp: '1',
+                    value: '418',
+                    timestamp: '1Z',
+                    channelData: { channelData: 'data' },
+                    serviceUrl: 'http://localhost/api/messages',
+                    replyToId: 'replyToId',
                 };
-                bot.run = async (context) => {
-                    assert(context);
-                    strictEqual(context.turnState.get(context.adapter.BotIdentityKey), identity);
-                    const a = context.activity;
-                    strictEqual(a.name, name);
-                    strictEqual(a.relatesTo, relatesTo);
-                    strictEqual(a.replyToId, replyToId);
-                    strictEqual(a.entities, entities);
-                    strictEqual(a.localTimestamp, localTimestamp);
-                    strictEqual(a.value, value);
-                    strictEqual(a.timestamp, timestamp);
-                    strictEqual(a.channelData, channelData);
-                    strictEqual(a.replyToId, replyToId);
-                };
+
+                expectsGetSkillConversationReference('convId', skillActivity.serviceUrl);
+                expectsBotRun(skillActivity, identity);
+
                 await handler.processActivity(identity, 'convId', 'replyId', skillActivity);
+                sandbox.verify();
             });
 
             it('should call bot logic for EndOfConversation activities from a skill and modify context.activity', async () => {
-                const skillConsumerAppId = '00000000-0000-0000-0000-000000000001';
-                const skillAppId = '00000000-0000-0000-0000-000000000000';
-
-                const serviceUrl = 'http://localhost/api/messages';
-                const text = 'bye';
-                const replyToId = 'replyToId';
-                const entities = [1];
-                const localTimestamp = '1';
-                const code = 418;
-                const timestamp = '1Z';
-                const channelData = { channelData: 'data' };
-                const value = { three: 3 };
-                factory.refs['convId'] = { serviceUrl, conversation: { id: 'conversationId' } };
-                const skillActivity = {
-                    type: ActivityTypes.EndOfConversation,
-                    text,
-                    code,
-                    replyToId,
-                    entities,
-                    localTimestamp,
-                    timestamp,
-                    value,
-                    channelData,
-                    serviceUrl,
-                };
                 const identity = new ClaimsIdentity(
                     [
-                        { type: AuthenticationConstants.AudienceClaim, value: skillConsumerAppId },
-                        { type: AuthenticationConstants.AppIdClaim, value: skillAppId },
+                        { type: AuthenticationConstants.AudienceClaim, value: '00000000-0000-0000-0000-000000000001' },
+                        { type: AuthenticationConstants.AppIdClaim, value: '00000000-0000-0000-0000-000000000000' },
                         { type: AuthenticationConstants.VersionClaim, value: '1.0' },
                     ],
-                    AuthenticationConstants.AnonymousAuthType
+                    true
                 );
-                bot.run = async (context) => {
-                    assert(context);
-                    strictEqual(context.turnState.get(context.adapter.BotIdentityKey), identity);
-                    const a = context.activity;
-                    strictEqual(a.type, ActivityTypes.EndOfConversation);
-                    strictEqual(a.text, text);
-                    strictEqual(a.code, code);
-                    strictEqual(a.replyToId, replyToId);
-                    strictEqual(a.entities, entities);
-                    strictEqual(a.localTimestamp, localTimestamp);
-                    strictEqual(a.value, value);
-                    strictEqual(a.timestamp, timestamp);
-                    strictEqual(a.channelData, channelData);
-                    strictEqual(a.replyToId, replyToId);
-                    strictEqual(a.callerId, `${CallerIdConstants.BotToBotPrefix}${skillAppId}`);
+
+                const skillActivity = {
+                    type: ActivityTypes.EndOfConversation,
+                    text: 'bye',
+                    code: 418,
+                    replyToId: 'replyToId',
+                    entities: [1],
+                    localTimestamp: '1',
+                    timestamp: '1Z',
+                    value: { three: 3 },
+                    channelData: { channelData: 'data' },
+                    serviceUrl: 'http://localhost/api/messages',
                 };
+
+                expectsGetSkillConversationReference('convId', skillActivity.serviceUrl);
+                expectsBotRun(skillActivity, identity);
+
                 await handler.processActivity(identity, 'convId', 'replyId', skillActivity);
-                strictEqual(skillActivity.callerId, undefined);
+                sandbox.verify();
             });
 
             it('should forward activity from Skill for other ActivityTypes', async () => {
-                const serviceUrl = 'http://localhost/api/messages';
-                factory.refs['convId'] = { serviceUrl, conversation: { id: 'conversationId' } };
-                const text = 'Test';
+                const identity = new ClaimsIdentity([{ type: 'aud', value: 'audience' }]);
+
                 const skillActivity = {
                     type: ActivityTypes.Message,
-                    serviceUrl,
-                    text,
+                    serviceUrl: 'http://localhost/api/messages',
+                    text: 'Test',
                 };
 
-                const rid = 'rId';
-                // Override sendActivities to do nothing.
-                adapter.sendActivities = async (context, activities) => {
-                    assert(context);
-                    assert(activities);
-                    strictEqual(activities.length, 1);
-                    strictEqual(activities[0].type, ActivityTypes.Message);
-                    strictEqual(activities[0].text, text);
-                    strictEqual(skillActivity.callerId, undefined);
-                    return [{ id: rid }];
-                };
+                expectsGetSkillConversationReference('convId', skillActivity.serviceUrl);
 
-                const resourceResponse = await handler.processActivity(identity, 'convId', 'replyId', skillActivity);
-                strictEqual(rid, resourceResponse.id);
+                sandbox
+                    .mock(adapter)
+                    .expects('sendActivities')
+                    .withArgs(sinon.match.instanceOf(TurnContext), sinon.match.some(sinon.match(skillActivity)))
+                    .once()
+                    .returns(Promise.resolve([{ id: 'responseId' }]));
+
+                const response = await handler.processActivity(identity, 'convId', 'replyId', skillActivity);
+                assert.strictEqual(response.id, 'responseId');
+                sandbox.verify();
             });
 
             it(`should use the skill's appId to set the callback's activity.callerId`, async () => {
                 const skillAppId = '00000000-0000-0000-0000-000000000000';
                 const skillConsumerAppId = '00000000-0000-0000-0000-000000000001';
 
-                const adapter = new BotFrameworkAdapter({});
-                adapter.credentialsProvider.isAuthenticationDisabled = async () => false;
                 const identity = new ClaimsIdentity(
                     [
                         { type: AuthenticationConstants.AudienceClaim, value: skillConsumerAppId },
                         { type: AuthenticationConstants.AppIdClaim, value: skillAppId },
                         { type: AuthenticationConstants.VersionClaim, value: '1.0' },
                     ],
-                    AuthenticationConstants.AnonymousAuthType
+                    true
                 );
-                const creds = new SimpleCredentialProvider(skillConsumerAppId, '');
-                const handler = new SkillHandler(adapter, bot, factory, creds, authConfig);
-                const serviceUrl = 'http://localhost/api/messages';
-                factory.refs['convId'] = { serviceUrl, conversation: { id: 'conversationId' } };
+
+                // sandbox
+                //     .mock(adapter.credentialsProvider)
+                //     .expects('isAuthenticationDisabled')
+                //     .once()
+                //     .returns(Promise.resolve(false));
+
                 const skillActivity = {
                     type: ActivityTypes.Event,
-                    serviceUrl,
+                    serviceUrl: 'http://localhost/api/messages',
                 };
-                bot.run = async (context) => {
-                    const fromKey = context.turnState.get(SkillConversationReferenceKey);
-                    const fromHandlerKey = context.turnState.get(handler.SkillConversationReferenceKey);
-                    assert(fromKey, 'skillConversationReference was not cached in TurnState');
-                    assert(fromHandlerKey, 'the key on the SkillHandler did not return TurnState cached value');
-                    strictEqual(fromKey, fromHandlerKey, 'the keys should return the same cached values');
-                    strictEqual(context.activity.callerId, `${CallerIdConstants.BotToBotPrefix}${skillAppId}`);
-                };
+
+                expectsGetSkillConversationReference('convId', skillActivity.serviceUrl);
+
+                sandbox
+                    .mock(bot)
+                    .expects('run')
+                    .withArgs(
+                        sinon.match((context) => {
+                            const fromKey = context.turnState.get(SkillConversationReferenceKey);
+                            assert(fromKey, 'skillConversationReference was not cached in TurnState');
+
+                            const fromHandlerKey = context.turnState.get(handler.SkillConversationReferenceKey);
+                            assert(fromHandlerKey, 'the key on the SkillHandler did not return TurnState cached value');
+
+                            assert.strictEqual(
+                                fromKey,
+                                fromHandlerKey,
+                                'the keys should return the same cached values'
+                            );
+
+                            assert.strictEqual(
+                                context.activity.callerId,
+                                `${CallerIdConstants.BotToBotPrefix}${skillAppId}`
+                            );
+
+                            return true;
+                        })
+                    )
+                    .once();
+
                 await handler.processActivity(identity, 'convId', 'replyId', skillActivity);
-                strictEqual(skillActivity.callerId, undefined);
+                sandbox.verify();
             });
         });
     });
