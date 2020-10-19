@@ -14,7 +14,6 @@ import { MemoryInterface, SimpleObjectMemory } from 'adaptive-expressions';
  * accessible at any sub evaluation process.
  */
 export class CustomizedMemory implements MemoryInterface {
-
     /**
      * Global memory.
      */
@@ -71,7 +70,7 @@ export class CustomizedMemory implements MemoryInterface {
      * If version is not changed, the caller may choose to use the cached result instead of recomputing everything.
      * @returns A string indicating the version.
      */
-    public  version(): string {
+    public version(): string {
         let result = '';
         if (this.globalMemory) {
             const version = this.globalMemory.version();

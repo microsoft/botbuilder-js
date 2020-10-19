@@ -164,7 +164,7 @@ describe('WaterfallDialog', function () {
 
             const results = await dc.beginDialog('a', { test: 'test' });
 
-            await turnContext.sendActivity(`ended WaterfallDialog ["${ results.result }"].`);
+            await turnContext.sendActivity(`ended WaterfallDialog ["${results.result}"].`);
         });
 
         const convoState = new ConversationState(new MemoryStorage());
@@ -215,7 +215,7 @@ describe('WaterfallDialog', function () {
                 assert(step.options, `step.options not found.`);
                 assert.strictEqual(step.options.test,
                     'test',
-                    `step.options.test "${ step.options.test }", was not expected value of "test".`);
+                    `step.options.test "${step.options.test}", was not expected value of "test".`);
                 await step.context.sendActivity('bot responding.');
                 return Dialog.EndOfTurn;
             },
@@ -258,7 +258,7 @@ describe('WaterfallDialog', function () {
                 assert(step.options, `step.options not found.`);
                 assert.strictEqual(step.options.test,
                     'test1',
-                    `step.options.test "${ step.options.test }", was not expected value of "test1".`);
+                    `step.options.test "${step.options.test}", was not expected value of "test1".`);
                 step.options.test = 'test2';
                 await step.context.sendActivity('bot responding.');
                 return Dialog.EndOfTurn;
@@ -268,7 +268,7 @@ describe('WaterfallDialog', function () {
                 assert(step.options, `step.options not found.`);
                 assert.strictEqual(step.options.test,
                     'test2',
-                    `step.options.test "${ step.options.test }", was not expected value of "test2".`);
+                    `step.options.test "${step.options.test}", was not expected value of "test2".`);
                 step.options.test = 'test3';
                 await step.context.sendActivity('bot responding again.');
                 return Dialog.EndOfTurn;
@@ -277,7 +277,7 @@ describe('WaterfallDialog', function () {
                 assert(step, `step not found.`);
                 assert.strictEqual(step.options.test,
                     'test3',
-                    `step.options.test "${ step.options.test }", was not expected value of "test3".`);
+                    `step.options.test "${step.options.test}", was not expected value of "test3".`);
                 return await step.endDialog('ending WaterfallDialog.');
             }
         ]));
@@ -324,7 +324,7 @@ describe('WaterfallDialog', function () {
                 assert(step.values, `step.values not found.`);
                 assert.strictEqual(step.values.test,
                     'test1',
-                    `step.values.test ["${ step.values.test }"] was not expected value "test1".`);
+                    `step.values.test ["${step.values.test}"] was not expected value "test1".`);
                 step.values.test2 = 'test2';
                 await step.context.sendActivity('bot responding again.');
                 return Dialog.EndOfTurn;
@@ -334,10 +334,10 @@ describe('WaterfallDialog', function () {
                 assert(step.values, `step.values not found.`);
                 assert.strictEqual(step.values.test,
                     'test1',
-                    `step.values.test ["${ step.values.test }"] was not expected value "test1".`);
+                    `step.values.test ["${step.values.test}"] was not expected value "test1".`);
                 assert.strictEqual(step.values.test2,
                     'test2',
-                    `step.values.test2 ["${ step.values.test2 }"] was not expected value "test2".`);
+                    `step.values.test2 ["${step.values.test2}"] was not expected value "test2".`);
                 return await step.endDialog('ending WaterfallDialog.');
             }
         ]));
@@ -384,7 +384,7 @@ describe('WaterfallDialog', function () {
                 assert(step.values, `step.values not found.`);
                 assert.strictEqual(step.values.test,
                     'test1',
-                    `step.values.test ["${ step.values.test }"] was not expected value "test1".`);
+                    `step.values.test ["${step.values.test}"] was not expected value "test1".`);
                 assert.strictEqual(step.values.test_b,
                     undefined,
                     `step.values.test_b should not be available in WaterfallDialog('a').`);
@@ -448,7 +448,7 @@ describe('WaterfallDialog', function () {
                 assert(step.options, `step.options not found.`);
                 assert.strictEqual(step.options.test_a,
                     'test_a',
-                    `step.options.test_a "${ step.options.test_a }", was not expected value of "test_a".`);
+                    `step.options.test_a "${step.options.test_a}", was not expected value of "test_a".`);
                 await step.context.sendActivity('bot responding.');
                 return await step.beginDialog('b');
             },
@@ -457,7 +457,7 @@ describe('WaterfallDialog', function () {
                 assert(step.options, `step.options not found.`);
                 assert.strictEqual(step.options.test_a,
                     'test_a',
-                    `step.options.test_a "${ step.options.test_a }", was not expected value of "test_a".`);
+                    `step.options.test_a "${step.options.test_a}", was not expected value of "test_a".`);
                 return await step.endDialog('ending WaterfallDialog.');
             }
         ]));
@@ -468,7 +468,7 @@ describe('WaterfallDialog', function () {
                 assert(step.options, `step.options not found.`);
                 assert.strictEqual(step.options.test_a,
                     undefined,
-                    `step.options.test_a "${ step.options.test_a }", was not expected value of "undefined".`);
+                    `step.options.test_a "${step.options.test_a}", was not expected value of "undefined".`);
                 step.options.test_b = 'test_b';
                 return Dialog.EndOfTurn;
             },
@@ -477,7 +477,7 @@ describe('WaterfallDialog', function () {
                 assert(step.options, `step.options not found.`);
                 assert.strictEqual(step.options.test_b,
                     'test_b',
-                    `step.options.test_b "${ step.options.test_b }", was not expected value of "test_b".`)
+                    `step.options.test_b "${step.options.test_b}", was not expected value of "test_b".`)
                 return await step.endDialog();
             }
         ]))
@@ -489,7 +489,7 @@ describe('WaterfallDialog', function () {
             .startTest();
     });
 
-    it('should end if no additional steps exist.', async function() {
+    it('should end if no additional steps exist.', async function () {
         const adapter = new TestAdapter(async (turnContext) => {
             const dc = await dialogs.createContext(turnContext);
 
@@ -529,7 +529,7 @@ describe('WaterfallDialog', function () {
             .startTest();
     });
 
-    it('should throw error if step.next() is called multiple times on a WaterfallStep.', async function() {
+    it('should throw error if step.next() is called multiple times on a WaterfallStep.', async function () {
         const adapter = new TestAdapter(async (turnContext) => {
             const dc = await dialogs.createContext(turnContext);
 
@@ -574,7 +574,7 @@ describe('WaterfallDialog', function () {
             .startTest();
     });
 
-    it('should support return EndOfTurn for non-message-type activities on continueDialog().', async function() {
+    it('should support return EndOfTurn for non-message-type activities on continueDialog().', async function () {
         const adapter = new TestAdapter(async (turnContext) => {
             const dc = await dialogs.createContext(turnContext);
             const results = await dc.continueDialog();
@@ -601,7 +601,7 @@ describe('WaterfallDialog', function () {
             },
             async function (step) {
                 assert(step, `step not found.`);
-                assert(step.context.activity.text === 'continue.', `expected "continue." not ${ step.context.activity.text }`);
+                assert(step.context.activity.text === 'continue.', `expected "continue." not ${step.context.activity.text}`);
                 return await step.endDialog('done.')
             }
         ]));
@@ -614,7 +614,7 @@ describe('WaterfallDialog', function () {
             .startTest();
     });
 
-    it('should record the correct step name when cancelled.', async function() {
+    it('should record the correct step name when cancelled.', async function () {
         const id = 'waterfall';
         const index = 1;
         const dialog = new MyWaterfall(id);
@@ -633,5 +633,33 @@ describe('WaterfallDialog', function () {
             }
         }, DialogReason.cancelCalled);
         assert(trackEventCalled, 'trackEvent was never called.');
+    });
+
+    it('should waterfall step parent be equal to waterfall dialog parent.', async function () {
+        const conversationState = new ConversationState(new MemoryStorage());
+        const dialogState = conversationState.createProperty('dialog');
+        const waterfall = new WaterfallDialog('waterfall', [
+            async function (step) {
+                assert.strictEqual(step.parent.activeDialog.id, component.id);
+                await step.context.sendActivity('verified');
+                return await step.endDialog('done.')
+            }
+        ]);
+
+        const component = new ComponentDialog('composite');
+        component.addDialog(waterfall);
+
+        const dialogs = new DialogSet(dialogState);
+        dialogs.add(component);
+
+        const adapter = new TestAdapter(async turnContext => {
+            const dc = await dialogs.createContext(turnContext);
+            const results = await dc.beginDialog('composite');
+            assert(results.status === DialogTurnStatus.complete, 'status results not completed');
+        });
+
+        adapter.send('Hi')
+            .assertReply('verified')
+            .startTest();
     });
 });

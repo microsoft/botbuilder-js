@@ -5,32 +5,43 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
+import { EnumExpression, EnumExpressionConverter, Expression } from 'adaptive-expressions';
 import { Attachment } from 'botbuilder-core';
-import { DialogContext } from 'botbuilder-dialogs';
-import { InputDialog, InputState } from './inputDialog';
-import { EnumExpression } from 'adaptive-expressions';
+import { Converter, ConverterFactory, DialogContext } from 'botbuilder-dialogs';
+import { InputDialog, InputDialogConfiguration, InputState } from './inputDialog';
 
 export enum AttachmentOutputFormat {
     all = 'all',
-    first = 'first'
+    first = 'first',
 }
 
-export class AttachmentInput extends InputDialog {
+export interface AttachmentInputConfiguration extends InputDialogConfiguration {
+    outputFormat?: AttachmentOutputFormat | string | Expression | EnumExpression<AttachmentOutputFormat>;
+}
 
-    public outputFormat: EnumExpression<AttachmentOutputFormat> = new EnumExpression<AttachmentOutputFormat>(AttachmentOutputFormat.first);
+export class AttachmentInput extends InputDialog implements AttachmentInputConfiguration {
+    public static $kind = 'Microsoft.AttachmentInput';
 
-    protected onComputeId(): string {
-        return `AttachmentInput[${ this.prompt && this.prompt.toString() }]`;
+    public outputFormat: EnumExpression<AttachmentOutputFormat> = new EnumExpression<AttachmentOutputFormat>(
+        AttachmentOutputFormat.first
+    );
+
+    public getConverter(property: keyof AttachmentInputConfiguration): Converter | ConverterFactory {
+        switch (property) {
+            case 'outputFormat':
+                return new EnumExpressionConverter<AttachmentOutputFormat>(AttachmentOutputFormat);
+            default:
+                return super.getConverter(property);
+        }
     }
 
-    protected getDefaultInput(dc: DialogContext): any {
-        const attachments = dc.context.activity.attachments;
-        return Array.isArray(attachments) && attachments.length > 0 ? attachments : undefined;
+    protected onComputeId(): string {
+        return `AttachmentInput[${this.prompt && this.prompt.toString()}]`;
     }
 
     protected async onRecognizeInput(dc: DialogContext): Promise<InputState> {
         // Recognize input and filter out non-attachments
-        let input: Attachment | Attachment[] = dc.state.getValue(InputDialog.VALUE_PROPERTY);
+        const input: Attachment | Attachment[] = dc.state.getValue(InputDialog.VALUE_PROPERTY);
         const attachments = Array.isArray(input) ? input : [input];
         const first = attachments.length > 0 ? attachments[0] : undefined;
         if (typeof first != 'object' || (!first.contentUrl && !first.content)) {

@@ -19,7 +19,7 @@ export {
     QNAMAKER_TRACE_NAME,
     QNAMAKER_TRACE_LABEL,
     QnAMakerTelemetryClient,
-    QnAMaker
+    QnAMaker,
 } from './qnaMaker';
 export {
     FeedbackRecord,
@@ -33,13 +33,9 @@ export {
     QnAMakerTraceInfo,
     QnARequestContext,
     QnAResponseContext,
-    RankerTypes
+    RankerTypes,
 } from './qnamaker-interfaces';
-export {
-    QnAMakerDialog,
-    QnAMakerDialogOptions,
-    QnAMakerDialogResponseOptions
-} from './qnaMakerDialog';
+export { QnAMakerDialog, QnAMakerDialogOptions, QnAMakerDialogResponseOptions } from './qnaMakerDialog';
 
 // GenerateAnswerUtils, HttpRequestUtils and TrainUtils are internal.
 export { ActiveLearningUtils } from './qnamaker-utils';

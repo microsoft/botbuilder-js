@@ -13,8 +13,6 @@ describe('SelectorTests', function() {
         await testRunner.runTestScript('SelectorTests_FirstSelector');
     });
 
-    // We don't have MostSpecificSelector yet
-    /*
     it('MostSpecificFirstSelector', async () => {
         await testRunner.runTestScript('SelectorTests_MostSpecificFirstSelector');
     });
@@ -22,7 +20,6 @@ describe('SelectorTests', function() {
     it('MostSpecificRandomSelector', async () => {
         await testRunner.runTestScript('SelectorTests_MostSpecificRandomSelector');
     });
-    */
 
     it('Priority', async () => {
         await testRunner.runTestScript('SelectorTests_Priority');
@@ -32,12 +29,9 @@ describe('SelectorTests', function() {
         await testRunner.runTestScript('SelectorTests_RandomSelector');
     });
 
-    // We don't have MostSpecificSelector yet
-    /*
     it('RunOnce', async () => {
         await testRunner.runTestScript('SelectorTests_RunOnce');
     });
-    */
 
     it('TrueSelector', async () => {
         await testRunner.runTestScript('SelectorTests_TrueSelector');

@@ -25,7 +25,6 @@ export abstract class SkillConversationIdFactoryBase {
         throw new Error('Not Implemented');
     }
 
-
     /**
      * Creates a conversation ID for a skill conversation based on the caller's ConversationReference.
      * @deprecated Method is deprecated, please use createSkillConversationIdWithOptions() with SkillConversationIdFactoryOptions instead.
