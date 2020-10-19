@@ -10,7 +10,7 @@
  * Class which manages cache of all LG resources from a ResourceExplorer.
  * This class automatically updates the cache when resource change events occure.
  */
-import { Resource, ResourceExplorer, FileResource, ResourceChangeEvent } from 'botbuilder-dialogs-declarative';
+import { Resource, ResourceExplorer, ResourceChangeEvent } from 'botbuilder-dialogs-declarative';
 import { ImportResolverDelegate, LGResource } from 'botbuilder-lg';
 import { normalize, basename, extname } from 'path';
 import { LanguageGenerator } from '../languageGenerator';
@@ -20,7 +20,7 @@ import { TemplateEngineLanguageGenerator } from './templateEngineLanguageGenerat
 /**
  * Class which manages cache of all LG resources from a ResourceExplorer.
  */
-export class LanguageGeneratorManager {
+export class LanguageGeneratorManager<T = unknown, D extends Record<string, unknown> = Record<string, unknown>> {
     /**
      * Resource explorer to manager LG files used by language generator manager.
      */
@@ -38,16 +38,16 @@ export class LanguageGeneratorManager {
     public constructor(resourceManager: ResourceExplorer) {
         this._resourceExporer = resourceManager;
         this._resourceExporer.changed = async (event: ResourceChangeEvent, resources: Resource[]): Promise<void> => {
-            for (let i = 0; i < resources.length; i++) {
-                if (extname(resources[i].id).toLowerCase() === '.lg') {
+            resources.forEach((resource) => {
+                if (extname(resource.id).toLowerCase() === '.lg') {
                     if (event === ResourceChangeEvent.removed) {
-                        this.languageGenerators.delete(resources[i].id);
+                        this.languageGenerators.delete(resource.id);
                     } else {
-                        const generator = this.getTemplateEngineLanguageGenerator(resources[i]);
-                        this.languageGenerators.set(resources[i].id, generator);
+                        const generator = this.getTemplateEngineLanguageGenerator(resource);
+                        this.languageGenerators.set(resource.id, generator);
                     }
                 }
-            }
+            });
         };
 
         this._multiLanguageResources = LanguageResourceLoader.groupByLocale(this._resourceExporer);
@@ -62,7 +62,7 @@ export class LanguageGeneratorManager {
     /**
      * Gets or sets language generators.
      */
-    public languageGenerators: Map<string, LanguageGenerator> = new Map<string, LanguageGenerator>();
+    public languageGenerators = new Map<string, LanguageGenerator<T, D>>();
 
     public static resourceExplorerResolver(
         locale: string,
@@ -87,7 +87,7 @@ export class LanguageGeneratorManager {
         };
     }
 
-    private getTemplateEngineLanguageGenerator(resource: Resource): TemplateEngineLanguageGenerator {
-        return new TemplateEngineLanguageGenerator(resource, this._multiLanguageResources);
+    private getTemplateEngineLanguageGenerator(resource: Resource): TemplateEngineLanguageGenerator<T, D> {
+        return new TemplateEngineLanguageGenerator<T, D>(resource, this._multiLanguageResources);
     }
 }

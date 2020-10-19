@@ -50,7 +50,7 @@ export class TriggerTree {
      * Returns a string the represents the current object.
      */
     public toString(): string {
-        return `TriggerTree with ${ this.totalTriggers } triggers`;
+        return `TriggerTree with ${this.totalTriggers} triggers`;
     }
 
     /**
@@ -61,8 +61,8 @@ export class TriggerTree {
      * @returns New trigger.
      */
     public addTrigger(stringOrExpression: string | Expression, action: any, ...quantifiers: Quantifier[]): Trigger {
-        const expression: Expression = (typeof stringOrExpression === 'string') ?
-            Expression.parse(stringOrExpression) : stringOrExpression;
+        const expression: Expression =
+            typeof stringOrExpression === 'string' ? Expression.parse(stringOrExpression) : stringOrExpression;
         const trigger = new Trigger(this, expression, action, ...quantifiers);
         let added = false;
         if (trigger.clauses.length) {
@@ -149,7 +149,7 @@ export class TriggerTree {
 
     private _treeToString(builder: string[], node: Node, indent: number): void {
         node.toString(builder, indent);
-        builder.push(` [${ node.triggers.length }]`);
+        builder.push(` [${node.triggers.length}]`);
         builder.push('\n');
         for (const child of node.specializations) {
             this._treeToString(builder, child, indent + 2);

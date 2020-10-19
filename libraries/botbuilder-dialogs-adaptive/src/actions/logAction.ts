@@ -5,13 +5,37 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { DialogTurnResult, DialogContext, Dialog } from 'botbuilder-dialogs';
+import {
+    BoolExpression,
+    BoolExpressionConverter,
+    Expression,
+    StringExpression,
+    StringExpressionConverter,
+} from 'adaptive-expressions';
 import { Activity, ActivityTypes } from 'botbuilder-core';
+import {
+    Converter,
+    ConverterFactory,
+    DialogConfiguration,
+    DialogContext,
+    Dialog,
+    DialogStateManager,
+    DialogTurnResult,
+} from 'botbuilder-dialogs';
 import { TemplateInterface } from '../template';
 import { TextTemplate } from '../templates';
-import { StringExpression, BoolExpression } from 'adaptive-expressions';
+import { TextTemplateConverter } from '../converters/textTemplateConverter';
 
-export class LogAction<O extends object = {}> extends Dialog<O> {
+export interface LogActionConfiguration extends DialogConfiguration {
+    text?: string | TemplateInterface<string, DialogStateManager>;
+    traceActivity?: boolean | string | Expression | BoolExpression;
+    label?: string | Expression | StringExpression;
+    disabled?: boolean | string | Expression | BoolExpression;
+}
+
+export class LogAction<O extends object = {}> extends Dialog<O> implements LogActionConfiguration {
+    public static $kind = 'Microsoft.LogAction';
+
     /**
      * Creates a new `SendActivity` instance.
      * @param template The text template to log.
@@ -29,7 +53,7 @@ export class LogAction<O extends object = {}> extends Dialog<O> {
     /**
      * The text template to log.
      */
-    public text: TemplateInterface<string>;
+    public text: TemplateInterface<string, DialogStateManager>;
 
     /**
      * If true, the message will both be logged to the console and sent as a trace activity.
@@ -46,6 +70,21 @@ export class LogAction<O extends object = {}> extends Dialog<O> {
      * An optional expression which if is true will disable this action.
      */
     public disabled?: BoolExpression;
+
+    public getConverter(property: keyof LogActionConfiguration): Converter | ConverterFactory {
+        switch (property) {
+            case 'text':
+                return new TextTemplateConverter();
+            case 'traceActivity':
+                return new BoolExpressionConverter();
+            case 'label':
+                return new StringExpressionConverter();
+            case 'disabled':
+                return new BoolExpressionConverter();
+            default:
+                return super.getConverter(property);
+        }
+    }
 
     public async beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult> {
         if (this.disabled && this.disabled.getValue(dc.state)) {

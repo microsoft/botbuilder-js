@@ -18,7 +18,7 @@ export enum ServiceTypes {
     Luis = 'luis',
     QnA = 'qna',
     Dispatch = 'dispatch',
-    File = 'file'
+    File = 'file',
 }
 
 /**

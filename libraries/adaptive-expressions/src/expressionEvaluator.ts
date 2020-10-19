@@ -78,14 +78,14 @@ export class ExpressionEvaluator {
                 //noop
             });
     }
-    
+
     /**
      * Gets the evaluator that is a negation of this one.
      */
     public get negation(): ExpressionEvaluator {
         return this._negation;
     }
-    
+
     /**
      * Sets the evaluator that is a negation of this one.
      */

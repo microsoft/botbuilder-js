@@ -19,10 +19,16 @@ import { localeInfo } from '../localeInfo';
  * Format number into required decimal numbers.
  */
 export class FormatNumber extends ExpressionEvaluator {
+    /**
+     * Initializes a new instance of the [FormatNumber](xref:adaptive-expressions.FormatNumber) class.
+     */
     public constructor() {
         super(ExpressionType.FormatNumber, FormatNumber.evaluator(), ReturnType.String, FormatNumber.validator);
     }
 
+    /**
+     * @private
+     */
     private static evaluator(): EvaluateExpressionDelegate {
         return FunctionUtils.applyWithOptionsAndError((args: any[], options: Options): any => {
             let value: any = null;

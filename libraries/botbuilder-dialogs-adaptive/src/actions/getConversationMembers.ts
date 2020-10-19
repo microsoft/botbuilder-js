@@ -5,10 +5,41 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { Dialog, DialogContext, DialogTurnResult } from 'botbuilder-dialogs';
-import { StringExpression, BoolExpression } from 'adaptive-expressions';
+import {
+    BoolExpression,
+    BoolExpressionConverter,
+    Expression,
+    StringExpression,
+    StringExpressionConverter,
+} from 'adaptive-expressions';
+import { TurnContext } from 'botbuilder-core';
+import {
+    Converter,
+    ConverterFactory,
+    Dialog,
+    DialogConfiguration,
+    DialogContext,
+    DialogTurnResult,
+} from 'botbuilder-dialogs';
 
-export class GetConversationMembers<O extends object = {}> extends Dialog<O> {
+interface CompatibleAdapter {
+    getConversationMembers(context: TurnContext);
+}
+
+function isCompatibleAdapter(adapter: unknown): adapter is CompatibleAdapter {
+    return adapter && typeof (adapter as CompatibleAdapter).getConversationMembers === 'function';
+}
+
+export interface GetConversationMembersConfiguration extends DialogConfiguration {
+    property?: string | Expression | StringExpression;
+    disabled?: boolean | string | Expression | BoolExpression;
+}
+
+export class GetConversationMembers<O extends object = {}>
+    extends Dialog<O>
+    implements GetConversationMembersConfiguration {
+    public static $kind = 'Microsoft.GetConversationMembers';
+
     public constructor();
     public constructor(property?: string) {
         super();
@@ -27,14 +58,25 @@ export class GetConversationMembers<O extends object = {}> extends Dialog<O> {
      */
     public disabled?: BoolExpression;
 
+    public getConverter(property: keyof GetConversationMembersConfiguration): Converter | ConverterFactory {
+        switch (property) {
+            case 'property':
+                return new StringExpressionConverter();
+            case 'disabled':
+                return new BoolExpressionConverter();
+            default:
+                return super.getConverter(property);
+        }
+    }
+
     public async beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult> {
         if (this.disabled && this.disabled.getValue(dc.state)) {
             return await dc.endDialog();
         }
 
         const adapter = dc.context.adapter;
-        if (typeof adapter['getConversationMembers'] === 'function') {
-            const result = await adapter['getConversationMembers'].getConversationMembers(dc.context);
+        if (isCompatibleAdapter(adapter)) {
+            const result = await adapter.getConversationMembers(dc.context);
             dc.state.setValue(this.property.getValue(dc.state), result);
             return await dc.endDialog(result);
         } else {

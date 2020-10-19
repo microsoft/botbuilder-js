@@ -9,10 +9,17 @@
 import { TurnContext, TestAdapter } from 'botbuilder-core';
 import { TestAction } from '../testAction';
 
+export interface UserSaysConfiguration {
+    text?: string;
+    user?: string;
+}
+
 /**
  * Action to script sending text to the bot.
  */
-export class UserSays implements TestAction {
+export class UserSays extends TestAction implements UserSaysConfiguration {
+    public static $kind = 'Microsoft.Test.UserSays';
+
     /**
      * The text to send to the bot.
      */
@@ -34,7 +41,7 @@ export class UserSays implements TestAction {
      * @param callback Logic for the bot to use.
      * @returns A Promise that represents the work queued to execute.
      */
-    public async execute(testAdapter: TestAdapter, callback: (context: TurnContext) => Promise<any>): Promise<any> {
+    public async execute(testAdapter: TestAdapter, callback: (context: TurnContext) => Promise<void>): Promise<void> {
         if (!this.text) {
             throw new Error('You must define the text property');
         }
