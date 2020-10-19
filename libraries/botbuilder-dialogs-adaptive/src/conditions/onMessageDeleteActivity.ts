@@ -13,6 +13,8 @@ import { OnActivity } from './onActivity';
  * Actions triggered when a MessageDeleteActivity is received.
  */
 export class OnMessageDeleteActivity extends OnActivity {
+    public static $kind = 'Microsoft.OnMessageDeleteActivity';
+
     public constructor(actions: Dialog[] = [], condition?: string) {
         super(ActivityTypes.MessageDelete, actions, condition);
     }

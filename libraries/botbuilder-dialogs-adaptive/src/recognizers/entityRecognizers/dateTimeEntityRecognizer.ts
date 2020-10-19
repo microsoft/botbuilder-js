@@ -11,6 +11,8 @@ import { ModelResult } from 'botbuilder-dialogs';
 import { TextEntityRecognizer } from './textEntityRecognizer';
 
 export class DateTimeEntityRecognizer extends TextEntityRecognizer {
+    public static $kind = 'Microsoft.DateTimeEntityRecognizer';
+
     protected recognize(text: string, culture: string): ModelResult[] {
         return recognizeDateTime(text, culture);
     }

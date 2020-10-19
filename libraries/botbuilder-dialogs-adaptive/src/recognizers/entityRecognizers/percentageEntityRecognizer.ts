@@ -11,6 +11,8 @@ import { ModelResult } from 'botbuilder-dialogs';
 import { TextEntityRecognizer } from './textEntityRecognizer';
 
 export class PercentageEntityRecognizer extends TextEntityRecognizer {
+    public static $kind = 'Microsoft.PercentageEntityRecognizer';
+
     protected recognize(text: string, culture: string): ModelResult[] {
         return recognizePercentage(text, culture);
     }

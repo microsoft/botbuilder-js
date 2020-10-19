@@ -7,12 +7,19 @@
  */
 
 import { TurnContext, ActivityTypes, TestAdapter } from 'botbuilder-core';
+import { Configurable } from 'botbuilder-dialogs';
 import { TestAction } from '../testAction';
+
+export interface UserTypingConfiguration {
+    user?: string;
+}
 
 /**
  * Action to script sending typing activity to the bot.
  */
-export class UserTyping implements TestAction {
+export class UserTyping extends Configurable implements TestAction, UserTypingConfiguration {
+    public static $kind = 'Microsoft.Test.UserTyping';
+
     /**
      * If user is set then the channalAccount.id and channelAccount.name will be from user.
      */

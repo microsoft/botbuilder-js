@@ -16,10 +16,16 @@ import { ReturnType } from '../returnType';
  * Return the first item from a string or array.
  */
 export class First extends ExpressionEvaluator {
+    /**
+     * Initializes a new instance of the [First](xref:adaptive-expressions.First) class.
+     */
     public constructor() {
         super(ExpressionType.First, First.evaluator(), ReturnType.Object, FunctionUtils.validateUnary);
     }
 
+    /**
+     * @private
+     */
     private static evaluator(): EvaluateExpressionDelegate {
         return FunctionUtils.apply((args: any[]): any => {
             let first: any;
