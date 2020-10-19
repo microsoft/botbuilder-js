@@ -38,17 +38,17 @@ export abstract class DialogContainer<O extends object = {}> extends Dialog<O> {
     /**
      * Called when an event has been raised, using `DialogContext.emitEvent()`,
      * by either the current dialog or a dialog that the current dialog started.
-     * 
+     *
      * @param dc The dialog context for the current turn of conversation.
      * @param e The event being raised.
      */
     public async onDialogEvent(dc: DialogContext, e: DialogEvent): Promise<boolean> {
         const handled = await super.onDialogEvent(dc, e);
         if (!handled && e.name === DialogEvents.versionChanged) {
-            const traceMessage = `Unhandled dialog event: ${ e.name }. Active Dialog: ${ dc.activeDialog.id }`;
+            const traceMessage = `Unhandled dialog event: ${e.name}. Active Dialog: ${dc.activeDialog.id}`;
             dc.dialogs.telemetryClient.trackTrace({
                 message: traceMessage,
-                severityLevel: Severity.Warning
+                severityLevel: Severity.Warning,
             });
             await dc.context.sendTraceActivity(traceMessage);
         }
@@ -57,7 +57,7 @@ export abstract class DialogContainer<O extends object = {}> extends Dialog<O> {
 
     /**
      * Returns internal version identifier for this container.
-     * 
+     *
      * @remarks
      * DialogContainers detect changes of all sub-components in the container and map that to a `versionChanged` event.
      * Because they do this, DialogContainers "hide" the internal changes and just have the .id. This isolates changes
@@ -73,7 +73,7 @@ export abstract class DialogContainer<O extends object = {}> extends Dialog<O> {
     /**
      * Checks to see if a containers child dialogs have changed since the current dialog instance
      * was started.
-     * 
+     *
      * @remarks
      * This should be called at the start of `beginDialog()`, `continueDialog()`, and `resumeDialog()`.
      * @param dc Current dialog context.
@@ -85,12 +85,12 @@ export abstract class DialogContainer<O extends object = {}> extends Dialog<O> {
         // Check for change of previously stored hash
         if (current && current != dc.activeDialog.version) {
             // Give bot an opportunity to handle the change.
-            // - If bot handles it the changeHash will have been updated as to avoid triggering the 
+            // - If bot handles it the changeHash will have been updated as to avoid triggering the
             //   change again.
             await dc.emitEvent(DialogEvents.versionChanged, this.id, true, false);
         }
     }
-    
+
     /**
      * Set the telemetry client, and also apply it to all child dialogs.
      * Future dialogs added to the component will also inherit this client.

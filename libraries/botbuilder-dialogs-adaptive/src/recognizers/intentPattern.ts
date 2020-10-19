@@ -5,8 +5,6 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { Converter } from 'botbuilder-dialogs-declarative';
-
 export class IntentPattern {
     private _intent: string;
     private _pattern: string;
@@ -36,11 +34,5 @@ export class IntentPattern {
 
     public set pattern(value: string) {
         this._pattern = value.startsWith('(?i)') ? value.substr(4) : value;
-    }
-}
-
-export class IntentPatternConverter implements Converter {
-    public convert(value: { intent: string; pattern: string }): IntentPattern {
-        return new IntentPattern(value.intent, value.pattern);
     }
 }

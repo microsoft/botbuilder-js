@@ -16,10 +16,16 @@ import { ReturnType } from '../returnType';
  * Return the length of a string.
  */
 export class Length extends ExpressionEvaluator {
+    /**
+     * Initializes a new instance of the [Length](xref:adaptive-expressions.Length) class.
+     */
     public constructor() {
         super(ExpressionType.Length, Length.evaluator(), ReturnType.Number, FunctionUtils.validateUnaryString);
     }
 
+    /**
+     * @private
+     */
     private static evaluator(): EvaluateExpressionDelegate {
         return FunctionUtils.apply(
             (args: any[]): number => InternalFunctionUtils.parseStringOrUndefined(args[0]).length,

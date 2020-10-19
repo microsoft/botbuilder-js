@@ -1,7 +1,6 @@
 /**
  * @module botframework-config
- */
-/**
+ *
  * Copyright(c) Microsoft Corporation.All rights reserved.
  * Licensed under the MIT License.
  */
@@ -19,7 +18,7 @@ export enum ServiceTypes {
     Luis = 'luis',
     QnA = 'qna',
     Dispatch = 'dispatch',
-    File = 'file'
+    File = 'file',
 }
 
 /**

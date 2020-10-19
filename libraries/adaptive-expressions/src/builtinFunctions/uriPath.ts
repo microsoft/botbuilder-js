@@ -19,31 +19,37 @@ import { ReturnType } from '../returnType';
  * Return the path value of a unified resource identifier (URI).
  */
 export class UriPath extends ExpressionEvaluator {
+    /**
+     * Initializes a new instance of the [UriPath](xref:adaptive-expressions.UriPath) class.
+     */
     public constructor() {
         super(ExpressionType.UriPath, UriPath.evaluator, ReturnType.String, FunctionUtils.validateUnary);
     }
 
+    /**
+     * @private
+     */
     private static evaluator(expr: Expression, state: MemoryInterface, options: Options): ValueWithError {
         let value: any;
-        let error: string;
-        let args: any[];
-        ({ args, error } = FunctionUtils.evaluateChildren(expr, state, options));
+        const { args, error: childrenError } = FunctionUtils.evaluateChildren(expr, state, options);
+        let error = childrenError;
         if (!error) {
             if (typeof args[0] === 'string') {
                 ({ value, error } = UriPath.evalUriPath(args[0]));
             } else {
-                error = `${expr} should contain a URI string.`;
+                error = `${ expr } should contain a URI string.`;
             }
         }
 
         return { value, error };
     }
 
+    /**
+     * @private
+     */
     private static evalUriPath(uri: string): ValueWithError {
         let result: string;
-        let error: string;
-        let parsed: URL;
-        ({ value: parsed, error } = InternalFunctionUtils.parseUri(uri));
+        let error = InternalFunctionUtils.parseUri(uri).error;
         if (!error) {
             try {
                 const uriObj: URL = new URL(uri);

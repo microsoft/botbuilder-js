@@ -10,7 +10,7 @@ import { IEventEmitter } from '.';
 
 /**
  * Represents a Server from the `net` module in Node.js.
- * 
+ *
  * This interface supports the framework and is not intended to be called directly for your code.
  */
 export interface INodeServer extends IEventEmitter {
