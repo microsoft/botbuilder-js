@@ -10,28 +10,42 @@ import { existsSync } from 'fs';
 import { resolve } from 'path';
 import { TextEncoder } from 'util';
 
-import { BoolExpression, NumberExpression, StringExpression } from 'adaptive-expressions';
+import {
+    BoolExpression,
+    BoolExpressionConverter,
+    Expression,
+    NumberExpression,
+    NumberExpressionConverter,
+    StringExpression,
+    StringExpressionConverter,
+} from 'adaptive-expressions';
 import { Activity, Entity, RecognizerResult } from 'botbuilder-core';
-import { DialogContext } from 'botbuilder-dialogs';
+import { Converter, ConverterFactory, DialogContext } from 'botbuilder-dialogs';
 import {
     createRecognizerResult,
     EntityRecognizer,
     EntityRecognizerSet,
     Recognizer,
+    RecognizerConfiguration,
     TextEntity,
 } from 'botbuilder-dialogs-adaptive';
 
 const oc: any = require('orchestrator-core/orchestrator-core.node');
 const ReadText: any = require('read-text-file');
 
+export interface OrchestratorAdaptiveRecognizerConfiguration extends RecognizerConfiguration {
+    modelPath?: string | Expression | StringExpression;
+    snapshotPath?: string | Expression | StringExpression;
+    disambiguationScoreThreshold?: number | string | Expression | NumberExpression;
+    detectAmbiguousIntents?: boolean | string | Expression | BoolExpression;
+    entityRecognizers?: EntityRecognizer[];
+}
+
 /**
  * Class that represents an adaptive Orchestrator recognizer.
  */
-export class OrchestratorAdaptiveRecognizer extends Recognizer {
-    /**
-     * Recognizers unique ID.
-     */
-    public id: string;
+export class OrchestratorAdaptiveRecognizer extends Recognizer implements OrchestratorAdaptiveRecognizerConfiguration {
+    public static $kind = 'Microsoft.OrchestratorRecognizer';
 
     /**
      * Path to the model to load.
@@ -78,6 +92,21 @@ export class OrchestratorAdaptiveRecognizer extends Recognizer {
      * Full recognition results are available under this property
      */
     public readonly resultProperty: string = 'result';
+
+    public getConverter(property: keyof OrchestratorAdaptiveRecognizerConfiguration): Converter | ConverterFactory {
+        switch (property) {
+            case 'modelPath':
+                return new StringExpressionConverter();
+            case 'snapshotPath':
+                return new StringExpressionConverter();
+            case 'disambiguationScoreThreshold':
+                return new NumberExpressionConverter();
+            case 'detectAmbiguousIntents':
+                return new BoolExpressionConverter();
+            default:
+                return super.getConverter(property);
+        }
+    }
 
     private readonly unknownIntentFilterScore = 0.4;
     private static orchestrator: any = null;

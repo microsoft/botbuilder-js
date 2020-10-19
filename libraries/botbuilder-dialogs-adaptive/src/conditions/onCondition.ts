@@ -5,25 +5,47 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { Dialog, DialogDependencies, DialogStateManager, DialogPath } from 'botbuilder-dialogs';
 import {
+    BoolExpression,
+    BoolExpressionConverter,
+    Constant,
     Expression,
     ExpressionParserInterface,
-    Constant,
     ExpressionParser,
     ExpressionEvaluator,
-    ReturnType,
     FunctionUtils,
+    IntExpression,
+    IntExpressionConverter,
+    ReturnType,
 } from 'adaptive-expressions';
+import {
+    Configurable,
+    Converter,
+    ConverterFactory,
+    Dialog,
+    DialogDependencies,
+    DialogPath,
+    DialogStateManager,
+} from 'botbuilder-dialogs';
 import { ActionScope } from '../actions/actionScope';
-import { BoolExpression, IntExpression } from 'adaptive-expressions';
 import { AdaptiveDialog } from '../adaptiveDialog';
 import { ActionContext } from '../actionContext';
 import { ActionChangeList } from '../actionChangeList';
 import { ActionState } from '../actionState';
 import { ActionChangeType } from '../actionChangeType';
+import { DialogListConverter } from '../converters';
 
-export class OnCondition implements DialogDependencies {
+export interface OnConditionConfiguration {
+    condition?: boolean | string | Expression | BoolExpression;
+    actions?: string[] | Dialog[];
+    priority?: number | string | Expression | IntExpression;
+    runOnce?: boolean;
+    id?: string;
+}
+
+export class OnCondition extends Configurable implements DialogDependencies, OnConditionConfiguration {
+    public static $kind = 'Microsoft.OnCondition';
+
     /**
      * Evaluates the rule and returns a predicted set of changes that should be applied to the
      * current plan.
@@ -74,8 +96,22 @@ export class OnCondition implements DialogDependencies {
      * @param actions (Optional) The actions to add to the plan when the rule constraints are met.
      */
     public constructor(condition?: string, actions: Dialog[] = []) {
+        super();
         this.condition = condition ? new BoolExpression(condition) : undefined;
         this.actions = actions;
+    }
+
+    public getConverter(property: keyof OnConditionConfiguration): Converter | ConverterFactory {
+        switch (property) {
+            case 'condition':
+                return new BoolExpressionConverter();
+            case 'actions':
+                return DialogListConverter;
+            case 'priority':
+                return new IntExpressionConverter();
+            default:
+                return super.getConverter(property);
+        }
     }
 
     /**

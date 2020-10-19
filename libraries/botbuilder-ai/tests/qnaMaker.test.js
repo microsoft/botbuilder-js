@@ -7,7 +7,7 @@ const { TrainUtils } = require('../lib/qnamaker-utils/trainUtils');
 const nock = require('nock');
 const fs = require('fs');
 const { getFetch } = require('../lib/globals');
-const { JoinOperator } = require('../lib/qnamaker-interfaces/JoinOperator');
+const { JoinOperator } = require('../lib/qnamaker-interfaces/joinOperator');
 
 // Save test keys
 const knowledgeBaseId = process.env.QNAKNOWLEDGEBASEID;

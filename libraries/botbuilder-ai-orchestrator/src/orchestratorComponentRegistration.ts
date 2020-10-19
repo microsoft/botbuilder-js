@@ -6,44 +6,16 @@
  * Licensed under the MIT License.
  */
 
-import { BoolExpressionConverter, NumberExpressionConverter, StringExpressionConverter } from 'adaptive-expressions';
-import { AdaptiveTypeBuilder } from 'botbuilder-dialogs-adaptive';
-import { BuilderRegistration, ComponentRegistration, ResourceExplorer } from 'botbuilder-dialogs-declarative';
-
+import { ComponentRegistration } from 'botbuilder-core';
 import { OrchestratorAdaptiveRecognizer } from './orchestratorAdaptiveRecognizer';
 
-/**
- * Define component assets for Luis.
- */
-export class OrchestratorComponentRegistration implements ComponentRegistration {
-    private readonly _builderRegistrations: BuilderRegistration[] = [];
-    private _resourceExplorer: ResourceExplorer;
-
-    /**
-     * Gets all the builder registration instances.
-     * @returns An array of [BuilderRegistration](xref:botbuilder-dialogs-declarative.BuilderRegistration).
-     */
-    public getTypeBuilders(): BuilderRegistration[] {
-        return this._builderRegistrations;
-    }
-
-    /**
-     * Initializes a new instance of the [OrchestratorComponentRegistration](xref:botbuilder-ai-orchestrator.OrchestratorComponentRegistration) class.
-     * @param resourceExplorer [ResourceExplorer](xref:botbuilder-dialogs-declarative.ResourceExplorer) to get all schema resources.
-     */
-    public constructor(resourceExplorer: ResourceExplorer) {
-        this._resourceExplorer = resourceExplorer;
-
-        this._builderRegistrations.push(
-            new BuilderRegistration(
-                'Microsoft.OrchestratorRecognizer',
-                new AdaptiveTypeBuilder(OrchestratorAdaptiveRecognizer, this._resourceExplorer, {
-                    modelPath: new StringExpressionConverter(),
-                    snapshotPath: new StringExpressionConverter(),
-                    disambiguationScoreThreshold: new NumberExpressionConverter(),
-                    detectAmbiguousIntents: new BoolExpressionConverter(),
-                })
-            )
-        );
+export class OrchestratorComponentRegistration extends ComponentRegistration {
+    public getDeclarativeTypes(_resourceExplorer: unknown) {
+        return [
+            {
+                kind: OrchestratorAdaptiveRecognizer.$kind,
+                type: OrchestratorAdaptiveRecognizer,
+            },
+        ];
     }
 }

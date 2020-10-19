@@ -10,6 +10,7 @@ export * from './baseInvokeDialog';
 export * from './beginDialog';
 export * from './beginSkill';
 export * from './breakLoop';
+export { CancelAllDialogsBaseConfiguration } from './cancelAllDialogsBase';
 export * from './cancelAllDialogs';
 export * from './cancelDialog';
 export * from './case';

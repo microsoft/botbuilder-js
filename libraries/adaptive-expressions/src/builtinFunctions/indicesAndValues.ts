@@ -19,6 +19,9 @@ import { ReturnType } from '../returnType';
  * For objects, it is the key for the value.
  */
 export class IndicesAndValues extends ExpressionEvaluator {
+    /**
+     * Initializes a new instance of the [IndicesAndValues](xref:adaptive-expressions.IndicesAndValues) class.
+     */
     public constructor() {
         super(
             ExpressionType.IndicesAndValues,
@@ -28,6 +31,9 @@ export class IndicesAndValues extends ExpressionEvaluator {
         );
     }
 
+    /**
+     * @private
+     */
     private static evaluator(expression: Expression, state: any, options: Options): ValueWithError {
         let result: object = undefined;
         let error: string = undefined;

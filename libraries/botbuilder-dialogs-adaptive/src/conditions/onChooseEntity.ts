@@ -8,12 +8,19 @@
 import { Dialog, TurnPath } from 'botbuilder-dialogs';
 import { Expression, ExpressionParserInterface } from 'adaptive-expressions';
 import { AdaptiveEvents } from '../adaptiveEvents';
-import { OnDialogEvent } from './onDialogEvent';
+import { OnDialogEvent, OnDialogEventConfiguration } from './onDialogEvent';
+
+export interface OnChooseEntityConfiguration extends OnDialogEventConfiguration {
+    property?: string;
+    entity?: string;
+}
 
 /**
  * Triggered to choose between different possible entity resolutions.
  */
-export class OnChooseEntity extends OnDialogEvent {
+export class OnChooseEntity extends OnDialogEvent implements OnChooseEntityConfiguration {
+    public static $kind = 'Microsoft.OnChooseEntity';
+
     public constructor(property?: string, entity?: string, actions: Dialog[] = [], condition?: string) {
         super(AdaptiveEvents.chooseEntity, actions, condition);
         this.property = property;

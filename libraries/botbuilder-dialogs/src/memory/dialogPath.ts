@@ -6,6 +6,9 @@
  * Licensed under the MIT License.
  */
 
+/**
+ * Defines path for available dialogs.
+ */
 export class DialogPath {
     /// Counter of emitted events.
     public static readonly eventCounter = 'dialog.eventCounter';
