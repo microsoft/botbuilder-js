@@ -21,8 +21,5 @@ export class AuthenticationConfiguration {
      * @param requiredEndorsements An array of JWT endorsements.
      * @param validateClaims Function that validates a list of Claims and should throw an exception if the validation fails.
      */
-    constructor(
-        public requiredEndorsements: string[] = [],
-        public validateClaims?: ValidateClaims
-        ) { }
+    constructor(public requiredEndorsements: string[] = [], public validateClaims?: ValidateClaims) {}
 }

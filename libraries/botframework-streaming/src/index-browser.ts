@@ -22,7 +22,4 @@ export { RequestHandler } from './requestHandler';
 export { StreamingRequest } from './streamingRequest';
 export { StreamingResponse } from './streamingResponse';
 export { SubscribableStream } from './subscribableStream';
-export {
-    BrowserWebSocket,
-    WebSocketClient
-} from './webSocket/index-browser';
+export { BrowserWebSocket, WebSocketClient } from './webSocket/index-browser';

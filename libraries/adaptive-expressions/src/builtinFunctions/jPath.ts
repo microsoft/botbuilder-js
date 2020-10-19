@@ -18,16 +18,24 @@ import { ReturnType } from '../returnType';
  * Check JSON or a JSON string for nodes or values that match a path expression, and return the matching nodes.
  */
 export class JPath extends ExpressionEvaluator {
+    /**
+     * Initializes a new instance of the [JPath](xref:adaptive-expressions.JPath) class.
+     */
     public constructor() {
         super(ExpressionType.JPath, JPath.evaluator(), ReturnType.Object, JPath.validator);
     }
 
+    /**
+     * @private
+     */
     private static evaluator(): EvaluateExpressionDelegate {
         return FunctionUtils.applyWithError((args: any[][]): any => JPath.evalJPath(args[0], args[1].toString()));
     }
 
+    /**
+     * @private
+     */
     private static evalJPath(jsonEntity: object | string, path: string): ValueWithError {
-        let result: any;
         let error: string;
         let evaled: any;
         let json: object;
@@ -35,7 +43,7 @@ export class JPath extends ExpressionEvaluator {
             try {
                 json = JSON.parse(jsonEntity);
             } catch (e) {
-                error = `${jsonEntity} is not a valid json string`;
+                error = `${ jsonEntity } is not a valid json string`;
             }
         } else if (typeof jsonEntity === 'object') {
             json = jsonEntity;
@@ -47,15 +55,16 @@ export class JPath extends ExpressionEvaluator {
             try {
                 evaled = jsPath.apply(path, json);
             } catch (e) {
-                error = `${path} is not a valid path + ${e}`;
+                error = `${ path } is not a valid path + ${ e }`;
             }
         }
 
-        result = evaled;
-
-        return { value: result, error };
+        return { value: evaled, error };
     }
 
+    /**
+     * @private
+     */
     private static validator(expr: Expression): void {
         FunctionUtils.validateOrder(expr, undefined, ReturnType.Object, ReturnType.String);
     }

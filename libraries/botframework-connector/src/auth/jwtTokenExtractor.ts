@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 import { decode, verify, VerifyOptions } from 'jsonwebtoken';
-import { Claim,  ClaimsIdentity } from './claimsIdentity';
+import { Claim, ClaimsIdentity } from './claimsIdentity';
 import { EndorsementsValidator } from './endorsementsValidator';
 import { OpenIdMetadata } from './openIdMetadata';
 import { AuthenticationError } from './authenticationError';
@@ -16,7 +16,6 @@ import { StatusCodes } from 'botframework-schema';
  * A JWT token processing class that gets identity information and performs security token validation.
  */
 export class JwtTokenExtractor {
-
     // Cache for OpenIdConnect configuration managers (one per metadata URL)
     private static openIdMetadataCache: Map<string, OpenIdMetadata> = new Map<string, OpenIdMetadata>();
 
@@ -58,7 +57,11 @@ export class JwtTokenExtractor {
      * @param requiredEndorsements The required JWT endorsements.
      * @returns A `Promise` representation for either a [ClaimsIdentity](botframework-connector:module.ClaimsIdentity) or `null`.
      */
-    public async getIdentityFromAuthHeader(authorizationHeader: string, channelId: string, requiredEndorsements?: string[]): Promise<ClaimsIdentity | null> {
+    public async getIdentityFromAuthHeader(
+        authorizationHeader: string,
+        channelId: string,
+        requiredEndorsements?: string[]
+    ): Promise<ClaimsIdentity | null> {
         if (!authorizationHeader) {
             return null;
         }
@@ -79,8 +82,12 @@ export class JwtTokenExtractor {
      * @param requiredEndorsements The required JWT endorsements.
      * @returns A `Promise` representation for either a [ClaimsIdentity](botframework-connector:module.ClaimsIdentity) or `null`.
      */
-    public async getIdentity(scheme: string, parameter: string, channelId: string, requiredEndorsements: string[] = []): Promise<ClaimsIdentity | null> {
-
+    public async getIdentity(
+        scheme: string,
+        parameter: string,
+        channelId: string,
+        requiredEndorsements: string[] = []
+    ): Promise<ClaimsIdentity | null> {
         // No header in correct scheme or no token
         if (scheme !== 'Bearer' || !parameter) {
             return null;
@@ -121,8 +128,11 @@ export class JwtTokenExtractor {
     /**
      * @private
      */
-    private async validateToken(jwtToken: string, channelId: string, requiredEndorsements: string[]): Promise<ClaimsIdentity> {
-
+    private async validateToken(
+        jwtToken: string,
+        channelId: string,
+        requiredEndorsements: string[]
+    ): Promise<ClaimsIdentity> {
         const decodedToken: any = decode(jwtToken, { complete: true });
 
         // Update the signing tokens from the last refresh
@@ -142,17 +152,21 @@ export class JwtTokenExtractor {
                 const isEndorsed: boolean = EndorsementsValidator.validate(channelId, endorsements);
                 if (!isEndorsed) {
                     throw new AuthenticationError(
-                        `Could not validate endorsement for key: ${ keyId } with endorsements: ${ endorsements.join(',') }`,
+                        `Could not validate endorsement for key: ${keyId} with endorsements: ${endorsements.join(',')}`,
                         StatusCodes.UNAUTHORIZED
                     );
                 }
 
                 // Verify that additional endorsements are satisfied. If no additional endorsements are expected, the requirement is satisfied as well
-                const additionalEndorsementsSatisfied = requiredEndorsements.every(endorsement => EndorsementsValidator.validate(endorsement, endorsements));
+                const additionalEndorsementsSatisfied = requiredEndorsements.every((endorsement) =>
+                    EndorsementsValidator.validate(endorsement, endorsements)
+                );
 
                 if (!additionalEndorsementsSatisfied) {
                     throw new AuthenticationError(
-                        `Could not validate additional endorsement for key: ${keyId} with endorsements: ${requiredEndorsements.join(',')}. Expected endorsements: ${requiredEndorsements.join(',')}`,
+                        `Could not validate additional endorsement for key: ${keyId} with endorsements: ${requiredEndorsements.join(
+                            ','
+                        )}. Expected endorsements: ${requiredEndorsements.join(',')}`,
                         StatusCodes.UNAUTHORIZED
                     );
                 }
@@ -161,26 +175,22 @@ export class JwtTokenExtractor {
             if (this.tokenValidationParameters.algorithms) {
                 if (this.tokenValidationParameters.algorithms.indexOf(decodedToken.header.alg) === -1) {
                     throw new AuthenticationError(
-                        `"Token signing algorithm '${ decodedToken.header.alg }' not in allowed list`,
+                        `"Token signing algorithm '${decodedToken.header.alg}' not in allowed list`,
                         StatusCodes.UNAUTHORIZED
                     );
                 }
             }
 
-            const claims: Claim[] = Object.keys(decodedPayload).reduce(
-                (acc: any, key: any) => {
-                    acc.push({ type: key, value: decodedPayload[key] });
+            const claims: Claim[] = Object.keys(decodedPayload).reduce((acc: any, key: any) => {
+                acc.push({ type: key, value: decodedPayload[key] });
 
-                    return acc;
-                },
-                <Claim[]>[]
-            );
+                return acc;
+            }, <Claim[]>[]);
 
             return new ClaimsIdentity(claims, true);
-
         } catch (err) {
             // tslint:disable-next-line:no-console
-            console.error(`Error finding key for token. Available keys: ${ metadata.key }`);
+            console.error(`Error finding key for token. Available keys: ${metadata.key}`);
             throw err;
         }
     }

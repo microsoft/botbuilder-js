@@ -45,7 +45,10 @@ export class Expression {
      */
     public children: Expression[];
 
-    protected readonly evaluator: ExpressionEvaluator;
+    /**
+     * Evaluator of expression.
+     */
+    public readonly evaluator: ExpressionEvaluator;
 
     /**
      * Dictionary of function => ExpressionEvaluator.
@@ -81,7 +84,7 @@ export class Expression {
      */
     public deepEquals(other: Expression): boolean {
         let eq = false;
-        if (!other) {
+        if (other) {
             eq = this.type === other.type;
             if (eq) {
                 eq = this.children.length === other.children.length;
@@ -266,6 +269,7 @@ export class Expression {
             ExpressionType.Lambda,
             new ExpressionEvaluator(
                 ExpressionType.Lambda,
+                // eslint-disable-next-line @typescript-eslint/no-unused-vars
                 (_expression: Expression, state: any, _: Options): ValueWithError => {
                     let value: any;
                     let error: string;

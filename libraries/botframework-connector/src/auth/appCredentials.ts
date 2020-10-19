@@ -7,7 +7,7 @@
  */
 import * as msrest from '@azure/ms-rest-js';
 import * as url from 'url';
-import * as adal from 'adal-node'
+import * as adal from 'adal-node';
 import { AuthenticationConstants } from './authenticationConstants';
 
 /**
@@ -15,14 +15,13 @@ import { AuthenticationConstants } from './authenticationConstants';
  * Subclasses can implement refreshToken to acquire the token.
  */
 export abstract class AppCredentials implements msrest.ServiceClientCredentials {
-
     private static readonly trustedHostNames: Map<string, Date> = new Map<string, Date>([
-        ['state.botframework.com', new Date(8640000000000000)],              // Date.MAX_VALUE,
-        ['api.botframework.com', new Date(8640000000000000)],                // Date.MAX_VALUE,
-        ['token.botframework.com', new Date(8640000000000000)],              // Date.MAX_VALUE,
-        ['state.botframework.azure.us', new Date(8640000000000000)],         // Date.MAX_VALUE,
-        ['api.botframework.azure.us', new Date(8640000000000000)],           // Date.MAX_VALUE,
-        ['token.botframework.azure.us', new Date(8640000000000000)],         // Date.MAX_VALUE,
+        ['state.botframework.com', new Date(8640000000000000)], // Date.MAX_VALUE,
+        ['api.botframework.com', new Date(8640000000000000)], // Date.MAX_VALUE,
+        ['token.botframework.com', new Date(8640000000000000)], // Date.MAX_VALUE,
+        ['state.botframework.azure.us', new Date(8640000000000000)], // Date.MAX_VALUE,
+        ['api.botframework.azure.us', new Date(8640000000000000)], // Date.MAX_VALUE,
+        ['token.botframework.azure.us', new Date(8640000000000000)], // Date.MAX_VALUE,
     ]);
 
     private static readonly cache: Map<string, adal.TokenResponse> = new Map<string, adal.TokenResponse>();
@@ -42,7 +41,11 @@ export abstract class AppCredentials implements msrest.ServiceClientCredentials 
      * @param channelAuthTenant Optional. The oauth token tenant.
      * @param oAuthScope The scope for the token.
      */
-    public constructor(appId: string, channelAuthTenant?: string, oAuthScope: string = AuthenticationConstants.ToBotFromChannelTokenIssuer) {
+    public constructor(
+        appId: string,
+        channelAuthTenant?: string,
+        oAuthScope: string = AuthenticationConstants.ToBotFromChannelTokenIssuer
+    ) {
         this.appId = appId;
         this.tenant = channelAuthTenant;
         this.oAuthEndpoint = AuthenticationConstants.ToChannelFromBotLoginUrlPrefix + this.tenant;
@@ -60,9 +63,7 @@ export abstract class AppCredentials implements msrest.ServiceClientCredentials 
      * Sets tenant to be used for channel authentication.
      */
     private set tenant(value: string) {
-        this._tenant = value && value.length > 0
-            ? value
-            : AuthenticationConstants.DefaultChannelAuthTenant;
+        this._tenant = value && value.length > 0 ? value : AuthenticationConstants.DefaultChannelAuthTenant;
     }
 
     /**
@@ -77,7 +78,7 @@ export abstract class AppCredentials implements msrest.ServiceClientCredentials 
      */
     public set oAuthScope(value: string) {
         this._oAuthScope = value;
-        this.tokenCacheKey = `${ this.appId }${ this.oAuthScope }-cache`;
+        this.tokenCacheKey = `${this.appId}${this.oAuthScope}-cache`;
     }
 
     /**
@@ -105,7 +106,7 @@ export abstract class AppCredentials implements msrest.ServiceClientCredentials 
      */
     public static trustServiceUrl(serviceUrl: string, expiration?: Date): void {
         if (!expiration) {
-            expiration = new Date(Date.now() + 86400000);  // 1 day
+            expiration = new Date(Date.now() + 86400000); // 1 day
         }
 
         const uri: url.Url = url.parse(serviceUrl);
@@ -140,7 +141,7 @@ export abstract class AppCredentials implements msrest.ServiceClientCredentials 
         const expiration: Date = AppCredentials.trustedHostNames.get(uri);
         if (expiration) {
             // check if the trusted service url is still valid
-            return expiration.getTime() > (Date.now() - 300000); // 5 Minutes
+            return expiration.getTime() > Date.now() - 300000; // 5 Minutes
         }
 
         return false;
@@ -168,7 +169,7 @@ export abstract class AppCredentials implements msrest.ServiceClientCredentials 
      * @returns A Promise that represents the work queued to execute.
      * @remarks If the promise is successful, the result contains the access token string.
      */
-    public async getToken(forceRefresh: boolean = false): Promise<string> {
+    public async getToken(forceRefresh = false): Promise<string> {
         if (!forceRefresh) {
             // check the global cache for the token. If we have it, and it's valid, we're done.
             const oAuthToken: adal.TokenResponse = AppCredentials.cache.get(this.tokenCacheKey);
@@ -197,13 +198,12 @@ export abstract class AppCredentials implements msrest.ServiceClientCredentials 
 
             // Subtract 5 minutes from expires_in so they'll we'll get a
             // new token before it expires.
-            res.expirationTime = Date.now() + (res.expiresIn * 1000) - 300000;
+            res.expirationTime = Date.now() + res.expiresIn * 1000 - 300000;
             AppCredentials.cache.set(this.tokenCacheKey, res);
             return res.accessToken;
         } else {
             throw new Error('Authentication: No response or error received from ADAL.');
         }
-
     }
 
     protected abstract async refreshToken(): Promise<adal.TokenResponse>;

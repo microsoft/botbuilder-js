@@ -12,34 +12,43 @@ import { QnAMakerResult } from './';
  * Provides methods to create activities containing hero cards for showing active learning or multi-turn prompt options for the QnAMakerDialog.
  */
 export class QnACardBuilder {
-
     /**
      * Returns an activity with a hero card attachment, containing buttons for active learning suggestions.
      * @param suggestionsList List of suggestions to be displayed on hero card.
      * @param cardTitle Title of the hero card.
      * @param cardNoMatchText Text for button to be added to card to allow user to select 'no match'.
      */
-    public static getSuggestionsCard(suggestionsList: string[], cardTitle: string, cardNoMatchText: string): Partial<Activity> {
-        if (!Array.isArray(suggestionsList)) { throw new Error('Missing suggestionsList'); }
+    public static getSuggestionsCard(
+        suggestionsList: string[],
+        cardTitle: string,
+        cardNoMatchText: string
+    ): Partial<Activity> {
+        if (!Array.isArray(suggestionsList)) {
+            throw new Error('Missing suggestionsList');
+        }
 
-        if (!cardTitle) { throw new Error('Missing cardTitle'); }
+        if (!cardTitle) {
+            throw new Error('Missing cardTitle');
+        }
 
-        if (!cardNoMatchText) { throw new Error('Missing cardNoMatchText'); }
+        if (!cardNoMatchText) {
+            throw new Error('Missing cardNoMatchText');
+        }
 
-        var buttonList: CardAction[] = [];
+        const buttonList: CardAction[] = [];
 
-        suggestionsList.forEach(suggestion => {
+        suggestionsList.forEach((suggestion) => {
             buttonList.push({
                 value: suggestion,
                 type: 'imBack',
-                title: suggestion
+                title: suggestion,
             });
         });
 
         buttonList.push({
             value: cardNoMatchText,
             type: 'imBack',
-            title: cardNoMatchText
+            title: cardNoMatchText,
         });
 
         const promptsCard = CardFactory.heroCard('', undefined, buttonList);
@@ -53,15 +62,17 @@ export class QnACardBuilder {
      * @param result QnAMaker result containing the answer text and multi turn prompts to be displayed.
      */
     public static getQnAPromptsCard(result: QnAMakerResult): Partial<Activity> {
-        if (!result) { throw new Error('Missing QnAMaker result'); }
+        if (!result) {
+            throw new Error('Missing QnAMaker result');
+        }
 
-        var buttonList: CardAction[] = [];
+        const buttonList: CardAction[] = [];
 
-        result.context.prompts.forEach(prompt => {
+        result.context.prompts.forEach((prompt) => {
             buttonList.push({
                 value: prompt.displayText,
                 type: 'imBack',
-                title: prompt.displayText
+                title: prompt.displayText,
             });
         });
 

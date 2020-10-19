@@ -5,24 +5,55 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { DialogTurnResult, DialogContext, Dialog } from 'botbuilder-dialogs';
-import { ValueExpression, StringExpression, BoolExpression, EnumExpression } from 'adaptive-expressions';
+import {
+    BoolExpression,
+    BoolExpressionConverter,
+    EnumExpression,
+    EnumExpressionConverter,
+    Expression,
+    StringExpression,
+    StringExpressionConverter,
+    ValueExpression,
+    ValueExpressionConverter,
+} from 'adaptive-expressions';
+import {
+    Converter,
+    ConverterFactory,
+    Dialog,
+    DialogConfiguration,
+    DialogContext,
+    DialogTurnResult,
+} from 'botbuilder-dialogs';
 
 export enum ArrayChangeType {
     push = 'push',
     pop = 'pop',
     take = 'take',
     remove = 'remove',
-    clear = 'clear'
+    clear = 'clear',
 }
 
-export class EditArray<O extends object = {}> extends Dialog<O> {
+export interface EditArrayConfiguration extends DialogConfiguration {
+    changeType?: ArrayChangeType | string | Expression | EnumExpression<ArrayChangeType>;
+    itemsProperty?: string | Expression | StringExpression;
+    resultProperty?: string | Expression | StringExpression;
+    value?: unknown | ValueExpression;
+    disabled?: boolean | string | Expression | BoolExpression;
+}
+
+export class EditArray<O extends object = {}> extends Dialog<O> implements EditArrayConfiguration {
+    public static $kind = 'Microsoft.EditArray';
+
     public constructor();
     public constructor(changeType: ArrayChangeType, itemsProperty: string, value?: any, resultProperty?: string);
     public constructor(changeType?: ArrayChangeType, itemsProperty?: string, value?: any, resultProperty?: string) {
         super();
-        if (changeType) { this.changeType = new EnumExpression<ArrayChangeType>(changeType); }
-        if (itemsProperty) { this.itemsProperty = new StringExpression(itemsProperty); }
+        if (changeType) {
+            this.changeType = new EnumExpression<ArrayChangeType>(changeType);
+        }
+        if (itemsProperty) {
+            this.itemsProperty = new StringExpression(itemsProperty);
+        }
         switch (changeType) {
             case ArrayChangeType.clear:
             case ArrayChangeType.pop:
@@ -63,13 +94,32 @@ export class EditArray<O extends object = {}> extends Dialog<O> {
      */
     public disabled?: BoolExpression;
 
+    public getConverter(property: keyof EditArrayConfiguration): Converter | ConverterFactory {
+        switch (property) {
+            case 'changeType':
+                return new EnumExpressionConverter<ArrayChangeType>(ArrayChangeType);
+            case 'itemsProperty':
+                return new StringExpressionConverter();
+            case 'resultProperty':
+                return new StringExpressionConverter();
+            case 'value':
+                return new ValueExpressionConverter();
+            case 'disabled':
+                return new BoolExpressionConverter();
+            default:
+                return super.getConverter(property);
+        }
+    }
+
     public async beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult> {
         if (this.disabled && this.disabled.getValue(dc.state)) {
             return await dc.endDialog();
         }
 
         if (!this.itemsProperty) {
-            throw new Error(`EditArray: "${ this.changeType.toString() }" operation couldn't be performed because the itemsProperty wasn't specified.`);
+            throw new Error(
+                `EditArray: "${this.changeType.toString()}" operation couldn't be performed because the itemsProperty wasn't specified.`
+            );
         }
 
         // Get list and ensure populated
@@ -98,7 +148,10 @@ export class EditArray<O extends object = {}> extends Dialog<O> {
                 if (evaluationResult != undefined) {
                     result = false;
                     for (let i = 0; i < list.length; i++) {
-                        if ((JSON.stringify(evaluationResult) == JSON.stringify(list[i])) || evaluationResult === list[i]) {
+                        if (
+                            JSON.stringify(evaluationResult) == JSON.stringify(list[i]) ||
+                            evaluationResult === list[i]
+                        ) {
                             list.splice(i, 1);
                             result = true;
                             break;
@@ -121,10 +174,16 @@ export class EditArray<O extends object = {}> extends Dialog<O> {
     }
 
     protected onComputeId(): string {
-        return `EditArray[${ this.changeType.toString() }: ${ this.itemsProperty.toString() }]`;
+        return `EditArray[${this.changeType.toString()}: ${this.itemsProperty.toString()}]`;
     }
 
     private ensureValue(): void {
-        if (!this.value) { throw new Error(`EditArray: "${ this.changeType.toString() }" operation couldn't be performed for list "${ this.itemsProperty }" because a value wasn't specified.`) }
+        if (!this.value) {
+            throw new Error(
+                `EditArray: "${this.changeType.toString()}" operation couldn't be performed for list "${
+                    this.itemsProperty
+                }" because a value wasn't specified.`
+            );
+        }
     }
 }

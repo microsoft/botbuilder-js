@@ -35,15 +35,28 @@ export class ProtocolAdapter {
     /// <param name="requestManager">The manager that will process outgoing requests.</param>
     /// <param name="sender">The sender for use with outgoing requests.</param>
     /// <param name="receiver">The receiver for use with incoming requests.</param>
-    public constructor(requestHandler: RequestHandler, requestManager: RequestManager, sender: PayloadSender, receiver: PayloadReceiver) {
+    public constructor(
+        requestHandler: RequestHandler,
+        requestManager: RequestManager,
+        sender: PayloadSender,
+        receiver: PayloadReceiver
+    ) {
         this.requestHandler = requestHandler;
         this.requestManager = requestManager;
         this.payloadSender = sender;
         this.payloadReceiver = receiver;
         this.sendOperations = new SendOperations(this.payloadSender);
         this.streamManager = new StreamManager(this.onCancelStream);
-        this.assemblerManager = new PayloadAssemblerManager(this.streamManager, (id: string, response: IReceiveResponse): Promise<void> => this.onReceiveResponse(id, response),(id: string, request: IReceiveRequest): Promise<void> => this.onReceiveRequest(id, request));
-        this.payloadReceiver.subscribe((header: IHeader): SubscribableStream => this.assemblerManager.getPayloadStream(header),(header: IHeader, contentStream: SubscribableStream, contentLength: number): void => this.assemblerManager.onReceive(header, contentStream, contentLength));
+        this.assemblerManager = new PayloadAssemblerManager(
+            this.streamManager,
+            (id: string, response: IReceiveResponse): Promise<void> => this.onReceiveResponse(id, response),
+            (id: string, request: IReceiveRequest): Promise<void> => this.onReceiveRequest(id, request)
+        );
+        this.payloadReceiver.subscribe(
+            (header: IHeader): SubscribableStream => this.assemblerManager.getPayloadStream(header),
+            (header: IHeader, contentStream: SubscribableStream, contentLength: number): void =>
+                this.assemblerManager.onReceive(header, contentStream, contentLength)
+        );
     }
 
     /// <summary>
@@ -52,7 +65,7 @@ export class ProtocolAdapter {
     /// <param name="request">The outgoing request to send.</param>
     /// <param name="cancellationToken">Optional cancellation token.</param>
     public async sendRequest(request: StreamingRequest): Promise<IReceiveResponse> {
-        let requestId: string = generateGuid();
+        const requestId: string = generateGuid();
         await this.sendOperations.sendRequest(requestId, request);
 
         return this.requestManager.getResponse(requestId);
@@ -65,7 +78,7 @@ export class ProtocolAdapter {
     /// <param name="request">The incoming request to process.</param>
     public async onReceiveRequest(id: string, request: IReceiveRequest): Promise<void> {
         if (this.requestHandler) {
-            let response = await this.requestHandler.processRequest(request);
+            const response = await this.requestHandler.processRequest(request);
 
             if (response) {
                 await this.sendOperations.sendResponse(id, response);
@@ -90,7 +103,6 @@ export class ProtocolAdapter {
     /// cancellation request targets.
     /// </param>
     public onCancelStream(contentStreamAssembler: PayloadAssembler): void {
-        this.sendOperations.sendCancelStream(contentStreamAssembler.id)
-            .catch();
+        this.sendOperations.sendCancelStream(contentStreamAssembler.id).catch();
     }
 }

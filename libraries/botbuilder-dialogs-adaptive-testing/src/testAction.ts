@@ -6,9 +6,9 @@
  * Licensed under the MIT License.
  */
 
-import { TurnContext } from 'botbuilder-core';
-import { AdaptiveTestAdapter } from './adaptiveTestAdapter';
+import { TurnContext, TestAdapter } from 'botbuilder-core';
+import { Configurable } from 'botbuilder-dialogs';
 
-export interface TestAction {
-    execute(adapter: AdaptiveTestAdapter, callback: (context: TurnContext) => Promise<any>);
+export abstract class TestAction extends Configurable {
+    public abstract execute(adapter: TestAdapter, callback: (context: TurnContext) => Promise<void>): void;
 }

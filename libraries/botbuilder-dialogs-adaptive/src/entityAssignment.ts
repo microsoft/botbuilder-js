@@ -78,6 +78,8 @@ export class EntityAssignment {
      * @param _this Source assignment.
      */
     public static toString(_this: Partial<EntityAssignment>): string {
-        return `${ _this.isExpected ? '+' : '' }${ _this.property } = ${ _this.operation }(${ EntityInfo.toString(_this.entity) })`;
+        return `${_this.isExpected ? '+' : ''}${_this.property} = ${_this.operation}(${EntityInfo.toString(
+            _this.entity
+        )})`;
     }
 }
