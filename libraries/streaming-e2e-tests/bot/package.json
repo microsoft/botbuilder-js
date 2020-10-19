@@ -1,25 +1,26 @@
 {
-    "name": "streaming-e2e-tests-bot",
-    "version": "1.0.0",
-    "description": "Echo bot for E2E streaming tests",
-    "author": "Microsoft Corp.",
-    "license": "MIT",
-    "main": "index.js",
-    "scripts": {
-        "start": "node ./index.js",
-        "watch": "nodemon ./index.js"
-    },
-    "repository": {
-        "type": "git",
-        "url": "https://github.com/microsoft/botbuilder-js"
-    },
-    "dependencies": {
-        "botbuilder": "~4.9.2",
-        "dotenv": "^8.2.0",
-        "math-random": "^1.0.4",
-        "restify": "~8.5.1"
-    },
-    "devDependencies": {
-        "nodemon": "~2.0.4"
-    }
+  "name": "streaming-e2e-tests-bot",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Echo bot for E2E streaming tests",
+  "author": "Microsoft Corp.",
+  "license": "MIT",
+  "main": "index.js",
+  "scripts": {
+    "start": "node ./index.js",
+    "watch": "nodemon ./index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/microsoft/botbuilder-js"
+  },
+  "dependencies": {
+    "botbuilder": "~4.9.2",
+    "dotenv": "^8.2.0",
+    "math-random": "^1.0.4",
+    "restify": "~8.5.1"
+  },
+  "devDependencies": {
+    "nodemon": "~2.0.4"
+  }
 }

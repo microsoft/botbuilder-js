@@ -13,6 +13,12 @@ import {
 } from 'botframework-schema';
 import { TelemetryConstants } from './telemetryConstants';
 
+// Internal helper duplicated from
+// https://github.com/microsoft/botbuilder-js/commit/9277f901701ef270cf5af089e37e7aa7ab2579e1
+function isTeamsChannelData(channelData: unknown): channelData is TeamsChannelData {
+    return typeof channelData === 'object';
+}
+
 /**
  * Middleware for logging incoming, outgoing, updated or deleted Activity messages.
  * Uses the botTelemetryClient interface.
@@ -364,15 +370,14 @@ export class TelemetryLoggerMiddleware implements Middleware {
 
     private populateAdditionalChannelProperties(activity: Activity, properties?: { [key: string]: string }): void {
         if (activity) {
+            const channelData = activity.channelData;
             switch (activity.channelId) {
                 case 'msteams':
-                    const channelData = activity.channelData as TeamsChannelData;
-
-                    properties['TeamsTenantId'] = channelData.tenant ? channelData.tenant.id : '';
                     properties['TeamsUserAadObjectId'] = activity.from ? activity.from.aadObjectId : '';
 
-                    if (channelData.team) {
-                        properties['TeamsTeamInfo'] = JSON.stringify(channelData.team);
+                    if (isTeamsChannelData(channelData)) {
+                        properties['TeamsTenantId'] = channelData.tenant ? channelData.tenant.id : '';
+                        properties['TeamsTeamInfo'] = channelData.team && JSON.stringify(channelData.team);
                     }
 
                     break;

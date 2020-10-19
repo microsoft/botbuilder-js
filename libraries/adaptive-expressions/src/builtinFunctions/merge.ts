@@ -16,10 +16,16 @@ import { ReturnType } from '../returnType';
  * Merge two JSON objects into one JSON object.
  */
 export class Merge extends ExpressionEvaluator {
+    /**
+     * Initializes a new instance of the [Merge](xref:adaptive-expressions.Merge) class.
+     */
     public constructor() {
         super(ExpressionType.Merge, Merge.evaluator(), ReturnType.Object, Merge.validator);
     }
 
+    /**
+     * @private
+     */
     private static evaluator(): EvaluateExpressionDelegate {
         return FunctionUtils.applySequenceWithError((args: any[]): any => {
             let value: any;
@@ -40,6 +46,9 @@ export class Merge extends ExpressionEvaluator {
         });
     }
 
+    /**
+     * @private
+     */
     private static validator(expression: Expression): void {
         FunctionUtils.validateArityAndAnyType(expression, 2, Number.MAX_SAFE_INTEGER);
     }

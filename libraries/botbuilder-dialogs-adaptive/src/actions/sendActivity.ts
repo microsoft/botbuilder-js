@@ -5,14 +5,32 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { DialogTurnResult, DialogContext, Dialog } from 'botbuilder-dialogs';
-import { Activity, StringUtils, MessageFactory, ActivityTypes, ResourceResponse } from 'botbuilder-core';
+import { BoolExpression, BoolExpressionConverter, Expression } from 'adaptive-expressions';
+import { Activity, ActivityTypes, ResourceResponse, StringUtils } from 'botbuilder-core';
+import {
+    Converter,
+    ConverterFactory,
+    Dialog,
+    DialogConfiguration,
+    DialogContext,
+    DialogStateManager,
+    DialogTurnResult,
+} from 'botbuilder-dialogs';
 import { TemplateInterface } from '../template';
-import { ActivityTemplate } from '../templates/activityTemplate';
-import { StaticActivityTemplate } from '../templates/staticActivityTemplate';
-import { BoolExpression } from 'adaptive-expressions';
+import { ActivityTemplate, StaticActivityTemplate } from '../templates';
+import { ActivityTemplateConverter } from '../converters';
 
-export class SendActivity<O extends object = {}> extends Dialog<O> {
+type D = DialogStateManager & {
+    utterance: string;
+};
+
+export interface SendActivityConfiguration extends DialogConfiguration {
+    activity?: string | Partial<Activity> | TemplateInterface<Partial<Activity>, D>;
+    disabled?: boolean | string | Expression | BoolExpression;
+}
+
+export class SendActivity<O extends object = {}> extends Dialog<O> implements SendActivityConfiguration {
+    public static $kind = 'Microsoft.SendActivity';
     /**
      * Creates a new `SendActivity` instance.
      * @param activity Activity or message text to send the user.
@@ -31,12 +49,23 @@ export class SendActivity<O extends object = {}> extends Dialog<O> {
     /**
      * Gets or sets template for the activity.
      */
-    public activity: TemplateInterface<Partial<Activity>>;
+    public activity: TemplateInterface<Partial<Activity>, D & O>;
 
     /**
      * An optional expression which if is true will disable this action.
      */
     public disabled?: BoolExpression;
+
+    public getConverter(property: keyof SendActivityConfiguration): Converter | ConverterFactory {
+        switch (property) {
+            case 'activity':
+                return new ActivityTemplateConverter();
+            case 'disabled':
+                return new BoolExpressionConverter();
+            default:
+                return super.getConverter(property);
+        }
+    }
 
     public async beginDialog(dc: DialogContext, options: O): Promise<DialogTurnResult> {
         if (this.disabled && this.disabled.getValue(dc.state)) {

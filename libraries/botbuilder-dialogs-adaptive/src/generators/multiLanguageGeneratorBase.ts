@@ -6,18 +6,37 @@
  * Licensed under the MIT License.
  */
 
-import { DialogContext } from 'botbuilder-dialogs';
+import { Configurable, Converter, ConverterFactory, DialogContext } from 'botbuilder-dialogs';
 import { LanguageGenerator } from '../languageGenerator';
-import { LanguagePolicy } from '../languagePolicy';
+import { LanguagePolicy, LanguagePolicyConverter } from '../languagePolicy';
 import { languagePolicyKey } from '../languageGeneratorExtensions';
+
+export interface MultiLanguageGeneratorBaseConfiguration {
+    languagePolicy?: Record<string, string[]> | LanguagePolicy;
+}
+
 /**
  * Base class which applies language policy to tryGetGenerator.
  */
-export abstract class MultiLanguageGeneratorBase implements LanguageGenerator {
+export abstract class MultiLanguageGeneratorBase<
+        T = unknown,
+        D extends Record<string, unknown> = Record<string, unknown>
+    >
+    extends Configurable
+    implements LanguageGenerator<T, D>, MultiLanguageGeneratorBaseConfiguration {
     /**
      * Language policy required by language generator.
      */
     public languagePolicy: LanguagePolicy;
+
+    public getConverter(property: keyof MultiLanguageGeneratorBaseConfiguration): Converter | ConverterFactory {
+        switch (property) {
+            case 'languagePolicy':
+                return new LanguagePolicyConverter();
+            default:
+                return super.getConverter(property);
+        }
+    }
 
     /**
      * Abstract method to get a language generator by locale.
@@ -27,7 +46,7 @@ export abstract class MultiLanguageGeneratorBase implements LanguageGenerator {
     public abstract tryGetGenerator(
         dialogContext: DialogContext,
         locale: string
-    ): { exist: boolean; result: LanguageGenerator };
+    ): { exist: boolean; result: LanguageGenerator<T, D> };
 
     /**
      * Find a language generator that matches the current context locale.
@@ -35,7 +54,7 @@ export abstract class MultiLanguageGeneratorBase implements LanguageGenerator {
      * @param template Template to use.
      * @param data Data to bind to.
      */
-    public async generate(dialogContext: DialogContext, template: string, data: object): Promise<string> {
+    public async generate(dialogContext: DialogContext, template: string, data: D): Promise<T> {
         const targetLocale = dialogContext.context.activity.locale
             ? dialogContext.context.activity.locale.toLocaleLowerCase()
             : '';
@@ -66,10 +85,11 @@ export abstract class MultiLanguageGeneratorBase implements LanguageGenerator {
             throw Error(`No supported language found for ${targetLocale}`);
         }
 
-        const generators: LanguageGenerator[] = [];
+        const generators: LanguageGenerator<T, D>[] = [];
         for (const locale of fallbackLocales) {
-            if (this.tryGetGenerator(dialogContext, locale).exist) {
-                generators.push(this.tryGetGenerator(dialogContext, locale).result);
+            const result = this.tryGetGenerator(dialogContext, locale);
+            if (result.exist) {
+                generators.push(result.result);
             }
         }
 
@@ -80,7 +100,7 @@ export abstract class MultiLanguageGeneratorBase implements LanguageGenerator {
         const errors: string[] = [];
         for (const generator of generators) {
             try {
-                return generator.generate(dialogContext, template, data);
+                return await generator.generate(dialogContext, template, data);
             } catch (e) {
                 errors.push(e);
             }

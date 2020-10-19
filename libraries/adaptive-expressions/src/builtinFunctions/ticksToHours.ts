@@ -20,6 +20,9 @@ import { ReturnType } from '../returnType';
 export class TicksToHours extends ExpressionEvaluator {
     private static readonly TicksPerHour: number = 60 * 60 * 10000000;
 
+    /**
+     * Initializes a new instance of the [TicksToHours](xref:adaptive-expressions.TicksToHours) class.
+     */
     public constructor() {
         super(
             ExpressionType.TicksToHours,
@@ -29,6 +32,9 @@ export class TicksToHours extends ExpressionEvaluator {
         );
     }
 
+    /**
+     * @private
+     */
     private static evaluator(expr: Expression, state: MemoryInterface, options: Options): ValueWithError {
         let value: any;
         const { args, error: childrenError } = FunctionUtils.evaluateChildren(expr, state, options);
@@ -37,7 +43,7 @@ export class TicksToHours extends ExpressionEvaluator {
             if (Number.isInteger(args[0])) {
                 value = args[0] / TicksToHours.TicksPerHour;
             } else {
-                error = `${expr} should contain an integer of ticks`;
+                error = `${ expr } should contain an integer of ticks`;
             }
         }
 

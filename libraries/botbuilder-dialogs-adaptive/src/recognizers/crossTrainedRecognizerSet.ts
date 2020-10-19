@@ -6,24 +6,40 @@
  * Licensed under the MIT License.
  */
 
-import { RecognizerResult, Activity, getTopScoringIntent } from 'botbuilder-core';
-import { DialogContext } from 'botbuilder-dialogs';
-import { Recognizer } from './recognizer';
-import * as lodash from 'lodash';
+import { Activity, RecognizerResult, getTopScoringIntent } from 'botbuilder-core';
+import { Converter, ConverterFactory, DialogContext } from 'botbuilder-dialogs';
+import { RecognizerListConverter } from '../converters';
+import { Recognizer, RecognizerConfiguration } from './recognizer';
+import { merge } from 'lodash';
 
 /**
  * Standard cross trained intent name prefix.
  */
 const deferPrefix = 'DeferToRecognizer_';
 
+export interface CrossTrainedRecognizerSetConfiguration extends RecognizerConfiguration {
+    recognizers?: string[] | Recognizer[];
+}
+
 /**
  * Recognizer for selecting between cross trained recognizers.
  */
-export class CrossTrainedRecognizerSet extends Recognizer {
+export class CrossTrainedRecognizerSet extends Recognizer implements CrossTrainedRecognizerSetConfiguration {
+    public static $kind = 'Microsoft.CrossTrainedRecognizerSet';
+
     /**
      * Gets or sets the input recognizers.
      */
     public recognizers: Recognizer[] = [];
+
+    public getConverter(property: keyof CrossTrainedRecognizerSetConfiguration): Converter | ConverterFactory {
+        switch (property) {
+            case 'recognizers':
+                return RecognizerListConverter;
+            default:
+                return super.getConverter(property);
+        }
+    }
 
     /**
      * To recognize intents and entities in a users utterance.
@@ -99,7 +115,7 @@ export class CrossTrainedRecognizerSet extends Recognizer {
                 }
 
                 // if we ended up back at the recognizer.id and we have no consensus then it's a none intent
-                if (recognizerId == recognizer.id && !consensusRecognizedId) {
+                if (recognizerId === recognizer.id && !consensusRecognizedId) {
                     const recognizerResult: RecognizerResult = {
                         text: recognizerResults[recognizer.id].text,
                         intents: { None: { score: 1.0 } },
@@ -110,16 +126,16 @@ export class CrossTrainedRecognizerSet extends Recognizer {
 
             // we have a real intent and it's the first one we found
             if (!consensusRecognizedId) {
-                if (intent != 'None') {
+                if (intent && intent !== 'None') {
                     consensusRecognizedId = recognizerId;
                 }
             } else {
                 // we have a second recognizer result which is either none or real
                 // if one of them is None intent, then go with the other one
-                if (intent == 'None') {
+                if (!intent || intent === 'None') {
                     // then we are fine with the one we have, just ignore this one
                     continue;
-                } else if (recognizerId == consensusRecognizedId) {
+                } else if (recognizerId === consensusRecognizedId) {
                     // this is more consensus for this recognizer
                     continue;
                 } else {
@@ -134,12 +150,12 @@ export class CrossTrainedRecognizerSet extends Recognizer {
         }
 
         //find if matched entities found when hits the none intent
-        const mergedEntities = results.reduce((acc, curr) => lodash.merge(acc, curr.entities), {});
+        const mergedEntities = results.reduce((acc, curr) => merge(acc, curr.entities), {});
 
         // return none
         const recognizerResult: RecognizerResult = {
             text,
-            intents: { 'None': { score: 1.0 } },
+            intents: { None: { score: 1.0 } },
             entities: mergedEntities
         };
         return recognizerResult;

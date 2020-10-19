@@ -18,10 +18,16 @@ import { ReturnType } from '../returnType';
  * Return a timestamp in the specified format from UNIX time (also know as Epoch time, POSIX time, UNIX Epoch time).
  */
 export class FormatEpoch extends ExpressionEvaluator {
+    /**
+     * Initializes a new instance of the [FormatEpoch](xref:adaptive-expressions.FormatEpoch) class.
+     */
     public constructor() {
         super(ExpressionType.FormatEpoch, FormatEpoch.evaluator(), ReturnType.String, FormatEpoch.validator);
     }
 
+    /**
+     * @private
+     */
     private static evaluator(): EvaluateExpressionDelegate {
         return FunctionUtils.applyWithError((args: any[]): any => {
             let error: string;
@@ -46,6 +52,9 @@ export class FormatEpoch extends ExpressionEvaluator {
         });
     }
 
+    /**
+     * @private
+     */
     private static validator(expression: Expression): void {
         FunctionUtils.validateOrder(expression, [ReturnType.String], ReturnType.Number);
     }
