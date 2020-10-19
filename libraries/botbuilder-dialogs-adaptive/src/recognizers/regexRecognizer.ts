@@ -5,16 +5,38 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { RecognizerResult, Entity, Activity } from 'botbuilder-core';
-import { DialogContext } from 'botbuilder-dialogs';
+import { Activity, Entity, RecognizerResult } from 'botbuilder-core';
+import { Converter, ConverterFactory, DialogContext } from 'botbuilder-dialogs';
 import { Recognizer } from './recognizer';
 import { IntentPattern } from './intentPattern';
 import { EntityRecognizer, TextEntity, EntityRecognizerSet } from './entityRecognizers';
+import { RecognizerSetConfiguration } from './recognizerSet';
+
+type IntentPatternInput = {
+    intent: string;
+    pattern: string;
+};
+
+class IntentPatternsConverter implements Converter<IntentPatternInput[], IntentPattern[]> {
+    public convert(items: IntentPatternInput[] | IntentPattern[]): IntentPattern[] {
+        const results: IntentPattern[] = [];
+        items.forEach((item) => {
+            results.push(item instanceof IntentPattern ? item : new IntentPattern(item.intent, item.pattern));
+        });
+        return results;
+    }
+}
+
+export interface RegexRecognizerConfiguration extends RecognizerSetConfiguration {
+    intents?: IntentPatternInput[] | IntentPattern[];
+}
 
 /**
  * Recognizer implementation which uses regex expressions to identify intents.
  */
-export class RegexRecognizer extends Recognizer {
+export class RegexRecognizer extends Recognizer implements RegexRecognizerConfiguration {
+    public static $kind = 'Microsoft.RegexRecognizer';
+
     /**
      * Dictionary of patterns -> intent names.
      */
@@ -24,6 +46,15 @@ export class RegexRecognizer extends Recognizer {
      * The entity recognizers.
      */
     public entities: EntityRecognizer[] = [];
+
+    public getConverter(property: keyof RegexRecognizerConfiguration): Converter | ConverterFactory {
+        switch (property) {
+            case 'intents':
+                return new IntentPatternsConverter();
+            default:
+                return super.getConverter(property);
+        }
+    }
 
     /**
      * Runs current `DialogContext.context.activity` through a recognizer and returns a [RecognizerResult](xref:botbuilder-core.RecognizerResult).
@@ -47,6 +78,11 @@ export class RegexRecognizer extends Recognizer {
             intents: {},
             entities: {},
         };
+
+        if (!text) {
+            // nothing to recognize, return empty result
+            return recognizerResult;
+        }
 
         const entityPool: Entity[] = [];
 

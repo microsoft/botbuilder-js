@@ -7,12 +7,20 @@
  */
 
 import { Culture } from '@microsoft/recognizers-text';
-import { DialogContext, ModelResult } from 'botbuilder-dialogs';
 import { Entity } from 'botbuilder-core';
+import { Configurable, DialogContext, ModelResult } from 'botbuilder-dialogs';
 import { EntityRecognizer } from './entityRecognizer';
 import { TextEntity } from './textEntity';
 
-export abstract class TextEntityRecognizer implements EntityRecognizer {
+export abstract class TextEntityRecognizer extends Configurable implements EntityRecognizer {
+    /**
+     * Recognizes entities from an [Entity](xref:botframework-schema.Entity) list.
+     * @param dialogContext The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
+     * @param text Text to recognize.
+     * @param locale Locale to use.
+     * @param entities The [Entity](xref:botframework-schema.Entity) array to be recognized.
+     * @returns Recognized [Entity](xref:botframework-schema.Entity) list Promise.
+     */
     public async recognizeEntities(
         dialogContext: DialogContext,
         text: string,

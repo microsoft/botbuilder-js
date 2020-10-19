@@ -159,6 +159,9 @@ export class GenerateAnswerUtils {
             .sort((a: QnAMakerResult, b: QnAMakerResult) => b.score - a.score);
     }
 
+    /**
+     * @private
+     */
     private formatQnaResult(qnaResult: any): QnAMakerResults {
         qnaResult.answers = qnaResult.answers.map((ans: any) => {
             ans.score = ans.score / 100;
@@ -177,6 +180,9 @@ export class GenerateAnswerUtils {
         return qnaResult;
     }
 
+    /**
+     * @private
+     */
     private validateScoreThreshold(scoreThreshold: number): void {
         if (typeof scoreThreshold !== 'number' || !(scoreThreshold > 0 && scoreThreshold <= 1)) {
             throw new TypeError(
@@ -185,6 +191,9 @@ export class GenerateAnswerUtils {
         }
     }
 
+    /**
+     * @private
+     */
     private validateTop(qnaOptionTop: number): void {
         if (!Number.isInteger(qnaOptionTop) || qnaOptionTop < 1) {
             throw new RangeError(

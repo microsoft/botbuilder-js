@@ -6,18 +6,37 @@
  * Licensed under the MIT License.
  */
 
-import { RecognizerResult, Activity } from 'botbuilder-core';
-import { DialogContext } from 'botbuilder-dialogs';
-import { Recognizer } from './recognizer';
-import { LanguagePolicy } from '../languagePolicy';
+import { Activity, RecognizerResult } from 'botbuilder-core';
+import { Converter, ConverterFactory, DialogContext } from 'botbuilder-dialogs';
+import { Recognizer, RecognizerConfiguration } from './recognizer';
+import { LanguagePolicy, LanguagePolicyConverter } from '../languagePolicy';
+import { MultiLanguageRecognizerConverter } from '../converters';
+
+export interface MultiLanguageRecognizerConfiguration extends RecognizerConfiguration {
+    languagePolicy?: Record<string, string[]> | LanguagePolicy;
+    recognizers?: Record<string, string> | Record<string, Recognizer>;
+}
 
 /**
  * Defines map of languages -> recognizer.
  */
-export class MultiLanguageRecognizer extends Recognizer {
+export class MultiLanguageRecognizer extends Recognizer implements MultiLanguageRecognizerConfiguration {
+    public static $kind = 'Microsoft.MultiLanguageRecognizer';
+
     public languagePolicy: LanguagePolicy = new LanguagePolicy();
 
     public recognizers: { [locale: string]: Recognizer };
+
+    public getConverter(property: keyof MultiLanguageRecognizerConfiguration): Converter | ConverterFactory {
+        switch (property) {
+            case 'languagePolicy':
+                return new LanguagePolicyConverter();
+            case 'recognizers':
+                return MultiLanguageRecognizerConverter;
+            default:
+                return super.getConverter(property);
+        }
+    }
 
     /**
      * Runs current `DialogContext.context.activity` through a recognizer and returns a [RecognizerResult](xref:botbuilder-core.RecognizerResult).

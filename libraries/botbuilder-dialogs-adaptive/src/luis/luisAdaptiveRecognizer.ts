@@ -5,8 +5,15 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { Recognizer } from '../recognizers';
-import { StringExpression, ArrayExpression, BoolExpression } from 'adaptive-expressions';
+import {
+    ArrayExpression,
+    ArrayExpressionConverter,
+    BoolExpression,
+    BoolExpressionConverter,
+    Expression,
+    StringExpression,
+    StringExpressionConverter,
+} from 'adaptive-expressions';
 import {
     LuisPredictionOptions,
     LuisRecognizerOptionsV3,
@@ -14,10 +21,22 @@ import {
     LuisApplication,
     LuisTelemetryConstants,
 } from 'botbuilder-ai';
-import { DialogContext } from 'botbuilder-dialogs';
 import { Activity, RecognizerResult } from 'botbuilder-core';
+import { Converter, ConverterFactory, DialogContext } from 'botbuilder-dialogs';
+import { Recognizer, RecognizerConfiguration } from '../recognizers';
 
-export class LuisAdaptiveRecognizer extends Recognizer {
+export interface LuisAdaptiveRecognizerConfiguration extends RecognizerConfiguration {
+    applicationId?: string | Expression | StringExpression;
+    logPersonalInformation?: boolean | string | Expression | BoolExpression;
+    dynamicLists?: unknown[] | string | Expression | ArrayExpression<unknown>;
+    endpoint?: string | Expression | StringExpression;
+    endpointKey?: string | Expression | StringExpression;
+    predictionOptions?: LuisPredictionOptions;
+}
+
+export class LuisAdaptiveRecognizer extends Recognizer implements LuisAdaptiveRecognizerConfiguration {
+    public static $kind = 'Microsoft.LuisRecognizer';
+
     /**
      * LUIS application ID.
      */
@@ -56,6 +75,23 @@ export class LuisAdaptiveRecognizer extends Recognizer {
      * LUIS prediction options.
      */
     public predictionOptions: LuisPredictionOptions;
+
+    public getConverter(property: keyof LuisAdaptiveRecognizerConfiguration): Converter | ConverterFactory {
+        switch (property) {
+            case 'applicationId':
+                return new StringExpressionConverter();
+            case 'dynamicLists':
+                return new ArrayExpressionConverter();
+            case 'endpoint':
+                return new StringExpressionConverter();
+            case 'endpointKey':
+                return new StringExpressionConverter();
+            case 'logPersonalInformation':
+                return new BoolExpressionConverter();
+            default:
+                return super.getConverter(property);
+        }
+    }
 
     public async recognize(
         dialogContext: DialogContext,

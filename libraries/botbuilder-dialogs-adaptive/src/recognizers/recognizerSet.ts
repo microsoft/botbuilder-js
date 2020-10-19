@@ -6,15 +6,31 @@
  * Licensed under the MIT License.
  */
 
-import { RecognizerResult, Activity, getTopScoringIntent } from 'botbuilder-core';
-import { DialogContext } from 'botbuilder-dialogs';
-import { Recognizer } from './recognizer';
+import { Activity, RecognizerResult, getTopScoringIntent } from 'botbuilder-core';
+import { Converter, ConverterFactory, DialogContext } from 'botbuilder-dialogs';
+import { RecognizerListConverter } from '../converters';
+import { Recognizer, RecognizerConfiguration } from './recognizer';
+
+export interface RecognizerSetConfiguration extends RecognizerConfiguration {
+    recognizers?: string[] | Recognizer[];
+}
 
 /**
  * RecognizerSet - [Recognizer](xref:botbuilder-dialogs-adaptive.Recognizer) which is the union of multiple recognizers into one RecognizerResult.
  */
-export class RecognizerSet extends Recognizer {
+export class RecognizerSet extends Recognizer implements RecognizerSetConfiguration {
+    public static $kind = 'Microsoft.RecognizerSet';
+
     public recognizers: Recognizer[] = [];
+
+    public getConverter(property: keyof RecognizerSetConfiguration): Converter | ConverterFactory {
+        switch (property) {
+            case 'recognizers':
+                return RecognizerListConverter;
+            default:
+                return super.getConverter(property);
+        }
+    }
 
     /**
      * Runs current `DialogContext.context.activity` through a recognizer and returns a [RecognizerResult](xref:botbuilder-core.RecognizerResult).
