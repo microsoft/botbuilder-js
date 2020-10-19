@@ -11,18 +11,28 @@ import { ActionState } from './actionState';
 import { ActionChangeList } from './actionChangeList';
 import { ActionChangeType } from './actionChangeType';
 
+/**
+ * Extends the [DialogContext](xref:botbuilder-dialogs.DialogContext) with additional methods for manipulating the
+ * executing sequence of actions for an [AdaptiveDialog](xref:botbuilder-dialogs-adaptive.AdaptiveDialog).
+ */
 export class ActionContext extends DialogContext {
     private readonly _changeKey: symbol;
 
     /**
-     * Initializes a new instance of the `ActionContext` class
+     * Initializes a new instance of the [ActionContext](xref:botbuilder-dialogs-adaptive.ActionContext) class
      * @param dialogs The dialog set to create the action context for.
      * @param parentDialogContext Parent dialog context.
      * @param state Current dialog state.
      * @param actions Current list of remaining actions to execute.
      * @param changeKey TurnState key for where to persist any changes.
      */
-    public constructor(dialogs: DialogSet, parentDialogContext: DialogContext, state: DialogState, actions: ActionState[], changeKey: symbol) {
+    public constructor(
+        dialogs: DialogSet,
+        parentDialogContext: DialogContext,
+        state: DialogState,
+        actions: ActionState[],
+        changeKey: symbol
+    ) {
         super(dialogs, parentDialogContext, state);
         this.actions = actions;
         this._changeKey = changeKey;
@@ -66,12 +76,12 @@ export class ActionContext extends DialogContext {
                 // Apply memory changes to turn state
                 if (change.turn) {
                     for (const key in change.turn) {
-                        this.state.setValue(`turn.${ key }`, change.turn[key]);
+                        this.state.setValue(`turn.${key}`, change.turn[key]);
                     }
                 }
 
                 // Update sequence
-                switch(change.changeType) {
+                switch (change.changeType) {
                     case ActionChangeType.insertActions:
                         this.actions.unshift(...change.actions);
                         break;

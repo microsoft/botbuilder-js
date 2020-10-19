@@ -21,6 +21,9 @@ import { ReturnType } from '../returnType';
  * Subtract a number of time units from a timestamp.
  */
 export class SubtractFromTime extends ExpressionEvaluator {
+    /**
+     * Initializes a new instance of the [SubtractFromTime](xref:adaptive-expressions.SubtractFromTime) class.
+     */
     public constructor() {
         super(
             ExpressionType.SubtractFromTime,
@@ -30,18 +33,20 @@ export class SubtractFromTime extends ExpressionEvaluator {
         );
     }
 
+    /**
+     * @private
+     */
     private static evaluator(expression: Expression, state: MemoryInterface, options: Options): ValueWithError {
         let value: any;
-        let error: any;
-        let args: any[];
-        ({ args, error } = FunctionUtils.evaluateChildren(expression, state, options));
+        const { args, error: childrenError } = FunctionUtils.evaluateChildren(expression, state, options);
+        let error = childrenError;
         if (!error) {
             if (typeof args[0] === 'string' && Number.isInteger(args[1]) && typeof args[2] === 'string') {
                 const format: string =
                     args.length === 4 ? FunctionUtils.timestampFormatter(args[3]) : FunctionUtils.DefaultDateTimeFormat;
                 const { duration, tsStr } = InternalFunctionUtils.timeUnitTransformer(args[1], args[2]);
                 if (tsStr === undefined) {
-                    error = `${args[2]} is not a valid time unit.`;
+                    error = `${ args[2] } is not a valid time unit.`;
                 } else {
                     const dur: any = duration;
                     ({ value, error } = InternalFunctionUtils.parseTimestamp(args[0], (dt: Date): string => {
@@ -51,13 +56,16 @@ export class SubtractFromTime extends ExpressionEvaluator {
                     }));
                 }
             } else {
-                error = `${expression} should contain an ISO format timestamp, a time interval integer, a string unit of time and an optional output format string.`;
+                error = `${ expression } should contain an ISO format timestamp, a time interval integer, a string unit of time and an optional output format string.`;
             }
         }
 
         return { value, error };
     }
 
+    /**
+     * @private
+     */
     private static validator(expression: Expression): void {
         FunctionUtils.validateOrder(
             expression,

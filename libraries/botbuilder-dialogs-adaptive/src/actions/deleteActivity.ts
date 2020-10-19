@@ -5,14 +5,36 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { Dialog, DialogContext, DialogTurnResult } from 'botbuilder-dialogs';
-import { StringExpression, BoolExpression } from 'adaptive-expressions';
+import {
+    BoolExpression,
+    BoolExpressionConverter,
+    Expression,
+    StringExpression,
+    StringExpressionConverter,
+} from 'adaptive-expressions';
+import {
+    Converter,
+    ConverterFactory,
+    Dialog,
+    DialogConfiguration,
+    DialogContext,
+    DialogTurnResult,
+} from 'botbuilder-dialogs';
 
-export class DeleteActivity<O extends object = {}> extends Dialog<O> {
+export interface DeleteActivityConfiguration extends DialogConfiguration {
+    activityId?: string | Expression | StringExpression;
+    disabled?: boolean | string | Expression | BoolExpression;
+}
+
+export class DeleteActivity<O extends object = {}> extends Dialog<O> implements DeleteActivityConfiguration {
+    public static $kind = 'Microsoft.DeleteActivity';
+
     public constructor();
     public constructor(activityId?: string) {
         super();
-        if (activityId) { this.activityId = new StringExpression(activityId); }
+        if (activityId) {
+            this.activityId = new StringExpression(activityId);
+        }
     }
 
     /**
@@ -24,6 +46,17 @@ export class DeleteActivity<O extends object = {}> extends Dialog<O> {
      * An optional expression which if is true will disable this action.
      */
     public disabled?: BoolExpression;
+
+    public getConverter(property: keyof DeleteActivityConfiguration): Converter | ConverterFactory {
+        switch (property) {
+            case 'activityId':
+                return new StringExpressionConverter();
+            case 'disabled':
+                return new BoolExpressionConverter();
+            default:
+                return super.getConverter(property);
+        }
+    }
 
     public async beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult> {
         if (this.disabled && this.disabled.getValue(dc.state)) {
@@ -37,6 +70,6 @@ export class DeleteActivity<O extends object = {}> extends Dialog<O> {
     }
 
     protected onComputeId(): string {
-        return `DeleteActivity[${ this.activityId.toString() }]`;
+        return `DeleteActivity[${this.activityId.toString()}]`;
     }
 }

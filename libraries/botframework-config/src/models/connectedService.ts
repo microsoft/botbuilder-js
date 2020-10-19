@@ -1,7 +1,6 @@
 /**
  * @module botframework-config
- */
-/**
+ *
  * Copyright(c) Microsoft Corporation.All rights reserved.
  * Licensed under the MIT License.
  */
@@ -9,6 +8,7 @@ import { IConnectedService, ServiceTypes } from '../schema';
 
 /**
  * Base class for all connected service definitions.
+ * @deprecated See https://aka.ms/bot-file-basics for more information.
  */
 export class ConnectedService implements IConnectedService {
     /**

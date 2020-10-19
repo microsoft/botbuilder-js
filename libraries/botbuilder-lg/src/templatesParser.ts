@@ -32,12 +32,10 @@ import { LGResource } from './lgResource';
 
 export declare type ImportResolverDelegate = (lgResource: LGResource, resourceId: string) => LGResource;
 
-
 /**
  * LG Parser
  */
 export class TemplatesParser {
-
     /**
      * Inline text id.
      */
@@ -54,13 +52,17 @@ export class TemplatesParser {
     public static readonly importRegex: RegExp = new RegExp(/\[([^\]]*)\]\(([^\)]*)\)/);
 
     /**
-    * parse a file and return LG file.
-    * @param filePath LG absolute file path..
-    * @param importResolver Resolver to resolve LG import id to template text.
-    * @param expressionParser Expression parser for evaluating expressions.
-    * @returns New lg file.
-    */
-    public static parseFile(filePath: string, importResolver?: ImportResolverDelegate, expressionParser?: ExpressionParser): Templates {
+     * parse a file and return LG file.
+     * @param filePath LG absolute file path..
+     * @param importResolver Resolver to resolve LG import id to template text.
+     * @param expressionParser Expression parser for evaluating expressions.
+     * @returns New lg file.
+     */
+    public static parseFile(
+        filePath: string,
+        importResolver?: ImportResolverDelegate,
+        expressionParser?: ExpressionParser
+    ): Templates {
         const fullPath = TemplateExtensions.normalizePath(filePath);
         const content = fs.readFileSync(fullPath, 'utf-8');
         const resource = new LGResource(fullPath, fullPath, content);
@@ -71,12 +73,17 @@ export class TemplatesParser {
      * Parser to turn lg content into a Templates.
      * @deprecated This method will soon be deprecated. Use ParseResource instead.
      * @param content Text content contains lg templates.
-     * @param id Id is the identifier of content. If importResolver is undefined, id must be a full path string. 
+     * @param id Id is the identifier of content. If importResolver is undefined, id must be a full path string.
      * @param importResolver Resolver to resolve LG import id to template text.
      * @param expressionParser Expression parser for evaluating expressions.
      * @returns Entity.
      */
-    public static parseText(content: string, id: string = '', importResolver?: ImportResolverDelegate, expressionParser?: ExpressionParser): Templates {
+    public static parseText(
+        content: string,
+        id = '',
+        importResolver?: ImportResolverDelegate,
+        expressionParser?: ExpressionParser
+    ): Templates {
         const resource = new LGResource(id, id, content);
         return TemplatesParser.parseResource(resource, importResolver, expressionParser);
     }
@@ -107,10 +114,9 @@ export class TemplatesParser {
                 .concat(originalTemplates.references)
                 .concat([originalTemplates]);
 
-            var semanticErrors = new StaticChecker(newTemplates).check();
+            const semanticErrors = new StaticChecker(newTemplates).check();
             newTemplates.diagnostics.push(...semanticErrors);
-        }
-        catch (err) {
+        } catch (err) {
             if (err instanceof TemplateException) {
                 newTemplates.diagnostics.push(...err.getDiagnostic());
             } else {
@@ -151,7 +157,8 @@ export class TemplatesParser {
         resource: LGResource,
         importResolver?: ImportResolverDelegate,
         expressionParser?: ExpressionParser,
-        cachedTemplates?: Map<string, Templates>): Templates {
+        cachedTemplates?: Map<string, Templates>
+    ): Templates {
         if (!resource) {
             throw new Error('lg resource is empty.');
         }
@@ -209,14 +216,18 @@ export class TemplatesParser {
     }
 
     private static getReferences(file: Templates, cachedTemplates?: Map<string, Templates>): Templates[] {
-        var resourcesFound = new Set<Templates>();
+        const resourcesFound = new Set<Templates>();
         this.resolveImportResources(file, resourcesFound, cachedTemplates || new Map<string, Templates>());
 
         resourcesFound.delete(file);
         return Array.from(resourcesFound);
     }
 
-    private static resolveImportResources(start: Templates, resourcesFound: Set<Templates>, cachedTemplates?: Map<string, Templates>): void {
+    private static resolveImportResources(
+        start: Templates,
+        resourcesFound: Set<Templates>,
+        cachedTemplates?: Map<string, Templates>
+    ): void {
         resourcesFound.add(start);
 
         for (const importItem of start.imports) {
@@ -225,7 +236,12 @@ export class TemplatesParser {
                 const originalResource = new LGResource(start.id, start.source, start.content);
                 resource = start.importResolver(originalResource, importItem.id);
             } catch (error) {
-                const diagnostic = new Diagnostic(importItem.sourceRange.range, error.message, DiagnosticSeverity.Error, start.source);
+                const diagnostic = new Diagnostic(
+                    importItem.sourceRange.range,
+                    error.message,
+                    DiagnosticSeverity.Error,
+                    start.source
+                );
                 throw new TemplateException(error.message, [diagnostic]);
             }
 
@@ -234,7 +250,12 @@ export class TemplatesParser {
                 if (cachedTemplates.has(resource.id)) {
                     childResource = cachedTemplates.get(resource.id);
                 } else {
-                    childResource = TemplatesParser.parseResource(resource, start.importResolver, start.expressionParser, cachedTemplates);
+                    childResource = TemplatesParser.parseResource(
+                        resource,
+                        start.importResolver,
+                        start.expressionParser,
+                        cachedTemplates
+                    );
                     cachedTemplates.set(resource.id, childResource);
                 }
 
@@ -257,7 +278,6 @@ export class TemplatesTransformer extends AbstractParseTreeVisitor<any> implemen
         this.templates = templates;
     }
 
-
     /**
      * Transform the parse tree into templates.
      * @param parseTree Input abstract syntax tree.
@@ -266,8 +286,8 @@ export class TemplatesTransformer extends AbstractParseTreeVisitor<any> implemen
         if (parseTree) {
             this.visit(parseTree);
         }
-        var templateCount = this.templates.toArray().length;
-        var currentIndex = 0;
+        const templateCount = this.templates.toArray().length;
+        let currentIndex = 0;
         for (const template of this.templates) {
             currentIndex++;
             if (currentIndex < templateCount) {
@@ -285,14 +305,19 @@ export class TemplatesTransformer extends AbstractParseTreeVisitor<any> implemen
     public visitErrorDefinition(context: lp.ErrorDefinitionContext): any {
         const lineContent = context.INVALID_LINE().text;
         if (lineContent === undefined || lineContent.trim() === '') {
-            this.templates.diagnostics.push(this.buildTemplatesDiagnostic(TemplateErrors.syntaxError(`Unexpected content: '${lineContent}'`), context));
+            this.templates.diagnostics.push(
+                this.buildTemplatesDiagnostic(
+                    TemplateErrors.syntaxError(`Unexpected content: '${lineContent}'`),
+                    context
+                )
+            );
         }
         return;
     }
 
     public visitImportDefinition(context: lp.ImportDefinitionContext): any {
         const importStr = context.IMPORT().text;
-        var groups = importStr.match(TemplatesParser.importRegex);
+        const groups = importStr.match(TemplatesParser.importRegex);
         if (groups && groups.length === 3) {
             const description = groups[1].trim();
             const id = groups[2].trim();
@@ -307,7 +332,7 @@ export class TemplatesTransformer extends AbstractParseTreeVisitor<any> implemen
         const optionStr = context.OPTION().text;
         let result = '';
         if (optionStr != undefined && optionStr.trim() !== '') {
-            var groups = optionStr.match(TemplatesParser.optionRegex);
+            const groups = optionStr.match(TemplatesParser.optionRegex);
             if (groups && groups.length === 2) {
                 result = groups[1].trim();
             }
@@ -328,17 +353,25 @@ export class TemplatesTransformer extends AbstractParseTreeVisitor<any> implemen
         ({ templateName, parameters } = this.extractTemplateNameLine(templateNameLine));
 
         if (this.templates.toArray().some((u): boolean => u.name === templateName)) {
-            const diagnostic = this.buildTemplatesDiagnostic(TemplateErrors.duplicatedTemplateInSameTemplate(templateName), context.templateNameLine());
+            const diagnostic = this.buildTemplatesDiagnostic(
+                TemplateErrors.duplicatedTemplateInSameTemplate(templateName),
+                context.templateNameLine()
+            );
             this.templates.diagnostics.push(diagnostic);
         } else {
-            let templateBody = context.templateBody().text;
+            const templateBody = context.templateBody().text;
 
             const sourceRange = new SourceRange(context, this.templates.source);
             const template = new Template(templateName, parameters, templateBody, sourceRange);
 
             this.checkTemplateName(templateName, context.templateNameLine());
             this.checkTemplateParameters(parameters, context.templateNameLine());
-            template.templateBodyParseTree = this.checkTemplateBody(templateName, templateBody, context.templateBody(), startLine);
+            template.templateBodyParseTree = this.checkTemplateBody(
+                templateName,
+                templateBody,
+                context.templateBody(),
+                startLine
+            );
 
             this.templates.push(template);
         }
@@ -346,9 +379,12 @@ export class TemplatesTransformer extends AbstractParseTreeVisitor<any> implemen
 
     private checkTemplateName(templateName: string, context: ParserRuleContext): void {
         const functionNameSplitDot = templateName.split('.');
-        for (let id of functionNameSplitDot) {
+        for (const id of functionNameSplitDot) {
             if (!this.templateNamePartRegex.test(id)) {
-                const diagnostic = this.buildTemplatesDiagnostic(TemplateErrors.invalidTemplateName(templateName), context);
+                const diagnostic = this.buildTemplatesDiagnostic(
+                    TemplateErrors.invalidTemplateName(templateName),
+                    context
+                );
                 this.templates.diagnostics.push(diagnostic);
                 break;
             }
@@ -364,9 +400,18 @@ export class TemplatesTransformer extends AbstractParseTreeVisitor<any> implemen
         }
     }
 
-    private checkTemplateBody(templateName: string, templateBody: string, context: lp.TemplateBodyContext, startLine: number): BodyContext {
+    private checkTemplateBody(
+        templateName: string,
+        templateBody: string,
+        context: lp.TemplateBodyContext,
+        startLine: number
+    ): BodyContext {
         if (templateBody === undefined || templateBody.trim() === '') {
-            const diagnostic = this.buildTemplatesDiagnostic(TemplateErrors.noTemplateBody(templateName), context, DiagnosticSeverity.Warning);
+            const diagnostic = this.buildTemplatesDiagnostic(
+                TemplateErrors.noTemplateBody(templateName),
+                context,
+                DiagnosticSeverity.Warning
+            );
             this.templates.diagnostics.push(diagnostic);
         } else {
             try {
@@ -418,7 +463,10 @@ export class TemplatesTransformer extends AbstractParseTreeVisitor<any> implemen
         const leftBracketIndex = templateNameLine.indexOf('(');
         if (leftBracketIndex >= 0 && templateNameLine.endsWith(')')) {
             templateName = templateNameLine.substr(0, leftBracketIndex).trim();
-            const paramStr = templateNameLine.substr(leftBracketIndex + 1, templateNameLine.length - leftBracketIndex - 2);
+            const paramStr = templateNameLine.substr(
+                leftBracketIndex + 1,
+                templateNameLine.length - leftBracketIndex - 2
+            );
             if (paramStr !== undefined && paramStr.trim() !== '') {
                 parameters = paramStr.split(',').map((u: string): string => u.trim());
             }
@@ -427,7 +475,16 @@ export class TemplatesTransformer extends AbstractParseTreeVisitor<any> implemen
         return { templateName, parameters };
     }
 
-    private buildTemplatesDiagnostic(errorMessage: string, context: ParserRuleContext, severity: DiagnosticSeverity = DiagnosticSeverity.Error): Diagnostic {
-        return new Diagnostic(TemplateExtensions.convertToRange(context), errorMessage, severity, this.templates.source);
+    private buildTemplatesDiagnostic(
+        errorMessage: string,
+        context: ParserRuleContext,
+        severity: DiagnosticSeverity = DiagnosticSeverity.Error
+    ): Diagnostic {
+        return new Diagnostic(
+            TemplateExtensions.convertToRange(context),
+            errorMessage,
+            severity,
+            this.templates.source
+        );
     }
 }
