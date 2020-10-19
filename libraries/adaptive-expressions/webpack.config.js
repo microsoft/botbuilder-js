@@ -4,10 +4,7 @@ const defaultTSConfig = require('./tsconfig.json');
 module.exports = (env, argv) => {
     return {
         mode: 'none',
-
-        entry: {
-            index: './src/index.ts',
-        },
+        entry: ['core-js/modules/es.array.find', path.resolve(__dirname, './src/index.ts')],
         output: {
             path: path.resolve(__dirname, './dist'),
             libraryTarget: 'amd',
@@ -29,7 +26,7 @@ module.exports = (env, argv) => {
                             target: 'es5',
                         },
                     },
-                    exclude: /node_modules/,
+                    include: path.resolve(__dirname, './src'),
                 },
                 {
                     test: /\.js$/,

@@ -13,6 +13,9 @@ module.exports = function (api) {
             },
         ],
     ];
+    // These plugins are used to apply transformation to the compiled code,
+    // like converting class or method decorators to appropriate js code. Please
+    // check individual plugin documentation for more details.
     const plugins = [
         ['@babel/plugin-proposal-decorators', { decoratorsBeforeExport: true }],
         ['@babel/plugin-proposal-class-properties'],
