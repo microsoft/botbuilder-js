@@ -15,6 +15,9 @@ import { TimeTransformEvaluator } from './timeTransformEvaluator';
  * Add a number of seconds to a timestamp.
  */
 export class AddSeconds extends TimeTransformEvaluator {
+    /**
+     * Initializes a new instance of the [AddSeconds](xref:adaptive-expressions.AddSeconds) class.
+     */
     public constructor() {
         super(ExpressionType.AddSeconds, (ts: Date, num: any): Date => moment(ts).utc().add(num, 'seconds').toDate());
     }

@@ -21,7 +21,7 @@ import { TurnContext } from './turnContext';
  * piece of middleware can inspect or act upon the activity, both before and after the bot logic runs.
  * Use the [use](xref:botbuilder-core.BotAdapter.use) method to add [Middleware](xref:botbuilder-core.Middleware)
  * objects to your adapter's middleware collection.
- * 
+ *
  * For more information, see the articles on
  * [How bots work](https://docs.microsoft.com/azure/bot-service/bot-builder-basics) and
  * [Middleware](https://docs.microsoft.com/azure/bot-service/bot-builder-concept-middleware).
@@ -29,21 +29,21 @@ import { TurnContext } from './turnContext';
 export abstract class BotAdapter {
     protected middleware: MiddlewareSet = new MiddlewareSet();
     private turnError: (context: TurnContext, error: Error) => Promise<void>;
-    public readonly BotIdentityKey: Symbol = Symbol('BotIdentity');
-    public readonly OAuthScopeKey: Symbol = Symbol('OAuthScope');
+    public readonly BotIdentityKey: symbol = Symbol('BotIdentity');
+    public readonly OAuthScopeKey: symbol = Symbol('OAuthScope');
 
     /**
      * Asynchronously sends a set of outgoing activities to a channel server.
-     * 
+     *
      * This method supports the framework and is not intended to be called directly for your code.
      * Use the turn context's [sendActivity](xref:botbuilder-core.TurnContext.sendActivity) or
      * [sendActivities](xref:botbuilder-core.TurnContext.sendActivities) method from your bot code.
      *
      * @param context The context object for the turn.
      * @param activities The activities to send.
-     * 
+     *
      * @returns An array of [ResourceResponse](xref:)
-     * 
+     *
      * @remarks
      * The activities will be sent one after another in the order in which they're received. A
      * response object will be returned for each sent activity. For `message` activities this will
@@ -53,14 +53,14 @@ export abstract class BotAdapter {
 
     /**
      * Asynchronously replaces a previous activity with an updated version.
-     * 
+     *
      * This interface supports the framework and is not intended to be called directly for your code.
      * Use [TurnContext.updateActivity](xref:botbuilder-core.TurnContext.updateActivity) to update
      * an activity from your bot code.
-     * 
+     *
      * @param context The context object for the turn.
      * @param activity The updated version of the activity to replace.
-     * 
+     *
      * @remarks
      * Not all channels support this operation. For channels that don't, this call may throw an exception.
      */
@@ -68,14 +68,14 @@ export abstract class BotAdapter {
 
     /**
      * Asynchronously deletes an existing activity.
-     * 
+     *
      * This interface supports the framework and is not intended to be called directly for your code.
      * Use [TurnContext.deleteActivity](xref:botbuilder-core.TurnContext.deleteActivity) to delete
      * an activity from your bot code.
-     * 
+     *
      * @param context The context object for the turn.
      * @param reference Conversation reference information for the activity to delete.
-     * 
+     *
      * @remarks
      * Not all channels support this operation. For channels that don't, this call may throw an exception.
      */
@@ -86,7 +86,7 @@ export abstract class BotAdapter {
      *
      * @param reference A reference to the conversation to continue.
      * @param logic The asynchronous method to call after the adapter middleware runs.
-     * 
+     *
      * @remarks
      * This is often referred to as a _proactive notification_, the bot can proactively
      * send a message to a conversation or user without waiting for an incoming message.
@@ -94,15 +94,15 @@ export abstract class BotAdapter {
      */
     public abstract continueConversation(
         reference: Partial<ConversationReference>,
-        logic: (revocableContext: TurnContext
-        ) => Promise<void>): Promise<void>;
+        logic: (revocableContext: TurnContext) => Promise<void>
+    ): Promise<void>;
 
     /**
      * Gets or sets an error handler that can catch exceptions in the middleware or application.
-     * 
+     *
      * @remarks
      * The error handler is called with these parameters:
-     * 
+     *
      * | Name | Type | Description |
      * | :--- | :--- | :--- |
      * | `context` | [TurnContext](xref:botbuilder-core.TurnContext) | The context object for the turn. |
@@ -118,14 +118,14 @@ export abstract class BotAdapter {
 
     /**
      * Adds middleware to the adapter's pipeline.
-     * 
+     *
      * @param middleware The middleware or middleware handlers to add.
-     * 
+     *
      * @remarks
      * Middleware is added to the adapter at initialization time.
      * Each turn, the adapter calls its middleware in the order in which you added it.
      */
-    public use(...middleware: (MiddlewareHandler|Middleware)[]): this {
+    public use(...middleware: (MiddlewareHandler | Middleware)[]): this {
         MiddlewareSet.prototype.use.apply(this.middleware, middleware);
 
         return this;
@@ -136,13 +136,13 @@ export abstract class BotAdapter {
      *
      * @param context The context object for the turn.
      * @param next A callback method to run at the end of the pipeline.
-     * 
+     *
      * @remarks
      * The adapter creates a revokable proxy for the turn context and then calls its middleware in
      * the order in which you added it. If the middleware chain completes without short circuiting,
      * the adapter calls the callback method. If any middleware short circuits, the adapter does not
-     * call any of the subsequent middleware or the callback method, and the pipeline short circuits. 
-     * 
+     * call any of the subsequent middleware or the callback method, and the pipeline short circuits.
+     *
      * The adapter calls middleware with a `next` parameter, which represents the next step in the
      * pipeline. Middleware should call the `next` method to continue processing without short circuiting.
      *
@@ -151,7 +151,10 @@ export abstract class BotAdapter {
      * [continueConversation](xref:botbuilder-core.BotAdapter.continueConversation) (proactive messaging),
      * the callback method is the callback method that was provided in the call.
      */
-    protected runMiddleware(context: TurnContext, next: (revocableContext: TurnContext) => Promise<void>): Promise<void> {
+    protected runMiddleware(
+        context: TurnContext,
+        next: (revocableContext: TurnContext) => Promise<void>
+    ): Promise<void> {
         // Wrap context with revocable proxy
         const pContext: {
             proxy: TurnContext;
@@ -159,20 +162,24 @@ export abstract class BotAdapter {
         } = makeRevocable(context);
 
         return new Promise((resolve: any, reject: any): void => {
-            this.middleware.run(pContext.proxy, () => {
-                // Call next with revocable context
-                return next(pContext.proxy);
-            }).then(resolve, (err: Error) => {
-                if (this.onTurnError) {
-                    this.onTurnError(pContext.proxy, err)
-                        .then(resolve, reject);
-                } else {
-                    reject(err);
-                }
-            });
-        }).then(() => pContext.revoke(), (err: Error) => {
-            pContext.revoke();
-            throw err;
-        });
+            this.middleware
+                .run(pContext.proxy, () => {
+                    // Call next with revocable context
+                    return next(pContext.proxy);
+                })
+                .then(resolve, (err: Error) => {
+                    if (this.onTurnError) {
+                        this.onTurnError(pContext.proxy, err).then(resolve, reject);
+                    } else {
+                        reject(err);
+                    }
+                });
+        }).then(
+            () => pContext.revoke(),
+            (err: Error) => {
+                pContext.revoke();
+                throw err;
+            }
+        );
     }
 }

@@ -12,12 +12,16 @@ import { IHttpContentHeaders } from './interfaces/IHttpContentHeaders';
 export class HttpContentStream {
     public readonly id: string;
     public readonly content: HttpContent;
-    public description: { id: string; type: string; length: number; };
+    public description: { id: string; type: string; length: number };
 
     public constructor(content: HttpContent) {
         this.id = generateGuid();
         this.content = content;
-        this.description = {id: this.id, type: (this.content.headers) ? this.content.headers.type : 'unknown', length: (this.content.headers) ? this.content.headers.contentLength : 0};
+        this.description = {
+            id: this.id,
+            type: this.content.headers ? this.content.headers.type : 'unknown',
+            length: this.content.headers ? this.content.headers.contentLength : 0,
+        };
     }
 }
 

@@ -12,6 +12,7 @@
     "test:consumer": "node ./run-consumer-test.js",
     "test:coveralls": "lerna run build && nyc mocha \"libraries/@(adaptive*|bot*)/tests/**/*.test.js\" --exit && nyc report --reporter=text-lcov | coveralls",
     "test-coverage": "nyc mocha \"libraries/@(adaptive*|bot*)/tests/**/*.test.js\" --exit --check-leaks",
+    "test:devops": "nyc --report --reporter=cobertura mocha -- \"libraries/@(adaptive*|bot*)/tests/**/*.test.js\" --check-leaks --reporter mocha-junit-reporter --reporter-options includePending=true",
     "upload-coverage": "nyc report --reporter=text-lcov | coveralls",
     "build-docs": "lerna run build-docs",
     "eslint": "eslint ./libraries/*/src/**/*.ts --resolve-plugins-relative-to .",
@@ -20,7 +21,7 @@
     "update-versions": "lerna run set-version && npm run set-dependency-versions"
   },
   "dependencies": {
-    "@azure/ms-rest-js": "1.8.15",
+    "@azure/ms-rest-js": "1.9.0",
     "@microsoft/api-extractor": "^7.7.12",
     "@types/jsonwebtoken": "7.2.8",
     "@types/lodash": "^4.14.134",
@@ -50,6 +51,7 @@
     "eslint-plugin-promise": "^4.2.1",
     "eslint-plugin-security": "^1.4.0",
     "eslint-plugin-standard": "^4.0.1",
+    "mocha-junit-reporter": "^2.0.0",
     "prettier": "^2.1.2"
   },
   "nyc": {

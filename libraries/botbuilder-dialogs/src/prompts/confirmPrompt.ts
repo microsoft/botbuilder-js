@@ -12,7 +12,9 @@ import { ListStyle, Prompt, PromptOptions, PromptRecognizerResult, PromptValidat
 import { PromptCultureModels } from './promptCultureModels';
 
 // Need ChoiceDefaultsProperty so we can set choiceDefaults dynamically with lambda
-interface ChoiceDefaultsConfirmPrompt { [locale: string]: { choices: (string|Choice)[]; options: ChoiceFactoryOptions }};
+interface ChoiceDefaultsConfirmPrompt {
+    [locale: string]: { choices: (string | Choice)[]; options: ChoiceFactoryOptions };
+}
 
 /**
  * Prompts a user to confirm something with a "yes" or "no" response.
@@ -22,7 +24,6 @@ interface ChoiceDefaultsConfirmPrompt { [locale: string]: { choices: (string|Cho
  * selection.
  */
 export class ConfirmPrompt extends Prompt<boolean> {
-
     /**
      * A dictionary of Default Choices based on [[PromptCultureModels.getSupportedCultures()]].
      * Can be replaced by user using the constructor that contains choiceDefaults.
@@ -59,7 +60,12 @@ export class ConfirmPrompt extends Prompt<boolean> {
      * @param validator (Optional) validator that will be called each time the user responds to the prompt.
      * @param defaultLocale (Optional) locale to use if `TurnContext.activity.locale` is not specified. Defaults to a value of `en-us`.
      */
-    public constructor(dialogId: string, validator?: PromptValidator<boolean>, defaultLocale?: string, choiceDefaults?: ChoiceDefaultsConfirmPrompt) {
+    public constructor(
+        dialogId: string,
+        validator?: PromptValidator<boolean>,
+        defaultLocale?: string,
+        choiceDefaults?: ChoiceDefaultsConfirmPrompt
+    ) {
         super(dialogId, validator);
         this.style = ListStyle.auto;
         this.defaultLocale = defaultLocale;
@@ -73,8 +79,8 @@ export class ConfirmPrompt extends Prompt<boolean> {
                         inlineSeparator: culture.separator,
                         inlineOr: culture.inlineOr,
                         inlineOrMore: culture.inlineOrMore,
-                        includeNumbers: true
-                    }
+                        includeNumbers: true,
+                    },
                 };
             });
             this.choiceDefaults = supported;
@@ -83,8 +89,12 @@ export class ConfirmPrompt extends Prompt<boolean> {
         }
     }
 
-    protected async onPrompt(context: TurnContext, state: any, options: PromptOptions, isRetry: boolean): Promise<void> {
-
+    protected async onPrompt(
+        context: TurnContext,
+        state: any,
+        options: PromptOptions,
+        isRetry: boolean
+    ): Promise<void> {
         // Format prompt to send
         let prompt: Partial<Activity>;
         const channelId: string = context.activity.channelId;
@@ -101,7 +111,11 @@ export class ConfirmPrompt extends Prompt<boolean> {
         await context.sendActivity(prompt);
     }
 
-    protected async onRecognize(context: TurnContext, state: any, options: PromptOptions): Promise<PromptRecognizerResult<boolean>> {
+    protected async onRecognize(
+        context: TurnContext,
+        state: any,
+        options: PromptOptions
+    ): Promise<PromptRecognizerResult<boolean>> {
         const result: PromptRecognizerResult<boolean> = { succeeded: false };
         const activity: Activity = context.activity;
         const utterance: string = activity.text;

@@ -1,13 +1,13 @@
 /**
  * @module botframework-config
- */
-/**
+ *
  * Copyright(c) Microsoft Corporation.All rights reserved.
  * Licensed under the MIT License.
  */
 
 /**
  * @private
+ * @deprecated See https://aka.ms/bot-file-basics for more information.
  * @param value
  */
 export function uuidValidate(value: string): boolean {

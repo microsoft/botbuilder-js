@@ -1,7 +1,6 @@
 /**
  * @module botframework-config
- */
-/**
+ *
  * Copyright(c) Microsoft Corporation.All rights reserved.
  * Licensed under the MIT License.
  */
@@ -11,6 +10,7 @@ import { ConnectedService } from './connectedService';
 
 /**
  * Defines a QnA Maker service connection.
+ * @deprecated See https://aka.ms/bot-file-basics for more information.
  */
 export class QnaMakerService extends ConnectedService implements IQnAService {
     /**
@@ -39,9 +39,9 @@ export class QnaMakerService extends ConnectedService implements IQnAService {
      */
     constructor(source: IQnAService = {} as IQnAService) {
         super(source, ServiceTypes.QnA);
-        
+
         if (!source.hostname) {
-            throw TypeError('QnAMakerService requires source parameter to have a hostname.')
+            throw TypeError('QnAMakerService requires source parameter to have a hostname.');
         }
 
         if (!this.hostname.endsWith('/qnamaker')) {
@@ -70,5 +70,4 @@ export class QnaMakerService extends ConnectedService implements IQnAService {
             this.subscriptionKey = decryptString(this.subscriptionKey, secret);
         }
     }
-
 }
