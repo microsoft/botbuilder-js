@@ -6,8 +6,8 @@
  * Licensed under the MIT License.
  */
 
-import { DialogManager } from 'botbuilder-dialogs';
 import { BotFrameworkClient, SkillConversationIdFactoryBase } from 'botbuilder-core';
+import { DialogManager } from 'botbuilder-dialogs';
 
 /**
  * The key to get or set skill client from turn state.
@@ -38,7 +38,10 @@ export class SkillExtensions {
      * @param dialogManager The dialog manager to add skill conversation id factory to.
      * @param skillConversationIdFactory The skill conversation id factory to be added.
      */
-    public static useSkillConversationIdFactory(dialogManager: DialogManager, skillConversationIdFactory: SkillConversationIdFactoryBase): DialogManager {
+    public static useSkillConversationIdFactory(
+        dialogManager: DialogManager,
+        skillConversationIdFactory: SkillConversationIdFactoryBase
+    ): DialogManager {
         dialogManager.initialTurnState.set(skillConversationIdFactoryKey, skillConversationIdFactory);
         return dialogManager;
     }

@@ -10,7 +10,7 @@ import { BotState } from './botState';
 import { Storage } from './storage';
 import { TurnContext } from './turnContext';
 
-const NO_KEY: string = `PrivateConversationState: overridden getStorageKey method did not return a key.`;
+const NO_KEY = `PrivateConversationState: overridden getStorageKey method did not return a key.`;
 
 /**
  * Reads and writes PrivateConversation state for your bot to storage.
@@ -48,7 +48,8 @@ export class PrivateConversationState extends BotState {
     public getStorageKey(context: TurnContext): string | undefined {
         const activity: Activity = context.activity;
         const channelId: string = activity.channelId;
-        const conversationId: string = activity && activity.conversation && activity.conversation.id ? activity.conversation.id : undefined;
+        const conversationId: string =
+            activity && activity.conversation && activity.conversation.id ? activity.conversation.id : undefined;
         const userId: string = activity && activity.from && activity.from.id ? activity.from.id : undefined;
 
         if (!channelId) {
@@ -63,6 +64,6 @@ export class PrivateConversationState extends BotState {
             throw new Error('missing activity.from.id');
         }
 
-        return `${ channelId }/conversations/${ conversationId }/users/${ userId }/${ this.namespace }`;
+        return `${channelId}/conversations/${conversationId}/users/${userId}/${this.namespace}`;
     }
 }

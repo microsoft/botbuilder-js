@@ -148,6 +148,7 @@ export class ExpressionType {
     public static readonly IndicesAndValues: string = 'indicesAndValues';
     public static readonly Flatten: string = 'flatten';
     public static readonly Unique: string = 'unique';
+    public static readonly Reverse: string = 'reverse';
 
     // Misc
     public static readonly Constant: string = 'Constant';

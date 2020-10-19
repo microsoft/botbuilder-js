@@ -9,12 +9,23 @@ import { ModelResult } from 'botbuilder-dialogs';
  * Licensed under the MIT License.
  */
 
-export class RegexEntityRecognizer extends TextEntityRecognizer {
+export interface RegexEntityRecognizerConfiguration {
+    name?: string;
+    pattern?: string;
+}
+
+export class RegexEntityRecognizer extends TextEntityRecognizer implements RegexEntityRecognizerConfiguration {
+    public static $kind = 'Microsoft.RegexEntityRecognizer';
+
     public constructor();
     public constructor(name?: string, pattern?: string) {
         super();
-        if (name) { this.name = name; }
-        if (pattern) { this.pattern = pattern; }
+        if (name) {
+            this.name = name;
+        }
+        if (pattern) {
+            this.pattern = pattern;
+        }
     }
 
     public name: string;
@@ -38,7 +49,7 @@ export class RegexEntityRecognizer extends TextEntityRecognizer {
         const matches = [];
         let matched: RegExpExecArray;
         const regexp = new RegExp(this._pattern, 'ig');
-        while (matched = regexp.exec(text)) {
+        while ((matched = regexp.exec(text))) {
             matches.push(matched);
             if (regexp.lastIndex == text.length) {
                 break; // to avoid infinite loop
@@ -53,7 +64,7 @@ export class RegexEntityRecognizer extends TextEntityRecognizer {
                 text: text,
                 start: match.index,
                 end: match.index + text.length,
-                resolution: {}
+                resolution: {},
             };
             results.push(result);
         }

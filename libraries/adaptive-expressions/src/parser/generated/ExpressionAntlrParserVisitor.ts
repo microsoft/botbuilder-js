@@ -22,6 +22,7 @@ import { FuncInvokeExpContext } from "./ExpressionAntlrParser";
 import { IndexAccessExpContext } from "./ExpressionAntlrParser";
 import { UnaryOpExpContext } from "./ExpressionAntlrParser";
 import { BinaryOpExpContext } from "./ExpressionAntlrParser";
+import { TripleOpExpContext } from "./ExpressionAntlrParser";
 import { PrimaryExpContext } from "./ExpressionAntlrParser";
 import { FileContext } from "./ExpressionAntlrParser";
 import { ExpressionContext } from "./ExpressionAntlrParser";
@@ -138,6 +139,14 @@ export interface ExpressionAntlrParserVisitor<Result> extends ParseTreeVisitor<R
 	 * @return the visitor result
 	 */
 	visitBinaryOpExp?: (ctx: BinaryOpExpContext) => Result;
+
+	/**
+	 * Visit a parse tree produced by the `tripleOpExp`
+	 * labeled alternative in `ExpressionAntlrParser.expression`.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	visitTripleOpExp?: (ctx: TripleOpExpContext) => Result;
 
 	/**
 	 * Visit a parse tree produced by the `primaryExp`

@@ -11,6 +11,8 @@ import { ModelResult } from 'botbuilder-dialogs';
 import { TextEntityRecognizer } from './textEntityRecognizer';
 
 export class UrlEntityRecognizer extends TextEntityRecognizer {
+    public static $kind = 'Microsoft.UrlEntityRecognizer';
+
     protected recognize(text: string, culture: string): ModelResult[] {
         return recognizeURL(text, culture);
     }

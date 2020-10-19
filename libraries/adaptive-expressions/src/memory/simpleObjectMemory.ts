@@ -1,5 +1,4 @@
 import { Extensions } from '../extensions';
-import { FunctionUtils } from '../functionUtils';
 import { InternalFunctionUtils } from '../functionUtils.internal';
 import { MemoryInterface } from './memoryInterface';
 
