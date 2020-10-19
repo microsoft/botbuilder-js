@@ -1732,8 +1732,8 @@ export enum RoleTypes {
  * @enum {string}
  */
 export enum ActivityEventNames {
-  ContinueConversation = 'continueConversation',
-  CreateConversation = 'createConversation'
+  ContinueConversation = 'ContinueConversation',
+  CreateConversation = 'CreateConversation'
 }
 
 /**
