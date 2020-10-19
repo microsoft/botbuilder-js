@@ -1,5 +1,6 @@
 {
   "name": "streaming-e2e-tests",
+  "private": true,
   "version": "1.0.0",
   "description": "Test that botframework-streaming works end-to-end from SDK to browser",
   "main": "streaming-e2e.test.js",

@@ -19,7 +19,6 @@ import { PromptOptions, PromptRecognizerResult, PromptValidator } from './prompt
  * expected activity is received.
  */
 export class ActivityPrompt extends Dialog {
-
     /**
      * Creates a new ActivityPrompt instance.
      * @param dialogId Unique ID of the dialog within its parent `DialogSet` or `ComponentDialog`.
@@ -42,7 +41,7 @@ export class ActivityPrompt extends Dialog {
      */
     public async beginDialog(dc: DialogContext, options: PromptOptions): Promise<DialogTurnResult> {
         // Ensure prompts have input hint set
-        const opt: Partial<PromptOptions> = {...options};
+        const opt: Partial<PromptOptions> = { ...options };
         if (opt.prompt && typeof opt.prompt === 'object' && typeof opt.prompt.inputHint !== 'string') {
             opt.prompt.inputHint = InputHints.ExpectingInput;
         }
@@ -75,7 +74,11 @@ export class ActivityPrompt extends Dialog {
     public async continueDialog(dc: DialogContext): Promise<DialogTurnResult> {
         // Perform base recognition
         const state: any = dc.activeDialog.state as ActivityPromptState;
-        const recognized: PromptRecognizerResult<Activity> = await this.onRecognize(dc.context, state.state, state.options);
+        const recognized: PromptRecognizerResult<Activity> = await this.onRecognize(
+            dc.context,
+            state.state,
+            state.options
+        );
 
         if (state.state['attemptCount'] === undefined) {
             state.state['attemptCount'] = 0;
@@ -89,7 +92,7 @@ export class ActivityPrompt extends Dialog {
             recognized: recognized,
             state: state.state,
             options: state.options,
-            attemptCount: ++state.state['attemptCount']
+            attemptCount: ++state.state['attemptCount'],
         });
 
         // Return recognized value or re-prompt
@@ -138,7 +141,7 @@ export class ActivityPrompt extends Dialog {
         const state: ActivityPromptState = instance.state as ActivityPromptState;
         await this.onPrompt(context, state.state, state.options, false);
     }
-
+  
     /**
      * When overridden in a derived class, prompts the user for input.
      * @param context [TurnContext](xref:botbuilder-core.TurnContext), context for the current
@@ -149,7 +152,12 @@ export class ActivityPrompt extends Dialog {
      * @param isRetry A boolean representing if the prompt is a retry.
      * @returns A `Promise` representing the asynchronous operation.
      */
-    protected async onPrompt(context: TurnContext, state: object, options: PromptOptions, isRetry: boolean): Promise<void> {
+    protected async onPrompt(
+        context: TurnContext,
+        state: object,
+        options: PromptOptions,
+        isRetry: boolean
+    ): Promise<void> {
         if (isRetry && options.retryPrompt) {
             await context.sendActivity(options.retryPrompt, undefined, InputHints.ExpectingInput);
         } else if (options.prompt) {
@@ -166,7 +174,11 @@ export class ActivityPrompt extends Dialog {
      * from the options initially provided in the call to Prompt.
      * @returns A `Promise` representing the asynchronous operation.
      */
-    protected async onRecognize(context: TurnContext, state: object, options: PromptOptions): Promise<PromptRecognizerResult<Activity>> {
+    protected async onRecognize(
+        context: TurnContext,
+        state: object,
+        options: PromptOptions
+    ): Promise<PromptRecognizerResult<Activity>> {
         return { succeeded: true, value: context.activity };
     }
 }

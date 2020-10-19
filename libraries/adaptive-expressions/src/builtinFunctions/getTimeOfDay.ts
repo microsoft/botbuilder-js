@@ -18,6 +18,9 @@ import { ReturnType } from '../returnType';
  * Returns time of day for a given timestamp.
  */
 export class GetTimeOfDay extends ExpressionEvaluator {
+    /**
+     * Initializes a new instance of the [GetTimeOfDay](xref:adaptive-expressions.GetTimeOfDay) class.
+     */
     public constructor() {
         super(
             ExpressionType.GetTimeOfDay,
@@ -27,6 +30,9 @@ export class GetTimeOfDay extends ExpressionEvaluator {
         );
     }
 
+    /**
+     * @private
+     */
     private static evaluator(): EvaluateExpressionDelegate {
         return FunctionUtils.applyWithError((args: any[]): any => {
             let value: any;

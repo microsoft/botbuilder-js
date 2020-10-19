@@ -43,7 +43,7 @@ export enum ListStyle {
     /**
      * Add choices to prompt as a HeroCard with buttons.
      */
-    heroCard
+    heroCard,
 }
 
 /**
@@ -69,7 +69,7 @@ export interface PromptOptions {
      * (Optional) Property that can be used to override or set the value of ChoicePrompt.Style
      * when the prompt is executed using DialogContext.prompt.
      */
-    style?: ListStyle
+    style?: ListStyle;
 
     /**
      * (Optional) Additional validation rules to pass the prompts validator routine.
@@ -154,7 +154,7 @@ export interface PromptValidatorContext<T> {
 
     /**
      * A count of the number of times the prompt has been executed.
-     * 
+     *
      * A number indicating how many times the prompt was invoked (starting at 1 for the first time it was invoked).
      */
     readonly attemptCount: number;
@@ -187,7 +187,7 @@ export abstract class Prompt<T> extends Dialog {
      */
     public async beginDialog(dc: DialogContext, options: PromptOptions): Promise<DialogTurnResult> {
         // Ensure prompts have input hint set
-        const opt: Partial<PromptOptions> = {...options};
+        const opt: Partial<PromptOptions> = { ...options };
         if (opt.prompt && typeof opt.prompt === 'object' && typeof opt.prompt.inputHint !== 'string') {
             opt.prompt.inputHint = InputHints.ExpectingInput;
         }
@@ -247,7 +247,7 @@ export abstract class Prompt<T> extends Dialog {
                 recognized: recognized,
                 state: state.state,
                 options: state.options,
-                attemptCount: ++state.state['attemptCount']
+                attemptCount: ++state.state['attemptCount'],
             });
         } else if (recognized.succeeded) {
             isValid = true;
@@ -279,7 +279,11 @@ export abstract class Prompt<T> extends Dialog {
         if (event.name == 'activityReceived' && dc.context.activity.type == ActivityTypes.Message) {
             // Perform base recognition
             const state: PromptState = dc.activeDialog.state as PromptState;
-            const recognized: PromptRecognizerResult<T> = await this.onRecognize(dc.context, state.state, state.options);
+            const recognized: PromptRecognizerResult<T> = await this.onRecognize(
+                dc.context,
+                state.state,
+                state.options
+            );
             return recognized.succeeded;
         }
 
@@ -329,7 +333,12 @@ export abstract class Prompt<T> extends Dialog {
      * @param options Options that the prompt was started with in the call to `DialogContext.prompt()`.
      * @param isRetry If `true` the users response wasn't recognized and the re-prompt should be sent.
      */
-    protected abstract onPrompt(context: TurnContext, state: object, options: PromptOptions, isRetry: boolean): Promise<void>;
+    protected abstract onPrompt(
+        context: TurnContext,
+        state: object,
+        options: PromptOptions,
+        isRetry: boolean
+    ): Promise<void>;
 
     /**
      * Called to recognize an utterance received from the user.
@@ -341,7 +350,11 @@ export abstract class Prompt<T> extends Dialog {
      * @param state Additional state being persisted for the prompt.
      * @param options Options that the prompt was started with in the call to `DialogContext.prompt()`.
      */
-    protected abstract onRecognize(context: TurnContext, state: object, options: PromptOptions): Promise<PromptRecognizerResult<T>>;
+    protected abstract onRecognize(
+        context: TurnContext,
+        state: object,
+        options: PromptOptions
+    ): Promise<PromptRecognizerResult<T>>;
 
     /**
      * Helper function to compose an output activity containing a set of choices.
@@ -399,15 +412,19 @@ export abstract class Prompt<T> extends Dialog {
             // Clone the prompt Activity as to not modify the original prompt.
             prompt = JSON.parse(JSON.stringify(prompt)) as Activity;
             prompt.text = msg.text;
-            if (msg.suggestedActions && Array.isArray(msg.suggestedActions.actions) && msg.suggestedActions.actions.length > 0) {
+            if (
+                msg.suggestedActions &&
+                Array.isArray(msg.suggestedActions.actions) &&
+                msg.suggestedActions.actions.length > 0
+            ) {
                 prompt.suggestedActions = msg.suggestedActions;
             }
 
             if (msg.attachments) {
                 if (prompt.attachments) {
-                  prompt.attachments = prompt.attachments.concat(msg.attachments);
+                    prompt.attachments = prompt.attachments.concat(msg.attachments);
                 } else {
-                  prompt.attachments = msg.attachments;
+                    prompt.attachments = msg.attachments;
                 }
             }
 

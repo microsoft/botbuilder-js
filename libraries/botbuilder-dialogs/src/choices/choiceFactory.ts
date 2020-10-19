@@ -13,7 +13,7 @@ import {
     CardFactory,
     InputHints,
     MessageFactory,
-    TurnContext
+    TurnContext,
 } from 'botbuilder-core';
 import * as channel from './channel';
 import { Choice } from './findChoices';
@@ -64,7 +64,6 @@ export interface ChoiceFactoryOptions {
  * ```
  */
 export class ChoiceFactory {
-
     /**
      * Returns a 'message' activity containing a list of choices that has been automatically
      * formatted based on the capabilities of a given channel.
@@ -98,8 +97,8 @@ export class ChoiceFactory {
         speak?: string,
         options?: ChoiceFactoryOptions
     ): Partial<Activity> {
-
-        const channelId: string = typeof channelOrContext === 'string' ? channelOrContext : channel.getChannelId(channelOrContext);
+        const channelId: string =
+            typeof channelOrContext === 'string' ? channelOrContext : channel.getChannelId(channelOrContext);
 
         // Normalize choices
         const list: Choice[] = ChoiceFactory.toChoices(choices);
@@ -145,16 +144,18 @@ export class ChoiceFactory {
      * @returns An [Activity](xref:botframework-schema.Activity) with choices as `HeroCard` with buttons.
      */
     public static heroCard(choices: (string | Choice)[] = [], text = '', speak = ''): Activity {
-        const buttons: CardAction[] = ChoiceFactory.toChoices(choices).map(choice => ({
-            title: choice.value,
-            type: ActionTypes.ImBack,
-            value: choice.value
-        } as CardAction));
+        const buttons: CardAction[] = ChoiceFactory.toChoices(choices).map(
+            (choice) =>
+                ({
+                    title: choice.value,
+                    type: ActionTypes.ImBack,
+                    value: choice.value,
+                } as CardAction)
+        );
         const attachment = CardFactory.heroCard(undefined, text, undefined, buttons);
 
         return MessageFactory.attachment(attachment, undefined, speak, InputHints.ExpectingInput) as Activity;
     }
-
 
     /**
      * Returns a 'message' activity containing a list of choices that has been formatted as an
@@ -172,24 +173,29 @@ export class ChoiceFactory {
      * @param speak (Optional) SSML to speak for the message.
      * @param options (Optional) formatting options to tweak rendering of list.
      */
-    public static inline(choices: (string | Choice)[], text?: string, speak?: string, options?: ChoiceFactoryOptions): Partial<Activity> {
+    public static inline(
+        choices: (string | Choice)[],
+        text?: string,
+        speak?: string,
+        options?: ChoiceFactoryOptions
+    ): Partial<Activity> {
         const opt: ChoiceFactoryOptions = {
             inlineSeparator: ', ',
             inlineOr: ' or ',
             inlineOrMore: ', or ',
             includeNumbers: true,
-            ...options
+            ...options,
         } as ChoiceFactoryOptions;
 
         // Format list of choices
         let connector = '';
-        let txt: string = (text || '');
+        let txt: string = text || '';
         txt += ' ';
         ChoiceFactory.toChoices(choices).forEach((choice: any, index: number) => {
             const title: string = choice.action && choice.action.title ? choice.action.title : choice.value;
             // tslint:disable-next-line:prefer-template
-            txt += `${ connector }${ opt.includeNumbers ? '(' + (index + 1).toString() + ') ' : '' }${ title }`;
-            if (index === (choices.length - 2)) {
+            txt += `${connector}${opt.includeNumbers ? '(' + (index + 1).toString() + ') ' : ''}${title}`;
+            if (index === choices.length - 2) {
                 connector = (index === 0 ? opt.inlineOr : opt.inlineOrMore) || '';
             } else {
                 connector = opt.inlineSeparator || '';
@@ -217,20 +223,25 @@ export class ChoiceFactory {
      * @param speak (Optional) SSML to speak for the message.
      * @param options (Optional) formatting options to tweak rendering of list.
      */
-    public static list(choices: (string | Choice)[], text?: string, speak?: string, options?: ChoiceFactoryOptions): Partial<Activity> {
+    public static list(
+        choices: (string | Choice)[],
+        text?: string,
+        speak?: string,
+        options?: ChoiceFactoryOptions
+    ): Partial<Activity> {
         const opt: ChoiceFactoryOptions = {
             includeNumbers: true,
-            ...options
+            ...options,
         } as ChoiceFactoryOptions;
 
         // Format list of choices
         let connector = '';
-        let txt: string = (text || '');
+        let txt: string = text || '';
         txt += '\n\n   ';
         ChoiceFactory.toChoices(choices).forEach((choice: any, index: number) => {
             const title: string = choice.action && choice.action.title ? choice.action.title : choice.value;
             // tslint:disable-next-line:prefer-template
-            txt += `${ connector }${ opt.includeNumbers ? (index + 1).toString() + '. ' : '- ' }${ title }`;
+            txt += `${connector}${opt.includeNumbers ? (index + 1).toString() + '. ' : '- '}${title}`;
             connector = '\n   ';
         });
 
@@ -259,7 +270,7 @@ export class ChoiceFactory {
             if (choice.action) {
                 return choice.action;
             } else {
-                return {type: ActionTypes.ImBack, value: choice.value, title: choice.value, channelData: undefined};
+                return { type: ActionTypes.ImBack, value: choice.value, title: choice.value, channelData: undefined };
             }
         });
 
@@ -282,24 +293,23 @@ export class ChoiceFactory {
      * @param choices List of choices to add.
      */
     public static toChoices(choices: (string | Choice)[] | undefined): Choice[] {
-        return (choices || []).map(
-            (choice: Choice) => typeof choice === 'string' ? {value: choice} : choice
-        ).map((choice: Choice) => {
-            const action: CardAction = choice.action;
-            // If the choice.action is incomplete, populate the missing fields.
-            if (action) {
-                action.type = action.type ? action.type : ActionTypes.ImBack;
-                if (!action.value && action.title) {
-                    action.value = action.title;
-                } else if (!action.title && action.value) {
-                    action.title = action.value;
-                } else if (!action.title && !action.value) {
-                    action.title = action.value = choice.value;
+        return (choices || [])
+            .map((choice: Choice) => (typeof choice === 'string' ? { value: choice } : choice))
+            .map((choice: Choice) => {
+                const action: CardAction = choice.action;
+                // If the choice.action is incomplete, populate the missing fields.
+                if (action) {
+                    action.type = action.type ? action.type : ActionTypes.ImBack;
+                    if (!action.value && action.title) {
+                        action.value = action.title;
+                    } else if (!action.title && action.value) {
+                        action.title = action.value;
+                    } else if (!action.title && !action.value) {
+                        action.title = action.value = choice.value;
+                    }
                 }
-            }
-            return choice;
-        }).filter(
-            (choice: Choice) => choice
-        );
+                return choice;
+            })
+            .filter((choice: Choice) => choice);
     }
 }

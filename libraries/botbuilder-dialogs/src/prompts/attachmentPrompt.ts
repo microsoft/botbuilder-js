@@ -15,7 +15,6 @@ import { Prompt, PromptOptions, PromptRecognizerResult, PromptValidator } from '
  * By default the prompt will return to the calling dialog an `Attachment[]`.
  */
 export class AttachmentPrompt extends Prompt<Attachment[]> {
-
     /**
      * Creates a new `AttachmentPrompt` instance.
      * @param dialogId Unique ID of the dialog within its parent `DialogSet` or `ComponentDialog`.
@@ -35,7 +34,12 @@ export class AttachmentPrompt extends Prompt<Attachment[]> {
      * on the stack is prompting the user for input; otherwise, false.
      * @returns A Promise representing the asynchronous operation.
      */
-    protected async onPrompt(context: TurnContext, state: any, options: PromptOptions, isRetry: boolean): Promise<void> {
+    protected async onPrompt(
+        context: TurnContext,
+        state: any,
+        options: PromptOptions,
+        isRetry: boolean
+    ): Promise<void> {
         if (isRetry && options.retryPrompt) {
             await context.sendActivity(options.retryPrompt, undefined, InputHints.ExpectingInput);
         } else if (options.prompt) {
@@ -51,7 +55,11 @@ export class AttachmentPrompt extends Prompt<Attachment[]> {
      * in the call to Prompt.
      * @returns A Promise representing the asynchronous operation.
      */
-    protected async onRecognize(context: TurnContext, state: any, options: PromptOptions): Promise<PromptRecognizerResult<Attachment[]>> {
+    protected async onRecognize(
+        context: TurnContext,
+        state: any,
+        options: PromptOptions
+    ): Promise<PromptRecognizerResult<Attachment[]>> {
         const value: Attachment[] = context.activity.attachments;
 
         return Array.isArray(value) && value.length > 0 ? { succeeded: true, value: value } : { succeeded: false };

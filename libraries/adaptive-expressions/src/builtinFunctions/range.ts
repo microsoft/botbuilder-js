@@ -15,10 +15,16 @@ import { ReturnType } from '../returnType';
  * Return an integer array that starts from a specified integer with the given length.
  */
 export class Range extends ExpressionEvaluator {
+    /**
+     * Initializes a new instance of the [Range](xref:adaptive-expressions.Range) class.
+     */
     public constructor() {
         super(ExpressionType.Range, Range.evaluator(), ReturnType.Array, FunctionUtils.validateBinaryNumber);
     }
 
+    /**
+     * @private
+     */
     private static evaluator(): EvaluateExpressionDelegate {
         return FunctionUtils.applyWithError((args: any[]): any => {
             let error: string;

@@ -15,6 +15,9 @@ import { ComparisonEvaluator } from './comparisonEvaluator';
  * Return true if the first value is less, or return false if the first value is more.
  */
 export class LessThan extends ComparisonEvaluator {
+    /**
+     * Initializes a new instance of the [LessThan](xref:adaptive-expressions.LessThan) class.
+     */
     public constructor() {
         super(
             ExpressionType.LessThan,
@@ -24,6 +27,9 @@ export class LessThan extends ComparisonEvaluator {
         );
     }
 
+    /**
+     * @private
+     */
     private static func(args: any[]): boolean {
         return args[0] < args[1];
     }
