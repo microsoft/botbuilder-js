@@ -6,11 +6,26 @@ import { IStatusCodeError, StatusCodes } from 'botframework-schema';
 
 export type StatusCode = number;
 
+/**
+ * General `AuthenticationError` class to represent an Authentication error with a Code Status.
+ */
 export class AuthenticationError extends Error implements IStatusCodeError {
-    constructor(message: string, public readonly statusCode: StatusCode) {
+    /**
+     * Initializes a new instance of the [AuthenticationError](xref:botframework-connector.AuthenticationError) class.
+     * @param message The Error message.
+     * @param statusCode The `StatusCode` number to use.
+     */
+    constructor(
+        message: string,
+        public readonly statusCode: StatusCode
+    ) {
         super(message);
     }
 
+    /**
+     * Corroborates that the error is of type [IStatusCodeError](xref:botbuilder.IStatusCodeError).
+     * @param err The error to validate.
+     */
     public static isStatusCodeError(err: any): err is IStatusCodeError {
         return !!(err && typeof err.statusCode === 'number');
     }
@@ -26,7 +41,10 @@ export class AuthenticationError extends Error implements IStatusCodeError {
 
         return `HTTP/1.1 ${code} ${StatusCodes[code]}\r\n${errMessage}\r\n${connectionHeader}\r\n`;
     }
-
+    
+    /**
+     * @private
+     */
     private static determineStatusCode(message: string): StatusCode {
         if (typeof message === 'string') {
             if (message.toLowerCase().startsWith('unauthorized')) {

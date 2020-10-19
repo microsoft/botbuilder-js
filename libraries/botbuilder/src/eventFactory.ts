@@ -69,6 +69,9 @@ export class EventFactory {
         return this.createHandoffEvent(HandoffEventNames.HandoffStatus, { state, message }, conversation);
     }
 
+    /**
+     * @private
+     */
     private static createHandoffEvent<T = unknown>(
         name: string,
         value: T,

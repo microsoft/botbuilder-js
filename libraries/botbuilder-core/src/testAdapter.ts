@@ -559,6 +559,14 @@ export class TestAdapter extends BotAdapter implements ExtendedUserTokenProvider
 
     private exchangeableTokens: { [key: string]: ExchangeableToken } = {};
 
+    /**
+     * Adds a fake exchangeable token so it can be exchanged later.
+     * @param connectionName Name of the auth connection to use.
+     * @param channelId Channel ID.
+     * @param userId User ID.
+     * @param exchangeableItem Exchangeable token or resource URI.
+     * @param token Token to store.
+     */
     public addExchangeableToken(
         connectionName: string,
         channelId: string,
@@ -575,6 +583,14 @@ export class TestAdapter extends BotAdapter implements ExtendedUserTokenProvider
         this.exchangeableTokens[key.toKey()] = key;
     }
 
+    /**
+     * Gets a sign-in resource.
+     * @param context [TurnContext](xref:botbuilder-core.TurnContext) for the current turn of conversation with the user.
+     * @param connectionName Name of the auth connection to use.
+     * @param userId User ID
+     * @param finalRedirect Final redirect URL.
+     * @returns A `Promise` with a new [SignInUrlResponse](xref:botframework-schema.SignInUrlResponse) object.
+     */
     public async getSignInResource(
         context: TurnContext,
         connectionName: string,
@@ -590,7 +606,15 @@ export class TestAdapter extends BotAdapter implements ExtendedUserTokenProvider
             },
         };
     }
-
+  
+    /**
+     * Performs a token exchange operation such as for single sign-on.
+     * @param context [TurnContext](xref:botbuilder-core.TurnContext) for the current turn of conversation with the user.
+     * @param connectionName Name of the auth connection to use.
+     * @param userId User id associated with the token.
+     * @param tokenExchangeRequest Exchange request details, either a token to exchange or a uri to exchange.
+     * @returns If the promise completes, the exchanged token is returned.
+     */
     public async exchangeToken(
         context: TurnContext,
         connectionName: string,

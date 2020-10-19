@@ -683,7 +683,6 @@ export class TeamsActivityHandler extends ActivityHandler {
     }
 
     /**
-     *
      * Registers a handler for TeamsMembersAdded events, such as for when members other than the bot
      * join the channel, such as your bot's welcome logic.
      * @param handler

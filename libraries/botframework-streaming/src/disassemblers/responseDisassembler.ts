@@ -19,11 +19,21 @@ export class ResponseDisassembler extends PayloadDisassembler {
     public readonly response: StreamingResponse;
     public readonly payloadType: PayloadTypes = PayloadTypes.response;
 
+    /**
+     * Initializes a new instance of the [ResponseDisassembler](xref:botframework-streaming.ResponseDisassembler) class.
+     * @param sender The [PayloadSender](xref:botframework-streaming.PayloadSender) to send the disassembled data to.
+     * @param id The ID of this disassembler.
+     * @param response The response to be disassembled.
+     */
     public constructor(sender: PayloadSender, id: string, response: StreamingResponse) {
         super(sender, id);
         this.response = response;
     }
 
+    /**
+     * Gets the stream this disassembler is operating on.
+     * @returns An [IStreamWrapper](xref:botframework-streaming.IStreamWrapper) with a Subscribable Stream.
+     */
     public async getStream(): Promise<IStreamWrapper> {
         const payload: IResponsePayload = { statusCode: this.response.statusCode, streams: [] };
         if (this.response.streams) {
