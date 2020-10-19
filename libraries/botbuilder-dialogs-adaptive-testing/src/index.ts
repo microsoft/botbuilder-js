@@ -7,7 +7,6 @@
  */
 
 export * from './actions';
-export * from './adaptiveTestAdapter';
 export * from './testScript';
 export * from './testAction';
 export * from './testActions';

@@ -19,7 +19,6 @@ export type ValidateExpressionDelegate = (expression: Expression) => any;
 /**
  * Value result with error.
  */
-// eslint-disable-next-line @typescript-eslint/prefer-interface
 export type ValueWithError = {
     value: any;
     error: string;
@@ -54,6 +53,7 @@ export class ExpressionEvaluator {
     public returnType: ReturnType;
     private readonly _validator: ValidateExpressionDelegate;
     private readonly _evaluator: EvaluateExpressionDelegate;
+    private _negation: ExpressionEvaluator;
 
     /**
      * Initializes a new instance of the <see cref="ExpressionEvaluator"/> class.
@@ -71,8 +71,27 @@ export class ExpressionEvaluator {
         this.type = type;
         this._evaluator = evaluator;
         this.returnType = returnType;
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        this._validator = validator || ((expr: Expression): any => {});
+        this._validator =
+            validator ||
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
+            ((_expr: Expression): any => {
+                //noop
+            });
+    }
+
+    /**
+     * Gets the evaluator that is a negation of this one.
+     */
+    public get negation(): ExpressionEvaluator {
+        return this._negation;
+    }
+
+    /**
+     * Sets the evaluator that is a negation of this one.
+     */
+    public set negation(value: ExpressionEvaluator) {
+        value._negation = this;
+        this._negation = value;
     }
 
     /**

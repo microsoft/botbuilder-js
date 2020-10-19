@@ -14,8 +14,12 @@ import { Activity, ActivityTimestamps } from 'botbuilder-core';
  * @returns The [Activity](xref:botframework-schema.Activity).
  */
 export function validateAndFixActivity(activity: Activity): Activity {
-    if (typeof activity !== 'object') { throw new Error(`validateAndFixActivity(): invalid request body.`); }
-    if (typeof activity.type !== 'string') { throw new Error(`validateAndFixActivity(): missing activity type.`); }
+    if (typeof activity !== 'object') {
+        throw new Error(`validateAndFixActivity(): invalid request body.`);
+    }
+    if (typeof activity.type !== 'string') {
+        throw new Error(`validateAndFixActivity(): missing activity type.`);
+    }
     if (typeof activity.timestamp === 'string') {
         (activity as ActivityTimestamps).rawTimestamp = activity.timestamp;
         activity.timestamp = new Date(activity.timestamp);

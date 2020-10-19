@@ -348,11 +348,13 @@ describe('InspectionMiddleware', function() {
         adapter.use(inspectionMiddleware);
 
         await adapter.receiveActivity(MessageFactory.text(attachCommand));
-
+        
+        adapter.activityBuffer.push(activity);
+        assert.strictEqual(adapter.activityBuffer.length, 2);
         await adapter.receiveActivity(activity);
 
-        assert(adapter.updatedActivities.length === 1, `no activities updated.`);
-        assert(adapter.updatedActivities[0].text === activity.text, `invalid update activity text.`);
+        assert.strictEqual(adapter.activityBuffer.length, 2, `no activities updated.`);
+        assert.strictEqual(adapter.activityBuffer[1].text, activity.text, `invalid update activity text.`);
     });
 
     it('should delete activity to trigger turnContext.onDeleteActivity', async () => {
@@ -406,10 +408,11 @@ describe('InspectionMiddleware', function() {
 
         await adapter.receiveActivity(MessageFactory.text(attachCommand));
 
-        await adapter.receiveActivity(activity);
+        adapter.activityBuffer.push(activity);
+        assert.strictEqual(adapter.activityBuffer.length, 2);
 
-        assert(adapter.deletedActivities.length === 1, `no activities deleted.`);
-        assert(adapter.deletedActivities[0].activityId === activity.id, `invalid delete activity.`);
+        await adapter.receiveActivity(activity);
+        assert.strictEqual(adapter.activityBuffer.length, 1, `no activities deleted.`);
     });
 
     it('should throw an error when onTurn next parameter is null', async () => {
@@ -459,7 +462,7 @@ describe('InspectionMiddleware', function() {
 
         await adapter.receiveActivity(MessageFactory.text(attachCommand));
 
-        await adapter.receiveActivity();
+        await adapter.receiveActivity('');
     });
 
     it('should invokeInbound throw an error', async () => {

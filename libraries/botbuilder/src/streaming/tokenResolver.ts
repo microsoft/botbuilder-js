@@ -35,7 +35,12 @@ export class TokenResolver {
      * @param activity The [Activity](xref:botframework-schema.Activity) to be checked.
      * @param log Optional. The log to write on.
      */
-    public static checkForOAuthCards(adapter: BotFrameworkAdapter, context: TurnContext, activity: Activity, log?: string[]) {
+    public static checkForOAuthCards(
+        adapter: BotFrameworkAdapter,
+        context: TurnContext,
+        activity: Activity,
+        log?: string[]
+    ) {
         if (!activity || !activity.attachments) {
             return;
         }
@@ -53,10 +58,13 @@ export class TokenResolver {
                     pollingTimeoutMs = OAuthLoginTimeoutMsValue;
                 }
 
-                let pollingTimeout: Date = new Date();
+                const pollingTimeout: Date = new Date();
                 pollingTimeout.setMilliseconds(pollingTimeout.getMilliseconds() + pollingTimeoutMs);
 
-                setTimeout(() => this.pollForToken(adapter, context, activity, oauthCard.connectionName, pollingTimeout, log), TokenResolver.PollingIntervalMs);
+                setTimeout(
+                    () => this.pollForToken(adapter, context, activity, oauthCard.connectionName, pollingTimeout, log),
+                    TokenResolver.PollingIntervalMs
+                );
             }
         }
     }
@@ -64,51 +72,70 @@ export class TokenResolver {
     /**
      * @private
      */
-    private static pollForToken(adapter: BotFrameworkAdapter, context: TurnContext, activity: Activity, connectionName: string, pollingTimeout: Date, log?: string[]) {
+    private static pollForToken(
+        adapter: BotFrameworkAdapter,
+        context: TurnContext,
+        activity: Activity,
+        connectionName: string,
+        pollingTimeout: Date,
+        log?: string[]
+    ) {
         if (pollingTimeout > new Date()) {
             const tokenApiClientCredentials = context.turnState.get(adapter.TokenApiClientCredentialsKey);
-            adapter.getUserToken(context, connectionName, null, tokenApiClientCredentials).then((tokenResponse: TokenResponse) => {
-                let pollingIntervalMs = TokenResolver.PollingIntervalMs;
-                if (tokenResponse) {
-                    if (tokenResponse.token) {
-                        const logic = context.turnState.get(BotCallbackHandlerKey);
-                        const eventActivity = <Activity>TokenResolver.createTokenResponseActivity(TurnContext.getConversationReference(activity), tokenResponse.token, connectionName);
-                        // received a token, send it to the bot and end polling
-                        adapter.processActivityDirect(eventActivity, logic).then(() => {
-                        }).catch(reason => {
-                            adapter.onTurnError(context, new Error(reason)).then(() => { });
-                        });
-                        if (log)
-                            log.push('Returned token');
-                        return;
-                    } else if (tokenResponse.properties && tokenResponse.properties[TokenPollingSettingsKey]) {
-                        const pollingSettings = <TokenPollingSettings>tokenResponse.properties[TokenPollingSettingsKey];
-                        if (pollingSettings.timeout <= 0) {
-                            // end polling
-                            if (log)
-                                log.push('End polling');
+            adapter
+                .getUserToken(context, connectionName, null, tokenApiClientCredentials)
+                .then((tokenResponse: TokenResponse) => {
+                    let pollingIntervalMs = TokenResolver.PollingIntervalMs;
+                    if (tokenResponse) {
+                        if (tokenResponse.token) {
+                            const logic = context.turnState.get(BotCallbackHandlerKey);
+                            const eventActivity = <Activity>(
+                                TokenResolver.createTokenResponseActivity(
+                                    TurnContext.getConversationReference(activity),
+                                    tokenResponse.token,
+                                    connectionName
+                                )
+                            );
+                            // received a token, send it to the bot and end polling
+                            adapter
+                                .processActivityDirect(eventActivity, logic)
+                                .then(() => {})
+                                .catch((reason) => {
+                                    adapter.onTurnError(context, new Error(reason)).then(() => {});
+                                });
+                            if (log) log.push('Returned token');
                             return;
-                        }
-                        if (pollingSettings.interval > 0) {
-                            // reset the polling interval
-                            if (log)
-                                log.push(`Changing polling interval to ${pollingSettings.interval}`);
-                            pollingIntervalMs = pollingSettings.interval;
+                        } else if (tokenResponse.properties && tokenResponse.properties[TokenPollingSettingsKey]) {
+                            const pollingSettings = <TokenPollingSettings>(
+                                tokenResponse.properties[TokenPollingSettingsKey]
+                            );
+                            if (pollingSettings.timeout <= 0) {
+                                // end polling
+                                if (log) log.push('End polling');
+                                return;
+                            }
+                            if (pollingSettings.interval > 0) {
+                                // reset the polling interval
+                                if (log) log.push(`Changing polling interval to ${pollingSettings.interval}`);
+                                pollingIntervalMs = pollingSettings.interval;
+                            }
                         }
                     }
-                }
-                if (log)
-                    log.push('Polling again');
-                setTimeout(() => this.pollForToken(adapter, context, activity, connectionName, pollingTimeout), pollingIntervalMs);
-            });
+                    if (log) log.push('Polling again');
+                    setTimeout(
+                        () => this.pollForToken(adapter, context, activity, connectionName, pollingTimeout),
+                        pollingIntervalMs
+                    );
+                });
         }
     }
 
-    /**
-     * @private
-     */
-    private static createTokenResponseActivity(relatesTo: Partial<ConversationReference>, token: string, connectionName: string): Partial<Activity> {
-        let tokenResponse: Partial<Activity> = {
+    private static createTokenResponseActivity(
+        relatesTo: Partial<ConversationReference>,
+        token: string,
+        connectionName: string
+    ): Partial<Activity> {
+        const tokenResponse: Partial<Activity> = {
             id: this.generate_guid(),
             timestamp: new Date(),
             type: ActivityTypes.Event,
@@ -122,8 +149,8 @@ export class TokenResolver {
             relatesTo: <ConversationReference>relatesTo,
             value: {
                 token: token,
-                connectionName: connectionName
-            }
+                connectionName: connectionName,
+            },
         };
         return tokenResponse;
     }
@@ -137,7 +164,6 @@ export class TokenResolver {
                 .toString(16)
                 .substring(1);
         }
-        return s4() + s4() + '-' + s4() + '-' + s4() + '-' +
-            s4() + '-' + s4() + s4() + s4();
+        return s4() + s4() + '-' + s4() + '-' + s4() + '-' + s4() + '-' + s4() + s4() + s4();
     }
 }

@@ -15,21 +15,28 @@ import { LGTemplateParserVisitor } from './generated/LGTemplateParserVisitor';
 import { Template } from './template';
 import { TemplateExtensions } from './templateExtensions';
 import { AnalyzerResult } from './analyzerResult';
-import {TemplateErrors} from './templateErrors';
+import { TemplateErrors } from './templateErrors';
 
 /**
- * Analyzer engine. To to get the static analyzer results.
+ * Analyzer engine. To get the static analyzer results.
  */
-export class Analyzer extends AbstractParseTreeVisitor<AnalyzerResult> implements LGTemplateParserVisitor<AnalyzerResult> {
+export class Analyzer
+    extends AbstractParseTreeVisitor<AnalyzerResult>
+    implements LGTemplateParserVisitor<AnalyzerResult> {
     /**
      * Templates.
      */
     public readonly templates: Template[];
 
-    private readonly templateMap: {[name: string]: Template};
+    private readonly templateMap: { [name: string]: Template };
     private readonly evalutationTargetStack: EvaluationTarget[] = [];
     private readonly _expressionParser: ExpressionParserInterface;
 
+    /**
+     * Creates a new instance of the [Analyzer](xref:botbuilder-lg.Analyzer) class.
+     * @param templates Template list.
+     * @param expressionParser Expression parser.
+     */
     public constructor(templates: Template[], expressionParser: ExpressionParser) {
         super();
         this.templates = templates;
@@ -50,10 +57,16 @@ export class Analyzer extends AbstractParseTreeVisitor<AnalyzerResult> implement
             throw new Error(TemplateErrors.templateNotExist(templateName));
         }
 
-        if (this.evalutationTargetStack.find((u: EvaluationTarget): boolean => u.templateName === templateName) !== undefined) {
-            throw new Error(`${ TemplateErrors.loopDetected } ${ this.evalutationTargetStack.reverse()
-                .map((u: EvaluationTarget): string => u.templateName)
-                .join(' => ') }`);
+        if (
+            this.evalutationTargetStack.find((u: EvaluationTarget): boolean => u.templateName === templateName) !==
+            undefined
+        ) {
+            throw new Error(
+                `${TemplateErrors.loopDetected} ${this.evalutationTargetStack
+                    .reverse()
+                    .map((u: EvaluationTarget): string => u.templateName)
+                    .join(' => ')}`
+            );
         }
 
         // Using a stack to track the evalution trace
@@ -69,10 +82,20 @@ export class Analyzer extends AbstractParseTreeVisitor<AnalyzerResult> implement
         return dependencies;
     }
 
+    /**
+     * Visit a parse tree produced by the normalBody labeled alternative in LGTemplateParser.body.
+     * @param ctx The parse tree.
+     * @returns The [AnalyzerResult](xref:botbuilder-lg.AnalyzerResult) instance.
+     */
     public visitNormalBody(ctx: lp.NormalBodyContext): AnalyzerResult {
         return this.visit(ctx.normalTemplateBody());
     }
 
+    /**
+     * Visit a parse tree produced by LGTemplateParser.normalTemplateBody.
+     * @param ctx The parse tree.
+     * @returns The [AnalyzerResult](xref:botbuilder-lg.AnalyzerResult) instance.
+     */
     public visitNormalTemplateBody(ctx: lp.NormalTemplateBodyContext): AnalyzerResult {
         const result: AnalyzerResult = new AnalyzerResult();
         for (const templateStr of ctx.templateString()) {
@@ -82,11 +105,16 @@ export class Analyzer extends AbstractParseTreeVisitor<AnalyzerResult> implement
         return result;
     }
 
+    /**
+     * Visit a parse tree produced by LGTemplateParser.structuredTemplateBody.
+     * @param ctx The parse tree.
+     * @returns The [AnalyzerResult](xref:botbuilder-lg.AnalyzerResult) instance.
+     */
     public visitStructuredTemplateBody(ctx: lp.StructuredTemplateBodyContext): AnalyzerResult {
         const result: AnalyzerResult = new AnalyzerResult();
 
         const bodys = ctx.structuredBodyContentLine();
-        for (const body  of bodys) {
+        for (const body of bodys) {
             const isKVPairBody = body.keyValueStructureLine() !== undefined;
             if (isKVPairBody) {
                 result.union(this.visitStructureValue(body.keyValueStructureLine()));
@@ -98,6 +126,11 @@ export class Analyzer extends AbstractParseTreeVisitor<AnalyzerResult> implement
         return result;
     }
 
+    /**
+     * Visit a parse tree produced by LGTemplateParser.structuredValue.
+     * @param ctx The parse tree.
+     * @returns The [AnalyzerResult](xref:botbuilder-lg.AnalyzerResult) instance.
+     */
     public visitStructureValue(ctx: lp.KeyValueStructureLineContext): AnalyzerResult {
         const result: AnalyzerResult = new AnalyzerResult();
 
@@ -116,6 +149,11 @@ export class Analyzer extends AbstractParseTreeVisitor<AnalyzerResult> implement
         return result;
     }
 
+    /**
+     * Visit a parse tree produced by the ifElseBody labeled alternative in LGTemplateParser.body.
+     * @param ctx The parse tree.
+     * @returns The [AnalyzerResult](xref:botbuilder-lg.AnalyzerResult) instance.
+     */
     public visitIfElseBody(ctx: lp.IfElseBodyContext): AnalyzerResult {
         const result: AnalyzerResult = new AnalyzerResult();
 
@@ -133,6 +171,11 @@ export class Analyzer extends AbstractParseTreeVisitor<AnalyzerResult> implement
         return result;
     }
 
+    /**
+     * Visit a parse tree produced by the switchCaseBody labeled alternative in LGTemplateParser.body.
+     * @param ctx The parse tree.
+     * @returns The [AnalyzerResult](xref:botbuilder-lg.AnalyzerResult) instance.
+     */
     public visitSwitchCaseBody(ctx: lp.SwitchCaseBodyContext): AnalyzerResult {
         const result: AnalyzerResult = new AnalyzerResult();
         const switchCaseNodes: lp.SwitchCaseRuleContext[] = ctx.switchCaseTemplateBody().switchCaseRule();
@@ -149,9 +192,14 @@ export class Analyzer extends AbstractParseTreeVisitor<AnalyzerResult> implement
         return result;
     }
 
+    /**
+     * Visit a parse tree produced by LGTemplateParser.normalTemplateString.
+     * @param ctx The parse tree.
+     * @returns The [AnalyzerResult](xref:botbuilder-lg.AnalyzerResult) instance.
+     */
     public visitNormalTemplateString(ctx: lp.NormalTemplateStringContext): AnalyzerResult {
         const result: AnalyzerResult = new AnalyzerResult();
-        
+
         for (const expression of ctx.expression()) {
             result.union(this.analyzeExpression(expression.text));
         }
@@ -159,18 +207,29 @@ export class Analyzer extends AbstractParseTreeVisitor<AnalyzerResult> implement
         return result;
     }
 
+    /**
+     * Gets the default value returned by visitor methods.
+     * @returns An instance of the AnalyzerResult class.
+     * @returns The [AnalyzerResult](xref:botbuilder-lg.AnalyzerResult) instance.
+     */
     protected defaultResult(): AnalyzerResult {
         return new AnalyzerResult();
     }
 
+    /**
+     * @private
+     */
     private analyzeExpressionDirectly(exp: Expression): AnalyzerResult {
-        const result: AnalyzerResult =  new AnalyzerResult();
+        const result: AnalyzerResult = new AnalyzerResult();
 
         if (exp.type in this.templateMap) {
             const templateName: string = exp.type;
             result.union(new AnalyzerResult([], [templateName]));
 
-            if (this.templateMap[templateName].parameters === undefined || this.templateMap[templateName].parameters.length === 0) {
+            if (
+                this.templateMap[templateName].parameters === undefined ||
+                this.templateMap[templateName].parameters.length === 0
+            ) {
                 result.union(this.analyzeTemplate(templateName));
             } else {
                 // if template has params, just get the templateref without variables.
@@ -185,8 +244,11 @@ export class Analyzer extends AbstractParseTreeVisitor<AnalyzerResult> implement
         return result;
     }
 
+    /**
+     * @private
+     */
     private analyzeExpression(exp: string): AnalyzerResult {
-        const result: AnalyzerResult =  new AnalyzerResult();
+        const result: AnalyzerResult = new AnalyzerResult();
         exp = TemplateExtensions.trimExpression(exp);
         const parsed: Expression = this._expressionParser.parse(exp);
 
@@ -194,6 +256,6 @@ export class Analyzer extends AbstractParseTreeVisitor<AnalyzerResult> implement
         result.union(new AnalyzerResult(references.slice(), []));
         result.union(this.analyzeExpressionDirectly(parsed));
 
-        return  result;
+        return result;
     }
 }

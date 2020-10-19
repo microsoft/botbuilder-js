@@ -9,7 +9,7 @@ import { IReceiveResponse } from './IReceiveResponse';
 import { StreamingRequest } from '../streamingRequest';
 
 /**
- * Abstraction to define the characteristics of a streaming transport server. 
+ * Abstraction to define the characteristics of a streaming transport server.
  * Example possible implementations include WebSocket transport server or NamedPipe transport server.
  */
 export interface IStreamingTransportServer {

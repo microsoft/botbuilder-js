@@ -16,9 +16,17 @@ import {
     SkillConversationIdFactoryBase,
     SkillConversationReference,
     SkillConversationReferenceKey,
-    TurnContext
+    TurnContext,
 } from 'botbuilder-core';
-import { AuthenticationConfiguration, AppCredentials, ICredentialProvider, ClaimsIdentity, JwtTokenValidation, GovernmentConstants, AuthenticationConstants } from 'botframework-connector';
+import {
+    AuthenticationConfiguration,
+    AppCredentials,
+    ICredentialProvider,
+    ClaimsIdentity,
+    JwtTokenValidation,
+    GovernmentConstants,
+    AuthenticationConstants,
+} from 'botframework-connector';
 
 import { ChannelServiceHandler } from '../channelServiceHandler';
 import { BotFrameworkAdapter } from '../botFrameworkAdapter';
@@ -71,23 +79,27 @@ export class SkillHandler extends ChannelServiceHandler {
      * sendToConversation() API for Skill.
      * @remarks
      * This method allows you to send an activity to the end of a conversation.
-     * 
+     *
      * This is slightly different from replyToActivity().
      * * sendToConversation(conversationId) - will append the activity to the end
      * of the conversation according to the timestamp or semantics of the channel.
      * * replyToActivity(conversationId,ActivityId) - adds the activity as a reply
      * to another activity, if the channel supports it. If the channel does not
      * support nested replies, replyToActivity falls back to sendToConversation.
-     * 
+     *
      * Use replyToActivity when replying to a specific activity in the conversation.
-     * 
+     *
      * Use sendToConversation in all other cases.
      * @param claimsIdentity ClaimsIdentity for the bot, should have AudienceClaim, AppIdClaim and ServiceUrlClaim.
      * @param conversationId Conversation ID.
      * @param activity Activity to send.
      * @returns A Promise with a ResourceResponse.
      */
-    protected async onSendToConversation(claimsIdentity: ClaimsIdentity, conversationId: string, activity: Activity): Promise<ResourceResponse> {
+    protected async onSendToConversation(
+        claimsIdentity: ClaimsIdentity,
+        conversationId: string,
+        activity: Activity
+    ): Promise<ResourceResponse> {
         return await this.processActivity(claimsIdentity, conversationId, null, activity);
     }
 
@@ -95,16 +107,16 @@ export class SkillHandler extends ChannelServiceHandler {
      * replyToActivity() API for Skill.
      * @remarks
      * This method allows you to reply to an activity.
-     * 
+     *
      * This is slightly different from sendToConversation().
      * * sendToConversation(conversationId) - will append the activity to the end
      * of the conversation according to the timestamp or semantics of the channel.
      * * replyToActivity(conversationId,ActivityId) - adds the activity as a reply
      * to another activity, if the channel supports it. If the channel does not
      * support nested replies, replyToActivity falls back to sendToConversation.
-     * 
+     *
      * Use replyToActivity when replying to a specific activity in the conversation.
-     * 
+     *
      * Use sendToConversation in all other cases.
      * @param claimsIdentity ClaimsIdentity for the bot, should have AudienceClaim, AppIdClaim and ServiceUrlClaim.
      * @param conversationId Conversation ID.
@@ -112,7 +124,12 @@ export class SkillHandler extends ChannelServiceHandler {
      * @param activity Activity to send.
      * @returns A Promise with a ResourceResponse.
      */
-    protected async onReplyToActivity(claimsIdentity: ClaimsIdentity, conversationId: string, activityId: string, activity: Activity): Promise<ResourceResponse> {
+    protected async onReplyToActivity(
+        claimsIdentity: ClaimsIdentity,
+        conversationId: string,
+        activityId: string,
+        activity: Activity
+    ): Promise<ResourceResponse> {
         return await this.processActivity(claimsIdentity, conversationId, activityId, activity);
     }
 
@@ -156,8 +173,12 @@ export class SkillHandler extends ChannelServiceHandler {
     /**
      * @private
      */
-    private async processActivity(claimsIdentity: ClaimsIdentity, conversationId: string, replyToActivityId: string, activity: Activity): Promise<ResourceResponse> {
-
+    private async processActivity(
+        claimsIdentity: ClaimsIdentity,
+        conversationId: string,
+        replyToActivityId: string,
+        activity: Activity
+    ): Promise<ResourceResponse> {
         let skillConversationReference: SkillConversationReference;
         try {
             skillConversationReference = await this.conversationIdFactory.getSkillConversationReference(conversationId);
@@ -169,12 +190,12 @@ export class SkillHandler extends ChannelServiceHandler {
                 const conversationReference = await this.conversationIdFactory.getConversationReference(conversationId);
                 skillConversationReference = {
                     conversationReference,
-                    oAuthScope: JwtTokenValidation.isGovernment(this.channelService) ?
-                        GovernmentConstants.ToChannelFromBotOAuthScope :
-                        AuthenticationConstants.ToChannelFromBotOAuthScope
+                    oAuthScope: JwtTokenValidation.isGovernment(this.channelService)
+                        ? GovernmentConstants.ToChannelFromBotOAuthScope
+                        : AuthenticationConstants.ToChannelFromBotOAuthScope,
                 };
             } else {
-                // Re-throw all other errors. 
+                // Re-throw all other errors.
                 throw err;
             }
         }
@@ -186,7 +207,7 @@ export class SkillHandler extends ChannelServiceHandler {
             throw new Error('conversationReference not found.');
         }
 
-        // If an activity is sent, return the ResourceResponse 
+        // If an activity is sent, return the ResourceResponse
         let resourceResponse: ResourceResponse;
 
         /**
@@ -198,16 +219,22 @@ export class SkillHandler extends ChannelServiceHandler {
          *    ConversationIdFactory
          */
         const callback = async (context: TurnContext): Promise<void> => {
-            const adapter: BotFrameworkAdapter = (context.adapter as BotFrameworkAdapter);
+            const adapter: BotFrameworkAdapter = context.adapter as BotFrameworkAdapter;
             // Cache the ClaimsIdentity and ConnectorClient on the context so that it's available inside of the bot's logic.
             context.turnState.set(adapter.BotIdentityKey, claimsIdentity);
             context.turnState.set(this.SkillConversationReferenceKey, skillConversationReference);
-            activity = TurnContext.applyConversationReference(activity, skillConversationReference.conversationReference) as Activity;
+            activity = TurnContext.applyConversationReference(
+                activity,
+                skillConversationReference.conversationReference
+            ) as Activity;
             const client = adapter.createConnectorClient(activity.serviceUrl);
             context.turnState.set(adapter.ConnectorClientKey, client);
 
             context.activity.id = replyToActivityId;
-            context.activity.callerId = `${CallerIdConstants.BotToBotPrefix}${JwtTokenValidation.getAppIdFromClaims(claimsIdentity.claims)}`;
+            context.activity.callerId = `${CallerIdConstants.BotToBotPrefix}${JwtTokenValidation.getAppIdFromClaims(
+                claimsIdentity.claims
+            )}`;
+          
             switch (activity.type) {
                 case ActivityTypes.EndOfConversation:
                     await this.conversationIdFactory.deleteConversationReference(conversationId);
@@ -229,7 +256,11 @@ export class SkillHandler extends ChannelServiceHandler {
         // received by the root bot.
         AppCredentials.trustServiceUrl(skillConversationReference.conversationReference.serviceUrl);
 
-        await (this.adapter as BotFrameworkAdapter).continueConversation(skillConversationReference.conversationReference, skillConversationReference.oAuthScope, callback);
+        await (this.adapter as BotFrameworkAdapter).continueConversation(
+            skillConversationReference.conversationReference,
+            skillConversationReference.oAuthScope,
+            callback
+        );
 
         if (!resourceResponse) {
             resourceResponse = { id: uuid() };
@@ -242,7 +273,8 @@ export class SkillHandler extends ChannelServiceHandler {
 // Code is from @stevenic: https://github.com/stevenic
 function uuid(): string {
     return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c): string => {
-        const r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+        const r = (Math.random() * 16) | 0,
+            v = c == 'x' ? r : (r & 0x3) | 0x8;
         return v.toString(16);
     });
 }

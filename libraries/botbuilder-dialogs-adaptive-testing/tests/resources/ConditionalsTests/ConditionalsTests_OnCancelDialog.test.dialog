@@ -1,0 +1,86 @@
+{
+    "$schema": "../../../tests.schema",
+    "$kind": "Microsoft.Test.Script",
+    "dialog": {
+        "$kind": "Microsoft.AdaptiveDialog",
+        "recognizer": {
+            "$kind": "Microsoft.RegexRecognizer",
+            "intents": [
+                {
+                    "intent": "Test",
+                    "pattern": "(?i)test"
+                }
+            ]
+        },
+        "triggers": [
+            {
+                "$kind": "Microsoft.OnIntent",
+                "intent": "Test",
+                "actions": [
+                    {
+                        "$kind": "Microsoft.AdaptiveDialog",
+                        "recognizer": {
+                            "$kind": "Microsoft.RegexRecognizer",
+                            "intents": [
+                                {
+                                    "intent": "Test",
+                                    "pattern": "(?i)test"
+                                }
+                            ]
+                        },
+                        "triggers": [
+                            {
+                                "$kind": "Microsoft.OnUnknownIntent",
+                                "actions": [
+                                    {
+                                        "$kind": "Microsoft.SendActivity",
+                                        "activity": "started"
+                                    },
+                                    {
+                                        "$kind": "Microsoft.CancelAllDialogs"
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "$kind": "Microsoft.OnCancelDialog",
+                "actions": [
+                    {
+                        "$kind": "Microsoft.SendActivity",
+                        "activity": "canceled"
+                    }
+                ]
+            },
+            {
+                "$kind": "Microsoft.OnUnknownIntent",
+                "actions": [
+                    {
+                        "$kind": "Microsoft.SendActivity",
+                        "activity": "done"
+                    }
+                ]
+            }
+        ]
+    },
+    "script": [
+        {
+            "$kind": "Microsoft.Test.UserSays",
+            "text": "Test"
+        },
+        {
+            "$kind": "Microsoft.Test.AssertReply",
+            "text": "started"
+        },
+        {
+            "$kind": "Microsoft.Test.UserSays",
+            "text": "next"
+        },
+        {
+            "$kind": "Microsoft.Test.AssertReply",
+            "text": "canceled"
+        }
+    ]
+}

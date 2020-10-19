@@ -6,11 +6,20 @@
  * Licensed under the MIT License.
  */
 
-import { TurnContext } from 'botbuilder-core';
+import { TurnContext, TestAdapter } from 'botbuilder-core';
 import { TestAction } from '../testAction';
-import { AdaptiveTestAdapter } from '../adaptiveTestAdapter';
 
-export class UserSays implements TestAction {
+export interface UserSaysConfiguration {
+    text?: string;
+    user?: string;
+}
+
+/**
+ * Action to script sending text to the bot.
+ */
+export class UserSays extends TestAction implements UserSaysConfiguration {
+    public static $kind = 'Microsoft.Test.UserSays';
+
     /**
      * The text to send to the bot.
      */
@@ -21,7 +30,13 @@ export class UserSays implements TestAction {
      */
     public user: string;
 
-    public async execute(testAdapter: AdaptiveTestAdapter, callback: (context: TurnContext) => Promise<any>): Promise<any> {
+    /**
+     * Execute the test.
+     * @param testAdapter Adapter to execute against.
+     * @param callback Logic for the bot to use.
+     * @returns A Promise that represents the work queued to execute.
+     */
+    public async execute(testAdapter: TestAdapter, callback: (context: TurnContext) => Promise<void>): Promise<void> {
         if (!this.text) {
             throw new Error('You must define the text property');
         }

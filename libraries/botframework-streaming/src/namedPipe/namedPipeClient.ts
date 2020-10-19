@@ -10,10 +10,7 @@ import { ProtocolAdapter } from '../protocolAdapter';
 import { RequestHandler } from '../requestHandler';
 import { StreamingRequest } from '../streamingRequest';
 import { RequestManager } from '../payloads';
-import {
-    PayloadReceiver,
-    PayloadSender
-} from '../payloadTransport';
+import { PayloadReceiver, PayloadSender } from '../payloadTransport';
 import { NamedPipeTransport } from './namedPipeTransport';
 import { IStreamingTransportClient, IReceiveResponse } from '../interfaces';
 
@@ -29,7 +26,7 @@ export class NamedPipeClient implements IStreamingTransportClient {
     private readonly _protocolAdapter: ProtocolAdapter;
     private readonly _autoReconnect: boolean;
     private _isDisconnecting: boolean;
-    
+
     /**
      * Creates a new instance of the [NamedPipeClient](xref:botframework-streaming.NamedPipeClient) class.
      *
@@ -37,7 +34,7 @@ export class NamedPipeClient implements IStreamingTransportClient {
      * @param requestHandler Optional [RequestHandler](xref:botframework-streaming.RequestHandler) to process incoming messages received by this client.
      * @param autoReconnect Optional setting to determine if the client sould attempt to reconnect automatically on disconnection events. Defaults to true.
      */
-    public constructor(baseName: string, requestHandler?: RequestHandler, autoReconnect: boolean = true) {
+    public constructor(baseName: string, requestHandler?: RequestHandler, autoReconnect = true) {
         this._baseName = baseName;
         this._requestHandler = requestHandler;
         this._autoReconnect = autoReconnect;
@@ -46,17 +43,24 @@ export class NamedPipeClient implements IStreamingTransportClient {
         this._sender.disconnected = this.onConnectionDisconnected.bind(this);
         this._receiver = new PayloadReceiver();
         this._receiver.disconnected = this.onConnectionDisconnected.bind(this);
-        this._protocolAdapter = new ProtocolAdapter(this._requestHandler, this._requestManager, this._sender, this._receiver);
+        this._protocolAdapter = new ProtocolAdapter(
+            this._requestHandler,
+            this._requestManager,
+            this._sender,
+            this._receiver
+        );
     }
 
     /**
      * Establish a connection with no custom headers.
      */
     public async connect(): Promise<void> {
-        let outgoingPipeName: string = NamedPipeTransport.PipePath + this._baseName + NamedPipeTransport.ServerIncomingPath;
-        let outgoing = connect(outgoingPipeName);
-        let incomingPipeName: string = NamedPipeTransport.PipePath + this._baseName + NamedPipeTransport.ServerOutgoingPath;
-        let incoming = connect(incomingPipeName);
+        const outgoingPipeName: string =
+            NamedPipeTransport.PipePath + this._baseName + NamedPipeTransport.ServerIncomingPath;
+        const outgoing = connect(outgoingPipeName);
+        const incomingPipeName: string =
+            NamedPipeTransport.PipePath + this._baseName + NamedPipeTransport.ServerOutgoingPath;
+        const incoming = connect(incomingPipeName);
         this._sender.connect(new NamedPipeTransport(outgoing));
         this._receiver.connect(new NamedPipeTransport(incoming));
     }
@@ -79,6 +83,9 @@ export class NamedPipeClient implements IStreamingTransportClient {
         return this._protocolAdapter.sendRequest(request);
     }
 
+    /**
+     * @private
+     */
     private onConnectionDisconnected(sender: object, args: any): void {
         if (!this._isDisconnecting) {
             this._isDisconnecting = true;
@@ -93,11 +100,14 @@ export class NamedPipeClient implements IStreamingTransportClient {
 
                 if (this._autoReconnect) {
                     this.connect()
-                        .then((): void => { })
-                        .catch((error): void => { throw new Error(`Failed to reconnect. Reason: ${ error.message } Sender: ${ sender } Args: ${ args }. `); });
+                        .then((): void => {})
+                        .catch((error): void => {
+                            throw new Error(
+                                `Failed to reconnect. Reason: ${error.message} Sender: ${sender} Args: ${args}. `
+                            );
+                        });
                 }
-            }
-            finally {
+            } finally {
                 this._isDisconnecting = false;
             }
         }
