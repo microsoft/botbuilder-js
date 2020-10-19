@@ -21,10 +21,16 @@ import { ReturnType } from '../returnType';
  * Add a number of time units to a timestamp.
  */
 export class AddToTime extends ExpressionEvaluator {
+    /**
+     * Initializes a new instance of the [AddToTime](xref:adaptive-expressions.AddToTime) class.
+     */
     public constructor() {
         super(ExpressionType.AddToTime, AddToTime.evaluator, ReturnType.String, AddToTime.validator);
     }
 
+    /**
+     * @private
+     */
     private static evaluator(expression: Expression, state: MemoryInterface, options: Options): ValueWithError {
         let value: any;
 
@@ -36,13 +42,16 @@ export class AddToTime extends ExpressionEvaluator {
             if (typeof args[0] === 'string' && Number.isInteger(args[1]) && typeof args[2] === 'string') {
                 ({ value, error } = AddToTime.evalAddToTime(args[0], args[1], args[2], format));
             } else {
-                error = `${expression} should contain an ISO format timestamp, a time interval integer, a string unit of time and an optional output format string.`;
+                error = `${ expression } should contain an ISO format timestamp, a time interval integer, a string unit of time and an optional output format string.`;
             }
         }
 
         return { value, error };
     }
-
+  
+    /**
+     * @private
+     */
     private static evalAddToTime(
         timeStamp: string,
         interval: number,
@@ -93,7 +102,7 @@ export class AddToTime extends ExpressionEvaluator {
                 }
 
                 default: {
-                    error = `${timeUnit} is not valid time unit`;
+                    error = `${ timeUnit } is not valid time unit`;
                     break;
                 }
             }
@@ -107,6 +116,9 @@ export class AddToTime extends ExpressionEvaluator {
         return { value: result, error };
     }
 
+    /**
+     * @private
+     */
     private static validator(expression: Expression): void {
         FunctionUtils.validateOrder(
             expression,

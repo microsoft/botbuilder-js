@@ -20,11 +20,23 @@ const LUIS_TRACE_TYPE = 'https://www.luis.ai/schemas/trace';
 const LUIS_TRACE_NAME = 'LuisRecognizer';
 const LUIS_TRACE_LABEL = 'Luis Trace';
 
+/**
+ * Validates if the options provided are valid [LuisRecognizerOptionsV2](xref:botbuilder-ai.LuisRecognizerOptionsV2).
+ * @returns A boolean value that indicates param options is a [LuisRecognizerOptionsV2](xref:botbuilder-ai.LuisRecognizerOptionsV2).
+ */
 export function isLuisRecognizerOptionsV2(options: any): options is LuisRecognizerOptionsV2 {
     return options.apiVersion && options.apiVersion === 'v2';
 }
 
+/**
+ * Recognize intents in a user utterance using a configured LUIS model.
+ */
 export class LuisRecognizerV2 extends LuisRecognizerInternal {
+    /**
+     * Creates a new [LuisRecognizerV2](xref:botbuilder-ai.LuisRecognizerV2) instance.
+     * @param application An object conforming to the [LuisApplication](xref:botbuilder-ai.LuisApplication) definition or a string representing a LUIS application endpoint, usually retrieved from https://luis.ai.
+     * @param options Optional. Options object used to control predictions. Should conform to the [LuisRecognizerOptionsV2](xref:botbuilder-ai.LuisRecognizerOptionsV2) definition.
+     */
     constructor(application: LuisApplication, options?: LuisRecognizerOptionsV2) {
         super(application);
         // Create client
@@ -52,6 +64,11 @@ export class LuisRecognizerV2 extends LuisRecognizerInternal {
 
     private luisClient: LuisClient;
 
+    /**
+     * Calls LUIS to recognize intents and entities in a users utterance.
+     * @param context The [TurnContext](xref:botbuilder-core.TurnContext).
+     * @returns Analysis of utterance in form of [RecognizerResult](xref:botbuilder-core.RecognizerResult).
+     */
     async recognizeInternal(context: TurnContext): Promise<RecognizerResult> {
         const luisPredictionOptions = this.options;
         const utterance: string = context.activity.text || '';
@@ -95,10 +112,20 @@ export class LuisRecognizerV2 extends LuisRecognizerInternal {
         return result;
     }
 
+    /**
+     * Remove role and ensure that dot and space are not a part of entity names since we want to do JSON paths.
+     * @param name Value to be normalized.
+     * @returns Normalized string value.
+     */
     private normalizeName(name: string): string {
         return name.replace(/\.| /g, '_');
     }
 
+    /**
+     * Get Intents from a LuisResult object.
+     * @param luisResult Prediction, based on the input query, containing intent(s) and entities.
+     * @returns LUIS Intents with a score number.
+     */
     private getIntents(luisResult: LuisModels.LuisResult): any {
         const intents: { [name: string]: { score: number } } = {};
         if (luisResult.intents) {
@@ -115,6 +142,9 @@ export class LuisRecognizerV2 extends LuisRecognizerInternal {
         return intents;
     }
 
+    /**
+     * @private
+     */
     private getEntitiesAndMetadata(
         entities: LuisModels.EntityModel[],
         compositeEntities: LuisModels.CompositeEntityModel[] | undefined,
@@ -155,6 +185,9 @@ export class LuisRecognizerV2 extends LuisRecognizerInternal {
         return entitiesAndMetadata;
     }
 
+    /**
+     * @private
+     */
     private populateCompositeEntity(
         compositeEntity: LuisModels.CompositeEntityModel,
         entities: LuisModels.EntityModel[],
@@ -231,6 +264,9 @@ export class LuisRecognizerV2 extends LuisRecognizerInternal {
         return filteredEntities;
     }
 
+    /**
+     * @private
+     */
     private getEntityValue(entity: LuisModels.EntityModel): any {
         if (entity.type.startsWith('builtin.geographyV2.')) {
             return {
@@ -295,6 +331,9 @@ export class LuisRecognizerV2 extends LuisRecognizerInternal {
         }
     }
 
+    /**
+     * @private
+     */
     private getEntityMetadata(entity: LuisModels.EntityModel): any {
         const res: any = {
             startIndex: entity.startIndex,
@@ -310,6 +349,9 @@ export class LuisRecognizerV2 extends LuisRecognizerInternal {
         return res;
     }
 
+    /**
+     * @private
+     */
     private getNormalizedEntityName(entity: LuisModels.EntityModel): string {
         // Type::Role -> Role
         let type: string = entity.type.split(':').pop();
@@ -345,6 +387,9 @@ export class LuisRecognizerV2 extends LuisRecognizerInternal {
         }
     }
 
+    /**
+     * @private
+     */
     private getSentiment(luis: LuisModels.LuisResult): any {
         let result: any;
         if (luis.sentimentAnalysis) {
@@ -357,6 +402,9 @@ export class LuisRecognizerV2 extends LuisRecognizerInternal {
         return result;
     }
 
+    /**
+     * @private
+     */
     private getUserAgent(): string {
         // Note when the ms-rest dependency the LuisClient uses has been updated
         // this code should be modified to use the client's addUserAgentInfo() function.
@@ -368,6 +416,9 @@ export class LuisRecognizerV2 extends LuisRecognizerInternal {
         return userAgent;
     }
 
+    /**
+     * @private
+     */
     private emitTraceInfo(
         context: TurnContext,
         luisResult: LuisModels.LuisResult,

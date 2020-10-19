@@ -20,10 +20,16 @@ import { ReturnType } from '../returnType';
 export class TicksToDays extends ExpressionEvaluator {
     private static readonly TicksPerDay: number = 24 * 60 * 60 * 10000000;
 
+    /**
+     * Initializes a new instance of the [TicksToDays](xref:adaptive-expressions.TicksToDays) class.
+     */
     public constructor() {
         super(ExpressionType.TicksToDays, TicksToDays.evaluator, ReturnType.Number, FunctionUtils.validateUnaryNumber);
     }
 
+    /**
+     * @private
+     */
     private static evaluator(expr: Expression, state: MemoryInterface, options: Options): ValueWithError {
         let value: any;
         const { args, error: childrenError } = FunctionUtils.evaluateChildren(expr, state, options);
@@ -32,7 +38,7 @@ export class TicksToDays extends ExpressionEvaluator {
             if (Number.isInteger(args[0])) {
                 value = args[0] / TicksToDays.TicksPerDay;
             } else {
-                error = `${expr} should contain an integer of ticks`;
+                error = `${ expr } should contain an integer of ticks`;
             }
         }
 
