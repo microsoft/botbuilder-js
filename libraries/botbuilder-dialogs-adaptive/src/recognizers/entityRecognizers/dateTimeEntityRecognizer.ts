@@ -14,6 +14,9 @@ import { TextEntityRecognizer } from './textEntityRecognizer';
  * Recognizes DateTime input.
  */
 export class DateTimeEntityRecognizer extends TextEntityRecognizer {
+
+    public static $kind = 'Microsoft.DateTimeEntityRecognizer';
+
     /**
      * @protected
      * DateTime recognizing implementation.

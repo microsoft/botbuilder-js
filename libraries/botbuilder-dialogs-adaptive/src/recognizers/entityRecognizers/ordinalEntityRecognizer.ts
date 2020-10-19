@@ -14,6 +14,9 @@ import { TextEntityRecognizer } from './textEntityRecognizer';
  * Recognizes ordinal input.
  */
 export class OrdinalEntityRecognizer extends TextEntityRecognizer {
+
+    public static $kind = 'Microsoft.OrdinalEntityRecognizer';
+
     /**
      * @protected
      * Ordinal recognizing implementation.

@@ -9,13 +9,14 @@ import { ModelResult } from 'botbuilder-dialogs';
  * Licensed under the MIT License.
  */
 
-/**
- * Matches input against a regular expression.
- */
-export class RegexEntityRecognizer extends TextEntityRecognizer {
-    /**
-     * Initializes a new instance of the [RegexEntityRecognizer](xref:botbuilder-dialogs-adaptive.RegexEntityRecognizer) class.
-     */
+export interface RegexEntityRecognizerConfiguration {
+    name?: string;
+    pattern?: string;
+}
+
+export class RegexEntityRecognizer extends TextEntityRecognizer implements RegexEntityRecognizerConfiguration {
+    public static $kind = 'Microsoft.RegexEntityRecognizer';
+
     public constructor();
     /**
      * Initializes a new instance of the [RegexEntityRecognizer](xref:botbuilder-dialogs-adaptive.RegexEntityRecognizer) class.

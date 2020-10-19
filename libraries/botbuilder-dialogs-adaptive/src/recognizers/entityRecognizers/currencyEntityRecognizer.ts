@@ -14,6 +14,9 @@ import { TextEntityRecognizer } from './textEntityRecognizer';
  * Recognizes currency input.
  */
 export class CurrencyEntityRecognizer extends TextEntityRecognizer {
+
+    public static $kind = 'Microsoft.CurrencyEntityRecognizer';
+
     /**
      * @protected
      * Currency recognizing implementation.

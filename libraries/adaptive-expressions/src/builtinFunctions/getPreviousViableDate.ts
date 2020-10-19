@@ -23,6 +23,9 @@ import { TimexProperty } from '@microsoft/recognizers-text-data-types-timex-expr
  * Return the previous viable date of a timex expression based on the current date and user's timezone.
  */
 export class GetPreviousViableDate extends ExpressionEvaluator {
+    /**
+     * Initializes a new instance of the [GetPreviousViableDate](xref:adaptive-expressions.GetPreviousViableDate) class.
+     */
     public constructor() {
         super(
             ExpressionType.GetPreviousViableDate,
@@ -32,6 +35,9 @@ export class GetPreviousViableDate extends ExpressionEvaluator {
         );
     }
 
+    /**
+     * @private
+     */
     private static evaluator(
         expr: Expression,
         state: MemoryInterface,
@@ -51,7 +57,7 @@ export class GetPreviousViableDate extends ExpressionEvaluator {
 
         if (parsed && !error) {
             if (parsed.year || !parsed.month || !parsed.dayOfMonth) {
-                error = `${args[0]} must be a timex string which only contains month and day-of-month, for example: 'XXXX-10-31'.`;
+                error = `${ args[0] } must be a timex string which only contains month and day-of-month, for example: 'XXXX-10-31'.`;
             }
         }
 
@@ -59,7 +65,7 @@ export class GetPreviousViableDate extends ExpressionEvaluator {
             if (args.length === 2 && typeof args[1] === 'string') {
                 const timeZone: string = TimeZoneConverter.windowsToIana(args[1]);
                 if (!TimeZoneConverter.verifyTimeZoneStr(timeZone)) {
-                    error = `${args[1]} is not a valid timezone`;
+                    error = `${ args[1] } is not a valid timezone`;
                 }
 
                 if (!error) {
@@ -95,6 +101,9 @@ export class GetPreviousViableDate extends ExpressionEvaluator {
         return { value, error };
     }
 
+    /**
+     * @private
+     */
     private static leapYear(year: number): boolean {
         return (year % 4 == 0 && year % 100 != 0) || year % 400 == 0;
     }

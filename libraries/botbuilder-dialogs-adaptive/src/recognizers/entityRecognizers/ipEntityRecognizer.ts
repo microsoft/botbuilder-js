@@ -14,6 +14,9 @@ import { TextEntityRecognizer } from './textEntityRecognizer';
  * Recognizes IP input.
  */
 export class IpEntityRecognizer extends TextEntityRecognizer {
+
+    public static $kind = 'Microsoft.IpEntityRecognizer';
+
     /**
      * @protected
      * IP recognizing implementation.

@@ -14,6 +14,9 @@ import { TextEntityRecognizer } from './textEntityRecognizer';
  * Recognizes GUID input.
  */
 export class GuidEntityRecognizer extends TextEntityRecognizer {
+
+    public static $kind = 'Microsoft.GuidEntityRecognizer';
+
     /**
      * @protected
      * GUID recognizing implementation.

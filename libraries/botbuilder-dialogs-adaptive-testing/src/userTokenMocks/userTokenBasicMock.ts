@@ -9,10 +9,20 @@
 import { TestAdapter } from 'botbuilder-core';
 import { UserTokenMock } from './userTokenMock';
 
+export interface UserTokenBasicMockConfiguration {
+    connectionName?: string;
+    channelId?: string;
+    userId?: string;
+    token?: string;
+    magicCode?: string;
+}
+
 /**
  * Mock UserToken with user id and token.
  */
-export class UserTokenBasicMock implements UserTokenMock {
+export class UserTokenBasicMock extends UserTokenMock implements UserTokenBasicMockConfiguration {
+    public static $kind = 'Microsoft.Test.UserTokenBasicMock';
+
     /**
      * Gets or sets the connection name.
      */

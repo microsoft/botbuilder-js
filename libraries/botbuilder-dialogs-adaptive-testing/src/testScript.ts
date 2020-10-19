@@ -6,17 +6,49 @@
  * Licensed under the MIT License.
  */
 
-import { MemoryStorage, UserState, ConversationState, TestAdapter } from 'botbuilder-core';
-import { DialogManager } from 'botbuilder-dialogs';
-import { DialogExpression, LanguageGeneratorExtensions, ResourceExtensions } from 'botbuilder-dialogs-adaptive';
+import { ConversationState, MemoryStorage, UserState, useBotState, TestAdapter } from 'botbuilder-core';
+import { Configurable, Converter, ConverterFactory, Dialog, DialogManager } from 'botbuilder-dialogs';
+import { LanguageGeneratorExtensions, ResourceExtensions } from 'botbuilder-dialogs-adaptive';
 import { ResourceExplorer } from 'botbuilder-dialogs-declarative';
 import { TestAction } from './testAction';
-import { UserTokenMock } from './userTokenMocks';
+import { UserTokenMock, UserTokenMocksConverter } from './userTokenMocks';
+
+class DialogConverter implements Converter<string, Dialog> {
+    public constructor(private readonly _resourceExplorer: ResourceExplorer) {}
+
+    public convert(value: string | Dialog): Dialog {
+        if (value instanceof Dialog) {
+            return value;
+        }
+
+        let resource = this._resourceExplorer.getResource(value);
+        if (!resource) {
+            resource = this._resourceExplorer.getResource(`${value}.dialog`);
+        }
+
+        if (resource) {
+            return this._resourceExplorer.loadType<Dialog>(resource);
+        }
+
+        return undefined;
+    }
+}
+
+export interface TestScriptConfiguration {
+    description?: string;
+    dialog?: string | Dialog;
+    locale?: string;
+    userTokenMocks?: string[] | UserTokenMock[];
+    script?: TestAction[];
+    enableTrace?: boolean;
+}
 
 /**
  * A mock Test Script that can be used for unit testing bot's logic.
  */
-export class TestScript {
+export class TestScript extends Configurable implements TestScriptConfiguration {
+    public static $kind = 'Microsoft.Test.Script';
+
     /**
      * A description of the test sequence.
      */
@@ -25,7 +57,7 @@ export class TestScript {
     /**
      * The dialog to use for the root dialog.
      */
-    public dialog: DialogExpression;
+    public dialog: Dialog;
 
     /**
      * The locale (default: en-us).
@@ -47,6 +79,17 @@ export class TestScript {
      */
     public enableTrace = false;
 
+    public getConverter(property: keyof TestScriptConfiguration): Converter | ConverterFactory {
+        switch (property) {
+            case 'dialog':
+                return DialogConverter;
+            case 'userTokenMocks':
+                return UserTokenMocksConverter;
+            default:
+                return super.getConverter(property);
+        }
+    }
+
     /**
      * Starts the execution of the test sequence.
      * @param testName Name of the test
@@ -64,9 +107,12 @@ export class TestScript {
         testAdapter.enableTrace = this.enableTrace;
         testAdapter.locale = this.locale;
 
-        const bot = new DialogManager(this.dialog.value);
-        bot.conversationState = new ConversationState(new MemoryStorage());
-        bot.userState = new UserState(new MemoryStorage());
+        const storage = new MemoryStorage();
+        const userState = new UserState(storage);
+        const convoState = new ConversationState(storage);
+        useBotState(testAdapter, userState, convoState);
+
+        const bot = new DialogManager(this.dialog);
         ResourceExtensions.useResourceExplorer(bot, resourceExplorer);
         LanguageGeneratorExtensions.useLanguageGeneration(bot);
 

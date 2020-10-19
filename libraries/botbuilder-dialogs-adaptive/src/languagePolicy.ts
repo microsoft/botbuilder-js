@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 
-import { Converter } from 'botbuilder-dialogs-declarative';
+import { Converter } from 'botbuilder-dialogs';
 
 /**
  * Language policy with fallback for each language as most specific to default en-us -> en -> default.
@@ -904,8 +904,11 @@ export class LanguagePolicy extends Map<string, string[]> {
     }
 }
 
-export class LanguagePolicyConverter implements Converter {
-    public convert(value: object): LanguagePolicy {
+export class LanguagePolicyConverter implements Converter<Record<string, string[]>, LanguagePolicy> {
+    public convert(value: Record<string, string[]> | LanguagePolicy): LanguagePolicy {
+        if (value instanceof LanguagePolicy) {
+            return value;
+        }
         const policy = new LanguagePolicy();
         policy.clear(); // Empty default policy to load custom language policy
         for (const key in value) {

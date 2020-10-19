@@ -14,6 +14,9 @@ import { TextEntityRecognizer } from './textEntityRecognizer';
  * Recognizes URL input.
  */
 export class UrlEntityRecognizer extends TextEntityRecognizer {
+
+    public static $kind = 'Microsoft.UrlEntityRecognizer';
+
     /**
      * @protected
      * URL recognizing implementation.

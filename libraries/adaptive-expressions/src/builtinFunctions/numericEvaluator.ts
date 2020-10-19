@@ -14,10 +14,18 @@ import { ReturnType } from '../returnType';
  * Numeric operators that can have 1 or more args.
  */
 export class NumericEvaluator extends ExpressionEvaluator {
+    /**
+     * Initializes a new instance of the [NumericEvaluator](xref:adaptive-expressions.NumericEvaluator) class.
+     * @param type Name of the built-in function.
+     * @param func The evaluation function, it takes a list of objects and returns a number.
+     */
     public constructor(type: string, func: (args: any[]) => any) {
         super(type, NumericEvaluator.evaluator(func), ReturnType.Number, FunctionUtils.validateNumber);
     }
 
+    /**
+     * @private
+     */
     private static evaluator(func: (args: any[]) => any): EvaluateExpressionDelegate {
         return FunctionUtils.applySequence(func, FunctionUtils.verifyNumber);
     }

@@ -14,6 +14,9 @@ import { TextEntityRecognizer } from './textEntityRecognizer';
  * Recognizes percentage input.
  */
 export class PercentageEntityRecognizer extends TextEntityRecognizer {
+
+    public static $kind = 'Microsoft.PercentageEntityRecognizer';
+
     /**
      * @protected
      * Percentage recognizing implementation.

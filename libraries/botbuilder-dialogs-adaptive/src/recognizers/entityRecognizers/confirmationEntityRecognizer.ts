@@ -14,6 +14,9 @@ import { TextEntityRecognizer } from './textEntityRecognizer';
  * Recognizes yes/no confirmation style input.
  */
 export class ConfirmationEntityRecognizer extends TextEntityRecognizer {
+
+    public static $kind = 'Microsoft.ConfirmationEntityRecognizer';
+
     /**
      * @protected
      * Yes/no confirmation style input recognizing implementation.

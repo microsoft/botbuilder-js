@@ -7,15 +7,12 @@
  */
 
 import { Culture } from '@microsoft/recognizers-text';
-import { DialogContext, ModelResult } from 'botbuilder-dialogs';
 import { Entity } from 'botbuilder-core';
+import { Configurable, DialogContext, ModelResult } from 'botbuilder-dialogs';
 import { EntityRecognizer } from './entityRecognizer';
 import { TextEntity } from './textEntity';
 
-/**
- * TextEntityRecognizer - base class for `text.recognizers` from the text recognizer library.
- */
-export abstract class TextEntityRecognizer implements EntityRecognizer {
+export abstract class TextEntityRecognizer extends Configurable implements EntityRecognizer {
     /**
      * Recognizes entities from an [Entity](xref:botframework-schema.Entity) list.
      * @param dialogContext The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.

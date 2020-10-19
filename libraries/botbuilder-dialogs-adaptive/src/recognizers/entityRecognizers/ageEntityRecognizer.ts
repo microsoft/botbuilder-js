@@ -14,6 +14,9 @@ import { TextEntityRecognizer } from './textEntityRecognizer';
  * Recognizes age input.
  */
 export class AgeEntityRecognizer extends TextEntityRecognizer {
+
+    public static $kind = 'Microsoft.AgeEntityRecognizer';
+
     /**
      * @protected
      * Age recognizing implementation.

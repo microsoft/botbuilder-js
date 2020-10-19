@@ -14,6 +14,9 @@ import { TextEntityRecognizer } from './textEntityRecognizer';
  * Recognizes temperature input.
  */
 export class TemperatureEntityRecognizer extends TextEntityRecognizer {
+
+    public static $kind = 'Microsoft.TemperatureEntityRecognizer';
+
     /**
      * @protected
      * Temperature recognizing implementation.

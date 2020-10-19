@@ -20,6 +20,7 @@
   "main": "./lib/index.js",
   "typings": "./lib/index.d.ts",
   "dependencies": {
+    "botbuilder-core": "4.1.6",
     "botbuilder-dialogs": "4.1.6",
     "chokidar": "^3.4.0",
     "jsonpath": "^1.0.0"
@@ -43,5 +44,9 @@
     "clean": "erase /q /s .\\lib",
     "set-version": "npm version --allow-same-version ${Version}",
     "test:compat": "api-extractor run --verbose"
-  }
+  },
+  "files": [
+    "lib",
+    "src"
+  ]
 }
