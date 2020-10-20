@@ -5,16 +5,20 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { DialogTurnResult, DialogContext, TurnPath } from 'botbuilder-dialogs';
-import { BaseInvokeDialog } from './baseInvokeDialog';
-import { BoolExpression } from 'adaptive-expressions';
+import { BoolExpression, BoolExpressionConverter, Expression } from 'adaptive-expressions';
+import { Converter, ConverterFactory, DialogContext, DialogTurnResult, TurnPath } from 'botbuilder-dialogs';
+import { BaseInvokeDialog, BaseInvokeDialogConfiguration } from './baseInvokeDialog';
+
+export interface ReplaceDialogConfiguration extends BaseInvokeDialogConfiguration {
+    disabled?: boolean | string | Expression | BoolExpression;
+}
 
 /**
  * Action which calls another [Dialog](xref:botbuilder-dialogs.Dialog), when it is done it will go to the caller's parent dialog.
  */
-export class ReplaceDialog<O extends object = {}> extends BaseInvokeDialog<O> {
-    public constructor();
-    
+export class ReplaceDialog<O extends object = {}> extends BaseInvokeDialog<O> implements ReplaceDialogConfiguration {
+    public static $kind = 'Microsoft.ReplaceDialog';
+
     /**
      * Creates a new [ReplaceDialog](xref:botbuilder-dialogs-adaptive.ReplaceDialog) instance.
      * @param dialogId ID of the [Dialog](xref:botbuilder-dialogs.Dialog) to goto.
@@ -35,6 +39,15 @@ export class ReplaceDialog<O extends object = {}> extends BaseInvokeDialog<O> {
      * An optional expression which if is true will disable this action.
      */
     public disabled?: BoolExpression;
+
+    public getConverter(property: keyof ReplaceDialogConfiguration): Converter | ConverterFactory {
+        switch (property) {
+            case 'disabled':
+                return new BoolExpressionConverter();
+            default:
+                return super.getConverter(property);
+        }
+    }
 
     /**
      * Starts a new [Dialog](xref:botbuilder-dialogs.Dialog) and pushes it onto the dialog stack.

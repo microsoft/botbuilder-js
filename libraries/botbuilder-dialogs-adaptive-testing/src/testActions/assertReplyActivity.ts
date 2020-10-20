@@ -6,14 +6,22 @@
  * Licensed under the MIT License.
  */
 
-import { Activity, TurnContext, TestAdapter } from 'botbuilder-core';
 import { ExpressionParser } from 'adaptive-expressions';
+import { Activity, TurnContext, TestAdapter } from 'botbuilder-core';
 import { TestAction } from '../testAction';
+
+export interface AssertReplyActivityConfiguration {
+    description?: string;
+    timeout?: number;
+    assertions?: string[];
+}
 
 /**
  * Basic assertion TestAction, which validates assertions against a reply activity.
  */
-export class AssertReplyActivity implements TestAction {
+export class AssertReplyActivity extends TestAction implements AssertReplyActivityConfiguration {
+    public static $kind = 'Microsoft.Test.AssertReplyActivity';
+
     /**
      * Description of what this assertion is.
      */

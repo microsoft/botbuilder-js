@@ -5,15 +5,58 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { BoolExpression, Constant, Expression, ExpressionParser, ValueExpression } from 'adaptive-expressions';
-import { DialogTurnResult, DialogDependencies, Dialog, DialogContext } from 'botbuilder-dialogs';
+import {
+    BoolExpression,
+    BoolExpressionConverter,
+    Constant,
+    Expression,
+    ExpressionConverter,
+    ExpressionParser,
+    ValueExpression,
+} from 'adaptive-expressions';
+import {
+    Converter,
+    ConverterFactory,
+    Dialog,
+    DialogConfiguration,
+    DialogContext,
+    DialogDependencies,
+    DialogTurnResult,
+} from 'botbuilder-dialogs';
+import { DialogListConverter } from '../converters';
 import { ActionScope } from './actionScope';
 import { Case } from './case';
+
+type CaseInput = {
+    actions: Dialog[];
+    value: string;
+};
+
+class CasesConverter implements Converter<CaseInput[], Case[]> {
+    public convert(items: CaseInput[] | Case[]): Case[] {
+        const results: Case[] = [];
+        items.forEach((item) => {
+            results.push(item instanceof Case ? item : new Case(item.value, item.actions));
+        });
+        return results;
+    }
+}
 
 /**
  * Conditional branch with multiple cases.
  */
-export class SwitchCondition<O extends object = {}> extends Dialog<O> implements DialogDependencies {
+export interface SwitchConditionConfiguration extends DialogConfiguration {
+    condition?: string | Expression;
+    default?: string[] | Dialog[];
+    cases?: CaseInput[] | Case[];
+    disabled?: boolean | string | Expression | BoolExpression;
+}
+
+export class SwitchCondition<O extends object = {}>
+    extends Dialog<O>
+    implements DialogDependencies, SwitchConditionConfiguration {
+    public static $kind = 'Microsoft.SwitchCondition';
+
     public constructor();
 
     /**
@@ -62,6 +105,21 @@ export class SwitchCondition<O extends object = {}> extends Dialog<O> implements
      * An optional expression which if is true will disable this action.
      */
     public disabled?: BoolExpression;
+
+    public getConverter(property: keyof SwitchConditionConfiguration): Converter | ConverterFactory {
+        switch (property) {
+            case 'condition':
+                return new ExpressionConverter();
+            case 'default':
+                return DialogListConverter;
+            case 'cases':
+                return new CasesConverter();
+            case 'disabled':
+                return new BoolExpressionConverter();
+            default:
+                return super.getConverter(property);
+        }
+    }
 
     private _caseExpresssions: Map<string, Expression>;
 

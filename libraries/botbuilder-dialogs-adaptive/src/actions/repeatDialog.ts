@@ -5,14 +5,21 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { DialogTurnResult, DialogContext, TurnPath } from 'botbuilder-dialogs';
-import { BaseInvokeDialog } from './baseInvokeDialog';
-import { BoolExpression } from 'adaptive-expressions';
+import { BoolExpression, BoolExpressionConverter, Expression } from 'adaptive-expressions';
+import { Converter, ConverterFactory, DialogContext, DialogTurnResult, TurnPath } from 'botbuilder-dialogs';
+import { BaseInvokeDialog, BaseInvokeDialogConfiguration } from './baseInvokeDialog';
+
+export interface RepeatDialogConfiguration extends BaseInvokeDialogConfiguration {
+    disabled?: boolean | string | Expression | BoolExpression;
+    allowLoop?: boolean | string | Expression | BoolExpression;
+}
 
 /**
  * Action which repeats the active [Dialog](xref:botbuilder-dialogs.Dialog) (restarting it).
  */
-export class RepeatDialog<O extends object = {}> extends BaseInvokeDialog<O> {
+export class RepeatDialog<O extends object = {}> extends BaseInvokeDialog<O> implements RepeatDialogConfiguration {
+    public static $kind = 'Microsoft.RepeatDialog';
+
     public constructor();
 
     /**
@@ -32,6 +39,17 @@ export class RepeatDialog<O extends object = {}> extends BaseInvokeDialog<O> {
      * An optional expression which if is true will allow loop of the repeated dialog.
      */
     public allowLoop?: BoolExpression;
+
+    public getConverter(property: keyof RepeatDialogConfiguration): Converter | ConverterFactory {
+        switch (property) {
+            case 'disabled':
+                return new BoolExpressionConverter();
+            case 'allowLoop':
+                return new BoolExpressionConverter();
+            default:
+                return super.getConverter(property);
+        }
+    }
 
     /**
      * Starts a new [Dialog](xref:botbuilder-dialogs.Dialog) and pushes it onto the dialog stack.

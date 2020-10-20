@@ -109,6 +109,9 @@ export class WebSocketTransport implements ITransportSender, ITransportReceiver 
         }
     }
 
+    /**
+     * @private
+     */
     private onClose(): void {
         if (this._activeReceiveReject) {
             this._activeReceiveReject(new Error('Socket was closed.'));
@@ -122,6 +125,9 @@ export class WebSocketTransport implements ITransportSender, ITransportReceiver 
         this._socket = null;
     }
 
+    /**
+     * @private
+     */
     private onError(err: Error): void {
         if (this._activeReceiveReject) {
             this._activeReceiveReject(err);
@@ -129,6 +135,9 @@ export class WebSocketTransport implements ITransportSender, ITransportReceiver 
         this.onClose();
     }
 
+    /**
+     * @private
+     */
     private trySignalData(): void {
         if (this._activeReceiveResolve) {
             if (!this._active && this._queue.length > 0) {

@@ -5,8 +5,25 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { DialogTurnResult, DialogContext, Dialog } from 'botbuilder-dialogs';
-import { ValueExpression, StringExpression, BoolExpression, EnumExpression } from 'adaptive-expressions';
+import {
+    BoolExpression,
+    BoolExpressionConverter,
+    EnumExpression,
+    EnumExpressionConverter,
+    Expression,
+    StringExpression,
+    StringExpressionConverter,
+    ValueExpression,
+    ValueExpressionConverter,
+} from 'adaptive-expressions';
+import {
+    Converter,
+    ConverterFactory,
+    Dialog,
+    DialogConfiguration,
+    DialogContext,
+    DialogTurnResult,
+} from 'botbuilder-dialogs';
 
 export enum ArrayChangeType {
     push = 'push',
@@ -16,7 +33,17 @@ export enum ArrayChangeType {
     clear = 'clear',
 }
 
-export class EditArray<O extends object = {}> extends Dialog<O> {
+export interface EditArrayConfiguration extends DialogConfiguration {
+    changeType?: ArrayChangeType | string | Expression | EnumExpression<ArrayChangeType>;
+    itemsProperty?: string | Expression | StringExpression;
+    resultProperty?: string | Expression | StringExpression;
+    value?: unknown | ValueExpression;
+    disabled?: boolean | string | Expression | BoolExpression;
+}
+
+export class EditArray<O extends object = {}> extends Dialog<O> implements EditArrayConfiguration {
+    public static $kind = 'Microsoft.EditArray';
+
     public constructor();
     public constructor(changeType: ArrayChangeType, itemsProperty: string, value?: any, resultProperty?: string);
     public constructor(changeType?: ArrayChangeType, itemsProperty?: string, value?: any, resultProperty?: string) {
@@ -66,6 +93,23 @@ export class EditArray<O extends object = {}> extends Dialog<O> {
      * An optional expression which if is true will disable this action.
      */
     public disabled?: BoolExpression;
+
+    public getConverter(property: keyof EditArrayConfiguration): Converter | ConverterFactory {
+        switch (property) {
+            case 'changeType':
+                return new EnumExpressionConverter<ArrayChangeType>(ArrayChangeType);
+            case 'itemsProperty':
+                return new StringExpressionConverter();
+            case 'resultProperty':
+                return new StringExpressionConverter();
+            case 'value':
+                return new ValueExpressionConverter();
+            case 'disabled':
+                return new BoolExpressionConverter();
+            default:
+                return super.getConverter(property);
+        }
+    }
 
     public async beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult> {
         if (this.disabled && this.disabled.getValue(dc.state)) {

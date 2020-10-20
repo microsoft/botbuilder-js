@@ -6,16 +6,29 @@
  * Licensed under the MIT License.
  */
 
-import { ArrayExpression, StringExpression } from 'adaptive-expressions';
 import {
+    ArrayExpression,
+    ArrayExpressionConverter,
+    Expression,
+    StringExpression,
+    StringExpressionConverter,
+} from 'adaptive-expressions';
+import {
+    Converter,
+    ConverterFactory,
     DialogContext,
-    DialogTurnResult,
-    DialogPath,
     DialogEvent,
-    TurnPath,
+    DialogPath,
+    DialogTurnResult,
     DialogTurnStatus,
+    TurnPath,
 } from 'botbuilder-dialogs';
-import { SendActivity } from '../actions/sendActivity';
+import { SendActivity, SendActivityConfiguration } from '../actions/sendActivity';
+
+export interface AskConfiguration extends SendActivityConfiguration {
+    expectedProperties?: string[] | string | Expression | ArrayExpression<string>;
+    defaultOperation?: string | Expression | StringExpression;
+}
 
 /**
  * Ask for an open-ended response.
@@ -24,7 +37,9 @@ import { SendActivity } from '../actions/sendActivity';
  * It also builds in a model of the properties that are expected in response through `DialogPath.expectedProperties`.
  * `DialogPath.retries` is updated as the same question is asked multiple times.
  */
-export class Ask extends SendActivity {
+export class Ask extends SendActivity implements AskConfiguration {
+    public static $kind = 'Microsoft.Ask';
+
     public constructor(text?: string, expectedProperties?: ArrayExpression<string>) {
         super(text);
         this.expectedProperties = expectedProperties;
@@ -39,6 +54,17 @@ export class Ask extends SendActivity {
      * Gets or sets the default operation that will be used when no operation is recognized.
      */
     public defaultOperation: StringExpression;
+
+    public getConverter(property: keyof AskConfiguration): Converter | ConverterFactory {
+        switch (property) {
+            case 'expectedProperties':
+                return new ArrayExpressionConverter<string>();
+            case 'defaultOperation':
+                return new StringExpressionConverter();
+            default:
+                return super.getConverter(property);
+        }
+    }
 
     public async beginDialog(dc: DialogContext, options?: object): Promise<DialogTurnResult> {
         // get number of retries from memory

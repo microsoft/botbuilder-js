@@ -6,6 +6,9 @@
  * Licensed under the MIT License.
  */
 
+/**
+ * Event to be included when disconnection events are fired.
+ */
 export class TransportDisconnectedEvent {
     /**
      * A new and empty TransportDisconnectedEvent.

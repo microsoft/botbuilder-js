@@ -10,6 +10,7 @@ export * from './beginSkillDialogOptions';
 export * from './choices';
 export * from './componentDialog';
 export * from './configurable';
+export * from './converter';
 export * from './dialog';
 export * from './dialogContainer';
 export * from './dialogContext';

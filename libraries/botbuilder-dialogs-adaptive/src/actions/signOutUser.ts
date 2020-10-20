@@ -5,13 +5,34 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { Dialog, DialogContext, DialogTurnResult } from 'botbuilder-dialogs';
-import { StringExpression, BoolExpression } from 'adaptive-expressions';
+import {
+    BoolExpression,
+    BoolExpressionConverter,
+    Expression,
+    StringExpression,
+    StringExpressionConverter,
+} from 'adaptive-expressions';
+import {
+    Converter,
+    ConverterFactory,
+    Dialog,
+    DialogConfiguration,
+    DialogContext,
+    DialogTurnResult,
+} from 'botbuilder-dialogs';
+
+export interface SignOutUserConfiguration extends DialogConfiguration {
+    userId?: string | Expression | StringExpression;
+    connectionName?: string | Expression | StringExpression;
+    disabled?: boolean | string | Expression | BoolExpression;
+}
 
 /**
  * Singns out the user and finishes the dialog.
  */
-export class SignOutUser<O extends object = {}> extends Dialog<O> {
+export class SignOutUser<O extends object = {}> extends Dialog<O> implements SignOutUserConfiguration {
+    public static $kind = 'Microsoft.SignOutUser';
+
     public constructor();
 
     /**
@@ -43,6 +64,19 @@ export class SignOutUser<O extends object = {}> extends Dialog<O> {
      * An optional expression which if is true will disable this action.
      */
     public disabled?: BoolExpression;
+
+    public getConverter(property: keyof SignOutUserConfiguration): Converter | ConverterFactory {
+        switch (property) {
+            case 'userId':
+                return new StringExpressionConverter();
+            case 'connectionName':
+                return new StringExpressionConverter();
+            case 'disabled':
+                return new BoolExpressionConverter();
+            default:
+                return super.getConverter(property);
+        }
+    }
 
     /**
      * Starts a new [Dialog](xref:botbuilder-dialogs.Dialog) and pushes it onto the dialog stack.

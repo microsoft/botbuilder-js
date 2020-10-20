@@ -89,6 +89,22 @@ export class TemplatesParser {
     }
 
     /**
+     * Parser to turn lg content into a Templates.
+     * @param resource LG resource.
+     * @param importResolver Resolver to resolve LG import id to template text.
+     * @param expressionParser Expression parser for evaluating expressions.
+     * @param cachedTemplates Give the file path and templates to avoid parsing and to improve performance.
+     * @returns Entity.
+     */
+    public static parseResource(
+        resource: LGResource,
+        importResolver?: ImportResolverDelegate,
+        expressionParser?: ExpressionParser
+    ): Templates {
+        return TemplatesParser.innerParseResource(resource, importResolver, expressionParser);
+    }
+
+    /**
      * Parser to turn lg content into a Templates based on the original Templates.
      * @param content Text content contains lg templates.
      * @param originalTemplates Original templates
@@ -151,18 +167,19 @@ export class TemplatesParser {
      * @param importResolver Resolver to resolve LG import id to template text.
      * @param expressionParser Expression parser for evaluating expressions.
      * @param cachedTemplates Give the file path and templates to avoid parsing and to improve performance.
+     * @param parentTemplates Parent visited Templates.
      * @returns Entity.
      */
-    public static parseResource(
+    private static innerParseResource(
         resource: LGResource,
         importResolver?: ImportResolverDelegate,
         expressionParser?: ExpressionParser,
-        cachedTemplates?: Map<string, Templates>
+        cachedTemplates: Map<string, Templates> = new Map<string, Templates>(),
+        parentTemplates: Templates[] = []
     ): Templates {
         if (!resource) {
             throw new Error('lg resource is empty.');
         }
-        cachedTemplates = cachedTemplates || new Map<string, Templates>();
 
         if (cachedTemplates.has(resource.id)) {
             return cachedTemplates.get(resource.id);
@@ -181,7 +198,7 @@ export class TemplatesParser {
         try {
             // eslint-disable-next-line @typescript-eslint/no-use-before-define
             templates = new TemplatesTransformer(templates).transform(this.antlrParseTemplates(resource));
-            templates.references = this.getReferences(templates, cachedTemplates);
+            templates.references = this.getReferences(templates, cachedTemplates, parentTemplates);
             const semanticErrors = new StaticChecker(templates).check();
             templates.diagnostics.push(...semanticErrors);
         } catch (err) {
@@ -215,20 +232,32 @@ export class TemplatesParser {
         return parser.file();
     }
 
-    private static getReferences(file: Templates, cachedTemplates?: Map<string, Templates>): Templates[] {
+    /**
+     * @private
+     */
+    private static getReferences(
+        file: Templates,
+        cachedTemplates: Map<string, Templates> = new Map<string, Templates>(),
+        parentTemplates: Templates[] = []
+    ): Templates[] {
         const resourcesFound = new Set<Templates>();
-        this.resolveImportResources(file, resourcesFound, cachedTemplates || new Map<string, Templates>());
+        this.resolveImportResources(file, resourcesFound, cachedTemplates, parentTemplates);
 
         resourcesFound.delete(file);
         return Array.from(resourcesFound);
     }
 
+    /**
+     * @private
+     */
     private static resolveImportResources(
         start: Templates,
         resourcesFound: Set<Templates>,
-        cachedTemplates?: Map<string, Templates>
+        cachedTemplates: Map<string, Templates>,
+        parentTemplates: Templates[]
     ): void {
         resourcesFound.add(start);
+        parentTemplates.push(start);
 
         for (const importItem of start.imports) {
             let resource: LGResource;
@@ -245,23 +274,39 @@ export class TemplatesParser {
                 throw new TemplateException(error.message, [diagnostic]);
             }
 
+            // Cycle reference would throw exception to avoid infinite Loop.
+            // Import self is allowed, and would ignore it.
+            const parentTemplate = parentTemplates[parentTemplates.length - 1];
+            if (parentTemplate.id !== resource.id && parentTemplates.some(u => u.id === resource.id)) {
+                const errorMsg = `${TemplateErrors.loopDetected} ${resource.id} => ${start.id}`;
+                const diagnostic = new Diagnostic(
+                    importItem.sourceRange.range,
+                    errorMsg,
+                    DiagnosticSeverity.Error,
+                    start.source
+                );
+                throw new TemplateException(errorMsg, [diagnostic]);
+            }
+
             if (Array.from(resourcesFound).every((u): boolean => u.id !== resource.id)) {
                 let childResource: Templates;
                 if (cachedTemplates.has(resource.id)) {
                     childResource = cachedTemplates.get(resource.id);
                 } else {
-                    childResource = TemplatesParser.parseResource(
+                    childResource = TemplatesParser.innerParseResource(
                         resource,
                         start.importResolver,
                         start.expressionParser,
-                        cachedTemplates
+                        cachedTemplates,
+                        parentTemplates
                     );
                     cachedTemplates.set(resource.id, childResource);
                 }
 
-                this.resolveImportResources(childResource, resourcesFound, cachedTemplates);
+                this.resolveImportResources(childResource, resourcesFound, cachedTemplates, parentTemplates);
             }
         }
+        parentTemplates.pop();
     }
 }
 
@@ -273,6 +318,10 @@ export class TemplatesTransformer extends AbstractParseTreeVisitor<any> implemen
     private readonly templateNamePartRegex: RegExp = new RegExp(/^[a-zA-Z_][0-9a-zA-Z_]*$/);
     private readonly templates: Templates;
 
+    /**
+     * Creates a new instance of the [TemplatesTransformer](xref:botbuilder-lg.TemplatesTransformer) class.
+     * @param templates Templates.
+     */
     public constructor(templates: Templates) {
         super();
         this.templates = templates;
@@ -298,10 +347,18 @@ export class TemplatesTransformer extends AbstractParseTreeVisitor<any> implemen
         return this.templates;
     }
 
+    /**
+     * Gets the default value returned by visitor methods.
+     * Method not implemented.
+     */
     protected defaultResult(): any {
         return;
     }
 
+    /**
+     * Visit a parse tree produced by `LGFileParser.errorDefinition`.
+     * @param context The parse tree.
+     */
     public visitErrorDefinition(context: lp.ErrorDefinitionContext): any {
         const lineContent = context.INVALID_LINE().text;
         if (lineContent === undefined || lineContent.trim() === '') {
@@ -315,6 +372,10 @@ export class TemplatesTransformer extends AbstractParseTreeVisitor<any> implemen
         return;
     }
 
+    /**
+     * Visit a parse tree produced by `LGFileParser.importDefinition`.
+     * @param context The parse tree.
+     */
     public visitImportDefinition(context: lp.ImportDefinitionContext): any {
         const importStr = context.IMPORT().text;
         const groups = importStr.match(TemplatesParser.importRegex);
@@ -328,6 +389,10 @@ export class TemplatesTransformer extends AbstractParseTreeVisitor<any> implemen
         return;
     }
 
+    /**
+     * Visit a parse tree produced by `LGFileParser.optionDefinition`.
+     * @param context The parse tree.
+     */
     public visitOptionDefinition(context: lp.OptionDefinitionContext): any {
         const optionStr = context.OPTION().text;
         let result = '';
@@ -344,6 +409,10 @@ export class TemplatesTransformer extends AbstractParseTreeVisitor<any> implemen
         return;
     }
 
+    /**
+     * Visit a parse tree produced by `LGFileParser.templateDefinition`.
+     * @param context The parse tree.
+     */
     public visitTemplateDefinition(context: lp.TemplateDefinitionContext): any {
         const startLine = context.start.line;
 
@@ -377,6 +446,9 @@ export class TemplatesTransformer extends AbstractParseTreeVisitor<any> implemen
         }
     }
 
+    /**
+     * @private
+     */
     private checkTemplateName(templateName: string, context: ParserRuleContext): void {
         const functionNameSplitDot = templateName.split('.');
         for (const id of functionNameSplitDot) {
@@ -391,6 +463,9 @@ export class TemplatesTransformer extends AbstractParseTreeVisitor<any> implemen
         }
     }
 
+    /**
+     * @private
+     */
     private checkTemplateParameters(parameters: string[], context: ParserRuleContext): void {
         for (const parameter of parameters) {
             if (!this.identifierRegex.test(parameter)) {
@@ -400,6 +475,9 @@ export class TemplatesTransformer extends AbstractParseTreeVisitor<any> implemen
         }
     }
 
+    /**
+     * @private
+     */
     private checkTemplateBody(
         templateName: string,
         templateBody: string,
@@ -428,6 +506,9 @@ export class TemplatesTransformer extends AbstractParseTreeVisitor<any> implemen
         return undefined;
     }
 
+    /**
+     * @private
+     */
     private antlrParseTemplate(templateBody: string, startLine: number): BodyContext {
         const input: ANTLRInputStream = new ANTLRInputStream(templateBody);
         const lexer: LGTemplateLexer = new LGTemplateLexer(input);
@@ -442,6 +523,9 @@ export class TemplatesTransformer extends AbstractParseTreeVisitor<any> implemen
         return parser.template().body();
     }
 
+    /**
+     * @private
+     */
     private removeTrailingNewline(templateBody: string): string {
         // remove the end newline of middle template.
         let result = templateBody;
@@ -455,6 +539,9 @@ export class TemplatesTransformer extends AbstractParseTreeVisitor<any> implemen
         return result;
     }
 
+    /**
+     * @private
+     */
     private extractTemplateNameLine(templateNameLine: string): { templateName: string; parameters: string[] } {
         const hashIndex = templateNameLine.indexOf('#');
         templateNameLine = templateNameLine.substr(hashIndex + 1).trim();
@@ -475,6 +562,9 @@ export class TemplatesTransformer extends AbstractParseTreeVisitor<any> implemen
         return { templateName, parameters };
     }
 
+    /**
+     * @private
+     */
     private buildTemplatesDiagnostic(
         errorMessage: string,
         context: ParserRuleContext,

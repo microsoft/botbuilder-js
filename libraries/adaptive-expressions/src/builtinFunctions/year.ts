@@ -16,10 +16,16 @@ import { ReturnType } from '../returnType';
  * Return the year of the specified timestamp.
  */
 export class Year extends ExpressionEvaluator {
+    /**
+     * Initializes a new instance of the [Year](xref:adaptive-expressions.Year) class.
+     */
     public constructor() {
         super(ExpressionType.Year, Year.evaluator(), ReturnType.Number, FunctionUtils.validateUnaryString);
     }
 
+    /**
+     * @private
+     */
     private static evaluator(): EvaluateExpressionDelegate {
         return FunctionUtils.applyWithError(
             (args: any[]): any =>

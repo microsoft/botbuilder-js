@@ -12,10 +12,15 @@ import {
     BotTelemetryClient,
     NullTelemetryClient,
 } from 'botbuilder-core';
-import { DialogContext } from 'botbuilder-dialogs';
+import { Configurable, DialogContext } from 'botbuilder-dialogs';
 import { telemetryClientKey } from '../telemetryExtensions';
 
-export class Recognizer {
+export interface RecognizerConfiguration {
+    id?: string;
+    telemetryClient?: BotTelemetryClient;
+}
+
+export class Recognizer extends Configurable implements RecognizerConfiguration {
     /**
      * Recognizers unique ID.
      */

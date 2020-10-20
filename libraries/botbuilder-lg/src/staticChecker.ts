@@ -29,13 +29,20 @@ export class StaticChecker
     private currentTemplate: Template;
     private _expressionParser: ExpressionParserInterface;
 
+    /**
+     * Creates a new instance of the [StaticChecker](xref:botbuilder-lg.StaticChecker) class.
+     * @param templates [Templates](xref:botbuilder-lg.Templates) to be checked.
+     */
     public constructor(templates: Templates) {
         super();
         this.templates = templates;
         this.baseExpressionParser = templates.expressionParser || new ExpressionParser();
     }
 
-    // Create a property because we want this to be lazy loaded
+    /**
+     * @private
+     * Creates a property because we want this to be lazy loaded.
+     */
     private get expressionParser(): ExpressionParserInterface {
         if (this._expressionParser === undefined) {
             // create an evaluator to leverage it's customized function look up for checking
@@ -96,6 +103,10 @@ export class StaticChecker
         return result;
     }
 
+    /**
+     * Visit a parse tree produced by `LGTemplateParser.normalTemplateBody`.
+     * @param context The parse tree.
+     */
     public visitNormalTemplateBody(context: lp.NormalTemplateBodyContext): Diagnostic[] {
         let result: Diagnostic[] = [];
         for (const templateStr of context.templateString()) {
@@ -111,6 +122,10 @@ export class StaticChecker
         return result;
     }
 
+    /**
+     * Visit a parse tree produced by `LGTemplateParser.structuredTemplateBody`.
+     * @param context The parse tree.
+     */
     public visitStructuredTemplateBody(context: lp.StructuredTemplateBodyContext): Diagnostic[] {
         let result: Diagnostic[] = [];
 
@@ -158,6 +173,10 @@ export class StaticChecker
         return result;
     }
 
+    /**
+     * Visit a parse tree produced by the `ifElseBody` labeled alternative in `LGTemplateParser.body`.
+     * @param context The parse tree.
+     */
     public visitIfElseBody(context: lp.IfElseBodyContext): Diagnostic[] {
         let result: Diagnostic[] = [];
         const ifRules: lp.IfConditionRuleContext[] = context.ifElseTemplateBody().ifConditionRule();
@@ -239,6 +258,10 @@ export class StaticChecker
         return result;
     }
 
+    /**
+     * Visit a parse tree produced by the `switchCaseBody` labeled alternative in `LGTemplateParser.body`.
+     * @param context The parse tree.
+     */
     public visitSwitchCaseBody(context: lp.SwitchCaseBodyContext): Diagnostic[] {
         let result: Diagnostic[] = [];
         const switchCaseNodes: lp.SwitchCaseRuleContext[] = context.switchCaseTemplateBody().switchCaseRule();
@@ -340,6 +363,10 @@ export class StaticChecker
         return result;
     }
 
+    /**
+     * Visit a parse tree produced by `LGTemplateParser.normalTemplateString`.
+     * @param context The parse tree.
+     */
     public visitNormalTemplateString(context: lp.NormalTemplateStringContext): Diagnostic[] {
         const prefixErrorMsg = TemplateExtensions.getPrefixErrorMessage(context);
         let result: Diagnostic[] = [];
@@ -357,10 +384,17 @@ export class StaticChecker
         return result;
     }
 
+    /**
+     * Gets the default value returned by visitor methods.
+     * @returns Empty [Diagnostic](xref:botbuilder-lg.Diagnostic) array.
+     */
     protected defaultResult(): Diagnostic[] {
         return [];
     }
 
+    /**
+     * @private
+     */
     private checkExpression(expressionContext: ParserRuleContext, prefix = ''): Diagnostic[] {
         const result: Diagnostic[] = [];
         let exp = expressionContext.text;
@@ -383,6 +417,9 @@ export class StaticChecker
         return result;
     }
 
+    /**
+     * @private
+     */
     private buildLGDiagnostic(
         message: string,
         severity: DiagnosticSeverity = undefined,

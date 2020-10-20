@@ -16,10 +16,16 @@ import { ReturnType } from '../returnType';
  *  Flatten an array into non-array values. You can optionally set the maximum depth to flatten to.
  */
 export class Flatten extends ExpressionEvaluator {
+    /**
+     * Initializes a new instance of the [Flatten](xref:adaptive-expressions.Flatten) class.
+     */
     public constructor() {
         super(ExpressionType.Flatten, Flatten.evaluator(), ReturnType.Array, Flatten.validator);
     }
 
+    /**
+     * @private
+     */
     private static evaluator(): EvaluateExpressionDelegate {
         return FunctionUtils.apply((args: any[]): any[] => {
             const array = args[0];
@@ -28,6 +34,9 @@ export class Flatten extends ExpressionEvaluator {
         });
     }
 
+    /**
+     * @private
+     */
     private static evalFlatten(arr: any[], dept: number): any[] {
         if (!FunctionUtils.isNumber(dept) || dept < 1) {
             dept = 1;
@@ -48,6 +57,9 @@ export class Flatten extends ExpressionEvaluator {
         return res;
     }
 
+    /**
+     * @private
+     */
     private static validator(expression: Expression): void {
         FunctionUtils.validateOrder(expression, [ReturnType.Number], ReturnType.Array);
     }

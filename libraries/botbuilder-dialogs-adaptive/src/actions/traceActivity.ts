@@ -5,14 +5,39 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { DialogTurnResult, DialogContext, Dialog } from 'botbuilder-dialogs';
+import {
+    BoolExpression,
+    BoolExpressionConverter,
+    Expression,
+    StringExpression,
+    StringExpressionConverter,
+    ValueExpression,
+    ValueExpressionConverter,
+} from 'adaptive-expressions';
 import { Activity, ActivityTypes } from 'botbuilder-core';
-import { ValueExpression, StringExpression, BoolExpression } from 'adaptive-expressions';
+import {
+    Converter,
+    ConverterFactory,
+    Dialog,
+    DialogConfiguration,
+    DialogContext,
+    DialogTurnResult,
+} from 'botbuilder-dialogs';
+
+export interface TraceActivityConfiguration extends DialogConfiguration {
+    name?: string | Expression | StringExpression;
+    valueType?: string | Expression | StringExpression;
+    value?: unknown | ValueExpression;
+    label?: string | Expression | StringExpression;
+    disabled?: boolean | string | Expression | BoolExpression;
+}
 
 /**
  * Send an trace activity back to the transcript.
  */
-export class TraceActivity<O extends object = {}> extends Dialog<O> {
+export class TraceActivity<O extends object = {}> extends Dialog<O> implements TraceActivityConfiguration {
+    public static $kind = 'Microsoft.TraceActivity';
+
     public constructor();
 
     /**
@@ -71,6 +96,23 @@ export class TraceActivity<O extends object = {}> extends Dialog<O> {
      * An optional expression which if is true will disable this action.
      */
     public disabled?: BoolExpression;
+
+    public getConverter(property: keyof TraceActivityConfiguration): Converter | ConverterFactory {
+        switch (property) {
+            case 'name':
+                return new StringExpressionConverter();
+            case 'valueType':
+                return new StringExpressionConverter();
+            case 'value':
+                return new ValueExpressionConverter();
+            case 'label':
+                return new StringExpressionConverter();
+            case 'disabled':
+                return new BoolExpressionConverter();
+            default:
+                return super.getConverter(property);
+        }
+    }
 
     /**
      * Starts a new [Dialog](xref:botbuilder-dialogs.Dialog) and pushes it onto the dialog stack.

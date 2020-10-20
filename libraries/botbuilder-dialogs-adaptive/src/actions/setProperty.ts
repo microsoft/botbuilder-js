@@ -5,14 +5,37 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { DialogTurnResult, DialogContext, Dialog } from 'botbuilder-dialogs';
-import { ValueExpression, StringExpression, BoolExpression } from 'adaptive-expressions';
+import {
+    BoolExpression,
+    BoolExpressionConverter,
+    Expression,
+    StringExpression,
+    StringExpressionConverter,
+    ValueExpression,
+    ValueExpressionConverter,
+} from 'adaptive-expressions';
+import {
+    Converter,
+    ConverterFactory,
+    Dialog,
+    DialogConfiguration,
+    DialogContext,
+    DialogTurnResult,
+} from 'botbuilder-dialogs';
 import { replaceJsonRecursively } from '../jsonExtensions';
+
+export interface SetPropertyConfiguration extends DialogConfiguration {
+    property?: string | Expression | StringExpression;
+    value?: unknown | ValueExpression;
+    disabled?: boolean | string | Expression | BoolExpression;
+}
 
 /**
  * Sets a property with the result of evaluating a value expression.
  */
-export class SetProperty<O extends object = {}> extends Dialog<O> {
+export class SetProperty<O extends object = {}> extends Dialog<O> implements SetPropertyConfiguration {
+    public static $kind = 'Microsoft.SetProperty';
+
     public constructor();
 
     /**
@@ -51,6 +74,19 @@ export class SetProperty<O extends object = {}> extends Dialog<O> {
      * An optional expression which if is true will disable this action.
      */
     public disabled?: BoolExpression;
+
+    public getConverter(property: keyof SetPropertyConfiguration): Converter | ConverterFactory {
+        switch (property) {
+            case 'property':
+                return new StringExpressionConverter();
+            case 'value':
+                return new ValueExpressionConverter();
+            case 'disabled':
+                return new BoolExpressionConverter();
+            default:
+                return super.getConverter(property);
+        }
+    }
 
     /**
      * Starts a new [Dialog](xref:botbuilder-dialogs.Dialog) and pushes it onto the dialog stack.

@@ -5,18 +5,40 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { DialogTurnResult, DialogContext, Dialog, DialogStateManager } from 'botbuilder-dialogs';
+import {
+    BoolExpression,
+    BoolExpressionConverter,
+    Expression,
+    StringExpression,
+    StringExpressionConverter,
+} from 'adaptive-expressions';
 import { Activity, ActivityTypes } from 'botbuilder-core';
+import {
+    Converter,
+    ConverterFactory,
+    DialogConfiguration,
+    DialogContext,
+    Dialog,
+    DialogStateManager,
+    DialogTurnResult,
+} from 'botbuilder-dialogs';
 import { TemplateInterface } from '../template';
 import { TextTemplate } from '../templates';
-import { StringExpression, BoolExpression } from 'adaptive-expressions';
+import { TextTemplateConverter } from '../converters/textTemplateConverter';
+
+export interface LogActionConfiguration extends DialogConfiguration {
+    text?: string | TemplateInterface<string, DialogStateManager>;
+    traceActivity?: boolean | string | Expression | BoolExpression;
+    label?: string | Expression | StringExpression;
+    disabled?: boolean | string | Expression | BoolExpression;
+}
 
 /**
  * Write entry into application trace logs.
  */
-export class LogAction<O extends object = {}> extends Dialog<O> {
-    public constructor();
-    
+export class LogAction<O extends object = {}> extends Dialog<O> implements LogActionConfiguration {
+    public static $kind = 'Microsoft.LogAction';
+
     /**
      * Creates a new [LogAction](xref:botbuilder-dialogs-adaptive.LogAction) instance.
      * @param template The text template to log.
@@ -54,6 +76,21 @@ export class LogAction<O extends object = {}> extends Dialog<O> {
      * An optional expression which if is true will disable this action.
      */
     public disabled?: BoolExpression;
+
+    public getConverter(property: keyof LogActionConfiguration): Converter | ConverterFactory {
+        switch (property) {
+            case 'text':
+                return new TextTemplateConverter();
+            case 'traceActivity':
+                return new BoolExpressionConverter();
+            case 'label':
+                return new StringExpressionConverter();
+            case 'disabled':
+                return new BoolExpressionConverter();
+            default:
+                return super.getConverter(property);
+        }
+    }
 
     /**
      * Starts a new [Dialog](xref:botbuilder-dialogs.Dialog) and pushes it onto the dialog stack.

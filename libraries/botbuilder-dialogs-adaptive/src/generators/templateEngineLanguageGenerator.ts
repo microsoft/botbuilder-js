@@ -6,18 +6,26 @@
  * Licensed under the MIT License.
  */
 
-import { DialogContext } from 'botbuilder-dialogs';
+import { Configurable, DialogContext } from 'botbuilder-dialogs';
 import { Resource } from 'botbuilder-dialogs-declarative';
-import { Templates, LGResource } from 'botbuilder-lg';
+import { Templates, LGResource, EvaluationOptions } from 'botbuilder-lg';
 import { LanguageGenerator } from '../languageGenerator';
 import { LanguageResourceLoader } from '../languageResourceLoader';
 import { LanguageGeneratorManager } from './languageGeneratorManager';
 
+export interface TemplateEngineLanguageGeneratorConfiguration {
+    id?: string;
+}
+
 /**
  * LanguageGenerator implementation which uses LGFile.
  */
+
 export class TemplateEngineLanguageGenerator<T = unknown, D extends Record<string, unknown> = Record<string, unknown>>
-    implements LanguageGenerator<T, D> {
+    extends Configurable
+    implements LanguageGenerator<T, D>, TemplateEngineLanguageGeneratorConfiguration {
+    public static $kind = 'Microsoft.TemplateEngineLanguageGenerator';
+
     private readonly DEFAULTLABEL: string = 'Unknown';
 
     private lg: Templates;
@@ -25,6 +33,7 @@ export class TemplateEngineLanguageGenerator<T = unknown, D extends Record<strin
     public id = '';
 
     public constructor(arg1?: Templates | Resource, arg2?: Map<string, Resource[]>) {
+        super();
         if (arguments.length === 0) {
             this.lg = new Templates();
         } else if (arguments.length === 1 && arg1 instanceof Templates) {
@@ -41,7 +50,9 @@ export class TemplateEngineLanguageGenerator<T = unknown, D extends Record<strin
 
     public generate(dialogContext: DialogContext, template: string, data: D): Promise<T> {
         try {
-            const result = this.lg.evaluateText(template, data);
+            const lgOptions = new EvaluationOptions();
+            lgOptions.locale = dialogContext.getLocale();
+            const result = this.lg.evaluateText(template, data, lgOptions);
             return Promise.resolve(result);
         } catch (e) {
             if (this.id !== undefined && this.id === '') {

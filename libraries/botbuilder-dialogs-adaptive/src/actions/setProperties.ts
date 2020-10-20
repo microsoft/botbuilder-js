@@ -5,40 +5,59 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
+import {
+    ValueExpression,
+    StringExpression,
+    BoolExpression,
+    BoolExpressionConverter,
+    Expression,
+} from 'adaptive-expressions';
 import { StringUtils } from 'botbuilder-core';
-import { Dialog, DialogContext, DialogTurnResult } from 'botbuilder-dialogs';
-import { Converter } from 'botbuilder-dialogs-declarative';
-import { ValueExpression, StringExpression, BoolExpression } from 'adaptive-expressions';
+import {
+    Converter,
+    ConverterFactory,
+    Dialog,
+    DialogConfiguration,
+    DialogContext,
+    DialogTurnResult,
+} from 'botbuilder-dialogs';
 import { replaceJsonRecursively } from '../jsonExtensions';
+
+type AssignmentInput<T> = {
+    property: string;
+    value: T;
+};
+
+class PropertyAssignmentsConverter<T = unknown> implements Converter<AssignmentInput<T>[], PropertyAssignment[]> {
+    public convert(items: AssignmentInput<T>[] | PropertyAssignment[]): PropertyAssignment[] {
+        const assignments: PropertyAssignment[] = [];
+        items.forEach((item) => {
+            const { property, value } = item;
+            assignments.push({
+                property: property instanceof StringExpression ? property : new StringExpression(property),
+                value: value instanceof ValueExpression ? value : new ValueExpression(value),
+            });
+        });
+        return assignments;
+    }
+}
 
 export interface PropertyAssignment {
     property: StringExpression;
     value: ValueExpression;
 }
 
-/**
- * `property`-`value` pair to [PropertyAssignment](xref:botbuilder-dialogs-adaptive.PropertyAssignment) converter.
- */
-export class PropertyAssignmentConverter implements Converter {
-
-    /**
-     * Converts a `property`-`value` pair to a [PropertyAssignment](xref:botbuilder-dialogs-adaptive.PropertyAssignment)
-     * @param assignment `property`-`value` pair.
-     * @returns The [PropertyAssignment](xref:botbuilder-dialogs-adaptive.PropertyAssignment).
-     */
-    public convert(assignment: { property: string; value: any }): PropertyAssignment {
-        const propertyAssignment: PropertyAssignment = {
-            property: new StringExpression(assignment.property),
-            value: new ValueExpression(assignment.value),
-        };
-        return propertyAssignment;
-    }
+export interface SetPropertiesConfiguration extends DialogConfiguration {
+    assignments?: AssignmentInput<unknown>[] | PropertyAssignment[];
+    disabled?: boolean | string | Expression | BoolExpression;
 }
 
 /**
  * Sets properties with the result of evaluating a value expression.
  */
-export class SetProperties<O extends object = {}> extends Dialog<O> {
+export class SetProperties<O extends object = {}> extends Dialog<O> implements SetPropertiesConfiguration {
+    public static $kind = 'Microsoft.SetProperties';
+
     public constructor();
 
     /**
@@ -61,6 +80,17 @@ export class SetProperties<O extends object = {}> extends Dialog<O> {
      * An optional expression which if is true will disable this action.
      */
     public disabled?: BoolExpression;
+
+    public getConverter(property: keyof SetPropertiesConfiguration): Converter | ConverterFactory {
+        switch (property) {
+            case 'assignments':
+                return new PropertyAssignmentsConverter();
+            case 'disabled':
+                return new BoolExpressionConverter();
+            default:
+                return super.getConverter(property);
+        }
+    }
 
     /**
      * Starts a new [Dialog](xref:botbuilder-dialogs.Dialog) and pushes it onto the dialog stack.
