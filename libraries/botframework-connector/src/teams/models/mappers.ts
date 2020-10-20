@@ -1545,6 +1545,28 @@ export const MessagingExtensionResult: msRest.CompositeMapper = {
     },
 };
 
+export const CacheInfo: msRest.CompositeMapper = {
+    serializedName: 'cacheInfo',
+    type: {
+        name: 'Composite',
+        className: 'cacheInfo',
+        modelProperties: {
+            cacheType: {
+                serializedName: 'cacheType',
+                type: {
+                    name: 'String',
+                },
+            },
+            cacheDuration: {
+                serializedName: 'cacheDuration',
+                type: {
+                    name: 'Number',
+                }
+            },
+        },
+    },
+};
+
 export const MessagingExtensionActionResponse: msRest.CompositeMapper = {
     serializedName: 'MessagingExtensionActionResponse',
     type: {
@@ -1565,6 +1587,13 @@ export const MessagingExtensionActionResponse: msRest.CompositeMapper = {
                     className: 'MessagingExtensionResult',
                 },
             },
+            cacheInfo: {
+                serializedName: 'cacheInfo',
+                type: {
+                    name: 'Composite',
+                    className: 'cacheInfo',
+                },
+            },
         },
     },
 };
@@ -1580,6 +1609,13 @@ export const MessagingExtensionResponse: msRest.CompositeMapper = {
                 type: {
                     name: 'Composite',
                     className: 'MessagingExtensionResult',
+                },
+            },
+            cacheInfo: {
+                serializedName: 'cacheInfo',
+                type: {
+                    name: 'Composite',
+                    className: 'cacheInfo',
                 },
             },
         },
@@ -1850,6 +1886,13 @@ export const TaskModuleResponse: msRest.CompositeMapper = {
                 type: {
                     name: 'Composite',
                     className: 'TaskModuleResponseBase',
+                },
+            },
+            cacheInfo: {
+                serializedName: 'cacheInfo',
+                type: {
+                    name: 'Composite',
+                    className: 'cacheInfo',
                 },
             },
         },

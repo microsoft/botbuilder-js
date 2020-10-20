@@ -58,6 +58,12 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGTe
     private readonly evaluationTargetStack: EvaluationTarget[] = [];
     private readonly lgOptions: EvaluationOptions;
 
+    /**
+     * Creates a new instance of the Expander class.
+     * @param templates Template list.
+     * @param expressionParser Given expression parser.
+     * @param opt Options for LG.
+     */
     public constructor(templates: Template[], expressionParser: ExpressionParser, opt: EvaluationOptions = undefined) {
         super();
         this.templates = templates;
@@ -106,10 +112,20 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGTe
         return result;
     }
 
+    /**
+     * Visit a parse tree produced by the normalBody labeled alternative in LGTemplateParser.body.
+     * @param ctx The parse tree.
+     * @returns The result of visiting the normal body.
+     */
     public visitNormalBody(ctx: lp.NormalBodyContext): any[] {
         return this.visit(ctx.normalTemplateBody());
     }
 
+    /**
+     * Visit a parse tree produced by LGTemplateParser.normalTemplateBody.
+     * @param ctx The parse tree.
+     * @returns The result of visiting the normal template body.
+     */
     public visitNormalTemplateBody(ctx: lp.NormalTemplateBodyContext): any[] {
         const normalTemplateStrs: lp.TemplateStringContext[] = ctx.templateString();
         let result: any[] = [];
@@ -120,6 +136,10 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGTe
         return result;
     }
 
+    /**
+     * Visit a parse tree produced by the ifElseBody labeled alternative in LGTemplateParser.body.
+     * @param ctx The parse tree.
+     */
     public visitIfElseBody(ctx: lp.IfElseBodyContext): any[] {
         const ifRules: lp.IfConditionRuleContext[] = ctx.ifElseTemplateBody().ifConditionRule();
         for (const ifRule of ifRules) {
@@ -131,6 +151,11 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGTe
         return undefined;
     }
 
+    /**
+     * Visit a parse tree produced by LGTemplateParser.structuredBody.
+     * @param ctx The parse tree.
+     * @returns The result of visiting the structured body.
+     */
     public visitStructuredBody(ctx: lp.StructuredBodyContext): any[] {
         const templateRefValues: Map<string, any> = new Map<string, any>();
         const stb: lp.StructuredTemplateBodyContext = ctx.structuredTemplateBody();
@@ -224,6 +249,9 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGTe
         return finalResult;
     }
 
+    /**
+     * @private
+     */
     private visitStructureValue(ctx: lp.KeyValueStructureLineContext): any[] {
         const values = ctx.keyValueStructureValue();
 
@@ -264,6 +292,11 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGTe
         return result;
     }
 
+    /**
+     * Visit a parse tree produced by the switchCaseBody labeled alternative in LGTemplateParser.body.
+     * @param ctx The parse tree.
+     * @returns The result of visiting the switch case body.
+     */
     public visitSwitchCaseBody(ctx: lp.SwitchCaseBodyContext): any[] {
         const switchcaseNodes: lp.SwitchCaseRuleContext[] = ctx.switchCaseTemplateBody().switchCaseRule();
         const length: number = switchcaseNodes.length;
@@ -311,6 +344,10 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGTe
         return undefined;
     }
 
+    /**
+     * Visit a parse tree produced by LGTemplateParser.normalTemplateString.
+     * @param ctx The parse tree.
+     */
     public visitNormalTemplateString(ctx: lp.NormalTemplateStringContext): any[] {
         const prefixErrorMsg = TemplateExtensions.getPrefixErrorMessage(ctx);
         let result: string[] = [undefined];
@@ -341,6 +378,13 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGTe
         return result;
     }
 
+    /**
+     * Constructs the scope for mapping the values of arguments to the parameters of the template.
+     * @param templateName The template name to evaluate.
+     * @param args Arguments to map to the template parameters.
+     * @returns The current scope if the number of arguments is 0, otherwise, returns a CustomizedMemory
+     * with the mapping of the parameter name to the argument value added to the scope.
+     */
     public constructScope(templateName: string, args: any[]): any {
         const parameters: string[] = this.templateMap[templateName].parameters;
 
@@ -355,14 +399,24 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGTe
         return newScope;
     }
 
+    /**
+     * Gets the default value returned by visitor methods.
+     * @returns Empty string array.
+     */
     protected defaultResult(): string[] {
         return [];
     }
 
+    /**
+     * @private
+     */
     private currentTarget(): EvaluationTarget {
         return this.evaluationTargetStack[this.evaluationTargetStack.length - 1];
     }
 
+    /**
+     * @private
+     */
     private evalCondition(condition: lp.IfConditionContext): boolean {
         const expression = condition.expression()[0];
         if (!expression) {
@@ -376,6 +430,9 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGTe
         return false;
     }
 
+    /**
+     * @private
+     */
     private evalExpressionInCondition(
         expressionContext: ParserRuleContext,
         contentLine: string,
@@ -401,6 +458,9 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGTe
         return true;
     }
 
+    /**
+     * @private
+     */
     private evalExpression(exp: string, context: ParserRuleContext, inlineContent = '', errorPrefix = ''): any[] {
         exp = TemplateExtensions.trimExpression(exp);
         let result: any;
@@ -424,6 +484,9 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGTe
         return [result];
     }
 
+    /**
+     * @private
+     */
     private evalByAdaptiveExpression(exp: string, scope: any): any {
         const expanderExpression: Expression = this.expanderExpressionParser.parse(exp);
         const evaluatorExpression: Expression = this.evaluatorExpressionParser.parse(exp);
@@ -432,6 +495,9 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGTe
         return parse.tryEvaluate(scope);
     }
 
+    /**
+     * @private
+     */
     private stringArrayConcat(array1: string[], array2: string[]): string[] {
         const result: string[] = [];
         for (const item1 of array1) {
@@ -554,6 +620,9 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGTe
         return this.expandTemplate(templateName, newScope);
     };
 
+    /**
+     * @private
+     */
     private reconstructExpression(
         expanderExpression: Expression,
         evaluatorExpression: Expression,
@@ -617,6 +686,9 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGTe
         return newTemplates.evaluateText(stringContent, newScope, this.lgOptions);
     };
 
+    /**
+     * @private
+     */
     private getResourcePath(filePath: string): string {
         let resourcePath: string;
         if (path.isAbsolute(filePath)) {
@@ -673,6 +745,9 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGTe
         }
     };
 
+    /**
+     * @private
+     */
     private checkTemplateReference(templateName: string, children: Expression[]): void {
         if (!(templateName in this.templateMap)) {
             throw new Error(TemplateErrors.templateNotExist(templateName));
@@ -690,6 +765,9 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGTe
         return this.checkTemplateReference(expression.type, expression.children);
     };
 
+    /**
+     * @private
+     */
     private parseTemplateName(templateName: string): { reExecute: boolean; pureTemplateName: string } {
         if (!templateName) {
             throw new Error('template name is empty.');

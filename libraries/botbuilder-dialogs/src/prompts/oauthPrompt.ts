@@ -170,6 +170,17 @@ export class OAuthPrompt extends Dialog {
         super(dialogId);
     }
 
+    /**
+     * Called when a prompt dialog is pushed onto the dialog stack and is being activated.
+     * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current
+     * turn of the conversation.
+     * @param options Optional. [PromptOptions](xref:botbuilder-dialogs.PromptOptions),
+     * additional information to pass to the prompt being started.
+     * @returns A `Promise` representing the asynchronous operation.
+     * @remarks
+     * If the task is successful, the result indicates whether the prompt is still
+     * active after the turn has been processed by the prompt.
+     */
     public async beginDialog(dc: DialogContext, options?: PromptOptions): Promise<DialogTurnResult> {
         // Ensure prompts have input hint set
         const o: Partial<PromptOptions> = { ...options };
@@ -201,6 +212,17 @@ export class OAuthPrompt extends Dialog {
         }
     }
 
+    /**
+     * Called when a prompt dialog is the active dialog and the user replied with a new activity.
+     * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn
+     * of the conversation.
+     * @returns A `Promise` representing the asynchronous operation.
+     * @remarks
+     * If the task is successful, the result indicates whether the dialog is still
+     * active after the turn has been processed by the dialog.
+     * The prompt generally continues to receive the user's replies until it accepts the
+     * user's reply as valid input for the prompt.
+     */
     public async continueDialog(dc: DialogContext): Promise<DialogTurnResult> {
         // Check for timeout
         const state: OAuthPromptState = dc.activeDialog.state as OAuthPromptState;
@@ -305,6 +327,9 @@ export class OAuthPrompt extends Dialog {
         return adapter.signOutUser(context, this.settings.connectionName, null, this.settings.oAuthAppCredentials);
     }
 
+    /**
+     * @private
+     */
     private async sendOAuthCardAsync(context: TurnContext, prompt?: string | Partial<Activity>): Promise<void> {
         // Validate adapter type
         if (!('getUserToken' in context.adapter)) {
@@ -394,6 +419,9 @@ export class OAuthPrompt extends Dialog {
         await context.sendActivity(msg);
     }
 
+    /**
+     * @private
+     */
     private async recognizeToken(dc: DialogContext): Promise<PromptRecognizerResult<TokenResponse>> {
         const context = dc.context;
         let token: TokenResponse | undefined;
@@ -510,6 +538,9 @@ export class OAuthPrompt extends Dialog {
         return token !== undefined ? { succeeded: true, value: token } : { succeeded: false };
     }
 
+    /**
+     * @private
+     */
     private static createCallerInfo(context: TurnContext) {
         const botIdentity = context.turnState.get(context.adapter.BotIdentityKey);
         if (botIdentity && isSkillClaim(botIdentity.claims)) {
@@ -522,6 +553,9 @@ export class OAuthPrompt extends Dialog {
         return null;
     }
 
+    /**
+     * @private
+     */
     private getTokenExchangeInvokeResponse(status: number, failureDetail: string, id?: string): Activity {
         const invokeResponse: Partial<Activity> = {
             type: 'invokeResponse',
@@ -530,22 +564,34 @@ export class OAuthPrompt extends Dialog {
         return invokeResponse as Activity;
     }
 
+    /**
+     * @private
+     */
     private static isFromStreamingConnection(activity: Activity): boolean {
         return activity && activity.serviceUrl && !activity.serviceUrl.toLowerCase().startsWith('http');
     }
 
+    /**
+     * @private
+     */
     private isTokenResponseEvent(context: TurnContext): boolean {
         const activity: Activity = context.activity;
 
         return activity.type === ActivityTypes.Event && activity.name === tokenResponseEventName;
     }
 
+    /**
+     * @private
+     */
     private isTeamsVerificationInvoke(context: TurnContext): boolean {
         const activity: Activity = context.activity;
 
         return activity.type === ActivityTypes.Invoke && activity.name === verifyStateOperationName;
     }
 
+    /**
+     * @private
+     */
     private isOAuthCardSupported(context: TurnContext): boolean {
         // Azure Bot Service OAuth cards are not supported in the community adapters. Since community adapters
         // have a 'name' in them, we cast the adapter to 'any' to check for the name.
@@ -566,12 +612,18 @@ export class OAuthPrompt extends Dialog {
         return this.channelSupportsOAuthCard(context.activity.channelId);
     }
 
+    /**
+     * @private
+     */
     private isTokenExchangeRequestInvoke(context: TurnContext): boolean {
         const activity: Activity = context.activity;
 
         return activity.type === ActivityTypes.Invoke && activity.name === tokenExchangeOperationName;
     }
 
+    /**
+     * @private
+     */
     private isTokenExchangeRequest(obj: unknown): obj is TokenExchangeInvokeRequest {
         if (obj.hasOwnProperty('token')) {
             return true;
@@ -579,6 +631,9 @@ export class OAuthPrompt extends Dialog {
         return false;
     }
 
+    /**
+     * @private
+     */
     private channelSupportsOAuthCard(channelId: string): boolean {
         switch (channelId) {
             case Channels.Cortana:
@@ -591,6 +646,9 @@ export class OAuthPrompt extends Dialog {
         return true;
     }
 
+    /**
+     * @private
+     */
     private channelRequiresSignInLink(channelId: string): boolean {
         switch (channelId) {
             case Channels.Msteams:

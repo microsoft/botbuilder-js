@@ -19,9 +19,10 @@ function validateActivity(activity: Activity): void {
 }
 
 /**
- * Activity helper methods for Teams.
+ * Gets the TeamsInfo object from the current [Activity](xref:botframework-schema.Activity).
+ * @param activity The current [Activity](xref:botframework-schema.Activity).
+ * @returns The current [Activity](xref:botframework-schema.Activity)'s team's info, or null.
  */
-
 export function teamsGetTeamInfo(activity: Activity): TeamInfo | null {
     validateActivity(activity);
 
@@ -34,11 +35,19 @@ export function teamsGetTeamInfo(activity: Activity): TeamInfo | null {
     return null;
 }
 
+/**
+ * Gets the Team Id from the current [Activity](xref:botframework-schema.Activity).
+ * @param activity The current [Activity](xref:botframework-schema.Activity).
+ * @returns The current [Activity](xref:botframework-schema.Activity)'s team's Id, or null.
+ */
 export function teamsGetTeamId(activity: Activity): string | null {
     const team = teamsGetTeamInfo(activity);
     return team && team.id ? team.id : null;
 }
 
+/**
+ * Activity helper methods for Teams.	 * Activity helper methods for Teams.
+ */
 export function teamsGetChannelId(activity: Activity): string | null {
     validateActivity(activity);
 
@@ -51,6 +60,10 @@ export function teamsGetChannelId(activity: Activity): string | null {
     return null;
 }
 
+/**
+ * Configures the current [Activity](xref:botframework-schema.Activity) to generate a notification within Teams.
+ * @param activity The current [Activity](xref:botframework-schema.Activity).
+ */
 export function teamsNotifyUser(activity: Activity, alertInMeeting?: boolean, externalResourceUrl?: string): void {
     validateActivity(activity);
 
