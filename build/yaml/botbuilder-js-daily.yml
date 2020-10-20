@@ -10,6 +10,7 @@ pool:
 
 variables:
   NodeVersion: 12.x
+#  NoPublish: (optional) Define this in Azure. true = do not publish artifacts.
 #  PackageVersion: Define this in Azure to be settable at queue time. Ex: 4.11.0-dev.{DateStamp}.{CommitHash} 
 #  PreviewPackageVersion: Define this in Azure to be settable at queue time. Ex: 4.11.0-dev.{DateStamp}.{CommitHash}
 
@@ -45,6 +46,7 @@ steps:
 
 - task: PublishBuildArtifacts@1
   displayName: 'Publish staging to Build Artifacts'
+  condition: and(succeeded(), eq(variables['NoPublish'], 'true'))
 
 - powershell: |
    [string[]]$outvar = (Get-ChildItem *.tgz -Path $(Build.ArtifactStagingDirectory) ).Name;
