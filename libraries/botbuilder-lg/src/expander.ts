@@ -16,6 +16,7 @@ import {
     ExpressionType,
     Constant,
     FunctionUtils,
+    Options
 } from 'adaptive-expressions';
 import { keyBy } from 'lodash';
 import { EvaluationTarget } from './evaluationTarget';
@@ -491,8 +492,11 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGTe
         const expanderExpression: Expression = this.expanderExpressionParser.parse(exp);
         const evaluatorExpression: Expression = this.evaluatorExpressionParser.parse(exp);
         const parse: Expression = this.reconstructExpression(expanderExpression, evaluatorExpression, false);
+        const opt = new Options();
+        opt.nullSubstitution = this.lgOptions.nullSubstitution;
+        opt.locale = this.lgOptions.locale;
 
-        return parse.tryEvaluate(scope);
+        return parse.tryEvaluate(scope, opt);
     }
 
     /**
