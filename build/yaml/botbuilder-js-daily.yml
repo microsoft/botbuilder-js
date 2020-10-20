@@ -46,7 +46,7 @@ steps:
 
 - task: PublishBuildArtifacts@1
   displayName: 'Publish staging to Build Artifacts'
-  condition: and(succeeded(), eq(variables['NoPublish'], 'true'))
+  condition: and(succeeded(), ne(variables['NoPublish'], 'true'))
 
 - powershell: |
    [string[]]$outvar = (Get-ChildItem *.tgz -Path $(Build.ArtifactStagingDirectory) ).Name;
