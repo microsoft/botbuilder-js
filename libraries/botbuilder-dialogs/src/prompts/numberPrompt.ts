@@ -5,25 +5,14 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
+import * as Globalize from 'globalize';
 import * as Recognizers from '@microsoft/recognizers-text-number';
-import { Activity, InputHints, TurnContext } from 'botbuilder-core';
+import * as locales from '../i18n';
+import { InputHints, TurnContext } from 'botbuilder-core';
 import { Prompt, PromptOptions, PromptRecognizerResult, PromptValidator } from './prompt';
 
-import {
-    Chinese,
-    Dutch,
-    English,
-    French,
-    German,
-    Japanese,
-    LikelySubtags,
-    NumberingSystem,
-    Portuguese,
-    Spanish,
-} from '../i18n';
-
-import * as Globalize from 'globalize';
-Globalize.load(Chinese, English, Dutch, French, German, Japanese, LikelySubtags, NumberingSystem, Portuguese, Spanish);
+// Load all registered locales into Globalize library
+Object.values(locales).forEach((locale) => Globalize.load(locale));
 
 /**
  * Prompts a user to enter a number.
@@ -35,7 +24,7 @@ export class NumberPrompt extends Prompt<number> {
     /**
      * The prompts default locale that should be recognized.
      */
-    public defaultLocale: string | undefined;
+    public defaultLocale?: string;
 
     /**
      * Creates a new NumberPrompt instance.
@@ -61,7 +50,7 @@ export class NumberPrompt extends Prompt<number> {
      */
     protected async onPrompt(
         context: TurnContext,
-        state: any,
+        state: unknown,
         options: PromptOptions,
         isRetry: boolean
     ): Promise<void> {
@@ -83,36 +72,45 @@ export class NumberPrompt extends Prompt<number> {
      */
     protected async onRecognize(
         context: TurnContext,
-        state: any,
+        state: unknown,
         options: PromptOptions
     ): Promise<PromptRecognizerResult<number>> {
         const result: PromptRecognizerResult<number> = { succeeded: false };
-        const activity: Activity = context.activity;
-        const utterance: string = activity.text;
+        const activity = context.activity;
+
+        const utterance = activity.text;
         if (!utterance) {
             return result;
         }
-        const locale: string = activity.locale || this.defaultLocale || 'en-us';
-        const results: any = Recognizers.recognizeNumber(utterance, locale);
-        if (results.length > 0 && results[0].resolution) {
+
+        const defaultLocale = this.defaultLocale || 'en-us';
+        const locale = activity.locale || defaultLocale;
+
+        const [{ resolution = null } = {}] = Recognizers.recognizeNumber(utterance, locale) || [];
+        if (resolution) {
             result.succeeded = true;
 
-            const culture = this.getCultureFormattedForGlobalize(locale);
-            const parser = Globalize(culture).numberParser();
-            result.value = parser(results[0].resolution.value);
+            // Note: if we encounter an exception loading a globalize number parser, fall back to the
+            // parser for the default locale
+            const parser = Globalize(this.getCultureFormattedForGlobalize(locale));
+            let numberParser: (value: string) => number;
+            try {
+                numberParser = parser.numberParser();
+            } catch (err) {
+                numberParser = Globalize(this.getCultureFormattedForGlobalize(defaultLocale)).numberParser();
+            }
+
+            result.value = numberParser(resolution.value);
         }
 
         return result;
     }
 
     /**
-     * @private 
+     * @private
+     * The portions of the Globalize parsing library we use only need the first letters for internationalization culture
      */
-    private getCultureFormattedForGlobalize(culture: string) {
-        // The portions of the Globalize parsing library we use
-        // only need the first 2 letters for internationalization culture
-        const formattedCulture = culture.replace(culture, `${culture[0]}${culture[1]}`);
-
-        return formattedCulture.toLowerCase();
+    private getCultureFormattedForGlobalize(culture: string): string {
+        return culture.slice(0, 2).toLowerCase();
     }
 }

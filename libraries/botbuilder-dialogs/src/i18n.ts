@@ -5,6 +5,8 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
+
+/* eslint-disable @typescript-eslint/no-var-requires */
 const Chinese = require('../vendor/cldr-data/main/zh/numbers.json');
 const English = require('../vendor/cldr-data/main/en/numbers.json');
 const French = require('../vendor/cldr-data/main/fr/numbers.json');

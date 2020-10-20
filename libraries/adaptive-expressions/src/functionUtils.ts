@@ -502,6 +502,33 @@ export class FunctionUtils {
     }
 
     /**
+     * Generate an expression delegate that applies function after verifying all children.
+     * @param func Function to apply.
+     * @param verify Function to check each arg for validity.
+     * @returns Delegate for evaluating an expression.
+     */
+    public static applyWithOptionsAndError(
+        func: (arg0: unknown[], options: Options) => { value: unknown; error: string },
+        verify?: VerifyExpression
+    ): EvaluateExpressionDelegate {
+        return (expression: Expression, state: MemoryInterface, options: Options): ValueWithError => {
+            let value: unknown;
+            let error: string;
+            let args: unknown[];
+            ({ args, error } = FunctionUtils.evaluateChildren(expression, state, options, verify));
+            if (!error) {
+                try {
+                    ({ value, error } = func(args, options));
+                } catch (e) {
+                    error = e.message;
+                }
+            }
+
+            return { value, error };
+        };
+    }
+
+    /**
      * Generate an expression delegate that applies function on the accumulated value after verifying all children.
      * @param func Function to apply.
      * @param verify Function to check each arg for validity.
@@ -549,6 +576,20 @@ export class FunctionUtils {
 
             return { value: soFar, error: undefined };
         }, verify);
+    }
+
+    /**
+     *
+     * @param args An array of arguments.
+     * @param locale A locale string
+     * @param maxArgsLength The max length of a given function.
+     */
+    public static determineLocale(args: unknown[], maxArgsLength: number, locale = 'en-us'): string {
+        if (args.length === maxArgsLength && typeof args[maxArgsLength - 1] === 'string') {
+            locale = args[maxArgsLength - 1] as string;
+        }
+
+        return locale;
     }
 
     /**

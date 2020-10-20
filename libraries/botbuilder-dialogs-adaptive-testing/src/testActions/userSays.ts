@@ -31,6 +31,11 @@ export class UserSays extends TestAction implements UserSaysConfiguration {
     public user: string;
 
     /**
+     * The locale of user.
+     */
+    public locale: string;
+
+    /**
      * Execute the test.
      * @param testAdapter Adapter to execute against.
      * @param callback Logic for the bot to use.
@@ -46,6 +51,10 @@ export class UserSays extends TestAction implements UserSaysConfiguration {
             activity.from = Object.assign({}, activity.from);
             activity.from.id = this.user;
             activity.from.name = this.user;
+        }
+
+        if (this.locale) {
+            activity.locale = this.locale;
         }
 
         await testAdapter.processActivity(activity, callback);
