@@ -63,10 +63,6 @@ steps:
     PreviewPackageVersion: $(PreviewPackageVersion)
 
 - powershell: |
-   throw
-  displayName: 'Break the build now! (Stops publishing. For testing only.)'
-
-- powershell: |
    $fileName = 'package-lock.json'
    Get-ChildItem -Path ./tools -File | Where-Object {$_.Name -eq $fileName};
    Write-Host "`nDeleting any files listed above";
