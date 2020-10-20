@@ -11,7 +11,7 @@
  */
 
 export class Options {
-    public nullSubstitution: (path: string) => any;
+    public nullSubstitution: (path: string) => unknown;
 
     /**
      * The locale info for evaluating Expressions.
