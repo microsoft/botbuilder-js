@@ -174,14 +174,12 @@ export class TemplatesParser {
         resource: LGResource,
         importResolver?: ImportResolverDelegate,
         expressionParser?: ExpressionParser,
-        cachedTemplates?: Map<string, Templates>,
-        parentTemplates?: Templates[]
+        cachedTemplates: Map<string, Templates> = new Map<string, Templates>(),
+        parentTemplates: Templates[] = []
     ): Templates {
         if (!resource) {
             throw new Error('lg resource is empty.');
         }
-        cachedTemplates = cachedTemplates || new Map<string, Templates>();
-        parentTemplates = parentTemplates || [];
 
         if (cachedTemplates.has(resource.id)) {
             return cachedTemplates.get(resource.id);
@@ -234,9 +232,13 @@ export class TemplatesParser {
         return parser.file();
     }
 
-    private static getReferences(file: Templates, cachedTemplates?: Map<string, Templates>, parentTemplates?: Templates[]): Templates[] {
+    private static getReferences(
+        file: Templates,
+        cachedTemplates: Map<string, Templates> = new Map<string, Templates>(),
+        parentTemplates: Templates[] = []
+    ): Templates[] {
         const resourcesFound = new Set<Templates>();
-        this.resolveImportResources(file, resourcesFound, cachedTemplates || new Map<string, Templates>(), parentTemplates || []);
+        this.resolveImportResources(file, resourcesFound, cachedTemplates, parentTemplates);
 
         resourcesFound.delete(file);
         return Array.from(resourcesFound);
