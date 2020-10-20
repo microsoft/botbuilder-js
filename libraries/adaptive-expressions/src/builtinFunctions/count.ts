@@ -16,10 +16,16 @@ import { ReturnType } from '../returnType';
  * Return the number of items in a collection.
  */
 export class Count extends ExpressionEvaluator {
+    /**
+     * Initializes a new instance of the [Count](xref:adaptive-expressions.Count) class.
+     */
     public constructor() {
         super(ExpressionType.Count, Count.evaluator(), ReturnType.Number, Count.validator);
     }
 
+    /**
+     * @private
+     */
     private static evaluator(): EvaluateExpressionDelegate {
         return FunctionUtils.apply((args: any[]): number => {
             let count: number;
@@ -35,6 +41,9 @@ export class Count extends ExpressionEvaluator {
         }, FunctionUtils.verifyContainer);
     }
 
+    /**
+     * @private
+     */
     private static validator(expression: Expression): void {
         FunctionUtils.validateOrder(expression, [], ReturnType.String | ReturnType.Array);
     }

@@ -34,6 +34,9 @@ export interface LuisAdaptiveRecognizerConfiguration extends RecognizerConfigura
     predictionOptions?: LuisPredictionOptions;
 }
 
+/**
+ * Class that represents an adaptive LUIS recognizer.
+ */
 export class LuisAdaptiveRecognizer extends Recognizer implements LuisAdaptiveRecognizerConfiguration {
     public static $kind = 'Microsoft.LuisRecognizer';
 
@@ -93,6 +96,13 @@ export class LuisAdaptiveRecognizer extends Recognizer implements LuisAdaptiveRe
         }
     }
 
+    /**
+     * To recognize intents and entities in a users utterance.
+     * @param dialogContext The [DialogContext](xref:botbuilder-dialogs.DialogContext).
+     * @param activity The [Activity](xref:botbuilder-core.Activity).
+     * @param telemetryProperties Optional. Additional properties to be logged to telemetry with event.
+     * @param telemetryMetrics Optional. Additional metrics to be logged to telemetry with event.
+     */
     public async recognize(
         dialogContext: DialogContext,
         activity: Activity,

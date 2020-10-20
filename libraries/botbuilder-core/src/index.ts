@@ -8,6 +8,7 @@
 
 export * from 'botframework-schema';
 export * from './activityFactory';
+export * from './adapterExtensions';
 export * from './coreAppCredentials';
 export * from './activityHandler';
 export * from './activityHandlerBase';
@@ -30,6 +31,7 @@ export * from './middlewareSet';
 export * from './privateConversationState';
 export * from './propertyManager';
 export * from './recognizerResult';
+export * from './registerClassMiddleware';
 export * from './showTypingMiddleware';
 export * from './signInConstants';
 export {

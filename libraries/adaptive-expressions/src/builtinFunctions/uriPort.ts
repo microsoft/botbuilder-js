@@ -19,10 +19,16 @@ import { ReturnType } from '../returnType';
  * Return the port value of a unified resource identifier (URI).
  */
 export class UriPort extends ExpressionEvaluator {
+    /**
+     * Initializes a new instance of the [UriPort](xref:adaptive-expressions.UriPort) class.
+     */
     public constructor() {
         super(ExpressionType.UriPort, UriPort.evaluator, ReturnType.Number, FunctionUtils.validateUnary);
     }
 
+    /**
+     * @private
+     */
     private static evaluator(expr: Expression, state: MemoryInterface, options: Options): ValueWithError {
         let value: any;
         const { args, error: childrenError } = FunctionUtils.evaluateChildren(expr, state, options);
@@ -31,13 +37,16 @@ export class UriPort extends ExpressionEvaluator {
             if (typeof args[0] === 'string') {
                 ({ value, error } = UriPort.evalUriPort(args[0]));
             } else {
-                error = `${expr} should contain a URI string.`;
+                error = `${ expr } should contain a URI string.`;
             }
         }
 
         return { value, error };
     }
 
+    /**
+     * @private
+     */
     private static evalUriPort(uri: string): ValueWithError {
         let result: string;
         const { value: parsed, error: parseError } = InternalFunctionUtils.parseUri(uri);

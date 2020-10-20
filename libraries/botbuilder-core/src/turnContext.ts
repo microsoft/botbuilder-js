@@ -136,6 +136,7 @@ export class TurnContext {
     private _onSendActivities: SendActivitiesHandler[] = [];
     private _onUpdateActivity: UpdateActivityHandler[] = [];
     private _onDeleteActivity: DeleteActivityHandler[] = [];
+    private readonly _turnLocale = 'turn.locale';
 
     /**
      * Creates an new instance of the [TurnContext](xref:xref:botbuilder-core.TurnContext) class.
@@ -749,6 +750,20 @@ export class TurnContext {
     }
 
     /**
+     * Gets the locale stored in the turnState.
+     */
+    public get locale(): string {
+        return this._turnState.get(this._turnLocale);
+    }
+
+    /**
+     * Sets the locale stored in the turnState.
+     */
+    public set locale(value: string) {
+        this._turnState.set(this._turnLocale, value);
+    }
+
+    /**
      * Sets the response flag on the current turn context.
      *
      * @remarks
@@ -787,6 +802,9 @@ export class TurnContext {
         return this._turnState;
     }
 
+    /**
+     * @private
+     */
     private emit<T>(
         handlers: ((context: TurnContext, arg: T, next: () => Promise<any>) => Promise<any>)[],
         arg: T,

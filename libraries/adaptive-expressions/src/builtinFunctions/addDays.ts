@@ -15,6 +15,9 @@ import { TimeTransformEvaluator } from './timeTransformEvaluator';
  * Add a number of days to a timestamp.
  */
 export class AddDays extends TimeTransformEvaluator {
+    /**
+     * Initializes a new instance of the [AddDays](xref:adaptive-expressions.AddDays) class.
+     */
     public constructor() {
         super(ExpressionType.AddDays, (ts: Date, num: any): Date => moment(ts).utc().add(num, 'd').toDate());
     }

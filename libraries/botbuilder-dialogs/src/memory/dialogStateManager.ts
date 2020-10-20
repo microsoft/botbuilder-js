@@ -55,6 +55,11 @@ const DIALOG_STATE_MANAGER_CONFIGURATION = 'DialogStateManagerConfiguration';
 export class DialogStateManager {
     private readonly dialogContext: DialogContext;
 
+    /**
+     * Initializes a new instance of the [DialogStateManager](xref:botbuilder-dialogs.DialogStateManager) class.
+     * @param dc The dialog context for the current turn of the conversation.
+     * @param configuration Configuration for the dialog state manager.
+     */
     public constructor(dc: DialogContext, configuration?: DialogStateManagerConfiguration) {
         this.dialogContext = dc;
         this.configuration = configuration
@@ -451,6 +456,10 @@ export class DialogStateManager {
         return found;
     }
 
+    /**
+     * @private
+     * @param path Track path to change.
+     */
     private trackChange(path: string): void {
         // Normalize path and scan for any matches or children that match.
         // - We're appending an extra '_' so that we can do substring matches and
@@ -471,6 +480,13 @@ export class DialogStateManager {
         }
     }
 
+    /**
+     * @private
+     * @param memory Object memory to resolve.
+     * @param segments Segments of the memory to resolve.
+     * @param assignment Optional.
+     * @returns The value of the memory segment.
+     */
     private resolveSegments(memory: object, segments: (string | number)[], assignment?: boolean): any {
         let value: any = memory;
         const l = assignment ? segments.length - 1 : segments.length;
@@ -546,6 +562,9 @@ export class DialogStateManager {
         return value;
     }
 
+    /**
+     * @private
+     */
     private findObjectKey(obj: object, key: string): string | undefined {
         const k = key.toLowerCase();
         for (const prop in obj) {
@@ -557,6 +576,12 @@ export class DialogStateManager {
         return undefined;
     }
 
+    /**
+     * @private
+     * Gets [MemoryScope](xref:botbuilder-dialogs.MemoryScope) by name.
+     * @param name Name of scope.
+     * @returns The [MemoryScope](xref:botbuilder-dialogs.MemoryScope).
+     */
     private getMemoryScope(name: string): MemoryScope | undefined {
         const key = name.toLowerCase();
         const scopes = this.configuration.memoryScopes;
@@ -570,6 +595,10 @@ export class DialogStateManager {
         return undefined;
     }
 
+    /**
+     * Creates a standard dialog state manager configuration.
+     * @returns A [DialogStateManagerConfiguration](xref:botbuilder-dialogs.DialogStateManagerConfiguration) with the standard configuration.
+     */
     public static createStandardConfiguration(): DialogStateManagerConfiguration {
         const config: DialogStateManagerConfiguration = {
             pathResolvers: [
@@ -595,6 +624,10 @@ export class DialogStateManager {
         return config;
     }
 
+    /**
+     * Gets the version number.
+     * @returns A string with the version number.
+     */
     public version(): string {
         return '0';
     }

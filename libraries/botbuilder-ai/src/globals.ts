@@ -9,6 +9,10 @@
 
 const window = require('./custom.window');
 
+/**
+ * Gets the fetch library.
+ * @returns The fetch library.
+ */
 export function getFetch() {
     const env = (global || window) as any;
 
