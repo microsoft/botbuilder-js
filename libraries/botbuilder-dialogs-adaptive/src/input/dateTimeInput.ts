@@ -15,13 +15,11 @@ export interface DateTimeInputConfiguration extends InputDialogConfiguration {
     outputFormat?: string | Expression | StringExpression;
 }
 
-export class DateTimeInput extends InputDialog implements DateTimeInputConfiguration {
-    public static $kind = 'Microsoft.DateTimeInput';
-
 /**
  * Input dialog to collect a datetime from the user.
  */
-export class DateTimeInput extends InputDialog {
+export class DateTimeInput extends InputDialog implements DateTimeInputConfiguration {
+    public static $kind = 'Microsoft.DateTimeInput';
 
     public defaultLocale: StringExpression;
 
