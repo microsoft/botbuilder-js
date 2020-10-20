@@ -8,12 +8,18 @@
 
 import { Dialog, TurnPath } from 'botbuilder-dialogs';
 import { Expression, ExpressionParserInterface } from 'adaptive-expressions';
-import { OnIntent } from './onIntent';
+import { OnIntent, OnIntentConfiguration } from './onIntent';
+
+export interface OnChooseIntentConfiguration extends OnIntentConfiguration {
+    intents?: string[];
+}
 
 /**
  * Actions triggered when an Intent of "ChooseIntent" has been emitted by a [Recognizer](xref:botbuilder-dialogs-adaptive.Recognizer).
  */
-export class OnChooseIntent extends OnIntent {
+export class OnChooseIntent extends OnIntent implements OnChooseIntentConfiguration {
+    public static $kind = 'Microsoft.OnChooseIntent';
+
     public intents: string[] = [];
 
     /**

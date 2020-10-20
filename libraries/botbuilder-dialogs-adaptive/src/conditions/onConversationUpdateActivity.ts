@@ -13,6 +13,8 @@ import { OnActivity } from './onActivity';
  * Actions triggered when ConversationUpdateActivity is received.
  */
 export class OnConversationUpdateActivity extends OnActivity {
+    public static $kind = 'Microsoft.OnConversationUpdateActivity';
+
     /**
      * Initializes a new instance of the [OnConversationUpdateActivity](xref:botbuilder-dialogs-adaptive.OnConversationUpdateActivity) class.
      * @param actions Optional. A [Dialog](xref:botbuilder-dialogs.Dialog) list containing the actions to add to the plan when the rule constraints are met.

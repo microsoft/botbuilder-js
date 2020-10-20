@@ -58,7 +58,7 @@ export const ApplicationInsightsWebserverMiddleware: any = (req: any, res: any, 
     });
 };
 
-/* ApplicationInsightsTelemetryClient Class
+/**
  * This is a wrapper class around the Application Insights node client.
  * This is primarily designed to be used alongside the WaterfallDialog telemetry collection.
  * It provides a pre-configured App Insights client, and wrappers around
@@ -75,7 +75,10 @@ export class ApplicationInsightsTelemetryClient implements BotTelemetryClient, B
     private client: appInsights.TelemetryClient;
     private config: appInsights.Configuration;
 
-    /* The settings parameter is passed directly into appInsights.setup().
+    /**
+     * Creates a new instance of the [ApplicationInsightsTelemetryClient](xref:botbuilder-applicationinsights.ApplicationInsightsTelemetryClient) class.
+     * @param instrumentationKey The ApplicationInsights instrumentation key.
+     * @remarks The settings parameter is passed directly into appInsights.setup().
      * https://www.npmjs.com/package/applicationinsights#basic-usage
      * This function currently takes an app insights instrumentation key only.
      */
@@ -94,7 +97,7 @@ export class ApplicationInsightsTelemetryClient implements BotTelemetryClient, B
         this.client.addTelemetryProcessor(addBotIdentifiers);
     }
 
-    /* configuration()
+    /**
      * Provides access to the Application Insights configuration that is running here.
      * Allows developers to adjust the options, for example:
      * `appInsightsClient.configuration.setAutoCollectDependencies(false)`
@@ -103,33 +106,56 @@ export class ApplicationInsightsTelemetryClient implements BotTelemetryClient, B
         return this.config;
     }
 
-    /* defaultClient()
+    /**
      * Provides direct access to the telemetry client object, which might be necessary for some operations.
      */
     get defaultClient(): appInsights.TelemetryClient {
         return this.client;
     }
 
+    /**
+     * Sends information about an external dependency (outgoing call) in the application.
+     * @param telemetry The [TelemetryDependency](xref:botbuilder-core.TelemetryDependency) to track.
+     */
     public trackDependency(telemetry: TelemetryDependency): void {
         this.defaultClient.trackDependency(telemetry as appInsights.Contracts.DependencyTelemetry);
     }
 
+    /**
+     * Logs custom events with extensible named fields.
+     * @param telemetry The [TelemetryEvent](xref:botbuilder-core.TelemetryEvent) to track.
+     */
     public trackEvent(telemetry: TelemetryEvent): void {
         this.defaultClient.trackEvent(telemetry as appInsights.Contracts.EventTelemetry);
     }
 
+    /**
+     * Logs a system exception.
+     * @param telemetry The [TelemetryException](xref:botbuilder-core.TelemetryException) to track.
+     */
     public trackException(telemetry: TelemetryException): void {
         this.defaultClient.trackException(telemetry as appInsights.Contracts.ExceptionTelemetry);
     }
 
+    /**
+     * Sends a trace message.
+     * @param telemetry The [TelemetryTrace](xref:botbuilder-core.TelemetryTrace) to track.
+     */
     public trackTrace(telemetry: TelemetryTrace): void {
         this.defaultClient.trackTrace(telemetry as appInsights.Contracts.TraceTelemetry);
     }
 
+    /**
+     * Logs a dialog entry as an Application Insights page view.
+     * @param telemetry The [TelemetryPageView](xref:botbuilder-core.TelemetryPageView) to track.
+     */
     public trackPageView(telemetry: TelemetryPageView): void {
         this.defaultClient.trackPageView(telemetry as appInsights.Contracts.PageViewTelemetry);
     }
 
+    /**
+     * Flushes the in-memory buffer and any metrics being pre-aggregated.
+     */
     public flush(): void {
         this.defaultClient.flush();
     }

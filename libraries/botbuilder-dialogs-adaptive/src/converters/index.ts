@@ -15,6 +15,7 @@ export * from './activityTemplateConverter';
 export * from './languageGeneratorConverter';
 
 // TODO: Status unknown as class doesn't exist in dotnet.
+export * from './dialogListConverter';
 export * from './textTemplateConverter';
 export * from './recognizerConverter';
 export * from './multiLanguageRecognizerConverter';

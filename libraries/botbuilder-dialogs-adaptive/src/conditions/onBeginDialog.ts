@@ -13,6 +13,8 @@ import { AdaptiveEvents } from '../adaptiveEvents';
  * Actions triggered when a dialog is started via BeginDialog().
  */
 export class OnBeginDialog extends OnDialogEvent {
+    public static $kind = 'Microsoft.OnBeginDialog';
+
     /**
      * Initializes a new instance of the [OnBeginDialog](xref:botbuilder-dialogs-adaptive.OnBeginDialog) class.
      * @param actions Optional. A [Dialog](xref:botbuilder-dialogs.Dialog) list containing the actions to add to the plan when the rule constraints are met.

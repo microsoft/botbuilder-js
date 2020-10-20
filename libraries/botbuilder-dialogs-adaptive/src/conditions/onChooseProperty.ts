@@ -8,12 +8,19 @@
 import { Dialog, TurnPath } from 'botbuilder-dialogs';
 import { Expression, ExpressionParserInterface } from 'adaptive-expressions';
 import { AdaptiveEvents } from '../adaptiveEvents';
-import { OnDialogEvent } from './onDialogEvent';
+import { OnDialogEvent, OnDialogEventConfiguration } from './onDialogEvent';
+
+export interface OnChoosePropertyConfiguration extends OnDialogEventConfiguration {
+    properties?: string[];
+    entities?: string[];
+}
 
 /**
  * Triggered to choose which property an entity goes to.
  */
-export class OnChooseProperty extends OnDialogEvent {
+export class OnChooseProperty extends OnDialogEvent implements OnChoosePropertyConfiguration {
+    public static $kind = 'Microsoft.OnChooseProperty';
+
     /**
      * Initializes a new instance of the [OnChooseProperty](xref:botbuilder-dialogs-adaptive.OnChooseProperty) class.
      * @param properties Optional. List of properties being chosen between to filter events.

@@ -18,10 +18,16 @@ import { ReturnType } from '../returnType';
  * Return characters from a string, starting from the specified position or index. Index values start with the number 0.
  */
 export class Substring extends ExpressionEvaluator {
+    /**
+     * Initializes a new instance of the [Substring](xref:adaptive-expressions.Substring) class.
+     */
     public constructor() {
         super(ExpressionType.Substring, Substring.evaluator, ReturnType.String, Substring.validator);
     }
 
+    /**
+     * @private
+     */
     private static evaluator(expression: Expression, state: MemoryInterface, options: Options): ValueWithError {
         let result: any;
         const { value: str, error: childrenError } = expression.children[0].tryEvaluate(state, options);
@@ -34,9 +40,9 @@ export class Substring extends ExpressionEvaluator {
                 const startExpr: Expression = expression.children[1];
                 ({ value: start, error } = startExpr.tryEvaluate(state, options));
                 if (!error && !Number.isInteger(start)) {
-                    error = `${startExpr} is not an integer.`;
+                    error = `${ startExpr } is not an integer.`;
                 } else if (start < 0 || start >= str.length) {
-                    error = `${startExpr}=${start} which is out of range for ${str}`;
+                    error = `${ startExpr }=${ start } which is out of range for ${ str }`;
                 }
                 if (!error) {
                     let length: number;
@@ -47,9 +53,9 @@ export class Substring extends ExpressionEvaluator {
                         const lengthExpr: Expression = expression.children[2];
                         ({ value: length, error } = lengthExpr.tryEvaluate(state, options));
                         if (!error && !Number.isInteger(length)) {
-                            error = `${lengthExpr} is not an integer`;
+                            error = `${ lengthExpr } is not an integer`;
                         } else if (length < 0 || Number(start) + Number(length) > str.length) {
-                            error = `${lengthExpr}=${length} which is out of range for ${str}`;
+                            error = `${ lengthExpr }=${ length } which is out of range for ${ str }`;
                         }
                     }
                     if (!error) {
@@ -59,13 +65,16 @@ export class Substring extends ExpressionEvaluator {
             } else if (str === undefined) {
                 result = '';
             } else {
-                error = `${expression.children[0]} is neither a string nor a null object.`;
+                error = `${ expression.children[0] } is neither a string nor a null object.`;
             }
         }
 
         return { value: result, error };
     }
 
+    /**
+     * @private
+     */
     private static validator(expression: Expression): void {
         FunctionUtils.validateOrder(expression, [ReturnType.Number], ReturnType.String, ReturnType.Number);
     }

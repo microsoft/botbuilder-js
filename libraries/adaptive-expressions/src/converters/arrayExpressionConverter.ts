@@ -7,9 +7,12 @@
  */
 
 import { ArrayExpression } from '../expressionProperties';
+import { Expression } from '../expression';
+
+type Input<T> = T[] | string | Expression;
 
 export class ArrayExpressionConverter<T> {
-    public convert(value: T[]): ArrayExpression<T> {
-        return new ArrayExpression<T>(value);
+    public convert(value: Input<T> | ArrayExpression<T>): ArrayExpression<T> {
+        return value instanceof ArrayExpression ? value : new ArrayExpression<T>(value);
     }
 }

@@ -7,13 +7,19 @@
  */
 import { Dialog, TurnPath } from 'botbuilder-dialogs';
 import { Expression, ExpressionType, ExpressionParserInterface } from 'adaptive-expressions';
-import { OnDialogEvent } from './onDialogEvent';
+import { OnDialogEvent, OnDialogEventConfiguration } from './onDialogEvent';
 import { AdaptiveEvents } from '../adaptiveEvents';
+
+export interface OnActivityConfiguration extends OnDialogEventConfiguration {
+    type?: string;
+}
 
 /**
  * Actions triggered when an [Activity](xref:botframework-schema.Activity) of a given type is received.
  */
-export class OnActivity extends OnDialogEvent {
+export class OnActivity extends OnDialogEvent implements OnActivityConfiguration {
+    public static $kind = 'Microsoft.OnActivity';
+
     /**
      * Gets or sets the ActivityType which must be matched for this to trigger.
      */
