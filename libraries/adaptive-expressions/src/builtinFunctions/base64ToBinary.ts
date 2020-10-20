@@ -18,6 +18,9 @@ import atob = require('atob-lite');
  * Return the binary array of a base64-encoded string.
  */
 export class Base64ToBinary extends ExpressionEvaluator {
+    /**
+     * Initializes a new instance of the [Base64ToBinary](xref:adaptive-expressions.Base64ToBinary) class.
+     */
     public constructor() {
         super(
             ExpressionType.Base64ToBinary,
@@ -27,6 +30,9 @@ export class Base64ToBinary extends ExpressionEvaluator {
         );
     }
 
+    /**
+     * @private
+     */
     private static evaluator(): EvaluateExpressionDelegate {
         return FunctionUtils.apply((args: Readonly<any>): Uint8Array => {
             const raw = atob(args[0].toString());

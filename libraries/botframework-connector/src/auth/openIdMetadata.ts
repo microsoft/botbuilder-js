@@ -12,15 +12,27 @@ import fetch from 'cross-fetch';
 import { AuthenticationError } from './authenticationError';
 import { StatusCodes } from 'botframework-schema';
 
+/**
+ * Class in charge of manage OpenId metadata.
+ */
 export class OpenIdMetadata {
     private url: string;
     private lastUpdated = 0;
     private keys: IKey[];
 
+    /**
+     * Initializes a new instance of the [OpenIdMetadata](xref:botframework-connector.OpenIdMetadata) class.
+     * @param url Metadata Url.
+     */
     constructor(url: string) {
         this.url = url;
     }
 
+    /**
+     * Gets the Signing key.
+     * @param keyId The key ID to search for.
+     * @returns A `Promise` representation for either a [IOpenIdMetadataKey](botframework-connector:module.IOpenIdMetadataKey) or `null`.
+     */
     public async getKey(keyId: string): Promise<IOpenIdMetadataKey | null> {
         // If keys are more than 24 hours old, refresh them
         if (this.lastUpdated < Date.now() - 1000 * 60 * 60 * 24) {
@@ -47,6 +59,9 @@ export class OpenIdMetadata {
         }
     }
 
+    /**
+     * @private
+     */
     private async refreshCache(): Promise<void> {
         const res = await fetch(this.url);
 
@@ -71,6 +86,9 @@ export class OpenIdMetadata {
         }
     }
 
+    /**
+     * @private
+     */
     private findKey(keyId: string): IOpenIdMetadataKey | null {
         if (!this.keys) {
             return null;

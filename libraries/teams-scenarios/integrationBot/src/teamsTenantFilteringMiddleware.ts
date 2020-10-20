@@ -10,17 +10,17 @@ import {
     TeamsChannelData,
 } from 'botbuilder-core';
 
-//
-// Teams specific middleware for filtering messages by Tenant Id.
-//
+/**
+ * Teams specific middleware for filtering messages by Tenant Id.
+ */
 export class TeamsTenantFilteringMiddleware implements Middleware {
     // tslint:disable:variable-name
     private readonly _tenantSet = new Set();
     // tslint:enable:variable-name
 
     /**
-     * Initializes a new instance of the TeamsTenantFilteringMiddleware class.
-     * * @param allowedTenants either a single Tenant Id or array of Tenant Ids.
+     * Initializes a new instance of the [TeamsTenantFilteringMiddleware](xref:integration-bot.TeamsTenantFilteringMiddleware) class.
+     * @param allowedTenants Either a single Tenant Id or array of Tenant Ids.
      */
     constructor(allowedTenants: string | string[]) {
         if(Array.isArray(allowedTenants)){

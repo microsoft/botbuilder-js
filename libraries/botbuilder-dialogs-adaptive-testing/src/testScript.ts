@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 
-import { ConversationState, MemoryStorage, UserState, TestAdapter } from 'botbuilder-core';
+import { ConversationState, MemoryStorage, UserState, useBotState, TestAdapter } from 'botbuilder-core';
 import { Configurable, Converter, ConverterFactory, Dialog, DialogManager } from 'botbuilder-dialogs';
 import { LanguageGeneratorExtensions, ResourceExtensions } from 'botbuilder-dialogs-adaptive';
 import { ResourceExplorer } from 'botbuilder-dialogs-declarative';
@@ -107,9 +107,12 @@ export class TestScript extends Configurable implements TestScriptConfiguration 
         testAdapter.enableTrace = this.enableTrace;
         testAdapter.locale = this.locale;
 
+        const storage = new MemoryStorage();
+        const userState = new UserState(storage);
+        const convoState = new ConversationState(storage);
+        useBotState(testAdapter, userState, convoState);
+
         const bot = new DialogManager(this.dialog);
-        bot.conversationState = new ConversationState(new MemoryStorage());
-        bot.userState = new UserState(new MemoryStorage());
         ResourceExtensions.useResourceExplorer(bot, resourceExplorer);
         LanguageGeneratorExtensions.useLanguageGeneration(bot);
 

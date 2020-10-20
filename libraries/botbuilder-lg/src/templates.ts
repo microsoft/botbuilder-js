@@ -94,6 +94,19 @@ export class Templates implements Iterable<Template> {
      */
     public options: string[];
 
+    /**
+     * Creates a new instance of the [Templates](xref:botbuilder-lg.Templates) class.
+     * @param items Optional. List of [Template](xref:botbuilder-lg.Template) instances.
+     * @param imports Optional. List of [TemplateImport](xref:botbuilder-lg.TemplateImport) instances.
+     * @param diagnostics Optional. List of [Diagnostic](xref:botbuilder-lg.Diagnostic) instances.
+     * @param references Optional. List of [Templates](xref:botbuilder-lg.Templates) instances.
+     * @param content Optional. Content of the current Templates instance.
+     * @param id Optional. Id of the current Templates instance.
+     * @param expressionParser Optional. [ExpressionParser](xref:adaptive-expressions.ExpressionParser) to parse the expressions in the content.
+     * @param importResolverDelegate Optional. Resolver to resolve LG import id to template text.
+     * @param options Optional. List of strings representing the options during evaluation of the templates.
+     * @param source Optional. Templates source.
+     */
     public constructor(
         items?: Template[],
         imports?: TemplateImport[],
@@ -424,10 +437,17 @@ export class Templates implements Iterable<Template> {
         return this;
     }
 
+    /**
+     * Returns a string representation of a [Templates](xref:botbuilder-lg.Templates) content.
+     * @returns A string representation of a [Templates](xref:botbuilder-lg.Templates) content.
+     */
     public toString(): string {
         return this.content;
     }
 
+    /**
+     * @private
+     */
     private getramdonTemplateId(): string {
         return 'xxxxxxxxxxxx4xxxyxxxxxxxxxxxxxxx'.replace(/[xy]/g, (c: any): string => {
             const r: number = (Math.random() * 16) | 0;
@@ -437,6 +457,9 @@ export class Templates implements Iterable<Template> {
         });
     }
 
+    /**
+     * @private
+     */
     private appendDiagnosticWithOffset(diagnostics: Diagnostic[], offset: number): void {
         if (diagnostics) {
             diagnostics.forEach((u): void => {
@@ -447,6 +470,9 @@ export class Templates implements Iterable<Template> {
         }
     }
 
+    /**
+     * @private
+     */
     private adjustRangeForUpdateTemplate(oldTemplate: Template, newTemplate: Template): void {
         const newRange = newTemplate.sourceRange.range.end.line - newTemplate.sourceRange.range.start.line;
         const oldRange = oldTemplate.sourceRange.range.end.line - oldTemplate.sourceRange.range.start.line;
@@ -467,12 +493,18 @@ export class Templates implements Iterable<Template> {
         }
     }
 
+    /**
+     * @private
+     */
     private adjustRangeForAddTemplate(newTemplate: Template, lineOffset: number): void {
         const lineLength = newTemplate.sourceRange.range.end.line - newTemplate.sourceRange.range.start.line;
         newTemplate.sourceRange.range.start.line = lineOffset + 1;
         newTemplate.sourceRange.range.end.line = lineOffset + lineLength + 1;
     }
 
+    /**
+     * @private
+     */
     private adjustRangeForDeleteTemplate(oldTemplate: Template): void {
         const lineOffset = oldTemplate.sourceRange.range.end.line - oldTemplate.sourceRange.range.start.line + 1;
 
@@ -486,10 +518,17 @@ export class Templates implements Iterable<Template> {
             }
         }
     }
+
+    /**
+     * @private
+     */
     private clearDiagnostic(): void {
         this.diagnostics = [];
     }
 
+    /**
+     * @private
+     */
     private replaceRangeContent(
         originString: string,
         startLine: number,
@@ -512,6 +551,9 @@ export class Templates implements Iterable<Template> {
         return destList.join(this.newLine);
     }
 
+    /**
+     * @private
+     */
     private convertTemplateBody(templateBody: string): string {
         if (!templateBody) {
             return '';
@@ -525,6 +567,9 @@ export class Templates implements Iterable<Template> {
         return destList.join(this.newLine);
     }
 
+    /**
+     * @private
+     */
     private buildTemplateNameLine(templateName: string, parameters: string[]): string {
         // if parameters is null or undefined, ignore ()
         if (parameters === undefined || parameters === undefined) {
@@ -534,6 +579,9 @@ export class Templates implements Iterable<Template> {
         }
     }
 
+    /**
+     * @private
+     */
     private checkErrors(): void {
         if (this.allDiagnostics) {
             const errors = this.allDiagnostics.filter((u): boolean => u.severity === DiagnosticSeverity.Error);
@@ -543,6 +591,9 @@ export class Templates implements Iterable<Template> {
         }
     }
 
+    /**
+     * @private
+     */
     private injectToExpressionFunction(): Templates {
         const totalTemplates = [this as Templates].concat(this.references);
         for (const curTemplates of totalTemplates) {
@@ -590,6 +641,9 @@ export class Templates implements Iterable<Template> {
         return this;
     }
 
+    /**
+     * @private
+     */
     private extractOptionByKey(nameOfKey: string, options: string[]): string {
         let result: string = undefined;
         for (const option of options) {
@@ -606,6 +660,9 @@ export class Templates implements Iterable<Template> {
         return result;
     }
 
+    /**
+     * @private
+     */
     private extractNamespace(options: string[]): string {
         let result = this.extractOptionByKey(this.namespaceKey, options);
         if (!result) {
@@ -615,6 +672,9 @@ export class Templates implements Iterable<Template> {
         return result;
     }
 
+    /**
+     * @private
+     */
     private getGlobalFunctionTable(options: string[]): string[] {
         const result: string[] = [];
         const value = this.extractOptionByKey(this.exportsKey, options);
