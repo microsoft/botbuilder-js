@@ -10,7 +10,7 @@ import { Activity, RecognizerResult, getTopScoringIntent } from 'botbuilder-core
 import { Converter, ConverterFactory, DialogContext } from 'botbuilder-dialogs';
 import { RecognizerListConverter } from '../converters';
 import { Recognizer, RecognizerConfiguration } from './recognizer';
-import { merge } from 'lodash';
+import merge from 'lodash/merge';
 
 /**
  * Standard cross trained intent name prefix.
