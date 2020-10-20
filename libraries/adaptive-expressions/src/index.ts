@@ -33,4 +33,5 @@ export {
 } from './builtinFunctions';
 export * from './functionUtils';
 export * from './returnType';
+export * from './localeInfo';
 export * from './triggerTrees';

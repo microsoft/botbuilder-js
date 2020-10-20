@@ -228,6 +228,12 @@ export class FileTranscriptStore implements TranscriptStore {
         return remove(transcriptFolder);
     }
 
+    /**
+     * Saves the [Activity](xref:botframework-schema.Activity) as a JSON file.
+     * @param activity The [Activity](xref:botframework-schema.Activity) to transcript.
+     * @param transcriptPath The path where the transcript will be saved.
+     * @param activityFilename The name for the file.
+     */
     private async saveActivity(activity: Activity, transcriptPath: string, activityFilename: string): Promise<void> {
         const json: string = JSON.stringify(activity, null, '\t');
 
@@ -238,18 +244,30 @@ export class FileTranscriptStore implements TranscriptStore {
         return writeFile(join(transcriptPath, activityFilename), json, 'utf8');
     }
 
+    /**
+     * @private
+     */
     private getActivityFilename(activity: Activity): string {
         return `${getTicks(activity.timestamp)}-${this.sanitizeKey(activity.id)}.json`;
     }
 
+    /**
+     * @private
+     */
     private getChannelFolder(channelId: string): string {
         return join(this.rootFolder, this.sanitizeKey(channelId));
     }
 
+    /**
+     * @private
+     */
     private getTranscriptFolder(channelId: string, conversationId: string): string {
         return join(this.rootFolder, this.sanitizeKey(channelId), this.sanitizeKey(conversationId));
     }
 
+    /**
+     * @private
+     */
     private sanitizeKey(key: string): string {
         return filenamify(key);
     }
