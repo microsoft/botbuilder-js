@@ -5,12 +5,28 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { DialogTurnResult, Dialog, DialogContext } from 'botbuilder-dialogs';
-import { ActionScope, ActionScopeResult } from './actionScope';
-import { StringExpression, BoolExpression, IntExpression } from 'adaptive-expressions';
+import {
+    BoolExpression,
+    BoolExpressionConverter,
+    Expression,
+    IntExpression,
+    IntExpressionConverter,
+    StringExpression,
+    StringExpressionConverter,
+} from 'adaptive-expressions';
+import { Converter, ConverterFactory, Dialog, DialogContext, DialogTurnResult } from 'botbuilder-dialogs';
+import { ActionScope, ActionScopeConfiguration, ActionScopeResult } from './actionScope';
 
 const FOREACHPAGE = 'dialog.foreach.page';
 const FOREACHPAGEINDEX = 'dialog.foreach.pageindex';
+
+export interface ForEachPageConfiguration extends ActionScopeConfiguration {
+    itemsProperty?: string | Expression | StringExpression;
+    page?: string | Expression | StringExpression;
+    pageIndex?: string | Expression | StringExpression;
+    pageSize?: number | string | Expression | IntExpression;
+    disabled?: boolean | string | Expression | BoolExpression;
+}
 
 /**
  * Executes a set of actions once for each page of results in an in-memory list or collection.
@@ -21,7 +37,9 @@ const FOREACHPAGEINDEX = 'dialog.foreach.pageindex';
  * and defaults to a size of 10. The loop can be exited early by including either a `EndDialog` or
  * `GotoDialog` action.
  */
-export class ForEachPage<O extends object = {}> extends ActionScope<O> {
+export class ForEachPage<O extends object = {}> extends ActionScope<O> implements ForEachPageConfiguration {
+    public static $kind = 'Microsoft.ForeachPage';
+
     public constructor();
 
     /**
@@ -61,6 +79,23 @@ export class ForEachPage<O extends object = {}> extends ActionScope<O> {
      * An optional expression which if is true will disable this action.
      */
     public disabled?: BoolExpression;
+
+    public getConverter(property: keyof ForEachPageConfiguration): Converter | ConverterFactory {
+        switch (property) {
+            case 'itemsProperty':
+                return new StringExpressionConverter();
+            case 'page':
+                return new StringExpressionConverter();
+            case 'pageIndex':
+                return new StringExpressionConverter();
+            case 'pageSize':
+                return new IntExpressionConverter();
+            case 'disabled':
+                return new BoolExpressionConverter();
+            default:
+                return super.getConverter(property);
+        }
+    }
 
     /**
      * Gets the child [Dialog](xref:botbuilder-dialogs.Dialog) dependencies so they can be added to the containers [Dialog](xref:botbuilder-dialogs.Dialog) set.

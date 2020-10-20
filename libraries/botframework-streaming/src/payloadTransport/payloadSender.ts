@@ -68,6 +68,9 @@ export class PayloadSender {
         }
     }
 
+    /**
+     * @private
+     */
     private writePacket(packet: ISendPacket): void {
         try {
             if (packet.header.payloadLength > 0 && packet.payload) {
@@ -77,7 +80,6 @@ export class PayloadSender {
                     const count =
                         leftOver <= PayloadConstants.MaxPayloadLength ? leftOver : PayloadConstants.MaxPayloadLength;
                     const chunk = packet.payload.read(count);
-
                     const header = packet.header;
                     header.payloadLength = count;
                     header.end = leftOver <= PayloadConstants.MaxPayloadLength;

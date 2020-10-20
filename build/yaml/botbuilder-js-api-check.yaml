@@ -3,7 +3,6 @@
 name: $(Build.BuildId)
 
 pool:
-  name: Azure Pipelines
   vmImage: 'macOS-10.15'
 
 variables:

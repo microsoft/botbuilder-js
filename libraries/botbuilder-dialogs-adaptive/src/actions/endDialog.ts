@@ -5,15 +5,33 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { DialogTurnResult, DialogContext, Dialog } from 'botbuilder-dialogs';
-import { ValueExpression, BoolExpression } from 'adaptive-expressions';
+import {
+    BoolExpression,
+    BoolExpressionConverter,
+    Expression,
+    ValueExpression,
+    ValueExpressionConverter,
+} from 'adaptive-expressions';
+import {
+    Converter,
+    ConverterFactory,
+    Dialog,
+    DialogConfiguration,
+    DialogContext,
+    DialogTurnResult,
+} from 'botbuilder-dialogs';
 import { replaceJsonRecursively } from '../jsonExtensions';
+
+export interface EndDialogConfiguration extends DialogConfiguration {
+    value?: unknown | ValueExpression;
+    disabled?: boolean | string | Expression | BoolExpression;
+}
 
 /**
  * Command to end the current [Dialog](xref:botbuilder-dialogs.Dialog), returning the `resultProperty` as the result of the dialog.
  */
-export class EndDialog<O extends object = {}> extends Dialog<O> {
-    public constructor();
+export class EndDialog<O extends object = {}> extends Dialog<O> implements EndDialogConfiguration {
+    public static $kind = 'Microsoft.EndDialog';
 
     /**
      * Creates a new `EndDialog` instance.
@@ -35,6 +53,17 @@ export class EndDialog<O extends object = {}> extends Dialog<O> {
      * An optional expression which if is true will disable this action.
      */
     public disabled?: BoolExpression;
+
+    public getConverter(property: keyof EndDialogConfiguration): Converter | ConverterFactory {
+        switch (property) {
+            case 'value':
+                return new ValueExpressionConverter();
+            case 'disabled':
+                return new BoolExpressionConverter();
+            default:
+                return super.getConverter(property);
+        }
+    }
 
     /**
      * Starts a new [Dialog](xref:botbuilder-dialogs.Dialog) and pushes it onto the dialog stack.

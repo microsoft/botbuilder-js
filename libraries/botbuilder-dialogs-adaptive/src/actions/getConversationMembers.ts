@@ -5,9 +5,22 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { Dialog, DialogContext, DialogTurnResult } from 'botbuilder-dialogs';
-import { StringExpression, BoolExpression } from 'adaptive-expressions';
+import {
+    BoolExpression,
+    BoolExpressionConverter,
+    Expression,
+    StringExpression,
+    StringExpressionConverter,
+} from 'adaptive-expressions';
 import { TurnContext } from 'botbuilder-core';
+import {
+    Converter,
+    ConverterFactory,
+    Dialog,
+    DialogConfiguration,
+    DialogContext,
+    DialogTurnResult,
+} from 'botbuilder-dialogs';
 
 interface CompatibleAdapter {
     getConversationMembers(context: TurnContext);
@@ -17,10 +30,19 @@ function isCompatibleAdapter(adapter: unknown): adapter is CompatibleAdapter {
     return adapter && typeof (adapter as CompatibleAdapter).getConversationMembers === 'function';
 }
 
+export interface GetConversationMembersConfiguration extends DialogConfiguration {
+    property?: string | Expression | StringExpression;
+    disabled?: boolean | string | Expression | BoolExpression;
+}
+
 /**
  * Calls `BotFrameworkAdapter.getConversationMembers()` and sets the result to a memory property.
  */
-export class GetConversationMembers<O extends object = {}> extends Dialog<O> {
+export class GetConversationMembers<O extends object = {}>
+    extends Dialog<O>
+    implements GetConversationMembersConfiguration {
+    public static $kind = 'Microsoft.GetConversationMembers';
+
     public constructor();
 
     /**
@@ -43,6 +65,17 @@ export class GetConversationMembers<O extends object = {}> extends Dialog<O> {
      * An optional expression which if is true will disable this action.
      */
     public disabled?: BoolExpression;
+
+    public getConverter(property: keyof GetConversationMembersConfiguration): Converter | ConverterFactory {
+        switch (property) {
+            case 'property':
+                return new StringExpressionConverter();
+            case 'disabled':
+                return new BoolExpressionConverter();
+            default:
+                return super.getConverter(property);
+        }
+    }
 
     /**
      * Starts a new [Dialog](xref:botbuilder-dialogs.Dialog) and pushes it onto the dialog stack.

@@ -14,6 +14,8 @@ import { ActionContext } from '../actionContext';
  * Select a random true rule implementation of TriggerSelector.
  */
 export class RandomSelector extends TriggerSelector {
+    public static $kind = 'Microsoft.RandomSelector';
+
     private _conditionals: OnCondition[];
     private _evaluate: boolean;
 
@@ -22,13 +24,24 @@ export class RandomSelector extends TriggerSelector {
      */
     public parser: ExpressionParserInterface = new ExpressionParser();
 
+    /**
+     * Initialize the selector with the set of rules.
+     * @param conditionals Possible rules to match.
+     * @param evaluate A boolean representing if rules should be evaluated on select.
+     */
     public initialize(conditionals: OnCondition[], evaluate: boolean): void {
         this._conditionals = conditionals;
         this._evaluate = evaluate;
     }
 
+    /**
+     * Select the best rule to execute.
+     * @param actionContext Dialog context for evaluation.
+     * @returns A Promise with a number array.
+     */
     public select(actionContext: ActionContext): Promise<OnCondition[]> {
         const candidates: OnCondition[] = [];
+
         for (let i = 0; i < this._conditionals.length; i++) {
             const conditional = this._conditionals[i];
             if (this._evaluate) {

@@ -6,11 +6,19 @@
  * Licensed under the MIT License.
  */
 
-import { Converter } from 'botbuilder-dialogs-declarative';
+import { Converter } from 'botbuilder-dialogs';
 import { TextTemplate } from '../templates';
 
-export class TextTemplateConverter implements Converter {
-    public convert(value: string): TextTemplate {
-        return new TextTemplate(value);
+/**
+ * Text template converter that implements [Converter](xref:botbuilder-dialogs-declarative.Converter).
+ */
+export class TextTemplateConverter implements Converter<string, TextTemplate> {
+    /**
+     * Converts a string to a [TextTemplate](xref:botbuilder-dialogs-adaptive.TextTemplate) instance.
+     * @param value The template to evaluate to create text.
+     * @returns A new [TextTemplate](xref:botbuilder-dialogs-adaptive.TextTemplate) instance.
+     */
+    public convert(value: string | TextTemplate): TextTemplate {
+        return typeof value === 'string' ? new TextTemplate(value) : value;
     }
 }

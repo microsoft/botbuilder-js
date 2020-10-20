@@ -6,8 +6,8 @@
  * Licensed under the MIT License.
  */
 
-import { DialogManager } from 'botbuilder-dialogs';
 import { BotFrameworkClient, SkillConversationIdFactoryBase } from 'botbuilder-core';
+import { DialogManager } from 'botbuilder-dialogs';
 
 /**
  * The key to get or set skill client from turn state.

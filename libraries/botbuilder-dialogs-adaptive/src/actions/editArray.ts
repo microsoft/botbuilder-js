@@ -5,8 +5,25 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { DialogTurnResult, DialogContext, Dialog } from 'botbuilder-dialogs';
-import { ValueExpression, StringExpression, BoolExpression, EnumExpression } from 'adaptive-expressions';
+import {
+    BoolExpression,
+    BoolExpressionConverter,
+    EnumExpression,
+    EnumExpressionConverter,
+    Expression,
+    StringExpression,
+    StringExpressionConverter,
+    ValueExpression,
+    ValueExpressionConverter,
+} from 'adaptive-expressions';
+import {
+    Converter,
+    ConverterFactory,
+    Dialog,
+    DialogConfiguration,
+    DialogContext,
+    DialogTurnResult,
+} from 'botbuilder-dialogs';
 
 export enum ArrayChangeType {
     push = 'push',
@@ -16,10 +33,20 @@ export enum ArrayChangeType {
     clear = 'clear',
 }
 
+export interface EditArrayConfiguration extends DialogConfiguration {
+    changeType?: ArrayChangeType | string | Expression | EnumExpression<ArrayChangeType>;
+    itemsProperty?: string | Expression | StringExpression;
+    resultProperty?: string | Expression | StringExpression;
+    value?: unknown | ValueExpression;
+    disabled?: boolean | string | Expression | BoolExpression;
+}
+
 /**
  * Lets you modify an array in memory.
  */
-export class EditArray<O extends object = {}> extends Dialog<O> {
+export class EditArray<O extends object = {}> extends Dialog<O> implements EditArrayConfiguration {
+    public static $kind = 'Microsoft.EditArray';
+
     public constructor();
 
     /**
@@ -85,6 +112,23 @@ export class EditArray<O extends object = {}> extends Dialog<O> {
      * An optional expression which if is true will disable this action.
      */
     public disabled?: BoolExpression;
+
+    public getConverter(property: keyof EditArrayConfiguration): Converter | ConverterFactory {
+        switch (property) {
+            case 'changeType':
+                return new EnumExpressionConverter<ArrayChangeType>(ArrayChangeType);
+            case 'itemsProperty':
+                return new StringExpressionConverter();
+            case 'resultProperty':
+                return new StringExpressionConverter();
+            case 'value':
+                return new ValueExpressionConverter();
+            case 'disabled':
+                return new BoolExpressionConverter();
+            default:
+                return super.getConverter(property);
+        }
+    }
 
     /**
      * Starts a new [Dialog](xref:botbuilder-dialogs.Dialog) and pushes it onto the dialog stack.

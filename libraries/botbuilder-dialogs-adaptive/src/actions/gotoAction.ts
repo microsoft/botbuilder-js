@@ -5,14 +5,34 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { DialogTurnResult, Dialog, DialogContext } from 'botbuilder-dialogs';
+import {
+    BoolExpression,
+    BoolExpressionConverter,
+    Expression,
+    StringExpression,
+    StringExpressionConverter,
+} from 'adaptive-expressions';
+import {
+    Converter,
+    ConverterFactory,
+    Dialog,
+    DialogConfiguration,
+    DialogContext,
+    DialogTurnResult,
+} from 'botbuilder-dialogs';
 import { ActionScopeResult, ActionScopeCommands } from './actionScope';
-import { StringExpression, BoolExpression } from 'adaptive-expressions';
+
+export interface GotoActionConfiguration extends DialogConfiguration {
+    actionId?: string | Expression | StringExpression;
+    disabled?: boolean | string | Expression | BoolExpression;
+}
 
 /**
  * Goto an action by Id.
  */
-export class GotoAction<O extends object = {}> extends Dialog<O> {
+export class GotoAction<O extends object = {}> extends Dialog<O> implements GotoActionConfiguration {
+    public static $kind = 'Microsoft.GotoAction';
+
     public constructor();
 
     /**
@@ -35,6 +55,17 @@ export class GotoAction<O extends object = {}> extends Dialog<O> {
      * An optional expression which if is true will disable this action.
      */
     public disabled?: BoolExpression;
+
+    public getConverter(property: keyof GotoActionConfiguration): Converter | ConverterFactory {
+        switch (property) {
+            case 'actionId':
+                return new StringExpressionConverter();
+            case 'disabled':
+                return new BoolExpressionConverter();
+            default:
+                return super.getConverter(property);
+        }
+    }
 
     /**
      * Starts a new [Dialog](xref:botbuilder-dialogs.Dialog) and pushes it onto the dialog stack.

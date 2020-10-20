@@ -5,13 +5,34 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { Dialog, DialogContext, DialogTurnResult } from 'botbuilder-dialogs';
-import { StringExpression, BoolExpression } from 'adaptive-expressions';
+import {
+    BoolExpression,
+    BoolExpressionConverter,
+    Expression,
+    StringExpression,
+    StringExpressionConverter,
+} from 'adaptive-expressions';
+import {
+    Converter,
+    ConverterFactory,
+    Dialog,
+    DialogConfiguration,
+    DialogContext,
+    DialogTurnResult,
+} from 'botbuilder-dialogs';
+
+export interface GetActivityMembersConfiguration extends DialogConfiguration {
+    activityId?: string | Expression | StringExpression;
+    property?: string | Expression | StringExpression;
+    disabled?: boolean | string | Expression | BoolExpression;
+}
 
 /**
  * Calls `BotFrameworkAdapter.getActivityMembers()` and sets the result to a memory property.
  */
-export class GetActivityMembers<O extends object = {}> extends Dialog {
+export class GetActivityMembers<O extends object = {}> extends Dialog implements GetActivityMembersConfiguration {
+    public static $kind = 'Microsoft.GetActivityMembers';
+
     public constructor();
 
     /**
@@ -43,6 +64,19 @@ export class GetActivityMembers<O extends object = {}> extends Dialog {
      * An optional expression which if is true will disable this action.
      */
     public disabled?: BoolExpression;
+
+    public getConverter(property: keyof GetActivityMembersConfiguration): Converter | ConverterFactory {
+        switch (property) {
+            case 'activityId':
+                return new StringExpressionConverter();
+            case 'property':
+                return new StringExpressionConverter();
+            case 'disabled':
+                return new BoolExpressionConverter();
+            default:
+                return super.getConverter(property);
+        }
+    }
 
     /**
      * Starts a new [Dialog](xref:botbuilder-dialogs.Dialog) and pushes it onto the dialog stack.

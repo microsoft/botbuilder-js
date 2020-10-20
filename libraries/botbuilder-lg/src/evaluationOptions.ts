@@ -30,6 +30,9 @@ export enum LGCacheScope {
     None = 'none',
 }
 
+/**
+ * Options for evaluating LG templates.
+ */
 export class EvaluationOptions {
     private readonly nullKeyReplaceStrRegex = /\${\s*path\s*}/g;
     private readonly strictModeKey = '@strict';
@@ -43,10 +46,19 @@ export class EvaluationOptions {
     public LineBreakStyle: LGLineBreakStyle | undefined;
 
     /**
+     * The locale info for evaluating LG.
+     */
+    public locale: string;
+
+    /**
      * Cache scope of the evaluation result.
      */
     public cacheScope: LGCacheScope | undefined;
 
+    /**
+     * Creates a new instance of the [EvaluationOptions](xref:botbuilder-lg.EvaluationOptions) class.
+     * @param opt Instance to copy initial settings from.
+     */
     public constructor(opt?: EvaluationOptions | string[]) {
         if (arguments.length === 0) {
             this.strictMode = undefined;
@@ -58,6 +70,7 @@ export class EvaluationOptions {
                 this.strictMode = opt.strictMode;
                 this.nullSubstitution = opt.nullSubstitution;
                 this.LineBreakStyle = opt.LineBreakStyle;
+                this.locale = opt.locale;
                 this.cacheScope = opt.cacheScope;
             } else {
                 if (opt !== undefined && opt.length > 0) {
@@ -86,6 +99,12 @@ export class EvaluationOptions {
         }
     }
 
+    /**
+     * Merges an incoming option to current option. If a property in incoming option is not null while it is null in current
+     * option, then the value of this property will be overwritten.
+     * @param opt Incoming option for merging.
+     * @returns Result after merging.
+     */
     public merge(opt: EvaluationOptions): EvaluationOptions {
         const properties = ['strictMode', 'nullSubstitution', 'LineBreakStyle'];
         for (const property of properties) {

@@ -5,13 +5,38 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { DialogTurnResult, DialogContext, Dialog } from 'botbuilder-dialogs';
-import { ValueExpression, StringExpression, BoolExpression } from 'adaptive-expressions';
+
+import {
+    BoolExpression,
+    BoolExpressionConverter,
+    Expression,
+    StringExpression,
+    StringExpressionConverter,
+    ValueExpression,
+    ValueExpressionConverter,
+} from 'adaptive-expressions';
+import {
+    Converter,
+    ConverterFactory,
+    Dialog,
+    DialogConfiguration,
+    DialogContext,
+    DialogTurnResult,
+} from 'botbuilder-dialogs';
+
+export interface EmitEventConfiguration extends DialogConfiguration {
+    eventName?: string | Expression | StringExpression;
+    eventValue?: unknown | ValueExpression;
+    bubbleEvent?: boolean | string | Expression | BoolExpression;
+    disabled?: boolean | string | Expression | BoolExpression;
+}
 
 /**
  * Action which emits an event declaratively.
  */
-export class EmitEvent<O extends object = {}> extends Dialog<O> {
+export class EmitEvent<O extends object = {}> extends Dialog<O> implements EmitEventConfiguration {
+    public static $kind = 'Microsoft.EmitEvent';
+  
     public constructor();
 
     /**
@@ -58,6 +83,21 @@ export class EmitEvent<O extends object = {}> extends Dialog<O> {
      * An optional expression which if is true will disable this action.
      */
     public disabled?: BoolExpression;
+
+    public getConverter(property: keyof EmitEventConfiguration): Converter | ConverterFactory {
+        switch (property) {
+            case 'eventName':
+                return new StringExpressionConverter();
+            case 'eventValue':
+                return new ValueExpressionConverter();
+            case 'bubbleEvent':
+                return new BoolExpressionConverter();
+            case 'disabled':
+                return new BoolExpressionConverter();
+            default:
+                return super.getConverter(property);
+        }
+    }
 
     /**
      * Starts a new [Dialog](xref:botbuilder-dialogs.Dialog) and pushes it onto the dialog stack.

@@ -6,12 +6,16 @@
  * Licensed under the MIT License.
  */
 
-import { Converter } from 'botbuilder-dialogs-declarative';
+import { Converter } from 'botbuilder-dialogs';
 
 /**
  * Language policy with fallback for each language as most specific to default en-us -> en -> default.
  */
 export class LanguagePolicy extends Map<string, string[]> {
+    /**
+     * Initializes a new instance of the [LanguagePolicy](xref:botbuilder-dialogs-adaptive.LanguagePolicy) class.
+     * @param defaultLanguages Default languages to use.
+     */
     public constructor(...defaultLanguages: string[]) {
         super(LanguagePolicy.defaultPolicy(defaultLanguages));
     }
@@ -867,12 +871,16 @@ export class LanguagePolicy extends Map<string, string[]> {
         'zu-za',
     ];
 
-    // walk through all of the cultures and create a dictionary map with most specific to least specific
-    // Example output "en-us" will generate fallback rule like this:
-    //   "en-us" -> "en" -> ""
-    //   "en" -> ""
-    // So that when we get a locale such as en-gb, we can try to resolve to "en-gb" then "en" then ""
-    // See commented section for full sample of output of this function
+    /**
+     * Walk through all of the cultures and create a dictionary map with most specific to least specific.
+     * @param defaultLanguages Default languages to use.
+     * @returns A Map object with a string array for each key.
+     * @example Example output "en-us" will generate fallback rule like this:
+     * "en-us" -> "en" -> ""
+     * "en" -> ""
+     * So that when we get a locale such as en-gb, we can try to resolve to "en-gb" then "en" then ""
+     * See commented section for full sample of output of this function.
+     */
     public static defaultPolicy(defaultLanguages: string[] = []): Map<string, string[]> {
         const result = new Map<string, string[]>();
 
@@ -904,8 +912,19 @@ export class LanguagePolicy extends Map<string, string[]> {
     }
 }
 
-export class LanguagePolicyConverter implements Converter {
-    public convert(value: object): LanguagePolicy {
+/**
+ * Language policy converter that implements `Converter`.
+ */
+export class LanguagePolicyConverter implements Converter<Record<string, string[]>, LanguagePolicy> {
+    /**
+     * Converts an object to a [LanguagePolicy](xref:botbuilder-dialogs-adaptive.LanguagePolicy) instance.
+     * @param value Object.
+     * @returns A new [LanguagePolicy](xref:botbuilder-dialogs-adaptive.LanguagePolicy) instance.
+     */
+    public convert(value: Record<string, string[]> | LanguagePolicy): LanguagePolicy {
+        if (value instanceof LanguagePolicy) {
+            return value;
+        }
         const policy = new LanguagePolicy();
         policy.clear(); // Empty default policy to load custom language policy
         for (const key in value) {

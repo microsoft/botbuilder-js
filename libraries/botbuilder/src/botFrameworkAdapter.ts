@@ -31,6 +31,7 @@ import {
     TurnContext,
     HealthCheckResponse,
     HealthResults,
+    ActivityEventNames,
 } from 'botbuilder-core';
 import {
     AuthenticationConfiguration,
@@ -363,6 +364,12 @@ export class BotFrameworkAdapter
         oAuthScope: string,
         logic: (context: TurnContext) => Promise<void>
     ): Promise<void>;
+     /**
+     * Asynchronously resumes a conversation with a user, possibly after some time has gone by.
+     * @param reference [ConversationReference](xref:botframework-schema.ConversationReference) of the conversation to continue.
+     * @param oAuthScopeOrlogic The intended recipient of any sent activities or the function to call to continue the conversation.
+     * @param logic Optional. The asynchronous method to call after the adapter middleware runs.
+     */
     public async continueConversation(
         reference: Partial<ConversationReference>,
         oAuthScopeOrlogic: string | ((context: TurnContext) => Promise<void>),
@@ -399,7 +406,7 @@ export class BotFrameworkAdapter
 
         const connectorClient = this.createConnectorClientInternal(reference.serviceUrl, credentials);
         const request: Partial<Activity> = TurnContext.applyConversationReference(
-            { type: 'event', name: 'continueConversation' },
+            { type: ActivityTypes.Event, name: ActivityEventNames.ContinueConversation },
             reference,
             true
         );
@@ -455,36 +462,45 @@ export class BotFrameworkAdapter
      */
     public async createConversation(
         reference: Partial<ConversationReference>,
+        parameters?: Partial<ConversationParameters> | ((context: TurnContext) => Promise<void>),
         logic?: (context: TurnContext) => Promise<void>
     ): Promise<void> {
         if (!reference.serviceUrl) {
             throw new Error(`BotFrameworkAdapter.createConversation(): missing serviceUrl.`);
         }
 
-        // Create conversation
-        const parameters: ConversationParameters = {
-            bot: reference.bot,
-            members: [reference.user],
-            isGroup: false,
-            activity: null,
-            channelData: null,
-        };
-        const client: ConnectorClient = this.createConnectorClient(reference.serviceUrl);
+        // Create conversation parameters, taking care to provide defaults that can be
+        // overridden by passed in parameters
+        const conversationParameters = Object.assign(
+            {},
+            {
+                bot: reference.bot,
+                members: [reference.user],
+                isGroup: false,
+                activity: null,
+                channelData: null,
+            },
+            typeof parameters === 'object' ? parameters : undefined
+        );
+
+        const callback = typeof parameters === 'function' ? parameters : logic;
+
+        const client = this.createConnectorClient(reference.serviceUrl);
 
         // Mix in the tenant ID if specified. This is required for MS Teams.
         if (reference.conversation && reference.conversation.tenantId) {
             // Putting tenantId in channelData is a temporary solution while we wait for the Teams API to be updated
-            parameters.channelData = { tenant: { id: reference.conversation.tenantId } };
+            conversationParameters.channelData = { tenant: { id: reference.conversation.tenantId } };
 
             // Permanent solution is to put tenantId in parameters.tenantId
-            parameters.tenantId = reference.conversation.tenantId;
+            conversationParameters.tenantId = reference.conversation.tenantId;
         }
 
-        const response = await client.conversations.createConversation(parameters);
+        const response = await client.conversations.createConversation(conversationParameters);
 
         // Initialize request and copy over new conversation ID and updated serviceUrl.
         const request: Partial<Activity> = TurnContext.applyConversationReference(
-            { type: 'event', name: 'createConversation' },
+            { type: ActivityTypes.Event, name: ActivityEventNames.CreateConversation },
             reference,
             true
         );
@@ -497,15 +513,15 @@ export class BotFrameworkAdapter
             name: null,
         };
         request.conversation = conversation;
-        request.channelData = parameters.channelData;
+        request.channelData = conversationParameters.channelData;
 
         if (response.serviceUrl) {
             request.serviceUrl = response.serviceUrl;
         }
 
         // Create context and run middleware
-        const context: TurnContext = this.createContext(request);
-        await this.runMiddleware(context, logic as any);
+        const context = this.createContext(request);
+        await this.runMiddleware(context, callback);
     }
 
     /**
@@ -681,13 +697,26 @@ export class BotFrameworkAdapter
      *
      * @returns A [TokenResponse](xref:botframework-schema.TokenResponse) object that contains the user token.
      */
-    public async getUserToken(context: TurnContext, connectionName: string, magicCode?: string): Promise<TokenResponse>;
+    public async getUserToken(
+        context: TurnContext, 
+        connectionName: string, 
+        magicCode?: string
+    ): Promise<TokenResponse>;
     public async getUserToken(
         context: TurnContext,
         connectionName: string,
         magicCode?: string,
         oAuthAppCredentials?: CoreAppCredentials
     ): Promise<TokenResponse>;
+    /**
+     * Asynchronously attempts to retrieve the token for a user that's in a login flow.
+     * @param context The [TurnContext](xref:botbuilder-core.TurnContext) for the turn.
+     * @param connectionName The name of the auth connection to use.
+     * @param magicCode Optional. The validation code the user entered.
+     * @param oAuthAppCredentials Optional. [AppCredentials](xref:botframework-connector.AppCredentials) for OAuth.
+     * 
+     * @returns A [TokenResponse](xref:botframework-schema.TokenResponse) object that contains the user token.
+     */      
     public async getUserToken(
         context: TurnContext,
         connectionName: string,
@@ -726,13 +755,25 @@ export class BotFrameworkAdapter
      * @param userId The ID of user to sign out.
      * @param oAuthAppCredentials AppCredentials for OAuth.
      */
-    public async signOutUser(context: TurnContext, connectionName?: string, userId?: string): Promise<void>;
+    public async signOutUser(
+       context: TurnContext, 
+       connectionName?: string, 
+       userId?: string
+    ): Promise<void>;
     public async signOutUser(
         context: TurnContext,
         connectionName?: string,
         userId?: string,
         oAuthAppCredentials?: CoreAppCredentials
     ): Promise<void>;
+    /**
+     * Asynchronously signs out the user from the token server.
+     * 
+     * @param context The [TurnContext](xref:botbuilder-core.TurnContext) for the turn.
+     * @param connectionName Optional. The name of the auth connection to use.
+     * @param userId Optional. The ID of the user to sign out.
+     * @param oAuthAppCredentials Optional. [AppCredentials](xref:botframework-connector.AppCredentials) for OAuth.
+     */      
     public async signOutUser(
         context: TurnContext,
         connectionName?: string,
@@ -781,6 +822,17 @@ export class BotFrameworkAdapter
         userId?: string,
         finalRedirect?: string
     ): Promise<string>;
+    /**
+     * Asynchronously gets a sign-in link from the token server that can be sent as part
+     * of a [SigninCard](xref:botframework-schema.SigninCard).
+     * 
+     * @param context The [TurnContext](xref:botbuilder-core.TurnContext) for the turn.
+     * @param connectionName The name of the auth connection to use.
+     * @param oAuthAppCredentials Optional. [AppCredentials](xref:botframework-connector.AppCredentials) for OAuth.
+     * @param userId Optional. The user id that will be associated with the token.
+     * @param finalRedirect Optional. The final URL that the OAuth flow will redirect to.
+     * @returns The sign in link.
+     */      
     public async getSignInLink(
         context: TurnContext,
         connectionName: string,
@@ -824,13 +876,29 @@ export class BotFrameworkAdapter
      *
      * @returns The [TokenStatus](xref:botframework-connector.TokenStatus) objects retrieved.
      */
-    public async getTokenStatus(context: TurnContext, userId?: string, includeFilter?: string): Promise<TokenStatus[]>;
+    public async getTokenStatus(
+        context: TurnContext,
+        userId?: string, 
+        includeFilter?: string
+     ): Promise<TokenStatus[]>;
     public async getTokenStatus(
         context: TurnContext,
         userId?: string,
         includeFilter?: string,
         oAuthAppCredentials?: CoreAppCredentials
     ): Promise<TokenStatus[]>;
+    /** 
+     * Asynchronously retrieves the token status for each configured connection for the given user.
+     * 
+     * @param context The [TurnContext](xref:botbuilder-core.TurnContext) for the turn.
+     * @param userId Optional. If present, the ID of the user to retrieve the token status for.
+     * Otherwise, the ID of the user who sent the current activity is used.
+     * @param includeFilter Optional. A comma-separated list of connection's to include. If present,
+     * the `includeFilter` parameter limits the tokens this method returns.
+     * @param oAuthAppCredentials Optional. [AppCredentials](xref:botframework-connector.AppCredentials) for OAuth.
+     * 
+     * @returns The [TokenStatus](xref:botframework-connector.TokenStatus) objects retrieved.
+     */      
     public async getTokenStatus(
         context: TurnContext,
         userId?: string,
@@ -875,6 +943,16 @@ export class BotFrameworkAdapter
         resourceUrls: string[],
         oAuthAppCredentials?: CoreAppCredentials
     ): Promise<{ [propertyName: string]: TokenResponse }>;
+    /**
+     * Asynchronously signs out the user from the token server.
+     * 
+     * @param context The [TurnContext](xref:botbuilder-core.TurnContext) for the turn.
+     * @param connectionName The name of the auth connection to use.
+     * @param resourceUrls The list of resource URLs to retrieve tokens for.
+     * @param oAuthAppCredentials Optional. [AppCredentials](xref:botframework-connector.AppCredentials) for OAuth.
+     * 
+     * @returns A map of the [TokenResponse](xref:botframework-schema.TokenResponse) objects by resource URL.
+     */    
     public async getAadTokens(
         context: TurnContext,
         connectionName: string,
@@ -955,6 +1033,7 @@ export class BotFrameworkAdapter
      * @param connectionName Name of the auth connection to use.
      * @param userId The user id that will be associated with the token.
      * @param tokenExchangeRequest The exchange request details, either a token to exchange or a uri to exchange.
+     * @param appCredentials Optional. The CoreAppCredentials for OAuth.
      */
     public async exchangeToken(
         context: TurnContext,
@@ -963,6 +1042,15 @@ export class BotFrameworkAdapter
         tokenExchangeRequest: TokenExchangeRequest,
         appCredentials?: CoreAppCredentials
     ): Promise<TokenResponse>;
+     /**
+     * Asynchronously Performs a token exchange operation such as for single sign-on.
+     * @param context The [TurnContext](xref:botbuilder-core.TurnContext) for the turn.
+     * @param connectionName Name of the auth connection to use.
+     * @param userId The user id that will be associated with the token.
+     * @param tokenExchangeRequest The [TokenExchangeRequest](xref:botbuilder-schema.TokenExchangeRequest), either a token to exchange or a uri to exchange.
+     * @param appCredentials Optional. [AppCredentials](xref:botframework-connector.AppCredentials) for OAuth.
+     * @returns A `Promise` representing the exchanged [TokenResponse](xref:botframework-schema.TokenResponse).
+     */
     public async exchangeToken(
         context: TurnContext,
         connectionName: string,
@@ -1312,7 +1400,7 @@ export class BotFrameworkAdapter
      * @remarks
      * If the ClaimsIdentity contains the claims for a Skills request, create a ConnectorClient for use with Skills.
      * Derives the correct audience from the ClaimsIdentity, or the instance's credentials property.
-     * @param serviceUrl
+     * @param serviceUrl The client's service URL.
      * @param identity ClaimsIdentity
      */
     public async createConnectorClientWithIdentity(
@@ -1324,7 +1412,7 @@ export class BotFrameworkAdapter
      * @remarks
      * If the trimmed audience is not a non-zero length string, the audience will be derived from the ClaimsIdentity or
      * the instance's credentials property.
-     * @param serviceUrl
+     * @param serviceUrl The client's service URL.
      * @param identity ClaimsIdentity
      * @param audience The recipient of the ConnectorClient's messages. Normally the Bot Framework Channel Service or the AppId of another bot.
      */
@@ -1333,6 +1421,16 @@ export class BotFrameworkAdapter
         identity: ClaimsIdentity,
         audience: string
     ): Promise<ConnectorClient>;
+     /**
+     * Create a [ConnectorClient](xref:botbuilder-connector.ConnectorClient) with a [ClaimsIdentity](xref:botbuilder-connector.ClaimsIdentity).
+     * @remarks
+     * If the [ClaimsIdentity](xref:botbuilder-connector.ClaimsIdentity) contains the claims for a Skills request, create a [ConnectorClient](xref:botbuilder-connector.ConnectorClient) for use with Skills.
+     * Derives the correct audience from the [ClaimsIdentity](xref:botbuilder-connector.ClaimsIdentity), or the instance's credentials property.
+     * @param serviceUrl The client's service URL.
+     * @param identity [ClaimsIdentity](xref:botbuilder-connector.ClaimsIdentity).
+     * @param audience Optional. The recipient of the [ConnectorClient](xref:botbuilder-connector.ConnectorClient)'s messages. Normally the Bot Framework Channel Service or the AppId of another bot.
+     * @returns The client.
+     */  
     public async createConnectorClientWithIdentity(
         serviceUrl: string,
         identity: ClaimsIdentity,
@@ -1417,6 +1515,13 @@ export class BotFrameworkAdapter
         return client;
     }
 
+    /**
+     * Returns the correct [OAuthScope](xref:botframework-connector.AppCredentials.OAuthScope) for [AppCredentials](xref:botframework-connector.AppCredentials).
+     * @param botAppId The bot's AppId.
+     * @param claims The [Claim](xref:botbuilder-connector.Claim) list to check. 
+     * 
+     * @returns The current credentials' OAuthScope.
+     */
     private async getOAuthScope(botAppId: string, claims: Claim[]): Promise<string> {
         // If the Claims are for skills, we need to create an AppCredentials instance with
         // the correct scope for communication between the caller and the skill.
@@ -1463,6 +1568,16 @@ export class BotFrameworkAdapter
      * Override this in a derived class to create a mock OAuth API client for unit testing.
      */
     protected createTokenApiClient(serviceUrl: string, oAuthAppCredentials?: CoreAppCredentials): TokenApiClient;
+    /**
+     * Creates an OAuth API client.
+     * 
+     * @param serviceUrl The client's service URL.
+     * @param oAuthAppCredentials Optional. The [AppCredentials](xref:botframework-connector.AppCredentials)for OAuth.
+     * 
+     * @remarks
+     * Override this in a derived class to create a mock OAuth API client for unit testing.
+     * @returns The client.
+     */
     protected createTokenApiClient(serviceUrl: string, oAuthAppCredentials?: AppCredentials): TokenApiClient {
         const tokenApiClientCredentials = oAuthAppCredentials ? oAuthAppCredentials : this.credentials;
         const client = new TokenApiClient(tokenApiClientCredentials, { baseUri: serviceUrl, userAgent: USER_AGENT });
@@ -1643,6 +1758,7 @@ export class BotFrameworkAdapter
                     request.verb
                 }`
             );
+
             return response;
         }
 
@@ -1676,7 +1792,13 @@ export class BotFrameworkAdapter
 
         return response;
     }
-
+      
+    /**
+     * Invoked when the bot is sent a health check from the hosting infrastructure or, in the case of Skills the parent bot.
+     * @param context The [TurnContext](xref:botbuilder-core.TurnContext) for this turn.
+     * 
+     * @returns The result of the health check.
+     */
     public async healthCheck(context: TurnContext): Promise<HealthCheckResponse> {
         const healthResults = <HealthResults>{
             success: true,
@@ -1745,6 +1867,9 @@ export class BotFrameworkAdapter
         await this.startWebSocket(nodeWebSocket);
     }
 
+    /**
+     * @private
+     */
     private async authenticateConnection(req: WebRequest, channelService?: string): Promise<void> {
         if (!this.credentials.appId) {
             // auth is disabled
@@ -1779,11 +1904,17 @@ export class BotFrameworkAdapter
         await this.streamingServer.start();
     }
 
+    /**
+     * @private
+     */
     private async readRequestBodyAsString(request: IReceiveRequest): Promise<Activity> {
         const contentStream = request.streams[0];
         return await contentStream.readAsJson<Activity>();
     }
 
+    /**
+     * @private
+     */
     private async handleVersionRequest(
         request: IReceiveRequest,
         response: StreamingResponse

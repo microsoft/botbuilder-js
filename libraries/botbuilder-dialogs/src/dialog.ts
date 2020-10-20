@@ -172,64 +172,6 @@ export interface DialogConfiguration {
     telemetryClient?: BotTelemetryClient;
 }
 
-export interface DialogEvent {
-    /**
-     * Flag indicating whether the event will be bubbled to the parent `DialogContext`.
-     */
-    bubble: boolean;
-
-    /**
-     * Name of the event being raised.
-     */
-    name: string;
-
-    /**
-     * Optional. Value associated with the event.
-     */
-    value?: any;
-}
-
-export interface DialogConfiguration {
-    /**
-     * Static id of the dialog.
-     */
-    id?: string;
-
-    /**
-     * Telemetry client the dialog should use.
-     */
-    telemetryClient?: BotTelemetryClient;
-}
-
-export interface DialogEvent {
-    /**
-     * Flag indicating whether the event will be bubbled to the parent `DialogContext`.
-     */
-    bubble: boolean;
-
-    /**
-     * Name of the event being raised.
-     */
-    name: string;
-
-    /**
-     * Optional. Value associated with the event.
-     */
-    value?: any;
-}
-
-export interface DialogConfiguration {
-    /**
-     * Static id of the dialog.
-     */
-    id?: string;
-
-    /**
-     * Telemetry client the dialog should use.
-     */
-    telemetryClient?: BotTelemetryClient;
-}
-
 /**
  * Represents the result of a dialog context's attempt to begin, continue,
  * or otherwise manipulate one or more dialogs.
@@ -326,6 +268,9 @@ export abstract class Dialog<O extends object = {}> extends Configurable {
         return this._id;
     }
 
+    /**
+     * Sets the unique ID of the dialog.
+     */
     public set id(value: string) {
         this._id = value;
     }

@@ -11,6 +11,9 @@ import { AliasPathResolver } from './aliasPathResolver';
  * Maps $xxx => dialog.xxx
  */
 export class DollarPathResolver extends AliasPathResolver {
+    /**
+     * Initializes a new instance of the [DollarPathResolver](xref:botbuilder-dialogs.DollarPathResolver) class.
+     */
     constructor() {
         super('$', 'dialog.');
     }
