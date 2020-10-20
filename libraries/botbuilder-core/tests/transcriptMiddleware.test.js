@@ -1,78 +1,58 @@
 const assert = require('assert');
-const { TestAdapter, TranscriptLoggerMiddleware, MemoryTranscriptStore, ActivityTypes } = require('../');
+const sinon = require('sinon');
 
-class SyncErrorLogger {
-    logActivity(activity) {
-        throw new Error();
-    }
-}
-
-class AsyncErrorLogger {
-    async logActivity(activity) {
-        throw new Error();
-    }
-}
-
-class SyncThrowerLogger {
-    logActivity(activity) {
-        throw 1;
-    }
-}
-
-class AsyncThrowerLogger {
-    async logActivity(activity) {
-        throw 2;
-    }
-}
-
+const {
+    ConsoleTranscriptLogger,
+    TestAdapter,
+    TranscriptLoggerMiddleware,
+    MemoryTranscriptStore,
+    ActivityTypes,
+    ActivityEventNames,
+} = require('../');
 
 describe(`TranscriptLoggerMiddleware`, function () {
     this.timeout(5000);
 
-    it(`should log activities`, function (done) {
-        var conversationId = null;
-        var transcriptStore = new MemoryTranscriptStore();
-        var adapter = new TestAdapter(async (context) => {
+    it(`should log activities`, async function () {
+        let conversationId = null;
+        const transcriptStore = new MemoryTranscriptStore();
+        const adapter = new TestAdapter(async (context) => {
             conversationId = context.activity.conversation.id;
             var typingActivity = {
                 type: ActivityTypes.Typing,
-                relatesTo: context.activity.relatesTo
+                relatesTo: context.activity.relatesTo,
             };
 
             await context.sendActivity(typingActivity);
             await context.sendActivity(`echo:${context.activity.text}`);
-
         }).use(new TranscriptLoggerMiddleware(transcriptStore));
 
-        adapter
+        await adapter
             .send('foo')
-            .assertReply(activity => assert.equal(activity.type, ActivityTypes.Typing))
+            .assertReply((activity) => assert.equal(activity.type, ActivityTypes.Typing))
             .assertReply('echo:foo')
             .send('bar')
-            .assertReply(activity => assert.equal(activity.type, ActivityTypes.Typing))
-            .assertReply('echo:bar')
-            .then(() => {
-                transcriptStore.getTranscriptActivities('test', conversationId).then(pagedResult => {
-                    assert.equal(pagedResult.items.length, 6);
-                    assert.equal(pagedResult.items[0].text, 'foo');
-                    assert.equal(pagedResult.items[1].type, ActivityTypes.Typing);
-                    assert.equal(pagedResult.items[2].text, 'echo:foo');
-                    assert.equal(pagedResult.items[3].text, 'bar');
-                    assert.equal(pagedResult.items[4].type, ActivityTypes.Typing);
-                    assert.equal(pagedResult.items[5].text, 'echo:bar');
-                    pagedResult.items.forEach(a => {
-                        assert(a.timestamp);
-                    })
-                    done();
-                });
-            });
+            .assertReply((activity) => assert.equal(activity.type, ActivityTypes.Typing))
+            .assertReply('echo:bar');
+
+        const pagedResult = await transcriptStore.getTranscriptActivities('test', conversationId);
+        assert.equal(pagedResult.items.length, 6);
+        assert.equal(pagedResult.items[0].text, 'foo');
+        assert.equal(pagedResult.items[1].type, ActivityTypes.Typing);
+        assert.equal(pagedResult.items[2].text, 'echo:foo');
+        assert.equal(pagedResult.items[3].text, 'bar');
+        assert.equal(pagedResult.items[4].type, ActivityTypes.Typing);
+        assert.equal(pagedResult.items[5].text, 'echo:bar');
+        pagedResult.items.forEach((a) => {
+            assert(a.timestamp);
+        });
     });
 
-    it(`should log update activities`, function (done) {
-        var conversationId = null;
+    it(`should log update activities`, async function () {
+        let conversationId = null;
         let activityToUpdate = null;
-        var transcriptStore = new MemoryTranscriptStore();
-        var adapter = new TestAdapter(async (context) => {
+        const transcriptStore = new MemoryTranscriptStore();
+        const adapter = new TestAdapter(async (context) => {
             conversationId = context.activity.conversation.id;
             if (context.activity.text === 'update') {
                 activityToUpdate.text = 'new response';
@@ -85,55 +65,58 @@ describe(`TranscriptLoggerMiddleware`, function () {
                 // clone the activity, so we can use it to do an update
                 activityToUpdate = JSON.parse(JSON.stringify(activity));
             }
-
         }).use(new TranscriptLoggerMiddleware(transcriptStore));
 
-        adapter
-            .send('foo')
-            .delay(100)
-            .send('update')
-            .delay(100)
-            .then(() => {
-                transcriptStore.getTranscriptActivities('test', conversationId).then(pagedResult => {
-                    assert(pagedResult.items.length, 4);
-                    assert(pagedResult.items[0].text, 'foo');
-                    assert(pagedResult.items[1].text, 'response');
-                    assert(pagedResult.items[2].text, 'new response');
-                    assert(pagedResult.items[3].text, 'update');
-                    done();
-                });
-            });
+        await adapter.send('foo').delay(100).send('update').delay(100);
 
+        const pagedResult = await transcriptStore.getTranscriptActivities('test', conversationId);
+        assert(pagedResult.items.length, 4);
+        assert(pagedResult.items[0].text, 'foo');
+        assert(pagedResult.items[1].text, 'response');
+        assert(pagedResult.items[2].text, 'new response');
+        assert(pagedResult.items[3].text, 'update');
     });
 
-    it(`should log delete activities`, function(done) {
-        var conversationId = null;
-        var activityId = null;
-        var transcriptStore = new MemoryTranscriptStore();
-        var adapter = new TestAdapter(async (context) => {
+    it(`should log delete activities`, async function () {
+        let conversationId = null;
+        let activityId = null;
+        const transcriptStore = new MemoryTranscriptStore();
+        const adapter = new TestAdapter(async (context) => {
             conversationId = context.activity.conversation.id;
-            if(context.activity.text === 'deleteIt') {
+            if (context.activity.text === 'deleteIt') {
                 await context.deleteActivity(activityId);
             } else {
-                var activity = createReply(context.activity, 'response');
-                var response = await context.sendActivity(activity);
+                const activity = createReply(context.activity, 'response');
+                const response = await context.sendActivity(activity);
                 activityId = response.id;
             }
         }).use(new TranscriptLoggerMiddleware(transcriptStore));
 
-        adapter.send('foo')
-            .assertReply('response')
-            .send('deleteIt')
-            .delay(500).then(() => {
-                transcriptStore.getTranscriptActivities('test', conversationId).then(pagedResult => {
-                    assert(pagedResult.items.length, 4);
-                    assert(pagedResult.items[0].text, 'foo');
-                    assert(pagedResult.items[1].text, 'response');
-                    assert(pagedResult.items[2].text, 'deleteIt');
-                    assert(pagedResult.items[3].type, ActivityTypes.MessageDelete);
-                    done();
-                });
-            })
+        await adapter.send('foo').assertReply('response').send('deleteIt').delay(500);
+
+        const pagedResult = await transcriptStore.getTranscriptActivities('test', conversationId);
+
+        assert(pagedResult.items.length, 4);
+        assert(pagedResult.items[0].text, 'foo');
+        assert(pagedResult.items[1].text, 'response');
+        assert(pagedResult.items[2].text, 'deleteIt');
+        assert(pagedResult.items[3].type, ActivityTypes.MessageDelete);
+    });
+
+    it('should filter continueConversation events', async () => {
+        let conversationId;
+        const transcriptStore = new MemoryTranscriptStore();
+        const adapter = new TestAdapter(async (context) => {
+            conversationId = context.activity.conversation.id;
+        }).use(new TranscriptLoggerMiddleware(transcriptStore));
+
+        await adapter
+            .send('foo')
+            .send('bar')
+            .send({ type: ActivityTypes.Event, name: ActivityEventNames.ContinueConversation });
+
+        const pagedResult = await transcriptStore.getTranscriptActivities('test', conversationId);
+        assert.strictEqual(pagedResult.items.length, 2, 'only the two message activities should be logged');
     });
 
     it(`should not error for sent activities if no ResourceResponses are received`, async () => {
@@ -154,19 +137,19 @@ describe(`TranscriptLoggerMiddleware`, function () {
             conversationId = context.activity.conversation.id;
             const typingActivity = {
                 type: ActivityTypes.Typing,
-                relatesTo: context.activity.relatesTo
+                relatesTo: context.activity.relatesTo,
             };
 
             await context.sendActivity(typingActivity);
             await context.sendActivity(`echo:${context.activity.text}`);
-
         }).use(new TranscriptLoggerMiddleware(transcriptStore));
 
-        await adapter.send('foo')
-            .assertReply(activity => assert.equal(activity.type, ActivityTypes.Typing))
+        await adapter
+            .send('foo')
+            .assertReply((activity) => assert.equal(activity.type, ActivityTypes.Typing))
             .assertReply('echo:foo')
             .send('bar')
-            .assertReply(activity => assert.equal(activity.type, ActivityTypes.Typing))
+            .assertReply((activity) => assert.equal(activity.type, ActivityTypes.Typing))
             .assertReply('echo:bar');
 
         const pagedResult = await transcriptStore.getTranscriptActivities('test', conversationId);
@@ -177,7 +160,7 @@ describe(`TranscriptLoggerMiddleware`, function () {
         assert.equal(pagedResult.items[3].text, 'bar');
         assert.equal(pagedResult.items[4].type, ActivityTypes.Typing);
         assert.equal(pagedResult.items[5].text, 'echo:bar');
-        pagedResult.items.forEach(a => {
+        pagedResult.items.forEach((a) => {
             assert(a.timestamp);
         });
     });
@@ -203,23 +186,23 @@ describe(`TranscriptLoggerMiddleware`, function () {
             conversationId = context.activity.conversation.id;
             const typingActivity = {
                 type: ActivityTypes.Typing,
-                relatesTo: context.activity.relatesTo
+                relatesTo: context.activity.relatesTo,
             };
 
             await context.sendActivity(typingActivity);
             await context.sendActivity(`echo:${context.activity.text}`);
-
         });
 
         // Register both middleware
         adapter.use(new TranscriptLoggerMiddleware(transcriptStore));
         adapter.use(new NoResourceResponseMiddleware());
 
-        await adapter.send('foo')
-            .assertReply(activity => assert.equal(activity.type, ActivityTypes.Typing))
+        await adapter
+            .send('foo')
+            .assertReply((activity) => assert.equal(activity.type, ActivityTypes.Typing))
             .assertReply('echo:foo')
             .send('bar')
-            .assertReply(activity => assert.equal(activity.type, ActivityTypes.Typing))
+            .assertReply((activity) => assert.equal(activity.type, ActivityTypes.Typing))
             .assertReply('echo:bar');
 
         const pagedResult = await transcriptStore.getTranscriptActivities('test', conversationId);
@@ -230,7 +213,7 @@ describe(`TranscriptLoggerMiddleware`, function () {
         assert.equal(pagedResult.items[3].text, 'bar');
         assert.equal(pagedResult.items[4].type, ActivityTypes.Typing);
         assert.equal(pagedResult.items[5].text, 'echo:bar');
-        pagedResult.items.forEach(a => {
+        pagedResult.items.forEach((a) => {
             assert(a.timestamp);
         });
     });
@@ -263,14 +246,13 @@ describe(`TranscriptLoggerMiddleware`, function () {
         adapter.use(new TranscriptLoggerMiddleware(transcriptStore));
         adapter.use(new NoResourceResponseMiddleware());
 
-        await adapter.send('foo')
-            .assertReply('echo:foo');
+        await adapter.send('foo').assertReply('echo:foo');
 
         const pagedResult = await transcriptStore.getTranscriptActivities('test', conversationId);
         assert.equal(pagedResult.items.length, 2);
         assert.equal(pagedResult.items[0].text, 'foo');
         assert.equal(pagedResult.items[1].text, 'echo:foo');
-        pagedResult.items.forEach(a => {
+        pagedResult.items.forEach((a) => {
             assert(a.id);
             assert(a.timestamp);
         });
@@ -316,81 +298,80 @@ describe(`TranscriptLoggerMiddleware`, function () {
         adapter.use(new TranscriptLoggerMiddleware(transcriptStore));
         adapter.use(new Returns1Middleware());
 
-        await adapter.send('foo')
-            .assertReply('echo:foo');
+        await adapter.send('foo').assertReply('echo:foo');
 
         const pagedResult = await transcriptStore.getTranscriptActivities('test', conversationId);
         assert.equal(pagedResult.items.length, 2);
         assert.equal(pagedResult.items[0].text, 'foo');
         assert.equal(pagedResult.items[1].text, 'echo:foo');
-        pagedResult.items.forEach(a => {
+        pagedResult.items.forEach((a) => {
             assert(a.id);
             assert(a.timestamp);
         });
     });
 
-    describe('\'s error handling', function () {
-        const originalConsoleError = console.error;
+    describe("'s error handling", function () {
+        let sandbox;
+        beforeEach(() => {
+            sandbox = sinon.createSandbox();
+        });
 
-        this.afterEach(function () {
-            console.error = originalConsoleError;
-        })
+        afterEach(() => {
+            sandbox.restore();
+        });
 
-        function stubConsoleError(done, expectedErrorMessage, expectedErrors = 1) {
-            let errorCounter = 0;      
-            console.error = function (error) {
-                // We only care about the error message on the first error.
-                if (errorCounter === 0) {
-                    if (expectedErrorMessage) {
-                        assert(error.startsWith(expectedErrorMessage), `unexpected error message received: ${ error }`);
-                    } else {
-                        assert(error.startsWith('TranscriptLoggerMiddleware logActivity failed'), `unexpected error message received: ${ error }`);
-                    }
-                }
-                errorCounter++;
+        // Returns an adapter that is expected to throw (or, IFF `async` is true, yield a Promise rejecting)
+        // `expectedError`. All behavior can be verified by calling `sandbox.verify()`.
+        const mockedAdapter = (expectedError, async = false) => {
+            const logger = new ConsoleTranscriptLogger();
 
-                if (expectedErrors === errorCounter)  {
-                    done();
-                } if (errorCounter > expectedErrors) {
-                    throw new Error(`console.error() called too many times.`);
-                }
+            const adapter = new TestAdapter(async () => {
+                // noop
+            }).use(new TranscriptLoggerMiddleware(logger));
+
+            const mLogger = sandbox.mock(logger);
+            if (async) {
+                mLogger.expects('logActivity').returns(Promise.reject(expectedError));
+            } else {
+                mLogger.expects('logActivity').throws(expectedError);
             }
-        }
 
-        it(`should print to console errors from synchronous logActivity()`, function (done) {
-            stubConsoleError(done, undefined, 2);
-            var adapter = new TestAdapter(async (context) => {
-            }).use(new TranscriptLoggerMiddleware(new SyncErrorLogger()));
-    
-            adapter.send('test');
-        });
+            const mConsole = sandbox.mock(console);
 
-        it(`should print to console errors from asynchronous logActivity().`, function (done) {
-            stubConsoleError(done, undefined, 2);
-            var adapter = new TestAdapter(async (context) => {
-            }).use(new TranscriptLoggerMiddleware(new AsyncErrorLogger()));
-    
-            adapter.send('test');
-        });
+            const prefix = 'TranscriptLoggerMiddleware logActivity failed';
+            if (expectedError instanceof Error) {
+                mConsole.expects('error').withArgs(`${prefix}: "${expectedError.message}"`).once();
+                mConsole.expects('error').withArgs(expectedError.stack).once();
+            } else {
+                mConsole
+                    .expects('error')
+                    .withArgs(`${prefix}: "${JSON.stringify(expectedError)}"`)
+                    .once();
+            }
 
-        it(`should print to console thrown info from synchronous logActivity()`, function (done) {
-            stubConsoleError(done, 'TranscriptLoggerMiddleware logActivity failed: "1"');
-            var adapter = new TestAdapter(async (context) => {
-            }).use(new TranscriptLoggerMiddleware(new SyncThrowerLogger()));
-    
-            adapter.send('test');
-        });
+            return adapter;
+        };
 
-        it(`should print to console thrown info from asynchronous logActivity().`, function (done) {
-            stubConsoleError(done, 'TranscriptLoggerMiddleware logActivity failed: "2"');
-            var adapter = new TestAdapter(async (context) => {
-            }).use(new TranscriptLoggerMiddleware(new AsyncThrowerLogger()));
-    
-            adapter.send('test');
+        const testCases = [
+            { label: 'errors', expectedError: new Error('error message') },
+            { label: 'thrown info', expectedError: 10 },
+        ];
+
+        testCases.forEach((testCase) => {
+            it(`should print to console ${testCase.label} from synchronous logActivity()`, async function () {
+                await mockedAdapter(testCase.expectedError).send('test');
+                sandbox.verify();
+            });
+
+            it(`should print to console ${testCase.label} from asynchronous logActivity().`, async function () {
+                await mockedAdapter(testCase.expectedError, true).send('test');
+                await new Promise((resolve) => process.nextTick(resolve));
+                sandbox.verify();
+            });
         });
     });
 
-    it(`should add resource response id to activity when activity id is empty`, function (done) {
+    it(`should add resource response id to activity when activity id is empty`, async function () {
         let conversationId = null;
         const transcriptStore = new MemoryTranscriptStore();
         const adapter = createTestAdapterWithNoResourceResponseId(async (context) => {
@@ -402,34 +383,30 @@ describe(`TranscriptLoggerMiddleware`, function () {
         const fooActivity = {
             type: ActivityTypes.Message,
             id: 'testFooId',
-            text: 'foo'
+            text: 'foo',
         };
 
-        adapter
+        await adapter
             .send(fooActivity)
             // sent activities do not contain the id returned from the service, so it should be undefined here
-            .assertReply(activity => assert.equal(activity.id, undefined) && assert.equal(activity.text, 'echo:foo')) 
+            .assertReply((activity) => assert.equal(activity.id, undefined) && assert.equal(activity.text, 'echo:foo'))
             .send('bar')
-            .assertReply(activity => assert.equal(activity.id, undefined) && assert.equal(activity.text, 'echo:bar')) 
-            .then(() => {
-                transcriptStore.getTranscriptActivities('test', conversationId).then(pagedResult => {
-                    assert.equal(pagedResult.items.length, 4);
-                    assert.equal(pagedResult.items[0].text, 'foo');
-                    // Transcript activities should have the id present on the activity when received
-                    assert.equal(pagedResult.items[0].id, 'testFooId');
+            .assertReply((activity) => assert.equal(activity.id, undefined) && assert.equal(activity.text, 'echo:bar'));
 
-                    assert.equal(pagedResult.items[1].text, 'echo:foo');
-                    assert.equal(pagedResult.items[2].text, 'bar');
-                    assert.equal(pagedResult.items[3].text, 'echo:bar');
+        const pagedResult = await transcriptStore.getTranscriptActivities('test', conversationId);
+        assert.equal(pagedResult.items.length, 4);
+        assert.equal(pagedResult.items[0].text, 'foo');
+        // Transcript activities should have the id present on the activity when received
+        assert.equal(pagedResult.items[0].id, 'testFooId');
 
-                    pagedResult.items.forEach(a => {
-                        assert(a.timestamp);
-                        assert(a.id);
-                    });
-                    done();
-                });
-            })
-            .catch(err => done(err));
+        assert.equal(pagedResult.items[1].text, 'echo:foo');
+        assert.equal(pagedResult.items[2].text, 'bar');
+        assert.equal(pagedResult.items[3].text, 'echo:bar');
+
+        pagedResult.items.forEach((a) => {
+            assert(a.timestamp);
+            assert(a.id);
+        });
     });
 
     it(`should use outgoing activity's timestamp for activity id when activity id and resourceResponse is empty`, async () => {
@@ -441,26 +418,27 @@ describe(`TranscriptLoggerMiddleware`, function () {
 
             timestamp = new Date(Date.now());
             await context.sendActivity({
-                text: `echo:${ context.activity.text }`,
+                text: `echo:${context.activity.text}`,
                 timestamp: timestamp,
-                type: ActivityTypes.Message
+                type: ActivityTypes.Message,
             });
         }).use(new TranscriptLoggerMiddleware(transcriptStore));
 
         const fooActivity = {
             type: ActivityTypes.Message,
             id: 'testFooId',
-            text: 'foo'
+            text: 'foo',
         };
 
-        await adapter.send(fooActivity)
+        await adapter
+            .send(fooActivity)
             // sent activities do not contain the id returned from the service, so it should be undefined here
-            .assertReply(activity => {
+            .assertReply((activity) => {
                 assert.equal(activity.id, undefined);
                 assert.equal(activity.text, 'echo:foo');
                 assert.equal(activity.timestamp, timestamp);
             });
-        
+
         const pagedResult = await transcriptStore.getTranscriptActivities('test', conversationId);
         assert.equal(pagedResult.items.length, 2);
         assert.equal(pagedResult.items[0].text, 'foo');
@@ -475,12 +453,12 @@ describe(`TranscriptLoggerMiddleware`, function () {
         // 3. The outgoing Activity.timestamp exists
         assert(pagedResult.items[1].id.indexOf(timestamp.getTime().toString()));
         assert(pagedResult.items[1].id.startsWith('g_'));
-        pagedResult.items.forEach(a => {
+        pagedResult.items.forEach((a) => {
             assert(a.timestamp);
         });
     });
 
-    it(`should use current server time for activity id when activity and resourceResponse id is empty and no activity timestamp exists`, function(done) {
+    it(`should use current server time for activity id when activity and resourceResponse id is empty and no activity timestamp exists`, async function () {
         let conversationId;
         const transcriptStore = new MemoryTranscriptStore();
 
@@ -488,44 +466,41 @@ describe(`TranscriptLoggerMiddleware`, function () {
             conversationId = context.activity.conversation.id;
 
             await context.sendActivity({
-                text: `echo:${ context.activity.text }`,
-                type: ActivityTypes.Message
+                text: `echo:${context.activity.text}`,
+                type: ActivityTypes.Message,
             });
         }).use(new TranscriptLoggerMiddleware(transcriptStore));
 
         const fooActivity = {
             type: ActivityTypes.Message,
             id: 'testFooId',
-            text: 'foo'
+            text: 'foo',
         };
 
-        adapter
+        await adapter
             .send(fooActivity)
             // sent activities do not contain the id returned from the service, so it should be undefined here
-            .assertReply(activity => {
+            .assertReply((activity) => {
                 assert.equal(activity.id, undefined);
                 assert.equal(activity.text, 'echo:foo');
-            }) 
-            .then(() => {
-                transcriptStore.getTranscriptActivities('test', conversationId).then(pagedResult => {
-                    assert.equal(pagedResult.items.length, 2);
-                    assert.equal(pagedResult.items[0].text, 'foo');
-                    // Transcript activities should have the id present on the activity when received
-                    assert.equal(pagedResult.items[0].id, 'testFooId');
-
-                    assert.equal(pagedResult.items[1].text, 'echo:foo');
-                    // Sent Activities in the transcript store should use the time the TranscriptLoggerMiddleware attempted 
-                    // to log the activity when the following cases are true:
-                    // 1. The outgoing Activity.id is falsey
-                    // 2. The ResourceResponse.id is falsey (some channels may not emit a ResourceResponse with an id value)
-                    // 3. The outgoing Activity.timestamp is falsey
-                    assert(pagedResult.items[1].id);
-                    pagedResult.items.forEach(a => {
-                        assert(a.timestamp);
-                    });
-                    done();
-                });
             });
+
+        const pagedResult = await transcriptStore.getTranscriptActivities('test', conversationId);
+        assert.equal(pagedResult.items.length, 2);
+        assert.equal(pagedResult.items[0].text, 'foo');
+        // Transcript activities should have the id present on the activity when received
+        assert.equal(pagedResult.items[0].id, 'testFooId');
+
+        assert.equal(pagedResult.items[1].text, 'echo:foo');
+        // Sent Activities in the transcript store should use the time the TranscriptLoggerMiddleware attempted
+        // to log the activity when the following cases are true:
+        // 1. The outgoing Activity.id is falsey
+        // 2. The ResourceResponse.id is falsey (some channels may not emit a ResourceResponse with an id value)
+        // 3. The outgoing Activity.timestamp is falsey
+        assert(pagedResult.items[1].id);
+        pagedResult.items.forEach((a) => {
+            assert(a.timestamp);
+        });
     });
 });
 
@@ -537,16 +512,15 @@ function createTestAdapterWithNoResourceResponseId(logic) {
             .filter((a) => this.sendTraceActivities || a.type !== 'trace')
             .map((activity) => {
                 this.activityBuffer.push(activity);
-                return { };
+                return {};
             });
-        
+
         return Promise.resolve(responses);
     }
     modifiedAdapter.sendActivities = sendActivities.bind(modifiedAdapter);
 
     return modifiedAdapter;
 }
-
 
 function createReply(activity, text, locale = null) {
     return {
@@ -556,8 +530,12 @@ function createReply(activity, text, locale = null) {
         replyToId: activity.id,
         serviceUrl: activity.serviceUrl,
         channelId: activity.channelId,
-        conversation: { isGroup: activity.conversation.isGroup, id: activity.conversation.id, name: activity.conversation.name },
+        conversation: {
+            isGroup: activity.conversation.isGroup,
+            id: activity.conversation.id,
+            name: activity.conversation.name,
+        },
         text: text || '',
-        locale: locale || activity.locale
+        locale: locale || activity.locale,
     };
 }
