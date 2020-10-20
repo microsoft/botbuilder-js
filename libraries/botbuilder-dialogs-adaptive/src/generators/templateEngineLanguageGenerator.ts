@@ -50,9 +50,6 @@ export class TemplateEngineLanguageGenerator<T = unknown, D extends Record<strin
 
     public generate(dialogContext: DialogContext, template: string, data: D): Promise<T> {
         try {
-            // BUGBUG: I'm casting objects to <any> to work around a bug in the activity factory.
-            //         The string version of of the serialized card isn't being parsed. We should
-            //         fix that in R10. The cast is working for now.
             const lgOptions = new EvaluationOptions();
             lgOptions.locale = dialogContext.getLocale();
             const result = this.lg.evaluateText(template, data, lgOptions);

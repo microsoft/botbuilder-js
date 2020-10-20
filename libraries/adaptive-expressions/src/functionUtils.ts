@@ -507,11 +507,14 @@ export class FunctionUtils {
      * @param verify Function to check each arg for validity.
      * @returns Delegate for evaluating an expression.
      */
-    public static applyWithOptionsAndError(func: (arg0: any[], options: Options) => any, verify?: VerifyExpression): EvaluateExpressionDelegate {
+    public static applyWithOptionsAndError(
+        func: (arg0: unknown[], options: Options) => { value: unknown; error: string },
+        verify?: VerifyExpression
+    ): EvaluateExpressionDelegate {
         return (expression: Expression, state: MemoryInterface, options: Options): ValueWithError => {
-            let value: any;
+            let value: unknown;
             let error: string;
-            let args: any[];
+            let args: unknown[];
             ({ args, error } = FunctionUtils.evaluateChildren(expression, state, options, verify));
             if (!error) {
                 try {
@@ -524,7 +527,6 @@ export class FunctionUtils {
             return { value, error };
         };
     }
-    
 
     /**
      * Generate an expression delegate that applies function on the accumulated value after verifying all children.
@@ -582,8 +584,8 @@ export class FunctionUtils {
      * @param locale A locale string
      * @param maxArgsLength The max length of a given function.
      */
-    public static determineLocale(args: any[], maxArgsLength: number, locale = 'en-us'): string {
-        if (args.length === maxArgsLength) {
+    public static determineLocale(args: unknown[], maxArgsLength: number, locale = 'en-us'): string {
+        if (args.length === maxArgsLength && args[maxArgsLength - 1] === 'string') {
             locale = args[maxArgsLength - 1] as string;
         }
 
