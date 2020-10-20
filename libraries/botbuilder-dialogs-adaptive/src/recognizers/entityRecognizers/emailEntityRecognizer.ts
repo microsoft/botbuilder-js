@@ -10,9 +10,20 @@ import { recognizeEmail } from '@microsoft/recognizers-text-sequence';
 import { ModelResult } from 'botbuilder-dialogs';
 import { TextEntityRecognizer } from './textEntityRecognizer';
 
+/**
+ * Recognizes email input.
+ */
 export class EmailEntityRecognizer extends TextEntityRecognizer {
+
     public static $kind = 'Microsoft.EmailEntityRecognizer';
 
+    /**
+     * @protected
+     * Email recognizing implementation.
+     * @param text Text to recognize.
+     * @param culture Culture to use.
+     * @returns The recognized [ModelResult](xref:botbuilder-dialogs.ModelResult) list.
+     */
     protected recognize(text: string, culture: string): ModelResult[] {
         return recognizeEmail(text, culture);
     }

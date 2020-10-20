@@ -16,6 +16,9 @@ import { ReturnType } from '../returnType';
  * Return the binary version of a data uniform resource identifier (URI).
  */
 export class DataUriToBinary extends ExpressionEvaluator {
+    /**
+     * Initializes a new instance of the [DataUriToBinary](xref:adaptive-expressions.DataUriToBinary) class.
+     */
     public constructor() {
         super(
             ExpressionType.DataUriToBinary,
@@ -25,6 +28,9 @@ export class DataUriToBinary extends ExpressionEvaluator {
         );
     }
 
+    /**
+     * @private
+     */
     private static evaluator(): EvaluateExpressionDelegate {
         return FunctionUtils.apply(
             (args: any[]): Uint8Array => InternalFunctionUtils.toBinary(args[0]),
