@@ -32,6 +32,9 @@ export interface WebServer {
     delete?: (path: string, handler: RouteHandler) => void;
 }
 
+/**
+ * Routes the API calls with the ChannelServiceHandler methods.
+ */
 export class ChannelServiceRoutes {
     /**
      * @param channelServiceHandler
@@ -74,6 +77,9 @@ export class ChannelServiceRoutes {
         }
     }
 
+    /**
+     * @private
+     */
     private processSendToConversation(req: WebRequest, res: WebResponse): void {
         const authHeader = req.headers.authorization || req.headers.Authorization || '';
         ChannelServiceRoutes.readActivity(req)
@@ -96,6 +102,9 @@ export class ChannelServiceRoutes {
             });
     }
 
+    /**
+     * @private
+     */
     private processReplyToActivity(req: WebRequest, res: WebResponse): void {
         const authHeader = req.headers.authorization || req.headers.Authorization || '';
         ChannelServiceRoutes.readActivity(req)
@@ -118,6 +127,9 @@ export class ChannelServiceRoutes {
             });
     }
 
+    /**
+     * @private
+     */
     private processUpdateActivity(req: WebRequest, res: WebResponse): void {
         const authHeader = req.headers.authorization || req.headers.Authorization || '';
         ChannelServiceRoutes.readActivity(req)
@@ -140,6 +152,9 @@ export class ChannelServiceRoutes {
             });
     }
 
+    /**
+     * @private
+     */
     private processDeleteActivity(req: WebRequest, res: WebResponse): void {
         const authHeader = req.headers.authorization || req.headers.Authorization || '';
         this.channelServiceHandler
@@ -153,6 +168,9 @@ export class ChannelServiceRoutes {
             });
     }
 
+    /**
+     * @private
+     */
     private processGetActivityMembers(req: WebRequest, res: WebResponse): void {
         const authHeader = req.headers.authorization || req.headers.Authorization || '';
         this.channelServiceHandler
@@ -169,6 +187,9 @@ export class ChannelServiceRoutes {
             });
     }
 
+    /**
+     * @private
+     */
     private processCreateConversation(req: WebRequest, res: WebResponse): void {
         const authHeader = req.headers.authorization || req.headers.Authorization || '';
         ChannelServiceRoutes.readBody<ConversationParameters>(req).then((conversationParameters) => {
@@ -187,6 +208,9 @@ export class ChannelServiceRoutes {
         });
     }
 
+    /**
+     * @private
+     */
     private processGetConversations(req: WebRequest, res: WebResponse): void {
         const authHeader = req.headers.authorization || req.headers.Authorization || '';
         this.channelServiceHandler
@@ -203,6 +227,9 @@ export class ChannelServiceRoutes {
             });
     }
 
+    /**
+     * @private
+     */
     private processGetConversationMembers(req: WebRequest, res: WebResponse): void {
         const authHeader = req.headers.authorization || req.headers.Authorization || '';
         this.channelServiceHandler
@@ -219,6 +246,9 @@ export class ChannelServiceRoutes {
             });
     }
 
+    /**
+     * @private
+     */
     private processGetConversationPagedMembers(req: WebRequest, res: WebResponse): void {
         const authHeader = req.headers.authorization || req.headers.Authorization || '';
         let pageSize = parseInt(req.query.pageSize);
@@ -244,6 +274,9 @@ export class ChannelServiceRoutes {
             });
     }
 
+    /**
+     * @private
+     */
     private processDeleteConversationMember(req: WebRequest, res: WebResponse): void {
         const authHeader = req.headers.authorization || req.headers.Authorization || '';
         this.channelServiceHandler
@@ -257,6 +290,9 @@ export class ChannelServiceRoutes {
             });
     }
 
+    /**
+     * @private
+     */
     private processSendConversationHistory(req: WebRequest, res: WebResponse): void {
         const authHeader = req.headers.authorization || req.headers.Authorization || '';
         ChannelServiceRoutes.readBody<Transcript>(req)
@@ -279,6 +315,9 @@ export class ChannelServiceRoutes {
             });
     }
 
+    /**
+     * @private
+     */
     private processUploadAttachment(req: WebRequest, res: WebResponse): void {
         const authHeader = req.headers.authorization || req.headers.Authorization || '';
         ChannelServiceRoutes.readBody<AttachmentData>(req)
@@ -301,6 +340,9 @@ export class ChannelServiceRoutes {
             });
     }
 
+    /**
+     * @private
+     */
     private static readActivity(req: WebRequest): Promise<Activity> {
         return new Promise((resolve, reject) => {
             if (req.body) {
@@ -328,6 +370,9 @@ export class ChannelServiceRoutes {
         });
     }
 
+    /**
+     * @private
+     */
     private static readBody<T>(req: WebRequest): Promise<T> {
         return new Promise((resolve, reject) => {
             if (req.body) {
@@ -353,6 +398,9 @@ export class ChannelServiceRoutes {
         });
     }
 
+    /**
+     * @private
+     */
     private static handleError(err: any, res: WebResponse): void {
         if (err instanceof StatusCodeError) {
             res.send(err.message);
