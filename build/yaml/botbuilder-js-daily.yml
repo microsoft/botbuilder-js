@@ -116,7 +116,3 @@ steps:
   displayName: 'Dir workspace'
   continueOnError: true
   condition: succeededOrFailed()
-
-- powershell: |
-   throw
-  displayName: 'Break the build now! (Stops publishing. For testing only.)'
