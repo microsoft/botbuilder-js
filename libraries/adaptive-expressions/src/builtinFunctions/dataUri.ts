@@ -15,10 +15,16 @@ import { ReturnType } from '../returnType';
  * Return a data uniform resource identifier (URI) of a string.
  */
 export class DataUri extends ExpressionEvaluator {
+    /**
+     * Initializes a new instance of the [DataUri](xref:adaptive-expressions.DataUri) class.
+     */
     public constructor() {
         super(ExpressionType.DataUri, DataUri.evaluator(), ReturnType.String, FunctionUtils.validateUnary);
     }
 
+    /**
+     * @private
+     */
     private static evaluator(): EvaluateExpressionDelegate {
         return FunctionUtils.apply(
             (args: any[]): string =>

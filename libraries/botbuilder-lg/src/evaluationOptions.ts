@@ -30,6 +30,9 @@ export enum LGCacheScope {
     None = 'none',
 }
 
+/**
+ * Options for evaluating LG templates.
+ */
 export class EvaluationOptions {
     private readonly nullKeyReplaceStrRegex = /\${\s*path\s*}/g;
     private readonly strictModeKey = '@strict';
@@ -52,6 +55,10 @@ export class EvaluationOptions {
      */
     public cacheScope: LGCacheScope | undefined;
 
+    /**
+     * Creates a new instance of the [EvaluationOptions](xref:botbuilder-lg.EvaluationOptions) class.
+     * @param opt Instance to copy initial settings from.
+     */
     public constructor(opt?: EvaluationOptions | string[]) {
         if (arguments.length === 0) {
             this.strictMode = undefined;
@@ -92,6 +99,12 @@ export class EvaluationOptions {
         }
     }
 
+    /**
+     * Merges an incoming option to current option. If a property in incoming option is not null while it is null in current
+     * option, then the value of this property will be overwritten.
+     * @param opt Incoming option for merging.
+     * @returns Result after merging.
+     */
     public merge(opt: EvaluationOptions): EvaluationOptions {
         const properties = ['strictMode', 'nullSubstitution', 'LineBreakStyle'];
         for (const property of properties) {

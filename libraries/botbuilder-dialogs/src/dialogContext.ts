@@ -75,15 +75,31 @@ export interface DialogState {
 export class DialogContext {
     /**
      * Creates an new instance of the [DialogContext](xref:botbuilder-dialogs.DialogContext) class.
-     *
+     * @param dialogs The [DialogSet](xref:botbuilder-dialogs.DialogSet) for which to create the dialog context.
+     * @param contextOrDC The [TurnContext](xref:botbuilder-core.TurnContext) object for the current turn of the bot.
+     * @param state The state object to use to read and write [DialogState](xref:botbuilder-dialogs.DialogState) to storage.
      * @remarks
-     * Passing in a dialog context instance will clone the dialog context.
-     * @param dialogs The dialog set for which to create the dialog context.
-     * @param contextOrDC The context object for the current turn of the bot.
-     * @param state The state object to use to read and write dialog state to storage.
+     * Passing in a [DialogContext](xref:botbuilder-dialogs.DialogContext) instance will clone the dialog context.
      */
     public constructor(dialogs: DialogSet, contextOrDC: TurnContext, state: DialogState);
+
+    /**
+     * Creates an new instance of the [DialogContext](xref:botbuilder-dialogs.DialogContext) class.
+     * @param dialogs The [DialogSet](xref:botbuilder-dialogs.DialogSet) for which to create the dialog context.
+     * @param contextOrDC The [DialogContext](xref:botbuilder-dialogs.DialogContext) object for the current turn of the bot.
+     * @param state The state object to use to read and write [DialogState](xref:botbuilder-dialogs.DialogState) to storage.
+     * @remarks
+     * Passing in a [DialogContext](xref:botbuilder-dialogs.DialogContext) instance will clone the dialog context.
+     */
     public constructor(dialogs: DialogSet, contextOrDC: DialogContext, state: DialogState);
+
+    /**
+     * Creates an new instance of the [DialogContext](xref:botbuilder-dialogs.DialogContext) class.
+     * @param dialogs The [DialogSet](xref:botbuilder-dialogs.DialogSet) for which to create the dialog context.
+     * @param contextOrDC The [TurnContext](xref:botbuilder-core.TurnContext) or [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of the bot.
+     * @param state The state object to use to read and write [DialogState](xref:botbuilder-dialogs.DialogState) to storage.
+     * @remarks Passing in a [DialogContext](xref:botbuilder-dialogs.DialogContext) instance will clone the dialog context.
+     */
     public constructor(dialogs: DialogSet, contextOrDC: TurnContext | DialogContext, state: DialogState) {
         this.dialogs = dialogs;
         if (contextOrDC instanceof DialogContext) {
@@ -317,7 +333,6 @@ export class DialogContext {
 
     /**
      * Helper function to simplify formatting the options for calling a prompt dialog.
-     *
      * @param dialogId ID of the prompt dialog to start.
      * @param promptOrOptions The text of the initial prompt to send the user,
      *      the activity to send as the initial prompt, or
@@ -332,16 +347,48 @@ export class DialogContext {
      * ```JavaScript
      * return await dc.prompt('confirmPrompt', `Are you sure you'd like to quit?`);
      * ```
-     */
+     */  
     public async prompt(
         dialogId: string,
         promptOrOptions: string | Partial<Activity> | PromptOptions
     ): Promise<DialogTurnResult>;
+    
+    /**
+     * Helper function to simplify formatting the options for calling a prompt dialog.
+     * @param dialogId ID of the prompt dialog to start.
+     * @param promptOrOptions The text of the initial prompt to send the user,
+     * the [Activity](xref:botframework-schema.Activity) to send as the initial prompt, or
+     * the object with which to format the prompt dialog.
+     * @param choices Optional. Array of choices for the user to choose from,
+     * for use with a [ChoicePrompt](xref:botbuilder-dialogs.ChoicePrompt).
+     * @remarks
+     * This helper method formats the object to use as the `options` parameter, and then calls
+     * [beginDialog](xref:botbuilder-dialogs.DialogContext.beginDialog) to start the specified prompt dialog.
+     *
+     * ```JavaScript
+     * return await dc.prompt('confirmPrompt', `Are you sure you'd like to quit?`);
+     * ```
+     */    
     public async prompt(
         dialogId: string,
         promptOrOptions: string | Partial<Activity> | PromptOptions,
         choices: (string | Choice)[]
     ): Promise<DialogTurnResult>;
+    
+    /**
+     * Helper function to simplify formatting the options for calling a prompt dialog.
+     * @param dialogId ID of the prompt dialog to start.
+     * @param promptOrOptions The text of the initial prompt to send the user,
+     * or the [Activity](xref:botframework-schema.Activity) to send as the initial prompt.
+     * @param choices Optional. Array of choices for the user to choose from,
+     * for use with a [ChoicePrompt](xref:botbuilder-dialogs.ChoicePrompt).
+     * @remarks This helper method formats the object to use as the `options` parameter, and then calls
+     * beginDialog to start the specified prompt dialog.
+     *
+     * ```JavaScript
+     * return await dc.prompt('confirmPrompt', `Are you sure you'd like to quit?`);
+     * ```
+     */
     public async prompt(
         dialogId: string,
         promptOrOptions: string | Partial<Activity>,
@@ -575,6 +622,11 @@ export class DialogContext {
         return false;
     }
 
+    /**
+     * @private
+     * @param reason 
+     * @param result 
+     */
     private async endActiveDialog(reason: DialogReason, result?: any): Promise<void> {
         const instance: DialogInstance<any> = this.activeDialog;
         if (instance) {

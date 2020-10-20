@@ -49,7 +49,11 @@ export class QnaMakerService extends ConnectedService implements IQnAService {
         }
     }
 
-    // encrypt keys in service
+    /**
+     * Encrypt properties on this service.
+     * @param secret Secret to use to encrypt.
+     * @param encryptString Function called to encrypt an individual value.
+     */
     public encrypt(secret: string, encryptString: (value: string, secret: string) => string): void {
         if (this.endpointKey && this.endpointKey.length > 0) {
             this.endpointKey = encryptString(this.endpointKey, secret);
@@ -60,7 +64,11 @@ export class QnaMakerService extends ConnectedService implements IQnAService {
         }
     }
 
-    // decrypt keys in service
+    /**
+     * Decrypt properties on this service.
+     * @param secret Secret to use to decrypt.
+     * @param decryptString Function called to decrypt an individual value.
+     */
     public decrypt(secret: string, decryptString: (value: string, secret: string) => string): void {
         if (this.endpointKey && this.endpointKey.length > 0) {
             this.endpointKey = decryptString(this.endpointKey, secret);

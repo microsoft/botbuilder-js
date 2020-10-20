@@ -6,6 +6,9 @@
  * Licensed under the MIT License.
  */
 
+/**
+ * Defines paths for the available scopes.
+ */
 export class ScopePath {
     /**
      * User memory scope root path.
