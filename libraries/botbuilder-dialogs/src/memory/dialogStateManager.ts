@@ -23,6 +23,7 @@ import {
     ConversationMemoryScope,
     UserMemoryScope,
     DialogClassMemoryScope,
+    DialogContextMemoryScope,
 } from './scopes';
 import { DialogContext } from '../dialogContext';
 import { DialogPath } from './dialogPath';
@@ -616,6 +617,7 @@ export class DialogStateManager {
                 new ThisMemoryScope(),
                 new ConversationMemoryScope(),
                 new UserMemoryScope(),
+                new DialogContextMemoryScope(),
             ],
         };
 
