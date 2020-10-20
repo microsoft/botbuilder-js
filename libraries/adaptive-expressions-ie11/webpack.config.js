@@ -1,5 +1,4 @@
 const path = require('path');
-const defaultTSConfig = require('./tsconfig.json');
 
 module.exports = (env, argv) => {
     return {
@@ -19,13 +18,6 @@ module.exports = (env, argv) => {
                 {
                     test: /\.tsx?$/,
                     loader: 'ts-loader',
-                    options: {
-                        compilerOptions: {
-                            ...defaultTSConfig.compilerOptions,
-                            outDir: './dist',
-                            target: 'es5',
-                        },
-                    },
                     include: path.resolve(__dirname, './src'),
                 },
                 {
@@ -36,6 +28,7 @@ module.exports = (env, argv) => {
                         },
                     ],
                     include: [
+                        path.resolve(__dirname, './node_modules/adaptive-expressions'),
                         path.resolve(
                             __dirname,
                             './node_modules/@microsoft/recognizers-text-data-types-timex-expression'

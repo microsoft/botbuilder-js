@@ -1,0 +1,50 @@
+{
+  "name": "adaptive-expressions-ie11",
+  "author": "Microsoft Corp.",
+  "description": "Common Expression Language",
+  "version": "4.1.6",
+  "license": "MIT",
+  "keywords": [
+    "botbuilder",
+    "botframework",
+    "expression"
+  ],
+  "bugs": {
+    "url": "https://github.com/Microsoft/botbuilder-js/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Microsoft/botbuilder-js.git"
+  },
+  "main": "./dist/index.js",
+  "typings": "./dist/index.d.ts",
+  "dependencies": {
+    "adaptive-expressions": "4.1.6",
+    "core-js": "^3.3.2"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.6.4",
+    "@babel/plugin-proposal-class-properties": "^7.5.5",
+    "@babel/plugin-proposal-decorators": "^7.6.0",
+    "@babel/plugin-transform-runtime": "^7.6.2",
+    "@babel/preset-env": "^7.6.3",
+    "@babel/preset-typescript": "^7.6.0",
+    "@babel/runtime": "^7.6.3",
+    "@types/node": "^10.17.27",
+    "babel-loader": "^8.0.6",
+    "copyfiles": "2.4.0",
+    "ts-loader": "^7.0.5",
+    "typescript": "3.5.3",
+    "webpack": "^4.43.0",
+    "webpack-cli": "^3.3.12"
+  },
+  "scripts": {
+    "build": "webpack && copyfiles -u 3 node_modules/adaptive-expressions/lib/**/*.d.ts dist",
+    "clean": "erase /q /s .\\dist",
+    "set-version": "npm version --allow-same-version ${Version}"
+  },
+  "files": [
+    "src",
+    "dist"
+  ]
+}
