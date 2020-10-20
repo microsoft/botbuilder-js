@@ -3,7 +3,7 @@ const path = require('path');
 module.exports = (env, argv) => {
     return {
         mode: 'none',
-        entry: ['core-js/modules/es.array.find', path.resolve(__dirname, './src/index.ts')],
+        entry: path.resolve(__dirname, './src/index.ts'),
         output: {
             path: path.resolve(__dirname, './dist'),
             libraryTarget: 'amd',
