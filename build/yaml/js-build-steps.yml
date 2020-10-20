@@ -31,7 +31,7 @@ steps:
     workingDir: tools
     verbose: false
 
-- bash: |
+- script: |
    set -o xtrace
    sed -i '' 's/${Version}/$(PackageVersion)/g' package.json 
    sed -i '' 's/${Version}/$(PackageVersion)/g' libraries/adaptive-expressions/package.json
@@ -55,12 +55,16 @@ steps:
   displayName: 'Replace version number in package.json files'
   continueOnError: true
 
-- bash: |
+- script: |
    npm run update-versions
   displayName: 'npm run update-versions'
   env:
     Version: $(PackageVersion)
     PreviewPackageVersion: $(PreviewPackageVersion)
+
+- powershell: |
+   throw
+  displayName: 'Break the build now! (Stops publishing. For testing only.)'
 
 - powershell: |
    $fileName = 'package-lock.json'
