@@ -32,8 +32,8 @@ steps:
 
 - template: js-build-steps.yml
 
-- script: 'lerna exec npm pack'
-  displayName: 'lerna exec npm pack'
+- script: 'lerna exec --no-private npm pack'
+  displayName: 'lerna exec --no-private npm pack'
 
 - task: CopyFiles@2
   displayName: 'Copy TGZ files to staging'
