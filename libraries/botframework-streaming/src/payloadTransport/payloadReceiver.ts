@@ -81,10 +81,16 @@ export class PayloadReceiver {
         }
     }
 
+    /**
+     * @private
+     */
     private runReceive(): void {
         this.receivePackets().catch();
     }
 
+    /**
+     * @private
+     */
     private async receivePackets(): Promise<void> {
         let isClosed;
 

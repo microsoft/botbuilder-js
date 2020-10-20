@@ -6,6 +6,9 @@
  * Licensed under the MIT License.
  */
 
+/**
+ * Represents a property found in a JSON schema.
+ */
 export class PropertySchema {
     private _parent: PropertySchema;
     private readonly _children: PropertySchema[];

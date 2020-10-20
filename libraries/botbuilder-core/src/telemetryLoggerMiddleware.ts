@@ -368,6 +368,9 @@ export class TelemetryLoggerMiddleware implements Middleware {
         return properties;
     }
 
+    /**
+     * @private
+     */
     private populateAdditionalChannelProperties(activity: Activity, properties?: { [key: string]: string }): void {
         if (activity) {
             const channelData = activity.channelData;
