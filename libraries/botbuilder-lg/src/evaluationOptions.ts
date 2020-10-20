@@ -46,6 +46,11 @@ export class EvaluationOptions {
     public LineBreakStyle: LGLineBreakStyle | undefined;
 
     /**
+     * The locale info for evaluating LG.
+     */
+    public locale: string;
+
+    /**
      * Cache scope of the evaluation result.
      */
     public cacheScope: LGCacheScope | undefined;
@@ -65,6 +70,7 @@ export class EvaluationOptions {
                 this.strictMode = opt.strictMode;
                 this.nullSubstitution = opt.nullSubstitution;
                 this.LineBreakStyle = opt.LineBreakStyle;
+                this.locale = opt.locale;
                 this.cacheScope = opt.cacheScope;
             } else {
                 if (opt !== undefined && opt.length > 0) {
