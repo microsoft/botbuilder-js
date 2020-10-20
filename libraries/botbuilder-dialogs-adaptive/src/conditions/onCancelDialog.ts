@@ -15,6 +15,11 @@ import { OnDialogEvent } from './onDialogEvent';
 export class OnCancelDialog extends OnDialogEvent {
     public static $kind = 'Microsoft.OnCancelDialog';
 
+    /**
+     * Initializes a new instance of the [OnCancelDialog](xref:botbuilder-dialogs-adaptive.OnCancelDialog) class.
+     * @param actions Optional. A [Dialog](xref:botbuilder-dialogs.Dialog) list containing the actions to add to the plan when the rule constraints are met.
+     * @param condition Optional. Condition which needs to be met for the actions to be executed.
+     */
     public constructor(actions: Dialog[] = [], condtion?: string) {
         super(AdaptiveEvents.cancelDialog, actions, condtion);
     }
