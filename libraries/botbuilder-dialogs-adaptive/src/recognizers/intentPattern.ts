@@ -5,7 +5,6 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { Converter } from 'botbuilder-dialogs-declarative';
 
 /**
  * Represents pattern for an intent.
@@ -59,19 +58,5 @@ export class IntentPattern {
      */
     public set pattern(value: string) {
         this._pattern = value.startsWith('(?i)') ? value.substr(4) : value;
-    }
-}
-
-/**
- * Input pattern converter that implements [Converter](xref:botbuilder-dialogs-declarative.Converter).
- */
-export class IntentPatternConverter implements Converter {
-    /**
-     * Converts an object or string to an [IntentPattern](xref:botbuilder-dialogs-adaptive.IntentPattern) instance.
-     * @param value An object composed by the `intent` and the `pattern` to match.
-     * @returns A new [IntentPattern](xref:botbuilder-dialogs-adaptive.IntentPattern) instance.
-     */
-    public convert(value: { intent: string; pattern: string }): IntentPattern {
-        return new IntentPattern(value.intent, value.pattern);
     }
 }
