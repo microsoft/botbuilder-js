@@ -326,7 +326,10 @@ export class SkillHandler extends ChannelServiceHandler {
             return context.updateActivity(newActivity);
         });
 
-        return { id: uuid() };
+        // Note: the original activity ID is passed back here to provide "behavioral" parity with the C# SDK. Due to
+        // some inconsistent method signatures, the proper response is not propagated back through `context.updateActivity`
+        // so we have to manually pass this value back.
+        return { id: activityId };
     }
 
     /**
