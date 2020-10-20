@@ -34,13 +34,12 @@ export interface LuisAdaptiveRecognizerConfiguration extends RecognizerConfigura
     predictionOptions?: LuisPredictionOptions;
 }
 
-export class LuisAdaptiveRecognizer extends Recognizer implements LuisAdaptiveRecognizerConfiguration {
-    public static $kind = 'Microsoft.LuisRecognizer';
-
 /**
  * Class that represents an adaptive LUIS recognizer.
  */
-export class LuisAdaptiveRecognizer extends Recognizer {
+export class LuisAdaptiveRecognizer extends Recognizer implements LuisAdaptiveRecognizerConfiguration {
+    public static $kind = 'Microsoft.LuisRecognizer';
+
     /**
      * LUIS application ID.
      */
@@ -96,7 +95,7 @@ export class LuisAdaptiveRecognizer extends Recognizer {
                 return super.getConverter(property);
         }
     }
-      
+
     /**
      * To recognize intents and entities in a users utterance.
      * @param dialogContext The [DialogContext](xref:botbuilder-dialogs.DialogContext).
