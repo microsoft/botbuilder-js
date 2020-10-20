@@ -20,10 +20,16 @@ import { ReturnType } from '../returnType';
  * Return a timestamp in the specified format from ticks.
  */
 export class FormatTicks extends ExpressionEvaluator {
+    /**
+     * Initializes a new instance of the [FormatTicks](xref:adaptive-expressions.FormatTicks) class.
+     */
     public constructor() {
         super(ExpressionType.FormatTicks, FormatTicks.evaluator(), ReturnType.String, FormatTicks.validator);
     }
 
+    /**
+     * @private
+     */
     private static evaluator(): EvaluateExpressionDelegate {
         return FunctionUtils.applyWithError((args: any[]): any => {
             let error: string;
@@ -57,6 +63,9 @@ export class FormatTicks extends ExpressionEvaluator {
         });
     }
 
+    /**
+     * @private
+     */
     private static validator(expression: Expression): void {
         FunctionUtils.validateOrder(expression, [ReturnType.String], ReturnType.Number);
     }

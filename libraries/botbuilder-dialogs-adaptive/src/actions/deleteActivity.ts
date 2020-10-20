@@ -5,13 +5,33 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { Dialog, DialogContext, DialogTurnResult } from 'botbuilder-dialogs';
-import { StringExpression, BoolExpression } from 'adaptive-expressions';
+import {
+    BoolExpression,
+    BoolExpressionConverter,
+    Expression,
+    StringExpression,
+    StringExpressionConverter,
+} from 'adaptive-expressions';
+import {
+    Converter,
+    ConverterFactory,
+    Dialog,
+    DialogConfiguration,
+    DialogContext,
+    DialogTurnResult,
+} from 'botbuilder-dialogs';
+
+export interface DeleteActivityConfiguration extends DialogConfiguration {
+    activityId?: string | Expression | StringExpression;
+    disabled?: boolean | string | Expression | BoolExpression;
+}
 
 /**
  * Ends and deletes an activity.
  */
-export class DeleteActivity<O extends object = {}> extends Dialog<O> {
+export class DeleteActivity<O extends object = {}> extends Dialog<O> implements DeleteActivityConfiguration {
+    public static $kind = 'Microsoft.DeleteActivity';
+
     public constructor();
 
     /**
@@ -35,6 +55,17 @@ export class DeleteActivity<O extends object = {}> extends Dialog<O> {
      */
     public disabled?: BoolExpression;
 
+    public getConverter(property: keyof DeleteActivityConfiguration): Converter | ConverterFactory {
+        switch (property) {
+            case 'activityId':
+                return new StringExpressionConverter();
+            case 'disabled':
+                return new BoolExpressionConverter();
+            default:
+                return super.getConverter(property);
+        }
+    }
+  
     /**
      * Called when the [Dialog](xref:botbuilder-dialogs.Dialog) is started and pushed onto the dialog stack.
      * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.

@@ -5,18 +5,40 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { DialogTurnResult, Dialog, DialogContext } from 'botbuilder-dialogs';
+import { BoolExpression, BoolExpressionConverter, Expression } from 'adaptive-expressions';
+import {
+    Converter,
+    ConverterFactory,
+    Dialog,
+    DialogConfiguration,
+    DialogContext,
+    DialogTurnResult,
+} from 'botbuilder-dialogs';
 import { ActionScopeResult, ActionScopeCommands } from './actionScope';
-import { BoolExpression } from 'adaptive-expressions';
+
+export interface ContinueLoopConfiguration extends DialogConfiguration {
+    disabled?: boolean | string | Expression | BoolExpression;
+}
 
 /**
  * Continue the loop.
  */
-export class ContinueLoop<O extends object = {}> extends Dialog<O> {
+export class ContinueLoop<O extends object = {}> extends Dialog<O> implements ContinueLoopConfiguration {
+    public static $kind = 'Microsoft.ContinueLoop';
+
     /**
      * An optional expression which if is true will disable this action.
      */
     public disabled?: BoolExpression;
+
+    public getConverter(property: keyof ContinueLoopConfiguration): Converter | ConverterFactory {
+        switch (property) {
+            case 'disabled':
+                return new BoolExpressionConverter();
+            default:
+                return super.getConverter(property);
+        }
+    }
 
     /**
      * Called when the [Dialog](xref:botbuilder-dialogs.Dialog) is started and pushed onto the dialog stack.

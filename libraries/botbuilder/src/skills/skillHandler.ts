@@ -133,6 +133,9 @@ export class SkillHandler extends ChannelServiceHandler {
         return await this.processActivity(claimsIdentity, conversationId, activityId, activity);
     }
 
+    /**
+     * @private
+     */
     private static applyEoCToTurnContextActivity(turnContext: TurnContext, endOfConversationActivity: Activity): void {
         // transform the turnContext.activity to be an EndOfConversation Activity.
         turnContext.activity.type = endOfConversationActivity.type;
@@ -148,6 +151,9 @@ export class SkillHandler extends ChannelServiceHandler {
         turnContext.activity.channelData = endOfConversationActivity.channelData;
     }
 
+    /**
+     * @private
+     */
     private static applyEventToTurnContextActivity(turnContext: TurnContext, eventActivity: Activity): void {
         // transform the turnContext.activity to be an Event Activity.
         turnContext.activity.type = eventActivity.type;
@@ -164,6 +170,9 @@ export class SkillHandler extends ChannelServiceHandler {
         turnContext.activity.channelData = eventActivity.channelData;
     }
 
+    /**
+     * @private
+     */
     private async processActivity(
         claimsIdentity: ClaimsIdentity,
         conversationId: string,
@@ -225,6 +234,7 @@ export class SkillHandler extends ChannelServiceHandler {
             context.activity.callerId = `${CallerIdConstants.BotToBotPrefix}${JwtTokenValidation.getAppIdFromClaims(
                 claimsIdentity.claims
             )}`;
+          
             switch (activity.type) {
                 case ActivityTypes.EndOfConversation:
                     await this.conversationIdFactory.deleteConversationReference(conversationId);

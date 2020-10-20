@@ -12,6 +12,12 @@ import { Diagnostic } from './diagnostic';
  */
 export class TemplateException extends Error {
     private diagnostics: Diagnostic[];
+    
+    /**
+     * Creates a new instance of the [TemplateException](xref:botbuilder-lg.TemplateException) class.
+     * @param m Error message.
+     * @param diagnostics List of [Diagnostic](xref:botbuilder-lg.Diagnostic) to throw.
+     */
     public constructor(m: string, diagnostics: Diagnostic[]) {
         super(m);
         this.diagnostics = diagnostics;

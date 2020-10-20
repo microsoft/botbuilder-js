@@ -5,21 +5,39 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { Dialog, DialogDependencies, DialogContext, DialogTurnResult } from 'botbuilder-dialogs';
-import { ValueExpression, ObjectExpression, BoolExpression } from 'adaptive-expressions';
+import {
+    ValueExpression,
+    BoolExpression,
+    BoolExpressionConverter,
+    ObjectExpression,
+    ObjectExpressionConverter,
+    Expression,
+} from 'adaptive-expressions';
+import {
+    Dialog,
+    DialogDependencies,
+    DialogContext,
+    DialogTurnResult,
+    Converter,
+    ConverterFactory,
+    DialogConfiguration,
+} from 'botbuilder-dialogs';
 import { DialogExpression } from '../expressions';
 import { replaceJsonRecursively } from '../jsonExtensions';
+import { DialogExpressionConverter } from '../converters';
+
+export interface BaseInvokeDialogConfiguration extends DialogConfiguration {
+    options?: object | string | Expression | ObjectExpression<object>;
+    dialog?: Dialog | string | Expression | DialogExpression;
+    activityProcessed?: boolean | string | Expression | BoolExpression;
+}
 
 /**
  * Action which calls another [Dialog](xref:botbuilder-dialogs.Dialog).
  */
-export class BaseInvokeDialog<O extends object = {}> extends Dialog<O> implements DialogDependencies {
-    /**
-     * Initializes a new instance of the [BaseInvokeDialog](xref:botbuilder-dialogs-adaptive.BaseInvokeDialog) class.
-     * Expression for `dialogId` to call (allowing dynamic expression).
-     * @param dialogIdToCall Optional. Id of the [Dialog](xref:botbuilder-dialogs.Dialog) to call.
-     * @param bindingOptions Optional. Binding options for the dialog to call.
-     */
+export class BaseInvokeDialog<O extends object = {}>
+    extends Dialog<O>
+    implements DialogDependencies, BaseInvokeDialogConfiguration {
     public constructor(dialogIdToCall?: string, bindingOptions?: O) {
         super();
         if (dialogIdToCall) {
@@ -44,6 +62,19 @@ export class BaseInvokeDialog<O extends object = {}> extends Dialog<O> implement
      * A value indicating whether to have the new dialog should process the activity.
      */
     public activityProcessed: BoolExpression = new BoolExpression(true);
+
+    public getConverter(property: keyof BaseInvokeDialogConfiguration): Converter | ConverterFactory {
+        switch (property) {
+            case 'options':
+                return new ObjectExpressionConverter<object>();
+            case 'dialog':
+                return DialogExpressionConverter;
+            case 'activityProcessed':
+                return new BoolExpressionConverter();
+            default:
+                return super.getConverter(property);
+        }
+    }
 
     /**
      * Called when the [Dialog](xref:botbuilder-dialogs.Dialog) is started and pushed onto the dialog stack.

@@ -8,8 +8,16 @@
 
 import { ValueExpression } from '../expressionProperties';
 
+/**
+ * `any` value to json [ValueExpression](xref:adaptive-expressions.ValueExpression) converter.
+ */
 export class ValueExpressionConverter {
-    public convert(value: any): ValueExpression {
-        return new ValueExpression(value);
+    /**
+     * Converts `any` value into a [ValueExpression](xref:adaptive-expressions.ValueExpression).
+     * @param value `any` value to convert.
+     * @returns The [ValueExpression](xref:adaptive-expressions.ValueExpression).
+     */
+    public convert(value: unknown | ValueExpression): ValueExpression {
+        return value instanceof ValueExpression ? value : new ValueExpression(value);
     }
 }

@@ -6,8 +6,18 @@
  * Licensed under the MIT License.
  */
 import { StringUtils } from 'botbuilder-core';
-import { Dialog, DialogDependencies, DialogContext, DialogTurnResult, DialogReason } from 'botbuilder-dialogs';
+import {
+    Converter,
+    ConverterFactory,
+    Dialog,
+    DialogConfiguration,
+    DialogContext,
+    DialogDependencies,
+    DialogReason,
+    DialogTurnResult,
+} from 'botbuilder-dialogs';
 import { ActionContext } from '../actionContext';
+import { DialogListConverter } from '../converters';
 
 const OFFSET_KEY = 'this.offset';
 
@@ -22,10 +32,16 @@ export interface ActionScopeResult {
     actionId?: string;
 }
 
+export interface ActionScopeConfiguration extends DialogConfiguration {
+    actions?: string[] | Dialog[];
+}
+
 /**
  * `ActionScope` manages execution of a block of actions, and supports Goto, Continue and Break semantics.
  */
-export class ActionScope<O extends object = {}> extends Dialog<O> implements DialogDependencies {
+export class ActionScope<O extends object = {}>
+    extends Dialog<O>
+    implements DialogDependencies, ActionScopeConfiguration {
     /**
      * Creates a new `ActionScope` instance.
      */
@@ -38,6 +54,15 @@ export class ActionScope<O extends object = {}> extends Dialog<O> implements Dia
      * The actions to execute.
      */
     public actions: Dialog[] = [];
+
+    public getConverter(property: keyof ActionScopeConfiguration): Converter | ConverterFactory {
+        switch (property) {
+            case 'actions':
+                return DialogListConverter;
+            default:
+                return super.getConverter(property);
+        }
+    }
 
     /**
      * Gets a unique `string` which represents the version of this dialog. If the version 
