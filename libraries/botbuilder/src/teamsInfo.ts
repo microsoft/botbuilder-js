@@ -26,7 +26,19 @@ import { ConnectorClient, TeamsConnectorClient, TeamsConnectorModels } from 'bot
 import { BotFrameworkAdapter } from './botFrameworkAdapter';
 import { teamsGetTeamMeetingInfo, teamsGetTenant } from './teamsActivityHelpers';
 
+/**
+ * Provides utility methods for the events and interactions that occur within Microsoft Teams.
+ */
 export class TeamsInfo {
+    /**
+     * Gets the meeting participant for the given meeting id and participant id. This only works in
+     * teams scoped meeting conversations.
+     * @param context The [TurnContext](xref:botbuilder-core.TurnContext) for this turn.
+     * @param meetingId The meeting ID to fetch
+     * @param participantId The participant ID to fetch
+     * @param tenantId The tenant ID to use when scoping the request
+     * @returns The [TeamsParticipantChannelAccount](xref:botbuilder-core.TeamsParticipantChannelAccount) fetched
+     */
     public static async getMeetingParticipant(
         context: TurnContext,
         meetingId?: string,
@@ -69,6 +81,12 @@ export class TeamsInfo {
         });
     }
 
+    /**
+     * Gets the details for the given team id. This only works in teams scoped conversations.
+     * @param context The [TurnContext](xref:botbuilder-core.TurnContext) for this turn.
+     * @param teamId The id of the Teams team.
+     * @returns The [TeamDetails](xref:botbuilder-core.TeamDetails) fetched
+     */
     public static async getTeamDetails(context: TurnContext, teamId?: string): Promise<TeamDetails> {
         const t = teamId || this.getTeamId(context);
         if (!t) {
@@ -78,6 +96,13 @@ export class TeamsInfo {
         return await this.getTeamsConnectorClient(context).teams.fetchTeamDetails(t);
     }
 
+    /**
+     * Creates a new thread in a Teams chat and sends an [Activity](xref:botframework-schema.Activity) to that new thread.
+     * @param context The [TurnContext](xref:botbuilder-core.TurnContext) for this turn.
+     * @param activity The [Activity](xref:botframework-schema.Activity) to send.
+     * @param teamsChannelId Id of the Teams channel.
+     * @returns The [ConversationReference](xref:botframework-schema.ConversationReference) and the id of the [Activity](xref:botframework-schema.Activity) (if sent).
+     */
     public static async sendMessageToTeamsChannel(
         context: TurnContext,
         activity: Activity,
@@ -113,6 +138,12 @@ export class TeamsInfo {
         return [conversationReference as ConversationReference, conversationResourceResponse.activityId];
     }
 
+    /**
+     * Returns a list of channels in a Team. This only works in teams scoped conversations.
+     * @param context The [TurnContext](xref:botbuilder-core.TurnContext) for this turn.
+     * @param teamId ID of the Teams team.
+     * @returns The list of [ChannelInfo](xref:botframework-schema.ChannelInfo) objects with the conversations.
+     */
     public static async getTeamChannels(context: TurnContext, teamId?: string): Promise<ChannelInfo[]> {
         const t = teamId || this.getTeamId(context);
         if (!t) {
@@ -123,6 +154,11 @@ export class TeamsInfo {
         return channelList.conversations;
     }
 
+    /**
+     * Gets the conversation members of a one-on-one or group chat.
+     * @param context The [TurnContext](xref:botbuilder-core.TurnContext) for this turn.
+     * @returns The list of [TeamsChannelAccount](xref:botframework-schema.TeamsChannelAccount).
+     */
     public static async getMembers(context: TurnContext): Promise<TeamsChannelAccount[]> {
         const teamId = this.getTeamId(context);
         if (teamId) {
@@ -134,6 +170,13 @@ export class TeamsInfo {
         }
     }
 
+    /**
+     * Gets a pagined list of members of one-on-one, group, or team conversation.
+     * @param context The [TurnContext](xref:botbuilder-core.TurnContext) for this turn.
+     * @param pageSize Suggested number of entries on a page.
+     * @param continuationToken A continuation token.
+     * @returns The [TeamsPagedMembersResult](xref:botframework-schema.TeamsPagedMembersResult) with the list of members.
+     */
     public static async getPagedMembers(
         context: TurnContext,
         pageSize?: number,
@@ -153,6 +196,12 @@ export class TeamsInfo {
         }
     }
 
+    /**
+     * Gets the account of a single conversation member.
+     * @param context The [TurnContext](xref:botbuilder-core.TurnContext) for this turn.
+     * @param userId ID of the user in question.
+     * @returns The [TeamsChannelAccount](xref:botframework-schema.TeamsChannelAccount) of the member.
+     */
     public static async getMember(context: TurnContext, userId: string): Promise<TeamsChannelAccount> {
         const teamId = this.getTeamId(context);
         if (teamId) {
@@ -164,6 +213,12 @@ export class TeamsInfo {
         }
     }
 
+    /**
+     * Gets the list of [TeamsChannelAccount](xref:botframework-schema.TeamsChannelAccount) within a team.
+     * @param context The [TurnContext](xref:botbuilder-core.TurnContext) for this turn.
+     * @param teamId ID of the Teams team.
+     * @returns The list of [TeamsChannelAccount](xref:botframework-schema.TeamsChannelAccount) of the members.
+     */
     public static async getTeamMembers(context: TurnContext, teamId?: string): Promise<TeamsChannelAccount[]> {
         const t = teamId || this.getTeamId(context);
         if (!t) {
@@ -172,6 +227,14 @@ export class TeamsInfo {
         return await this.getMembersInternal(this.getConnectorClient(context), t);
     }
 
+    /**
+     * Gets a paginated list of members of a team.
+     * @param context The [TurnContext](xref:botbuilder-core.TurnContext) for this turn.
+     * @param teamId ID of the Teams team.
+     * @param pageSize The number of entries on the page.
+     * @param continuationToken The continuationToken token.
+     * @returns A [TeamsPagedMembersResult](xref:botframework-schema.TeamsPagedMembersResult) with the list of members.
+     */
     public static async getPagedTeamMembers(
         context: TurnContext,
         teamId?: string,
@@ -190,6 +253,13 @@ export class TeamsInfo {
         return await this.getPagedMembersInternal(this.getConnectorClient(context), t, options);
     }
 
+    /**
+     * Gets the account of a member in a teams scoped conversation.
+     * @param context The [TurnContext](xref:botbuilder-core.TurnContext) for this turn.
+     * @param teamId ID of the Teams team.
+     * @param userId ID of the Teams user.
+     * @returns The [TeamsChannelAccount](xref:botframework-schema.TeamsChannelAccount) of the member.
+     */
     public static async getTeamMember(
         context: TurnContext,
         teamId?: string,
@@ -202,6 +272,9 @@ export class TeamsInfo {
         return await this.getMemberInternal(this.getConnectorClient(context), t, userId);
     }
 
+    /**
+     * @private
+     */
     private static async getMembersInternal(
         connectorClient: ConnectorClient,
         conversationId: string
@@ -220,6 +293,9 @@ export class TeamsInfo {
         return teamMembers as TeamsChannelAccount[];
     }
 
+    /**
+     * @private
+     */
     private static async getPagedMembersInternal(
         connectorClient: ConnectorClient,
         conversationId: string,
@@ -242,6 +318,9 @@ export class TeamsInfo {
         return teamsPagedMembersResult;
     }
 
+    /**
+     * @private
+     */
     private static async getMemberInternal(
         connectorClient: ConnectorClient,
         conversationId: string,
@@ -263,6 +342,9 @@ export class TeamsInfo {
         return teamMember as TeamsChannelAccount;
     }
 
+    /**
+     * @private
+     */
     private static getTeamId(context: TurnContext): string {
         if (!context) {
             throw new Error('Missing context parameter');
@@ -278,6 +360,9 @@ export class TeamsInfo {
         return teamId;
     }
 
+    /**
+     * @private
+     */
     private static getConnectorClient(context: TurnContext): ConnectorClient {
         if (!context.adapter || !('createConnectorClient' in context.adapter)) {
             throw new Error('This method requires a connector client.');
@@ -286,6 +371,9 @@ export class TeamsInfo {
         return (context.adapter as BotFrameworkAdapter).createConnectorClient(context.activity.serviceUrl);
     }
 
+    /**
+     * @private
+     */
     private static getTeamsConnectorClient(context: TurnContext): TeamsConnectorClient {
         const connectorClient = this.getConnectorClient(context);
         return new TeamsConnectorClient(connectorClient.credentials, { baseUri: context.activity.serviceUrl });

@@ -1042,6 +1042,21 @@ export interface MessagingExtensionResult {
 
 /**
  * @interface
+ * A cache info object which notifies Teams how long an object should be cached for.
+ */
+export interface CacheInfo {
+    /**
+     * @member {string} [cacheType] The type of cache for this object.
+     */
+    cacheType?: string;
+    /**
+     * @member {number} [cacheDuration] The time in seconds for which the cached object should remain in the cache
+     */
+    cacheDuration?: number;
+}
+
+/**
+ * @interface
  * An interface representing MessagingExtensionActionResponse.
  * Response of messaging extension action
  *
@@ -1056,6 +1071,10 @@ export interface MessagingExtensionActionResponse {
      * @member {MessagingExtensionResult} [composeExtension]
      */
     composeExtension?: MessagingExtensionResult;
+    /**
+     * @member {CacheInfo} [cacheInfo] The cache info for this response
+     */
+    cacheInfo?: CacheInfo;
 }
 
 /**
@@ -1069,6 +1088,10 @@ export interface MessagingExtensionResponse {
      * @member {MessagingExtensionResult} [composeExtension]
      */
     composeExtension?: MessagingExtensionResult;
+    /**
+     * @member {CacheInfo} [cacheInfo] The cache info for this response
+     */
+    cacheInfo?: CacheInfo;
 }
 
 /**
@@ -1286,6 +1309,10 @@ export interface TaskModuleResponse {
      * appear in the task module.
      */
     task?: TaskModuleContinueResponse | TaskModuleMessageResponse;
+    /**
+     * @member {CacheInfo} [cacheInfo] The cache info for this response
+     */
+    cacheInfo?: CacheInfo;
 }
 
 /**

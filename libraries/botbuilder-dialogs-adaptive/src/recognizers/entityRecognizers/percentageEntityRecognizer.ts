@@ -10,9 +10,20 @@ import { recognizePercentage } from '@microsoft/recognizers-text-number';
 import { ModelResult } from 'botbuilder-dialogs';
 import { TextEntityRecognizer } from './textEntityRecognizer';
 
+/**
+ * Recognizes percentage input.
+ */
 export class PercentageEntityRecognizer extends TextEntityRecognizer {
+
     public static $kind = 'Microsoft.PercentageEntityRecognizer';
 
+    /**
+     * @protected
+     * Percentage recognizing implementation.
+     * @param text Text to recognize.
+     * @param culture Culture to use.
+     * @returns The recognized [ModelResult](xref:botbuilder-dialogs.ModelResult) list.
+     */
     protected recognize(text: string, culture: string): ModelResult[] {
         return recognizePercentage(text, culture);
     }

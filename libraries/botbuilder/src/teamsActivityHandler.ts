@@ -32,16 +32,15 @@ import { TeamsInfo } from './teamsInfo';
 /**
  * Adds support for Microsoft Teams specific events and interactions.
  * @remarks
- * Developers may handle activities sent from Microsoft Teams via two methods:
- *  1. Overriding methods starting with `handle...()` (e.g. `handleTeamsTaskModuleFetch()`).
- *      * The only way to handle Invoke activities is to override these methods.
- *  2. Overriding methods starting with `on..` and *not* ending in `..Event()` (e.g. `onTeamsMembersAdded()`), or instead
- *  3. Passing callbacks to methods starting with `on..` *and* ending in `...Event()` (e.g. `onTeamsMembersAddedEvent()`),
+ * Developers may handle Conversation Update activities sent from Microsoft Teams via two methods:
+ *  1. Overriding methods starting with `on..` and *not* ending in `..Event()` (e.g. `onTeamsMembersAdded()`), or instead
+ *  2. Passing callbacks to methods starting with `on..` *and* ending in `...Event()` (e.g. `onTeamsMembersAddedEvent()`),
  *      to stay in line with older {@link ActivityHandler} implementation.
  *
- * Developers should use #1, above to handle Invoke activities.
- * Developers should use either #2 or #3, above for all other activities and not *both* #2 and #3 for the same activity. Meaning,
+ * Developers should use either #1 or #2, above for all Conversation Update activities and not *both* #2 and #3 for the same activity. Meaning,
  *   developers should override `onTeamsMembersAdded()` and not use both `onTeamsMembersAdded()` and `onTeamsMembersAddedEvent()`.
+ *
+ * Developers wanting to handle Invoke activities *must* override methods starting with `handle...()` (e.g. `handleTeamsTaskModuleFetch()`).
  */
 export class TeamsActivityHandler extends ActivityHandler {
     /**
@@ -684,7 +683,6 @@ export class TeamsActivityHandler extends ActivityHandler {
     }
 
     /**
-     *
      * Registers a handler for TeamsMembersAdded events, such as for when members other than the bot
      * join the channel, such as your bot's welcome logic.
      * @param handler

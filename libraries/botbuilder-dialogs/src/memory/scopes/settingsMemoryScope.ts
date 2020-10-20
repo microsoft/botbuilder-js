@@ -13,10 +13,18 @@ import { DialogContext } from '../../dialogContext';
  * SettingsMemoryScope maps "settings" -> dc.context.turnState['settings']
  */
 export class SettingsMemoryScope extends MemoryScope {
+    /**
+     * Initializes a new instance of the [SettingsMemoryScope](xref:botbuilder-dialogs.SettingsMemoryScope) class.
+     */
     public constructor() {
         super(ScopePath.settings, false);
     }
 
+    /**
+     * Gets the backing memory for this scope.
+     * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) object for this turn.
+     * @returns The memory for the scope.
+     */
     public getMemory(dc: DialogContext): object {
         let settings: object = {};
         if (dc.context.turnState.has(ScopePath.settings)) {

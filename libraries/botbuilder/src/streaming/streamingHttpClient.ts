@@ -9,6 +9,9 @@
 import { WebResource, HttpOperationResponse, HttpClient } from '@azure/ms-rest-js';
 import { IStreamingTransportServer, StreamingRequest } from 'botframework-streaming';
 
+/**
+ * An implementation of `HttpClient` that adds compatibility with streaming connections.
+ */
 export class StreamingHttpClient implements HttpClient {
     private readonly server: IStreamingTransportServer;
 
@@ -53,6 +56,9 @@ export class StreamingHttpClient implements HttpClient {
         };
     }
 
+    /**
+     * @private
+     */
     private mapHttpRequestToProtocolRequest(httpRequest: WebResource): StreamingRequest {
         return StreamingRequest.create(httpRequest.method, httpRequest.url, httpRequest.body);
     }
