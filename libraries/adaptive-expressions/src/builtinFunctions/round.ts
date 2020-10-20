@@ -15,10 +15,16 @@ import { ReturnType } from '../returnType';
  * Rounds a number value to the nearest integer.
  */
 export class Round extends ExpressionEvaluator {
+    /**
+     * Initializes a new instance of the [Round](xref:adaptive-expressions.Round) class.
+     */
     public constructor() {
         super(ExpressionType.Round, Round.evaluator(), ReturnType.Number, FunctionUtils.validateUnaryOrBinaryNumber);
     }
 
+    /**
+     * @private
+     */
     private static evaluator(): EvaluateExpressionDelegate {
         return FunctionUtils.applyWithError((args: any[]): any => {
             let result: any;
@@ -39,6 +45,7 @@ export class Round extends ExpressionEvaluator {
             return { value: result, error };
         }, FunctionUtils.verifyNumber);
     }
+
 
     private static roundToPrecision = (num: number, digits: number): number =>
         Math.round(num * Math.pow(10, digits)) / Math.pow(10, digits);

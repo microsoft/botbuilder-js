@@ -13,6 +13,8 @@ import { OnActivity } from './onActivity';
  * Actions triggered when a MessageReactionActivity is received.
  */
 export class OnMessageReactionActivity extends OnActivity {
+    public static $kind = 'Microsoft.OnMessageReactionActivity';
+
     /**
      * Initializes a new instance of the [OnMessageReactionActivity](xref:botbuilder-dialogs-adaptive.OnMessageReactionActivity) class.
      * @param actions Optional. A [Dialog](xref:botbuilder-dialogs.Dialog) list containing the actions to add to the plan when the rule constraints are met.

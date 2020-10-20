@@ -134,6 +134,15 @@ export class ChoiceFactory {
         }
     }
 
+
+    /**
+     * Creates a message [Activity](xref:botframework-schema.Activity) that includes a [Choice](xref:botbuilder-dialogs.Choice) list that have been added as `HeroCard`'s.
+     * 
+     * @param choices Optional. The [Choice](xref:botbuilder-dialogs.Choice) list to add.
+     * @param text Optional. Text of the message.
+     * @param speak Optional. SSML text to be spoken by the bot on a speech-enabled channel.
+     * @returns An [Activity](xref:botframework-schema.Activity) with choices as `HeroCard` with buttons.
+     */
     public static heroCard(choices: (string | Choice)[] = [], text = '', speak = ''): Activity {
         const buttons: CardAction[] = ChoiceFactory.toChoices(choices).map(
             (choice) =>

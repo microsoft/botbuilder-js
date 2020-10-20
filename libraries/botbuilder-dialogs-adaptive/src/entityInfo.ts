@@ -83,6 +83,9 @@ export interface NormalizedEntityInfos {
     [name: string]: Partial<EntityInfo>[];
 }
 
+/**
+ * Extended information about an entity including $instance data.
+ */
 export class EntityInfo {
     /**
      * Print an entity as a string.

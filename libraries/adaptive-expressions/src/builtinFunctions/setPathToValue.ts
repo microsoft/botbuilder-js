@@ -18,10 +18,16 @@ import { ReturnType } from '../returnType';
  * Set path in a JSON object to value.
  */
 export class SetPathToValue extends ExpressionEvaluator {
+    /**
+     * Initializes a new instance of the [SetPathToValue](xref:adaptive-expressions.SetPathToValue) class.
+     */
     public constructor() {
         super(ExpressionType.SetPathToValue, SetPathToValue.evaluator, ReturnType.Object, FunctionUtils.validateBinary);
     }
 
+    /**
+     * @private
+     */
     private static evaluator(expression: Expression, state: MemoryInterface, options: Options): ValueWithError {
         const { path, left, error } = FunctionUtils.tryAccumulatePath(expression.children[0], state, options);
         if (error !== undefined) {

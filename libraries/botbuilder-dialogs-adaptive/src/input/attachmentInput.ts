@@ -5,20 +5,35 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
+import { EnumExpression, EnumExpressionConverter, Expression } from 'adaptive-expressions';
 import { Attachment } from 'botbuilder-core';
-import { DialogContext } from 'botbuilder-dialogs';
-import { InputDialog, InputState } from './inputDialog';
-import { EnumExpression } from 'adaptive-expressions';
+import { Converter, ConverterFactory, DialogContext } from 'botbuilder-dialogs';
+import { InputDialog, InputDialogConfiguration, InputState } from './inputDialog';
 
 export enum AttachmentOutputFormat {
     all = 'all',
     first = 'first',
 }
 
-export class AttachmentInput extends InputDialog {
+export interface AttachmentInputConfiguration extends InputDialogConfiguration {
+    outputFormat?: AttachmentOutputFormat | string | Expression | EnumExpression<AttachmentOutputFormat>;
+}
+
+export class AttachmentInput extends InputDialog implements AttachmentInputConfiguration {
+    public static $kind = 'Microsoft.AttachmentInput';
+
     public outputFormat: EnumExpression<AttachmentOutputFormat> = new EnumExpression<AttachmentOutputFormat>(
         AttachmentOutputFormat.first
     );
+
+    public getConverter(property: keyof AttachmentInputConfiguration): Converter | ConverterFactory {
+        switch (property) {
+            case 'outputFormat':
+                return new EnumExpressionConverter<AttachmentOutputFormat>(AttachmentOutputFormat);
+            default:
+                return super.getConverter(property);
+        }
+    }
 
     protected onComputeId(): string {
         return `AttachmentInput[${this.prompt && this.prompt.toString()}]`;

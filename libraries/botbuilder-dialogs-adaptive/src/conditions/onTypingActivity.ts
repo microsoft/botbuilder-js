@@ -13,6 +13,8 @@ import { OnActivity } from './onActivity';
  * Actions triggered when a TypingActivity is received.
  */
 export class OnTypingActivity extends OnActivity {
+    public static $kind = 'Microsoft.OnTypingActivity';
+
     /**
      * Initializes a new instance of the [OnTypingActivity](xref:botbuilder-dialogs-adaptive.OnTypingActivity) class.
      * @param actions Optional. A [Dialog](xref:botbuilder-dialogs.Dialog) list containing the actions to add to the plan when the rule constraints are met.
