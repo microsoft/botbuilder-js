@@ -28,6 +28,13 @@ import {
 export class TokenResolver {
     private static readonly PollingIntervalMs: number = 1000;
 
+    /**
+     * Checks if we have token responses from OAuth cards.
+     * @param adapter The [BotFrameworkAdapter](xref:botbuilder.BotFrameworkAdapter).
+     * @param context The [TurnContext](xref:botbuilder-core.TurnContext) for this turn.
+     * @param activity The [Activity](xref:botframework-schema.Activity) to be checked.
+     * @param log Optional. The log to write on.
+     */
     public static checkForOAuthCards(
         adapter: BotFrameworkAdapter,
         context: TurnContext,
@@ -62,6 +69,9 @@ export class TokenResolver {
         }
     }
 
+    /**
+     * @private
+     */
     private static pollForToken(
         adapter: BotFrameworkAdapter,
         context: TurnContext,
@@ -145,6 +155,9 @@ export class TokenResolver {
         return tokenResponse;
     }
 
+    /**
+     * @private
+     */
     private static generate_guid(): string {
         function s4() {
             return Math.floor((1 + Math.random()) * 0x10000)

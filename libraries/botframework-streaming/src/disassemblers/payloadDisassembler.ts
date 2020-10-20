@@ -21,11 +21,20 @@ export abstract class PayloadDisassembler {
     private streamLength?: number;
     private readonly id: string;
 
+    /**
+     * Initializes a new instance of the [PayloadDisassembler](xref:botframework-streaming.PayloadDisassembler) class.
+     * @param sender The [PayloadSender](xref:botframework-streaming.PayloadSender) used to send the disassembled payload chunks.
+     * @param id The ID of this disassembler.
+     */
     public constructor(sender: PayloadSender, id: string) {
         this.sender = sender;
         this.id = id;
     }
 
+    /**
+     * Serializes the item into the [IStreamWrapper](xref:botframework-streaming.IStreamWrapper) that exposes the stream and length of the result.
+     * @param item The item to be serialized.
+     */
     protected static serialize<T>(item: T): IStreamWrapper {
         const stream: SubscribableStream = new SubscribableStream();
 
@@ -35,8 +44,15 @@ export abstract class PayloadDisassembler {
         return { stream, streamLength: stream.length };
     }
 
+    /**
+     * Gets the stream this disassembler is operating on.
+     * @returns An [IStreamWrapper](xref:botframework-streaming.IStreamWrapper) with a Subscribable Stream.
+     */
     public abstract async getStream(): Promise<IStreamWrapper>;
 
+    /**
+     * Begins the process of disassembling a payload and sending the resulting chunks to the [PayloadSender](xref:botframework-streaming.PayloadSender) to dispatch over the transport.
+     */
     public async disassemble(): Promise<void> {
         const { stream, streamLength }: IStreamWrapper = await this.getStream();
 
@@ -46,6 +62,9 @@ export abstract class PayloadDisassembler {
         return this.send();
     }
 
+    /**
+     * Begins the process of disassembling a payload and signals the [PayloadSender](xref:botframework-streaming.PayloadSender).
+     */
     private async send(): Promise<void> {
         const header: IHeader = {
             payloadType: this.payloadType,

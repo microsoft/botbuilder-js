@@ -35,6 +35,12 @@ export abstract class AppCredentials implements msrest.ServiceClientCredentials 
     protected refreshingToken: Promise<adal.TokenResponse> | null = null;
     protected authenticationContext: adal.AuthenticationContext;
 
+    /**
+     * Initializes a new instance of the [AppCredentials](xref:botframework-connector.AppCredentials) class.
+     * @param appId The App ID.
+     * @param channelAuthTenant Optional. The oauth token tenant.
+     * @param oAuthScope The scope for the token.
+     */
     public constructor(
         appId: string,
         channelAuthTenant?: string,
@@ -46,27 +52,45 @@ export abstract class AppCredentials implements msrest.ServiceClientCredentials 
         this.oAuthScope = oAuthScope;
     }
 
+    /**
+     * Gets tenant to be used for channel authentication.
+     */
     private get tenant(): string {
         return this._tenant;
     }
 
+    /**
+     * Sets tenant to be used for channel authentication.
+     */
     private set tenant(value: string) {
         this._tenant = value && value.length > 0 ? value : AuthenticationConstants.DefaultChannelAuthTenant;
     }
 
+    /**
+     * Gets the OAuth scope to use.
+     */
     public get oAuthScope(): string {
         return this._oAuthScope;
     }
 
+    /**
+     * Sets the OAuth scope to use.
+     */
     public set oAuthScope(value: string) {
         this._oAuthScope = value;
         this.tokenCacheKey = `${this.appId}${this.oAuthScope}-cache`;
     }
 
+    /**
+     * Gets the OAuth endpoint to use.
+     */
     public get oAuthEndpoint(): string {
         return this._oAuthEndpoint;
     }
 
+    /**
+     * Sets the OAuth endpoint to use.
+     */
     public set oAuthEndpoint(value: string) {
         // aadApiVersion is set to '1.5' to avoid the "spn:" concatenation on the audience claim
         // For more info, see https://github.com/AzureAD/azure-activedirectory-library-for-nodejs/issues/128
@@ -110,6 +134,9 @@ export abstract class AppCredentials implements msrest.ServiceClientCredentials 
         return false;
     }
 
+    /**
+     * @private
+     */
     private static isTrustedUrl(uri: string): boolean {
         const expiration: Date = AppCredentials.trustedHostNames.get(uri);
         if (expiration) {
@@ -120,6 +147,11 @@ export abstract class AppCredentials implements msrest.ServiceClientCredentials 
         return false;
     }
 
+    /**
+     * Apply the credentials to the HTTP request.
+     * @param webResource The WebResource HTTP request.
+     * @returns A Promise representing the asynchronous operation.
+     */
     public async signRequest(webResource: msrest.WebResource): Promise<msrest.WebResource> {
         if (this.shouldSetToken(webResource)) {
             const token: string = await this.getToken();
@@ -130,6 +162,13 @@ export abstract class AppCredentials implements msrest.ServiceClientCredentials 
         return webResource;
     }
 
+    /**
+     * Gets an OAuth access token.
+     * @param forceRefresh True to force a refresh of the token; or false to get
+     * a cached token if it exists.
+     * @returns A Promise that represents the work queued to execute.
+     * @remarks If the promise is successful, the result contains the access token string.
+     */
     public async getToken(forceRefresh = false): Promise<string> {
         if (!forceRefresh) {
             // check the global cache for the token. If we have it, and it's valid, we're done.
@@ -169,6 +208,9 @@ export abstract class AppCredentials implements msrest.ServiceClientCredentials 
 
     protected abstract async refreshToken(): Promise<adal.TokenResponse>;
 
+    /**
+     * @private
+     */
     private shouldSetToken(webResource: msrest.WebResource): boolean {
         return AppCredentials.isTrustedServiceUrl(webResource.url);
     }
