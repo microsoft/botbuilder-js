@@ -44,7 +44,6 @@
     "set-version": "npm version --allow-same-version ${Version}"
   },
   "files": [
-    "src",
     "dist"
   ]
 }
