@@ -196,7 +196,10 @@ export class JwtTokenExtractor {
             }
 
             const claims = Object.entries(decodedPayload).map<Claim>(([type, value]) => ({ type, value }));
-            return new ClaimsIdentity(claims, true); // TODO(joshgummersall): fix true
+
+            // Note: true is used here to indicate that these claims are to be considered authenticated. They are sourced
+            // from a validated JWT (see `verify` above), so no harm in doing so.
+            return new ClaimsIdentity(claims, true);
         } catch (err) {
             console.error(`Error finding key for token. Available keys: ${metadata.key}`);
             throw err;
