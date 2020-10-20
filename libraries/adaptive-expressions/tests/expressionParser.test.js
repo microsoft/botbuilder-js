@@ -420,6 +420,8 @@ const testCases = [
             ['formatNumber(12.123, 2)', '12.12'],
             ['formatNumber(1.555, 2)', '1.56'],
             ['formatNumber(12.123, 4)', '12.1230'],
+            ['formatNumber(12000.3, 4, "fr-FR")', '12\u00a0000,3000'],
+            ['formatNumber(12000.3, 4, "de-DE")', '12.000,3000'],
             ['jsonStringify(json(\'{\"a\":\"b\"}\'))', '{"a":"b"}'],
             ['jsonStringify(\'a\')', '"a"'],
             ['jsonStringify(null)', 'null'],
@@ -427,9 +429,6 @@ const testCases = [
             ['jsonStringify({a:"b"})', '{"a":"b"}'],
         ]
     },
-    // TODO: This should actually be the below, but toLocaleString does not work.
-    // ['formatNumber(12000.3, 4, "fr-FR")', '12\u00a0000,3000'],
-    //['formatNumber(12000.3, 4, "fr-FR")', '12,000.3000'],
     {
         label: 'Math functions',
         testCases: [

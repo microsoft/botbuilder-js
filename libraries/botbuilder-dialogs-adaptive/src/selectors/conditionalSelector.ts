@@ -61,11 +61,21 @@ export class ConditionalSelector extends TriggerSelector implements ConditionalS
         }
     }
 
+    /**
+     * Initialize the selector with the set of rules.
+     * @param conditionals Possible rules to match.
+     * @param evaluate True if rules should be evaluated on select.
+     */
     public initialize(conditionals: OnCondition[], evaluate: boolean): void {
         this._conditionals = conditionals;
         this._evaluate = evaluate;
     }
 
+    /**
+     * Select the best rule to execute.
+     * @param actionContext Dialog context for evaluation.
+     * @returns A Promise with a number array.
+     */
     public select(actionContext: ActionContext): Promise<OnCondition[]> {
         let selector: TriggerSelector;
         if (this.condition && this.condition.getValue(actionContext.state)) {

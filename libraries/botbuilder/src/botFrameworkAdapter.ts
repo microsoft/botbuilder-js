@@ -31,6 +31,7 @@ import {
     TurnContext,
     HealthCheckResponse,
     HealthResults,
+    ActivityEventNames,
 } from 'botbuilder-core';
 import {
     AuthenticationConfiguration,
@@ -405,7 +406,7 @@ export class BotFrameworkAdapter
 
         const connectorClient = this.createConnectorClientInternal(reference.serviceUrl, credentials);
         const request: Partial<Activity> = TurnContext.applyConversationReference(
-            { type: 'event', name: 'continueConversation' },
+            { type: ActivityTypes.Event, name: ActivityEventNames.ContinueConversation },
             reference,
             true
         );
@@ -499,7 +500,7 @@ export class BotFrameworkAdapter
 
         // Initialize request and copy over new conversation ID and updated serviceUrl.
         const request: Partial<Activity> = TurnContext.applyConversationReference(
-            { type: 'event', name: 'createConversation' },
+            { type: ActivityTypes.Event, name: ActivityEventNames.CreateConversation },
             reference,
             true
         );
