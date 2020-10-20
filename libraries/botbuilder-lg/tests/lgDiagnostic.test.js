@@ -41,7 +41,8 @@ describe(`LGExceptionTest`, function() {
         RunTimeErrors: GetLGFile('RunTimeErrors.lg'),
         ExpressionFormatError: GetDiagnostics(`ExpressionFormatError.lg`),
         MultiLineExprError: GetDiagnostics(`MultiLineExprError.lg`),
-        ErrorLine: GetDiagnostics(`ErrorLine.lg`)
+        ErrorLine: GetDiagnostics(`ErrorLine.lg`),
+        CycleRef1: GetDiagnostics(`CycleRef1.lg`),
     };
 
     it(`TestConditionFormatError`, function() {
@@ -247,9 +248,9 @@ describe(`LGExceptionTest`, function() {
 
     it(`TestLoopDetected`, function() {
         var templates = preloaded.LoopDetected;
-        
+
         assert.throws(() => templates.evaluate(`wPhrase`), Error(`Loop detected: welcome_user => wPhrase [wPhrase]  Error occurred when evaluating '-\${wPhrase()}'. [welcome_user]  Error occurred when evaluating '-\${welcome_user()}'.`));
-        
+
         assert.throws(() => templates.analyzeTemplate(`wPhrase`), Error('Loop detected: welcome_user => wPhrase'),);
 
         assert.throws(() => templates.analyzeTemplate(`shouldFail`), Error('Loop detected: shouldFail'),);
@@ -282,11 +283,11 @@ describe(`LGExceptionTest`, function() {
         assert.throws(() => templates.evaluate(`structured1`), Error(`'dialog.abc' evaluated to null. [structured1] Property 'Text': Error occurred when evaluating 'Text=I want \${dialog.abc}'.`));
 
         assert.throws(() => templates.evaluate(`structured2`), Error(`'dialog.abc' evaluated to null. [template1]  Error occurred when evaluating '-I want \${dialog.abc}'. [structured2] Property 'Text': Error occurred when evaluating 'Text=I want \${template1()}'.`));
-        
+
         assert.throws(() => templates.evaluate(`structured3`), Error(`'dialog.abc' evaluated to null. [template1]  Error occurred when evaluating '-I want \${dialog.abc}'. [structured2] Property 'Text': Error occurred when evaluating 'Text=I want \${template1()}'. [structured3]  Error occurred when evaluating '\${structured2()}'.`));
-        
+
         assert.throws(() => templates.evaluate(`switchcase1`, { turn : { testValue : 1 } }), Error(`'dialog.abc' evaluated to null. [switchcase1] Case '\${1}': Error occurred when evaluating '-I want \${dialog.abc}'.`));
-        
+
         assert.throws(() => templates.evaluate(`switchcase2`, { turn : { testValue : 0 } }), Error(`'dialog.abc' evaluated to null. [switchcase2] Case 'Default': Error occurred when evaluating '-I want \${dialog.abc}'.`));
     });
 
@@ -295,26 +296,26 @@ describe(`LGExceptionTest`, function() {
         assert.strictEqual(diagnostics.length, 1);
         assert.strictEqual(diagnostics[0].message.includes(`Close } is missing in Expression`), true);
     });
-    
+
     it(`TestMultiLineExpressionInLG`, function() {
         var diagnostics = preloaded.MultiLineExprError;
         assert.strictEqual(diagnostics.length, 1);
         assert.strictEqual(diagnostics[0].message.includes(`Close } is missing in Expression`), true);
-    
+
         diagnostics = Templates.parseResource(new LGResource('', '', '#Demo2\r\n- ${createArray(1,\r\n, 2,3)')).diagnostics;
         assert.strictEqual(diagnostics.length, 1);
         assert.strictEqual(diagnostics[0].message.includes(`Close } is missing in Expression`), true);
-    
+
         diagnostics = Templates.parseResource(new LGResource('', '', '#Demo4\r\n- ${createArray(1,\r\n2,3)\r\n> this is a comment')).diagnostics;
         assert.strictEqual(diagnostics.length, 1);
         assert.strictEqual(diagnostics[0].message.includes(`Close } is missing in Expression`), true);
     });
-    
+
     it(`TestErrorLine`, function() {
         var diagnostics = preloaded.ErrorLine;
         assert.strictEqual(diagnostics.length, 4);
-        
-    
+
+
         assert.strictEqual(DiagnosticSeverity.Error, diagnostics[0].severity);
         assert.strictEqual(diagnostics[0].message.includes(TemplateErrors.syntaxError('mismatched input \'-\' expecting <EOF>')), true);
         assert.strictEqual(DiagnosticSeverity.Error, diagnostics[1].severity);
@@ -323,5 +324,13 @@ describe(`LGExceptionTest`, function() {
         assert.strictEqual(diagnostics[2].message.includes(TemplateErrors.missingStrucEnd), true);
         assert.strictEqual(DiagnosticSeverity.Error, diagnostics[3].severity);
         assert.strictEqual(diagnostics[3].message.includes(TemplateErrors.invalidStrucBody('- hi')), true);
+    });
+
+    it(`TestLoopReference`, function() {
+        var diagnostics = preloaded.CycleRef1;
+        assert.strictEqual(diagnostics.length, 1);
+
+        assert.strictEqual(DiagnosticSeverity.Error, diagnostics[0].severity);
+        assert.strictEqual(diagnostics[0].message.startsWith(TemplateErrors.loopDetected), true);
     });
 });
