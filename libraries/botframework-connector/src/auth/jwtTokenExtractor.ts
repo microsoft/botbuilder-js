@@ -156,7 +156,7 @@ export class JwtTokenExtractor {
             let decodedPayload: Record<string, string> = {};
             const verifyResults = verify(jwtToken, metadata.key, this.tokenValidationParameters);
             if (verifyResults && typeof verifyResults === 'object') {
-                // Note: casting is necessary here, but we know `object` is loosely equivalient to a Record
+                // Note: casting is necessary here, but we know `object` is loosely equivalent to a Record
                 decodedPayload = verifyResults as Record<string, string>;
             }
 
