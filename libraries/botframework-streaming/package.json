@@ -20,7 +20,7 @@
     "url": "https://github.com/microsoft/botbuilder-js.git"
   },
   "main": "lib/index.js",
-  "browser": "browser/index-browser.js",
+  "browser": "lib/index-browser.js",
   "typings": "lib/index.d.ts",
   "dependencies": {
     "@types/ws": "^6.0.3",
@@ -31,24 +31,31 @@
     "@microsoft/api-extractor": "^7.7.12",
     "@types/chai": "^4.1.7",
     "@types/node": "^10.17.27",
+    "browserify": "16.5.2",
     "chai": "^4.2.0",
+    "exorcist": "^1.0.1",
     "mocha": "^6.2.3",
+    "npm-run-all": "^4.1.5",
     "nyc": "^15.1.0",
+    "rimraf": "^3.0.2",
     "sinon": "^7.5.0",
+    "sponge": "^0.1.0",
     "ts-node": "^4.1.0",
     "typescript": "3.5.3"
   },
   "scripts": {
-    "build": "tsc -p tsconfig.json && tsc -p tsconfig-browser.json",
+    "build": "npm-run-all -p build:lib build:es5",
+    "build:lib": "tsc -p tsconfig.json",
+    "build:es5": "tsc -p tsconfig-es5.json",
+    "postbuild": "browserify -s BFSE --debug es5/index-browser.js | exorcist lib/index-browser.js.map | sponge lib/index-browser.js",
     "build:rollup": "npm run clean && npm run build && api-extractor run --verbose --local",
-    "clean": "rmdir /q /s lib browser",
+    "clean": "rimraf q s lib es5",
     "set-version": "npm version --allow-same-version ${Version}",
     "test": "npm run build && nyc mocha tests/",
     "test:compat": "api-extractor run --verbose"
   },
   "files": [
     "lib",
-    "src",
-    "browser"
+    "src"
   ]
 }
