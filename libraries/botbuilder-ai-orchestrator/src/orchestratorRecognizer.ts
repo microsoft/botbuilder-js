@@ -13,6 +13,9 @@ import { EntityRecognizer } from 'botbuilder-dialogs-adaptive';
 
 import { OrchestratorAdaptiveRecognizer } from './orchestratorAdaptiveRecognizer';
 
+/**
+ * Class that represents an Orchestrator recognizer.
+ */
 export class OrchestratorRecognizer extends Configurable {
     /**
      * Full recognition results are available under this property

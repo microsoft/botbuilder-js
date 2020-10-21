@@ -19,11 +19,21 @@ export class RequestDisassembler extends PayloadDisassembler {
     public request: StreamingRequest;
     public payloadType: PayloadTypes = PayloadTypes.request;
 
+    /**
+     * Initializes a new instance of the [RequestDisassembler](xref:botframework-streaming.RequestDisassembler) class.
+     * @param sender The [PayloadSender](xref:botframework-streaming.PayloadSender) to send the disassembled data to.
+     * @param id The ID of this disassembler.
+     * @param request The request to be disassembled.
+     */
     public constructor(sender: PayloadSender, id: string, request?: StreamingRequest) {
         super(sender, id);
         this.request = request;
     }
 
+    /**
+     * Gets the stream this disassembler is operating on.
+     * @returns An [IStreamWrapper](xref:botframework-streaming.IStreamWrapper) with a Subscribable Stream.
+     */
     public async getStream(): Promise<IStreamWrapper> {
         const payload: IRequestPayload = { verb: this.request.verb, path: this.request.path, streams: [] };
         if (this.request.streams) {

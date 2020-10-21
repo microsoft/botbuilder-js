@@ -13,6 +13,8 @@ import { AdaptiveEvents } from '../adaptiveEvents';
  * Triggered when all actions and ambiguity events have been processed.
  */
 export class OnEndOfActions extends OnDialogEvent {
+    public static $kind = 'Microsoft.OnEndOfActions';
+
     /**
      * Creates a new `OnEndOfActions` instance.
      * @param event (Optional) The event to fire on.

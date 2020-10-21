@@ -14,6 +14,8 @@ import { ActionContext } from '../actionContext';
  * Select all rules which evaluate to true.
  */
 export class TrueSelector extends TriggerSelector {
+    public static $kind = 'Microsoft.TrueSelector';
+
     private _conditionals: OnCondition[];
     private _evaluate: boolean;
 
@@ -22,11 +24,21 @@ export class TrueSelector extends TriggerSelector {
      */
     public parser: ExpressionParserInterface = new ExpressionParser();
 
+    /**
+     * Initialize the selector with the set of rules.
+     * @param conditionals Possible rules to match.
+     * @param evaluate True if rules should be evaluated on select.
+     */
     public initialize(conditionals: OnCondition[], evaluate: boolean): void {
         this._conditionals = conditionals;
         this._evaluate = evaluate;
     }
 
+    /**
+     * Select the best rule to execute.
+     * @param actionContext Dialog context for evaluation.
+     * @returns A Promise with a number array.
+     */
     public select(actionContext: ActionContext): Promise<OnCondition[]> {
         const candidates: OnCondition[] = [];
 

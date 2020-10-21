@@ -5,25 +5,50 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { Dialog, DialogDependencies, DialogStateManager, DialogPath } from 'botbuilder-dialogs';
 import {
+    BoolExpression,
+    BoolExpressionConverter,
+    Constant,
     Expression,
     ExpressionParserInterface,
-    Constant,
     ExpressionParser,
     ExpressionEvaluator,
-    ReturnType,
     FunctionUtils,
+    IntExpression,
+    IntExpressionConverter,
+    ReturnType,
 } from 'adaptive-expressions';
+import {
+    Configurable,
+    Converter,
+    ConverterFactory,
+    Dialog,
+    DialogDependencies,
+    DialogPath,
+    DialogStateManager,
+} from 'botbuilder-dialogs';
 import { ActionScope } from '../actions/actionScope';
-import { BoolExpression, IntExpression } from 'adaptive-expressions';
 import { AdaptiveDialog } from '../adaptiveDialog';
 import { ActionContext } from '../actionContext';
 import { ActionChangeList } from '../actionChangeList';
 import { ActionState } from '../actionState';
 import { ActionChangeType } from '../actionChangeType';
+import { DialogListConverter } from '../converters';
 
-export class OnCondition implements DialogDependencies {
+export interface OnConditionConfiguration {
+    condition?: boolean | string | Expression | BoolExpression;
+    actions?: string[] | Dialog[];
+    priority?: number | string | Expression | IntExpression;
+    runOnce?: boolean;
+    id?: string;
+}
+
+/**
+ * Actions triggered when condition is true.
+ */
+export class OnCondition extends Configurable implements DialogDependencies, OnConditionConfiguration {
+    public static $kind = 'Microsoft.OnCondition';
+
     /**
      * Evaluates the rule and returns a predicted set of changes that should be applied to the
      * current plan.
@@ -61,6 +86,9 @@ export class OnCondition implements DialogDependencies {
      */
     public id: string;
 
+    /**
+     * @protected
+     */
     protected get actionScope(): ActionScope {
         if (!this._actionScope) {
             this._actionScope = new ActionScope(this.actions);
@@ -74,8 +102,22 @@ export class OnCondition implements DialogDependencies {
      * @param actions (Optional) The actions to add to the plan when the rule constraints are met.
      */
     public constructor(condition?: string, actions: Dialog[] = []) {
+        super();
         this.condition = condition ? new BoolExpression(condition) : undefined;
         this.actions = actions;
+    }
+
+    public getConverter(property: keyof OnConditionConfiguration): Converter | ConverterFactory {
+        switch (property) {
+            case 'condition':
+                return new BoolExpressionConverter();
+            case 'actions':
+                return DialogListConverter;
+            case 'priority':
+                return new IntExpressionConverter();
+            default:
+                return super.getConverter(property);
+        }
     }
 
     /**
@@ -179,6 +221,13 @@ export class OnCondition implements DialogDependencies {
         return [this.actionScope];
     }
 
+    /**
+     * @protected
+     * Called when a change list is created.
+     * @param actionContext [ActionContext](xref:botbuilder-dialogs-adaptive.ActionContext) to use for evaluation.
+     * @param dialogOptions Optional. Object with dialog options.
+     * @returns An [ActionChangeList](xref:botbuilder-dialogs-adaptive.ActionChangeList) with the list of actions.
+     */
     protected onCreateChangeList(actionContext: ActionContext, dialogOptions?: any): ActionChangeList {
         const actionState: ActionState = {
             dialogId: this.actionScope.id,

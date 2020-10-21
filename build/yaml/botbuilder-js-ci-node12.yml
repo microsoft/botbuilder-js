@@ -6,12 +6,12 @@
 name: $(Build.BuildId)
 
 pool:
-    vmImage: 'macOS-10.15'
+  vmImage: 'ubuntu-18.04'
 
 variables:
   NodeVersion: 12.x
-#  CI_PULL_REQUEST: define this in Azure
-#  version: define this in Azure, settable at queue time
+  PackageVersion: 4.4.0-preview.$(Build.BuildNumber)
+  PreviewPackageVersion: 4.4.0-preview.$(Build.BuildNumber)
 
 stages:
 - stage: Build

@@ -9,10 +9,17 @@
 import { TurnContext, ActivityTypes, ChannelAccount, RoleTypes, TestAdapter } from 'botbuilder-core';
 import { TestAction } from '../testAction';
 
+export interface UserConversationUpdateConfiguration {
+    membersAdded?: string[];
+    membersRemoved?: string[];
+}
+
 /**
  * Action to script sending a conversationUpdate activity to the bot.
  */
-export class UserConversationUpdate implements TestAction {
+export class UserConversationUpdate extends TestAction implements UserConversationUpdateConfiguration {
+    public static $kind = 'Microsoft.Test.UserConversationUpdate';
+
     /**
      * The members added names.
      */
@@ -29,7 +36,7 @@ export class UserConversationUpdate implements TestAction {
      * @param callback Logic for the bot to use.
      * @returns A Promise that represents the work queued to execute.
      */
-    public async execute(testAdapter: TestAdapter, callback: (context: TurnContext) => Promise<any>): Promise<any> {
+    public async execute(testAdapter: TestAdapter, callback: (context: TurnContext) => Promise<void>): Promise<void> {
         const activity = testAdapter.makeActivity();
         activity.type = ActivityTypes.ConversationUpdate;
 
