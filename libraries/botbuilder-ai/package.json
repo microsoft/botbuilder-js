@@ -27,6 +27,7 @@
     "adaptive-expressions": "4.1.6",
     "botbuilder-core": "4.1.6",
     "botbuilder-dialogs": "4.1.6",
+    "dotenv": "^8.1.0",
     "node-fetch": "^2.6.0",
     "url-parse": "^1.4.4"
   },

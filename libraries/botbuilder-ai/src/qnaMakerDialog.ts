@@ -443,11 +443,15 @@ export class QnAMakerDialog extends WaterfallDialog {
             host: this.getHost(),
         };
 
+        const logPii = this.logPersonalInformation instanceof BoolExpression ?
+            this.logPersonalInformation.getValue(dc.state)
+            : this.logPersonalInformation
+
         return new QnAMaker(
             endpoint,
             this.getQnAMakerOptions(),
             this.telemetryClient,
-            this.logPersonalInformation.getValue(dc.state),
+            logPii,
         );
     }
 
