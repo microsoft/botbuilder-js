@@ -21,8 +21,8 @@ import {
     Dialog,
     DialogStateManager,
     DialogTurnResult,
+    TemplateInterface,
 } from 'botbuilder-dialogs';
-import { TemplateInterface } from '../template';
 import { TextTemplate } from '../templates';
 import { TextTemplateConverter } from '../converters/textTemplateConverter';
 

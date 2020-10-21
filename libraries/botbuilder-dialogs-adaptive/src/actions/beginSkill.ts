@@ -27,8 +27,8 @@ import {
     DialogStateManager,
     SkillDialog,
     SkillDialogOptions,
+    TemplateInterface,
 } from 'botbuilder-dialogs';
-import { TemplateInterface } from '../template';
 import { skillClientKey, skillConversationIdFactoryKey } from '../skillExtensions';
 import { ActivityTemplate } from '../templates';
 import { ActivityTemplateConverter } from '../converters';

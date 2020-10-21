@@ -7,10 +7,9 @@
  */
 
 import { Activity, ActivityFactory, MessageFactory } from 'botbuilder-core';
-import { DialogContext, DialogStateManager } from 'botbuilder-dialogs';
+import { DialogContext, DialogStateManager, TemplateInterface } from 'botbuilder-dialogs';
 import { LanguageGenerator } from '../languageGenerator';
 import { languageGeneratorKey } from '../languageGeneratorExtensions';
-import { TemplateInterface } from '../template';
 
 /**
  * Defines an activity template where the template expression is local aka "inline"

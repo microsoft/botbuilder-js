@@ -7,9 +7,8 @@
  */
 
 import { Activity, RecognizerResult, getTopScoringIntent } from 'botbuilder-core';
-import { Converter, ConverterFactory, DialogContext } from 'botbuilder-dialogs';
+import { Converter, ConverterFactory, DialogContext, Recognizer, RecognizerConfiguration } from 'botbuilder-dialogs';
 import { RecognizerListConverter } from '../converters';
-import { Recognizer, RecognizerConfiguration } from './recognizer';
 
 export interface RecognizerSetConfiguration extends RecognizerConfiguration {
     recognizers?: string[] | Recognizer[];

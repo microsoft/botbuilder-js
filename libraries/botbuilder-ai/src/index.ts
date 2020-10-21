@@ -10,6 +10,8 @@ export * from './dateTimeSpec';
 export * from './geographyV2';
 export * from './instanceData';
 export * from './intentData';
+export * from './luisAdaptiveRecognizer';
+export * from './luisComponentRegistration';
 export * from './luisRecognizer';
 export * from './luisTelemetryConstants';
 export * from './numberWithUnits';
@@ -36,6 +38,8 @@ export {
     RankerTypes,
 } from './qnamaker-interfaces';
 export { QnAMakerDialog, QnAMakerDialogOptions, QnAMakerDialogResponseOptions } from './qnaMakerDialog';
+export * from './qnaMakerComponentRegistration';
+export * from './qnaMakerRecognizer';
 
 // GenerateAnswerUtils, HttpRequestUtils and TrainUtils are internal.
 export { ActiveLearningUtils } from './qnamaker-utils';
