@@ -331,12 +331,6 @@ describe('SkillHandler', function () {
                     true
                 );
 
-                // sandbox
-                //     .mock(adapter.credentialsProvider)
-                //     .expects('isAuthenticationDisabled')
-                //     .once()
-                //     .returns(Promise.resolve(false));
-
                 const skillActivity = {
                     type: ActivityTypes.Event,
                     serviceUrl: 'http://localhost/api/messages',
