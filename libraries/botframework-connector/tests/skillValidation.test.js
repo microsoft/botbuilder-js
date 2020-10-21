@@ -273,7 +273,7 @@ describe('SkillValidation', function () {
             assert(result.isAuthenticated, 'isAuthenticated should be true');
 
             const appIdClaim = result.claims.find((claim) => claim.type == AuthenticationConstants.AppIdClaim);
-            assert(appIdClaim, 'appId claim found');
+            assert(appIdClaim, 'appId claim not found');
             assert.strictEqual(appIdClaim.value, AuthenticationConstants.AnonymousSkillAppId);
         });
     });
