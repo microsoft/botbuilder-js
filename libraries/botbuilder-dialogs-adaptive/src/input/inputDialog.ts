@@ -30,12 +30,12 @@ import {
     DialogEvent,
     DialogEvents,
     DialogReason,
+    DialogStateManager,
     DialogTurnResult,
     ListStyle,
+    TemplateInterface,
     TurnPath,
-    DialogStateManager,
 } from 'botbuilder-dialogs';
-import { TemplateInterface } from '../template';
 import { AdaptiveEvents } from '../adaptiveEvents';
 import { ActivityTemplate } from '../templates/activityTemplate';
 import { StaticActivityTemplate } from '../templates/staticActivityTemplate';

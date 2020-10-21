@@ -7,8 +7,7 @@
  */
 
 import { Activity } from 'botbuilder-core';
-import { Converter, DialogStateManager } from 'botbuilder-dialogs';
-import { TemplateInterface } from '../template';
+import { Converter, DialogStateManager, TemplateInterface } from 'botbuilder-dialogs';
 import { ActivityTemplate, StaticActivityTemplate } from '../templates';
 
 type Input = string | Partial<Activity>;

@@ -6,8 +6,7 @@
  * Licensed under the MIT License.
  */
 import { Activity, Entity, RecognizerResult } from 'botbuilder-core';
-import { Converter, ConverterFactory, DialogContext } from 'botbuilder-dialogs';
-import { Recognizer } from './recognizer';
+import { Converter, ConverterFactory, DialogContext, Recognizer } from 'botbuilder-dialogs';
 import { IntentPattern } from './intentPattern';
 import { EntityRecognizer, TextEntity, EntityRecognizerSet } from './entityRecognizers';
 import { RecognizerSetConfiguration } from './recognizerSet';

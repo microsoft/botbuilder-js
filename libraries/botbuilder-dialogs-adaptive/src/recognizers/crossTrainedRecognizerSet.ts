@@ -6,10 +6,10 @@
  * Licensed under the MIT License.
  */
 
+import merge from 'lodash/merge';
 import { Activity, RecognizerResult, getTopScoringIntent } from 'botbuilder-core';
-import { Converter, ConverterFactory, DialogContext } from 'botbuilder-dialogs';
+import { Converter, ConverterFactory, DialogContext, Recognizer, RecognizerConfiguration } from 'botbuilder-dialogs';
 import { RecognizerListConverter } from '../converters';
-import { Recognizer, RecognizerConfiguration } from './recognizer';
 
 /**
  * Standard cross trained intent name prefix.
@@ -148,10 +148,14 @@ export class CrossTrainedRecognizerSet extends Recognizer implements CrossTraine
             return recognizerResults[consensusRecognizedId];
         }
 
+        //find if matched entities found when hits the none intent
+        const mergedEntities = results.reduce((acc, curr) => merge(acc, curr.entities), {});
+
         // return none
         const recognizerResult: RecognizerResult = {
             text,
             intents: { None: { score: 1.0 } },
+            entities: mergedEntities
         };
         return recognizerResult;
     }

@@ -15,8 +15,8 @@ import {
     DialogContext,
     DialogStateManager,
     DialogTurnResult,
+    TemplateInterface,
 } from 'botbuilder-dialogs';
-import { TemplateInterface } from '../template';
 import { ActivityTemplate, StaticActivityTemplate } from '../templates';
 import { ActivityTemplateConverter } from '../converters';
 
