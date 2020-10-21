@@ -578,14 +578,16 @@ describe('TeamsInfo', () => {
 
         it('should work with correct arguments', async () => {
             const participant = {
-                id: teamActivity.from.id,
-                name: teamActivity.from.name,
-                objectId: 'User-One-Object-Id',
-                givenName: 'User',
-                surname: 'One',
-                email: 'User.One@microsoft.com',
-                userPrincipalName: 'user1@microsoft.com',
-                tenantId: teamActivity.conversation.tenantId,
+                user: {
+                    id: teamActivity.from.id,
+                    name: teamActivity.from.name,
+                    objectId: 'User-One-Object-Id',
+                    givenName: 'User',
+                    surname: 'One',
+                    email: 'User.One@microsoft.com',
+                    userPrincipalName: 'user1@microsoft.com',
+                    tenantId: teamActivity.conversation.tenantId,
+                },
                 meeting: {
                     inMeeting: true,
                     role: 'Organizer',

@@ -7,7 +7,7 @@
 // and the botframework-connector libraries.
 
 import { HttpResponse, ServiceClientOptions, RequestOptionsBase } from '@azure/ms-rest-js';
-import { ConversationList, TeamDetails, TeamsParticipantChannelAccount } from 'botframework-schema';
+import { ConversationList, TeamDetails, TeamsMeetingParticipant } from 'botframework-schema';
 
 /**
  * @interface
@@ -73,7 +73,7 @@ export interface ConversationsGetConversationPagedMembersOptionalParams extends 
 /**
  * Contains response data for the fetchMeetingParticipant operation.
  */
-export type TeamsFetchMeetingParticipantResponse = TeamsParticipantChannelAccount & {
+export type TeamsFetchMeetingParticipantResponse = TeamsMeetingParticipant & {
     /**
      * The underlying HTTP response.
      */
@@ -85,7 +85,7 @@ export type TeamsFetchMeetingParticipantResponse = TeamsParticipantChannelAccoun
         /**
          * The response body as parsed JSON or XML
          */
-        parsedBody: TeamsParticipantChannelAccount;
+        parsedBody: TeamsMeetingParticipant;
     };
 };
 

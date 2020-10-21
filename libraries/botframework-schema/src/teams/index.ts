@@ -231,12 +231,15 @@ export interface Meeting {
 
 /**
  * @interface
- * An interface representing TeamsParticipantChannelAccount.
- * Teams participant channel account detailing user Azure Active Directory details.
+ * An interface representing TeamsMeetingParticipant.
+ * Teams meeting participant detailing user Azure Active Directory details.
  *
- * @extends TeamsChannelAccount
  */
-export interface TeamsParticipantChannelAccount extends TeamsChannelAccount {
+export interface TeamsMeetingParticipant {
+    /**
+     * @member {TeamsChannelAccount} [user] The user details
+     */
+    user?: TeamsChannelAccount
     /**
      * @member {Meeting} [meeting] The meeting details.
      */

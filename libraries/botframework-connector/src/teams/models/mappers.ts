@@ -285,13 +285,19 @@ export const Meeting: msRest.CompositeMapper = {
     },
 };
 
-export const TeamsParticipantChannelAccount: msRest.CompositeMapper = {
-    serializedName: 'TeamsParticipantChannelAccount',
+export const TeamsMeetingParticipant: msRest.CompositeMapper = {
+    serializedName: 'TeamsMeetingParticipant',
     type: {
         name: 'Composite',
-        className: 'TeamsParticipantChannelAccount',
+        className: 'TeamsMeetingParticipant',
         modelProperties: {
-            ...TeamsChannelAccount.type.modelProperties,
+            user: {
+                serializedName: 'user',
+                type: {
+                    name: 'Composite',
+                    className: 'TeamsChannelAccount',
+                },
+            },
             meeting: {
                 serializedName: 'meeting',
                 type: {

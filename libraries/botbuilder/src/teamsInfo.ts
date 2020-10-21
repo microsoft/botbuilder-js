@@ -19,7 +19,7 @@ import {
     TeamsPagedMembersResult,
     ConversationParameters,
     ConversationReference,
-    TeamsParticipantChannelAccount,
+    TeamsMeetingParticipant,
 } from 'botbuilder-core';
 import { ConnectorClient, TeamsConnectorClient, TeamsConnectorModels } from 'botframework-connector';
 
@@ -37,14 +37,14 @@ export class TeamsInfo {
      * @param meetingId The meeting ID to fetch
      * @param participantId The participant ID to fetch
      * @param tenantId The tenant ID to use when scoping the request
-     * @returns The [TeamsParticipantChannelAccount](xref:botbuilder-core.TeamsParticipantChannelAccount) fetched
+     * @returns The [TeamsMeetingParticipant](xref:botbuilder-core.TeamsMeetingParticipant) fetched
      */
     public static async getMeetingParticipant(
         context: TurnContext,
         meetingId?: string,
         participantId?: string,
         tenantId?: string
-    ): Promise<TeamsParticipantChannelAccount> {
+    ): Promise<TeamsMeetingParticipant> {
         if (!context) {
             throw new Error('context is required.');
         }

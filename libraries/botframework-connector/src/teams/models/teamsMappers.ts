@@ -12,5 +12,6 @@ export {
     MessageActionsPayloadConversation,
     Meeting,
     TeamDetails,
-    TeamsParticipantChannelAccount,
+    TeamsChannelAccount,
+    TeamsMeetingParticipant,
 } from './mappers';
