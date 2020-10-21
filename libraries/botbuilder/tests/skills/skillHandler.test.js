@@ -175,24 +175,9 @@ describe('SkillHandler', function () {
         describe('continueConversation()', () => {
             const identity = new ClaimsIdentity([{ type: 'aud', value: 'audience' }]);
             const conversationId = 'conversationId';
-            const serviceUrl = 'http://initiallyUntrusted/api/messages';
-
-            it(`should add the original activity's ServiceUrl to the TrustedServiceUrls in AppCredentials`, (done) => {
-                expectsGetSkillConversationReference(conversationId, serviceUrl);
-
-                assert(!AppCredentials.isTrustedServiceUrl(serviceUrl), 'service URL should initially be untrusted');
-
-                handler
-                    .continueConversation(identity, conversationId, () => {
-                        assert(AppCredentials.isTrustedServiceUrl(serviceUrl), 'service URL should now be trusted');
-                        sandbox.verify();
-                        done();
-                    })
-                    .catch(done);
-            });
 
             it('should cache the ClaimsIdentity, ConnectorClient and SkillConversationReference on the turnState', (done) => {
-                expectsGetSkillConversationReference(conversationId, serviceUrl);
+                expectsGetSkillConversationReference(conversationId);
 
                 handler
                     .continueConversation(identity, conversationId, async (adapter, ref, context) => {
