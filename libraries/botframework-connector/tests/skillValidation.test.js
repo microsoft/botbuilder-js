@@ -182,7 +182,7 @@ describe('SkillValidation', function () {
             }
         });
 
-        it('should fail if ClaimsIdentity.isAuthenticated is false', async () => {
+        it('should fail if ClaimsIdentity authType is false', async () => {
             const { credentials, identity } = makeCredentialsAndIdentity({ authType: false });
 
             try {
