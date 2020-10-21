@@ -232,9 +232,6 @@ describe('DialogManager', function() {
         const dialog = new SimpleComponentDialog();
         const testFlow = createTestFlow(dialog, FlowTestCase.LeafSkill, true);
         await testFlow.send('Hi')
-            .assertReply(reply => {
-                strictEqual(reply.type, ActivityTypes.Trace);
-            })
             .assertReply('Hello, what is your name?')
             .assertReply(reply => {
                 strictEqual(reply.type, ActivityTypes.Trace);
@@ -245,9 +242,6 @@ describe('DialogManager', function() {
             .assertReply(reply => {
                 strictEqual(reply.type, ActivityTypes.Trace);
                 strictEqual(reply.label, 'Skill State');
-            })
-            .assertReply(reply => {
-                strictEqual(reply.type, ActivityTypes.Trace);
             })
             .startTest();
         strictEqual(_dmTurnResult.turnResult.status, DialogTurnStatus.complete);
