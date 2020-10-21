@@ -43,6 +43,9 @@ export interface OnConditionConfiguration {
     id?: string;
 }
 
+/**
+ * Actions triggered when condition is true.
+ */
 export class OnCondition extends Configurable implements DialogDependencies, OnConditionConfiguration {
     public static $kind = 'Microsoft.OnCondition';
 
@@ -83,6 +86,9 @@ export class OnCondition extends Configurable implements DialogDependencies, OnC
      */
     public id: string;
 
+    /**
+     * @protected
+     */
     protected get actionScope(): ActionScope {
         if (!this._actionScope) {
             this._actionScope = new ActionScope(this.actions);
@@ -215,6 +221,13 @@ export class OnCondition extends Configurable implements DialogDependencies, OnC
         return [this.actionScope];
     }
 
+    /**
+     * @protected
+     * Called when a change list is created.
+     * @param actionContext [ActionContext](xref:botbuilder-dialogs-adaptive.ActionContext) to use for evaluation.
+     * @param dialogOptions Optional. Object with dialog options.
+     * @returns An [ActionChangeList](xref:botbuilder-dialogs-adaptive.ActionChangeList) with the list of actions.
+     */
     protected onCreateChangeList(actionContext: ActionContext, dialogOptions?: any): ActionChangeList {
         const actionState: ActionState = {
             dialogId: this.actionScope.id,

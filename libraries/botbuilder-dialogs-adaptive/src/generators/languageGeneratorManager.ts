@@ -18,7 +18,7 @@ import { LanguageResourceLoader } from '../languageResourceLoader';
 import { TemplateEngineLanguageGenerator } from './templateEngineLanguageGenerator';
 
 /**
- * Class which manages cache of all LG resources from a ResourceExplorer.
+ * Class which manages cache of all LG resources from a [ResourceExplorer](xref:botbuilder-dialogs-declarative.ResourceExplorer).
  */
 export class LanguageGeneratorManager<T = unknown, D extends Record<string, unknown> = Record<string, unknown>> {
     /**
@@ -32,7 +32,7 @@ export class LanguageGeneratorManager<T = unknown, D extends Record<string, unkn
     private _multiLanguageResources: Map<string, Resource[]>;
 
     /**
-     * Initialize a new instance of LanguageResourceManager class.
+     * Initialize a new instance of [LanguageResourceManager](xref:botbuilder-dialogs-adaptive.LanguageResourceManager) class.
      * @param resourceManager Resource explorer to manager LG files.
      */
     public constructor(resourceManager: ResourceExplorer) {
@@ -64,6 +64,12 @@ export class LanguageGeneratorManager<T = unknown, D extends Record<string, unkn
      */
     public languageGenerators = new Map<string, LanguageGenerator<T, D>>();
 
+    /**
+     * Returns the resolver to resolve LG import id to template text based on language and a template resource loader delegate.
+     * @param locale Locale to identify language.
+     * @param resourceMapping Template resource loader delegate.
+     * @returns The delegate to resolve the resource.
+     */
     public static resourceExplorerResolver(
         locale: string,
         resourceMapping: Map<string, Resource[]>
@@ -87,6 +93,9 @@ export class LanguageGeneratorManager<T = unknown, D extends Record<string, unkn
         };
     }
 
+    /**
+     * @private
+     */
     private getTemplateEngineLanguageGenerator(resource: Resource): TemplateEngineLanguageGenerator<T, D> {
         return new TemplateEngineLanguageGenerator<T, D>(resource, this._multiLanguageResources);
     }
