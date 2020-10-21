@@ -24,4 +24,8 @@ describe('MultiLanguageRecognizerTests', function() {
     it('EnUsFallback_AcitivtyLocaleCasing', async () => {
         await testRunner.runTestScript('MultiLanguageRecognizerTest_EnUsFallback_ActivityLocaleCasing');
     });
+
+    it('LanguagePolicy', async () => {
+        await testRunner.runTestScript('MultiLanguageRecognizerTest_LanguagePolicy');
+    });
 });
