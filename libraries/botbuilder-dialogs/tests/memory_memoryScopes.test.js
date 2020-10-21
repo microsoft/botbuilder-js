@@ -1,8 +1,32 @@
 const { ConversationState, UserState, MemoryStorage, TurnContext, TestAdapter } = require('botbuilder-core');
-const { ClassMemoryScope, ConversationMemoryScope, DialogMemoryScope,
-    SettingsMemoryScope, ThisMemoryScope, TurnMemoryScope, UserMemoryScope,
-    Dialog, DialogSet, DialogContext, DialogContainer } = require('../');
+const {
+    AdaptiveDialog,
+    OnBeginDialog,
+    SendActivity,
+    LanguageGeneratorExtensions,
+    TemplateEngineLanguageGenerator,
+    RegexRecognizer,
+    IntentPattern,
+    TextInput,
+    OnIntent,
+} = require('../../botbuilder-dialogs-adaptive/lib');
+const {
+    ClassMemoryScope,
+    ConversationMemoryScope,
+    DialogMemoryScope,
+    DialogContextMemoryScope,
+    SettingsMemoryScope,
+    ThisMemoryScope,
+    TurnMemoryScope,
+    UserMemoryScope,
+    Dialog,
+    DialogSet,
+    DialogContext,
+    DialogContainer,
+    DialogManager,
+} = require('../');
 const assert = require('assert');
+const { BoolExpression } = require('../../botbuilder-lg/node_modules/adaptive-expressions/lib');
 
 const beginMessage = {
     text: `begin`,
@@ -10,7 +34,7 @@ const beginMessage = {
     channelId: 'test',
     from: { id: 'user' },
     recipient: { id: 'bot' },
-    conversation: { id: 'convo1' }
+    conversation: { id: 'convo1' },
 };
 
 class TestDialog extends Dialog {
@@ -20,8 +44,8 @@ class TestDialog extends Dialog {
         this.expression = {
             tryGetValue: (state) => {
                 return { value: 'resolved value' };
-            }
-        }
+            },
+        };
     }
 
     async beginDialog(dc, options) {
@@ -73,10 +97,10 @@ class TestContainer extends DialogContainer {
     }
 }
 
-describe('Memory - Memory Scopes', function() {
+describe('Memory - Memory Scopes', function () {
     this.timeout(5000);
 
-    it('ClassMemoryScope should find registered dialog.', async function() {
+    it('ClassMemoryScope should find registered dialog.', async function () {
         // Create new ConversationState with MemoryStorage and register the state as middleware.
         const convoState = new ConversationState(new MemoryStorage());
 
@@ -89,9 +113,7 @@ describe('Memory - Memory Scopes', function() {
         // Create test context
         const context = new TurnContext(new TestAdapter(), beginMessage);
         await dialogState.set(context, {
-            dialogStack: [
-                { id: 'test', state: {} }
-            ]
+            dialogStack: [{ id: 'test', state: {} }],
         });
         const dc = await dialogs.createContext(context);
 
@@ -103,7 +125,7 @@ describe('Memory - Memory Scopes', function() {
         assert(memory.expression == 'resolved value');
     });
 
-    it('ClassMemoryScope should not allow setMemory() call.', async function() {
+    it('ClassMemoryScope should not allow setMemory() call.', async function () {
         // Create new ConversationState with MemoryStorage and register the state as middleware.
         const convoState = new ConversationState(new MemoryStorage());
 
@@ -116,9 +138,7 @@ describe('Memory - Memory Scopes', function() {
         // Create test context
         const context = new TurnContext(new TestAdapter(), beginMessage);
         await dialogState.set(context, {
-            dialogStack: [
-                { id: 'test', state: {} }
-            ]
+            dialogStack: [{ id: 'test', state: {} }],
         });
         const dc = await dialogs.createContext(context);
 
@@ -133,7 +153,7 @@ describe('Memory - Memory Scopes', function() {
         assert(error == true);
     });
 
-    it('ClassMemoryScope should ignore load() and saveChanges() calls.', async function() {
+    it('ClassMemoryScope should ignore load() and saveChanges() calls.', async function () {
         // Create new ConversationState with MemoryStorage and register the state as middleware.
         const convoState = new ConversationState(new MemoryStorage());
 
@@ -146,9 +166,7 @@ describe('Memory - Memory Scopes', function() {
         // Create test context
         const context = new TurnContext(new TestAdapter(), beginMessage);
         await dialogState.set(context, {
-            dialogStack: [
-                { id: 'test', state: {} }
-            ]
+            dialogStack: [{ id: 'test', state: {} }],
         });
         const dc = await dialogs.createContext(context);
 
@@ -161,7 +179,7 @@ describe('Memory - Memory Scopes', function() {
         assert(dialog.message == 'test message');
     });
 
-    it('ClassMemoryScope should not allow delete() call.', async function() {
+    it('ClassMemoryScope should not allow delete() call.', async function () {
         // Create new ConversationState with MemoryStorage and register the state as middleware.
         const convoState = new ConversationState(new MemoryStorage());
 
@@ -174,9 +192,7 @@ describe('Memory - Memory Scopes', function() {
         // Create test context
         const context = new TurnContext(new TestAdapter(), beginMessage);
         await dialogState.set(context, {
-            dialogStack: [
-                { id: 'test', state: {} }
-            ]
+            dialogStack: [{ id: 'test', state: {} }],
         });
         const dc = await dialogs.createContext(context);
 
@@ -191,8 +207,7 @@ describe('Memory - Memory Scopes', function() {
         assert(error == true);
     });
 
-
-    it('ConversationMemoryScope should return conversation state.', async function() {
+    it('ConversationMemoryScope should return conversation state.', async function () {
         // Create new ConversationState with MemoryStorage and register the state as middleware.
         const convoState = new ConversationState(new MemoryStorage());
 
@@ -218,7 +233,7 @@ describe('Memory - Memory Scopes', function() {
         assert.equal(memory.conversation.foo, 'bar');
     });
 
-    it('UserMemoryScope should not return state if not loaded.', async function() {
+    it('UserMemoryScope should not return state if not loaded.', async function () {
         // Initialize user state
         const storage = new MemoryStorage();
         let context = new TurnContext(new TestAdapter(), beginMessage);
@@ -248,7 +263,7 @@ describe('Memory - Memory Scopes', function() {
         assert.equal(memory, undefined, `state returned`);
     });
 
-    it('UserMemoryScope should return state once loaded.', async function() {
+    it('UserMemoryScope should return state once loaded.', async function () {
         // Initialize user state
         const storage = new MemoryStorage();
         let context = new TurnContext(new TestAdapter(), beginMessage);
@@ -277,14 +292,14 @@ describe('Memory - Memory Scopes', function() {
         const scope = new UserMemoryScope();
         let memory = scope.getMemory(dc);
         assert.equal(memory, undefined, `state returned`);
-        
+
         await scope.load(dc);
         memory = scope.getMemory(dc);
         assert.equal(typeof memory, 'object', `state not returned`);
         assert.equal(memory.user.foo, 'bar');
     });
 
-    it('DialogMemoryScope should return containers state.', async function() {
+    it('DialogMemoryScope should return containers state.', async function () {
         // Create a DialogState property, DialogSet and register the dialogs.
         const storage = new MemoryStorage();
         const convoState = new ConversationState(storage);
@@ -305,7 +320,7 @@ describe('Memory - Memory Scopes', function() {
         assert(memory.isContainer == true);
     });
 
-    it('DialogMemoryScope should return parent containers state for children.', async function() {
+    it('DialogMemoryScope should return parent containers state for children.', async function () {
         // Create a DialogState property, DialogSet and register the dialogs.
         const storage = new MemoryStorage();
         const convoState = new ConversationState(storage);
@@ -328,7 +343,7 @@ describe('Memory - Memory Scopes', function() {
         assert(memory.isContainer == true);
     });
 
-    it('DialogMemoryScope should return childs state when no parent.', async function() {
+    it('DialogMemoryScope should return childs state when no parent.', async function () {
         // Create a DialogState property, DialogSet and register the dialogs.
         const storage = new MemoryStorage();
         const convoState = new ConversationState(storage);
@@ -349,7 +364,7 @@ describe('Memory - Memory Scopes', function() {
         assert(memory.isDialog == true);
     });
 
-    it('DialogMemoryScope should overwrite parents memory.', async function() {
+    it('DialogMemoryScope should overwrite parents memory.', async function () {
         // Create a DialogState property, DialogSet and register the dialogs.
         const storage = new MemoryStorage();
         const convoState = new ConversationState(storage);
@@ -373,7 +388,7 @@ describe('Memory - Memory Scopes', function() {
         assert(memory.foo == 'bar');
     });
 
-    it('DialogMemoryScope should overwrite active dialogs memory.', async function() {
+    it('DialogMemoryScope should overwrite active dialogs memory.', async function () {
         // Create a DialogState property, DialogSet and register the dialogs.
         const storage = new MemoryStorage();
         const convoState = new ConversationState(storage);
@@ -395,7 +410,7 @@ describe('Memory - Memory Scopes', function() {
         assert(memory.foo == 'bar');
     });
 
-    it('DialogMemoryScope should raise error if setMemory() called without memory.', async function() {
+    it('DialogMemoryScope should raise error if setMemory() called without memory.', async function () {
         // Create a DialogState property, DialogSet and register the dialogs.
         const storage = new MemoryStorage();
         const convoState = new ConversationState(storage);
@@ -420,7 +435,7 @@ describe('Memory - Memory Scopes', function() {
         assert(error);
     });
 
-    it('DialogMemoryScope should raise error if delete() called.', async function() {
+    it('DialogMemoryScope should raise error if delete() called.', async function () {
         // Create a DialogState property, DialogSet and register the dialogs.
         const storage = new MemoryStorage();
         const convoState = new ConversationState(storage);
@@ -444,7 +459,7 @@ describe('Memory - Memory Scopes', function() {
         assert(error);
     });
 
-    it('SettingsMemoryScope should return content of settings.', async function() {
+    it('SettingsMemoryScope should return content of settings.', async function () {
         // Create a DialogState property, DialogSet and register the dialogs.
         const convoState = new ConversationState(new MemoryStorage());
         const dialogState = convoState.createProperty('dialogs');
@@ -481,10 +496,14 @@ describe('Memory - Memory Scopes', function() {
         assert.equal(dc.state.getValue('settings.to_be_overridden'), 'one');
         process.env['to_be_overridden'] = 'two';
         assert.equal(dc.state.getValue('settings.not_to_be_overridden'), 'one');
-        assert.equal(dc.state.getValue('settings.to_be_overridden'), 'two', 'settings should be overriden by environment variables');
+        assert.equal(
+            dc.state.getValue('settings.to_be_overridden'),
+            'two',
+            'settings should be overriden by environment variables'
+        );
     });
 
-    it('ThisMemoryScope should return active dialogs state.', async function() {
+    it('ThisMemoryScope should return active dialogs state.', async function () {
         // Create a DialogState property, DialogSet and register the dialogs.
         const storage = new MemoryStorage();
         const convoState = new ConversationState(storage);
@@ -505,7 +524,7 @@ describe('Memory - Memory Scopes', function() {
         assert(memory.isDialog == true);
     });
 
-    it('ThisMemoryScope should overwrite active dialogs memory.', async function() {
+    it('ThisMemoryScope should overwrite active dialogs memory.', async function () {
         // Create a DialogState property, DialogSet and register the dialogs.
         const storage = new MemoryStorage();
         const convoState = new ConversationState(storage);
@@ -527,7 +546,7 @@ describe('Memory - Memory Scopes', function() {
         assert(memory.foo == 'bar');
     });
 
-    it('ThisMemoryScope should raise error if setMemory() called without memory.', async function() {
+    it('ThisMemoryScope should raise error if setMemory() called without memory.', async function () {
         // Create a DialogState property, DialogSet and register the dialogs.
         const storage = new MemoryStorage();
         const convoState = new ConversationState(storage);
@@ -552,7 +571,7 @@ describe('Memory - Memory Scopes', function() {
         assert(error);
     });
 
-    it('ThisMemoryScope should raise error if setMemory() called without active dialog.', async function() {
+    it('ThisMemoryScope should raise error if setMemory() called without active dialog.', async function () {
         // Create a DialogState property, DialogSet and register the dialogs.
         const storage = new MemoryStorage();
         const convoState = new ConversationState(storage);
@@ -576,7 +595,7 @@ describe('Memory - Memory Scopes', function() {
         assert(error);
     });
 
-    it('ThisMemoryScope should raise error if delete() called.', async function() {
+    it('ThisMemoryScope should raise error if delete() called.', async function () {
         // Create a DialogState property, DialogSet and register the dialogs.
         const storage = new MemoryStorage();
         const convoState = new ConversationState(storage);
@@ -600,7 +619,7 @@ describe('Memory - Memory Scopes', function() {
         assert(error);
     });
 
-    it('TurnMemoryScope should persist changes to turn state.', async function() {
+    it('TurnMemoryScope should persist changes to turn state.', async function () {
         // Create a DialogState property, DialogSet and register the dialogs.
         const storage = new MemoryStorage();
         const convoState = new ConversationState(storage);
@@ -622,7 +641,7 @@ describe('Memory - Memory Scopes', function() {
         assert(memory.foo == 'bar');
     });
 
-    it('TurnMemoryScope should overwrite values in turn state.', async function() {
+    it('TurnMemoryScope should overwrite values in turn state.', async function () {
         // Create a DialogState property, DialogSet and register the dialogs.
         const storage = new MemoryStorage();
         const convoState = new ConversationState(storage);
@@ -643,7 +662,7 @@ describe('Memory - Memory Scopes', function() {
         assert(memory.foo == 'bar');
     });
 
-    it('TurnMemoryScope should raise error when setMemory() called without memory.', async function() {
+    it('TurnMemoryScope should raise error when setMemory() called without memory.', async function () {
         // Create a DialogState property, DialogSet and register the dialogs.
         const storage = new MemoryStorage();
         const convoState = new ConversationState(storage);
@@ -667,7 +686,7 @@ describe('Memory - Memory Scopes', function() {
         assert(error);
     });
 
-    it('TurnMemoryScope should raise error when delete() called.', async function() {
+    it('TurnMemoryScope should raise error when delete() called.', async function () {
         // Create a DialogState property, DialogSet and register the dialogs.
         const storage = new MemoryStorage();
         const convoState = new ConversationState(storage);
@@ -689,5 +708,141 @@ describe('Memory - Memory Scopes', function() {
             error = true;
         }
         assert(error);
+    });
+
+    it('DialogContextMemoryScope test', async function () {
+        const dialog = new AdaptiveDialog('adaptiveDialog');
+        const dialog2 = new AdaptiveDialog('adaptiveDialog2');
+
+        dialog.triggers.push(new OnBeginDialog([dialog2]));
+        dialog2.triggers.push(
+            new OnBeginDialog([
+                new SendActivity('${dialogcontext.activeDialog}').configure({ id: 'action1' }),
+                new SendActivity('${dialogcontext.parent}'),
+                new SendActivity("${contains(dialogcontext.stack, 'foo')}"),
+                new SendActivity("${contains(dialogcontext.stack, 'adaptiveDialog')}"),
+                new SendActivity("${contains(dialogcontext.stack, 'adaptiveDialog2')}"),
+            ])
+        );
+
+        const storage = new MemoryStorage();
+        const convoState = new ConversationState(storage);
+        const userState = new UserState(storage);
+        const dm = new DialogManager(dialog);
+        dm.userState = userState;
+        dm.conversationState = convoState;
+        LanguageGeneratorExtensions.useLanguageGeneration(dm);
+
+        await new TestAdapter(async (context) => {
+            return dm.onTurn(context);
+        })
+            .send('hi')
+            .assertReply('action1')
+            .assertReply('adaptiveDialog2')
+            .assertReply('false')
+            .assertReply('true')
+            .assertReply('true');
+    });
+
+    it('DialogContextMemoryScope interruption test', async function () {
+        const root = new AdaptiveDialog('rootDialog');
+
+        root.autoEndDialog = new BoolExpression(false);
+        root.generator = new TemplateEngineLanguageGenerator();
+        root.recognizer = new RegexRecognizer();
+        root.recognizer.intents.push(new IntentPattern('why', 'why'));
+
+        root.triggers.push(
+            new OnBeginDialog([
+                new SendActivity('Hello'),
+                new TextInput('user.name', 'What is your name?').configure({
+                    alwaysPrompt: new BoolExpression(true),
+                    id: 'askForName',
+                }),
+                new SendActivity('I have ${user.name}'),
+            ])
+        );
+        root.triggers.push(
+            new OnIntent(
+                'why',
+                [],
+                [new SendActivity('I need your name to complete the sample')],
+                "contains(dialogcontext.stack, 'askForName')"
+            )
+        );
+        root.triggers.push(new OnIntent('why', [], [new SendActivity('why what?')]));
+
+        const storage = new MemoryStorage();
+        const convoState = new ConversationState(storage);
+        const userState = new UserState(storage);
+        const dm = new DialogManager(root);
+        dm.userState = userState;
+        dm.conversationState = convoState;
+        LanguageGeneratorExtensions.useLanguageGeneration(dm);
+
+        await new TestAdapter(async (context) => {
+            return dm.onTurn(context);
+        })
+            .send('hello')
+            .assertReply('Hello')
+            .assertReply('What is your name?')
+            .send('why')
+            .assertReply('I need your name to complete the sample')
+            .assertReply('What is your name?')
+            .send('tom')
+            .assertReply('I have tom')
+            .send('why')
+            .assertReply('why what?')
+            .startTest();
+    });
+
+    it('DialogContextMemoryScope should get dialog context.', async function () {
+        // Create new ConversationState with MemoryStorage and register the state as middleware.
+        const convoState = new ConversationState(new MemoryStorage());
+
+        // Create a DialogState property, DialogSet and register the dialogs.
+        const dialogState = convoState.createProperty('dialogs');
+        const dialogs = new DialogSet(dialogState);
+        const dialog = new TestDialog('test', 'test message');
+        dialogs.add(dialog);
+
+        // Create test context
+        const context = new TurnContext(new TestAdapter(), beginMessage);
+        await dialogState.set(context, {
+            dialogStack: [{ id: 'test', state: {} }],
+        });
+        const dc = await dialogs.createContext(context);
+
+        // Run test
+        const scope = new DialogContextMemoryScope();
+        const memory = scope.getMemory(dc);
+
+        assert.strictEqual(memory.activeDialog, 'test');
+        assert.strictEqual(memory.stack.length, 1);
+        assert.strictEqual(memory.parent, undefined);
+    });
+
+    it('DialogContextMemoryScope should not allow setMemory() call.', async function () {
+        // Create new ConversationState with MemoryStorage and register the state as middleware.
+        const convoState = new ConversationState(new MemoryStorage());
+
+        // Create a DialogState property, DialogSet and register the dialogs.
+        const dialogState = convoState.createProperty('dialogs');
+        const dialogs = new DialogSet(dialogState);
+        const dialog = new TestDialog('test', 'test message');
+        dialogs.add(dialog);
+
+        // Create test context
+        const context = new TurnContext(new TestAdapter(), beginMessage);
+        await dialogState.set(context, {
+            dialogStack: [{ id: 'test', state: {} }],
+        });
+        const dc = await dialogs.createContext(context);
+
+        // Run test
+        assert.throws(() => {
+            const scope = new DialogContextMemoryScope();
+            scope.setMemory(dc, {});
+        });
     });
 });
