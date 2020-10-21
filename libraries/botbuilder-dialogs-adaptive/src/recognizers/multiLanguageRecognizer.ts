@@ -7,8 +7,7 @@
  */
 
 import { Activity, RecognizerResult } from 'botbuilder-core';
-import { Converter, ConverterFactory, DialogContext } from 'botbuilder-dialogs';
-import { Recognizer, RecognizerConfiguration } from './recognizer';
+import { Converter, ConverterFactory, DialogContext, Recognizer, RecognizerConfiguration } from 'botbuilder-dialogs';
 import { LanguagePolicy, LanguagePolicyConverter } from '../languagePolicy';
 import { MultiLanguageRecognizerConverter } from '../converters';
 import { languagePolicyKey } from '../languageGeneratorExtensions';

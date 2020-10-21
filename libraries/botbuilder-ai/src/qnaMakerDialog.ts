@@ -5,14 +5,34 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { Activity, ActivityTypes } from 'botbuilder-core';
 import {
+    ArrayExpression,
+    ArrayExpressionConverter,
+    BoolExpression,
+    BoolExpressionConverter,
+    EnumExpression,
+    EnumExpressionConverter,
+    Expression,
+    IntExpression,
+    IntExpressionConverter,
+    NumberExpression,
+    NumberExpressionConverter,
+    StringExpression,
+    StringExpressionConverter,
+} from 'adaptive-expressions';
+import { Activity, ActivityTypes, MessageFactory } from 'botbuilder-core';
+import {
+    Converter,
+    ConverterFactory,
     WaterfallDialog,
     Dialog,
-    DialogTurnResult,
+    DialogConfiguration,
     DialogContext,
-    WaterfallStepContext,
     DialogReason,
+    DialogStateManager,
+    DialogTurnResult,
+    TemplateInterface,
+    WaterfallStepContext,
 } from 'botbuilder-dialogs';
 import { QnAMakerOptions } from './qnamaker-interfaces/qnamakerOptions';
 import { RankerTypes } from './qnamaker-interfaces/rankerTypes';
@@ -20,9 +40,20 @@ import { JoinOperator } from './qnamaker-interfaces/joinOperator';
 import { QnAMaker, QnAMakerResult } from './';
 import { FeedbackRecord, FeedbackRecords, QnAMakerMetadata } from './qnamaker-interfaces';
 import { QnACardBuilder } from './qnaCardBuilder';
+import { BindToActivity } from './qnamaker-utils/bindToActivity';
 import { ActiveLearningUtils } from './qnamaker-utils/activeLearningUtils';
 
-const V4_API_REGEX = /^https:\/\/.*\.azurewebsites\.net\/qnamaker\/?/i;
+class QnAMakerDialogActivityConverter
+    implements Converter<string, TemplateInterface<Partial<Activity>, DialogStateManager>> {
+    public convert(
+        value: string | TemplateInterface<Partial<Activity>, DialogStateManager>
+    ): TemplateInterface<Partial<Activity>, DialogStateManager> {
+        if (typeof value === 'string') {
+            return new BindToActivity(MessageFactory.text(value) as Activity);
+        }
+        return value;
+    }
+}
 
 /**
  * QnAMakerDialog response options.
@@ -39,11 +70,11 @@ export interface QnAMakerDialogResponseOptions {
     /**
      * Activity to be sent in the event of no answer found in KB.
      */
-    noAnswer: Activity;
+    noAnswer: Partial<Activity>;
     /**
      * Activity to be sent in the end that the 'no match' option is selected on active learning card.
      */
-    cardNoMatchResponse: Activity;
+    cardNoMatchResponse: Partial<Activity>;
 }
 
 /**
@@ -60,6 +91,22 @@ export interface QnAMakerDialogOptions {
     qnaDialogResponseOptions: QnAMakerDialogResponseOptions;
 }
 
+export interface QnAMakerDialogConfiguration extends DialogConfiguration {
+    knowledgeBaseId?: string | Expression | StringExpression;
+    hostname?: string | Expression | StringExpression;
+    endpointKey?: string | Expression | StringExpression;
+    threshold?: number | string | Expression | NumberExpression;
+    top?: number | string | Expression | IntExpression;
+    noAnswer?: string | Partial<Activity> | TemplateInterface<Partial<Activity>, DialogStateManager>;
+    activeLearningCardTitle?: string | Expression | StringExpression;
+    cardNoMatchText?: string | Expression | StringExpression;
+    cardNoMatchResponse?: string | Partial<Activity> | TemplateInterface<Partial<Activity>, DialogStateManager>;
+    strictFilters?: QnAMakerMetadata[] | string | Expression | ArrayExpression<QnAMakerMetadata>;
+    logPersonalInformation?: boolean | string | Expression | BoolExpression;
+    isTest?: boolean;
+    rankerType?: RankerTypes | string | Expression | EnumExpression<RankerTypes>;
+}
+
 /**
  * A dialog that supports multi-step and adaptive-learning QnA Maker services.
  *
@@ -68,7 +115,8 @@ export interface QnAMakerDialogOptions {
  * It supports knowledge bases that include follow-up prompt and active learning features.
  * The dialog will also present user with appropriate multi-turn prompt or active learning options.
  */
-export class QnAMakerDialog extends WaterfallDialog {
+export class QnAMakerDialog extends WaterfallDialog implements QnAMakerDialogConfiguration {
+    public static $kind = 'Microsoft.QnAMakerDialog';
     // state and step value key constants
     /**
      * The path for storing and retrieving QnA Maker context data.
@@ -104,16 +152,23 @@ export class QnAMakerDialog extends WaterfallDialog {
     private defaultCardNoMatchResponse = `Thanks for the feedback.`;
     private defaultNoAnswer = `No QnAMaker answers found.`;
 
-    private knowledgeBaseId: any;
-    private hostName: any;
-    private endpointKey: any;
-    private threshold: number;
-    private top: number;
-    private noAnswer: Activity;
-    private activeLearningCardTitle: string;
-    private cardNoMatchText: string;
-    private strintFilters: any;
-    private cardNoMatchResponse: Activity;
+    public knowledgeBaseId: StringExpression;
+    public hostname: StringExpression;
+    public endpointKey: StringExpression;
+    public threshold: NumberExpression = new NumberExpression(0.3);
+    public top: IntExpression = new IntExpression(3);
+    public noAnswer: TemplateInterface<Partial<Activity>, DialogStateManager> = new BindToActivity(
+        MessageFactory.text(this.defaultNoAnswer) as Activity
+    );
+    public activeLearningCardTitle: StringExpression;
+    public cardNoMatchText: StringExpression;
+    public cardNoMatchResponse: TemplateInterface<Partial<Activity>, DialogStateManager> = new BindToActivity(
+        MessageFactory.text(this.defaultCardNoMatchResponse) as Activity
+    );
+    public strictFilters: ArrayExpression<QnAMakerMetadata>;
+    public logPersonalInformation: BoolExpression = new BoolExpression('=settings.telemetry.logPersonalInformation');
+    public isTest = false;
+    public rankerType: EnumExpression<RankerTypes> = new EnumExpression(RankerTypes.default);
     private strictFiltersJoinOperator: JoinOperator;
 
     /**
@@ -130,10 +185,11 @@ export class QnAMakerDialog extends WaterfallDialog {
      * @param strictFilters (Optional) QnA Maker metadata with which to filter or boost queries to the knowledge base; or null to apply none.
      * @param dialogId (Optional) Id of the created dialog. Default is 'QnAMakerDialog'.
      */
+    public constructor();
     public constructor(
-        knowledgeBaseId: string,
-        endpointKey: string,
-        hostName: string,
+        knowledgeBaseId?: string,
+        endpointKey?: string,
+        hostname?: string,
         noAnswer?: Activity,
         threshold = 0.3,
         activeLearningCardTitle = 'Did you mean:',
@@ -145,33 +201,73 @@ export class QnAMakerDialog extends WaterfallDialog {
         strictFiltersJoinOperator: JoinOperator = JoinOperator.AND
     ) {
         super(dialogId);
-        if (!knowledgeBaseId) {
-            throw new TypeError('QnAMakerDialog: missing knowledgeBaseId parameter');
+        if (knowledgeBaseId) {
+            this.knowledgeBaseId = new StringExpression(knowledgeBaseId);
+        }
+        if (endpointKey) {
+            this.endpointKey = new StringExpression(endpointKey);
+        }
+        if (hostname) {
+            this.hostname = new StringExpression(hostname);
+        }
+        if (threshold) {
+            this.threshold = new NumberExpression(threshold);
+        }
+        if (top) {
+            this.top = new IntExpression(top);
+        }
+        if (activeLearningCardTitle) {
+            this.activeLearningCardTitle = new StringExpression(activeLearningCardTitle);
+        }
+        if (cardNoMatchText) {
+            this.cardNoMatchText = new StringExpression(cardNoMatchText);
+        }
+        if (strictFilters) {
+            this.strictFilters = new ArrayExpression(strictFilters);
+        }
+        if (noAnswer) {
+            this.noAnswer = new BindToActivity(noAnswer);
+        }
+        if (cardNoMatchResponse) {
+            this.cardNoMatchResponse = new BindToActivity(cardNoMatchResponse);
         }
 
-        if (!endpointKey) {
-            throw new TypeError('QnAMakerDialog: missing endpointKey parameter');
-        }
-
-        if (!hostName) {
-            throw new TypeError('QnAMakerDialog: missing hostName parameter');
-        }
-
-        this.knowledgeBaseId = knowledgeBaseId;
-        this.endpointKey = endpointKey;
-        this.hostName = hostName;
-        this.threshold = threshold;
-        this.top = top;
-        this.activeLearningCardTitle = activeLearningCardTitle;
-        this.cardNoMatchText = cardNoMatchText;
-        this.strintFilters = strictFilters;
-        this.noAnswer = noAnswer;
-        this.cardNoMatchResponse = cardNoMatchResponse;
         this.strictFiltersJoinOperator = strictFiltersJoinOperator;
         this.addStep(this.callGenerateAnswer.bind(this));
         this.addStep(this.callTrain.bind(this));
         this.addStep(this.checkForMultiTurnPrompt.bind(this));
         this.addStep(this.displayQnAResult.bind(this));
+    }
+
+    public getConverter(property: keyof QnAMakerDialogConfiguration): Converter | ConverterFactory {
+        switch (property) {
+            case 'knowledgeBaseId':
+                return new StringExpressionConverter();
+            case 'hostname':
+                return new StringExpressionConverter();
+            case 'endpointKey':
+                return new StringExpressionConverter();
+            case 'threshold':
+                return new NumberExpressionConverter();
+            case 'top':
+                return new IntExpressionConverter();
+            case 'noAnswer':
+                return new QnAMakerDialogActivityConverter();
+            case 'activeLearningCardTitle':
+                return new StringExpressionConverter();
+            case 'cardNoMatchText':
+                return new StringExpressionConverter();
+            case 'cardNoMatchResponse':
+                return new QnAMakerDialogActivityConverter();
+            case 'strictFilters':
+                return new ArrayExpressionConverter();
+            case 'logPersonalInformation':
+                return new BoolExpressionConverter();
+            case 'rankerType':
+                return new EnumExpressionConverter(RankerTypes);
+            default:
+                return super.getConverter(property);
+        }
     }
 
     /**
@@ -198,8 +294,8 @@ export class QnAMakerDialog extends WaterfallDialog {
         }
 
         const dialogOptions: QnAMakerDialogOptions = {
-            qnaDialogResponseOptions: await this.getQnAResponseOptions(),
-            qnaMakerOptions: await this.getQnAMakerOptions(),
+            qnaDialogResponseOptions: await this.getQnAResponseOptions(dc),
+            qnaMakerOptions: await this.getQnAMakerOptions(dc),
         };
 
         if (options) {
@@ -211,32 +307,34 @@ export class QnAMakerDialog extends WaterfallDialog {
 
     /**
      * Gets the options for the QnA Maker client that the dialog will use to query the knowledge base.
+     * @param dc The dialog context for the current turn of conversation.
      * @remarks If the task is successful, the result contains the QnA Maker options to use.
      * @returns A new instance of QnAMakerOptions.
      */
-    private getQnAMakerOptions(): QnAMakerOptions {
+    private async getQnAMakerOptions(dc: DialogContext): Promise<QnAMakerOptions> {
         return {
-            scoreThreshold: this.threshold,
-            strictFilters: this.strintFilters,
-            top: this.top,
+            scoreThreshold: this.threshold && this.threshold.getValue(dc.state),
+            strictFilters: this.strictFilters && this.strictFilters.getValue(dc.state),
+            top: this.top && this.top.getValue(dc.state),
             qnaId: 0,
-            rankerType: RankerTypes.default,
-            isTest: false,
+            rankerType: this.rankerType && (this.rankerType.getValue(dc.state) as string),
+            isTest: this.isTest,
             strictFiltersJoinOperator: this.strictFiltersJoinOperator,
         };
     }
 
     /**
      * Gets the options the dialog will use to display query results to the user.
+     * @param dc The dialog context for the current turn of conversation.
      * @remarks If the task is successful, the result contains the response options to use.
      * @returns A new instance of QnAMakerDialogResponseOptions.
      */
-    private getQnAResponseOptions(): QnAMakerDialogResponseOptions {
+    private async getQnAResponseOptions(dc: DialogContext): Promise<QnAMakerDialogResponseOptions> {
         return {
-            activeLearningCardTitle: this.activeLearningCardTitle,
-            cardNoMatchResponse: this.cardNoMatchResponse,
-            cardNoMatchText: this.cardNoMatchText,
-            noAnswer: this.noAnswer,
+            activeLearningCardTitle: this.activeLearningCardTitle && this.activeLearningCardTitle.getValue(dc.state),
+            cardNoMatchResponse: this.cardNoMatchResponse && (await this.cardNoMatchResponse.bind(dc, dc.state)),
+            cardNoMatchText: this.cardNoMatchText && this.cardNoMatchText.getValue(dc.state),
+            noAnswer: this.noAnswer && (await this.noAnswer.bind(dc, dc.state)),
         };
     }
 
@@ -261,7 +359,7 @@ export class QnAMakerDialog extends WaterfallDialog {
             }
         }
 
-        const qna = this.getQnAClient();
+        const qna = await this.getQnAClient(step);
 
         const response = await qna.getAnswersRaw(step.context, dialogOptions.qnaMakerOptions);
 
@@ -342,7 +440,8 @@ export class QnAMakerDialog extends WaterfallDialog {
 
                 const feedbackRecords: FeedbackRecords = { feedbackRecords: records };
 
-                await this.getQnAClient().callTrainAsync(feedbackRecords);
+                const qnaClient = await this.getQnAClient(step);
+                await qnaClient.callTrainAsync(feedbackRecords);
 
                 return await step.next(qnaResult);
             } else if (reply == dialogOptions.qnaDialogResponseOptions.cardNoMatchText) {
@@ -424,13 +523,15 @@ export class QnAMakerDialog extends WaterfallDialog {
     /**
      * Creates and returns an instance of the QnAMaker class used to query the knowledgebase.
      **/
-    private getQnAClient(): QnAMaker {
+    private async getQnAClient(dc: DialogContext): Promise<QnAMaker> {
         const endpoint = {
-            knowledgeBaseId: this.knowledgeBaseId,
-            endpointKey: this.endpointKey,
-            host: this.getHost(),
+            knowledgeBaseId: this.knowledgeBaseId.getValue(dc.state),
+            endpointKey: this.endpointKey.getValue(dc.state),
+            host: this.getHost(dc),
         };
-        return new QnAMaker(endpoint);
+        const options = await this.getQnAMakerOptions(dc);
+        const logPersonalInformation = this.logPersonalInformation && this.logPersonalInformation.getValue(dc.state);
+        return new QnAMaker(endpoint, options, this.telemetryClient, logPersonalInformation);
     }
 
     /**
@@ -439,8 +540,8 @@ export class QnAMakerDialog extends WaterfallDialog {
      * Example of a complete v5 API endpoint: "https://qnamaker-acom.azure.com/qnamaker/v5.0"
      * Template literal to construct v4 API endpoint: `https://${ this.hostName }.azurewebsites.net/qnamaker`
      */
-    private getHost(): string {
-        let host: string = this.hostName;
+    private getHost(dc: DialogContext): string {
+        let host: string = this.hostname.getValue(dc.state);
         // If hostName includes 'qnamaker/v5', return the v5 API hostName.
         if (host.includes('qnamaker/v5')) {
             return host;

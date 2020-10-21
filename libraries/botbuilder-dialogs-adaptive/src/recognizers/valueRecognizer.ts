@@ -7,8 +7,7 @@
  */
 
 import { Activity, ActivityTypes, RecognizerResult } from 'botbuilder-core';
-import { DialogContext } from 'botbuilder-dialogs';
-import { Recognizer } from './recognizer';
+import { DialogContext, Recognizer } from 'botbuilder-dialogs';
 
 export class ValueRecognizer extends Recognizer {
     public async recognize(

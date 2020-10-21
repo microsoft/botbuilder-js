@@ -1,12 +1,12 @@
 /**
- * @module botbuilder-dialogs-adaptive
+ * @module botbuilder-dialogs
  */
 /**
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
 
-import { DialogContext } from 'botbuilder-dialogs';
+import { DialogContext } from './dialogContext';
 
 /**
  * Defines Template interface for binding data to T.
