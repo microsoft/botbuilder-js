@@ -65,8 +65,6 @@ export async function runDialog(
             }
 
             const activeDialogContext = getActiveDialogContext(dialogContext);
-            const remoteCancelText = 'Skill was canceled through an EndOfConversation activity from the parent.';
-            await context.sendTraceActivity(telemetryEventName, undefined, undefined, `${remoteCancelText}`);
 
             // Send cancellation message to the top dialog in the stack to ensure all the parents are canceled in the right order.
             await activeDialogContext.cancelAllDialogs(true);
@@ -93,9 +91,6 @@ export async function runDialog(
 
     if (result.status === DialogTurnStatus.complete || result.status === DialogTurnStatus.cancelled) {
         if (shouldSendEndOfConversationToParent(context, result)) {
-            const endMessageText = `Dialog ${dialog.id} has **completed**. Sending EndOfConversation.`;
-            await context.sendTraceActivity(telemetryEventName, result.result, undefined, `${endMessageText}`);
-
             // Send End of conversation at the end.
             const code =
                 result.status == DialogTurnStatus.complete

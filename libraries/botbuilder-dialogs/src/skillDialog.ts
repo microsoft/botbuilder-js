@@ -71,13 +71,6 @@ export class SkillDialog extends Dialog<Partial<BeginSkillDialogOptions>> {
     public async beginDialog(dc: DialogContext, options: BeginSkillDialogOptions): Promise<DialogTurnResult> {
         const dialogArgs = this.validateBeginDialogArgs(options);
 
-        await dc.context.sendTraceActivity(
-            `${this.id}.beginDialog()`,
-            undefined,
-            undefined,
-            `Using activity of type: ${dialogArgs.activity.type}`
-        );
-
         // Create deep clone of the original activity to avoid altering it before forwarding it.
         const clonedActivity = this.cloneActivity(dialogArgs.activity);
 
@@ -118,21 +111,8 @@ export class SkillDialog extends Dialog<Partial<BeginSkillDialogOptions>> {
             return Dialog.EndOfTurn;
         }
 
-        await dc.context.sendTraceActivity(
-            `${this.id}.continueDialog()`,
-            undefined,
-            undefined,
-            `ActivityType: ${dc.context.activity.type}`
-        );
-
         // Handle EndOfConversation from the skill (this will be sent to the this dialog by the SkillHandler if received from the Skill)
         if (dc.context.activity.type === ActivityTypes.EndOfConversation) {
-            await dc.context.sendTraceActivity(
-                `${this.id}.continueDialog()`,
-                undefined,
-                undefined,
-                `Got ${ActivityTypes.EndOfConversation}`
-            );
             return await dc.endDialog(dc.context.activity.value);
         }
 
@@ -162,13 +142,6 @@ export class SkillDialog extends Dialog<Partial<BeginSkillDialogOptions>> {
     public async endDialog(context: TurnContext, instance: DialogInstance, reason: DialogReason): Promise<void> {
         // Send of of conversation to the skill if the dialog has been cancelled.
         if (reason == DialogReason.cancelCalled || reason == DialogReason.replaceCalled) {
-            await context.sendTraceActivity(
-                `${this.id}.endDialog()`,
-                undefined,
-                undefined,
-                `ActivityType: ${context.activity.type}`
-            );
-
             const reference = TurnContext.getConversationReference(context.activity);
             // Apply conversation reference and common properties from incoming activity before sending.
             const activity = TurnContext.applyConversationReference(
