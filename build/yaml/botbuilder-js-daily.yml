@@ -51,9 +51,6 @@ steps:
    
    [int] $packageCount = $outvar.Length;
    $PackagesDescription = "$packageCount packages";
-   if ($(DoNotPublishPackages) -eq true) {
-       $PackagesDescription = "$PackagesDescription (DoNotPublishPackages = true)"
-   }
    $PackagesDescription;
    $outvar;
    
