@@ -145,49 +145,60 @@ describe('SkillValidation', function () {
     });
 
     describe('validateIdentity()', () => {
-        const audience = uuid();
-        const appId = uuid();
-        const credentials = new SimpleCredentialProvider(audience, '');
+        const makeCredentialsAndIdentity = ({
+            audience,
+            audienceClaim, // overrides audience in claim value
+            appId = uuid(),
+            authType = true,
+            version = '1.0',
+        } = {}) => {
+            if (audience === undefined) {
+                audience = appId;
+            }
 
-        const appIdClaim = { type: AuthenticationConstants.AppIdClaim, value: appId };
-        const audClaim = { type: AuthenticationConstants.AudienceClaim, value: audience };
-        const verClaim = { type: AuthenticationConstants.VersionClaim, value: '1.0' };
+            const credentials = new SimpleCredentialProvider(audience, '');
 
-        const claims = [appIdClaim, audClaim, verClaim];
-        const identity = new ClaimsIdentity(claims);
+            const appIdClaim = { type: AuthenticationConstants.AppIdClaim, value: appId };
+            const audClaim = {
+                type: AuthenticationConstants.AudienceClaim,
+                value: audienceClaim !== undefined ? audienceClaim : audience,
+            };
+            const verClaim = { type: AuthenticationConstants.VersionClaim, value: version };
 
-        afterEach(() => {
-            identity.isAuthenticated = true;
+            const claims = [appIdClaim, audClaim, verClaim];
+            const identity = new ClaimsIdentity(claims, authType);
 
-            verClaim.type = AuthenticationConstants.VersionClaim;
-            verClaim.value = '1.0';
-            audClaim.type = AuthenticationConstants.AudienceClaim;
-            audClaim.value = audience;
-            appIdClaim.type = AuthenticationConstants.AppIdClaim;
-            appIdClaim.value = appId;
-        });
+            return { credentials, identity };
+        };
 
         it('should fail with a falsey identity', async () => {
+            const { credentials } = makeCredentialsAndIdentity();
+
             try {
                 await SkillValidation.validateIdentity(undefined, credentials);
+                assert.fail('should have thrown');
             } catch (e) {
                 assert.strictEqual(e.message, 'SkillValidation.validateIdentity(): Invalid identity');
             }
         });
 
         it('should fail if ClaimsIdentity.isAuthenticated is false', async () => {
+            const { credentials, identity } = makeCredentialsAndIdentity({ authType: false });
+
             try {
-                identity.isAuthenticated = false;
                 await SkillValidation.validateIdentity(identity, credentials);
+                assert.fail('should have thrown');
             } catch (e) {
                 assert.strictEqual(e.message, 'SkillValidation.validateIdentity(): Token not authenticated');
             }
         });
 
-        it('should fail no version claim', async () => {
+        it('should fail with no version claim', async () => {
+            const { credentials, identity } = makeCredentialsAndIdentity({ version: null });
+
             try {
-                verClaim.type = undefined;
                 await SkillValidation.validateIdentity(identity, credentials);
+                assert.fail('should have thrown');
             } catch (e) {
                 assert.strictEqual(
                     e.message,
@@ -197,9 +208,11 @@ describe('SkillValidation', function () {
         });
 
         it('should fail with no audience claim', async () => {
+            const { credentials, identity } = makeCredentialsAndIdentity({ audience: null });
+
             try {
-                audClaim.type = undefined;
                 await SkillValidation.validateIdentity(identity, credentials);
+                assert.fail('should have thrown');
             } catch (e) {
                 assert.strictEqual(
                     e.message,
@@ -208,24 +221,39 @@ describe('SkillValidation', function () {
             }
         });
 
-        it('should fail if audience is not an appId', async () => {
-            audClaim.value = AuthenticationConstants.ToBotFromChannelTokenIssuer;
+        it('should fail if audience claim is not appId', async () => {
+            const { credentials, identity } = makeCredentialsAndIdentity({
+                audienceClaim: uuid(),
+                appId: uuid(),
+            });
+
             try {
                 await SkillValidation.validateIdentity(identity, credentials);
+                assert.fail('should have thrown');
             } catch (e) {
                 assert.strictEqual(e.message, 'SkillValidation.validateIdentity(): Invalid audience.');
             }
         });
 
-        it('should fail if appid claim is missing or falsey', async () => {
-            appIdClaim.type = undefined;
+        it('should fail if appid claim is falsey', async () => {
+            const { credentials, identity } = makeCredentialsAndIdentity({
+                audience: uuid(),
+                appId: '',
+            });
+
             try {
                 await SkillValidation.validateIdentity(identity, credentials);
             } catch (e) {
                 assert.strictEqual(e.message, 'SkillValidation.validateIdentity(): Invalid appId.');
             }
+        });
 
-            appIdClaim.type = AuthenticationConstants.AppIdClaim;
+        it('should fail if appid claim is missing', async () => {
+            const { credentials, identity } = makeCredentialsAndIdentity({
+                audience: uuid(),
+                appId: null,
+            });
+
             try {
                 await SkillValidation.validateIdentity(identity, credentials);
             } catch (e) {
@@ -234,6 +262,7 @@ describe('SkillValidation', function () {
         });
 
         it('should succeed', async () => {
+            const { credentials, identity } = makeCredentialsAndIdentity();
             await SkillValidation.validateIdentity(identity, credentials);
         });
     });
