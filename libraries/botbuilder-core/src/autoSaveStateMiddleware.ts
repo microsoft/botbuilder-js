@@ -57,6 +57,11 @@ export class AutoSaveStateMiddleware implements Middleware {
         BotStateSet.prototype.add.apply(this.botStateSet, botStates);
     }
 
+    /**
+     * Called by the adapter (for example, a `BotFrameworkAdapter`) at runtime in order to process an inbound [Activity](xref:botframework-schema.Activity).
+     * @param context The context object for this turn.
+     * @param next {function} The next delegate function.
+     */
     public async onTurn(context: TurnContext, next: () => Promise<void>): Promise<void> {
         await next();
         await this.botStateSet.saveAllChanges(context, false);

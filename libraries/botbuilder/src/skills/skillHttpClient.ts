@@ -28,6 +28,12 @@ import { BotFrameworkHttpClient } from '../botFrameworkHttpClient';
 export class SkillHttpClient extends BotFrameworkHttpClient {
     private readonly conversationIdFactory: SkillConversationIdFactoryBase;
 
+    /**
+     * Creates a new instance of the [SkillHttpClient](xref:botbuilder-core.SkillHttpClient) class.
+     * @param credentialProvider An instance of [ICredentialProvider](xref:botframework-connector.ICredentialProvider).
+     * @param conversationIdFactory An instance of a class derived from [SkillConversationIdFactoryBase](xref:botbuilder-core.SkillConversationIdFactoryBase).
+     * @param channelService Optional. The channel service.
+     */
     public constructor(
         credentialProvider: ICredentialProvider,
         conversationIdFactory: SkillConversationIdFactoryBase,
@@ -71,6 +77,15 @@ export class SkillHttpClient extends BotFrameworkHttpClient {
         callbackUrl: string,
         activity: Activity
     ): Promise<InvokeResponse>;
+    /**
+     * Uses the `SkillConversationIdFactory` to create or retrieve a Skill Conversation Id, and sends the [Activity](xref:botframework-schema.Activity).
+     * @param audienceOrFromBotId The OAuth audience scope, used during token retrieval or the AppId of the bot sending the [Activity](xref:botframework-schema.Activity).
+     * @param fromBotIdOrSkill The AppId of the bot sending the [Activity](xref:botframework-schema.Activity) or the skill to create the Conversation Id for.
+     * @param toSkillOrCallbackUrl The skill to create the Conversation Id for or the callback Url for the skill host.
+     * @param callbackUrlOrActivity The callback Url for the skill host or the [Activity](xref:botframework-schema.Activity) to send.
+     * @param activityToForward Optional. The [Activity](xref:botframework-schema.Activity) to forward.
+     * @returns A `Promise` representing the [InvokeResponse](xref:botbuilder-core.InvokeResponse) for the operation.
+     */                             
     public async postToSkill<T = any>(
         audienceOrFromBotId: string,
         fromBotIdOrSkill: string | BotFrameworkSkill,
@@ -97,7 +112,6 @@ export class SkillHttpClient extends BotFrameworkHttpClient {
             typeof callbackUrlOrActivity === 'string' ? callbackUrlOrActivity : (toSkillOrCallbackUrl as string);
         const activity =
             typeof activityToForward === 'object' ? activityToForward : (callbackUrlOrActivity as Activity);
-
         let skillConversationId: string;
         try {
             const createIdOptions: SkillConversationIdFactoryOptions = {

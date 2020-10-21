@@ -20,10 +20,16 @@ import { ReturnType } from '../returnType';
  * This function is case-sensitive.
  */
 export class Contains extends ExpressionEvaluator {
+    /**
+     * Initializes a new instance of the [Contains](xref:adaptive-expressions.Contains) class.
+     */
     public constructor() {
         super(ExpressionType.Contains, Contains.evaluator, ReturnType.Boolean, FunctionUtils.validateBinary);
     }
 
+    /**
+     * @private
+     */
     private static evaluator(expression: Expression, state: MemoryInterface, options: Options): ValueWithError {
         let found = false;
         const { args, error: childrenError } = FunctionUtils.evaluateChildren(expression, state, options);
