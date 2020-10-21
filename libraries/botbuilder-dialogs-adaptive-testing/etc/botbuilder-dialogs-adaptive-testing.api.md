@@ -75,6 +75,7 @@ export class TestRunner {
 export class TestScript {
     description: string;
     dialog: DialogExpression;
+    languagePolicy: LanguagePolicy;
     enableTrace: boolean;
     execute(resourceExplorer: ResourceExplorer, testName?: string, testAdapter?: TestAdapter): Promise<void>;
     locale: string;
