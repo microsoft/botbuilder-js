@@ -16,3 +16,35 @@ export const teamId: msRest.OperationURLParameter = {
         },
     },
 };
+
+export const meetingId: msRest.OperationURLParameter = {
+    parameterPath: 'meetingId',
+    mapper: {
+        required: true,
+        serializedName: 'meetingId',
+        type: {
+            name: 'String',
+        },
+    },
+};
+
+export const participantId: msRest.OperationURLParameter = {
+    parameterPath: 'participantId',
+    mapper: {
+        required: true,
+        serializedName: 'participantId',
+        type: {
+            name: 'String',
+        },
+    },
+};
+
+export const tenantId: msRest.OperationQueryParameter = {
+    parameterPath: ['options', 'tenantId'],
+    mapper: {
+        serializedName: 'tenantId',
+        type: {
+            name: 'String',
+        },
+    },
+};

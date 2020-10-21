@@ -35,4 +35,5 @@ export {
     Models as TeamsConnectorModels,
     Mappers as TeamsConnectorMappers,
 };
+
 export * from './operations';
