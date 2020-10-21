@@ -6,7 +6,7 @@
 name: $(Build.BuildId)
 
 pool:
-  vmImage: 'macOS-10.15'
+  vmImage: 'ubuntu-18.04'
 
 variables:
   PackageVersion: 4.4.0-preview.$(Build.BuildNumber)
