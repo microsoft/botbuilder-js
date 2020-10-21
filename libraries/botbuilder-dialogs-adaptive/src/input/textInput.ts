@@ -38,7 +38,7 @@ export class TextInput extends InputDialog implements TextInputConfiguration {
         if (this.outputFormat) {
             const value = this.outputFormat.getValue(dc.state);
             if (value && value.trim()) {
-                input = value.toString();
+                input = value;
             }
         }
 
