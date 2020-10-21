@@ -7,7 +7,7 @@
 // The Teams schemas was manually added to botframework-schema. This file has been updated import from the botframework-schema and the extension folder.
 // The ChannelCount and MemberCount fields were manually added to the TeamDetails definition.
 import { MessageActionsPayloadBody, O365ConnectorCardActionBase, O365ConnectorCardInputBase } from './extension';
-import { Activity, Attachment, CardAction, ChannelAccount } from '../';
+import { Activity, Attachment, CardAction, ChannelAccount, ConversationAccount } from '../';
 export * from './extension';
 
 /**
@@ -130,6 +130,19 @@ export interface TenantInfo {
 
 /**
  * @interface
+ * An interface representing TeamsMeetingInfo.
+ * Describes a meeting
+ *
+ */
+export interface TeamsMeetingInfo {
+    /**
+     * @member {string} [id] Unique identifier representing a meeting
+     */
+    id?: string;
+}
+
+/**
+ * @interface
  * An interface representing TeamsChannelData.
  * Channel data specific to messages received in Microsoft Teams
  *
@@ -159,6 +172,11 @@ export interface TeamsChannelData {
      * message was sent
      */
     tenant?: TenantInfo;
+    /**
+     * @member {TeamsMeetingInfo} [meeting] Information about the tenant in which the
+     * message was sent
+     */
+    meeting?: TeamsMeetingInfo;
 }
 
 /**
@@ -193,6 +211,43 @@ export interface TeamsChannelAccount extends ChannelAccount {
      * @member {string} [userRole] User Role of the user.
      */
     userRole?: string;
+}
+
+/**
+ * @interface
+ * An interface representing a Meeting.
+ * Meeting details.
+ */
+export interface Meeting {
+    /**
+     * @member {string} [role] Meeting role of the user.
+     */
+    role?: string;
+    /**
+     * @member {string} [inMeeting] Indicates if the participant is in the meeting.
+     */
+    inMeeting?: boolean;
+}
+
+/**
+ * @interface
+ * An interface representing TeamsMeetingParticipant.
+ * Teams meeting participant detailing user Azure Active Directory details.
+ *
+ */
+export interface TeamsMeetingParticipant {
+    /**
+     * @member {TeamsChannelAccount} [user] The user details
+     */
+    user?: TeamsChannelAccount
+    /**
+     * @member {Meeting} [meeting] The meeting details.
+     */
+    meeting?: Meeting;
+    /**
+     * @member {ConversationAccount} [conversation] The conversation account for the meeting.
+     */
+    conversation?: ConversationAccount;
 }
 
 export interface TeamsPagedMembersResult {

@@ -6,4 +6,12 @@
 // This code has been manually edited to reflect the integration of the Teams schemas into botframework-schema
 // and the botframework-connector libraries.
 
-export { ConversationList, ChannelInfo, TeamDetails } from './mappers';
+export {
+    ConversationList,
+    ChannelInfo,
+    MessageActionsPayloadConversation,
+    Meeting,
+    TeamDetails,
+    TeamsChannelAccount,
+    TeamsMeetingParticipant,
+} from './mappers';
