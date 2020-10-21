@@ -22,7 +22,6 @@
   "dependencies": {
     "@microsoft/recognizers-text-suite": "1.1.4",
     "adaptive-expressions": "4.1.6",
-    "botbuilder-ai": "4.1.6",
     "botbuilder-core": "4.1.6",
     "botbuilder-dialogs": "4.1.6",
     "botbuilder-dialogs-declarative": "4.1.6",

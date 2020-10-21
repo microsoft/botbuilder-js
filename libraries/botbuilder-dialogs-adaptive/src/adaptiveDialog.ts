@@ -37,6 +37,7 @@ import {
     DialogState,
     DialogTurnResult,
     DialogTurnStatus,
+    Recognizer,
     TurnPath,
 } from 'botbuilder-dialogs';
 import { ActionContext } from './actionContext';
@@ -49,7 +50,7 @@ import { EntityAssignments } from './entityAssignments';
 import { EntityInfo, NormalizedEntityInfos } from './entityInfo';
 import { LanguageGenerator } from './languageGenerator';
 import { languageGeneratorKey } from './languageGeneratorExtensions';
-import { Recognizer, RecognizerSet } from './recognizers';
+import { RecognizerSet } from './recognizers';
 import { ValueRecognizer } from './recognizers/valueRecognizer';
 import { SchemaHelper } from './schemaHelper';
 import { FirstSelector, MostSpecificSelector } from './selectors';

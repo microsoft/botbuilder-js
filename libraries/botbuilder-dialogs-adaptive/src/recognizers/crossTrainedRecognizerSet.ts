@@ -6,11 +6,10 @@
  * Licensed under the MIT License.
  */
 
-import { Activity, RecognizerResult, getTopScoringIntent } from 'botbuilder-core';
-import { Converter, ConverterFactory, DialogContext } from 'botbuilder-dialogs';
-import { RecognizerListConverter } from '../converters';
-import { Recognizer, RecognizerConfiguration } from './recognizer';
 import merge from 'lodash/merge';
+import { Activity, RecognizerResult, getTopScoringIntent } from 'botbuilder-core';
+import { Converter, ConverterFactory, DialogContext, Recognizer, RecognizerConfiguration } from 'botbuilder-dialogs';
+import { RecognizerListConverter } from '../converters';
 
 /**
  * Standard cross trained intent name prefix.

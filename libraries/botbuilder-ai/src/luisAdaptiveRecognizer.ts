@@ -1,5 +1,5 @@
 /**
- * @module botbuilder-dialogs-adaptive
+ * @module botbuilder-ai
  */
 /**
  * Copyright (c) Microsoft Corporation. All rights reserved.
@@ -14,16 +14,10 @@ import {
     StringExpression,
     StringExpressionConverter,
 } from 'adaptive-expressions';
-import {
-    LuisPredictionOptions,
-    LuisRecognizerOptionsV3,
-    LuisRecognizer,
-    LuisApplication,
-    LuisTelemetryConstants,
-} from 'botbuilder-ai';
 import { Activity, RecognizerResult } from 'botbuilder-core';
-import { Converter, ConverterFactory, DialogContext } from 'botbuilder-dialogs';
-import { Recognizer, RecognizerConfiguration } from '../recognizers';
+import { Converter, ConverterFactory, DialogContext, Recognizer, RecognizerConfiguration } from 'botbuilder-dialogs';
+import { LuisApplication, LuisPredictionOptions, LuisRecognizer, LuisRecognizerOptionsV3 } from './luisRecognizer';
+import { LuisTelemetryConstants } from './luisTelemetryConstants';
 
 export interface LuisAdaptiveRecognizerConfiguration extends RecognizerConfiguration {
     applicationId?: string | Expression | StringExpression;

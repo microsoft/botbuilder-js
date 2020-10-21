@@ -6,9 +6,8 @@
  * Licensed under the MIT License.
  */
 
-import { Converter } from 'botbuilder-dialogs';
+import { Converter, Recognizer } from 'botbuilder-dialogs';
 import { ResourceExplorer } from 'botbuilder-dialogs-declarative';
-import { Recognizer } from '../recognizers';
 
 /**
  * Recognizer converter that implements [Converter](xref:botbuilder-dialogs-declarative.Converter).
