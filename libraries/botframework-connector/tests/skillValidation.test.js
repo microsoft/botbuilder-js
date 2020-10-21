@@ -5,7 +5,7 @@ const {
     GovernmentConstants,
     SimpleCredentialProvider,
     SkillValidation,
-} = require('../lib');
+} = require('../');
 
 describe('SkillValidation', function () {
     this.timeout(5000);
