@@ -8,7 +8,7 @@
 
 import { ConversationState, MemoryStorage, UserState, useBotState, TestAdapter } from 'botbuilder-core';
 import { Configurable, Converter, ConverterFactory, Dialog, DialogManager } from 'botbuilder-dialogs';
-import { LanguageGeneratorExtensions, ResourceExtensions } from 'botbuilder-dialogs-adaptive';
+import { LanguageGeneratorExtensions, LanguagePolicy, LanguagePolicyConverter, ResourceExtensions } from 'botbuilder-dialogs-adaptive';
 import { ResourceExplorer } from 'botbuilder-dialogs-declarative';
 import { TestAction } from './testAction';
 import { UserTokenMock, UserTokenMocksConverter } from './userTokenMocks';
@@ -41,6 +41,7 @@ export interface TestScriptConfiguration {
     userTokenMocks?: string[] | UserTokenMock[];
     script?: TestAction[];
     enableTrace?: boolean;
+    languagePolicy?: Record<string, string[]> | LanguagePolicy;
 }
 
 /**
@@ -65,6 +66,11 @@ export class TestScript extends Configurable implements TestScriptConfiguration 
     public locale = 'en-us';
 
     /**
+     * Language policy.
+     */
+    public languagePolicy: LanguagePolicy;
+
+    /**
      * The mock data for Microsoft.OAuthInput.
      */
     public userTokenMocks: UserTokenMock[] = [];
@@ -85,6 +91,8 @@ export class TestScript extends Configurable implements TestScriptConfiguration 
                 return DialogConverter;
             case 'userTokenMocks':
                 return UserTokenMocksConverter;
+            case 'languagePolicy':
+                return new LanguagePolicyConverter();
             default:
                 return super.getConverter(property);
         }
@@ -115,6 +123,10 @@ export class TestScript extends Configurable implements TestScriptConfiguration 
         const bot = new DialogManager(this.dialog);
         ResourceExtensions.useResourceExplorer(bot, resourceExplorer);
         LanguageGeneratorExtensions.useLanguageGeneration(bot);
+
+        if (this.languagePolicy) {
+            LanguageGeneratorExtensions.useLanguagePolicy(bot, this.languagePolicy);
+        }
 
         this.userTokenMocks.forEach((userTokenMock) => {
             userTokenMock.setup(testAdapter);
