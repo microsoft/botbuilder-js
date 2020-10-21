@@ -46,7 +46,9 @@ export class TextInput extends InputDialog implements TextInputConfiguration {
 
         if (this.outputFormat) {
             const value = this.outputFormat.getValue(dc.state);
-            input = value.toString();
+            if (value && value.trim()) {
+                input = value;
+            }
         }
 
         // Save formated value and ensure length > 0
