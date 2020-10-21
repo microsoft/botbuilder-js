@@ -243,6 +243,7 @@ describe('SkillValidation', function () {
 
             try {
                 await SkillValidation.validateIdentity(identity, credentials);
+                assert.fail('should have thrown');
             } catch (e) {
                 assert.strictEqual(e.message, 'SkillValidation.validateIdentity(): Invalid appId.');
             }
@@ -256,6 +257,7 @@ describe('SkillValidation', function () {
 
             try {
                 await SkillValidation.validateIdentity(identity, credentials);
+                assert.fail('should have thrown');
             } catch (e) {
                 assert.strictEqual(e.message, 'SkillValidation.validateIdentity(): Invalid appId.');
             }
