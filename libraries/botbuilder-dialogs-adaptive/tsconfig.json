@@ -8,7 +8,9 @@
     "declarationMap": true,
     "outDir": "./lib",
     "rootDir": "./src",
-    "types" : ["node"]
+    "types" : ["node"],
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
   },
   "include": [
     "src/**/*"
