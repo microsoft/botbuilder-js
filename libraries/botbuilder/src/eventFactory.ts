@@ -18,9 +18,9 @@ export class EventFactory {
      * @param handoffContext Agent hub-specific context.
      * @param transcript Transcript of the conversation.
      */
-    public static createHandoffInitiation(
+    public static createHandoffInitiation<T = unknown>(
         context: TurnContext,
-        handoffContext: any,
+        handoffContext: T,
         transcript?: Transcript
     ): Activity {
         if (!context) {
@@ -30,7 +30,7 @@ export class EventFactory {
         const handoffEvent = this.createHandoffEvent(
             HandoffEventNames.InitiateHandoff,
             handoffContext,
-            context.activity.conversation
+            context.activity.conversation as ConversationAccount // TODO(joshgummersall) why is this necessary?
         );
 
         handoffEvent.from = context.activity.from;
@@ -66,18 +66,18 @@ export class EventFactory {
             throw new TypeError('EventFactory.createHandoffStatus(): missing state.');
         }
 
-        const value: any = { state, message };
-
-        const handoffEvent = this.createHandoffEvent(HandoffEventNames.HandoffStatus, value, conversation);
-
-        return handoffEvent;
+        return this.createHandoffEvent(HandoffEventNames.HandoffStatus, { state, message }, conversation);
     }
 
     /**
      * @private
      */
-    private static createHandoffEvent(name: string, value: any, conversation: ConversationAccount): Activity {
-        const handoffEvent: Activity = {} as any;
+    private static createHandoffEvent<T = unknown>(
+        name: string,
+        value: T,
+        conversation: ConversationAccount
+    ): Activity {
+        const handoffEvent: Partial<Activity> = {};
 
         handoffEvent.name = name;
         handoffEvent.value = value;
@@ -90,7 +90,7 @@ export class EventFactory {
         handoffEvent.attachments = [];
         handoffEvent.entities = [];
 
-        return handoffEvent;
+        return handoffEvent as Activity;
     }
 }
 

@@ -5,6 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
+// eslint-disable-next-line @typescript-eslint/no-namespace
 export namespace AuthenticationConstants {
     /**
      * TO CHANNEL FROM BOT: Login URL
@@ -149,4 +150,14 @@ export namespace AuthenticationConstants {
      * Service URL claim name. As used in Microsoft Bot Framework v3.1 auth.
      */
     export const ServiceUrlClaim = 'serviceurl';
+
+    /**
+     * AppId used for creating skill claims when there is no appId and password configured.
+     */
+    export const AnonymousSkillAppId = 'AnonymousSkill';
+
+    /**
+     * Indicates that bot identity is anonymous (no appId and password were provided).
+     */
+    export const AnonymousAuthType = 'anonymous';
 }

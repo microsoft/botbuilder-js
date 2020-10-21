@@ -12,6 +12,7 @@ import {
     ActivityTypes,
     ConversationReference,
     ResourceResponse,
+    RoleTypes,
 } from 'botframework-schema';
 import { Middleware } from './middlewareSet';
 import { TurnContext } from './turnContext';
@@ -45,7 +46,7 @@ export class TranscriptLoggerMiddleware implements Middleware {
         // log incoming activity at beginning of turn
         if (context.activity) {
             if (!context.activity.from.role) {
-                context.activity.from.role = 'user';
+                context.activity.from.role = RoleTypes.User;
             }
 
             this.logActivity(transcript, this.cloneActivity(context.activity));
