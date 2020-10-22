@@ -19,6 +19,7 @@
     "libraries/botbuilder-ai-orchestrator",
     "libraries/botbuilder-applicationinsights",
     "libraries/botbuilder-azure",
+    "libraries/botbuilder-azure-blobs",
     "libraries/botbuilder-core",
     "libraries/botbuilder-dialogs",
     "libraries/botbuilder-dialogs-adaptive",
