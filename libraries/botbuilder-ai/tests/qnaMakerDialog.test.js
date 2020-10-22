@@ -6,7 +6,6 @@ const fs = require('fs');
 const nock = require('nock');
 
 const path = require('path');
-const { strict } = require('applicationinsights/out/Library/Tracestate');
 const ENV_FILE = path.join(__dirname, '.env');
 require('dotenv').config({ path: ENV_FILE });
 
