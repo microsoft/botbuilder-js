@@ -12,11 +12,20 @@
 export abstract class Resource {
     protected _id: string;
 
+    protected _fullname: string;
+
     /**
      * Resource id.
      */
     public get id(): string {
         return this._id;
+    }
+
+    /**
+     * The full path to the resource on disk
+     */
+    public get fullName(): string {
+        return this._fullname;
     }
 
     /**

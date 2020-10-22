@@ -11,18 +11,21 @@ import { Expression } from '../expression';
 /**
  * Represents a property which is either a string value or a string expression.
  * @remarks
- * If the value is 
- * - a string with '=' prefix then the string is treated as an expression to resolve to a string. 
+ * If the value is
+ * - a string with '=' prefix then the string is treated as an expression to resolve to a string.
  * - a string without '=' then value is treated as string with string interpolation.
- * - You can escape the '=' prefix by putting a backslash.  
- * Examples: 
+ * - You can escape the '=' prefix by putting a backslash.
+ * Examples:
  *     prop = "Hello @{user.name}" => "Hello Joe"
  *     prop = "=length(user.name)" => "3"
  *     prop = "=user.name" => "Joe"
  *     prop = "\=user" => "=user".
  */
 export class StringExpression extends ExpressionProperty<string> {
-
+    /**
+     * Initializes a new instance of the [StringExpression](xref:adaptive-expressions.StringExpression) class.
+     * @param value A `string` value or a `string` expression.
+     */
     public constructor(value?: string | Expression) {
         super(value);
     }
@@ -50,7 +53,7 @@ export class StringExpression extends ExpressionProperty<string> {
             }
 
             // Initialize value
-            this.expressionText = `=\`${ value.replace(/\\/g, '\\\\') }\``;
+            this.expressionText = `=\`${value.replace(/\\/g, '\\\\')}\``;
             return;
         }
     }

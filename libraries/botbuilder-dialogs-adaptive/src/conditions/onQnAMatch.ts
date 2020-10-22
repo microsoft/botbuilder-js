@@ -7,14 +7,16 @@
  */
 import { Dialog } from 'botbuilder-dialogs';
 import { OnIntent } from './onIntent';
-import { QnAMakerRecognizer } from '../qnaMaker';
+
+const qnaMatchIntent = 'QnAMatch';
 
 /**
  * Actions triggered when a MessageUpdateActivity is received.
  */
 export class OnQnAMatch extends OnIntent {
+    public static $kind = 'Microsoft.OnQnAMatch';
 
     public constructor(actions: Dialog[] = [], condition?: string) {
-        super(QnAMakerRecognizer.qnaMatchIntent, [], actions, condition);
+        super(qnaMatchIntent, [], actions, condition);
     }
 }

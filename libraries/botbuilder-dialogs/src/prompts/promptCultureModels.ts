@@ -43,7 +43,6 @@ export interface PromptCultureModel {
  * Class container for currently-supported Culture Models in Confirm and Choice Prompt.
  */
 export class PromptCultureModels {
-
     public static Chinese: PromptCultureModel = {
         locale: Culture.Chinese,
         separator: ', ',
@@ -51,7 +50,7 @@ export class PromptCultureModels {
         inlineOrMore: '， 要么 ',
         yesInLanguage: '是的',
         noInLanguage: '不',
-    }
+    };
 
     public static Dutch: PromptCultureModel = {
         locale: Culture.Dutch,
@@ -60,7 +59,7 @@ export class PromptCultureModels {
         inlineOrMore: ', of ',
         yesInLanguage: 'Ja',
         noInLanguage: 'Nee',
-    }
+    };
 
     public static English: PromptCultureModel = {
         locale: Culture.English,
@@ -69,7 +68,7 @@ export class PromptCultureModels {
         inlineOrMore: ', or ',
         yesInLanguage: 'Yes',
         noInLanguage: 'No',
-    }
+    };
 
     public static French: PromptCultureModel = {
         locale: Culture.French,
@@ -78,7 +77,7 @@ export class PromptCultureModels {
         inlineOrMore: ', ou ',
         yesInLanguage: 'Oui',
         noInLanguage: 'Non',
-    }
+    };
 
     public static German: PromptCultureModel = {
         locale: Culture.German,
@@ -87,7 +86,7 @@ export class PromptCultureModels {
         inlineOrMore: ', oder ',
         yesInLanguage: 'Ja',
         noInLanguage: 'Nein',
-    }
+    };
 
     public static Italian: PromptCultureModel = {
         locale: Culture.Italian,
@@ -96,7 +95,7 @@ export class PromptCultureModels {
         inlineOrMore: ' o ',
         yesInLanguage: 'Si',
         noInLanguage: 'No',
-    }
+    };
 
     public static Japanese: PromptCultureModel = {
         locale: Culture.Japanese,
@@ -105,7 +104,7 @@ export class PromptCultureModels {
         inlineOrMore: '、 または ',
         yesInLanguage: 'はい',
         noInLanguage: 'いいえ',
-    }
+    };
 
     public static Portuguese: PromptCultureModel = {
         locale: Culture.Portuguese,
@@ -114,7 +113,7 @@ export class PromptCultureModels {
         inlineOrMore: ', ou ',
         yesInLanguage: 'Sim',
         noInLanguage: 'Não',
-    }
+    };
 
     public static Spanish: PromptCultureModel = {
         locale: Culture.Spanish,
@@ -123,8 +122,11 @@ export class PromptCultureModels {
         inlineOrMore: ', o ',
         yesInLanguage: 'Sí',
         noInLanguage: 'No',
-    }
+    };
 
+    /**
+     * @private
+     */
     private static getSupportedCultureCodes(): string[] {
         return this.getSupportedCultures().map((c): string => c.locale);
     }
@@ -139,32 +141,31 @@ export class PromptCultureModels {
     public static mapToNearestLanguage(cultureCode: string): string {
         if (cultureCode) {
             cultureCode = cultureCode.toLowerCase();
-            let supportedCultureCodes = this.getSupportedCultureCodes();
-    
+            const supportedCultureCodes = this.getSupportedCultureCodes();
+
             if (supportedCultureCodes.indexOf(cultureCode) < 0) {
-                let culturePrefix = cultureCode.split('-')[0].trim();
-    
-                supportedCultureCodes.forEach(function(supportedCultureCode): void {
+                const culturePrefix = cultureCode.split('-')[0].trim();
+
+                supportedCultureCodes.forEach(function (supportedCultureCode): void {
                     if (supportedCultureCode.startsWith(culturePrefix)) {
                         cultureCode = supportedCultureCode;
                     }
                 });
             }
         }
-    
+
         return cultureCode;
     }
 
-    public static getSupportedCultures = (): PromptCultureModel[] => 
-        [
-            PromptCultureModels.Chinese,
-            PromptCultureModels.Dutch,
-            PromptCultureModels.English,
-            PromptCultureModels.French,
-            PromptCultureModels.German,
-            PromptCultureModels.Italian,
-            PromptCultureModels.Japanese,
-            PromptCultureModels.Portuguese,
-            PromptCultureModels.Spanish,
-        ];
+    public static getSupportedCultures = (): PromptCultureModel[] => [
+        PromptCultureModels.Chinese,
+        PromptCultureModels.Dutch,
+        PromptCultureModels.English,
+        PromptCultureModels.French,
+        PromptCultureModels.German,
+        PromptCultureModels.Italian,
+        PromptCultureModels.Japanese,
+        PromptCultureModels.Portuguese,
+        PromptCultureModels.Spanish,
+    ];
 }

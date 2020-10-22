@@ -159,7 +159,7 @@ describe('CosmosDbPartitionedStorage - Base Storage Tests', function() {
             userAgentSuffix: 'test', 
         };
 
-        client = new CosmosDbPartitionedStorage(settingsWithClientOptions);
+        const client = new CosmosDbPartitionedStorage(settingsWithClientOptions);
         await client.initialize(); // Force client to go through initialization
 
         assert.strictEqual(client.client.clientContext.connectionPolicy.requestTimeout, 999);

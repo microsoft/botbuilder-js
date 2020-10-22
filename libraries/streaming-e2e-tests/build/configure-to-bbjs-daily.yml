@@ -1,24 +1,19 @@
 
 steps:
+  - task: Npm@1
+    displayName: 'npm install'
+    inputs: 
+      workingDir: '$(TargetProjectDir)'
+      
   - task: PowerShell@2
-    displayName: 'Set $(PackageName) to latest version from MyGet - https://botbuilder.myget.org/gallery/botbuilder-v4-js-daily'
+    displayName: 'Get latest daily version of $(PackageName)'
     inputs:
       targetType: 'filePath'
-      filePath: $(System.DefaultWorkingDirectory)/libraries/streaming-e2e-tests/build/set-to-latest-daily.ps1
+      filePath: $(System.DefaultWorkingDirectory)/libraries/streaming-e2e-tests/build/get-latest-daily-ver.ps1
       arguments:
-        -AccessToken $(MyGetPersonalAccessToken)
         -PackageName $(PackageName)
-        -PathToPJson $(TargetProjectDir)/package.json
-        -BuildDir $(System.DefaultWorkingDirectory)/libraries/streaming-e2e-tests/build/
-  
-  - powershell: |
-      Set-Location -Path "$(TargetProjectDir)"
-      
-      New-Item -Path . -Name ".npmrc" -ItemType "file" -Value "registry=https://botbuilder.myget.org/F/botbuilder-v4-js-daily/npm/"
-    displayName: 'Create .npmrc for MyGet feed - https://botbuilder.myget.org/gallery/botbuilder-v4-js-daily'
+        -WorkingDir $(TargetProjectDir)
 
-  # Repeating tagging step, but varying on PackageName due to DevOps
-  # YAML inability to expand nested variables for dynamic variable names
   - task: colinsalmcorner.colinsalmcorner-buildtasks.tag-build-task.tagBuildOrRelease@0
     displayName: 'Tag Build with $(BotBuilder) version'
     condition: eq(variables.PackageName, 'botbuilder')
@@ -30,10 +25,4 @@ steps:
     condition: eq(variables.PackageName, 'botframework-streaming')
     inputs:
       tags: 'Using $(PackageName) version $(LatestVersion_streaming)'
-    
-  - task: Npm@1
-    displayName: 'npm install'
-    inputs: 
-      workingDir: '$(TargetProjectDir)'
-      verbose: false
   

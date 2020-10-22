@@ -7,9 +7,20 @@
  */
 
 import { BoolExpression } from '../expressionProperties';
+import { Expression } from '../expression';
 
+type Input = boolean | string | Expression;
+
+/**
+ * `any` value to json [BoolExpression](xref:adaptive-expressions.BoolExpression) converter.
+ */
 export class BoolExpressionConverter {
-    public convert(value: any): BoolExpression {
-        return new BoolExpression(value);
+    /**
+     * Converts `any` value into a [BoolExpression](xref:adaptive-expressions.BoolExpression).
+     * @param value `any` value to convert.
+     * @returns The [BoolExpression](xref:adaptive-expressions.BoolExpression).
+     */
+    public convert(value: Input | BoolExpression): BoolExpression {
+        return value instanceof BoolExpression ? value : new BoolExpression(value);
     }
 }

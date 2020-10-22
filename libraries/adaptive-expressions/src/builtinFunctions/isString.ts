@@ -15,12 +15,17 @@ import { ReturnType } from '../returnType';
  * Return true if a given input is a string.
  */
 export class IsString extends ExpressionEvaluator {
+    /**
+     * Initializes a new instance of the [IsString](xref:adaptive-expressions.IsString) class.
+     */
     public constructor() {
         super(ExpressionType.IsString, IsString.evaluator(), ReturnType.Boolean, FunctionUtils.validateUnary);
     }
 
+    /**
+     * @private
+     */
     private static evaluator(): EvaluateExpressionDelegate {
-        return FunctionUtils.apply(
-            (args: any[]): boolean => typeof args[0] === 'string');
+        return FunctionUtils.apply((args: any[]): boolean => typeof args[0] === 'string');
     }
 }

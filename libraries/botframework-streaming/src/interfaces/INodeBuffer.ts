@@ -8,20 +8,36 @@
 
 export type ValidBuffer = string | Uint8Array | INodeBuffer;
 
-export type BufferEncoding = "ascii" | "utf8" | "utf-8" | "utf16le" | "ucs2" | "ucs-2" | "base64" | "latin1" | "binary" | "hex";
+export type BufferEncoding =
+    | 'ascii'
+    | 'utf8'
+    | 'utf-8'
+    | 'utf16le'
+    | 'ucs2'
+    | 'ucs-2'
+    | 'base64'
+    | 'latin1'
+    | 'binary'
+    | 'hex';
 
 /**
  * Represents a Buffer from the `net` module in Node.js.
- * 
+ *
  * This interface supports the framework and is not intended to be called directly for your code.
  */
 export interface INodeBuffer extends Uint8Array {
     constructor: any;
     write(string: string, offset?: number, length?: number, encoding?: string): number;
     toString(encoding?: string, start?: number, end?: number): string;
-    toJSON(): { type: 'Buffer', data: any[] };
+    toJSON(): { type: 'Buffer'; data: any[] };
     equals(otherBuffer: Uint8Array): boolean;
-    compare(otherBuffer: Uint8Array, targetStart?: number, targetEnd?: number, sourceStart?: number, sourceEnd?: number): number;
+    compare(
+        otherBuffer: Uint8Array,
+        targetStart?: number,
+        targetEnd?: number,
+        sourceStart?: number,
+        sourceEnd?: number
+    ): number;
     copy(targetBuffer: Uint8Array, targetStart?: number, sourceStart?: number, sourceEnd?: number): number;
     slice(start?: number, end?: number): this;
 
@@ -55,7 +71,7 @@ export interface INodeBuffer extends Uint8Array {
     swap16(): this;
     swap32(): this;
     swap64(): this;
-    
+
     writeUInt8(value: number, offset: number, noAssert?: boolean): number;
     writeUInt16LE(value: number, offset: number, noAssert?: boolean): number;
     writeUInt16BE(value: number, offset: number, noAssert?: boolean): number;

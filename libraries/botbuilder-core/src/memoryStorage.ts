@@ -27,7 +27,7 @@ import { Storage, StoreItems } from './storage';
  * const storage = new MemoryStorage();
  * ```
  */
-export class MemoryStorage  implements Storage {
+export class MemoryStorage implements Storage {
     protected etag: number;
     /**
      * Creates a new MemoryStorage instance.
@@ -37,9 +37,16 @@ export class MemoryStorage  implements Storage {
         this.etag = 1;
     }
 
+    /**
+     * Reads storage items from storage.
+     * @param keys Keys of the [StoreItems](xref:botbuilder-core.StoreItems) objects to read.
+     * @returns The read items.
+     */
     public read(keys: string[]): Promise<StoreItems> {
         return new Promise<StoreItems>((resolve: any, reject: any): void => {
-            if (!keys) { throw new ReferenceError(`Keys are required when reading.`); }
+            if (!keys) {
+                throw new ReferenceError(`Keys are required when reading.`);
+            }
             const data: StoreItems = {};
             keys.forEach((key: string) => {
                 const item: string = this.memory[key];
@@ -51,16 +58,22 @@ export class MemoryStorage  implements Storage {
         });
     }
 
+    /**
+     * Writes storage items to storage.
+     * @param changes The [StoreItems](xref:botbuilder-core.StoreItems) to write, indexed by key.
+     */
     public write(changes: StoreItems): Promise<void> {
         const that: MemoryStorage = this;
         function saveItem(key: string, item: any): void {
-            const clone: any = {...item};
+            const clone: any = { ...item };
             clone.eTag = (that.etag++).toString();
             that.memory[key] = JSON.stringify(clone);
         }
 
         return new Promise<void>((resolve: any, reject: any): void => {
-            if (!changes) { throw new ReferenceError(`Changes are required when writing.`); }
+            if (!changes) {
+                throw new ReferenceError(`Changes are required when writing.`);
+            }
             Object.keys(changes).forEach((key: any) => {
                 const newItem: any = changes[key];
                 const old: string = this.memory[key];
@@ -71,7 +84,7 @@ export class MemoryStorage  implements Storage {
                     if (newItem.eTag === oldItem.eTag) {
                         saveItem(key, newItem);
                     } else {
-                        reject(new Error(`Storage: error writing "${ key }" due to eTag conflict.`));
+                        reject(new Error(`Storage: error writing "${key}" due to eTag conflict.`));
                     }
                 }
             });
@@ -79,9 +92,13 @@ export class MemoryStorage  implements Storage {
         });
     }
 
+    /**
+     * Deletes storage items from storage.
+     * @param keys Keys of the [StoreItems](xref:botbuilder-core.StoreItems) objects to delete.
+     */
     public delete(keys: string[]): Promise<void> {
         return new Promise<void>((resolve: any, reject: any): void => {
-            keys.forEach((key: string) => this.memory[key] = <any>undefined);
+            keys.forEach((key: string) => (this.memory[key] = <any>undefined));
             resolve();
         });
     }

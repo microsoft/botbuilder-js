@@ -5,7 +5,8 @@
     "module": "commonjs",
     "declaration": true,
     "sourceMap": true,
-    "outDir": "lib",
+    "declarationMap": true,
+    "outDir": "./lib",
     "rootDir": "./src",
     "types": [
       "node"

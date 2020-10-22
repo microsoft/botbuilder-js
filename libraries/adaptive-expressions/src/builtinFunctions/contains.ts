@@ -10,6 +10,7 @@ import { Expression } from '../expression';
 import { ExpressionEvaluator, ValueWithError } from '../expressionEvaluator';
 import { ExpressionType } from '../expressionType';
 import { FunctionUtils } from '../functionUtils';
+import { InternalFunctionUtils } from '../functionUtils.internal';
 import { MemoryInterface } from '../memory/memoryInterface';
 import { Options } from '../options';
 import { ReturnType } from '../returnType';
@@ -19,24 +20,28 @@ import { ReturnType } from '../returnType';
  * This function is case-sensitive.
  */
 export class Contains extends ExpressionEvaluator {
+    /**
+     * Initializes a new instance of the [Contains](xref:adaptive-expressions.Contains) class.
+     */
     public constructor() {
         super(ExpressionType.Contains, Contains.evaluator, ReturnType.Boolean, FunctionUtils.validateBinary);
     }
 
+    /**
+     * @private
+     */
     private static evaluator(expression: Expression, state: MemoryInterface, options: Options): ValueWithError {
         let found = false;
-        let error: any;
-        let args: any[];
-        ({ args, error } = FunctionUtils.evaluateChildren(expression, state, options));
-
+        const { args, error: childrenError } = FunctionUtils.evaluateChildren(expression, state, options);
+        let error = childrenError;
         if (!error) {
-            if (typeof args[0] === 'string' && typeof args[1] === 'string' || Array.isArray(args[0])) {
+            if ((typeof args[0] === 'string' && typeof args[1] === 'string') || Array.isArray(args[0])) {
                 found = args[0].includes(args[1]);
             } else if (args[0] instanceof Map) {
                 found = (args[0] as Map<string, any>).get(args[1]) !== undefined;
             } else if (typeof args[1] === 'string') {
                 let value: any;
-                ({ value, error } = FunctionUtils.accessProperty(args[0], args[1]));
+                ({ value, error } = InternalFunctionUtils.accessProperty(args[0], args[1]));
                 found = !error && value !== undefined;
             }
         }

@@ -1,14 +1,15 @@
 /**
- * @module botbuilder
+ * @module botframework-connector
  */
 /**
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
+// eslint-disable-next-line @typescript-eslint/no-namespace
 export namespace AuthenticationConstants {
     /**
      * TO CHANNEL FROM BOT: Login URL
-     * 
+     *
      * DEPRECATED: DO NOT USE
      */
     export const ToChannelFromBotLoginUrl = 'https://login.microsoftonline.com/botframework.com';
@@ -66,7 +67,8 @@ export namespace AuthenticationConstants {
     /**
      * TO BOT FROM CHANNEL: OpenID metadata document for tokens coming from MSA
      */
-    export const ToBotFromChannelOpenIdMetadataUrl = 'https://login.botframework.com/v1/.well-known/openidconfiguration';
+    export const ToBotFromChannelOpenIdMetadataUrl =
+        'https://login.botframework.com/v1/.well-known/openidconfiguration';
 
     /**
      * TO BOT FROM ENTERPRISE CHANNEL: OpenID metadata document for tokens coming from MSA
@@ -84,7 +86,7 @@ export namespace AuthenticationConstants {
      * Allowed token signing algorithms. Tokens come from channels to the bot. The code
      * that uses this also supports tokens coming from the emulator.
      */
-    export const AllowedSigningAlgorithms: string[] = [ 'RS256', 'RS384', 'RS512' ];
+    export const AllowedSigningAlgorithms: string[] = ['RS256', 'RS384', 'RS512'];
 
     /**
      * "azp" Claim.
@@ -148,4 +150,14 @@ export namespace AuthenticationConstants {
      * Service URL claim name. As used in Microsoft Bot Framework v3.1 auth.
      */
     export const ServiceUrlClaim = 'serviceurl';
+
+    /**
+     * AppId used for creating skill claims when there is no appId and password configured.
+     */
+    export const AnonymousSkillAppId = 'AnonymousSkill';
+
+    /**
+     * Indicates that bot identity is anonymous (no appId and password were provided).
+     */
+    export const AnonymousAuthType = 'anonymous';
 }

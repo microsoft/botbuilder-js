@@ -1,0 +1,73 @@
+{
+    "title": "Test schema",
+    "description": "This file is to test SchemaHelper and PropertySchama.",
+    "type": "object",
+    "properties": {
+        "$schema": {
+            "description": "Description of $schema.",
+            "type": "string"
+        },
+        "propertyString": {
+            "description": "Description of propertyString.",
+            "type": "string",
+            "pattern": "^(?!(=)).*",
+            "examples": [
+                "Hello ${user.name}"
+            ]
+        },
+        "propertyArray": {
+            "description": "Description of propertyArray.",
+            "type": "array",
+            "$sample": "sampleValue",
+            "items": {
+                "type": "string",
+                "$sample": "sample"
+            }
+        },
+        "propertyChildren": {
+            "description": "Description of propertyChildren.",
+            "type": "object",
+            "properties": {
+                "subProperty1": {
+                    "description": "Description of subProperty1",
+                    "type": "string"
+                },
+                "subProperty2": {
+                    "description": "Description of subProperty2",
+                    "type": "object"
+                },
+                "subProperty3": {
+                    "description": "Description of subProperty3",
+                    "type": "boolean"
+                },
+                "enabled": {
+                    "description": "Description of subProperty4",
+                    "type": "boolean"
+                }
+            }
+        },
+        "propertyEnum": {
+            "description": "Description of propertyEnum.",
+            "type": "string",
+            "enum": [
+                "enum1",
+                "enum2",
+                "enum3"
+            ],
+            "$entities":[
+                "entitySample"
+            ],
+            "default": "enum1"
+        }
+    },
+    "$expectedOnly": [
+		"expectedSample1",
+		"expectedSample2"
+    ],
+    "required": [
+        "propertyString",
+        "propertyArray",
+        "propertyChildren",
+        "propertyEnum"
+    ]
+}

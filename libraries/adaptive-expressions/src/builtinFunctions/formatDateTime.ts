@@ -12,6 +12,7 @@ import { Expression } from '../expression';
 import { EvaluateExpressionDelegate, ExpressionEvaluator } from '../expressionEvaluator';
 import { ExpressionType } from '../expressionType';
 import { FunctionUtils } from '../functionUtils';
+import { InternalFunctionUtils } from '../functionUtils.internal';
 import { ReturnType } from '../returnType';
 
 /**
@@ -19,30 +20,41 @@ import { ReturnType } from '../returnType';
  * Format reference: https://docs.microsoft.com/en-us/dotnet/standard/base-types/custom-date-and-time-format-strings
  */
 export class FormatDateTime extends ExpressionEvaluator {
+    /**
+     * Initializes a new instance of the [FormatDateTime](xref:adaptive-expressions.FormatDateTime) class.
+     */
     public constructor() {
         super(ExpressionType.FormatDateTime, FormatDateTime.evaluator(), ReturnType.String, FormatDateTime.validator);
     }
 
+    /**
+     * @private
+     */
     private static evaluator(): EvaluateExpressionDelegate {
-        return FunctionUtils.applyWithError(
-            (args: any[]): any => {
-                let error: string;
-                let arg: any = args[0];
-                if (typeof arg === 'string') {
-                    error = FunctionUtils.verifyTimestamp(arg.toString());
-                } else {
-                    arg = arg.toString();
-                }
-                let value: any;
-                if (!error) {
-                    const dateString: string = new Date(arg).toISOString();
-                    value = args.length === 2 ? moment(dateString).format(FunctionUtils.timestampFormatter(args[1])) : dateString;
-                }
+        return FunctionUtils.applyWithError((args: any[]): any => {
+            let error: string;
+            let arg: any = args[0];
+            if (typeof arg === 'string') {
+                error = InternalFunctionUtils.verifyTimestamp(arg.toString());
+            } else {
+                arg = arg.toString();
+            }
+            let value: any;
+            if (!error) {
+                const dateString: string = new Date(arg).toISOString();
+                value =
+                    args.length === 2
+                        ? moment(dateString).format(FunctionUtils.timestampFormatter(args[1]))
+                        : dateString;
+            }
 
-                return { value, error };
-            });
+            return { value, error };
+        });
     }
 
+    /**
+     * @private
+     */
     private static validator(expression: Expression): void {
         FunctionUtils.validateOrder(expression, [ReturnType.String], ReturnType.String);
     }

@@ -19,23 +19,30 @@ import { ReturnType } from '../returnType';
  * the last item with that name appears in the result.
  */
 export class Intersection extends ExpressionEvaluator {
+    /**
+     * Initializes a new instance of the [Intersection](xref:adaptive-expressions.Intersection) class.
+     */
     public constructor() {
         super(ExpressionType.Intersection, Intersection.evaluator(), ReturnType.Array, Intersection.validator);
     }
 
+    /**
+     * @private
+     */
     private static evaluator(): EvaluateExpressionDelegate {
-        return FunctionUtils.apply(
-            (args: any[]): any => {
-                let result: any[] = args[0];
-                for (const arg of args) {
-                    result = result.filter((e: any): boolean => arg.indexOf(e) > -1);
-                }
+        return FunctionUtils.apply((args: any[]): any => {
+            let result: any[] = args[0];
+            for (const arg of args) {
+                result = result.filter((e: any): boolean => arg.indexOf(e) > -1);
+            }
 
-                return Array.from(new Set(result));
-            },
-            FunctionUtils.verifyList);
+            return Array.from(new Set(result));
+        }, FunctionUtils.verifyList);
     }
 
+    /**
+     * @private
+     */
     private static validator(expression: Expression): void {
         FunctionUtils.validateArityAndAnyType(expression, 1, Number.MAX_SAFE_INTEGER, ReturnType.Array);
     }

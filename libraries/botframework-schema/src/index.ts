@@ -4,6 +4,7 @@
  */
 
 export * from './activityInterfaces';
+export * from './activityEx';
 export { CallerIdConstants } from './callerIdConstants';
 export { HealthCheckResponse, HealthResults } from './healthCheck';
 export { SpeechConstants } from './speechConstants';
@@ -105,7 +106,7 @@ export interface ChannelAccount {
   aadObjectId?: string;
   /**
    * Role of the entity behind the account (Example: User, Bot, etc.). Possible values include:
-   * 'user', 'bot'
+   * 'user', 'bot', 'skill'
    */
   role?: RoleTypes | string;
 }
@@ -480,7 +481,7 @@ export interface Activity {
   /**
    * The name of the operation associated with an invoke or event activity.
    */
-  name?: string;
+  name?: ActivityEventNames | string;
   /**
    * A reference to another conversation or activity.
    */
@@ -1715,13 +1716,25 @@ export interface TokenExchangeRequest {
 
 /**
  * Defines values for RoleTypes.
- * Possible values include: 'user', 'bot'
+ * Possible values include: 'user', 'bot', 'skill'
  * @readonly
  * @enum {string}
  */
 export enum RoleTypes {
   User = 'user',
   Bot = 'bot',
+  Skill = 'skill',
+}
+
+/**
+ * Defines values for ActivityEventNames.
+ * Possible values include: 'continueConversation', 'createConversation'
+ * @readonly
+ * @enum {string}
+ */
+export enum ActivityEventNames {
+  ContinueConversation = 'ContinueConversation',
+  CreateConversation = 'CreateConversation'
 }
 
 /**

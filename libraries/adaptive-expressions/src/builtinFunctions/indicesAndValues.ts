@@ -19,10 +19,21 @@ import { ReturnType } from '../returnType';
  * For objects, it is the key for the value.
  */
 export class IndicesAndValues extends ExpressionEvaluator {
+    /**
+     * Initializes a new instance of the [IndicesAndValues](xref:adaptive-expressions.IndicesAndValues) class.
+     */
     public constructor() {
-        super(ExpressionType.IndicesAndValues, IndicesAndValues.evaluator, ReturnType.Array, FunctionUtils.validateUnary);
+        super(
+            ExpressionType.IndicesAndValues,
+            IndicesAndValues.evaluator,
+            ReturnType.Array,
+            FunctionUtils.validateUnary
+        );
     }
 
+    /**
+     * @private
+     */
     private static evaluator(expression: Expression, state: any, options: Options): ValueWithError {
         let result: object = undefined;
         let error: string = undefined;
@@ -38,7 +49,7 @@ export class IndicesAndValues extends ExpressionEvaluator {
                 result = tempList;
             } else if (typeof value === 'object') {
                 const tempList = [];
-                for (let [index, val] of Object.entries(value)) {
+                for (const [index, val] of Object.entries(value)) {
                     tempList.push({ index: index, value: val });
                 }
 

@@ -28,8 +28,14 @@ export class ExpressionFunctions {
     /**
      * Read only Dictionary of built in functions.
      */
-    public static readonly standardFunctions: ReadonlyMap<string, ExpressionEvaluator> = ExpressionFunctions.getStandardFunctions();
+    public static readonly standardFunctions: ReadonlyMap<
+        string,
+        ExpressionEvaluator
+    > = ExpressionFunctions.getStandardFunctions();
 
+    /**
+     * @private
+     */
     private static getStandardFunctions(): ReadonlyMap<string, ExpressionEvaluator> {
         const functions: ExpressionEvaluator[] = [
             new BuiltinFunctions.Accessor(),
@@ -116,6 +122,7 @@ export class ExpressionFunctions {
             new BuiltinFunctions.Join(),
             new BuiltinFunctions.JPath(),
             new BuiltinFunctions.Json(),
+            new BuiltinFunctions.JsonStringify(),
             new BuiltinFunctions.Last(),
             new BuiltinFunctions.LastIndexOf(),
             new BuiltinFunctions.Length(),
@@ -138,6 +145,7 @@ export class ExpressionFunctions {
             new BuiltinFunctions.RemoveProperty(),
             new BuiltinFunctions.Replace(),
             new BuiltinFunctions.ReplaceIgnoreCase(),
+            new BuiltinFunctions.Reverse(),
             new BuiltinFunctions.Round(),
             new BuiltinFunctions.Select(),
             new BuiltinFunctions.SentenceCase(),
@@ -178,13 +186,18 @@ export class ExpressionFunctions {
             new BuiltinFunctions.UriScheme(),
             new BuiltinFunctions.UtcNow(),
             new BuiltinFunctions.Where(),
-            new BuiltinFunctions.Year()
+            new BuiltinFunctions.Year(),
         ];
 
         const lookup: Map<string, ExpressionEvaluator> = new Map<string, ExpressionEvaluator>();
         functions.forEach((func: ExpressionEvaluator): void => {
             lookup.set(func.type, func);
         });
+
+        // Attach negations
+        lookup.get(ExpressionType.LessThan).negation = lookup.get(ExpressionType.GreaterThanOrEqual);
+        lookup.get(ExpressionType.LessThanOrEqual).negation = lookup.get(ExpressionType.GreaterThan);
+        lookup.get(ExpressionType.Equal).negation = lookup.get(ExpressionType.NotEqual);
 
         // Math aliases
         lookup.set('add', lookup.get(ExpressionType.Add)); // more than 1 param
@@ -204,6 +217,7 @@ export class ExpressionFunctions {
         lookup.set('not', lookup.get(ExpressionType.Not));
         lookup.set('or', lookup.get(ExpressionType.Or));
         lookup.set('&', lookup.get(ExpressionType.Concat));
+        lookup.set('??', lookup.get(ExpressionType.Coalesce));
 
         return lookup as ReadonlyMap<string, ExpressionEvaluator>;
     }

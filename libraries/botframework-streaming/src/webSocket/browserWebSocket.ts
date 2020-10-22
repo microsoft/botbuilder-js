@@ -6,25 +6,10 @@
  * Licensed under the MIT License.
  */
 import { IBrowserFileReader, IBrowserWebSocket, ISocket, INodeBuffer } from '../interfaces';
-import { doesGlobalFileReaderExist, doesGlobalWebSocketExist } from '../utilities';
 
-const createWebSocket = function(url: string): IBrowserWebSocket {
-    if (!url) {
-        throw new TypeError('Unable to create WebSocket without url.');
-    }
-    if (doesGlobalWebSocketExist()) {
-        return new Function(`return new WebSocket('${ url }');`)();
-    }
-    throw new ReferenceError('Unable to find global.WebSocket which is required for constructing a BrowserWebSocket.');
-};
-
-const createFileReader = function(): IBrowserFileReader {
-    if (doesGlobalFileReaderExist()) {
-        return new Function(`return new FileReader();`)();
-    }
-    throw new ReferenceError('Unable to find global.FileReader. Unable to create FileReader for BrowserWebSocket.');
-};
-
+/**
+ * Represents a WebSocket that implements [ISocket](xref:botframework-streaming.ISocket).
+ */
 export class BrowserWebSocket implements ISocket {
     private webSocket: IBrowserWebSocket;
 
@@ -49,7 +34,7 @@ export class BrowserWebSocket implements ISocket {
         let rejector;
 
         if (!this.webSocket) {
-            this.webSocket = createWebSocket(serverAddress);
+            this.webSocket = new WebSocket(serverAddress);
         }
 
         this.webSocket.onerror = (e): void => {
@@ -64,7 +49,6 @@ export class BrowserWebSocket implements ISocket {
             resolver = resolve;
             rejector = reject;
         });
-
     }
 
     /**
@@ -94,17 +78,17 @@ export class BrowserWebSocket implements ISocket {
      * Set the handler for text and binary messages received on the socket.
      */
     public setOnMessageHandler(handler: (x: any) => void): void {
-        const bufferKey: string = 'buffer';
-        let packets = [];
+        const bufferKey = 'buffer';
+        const packets = [];
         this.webSocket.onmessage = (evt): void => {
-            let fileReader = createFileReader();
-            let queueEntry = {buffer: null};
+            const fileReader = new FileReader();
+            const queueEntry = { buffer: null };
             packets.push(queueEntry);
             fileReader.onload = (e): void => {
-                let t = e.target as IBrowserFileReader;
+                const t = (e.target as unknown) as IBrowserFileReader;
                 queueEntry[bufferKey] = t.result;
                 if (packets[0] === queueEntry) {
-                    while(0 < packets.length && packets[0][bufferKey]) {
+                    while (0 < packets.length && packets[0][bufferKey]) {
                         handler(packets[0][bufferKey]);
                         packets.splice(0, 1);
                     }
@@ -118,9 +102,13 @@ export class BrowserWebSocket implements ISocket {
      * Set the callback to call when encountering errors.
      */
     public setOnErrorHandler(handler: (x: any) => void): void {
-        this.webSocket.onerror = (error): void => { if (error) { handler(error); } };
+        this.webSocket.onerror = (error): void => {
+            if (error) {
+                handler(error);
+            }
+        };
     }
-    
+
     /**
      * Set the callback to call when encountering socket closures.
      */

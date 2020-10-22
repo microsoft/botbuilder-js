@@ -43,7 +43,7 @@ export enum ListStyle {
     /**
      * Add choices to prompt as a HeroCard with buttons.
      */
-    heroCard
+    heroCard,
 }
 
 /**
@@ -69,7 +69,7 @@ export interface PromptOptions {
      * (Optional) Property that can be used to override or set the value of ChoicePrompt.Style
      * when the prompt is executed using DialogContext.prompt.
      */
-    style?: ListStyle
+    style?: ListStyle;
 
     /**
      * (Optional) Additional validation rules to pass the prompts validator routine.
@@ -154,7 +154,7 @@ export interface PromptValidatorContext<T> {
 
     /**
      * A count of the number of times the prompt has been executed.
-     * 
+     *
      * A number indicating how many times the prompt was invoked (starting at 1 for the first time it was invoked).
      */
     readonly attemptCount: number;
@@ -174,9 +174,20 @@ export abstract class Prompt<T> extends Dialog {
         super(dialogId);
     }
 
+    /**
+     * Called when a prompt dialog is pushed onto the dialog stack and is being activated.
+     * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current
+     * turn of the conversation.
+     * @param options Optional. [PromptOptions](xref:botbuilder-dialogs.PromptOptions),
+     * additional information to pass to the prompt being started.
+     * @returns A `Promise` representing the asynchronous operation.
+     * @remarks
+     * If the task is successful, the result indicates whether the prompt is still
+     * active after the turn has been processed by the prompt.
+     */
     public async beginDialog(dc: DialogContext, options: PromptOptions): Promise<DialogTurnResult> {
         // Ensure prompts have input hint set
-        const opt: Partial<PromptOptions> = {...options};
+        const opt: Partial<PromptOptions> = { ...options };
         if (opt.prompt && typeof opt.prompt === 'object' && typeof opt.prompt.inputHint !== 'string') {
             opt.prompt.inputHint = InputHints.ExpectingInput;
         }
@@ -195,6 +206,16 @@ export abstract class Prompt<T> extends Dialog {
         return Dialog.EndOfTurn;
     }
 
+    /**
+     * Called when a prompt dialog is the active dialog and the user replied with a new activity.
+     * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
+     * @returns A `Promise` representing the asynchronous operation.
+     * @remarks
+     * If the task is successful, the result indicates whether the dialog is still
+     * active after the turn has been processed by the dialog.
+     * The prompt generally continues to receive the user's replies until it accepts the
+     * user's reply as valid input for the prompt.
+     */
     public async continueDialog(dc: DialogContext): Promise<DialogTurnResult> {
         // Don't do anything for non-message activities
         if (dc.context.activity.type !== ActivityTypes.Message) {
@@ -226,7 +247,7 @@ export abstract class Prompt<T> extends Dialog {
                 recognized: recognized,
                 state: state.state,
                 options: state.options,
-                attemptCount: ++state.state['attemptCount']
+                attemptCount: ++state.state['attemptCount'],
             });
         } else if (recognized.succeeded) {
             isValid = true;
@@ -244,17 +265,43 @@ export abstract class Prompt<T> extends Dialog {
         }
     }
 
+    /**
+     * Called before an event is bubbled to its parent.
+     * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
+     * @param event [DialogEvent](xref:botbuilder-dialogs.DialogEvent), the event being raised.
+     * @returns Whether the event is handled by the current dialog and further processing should stop.
+     * @remarks
+     * This is a good place to perform interception of an event as returning `true` will prevent
+     * any further bubbling of the event to the dialogs parents and will also prevent any child
+     * dialogs from performing their default processing.
+     */
     protected async onPreBubbleEvent(dc: DialogContext, event: DialogEvent): Promise<boolean> {
         if (event.name == 'activityReceived' && dc.context.activity.type == ActivityTypes.Message) {
             // Perform base recognition
             const state: PromptState = dc.activeDialog.state as PromptState;
-            const recognized: PromptRecognizerResult<T> = await this.onRecognize(dc.context, state.state, state.options);
+            const recognized: PromptRecognizerResult<T> = await this.onRecognize(
+                dc.context,
+                state.state,
+                state.options
+            );
             return recognized.succeeded;
         }
 
         return false;
     }
 
+    /**
+     * Called when a prompt dialog resumes being the active dialog on the dialog stack, such as
+     * when the previous active dialog on the stack completes.
+     * @param dc The DialogContext for the current turn of the conversation.
+     * @param reason An enum indicating why the dialog resumed.
+     * @param result Optional, value returned from the previous dialog on the stack.
+     * The type of the value returned is dependent on the previous dialog.
+     * @returns A Promise representing the asynchronous operation.
+     * @remarks
+     * If the task is successful, the result indicates whether the dialog is still
+     * active after the turn has been processed by the dialog.
+     */
     public async resumeDialog(dc: DialogContext, reason: DialogReason, result?: any): Promise<DialogTurnResult> {
         // Prompts are typically leaf nodes on the stack but the dev is free to push other dialogs
         // on top of the stack which will result in the prompt receiving an unexpected call to
@@ -266,6 +313,14 @@ export abstract class Prompt<T> extends Dialog {
         return Dialog.EndOfTurn;
     }
 
+    /**
+     * Called when a prompt dialog has been requested to re-prompt the user for input.
+     * @param context [TurnContext](xref:botbuilder-core.TurnContext), context for the current
+     * turn of conversation with the user.
+     * @param instance [DialogInstance](xref:botbuilder-dialogs.DialogInstance), the instance
+     * of the dialog on the stack.
+     * @returns A `Promise` representing the asynchronous operation.
+     */
     public async repromptDialog(context: TurnContext, instance: DialogInstance): Promise<void> {
         const state: PromptState = instance.state as PromptState;
         await this.onPrompt(context, state.state, state.options, false);
@@ -278,7 +333,12 @@ export abstract class Prompt<T> extends Dialog {
      * @param options Options that the prompt was started with in the call to `DialogContext.prompt()`.
      * @param isRetry If `true` the users response wasn't recognized and the re-prompt should be sent.
      */
-    protected abstract onPrompt(context: TurnContext, state: object, options: PromptOptions, isRetry: boolean): Promise<void>;
+    protected abstract onPrompt(
+        context: TurnContext,
+        state: object,
+        options: PromptOptions,
+        isRetry: boolean
+    ): Promise<void>;
 
     /**
      * Called to recognize an utterance received from the user.
@@ -290,7 +350,11 @@ export abstract class Prompt<T> extends Dialog {
      * @param state Additional state being persisted for the prompt.
      * @param options Options that the prompt was started with in the call to `DialogContext.prompt()`.
      */
-    protected abstract onRecognize(context: TurnContext, state: object, options: PromptOptions): Promise<PromptRecognizerResult<T>>;
+    protected abstract onRecognize(
+        context: TurnContext,
+        state: object,
+        options: PromptOptions
+    ): Promise<PromptRecognizerResult<T>>;
 
     /**
      * Helper function to compose an output activity containing a set of choices.
@@ -348,15 +412,19 @@ export abstract class Prompt<T> extends Dialog {
             // Clone the prompt Activity as to not modify the original prompt.
             prompt = JSON.parse(JSON.stringify(prompt)) as Activity;
             prompt.text = msg.text;
-            if (msg.suggestedActions && Array.isArray(msg.suggestedActions.actions) && msg.suggestedActions.actions.length > 0) {
+            if (
+                msg.suggestedActions &&
+                Array.isArray(msg.suggestedActions.actions) &&
+                msg.suggestedActions.actions.length > 0
+            ) {
                 prompt.suggestedActions = msg.suggestedActions;
             }
 
             if (msg.attachments) {
                 if (prompt.attachments) {
-                  prompt.attachments = prompt.attachments.concat(msg.attachments);
+                    prompt.attachments = prompt.attachments.concat(msg.attachments);
                 } else {
-                  prompt.attachments = msg.attachments;
+                    prompt.attachments = msg.attachments;
                 }
             }
 

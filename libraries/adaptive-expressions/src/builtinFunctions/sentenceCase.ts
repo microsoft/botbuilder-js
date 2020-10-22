@@ -8,18 +8,25 @@
 
 import { ExpressionType } from '../expressionType';
 import { FunctionUtils } from '../functionUtils';
+import { InternalFunctionUtils } from '../functionUtils.internal';
 import { StringTransformEvaluator } from './stringTransformEvaluator';
 
 /**
  * Capitalizing only the first word and leave others lowercase.
  */
 export class SentenceCase extends StringTransformEvaluator {
+    /**
+     * Initializes a new instance of the [SentenceCase](xref:adaptive-expressions.SentenceCase) class.
+     */
     public constructor() {
         super(ExpressionType.SentenceCase, SentenceCase.evaluator);
     }
 
+    /**
+     * @private
+     */
     private static evaluator(args: any[]): string {
-        const inputStr = String(FunctionUtils.parseStringOrUndefined(args[0])).toLowerCase();
+        const inputStr = String(InternalFunctionUtils.parseStringOrUndefined(args[0])).toLowerCase();
         if (inputStr === '') {
             return inputStr;
         } else {

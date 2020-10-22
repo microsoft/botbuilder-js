@@ -9,6 +9,7 @@ export * from './botStateMemoryScope';
 export * from './classMemoryScope';
 export * from './conversationMemoryScope';
 export * from './dialogClassMemoryScope';
+export * from './dialogContextMemoryScope';
 export * from './dialogMemoryScope';
 export * from './memoryScope';
 export * from './settingsMemoryScope';

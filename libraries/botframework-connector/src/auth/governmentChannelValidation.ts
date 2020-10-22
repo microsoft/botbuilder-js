@@ -1,5 +1,5 @@
 /**
- * @module botbuilder
+ * @module botframework-connector
  */
 /**
  * Copyright (c) Microsoft Corporation. All rights reserved.
@@ -16,7 +16,6 @@ import { AuthenticationError } from './authenticationError';
 import { StatusCodes } from 'botframework-schema';
 
 export namespace GovernmentChannelValidation {
-
     export let OpenIdMetadataEndpoint: string;
 
     /**
@@ -24,9 +23,9 @@ export namespace GovernmentChannelValidation {
      */
     export const ToBotFromGovernmentChannelTokenValidationParameters: VerifyOptions = {
         issuer: [GovernmentConstants.ToBotFromChannelTokenIssuer],
-        audience: undefined,                                 // Audience validation takes place manually in code.
+        audience: undefined, // Audience validation takes place manually in code.
         clockTolerance: 5 * 60,
-        ignoreExpiration: false
+        ignoreExpiration: false,
     };
 
     /**
@@ -43,7 +42,6 @@ export namespace GovernmentChannelValidation {
         serviceUrl: string,
         channelId: string
     ): Promise<ClaimsIdentity> {
-
         const identity: ClaimsIdentity = await authenticateChannelToken(authHeader, credentials, channelId);
 
         const serviceUrlClaim: string = identity.getClaimValue(AuthenticationConstants.ServiceUrlClaim);
@@ -70,24 +68,27 @@ export namespace GovernmentChannelValidation {
         channelId: string,
         authConfig: AuthenticationConfiguration = new AuthenticationConfiguration()
     ): Promise<ClaimsIdentity> {
-
         const tokenExtractor: JwtTokenExtractor = new JwtTokenExtractor(
             ToBotFromGovernmentChannelTokenValidationParameters,
-            OpenIdMetadataEndpoint ?
-                OpenIdMetadataEndpoint : GovernmentConstants.ToBotFromChannelOpenIdMetadataUrl,
-            AuthenticationConstants.AllowedSigningAlgorithms);
+            OpenIdMetadataEndpoint ? OpenIdMetadataEndpoint : GovernmentConstants.ToBotFromChannelOpenIdMetadataUrl,
+            AuthenticationConstants.AllowedSigningAlgorithms
+        );
 
-        const identity: ClaimsIdentity = await tokenExtractor.getIdentityFromAuthHeader(authHeader, channelId, authConfig.requiredEndorsements);
+        const identity: ClaimsIdentity = await tokenExtractor.getIdentityFromAuthHeader(
+            authHeader,
+            channelId,
+            authConfig.requiredEndorsements
+        );
 
         return await validateIdentity(identity, credentials);
     }
 
     /**
-      * Validate the ClaimsIdentity to ensure it came from the channel service.
-      * @param  {ClaimsIdentity} identity The identity to validate
-      * @param  {ICredentialProvider} credentials The user defined set of valid credentials, such as the AppId.
-      * @returns {Promise<ClaimsIdentity>} A valid ClaimsIdentity.
-      */
+     * Validate the ClaimsIdentity to ensure it came from the channel service.
+     * @param  {ClaimsIdentity} identity The identity to validate
+     * @param  {ICredentialProvider} credentials The user defined set of valid credentials, such as the AppId.
+     * @returns {Promise<ClaimsIdentity>} A valid ClaimsIdentity.
+     */
     export async function validateIdentity(
         identity: ClaimsIdentity,
         credentials: ICredentialProvider
@@ -108,7 +109,10 @@ export namespace GovernmentChannelValidation {
         // Async validation.
 
         // Look for the "aud" claim, but only if issued from the Bot Framework
-        if (identity.getClaimValue(AuthenticationConstants.IssuerClaim) !== GovernmentConstants.ToBotFromChannelTokenIssuer) {
+        if (
+            identity.getClaimValue(AuthenticationConstants.IssuerClaim) !==
+            GovernmentConstants.ToBotFromChannelTokenIssuer
+        ) {
             // The relevant Audiance Claim MUST be present. Not Authorized.
             throw new AuthenticationError('Unauthorized. Issuer Claim MUST be present.', StatusCodes.UNAUTHORIZED);
         }
@@ -118,7 +122,10 @@ export namespace GovernmentChannelValidation {
         const audClaim: string = identity.getClaimValue(AuthenticationConstants.AudienceClaim);
         if (!(await credentials.isValidAppId(audClaim || ''))) {
             // The AppId is not valid or not present. Not Authorized.
-            throw new AuthenticationError(`Unauthorized. Invalid AppId passed on token: ${ audClaim }`, StatusCodes.UNAUTHORIZED);
+            throw new AuthenticationError(
+                `Unauthorized. Invalid AppId passed on token: ${audClaim}`,
+                StatusCodes.UNAUTHORIZED
+            );
         }
 
         return identity;

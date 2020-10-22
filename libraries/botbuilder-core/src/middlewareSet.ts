@@ -73,10 +73,15 @@ export class MiddlewareSet implements Middleware {
      * Creates a new MiddlewareSet instance.
      * @param middleware One or more middleware handlers(s) to register.
      */
-    constructor(...middleware: (MiddlewareHandler|Middleware)[]) {
+    constructor(...middleware: (MiddlewareHandler | Middleware)[]) {
         MiddlewareSet.prototype.use.apply(this, middleware);
     }
 
+    /**
+     * Processes an incoming activity.
+     * @param context [TurnContext](xref:botbuilder-core.TurnContext) object for this turn.
+     * @param next Delegate to call to continue the bot middleware pipeline.
+     */
     public onTurn(context: TurnContext, next: () => Promise<void>): Promise<void> {
         return this.run(context, next);
     }
@@ -96,7 +101,7 @@ export class MiddlewareSet implements Middleware {
      * ```
      * @param middleware One or more middleware handlers(s) to register.
      */
-    public use(...middleware: (MiddlewareHandler|Middleware)[]): this {
+    public use(...middleware: (MiddlewareHandler | Middleware)[]): this {
         middleware.forEach((plugin: any) => {
             if (typeof plugin === 'function') {
                 this.middleware.push(plugin);

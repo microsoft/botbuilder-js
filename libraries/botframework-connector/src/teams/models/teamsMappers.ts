@@ -7,7 +7,11 @@
 // and the botframework-connector libraries.
 
 export {
-  ConversationList,
-  ChannelInfo,
-  TeamDetails
+    ConversationList,
+    ChannelInfo,
+    MessageActionsPayloadConversation,
+    Meeting,
+    TeamDetails,
+    TeamsChannelAccount,
+    TeamsMeetingParticipant,
 } from './mappers';

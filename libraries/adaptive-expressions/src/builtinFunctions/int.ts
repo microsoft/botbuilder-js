@@ -15,20 +15,25 @@ import { ReturnType } from '../returnType';
  * Return the integer version of a string.
  */
 export class Int extends ExpressionEvaluator {
+    /**
+     * Initializes a new instance of the [Int](xref:adaptive-expressions.Int) class.
+     */
     public constructor() {
         super(ExpressionType.Int, Int.evaluator(), ReturnType.Number, FunctionUtils.validateUnary);
     }
 
+    /**
+     * @private
+     */
     private static evaluator(): EvaluateExpressionDelegate {
-        return FunctionUtils.applyWithError(
-            (args: any[]): any => {
-                let error: string;
-                const value: number = parseInt(args[0], 10);
-                if (!FunctionUtils.isNumber(value)) {
-                    error = `parameter ${args[0]} is not a valid number string.`;
-                }
+        return FunctionUtils.applyWithError((args: any[]): any => {
+            let error: string;
+            const value: number = parseInt(args[0], 10);
+            if (!FunctionUtils.isNumber(value)) {
+                error = `parameter ${args[0]} is not a valid number string.`;
+            }
 
-                return { value, error };
-            });
+            return { value, error };
+        });
     }
 }

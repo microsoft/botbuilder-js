@@ -6,13 +6,8 @@
  * Licensed under the MIT License.
  */
 
-import { DialogManager } from 'botbuilder-dialogs';
 import { BotTelemetryClient } from 'botbuilder-core';
-
-/**
- * The key to get or set telemetry client from turn state.
- */
-export const telemetryClientKey = Symbol('telemetryClient');
+import { DialogManager, DialogTurnStateConstants } from 'botbuilder-dialogs';
 
 /**
  * Extension methods for telemetry.
@@ -22,7 +17,7 @@ export const telemetryClientKey = Symbol('telemetryClient');
  * @returns DialogManager.
  */
 export function useTelemetry(dialogManager: DialogManager, telemetryClient: BotTelemetryClient): DialogManager {
-    dialogManager.initialTurnState.set(telemetryClientKey, telemetryClient);
+    dialogManager.initialTurnState.set(DialogTurnStateConstants.telemetryClient, telemetryClient);
     dialogManager.dialogs.telemetryClient = telemetryClient;
     return dialogManager;
 }

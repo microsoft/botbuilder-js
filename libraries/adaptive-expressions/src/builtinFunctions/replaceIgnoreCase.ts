@@ -10,6 +10,7 @@ import { Expression } from '../expression';
 import { EvaluateExpressionDelegate, ExpressionEvaluator } from '../expressionEvaluator';
 import { ExpressionType } from '../expressionType';
 import { FunctionUtils } from '../functionUtils';
+import { InternalFunctionUtils } from '../functionUtils.internal';
 import { ReturnType } from '../returnType';
 
 /**
@@ -17,27 +18,43 @@ import { ReturnType } from '../returnType';
  * This function is case-insensitive.
  */
 export class ReplaceIgnoreCase extends ExpressionEvaluator {
+    /**
+     * Initializes a new instance of the [ReplaceIgnoreCase](xref:adaptive-expressions.ReplaceIgnoreCase) class.
+     */
     public constructor() {
-        super(ExpressionType.ReplaceIgnoreCase, ReplaceIgnoreCase.evaluator(), ReturnType.String, ReplaceIgnoreCase.validator);
+        super(
+            ExpressionType.ReplaceIgnoreCase,
+            ReplaceIgnoreCase.evaluator(),
+            ReturnType.String,
+            ReplaceIgnoreCase.validator
+        );
     }
 
+    /**
+     * @private
+     */
     private static evaluator(): EvaluateExpressionDelegate {
-        return FunctionUtils.applyWithError((
-            args: any[]): any => {
+        return FunctionUtils.applyWithError((args: any[]): any => {
             let error = undefined;
             let result = undefined;
-            if (FunctionUtils.parseStringOrUndefined(args[1]).length === 0) {
-                error = `${args[1]} should be a string with length at least 1`;
+            if (InternalFunctionUtils.parseStringOrUndefined(args[1]).length === 0) {
+                error = `${ args[1] } should be a string with length at least 1`;
             }
 
             if (!error) {
-                result = FunctionUtils.parseStringOrUndefined(args[0]).replace(new RegExp(FunctionUtils.parseStringOrUndefined(args[1]), 'gi'), FunctionUtils.parseStringOrUndefined(args[2]));
+                result = InternalFunctionUtils.parseStringOrUndefined(args[0]).replace(
+                    new RegExp(InternalFunctionUtils.parseStringOrUndefined(args[1]), 'gi'),
+                    InternalFunctionUtils.parseStringOrUndefined(args[2])
+                );
             }
 
             return { value: result, error };
         }, FunctionUtils.verifyStringOrNull);
     }
 
+    /**
+     * @private
+     */
     private static validator(expression: Expression): void {
         FunctionUtils.validateArityAndAnyType(expression, 3, 3, ReturnType.String);
     }

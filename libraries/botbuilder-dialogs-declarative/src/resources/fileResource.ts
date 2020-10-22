@@ -13,9 +13,6 @@ import { Resource } from './resource';
  * Class which represents a file as a resource.
  */
 export class FileResource extends Resource {
-
-    private _fullname: string;
-
     /**
      * Initialize a new instance of the `FileResouce` class.
      * @param path Path to file.
@@ -25,13 +22,6 @@ export class FileResource extends Resource {
         this._fullname = path;
         // The id will be the file name, without the path
         this._id = this._fullname.replace(/^.*[\\\/]/, '');
-    }
-
-    /**
-     * The full path to the resource on disk
-     */
-    public get fullName(): string {
-        return this._fullname;
     }
 
     /**
