@@ -10,9 +10,18 @@ import { ExpressionProperty } from 'adaptive-expressions';
 import { DialogContext } from 'botbuilder-dialogs';
 import { BeginDialog } from './beginDialog';
 
+/**
+ * Internal `BeginDialog` action which dynamically binds x.schema/x.dialog to invoke the x.dialog resource with properties as the options.
+ */
 export class DynamicBeginDialog extends BeginDialog {
     public static $kind = 'Microsoft.DynamicBeginDialog';
 
+    /**
+     * @protected
+     * Evaluates expressions in options.
+     * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
+     * @param options The options to bind.
+     */
     protected bindOptions(dc: DialogContext, _options: object): object {
         const options = {};
         for (const key of Object.getOwnPropertyNames(this)) {

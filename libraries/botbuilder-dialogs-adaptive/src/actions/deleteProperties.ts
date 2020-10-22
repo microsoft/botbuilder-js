@@ -30,10 +30,18 @@ export interface DeletePropertiesConfiguration extends DialogConfiguration {
     disabled?: boolean | string | Expression | BoolExpression;
 }
 
+/**
+ * Deletes a collection of properties from memory.
+ */
 export class DeleteProperties<O extends object = {}> extends Dialog<O> implements DeletePropertiesConfiguration {
     public static $kind = 'Microsoft.DeleteProperties';
 
     public constructor();
+
+    /**
+     * Initializes a new instance of the [DeleteProperties](xref:botbuilder-dialogs-adaptive.DeleteProperties) class.
+     * @param properties Optional. Collection of property paths to remove.
+     */
     public constructor(properties?: string[]) {
         super();
         if (properties) {
@@ -62,6 +70,12 @@ export class DeleteProperties<O extends object = {}> extends Dialog<O> implement
         }
     }
 
+    /**
+     * Called when the [Dialog](xref:botbuilder-dialogs.Dialog) is started and pushed onto the dialog stack.
+     * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
+     * @param options Optional. Initial information to pass to the dialog.
+     * @returns A `Promise` representing the asynchronous operation.
+     */
     public async beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult> {
         if (this.disabled && this.disabled.getValue(dc.state)) {
             return await dc.endDialog();
@@ -76,6 +90,11 @@ export class DeleteProperties<O extends object = {}> extends Dialog<O> implement
         return await dc.endDialog();
     }
 
+    /**
+     * @protected
+     * Builds the compute Id for the [Dialog](xref:botbuilder-dialogs.Dialog).
+     * @returns A `string` representing the compute Id.
+     */
     protected onComputeId(): string {
         return `DeleteProperties[${this.properties.map((property): string => property.toString()).join(',')}]`;
     }
