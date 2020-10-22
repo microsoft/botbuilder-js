@@ -88,10 +88,6 @@ export interface StoreItems {
     [key: string]: any;
 }
 
-export function isStoreItems(value: unknown): value is StoreItem {
-    return typeof value === 'object';
-}
-
 /**
  * Utility function to calculate a change hash for a `StoreItem`.
  *

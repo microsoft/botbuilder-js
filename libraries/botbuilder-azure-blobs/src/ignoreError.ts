@@ -1,7 +1,5 @@
-/**
- * Copyright (c) Microsoft Corporation. All rights reserved.
- * Licensed under the MIT License.
- */
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 
 import { RestError } from '@azure/storage-blob';
 
@@ -12,8 +10,9 @@ export type IgnoreError = (err: Error) => boolean;
 
 /**
  * Wrap a promise and provide a function to decide whether to ignore a type of error
- * @param promise A promise to await
- * @param ignore A method that returns true if an error should be ignored
+ * @typeparam T expected promise return type
+ * @param promise promise to await
+ * @param ignore method that returns true if an error should be ignored
  */
 export async function ignoreError<T>(promise: Promise<T>, ignore: IgnoreError): Promise<T | null> {
     try {

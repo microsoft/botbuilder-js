@@ -237,7 +237,7 @@ export interface TranscriptStore extends TranscriptLogger {
     listTranscripts(channelId: string, continuationToken?: string): Promise<PagedResult<TranscriptInfo>>;
 
     /**
-     * Delete a specific conversation and all of it's activities.
+     * Delete a specific conversation and all of its activities.
      * @param channelId Channel Id where conversation took place.
      * @param conversationId Id of the conversation to delete.
      */

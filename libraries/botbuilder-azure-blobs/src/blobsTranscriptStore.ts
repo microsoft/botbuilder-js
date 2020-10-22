@@ -1,11 +1,10 @@
-/**
- * Copyright (c) Microsoft Corporation. All rights reserved.
- * Licensed under the MIT License.
- */
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 
 import getStream from 'get-stream';
 import pmap from 'p-map';
-import { Activity, PagedResult, TranscriptInfo, TranscriptStore } from 'botbuilder';
+import { Activity, PagedResult, TranscriptInfo, TranscriptStore } from 'botbuilder-core';
+import { assert } from './assert';
 import { maybeCast } from './maybeCast';
 import { sanitizeBlobKey } from './sanitizeBlobKey';
 
@@ -15,7 +14,10 @@ import {
     StoragePipelineOptions,
 } from '@azure/storage-blob';
 
-// Formats a timestamp in a way that is consistent with the C# SDK
+/**
+ * Formats a timestamp in a way that is consistent with the C# SDK
+ * @param timestamp Timestamp to format as ticks
+ */
 function formatTicks(timestamp: Date): string {
     const epochTicks = 621355968000000000; // the number of .net ticks at the unix epoch
     const ticksPerMillisecond = 10000; // there are 10000 .net ticks per millisecond
@@ -23,16 +25,28 @@ function formatTicks(timestamp: Date): string {
     return ticks.toString(16);
 }
 
+/**
+ * Formats a channelId as a blob prefix
+ * @param channelId channelId to include in blob prefix
+ */
 function getChannelPrefix(channelId: string): string {
     return sanitizeBlobKey(`${channelId}/`);
 }
 
+/**
+ * Formats a channelId and conversationId as a blob prefix
+ * @param channelId channelId to include in blob prefix
+ * @param conversationId conversationId to include in blob prefix
+ */
 function getConversationPrefix(channelId: string, conversationId: string): string {
     return sanitizeBlobKey(`${channelId}/${conversationId}`);
 }
 
-// Transforms an activity into its blob name
-function getBlobName(activity: Activity): string {
+/**
+ * Formats an activity as a blob key
+ * @param activity activity to format as a blob key
+ */
+function getBlobKey(activity: Activity): string {
     return sanitizeBlobKey(
         [activity.channelId, activity.conversation.id, `${formatTicks(activity.timestamp)}-${activity.id}.json`].join(
             '/'
@@ -40,15 +54,30 @@ function getBlobName(activity: Activity): string {
     );
 }
 
+// Max number of results returned in a single Azure API call
+const MAX_PAGE_SIZE = 20;
+
 /**
+ * Optional settings for BlobsTranscriptStore
+ */
+export interface BlobsTranscriptStoreOptions {
+    /**
+     * [StoragePipelineOptions](xref:@azure/storage-blob.StoragePipelineOptions) to pass to azure blob
+     * storage client
+     */
+    storagePipelineOptions?: StoragePipelineOptions;
+}
+
+/**
+ * BlobsTranscriptStore is a [TranscriptStore](xref:botbuilder-core.TranscriptStore) that persists
+ * transcripts in Azure Blob Storage
  * @remarks
- * Each activity is stored as JSON blob with a structure of
+ * Each activity is stored as JSON blob with a key of
  * `container/{channelId]/{conversationId}/{Timestamp.ticks}-{activity.id}.json`.
  */
 export class BlobsTranscriptStore implements TranscriptStore {
     private readonly _containerClient: ContainerClient;
-    private readonly _concurrency: number;
-    private _maxPageSize = 20;
+    private readonly _concurrency = Infinity;
     private _initializePromise: Promise<unknown>;
 
     /**
@@ -56,21 +85,21 @@ export class BlobsTranscriptStore implements TranscriptStore {
      *
      * @param connectionString Azure Blob Storage connection string
      * @param containerName Azure Blob Storage container name
-     * @param options Azure Blob Storage [StoragePipelineOptions](xref:@azure/storage-blob.StoragePipelineOptions) options
+     * @param options Other options for BlobsTranscriptStore
      */
-    constructor(connectionString: string, containerName: string, options?: StoragePipelineOptions) {
-        if (typeof connectionString !== 'string') {
-            throw new Error('`connectionString` is required and must be a string');
-        }
+    constructor(connectionString: string, containerName: string, options?: BlobsTranscriptStoreOptions) {
+        assert(typeof connectionString === 'string', '`connectionString` must be a string');
+        assert(connectionString, '`connectionString` must be non-empty');
 
-        if (typeof containerName !== 'string') {
-            throw new Error('`containerName` is required and must be a string');
-        }
+        assert(typeof containerName === 'string', '`containerName` must be a string');
+        assert(containerName, '`containerName` must be non-empty');
 
-        this._containerClient = new ContainerClient(connectionString, containerName, options);
+        this._containerClient = new ContainerClient(connectionString, containerName, options?.storagePipelineOptions);
 
         // At most one promise at a time to be friendly to local emulator users
-        this._concurrency = connectionString.trim() === 'UseDevelopmentStorage=true;' ? 1 : Infinity;
+        if (connectionString.trim() === 'UseDevelopmentStorage=true;') {
+            this._concurrency = 1;
+        }
     }
 
     /**
@@ -84,19 +113,26 @@ export class BlobsTranscriptStore implements TranscriptStore {
         return this._initializePromise;
     }
 
+    /**
+     * Get activities for a conversation (aka the transcript).
+     * @param channelId channelId
+     * @param conversationId conversationId
+     * @param continuationToken continuation token to page through results
+     * @param startDate earliest time to include in results
+     * @returns Promise that resolves to a
+     * [PagedResult](xref:botbuilder-core.PagedResult) of [Activity](xref:botbuilder-core.Activity) items
+     */
     async getTranscriptActivities(
         channelId: string,
         conversationId: string,
         continuationToken?: string,
         startDate?: Date
     ): Promise<PagedResult<Activity>> {
-        if (typeof channelId !== 'string') {
-            throw new Error('`channelId` is required to be a string');
-        }
+        assert(typeof channelId === 'string', '`channelId` must be a string');
+        assert(channelId, '`channelId` must be non-empty');
 
-        if (typeof conversationId !== 'string') {
-            throw new Error('`conversationId` is required to be a string');
-        }
+        assert(typeof conversationId === 'string', '`conversationId` must be a string');
+        assert(conversationId, '`conversationId` must be non-empty');
 
         await this._initialize();
 
@@ -104,7 +140,7 @@ export class BlobsTranscriptStore implements TranscriptStore {
             .listBlobsByHierarchy('/', {
                 prefix: getConversationPrefix(channelId, conversationId),
             })
-            .byPage({ continuationToken, maxPageSize: this._maxPageSize });
+            .byPage({ continuationToken, maxPageSize: MAX_PAGE_SIZE });
 
         let page = await iter.next();
         while (!page.done) {
@@ -143,10 +179,16 @@ export class BlobsTranscriptStore implements TranscriptStore {
         return { continuationToken: '', items: [] };
     }
 
+    /**
+     * List conversations in the channelId.
+     * @param channelId channelId
+     * @param continuationToken continuation token to page through results
+     * @returns Promise that resolves to a
+     * [PagedResult](xref:botbuilder-core.PagedResult) of [Activity](xref:botbuilder-core.Activity) items
+     */
     async listTranscripts(channelId: string, continuationToken?: string): Promise<PagedResult<TranscriptInfo>> {
-        if (typeof channelId !== 'string') {
-            throw new Error('`channelId` is required to be a string');
-        }
+        assert(typeof channelId === 'string', '`channelId` must be a string');
+        assert(channelId, '`channelId` must be non-empty');
 
         await this._initialize();
 
@@ -154,7 +196,7 @@ export class BlobsTranscriptStore implements TranscriptStore {
             .listBlobsByHierarchy('/', {
                 prefix: getChannelPrefix(channelId),
             })
-            .byPage({ continuationToken, maxPageSize: this._maxPageSize })
+            .byPage({ continuationToken, maxPageSize: MAX_PAGE_SIZE })
             .next();
 
         // Note: azure library does not properly type iterator result, hence the need to cast
@@ -175,14 +217,18 @@ export class BlobsTranscriptStore implements TranscriptStore {
         };
     }
 
+    /**
+     * Delete a specific conversation and all of its activities.
+     * @param channelId channelId
+     * @param conversationId conversationId
+     * @returns A promise representing the async operation.
+     */
     async deleteTranscript(channelId: string, conversationId: string): Promise<void> {
-        if (typeof channelId !== 'string') {
-            throw new Error('`channelId` is required to be a string');
-        }
+        assert(typeof channelId === 'string', '`channelId` must be a string');
+        assert(channelId, '`channelId` must be non-empty');
 
-        if (typeof conversationId !== 'string') {
-            throw new Error('`conversationId` is required to be a string');
-        }
+        assert(typeof conversationId === 'string', '`conversationId` must be a string');
+        assert(conversationId, '`conversationId` must be non-empty');
 
         await this._initialize();
 
@@ -191,7 +237,7 @@ export class BlobsTranscriptStore implements TranscriptStore {
                 prefix: getConversationPrefix(channelId, conversationId),
             })
             .byPage({
-                maxPageSize: this._maxPageSize,
+                maxPageSize: MAX_PAGE_SIZE,
             });
 
         let page = await iter.next();
@@ -208,14 +254,18 @@ export class BlobsTranscriptStore implements TranscriptStore {
         }
     }
 
+    /**
+     * Log an activity to the transcript.
+     * @param activity activity to log
+     * @returns A promise representing the async operation.
+     */
     async logActivity(activity: Activity): Promise<void> {
-        if (typeof activity !== 'object') {
-            throw new Error('`activity` is required to be a string');
-        }
+        assert(activity, '`activity` must not be null or undefined');
+        assert(typeof activity === 'object', '`activity` must be an object');
 
         await this._initialize();
 
-        const blob = this._containerClient.getBlockBlobClient(getBlobName(activity));
+        const blob = this._containerClient.getBlockBlobClient(getBlobKey(activity));
         const serialized = JSON.stringify(activity);
 
         await blob.upload(serialized, serialized.length, {

@@ -1,7 +1,7 @@
 {
   "name": "botbuilder-azure-blobs",
   "author": "Microsoft Corp.",
-  "description": "Botbuild storage bindings for Azure Blobs services",
+  "description": "BotBuilder storage bindings for Azure Blobs services",
   "version": "4.1.6",
   "license": "MIT",
   "keywords": [
@@ -28,7 +28,7 @@
   },
   "dependencies": {
     "@azure/storage-blob": "^12.2.1",
-    "botbuilder": "4.1.6",
+    "botbuilder-core": "4.1.6",
     "get-stream": "^6.0.0",
     "p-map": "^4.0.0"
   },
@@ -43,14 +43,15 @@
     "typescript": "^4.0.3"
   },
   "scripts": {
-    "test": "npm run build && nyc mocha tests",
+    "test": "npm run build && nyc mocha --check-leaks tests",
     "build": "tsc -b",
     "postbuild": "downlevel-dts lib _ts3.4/lib",
-    "build-docs": "typedoc --theme markdown --entryPoint botbuilder-dialogs-adaptive --excludePrivate --includeDeclarations --ignoreCompilerErrors --module amd --out ..\\..\\doc\\botbuilder-dialogs .\\lib\\index.d.ts --hideGenerator --name \"Bot Builder SDK - Dialogs\" --readme none",
+    "build-docs": "typedoc --theme markdown --entryPoint botbuilder-azure-blobs --excludePrivate --includeDeclarations --ignoreCompilerErrors --module amd --out ..\\..\\doc\\botbuilder-azure-blobs .\\lib\\index.d.ts --hideGenerator --name \"Bot Builder SDK - Azure Blobs\" --readme none",
     "set-version": "npm version --allow-same-version ${Version}",
     "test:compat": "api-extractor run --verbose"
   },
   "files": [
-    "lib"
+    "lib",
+    "src"
   ]
 }

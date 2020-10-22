@@ -1,21 +1,31 @@
-/**
- * Copyright (c) Microsoft Corporation. All rights reserved.
- * Licensed under the MIT License.
- */
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 
 import getStream from 'get-stream';
 import pmap from 'p-map';
 import { ContainerClient, StoragePipelineOptions } from '@azure/storage-blob';
-import { Storage, StoreItems, isStoreItems } from 'botbuilder';
+import { Storage, StoreItems } from 'botbuilder-core';
+import { assert } from './assert';
 import { ignoreError, isStatusCodeError } from './ignoreError';
 import { sanitizeBlobKey } from './sanitizeBlobKey';
+
+/**
+ * Optional settings for BlobsStorage
+ */
+export interface BlobsStorageOptions {
+    /**
+     * [StoragePipelineOptions](xref:@azure/storage-blob.StoragePipelineOptions) to pass to azure blob
+     * storage client
+     */
+    storagePipelineOptions?: StoragePipelineOptions;
+}
 
 /**
  * BlobsStorage provides a [Storage](xref:botbuilder-core.Storage) implementation backed by Azure Blob Storage
  */
 export class BlobsStorage implements Storage {
     private readonly _containerClient: ContainerClient;
-    private readonly _concurrency: number;
+    private readonly _concurrency = Infinity;
     private _initializePromise: Promise<unknown>;
 
     /**
@@ -23,21 +33,21 @@ export class BlobsStorage implements Storage {
      *
      * @param connectionString Azure Blob Storage connection string
      * @param containerName Azure Blob Storage container name
-     * @param options Azure Blob Storage [StoragePipelineOptions](xref:@azure/storage-blob.StoragePipelineOptions) options
+     * @param options Other options for BlobsStorage
      */
-    constructor(connectionString: string, containerName: string, options?: StoragePipelineOptions) {
-        if (typeof connectionString !== 'string') {
-            throw new Error('connectionString is required and must be a string');
-        }
+    constructor(connectionString: string, containerName: string, options?: BlobsStorageOptions) {
+        assert(typeof connectionString === 'string', '`connectionString` must be a string');
+        assert(connectionString, '`connectionString` must be non-empty', Error);
 
-        if (typeof containerName !== 'string') {
-            throw new Error('containerName is required and must be a string');
-        }
+        assert(typeof containerName === 'string', '`containerName` must be a string');
+        assert(containerName, '`containerName` must be non-empty', Error);
 
-        this._containerClient = new ContainerClient(connectionString, containerName, options);
+        this._containerClient = new ContainerClient(connectionString, containerName, options?.storagePipelineOptions);
 
         // At most one promise at a time to be friendly to local emulator users
-        this._concurrency = connectionString.trim() === 'UseDevelopmentStorage=true;' ? 1 : Infinity;
+        if (connectionString.trim() === 'UseDevelopmentStorage=true;') {
+            this._concurrency = 1;
+        }
     }
 
     /**
@@ -51,7 +61,14 @@ export class BlobsStorage implements Storage {
         return this._initializePromise;
     }
 
+    /**
+     * Loads store items from storage.
+     * @param keys Array of item keys to read
+     * @returns The fetched [StoreItems](xref:botbuilder-core.StoreItems)
+     */
     async read(keys: string[]): Promise<StoreItems> {
+        assert(Array.isArray(keys), '`keys` must be an array');
+
         await this._initialize();
 
         return (
@@ -81,10 +98,14 @@ export class BlobsStorage implements Storage {
         ).reduce((acc, { key, value }) => (value ? { ...acc, [key]: value } : acc), {});
     }
 
+    /**
+     * Saves store items to storage.
+     * @param changes Map of [StoreItems](xref:botbuilder-core.StoreItems) to write to storage
+     * @returns A promise representing the async operation
+     */
     async write(changes: StoreItems): Promise<void> {
-        if (!isStoreItems(changes)) {
-            throw new Error('changes argument is required');
-        }
+        assert(changes, '`changes` must not be null or undefined');
+        assert(typeof changes === 'object', '`changes` must be an object');
 
         await this._initialize();
 
@@ -104,7 +125,14 @@ export class BlobsStorage implements Storage {
         );
     }
 
+    /**
+     * Removes store items from storage.
+     * @param keys Array of item keys to remove from the store
+     * @returns A promise representing the async operation
+     */
     async delete(keys: string[]): Promise<void> {
+        assert(Array.isArray(keys), '`keys` must be an array');
+
         await this._initialize();
 
         await pmap(

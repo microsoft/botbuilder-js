@@ -1,14 +1,9 @@
-/**
- * Copyright (c) Microsoft Corporation. All rights reserved.
- * Licensed under the MIT License.
- */
-
-/* eslint-disable @typescript-eslint/no-var-requires */
-/* eslint-disable no-undef */
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 
 const assert = require('assert');
 const sinon = require('sinon');
-const { BlobsStorage } = require('../lib');
+const { BlobsStorage } = require('../');
 
 const connectionString = process.env.AZURE_BLOB_STORAGE_CONNECTION_STRING;
 const containerName = process.env.AZURE_BLOB_STORAGE_CONTAINER;
