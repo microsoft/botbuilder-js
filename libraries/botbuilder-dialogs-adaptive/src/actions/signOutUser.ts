@@ -27,10 +27,19 @@ export interface SignOutUserConfiguration extends DialogConfiguration {
     disabled?: boolean | string | Expression | BoolExpression;
 }
 
+/**
+ * Singns out the user and finishes the dialog.
+ */
 export class SignOutUser<O extends object = {}> extends Dialog<O> implements SignOutUserConfiguration {
     public static $kind = 'Microsoft.SignOutUser';
 
     public constructor();
+
+    /**
+     * Initializes a new instance of the [SignOutUser](xref:botbuilder-dialogs-adaptive.SignOutUser) class.
+     * @param userId Optional. The expression which resolves to the userId to sign out.
+     * @param connectionName Optional. The name of the OAuth connection.
+     */
     public constructor(userId?: string, connectionName?: string) {
         super();
         if (userId) {
@@ -69,6 +78,12 @@ export class SignOutUser<O extends object = {}> extends Dialog<O> implements Sig
         }
     }
 
+    /**
+     * Starts a new [Dialog](xref:botbuilder-dialogs.Dialog) and pushes it onto the dialog stack.
+     * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
+     * @param options Optional. Initial information to pass to the dialog.
+     * @returns A `Promise` representing the asynchronous operation.
+     */
     public async beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult> {
         if (this.disabled && this.disabled.getValue(dc.state)) {
             return await dc.endDialog();
@@ -89,6 +104,11 @@ export class SignOutUser<O extends object = {}> extends Dialog<O> implements Sig
         }
     }
 
+    /**
+     * @protected
+     * Builds the compute Id for the [Dialog](xref:botbuilder-dialogs.Dialog).
+     * @returns A `string` representing the compute Id.
+     */
     protected onComputeId(): string {
         return `SignOutUser[${this.connectionName ? this.connectionName.toString() : ''}, ${
             this.userId ? this.userId.toString() : ''

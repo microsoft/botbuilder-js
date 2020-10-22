@@ -36,10 +36,19 @@ export interface UpdateActivityConfiguration extends DialogConfiguration {
     disabled?: boolean | string | Expression | BoolExpression;
 }
 
+/**
+ * Update an activity with replacement.
+ */
 export class UpdateActivity<O extends object = {}> extends Dialog<O> implements UpdateActivityConfiguration {
     public static $kind = 'Microsoft.UpdateActivity';
 
     public constructor();
+
+    /**
+     * Initializes a new instance of the [UpdateActivity](xref:botbuilder-dialogs-adaptive.UpdateActivity) class.
+     * @param activityId Optional. The expression which resolves to the activityId to update.
+     * @param activity Optional. Template for the [Activity](xref:botframework-schema.Activity).
+     */
     public constructor(activityId?: string, activity?: Partial<Activity> | string) {
         super();
         if (activityId) {
@@ -82,6 +91,12 @@ export class UpdateActivity<O extends object = {}> extends Dialog<O> implements 
         }
     }
 
+    /**
+     * Starts a new [Dialog](xref:botbuilder-dialogs.Dialog) and pushes it onto the dialog stack.
+     * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
+     * @param options Optional. Initial information to pass to the dialog.
+     * @returns A `Promise` representing the asynchronous operation.
+     */
     public async beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult> {
         if (this.disabled && this.disabled.getValue(dc.state)) {
             return await dc.endDialog();
@@ -115,6 +130,11 @@ export class UpdateActivity<O extends object = {}> extends Dialog<O> implements 
         return await dc.endDialog(result);
     }
 
+    /**
+     * @protected
+     * Builds the compute Id for the [Dialog](xref:botbuilder-dialogs.Dialog).
+     * @returns A `string` representing the compute Id.
+     */
     protected onComputeId(): string {
         if (this.activity instanceof ActivityTemplate) {
             return `UpdateActivity[${StringUtils.ellipsis(this.activity.template.trim(), 30)}]`;

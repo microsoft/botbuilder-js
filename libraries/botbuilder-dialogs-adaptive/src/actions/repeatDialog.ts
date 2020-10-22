@@ -14,10 +14,18 @@ export interface RepeatDialogConfiguration extends BaseInvokeDialogConfiguration
     allowLoop?: boolean | string | Expression | BoolExpression;
 }
 
+/**
+ * Action which repeats the active [Dialog](xref:botbuilder-dialogs.Dialog) (restarting it).
+ */
 export class RepeatDialog<O extends object = {}> extends BaseInvokeDialog<O> implements RepeatDialogConfiguration {
     public static $kind = 'Microsoft.RepeatDialog';
 
     public constructor();
+
+    /**
+     * Initializes a new instance of the [RepeatDialog](xref:botbuilder-dialogs-adaptive.RepeatDialog) class.
+     * @param options Optional. Object with additional options.
+     */
     public constructor(options?: O) {
         super(undefined, options);
     }
@@ -43,6 +51,12 @@ export class RepeatDialog<O extends object = {}> extends BaseInvokeDialog<O> imp
         }
     }
 
+    /**
+     * Starts a new [Dialog](xref:botbuilder-dialogs.Dialog) and pushes it onto the dialog stack.
+     * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
+     * @param options Optional. Initial information to pass to the dialog.
+     * @returns A `Promise` representing the asynchronous operation.
+     */
     public async beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult> {
         if (this.disabled && this.disabled.getValue(dc.state)) {
             return await dc.endDialog();

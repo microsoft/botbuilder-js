@@ -29,6 +29,11 @@ type PropertiesOutput = Record<string, StringExpression>;
  * Converter to convert telemetry properties configuration.
  */
 class TelemetryPropertiesConverter implements Converter<PropertiesInput, PropertiesOutput> {
+    /**
+     * Converts a [PropertiesInput](xref:botbuilder-dialogs-adaptive.PropertiesInput) or [PropertiesOutput](xref:botbuilder-dialogs-adaptive.PropertiesOutput) into telemetry [PropertiesOutput](xref:botbuilder-dialogs-adaptive.PropertiesOutput).
+     * @param properties The [PropertiesInput](xref:botbuilder-dialogs-adaptive.PropertiesInput) or [PropertiesOutput](xref:botbuilder-dialogs-adaptive.PropertiesOutput) to convert.
+     * @returns The converted [StringExpression](xref:adaptive-expressions.StringExpression).
+     */
     public convert(value: PropertiesInput | PropertiesOutput): PropertiesOutput {
         return Object.entries(value).reduce((properties, [key, value]) => {
             const property = value instanceof StringExpression ? value : new StringExpression(value);
@@ -42,7 +47,7 @@ export interface TelemetryTrackEventActionConfiguration extends DialogConfigurat
     eventName?: string | Expression | StringExpression;
     properties?: PropertiesInput | PropertiesOutput;
 }
-
+  
 /**
  * Track a custom event.
  */
@@ -52,10 +57,17 @@ export class TelemetryTrackEventAction<O extends object = {}>
     public static $kind = 'Microsoft.TelemetryTrackEventAction';
 
     /**
-     * Initialize a `TelemetryTrackEventAction` instance.
+     * Initializes a new instance of the [TelemetryTrackEventAction](xref:botbuilder-dialogs-adaptive.TelemetryTrackEventAction) class.
+     * @param eventName Name to use for the event.
+     * @param properties Properties to attach to the tracked event.
      */
-    public constructor();
     public constructor(eventName: string, properties: { [name: string]: string });
+
+    /**
+     * Initializes a new instance of the [TelemetryTrackEventAction](xref:botbuilder-dialogs-adaptive.TelemetryTrackEventAction) class.
+     * @param eventName Optional. Name to use for the event.
+     * @param properties Optional. Properties to attach to the tracked event.
+     */
     public constructor(eventName?: string, properties?: { [name: string]: string }) {
         super();
         if (eventName) {
@@ -97,6 +109,12 @@ export class TelemetryTrackEventAction<O extends object = {}>
         }
     }
 
+    /**
+     * Starts a new [Dialog](xref:botbuilder-dialogs.Dialog) and pushes it onto the dialog stack.
+     * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
+     * @param options Optional. Initial information to pass to the dialog.
+     * @returns A `Promise` representing the asynchronous operation.
+     */
     public async beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult> {
         if (this.disabled && this.disabled.getValue(dc.state)) {
             return await dc.endDialog();
@@ -116,6 +134,11 @@ export class TelemetryTrackEventAction<O extends object = {}>
         return await dc.endDialog();
     }
 
+    /**
+     * @protected
+     * Builds the compute Id for the [Dialog](xref:botbuilder-dialogs.Dialog).
+     * @returns A `string` representing the compute Id.
+     */
     protected onComputeId(): string {
         return `TelemetryTrackEventAction[${this.eventName && this.eventName.toString()}]`;
     }
