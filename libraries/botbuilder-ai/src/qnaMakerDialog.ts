@@ -115,7 +115,7 @@ export interface QnAMakerDialogConfiguration extends DialogConfiguration {
  * It supports knowledge bases that include follow-up prompt and active learning features.
  * The dialog will also present user with appropriate multi-turn prompt or active learning options.
  */
-export class QnAMakerDialog extends WaterfallDialog {
+export class QnAMakerDialog extends WaterfallDialog implements QnAMakerDialogConfiguration {
     public static $kind = 'Microsoft.QnAMakerDialog';
 
     /**
@@ -540,16 +540,12 @@ export class QnAMakerDialog extends WaterfallDialog {
             host: this.getHost(dc),
         };
 
-        const logPersonalInformation = this.logPersonalInformation instanceof BoolExpression ?
-            this.logPersonalInformation.getValue(dc.state)
-            : this.logPersonalInformation
+        const logPersonalInformation =
+            this.logPersonalInformation instanceof BoolExpression
+                ? this.logPersonalInformation.getValue(dc.state)
+                : this.logPersonalInformation;
 
-        return new QnAMaker(
-            endpoint,
-            await this.getQnAMakerOptions(dc),
-            this.telemetryClient,
-            logPersonalInformation,
-        );
+        return new QnAMaker(endpoint, await this.getQnAMakerOptions(dc), this.telemetryClient, logPersonalInformation);
     }
 
     /**
