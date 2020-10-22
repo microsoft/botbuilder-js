@@ -7,12 +7,23 @@
  */
 
 import { DialogContext } from 'botbuilder-dialogs';
-import { MultiLanguageGeneratorBase } from './multiLanguageGeneratorBase';
+import { MultiLanguageGeneratorBase, MultiLanguageGeneratorBaseConfiguration } from './multiLanguageGeneratorBase';
 import { LanguageGenerator } from '../languageGenerator';
 import { LanguageGeneratorManager } from './languageGeneratorManager';
 import { languageGeneratorManagerKey } from '../languageGeneratorExtensions';
 
-export class ResourceMultiLanguageGenerator extends MultiLanguageGeneratorBase {
+/**
+ * Multi language resource generator that extends [MultiLanguageGeneratorBase](xref:botbuilder-dialogs-adaptive.MultiLanguageGeneratorBase) class.
+ */
+export interface ResourceMultiLanguageGeneratorConfiguration extends MultiLanguageGeneratorBaseConfiguration {
+    resourceId?: string;
+}
+
+export class ResourceMultiLanguageGenerator<T = unknown, D extends Record<string, unknown> = Record<string, unknown>>
+    extends MultiLanguageGeneratorBase<T, D>
+    implements ResourceMultiLanguageGeneratorConfiguration {
+    public static $kind = 'Microsoft.ResourceMultiLanguageGenerator';
+
     /**
      * Initializes a new instance of the ResourceMultiLanguageGenerator class.
      * @param resourceId Resource id of LG file.
@@ -32,11 +43,17 @@ export class ResourceMultiLanguageGenerator extends MultiLanguageGeneratorBase {
      * @param dialogContext Context for the current turn of conversation.
      * @param locale Locale to lookup.
      */
-    public tryGetGenerator(dialogContext: DialogContext, locale: string): { exist: boolean; result: LanguageGenerator } {
-        const lgm: LanguageGeneratorManager = dialogContext.services.get(languageGeneratorManagerKey);
-        const resourceId = (locale === undefined || locale === '') ? this.resourceId : this.resourceId.replace('.lg', `.${ locale }.lg`);
-        if (lgm.languageGenerators.has(resourceId)) {
-            return { exist: true, result: lgm.languageGenerators.get(resourceId) };
+    public tryGetGenerator(
+        dialogContext: DialogContext,
+        locale: string
+    ): { exist: boolean; result: LanguageGenerator<T, D> } {
+        const manager = dialogContext.services.get(languageGeneratorManagerKey) as LanguageGeneratorManager<T, D>;
+
+        const resourceId =
+            locale === undefined || locale === '' ? this.resourceId : this.resourceId.replace('.lg', `.${locale}.lg`);
+
+        if (manager.languageGenerators.has(resourceId)) {
+            return { exist: true, result: manager.languageGenerators.get(resourceId) as LanguageGenerator<T, D> };
         } else {
             return { exist: false, result: undefined };
         }

@@ -18,23 +18,30 @@ import { ReturnType } from '../returnType';
  * If one or more items have the same name, the last item with that name appears in the result.
  */
 export class Union extends ExpressionEvaluator {
+    /**
+     * Initializes a new instance of the [Union](xref:adaptive-expressions.Union) class.
+     */
     public constructor() {
         super(ExpressionType.Union, Union.evaluator(), ReturnType.Array, Union.validator);
     }
 
+    /**
+     * @private
+     */
     private static evaluator(): EvaluateExpressionDelegate {
-        return FunctionUtils.apply(
-            (args: any[]): any => {
-                let result: any[] = [];
-                for (const arg of args) {
-                    result = result.concat(arg);
-                }
+        return FunctionUtils.apply((args: any[]): any => {
+            let result: any[] = [];
+            for (const arg of args) {
+                result = result.concat(arg);
+            }
 
-                return Array.from(new Set(result));
-            },
-            FunctionUtils.verifyList);
+            return Array.from(new Set(result));
+        }, FunctionUtils.verifyList);
     }
 
+    /**
+     * @private
+     */
     private static validator(expression: Expression): void {
         FunctionUtils.validateArityAndAnyType(expression, 1, Number.MAX_SAFE_INTEGER, ReturnType.Array);
     }

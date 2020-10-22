@@ -7,7 +7,7 @@
  */
 
 export const defaultPipeName = 'bfv4.pipes';
-export const VERSION_PATH: string = '/api/version';
-export const MESSAGES_PATH: string = '/api/messages';
-export const GET: string = 'GET';
-export const POST: string = 'POST';
+export const VERSION_PATH = '/api/version';
+export const MESSAGES_PATH = '/api/messages';
+export const GET = 'GET';
+export const POST = 'POST';

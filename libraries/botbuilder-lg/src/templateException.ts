@@ -10,13 +10,18 @@ import { Diagnostic } from './diagnostic';
 /**
  * LG Exception that contains diagnostics.
  */
-export class TemplateException  extends Error {
-
+export class TemplateException extends Error {
     private diagnostics: Diagnostic[];
+    
+    /**
+     * Creates a new instance of the [TemplateException](xref:botbuilder-lg.TemplateException) class.
+     * @param m Error message.
+     * @param diagnostics List of [Diagnostic](xref:botbuilder-lg.Diagnostic) to throw.
+     */
     public constructor(m: string, diagnostics: Diagnostic[]) {
         super(m);
         this.diagnostics = diagnostics;
-        Object.setPrototypeOf(this, TemplateException .prototype);
+        Object.setPrototypeOf(this, TemplateException.prototype);
     }
 
     /**

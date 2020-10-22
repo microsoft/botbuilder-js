@@ -7,18 +7,39 @@
  */
 import fetch from 'node-fetch';
 import { Response, Headers } from 'node-fetch';
-import { DialogTurnResult, DialogContext, Dialog, Configurable } from 'botbuilder-dialogs';
-import { Converter } from 'botbuilder-dialogs-declarative';
+import {
+    BoolExpression,
+    BoolExpressionConverter,
+    EnumExpression,
+    EnumExpressionConverter,
+    Expression,
+    StringExpression,
+    StringExpressionConverter,
+    ValueExpression,
+    ValueExpressionConverter,
+} from 'adaptive-expressions';
 import { Activity } from 'botbuilder-core';
-import { ValueExpression, StringExpression, BoolExpression, EnumExpression } from 'adaptive-expressions';
+import {
+    Converter,
+    ConverterFactory,
+    DialogContext,
+    Dialog,
+    DialogTurnResult,
+    DialogConfiguration,
+} from 'botbuilder-dialogs';
+import { replaceJsonRecursively } from '../jsonExtensions';
 
-export class HttpHeadersConverter implements Converter {
-    public convert(value: object): { [key: string]: StringExpression } {
-        const headers = {};
-        for (const key in value) {
-            headers[key] = new StringExpression(value[key]);
-        }
-        return headers;
+type HeadersInput = Record<string, string>;
+type HeadersOutput = Record<string, StringExpression>;
+
+class HttpHeadersConverter implements Converter<HeadersInput, HeadersOutput> {
+    public convert(value: HeadersInput | HeadersOutput): HeadersOutput {
+        return Object.entries(value).reduce((headers, [key, value]) => {
+            return {
+                ...headers,
+                [key]: value instanceof StringExpression ? value : new StringExpression(value),
+            };
+        }, {});
     }
 }
 
@@ -46,7 +67,7 @@ export enum ResponsesTypes {
     /**
      * Binary data parsing from http response content
      */
-    Binary
+    Binary,
 }
 
 export enum HttpMethod {
@@ -73,7 +94,7 @@ export enum HttpMethod {
     /**
      * Http DELETE
      */
-    DELETE = 'DELETE'
+    DELETE = 'DELETE',
 }
 
 /**
@@ -113,7 +134,20 @@ export class Result {
     public content?: any;
 }
 
-export class HttpRequest<O extends object = {}> extends Dialog<O> implements Configurable {
+export interface HttpRequestConfiguration extends DialogConfiguration {
+    method?: HttpMethod;
+    contentType?: string | Expression | StringExpression;
+    url?: string | Expression | StringExpression;
+    headers?: HeadersInput | HeadersOutput;
+    body?: unknown | ValueExpression;
+    responseType?: ResponsesTypes | string | Expression | EnumExpression<ResponsesTypes>;
+    resultProperty?: string | Expression | StringExpression;
+    disabled?: boolean | string | Expression | BoolExpression;
+}
+
+export class HttpRequest<O extends object = {}> extends Dialog<O> implements HttpRequestConfiguration {
+    public static $kind = 'Microsoft.HttpRequest';
+
     public constructor();
     public constructor(method: HttpMethod, url: string, headers: { [key: string]: string }, body: any);
     public constructor(method?: HttpMethod, url?: string, headers?: { [key: string]: string }, body?: any) {
@@ -168,6 +202,27 @@ export class HttpRequest<O extends object = {}> extends Dialog<O> implements Con
      */
     public disabled?: BoolExpression;
 
+    public getConverter(property: keyof HttpRequestConfiguration): Converter | ConverterFactory {
+        switch (property) {
+            case 'contentType':
+                return new StringExpressionConverter();
+            case 'url':
+                return new StringExpressionConverter();
+            case 'headers':
+                return new HttpHeadersConverter();
+            case 'body':
+                return new ValueExpressionConverter();
+            case 'responseType':
+                return new EnumExpressionConverter<ResponsesTypes>(ResponsesTypes);
+            case 'resultProperty':
+                return new StringExpressionConverter();
+            case 'disabled':
+                return new BoolExpressionConverter();
+            default:
+                return super.getConverter(property);
+        }
+    }
+
     public async beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult> {
         if (this.disabled && this.disabled.getValue(dc.state)) {
             return await dc.endDialog();
@@ -188,12 +243,12 @@ export class HttpRequest<O extends object = {}> extends Dialog<O> implements Con
 
         let instanceBody: string;
         if (this.body) {
-            let body = this.body.getValue(dc.state);
+            const body = this.body.getValue(dc.state);
             if (body) {
                 if (typeof body === 'string') {
                     instanceBody = body;
                 } else {
-                    instanceBody = JSON.stringify(this.replaceBodyRecursively(dc, Object.assign({}, body)));
+                    instanceBody = JSON.stringify(replaceJsonRecursively(dc.state, Object.assign({}, body)));
                 }
             }
         }
@@ -203,9 +258,9 @@ export class HttpRequest<O extends object = {}> extends Dialog<O> implements Con
                 method: instanceMethod,
                 url: instanceUrl,
                 headers: instanceHeaders,
-                content: instanceBody
+                content: instanceBody,
             },
-            response: undefined
+            response: undefined,
         };
 
         let response: Response;
@@ -272,34 +327,6 @@ export class HttpRequest<O extends object = {}> extends Dialog<O> implements Con
     }
 
     protected onComputeId(): string {
-        return `HttpRequest[${ this.method } ${ this.url }]`;
-    }
-
-    private replaceBodyRecursively(dc: DialogContext, unit: any): any {
-        if (typeof unit === 'string') {
-            const { value, error } = new ValueExpression(unit).tryGetValue(dc.state);
-            if (!error) {
-                return value;
-            }
-            return unit;
-        }
-
-        if (Array.isArray(unit)) {
-            let result = [];
-            for (const child of unit) {
-                result.push(this.replaceBodyRecursively(dc, child));
-            }
-            return result;
-        }
-
-        if (typeof unit === 'object') {
-            let result = {};
-            for (let key in unit) {
-                result[key] = this.replaceBodyRecursively(dc, unit[key]);
-            }
-            return result;
-        }
-
-        return unit;
+        return `HttpRequest[${this.method} ${this.url}]`;
     }
 }

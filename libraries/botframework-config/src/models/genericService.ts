@@ -1,7 +1,6 @@
 /**
  * @module botframework-config
- */
-/**
+ *
  * Copyright(c) Microsoft Corporation.All rights reserved.
  * Licensed under the MIT License.
  */
@@ -10,6 +9,7 @@ import { ConnectedService } from './connectedService';
 
 /**
  * Defines a generic service connection.
+ * @deprecated See https://aka.ms/bot-file-basics for more information.
  */
 export class GenericService extends ConnectedService implements IGenericService {
     /**
@@ -30,6 +30,11 @@ export class GenericService extends ConnectedService implements IGenericService 
         super(source, ServiceTypes.Generic);
     }
 
+    /**
+     * Encrypt properties on this service.
+     * @param secret Secret to use to encrypt.
+     * @param encryptString Function called to encrypt an individual value.
+     */
     public encrypt(secret: string, encryptString: (value: string, secret: string) => string): void {
         const that: GenericService = this;
         if (this.configuration) {
@@ -39,6 +44,11 @@ export class GenericService extends ConnectedService implements IGenericService 
         }
     }
 
+    /**
+     * Decrypt properties on this service.
+     * @param secret Secret to use to decrypt.
+     * @param decryptString Function called to decrypt an individual value.
+     */
     public decrypt(secret: string, decryptString: (value: string, secret: string) => string): void {
         const that: GenericService = this;
         if (this.configuration) {

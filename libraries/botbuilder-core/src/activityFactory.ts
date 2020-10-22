@@ -12,36 +12,106 @@ import { CardFactory } from './cardFactory';
  * to generate text and then uses simple markdown semantics like chatdown to create Activity.
  */
 export class ActivityFactory {
-
     private static readonly lgType = 'lgType';
     private static adaptiveCardType: string = CardFactory.contentTypes.adaptiveCard;
 
-    private static readonly genericCardTypeMapping: Map<string, string> = new Map<string, string>
-    ([
-        [ 'herocard', CardFactory.contentTypes.heroCard ],
-        [ 'thumbnailcard', CardFactory.contentTypes.thumbnailCard ],
-        [ 'audiocard', CardFactory.contentTypes.audioCard ],
-        [ 'videocard', CardFactory.contentTypes.videoCard ],
-        [ 'animationcard', CardFactory.contentTypes.animationCard ],
-        [ 'signincard', CardFactory.contentTypes.signinCard ],
-        [ 'oauthcard', CardFactory.contentTypes.oauthCard ],
-        [ 'receiptcard', CardFactory.contentTypes.receiptCard ],
+    private static readonly genericCardTypeMapping: Map<string, string> = new Map<string, string>([
+        ['herocard', CardFactory.contentTypes.heroCard],
+        ['thumbnailcard', CardFactory.contentTypes.thumbnailCard],
+        ['audiocard', CardFactory.contentTypes.audioCard],
+        ['videocard', CardFactory.contentTypes.videoCard],
+        ['animationcard', CardFactory.contentTypes.animationCard],
+        ['signincard', CardFactory.contentTypes.signinCard],
+        ['oauthcard', CardFactory.contentTypes.oauthCard],
+        ['receiptcard', CardFactory.contentTypes.receiptCard],
     ]);
 
-    private static readonly activityProperties: string[] = ['type','id','timestamp','localTimestamp','localTimezone','callerId',
-        'serviceUrl','channelId','from','conversation','recipient','textFormat','attachmentLayout','membersAdded',
-        'membersRemoved','reactionsAdded','reactionsRemoved','topicName','historyDisclosed','locale','text','speak',
-        'inputHint','summary','suggestedActions','attachments','entities','channelData','action','replyToId','label',
-        'valueType','value','name','typrelatesToe','code','expiration','importance','deliveryMode','listenFor',
-        'textHighlights','semanticAction'];
+    private static readonly activityProperties: string[] = [
+        'type',
+        'id',
+        'timestamp',
+        'localTimestamp',
+        'localTimezone',
+        'callerId',
+        'serviceUrl',
+        'channelId',
+        'from',
+        'conversation',
+        'recipient',
+        'textFormat',
+        'attachmentLayout',
+        'membersAdded',
+        'membersRemoved',
+        'reactionsAdded',
+        'reactionsRemoved',
+        'topicName',
+        'historyDisclosed',
+        'locale',
+        'text',
+        'speak',
+        'inputHint',
+        'summary',
+        'suggestedActions',
+        'attachments',
+        'entities',
+        'channelData',
+        'action',
+        'replyToId',
+        'label',
+        'valueType',
+        'value',
+        'name',
+        'typrelatesToe',
+        'code',
+        'expiration',
+        'importance',
+        'deliveryMode',
+        'listenFor',
+        'textHighlights',
+        'semanticAction',
+    ];
 
-    private static readonly cardActionProperties: string[] = ['type','title','image','text','displayText','value','channelData'];
+    private static readonly cardActionProperties: string[] = [
+        'type',
+        'title',
+        'image',
+        'text',
+        'displayText',
+        'value',
+        'channelData',
+    ];
 
-    private static readonly attachmentProperties: string[] = ['contentType', 'contentUrl', 'content', 'name', 'thumbnailUrl'];
+    private static readonly attachmentProperties: string[] = [
+        'contentType',
+        'contentUrl',
+        'content',
+        'name',
+        'thumbnailUrl',
+    ];
 
-    private static readonly cardProperties: string[] = ['title', 'subtitle', 'text', 'images', 'image', 'buttons', 'tap', 'media',
-        'shareable', 'autoloop', 'autostart', 'aspect', 'duration', 'value', 'connectionName', 'tokenExchangeResource',
-        'facts', 'items', 'total', 'tax', 'vat'];
+    private static readonly cardProperties: string[] = [
+        'title',
+        'subtitle',
+        'text',
+        'images',
+        'image',
+        'buttons',
+        'tap',
+        'media',
+        'shareable',
+        'autoloop',
+        'autostart',
+        'aspect',
+        'duration',
+        'value',
+        'connectionName',
+        'tokenExchangeResource',
+        'facts',
+        'items',
+        'total',
+        'tax',
+        'vat',
+    ];
 
     /**
      * Generate the activity.
@@ -65,7 +135,7 @@ export class ActivityFactory {
      */
     private static buildActivityFromText(text: string): Partial<Activity> {
         const msg: Partial<Activity> = {
-            type: ActivityTypes.Message
+            type: ActivityTypes.Message,
         };
 
         if (text) {
@@ -88,15 +158,20 @@ export class ActivityFactory {
             activity = MessageFactory.attachment(this.getAttachment(lgValue));
         } else if (type === 'activity') {
             activity = this.buildActivity(lgValue);
-        } else if (lgValue){
+        } else if (lgValue) {
             activity = this.buildActivityFromText(JSON.stringify(lgValue).trim());
         }
 
         return activity;
     }
 
+    /**
+     * Builds an [Activity](xref:botframework-schema.Activity) with a given message.
+     * @param messageValue Message value on which to base the activity.
+     * @returns [Activity](xref:botframework-schema.Activity) with the given message.
+     */
     private static buildActivity(messageValue: any): Partial<Activity> {
-        let activity: Partial<Activity> = { type: ActivityTypes.Message };
+        const activity: Partial<Activity> = { type: ActivityTypes.Message };
         for (const key of Object.keys(messageValue)) {
             const property: string = key.trim();
             if (property === this.lgType) {
@@ -121,28 +196,39 @@ export class ActivityFactory {
         return activity;
     }
 
+    /**
+     * @private
+     */
     private static getSuggestions(suggestionsValue: any): SuggestedActions {
         const actions: any[] = this.normalizedToList(suggestionsValue);
 
         const suggestedActions: SuggestedActions = {
-            actions : this.getCardActions(actions),
-            to: []
+            actions: this.getCardActions(actions),
+            to: [],
         };
 
         return suggestedActions;
     }
 
+    /**
+     * @private
+     */
     private static getButtons(buttonsValue: any): CardAction[] {
         const actions: any[] = this.normalizedToList(buttonsValue);
         return this.getCardActions(actions);
     }
 
+    /**
+     * @private
+     */
     private static getCardActions(actions: any[]): CardAction[] {
         return actions.map((u: any): CardAction => this.getCardAction(u));
     }
 
-    private static getCardAction(action: any): CardAction
-    {
+    /**
+     * @private
+     */
+    private static getCardAction(action: any): CardAction {
         let cardAction: CardAction;
         if (typeof action === 'string') {
             cardAction = { type: ActionTypes.ImBack, value: action, title: action, channelData: undefined };
@@ -151,7 +237,7 @@ export class ActivityFactory {
             cardAction = {
                 type: ActionTypes.ImBack,
                 title: '',
-                value: ''
+                value: '',
             };
 
             if (type === 'cardaction') {
@@ -168,6 +254,9 @@ export class ActivityFactory {
         return cardAction;
     }
 
+    /**
+     * @private
+     */
     private static getAttachments(input: any): Attachment[] {
         const attachments: Attachment[] = [];
         const attachmentsJsonList: any[] = this.normalizedToList(input);
@@ -181,9 +270,12 @@ export class ActivityFactory {
         return attachments;
     }
 
+    /**
+     * @private
+     */
     private static getAttachment(input: any): Attachment {
         let attachment: Attachment = {
-            contentType: ''
+            contentType: '',
         };
         const type: string = this.getStructureType(input);
         if (this.genericCardTypeMapping.has(type)) {
@@ -193,14 +285,17 @@ export class ActivityFactory {
         } else if (type === 'attachment') {
             attachment = this.getNormalAttachment(input);
         } else {
-            attachment = {contentType: type, content: input};
+            attachment = { contentType: type, content: input };
         }
 
         return attachment;
     }
 
+    /**
+     * @private
+     */
     private static getNormalAttachment(input: any): Attachment {
-        const attachment: Attachment = {contentType:''};
+        const attachment: Attachment = { contentType: '' };
 
         for (const key of Object.keys(input)) {
             const property: string = key.trim();
@@ -226,6 +321,9 @@ export class ActivityFactory {
         return attachment;
     }
 
+    /**
+     * @private
+     */
     private static getCardAttachment(type: string, input: any): Attachment {
         const card: any = {};
 
@@ -245,7 +343,7 @@ export class ActivityFactory {
                         }
 
                         const imageList = this.normalizedToList(value);
-                        imageList.forEach( (u): any => card['images'].push(this.normalizedToMediaOrImage(u)));
+                        imageList.forEach((u): any => card['images'].push(this.normalizedToMediaOrImage(u)));
                     } else {
                         card['image'] = this.normalizedToMediaOrImage(value);
                     }
@@ -256,7 +354,7 @@ export class ActivityFactory {
                     }
 
                     const mediaList = this.normalizedToList(value);
-                    mediaList.forEach( (u): any => card['media'].push(this.normalizedToMediaOrImage(u)));
+                    mediaList.forEach((u): any => card['media'].push(this.normalizedToMediaOrImage(u)));
                     break;
                 case 'buttons':
                     if (!('buttons' in card)) {
@@ -264,7 +362,7 @@ export class ActivityFactory {
                     }
 
                     const buttons: any[] = this.getButtons(value);
-                    buttons.forEach( (u): any => card[property].push(u));
+                    buttons.forEach((u): any => card[property].push(u));
                     break;
                 case 'autostart':
                 case 'shareable':
@@ -284,22 +382,27 @@ export class ActivityFactory {
 
         const attachment: Attachment = {
             contentType: type,
-            content: card
+            content: card,
         };
 
         return attachment;
     }
 
+    /**
+     * @private
+     */
     private static realProperty(property: string, builtinProperties: string[]): string {
         const properties = builtinProperties.map((u: string): string => u.toLowerCase());
-        if (properties.includes(property.toLowerCase()))
-        {
+        if (properties.includes(property.toLowerCase())) {
             return builtinProperties[properties.indexOf(property.toLowerCase())];
         } else {
             return property;
         }
     }
 
+    /**
+     * @private
+     */
     private static normalizedToList(item: any): any[] {
         if (item === undefined) {
             return [];
@@ -310,6 +413,9 @@ export class ActivityFactory {
         }
     }
 
+    /**
+     * @private
+     */
     private static getStructureType(input: any): string {
         let result = '';
 
@@ -325,25 +431,28 @@ export class ActivityFactory {
         return result.trim().toLowerCase();
     }
 
+    /**
+     * @private
+     */
     private static normalizedToMediaOrImage(item: any): object {
         if (!item) {
             return {};
         } else if (typeof item === 'string') {
-            return {url: item};
+            return { url: item };
         } else return item;
     }
 
-    private static getValidBooleanValue(boolValue: any): boolean{
+    /**
+     * @private
+     */
+    private static getValidBooleanValue(boolValue: any): boolean {
         if (typeof boolValue === 'boolean') {
             return boolValue;
         }
 
-        if (boolValue.toLowerCase() === 'true')
-        {
+        if (boolValue.toLowerCase() === 'true') {
             return true;
-        }
-        else if (boolValue.toLowerCase() === 'false')
-        {
+        } else if (boolValue.toLowerCase() === 'false') {
             return false;
         }
 

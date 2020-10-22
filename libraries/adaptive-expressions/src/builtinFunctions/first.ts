@@ -9,29 +9,35 @@
 import { EvaluateExpressionDelegate, ExpressionEvaluator } from '../expressionEvaluator';
 import { ExpressionType } from '../expressionType';
 import { FunctionUtils } from '../functionUtils';
+import { InternalFunctionUtils } from '../functionUtils.internal';
 import { ReturnType } from '../returnType';
 
 /**
  * Return the first item from a string or array.
  */
 export class First extends ExpressionEvaluator {
+    /**
+     * Initializes a new instance of the [First](xref:adaptive-expressions.First) class.
+     */
     public constructor() {
         super(ExpressionType.First, First.evaluator(), ReturnType.Object, FunctionUtils.validateUnary);
     }
 
+    /**
+     * @private
+     */
     private static evaluator(): EvaluateExpressionDelegate {
-        return FunctionUtils.apply(
-            (args: any[]): any => {
-                let first: any;
-                if (typeof args[0] === 'string' && args[0].length > 0) {
-                    first = args[0][0];
-                }
+        return FunctionUtils.apply((args: any[]): any => {
+            let first: any;
+            if (typeof args[0] === 'string' && args[0].length > 0) {
+                first = args[0][0];
+            }
 
-                if (Array.isArray(args[0]) && args[0].length > 0) {
-                    first = FunctionUtils.accessIndex(args[0], 0).value;
-                }
+            if (Array.isArray(args[0]) && args[0].length > 0) {
+                first = InternalFunctionUtils.accessIndex(args[0], 0).value;
+            }
 
-                return first;
-            });
+            return first;
+        });
     }
 }

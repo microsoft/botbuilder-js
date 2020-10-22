@@ -12,6 +12,7 @@ import { Expression } from '../expression';
 import { ExpressionEvaluator, ValueWithError } from '../expressionEvaluator';
 import { ExpressionType } from '../expressionType';
 import { FunctionUtils } from '../functionUtils';
+import { InternalFunctionUtils } from '../functionUtils.internal';
 import { MemoryInterface } from '../memory/memoryInterface';
 import { Options } from '../options';
 import { ReturnType } from '../returnType';
@@ -20,40 +21,51 @@ import { ReturnType } from '../returnType';
  * Return the start of the month for a timestamp.
  */
 export class StartOfMonth extends ExpressionEvaluator {
+    /**
+     * Initializes a new instance of the [StartOfMonth](xref:adaptive-expressions.StartOfMonth) class.
+     */
     public constructor() {
         super(ExpressionType.StartOfMonth, StartOfMonth.evaluator, ReturnType.String, StartOfMonth.validator);
     }
 
+    /**
+     * @private
+     */
     private static evaluator(expr: Expression, state: MemoryInterface, options: Options): ValueWithError {
         let value: any;
-        let error: string;
-        let args: any[];
-        ({ args, error } = FunctionUtils.evaluateChildren(expr, state, options));
+        const { args, error: childrenError } = FunctionUtils.evaluateChildren(expr, state, options);
+        let error = childrenError;
         if (!error) {
-            const format: string = (args.length === 2) ? FunctionUtils.timestampFormatter(args[1]) : FunctionUtils.DefaultDateTimeFormat;
-            if (typeof (args[0]) === 'string') {
+            const format: string =
+                args.length === 2 ? FunctionUtils.timestampFormatter(args[1]) : FunctionUtils.DefaultDateTimeFormat;
+            if (typeof args[0] === 'string') {
                 ({ value, error } = StartOfMonth.evalStartOfMonth(args[0], format));
             } else {
-                error = `${expr} cannot evaluate`;
+                error = `${expr} should contain an ISO format timestamp and an optional output format string.`;
             }
         }
 
         return { value, error };
     }
 
+    /**
+     * @private
+     */
     private static evalStartOfMonth(timeStamp: string, format?: string): ValueWithError {
         let result: string;
-        let error: string;
-        let parsed: any;
-        ({ value: parsed, error } = FunctionUtils.parseTimestamp(timeStamp));
+        const { value: parsed, error: parseError } = InternalFunctionUtils.parseTimestamp(timeStamp);
+        let error = parseError;
         if (!error) {
             const startofMonth = moment(parsed).utc().date(1).hours(0).minutes(0).second(0).millisecond(0);
-            ({ value: result, error } = FunctionUtils.returnFormattedTimeStampStr(startofMonth, format));
+            ({ value: result, error } = InternalFunctionUtils.returnFormattedTimeStampStr(startofMonth, format));
         }
 
         return { value: result, error };
     }
 
+    /**
+     * @private
+     */
     private static validator(expr: Expression): void {
         FunctionUtils.validateOrder(expr, [ReturnType.String], ReturnType.String);
     }

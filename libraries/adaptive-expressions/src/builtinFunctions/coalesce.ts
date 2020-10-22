@@ -16,16 +16,25 @@ import { ReturnType } from '../returnType';
  * Empty strings, empty arrays, and empty objects are not null.
  */
 export class Coalesce extends ExpressionEvaluator {
+    /**
+     * Initializes a new instance of the [Coalesce](xref:adaptive-expressions.Coalesce) class.
+     */
     public constructor() {
         super(ExpressionType.Coalesce, Coalesce.evaluator(), ReturnType.Object, FunctionUtils.validateAtLeastOne);
     }
 
+    /**
+     * @private
+     */
     private static evaluator(): EvaluateExpressionDelegate {
         return FunctionUtils.apply((args: any[][]): any => Coalesce.evalCoalesce(args as any[]));
     }
 
-    private static evalCoalesce(objetcList: object[]): any {
-        for (const obj of objetcList) {
+    /**
+     * @private
+     */
+    private static evalCoalesce(objectList: any[]): any {
+        for (const obj of objectList) {
             if (obj !== null && obj !== undefined) {
                 return obj;
             }

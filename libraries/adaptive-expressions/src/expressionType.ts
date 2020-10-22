@@ -124,6 +124,7 @@ export class ExpressionType {
     public static readonly UriComponent: string = 'uriComponent';
     public static readonly UriComponentToString: string = 'uriComponentToString';
     public static readonly FormatNumber: string = 'formatNumber';
+    public static readonly JsonStringify: string = 'jsonStringify';
 
     // Memory
     public static readonly Accessor: string = 'Accessor';
@@ -147,6 +148,7 @@ export class ExpressionType {
     public static readonly IndicesAndValues: string = 'indicesAndValues';
     public static readonly Flatten: string = 'flatten';
     public static readonly Unique: string = 'unique';
+    public static readonly Reverse: string = 'reverse';
 
     // Misc
     public static readonly Constant: string = 'Constant';
@@ -176,7 +178,7 @@ export class ExpressionType {
     // Regar expression
     public static readonly IsMatch: string = 'isMatch';
 
-    //Type Checking 
+    //Type Checking
     public static readonly IsString: string = 'isString';
     public static readonly IsInteger: string = 'isInteger';
     public static readonly IsArray: string = 'isArray';

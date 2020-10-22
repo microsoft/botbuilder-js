@@ -36,7 +36,7 @@
 # T1
 [Activity
 		Text = ${T2()}
-		Speak = foo bar ${T3().speak}
+		Speak = hello world ${T3().speak}
     ]
 
 
@@ -51,18 +51,18 @@
 
 
 > use a pure to get the structured, but remember, with the same property, original one would be hold
-> so, the result of Text would be 'foo' but not 'zoo'
+> so, the result of Text would be 'cool' but not 'food'
 # ST1
 [MyStruct
-    Text = foo
+    Text = cool
     ${ST2()}
 ]
 
 
 # ST2
 [MyStruct
-    Speak = bar
-    Text = zoo
+    Speak = beta
+    Text = food
 ]
 
 
@@ -123,7 +123,7 @@
 # ExpanderT3
 [MyStruct
     Speak = ${GetAge()}
-    Text = zoo
+    Text = food
 ]
 
 

@@ -15,12 +15,17 @@ import { ReturnType } from '../returnType';
  * Return true if a given input is a Boolean.
  */
 export class IsBoolean extends ExpressionEvaluator {
+    /**
+     * Initializes a new instance of the [IsBoolean](xref:adaptive-expressions.IsBoolean) class.
+     */
     public constructor() {
         super(ExpressionType.IsBoolean, IsBoolean.evaluator(), ReturnType.Boolean, FunctionUtils.validateUnary);
     }
 
+    /**
+     * @private
+     */
     private static evaluator(): EvaluateExpressionDelegate {
-        return FunctionUtils.apply(
-            (args: any[]): boolean => typeof args[0] === 'boolean');
+        return FunctionUtils.apply((args: any[]): boolean => typeof args[0] === 'boolean');
     }
 }

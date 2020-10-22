@@ -10,6 +10,7 @@ import { Expression } from '../expression';
 import { ExpressionEvaluator, ValueWithError } from '../expressionEvaluator';
 import { ExpressionType } from '../expressionType';
 import { FunctionUtils } from '../functionUtils';
+import { InternalFunctionUtils } from '../functionUtils.internal';
 import { MemoryInterface } from '../memory/memoryInterface';
 import { Options } from '../options';
 import { ReturnType } from '../returnType';
@@ -18,21 +19,26 @@ import { ReturnType } from '../returnType';
  * Return a number of ticks that the two timestamps differ.
  */
 export class DateTimeDiff extends ExpressionEvaluator {
+    /**
+     * Initializes a new instance of the [DateTimeDiff](xref:adaptive-expressions.DateTimeDiff) class.
+     */
     public constructor() {
         super(ExpressionType.DateTimeDiff, DateTimeDiff.evaluator, ReturnType.Number, DateTimeDiff.validator);
     }
 
+    /**
+     * @private
+     */
     private static evaluator(expr: Expression, state: MemoryInterface, options: Options): ValueWithError {
         let value: any;
         let dateTimeStart: any;
         let dateTimeEnd: any;
-        let error: string;
-        let args: any[];
-        ({ args, error } = FunctionUtils.evaluateChildren(expr, state, options));
+        const { args, error: childrenError } = FunctionUtils.evaluateChildren(expr, state, options);
+        let error = childrenError;
         if (!error) {
-            ({ value: dateTimeStart, error: error } = FunctionUtils.ticks(args[0]));
+            ({ value: dateTimeStart, error: error } = InternalFunctionUtils.ticks(args[0]));
             if (!error) {
-                ({ value: dateTimeEnd, error: error } = FunctionUtils.ticks(args[1]));
+                ({ value: dateTimeEnd, error: error } = InternalFunctionUtils.ticks(args[1]));
             }
         }
 
@@ -43,6 +49,9 @@ export class DateTimeDiff extends ExpressionEvaluator {
         return { value, error };
     }
 
+    /**
+     * @private
+     */
     private static validator(expression: Expression): void {
         FunctionUtils.validateArityAndAnyType(expression, 2, 2, ReturnType.String);
     }

@@ -83,18 +83,21 @@ export interface NormalizedEntityInfos {
     [name: string]: Partial<EntityInfo>[];
 }
 
+/**
+ * Extended information about an entity including $instance data.
+ */
 export class EntityInfo {
     /**
      * Print an entity as a string.
      * @param _this Source entity.
      */
     public static toString(_this: Partial<EntityInfo>): string {
-        return `${ _this.name }:${ _this.value } P${ _this.priority } ${ _this.score } ${ _this.coverage }`;
+        return `${_this.name}:${_this.value} P${_this.priority} ${_this.score} ${_this.coverage}`;
     }
 
     /**
      * Returns true if entities share text in utterance.
-     * @param _this Source entity. 
+     * @param _this Source entity.
      * @param entity Entity to compare.
      */
     public static overlaps(_this: Partial<EntityInfo>, entity: Partial<EntityInfo>): boolean {
@@ -103,7 +106,7 @@ export class EntityInfo {
 
     /**
      * Returns true if entities come from exactly the same text in the utterance.
-     * @param _this Source entity. 
+     * @param _this Source entity.
      * @param entity Entity to compare.
      */
     public static alternative(_this: Partial<EntityInfo>, entity: Partial<EntityInfo>): boolean {
@@ -112,17 +115,21 @@ export class EntityInfo {
 
     /**
      * Returns true entity text completely includes another entity text.
-     * @param _this Source entity. 
+     * @param _this Source entity.
      * @param entity Entity to compare.
      */
     public static covers(_this: Partial<EntityInfo>, entity: Partial<EntityInfo>): boolean {
-        return _this.start <= entity.start && _this.end >= entity.end && _this.end - _this.start > entity.end - entity.start;
+        return (
+            _this.start <= entity.start &&
+            _this.end >= entity.end &&
+            _this.end - _this.start > entity.end - entity.start
+        );
     }
 
     /**
      * @private
      * Remove any entities that overlap a selected entity.
-     * @param _this Source entity. 
+     * @param _this Source entity.
      * @param entities Normalized set of entities to modify.
      */
     public static removeOverlappingEntities(_this: EntityInfo, entities: NormalizedEntityInfos): void {

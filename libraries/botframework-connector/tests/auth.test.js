@@ -1,7 +1,8 @@
 const assert = require('assert');
-const { AuthenticationConstants, ChannelValidation, ClaimsIdentity, EndorsementsValidator, EnterpriseChannelValidation,
-    GovernmentChannelValidation, JwtTokenValidation, MicrosoftAppCredentials, SimpleCredentialProvider } = require('../lib');
+const { AuthenticationConfiguration, AuthenticationConstants, ChannelValidation, ClaimsIdentity, EndorsementsValidator, EnterpriseChannelValidation,
+    GovernmentChannelValidation, JwtTokenValidation, MicrosoftAppCredentials, SkillValidation, SimpleCredentialProvider } = require('../lib');
 const { StatusCodes } = require('botframework-schema');
+const { stub } = require('sinon');
 
 describe('Bot Framework Connector - Auth Tests', function() {
 
@@ -367,6 +368,54 @@ describe('Bot Framework Connector - Auth Tests', function() {
                 } catch (e) {
                     assert.strictEqual(e.message, 'JwtTokenValidation.getAppIdFromClaims(): missing claims.');
                 }
+            });
+        });
+
+        describe('validateClaims()', () => {
+            it('should throw OnSkillClaim and missing AuthenticationConfiguration', async () => {
+
+                const verClaim = { type: AuthenticationConstants.VersionClaim, value: '1.0' };
+                const appIdClaim = { type: AuthenticationConstants.AppIdClaim, value: 'fromBotAppId' };
+                const audClaim = { type: AuthenticationConstants.AudienceClaim, value: 'toBotId' }; // Skill claims aud!=azp
+
+                // Stubs for authenticateChannelToken and isSkillToken, which are called by validateAuthHeader
+                const authHeaderStub = stub(SkillValidation, 'authenticateChannelToken');
+                authHeaderStub.returns(new ClaimsIdentity( [appIdClaim, audClaim, verClaim], true));
+                const isSkillTokenStub = stub(SkillValidation, 'isSkillToken');
+                isSkillTokenStub.returns(true);
+
+                try {    
+                    
+                    await JwtTokenValidation.validateAuthHeader('Bearer:');
+                    throw new Error('Expected validation to fail.');
+                } catch (err) {
+                    // validateClaims will throw AuthenticationError, since AuthenticationConfiguration is missing a validator
+                    // and the Claims are Skill claims
+                    assert(err.message === 'Unauthorized Access. Request is not authorized. Skill Claims require validation.', `unexpected error thrown: "${ err.message }"`);
+                    assert.strictEqual(err.statusCode, StatusCodes.UNAUTHORIZED);
+                }
+                authHeaderStub.restore();
+                isSkillTokenStub.restore();
+            });
+
+            it('should NOT throw when not a SkillClaim and missing AuthenticationConfiguration', async () => {
+
+                const verClaim = { type: AuthenticationConstants.VersionClaim, value: '1.0' };
+                const appIdClaim = { type: AuthenticationConstants.AppIdClaim, value: 'botid' };
+                const audClaim = { type: AuthenticationConstants.AudienceClaim, value: 'botid' }; // Skill claims aud!=azp
+
+                // Stubs for authenticateChannelToken and isSkillToken, which are called by validateAuthHeader
+                const authHeaderStub = stub(SkillValidation, 'authenticateChannelToken');
+                // Return non-skill claims (aud and azp match)
+                authHeaderStub.returns(new ClaimsIdentity( [appIdClaim, audClaim, verClaim], true));
+                const isSkillTokenStub = stub(SkillValidation, 'isSkillToken');
+                isSkillTokenStub.returns(true);
+
+                // No exception should be thrown, since the claims are not Skill Claims
+                await JwtTokenValidation.validateAuthHeader('Bearer:');
+
+                isSkillTokenStub.restore();
+                authHeaderStub.restore();
             });
         });
 

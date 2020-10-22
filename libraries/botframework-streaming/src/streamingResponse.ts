@@ -8,6 +8,9 @@
 import { HttpContent, HttpContentStream } from './httpContentStream';
 import { SubscribableStream } from './subscribableStream';
 
+/**
+ * The basic response type sent over Bot Framework Protocol 3 with Streaming Extensions transports, equivalent to HTTP response messages.
+ */
 export class StreamingResponse {
     public statusCode: number;
     public streams: HttpContentStream[] = [];
@@ -20,7 +23,7 @@ export class StreamingResponse {
      * @returns A streaming response with the appropriate statuscode and passed in body.
      */
     public static create(statusCode: number, body?: HttpContent): StreamingResponse {
-        let response = new StreamingResponse();
+        const response = new StreamingResponse();
         response.statusCode = statusCode;
         if (body) {
             response.addStream(body);
@@ -44,11 +47,16 @@ export class StreamingResponse {
      * @param body The JSON text to write to the body of the streaming response.
      */
     public setBody(body: any): void {
-        let stream = new SubscribableStream();
+        const stream = new SubscribableStream();
         stream.write(JSON.stringify(body), 'utf8');
-        this.addStream(new HttpContent({
-            type: 'application/json; charset=utf-8',
-            contentLength: stream.length
-        }, stream));
+        this.addStream(
+            new HttpContent(
+                {
+                    type: 'application/json; charset=utf-8',
+                    contentLength: stream.length,
+                },
+                stream
+            )
+        );
     }
 }

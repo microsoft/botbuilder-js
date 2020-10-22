@@ -10,6 +10,7 @@ import { Expression } from '../expression';
 import { ExpressionEvaluator, ValueWithError } from '../expressionEvaluator';
 import { ExpressionType } from '../expressionType';
 import { FunctionUtils } from '../functionUtils';
+import { InternalFunctionUtils } from '../functionUtils.internal';
 import { MemoryInterface } from '../memory/memoryInterface';
 import { Options } from '../options';
 import { ReturnType } from '../returnType';
@@ -19,10 +20,16 @@ import { ReturnType } from '../returnType';
  * Return true if the expression is false, or return false if true.
  */
 export class Not extends ExpressionEvaluator {
+    /**
+     * Initializes a new instance of the [Not](xref:adaptive-expressions.Not) class.
+     */
     public constructor() {
         super(ExpressionType.Not, Not.evaluator, ReturnType.Boolean, FunctionUtils.validateUnary);
     }
 
+    /**
+     * @private
+     */
     private static evaluator(expression: Expression, state: MemoryInterface, options: Options): ValueWithError {
         let result = false;
         let error: string;
@@ -30,7 +37,7 @@ export class Not extends ExpressionEvaluator {
         newOptions.nullSubstitution = undefined;
         ({ value: result, error } = expression.children[0].tryEvaluate(state, newOptions));
         if (!error) {
-            result = !FunctionUtils.isLogicTrue(result);
+            result = !InternalFunctionUtils.isLogicTrue(result);
         } else {
             error = undefined;
             result = true;

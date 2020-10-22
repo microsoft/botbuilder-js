@@ -1,6 +1,7 @@
 # EditorConfig is awesome: http://EditorConfig.org
 # File take from the VSCode repo at:
 # https://github.com/Microsoft/vscode/blob/master/.editorconfig
+# Added line length, charset, and final newline.
 
 # top-most EditorConfig file
 root = true
@@ -9,7 +10,10 @@ root = true
 [*]
 indent_style = space
 indent_size = 4
+max_line_length = 120
+charset = utf-8
 trim_trailing_whitespace = true
+insert_final_newline = true
 
 # The indent size used in the `package.json` file cannot be changed
 # https://github.com/npm/npm/pull/3180#issuecomment-16336516

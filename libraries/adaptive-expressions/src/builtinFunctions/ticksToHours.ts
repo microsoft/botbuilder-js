@@ -18,23 +18,32 @@ import { ReturnType } from '../returnType';
  * Convert ticks to number of hours.
  */
 export class TicksToHours extends ExpressionEvaluator {
-
     private static readonly TicksPerHour: number = 60 * 60 * 10000000;
 
+    /**
+     * Initializes a new instance of the [TicksToHours](xref:adaptive-expressions.TicksToHours) class.
+     */
     public constructor() {
-        super(ExpressionType.TicksToHours, TicksToHours.evaluator, ReturnType.Number, FunctionUtils.validateUnaryNumber);
+        super(
+            ExpressionType.TicksToHours,
+            TicksToHours.evaluator,
+            ReturnType.Number,
+            FunctionUtils.validateUnaryNumber
+        );
     }
 
+    /**
+     * @private
+     */
     private static evaluator(expr: Expression, state: MemoryInterface, options: Options): ValueWithError {
         let value: any;
-        let error: string;
-        let args: any[];
-        ({ args, error } = FunctionUtils.evaluateChildren(expr, state, options));
+        const { args, error: childrenError } = FunctionUtils.evaluateChildren(expr, state, options);
+        let error = childrenError;
         if (!error) {
             if (Number.isInteger(args[0])) {
                 value = args[0] / TicksToHours.TicksPerHour;
             } else {
-                error = `${expr} should contain an integer of ticks`;
+                error = `${ expr } should contain an integer of ticks`;
             }
         }
 

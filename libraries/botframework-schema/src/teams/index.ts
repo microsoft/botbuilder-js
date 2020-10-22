@@ -17,14 +17,14 @@ export * from './extension';
  *
  */
 export interface ChannelInfo {
-  /**
-   * @member {string} [id] Unique identifier representing a channel
-   */
-  id?: string;
-  /**
-   * @member {string} [name] Name of the channel
-   */
-  name?: string;
+    /**
+     * @member {string} [id] Unique identifier representing a channel
+     */
+    id?: string;
+    /**
+     * @member {string} [name] Name of the channel
+     */
+    name?: string;
 }
 
 /**
@@ -34,10 +34,10 @@ export interface ChannelInfo {
  *
  */
 export interface ConversationList {
-  /**
-   * @member {ChannelInfo[]} [conversations]
-   */
-  conversations?: ChannelInfo[];
+    /**
+     * @member {ChannelInfo[]} [conversations]
+     */
+    conversations?: ChannelInfo[];
 }
 
 /**
@@ -47,28 +47,28 @@ export interface ConversationList {
  *
  */
 export interface TeamDetails {
-  /**
-   * @member {string} [id] Unique identifier representing a team
-   */
-  id?: string;
-  /**
-   * @member {string} [name] Name of team.
-   */
-  name?: string;
-  /**
-   * @member {string} [aadGroupId] Azure Active Directory (AAD) Group Id for
-   * the team.
-   */
-  aadGroupId?: string;
     /**
-   * @member {number} [channelCount] Count of channels in the team.
-   */
-  channelCount?: number;
-  /**
-   * @member {number} [memberCount] Count of members in the team.
-   * the team.
-   */
-  memberCount?: number;
+     * @member {string} [id] Unique identifier representing a team
+     */
+    id?: string;
+    /**
+     * @member {string} [name] Name of team.
+     */
+    name?: string;
+    /**
+     * @member {string} [aadGroupId] Azure Active Directory (AAD) Group Id for
+     * the team.
+     */
+    aadGroupId?: string;
+    /**
+     * @member {number} [channelCount] Count of channels in the team.
+     */
+    channelCount?: number;
+    /**
+     * @member {number} [memberCount] Count of members in the team.
+     * the team.
+     */
+    memberCount?: number;
 }
 
 /**
@@ -78,18 +78,18 @@ export interface TeamDetails {
  *
  */
 export interface TeamInfo {
-  /**
-   * @member {string} [id] Unique identifier representing a team
-   */
-  id?: string;
-  /**
-   * @member {string} [name] Name of team.
-   */
-  name?: string;
     /**
-   * @member {string} [aadGroupId] The Azure AD Teams group ID.
-   */
-  aadGroupId?: string;
+     * @member {string} [id] Unique identifier representing a team
+     */
+    id?: string;
+    /**
+     * @member {string} [name] Name of team.
+     */
+    name?: string;
+    /**
+     * @member {string} [aadGroupId] The Azure AD Teams group ID.
+     */
+    aadGroupId?: string;
 }
 
 /**
@@ -99,11 +99,20 @@ export interface TeamInfo {
  *
  */
 export interface NotificationInfo {
-  /**
-   * @member {boolean} [alert] true if notification is to be sent to the user,
-   * false otherwise.
-   */
-  alert?: boolean;
+    /**
+     * @member {boolean} [alert] true if notification is to be sent to the user,
+     * false otherwise.
+     */
+    alert?: boolean;
+    /**
+     * @member {boolean} [alertInMeeting] true if a notification is to be shown to the user while in a meeting,
+     * false otherwise.
+     */
+    alertInMeeting?: boolean;
+    /**
+     * @member {string} [externalResourceUrl] the value of the notification's external resource url
+     */
+    externalResourceUrl?: string;
 }
 
 /**
@@ -113,10 +122,10 @@ export interface NotificationInfo {
  *
  */
 export interface TenantInfo {
-  /**
-   * @member {string} [id] Unique identifier representing a tenant
-   */
-  id?: string;
+    /**
+     * @member {string} [id] Unique identifier representing a tenant
+     */
+    id?: string;
 }
 
 /**
@@ -126,30 +135,30 @@ export interface TenantInfo {
  *
  */
 export interface TeamsChannelData {
-  /**
-   * @member {ChannelInfo} [channel] Information about the channel in which the
-   * message was sent
-   */
-  channel?: ChannelInfo;
-  /**
-   * @member {string} [eventType] Type of event.
-   */
-  eventType?: string;
-  /**
-   * @member {TeamInfo} [team] Information about the team in which the message
-   * was sent
-   */
-  team?: TeamInfo;
-  /**
-   * @member {NotificationInfo} [notification] Notification settings for the
-   * message
-   */
-  notification?: NotificationInfo;
-  /**
-   * @member {TenantInfo} [tenant] Information about the tenant in which the
-   * message was sent
-   */
-  tenant?: TenantInfo;
+    /**
+     * @member {ChannelInfo} [channel] Information about the channel in which the
+     * message was sent
+     */
+    channel?: ChannelInfo;
+    /**
+     * @member {string} [eventType] Type of event.
+     */
+    eventType?: string;
+    /**
+     * @member {TeamInfo} [team] Information about the team in which the message
+     * was sent
+     */
+    team?: TeamInfo;
+    /**
+     * @member {NotificationInfo} [notification] Notification settings for the
+     * message
+     */
+    notification?: NotificationInfo;
+    /**
+     * @member {TenantInfo} [tenant] Information about the tenant in which the
+     * message was sent
+     */
+    tenant?: TenantInfo;
 }
 
 /**
@@ -160,34 +169,34 @@ export interface TeamsChannelData {
  * @extends ChannelAccount
  */
 export interface TeamsChannelAccount extends ChannelAccount {
-  /**
-   * @member {string} [givenName] Given name part of the user name.
-   */
-  givenName?: string;
-  /**
-   * @member {string} [surname] Surname part of the user name.
-   */
-  surname?: string;
-  /**
-   * @member {string} [email] Email Id of the user.
-   */
-  email?: string;
-  /**
-   * @member {string} [userPrincipalName] Unique user principal name.
-   */
-  userPrincipalName?: string;
-  /**
-   * @member {string} [tenantId] Tenant Id of the user.
-   */
-  tenantId?: string;
-  /**
-   * @member {string} [userRole] User Role of the user.
-   */
-  userRole?: string;
+    /**
+     * @member {string} [givenName] Given name part of the user name.
+     */
+    givenName?: string;
+    /**
+     * @member {string} [surname] Surname part of the user name.
+     */
+    surname?: string;
+    /**
+     * @member {string} [email] Email Id of the user.
+     */
+    email?: string;
+    /**
+     * @member {string} [userPrincipalName] Unique user principal name.
+     */
+    userPrincipalName?: string;
+    /**
+     * @member {string} [tenantId] Tenant Id of the user.
+     */
+    tenantId?: string;
+    /**
+     * @member {string} [userRole] User Role of the user.
+     */
+    userRole?: string;
 }
 
 export interface TeamsPagedMembersResult {
-        /**
+    /**
      * Paging token
      */
     continuationToken: string;
@@ -204,14 +213,14 @@ export interface TeamsPagedMembersResult {
  *
  */
 export interface O365ConnectorCardFact {
-  /**
-   * @member {string} [name] Display name of the fact
-   */
-  name?: string;
-  /**
-   * @member {string} [value] Display value for the fact
-   */
-  value?: string;
+    /**
+     * @member {string} [name] Display name of the fact
+     */
+    name?: string;
+    /**
+     * @member {string} [value] Display value for the fact
+     */
+    value?: string;
 }
 
 /**
@@ -221,14 +230,14 @@ export interface O365ConnectorCardFact {
  *
  */
 export interface O365ConnectorCardImage {
-  /**
-   * @member {string} [image] URL for the image
-   */
-  image?: string;
-  /**
-   * @member {string} [title] Alternative text for the image
-   */
-  title?: string;
+    /**
+     * @member {string} [image] URL for the image
+     */
+    image?: string;
+    /**
+     * @member {string} [title] Alternative text for the image
+     */
+    title?: string;
 }
 
 /**
@@ -238,55 +247,55 @@ export interface O365ConnectorCardImage {
  *
  */
 export interface O365ConnectorCardSection {
-  /**
-   * @member {string} [title] Title of the section
-   */
-  title?: string;
-  /**
-   * @member {string} [text] Text for the section
-   */
-  text?: string;
-  /**
-   * @member {string} [activityTitle] Activity title
-   */
-  activityTitle?: string;
-  /**
-   * @member {string} [activitySubtitle] Activity subtitle
-   */
-  activitySubtitle?: string;
-  /**
-   * @member {string} [activityText] Activity text
-   */
-  activityText?: string;
-  /**
-   * @member {string} [activityImage] Activity image
-   */
-  activityImage?: string;
-  /**
-   * @member {ActivityImageType} [activityImageType] Describes how Activity
-   * image is rendered. Possible values include: 'avatar', 'article'
-   */
-  activityImageType?: ActivityImageType;
-  /**
-   * @member {boolean} [markdown] Use markdown for all text contents. Default
-   * vaule is true.
-   */
-  markdown?: boolean;
-  /**
-   * @member {O365ConnectorCardFact[]} [facts] Set of facts for the current
-   * section
-   */
-  facts?: O365ConnectorCardFact[];
-  /**
-   * @member {O365ConnectorCardImage[]} [images] Set of images for the current
-   * section
-   */
-  images?: O365ConnectorCardImage[];
-  /**
-   * @member {O365ConnectorCardActionBase[]} [potentialAction] Set of actions
-   * for the current section
-   */
-  potentialAction?: O365ConnectorCardActionBase[];
+    /**
+     * @member {string} [title] Title of the section
+     */
+    title?: string;
+    /**
+     * @member {string} [text] Text for the section
+     */
+    text?: string;
+    /**
+     * @member {string} [activityTitle] Activity title
+     */
+    activityTitle?: string;
+    /**
+     * @member {string} [activitySubtitle] Activity subtitle
+     */
+    activitySubtitle?: string;
+    /**
+     * @member {string} [activityText] Activity text
+     */
+    activityText?: string;
+    /**
+     * @member {string} [activityImage] Activity image
+     */
+    activityImage?: string;
+    /**
+     * @member {ActivityImageType} [activityImageType] Describes how Activity
+     * image is rendered. Possible values include: 'avatar', 'article'
+     */
+    activityImageType?: ActivityImageType;
+    /**
+     * @member {boolean} [markdown] Use markdown for all text contents. Default
+     * vaule is true.
+     */
+    markdown?: boolean;
+    /**
+     * @member {O365ConnectorCardFact[]} [facts] Set of facts for the current
+     * section
+     */
+    facts?: O365ConnectorCardFact[];
+    /**
+     * @member {O365ConnectorCardImage[]} [images] Set of images for the current
+     * section
+     */
+    images?: O365ConnectorCardImage[];
+    /**
+     * @member {O365ConnectorCardActionBase[]} [potentialAction] Set of actions
+     * for the current section
+     */
+    potentialAction?: O365ConnectorCardActionBase[];
 }
 
 /**
@@ -296,32 +305,32 @@ export interface O365ConnectorCardSection {
  *
  */
 export interface O365ConnectorCard {
-  /**
-   * @member {string} [title] Title of the item
-   */
-  title?: string;
-  /**
-   * @member {string} [text] Text for the card
-   */
-  text?: string;
-  /**
-   * @member {string} [summary] Summary for the card
-   */
-  summary?: string;
-  /**
-   * @member {string} [themeColor] Theme color for the card
-   */
-  themeColor?: string;
-  /**
-   * @member {O365ConnectorCardSection[]} [sections] Set of sections for the
-   * current card
-   */
-  sections?: O365ConnectorCardSection[];
-  /**
-   * @member {O365ConnectorCardActionBase[]} [potentialAction] Set of actions
-   * for the current card
-   */
-  potentialAction?: O365ConnectorCardActionBase[];
+    /**
+     * @member {string} [title] Title of the item
+     */
+    title?: string;
+    /**
+     * @member {string} [text] Text for the card
+     */
+    text?: string;
+    /**
+     * @member {string} [summary] Summary for the card
+     */
+    summary?: string;
+    /**
+     * @member {string} [themeColor] Theme color for the card
+     */
+    themeColor?: string;
+    /**
+     * @member {O365ConnectorCardSection[]} [sections] Set of sections for the
+     * current card
+     */
+    sections?: O365ConnectorCardSection[];
+    /**
+     * @member {O365ConnectorCardActionBase[]} [potentialAction] Set of actions
+     * for the current card
+     */
+    potentialAction?: O365ConnectorCardActionBase[];
 }
 
 /**
@@ -332,11 +341,11 @@ export interface O365ConnectorCard {
  * @extends O365ConnectorCardActionBase
  */
 export interface O365ConnectorCardViewAction extends O365ConnectorCardActionBase {
-  /**
-   * @member {string[]} [target] Target urls, only the first url effective for
-   * card button
-   */
-  target?: string[];
+    /**
+     * @member {string[]} [target] Target urls, only the first url effective for
+     * card button
+     */
+    target?: string[];
 }
 
 /**
@@ -346,15 +355,15 @@ export interface O365ConnectorCardViewAction extends O365ConnectorCardActionBase
  *
  */
 export interface O365ConnectorCardOpenUriTarget {
-  /**
-   * @member {Os} [os] Target operating system. Possible values include:
-   * 'default', 'iOS', 'android', 'windows'
-   */
-  os?: Os;
-  /**
-   * @member {string} [uri] Target url
-   */
-  uri?: string;
+    /**
+     * @member {Os} [os] Target operating system. Possible values include:
+     * 'default', 'iOS', 'android', 'windows'
+     */
+    os?: Os;
+    /**
+     * @member {string} [uri] Target url
+     */
+    uri?: string;
 }
 
 /**
@@ -365,10 +374,10 @@ export interface O365ConnectorCardOpenUriTarget {
  * @extends O365ConnectorCardActionBase
  */
 export interface O365ConnectorCardOpenUri extends O365ConnectorCardActionBase {
-  /**
-   * @member {O365ConnectorCardOpenUriTarget[]} [targets] Target os / urls
-   */
-  targets?: O365ConnectorCardOpenUriTarget[];
+    /**
+     * @member {O365ConnectorCardOpenUriTarget[]} [targets] Target os / urls
+     */
+    targets?: O365ConnectorCardOpenUriTarget[];
 }
 
 /**
@@ -379,10 +388,10 @@ export interface O365ConnectorCardOpenUri extends O365ConnectorCardActionBase {
  * @extends O365ConnectorCardActionBase
  */
 export interface O365ConnectorCardHttpPOST extends O365ConnectorCardActionBase {
-  /**
-   * @member {string} [body] Content to be posted back to bots via invoke
-   */
-  body?: string;
+    /**
+     * @member {string} [body] Content to be posted back to bots via invoke
+     */
+    body?: string;
 }
 
 /**
@@ -393,19 +402,19 @@ export interface O365ConnectorCardHttpPOST extends O365ConnectorCardActionBase {
  * @extends O365ConnectorCardActionBase
  */
 export interface O365ConnectorCardActionCard extends O365ConnectorCardActionBase {
-  /**
-   * @member {O365ConnectorCardInputBase[]} [inputs] Set of inputs contained in
-   * this ActionCard whose each item can be in any subtype of
-   * O365ConnectorCardInputBase
-   */
-  inputs?: O365ConnectorCardInputBase[];
-  /**
-   * @member {O365ConnectorCardActionBase[]} [actions] Set of actions contained
-   * in this ActionCard whose each item can be in any subtype of
-   * O365ConnectorCardActionBase except O365ConnectorCardActionCard, as nested
-   * ActionCard is forbidden.
-   */
-  actions?: O365ConnectorCardActionBase[];
+    /**
+     * @member {O365ConnectorCardInputBase[]} [inputs] Set of inputs contained in
+     * this ActionCard whose each item can be in any subtype of
+     * O365ConnectorCardInputBase
+     */
+    inputs?: O365ConnectorCardInputBase[];
+    /**
+     * @member {O365ConnectorCardActionBase[]} [actions] Set of actions contained
+     * in this ActionCard whose each item can be in any subtype of
+     * O365ConnectorCardActionBase except O365ConnectorCardActionCard, as nested
+     * ActionCard is forbidden.
+     */
+    actions?: O365ConnectorCardActionBase[];
 }
 
 /**
@@ -416,16 +425,16 @@ export interface O365ConnectorCardActionCard extends O365ConnectorCardActionBase
  * @extends O365ConnectorCardInputBase
  */
 export interface O365ConnectorCardTextInput extends O365ConnectorCardInputBase {
-  /**
-   * @member {boolean} [isMultiline] Define if text input is allowed for
-   * multiple lines. Default value is false.
-   */
-  isMultiline?: boolean;
-  /**
-   * @member {number} [maxLength] Maximum length of text input. Default value
-   * is unlimited.
-   */
-  maxLength?: number;
+    /**
+     * @member {boolean} [isMultiline] Define if text input is allowed for
+     * multiple lines. Default value is false.
+     */
+    isMultiline?: boolean;
+    /**
+     * @member {number} [maxLength] Maximum length of text input. Default value
+     * is unlimited.
+     */
+    maxLength?: number;
 }
 
 /**
@@ -436,11 +445,11 @@ export interface O365ConnectorCardTextInput extends O365ConnectorCardInputBase {
  * @extends O365ConnectorCardInputBase
  */
 export interface O365ConnectorCardDateInput extends O365ConnectorCardInputBase {
-  /**
-   * @member {boolean} [includeTime] Include time input field. Default value
-   * is false (date only).
-   */
-  includeTime?: boolean;
+    /**
+     * @member {boolean} [includeTime] Include time input field. Default value
+     * is false (date only).
+     */
+    includeTime?: boolean;
 }
 
 /**
@@ -450,14 +459,14 @@ export interface O365ConnectorCardDateInput extends O365ConnectorCardInputBase {
  *
  */
 export interface O365ConnectorCardMultichoiceInputChoice {
-  /**
-   * @member {string} [display] The text rednered on ActionCard.
-   */
-  display?: string;
-  /**
-   * @member {string} [value] The value received as results.
-   */
-  value?: string;
+    /**
+     * @member {string} [display] The text rednered on ActionCard.
+     */
+    display?: string;
+    /**
+     * @member {string} [value] The value received as results.
+     */
+    value?: string;
 }
 
 /**
@@ -468,22 +477,22 @@ export interface O365ConnectorCardMultichoiceInputChoice {
  * @extends O365ConnectorCardInputBase
  */
 export interface O365ConnectorCardMultichoiceInput extends O365ConnectorCardInputBase {
-  /**
-   * @member {O365ConnectorCardMultichoiceInputChoice[]} [choices] Set of
-   * choices whose each item can be in any subtype of
-   * O365ConnectorCardMultichoiceInputChoice.
-   */
-  choices?: O365ConnectorCardMultichoiceInputChoice[];
-  /**
-   * @member {Style} [style] Choice item rendering style. Default valud is
-   * 'compact'. Possible values include: 'compact', 'expanded'
-   */
-  style?: Style;
-  /**
-   * @member {boolean} [isMultiSelect] Define if this input field allows
-   * multiple selections. Default value is false.
-   */
-  isMultiSelect?: boolean;
+    /**
+     * @member {O365ConnectorCardMultichoiceInputChoice[]} [choices] Set of
+     * choices whose each item can be in any subtype of
+     * O365ConnectorCardMultichoiceInputChoice.
+     */
+    choices?: O365ConnectorCardMultichoiceInputChoice[];
+    /**
+     * @member {Style} [style] Choice item rendering style. Default valud is
+     * 'compact'. Possible values include: 'compact', 'expanded'
+     */
+    style?: Style;
+    /**
+     * @member {boolean} [isMultiSelect] Define if this input field allows
+     * multiple selections. Default value is false.
+     */
+    isMultiSelect?: boolean;
 }
 
 /**
@@ -493,16 +502,16 @@ export interface O365ConnectorCardMultichoiceInput extends O365ConnectorCardInpu
  *
  */
 export interface O365ConnectorCardActionQuery {
-  /**
-   * @member {string} [body] The results of body string defined in
-   * IO365ConnectorCardHttpPOST with substituted input values
-   */
-  body?: string;
-  /**
-   * @member {string} [actionId] Action Id associated with the HttpPOST action
-   * button triggered, defined in O365ConnectorCardActionBase.
-   */
-  actionId?: string;
+    /**
+     * @member {string} [body] The results of body string defined in
+     * IO365ConnectorCardHttpPOST with substituted input values
+     */
+    body?: string;
+    /**
+     * @member {string} [actionId] Action Id associated with the HttpPOST action
+     * button triggered, defined in O365ConnectorCardActionBase.
+     */
+    actionId?: string;
 }
 
 /**
@@ -512,12 +521,12 @@ export interface O365ConnectorCardActionQuery {
  *
  */
 export interface SigninStateVerificationQuery {
-  /**
-   * @member {string} [state] The state string originally received when the
-   * signin web flow is finished with a state posted back to client via tab SDK
-   * microsoftTeams.authentication.notifySuccess(state)
-   */
-  state?: string;
+    /**
+     * @member {string} [state] The state string originally received when the
+     * signin web flow is finished with a state posted back to client via tab SDK
+     * microsoftTeams.authentication.notifySuccess(state)
+     */
+    state?: string;
 }
 
 /**
@@ -527,14 +536,14 @@ export interface SigninStateVerificationQuery {
  *
  */
 export interface MessagingExtensionQueryOptions {
-  /**
-   * @member {number} [skip] Number of entities to skip
-   */
-  skip?: number;
-  /**
-   * @member {number} [count] Number of entities to fetch
-   */
-  count?: number;
+    /**
+     * @member {number} [skip] Number of entities to skip
+     */
+    skip?: number;
+    /**
+     * @member {number} [count] Number of entities to fetch
+     */
+    count?: number;
 }
 
 /**
@@ -544,14 +553,14 @@ export interface MessagingExtensionQueryOptions {
  *
  */
 export interface MessagingExtensionParameter {
-  /**
-   * @member {string} [name] Name of the parameter
-   */
-  name?: string;
-  /**
-   * @member {any} [value] Value of the parameter
-   */
-  value?: any;
+    /**
+     * @member {string} [name] Name of the parameter
+     */
+    name?: string;
+    /**
+     * @member {any} [value] Value of the parameter
+     */
+    value?: any;
 }
 
 /**
@@ -561,24 +570,24 @@ export interface MessagingExtensionParameter {
  *
  */
 export interface MessagingExtensionQuery {
-  /**
-   * @member {string} [commandId] Id of the command assigned by Bot
-   */
-  commandId?: string;
-  /**
-   * @member {MessagingExtensionParameter[]} [parameters] Parameters for the
-   * query
-   */
-  parameters?: MessagingExtensionParameter[];
-  /**
-   * @member {MessagingExtensionQueryOptions} [queryOptions]
-   */
-  queryOptions?: MessagingExtensionQueryOptions;
-  /**
-   * @member {string} [state] State parameter passed back to the bot after
-   * authentication/configuration flow
-   */
-  state?: string;
+    /**
+     * @member {string} [commandId] Id of the command assigned by Bot
+     */
+    commandId?: string;
+    /**
+     * @member {MessagingExtensionParameter[]} [parameters] Parameters for the
+     * query
+     */
+    parameters?: MessagingExtensionParameter[];
+    /**
+     * @member {MessagingExtensionQueryOptions} [queryOptions]
+     */
+    queryOptions?: MessagingExtensionQueryOptions;
+    /**
+     * @member {string} [state] State parameter passed back to the bot after
+     * authentication/configuration flow
+     */
+    state?: string;
 }
 
 /**
@@ -588,20 +597,20 @@ export interface MessagingExtensionQuery {
  *
  */
 export interface MessageActionsPayloadUser {
-  /**
-   * @member {UserIdentityType} [userIdentityType] The identity type of the
-   * user. Possible values include: 'aadUser', 'onPremiseAadUser',
-   * 'anonymousGuest', 'federatedUser'
-   */
-  userIdentityType?: UserIdentityType;
-  /**
-   * @member {string} [id] The id of the user.
-   */
-  id?: string;
-  /**
-   * @member {string} [displayName] The plaintext display name of the user.
-   */
-  displayName?: string;
+    /**
+     * @member {UserIdentityType} [userIdentityType] The identity type of the
+     * user. Possible values include: 'aadUser', 'onPremiseAadUser',
+     * 'anonymousGuest', 'federatedUser'
+     */
+    userIdentityType?: UserIdentityType;
+    /**
+     * @member {string} [id] The id of the user.
+     */
+    id?: string;
+    /**
+     * @member {string} [displayName] The plaintext display name of the user.
+     */
+    displayName?: string;
 }
 
 /**
@@ -611,21 +620,21 @@ export interface MessageActionsPayloadUser {
  *
  */
 export interface MessageActionsPayloadApp {
-  /**
-   * @member {ApplicationIdentityType} [applicationIdentityType] The type of
-   * application. Possible values include: 'aadApplication', 'bot',
-   * 'tenantBot', 'office365Connector', 'webhook'
-   */
-  applicationIdentityType?: ApplicationIdentityType;
-  /**
-   * @member {string} [id] The id of the application.
-   */
-  id?: string;
-  /**
-   * @member {string} [displayName] The plaintext display name of the
-   * application.
-   */
-  displayName?: string;
+    /**
+     * @member {ApplicationIdentityType} [applicationIdentityType] The type of
+     * application. Possible values include: 'aadApplication', 'bot',
+     * 'tenantBot', 'office365Connector', 'webhook'
+     */
+    applicationIdentityType?: ApplicationIdentityType;
+    /**
+     * @member {string} [id] The id of the application.
+     */
+    id?: string;
+    /**
+     * @member {string} [displayName] The plaintext display name of the
+     * application.
+     */
+    displayName?: string;
 }
 
 /**
@@ -635,21 +644,21 @@ export interface MessageActionsPayloadApp {
  *
  */
 export interface MessageActionsPayloadConversation {
-  /**
-   * @member {ConversationIdentityType} [conversationIdentityType] The type of
-   * conversation, whether a team or channel. Possible values include: 'team',
-   * 'channel'
-   */
-  conversationIdentityType?: ConversationIdentityType;
-  /**
-   * @member {string} [id] The id of the team or channel.
-   */
-  id?: string;
-  /**
-   * @member {string} [displayName] The plaintext display name of the team or
-   * channel entity.
-   */
-  displayName?: string;
+    /**
+     * @member {ConversationIdentityType} [conversationIdentityType] The type of
+     * conversation, whether a team or channel. Possible values include: 'team',
+     * 'channel'
+     */
+    conversationIdentityType?: ConversationIdentityType;
+    /**
+     * @member {string} [id] The id of the team or channel.
+     */
+    id?: string;
+    /**
+     * @member {string} [displayName] The plaintext display name of the team or
+     * channel entity.
+     */
+    displayName?: string;
 }
 
 /**
@@ -660,20 +669,20 @@ export interface MessageActionsPayloadConversation {
  *
  */
 export interface MessageActionsPayloadFrom {
-  /**
-   * @member {MessageActionsPayloadUser} [user] Represents details of the user.
-   */
-  user?: MessageActionsPayloadUser;
-  /**
-   * @member {MessageActionsPayloadApp} [application] Represents details of the
-   * app.
-   */
-  application?: MessageActionsPayloadApp;
-  /**
-   * @member {MessageActionsPayloadConversation} [conversation] Represents
-   * details of the converesation.
-   */
-  conversation?: MessageActionsPayloadConversation;
+    /**
+     * @member {MessageActionsPayloadUser} [user] Represents details of the user.
+     */
+    user?: MessageActionsPayloadUser;
+    /**
+     * @member {MessageActionsPayloadApp} [application] Represents details of the
+     * app.
+     */
+    application?: MessageActionsPayloadApp;
+    /**
+     * @member {MessageActionsPayloadConversation} [conversation] Represents
+     * details of the converesation.
+     */
+    conversation?: MessageActionsPayloadConversation;
 }
 
 /**
@@ -683,33 +692,33 @@ export interface MessageActionsPayloadFrom {
  *
  */
 export interface MessageActionsPayloadAttachment {
-  /**
-   * @member {string} [id] The id of the attachment.
-   */
-  id?: string;
-  /**
-   * @member {string} [contentType] The type of the attachment.
-   */
-  contentType?: string;
-  /**
-   * @member {string} [contentUrl] The url of the attachment, in case of a
-   * external link.
-   */
-  contentUrl?: string;
-  /**
-   * @member {any} [content] The content of the attachment, in case of a code
-   * snippet, email, or file.
-   */
-  content?: any;
-  /**
-   * @member {string} [name] The plaintext display name of the attachment.
-   */
-  name?: string;
-  /**
-   * @member {string} [thumbnailUrl] The url of a thumbnail image that might be
-   * embedded in the attachment, in case of a card.
-   */
-  thumbnailUrl?: string;
+    /**
+     * @member {string} [id] The id of the attachment.
+     */
+    id?: string;
+    /**
+     * @member {string} [contentType] The type of the attachment.
+     */
+    contentType?: string;
+    /**
+     * @member {string} [contentUrl] The url of the attachment, in case of a
+     * external link.
+     */
+    contentUrl?: string;
+    /**
+     * @member {any} [content] The content of the attachment, in case of a code
+     * snippet, email, or file.
+     */
+    content?: any;
+    /**
+     * @member {string} [name] The plaintext display name of the attachment.
+     */
+    name?: string;
+    /**
+     * @member {string} [thumbnailUrl] The url of a thumbnail image that might be
+     * embedded in the attachment, in case of a card.
+     */
+    thumbnailUrl?: string;
 }
 
 /**
@@ -719,20 +728,20 @@ export interface MessageActionsPayloadAttachment {
  *
  */
 export interface MessageActionsPayloadMention {
-  /**
-   * @member {number} [id] The id of the mentioned entity.
-   */
-  id?: number;
-  /**
-   * @member {string} [mentionText] The plaintext display name of the mentioned
-   * entity.
-   */
-  mentionText?: string;
-  /**
-   * @member {MessageActionsPayloadFrom} [mentioned] Provides more details on
-   * the mentioned entity.
-   */
-  mentioned?: MessageActionsPayloadFrom;
+    /**
+     * @member {number} [id] The id of the mentioned entity.
+     */
+    id?: number;
+    /**
+     * @member {string} [mentionText] The plaintext display name of the mentioned
+     * entity.
+     */
+    mentionText?: string;
+    /**
+     * @member {MessageActionsPayloadFrom} [mentioned] Provides more details on
+     * the mentioned entity.
+     */
+    mentioned?: MessageActionsPayloadFrom;
 }
 
 /**
@@ -742,22 +751,22 @@ export interface MessageActionsPayloadMention {
  *
  */
 export interface MessageActionsPayloadReaction {
-  /**
-   * @member {ReactionType} [reactionType] The type of reaction given to the
-   * message. Possible values include: 'like', 'heart', 'laugh', 'surprised',
-   * 'sad', 'angry'
-   */
-  reactionType?: ReactionType;
-  /**
-   * @member {string} [createdDateTime] Timestamp of when the user reacted to
-   * the message.
-   */
-  createdDateTime?: string;
-  /**
-   * @member {MessageActionsPayloadFrom} [user] The user with which the
-   * reaction is associated.
-   */
-  user?: MessageActionsPayloadFrom;
+    /**
+     * @member {ReactionType} [reactionType] The type of reaction given to the
+     * message. Possible values include: 'like', 'heart', 'laugh', 'surprised',
+     * 'sad', 'angry'
+     */
+    reactionType?: ReactionType;
+    /**
+     * @member {string} [createdDateTime] Timestamp of when the user reacted to
+     * the message.
+     */
+    createdDateTime?: string;
+    /**
+     * @member {MessageActionsPayloadFrom} [user] The user with which the
+     * reaction is associated.
+     */
+    user?: MessageActionsPayloadFrom;
 }
 
 /**
@@ -768,85 +777,85 @@ export interface MessageActionsPayloadReaction {
  *
  */
 export interface MessageActionsPayload {
-  /**
-   * @member {string} [id] Unique id of the message.
-   */
-  id?: string;
-  /**
-   * @member {string} [replyToId] Id of the parent/root message of the thread.
-   */
-  replyToId?: string;
-  /**
-   * @member {MessageType} [messageType] Type of message - automatically set to
-   * message. Possible values include: 'message'
-   */
-  messageType?: MessageType;
-  /**
-   * @member {string} [createdDateTime] Timestamp of when the message was
-   * created.
-   */
-  createdDateTime?: string;
-  /**
-   * @member {string} [lastModifiedDateTime] Timestamp of when the message was
-   * edited or updated.
-   */
-  lastModifiedDateTime?: string;
-  /**
-   * @member {boolean} [deleted] Indicates whether a message has been soft
-   * deleted.
-   */
-  deleted?: boolean;
-  /**
-   * @member {string} [subject] Subject line of the message.
-   */
-  subject?: string;
-  /**
-   * @member {string} [summary] Summary text of the message that could be used
-   * for notifications.
-   */
-  summary?: string;
-  /**
-   * @member {Importance} [importance] The importance of the message. Possible
-   * values include: 'normal', 'high', 'urgent'
-   */
-  importance?: Importance;
-  /**
-   * @member {string} [locale] Locale of the message set by the client.
-   */
-  locale?: string;
-  /**
-   * @member {string} [linkToMessage] Link back to the message.
-   */
-  linkToMessage?: string;
-  /**
-   * @member {MessageActionsPayloadFrom} [from] Sender of the message.
-   */
-  from?: MessageActionsPayloadFrom;
-  /**
-   * @member {MessageActionsPayloadBody} [body] Plaintext/HTML representation
-   * of the content of the message.
-   */
-  body?: MessageActionsPayloadBody;
-  /**
-   * @member {string} [attachmentLayout] How the attachment(s) are displayed in
-   * the message.
-   */
-  attachmentLayout?: string;
-  /**
-   * @member {MessageActionsPayloadAttachment[]} [attachments] Attachments in
-   * the message - card, image, file, etc.
-   */
-  attachments?: MessageActionsPayloadAttachment[];
-  /**
-   * @member {MessageActionsPayloadMention[]} [mentions] List of entities
-   * mentioned in the message.
-   */
-  mentions?: MessageActionsPayloadMention[];
-  /**
-   * @member {MessageActionsPayloadReaction[]} [reactions] Reactions for the
-   * message.
-   */
-  reactions?: MessageActionsPayloadReaction[];
+    /**
+     * @member {string} [id] Unique id of the message.
+     */
+    id?: string;
+    /**
+     * @member {string} [replyToId] Id of the parent/root message of the thread.
+     */
+    replyToId?: string;
+    /**
+     * @member {MessageType} [messageType] Type of message - automatically set to
+     * message. Possible values include: 'message'
+     */
+    messageType?: MessageType;
+    /**
+     * @member {string} [createdDateTime] Timestamp of when the message was
+     * created.
+     */
+    createdDateTime?: string;
+    /**
+     * @member {string} [lastModifiedDateTime] Timestamp of when the message was
+     * edited or updated.
+     */
+    lastModifiedDateTime?: string;
+    /**
+     * @member {boolean} [deleted] Indicates whether a message has been soft
+     * deleted.
+     */
+    deleted?: boolean;
+    /**
+     * @member {string} [subject] Subject line of the message.
+     */
+    subject?: string;
+    /**
+     * @member {string} [summary] Summary text of the message that could be used
+     * for notifications.
+     */
+    summary?: string;
+    /**
+     * @member {Importance} [importance] The importance of the message. Possible
+     * values include: 'normal', 'high', 'urgent'
+     */
+    importance?: Importance;
+    /**
+     * @member {string} [locale] Locale of the message set by the client.
+     */
+    locale?: string;
+    /**
+     * @member {string} [linkToMessage] Link back to the message.
+     */
+    linkToMessage?: string;
+    /**
+     * @member {MessageActionsPayloadFrom} [from] Sender of the message.
+     */
+    from?: MessageActionsPayloadFrom;
+    /**
+     * @member {MessageActionsPayloadBody} [body] Plaintext/HTML representation
+     * of the content of the message.
+     */
+    body?: MessageActionsPayloadBody;
+    /**
+     * @member {string} [attachmentLayout] How the attachment(s) are displayed in
+     * the message.
+     */
+    attachmentLayout?: string;
+    /**
+     * @member {MessageActionsPayloadAttachment[]} [attachments] Attachments in
+     * the message - card, image, file, etc.
+     */
+    attachments?: MessageActionsPayloadAttachment[];
+    /**
+     * @member {MessageActionsPayloadMention[]} [mentions] List of entities
+     * mentioned in the message.
+     */
+    mentions?: MessageActionsPayloadMention[];
+    /**
+     * @member {MessageActionsPayloadReaction[]} [reactions] Reactions for the
+     * message.
+     */
+    reactions?: MessageActionsPayloadReaction[];
 }
 
 /**
@@ -856,15 +865,15 @@ export interface MessageActionsPayload {
  *
  */
 export interface TaskModuleRequest {
-  /**
-   * @member {any} [data] User input data. Free payload with key-value pairs.
-   */
-  data?: any;
-  /**
-   * @member {TaskModuleRequestContext} [context] Current user context, i.e.,
-   * the current theme
-   */
-  context?: TaskModuleRequestContext;
+    /**
+     * @member {any} [data] User input data. Free payload with key-value pairs.
+     */
+    data?: any;
+    /**
+     * @member {TaskModuleRequestContext} [context] Current user context, i.e.,
+     * the current theme
+     */
+    context?: TaskModuleRequestContext;
 }
 
 /**
@@ -875,30 +884,30 @@ export interface TaskModuleRequest {
  * @extends TaskModuleRequest
  */
 export interface MessagingExtensionAction extends TaskModuleRequest {
-  /**
-   * @member {string} [commandId] Id of the command assigned by Bot
-   */
-  commandId?: string;
-  /**
-   * @member {CommandContext} [commandContext] The context from which the
-   * command originates. Possible values include: 'message', 'compose',
-   * 'commandbox'
-   */
-  commandContext?: CommandContext;
-  /**
-   * @member {BotMessagePreviewAction} [botMessagePreviewAction] Bot message
-   * preview action taken by user. Possible values include: 'edit', 'send'
-   */
-  botMessagePreviewAction?: BotMessagePreviewActionType;
-  /**
-   * @member {Activity[]} [botActivityPreview]
-   */
-  botActivityPreview?: Activity[];
-  /**
-   * @member {MessageActionsPayload} [messagePayload] Message content sent as
-   * part of the command request.
-   */
-  messagePayload?: MessageActionsPayload;
+    /**
+     * @member {string} [commandId] Id of the command assigned by Bot
+     */
+    commandId?: string;
+    /**
+     * @member {CommandContext} [commandContext] The context from which the
+     * command originates. Possible values include: 'message', 'compose',
+     * 'commandbox'
+     */
+    commandContext?: CommandContext;
+    /**
+     * @member {BotMessagePreviewAction} [botMessagePreviewAction] Bot message
+     * preview action taken by user. Possible values include: 'edit', 'send'
+     */
+    botMessagePreviewAction?: BotMessagePreviewActionType;
+    /**
+     * @member {Activity[]} [botActivityPreview]
+     */
+    botActivityPreview?: Activity[];
+    /**
+     * @member {MessageActionsPayload} [messagePayload] Message content sent as
+     * part of the command request.
+     */
+    messagePayload?: MessageActionsPayload;
 }
 
 /**
@@ -908,11 +917,11 @@ export interface MessagingExtensionAction extends TaskModuleRequest {
  *
  */
 export interface TaskModuleResponseBase {
-  /**
-   * @member {BotMessagePreviewType} [type] Choice of action options when responding to the
-   * task/submit message. Possible values include: 'message', 'continue'
-   */
-  type?: BotMessagePreviewType;
+    /**
+     * @member {BotMessagePreviewType} [type] Choice of action options when responding to the
+     * task/submit message. Possible values include: 'message', 'continue'
+     */
+    type?: BotMessagePreviewType;
 }
 
 /**
@@ -923,10 +932,10 @@ export interface TaskModuleResponseBase {
  * @extends Attachment
  */
 export interface MessagingExtensionAttachment extends Attachment {
-  /**
-   * @member {Attachment} [preview]
-   */
-  preview?: Attachment;
+    /**
+     * @member {Attachment} [preview]
+     */
+    preview?: Attachment;
 }
 
 /**
@@ -936,10 +945,10 @@ export interface MessagingExtensionAttachment extends Attachment {
  *
  */
 export interface MessagingExtensionSuggestedAction {
-  /**
-   * @member {CardAction[]} [actions] Actions
-   */
-  actions?: CardAction[];
+    /**
+     * @member {CardAction[]} [actions] Actions
+     */
+    actions?: CardAction[];
 }
 
 /**
@@ -949,34 +958,49 @@ export interface MessagingExtensionSuggestedAction {
  *
  */
 export interface MessagingExtensionResult {
-  /**
-   * @member {AttachmentLayout} [attachmentLayout] Hint for how to deal with
-   * multiple attachments. Possible values include: 'list', 'grid'
-   */
-  attachmentLayout?: AttachmentLayout;
-  /**
-   * @member {MessagingExtensionResultType} [type] The type of the result. Possible values include:
-   * 'result', 'auth', 'config', 'message', 'botMessagePreview'
-   */
-  type?: MessagingExtensionResultType;
-  /**
-   * @member {MessagingExtensionAttachment[]} [attachments] (Only when type is
-   * result) Attachments
-   */
-  attachments?: MessagingExtensionAttachment[];
-  /**
-   * @member {MessagingExtensionSuggestedAction} [suggestedActions]
-   */
-  suggestedActions?: MessagingExtensionSuggestedAction;
-  /**
-   * @member {string} [text] (Only when type is message) Text
-   */
-  text?: string;
-  /**
-   * @member {Activity} [activityPreview] (Only when type is botMessagePreview)
-   * Message activity to preview
-   */
-  activityPreview?: Activity;
+    /**
+     * @member {AttachmentLayout} [attachmentLayout] Hint for how to deal with
+     * multiple attachments. Possible values include: 'list', 'grid'
+     */
+    attachmentLayout?: AttachmentLayout;
+    /**
+     * @member {MessagingExtensionResultType} [type] The type of the result. Possible values include:
+     * 'result', 'auth', 'config', 'message', 'botMessagePreview'
+     */
+    type?: MessagingExtensionResultType;
+    /**
+     * @member {MessagingExtensionAttachment[]} [attachments] (Only when type is
+     * result) Attachments
+     */
+    attachments?: MessagingExtensionAttachment[];
+    /**
+     * @member {MessagingExtensionSuggestedAction} [suggestedActions]
+     */
+    suggestedActions?: MessagingExtensionSuggestedAction;
+    /**
+     * @member {string} [text] (Only when type is message) Text
+     */
+    text?: string;
+    /**
+     * @member {Activity} [activityPreview] (Only when type is botMessagePreview)
+     * Message activity to preview
+     */
+    activityPreview?: Activity;
+}
+
+/**
+ * @interface
+ * A cache info object which notifies Teams how long an object should be cached for.
+ */
+export interface CacheInfo {
+    /**
+     * @member {string} [cacheType] The type of cache for this object.
+     */
+    cacheType?: string;
+    /**
+     * @member {number} [cacheDuration] The time in seconds for which the cached object should remain in the cache
+     */
+    cacheDuration?: number;
 }
 
 /**
@@ -986,15 +1010,19 @@ export interface MessagingExtensionResult {
  *
  */
 export interface MessagingExtensionActionResponse {
-  /**
-   * @member {TaskModuleContinueResponse | TaskModuleMessageResponse} [task] The JSON for the response to
-   * appear in the task module.
-   */
-  task?: TaskModuleContinueResponse | TaskModuleMessageResponse;
-  /**
-   * @member {MessagingExtensionResult} [composeExtension]
-   */
-  composeExtension?: MessagingExtensionResult;
+    /**
+     * @member {TaskModuleContinueResponse | TaskModuleMessageResponse} [task] The JSON for the response to
+     * appear in the task module.
+     */
+    task?: TaskModuleContinueResponse | TaskModuleMessageResponse;
+    /**
+     * @member {MessagingExtensionResult} [composeExtension]
+     */
+    composeExtension?: MessagingExtensionResult;
+    /**
+     * @member {CacheInfo} [cacheInfo] The cache info for this response
+     */
+    cacheInfo?: CacheInfo;
 }
 
 /**
@@ -1004,10 +1032,14 @@ export interface MessagingExtensionActionResponse {
  *
  */
 export interface MessagingExtensionResponse {
-  /**
-   * @member {MessagingExtensionResult} [composeExtension]
-   */
-  composeExtension?: MessagingExtensionResult;
+    /**
+     * @member {MessagingExtensionResult} [composeExtension]
+     */
+    composeExtension?: MessagingExtensionResult;
+    /**
+     * @member {CacheInfo} [cacheInfo] The cache info for this response
+     */
+    cacheInfo?: CacheInfo;
 }
 
 /**
@@ -1017,26 +1049,26 @@ export interface MessagingExtensionResponse {
  *
  */
 export interface FileConsentCard {
-  /**
-   * @member {string} [description] File description.
-   */
-  description?: string;
-  /**
-   * @member {number} [sizeInBytes] Size of the file to be uploaded in Bytes.
-   */
-  sizeInBytes?: number;
-  /**
-   * @member {any} [acceptContext] Context sent back to the Bot if user
-   * consented to upload. This is free flow schema and is sent back in Value
-   * field of Activity.
-   */
-  acceptContext?: any;
-  /**
-   * @member {any} [declineContext] Context sent back to the Bot if user
-   * declined. This is free flow schema and is sent back in Value field of
-   * Activity.
-   */
-  declineContext?: any;
+    /**
+     * @member {string} [description] File description.
+     */
+    description?: string;
+    /**
+     * @member {number} [sizeInBytes] Size of the file to be uploaded in Bytes.
+     */
+    sizeInBytes?: number;
+    /**
+     * @member {any} [acceptContext] Context sent back to the Bot if user
+     * consented to upload. This is free flow schema and is sent back in Value
+     * field of Activity.
+     */
+    acceptContext?: any;
+    /**
+     * @member {any} [declineContext] Context sent back to the Bot if user
+     * declined. This is free flow schema and is sent back in Value field of
+     * Activity.
+     */
+    declineContext?: any;
 }
 
 /**
@@ -1046,22 +1078,22 @@ export interface FileConsentCard {
  *
  */
 export interface FileDownloadInfo {
-  /**
-   * @member {string} [downloadUrl] File download url.
-   */
-  downloadUrl?: string;
-  /**
-   * @member {string} [uniqueId] Unique Id for the file.
-   */
-  uniqueId?: string;
-  /**
-   * @member {string} [fileType] Type of file.
-   */
-  fileType?: string;
-  /**
-   * @member {any} [etag] ETag for the file.
-   */
-  etag?: any;
+    /**
+     * @member {string} [downloadUrl] File download url.
+     */
+    downloadUrl?: string;
+    /**
+     * @member {string} [uniqueId] Unique Id for the file.
+     */
+    uniqueId?: string;
+    /**
+     * @member {string} [fileType] Type of file.
+     */
+    fileType?: string;
+    /**
+     * @member {any} [etag] ETag for the file.
+     */
+    etag?: any;
 }
 
 /**
@@ -1071,18 +1103,18 @@ export interface FileDownloadInfo {
  *
  */
 export interface FileInfoCard {
-  /**
-   * @member {string} [uniqueId] Unique Id for the file.
-   */
-  uniqueId?: string;
-  /**
-   * @member {string} [fileType] Type of file.
-   */
-  fileType?: string;
-  /**
-   * @member {any} [etag] ETag for the file.
-   */
-  etag?: any;
+    /**
+     * @member {string} [uniqueId] Unique Id for the file.
+     */
+    uniqueId?: string;
+    /**
+     * @member {string} [fileType] Type of file.
+     */
+    fileType?: string;
+    /**
+     * @member {any} [etag] ETag for the file.
+     */
+    etag?: any;
 }
 
 /**
@@ -1092,27 +1124,27 @@ export interface FileInfoCard {
  *
  */
 export interface FileUploadInfo {
-  /**
-   * @member {string} [name] Name of the file.
-   */
-  name?: string;
-  /**
-   * @member {string} [uploadUrl] URL to an upload session that the bot can use
-   * to set the file contents.
-   */
-  uploadUrl?: string;
-  /**
-   * @member {string} [contentUrl] URL to file.
-   */
-  contentUrl?: string;
-  /**
-   * @member {string} [uniqueId] ID that uniquely identifies the file.
-   */
-  uniqueId?: string;
-  /**
-   * @member {string} [fileType] Type of the file.
-   */
-  fileType?: string;
+    /**
+     * @member {string} [name] Name of the file.
+     */
+    name?: string;
+    /**
+     * @member {string} [uploadUrl] URL to an upload session that the bot can use
+     * to set the file contents.
+     */
+    uploadUrl?: string;
+    /**
+     * @member {string} [contentUrl] URL to file.
+     */
+    contentUrl?: string;
+    /**
+     * @member {string} [uniqueId] ID that uniquely identifies the file.
+     */
+    uniqueId?: string;
+    /**
+     * @member {string} [fileType] Type of the file.
+     */
+    fileType?: string;
 }
 
 /**
@@ -1123,20 +1155,20 @@ export interface FileUploadInfo {
  *
  */
 export interface FileConsentCardResponse {
-  /**
-   * @member {Action} [action] The action the user took. Possible values
-   * include: 'accept', 'decline'
-   */
-  action?: Action;
-  /**
-   * @member {any} [context] The context associated with the action.
-   */
-  context?: any;
-  /**
-   * @member {FileUploadInfo} [uploadInfo] If the user accepted the file,
-   * contains information about the file to be uploaded.
-   */
-  uploadInfo?: FileUploadInfo;
+    /**
+     * @member {Action} [action] The action the user took. Possible values
+     * include: 'accept', 'decline'
+     */
+    action?: Action;
+    /**
+     * @member {any} [context] The context associated with the action.
+     */
+    context?: any;
+    /**
+     * @member {FileUploadInfo} [uploadInfo] If the user accepted the file,
+     * contains information about the file to be uploaded.
+     */
+    uploadInfo?: FileUploadInfo;
 }
 
 /**
@@ -1146,41 +1178,41 @@ export interface FileConsentCardResponse {
  *
  */
 export interface TaskModuleTaskInfo {
-  /**
-   * @member {string} [title] Appears below the app name and to the right of
-   * the app icon.
-   */
-  title?: string;
-  /**
-   * @member {any} [height] This can be a number, representing the task
-   * module's height in pixels, or a string, one of: small, medium, large.
-   */
-  height?: any;
-  /**
-   * @member {any} [width] This can be a number, representing the task module's
-   * width in pixels, or a string, one of: small, medium, large.
-   */
-  width?: any;
-  /**
-   * @member {string} [url] The URL of what is loaded as an iframe inside the
-   * task module. One of url or card is required.
-   */
-  url?: string;
-  /**
-   * @member {Attachment} [card] The JSON for the Adaptive card to appear in
-   * the task module.
-   */
-  card?: Attachment;
-  /**
-   * @member {string} [fallbackUrl] If a client does not support the task
-   * module feature, this URL is opened in a browser tab.
-   */
-  fallbackUrl?: string;
-  /**
-   * @member {string} [completionBotId] If a client does not support the task
-   * module feature, this URL is opened in a browser tab.
-   */
-  completionBotId?: string;
+    /**
+     * @member {string} [title] Appears below the app name and to the right of
+     * the app icon.
+     */
+    title?: string;
+    /**
+     * @member {any} [height] This can be a number, representing the task
+     * module's height in pixels, or a string, one of: small, medium, large.
+     */
+    height?: any;
+    /**
+     * @member {any} [width] This can be a number, representing the task module's
+     * width in pixels, or a string, one of: small, medium, large.
+     */
+    width?: any;
+    /**
+     * @member {string} [url] The URL of what is loaded as an iframe inside the
+     * task module. One of url or card is required.
+     */
+    url?: string;
+    /**
+     * @member {Attachment} [card] The JSON for the Adaptive card to appear in
+     * the task module.
+     */
+    card?: Attachment;
+    /**
+     * @member {string} [fallbackUrl] If a client does not support the task
+     * module feature, this URL is opened in a browser tab.
+     */
+    fallbackUrl?: string;
+    /**
+     * @member {string} [completionBotId] If a client does not support the task
+     * module feature, this URL is opened in a browser tab.
+     */
+    completionBotId?: string;
 }
 
 /**
@@ -1191,11 +1223,11 @@ export interface TaskModuleTaskInfo {
  * @extends TaskModuleResponseBase
  */
 export interface TaskModuleContinueResponse extends TaskModuleResponseBase {
-  /**
-   * @member {TaskModuleTaskInfo} [value] The JSON for the Adaptive card to
-   * appear in the task module.
-   */
-  value?: TaskModuleTaskInfo;
+    /**
+     * @member {TaskModuleTaskInfo} [value] The JSON for the Adaptive card to
+     * appear in the task module.
+     */
+    value?: TaskModuleTaskInfo;
 }
 
 /**
@@ -1206,11 +1238,11 @@ export interface TaskModuleContinueResponse extends TaskModuleResponseBase {
  * @extends TaskModuleResponseBase
  */
 export interface TaskModuleMessageResponse extends TaskModuleResponseBase {
-  /**
-   * @member {string} [value] Teams will display the value of value in a popup
-   * message box.
-   */
-  value?: string;
+    /**
+     * @member {string} [value] Teams will display the value of value in a popup
+     * message box.
+     */
+    value?: string;
 }
 
 /**
@@ -1220,11 +1252,15 @@ export interface TaskModuleMessageResponse extends TaskModuleResponseBase {
  *
  */
 export interface TaskModuleResponse {
-  /**
-   * @member {TaskModuleContinueResponse | TaskModuleMessageResponse} [task] The JSON for the response to
-   * appear in the task module.
-   */
-  task?: TaskModuleContinueResponse | TaskModuleMessageResponse;
+    /**
+     * @member {TaskModuleContinueResponse | TaskModuleMessageResponse} [task] The JSON for the response to
+     * appear in the task module.
+     */
+    task?: TaskModuleContinueResponse | TaskModuleMessageResponse;
+    /**
+     * @member {CacheInfo} [cacheInfo] The cache info for this response
+     */
+    cacheInfo?: CacheInfo;
 }
 
 /**
@@ -1234,10 +1270,10 @@ export interface TaskModuleResponse {
  *
  */
 export interface TaskModuleRequestContext {
-  /**
-   * @member {string} [theme]
-   */
-  theme?: string;
+    /**
+     * @member {string} [theme]
+     */
+    theme?: string;
 }
 
 /**
@@ -1247,14 +1283,14 @@ export interface TaskModuleRequestContext {
  *
  */
 export interface AppBasedLinkQuery {
-  /**
-   * @member {string} [url] Url queried by user
-   */
-  url?: string;
-  /**
-   * @member {string} [state] State is the magic code for OAuth Flow
-   */
-  state?: string;
+    /**
+     * @member {string} [url] Url queried by user
+     */
+    url?: string;
+    /**
+     * @member {string} [state] State is the magic code for OAuth Flow
+     */
+    state?: string;
 }
 
 /**
@@ -1382,11 +1418,10 @@ export type BotMessagePreviewActionType = 'edit' | 'send';
  */
 export type BotMessagePreviewType = 'message' | 'continue';
 
-
 /**
  * @deprecated Use BotMessagePreviewType
  */
-export type Type2 = BotMessagePreviewType
+export type Type2 = BotMessagePreviewType;
 
 /**
  * Defines values for AttachmentLayout.
@@ -1404,11 +1439,10 @@ export type AttachmentLayout = 'list' | 'grid';
  */
 export type MessagingExtensionResultType = 'result' | 'auth' | 'config' | 'message' | 'botMessagePreview';
 
-
 /**
  * @deprecated Use MessagingExtensionResultType instead
  */
-export type Type3 = MessagingExtensionResultType
+export type Type3 = MessagingExtensionResultType;
 /**
  * Defines values for Action.
  * Possible values include: 'accept', 'decline'
@@ -1416,4 +1450,3 @@ export type Type3 = MessagingExtensionResultType
  * @enum {string}
  */
 export type Action = 'accept' | 'decline';
-

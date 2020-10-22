@@ -1,5 +1,5 @@
 /**
- * @module botbuilder
+ * @module botframework-connector
  */
 /**
  * Copyright (c) Microsoft Corporation. All rights reserved.
@@ -34,8 +34,9 @@ export namespace GovernmentConstants {
     /**
      * TO BOT FROM GOVERNMENT CHANNEL: OpenID metadata document for tokens coming from MSA
      */
-    export const ToBotFromChannelOpenIdMetadataUrl = 'https://login.botframework.azure.us/v1/.well-known/openidconfiguration';
-    
+    export const ToBotFromChannelOpenIdMetadataUrl =
+        'https://login.botframework.azure.us/v1/.well-known/openidconfiguration';
+
     /**
      * TO BOT FROM GOVERNMENT EMULATOR: OpenID metadata document for tokens coming from MSA
      */

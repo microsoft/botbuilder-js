@@ -11,19 +11,30 @@ import moment from 'moment';
 import { EvaluateExpressionDelegate, ExpressionEvaluator } from '../expressionEvaluator';
 import { ExpressionType } from '../expressionType';
 import { FunctionUtils } from '../functionUtils';
+import { InternalFunctionUtils } from '../functionUtils.internal';
 import { ReturnType } from '../returnType';
 
 /**
  * Return the day of the year from a timestamp.
  */
 export class DayOfYear extends ExpressionEvaluator {
+    /**
+     * Initializes a new instance of the [DayOfYear](xref:adaptive-expressions.DayOfYear) class.
+     */
     public constructor() {
         super(ExpressionType.DayOfYear, DayOfYear.evaluator(), ReturnType.Number, FunctionUtils.validateUnaryString);
     }
 
+    /**
+     * @private
+     */
     private static evaluator(): EvaluateExpressionDelegate {
         return FunctionUtils.applyWithError(
-            (args: any[]): any => FunctionUtils.parseTimestamp(args[0], (timestamp: Date): number => moment(timestamp).utc().dayOfYear()),
-            FunctionUtils.verifyString);
+            (args: any[]): any =>
+                InternalFunctionUtils.parseTimestamp(args[0], (timestamp: Date): number =>
+                    moment(timestamp).utc().dayOfYear()
+                ),
+            FunctionUtils.verifyString
+        );
     }
 }

@@ -15,12 +15,22 @@ import { ReturnType } from '../returnType';
  * Return the string version of a value.
  */
 export class String extends ExpressionEvaluator {
+    /**
+     * Initializes a new instance of the [String](xref:adaptive-expressions.String) class.
+     */
     public constructor() {
         super(ExpressionType.String, String.evaluator(), ReturnType.String, FunctionUtils.validateUnary);
     }
 
+    /**
+     * @private
+     */
     private static evaluator(): EvaluateExpressionDelegate {
         return FunctionUtils.apply((args: any[]): string => {
+            if (typeof args[0] === 'string') {
+                return args[0];
+            }
+
             return JSON.stringify(args[0])
                 .replace(/(^\'*)/g, '')
                 .replace(/(\'*$)/g, '')

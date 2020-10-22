@@ -1,5 +1,6 @@
 {
   "name": "streaming-e2e-tests",
+  "private": true,
   "version": "1.0.0",
   "description": "Test that botframework-streaming works end-to-end from SDK to browser",
   "main": "streaming-e2e.test.js",
@@ -9,10 +10,7 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "dependencies": {
-    "dotenv": "^8.2.0",
-    "path": "^0.12.7"
-  },
+  "dependencies": {},
   "devDependencies": {
     "mocha": "^8.0.1",
     "selenium-webdriver": "^4.0.0-alpha.7"

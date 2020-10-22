@@ -1,4 +1,3 @@
-
 /**
  * @module adaptive-expressions
  */
@@ -11,8 +10,8 @@
  */
 export class Util {
     /**
-     * trim char 
-     * @param str input string 
+     * trim char
+     * @param str input string
      * @param char trim character
      */
     public static trim(str: string, char: string): string {

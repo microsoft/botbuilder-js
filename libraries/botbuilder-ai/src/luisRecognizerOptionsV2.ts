@@ -6,10 +6,13 @@
  * Licensed under the MIT License.
  */
 
-import { LUISRuntimeClient as LuisClient, LUISRuntimeModels as LuisModels } from '@azure/cognitiveservices-luis-runtime';
+import {
+    LUISRuntimeClient as LuisClient,
+    LUISRuntimeModels as LuisModels,
+} from '@azure/cognitiveservices-luis-runtime';
 import * as msRest from '@azure/ms-rest-js';
-import { LuisRecognizerInternal } from './luisRecognizerOptions'
-import { LuisApplication, LuisRecognizerOptionsV2} from './luisRecognizer'
+import { LuisRecognizerInternal } from './luisRecognizerOptions';
+import { LuisApplication, LuisRecognizerOptionsV2 } from './luisRecognizer';
 import { NullTelemetryClient, TurnContext, RecognizerResult } from 'botbuilder-core';
 import * as os from 'os';
 const pjson = require('../package.json');
@@ -17,14 +20,24 @@ const LUIS_TRACE_TYPE = 'https://www.luis.ai/schemas/trace';
 const LUIS_TRACE_NAME = 'LuisRecognizer';
 const LUIS_TRACE_LABEL = 'Luis Trace';
 
-
-
+/**
+ * Validates if the options provided are valid [LuisRecognizerOptionsV2](xref:botbuilder-ai.LuisRecognizerOptionsV2).
+ * @returns A boolean value that indicates param options is a [LuisRecognizerOptionsV2](xref:botbuilder-ai.LuisRecognizerOptionsV2).
+ */
 export function isLuisRecognizerOptionsV2(options: any): options is LuisRecognizerOptionsV2 {
-    return (options.apiVersion && options.apiVersion === "v2");
+    return options.apiVersion && options.apiVersion === 'v2';
 }
 
-export class LuisRecognizerV2 extends LuisRecognizerInternal {  
-    constructor (application: LuisApplication, options?: LuisRecognizerOptionsV2) { 
+/**
+ * Recognize intents in a user utterance using a configured LUIS model.
+ */
+export class LuisRecognizerV2 extends LuisRecognizerInternal {
+    /**
+     * Creates a new [LuisRecognizerV2](xref:botbuilder-ai.LuisRecognizerV2) instance.
+     * @param application An object conforming to the [LuisApplication](xref:botbuilder-ai.LuisApplication) definition or a string representing a LUIS application endpoint, usually retrieved from https://luis.ai.
+     * @param options Optional. Options object used to control predictions. Should conform to the [LuisRecognizerOptionsV2](xref:botbuilder-ai.LuisRecognizerOptionsV2) definition.
+     */
+    constructor(application: LuisApplication, options?: LuisRecognizerOptionsV2) {
         super(application);
         // Create client
         // - We have to cast "creds as any" to avoid a build break relating to different versions
@@ -40,10 +53,10 @@ export class LuisRecognizerV2 extends LuisRecognizerInternal {
             log: true,
             spellCheck: false,
             staging: false,
-            telemetryClient: new NullTelemetryClient(), 
-            logPersonalInformation: false, 
+            telemetryClient: new NullTelemetryClient(),
+            logPersonalInformation: false,
             includeAPIResults: true,
-            ...options
+            ...options,
         };
     }
 
@@ -51,6 +64,11 @@ export class LuisRecognizerV2 extends LuisRecognizerInternal {
 
     private luisClient: LuisClient;
 
+    /**
+     * Calls LUIS to recognize intents and entities in a users utterance.
+     * @param context The [TurnContext](xref:botbuilder-core.TurnContext).
+     * @returns Analysis of utterance in form of [RecognizerResult](xref:botbuilder-core.RecognizerResult).
+     */
     async recognizeInternal(context: TurnContext): Promise<RecognizerResult> {
         const luisPredictionOptions = this.options;
         const utterance: string = context.activity.text || '';
@@ -59,21 +77,23 @@ export class LuisRecognizerV2 extends LuisRecognizerInternal {
             // Bypass LUIS if the activity's text is null or whitespace
             return {
                 text: utterance,
-                intents: { '': { score: 1 } },
+                intents: {},
                 entities: {},
             };
         }
-        
-        const luisResult: LuisModels.LuisResult  = await this.luisClient.prediction.resolve(
-            this.application.applicationId, utterance,
+
+        const luisResult: LuisModels.LuisResult = await this.luisClient.prediction.resolve(
+            this.application.applicationId,
+            utterance,
             {
                 verbose: luisPredictionOptions.includeAllIntents,
                 customHeaders: {
                     'Ocp-Apim-Subscription-Key': this.application.endpointKey,
-                    'User-Agent': this.getUserAgent()
+                    'User-Agent': this.getUserAgent(),
                 },
-                ...luisPredictionOptions
-            })
+                ...luisPredictionOptions,
+            }
+        );
         // Map results
         const result = {
             text: luisResult.query,
@@ -85,36 +105,46 @@ export class LuisRecognizerV2 extends LuisRecognizerInternal {
                 luisPredictionOptions.includeInstanceData === undefined || luisPredictionOptions.includeInstanceData
             ),
             sentiment: this.getSentiment(luisResult),
-            luisResult: (luisPredictionOptions.includeAPIResults ? luisResult : null)
+            luisResult: luisPredictionOptions.includeAPIResults ? luisResult : null,
         };
 
         this.emitTraceInfo(context, luisResult, result);
         return result;
     }
 
+    /**
+     * Remove role and ensure that dot and space are not a part of entity names since we want to do JSON paths.
+     * @param name Value to be normalized.
+     * @returns Normalized string value.
+     */
     private normalizeName(name: string): string {
         return name.replace(/\.| /g, '_');
     }
 
+    /**
+     * Get Intents from a LuisResult object.
+     * @param luisResult Prediction, based on the input query, containing intent(s) and entities.
+     * @returns LUIS Intents with a score number.
+     */
     private getIntents(luisResult: LuisModels.LuisResult): any {
         const intents: { [name: string]: { score: number } } = {};
         if (luisResult.intents) {
-            luisResult.intents.reduce(
-                (prev: any, curr: LuisModels.IntentModel) => {
-                    prev[this.normalizeName(curr.intent)] = { score: curr.score };
+            luisResult.intents.reduce((prev: any, curr: LuisModels.IntentModel) => {
+                prev[this.normalizeName(curr.intent)] = { score: curr.score };
 
-                    return prev;
-                },
-                intents
-            );
+                return prev;
+            }, intents);
         } else {
             const topScoringIntent: LuisModels.IntentModel = luisResult.topScoringIntent;
-            intents[this.normalizeName((topScoringIntent).intent)] = { score: topScoringIntent.score };
+            intents[this.normalizeName(topScoringIntent.intent)] = { score: topScoringIntent.score };
         }
 
         return intents;
     }
 
+    /**
+     * @private
+     */
     private getEntitiesAndMetadata(
         entities: LuisModels.EntityModel[],
         compositeEntities: LuisModels.CompositeEntityModel[] | undefined,
@@ -125,7 +155,9 @@ export class LuisRecognizerV2 extends LuisRecognizerInternal {
 
         // We start by populating composite entities so that entities covered by them are removed from the entities list
         if (compositeEntities) {
-            compositeEntityTypes = compositeEntities.map((compositeEntity: LuisModels.CompositeEntityModel) => compositeEntity.parentType);
+            compositeEntityTypes = compositeEntities.map(
+                (compositeEntity: LuisModels.CompositeEntityModel) => compositeEntity.parentType
+            );
             compositeEntities.forEach((compositeEntity: LuisModels.CompositeEntityModel) => {
                 entities = this.populateCompositeEntity(compositeEntity, entities, entitiesAndMetadata, verbose);
             });
@@ -137,11 +169,15 @@ export class LuisRecognizerV2 extends LuisRecognizerInternal {
                 return;
             }
 
-            let val = this.getEntityValue(entity);
+            const val = this.getEntityValue(entity);
             if (val != null) {
                 this.addProperty(entitiesAndMetadata, this.getNormalizedEntityName(entity), val);
                 if (verbose) {
-                    this.addProperty(entitiesAndMetadata.$instance, this.getNormalizedEntityName(entity), this.getEntityMetadata(entity));
+                    this.addProperty(
+                        entitiesAndMetadata.$instance,
+                        this.getNormalizedEntityName(entity),
+                        this.getEntityMetadata(entity)
+                    );
                 }
             }
         });
@@ -149,6 +185,9 @@ export class LuisRecognizerV2 extends LuisRecognizerInternal {
         return entitiesAndMetadata;
     }
 
+    /**
+     * @private
+     */
     private populateCompositeEntity(
         compositeEntity: LuisModels.CompositeEntityModel,
         entities: LuisModels.EntityModel[],
@@ -159,11 +198,13 @@ export class LuisRecognizerV2 extends LuisRecognizerInternal {
         let childrenEntitiesMetadata: any = {};
 
         // This is now implemented as O(n^2) search and can be reduced to O(2n) using a map as an optimization if n grows
-        const compositeEntityMetadata: LuisModels.EntityModel | undefined = entities.find((entity: LuisModels.EntityModel) => {
-            // For now we are matching by value, which can be ambiguous if the same composite entity shows up with the same text
-            // multiple times within an utterance, but this is just a stop gap solution till the indices are included in composite entities
-            return entity.type === compositeEntity.parentType && entity.entity === compositeEntity.value;
-        });
+        const compositeEntityMetadata: LuisModels.EntityModel | undefined = entities.find(
+            (entity: LuisModels.EntityModel) => {
+                // For now we are matching by value, which can be ambiguous if the same composite entity shows up with the same text
+                // multiple times within an utterance, but this is just a stop gap solution till the indices are included in composite entities
+                return entity.type === compositeEntity.parentType && entity.entity === compositeEntity.value;
+            }
+        );
 
         const filteredEntities: LuisModels.EntityModel[] = [];
         if (verbose) {
@@ -175,7 +216,8 @@ export class LuisRecognizerV2 extends LuisRecognizerInternal {
         compositeEntity.children.forEach((childEntity: LuisModels.CompositeChildModel) => {
             for (let i = 0; i < entities.length; i++) {
                 const entity: LuisModels.EntityModel = entities[i];
-                if (!coveredSet.has(i) &&
+                if (
+                    !coveredSet.has(i) &&
                     childEntity.type === entity.type &&
                     compositeEntityMetadata &&
                     entity.startIndex !== undefined &&
@@ -185,7 +227,6 @@ export class LuisRecognizerV2 extends LuisRecognizerInternal {
                     compositeEntityMetadata.endIndex !== undefined &&
                     entity.endIndex <= compositeEntityMetadata.endIndex
                 ) {
-
                     // Add to the set to ensure that we don't consider the same child entity more than once per composite
                     coveredSet.add(i);
 
@@ -193,7 +234,11 @@ export class LuisRecognizerV2 extends LuisRecognizerInternal {
                     if (val != null) {
                         this.addProperty(childrenEntities, this.getNormalizedEntityName(entity), val);
                         if (verbose) {
-                            this.addProperty(childrenEntities.$instance, this.getNormalizedEntityName(entity), this.getEntityMetadata(entity));
+                            this.addProperty(
+                                childrenEntities.$instance,
+                                this.getNormalizedEntityName(entity),
+                                this.getEntityMetadata(entity)
+                            );
                         }
                     }
                 }
@@ -209,25 +254,32 @@ export class LuisRecognizerV2 extends LuisRecognizerInternal {
 
         this.addProperty(entitiesAndMetadata, this.getNormalizedEntityName(compositeEntityMetadata), childrenEntities);
         if (verbose) {
-            this.addProperty(entitiesAndMetadata.$instance, this.getNormalizedEntityName(compositeEntityMetadata), childrenEntitiesMetadata);
+            this.addProperty(
+                entitiesAndMetadata.$instance,
+                this.getNormalizedEntityName(compositeEntityMetadata),
+                childrenEntitiesMetadata
+            );
         }
 
         return filteredEntities;
     }
 
+    /**
+     * @private
+     */
     private getEntityValue(entity: LuisModels.EntityModel): any {
         if (entity.type.startsWith('builtin.geographyV2.')) {
             return {
-                'type': entity.type.substring(20),
-                'location': entity.entity
+                type: entity.type.substring(20),
+                location: entity.entity,
             };
         }
 
         if (entity.type.startsWith('builtin.ordinalV2')) {
             return {
-                'relativeTo': entity.resolution.relativeTo,
-                'offset': Number(entity.resolution.offset)
-            }
+                relativeTo: entity.resolution.relativeTo,
+                offset: Number(entity.resolution.offset),
+            };
         }
 
         if (!entity.resolution) {
@@ -249,46 +301,46 @@ export class LuisRecognizerV2 extends LuisRecognizerInternal {
             const res: any = entity.resolution;
             switch (entity.type) {
                 case 'builtin.number':
-                case 'builtin.ordinal': return Number(res.value);
-                case 'builtin.percentage':
-                    {
-                        let svalue: string = res.value;
-                        if (svalue.endsWith('%')) {
-                            svalue = svalue.substring(0, svalue.length - 1);
-                        }
-
-                        return Number(svalue);
+                case 'builtin.ordinal':
+                    return Number(res.value);
+                case 'builtin.percentage': {
+                    let svalue: string = res.value;
+                    if (svalue.endsWith('%')) {
+                        svalue = svalue.substring(0, svalue.length - 1);
                     }
+
+                    return Number(svalue);
+                }
                 case 'builtin.age':
                 case 'builtin.dimension':
                 case 'builtin.currency':
-                case 'builtin.temperature':
-                    {
-                        const val: any = res.value;
-                        const obj: any = {};
-                        if (val) {
-                            obj.number = Number(val);
-                        }
-                        obj.units = res.unit;
-
-                        return obj;
+                case 'builtin.temperature': {
+                    const val: any = res.value;
+                    const obj: any = {};
+                    if (val) {
+                        obj.number = Number(val);
                     }
+                    obj.units = res.unit;
+
+                    return obj;
+                }
                 default:
                     // This will return null if there is no value/values which can happen when a new prebuilt is introduced
-                    return entity.resolution.value ?
-                        entity.resolution.value :
-                        entity.resolution.values;
+                    return entity.resolution.value ? entity.resolution.value : entity.resolution.values;
             }
         }
     }
 
+    /**
+     * @private
+     */
     private getEntityMetadata(entity: LuisModels.EntityModel): any {
         const res: any = {
             startIndex: entity.startIndex,
             endIndex: entity.endIndex + 1,
             score: entity.score,
             text: entity.entity,
-            type: entity.type
+            type: entity.type,
         };
         if (entity.resolution && entity.resolution.subtype) {
             res.subtype = entity.resolution.subtype;
@@ -297,22 +349,21 @@ export class LuisRecognizerV2 extends LuisRecognizerInternal {
         return res;
     }
 
+    /**
+     * @private
+     */
     private getNormalizedEntityName(entity: LuisModels.EntityModel): string {
         // Type::Role -> Role
         let type: string = entity.type.split(':').pop();
         if (type.startsWith('builtin.datetimeV2.')) {
             type = 'datetime';
-        }
-        else if (type.startsWith('builtin.currency')) {
+        } else if (type.startsWith('builtin.currency')) {
             type = 'money';
-        }
-        else if (type.startsWith('builtin.geographyV2')) {
+        } else if (type.startsWith('builtin.geographyV2')) {
             type = 'geographyV2';
-        }
-        else if (type.startsWith('builtin.ordinalV2')) {
+        } else if (type.startsWith('builtin.ordinalV2')) {
             type = 'ordinalV2';
-        }
-        else if (type.startsWith('builtin.')) {
+        } else if (type.startsWith('builtin.')) {
             type = type.substring(8);
         }
         if (entity.role !== null && entity.role !== '' && entity.role !== undefined) {
@@ -322,7 +373,7 @@ export class LuisRecognizerV2 extends LuisRecognizerInternal {
         return type.replace(/\.|\s/g, '_');
     }
 
-        /**
+    /**
      * If a property doesn't exist add it to a new array, otherwise append it to the existing array
      * @param obj Object on which the property is to be set
      * @param key Property Key
@@ -336,21 +387,25 @@ export class LuisRecognizerV2 extends LuisRecognizerInternal {
         }
     }
 
-
+    /**
+     * @private
+     */
     private getSentiment(luis: LuisModels.LuisResult): any {
         let result: any;
         if (luis.sentimentAnalysis) {
             result = {
                 label: luis.sentimentAnalysis.label,
-                score: luis.sentimentAnalysis.score
+                score: luis.sentimentAnalysis.score,
             };
         }
 
         return result;
     }
 
+    /**
+     * @private
+     */
     private getUserAgent(): string {
-
         // Note when the ms-rest dependency the LuisClient uses has been updated
         // this code should be modified to use the client's addUserAgentInfo() function.
 
@@ -361,16 +416,23 @@ export class LuisRecognizerV2 extends LuisRecognizerInternal {
         return userAgent;
     }
 
-    private emitTraceInfo(context: TurnContext, luisResult: LuisModels.LuisResult, recognizerResult: RecognizerResult): Promise<any> {
+    /**
+     * @private
+     */
+    private emitTraceInfo(
+        context: TurnContext,
+        luisResult: LuisModels.LuisResult,
+        recognizerResult: RecognizerResult
+    ): Promise<any> {
         const traceInfo: any = {
             recognizerResult: recognizerResult,
             luisResult: luisResult,
             luisOptions: {
-                Staging: this.options.staging
+                Staging: this.options.staging,
             },
             luisModel: {
-                ModelID: this.application.applicationId
-            }
+                ModelID: this.application.applicationId,
+            },
         };
 
         return context.sendActivity({
@@ -378,8 +440,7 @@ export class LuisRecognizerV2 extends LuisRecognizerInternal {
             valueType: LUIS_TRACE_TYPE,
             name: LUIS_TRACE_NAME,
             label: LUIS_TRACE_LABEL,
-            value: traceInfo
+            value: traceInfo,
         });
     }
-
 }

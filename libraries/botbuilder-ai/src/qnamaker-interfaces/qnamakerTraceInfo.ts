@@ -15,17 +15,17 @@ import { QnARequestContext } from './qnaRequestContext';
  */
 export interface QnAMakerTraceInfo {
     /**
-     *  Message which instigated the query to QnA Maker.
+     * Message which instigated the query to QnA Maker.
      */
     message: Activity;
 
     /**
-     *  Results that QnA Maker returned.
+     * Results that QnA Maker returned.
      */
     queryResults: QnAMakerResult[];
 
     /**
-     *  ID of the knowledge base that is being queried.
+     * ID of the knowledge base that is being queried.
      */
     knowledgeBaseId: string;
 
@@ -35,7 +35,7 @@ export interface QnAMakerTraceInfo {
     scoreThreshold: number;
 
     /**
-     *  Number of ranked results that are asked to be returned.
+     * Number of ranked results that are asked to be returned.
      */
     top: number;
 

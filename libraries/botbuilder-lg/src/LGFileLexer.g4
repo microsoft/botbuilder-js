@@ -24,7 +24,9 @@ IMPORT : WHITESPACE* '[' ~[\r\n[\]]*? ']' '(' ~[\r\n()]*? ')' WHITESPACE* { !thi
 
 TEMPLATE_NAME_LINE : WHITESPACE* '#' ~('\r'|'\n')* { this._tokenStartCharPositionInLine == 0 }? { this.startTemplate = true; };
 
-MULTILINE_PREFIX: WHITESPACE* '-' WHITESPACE* '```' { this.startTemplate && this._tokenStartCharPositionInLine == 0 }? -> pushMode(MULTILINE_MODE);
+INLINE_MULTILINE: WHITESPACE* '-' WHITESPACE* '```' ~('\r'|'\n')* '```' WHITESPACE* { this.startTemplate && this._tokenStartCharPositionInLine == 0 }?;
+
+MULTILINE_PREFIX: WHITESPACE* '-' WHITESPACE* '```' ~('\r'|'\n')* { this.startTemplate && this._tokenStartCharPositionInLine == 0 }? -> pushMode(MULTILINE_MODE);
 
 TEMPLATE_BODY : ~('\r'|'\n')+ { this.startTemplate }?;
 

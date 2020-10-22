@@ -9,19 +9,28 @@
 import { EvaluateExpressionDelegate, ExpressionEvaluator } from '../expressionEvaluator';
 import { ExpressionType } from '../expressionType';
 import { FunctionUtils } from '../functionUtils';
+import { InternalFunctionUtils } from '../functionUtils.internal';
 import { ReturnType } from '../returnType';
 
 /**
  * Return the month of the specified timestamp.
  */
 export class Month extends ExpressionEvaluator {
+    /**
+     * Initializes a new instance of the [Month](xref:adaptive-expressions.Month) class.
+     */
     public constructor() {
         super(ExpressionType.Month, Month.evaluator(), ReturnType.Number, FunctionUtils.validateUnaryString);
     }
 
+    /**
+     * @private
+     */
     private static evaluator(): EvaluateExpressionDelegate {
         return FunctionUtils.applyWithError(
-            (args: any[]): any => FunctionUtils.parseTimestamp(args[0], (timestamp: Date): number => timestamp.getUTCMonth() + 1),
-            FunctionUtils.verifyString);
+            (args: any[]): any =>
+                InternalFunctionUtils.parseTimestamp(args[0], (timestamp: Date): number => timestamp.getUTCMonth() + 1),
+            FunctionUtils.verifyString
+        );
     }
 }

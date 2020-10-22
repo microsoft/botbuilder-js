@@ -15,10 +15,21 @@ import { ComparisonEvaluator } from './comparisonEvaluator';
  * Return true if the first value is more, or return false if less.
  */
 export class GreaterThan extends ComparisonEvaluator {
+    /**
+     * Initializes a new instance of the [GreaterThan](xref:adaptive-expressions.GreaterThan) class.
+     */
     public constructor() {
-        super(ExpressionType.GreaterThan, GreaterThan.func, FunctionUtils.validateBinaryNumberOrString, FunctionUtils.verifyNumberOrString);
+        super(
+            ExpressionType.GreaterThan,
+            GreaterThan.func,
+            FunctionUtils.validateBinaryNumberOrString,
+            FunctionUtils.verifyNumberOrString
+        );
     }
 
+    /**
+     * @private
+     */
     private static func(args: any[]): boolean {
         return args[0] > args[1];
     }

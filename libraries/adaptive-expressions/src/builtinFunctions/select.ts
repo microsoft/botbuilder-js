@@ -8,14 +8,22 @@
 
 import { ExpressionEvaluator } from '../expressionEvaluator';
 import { ExpressionType } from '../expressionType';
-import { FunctionUtils } from '../functionUtils';
+import { InternalFunctionUtils } from '../functionUtils.internal';
 import { ReturnType } from '../returnType';
 
 /**
  * Operate on each element and return the new collection of transformed elements.
  */
 export class Select extends ExpressionEvaluator {
+    /**
+     * Initializes a new instance of the [Select](xref:adaptive-expressions.Select) class.
+     */
     public constructor() {
-        super(ExpressionType.Select, FunctionUtils.foreach, ReturnType.Array, FunctionUtils.validateForeach);
+        super(
+            ExpressionType.Select,
+            InternalFunctionUtils.foreach,
+            ReturnType.Array,
+            InternalFunctionUtils.validateForeach
+        );
     }
 }

@@ -5,11 +5,12 @@ const {
     AuthenticationConfiguration,
     AuthenticationConstants,
     ClaimsIdentity,
-    SimpleCredentialProvider } = require('botframework-connector');
+    SimpleCredentialProvider,
+} = require('botframework-connector');
 const { BotFrameworkAdapter, SkillHandler } = require('../../');
 const { ConversationIdFactory } = require('./conversationIdFactory');
 
-describe('SkillHandler', function() {
+describe('SkillHandler', function () {
     this.timeout(3000);
     const adapter = new BotFrameworkAdapter({});
     const bot = new ActivityHandler();
@@ -46,7 +47,7 @@ describe('SkillHandler', function() {
         const skillActivity = { type: ActivityTypes.Message };
 
         const handler = new SkillHandler(adapter, bot, {}, creds, authConfig);
-        handler.processActivity = async function(skillIdentity, conversationId, replyToId, activity) {
+        handler.processActivity = async function (skillIdentity, conversationId, replyToId, activity) {
             strictEqual(skillIdentity, identity);
             strictEqual(conversationId, convId);
             strictEqual(replyToId, actualReplyToId);
@@ -64,7 +65,7 @@ describe('SkillHandler', function() {
         const skillActivity = { type: ActivityTypes.Message };
 
         const handler = new SkillHandler(adapter, bot, {}, creds, authConfig);
-        handler.processActivity = async function(skillIdentity, conversationId, replyToId, activity) {
+        handler.processActivity = async function (skillIdentity, conversationId, replyToId, activity) {
             strictEqual(skillIdentity, identity);
             strictEqual(conversationId, convId);
             strictEqual(activity, skillActivity);
@@ -98,13 +99,16 @@ describe('SkillHandler', function() {
                 };
                 bot.run = async (context) => {
                     assert(context);
-                    assert(AppCredentials.isTrustedServiceUrl(serviceUrl), `ServiceUrl "${ serviceUrl }" should have been trusted and added to AppCredentials ServiceUrl cache.`);
+                    assert(
+                        AppCredentials.isTrustedServiceUrl(serviceUrl),
+                        `ServiceUrl "${serviceUrl}" should have been trusted and added to AppCredentials ServiceUrl cache.`
+                    );
                 };
                 assert(!AppCredentials.isTrustedServiceUrl(serviceUrl));
                 await handler.processActivity(identity, 'convId', 'replyId', skillActivity);
             });
 
-            const identity =  new ClaimsIdentity([{ type: 'aud', value: 'audience' }]);
+            const identity = new ClaimsIdentity([{ type: 'aud', value: 'audience' }]);
             it('should cache the ClaimsIdentity, ConnectorClient and SkillConversationReference on the turnState', async () => {
                 const serviceUrl = 'http://localhost/api/messages';
                 factory.refs['convId'] = { serviceUrl, conversation: { id: 'conversationId' } };
@@ -136,10 +140,15 @@ describe('SkillHandler', function() {
                 factory.refs['convId'] = { serviceUrl, conversation: { id: 'conversationId' } };
                 const skillActivity = {
                     type: ActivityTypes.Event,
-                    name, relatesTo, entities,
-                    localTimestamp, value,
-                    timestamp, channelData,
-                    serviceUrl, replyToId,
+                    name,
+                    relatesTo,
+                    entities,
+                    localTimestamp,
+                    value,
+                    timestamp,
+                    channelData,
+                    serviceUrl,
+                    replyToId,
                 };
                 bot.run = async (context) => {
                     assert(context);
@@ -174,15 +183,24 @@ describe('SkillHandler', function() {
                 factory.refs['convId'] = { serviceUrl, conversation: { id: 'conversationId' } };
                 const skillActivity = {
                     type: ActivityTypes.EndOfConversation,
-                    text, code, replyToId, entities,
-                    localTimestamp, timestamp,
-                    value, channelData, serviceUrl
+                    text,
+                    code,
+                    replyToId,
+                    entities,
+                    localTimestamp,
+                    timestamp,
+                    value,
+                    channelData,
+                    serviceUrl,
                 };
-                const identity = new ClaimsIdentity([
-                    { type: AuthenticationConstants.AudienceClaim, value: skillConsumerAppId },
-                    { type: AuthenticationConstants.AppIdClaim, value: skillAppId },
-                    { type: AuthenticationConstants.VersionClaim, value: '1.0' },
-                ], true);
+                const identity = new ClaimsIdentity(
+                    [
+                        { type: AuthenticationConstants.AudienceClaim, value: skillConsumerAppId },
+                        { type: AuthenticationConstants.AppIdClaim, value: skillAppId },
+                        { type: AuthenticationConstants.VersionClaim, value: '1.0' },
+                    ],
+                    AuthenticationConstants.AnonymousAuthType
+                );
                 bot.run = async (context) => {
                     assert(context);
                     strictEqual(context.turnState.get(context.adapter.BotIdentityKey), identity);
@@ -197,7 +215,7 @@ describe('SkillHandler', function() {
                     strictEqual(a.timestamp, timestamp);
                     strictEqual(a.channelData, channelData);
                     strictEqual(a.replyToId, replyToId);
-                    strictEqual(a.callerId, `${ CallerIdConstants.BotToBotPrefix }${ skillAppId }`);
+                    strictEqual(a.callerId, `${CallerIdConstants.BotToBotPrefix}${skillAppId}`);
                 };
                 await handler.processActivity(identity, 'convId', 'replyId', skillActivity);
                 strictEqual(skillActivity.callerId, undefined);
@@ -209,7 +227,8 @@ describe('SkillHandler', function() {
                 const text = 'Test';
                 const skillActivity = {
                     type: ActivityTypes.Message,
-                    serviceUrl, text
+                    serviceUrl,
+                    text,
                 };
 
                 const rid = 'rId';
@@ -234,11 +253,14 @@ describe('SkillHandler', function() {
 
                 const adapter = new BotFrameworkAdapter({});
                 adapter.credentialsProvider.isAuthenticationDisabled = async () => false;
-                const identity = new ClaimsIdentity([
-                    { type: AuthenticationConstants.AudienceClaim, value: skillConsumerAppId },
-                    { type: AuthenticationConstants.AppIdClaim, value: skillAppId },
-                    { type: AuthenticationConstants.VersionClaim, value: '1.0' },
-                ], true);
+                const identity = new ClaimsIdentity(
+                    [
+                        { type: AuthenticationConstants.AudienceClaim, value: skillConsumerAppId },
+                        { type: AuthenticationConstants.AppIdClaim, value: skillAppId },
+                        { type: AuthenticationConstants.VersionClaim, value: '1.0' },
+                    ],
+                    AuthenticationConstants.AnonymousAuthType
+                );
                 const creds = new SimpleCredentialProvider(skillConsumerAppId, '');
                 const handler = new SkillHandler(adapter, bot, factory, creds, authConfig);
                 const serviceUrl = 'http://localhost/api/messages';
@@ -253,7 +275,7 @@ describe('SkillHandler', function() {
                     assert(fromKey, 'skillConversationReference was not cached in TurnState');
                     assert(fromHandlerKey, 'the key on the SkillHandler did not return TurnState cached value');
                     strictEqual(fromKey, fromHandlerKey, 'the keys should return the same cached values');
-                    strictEqual(context.activity.callerId, `${ CallerIdConstants.BotToBotPrefix }${ skillAppId }`);
+                    strictEqual(context.activity.callerId, `${CallerIdConstants.BotToBotPrefix}${skillAppId}`);
                 };
                 await handler.processActivity(identity, 'convId', 'replyId', skillActivity);
                 strictEqual(skillActivity.callerId, undefined);

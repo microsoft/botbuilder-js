@@ -1,32 +1,42 @@
-# Create a React app that uses ReactWebChat
+# Create a React app that uses ReactWebChat and a customized DirectLineJS
+# that uses that latest version of botframework-streaming
 
 steps:
-  - powershell: npx create-react-app react-app
-    displayName: 'create-react-app'
-    workingDirectory: $(RootReactPiecesDir)
+  - task: Cache@2
+    displayName: 'Cache create-react-app + WebChat Dependencies'
+    inputs:
+      key: '"CRA-WebChat4.10.1-Cache" | npm | "$(Agent.OS)"'
+      path: $(ReactProjectDir)/node_modules
+      cacheHitVar: 'CacheRestored'
+
+  - powershell: npm install
+    displayName: npm install in React App
+    condition: ne(variables.CacheRestored, 'true')
+    workingDirectory: $(ReactProjectDir)
+
+  - powershell: npm install react-scripts@latest
+    displayName: npm install react-scripts@latest
+    workingDirectory: $(ReactProjectDir)
+
+  - template: customize-dljs.yml
   
-  - powershell: npm install botframework-webchat@4.9.2
-    displayName: 'npm install botframework-webchat'
-    workingDirectory: $(RootReactPiecesDir)/react-app
-
-  - powershell: Remove-Item src/App.js, src/index.js, public/index.html
-    displayName: "Delete files we're replacing with custom code in react app"
-    workingDirectory: $(RootReactPiecesDir)/react-app
-
-  - powershell: |
-      copy ../custom-app-code/App.js, ../custom-app-code/index.js, ../custom-app-code/.gitignore ./src/
-      copy ../custom-app-code/index.html ./public
-    displayName: "Copy custom files into react-app"
-    workingDirectory: $(RootReactPiecesDir)/react-app
+  - powershell: npm install $(DLJSDir)/botframework-directlinejs.tgz
+    displayName: 'npm install botframework-directlinejs.tgz'
+    workingDirectory: $(ReactProjectDir)
   
   - powershell: |
-      Add-Content -Path "./.env" -Value REACT_APP_BOT_HOSTNAME=$(BotName)
-      Get-Content -Path "./.env"	
-    displayName: "Write react-consumable bot name to .env"
-    workingDirectory: $(RootReactPiecesDir)/react-app
-
+      Rename-Item ./botframework-directlinejs botframework-directlinejs.old
+      Rename-Item ./botframework-streaming botframework-streaming.old
+      ls
+    displayName: Rename DLJS node modules
+    workingDirectory: $(ReactProjectDir)/node_modules/botframework-webchat/node_modules
+  
+  - powershell: npm run build
+    displayName: Build React App
+    workingDirectory: $(ReactProjectDir)
+  
   - task: PublishPipelineArtifact@1
     displayName: 'Publish Artifact: ReactApp'
     inputs:
-      targetPath: $(RootReactPiecesDir)/react-app
+      targetPath: $(ReactProjectDir)/build
       artifactName: 'ReactApp'

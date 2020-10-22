@@ -7,6 +7,6 @@
  */
 
 export { BrowserWebSocket } from './browserWebSocket';
-export { WebSocketClient } from './webSocketClient';
-export { WebSocketServer } from './webSocketServer';
+export { WebSocketClient } from './browserWebSocketClient';
+/** @internal */
 export { WebSocketTransport } from './webSocketTransport';
