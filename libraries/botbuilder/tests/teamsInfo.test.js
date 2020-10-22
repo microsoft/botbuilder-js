@@ -157,6 +157,19 @@ describe('TeamsInfo', () => {
         done();
     });
 
+    // Sets up nock expectation for an oauth token call, returning the expected auth header
+    // and the nock expectation
+    const nockOauth = () => {
+        const tokenType = 'Bearer';
+        const accessToken = 'access_token';
+
+        const expectation = nock('https://login.microsoftonline.com')
+            .post(/\/oauth2\/token/)
+            .reply(200, { access_token: accessToken, token_type: tokenType });
+
+        return { expectedAuthHeader: `${tokenType} ${accessToken}`, expectation };
+    };
+
     describe('sendMessageToTeamsChannel()', () => {
         it('should work with correct information', async () => {
             const newConversation = [
@@ -166,8 +179,11 @@ describe('TeamsInfo', () => {
                 'resourceresponseid',
             ];
 
+            const { expectedAuthHeader, expectation: fetchOauthToken } = nockOauth();
+
             const fetchNewConversation = nock('https://smba.trafficmanager.net/amer')
                 .post('/v3/conversations')
+                .matchHeader('Authorization', expectedAuthHeader)
                 .reply(200, { newConversation });
 
             const context = new TestContext(teamActivity);
@@ -175,7 +191,10 @@ describe('TeamsInfo', () => {
             const teamChannelId = '19%3AgeneralChannelIdgeneralChannelId%40thread.skype';
 
             const response = await TeamsInfo.sendMessageToTeamsChannel(context, msg, teamChannelId);
+
+            assert(fetchOauthToken.isDone());
             assert(fetchNewConversation.isDone());
+
             assert(Array.isArray(response));
             assert(newConversation[0]['activityid'] == 'activityid123');
             assert(newConversation[1] == 'resourceresponseid');
@@ -264,14 +283,19 @@ describe('TeamsInfo', () => {
                 },
             ];
 
+            const { expectedAuthHeader, expectation: fetchOauthToken } = nockOauth();
+
             const fetchChannelListExpectation = nock('https://smba.trafficmanager.net/amer')
                 .get('/v3/teams/19%3AgeneralChannelIdgeneralChannelId%40thread.skype/conversations')
+                .matchHeader('Authorization', expectedAuthHeader)
                 .reply(200, { conversations });
 
             const context = new TestContext(teamActivity);
             const channels = await TeamsInfo.getTeamChannels(context);
 
+            assert(fetchOauthToken.isDone());
             assert(fetchChannelListExpectation.isDone());
+
             assert(Array.isArray(channels));
             assert(channels.length === 3, `unexpected number of channels detected: ${channels.length}`);
 
@@ -298,14 +322,19 @@ describe('TeamsInfo', () => {
                 },
             ];
 
+            const { expectedAuthHeader, expectation: fetchOauthToken } = nockOauth();
+
             const fetchChannelListExpectation = nock('https://smba.trafficmanager.net/amer')
                 .get('/v3/teams/19%3AChannelIdgeneralChannelId%40thread.skype/conversations')
+                .matchHeader('Authorization', expectedAuthHeader)
                 .reply(200, { conversations });
 
             const context = new TestContext(teamActivity);
             const channels = await TeamsInfo.getTeamChannels(context, '19:ChannelIdgeneralChannelId@thread.skype');
 
+            assert(fetchOauthToken.isDone());
             assert(fetchChannelListExpectation.isDone());
+
             assert(Array.isArray(channels));
             assert(channels.length === 3, `unexpected number of channels detected: ${channels.length}`);
 
@@ -350,14 +379,20 @@ describe('TeamsInfo', () => {
                 name: 'TeamName',
                 aadGroupId: 'Team-aadGroupId',
             };
+
+            const { expectedAuthHeader, expectation: fetchOauthToken } = nockOauth();
+
             const fetchTeamDetailsExpectation = nock('https://smba.trafficmanager.net/amer')
                 .get('/v3/teams/19%3AgeneralChannelIdgeneralChannelId%40thread.skype')
+                .matchHeader('Authorization', expectedAuthHeader)
                 .reply(200, teamDetails);
 
             const context = new TestContext(teamActivity);
             const fetchedTeamDetails = await TeamsInfo.getTeamDetails(context);
 
+            assert(fetchOauthToken.isDone());
             assert(fetchTeamDetailsExpectation.isDone());
+
             assert(fetchedTeamDetails, `teamDetails should not be falsey: ${teamDetails}`);
             assert(fetchedTeamDetails.id === '19:generalChannelIdgeneralChannelId@thread.skype');
             assert(fetchedTeamDetails.name === 'TeamName');
@@ -370,8 +405,12 @@ describe('TeamsInfo', () => {
                 name: 'TeamName',
                 aadGroupId: 'Team-aadGroupId',
             };
+
+            const { expectedAuthHeader, expectation: fetchOauthToken } = nockOauth();
+
             const fetchTeamDetailsExpectation = nock('https://smba.trafficmanager.net/amer')
                 .get('/v3/teams/19%3AChannelIdgeneralChannelId%40thread.skype')
+                .matchHeader('Authorization', expectedAuthHeader)
                 .reply(200, teamDetails);
 
             const context = new TestContext(teamActivity);
@@ -380,7 +419,9 @@ describe('TeamsInfo', () => {
                 '19:ChannelIdgeneralChannelId@thread.skype'
             );
 
+            assert(fetchOauthToken.isDone());
             assert(fetchTeamDetailsExpectation.isDone());
+
             assert(fetchedTeamDetails, `teamDetails should not be falsey: ${teamDetails}`);
             assert(fetchedTeamDetails.id === '19:ChannelIdgeneralChannelId@thread.skype');
             assert(fetchedTeamDetails.name === 'TeamName');
@@ -403,14 +444,19 @@ describe('TeamsInfo', () => {
                 },
             ];
 
+            const { expectedAuthHeader, expectation: fetchOauthToken } = nockOauth();
+
             const fetchChannelListExpectation = nock('https://smba.trafficmanager.net/amer')
                 .get('/v3/conversations/a%3AoneOnOneConversationId/members')
+                .matchHeader('Authorization', expectedAuthHeader)
                 .reply(200, members);
 
             const context = new TestContext(oneOnOneActivity);
             const fetchedMembers = await TeamsInfo.getMembers(context);
 
+            assert(fetchOauthToken.isDone());
             assert(fetchChannelListExpectation.isDone());
+
             assert.deepStrictEqual(
                 fetchedMembers,
                 members.map((member) => ({ ...member, aadObjectId: member.objectId }))
@@ -451,14 +497,19 @@ describe('TeamsInfo', () => {
                 },
             ];
 
+            const { expectedAuthHeader, expectation: fetchOauthToken } = nockOauth();
+
             const fetchChannelListExpectation = nock('https://smba.trafficmanager.net/amer')
                 .get('/v3/conversations/19%3AgroupChatId%40thread.v2/members')
+                .matchHeader('Authorization', expectedAuthHeader)
                 .reply(200, members);
 
             const context = new TestContext(groupChatActivity);
             const fetchedMembers = await TeamsInfo.getMembers(context);
 
+            assert(fetchOauthToken.isDone());
             assert(fetchChannelListExpectation.isDone());
+
             assert.deepStrictEqual(
                 fetchedMembers,
                 members.map((member) => ({ ...member, aadObjectId: member.objectId }))
@@ -489,13 +540,19 @@ describe('TeamsInfo', () => {
                 },
             ];
 
+            const { expectedAuthHeader, expectation: fetchOauthToken } = nockOauth();
+
             const fetchChannelListExpectation = nock('https://smba.trafficmanager.net/amer')
                 .get('/v3/conversations/19%3AgeneralChannelIdgeneralChannelId%40thread.skype/members')
+                .matchHeader('Authorization', expectedAuthHeader)
                 .reply(200, members);
 
             const context = new TestContext(teamActivity);
             const fetchedMembers = await TeamsInfo.getMembers(context);
+
+            assert(fetchOauthToken.isDone());
             assert(fetchChannelListExpectation.isDone());
+
             assert.deepStrictEqual(
                 fetchedMembers,
                 members.map((member) => ({ ...member, aadObjectId: member.objectId }))
@@ -528,13 +585,19 @@ describe('TeamsInfo', () => {
                 tenantId: 'tenantId-Guid',
             };
 
+            const { expectedAuthHeader, expectation: fetchOauthToken } = nockOauth();
+
             const fetchExpectation = nock('https://smba.trafficmanager.net/amer')
                 .get('/v3/conversations/a%3AoneOnOneConversationId/members/29%3AUser-One-Id')
+                .matchHeader('Authorization', expectedAuthHeader)
                 .reply(200, member);
 
             const context = new TestContext(oneOnOneActivity);
             const fetchedMember = await TeamsInfo.getMember(context, oneOnOneActivity.from.id);
+
+            assert(fetchOauthToken.isDone());
             assert(fetchExpectation.isDone());
+
             assert.deepStrictEqual(fetchedMember, member);
         });
 
@@ -550,13 +613,19 @@ describe('TeamsInfo', () => {
                 tenantId: 'tenantId-Guid',
             };
 
+            const { expectedAuthHeader, expectation: fetchOauthToken } = nockOauth();
+
             const fetchExpectation = nock('https://smba.trafficmanager.net/amer')
                 .get('/v3/conversations/19%3AgeneralChannelIdgeneralChannelId%40thread.skype/members/29%3AUser-One-Id')
+                .matchHeader('Authorization', expectedAuthHeader)
                 .reply(200, member);
 
             const context = new TestContext(teamActivity);
             const fetchedMember = await TeamsInfo.getMember(context, teamActivity.from.id);
+
+            assert(fetchOauthToken.isDone());
             assert(fetchExpectation.isDone());
+
             assert.deepStrictEqual(fetchedMember, member);
         });
     });
@@ -597,13 +666,18 @@ describe('TeamsInfo', () => {
                 },
             };
 
+            const { expectedAuthHeader, expectation: fetchOauthToken } = nockOauth();
+
             const fetchExpectation = nock('https://smba.trafficmanager.net/amer')
                 .get('/v1/meetings/19%3AmeetingId/participants/User-aadObjectId?tenantId=tenantId-Guid')
+                .matchHeader('Authorization', expectedAuthHeader)
                 .reply(200, participant);
 
             const fetchedParticipant = await TeamsInfo.getMeetingParticipant(context);
 
+            assert(fetchOauthToken.isDone());
             assert(fetchExpectation.isDone());
+
             assert.deepStrictEqual(fetchedParticipant, participant);
         });
 
@@ -668,14 +742,19 @@ describe('TeamsInfo', () => {
                 },
             ];
 
+            const { expectedAuthHeader, expectation: fetchOauthToken } = nockOauth();
+
             const fetchChannelListExpectation = nock('https://smba.trafficmanager.net/amer')
                 .get('/v3/conversations/19%3AgeneralChannelIdgeneralChannelId%40thread.skype/members')
+                .matchHeader('Authorization', expectedAuthHeader)
                 .reply(200, members);
 
             const context = new TestContext(teamActivity);
             const fetchedMembers = await TeamsInfo.getTeamMembers(context);
 
+            assert(fetchOauthToken.isDone());
             assert(fetchChannelListExpectation.isDone());
+
             assert.deepStrictEqual(
                 fetchedMembers,
                 members.map((member) => ({ ...member, aadObjectId: member.objectId }))
@@ -706,14 +785,19 @@ describe('TeamsInfo', () => {
                 },
             ];
 
+            const { expectedAuthHeader, expectation: fetchOauthToken } = nockOauth();
+
             const fetchChannelListExpectation = nock('https://smba.trafficmanager.net/amer')
                 .get('/v3/conversations/19%3AChannelIdgeneralChannelId%40thread.skype/members')
+                .matchHeader('Authorization', expectedAuthHeader)
                 .reply(200, members);
 
             const context = new TestContext(teamActivity);
             const fetchedMembers = await TeamsInfo.getTeamMembers(context, '19:ChannelIdgeneralChannelId@thread.skype');
 
+            assert(fetchOauthToken.isDone());
             assert(fetchChannelListExpectation.isDone());
+
             assert.deepStrictEqual(
                 fetchedMembers,
                 members.map((member) => ({ ...member, aadObjectId: member.objectId }))
@@ -815,7 +899,7 @@ describe('TeamsInfo', () => {
                         tenantId: 'tenantId-Guid',
                     },
                 ];
-                const conversations = new Conversations({ id: 'convo1', id: 'convo2' });
+                const conversations = new Conversations({ id: 'convo1' });
                 const getPagedMembers = sandbox.stub(conversations, 'getConversationPagedMembers');
                 getPagedMembers.returns({ continuationToken: 'token', members: members });
                 const connector = new ConnectorClient(new MicrosoftAppCredentials('', ''));
