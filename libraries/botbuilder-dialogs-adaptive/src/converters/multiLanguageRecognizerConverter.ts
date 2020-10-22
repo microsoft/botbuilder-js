@@ -6,17 +6,24 @@
  * Licensed under the MIT License.
  */
 
-import { Converter } from 'botbuilder-dialogs';
+import { Converter, Recognizer } from 'botbuilder-dialogs';
 import { ResourceExplorer } from 'botbuilder-dialogs-declarative';
-import { Recognizer } from '../recognizers';
 import { RecognizerConverter } from './recognizerConverter';
 
 type Input = Record<string, string>;
 type Output = Record<string, Recognizer>;
 
+/**
+ * Language generator converter that implements [Converter](xref:botbuilder-dialogs-declarative.Converter).
+ */
 export class MultiLanguageRecognizerConverter implements Converter<Input, Output> {
+
     private _recognizerConverter: RecognizerConverter;
 
+    /**
+     * Initializes a new instance of the [MultiLanguageRecognizerConverter](xref:botbuilder-dialogs-adaptive.MultiLanguageRecognizerConverter) class.
+     * @param resouceExplorer Resource explorer to use for resolving references.
+     */
     public constructor(resouceExplorer: ResourceExplorer) {
         this._recognizerConverter = new RecognizerConverter(resouceExplorer);
     }

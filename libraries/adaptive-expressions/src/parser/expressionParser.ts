@@ -265,10 +265,20 @@ export class ExpressionParser implements ExpressionParserInterface {
         }
     };
 
+    /**
+     * Initializes a new instance of the [ExpressionParser](xref:adaptive-expressions.ExpressionParser) class.
+     * @param lookup [EvaluatorLookup](xref:adaptive-expressions.EvaluatorLookup) for information from type string.
+     */
     public constructor(lookup?: EvaluatorLookup) {
         this.EvaluatorLookup = lookup || Expression.lookup;
     }
 
+    /**
+     * @protected
+     * Parse the expression to ANTLR lexer and parser.
+     * @param expression The input string expression.
+     * @returns A ParseTree.
+     */
     protected static antlrParse(expression: string): ParseTree {
         if (ExpressionParser.expressionDict.has(expression)) {
             return ExpressionParser.expressionDict.get(expression);

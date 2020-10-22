@@ -6,7 +6,14 @@
  * Licensed under the MIT License.
  */
 
-import { Activity, ActivityTypes, ConversationReference, ResourceResponse } from 'botframework-schema';
+import {
+    Activity,
+    ActivityEventNames,
+    ActivityTypes,
+    ConversationReference,
+    ResourceResponse,
+    RoleTypes,
+} from 'botframework-schema';
 import { Middleware } from './middlewareSet';
 import { TurnContext } from './turnContext';
 
@@ -39,7 +46,7 @@ export class TranscriptLoggerMiddleware implements Middleware {
         // log incoming activity at beginning of turn
         if (context.activity) {
             if (!context.activity.from.role) {
-                context.activity.from.role = 'user';
+                context.activity.from.role = RoleTypes.User;
             }
 
             this.logActivity(transcript, this.cloneActivity(context.activity));
@@ -47,12 +54,12 @@ export class TranscriptLoggerMiddleware implements Middleware {
 
         // hook up onSend pipeline
         context.onSendActivities(
-            async (ctx: TurnContext, activities: Partial<Activity>[], next2: () => Promise<ResourceResponse[]>) => {
+            async (ctx: TurnContext, activities: Partial<Activity>[], next: () => Promise<ResourceResponse[]>) => {
                 // Run full pipeline.
-                const responses: ResourceResponse[] = await next2();
+                const responses = await next();
 
-                activities.map((a: Partial<Activity>, index: number) => {
-                    const clonedActivity = this.cloneActivity(a);
+                activities.forEach((activity, index) => {
+                    const clonedActivity = this.cloneActivity(activity);
                     clonedActivity.id = responses && responses[index] ? responses[index].id : clonedActivity.id;
 
                     // For certain channels, a ResourceResponse with an id is not always sent to the bot.
@@ -76,12 +83,12 @@ export class TranscriptLoggerMiddleware implements Middleware {
         );
 
         // hook up update activity pipeline
-        context.onUpdateActivity(async (ctx: TurnContext, activity: Partial<Activity>, next3: () => Promise<void>) => {
+        context.onUpdateActivity(async (ctx: TurnContext, activity: Partial<Activity>, next: () => Promise<void>) => {
             // run full pipeline
-            const response: void = await next3();
+            const response: void = await next();
 
             // add Message Update activity
-            const updateActivity: Activity = this.cloneActivity(activity);
+            const updateActivity = this.cloneActivity(activity);
             updateActivity.type = ActivityTypes.MessageUpdate;
             this.logActivity(transcript, updateActivity);
 
@@ -90,13 +97,13 @@ export class TranscriptLoggerMiddleware implements Middleware {
 
         // hook up delete activity pipeline
         context.onDeleteActivity(
-            async (ctx: TurnContext, reference: Partial<ConversationReference>, next4: () => Promise<void>) => {
+            async (ctx: TurnContext, reference: Partial<ConversationReference>, next: () => Promise<void>) => {
                 // run full pipeline
-                await next4();
+                await next();
 
                 // add MessageDelete activity
                 // log as MessageDelete activity
-                const deleteActivity: Partial<Activity> = TurnContext.applyConversationReference(
+                const deleteActivity = TurnContext.applyConversationReference(
                     {
                         type: ActivityTypes.MessageDelete,
                         id: reference.activityId,
@@ -105,7 +112,7 @@ export class TranscriptLoggerMiddleware implements Middleware {
                     false
                 );
 
-                this.logActivity(transcript, <Activity>deleteActivity);
+                this.logActivity(transcript, this.cloneActivity(deleteActivity));
             }
         );
 
@@ -113,21 +120,20 @@ export class TranscriptLoggerMiddleware implements Middleware {
         await next();
 
         // flush transcript at end of turn
-        while (transcript.length > 0) {
+        while (transcript.length) {
             try {
-                const activity: Activity = transcript.shift();
                 // If the implementation of this.logger.logActivity() is asynchronous, we don't
                 // await it as to not block processing of activities.
                 // Because TranscriptLogger.logActivity() returns void or Promise<void>, we capture
                 // the result and see if it is a Promise.
-                const logActivityResult = this.logger.logActivity(activity);
+                const maybePromise = this.logger.logActivity(transcript.shift());
 
                 // If this.logger.logActivity() returns a Promise, a catch is added in case there
                 // is no innate error handling in the method. This catch prevents
                 // UnhandledPromiseRejectionWarnings from being thrown and prints the error to the
                 // console.
-                if (logActivityResult instanceof Promise) {
-                    logActivityResult.catch((err) => {
+                if (maybePromise instanceof Promise) {
+                    maybePromise.catch((err) => {
                         this.transcriptLoggerErrorHandler(err);
                     });
                 }
@@ -146,7 +152,10 @@ export class TranscriptLoggerMiddleware implements Middleware {
             activity.timestamp = new Date();
         }
 
-        transcript.push(activity);
+        // We should not log ContinueConversation events used by skills to initialize the middleware.
+        if (!(activity.type === ActivityTypes.Event && activity.name === ActivityEventNames.ContinueConversation)) {
+            transcript.push(activity);
+        }
     }
 
     /**

@@ -1,5 +1,5 @@
 /**
- * @module botbuilder-dialogs-adaptive
+ * @module botbuilder-ai
  */
 /**
  * Copyright (c) Microsoft Corporation. All rights reserved.
@@ -14,16 +14,10 @@ import {
     StringExpression,
     StringExpressionConverter,
 } from 'adaptive-expressions';
-import {
-    LuisPredictionOptions,
-    LuisRecognizerOptionsV3,
-    LuisRecognizer,
-    LuisApplication,
-    LuisTelemetryConstants,
-} from 'botbuilder-ai';
 import { Activity, RecognizerResult } from 'botbuilder-core';
-import { Converter, ConverterFactory, DialogContext } from 'botbuilder-dialogs';
-import { Recognizer, RecognizerConfiguration } from '../recognizers';
+import { Converter, ConverterFactory, DialogContext, Recognizer, RecognizerConfiguration } from 'botbuilder-dialogs';
+import { LuisApplication, LuisPredictionOptions, LuisRecognizer, LuisRecognizerOptionsV3 } from './luisRecognizer';
+import { LuisTelemetryConstants } from './luisTelemetryConstants';
 
 export interface LuisAdaptiveRecognizerConfiguration extends RecognizerConfiguration {
     applicationId?: string | Expression | StringExpression;
@@ -34,6 +28,9 @@ export interface LuisAdaptiveRecognizerConfiguration extends RecognizerConfigura
     predictionOptions?: LuisPredictionOptions;
 }
 
+/**
+ * Class that represents an adaptive LUIS recognizer.
+ */
 export class LuisAdaptiveRecognizer extends Recognizer implements LuisAdaptiveRecognizerConfiguration {
     public static $kind = 'Microsoft.LuisRecognizer';
 
@@ -93,6 +90,13 @@ export class LuisAdaptiveRecognizer extends Recognizer implements LuisAdaptiveRe
         }
     }
 
+    /**
+     * To recognize intents and entities in a users utterance.
+     * @param dialogContext The [DialogContext](xref:botbuilder-dialogs.DialogContext).
+     * @param activity The [Activity](xref:botbuilder-core.Activity).
+     * @param telemetryProperties Optional. Additional properties to be logged to telemetry with event.
+     * @param telemetryMetrics Optional. Additional metrics to be logged to telemetry with event.
+     */
     public async recognize(
         dialogContext: DialogContext,
         activity: Activity,

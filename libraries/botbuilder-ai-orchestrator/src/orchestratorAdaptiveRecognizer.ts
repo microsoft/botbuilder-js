@@ -20,15 +20,15 @@ import {
     StringExpressionConverter,
 } from 'adaptive-expressions';
 import { Activity, Entity, RecognizerResult } from 'botbuilder-core';
-import { Converter, ConverterFactory, DialogContext } from 'botbuilder-dialogs';
 import {
     createRecognizerResult,
-    EntityRecognizer,
-    EntityRecognizerSet,
+    Converter,
+    ConverterFactory,
+    DialogContext,
     Recognizer,
     RecognizerConfiguration,
-    TextEntity,
-} from 'botbuilder-dialogs-adaptive';
+} from 'botbuilder-dialogs';
+import { EntityRecognizer, EntityRecognizerSet, TextEntity } from 'botbuilder-dialogs-adaptive';
 
 const oc: any = require('orchestrator-core/orchestrator-core.node');
 const ReadText: any = require('read-text-file');
@@ -41,6 +41,9 @@ export interface OrchestratorAdaptiveRecognizerConfiguration extends RecognizerC
     entityRecognizers?: EntityRecognizer[];
 }
 
+/**
+ * Class that represents an adaptive Orchestrator recognizer.
+ */
 export class OrchestratorAdaptiveRecognizer extends Recognizer implements OrchestratorAdaptiveRecognizerConfiguration {
     public static $kind = 'Microsoft.OrchestratorRecognizer';
 
@@ -211,6 +214,9 @@ export class OrchestratorAdaptiveRecognizer extends Recognizer implements Orches
         return recognizerResult;
     }
 
+    /**
+     * @private
+     */
     private AddTopScoringIntent(result: any, recognizerResult: RecognizerResult): void {
         const topScoringIntent = result[0].label.name;
         const topScore = result[0].score;
@@ -225,6 +231,9 @@ export class OrchestratorAdaptiveRecognizer extends Recognizer implements Orches
         }
     }
 
+    /**
+     * @private
+     */
     private async recognizeEntities(
         dialogContext: DialogContext,
         text: string,
@@ -283,6 +292,9 @@ export class OrchestratorAdaptiveRecognizer extends Recognizer implements Orches
         }
     }
 
+    /**
+     * @private
+     */
     private Initialize() {
         if (OrchestratorAdaptiveRecognizer.orchestrator == null && this.resolver == null) {
             if (this._modelPath == null) {

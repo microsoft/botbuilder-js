@@ -61,11 +61,19 @@ export interface DialogManagerConfiguration {
     stateConfiguration?: DialogStateManagerConfiguration;
 }
 
+/**
+ * Class which runs the dialog system.
+ */
 export class DialogManager extends Configurable {
     private _rootDialogId: string;
     private readonly _dialogStateProperty: string;
     private readonly _initialTurnState: TurnContextStateCollection = new TurnContextStateCollection();
 
+    /**
+     * Creates an instance of the [DialogSet](xref:botbuilder-dialogs.DialogManager) class.
+     * @param rootDialog Optional, root [Dialog](xref:botbuilder-dialogs.Dialog) to use.
+     * @param dialogStateProperty Optional, alternate name for the dialogState property. (Default is "DialogStateProperty")
+     */
     public constructor(rootDialog?: Dialog, dialogStateProperty?: string) {
         super();
         if (rootDialog) {
@@ -106,6 +114,10 @@ export class DialogManager extends Configurable {
         }
     }
 
+    /**
+     * Gets the root [Dialog](xref:botbuilder-dialogs.Dialog) ID.
+     * @returns The root [Dialog](xref:botbuilder-dialogs.Dialog) ID.
+     */
     public get rootDialog(): Dialog {
         return this._rootDialogId ? this.dialogs.find(this._rootDialogId) : undefined;
     }
@@ -125,10 +137,20 @@ export class DialogManager extends Configurable {
      */
     public expireAfter?: number;
 
+    /**
+     * Set configuration settings.
+     * @param config Configuration settings to apply.
+     * @returns The cofigured [DialogManager](xref:botbuilder-dialogs.DialogManager) context.
+     */
     public configure(config: Partial<DialogManagerConfiguration>): this {
         return super.configure(config);
     }
 
+    /**
+     * Runs dialog system in the context of a [TurnContext](xref:botbuilder-core.TurnContext).
+     * @param context [TurnContext](xref:botbuilder-core.TurnContext) for the current turn of conversation with the user.
+     * @returns Result of running the logic against the activity.
+     */
     public async onTurn(context: TurnContext): Promise<DialogManagerResult> {
         // Ensure properly configured
         if (!this._rootDialogId) {
@@ -236,10 +258,14 @@ export class DialogManager extends Configurable {
         return { turnResult: turnResult };
     }
 
-    // Helper to send a trace activity with a memory snapshot of the active dialog DC.
+    /**
+     * Helper to send a trace activity with a memory snapshot of the active [DialogContext](xref:botbuilder-dialogs.DialogContext).
+     * @param dc [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation with the user.
+     * @param traceLabel Trace label to set for the activity.
+     */
     private async sendStateSnapshotTrace(dc: DialogContext, traceLabel: string): Promise<void> {
         // send trace of memory
-        const snapshot: object = getActiveDialogContext(dc).state.getMemorySnapshot();
+        const snapshot = getActiveDialogContext(dc).state.getMemorySnapshot();
         await dc.context.sendActivity({
             type: ActivityTypes.Trace,
             name: 'BotState',
@@ -249,6 +275,11 @@ export class DialogManager extends Configurable {
         });
     }
 
+    /**
+     * @private
+     * @param dc [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation with the user.
+     * @returns A Promise representing the asynchronous operation.
+     */
     private async handleSkillOnTurn(dc: DialogContext): Promise<DialogTurnResult> {
         // The bot is running as a skill.
         const turnContext = dc.context;
@@ -261,9 +292,6 @@ export class DialogManager extends Configurable {
         ) {
             // Handle remote cancellation request from parent.
             const activeDialogContext = getActiveDialogContext(dc);
-
-            const remoteCancelText = 'Skill was canceled through an EndOfConversation activity from the parent.';
-            await turnContext.sendTraceActivity(`DialogManager.onTurn()`, undefined, undefined, remoteCancelText);
 
             // Send cancellation message to the top dialog in the stack to ensure all the parents are canceled in the right order.
             return await activeDialogContext.cancelAllDialogs(true);
@@ -288,17 +316,12 @@ export class DialogManager extends Configurable {
         let turnResult = await dc.continueDialog();
         if (turnResult.status == DialogTurnStatus.empty) {
             // restart root dialog
-            const startMessageText = `Starting ${this._rootDialogId}.`;
-            await turnContext.sendTraceActivity('DialogManager.onTurn()', undefined, undefined, startMessageText);
             turnResult = await dc.beginDialog(this._rootDialogId);
         }
 
         await this.sendStateSnapshotTrace(dc, 'Skill State');
 
         if (shouldSendEndOfConversationToParent(turnContext, turnResult)) {
-            const endMessageText = `Dialog ${this._rootDialogId} has **completed**. Sending EndOfConversation.`;
-            await turnContext.sendTraceActivity('DialogManager.onTurn()', turnResult.result, undefined, endMessageText);
-
             // Send End of conversation at the end.
             const activity: Partial<Activity> = {
                 type: ActivityTypes.EndOfConversation,
@@ -311,6 +334,11 @@ export class DialogManager extends Configurable {
         return turnResult;
     }
 
+    /**
+     * @private
+     * @param dc [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation with the user.
+     * @returns The [DialogTurnResult](xref:botbuilder-dialogs.DialogTurnResult).
+     */
     private async handleBotOnTurn(dc: DialogContext): Promise<DialogTurnResult> {
         let turnResult: DialogTurnResult;
 

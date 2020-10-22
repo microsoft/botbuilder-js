@@ -20,7 +20,8 @@ const beginMessage = { text: `begin`, type: 'message' };
 
 
 describe('QnAMakerDialog', function() {
-    this.timeout(3000);
+    // this.timeout(3000);
+    this.timeout(120000);
     const testFiles = fs.readdirSync(`${ __dirname }/TestData/${ this.title }/`);
 
     beforeEach(function(done){
@@ -55,26 +56,6 @@ describe('QnAMakerDialog', function() {
         new QnAMakerDialog('kbId', 'endpointKey', 'https://myqnainstance.azurewebsites.net/qnamaker');
     });
 
-    it('should fail to construct with missing params', () => {
-        try {
-            new QnAMakerDialog(undefined, 'endpointKey', 'https://myqnainstance.azurewebsites.net/qnamaker');
-        } catch (e) {
-            strictEqual(e.message, 'QnAMakerDialog: missing knowledgeBaseId parameter');
-        }
-
-        try {
-            new QnAMakerDialog('kbId', undefined, 'https://myqnainstance.azurewebsites.net/qnamaker');
-        } catch (e) {
-            strictEqual(e.message, 'QnAMakerDialog: missing endpointKey parameter');
-        }
-
-        try {
-            new QnAMakerDialog('kbId', 'endpointKey', undefined);
-        } catch (e) {
-            strictEqual(e.message, 'QnAMakerDialog: missing hostName parameter');
-        }
-    });
-
     it('should add instance to a dialog set', () => {
         const dialogs = new DialogSet();
         const qna = new QnAMakerDialog('kbId', 'endpointKey', 'https://myqnainstance.azurewebsites.net/qnamaker');
@@ -87,121 +68,44 @@ describe('QnAMakerDialog', function() {
         const endpointKey = 'dummyEndpointKey';
 
         it('should return unmodified v5 hostName value', async () => {
-            // Add QnAMakerDialog
             const V5_HOSTNAME = 'https://qnamaker-acom.azure.com/qnamaker/v5.0';
-            
-            const convoState = new ConversationState(new MemoryStorage());
-            const dialogState = convoState.createProperty('dialogState');
-            const dialogs = new DialogSet(dialogState);
-            dialogs.add(new QnAMakerDialog(kbId, endpointKey, V5_HOSTNAME));
-            const qnaDialog = dialogs.find('QnAMakerDialog');
-
-            // QnAMakerDialog automatically adds at least 4 steps in ctor.
-            // Add custom assertion step to beginning of waterfall dialog
-            qnaDialog.steps.unshift(async (step) => {
-                ok(step);
-                const qnaClient = qnaDialog.getQnAClient(step);
-
-                ok(qnaClient instanceof QnAMaker);
-                strictEqual(qnaClient.endpoint.knowledgeBaseId,  kbId);
-                strictEqual(qnaClient.endpoint.endpointKey, endpointKey);
-                strictEqual(qnaClient.endpoint.host, V5_HOSTNAME);
-                
-                return Dialog.EndOfTurn;
-            });
-
-            const adapter = new TestAdapter(async (turnContext) => {
-                const dc = await dialogs.createContext(turnContext);
-                const results = await dc.continueDialog();
-
-                if (results.status === DialogTurnStatus.empty) {
-                    await dc.beginDialog('QnAMakerDialog');
-                }
-                
-                await convoState.saveChanges(turnContext);
-            });
-
-            await adapter.send(beginMessage);
+    
+            // Create QnAMakerDialog
+            const qna = new QnAMakerDialog(kbId, endpointKey, V5_HOSTNAME);
+            const client = await qna.getQnAClient({state: {}});
+    
+            ok(client instanceof QnAMaker);
+            strictEqual(client.endpoint.knowledgeBaseId,  kbId);
+            strictEqual(client.endpoint.endpointKey, endpointKey);
+            strictEqual(client.endpoint.host, V5_HOSTNAME);
         });
-
+    
         it('should construct v4 API endpoint', async () => {
-            // Add QnAMakerDialog
             const INCOMPLETE_HOSTNAME = 'myqnainstance';
-            const hostname = 'https://myqnainstance.azurewebsites.net/qnamaker';
-            
-            const convoState = new ConversationState(new MemoryStorage());
-            const dialogState = convoState.createProperty('dialogState');
-            const dialogs = new DialogSet(dialogState);
-            dialogs.add(new QnAMakerDialog(kbId, endpointKey, INCOMPLETE_HOSTNAME));
-
-            const adapter = new TestAdapter(async (turnContext) => {
-                const dc = await dialogs.createContext(turnContext);
-                const results = await dc.continueDialog();
-
-                if (results.status === DialogTurnStatus.empty) {
-                    await dc.beginDialog('QnAMakerDialog');
-                }
-                
-                await convoState.saveChanges(turnContext);
-            });
-            
-            // Add custom assertion step as the first step of QnAMakerDialog steps
-            const qnaDialog = dialogs.find('QnAMakerDialog');
-            qnaDialog.steps.unshift(async (step) => {
-                ok(step);
-                const fixedClient = qnaDialog.getQnAClient(step);
-
-                ok(fixedClient instanceof QnAMaker);
-                strictEqual(fixedClient.endpoint.knowledgeBaseId, kbId);
-                strictEqual(fixedClient.endpoint.endpointKey, endpointKey);
-                strictEqual(fixedClient.endpoint.host, hostname);
-                
-                return Dialog.EndOfTurn;
-            });
-
-            // Begin dialog
-            await adapter.send(beginMessage);
+            const HOSTNAME = 'https://myqnainstance.azurewebsites.net/qnamaker';
+    
+            // Create QnAMakerDialog with incomplete hostname
+            const qnaDialog = new QnAMakerDialog(kbId, endpointKey, INCOMPLETE_HOSTNAME);
+            const fixedClient = await qnaDialog.getQnAClient({state: {}});
+    
+            ok(fixedClient instanceof QnAMaker);
+            strictEqual(fixedClient.endpoint.knowledgeBaseId, kbId);
+            strictEqual(fixedClient.endpoint.endpointKey, endpointKey);
+            strictEqual(fixedClient.endpoint.host, HOSTNAME);
         });
-
-
+    
         it('should construct BAD v4 hostnames', async () => {
-            // Add QnAMakerDialog
             const createHostName = (hostName) => `https://${ hostName }.azurewebsites.net/qnamaker`;
             const NOT_V5_HOSTNAME = 'myqnainstance.net/qnamaker';
-            
-            const convoState = new ConversationState(new MemoryStorage());
-            const dialogState = convoState.createProperty('dialogState');
-            const dialogs = new DialogSet(dialogState);
+    
             // Missing authority
-            dialogs.add(new QnAMakerDialog(kbId, endpointKey, NOT_V5_HOSTNAME));
-
-            const adapter = new TestAdapter(async (turnContext) => {
-                const dc = await dialogs.createContext(turnContext);
-                const results = await dc.continueDialog();
-
-                if (results.status === DialogTurnStatus.empty) {
-                    await dc.beginDialog('QnAMakerDialog');
-                }
-                
-                await convoState.saveChanges(turnContext);
-            });
-            
-            // Add custom assertion step as the first step of QnAMakerDialog steps
-            const qnaDialog = dialogs.find('QnAMakerDialog');
-            qnaDialog.steps.unshift(async (step) => {
-                ok(step);
-                const noAuthorityClient = qnaDialog.getQnAClient(step);
-
-                ok(noAuthorityClient instanceof QnAMaker);
-                strictEqual(noAuthorityClient.endpoint.knowledgeBaseId,  kbId);
-                strictEqual(noAuthorityClient.endpoint.endpointKey, endpointKey);
-                strictEqual(noAuthorityClient.endpoint.host, createHostName(NOT_V5_HOSTNAME));
-                
-                return Dialog.EndOfTurn;
-            });
-
-            // Begin dialog
-            await adapter.send(beginMessage);
+            const noAuthority = new QnAMakerDialog(kbId, endpointKey, NOT_V5_HOSTNAME);
+            const noAuthorityClient = await noAuthority.getQnAClient({state: {}});
+    
+            ok(noAuthorityClient instanceof QnAMaker);
+            strictEqual(noAuthorityClient.endpoint.knowledgeBaseId,  kbId);
+            strictEqual(noAuthorityClient.endpoint.endpointKey, endpointKey);
+            strictEqual(noAuthorityClient.endpoint.host, createHostName(NOT_V5_HOSTNAME));
         });
         
         it('should log telemetry that includes question and username if logPersonalInformation is true in env file', async () => {
@@ -214,7 +118,7 @@ describe('QnAMakerDialog', function() {
             const qnaDialog = new QnAMakerDialog(kbId, endpointKey, HOSTNAME);
             qnaDialog.steps.unshift(async (step) => {
                 ok(step);
-                const qnaClient = qnaDialog.getQnAClient(step);
+                const qnaClient = await qnaDialog.getQnAClient(step);
 
                 ok(qnaClient instanceof QnAMaker);
                 ok(qnaClient.telemetryClient);
@@ -289,7 +193,7 @@ describe('QnAMakerDialog', function() {
 
             qnaDialog.steps.unshift(async (step) => {
                 ok(step);
-                const qnaClient = qnaDialog.getQnAClient(step);
+                const qnaClient = await qnaDialog.getQnAClient(step);
 
                 ok(qnaClient instanceof QnAMaker);
                 ok(qnaClient.telemetryClient);

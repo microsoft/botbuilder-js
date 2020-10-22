@@ -6,6 +6,9 @@
  * Licensed under the MIT License.
  */
 
+/**
+ * Defines paths for the available scopes.
+ */
 export class ScopePath {
     /**
      * User memory scope root path.
@@ -26,6 +29,11 @@ export class ScopePath {
      * DialogClass memory scope root path.
      */
     static readonly dialogClass = 'dialogClass';
+
+    /**
+     * DialogContext memory scope root path.
+     */
+    static readonly dialogContext = 'dialogContext';
 
     /**
      * This memory scope root path.

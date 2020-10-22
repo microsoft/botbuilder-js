@@ -22,10 +22,16 @@ import { TimeZoneConverter } from '../timeZoneConverter';
  * Convert a timestamp to Universal Time Coordinated (UTC) from the source time zone.
  */
 export class ConvertToUTC extends ExpressionEvaluator {
+    /**
+     * Initializes a new instance of the [ConvertToUTC](xref:adaptive-expressions.ConvertToUTC) class.
+     */
     public constructor() {
         super(ExpressionType.ConvertToUTC, ConvertToUTC.evaluator, ReturnType.String, ConvertToUTC.validator);
     }
 
+    /**
+     * @private
+     */
     private static evaluator(expression: Expression, state: MemoryInterface, options: Options): ValueWithError {
         let value: any;
         const { args, error: childrenError } = FunctionUtils.evaluateChildren(expression, state, options);
@@ -43,6 +49,9 @@ export class ConvertToUTC extends ExpressionEvaluator {
         return { value, error };
     }
 
+    /**
+     * @private
+     */
     private static verifyTimeStamp(timeStamp: string): string | undefined {
         const parsed = moment(timeStamp);
         if (parsed.toString() === 'Invalid date') {
@@ -52,6 +61,9 @@ export class ConvertToUTC extends ExpressionEvaluator {
         return undefined;
     }
 
+    /**
+     * @private
+     */
     private static evalConvertToUTC(timeStamp: string, sourceTimezone: string, format?: string): ValueWithError {
         let result: string;
         let error: string;
@@ -84,6 +96,9 @@ export class ConvertToUTC extends ExpressionEvaluator {
         return { value: result, error };
     }
 
+    /**
+     * @private
+     */
     private static validator(expr: Expression): void {
         FunctionUtils.validateOrder(expr, [ReturnType.String], ReturnType.String, ReturnType.String);
     }

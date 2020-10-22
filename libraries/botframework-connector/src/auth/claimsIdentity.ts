@@ -17,12 +17,19 @@ export interface Claim {
  * Represents a claims-based identity.
  */
 export class ClaimsIdentity {
-    public readonly isAuthenticated: boolean;
-    public readonly claims: Claim[];
+    /**
+     * Initializes a new instance of the [ClaimsIdentity](xref:botframework-connector.ClaimsIdentity) class.
+     * @param claims An array of [Claim](xref:botframework-connector.Claim).
+     * @param authenticationType The type of auth for this set of claims, or boolean to override isAuthenticated
+     */
+    constructor(public readonly claims: Claim[], private readonly authenticationType?: string | boolean) {}
 
-    constructor(claims: Claim[], isAuthenticated: boolean) {
-        this.claims = claims;
-        this.isAuthenticated = isAuthenticated;
+    public get isAuthenticated(): boolean {
+        if (typeof this.authenticationType === 'boolean') {
+            return this.authenticationType;
+        }
+
+        return this.authenticationType != null;
     }
 
     /**
@@ -31,7 +38,7 @@ export class ClaimsIdentity {
      * @returns {string|null} The claim value or null if not found
      */
     public getClaimValue(claimType: string): string | null {
-        const claim: Claim = this.claims.find((c: Claim) => c.type === claimType);
+        const claim = this.claims.find((c) => c.type === claimType);
 
         return claim ? claim.value : null;
     }

@@ -29,6 +29,12 @@ import { DialogContext } from './dialogContext';
 import { DialogEvents } from './dialogEvents';
 import { SkillDialogOptions } from './skillDialogOptions';
 
+/**
+ * A specialized Dialog that can wrap remote calls to a skill.
+ * @remarks
+ * The options parameter in beginDialog must be a BeginSkillDialogOptions instance
+ * with the initial parameters for the dialog.
+ */
 export class SkillDialog extends Dialog<Partial<BeginSkillDialogOptions>> {
     protected dialogOptions: SkillDialogOptions;
 
@@ -54,15 +60,16 @@ export class SkillDialog extends Dialog<Partial<BeginSkillDialogOptions>> {
         this.dialogOptions = dialogOptions;
     }
 
+    /**
+     * Called when the skill dialog is started and pushed onto the dialog stack.
+     * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
+     * @param options Initial information to pass to the dialog.
+     * @returns A Promise representing the asynchronous operation.
+     * @remarks
+     * If the task is successful, the result indicates whether the dialog is still active after the turn has been processed by the dialog.
+     */
     public async beginDialog(dc: DialogContext, options: BeginSkillDialogOptions): Promise<DialogTurnResult> {
         const dialogArgs = this.validateBeginDialogArgs(options);
-
-        await dc.context.sendTraceActivity(
-            `${this.id}.beginDialog()`,
-            undefined,
-            undefined,
-            `Using activity of type: ${dialogArgs.activity.type}`
-        );
 
         // Create deep clone of the original activity to avoid altering it before forwarding it.
         const clonedActivity = this.cloneActivity(dialogArgs.activity);
@@ -89,26 +96,23 @@ export class SkillDialog extends Dialog<Partial<BeginSkillDialogOptions>> {
         return Dialog.EndOfTurn;
     }
 
+    /**
+     * Called when the skill dialog is _continued_, where it is the active dialog and the
+     * user replies with a new [Activity](xref:botframework-schema.Activity).
+     * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
+     * @returns A Promise representing the asynchronous operation.
+     * @remarks
+     * If the task is successful, the result indicates whether the dialog is still
+     * active after the turn has been processed by the dialog. The result may also contain a
+     * return value.
+     */
     public async continueDialog(dc: DialogContext): Promise<DialogTurnResult> {
         if (!this.onValidateActivity(dc.context.activity)) {
             return Dialog.EndOfTurn;
         }
 
-        await dc.context.sendTraceActivity(
-            `${this.id}.continueDialog()`,
-            undefined,
-            undefined,
-            `ActivityType: ${dc.context.activity.type}`
-        );
-
         // Handle EndOfConversation from the skill (this will be sent to the this dialog by the SkillHandler if received from the Skill)
         if (dc.context.activity.type === ActivityTypes.EndOfConversation) {
-            await dc.context.sendTraceActivity(
-                `${this.id}.continueDialog()`,
-                undefined,
-                undefined,
-                `Got ${ActivityTypes.EndOfConversation}`
-            );
             return await dc.endDialog(dc.context.activity.value);
         }
 
@@ -128,16 +132,16 @@ export class SkillDialog extends Dialog<Partial<BeginSkillDialogOptions>> {
         return Dialog.EndOfTurn;
     }
 
+    /**
+     * Called when the skill dialog is ending.
+     * @param context The [TurnContext](xref:botbuilder-core.TurnContext) object for this turn.
+     * @param instance State information associated with the instance of this dialog on the dialog stack.
+     * @param reason [Reason](xref:botbuilder-dialogs.DialogReason) why the dialog ended.
+     * @returns A Promise representing the asynchronous operation.
+     */
     public async endDialog(context: TurnContext, instance: DialogInstance, reason: DialogReason): Promise<void> {
         // Send of of conversation to the skill if the dialog has been cancelled.
         if (reason == DialogReason.cancelCalled || reason == DialogReason.replaceCalled) {
-            await context.sendTraceActivity(
-                `${this.id}.endDialog()`,
-                undefined,
-                undefined,
-                `ActivityType: ${context.activity.type}`
-            );
-
             const reference = TurnContext.getConversationReference(context.activity);
             // Apply conversation reference and common properties from incoming activity before sending.
             const activity = TurnContext.applyConversationReference(
@@ -156,6 +160,12 @@ export class SkillDialog extends Dialog<Partial<BeginSkillDialogOptions>> {
         await super.endDialog(context, instance, reason);
     }
 
+    /**
+     * Called when the skill dialog should re-prompt the user for input.
+     * @param context The [TurnContext](xref:botbuilder-core.TurnContext) object for this turn.
+     * @param instance State information for this dialog.
+     * @returns A Promise representing the asynchronous operation.
+     */
     public async repromptDialog(context: TurnContext, instance: DialogInstance): Promise<void> {
         // Create and send an envent to the skill so it can resume the dialog.
         const repromptEvent = { type: ActivityTypes.Event, name: DialogEvents.repromptDialog };
@@ -170,6 +180,14 @@ export class SkillDialog extends Dialog<Partial<BeginSkillDialogOptions>> {
         await this.sendToSkill(context, activity, skillConversationId);
     }
 
+    /**
+     * Called when a child skill dialog completed its turn, returning control to this dialog.
+     * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of the conversation.
+     * @param reason [Reason](xref:botbuilder-dialogs.DialogReason) why the dialog resumed.
+     * @param result Optional, value returned from the dialog that was called. The type
+     * of the value returned is dependent on the child dialog.
+     * @returns A Promise representing the asynchronous operation.
+     */
     public async resumeDialog(dc: DialogContext, reason: DialogReason, result?: any): Promise<DialogTurnResult> {
         await this.repromptDialog(dc.context, dc.activeDialog);
         return Dialog.EndOfTurn;
@@ -197,6 +215,9 @@ export class SkillDialog extends Dialog<Partial<BeginSkillDialogOptions>> {
         return JSON.parse(JSON.stringify(activity));
     }
 
+    /**
+     * @private
+     */
     private validateBeginDialogArgs(options: BeginSkillDialogOptions): BeginSkillDialogOptions {
         if (!options) {
             throw new TypeError('Missing options parameter');
@@ -209,6 +230,9 @@ export class SkillDialog extends Dialog<Partial<BeginSkillDialogOptions>> {
         return options;
     }
 
+    /**
+     * @private
+     */
     private async sendToSkill(
         context: TurnContext,
         activity: Activity,
@@ -321,6 +345,9 @@ export class SkillDialog extends Dialog<Partial<BeginSkillDialogOptions>> {
         return false;
     }
 
+    /**
+     * @private
+     */
     private async sendTokenExchangeInvokeToSkill(
         incomingActivity: Activity,
         id: string,
@@ -348,8 +375,14 @@ export class SkillDialog extends Dialog<Partial<BeginSkillDialogOptions>> {
         return isSuccessStatusCode(response.status);
     }
 
+    /**
+     * @private
+     * Create a conversationId to interact with the skill and send the [Activity](xref:botframework-schema.Activity).
+     * @param context [TurnContext](xref:botbuilder-core.TurnContext) for the current turn of conversation with the user.
+     * @param activity [Activity](xref:botframework-schema.Activity) to send.
+     * @returns The Skill Conversation ID.
+     */
     private async createSkillConversationId(context: TurnContext, activity: Activity) {
-        // Create a conversationId to interact with the skill and send the activity
         const conversationIdFactoryOptions: SkillConversationIdFactoryOptions = {
             fromBotOAuthScope: context.turnState.get(context.adapter.OAuthScopeKey),
             fromBotId: this.dialogOptions.botId,
@@ -374,6 +407,12 @@ export class SkillDialog extends Dialog<Partial<BeginSkillDialogOptions>> {
         return skillConversationId;
     }
 
+    /**
+     * @private
+     * Gets the Skill Conversation ID from a given instance.
+     * @param instance [DialogInstance](xref:botbuilder-dialogs.DialogInstance) from which to look for its ID.
+     * @returns Instance conversation ID.
+     */
     private getSkillConversationIdFromInstance(instance: DialogInstance): string {
         if (instance && instance.state) {
             return instance.state[this.SkillConversationIdStateKey];

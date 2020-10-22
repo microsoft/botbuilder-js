@@ -21,6 +21,12 @@ import { DialogEvents } from './dialogEvents';
 import { DialogSet } from './dialogSet';
 import { AuthConstants, GovConstants, isSkillClaim } from './prompts/skillsHelpers';
 
+/**
+ * Runs a dialog from a given context and accesor.
+ * @param dialog The [Dialog](xref:botbuilder-dialogs.Dialog) to run.
+ * @param context [TurnContext](xref:botbuilder-core.TurnContext) object for the current turn of conversation with the user.
+ * @param accessor Defined methods for accessing the state property created in a BotState object.
+ */
 export async function runDialog(
     dialog: Dialog,
     context: TurnContext,
@@ -59,8 +65,6 @@ export async function runDialog(
             }
 
             const activeDialogContext = getActiveDialogContext(dialogContext);
-            const remoteCancelText = 'Skill was canceled through an EndOfConversation activity from the parent.';
-            await context.sendTraceActivity(telemetryEventName, undefined, undefined, `${remoteCancelText}`);
 
             // Send cancellation message to the top dialog in the stack to ensure all the parents are canceled in the right order.
             await activeDialogContext.cancelAllDialogs(true);
@@ -87,9 +91,6 @@ export async function runDialog(
 
     if (result.status === DialogTurnStatus.complete || result.status === DialogTurnStatus.cancelled) {
         if (shouldSendEndOfConversationToParent(context, result)) {
-            const endMessageText = `Dialog ${dialog.id} has **completed**. Sending EndOfConversation.`;
-            await context.sendTraceActivity(telemetryEventName, result.result, undefined, `${endMessageText}`);
-
             // Send End of conversation at the end.
             const code =
                 result.status == DialogTurnStatus.complete
@@ -138,7 +139,11 @@ export function shouldSendEndOfConversationToParent(context: TurnContext, turnRe
     return false;
 }
 
-// Recursively walk up the DC stack to find the active DC.
+/**
+ * Recursively walk up the DC stack to find the active DC.
+ * @param dialogContext [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation with the user.
+ * @returns Active [DialogContext](xref:botbuilder-dialogs.DialogContext).
+ */
 export function getActiveDialogContext(dialogContext: DialogContext): DialogContext {
     const child = dialogContext.child;
     if (!child) {
@@ -148,6 +153,11 @@ export function getActiveDialogContext(dialogContext: DialogContext): DialogCont
     return getActiveDialogContext(child);
 }
 
+/**
+ * Determines if the skill is acting as a skill parent.
+ * @param context [TurnContext](xref:botbuilder-core.TurnContext) object for the current turn of conversation with the user.
+ * @returns A boolean representing if the skill is acting as a skill parent.
+ */
 export function isFromParentToSkill(context: TurnContext): boolean {
     // If a SkillConversationReference exists, it was likely set by the SkillHandler and the bot is acting as a parent.
     if (context.turnState.get(SkillConversationReferenceKey)) {

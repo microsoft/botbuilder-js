@@ -5,6 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
+import { QnAMakerComponentRegistration, LuisComponentRegistration } from 'botbuilder-ai';
 import { ComponentRegistration, TestAdapter } from 'botbuilder-core';
 import { AdaptiveComponentRegistration } from 'botbuilder-dialogs-adaptive';
 import { ResourceExplorer } from 'botbuilder-dialogs-declarative';
@@ -25,6 +26,8 @@ export class TestRunner {
     public constructor(resourcePath: string) {
         ComponentRegistration.add(new AdaptiveComponentRegistration());
         ComponentRegistration.add(new AdaptiveTestComponentRegistration());
+        ComponentRegistration.add(new QnAMakerComponentRegistration());
+        ComponentRegistration.add(new LuisComponentRegistration());
 
         this.resourceExplorer = new ResourceExplorer();
         this.resourceExplorer.addFolder(resourcePath, true, false);

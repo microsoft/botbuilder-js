@@ -7,8 +7,7 @@
  */
 
 import { Activity } from 'botbuilder-core';
-import { DialogContext } from 'botbuilder-dialogs';
-import { TemplateInterface } from '../template';
+import { DialogContext, TemplateInterface } from 'botbuilder-dialogs';
 
 /**
  * Defines a static activity as a template.

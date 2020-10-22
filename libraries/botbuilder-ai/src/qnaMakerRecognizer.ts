@@ -21,19 +21,18 @@ import {
     StringExpression,
     StringExpressionConverter,
 } from 'adaptive-expressions';
+import { RecognizerResult, Activity } from 'botbuilder-core';
+import { Converter, ConverterFactory, DialogContext, Recognizer, RecognizerConfiguration } from 'botbuilder-dialogs';
+import { QnAMaker } from './qnaMaker';
 import {
     JoinOperator,
-    QnAMakerMetadata,
-    QnAMaker,
     QnAMakerEndpoint,
+    QnAMakerMetadata,
     QnAMakerOptions,
     QnAMakerResult,
     QnARequestContext,
     RankerTypes,
-} from 'botbuilder-ai';
-import { RecognizerResult, Activity } from 'botbuilder-core';
-import { Converter, ConverterFactory, DialogContext } from 'botbuilder-dialogs';
-import { Recognizer, RecognizerConfiguration } from '../recognizers/recognizer';
+} from './qnamaker-interfaces';
 
 const intentPrefix = 'intent=';
 

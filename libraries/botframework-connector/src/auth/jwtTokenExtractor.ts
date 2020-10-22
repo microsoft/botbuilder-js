@@ -12,6 +12,9 @@ import { OpenIdMetadata } from './openIdMetadata';
 import { AuthenticationError } from './authenticationError';
 import { StatusCodes } from 'botframework-schema';
 
+/**
+ * A JWT token processing class that gets identity information and performs security token validation.
+ */
 export class JwtTokenExtractor {
     // Cache for OpenIdConnect configuration managers (one per metadata URL)
     private static openIdMetadataCache: Map<string, OpenIdMetadata> = new Map<string, OpenIdMetadata>();
@@ -22,12 +25,21 @@ export class JwtTokenExtractor {
     // OpenIdMetadata for this instance
     public readonly openIdMetadata: OpenIdMetadata;
 
+    /**
+     * Initializes a new instance of the [JwtTokenExtractor](xref:botframework-connector.JwtTokenExtractor) class. Extracts relevant data from JWT Tokens.
+     * @param tokenValidationParameters Token validation parameters.
+     * @param metadataUrl Metadata Url.
+     * @param allowedSigningAlgorithms Allowed signing algorithms.
+     */
     constructor(tokenValidationParameters: VerifyOptions, metadataUrl: string, allowedSigningAlgorithms: string[]) {
         this.tokenValidationParameters = { ...tokenValidationParameters };
         this.tokenValidationParameters.algorithms = allowedSigningAlgorithms;
         this.openIdMetadata = JwtTokenExtractor.getOrAddOpenIdMetadata(metadataUrl);
     }
 
+    /**
+     * @private
+     */
     private static getOrAddOpenIdMetadata(metadataUrl: string): OpenIdMetadata {
         let metadata: OpenIdMetadata = JwtTokenExtractor.openIdMetadataCache.get(metadataUrl);
         if (!metadata) {
@@ -38,6 +50,13 @@ export class JwtTokenExtractor {
         return metadata;
     }
 
+    /**
+     * Gets the claims identity associated with a request.
+     * @param authorizationHeader The raw HTTP header in the format: "Bearer [longString]".
+     * @param channelId The Id of the channel being validated in the original request.
+     * @param requiredEndorsements The required JWT endorsements.
+     * @returns A `Promise` representation for either a [ClaimsIdentity](botframework-connector:module.ClaimsIdentity) or `null`.
+     */
     public async getIdentityFromAuthHeader(
         authorizationHeader: string,
         channelId: string,
@@ -55,6 +74,14 @@ export class JwtTokenExtractor {
         return null;
     }
 
+    /**
+     * Gets the claims identity associated with a request.
+     * @param scheme The associated scheme.
+     * @param parameter The token.
+     * @param channelId The Id of the channel being validated in the original request.
+     * @param requiredEndorsements The required JWT endorsements.
+     * @returns A `Promise` representation for either a [ClaimsIdentity](botframework-connector:module.ClaimsIdentity) or `null`.
+     */
     public async getIdentity(
         scheme: string,
         parameter: string,
@@ -80,9 +107,18 @@ export class JwtTokenExtractor {
         }
     }
 
+    /**
+     * @private
+     */
     private hasAllowedIssuer(jwtToken: string): boolean {
-        const decoded: any = decode(jwtToken, { complete: true });
-        const issuer: string = decoded.payload.iss;
+        const payload = decode(jwtToken);
+
+        let issuer: string;
+        if (payload && typeof payload === 'object') {
+            issuer = payload.iss;
+        } else {
+            return false;
+        }
 
         if (Array.isArray(this.tokenValidationParameters.issuer)) {
             return this.tokenValidationParameters.issuer.indexOf(issuer) !== -1;
@@ -95,28 +131,39 @@ export class JwtTokenExtractor {
         return false;
     }
 
+    /**
+     * @private
+     */
     private async validateToken(
         jwtToken: string,
         channelId: string,
         requiredEndorsements: string[]
     ): Promise<ClaimsIdentity> {
-        const decodedToken: any = decode(jwtToken, { complete: true });
+        let header: Partial<Record<'kid' | 'alg', string>> = {};
+        const decodedToken = decode(jwtToken, { complete: true });
+        if (decodedToken && typeof decodedToken === 'object') {
+            header = decodedToken.header;
+        }
 
         // Update the signing tokens from the last refresh
-        const keyId: string = decodedToken.header.kid;
-        const metadata: any = await this.openIdMetadata.getKey(keyId);
+        const keyId = header.kid;
+        const metadata = await this.openIdMetadata.getKey(keyId);
         if (!metadata) {
             throw new AuthenticationError('Signing Key could not be retrieved.', StatusCodes.UNAUTHORIZED);
         }
 
         try {
-            const decodedPayload: any = verify(jwtToken, metadata.key, this.tokenValidationParameters);
+            let decodedPayload: Record<string, string> = {};
+            const verifyResults = verify(jwtToken, metadata.key, this.tokenValidationParameters);
+            if (verifyResults && typeof verifyResults === 'object') {
+                // Note: casting is necessary here, but we know `object` is loosely equivalent to a Record
+                decodedPayload = verifyResults as Record<string, string>;
+            }
 
             // enforce endorsements in openIdMetadadata if there is any endorsements associated with the key
-            const endorsements: any = metadata.endorsements;
-
+            const endorsements = metadata.endorsements;
             if (Array.isArray(endorsements) && endorsements.length !== 0) {
-                const isEndorsed: boolean = EndorsementsValidator.validate(channelId, endorsements);
+                const isEndorsed = EndorsementsValidator.validate(channelId, endorsements);
                 if (!isEndorsed) {
                     throw new AuthenticationError(
                         `Could not validate endorsement for key: ${keyId} with endorsements: ${endorsements.join(',')}`,
@@ -140,23 +187,20 @@ export class JwtTokenExtractor {
             }
 
             if (this.tokenValidationParameters.algorithms) {
-                if (this.tokenValidationParameters.algorithms.indexOf(decodedToken.header.alg) === -1) {
+                if (this.tokenValidationParameters.algorithms.indexOf(header.alg) === -1) {
                     throw new AuthenticationError(
-                        `"Token signing algorithm '${decodedToken.header.alg}' not in allowed list`,
+                        `"Token signing algorithm '${header.alg}' not in allowed list`,
                         StatusCodes.UNAUTHORIZED
                     );
                 }
             }
 
-            const claims: Claim[] = Object.keys(decodedPayload).reduce((acc: any, key: any) => {
-                acc.push({ type: key, value: decodedPayload[key] });
+            const claims = Object.entries(decodedPayload).map<Claim>(([type, value]) => ({ type, value }));
 
-                return acc;
-            }, <Claim[]>[]);
-
+            // Note: true is used here to indicate that these claims are to be considered authenticated. They are sourced
+            // from a validated JWT (see `verify` above), so no harm in doing so.
             return new ClaimsIdentity(claims, true);
         } catch (err) {
-            // tslint:disable-next-line:no-console
             console.error(`Error finding key for token. Available keys: ${metadata.key}`);
             throw err;
         }

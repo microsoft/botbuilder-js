@@ -6,8 +6,7 @@
  * Licensed under the MIT License.
  */
 
-import { DialogContext } from 'botbuilder-dialogs';
-import { TemplateInterface } from '../template';
+import { DialogContext, TemplateInterface } from 'botbuilder-dialogs';
 import { LanguageGenerator } from '../languageGenerator';
 import { languageGeneratorKey } from '../languageGeneratorExtensions';
 

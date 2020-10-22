@@ -7,7 +7,7 @@
  */
 
 import axios from 'axios';
-import { Activity, BotFrameworkClient, InvokeResponse } from 'botbuilder-core';
+import { Activity, BotFrameworkClient, ChannelAccount, InvokeResponse, RoleTypes } from 'botbuilder-core';
 import {
     AuthenticationConstants,
     AppCredentials,
@@ -32,6 +32,11 @@ export class BotFrameworkHttpClient implements BotFrameworkClient {
     private static readonly appCredentialMapCache: Map<string, AppCredentials> = new Map<string, AppCredentials>();
     private readonly credentialProvider: ICredentialProvider;
 
+    /**
+     * Creates a new instance of the [BotFrameworkHttpClient](xref:botbuilder.BotFrameworkHttpClient) class
+     * @param credentialProvider An instance of [ICredentialProvider](xref:botframework-connector.ICredentialProvider).
+     * @param channelService Optional. The channel service.
+     */
     public constructor(credentialProvider: ICredentialProvider, channelService?: string) {
         if (!credentialProvider) {
             throw new Error('BotFrameworkHttpClient(): missing credentialProvider');
@@ -42,7 +47,7 @@ export class BotFrameworkHttpClient implements BotFrameworkClient {
     }
 
     /**
-     * Forwards an activity to a another bot.
+     * Forwards an activity to another bot.
      * @remarks
      *
      * @template T The type of body in the InvokeResponse.
@@ -53,22 +58,6 @@ export class BotFrameworkHttpClient implements BotFrameworkClient {
      * @param conversationId A conversation ID to use for the conversation with the skill.
      * @param activity Activity to forward.
      */
-    public async postActivity<T>(
-        fromBotId: string,
-        toBotId: string,
-        toUrl: string,
-        serviceUrl: string,
-        conversationId: string,
-        activity: Activity
-    ): Promise<InvokeResponse<T>>;
-    public async postActivity(
-        fromBotId: string,
-        toBotId: string,
-        toUrl: string,
-        serviceUrl: string,
-        conversationId: string,
-        activity: Activity
-    ): Promise<InvokeResponse>;
     public async postActivity<T = any>(
         fromBotId: string,
         toBotId: string,
@@ -101,6 +90,7 @@ export class BotFrameworkHttpClient implements BotFrameworkClient {
         const originalServiceUrl = activity.serviceUrl;
         const originalRelatesTo = activity.relatesTo;
         const originalRecipient = activity.recipient;
+
         try {
             activity.relatesTo = {
                 serviceUrl: activity.serviceUrl,
@@ -123,10 +113,11 @@ export class BotFrameworkHttpClient implements BotFrameworkClient {
 
             // Fixes: https://github.com/microsoft/botframework-sdk/issues/5785
             if (!activity.recipient) {
-                activity.recipient = {} as any;
+                activity.recipient = {} as ChannelAccount;
             }
+            activity.recipient.role = RoleTypes.Skill;
 
-            const config = {
+            const config: { headers: Record<string, string>; validateStatus: () => boolean } = {
                 headers: {
                     Accept: 'application/json',
                     'Content-Type': 'application/json',
@@ -136,13 +127,11 @@ export class BotFrameworkHttpClient implements BotFrameworkClient {
             };
 
             if (token) {
-                config.headers['Authorization'] = `Bearer ${token}`;
+                config.headers.Authorization = `Bearer ${token}`;
             }
 
-            const response = await axios.post(toUrl, activity, config);
-            const invokeResponse: InvokeResponse<T> = { status: response.status, body: response.data };
-
-            return invokeResponse;
+            const response = await axios.post<T>(toUrl, activity, config);
+            return { status: response.status, body: response.data };
         } finally {
             // Restore activity properties.
             activity.conversation.id = originalConversationId;
@@ -152,16 +141,22 @@ export class BotFrameworkHttpClient implements BotFrameworkClient {
         }
     }
 
+    /**
+     * Logic to build an [AppCredentials](xref:botframework-connector.AppCredentials) to be used to acquire tokens for this `HttpClient`.
+     * @param appId The application id.
+     * @param oAuthScope Optional. The OAuth scope.
+     * 
+     * @returns The app credentials to be used to acquire tokens.
+     */
     protected async buildCredentials(appId: string, oAuthScope?: string): Promise<AppCredentials> {
         const appPassword = await this.credentialProvider.getAppPassword(appId);
-        let appCredentials;
         if (JwtTokenValidation.isGovernment(this.channelService)) {
-            appCredentials = new MicrosoftAppCredentials(appId, appPassword, undefined, oAuthScope);
+            const appCredentials = new MicrosoftAppCredentials(appId, appPassword, undefined, oAuthScope);
             appCredentials.oAuthEndpoint = GovernmentConstants.ToChannelFromBotLoginUrl;
+            return appCredentials;
         } else {
-            appCredentials = new MicrosoftAppCredentials(appId, appPassword, undefined, oAuthScope);
+            return new MicrosoftAppCredentials(appId, appPassword, undefined, oAuthScope);
         }
-        return appCredentials;
     }
 
     /**
@@ -183,7 +178,7 @@ export class BotFrameworkHttpClient implements BotFrameworkClient {
         }
 
         // Credentials not found in cache, build them
-        appCredentials = (await this.buildCredentials(appId, oAuthScope)) as MicrosoftAppCredentials;
+        appCredentials = await this.buildCredentials(appId, oAuthScope);
 
         // Cache the credentials for later use
         BotFrameworkHttpClient.appCredentialMapCache.set(cacheKey, appCredentials);

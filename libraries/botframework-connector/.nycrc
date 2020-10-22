@@ -6,6 +6,7 @@
     "lib/**/*.js"
   ],
   "exclude": [
+    "lib/browser*.js",
     "**/node_modules/**",
     "**/tests/**",
     "**/coverage/**",

@@ -7,10 +7,10 @@
  */
 
 import { Activity, RecognizerResult } from 'botbuilder-core';
-import { Converter, ConverterFactory, DialogContext } from 'botbuilder-dialogs';
-import { Recognizer, RecognizerConfiguration } from './recognizer';
+import { Converter, ConverterFactory, DialogContext, Recognizer, RecognizerConfiguration } from 'botbuilder-dialogs';
 import { LanguagePolicy, LanguagePolicyConverter } from '../languagePolicy';
 import { MultiLanguageRecognizerConverter } from '../converters';
+import { languagePolicyKey } from '../languageGeneratorExtensions';
 
 export interface MultiLanguageRecognizerConfiguration extends RecognizerConfiguration {
     languagePolicy?: Record<string, string[]> | LanguagePolicy;
@@ -20,7 +20,7 @@ export interface MultiLanguageRecognizerConfiguration extends RecognizerConfigur
 export class MultiLanguageRecognizer extends Recognizer implements MultiLanguageRecognizerConfiguration {
     public static $kind = 'Microsoft.MultiLanguageRecognizer';
 
-    public languagePolicy: LanguagePolicy = new LanguagePolicy();
+    public languagePolicy: LanguagePolicy;
 
     public recognizers: { [locale: string]: Recognizer };
 
@@ -41,15 +41,23 @@ export class MultiLanguageRecognizer extends Recognizer implements MultiLanguage
         telemetryProperties?: { [key: string]: string },
         telemetryMetrics?: { [key: string]: number }
     ): Promise<RecognizerResult> {
-        const locale = activity.locale || '';
-        const policy: string[] = [];
-        if (this.languagePolicy.has(locale)) {
-            this.languagePolicy.get(locale).forEach((u: string): number => policy.push(u));
+        let languagepolicy: LanguagePolicy = this.languagePolicy;
+        if (!languagepolicy) {
+            languagepolicy = dialogContext.services.get(languagePolicyKey);
+            if (!languagepolicy) {
+                languagepolicy = new LanguagePolicy();
+            }
         }
 
-        if (locale !== '' && this.languagePolicy.has('')) {
+        const locale = activity.locale || '';
+        const policy: string[] = [];
+        if (languagepolicy.has(locale)) {
+            languagepolicy.get(locale).forEach((u: string): number => policy.push(u));
+        }
+
+        if (locale !== '' && languagepolicy.has('')) {
             // we now explictly add defaultPolicy instead of coding that into target's policy
-            this.languagePolicy.get('').forEach((u: string): number => policy.push(u));
+            languagepolicy.get('').forEach((u: string): number => policy.push(u));
         }
 
         for (let i = 0; i < policy.length; i++) {

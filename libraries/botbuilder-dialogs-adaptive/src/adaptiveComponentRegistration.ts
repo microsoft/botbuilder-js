@@ -161,8 +161,6 @@ import {
     TemperatureEntityRecognizer,
     UrlEntityRecognizer,
 } from './recognizers';
-import { LuisAdaptiveRecognizer, LuisAdaptiveRecognizerConfiguration } from './luis';
-import { QnAMakerRecognizer, QnAMakerRecognizerConfiguration } from './qnaMaker';
 import {
     ResourceMultiLanguageGenerator,
     ResourceMultiLanguageGeneratorConfiguration,
@@ -275,7 +273,6 @@ export class AdaptiveComponentRegistration extends ComponentRegistration impleme
         this._addDeclarativeType<TextInput, TextInputConfiguration>(TextInput);
 
         // Recognizers
-        this._addDeclarativeType<LuisAdaptiveRecognizer, LuisAdaptiveRecognizerConfiguration>(LuisAdaptiveRecognizer);
         this._addDeclarativeType<CrossTrainedRecognizerSet, CrossTrainedRecognizerSetConfiguration>(
             CrossTrainedRecognizerSet
         );
@@ -301,7 +298,6 @@ export class AdaptiveComponentRegistration extends ComponentRegistration impleme
         this._addDeclarativeType<RegexEntityRecognizer, RegexEntityRecognizerConfiguration>(RegexEntityRecognizer);
         this._addDeclarativeType<TemperatureEntityRecognizer, unknown>(TemperatureEntityRecognizer);
         this._addDeclarativeType<UrlEntityRecognizer, unknown>(UrlEntityRecognizer);
-        this._addDeclarativeType<QnAMakerRecognizer, QnAMakerRecognizerConfiguration>(QnAMakerRecognizer);
 
         // Generators
         this._addDeclarativeType<TemplateEngineLanguageGenerator, TemplateEngineLanguageGeneratorConfiguration>(
