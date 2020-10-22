@@ -87,9 +87,9 @@ export class ChoicePrompt extends Prompt<FoundChoice> {
 
         // Format prompt to send
         let prompt: Partial<Activity>;
-        const choices: any[] = (this.style === ListStyle.suggestedAction ? ChoiceFactory.toChoices(options.choices) : options.choices) || [];
-        const channelId: string = context.activity.channelId;
-        const choiceOptions: ChoiceFactoryOptions = this.choiceOptions || this.choiceDefaults[locale];
+        const choices = (this.style === ListStyle.suggestedAction ? ChoiceFactory.toChoices(options.choices) : options.choices) || [];
+        const channelId = context.activity.channelId;
+        const choiceOptions = this.choiceOptions || this.choiceDefaults[locale];
         const choiceStyle: ListStyle = options.style === 0 ? 0 : options.style || this.style;
         if (isRetry && options.retryPrompt) {
             prompt = this.appendChoices(options.retryPrompt, channelId, choices, choiceStyle, choiceOptions);
@@ -104,15 +104,15 @@ export class ChoicePrompt extends Prompt<FoundChoice> {
     protected async onRecognize(context: TurnContext, state: any, options: PromptOptions): Promise<PromptRecognizerResult<FoundChoice>> {
 
         const result: PromptRecognizerResult<FoundChoice> = { succeeded: false };
-        const activity: Activity = context.activity;
-        const utterance: string = activity.text;
+        const activity = context.activity;
+        const utterance = activity.text;
         if (!utterance) {
             return result;
         }
-        const choices: any[] = (this.style === ListStyle.suggestedAction ? ChoiceFactory.toChoices(options.choices) : options.choices)|| [];
-        const opt: FindChoicesOptions = this.recognizerOptions || {};
+        const choices = (this.style === ListStyle.suggestedAction ? ChoiceFactory.toChoices(options.choices) : options.choices)|| [];
+        const opt = this.recognizerOptions || {};
         opt.locale = this.determineCulture(activity, opt);
-        const results: any[]  = recognizeChoices(utterance, choices, opt);
+        const results  = recognizeChoices(utterance, choices, opt);
         if (Array.isArray(results) && results.length > 0) {
             result.succeeded = true;
             result.value = results[0].resolution;
@@ -121,10 +121,10 @@ export class ChoicePrompt extends Prompt<FoundChoice> {
         return result;
     }
 
-    private determineCulture(activity: Activity, opt: FindChoicesOptions = null): string {
-        const optLocale: string = opt && opt.locale ? opt.locale : null;
-        let culture: string = PromptCultureModels.mapToNearestLanguage(activity.locale || optLocale || this.defaultLocale);
-        if (!culture || !this.choiceDefaults.hasOwnProperty(culture)) {
+    private determineCulture(activity: Activity, opt?: FindChoicesOptions): string {
+        const optLocale = opt && opt.locale ? opt.locale : null;
+        let culture = PromptCultureModels.mapToNearestLanguage(activity.locale || optLocale || this.defaultLocale);
+        if (!(culture && this.choiceDefaults.hasOwnProperty(culture))) {
             culture = PromptCultureModels.English.locale;
         }
 

@@ -62,13 +62,13 @@ export class ConfirmInput extends InputDialog {
 
     protected async onRecognizeInput(dc: DialogContext): Promise<InputState> {
         // Recognize input if needed
-        let input: any = dc.state.getValue(InputDialog.VALUE_PROPERTY);
+        let input = dc.state.getValue(InputDialog.VALUE_PROPERTY);
         if (typeof input !== 'boolean') {
             // Find locale to use
             const locale = this.determineCulture(dc);
 
             // Recognize input
-            const results: any = Recognizers.recognizeBoolean(input, locale);
+            const results = Recognizers.recognizeBoolean(input, locale);
             if (results.length > 0 && results[0].resolution) {
                 input = results[0].resolution.value;
                 dc.state.setValue(InputDialog.VALUE_PROPERTY, !!input);
@@ -96,7 +96,7 @@ export class ConfirmInput extends InputDialog {
 
     protected async onRenderPrompt(dc: DialogContext, state: InputState): Promise<Partial<Activity>> {
         // Determine locale
-        let locale: string = this.determineCulture(dc);
+        let locale = this.determineCulture(dc);
 
         // Format choices
         const confirmChoices = (this.confirmChoices && this.confirmChoices.getValue(dc.state)) || ConfirmInput.defaultChoiceOptions[locale].choices;
@@ -104,15 +104,15 @@ export class ConfirmInput extends InputDialog {
 
         // Format prompt to send
         const prompt = await super.onRenderPrompt(dc, state);
-        const channelId: string = dc.context.activity.channelId;
-        const choiceOptions: ChoiceFactoryOptions = (this.choiceOptions && this.choiceOptions.getValue(dc.state)) || ConfirmInput.defaultChoiceOptions[locale].options;
+        const channelId = dc.context.activity.channelId;
+        const choiceOptions = (this.choiceOptions && this.choiceOptions.getValue(dc.state)) || ConfirmInput.defaultChoiceOptions[locale].options;
         const style = this.style.getValue(dc.state)
         return Promise.resolve(this.appendChoices(prompt, channelId, choices, style, choiceOptions));
     }
     
     private determineCulture(dc: DialogContext): string {
-        let culture: string = PromptCultureModels.mapToNearestLanguage(dc.context.activity.locale || (this.defaultLocale && this.defaultLocale.getValue(dc.state)));
-        if (!culture || !ConfirmInput.defaultChoiceOptions.hasOwnProperty(culture)) {
+        let culture = PromptCultureModels.mapToNearestLanguage(dc.context.activity.locale || (this.defaultLocale && this.defaultLocale.getValue(dc.state)));
+        if (!(culture && ConfirmInput.defaultChoiceOptions.hasOwnProperty(culture))) {
             culture = PromptCultureModels.English.locale;
         }
         

@@ -71,7 +71,7 @@ export class ChoiceInput extends InputDialog {
     public recognizerOptions?: ObjectExpression<FindChoicesOptions> = new ObjectExpression();
 
     protected onInitializeOptions(dc: DialogContext, options: ChoiceInputOptions): ChoiceInputOptions {
-        if (!options || !options.choices || options.choices.length == 0) {
+        if (!(options && options.choices && options.choices.length > 0)) {
             if (!options) {
                 options = { choices: [] };
             }
@@ -90,17 +90,17 @@ export class ChoiceInput extends InputDialog {
         const choices = ChoiceFactory.toChoices(options.choices);
 
         // Initialize recognizer options
-        const opt: FindChoicesOptions = Object.assign({}, this.recognizerOptions.getValue(dc.state));
+        const opt = Object.assign({}, this.recognizerOptions.getValue(dc.state));
         opt.locale = this.determineCulture(dc, opt);
 
         // Recognize input
-        const results: ModelResult<FoundChoice>[] = recognizeChoices(input, choices, opt);
+        const results = recognizeChoices(input, choices, opt);
         if (!Array.isArray(results) || results.length == 0) {
             return InputState.unrecognized;
         }
 
         // Format output and return success
-        const foundChoice: FoundChoice = results[0].resolution;
+        const foundChoice = results[0].resolution;
         switch (this.outputFormat.getValue(dc.state)) {
             case ChoiceOutputFormat.value:
             default:
@@ -116,14 +116,14 @@ export class ChoiceInput extends InputDialog {
 
     protected async onRenderPrompt(dc: DialogContext, state: InputState): Promise<Partial<Activity>> {
         // Determine locale
-        let locale: string = this.determineCulture(dc);
+        let locale = this.determineCulture(dc);
 
-        const choices: Choice[] = this.choices.getValue(dc.state);
+        const choices = this.choices.getValue(dc.state);
 
         // Format prompt to send
         const prompt = await super.onRenderPrompt(dc, state);
-        const channelId: string = dc.context.activity.channelId;
-        const choiceOptions: ChoiceFactoryOptions = (this.choiceOptions && this.choiceOptions.getValue(dc.state)) || ChoiceInput.defaultChoiceOptions[locale];
+        const channelId = dc.context.activity.channelId;
+        const choiceOptions = (this.choiceOptions && this.choiceOptions.getValue(dc.state)) || ChoiceInput.defaultChoiceOptions[locale];
         const style = this.style.getValue(dc.state);
         return Promise.resolve(this.appendChoices(prompt, channelId, choices, style, choiceOptions));
     }
@@ -132,14 +132,14 @@ export class ChoiceInput extends InputDialog {
         return `ChoiceInput[${ this.prompt && this.prompt.toString() }]`;
     }
 
-    private determineCulture(dc: DialogContext, opt: FindChoicesOptions = null): string {
-        const optLocale: string = opt && opt.locale ? opt.locale : null;
-        let culture: string = PromptCultureModels.mapToNearestLanguage(
+    private determineCulture(dc: DialogContext, opt?: FindChoicesOptions): string {
+        const optLocale = opt && opt.locale ? opt.locale : null;
+        let culture = PromptCultureModels.mapToNearestLanguage(
             dc.context.activity.locale ||
             optLocale ||
             (this.defaultLocale && this.defaultLocale.getValue(dc.state)));
 
-        if (!culture || !ChoiceInput.defaultChoiceOptions.hasOwnProperty(culture)) {
+        if (!(culture && ChoiceInput.defaultChoiceOptions.hasOwnProperty(culture))) {
             culture = PromptCultureModels.English.locale;
         }
 

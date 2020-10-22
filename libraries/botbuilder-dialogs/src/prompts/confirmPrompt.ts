@@ -87,10 +87,10 @@ export class ConfirmPrompt extends Prompt<boolean> {
 
         // Format prompt to send
         let prompt: Partial<Activity>;
-        const channelId: string = context.activity.channelId;
-        const culture: string = this.determineCulture(context.activity);
-        const choiceOptions: ChoiceFactoryOptions = this.choiceOptions || this.choiceDefaults[culture].options;
-        const choices: any[] = this.confirmChoices || this.choiceDefaults[culture].choices;
+        const channelId = context.activity.channelId;
+        const culture = this.determineCulture(context.activity);
+        const choiceOptions = this.choiceOptions || this.choiceDefaults[culture].options;
+        const choices = this.confirmChoices || this.choiceDefaults[culture].choices;
         if (isRetry && options.retryPrompt) {
             prompt = this.appendChoices(options.retryPrompt, channelId, choices, this.style, choiceOptions);
         } else {
@@ -103,13 +103,13 @@ export class ConfirmPrompt extends Prompt<boolean> {
 
     protected async onRecognize(context: TurnContext, state: any, options: PromptOptions): Promise<PromptRecognizerResult<boolean>> {
         const result: PromptRecognizerResult<boolean> = { succeeded: false };
-        const activity: Activity = context.activity;
-        const utterance: string = activity.text;
+        const activity = context.activity;
+        const utterance = activity.text;
         if (!utterance) {
             return result;
         }
-        const culture: string = this.determineCulture(context.activity);
-        const results: any = Recognizers.recognizeBoolean(utterance, culture);
+        const culture = this.determineCulture(context.activity);
+        const results = Recognizers.recognizeBoolean(utterance, culture);
         if (results.length > 0 && results[0].resolution) {
             result.succeeded = true;
             result.value = results[0].resolution.value;
@@ -132,8 +132,8 @@ export class ConfirmPrompt extends Prompt<boolean> {
     }
 
     private determineCulture(activity: Activity): string {
-        let culture: string = PromptCultureModels.mapToNearestLanguage(activity.locale || this.defaultLocale);
-        if (!culture || !this.choiceDefaults.hasOwnProperty(culture)) {
+        let culture = PromptCultureModels.mapToNearestLanguage(activity.locale || this.defaultLocale);
+        if (!(culture && this.choiceDefaults.hasOwnProperty(culture))) {
             culture = PromptCultureModels.English.locale;
         }
         
