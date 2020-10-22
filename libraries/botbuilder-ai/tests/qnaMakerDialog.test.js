@@ -25,16 +25,14 @@ describe('QnAMakerDialog', function () {
         if (isMockQna) {
             const fileName = replaceCharacters(this.currentTest.title);
             const filePath = `${__dirname}/TestData/${this.test.parent.title}/`;
-            const arr = testFiles.filter(function (file) {
-                return file.startsWith(fileName + '.');
-            });
-
-            arr.forEach((file) => {
-                nock(`https://${HOSTNAME}.azurewebsites.net`)
-                    .matchHeader('User-Agent', /botbuilder-ai\/4.*/)
-                    .post(/qnamaker/)
-                    .replyWithFile(200, filePath + file);
-            });
+            testFiles
+                .filter((file) => file.startsWith(fileName + '.'))
+                .forEach((file) => {
+                    nock(`https://${HOSTNAME}.azurewebsites.net`)
+                        .matchHeader('User-Agent', /botbuilder-ai\/4.*/)
+                        .post(/qnamaker/)
+                        .replyWithFile(200, filePath + file);
+                });
         }
     });
 
