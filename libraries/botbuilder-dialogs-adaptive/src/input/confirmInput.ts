@@ -38,6 +38,9 @@ export interface ConfirmInputConfiguration extends InputDialogConfiguration {
     outputFormat?: string | Expression | StringExpression;
 }
 
+/**
+ * Declarative input control that will gather yes/no confirmation input from a set of choices.
+ */
 export class ConfirmInput extends InputDialog implements ConfirmInputConfiguration {
     public static $kind = 'Microsoft.ConfirmInput';
 
@@ -127,10 +130,19 @@ export class ConfirmInput extends InputDialog implements ConfirmInputConfigurati
         }
     }
 
+     /**
+     * @protected
+     */
     protected onComputeId(): string {
         return `ConfirmInput[${this.prompt && this.prompt.toString()}]`;
     }
 
+    /**
+     * @protected
+     * Called when input has been received.
+     * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
+     * @returns [InputState](xref:botbuilder-dialogs-adaptive.InputState) which reflects whether input was recognized as valid or not.
+     */
     protected async onRecognizeInput(dc: DialogContext): Promise<InputState> {
         // Recognize input if needed
         let input = dc.state.getValue(InputDialog.VALUE_PROPERTY);
@@ -167,6 +179,13 @@ export class ConfirmInput extends InputDialog implements ConfirmInputConfigurati
         return InputState.valid;
     }
 
+    /**
+     * @protected
+     * Method which renders the prompt to the user given the current input state.
+     * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
+     * @param state Dialog [InputState](xref:botbuilder-dialogs-adaptive.InputState).
+     * @returns An [Activity](xref:botframework-schema.Activity) `Promise` representing the asynchronous operation.
+     */
     protected async onRenderPrompt(dc: DialogContext, state: InputState): Promise<Partial<Activity>> {
         // Determine locale
         let locale = this.determineCulture(dc);
