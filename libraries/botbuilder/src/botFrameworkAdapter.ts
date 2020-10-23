@@ -1120,7 +1120,7 @@ export class BotFrameworkAdapter
 
         // Okay, we _can_ immediate accept, so defer to the user.
         const immediateAccept = this.settings.immediateAccept;
-        return typeof immediateAccept === 'function' ? immediateAccept(activity) : immediateAccept;
+        return typeof immediateAccept === 'function' ? immediateAccept(activity) === true : immediateAccept === true;
     }
 
     /**
