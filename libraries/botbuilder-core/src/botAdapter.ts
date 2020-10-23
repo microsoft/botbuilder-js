@@ -114,10 +114,10 @@ export abstract class BotAdapter {
 
     /**
      * Sets an error handler that can catch exceptions in the middleware or application.
-     * 
+     *
      * @remarks
      * The error handler is called with these parameters:
-     * 
+     *
      * | Name | Type | Description |
      * | :--- | :--- | :--- |
      * | `context` | [TurnContext](xref:botbuilder-core.TurnContext) | The context object for the turn. |
@@ -136,8 +136,8 @@ export abstract class BotAdapter {
      * Middleware is added to the adapter at initialization time.
      * Each turn, the adapter calls its middleware in the order in which you added it.
      */
-    public use(...middleware: (MiddlewareHandler | Middleware)[]): this {
-        MiddlewareSet.prototype.use.apply(this.middleware, middleware);
+    public use(...middlewares: (MiddlewareHandler | Middleware)[]): this {
+        this.middleware.use(...middlewares);
 
         return this;
     }
@@ -147,6 +147,7 @@ export abstract class BotAdapter {
      *
      * @param context The context object for the turn.
      * @param next A callback method to run at the end of the pipeline.
+     * @returns A promise that resolves when the middleware chain is finished
      *
      * @remarks
      * The adapter creates a revokable proxy for the turn context and then calls its middleware in
@@ -162,39 +163,27 @@ export abstract class BotAdapter {
      * [continueConversation](xref:botbuilder-core.BotAdapter.continueConversation) (proactive messaging),
      * the callback method is the callback method that was provided in the call.
      */
-    protected runMiddleware(
+    protected async runMiddleware(
         context: TurnContext,
         next: (revocableContext: TurnContext) => Promise<void>
     ): Promise<void> {
-        // Wrap context with revocable proxy
-        const pContext: {
-            proxy: TurnContext;
-            revoke(): void;
-        } = makeRevocable(context);
-
         if (context && context.activity && context.activity.locale) {
             context.locale = context.activity.locale;
         }
 
-        return new Promise((resolve: any, reject: any): void => {
-            this.middleware
-                .run(pContext.proxy, () => {
-                    // Call next with revocable context
-                    return next(pContext.proxy);
-                })
-                .then(resolve, (err: Error) => {
-                    if (this.onTurnError) {
-                        this.onTurnError(pContext.proxy, err).then(resolve, reject);
-                    } else {
-                        reject(err);
-                    }
-                });
-        }).then(
-            () => pContext.revoke(),
-            (err: Error) => {
-                pContext.revoke();
+        // Wrap context with revocable proxy
+        const pContext = makeRevocable(context);
+
+        try {
+            await this.middleware.run(pContext.proxy, () => next(pContext.proxy));
+        } catch (err) {
+            if (this.onTurnError) {
+                await this.onTurnError(pContext.proxy, err);
+            } else {
                 throw err;
             }
-        );
+        } finally {
+            pContext.revoke();
+        }
     }
 }
