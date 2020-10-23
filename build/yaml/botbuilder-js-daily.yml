@@ -6,7 +6,7 @@
 name: $(Build.BuildId)
 
 pool:
-  vmImage: 'ubuntu-18.04'
+  vmImage: 'macOS-10.15'
 
 variables:
   NodeVersion: 12.x
@@ -36,7 +36,7 @@ steps:
   displayName: 'lerna exec --no-private npm pack'
 
 - task: CopyFiles@2
-  displayName: 'Copy packages to staging'
+  displayName: 'Copy TGZ files to staging'
   inputs:
     SourceFolder: libraries
     Contents: '*/*.tgz'
@@ -44,7 +44,7 @@ steps:
     flattenFolders: true
 
 - task: PublishBuildArtifacts@1
-  displayName: 'Publish packages to Build Artifacts'
+  displayName: 'Publish staging to Build Artifacts'
 
 - powershell: |
    [string[]]$outvar = (Get-ChildItem *.tgz -Path $(Build.ArtifactStagingDirectory) ).Name;
