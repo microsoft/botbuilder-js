@@ -205,10 +205,11 @@ export class QnAMaker implements QnAMakerTelemetryClient {
             return result;
         }
 
-        // Log telemetry
-        this.onQnaResults(queryResult, context, telemetryProperties, telemetryMetrics);
-
-        await this.generateAnswerUtils.emitTraceInfo(context, queryResult, queryOptions);
+        await Promise.all([
+            // Log telemetry
+            this.onQnaResults(queryResult, context, telemetryProperties, telemetryMetrics),
+            this.generateAnswerUtils.emitTraceInfo(context, queryResult, queryOptions)
+        ]);
 
         const qnaResponse: QnAMakerResults = {
             activeLearningEnabled: result.activeLearningEnabled,

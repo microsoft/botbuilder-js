@@ -117,6 +117,16 @@ export interface QnAMakerDialogConfiguration extends DialogConfiguration {
  */
 export class QnAMakerDialog extends WaterfallDialog implements QnAMakerDialogConfiguration {
     public static $kind = 'Microsoft.QnAMakerDialog';
+
+    /**
+     * Log personal information flag.
+     *
+     * @remarks
+     * Defauls to a value of `=settings.logPersonalInformation`, which retrieves
+     * `logPersonalInformation` flag from settings.
+     */
+    public logPersonalInformation = new BoolExpression('=settings.logPersonalInformation');
+
     // state and step value key constants
     /**
      * The path for storing and retrieving QnA Maker context data.
@@ -166,7 +176,6 @@ export class QnAMakerDialog extends WaterfallDialog implements QnAMakerDialogCon
         MessageFactory.text(this.defaultCardNoMatchResponse) as Activity
     );
     public strictFilters: ArrayExpression<QnAMakerMetadata>;
-    public logPersonalInformation: BoolExpression = new BoolExpression('=settings.telemetry.logPersonalInformation');
     public isTest = false;
     public rankerType: EnumExpression<RankerTypes> = new EnumExpression(RankerTypes.default);
     private strictFiltersJoinOperator: JoinOperator;
@@ -233,6 +242,7 @@ export class QnAMakerDialog extends WaterfallDialog implements QnAMakerDialogCon
         }
 
         this.strictFiltersJoinOperator = strictFiltersJoinOperator;
+
         this.addStep(this.callGenerateAnswer.bind(this));
         this.addStep(this.callTrain.bind(this));
         this.addStep(this.checkForMultiTurnPrompt.bind(this));
@@ -529,9 +539,13 @@ export class QnAMakerDialog extends WaterfallDialog implements QnAMakerDialogCon
             endpointKey: this.endpointKey.getValue(dc.state),
             host: this.getHost(dc),
         };
-        const options = await this.getQnAMakerOptions(dc);
-        const logPersonalInformation = this.logPersonalInformation && this.logPersonalInformation.getValue(dc.state);
-        return new QnAMaker(endpoint, options, this.telemetryClient, logPersonalInformation);
+
+        const logPersonalInformation =
+            this.logPersonalInformation instanceof BoolExpression
+                ? this.logPersonalInformation.getValue(dc.state)
+                : this.logPersonalInformation;
+
+        return new QnAMaker(endpoint, await this.getQnAMakerOptions(dc), this.telemetryClient, logPersonalInformation);
     }
 
     /**

@@ -1,0 +1,27 @@
+{
+    "answers": [
+        {
+            "questions": [
+                "Hi",
+                "Hello",
+                "Start",
+                "Begin"
+            ],
+            "answer": "Welcome to the **Smart lightbulb** bot.",
+            "score": 100.00,
+            "id": 8,
+            "source": "dina-kb-9.tsv",
+            "metadata": [
+                {
+                    "name": "category",
+                    "value": "chitchat"
+                }
+            ],
+            "context": {
+                "isContextOnly": false,
+                "prompts": []
+            }
+        }
+    ],
+    "activeLearningEnabled": true
+}
