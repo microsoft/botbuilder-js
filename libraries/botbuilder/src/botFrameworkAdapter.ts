@@ -1377,7 +1377,7 @@ export class BotFrameworkAdapter
      * @remarks
      * Not all channels support this operation. For channels that don't, this call may throw an exception.
      */
-    public async updateActivity(context: TurnContext, activity: Partial<Activity>): Promise<void> {
+    public updateActivity(context: TurnContext, activity: Partial<Activity>): Promise<ResourceResponse | void> {
         if (!activity.serviceUrl) {
             throw new Error(`BotFrameworkAdapter.updateActivity(): missing serviceUrl`);
         }
@@ -1387,8 +1387,9 @@ export class BotFrameworkAdapter
         if (!activity.id) {
             throw new Error(`BotFrameworkAdapter.updateActivity(): missing activity.id`);
         }
-        const client: ConnectorClient = this.getOrCreateConnectorClient(context, activity.serviceUrl, this.credentials);
-        await client.conversations.updateActivity(activity.conversation.id, activity.id, activity as Activity);
+
+        const client = this.getOrCreateConnectorClient(context, activity.serviceUrl, this.credentials);
+        return client.conversations.updateActivity(activity.conversation.id, activity.id, activity as Activity);
     }
 
     /**

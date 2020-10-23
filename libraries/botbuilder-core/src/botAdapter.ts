@@ -64,7 +64,7 @@ export abstract class BotAdapter {
      * @remarks
      * Not all channels support this operation. For channels that don't, this call may throw an exception.
      */
-    public abstract updateActivity(context: TurnContext, activity: Partial<Activity>): Promise<void>;
+    public abstract updateActivity(context: TurnContext, activity: Partial<Activity>): Promise<ResourceResponse | void>;
 
     /**
      * Asynchronously deletes an existing activity.
