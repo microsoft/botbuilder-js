@@ -24,6 +24,7 @@ import {
     ConverterFactory,
     DialogContext,
     ListStyle,
+    PromptCultureModels,
     recognizeChoices,
 } from 'botbuilder-dialogs';
 import { ChoiceSet } from './choiceSet';
@@ -37,6 +38,9 @@ export interface ConfirmInputConfiguration extends InputDialogConfiguration {
     outputFormat?: string | Expression | StringExpression;
 }
 
+/**
+ * Declarative input control that will gather yes/no confirmation input from a set of choices.
+ */
 export class ConfirmInput extends InputDialog implements ConfirmInputConfiguration {
     public static $kind = 'Microsoft.ConfirmInput';
 
@@ -126,20 +130,28 @@ export class ConfirmInput extends InputDialog implements ConfirmInputConfigurati
         }
     }
 
+     /**
+     * @protected
+     */
     protected onComputeId(): string {
         return `ConfirmInput[${this.prompt && this.prompt.toString()}]`;
     }
 
+    /**
+     * @protected
+     * Called when input has been received.
+     * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
+     * @returns [InputState](xref:botbuilder-dialogs-adaptive.InputState) which reflects whether input was recognized as valid or not.
+     */
     protected async onRecognizeInput(dc: DialogContext): Promise<InputState> {
         // Recognize input if needed
-        let input: any = dc.state.getValue(InputDialog.VALUE_PROPERTY);
+        let input = dc.state.getValue(InputDialog.VALUE_PROPERTY);
         if (typeof input !== 'boolean') {
             // Find locale to use
-            const activity: Activity = dc.context.activity;
-            const locale = activity.locale || this.defaultLocale.getValue(dc.state) || 'en-us';
+            const locale = this.determineCulture(dc);
 
             // Recognize input
-            const results: any = Recognizers.recognizeBoolean(input, locale);
+            const results = Recognizers.recognizeBoolean(input, locale);
             if (results.length > 0 && results[0].resolution) {
                 input = results[0].resolution.value;
                 dc.state.setValue(InputDialog.VALUE_PROPERTY, !!input);
@@ -167,13 +179,16 @@ export class ConfirmInput extends InputDialog implements ConfirmInputConfigurati
         return InputState.valid;
     }
 
+    /**
+     * @protected
+     * Method which renders the prompt to the user given the current input state.
+     * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
+     * @param state Dialog [InputState](xref:botbuilder-dialogs-adaptive.InputState).
+     * @returns An [Activity](xref:botframework-schema.Activity) `Promise` representing the asynchronous operation.
+     */
     protected async onRenderPrompt(dc: DialogContext, state: InputState): Promise<Partial<Activity>> {
         // Determine locale
-        let locale: string = dc.context.activity.locale || this.defaultLocale.getValue(dc.state);
-        if (!locale || !ConfirmInput.defaultChoiceOptions.hasOwnProperty(locale)) {
-            locale = 'en-us';
-        }
-        locale = locale.toLowerCase(); // to match format 'en-US'
+        let locale = this.determineCulture(dc);
 
         // Format choices
         const confirmChoices =
@@ -183,11 +198,20 @@ export class ConfirmInput extends InputDialog implements ConfirmInputConfigurati
 
         // Format prompt to send
         const prompt = await super.onRenderPrompt(dc, state);
-        const channelId: string = dc.context.activity.channelId;
-        const choiceOptions: ChoiceFactoryOptions =
+        const channelId = dc.context.activity.channelId;
+        const choiceOptions =
             (this.choiceOptions && this.choiceOptions.getValue(dc.state)) ||
             ConfirmInput.defaultChoiceOptions[locale].options;
         const style = this.style.getValue(dc.state);
         return Promise.resolve(this.appendChoices(prompt, channelId, choices, style, choiceOptions));
+    }
+
+    private determineCulture(dc: DialogContext): string {
+        let culture = PromptCultureModels.mapToNearestLanguage(dc.context.activity.locale || (this.defaultLocale && this.defaultLocale.getValue(dc.state)));
+        if (!(culture && ConfirmInput.defaultChoiceOptions.hasOwnProperty(culture))) {
+            culture = PromptCultureModels.English.locale;
+        }
+
+        return culture;
     }
 }

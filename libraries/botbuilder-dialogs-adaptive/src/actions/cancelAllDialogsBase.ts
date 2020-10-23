@@ -32,11 +32,28 @@ export interface CancelAllDialogsBaseConfiguration extends DialogConfiguration {
     activityProcessed?: boolean | string | Expression | BoolExpression;
 }
 
+/**
+ * Base class for [CancelAllDialogs](xref:botbuilder-dialogs-adaptive.CancelAllDialogs) api.
+ */
 export class CancelAllDialogsBase<O extends object = {}>
     extends Dialog<O>
     implements CancelAllDialogsBaseConfiguration {
     public constructor();
+
+    /**
+     * Initializes a new instance of the [CancelAllDialogsBase](xref:botbuilder-dialogs-adaptive.CancelAllDialogsBase) class.
+     * @param eventName Expression for event name.
+     * @param eventValue Optional. Expression for event value.
+     * @param isCancelAll Set to `true` to cancel all dialogs; `false` otherwise.
+     */
     public constructor(eventName: string, eventValue?: string, isCancelAll?: boolean);
+
+    /**
+     * Initializes a new instance of the [CancelAllDialogsBase](xref:botbuilder-dialogs-adaptive.CancelAllDialogsBase) class.
+     * @param eventName Optional. Expression for event name.
+     * @param eventValue Optional. Expression for event value.
+     * @param isCancelAll Set to `true` to cancel all [Dialogs](xref:botbuilder-dialogs.Dialog); `false` otherwise.
+     */
     public constructor(eventName?: string, eventValue?: string, isCancelAll = true) {
         super();
         if (eventName) {
@@ -85,6 +102,12 @@ export class CancelAllDialogsBase<O extends object = {}>
         }
     }
 
+    /**
+     * Called when the [Dialog](xref:botbuilder-dialogs.Dialog) is started and pushed onto the dialog stack.
+     * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
+     * @param options Optional. Initial information to pass to the dialog.
+     * @returns A `Promise` representing the asynchronous operation.
+     */
     public async beginDialog(dc: DialogContext, options: O): Promise<DialogTurnResult> {
         if (this.disabled && this.disabled.getValue(dc.state)) {
             return await dc.endDialog();
@@ -110,7 +133,12 @@ export class CancelAllDialogsBase<O extends object = {}>
             return turnResult;
         }
     }
-
+    
+    /**
+     * @protected
+     * Builds the compute Id for the [Dialog](xref:botbuilder-dialogs.Dialog).
+     * @returns A `string` representing the compute Id.
+     */
     protected onComputeId(): string {
         return `${this.constructor.name}[${this.eventName ? this.eventName.toString() : ''}]`;
     }

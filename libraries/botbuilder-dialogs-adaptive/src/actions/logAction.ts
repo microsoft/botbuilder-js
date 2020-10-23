@@ -33,16 +33,22 @@ export interface LogActionConfiguration extends DialogConfiguration {
     disabled?: boolean | string | Expression | BoolExpression;
 }
 
+/**
+ * Write entry into application trace logs.
+ */
 export class LogAction<O extends object = {}> extends Dialog<O> implements LogActionConfiguration {
     public static $kind = 'Microsoft.LogAction';
 
     /**
-     * Creates a new `SendActivity` instance.
+     * Creates a new [LogAction](xref:botbuilder-dialogs-adaptive.LogAction) instance.
      * @param template The text template to log.
-     * @param sendTrace (Optional) If true, the message will both be logged to the console and sent as a trace activity.  Defaults to a value of false.
      */
-    public constructor();
     public constructor(text: string);
+    
+    /**
+     * Creates a new [LogAction](xref:botbuilder-dialogs-adaptive.LogAction) instance.
+     * @param text Optional. The text template to log.
+     */
     public constructor(text?: string) {
         super();
         if (text) {
@@ -86,6 +92,12 @@ export class LogAction<O extends object = {}> extends Dialog<O> implements LogAc
         }
     }
 
+    /**
+     * Starts a new [Dialog](xref:botbuilder-dialogs.Dialog) and pushes it onto the dialog stack.
+     * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
+     * @param options Optional. Initial information to pass to the dialog.
+     * @returns A `Promise` representing the asynchronous operation.
+     */
     public async beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult> {
         if (this.disabled && this.disabled.getValue(dc.state)) {
             return await dc.endDialog();
@@ -128,6 +140,11 @@ export class LogAction<O extends object = {}> extends Dialog<O> implements LogAc
         return await dc.endDialog();
     }
 
+    /**
+     * @protected
+     * Builds the compute Id for the [Dialog](xref:botbuilder-dialogs.Dialog).
+     * @returns A `string` representing the compute Id.
+     */
     protected onComputeId(): string {
         return `LogAction[${this.text}]`;
     }

@@ -75,26 +75,10 @@ describe('Bot Framework Connector - Auth Tests', function() {
                 assert(claims.getClaimValue('tid') == '72f988bf-86f1-41af-91ab-2d7cd011db47');
             });
 
-            it('MsaHeader with invalid ServiceUrl should not be trusted', async () => {
-                const credentials = new SimpleCredentialProvider('7f74513e-6f96-4dbc-be9d-9a81fea22b88', '');
-                try {
-                    await JwtTokenValidation.authenticateRequest({ serviceUrl: 'https://webchat.botframework.com/' }, header, credentials, undefined);
-                    throw new Error('Expected validation to fail.');
-                } catch (err) {
-                    assert(!MicrosoftAppCredentials.isTrustedServiceUrl('https://webchat.botframework.com/'));
-                }
-            });
-
             it('with AuthenticationDisabled should be anonymous', async () => {
                 const claims = await JwtTokenValidation.authenticateRequest({ serviceUrl: 'https://webchat.botframework.com/' }, '', emptyCredentials, undefined);
                 assert(claims.isAuthenticated);
                 assert.equal(claims.claims.length, 0);
-            });
-
-            it('with authentication disabled and serviceUrl should not be trusted', async () => {
-                const claims = await JwtTokenValidation.authenticateRequest({ serviceUrl: 'https://webchat.botframework.com/' }, '', emptyCredentials, undefined);
-                assert(claims.isAuthenticated);
-                assert(!MicrosoftAppCredentials.isTrustedServiceUrl('https://webchat.botframework.com/'));
             });
         });
 

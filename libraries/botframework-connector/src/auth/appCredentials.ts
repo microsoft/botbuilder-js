@@ -15,15 +15,6 @@ import { AuthenticationConstants } from './authenticationConstants';
  * Subclasses can implement refreshToken to acquire the token.
  */
 export abstract class AppCredentials implements msrest.ServiceClientCredentials {
-    private static readonly trustedHostNames: Map<string, Date> = new Map<string, Date>([
-        ['state.botframework.com', new Date(8640000000000000)], // Date.MAX_VALUE,
-        ['api.botframework.com', new Date(8640000000000000)], // Date.MAX_VALUE,
-        ['token.botframework.com', new Date(8640000000000000)], // Date.MAX_VALUE,
-        ['state.botframework.azure.us', new Date(8640000000000000)], // Date.MAX_VALUE,
-        ['api.botframework.azure.us', new Date(8640000000000000)], // Date.MAX_VALUE,
-        ['token.botframework.azure.us', new Date(8640000000000000)], // Date.MAX_VALUE,
-    ]);
-
     private static readonly cache: Map<string, adal.TokenResponse> = new Map<string, adal.TokenResponse>();
 
     public appId: string;
@@ -101,50 +92,24 @@ export abstract class AppCredentials implements msrest.ServiceClientCredentials 
     /**
      * Adds the host of service url to trusted hosts.
      * If expiration time is not provided, the expiration date will be current (utc) date + 1 day.
+     * @deprecated
      * @param  {string} serviceUrl The service url
      * @param  {Date} expiration? The expiration date after which this service url is not trusted anymore
      */
-    public static trustServiceUrl(serviceUrl: string, expiration?: Date): void {
-        if (!expiration) {
-            expiration = new Date(Date.now() + 86400000); // 1 day
-        }
-
-        const uri: url.Url = url.parse(serviceUrl);
-        if (uri.host) {
-            AppCredentials.trustedHostNames.set(uri.host, expiration);
-        }
+    public static trustServiceUrl(serviceUrl: string, expiration?: Date): void;
+    public static trustServiceUrl(): void {
+        // no-op
     }
 
     /**
      * Checks if the service url is for a trusted host or not.
+     * @deprecated
      * @param  {string} serviceUrl The service url
      * @returns {boolean} True if the host of the service url is trusted; False otherwise.
      */
-    public static isTrustedServiceUrl(serviceUrl: string): boolean {
-        try {
-            const uri: url.Url = url.parse(serviceUrl);
-            if (uri.host) {
-                return AppCredentials.isTrustedUrl(uri.host);
-            }
-        } catch (e) {
-            // tslint:disable-next-line:no-console
-            console.error('Error in isTrustedServiceUrl', e);
-        }
-
-        return false;
-    }
-
-    /**
-     * @private
-     */
-    private static isTrustedUrl(uri: string): boolean {
-        const expiration: Date = AppCredentials.trustedHostNames.get(uri);
-        if (expiration) {
-            // check if the trusted service url is still valid
-            return expiration.getTime() > Date.now() - 300000; // 5 Minutes
-        }
-
-        return false;
+    public static isTrustedServiceUrl(serviceUrl: string): boolean;
+    public static isTrustedServiceUrl(): boolean {
+        return true;
     }
 
     /**
@@ -153,10 +118,8 @@ export abstract class AppCredentials implements msrest.ServiceClientCredentials 
      * @returns A Promise representing the asynchronous operation.
      */
     public async signRequest(webResource: msrest.WebResource): Promise<msrest.WebResource> {
-        if (this.shouldSetToken(webResource)) {
-            const token: string = await this.getToken();
-
-            return new msrest.TokenCredentials(token).signRequest(webResource);
+        if (this.shouldSetToken()) {
+            return new msrest.TokenCredentials(await this.getToken()).signRequest(webResource);
         }
 
         return webResource;
@@ -211,12 +174,7 @@ export abstract class AppCredentials implements msrest.ServiceClientCredentials 
     /**
      * @private
      */
-    private shouldSetToken(webResource: msrest.WebResource): boolean {
-        // Don't set token if appId is falsy or set to anonymous skill appId
-        if (!this.appId || this.appId === AuthenticationConstants.AnonymousSkillAppId) {
-            return false;
-        }
-
-        return AppCredentials.isTrustedServiceUrl(webResource.url);
+    private shouldSetToken(): boolean {
+        return this.appId && this.appId !== AuthenticationConstants.AnonymousSkillAppId;
     }
 }
