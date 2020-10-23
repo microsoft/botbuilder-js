@@ -503,8 +503,8 @@ export class TurnContext {
                 // Append activities to buffer
                 const responses: ResourceResponse[] = [];
                 output.forEach((a) => {
-                    this.bufferedReplyActivities.push(a);
-                    responses.push({ id: undefined });
+                        this.bufferedReplyActivities.push(a);
+                        responses.push({ id: undefined });
                 });
 
                 // Set responded flag
