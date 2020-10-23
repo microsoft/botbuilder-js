@@ -5,7 +5,6 @@
 import {
     Activity,
     ActivityTypes,
-    Channels,
     ConversationReference,
     DeliveryModes,
     InputHints,
@@ -504,13 +503,8 @@ export class TurnContext {
                 // Append activities to buffer
                 const responses: ResourceResponse[] = [];
                 output.forEach((a) => {
-                    if (a.type === ActivityTypes.Trace && a.channelId !== Channels.Emulator) {
-                        // Just eat activity
-                        responses.push({} as ResourceResponse);
-                    } else {
                         this.bufferedReplyActivities.push(a);
                         responses.push({ id: undefined });
-                    }
                 });
 
                 // Set responded flag

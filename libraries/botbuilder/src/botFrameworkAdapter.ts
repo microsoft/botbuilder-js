@@ -1196,8 +1196,17 @@ export class BotFrameworkAdapter
             if (request.deliveryMode === DeliveryModes.ExpectReplies) {
                 // Handle "expectReplies" scenarios where all the activities have been buffered and sent back at once
                 // in an invoke response.
-                const expectedReplies: ExpectedReplies = { activities: context.bufferedReplyActivities as Activity[] };
-                body = expectedReplies;
+                let activities = context.bufferedReplyActivities as Activity[];
+                
+                // If the channel is not the emulator, do not send trace activities.
+                // Fixes: https://github.com/microsoft/botbuilder-js/issues/2732
+                if (request.channelId !== Channels.Emulator) {
+                    activities = context.bufferedReplyActivities.reduce(
+                        (replies, a: Activity) => a.type === ActivityTypes.Trace ? replies : replies.concat(a),
+                        [] as Activity[]);
+                }
+                
+                body = { activities } as ExpectedReplies;
                 status = StatusCodes.OK;
             } else if (request.type === ActivityTypes.Invoke) {
                 // Retrieve a cached Invoke response to handle Invoke scenarios.
