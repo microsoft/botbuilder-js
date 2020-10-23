@@ -2,7 +2,7 @@ const { expect } = require('chai');
 const { spy } = require('sinon');
 
 const { RequestHandler, StreamingRequest, WebSocketClient, WebSocketServer } = require('../');
-const { BrowserWebSocket } = require('../browser/index-browser');
+const { BrowserWebSocket } = require('../lib/index-browser');
 const { WebSocketTransport } = require('../lib/webSocket/webSocketTransport');
 
 const { FauxSock } = require('./helpers');

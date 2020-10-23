@@ -1,3 +1,5 @@
+const fetch = require('cross-fetch');
+
 module.exports = async function (
     token,
     { domain = process.env.WEBSITE_HOSTNAME } = {}

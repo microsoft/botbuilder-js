@@ -3,7 +3,7 @@
 name: $(Build.BuildId)
 
 pool:
-  vmImage: 'ubuntu-18.04'
+  vmImage: 'macOS-10.15'
 
 variables:
   version: 4.0.0-0
@@ -51,25 +51,27 @@ steps:
     customCommand: 'install coveralls --save-dev'
   enabled: false
 
-- script: |
-   sed -i 's/${Version}/$(version)/g' package.json
-   sed -i 's/${Version}/$(version)/g' libraries/adaptive-expressions/package.json
-   sed -i 's/${Version}/$(version)/g' libraries/bot-integration-tests/package.json
-   sed -i 's/${Version}/$(version)/g' libraries/botbuilder/package.json
-   sed -i 's/${Version}/$(version)/g' libraries/botbuilder-ai/package.json
-   sed -i 's/${Version}/$(version)/g' libraries/botbuilder-applicationinsights/package.json
-   sed -i 's/${Version}/$(version)/g' libraries/botbuilder-azure/package.json
-   sed -i 's/${Version}/$(version)/g' libraries/botbuilder-core/package.json
-   sed -i 's/${Version}/$(version)/g' libraries/botbuilder-dialogs/package.json
-   sed -i 's/${Version}/$(version)/g' libraries/botbuilder-dialogs-adaptive/package.json
-   sed -i 's/${Version}/$(version)/g' libraries/botbuilder-dialogs-adaptive-tests/package.json
-   sed -i 's/${Version}/$(version)/g' libraries/botbuilder-dialogs-declarative/package.json
-   sed -i 's/${Version}/$(version)/g' libraries/botbuilder-lg/package.json
-   sed -i 's/${Version}/$(version)/g' libraries/botbuilder-testing/package.json
-   sed -i 's/${Version}/$(version)/g' libraries/botframework-config/package.json
-   sed -i 's/${Version}/$(version)/g' libraries/botframework-connector/package.json
-   sed -i 's/${Version}/$(version)/g' libraries/botframework-schema/package.json
-   sed -i 's/${Version}/$(version)/g' libraries/botframework-streaming/package.json
+- bash: |
+   sed -i '' 's/${Version}/$(version)/g' package.json
+   sed -i '' 's/${Version}/$(version)/g' libraries/adaptive-expressions/package.json
+   sed -i '' 's/${Version}/$(version)/g' libraries/bot-integration-tests/package.json
+   sed -i '' 's/${Version}/$(version)/g' libraries/botbuilder/package.json
+   sed -i '' 's/${Version}/$(version)/g' libraries/botbuilder-ai/package.json
+   sed -i '' 's/${Version}/$(version)/g' libraries/botbuilder-applicationinsights/package.json
+   sed -i '' 's/${Version}/$(version)/g' libraries/botbuilder-azure/package.json
+   sed -i '' 's/${Version}/$(version)/g' libraries/botbuilder-core/package.json
+   sed -i '' 's/${Version}/$(version)/g' libraries/botbuilder-dialogs/package.json
+   sed -i '' 's/${Version}/$(version)/g' libraries/botbuilder-dialogs-adaptive/package.json
+   sed -i '' 's/${Version}/$(version)/g' libraries/botbuilder-dialogs-adaptive-tests/package.json
+   sed -i '' 's/${Version}/$(version)/g' libraries/botbuilder-dialogs-declarative/package.json
+   sed -i '' 's/${Version}/$(version)/g' libraries/botbuilder-lg/package.json
+   sed -i '' 's/${Version}/$(version)/g' libraries/botbuilder-testing/package.json
+   sed -i '' 's/${Version}/$(version)/g' libraries/botframework-config/package.json
+   sed -i '' 's/${Version}/$(version)/g' libraries/botframework-connector/package.json
+   sed -i '' 's/${Version}/$(version)/g' libraries/botframework-schema/package.json
+   sed -i '' 's/${Version}/$(version)/g' libraries/botframework-streaming/package.json
+   
+  failOnStderr: true
   displayName: 'Replace version number in package.json files'
   continueOnError: true
   env:
