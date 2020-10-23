@@ -1,4 +1,4 @@
-const fetch = require('./getFetch')();
+const fetch = require('cross-fetch');
 
 module.exports = async function (
     token,
