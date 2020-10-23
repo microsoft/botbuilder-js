@@ -77,6 +77,9 @@ export interface OAuthInputConfiguration extends InputDialogConfiguration {
     timeout?: number | string | Expression | IntExpression;
 }
 
+/**
+ * OAuthInput prompts user to login.
+ */
 export class OAuthInput extends InputDialog implements OAuthInputConfiguration {
     public static $kind = 'Microsoft.OAuthInput';
 
@@ -116,6 +119,13 @@ export class OAuthInput extends InputDialog implements OAuthInputConfiguration {
         }
     }
 
+    /**
+     * Initializes a new instance of the [OAuthInput](xref:botbuilder-dialogs-adaptive.OAuthInput) class
+     * @param connectionName Optional. Name of the OAuth connection being used.
+     * @param title Optional. Title of the cards signin button.
+     * @param text Optional. Additional text to include on the signin card.
+     * @param timeout Optional. Number of milliseconds the prompt will wait for the user to authenticate.
+     */
     public constructor(connectionName?: string, title?: string, text?: string, timeout?: number) {
         super();
         this.connectionName = new StringExpression(connectionName);
@@ -126,6 +136,12 @@ export class OAuthInput extends InputDialog implements OAuthInputConfiguration {
         }
     }
 
+    /**
+     * Called when a prompt [Dialog](xref:botbuilder-dialogs.Dialog) is pushed onto the dialog stack and is being activated.
+     * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
+     * @param options Optional. Additional information to pass to the prompt being started.
+     * @returns A [DialogTurnResult](xref:botbuilder-dialogs.DialogTurnResult) `Promise` representing the asynchronous operation.
+     */
     public async beginDialog(dc: DialogContext, options?: PromptOptions): Promise<DialogTurnResult> {
         if (this.disabled && this.disabled.getValue(dc.state)) {
             return await dc.endDialog();
@@ -176,6 +192,11 @@ export class OAuthInput extends InputDialog implements OAuthInputConfiguration {
         }
     }
 
+    /**
+     * Called when a prompt [Dialog](xref:botbuilder-dialogs.Dialog) is the active dialog and the user replied with a new activity.
+     * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
+     * @returns A [DialogTurnResult](xref:botbuilder-dialogs.DialogTurnResult) `Promise` representing the asynchronous operation.
+     */
     public async continueDialog(dc: DialogContext): Promise<DialogTurnResult> {
         if (!dc) {
             throw new Error('Missing DialogContext');
@@ -299,14 +320,26 @@ export class OAuthInput extends InputDialog implements OAuthInputConfiguration {
         return adapter.signOutUser(dc.context, this.connectionName.getValue(dc.state));
     }
 
+    /**
+     * @protected
+     */
     protected onComputeId(): string {
         return `OAuthInput[${this.prompt && this.prompt.toString()}]`;
     }
 
+    /**
+     * @protected
+     * Called when input has been received.
+     * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
+     * @returns [InputState](xref:botbuilder-dialogs-adaptive.InputState) which reflects whether input was recognized as valid or not.
+     */
     protected onRecognizeInput(dc: DialogContext): Promise<InputState> {
         throw new Error('Method not implemented.');
     }
 
+    /**
+     * @private
+     */
     private async sendOAuthCardAsync(dc: DialogContext, prompt?: string | Partial<Activity>): Promise<void> {
         const turnContext = dc.context;
 
@@ -401,6 +434,9 @@ export class OAuthInput extends InputDialog implements OAuthInputConfiguration {
         await turnContext.sendActivity(msg);
     }
 
+    /**
+     * @private
+     */
     private async recognizeToken(dc: DialogContext): Promise<PromptRecognizerResult<TokenResponse>> {
         const turnContext = dc.context;
 
@@ -493,28 +529,43 @@ export class OAuthInput extends InputDialog implements OAuthInputConfiguration {
         return token !== undefined ? { succeeded: true, value: token } : { succeeded: false };
     }
 
+    /**
+     * @private
+     */
     private isFromStreamingConnection(activity: Activity): boolean {
         return activity && activity.serviceUrl && !activity.serviceUrl.toLowerCase().startsWith('http');
     }
 
+    /**
+     * @private
+     */
     private isTokenResponseEvent(context: TurnContext): boolean {
         const activity: Activity = context.activity;
 
         return activity.type === ActivityTypes.Event && activity.name === tokenResponseEventName;
     }
 
+    /**
+     * @private
+     */
     private isTeamsVerificationInvoke(context: TurnContext): boolean {
         const activity: Activity = context.activity;
 
         return activity.type === ActivityTypes.Invoke && activity.name === verifyStateOperationName;
     }
 
+    /**
+     * @private
+     */
     private isTokenExchangeRequestInvoke(context: TurnContext): boolean {
         const activity: Activity = context.activity;
 
         return activity.type === ActivityTypes.Invoke && activity.name === tokenExchangeOperationName;
     }
 
+    /**
+     * @private
+     */
     private isTokenExchangeRequest(obj: unknown): obj is TokenExchangeInvokeRequest {
         if (obj.hasOwnProperty('token')) {
             return true;
@@ -522,6 +573,9 @@ export class OAuthInput extends InputDialog implements OAuthInputConfiguration {
         return false;
     }
 
+    /**
+     * @private
+     */
     private channelSupportsOAuthCard(channelId: string): boolean {
         switch (channelId) {
             case channels.msteams:
@@ -535,6 +589,9 @@ export class OAuthInput extends InputDialog implements OAuthInputConfiguration {
         return true;
     }
 
+    /**
+     * @private
+     */
     private async sendInvokeResponse(turnContext: TurnContext, status: StatusCodes, body?: object): Promise<void> {
         await turnContext.sendActivity({
             type: 'invokeResponse',
@@ -545,6 +602,9 @@ export class OAuthInput extends InputDialog implements OAuthInputConfiguration {
         });
     }
 
+    /**
+     * @private
+     */
     private channelRequiresSignInLink(channelId: string): boolean {
         switch (channelId) {
             case Channels.Msteams:

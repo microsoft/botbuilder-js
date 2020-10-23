@@ -22,6 +22,9 @@ export interface NumberInputConfiguration extends InputDialogConfiguration {
     outputFormat?: number | string | Expression | NumberExpression;
 }
 
+/**
+ * Input dialog for asking for numbers.
+ */
 export class NumberInput extends InputDialog implements NumberInputConfiguration {
     public static $kind = 'Microsoft.NumberInput';
 
@@ -40,10 +43,19 @@ export class NumberInput extends InputDialog implements NumberInputConfiguration
         }
     }
 
+    /**
+     * @protected
+     */
     protected onComputeId(): string {
         return `NumberInput[${this.prompt && this.prompt.toString()}]`;
     }
 
+    /**
+     * @protected
+     * Called when input has been received.
+     * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
+     * @returns [InputState](xref:botbuilder-dialogs-adaptive.InputState) which reflects whether input was recognized as valid or not.
+     */
     protected async onRecognizeInput(dc: DialogContext): Promise<InputState> {
         // Recognize input if needed
         let input: any = dc.state.getValue(InputDialog.VALUE_PROPERTY);

@@ -63,6 +63,9 @@ export interface InputDialogConfiguration extends DialogConfiguration {
     disabled?: boolean | string | Expression | BoolExpression;
 }
 
+/**
+ * Defines input dialogs.
+ */
 export abstract class InputDialog extends Dialog implements InputDialogConfiguration {
     public static OPTIONS_PROPERTY = 'this.options';
     public static VALUE_PROPERTY = 'this.value';
@@ -157,6 +160,12 @@ export abstract class InputDialog extends Dialog implements InputDialogConfigura
         }
     }
 
+    /**
+     * Initializes a new instance of the [InputDialog](xref:botbuilder-dialogs-adaptive.InputDialog) class
+     * @param property Optional. The value expression which the input will be bound to.
+     * @param prompt Optional. The [Activity](xref:botframework-schema.Activity) to send to the user,
+     * if a string is specified it will instantiates an [ActivityTemplate](xref:botbuilder-dialogs-adaptive.ActivityTemplate).
+     */
     public constructor(property?: string, prompt?: Partial<Activity> | string) {
         super();
         if (property) {
@@ -171,6 +180,12 @@ export abstract class InputDialog extends Dialog implements InputDialogConfigura
         }
     }
 
+    /**
+     * Called when the [Dialog](xref:botbuilder-dialogs.Dialog) is started and pushed onto the dialog stack.
+     * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
+     * @param options Optional. Initial information to pass to the [Dialog](xref:botbuilder-dialogs.Dialog).
+     * @returns A [DialogTurnResult](xref:botbuilder-dialogs.DialogTurnResult) `Promise` representing the asynchronous operation.
+     */
     public async beginDialog(dc: DialogContext, options?: any): Promise<DialogTurnResult> {
         if (this.disabled && this.disabled.getValue(dc.state)) {
             return await dc.endDialog();
@@ -204,6 +219,11 @@ export abstract class InputDialog extends Dialog implements InputDialogConfigura
         }
     }
 
+    /**
+     * Called when the [Dialog](xref:botbuilder-dialogs.Dialog) is _continued_, where it is the active dialog and the user replies with a new activity.
+     * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
+     * @returns A [DialogTurnResult](xref:botbuilder-dialogs.DialogTurnResult) `Promise` representing the asynchronous operation.
+     */
     public async continueDialog(dc: DialogContext): Promise<DialogTurnResult> {
         // Filter to only message activities
         const activity = dc.context.activity;
@@ -249,11 +269,26 @@ export abstract class InputDialog extends Dialog implements InputDialogConfigura
         return await dc.endDialog();
     }
 
+    /**
+     * Called when a child [Dialog](xref:botbuilder-dialogs.Dialog) completes its turn, returning control to this dialog.
+     * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
+     * @param reason [DialogReason](xref:botbuilder-dialogs.DialogReason), reason why the dialog resumed.
+     * @param result Optional. Value returned from the [Dialog](xref:botbuilder-dialogs.Dialog) that was called.
+     * The type of the value returned is dependent on the child dialog.
+     * @returns A [DialogTurnResult](xref:botbuilder-dialogs.DialogTurnResult) `Promise` representing the asynchronous operation.
+     */
     public async resumeDialog(dc: DialogContext, reason: DialogReason, result?: any): Promise<DialogTurnResult> {
         // Re-send initial prompt
         return await this.promptUser(dc, InputState.missing);
     }
 
+    /**
+     * @protected
+     * Called before an event is bubbled to its parent.
+     * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
+     * @param event [DialogEvent](xref:botbuilder-dialogs.DialogEvent), the event being raised.
+     * @returns Whether the event is handled by the current [Dialog](xref:botbuilder-dialogs.Dialog) and further processing should stop.
+     */
     protected async onPreBubbleEvent(dc: DialogContext, event: DialogEvent): Promise<boolean> {
         if (event.name === DialogEvents.activityReceived && dc.context.activity.type === ActivityTypes.Message) {
             if (dc.parent) {
@@ -276,10 +311,23 @@ export abstract class InputDialog extends Dialog implements InputDialogConfigura
 
     protected abstract onRecognizeInput(dc: DialogContext): Promise<InputState>;
 
+    /**
+     * @protected
+     * Method which processes options.
+     * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
+     * @param options Initial information to pass to the dialog.
+     */
     protected onInitializeOptions(dc: DialogContext, options: any): any {
         return Object.assign({}, options);
     }
 
+    /**
+     * @protected
+     * Method which renders the prompt to the user given the current input state.
+     * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
+     * @param state Dialog [InputState](xref:botbuilder-dialogs-adaptive.InputState).
+     * @returns An [Activity](xref:botframework-schema.Activity) `Promise` representing the asynchronous operation.
+     */
     protected async onRenderPrompt(dc: DialogContext, state: InputState): Promise<Partial<Activity>> {
         let msg: Partial<Activity>;
         let template: TemplateInterface<Partial<Activity>, DialogStateManager>;
@@ -389,6 +437,9 @@ export abstract class InputDialog extends Dialog implements InputDialogConfigura
         return clone;
     }
 
+    /**
+     * @private
+     */
     private async recognizeInput(dc: DialogContext, turnCount: number): Promise<InputState> {
         let input: any;
         if (this.property) {
@@ -439,6 +490,9 @@ export abstract class InputDialog extends Dialog implements InputDialogConfigura
         }
     }
 
+    /**
+     * @private
+     */
     private async promptUser(dc: DialogContext, state: InputState): Promise<DialogTurnResult> {
         const prompt = await this.onRenderPrompt(dc, state);
         await dc.context.sendActivity(prompt);

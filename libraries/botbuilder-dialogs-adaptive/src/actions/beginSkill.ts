@@ -47,6 +47,9 @@ export interface BeginSkillConfiguration extends DialogConfiguration {
     allowInterruptions?: boolean | string | Expression | BoolExpression;
 }
 
+/**
+ * Begin a Skill.
+ */
 export class BeginSkill extends SkillDialog implements BeginSkillConfiguration {
     public static $kind = 'Microsoft.BeginSkill';
 
@@ -148,6 +151,12 @@ export class BeginSkill extends SkillDialog implements BeginSkillConfiguration {
         super(Object.assign({ skill: {} } as SkillDialogOptions, options));
     }
 
+    /**
+     * Called when the [Dialog](xref:botbuilder-dialogs.Dialog) is started and pushed onto the dialog stack.
+     * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
+     * @param options Optional. Initial information to pass to the dialog.
+     * @returns A `Promise` representing the asynchronous operation.
+     */
     public async beginDialog(dc: DialogContext, options?: BeginSkillDialogOptions): Promise<DialogTurnResult> {
         const dcState = dc.state;
         if (this.disabled && this.disabled.getValue(dcState)) {
@@ -208,7 +217,13 @@ export class BeginSkill extends SkillDialog implements BeginSkillConfiguration {
         // Call the base to invoke the skill
         return await super.beginDialog(dc, options);
     }
-
+    
+    /**
+     * Called when the [Dialog](xref:botbuilder-dialogs.Dialog) is _continued_, where it is the active dialog and the 
+     * user replies with a new activity.
+     * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
+     * @returns A `Promise` representing the asynchronous operation.
+     */
     public async continueDialog(dc: DialogContext): Promise<DialogTurnResult> {
         this.loadDialogOptions(dc.context, dc.activeDialog);
         const activity = dc.context.activity;
@@ -223,21 +238,47 @@ export class BeginSkill extends SkillDialog implements BeginSkillConfiguration {
         return await super.continueDialog(dc);
     }
 
+    /**
+     * Called when the [Dialog](xref:botbuilder-dialogs.Dialog) should re-prompt the user for input.
+     * @param turnContext [TurnContext](xref:botbuilder-core.TurnContext), the context object for this turn.
+     * @param instance [DialogInstance](xref:botbuilder-dialogs.DialogInstance), state information for this dialog.
+     * @returns A `Promise` representing the asynchronous operation.
+     */
     public async repromptDialog(turnContext: TurnContext, instance: DialogInstance): Promise<void> {
         this.loadDialogOptions(turnContext, instance);
         return await super.repromptDialog(turnContext, instance);
     }
 
+    /**
+     * Called when a child [Dialog](xref:botbuilder-dialogs.Dialog) completed its turn, returning control to this dialog.
+     * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
+     * @param reason [DialogReason](xref:botbuilder-dialogs.DialogReason), reason why the dialog resumed.
+     * @param result Optional. Value returned from the dialog that was called. The type 
+     * of the value returned is dependent on the child dialog.
+     * @returns A `Promise` representing the asynchronous operation.
+     */
     public async resumeDialog(dc: DialogContext, reason: DialogReason, result?: any): Promise<DialogTurnResult<any>> {
         this.loadDialogOptions(dc.context, dc.activeDialog);
         return await super.resumeDialog(dc, reason, result);
     }
 
+    /**
+     * Called when the [Dialog](xref:botbuilder-dialogs.Dialog) is ending.
+     * @param turnContext [TurnContext](xref:botbuilder-core.TurnContext), the context object for this turn.
+     * @param instance [DialogInstance](xref:botbuilder-dialogs.DialogInstance), state information associated with the instance of this dialog on the dialog stack.
+     * @param reason [DialogReason](xref:botbuilder-dialogs.DialogReason), reason why the dialog ended.
+     * @returns A `Promise` representing the asynchronous operation.
+     */
     public async endDialog(turnContext: TurnContext, instance: DialogInstance, reason: DialogReason): Promise<void> {
         this.loadDialogOptions(turnContext, instance);
         return await super.endDialog(turnContext, instance, reason);
     }
 
+    /**
+     * @protected
+     * Builds the compute Id for the [Dialog](xref:botbuilder-dialogs.Dialog).
+     * @returns A `string` representing the compute Id.
+     */
     protected onComputeId(): string {
         const appId = this.skillAppId ? this.skillAppId.toString() : '';
         if (this.activity instanceof ActivityTemplate) {
@@ -267,6 +308,14 @@ export class BeginSkill extends SkillDialog implements BeginSkillConfiguration {
         return false;
     }
 
+    /**
+     * @private
+     * Regenerates the [SkillDialog.DialogOptions](xref:botbuilder-dialogs.SkillDialog.DialogOptions) based on the values used during the `BeginDialog` call.
+     * @remarks The [Dialog](xref:botbuilder-dialogs.Dialog) can be resumed in another server or after redeploying the bot, this code ensure that the options used are the ones
+     * used to call `BeginDialog`.
+     * Also, if `ContinueConversation` or other methods are called on a server different than the one where `BeginDialog` was called,
+     * `DialogOptions` will be empty and this code will make sure it has the right value.
+     */
     private loadDialogOptions(context: TurnContext, instance: DialogInstance): void {
         const dialogOptions = <SkillDialogOptions>instance.state[this._dialogOptionsStateKey];
 

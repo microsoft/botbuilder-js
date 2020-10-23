@@ -35,12 +35,20 @@ export interface GetConversationMembersConfiguration extends DialogConfiguration
     disabled?: boolean | string | Expression | BoolExpression;
 }
 
+/**
+ * Calls `BotFrameworkAdapter.getConversationMembers()` and sets the result to a memory property.
+ */
 export class GetConversationMembers<O extends object = {}>
     extends Dialog<O>
     implements GetConversationMembersConfiguration {
     public static $kind = 'Microsoft.GetConversationMembers';
 
     public constructor();
+
+    /**
+     * Initializes a new instance of the [GetConversationMembers](xref:botbuilder-dialogs-adaptive.GetConversationMembers) class.
+     * @param property Property path to put the value in.
+     */
     public constructor(property?: string) {
         super();
         if (property) {
@@ -69,6 +77,12 @@ export class GetConversationMembers<O extends object = {}>
         }
     }
 
+    /**
+     * Starts a new [Dialog](xref:botbuilder-dialogs.Dialog) and pushes it onto the dialog stack.
+     * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
+     * @param options Optional. Initial information to pass to the dialog.
+     * @returns A `Promise` representing the asynchronous operation.
+     */
     public async beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult> {
         if (this.disabled && this.disabled.getValue(dc.state)) {
             return await dc.endDialog();
@@ -84,6 +98,11 @@ export class GetConversationMembers<O extends object = {}>
         }
     }
 
+    /**
+     * @protected
+     * Builds the compute Id for the [Dialog](xref:botbuilder-dialogs.Dialog).
+     * @returns A `string` representing the compute Id.
+     */
     protected onComputeId(): string {
         return `GetConversationMembers[${this.property.toString()}]`;
     }

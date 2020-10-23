@@ -41,11 +41,30 @@ export interface EditArrayConfiguration extends DialogConfiguration {
     disabled?: boolean | string | Expression | BoolExpression;
 }
 
+/**
+ * Lets you modify an array in memory.
+ */
 export class EditArray<O extends object = {}> extends Dialog<O> implements EditArrayConfiguration {
     public static $kind = 'Microsoft.EditArray';
 
     public constructor();
+
+    /**
+     * Initializes a new instance of the [EditArray](xref:botbuilder-dialogs-adaptive.EditArray) class.
+     * @param changeType [ArrayChangeType](xref:botbuilder-dialogs-adaptive.ArrayChangeType), change type.
+     * @param itemsProperty Array property.
+     * @param value Optional. Value to insert.
+     * @param resultProperty Optional. Output property to put Pop/Take into.
+     */
     public constructor(changeType: ArrayChangeType, itemsProperty: string, value?: any, resultProperty?: string);
+
+    /**
+     * Initializes a new instance of the [EditArray](xref:botbuilder-dialogs-adaptive.EditArray) class.
+     * @param changeType Optional. [ArrayChangeType](xref:botbuilder-dialogs-adaptive.ArrayChangeType), change type.
+     * @param itemsProperty Optional. Array property.
+     * @param value Optional. Value to insert.
+     * @param resultProperty Optional. Output property to put Pop/Take into.
+     */
     public constructor(changeType?: ArrayChangeType, itemsProperty?: string, value?: any, resultProperty?: string) {
         super();
         if (changeType) {
@@ -111,6 +130,12 @@ export class EditArray<O extends object = {}> extends Dialog<O> implements EditA
         }
     }
 
+    /**
+     * Starts a new [Dialog](xref:botbuilder-dialogs.Dialog) and pushes it onto the dialog stack.
+     * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
+     * @param options Optional. Initial information to pass to the dialog.
+     * @returns A `Promise` representing the asynchronous operation.
+     */
     public async beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult> {
         if (this.disabled && this.disabled.getValue(dc.state)) {
             return await dc.endDialog();
@@ -173,10 +198,18 @@ export class EditArray<O extends object = {}> extends Dialog<O> implements EditA
         return await dc.endDialog();
     }
 
+    /**
+     * @protected
+     * Builds the compute Id for the [Dialog](xref:botbuilder-dialogs.Dialog).
+     * @returns A `string` representing the compute Id.
+     */
     protected onComputeId(): string {
         return `EditArray[${this.changeType.toString()}: ${this.itemsProperty.toString()}]`;
     }
 
+    /**
+     * @private
+     */
     private ensureValue(): void {
         if (!this.value) {
             throw new Error(
