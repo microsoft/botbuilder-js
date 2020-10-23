@@ -315,6 +315,8 @@ export class SkillHandler extends ChannelServiceHandler {
         activityId: string,
         activity: Activity
     ): Promise<ResourceResponse> {
+        let resourceResponse: ResourceResponse | void;
+
         await this.continueConversation(claimsIdentity, conversationId, async (adapter, ref, context) => {
             const newActivity = TurnContext.applyConversationReference(activity, ref.conversationReference);
 
@@ -323,13 +325,11 @@ export class SkillHandler extends ChannelServiceHandler {
                 claimsIdentity.claims
             )}`;
 
-            return context.updateActivity(newActivity);
+            resourceResponse = await context.updateActivity(newActivity);
         });
 
-        // Note: the original activity ID is passed back here to provide "behavioral" parity with the C# SDK. Due to
-        // some inconsistent method signatures, the proper response is not propagated back through `context.updateActivity`
-        // so we have to manually pass this value back.
-        return { id: activityId };
+        // Due to a backwards-compat function signature, resourceResponse may not be defined.
+        return resourceResponse ? resourceResponse : { id: activityId };
     }
 
     /**
