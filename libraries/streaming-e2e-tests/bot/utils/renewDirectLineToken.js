@@ -1,3 +1,5 @@
+const fetch = require('./getFetch')();
+
 module.exports = async function (
     token,
     { domain = process.env.WEBSITE_HOSTNAME } = {}
