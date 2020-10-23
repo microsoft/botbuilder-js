@@ -1,5 +1,13 @@
 const assert = require('assert');
-const { ActivityHandler, ActivityTypes, CallerIdConstants, DeliveryModes, StatusCodes, TurnContext } = require('botbuilder-core');
+const {
+    ActivityHandler,
+    ActivityTypes,
+    CallerIdConstants,
+    Channels,
+    DeliveryModes,
+    StatusCodes,
+    TurnContext
+} = require('botbuilder-core');
 const connector = require('botframework-connector');
 const {
     AuthenticationConstants,
@@ -34,6 +42,13 @@ const reference = {
 const incomingMessage = TurnContext.applyConversationReference({ text: 'test', type: 'message' }, reference, true);
 const outgoingMessage = TurnContext.applyConversationReference({ text: 'test', type: 'message' }, reference);
 const incomingInvoke = TurnContext.applyConversationReference({ type: 'invoke' }, reference, true);
+
+const testTraceMessage = {
+    type: 'trace', 
+    name: 'TestTrace',
+    valueType: 'https://example.org/test/trace',
+    label: 'Test Trace'
+};
 
 class AdapterUnderTest extends BotFrameworkAdapter {
     constructor(settings) {
@@ -548,6 +563,49 @@ describe(`BotFrameworkAdapter`, function () {
         assert.strictEqual(bufferedReplies[0].type, 'invokeResponse');
         assert.strictEqual(bufferedReplies[1].text, '2nd message');
         assert.strictEqual(bufferedReplies[1].type, 'invokeResponse');
+        assert.strictEqual(res.statusCode, StatusCodes.OK);
+    });
+
+    it(`should remove trace activities from bufferedReplyActivities if request.channelId !== Channels.Emulator`, async () => {
+        const activity = JSON.parse(JSON.stringify(incomingMessage));
+        activity.type = ActivityTypes.Invoke;
+        activity.deliveryMode = DeliveryModes.ExpectReplies;
+        activity.channelId = Channels.Msteams;
+
+        const req = new MockRequest(activity);
+        const res = new MockResponse();
+        const adapter = new AdapterUnderTest();
+        await adapter.processActivity(req, res, async (context) => {
+            await context.sendActivity({ type: 'invokeResponse', text: 'message' });
+            await context.sendActivity(testTraceMessage);
+        });
+
+        const bufferedReplies = res.body && res.body.activities;
+        assert.strictEqual(bufferedReplies && bufferedReplies.length, 1);
+        assert.strictEqual(bufferedReplies[0].text, 'message');
+        assert.strictEqual(bufferedReplies[0].type, 'invokeResponse');
+        assert.strictEqual(res.statusCode, StatusCodes.OK);
+    });
+
+    it(`should keep trace activities from bufferedReplyActivities if request.channelId === Channels.Emulator`, async () => {
+        const activity = JSON.parse(JSON.stringify(incomingMessage));
+        activity.type = ActivityTypes.Invoke;
+        activity.deliveryMode = DeliveryModes.ExpectReplies;
+        activity.channelId = Channels.Emulator;
+
+        const req = new MockRequest(activity);
+        const res = new MockResponse();
+        const adapter = new AdapterUnderTest();
+        await adapter.processActivity(req, res, async (context) => {
+            await context.sendActivity({ type: 'invokeResponse', text: 'message' });
+            await context.sendActivity(testTraceMessage);
+        });
+
+        const bufferedReplies = res.body && res.body.activities;
+        assert.strictEqual(bufferedReplies && bufferedReplies.length, 2);
+        assert.strictEqual(bufferedReplies[0].text, 'message');
+        assert.strictEqual(bufferedReplies[0].type, 'invokeResponse');
+        assert.strictEqual(bufferedReplies[1].type, ActivityTypes.Trace);
         assert.strictEqual(res.statusCode, StatusCodes.OK);
     });
 
