@@ -19,19 +19,73 @@ import {
     TeamsPagedMembersResult,
     ConversationParameters,
     ConversationReference,
+    TeamsMeetingParticipant,
 } from 'botbuilder-core';
 import { ConnectorClient, TeamsConnectorClient, TeamsConnectorModels } from 'botframework-connector';
 
 import { BotFrameworkAdapter } from './botFrameworkAdapter';
+import { teamsGetTeamMeetingInfo, teamsGetTenant } from './teamsActivityHelpers';
 
 /**
  * Provides utility methods for the events and interactions that occur within Microsoft Teams.
  */
 export class TeamsInfo {
     /**
+     * Gets the meeting participant for the given meeting id and participant id. This only works in
+     * teams scoped meeting conversations.
+     * @param context The [TurnContext](xref:botbuilder-core.TurnContext) for this turn.
+     * @param meetingId The meeting ID to fetch
+     * @param participantId The participant ID to fetch
+     * @param tenantId The tenant ID to use when scoping the request
+     * @returns The [TeamsMeetingParticipant](xref:botbuilder-core.TeamsMeetingParticipant) fetched
+     */
+    public static async getMeetingParticipant(
+        context: TurnContext,
+        meetingId?: string,
+        participantId?: string,
+        tenantId?: string
+    ): Promise<TeamsMeetingParticipant> {
+        if (!context) {
+            throw new Error('context is required.');
+        }
+
+        const activity = context.activity;
+
+        if (meetingId == null) {
+            const meeting = teamsGetTeamMeetingInfo(activity);
+            meetingId = meeting ? meeting.id : undefined;
+        }
+
+        if (!meetingId) {
+            throw new Error('meetingId is required.');
+        }
+
+        if (participantId == null) {
+            const from = activity.from;
+            participantId = from ? from.aadObjectId : undefined;
+        }
+
+        if (!participantId) {
+            throw new Error('participantId is required.');
+        }
+
+        // Note: === undefined here because tenant ID is technically an optional parameter. If a user specifically
+        // wants to disable defaulting of tenant ID they can pass `null`.
+        if (tenantId === undefined) {
+            const tenant = teamsGetTenant(activity);
+            tenantId = tenant ? tenant.id : undefined;
+        }
+
+        return this.getTeamsConnectorClient(context).teams.fetchMeetingParticipant(meetingId, participantId, {
+            tenantId,
+        });
+    }
+
+    /**
      * Gets the details for the given team id. This only works in teams scoped conversations.
      * @param context The [TurnContext](xref:botbuilder-core.TurnContext) for this turn.
      * @param teamId The id of the Teams team.
+     * @returns The [TeamDetails](xref:botbuilder-core.TeamDetails) fetched
      */
     public static async getTeamDetails(context: TurnContext, teamId?: string): Promise<TeamDetails> {
         const t = teamId || this.getTeamId(context);

@@ -27,10 +27,18 @@ export interface GotoActionConfiguration extends DialogConfiguration {
     disabled?: boolean | string | Expression | BoolExpression;
 }
 
+/**
+ * Goto an action by Id.
+ */
 export class GotoAction<O extends object = {}> extends Dialog<O> implements GotoActionConfiguration {
     public static $kind = 'Microsoft.GotoAction';
 
     public constructor();
+
+    /**
+     * Initializes a new instance of the [GotoAction](xref:botbuilder-dialogs-adaptive.GotoAction) class.
+     * @param actionId Optional. Action's unique identifier.
+     */
     public constructor(actionId?: string) {
         super();
         if (actionId) {
@@ -59,6 +67,12 @@ export class GotoAction<O extends object = {}> extends Dialog<O> implements Goto
         }
     }
 
+    /**
+     * Starts a new [Dialog](xref:botbuilder-dialogs.Dialog) and pushes it onto the dialog stack.
+     * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
+     * @param options Optional. Initial information to pass to the dialog.
+     * @returns A `Promise` representing the asynchronous operation.
+     */
     public async beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult> {
         if (this.disabled && this.disabled.getValue(dc.state)) {
             return await dc.endDialog();
@@ -76,6 +90,11 @@ export class GotoAction<O extends object = {}> extends Dialog<O> implements Goto
         return await dc.endDialog(actionScopeResult);
     }
 
+    /**
+     * @protected
+     * Builds the compute Id for the [Dialog](xref:botbuilder-dialogs.Dialog).
+     * @returns A `string` representing the compute Id.
+     */
     protected onComputeId(): string {
         return `GotoAction[${this.actionId.toString()}]`;
     }

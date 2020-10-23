@@ -19,13 +19,18 @@ export interface AttachmentInputConfiguration extends InputDialogConfiguration {
     outputFormat?: AttachmentOutputFormat | string | Expression | EnumExpression<AttachmentOutputFormat>;
 }
 
+/**
+ * Input dialog which prompts the user to send a file.
+ */
 export class AttachmentInput extends InputDialog implements AttachmentInputConfiguration {
     public static $kind = 'Microsoft.AttachmentInput';
-
     public outputFormat: EnumExpression<AttachmentOutputFormat> = new EnumExpression<AttachmentOutputFormat>(
         AttachmentOutputFormat.first
     );
 
+    /**
+     * @protected
+     */
     public getConverter(property: keyof AttachmentInputConfiguration): Converter | ConverterFactory {
         switch (property) {
             case 'outputFormat':
@@ -39,6 +44,12 @@ export class AttachmentInput extends InputDialog implements AttachmentInputConfi
         return `AttachmentInput[${this.prompt && this.prompt.toString()}]`;
     }
 
+    /**
+     * @protected
+     * Called when input has been received.
+     * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
+     * @returns [InputState](xref:botbuilder-dialogs-adaptive.InputState) which reflects whether input was recognized as valid or not.
+     */
     protected async onRecognizeInput(dc: DialogContext): Promise<InputState> {
         // Recognize input and filter out non-attachments
         const input: Attachment | Attachment[] = dc.state.getValue(InputDialog.VALUE_PROPERTY);

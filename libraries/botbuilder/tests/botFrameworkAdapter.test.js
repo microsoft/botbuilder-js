@@ -1890,7 +1890,6 @@ describe(`BotFrameworkAdapter`, function () {
                 assert(context.activity.type === 'event', `request has invalid type.`);
                 assert(context.activity.from && context.activity.from.id === reference.user.id, `request has invalid from.id.`);
                 assert(context.activity.recipient && context.activity.recipient.id === reference.bot.id, `request has invalid recipient.id.`);
-                assert(!MicrosoftAppCredentials.isTrustedServiceUrl('https://example.org/channel'));
                 called = true;
             }).then(() => {
                 assert(called, `bot logic not called.`);
@@ -1907,7 +1906,6 @@ describe(`BotFrameworkAdapter`, function () {
                 assert(context.activity.type === 'event', `request has invalid type.`);
                 assert(context.activity.from && context.activity.from.id === reference.user.id, `request has invalid from.id.`);
                 assert(context.activity.recipient && context.activity.recipient.id === reference.bot.id, `request has invalid recipient.id.`);
-                assert(MicrosoftAppCredentials.isTrustedServiceUrl('https://example.org/channel'));
                 called = true;
             }).then(() => {
                 assert(called, `bot logic not called.`);

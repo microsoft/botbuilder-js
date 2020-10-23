@@ -265,7 +265,7 @@ export class DialogManager extends Configurable {
      */
     private async sendStateSnapshotTrace(dc: DialogContext, traceLabel: string): Promise<void> {
         // send trace of memory
-        const snapshot: object = getActiveDialogContext(dc).state.getMemorySnapshot();
+        const snapshot = getActiveDialogContext(dc).state.getMemorySnapshot();
         await dc.context.sendActivity({
             type: ActivityTypes.Trace,
             name: 'BotState',
@@ -293,9 +293,6 @@ export class DialogManager extends Configurable {
             // Handle remote cancellation request from parent.
             const activeDialogContext = getActiveDialogContext(dc);
 
-            const remoteCancelText = 'Skill was canceled through an EndOfConversation activity from the parent.';
-            await turnContext.sendTraceActivity(`DialogManager.onTurn()`, undefined, undefined, remoteCancelText);
-
             // Send cancellation message to the top dialog in the stack to ensure all the parents are canceled in the right order.
             return await activeDialogContext.cancelAllDialogs(true);
         }
@@ -319,17 +316,12 @@ export class DialogManager extends Configurable {
         let turnResult = await dc.continueDialog();
         if (turnResult.status == DialogTurnStatus.empty) {
             // restart root dialog
-            const startMessageText = `Starting ${this._rootDialogId}.`;
-            await turnContext.sendTraceActivity('DialogManager.onTurn()', undefined, undefined, startMessageText);
             turnResult = await dc.beginDialog(this._rootDialogId);
         }
 
         await this.sendStateSnapshotTrace(dc, 'Skill State');
 
         if (shouldSendEndOfConversationToParent(turnContext, turnResult)) {
-            const endMessageText = `Dialog ${this._rootDialogId} has **completed**. Sending EndOfConversation.`;
-            await turnContext.sendTraceActivity('DialogManager.onTurn()', turnResult.result, undefined, endMessageText);
-
             // Send End of conversation at the end.
             const activity: Partial<Activity> = {
                 type: ActivityTypes.EndOfConversation,

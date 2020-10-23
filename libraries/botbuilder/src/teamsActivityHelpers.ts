@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 
-import { Activity, TeamInfo, TeamsChannelData } from 'botbuilder-core';
+import { Activity, TeamInfo, TeamsChannelData, TeamsMeetingInfo, TenantInfo } from 'botbuilder-core';
 
 function isTeamsChannelData(channelData: unknown): channelData is TeamsChannelData {
     return typeof channelData === 'object';
@@ -16,6 +16,36 @@ function validateActivity(activity: Activity): void {
     if (!activity) {
         throw new Error('Missing activity parameter');
     }
+}
+
+/**
+ * Gets the TeamsMeetingInfo object from the current [Activity](xref:botframework-schema.Activity).
+ * @param activity The current [Activity](xref:botframework-schema.Activity).
+ * @returns The current [Activity](xref:botframework-schema.Activity)'s team meeting info, or null.
+ */
+export function teamsGetTeamMeetingInfo(activity: Activity): TeamsMeetingInfo | null {
+    validateActivity(activity);
+
+    if (isTeamsChannelData(activity.channelData)) {
+        return activity.channelData.meeting || null;
+    }
+
+    return null;
+}
+
+/**
+ * Gets the TenantInfo object from the current [Activity](xref:botframework-schema.Activity).
+ * @param activity The current [Activity](xref:botframework-schema.Activity).
+ * @returns The current [Activity](xref:botframework-schema.Activity)'s tenant info, or null.
+ */
+export function teamsGetTenant(activity: Activity): TenantInfo | null {
+    validateActivity(activity);
+
+    if (isTeamsChannelData(activity.channelData)) {
+        return activity.channelData.tenant || null;
+    }
+
+    return null;
 }
 
 /**
