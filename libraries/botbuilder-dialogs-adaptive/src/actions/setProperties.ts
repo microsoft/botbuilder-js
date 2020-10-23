@@ -52,10 +52,18 @@ export interface SetPropertiesConfiguration extends DialogConfiguration {
     disabled?: boolean | string | Expression | BoolExpression;
 }
 
+/**
+ * Sets properties with the result of evaluating a value expression.
+ */
 export class SetProperties<O extends object = {}> extends Dialog<O> implements SetPropertiesConfiguration {
     public static $kind = 'Microsoft.SetProperties';
 
     public constructor();
+
+    /**
+     * Initializes a new instance of the [SetProperties](xref:botbuilder-dialogs-adaptive.SetProperties) class.
+     * @param assignments Optional. [PropertyAssignment](xref:botbuilder-dialogs-adaptive.PropertyAssignment), additional property settings as property/value pairs.
+     */
     public constructor(assignments?: PropertyAssignment[]) {
         super();
         if (assignments) {
@@ -84,6 +92,12 @@ export class SetProperties<O extends object = {}> extends Dialog<O> implements S
         }
     }
 
+    /**
+     * Starts a new [Dialog](xref:botbuilder-dialogs.Dialog) and pushes it onto the dialog stack.
+     * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
+     * @param options Optional. Initial information to pass to the dialog.
+     * @returns A `Promise` representing the asynchronous operation.
+     */
     public async beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult> {
         if (this.disabled && this.disabled.getValue(dc.state)) {
             return await dc.endDialog();
@@ -104,6 +118,11 @@ export class SetProperties<O extends object = {}> extends Dialog<O> implements S
         return await dc.endDialog();
     }
 
+    /**
+     * @protected
+     * Builds the compute Id for the [Dialog](xref:botbuilder-dialogs.Dialog).
+     * @returns A `string` representing the compute Id.
+     */
     protected onComputeId(): string {
         return `SetProperties[${StringUtils.ellipsis(
             this.assignments.map((item): string => item.property.toString()).join(','),

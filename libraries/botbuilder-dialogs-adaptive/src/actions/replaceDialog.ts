@@ -13,16 +13,24 @@ export interface ReplaceDialogConfiguration extends BaseInvokeDialogConfiguratio
     disabled?: boolean | string | Expression | BoolExpression;
 }
 
+/**
+ * Action which calls another [Dialog](xref:botbuilder-dialogs.Dialog), when it is done it will go to the caller's parent dialog.
+ */
 export class ReplaceDialog<O extends object = {}> extends BaseInvokeDialog<O> implements ReplaceDialogConfiguration {
     public static $kind = 'Microsoft.ReplaceDialog';
 
     /**
-     * Creates a new `ReplaceWithDialog` instance.
-     * @param dialogId ID of the dialog to goto.
-     * @param options (Optional) static options to pass the dialog.
+     * Creates a new [ReplaceDialog](xref:botbuilder-dialogs-adaptive.ReplaceDialog) instance.
+     * @param dialogId ID of the [Dialog](xref:botbuilder-dialogs.Dialog) to goto.
+     * @param options Optional, static options to pass the [Dialog](xref:botbuilder-dialogs.Dialog).
      */
-    public constructor();
     public constructor(dialogIdToCall: string, options?: O);
+        
+    /**
+     * Creates a new [ReplaceDialog](xref:botbuilder-dialogs-adaptive.ReplaceDialog) instance.
+     * @param dialogId Optional. ID of the [Dialog](xref:botbuilder-dialogs.Dialog) to goto.
+     * @param options Optional. Static options to pass the [Dialog](xref:botbuilder-dialogs.Dialog).
+     */
     public constructor(dialogIdToCall?: string, options?: O) {
         super(dialogIdToCall, options);
     }
@@ -41,6 +49,12 @@ export class ReplaceDialog<O extends object = {}> extends BaseInvokeDialog<O> im
         }
     }
 
+    /**
+     * Starts a new [Dialog](xref:botbuilder-dialogs.Dialog) and pushes it onto the dialog stack.
+     * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
+     * @param options Optional. Initial information to pass to the dialog.
+     * @returns A `Promise` representing the asynchronous operation.
+     */
     public async beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult> {
         if (this.disabled && this.disabled.getValue(dc.state)) {
             return await dc.endDialog();

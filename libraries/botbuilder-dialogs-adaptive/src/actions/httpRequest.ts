@@ -32,7 +32,15 @@ import { replaceJsonRecursively } from '../jsonExtensions';
 type HeadersInput = Record<string, string>;
 type HeadersOutput = Record<string, StringExpression>;
 
+/**
+ * [HeadersInput](xref:botbuilder-dialogs-adaptive.HeadersInput) or [HeadersOutput](xref:botbuilder-dialogs-adaptive.HeadersOutput) to [HttpHeader](xref:botbuilder-dialogs-adaptive.HttpHeader) converter.
+ */
 class HttpHeadersConverter implements Converter<HeadersInput, HeadersOutput> {
+    /**
+     * Converts a [HeadersInput](xref:botbuilder-dialogs-adaptive.HeadersInput) or [HeadersOutput](xref:botbuilder-dialogs-adaptive.HeadersOutput) to [HttpHeader](xref:botbuilder-dialogs-adaptive.HttpHeader).
+     * @param value [HeadersInput](xref:botbuilder-dialogs-adaptive.HeadersInput) or [HeadersOutput](xref:botbuilder-dialogs-adaptive.HeadersOutput) to convert.
+     * @returns The [HttpHeader](xref:botbuilder-dialogs-adaptive.HttpHeader).
+     */
     public convert(value: HeadersInput | HeadersOutput): HeadersOutput {
         return Object.entries(value).reduce((headers, [key, value]) => {
             return {
@@ -145,11 +153,30 @@ export interface HttpRequestConfiguration extends DialogConfiguration {
     disabled?: boolean | string | Expression | BoolExpression;
 }
 
+/**
+ * Action for performing an `HttpRequest`.
+ */
 export class HttpRequest<O extends object = {}> extends Dialog<O> implements HttpRequestConfiguration {
     public static $kind = 'Microsoft.HttpRequest';
 
     public constructor();
+
+    /**
+     * Initializes a new instance of the [HttpRequest](xref:botbuilder-dialogs-adaptive.HttpRequest) class.
+     * @param method The [HttpMethod](xref:botbuilder-dialogs-adaptive.HttpMethod), for example POST, GET, DELETE or PUT.
+     * @param url URL for the request.
+     * @param headers The headers of the request.
+     * @param body The raw body of the request.
+     */
     public constructor(method: HttpMethod, url: string, headers: { [key: string]: string }, body: any);
+
+    /**
+     * Initializes a new instance of the [HttpRequest](xref:botbuilder-dialogs-adaptive.HttpRequest) class.
+     * @param method Optional. The [HttpMethod](xref:botbuilder-dialogs-adaptive.HttpMethod), for example POST, GET, DELETE or PUT.
+     * @param url Optional. URL for the request.
+     * @param headers Optional. The headers of the request.
+     * @param body Optional. The raw body of the request.
+     */
     public constructor(method?: HttpMethod, url?: string, headers?: { [key: string]: string }, body?: any) {
         super();
         this.method = method || HttpMethod.GET;
@@ -223,6 +250,12 @@ export class HttpRequest<O extends object = {}> extends Dialog<O> implements Htt
         }
     }
 
+    /**
+     * Starts a new [Dialog](xref:botbuilder-dialogs.Dialog) and pushes it onto the dialog stack.
+     * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
+     * @param options Optional. Initial information to pass to the dialog.
+     * @returns A `Promise` representing the asynchronous operation.
+     */
     public async beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult> {
         if (this.disabled && this.disabled.getValue(dc.state)) {
             return await dc.endDialog();
@@ -326,6 +359,11 @@ export class HttpRequest<O extends object = {}> extends Dialog<O> implements Htt
         return await dc.endDialog(result);
     }
 
+    /**
+     * @protected
+     * Builds the compute Id for the [Dialog](xref:botbuilder-dialogs.Dialog).
+     * @returns A `string` representing the compute Id.
+     */
     protected onComputeId(): string {
         return `HttpRequest[${this.method} ${this.url}]`;
     }

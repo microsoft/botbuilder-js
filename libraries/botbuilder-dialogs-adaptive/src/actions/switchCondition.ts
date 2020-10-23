@@ -42,6 +42,9 @@ class CasesConverter implements Converter<CaseInput[], Case[]> {
     }
 }
 
+/**
+ * Conditional branch with multiple cases.
+ */
 export interface SwitchConditionConfiguration extends DialogConfiguration {
     condition?: string | Expression;
     default?: string[] | Dialog[];
@@ -55,7 +58,21 @@ export class SwitchCondition<O extends object = {}>
     public static $kind = 'Microsoft.SwitchCondition';
 
     public constructor();
+
+    /**
+     * Initializes a new instance of the [SwitchCondition](xref:botbuilder-dialogs-adaptive.SwitchCondition) class
+     * @param condition Condition expression against memory.
+     * @param defaultDialogs Default [Dialog](xref:botbuilder-dialogs.Dialog) array.
+     * @param cases Cases.
+     */
     public constructor(condition: string, defaultDialogs: Dialog[], cases: Case[]);
+
+    /**
+     * Initializes a new instance of the [SwitchCondition](xref:botbuilder-dialogs-adaptive.SwitchCondition) class
+     * @param condition Optional. Condition expression against memory.
+     * @param defaultDialogs Optional. Default [Dialog](xref:botbuilder-dialogs.Dialog) array.
+     * @param cases Optional. Cases.
+     */
     public constructor(condition?: string, defaultDialogs?: Dialog[], cases?: Case[]) {
         super();
         if (condition) {
@@ -108,6 +125,10 @@ export class SwitchCondition<O extends object = {}>
 
     private _defaultScope: ActionScope;
 
+    /**
+     * Gets the child [Dialog](xref:botbuilder-dialogs.Dialog) dependencies so they can be added to the containers [Dialog](xref:botbuilder-dialogs.Dialog) set.
+     * @returns The child [Dialog](xref:botbuilder-dialogs.Dialog) dependencies.
+     */
     public getDependencies(): Dialog[] {
         let dialogs: Dialog[] = [];
         if (this.default) {
@@ -120,6 +141,12 @@ export class SwitchCondition<O extends object = {}>
         return dialogs;
     }
 
+    /**
+     * Starts a new [Dialog](xref:botbuilder-dialogs.Dialog) and pushes it onto the dialog stack.
+     * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
+     * @param options Optional. Initial information to pass to the dialog.
+     * @returns A `Promise` representing the asynchronous operation.
+     */
     public async beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult> {
         if (this.disabled && this.disabled.getValue(dc.state)) {
             return await dc.endDialog();
@@ -206,6 +233,11 @@ export class SwitchCondition<O extends object = {}>
         return await dc.replaceDialog(actionScope.id);
     }
 
+    /**
+     * @protected
+     * Gets the default scope.
+     * @returns An [ActionScope](xref:botbuilder-dialogs-adaptive.ActionScope) with the scope.
+     */
     protected get defaultScope(): ActionScope {
         if (!this._defaultScope) {
             this._defaultScope = new ActionScope(this.default);
@@ -213,6 +245,11 @@ export class SwitchCondition<O extends object = {}>
         return this._defaultScope;
     }
 
+    /**
+     * @protected
+     * Builds the compute Id for the [Dialog](xref:botbuilder-dialogs.Dialog).
+     * @returns A `string` representing the compute Id.
+     */
     protected onComputeId(): string {
         return `SwitchCondition[${this.condition.toString()}]`;
     }

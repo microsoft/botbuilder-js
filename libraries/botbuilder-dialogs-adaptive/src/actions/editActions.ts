@@ -34,13 +34,29 @@ export interface EditActionsConfiguration extends DialogConfiguration {
     disabled?: boolean | string | BoolExpression;
 }
 
+/**
+ * Class which allows you to edit the current actions. 
+ */
 export class EditActions<O extends object = {}>
     extends Dialog<O>
     implements DialogDependencies, EditActionsConfiguration {
     public static $kind = 'Microsoft.EditActions';
 
     public constructor();
+
+    /**
+     * Initializes a new instance of the [EditActions](xref:botbuilder-dialogs-adaptive.EditActions) class.
+     * @param changeType [ActionChangeType](xref:botbuilder-dialogs-adaptive.ActionChangeType), type of change to apply to the active actions.
+     * @param actions Optional. Child [Dialog](xref:botbuilder-dialogs.Dialog) dependencies so they can be added to the containers dialogset.
+     */
+
     public constructor(changeType: ActionChangeType, actions?: Dialog[]);
+
+    /**
+     * Initializes a new instance of the [EditActions](xref:botbuilder-dialogs-adaptive.EditActions) class.
+     * @param changeType Optional. [ActionChangeType](xref:botbuilder-dialogs-adaptive.ActionChangeType), type of change to apply to the active actions.
+     * @param actions Optional. Child [Dialog](xref:botbuilder-dialogs.Dialog) dependencies so they can be added to the containers dialogset.
+     */
     public constructor(changeType?: ActionChangeType, actions?: Dialog[]) {
         super();
         if (changeType) {
@@ -79,10 +95,20 @@ export class EditActions<O extends object = {}>
         }
     }
 
+    /**
+     * Gets the child [Dialog](xref:botbuilder-dialogs.Dialog) dependencies so they can be added to the containers [Dialog](xref:botbuilder-dialogs.Dialog) set.
+     * @returns The child [Dialog](xref:botbuilder-dialogs.Dialog) dependencies.
+     */
     public getDependencies(): Dialog[] {
         return this.actions;
     }
 
+    /**
+     * Starts a new [Dialog](xref:botbuilder-dialogs.Dialog) and pushes it onto the dialog stack.
+     * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
+     * @param options Optional. Initial information to pass to the dialog.
+     * @returns A `Promise` representing the asynchronous operation.
+     */
     public async beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult> {
         if (this.disabled && this.disabled.getValue(dc.state)) {
             return await dc.endDialog();
@@ -111,6 +137,11 @@ export class EditActions<O extends object = {}>
         }
     }
 
+    /**
+     * @protected
+     * Builds the compute Id for the [Dialog](xref:botbuilder-dialogs.Dialog).
+     * @returns A `string` representing the compute Id.
+     */
     protected onComputeId(): string {
         const idList = this.actions.map((action: Dialog): string => action.id);
         return `EditActions[${this.changeType.toString()}|${StringUtils.ellipsis(idList.join(','), 50)}]`;
