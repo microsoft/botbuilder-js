@@ -12,6 +12,7 @@ import {
     Activity,
     ActivityTypes,
     CallerIdConstants,
+    Channels,
     CoreAppCredentials,
     BotAdapter,
     BotCallbackHandlerKey,
@@ -1195,8 +1196,15 @@ export class BotFrameworkAdapter
             if (request.deliveryMode === DeliveryModes.ExpectReplies) {
                 // Handle "expectReplies" scenarios where all the activities have been buffered and sent back at once
                 // in an invoke response.
-                const expectedReplies: ExpectedReplies = { activities: context.bufferedReplyActivities as Activity[] };
-                body = expectedReplies;
+                let activities = context.bufferedReplyActivities as Activity[];
+                
+                // If the channel is not the emulator, do not send trace activities.
+                // Fixes: https://github.com/microsoft/botbuilder-js/issues/2732
+                if (request.channelId !== Channels.Emulator) {
+                    activities = activities.filter((a) => a.type !== ActivityTypes.Trace);
+                }
+                
+                body = { activities } as ExpectedReplies;
                 status = StatusCodes.OK;
             } else if (request.type === ActivityTypes.Invoke) {
                 // Retrieve a cached Invoke response to handle Invoke scenarios.
@@ -1331,8 +1339,8 @@ export class BotFrameworkAdapter
                         TokenResolver.checkForOAuthCards(this, context, activity as Activity);
                     }
                     const client = this.getOrCreateConnectorClient(context, activity.serviceUrl, this.credentials);
-                    if (activity.type === 'trace' && activity.channelId !== 'emulator') {
-                        // Just eat activity
+                    if (activity.type === ActivityTypes.Trace && activity.channelId !== Channels.Emulator) {
+                    // Just eat activity
                         responses.push({} as ResourceResponse);
                     } else if (activity.replyToId) {
                         responses.push(
