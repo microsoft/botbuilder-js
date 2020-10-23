@@ -1,4 +1,5 @@
 const createUserId = require('./createUserId');
+const fetch = require('cross-fetch');
 
 module.exports = async function (
   directLineSecret = process.env.DIRECT_LINE_SECRET,
