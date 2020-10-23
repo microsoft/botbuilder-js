@@ -29,11 +29,14 @@ export interface SendActivityConfiguration extends DialogConfiguration {
     disabled?: boolean | string | Expression | BoolExpression;
 }
 
+/**
+ * Send an activity back to the user.
+ */
 export class SendActivity<O extends object = {}> extends Dialog<O> implements SendActivityConfiguration {
     public static $kind = 'Microsoft.SendActivity';
     /**
-     * Creates a new `SendActivity` instance.
-     * @param activity Activity or message text to send the user.
+     * Creates a new [SendActivity](xref:botbuilder-dialogs-adaptive.SendActivity) instance.
+     * @param activity [Activity](xref:botframework-schema.Activity) or message text to send the user.
      */
     public constructor(activity?: Partial<Activity> | string) {
         super();
@@ -67,6 +70,12 @@ export class SendActivity<O extends object = {}> extends Dialog<O> implements Se
         }
     }
 
+    /**
+     * Starts a new [Dialog](xref:botbuilder-dialogs.Dialog) and pushes it onto the dialog stack.
+     * @param dc The `DialogContext` for the current turn of conversation.
+     * @param options Optional. Initial information to pass to the dialog.
+     * @returns A `Promise` representing the asynchronous operation.
+     */
     public async beginDialog(dc: DialogContext, options: O): Promise<DialogTurnResult> {
         if (this.disabled && this.disabled.getValue(dc.state)) {
             return await dc.endDialog();
@@ -111,6 +120,11 @@ export class SendActivity<O extends object = {}> extends Dialog<O> implements Se
         return await dc.endDialog(result);
     }
 
+    /**
+     * @protected
+     * Builds the compute Id for the [Dialog](xref:botbuilder-dialogs.Dialog).
+     * @returns A `string` representing the compute Id.
+     */
     protected onComputeId(): string {
         if (this.activity instanceof ActivityTemplate) {
             return `SendActivity[${StringUtils.ellipsis(this.activity.template.trim(), 30)}]`;

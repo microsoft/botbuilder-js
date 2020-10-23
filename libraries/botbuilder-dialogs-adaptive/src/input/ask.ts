@@ -40,6 +40,11 @@ export interface AskConfiguration extends SendActivityConfiguration {
 export class Ask extends SendActivity implements AskConfiguration {
     public static $kind = 'Microsoft.Ask';
 
+    /**
+     *Initializes a new instance of the [Ask](xref:botbuilder-dialogs-adaptive.Ask) class.
+     * @param text Optional, text value.
+     * @param expectedProperties Optional, [ArrayExpression](xref:adaptive-expressions.ArrayExpression) of expected properties.
+     */
     public constructor(text?: string, expectedProperties?: ArrayExpression<string>) {
         super(text);
         this.expectedProperties = expectedProperties;
@@ -55,6 +60,12 @@ export class Ask extends SendActivity implements AskConfiguration {
      */
     public defaultOperation: StringExpression;
 
+    /**
+     * Called when the [Dialog](xref:botbuilder-dialogs.Dialog) is started and pushed onto the dialog stack.
+     * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
+     * @param options Optional, initial information to pass to the [Dialog](xref:botbuilder-dialogs.Dialog).
+     * @returns A [DialogTurnResult](xref:botbuilder-dialogs.DialogTurnResult) `Promise` representing the asynchronous operation.
+     */
     public getConverter(property: keyof AskConfiguration): Converter | ConverterFactory {
         switch (property) {
             case 'expectedProperties':

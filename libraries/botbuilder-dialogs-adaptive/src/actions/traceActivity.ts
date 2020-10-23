@@ -32,11 +32,30 @@ export interface TraceActivityConfiguration extends DialogConfiguration {
     disabled?: boolean | string | Expression | BoolExpression;
 }
 
+/**
+ * Send an trace activity back to the transcript.
+ */
 export class TraceActivity<O extends object = {}> extends Dialog<O> implements TraceActivityConfiguration {
     public static $kind = 'Microsoft.TraceActivity';
 
     public constructor();
+
+    /**
+     * Initializes a new instance of the [TraceActivity](xref:botbuilder-dialogs-adaptive.TraceActivity) class.
+     * @param name Name of the trace activity.
+     * @param valueType Value type of the trace activity.
+     * @param value Value expression to send as the value.
+     * @param label Label to use when describing a trace activity.
+     */
     public constructor(name: string, valueType: string, value: any, label: string);
+    
+    /**
+     * Initializes a new instance of the [TraceActivity](xref:botbuilder-dialogs-adaptive.TraceActivity) class.
+     * @param name Optional. Name of the trace activity.
+     * @param valueType Optional. Value type of the trace activity.
+     * @param value Optional. Value expression to send as the value.
+     * @param label Optional. Label to use when describing a trace activity.
+     */
     public constructor(name?: string, valueType?: string, value?: any, label?: string) {
         super();
         if (name) {
@@ -95,6 +114,12 @@ export class TraceActivity<O extends object = {}> extends Dialog<O> implements T
         }
     }
 
+    /**
+     * Starts a new [Dialog](xref:botbuilder-dialogs.Dialog) and pushes it onto the dialog stack.
+     * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
+     * @param options Optional. Initial information to pass to the dialog.
+     * @returns A `Promise` representing the asynchronous operation.
+     */
     public async beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult> {
         if (this.disabled && this.disabled.getValue(dc.state)) {
             return await dc.endDialog();
@@ -127,6 +152,11 @@ export class TraceActivity<O extends object = {}> extends Dialog<O> implements T
         return await dc.endDialog(traceActivity);
     }
 
+    /**
+     * @protected
+     * Builds the compute Id for the [Dialog](xref:botbuilder-dialogs.Dialog).
+     * @returns A `string` representing the compute Id.
+     */
     protected onComputeId(): string {
         return `TraceActivity[${this.name ? this.name.toString() : ''}]`;
     }

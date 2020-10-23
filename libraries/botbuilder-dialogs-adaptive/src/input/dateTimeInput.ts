@@ -15,6 +15,9 @@ export interface DateTimeInputConfiguration extends InputDialogConfiguration {
     outputFormat?: string | Expression | StringExpression;
 }
 
+/**
+ * Input dialog to collect a datetime from the user.
+ */
 export class DateTimeInput extends InputDialog implements DateTimeInputConfiguration {
     public static $kind = 'Microsoft.DateTimeInput';
 
@@ -33,10 +36,19 @@ export class DateTimeInput extends InputDialog implements DateTimeInputConfigura
         }
     }
 
+    /**
+     * @protected
+     */
     protected onComputeId(): string {
         return `DateTimeInput[${this.prompt && this.prompt.toString()}]`;
     }
 
+    /**
+     * @protected
+     * Called when input has been received.
+     * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
+     * @returns [InputState](xref:botbuilder-dialogs-adaptive.InputState) which reflects whether input was recognized as valid or not.
+     */
     protected async onRecognizeInput(dc: DialogContext): Promise<InputState> {
         // Recognize input and filter out non-attachments
         const input: object = dc.state.getValue(InputDialog.VALUE_PROPERTY);
