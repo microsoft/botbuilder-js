@@ -52,6 +52,11 @@ describe('Prompt Culture Models Tests', function() {
             });
         });
     });
+    
+    it('should not throw when locale is null or undefined', function() {
+        assert.doesNotThrow(() => PromptCultureModels.mapToNearestLanguage(null));
+        assert.doesNotThrow(() => PromptCultureModels.mapToNearestLanguage(undefined));
+    });
 
     it('should return all supported cultures', function() {
         const expected = [
