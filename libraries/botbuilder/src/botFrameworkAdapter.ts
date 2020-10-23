@@ -1201,9 +1201,7 @@ export class BotFrameworkAdapter
                 // If the channel is not the emulator, do not send trace activities.
                 // Fixes: https://github.com/microsoft/botbuilder-js/issues/2732
                 if (request.channelId !== Channels.Emulator) {
-                    activities = context.bufferedReplyActivities.reduce(
-                        (replies, a: Activity) => a.type === ActivityTypes.Trace ? replies : replies.concat(a),
-                        [] as Activity[]);
+                    activities = activities.filter((a) => a.type !== ActivityTypes.Trace);
                 }
                 
                 body = { activities } as ExpectedReplies;
