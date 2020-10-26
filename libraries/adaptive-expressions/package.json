@@ -51,7 +51,7 @@
     "build": "tsc",
     "build-docs": "typedoc --theme markdown --entryPoint adaptive-expressions --excludePrivate --includeDeclarations --ignoreCompilerErrors --module amd --out ..\\..\\doc\\adaptive-expressions .\\lib\\index.d.ts --hideGenerator --name \"Bot Builder SDK - Expression\" --readme none",
     "clean": "erase /q /s .\\lib",
-    "postbuild": "browserify lib/index.js -s AEL -o dist/adaptive-expressions.js",
+    "postbuild": "browserify lib/index.js -s AEL -o lib/browser.js",
     "set-version": "npm version --allow-same-version ${Version}",
     "test": "tsc && tsc ./tests/expressionProperty.test.ts && mocha tests/ --timeout 60000",
     "antlr-build-expression": "antlr4ts src/parser/ExpressionAntlrLexer.g4 -o src/parser/generated && antlr4ts src/parser/ExpressionAntlrParser.g4 -visitor -o src/parser/generated",
@@ -59,7 +59,6 @@
   },
   "files": [
     "lib",
-    "src",
-    "dist"
+    "src"
   ]
 }
