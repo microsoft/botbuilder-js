@@ -32,13 +32,14 @@
     "lru-cache": "^5.1.1",
     "moment": "^2.25.1",
     "moment-timezone": "^0.5.28",
-    "d3-format":"^1.4.4"
+    "d3-format": "^1.4.4"
   },
   "devDependencies": {
     "@microsoft/api-extractor": "^7.7.12",
     "@types/jspath": "^0.4.0",
     "@types/mocha": "^5.2.7",
     "@types/node": "^10.17.27",
+    "browserify": "16.5.2",
     "mocha": "^6.2.3",
     "nyc": "^15.1.0",
     "ts-node": "^4.1.0",
@@ -50,6 +51,7 @@
     "build": "tsc",
     "build-docs": "typedoc --theme markdown --entryPoint adaptive-expressions --excludePrivate --includeDeclarations --ignoreCompilerErrors --module amd --out ..\\..\\doc\\adaptive-expressions .\\lib\\index.d.ts --hideGenerator --name \"Bot Builder SDK - Expression\" --readme none",
     "clean": "erase /q /s .\\lib",
+    "postbuild": "browserify lib/index.js -s AEL -o lib/browser.js",
     "set-version": "npm version --allow-same-version ${Version}",
     "test": "tsc && tsc ./tests/expressionProperty.test.ts && mocha tests/ --timeout 60000",
     "antlr-build-expression": "antlr4ts src/parser/ExpressionAntlrLexer.g4 -o src/parser/generated && antlr4ts src/parser/ExpressionAntlrParser.g4 -visitor -o src/parser/generated",
