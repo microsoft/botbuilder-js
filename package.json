@@ -9,7 +9,7 @@
     "browser-functional-test": "cd libraries/browser-functional-tests && node nightwatch.js -e",
     "test": "lerna run build && nyc mocha \"libraries/@(adaptive*|bot*)/tests/**/*.test.js\" --exit --check-leaks",
     "test:compat": "lerna run test:compat",
-    "test:consumer": "node ./run-consumer-test.js",
+    "test:consumer": "lerna run --scope consumer-test --stream start",
     "test:coveralls": "lerna run build && nyc mocha \"libraries/@(adaptive*|bot*)/tests/**/*.test.js\" --exit && nyc report --reporter=text-lcov | coveralls",
     "test-coverage": "nyc mocha \"libraries/@(adaptive*|bot*)/tests/**/*.test.js\" --exit --check-leaks",
     "test:devops": "nyc --report --reporter=cobertura mocha -- \"libraries/@(adaptive*|bot*)/tests/**/*.test.js\" --check-leaks --reporter mocha-junit-reporter --reporter-options includePending=true",
