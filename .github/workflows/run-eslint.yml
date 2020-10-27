@@ -31,3 +31,10 @@ jobs:
 
       - name: Run "eslint" npm script
         run: npm run eslint
+
+      - uses: actions/cache@v2
+        with:
+          path: |
+            ~/.npm
+            **/node_modules
+          key: ${{ runner.os }}-${{ hashFiles('**/package.json') }}

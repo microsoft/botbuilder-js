@@ -33,3 +33,10 @@ jobs:
 
       - name: Run "test:consumer" npm script
         run: npm run test:consumer
+
+      - uses: actions/cache@v2
+        with:
+          path: |
+            ~/.npm
+            **/node_modules
+          key: ${{ runner.os }}-${{ hashFiles('**/package.json') }}
