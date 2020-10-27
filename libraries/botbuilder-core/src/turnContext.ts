@@ -11,6 +11,7 @@ import {
     ResourceResponse,
     Mention,
 } from 'botframework-schema';
+import { INVOKE_RESPONSE_KEY } from '.';
 import { BotAdapter } from './botAdapter';
 import { shallowCopy } from './internal';
 import { TurnContextStateCollection } from './turnContextStateCollection';
@@ -503,8 +504,15 @@ export class TurnContext {
                 // Append activities to buffer
                 const responses: ResourceResponse[] = [];
                 output.forEach((a) => {
-                        this.bufferedReplyActivities.push(a);
-                        responses.push({ id: undefined });
+                    this.bufferedReplyActivities.push(a);
+
+                    // Ensure the TurnState has the InvokeResponseKey, since this activity
+                    // is not being sent through the adapter, where it would be added to TurnState.
+                    if (a.type === ActivityTypes.InvokeResponse) {
+                        this.turnState.set(INVOKE_RESPONSE_KEY, a);
+                    }
+
+                    responses.push({ id: undefined });
                 });
 
                 // Set responded flag

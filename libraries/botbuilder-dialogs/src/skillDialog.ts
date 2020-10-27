@@ -266,10 +266,11 @@ export class SkillDialog extends Dialog<Partial<BeginSkillDialogOptions>> {
         }
 
         let eocActivity: Activity;
-        const activities = typeof response.body !== 'undefined' && (response.body as ExpectedReplies).activities;
-        if (activity.deliveryMode === DeliveryModes.ExpectReplies && Array.isArray(activities)) {
-            // Process replies in the response.body.
-            for (const activityFromSkill of activities) {
+        let sentInvokeResponses = false;
+
+        const activitiesFromSkill = response.body && response.body.activities;
+        if (activity.deliveryMode === DeliveryModes.ExpectReplies && Array.isArray(activitiesFromSkill)) {
+            for (const activityFromSkill of activitiesFromSkill) {
                 if (activityFromSkill.type === ActivityTypes.EndOfConversation) {
                     // Capture the EndOfConversation activity if it was sent from skill
                     eocActivity = activityFromSkill;
@@ -277,10 +278,21 @@ export class SkillDialog extends Dialog<Partial<BeginSkillDialogOptions>> {
                     // The conversation has ended, so cleanup the conversation id.
                     await this.dialogOptions.conversationIdFactory.deleteConversationReference(skillConversationId);
                 } else if (
-                    await this.interceptOAuthCards(context, activityFromSkill, this.dialogOptions.connectionName)
+                    !sentInvokeResponses &&
+                    (await this.interceptOAuthCards(context, activityFromSkill, this.dialogOptions.connectionName))
                 ) {
                     // Do nothing. The token exchange succeeded, so no OAuthCard needs to be shown to the user.
+                    sentInvokeResponses = true;
                 } else {
+                    // If an invoke response has already been sent we should ignore future invoke responses as this
+                    // represents a bug in the skill.
+                    if (activityFromSkill.type === ActivityTypes.InvokeResponse) {
+                        if (sentInvokeResponses) {
+                            continue;
+                        }
+                        sentInvokeResponses = true;
+                    }
+
                     await context.sendActivity(activityFromSkill);
                 }
             }
