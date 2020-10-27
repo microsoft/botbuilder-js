@@ -1,4 +1,4 @@
-name: ESLint
+name: Consumer Test
 
 on:
   workflow_dispatch:
@@ -15,7 +15,7 @@ on:
 
 jobs:
   build:
-    name: Run ESLint
+    name: Run test:consumer
     runs-on: ubuntu-latest
 
     steps:
@@ -32,9 +32,11 @@ jobs:
             **/node_modules
           key: ${{ runner.os }}-${{ hashFiles('**/package.json') }}
 
-      # Note: postinstall is unnecessary for linting
-      - name: npm install --ignore-scripts
-        run: npm install --ignore-scripts
+      - name: npm install
+        run: npm install
 
-      - name: Run "eslint" npm script
-        run: npm run eslint
+      - name: npm build
+        run: npm run build
+
+      - name: Run "test:consumer" npm script
+        run: npm run test:consumer
