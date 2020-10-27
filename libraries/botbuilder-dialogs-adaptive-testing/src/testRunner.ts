@@ -16,23 +16,15 @@ import { TestScript } from './testScript';
  * In charge of running Dialog Adaptive tests.
  */
 export class TestRunner {
-    private resourceExplorer: ResourceExplorer;
-    private testAdapter: TestAdapter;
-
     /**
      * Initializes a new instance of the `TestRunner` class.
      * @param resourcePath Path where the `.dialog` files are located.
      */
-    public constructor(resourcePath: string) {
+    public constructor(private resourcePath: string) {
         ComponentRegistration.add(new AdaptiveComponentRegistration());
         ComponentRegistration.add(new AdaptiveTestComponentRegistration());
         ComponentRegistration.add(new QnAMakerComponentRegistration());
         ComponentRegistration.add(new LuisComponentRegistration());
-
-        this.resourceExplorer = new ResourceExplorer();
-        this.resourceExplorer.addFolder(resourcePath, true, false);
-
-        this.testAdapter = new TestAdapter(TestAdapter.createConversation('botbuilder-dialogs-adaptive-testing'));
     }
 
     /**
@@ -40,10 +32,17 @@ export class TestRunner {
      * @param testName Test name.
      * @returns A Promise that represents the work queued to execute.
      */
-    public async runTestScript(testName: string): Promise<any> {
-        const script = this.resourceExplorer.loadType<TestScript>(`${testName}.test.dialog`);
+    public runTestScript(testName: string): Promise<void> {
+        // Construct a fresh test adapter
+        const testAdapter = new TestAdapter(TestAdapter.createConversation('botbuilder-dialogs-adaptive-testing'));
+
+        // Construct a fresh resourceExplorer
+        const resourceExplorer = new ResourceExplorer();
+        resourceExplorer.addFolder(this.resourcePath, true, false);
+
+        const script = resourceExplorer.loadType<TestScript>(`${testName}.test.dialog`);
         script.description = script.description || testName;
-        this.testAdapter.activeQueue.splice(0, this.testAdapter.activeQueue.length);
-        await script.execute(this.resourceExplorer, testName, this.testAdapter);
+
+        return script.execute(resourceExplorer, testName, testAdapter);
     }
 }
