@@ -108,6 +108,7 @@ steps:
      $(PKG15)
      $(PKG16)
      $(PKG17)
+     $(PKG18)
   continueOnError: true
 
 - powershell: |
