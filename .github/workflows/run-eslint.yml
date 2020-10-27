@@ -25,16 +25,16 @@ jobs:
         with:
           node-version: '12'
 
-      # Note: postinstall is unnecessary for linting
-      - name: npm install --ignore-scripts
-        run: npm install --ignore-scripts
-
-      - name: Run "eslint" npm script
-        run: npm run eslint
-
       - uses: actions/cache@v2
         with:
           path: |
             ~/.npm
             **/node_modules
           key: ${{ runner.os }}-${{ hashFiles('**/package.json') }}
+
+      # Note: postinstall is unnecessary for linting
+      - name: npm install --ignore-scripts
+        run: npm install --ignore-scripts
+
+      - name: Run "eslint" npm script
+        run: npm run eslint
