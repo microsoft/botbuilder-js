@@ -28,6 +28,7 @@
     "libraries/botbuilder-testing",
     "libraries/botbuilder-lg",
     "libraries/adaptive-expressions",
+    "libraries/adaptive-expressions-ie11",
     "libraries/botframework-config",
     "libraries/botframework-connector",
     "libraries/botframework-schema",
