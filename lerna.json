@@ -40,6 +40,7 @@
     "libraries/bot-integration-tests",
     "libraries/testskills/skillparent",
     "libraries/testskills/skillchild",
+    "testing/*",
     "transcripts"
   ],
   "version": "independent"

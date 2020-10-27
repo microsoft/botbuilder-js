@@ -1,0 +1,11 @@
+{
+  "compilerOptions": {
+    "esModuleInterop": true,
+    "moduleResolution": "node",
+    "strict": true,
+    "target": "es6"
+  },
+  "include": [
+    "run.ts"
+  ]
+}

@@ -91,6 +91,13 @@ steps:
     verbose: false
     customCommand: 'run test:devops'
 
+- task: Npm@1
+  displayName: 'npm run test:consumer'
+  inputs:
+    command: custom
+    verbose: false
+    customCommand: 'run test:consumer'
+
 # Publish test results to Azure Pipelines
 - task: PublishTestResults@2
   displayName: 'Publish test results to Azure DevOps'
