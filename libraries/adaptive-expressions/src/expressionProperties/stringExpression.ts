@@ -43,7 +43,7 @@ export class StringExpression extends ExpressionProperty<string> {
             return;
         }
 
-        if (typeof value == 'string') {
+        if (typeof value === 'string') {
             if (value.startsWith('=')) {
                 this.expressionText = value;
                 return;
@@ -55,6 +55,10 @@ export class StringExpression extends ExpressionProperty<string> {
             // Initialize value
             this.expressionText = `=\`${value.replace(/\\/g, '\\\\')}\``;
             return;
+        }
+
+        if (value !== undefined && value !== null) {
+            throw new Error("StringExpression accepts string or Expression as the value.");
         }
     }
 }

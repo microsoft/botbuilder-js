@@ -21,4 +21,20 @@ export class NumberExpression extends ExpressionProperty<number> {
     public constructor(value?: number | string | Expression) {
         super(value, 0);
     }
+
+    /**
+     * Set a number value.
+     * @param value Value to set.
+     */
+    public setValue(value: number | string | Expression): void {
+        if (value !== undefined 
+            && value !== null 
+            && typeof value !== 'number' 
+            && typeof value !== 'string' 
+            && !(value instanceof Expression)) {
+            throw new Error("NumberExpression accepts string, number or Expression as the value.");
+        }
+
+        super.setValue(value);
+    }
 }

@@ -36,4 +36,20 @@ export class IntExpression extends ExpressionProperty<number> {
 
         return result;
     }
+
+    /**
+     * Set an integer value.
+     * @param value Value to set.
+     */
+    public setValue(value: number | string | Expression): void {
+        if (value !== undefined 
+            && value !== null 
+            && typeof value !== 'number' 
+            && typeof value !== 'string' 
+            && !(value instanceof Expression)) {
+            throw new Error("IntExpression accepts string, number or Expression as the value.");
+        }
+
+        super.setValue(value);
+    }
 }
