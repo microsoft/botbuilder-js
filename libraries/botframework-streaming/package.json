@@ -39,7 +39,6 @@
     "nyc": "^15.1.0",
     "rimraf": "^3.0.2",
     "sinon": "^7.5.0",
-    "sponge": "^0.1.0",
     "ts-node": "^4.1.0",
     "typescript": "3.5.3"
   },
@@ -47,7 +46,7 @@
     "build": "npm-run-all -p build:lib build:es5",
     "build:lib": "tsc -p tsconfig.json",
     "build:es5": "tsc -p tsconfig-es5.json",
-    "postbuild": "browserify -s BFSE --debug es5/index-browser.js | exorcist lib/index-browser.js.map | sponge lib/index-browser.js",
+    "postbuild": "browserify -s BFSE --debug es5/index-browser.js | exorcist lib/index-browser.js.map > lib/index-browser.js",
     "build:rollup": "npm run clean && npm run build && api-extractor run --verbose --local",
     "clean": "rimraf q s lib es5",
     "set-version": "npm version --allow-same-version ${Version}",
