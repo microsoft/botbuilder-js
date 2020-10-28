@@ -47,10 +47,9 @@
     "build:lib": "tsc -p tsconfig.json",
     "build:es5": "tsc -p tsconfig-es5.json",
     "postbuild": "browserify -s BFSE --debug es5/index-browser.js | exorcist lib/index-browser.js.map > lib/index-browser.js",
-    "build:rollup": "npm run clean && npm run build && api-extractor run --verbose --local",
+    "build:rollup": "yarn clean && yarn build && api-extractor run --verbose --local",
     "clean": "rimraf q s lib es5",
-    "set-version": "npm version --allow-same-version ${Version}",
-    "test": "npm run build && nyc mocha tests/",
+    "test": "yarn build && nyc mocha tests/",
     "test:compat": "api-extractor run --verbose"
   },
   "files": [

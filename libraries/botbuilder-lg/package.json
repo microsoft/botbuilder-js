@@ -39,7 +39,6 @@
     "build": "tsc",
     "build-docs": "typedoc --theme markdown --entryPoint botbuilder-lg --excludePrivate --includeDeclarations --ignoreCompilerErrors --module amd --out ..\\..\\doc\\botbuilder-lg .\\lib\\index.d.ts --hideGenerator --name \"Bot Builder SDK - LG\" --readme none",
     "clean": "erase /q /s .\\lib",
-    "set-version": "npm version --allow-same-version ${Version}",
     "test": "tsc && mocha tests/ --timeout 60000",
     "antlr-build": "antlr4ts src/LGFileLexer.g4 -o src/generated && antlr4ts src/LGFileParser.g4 -visitor -o src/generated && antlr4ts src/LGTemplateLexer.g4 -o src/generated && antlr4ts src/LGTemplateParser.g4 -visitor -o src/generated"
   },

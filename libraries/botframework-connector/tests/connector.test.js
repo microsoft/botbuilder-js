@@ -46,7 +46,7 @@ const ConnectorClient = BotConnector.ConnectorClient;
 const TokenApiClient = BotConnector.TokenApiClient;
 const Credentials = BotConnector.MicrosoftAppCredentials;
 
-var SuiteBase = require('../../../tools/framework/suite-base');
+var SuiteBase = require('azure/framework/suite-base');
 var should = require('should');
 
 var requiredEnvironment = [

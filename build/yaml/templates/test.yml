@@ -1,0 +1,25 @@
+#variables:
+#  PackageVersion: Define this in the calling pipeline.
+#  PublishTestResults: (optional) Define this in the calling pipeline.
+
+steps:
+- script: yarn test:devops
+  displayName: yarn test
+
+- task: PublishTestResults@2
+  displayName: publish test results
+  inputs:
+    testResultsFormat: 'JUnit'
+    testResultsFiles: '**/test-results.xml' 
+    mergeTestResults: true
+    failTaskOnFailedTests: false
+    testRunTitle: 'Unit Tests for $(Build.SourceVersion)'
+  condition: and(succeeded(), ne(variables['System.PullRequest.IsFork'], 'True'), eq(variables['PublishTestResults'], true))
+
+- task: PublishCodeCoverageResults@1
+  displayName: publish code coverage
+  inputs:
+    codeCoverageTool: 'cobertura'
+    summaryFileLocation: './coverage/cobertura-coverage.xml'
+    failIfCoverageEmpty: true
+  condition: and(succeeded(), eq(variables['PublishTestResults'], true))
