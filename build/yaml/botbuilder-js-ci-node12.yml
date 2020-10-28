@@ -12,6 +12,7 @@ variables:
   NodeVersion: 12.x
   PackageVersion: 4.4.0-preview.$(Build.BuildNumber)
   PreviewPackageVersion: 4.4.0-preview.$(Build.BuildNumber)
+  npm_config_cache: $(Pipeline.Workspace)/.npm
 
 stages:
 - stage: Build

@@ -7,6 +7,8 @@ pool:
 
 variables:
   version: 4.0.0-0
+  NodeVersion: 12.x
+  npm_config_cache: $(Pipeline.Workspace)/.npm
 
 steps:
 - task: colinsalmcorner.colinsalmcorner-buildtasks.tag-build-task.tagBuildOrRelease@0
@@ -17,38 +19,26 @@ steps:
   condition: and(succeeded(), eq(variables['System.PullRequest.IsFork'], 'false'))
 
 - task: NodeTool@0
-  displayName: 'Use Node 10.x'
+  displayName: 'Use NodeVersion'
   inputs:
-    versionSpec: 10.x
+    versionSpec: $(NodeVersion)
+
+- task: Cache@2
+  inputs:
+    key: 'npm | "$(NodeVersion)" | "$(Agent.OS)" | package.json | **/package.json'
+    path: $(Pipeline.Workspace)/.npm
+  displayName: npm cache
 
 - task: Npm@1
-  displayName: 'npm install lerna ...'
+  displayName: 'npm install'
   inputs:
-    command: custom
     verbose: false
-    customCommand: 'install --global lerna@3.2.1 nyc mocha'
-
-- task: Npm@1
-  displayName: 'npm i -g @microsoft/api-extractor'
-  inputs:
-    command: custom
-    verbose: false
-    customCommand: 'i -g @microsoft/api-extractor@7.7.10'
 
 - task: Npm@1
   displayName: '/tools npm install'
   inputs:
     workingDir: tools
     verbose: false
-  enabled: false
-
-- task: Npm@1
-  displayName: 'npm install coveralls --save-dev'
-  inputs:
-    command: custom
-    workingDir: tools
-    verbose: false
-    customCommand: 'install coveralls --save-dev'
   enabled: false
 
 - bash: |
@@ -70,7 +60,6 @@ steps:
    sed -i '' 's/${Version}/$(version)/g' libraries/botframework-connector/package.json
    sed -i '' 's/${Version}/$(version)/g' libraries/botframework-schema/package.json
    sed -i '' 's/${Version}/$(version)/g' libraries/botframework-streaming/package.json
-   
   failOnStderr: true
   displayName: 'Replace version number in package.json files'
   continueOnError: true
@@ -93,13 +82,6 @@ steps:
   continueOnError: true
 
 - task: Npm@1
-  displayName: 'npm run postinstall'
-  inputs:
-    command: custom
-    verbose: false
-    customCommand: 'run postinstall'
-
-- task: Npm@1
   displayName: 'npm run build'
   inputs:
     command: custom
@@ -109,98 +91,11 @@ steps:
 - powershell: |
    # All "check_api_for" Tasks should run only if the build succeeds,
    # And continue running even if another "check_api_for" task fails.
-   
    Write-Host "##vso[task.setvariable variable=buildPassed;]true"
   displayName: 'Set "buildPassed" variable'
 
-- task: Npm@1
-  displayName: 'check_api_for botframework-schema'
-  inputs:
-    command: custom
-    workingDir: 'libraries/botframework-schema'
-    verbose: false
-    customCommand: 'run test:compat'
-  condition: eq(variables.buildPassed, 'true')
-
-- task: Npm@1
-  displayName: 'check_api_for botframework-streaming'
-  inputs:
-    command: custom
-    workingDir: 'libraries/botframework-streaming'
-    verbose: false
-    customCommand: 'run test:compat'
-  condition: eq(variables.buildPassed, 'true')
-
-- task: Npm@1
-  displayName: 'check_api_for botbuilder-core'
-  inputs:
-    command: custom
-    workingDir: 'libraries/botbuilder-core'
-    verbose: false
-    customCommand: 'run test:compat'
-  condition: eq(variables.buildPassed, 'true')
-
-- task: Npm@1
-  displayName: 'check_api_for botbuilder'
-  inputs:
-    command: custom
-    workingDir: libraries/botbuilder
-    verbose: false
-    customCommand: 'run test:compat'
-  condition: eq(variables.buildPassed, 'true')
-
-- task: Npm@1
-  displayName: 'check_api_for botbuilder-ai'
-  inputs:
-    command: custom
-    workingDir: 'libraries/botbuilder-ai'
-    verbose: false
-    customCommand: 'run test:compat'
-  condition: eq(variables.buildPassed, 'true')
-
-- task: Npm@1
-  displayName: 'check_api_for botbuilder-applicationinsights'
-  inputs:
-    command: custom
-    workingDir: 'libraries/botbuilder-applicationinsights'
-    verbose: false
-    customCommand: 'run test:compat'
-  condition: eq(variables.buildPassed, 'true')
-
-- task: Npm@1
-  displayName: 'check_api_for botbuilder-azure'
-  inputs:
-    command: custom
-    workingDir: 'libraries/botbuilder-azure'
-    verbose: false
-    customCommand: 'run test:compat'
-  condition: eq(variables.buildPassed, 'true')
-
-- task: Npm@1
-  displayName: 'check_api_for botbuilder-dialogs'
-  inputs:
-    command: custom
-    workingDir: 'libraries/botbuilder-dialogs'
-    verbose: false
-    customCommand: 'run test:compat'
-  condition: eq(variables.buildPassed, 'true')
-
-- task: Npm@1
-  displayName: 'check_api_for botbuilder-testing'
-  inputs:
-    command: custom
-    workingDir: 'libraries/botbuilder-testing'
-    verbose: false
-    customCommand: 'run test:compat'
-  condition: eq(variables.buildPassed, 'true')
-
-- task: Npm@1
-  displayName: 'check_api_for botframework-config'
-  inputs:
-    command: custom
-    workingDir: 'libraries/botframework-config'
-    verbose: false
-    customCommand: 'run test:compat'
+- script: 'npx lerna run --no-private test:compat'
+  displayName: 'npx lerna exec --no-private npm pack'
   condition: eq(variables.buildPassed, 'true')
 
 - task: ms.vss-governance-buildtask.governance-build-task-component-detection.ComponentGovernanceComponentDetection@0
