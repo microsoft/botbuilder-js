@@ -1753,6 +1753,7 @@ export enum ActivityTypes {
   EndOfConversation = 'endOfConversation',
   Event = 'event',
   Invoke = 'invoke',
+  InvokeResponse = 'invokeResponse',
   DeleteUserData = 'deleteUserData',
   MessageUpdate = 'messageUpdate',
   MessageDelete = 'messageDelete',
