@@ -1,7 +1,8 @@
 {
   "compilerOptions": {
     "allowSyntheticDefaultImports": true,
-    "noEmit": true
+    "noEmit": true,
+    "strict": true
   },
   "include": [
     "test.ts"
