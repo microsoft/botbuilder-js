@@ -194,7 +194,6 @@ export class QnAMakerDialog extends WaterfallDialog implements QnAMakerDialogCon
      * @param strictFilters (Optional) QnA Maker metadata with which to filter or boost queries to the knowledge base; or null to apply none.
      * @param dialogId (Optional) Id of the created dialog. Default is 'QnAMakerDialog'.
      */
-    public constructor();
     public constructor(
         knowledgeBaseId?: string,
         endpointKey?: string,
@@ -207,7 +206,7 @@ export class QnAMakerDialog extends WaterfallDialog implements QnAMakerDialogCon
         cardNoMatchResponse?: Activity,
         strictFilters?: QnAMakerMetadata[],
         dialogId = 'QnAMakerDialog',
-        strictFiltersJoinOperator: JoinOperator = JoinOperator.AND
+        strictFiltersJoinOperator = JoinOperator.AND
     ) {
         super(dialogId);
         if (knowledgeBaseId) {
