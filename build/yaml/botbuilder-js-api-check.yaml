@@ -3,7 +3,7 @@
 name: $(Build.BuildId)
 
 pool:
-  vmImage: 'macOS-10.15'
+  vmImage: 'ubuntu-18.04'
 
 variables:
   version: 4.0.0-0
