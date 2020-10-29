@@ -33,25 +33,25 @@ steps:
 
 - bash: |
    set -o xtrace
-   sed -i '' 's/${Version}/$(PackageVersion)/g' package.json 
-   sed -i '' 's/${Version}/$(PackageVersion)/g' libraries/adaptive-expressions/package.json
-   sed -i '' 's/${Version}/$(PackageVersion)/g' libraries/bot-integration-tests/package.json
-   sed -i '' 's/${Version}/$(PackageVersion)/g' libraries/botbuilder/package.json
-   sed -i '' 's/${Version}/$(PackageVersion)/g' libraries/botbuilder-ai/package.json
-   sed -i '' 's/${Version}/$(PreviewPackageVersion)/g' libraries/botbuilder-ai-orchestrator/package.json
-   sed -i '' 's/${Version}/$(PackageVersion)/g' libraries/botbuilder-applicationinsights/package.json
-   sed -i '' 's/${Version}/$(PackageVersion)/g' libraries/botbuilder-azure/package.json
-   sed -i '' 's/${Version}/$(PackageVersion)/g' libraries/botbuilder-core/package.json
-   sed -i '' 's/${Version}/$(PackageVersion)/g' libraries/botbuilder-dialogs/package.json
-   sed -i '' 's/${Version}/$(PreviewPackageVersion)/g' libraries/botbuilder-dialogs-adaptive/package.json
-   sed -i '' 's/${Version}/$(PreviewPackageVersion)/g' libraries/botbuilder-dialogs-adaptive-testing/package.json
-   sed -i '' 's/${Version}/$(PreviewPackageVersion)/g' libraries/botbuilder-dialogs-declarative/package.json
-   sed -i '' 's/${Version}/$(PackageVersion)/g' libraries/botbuilder-lg/package.json
-   sed -i '' 's/${Version}/$(PackageVersion)/g' libraries/botbuilder-testing/package.json
-   sed -i '' 's/${Version}/$(PackageVersion)/g' libraries/botframework-config/package.json
-   sed -i '' 's/${Version}/$(PackageVersion)/g' libraries/botframework-connector/package.json
-   sed -i '' 's/${Version}/$(PackageVersion)/g' libraries/botframework-schema/package.json
-   sed -i '' 's/${Version}/$(PackageVersion)/g' libraries/botframework-streaming/package.json
+   sed -i 's/${Version}/$(PackageVersion)/g' package.json 
+   sed -i 's/${Version}/$(PackageVersion)/g' libraries/adaptive-expressions/package.json
+   sed -i 's/${Version}/$(PackageVersion)/g' libraries/bot-integration-tests/package.json
+   sed -i 's/${Version}/$(PackageVersion)/g' libraries/botbuilder/package.json
+   sed -i 's/${Version}/$(PackageVersion)/g' libraries/botbuilder-ai/package.json
+   sed -i 's/${Version}/$(PreviewPackageVersion)/g' libraries/botbuilder-ai-orchestrator/package.json
+   sed -i 's/${Version}/$(PackageVersion)/g' libraries/botbuilder-applicationinsights/package.json
+   sed -i 's/${Version}/$(PackageVersion)/g' libraries/botbuilder-azure/package.json
+   sed -i 's/${Version}/$(PackageVersion)/g' libraries/botbuilder-core/package.json
+   sed -i 's/${Version}/$(PackageVersion)/g' libraries/botbuilder-dialogs/package.json
+   sed -i 's/${Version}/$(PreviewPackageVersion)/g' libraries/botbuilder-dialogs-adaptive/package.json
+   sed -i 's/${Version}/$(PreviewPackageVersion)/g' libraries/botbuilder-dialogs-adaptive-testing/package.json
+   sed -i 's/${Version}/$(PreviewPackageVersion)/g' libraries/botbuilder-dialogs-declarative/package.json
+   sed -i 's/${Version}/$(PackageVersion)/g' libraries/botbuilder-lg/package.json
+   sed -i 's/${Version}/$(PackageVersion)/g' libraries/botbuilder-testing/package.json
+   sed -i 's/${Version}/$(PackageVersion)/g' libraries/botframework-config/package.json
+   sed -i 's/${Version}/$(PackageVersion)/g' libraries/botframework-connector/package.json
+   sed -i 's/${Version}/$(PackageVersion)/g' libraries/botframework-schema/package.json
+   sed -i 's/${Version}/$(PackageVersion)/g' libraries/botframework-streaming/package.json
   displayName: 'Replace version number in package.json files'
   continueOnError: true
 
