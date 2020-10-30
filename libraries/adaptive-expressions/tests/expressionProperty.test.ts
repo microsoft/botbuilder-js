@@ -170,6 +170,15 @@ describe('expressionProperty tests', () => {
         str = new StringExpression('c:\test\test\test');
         result = str.getValue(data);
         assert.equal(result, 'c:\test\test\test');
+
+        // test backtick in stringExpression
+        str = new StringExpression('test `name');
+        result = str.getValue(data);
+        assert.strictEqual(result, 'test `name');
+
+        str = new StringExpression('test //`name');
+        result = str.getValue(data);
+        assert.strictEqual(result, 'test //`name');
     });
 
     it('ValueExpression', () => {
@@ -214,5 +223,14 @@ describe('expressionProperty tests', () => {
         val = new ValueExpression('c:\test\test\test');
         result = val.getValue(data);
         assert.equal(result, 'c:\test\test\test');
+
+        // test backtick in valueExpression
+        val = new ValueExpression('name `backtick');
+        result = val.getValue(data);
+        assert.strictEqual(result, 'name `backtick');
+
+        val = new ValueExpression('name \\`backtick');
+        result = val.getValue(data);
+        assert.strictEqual(result, 'name \\`backtick');
     });
 });
