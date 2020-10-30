@@ -1,149 +1,194 @@
 const assert = require('assert');
 const { BotAdapter, MiddlewareSet, TurnContext } = require('../');
 
+class SimpleAdapter extends BotAdapter {}
+
 const testMessage = { text: 'test', type: 'message' };
 
-class SimpleAdapter extends BotAdapter { }
+const context = new TurnContext(new SimpleAdapter(), testMessage);
 
-describe(`MiddlewareSet`, function () {
-    this.timeout(5000);
+const noop = () => {
+    // no-op
+};
 
-    let order = '';
-    let calls = 0;
-    function middleware(char) {
-        return (context, next) => {
-            assert(context, `middleware[${calls}]: context object missing.`);
-            assert(next, `middleware[${calls}]: next() function missing.`);
-            calls++;
-            order += char;
-            return next();
-        };
-    }
+describe(`MiddlewareSet`, () => {
+    // Generates middleware helper that itself generates middleware that pushes a value
+    // on a stack. Returns the middleware generator function, the stack, and a clean
+    // MiddlewareSet instance for testing
+    const stackMiddleware = () => {
+        const stack = [];
 
-    const set = new MiddlewareSet();
-    it(`should use() middleware individually.`, function (done) {
-        set.use(middleware('a')).use(middleware('b'));
-        done();
-    });
-
-    it(`should use() a list of middleware.`, function (done) {
-        set.use(middleware('c'), middleware('d'), middleware('e'));
-        done();
-    });
-
-    it(`should run all middleware in order.`, function (done) {
-        calls = 0;
-        order = '';
-        const context = new TurnContext(new SimpleAdapter(), testMessage);
-        set.run(context, () => {
-            assert(calls === 5, `only "${calls} of 5" middleware called.`);
-            assert(order === 'abcde', `middleware executed out of order "${order}".`)
-        }).then(() => done());
-    });
-
-    it(`should run a middleware set added to another middleware set.`, function (done) {
-        calls = 0;
-        order = '';
-        const context = new TurnContext(new SimpleAdapter(), testMessage);
-        const set2 = new MiddlewareSet(set);
-        set2.run(context, () => {
-            assert(calls === 5, `only "${calls} of 5" middleware called.`);
-            assert(order === 'abcde', `middleware executed out of order "${order}".`)
-        }).then(() => done());
-    });
-    
-    it(`should run middleware with a leading and trailing edge.`, function (done) {
-        let edge = '';
-        const context = new TurnContext(new SimpleAdapter(), testMessage);
-        new MiddlewareSet()
-            .use((context, next) => {
-                edge += 'a';
-                return next().then(() => {
-                    edge += 'c';
-                });
-            })
-            .run(context, () => {
-                edge += 'b';
-            })
-            .then(() => {
-                assert(edge === 'abc', `edges out of order "${edge}".`);
-                done();
-            });
-    });
-
-    it(`should support middleware added as an object.`, function (done) {
-        let called = false;
-        const context = new TurnContext(new SimpleAdapter(), testMessage);
-        new MiddlewareSet()
-            .use({
-                onTurn: (context, next) => {
-                    called = true;
-                    return next();
-                }
-            })
-            .run(context, () => {
-                assert(called, `onProcessRequest() not called.`);
-                done();
-            });
-    });
-
-    it(`not calling next() should intercept other middleware and bot logic.`, function (done) {
-        let called = false;
-        const context = new TurnContext(new SimpleAdapter(), testMessage);
-        new MiddlewareSet()
-            .use(() => {
-                return Promise.resolve();
-            })
-            .use((context, next) => {
-                called = true;
+        return {
+            middleware: (value) => (_, next) => {
+                stack.unshift(value);
                 return next();
-            })
+            },
+            set: new MiddlewareSet(),
+            stack,
+        };
+    };
+
+    it(`should use() middleware individually.`, () => {
+        const { middleware, set } = stackMiddleware();
+        set.use(middleware('a')).use(middleware('b'));
+    });
+
+    it(`should use() a list of middleware.`, () => {
+        const { middleware, set } = stackMiddleware();
+        set.use(middleware('a'), middleware('b'), middleware('c'));
+    });
+
+    it(`should run all middleware in order.`, (done) => {
+        const { middleware, set, stack } = stackMiddleware();
+        set.use(middleware(1), middleware(2), middleware(3));
+
+        set.run(context, () => {
+            assert.deepStrictEqual(stack, [3, 2, 1], 'stack holds expected values');
+        })
+            .then(done)
+            .catch(done);
+    });
+
+    it(`should run a middleware set added to another middleware set.`, (done) => {
+        const { middleware, set: child, stack } = stackMiddleware();
+
+        child.use(middleware(1));
+        const parent = new MiddlewareSet(child);
+
+        parent
             .run(context, () => {
-                assert(false, `bot logic not intercepted.`);
+                assert.deepStrictEqual(stack, [1]);
             })
-            .then(() => {
-                assert(!called, `other middleware not intercepted.`);
-                done();
-            });
+            .then(done)
+            .catch(done);
+    });
+
+    it(`should run middleware with a leading and trailing edge.`, async () => {
+        const { set, stack } = stackMiddleware();
+
+        set.use(async (_, next) => {
+            stack.unshift(1);
+
+            await next();
+
+            stack.unshift(2);
+        });
+
+        await set.run(context, () => {
+            stack.unshift(3);
+        });
+
+        assert.deepStrictEqual(stack, [2, 3, 1]);
+    });
+
+    it(`should support middleware added as an object.`, (done) => {
+        const { middleware, set, stack } = stackMiddleware();
+
+        set.use({ onTurn: middleware(1) }).use({ onTurn: middleware(2) });
+
+        set.run(context, () => {
+            assert.deepStrictEqual(stack, [2, 1]);
+        })
+            .then(done)
+            .catch(done);
+    });
+
+    it(`not calling next() should intercept other middleware and bot logic.`, (done) => {
+        const { middleware, set, stack } = stackMiddleware();
+
+        set.use(middleware(1), noop, middleware(2));
+
+        set.run(context, () => {
+            assert.deepStrictEqual(stack, [1]);
+        })
+            .then(done)
+            .catch(done);
     });
 
     it(`should map an exception within middleware to a rejection.`, function (done) {
-        const context = new TurnContext(new SimpleAdapter(), testMessage);
-        new MiddlewareSet()
-            .use(() => {
-                throw new Error('failed');
-            })
-            .run(context, () => {
-                assert(false, `bot logic shouldn't run.`);
-            })
-            .then(() => {
-                assert(false, `exception swallowed.`);
-            })
-            .catch((err) => {
-                assert(err, `invalid exception object.`);
-                done();
+        const { middleware, set, stack } = stackMiddleware();
+
+        set.use(middleware(1), () => Promise.reject(new Error('rejected')), middleware(2));
+
+        set.run(context, noop)
+            .then(() => done(new Error('expected error')))
+            .catch(() => {
+                try {
+                    assert.deepStrictEqual(stack, [1]);
+                    done();
+                } catch (err) {
+                    done(err);
+                }
             });
     });
-    
-    it(`should throw an error if an invalid plugin type is added.`, function (done) {
-        try {
-            new MiddlewareSet().use('bogus');
-        } catch (err) {
-            done();
-        }
+
+    it(`should throw an error if an invalid plugin type is added.`, () => {
+        assert.throws(() => new MiddlewareSet().use('bogus'));
     });
 
-    it(`should support passing middleware into the constructor of the set.`, function (done) {
-        let called = false;
-        const context = new TurnContext(new SimpleAdapter(), testMessage);
-        new MiddlewareSet((context, next) => {
-            called = true;
-            return next();
-        })
-        .run(context, () => { })
-        .then(() => {
-            assert(called, `middleware not called.`);
-            done();
+    it(`should support passing middleware into the constructor of the set.`, (done) => {
+        const { middleware, stack } = stackMiddleware();
+
+        new MiddlewareSet(middleware(1), middleware(2), middleware(3))
+            .run(context, () => {
+                assert.deepStrictEqual(stack, [3, 2, 1]);
+            })
+            .then(done)
+            .catch(done);
+    });
+
+    it('should unroll middleware even if some later middleware rejects', (done) => {
+        const { middleware, set, stack } = stackMiddleware();
+
+        set.use(
+            middleware(1),
+            async (_, next) => {
+                try {
+                    stack.unshift(2);
+                    await next();
+                } finally {
+                    stack.shift();
+                }
+            },
+            () => Promise.reject(new Error('rejected')),
+            middleware(4)
+        );
+
+        set.run(context, noop)
+            .then(() => done(new Error('expected error')))
+            .catch((err) => {
+                try {
+                    assert.strictEqual(err.message, 'rejected');
+                    assert.deepStrictEqual(stack, [1]);
+                    done();
+                } catch (err) {
+                    done(err);
+                }
+            });
+    });
+
+    it('should unroll middleware even if the next handler reject', (done) => {
+        const { middleware, set, stack } = stackMiddleware();
+
+        set.use(middleware(1), async (_, next) => {
+            try {
+                stack.unshift(2);
+                await next();
+            } finally {
+                stack.shift();
+            }
         });
+
+        set.run(context, () => Promise.reject(new Error('rejected')))
+            .then(() => done(new Error('expected error')))
+            .catch((err) => {
+                try {
+                    assert.strictEqual(err.message, 'rejected');
+                    assert.deepStrictEqual(stack, [1]);
+                    done();
+                } catch (err) {
+                    done(err);
+                }
+            });
     });
 });
