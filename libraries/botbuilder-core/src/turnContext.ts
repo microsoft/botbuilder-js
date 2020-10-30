@@ -389,7 +389,7 @@ export class TurnContext {
      */
     public sendTraceActivity(
         name: string,
-        value?: unknown,
+        value?: any,
         valueType?: string,
         label?: string
     ): Promise<ResourceResponse | undefined> {
