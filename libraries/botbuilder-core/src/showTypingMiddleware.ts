@@ -68,13 +68,14 @@ export class ShowTypingMiddleware implements Middleware {
             scheduleIndicator();
         }
 
-        // Execute remaining middleware, then clear scheduled indicators
-        await next();
-
-        finished = true;
-        if (timeout) clearTimeout(timeout);
+        // Execute remaining middleware inside try/finally to ensure we eventually clear timeouts
+        try {
+            await next();
+        } finally {
+            finished = true;
+            if (timeout) clearTimeout(timeout);
+        }
     }
-
 
     private isSkillBot(context: TurnContext) {
         const identity = context.turnState.get(context.adapter.BotIdentityKey);
