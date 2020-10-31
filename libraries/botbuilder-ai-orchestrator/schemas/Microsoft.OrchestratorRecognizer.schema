@@ -1,8 +1,8 @@
 {
     "$schema": "https://schemas.botframework.com/schemas/component/v1.0/component.schema",
     "$role": "implements(Microsoft.IRecognizer)",
-    "title": "QnAMaker Recognizer",
-    "description": "Recognizer for generating QnAMatch intents from a KB.",
+    "title": "Orchestrator recognizer",
+    "description": "Orchestrator recognizer.",
     "type": "object",
     "properties": {
         "id": {
@@ -14,23 +14,13 @@
             "$ref": "schema:#/definitions/stringExpression",
             "title": "Model",
             "description": "NLR model file path.",
-            "default": "settings.orchestrator.modelpath"
+            "default": "=settings.orchestrator.modelpath"
         },
         "snapshotPath": {
             "$ref": "schema:#/definitions/stringExpression",
-            "title": "Endpoint Key",
+            "title": "Endpoint key",
             "description": "SnapShot file path.",
-            "default": "settings.orchestrator.shapshotpath"
-        },
-        "useCompactEmbeddings": {
-            "$ref": "schema:#/definitions/booleanExpression",
-            "title": "Use compact embeddings",
-            "description": "If true, compact embeddings will be used.",
-            "default": "true",
-            "examples": [
-                true,
-                "=turn.useCompactEmbeddings"
-            ]
+            "default": "=settings.orchestrator.shapshotpath"
         },
         "entityRecognizers": {
             "type": "array",
@@ -46,20 +36,20 @@
             "description": "Recognizer returns ChooseIntent (disambiguation) if other intents are classified within this score of the top scoring intent.",
             "default": 0.05,
             "examples": [
-                true,
+                "=true",
                 "=turn.scoreThreshold",
-                "=settings.orchestrator.disambigscorethreshold"
+                "=settings.orchestrator.disambigScoreThreshold"
             ]
         },
         "detectAmbiguousIntents": {
             "$ref": "schema:#/definitions/booleanExpression",
-            "title": "Threshold",
+            "title": "Detect ambiguous intents",
             "description": "If true, recognizer will look for ambiguous intents (intents with close recognition scores from top scoring intent).",
             "default": false,
             "examples": [
-                true,
+                "=true",
                 "=turn.detectAmbiguousIntents",
-                "=settings.orchestrator.detectambiguousintents"
+                "=settings.orchestrator.detectAmbiguousIntents"
             ]
         }
     },
