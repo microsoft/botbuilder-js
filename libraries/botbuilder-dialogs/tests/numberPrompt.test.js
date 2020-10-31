@@ -155,9 +155,9 @@ describe('NumberPrompt', function () {
             (dialogContext) =>
                 dialogContext.prompt('prompt', { prompt: 'Send me a zero', retryPrompt: 'Send 0 or zero' }),
             (turnContext) => turnContext.sendActivity('ok'),
-            (prompt) => {
+            async (prompt) => {
                 if (prompt.recognized.value !== 0) {
-                    prompt.context.sendActivity(`attemptCount ${prompt.attemptCount}`);
+                    await prompt.context.sendActivity(`attemptCount ${prompt.attemptCount}`);
                     return false;
                 }
 
