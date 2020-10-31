@@ -434,7 +434,7 @@ export class TurnContext {
      * - [updateActivity](xref:botbuilder-core.TurnContext.updateActivity)
      * - [deleteActivity](xref:botbuilder-core.TurnContext.deleteActivity)
      */
-    public sendActivity(
+    public async sendActivity(
         activityOrText: string | Partial<Activity>,
         speak?: string,
         inputHint?: string
@@ -449,9 +449,8 @@ export class TurnContext {
             a = activityOrText;
         }
 
-        return this.sendActivities([a]).then((responses: ResourceResponse[]) =>
-            responses && responses.length > 0 ? responses[0] : undefined
-        );
+        const responses = (await this.sendActivities([a])) || [];
+        return responses[0];
     }
 
     /**
@@ -484,22 +483,26 @@ export class TurnContext {
      */
     public sendActivities(activities: Partial<Activity>[]): Promise<ResourceResponse[]> {
         let sentNonTraceActivity = false;
-        const ref: Partial<ConversationReference> = TurnContext.getConversationReference(this.activity);
-        const output: Partial<Activity>[] = activities.map((a: Partial<Activity>) => {
-            const o: Partial<Activity> = TurnContext.applyConversationReference({ ...a }, ref);
-            if (!o.type) {
-                o.type = ActivityTypes.Message;
+        const ref = TurnContext.getConversationReference(this.activity);
+        const output = activities.map((activity) => {
+            const result = TurnContext.applyConversationReference({ ...activity }, ref);
+
+            if (!result.type) {
+                result.type = ActivityTypes.Message;
             }
-            if (o.type !== ActivityTypes.Trace) {
+
+            if (result.type !== ActivityTypes.Trace) {
                 sentNonTraceActivity = true;
             }
-            if (o.id) {
-                delete o.id;
+
+            if (result.id) {
+                delete result.id;
             }
-            return o;
+
+            return result;
         });
 
-        return this.emit(this._onSendActivities, output, () => {
+        return this.emit(this._onSendActivities, output, async () => {
             if (this.activity.deliveryMode === DeliveryModes.ExpectReplies) {
                 // Append activities to buffer
                 const responses: ResourceResponse[] = [];
@@ -520,16 +523,16 @@ export class TurnContext {
                     this.responded = true;
                 }
 
-                return Promise.resolve(responses);
+                return responses;
             } else {
-                return this.adapter.sendActivities(this, output).then((responses: ResourceResponse[]) => {
-                    // Set responded flag
-                    if (sentNonTraceActivity) {
-                        this.responded = true;
-                    }
+                const responses = await this.adapter.sendActivities(this, output);
 
-                    return responses;
-                });
+                // Set responded flag
+                if (sentNonTraceActivity) {
+                    this.responded = true;
+                }
+
+                return responses;
             }
         });
     }
@@ -558,7 +561,7 @@ export class TurnContext {
      * - [deleteActivity](xref:botbuilder-core.TurnContext.deleteActivity)
      * - [getReplyConversationReference](xref:botbuilder-core.TurnContext.getReplyConversationReference)
      */
-    public updateActivity(activity: Partial<Activity>): Promise<void> {
+    public updateActivity(activity: Partial<Activity>): Promise<ResourceResponse | void> {
         const ref: Partial<ConversationReference> = TurnContext.getConversationReference(this.activity);
         const a: Partial<Activity> = TurnContext.applyConversationReference(activity, ref);
         return this.emit(this._onUpdateActivity, a, () => this.adapter.updateActivity(this, a));
@@ -812,26 +815,21 @@ export class TurnContext {
 
     /**
      * @private
+     * Executes `handlers` as a chain, returning a promise that resolves to the final result.
      */
-    private emit<T>(
-        handlers: ((context: TurnContext, arg: T, next: () => Promise<any>) => Promise<any>)[],
-        arg: T,
-        next: () => Promise<any>
-    ): Promise<any> {
-        const list: ((context: TurnContext, arg: T, next: () => Promise<any>) => Promise<any>)[] = handlers.slice();
-        const context: TurnContext = this;
-        function emitNext(i: number): Promise<void> {
+    private emit<A, T>(
+        handlers: Array<(context: TurnContext, arg: A, next: () => Promise<T>) => Promise<T>>,
+        arg: A,
+        next: () => Promise<T>
+    ): Promise<T> {
+        const runHandlers = ([handler, ...remaining]: typeof handlers): Promise<T> => {
             try {
-                if (i < list.length) {
-                    return Promise.resolve(list[i](context, arg, () => emitNext(i + 1)));
-                }
-
-                return Promise.resolve(next());
+                return handler ? handler(this, arg, () => runHandlers(remaining)) : Promise.resolve(next());
             } catch (err) {
                 return Promise.reject(err);
             }
-        }
+        };
 
-        return emitNext(0);
+        return runHandlers(handlers);
     }
 }

@@ -242,7 +242,7 @@ describe(`TestAdapter`, function() {
     it(`should throw an error with assertNoReply() when no reply is expected, but reply Activity was received.`, function(done) {
         const adapter = new TestAdapter((context) => {
             const activities = [receivedMessage, receivedMessage];
-            context.sendActivity(activities);
+            return context.sendActivity(activities);
         });
         adapter
             .send('test')

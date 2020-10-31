@@ -277,14 +277,17 @@ export class TestAdapter extends BotAdapter implements ExtendedUserTokenProvider
      * Replaces an existing activity in the activeQueue.
      * @param context Context object for the current turn of conversation with the user.
      * @param activity Activity being updated.
+     * @returns promise representing async operation
      */
-    public updateActivity(context: TurnContext, activity: Partial<Activity>): Promise<void> {
-        for (let i = 0; i < this.activeQueue.length; i++) {
-            if (activity.id && activity.id === this.activeQueue[i].id) {
-                this.activeQueue[i] = activity;
-                break;
+    public updateActivity(context: TurnContext, activity: Partial<Activity>): Promise<ResourceResponse | void> {
+        if (activity.id) {
+            const idx = this.activeQueue.findIndex((a) => a.id === activity.id);
+            if (idx !== -1) {
+                this.activeQueue.splice(idx, 1, activity);
             }
+            return Promise.resolve({ id: activity.id });
         }
+
         return Promise.resolve();
     }
 
@@ -295,12 +298,13 @@ export class TestAdapter extends BotAdapter implements ExtendedUserTokenProvider
      * @param reference `ConversationReference` for activity being deleted.
      */
     public deleteActivity(context: TurnContext, reference: Partial<ConversationReference>): Promise<void> {
-        for (let i = 0; i < this.activeQueue.length; i++) {
-            if (reference.activityId && reference.activityId === this.activeQueue[i].id) {
-                this.activeQueue.splice(i, 1);
-                break;
+        if (reference.activityId) {
+            const idx = this.activeQueue.findIndex((a) => a.id === reference.activityId);
+            if (idx !== -1) {
+                this.activeQueue.splice(idx, 1);
             }
         }
+
         return Promise.resolve();
     }
 

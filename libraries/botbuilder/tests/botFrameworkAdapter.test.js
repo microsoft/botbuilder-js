@@ -1104,7 +1104,8 @@ describe(`BotFrameworkAdapter`, function () {
     it(`should updateActivity().`, async () => {
         const adapter = new AdapterUnderTest();
         const context = new TurnContext(adapter, incomingMessage);
-        await adapter.updateActivity(context, incomingMessage);
+        const result = await adapter.updateActivity(context, incomingMessage);
+        assert.deepStrictEqual(result, { id: '5678' }, 'result is expected');
     });
 
     it(`should fail to updateActivity() if serviceUrl missing.`, function (done) {
