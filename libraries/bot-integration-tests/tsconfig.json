@@ -1,16 +1,13 @@
 {
-    "compilerOptions": {
-      "declaration": false,
-      "esModuleInterop": true,
-      "sourceMap": true,
-      "module": "commonjs",
-      "outDir": "./transpiled-tests",
-      "rootDir": "./src",
-      "target": "es6",
-      "lib": [ "es2015", "dom" ],
-      "types" : ["node", "mocha"]
-    },
-    "include": [
-      "src/**/*"
-    ]
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "esModuleInterop": true,
+    "lib": ["es2015", "dom"],
+    "outDir": "lib",
+    "rootDir": "src",
+    "types" : ["node", "mocha"]
+  },
+  "include": [
+    "src/**/*"
+  ]
 }

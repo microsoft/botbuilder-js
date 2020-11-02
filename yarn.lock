@@ -5363,13 +5363,14 @@ dotnet-2.0.0@^1.4.4:
   resolved "https://registry.yarnpkg.com/dotnet-2.0.0/-/dotnet-2.0.0-1.4.4.tgz#917a9d8f68542ac82187a8c23a7dd3325639749c"
   integrity sha512-KDbUncVUhwkJH2wjL9gbUWQ5NcZIe+PFEI0CGTMtX5TImFG6Nlt9CABVGBBG+oWf13zLARaBVenkD20moz1NPw==
 
-downlevel-dts@^0.6.0:
-  version "0.6.0"
-  resolved "https://registry.yarnpkg.com/downlevel-dts/-/downlevel-dts-0.6.0.tgz#1e52db9fa3ad9e3919a36545412f0b41a44289d1"
-  integrity sha512-Jy3ZZcXWPzTn5jJRW5WpdEtIq8+UowWWi5TEBgHHvzw320kouV//2KgVhfcuOpP93KS3UAokTxnZKU4L75kRSQ==
+downlevel-dts@^0.7.0:
+  version "0.7.0"
+  resolved "https://registry.yarnpkg.com/downlevel-dts/-/downlevel-dts-0.7.0.tgz#155c24310dad8a4820ad077e64b15a8c461aa932"
+  integrity sha512-tcjGqElN0/oad/LJBlaxmZ3zOYEQOBbGuirKzif8s1jeRiWBdNX9H6OBFlRjOQkosXgV+qSjs4osuGCivyZ4Jw==
   dependencies:
+    semver "^7.3.2"
     shelljs "^0.8.3"
-    typescript "^4.1.0-dev.20200804"
+    typescript "^4.1.0-dev.20201026"
 
 dtrace-provider@^0.8.1, dtrace-provider@~0.8:
   version "0.8.8"
@@ -13830,15 +13831,15 @@ typescript@3.7.x:
   resolved "https://registry.yarnpkg.com/typescript/-/typescript-3.7.5.tgz#0692e21f65fd4108b9330238aac11dd2e177a1ae"
   integrity sha512-/P5lkRXkWHNAbcJIiHPfRoKqyd7bsyCma1hZNUGfn20qm64T6ZBlrzprymeu918H+mB/0rIg2gGK/BXkhhYgBw==
 
-typescript@^4.0.3, typescript@^4.0.5:
+typescript@^4.0.5:
   version "4.0.5"
   resolved "https://registry.yarnpkg.com/typescript/-/typescript-4.0.5.tgz#ae9dddfd1069f1cb5beb3ef3b2170dd7c1332389"
   integrity sha512-ywmr/VrTVCmNTJ6iV2LwIrfG1P+lv6luD8sUJs+2eI9NLGigaN+nUQc13iHqisq7bra9lnmUSYqbJvegraBOPQ==
 
-typescript@^4.1.0-dev.20200804:
-  version "4.1.0-dev.20201028"
-  resolved "https://registry.yarnpkg.com/typescript/-/typescript-4.1.0-dev.20201028.tgz#d76c4a90e0158f044d2d3a5b46bb0d6f02a860c7"
-  integrity sha512-M/JEPZn+OuswyHK/4aS4TSYpAzghlZRlV2wxmkky/Spqfn0LKxgE/BP/IMCbx6Wnfr+yEOAE9InN23MLgc5B5Q==
+typescript@^4.1.0-dev.20201026:
+  version "4.1.0-dev.20201102"
+  resolved "https://registry.yarnpkg.com/typescript/-/typescript-4.1.0-dev.20201102.tgz#e1978890ac063bb3f13d067067905b312c1e0897"
+  integrity sha512-kyL2MUGRx69NgowtHpnabYzNA3N8CR+XW51kL9my6MfSXyrojytW5P4YmaayHGQhWLRmzzdDvHfkf2PQBHgbUw==
 
 typescript@~3.9.7:
   version "3.9.7"
