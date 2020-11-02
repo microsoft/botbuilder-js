@@ -36,6 +36,8 @@ export const languagePolicyKey = Symbol('LanguagePolicy');
  * Extension methods for language generator.
  */
 export class LanguageGeneratorExtensions {
+    private static readonly _languageGeneratorManagers = new Map<ResourceExplorer, LanguageGeneratorManager>();
+
     /**
      * Register default LG file or a language generator as default language generator.
      * @param dialogManager The dialog manager to add language generator to.
@@ -56,7 +58,11 @@ export class LanguageGeneratorExtensions {
             }
         }
 
-        const languageGeneratorManager: LanguageGeneratorManager = new LanguageGeneratorManager(resourceExplorer);
+        let languageGeneratorManager = this._languageGeneratorManagers.get(resourceExplorer);
+        if (!languageGeneratorManager) {
+            languageGeneratorManager = new LanguageGeneratorManager(resourceExplorer);
+            this._languageGeneratorManagers.set(resourceExplorer, languageGeneratorManager);
+        }
 
         dialogManager.initialTurnState.set(languageGeneratorKey, languageGenerator);
         dialogManager.initialTurnState.set(languageGeneratorManagerKey, languageGeneratorManager);
