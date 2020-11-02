@@ -16,12 +16,6 @@ steps:
   inputs:
     versionSpec: $(NodeVersion)
 
-# - task: Cache@2
-#   displayName: yarn cache
-#   inputs:
-#     key: 'yarn | "$(Agent.OS)" | "node-$(NodeVersion)" | yarn.lock'
-#     path: $(YARN_CACHE_FOLDER)
-
 - script: yarn --frozen-lockfile
   displayName: yarn install
 
