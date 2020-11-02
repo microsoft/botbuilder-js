@@ -14,10 +14,7 @@ import {
     StoragePipelineOptions,
 } from '@azure/storage-blob';
 
-/**
- * Formats a timestamp in a way that is consistent with the C# SDK
- * @param timestamp Timestamp to format as ticks
- */
+// Formats a timestamp in a way that is consistent with the C# SDK
 function formatTicks(timestamp: Date): string {
     const epochTicks = 621355968000000000; // the number of .net ticks at the unix epoch
     const ticksPerMillisecond = 10000; // there are 10000 .net ticks per millisecond
@@ -25,27 +22,17 @@ function formatTicks(timestamp: Date): string {
     return ticks.toString(16);
 }
 
-/**
- * Formats a channelId as a blob prefix
- * @param channelId channelId to include in blob prefix
- */
+// Formats a channelId as a blob prefix
 function getChannelPrefix(channelId: string): string {
     return sanitizeBlobKey(`${channelId}/`);
 }
 
-/**
- * Formats a channelId and conversationId as a blob prefix
- * @param channelId channelId to include in blob prefix
- * @param conversationId conversationId to include in blob prefix
- */
+// Formats a channelId and conversationId as a blob prefix
 function getConversationPrefix(channelId: string, conversationId: string): string {
     return sanitizeBlobKey(`${channelId}/${conversationId}`);
 }
 
-/**
- * Formats an activity as a blob key
- * @param activity activity to format as a blob key
- */
+// Formats an activity as a blob key
 function getBlobKey(activity: Activity): string {
     return sanitizeBlobKey(
         [activity.channelId, activity.conversation.id, `${formatTicks(activity.timestamp)}-${activity.id}.json`].join(
@@ -71,7 +58,8 @@ export interface BlobsTranscriptStoreOptions {
 /**
  * BlobsTranscriptStore is a [TranscriptStore](xref:botbuilder-core.TranscriptStore) that persists
  * transcripts in Azure Blob Storage
- * @remarks
+ *
+ * @summary
  * Each activity is stored as JSON blob with a key of
  * `container/{channelId]/{conversationId}/{Timestamp.ticks}-{activity.id}.json`.
  */
@@ -83,9 +71,9 @@ export class BlobsTranscriptStore implements TranscriptStore {
     /**
      * Constructs a BlobsStorage instance.
      *
-     * @param connectionString Azure Blob Storage connection string
-     * @param containerName Azure Blob Storage container name
-     * @param options Other options for BlobsTranscriptStore
+     * @param {string} connectionString Azure Blob Storage connection string
+     * @param {string} containerName Azure Blob Storage container name
+     * @param {BlobsTranscriptStoreOptions} options Other options for BlobsTranscriptStore
      */
     constructor(connectionString: string, containerName: string, options?: BlobsTranscriptStoreOptions) {
         assert(typeof connectionString === 'string', '`connectionString` must be a string');
@@ -102,10 +90,6 @@ export class BlobsTranscriptStore implements TranscriptStore {
         }
     }
 
-    /**
-     * Returns a promise that resolves when the container is accessible
-     * @private
-     */
     private _initialize(): Promise<unknown> {
         if (!this._initializePromise) {
             this._initializePromise = this._containerClient.createIfNotExists();
@@ -115,11 +99,12 @@ export class BlobsTranscriptStore implements TranscriptStore {
 
     /**
      * Get activities for a conversation (aka the transcript).
-     * @param channelId channelId
-     * @param conversationId conversationId
-     * @param continuationToken continuation token to page through results
-     * @param startDate earliest time to include in results
-     * @returns Promise that resolves to a
+     *
+     * @param {string} channelId channelId
+     * @param {string} conversationId conversationId
+     * @param {string} continuationToken continuation token to page through results
+     * @param {Date} startDate earliest time to include in results
+     * @returns {Promise<PagedResult<Activity>>} Promise that resolves to a
      * [PagedResult](xref:botbuilder-core.PagedResult) of [Activity](xref:botbuilder-core.Activity) items
      */
     async getTranscriptActivities(
@@ -181,9 +166,10 @@ export class BlobsTranscriptStore implements TranscriptStore {
 
     /**
      * List conversations in the channelId.
-     * @param channelId channelId
-     * @param continuationToken continuation token to page through results
-     * @returns Promise that resolves to a
+     *
+     * @param {string} channelId channelId
+     * @param {string} continuationToken continuation token to page through results
+     * @returns {Promise<PagedResult<TranscriptInfo>>} Promise that resolves to a
      * [PagedResult](xref:botbuilder-core.PagedResult) of [Activity](xref:botbuilder-core.Activity) items
      */
     async listTranscripts(channelId: string, continuationToken?: string): Promise<PagedResult<TranscriptInfo>> {
@@ -206,7 +192,7 @@ export class BlobsTranscriptStore implements TranscriptStore {
         return {
             continuationToken: response?.continuationToken,
             items: blobItems.map((blobItem) => {
-                const [_, conversationId] = decodeURIComponent(blobItem.name).split('/');
+                const [, conversationId] = decodeURIComponent(blobItem.name).split('/');
 
                 return {
                     channelId,
@@ -219,9 +205,10 @@ export class BlobsTranscriptStore implements TranscriptStore {
 
     /**
      * Delete a specific conversation and all of its activities.
-     * @param channelId channelId
-     * @param conversationId conversationId
-     * @returns A promise representing the async operation.
+     *
+     * @param {string} channelId channelId
+     * @param {string} conversationId conversationId
+     * @returns {Promise<void>} A promise representing the async operation.
      */
     async deleteTranscript(channelId: string, conversationId: string): Promise<void> {
         assert(typeof channelId === 'string', '`channelId` must be a string');
@@ -256,8 +243,9 @@ export class BlobsTranscriptStore implements TranscriptStore {
 
     /**
      * Log an activity to the transcript.
-     * @param activity activity to log
-     * @returns A promise representing the async operation.
+     *
+     * @param {Activity} activity activity to log
+     * @returns {Promise<void>} A promise representing the async operation.
      */
     async logActivity(activity: Activity): Promise<void> {
         assert(activity, '`activity` must not be null or undefined');

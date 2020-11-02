@@ -19,7 +19,14 @@
     "url": "https://github.com/Microsoft/botbuilder-js.git"
   },
   "main": "./lib/index.js",
-  "typings": "./lib/index.d.ts",
+  "types": "./lib/index.d.ts",
+  "typesVersions": {
+    "<3.9": {
+      "*": [
+        "_ts3.4/*"
+      ]
+    }
+  },
   "dependencies": {
     "botbuilder-core": "4.1.6",
     "botbuilder-dialogs": "4.1.6",
@@ -27,25 +34,19 @@
     "jsonpath": "^1.0.0"
   },
   "devDependencies": {
-    "@microsoft/api-extractor": "^7.7.12",
-    "@types/mocha": "^5.2.7",
-    "@types/node": "^10.17.27",
-    "@types/jsonpath": "^0.2.0",
-    "codelyzer": "^4.1.0",
-    "mocha": "^6.2.3",
-    "nyc": "^15.1.0",
-    "source-map-support": "^0.5.3",
-    "ts-node": "^4.1.0",
-    "typescript": "3.5.3"
+    "@types/jsonpath": "^0.2.0"
   },
   "scripts": {
-    "test": "tsc && nyc mocha tests/ --exit",
-    "build": "tsc",
+    "build": "tsc -b",
     "build-docs": "typedoc --theme markdown --entryPoint botbuilder-dialogs-adaptive --excludePrivate --includeDeclarations --ignoreCompilerErrors --module amd --out ..\\..\\doc\\botbuilder-dialogs .\\lib\\index.d.ts --hideGenerator --name \"Bot Builder SDK - Dialogs\" --readme none",
-    "clean": "erase /q /s .\\lib",
+    "clean": "rimraf _ts3.4 lib tsconfig.tsbuildinfo",
+    "lint": "eslint . --ext .js,.ts",
+    "postbuild": "downlevel-dts lib _ts3.4/lib",
+    "test": "yarn build && nyc mocha tests/ --exit",
     "test:compat": "api-extractor run --verbose"
   },
   "files": [
+    "_ts3.4",
     "lib",
     "schemas",
     "src"

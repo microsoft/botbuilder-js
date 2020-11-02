@@ -10,9 +10,11 @@ export type IgnoreError = (err: Error) => boolean;
 
 /**
  * Wrap a promise and provide a function to decide whether to ignore a type of error
- * @typeparam T expected promise return type
- * @param promise promise to await
- * @param ignore method that returns true if an error should be ignored
+ *
+ * @template T expected promise return type
+ * @param {Promise<T>} promise a promise to await
+ * @param {IgnoreError} ignore method that returns true if an error should be ignored
+ * @returns {Promise<T | null>} a promise that resolves to `T` or `null` after ignoring any matched errors
  */
 export async function ignoreError<T>(promise: Promise<T>, ignore: IgnoreError): Promise<T | null> {
     try {
@@ -28,7 +30,9 @@ export async function ignoreError<T>(promise: Promise<T>, ignore: IgnoreError): 
 
 /**
  * Ignore RestErrors that match a set of status codes.
- * @param codes HTTP status codes that should not be considered errors
+ *
+ * @param {number[]} codes HTTP status codes that should not be considered errors
+ * @returns {IgnoreError} a function that accepts an error and returns true if it represents one of the ignored status codes
  */
 export function isStatusCodeError(...codes: number[]): IgnoreError {
     const ignoredCodes = new Set(codes);

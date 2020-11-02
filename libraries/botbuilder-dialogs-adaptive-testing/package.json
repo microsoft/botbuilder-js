@@ -4,12 +4,22 @@
   "preview": true,
   "description": "Tools for testing adaptive dialogs",
   "scripts": {
-    "test": "tsc && mocha tests/*.test.js",
-    "build": "tsc",
+    "build": "tsc -b",
+    "clean": "rimraf _ts3.4 lib tsconfig.tsbuildinfo",
+    "lint": "eslint . --ext .js,.ts",
+    "postbuild": "downlevel-dts lib _ts3.4/lib",
+    "test": "yarn build && mocha tests/*.test.js",
     "test:compat": "api-extractor run --verbose"
   },
   "main": "./lib/index.js",
-  "typings": "./lib/index.d.ts",
+  "types": "./lib/index.d.ts",
+  "typesVersions": {
+    "<3.9": {
+      "*": [
+        "_ts3.4/*"
+      ]
+    }
+  },
   "dependencies": {
     "botbuilder-ai": "4.1.6",
     "botbuilder-core": "4.1.6",
@@ -19,15 +29,12 @@
     "adaptive-expressions": "4.1.6"
   },
   "devDependencies": {
-    "@microsoft/api-extractor": "^7.7.12",
-    "@types/mocha": "^5.2.7",
-    "nock": "^11.9.1",
-    "mocha": "^6.2.3",
-    "typescript": "3.5.3"
+    "nock": "^11.9.1"
   },
   "author": "Microsoft",
   "license": "MIT",
   "files": [
+    "_ts3.4",
     "lib",
     "schemas",
     "src"

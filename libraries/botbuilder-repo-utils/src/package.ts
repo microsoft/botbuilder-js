@@ -1,6 +1,7 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
+// Represents a package.json file
 export interface Package {
     name: string;
     version: string;
