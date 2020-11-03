@@ -456,7 +456,7 @@ export class InternalFunctionUtils {
         if (!Array.isArray(obj)) {
             if (obj instanceof Map) {
                 count = obj.size;
-            } else if (typeof obj === 'object') {
+            } else if (typeof obj === 'object' && !(obj instanceof Date)) {
                 count = Object.keys(obj).length;
             }
         }

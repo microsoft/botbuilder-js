@@ -22,8 +22,8 @@ export class LessThan extends ComparisonEvaluator {
         super(
             ExpressionType.LessThan,
             LessThan.func,
-            FunctionUtils.validateBinaryNumberOrString,
-            FunctionUtils.verifyNumberOrString
+            FunctionUtils.validateBinary,
+            FunctionUtils.verifyNotNull
         );
     }
 
@@ -31,6 +31,12 @@ export class LessThan extends ComparisonEvaluator {
      * @private
      */
     private static func(args: any[]): boolean {
-        return args[0] < args[1];
+        if (typeof args[0] === 'number' && typeof args[1] === 'number'
+            || typeof args[0] === 'string' && typeof args[1] === 'string'
+            || args[0] instanceof Date && args[1] instanceof Date) {
+            return args[0] < args[1];
+        } else {
+            throw new Error(`${args[0]} and ${args[1]} must be comparable.`);
+        }
     }
 }
