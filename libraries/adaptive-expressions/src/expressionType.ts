@@ -108,6 +108,7 @@ export class ExpressionType {
     public static readonly GetPreviousViableDate: string = 'getPreviousViableDate';
     public static readonly GetNextViableTime: string = 'getNextViableTime';
     public static readonly GetPreviousViableTime: string = 'getPreviousViableTime';
+    public static readonly TimexResolve: string = 'resolve';
 
     // Conversions
     public static readonly Float: string = 'float';

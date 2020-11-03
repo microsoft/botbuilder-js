@@ -37,14 +37,24 @@ export class FormatDateTime extends ExpressionEvaluator {
             if (typeof arg === 'string') {
                 error = InternalFunctionUtils.verifyTimestamp(arg.toString());
             } else {
-                arg = arg.toString();
+                arg = arg.toISOString();
             }
             let value: any;
             if (!error) {
-                const dateString: string = new Date(arg).toISOString();
+                let dateString: string;
+                if (arg.endsWith('Z')) {
+                    dateString = new Date(arg).toISOString();
+                } else {
+                    try {
+                        dateString = new Date(`${arg}Z`).toISOString();
+                    } catch (err) {
+                        dateString = new Date(arg).toISOString();
+                    }
+                }
+
                 value =
                     args.length === 2
-                        ? moment(dateString).format(FunctionUtils.timestampFormatter(args[1]))
+                        ? moment(dateString).utc().format(FunctionUtils.timestampFormatter(args[1]))
                         : dateString;
             }
 

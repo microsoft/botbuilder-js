@@ -170,6 +170,7 @@ export class ExpressionFunctions {
             new BuiltinFunctions.TicksToDays(),
             new BuiltinFunctions.TicksToHours(),
             new BuiltinFunctions.TicksToMinutes(),
+            new BuiltinFunctions.TimexResolve(),
             new BuiltinFunctions.TitleCase(),
             new BuiltinFunctions.ToLower(),
             new BuiltinFunctions.ToUpper(),

@@ -53,7 +53,7 @@ export class StringExpression extends ExpressionProperty<string> {
             }
 
             // keep the string as quoted expression, which will be literal unless string interpolation is used.
-            this.expressionText = `=\`${value.replace(/\\/g, '\\\\').replace('`', '\\`')}\``;
+            this.expressionText = `=\`${value.replace('`', '\\`')}\``;
             return;
         }
 
