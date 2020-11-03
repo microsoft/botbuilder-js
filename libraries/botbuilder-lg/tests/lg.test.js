@@ -21,6 +21,7 @@ describe('LG', function() {
         three: Templates.parseFile(GetExampleFilePath('3.lg')),
         four: Templates.parseFile(GetExampleFilePath('4.lg')),
         five: Templates.parseFile(GetExampleFilePath('5.lg')),
+        nine: Templates.parseFile(GetExampleFilePath('9.lg')),
         Multiline: Templates.parseFile(GetExampleFilePath('Multiline.lg')),
         MultiLineExpr: Templates.parseFile(GetExampleFilePath('MultiLineExpr.lg')),
         ExpandText: Templates.parseFile(GetExampleFilePath('ExpandText.lg')),
@@ -81,6 +82,10 @@ describe('LG', function() {
         let evaled = templates.evaluate('wPhrase');
         const options = ['Hi', 'Hello', 'Hiya'];
         assert.strictEqual(options.includes(evaled), true, `The result ${ evaled } is not in those options [${ options.join(',') }]`);
+
+        templates = preloaded.nine;
+        evaled = templates.evaluate('ResolveDateTime');
+        assert.strictEqual('2009-01-23T14:00:00.000Z', evaled);
     });
 
     it('TestBasicTemplateReference', function() {
