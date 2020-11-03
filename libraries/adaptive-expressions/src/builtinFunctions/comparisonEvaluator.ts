@@ -55,21 +55,11 @@ export class ComparisonEvaluator extends ExpressionEvaluator {
             );
             let error = childrenError;
             if (!error) {
-                const isNumber: boolean = args && args.length > 0 && typeof args[0] === 'number';
-                for (const arg of args) {
-                    if (arg && (typeof arg === 'number') !== isNumber) {
-                        error = `Arguments must either all be numbers or strings in ${expression}`;
-                        break;
-                    }
-                }
-
-                if (!error) {
-                    try {
-                        result = func(args);
-                    } catch (e) {
-                        // NOTE: This should not happen in normal execution
-                        error = e.message;
-                    }
+                try {
+                    result = func(args);
+                } catch (e) {
+                    // NOTE: This should not happen in normal execution
+                    error = e.message;
                 }
             } else {
                 error = undefined;
