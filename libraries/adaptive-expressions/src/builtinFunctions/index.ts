@@ -144,6 +144,7 @@ export * from './ticksToDays';
 export * from './ticksToHours';
 export * from './ticksToMinutes';
 export * from './timeTransformEvaluator';
+export * from './timexResolve';
 export * from './titleCase';
 export * from './toLower';
 export * from './toUpper';

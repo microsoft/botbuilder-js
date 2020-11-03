@@ -162,7 +162,9 @@ const badExpressions = [
             ['greater(one)', 'greater need two parameters'],
             ['greaterOrEquals(one, hello)', 'string and integer are not comparable'],
             ['greaterOrEquals(one)', 'function need two parameters'],
-            ['less(false, true)', 'string or number parameters are needed'],
+            ['less(false, true)', 'boolean are not comparable'],
+            ['less(1, true)', 'number and boolean are not comparable'],
+            ['less(json("{}"), [])', 'objects are not comparable'],
             ['less(one, hello)', 'string and integer are not comparable'],
             ['less(one)', 'function need two parameters'],
             ['lessOrEquals(one, hello)', 'string and integer are not comparable'],
@@ -378,6 +380,10 @@ const badExpressions = [
             ['getPreviousViableTime(hello)', 'should have a "XX:mm:ss" format string'],
             ['getPreviousViableTime(one)', 'should have a string parameter'],
             ['getPreviousViableTime(\'XX:12:12\', 20)', 'should only have 1 parameter'],
+            ['resolve(one)', 'should have string or TimexProperty arguments'],
+            ['resolve("T14", "Asia/Tokyo")', 'should only have one parameter'],
+            ['resolve("12-20")', 'should have a valid TimexPropterty after parsing'],
+            ['resolve("XXXX-WXX-6")', 'not a valid argument'],
         ]
     },
     {
