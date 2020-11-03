@@ -181,14 +181,17 @@ export class ExpressionParser implements ExpressionParserInterface {
                             break;
                         }
                         case ep.ExpressionAntlrParser.ESCAPE_CHARACTER: {
-                            children.push(new Constant(node.text.replace(/\\`/g, '`').replace(/\\\$/g, '$')));
+                            children.push(
+                                new Constant(this.evalEscape(node.text).replace(/\\`/g, '`').replace(/\\\$/g, '$'))
+                            );
                             break;
                         }
                         default:
                             break;
                     }
                 } else {
-                    children.push(new Constant(node.text));
+                    const text = this.evalEscape(node.text);
+                    children.push(new Constant(text));
                 }
             }
 

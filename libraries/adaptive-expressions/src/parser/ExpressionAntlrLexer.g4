@@ -95,6 +95,6 @@ STRING_INTERPOLATION_END : '`' {this.ignoreWS = true;} -> type(STRING_INTERPOLAT
 
 TEMPLATE : '$' '{' (STRING | OBJECT_DEFINITION | ~[\r\n{}'"`])+ '}';
 
-ESCAPE_CHARACTER : '\\' [`$];
+ESCAPE_CHARACTER : '\\' ~[\r\n]?;
 
 TEXT_CONTENT : . ;

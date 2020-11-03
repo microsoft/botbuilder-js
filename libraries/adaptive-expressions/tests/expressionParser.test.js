@@ -28,10 +28,6 @@ const testCases = [
         testCases: [
             ['``', ''],
             ['`hi`', 'hi'],
-            ['`hi\r\n`', 'hi\r\n'],
-            ['`hi\\r\\n`', 'hi\\r\\n'],
-            ['`hi\\\\``', 'hi\\`'],
-            ['`hi\\$`', 'hi$'],
             ['`hi\\``', 'hi`'],
             ['`${world}`', 'world'],
             ['`hi ${string(\'jack`\')}`', 'hi jack`'],
