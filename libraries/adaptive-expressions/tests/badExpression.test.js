@@ -378,6 +378,10 @@ const badExpressions = [
             ['getPreviousViableTime(hello)', 'should have a "XX:mm:ss" format string'],
             ['getPreviousViableTime(one)', 'should have a string parameter'],
             ['getPreviousViableTime(\'XX:12:12\', 20)', 'should only have 1 parameter'],
+            ['resolve(one)', 'should have string or TimexProperty arguments'],
+            ['resolve("T14", "Asia/Tokyo")', 'should only have one parameter'],
+            ['resolve("12-20")', 'should have a valid TimexPropterty after parsing'],
+            ['resolve("XXXX-WXX-6")', 'not a valid argument'],
         ]
     },
     {
