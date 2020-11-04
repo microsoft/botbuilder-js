@@ -8,12 +8,12 @@ import util from 'util';
 export const readFile = util.promisify(fs.readFile);
 
 // reads a file at `path` as JSON
-export async function readJsonFile<T>(path: string): Promise<T | null> {
+export async function readJsonFile<T>(path: string): Promise<T | undefined> {
     try {
         const rawPackageJson = await readFile(path, 'utf8');
         return JSON.parse(rawPackageJson);
     } catch (err) {
-        return null;
+        return undefined;
     }
 }
 

@@ -6,27 +6,20 @@ pool:
   vmImage: 'ubuntu-18.04'
 
 variables:
+  DateFormat: ''
+  DeprecatedText: deprecated
+  IncludeGitSha: 'false'
   NodeVersion: 12.x
+  PackageVersion: ""
+  PreviewText: preview
   YARN_CACHE_FOLDER: $(Pipeline.Workspace)/.yarn
-#  PackageVersion: Define this in Azure to be settable at queue time. Ex: 4.11.0-dev.{DateStamp}.{CommitHash} 
 
 steps:
-- powershell: |
-   # Replace {DateStamp} and {CommitHash} tokens with the actual values in vars PackageVersion
-   $dateStamp = (Get-Date -format "yyyyMMdd");
-   $commitHash = "$(Build.SourceVersion)".SubString(0,7);
-
-   "Raw PackageVersion = $(PackageVersion)";
-   $v = "$(PackageVersion)".Replace("{DateStamp}",$dateStamp).Replace("{CommitHash}",$commitHash);
-   Write-Host "##vso[task.setvariable variable=PackageVersion;]$v";
-   "Resolved PackageVersion = $v";
-  displayName: resolve variables
-
 - template: templates/build.yml
 
 - template: templates/test.yml
 
-- script: yarn update-versions $(PackageVersion)
+- script: yarn update-versions "$(PackageVersion)" --preview "$(PreviewText)" --deprecated "$(DeprecatedText)" --date-format "$(DateFormat)" --include-git-sha "$(IncludeGitSha)"
   displayName: yarn update-versions
 
 - script: yarn package

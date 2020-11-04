@@ -24,7 +24,7 @@
     "test:consumer": "lerna run --scope consumer-test --stream start",
     "test:coveralls": "lerna run build && nyc mocha \"libraries/@(adaptive*|bot*)/tests/**/*.test.js\" --exit && nyc report --reporter=text-lcov | coveralls",
     "test:devops": "nyc --report --reporter=cobertura mocha -- \"libraries/@(adaptive*|bot*)/tests/**/*.test.js\" --check-leaks --reporter mocha-junit-reporter --reporter-options includePending=true",
-    "update-versions": "lerna --scope botbuilder-repo-utils exec yarn update-versions"
+    "update-versions": "lerna --scope botbuilder-repo-utils exec -- yarn update-versions"
   },
   "devDependencies": {
     "@azure/ms-rest-js": "1.9.0",

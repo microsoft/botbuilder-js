@@ -1,89 +1,137 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
+import * as R from 'remeda';
+import minimist from 'minimist';
+import moment from 'moment';
 import path from 'path';
 import { Package } from './package';
 import { collectWorkspacePackages } from './workspace';
 import { failure, isFailure, Result, run, success } from './run';
-import { gitRoot } from './gitRoot';
+import { gitRoot, gitSha } from './git';
 import { readJsonFile, writeJsonFile } from './file';
 
-run(async () => {
-    const newVersion = process.argv[2];
-    if (!newVersion) {
-        return failure(1, 'Must provide new version as a command line argument');
+const GIT_SHA_LENGTH = 12;
+
+/**
+ * Computes the final version identifier components for a package.
+ * @param pkg package.json data
+ * @param newVersion new version requested
+ * @param options options to control versioning
+ */
+const getPackageVersion = (
+    pkg: Package,
+    newVersion: string,
+    options: Record<'commitSha' | 'date' | 'deprecated' | 'preview', string | undefined>
+): string[] => {
+    let version: Array<string | undefined> = [newVersion];
+
+    if (pkg.deprecated) {
+        version.push(options.deprecated);
+    } else if (pkg.preview) {
+        version.push(options.preview);
     }
 
+    return R.compact([...version, options.date, options.commitSha]);
+};
+
+run(async () => {
     // Obtain the path of the repo root, useful for constructing absolute paths
     const repoRoot = await gitRoot();
 
-    // Read package.json from repo root
-    const rootPackage = await readJsonFile<Package>(path.join(repoRoot, 'package.json'));
-    if (!rootPackage) {
-        return failure(2, 'root package.json not found');
+    const [lernaFile, packageFile] = await Promise.all([
+        readJsonFile<Record<'lerna', string>>(path.join(repoRoot, 'lerna.json')),
+        readJsonFile<Package>(path.join(repoRoot, 'package.json')),
+    ]);
+
+    if (!lernaFile) {
+        return failure(1, 'lerna.json not found');
     }
 
-    // Collect all workspaces from the repo root. Returns workspaces with absolute paths.
-    const workspaces = await collectWorkspacePackages(repoRoot, rootPackage.workspaces ?? []);
+    if (!packageFile) {
+        return failure(2, 'package.json not found');
+    }
 
-    // Build an object mapping a package name to its new, updated version. Take care to
-    // omit private packages: we don't publish these so there is no use updating the versions.
-    const workspaceVersions = workspaces.reduce<Record<string, string>>((acc, { contents }) => {
-        if (!contents || contents.private) {
-            return acc;
-        }
+    // Parse process.argv for all configuration options
+    const {
+        _: [maybeNewVersion],
+        dateFormat,
+        includeGitSha,
+        deprecated,
+        join,
+        preview,
+    } = minimist(process.argv.slice(2), {
+        alias: {
+            d: 'deprecated',
+            date: 'dateFormat',
+            g: 'includeGitSha',
+            git: 'includeGitSha',
+            gitSha: 'includeGitSha',
+            j: 'join',
+            p: 'preview',
+        },
+        default: {
+            deprecated: 'deprecated',
+            includeGitSha: false,
+            join: '-',
+            preview: 'preview',
+        },
+        boolean: ['includeGitSha'],
+        string: ['dateFormat', 'deprecated', 'preview', 'join'],
+    });
 
-        let version = newVersion;
+    // If `maybeNewVersion` is falsy use version from the lerna.json file
+    const newVersion = maybeNewVersion || lernaFile.lerna;
+    if (!newVersion) {
+        return failure(3, 'unable to resolve new version');
+    }
 
-        if (contents.deprecated) {
-            version = `${version}-deprecated`;
-        } else if (contents.preview) {
-            version = `${version}-preview`;
-        }
+    // Fetch and format date, if instructed
+    const date = dateFormat ? moment().format(dateFormat) : undefined;
 
-        return { ...acc, [contents.name]: version };
-    }, {});
+    // Read git commit sha if instructed
+    const commitSha = includeGitSha ? await gitSha(GIT_SHA_LENGTH) : undefined;
 
-    // This method will map over the depdencies, replacing any that are found in the workspaceVersions
-    // map built above.
-    const updateDependencyVersions = (dependencies: Record<string, string>): Record<string, string> => {
-        return Object.entries(dependencies).reduce((acc, [dependency, version]) => {
-            const newVersion = workspaceVersions[dependency];
-            return { ...acc, [dependency]: newVersion ?? version };
-        }, {});
-    };
+    // Collect all non-private workspaces from the repo root. Returns workspaces with absolute paths.
+    const workspaces = (await collectWorkspacePackages(repoRoot, packageFile.workspaces ?? [])).filter(
+        ({ pkg }) => !pkg.private
+    );
 
-    // Go ahead and rewrite package.json files for packages by updating version as well as
-    // dependencies and devDependencies.
+    // Build an object mapping a package name to its new, updated version
+    const workspaceVersions = workspaces.reduce<Record<string, string>>(
+        (acc, { pkg }) => ({
+            ...acc,
+            [pkg.name]: getPackageVersion(pkg, newVersion, { commitSha, date, deprecated, preview }).join(join),
+        }),
+        {}
+    );
+
+    // Rewrites the version for any dependencies found in `workspaceVersions`
+    const rewriteWithNewVersions = (dependencies: Record<string, string>) =>
+        R.mapValues(dependencies, (value, key) => workspaceVersions[key] ?? value);
+
+    // Rewrite package.json files by updating version as well as dependencies and devDependencies.
     const results = await Promise.all<Result>(
-        workspaces.map(async ({ absolutePath, contents }) => {
-            // Skip private packages
-            if (!contents || contents.private) {
-                return success();
-            }
+        workspaces.map(async ({ absPath, pkg }) => {
+            const newVersion = workspaceVersions[pkg.name];
 
-            // Rewrite version, if it exists
-            const newVersion = workspaceVersions[contents.name];
             if (newVersion) {
-                contents.version = newVersion;
+                pkg.version = newVersion;
             }
 
-            // Rewrite dependencies with new versions
-            if (contents.dependencies) {
-                contents.dependencies = updateDependencyVersions(contents.dependencies);
+            if (pkg.dependencies) {
+                pkg.dependencies = rewriteWithNewVersions(pkg.dependencies);
             }
 
-            // Rewrite devDependencies with new versions
-            if (contents.devDependencies) {
-                contents.devDependencies = updateDependencyVersions(contents.devDependencies);
+            if (pkg.devDependencies) {
+                pkg.devDependencies = rewriteWithNewVersions(pkg.devDependencies);
             }
 
-            // Commit changes
             try {
-                await writeJsonFile(absolutePath, contents);
+                await writeJsonFile(absPath, pkg);
                 return success();
             } catch (err) {
-                return failure(3, err instanceof Error ? err.message : err);
+                return failure(4, err instanceof Error ? err.message : err);
             }
         })
     );
