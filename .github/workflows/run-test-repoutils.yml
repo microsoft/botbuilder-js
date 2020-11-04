@@ -1,4 +1,4 @@
-name: yarn test:repoutils
+name: repoutils test
 
 on:
   workflow_dispatch:
@@ -11,7 +11,7 @@ on:
 
 jobs:
   linux:
-    name: yarn test:repoutils ubuntu
+    name: ubuntu
     runs-on: ubuntu-latest
 
     steps:
@@ -21,10 +21,14 @@ jobs:
         with:
           node-version: '12'
 
+      - name: yarn cache dir
+        id: yarn-cache-dir
+        run: echo "::set-output name=dir::$(yarn cache dir)"
+
       - uses: actions/cache@v2
         with:
-          path: node_modules
-          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}
+          path: ${{ steps.yarn-cache-dir.outputs.dir }}
+          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
 
       - name: yarn
         run: yarn
@@ -33,7 +37,7 @@ jobs:
         run: yarn test:repoutils
 
   windows:
-    name: yarn test:repoutils windows
+    name: windows
     runs-on: windows-latest
 
     steps:
@@ -43,13 +47,17 @@ jobs:
         with:
           node-version: '12'
 
+      - name: yarn cache dir
+        id: yarn-cache-dir
+        run: echo "::set-output name=dir::$(yarn cache dir)"
+
       - uses: actions/cache@v2
         with:
-          path: node_modules
-          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}
+          path: ${{ steps.yarn-cache-dir.outputs.dir }}
+          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
 
       - name: yarn
-        run: yarn
+        run: yarn --frozen-lockfile
 
       - name: yarn test:repoutils
         run: yarn test:repoutils
