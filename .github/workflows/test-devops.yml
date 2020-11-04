@@ -1,0 +1,46 @@
+name: yarn test:devops
+
+on:
+  workflow_dispatch:
+  push:
+    branches: 
+    - main
+    - 4.10
+    - 4.11
+  pull_request:
+    branches: 
+    - main
+    - 4.10
+    - 4.11
+
+jobs:
+  build:
+    name: yarn test:devops
+
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [10.x, 12.x, 14.x]
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: use node ${{ matrix.node-version }}
+        uses: actions/setup-node@v2-beta
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - uses: actions/cache@v2
+        with:
+          path: node_modules
+          key: ${{ runner.os }}-${{ matrix.node-version }}-${{ hashFiles('yarn.lock') }}
+
+      - name: yarn
+        run: yarn --frozen-lockfile
+
+      - name: yarn build
+        run: yarn build
+
+      - name: yarn test:devops
+        run: yarn test:devops
