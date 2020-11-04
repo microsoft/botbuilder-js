@@ -1,4 +1,4 @@
-name: yarn lint
+name: yarn test:consumer
 
 on:
   workflow_dispatch:
@@ -15,7 +15,8 @@ on:
 
 jobs:
   build:
-    name: yarn lint
+    name: yarn test:consumer
+
     runs-on: ubuntu-latest
 
     steps:
@@ -31,7 +32,10 @@ jobs:
           key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}
 
       - name: yarn
-        run: yarn
+        run: yarn --frozen-lockfile
 
-      - name: yarn lint
-        run: yarn lint
+      - name: yarn build
+        run: yarn build
+
+      - name: yarn test:consumer
+        run: yarn test:consumer
