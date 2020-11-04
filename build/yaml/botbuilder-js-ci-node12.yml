@@ -7,7 +7,7 @@ pool:
 
 variables:
   NodeVersion: 12.x
-  PackageVersion: 4.4.0-preview.$(Build.BuildNumber)
+  PackageVersion: $(Build.BuildId)
   YARN_CACHE_FOLDER: $(Pipeline.Workspace)/.yarn
 
 stages:

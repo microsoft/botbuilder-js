@@ -1,7 +1,3 @@
-#variables:
-#  PackageVersion: Define this in the calling pipeline.
-#  PublishTestResults: (optional) Define this in the calling pipeline.
-
 steps:
 - script: yarn test:devops
   displayName: yarn test

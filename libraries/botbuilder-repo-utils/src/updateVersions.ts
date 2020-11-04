@@ -62,22 +62,17 @@ run(async () => {
         preview,
     } = minimist(process.argv.slice(2), {
         alias: {
-            d: 'deprecated',
             date: 'dateFormat',
-            g: 'includeGitSha',
             git: 'includeGitSha',
-            gitSha: 'includeGitSha',
-            j: 'join',
-            p: 'preview',
         },
         default: {
+            dateFormat: '',
             deprecated: 'deprecated',
-            includeGitSha: false,
+            includeGitSha: 'false',
             join: '-',
             preview: 'preview',
         },
-        boolean: ['includeGitSha'],
-        string: ['dateFormat', 'deprecated', 'preview', 'join'],
+        string: ['dateFormat', 'deprecated', 'includeGitSha', 'preview', 'join'],
     });
 
     // If `maybeNewVersion` is falsy use version from the lerna.json file
@@ -89,8 +84,8 @@ run(async () => {
     // Fetch and format date, if instructed
     const date = dateFormat ? moment().format(dateFormat) : undefined;
 
-    // Read git commit sha if instructed
-    const commitSha = includeGitSha ? await gitSha(GIT_SHA_LENGTH) : undefined;
+    // Read git commit sha if instructed (JSON.parse properly coerces strings to boolean)
+    const commitSha = JSON.parse(includeGitSha) ? await gitSha(GIT_SHA_LENGTH) : undefined;
 
     // Collect all non-private workspaces from the repo root. Returns workspaces with absolute paths.
     const workspaces = (await collectWorkspacePackages(repoRoot, packageFile.workspaces ?? [])).filter(
@@ -116,6 +111,7 @@ run(async () => {
             const newVersion = workspaceVersions[pkg.name];
 
             if (newVersion) {
+                console.log(`Updating ${pkg.name} to ${newVersion}`);
                 pkg.version = newVersion;
             }
 
