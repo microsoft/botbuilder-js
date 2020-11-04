@@ -13,6 +13,7 @@
   "scripts": {
     "browser-functional-test": "cd libraries/browser-functional-tests && node nightwatch.js -e",
     "build": "yarn execute --silent --script build",
+    "build-and-lint": "npm-run-all -p build lint",
     "build-docs": "yarn execute --silent --script build-docs",
     "clean": "yarn execute --silent --script clean",
     "execute": "yarn workspace botbuilder-repo-utils execute",
