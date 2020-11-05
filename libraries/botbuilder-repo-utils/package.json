@@ -22,7 +22,9 @@
     "typescript": "^4.0.5"
   },
   "scripts": {
+    "build": "tsc",
     "execute": "ts-node src/execCmd.ts",
+    "lint": "eslint . --ext .js,.ts",
     "update-versions": "ts-node src/updateVersions.ts"
   }
 }

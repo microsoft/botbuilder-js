@@ -11,14 +11,10 @@ import { failure, isFailure, Result, run, success } from './run';
 import { gitRoot, gitSha } from './git';
 import { readJsonFile, writeJsonFile } from './file';
 
+const GIT_SHA_REF = 'HEAD';
 const GIT_SHA_LENGTH = 12;
 
-/**
- * Computes the final version identifier components for a package.
- * @param pkg package.json data
- * @param newVersion new version requested
- * @param options options to control versioning
- */
+// Computes the final version identifier components for a package.
 const getPackageVersion = (
     pkg: Package,
     newVersion: string,
@@ -67,7 +63,7 @@ run(async () => {
     const date = flags.date ? moment().format(flags.date) : undefined;
 
     // Read git commit sha if instructed (JSON.parse properly coerces strings to boolean)
-    const commitSha = JSON.parse(flags.git) ? await gitSha(GIT_SHA_LENGTH) : undefined;
+    const commitSha = JSON.parse(flags.git) ? await gitSha(GIT_SHA_REF, GIT_SHA_LENGTH) : undefined;
 
     // Collect all non-private workspaces from the repo root. Returns workspaces with absolute paths.
     const workspaces = await collectWorkspacePackages(repoRoot, packageFile.workspaces, { noPrivate: true });
@@ -88,6 +84,7 @@ run(async () => {
 
     // Rewrites the version for any dependencies found in `workspaceVersions`
     const rewriteWithNewVersions = (dependencies: Record<string, string>) =>
+        // eslint-disable-next-line security/detect-object-injection
         R.mapValues(dependencies, (value, key) => workspaceVersions[key] ?? value);
 
     // Rewrite package.json files by updating version as well as dependencies and devDependencies.
