@@ -11,18 +11,29 @@ import { failure, isFailure, Result, run, success } from './run';
 import { gitRoot, gitSha } from './git';
 import { readJsonFile, writeJsonFile } from './file';
 
+const GIT_SHA_REF = 'HEAD';
 const GIT_SHA_LENGTH = 12;
+
+// Represents options for controlling package version update
+export interface PackageVersionOptions {
+    commitSha?: string;
+    date?: string;
+    deprecated?: string;
+    preview?: string;
+}
 
 /**
  * Computes the final version identifier components for a package.
- * @param pkg package.json data
- * @param newVersion new version requested
- * @param options options to control versioning
+ *
+ * @param {Partial<Package>} pkg package.json data
+ * @param {string} newVersion new version requested
+ * @param {PackageVersionOptions} options options to control versioning
+ * @returns {string} updated package version
  */
 export const getPackageVersion = (
     pkg: Partial<Package>,
     newVersion: string,
-    options: Partial<Record<'commitSha' | 'date' | 'deprecated' | 'preview', string>>
+    options: PackageVersionOptions
 ): string => {
     const extra = [options.date, options.commitSha];
 
@@ -67,7 +78,7 @@ export const command = (argv: string[], quiet = false) => async (): Promise<Resu
     const date = flags.date ? moment().format(flags.date) : undefined;
 
     // Read git commit sha if instructed (JSON.parse properly coerces strings to boolean)
-    const commitSha = JSON.parse(flags.git) ? await gitSha(GIT_SHA_LENGTH) : undefined;
+    const commitSha = JSON.parse(flags.git) ? await gitSha(GIT_SHA_REF, GIT_SHA_LENGTH) : undefined;
 
     // Collect all non-private workspaces from the repo root. Returns workspaces with absolute paths.
     const workspaces = await collectWorkspacePackages(repoRoot, packageFile.workspaces, { noPrivate: true });

@@ -1,4 +1,4 @@
-name: ESLint
+name: yarn lint
 
 on:
   workflow_dispatch:
@@ -15,7 +15,7 @@ on:
 
 jobs:
   build:
-    name: Run ESLint
+    name: yarn lint
     runs-on: ubuntu-latest
 
     steps:
@@ -33,5 +33,5 @@ jobs:
       - name: yarn
         run: yarn
 
-      - name: Run "eslint" script
-        run: yarn eslint
+      - name: yarn lint
+        run: yarn lint
