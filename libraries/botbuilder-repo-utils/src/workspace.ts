@@ -9,12 +9,16 @@ import pmap from 'p-map';
 import { Package } from './package';
 import { readJsonFile } from './file';
 
+export const glob = (paths: string[]): Promise<string[]> => globby(paths);
+
+// Represents a workspace
 export interface Workspace {
     absPath: string;
     relPath: string;
     pkg: Package;
 }
 
+// Represents options to filter workspaces
 export interface Filters {
     ignoreName: string;
     ignorePath: string;
@@ -24,9 +28,14 @@ export interface Filters {
     path: string;
 }
 
-export const glob = (paths: string[]): Promise<string[]> => globby(paths);
-
-// Returns all workspace packages by resolving the `workspaces` key inside package.json
+/**
+ * Collect all concrete workspaces referenced in the root package.json file of a repo. Supports globs.
+ *
+ * @param {string} repoRoot absolute path to the root of the repo
+ * @param {string[]} workspaces array of paths/globs to resolve
+ * @param {Filters} filters set of filters to select or omit korkspaces
+ * @returns {Promise<Array<Workspace>>} the resolved set of workspaces
+ */
 export async function collectWorkspacePackages(
     repoRoot: string,
     workspaces: string[] = [],
@@ -101,8 +110,7 @@ export class DependencyResolver {
                 ...Object.keys(workspace.pkg.dependencies ?? {}),
                 ...Object.keys(workspace.pkg.devDependencies ?? {}),
             ]
-                // eslint-disable-next-line security/detect-object-injection
-                .map((name) => this.byName[name])
+                .map((name) => this.byName[name]) // eslint-disable-line security/detect-object-injection
                 .filter((pkg) => !!pkg);
 
             return { ...acc, [workspace.pkg.name]: deps };
@@ -117,8 +125,7 @@ export class DependencyResolver {
             R.flatten(
                 Object.entries(this.byName)
                     .filter(([name]) => {
-                        // eslint-disable-next-line security/detect-object-injection
-                        const deps = this.depsByName[name];
+                        const deps = this.depsByName[name]; // eslint-disable-line security/detect-object-injection
 
                         const needs = deps.filter((dep) => !resolved.has(dep.pkg.name));
 
