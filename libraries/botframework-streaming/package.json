@@ -58,6 +58,7 @@
     "build:lib": "tsc -p tsconfig.json",
     "build:rollup": "yarn clean && yarn build && api-extractor run --verbose --local",
     "clean": "rimraf q s lib es5",
+    "lint": "eslint . --ext .js,.ts",
     "postbuild": "downlevel-dts lib _ts3.4/lib",
     "test": "yarn build && nyc mocha tests/",
     "test:compat": "api-extractor run --verbose"

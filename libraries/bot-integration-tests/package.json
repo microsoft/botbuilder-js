@@ -5,6 +5,7 @@
   "description": "Integration tests for botbuilder",
   "scripts": {
     "build": "tsc -b",
+    "lint": "eslint . --ext .js,.ts",
     "test": "yarn build && mocha **/*.test.js"
   },
   "author": "Microsoft Corp.",

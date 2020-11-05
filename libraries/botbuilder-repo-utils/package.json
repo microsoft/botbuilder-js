@@ -21,6 +21,7 @@
   },
   "scripts": {
     "build": "tsc",
+    "lint": "eslint . --ext .js,.ts",
     "update-versions": "ts-node src/updateVersions.ts"
   }
 }

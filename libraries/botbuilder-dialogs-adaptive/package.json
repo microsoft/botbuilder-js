@@ -60,6 +60,7 @@
     "build:src": "tsc -b",
     "build:tests": "tsc -p tests/tsconfig.json",
     "clean": "erase /q /s .\\lib",
+    "lint": "eslint . --ext .js,.ts",
     "postbuild": "downlevel-dts lib _ts3.4/lib",
     "test": "yarn build && nyc mocha tests/",
     "test:compat": "api-extractor run --verbose"

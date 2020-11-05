@@ -46,9 +46,10 @@
   },
   "scripts": {
     "build": "tsc -b",
-    "postbuild": "downlevel-dts lib _ts3.4/lib",
     "build:rollup": "yarn clean && yarn build && api-extractor run --verbose --local",
     "clean": "erase /q /s .\\lib",
+    "lint": "eslint . --ext .js,.ts",
+    "postbuild": "downlevel-dts lib _ts3.4/lib",
     "test": "yarn build && nyc mocha tests/",
     "test:compat": "api-extractor run --verbose"
   }

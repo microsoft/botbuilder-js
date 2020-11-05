@@ -5,6 +5,7 @@
   "description": "Tools for testing adaptive dialogs",
   "scripts": {
     "build": "tsc -b",
+    "lint": "eslint . --ext .js,.ts",
     "postbuild": "downlevel-dts lib _ts3.4/lib",
     "test": "yarn build && mocha tests/*.test.js",
     "test:compat": "api-extractor run --verbose"

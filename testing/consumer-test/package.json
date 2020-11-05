@@ -3,6 +3,7 @@
   "private": true,
   "version": "1.0.0",
   "scripts": {
+    "lint": "eslint . --ext .js,.ts",
     "start": "ts-node run.ts"
   },
   "dependencies": {

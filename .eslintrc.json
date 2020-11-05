@@ -1,7 +1,7 @@
 {
-    "env": {    
+    "env": {
         "es6": true
-      },
+    },
     "extends": [
         "eslint:recommended",
         "plugin:security/recommended",
@@ -9,22 +9,32 @@
         "plugin:@typescript-eslint/eslint-recommended",
         "prettier",
         "plugin:prettier/recommended",
-        "prettier/@typescript-eslint"
+        "prettier/@typescript-eslint",
+        "plugin:jsdoc/recommended"
     ],
     "ignorePatterns": [
-        "libraries/adaptive-expressions/**/generated/**/*",
-        "libraries/botbuilder-lg/**/generated/**/*",
-        "libraries/botframework-connector/src/connectorApi/**/*",
-        "libraries/botframework-connector/src/tokenApi/**/*",
-        "libraries/botframework-schema/**/*",
-        "libraries/streaming-e2e-tests/**"
+        "_ts3.4/",
+        "dist/",
+        "lib/",
+        "node_modules/"
     ],
     "overrides": [
         {
-            "files": [ "*.test.js", "*.test.ts" ],
+            "files": ["*.test.js", "*.test.ts"],
             "env": {
                 "mocha": true,
                 "node": true
+            },
+            "rules": {
+                "@typescript-eslint/no-var-requires": 0
+            }
+        },
+        {
+            "files": ["babel.config.js", "webpack.config.js"],
+            "globals": {
+                "__dirname": true,
+                "module": true,
+                "require": true
             },
             "rules": {
                 "@typescript-eslint/no-var-requires": 0
@@ -41,11 +51,16 @@
     },
     "plugins": [
         "@typescript-eslint",
-        "only-warn",
         "prettier",
+        "jsdoc",
         "security"
     ],
     "rules": {
-        "prettier/prettier": "error" 
+        "jsdoc/require-jsdoc": ["error", {"publicOnly": true}],
+        "jsdoc/require-param": ["error"],
+        "jsdoc/require-param-type": ["error"],
+        "jsdoc/require-returns": ["error"],
+        "jsdoc/require-returns-type": ["error"],
+        "prettier/prettier": "error"
     }
 }

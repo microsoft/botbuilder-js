@@ -48,9 +48,10 @@
   },
   "scripts": {
     "build": "tsc -b",
-    "postbuild": "downlevel-dts lib _ts3.4/lib",
     "build-docs": "typedoc --theme markdown --entryPoint botbuilder-dialogs-adaptive --excludePrivate --includeDeclarations --ignoreCompilerErrors --module amd --out ..\\..\\doc\\botbuilder-dialogs .\\lib\\index.d.ts --hideGenerator --name \"Bot Builder SDK - Dialogs\" --readme none",
     "clean": "erase /q /s .\\lib",
+    "lint": "eslint . --ext .js,.ts",
+    "postbuild": "downlevel-dts lib _ts3.4/lib",
     "test": "yarn build && nyc mocha tests/ --exit",
     "test:compat": "api-extractor run --verbose"
   },

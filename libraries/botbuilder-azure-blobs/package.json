@@ -44,10 +44,11 @@
     "typescript": "^4.0.5"
   },
   "scripts": {
-    "test": "yarn build && nyc mocha --check-leaks tests",
     "build": "tsc -b",
-    "postbuild": "downlevel-dts lib _ts3.4/lib",
     "build-docs": "typedoc --theme markdown --entryPoint botbuilder-azure-blobs --excludePrivate --includeDeclarations --ignoreCompilerErrors --module amd --out ..\\..\\doc\\botbuilder-azure-blobs .\\lib\\index.d.ts --hideGenerator --name \"Bot Builder SDK - Azure Blobs\" --readme none",
+    "lint": "eslint . --ext .js,.ts",
+    "postbuild": "downlevel-dts lib _ts3.4/lib",
+    "test": "yarn build && nyc mocha --check-leaks tests",
     "test:compat": "api-extractor run --verbose"
   },
   "files": [
