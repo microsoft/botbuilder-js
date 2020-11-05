@@ -45,11 +45,11 @@ run(async () => {
     ]);
 
     if (!lernaFile) {
-        return failure(1, 'lerna.json not found');
+        return failure('lerna.json not found', 20);
     }
 
     if (!packageFile) {
-        return failure(2, 'package.json not found');
+        return failure('package.json not found', 21);
     }
 
     // Parse process.argv for all configuration options
@@ -78,7 +78,7 @@ run(async () => {
     // If `maybeNewVersion` is falsy use version from the lerna.json file
     const newVersion = maybeNewVersion || lernaFile.lerna;
     if (!newVersion) {
-        return failure(3, 'unable to resolve new version');
+        return failure('unable to resolve new version', 22);
     }
 
     // Fetch and format date, if instructed
@@ -127,7 +127,7 @@ run(async () => {
                 await writeJsonFile(absPath, pkg);
                 return success();
             } catch (err) {
-                return failure(4, err instanceof Error ? err.message : err);
+                return failure(err instanceof Error ? err.message : err, 23);
             }
         })
     );
