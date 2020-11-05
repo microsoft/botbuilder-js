@@ -32,7 +32,6 @@
     "botframework-schema": "4.1.6"
   },
   "devDependencies": {
-    "@types/node": "^10.17.27",
     "sinon": "^7.5.0",
     "unzipper": "^0.10.9"
   },

@@ -37,7 +37,6 @@
     "url-parse": "^1.4.4"
   },
   "devDependencies": {
-    "@types/node": "^10.17.27",
     "@types/node-fetch": "^2.5.7",
     "dotenv": "^8.1.0",
     "fs-extra": "^7.0.1",

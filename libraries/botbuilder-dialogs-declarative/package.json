@@ -34,7 +34,6 @@
     "jsonpath": "^1.0.0"
   },
   "devDependencies": {
-    "@types/node": "^10.17.27",
     "@types/jsonpath": "^0.2.0"
   },
   "scripts": {
