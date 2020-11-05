@@ -33,6 +33,7 @@ describe(`LGExceptionTest`, function() {
         InvalidLGFileImportPath: GetDiagnostics(`InvalidLGFileImportPath.lg`),
         LgTemplateFunctionError: GetDiagnostics(`LgTemplateFunctionError.lg`),
         MultiLineVariation: GetDiagnostics(`MultiLineVariation.lg`),
+        MultiLineTemplate: GetDiagnostics(`MultiLineTemplate.lg`),
         NoNormalTemplateBody: GetDiagnostics(`NoNormalTemplateBody.lg`),
         NoTemplateRef: GetDiagnostics(`NoTemplateRef.lg`),
         SwitchCaseFormatError: GetDiagnostics(`SwitchCaseFormatError.lg`),
@@ -181,6 +182,14 @@ describe(`LGExceptionTest`, function() {
 
     it(`TestMultiLineVariation`, function() {
         var diagnostics = preloaded.MultiLineVariation;
+
+        assert.strictEqual(1, diagnostics.length);
+        assert.strictEqual(DiagnosticSeverity.Error, diagnostics[0].severity);
+        assert.strictEqual(diagnostics[0].message.includes(TemplateErrors.noEndingInMultiline), true);
+    });
+
+    it(`TestMultiLineTemplate`, function() {
+        var diagnostics = preloaded.MultiLineTemplate;
 
         assert.strictEqual(1, diagnostics.length);
         assert.strictEqual(DiagnosticSeverity.Error, diagnostics[0].severity);
