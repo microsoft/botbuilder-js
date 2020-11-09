@@ -47,9 +47,8 @@
   "scripts": {
     "build": "tsc",
     "build-docs": "typedoc --theme markdown --entryPoint botbuilder-ai --excludePrivate --includeDeclarations --ignoreCompilerErrors --module amd --out ..\\..\\doc\\botbuilder-ai .\\lib\\index.d.ts --hideGenerator --name \"Bot Builder SDK - AI\" --readme none",
-    "build:rollup": "npm run clean && npm run build && api-extractor run --verbose --local",
+    "build:rollup": "yarn clean && yarn build && api-extractor run --verbose --local",
     "clean": "erase /q /s .\\lib",
-    "set-version": "npm version --allow-same-version ${Version}",
     "test": "tsc && nyc mocha tests/",
     "test:compat": "api-extractor run --verbose"
   },

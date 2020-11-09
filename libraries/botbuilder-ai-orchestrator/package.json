@@ -3,6 +3,7 @@
   "author": "Microsoft Corp.",
   "description": "Orchestrator recognizer",
   "version": "4.1.6",
+  "preview": true,
   "license": "MIT",
   "keywords": [
     "botbuilder",
@@ -39,9 +40,8 @@
   "scripts": {
     "build": "tsc",
     "build-docs": "typedoc --theme markdown --entryPoint botbuilder-ai-orchestrator --excludePrivate --includeDeclarations --ignoreCompilerErrors --module amd --out ..\\..\\doc\\botbuilder-ai-orchestrator .\\lib\\index.d.ts --hideGenerator --name \"Bot Builder SDK - Orchestrator\" --readme none",
-    "build:rollup": "npm run clean && npm run build && api-extractor run --verbose --local",
+    "build:rollup": "yarn clean && yarn build && api-extractor run --verbose --local",
     "clean": "erase /q /s .\\lib",
-    "set-version": "npm version --allow-same-version ${Version}",
     "test": "tsc && nyc mocha tests/",
     "test:compat": "api-extractor run --verbose"
   },

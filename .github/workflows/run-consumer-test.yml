@@ -20,23 +20,21 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
-      
+
       - uses: actions/setup-node@v2-beta
         with:
           node-version: '12'
 
       - uses: actions/cache@v2
         with:
-          path: |
-            ~/.npm
-            **/node_modules
-          key: ${{ runner.os }}-${{ hashFiles('**/package.json') }}
+          path: node_modules
+          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}
 
-      - name: npm install
-        run: npm install
+      - name: yarn
+        run: yarn
 
-      - name: npm build
-        run: npm run build
+      - name: yarn build
+        run: yarn build
 
-      - name: Run "test:consumer" npm script
-        run: npm run test:consumer
+      - name: Run "test:consumer" script
+        run: yarn test:consumer

@@ -54,10 +54,7 @@ If you want to debug an issue, would like to [contribute](#Contributing-and-our-
 ### Prerequisites
 - [Git](https://git-scm.com/downloads) 
 - [Node.js](https://nodejs.org/en/)
-- [Lerna](https://lernajs.io/)
-- [Nyc](https://www.npmjs.com/package/nyc)
-- [Mocha](https://www.npmjs.com/package/mocha)
-- [TypeScript](https://www.typescriptlang.org/)
+- [Yarn 1.x](https://classic.yarnpkg.com/)
 - Your favorite code-editor for example [VS Code](https://code.visualstudio.com/)
 
 ### Clone
@@ -74,16 +71,17 @@ cd botbuilder-js
 ```
 
 ### Build and test locally
-Install the prerequisites. This will also run the postinstall script (`lerna bootstrap --hoist`).
+
+Install the prerequisites.
 
 ```bash
-npm install
+yarn
 ```
 
 Then use the following command to build the SDK.
 
 ```bash
-npm run build
+yarn build
 ```
 
 ### Running unit tests
@@ -91,7 +89,7 @@ npm run build
 Use the following command to run the unit tests.
 
 ```bash
-npm run test
+yarn test
 ```
 
 The `prep-test.cmd` command is run to install test keys and start the [Azure Storage Emulator](https://docs.microsoft.com/en-us/azure/storage/common/storage-use-emulator) if its installed. Any unit tests needing test keys or the storage emulator are designed to be skipped if their dependencies are missing so most developers won't need to worry about running this command. 
@@ -99,7 +97,7 @@ The `prep-test.cmd` command is run to install test keys and start the [Azure Sto
 If you have a need to re-generate the LUIS or connector clients using the latest swagger you'll need to install `autorest` (requires Node 7.10.0 or higher), which you can do with the following command.
 
 ```bash
-npm install --global autorest
+yarn global add global autorest
 ```
 
 ## Getting support and providing feedback

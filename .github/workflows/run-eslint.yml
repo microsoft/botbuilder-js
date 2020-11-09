@@ -20,21 +20,18 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
-      
+
       - uses: actions/setup-node@v2-beta
         with:
           node-version: '12'
 
       - uses: actions/cache@v2
         with:
-          path: |
-            ~/.npm
-            **/node_modules
-          key: ${{ runner.os }}-${{ hashFiles('**/package.json') }}
+          path: node_modules
+          key: ${{ runner.os }}-${{ hashFiles('yarn.lock') }}
 
-      # Note: postinstall is unnecessary for linting
-      - name: npm install --ignore-scripts
-        run: npm install --ignore-scripts
+      - name: yarn
+        run: yarn
 
-      - name: Run "eslint" npm script
-        run: npm run eslint
+      - name: Run "eslint" script
+        run: yarn eslint

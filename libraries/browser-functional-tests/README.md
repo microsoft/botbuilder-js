@@ -6,19 +6,15 @@ The library **browser-functional-tests** is a suite of tests running with **Nigh
 
 _Note: The tests are configured to run in two-terminals, one for the webpack-dev-server which runs the bot, another for running the tests._ 
 
-1. Go to `libraries/browser-functional-tests`, open a terminal and run `npm install`
-
+1. In the `botbuilder-js` root directory, open a terminal and run `yarn`
 
 2. Go to `libraries/browser-functional-tests/browser-echo-bot`, open a terminal and run the following commands:
-   * `npm install`
-   * `npm run start`
+   * `yarn`
+   * `yarn start`
 This command will start the browser bot using `webpack-dev-server`.
 
 3. In the `botbuilder-js` root directory, open a new terminal and run the following commands:
-   * `npm install`
-   * `npm run browser-functional-test browser` where browser is _chrome_ or _firefox_
-
-4. Go to the `.env` file and set the **TestURI** variable with `http://localhost:8080/` value
+   * `yarn browser-functional-test $browser` where `$browser` is _chrome_ or _firefox_
 
 ## Azure Build Pipeline Configuration
 The next steps will guide you thought the configuration of a Build pipeline based on YAML file.

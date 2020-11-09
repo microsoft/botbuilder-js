@@ -6,8 +6,7 @@
   "scripts": {
     "build": "tsc",
     "just-test": "tsc && mocha \"./transpiled-tests/**/*.test.js\"",
-    "test": "tsc && nyc mocha \"./transpiled-tests/**/*.test.js\"",
-    "set-version": "npm version --allow-same-version ${Version}"
+    "test": "tsc && nyc mocha \"./transpiled-tests/**/*.test.js\""
   },
   "author": "Microsoft Corp.",
   "license": "MIT",
