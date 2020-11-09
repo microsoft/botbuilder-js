@@ -33,6 +33,7 @@ describe(`LGExceptionTest`, function() {
         InvalidLGFileImportPath: GetDiagnostics(`InvalidLGFileImportPath.lg`),
         LgTemplateFunctionError: GetDiagnostics(`LgTemplateFunctionError.lg`),
         MultiLineVariation: GetDiagnostics(`MultiLineVariation.lg`),
+        MultiLineTemplate: GetDiagnostics(`MultiLineTemplate.lg`),
         NoNormalTemplateBody: GetDiagnostics(`NoNormalTemplateBody.lg`),
         NoTemplateRef: GetDiagnostics(`NoTemplateRef.lg`),
         SwitchCaseFormatError: GetDiagnostics(`SwitchCaseFormatError.lg`),
@@ -180,10 +181,18 @@ describe(`LGExceptionTest`, function() {
     });
 
     it(`TestMultiLineVariation`, function() {
-        var diagnostics = preloaded.MultiLineVariation;
+        const diagnostics = preloaded.MultiLineVariation;
 
-        assert.strictEqual(1, diagnostics.length);
-        assert.strictEqual(DiagnosticSeverity.Error, diagnostics[0].severity);
+        assert.strictEqual(diagnostics.length, 1);
+        assert.strictEqual(diagnostics[0].severity, DiagnosticSeverity.Error);
+        assert.strictEqual(diagnostics[0].message.includes(TemplateErrors.noEndingInMultiline), true);
+    });
+
+    it(`TestMultiLineTemplate`, function() {
+        const diagnostics = preloaded.MultiLineTemplate;
+
+        assert.strictEqual(diagnostics.length, 1);
+        assert.strictEqual(diagnostics[0].severity, DiagnosticSeverity.Error);
         assert.strictEqual(diagnostics[0].message.includes(TemplateErrors.noEndingInMultiline), true);
     });
 
@@ -258,7 +267,7 @@ describe(`LGExceptionTest`, function() {
 
     it(`AddTextWithWrongId`, function() {
         var diagnostics = Templates.parseResource(new LGResource('a.lg', 'a.lg', `[import](xx.lg) \r\n # t \n - hi`)).diagnostics;
-        assert.strictEqual(1, diagnostics.length);
+        assert.strictEqual(diagnostics.length, 1);
         assert.strictEqual(diagnostics[0].message.includes(`Could not find file`), true);
     });
 

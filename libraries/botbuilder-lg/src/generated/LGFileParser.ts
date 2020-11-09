@@ -481,7 +481,7 @@ export class LGFileParser extends Parser {
         this.enterRule(_localctx, 18, LGFileParser.RULE_templateBodyLine);
         let _la: number;
         try {
-            this.state = 82;
+            this.state = 83;
             this._errHandler.sync(this);
             switch (this._input.LA(1)) {
                 case LGFileParser.INLINE_MULTILINE:
@@ -490,7 +490,7 @@ export class LGFileParser extends Parser {
                     this.enterOuterAlt(_localctx, 1);
                     {
                         {
-                            this.state = 76;
+                            this.state = 77;
                             this._errHandler.sync(this);
                             switch (this._input.LA(1)) {
                                 case LGFileParser.TEMPLATE_BODY:
@@ -510,10 +510,13 @@ export class LGFileParser extends Parser {
                                         {
                                             this.state = 67;
                                             this.match(LGFileParser.MULTILINE_PREFIX);
-                                            this.state = 69;
+                                            this.state = 71;
                                             this._errHandler.sync(this);
                                             _la = this._input.LA(1);
-                                            do {
+                                            while (
+                                                _la === LGFileParser.ESCAPE_CHARACTER ||
+                                                _la === LGFileParser.MULTILINE_TEXT
+                                            ) {
                                                 {
                                                     {
                                                         this.state = 68;
@@ -535,19 +538,16 @@ export class LGFileParser extends Parser {
                                                         }
                                                     }
                                                 }
-                                                this.state = 71;
+                                                this.state = 73;
                                                 this._errHandler.sync(this);
                                                 _la = this._input.LA(1);
-                                            } while (
-                                                _la === LGFileParser.ESCAPE_CHARACTER ||
-                                                _la === LGFileParser.MULTILINE_TEXT
-                                            );
-                                            this.state = 74;
+                                            }
+                                            this.state = 75;
                                             this._errHandler.sync(this);
                                             _la = this._input.LA(1);
                                             if (_la === LGFileParser.MULTILINE_SUFFIX) {
                                                 {
-                                                    this.state = 73;
+                                                    this.state = 74;
                                                     this.match(LGFileParser.MULTILINE_SUFFIX);
                                                 }
                                             }
@@ -557,12 +557,12 @@ export class LGFileParser extends Parser {
                                 default:
                                     throw new NoViableAltException(this);
                             }
-                            this.state = 79;
+                            this.state = 80;
                             this._errHandler.sync(this);
                             switch (this.interpreter.adaptivePredict(this._input, 11, this._ctx)) {
                                 case 1:
                                     {
-                                        this.state = 78;
+                                        this.state = 79;
                                         this.match(LGFileParser.NEWLINE);
                                     }
                                     break;
@@ -573,7 +573,7 @@ export class LGFileParser extends Parser {
                 case LGFileParser.NEWLINE:
                     this.enterOuterAlt(_localctx, 2);
                     {
-                        this.state = 81;
+                        this.state = 82;
                         this.match(LGFileParser.NEWLINE);
                     }
                     break;
@@ -595,42 +595,43 @@ export class LGFileParser extends Parser {
     }
 
     public static readonly _serializedATN: string =
-        '\x03\uC91D\uCABA\u058D\uAFBA\u4F53\u0607\uEA8B\uC241\x03\x0EW\x04\x02' +
+        '\x03\uC91D\uCABA\u058D\uAFBA\u4F53\u0607\uEA8B\uC241\x03\x0EX\x04\x02' +
         '\t\x02\x04\x03\t\x03\x04\x04\t\x04\x04\x05\t\x05\x04\x06\t\x06\x04\x07' +
         '\t\x07\x04\b\t\b\x04\t\t\t\x04\n\t\n\x04\v\t\v\x03\x02\x06\x02\x18\n\x02' +
         '\r\x02\x0E\x02\x19\x03\x02\x03\x02\x03\x03\x03\x03\x03\x03\x03\x03\x03' +
         '\x03\x03\x03\x03\x03\x05\x03%\n\x03\x03\x04\x03\x04\x05\x04)\n\x04\x03' +
         '\x05\x03\x05\x05\x05-\n\x05\x03\x06\x03\x06\x05\x061\n\x06\x03\x07\x03' +
         '\x07\x05\x075\n\x07\x03\b\x03\b\x03\b\x03\t\x03\t\x05\t<\n\t\x03\n\x07' +
-        '\n?\n\n\f\n\x0E\nB\v\n\x03\v\x03\v\x03\v\x03\v\x06\vH\n\v\r\v\x0E\vI\x03' +
-        '\v\x05\vM\n\v\x05\vO\n\v\x03\v\x05\vR\n\v\x03\v\x05\vU\n\v\x03\v\x03\x19' +
-        '\x02\x02\f\x02\x02\x04\x02\x06\x02\b\x02\n\x02\f\x02\x0E\x02\x10\x02\x12' +
-        '\x02\x14\x02\x02\x03\x03\x02\r\x0E\x02_\x02\x17\x03\x02\x02\x02\x04$\x03' +
-        '\x02\x02\x02\x06&\x03\x02\x02\x02\b*\x03\x02\x02\x02\n.\x03\x02\x02\x02' +
-        '\f2\x03\x02\x02\x02\x0E6\x03\x02\x02\x02\x109\x03\x02\x02\x02\x12@\x03' +
-        '\x02\x02\x02\x14T\x03\x02\x02\x02\x16\x18\x05\x04\x03\x02\x17\x16\x03' +
-        '\x02\x02\x02\x18\x19\x03\x02\x02\x02\x19\x1A\x03\x02\x02\x02\x19\x17\x03' +
-        '\x02\x02\x02\x1A\x1B\x03\x02\x02\x02\x1B\x1C\x07\x02\x02\x03\x1C\x03\x03' +
-        '\x02\x02\x02\x1D%\x05\x0E\b\x02\x1E%\x05\b\x05\x02\x1F%\x05\n\x06\x02' +
-        ' %\x05\f\x07\x02!%\x05\x06\x04\x02"%\x07\x03\x02\x02#%\x07\x02\x02\x03' +
-        '$\x1D\x03\x02\x02\x02$\x1E\x03\x02\x02\x02$\x1F\x03\x02\x02\x02$ \x03' +
-        '\x02\x02\x02$!\x03\x02\x02\x02$"\x03\x02\x02\x02$#\x03\x02\x02\x02%\x05' +
-        "\x03\x02\x02\x02&(\x07\x05\x02\x02')\x07\x03\x02\x02('\x03\x02\x02\x02" +
-        '()\x03\x02\x02\x02)\x07\x03\x02\x02\x02*,\x07\x06\x02\x02+-\x07\x03\x02' +
-        '\x02,+\x03\x02\x02\x02,-\x03\x02\x02\x02-\t\x03\x02\x02\x02.0\x07\x04' +
-        '\x02\x02/1\x07\x03\x02\x020/\x03\x02\x02\x0201\x03\x02\x02\x021\v\x03' +
-        '\x02\x02\x0224\x07\v\x02\x0235\x07\x03\x02\x0243\x03\x02\x02\x0245\x03' +
-        '\x02\x02\x025\r\x03\x02\x02\x0267\x05\x10\t\x0278\x05\x12\n\x028\x0F\x03' +
-        '\x02\x02\x029;\x07\x07\x02\x02:<\x07\x03\x02\x02;:\x03\x02\x02\x02;<\x03' +
-        '\x02\x02\x02<\x11\x03\x02\x02\x02=?\x05\x14\v\x02>=\x03\x02\x02\x02?B' +
-        '\x03\x02\x02\x02@>\x03\x02\x02\x02@A\x03\x02\x02\x02A\x13\x03\x02\x02' +
-        '\x02B@\x03\x02\x02\x02CO\x07\n\x02\x02DO\x07\b\x02\x02EG\x07\t\x02\x02' +
-        'FH\t\x02\x02\x02GF\x03\x02\x02\x02HI\x03\x02\x02\x02IG\x03\x02\x02\x02' +
-        'IJ\x03\x02\x02\x02JL\x03\x02\x02\x02KM\x07\f\x02\x02LK\x03\x02\x02\x02' +
-        'LM\x03\x02\x02\x02MO\x03\x02\x02\x02NC\x03\x02\x02\x02ND\x03\x02\x02\x02' +
-        'NE\x03\x02\x02\x02OQ\x03\x02\x02\x02PR\x07\x03\x02\x02QP\x03\x02\x02\x02' +
-        'QR\x03\x02\x02\x02RU\x03\x02\x02\x02SU\x07\x03\x02\x02TN\x03\x02\x02\x02' +
-        'TS\x03\x02\x02\x02U\x15\x03\x02\x02\x02\x0F\x19$(,04;@ILNQT';
+        '\n?\n\n\f\n\x0E\nB\v\n\x03\v\x03\v\x03\v\x03\v\x07\vH\n\v\f\v\x0E\vK\v' +
+        '\v\x03\v\x05\vN\n\v\x05\vP\n\v\x03\v\x05\vS\n\v\x03\v\x05\vV\n\v\x03\v' +
+        '\x03\x19\x02\x02\f\x02\x02\x04\x02\x06\x02\b\x02\n\x02\f\x02\x0E\x02\x10' +
+        '\x02\x12\x02\x14\x02\x02\x03\x03\x02\r\x0E\x02`\x02\x17\x03\x02\x02\x02' +
+        '\x04$\x03\x02\x02\x02\x06&\x03\x02\x02\x02\b*\x03\x02\x02\x02\n.\x03\x02' +
+        '\x02\x02\f2\x03\x02\x02\x02\x0E6\x03\x02\x02\x02\x109\x03\x02\x02\x02' +
+        '\x12@\x03\x02\x02\x02\x14U\x03\x02\x02\x02\x16\x18\x05\x04\x03\x02\x17' +
+        '\x16\x03\x02\x02\x02\x18\x19\x03\x02\x02\x02\x19\x1A\x03\x02\x02\x02\x19' +
+        '\x17\x03\x02\x02\x02\x1A\x1B\x03\x02\x02\x02\x1B\x1C\x07\x02\x02\x03\x1C' +
+        '\x03\x03\x02\x02\x02\x1D%\x05\x0E\b\x02\x1E%\x05\b\x05\x02\x1F%\x05\n' +
+        '\x06\x02 %\x05\f\x07\x02!%\x05\x06\x04\x02"%\x07\x03\x02\x02#%\x07\x02' +
+        '\x02\x03$\x1D\x03\x02\x02\x02$\x1E\x03\x02\x02\x02$\x1F\x03\x02\x02\x02' +
+        '$ \x03\x02\x02\x02$!\x03\x02\x02\x02$"\x03\x02\x02\x02$#\x03\x02\x02' +
+        "\x02%\x05\x03\x02\x02\x02&(\x07\x05\x02\x02')\x07\x03\x02\x02('\x03" +
+        '\x02\x02\x02()\x03\x02\x02\x02)\x07\x03\x02\x02\x02*,\x07\x06\x02\x02' +
+        '+-\x07\x03\x02\x02,+\x03\x02\x02\x02,-\x03\x02\x02\x02-\t\x03\x02\x02' +
+        '\x02.0\x07\x04\x02\x02/1\x07\x03\x02\x020/\x03\x02\x02\x0201\x03\x02\x02' +
+        '\x021\v\x03\x02\x02\x0224\x07\v\x02\x0235\x07\x03\x02\x0243\x03\x02\x02' +
+        '\x0245\x03\x02\x02\x025\r\x03\x02\x02\x0267\x05\x10\t\x0278\x05\x12\n' +
+        '\x028\x0F\x03\x02\x02\x029;\x07\x07\x02\x02:<\x07\x03\x02\x02;:\x03\x02' +
+        '\x02\x02;<\x03\x02\x02\x02<\x11\x03\x02\x02\x02=?\x05\x14\v\x02>=\x03' +
+        '\x02\x02\x02?B\x03\x02\x02\x02@>\x03\x02\x02\x02@A\x03\x02\x02\x02A\x13' +
+        '\x03\x02\x02\x02B@\x03\x02\x02\x02CP\x07\n\x02\x02DP\x07\b\x02\x02EI\x07' +
+        '\t\x02\x02FH\t\x02\x02\x02GF\x03\x02\x02\x02HK\x03\x02\x02\x02IG\x03\x02' +
+        '\x02\x02IJ\x03\x02\x02\x02JM\x03\x02\x02\x02KI\x03\x02\x02\x02LN\x07\f' +
+        '\x02\x02ML\x03\x02\x02\x02MN\x03\x02\x02\x02NP\x03\x02\x02\x02OC\x03\x02' +
+        '\x02\x02OD\x03\x02\x02\x02OE\x03\x02\x02\x02PR\x03\x02\x02\x02QS\x07\x03' +
+        '\x02\x02RQ\x03\x02\x02\x02RS\x03\x02\x02\x02SV\x03\x02\x02\x02TV\x07\x03' +
+        '\x02\x02UO\x03\x02\x02\x02UT\x03\x02\x02\x02V\x15\x03\x02\x02\x02\x0F' +
+        '\x19$(,04;@IMORU';
     public static __ATN: ATN;
     public static get _ATN(): ATN {
         if (!LGFileParser.__ATN) {
