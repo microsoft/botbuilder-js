@@ -47,7 +47,7 @@ export class Element extends ExpressionEvaluator {
                 } else if (typeof idxValue === 'string') {
                     ({ value, error } = InternalFunctionUtils.accessProperty(inst, idxValue.toString()));
                 } else {
-                    error = `Could not coerce ${ index } to an int or string.`;
+                    error = `Could not coerce ${index} to an int or string.`;
                 }
 
                 return { value, error };

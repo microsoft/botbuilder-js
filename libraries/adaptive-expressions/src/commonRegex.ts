@@ -1,3 +1,4 @@
+/* eslint-disable security/detect-non-literal-regexp */
 /**
  * @module adaptive-expressions
  */

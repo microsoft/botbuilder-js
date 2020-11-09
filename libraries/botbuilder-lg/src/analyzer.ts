@@ -1,3 +1,4 @@
+/* eslint-disable security/detect-object-injection */
 /**
  * @module botbuilder-lg
  */
@@ -5,7 +6,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { AbstractParseTreeVisitor, TerminalNode } from 'antlr4ts/tree';
+import { AbstractParseTreeVisitor } from 'antlr4ts/tree';
 import { Expression, ExpressionParserInterface, ExpressionParser } from 'adaptive-expressions';
 import { keyBy } from 'lodash';
 import { EvaluationTarget } from './evaluationTarget';

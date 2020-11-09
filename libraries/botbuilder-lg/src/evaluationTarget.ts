@@ -25,7 +25,7 @@ export class EvaluationTarget {
      * The children templates that this template has evaluated currently.
      */
     public cachedEvaluatedChildren: Map<string, any>;
-    
+
     /**
      * Creates a new instance of the [EvaluationTarget](xref:botbuilder-lg.EvaluationTarget) class.
      * @param templateName Template name.

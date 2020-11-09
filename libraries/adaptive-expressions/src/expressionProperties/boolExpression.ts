@@ -14,7 +14,6 @@ import { Expression } from '../expression';
  * String values are always interpreted as an expression, whether it has '=' prefix or not.
  */
 export class BoolExpression extends ExpressionProperty<boolean> {
-    
     /**
      * Initializes a new instance of the [BoolExpression](xref:adaptive-expressions.BoolExpression) class.
      * @param value A `boolean` or a `string` expression which resolves to a `boolean`.
@@ -28,12 +27,14 @@ export class BoolExpression extends ExpressionProperty<boolean> {
      * @param value Value to set.
      */
     public setValue(value: boolean | string | Expression): void {
-        if (value !== undefined 
-            && value !== null 
-            && typeof value !== 'boolean' 
-            && typeof value !== 'string' 
-            && !(value instanceof Expression)) {
-            throw new Error("BoolExpression accepts string, boolean or Expression as the value.");
+        if (
+            value !== undefined &&
+            value !== null &&
+            typeof value !== 'boolean' &&
+            typeof value !== 'string' &&
+            !(value instanceof Expression)
+        ) {
+            throw new Error('BoolExpression accepts string, boolean or Expression as the value.');
         }
 
         super.setValue(value);

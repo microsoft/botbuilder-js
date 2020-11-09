@@ -1,3 +1,4 @@
+/* eslint-disable security/detect-object-injection */
 import { Extensions } from '../extensions';
 import { InternalFunctionUtils } from '../functionUtils.internal';
 import { MemoryInterface } from './memoryInterface';
@@ -93,7 +94,7 @@ export class SimpleObjectMemory implements MemoryInterface {
         }
 
         const parts: string[] = path
-            .split(/[.\[\]]+/)
+            .split(/[.[\]]+/)
             .filter((u: string): boolean => u !== undefined && u !== '')
             .map((u: string): string => {
                 if ((u.startsWith('"') && u.endsWith('"')) || (u.startsWith("'") && u.endsWith("'"))) {
@@ -186,7 +187,7 @@ export class SimpleObjectMemory implements MemoryInterface {
             return value;
         };
     }
-  
+
     /**
      * @private
      */

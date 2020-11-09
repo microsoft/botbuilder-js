@@ -1,3 +1,4 @@
+/* eslint-disable security/detect-object-injection */
 /**
  * @module botbuilder-lg
  */
@@ -85,6 +86,7 @@ export class EvaluationOptions {
                                 }
                             } else if (key === this.replaceNullKey) {
                                 this.nullSubstitution = (path): any =>
+                                    // eslint-disable-next-line security/detect-eval-with-expression
                                     eval('`' + value.replace(this.nullKeyReplaceStrRegex, '${path}') + '`');
                             } else if (key === this.lineBreakKey) {
                                 this.LineBreakStyle =

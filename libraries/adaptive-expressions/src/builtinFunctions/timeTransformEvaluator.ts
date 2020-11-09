@@ -51,7 +51,7 @@ export class TimeTransformEvaluator extends ExpressionEvaluator {
                         }
                     }
                 } else {
-                    error = `${ expression } should contain an ISO format timestamp and a time interval integer.`;
+                    error = `${expression} should contain an ISO format timestamp and a time interval integer.`;
                 }
             }
 

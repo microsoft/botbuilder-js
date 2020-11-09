@@ -18,7 +18,7 @@ import { TemplateErrors } from './templateErrors';
 export class ErrorListener implements ANTLRErrorListener<any> {
     private readonly source: string;
     private lineOffset: number;
-    
+
     /**
      * Creates a new instance of the [ErrorListener](xref:botbuilder-lg.ErrorListener) class.
      * @param errorSource String value that represents the source of the error.

@@ -66,10 +66,10 @@ export class Accessor extends ExpressionEvaluator {
         }
 
         if (children.length > 2) {
-            throw new Error(`${ expression } has more than 2 children.`);
+            throw new Error(`${expression} has more than 2 children.`);
         }
         if (children.length === 2 && (children[1].returnType & ReturnType.Object) === 0) {
-            throw new Error(`${ expression } must have an object as its second argument.`);
+            throw new Error(`${expression} must have an object as its second argument.`);
         }
     }
 }
