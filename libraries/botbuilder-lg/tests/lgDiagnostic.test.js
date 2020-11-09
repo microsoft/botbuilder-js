@@ -189,7 +189,7 @@ describe(`LGExceptionTest`, function() {
     });
 
     it(`TestMultiLineTemplate`, function() {
-        var diagnostics = preloaded.MultiLineTemplate;
+        const diagnostics = preloaded.MultiLineTemplate;
 
         assert.strictEqual(diagnostics.length, 1);
         assert.strictEqual(diagnostics[0].severity, DiagnosticSeverity.Error);
