@@ -3,12 +3,16 @@
 
 /* eslint-disable security/detect-non-literal-fs-filename */
 
-import fs from 'fs/promises';
+import fs from 'fs';
+import util from 'util';
+
+const readFile = util.promisify(fs.readFile);
+const writeFile = util.promisify(fs.writeFile);
 
 // reads a file at `path` as JSON
 export async function readJsonFile<T>(path: string): Promise<T | undefined> {
     try {
-        const rawPackageJson = await fs.readFile(path, 'utf8');
+        const rawPackageJson = await readFile(path, 'utf8');
         return JSON.parse(rawPackageJson);
     } catch (err) {
         return undefined;
@@ -17,5 +21,5 @@ export async function readJsonFile<T>(path: string): Promise<T | undefined> {
 
 // writes JSON.stringified `data` to `path`
 export function writeJsonFile<T>(path: string, data: T): Promise<void> {
-    return fs.writeFile(path, JSON.stringify(data, null, 2));
+    return writeFile(path, JSON.stringify(data, null, 2));
 }
