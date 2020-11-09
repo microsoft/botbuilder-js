@@ -48,12 +48,12 @@ export class UriPort extends ExpressionEvaluator {
      * @private
      */
     private static evalUriPort(uri: string): ValueWithError {
-        let result: string;
+        let result: number;
         const { value: parsed, error: parseError } = InternalFunctionUtils.parseUri(uri);
         let error = parseError;
         if (!error) {
             try {
-                result = parsed.port;
+                result = parseInt(parsed.port);
             } catch (e) {
                 error = 'invalid operation, input uri should be an absolute URI';
             }
