@@ -48,21 +48,3 @@ stages:
       displayName: 'Dir workspace except node-modules (takes 5 seconds)'
       continueOnError: true
       condition: succeededOrFailed()
-
-- stage: Node14CI
-  dependsOn: []  # Run this stage in parallel
-  displayName: 'Node 14.x CI'
-  variables:
-    NodeVersion: 14.x
-  jobs:
-  - job: Node14UnitTests
-    displayName: 'Node 14.x Unit Tests'
-    steps:
-    - template: js-build-steps.yml
-
-    - powershell: |
-        pushd ..
-        Get-ChildItem -Recurse -Force | Where {$_.FullName -notlike "*node_modules*"}
-      displayName: 'Dir workspace except node-modules (takes 5 seconds)'
-      continueOnError: true
-      condition: succeededOrFailed()
