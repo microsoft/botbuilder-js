@@ -179,18 +179,16 @@ export class ResourceExplorer {
     }
 
     /**
-     * Load types from resource or resource id.
-     * @param resource Resource or resource id to be parsed as a type.
+     * Load type from resource
+     * @param resourceOrIdId resource or resource id to be parsed as a type.
+     * @returns type parsed from resource
      */
-    public loadType<T>(resource: string | Resource): T {
+    public loadType<T>(resourceOrId: Resource | string): T {
         this.registerComponentTypes();
 
-        if (typeof resource == 'string') {
-            resource = this.getResource(resource);
-        }
-
+        const resource = typeof resourceOrId === 'string' ? this.getResource(resourceOrId) : resourceOrId;
         if (!resource) {
-            throw new Error(`Resource ${resource.id} not found.`);
+            throw new Error(`Resource ${typeof resourceOrId === 'string' ? resourceOrId : resourceOrId.id} not found.`);
         }
 
         const json = resource.readText();
