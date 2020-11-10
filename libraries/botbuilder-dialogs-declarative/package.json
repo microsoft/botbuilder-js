@@ -55,6 +55,7 @@
     "test:compat": "api-extractor run --verbose"
   },
   "files": [
+    "_ts3.4",
     "lib",
     "schemas",
     "src"

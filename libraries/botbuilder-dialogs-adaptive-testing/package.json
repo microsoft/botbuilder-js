@@ -37,6 +37,7 @@
   "author": "Microsoft",
   "license": "MIT",
   "files": [
+    "_ts3.4",
     "lib",
     "schemas",
     "src"

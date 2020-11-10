@@ -70,6 +70,7 @@
     "test": "yarn build && nyc mocha tests/ --timeout 60000 --inspect"
   },
   "files": [
+    "_ts3.4",
     "lib",
     "src"
   ]

@@ -19,6 +19,7 @@
     }
   },
   "files": [
+    "_ts3.4",
     "lib"
   ],
   "engines": {
