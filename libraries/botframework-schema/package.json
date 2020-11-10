@@ -27,9 +27,8 @@
   },
   "scripts": {
     "build": "tsc",
-    "build:rollup": "npm run clean && npm run build && api-extractor run --verbose --local",
+    "build:rollup": "yarn clean && yarn build && api-extractor run --verbose --local",
     "clean": "erase /q /s .\\lib",
-    "set-version": "npm version --allow-same-version ${Version}",
     "test": "tsc && nyc mocha tests/",
     "test:compat": "api-extractor run --verbose"
   },

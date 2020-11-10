@@ -3,6 +3,7 @@
   "author": "Microsoft Corp.",
   "description": "Declarative library for the Microsoft BotBuilder dialog system.",
   "version": "4.1.6",
+  "preview": true,
   "license": "MIT",
   "keywords": [
     "botbuilder",
@@ -42,7 +43,6 @@
     "build": "tsc",
     "build-docs": "typedoc --theme markdown --entryPoint botbuilder-dialogs-adaptive --excludePrivate --includeDeclarations --ignoreCompilerErrors --module amd --out ..\\..\\doc\\botbuilder-dialogs .\\lib\\index.d.ts --hideGenerator --name \"Bot Builder SDK - Dialogs\" --readme none",
     "clean": "erase /q /s .\\lib",
-    "set-version": "npm version --allow-same-version ${Version}",
     "test:compat": "api-extractor run --verbose"
   },
   "files": [

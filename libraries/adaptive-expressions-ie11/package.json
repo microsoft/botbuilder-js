@@ -40,8 +40,7 @@
   },
   "scripts": {
     "build": "webpack && copyfiles -u 3 node_modules/adaptive-expressions/lib/**/*.d.ts dist",
-    "clean": "erase /q /s .\\dist",
-    "set-version": "npm version --allow-same-version ${Version}"
+    "clean": "erase /q /s .\\dist"
   },
   "files": [
     "dist"

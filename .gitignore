@@ -8,10 +8,6 @@
 *.zip
 *.vscode
 
-# Functional Tests
-libraries/functional-tests/**/lib
-libraries/functional-tests/**/*.vscode/launch.json
-
 # @microsoft/api-extractor
 libraries/*/temp
 libraries/*/dist
@@ -307,19 +303,18 @@ __pycache__/
 !.vscode/extensions.json
 
 /**/*.VC.db
-#coverage
+
+# code coverage
 /**/coverage
 /**/.nyc_output
 
-#derived
+# misc. things
 /test-runner/out
-package-lock.json
+.yarn
 
+# typescript assets
 *.tsbuildinfo
 *.js.map
-
-consumer-test/**.js
-consumer-test/**.json
 
 # Transpiled botbuilder integration tests
 libraries/**/transpiled-tests/

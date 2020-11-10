@@ -1,8 +1,5 @@
-#
 # This runs under BotBuilder-JS-daily-yaml.
-#
 
-# "name" here defines the build number format. Build number is accessed via $(Build.BuildNumber)
 name: $(Build.BuildId)
 
 pool:
@@ -10,33 +7,21 @@ pool:
 
 variables:
   NodeVersion: 12.x
-#  PackageVersion: Define this in Azure to be settable at queue time. Ex: 4.11.0-dev.{DateStamp}.{CommitHash} 
-#  PreviewPackageVersion: Define this in Azure to be settable at queue time. Ex: 4.11.0-dev.{DateStamp}.{CommitHash}
+  YARN_CACHE_FOLDER: $(Pipeline.Workspace)/.yarn
 
 steps:
-- powershell: |
-   # Replace {DateStamp} and {CommitHash} tokens with the actual values in vars PackageVersion and PreviewPackageVersion
-   $dateStamp = (Get-Date -format "yyyyMMdd");
-   $commitHash = "$(Build.SourceVersion)".SubString(0,7);
-   
-   "Raw PackageVersion = $(PackageVersion)";
-   $v = "$(PackageVersion)".Replace("{DateStamp}",$dateStamp).Replace("{CommitHash}",$commitHash);
-   Write-Host "##vso[task.setvariable variable=PackageVersion;]$v";
-   "Resolved PackageVersion = $v";
-   
-   "Raw PreviewPackageVersion = $(PreviewPackageVersion)";
-   $ppv = "$(PreviewPackageVersion)".Replace("{DateStamp}",$dateStamp).Replace("{CommitHash}",$commitHash);
-   Write-Host "##vso[task.setvariable variable=PreviewPackageVersion;]$ppv";
-   "Resolved PreviewPackageVersion = $ppv";
-  displayName: 'Resolve package version variables'
+- template: templates/build.yml
 
-- template: js-build-steps.yml
+- template: templates/test.yml
 
-- script: 'lerna exec --no-private npm pack'
-  displayName: 'lerna exec --no-private npm pack'
+- script: yarn update-versions "$(PackageVersion)" --preview "$(PreviewText)" --deprecated "$(DeprecatedText)" --date "$(DateFormat)" --git "$(IncludeGitSha)"
+  displayName: yarn update-versions
+
+- script: yarn package
+  displayName: yarn package
 
 - task: CopyFiles@2
-  displayName: 'Copy TGZ files to staging'
+  displayName: copy .tgz files to staging area
   inputs:
     SourceFolder: libraries
     Contents: '*/*.tgz'
@@ -44,28 +29,28 @@ steps:
     flattenFolders: true
 
 - task: PublishBuildArtifacts@1
-  displayName: 'Publish staging to Build Artifacts'
+  displayName: publish staging artifacts
 
 - powershell: |
    [string[]]$outvar = (Get-ChildItem *.tgz -Path $(Build.ArtifactStagingDirectory) ).Name;
-   
+
    [int] $packageCount = $outvar.Length;
    $PackagesDescription = "$packageCount packages";
    $PackagesDescription;
    $outvar;
-   
+
    "##vso[task.setvariable variable=PackagesDescription;]$PackagesDescription";
    [int] $maxTags = 5;
-   
+
    if ($packageCount -gt $maxTags) {
        # Too many packages for tags.
-   
+
        # Set a few package name variables for tags
        for ($i = 0; $i -lt $maxTags; $i++ ) {
            $p = $outvar[$i];
            "##vso[task.setvariable variable=pkg$i;]$p";
        }
-   
+
        $message = "(See 'Package names' task log for full list)";
        Write-Host "##vso[task.setvariable variable=pkg$i;]$message";
        Write-Host $message;
@@ -77,16 +62,16 @@ steps:
            "##vso[task.setvariable variable=pkg$i;]$p";
        }
    }
-   
+
    for ($i = $packageCount; $i -le 30; $i++ ) {
        # Set remaining variables to an empty string
        "##vso[task.setvariable variable=pkg$i;]";
    }
-  displayName: 'Package names'
+  displayName: package names
   continueOnError: true
 
 - task: colinsalmcorner.colinsalmcorner-buildtasks.tag-build-task.tagBuildOrRelease@0
-  displayName: 'Tag Build with package names'
+  displayName: tag build with package names
   inputs:
     tags: |
      $(PACKAGESDESCRIPTION)
@@ -111,9 +96,4 @@ steps:
      $(PKG18)
   continueOnError: true
 
-- powershell: |
-   pushd ..
-   ls -R
-  displayName: 'Dir workspace'
-  continueOnError: true
-  condition: succeededOrFailed()
+- template: templates/list-files.yml

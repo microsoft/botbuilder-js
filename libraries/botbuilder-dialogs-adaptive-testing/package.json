@@ -1,12 +1,11 @@
 {
   "name": "botbuilder-dialogs-adaptive-testing",
-  "private": true,
-  "version": "1.0.0",
-  "description": "",
+  "version": "4.1.6",
+  "preview": true,
+  "description": "Tools for testing adaptive dialogs",
   "scripts": {
     "test": "tsc && mocha tests/*.test.js",
     "build": "tsc",
-    "set-version": "npm version --allow-same-version ${Version}",
     "test:compat": "api-extractor run --verbose"
   },
   "main": "./lib/index.js",
