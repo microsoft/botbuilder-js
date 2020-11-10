@@ -82,8 +82,8 @@ steps:
     customCommand: 'run build'
 
 - task: Npm@1
-  displayName: 'npm run test:coveralls'
+  displayName: 'npm run test'
   inputs:
     command: custom
     verbose: false
-    customCommand: 'run test:coveralls'
+    customCommand: 'run test'
