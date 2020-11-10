@@ -1,0 +1,114 @@
+# This runs under BotBuilder-JS-daily-yaml.
+
+# "name" here defines the build number format. Build number is accessed via $(Build.BuildNumber)
+name: $(Build.BuildId)
+
+pool:
+  vmImage: 'macOS-10.15'
+
+variables:
+  NodeVersion: 12.x
+#  PackageVersion: Define this in Azure to be settable at queue time. Ex: 4.9.0-dev.{DateStamp}.{CommitHash} 
+#  PreviewPackageVersion: Define this in Azure to be settable at queue time. Ex: 4.9.0-dev.{DateStamp}.{CommitHash}
+
+steps:
+- powershell: |
+   # Replace {DateStamp} and {CommitHash} tokens with the actual values in vars PackageVersion and PreviewPackageVersion
+   $dateStamp = (Get-Date -format "yyyyMMdd");
+   $commitHash = "$(Build.SourceVersion)".SubString(0,7);
+   
+   "Raw PackageVersion = $(PackageVersion)";
+   $v = "$(PackageVersion)".Replace("{DateStamp}",$dateStamp).Replace("{CommitHash}",$commitHash);
+   Write-Host "##vso[task.setvariable variable=PackageVersion;]$v";
+   "Resolved PackageVersion = $v";
+   
+   "Raw PreviewPackageVersion = $(PreviewPackageVersion)";
+   $ppv = "$(PreviewPackageVersion)".Replace("{DateStamp}",$dateStamp).Replace("{CommitHash}",$commitHash);
+   Write-Host "##vso[task.setvariable variable=PreviewPackageVersion;]$ppv";
+   "Resolved PreviewPackageVersion = $ppv";
+  displayName: 'Resolve package version variables'
+
+- template: js-daily-build-steps.yml
+
+- script: 'lerna exec --no-private npm pack'
+  displayName: 'lerna exec --no-private npm pack'
+
+- task: CopyFiles@2
+  displayName: 'Copy TGZ files to staging'
+  inputs:
+    SourceFolder: libraries
+    Contents: '*/*.tgz'
+    TargetFolder: '$(Build.ArtifactStagingDirectory)'
+    flattenFolders: true
+
+- task: PublishBuildArtifacts@1
+  displayName: 'Publish staging to Build Artifacts'
+
+- powershell: |
+   [string[]]$outvar = (Get-ChildItem *.tgz -Path $(Build.ArtifactStagingDirectory) ).Name;
+   
+   [int] $packageCount = $outvar.Length;
+   $PackagesDescription = "$packageCount packages";
+   $PackagesDescription;
+   $outvar;
+   
+   "##vso[task.setvariable variable=PackagesDescription;]$PackagesDescription";
+   [int] $maxTags = 5;
+   
+   if ($packageCount -gt $maxTags) {
+       # Too many packages for tags.
+   
+       # Set a few package name variables for tags
+       for ($i = 0; $i -lt $maxTags; $i++ ) {
+           $p = $outvar[$i];
+           "##vso[task.setvariable variable=pkg$i;]$p";
+       }
+   
+       $message = "(See 'Package names' task log for full list)";
+       Write-Host "##vso[task.setvariable variable=pkg$i;]$message";
+       Write-Host $message;
+       $packageCount = ++$i;
+   } else {
+       # Set package name variables for tags
+       for ($i = 0; $i -lt $packageCount; $i++ ) {
+           $p = $outvar[$i];
+           "##vso[task.setvariable variable=pkg$i;]$p";
+       }
+   }
+   
+   for ($i = $packageCount; $i -le 30; $i++ ) {
+       # Set remaining variables to an empty string
+       "##vso[task.setvariable variable=pkg$i;]";
+   }
+  displayName: 'Package names'
+  continueOnError: true
+
+- task: colinsalmcorner.colinsalmcorner-buildtasks.tag-build-task.tagBuildOrRelease@0
+  displayName: 'Tag Build with package names'
+  inputs:
+    tags: |
+     $(PACKAGESDESCRIPTION)
+     $(PKG0)
+     $(PKG1)
+     $(PKG2)
+     $(PKG3)
+     $(PKG4)
+     $(PKG5)
+     $(PKG6)
+     $(PKG7)
+     $(PKG8)
+     $(PKG9)
+     $(PKG10)
+     $(PKG11)
+     $(PKG12)
+     $(PKG13)
+     $(PKG14)
+     $(PKG15)
+  continueOnError: true
+
+- powershell: |
+   pushd ..
+   ls -R
+  displayName: 'Dir workspace'
+  continueOnError: true
+  condition: succeededOrFailed()
