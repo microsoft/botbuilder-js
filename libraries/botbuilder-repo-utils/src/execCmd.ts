@@ -7,7 +7,7 @@ import path from 'path';
 import util from 'util';
 import { DependencyResolver, collectWorkspacePackages } from './workspace';
 import { Package } from './package';
-import { exec } from 'child_process';
+import { exec, spawn } from 'child_process';
 import { failure, run, success } from './run';
 import { gitRoot } from './git';
 import { readJsonFile } from './file';
@@ -17,7 +17,7 @@ const execp = util.promisify(exec);
 run(async () => {
     const { _: maybeCmd, ...flags } = minimist(process.argv.slice(2), {
         '--': true,
-        boolean: ['continue', 'noPrivate', 'silent'],
+        boolean: ['continue', 'noPrivate', 'silent', 'stream'],
         default: { concurrency: '', npm: 'yarn' },
         string: ['concurrency', 'ignoreName', 'ignorePath', 'name', 'npm', 'script', 'path'],
     });
@@ -29,11 +29,9 @@ run(async () => {
     const maybeFlags: string[] = flags['--'] ?? [];
 
     // If we just have --script, simply invoke that with the npm program
-    const command = R.compact(
-        flags.script ? [...npmArgs, flags.script, ...maybeFlags] : [...maybeCmd, ...maybeFlags]
-    ).join(' ');
+    const command = R.compact(flags.script ? [...npmArgs, flags.script, ...maybeFlags] : [...maybeCmd, ...maybeFlags]);
 
-    if (!command) {
+    if (!command.length) {
         throw new Error('must provide a command to execute');
     }
 
@@ -81,17 +79,34 @@ run(async () => {
                 }
             };
 
-            log(command);
+            log(command.join(' '));
 
             try {
-                const { stdout, stderr } = await execp(command, {
+                const opts = {
                     cwd: path.dirname(workspace.absPath),
-                });
+                };
 
-                if (stderr.trim()) {
-                    error(stderr);
-                } else if (!flags.silent) {
-                    log(stdout.trim() || 'done!');
+                if (flags.stream) {
+                    const [bin, ...args] = command;
+                    const cmd = spawn(bin, args, opts);
+
+                    cmd.stdout.on('data', (buf) => console.log(buf.toString('utf8').trim()));
+                    cmd.stderr.on('data', (buf) => console.error(buf.toString('utf8').trim()));
+
+                    await new Promise((resolve, reject) => {
+                        cmd.on('close', resolve);
+                        cmd.on('error', reject);
+                    });
+
+                    log('done!');
+                } else {
+                    const { stdout, stderr } = await execp(command.join(' '), opts);
+
+                    if (stderr.trim()) {
+                        error(stderr);
+                    } else if (!flags.silent) {
+                        log(stdout.trim() || 'done!');
+                    }
                 }
             } catch (err) {
                 error(err.message);
