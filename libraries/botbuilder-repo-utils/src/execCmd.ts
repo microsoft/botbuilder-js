@@ -69,23 +69,32 @@ run(async () => {
 
     try {
         await dependencyResolver.execute(async (workspace) => {
-            console.log(`[${workspace.pkg.name}]: ${cmd.join(' ')}`);
+            const fmt = (message: string) => `[${workspace.pkg.name}]: ${message.trim()}`;
 
-            let { stdout, stderr } = await execp(cmd.join(' '), {
-                cwd: path.dirname(workspace.absPath),
-            });
+            const log = (message: string) => console.log(fmt(message));
 
-            stdout = stdout.trim();
-            stderr = stderr.trim();
-
-            if (stderr) {
+            const error = (message: string) => {
                 if (flags.continue) {
-                    console.error(`[${workspace.pkg.name}]: ${stderr}`);
+                    console.error(fmt(message));
                 } else {
-                    throw new Error(`[${workspace.pkg.name}]: ${stderr}`);
+                    throw new Error(fmt(message));
                 }
-            } else if (!flags.silent) {
-                console.log(`[${workspace.pkg.name}]: ${stdout || 'done!'}`);
+            };
+
+            log(command);
+
+            try {
+                const { stdout, stderr } = await execp(command, {
+                    cwd: path.dirname(workspace.absPath),
+                });
+
+                if (stderr.trim()) {
+                    error(stderr);
+                } else if (!flags.silent) {
+                    log(stdout.trim() || 'done!');
+                }
+            } catch (err) {
+                error(err.message);
             }
         });
 

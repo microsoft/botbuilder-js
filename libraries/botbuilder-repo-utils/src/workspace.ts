@@ -30,7 +30,7 @@ export async function collectWorkspacePackages(
     workspaces: string[] = [],
     filters: Partial<Filters> = {}
 ): Promise<Array<Workspace>> {
-    let paths = await globby(workspaces.map((workspace) => path.join(repoRoot, workspace, 'package.json')));
+    const paths = await globby(workspaces.map((workspace) => path.join(repoRoot, workspace, 'package.json')));
 
     const maybeWorkspaces = await Promise.all(
         paths.map(
