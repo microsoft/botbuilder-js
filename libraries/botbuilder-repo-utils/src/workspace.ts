@@ -39,7 +39,8 @@ export async function collectWorkspacePackages(
     workspaces: string[] = [],
     filters: Partial<Filters> = {}
 ): Promise<Array<Workspace>> {
-    const paths = await globby(workspaces.map((workspace) => path.join(repoRoot, workspace, 'package.json')));
+    // Note: posix is required by globby, still yields proper absolute paths for platform
+    const paths = await globby(workspaces.map((workspace) => path.posix.join(repoRoot, workspace, 'package.json')));
 
     const maybeWorkspaces = await Promise.all(
         paths.map(
