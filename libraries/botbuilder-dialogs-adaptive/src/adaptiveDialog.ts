@@ -145,7 +145,7 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> im
     /**
      * JSON Schema for the dialog.
      */
-    public get schema(): object | undefined {
+    public get schema(): object {
         return this.dialogSchema ? this.dialogSchema.schema : undefined;
     }
 

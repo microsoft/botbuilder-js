@@ -1,6 +1,7 @@
 {
   "private": true,
   "name": "botbuilder-js",
+  "version": "4.12.0",
   "workspaces": [
     "libraries/*",
     "libraries/functional-tests/dialogToDialog/*",
@@ -11,20 +12,20 @@
   ],
   "scripts": {
     "browser-functional-test": "cd libraries/browser-functional-tests && node nightwatch.js -e",
-    "build": "lerna run build",
-    "build-docs": "lerna run build-docs",
-    "clean": "lerna run clean",
+    "build": "yarn execute --script build --silent",
+    "build-docs": "yarn execute --script build-docs --silent",
+    "clean": "yarn execute --script clean --silent",
     "eslint": "eslint libraries/*/src/**/*.ts --resolve-plugins-relative-to .",
     "eslint:fix": "yarn eslint --fix",
-    "functional-test": "lerna run build && nyc mocha \"libraries/functional-tests/tests/*.test.js\"",
-    "package": "lerna --no-private exec yarn pack",
-    "postinstall": "lerna bootstrap",
-    "test": "lerna run build && nyc mocha \"libraries/@(adaptive*|bot*)/tests/**/*.test.js\" --exit --check-leaks",
-    "test:compat": "lerna run test:compat",
-    "test:consumer": "lerna run --scope consumer-test --stream start",
-    "test:coveralls": "lerna run build && nyc mocha \"libraries/@(adaptive*|bot*)/tests/**/*.test.js\" --exit && nyc report --reporter=text-lcov | coveralls",
+    "functional-test": "yarn build && nyc mocha \"libraries/functional-tests/tests/*.test.js\"",
+    "package": "yarn execute --no-private --silent yarn pack",
+    "test": "yarn build && nyc mocha \"libraries/@(adaptive*|bot*)/tests/**/*.test.js\" --exit --check-leaks",
+    "test:compat": "yarn execute --script test:compat --silent",
+    "test:consumer": "yarn workspace consumer-test start",
+    "test:coveralls": "yarn build && nyc mocha \"libraries/@(adaptive*|bot*)/tests/**/*.test.js\" --exit && nyc report --reporter=text-lcov | coveralls",
     "test:devops": "nyc --report --reporter=cobertura mocha -- \"libraries/@(adaptive*|bot*)/tests/**/*.test.js\" --check-leaks --reporter mocha-junit-reporter --reporter-options includePending=true",
-    "update-versions": "lerna --scope botbuilder-repo-utils exec -- yarn update-versions"
+    "execute": "yarn workspace botbuilder-repo-utils execute",
+    "update-versions": "yarn workspace botbuilder-repo-utils update-versions"
   },
   "devDependencies": {
     "@azure/ms-rest-js": "1.9.0",
@@ -41,7 +42,6 @@
     "eslint-plugin-only-warn": "^1.0.2",
     "eslint-plugin-prettier": "^3.1.4",
     "eslint-plugin-security": "^1.4.0",
-    "lerna": "^3.22.1",
     "mocha": "^6.2.3",
     "mocha-junit-reporter": "^2.0.0",
     "ms-rest-azure": "^2.6.0",

@@ -23,80 +23,65 @@ const getPackageVersion = (
     pkg: Package,
     newVersion: string,
     options: Record<'commitSha' | 'date' | 'deprecated' | 'preview', string | undefined>
-): string[] => {
-    let version: Array<string | undefined> = [newVersion];
+): string => {
+    const extra = [options.commitSha, options.date];
 
     if (pkg.deprecated) {
-        version.push(options.deprecated);
+        extra.unshift(options.deprecated);
     } else if (pkg.preview) {
-        version.push(options.preview);
+        extra.unshift(options.preview);
     }
 
-    return R.compact([...version, options.date, options.commitSha]);
+    return R.compact([newVersion, R.compact(extra).join('.')]).join('-');
 };
 
 run(async () => {
     // Obtain the path of the repo root, useful for constructing absolute paths
     const repoRoot = await gitRoot();
 
-    const [lernaFile, packageFile] = await Promise.all([
-        readJsonFile<Record<'lerna', string>>(path.join(repoRoot, 'lerna.json')),
-        readJsonFile<Package>(path.join(repoRoot, 'package.json')),
-    ]);
-
-    if (!lernaFile) {
-        return failure('lerna.json not found', 20);
-    }
-
+    const packageFile = await readJsonFile<Package>(path.join(repoRoot, 'package.json'));
     if (!packageFile) {
-        return failure('package.json not found', 21);
+        return failure('package.json not found', 20);
     }
 
     // Parse process.argv for all configuration options
     const {
         _: [maybeNewVersion],
-        dateFormat,
-        includeGitSha,
-        deprecated,
-        join,
-        preview,
+        ...flags
     } = minimist(process.argv.slice(2), {
-        alias: {
-            date: 'dateFormat',
-            git: 'includeGitSha',
-        },
         default: {
-            dateFormat: '',
             deprecated: 'deprecated',
-            includeGitSha: 'false',
-            join: '-',
+            git: 'false',
             preview: 'preview',
         },
-        string: ['dateFormat', 'deprecated', 'includeGitSha', 'preview', 'join'],
+        string: ['date', 'deprecated', 'git', 'preview'],
     });
 
-    // If `maybeNewVersion` is falsy use version from the lerna.json file
-    const newVersion = maybeNewVersion || lernaFile.lerna;
+    // If `maybeNewVersion` is falsy use version from the root packge.json file
+    const newVersion = maybeNewVersion || packageFile.version;
     if (!newVersion) {
-        return failure('unable to resolve new version', 22);
+        return failure('unable to resolve new version', 21);
     }
 
     // Fetch and format date, if instructed
-    const date = dateFormat ? moment().format(dateFormat) : undefined;
+    const date = flags.date ? moment().format(flags.date) : undefined;
 
     // Read git commit sha if instructed (JSON.parse properly coerces strings to boolean)
-    const commitSha = JSON.parse(includeGitSha) ? await gitSha(GIT_SHA_LENGTH) : undefined;
+    const commitSha = JSON.parse(flags.git) ? await gitSha(GIT_SHA_LENGTH) : undefined;
 
     // Collect all non-private workspaces from the repo root. Returns workspaces with absolute paths.
-    const workspaces = (await collectWorkspacePackages(repoRoot, packageFile.workspaces ?? [])).filter(
-        ({ pkg }) => !pkg.private
-    );
+    const workspaces = await collectWorkspacePackages(repoRoot, packageFile.workspaces, { noPrivate: true });
 
     // Build an object mapping a package name to its new, updated version
     const workspaceVersions = workspaces.reduce<Record<string, string>>(
         (acc, { pkg }) => ({
             ...acc,
-            [pkg.name]: getPackageVersion(pkg, newVersion, { commitSha, date, deprecated, preview }).join(join),
+            [pkg.name]: getPackageVersion(pkg, newVersion, {
+                commitSha,
+                date,
+                deprecated: flags.deprecated,
+                preview: flags.preview,
+            }),
         }),
         {}
     );
@@ -127,7 +112,7 @@ run(async () => {
                 await writeJsonFile(absPath, pkg);
                 return success();
             } catch (err) {
-                return failure(err instanceof Error ? err.message : err, 23);
+                return failure(err instanceof Error ? err.message : err, 22);
             }
         })
     );

@@ -18,7 +18,14 @@
   },
   "main": "lib/index.js",
   "browser": "lib/browser.js",
-  "typings": "lib/index.d.ts",
+  "types": "lib/index.d.ts",
+  "typesVersions": {
+    "<3.9": {
+      "*": [
+        "_ts3.4/*"
+      ]
+    }
+  },
   "dependencies": {
     "@azure/ms-rest-js": "1.9.0",
     "@types/jsonwebtoken": "7.2.8",
@@ -37,26 +44,33 @@
     "browserify": "16.5.2",
     "codelyzer": "^4.1.0",
     "dotenv": "^6.2.0",
+    "downlevel-dts": "^0.7.0",
     "exorcist": "^1.0.1",
     "mocha": "^6.2.3",
     "nock": "^11.9.1",
+    "npm-run-all": "^4.1.5",
     "nyc": "^15.1.0",
     "rimraf": "^3.0.2",
     "should": "^13.2.3",
     "shx": "^0.3.2",
     "source-map-support": "^0.5.3",
     "sponge": "^0.1.0",
-    "ts-node": "^4.1.0",
-    "typescript": "3.5.3"
+    "ts-node": "^9.0.0",
+    "typescript": "^4.0.5"
   },
   "scripts": {
-    "build": "tsc",
-    "browserify": "browserify -s BFC --debug lib/browser.js | exorcist lib/browser.js.map | sponge lib/browser.js",
-    "postbuild": "rimraf lib/browser.* && shx cp lib/index.js lib/browser.js && yarn browserify",
+    "build": "tsc -b",
+    "build:browserify": "npm-run-all build:browserify:clean build:browserify:init build:browserify:run",
+    "build:browserify:clean": "rimraf lib/browser.*",
+    "build:browserify:init": "shx cp lib/index.js lib/browser.js",
+    "build:browserify:run": "browserify -s BFC --debug lib/browser.js | exorcist lib/browser.js.map | sponge lib/browser.js",
+    "build:downlevel-dts": "downlevel-dts lib _ts3.4/lib",
     "clean": "rimraf q s lib",
-    "test": "tsc && nyc mocha tests/ --timeout 60000 --inspect"
+    "postbuild": "npm-run-all -p build:browserify build:downlevel-dts",
+    "test": "yarn build && nyc mocha tests/ --timeout 60000 --inspect"
   },
   "files": [
+    "_ts3.4",
     "lib",
     "src"
   ]

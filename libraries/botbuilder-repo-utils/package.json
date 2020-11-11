@@ -11,14 +11,18 @@
     "url": "https://github.com/Microsoft/botbuilder-js.git"
   },
   "devDependencies": {
+    "@types/minimist": "^1.2.1",
     "globby": "^11.0.1",
+    "minimatch": "^3.0.4",
     "minimist": "^1.2.5",
     "moment": "^2.29.1",
+    "p-map": "^4.0.0",
     "remeda": "^0.0.26",
     "ts-node": "^9.0.0",
     "typescript": "^4.0.5"
   },
   "scripts": {
+    "execute": "ts-node src/execCmd.ts",
     "update-versions": "ts-node src/updateVersions.ts"
   }
 }

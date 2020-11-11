@@ -18,21 +18,31 @@
     "url": "git@github.com:Microsoft/botbuilder-js.git"
   },
   "main": "./lib/index.js",
-  "typings": "./lib/index.d.ts",
+  "types": "./lib/index.d.ts",
+  "typesVersions": {
+    "<3.9": {
+      "*": [
+        "_ts3.4/*"
+      ]
+    }
+  },
   "devDependencies": {
     "@microsoft/api-extractor": "^7.7.12",
+    "downlevel-dts": "^0.7.0",
     "mocha": "^6.2.3",
     "nyc": "^15.1.0",
-    "typescript": "3.5.3"
+    "typescript": "^4.0.5"
   },
   "scripts": {
-    "build": "tsc",
+    "build": "tsc -b",
+    "postbuild": "downlevel-dts lib _ts3.4/lib",
     "build:rollup": "yarn clean && yarn build && api-extractor run --verbose --local",
     "clean": "erase /q /s .\\lib",
-    "test": "tsc && nyc mocha tests/",
+    "test": "yarn build && nyc mocha tests/",
     "test:compat": "api-extractor run --verbose"
   },
   "files": [
+    "_ts3.4",
     "lib",
     "src"
   ]

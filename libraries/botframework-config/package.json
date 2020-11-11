@@ -10,8 +10,16 @@
     "chatbots"
   ],
   "main": "./lib/index.js",
-  "typings": "./lib/index.d.ts",
+  "types": "./lib/index.d.ts",
+  "typesVersions": {
+    "<3.9": {
+      "*": [
+        "_ts3.4/*"
+      ]
+    }
+  },
   "files": [
+    "_ts3.4",
     "lib"
   ],
   "engines": {
@@ -25,22 +33,24 @@
     "type": "git",
     "url": "git@github.com:Microsoft/botbuilder-js.git"
   },
-  "devDependencies": {
-    "@microsoft/api-extractor": "^7.7.12",
-    "@types/uuid": "^3.4.3",
-    "mocha": "^6.2.3",
-    "typescript": "3.5.3"
-  },
   "dependencies": {
     "fs-extra": "^7.0.1",
     "read-text-file": "^1.1.0",
     "uuid": "^3.4.0"
   },
+  "devDependencies": {
+    "@microsoft/api-extractor": "^7.7.12",
+    "@types/uuid": "^3.4.3",
+    "downlevel-dts": "^0.7.0",
+    "mocha": "^6.2.3",
+    "typescript": "^4.0.5"
+  },
   "scripts": {
-    "build": "tsc",
+    "build": "tsc -b",
+    "postbuild": "downlevel-dts lib _ts3.4/lib",
     "build:rollup": "yarn clean && yarn build && api-extractor run --verbose --local",
     "clean": "erase /q /s .\\lib",
-    "test": "tsc && nyc mocha tests/",
+    "test": "yarn build && nyc mocha tests/",
     "test:compat": "api-extractor run --verbose"
   }
 }
