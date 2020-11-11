@@ -7,7 +7,7 @@ import path from 'path';
 import { DependencyResolver, collectWorkspacePackages } from './workspace';
 import { Package } from './package';
 import { Result, failure, run, success } from './run';
-import { execute, stream } from './process';
+import { execute } from './process';
 import { gitRoot } from './git';
 import { readJsonFile } from './file';
 
@@ -16,8 +16,12 @@ export const command = (argv: string[], quiet = false) => async (): Promise<Resu
         '--': true,
         boolean: ['continue', 'noPrivate', 'silent', 'stream'],
         default: { concurrency: '', npm: 'yarn' },
-        string: ['concurrency', 'ignoreName', 'ignorePath', 'name', 'npm', 'script', 'path'],
+        string: ['concurrency', 'ignoreName', 'ignorePath', 'name', 'npm', 'path', 'script', 'scriptArgs'],
     });
+
+    const maybeScriptArgs: string[] = Array.isArray(flags.scriptArgs)
+        ? flags.scriptArgs
+        : flags.scriptArgs?.split(' ') ?? [];
 
     // Resolve npm args from the command, `npm` requires the extra 'run' arg
     const npmArgs = flags.npm.trim() === 'npm' ? ['npm', 'run'] : [flags.npm.trim()];
@@ -25,8 +29,11 @@ export const command = (argv: string[], quiet = false) => async (): Promise<Resu
     // To pass flags to the resolved command use '--' in the command line invocation
     const maybeFlags: string[] = flags['--'] ?? [];
 
-    // If we just have --script, simply invoke that with the npm program
-    const command = R.compact(flags.script ? [...npmArgs, flags.script, ...maybeFlags] : [...maybeCmd, ...maybeFlags]);
+    // If we just have --script, simply invoke that with the npm program. Support passing scriptArgs directly
+    // as flags propagation isn't reliable in package.json scripts that call other scripts.
+    const command = R.compact(
+        flags.script ? [...npmArgs, flags.script, ...maybeFlags, ...maybeScriptArgs] : [...maybeCmd, ...maybeFlags]
+    );
 
     if (!command.length) {
         throw new Error('must provide a command to execute');
@@ -82,19 +89,18 @@ export const command = (argv: string[], quiet = false) => async (): Promise<Resu
                 log(command.join(' '));
 
                 const [bin, ...args] = command;
-                const options = { cwd: path.dirname(workspace.absPath) };
 
-                if (flags.stream && !quiet) {
-                    await stream(bin, args, options);
-                    log('done!');
+                const { stdout, stderr } = await execute(bin, args, {
+                    cwd: path.dirname(workspace.absPath),
+                    shell: true,
+                    silent: flags.silent,
+                    stream: flags.stream,
+                });
+
+                if (stderr) {
+                    error(stderr);
                 } else {
-                    const { stdout, stderr } = await execute(bin, args, options);
-
-                    if (stderr.trim()) {
-                        error(stderr);
-                    } else if (!flags.silent) {
-                        log(stdout.trim() || 'done!');
-                    }
+                    log(stdout || 'done!');
                 }
             } catch (err) {
                 error(err.message);

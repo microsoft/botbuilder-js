@@ -1,21 +1,25 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-import { exec, spawn } from 'child_process';
-import util from 'util';
-
-const execp = util.promisify(exec);
+import getStream from 'get-stream';
+import { spawn } from 'child_process';
 
 // Options for executing a command
-export interface ExecuteOptions {
+export interface Options {
     // Path to use for current working directory when executing a command
-    cwd: string;
+    cwd?: string;
+    // Stream output to stdout/stderr rather than buffering
+    stream?: boolean;
+    // Suppress stdout output
+    silent?: boolean;
+    // Execute command in context of a shell
+    shell?: boolean;
 }
 
 // Result of executing a command
-export interface ExecuteResult {
-    stdout: string;
-    stderr: string;
+export interface Result {
+    stdout?: string;
+    stderr?: string;
 }
 
 /**
@@ -23,30 +27,34 @@ export interface ExecuteResult {
  *
  * @param {string} bin name of a binary to execute
  * @param {string[]} args set of args to pass to binary
- * @param {ExecuteOptions} options options for execution
- * @returns {Promise<ExecuteResult>} execution results
+ * @param {Options} options options for execution
+ * @returns {Promise<Result>} execution results
  */
-export async function execute(bin: string, args: string[], options: ExecuteOptions): Promise<ExecuteResult> {
-    const { stdout, stderr } = await execp([bin, ...args].join(' '), options);
-    return { stdout: stdout.trim(), stderr: stderr.trim() };
-}
-
-/**
- * Executes a command and streams output to stdout/stderr.
- *
- * @param {string} bin name of a binary to execute
- * @param {string[]} args set of args to pass to binary
- * @param {ExecuteOptions} options options for execution
- * @returns {Promise<void>} promise that resolves when execution is complete
- */
-export async function stream(bin: string, args: string[], options: ExecuteOptions): Promise<void> {
+export async function execute(bin: string, args: string[], options: Options): Promise<Result> {
     const cmd = spawn(bin, args, options);
 
-    cmd.stdout.on('data', (buf) => console.log(buf.toString('utf8').trim()));
-    cmd.stderr.on('data', (buf) => console.error(buf.toString('utf8').trim()));
+    let stdoutPromise = Promise.resolve<string | undefined>(undefined);
+    let stderrPromise = Promise.resolve<string | undefined>(undefined);
+
+    if (options.stream) {
+        if (!options.silent) {
+            cmd.stdout.on('data', (data) => console.log(data.toString('utf8').trim()));
+        }
+
+        cmd.stderr.on('data', (data) => console.error(data.toString('utf8').trim()));
+    } else {
+        if (!options.silent) {
+            stdoutPromise = getStream(cmd.stdout, { maxBuffer: Infinity });
+        }
+
+        stderrPromise = getStream(cmd.stderr, { maxBuffer: Infinity });
+    }
 
     await new Promise((resolve, reject) => {
         cmd.on('close', resolve);
         cmd.on('error', reject);
     });
+
+    const [stdout, stderr] = await Promise.all([stdoutPromise, stderrPromise]);
+    return { stdout: stdout?.trim(), stderr: stderr?.trim() };
 }

@@ -84,7 +84,7 @@ describe('execCmd', () => {
                 if (!workspace.expects?.postReadFilter) {
                     procMock
                         .expects('execute')
-                        .withArgs(bin, args, { cwd: workspace.cwdPath })
+                        .withArgs(bin, args, sinon.match({ cwd: workspace.cwdPath }))
                         .once()
                         .resolves({ stdout: 'hello world', stderr: '' });
                 }
