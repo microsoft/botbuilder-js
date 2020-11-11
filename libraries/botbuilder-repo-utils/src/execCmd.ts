@@ -4,18 +4,15 @@
 import * as R from 'remeda';
 import minimist from 'minimist';
 import path from 'path';
-import util from 'util';
 import { DependencyResolver, collectWorkspacePackages } from './workspace';
 import { Package } from './package';
-import { exec, spawn } from 'child_process';
-import { failure, run, success } from './run';
+import { Result, failure, run, success } from './run';
+import { execute, stream } from './process';
 import { gitRoot } from './git';
 import { readJsonFile } from './file';
 
-const execp = util.promisify(exec);
-
-run(async () => {
-    const { _: maybeCmd, ...flags } = minimist(process.argv.slice(2), {
+export const command = (argv: string[], quiet = false) => async (): Promise<Result> => {
+    const { _: maybeCmd, ...flags } = minimist(argv, {
         '--': true,
         boolean: ['continue', 'noPrivate', 'silent', 'stream'],
         default: { concurrency: '', npm: 'yarn' },
@@ -69,38 +66,29 @@ run(async () => {
         await dependencyResolver.execute(async (workspace) => {
             const fmt = (message: string) => `[${workspace.pkg.name}]: ${message.trim()}`;
 
-            const log = (message: string) => console.log(fmt(message));
+            const log = (message: string) => !quiet && console.log(fmt(message));
 
             const error = (message: string) => {
                 if (flags.continue) {
-                    console.error(fmt(message));
+                    if (!quiet) {
+                        console.error(fmt(message));
+                    }
                 } else {
                     throw new Error(fmt(message));
                 }
             };
 
-            log(command.join(' '));
-
             try {
-                const opts = {
-                    cwd: path.dirname(workspace.absPath),
-                };
+                log(command.join(' '));
 
-                if (flags.stream) {
-                    const [bin, ...args] = command;
-                    const cmd = spawn(bin, args, opts);
+                const [bin, ...args] = command;
+                const options = { cwd: path.dirname(workspace.absPath) };
 
-                    cmd.stdout.on('data', (buf) => console.log(buf.toString('utf8').trim()));
-                    cmd.stderr.on('data', (buf) => console.error(buf.toString('utf8').trim()));
-
-                    await new Promise((resolve, reject) => {
-                        cmd.on('close', resolve);
-                        cmd.on('error', reject);
-                    });
-
+                if (flags.stream && !quiet) {
+                    await stream(bin, args, options);
                     log('done!');
                 } else {
-                    const { stdout, stderr } = await execp(command.join(' '), opts);
+                    const { stdout, stderr } = await execute(bin, args, options);
 
                     if (stderr.trim()) {
                         error(stderr);
@@ -117,4 +105,8 @@ run(async () => {
     } catch (err) {
         return failure(err.message);
     }
-});
+};
+
+if (require.main === module) {
+    run(command(process.argv.slice(2)));
+}

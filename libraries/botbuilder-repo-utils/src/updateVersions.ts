@@ -19,12 +19,12 @@ const GIT_SHA_LENGTH = 12;
  * @param newVersion new version requested
  * @param options options to control versioning
  */
-const getPackageVersion = (
-    pkg: Package,
+export const getPackageVersion = (
+    pkg: Partial<Package>,
     newVersion: string,
-    options: Record<'commitSha' | 'date' | 'deprecated' | 'preview', string | undefined>
+    options: Partial<Record<'commitSha' | 'date' | 'deprecated' | 'preview', string>>
 ): string => {
-    const extra = [options.commitSha, options.date];
+    const extra = [options.date, options.commitSha];
 
     if (pkg.deprecated) {
         extra.unshift(options.deprecated);
@@ -35,7 +35,7 @@ const getPackageVersion = (
     return R.compact([newVersion, R.compact(extra).join('.')]).join('-');
 };
 
-run(async () => {
+export const command = (argv: string[], quiet = false) => async (): Promise<Result> => {
     // Obtain the path of the repo root, useful for constructing absolute paths
     const repoRoot = await gitRoot();
 
@@ -48,7 +48,7 @@ run(async () => {
     const {
         _: [maybeNewVersion],
         ...flags
-    } = minimist(process.argv.slice(2), {
+    } = minimist(argv, {
         default: {
             deprecated: 'deprecated',
             git: 'false',
@@ -88,6 +88,7 @@ run(async () => {
 
     // Rewrites the version for any dependencies found in `workspaceVersions`
     const rewriteWithNewVersions = (dependencies: Record<string, string>) =>
+        // eslint-disable-next-line security/detect-object-injection
         R.mapValues(dependencies, (value, key) => workspaceVersions[key] ?? value);
 
     // Rewrite package.json files by updating version as well as dependencies and devDependencies.
@@ -96,7 +97,9 @@ run(async () => {
             const newVersion = workspaceVersions[pkg.name];
 
             if (newVersion) {
-                console.log(`Updating ${pkg.name} to ${newVersion}`);
+                if (!quiet) {
+                    console.log(`Updating ${pkg.name} to ${newVersion}`);
+                }
                 pkg.version = newVersion;
             }
 
@@ -118,4 +121,8 @@ run(async () => {
     );
 
     return results.find(isFailure) ?? success();
-});
+};
+
+if (require.main === module) {
+    run(command(process.argv.slice(2)));
+}

@@ -24,14 +24,16 @@ export interface Filters {
     path: string;
 }
 
+export const glob = (paths: string[]): Promise<string[]> => globby(paths);
+
 // Returns all workspace packages by resolving the `workspaces` key inside package.json
 export async function collectWorkspacePackages(
     repoRoot: string,
     workspaces: string[] = [],
     filters: Partial<Filters> = {}
 ): Promise<Array<Workspace>> {
-    // Note: posix is required by globby, this emits absolute paths that are platform specific
-    const paths = await globby(workspaces.map((workspace) => path.posix.join(repoRoot, workspace, 'package.json')));
+    // Note: posix is required, this emits absolute paths that are platform specific
+    const paths = await glob(workspaces.map((workspace) => path.posix.join(repoRoot, workspace, 'package.json')));
 
     const maybeWorkspaces = await Promise.all(
         paths.map(
@@ -41,11 +43,14 @@ export async function collectWorkspacePackages(
                     relPath = relPath.slice(1);
                 }
 
-                if (filters.path && !minimatch(relPath, filters.path)) {
+                // Strip `package.json` filename for path filters
+                const relWorkspacePath = path.dirname(relPath);
+
+                if (filters.path && !minimatch(relWorkspacePath, filters.path)) {
                     return;
                 }
 
-                if (filters.ignorePath && minimatch(relPath, filters.ignorePath)) {
+                if (filters.ignorePath && minimatch(relWorkspacePath, filters.ignorePath)) {
                     return;
                 }
 
@@ -58,7 +63,7 @@ export async function collectWorkspacePackages(
                     return;
                 }
 
-                if (filters.script && !pkg.scripts[filters.script]) {
+                if (filters.script && !(pkg.scripts ?? {})[filters.script]) {
                     return;
                 }
 
@@ -96,6 +101,7 @@ export class DependencyResolver {
                 ...Object.keys(workspace.pkg.dependencies ?? {}),
                 ...Object.keys(workspace.pkg.devDependencies ?? {}),
             ]
+                // eslint-disable-next-line security/detect-object-injection
                 .map((name) => this.byName[name])
                 .filter((pkg) => !!pkg);
 
@@ -111,6 +117,7 @@ export class DependencyResolver {
             R.flatten(
                 Object.entries(this.byName)
                     .filter(([name]) => {
+                        // eslint-disable-next-line security/detect-object-injection
                         const deps = this.depsByName[name];
 
                         const needs = deps.filter((dep) => !resolved.has(dep.pkg.name));
