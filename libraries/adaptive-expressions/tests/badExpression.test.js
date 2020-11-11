@@ -1,4 +1,3 @@
-/* eslint-disable prettier/prettier */
 const { ExpressionParser } = require('../lib');
 const assert = require('assert');
 

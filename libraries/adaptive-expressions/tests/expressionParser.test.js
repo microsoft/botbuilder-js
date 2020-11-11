@@ -1,4 +1,3 @@
-/* eslint-disable prettier/prettier */
 /* eslint-disable security/detect-object-injection */
 const assert = require('assert');
 const bigInt = require('big-integer');
