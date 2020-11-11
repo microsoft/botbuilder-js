@@ -5,6 +5,7 @@ on:
   pull_request:
     paths:
     - 'libraries/botbuilder-repo-utils/**'
+    - '.github/workflows/run-test-repoutils.yml'
     branches: 
     - main
 
