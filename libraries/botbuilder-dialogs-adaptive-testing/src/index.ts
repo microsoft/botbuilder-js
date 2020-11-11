@@ -6,8 +6,9 @@
  * Licensed under the MIT License.
  */
 
+export * from './adaptiveTestComponentRegistration';
 export * from './actions';
 export * from './testScript';
 export * from './testAction';
 export * from './testActions';
-export * from './testRunner';
+export * from './testUtils';

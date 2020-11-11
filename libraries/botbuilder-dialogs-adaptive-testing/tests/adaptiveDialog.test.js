@@ -1,151 +1,162 @@
 const path = require('path');
-const { TestRunner } = require('../lib');
+const { ComponentRegistration } = require('botbuilder-core');
+const { AdaptiveComponentRegistration } = require('botbuilder-dialogs-adaptive');
+const { ResourceExplorer } = require('botbuilder-dialogs-declarative');
+const { AdaptiveTestComponentRegistration, TestUtils } = require('../lib');
 
-describe('AdaptiveDialogTests', function() {
+describe('AdaptiveDialogTests', function () {
     this.timeout(10000);
-    const testRunner = new TestRunner(path.join(__dirname, 'resources/AdaptiveDialogTests'));
+
+    ComponentRegistration.add(new AdaptiveComponentRegistration());
+    ComponentRegistration.add(new AdaptiveTestComponentRegistration());
+
+    const resourceExplorer = new ResourceExplorer().addFolder(
+        path.join(__dirname, 'resources/AdaptiveDialogTests'),
+        true,
+        false
+    );
 
     it('ActivityAndIntentEvents', async () => {
-        await testRunner.runTestScript('AdaptiveDialog_ActivityAndIntentEvents');
+        await TestUtils.runTestScript(resourceExplorer, 'AdaptiveDialog_ActivityAndIntentEvents');
     });
 
     it('ActivityEvents', async () => {
-        await testRunner.runTestScript('AdaptiveDialog_ActivityEvents');
+        await TestUtils.runTestScript(resourceExplorer, 'AdaptiveDialog_ActivityEvents');
     });
 
     it('AdaptiveCardSubmit', async () => {
-        await testRunner.runTestScript('AdaptiveDialog_AdaptiveCardSubmit');
+        await TestUtils.runTestScript(resourceExplorer, 'AdaptiveDialog_AdaptiveCardSubmit');
     });
 
     it('AllowInterruption', async () => {
-        await testRunner.runTestScript('AdaptiveDialog_AllowInterruption');
+        await TestUtils.runTestScript(resourceExplorer, 'AdaptiveDialog_AllowInterruption');
     });
 
     it('AllowInterruptionAlwaysWithFailedValidation', async () => {
-        await testRunner.runTestScript('AdaptiveDialog_AllowInterruptionAlwaysWithFailedValidation');
+        await TestUtils.runTestScript(resourceExplorer, 'AdaptiveDialog_AllowInterruptionAlwaysWithFailedValidation');
     });
 
     it('AllowInterruptionNever', async () => {
-        await testRunner.runTestScript('AdaptiveDialog_AllowInterruptionNever');
+        await TestUtils.runTestScript(resourceExplorer, 'AdaptiveDialog_AllowInterruptionNever');
     });
 
     it('AllowInterruptionNeverWithInvalidInput', async () => {
-        await testRunner.runTestScript('AdaptiveDialog_AllowInterruptionNeverWithInvalidInput');
+        await TestUtils.runTestScript(resourceExplorer, 'AdaptiveDialog_AllowInterruptionNeverWithInvalidInput');
     });
 
     it('AllowInterruptionNeverWithMaxCount', async () => {
-        await testRunner.runTestScript('AdaptiveDialog_AllowInterruptionNeverWithMaxCount');
+        await TestUtils.runTestScript(resourceExplorer, 'AdaptiveDialog_AllowInterruptionNeverWithMaxCount');
     });
 
     it('AllowInterruptionNeverWithUnrecognizedInput', async () => {
-        await testRunner.runTestScript('AdaptiveDialog_AllowInterruptionNeverWithUnrecognizedInput');
+        await TestUtils.runTestScript(resourceExplorer, 'AdaptiveDialog_AllowInterruptionNeverWithUnrecognizedInput');
     });
 
     it('BeginDialog', async () => {
-        await testRunner.runTestScript('AdaptiveDialog_BeginDialog');
+        await TestUtils.runTestScript(resourceExplorer, 'AdaptiveDialog_BeginDialog');
     });
 
     it('BindingCaptureValueWithinSameAdaptive', async () => {
-        await testRunner.runTestScript('AdaptiveDialog_BindingCaptureValueWithinSameAdaptive');
+        await TestUtils.runTestScript(resourceExplorer, 'AdaptiveDialog_BindingCaptureValueWithinSameAdaptive');
     });
 
     it('BindingOptionsAcrossAdaptiveDialogs', async () => {
-        await testRunner.runTestScript('AdaptiveDialog_BindingOptionsAcrossAdaptiveDialogs');
+        await TestUtils.runTestScript(resourceExplorer, 'AdaptiveDialog_BindingOptionsAcrossAdaptiveDialogs');
     });
 
     it('BindingReferValueInLaterAction', async () => {
-        await testRunner.runTestScript('AdaptiveDialog_BindingReferValueInLaterAction');
+        await TestUtils.runTestScript(resourceExplorer, 'AdaptiveDialog_BindingReferValueInLaterAction');
     });
 
     it('BindingReferValueInNestedAction', async () => {
-        await testRunner.runTestScript('AdaptiveDialog_BindingReferValueInNestedAction');
+        await TestUtils.runTestScript(resourceExplorer, 'AdaptiveDialog_BindingReferValueInNestedAction');
     });
 
     it('ConditionallyAllowInterruptions', async () => {
-        await testRunner.runTestScript('AdaptiveDialog_ConditionallyAllowInterruptions');
+        await TestUtils.runTestScript(resourceExplorer, 'AdaptiveDialog_ConditionallyAllowInterruptions');
     });
 
     it('DoActions', async () => {
-        await testRunner.runTestScript('AdaptiveDialog_DoActions');
+        await TestUtils.runTestScript(resourceExplorer, 'AdaptiveDialog_DoActions');
     });
 
     it('EditArray', async () => {
-        await testRunner.runTestScript('AdaptiveDialog_EditArray');
+        await TestUtils.runTestScript(resourceExplorer, 'AdaptiveDialog_EditArray');
     });
 
     it('EmitEventActivityReceived', async () => {
-        await testRunner.runTestScript('AdaptiveDialog_EmitEventActivityReceived');
+        await TestUtils.runTestScript(resourceExplorer, 'AdaptiveDialog_EmitEventActivityReceived');
     });
 
     it('EndTurn', async () => {
-        await testRunner.runTestScript('AdaptiveDialog_EndTurn');
+        await TestUtils.runTestScript(resourceExplorer, 'AdaptiveDialog_EndTurn');
     });
 
     it('IfProperty', async () => {
-        await testRunner.runTestScript('AdaptiveDialog_IfProperty');
+        await TestUtils.runTestScript(resourceExplorer, 'AdaptiveDialog_IfProperty');
     });
 
     it('NestedInlineSequences', async () => {
-        await testRunner.runTestScript('AdaptiveDialog_NestedInlineSequences');
+        await TestUtils.runTestScript(resourceExplorer, 'AdaptiveDialog_NestedInlineSequences');
     });
 
     it('NestedMemoryAccess', async () => {
-        await testRunner.runTestScript('AdaptiveDialog_NestedMemoryAccess');
+        await TestUtils.runTestScript(resourceExplorer, 'AdaptiveDialog_NestedMemoryAccess');
     });
 
     it('NestedRecognizers', async () => {
-        await testRunner.runTestScript('AdaptiveDialog_NestedRecognizers');
+        await TestUtils.runTestScript(resourceExplorer, 'AdaptiveDialog_NestedRecognizers');
     });
 
     it('PropertySetInInterruption', async () => {
-        await testRunner.runTestScript('AdaptiveDialog_PropertySetInInterruption');
+        await TestUtils.runTestScript(resourceExplorer, 'AdaptiveDialog_PropertySetInInterruption');
     });
 
     it('ReplacePlan', async () => {
-        await testRunner.runTestScript('AdaptiveDialog_ReplacePlan');
+        await TestUtils.runTestScript(resourceExplorer, 'AdaptiveDialog_ReplacePlan');
     });
 
     it('ReProcessInputProperty', async () => {
-        await testRunner.runTestScript('AdaptiveDialog_ReProcessInputProperty');
+        await TestUtils.runTestScript(resourceExplorer, 'AdaptiveDialog_ReProcessInputProperty');
     });
 
     it('ReProcessInputPropertyValidOnlyOnce', async () => {
-        await testRunner.runTestScript('AdaptiveDialog_ReProcessInputPropertyValidOnlyOnce');
+        await TestUtils.runTestScript(resourceExplorer, 'AdaptiveDialog_ReProcessInputPropertyValidOnlyOnce');
     });
 
     it('StringLiteralInExpression', async () => {
-        await testRunner.runTestScript('AdaptiveDialog_StringLiteralInExpression');
+        await TestUtils.runTestScript(resourceExplorer, 'AdaptiveDialog_StringLiteralInExpression');
     });
 
     it('TextInput', async () => {
-        await testRunner.runTestScript('AdaptiveDialog_TextInput');
+        await TestUtils.runTestScript(resourceExplorer, 'AdaptiveDialog_TextInput');
     });
 
     it('TextInputDefaultValueResponse', async () => {
-        await testRunner.runTestScript('AdaptiveDialog_TextInputDefaultValueResponse');
+        await TestUtils.runTestScript(resourceExplorer, 'AdaptiveDialog_TextInputDefaultValueResponse');
     });
 
     it('TextInputNoMaxTurnCount', async () => {
-        await testRunner.runTestScript('AdaptiveDialog_TextInputNoMaxTurnCount');
+        await TestUtils.runTestScript(resourceExplorer, 'AdaptiveDialog_TextInputNoMaxTurnCount');
     });
 
     it('TopLevelFallback', async () => {
-        await testRunner.runTestScript('AdaptiveDialog_TopLevelFallback');
+        await TestUtils.runTestScript(resourceExplorer, 'AdaptiveDialog_TopLevelFallback');
     });
 
     it('TopLevelFallbackMultipleActivities', async () => {
-        await testRunner.runTestScript('AdaptiveDialog_TopLevelFallbackMultipleActivities');
+        await TestUtils.runTestScript(resourceExplorer, 'AdaptiveDialog_TopLevelFallbackMultipleActivities');
     });
 
     it('TestBindingTwoWayAcrossAdaptiveDialogs', async () => {
-        await testRunner.runTestScript('TestBindingTwoWayAcrossAdaptiveDialogs');
+        await TestUtils.runTestScript(resourceExplorer, 'TestBindingTwoWayAcrossAdaptiveDialogs');
     });
 
     it('TestBindingTwoWayAcrossAdaptiveDialogsDefaultResultProperty', async () => {
-        await testRunner.runTestScript('TestBindingTwoWayAcrossAdaptiveDialogsDefaultResultProperty');
+        await TestUtils.runTestScript(resourceExplorer, 'TestBindingTwoWayAcrossAdaptiveDialogsDefaultResultProperty');
     });
 
     it('TestForeachWithPrompt', async () => {
-        await testRunner.runTestScript('TestForeachWithPrompt');
+        await TestUtils.runTestScript(resourceExplorer, 'TestForeachWithPrompt');
     });
 });
