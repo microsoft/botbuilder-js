@@ -155,6 +155,20 @@ describe('LG', function() {
         var evaledMultilineResult = templates.evaluate('evalMultiLineObj');
         assert.strictEqual(evaledMultilineResult, '{"a":1,"b":2,"c":{"d":4,"e":5}}');
 
+        evaled = templates.evaluate('crtObj1');
+        assert.deepStrictEqual(evaled, { a: 1, c: 3, b: 2 });
+
+        evaled = templates.evaluate('crtObj2');
+        assert.deepStrictEqual(evaled, { key: 'value' });
+
+        evaled = templates.evaluate('crtObj3');
+        assert.deepStrictEqual(evaled, { key1: { key2: 'value' }, key3: 'value2' });
+
+        evaled = templates.evaluate('crtArr1');
+        assert.deepStrictEqual(evaled, [1, 2, 3, 4]);
+
+        evaled = templates.evaluate('crtArr2');
+        assert.deepStrictEqual(evaled, [1, 2, 3, 4]);
     });
 
     it('TestBasicConditionalTemplateWithoutDefault', function() {
