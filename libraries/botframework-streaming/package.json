@@ -30,13 +30,13 @@
     }
   },
   "dependencies": {
+    "@types/node": "^10.17.27",
     "@types/ws": "^6.0.3",
     "uuid": "^3.4.0",
     "ws": "^7.1.2"
   },
   "devDependencies": {
     "@types/chai": "^4.1.7",
-    "@types/node": "^10.17.27",
     "chai": "^4.2.0",
     "sinon": "^7.5.0"
   },

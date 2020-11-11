@@ -34,9 +34,6 @@
     "botbuilder-dialogs-adaptive": "4.1.6",
     "read-text-file": "1.1.0"
   },
-  "devDependencies": {
-    "@types/node": "^12.6.9"
-  },
   "scripts": {
     "build": "tsc -b",
     "build-docs": "typedoc --theme markdown --entryPoint botbuilder-ai-orchestrator --excludePrivate --includeDeclarations --ignoreCompilerErrors --module amd --out ..\\..\\doc\\botbuilder-ai-orchestrator .\\lib\\index.d.ts --hideGenerator --name \"Bot Builder SDK - Orchestrator\" --readme none",
