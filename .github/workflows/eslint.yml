@@ -2,16 +2,7 @@ name: lint
 
 on:
   workflow_dispatch:
-  push:
-    branches:
-    - main
-    - 4.10
-    - 4.11
   pull_request:
-    branches:
-    - main
-    - 4.10
-    - 4.11
 
 jobs:
   build:

@@ -6,8 +6,6 @@ on:
     paths:
     - 'libraries/botbuilder-repo-utils/**'
     - '.github/workflows/run-test-repoutils.yml'
-    branches: 
-    - main
 
 jobs:
   linux:
