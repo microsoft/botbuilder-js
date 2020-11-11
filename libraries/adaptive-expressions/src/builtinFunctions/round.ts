@@ -46,7 +46,6 @@ export class Round extends ExpressionEvaluator {
         }, FunctionUtils.verifyNumber);
     }
 
-
     private static roundToPrecision = (num: number, digits: number): number =>
         Math.round(num * Math.pow(10, digits)) / Math.pow(10, digits);
 }

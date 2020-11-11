@@ -65,19 +65,19 @@ export class TemplateErrors {
     public static readonly invalidTemplateNameType: string =
         'Expected string type for the parameter of template function.';
 
-    public static readonly invalidStrucBody = (invalidBody: string) =>
+    public static readonly invalidStrucBody = (invalidBody: string): string =>
         `Invalid structure body: '${invalidBody}'. Body can include <PropertyName> = <Value> pairs or \${reference()} template reference.`;
 
     public static readonly invalidStrucName = (invalidName: string): string =>
         `Invalid structure name: '${invalidName}'. name should start with letter/number/_ and can only contains letter/number/./_.`;
 
-    public static readonly syntaxError = (unexpectedContent: string) =>
+    public static readonly syntaxError = (unexpectedContent: string): string =>
         `${unexpectedContent}. Expecting a comment, template definition, import statement or option definition.`;
 
-    public static readonly invalidTemplateName = (invalidTemplateName: string) =>
+    public static readonly invalidTemplateName = (invalidTemplateName: string): string =>
         `Invalid template name: '${invalidTemplateName}'. Template names can only contain letter, underscore '_' or number. Any part of a template name (split by '.') cannot start with a number.`;
 
-    public static readonly invalidParameter = (invalidParameter: string) =>
+    public static readonly invalidParameter = (invalidParameter: string): string =>
         `Invalid parameter name: '${invalidParameter}'. Parameter names can only contain letter, underscore '_' or number.`;
 
     public static readonly duplicatedTemplateInSameTemplate = (templateName: string): string =>

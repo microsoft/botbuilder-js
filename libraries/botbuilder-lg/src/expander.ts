@@ -1,3 +1,4 @@
+/* eslint-disable security/detect-object-injection */
 /**
  * @module botbuilder-lg
  */
@@ -16,7 +17,7 @@ import {
     ExpressionType,
     Constant,
     FunctionUtils,
-    Options
+    Options,
 } from 'adaptive-expressions';
 import { keyBy } from 'lodash';
 import { EvaluationTarget } from './evaluationTarget';
@@ -238,7 +239,7 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGTe
                 for (const refValue of templateRefValues.get(templateRefValueKey)) {
                     tempRes.push(
                         JSON.parse(
-                            JSON.stringify(res).replace(templateRefValueKey, refValue.toString().replace(/\"/g, '\\"'))
+                            JSON.stringify(res).replace(templateRefValueKey, refValue.toString().replace(/"/g, '\\"'))
                         )
                     );
                 }
@@ -440,9 +441,7 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGTe
         errorPrefix = ''
     ): boolean {
         const exp = TemplateExtensions.trimExpression(expressionContext.text);
-        let result: any;
-        let error: string;
-        ({ value: result, error: error } = this.evalByAdaptiveExpression(exp, this.currentTarget().scope));
+        const { value: result, error: error } = this.evalByAdaptiveExpression(exp, this.currentTarget().scope);
 
         if (this.lgOptions.strictMode && (error || !result)) {
             const templateName = this.currentTarget().templateName;
@@ -464,9 +463,7 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGTe
      */
     private evalExpression(exp: string, context: ParserRuleContext, inlineContent = '', errorPrefix = ''): any[] {
         exp = TemplateExtensions.trimExpression(exp);
-        let result: any;
-        let error: string;
-        ({ value: result, error: error } = this.evalByAdaptiveExpression(exp, this.currentTarget().scope));
+        const { value: result, error: error } = this.evalByAdaptiveExpression(exp, this.currentTarget().scope);
 
         if (error || (result === undefined && this.lgOptions.strictMode)) {
             const templateName = this.currentTarget().templateName;

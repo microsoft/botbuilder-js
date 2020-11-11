@@ -19,21 +19,18 @@ export class GreaterThan extends ComparisonEvaluator {
      * Initializes a new instance of the [GreaterThan](xref:adaptive-expressions.GreaterThan) class.
      */
     public constructor() {
-        super(
-            ExpressionType.GreaterThan,
-            GreaterThan.func,
-            FunctionUtils.validateBinary,
-            FunctionUtils.verifyNotNull
-        );
+        super(ExpressionType.GreaterThan, GreaterThan.func, FunctionUtils.validateBinary, FunctionUtils.verifyNotNull);
     }
 
     /**
      * @private
      */
     private static func(args: any[]): boolean {
-        if (typeof args[0] === 'number' && typeof args[1] === 'number'
-            || typeof args[0] === 'string' && typeof args[1] === 'string'
-            || args[0] instanceof Date && args[1] instanceof Date) {
+        if (
+            (typeof args[0] === 'number' && typeof args[1] === 'number') ||
+            (typeof args[0] === 'string' && typeof args[1] === 'string') ||
+            (args[0] instanceof Date && args[1] instanceof Date)
+        ) {
             return args[0] > args[1];
         } else {
             throw new Error(`${args[0]} and ${args[1]} must be comparable.`);

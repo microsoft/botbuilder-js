@@ -1,3 +1,4 @@
+/* eslint-disable security/detect-object-injection */
 /**
  * @module adaptive-expressions
  */
@@ -6,8 +7,6 @@
  * Licensed under the MIT License.
  */
 
-/* eslint-disable @typescript-eslint/no-unused-vars */
-/* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 import { Constant } from './constant';
 import sortBy from 'lodash/sortBy';
 import moment, { Moment } from 'moment';

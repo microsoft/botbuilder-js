@@ -1,3 +1,4 @@
+/* eslint-disable security/detect-object-injection */
 /**
  * @module botbuilder-lg
  */
@@ -8,7 +9,6 @@
 
 import * as path from 'path';
 import * as lp from './generated/LGTemplateParser';
-import { TerminalNode } from 'antlr4ts/tree';
 import { ParserRuleContext } from 'antlr4ts';
 import { Range } from './range';
 import { Position } from './position';

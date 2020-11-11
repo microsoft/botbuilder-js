@@ -1,3 +1,4 @@
+/* eslint-disable security/detect-non-literal-fs-filename */
 /**
  * @module botbuilder-lg
  */
@@ -49,7 +50,7 @@ export class TemplatesParser {
     /**
      * Import regex.
      */
-    public static readonly importRegex: RegExp = new RegExp(/\[([^\]]*)\]\(([^\)]*)\)/);
+    public static readonly importRegex: RegExp = new RegExp(/\[([^\]]*)\]\(([^)]*)\)/);
 
     /**
      * parse a file and return LG file.
@@ -277,7 +278,7 @@ export class TemplatesParser {
             // Cycle reference would throw exception to avoid infinite Loop.
             // Import self is allowed, and would ignore it.
             const parentTemplate = parentTemplates[parentTemplates.length - 1];
-            if (parentTemplate.id !== resource.id && parentTemplates.some(u => u.id === resource.id)) {
+            if (parentTemplate.id !== resource.id && parentTemplates.some((u) => u.id === resource.id)) {
                 const errorMsg = `${TemplateErrors.loopDetected} ${resource.id} => ${start.id}`;
                 const diagnostic = new Diagnostic(
                     importItem.sourceRange.range,
@@ -417,9 +418,7 @@ export class TemplatesTransformer extends AbstractParseTreeVisitor<any> implemen
         const startLine = context.start.line;
 
         const templateNameLine = context.templateNameLine().TEMPLATE_NAME_LINE().text;
-        let templateName: string;
-        let parameters: string[];
-        ({ templateName, parameters } = this.extractTemplateNameLine(templateNameLine));
+        const { templateName, parameters } = this.extractTemplateNameLine(templateNameLine);
 
         if (this.templates.toArray().some((u): boolean => u.name === templateName)) {
             const diagnostic = this.buildTemplatesDiagnostic(

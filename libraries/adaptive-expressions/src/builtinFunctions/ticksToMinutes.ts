@@ -43,7 +43,7 @@ export class TicksToMinutes extends ExpressionEvaluator {
             if (Number.isInteger(args[0])) {
                 value = args[0] / TicksToMinutes.TicksPerMinute;
             } else {
-                error = `${ expr } should contain an integer of ticks`;
+                error = `${expr} should contain an integer of ticks`;
             }
         }
 

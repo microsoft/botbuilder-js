@@ -37,7 +37,7 @@ export class UriHost extends ExpressionEvaluator {
             if (typeof args[0] === 'string') {
                 ({ value, error } = UriHost.evalUriHost(args[0]));
             } else {
-                error = `${ expr } should contain a URI string.`;
+                error = `${expr} should contain a URI string.`;
             }
         }
 

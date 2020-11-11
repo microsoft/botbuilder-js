@@ -45,7 +45,7 @@ export class Where extends ExpressionEvaluator {
             } else if (typeof instance === 'object') {
                 Object.keys(instance).forEach((u): number => arr.push({ key: u, value: instance[u] }));
             } else {
-                error = `${ expression.children[0] } is not a collection or structure object to run foreach`;
+                error = `${expression.children[0]} is not a collection or structure object to run foreach`;
             }
 
             if (!error) {
