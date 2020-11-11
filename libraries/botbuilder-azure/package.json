@@ -19,7 +19,14 @@
     "url": "https://github.com/Microsoft/botbuilder-js.git"
   },
   "main": "./lib/index.js",
-  "typings": "./lib/index.d.ts",
+  "types": "./lib/index.d.ts",
+  "typesVersions": {
+    "<3.9": {
+      "*": [
+        "_ts3.4/*"
+      ]
+    }
+  },
   "dependencies": {
     "@azure/cosmos": "^3.3.1",
     "@types/documentdb": "^1.10.5",
@@ -35,22 +42,25 @@
     "@types/mocha": "^5.2.7",
     "@types/semaphore": "^1.1.0",
     "codelyzer": "^4.1.0",
+    "downlevel-dts": "^0.7.0",
     "mocha": "^6.2.3",
     "nock": "^11.9.1",
     "nyc": "^15.1.0",
     "source-map-support": "^0.5.3",
-    "ts-node": "^4.1.0",
-    "typescript": "3.5.3"
+    "ts-node": "^9.0.0",
+    "typescript": "^4.0.5"
   },
   "scripts": {
-    "build": "tsc",
+    "build": "tsc -b",
+    "postbuild": "downlevel-dts lib _ts3.4/lib",
     "build-docs": "typedoc --theme markdown --entryPoint botbuilder-azure --excludePrivate --includeDeclarations --ignoreCompilerErrors --module amd --out ..\\..\\doc\\botbuilder-azure .\\lib\\index.d.ts --hideGenerator --name \"Bot Builder SDK - Azure\" --readme none",
     "build:rollup": "yarn clean && yarn build && api-extractor run --verbose --local",
     "clean": "erase /q /s .\\lib",
-    "test": "tsc && nyc mocha tests/",
+    "test": "yarn build && nyc mocha tests/",
     "test:compat": "api-extractor run --verbose"
   },
   "files": [
+    "_ts3.4",
     "lib",
     "src"
   ]

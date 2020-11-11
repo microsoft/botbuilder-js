@@ -53,12 +53,14 @@
     "typescript": "3.5.3"
   },
   "scripts": {
-    "build": "tsc",
+    "build:src": "tsc -b",
+    "build:tests": "tsc -p tests/tsconfig.json",
+    "build": "npm-run-all build:src build:tests",
     "browserify": "browserify -s AEL --debug lib/browser.js | exorcist lib/browser.js.map | sponge lib/browser.js",
     "postbuild": "rimraf lib/browser.* && shx cp lib/index.js lib/browser.js && yarn browserify",
     "clean": "rimraf q s lib",
     "build-docs": "typedoc --theme markdown --entryPoint adaptive-expressions --excludePrivate --includeDeclarations --ignoreCompilerErrors --module amd --out ..\\..\\doc\\adaptive-expressions .\\lib\\index.d.ts --hideGenerator --name \"Bot Builder SDK - Expression\" --readme none",
-    "test": "tsc && tsc ./tests/expressionProperty.test.ts && mocha tests/ --timeout 60000",
+    "test": "yarn build && mocha tests --timeout 60000",
     "antlr-build-expression": "antlr4ts src/parser/ExpressionAntlrLexer.g4 -o src/parser/generated && antlr4ts src/parser/ExpressionAntlrParser.g4 -visitor -o src/parser/generated",
     "antlr-build-commonregex": "antlr4ts src/CommonRegex.g4 -o src/generated -visitor"
   },

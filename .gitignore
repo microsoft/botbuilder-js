@@ -315,6 +315,3 @@ __pycache__/
 # typescript assets
 *.tsbuildinfo
 *.js.map
-
-# Transpiled botbuilder integration tests
-libraries/**/transpiled-tests/
