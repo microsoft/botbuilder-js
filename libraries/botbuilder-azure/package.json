@@ -30,7 +30,6 @@
   "dependencies": {
     "@azure/cosmos": "^3.3.1",
     "@types/documentdb": "^1.10.5",
-    "@types/node": "^10.17.27",
     "azure-storage": "2.10.2",
     "botbuilder": "4.1.6",
     "documentdb": "1.14.5",

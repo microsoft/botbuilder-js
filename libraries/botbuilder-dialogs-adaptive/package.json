@@ -41,7 +41,6 @@
   },
   "devDependencies": {
     "@types/jsonpath": "^0.2.0",
-    "@types/node": "^10.17.27",
     "@types/node-fetch": "^2.5.3",
     "nock": "^11.9.1"
   },
