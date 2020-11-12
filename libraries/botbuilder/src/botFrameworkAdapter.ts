@@ -85,6 +85,7 @@ import {
 } from './streaming';
 
 import { validateAndFixActivity } from './activityValidator';
+import { userAgentPolicy } from '@azure/ms-rest-js';
 
 /**
  * Contains settings used to configure a [BotFrameworkAdapter](xref:botbuilder.BotFrameworkAdapter) instance.
@@ -147,16 +148,14 @@ export interface BotFrameworkAdapterSettings {
 }
 
 // Retrieve additional information, i.e., host operating system, host OS release, architecture, Node.js version
-const ARCHITECTURE: any = arch();
-const TYPE: any = type();
-const RELEASE: any = release();
-const NODE_VERSION: any = process.version;
+const ARCHITECTURE = arch();
+const TYPE = type();
+const RELEASE = release();
+const NODE_VERSION = process.version;
 
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const pjson: any = require('../package.json');
-export const USER_AGENT: string =
-    `Microsoft-BotFramework/3.1 BotBuilder/${pjson.version} ` +
-    `(Node.js,Version=${NODE_VERSION}; ${TYPE} ${RELEASE}; ${ARCHITECTURE})`;
+const pjson: Record<'version', string> = require('../package.json'); // eslint-disable-line @typescript-eslint/no-var-requires
+export const USER_AGENT = `Microsoft-BotFramework/3.1 BotBuilder/${pjson.version} (Node.js,Version=${NODE_VERSION}; ${TYPE} ${RELEASE}; ${ARCHITECTURE})`;
+
 const OAUTH_ENDPOINT = 'https://api.botframework.com';
 const US_GOV_OAUTH_ENDPOINT = 'https://api.botframework.azure.us';
 
@@ -1461,11 +1460,6 @@ export class BotFrameworkAdapter
         return client;
     }
 
-    /**
-     * @private
-     * @param serviceUrl The client's service URL.
-     * @param credentials AppCredentials instance to construct the ConnectorClient with.
-     */
     private createConnectorClientInternal(serviceUrl: string, credentials: AppCredentials): ConnectorClient {
         if (BotFrameworkAdapter.isStreamingServiceUrl(serviceUrl)) {
             // Check if we have a streaming server. Otherwise, requesting a connector client
@@ -1484,28 +1478,50 @@ export class BotFrameworkAdapter
         return new ConnectorClient(credentials, clientOptions);
     }
 
-    /**
-     * @private
-     * @param serviceUrl The service URL to use for the new ConnectorClientOptions.
-     * @param httpClient Optional. The @azure/ms-rest-js.HttpClient to use for the new ConnectorClientOptions.
-     */
     private getClientOptions(serviceUrl: string, httpClient?: any): ConnectorClientOptions {
-        const options = Object.assign({ baseUri: serviceUrl } as ConnectorClientOptions, this.settings.clientOptions);
+        const { requestPolicyFactories, ...clientOptions } = this.settings.clientOptions ?? {};
+
+        const options: ConnectorClientOptions = Object.assign({}, { baseUri: serviceUrl }, clientOptions);
+
         if (httpClient) {
             options.httpClient = httpClient;
         }
 
-        options.userAgent = `${USER_AGENT}${options.userAgent || ''}`;
+        const userAgent = typeof options.userAgent === 'function' ? options.userAgent(USER_AGENT) : options.userAgent;
+        const setUserAgent = userAgentPolicy({
+            value: `${USER_AGENT}${userAgent ?? ''}`,
+        });
+
+        // Resolve any user request policy factories, then include our user agent via a factory policy
+        options.requestPolicyFactories = (defaultRequestPolicyFactories) => {
+            let defaultFactories = [];
+
+            if (requestPolicyFactories) {
+                if (typeof requestPolicyFactories === 'function') {
+                    const newDefaultFactories = requestPolicyFactories(defaultRequestPolicyFactories);
+                    if (newDefaultFactories) {
+                        defaultFactories = newDefaultFactories;
+                    }
+                } else if (requestPolicyFactories) {
+                    defaultFactories = [...requestPolicyFactories];
+                }
+
+                // If the user has supplied custom factories, allow them to optionally set user agent
+                // before we do.
+                defaultFactories = [...defaultFactories, setUserAgent];
+            } else {
+                // In the case that there are no user supplied factories, inject our user agent as
+                // the first policy to ensure none of the default policies override it.
+                defaultFactories = [setUserAgent, ...defaultRequestPolicyFactories];
+            }
+
+            return defaultFactories;
+        };
+
         return options;
     }
 
-    /**
-     * @private
-     * Retrieves the ConnectorClient from the TurnContext or creates a new ConnectorClient with the provided serviceUrl and credentials.
-     * @param context
-     * @param serviceUrl
-     * @param credentials
-     */
+    // Retrieves the ConnectorClient from the TurnContext or creates a new ConnectorClient with the provided serviceUrl and credentials.
     private getOrCreateConnectorClient(
         context: TurnContext,
         serviceUrl: string,
