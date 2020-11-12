@@ -4,8 +4,7 @@
     "esModuleInterop": true,
     "lib": ["es2015", "dom"],
     "outDir": "lib",
-    "rootDir": "src",
-    "types" : ["node", "mocha"]
+    "rootDir": "src"
   },
   "include": [
     "src/**/*"

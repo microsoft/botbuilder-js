@@ -6,15 +6,25 @@ import { exec } from 'child_process';
 
 const execp = util.promisify(exec);
 
-// returns the path of the root of this git repo
+/**
+ * Computes the absolute path of the root of the repo
+ *
+ * @returns {Promise<string>} returns absolute path of repo root
+ */
 export async function gitRoot(): Promise<string> {
     const { stdout } = await execp('git rev-parse --show-toplevel');
     return stdout.trim();
 }
 
-// returns SHA of commit that HEAD points to
-export async function gitSha(truncate?: number): Promise<string> {
-    const { stdout } = await execp('git rev-parse HEAD');
+/**
+ * Fetches the current sha pointed to by `ref`
+ *
+ * @param {string} ref git reference to fetch commit sha for
+ * @param {number} truncate how many characters to include in commit sha
+ * @returns {Promise<string>} returns commit sha `ref` points to
+ */
+export async function gitSha(ref: string, truncate?: number): Promise<string> {
+    const { stdout } = await execp(`git rev-parse ${ref}`);
     let sha = stdout.trim();
     if (truncate != null) {
         sha = sha.slice(0, truncate);

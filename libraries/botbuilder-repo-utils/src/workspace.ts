@@ -5,16 +5,19 @@ import * as R from 'remeda';
 import globby from 'globby';
 import minimatch from 'minimatch';
 import path from 'path';
-import pmap from 'p-map';
 import { Package } from './package';
 import { readJsonFile } from './file';
 
+export const glob = (paths: string[]): Promise<string[]> => globby(paths);
+
+// Represents a workspace
 export interface Workspace {
     absPath: string;
     relPath: string;
     pkg: Package;
 }
 
+// Represents options to filter workspaces
 export interface Filters {
     ignoreName: string;
     ignorePath: string;
@@ -24,9 +27,14 @@ export interface Filters {
     path: string;
 }
 
-export const glob = (paths: string[]): Promise<string[]> => globby(paths);
-
-// Returns all workspace packages by resolving the `workspaces` key inside package.json
+/**
+ * Collect all concrete workspaces referenced in the root package.json file of a repo. Supports globs.
+ *
+ * @param {string} repoRoot absolute path to the root of the repo
+ * @param {string[]} workspaces array of paths/globs to resolve
+ * @param {Filters} filters set of filters to select or omit korkspaces
+ * @returns {Promise<Array<Workspace>>} the resolved set of workspaces
+ */
 export async function collectWorkspacePackages(
     repoRoot: string,
     workspaces: string[] = [],
@@ -81,76 +89,4 @@ export async function collectWorkspacePackages(
     );
 
     return R.compact(maybeWorkspaces);
-}
-
-// Takes a set of workspaces and exposes an execute method that invokes a callback
-// concurrently on each workspace, ensuring that dependencies are processed before
-// their consumers.
-export class DependencyResolver {
-    private readonly byName: Record<string, Workspace>;
-    private readonly depsByName: Record<string, Workspace[]>;
-
-    constructor(private readonly workspaces: Workspace[], private readonly concurrency = Infinity) {
-        this.byName = this.workspaces.reduce<Record<string, Workspace>>(
-            (acc, workspace) => ({ ...acc, [workspace.pkg.name]: workspace }),
-            {}
-        );
-
-        this.depsByName = this.workspaces.reduce<Record<string, Workspace[]>>((acc, workspace) => {
-            const deps = [
-                ...Object.keys(workspace.pkg.dependencies ?? {}),
-                ...Object.keys(workspace.pkg.devDependencies ?? {}),
-            ]
-                // eslint-disable-next-line security/detect-object-injection
-                .map((name) => this.byName[name])
-                .filter((pkg) => !!pkg);
-
-            return { ...acc, [workspace.pkg.name]: deps };
-        }, {});
-    }
-
-    async execute(callback: (workspace: Workspace, group: number) => Promise<unknown>): Promise<void> {
-        const resolved = new Set<string>();
-
-        // Returns list of packages where all dependencies are resolved
-        const ready = () =>
-            R.flatten(
-                Object.entries(this.byName)
-                    .filter(([name]) => {
-                        // eslint-disable-next-line security/detect-object-injection
-                        const deps = this.depsByName[name];
-
-                        const needs = deps.filter((dep) => !resolved.has(dep.pkg.name));
-
-                        // Only report a cycle if both packages are just waiting for each other
-                        const cycle =
-                            needs.length === 1 &&
-                            needs.every((other) => {
-                                const needs = this.depsByName[other.pkg.name].filter(
-                                    (other) => !resolved.has(other.pkg.name)
-                                );
-                                return needs.length === 1 && needs.every((other) => other.pkg.name === name);
-                            });
-
-                        return (!needs.length || cycle) && !resolved.has(name);
-                    })
-                    .map(([, pkg]) => pkg)
-            );
-
-        let group = 0;
-        let packages = ready();
-        while (packages.length) {
-            await pmap(
-                packages,
-                async (workspace) => {
-                    await callback(workspace, group);
-                    resolved.add(workspace.pkg.name);
-                },
-                { concurrency: this.concurrency }
-            );
-
-            packages = ready();
-            group++;
-        }
-    }
 }
