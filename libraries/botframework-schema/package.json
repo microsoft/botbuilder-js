@@ -26,18 +26,12 @@
       ]
     }
   },
-  "devDependencies": {
-    "@microsoft/api-extractor": "^7.7.12",
-    "downlevel-dts": "^0.7.0",
-    "mocha": "^6.2.3",
-    "nyc": "^15.1.0",
-    "typescript": "^4.0.5"
-  },
   "scripts": {
     "build": "tsc -b",
     "postbuild": "downlevel-dts lib _ts3.4/lib",
     "build:rollup": "yarn clean && yarn build && api-extractor run --verbose --local",
-    "clean": "erase /q /s .\\lib",
+    "clean": "rimraf _ts3.4 lib tsconfig.tsbuildinfo",
+    "lint": "eslint . --ext .js,.ts",
     "test": "yarn build && nyc mocha tests/",
     "test:compat": "api-extractor run --verbose"
   },

@@ -6,8 +6,7 @@
     "lib": ["es2015", "dom"],
     "outDir": "lib",
     "rootDir": "src",
-    "skipLibCheck": true,
-    "types" : ["node"]
+    "skipLibCheck": true
   },
   "include": [
     "src/**/*"
