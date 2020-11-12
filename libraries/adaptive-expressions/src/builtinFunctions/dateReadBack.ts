@@ -36,10 +36,10 @@ export class DateReadBack extends ExpressionEvaluator {
             const dateFormat = 'YYYY-MM-DD';
             ({ value, error } = InternalFunctionUtils.parseTimestamp(args[0]));
             if (!error) {
-                const timestamp1: Date = new Date(moment(value).format(dateFormat));
+                const timestamp1 = new Date(moment(value).format(dateFormat));
                 ({ value, error } = InternalFunctionUtils.parseTimestamp(args[1]));
-                const timestamp2: string = moment(value).format(dateFormat);
-                const timex: TimexProperty = new TimexProperty(timestamp2);
+                const timestamp2 = moment(value).format(dateFormat);
+                const timex = new TimexProperty(timestamp2);
 
                 return { value: timex.toNaturalLanguage(timestamp1), error };
             }
