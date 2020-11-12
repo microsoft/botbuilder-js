@@ -5,7 +5,7 @@ steps:
 - task: PublishTestResults@2
   displayName: publish test results
   inputs:
-    testResultsFormat: 'JUnit'
+    testResultsFormat: JUnit
     testResultsFiles: '**/test-results.xml' 
     mergeTestResults: true
     failTaskOnFailedTests: false
@@ -16,6 +16,6 @@ steps:
   displayName: publish code coverage
   inputs:
     codeCoverageTool: cobertura
-    summaryFileLocation: ./coverage/cobertura-coverage.xml
+    summaryFileLocation: coverage/cobertura-coverage.xml
     failIfCoverageEmpty: true
   condition: and(succeeded(), eq(variables['PublishTestResults'], true))

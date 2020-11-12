@@ -306,6 +306,7 @@ __pycache__/
 
 # code coverage
 .lcov.info
+coverage
 .nyc_output
 
 # misc. things

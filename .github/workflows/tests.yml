@@ -51,12 +51,8 @@ jobs:
       - name: yarn build
         run: yarn build
 
-      - name: yarn test:mocha
-        run: yarn test:mocha
-
-      - name: yarn test:lcov
-        if: matrix.node-version == '12.x'
-        run: yarn test:lcov
+      - name: yarn test:github
+        run: yarn test:github
 
       - name: coveralls
         if: matrix.node-version == '12.x'
@@ -108,5 +104,5 @@ jobs:
       - name: yarn build
         run: yarn build
 
-      - name: yarn test:mocha
-        run: yarn test:mocha
+      - name: yarn test:github
+        run: yarn test:github
