@@ -27,7 +27,7 @@ export class TestUtils {
         ...middlewares: Middleware[]
     ): Promise<void> {
         const script = resourceExplorer.loadType<TestScript>(`${testName}.test.dialog`);
-        script.description = script.description || testName;
+        script.description = script.description ?? testName;
         await script.execute(resourceExplorer, testName, undefined, adapter, ...middlewares);
     }
 }
