@@ -305,8 +305,8 @@ __pycache__/
 /**/*.VC.db
 
 # code coverage
-/**/coverage
-/**/.nyc_output
+.lcov.info
+.nyc_output
 
 # misc. things
 /test-runner/out

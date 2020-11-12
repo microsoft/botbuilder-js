@@ -10,7 +10,9 @@
   "directories": {
     "test": "tests"
   },
-  "scripts": {},
+  "scripts": {
+    "test": "mocha tests/*.test.js"
+  },
   "keywords": [],
   "author": "",
   "license": "MIT"

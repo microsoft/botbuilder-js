@@ -1,6 +1,6 @@
 steps:
 - script: yarn test:devops
-  displayName: yarn test
+  displayName: yarn test:devops
 
 - task: PublishTestResults@2
   displayName: publish test results
@@ -15,7 +15,7 @@ steps:
 - task: PublishCodeCoverageResults@1
   displayName: publish code coverage
   inputs:
-    codeCoverageTool: 'cobertura'
-    summaryFileLocation: './coverage/cobertura-coverage.xml'
+    codeCoverageTool: cobertura
+    summaryFileLocation: ./coverage/cobertura-coverage.xml
     failIfCoverageEmpty: true
   condition: and(succeeded(), eq(variables['PublishTestResults'], true))

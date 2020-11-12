@@ -1,7 +1,11 @@
-name: pr.yml
+name: tests.yml
 
 on:
   workflow_dispatch:
+  push:
+    branches:
+    - main
+    - 'releases/*'
   pull_request:
     branches:
     - main
@@ -9,7 +13,7 @@ on:
 
 jobs:
   ubuntu:
-    name: "${{ github.workflow }} ${{ runner.os }}"
+    name: "${{ github.workflow }} ubuntu (node ${{ matrix.node-version }})"
     runs-on: ubuntu-latest
 
     strategy:
@@ -36,17 +40,37 @@ jobs:
       - name: yarn
         run: yarn --frozen-lockfile
 
+      - name: yarn test:repoutils
+        if: matrix.node-version == '14.x'
+        run: yarn test:repoutils
+
       - name: yarn lint
+        if: matrix.node-version == '12.x'
         run: yarn lint
 
       - name: yarn build
         run: yarn build
 
-      - name: yarn test:devops
-        run: yarn test:devops
+      - name: yarn test:mocha
+        run: yarn test:mocha
+
+      - name: yarn test:lcov
+        if: matrix.node-version == '12.x'
+        run: yarn test:lcov
+
+      - name: coveralls
+        if: matrix.node-version == '12.x'
+        uses: coverallsapp/github-action@v1.1.2
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          path-to-lcov: .lcov.info
+
+      - name: yarn test:consumer
+        if: matrix.node-version == '14.x'
+        run: yarn test:consumer
 
   windows:
-    name: "${{ github.workflow }} ${{ runner.os }}"
+    name: "${{ github.workflow }} windows (node ${{ matrix.node-version }})"
     runs-on: windows-latest
 
     strategy:
@@ -73,11 +97,16 @@ jobs:
       - name: yarn
         run: yarn --frozen-lockfile
 
+      - name: yarn test:repoutils
+        if: matrix.node-version == '14.x'
+        run: yarn test:repoutils
+
       - name: yarn lint
+        if: matrix.node-version == '12.x'
         run: yarn lint
 
       - name: yarn build
         run: yarn build
 
-      - name: yarn test:devops
-        run: yarn test:devops
+      - name: yarn test:mocha
+        run: yarn test:mocha
