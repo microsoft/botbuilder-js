@@ -15,11 +15,30 @@ import { ComparisonEvaluator } from './comparisonEvaluator';
  * or return false if the first value is less.
  */
 export class GreaterThanOrEqual extends ComparisonEvaluator {
+    /**
+     * Initializes a new instance of the [GreaterThanOrEqual](xref:adaptive-expressions.GreaterThanOrEqual) class.
+     */
     public constructor() {
-        super(ExpressionType.GreaterThanOrEqual, GreaterThanOrEqual.func, FunctionUtils.validateBinaryNumberOrString, FunctionUtils.verifyNumberOrString);
+        super(
+            ExpressionType.GreaterThanOrEqual,
+            GreaterThanOrEqual.func,
+            FunctionUtils.validateBinary,
+            FunctionUtils.verifyNotNull
+        );
     }
 
+    /**
+     * @private
+     */
     private static func(args: any[]): boolean {
-        return args[0] >= args[1];
+        if (
+            (typeof args[0] === 'number' && typeof args[1] === 'number') ||
+            (typeof args[0] === 'string' && typeof args[1] === 'string') ||
+            (args[0] instanceof Date && args[1] instanceof Date)
+        ) {
+            return args[0] >= args[1];
+        } else {
+            throw new Error(`${args[0]} and ${args[1]} must be comparable.`);
+        }
     }
 }

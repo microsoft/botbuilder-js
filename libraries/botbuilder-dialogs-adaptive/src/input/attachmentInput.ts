@@ -5,32 +5,54 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
+import { EnumExpression, EnumExpressionConverter, Expression } from 'adaptive-expressions';
 import { Attachment } from 'botbuilder-core';
-import { DialogContext } from 'botbuilder-dialogs';
-import { InputDialog, InputState } from './inputDialog';
-import { EnumExpression } from 'adaptive-expressions';
+import { Converter, ConverterFactory, DialogContext } from 'botbuilder-dialogs';
+import { InputDialog, InputDialogConfiguration, InputState } from './inputDialog';
 
 export enum AttachmentOutputFormat {
     all = 'all',
-    first = 'first'
+    first = 'first',
 }
 
-export class AttachmentInput extends InputDialog {
+export interface AttachmentInputConfiguration extends InputDialogConfiguration {
+    outputFormat?: AttachmentOutputFormat | string | Expression | EnumExpression<AttachmentOutputFormat>;
+}
 
-    public outputFormat: EnumExpression<AttachmentOutputFormat> = new EnumExpression<AttachmentOutputFormat>(AttachmentOutputFormat.first);
+/**
+ * Input dialog which prompts the user to send a file.
+ */
+export class AttachmentInput extends InputDialog implements AttachmentInputConfiguration {
+    public static $kind = 'Microsoft.AttachmentInput';
+    public outputFormat: EnumExpression<AttachmentOutputFormat> = new EnumExpression<AttachmentOutputFormat>(
+        AttachmentOutputFormat.first
+    );
+
+    /**
+     * @protected
+     */
+    public getConverter(property: keyof AttachmentInputConfiguration): Converter | ConverterFactory {
+        switch (property) {
+            case 'outputFormat':
+                return new EnumExpressionConverter<AttachmentOutputFormat>(AttachmentOutputFormat);
+            default:
+                return super.getConverter(property);
+        }
+    }
 
     protected onComputeId(): string {
-        return `AttachmentInput[${ this.prompt && this.prompt.toString() }]`;
+        return `AttachmentInput[${this.prompt && this.prompt.toString()}]`;
     }
 
-    protected getDefaultInput(dc: DialogContext): any {
-        const attachments = dc.context.activity.attachments;
-        return Array.isArray(attachments) && attachments.length > 0 ? attachments : undefined;
-    }
-
+    /**
+     * @protected
+     * Called when input has been received.
+     * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
+     * @returns [InputState](xref:botbuilder-dialogs-adaptive.InputState) which reflects whether input was recognized as valid or not.
+     */
     protected async onRecognizeInput(dc: DialogContext): Promise<InputState> {
         // Recognize input and filter out non-attachments
-        let input: Attachment | Attachment[] = dc.state.getValue(InputDialog.VALUE_PROPERTY);
+        const input: Attachment | Attachment[] = dc.state.getValue(InputDialog.VALUE_PROPERTY);
         const attachments = Array.isArray(input) ? input : [input];
         const first = attachments.length > 0 ? attachments[0] : undefined;
         if (typeof first != 'object' || (!first.contentUrl && !first.content)) {

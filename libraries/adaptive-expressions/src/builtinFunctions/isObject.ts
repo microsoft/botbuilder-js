@@ -17,12 +17,17 @@ import { ReturnType } from '../returnType';
  * complex types, contain properties.
  */
 export class IsObject extends ExpressionEvaluator {
+    /**
+     * Initializes a new instance of the [IsObject](xref:adaptive-expressions.IsObject) class.
+     */
     public constructor() {
         super(ExpressionType.IsObject, IsObject.evaluator(), ReturnType.Boolean, FunctionUtils.validateUnary);
     }
 
+    /**
+     * @private
+     */
     private static evaluator(): EvaluateExpressionDelegate {
-        return FunctionUtils.apply(
-            (args: any[]): boolean => typeof args[0] === 'object');
+        return FunctionUtils.apply((args: any[]): boolean => typeof args[0] === 'object');
     }
 }

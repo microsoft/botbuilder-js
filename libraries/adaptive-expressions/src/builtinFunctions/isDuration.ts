@@ -21,28 +21,34 @@ import { ReturnType } from '../returnType';
  * Return true if a given TimexProperty or Timex expression refers to a valid duration.
  */
 export class IsDuration extends ExpressionEvaluator {
+    /**
+     * Initializes a new instance of the [IsDuration](xref:adaptive-expressions.IsDuration) class.
+     */
     public constructor() {
         super(ExpressionType.IsDuration, IsDuration.evaluator, ReturnType.Boolean, FunctionUtils.validateUnary);
     }
 
+    /**
+     * @private
+     */
     private static evaluator(expr: Expression, state: MemoryInterface, options: Options): ValueWithError {
         let parsed: TimexProperty;
         let value = false;
-        let error: string;
-        let args: any[];
-        ({ args, error } = FunctionUtils.evaluateChildren(expr, state, options));
+        const { args, error: childrenError } = FunctionUtils.evaluateChildren(expr, state, options);
+        let error = childrenError;
         if (!error) {
             ({ timexProperty: parsed, error: error } = InternalFunctionUtils.parseTimexProperty(args[0]));
         }
 
         if (parsed && !error) {
-            value = parsed.years !== undefined
-                || parsed.months !== undefined
-                || parsed.weeks !== undefined
-                || parsed.days !== undefined
-                || parsed.hours !== undefined
-                || parsed.minutes !== undefined
-                || parsed.seconds !== undefined;
+            value =
+                parsed.years !== undefined ||
+                parsed.months !== undefined ||
+                parsed.weeks !== undefined ||
+                parsed.days !== undefined ||
+                parsed.hours !== undefined ||
+                parsed.minutes !== undefined ||
+                parsed.seconds !== undefined;
         }
 
         return { value, error };

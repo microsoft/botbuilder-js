@@ -5,8 +5,26 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { PathResolver, DollarPathResolver, HashPathResolver, AtAtPathResolver, AtPathResolver, PercentPathResolver } from './pathResolvers';
-import { MemoryScope, SettingsMemoryScope, DialogMemoryScope, ClassMemoryScope, ThisMemoryScope, TurnMemoryScope, ConversationMemoryScope, UserMemoryScope, DialogClassMemoryScope } from './scopes';
+import {
+    PathResolver,
+    DollarPathResolver,
+    HashPathResolver,
+    AtAtPathResolver,
+    AtPathResolver,
+    PercentPathResolver,
+} from './pathResolvers';
+import {
+    MemoryScope,
+    SettingsMemoryScope,
+    DialogMemoryScope,
+    ClassMemoryScope,
+    ThisMemoryScope,
+    TurnMemoryScope,
+    ConversationMemoryScope,
+    UserMemoryScope,
+    DialogClassMemoryScope,
+    DialogContextMemoryScope,
+} from './scopes';
 import { DialogContext } from '../dialogContext';
 import { DialogPath } from './dialogPath';
 
@@ -28,18 +46,25 @@ const DIALOG_STATE_MANAGER_CONFIGURATION = 'DialogStateManagerConfiguration';
 
 /**
  * The DialogStateManager manages memory scopes and path resolvers.
- * 
+ *
  * @remarks
- * MemoryScopes are named root level objects, which can exist either in the dialog context or off 
- * of turn state. Path resolvers allow for shortcut behavior for mapping things like 
+ * MemoryScopes are named root level objects, which can exist either in the dialog context or off
+ * of turn state. Path resolvers allow for shortcut behavior for mapping things like
  * $foo -> dialog.foo
  */
 export class DialogStateManager {
     private readonly dialogContext: DialogContext;
 
+    /**
+     * Initializes a new instance of the [DialogStateManager](xref:botbuilder-dialogs.DialogStateManager) class.
+     * @param dc The dialog context for the current turn of the conversation.
+     * @param configuration Configuration for the dialog state manager.
+     */
     public constructor(dc: DialogContext, configuration?: DialogStateManagerConfiguration) {
         this.dialogContext = dc;
-        this.configuration = configuration ? configuration : dc.context.turnState.get(DIALOG_STATE_MANAGER_CONFIGURATION);
+        this.configuration = configuration
+            ? configuration
+            : dc.context.turnState.get(DIALOG_STATE_MANAGER_CONFIGURATION);
         if (!this.configuration) {
             this.configuration = DialogStateManager.createStandardConfiguration();
             // cache for any other new dialogStateManager instances in this turn
@@ -49,9 +74,9 @@ export class DialogStateManager {
 
     /**
      * Gets or sets the configured path resolvers and memory scopes for the dialog state manager.
-     * 
+     *
      * @remarks
-     * There is a single set of configuration information for a given chain of dialog contexts. 
+     * There is a single set of configuration information for a given chain of dialog contexts.
      * Assigning a new configuration to any DialogStateManager within the chain will update the
      * configuration for the entire chain.
      */
@@ -59,7 +84,7 @@ export class DialogStateManager {
 
     /**
      * Get the value from memory using path expression.
-     * 
+     *
      * @remarks
      * This always returns a CLONE of the memory, any modifications to the result will not affect memory.
      * @param T The value type to return.
@@ -74,11 +99,15 @@ export class DialogStateManager {
 
         // Get path segments
         const segments = this.parsePath(this.transformPath(pathExpression));
-        if (segments.length < 1) { return returnDefault() }
+        if (segments.length < 1) {
+            return returnDefault();
+        }
 
         // Get memory scope to search over
         const scope = this.getMemoryScope(segments[0].toString());
-        if (scope == undefined) { throw new Error(`DialogStateManager.getValue: a scope of '${ segments[0] }' wasn't found.`) }
+        if (scope == undefined) {
+            throw new Error(`DialogStateManager.getValue: a scope of '${segments[0]}' wasn't found.`);
+        }
 
         // Search over path
         const memory = this.resolveSegments(scope.getMemory(this.dialogContext), segments, false);
@@ -89,21 +118,25 @@ export class DialogStateManager {
 
     /**
      * Set memory to value.
-     * @param pathExpression Path to memory. 
+     * @param pathExpression Path to memory.
      * @param value Value to set.
      */
     public setValue(pathExpression: string, value: any): void {
         // Get path segments
         const tpath = this.transformPath(pathExpression);
         const segments = this.parsePath(tpath);
-        if (segments.length < 1) { throw new Error(`DialogStateManager.setValue: path wasn't specified.`) }
+        if (segments.length < 1) {
+            throw new Error(`DialogStateManager.setValue: path wasn't specified.`);
+        }
 
         // Track changes
         this.trackChange(tpath);
 
         // Get memory scope to update
         const scope = this.getMemoryScope(segments[0].toString());
-        if (scope == undefined) { throw new Error(`DialogStateManager.setValue: a scope of '${ segments[0] }' wasn't found.`) }
+        if (scope == undefined) {
+            throw new Error(`DialogStateManager.setValue: a scope of '${segments[0]}' wasn't found.`);
+        }
 
         // Update memory
         if (segments.length > 1) {
@@ -114,10 +147,16 @@ export class DialogStateManager {
 
             // Update value
             let key = segments[segments.length - 1];
-            if (key === 'first()') { key = 0 };
+            if (key === 'first()') {
+                key = 0;
+            }
             if (typeof key == 'number' && Array.isArray(memory)) {
                 // Only allow positive indexes
-                if (key < 0) { throw new Error(`DialogStateManager.setValue: unable to update value for '${ pathExpression }'. Negative indexes aren't allowed.`) }
+                if (key < 0) {
+                    throw new Error(
+                        `DialogStateManager.setValue: unable to update value for '${pathExpression}'. Negative indexes aren't allowed.`
+                    );
+                }
 
                 // Expand array as needed and update array
                 const l = key + 1;
@@ -125,12 +164,17 @@ export class DialogStateManager {
                     memory.push(undefined);
                 }
                 memory[key] = value;
-            } else if (typeof key == 'string' && key.length > 0 && typeof memory == 'object' && !Array.isArray(memory)) {
+            } else if (
+                typeof key == 'string' &&
+                key.length > 0 &&
+                typeof memory == 'object' &&
+                !Array.isArray(memory)
+            ) {
                 // Find key to use and update object
                 key = this.findObjectKey(memory, key) || key;
                 memory[key] = value;
             } else {
-                throw new Error(`DialogStateManager.setValue: unable to update value for '${ pathExpression }'.`);
+                throw new Error(`DialogStateManager.setValue: unable to update value for '${pathExpression}'.`);
             }
         } else {
             // Just update memory scope
@@ -146,17 +190,21 @@ export class DialogStateManager {
         // Get path segments
         const tpath = this.transformPath(pathExpression);
         const segments = this.parsePath(tpath);
-        if (segments.length < 2) { throw new Error(`DialogStateManager.deleteValue: invalid path of '${ pathExpression }'.`) }
+        if (segments.length < 2) {
+            throw new Error(`DialogStateManager.deleteValue: invalid path of '${pathExpression}'.`);
+        }
 
         // Track change
         this.trackChange(tpath);
 
         // Get memory scope to update
         const scope = this.getMemoryScope(segments[0].toString());
-        if (scope == undefined) { throw new Error(`DialogStateManager.deleteValue: a scope of '${ segments[0] }' wasn't found.`) }
+        if (scope == undefined) {
+            throw new Error(`DialogStateManager.deleteValue: a scope of '${segments[0]}' wasn't found.`);
+        }
 
         // Find value up to last key
-        let key = segments.pop();
+        const key = segments.pop();
         const memory = this.resolveSegments(scope.getMemory(this.dialogContext), segments, false);
 
         // Update value
@@ -174,7 +222,7 @@ export class DialogStateManager {
 
     /**
      * Ensures that all memory scopes have been loaded for the current turn.
-     * 
+     *
      * @remarks
      * This should be called at the beginning of the turn.
      */
@@ -187,7 +235,7 @@ export class DialogStateManager {
 
     /**
      * Saves any changes made to memory scopes.
-     * 
+     *
      * @remarks
      * This should be called at the end of the turn.
      */
@@ -215,9 +263,9 @@ export class DialogStateManager {
 
     /**
      * Normalizes the path segments of a passed in path.
-     * 
+     *
      * @remarks
-     * A path of `profile.address[0]` will be normalized to `profile.address.0`.    
+     * A path of `profile.address[0]` will be normalized to `profile.address.0`.
      * @param pathExpression The path to normalize.
      * @param allowNestedPaths Optional. If `false` then detection of a nested path will cause an empty path to be returned. Defaults to 'true'.
      * @returns The normalized path.
@@ -248,7 +296,7 @@ export class DialogStateManager {
                             break;
                     }
                 } else {
-                    // We're in a bracket 
+                    // We're in a bracket
                     switch (c) {
                         case '[':
                             depth++;
@@ -256,7 +304,9 @@ export class DialogStateManager {
                             break;
                         case ']':
                             depth--;
-                            if (depth > 0) { segment += c }
+                            if (depth > 0) {
+                                segment += c;
+                            }
                             break;
                         case "'":
                         case '"':
@@ -302,7 +352,7 @@ export class DialogStateManager {
                         if (segment.length > 0) {
                             output.push(segment);
                             segment = '';
-                        } else if (i == 0 || i == (pathExpression.length - 1)) {
+                        } else if (i == 0 || i == pathExpression.length - 1) {
                             // Special case a "." at beginning or end of path
                             output.push('');
                         } else if (pathExpression[i - 1] == '.') {
@@ -316,14 +366,16 @@ export class DialogStateManager {
                         } else if (isValidPathChar(c)) {
                             segment += c;
                         } else {
-                            throw new Error(`DialogStateManager.normalizePath: Invalid path detected - ${ pathExpression }`);
+                            throw new Error(
+                                `DialogStateManager.normalizePath: Invalid path detected - ${pathExpression}`
+                            );
                         }
                         break;
                 }
             }
         }
         if (depth > 0) {
-            throw new Error(`DialogStateManager.normalizePath: Invalid path detected - ${ pathExpression }`);
+            throw new Error(`DialogStateManager.normalizePath: Invalid path detected - ${pathExpression}`);
         } else if (segment.length > 0) {
             output.push(segment);
         }
@@ -374,11 +426,10 @@ export class DialogStateManager {
             if (segments.length > 0 && (segments.length == 1 || !segments[1].toString().startsWith('_'))) {
                 // Normalize path and initialize change tracker
                 const npath = segments.join('_').toLowerCase();
-                this.setValue(`${ PATH_TRACKER }.${ npath }`, 0);
+                this.setValue(`${PATH_TRACKER}.${npath}`, 0);
 
                 // Return normalized path
                 allPaths.push(npath);
-
             }
         });
 
@@ -395,7 +446,7 @@ export class DialogStateManager {
         let found = false;
         if (paths) {
             for (let i = 0; i < paths.length; i++) {
-                if (this.getValue(`${ PATH_TRACKER }.${ paths[i] }`, 0) > counter) {
+                if (this.getValue(`${PATH_TRACKER}.${paths[i]}`, 0) > counter) {
                     found = true;
                     break;
                 }
@@ -405,6 +456,10 @@ export class DialogStateManager {
         return found;
     }
 
+    /**
+     * @private
+     * @param path Track path to change.
+     */
     private trackChange(path: string): void {
         // Normalize path and scan for any matches or children that match.
         // - We're appending an extra '_' so that we can do substring matches and
@@ -413,23 +468,30 @@ export class DialogStateManager {
         const npath = this.parsePath(path, false).join('_') + '_';
         const tracking: object = this.getValue(PATH_TRACKER) || {};
         for (const key in tracking) {
-            if (`${ key }_`.startsWith(npath)) {
+            if (`${key}_`.startsWith(npath)) {
                 // Populate counter on first use
                 if (counter == undefined) {
                     counter = this.getValue(DialogPath.eventCounter);
                 }
 
                 // Update tracking watermark
-                this.setValue(`${ PATH_TRACKER }.${ key }`, counter);
+                this.setValue(`${PATH_TRACKER}.${key}`, counter);
             }
         }
     }
 
+    /**
+     * @private
+     * @param memory Object memory to resolve.
+     * @param segments Segments of the memory to resolve.
+     * @param assignment Optional.
+     * @returns The value of the memory segment.
+     */
     private resolveSegments(memory: object, segments: (string | number)[], assignment?: boolean): any {
         let value: any = memory;
         const l = assignment ? segments.length - 1 : segments.length;
         for (let i = 1; i < l && value != undefined; i++) {
-            let key = segments[i];
+            const key = segments[i];
             if (typeof key == 'number') {
                 // Key is an array index
                 if (Array.isArray(value)) {
@@ -500,6 +562,9 @@ export class DialogStateManager {
         return value;
     }
 
+    /**
+     * @private
+     */
     private findObjectKey(obj: object, key: string): string | undefined {
         const k = key.toLowerCase();
         for (const prop in obj) {
@@ -511,6 +576,12 @@ export class DialogStateManager {
         return undefined;
     }
 
+    /**
+     * @private
+     * Gets [MemoryScope](xref:botbuilder-dialogs.MemoryScope) by name.
+     * @param name Name of scope.
+     * @returns The [MemoryScope](xref:botbuilder-dialogs.MemoryScope).
+     */
     private getMemoryScope(name: string): MemoryScope | undefined {
         const key = name.toLowerCase();
         const scopes = this.configuration.memoryScopes;
@@ -524,6 +595,10 @@ export class DialogStateManager {
         return undefined;
     }
 
+    /**
+     * Creates a standard dialog state manager configuration.
+     * @returns A [DialogStateManagerConfiguration](xref:botbuilder-dialogs.DialogStateManagerConfiguration) with the standard configuration.
+     */
     public static createStandardConfiguration(): DialogStateManagerConfiguration {
         const config: DialogStateManagerConfiguration = {
             pathResolvers: [
@@ -531,7 +606,7 @@ export class DialogStateManager {
                 new HashPathResolver(),
                 new AtAtPathResolver(),
                 new AtPathResolver(),
-                new PercentPathResolver()
+                new PercentPathResolver(),
             ],
             memoryScopes: [
                 new TurnMemoryScope(),
@@ -541,13 +616,18 @@ export class DialogStateManager {
                 new ClassMemoryScope(),
                 new ThisMemoryScope(),
                 new ConversationMemoryScope(),
-                new UserMemoryScope()
-            ]
+                new UserMemoryScope(),
+                new DialogContextMemoryScope(),
+            ],
         };
 
         return config;
     }
 
+    /**
+     * Gets the version number.
+     * @returns A string with the version number.
+     */
     public version(): string {
         return '0';
     }
@@ -561,7 +641,7 @@ function isIndex(segment: string): boolean {
     for (let i = 0; i < segment.length; i++) {
         const c = segment[i];
         if (digits.indexOf(c) < 0) {
-            // Check for negative sign 
+            // Check for negative sign
             if (c != '-' || i > 0 || segment.length < 2) {
                 return false;
             }
@@ -575,8 +655,10 @@ function isIndex(segment: string): boolean {
  * @private
  */
 function isQuoted(segment: string): boolean {
-    return segment.length > 1 && (segment.startsWith("'") && segment.endsWith("'")) ||
-        (segment.startsWith('"') && segment.endsWith('"'));
+    return (
+        (segment.length > 1 && segment.startsWith("'") && segment.endsWith("'")) ||
+        (segment.startsWith('"') && segment.endsWith('"'))
+    );
 }
 
 /**

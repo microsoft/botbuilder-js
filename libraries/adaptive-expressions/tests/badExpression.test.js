@@ -10,24 +10,17 @@ const scope = {
     world: 'world',
     istrue: true,
     nullObj: undefined,
-    bag:
-    {
+    bag: {
         three: 3.0,
-        set:
-        {
+        set: {
             four: 4.0,
         },
         list: ['red', 'blue'],
         index: 3,
-        name: 'mybag'
+        name: 'mybag',
     },
     items: ['zero', 'one', 'two'],
-    nestedItems:
-        [
-            { x: 1 },
-            { x: 2 },
-            { x: 3 },
-        ],
+    nestedItems: [{ x: 1 }, { x: 2 }, { x: 3 }],
     timestamp: '2018-03-15T13:00:00.111Z',
     noISOTimestamp: '2018-03-15T13:00:00Z',
     notValidTimestamp: '2018timestmap',
@@ -35,30 +28,25 @@ const scope = {
     notValidTimestamp3: '20181115',
     relativeUri: '../catalog/shownew.htm?date=today',
     json2: {
-        'Enabled': true,
-        'Roles': ['User', 'Admin']
+        Enabled: true,
+        Roles: ['User', 'Admin'],
     },
     jarray1: ['a', 'b'],
-    turn:
-    {
+    turn: {
         recognized: {
-            entities:
-            {
-                city: 'Seattle'
+            entities: {
+                city: 'Seattle',
             },
-            intents:
-            {
-                BookFlight: 'BookFlight'
-            }
-        }
+            intents: {
+                BookFlight: 'BookFlight',
+            },
+        },
     },
-    dialog:
-    {
-        result:
-        {
+    dialog: {
+        result: {
             title: 'Dialog Title',
-            subTitle: 'Dialog Sub Title'
-        }
+            subTitle: 'Dialog Sub Title',
+        },
     },
 };
 
@@ -71,7 +59,7 @@ const invalidExpressions = [
     '"hello\'',
     'user.lists.{dialog.listName}',
     '\'hello\'.length()',
-    '`hi` world'
+    '`hi` world',
 ];
 
 const badExpressions = [
@@ -83,8 +71,8 @@ const badExpressions = [
             ['a.func()', 'no such function'],
             ['(1.foreach)()', 'error func missing'],
             ['(\'str\'.foreach)()', 'error func missing'],
-            ['\'hello\'.length()', 'not supported currently']
-        ]
+            ['\'hello\'.length()', 'not supported currently'],
+        ],
     },
     {
         label: 'Operators',
@@ -97,7 +85,7 @@ const badExpressions = [
             ['\'1\' % 2', 'params should be number'],
             ['\'1\' ^ 2', 'params should be number'],
             ['1/0', 'can not divide 0'],
-        ]
+        ],
     },
     {
         label: 'String functions',
@@ -153,7 +141,7 @@ const badExpressions = [
             ['sentenceCase(one)', 'first parameter should be string'],
             ['titleCase(hello, hello)', 'should have one parameters'],
             ['titleCase(one)', 'first parameter should be string'],
-        ]
+        ],
     },
     {
         label: 'Logical comparison functions',
@@ -162,7 +150,9 @@ const badExpressions = [
             ['greater(one)', 'greater need two parameters'],
             ['greaterOrEquals(one, hello)', 'string and integer are not comparable'],
             ['greaterOrEquals(one)', 'function need two parameters'],
-            ['less(false, true)', 'string or number parameters are needed'],
+            ['less(false, true)', 'boolean are not comparable'],
+            ['less(1, true)', 'number and boolean are not comparable'],
+            ['less(json("{}"), [])', 'objects are not comparable'],
             ['less(one, hello)', 'string and integer are not comparable'],
             ['less(one)', 'function need two parameters'],
             ['lessOrEquals(one, hello)', 'string and integer are not comparable'],
@@ -171,7 +161,7 @@ const badExpressions = [
             ['exists(1, 2)', 'function need one parameter'],
             // ["if(!exists(one), one, hello)", 'the second and third parameters of if must the same type'],
             ['not(false, one)', 'function need one parameter'],
-        ]
+        ],
     },
     {
         label: 'Conversion functions',
@@ -214,7 +204,7 @@ const badExpressions = [
             ['uriComponent(hello, world)', 'should have 1 param'],
             ['uriComponent(false)', 'param should be string'],
             ['jsonStringify(hello, 12)', 'should have 1 param'],
-        ]
+        ],
     },
     {
         label: 'Math functions',
@@ -259,7 +249,7 @@ const badExpressions = [
             ['ceiling(1.2, -2)', 'the second parameter should be integer not less than 0'],
             ['ceiling(1.2, 16)', 'the second parameter should be integer not greater than 15'],
             ['ceiling(1.2, 12, 7)', 'should have one or two numeric parameters'],
-        ]
+        ],
     },
     {
         label: 'Date and Time functions',
@@ -378,7 +368,11 @@ const badExpressions = [
             ['getPreviousViableTime(hello)', 'should have a "XX:mm:ss" format string'],
             ['getPreviousViableTime(one)', 'should have a string parameter'],
             ['getPreviousViableTime(\'XX:12:12\', 20)', 'should only have 1 parameter'],
-        ]
+            ['resolve(one)', 'should have string or TimexProperty arguments'],
+            ['resolve("T14", "Asia/Tokyo")', 'should only have one parameter'],
+            ['resolve("12-20")', 'should have a valid TimexPropterty after parsing'],
+            ['resolve("XXXX-WXX-6")', 'not a valid argument'],
+        ],
     },
     {
         label: 'Collection functions',
@@ -391,6 +385,8 @@ const badExpressions = [
             ['contains(\'hello world\', \'hello\', \'new\')', 'should have 2 parameter'],
             ['count(items, 1)', 'should have 1 parameter'],
             ['count(1)', 'first param should be string, array or map'],
+            ['reverse(items, 1)', 'should have 1 parameter'],
+            ['reverse(1)', 'first param should be string or array'],
             ['empty(1,2)', 'should have two params'],
             ['first(items,2)', 'should have 1 param'],
             ['last(items,2)', 'should have 1 param'],
@@ -438,7 +434,7 @@ const badExpressions = [
             ['sortBy(hello, \'x\')', 'first param should be list'],
             ['sortBy(createArray(\'H\',\'e\',\'l\',\'l\',\'o\'), 1)', 'second param should be string'],
             ['sortBy(createArray(\'H\',\'e\',\'l\',\'l\',\'o\'), \'x\', hi)', 'second param should be string'],
-        ]
+        ],
     },
     {
         label: 'URI parsing',
@@ -449,7 +445,7 @@ const badExpressions = [
             ['uriPort(relatibeUri)', 'fails for undefined input'],
             ['uriQuery(relatibeUri)', 'fails for undefined input'],
             ['uriScheme(relatibeUri)', 'fails for undefined input'],
-        ]
+        ],
     },
     {
         label: 'Object manipulation and construction functions',
@@ -470,7 +466,7 @@ const badExpressions = [
             ['merge(json(\'{"key1":"value1","key2":"value2"}\'))', 'should have at least 2 arguments'],
             ['merge(json2, jarray1)', 'should only have JSON object arguments'],
             ['merge(jarray1, json2)', 'should only have JSON object arguments'],
-        ]
+        ],
     },
     {
         label: 'Memory access',
@@ -482,7 +478,7 @@ const badExpressions = [
             ['one[0]', 'one is not list'],
             ['items[3]', 'index out of range'],
             ['items[one+0.5]', 'index is not integer'],
-        ]
+        ],
     },
     {
         label: 'Regex',
@@ -491,14 +487,14 @@ const badExpressions = [
             ['isMatch(\'abC\', one)', 'second param should be string'],
             ['isMatch(1, \'^[a-z]+$\')', 'first param should be string'],
             ['isMatch(\'abC\', \'^[a-z+$\')', ' bad regular expression'],
-        ]
+        ],
     },
     {
         label: 'SetPathToValue',
         testCases: [
             ['setPathToValue(2+3, 4)', 'Not a real path'],
             ['setPathToValue(a)', 'Missing value'],
-        ]
+        ],
     },
     {
         label: 'Type checking',
@@ -510,13 +506,13 @@ const badExpressions = [
             ['isBoolean(true, false)', 'should have one parameter'],
             ['isDateTime("2018-03-15T13:00:00.111Z", hello)', 'should have one parameter'],
             ['isObject({}, false)', 'should have one parameter'],
-        ]
-    }
+        ],
+    },
 ];
 
 describe('expression functional test', () => {
     describe('invalidExpressions', () => {
-        invalidExpressions.forEach(invalidExpression => {
+        invalidExpressions.forEach((invalidExpression) => {
             it(`${invalidExpression} throws an exception`, () => {
                 assert.throws(() => parser.parse(invalidExpression));
             });
@@ -539,8 +535,8 @@ describe('expression functional test', () => {
 
                         assert(errorResult != null);
                     });
-                })
-            })
+                });
+            });
         });
     });
 });

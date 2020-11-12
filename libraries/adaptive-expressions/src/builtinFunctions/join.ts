@@ -18,15 +18,20 @@ import { ReturnType } from '../returnType';
  * Return a string that has all the items from an array, with each character separated by a delimiter.
  */
 export class Join extends ExpressionEvaluator {
+    /**
+     * Initializes a new instance of the Join class.
+     */
     public constructor() {
         super(ExpressionType.Join, Join.evaluator, ReturnType.String, Join.validator);
     }
 
+    /**
+     * @private
+     */
     private static evaluator(expression: Expression, state: MemoryInterface, options: Options): ValueWithError {
         let value: any;
-        let error: string;
-        let args: any[];
-        ({ args, error } = FunctionUtils.evaluateChildren(expression, state, options));
+        const { args, error: childrenError } = FunctionUtils.evaluateChildren(expression, state, options);
+        let error = childrenError;
         if (!error) {
             if (!Array.isArray(args[0])) {
                 error = `${expression.children[0]} evaluates to ${args[0]} which is not a list.`;
@@ -47,6 +52,9 @@ export class Join extends ExpressionEvaluator {
         return { value, error };
     }
 
+    /**
+     * @private
+     */
     private static validator(expression: Expression): void {
         FunctionUtils.validateOrder(expression, [ReturnType.String], ReturnType.Array, ReturnType.String);
     }

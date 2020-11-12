@@ -8,7 +8,11 @@
 
 import { DialogManager } from 'botbuilder-dialogs';
 import { ResourceExplorer } from 'botbuilder-dialogs-declarative';
-import { LanguageGeneratorManager, ResourceMultiLanguageGenerator, TemplateEngineLanguageGenerator } from './generators';
+import {
+    LanguageGeneratorManager,
+    ResourceMultiLanguageGenerator,
+    TemplateEngineLanguageGenerator,
+} from './generators';
 import { LanguageGenerator } from './languageGenerator';
 import { resourceExplorerKey } from './resourceExtensions';
 import { LanguagePolicy } from './languagePolicy';
@@ -32,6 +36,8 @@ export const languagePolicyKey = Symbol('LanguagePolicy');
  * Extension methods for language generator.
  */
 export class LanguageGeneratorExtensions {
+    private static readonly _languageGeneratorManagers = new Map<ResourceExplorer, LanguageGeneratorManager>();
+
     /**
      * Register default LG file or a language generator as default language generator.
      * @param dialogManager The dialog manager to add language generator to.
@@ -39,10 +45,11 @@ export class LanguageGeneratorExtensions {
      * @returns dialog manager with language generator.
      */
     public static useLanguageGeneration(dialogManager: DialogManager, lg?: string | LanguageGenerator): DialogManager {
-        const resourceExplorer: ResourceExplorer = dialogManager.initialTurnState.get(resourceExplorerKey) || new ResourceExplorer();
+        const resourceExplorer: ResourceExplorer =
+            dialogManager.initialTurnState.get(resourceExplorerKey) || new ResourceExplorer();
 
         let languageGenerator = lg || 'main.lg';
-        if (typeof(languageGenerator) === 'string') {
+        if (typeof languageGenerator === 'string') {
             const resource = resourceExplorer.getResource(languageGenerator);
             if (resource) {
                 languageGenerator = new ResourceMultiLanguageGenerator(languageGenerator);
@@ -51,13 +58,17 @@ export class LanguageGeneratorExtensions {
             }
         }
 
-        const languageGeneratorManager: LanguageGeneratorManager = new LanguageGeneratorManager(resourceExplorer);
+        let languageGeneratorManager = this._languageGeneratorManagers.get(resourceExplorer);
+        if (!languageGeneratorManager) {
+            languageGeneratorManager = new LanguageGeneratorManager(resourceExplorer);
+            this._languageGeneratorManagers.set(resourceExplorer, languageGeneratorManager);
+        }
 
         dialogManager.initialTurnState.set(languageGeneratorKey, languageGenerator);
         dialogManager.initialTurnState.set(languageGeneratorManagerKey, languageGeneratorManager);
 
         return dialogManager;
-    };
+    }
 
     /**
      * Register language policy as default policy.

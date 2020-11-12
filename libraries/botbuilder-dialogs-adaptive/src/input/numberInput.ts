@@ -6,21 +6,56 @@
  * Licensed under the MIT License.
  */
 import * as Recognizers from '@microsoft/recognizers-text-number';
+import {
+    Expression,
+    NumberExpression,
+    NumberExpressionConverter,
+    StringExpression,
+    StringExpressionConverter,
+} from 'adaptive-expressions';
 import { Activity } from 'botbuilder-core';
-import { DialogContext } from 'botbuilder-dialogs';
-import { InputDialog, InputState } from './inputDialog';
-import { StringExpression, NumberExpression } from 'adaptive-expressions';
+import { Converter, ConverterFactory, DialogContext } from 'botbuilder-dialogs';
+import { InputDialog, InputDialogConfiguration, InputState } from './inputDialog';
 
-export class NumberInput extends InputDialog {
+export interface NumberInputConfiguration extends InputDialogConfiguration {
+    defaultLocale?: string | Expression | StringExpression;
+    outputFormat?: number | string | Expression | NumberExpression;
+}
+
+/**
+ * Input dialog for asking for numbers.
+ */
+export class NumberInput extends InputDialog implements NumberInputConfiguration {
+    public static $kind = 'Microsoft.NumberInput';
 
     public defaultLocale?: StringExpression;
 
     public outputFormat?: NumberExpression;
 
-    protected onComputeId(): string {
-        return `NumberInput[${ this.prompt && this.prompt.toString() }]`;
+    public getConverter(property: keyof NumberInputConfiguration): Converter | ConverterFactory {
+        switch (property) {
+            case 'defaultLocale':
+                return new StringExpressionConverter();
+            case 'outputFormat':
+                return new NumberExpressionConverter();
+            default:
+                return super.getConverter(property);
+        }
     }
 
+    /**
+     * @protected
+     */
+    protected onComputeId(): string {
+        return `NumberInput[${this.prompt && this.prompt.toString()}]`;
+    }
+
+    /**
+     * @protected
+     * Called when input has been received.
+     * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
+     * @returns [InputState](xref:botbuilder-dialogs-adaptive.InputState) which reflects whether input was recognized as valid or not.
+     */
     protected async onRecognizeInput(dc: DialogContext): Promise<InputState> {
         // Recognize input if needed
         let input: any = dc.state.getValue(InputDialog.VALUE_PROPERTY);

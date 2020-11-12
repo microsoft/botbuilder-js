@@ -6,12 +6,29 @@
  * Licensed under the MIT License.
  */
 
+import { ExpressionProperty } from 'adaptive-expressions';
 import { DialogContext } from 'botbuilder-dialogs';
 import { BeginDialog } from './beginDialog';
 
+/**
+ * Internal `BeginDialog` action which dynamically binds x.schema/x.dialog to invoke the x.dialog resource with properties as the options.
+ */
 export class DynamicBeginDialog extends BeginDialog {
-    protected bindOptions(dc: DialogContext, options: object): object {
-        // use overflow properties of deserialized object instead of the passed in option.
-        return super.bindOptions(dc, Object.assign({}, this));
+    public static $kind = 'Microsoft.DynamicBeginDialog';
+
+    /**
+     * @protected
+     * Evaluates expressions in options.
+     * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
+     * @param options The options to bind.
+     */
+    protected bindOptions(dc: DialogContext, _options: object): object {
+        const options = {};
+        for (const key of Object.getOwnPropertyNames(this)) {
+            if (!(this[key] instanceof ExpressionProperty)) {
+                options[key] = this[key];
+            }
+        }
+        return super.bindOptions(dc, options);
     }
 }

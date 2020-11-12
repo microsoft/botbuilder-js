@@ -1,21 +1,20 @@
-const { Templates, LGTemplateParser } = require('../');
+const { Templates } = require('../');
 const assert = require('assert');
 
 function GetExampleFilePath(fileName) {
-    return `${ __dirname }/testData/examples/` + fileName;
+    return `${__dirname}/testData/examples/` + fileName;
 }
 
-
-describe('ParseTreeTest', function() {
+describe('ParseTreeTest', function () {
     /**
      * Disk I/O is slow and variable, causing issues in pipeline tests, so we
      * preload all of the file reads here so that it doesn't count against individual test duration.
      */
     const preloaded = {
-        ParseTreeTest: Templates.parseFile(GetExampleFilePath('ParseTreeTest.lg'))
+        ParseTreeTest: Templates.parseFile(GetExampleFilePath('ParseTreeTest.lg')),
     };
 
-    it('ParseTreeTest', function() {
+    it('ParseTreeTest', function () {
         const templates = preloaded.ParseTreeTest.toArray();
         assert.strictEqual(templates.length, 4);
 
@@ -69,9 +68,9 @@ describe('ParseTreeTest', function() {
         // -CASE: ${'Saturday'}
         // -Happy Saturday!
         const caseStat = caseRules[1].switchCaseStat();
-        assert.strictEqual(caseStat.text, '-CASE:${\'Saturday\'}');
+        assert.strictEqual(caseStat.text, "-CASE:${'Saturday'}");
         expressionContext = caseStat.expression()[0];
-        assert.strictEqual(expressionContext.text, '${\'Saturday\'}');
+        assert.strictEqual(expressionContext.text, "${'Saturday'}");
 
         //-DEFAULT
         const defaultStat = caseRules[3].switchCaseStat();

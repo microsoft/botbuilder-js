@@ -7,14 +7,12 @@
  */
 
 import { Activity } from 'botbuilder-core';
-import { DialogContext } from 'botbuilder-dialogs';
-import { TemplateInterface } from '../template';
+import { DialogContext, TemplateInterface } from 'botbuilder-dialogs';
 
 /**
  * Defines a static activity as a template.
  */
-export class StaticActivityTemplate implements TemplateInterface<Partial<Activity>> {
-
+export class StaticActivityTemplate implements TemplateInterface<Partial<Activity>, unknown> {
     /**
      * Intialize a new instance of StaticActivityTemplate class.
      * @param activity Activity as a template.
@@ -33,9 +31,12 @@ export class StaticActivityTemplate implements TemplateInterface<Partial<Activit
      * @param dialogContext DialogContext.
      * @param data Data to bind to (not working with static activity template).
      */
-    public async bind(dialogContext: DialogContext, data: object): Promise<Partial<Activity>> {
+    public async bind(dialogContext: DialogContext, data: unknown): Promise<Partial<Activity>>;
+    public async bind(): Promise<Partial<Activity>> {
         return Promise.resolve(this.activity);
     }
 
-    public toString = (): string => { return `${ this.activity.text }`; }
+    public toString = (): string => {
+        return `${this.activity.text}`;
+    };
 }

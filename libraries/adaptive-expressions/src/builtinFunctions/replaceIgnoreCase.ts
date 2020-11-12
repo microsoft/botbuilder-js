@@ -18,13 +18,23 @@ import { ReturnType } from '../returnType';
  * This function is case-insensitive.
  */
 export class ReplaceIgnoreCase extends ExpressionEvaluator {
+    /**
+     * Initializes a new instance of the [ReplaceIgnoreCase](xref:adaptive-expressions.ReplaceIgnoreCase) class.
+     */
     public constructor() {
-        super(ExpressionType.ReplaceIgnoreCase, ReplaceIgnoreCase.evaluator(), ReturnType.String, ReplaceIgnoreCase.validator);
+        super(
+            ExpressionType.ReplaceIgnoreCase,
+            ReplaceIgnoreCase.evaluator(),
+            ReturnType.String,
+            ReplaceIgnoreCase.validator
+        );
     }
 
+    /**
+     * @private
+     */
     private static evaluator(): EvaluateExpressionDelegate {
-        return FunctionUtils.applyWithError((
-            args: any[]): any => {
+        return FunctionUtils.applyWithError((args: any[]): any => {
             let error = undefined;
             let result = undefined;
             if (InternalFunctionUtils.parseStringOrUndefined(args[1]).length === 0) {
@@ -32,13 +42,19 @@ export class ReplaceIgnoreCase extends ExpressionEvaluator {
             }
 
             if (!error) {
-                result = InternalFunctionUtils.parseStringOrUndefined(args[0]).replace(new RegExp(InternalFunctionUtils.parseStringOrUndefined(args[1]), 'gi'), InternalFunctionUtils.parseStringOrUndefined(args[2]));
+                result = InternalFunctionUtils.parseStringOrUndefined(args[0]).replace(
+                    new RegExp(InternalFunctionUtils.parseStringOrUndefined(args[1]), 'gi'),
+                    InternalFunctionUtils.parseStringOrUndefined(args[2])
+                );
             }
 
             return { value: result, error };
         }, FunctionUtils.verifyStringOrNull);
     }
 
+    /**
+     * @private
+     */
     private static validator(expression: Expression): void {
         FunctionUtils.validateArityAndAnyType(expression, 3, 3, ReturnType.String);
     }

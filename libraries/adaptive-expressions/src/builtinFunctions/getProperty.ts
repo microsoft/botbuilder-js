@@ -20,18 +20,23 @@ import { ReturnType } from '../returnType';
  * Retrieve the value of the specified property from the JSON object.
  */
 export class GetProperty extends ExpressionEvaluator {
+    /**
+     * Initializes a new instance of the [GetProperty](xref:adaptive-expressions.GetProperty) class.
+     */
     public constructor() {
         super(ExpressionType.GetProperty, GetProperty.evaluator, ReturnType.Object, GetProperty.validator);
     }
 
+    /**
+     * @private
+     */
     private static evaluator(expression: Expression, state: MemoryInterface, options: Options): ValueWithError {
         let value: any;
-        let error: string;
-        let firstItem: any;
         let property: any;
 
         const children: Expression[] = expression.children;
-        ({ value: firstItem, error } = children[0].tryEvaluate(state, options));
+        const { value: firstItem, error: childrenError } = children[0].tryEvaluate(state, options);
+        let error = childrenError;
         if (!error) {
             if (children.length === 1) {
                 // get root value from memory
@@ -45,7 +50,11 @@ export class GetProperty extends ExpressionEvaluator {
                 ({ value: property, error } = children[1].tryEvaluate(state, options));
 
                 if (!error) {
-                    value = InternalFunctionUtils.wrapGetValue(new SimpleObjectMemory(firstItem), property.toString(), options);
+                    value = InternalFunctionUtils.wrapGetValue(
+                        new SimpleObjectMemory(firstItem),
+                        property.toString(),
+                        options
+                    );
                 }
             }
         }
@@ -53,6 +62,9 @@ export class GetProperty extends ExpressionEvaluator {
         return { value, error };
     }
 
+    /**
+     * @private
+     */
     private static validator(expression: Expression): void {
         FunctionUtils.validateOrder(expression, [ReturnType.String], ReturnType.Object);
     }

@@ -18,13 +18,23 @@ import { ReturnType } from '../returnType';
  * Return the date of a specified timestamp in m/dd/yyyy format.
  */
 export class DateFunc extends ExpressionEvaluator {
+    /**
+     * Initializes a new instance of the [DateFunc](xref:adaptive-expressions.DateFunc) class.
+     */
     public constructor() {
         super(ExpressionType.Date, DateFunc.evaluator(), ReturnType.String, FunctionUtils.validateUnaryString);
     }
 
+    /**
+     * @private
+     */
     private static evaluator(): EvaluateExpressionDelegate {
         return FunctionUtils.applyWithError(
-            (args: any[]): any => InternalFunctionUtils.parseTimestamp(args[0], (timestamp: Date): string => moment(timestamp).utc().format('M/DD/YYYY')),
-            FunctionUtils.verifyString);
+            (args: any[]): any =>
+                InternalFunctionUtils.parseTimestamp(args[0], (timestamp: Date): string =>
+                    moment(timestamp).utc().format('M/DD/YYYY')
+                ),
+            FunctionUtils.verifyString
+        );
     }
 }

@@ -20,7 +20,7 @@ For more information jump to a section below.
 
  | Branch | Description        | Build Status | Coverage Status | Windows Bot Test Status | Linux Bot Test Status |Browser Functional Tests
  |----|---------------|--------------|-----------------|--|--|--|
-|Master | 4.11.* Preview Builds |[![Build status](https://fuselabs.visualstudio.com/SDK_v4/_apis/build/status/JS/BotBuilder-JS-master-daily)](https://fuselabs.visualstudio.com/SDK_v4/_build/latest?definitionId=460)|[![Coverage Status](https://coveralls.io/repos/github/microsoft/botbuilder-js/badge.svg?branch=master)](https://coveralls.io/github/microsoft/botbuilder-js?branch=master)|[![Build Status](https://fuselabs.visualstudio.com/SDK_v4/_apis/build/status/JS/Run-JS-Functional-Tests-Windows?branchName=master)](https://fuselabs.visualstudio.com/SDK_v4/_build/latest?definitionId=548&branchName=master)|[![Build Status](https://fuselabs.visualstudio.com/SDK_v4/_apis/build/status/JS/Run-JS-Functional-Tests-Linux?branchName=master)](https://fuselabs.visualstudio.com/SDK_v4/_build/latest?definitionId=549&branchName=master)|[![Build Status](https://fuselabs.visualstudio.com/SDK_v4/_apis/build/status/SDK_v4-CI?branchName=master)](https://fuselabs.visualstudio.com/SDK_v4/_build/latest?definitionId=731&branchName=master)
+|Main | 4.12.* Preview Builds |[![Build status](https://fuselabs.visualstudio.com/SDK_v4/_apis/build/status/JS/BotBuilder-JS-master-daily)](https://fuselabs.visualstudio.com/SDK_v4/_build/latest?definitionId=460)|[![Coverage Status](https://coveralls.io/repos/github/microsoft/botbuilder-js/badge.svg?branch=main)](https://coveralls.io/github/microsoft/botbuilder-js?branch=main)|[![Build Status](https://fuselabs.visualstudio.com/SDK_v4/_apis/build/status/JS/Run-JS-Functional-Tests-Windows?branchName=main)](https://fuselabs.visualstudio.com/SDK_v4/_build/latest?definitionId=548&branchName=main)|[![Build Status](https://fuselabs.visualstudio.com/SDK_v4/_apis/build/status/JS/Run-JS-Functional-Tests-Linux?branchName=main)](https://fuselabs.visualstudio.com/SDK_v4/_build/latest?definitionId=549&branchName=main)|[![Build Status](https://fuselabs.visualstudio.com/SDK_v4/_apis/build/status/SDK_v4-CI?branchName=main)](https://fuselabs.visualstudio.com/SDK_v4/_build/latest?definitionId=731&branchName=main)
 
 ## Packages
 
@@ -49,22 +49,19 @@ To get started building bots using the SDK, see the [Azure Bot Service Documenta
 
 The [Bot Framework Samples](https://github.com/microsoft/botbuilder-samples) includes a rich set of samples repository.
 
-If you want to debug an issue, would like to [contribute](#contributing), or understand how the Bot Builder SDK works, instructions for building and testing the SDK are below.
+If you want to debug an issue, would like to [contribute](#Contributing-and-our-code-of-conduct), or understand how the Bot Builder SDK works, instructions for building and testing the SDK are below.
 
 ### Prerequisites
 - [Git](https://git-scm.com/downloads) 
 - [Node.js](https://nodejs.org/en/)
-- [Lerna](https://lernajs.io/)
-- [Nyc](https://www.npmjs.com/package/nyc)
-- [Mocha](https://www.npmjs.com/package/mocha)
-- [TypeScript](https://www.typescriptlang.org/)
+- [Yarn 1.x](https://classic.yarnpkg.com/)
 - Your favorite code-editor for example [VS Code](https://code.visualstudio.com/)
 
 ### Clone
 Clone a copy of the repo:
 
 ```bash
-git clone https://github.com/Microsoft/botbuilder-js.git
+git clone https://github.com/microsoft/botbuilder-js.git
 ```
 
 Change to the SDK's directory:
@@ -74,16 +71,17 @@ cd botbuilder-js
 ```
 
 ### Build and test locally
-Install the prerequisites. This will also run the postinstall script (`lerna bootstrap --hoist`).
+
+Install the prerequisites.
 
 ```bash
-npm install
+yarn
 ```
 
 Then use the following command to build the SDK.
 
 ```bash
-npm run build
+yarn build
 ```
 
 ### Running unit tests
@@ -91,7 +89,7 @@ npm run build
 Use the following command to run the unit tests.
 
 ```bash
-npm run test
+yarn test
 ```
 
 The `prep-test.cmd` command is run to install test keys and start the [Azure Storage Emulator](https://docs.microsoft.com/en-us/azure/storage/common/storage-use-emulator) if its installed. Any unit tests needing test keys or the storage emulator are designed to be skipped if their dependencies are missing so most developers won't need to worry about running this command. 
@@ -99,14 +97,14 @@ The `prep-test.cmd` command is run to install test keys and start the [Azure Sto
 If you have a need to re-generate the LUIS or connector clients using the latest swagger you'll need to install `autorest` (requires Node 7.10.0 or higher), which you can do with the following command.
 
 ```bash
-npm install --global autorest
+yarn global add global autorest
 ```
 
 ## Getting support and providing feedback
 Below are the various channels that are available to you for obtaining support and providing feedback. Please pay carful attention to which channel should be used for which type of content. e.g. general "how do I..." questions should be asked on Stack Overflow, Twitter or Gitter, with GitHub issues being for feature requests and bug reports.
 
 ### Github issues
-[Github issues](https://github.com/Microsoft/botbuilder-python/issues) should be used for bugs and feature requests. 
+[Github issues](https://github.com/Microsoft/botbuilder-js/issues) should be used for bugs and feature requests. 
 
 ### Stack overflow
 [Stack Overflow](https://stackoverflow.com/questions/tagged/botframework) is a great place for getting high-quality answers. Our support team, as well as many of our community members are already on Stack Overflow providing answers to 'how-to' questions.
@@ -121,7 +119,7 @@ We use the [@botframework](https://twitter.com/botframework) account on twitter 
 The [Gitter Channel](https://gitter.im/Microsoft/BotBuilder) provides a place where the Community can get together and collaborate.
 
 ## Contributing and our code of conduct
-We welcome contributions and suggestions. Please see our [contributing guidelines](./contributing.md) for more information.
+We welcome contributions and suggestions. Please see our [contributing guidelines](./Contributing.md) for more information.
 
 This project has adopted the [Microsoft Open Source Code of Conduct](https://opensource.microsoft.com/codeofconduct/). 
 For more information see the [Code of Conduct FAQ](https://opensource.microsoft.com/codeofconduct/faq/) or contact
@@ -136,4 +134,4 @@ at [secure@microsoft.com](mailto:secure@microsoft.com).  You should receive a re
 
 Copyright (c) Microsoft Corporation. All rights reserved.
 
-Licensed under the [MIT](./LICENSE.md) License.
+Licensed under the [MIT](./LICENSE) License.

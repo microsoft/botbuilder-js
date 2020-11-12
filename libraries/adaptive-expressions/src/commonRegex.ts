@@ -1,3 +1,4 @@
+/* eslint-disable security/detect-non-literal-regexp */
 /**
  * @module adaptive-expressions
  */
@@ -26,13 +27,12 @@ export class CommonRegex {
      * @returns RegExp object.
      */
     public static CreateRegex(pattern: string): RegExp {
-
         let result: RegExp;
         if (pattern && this.regexCache.has(pattern)) {
             result = this.regexCache.get(pattern);
         } else {
             if (!pattern || !this.isCommonRegex(pattern)) {
-                throw new Error(`'${ pattern }' is not a valid regex.`);
+                throw new Error(`'${pattern}' is not a valid regex.`);
             }
 
             result = this.getRegExpFromString(pattern);
@@ -42,6 +42,9 @@ export class CommonRegex {
         return result;
     }
 
+    /**
+     * @private
+     */
     private static getRegExpFromString(pattern: string): RegExp {
         const flags: string[] = ['(?i)', '(?m)', '(?s)'];
         let flag = '';
@@ -54,14 +57,17 @@ export class CommonRegex {
 
         let regexp: RegExp;
         if (flag) {
-            regexp = new RegExp(`${ pattern }`, flag);
+            regexp = new RegExp(`${pattern}`, flag);
         } else {
-            regexp = new RegExp(`${ pattern }`);
+            regexp = new RegExp(`${pattern}`);
         }
 
         return regexp;
     }
 
+    /**
+     * @private
+     */
     private static isCommonRegex(pattern: string): boolean {
         try {
             this.antlrParse(pattern);
@@ -72,6 +78,9 @@ export class CommonRegex {
         return true;
     }
 
+    /**
+     * @private
+     */
     private static antlrParse(pattern: string): ParseTree {
         const inputStream: ANTLRInputStream = new ANTLRInputStream(pattern);
         const lexer: CommonRegexLexer = new CommonRegexLexer(inputStream);

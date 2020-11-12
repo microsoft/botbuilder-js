@@ -5,29 +5,44 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { AdaptiveDialogComponentRegistration } from 'botbuilder-dialogs-adaptive';
+import { QnAMakerComponentRegistration, LuisComponentRegistration } from 'botbuilder-ai';
+import { ComponentRegistration, TestAdapter } from 'botbuilder-core';
+import { AdaptiveComponentRegistration } from 'botbuilder-dialogs-adaptive';
 import { ResourceExplorer } from 'botbuilder-dialogs-declarative';
-import { AdaptiveDialogTestComponentRegistration } from './adaptiveDialogTestComponentRegistration';
-import { AdaptiveTestAdapter } from './adaptiveTestAdapter';
+import { AdaptiveTestComponentRegistration } from './adaptiveTestComponentRegistration';
 import { TestScript } from './testScript';
 
+/**
+ * In charge of running Dialog Adaptive tests.
+ */
 export class TestRunner {
-    private resourceExplorer: ResourceExplorer;
-    private testAdapter: AdaptiveTestAdapter;
-
-    public constructor(resourcePath: string) {
-        this.resourceExplorer = new ResourceExplorer();
-        this.resourceExplorer.addFolder(resourcePath, true, false);
-        this.resourceExplorer.addComponent(new AdaptiveDialogComponentRegistration(this.resourceExplorer));
-        this.resourceExplorer.addComponent(new AdaptiveDialogTestComponentRegistration(this.resourceExplorer));
-
-        this.testAdapter = new AdaptiveTestAdapter(AdaptiveTestAdapter.createConversation('botbuilder-dialogs-adaptive-testing'));
+    /**
+     * Initializes a new instance of the `TestRunner` class.
+     * @param resourcePath Path where the `.dialog` files are located.
+     */
+    public constructor(private resourcePath: string) {
+        ComponentRegistration.add(new AdaptiveComponentRegistration());
+        ComponentRegistration.add(new AdaptiveTestComponentRegistration());
+        ComponentRegistration.add(new QnAMakerComponentRegistration());
+        ComponentRegistration.add(new LuisComponentRegistration());
     }
 
-    public async runTestScript(testName: string): Promise<any> {
-        const script = this.resourceExplorer.loadType(`${ testName }.test.dialog`) as TestScript;
+    /**
+     * Runs a test script with the specified name.
+     * @param testName Test name.
+     * @returns A Promise that represents the work queued to execute.
+     */
+    public runTestScript(testName: string): Promise<void> {
+        // Construct a fresh test adapter
+        const testAdapter = new TestAdapter(TestAdapter.createConversation('botbuilder-dialogs-adaptive-testing'));
+
+        // Construct a fresh resourceExplorer
+        const resourceExplorer = new ResourceExplorer();
+        resourceExplorer.addFolder(this.resourcePath, true, false);
+
+        const script = resourceExplorer.loadType<TestScript>(`${testName}.test.dialog`);
         script.description = script.description || testName;
-        this.testAdapter.activeQueue = [];
-        await script.execute(this.resourceExplorer, testName, this.testAdapter);
+
+        return script.execute(resourceExplorer, testName, testAdapter);
     }
 }

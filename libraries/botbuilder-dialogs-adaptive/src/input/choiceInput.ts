@@ -5,23 +5,55 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { DialogContext, Choice, ListStyle, ChoiceFactoryOptions, FindChoicesOptions, ChoiceFactory, recognizeChoices, ModelResult, FoundChoice } from 'botbuilder-dialogs';
+import {
+    EnumExpression,
+    EnumExpressionConverter,
+    Expression,
+    ObjectExpression,
+    ObjectExpressionConverter,
+    StringExpression,
+    StringExpressionConverter,
+} from 'adaptive-expressions';
 import { Activity } from 'botbuilder-core';
-import { InputDialog, InputState } from './inputDialog';
+import {
+    Choice,
+    ChoiceFactory,
+    ChoiceFactoryOptions,
+    Converter,
+    ConverterFactory,
+    DialogContext,
+    FindChoicesOptions,
+    ListStyle,
+    PromptCultureModels,
+    recognizeChoices,
+} from 'botbuilder-dialogs';
+import { InputDialog, InputDialogConfiguration, InputState } from './inputDialog';
 import { ChoiceSet } from './choiceSet';
-import { ObjectExpression, StringExpression, ArrayExpression, EnumExpression } from 'adaptive-expressions';
-
 
 export enum ChoiceOutputFormat {
     value = 'value',
-    index = 'index'
+    index = 'index',
 }
 
 export interface ChoiceInputOptions {
     choices: Choice[];
 }
 
-export class ChoiceInput extends InputDialog {
+export interface ChoiceInputConfiguration extends InputDialogConfiguration {
+    choices?: ChoiceSet | string | Expression | ObjectExpression<ChoiceSet>;
+    style?: ListStyle | string | Expression | EnumExpression<ListStyle>;
+    defaultLocale?: string | Expression | StringExpression;
+    outputFormat?: ChoiceOutputFormat | string | Expression | EnumExpression<ChoiceOutputFormat>;
+    choiceOptions?: ChoiceFactoryOptions | string | Expression | ObjectExpression<ChoiceFactoryOptions>;
+    recognizerOptions?: FindChoicesOptions | string | Expression | ObjectExpression<FindChoicesOptions>;
+}
+
+/**
+ * ChoiceInput - Declarative input to gather choices from user.
+ */
+export class ChoiceInput extends InputDialog implements ChoiceInputConfiguration {
+    public static $kind = 'Microsoft.ChoiceInput';
+
     /**
      * Default options for rendering the choices to the user based on locale.
      */
@@ -33,13 +65,13 @@ export class ChoiceInput extends InputDialog {
         'de-de': { inlineSeparator: ', ', inlineOr: ' oder ', inlineOrMore: ', oder ', includeNumbers: true },
         'ja-jp': { inlineSeparator: '、 ', inlineOr: ' または ', inlineOrMore: '、 または ', includeNumbers: true },
         'pt-br': { inlineSeparator: ', ', inlineOr: ' ou ', inlineOrMore: ', ou ', includeNumbers: true },
-        'zh-cn': { inlineSeparator: '， ', inlineOr: ' 要么 ', inlineOrMore: '， 要么 ', includeNumbers: true }
+        'zh-cn': { inlineSeparator: '， ', inlineOr: ' 要么 ', inlineOrMore: '， 要么 ', includeNumbers: true },
     };
 
     /**
      * List of choices to present to user.
      */
-    public choices: ObjectExpression<ChoiceSet>;
+    public choices: ObjectExpression<ChoiceSet> = new ObjectExpression();
 
     /**
      * Style of the "yes" and "no" choices rendered to the user when prompting.
@@ -57,7 +89,9 @@ export class ChoiceInput extends InputDialog {
     /**
      * Control the format of the response (value or index of the choice).
      */
-    public outputFormat: EnumExpression<ChoiceOutputFormat> = new EnumExpression<ChoiceOutputFormat>(ChoiceOutputFormat.value);
+    public outputFormat: EnumExpression<ChoiceOutputFormat> = new EnumExpression<ChoiceOutputFormat>(
+        ChoiceOutputFormat.value
+    );
 
     /**
      * Additional options passed to the `ChoiceFactory` and used to tweak the style of choices
@@ -70,8 +104,34 @@ export class ChoiceInput extends InputDialog {
      */
     public recognizerOptions?: ObjectExpression<FindChoicesOptions> = new ObjectExpression();
 
+    public getConverter(property: keyof ChoiceInputConfiguration): Converter | ConverterFactory {
+        switch (property) {
+            case 'choices':
+                return new ObjectExpressionConverter<ChoiceSet>();
+            case 'style':
+                return new EnumExpressionConverter<ListStyle>(ListStyle);
+            case 'defaultLocale':
+                return new StringExpressionConverter();
+            case 'outputFormat':
+                return new EnumExpressionConverter<ChoiceOutputFormat>(ChoiceOutputFormat);
+            case 'choiceOptions':
+                return new ObjectExpressionConverter<ChoiceFactoryOptions>();
+            case 'recognizerOptions':
+                return new ObjectExpressionConverter<FindChoicesOptions>();
+            default:
+                return super.getConverter(property);
+        }
+    }
+
+    /**
+     * @protected
+     * Method which processes options.
+     * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
+     * @param options Optional, initial information to pass to the dialog.
+     * @returns The modified [ChoiceInputOptions](xref:botbuilder-dialogs-adaptive.ChoiceInputOptions) options.
+     */
     protected onInitializeOptions(dc: DialogContext, options: ChoiceInputOptions): ChoiceInputOptions {
-        if (!options || !options.choices || options.choices.length == 0) {
+        if (!(options && options.choices && options.choices.length > 0)) {
             if (!options) {
                 options = { choices: [] };
             }
@@ -81,27 +141,32 @@ export class ChoiceInput extends InputDialog {
         return super.onInitializeOptions(dc, options);
     }
 
+    /**
+     * @protected
+     * Called when input has been received.
+     * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
+     * @returns [InputState](xref:botbuilder-dialogs-adaptive.InputState) which reflects whether input was recognized as valid or not.
+     */
     protected async onRecognizeInput(dc: DialogContext): Promise<InputState> {
         // Get input and options
-        let input: string = dc.state.getValue(InputDialog.VALUE_PROPERTY).toString();
+        const input: string = dc.state.getValue(InputDialog.VALUE_PROPERTY).toString();
         const options: ChoiceInputOptions = dc.state.getValue(InputDialog.OPTIONS_PROPERTY);
 
         // Format choices
         const choices = ChoiceFactory.toChoices(options.choices);
 
         // Initialize recognizer options
-        const activity: Activity = dc.context.activity;
-        const opt: FindChoicesOptions = Object.assign({}, this.recognizerOptions.getValue(dc.state));
-        opt.locale = activity.locale || opt.locale || this.defaultLocale.getValue(dc.state) || 'en-us';
+        const opt = Object.assign({}, this.recognizerOptions.getValue(dc.state));
+        opt.locale = this.determineCulture(dc, opt);
 
         // Recognize input
-        const results: ModelResult<FoundChoice>[] = recognizeChoices(input, choices, opt);
+        const results = recognizeChoices(input, choices, opt);
         if (!Array.isArray(results) || results.length == 0) {
             return InputState.unrecognized;
         }
 
         // Format output and return success
-        const foundChoice: FoundChoice = results[0].resolution;
+        const foundChoice = results[0].resolution;
         switch (this.outputFormat.getValue(dc.state)) {
             case ChoiceOutputFormat.value:
             default:
@@ -115,25 +180,46 @@ export class ChoiceInput extends InputDialog {
         return InputState.valid;
     }
 
+    /**
+     * @protected
+     * Method which renders the prompt to the user given the current input state.
+     * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
+     * @param state Dialog [InputState](xref:botbuilder-dialogs-adaptive.InputState).
+     * @returns An [Activity](xref:botframework-schema.Activity) `Promise` representing the asynchronous operation.
+     */
     protected async onRenderPrompt(dc: DialogContext, state: InputState): Promise<Partial<Activity>> {
         // Determine locale
-        let locale: string = dc.context.activity.locale || this.defaultLocale.getValue(dc.state);
-        if (!locale || !ChoiceInput.defaultChoiceOptions.hasOwnProperty(locale)) {
-            locale = 'en-us';
-        }
+        let locale = this.determineCulture(dc);
 
-        const choices: Choice[] = this.choices.getValue(dc.state);
+        const choices = this.choices.getValue(dc.state);
 
         // Format prompt to send
         const prompt = await super.onRenderPrompt(dc, state);
-        const channelId: string = dc.context.activity.channelId;
-        const choiceOptions: ChoiceFactoryOptions = (this.choiceOptions && this.choiceOptions.getValue(dc.state)) || ChoiceInput.defaultChoiceOptions[locale];
+        const channelId = dc.context.activity.channelId;
+        const choiceOptions =
+            (this.choiceOptions && this.choiceOptions.getValue(dc.state)) || ChoiceInput.defaultChoiceOptions[locale];
         const style = this.style.getValue(dc.state);
         return Promise.resolve(this.appendChoices(prompt, channelId, choices, style, choiceOptions));
     }
 
+    /**
+     * @protected
+     */
     protected onComputeId(): string {
-        return `ChoiceInput[${ this.prompt && this.prompt.toString() }]`;
+        return `ChoiceInput[${this.prompt && this.prompt.toString()}]`;
     }
 
+    private determineCulture(dc: DialogContext, opt?: FindChoicesOptions): string {
+        const optLocale = opt && opt.locale ? opt.locale : null;
+        let culture = PromptCultureModels.mapToNearestLanguage(
+            dc.context.activity.locale ||
+            optLocale ||
+            (this.defaultLocale && this.defaultLocale.getValue(dc.state)));
+
+        if (!(culture && ChoiceInput.defaultChoiceOptions.hasOwnProperty(culture))) {
+            culture = PromptCultureModels.English.locale;
+        }
+
+        return culture;
+    }
 }

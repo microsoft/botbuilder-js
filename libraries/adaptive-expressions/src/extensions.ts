@@ -26,8 +26,14 @@ export class Extensions {
             return false;
         }
 
-        return 'getValue' in obj && 'setValue' in obj && 'version' in obj
-            && typeof obj.getValue === 'function' && typeof obj.setValue === 'function' && typeof obj.version === 'function';
+        return (
+            'getValue' in obj &&
+            'setValue' in obj &&
+            'version' in obj &&
+            typeof obj.getValue === 'function' &&
+            typeof obj.setValue === 'function' &&
+            typeof obj.version === 'function'
+        );
     }
 
     /**

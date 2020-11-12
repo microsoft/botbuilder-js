@@ -1,5 +1,5 @@
 /**
- * @module botbuilder
+ * @module botframework-connector
  */
 /**
  * Copyright (c) Microsoft Corporation. All rights reserved.
@@ -20,23 +20,26 @@ import { AuthenticationError } from './authenticationError';
 /**
  * Validates JWT tokens sent to and from a Skill.
  */
+// eslint-disable-next-line @typescript-eslint/no-namespace
 export namespace SkillValidation {
     /**
      * TO SKILL FROM BOT and TO BOT FROM SKILL: Token validation parameters when connecting a bot to a skill.
      */
     const _tokenValidationParameters: VerifyOptions = {
         issuer: [
-            'https://sts.windows.net/d6d49420-f39b-4df7-a1dc-d59a935871db/',                    // Auth v3.1, 1.0 token
-            'https://login.microsoftonline.com/d6d49420-f39b-4df7-a1dc-d59a935871db/v2.0',      // Auth v3.1, 2.0 token
-            'https://sts.windows.net/f8cdef31-a31e-4b4a-93e4-5f571e91255a/',                    // Auth v3.2, 1.0 token
-            'https://login.microsoftonline.com/f8cdef31-a31e-4b4a-93e4-5f571e91255a/v2.0',      // Auth v3.2, 2.0 token
-            'https://sts.windows.net/72f988bf-86f1-41af-91ab-2d7cd011db47/',                    // ???
-            'https://sts.windows.net/cab8a31a-1906-4287-a0d8-4eef66b95f6e/',                    // US Gov Auth, 1.0 token
-            'https://login.microsoftonline.us/cab8a31a-1906-4287-a0d8-4eef66b95f6e/v2.0',       // US Gov Auth, 2.0 token
+            'https://sts.windows.net/d6d49420-f39b-4df7-a1dc-d59a935871db/', // Auth v3.1, 1.0 token
+            'https://login.microsoftonline.com/d6d49420-f39b-4df7-a1dc-d59a935871db/v2.0', // Auth v3.1, 2.0 token
+            'https://sts.windows.net/f8cdef31-a31e-4b4a-93e4-5f571e91255a/', // Auth v3.2, 1.0 token
+            'https://login.microsoftonline.com/f8cdef31-a31e-4b4a-93e4-5f571e91255a/v2.0', // Auth v3.2, 2.0 token
+            'https://sts.windows.net/72f988bf-86f1-41af-91ab-2d7cd011db47/', // ???
+            'https://sts.windows.net/cab8a31a-1906-4287-a0d8-4eef66b95f6e/', // US Gov Auth, 1.0 token
+            'https://login.microsoftonline.us/cab8a31a-1906-4287-a0d8-4eef66b95f6e/v2.0', // US Gov Auth, 2.0 token
+            "https://login.microsoftonline.us/f8cdef31-a31e-4b4a-93e4-5f571e91255a/",           // Auth for US Gov, 1.0 token
+            "https://login.microsoftonline.us/f8cdef31-a31e-4b4a-93e4-5f571e91255a/v2.0",       // Auth for US Gov, 2.0 token
         ],
         audience: undefined, // Audience validation takes place manually in code.
         clockTolerance: 5 * 60,
-        ignoreExpiration: false
+        ignoreExpiration: false,
     };
 
     /**
@@ -52,19 +55,15 @@ export namespace SkillValidation {
         // We know is a valid token, split it and work with it:
         // [0] = "Bearer"
         // [1] = "[Big Long String]"
-        const bearerToken: string = authHeader.trim().split(' ')[1];
+        const [, ...bearerTokens] = authHeader.trim().split(' ');
 
         // Parse the Big Long String into an actual token.
-        const payload: any = decode(bearerToken);
+        const payload = decode(bearerTokens.join(' '));
 
-        const claims: Claim[] = Object.keys(payload).reduce(
-            (acc: any, key: any) => {
-                acc.push({ type: key, value: payload[key] });
-
-                return acc;
-            },
-            <Claim[]>[]
-        );
+        let claims: Claim[] = [];
+        if (payload && typeof payload === 'object') {
+            claims = Object.entries(payload).map(([type, value]) => ({ type, value }));
+        }
 
         return isSkillClaim(claims);
     }
@@ -86,16 +85,29 @@ export namespace SkillValidation {
             throw new TypeError(`SkillValidation.isSkillClaim(): missing claims.`);
         }
 
-        const versionClaim = claims.find(c => c.type === AuthenticationConstants.VersionClaim);
+        // Group claims by type for fast lookup
+        const claimsByType = claims.reduce((acc, claim) => ({ ...acc, [claim.type]: claim }), {});
+
+        // Short circuit if this is a anonymous skill app ID (generated via createAnonymousSkillClaim)
+        const appIdClaim = claimsByType[AuthenticationConstants.AppIdClaim];
+        if (appIdClaim && appIdClaim.value === AuthenticationConstants.AnonymousSkillAppId) {
+            return true;
+        }
+
+        const versionClaim = claimsByType[AuthenticationConstants.VersionClaim];
         const versionValue = versionClaim && versionClaim.value;
         if (!versionValue) {
             // Must have a version claim.
             return false;
         }
 
-        const audClaim = claims.find(c => c.type === AuthenticationConstants.AudienceClaim);
+        const audClaim = claimsByType[AuthenticationConstants.AudienceClaim];
         const audienceValue = audClaim && audClaim.value;
-        if (!audClaim || AuthenticationConstants.ToBotFromChannelTokenIssuer === audienceValue || GovernmentConstants.ToBotFromChannelTokenIssuer === audienceValue) {
+        if (
+            !audClaim ||
+            AuthenticationConstants.ToBotFromChannelTokenIssuer === audienceValue ||
+            GovernmentConstants.ToBotFromChannelTokenIssuer === audienceValue
+        ) {
             // The audience is https://api.botframework.com and not an appId.
             return false;
         }
@@ -123,22 +135,32 @@ export namespace SkillValidation {
         credentials: ICredentialProvider,
         channelService: string,
         channelId: string,
-        authConfig: AuthenticationConfiguration): Promise<ClaimsIdentity> {
+        authConfig: AuthenticationConfiguration
+    ): Promise<ClaimsIdentity> {
         if (!authConfig) {
-            throw new AuthenticationError('SkillValidation.authenticateChannelToken(): invalid authConfig parameter', StatusCodes.INTERNAL_SERVER_ERROR);
+            throw new AuthenticationError(
+                'SkillValidation.authenticateChannelToken(): invalid authConfig parameter',
+                StatusCodes.INTERNAL_SERVER_ERROR
+            );
         }
 
-        const openIdMetadataUrl = JwtTokenValidation.isGovernment(channelService) ?
-            GovernmentConstants.ToBotFromEmulatorOpenIdMetadataUrl : 
-            AuthenticationConstants.ToBotFromEmulatorOpenIdMetadataUrl;
+        const openIdMetadataUrl = JwtTokenValidation.isGovernment(channelService)
+            ? GovernmentConstants.ToBotFromEmulatorOpenIdMetadataUrl
+            : AuthenticationConstants.ToBotFromEmulatorOpenIdMetadataUrl;
 
         const tokenExtractor = new JwtTokenExtractor(
             _tokenValidationParameters,
             openIdMetadataUrl,
-            AuthenticationConstants.AllowedSigningAlgorithms);
+            AuthenticationConstants.AllowedSigningAlgorithms
+        );
 
         const parts: string[] = authHeader.split(' ');
-        const identity = await tokenExtractor.getIdentity(parts[0], parts[1], channelId, authConfig.requiredEndorsements);
+        const identity = await tokenExtractor.getIdentity(
+            parts[0],
+            parts[1],
+            channelId,
+            authConfig.requiredEndorsements
+        );
 
         await validateIdentity(identity, credentials);
 
@@ -148,48 +170,81 @@ export namespace SkillValidation {
     /**
      * @ignore
      * @private
-     * @param identity 
-     * @param credentials 
+     * @param identity
+     * @param credentials
      */
     export async function validateIdentity(identity: ClaimsIdentity, credentials: ICredentialProvider): Promise<void> {
         if (!identity) {
             // No valid identity. Not Authorized.
-            throw new AuthenticationError('SkillValidation.validateIdentity(): Invalid identity', StatusCodes.UNAUTHORIZED);
+            throw new AuthenticationError(
+                'SkillValidation.validateIdentity(): Invalid identity',
+                StatusCodes.UNAUTHORIZED
+            );
         }
 
         if (!identity.isAuthenticated) {
             // The token is in some way invalid. Not Authorized.
-            throw new AuthenticationError('SkillValidation.validateIdentity(): Token not authenticated', StatusCodes.UNAUTHORIZED);
+            throw new AuthenticationError(
+                'SkillValidation.validateIdentity(): Token not authenticated',
+                StatusCodes.UNAUTHORIZED
+            );
         }
 
         const versionClaim = identity.getClaimValue(AuthenticationConstants.VersionClaim);
         // const versionClaim = identity.claims.FirstOrDefault(c => c.Type == AuthenticationConstants.VersionClaim);
         if (!versionClaim) {
             // No version claim
-            throw new AuthenticationError(`SkillValidation.validateIdentity(): '${AuthenticationConstants.VersionClaim}' claim is required on skill Tokens.`, StatusCodes.UNAUTHORIZED);
+            throw new AuthenticationError(
+                `SkillValidation.validateIdentity(): '${AuthenticationConstants.VersionClaim}' claim is required on skill Tokens.`,
+                StatusCodes.UNAUTHORIZED
+            );
         }
 
         // Look for the "aud" claim, but only if issued from the Bot Framework
         const audienceClaim = identity.getClaimValue(AuthenticationConstants.AudienceClaim);
         if (!audienceClaim) {
             // Claim is not present or doesn't have a value. Not Authorized.
-            throw new AuthenticationError(`SkillValidation.validateIdentity(): '${AuthenticationConstants.AudienceClaim}' claim is required on skill Tokens.`, StatusCodes.UNAUTHORIZED);
+            throw new AuthenticationError(
+                `SkillValidation.validateIdentity(): '${AuthenticationConstants.AudienceClaim}' claim is required on skill Tokens.`,
+                StatusCodes.UNAUTHORIZED
+            );
         }
 
-        if (!await credentials.isValidAppId(audienceClaim)) {
+        if (!(await credentials.isValidAppId(audienceClaim))) {
             // The AppId is not valid. Not Authorized.
-            throw new AuthenticationError('SkillValidation.validateIdentity(): Invalid audience.', StatusCodes.UNAUTHORIZED);
+            throw new AuthenticationError(
+                'SkillValidation.validateIdentity(): Invalid audience.',
+                StatusCodes.UNAUTHORIZED
+            );
         }
-        
+
         const appId = JwtTokenValidation.getAppIdFromClaims(identity.claims);
         if (!appId) {
             // Invalid appId
-            throw new AuthenticationError('SkillValidation.validateIdentity(): Invalid appId.', StatusCodes.UNAUTHORIZED);
+            throw new AuthenticationError(
+                'SkillValidation.validateIdentity(): Invalid appId.',
+                StatusCodes.UNAUTHORIZED
+            );
         }
 
         // TODO: check the appId against the registered skill client IDs.
         // Check the AppId and ensure that only works against my whitelist authConfig can have info on how to get the
         // whitelist AuthenticationConfiguration
         // We may need to add a ClaimsIdentityValidator delegate or class that allows the dev to inject a custom validator.
+    }
+
+    /**
+     * Creates a set of claims that represent an anonymous skill. Useful for testing bots locally in the emulator
+     */
+    export function createAnonymousSkillClaim(): ClaimsIdentity {
+        return new ClaimsIdentity(
+            [
+                {
+                    type: AuthenticationConstants.AppIdClaim,
+                    value: AuthenticationConstants.AnonymousSkillAppId,
+                },
+            ],
+            AuthenticationConstants.AnonymousAuthType
+        );
     }
 }

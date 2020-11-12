@@ -1,3 +1,4 @@
+/* eslint-disable security/detect-object-injection */
 /**
  * @module adaptive-expressions
  */
@@ -12,7 +13,7 @@ import { Expression } from '../expression';
 import { EvaluatorLookup } from '../expressionEvaluator';
 import { ExpressionParserInterface } from '../expressionParserInterface';
 import { ExpressionType } from '../expressionType';
-import {  ExpressionAntlrLexer, ExpressionAntlrParser, ExpressionAntlrParserVisitor } from './generated';
+import { ExpressionAntlrLexer, ExpressionAntlrParser, ExpressionAntlrParserVisitor } from './generated';
 import * as ep from './generated/ExpressionAntlrParser';
 import { ParseErrorListener } from './parseErrorListener';
 
@@ -27,8 +28,9 @@ export class ExpressionParser implements ExpressionParserInterface {
 
     private static expressionDict: Map<string, ParseTree> = new Map<string, ParseTree>();
 
-    private readonly ExpressionTransformer = class extends AbstractParseTreeVisitor<Expression> implements ExpressionAntlrParserVisitor<Expression> {
-
+    private readonly ExpressionTransformer = class
+        extends AbstractParseTreeVisitor<Expression>
+        implements ExpressionAntlrParserVisitor<Expression> {
         private readonly escapeRegex: RegExp = new RegExp(/\\[^\r\n]?/g);
         private readonly _lookupFunction: EvaluatorLookup = undefined;
         public constructor(lookup: EvaluatorLookup) {
@@ -54,6 +56,14 @@ export class ExpressionParser implements ExpressionParserInterface {
             const right: Expression = this.visit(context.expression(1));
 
             return this.makeExpression(binaryOperationName, left, right);
+        }
+
+        public visitTripleOpExp(context: ep.TripleOpExpContext): Expression {
+            const conditionalExpression: Expression = this.visit(context.expression(0));
+            const left: Expression = this.visit(context.expression(1));
+            const right: Expression = this.visit(context.expression(2));
+
+            return this.makeExpression(ExpressionType.If, conditionalExpression, left, right);
         }
 
         public visitFuncInvokeExp(context: ep.FuncInvokeExpContext): Expression {
@@ -89,10 +99,9 @@ export class ExpressionParser implements ExpressionParserInterface {
         }
 
         public visitIndexAccessExp(context: ep.IndexAccessExpContext): Expression {
-            let instance: Expression;
             const property: Expression = this.visit(context.expression());
 
-            instance = this.visit(context.primaryExpression());
+            const instance = this.visit(context.primaryExpression());
 
             return this.makeExpression(ExpressionType.Element, instance, property);
         }
@@ -110,24 +119,26 @@ export class ExpressionParser implements ExpressionParserInterface {
                 return new Constant(numberValue);
             }
 
-            throw new Error(`${ context.text } is not a number.`);
+            throw new Error(`${context.text} is not a number.`);
         }
 
-        public visitParenthesisExp = (context: ep.ParenthesisExpContext): Expression => this.visit(context.expression());
+        public visitParenthesisExp = (context: ep.ParenthesisExpContext): Expression =>
+            this.visit(context.expression());
 
         public visitArrayCreationExp(context: ep.ArrayCreationExpContext): Expression {
             const parameters: Expression[] = this.processArgsList(context.argsList());
             return this.makeExpression(ExpressionType.CreateArray, ...parameters);
-        } 
+        }
 
         public visitStringAtom(context: ep.StringAtomContext): Expression {
             let text: string = context.text;
-            if (text.startsWith('\'') && text.endsWith('\'')) {
-                text = text.substr(1, text.length - 2).replace(/\\'/g, '\'');
-            } else if (text.startsWith('"') && text.endsWith('"')) { // start with ""
+            if (text.startsWith("'") && text.endsWith("'")) {
+                text = text.substr(1, text.length - 2).replace(/\\'/g, "'");
+            } else if (text.startsWith('"') && text.endsWith('"')) {
+                // start with ""
                 text = text.substr(1, text.length - 2).replace(/\\"/g, '"');
             } else {
-                throw new Error(`Invalid string ${ text }`);
+                throw new Error(`Invalid string ${text}`);
             }
 
             return new Constant(this.evalEscape(text));
@@ -147,7 +158,12 @@ export class ExpressionParser implements ExpressionParserInterface {
                         }
                     }
 
-                    expr = this.makeExpression(ExpressionType.SetProperty, expr, new Constant(key), this.visit(kvPair.expression()));
+                    expr = this.makeExpression(
+                        ExpressionType.SetProperty,
+                        expr,
+                        new Constant(key),
+                        this.visit(kvPair.expression())
+                    );
                 }
             }
 
@@ -155,41 +171,41 @@ export class ExpressionParser implements ExpressionParserInterface {
         }
 
         public visitStringInterpolationAtom(context: ep.StringInterpolationAtomContext): Expression {
-            let children: Expression[] = [new Constant('')];
+            const children: Expression[] = [new Constant('')];
 
-            for (const node  of context.stringInterpolation().children) {
-                if (node instanceof TerminalNode){
-                    switch((node as TerminalNode).symbol.type) {
-                        case ep.ExpressionAntlrParser.TEMPLATE:
+            for (const node of context.stringInterpolation().children) {
+                if (node instanceof TerminalNode) {
+                    switch ((node as TerminalNode).symbol.type) {
+                        case ep.ExpressionAntlrParser.TEMPLATE: {
                             const expressionString = this.trimExpression(node.text);
                             children.push(Expression.parse(expressionString, this._lookupFunction));
                             break;
-                        case ep.ExpressionAntlrParser.ESCAPE_CHARACTER:
-                            children.push(new Constant(this.evalEscape(node.text).replace(/\\`/g, '`').replace(/\\\$/g, '$')));
+                        }
+                        case ep.ExpressionAntlrParser.ESCAPE_CHARACTER: {
+                            children.push(new Constant(node.text.replace(/\\`/g, '`').replace(/\\\$/g, '$')));
                             break;
+                        }
                         default:
                             break;
                     }
                 } else {
-                    const text = this.evalEscape(node.text);
-                    children.push(new Constant(text));
+                    children.push(new Constant(node.text));
                 }
-                
             }
 
             return this.makeExpression(ExpressionType.Concat, ...children);
-
         }
         protected defaultResult = (): Expression => new Constant('');
 
         private readonly makeExpression = (functionType: string, ...children: Expression[]): Expression => {
             if (!this._lookupFunction(functionType)) {
-                throw new Error(`${ functionType } does not have an evaluator, it's not a built-in function or a custom function.`);
+                throw new Error(
+                    `${functionType} does not have an evaluator, it's not a built-in function or a custom function.`
+                );
             }
 
             return Expression.makeExpression(functionType, this._lookupFunction(functionType), ...children);
-        }
-           
+        };
 
         private processArgsList(context: ep.ArgsListContext): Expression[] {
             const result: Expression[] = [];
@@ -199,11 +215,14 @@ export class ExpressionParser implements ExpressionParserInterface {
 
             for (const child of context.children) {
                 if (child instanceof ep.LambdaContext) {
-                    const evalParam = this.makeExpression(ExpressionType.Accessor, new Constant(child.IDENTIFIER().text));
+                    const evalParam = this.makeExpression(
+                        ExpressionType.Accessor,
+                        new Constant(child.IDENTIFIER().text)
+                    );
                     const evalFun = this.visit(child.expression());
                     result.push(evalParam);
                     result.push(evalFun);
-                } else if (child instanceof ep.ExpressionContext){
+                } else if (child instanceof ep.ExpressionContext) {
                     result.push(this.visit(child));
                 }
             }
@@ -216,13 +235,13 @@ export class ExpressionParser implements ExpressionParserInterface {
             if (result.startsWith('$')) {
                 result = result.substr(1);
             }
-    
+
             result = result.trim();
-            
+
             if (result.startsWith('{') && result.endsWith('}')) {
                 result = result.substr(1, result.length - 2);
             }
-    
+
             return result.trim();
         }
 
@@ -231,10 +250,10 @@ export class ExpressionParser implements ExpressionParserInterface {
                 '\\r': '\r',
                 '\\n': '\n',
                 '\\t': '\t',
-                '\\\\': '\\'
+                '\\\\': '\\',
             };
-    
-            return text.replace(this.escapeRegex, (sub: string): string => { 
+
+            return text.replace(this.escapeRegex, (sub: string): string => {
                 if (sub in validCharactersDict) {
                     return validCharactersDict[sub];
                 } else {
@@ -244,10 +263,20 @@ export class ExpressionParser implements ExpressionParserInterface {
         }
     };
 
+    /**
+     * Initializes a new instance of the [ExpressionParser](xref:adaptive-expressions.ExpressionParser) class.
+     * @param lookup [EvaluatorLookup](xref:adaptive-expressions.EvaluatorLookup) for information from type string.
+     */
     public constructor(lookup?: EvaluatorLookup) {
         this.EvaluatorLookup = lookup || Expression.lookup;
     }
 
+    /**
+     * @protected
+     * Parse the expression to ANTLR lexer and parser.
+     * @param expression The input string expression.
+     * @returns A ParseTree.
+     */
     protected static antlrParse(expression: string): ParseTree {
         if (ExpressionParser.expressionDict.has(expression)) {
             return ExpressionParser.expressionDict.get(expression);
@@ -281,7 +310,9 @@ export class ExpressionParser implements ExpressionParserInterface {
         if (expression === undefined || expression === null || expression === '') {
             return new Constant('');
         } else {
-            return new this.ExpressionTransformer(this.EvaluatorLookup).transform(ExpressionParser.antlrParse(expression));
+            return new this.ExpressionTransformer(this.EvaluatorLookup).transform(
+                ExpressionParser.antlrParse(expression)
+            );
         }
     }
 }

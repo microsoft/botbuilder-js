@@ -19,17 +19,22 @@ import { ReturnType } from '../returnType';
  * Return the query value of a unified resource identifier (URI).
  */
 export class UriQuery extends ExpressionEvaluator {
+    /**
+     * Initializes a new instance of the [UriQuery](xref:adaptive-expressions.UriQuery) class.
+     */
     public constructor() {
         super(ExpressionType.UriQuery, UriQuery.evaluator, ReturnType.String, FunctionUtils.validateUnary);
     }
 
+    /**
+     * @private
+     */
     private static evaluator(expr: Expression, state: MemoryInterface, options: Options): ValueWithError {
         let value: any;
-        let error: string;
-        let args: any[];
-        ({ args, error } = FunctionUtils.evaluateChildren(expr, state, options));
+        const { args, error: childrenError } = FunctionUtils.evaluateChildren(expr, state, options);
+        let error = childrenError;
         if (!error) {
-            if (typeof (args[0]) === 'string') {
+            if (typeof args[0] === 'string') {
                 ({ value, error } = UriQuery.evalUriQuery(args[0]));
             } else {
                 error = `${expr} should contain a URI string.`;
@@ -39,11 +44,13 @@ export class UriQuery extends ExpressionEvaluator {
         return { value, error };
     }
 
+    /**
+     * @private
+     */
     private static evalUriQuery(uri: string): ValueWithError {
         let result: string;
-        let error: string;
-        let parsed: URL;
-        ({ value: parsed, error } = InternalFunctionUtils.parseUri(uri));
+        const { value: parsed, error: parseError } = InternalFunctionUtils.parseUri(uri);
+        let error = parseError;
         if (!error) {
             try {
                 result = parsed.search;

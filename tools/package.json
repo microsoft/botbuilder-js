@@ -1,5 +1,6 @@
 {
   "name": "azure",
+  "private": true,
   "author": "Microsoft Corporation",
   "contributors": [
     "Block, Glenn <gblock@microsoft.com>",
@@ -29,6 +30,7 @@
   "license": "(MIT OR Apache-2.0)",
   "dependencies": {
     "@types/request": "^2.47.1",
+    "botframework-connector": "4.1.6",
     "dotenv": "^4.0.0",
     "mime": "^1.4.1",
     "moment": "^2.22.2",
@@ -50,7 +52,7 @@
     "minami": "github:devigned/minami#master",
     "mocha": "^5.2.0",
     "nock": "^11.9.1",
-    "node-forge": "0.6.30",
+    "node-forge": "0.10.0",
     "nyc": "^11.9.0",
     "promise": "^7.1.1",
     "random-js": "1.0.4",

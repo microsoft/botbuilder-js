@@ -1,0 +1,18 @@
+steps:
+- task: colinsalmcorner.colinsalmcorner-buildtasks.tag-build-task.tagBuildOrRelease@0
+  displayName: tag build
+  inputs:
+    tags: $(PackageVersion)
+  continueOnError: true
+  condition: and(succeeded(), eq(variables['System.PullRequest.IsFork'], 'false'))
+
+- task: NodeTool@0
+  displayName: use node $(NodeVersion)
+  inputs:
+    versionSpec: $(NodeVersion)
+
+- script: yarn --frozen-lockfile
+  displayName: yarn install
+
+- script: yarn build
+  displayName: yarn build

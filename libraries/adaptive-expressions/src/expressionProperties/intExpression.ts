@@ -14,6 +14,10 @@ import { Expression } from '../expression';
  * String values are always interpreted as an expression, whether it has '=' prefix or not.
  */
 export class IntExpression extends ExpressionProperty<number> {
+    /**
+     * Initializes a new instance of the [IntExpression](xref:adaptive-expressions.IntExpression) class.
+     * @param value An int `number` or `string` expression which resolves to an int `number`.
+     */
     public constructor(value?: number | string | Expression) {
         super(value, 0);
     }
@@ -31,5 +35,23 @@ export class IntExpression extends ExpressionProperty<number> {
         }
 
         return result;
+    }
+
+    /**
+     * Set an integer value.
+     * @param value Value to set.
+     */
+    public setValue(value: number | string | Expression): void {
+        if (
+            value !== undefined &&
+            value !== null &&
+            typeof value !== 'number' &&
+            typeof value !== 'string' &&
+            !(value instanceof Expression)
+        ) {
+            throw new Error('IntExpression accepts string, number or Expression as the value.');
+        }
+
+        super.setValue(value);
     }
 }

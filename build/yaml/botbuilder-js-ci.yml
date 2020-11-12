@@ -1,39 +1,52 @@
-#
-# This runs under BotBuilder-Js-CI-yaml. Replaces classic build BotBuilder-JS-master-CI.
-#
+# This runs under botbuilder-js-ci.yml. Runs unit tests on Node versions 10, 12 and 14.
 
-# "name" here defines the build number format. Build number is accessed via $(Build.BuildNumber)
 name: $(Build.BuildId)
 
 pool:
-    vmImage: 'macOS-10.15'
+  vmImage: 'ubuntu-18.04'
 
 variables:
-  NodeVersion: 10.x
-#  CI_PULL_REQUEST: define this in Azure
-#  COVERALLS_GIT_BRANCH: define this in Azure
-#  COVERALLS_GIT_COMMIT: define this in Azure
-#  COVERALLS_SERVICE_JOB_ID: define this in Azure
-#  COVERALLS_SERVICE_NAME: define this in Azure
-#  version: define this in Azure, settable at queue time
+  PackageVersion: $(Build.BuildId)
 
 stages:
-- stage: Build
-  jobs:
-  - job:
-    steps:
-    - template: js-build-steps.yml
-
-    - powershell: |
-        pushd ..
-        Get-ChildItem -Recurse -Force | Where {$_.FullName -notlike "*node_modules*"}
-      displayName: 'Dir workspace except node-modules (takes 5 seconds)'
-      continueOnError: true
-      condition: succeededOrFailed()
-
-- stage: CodeAnalysis
+- stage: Node10CI
   dependsOn: [] # Run this stage in parallel
+  displayName: Node 10.x CI
+  variables:
+    NodeVersion: 10.x
   jobs:
-  - job:
+  - job: Node10UnitTests
+    displayName: Node 10.x Unit Tests
     steps:
-    - template: js-analysis-steps.yml
+    - template: templates/build.yml
+    - template: templates/test.yml
+    - template: templates/list-files.yml
+
+- stage: Node12CI
+  dependsOn: [] # Run this stage in parallel
+  displayName: Node 12.x CI
+  variables:
+    NodeVersion: 12.x
+  jobs:
+  - job: Node12UnitTests
+    displayName: Node 12.x Unit Tests
+    variables:
+      PublishTestResults: true # Publish test results to ADO, publish code coverage
+    steps:
+    - template: templates/build.yml
+    - template: templates/test.yml
+    - template: templates/list-files.yml
+
+- stage: Node14CI
+  dependsOn: 
+  - Node10CI # Node 14 is not the current LTS, so to save agents it will run after Node 10 completes
+  displayName: Node 14.x CI
+  variables:
+    NodeVersion: 14.x
+  jobs:
+  - job: Node14UnitTests
+    displayName: Node 14.x Unit Tests
+    steps:
+    - template: templates/build.yml
+    - template: templates/test.yml
+    - template: templates/list-files.yml

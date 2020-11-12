@@ -7,19 +7,47 @@
  */
 import fetch from 'node-fetch';
 import { Response, Headers } from 'node-fetch';
-import { DialogTurnResult, DialogContext, Dialog, Configurable } from 'botbuilder-dialogs';
-import { Converter } from 'botbuilder-dialogs-declarative';
+import {
+    BoolExpression,
+    BoolExpressionConverter,
+    EnumExpression,
+    EnumExpressionConverter,
+    Expression,
+    StringExpression,
+    StringExpressionConverter,
+    ValueExpression,
+    ValueExpressionConverter,
+} from 'adaptive-expressions';
 import { Activity } from 'botbuilder-core';
-import { ValueExpression, StringExpression, BoolExpression, EnumExpression } from 'adaptive-expressions';
+import {
+    Converter,
+    ConverterFactory,
+    DialogContext,
+    Dialog,
+    DialogTurnResult,
+    DialogConfiguration,
+} from 'botbuilder-dialogs';
 import { replaceJsonRecursively } from '../jsonExtensions';
 
-export class HttpHeadersConverter implements Converter {
-    public convert(value: object): { [key: string]: StringExpression } {
-        const headers = {};
-        for (const key in value) {
-            headers[key] = new StringExpression(value[key]);
-        }
-        return headers;
+type HeadersInput = Record<string, string>;
+type HeadersOutput = Record<string, StringExpression>;
+
+/**
+ * [HeadersInput](xref:botbuilder-dialogs-adaptive.HeadersInput) or [HeadersOutput](xref:botbuilder-dialogs-adaptive.HeadersOutput) to [HttpHeader](xref:botbuilder-dialogs-adaptive.HttpHeader) converter.
+ */
+class HttpHeadersConverter implements Converter<HeadersInput, HeadersOutput> {
+    /**
+     * Converts a [HeadersInput](xref:botbuilder-dialogs-adaptive.HeadersInput) or [HeadersOutput](xref:botbuilder-dialogs-adaptive.HeadersOutput) to [HttpHeader](xref:botbuilder-dialogs-adaptive.HttpHeader).
+     * @param value [HeadersInput](xref:botbuilder-dialogs-adaptive.HeadersInput) or [HeadersOutput](xref:botbuilder-dialogs-adaptive.HeadersOutput) to convert.
+     * @returns The [HttpHeader](xref:botbuilder-dialogs-adaptive.HttpHeader).
+     */
+    public convert(value: HeadersInput | HeadersOutput): HeadersOutput {
+        return Object.entries(value).reduce((headers, [key, value]) => {
+            return {
+                ...headers,
+                [key]: value instanceof StringExpression ? value : new StringExpression(value),
+            };
+        }, {});
     }
 }
 
@@ -47,7 +75,7 @@ export enum ResponsesTypes {
     /**
      * Binary data parsing from http response content
      */
-    Binary
+    Binary,
 }
 
 export enum HttpMethod {
@@ -74,7 +102,7 @@ export enum HttpMethod {
     /**
      * Http DELETE
      */
-    DELETE = 'DELETE'
+    DELETE = 'DELETE',
 }
 
 /**
@@ -114,9 +142,41 @@ export class Result {
     public content?: any;
 }
 
-export class HttpRequest<O extends object = {}> extends Dialog<O> implements Configurable {
+export interface HttpRequestConfiguration extends DialogConfiguration {
+    method?: HttpMethod;
+    contentType?: string | Expression | StringExpression;
+    url?: string | Expression | StringExpression;
+    headers?: HeadersInput | HeadersOutput;
+    body?: unknown | ValueExpression;
+    responseType?: ResponsesTypes | string | Expression | EnumExpression<ResponsesTypes>;
+    resultProperty?: string | Expression | StringExpression;
+    disabled?: boolean | string | Expression | BoolExpression;
+}
+
+/**
+ * Action for performing an `HttpRequest`.
+ */
+export class HttpRequest<O extends object = {}> extends Dialog<O> implements HttpRequestConfiguration {
+    public static $kind = 'Microsoft.HttpRequest';
+
     public constructor();
+
+    /**
+     * Initializes a new instance of the [HttpRequest](xref:botbuilder-dialogs-adaptive.HttpRequest) class.
+     * @param method The [HttpMethod](xref:botbuilder-dialogs-adaptive.HttpMethod), for example POST, GET, DELETE or PUT.
+     * @param url URL for the request.
+     * @param headers The headers of the request.
+     * @param body The raw body of the request.
+     */
     public constructor(method: HttpMethod, url: string, headers: { [key: string]: string }, body: any);
+
+    /**
+     * Initializes a new instance of the [HttpRequest](xref:botbuilder-dialogs-adaptive.HttpRequest) class.
+     * @param method Optional. The [HttpMethod](xref:botbuilder-dialogs-adaptive.HttpMethod), for example POST, GET, DELETE or PUT.
+     * @param url Optional. URL for the request.
+     * @param headers Optional. The headers of the request.
+     * @param body Optional. The raw body of the request.
+     */
     public constructor(method?: HttpMethod, url?: string, headers?: { [key: string]: string }, body?: any) {
         super();
         this.method = method || HttpMethod.GET;
@@ -169,6 +229,33 @@ export class HttpRequest<O extends object = {}> extends Dialog<O> implements Con
      */
     public disabled?: BoolExpression;
 
+    public getConverter(property: keyof HttpRequestConfiguration): Converter | ConverterFactory {
+        switch (property) {
+            case 'contentType':
+                return new StringExpressionConverter();
+            case 'url':
+                return new StringExpressionConverter();
+            case 'headers':
+                return new HttpHeadersConverter();
+            case 'body':
+                return new ValueExpressionConverter();
+            case 'responseType':
+                return new EnumExpressionConverter<ResponsesTypes>(ResponsesTypes);
+            case 'resultProperty':
+                return new StringExpressionConverter();
+            case 'disabled':
+                return new BoolExpressionConverter();
+            default:
+                return super.getConverter(property);
+        }
+    }
+
+    /**
+     * Starts a new [Dialog](xref:botbuilder-dialogs.Dialog) and pushes it onto the dialog stack.
+     * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
+     * @param options Optional. Initial information to pass to the dialog.
+     * @returns A `Promise` representing the asynchronous operation.
+     */
     public async beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult> {
         if (this.disabled && this.disabled.getValue(dc.state)) {
             return await dc.endDialog();
@@ -189,7 +276,7 @@ export class HttpRequest<O extends object = {}> extends Dialog<O> implements Con
 
         let instanceBody: string;
         if (this.body) {
-            let body = this.body.getValue(dc.state);
+            const body = this.body.getValue(dc.state);
             if (body) {
                 if (typeof body === 'string') {
                     instanceBody = body;
@@ -204,9 +291,9 @@ export class HttpRequest<O extends object = {}> extends Dialog<O> implements Con
                 method: instanceMethod,
                 url: instanceUrl,
                 headers: instanceHeaders,
-                content: instanceBody
+                content: instanceBody,
             },
-            response: undefined
+            response: undefined,
         };
 
         let response: Response;
@@ -272,7 +359,12 @@ export class HttpRequest<O extends object = {}> extends Dialog<O> implements Con
         return await dc.endDialog(result);
     }
 
+    /**
+     * @protected
+     * Builds the compute Id for the [Dialog](xref:botbuilder-dialogs.Dialog).
+     * @returns A `string` representing the compute Id.
+     */
     protected onComputeId(): string {
-        return `HttpRequest[${ this.method } ${ this.url }]`;
+        return `HttpRequest[${this.method} ${this.url}]`;
     }
 }

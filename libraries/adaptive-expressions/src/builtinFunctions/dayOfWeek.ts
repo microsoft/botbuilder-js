@@ -16,13 +16,21 @@ import { ReturnType } from '../returnType';
  * Return the day of the week from a timestamp.
  */
 export class DayOfWeek extends ExpressionEvaluator {
+    /**
+     * Initializes a new instance of the [DayOfWeek](xref:adaptive-expressions.DayOfWeek) class.
+     */
     public constructor() {
         super(ExpressionType.DayOfWeek, DayOfWeek.evaluator(), ReturnType.Number, FunctionUtils.validateUnaryString);
     }
 
+    /**
+     * @private
+     */
     private static evaluator(): EvaluateExpressionDelegate {
         return FunctionUtils.applyWithError(
-            (args: any[]): any => InternalFunctionUtils.parseTimestamp(args[0], (timestamp: Date): number => timestamp.getUTCDay()),
-            FunctionUtils.verifyString);
+            (args: any[]): any =>
+                InternalFunctionUtils.parseTimestamp(args[0], (timestamp: Date): number => timestamp.getUTCDay()),
+            FunctionUtils.verifyString
+        );
     }
 }

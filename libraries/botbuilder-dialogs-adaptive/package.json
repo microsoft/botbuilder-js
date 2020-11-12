@@ -3,6 +3,7 @@
   "author": "Microsoft Corp.",
   "description": "Rule system for the Microsoft BotBuilder dialog system.",
   "version": "4.1.6",
+  "preview": true,
   "license": "MIT",
   "keywords": [
     "botbuilder",
@@ -18,15 +19,21 @@
     "url": "https://github.com/Microsoft/botbuilder-js.git"
   },
   "main": "./lib/index.js",
-  "typings": "./lib/index.d.ts",
+  "types": "./lib/index.d.ts",
+  "typesVersions": {
+    "<3.9": {
+      "*": [
+        "_ts3.4/*"
+      ]
+    }
+  },
   "dependencies": {
     "@microsoft/recognizers-text-suite": "1.1.4",
-    "botbuilder-ai": "4.1.6",
+    "adaptive-expressions": "4.1.6",
     "botbuilder-core": "4.1.6",
     "botbuilder-dialogs": "4.1.6",
     "botbuilder-dialogs-declarative": "4.1.6",
     "botbuilder-lg": "4.1.6",
-    "adaptive-expressions": "4.1.6",
     "botframework-connector": "4.1.6",
     "botframework-schema": "4.1.6",
     "jsonpath": "^1.0.0",
@@ -39,19 +46,28 @@
     "@types/node": "^10.17.27",
     "@types/node-fetch": "^2.5.3",
     "codelyzer": "^4.1.0",
+    "downlevel-dts": "^0.7.0",
     "mocha": "^6.2.3",
     "nock": "^11.9.1",
+    "npm-run-all": "^4.1.5",
     "nyc": "^15.1.0",
     "source-map-support": "^0.5.3",
-    "ts-node": "^4.1.0",
-    "typescript": "3.5.3"
+    "typescript": "^4.0.5"
   },
   "scripts": {
-    "test": "npm run build && nyc mocha tests/",
-    "build": "tsc && tsc -p tests/tsconfig.json",
+    "build": "npm-run-all build:src build:tests",
     "build-docs": "typedoc --theme markdown --entryPoint botbuilder-dialogs-adaptive --excludePrivate --includeDeclarations --ignoreCompilerErrors --module amd --out ..\\..\\doc\\botbuilder-dialogs .\\lib\\index.d.ts --hideGenerator --name \"Bot Builder SDK - Dialogs\" --readme none",
+    "build:src": "tsc -b",
+    "build:tests": "tsc -p tests/tsconfig.json",
     "clean": "erase /q /s .\\lib",
-    "set-version": "npm version --allow-same-version ${Version}",
+    "postbuild": "downlevel-dts lib _ts3.4/lib",
+    "test": "yarn build && nyc mocha tests/",
     "test:compat": "api-extractor run --verbose"
-  }
+  },
+  "files": [
+    "_ts3.4",
+    "lib",
+    "schemas",
+    "src"
+  ]
 }

@@ -6,12 +6,22 @@
  * Licensed under the MIT License.
  */
 
-import { Activity, TurnContext } from 'botbuilder-core';
 import { ExpressionParser } from 'adaptive-expressions';
+import { Activity, TurnContext, TestAdapter } from 'botbuilder-core';
 import { TestAction } from '../testAction';
-import { AdaptiveTestAdapter } from '../adaptiveTestAdapter';
 
-export class AssertReplyActivity implements TestAction {
+export interface AssertReplyActivityConfiguration {
+    description?: string;
+    timeout?: number;
+    assertions?: string[];
+}
+
+/**
+ * Basic assertion TestAction, which validates assertions against a reply activity.
+ */
+export class AssertReplyActivity extends TestAction implements AssertReplyActivityConfiguration {
+    public static $kind = 'Microsoft.Test.AssertReplyActivity';
+
     /**
      * Description of what this assertion is.
      */
@@ -20,17 +30,25 @@ export class AssertReplyActivity implements TestAction {
     /**
      * The milliseconds to wait for a reply.
      */
-    public timeout: number = 3000;
+    public timeout = 3000;
 
     /**
      * The expressions for assertions.
      */
     public assertions: string[];
 
+    /**
+     * Gets the text to assert for an activity.
+     * @returns String.
+     */
     public getConditionDescription(): string {
         return this.description || this.assertions.join('\n');
     }
 
+    /**
+     * Validates the reply of an activity.
+     * @param activity The activity to verify.
+     */
     public validateReply(activity: Activity): void {
         if (this.assertions) {
             const engine = new ExpressionParser();
@@ -38,19 +56,25 @@ export class AssertReplyActivity implements TestAction {
                 const assertion = this.assertions[i];
                 const { value, error } = engine.parse(assertion).tryEvaluate(activity);
                 if (!value || error) {
-                    throw new Error(`${ this.description } ${ assertion }`);
+                    throw new Error(`${this.description} ${assertion} ${JSON.stringify(activity)}`);
                 }
             }
         }
     }
 
-    public async execute(testAdapter: AdaptiveTestAdapter, callback: (context: TurnContext) => Promise<any>): Promise<any> {
+    /**
+     * Execute the test.
+     * @param testAdapter Adapter to execute against.
+     * @param callback Logic for the bot to use.
+     * @returns A Promise that represents the work queued to execute.
+     */
+    public async execute(testAdapter: TestAdapter, callback: (context: TurnContext) => Promise<any>): Promise<any> {
         const start = new Date();
         while (true) {
             const current = new Date();
 
-            if ((current.getTime() - start.getTime()) > this.timeout) {
-                throw new Error(`${ this.timeout }ms Timed out waiting for: ${ this.getConditionDescription() }`);
+            if (current.getTime() - start.getTime() > this.timeout) {
+                throw new Error(`${this.timeout}ms Timed out waiting for: ${this.getConditionDescription()}`);
             }
 
             const replyActivity = testAdapter.getNextReply();
@@ -59,7 +83,7 @@ export class AssertReplyActivity implements TestAction {
                 return;
             }
 
-            await Promise.resolve(resolve => setTimeout(resolve, 100));
+            await Promise.resolve((resolve) => setTimeout(resolve, 100));
         }
     }
 }

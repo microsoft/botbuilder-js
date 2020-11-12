@@ -19,7 +19,7 @@ import { ResourceExplorer } from './resourceExplorer';
 export enum ResourceChangeEvent {
     added = 'added',
     changed = 'changed',
-    removed = 'removed'
+    removed = 'removed',
 }
 
 /**
@@ -85,6 +85,12 @@ export abstract class ResourceProvider {
      */
     public abstract refresh(): void;
 
+    /**
+     * @protected
+     * Actions to perform when the current object is changed.
+     * @param event Resource change event.
+     * @param resources A collection of changed resources.
+     */
     protected onChanged(event: ResourceChangeEvent, resources: Resource[]): void {
         if (this._eventEmitter) {
             this._eventEmitter.emit(event, resources);

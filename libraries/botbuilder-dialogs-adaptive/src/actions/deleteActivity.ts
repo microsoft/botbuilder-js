@@ -5,14 +5,44 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { Dialog, DialogContext, DialogTurnResult } from 'botbuilder-dialogs';
-import { StringExpression, BoolExpression } from 'adaptive-expressions';
+import {
+    BoolExpression,
+    BoolExpressionConverter,
+    Expression,
+    StringExpression,
+    StringExpressionConverter,
+} from 'adaptive-expressions';
+import {
+    Converter,
+    ConverterFactory,
+    Dialog,
+    DialogConfiguration,
+    DialogContext,
+    DialogTurnResult,
+} from 'botbuilder-dialogs';
 
-export class DeleteActivity<O extends object = {}> extends Dialog<O> {
+export interface DeleteActivityConfiguration extends DialogConfiguration {
+    activityId?: string | Expression | StringExpression;
+    disabled?: boolean | string | Expression | BoolExpression;
+}
+
+/**
+ * Ends and deletes an activity.
+ */
+export class DeleteActivity<O extends object = {}> extends Dialog<O> implements DeleteActivityConfiguration {
+    public static $kind = 'Microsoft.DeleteActivity';
+
     public constructor();
+
+    /**
+     * Initializes a new instance of the [DeleteActivity](xref:botbuilder-dialogs-adaptive.DeleteActivity) class.
+     * @param activityId ID of the activity to update.
+     */
     public constructor(activityId?: string) {
         super();
-        if (activityId) { this.activityId = new StringExpression(activityId); }
+        if (activityId) {
+            this.activityId = new StringExpression(activityId);
+        }
     }
 
     /**
@@ -25,6 +55,23 @@ export class DeleteActivity<O extends object = {}> extends Dialog<O> {
      */
     public disabled?: BoolExpression;
 
+    public getConverter(property: keyof DeleteActivityConfiguration): Converter | ConverterFactory {
+        switch (property) {
+            case 'activityId':
+                return new StringExpressionConverter();
+            case 'disabled':
+                return new BoolExpressionConverter();
+            default:
+                return super.getConverter(property);
+        }
+    }
+  
+    /**
+     * Called when the [Dialog](xref:botbuilder-dialogs.Dialog) is started and pushed onto the dialog stack.
+     * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
+     * @param options Optional. Initial information to pass to the dialog.
+     * @returns A `Promise` representing the asynchronous operation.
+     */
     public async beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult> {
         if (this.disabled && this.disabled.getValue(dc.state)) {
             return await dc.endDialog();
@@ -36,7 +83,12 @@ export class DeleteActivity<O extends object = {}> extends Dialog<O> {
         return await dc.endDialog();
     }
 
+    /**
+     * @protected
+     * Builds the compute Id for the [Dialog](xref:botbuilder-dialogs.Dialog).
+     * @returns A `string` representing the compute Id.
+     */
     protected onComputeId(): string {
-        return `DeleteActivity[${ this.activityId.toString() }]`;
+        return `DeleteActivity[${this.activityId.toString()}]`;
     }
 }

@@ -69,7 +69,6 @@ const PERSISTED_DIALOG_STATE = 'dialogs';
  * @param O (Optional) options that can be passed into the `DialogContext.beginDialog()` method.
  */
 export class ComponentDialog<O extends object = {}> extends DialogContainer<O> {
-
     /**
      * ID of the child dialog that should be started anytime the component is started.
      *
@@ -78,20 +77,36 @@ export class ComponentDialog<O extends object = {}> extends DialogContainer<O> {
      */
     protected initialDialogId: string;
 
+    /**
+     * Called when the dialog is started and pushed onto the parent's dialog stack.
+     * By default, this calls the
+     * Dialog.BeginDialogAsync(DialogContext, object, CancellationToken) method
+     * of the component dialog's initial dialog, as defined by InitialDialogId.
+     * Override this method in a derived class to implement interrupt logic.
+     * @param outerDC The parent [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
+     * @param options Optional, initial information to pass to the dialog.
+     * @returns A Promise representing the asynchronous operation.
+     * @remarks
+     * If the task is successful, the result indicates whether the dialog is still 
+     * active after the turn has been processed by the dialog.
+     */
     public async beginDialog(outerDC: DialogContext, options?: O): Promise<DialogTurnResult> {
         await this.checkForVersionChange(outerDC);
 
         telemetryTrackDialogView(this.telemetryClient, this.id);
 
         // Start the inner dialog.
-        const innerDC: DialogContext = this.createChildContext(outerDC)
+        const innerDC: DialogContext = this.createChildContext(outerDC);
         const turnResult: DialogTurnResult<any> = await this.onBeginDialog(innerDC, options);
 
         // Check for end of inner dialog
         if (turnResult.status !== DialogTurnStatus.waiting) {
             if (turnResult.status === DialogTurnStatus.cancelled) {
                 await this.endComponent(outerDC, turnResult.result);
-                const cancelledTurnResult: DialogTurnResult = { status: DialogTurnStatus.cancelled, result: turnResult.result }
+                const cancelledTurnResult: DialogTurnResult = {
+                    status: DialogTurnStatus.cancelled,
+                    result: turnResult.result,
+                };
                 return cancelledTurnResult;
             }
             // Return result to calling dialog
@@ -101,11 +116,22 @@ export class ComponentDialog<O extends object = {}> extends DialogContainer<O> {
         return Dialog.EndOfTurn;
     }
 
+    /**
+     * Called when the dialog is _continued_, where it is the active dialog and the
+     * user replies with a new [Activity](xref:botframework-schema.Activity).
+     * If this method is *not* overridden, the dialog automatically ends when the user replies.
+     * @param outerDC The parent [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
+     * @returns A Promise representing the asynchronous operation.
+     * @remarks
+     * If the task is successful, the result indicates whether the dialog is still
+     * active after the turn has been processed by the dialog. The result may also contain a
+     * return value.
+     */
     public async continueDialog(outerDC: DialogContext): Promise<DialogTurnResult> {
         await this.checkForVersionChange(outerDC);
 
         // Continue execution of inner dialog.
-        const innerDC: DialogContext = this.createChildContext(outerDC)
+        const innerDC: DialogContext = this.createChildContext(outerDC);
         const turnResult: DialogTurnResult<any> = await this.onContinueDialog(innerDC);
 
         // Check for end of inner dialog
@@ -118,6 +144,24 @@ export class ComponentDialog<O extends object = {}> extends DialogContainer<O> {
         return Dialog.EndOfTurn;
     }
 
+    /**
+     * Called when a child dialog on the parent's dialog stack completed this turn, returning
+     * control to this dialog component.
+     * @param outerDc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
+     * @param reason Reason why the dialog resumed.
+     * @param result Optional, value returned from the dialog that was called. The type
+     * of the value returned is dependent on the child dialog.
+     * @returns A Promise representing the asynchronous operation.
+     * @remarks
+     * If the task is successful, the result indicates whether this dialog is still
+     * active after this dialog turn has been processed.
+     * Generally, the child dialog was started with a call to
+     * beginDialog(DialogContext, object) in the parent's
+     * context. However, if the DialogContext.replaceDialog(string, object) method
+     * is called, the logical child dialog may be different than the original.
+     * If this method is *not* overridden, the dialog automatically calls its
+     * RepromptDialog(ITurnContext, DialogInstance) when the user replies.
+     */
     public async resumeDialog(outerDC: DialogContext, reason: DialogReason, result?: any): Promise<DialogTurnResult> {
         await this.checkForVersionChange(outerDC);
 
@@ -131,6 +175,12 @@ export class ComponentDialog<O extends object = {}> extends DialogContainer<O> {
         return Dialog.EndOfTurn;
     }
 
+    /**
+     * Called when the dialog should re-prompt the user for input.
+     * @param context The [TurnContext](xref:botbuilder-core.TurnContext) object for this turn.
+     * @param instance State information for this dialog.
+     * @returns A Promise representing the asynchronous operation.
+     */
     public async repromptDialog(context: TurnContext, instance: DialogInstance): Promise<void> {
         // Forward to inner dialogs
         const innerDC: DialogContext = this.createInnerDC(context, instance);
@@ -140,6 +190,16 @@ export class ComponentDialog<O extends object = {}> extends DialogContainer<O> {
         await this.onRepromptDialog(context, instance);
     }
 
+    /**
+     * Called when the [Dialog](xref:botbuilder-dialogs.Dialog) is ending.
+     * @param context The [TurnContext](xref:botbuilder-core.TurnContext) object for this turn.
+     * @param instance State information associated with the instance of this component
+     * [Dialog](xref:botbuilder-dialogs.Dialog) on its parent's dialog stack.
+     * @param reason Reason why the [Dialog](xref:botbuilder-dialogs.Dialog) ended.
+     * @returns A Promise representing the asynchronous operation.
+     * @remarks When this method is called from the parent dialog's context, the component [Dialog](xref:botbuilder-dialogs.Dialog)
+     * cancels all of the dialogs on its inner dialog stack before ending.
+     */
     public async endDialog(context: TurnContext, instance: DialogInstance, reason: DialogReason): Promise<void> {
         // Forward cancel to inner dialogs
         if (reason === DialogReason.cancelCalled) {
@@ -152,16 +212,16 @@ export class ComponentDialog<O extends object = {}> extends DialogContainer<O> {
     }
 
     /**
-     * Adds a child dialog or prompt to the components internal `DialogSet`.
-     *
+     * Adds a child [Dialog](xref:botbuilder-dialogs.Dialog) or prompt to the components internal [DialogSet](xref:botbuilder-dialogs.DialogSet).
+     * @param dialog The child [Dialog](xref:botbuilder-dialogs.Dialog) or prompt to add.
      * @remarks
-     * The `Dialog.id` of the first child added to the component will be assigned to the [initialDialogId](#initialdialogid)
-     * property.
-     * @param dialog The child dialog or prompt to add.
+     * The [Dialog.id](xref:botbuilder-dialogs.Dialog.id) of the first child added to the component will be assigned to the initialDialogId property.
      */
     public addDialog(dialog: Dialog): this {
         this.dialogs.add(dialog);
-        if (this.initialDialogId === undefined) { this.initialDialogId = dialog.id; }
+        if (this.initialDialogId === undefined) {
+            this.initialDialogId = dialog.id;
+        }
 
         return this;
     }
@@ -240,8 +300,32 @@ export class ComponentDialog<O extends object = {}> extends DialogContainer<O> {
         return outerDC.endDialog(result);
     }
 
+    /**
+     * @private
+     * @param context [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation with the user.
+     * @param instance [DialogInstance](xref:botbuilder-dialogs.DialogInstance) which contains the current state information for this dialog.
+     * @returns A new [DialogContext](xref:botbuilder-dialogs.DialogContext) instance.
+     * @remarks
+     * You should only call this if you don't have a dc to work with (such as OnResume())
+     */
     private createInnerDC(context: DialogContext, instance: DialogInstance): DialogContext;
+    /**
+     * @private
+     * @param context [TurnContext](xref:botbuilder-core.TurnContext) for the current turn of conversation with the user.
+     * @param instance [DialogInstance](xref:botbuilder-dialogs.DialogInstance) which contains the current state information for this dialog.
+     * @returns A new [DialogContext](xref:botbuilder-dialogs.DialogContext) instance.
+     * @remarks
+     * You should only call this if you don't have a dc to work with (such as OnResume())
+     */
     private createInnerDC(context: TurnContext, instance: DialogInstance): DialogContext;
+    /**
+     * @private
+     * @param context [TurnContext](xref:botbuilder-core.TurnContext) or [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation with the user.
+     * @param instance [DialogInstance](xref:botbuilder-dialogs.DialogInstance) which contains the current state information for this dialog.
+     * @returns A new [DialogContext](xref:botbuilder-dialogs.DialogContext) instance.
+     * @remarks
+     * You should only call this if you don't have a dc to work with (such as OnResume())
+     */
     private createInnerDC(context: TurnContext | DialogContext, instance: DialogInstance): DialogContext {
         if (!instance) {
             const dialogInstance = { state: {} };

@@ -1,3 +1,4 @@
+/* eslint-disable security/detect-object-injection */
 /**
  * @module adaptive-expressions
  */
@@ -42,7 +43,12 @@ export class FunctionUtils {
      * @param returnType Allowed return types for children.
      * If a child has a return type of Object then validation will happen at runtime.
      */
-    public static validateArityAndAnyType(expression: Expression, minArity: number, maxArity: number, returnType: ReturnType = ReturnType.Object): void {
+    public static validateArityAndAnyType(
+        expression: Expression,
+        minArity: number,
+        maxArity: number,
+        returnType: ReturnType = ReturnType.Object
+    ): void {
         if (expression.children.length < minArity) {
             throw new Error(`${expression} should have at least ${minArity} children.`);
         }
@@ -70,17 +76,23 @@ export class FunctionUtils {
             optional = [];
         }
         if (expression.children.length < types.length || expression.children.length > types.length + optional.length) {
-            throw new Error(optional.length === 0 ?
-                `${expression} should have ${types.length} children.`
-                : `${expression} should have between ${types.length} and ${types.length + optional.length} children.`);
+            throw new Error(
+                optional.length === 0
+                    ? `${expression} should have ${types.length} children.`
+                    : `${expression} should have between ${types.length} and ${
+                          types.length + optional.length
+                      } children.`
+            );
         }
 
         for (let i = 0; i < types.length; i++) {
             const child: Expression = expression.children[i];
             const type: ReturnType = types[i];
-            if ((type & ReturnType.Object) == 0
-                && (child.returnType & ReturnType.Object) == 0
-                && (type & child.returnType) == 0) {
+            if (
+                (type & ReturnType.Object) == 0 &&
+                (child.returnType & ReturnType.Object) == 0 &&
+                (type & child.returnType) == 0
+            ) {
                 throw new Error(FunctionUtils.buildTypeValidatorError(type, child, expression));
             }
         }
@@ -92,9 +104,11 @@ export class FunctionUtils {
             }
             const child: Expression = expression.children[ic];
             const type: ReturnType = optional[i];
-            if ((type & ReturnType.Object) == 0
-                && (child.returnType & ReturnType.Object) == 0
-                && (type & child.returnType) == 0) {
+            if (
+                (type & ReturnType.Object) == 0 &&
+                (child.returnType & ReturnType.Object) == 0 &&
+                (type & child.returnType) == 0
+            ) {
                 throw new Error(FunctionUtils.buildTypeValidatorError(type, child, expression));
             }
         }
@@ -105,7 +119,6 @@ export class FunctionUtils {
      * @param expression Expression to validate.
      */
     public static validateAtLeastOne(expression: Expression): void {
-
         FunctionUtils.validateArityAndAnyType(expression, 1, Number.MAX_SAFE_INTEGER);
     }
 
@@ -114,7 +127,6 @@ export class FunctionUtils {
      * @param expression Expression to validate.
      */
     public static validateNumber(expression: Expression): void {
-
         FunctionUtils.validateArityAndAnyType(expression, 1, Number.MAX_SAFE_INTEGER, ReturnType.Number);
     }
 
@@ -277,7 +289,12 @@ export class FunctionUtils {
      */
     public static verifyContainer(value: any, expression: Expression, _: number): string | undefined {
         let error: string;
-        if (!(typeof value === 'string') && !Array.isArray(value) && !(value instanceof Map) && !(typeof value === 'object')) {
+        if (
+            !(typeof value === 'string') &&
+            !Array.isArray(value) &&
+            !(value instanceof Map) &&
+            !(typeof value === 'object')
+        ) {
             error = `${expression} must be a string, list, map or object.`;
         }
 
@@ -411,7 +428,12 @@ export class FunctionUtils {
      * @param verify Optional function to verify each child's result.
      * @returns List of child values or error message.
      */
-    public static evaluateChildren(expression: Expression, state: MemoryInterface, options: Options, verify?: VerifyExpression): { args: any[]; error: string } {
+    public static evaluateChildren(
+        expression: Expression,
+        state: MemoryInterface,
+        options: Options,
+        verify?: VerifyExpression
+    ): { args: any[]; error: string } {
         const args: any[] = [];
         let value: any;
         let error: string;
@@ -443,9 +465,8 @@ export class FunctionUtils {
     public static apply(func: (arg0: any[]) => any, verify?: VerifyExpression): EvaluateExpressionDelegate {
         return (expression: Expression, state: MemoryInterface, options: Options): ValueWithError => {
             let value: any;
-            let error: string;
-            let args: any[];
-            ({ args, error } = FunctionUtils.evaluateChildren(expression, state, options, verify));
+            const { args, error: childrenError } = FunctionUtils.evaluateChildren(expression, state, options, verify);
+            let error = childrenError;
             if (!error) {
                 try {
                     value = func(args);
@@ -467,12 +488,38 @@ export class FunctionUtils {
     public static applyWithError(func: (arg0: any[]) => any, verify?: VerifyExpression): EvaluateExpressionDelegate {
         return (expression: Expression, state: MemoryInterface, options: Options): ValueWithError => {
             let value: any;
-            let error: string;
-            let args: any[];
-            ({ args, error } = FunctionUtils.evaluateChildren(expression, state, options, verify));
+            const { args, error: childrenError } = FunctionUtils.evaluateChildren(expression, state, options, verify);
+            let error = childrenError;
             if (!error) {
                 try {
                     ({ value, error } = func(args));
+                } catch (e) {
+                    error = e.message;
+                }
+            }
+
+            return { value, error };
+        };
+    }
+
+    /**
+     * Generate an expression delegate that applies function after verifying all children.
+     * @param func Function to apply.
+     * @param verify Function to check each arg for validity.
+     * @returns Delegate for evaluating an expression.
+     */
+    public static applyWithOptionsAndError(
+        func: (arg0: unknown[], options: Options) => { value: unknown; error: string },
+        verify?: VerifyExpression
+    ): EvaluateExpressionDelegate {
+        return (expression: Expression, state: MemoryInterface, options: Options): ValueWithError => {
+            let value: unknown;
+            let error: string;
+            let args: unknown[];
+            ({ args, error } = FunctionUtils.evaluateChildren(expression, state, options, verify));
+            if (!error) {
+                try {
+                    ({ value, error } = func(args, options));
                 } catch (e) {
                     error = e.message;
                 }
@@ -489,20 +536,17 @@ export class FunctionUtils {
      * @returns Delegate for evaluating an expression.
      */
     public static applySequence(func: (arg0: any[]) => any, verify?: VerifyExpression): EvaluateExpressionDelegate {
-        return FunctionUtils.apply(
-            (args: any[]): any => {
-                const binaryArgs: any[] = [undefined, undefined];
-                let soFar: any = args[0];
-                for (let i = 1; i < args.length; i++) {
-                    binaryArgs[0] = soFar;
-                    binaryArgs[1] = args[i];
-                    soFar = func(binaryArgs);
-                }
+        return FunctionUtils.apply((args: any[]): any => {
+            const binaryArgs: any[] = [undefined, undefined];
+            let soFar: any = args[0];
+            for (let i = 1; i < args.length; i++) {
+                binaryArgs[0] = soFar;
+                binaryArgs[1] = args[i];
+                soFar = func(binaryArgs);
+            }
 
-                return soFar;
-            },
-            verify
-        );
+            return soFar;
+        }, verify);
     }
 
     /**
@@ -511,29 +555,42 @@ export class FunctionUtils {
      * @param verify Function to check each arg for validity.
      * @returns Delegate for evaluating an expression.
      */
-    public static applySequenceWithError(func: (arg0: any[]) => any, verify?: VerifyExpression): EvaluateExpressionDelegate {
-        return FunctionUtils.applyWithError(
-            (args: any[]): any => {
-                const binaryArgs: any[] = [undefined, undefined];
-                let soFar: any = args[0];
-                let value: any;
-                let error: string;
-                for (let i = 1; i < args.length; i++) {
-                    binaryArgs[0] = soFar;
-                    binaryArgs[1] = args[i];
-                    ({ value, error } = func(binaryArgs));
-                    if (error) {
-                        return { value, error };
-                    } else {
-                        soFar = value;
-                    }
-
+    public static applySequenceWithError(
+        func: (arg0: any[]) => any,
+        verify?: VerifyExpression
+    ): EvaluateExpressionDelegate {
+        return FunctionUtils.applyWithError((args: any[]): any => {
+            const binaryArgs: any[] = [undefined, undefined];
+            let soFar: any = args[0];
+            let value: any;
+            let error: string;
+            for (let i = 1; i < args.length; i++) {
+                binaryArgs[0] = soFar;
+                binaryArgs[1] = args[i];
+                ({ value, error } = func(binaryArgs));
+                if (error) {
+                    return { value, error };
+                } else {
+                    soFar = value;
                 }
+            }
 
-                return { value: soFar, error: undefined };
-            },
-            verify
-        );
+            return { value: soFar, error: undefined };
+        }, verify);
+    }
+
+    /**
+     *
+     * @param args An array of arguments.
+     * @param locale A locale string
+     * @param maxArgsLength The max length of a given function.
+     */
+    public static determineLocale(args: unknown[], maxArgsLength: number, locale = 'en-us'): string {
+        if (args.length === maxArgsLength && typeof args[maxArgsLength - 1] === 'string') {
+            locale = args[maxArgsLength - 1] as string;
+        }
+
+        return locale;
     }
 
     /**
@@ -558,7 +615,11 @@ export class FunctionUtils {
      * @param options Options used in evaluation.
      * @returns Return the accumulated path and the expression left unable to accumulate.
      */
-    public static tryAccumulatePath(expression: Expression, state: MemoryInterface, options: Options): { path: string; left: any; error: string } {
+    public static tryAccumulatePath(
+        expression: Expression,
+        state: MemoryInterface,
+        options: Options
+    ): { path: string; left: any; error: string } {
         let path = '';
         let left = expression;
         while (left !== undefined) {
@@ -566,7 +627,7 @@ export class FunctionUtils {
                 path = (left.children[0] as Constant).value + '.' + path;
                 left = left.children.length === 2 ? left.children[1] : undefined;
             } else if (left.type === ExpressionType.Element) {
-                let {value, error} = left.children[1].tryEvaluate(state, options);
+                const { value, error } = left.children[1].tryEvaluate(state, options);
 
                 if (error !== undefined) {
                     return { path: undefined, left: undefined, error };
@@ -577,7 +638,11 @@ export class FunctionUtils {
                 } else if (typeof value === 'string') {
                     path = `['${value}'].${path}`;
                 } else {
-                    return { path: undefined, left: undefined, error: `${left.children[1].toString()} doesn't return an int or string` };
+                    return {
+                        path: undefined,
+                        left: undefined,
+                        error: `${left.children[1].toString()} doesn't return an int or string`,
+                    };
                 }
 
                 left = left.children[0];
@@ -604,9 +669,12 @@ export class FunctionUtils {
         return instance !== undefined && instance !== null && typeof instance === 'number' && !Number.isNaN(instance);
     }
 
+    /**
+     * @private
+     */
     private static buildTypeValidatorError(returnType: ReturnType, childExpr: Expression, expr: Expression): string {
         const names = Object.keys(ReturnType).filter((x): boolean => !(parseInt(x) >= 0));
-        let types = [];
+        const types = [];
         for (const name of names) {
             const value = ReturnType[name] as number;
             if ((returnType & value) !== 0) {

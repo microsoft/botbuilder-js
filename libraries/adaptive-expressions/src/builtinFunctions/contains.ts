@@ -20,18 +20,22 @@ import { ReturnType } from '../returnType';
  * This function is case-sensitive.
  */
 export class Contains extends ExpressionEvaluator {
+    /**
+     * Initializes a new instance of the [Contains](xref:adaptive-expressions.Contains) class.
+     */
     public constructor() {
         super(ExpressionType.Contains, Contains.evaluator, ReturnType.Boolean, FunctionUtils.validateBinary);
     }
 
+    /**
+     * @private
+     */
     private static evaluator(expression: Expression, state: MemoryInterface, options: Options): ValueWithError {
         let found = false;
-        let error: any;
-        let args: any[];
-        ({ args, error } = FunctionUtils.evaluateChildren(expression, state, options));
-
+        const { args, error: childrenError } = FunctionUtils.evaluateChildren(expression, state, options);
+        let error = childrenError;
         if (!error) {
-            if (typeof args[0] === 'string' && typeof args[1] === 'string' || Array.isArray(args[0])) {
+            if ((typeof args[0] === 'string' && typeof args[1] === 'string') || Array.isArray(args[0])) {
                 found = args[0].includes(args[1]);
             } else if (args[0] instanceof Map) {
                 found = (args[0] as Map<string, any>).get(args[1]) !== undefined;

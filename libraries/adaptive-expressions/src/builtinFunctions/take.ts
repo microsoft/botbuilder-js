@@ -14,18 +14,23 @@ import { Options } from '../options';
 import { ReturnType } from '../returnType';
 
 /**
- * Return items from the front of an array.
+ * Return items from the front of an array or take the specific prefix from a string.
  */
 export class Take extends ExpressionEvaluator {
+    /**
+     * Initializes a new instance of the [Take](xref:adaptive-expressions.Take) class.
+     */
     public constructor() {
-        super(ExpressionType.Take, Take.evaluator, ReturnType.Array, Take.validator);
+        super(ExpressionType.Take, Take.evaluator, ReturnType.Array | ReturnType.String, Take.validator);
     }
 
+    /**
+     * @private
+     */
     private static evaluator(expression: Expression, state: any, options: Options): ValueWithError {
         let result: any;
-        let error: any;
-        let arr: any;
-        ({ value: arr, error } = expression.children[0].tryEvaluate(state, options));
+        const { value: arr, error: childrenError } = expression.children[0].tryEvaluate(state, options);
+        let error = childrenError;
 
         if (!error) {
             if (Array.isArray(arr) || typeof arr === 'string') {
@@ -35,10 +40,10 @@ export class Take extends ExpressionEvaluator {
                 ({ value: start, error } = startExpr.tryEvaluate(state, options));
                 if (!error && !Number.isInteger(start)) {
                     error = `${startExpr} is not an integer.`;
-                } else if (start < 0 || start >= arr.length) {
-                    error = `${startExpr}=${start} which is out of range for ${arr}`;
                 }
+
                 if (!error) {
+                    start = Math.max(start, 0);
                     result = arr.slice(0, start);
                 }
             } else {
@@ -49,8 +54,10 @@ export class Take extends ExpressionEvaluator {
         return { value: result, error };
     }
 
-
+    /**
+     * @private
+     */
     private static validator(expression: Expression): void {
-        FunctionUtils.validateOrder(expression, [], ReturnType.Array, ReturnType.Number);
+        FunctionUtils.validateOrder(expression, [], ReturnType.Array | ReturnType.String, ReturnType.Number);
     }
 }

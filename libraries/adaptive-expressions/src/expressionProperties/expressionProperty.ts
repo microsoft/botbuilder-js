@@ -7,14 +7,19 @@
  */
 import { Expression } from '../expression';
 
-
 /**
- * Base class which defines a Expression or value for a property.
+ * Base class which defines an Expression or value for a property.
+ * @typeparam T Type of value of the expression property.
  */
 export class ExpressionProperty<T> {
     private defaultValue: T;
     private expression: Expression;
 
+    /**
+     * Initializes a new instance of the [ExpressionProperty<T>](xref:adaptive-expressions.ExpressionProperty) class.
+     * @param value Optional. Raw value of the expression property.
+     * @param defaultValue Optional. Default value for the property.
+     */
     public constructor(value?: T | string | Expression, defaultValue?: T) {
         this.defaultValue = defaultValue;
         this.setValue(value);
@@ -35,7 +40,7 @@ export class ExpressionProperty<T> {
      */
     public toString(): string {
         if (this.expressionText) {
-            return `=${ this.expressionText.replace(/^=/, '') }`;
+            return `=${this.expressionText.replace(/^=/, '')}`;
         }
         return this.value ? this.value.toString() : '';
     }
@@ -61,10 +66,12 @@ export class ExpressionProperty<T> {
                 this.expression = Expression.parse(this.value.toString());
                 break;
             default:
-                if (this.value == undefined || this.value == null) {
+                if (this.value === undefined) {
+                    this.expression = Expression.parse('undefined');
+                } else if (this.value === null) {
                     this.expression = Expression.parse('null');
                 } else {
-                    this.expression = Expression.parse(`json(${ JSON.stringify(this.value) })`);
+                    this.expression = Expression.parse(`json(${JSON.stringify(this.value)})`);
                 }
                 break;
         }
@@ -80,7 +87,9 @@ export class ExpressionProperty<T> {
      */
     public getValue(data: object): T {
         const { value, error } = this.tryGetValue(data);
-        if (error) { throw error; }
+        if (error) {
+            throw error;
+        }
 
         return value;
     }
@@ -121,4 +130,3 @@ export class ExpressionProperty<T> {
         }
     }
 }
-

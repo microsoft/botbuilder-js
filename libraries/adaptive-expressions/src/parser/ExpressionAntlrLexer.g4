@@ -73,6 +73,10 @@ COLON: ':';
 
 ARROW: '=>';
 
+NULL_COALESCE: '??';
+
+QUESTION_MARK: '?';
+
 NUMBER : DIGIT + ( '.' DIGIT +)? ;
 
 WHITESPACE : (' '|'\t'|'\ufeff'|'\u00a0') {this.ignoreWS}? -> skip;
@@ -91,6 +95,6 @@ STRING_INTERPOLATION_END : '`' {this.ignoreWS = true;} -> type(STRING_INTERPOLAT
 
 TEMPLATE : '$' '{' (STRING | OBJECT_DEFINITION | ~[\r\n{}'"`])+ '}';
 
-ESCAPE_CHARACTER : '\\' ~[\r\n]?;
+ESCAPE_CHARACTER : '\\' [`$];
 
 TEXT_CONTENT : . ;

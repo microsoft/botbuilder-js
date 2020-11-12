@@ -5,19 +5,43 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { DialogTurnResult, DialogContext, Dialog } from 'botbuilder-dialogs';
-import { ValueExpression, BoolExpression } from 'adaptive-expressions';
+import {
+    BoolExpression,
+    BoolExpressionConverter,
+    Expression,
+    ValueExpression,
+    ValueExpressionConverter,
+} from 'adaptive-expressions';
+import {
+    Converter,
+    ConverterFactory,
+    Dialog,
+    DialogConfiguration,
+    DialogContext,
+    DialogTurnResult,
+} from 'botbuilder-dialogs';
 import { replaceJsonRecursively } from '../jsonExtensions';
 
-export class EndDialog<O extends object = {}> extends Dialog<O> {
+export interface EndDialogConfiguration extends DialogConfiguration {
+    value?: unknown | ValueExpression;
+    disabled?: boolean | string | Expression | BoolExpression;
+}
+
+/**
+ * Command to end the current [Dialog](xref:botbuilder-dialogs.Dialog), returning the `resultProperty` as the result of the dialog.
+ */
+export class EndDialog<O extends object = {}> extends Dialog<O> implements EndDialogConfiguration {
+    public static $kind = 'Microsoft.EndDialog';
+
     /**
      * Creates a new `EndDialog` instance.
-     * @param value (Optional) A value expression for the result to be returned to the caller
+     * @param value Optional, a value expression for the result to be returned to the caller.
      */
-    public constructor();
     public constructor(value?: any) {
         super();
-        if (value) { this.value = new ValueExpression(value); }
+        if (value) {
+            this.value = new ValueExpression(value);
+        }
     }
 
     /**
@@ -30,6 +54,23 @@ export class EndDialog<O extends object = {}> extends Dialog<O> {
      */
     public disabled?: BoolExpression;
 
+    public getConverter(property: keyof EndDialogConfiguration): Converter | ConverterFactory {
+        switch (property) {
+            case 'value':
+                return new ValueExpressionConverter();
+            case 'disabled':
+                return new BoolExpressionConverter();
+            default:
+                return super.getConverter(property);
+        }
+    }
+
+    /**
+     * Starts a new [Dialog](xref:botbuilder-dialogs.Dialog) and pushes it onto the dialog stack.
+     * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
+     * @param options Optional. Initial information to pass to the dialog.
+     * @returns A `Promise` representing the asynchronous operation.
+     */
     public async beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult> {
         if (this.disabled && this.disabled.getValue(dc.state)) {
             return await dc.endDialog();
@@ -37,7 +78,7 @@ export class EndDialog<O extends object = {}> extends Dialog<O> {
 
         if (this.value) {
             let value = this.value.getValue(dc.state);
-            
+
             if (value) {
                 value = replaceJsonRecursively(dc.state, value);
             }
@@ -48,6 +89,13 @@ export class EndDialog<O extends object = {}> extends Dialog<O> {
         return await this.endParentDialog(dc);
     }
 
+    /**
+     * Ends the parent [Dialog](xref:botbuilder-dialogs.Dialog).
+     * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
+     * @param result Optional. Value returned from the dialog that was called. The type 
+     * of the value returned is dependent on the child dialog.
+     * @returns A `Promise` representing the asynchronous operation.
+     */
     protected async endParentDialog(dc: DialogContext, result?: any): Promise<DialogTurnResult> {
         if (dc.parent) {
             const turnResult = await dc.parent.endDialog(result);
@@ -58,7 +106,12 @@ export class EndDialog<O extends object = {}> extends Dialog<O> {
         }
     }
 
+    /**
+     * @protected
+     * Builds the compute Id for the [Dialog](xref:botbuilder-dialogs.Dialog).
+     * @returns A `string` representing the compute Id.
+     */
     protected onComputeId(): string {
-        return `EndDialog[${ this.value ? this.value.toString() : '' }]`;
+        return `EndDialog[${this.value ? this.value.toString() : ''}]`;
     }
 }

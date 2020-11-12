@@ -6,25 +6,71 @@
  * Licensed under the MIT License.
  */
 
-import { IntExpression, ExpressionParser, BoolExpression } from 'adaptive-expressions';
-import { Activity, ActivityTypes, getTopScoringIntent, RecognizerResult, StringUtils, TurnContext, telemetryTrackDialogView } from 'botbuilder-core';
-import { Dialog, DialogContainer, DialogContext, DialogDependencies, DialogEvent, DialogInstance, DialogPath, DialogReason, DialogState, DialogTurnResult, DialogTurnStatus, TurnPath } from 'botbuilder-dialogs';
+import {
+    BoolExpression,
+    BoolExpressionConverter,
+    Expression,
+    ExpressionParser,
+    IntExpression,
+} from 'adaptive-expressions';
+import {
+    Activity,
+    ActivityTypes,
+    getTopScoringIntent,
+    RecognizerResult,
+    StringUtils,
+    TurnContext,
+    telemetryTrackDialogView,
+} from 'botbuilder-core';
+import {
+    Converter,
+    ConverterFactory,
+    Dialog,
+    DialogConfiguration,
+    DialogContainer,
+    DialogContext,
+    DialogDependencies,
+    DialogEvent,
+    DialogInstance,
+    DialogPath,
+    DialogReason,
+    DialogState,
+    DialogTurnResult,
+    DialogTurnStatus,
+    Recognizer,
+    TurnPath,
+} from 'botbuilder-dialogs';
 import { ActionContext } from './actionContext';
 import { AdaptiveDialogState } from './adaptiveDialogState';
 import { AdaptiveEvents } from './adaptiveEvents';
 import { OnCondition } from './conditions';
+import { LanguageGeneratorConverter, RecognizerConverter } from './converters';
 import { EntityAssignment } from './entityAssignment';
 import { EntityAssignments } from './entityAssignments';
 import { EntityInfo, NormalizedEntityInfos } from './entityInfo';
 import { LanguageGenerator } from './languageGenerator';
 import { languageGeneratorKey } from './languageGeneratorExtensions';
-import { Recognizer, RecognizerSet } from './recognizers';
+import { RecognizerSet } from './recognizers';
 import { ValueRecognizer } from './recognizers/valueRecognizer';
 import { SchemaHelper } from './schemaHelper';
-import { FirstSelector } from './selectors';
+import { FirstSelector, MostSpecificSelector } from './selectors';
 import { TriggerSelector } from './triggerSelector';
 
-export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
+export interface AdaptiveDialogConfiguration extends DialogConfiguration {
+    recognizer?: string | Recognizer;
+    generator?: string | LanguageGenerator;
+    triggers?: OnCondition[];
+    autoEndDialog?: boolean | string | Expression | BoolExpression;
+    selector?: TriggerSelector;
+    defaultResultProperty?: string;
+    schema?: unknown;
+}
+
+/**
+ * The Adaptive Dialog models conversation using events and events to adapt dynamically to changing conversation flow.
+ */
+export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> implements AdaptiveDialogConfiguration {
+    public static $kind = 'Microsoft.AdaptiveDialog';
     public static conditionTracker = 'dialog._tracker.conditions';
 
     private readonly adaptiveKey = '_adaptive';
@@ -87,7 +133,7 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
      * @remarks
      * Defaults to a value of `dialog.result`.
      */
-    public defaultResultProperty: string = 'dialog.result';
+    public defaultResultProperty = 'dialog.result';
 
     /**
      * JSON Schema for the dialog.
@@ -96,10 +142,30 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
         this.dialogSchema = new SchemaHelper(value);
     }
 
-    public get schema(): object | undefined {
+    /**
+     * JSON Schema for the dialog.
+     */
+    public get schema(): object {
         return this.dialogSchema ? this.dialogSchema.schema : undefined;
     }
 
+    public getConverter(property: keyof AdaptiveDialogConfiguration): Converter | ConverterFactory {
+        switch (property) {
+            case 'recognizer':
+                return RecognizerConverter;
+            case 'generator':
+                return new LanguageGeneratorConverter();
+            case 'autoEndDialog':
+                return new BoolExpressionConverter();
+            default:
+                return super.getConverter(property);
+        }
+    }
+
+    /**
+     * @protected
+     * Ensures all dependencies for the class are installed.
+     */
     protected ensureDependenciesInstalled(): void {
         if (this.installedDependencies) {
             return;
@@ -131,9 +197,10 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
         }
 
         if (!this.selector) {
-            // Default to first selector
-            // TODO: Implement MostSpecificSelector (needs TriggerTree)
-            this.selector = new FirstSelector();
+            // Default to MostSpecificSelector
+            const selector = new MostSpecificSelector();
+            selector.selector = new FirstSelector();
+            this.selector = selector;
         }
         this.selector.initialize(this.triggers, true);
     }
@@ -142,6 +209,11 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
     // Base Dialog Overrides
     //---------------------------------------------------------------------------------------------
 
+    /**
+     * @protected
+     * Gets the internal version string.
+     * @returns Internal version string.
+     */
     protected getInternalVersion(): string {
         if (!this._internalVersion) {
             // change the container version if any dialogs are added or removed.
@@ -164,10 +236,19 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
         return this._internalVersion;
     }
 
+    /**
+     * @protected
+     */
     protected onComputeId(): string {
         return `AdaptiveDialog[]`;
     }
 
+    /**
+     * Called when the dialog is started and pushed onto the dialog stack.
+     * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
+     * @param options Optional, initial information to pass to the dialog.
+     * @returns A Promise representing the asynchronous operation.
+     */
     public async beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult> {
         await this.checkForVersionChange(dc);
 
@@ -197,8 +278,8 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
             this.triggers.forEach((trigger): void => {
                 if (trigger.runOnce && trigger.condition) {
                     const references = trigger.condition.toExpression().references();
-                    var paths = dcState.trackPaths(references);
-                    var triggerPath = `${ AdaptiveDialog.conditionTracker }.${ trigger.id }.`;
+                    const paths = dcState.trackPaths(references);
+                    const triggerPath = `${AdaptiveDialog.conditionTracker}.${trigger.id}.`;
                     dcState.setValue(triggerPath + 'paths', paths);
                     dcState.setValue(triggerPath + 'lastRun', 0);
                 }
@@ -208,12 +289,12 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
         dc.activeDialog.state[this.adaptiveKey] = {};
 
         const properties: { [key: string]: string } = {
-            'DialogId' : this.id,  
-            'Kind' : 'Microsoft.AdaptiveDialog',
+            DialogId: this.id,
+            Kind: 'Microsoft.AdaptiveDialog',
         };
         this.telemetryClient.trackEvent({
             name: 'AdaptiveDialogStart',
-            properties: properties
+            properties: properties,
         });
         telemetryTrackDialogView(this.telemetryClient, this.id);
 
@@ -225,6 +306,12 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
         return await this.continueActions(dc);
     }
 
+    /**
+     * Called when the dialog is _continued_, where it is the active dialog and the
+     * user replies with a new activity.
+     * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
+     * @returns A Promise representing the asynchronous operation.
+     */
     public async continueDialog(dc: DialogContext): Promise<DialogTurnResult> {
         await this.checkForVersionChange(dc);
 
@@ -234,25 +321,39 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
         return await this.continueActions(dc);
     }
 
+    /**
+     * Called when the dialog is ending.
+     * @param turnContext The context object for this turn.
+     * @param instance State information associated with the instance of this dialog on the dialog stack.
+     * @param reason Reason why the dialog ended.
+     * @returns A Promise representing the asynchronous operation.
+     */
     public async endDialog(turnContext: TurnContext, instance: DialogInstance, reason: DialogReason): Promise<void> {
         const properties: { [key: string]: string } = {
-            'DialogId' : this.id, 
-            'Kind' : 'Microsoft.AdaptiveDialog' 
+            DialogId: this.id,
+            Kind: 'Microsoft.AdaptiveDialog',
         };
         if (reason == DialogReason.cancelCalled) {
             this.telemetryClient.trackEvent({
-                name: 'AdaptiveDialogCancel', 
-                properties: properties
+                name: 'AdaptiveDialogCancel',
+                properties: properties,
             });
-        } else if (reason == DialogReason.endCalled){
+        } else if (reason == DialogReason.endCalled) {
             this.telemetryClient.trackEvent({
                 name: 'AdaptiveDialogComplete',
-                properties: properties
+                properties: properties,
             });
         }
         await super.endDialog(turnContext, instance, reason);
     }
 
+    /**
+     * @protected
+     * Called before an event is bubbled to its parent.
+     * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
+     * @param event The [DialogEvent](xref:botbuilder-dialogs.DialogEvent) being raised.
+     * @returns Whether the event is handled by the current dialog and further processing should stop.
+     */
     protected async onPreBubbleEvent(dc: DialogContext, event: DialogEvent): Promise<boolean> {
         const actionContext = this.toActionContext(dc);
 
@@ -260,6 +361,13 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
         return await this.processEvent(actionContext, event, true);
     }
 
+    /**
+     * @protected
+     * Called after an event was bubbled to all parents and wasn't handled.
+     * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
+     * @param event The [DialogEvent](xref:botbuilder-dialogs.DialogEvent) being raised.
+     * @returns Whether the event is handled by the current dialog and further processing should stop.
+     */
     protected async onPostBubbleEvent(dc: DialogContext, event: DialogEvent): Promise<boolean> {
         const actionContext = this.toActionContext(dc);
 
@@ -267,6 +375,14 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
         return await this.processEvent(actionContext, event, false);
     }
 
+    /**
+     * Called when a child dialog completed its turn, returning control to this dialog.
+     * @param dc The dialog context for the current turn of the conversation.
+     * @param reason Reason why the dialog resumed.
+     * @param result Optional, value returned from the dialog that was called.
+     * The type of the value returned is dependent on the child dialog.
+     * @returns A Promise representing the asynchronous operation.
+     */
     public async resumeDialog(dc: DialogContext, reason: DialogReason, result?: any): Promise<DialogTurnResult> {
         await this.checkForVersionChange(dc);
 
@@ -280,6 +396,12 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
         return Dialog.EndOfTurn;
     }
 
+    /**
+     * Reprompts the user.
+     * @param context The context object for the turn.
+     * @param instance Current state information for this dialog.
+     * @returns A Promise representing the asynchronous operation.
+     */
     public async repromptDialog(context: DialogContext | TurnContext, instance: DialogInstance): Promise<void> {
         if (context instanceof DialogContext) {
             // Forward to current sequence action
@@ -295,6 +417,11 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
         }
     }
 
+    /**
+     * Creates a child [DialogContext](xref:botbuilder-dialogs.DialogContext) for the given context.
+     * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
+     * @returns The child [DialogContext](xref:botbuilder-dialogs.DialogContext) or null if no [AdaptiveDialogState.actions](xref:botbuilder-dialogs-adaptive.AdaptiveDialogState.actions) are found for the given context.
+     */
     public createChildContext(dc: DialogContext): DialogContext {
         const activeDialogState = dc.activeDialog.state;
         let state: AdaptiveDialogState = activeDialogState[this.adaptiveKey];
@@ -310,6 +437,10 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
         return undefined;
     }
 
+    /**
+     * Gets [Dialog](xref:botbuilder-dialogs.Dialog) enumerated dependencies.
+     * @returns [Dialog](xref:botbuilder-dialogs.Dialog)'s enumerated dependencies.
+     */
     public getDependencies(): Dialog[] {
         this.ensureDependenciesInstalled();
         return [];
@@ -319,21 +450,35 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
     // Event Processing
     //---------------------------------------------------------------------------------------------
 
-    protected async processEvent(actionContext: ActionContext, dialogEvent: DialogEvent, preBubble: boolean): Promise<boolean> {
+    /**
+     * @protected
+     * Event processing implementation.
+     * @param actionContext The [ActionContext](xref:botbuilder-dialogs-adaptive.ActionContext) for the current turn of conversation.
+     * @param dialogEvent The [DialogEvent](xref:botbuilder-dialogs.DialogEvent) being raised.
+     * @param preBubble A flag indicator for preBubble processing.
+     * @returns A Promise representation of a boolean indicator or the result.
+     */
+    protected async processEvent(
+        actionContext: ActionContext,
+        dialogEvent: DialogEvent,
+        preBubble: boolean
+    ): Promise<boolean> {
         // Save into turn
         actionContext.state.setValue(TurnPath.dialogEvent, dialogEvent);
 
         let activity = actionContext.state.getValue<Activity>(TurnPath.activity);
 
         // some dialogevents get promoted into turn state for general access outside of the dialogevent.
-        // This allows events to be fired (in the case of ChooseIntent), or in interruption (Activity) 
-        // Triggers all expressed against turn.recognized or turn.activity, and this mapping maintains that 
+        // This allows events to be fired (in the case of ChooseIntent), or in interruption (Activity)
+        // Triggers all expressed against turn.recognized or turn.activity, and this mapping maintains that
         // any event that is emitted updates those for the rest of rule evaluation.
         switch (dialogEvent.name) {
             case AdaptiveEvents.recognizedIntent:
                 // we have received a RecognizedIntent event
                 // get the value and promote to turn.recognized, topintent, topscore and lastintent
-                const recognizedResult = actionContext.state.getValue<RecognizerResult>(`${ TurnPath.dialogEvent }.value`);
+                const recognizedResult = actionContext.state.getValue<RecognizerResult>(
+                    `${TurnPath.dialogEvent}.value`
+                );
                 const { intent, score } = getTopScoringIntent(recognizedResult);
                 actionContext.state.setValue(TurnPath.recognized, recognizedResult);
                 actionContext.state.setValue(TurnPath.topIntent, intent);
@@ -353,7 +498,7 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
         this.ensureDependenciesInstalled();
 
         // Count of events processed
-        var count = actionContext.state.getValue(DialogPath.eventCounter);
+        let count = actionContext.state.getValue(DialogPath.eventCounter);
         actionContext.state.setValue(DialogPath.eventCounter, ++count);
 
         // Look for triggered rule
@@ -370,7 +515,7 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
                         const activityReceivedEvent: DialogEvent = {
                             name: AdaptiveEvents.activityReceived,
                             value: actionContext.context.activity,
-                            bubble: false
+                            bubble: false,
                         };
                         handled = await this.processEvent(actionContext, activityReceivedEvent, true);
                     }
@@ -381,7 +526,7 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
                         const recognizeUtteranceEvent: DialogEvent = {
                             name: AdaptiveEvents.recognizeUtterance,
                             value: activity,
-                            bubble: false
+                            bubble: false,
                         };
                         await this.processEvent(actionContext, recognizeUtteranceEvent, true);
 
@@ -390,7 +535,7 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
                         const recognizedIntentEvent: DialogEvent = {
                             name: AdaptiveEvents.recognizedIntent,
                             value: recognized,
-                            bubble: false
+                            bubble: false,
                         };
                         handled = await this.processEvent(actionContext, recognizedIntentEvent, true);
                     }
@@ -429,7 +574,7 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
                         const activityReceivedEvent: DialogEvent = {
                             name: AdaptiveEvents.activityReceived,
                             value: activity,
-                            bubble: false
+                            bubble: false,
                         };
                         // Emit trailing ActivityReceived event
                         handled = await this.processEvent(actionContext, activityReceivedEvent, false);
@@ -441,7 +586,7 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
                         if (actionContext.actions.length == 0) {
                             const unknownIntentEvent: DialogEvent = {
                                 name: AdaptiveEvents.unknownIntent,
-                                bubble: false
+                                bubble: false,
                             };
                             // Emit trailing UnknownIntent event
                             handled = await this.processEvent(actionContext, unknownIntentEvent, false);
@@ -464,12 +609,19 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
         return handled;
     }
 
+    /**
+     * @protected
+     * Recognizes intent for current activity given the class recognizer set, if set is null no intent will be recognized.
+     * @param actionContext The [ActionContext](xref:botbuilder-dialogs-adaptive.ActionContext) for the current turn of conversation.
+     * @param activity [Activity](xref:botbuilder-schema.Activity) to recognize.
+     * @returns A Promise representing a [RecognizerResult](xref:botbuilder.RecognizerResult).
+     */
     protected async onRecognize(actionContext: ActionContext, activity: Activity): Promise<RecognizerResult> {
         const { text } = activity;
         const noneIntent: RecognizerResult = {
             text: text || '',
-            intents: { 'None': { score: 0.0 } },
-            entities: {}
+            intents: { None: { score: 0.0 } },
+            entities: {},
         };
 
         if (this.recognizer) {
@@ -490,20 +642,23 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
         }
     }
 
+    /**
+     * @private
+     */
     private async queueFirstMatch(actionContext: ActionContext): Promise<boolean> {
-        const selection = await this.selector.select(actionContext);
+        const selection: OnCondition[] = await this.selector.select(actionContext);
         if (selection.length > 0) {
-            const evt = this.triggers[selection[0]];
+            const evt = selection[0];
             const parser = new ExpressionParser();
             const properties: { [key: string]: string } = {
-                'DialogId': this.id, 
-                'Expression': evt.getExpression(parser).toString(),
-                'Kind': `Microsoft.${ evt.constructor.name }`,
-                'ConditionId': evt.id
+                DialogId: this.id,
+                Expression: evt.getExpression(parser).toString(),
+                Kind: `Microsoft.${evt.constructor.name}`,
+                ConditionId: evt.id,
             };
             this.telemetryClient.trackEvent({
                 name: 'AdaptiveDialogTrigger',
-                properties: properties
+                properties: properties,
             });
 
             const changes = await evt.execute(actionContext);
@@ -520,6 +675,12 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
     // Action Execution
     //---------------------------------------------------------------------------------------------
 
+    /**
+     * @protected
+     * Waits for pending actions to complete and moves on to [OnEndOfActions](xref:botbuilder-dialogs-adaptive.OnEndOfActions).
+     * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
+     * @returns A Promise representation of [DialogTurnResult](xref:botbuilder-dialogs.DialogTurnResult).
+     */
     protected async continueActions(dc: DialogContext): Promise<DialogTurnResult> {
         // Apply any queued up changes
         const actionContext = this.toActionContext(dc);
@@ -582,12 +743,23 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
         return await this.onEndOfActions(actionContext);
     }
 
+    /**
+     * @protected
+     * Provides the ability to set scoped services for the current [DialogContext](xref:botbuilder-dialogs.DialogContext).
+     * @param dialogContext The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
+     */
     protected onSetScopedServices(dialogContext: DialogContext): void {
         if (this.generator) {
             dialogContext.services.set(languageGeneratorKey, this.generator);
         }
     }
 
+    /**
+     * @protected
+     * Removes the most current action from the given [ActionContext](xref:botbuilder-dialogs-adaptive.ActionContext) if there are any.
+     * @param actionContext The [ActionContext](xref:botbuilder-dialogs-adaptive.ActionContext) for the current turn of conversation.
+     * @returns A Promise representing a boolean indicator for the result.
+     */
     protected async endCurrentAction(actionContext: ActionContext): Promise<boolean> {
         if (actionContext.actions.length > 0) {
             actionContext.actions.shift();
@@ -596,6 +768,12 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
         return false;
     }
 
+    /**
+     * @protected
+     * Awaits for completed actions to finish processing entity assignments and finishes the turn.
+     * @param actionContext The [ActionContext](xref:botbuilder-dialogs-adaptive.ActionContext) for the current turn of conversation.
+     * @returns A Promise representation of [DialogTurnResult](xref:botbuilder-dialogs.DialogTurnResult).
+     */
     protected async onEndOfActions(actionContext: ActionContext): Promise<DialogTurnResult> {
         // Is the current dialog still on the stack?
         if (actionContext.activeDialog) {
@@ -613,10 +791,16 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
         return { status: DialogTurnStatus.cancelled };
     }
 
+    /**
+     * @private
+     */
     private getUniqueInstanceId(dc: DialogContext): string {
-        return dc.stack.length > 0 ? `${ dc.stack.length }:${ dc.activeDialog.id }` : '';
+        return dc.stack.length > 0 ? `${dc.stack.length}:${dc.activeDialog.id}` : '';
     }
 
+    /**
+     * @private
+     */
     private toActionContext(dc: DialogContext): ActionContext {
         const activeDialogState = dc.activeDialog.state;
         let state: AdaptiveDialogState = activeDialogState[this.adaptiveKey];
@@ -652,7 +836,7 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
             evt = {
                 name: nextAssignment.event,
                 value: nextAssignment.alternative ? nextAssignment.alternatives : nextAssignment,
-                bubble: false
+                bubble: false,
             };
 
             if (nextAssignment.event == AdaptiveEvents.assignEntity) {
@@ -664,7 +848,7 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
                     entity = [entity];
                 }
 
-                actionContext.state.setValue(`${ TurnPath.recognized }.entities.${ nextAssignment.entity.name }`, entity);
+                actionContext.state.setValue(`${TurnPath.recognized}.entities.${nextAssignment.entity.name}`, entity);
                 assignments.dequeue(actionContext);
             }
 
@@ -683,7 +867,7 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
             // Emit end of actions
             evt = {
                 name: AdaptiveEvents.endOfActions,
-                bubble: false
+                bubble: false,
             };
             actionContext.state.setValue(DialogPath.lastEvent, evt.name);
             handled = await this.processEvent(actionContext, evt, true);
@@ -698,7 +882,7 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
      * Check to see if an entity is in response to a previous ambiguity event
      * Assign entities to possible properties
      * Merge new queues into existing queues of ambiguity events
-    */
+     */
     private processEntities(actionContext: ActionContext, activity: Activity): void {
         if (this.dialogSchema) {
             const lastEvent = actionContext.state.getValue(DialogPath.lastEvent);
@@ -711,17 +895,19 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
             const utterance = activity.type == ActivityTypes.Message ? activity.text : '';
 
             // Utterance is a special entity that corresponds to the full utterance
-            entities[this.utteranceKey] = [Object.assign(new EntityInfo(), {
-                priority: Number.MAX_SAFE_INTEGER,
-                coverage: 1,
-                start: 0,
-                end: utterance.length,
-                name: this.utteranceKey,
-                score: 0,
-                type: 'string',
-                value: utterance,
-                text: utterance
-            })];
+            entities[this.utteranceKey] = [
+                Object.assign(new EntityInfo(), {
+                    priority: Number.MAX_SAFE_INTEGER,
+                    coverage: 1,
+                    start: 0,
+                    end: utterance.length,
+                    name: this.utteranceKey,
+                    score: 0,
+                    type: 'string',
+                    value: utterance,
+                    text: utterance,
+                }),
+            ];
             const recognized = this.assignEntities(actionContext, entities, assignments, lastEvent);
             const unrecognized = this.splitUtterance(utterance, recognized);
 
@@ -732,9 +918,12 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
         }
     }
 
+    /**
+     * @private
+     */
     private splitUtterance(utterance: string, recognized: Partial<EntityInfo>[]): string[] {
         const unrecognized = [];
-        var current = 0;
+        let current = 0;
         for (let i = 0; i < recognized.length; i++) {
             const entity = recognized[i];
             if (entity.start > current) {
@@ -751,6 +940,9 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
         return unrecognized;
     }
 
+    /**
+     * @private
+     */
     private normalizeEntities(actionContext: ActionContext): NormalizedEntityInfos {
         const entityToInfo: NormalizedEntityInfos = {};
         const recognized = actionContext.state.getValue(TurnPath.recognized);
@@ -794,7 +986,7 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
             }
         }
 
-        // When there are multiple possible resolutions for the same entity that overlap, pick the 
+        // When there are multiple possible resolutions for the same entity that overlap, pick the
         // one that covers the most of the utterance.
         for (const name in entityToInfo) {
             const infos = entityToInfo[name];
@@ -816,7 +1008,7 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
             });
             for (let i = 0; i < infos.length; ++i) {
                 const current = infos[i];
-                for (let j = i + 1; j < infos.length;) {
+                for (let j = i + 1; j < infos.length; ) {
                     const alt = infos[j];
                     if (EntityInfo.covers(current, alt)) {
                         infos.splice(j, 1);
@@ -830,7 +1022,18 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
         return entityToInfo;
     }
 
-    private expandEntity(entry: any, metaData: any, op: string, propertyName: Partial<EntityInfo>, turn: number, text: string, entityToInfo: NormalizedEntityInfos): void {
+    /**
+     * @private
+     */
+    private expandEntity(
+        entry: any,
+        metaData: any,
+        op: string,
+        propertyName: Partial<EntityInfo>,
+        turn: number,
+        text: string,
+        entityToInfo: NormalizedEntityInfos
+    ): void {
         const name: string = entry.name;
         if (!name.startsWith('$')) {
             const values = entry.value;
@@ -838,14 +1041,14 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
             for (let i = 0; i < values.length; ++i) {
                 const val = values[i];
                 const instance = instances && instances[i];
-                const infos = entityToInfo && entityToInfo[name] || [];
+                const infos = (entityToInfo && entityToInfo[name]) || [];
                 entityToInfo[name] = infos;
 
                 const info: Partial<EntityInfo> = {
                     whenRecognized: turn,
                     name: name,
                     value: val,
-                    operation: op
+                    operation: op,
                 };
 
                 if (instance) {
@@ -876,17 +1079,14 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
                         newInfo.property = property;
                         infos.push(newInfo);
                     }
-                }
-                else {
+                } else {
                     if (op && name == this.propertyNameKey) {
-                        for(const property in val)
-                        {
+                        for (const property in val) {
                             const newInfo: Partial<EntityInfo> = Object.assign({}, info);
                             newInfo.property = property;
                             infos.push(newInfo);
                         }
-                    }
-                    else {
+                    } else {
                         infos.push(info);
                     }
                 }
@@ -894,6 +1094,9 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
         }
     }
 
+    /**
+     * @private
+     */
     private candidates(entities: NormalizedEntityInfos, expected: string[]): Partial<EntityAssignment>[] {
         const candidates: Partial<EntityAssignment>[] = [];
         const globalExpectedOnly: string[] = this.dialogSchema.schema[this.expectedOnlyKey] || [];
@@ -910,7 +1113,7 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
                         entity: alternative,
                         property: alternative.property,
                         operation: alternative.operation,
-                        isExpected: expected.indexOf(alternative.property) >= 0
+                        isExpected: expected.indexOf(alternative.property) >= 0,
                     });
                 }
             }
@@ -930,7 +1133,7 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
                                 entity: entity,
                                 property: propSchema.name,
                                 operation: entity.operation,
-                                isExpected: isExpected
+                                isExpected: isExpected,
                             });
                         }
                     }
@@ -947,7 +1150,7 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
                         candidates.push({
                             entity: entity,
                             operation: entity.operation,
-                            property: entity.property
+                            property: entity.property,
                         });
                     }
                 }
@@ -957,6 +1160,9 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
         return candidates;
     }
 
+    /**
+     * @private
+     */
     private addMapping(mapping: Partial<EntityAssignment>, assignments: EntityAssignments): void {
         // Entities without a property or operation are available as entities only when found
         if (mapping.property || mapping.operation) {
@@ -978,6 +1184,9 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
         }
     }
 
+    /**
+     * @private
+     */
     private entityPreferences(property: string): string[] {
         if (!property) {
             if (this.dialogSchema.schema && this.dialogSchema.schema.hasOwnProperty(this.entitiesKey)) {
@@ -990,6 +1199,9 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
         }
     }
 
+    /**
+     * @private
+     */
     private defaultOperation(assignment: Partial<EntityAssignment>, askDefault: any, dialogDefault: any): string {
         let operation: string;
         if (askDefault) {
@@ -1007,16 +1219,22 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
         return operation;
     }
 
+    /**
+     * @private
+     */
     private removeOverlappingPerProperty(candidates: Partial<EntityAssignment>[]): Partial<EntityAssignment>[] {
         // Group mappings by property
-        const perProperty = candidates.reduce<{ [path: string]: Partial<EntityAssignment>[] }>((accumulator, assignment): {} => {
-            if (accumulator.hasOwnProperty(assignment.property)) {
-                accumulator[assignment.property].push(assignment);
-            } else {
-                accumulator[assignment.property] = [assignment];
-            }
-            return accumulator;
-        }, {});
+        const perProperty = candidates.reduce<{ [path: string]: Partial<EntityAssignment>[] }>(
+            (accumulator, assignment): {} => {
+                if (accumulator.hasOwnProperty(assignment.property)) {
+                    accumulator[assignment.property].push(assignment);
+                } else {
+                    accumulator[assignment.property] = [assignment];
+                }
+                return accumulator;
+            },
+            {}
+        );
 
         const output: Partial<EntityAssignment>[] = [];
         for (const path in perProperty) {
@@ -1039,10 +1257,11 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
 
                     if (candidate) {
                         // Remove any overlapping entities
-                        choices = choices.filter((choice): boolean => !EntityInfo.overlaps(choice.entity, candidate.entity));
+                        choices = choices.filter(
+                            (choice): boolean => !EntityInfo.overlaps(choice.entity, candidate.entity)
+                        );
                         output.push(candidate);
                     }
-
                 } while (candidate);
             }
         }
@@ -1050,7 +1269,15 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
         return output;
     }
 
-    private assignEntities(actionContext: ActionContext, entities: NormalizedEntityInfos, existing: EntityAssignments, lastEvent: string): Partial<EntityInfo>[] {
+    /**
+     * @private
+     */
+    private assignEntities(
+        actionContext: ActionContext,
+        entities: NormalizedEntityInfos,
+        existing: EntityAssignments,
+        lastEvent: string
+    ): Partial<EntityInfo>[] {
         const assignments = new EntityAssignments();
         const expected: string[] = actionContext.state.getValue(DialogPath.expectedProperties, []);
 
@@ -1061,8 +1288,9 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
         const defaultOp = this.dialogSchema.schema && this.dialogSchema.schema[this.defaultOperationKey];
 
         const nextAssignment = existing.nextAssignment;
-        let candidates = this.removeOverlappingPerProperty(this.candidates(entities, expected))
-            .sort((a, b): number => (a.isExpected === b.isExpected) ? 0 : (a.isExpected ? -1 : 1));
+        let candidates = this.removeOverlappingPerProperty(this.candidates(entities, expected)).sort((a, b): number =>
+            a.isExpected === b.isExpected ? 0 : a.isExpected ? -1 : 1
+        );
         const usedEntities: Map<string, Partial<EntityInfo>> = new Map();
         const expectedChoices: string[] = [];
         let choices: Partial<EntityAssignment>[] = [];
@@ -1088,8 +1316,10 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
 
             // Find alternative that covers the largest amount of utterance
             candidate = alternatives.sort((a, b): number => {
-                return (b.entity.name === this.utteranceKey ? 0 : b.entity.end - b.entity.start) -
-                    (a.entity.name === this.utteranceKey ? 0 : a.entity.end - a.entity.start);
+                return (
+                    (b.entity.name === this.utteranceKey ? 0 : b.entity.end - b.entity.start) -
+                    (a.entity.name === this.utteranceKey ? 0 : a.entity.end - a.entity.start)
+                );
             })[0];
 
             // Remove all alternatives that are fully contained in largest
@@ -1101,11 +1331,17 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
                 // Property has resolution so remove entity ambiguity
                 existing.dequeue(actionContext);
                 lastEvent = undefined;
-            } else if (lastEvent == AdaptiveEvents.chooseProperty && !candidate.operation && candidate.entity.name == this.propertyNameKey) {
+            } else if (
+                lastEvent == AdaptiveEvents.chooseProperty &&
+                !candidate.operation &&
+                candidate.entity.name == this.propertyNameKey
+            ) {
                 // NOTE: This assumes the existence of an entity named PROPERTYName for resolving this ambiguity
                 // See if one of the choices corresponds to an alternative
                 choices = existing.nextAssignment.alternatives;
-                const property = Array.isArray(candidate.entity.value) ? candidate.entity.value[0] : candidate.entity.value.toString();
+                const property = Array.isArray(candidate.entity.value)
+                    ? candidate.entity.value[0]
+                    : candidate.entity.value.toString();
                 const choice = choices.find((p): boolean => p.property == property);
                 if (choice) {
                     // Resolve choice, pretend it was expected and add to assignments
@@ -1151,12 +1387,19 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
         return Object.values(usedEntities);
     }
 
+    /**
+     * @private
+     */
     private replaces(a: Partial<EntityAssignment>, b: Partial<EntityAssignment>): number {
         let replaces = 0;
         for (const aAlt of a.alternatives) {
             for (const bAlt of b.alternatives) {
-                if (aAlt.property == bAlt.property && aAlt.entity.name != this.propertyNameKey && bAlt.entity.name != this.propertyNameKey) {
-                    var prop = this.dialogSchema.pathToSchema(aAlt.property);
+                if (
+                    aAlt.property == bAlt.property &&
+                    aAlt.entity.name != this.propertyNameKey &&
+                    bAlt.entity.name != this.propertyNameKey
+                ) {
+                    const prop = this.dialogSchema.pathToSchema(aAlt.property);
                     if (Array.isArray(prop)) {
                         if (aAlt.entity.whenRecognized > bAlt.entity.whenRecognized) {
                             replaces = -1;
@@ -1186,6 +1429,9 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
         return replaces;
     }
 
+    /**
+     * @private
+     */
     private mergeAssignments(newAssignments: EntityAssignments, old: EntityAssignments): void {
         let list = old.assignments;
         for (const assign of newAssignments.assignments) {
@@ -1219,8 +1465,13 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
 
         old.assignments = list;
 
-        const operationPreference: string[] = this.dialogSchema.schema && this.dialogSchema.schema[this.operationsKey] || [];
-        const eventPreference: string[] = [AdaptiveEvents.assignEntity, AdaptiveEvents.chooseProperty, AdaptiveEvents.chooseEntity];
+        const operationPreference: string[] =
+            (this.dialogSchema.schema && this.dialogSchema.schema[this.operationsKey]) || [];
+        const eventPreference: string[] = [
+            AdaptiveEvents.assignEntity,
+            AdaptiveEvents.chooseProperty,
+            AdaptiveEvents.chooseEntity,
+        ];
         list.sort((a, b): number => {
             // Order by event
             let comparison = 0;
@@ -1238,7 +1489,10 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
                     } else {
                         // Order by operations
                         if (operationPreference.indexOf(a.operation) != operationPreference.indexOf(b.operation)) {
-                            comparison = operationPreference.indexOf(a.operation) > operationPreference.indexOf(b.operation) ? 1 : -1;
+                            comparison =
+                                operationPreference.indexOf(a.operation) > operationPreference.indexOf(b.operation)
+                                    ? 1
+                                    : -1;
                         }
                     }
                 }

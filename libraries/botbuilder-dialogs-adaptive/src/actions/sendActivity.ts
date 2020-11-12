@@ -5,25 +5,46 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { DialogTurnResult, DialogContext, Dialog } from 'botbuilder-dialogs';
-import { Activity, StringUtils, MessageFactory, ActivityTypes, ResourceResponse } from 'botbuilder-core';
-import { TemplateInterface } from '../template';
-import { ActivityTemplate } from '../templates/activityTemplate';
-import { StaticActivityTemplate } from '../templates/staticActivityTemplate';
-import { BoolExpression } from 'adaptive-expressions';
+import { BoolExpression, BoolExpressionConverter, Expression } from 'adaptive-expressions';
+import { Activity, ActivityTypes, ResourceResponse, StringUtils } from 'botbuilder-core';
+import {
+    Converter,
+    ConverterFactory,
+    Dialog,
+    DialogConfiguration,
+    DialogContext,
+    DialogStateManager,
+    DialogTurnResult,
+    TemplateInterface,
+} from 'botbuilder-dialogs';
+import { ActivityTemplate, StaticActivityTemplate } from '../templates';
+import { ActivityTemplateConverter } from '../converters';
 
-export class SendActivity<O extends object = {}> extends Dialog<O> {
+type D = DialogStateManager & {
+    utterance: string;
+};
+
+export interface SendActivityConfiguration extends DialogConfiguration {
+    activity?: string | Partial<Activity> | TemplateInterface<Partial<Activity>, D>;
+    disabled?: boolean | string | Expression | BoolExpression;
+}
+
+/**
+ * Send an activity back to the user.
+ */
+export class SendActivity<O extends object = {}> extends Dialog<O> implements SendActivityConfiguration {
+    public static $kind = 'Microsoft.SendActivity';
     /**
-     * Creates a new `SendActivity` instance.
-     * @param activity Activity or message text to send the user.
+     * Creates a new [SendActivity](xref:botbuilder-dialogs-adaptive.SendActivity) instance.
+     * @param activity [Activity](xref:botframework-schema.Activity) or message text to send the user.
      */
     public constructor(activity?: Partial<Activity> | string) {
         super();
-        if (activity) { 
-            if (typeof activity === 'string') { 
-                this.activity = new ActivityTemplate(activity); 
+        if (activity) {
+            if (typeof activity === 'string') {
+                this.activity = new ActivityTemplate(activity);
             } else {
-                this.activity = new StaticActivityTemplate(activity); 
+                this.activity = new StaticActivityTemplate(activity);
             }
         }
     }
@@ -31,15 +52,31 @@ export class SendActivity<O extends object = {}> extends Dialog<O> {
     /**
      * Gets or sets template for the activity.
      */
-    public activity: TemplateInterface<Partial<Activity>>;
-    
+    public activity: TemplateInterface<Partial<Activity>, D & O>;
+
     /**
      * An optional expression which if is true will disable this action.
      */
     public disabled?: BoolExpression;
 
-    public async beginDialog(dc: DialogContext, options: O): Promise<DialogTurnResult> {
+    public getConverter(property: keyof SendActivityConfiguration): Converter | ConverterFactory {
+        switch (property) {
+            case 'activity':
+                return new ActivityTemplateConverter();
+            case 'disabled':
+                return new BoolExpressionConverter();
+            default:
+                return super.getConverter(property);
+        }
+    }
 
+    /**
+     * Starts a new [Dialog](xref:botbuilder-dialogs.Dialog) and pushes it onto the dialog stack.
+     * @param dc The `DialogContext` for the current turn of conversation.
+     * @param options Optional. Initial information to pass to the dialog.
+     * @returns A `Promise` representing the asynchronous operation.
+     */
+    public async beginDialog(dc: DialogContext, options: O): Promise<DialogTurnResult> {
         if (this.disabled && this.disabled.getValue(dc.state)) {
             return await dc.endDialog();
         }
@@ -50,37 +87,48 @@ export class SendActivity<O extends object = {}> extends Dialog<O> {
         }
 
         // Send activity and return result
-        const data = Object.assign(dc.state, {
-            utterance: dc.context.activity.text || ''
-        }, options);
-        
+        const data = Object.assign(
+            dc.state,
+            {
+                utterance: dc.context.activity.text || '',
+            },
+            options
+        );
+
         const activityResult = await this.activity.bind(dc, data);
 
         this.telemetryClient.trackEvent({
             name: 'GeneratorResult',
             properties: {
-                'template':this.activity,
-                'result': activityResult || ''
-            }
+                template: this.activity,
+                result: activityResult || '',
+            },
         });
 
         let result: ResourceResponse;
-        if (activityResult.type !== ActivityTypes.Message
-             || activityResult.text
-             || activityResult.speak
-             || (activityResult.attachments && activityResult.attachments.length > 0)
-             || activityResult.suggestedActions
-             || activityResult.channelData) {
-                result = await dc.context.sendActivity(activityResult);
+        if (
+            activityResult.type !== ActivityTypes.Message ||
+            activityResult.text ||
+            activityResult.speak ||
+            (activityResult.attachments && activityResult.attachments.length > 0) ||
+            activityResult.suggestedActions ||
+            activityResult.channelData
+        ) {
+            result = await dc.context.sendActivity(activityResult);
         }
 
         return await dc.endDialog(result);
     }
 
+    /**
+     * @protected
+     * Builds the compute Id for the [Dialog](xref:botbuilder-dialogs.Dialog).
+     * @returns A `string` representing the compute Id.
+     */
     protected onComputeId(): string {
         if (this.activity instanceof ActivityTemplate) {
-            return `SendActivity[${ StringUtils.ellipsis(this.activity.template.trim(), 30) }]`;
+            return `SendActivity[${StringUtils.ellipsis(this.activity.template.trim(), 30)}]`;
         }
-        return `SendActivity[${ StringUtils.ellipsis(this.activity && this.activity.toString().trim(), 30) }]`;
+        return `SendActivity[${StringUtils.ellipsis(this.activity && this.activity.toString().trim(), 30)}]`;
     }
 }

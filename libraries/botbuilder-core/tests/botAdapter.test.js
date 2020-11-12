@@ -1,57 +1,168 @@
 const assert = require('assert');
+const sinon = require('sinon');
 const { BotAdapter, TurnContext } = require('../');
 
 const testMessage = { text: 'test', type: 'message' };
 
 class SimpleAdapter extends BotAdapter {
-    processRequest(activity, handler) {
+    processRequest(activity, next) {
         const context = new TurnContext(this, activity);
-        return this.runMiddleware(context, handler);
+        return this.runMiddleware(context, next);
     }
-
 }
 
-
-describe(`BotAdapter`, function () {
-    this.timeout(5000);
-
-    let calls = 0;
-    function middleware(context, next) {
-        assert(context, `middleware[${calls}]: context object missing.`);
-        assert(next, `middleware[${calls}]: next() function missing.`);
-        calls++;
-        return next();
-    }
-
-    const adapter = new SimpleAdapter();
-    
-    it(`should use() middleware individually.`, function (done) {
-        adapter.use(middleware).use(middleware);
-        done();
+describe('BotAdapter', () => {
+    let sandbox;
+    beforeEach(() => {
+        sandbox = sinon.createSandbox();
     });
 
-    it(`should use() a list of middleware.`, function (done) {
-        adapter.use(middleware, middleware, middleware);
-        done();
+    afterEach(() => {
+        sandbox.restore();
     });
 
-    it(`should run all middleware.`, function (done) {
-        adapter.processRequest(testMessage, (context) => {
-            assert(context, `callback not passed context object.`);
-            assert(calls === 5, `only "${calls} of 5" middleware called.`);
-        }).then(() => done());
-    });
-   
-    it(`should reach onTurnError when error is thrown.`, function (done) {
-        adapter.onTurnError = async (turnContext, error) => {
-            assert(turnContext, `turnContext not found.`);
-            assert(error, `error not found.`);
-            assert.equal(error, 1, `unexpected error thrown.`);
-            done();
-        }
+    const getNextFake = () => sinon.fake((_, next) => next());
 
-        adapter.processRequest(testMessage, (turnContext) => {
-            throw 1;
+    const getAdapter = () => new SimpleAdapter();
+
+    describe('middleware handling', () => {
+        it('should use() middleware individually', () => {
+            const adapter = getAdapter();
+            adapter.use(getNextFake()).use(getNextFake());
+        });
+
+        it('should use() a list of middleware', () => {
+            const adapter = getAdapter();
+            adapter.use(getNextFake(), getNextFake(), getNextFake());
+        });
+
+        it('should run all middleware', async () => {
+            const adapter = getAdapter();
+
+            const middlewares = [getNextFake(), getNextFake()];
+            adapter.use(...middlewares);
+
+            const handler = sandbox.fake((context) => {
+                assert(context instanceof TurnContext, 'context is a TurnContext instance');
+            });
+
+            await adapter.processRequest(testMessage, handler);
+
+            assert(
+                middlewares.every((middleware) => middleware.called),
+                'every middleware was called'
+            );
+            assert(handler.called, 'handler was called');
+        });
+    });
+
+    describe('onTurnError', () => {
+        const testCases = [
+            { label: 'promise is rejected', logic: () => Promise.reject('error') },
+            {
+                label: 'error is thrown',
+                logic: () => {
+                    throw new Error();
+                },
+            },
+        ];
+
+        testCases.forEach(({ label, logic }) => {
+            it(`should reach onTurnError when a ${label}`, async () => {
+                const adapter = getAdapter();
+
+                adapter.onTurnError = sandbox.fake((context, error) => {
+                    assert(context instanceof TurnContext, 'context is a TurnContext instance');
+                    assert(error, 'error is defined');
+                });
+
+                const handler = sandbox.fake(logic);
+
+                await adapter.processRequest(testMessage, handler);
+
+                assert(adapter.onTurnError.called, 'onTurnError was called');
+                assert(handler.called, 'handler was called');
+            });
+
+            it(`should propagate error when onTurnError is not defined and a ${label}`, async () => {
+                const adapter = getAdapter();
+
+                const handler = sandbox.fake(logic);
+
+                await assert.rejects(
+                    adapter.processRequest(testMessage, handler),
+                    'unhandled handler error should yield promise rejection'
+                );
+
+                assert(handler.called, 'handler was called');
+            });
+
+            it(`should propagate error if a ${label} in onTurnError when a ${label} in handler`, async () => {
+                const adapter = getAdapter();
+
+                adapter.onTurnError = sandbox.fake((context, error) => {
+                    assert(context instanceof TurnContext, 'context is a TurnContext instance');
+                    assert(error, 'error is defined');
+                    return logic();
+                });
+
+                const handler = sandbox.fake(logic);
+
+                await assert.rejects(
+                    adapter.processRequest(testMessage, handler),
+                    'unhandled onTurnError error should yield promise rejection'
+                );
+
+                assert(adapter.onTurnError.called, 'onTurnError was called');
+                assert(handler.called, 'handler was called');
+            });
+        });
+    });
+
+    describe('proxy context revocation', () => {
+        it('should revoke after execution', async () => {
+            const adapter = getAdapter();
+
+            const handler = sandbox.fake((context) => {
+                assert.doesNotThrow(() => context.activity, 'accessing context property succeeds before it is revoked');
+            });
+
+            await adapter.processRequest(testMessage, handler);
+            assert(handler.called, 'handler was called');
+
+            const [context] = handler.args[0];
+            assert.throws(() => context.activity, 'accessing context property should throw since it has been revoked');
+        });
+
+        it('should revoke after onTurnError', async () => {
+            const adapter = getAdapter();
+
+            adapter.onTurnError = sandbox.fake((context) => {
+                assert.doesNotThrow(() => context.activity, 'accessing context property succeeds before it is revoked');
+            });
+
+            const handler = sandbox.fake(() => Promise.reject('error'));
+            await adapter.processRequest(testMessage, handler);
+            assert(handler.called, 'handler was called');
+
+            assert(adapter.onTurnError.called, 'onTurnError was called');
+            const [context] = adapter.onTurnError.args[0];
+            assert.throws(() => context.activity, 'accessing context property should throw since it has been revoked');
+        });
+
+        it('should revoke after unhandled error', async () => {
+            const adapter = getAdapter();
+
+            const handler = sandbox.fake(() => Promise.reject('error'));
+
+            await assert.rejects(
+                adapter.processRequest(testMessage, handler),
+                'unhandled handler error should yield promise rejection'
+            );
+            assert(handler.called, 'handler was called');
+
+            const [context] = handler.args[0];
+            assert.throws(() => context.activity, 'accessing context property should throw since it has been revoked');
         });
     });
 });

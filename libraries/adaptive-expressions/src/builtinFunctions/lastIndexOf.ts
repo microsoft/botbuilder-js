@@ -20,15 +20,20 @@ import { ReturnType } from '../returnType';
  * The zero-based index position of value if that value is found, or -1 if it is not.
  */
 export class LastIndexOf extends ExpressionEvaluator {
+    /**
+     * Initializes a new instance of the [LastIndexOf](xref:adaptive-expressions.LastIndexOf) class.
+     */
     public constructor() {
         super(ExpressionType.LastIndexOf, LastIndexOf.evaluator, ReturnType.Number, LastIndexOf.validator);
     }
 
+    /**
+     * @private
+     */
     private static evaluator(expression: Expression, state: MemoryInterface, options: Options): ValueWithError {
         let value = -1;
-        let error: string;
-        let args: any[];
-        ({ args, error } = FunctionUtils.evaluateChildren(expression, state, options));
+        const { args, error: childrenError } = FunctionUtils.evaluateChildren(expression, state, options);
+        let error = childrenError;
         if (!error) {
             if (args[0] == undefined || typeof args[0] === 'string') {
                 if (args[1] === undefined || typeof args[1] === 'string') {
@@ -48,6 +53,9 @@ export class LastIndexOf extends ExpressionEvaluator {
         return { value, error };
     }
 
+    /**
+     * @private
+     */
     private static validator(expression: Expression): void {
         FunctionUtils.validateOrder(expression, [], ReturnType.String | ReturnType.Array, ReturnType.Object);
     }

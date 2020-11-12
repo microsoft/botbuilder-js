@@ -5,24 +5,74 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { DialogTurnResult, DialogContext, Dialog } from 'botbuilder-dialogs';
-import { ValueExpression, StringExpression, BoolExpression, EnumExpression } from 'adaptive-expressions';
+import {
+    BoolExpression,
+    BoolExpressionConverter,
+    EnumExpression,
+    EnumExpressionConverter,
+    Expression,
+    StringExpression,
+    StringExpressionConverter,
+    ValueExpression,
+    ValueExpressionConverter,
+} from 'adaptive-expressions';
+import {
+    Converter,
+    ConverterFactory,
+    Dialog,
+    DialogConfiguration,
+    DialogContext,
+    DialogTurnResult,
+} from 'botbuilder-dialogs';
 
 export enum ArrayChangeType {
     push = 'push',
     pop = 'pop',
     take = 'take',
     remove = 'remove',
-    clear = 'clear'
+    clear = 'clear',
 }
 
-export class EditArray<O extends object = {}> extends Dialog<O> {
+export interface EditArrayConfiguration extends DialogConfiguration {
+    changeType?: ArrayChangeType | string | Expression | EnumExpression<ArrayChangeType>;
+    itemsProperty?: string | Expression | StringExpression;
+    resultProperty?: string | Expression | StringExpression;
+    value?: unknown | ValueExpression;
+    disabled?: boolean | string | Expression | BoolExpression;
+}
+
+/**
+ * Lets you modify an array in memory.
+ */
+export class EditArray<O extends object = {}> extends Dialog<O> implements EditArrayConfiguration {
+    public static $kind = 'Microsoft.EditArray';
+
     public constructor();
+
+    /**
+     * Initializes a new instance of the [EditArray](xref:botbuilder-dialogs-adaptive.EditArray) class.
+     * @param changeType [ArrayChangeType](xref:botbuilder-dialogs-adaptive.ArrayChangeType), change type.
+     * @param itemsProperty Array property.
+     * @param value Optional. Value to insert.
+     * @param resultProperty Optional. Output property to put Pop/Take into.
+     */
     public constructor(changeType: ArrayChangeType, itemsProperty: string, value?: any, resultProperty?: string);
+
+    /**
+     * Initializes a new instance of the [EditArray](xref:botbuilder-dialogs-adaptive.EditArray) class.
+     * @param changeType Optional. [ArrayChangeType](xref:botbuilder-dialogs-adaptive.ArrayChangeType), change type.
+     * @param itemsProperty Optional. Array property.
+     * @param value Optional. Value to insert.
+     * @param resultProperty Optional. Output property to put Pop/Take into.
+     */
     public constructor(changeType?: ArrayChangeType, itemsProperty?: string, value?: any, resultProperty?: string) {
         super();
-        if (changeType) { this.changeType = new EnumExpression<ArrayChangeType>(changeType); }
-        if (itemsProperty) { this.itemsProperty = new StringExpression(itemsProperty); }
+        if (changeType) {
+            this.changeType = new EnumExpression<ArrayChangeType>(changeType);
+        }
+        if (itemsProperty) {
+            this.itemsProperty = new StringExpression(itemsProperty);
+        }
         switch (changeType) {
             case ArrayChangeType.clear:
             case ArrayChangeType.pop:
@@ -63,13 +113,38 @@ export class EditArray<O extends object = {}> extends Dialog<O> {
      */
     public disabled?: BoolExpression;
 
+    public getConverter(property: keyof EditArrayConfiguration): Converter | ConverterFactory {
+        switch (property) {
+            case 'changeType':
+                return new EnumExpressionConverter<ArrayChangeType>(ArrayChangeType);
+            case 'itemsProperty':
+                return new StringExpressionConverter();
+            case 'resultProperty':
+                return new StringExpressionConverter();
+            case 'value':
+                return new ValueExpressionConverter();
+            case 'disabled':
+                return new BoolExpressionConverter();
+            default:
+                return super.getConverter(property);
+        }
+    }
+
+    /**
+     * Starts a new [Dialog](xref:botbuilder-dialogs.Dialog) and pushes it onto the dialog stack.
+     * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
+     * @param options Optional. Initial information to pass to the dialog.
+     * @returns A `Promise` representing the asynchronous operation.
+     */
     public async beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult> {
         if (this.disabled && this.disabled.getValue(dc.state)) {
             return await dc.endDialog();
         }
 
         if (!this.itemsProperty) {
-            throw new Error(`EditArray: "${ this.changeType.toString() }" operation couldn't be performed because the itemsProperty wasn't specified.`);
+            throw new Error(
+                `EditArray: "${this.changeType.toString()}" operation couldn't be performed because the itemsProperty wasn't specified.`
+            );
         }
 
         // Get list and ensure populated
@@ -98,7 +173,10 @@ export class EditArray<O extends object = {}> extends Dialog<O> {
                 if (evaluationResult != undefined) {
                     result = false;
                     for (let i = 0; i < list.length; i++) {
-                        if ((JSON.stringify(evaluationResult) == JSON.stringify(list[i])) || evaluationResult === list[i]) {
+                        if (
+                            JSON.stringify(evaluationResult) == JSON.stringify(list[i]) ||
+                            evaluationResult === list[i]
+                        ) {
                             list.splice(i, 1);
                             result = true;
                             break;
@@ -120,11 +198,25 @@ export class EditArray<O extends object = {}> extends Dialog<O> {
         return await dc.endDialog();
     }
 
+    /**
+     * @protected
+     * Builds the compute Id for the [Dialog](xref:botbuilder-dialogs.Dialog).
+     * @returns A `string` representing the compute Id.
+     */
     protected onComputeId(): string {
-        return `EditArray[${ this.changeType.toString() }: ${ this.itemsProperty.toString() }]`;
+        return `EditArray[${this.changeType.toString()}: ${this.itemsProperty.toString()}]`;
     }
 
+    /**
+     * @private
+     */
     private ensureValue(): void {
-        if (!this.value) { throw new Error(`EditArray: "${ this.changeType.toString() }" operation couldn't be performed for list "${ this.itemsProperty }" because a value wasn't specified.`) }
+        if (!this.value) {
+            throw new Error(
+                `EditArray: "${this.changeType.toString()}" operation couldn't be performed for list "${
+                    this.itemsProperty
+                }" because a value wasn't specified.`
+            );
+        }
     }
 }

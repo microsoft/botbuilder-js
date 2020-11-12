@@ -1,5 +1,5 @@
-/browser
-/lib
-/node_modules
+es5
+lib
+node_modules
 *.js.map
-/coverage/**
+coverage/**

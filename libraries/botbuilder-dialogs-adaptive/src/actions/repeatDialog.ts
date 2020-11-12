@@ -5,12 +5,27 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { DialogTurnResult, DialogContext, TurnPath } from 'botbuilder-dialogs';
-import { BaseInvokeDialog } from './baseInvokeDialog';
-import { BoolExpression } from 'adaptive-expressions';
+import { BoolExpression, BoolExpressionConverter, Expression } from 'adaptive-expressions';
+import { Converter, ConverterFactory, DialogContext, DialogTurnResult, TurnPath } from 'botbuilder-dialogs';
+import { BaseInvokeDialog, BaseInvokeDialogConfiguration } from './baseInvokeDialog';
 
-export class RepeatDialog<O extends object = {}> extends BaseInvokeDialog<O> {
+export interface RepeatDialogConfiguration extends BaseInvokeDialogConfiguration {
+    disabled?: boolean | string | Expression | BoolExpression;
+    allowLoop?: boolean | string | Expression | BoolExpression;
+}
+
+/**
+ * Action which repeats the active [Dialog](xref:botbuilder-dialogs.Dialog) (restarting it).
+ */
+export class RepeatDialog<O extends object = {}> extends BaseInvokeDialog<O> implements RepeatDialogConfiguration {
+    public static $kind = 'Microsoft.RepeatDialog';
+
     public constructor();
+
+    /**
+     * Initializes a new instance of the [RepeatDialog](xref:botbuilder-dialogs-adaptive.RepeatDialog) class.
+     * @param options Optional. Object with additional options.
+     */
     public constructor(options?: O) {
         super(undefined, options);
     }
@@ -19,12 +34,29 @@ export class RepeatDialog<O extends object = {}> extends BaseInvokeDialog<O> {
      * An optional expression which if is true will disable this action.
      */
     public disabled?: BoolExpression;
-    
+
     /**
      * An optional expression which if is true will allow loop of the repeated dialog.
      */
     public allowLoop?: BoolExpression;
 
+    public getConverter(property: keyof RepeatDialogConfiguration): Converter | ConverterFactory {
+        switch (property) {
+            case 'disabled':
+                return new BoolExpressionConverter();
+            case 'allowLoop':
+                return new BoolExpressionConverter();
+            default:
+                return super.getConverter(property);
+        }
+    }
+
+    /**
+     * Starts a new [Dialog](xref:botbuilder-dialogs.Dialog) and pushes it onto the dialog stack.
+     * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
+     * @param options Optional. Initial information to pass to the dialog.
+     * @returns A `Promise` representing the asynchronous operation.
+     */
     public async beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult> {
         if (this.disabled && this.disabled.getValue(dc.state)) {
             return await dc.endDialog();
@@ -36,15 +68,14 @@ export class RepeatDialog<O extends object = {}> extends BaseInvokeDialog<O> {
         const repeatedIds: string[] = dc.state.getValue(TurnPath.repeatedIds, []);
         if (repeatedIds.includes(targetDialogId)) {
             if (this.allowLoop == null || this.allowLoop.getValue(dc.state) == false) {
-                throw new Error(`Recursive loop detected, ${ targetDialogId } cannot be repeated twice in one turn.`);
+                throw new Error(`Recursive loop detected, ${targetDialogId} cannot be repeated twice in one turn.`);
             }
-        }
-        else {
+        } else {
             repeatedIds.push(targetDialogId);
         }
 
         dc.state.setValue(TurnPath.repeatedIds, repeatedIds);
-        
+
         // set the activity processed state (default is true)
         dc.state.setValue(TurnPath.activityProcessed, this.activityProcessed.getValue(dc.state));
 

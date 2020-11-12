@@ -241,8 +241,6 @@ export class Ask extends SendActivity {
 // @public (undocumented)
 export class AttachmentInput extends InputDialog {
     // (undocumented)
-    protected getDefaultInput(dc: DialogContext): any;
-    // (undocumented)
     protected onComputeId(): string;
     // (undocumented)
     protected onRecognizeInput(dc: DialogContext): Promise<InputState>;
@@ -805,8 +803,6 @@ export abstract class InputDialog extends Dialog {
     defaultValue?: ValueExpression;
     defaultValueResponse: TemplateInterface<Partial<Activity>>;
     disabled?: BoolExpression;
-    // (undocumented)
-    protected getDefaultInput(dc: DialogContext): any;
     invalidPrompt: TemplateInterface<Partial<Activity>>;
     maxTurnCount?: IntExpression;
     // (undocumented)
@@ -1518,7 +1514,7 @@ export class TemperatureEntityRecognizer extends TextEntityRecognizer {
 
 // @public
 export class TemplateEngineLanguageGenerator implements LanguageGenerator {
-    constructor(arg1?: Templates | string, arg2?: string | Map<string, Resource[]>, arg3?: Map<string, Resource[]>);
+    constructor(arg1?: Templates | Resource, arg2?: Map<string, Resource[]>);
     // (undocumented)
     generate(dialogContext: DialogContext, template: string, data: object): Promise<string>;
     // (undocumented)

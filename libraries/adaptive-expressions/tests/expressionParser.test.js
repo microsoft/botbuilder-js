@@ -1,3 +1,4 @@
+/* eslint-disable security/detect-object-injection */
 const assert = require('assert');
 const bigInt = require('big-integer');
 const { Expression, SimpleObjectMemory, FunctionUtils, Options } = require('../lib');
@@ -21,13 +22,17 @@ const testCases = [
             ['"ab\\ycd"', 'ab\\ycd'], //"ab\ycd" -> ab\ycd
             ['\'ab\\\'cd\'', 'ab\'cd'], // 'ab\'cd' -> ab'cd
             ['alist[0].Name', 'item1'],
-        ]
+        ],
     },
     {
         label: 'string interpolation',
         testCases: [
             ['``', ''],
             ['`hi`', 'hi'],
+            ['`hi\r\n`', 'hi\r\n'],
+            ['`hi\\r\\n`', 'hi\\r\\n'],
+            ['`hi\\\\``', 'hi\\`'],
+            ['`hi\\$`', 'hi$'],
             ['`hi\\``', 'hi`'],
             ['`${world}`', 'world'],
             ['`hi ${string(\'jack`\')}`', 'hi jack`'],
@@ -153,7 +158,28 @@ const testCases = [
             ['one > 0.5 || two < 1.5', true, oneTwo],
             ['one / 0 || two', true],
             ['0/3', 0],
-        ]
+            ['3??2', 3],
+            ['null ?? two', 2],
+            ['undefined ?? two', 2],
+            ['bag.notExist ?? bag.n ?? bag.name', 'mybag'],
+            ['!exists(one)?"r1":"r2"', "r2"],
+            ['!!exists(one) ? "r1" : "r2"', 'r1'],
+            ['0?"r1":"r2"', 'r1'],
+            ['bool("true")? "r1": "r2"', 'r1'],
+            ['bag.name == null ? "hello": bag.name', 'mybag'],
+            ['one > 0? one : two', 1],
+            ['hello * 5?"r1":"r2"', 'r2'],
+            ['timestampObj < timestampObj2', false],
+            ['timestampObj2 < timestampObj', true],
+            ['timestampObj > timestampObj2', true],
+            ['timestampObj2 > timestampObj', false],
+            ['timestampObj >= timestampObj2', true],
+            ['timestampObj2 >= timestampObj', false],
+            ['timestampObj <= timestampObj2', false],
+            ['timestampObj2 <= timestampObj', true],
+            ['timestampObj == timestampObj2', false],
+            ['timestampObj == timestampObj', true],
+        ],
     },
     {
         label: 'String functions',
@@ -178,6 +204,10 @@ const testCases = [
             ['count(\'hello\')', 5],
             ['count("hello")', 5],
             ['count(concat(hello,\r\nworld))', 10],
+            ['reverse("hello")', 'olleh'],
+            ['reverse(reverse("hello"))', 'hello'],
+            ['reverse(\'hello\')', 'olleh'],
+            ['reverse(concat(hello,world))', 'dlrowolleh'],
             ['replace(\'hello\', \'l\', \'k\')', 'hekko'],
             ['replace(\'hello\', \'L\', \'k\')', 'hello'],
             ['replace(nullObj, \'L\', \'k\')', ''],
@@ -222,6 +252,9 @@ const testCases = [
             ['startsWith(nullObj,\'a\')', false],
             ['startsWith(nullObj, nullObj)', true],
             ['startsWith(\'hello\',nullObj)', true],
+            ['take(hello,1)', 'h'],
+            ['take(hello,-1)', ''],
+            ['take(hello,10)', 'hello'],
             ['countWord(hello)', 1],
             ['countWord(concat(hello, \' \', world))', 2],
             ['addOrdinal(11)', '11th'],
@@ -258,7 +291,7 @@ const testCases = [
             ['sentenceCase(\'aBC\')', 'Abc'],
             ['titleCase(\'a\')', 'A'],
             ['titleCase(\'abc dEF\')', 'Abc Def'],
-        ]
+        ],
     },
     {
         label: 'Logical comparison functions',
@@ -287,6 +320,7 @@ const testCases = [
             ['less(2, 2)', false],
             ['less(one, two)', true],
             ['less(one, two)', true, oneTwo],
+            ["less('abc', 'xyz')", true],
             ['lessOrEquals(one, one)', true, ['one']],
             ['lessOrEquals(one, two)', true, oneTwo],
             ['lessOrEquals(one, one)', true],
@@ -356,7 +390,7 @@ const testCases = [
             ['null >= 1', false],
             ['undefined < 1', false],
             ['undefined >= 1', false],
-        ]
+        ],
     },
     {
         label: 'Conversion functions',
@@ -377,12 +411,12 @@ const testCases = [
             ['bool(\'hi\')', true],
             ['[1,2,3]', [1, 2, 3]],
             ['[1,2,3, [4,5]]', [1, 2, 3, [4, 5]]],
-            ['\"[1,2,3]\"', '[1,2,3]'],
+            ['"[1,2,3]"', '[1,2,3]'],
             ['[1, bool(0), string(bool(1)), float(\'10\')]', [1, true, 'true', 10.0]],
             ['[\'a\', \'b[]\', \'c[][][]\'][1]', 'b[]'],
             ['[\'a\', [\'b\', \'c\']][1][0]', 'b'],
             ['union(["a", "b", "c"], ["d", ["e", "f"], "g"][1])', ['a', 'b', 'c', 'e', 'f']],
-            ['union(["a", "b", "c"], ["d", ["e", "f"], "g"][1])[1]', ['b']],
+            ['union(["a", "b", "c"], ["d", ["e", "f"], "g"][1])[1]', 'b'],
             ['createArray(\'h\', \'e\', \'l\', \'l\', \'o\')', ['h', 'e', 'l', 'l', 'o']],
             ['createArray()', []],
             ['[]', []],
@@ -396,7 +430,7 @@ const testCases = [
             ['base64(hello)', 'aGVsbG8='],
             ['base64(byteArr)', 'AwUBDA=='],
             ['base64ToBinary(base64(byteArr))', new Uint8Array([3, 5, 1, 12])],
-            ['base64(base64ToBinary(\"AwUBDA==\"))', 'AwUBDA=='],
+            ['base64(base64ToBinary("AwUBDA=="))', 'AwUBDA=='],
             ['base64ToString(base64(hello))', 'hello'],
             ['dataUriToBinary(base64(hello))', new Uint8Array([97, 71, 86, 115, 98, 71, 56, 61])],
             ['uriComponent(\'http://contoso.com\')', 'http%3A%2F%2Fcontoso.com'],
@@ -405,16 +439,15 @@ const testCases = [
             ['formatNumber(12.123, 2)', '12.12'],
             ['formatNumber(1.555, 2)', '1.56'],
             ['formatNumber(12.123, 4)', '12.1230'],
-            ['jsonStringify(json(\'{\"a\":\"b\"}\'))', '{"a":"b"}'],
+            ['formatNumber(12000.3, 4, "fr-FR")', '12\u00a0000,3000'],
+            ['formatNumber(12000.3, 4, "de-DE")', '12.000,3000'],
+            ['jsonStringify(json(\'{"a":"b"}\'))', '{"a":"b"}'],
             ['jsonStringify(\'a\')', '"a"'],
             ['jsonStringify(null)', 'null'],
             ['jsonStringify(undefined)', undefined],
             ['jsonStringify({a:"b"})', '{"a":"b"}'],
-        ]
+        ],
     },
-    // TODO: This should actually be the below, but toLocaleString does not work.
-    // ['formatNumber(12000.3, 4, "fr-FR")', '12\u00a0000,3000'],
-    //['formatNumber(12000.3, 4, "fr-FR")', '12,000.3000'],
     {
         label: 'Math functions',
         testCases: [
@@ -452,7 +485,7 @@ const testCases = [
             ['round(3.51)', 4],
             ['round(3.55, 1)', 3.6],
             ['round(3.12134, 3)', 3.121],
-        ]
+        ],
     },
     // All the timestamp strings passed in must be in ISO format of YYYY-MM-DDTHH:mm:ss.sssZ
     // Otherwise exceptions will be thrown out
@@ -480,6 +513,7 @@ const testCases = [
             ['isPresent(validNow)', true],
             ['addDays(timestamp, 1)', '2018-03-16T13:00:00.111Z'],
             ['addDays(timestamp, 1,\'MM-dd-yy\')', '03-16-18'],
+            ['addDays(timestamp, 1,\'MM/dd/yy\')', '03/16/18'],
             ['addHours(timestamp, 1)', '2018-03-15T14:00:00.111Z'],
             ['addHours(timestamp, 1,\'MM-dd-yy hh-mm\')', '03-15-18 02-00'],
             ['addMinutes(timestamp, 1)', '2018-03-15T13:01:00.111Z'],
@@ -493,6 +527,8 @@ const testCases = [
             ['date(timestamp)', '3/15/2018'],//Default. TODO
             ['year(timestamp)', 2018],
             ['length(utcNow())', 24],
+            ['formatDateTime(notISOTimestamp, \'dd/MM/yyy\')', '15/03/2018'],
+            ['formatDateTime(notISOTimestamp, \'dd%MM%yyy\')', '15032018'],
             ['formatDateTime(notISOTimestamp)', '2018-03-15T13:00:00.000Z'],
             ['formatDateTime(notISOTimestamp, \'MM-dd-yy\')', '03-15-18'],
             ['formatDateTime(notISOTimestamp, \'ddd\')', 'Thu'],
@@ -552,7 +588,14 @@ const testCases = [
             ['ticksToDays(2193385800000000)', 2538.6409722222224],
             ['ticksToHours(2193385800000000)', 60927.383333333331],
             ['ticksToMinutes(2193385811100000)', 3655643.0185],
-        ]
+            ['resolve("T14")', '14:00:00'],
+            ['resolve("T14:20")', '14:20:00'],
+            ['resolve("T14:20:30")', '14:20:30'],
+            ['resolve("2020-12-20")', '2020-12-20'],
+            ['resolve("2020-12-20T14")', '2020-12-20 14:00:00'],
+            ['resolve("2020-12-20T14:20")', '2020-12-20 14:20:00'],
+            ['resolve("2020-12-20T14:20:30")', '2020-12-20 14:20:30'],
+        ],
     },
     {
         label: 'URI parsing functions',
@@ -563,7 +606,7 @@ const testCases = [
             ['uriPort(\'http://www.localhost:8080\')', 8080],
             ['uriQuery(\'http://www.contoso.com/catalog/shownew.htm?date=today\')', '?date=today'],
             ['uriScheme(\'http://www.contoso.com/catalog/shownew.htm?date=today\')', 'http'],
-        ]
+        ],
     },
     {
         label: 'Collection functions',
@@ -585,6 +628,8 @@ const testCases = [
             ['count(split(hello,\'e\'))', 2],
             ['count(createArray(\'h\', \'e\', \'l\', \'l\', \'o\'))', 5],
             ['empty(\'\')', true],
+            ['reverse(split(hello,"e"))', ['llo', 'h']],
+            ['reverse(createArray("h", "e", "l", "l", "o"))', ['o', 'l', 'l', 'e', 'h']],
             ['empty(\'a\')', false],
             ['empty(bag)', false],
             ['empty(items)', false],
@@ -618,7 +663,7 @@ const testCases = [
             ['join(where(items, item, item == \'two\'), \',\')', 'two'],
             ['join(where(items, item => item == \'two\'), \',\')', 'two'],
             ['join(foreach(where(nestedItems, item, item.x > 1), result, result.x), \',\')', '2,3', ['nestedItems']],
-            ['string(where(dialog, item, item.value=="Dialog Title"))', '{\"title\":\"Dialog Title\"}'],
+            ['string(where(dialog, item, item.value=="Dialog Title"))', '{"title":"Dialog Title"}'],
             ['last(items)', 'two'],
             ['last(\'hello\')', 'o'],
             ['last(createArray(0, 1, 2))', 2],
@@ -628,8 +673,12 @@ const testCases = [
             ['count(intersection(createArray(\'a\', \'b\')))', 2],
             ['count(intersection(createArray(\'a\', \'b\'), createArray(\'b\', \'c\'), createArray(\'b\', \'d\')))', 1],
             ['skip(createArray(\'a\', \'b\', \'c\', \'d\'), 2)', ['c', 'd']],
+            ['skip(createArray(\'a\', \'b\', \'c\', \'d\'), -1)', ['a', 'b', 'c', 'd']],
+            ['skip(createArray(\'a\', \'b\', \'c\', \'d\'), 10)', []],
             ['take(hello, two)', 'he'],
             ['take(createArray(\'a\', \'b\', \'c\', \'d\'), one)', ['a']],
+            ['take(createArray(\'a\', \'b\', \'c\', \'d\'), -1)', []],
+            ['take(createArray(\'a\', \'b\', \'c\', \'d\'), 10)', ['a', 'b', 'c', 'd']],
             ['subArray(createArray(\'a\', \'b\', \'c\', \'d\'), 1, 3)', ['b', 'c']],
             ['subArray(createArray(\'a\', \'b\', \'c\', \'d\'), 1)', ['b', 'c', 'd']],
             ['range(1, 4)', [1, 2, 3, 4]],
@@ -641,7 +690,7 @@ const testCases = [
             ['flatten(createArray(1,createArray(2),createArray(createArray(3, 4), createArray(5,6))))', [1, 2, 3, 4, 5, 6]],
             ['flatten(createArray(1,createArray(2),createArray(createArray(3, 4), createArray(5,6))), 1)', [1, 2, [3, 4], [5, 6]]],
             ['unique(createArray(1, 5, 1))', [1, 5]],
-        ]
+        ],
     },
     {
         label: 'Object manipulation and construction functions',
@@ -667,7 +716,7 @@ const testCases = [
             ['jPath(jsonStr, \'.automobiles[0].maker\' )', ['Nissan']],
             ['string(merge(json1, json2))', '{"FirstName":"John","LastName":"Smith","Enabled":true,"Roles":["Customer","Admin"]}'],
             ['string(merge(json1, json2, json3))', '{"FirstName":"John","LastName":"Smith","Enabled":true,"Roles":["Customer","Admin"],"age":36}'],
-        ]
+        ],
     },
     {
         label: 'Memory access',
@@ -684,7 +733,7 @@ const testCases = [
             ['items[1+1]', 'two'],
             ['getProperty(undefined, \'p\')', undefined],
             ['(getProperty(undefined, \'p\'))[1]', undefined],
-        ]
+        ],
     },
     {
         label: 'regex',
@@ -715,7 +764,7 @@ const testCases = [
             ['isMatch("1", "\\\\d{1}")', true], // "\d" (match [0-9])
             ['isMatch("12.5", "[0-9]+(\\\\.5)")', true], // "\." (match .)
             ['isMatch("12x5", "[0-9]+(\\\\.5)")', false], // "\." (match .)
-        ]
+        ],
     },
     {
         label: 'Type Checking',
@@ -737,13 +786,11 @@ const testCases = [
             ['isBoolean(1 == one)', true],
             ['isDateTime(hello)', false],
             ['isDateTime(timestamp)', true],
-        ]
+        ],
     },
     {
         label: 'Empty expression',
-        testCases: [
-            ['', '']
-        ]
+        testCases: [['', '']],
     },
     {
         label: 'SetPathToValue',
@@ -753,8 +800,8 @@ const testCases = [
             ['setPathToValue(path.array[0], 7) + path.array[0]', 14],
             ['setPathToValue(path.array[1], 9) + path.array[1]', 18],
             ['setPathToValue(path.x, null)', null],
-        ]
-    }
+        ],
+    },
 ];
 
 const mockedTimeTestCases = [
@@ -784,26 +831,26 @@ const mockedTimeTestCases = [
     ['getPreviousViableTime(\'TXX:40:20\')', 'T23:40:20'],
     ['getPreviousViableTime(\'TXX:40:20\', \'Eastern Standard Time\')', 'T19:40:20'],
     ['getPreviousViableTime(\'TXX:05:10\')', 'T00:05:10'],
-    ['getPreviousViableTime(\'TXX:05:10\', \'Central Standard Time\')', 'T19:05:10']
+    ['getPreviousViableTime(\'TXX:05:10\', \'Central Standard Time\')', 'T19:05:10'],
 ];
 
 const scope = {
-    '$index': 'index',
+    $index: 'index',
     'a:b': 'stringa:b',
     alist: [
         {
-            Name: 'item1'
+            Name: 'item1',
         },
         {
-            Name: 'item2'
-        }
+            Name: 'item2',
+        },
     ],
     emptyList: [],
     emptyObject: new Map(),
     emptyJObject: {},
 
     path: {
-        array: [1]
+        array: [1],
     },
     one: 1.0,
     two: 2.0,
@@ -814,27 +861,21 @@ const scope = {
     y: 'y',
     istrue: true,
     nullObj: undefined,
-    jsonStr: '{"automobiles" : [{ "maker" : "Nissan", "model" : "Teana", "year" : 2011 },{ "maker" : "Honda", "model" : "Jazz", "year" : 2010 },{ "maker" : "Honda", "model" : "Civic", "year" : 2007 },{ "maker" : "Toyota", "model" : "Yaris", "year" : 2008 },{"maker" : "Honda", "model" : "Accord", "year" : 2011 }],"motorcycles" : [{ "maker" : "Honda", "model" : "ST1300", "year" : 2012 }]}',
+    jsonStr:
+        '{"automobiles" : [{ "maker" : "Nissan", "model" : "Teana", "year" : 2011 },{ "maker" : "Honda", "model" : "Jazz", "year" : 2010 },{ "maker" : "Honda", "model" : "Civic", "year" : 2007 },{ "maker" : "Toyota", "model" : "Yaris", "year" : 2008 },{"maker" : "Honda", "model" : "Accord", "year" : 2011 }],"motorcycles" : [{ "maker" : "Honda", "model" : "ST1300", "year" : 2012 }]}',
     pathStr: `.automobiles{.maker === "Honda" && .year > 2009}.model`,
     byteArr: new Uint8Array([3, 5, 1, 12]),
-    bag:
-    {
+    bag: {
         three: 3.0,
-        set:
-        {
+        set: {
             four: 4.0,
         },
         list: ['red', 'blue'],
         index: 3,
-        name: 'mybag'
+        name: 'mybag',
     },
     items: ['zero', 'one', 'two'],
-    nestedItems:
-        [
-            { x: 1 },
-            { x: 2 },
-            { x: 3 },
-        ],
+    nestedItems: [{ x: 1 }, { x: 2 }, { x: 3 }],
     timestamp: '2018-03-15T13:00:00.111Z',
     notISOTimestamp: '2018-03-15T13:00:00Z',
     validFullDateTimex: new TimexProperty('2020-02-20'),
@@ -844,71 +885,62 @@ const scope = {
     validNow: new TimexProperty({ now: true }),
     invalidHourTimex: new TimexProperty('2001-02-20'),
     timestampObj: new Date('2018-03-15T13:00:00.000Z'),
+    timeStampObj2: new Date('2018-01-02T02:00:00.000Z'),
     unixTimestamp: 1521118800,
     unixTimestampFraction: 1521118800.5,
     ticks: bigInt('637243624200000000'),
     json1: {
-        'FirstName': 'John',
-        'LastName': 'Smith',
-        'Enabled': false,
-        'Roles': ['User']
+        FirstName: 'John',
+        LastName: 'Smith',
+        Enabled: false,
+        Roles: ['User'],
     },
     json2: {
-        'Enabled': true,
-        'Roles': ['Customer', 'Admin']
+        Enabled: true,
+        Roles: ['Customer', 'Admin'],
     },
-    json3: { 'age': 36 },
-    user:
-    {
+    json3: { age: 36 },
+    user: {
         income: 110.0,
         outcome: 120.0,
         nickname: 'John',
-        lists:
-        {
+        lists: {
             todo: ['todo1', 'todo2', 'todo3']
         },
         listType: 'todo'
     },
-    turn:
-    {
-        recognized:
-        {
-            entities:
-            {
+    turn: {
+        recognized: {
+            entities: {
                 city: 'Seattle',
                 ordinal: ['1', '2', '3'],
                 CompositeList1: [['firstItem']],
                 CompositeList2: [['firstItem', 'secondItem']]
             },
-            intents:
-            {
+            intents: {
                 BookFlight: 'BookFlight',
                 BookHotel: [
                     {
                         Where: 'Bellevue',
                         Time: 'Tomorrow',
-                        People: '2'
+                        People: '2',
                     },
                     {
                         Where: 'Kirkland',
                         Time: 'Today',
-                        People: '4'
-                    }
-                ]
-            }
-        }
+                        People: '4',
+                    },
+                ],
+            },
+        },
     },
-    dialog:
-    {
+    dialog: {
         instance: { xxx: 'instance', yyy: { instanceY: 'instanceY' } },
         options: { xxx: 'options', yyy: ['optionY1', 'optionY2'] },
         title: 'Dialog Title',
         subTitle: 'Dialog Sub Title'
     },
-    doubleNestedItems: [
-        [{ x: 1 }, { x: 2 }],
-        [{ x: 3 }],
-    ],
+    doubleNestedItems: [[{ x: 1 }, { x: 2 }], [{ x: 3 }]],
 };
 
 const generateParseTest = (input, expectedOutput, expectedRefs) => () => {
@@ -930,6 +962,10 @@ const generateParseTest = (input, expectedOutput, expectedRefs) => () => {
 }
 
 describe('expression parser functional test', () => {
+    describe("tt", () => {
+        it('union(["a", "b", "c"], ["d", ["e", "f"], "g"][1])', generateParseTest('union(["a", "b", "c"], ["d", ["e", "f"], "g"][1])', ['a', 'b', 'c', 'e', 'f'], undefined));
+    });
+
     testCases.forEach(({ label, testCases }) => {
         describe(label, () => {
             testCases.forEach(([input, expectedOutput, expectedRefs]) => {
@@ -966,9 +1002,9 @@ describe('expression parser functional test', () => {
             f: 'food',
             b: 'beta',
             z: {
-                z: 'zar'
+                z: 'zar',
             },
-            n: 2
+            n: 2,
         };
         const memory = new SimpleObjectMemory(scope);
 
@@ -992,7 +1028,6 @@ describe('expression parser functional test', () => {
         exp = Expression.parse('json(x).b');
         ({ path } = FunctionUtils.tryAccumulatePath(exp, memory, undefined));
         assert.strictEqual(path, 'b');
-
     });
 
     it('Test Evaluation Options', () => {
@@ -1047,7 +1082,7 @@ describe('expression parser functional test', () => {
         // index is not boolean context, but it also requires raw value
         exp = Expression.parse('a[b]');
         ({ value, error } = exp.tryEvaluate(mockMemory, options));
-        assert.strictEqual(error !== undefined, true);
+        assert(error !== undefined);
     });
 });
 
@@ -1058,7 +1093,11 @@ const assertObjectEquals = (actual, expected, input) => {
     } else if (actual === undefined || expected === undefined) {
         assert.fail(`actual or expected was undefined. ${debugMessage}`);
     } else if (typeof actual === 'number' && typeof expected === 'number') {
-        assert.strictEqual(parseFloat(actual.toString()), parseFloat(expected.toString()), `Numbers don't match. ${debugMessage}`);
+        assert.strictEqual(
+            parseFloat(actual.toString()),
+            parseFloat(expected.toString()),
+            `Numbers don't match. ${debugMessage}`
+        );
     } else if (Array.isArray(actual) && Array.isArray(expected)) {
         assert.strictEqual(actual.length, expected.length);
         for (let i = 0; i < actual.length; i++) {
@@ -1072,6 +1111,6 @@ const assertObjectEquals = (actual, expected, input) => {
     } else if (bigInt.isInstance(actual) && bigInt.isInstance(expected)) {
         assert(actual.equals(expected), `bigInt is not equal. ${debugMessage}`);
     } else {
-        assert.equal(actual, expected, `Acutal and expected don't match. ${debugMessage}`);
+        assert.strictEqual(actual, expected, `Acutal and expected don't match. ${debugMessage}`);
     }
 };

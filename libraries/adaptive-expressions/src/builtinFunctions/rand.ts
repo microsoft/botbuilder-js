@@ -20,6 +20,9 @@ import { MemoryInterface } from '../memory';
  * Return a random integer from a specified range, which is inclusive only at the starting end.
  */
 export class Rand extends ExpressionEvaluator {
+    /**
+     * Initializes a new instance of the [Rand](xref:adaptive-expressions.Rand) class.
+     */
     public constructor() {
         super(ExpressionType.Rand, Rand.evaluator, ReturnType.Number, FunctionUtils.validateBinaryNumber);
     }

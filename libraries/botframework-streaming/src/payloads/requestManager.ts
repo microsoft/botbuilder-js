@@ -22,12 +22,21 @@ class PendingRequest {
 export class RequestManager {
     private readonly _pendingRequests = {};
 
+    /**
+     * Gets the count of the pending requests.
+     * @returns Number with the pending requests count.
+     */
     public pendingRequestCount(): number {
         return Object.keys(this._pendingRequests).length;
     }
 
+    /**
+     * Signal fired when all response tasks have completed.
+     * @param requestId The ID of the StreamingRequest.
+     * @param response The [IReceiveResponse](xref:botframework-streaming.IReceiveResponse) in response to the request.
+     */
     public async signalResponse(requestId: string, response: IReceiveResponse): Promise<boolean> {
-        let pendingRequest = this._pendingRequests[requestId];
+        const pendingRequest = this._pendingRequests[requestId];
 
         if (pendingRequest) {
             pendingRequest.resolve(response);
@@ -39,17 +48,22 @@ export class RequestManager {
         return false;
     }
 
+    /**
+     * Constructs and returns a response for this request.
+     * @param requestId The ID of the StreamingRequest being responded to.
+     * @returns The response to the specified request.
+     */
     public getResponse(requestId: string): Promise<IReceiveResponse> {
         let pendingRequest = this._pendingRequests[requestId];
 
         if (pendingRequest) {
-            return Promise.reject(`requestId '${ requestId }' already exists in RequestManager`);
+            return Promise.reject(`requestId '${requestId}' already exists in RequestManager`);
         }
 
         pendingRequest = new PendingRequest();
         pendingRequest.requestId = requestId;
 
-        let promise = new Promise<IReceiveResponse>((resolve, reject): void => {
+        const promise = new Promise<IReceiveResponse>((resolve, reject): void => {
             pendingRequest.resolve = resolve;
             pendingRequest.reject = reject;
         });

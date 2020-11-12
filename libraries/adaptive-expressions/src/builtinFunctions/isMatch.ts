@@ -18,27 +18,35 @@ import { ReturnType } from '../returnType';
  * Return true if a given string matches a specified regular expression pattern.
  */
 export class IsMatch extends ExpressionEvaluator {
+    /**
+     * Initializes a new instance of the [IsMatch](xref:adaptive-expressions.IsMatch) class.
+     */
     public constructor() {
         super(ExpressionType.IsMatch, IsMatch.evaluator(), ReturnType.Boolean, IsMatch.validator);
     }
 
+    /**
+     * @private
+     */
     private static evaluator(): EvaluateExpressionDelegate {
-        return FunctionUtils.applyWithError(
-            (args: any[]): any => {
-                let value = false;
-                let error: string;
-                if (args[0] === undefined || args[0] === '') {
-                    value = false;
-                    error = 'regular expression is empty.';
-                } else {
-                    const regex: RegExp = CommonRegex.CreateRegex(args[1].toString());
-                    value = regex.test(args[0].toString());
-                }
+        return FunctionUtils.applyWithError((args: any[]): any => {
+            let value = false;
+            let error: string;
+            if (args[0] === undefined || args[0] === '') {
+                value = false;
+                error = 'regular expression is empty.';
+            } else {
+                const regex: RegExp = CommonRegex.CreateRegex(args[1].toString());
+                value = regex.test(args[0].toString());
+            }
 
-                return { value, error };
-            }, FunctionUtils.verifyStringOrNull);
+            return { value, error };
+        }, FunctionUtils.verifyStringOrNull);
     }
 
+    /**
+     * @private
+     */
     private static validator(expression: Expression): void {
         FunctionUtils.validateArityAndAnyType(expression, 2, 2, ReturnType.String);
 

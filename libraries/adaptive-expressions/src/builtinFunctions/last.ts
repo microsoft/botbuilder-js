@@ -16,23 +16,28 @@ import { ReturnType } from '../returnType';
  * Return the last item from a collection.
  */
 export class Last extends ExpressionEvaluator {
+    /**
+     * Initializes a new instance of the [Last](xref:adaptive-expressions.Last) class.
+     */
     public constructor() {
         super(ExpressionType.Last, Last.evaluator(), ReturnType.Object, FunctionUtils.validateUnary);
     }
 
+    /**
+     * @private
+     */
     private static evaluator(): EvaluateExpressionDelegate {
-        return FunctionUtils.apply(
-            (args: any[]): any => {
-                let last: any;
-                if (typeof args[0] === 'string' && args[0].length > 0) {
-                    last = args[0][args[0].length - 1];
-                }
+        return FunctionUtils.apply((args: any[]): any => {
+            let last: any;
+            if (typeof args[0] === 'string' && args[0].length > 0) {
+                last = args[0][args[0].length - 1];
+            }
 
-                if (Array.isArray(args[0]) && args[0].length > 0) {
-                    last = InternalFunctionUtils.accessIndex(args[0], args[0].length - 1).value;
-                }
+            if (Array.isArray(args[0]) && args[0].length > 0) {
+                last = InternalFunctionUtils.accessIndex(args[0], args[0].length - 1).value;
+            }
 
-                return last;
-            });
+            return last;
+        });
     }
 }

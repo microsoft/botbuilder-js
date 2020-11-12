@@ -1,3 +1,4 @@
+/* eslint-disable security/detect-object-injection */
 /**
  * @module adaptive-expressions
  */
@@ -6,7 +7,12 @@
  * Licensed under the MIT License.
  */
 import { Constant } from './constant';
-import { EvaluateExpressionDelegate, EvaluatorLookup, ExpressionEvaluator, ValueWithError } from './expressionEvaluator';
+import {
+    EvaluateExpressionDelegate,
+    EvaluatorLookup,
+    ExpressionEvaluator,
+    ValueWithError,
+} from './expressionEvaluator';
 import { ExpressionType } from './expressionType';
 import { Extensions } from './extensions';
 import { FunctionTable } from './functionTable';
@@ -21,7 +27,6 @@ import { ReturnType } from './returnType';
  * It also supports validation of the correctness of an expression and evaluation that should be exception free.
  */
 export class Expression {
-
     /**
      * Expected result of evaluating expression.
      */
@@ -41,7 +46,10 @@ export class Expression {
      */
     public children: Expression[];
 
-    protected readonly evaluator: ExpressionEvaluator;
+    /**
+     * Evaluator of expression.
+     */
+    public readonly evaluator: ExpressionEvaluator;
 
     /**
      * Dictionary of function => ExpressionEvaluator.
@@ -77,7 +85,7 @@ export class Expression {
      */
     public deepEquals(other: Expression): boolean {
         let eq = false;
-        if (!other) {
+        if (other) {
             eq = this.type === other.type;
             if (eq) {
                 eq = this.children.length === other.children.length;
@@ -86,7 +94,7 @@ export class Expression {
                     for (let i = 0; eq && i < this.children.length; i++) {
                         const primary = this.children[0];
                         let found = false;
-                        for (var j = 0; j < this.children.length; j++) {
+                        for (let j = 0; j < this.children.length; j++) {
                             if (primary.deepEquals(other.children[j])) {
                                 found = true;
                                 break;
@@ -127,8 +135,10 @@ export class Expression {
      * @param extension If present, called to override lookup for things like template expansion.
      * @returns Accessor path of expression.
      */
-    public referenceWalk(expression: Expression,
-        extension?: (arg0: Expression) => boolean): { path: string; refs: Set<string> } {
+    public referenceWalk(
+        expression: Expression,
+        extension?: (arg0: Expression) => boolean
+    ): { path: string; refs: Set<string> } {
         let path: string;
         let refs = new Set<string>();
         if (extension === undefined || !extension(expression)) {
@@ -169,9 +179,11 @@ export class Expression {
                 if (idxPath !== undefined) {
                     refs.add(idxPath);
                 }
-            } else if (expression.type === ExpressionType.Foreach ||
+            } else if (
+                expression.type === ExpressionType.Foreach ||
                 expression.type === ExpressionType.Where ||
-                expression.type === ExpressionType.Select) {
+                expression.type === ExpressionType.Select
+            ) {
                 let result = this.referenceWalk(children[0], extension);
                 const child0Path = result.path;
                 const refs0 = result.refs;
@@ -187,9 +199,11 @@ export class Expression {
                 }
 
                 const iteratorName = (children[1].children[0] as Constant).value as string;
-                var nonLocalRefs2 = Array.from(refs2).filter((x): boolean => !(x === iteratorName || x.startsWith(iteratorName + '.') || x.startsWith(iteratorName + '[')));
+                const nonLocalRefs2 = Array.from(refs2).filter(
+                    (x): boolean =>
+                        !(x === iteratorName || x.startsWith(iteratorName + '.') || x.startsWith(iteratorName + '['))
+                );
                 refs = new Set([...refs, ...refs0, ...nonLocalRefs2]);
-
             } else {
                 for (const child of expression.children) {
                     const result = this.referenceWalk(child, extension);
@@ -206,14 +220,20 @@ export class Expression {
         return { path, refs };
     }
 
+    /**
+     * Parse an expression string into an [Expression](xref:adaptive-expressions.Expression) object.
+     * @param expression Expression string.
+     * @param lookup Optional. [EvaluatorLookup](xref:adaptive-expressions.EvaluatorLookup) function lookup when parsing the expression. Default is [Expression.lookup](xref:adaptive-expressions.Expression.lookup) which uses [Expression.functions](xref:adaptive-expressions.Expression.functions) table.
+     * @returns The expression object.
+     */
     public static parse(expression: string, lookup?: EvaluatorLookup): Expression {
         return new ExpressionParser(lookup || Expression.lookup).parse(expression);
     }
 
     /**
-     * Lookup a ExpressionEvaluator (function) by name.
-     * @param functionName name of function to lookup
-     * @returns a ExpressionEvaluator that corresponding to the funtion name
+     * Lookup an [ExpressionEvaluator](xref:adaptive-expressions.ExpressionEvaluator) function by name.
+     * @param functionName Name of function to lookup.
+     * @returns An [ExpressionEvaluator](xref:adaptive-expressions.ExpressionEvaluator) corresponding to the function name.
      */
     public static lookup(functionName: string): ExpressionEvaluator {
         const exprEvaluator = Expression.functions.get(functionName);
@@ -222,11 +242,11 @@ export class Expression {
         }
 
         return exprEvaluator;
-    };
+    }
 
     /**
      * Make an expression and validate it.
-     * @param type Type of expression from ExpressionType
+     * @param type Type of expression from ExpressionType.
      * @param evaluator Information about how to validate and evaluate expression.
      * @param children Child expressions.
      */
@@ -245,26 +265,31 @@ export class Expression {
         return new Expression(ExpressionType.Lambda, new ExpressionEvaluator(ExpressionType.Lambda, func));
     }
 
-    /**	
+    /**
      * Construct an expression from a lamba expression over the state.
      * Exceptions will be caught and surfaced as an error string.
      * @param func ambda expression to evaluate.
      * @returns New expression.
      */
     public static lambda(func: (arg0: any) => any): Expression {
-        return new Expression(ExpressionType.Lambda, new ExpressionEvaluator(ExpressionType.Lambda,
-            (_expression: Expression, state: any, _: Options): ValueWithError => {
-                let value: any;
-                let error: string;
-                try {
-                    value = func(state);
-                } catch (funcError) {
-                    error = funcError;
-                }
+        return new Expression(
+            ExpressionType.Lambda,
+            new ExpressionEvaluator(
+                ExpressionType.Lambda,
+                // eslint-disable-next-line @typescript-eslint/no-unused-vars
+                (_expression: Expression, state: any, _: Options): ValueWithError => {
+                    let value: any;
+                    let error: string;
+                    try {
+                        value = func(state);
+                    } catch (funcError) {
+                        error = funcError;
+                    }
 
-                return { value, error };
-            }
-        ));
+                    return { value, error };
+                }
+            )
+        );
     }
 
     /**
@@ -280,7 +305,6 @@ export class Expression {
             return Expression.makeExpression(ExpressionType.SetPathToValue, undefined, property, new Constant(value));
         }
     }
-
 
     /**
      * Construct and validate an Equals expression.
@@ -326,7 +350,6 @@ export class Expression {
         return Expression.makeExpression(ExpressionType.Not, undefined, child);
     }
 
-
     /**
      * Validate immediate expression.
      */
@@ -357,6 +380,10 @@ export class Expression {
         return this.evaluator.tryEvaluate(this, state, options);
     }
 
+    /**
+     * Returns a string that represents the current [Expression](xref:adaptive-expressions.Expression) object.
+     * @returns A string that represents the current [Expression](xref:adaptive-expressions.Expression) object.
+     */
     public toString(): string {
         let builder = '';
         let valid = false;
@@ -380,7 +407,8 @@ export class Expression {
         }
 
         if (!valid) {
-            const infix: boolean = this.type.length > 0 && !new RegExp(/[a-z]/i).test(this.type[0]) && this.children.length >= 2;
+            const infix: boolean =
+                this.type.length > 0 && !new RegExp(/[a-z]/i).test(this.type[0]) && this.children.length >= 2;
             if (!infix) {
                 builder = builder.concat(this.type);
             }

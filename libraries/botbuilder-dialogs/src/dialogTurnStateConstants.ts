@@ -6,8 +6,10 @@
  * Licensed under the MIT License.
  */
 
+/**
+  * Defines dialog turn state constants.
+  */
 export class DialogTurnStateConstants {
     static dialogManager = Symbol('dialogManager');
-
-    
+    static telemetryClient = Symbol('telemetryClient');
 }

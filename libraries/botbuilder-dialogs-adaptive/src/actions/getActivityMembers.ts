@@ -5,15 +5,49 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { Dialog, DialogContext, DialogTurnResult } from 'botbuilder-dialogs';
-import { StringExpression, BoolExpression } from 'adaptive-expressions';
+import {
+    BoolExpression,
+    BoolExpressionConverter,
+    Expression,
+    StringExpression,
+    StringExpressionConverter,
+} from 'adaptive-expressions';
+import {
+    Converter,
+    ConverterFactory,
+    Dialog,
+    DialogConfiguration,
+    DialogContext,
+    DialogTurnResult,
+} from 'botbuilder-dialogs';
 
-export class GetActivityMembers<O extends object = {}> extends Dialog {
+export interface GetActivityMembersConfiguration extends DialogConfiguration {
+    activityId?: string | Expression | StringExpression;
+    property?: string | Expression | StringExpression;
+    disabled?: boolean | string | Expression | BoolExpression;
+}
+
+/**
+ * Calls `BotFrameworkAdapter.getActivityMembers()` and sets the result to a memory property.
+ */
+export class GetActivityMembers<O extends object = {}> extends Dialog implements GetActivityMembersConfiguration {
+    public static $kind = 'Microsoft.GetActivityMembers';
+
     public constructor();
+
+    /**
+     * Initializes a new instance of the [GetActivityMembers](xref:botbuilder-dialogs-adaptive.GetActivityMembers) class.
+     * @param activityId Optional. The expression to get the value to put into property path.
+     * @param property Optional. Property path to put the value in.
+     */
     public constructor(activityId?: string, property?: string) {
         super();
-        if (activityId) { this.activityId = new StringExpression(activityId); }
-        if (property) { this.property = new StringExpression(property); }
+        if (activityId) {
+            this.activityId = new StringExpression(activityId);
+        }
+        if (property) {
+            this.property = new StringExpression(property);
+        }
     }
 
     /**
@@ -31,6 +65,25 @@ export class GetActivityMembers<O extends object = {}> extends Dialog {
      */
     public disabled?: BoolExpression;
 
+    public getConverter(property: keyof GetActivityMembersConfiguration): Converter | ConverterFactory {
+        switch (property) {
+            case 'activityId':
+                return new StringExpressionConverter();
+            case 'property':
+                return new StringExpressionConverter();
+            case 'disabled':
+                return new BoolExpressionConverter();
+            default:
+                return super.getConverter(property);
+        }
+    }
+
+    /**
+     * Starts a new [Dialog](xref:botbuilder-dialogs.Dialog) and pushes it onto the dialog stack.
+     * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
+     * @param options Optional. Initial information to pass to the dialog.
+     * @returns A `Promise` representing the asynchronous operation.
+     */
     public async beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult> {
         if (this.disabled && this.disabled.getValue(dc.state)) {
             return await dc.endDialog();
@@ -52,7 +105,14 @@ export class GetActivityMembers<O extends object = {}> extends Dialog {
         }
     }
 
+    /**
+     * @protected
+     * Builds the compute Id for the [Dialog](xref:botbuilder-dialogs.Dialog).
+     * @returns A `string` representing the compute Id.
+     */
     protected onComputeId(): string {
-        return `GetActivityMembers[${ this.activityId ? this.activityId.toString() : '' }, ${ this.property ? this.property.toString() : '' }]`;
+        return `GetActivityMembers[${this.activityId ? this.activityId.toString() : ''}, ${
+            this.property ? this.property.toString() : ''
+        }]`;
     }
 }

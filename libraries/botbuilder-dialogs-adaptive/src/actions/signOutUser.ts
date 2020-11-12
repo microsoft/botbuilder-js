@@ -5,15 +5,49 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { Dialog, DialogContext, DialogTurnResult } from 'botbuilder-dialogs';
-import { StringExpression, BoolExpression } from 'adaptive-expressions';
+import {
+    BoolExpression,
+    BoolExpressionConverter,
+    Expression,
+    StringExpression,
+    StringExpressionConverter,
+} from 'adaptive-expressions';
+import {
+    Converter,
+    ConverterFactory,
+    Dialog,
+    DialogConfiguration,
+    DialogContext,
+    DialogTurnResult,
+} from 'botbuilder-dialogs';
 
-export class SignOutUser<O extends object = {}> extends Dialog<O> {
+export interface SignOutUserConfiguration extends DialogConfiguration {
+    userId?: string | Expression | StringExpression;
+    connectionName?: string | Expression | StringExpression;
+    disabled?: boolean | string | Expression | BoolExpression;
+}
+
+/**
+ * Singns out the user and finishes the dialog.
+ */
+export class SignOutUser<O extends object = {}> extends Dialog<O> implements SignOutUserConfiguration {
+    public static $kind = 'Microsoft.SignOutUser';
+
     public constructor();
+
+    /**
+     * Initializes a new instance of the [SignOutUser](xref:botbuilder-dialogs-adaptive.SignOutUser) class.
+     * @param userId Optional. The expression which resolves to the userId to sign out.
+     * @param connectionName Optional. The name of the OAuth connection.
+     */
     public constructor(userId?: string, connectionName?: string) {
         super();
-        if (userId) { this.userId = new StringExpression(userId); }
-        if (connectionName) { this.connectionName = new StringExpression(connectionName); }
+        if (userId) {
+            this.userId = new StringExpression(userId);
+        }
+        if (connectionName) {
+            this.connectionName = new StringExpression(connectionName);
+        }
     }
 
     /**
@@ -31,6 +65,25 @@ export class SignOutUser<O extends object = {}> extends Dialog<O> {
      */
     public disabled?: BoolExpression;
 
+    public getConverter(property: keyof SignOutUserConfiguration): Converter | ConverterFactory {
+        switch (property) {
+            case 'userId':
+                return new StringExpressionConverter();
+            case 'connectionName':
+                return new StringExpressionConverter();
+            case 'disabled':
+                return new BoolExpressionConverter();
+            default:
+                return super.getConverter(property);
+        }
+    }
+
+    /**
+     * Starts a new [Dialog](xref:botbuilder-dialogs.Dialog) and pushes it onto the dialog stack.
+     * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
+     * @param options Optional. Initial information to pass to the dialog.
+     * @returns A `Promise` representing the asynchronous operation.
+     */
     public async beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult> {
         if (this.disabled && this.disabled.getValue(dc.state)) {
             return await dc.endDialog();
@@ -51,7 +104,14 @@ export class SignOutUser<O extends object = {}> extends Dialog<O> {
         }
     }
 
+    /**
+     * @protected
+     * Builds the compute Id for the [Dialog](xref:botbuilder-dialogs.Dialog).
+     * @returns A `string` representing the compute Id.
+     */
     protected onComputeId(): string {
-        return `SignOutUser[${ this.connectionName ? this.connectionName.toString() : '' }, ${ this.userId ? this.userId.toString() : '' }]`;
+        return `SignOutUser[${this.connectionName ? this.connectionName.toString() : ''}, ${
+            this.userId ? this.userId.toString() : ''
+        }]`;
     }
 }

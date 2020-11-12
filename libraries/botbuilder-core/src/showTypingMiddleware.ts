@@ -6,25 +6,26 @@
  * Licensed under the MIT License.
  */
 import { ActivityTypes } from 'botframework-schema';
+import { SkillValidation } from 'botframework-connector';
 import { Middleware } from './middlewareSet';
 import { TurnContext } from './turnContext';
 
 /**
-  * Middleware that will send a typing indicator automatically for each message.
-  *
-  * @remarks
-  * When added, this middleware will send typing activities back to the user when a Message activity
-  * is received to let them know that the bot has received the message and is working on the response.
-  * You can specify a delay in milliseconds before the first typing activity is sent and then a frequency,
-  * also in milliseconds which determines how often another typing activity is sent. Typing activities
-  * will continue to be sent until your bot sends another message back to the user
-  */
+ * Middleware that will send a typing indicator automatically for each message.
+ *
+ * @remarks
+ * When added, this middleware will send typing activities back to the user when a Message activity
+ * is received to let them know that the bot has received the message and is working on the response.
+ * You can specify a delay in milliseconds before the first typing activity is sent and then a frequency,
+ * also in milliseconds which determines how often another typing activity is sent. Typing activities
+ * will continue to be sent until your bot sends another message back to the user
+ */
 export class ShowTypingMiddleware implements Middleware {
     /**
-         * Create the SendTypingIndicator middleware
-         * @param delay {number} Number of milliseconds to wait before sending the first typing indicator.
-         * @param period {number} Number of milliseconds to wait before sending each following indicator.
-         */
+     * Create the SendTypingIndicator middleware
+     * @param delay {number} Number of milliseconds to wait before sending the first typing indicator.
+     * @param period {number} Number of milliseconds to wait before sending each following indicator.
+     */
     constructor(private readonly delay: number = 500, private readonly period: number = 2000) {
         if (delay < 0) {
             throw new Error('Delay must be greater than or equal to zero');
@@ -35,10 +36,11 @@ export class ShowTypingMiddleware implements Middleware {
         }
     }
 
-    /** Implement middleware signature
-         * @param context {TurnContext} An incoming TurnContext object.
-         * @param next {function} The next delegate function.
-         */
+    /**
+     * Processes an incoming activity.
+     * @param context {TurnContext} An incoming TurnContext object.
+     * @param next {function} The next delegate function.
+     */
     public async onTurn(context: TurnContext, next: () => Promise<void>) {
         let finished = false;
         let timeout: ReturnType<typeof setTimeout>;
@@ -59,29 +61,42 @@ export class ShowTypingMiddleware implements Middleware {
                     scheduleIndicator(this.period);
                 }
             }, delay);
-        }
+        };
 
-        if (context.activity.type === ActivityTypes.Message) {
+        if (!this.isSkillBot(context) && context.activity.type === ActivityTypes.Message) {
             finished = false;
             scheduleIndicator();
         }
 
-        // Execute remaining middleware, then clear scheduled indicators
-        await next();
-
-        finished = true;
-        if (timeout) clearTimeout(timeout);
+        // Execute remaining middleware inside try/finally to ensure we eventually clear timeouts
+        try {
+            await next();
+        } finally {
+            finished = true;
+            if (timeout) clearTimeout(timeout);
+        }
     }
 
+    private isSkillBot(context: TurnContext) {
+        const identity = context.turnState.get(context.adapter.BotIdentityKey);
+        return identity && SkillValidation.isSkillClaim(identity.claims);
+    }
+
+    /**
+     * @private
+     */
     private async sendTypingActivity(context: TurnContext) {
         // Sending the Activity directly via the Adapter avoids other middleware and avoids setting the
         // responded flag. However this also requires that the conversation reference details are explicitly added.
         const conversationReference = TurnContext.getConversationReference(context.activity);
 
-        const typingActivity = TurnContext.applyConversationReference({
-            type: ActivityTypes.Typing,
-            relatesTo: context.activity.relatesTo
-        }, conversationReference);
+        const typingActivity = TurnContext.applyConversationReference(
+            {
+                type: ActivityTypes.Typing,
+                relatesTo: context.activity.relatesTo,
+            },
+            conversationReference
+        );
 
         await context.adapter.sendActivities(context, [typingActivity]);
     }

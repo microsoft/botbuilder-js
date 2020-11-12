@@ -18,15 +18,20 @@ import { ReturnType } from '../returnType';
  * Return characters from a string, starting from the specified position or index. Index values start with the number 0.
  */
 export class Substring extends ExpressionEvaluator {
+    /**
+     * Initializes a new instance of the [Substring](xref:adaptive-expressions.Substring) class.
+     */
     public constructor() {
         super(ExpressionType.Substring, Substring.evaluator, ReturnType.String, Substring.validator);
     }
 
+    /**
+     * @private
+     */
     private static evaluator(expression: Expression, state: MemoryInterface, options: Options): ValueWithError {
         let result: any;
-        let error: any;
-        let str: string;
-        ({ value: str, error } = expression.children[0].tryEvaluate(state, options));
+        const { value: str, error: childrenError } = expression.children[0].tryEvaluate(state, options);
+        let error = childrenError;
 
         if (!error) {
             if (typeof str === 'string') {
@@ -67,6 +72,9 @@ export class Substring extends ExpressionEvaluator {
         return { value: result, error };
     }
 
+    /**
+     * @private
+     */
     private static validator(expression: Expression): void {
         FunctionUtils.validateOrder(expression, [ReturnType.Number], ReturnType.String, ReturnType.Number);
     }

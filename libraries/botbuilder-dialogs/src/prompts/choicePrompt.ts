@@ -11,7 +11,9 @@ import { ListStyle, Prompt, PromptOptions, PromptRecognizerResult, PromptValidat
 import { PromptCultureModels } from './promptCultureModels';
 
 // Need ChoiceDefaultsProperty so we can set choiceDefaults dynamically with lambda
-interface ChoiceDefaultsChoicePrompt { [locale: string]: ChoiceFactoryOptions };
+interface ChoiceDefaultsChoicePrompt {
+    [locale: string]: ChoiceFactoryOptions;
+}
 
 /**
  * Prompts a user to select from a list of choices.
@@ -21,7 +23,6 @@ interface ChoiceDefaultsChoicePrompt { [locale: string]: ChoiceFactoryOptions };
  * choice that was selected.
  */
 export class ChoicePrompt extends Prompt<FoundChoice> {
-
     /**
      * A dictionary of Default Choices based on [[PromptCultureModels.getSupportedCultures()]].
      * Can be replaced by user using the constructor that contains choiceDefaults.
@@ -31,7 +32,7 @@ export class ChoicePrompt extends Prompt<FoundChoice> {
     /**
      * The prompts default locale that should be recognized.
      */
-    public defaultLocale: string|undefined;
+    public defaultLocale: string | undefined;
 
     /**
      * Style of the "yes" and "no" choices rendered to the user when prompting.
@@ -45,12 +46,12 @@ export class ChoicePrompt extends Prompt<FoundChoice> {
      * Additional options passed to the `ChoiceFactory` and used to tweak the style of choices
      * rendered to the user.
      */
-    public choiceOptions: ChoiceFactoryOptions|undefined;
+    public choiceOptions: ChoiceFactoryOptions | undefined;
 
     /**
      * Additional options passed to the underlying `recognizeChoices()` function.
      */
-    public recognizerOptions: FindChoicesOptions|undefined;
+    public recognizerOptions: FindChoicesOptions | undefined;
 
     /**
      * Creates a new `ChoicePrompt` instance.
@@ -60,11 +61,16 @@ export class ChoicePrompt extends Prompt<FoundChoice> {
      * @param choiceDefaults (Optional) Overrides the dictionary of Bot Framework SDK-supported _choiceDefaults (for prompt localization).
      *  Must be passed in to each ConfirmPrompt that needs the custom choice defaults.
      */
-    public constructor(dialogId: string, validator?: PromptValidator<FoundChoice>, defaultLocale?: string, choiceDefaults?: ChoiceDefaultsChoicePrompt) {
+    public constructor(
+        dialogId: string,
+        validator?: PromptValidator<FoundChoice>,
+        defaultLocale?: string,
+        choiceDefaults?: ChoiceDefaultsChoicePrompt
+    ) {
         super(dialogId, validator);
         this.style = ListStyle.auto;
         this.defaultLocale = defaultLocale;
-        
+
         if (choiceDefaults == undefined) {
             const supported: ChoiceDefaultsChoicePrompt = {};
             PromptCultureModels.getSupportedCultures().forEach((culture): void => {
@@ -72,7 +78,7 @@ export class ChoicePrompt extends Prompt<FoundChoice> {
                     inlineSeparator: culture.separator,
                     inlineOr: culture.inlineOr,
                     inlineOrMore: culture.inlineOrMore,
-                    includeNumbers: true
+                    includeNumbers: true,
                 };
             });
             this.choiceDefaults = supported;
@@ -81,15 +87,33 @@ export class ChoicePrompt extends Prompt<FoundChoice> {
         }
     }
 
-    protected async onPrompt(context: TurnContext, state: any, options: PromptOptions, isRetry: boolean): Promise<void> {
+    /**
+     * Prompts the user for input.
+     * @param context [TurnContext](xref:botbuilder-core.TurnContext), context for the current
+     * turn of conversation with the user.
+     * @param state Contains state for the current instance of the prompt on the dialog stack.
+     * @param options A [PromptOptions](xref:botbuilder-dialogs.PromptOptions) object constructed
+     * from the options initially provided in the call to Prompt.
+     * @param isRetry `true` if this is the first time this prompt dialog instance
+     * on the stack is prompting the user for input; otherwise, false.
+     * @returns A `Promise` representing the asynchronous operation.
+     */
+    protected async onPrompt(
+        context: TurnContext,
+        state: any,
+        options: PromptOptions,
+        isRetry: boolean
+    ): Promise<void> {
         // Determine locale
         const locale = this.determineCulture(context.activity);
 
         // Format prompt to send
         let prompt: Partial<Activity>;
-        const choices: any[] = (this.style === ListStyle.suggestedAction ? ChoiceFactory.toChoices(options.choices) : options.choices) || [];
-        const channelId: string = context.activity.channelId;
-        const choiceOptions: ChoiceFactoryOptions = this.choiceOptions || this.choiceDefaults[locale];
+        const choices =
+            (this.style === ListStyle.suggestedAction ? ChoiceFactory.toChoices(options.choices) : options.choices) ||
+            [];
+        const channelId = context.activity.channelId;
+        const choiceOptions = this.choiceOptions || this.choiceDefaults[locale];
         const choiceStyle: ListStyle = options.style === 0 ? 0 : options.style || this.style;
         if (isRetry && options.retryPrompt) {
             prompt = this.appendChoices(options.retryPrompt, channelId, choices, choiceStyle, choiceOptions);
@@ -101,18 +125,32 @@ export class ChoicePrompt extends Prompt<FoundChoice> {
         await context.sendActivity(prompt);
     }
 
-    protected async onRecognize(context: TurnContext, state: any, options: PromptOptions): Promise<PromptRecognizerResult<FoundChoice>> {
-
+    /**
+     * Attempts to recognize the user's input.
+     * @param context [TurnContext](xref:botbuilder-core.TurnContext) context for the current 
+     * turn of conversation with the user.
+     * @param state Contains state for the current instance of the prompt on the dialog stack.
+     * @param options A [PromptOptions](xref:botbuilder-dialogs.PromptOptions) object constructed
+     * from the options initially provided in the call to Prompt.
+     * @returns A `Promise` representing the asynchronous operation.
+     */
+    protected async onRecognize(
+        context: TurnContext,
+        state: any,
+        options: PromptOptions
+    ): Promise<PromptRecognizerResult<FoundChoice>> {
         const result: PromptRecognizerResult<FoundChoice> = { succeeded: false };
-        const activity: Activity = context.activity;
-        const utterance: string = activity.text;
+        const activity = context.activity;
+        const utterance = activity.text;
         if (!utterance) {
             return result;
         }
-        const choices: any[] = (this.style === ListStyle.suggestedAction ? ChoiceFactory.toChoices(options.choices) : options.choices)|| [];
-        const opt: FindChoicesOptions = this.recognizerOptions || {};
+        const choices =
+            (this.style === ListStyle.suggestedAction ? ChoiceFactory.toChoices(options.choices) : options.choices) ||
+            [];
+        const opt = this.recognizerOptions || {};
         opt.locale = this.determineCulture(activity, opt);
-        const results: any[]  = recognizeChoices(utterance, choices, opt);
+        const results = recognizeChoices(utterance, choices, opt);
         if (Array.isArray(results) && results.length > 0) {
             result.succeeded = true;
             result.value = results[0].resolution;
@@ -121,11 +159,15 @@ export class ChoicePrompt extends Prompt<FoundChoice> {
         return result;
     }
 
-    private determineCulture(activity: Activity, opt: FindChoicesOptions = null): string {
+    /**
+     * @private
+     */
+    private determineCulture(activity: Activity, opt?: FindChoicesOptions): string {
         const optLocale = opt && opt.locale ? opt.locale : null;
-        let culture = PromptCultureModels.mapToNearestLanguage(activity.locale || optLocale || this.defaultLocale || PromptCultureModels.English.locale);
-        if (!culture || !this.choiceDefaults[culture])
-        {
+        let culture = PromptCultureModels.mapToNearestLanguage(
+            activity.locale || optLocale || this.defaultLocale || PromptCultureModels.English.locale
+        );
+        if (!(culture && this.choiceDefaults[culture])) {
             culture = PromptCultureModels.English.locale;
         }
 

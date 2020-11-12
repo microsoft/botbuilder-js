@@ -17,13 +17,20 @@ import { ReturnType } from '../returnType';
 /**
  * Mark a clause so that MostSpecificSelector will ignore it.
  * MostSpecificSelector considers A &amp; B to be more specific than A, but some clauses are unique and incomparable.
- * 
+ *
  */
 export class Ignore extends ExpressionEvaluator {
+    /**
+     * Initializes a new instance of the [Ignore](xref:adaptive-expressions.Ignore) class.
+     */
     public constructor() {
         super(ExpressionType.Ignore, Ignore.evaluator, ReturnType.Boolean, FunctionUtils.validateUnaryBoolean);
+        this.negation = this;
     }
 
+    /**
+     * @private
+     */
     private static evaluator(expression: Expression, state: MemoryInterface, options: Options): ValueWithError {
         return expression.children[0].tryEvaluate(state, options);
     }
