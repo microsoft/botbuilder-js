@@ -1,3 +1,4 @@
+/* eslint-disable security/detect-object-injection */
 /**
  * @module botbuilder-lg
  */
@@ -16,7 +17,6 @@ import {
     ReturnType,
     FunctionUtils,
     SimpleObjectMemory,
-    StackedMemory,
 } from 'adaptive-expressions';
 import { ImportResolverDelegate, TemplatesTransformer } from './templatesParser';
 import { Evaluator } from './evaluator';
@@ -617,6 +617,7 @@ export class Templates implements Iterable<Template> {
                                     this.expressionParser,
                                     this.lgOptions
                                 );
+                                // eslint-disable-next-line prefer-const
                                 ({ args, error } = FunctionUtils.evaluateChildren(expr, state, options));
                                 if (!error) {
                                     const parameters = evaluator.templateMap[templateName].parameters;

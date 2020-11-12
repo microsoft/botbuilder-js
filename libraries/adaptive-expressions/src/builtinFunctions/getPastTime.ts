@@ -41,7 +41,7 @@ export class GetPastTime extends ExpressionEvaluator {
                     args.length === 3 ? FunctionUtils.timestampFormatter(args[2]) : FunctionUtils.DefaultDateTimeFormat;
                 const { duration, tsStr } = InternalFunctionUtils.timeUnitTransformer(args[0], args[1]);
                 if (tsStr === undefined) {
-                    error = `${ args[2] } is not a valid time unit.`;
+                    error = `${args[2]} is not a valid time unit.`;
                 } else {
                     const dur: any = duration;
                     ({ value, error } = InternalFunctionUtils.parseTimestamp(
@@ -52,7 +52,7 @@ export class GetPastTime extends ExpressionEvaluator {
                     ));
                 }
             } else {
-                error = `${ expression } should contain a time interval integer, a string unit of time and an optional output format string.`;
+                error = `${expression} should contain a time interval integer, a string unit of time and an optional output format string.`;
             }
         }
 

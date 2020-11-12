@@ -1,4 +1,13 @@
-const { Constant, Expression, ExpressionType, Quantifier, QuantifierType, RelationshipType, TriggerTree } = require('../lib');
+/* eslint-disable security/detect-object-injection */
+const {
+    Constant,
+    Expression,
+    ExpressionType,
+    Quantifier,
+    QuantifierType,
+    RelationshipType,
+    TriggerTree,
+} = require('../lib');
 const assert = require('assert');
 
 const doubleEpsilon = 0.000001;
@@ -8,17 +17,18 @@ const comparisons = [
     ExpressionType.LessThanOrEqual,
     ExpressionType.Equal,
     ExpressionType.GreaterThanOrEqual,
-    ExpressionType.GreaterThan
+    ExpressionType.GreaterThan,
 ];
 
 class Generator {
-
     generatePredicates(n, nameBase) {
         const expressions = [];
         for (let i = 0; i < n; ++i) {
-            const name = `${ nameBase }${ i }`;
+            const name = `${nameBase}${i}`;
             expressions.push(
-                this.randomWeighted([1.0, 1.0]) ? this.generateSimpleComparison(name) : this.generateHasValueComparison(name)
+                this.randomWeighted([1.0, 1.0])
+                    ? this.generateSimpleComparison(name)
+                    : this.generateHasValueComparison(name)
             );
         }
         return expressions;
@@ -34,7 +44,7 @@ class Generator {
                 let choice;
                 do {
                     choice = Math.floor(Math.random() * predicates.length);
-                } while (used.findIndex(item => item === choice) >= 0);
+                } while (used.findIndex((item) => item === choice) >= 0);
 
                 expressions.push(predicates[choice]);
                 used.push(choice);
@@ -44,7 +54,7 @@ class Generator {
             const expressionInfo = {
                 expression: conjunction,
                 bindings,
-                quantifiers: []
+                quantifiers: [],
             };
             conjunctions.push(expressionInfo);
         }
@@ -61,7 +71,7 @@ class Generator {
                 let choice;
                 do {
                     choice = Math.floor(Math.random() * predicates.length);
-                } while (used.findIndex(item => item === choice) >= 0);
+                } while (used.findIndex((item) => item === choice) >= 0);
                 expressions.push(predicates[choice]);
                 used.push(choice);
             }
@@ -70,7 +80,7 @@ class Generator {
             const expressionInfo = {
                 expression: disjunction,
                 bindings,
-                quantifiers: []
+                quantifiers: [],
             };
             disjunctions.push(expressionInfo);
         }
@@ -88,11 +98,15 @@ class Generator {
                 let choice;
                 do {
                     choice = Math.floor(Math.random() * predicates.length);
-                } while (used.findIndex(item => item === choice) >= 0);
+                } while (used.findIndex((item) => item === choice) >= 0);
 
                 const predicate = predicates[choice];
                 if (j === 0) {
-                    let optional = Expression.makeExpression(undefined, Expression.lookup(ExpressionType.Optional), predicate.expression);
+                    let optional = Expression.makeExpression(
+                        undefined,
+                        Expression.lookup(ExpressionType.Optional),
+                        predicate.expression
+                    );
                     if (Math.random() < 0.25) {
                         optional = Expression.notExpression(optional);
                     }
@@ -100,7 +114,7 @@ class Generator {
                     const expressionInfo = {
                         expression: optional,
                         bindings: predicate.bindings,
-                        quantifiers: []
+                        quantifiers: [],
                     };
                     expressions.push(expressionInfo);
                 } else {
@@ -114,7 +128,7 @@ class Generator {
             const expressionInfo = {
                 expression: optional,
                 bindings,
-                quantifiers: []
+                quantifiers: [],
             };
             optionals.push(expressionInfo);
         }
@@ -131,7 +145,7 @@ class Generator {
             const info = {
                 expression: expression.expression,
                 bindings: new Map(),
-                quantifiers: []
+                quantifiers: [],
             };
             const numQuants = 1 + Math.floor(Math.random() * (maxQuantifiers - 1));
             const chosen = new Set();
@@ -146,7 +160,7 @@ class Generator {
                     const bindingValue = expression.bindings.get(bindingKey);
                     baseBinding = {
                         key: bindingKey,
-                        value: bindingValue
+                        value: bindingValue,
                     };
                 } while (chosen.has(baseBinding.key));
                 chosen.add(baseBinding.key);
@@ -154,11 +168,11 @@ class Generator {
                 const expansion = 1 + Math.floor(Math.random() * (maxExpansion - 1));
                 for (let i = 0; i < expansion; ++i) {
                     if (i === 0) {
-                        mappings.push(`${ baseBinding.key }`);
+                        mappings.push(`${baseBinding.key}`);
                     } else {
                         const { value } = baseBinding.value;
                         const mapping = this.randomChoice(allTypes.get(typeof value));
-                        if (mappings.findIndex(item => item === mapping) === -1) {
+                        if (mappings.findIndex((item) => item === mapping) === -1) {
                             mappings.push(mapping);
                         }
                     }
@@ -204,7 +218,7 @@ class Generator {
             const expressionInfo = {
                 expression: Expression.notExpression(expr.expression),
                 bindings,
-                quantifiers: expr.quantifiers
+                quantifiers: expr.quantifiers,
             };
             result.push(expressionInfo);
         }
@@ -239,7 +253,7 @@ class Generator {
         return {
             expression,
             bindings: new Map().set(name, { type, value }),
-            quantifiers: []
+            quantifiers: [],
         };
     }
 
@@ -279,15 +293,15 @@ class Generator {
             expression,
             bindings: new Map().set(name, {
                 value,
-                type: ExpressionType.Not
+                type: ExpressionType.Not,
             }),
-            quantifiers: []
+            quantifiers: [],
         };
     }
 
     mergeBindings(expressions) {
         const bindings = new Map();
-        expressions.forEach(info => {
+        expressions.forEach((info) => {
             info.bindings.forEach((value, key) => {
                 bindings.set(key, value);
             });
@@ -364,17 +378,12 @@ class Generator {
             if (!binaryExpression) {
                 binaryExpression = info.expression;
             } else {
-                binaryExpression = Expression.makeExpression(
-                    type,
-                    undefined,
-                    binaryExpression,
-                    info.expression
-                );
+                binaryExpression = Expression.makeExpression(type, undefined, binaryExpression, info.expression);
             }
         }
         return {
             expression: binaryExpression,
-            bindings
+            bindings,
         };
     }
 
@@ -466,7 +475,7 @@ describe('TriggerTree', () => {
         tree.addTrigger('exists(blah) && ignore(!exists(foo2)) && woof == 3', 2);
         tree.addTrigger('exists(blah) && woof == 3', 3);
         tree.addTrigger('exists(blah) && woof == 3 && ignore(!exists(foo2))', 2);
-        const frame = { 'blah': 1, 'woof': 3 };
+        const frame = { blah: 1, woof: 3 };
         const matches = tree.matches(frame);
         assert.strictEqual(matches.length, 2);
         assert.strictEqual(matches[0].action, 2);
@@ -478,7 +487,7 @@ describe('TriggerTree', () => {
         tree.addTrigger('exists(woof) || exists(blah)', 1);
         tree.addTrigger('exists(blah)', 2);
         tree.addTrigger('exists(blah) && exists(foo)', 3);
-        const frame = { 'blah': 1, 'woof': 3 };
+        const frame = { blah: 1, woof: 3 };
         const matches = tree.matches(frame);
         assert.strictEqual(matches.length, 2);
         assert.strictEqual(matches[0].action, 1);
@@ -575,7 +584,10 @@ describe('TriggerTree', () => {
             triggers.push(tree.addTrigger(expr.expression, expr.bindings, ...expr.quantifiers));
         }
 
-        assert.strictEqual(tree.totalTriggers, numSingletons + numConjunctions + numDisjunctions + numOptionals + numQuantifiers);
+        assert.strictEqual(
+            tree.totalTriggers,
+            numSingletons + numConjunctions + numDisjunctions + numOptionals + numQuantifiers
+        );
         all.push(...quantified);
 
         const nots = generator.generateNots(all, numNots);
@@ -583,7 +595,10 @@ describe('TriggerTree', () => {
             triggers.push(tree.addTrigger(expr.expression, expr.bindings, ...expr.quantifiers));
         }
 
-        assert.strictEqual(tree.totalTriggers, numSingletons + numConjunctions + numDisjunctions + numOptionals + numQuantifiers + numNots);
+        assert.strictEqual(
+            tree.totalTriggers,
+            numSingletons + numConjunctions + numDisjunctions + numOptionals + numQuantifiers + numNots
+        );
         all.push(...nots);
 
         verifyTree(tree);
@@ -625,7 +640,6 @@ describe('TriggerTree', () => {
                     assert(found);
                 }
             }
-
         }
 
         // Delete triggers

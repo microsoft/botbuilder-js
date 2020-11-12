@@ -40,9 +40,9 @@ export class Substring extends ExpressionEvaluator {
                 const startExpr: Expression = expression.children[1];
                 ({ value: start, error } = startExpr.tryEvaluate(state, options));
                 if (!error && !Number.isInteger(start)) {
-                    error = `${ startExpr } is not an integer.`;
+                    error = `${startExpr} is not an integer.`;
                 } else if (start < 0 || start >= str.length) {
-                    error = `${ startExpr }=${ start } which is out of range for ${ str }`;
+                    error = `${startExpr}=${start} which is out of range for ${str}`;
                 }
                 if (!error) {
                     let length: number;
@@ -53,9 +53,9 @@ export class Substring extends ExpressionEvaluator {
                         const lengthExpr: Expression = expression.children[2];
                         ({ value: length, error } = lengthExpr.tryEvaluate(state, options));
                         if (!error && !Number.isInteger(length)) {
-                            error = `${ lengthExpr } is not an integer`;
+                            error = `${lengthExpr} is not an integer`;
                         } else if (length < 0 || Number(start) + Number(length) > str.length) {
-                            error = `${ lengthExpr }=${ length } which is out of range for ${ str }`;
+                            error = `${lengthExpr}=${length} which is out of range for ${str}`;
                         }
                     }
                     if (!error) {
@@ -65,7 +65,7 @@ export class Substring extends ExpressionEvaluator {
             } else if (str === undefined) {
                 result = '';
             } else {
-                error = `${ expression.children[0] } is neither a string nor a null object.`;
+                error = `${expression.children[0]} is neither a string nor a null object.`;
             }
         }
 

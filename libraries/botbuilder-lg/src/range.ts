@@ -21,7 +21,7 @@ export class Range {
      * @param start Starting [Position](xref:botbuilder-lg.Position).
      * @param end Ending [Position](xref:botbuilder-lg.Position).
      */
-    public constructor(start: Position, end: Position)
+    public constructor(start: Position, end: Position);
 
     /**
      * Creates a new instance of the [Range](xref:botbuilder-lg.Range) class.
@@ -30,7 +30,7 @@ export class Range {
      * @param endLine Ending line number in a file.
      * @param endChar Ending character number in the end line.
      */
-    public constructor(startLine: number, startChar: number, endLine: number, endChar: number)
+    public constructor(startLine: number, startChar: number, endLine: number, endChar: number);
 
     /**
      * Creates a new instance of the [Range](xref:botbuilder-lg.Range) class.
@@ -39,7 +39,7 @@ export class Range {
      * @param endLine Optional. Ending line number in a file.
      * @param endChar Optional. Ending character number in the end line.
      */
-    public constructor(x: number|Position, y: number|Position, endLine?: number, endChar?: number){
+    public constructor(x: number | Position, y: number | Position, endLine?: number, endChar?: number) {
         if (typeof x === 'number' && typeof y === 'number') {
             this.start = new Position(x, y);
             this.end = new Position(endLine, endChar);

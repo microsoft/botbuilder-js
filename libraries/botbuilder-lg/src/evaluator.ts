@@ -1,3 +1,4 @@
+/* eslint-disable security/detect-object-injection */
 /**
  * @module botbuilder-lg
  */
@@ -85,9 +86,7 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGTempla
      */
     public evaluateTemplate(inputTemplateName: string, scope: any): any {
         const memory = scope instanceof CustomizedMemory ? scope : new CustomizedMemory(scope);
-        let templateName: string;
-        let reExecute: boolean;
-        ({ reExecute, pureTemplateName: templateName } = this.parseTemplateName(inputTemplateName));
+        const { reExecute, pureTemplateName: templateName } = this.parseTemplateName(inputTemplateName);
 
         if (!(templateName in this.templateMap)) {
             throw new Error(TemplateErrors.templateNotExist(templateName));
@@ -509,9 +508,7 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGTempla
         errorPrefix = ''
     ): boolean {
         const exp = TemplateExtensions.trimExpression(expressionContext.text);
-        let result: any;
-        let error: string;
-        ({ value: result, error: error } = this.evalByAdaptiveExpression(exp, this.currentTarget().scope));
+        const { value: result, error: error } = this.evalByAdaptiveExpression(exp, this.currentTarget().scope);
 
         if (this.lgOptions.strictMode && (error || !result)) {
             const templateName = this.currentTarget().templateName;
@@ -538,9 +535,7 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGTempla
         errorPrefix = ''
     ): any {
         exp = TemplateExtensions.trimExpression(exp);
-        let result: any;
-        let error: string;
-        ({ value: result, error: error } = this.evalByAdaptiveExpression(exp, this.currentTarget().scope));
+        const { value: result, error: error } = this.evalByAdaptiveExpression(exp, this.currentTarget().scope);
 
         if (error || (result === undefined && this.lgOptions.strictMode)) {
             const templateName = this.currentTarget().templateName;

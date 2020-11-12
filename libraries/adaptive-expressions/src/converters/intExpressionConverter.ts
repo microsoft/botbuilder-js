@@ -19,7 +19,7 @@ export class IntExpressionConverter {
      * Converts a `string` or `number` into an [IntExpression](xref:adaptive-expressions.IntExpression).
      * @param value `string` or `number` to convert.
      * @returns The [IntExpression](xref:adaptive-expressions.IntExpression).
-     */  
+     */
     public convert(value: Input | IntExpression): IntExpression {
         return value instanceof IntExpression ? value : new IntExpression(value);
     }

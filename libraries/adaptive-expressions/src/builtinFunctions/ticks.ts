@@ -37,7 +37,7 @@ export class Ticks extends ExpressionEvaluator {
             if (typeof args[0] === 'string') {
                 ({ value, error } = InternalFunctionUtils.ticks(args[0]));
             } else {
-                error = `${ expr } should contain an ISO format timestamp.`;
+                error = `${expr} should contain an ISO format timestamp.`;
             }
         }
 

@@ -24,6 +24,7 @@
     "test:consumer": "yarn workspace consumer-test start",
     "test:coveralls": "yarn build && nyc mocha \"libraries/@(adaptive*|bot*)/tests/**/*.test.js\" --exit && nyc report --reporter=text-lcov | coveralls",
     "test:devops": "nyc --report --reporter=cobertura mocha -- \"libraries/@(adaptive*|bot*)/tests/**/*.test.js\" --check-leaks --reporter mocha-junit-reporter --reporter-options includePending=true",
+    "test:repoutils": "yarn workspace botbuilder-repo-utils test",
     "execute": "yarn workspace botbuilder-repo-utils execute",
     "update-versions": "yarn workspace botbuilder-repo-utils update-versions"
   },

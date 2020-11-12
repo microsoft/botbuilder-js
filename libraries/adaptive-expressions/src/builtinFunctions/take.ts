@@ -39,7 +39,7 @@ export class Take extends ExpressionEvaluator {
                 const startExpr: Expression = expression.children[1];
                 ({ value: start, error } = startExpr.tryEvaluate(state, options));
                 if (!error && !Number.isInteger(start)) {
-                    error = `${ startExpr } is not an integer.`;
+                    error = `${startExpr} is not an integer.`;
                 }
 
                 if (!error) {
@@ -47,7 +47,7 @@ export class Take extends ExpressionEvaluator {
                     result = arr.slice(0, start);
                 }
             } else {
-                error = `${ expression.children[0] } is not array or string.`;
+                error = `${expression.children[0]} is not array or string.`;
             }
         }
 

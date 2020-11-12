@@ -18,7 +18,6 @@ import { ReturnType } from '../returnType';
  * Return a string that has all the items from an array, with each character separated by a delimiter.
  */
 export class Join extends ExpressionEvaluator {
-
     /**
      * Initializes a new instance of the Join class.
      */
@@ -35,7 +34,7 @@ export class Join extends ExpressionEvaluator {
         let error = childrenError;
         if (!error) {
             if (!Array.isArray(args[0])) {
-                error = `${ expression.children[0] } evaluates to ${ args[0] } which is not a list.`;
+                error = `${expression.children[0]} evaluates to ${args[0]} which is not a list.`;
             } else {
                 if (args.length === 2) {
                     value = args[0].join(args[1]);
