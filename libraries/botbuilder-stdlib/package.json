@@ -1,0 +1,48 @@
+{
+  "name": "botbuilder-stdlib",
+  "author": "Microsoft Corp.",
+  "description": "BotBuilder shared libraries, intenal only",
+  "version": "4.1.6",
+  "preview": true,
+  "license": "MIT",
+  "keywords": [
+    "botbuilder",
+    "botframework",
+    "bots",
+    "chatbots"
+  ],
+  "bugs": {
+    "url": "https://github.com/Microsoft/botbuilder-js/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Microsoft/botbuilder-js.git"
+  },
+  "dependencies": {
+    "ts-essentials": "^7.0.1"
+  },
+  "devDependencies": {
+    "sinon": "^9.2.0"
+  },
+  "scripts": {
+    "build": "tsc -b",
+    "clean": "rimraf _ts3.4 lib tsconfig.tsbuildinfo",
+    "lint": "eslint . --ext .js,.ts",
+    "postbuild": "downlevel-dts lib _ts3.4/lib",
+    "test": "yarn build && nyc mocha --check-leaks tests"
+  },
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
+  "typesVersions": {
+    "<3.9": {
+      "*": [
+        "_ts3.4/*"
+      ]
+    }
+  },
+  "files": [
+    "_ts3.4",
+    "lib",
+    "src"
+  ]
+}

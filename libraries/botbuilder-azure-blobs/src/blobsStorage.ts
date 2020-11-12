@@ -5,7 +5,7 @@ import getStream from 'get-stream';
 import pmap from 'p-map';
 import { ContainerClient, StoragePipelineOptions } from '@azure/storage-blob';
 import { Storage, StoreItems } from 'botbuilder-core';
-import { assert } from './assert';
+import { assert } from 'botbuilder-stdlib';
 import { ignoreError, isStatusCodeError } from './ignoreError';
 import { sanitizeBlobKey } from './sanitizeBlobKey';
 
@@ -36,11 +36,8 @@ export class BlobsStorage implements Storage {
      * @param {BlobsStorageOptions} options Other options for BlobsStorage
      */
     constructor(connectionString: string, containerName: string, options?: BlobsStorageOptions) {
-        assert(typeof connectionString === 'string', '`connectionString` must be a string');
-        assert(connectionString, '`connectionString` must be non-empty', Error);
-
-        assert(typeof containerName === 'string', '`containerName` must be a string');
-        assert(containerName, '`containerName` must be non-empty', Error);
+        assert.nonEmptyString(connectionString, 'connectionString');
+        assert.nonEmptyString(containerName, 'containerName');
 
         this._containerClient = new ContainerClient(connectionString, containerName, options?.storagePipelineOptions);
 
@@ -64,7 +61,7 @@ export class BlobsStorage implements Storage {
      * @returns {Promise<StoreItems>} The fetched [StoreItems](xref:botbuilder-core.StoreItems)
      */
     async read(keys: string[]): Promise<StoreItems> {
-        assert(Array.isArray(keys), '`keys` must be an array');
+        assert.array(keys, 'keys');
 
         await this._initialize();
 
@@ -102,8 +99,7 @@ export class BlobsStorage implements Storage {
      * @returns {Promise<void>} A promise representing the async operation
      */
     async write(changes: StoreItems): Promise<void> {
-        assert(changes, '`changes` must not be null or undefined');
-        assert(typeof changes === 'object', '`changes` must be an object');
+        assert.object(changes, 'changes');
 
         await this._initialize();
 
@@ -130,7 +126,7 @@ export class BlobsStorage implements Storage {
      * @returns {Promise<void>} A promise representing the async operation
      */
     async delete(keys: string[]): Promise<void> {
-        assert(Array.isArray(keys), '`keys` must be an array');
+        assert.array(keys, 'keys');
 
         await this._initialize();
 

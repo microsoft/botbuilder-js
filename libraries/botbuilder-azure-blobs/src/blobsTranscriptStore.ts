@@ -4,8 +4,8 @@
 import getStream from 'get-stream';
 import pmap from 'p-map';
 import { Activity, PagedResult, TranscriptInfo, TranscriptStore } from 'botbuilder-core';
-import { assert } from './assert';
-import { maybeCast } from './maybeCast';
+import { assert } from 'botbuilder-stdlib';
+import { maybeCast } from 'botbuilder-stdlib/lib/maybeCast';
 import { sanitizeBlobKey } from './sanitizeBlobKey';
 
 import {
@@ -76,11 +76,8 @@ export class BlobsTranscriptStore implements TranscriptStore {
      * @param {BlobsTranscriptStoreOptions} options Other options for BlobsTranscriptStore
      */
     constructor(connectionString: string, containerName: string, options?: BlobsTranscriptStoreOptions) {
-        assert(typeof connectionString === 'string', '`connectionString` must be a string');
-        assert(connectionString, '`connectionString` must be non-empty');
-
-        assert(typeof containerName === 'string', '`containerName` must be a string');
-        assert(containerName, '`containerName` must be non-empty');
+        assert.nonEmptyString(connectionString, 'connectionString');
+        assert.nonEmptyString(containerName, 'containerName');
 
         this._containerClient = new ContainerClient(connectionString, containerName, options?.storagePipelineOptions);
 
@@ -113,11 +110,8 @@ export class BlobsTranscriptStore implements TranscriptStore {
         continuationToken?: string,
         startDate?: Date
     ): Promise<PagedResult<Activity>> {
-        assert(typeof channelId === 'string', '`channelId` must be a string');
-        assert(channelId, '`channelId` must be non-empty');
-
-        assert(typeof conversationId === 'string', '`conversationId` must be a string');
-        assert(conversationId, '`conversationId` must be non-empty');
+        assert.nonEmptyString(channelId, 'channelId');
+        assert.nonEmptyString(conversationId, 'conversationId');
 
         await this._initialize();
 
@@ -173,8 +167,7 @@ export class BlobsTranscriptStore implements TranscriptStore {
      * [PagedResult](xref:botbuilder-core.PagedResult) of [Activity](xref:botbuilder-core.Activity) items
      */
     async listTranscripts(channelId: string, continuationToken?: string): Promise<PagedResult<TranscriptInfo>> {
-        assert(typeof channelId === 'string', '`channelId` must be a string');
-        assert(channelId, '`channelId` must be non-empty');
+        assert.nonEmptyString(channelId, 'channelId');
 
         await this._initialize();
 
@@ -211,11 +204,8 @@ export class BlobsTranscriptStore implements TranscriptStore {
      * @returns {Promise<void>} A promise representing the async operation.
      */
     async deleteTranscript(channelId: string, conversationId: string): Promise<void> {
-        assert(typeof channelId === 'string', '`channelId` must be a string');
-        assert(channelId, '`channelId` must be non-empty');
-
-        assert(typeof conversationId === 'string', '`conversationId` must be a string');
-        assert(conversationId, '`conversationId` must be non-empty');
+        assert.nonEmptyString(channelId, 'channelId');
+        assert.nonEmptyString(conversationId, 'conversationId');
 
         await this._initialize();
 
@@ -248,8 +238,7 @@ export class BlobsTranscriptStore implements TranscriptStore {
      * @returns {Promise<void>} A promise representing the async operation.
      */
     async logActivity(activity: Activity): Promise<void> {
-        assert(activity, '`activity` must not be null or undefined');
-        assert(typeof activity === 'object', '`activity` must be an object');
+        assert.object(activity, 'activity');
 
         await this._initialize();
 

@@ -2,7 +2,7 @@
 // Licensed under the MIT License.
 
 const assert = require('assert');
-const { maybeCast } = require('../lib/maybeCast');
+const { maybeCast } = require('../');
 
 describe('maybeCast', () => {
     it('should be transparent', () => {

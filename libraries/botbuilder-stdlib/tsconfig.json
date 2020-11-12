@@ -1,0 +1,12 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "esModuleInterop": true,
+    "outDir": "lib",
+    "rootDir": "src",
+    "target": "es6"
+  },
+  "include": [
+    "src/**/*"
+  ]
+}
