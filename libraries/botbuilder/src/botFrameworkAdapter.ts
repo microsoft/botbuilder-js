@@ -1492,7 +1492,7 @@ export class BotFrameworkAdapter
             value: `${USER_AGENT}${userAgent ?? ''}`,
         });
 
-        // Resolve any user request policy factories, then includes our user agent via a factory policy
+        // Resolve any user request policy factories, then include our user agent via a factory policy
         options.requestPolicyFactories = (defaultRequestPolicyFactories) => {
             let defaultFactories = [];
 
