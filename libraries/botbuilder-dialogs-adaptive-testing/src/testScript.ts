@@ -6,12 +6,11 @@
  * Licensed under the MIT License.
  */
 
-import { ConversationState, MemoryStorage, UserState, useBotState, TestAdapter } from 'botbuilder-core';
+import { ConversationState, MemoryStorage, UserState, useBotState, TestAdapter, RegisterClassMiddleware } from 'botbuilder-core';
 import { Configurable, Converter, ConverterFactory, Dialog, DialogManager } from 'botbuilder-dialogs';
 import { LanguageGeneratorExtensions, LanguagePolicy, LanguagePolicyConverter, ResourceExtensions } from 'botbuilder-dialogs-adaptive';
 import { ResourceExplorer } from 'botbuilder-dialogs-declarative';
 import { TestAction } from './testAction';
-import { AdaptiveTestAdapter } from './adaptiveTestAdapter';
 import { SetTestOptionsMiddleware } from './setTestOptionsMiddleware';
 import { UserTokenMock, UserTokenMocksConverter } from './userTokenMocks';
 
@@ -116,12 +115,12 @@ export class TestScript extends Configurable implements TestScriptConfiguration 
 
         testAdapter.enableTrace = this.enableTrace;
         testAdapter.locale = this.locale;
-        testAdapter.use(new SetTestOptionsMiddleware());
 
         const storage = new MemoryStorage();
         const userState = new UserState(storage);
         const convoState = new ConversationState(storage);
         useBotState(testAdapter, userState, convoState);
+        testAdapter.use(new SetTestOptionsMiddleware());
 
         const bot = new DialogManager(this.dialog);
         ResourceExtensions.useResourceExplorer(bot, resourceExplorer);

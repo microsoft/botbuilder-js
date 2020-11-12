@@ -17,7 +17,7 @@ describe('TestScriptTests', function () {
     it('AssertReply_Assertions_Failed', async () => {
         try {
             await testRunner.runTestScript('TestScriptTests_AssertReply_Assertions_Failed');
-        } 
+        }
         catch (error) {
             assert(error.message.includes('\"text\":\"hi User1\"'), `assertion should have failed.`);
         }

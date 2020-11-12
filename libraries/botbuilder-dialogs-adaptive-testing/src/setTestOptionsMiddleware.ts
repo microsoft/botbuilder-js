@@ -19,12 +19,13 @@ export class SetTestOptionsMiddleware implements Middleware {
     public async onTurn(context: TurnContext, next: () => Promise<void>): Promise<void> {
         if (context.activity.type === ActivityTypes.Event) {
             if (context.activity.name === 'SetTestOptions') {
-                // TODO: conversaitonState is undefined
                 const conversationState = context.turnState.get(CONVERSATION_STATE);
                 const property = conversationState.createProperty('TestOptions');
                 await property.set(context, context.activity.value);
             }
         }
-        await next();
+        if (next) {
+            await next();
+        }
     }
 }
