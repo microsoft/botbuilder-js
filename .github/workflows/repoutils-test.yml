@@ -1,4 +1,4 @@
-name: repoutils test
+name: repoutils-test.yml
 
 on:
   workflow_dispatch:
@@ -12,7 +12,7 @@ on:
 
 jobs:
   ubuntu:
-    name: ubuntu
+    name: "${{ github.workflow }} ${{ runner.os }}"
     runs-on: ubuntu-latest
 
     strategy:
@@ -43,7 +43,7 @@ jobs:
         run: yarn test:repoutils
 
   windows:
-    name: windows
+    name: "${{ github.workflow }} ${{ runner.os }}"
     runs-on: windows-latest
 
     strategy:

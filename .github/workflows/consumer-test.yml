@@ -1,4 +1,4 @@
-name: consumer test
+name: consumer-test.yml
 
 on:
   workflow_dispatch:
@@ -9,7 +9,7 @@ on:
 
 jobs:
   ubuntu:
-    name: ubuntu
+    name: "${{ github.workflow }} ${{ runner.os }}"
     runs-on: ubuntu-latest
 
     strategy:
