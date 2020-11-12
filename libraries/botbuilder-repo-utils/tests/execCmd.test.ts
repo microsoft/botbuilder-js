@@ -31,7 +31,7 @@ describe('execCmd', () => {
         }>,
         bin: string,
         args: string[] = [],
-        flags: string[] = []
+        flags = ['--coordinated']
     ) => {
         const root = 'root';
 
@@ -129,7 +129,7 @@ describe('execCmd', () => {
             ],
             'echo',
             ['hello world'],
-            ['--path', 'packages/foo']
+            ['--coordinated', '--path', 'packages/foo']
         ));
 
     it('filters packages by path', () =>
@@ -165,7 +165,7 @@ describe('execCmd', () => {
             ],
             'echo',
             ['hello world'],
-            ['--name', 'bar']
+            ['--coordinated', '--name', 'bar']
         ));
 
     it('filters packages by name', () =>
@@ -183,7 +183,7 @@ describe('execCmd', () => {
             ],
             'echo',
             ['hello world'],
-            ['--ignoreName', 'bar']
+            ['--coordinated', '--ignoreName', 'bar']
         ));
 
     it('filters private packages', () =>
@@ -202,7 +202,7 @@ describe('execCmd', () => {
             ],
             'echo',
             ['hello world'],
-            ['--noPrivate']
+            ['--coordinated', '--noPrivate']
         ));
 
     it('executes a package with a dependency if that depedency is filtered', () =>
@@ -222,7 +222,7 @@ describe('execCmd', () => {
             ],
             'echo',
             ['hello world'],
-            ['--noPrivate']
+            ['--coordinated', '--noPrivate']
         ));
 
     it('breaks cycles', () =>

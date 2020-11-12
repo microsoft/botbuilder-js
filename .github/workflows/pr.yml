@@ -36,8 +36,11 @@ jobs:
       - name: yarn
         run: yarn --frozen-lockfile
 
-      - name: yarn lint-and-build
-        run: yarn lint-and-build
+      - name: yarn lint
+        run: yarn lint
+
+      - name: yarn build
+        run: yarn build
 
       - name: yarn test:devops
         run: yarn test:devops
@@ -70,8 +73,11 @@ jobs:
       - name: yarn
         run: yarn --frozen-lockfile
 
-      - name: yarn lint-and-build
-        run: yarn lint-and-build
+      - name: yarn lint
+        run: yarn lint
+
+      - name: yarn build
+        run: yarn build
 
       - name: yarn test:devops
         run: yarn test:devops

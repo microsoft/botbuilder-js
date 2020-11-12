@@ -11,10 +11,12 @@
     "url": "https://github.com/Microsoft/botbuilder-js.git"
   },
   "devDependencies": {
+    "@types/async": "^3.2.3",
     "@types/minimist": "^1.2.1",
     "@types/sinon": "^9.0.8",
-    "globby": "^11.0.1",
+    "async": "^3.2.0",
     "get-stream": "^6.0.0",
+    "globby": "^11.0.1",
     "minimatch": "^3.0.4",
     "minimist": "^1.2.5",
     "moment": "^2.29.1",
