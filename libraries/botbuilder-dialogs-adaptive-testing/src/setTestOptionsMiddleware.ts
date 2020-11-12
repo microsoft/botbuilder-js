@@ -6,17 +6,11 @@
  * Licensed under the MIT License.
  */
 
-import { Middleware, TurnContext, ActivityTypes, MemoryStorage, ConversationState } from 'botbuilder-core';
+import { Middleware, TurnContext, ActivityTypes } from 'botbuilder-core';
 
 const CONVERSATION_STATE = 'ConversationState';
 
 export class SetTestOptionsMiddleware implements Middleware {
-    /**
-     * Creates a new SetTestOptionsMiddleware instance.
-     */
-    constructor() {
-    }
-
     /**
      * Processes an incoming event activity.
      * @param context The context object for this turn.
@@ -26,7 +20,7 @@ export class SetTestOptionsMiddleware implements Middleware {
         if (context.activity.type === ActivityTypes.Event) {
             if (context.activity.name === 'SetTestOptions') {
                 // TODO: conversaitonState is undefined
-                let conversationState = context.turnState.get(CONVERSATION_STATE);
+                const conversationState = context.turnState.get(CONVERSATION_STATE);
                 const property = conversationState.createProperty('TestOptions');
                 await property.set(context, context.activity.value);
             }

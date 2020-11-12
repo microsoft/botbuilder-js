@@ -6,11 +6,16 @@
  * Licensed under the MIT License.
  */
 
-import { TurnContext, ActivityTypes } from 'botbuilder-core';
+import { TurnContext, TestAdapter, ActivityTypes } from 'botbuilder-core';
 import { TestAction } from '../testAction';
-import { AdaptiveTestAdapter } from '../adaptiveTestAdapter';
 
-export class CustomEvent implements TestAction {
+export interface CustomEventConfiguration {
+    name: string;
+    value?: unknown;
+}
+
+export class CustomEvent extends TestAction implements CustomEventConfiguration {
+    public static $kind = 'Microsoft.Test.CustomEvent';
     /**
      * The event name.
      */
@@ -19,9 +24,9 @@ export class CustomEvent implements TestAction {
     /**
      * Event value.
      */
-    public value: any;
+    public value: unknown;
 
-    public async execute(testAdapter: AdaptiveTestAdapter, callback: (context: TurnContext) => Promise<any>): Promise<any> {
+    public async execute(testAdapter: TestAdapter, callback: (context: TurnContext) => Promise<void>): Promise<void> {
         if (!this.name) {
             throw Error('You must define the event name.');
         }

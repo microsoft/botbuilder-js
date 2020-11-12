@@ -101,6 +101,22 @@ export interface UserActivityConfiguration {
 }
 
 // @public (undocumented)
+export class CustomEvent implements TestAction {
+    name: string;
+    // (undocumented)
+    execute(testAdapter: TestAdapter, callback: (context: TurnContext) => Promise<any>): Promise<any>;
+    value?: unknown;
+}
+
+// @public (undocumented)
+export interface CustomEventConfiguration {
+    // (undocumented)
+    name: string;
+    // (undocumented)
+    value?: unknown;
+}
+
+// @public (undocumented)
 export class UserConversationUpdate implements TestAction {
     // (undocumented)
     execute(testAdapter: TestAdapter, callback: (context: TurnContext) => Promise<any>): Promise<any>;
