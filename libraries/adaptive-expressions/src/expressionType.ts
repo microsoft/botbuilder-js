@@ -61,6 +61,7 @@ export class ExpressionType {
     public static readonly NewGuid: string = 'newGuid';
     public static readonly IndexOf: string = 'indexOf';
     public static readonly LastIndexOf: string = 'lastIndexOf';
+    public static readonly EOL: string = 'EOL';
     public static readonly SentenceCase: string = 'sentenceCase';
     public static readonly TitleCase: string = 'titleCase';
 

@@ -4,6 +4,7 @@ const bigInt = require('big-integer');
 const { Expression, SimpleObjectMemory, FunctionUtils, Options } = require('../lib');
 const { TimexProperty } = require('@microsoft/recognizers-text-data-types-timex-expression');
 const { useFakeTimers } = require('sinon');
+const os = require('os');
 
 const one = ['one'];
 const oneTwo = ['one', 'two'];
@@ -268,6 +269,7 @@ const testCases = [
             ['count(newGuid())', 36],
             ['indexOf(newGuid(), \'-\')', 8],
             ['indexOf(newGuid(), \'-\')', 8],
+            ['EOL()', os.EOL],
             ['indexOf(hello, \'-\')', -1],
             ['indexOf(nullObj, \'-\')', -1],
             ['indexOf(hello, nullObj)', 0],
