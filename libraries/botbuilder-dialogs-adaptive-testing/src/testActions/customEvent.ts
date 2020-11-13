@@ -24,7 +24,7 @@ export class CustomEvent extends TestAction implements CustomEventConfiguration 
     /**
      * Event value.
      */
-    public value: unknown;
+    public value?: unknown;
 
     public async execute(testAdapter: TestAdapter, callback: (context: TurnContext) => Promise<void>): Promise<void> {
         if (!this.name) {

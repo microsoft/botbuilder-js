@@ -24,7 +24,7 @@ export class SetTestOptionsMiddleware implements Middleware {
                 await property.set(context, context.activity.value);
             }
         }
-        if (next) {
+        if (next !== null) {
             await next();
         }
     }

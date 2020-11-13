@@ -32,20 +32,22 @@ export class Rand extends ExpressionEvaluator {
         let maxValue;
         let error: string;
 
-        ({ value: minValue, error } = expression.children[0].tryEvaluate(state, options));
+        const [maybeMinValue, maybeMaxValue] = expression.children;
+
+        ({ value: minValue, error } = maybeMinValue.tryEvaluate(state, options));
         if (error) {
-            return { value: result, error };
+            return { value: undefined, error };
         }
         if (!Number.isInteger(minValue)) {
-            return { value: result, error: `${minValue} is not an integer.` };
+            return { value: undefined, error: `${minValue} is not an integer.` };
         }
 
-        ({ value: maxValue, error } = expression.children[1].tryEvaluate(state, options));
+        ({ value: maxValue, error } = maybeMaxValue.tryEvaluate(state, options));
         if (error) {
-            return { value: result, error };
+            return { value: undefined, error };
         }
         if (!Number.isInteger(maxValue)) {
-            return { value: result, error: `${maxValue} is not an integer.` };
+            return { value: undefined, error: `${maxValue} is not an integer.` };
         }
 
         if (minValue > maxValue) {
