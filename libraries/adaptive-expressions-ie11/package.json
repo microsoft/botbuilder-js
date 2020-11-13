@@ -30,7 +30,6 @@
     "@babel/preset-env": "^7.6.3",
     "@babel/preset-typescript": "^7.6.0",
     "@babel/runtime": "^7.6.3",
-    "@types/node": "^10.17.27",
     "babel-loader": "^8.0.6",
     "copyfiles": "2.4.0",
     "ts-loader": "^7.0.5",
@@ -39,8 +38,11 @@
     "webpack-cli": "^3.3.12"
   },
   "scripts": {
-    "build": "webpack && copyfiles -u 3 node_modules/adaptive-expressions/lib/**/*.d.ts dist",
-    "clean": "erase /q /s .\\dist"
+    "build:webpack": "webpack",
+    "build:copyfiles": "copyfiles -u 3 node_modules/adaptive-expressions/lib/**/*.d.ts dist",
+    "build": "npm-run-all -p build:webpack build:copyfiles",
+    "clean": "rimraf dist",
+    "lint": "eslint . --ext .js,.ts"
   },
   "files": [
     "dist"

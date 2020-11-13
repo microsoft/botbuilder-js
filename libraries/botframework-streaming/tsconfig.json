@@ -4,8 +4,7 @@
     "composite": false,
     "lib": ["es2015"],
     "outDir": "lib",
-    "rootDir": "src",
-    "types" : ["node"]
+    "rootDir": "src"
   },
   "include": [
     "src/**/*"
