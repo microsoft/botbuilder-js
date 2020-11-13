@@ -31,9 +31,9 @@ export class BlobsStorage implements Storage {
     /**
      * Constructs a BlobsStorage instance.
      *
-     * @param connectionString Azure Blob Storage connection string
-     * @param containerName Azure Blob Storage container name
-     * @param options Other options for BlobsStorage
+     * @param {string} connectionString Azure Blob Storage connection string
+     * @param {string} containerName Azure Blob Storage container name
+     * @param {BlobsStorageOptions} options Other options for BlobsStorage
      */
     constructor(connectionString: string, containerName: string, options?: BlobsStorageOptions) {
         assert(typeof connectionString === 'string', '`connectionString` must be a string');
@@ -50,10 +50,6 @@ export class BlobsStorage implements Storage {
         }
     }
 
-    /**
-     * Returns a promise that resolves when the container is accessible
-     * @private
-     */
     private _initialize(): Promise<unknown> {
         if (!this._initializePromise) {
             this._initializePromise = this._containerClient.createIfNotExists();
@@ -63,8 +59,9 @@ export class BlobsStorage implements Storage {
 
     /**
      * Loads store items from storage.
-     * @param keys Array of item keys to read
-     * @returns The fetched [StoreItems](xref:botbuilder-core.StoreItems)
+     *
+     * @param {string[]} keys Array of item keys to read
+     * @returns {Promise<StoreItems>} The fetched [StoreItems](xref:botbuilder-core.StoreItems)
      */
     async read(keys: string[]): Promise<StoreItems> {
         assert(Array.isArray(keys), '`keys` must be an array');
@@ -100,8 +97,9 @@ export class BlobsStorage implements Storage {
 
     /**
      * Saves store items to storage.
-     * @param changes Map of [StoreItems](xref:botbuilder-core.StoreItems) to write to storage
-     * @returns A promise representing the async operation
+     *
+     * @param {StoreItems} changes Map of [StoreItems](xref:botbuilder-core.StoreItems) to write to storage
+     * @returns {Promise<void>} A promise representing the async operation
      */
     async write(changes: StoreItems): Promise<void> {
         assert(changes, '`changes` must not be null or undefined');
@@ -127,8 +125,9 @@ export class BlobsStorage implements Storage {
 
     /**
      * Removes store items from storage.
-     * @param keys Array of item keys to remove from the store
-     * @returns A promise representing the async operation
+     *
+     * @param {string[]} keys Array of item keys to remove from the store
+     * @returns {Promise<void>} A promise representing the async operation
      */
     async delete(keys: string[]): Promise<void> {
         assert(Array.isArray(keys), '`keys` must be an array');

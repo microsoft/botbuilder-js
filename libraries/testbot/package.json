@@ -20,9 +20,6 @@
     "restify": "^8.5.1"
   },
   "devDependencies": {
-    "@types/mocha": "^5.2.7",
-    "assert": "^1.4.1",
-    "mocha": "^6.2.3",
-    "nyc": "^15.1.0"
+    "assert": "^1.4.1"
   }
 }

@@ -4,6 +4,7 @@ const bigInt = require('big-integer');
 const { Expression, SimpleObjectMemory, FunctionUtils, Options } = require('../lib');
 const { TimexProperty } = require('@microsoft/recognizers-text-data-types-timex-expression');
 const { useFakeTimers } = require('sinon');
+const os = require('os');
 
 const one = ['one'];
 const oneTwo = ['one', 'two'];
@@ -268,6 +269,7 @@ const testCases = [
             ['count(newGuid())', 36],
             ['indexOf(newGuid(), \'-\')', 8],
             ['indexOf(newGuid(), \'-\')', 8],
+            ['EOL()', os.EOL],
             ['indexOf(hello, \'-\')', -1],
             ['indexOf(nullObj, \'-\')', -1],
             ['indexOf(hello, nullObj)', 0],
@@ -560,9 +562,8 @@ const testCases = [
             ['subtractFromTime(timestamp, 1, \'Hour\')', '2018-03-15T12:00:00.111Z'],
             ['subtractFromTime(timestamp, 1, \'Minute\')', '2018-03-15T12:59:00.111Z'],
             ['subtractFromTime(timestamp, 1, \'Second\')', '2018-03-15T12:59:59.111Z'],
-            //    ['dateReadBack(timestamp, addDays(timestamp, 1))', 'tomorrow'],
-            //    ['dateReadBack(addDays(timestamp, 1),timestamp)', 'yesterday'],
-            // - Fails in the US
+            ['dateReadBack(timestamp, addDays(timestamp, 1))', 'tomorrow'],
+            ['dateReadBack(addDays(timestamp, 1),timestamp)', 'yesterday'],
             ['getTimeOfDay(\'2018-03-15T00:00:00.000Z\')', 'midnight'],
             ['getTimeOfDay(\'2018-03-15T08:00:00.000Z\')', 'morning'],
             ['getTimeOfDay(\'2018-03-15T12:00:00.000Z\')', 'noon'],
@@ -962,10 +963,6 @@ const generateParseTest = (input, expectedOutput, expectedRefs) => () => {
 }
 
 describe('expression parser functional test', () => {
-    describe("tt", () => {
-        it('union(["a", "b", "c"], ["d", ["e", "f"], "g"][1])', generateParseTest('union(["a", "b", "c"], ["d", ["e", "f"], "g"][1])', ['a', 'b', 'c', 'e', 'f'], undefined));
-    });
-
     testCases.forEach(({ label, testCases }) => {
         describe(label, () => {
             testCases.forEach(([input, expectedOutput, expectedRefs]) => {

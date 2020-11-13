@@ -4,7 +4,9 @@
 /**
  * Ensures that `key` is a properly sanitized Azure Blob Storage key. It should be URI encoded,
  * no longer than 1024 characters, and contain no more than 254 slash ("/") chars.
- * @param key blob key to sanitize
+ *
+ * @param {string} key string blob key to sanitize
+ * @returns {string} sanitized blob key
  */
 export function sanitizeBlobKey(key: string): string {
     if (!key || !key.length) {

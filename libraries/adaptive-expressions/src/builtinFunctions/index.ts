@@ -45,6 +45,7 @@ export * from './divide';
 export * from './element';
 export * from './empty';
 export * from './endsWith';
+export * from './eol';
 export * from './equal';
 export * from './exists';
 export * from './flatten';

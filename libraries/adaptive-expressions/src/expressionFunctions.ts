@@ -76,6 +76,7 @@ export class ExpressionFunctions {
             new BuiltinFunctions.Element(),
             new BuiltinFunctions.Empty(),
             new BuiltinFunctions.EndsWith(),
+            new BuiltinFunctions.EOL(),
             new BuiltinFunctions.Equal(),
             new BuiltinFunctions.Exists(),
             new BuiltinFunctions.Flatten(),
