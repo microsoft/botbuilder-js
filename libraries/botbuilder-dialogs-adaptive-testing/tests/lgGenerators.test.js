@@ -1,31 +1,42 @@
 const path = require('path');
-const { TestRunner } = require('../lib');
+const { ComponentRegistration } = require('botbuilder-core');
+const { AdaptiveComponentRegistration } = require('botbuilder-dialogs-adaptive');
+const { ResourceExplorer } = require('botbuilder-dialogs-declarative');
+const { AdaptiveTestComponentRegistration, TestUtils } = require('../lib');
 
-describe('LGGeneratorTests', function() {
+describe('LGGeneratorTests', function () {
     this.timeout(5000);
-    const testRunner = new TestRunner(path.join(__dirname,  'resources/LGGeneratorTests'));
+
+    ComponentRegistration.add(new AdaptiveComponentRegistration());
+    ComponentRegistration.add(new AdaptiveTestComponentRegistration());
+
+    const resourceExplorer = new ResourceExplorer().addFolder(
+        path.join(__dirname, 'resources/LGGeneratorTests'),
+        true,
+        false
+    );
 
     it('MultiLandE2E', async () => {
-        await testRunner.runTestScript('MultiLangE2E');
+        await TestUtils.runTestScript(resourceExplorer, 'MultiLangE2E');
     });
 
     it('LGMiddleWare', async () => {
-        await testRunner.runTestScript('LGMiddleWare');
+        await TestUtils.runTestScript(resourceExplorer, 'LGMiddleWare');
     });
 
     it('LGScopeAccess', async () => {
-        await testRunner.runTestScript('LGScopeAccess');
+        await TestUtils.runTestScript(resourceExplorer, 'LGScopeAccess');
     });
 
     it('No Language Generator', async () => {
-        await testRunner.runTestScript('NoLanguageGeneration');
+        await TestUtils.runTestScript(resourceExplorer, 'NoLanguageGeneration');
     });
 
     it('Customize Language Policy', async () => {
-        await testRunner.runTestScript('CustomizeLanguagePolicy');
+        await TestUtils.runTestScript(resourceExplorer, 'CustomizeLanguagePolicy');
     });
 
     it('LocaleInExpr', async () => {
-        await testRunner.runTestScript('LocaleInExpr');
+        await TestUtils.runTestScript(resourceExplorer, 'LocaleInExpr');
     });
 });

@@ -1,11 +1,22 @@
 const path = require('path');
-const { TestRunner } = require('../lib');
+const { ComponentRegistration } = require('botbuilder-core');
+const { AdaptiveComponentRegistration } = require('botbuilder-dialogs-adaptive');
+const { ResourceExplorer } = require('botbuilder-dialogs-declarative');
+const { AdaptiveTestComponentRegistration, TestUtils } = require('../lib');
 
-describe('RegexRecognizerTests', function() {
+describe('RegexRecognizerTests', function () {
     this.timeout(5000);
-    const testRunner = new TestRunner(path.join(__dirname,  'resources/RegexRecognizerTests'));
+
+    ComponentRegistration.add(new AdaptiveComponentRegistration());
+    ComponentRegistration.add(new AdaptiveTestComponentRegistration());
+
+    const resourceExplorer = new ResourceExplorer().addFolder(
+        path.join(__dirname, 'resources/RegexRecognizerTests'),
+        true,
+        false
+    );
 
     it('Entities', async () => {
-        await testRunner.runTestScript('RegexRecognizerTests_Entities');
+        await TestUtils.runTestScript(resourceExplorer, 'RegexRecognizerTests_Entities');
     });
 });

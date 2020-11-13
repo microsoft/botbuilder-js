@@ -1,35 +1,46 @@
 const path = require('path');
-const { TestRunner } = require('../lib');
+const { ComponentRegistration } = require('botbuilder-core');
+const { AdaptiveComponentRegistration } = require('botbuilder-dialogs-adaptive');
+const { ResourceExplorer } = require('botbuilder-dialogs-declarative');
+const { AdaptiveTestComponentRegistration, TestUtils } = require('../lib');
 
-describe('CrossTrainedRecognizerSetTests', function() {
+describe('CrossTrainedRecognizerSetTests', function () {
     this.timeout(5000);
-    const testRunner = new TestRunner(path.join(__dirname,  'resources/CrossTrainedRecognizerSetTests'));
+
+    ComponentRegistration.add(new AdaptiveComponentRegistration());
+    ComponentRegistration.add(new AdaptiveTestComponentRegistration());
+
+    const resourceExplorer = new ResourceExplorer().addFolder(
+        path.join(__dirname, 'resources/CrossTrainedRecognizerSetTests'),
+        true,
+        false
+    );
 
     it('AllNone', async () => {
-        await testRunner.runTestScript('CrossTrainedRecognizerSetTests_AllNone');
+        await TestUtils.runTestScript(resourceExplorer, 'CrossTrainedRecognizerSetTests_AllNone');
     });
 
     it('CircleDefer', async () => {
-        await testRunner.runTestScript('CrossTrainedRecognizerSetTests_CircleDefer');
+        await TestUtils.runTestScript(resourceExplorer, 'CrossTrainedRecognizerSetTests_CircleDefer');
     });
 
     it('DoubleDefer', async () => {
-        await testRunner.runTestScript('CrossTrainedRecognizerSetTests_DoubleDefer');
+        await TestUtils.runTestScript(resourceExplorer, 'CrossTrainedRecognizerSetTests_DoubleDefer');
     });
 
     it('DoubleIntent', async () => {
-        await testRunner.runTestScript('CrossTrainedRecognizerSetTests_DoubleIntent');
+        await TestUtils.runTestScript(resourceExplorer, 'CrossTrainedRecognizerSetTests_DoubleIntent');
     });
 
     it('Empty', async () => {
-        await testRunner.runTestScript('CrossTrainedRecognizerSetTests_Empty');
+        await TestUtils.runTestScript(resourceExplorer, 'CrossTrainedRecognizerSetTests_Empty');
     });
 
     it('NoneWithIntent', async () => {
-        await testRunner.runTestScript('CrossTrainedRecognizerSetTests_NoneWithIntent');
+        await TestUtils.runTestScript(resourceExplorer, 'CrossTrainedRecognizerSetTests_NoneWithIntent');
     });
 
     it('EntitiesWithNoneIntent', async () => {
-        await testRunner.runTestScript('CrossTrainedRecognizerSetTests_NoneIntentWithEntities');
+        await TestUtils.runTestScript(resourceExplorer, 'CrossTrainedRecognizerSetTests_NoneIntentWithEntities');
     });
 });
