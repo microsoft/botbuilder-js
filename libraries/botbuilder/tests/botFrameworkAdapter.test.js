@@ -472,12 +472,13 @@ describe('BotFrameworkAdapter', () => {
 
         it('ConnectorClient should add userAgent header from clientOptions', async () => {
             const userAgent = 'test user agent';
+
             nock(reference.serviceUrl)
                 .matchHeader('user-agent', (val) => val.endsWith(userAgent))
                 .post('/v3/conversations/convo1/activities/1234')
                 .reply(200, { id: 'abc123id' });
 
-            const adapter = new BotFrameworkAdapter({ clientOptions: { userAgent: userAgent } });
+            const adapter = new BotFrameworkAdapter({ clientOptions: { userAgent } });
 
             await adapter.continueConversation(reference, async (turnContext) => {
                 await turnContext.sendActivity(outgoingMessage);
@@ -521,14 +522,16 @@ describe('BotFrameworkAdapter', () => {
         });
 
         it('ConnectorClient should use requestPolicyFactories from clientOptions', async () => {
-            const factories = [userAgentPolicy({ value: 'test' })];
+            const setUserAgent = userAgentPolicy({ value: 'test' });
+            const factories = [setUserAgent];
+
             const adapter = new BotFrameworkAdapter({ clientOptions: { requestPolicyFactories: factories } });
 
             await adapter.continueConversation(reference, async (turnContext) => {
                 const connectorClient = turnContext.turnState.get(turnContext.adapter.ConnectorClientKey);
-                assert.strictEqual(
-                    connectorClient._requestPolicyFactories.length,
-                    factories.length,
+
+                assert(
+                    connectorClient._requestPolicyFactories.find((policy) => policy === setUserAgent),
                     'requestPolicyFactories from clientOptions parameter is not used.'
                 );
             });
@@ -1287,20 +1290,11 @@ describe('BotFrameworkAdapter', () => {
         await assert.rejects(adapter.deleteActivity(context, copy));
     });
 
-    it(`should create a User-Agent header with the same info as the host machine.`, async () => {
-        const userAgent =
-            'Microsoft-BotFramework/3.1 BotBuilder/' +
-            pjson.version +
-            ' (Node.js,Version=' +
-            process.version +
-            '; ' +
-            os.type() +
-            ' ' +
-            os.release() +
-            '; ' +
-            os.arch() +
-            ')';
+    const userAgent = `Microsoft-BotFramework/3.1 BotBuilder/${pjson.version} (Node.js,Version=${
+        process.version
+    }; ${os.type()} ${os.release()}; ${os.arch()})`;
 
+    it(`should create a User-Agent header with the same info as the host machine.`, async () => {
         nock(reference.serviceUrl)
             .matchHeader('user-agent', (val) => val.endsWith(userAgent))
             .post('/v3/conversations/convo1/activities/1234')
@@ -1313,33 +1307,13 @@ describe('BotFrameworkAdapter', () => {
         });
     });
 
-    // TODO: update BotFrameworkAdapter.getClientOptions to ensure requestPolicyFactories includes userAgent of BB, regardless of requestPolicyFactories
-    xit(`should still add Botbuilder User-Agent header when custom requestPolicyFactories are provided.`, async () => {
-        //ms-rest-js currently adds:
-        //botframework-connector/4.0.0 ms-rest-js/0.1.0 Node/v12.14.1 OS/(x64-Windows_NT-10.0.18363)
-        //BotBuilder adds BotFrameworkAdapter.USER_AGENT:
-        //Microsoft-BotFramework/3.1 BotBuilder/4.1.6 (Node.js,Version=v12.14.1; Windows_NT 10.0.18363; x64)"
-
-        const userAgent =
-            'Microsoft-BotFramework/3.1 BotBuilder/' +
-            pjson.version +
-            ' (Node.js,Version=' +
-            process.version +
-            '; ' +
-            os.type() +
-            ' ' +
-            os.release() +
-            '; ' +
-            os.arch() +
-            ')';
-
+    it(`should still add Botbuilder User-Agent header when custom requestPolicyFactories are provided.`, async () => {
         nock(reference.serviceUrl)
             .matchHeader('user-agent', (val) => val.endsWith(userAgent))
             .post('/v3/conversations/convo1/activities/1234')
             .reply(200, { id: 'abc123id' });
 
-        const factories = [userAgentPolicy({ value: 'test' })];
-        const adapter = new BotFrameworkAdapter({ clientOptions: { requestPolicyFactories: factories } });
+        const adapter = new BotFrameworkAdapter({ clientOptions: { requestPolicyFactories: [] } });
 
         await adapter.continueConversation(reference, async (turnContext) => {
             await turnContext.sendActivity(outgoingMessage);
