@@ -1,35 +1,46 @@
 const path = require('path');
-const { TestRunner } = require('../lib');
+const { ComponentRegistration } = require('botbuilder-core');
+const { AdaptiveComponentRegistration } = require('botbuilder-dialogs-adaptive');
+const { ResourceExplorer } = require('botbuilder-dialogs-declarative');
+const { AdaptiveTestComponentRegistration, TestUtils } = require('../lib');
 
-describe('ActionScopeTests', function() {
+describe('ActionScopeTests', function () {
     this.timeout(5000);
-    const testRunner = new TestRunner(path.join(__dirname,  'resources/ActionScopeTests'));
+
+    ComponentRegistration.add(new AdaptiveComponentRegistration());
+    ComponentRegistration.add(new AdaptiveTestComponentRegistration());
+
+    const resourceExplorer = new ResourceExplorer().addFolder(
+        path.join(__dirname, 'resources/ActionScopeTests'),
+        true,
+        false
+    );
 
     it('Break', async () => {
-        await testRunner.runTestScript('ActionScope_Break');
+        await TestUtils.runTestScript(resourceExplorer, 'ActionScope_Break');
     });
 
     it('Continue', async () => {
-        await testRunner.runTestScript('ActionScope_Continue');
+        await TestUtils.runTestScript(resourceExplorer, 'ActionScope_Continue');
     });
 
     it('Goto_Nowhere', async () => {
-        await testRunner.runTestScript('ActionScope_Goto_Nowhere');
+        await TestUtils.runTestScript(resourceExplorer, 'ActionScope_Goto_Nowhere');
     });
 
     it('Goto_OnIntent', async () => {
-        await testRunner.runTestScript('ActionScope_Goto_OnIntent');
+        await TestUtils.runTestScript(resourceExplorer, 'ActionScope_Goto_OnIntent');
     });
 
     it('Goto_Parent', async () => {
-        await testRunner.runTestScript('ActionScope_Goto_Parent');
+        await TestUtils.runTestScript(resourceExplorer, 'ActionScope_Goto_Parent');
     });
 
     it('Goto_Switch', async () => {
-        await testRunner.runTestScript('ActionScope_Goto_Switch');
+        await TestUtils.runTestScript(resourceExplorer, 'ActionScope_Goto_Switch');
     });
 
     it('Goto', async () => {
-        await testRunner.runTestScript('ActionScope_Goto');
+        await TestUtils.runTestScript(resourceExplorer, 'ActionScope_Goto');
     });
 });

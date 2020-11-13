@@ -1,77 +1,87 @@
-const assert = require ('assert');
+const assert = require('assert');
 const path = require('path');
-const { TestRunner } = require('../lib');
+const { ComponentRegistration } = require('botbuilder-core');
+const { AdaptiveComponentRegistration } = require('botbuilder-dialogs-adaptive');
+const { ResourceExplorer } = require('botbuilder-dialogs-declarative');
+const { AdaptiveTestComponentRegistration, TestUtils } = require('../lib');
 
 describe('TestScriptTests', function () {
     this.timeout(5000);
-    const testRunner = new TestRunner(path.join(__dirname, 'resources/TestScriptTests'));
+
+    ComponentRegistration.add(new AdaptiveComponentRegistration());
+    ComponentRegistration.add(new AdaptiveTestComponentRegistration());
+
+    const resourceExplorer = new ResourceExplorer().addFolder(
+        path.join(__dirname, 'resources/TestScriptTests'),
+        true,
+        false
+    );
 
     it('AssertReply_Assertions', async () => {
-        await testRunner.runTestScript('TestScriptTests_AssertReply_Assertions');
+        await TestUtils.runTestScript(resourceExplorer, 'TestScriptTests_AssertReply_Assertions');
     });
 
     it('AssertReply_AssertCondition', async () => {
-        await testRunner.runTestScript('TestScriptTests_AssertCondition');
+        await TestUtils.runTestScript(resourceExplorer, 'TestScriptTests_AssertCondition');
     });
 
     it('AssertReply_Assertions_Failed', async () => {
         try {
-            await testRunner.runTestScript('TestScriptTests_AssertReply_Assertions_Failed');
-        }
-        catch (error) {
-            assert(error.message.includes('\"text\":\"hi User1\"'), `assertion should have failed.`);
+            await TestUtils.runTestScript(resourceExplorer, 'TestScriptTests_AssertReply_Assertions_Failed');
+        } catch (error) {
+            assert(error.message.includes('"text":"hi User1"'), `assertion should have failed.`);
         }
     });
 
     it('AssertReply_Exact', async () => {
-        await testRunner.runTestScript('TestScriptTests_AssertReply_Exact');
+        await TestUtils.runTestScript(resourceExplorer, 'TestScriptTests_AssertReply_Exact');
     });
 
     it('AssertReply_ExactInvalid', async () => {
         assert.rejects(async () => {
-            await testRunner.runTestScript('TestScriptTests_AssertReply_ExactInvalid');
+            await TestUtils.runTestScript(resourceExplorer, 'TestScriptTests_AssertReply_ExactInvalid');
         });
     });
 
     it('AssertReply_Invalid', async () => {
         assert.rejects(async () => {
-            await testRunner.runTestScript('TestScriptTests_AssertReply_Invalid');
+            await TestUtils.runTestScript(resourceExplorer, 'TestScriptTests_AssertReply_Invalid');
         });
     });
 
     it('AssertReply_User', async () => {
-        await testRunner.runTestScript('TestScriptTests_AssertReply_User');
+        await TestUtils.runTestScript(resourceExplorer, 'TestScriptTests_AssertReply_User');
     });
 
     it('AssertReplyOneOf_Assertions', async () => {
-        await testRunner.runTestScript('TestScriptTests_AssertReplyOneOf_Assertions');
+        await TestUtils.runTestScript(resourceExplorer, 'TestScriptTests_AssertReplyOneOf_Assertions');
     });
 
     it('AssertReplyOneOf_Exact', async () => {
-        await testRunner.runTestScript('TestScriptTests_AssertReplyOneOf_Exact');
+        await TestUtils.runTestScript(resourceExplorer, 'TestScriptTests_AssertReplyOneOf_Exact');
     });
 
     it('AssertReplyOneOf_User', async () => {
-        await testRunner.runTestScript('TestScriptTests_AssertReplyOneOf_User');
+        await TestUtils.runTestScript(resourceExplorer, 'TestScriptTests_AssertReplyOneOf_User');
     });
 
     it('AssertReplyOneOf', async () => {
-        await testRunner.runTestScript('TestScriptTests_AssertReplyOneOf');
+        await TestUtils.runTestScript(resourceExplorer, 'TestScriptTests_AssertReplyOneOf');
     });
 
     it('UserConversationUpdate', async () => {
-        await testRunner.runTestScript('TestScriptTests_UserConversationUpdate');
+        await TestUtils.runTestScript(resourceExplorer, 'TestScriptTests_UserConversationUpdate');
     });
 
     it('UserTokenMock', async () => {
-        await testRunner.runTestScript('TestScriptTests_UserTokenMock');
+        await TestUtils.runTestScript(resourceExplorer, 'TestScriptTests_UserTokenMock');
     });
 
     it('UserTyping', async () => {
-        await testRunner.runTestScript('TestScriptTests_UserTyping');
+        await TestUtils.runTestScript(resourceExplorer, 'TestScriptTests_UserTyping');
     });
 
     it('CustomEvent', async () => {
-        await testRunner.runTestScript('TestScriptTests_CustomEvent');
+        await TestUtils.runTestScript(resourceExplorer, 'TestScriptTests_CustomEvent');
     });
 });
