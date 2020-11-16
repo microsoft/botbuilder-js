@@ -3,8 +3,8 @@
 
 import getStream from 'get-stream';
 import pmap from 'p-map';
-import { Activity, PagedResult, TranscriptInfo, TranscriptStore } from 'botbuilder-core';
-import { assert } from 'botbuilder-stdlib';
+import { Activity, PagedResult, TranscriptInfo, TranscriptStore, assertActivity } from 'botbuilder-core';
+import { assert } from 'botbuilder-stdlib/lib/types';
 import { maybeCast } from 'botbuilder-stdlib/lib/maybeCast';
 import { sanitizeBlobKey } from './sanitizeBlobKey';
 
@@ -76,8 +76,8 @@ export class BlobsTranscriptStore implements TranscriptStore {
      * @param {BlobsTranscriptStoreOptions} options Other options for BlobsTranscriptStore
      */
     constructor(connectionString: string, containerName: string, options?: BlobsTranscriptStoreOptions) {
-        assert.nonEmptyString(connectionString, 'connectionString');
-        assert.nonEmptyString(containerName, 'containerName');
+        assert.string(connectionString, ['connectionString']);
+        assert.string(containerName, ['containerName']);
 
         this._containerClient = new ContainerClient(connectionString, containerName, options?.storagePipelineOptions);
 
@@ -110,8 +110,8 @@ export class BlobsTranscriptStore implements TranscriptStore {
         continuationToken?: string,
         startDate?: Date
     ): Promise<PagedResult<Activity>> {
-        assert.nonEmptyString(channelId, 'channelId');
-        assert.nonEmptyString(conversationId, 'conversationId');
+        assert.string(channelId, ['channelId']);
+        assert.string(conversationId, ['conversationId']);
 
         await this._initialize();
 
@@ -167,7 +167,7 @@ export class BlobsTranscriptStore implements TranscriptStore {
      * [PagedResult](xref:botbuilder-core.PagedResult) of [Activity](xref:botbuilder-core.Activity) items
      */
     async listTranscripts(channelId: string, continuationToken?: string): Promise<PagedResult<TranscriptInfo>> {
-        assert.nonEmptyString(channelId, 'channelId');
+        assert.string(channelId, ['channelId']);
 
         await this._initialize();
 
@@ -204,8 +204,8 @@ export class BlobsTranscriptStore implements TranscriptStore {
      * @returns {Promise<void>} A promise representing the async operation.
      */
     async deleteTranscript(channelId: string, conversationId: string): Promise<void> {
-        assert.nonEmptyString(channelId, 'channelId');
-        assert.nonEmptyString(conversationId, 'conversationId');
+        assert.string(channelId, ['channelId']);
+        assert.string(conversationId, ['conversationId']);
 
         await this._initialize();
 
@@ -238,7 +238,7 @@ export class BlobsTranscriptStore implements TranscriptStore {
      * @returns {Promise<void>} A promise representing the async operation.
      */
     async logActivity(activity: Activity): Promise<void> {
-        assert.object(activity, 'activity');
+        assertActivity(activity, ['activity']);
 
         await this._initialize();
 

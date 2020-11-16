@@ -4,8 +4,8 @@
 import getStream from 'get-stream';
 import pmap from 'p-map';
 import { ContainerClient, StoragePipelineOptions } from '@azure/storage-blob';
-import { Storage, StoreItems } from 'botbuilder-core';
-import { assert } from 'botbuilder-stdlib';
+import { Storage, StoreItems, assertStoreItems } from 'botbuilder-core';
+import { assert } from 'botbuilder-stdlib/lib/types';
 import { ignoreError, isStatusCodeError } from './ignoreError';
 import { sanitizeBlobKey } from './sanitizeBlobKey';
 
@@ -36,8 +36,8 @@ export class BlobsStorage implements Storage {
      * @param {BlobsStorageOptions} options Other options for BlobsStorage
      */
     constructor(connectionString: string, containerName: string, options?: BlobsStorageOptions) {
-        assert.nonEmptyString(connectionString, 'connectionString');
-        assert.nonEmptyString(containerName, 'containerName');
+        assert.string(connectionString, ['connectionString']);
+        assert.string(containerName, ['containerName']);
 
         this._containerClient = new ContainerClient(connectionString, containerName, options?.storagePipelineOptions);
 
@@ -61,7 +61,7 @@ export class BlobsStorage implements Storage {
      * @returns {Promise<StoreItems>} The fetched [StoreItems](xref:botbuilder-core.StoreItems)
      */
     async read(keys: string[]): Promise<StoreItems> {
-        assert.array(keys, 'keys');
+        assert.arrayOfString(keys, ['keys']);
 
         await this._initialize();
 
@@ -99,7 +99,7 @@ export class BlobsStorage implements Storage {
      * @returns {Promise<void>} A promise representing the async operation
      */
     async write(changes: StoreItems): Promise<void> {
-        assert.object(changes, 'changes');
+        assertStoreItems(changes, ['changes']);
 
         await this._initialize();
 
@@ -126,7 +126,7 @@ export class BlobsStorage implements Storage {
      * @returns {Promise<void>} A promise representing the async operation
      */
     async delete(keys: string[]): Promise<void> {
-        assert.array(keys, 'keys');
+        assert.arrayOfString(keys, ['keys']);
 
         await this._initialize();
 

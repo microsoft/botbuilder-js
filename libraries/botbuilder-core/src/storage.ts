@@ -6,6 +6,7 @@
  * Licensed under the MIT License.
  */
 import { TurnContext } from './turnContext';
+import { Assertion, assert } from 'botbuilder-stdlib/lib/types';
 
 /**
  * Callback to calculate a storage key.
@@ -87,6 +88,10 @@ export interface StoreItems {
      */
     [key: string]: any;
 }
+
+export const assertStoreItems: Assertion<StoreItems> = (val, path) => {
+    assert.object(val, path);
+};
 
 /**
  * Utility function to calculate a change hash for a `StoreItem`.
