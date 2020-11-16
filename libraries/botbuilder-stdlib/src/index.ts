@@ -2,5 +2,5 @@
 // Licensed under the MIT License.
 
 export * as assertExt from './assertExt';
-export * as result from './result';
 export { maybeCast } from './maybeCast';
+export { Assertion, Func, Nil, Test, assert, tests } from './types';

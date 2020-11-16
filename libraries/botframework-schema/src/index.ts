@@ -3,7 +3,7 @@
  * Changes may cause incorrect behavior and will be lost if the code is regenerated.
  */
 
-import { Assertion, Nil, assert } from 'botbuilder-stdlib/lib/types';
+import { Assertion, Nil, assert } from 'botbuilder-stdlib';
 
 export * from './activityInterfaces';
 export * from './activityEx';

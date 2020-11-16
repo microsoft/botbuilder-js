@@ -5,7 +5,7 @@ import getStream from 'get-stream';
 import pmap from 'p-map';
 import { ContainerClient, StoragePipelineOptions } from '@azure/storage-blob';
 import { Storage, StoreItems, assertStoreItems } from 'botbuilder-core';
-import { assert } from 'botbuilder-stdlib/lib/types';
+import { assert } from 'botbuilder-stdlib';
 import { ignoreError, isStatusCodeError } from './ignoreError';
 import { sanitizeBlobKey } from './sanitizeBlobKey';
 

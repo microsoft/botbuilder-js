@@ -4,7 +4,7 @@
 import getStream from 'get-stream';
 import pmap from 'p-map';
 import { Activity, PagedResult, TranscriptInfo, TranscriptStore, assertActivity } from 'botbuilder-core';
-import { assert } from 'botbuilder-stdlib/lib/types';
+import { assert } from 'botbuilder-stdlib';
 import { maybeCast } from 'botbuilder-stdlib/lib/maybeCast';
 import { sanitizeBlobKey } from './sanitizeBlobKey';
 

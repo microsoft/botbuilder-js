@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 import { TurnContext } from './turnContext';
-import { Assertion, assert } from 'botbuilder-stdlib/lib/types';
+import { Assertion, assert } from 'botbuilder-stdlib';
 
 /**
  * Callback to calculate a storage key.
