@@ -2,8 +2,7 @@
 // Licensed under the MIT License.
 
 import assert from 'assert';
-import { Newable } from 'ts-essentials';
-import { tests } from './types';
+import { Newable, tests } from './types';
 
 /**
  * Asserts `condition` to the Typescript compiler

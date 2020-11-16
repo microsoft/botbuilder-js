@@ -69,6 +69,32 @@ describe('assertType', () => {
             assert.doesNotThrow(() => typeAssert.maybeString(null, []));
             assert.throws(() => typeAssert.maybeString(true, []));
         });
+
+        it('works for arrayOf', () => {
+            assert.doesNotThrow(() => typeAssert.maybeArrayOf(typeAssert.number)([1, 2, 3], []));
+            assert.doesNotThrow(() => typeAssert.maybeArrayOf(typeAssert.number)(undefined, []));
+            assertExt.throwsMessage(
+                () => typeAssert.maybeArrayOf(typeAssert.number)([1, 2, '3'], ['arr']),
+                '`arr.[2]` must be of type "number"'
+            );
+        });
+
+        it('works for instanceOf', () => {
+            assert.doesNotThrow(() => typeAssert.maybeInstanceOf('Error', Error)(new Error(), []));
+            assert.doesNotThrow(() => typeAssert.maybeInstanceOf('Error', Error)(undefined, []));
+            assertExt.throwsMessage(
+                () => typeAssert.maybeInstanceOf('Error', Error)('foo', ['err']),
+                '`err` must be of type "Error"'
+            );
+        });
+    });
+
+    describe('makeTest', () => {
+        it('works', () => {
+            const isNumber = typeAssert.toTest(typeAssert.number);
+            assert(isNumber(10));
+            assert(!isNumber('foo'));
+        });
     });
 
     describe('nested assertion', () => {

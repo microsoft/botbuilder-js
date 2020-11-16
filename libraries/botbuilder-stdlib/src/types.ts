@@ -1,8 +1,13 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-import { Dictionary, Newable } from 'ts-essentials';
 import { assertCondition } from './assertExt';
+
+// Newable describes the constructor of a type T
+export type Newable<T> = new (...args: unknown[]) => T;
+
+// A dictionary type describes a common Javascript object
+export type Dictionary<V, K extends string | number = string | number> = Record<K, V>;
 
 // A type test function signature
 export type Test<T> = (val: unknown) => val is T;
