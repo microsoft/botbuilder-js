@@ -171,27 +171,10 @@ Write-Host "Analyzing $($Pkgs.Count) packages..."
 # Precompute some derived data for the template
 $External = $Deps.Keys | Where-Object { -not ($Pkgs.ContainsKey($_)) }
 $Inconsistent = @{ }
-$MismatchedVersions = @{ }
-$Unlocked = New-Object System.Collections.ArrayList
 foreach ($DepName in $Deps.Keys) {
   $InconsistentFrameworks = $Deps[$DepName].Keys | Where-Object { $Deps[$DepName][$_].Count -gt 1 }
   if ($InconsistentFrameworks) {
     $Inconsistent[$DepName] = $InconsistentFrameworks
-  }
-
-  if ($Locked.ContainsKey($DepName)) {
-    foreach ($TargetFramework in $Deps[$DepName].Keys) {
-      foreach ($DepVer in $Deps[$DepName][$TargetFramework].Keys) {
-        if (-Not $Locked[$DepName].ContainsKey($DepVer)) {
-          if (-Not $MismatchedVersions[$DepName]) {
-            $MismatchedVersions[$DepName] = @{ }
-          }
-          $MismatchedVersions[$DepName][$DepVer] = $Deps[$DepName][$TargetFramework][$DepVer]
-        }
-      }
-    }
-  } else {
-    $Unlocked.Add($DepName) | Out-Null
   }
 }
 
