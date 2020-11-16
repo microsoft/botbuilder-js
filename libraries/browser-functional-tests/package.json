@@ -14,7 +14,9 @@
   "directories": {
     "test": "tests"
   },
-  "scripts": {},
+  "scripts": {
+    "test": "node nightwatch.js -e"
+  },
   "keywords": [],
   "author": "",
   "license": "MIT"
