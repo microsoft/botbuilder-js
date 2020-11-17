@@ -1,11 +1,11 @@
 steps:
 - script: yarn test:devops
-  displayName: yarn test
+  displayName: yarn test:devops
 
 - task: PublishTestResults@2
   displayName: publish test results
   inputs:
-    testResultsFormat: 'JUnit'
+    testResultsFormat: JUnit
     testResultsFiles: '**/test-results.xml' 
     mergeTestResults: true
     failTaskOnFailedTests: false
@@ -15,7 +15,7 @@ steps:
 - task: PublishCodeCoverageResults@1
   displayName: publish code coverage
   inputs:
-    codeCoverageTool: 'cobertura'
-    summaryFileLocation: './coverage/cobertura-coverage.xml'
+    codeCoverageTool: cobertura
+    summaryFileLocation: coverage/cobertura-coverage.xml
     failIfCoverageEmpty: true
   condition: and(succeeded(), eq(variables['PublishTestResults'], true))

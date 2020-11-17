@@ -1,15 +1,26 @@
 const path = require('path');
-const { TestRunner } = require('../lib');
+const { ComponentRegistration } = require('botbuilder-core');
+const { AdaptiveComponentRegistration } = require('botbuilder-dialogs-adaptive');
+const { ResourceExplorer } = require('botbuilder-dialogs-declarative');
+const { AdaptiveTestComponentRegistration, TestUtils } = require('../lib');
 
-describe('RecognizerSetTests', function() {
+describe('RecognizerSetTests', function () {
     this.timeout(5000);
-    const testRunner = new TestRunner(path.join(__dirname,  'resources/RecognizerSetTests'));
+
+    ComponentRegistration.add(new AdaptiveComponentRegistration());
+    ComponentRegistration.add(new AdaptiveTestComponentRegistration());
+
+    const resourceExplorer = new ResourceExplorer().addFolder(
+        path.join(__dirname, 'resources/RecognizerSetTests'),
+        true,
+        false
+    );
 
     it('Merge', async () => {
-        await testRunner.runTestScript('RecognizerSetTests_Merge');
+        await TestUtils.runTestScript(resourceExplorer, 'RecognizerSetTests_Merge');
     });
 
     it('None', async () => {
-        await testRunner.runTestScript('RecognizerSetTests_None');
+        await TestUtils.runTestScript(resourceExplorer, 'RecognizerSetTests_None');
     });
 });

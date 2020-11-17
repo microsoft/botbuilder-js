@@ -1,31 +1,45 @@
 const path = require('path');
-const { TestRunner } = require('../lib');
+const { ComponentRegistration } = require('botbuilder-core');
+const { AdaptiveComponentRegistration } = require('botbuilder-dialogs-adaptive');
+const { ResourceExplorer } = require('botbuilder-dialogs-declarative');
+const { AdaptiveTestComponentRegistration, TestUtils } = require('../lib');
 
-describe('MultiLanguageRecognizerTests', function() {
+describe('MultiLanguageRecognizerTests', function () {
     this.timeout(5000);
-    const testRunner = new TestRunner(path.join(__dirname,  'resources/MultiLanguageRecognizerTests'));
+
+    ComponentRegistration.add(new AdaptiveComponentRegistration());
+    ComponentRegistration.add(new AdaptiveTestComponentRegistration());
+
+    const resourceExplorer = new ResourceExplorer().addFolder(
+        path.join(__dirname, 'resources/MultiLanguageRecognizerTests'),
+        true,
+        false
+    );
 
     it('DefaultFallback', async () => {
-        await testRunner.runTestScript('MultiLanguageRecognizerTest_DefaultFallback');
+        await TestUtils.runTestScript(resourceExplorer, 'MultiLanguageRecognizerTest_DefaultFallback');
     });
 
     it('EnFallback', async () => {
-        await testRunner.runTestScript('MultiLanguageRecognizerTest_EnFallback');
+        await TestUtils.runTestScript(resourceExplorer, 'MultiLanguageRecognizerTest_EnFallback');
     });
 
     it('EnGbFallback', async () => {
-        await testRunner.runTestScript('MultiLanguageRecognizerTest_EnGbFallback');
+        await TestUtils.runTestScript(resourceExplorer, 'MultiLanguageRecognizerTest_EnGbFallback');
     });
 
     it('EnUsFallback', async () => {
-        await testRunner.runTestScript('MultiLanguageRecognizerTest_EnUsFallback');
+        await TestUtils.runTestScript(resourceExplorer, 'MultiLanguageRecognizerTest_EnUsFallback');
     });
 
     it('EnUsFallback_AcitivtyLocaleCasing', async () => {
-        await testRunner.runTestScript('MultiLanguageRecognizerTest_EnUsFallback_ActivityLocaleCasing');
+        await TestUtils.runTestScript(
+            resourceExplorer,
+            'MultiLanguageRecognizerTest_EnUsFallback_ActivityLocaleCasing'
+        );
     });
 
     it('LanguagePolicy', async () => {
-        await testRunner.runTestScript('MultiLanguageRecognizerTest_LanguagePolicy');
+        await TestUtils.runTestScript(resourceExplorer, 'MultiLanguageRecognizerTest_LanguagePolicy');
     });
 });

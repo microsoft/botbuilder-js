@@ -1,39 +1,50 @@
 const path = require('path');
-const { TestRunner } = require('../lib');
+const { ComponentRegistration } = require('botbuilder-core');
+const { AdaptiveComponentRegistration } = require('botbuilder-dialogs-adaptive');
+const { ResourceExplorer } = require('botbuilder-dialogs-declarative');
+const { AdaptiveTestComponentRegistration, TestUtils } = require('../lib');
 
-describe('SelectorTests', function() {
+describe('SelectorTests', function () {
     this.timeout(10000);
-    const testRunner = new TestRunner(path.join(__dirname,  'resources/SelectorTests'));
+
+    ComponentRegistration.add(new AdaptiveComponentRegistration());
+    ComponentRegistration.add(new AdaptiveTestComponentRegistration());
+
+    const resourceExplorer = new ResourceExplorer().addFolder(
+        path.join(__dirname, 'resources/SelectorTests'),
+        true,
+        false
+    );
 
     it('ConditionalSelector', async () => {
-        await testRunner.runTestScript('SelectorTests_ConditionalSelector');
+        await TestUtils.runTestScript(resourceExplorer, 'SelectorTests_ConditionalSelector');
     });
 
     it('FirstSelector', async () => {
-        await testRunner.runTestScript('SelectorTests_FirstSelector');
+        await TestUtils.runTestScript(resourceExplorer, 'SelectorTests_FirstSelector');
     });
 
     it('MostSpecificFirstSelector', async () => {
-        await testRunner.runTestScript('SelectorTests_MostSpecificFirstSelector');
+        await TestUtils.runTestScript(resourceExplorer, 'SelectorTests_MostSpecificFirstSelector');
     });
 
     it('MostSpecificRandomSelector', async () => {
-        await testRunner.runTestScript('SelectorTests_MostSpecificRandomSelector');
+        await TestUtils.runTestScript(resourceExplorer, 'SelectorTests_MostSpecificRandomSelector');
     });
 
     it('Priority', async () => {
-        await testRunner.runTestScript('SelectorTests_Priority');
+        await TestUtils.runTestScript(resourceExplorer, 'SelectorTests_Priority');
     });
 
     it('RandomSelector', async () => {
-        await testRunner.runTestScript('SelectorTests_RandomSelector');
+        await TestUtils.runTestScript(resourceExplorer, 'SelectorTests_RandomSelector');
     });
 
     it('RunOnce', async () => {
-        await testRunner.runTestScript('SelectorTests_RunOnce');
+        await TestUtils.runTestScript(resourceExplorer, 'SelectorTests_RunOnce');
     });
 
     it('TrueSelector', async () => {
-        await testRunner.runTestScript('SelectorTests_TrueSelector');
+        await TestUtils.runTestScript(resourceExplorer, 'SelectorTests_TrueSelector');
     });
 });

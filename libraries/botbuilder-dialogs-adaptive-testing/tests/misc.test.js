@@ -1,15 +1,22 @@
 const path = require('path');
-const { TestRunner } = require('../lib');
+const { ComponentRegistration } = require('botbuilder-core');
+const { AdaptiveComponentRegistration } = require('botbuilder-dialogs-adaptive');
+const { ResourceExplorer } = require('botbuilder-dialogs-declarative');
+const { AdaptiveTestComponentRegistration, TestUtils } = require('../lib');
 
-describe('MiscTests', function() {
+describe('MiscTests', function () {
     this.timeout(10000);
-    const testRunner = new TestRunner(path.join(__dirname,  'resources/MiscTests'));
+
+    ComponentRegistration.add(new AdaptiveComponentRegistration());
+    ComponentRegistration.add(new AdaptiveTestComponentRegistration());
+
+    const resourceExplorer = new ResourceExplorer().addFolder(path.join(__dirname, 'resources/MiscTests'), true, false);
 
     it('IfCondition_EndDialog', async () => {
-        await testRunner.runTestScript('IfCondition_EndDialog');
+        await TestUtils.runTestScript(resourceExplorer, 'IfCondition_EndDialog');
     });
 
     it('Rule_Reprompt', async () => {
-        await testRunner.runTestScript('Rule_Reprompt');
+        await TestUtils.runTestScript(resourceExplorer, 'Rule_Reprompt');
     });
 });
