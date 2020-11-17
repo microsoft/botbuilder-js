@@ -1,0 +1,50 @@
+#
+# This runs under botbuilder-js-ci.yml. Runs unit tests on Node versions 10, 12 and 14.
+#
+
+# "name" here defines the build number format. Build number is accessed via $(Build.BuildNumber)
+name: $(Build.BuildId)
+
+pool:
+  vmImage: 'macOS-10.15'
+
+variables:
+  PackageVersion: 4.9.0-preview.$(Build.BuildNumber)
+  PreviewPackageVersion: 4.9.0-preview.$(Build.BuildNumber)
+
+stages:
+- stage: Node10CI
+  dependsOn: [] # Run this stage in parallel
+  displayName: 'Node 10.x CI'
+  variables:
+    NodeVersion: 10.x
+  jobs:
+  - job: Node10UnitTests
+    displayName: 'Node 10.x Unit Tests'
+    steps:
+    - template: js-build-steps.yml
+
+    - powershell: |
+        pushd ..
+        Get-ChildItem -Recurse -Force | Where {$_.FullName -notlike "*node_modules*"}
+      displayName: 'Dir workspace except node-modules (takes 5 seconds)'
+      continueOnError: true
+      condition: succeededOrFailed()
+
+- stage: Node12CI
+  dependsOn: [] # Run this stage in parallel
+  displayName: 'Node 12.x CI'
+  variables:
+    NodeVersion: 12.x
+  jobs:
+  - job: Node12UnitTests
+    displayName: 'Node 12.x Unit Tests'
+    steps:
+    - template: js-build-steps.yml
+
+    - powershell: |
+        pushd ..
+        Get-ChildItem -Recurse -Force | Where {$_.FullName -notlike "*node_modules*"}
+      displayName: 'Dir workspace except node-modules (takes 5 seconds)'
+      continueOnError: true
+      condition: succeededOrFailed()
