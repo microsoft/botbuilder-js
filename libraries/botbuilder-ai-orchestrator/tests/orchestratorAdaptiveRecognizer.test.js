@@ -44,7 +44,6 @@ describe('OrchestratorAdpativeRecognizer tests', function() {
     });
 
     it('Expect initialize is called when labelresolver is null', (done) => {
-        //if labelresolver is null, initialize() must be called        
         let testPaths = "test";
         let rec = new OrchestratorAdaptiveRecognizer(testPaths, testPaths, null);
         OrchestratorAdaptiveRecognizer.orchestrator = null;
