@@ -28,7 +28,7 @@ export class OrchestratorRecognizer extends Configurable {
     public id: string;
 
     /**
-     * Path to the model to load.
+     * Path to Orchestrator base model folder.
      */
     public modelPath: string = null;
 
@@ -44,8 +44,7 @@ export class OrchestratorRecognizer extends Configurable {
 
     /**
      * Threshold value to use for ambiguous intent detection. Defaults to 0.05.
-     * Any intents that are classified with a score that is within this value from the top
-     * scoring intent is determined to be ambiguous.
+     * Recognizer returns ChooseIntent (disambiguation) if other intents are classified within this threshold of the top scoring intent.
      */
     public disambiguationScoreThreshold = 0.05;
 
