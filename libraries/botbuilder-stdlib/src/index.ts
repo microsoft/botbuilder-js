@@ -3,4 +3,4 @@
 
 export * as assertExt from './assertExt';
 export { maybeCast } from './maybeCast';
-export { Assertion, Func, Nil, Test, assert, tests } from './types';
+export * from './types';

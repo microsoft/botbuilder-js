@@ -3,8 +3,10 @@
 
 import { assertCondition } from './assertExt';
 
-// Newable describes the constructor of a type T
 export type Newable<T> = new (...args: unknown[]) => T;
+
+// Extends<T> mimics Newable<T>, but works for abstract classes as well
+export type Extends<T> = Function & { prototype: T }; // eslint-disable-line @typescript-eslint/ban-types
 
 // A dictionary type describes a common Javascript object
 export type Dictionary<V, K extends string | number = string | number> = Record<K, V>;
@@ -56,7 +58,7 @@ const isError: Test<Error> = (val): val is Error => val instanceof Error;
 const error = makeAssertion('Error', isError);
 const maybeError = makeMaybeAssertion(error);
 
-export type Func = (...args: unknown[]) => unknown;
+export type Func<T = unknown> = (...args: unknown[]) => T;
 const isFunc: Test<Func> = (val): val is Func => typeof val === 'function';
 const func = makeAssertion('Function', isFunc);
 const maybeFunc = makeMaybeAssertion(func);
@@ -125,11 +127,11 @@ const maybeArrayOf = <T>(asserts: Assertion<T>): Assertion<Array<T> | Nil> => (v
     assertMaybeArrayOf(val, path);
 };
 
-const instanceOf = <T>(typeName: string, ctor: Newable<T>): Assertion<T> => (val, path) => {
+const instanceOf = <T>(typeName: string, ctor: Newable<T> | Extends<T>): Assertion<T> => (val, path) => {
     assertCondition(val instanceof ctor, formatPathAndTypeName(typeName, path));
 };
 
-const maybeInstanceOf = <T>(typeName: string, ctor: Newable<T>): Assertion<T | Nil> => (val, path) => {
+const maybeInstanceOf = <T>(typeName: string, ctor: Newable<T> | Extends<T>): Assertion<T | Nil> => (val, path) => {
     const assertInstanceOf: Assertion<T> = instanceOf(typeName, ctor);
     const assertMaybeInstanceOf: Assertion<T | Nil> = makeMaybeAssertion(assertInstanceOf);
     assertMaybeInstanceOf(val, path);
