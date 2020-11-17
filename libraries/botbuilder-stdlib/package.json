@@ -3,7 +3,7 @@
   "author": "Microsoft Corp.",
   "description": "BotBuilder shared libraries, internal only",
   "version": "4.1.6",
-  "preview": true,
+  "internal": true,
   "license": "MIT",
   "keywords": [],
   "bugs": {
@@ -12,9 +12,6 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/Microsoft/botbuilder-js.git"
-  },
-  "devDependencies": {
-    "sinon": "^9.2.0"
   },
   "scripts": {
     "build": "tsc -b",
