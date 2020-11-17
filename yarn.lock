@@ -4144,15 +4144,6 @@ dotnet-2.0.0@^1.4.4:
   resolved "https://registry.yarnpkg.com/dotnet-2.0.0/-/dotnet-2.0.0-1.4.4.tgz#917a9d8f68542ac82187a8c23a7dd3325639749c"
   integrity sha512-KDbUncVUhwkJH2wjL9gbUWQ5NcZIe+PFEI0CGTMtX5TImFG6Nlt9CABVGBBG+oWf13zLARaBVenkD20moz1NPw==
 
-downlevel-dts@^0.7.0:
-  version "0.7.0"
-  resolved "https://registry.yarnpkg.com/downlevel-dts/-/downlevel-dts-0.7.0.tgz#155c24310dad8a4820ad077e64b15a8c461aa932"
-  integrity sha512-tcjGqElN0/oad/LJBlaxmZ3zOYEQOBbGuirKzif8s1jeRiWBdNX9H6OBFlRjOQkosXgV+qSjs4osuGCivyZ4Jw==
-  dependencies:
-    semver "^7.3.2"
-    shelljs "^0.8.3"
-    typescript "^4.1.0-dev.20201026"
-
 dtrace-provider@^0.8.1, dtrace-provider@~0.8:
   version "0.8.8"
   resolved "https://registry.yarnpkg.com/dtrace-provider/-/dtrace-provider-0.8.8.tgz#2996d5490c37e1347be263b423ed7b297fb0d97e"
