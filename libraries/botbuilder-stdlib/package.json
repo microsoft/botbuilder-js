@@ -1,16 +1,11 @@
 {
   "name": "botbuilder-stdlib",
   "author": "Microsoft Corp.",
-  "description": "BotBuilder shared libraries, intenal only",
+  "description": "BotBuilder shared libraries, internal only",
   "version": "4.1.6",
   "preview": true,
   "license": "MIT",
-  "keywords": [
-    "botbuilder",
-    "botframework",
-    "bots",
-    "chatbots"
-  ],
+  "keywords": [],
   "bugs": {
     "url": "https://github.com/Microsoft/botbuilder-js/issues"
   },
