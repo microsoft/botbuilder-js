@@ -296,7 +296,7 @@ export class OrchestratorAdaptiveRecognizer extends Recognizer implements Orches
      * @private
      */
     private Initialize() {
-        if (OrchestratorAdaptiveRecognizer.orchestrator == null && this.resolver == null) {
+        if (OrchestratorAdaptiveRecognizer.orchestrator === null || this.resolver == null) {
             if (this._modelPath == null) {
                 throw new Error(`Missing "ModelPath" information.`);
             }

@@ -10,8 +10,56 @@ const { TurnContext, MessageFactory } = require('botbuilder-core');
 const { BotFrameworkAdapter } = require('../../botbuilder/lib');
 const { StringExpression, BoolExpression, NumberExpression } = require('adaptive-expressions');
 const { NumberEntityRecognizer } = require('botbuilder-dialogs-adaptive');
+const sinon = require('sinon');
 
 describe('OrchestratorAdpativeRecognizer tests', function() {
+    it('Expect initialize is called when orchestrator obj is null', (done) => {
+        //if labelresolver is null, initialize() must be called
+        let result = [
+            {
+                score : 0.9,
+                label : {
+                    name : "mockLabel"
+                }
+            }
+        ];
+        let mockResolver = new MockResolver(result);
+        let testPaths = "test";
+
+        let rec = new OrchestratorAdaptiveRecognizer(testPaths, testPaths, mockResolver);
+        OrchestratorAdaptiveRecognizer.orchestrator = null;
+        rec.Initialize = sinon.fake();
+
+        let {dc, activity} = createTestDcAndActivity("hello");
+        rec.recognize(dc, activity)
+            .then(res => {
+                assert(res.text, "hello");
+                assert(res.intents.mockLabel.score, 0.9);
+                
+                done();
+            })
+            .catch(err => done(err))
+
+        assert(rec.Initialize.calledOnce);
+    });
+
+    it('Expect initialize is called when labelresolver is null', (done) => {
+        //if labelresolver is null, initialize() must be called        
+        let testPaths = "test";
+        let rec = new OrchestratorAdaptiveRecognizer(testPaths, testPaths, null);
+        OrchestratorAdaptiveRecognizer.orchestrator = null;
+        
+        rec.Initialize = sinon.fake();
+        
+        let {dc, activity} = createTestDcAndActivity("hello");
+        rec.recognize(dc, activity)
+            .catch(err => {
+                done();
+            })
+        
+        assert(rec.Initialize.calledOnce);
+    });
+
     it('Test intent recognition', (done) => {
         let result = [
             {
@@ -24,9 +72,10 @@ describe('OrchestratorAdpativeRecognizer tests', function() {
         let mockResolver = new MockResolver(result);
         let testPaths = "test";
         let rec = new OrchestratorAdaptiveRecognizer(testPaths, testPaths, mockResolver);
+        OrchestratorAdaptiveRecognizer.orchestrator = "mock";
         rec.modelPath = new StringExpression(testPaths);
         rec.snapshotPath = new StringExpression(testPaths);
-        let {dc, activity} = createTestDcAndActivity("hello")
+        let {dc, activity} = createTestDcAndActivity("hello");
         rec.recognize(dc, activity)
             .then(res => {
                 assert(res.text, "hello");
@@ -48,6 +97,7 @@ describe('OrchestratorAdpativeRecognizer tests', function() {
         let mockResolver = new MockResolver(result);
         let testPaths = "test";
         let rec = new OrchestratorAdaptiveRecognizer(testPaths, testPaths, mockResolver);
+        OrchestratorAdaptiveRecognizer.orchestrator = "mock";
         rec.modelPath = new StringExpression(testPaths);
         rec.snapshotPath = new StringExpression(testPaths);
         rec.entityRecognizers = [
