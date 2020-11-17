@@ -18,18 +18,44 @@ export type Test<T> = (val: unknown) => val is T;
 export type Assertion<T> = (val: unknown, path: string[]) => asserts val is T;
 
 // Formats error messages for assertion failures
-const formatPathAndTypeName = (typeName: string, path: string[]): string =>
-    `\`${path.join('.')}\` must be of type "${typeName}"`;
+const formatPathAndMessage = (path: string[], message: string): string => `\`${path.join('.')}\` ${message}`;
+
+export class UndefinedError extends Error {}
+
+function condition(
+    cond: unknown,
+    path: string[],
+    message: string,
+    errorCtor: Newable<Error> = TypeError
+): asserts cond {
+    assertCondition(cond, formatPathAndMessage(path, message), errorCtor);
+}
 
 // Constructs a type assertion given a type name and a function that tests if a value is a particular type
-const makeAssertion = <T>(typeName: string, test: Test<T>): Assertion<T> => (val, path) => {
-    assertCondition(test(val), formatPathAndTypeName(typeName, path));
+const makeAssertion = <T>(typeName: string, test: Test<T>, acceptNil = false): Assertion<T> => (val, path) => {
+    if (!acceptNil) {
+        condition(!isNil(val), path, 'must be defined', UndefinedError);
+    }
+    condition(test(val), path, `must be of type "${typeName}"`);
 };
 
 // Constructs a type assertion that is enforced if the value is not null or undefined
 const makeMaybeAssertion = <T>(assertion: Assertion<T>): Assertion<T | Nil> => (val, path) => {
     if (!isNil(val)) {
         assertion(val, path);
+    }
+};
+
+const makePartialAssertion = <T extends Dictionary<unknown>>(assertion: Assertion<T>): Assertion<Partial<T>> => (
+    val,
+    path
+) => {
+    try {
+        assertion(val, path);
+    } catch (err) {
+        if (!isUndefinedError(err)) {
+            throw err;
+        }
     }
 };
 
@@ -56,7 +82,12 @@ const maybeDictionary = makeMaybeAssertion(dictionary);
 
 const isError: Test<Error> = (val): val is Error => val instanceof Error;
 const error = makeAssertion('Error', isError);
-const maybeError = makeMaybeAssertion(error);
+
+const isTypeError: Test<TypeError> = (val): val is TypeError => val instanceof TypeError;
+const typeError = makeAssertion('TypeError', isTypeError);
+
+const isUndefinedError: Test<UndefinedError> = (val): val is UndefinedError => val instanceof UndefinedError;
+const undefinedError = makeAssertion('UndefinedError', isUndefinedError);
 
 export type Func<T = unknown> = (...args: unknown[]) => T;
 const isFunc: Test<Func> = (val): val is Func => typeof val === 'function';
@@ -65,7 +96,7 @@ const maybeFunc = makeMaybeAssertion(func);
 
 export type Nil = null | undefined;
 const isNil: Test<Nil> = (val: unknown): val is Nil => val == null;
-const nil = makeAssertion('nil', isNil);
+const nil = makeAssertion('nil', isNil, true);
 
 const isString: Test<string> = (val): val is string => typeof val === 'string';
 const string = makeAssertion('string', isString);
@@ -100,13 +131,16 @@ export const tests = {
     isBoolean,
     isDate,
     isDictionary,
-    isError,
     isFunc,
     isNil,
     isNumber,
     isObject,
     isString,
     isUnknown,
+
+    isError,
+    isTypeError,
+    isUndefinedError,
 
     fromAssertion: makeTest,
     toAssertion: makeAssertion,
@@ -115,6 +149,7 @@ export const tests = {
 const arrayOf = <T>(asserts: Assertion<T>): Assertion<Array<T>> => (val, path) => {
     const assertArray: Assertion<unknown[]> = array;
     assertArray(val, path);
+
     val.forEach((val, idx) => asserts(val, path.concat(`[${idx}]`)));
 };
 
@@ -128,7 +163,8 @@ const maybeArrayOf = <T>(asserts: Assertion<T>): Assertion<Array<T> | Nil> => (v
 };
 
 const instanceOf = <T>(typeName: string, ctor: Newable<T> | Extends<T>): Assertion<T> => (val, path) => {
-    assertCondition(val instanceof ctor, formatPathAndTypeName(typeName, path));
+    condition(!isNil(val), path, 'must be defined', UndefinedError);
+    condition(val instanceof ctor, path, `must be an instance of "${typeName}"`);
 };
 
 const maybeInstanceOf = <T>(typeName: string, ctor: Newable<T> | Extends<T>): Assertion<T | Nil> => (val, path) => {
@@ -137,14 +173,29 @@ const maybeInstanceOf = <T>(typeName: string, ctor: Newable<T> | Extends<T>): As
     assertMaybeInstanceOf(val, path);
 };
 
+const oneOf = <T>(...tests: Array<Test<T>>): Assertion<T> => (val, path) => {
+    condition(!isNil(val), path, 'must be defined', UndefinedError);
+    if (!tests.some((test) => test(val))) {
+        condition(false, path, 'is of wrong type');
+    }
+};
+
+const maybeOneOf = <T>(...tests: Array<Test<T>>): Assertion<T | Nil> => (val, path) => {
+    const assertOneOf: Assertion<T> = oneOf(...tests);
+    const assertMaybeOneOf: Assertion<T | Nil> = makeMaybeAssertion(assertOneOf);
+    assertMaybeOneOf(val, path);
+};
+
 // Note: this assertion does not actually assert that `val` is of type `T`. It is useful as the first
 // line in a nested assertion so that remaining assertion calls can leverage helpful intellisense. This
 // method is only exported under the `unsafe` keyword as a constant reminder of this fact.
 const objectAs = <T>(val: unknown, path: string[]): asserts val is T => {
-    assertCondition(isObject(val), formatPathAndTypeName('object', path));
+    condition(isObject(val), path, 'must be an object');
 };
 
 export const assert = {
+    condition,
+
     any,
     maybeAny,
 
@@ -161,7 +212,8 @@ export const assert = {
     maybeDictionary,
 
     error,
-    maybeError,
+    undefinedError,
+    typeError,
 
     func,
     maybeFunc,
@@ -188,9 +240,13 @@ export const assert = {
     instanceOf,
     maybeInstanceOf,
 
+    oneOf,
+    maybeOneOf,
+
     // Some helpful, well, helpers
     fromTest: makeAssertion,
     makeMaybe: makeMaybeAssertion,
+    makePartial: makePartialAssertion,
     toTest: makeTest,
 
     unsafe: { objectAs },
