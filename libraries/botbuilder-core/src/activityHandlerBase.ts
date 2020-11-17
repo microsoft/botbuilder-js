@@ -362,7 +362,7 @@ export class ActivityHandlerBase {
         }
 
         if (!context.activity.type) {
-            throw new Error(`Activity is missing it's type`);
+            throw new Error(`Activity is missing its type`);
         }
 
         // List of all Activity Types:
