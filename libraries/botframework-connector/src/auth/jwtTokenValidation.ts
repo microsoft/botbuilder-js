@@ -133,7 +133,7 @@ export namespace JwtTokenValidation {
             await authConfig.validateClaims(claims);
         } else if (SkillValidation.isSkillClaim(claims)) {
             // Skill claims must be validated using AuthenticationConfiguration validateClaims
-            throw new AuthenticationError('Unauthorized Access. Request is not authorized. Skill Claims require validation.', StatusCodes.UNAUTHORIZED); 
+            throw new Error('Unauthorized Access. Request is not authorized. Skill Claims require validation.'); 
         }
     }
 
