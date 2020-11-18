@@ -108,7 +108,7 @@ describe('assertType', () => {
 
     describe('partial', () => {
         const assertThing = (val, path) => {
-            typeAssert.unsafe.objectAs(val, path);
+            typeAssert.unsafe.castObjectAs(val, path);
             typeAssert.string(val.foo, path.concat('foo'));
             typeAssert.number(val.bar, path.concat('bar'));
         };

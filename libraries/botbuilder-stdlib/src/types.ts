@@ -3,6 +3,13 @@
 
 import { assertCondition } from './assertExt';
 
+// Nil describes a null or undefined value;
+export type Nil = null | undefined;
+
+// Maybe describes a type that is `T`, or `Nil`
+export type Maybe<T> = T | Nil;
+
+// Newable ensures that a given value is a constructor
 export type Newable<T> = new (...args: unknown[]) => T;
 
 // Extends<T> mimics Newable<T>, but works for abstract classes as well
@@ -20,8 +27,19 @@ export type Assertion<T> = (val: unknown, path: string[]) => asserts val is T;
 // Formats error messages for assertion failures
 const formatPathAndMessage = (path: string[], message: string): string => `\`${path.join('.')}\` ${message}`;
 
+/**
+ * An error that indicates that the source of the error was an undefined value
+ */
 export class UndefinedError extends Error {}
 
+/**
+ * Asserts `cond` to the typescript compiler
+ *
+ * @param {any} cond a condition to assert
+ * @param {string[]} path the accumulated path for the assertion
+ * @param {string} message an error message to use
+ * @param {Newable<Error>} errorCtor an optional error constructor
+ */
 function condition(
     cond: unknown,
     path: string[],
@@ -31,36 +49,61 @@ function condition(
     assertCondition(cond, formatPathAndMessage(path, message), errorCtor);
 }
 
-// Constructs a type assertion given a type name and a function that tests if a value is a particular type
-const makeAssertion = <T>(typeName: string, test: Test<T>, acceptNil = false): Assertion<T> => (val, path) => {
-    if (!acceptNil) {
-        condition(!isNil(val), path, 'must be defined', UndefinedError);
-    }
-    condition(test(val), path, `must be of type "${typeName}"`);
-};
-
-// Constructs a type assertion that is enforced if the value is not null or undefined
-const makeMaybeAssertion = <T>(assertion: Assertion<T>): Assertion<T | Nil> => (val, path) => {
-    if (!isNil(val)) {
-        assertion(val, path);
-    }
-};
-
-const makePartialAssertion = <T extends Dictionary<unknown>>(assertion: Assertion<T>): Assertion<Partial<T>> => (
-    val,
-    path
-) => {
-    try {
-        assertion(val, path);
-    } catch (err) {
-        if (!isUndefinedError(err)) {
-            throw err;
+/**
+ * Construct an assertion function
+ *
+ * @template T the type to assert
+ * @param {string} typeName the name of type `T`
+ * @param {Test<T>} test a method to test if an unknown value is of type `T`
+ * @param {boolean} acceptNil true if undefined values are acceptable
+ * @returns {Assertion<T>} an assertion that asserts an unknown value is of type `T`
+ */
+function makeAssertion<T>(typeName: string, test: Test<T>, acceptNil = false): Assertion<T> {
+    return (val, path) => {
+        if (!acceptNil) {
+            condition(!isNil(val), path, 'must be defined', UndefinedError);
         }
-    }
-};
+        condition(test(val), path, `must be of type "${typeName}"`);
+    };
+}
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const isAny: Test<any> = (val): val is any => true;
+/**
+ * Constructs a type assertion that is enforced if the value is not null or undefined
+ *
+ * @template T the type to assert
+ * @param {Assertion<T>} assertion the assertion
+ * @returns {Assertion<Maybe<T>>} an assertion that asserts an unknown value is of type `T` or `Nil`
+ */
+function makeMaybeAssertion<T>(assertion: Assertion<T>): Assertion<Maybe<T>> {
+    return (val, path) => {
+        if (!isNil(val)) {
+            assertion(val, path);
+        }
+    };
+}
+
+/**
+ * Takes an assertion for type `T` and returns an assertion for type `Partial<T>`. The implementation
+ * expects that the assertion throws `UndefinedError` if an expected value is undefined. All the assertions
+ * exported by this package satisfy that requirement.
+ *
+ * @template T a type extending from `Dictionary`
+ * @param {Assertion<T>} assertion an assertion that asserts an unknown value is of type `T`
+ * @returns {Assertion<Partial<T>>} an assertion that asserts an unknown value is of type `Partial<T>`
+ */
+function makePartialAssertion<T extends Dictionary<unknown>>(assertion: Assertion<T>): Assertion<Partial<T>> {
+    return (val, path) => {
+        try {
+            assertion(val, path);
+        } catch (err) {
+            if (!isUndefinedError(err)) {
+                throw err;
+            }
+        }
+    };
+}
+
+const isAny: Test<any> = (val): val is any => true; // eslint-disable-line @typescript-eslint/no-explicit-any
 const any = makeAssertion('any', isAny);
 const maybeAny = makeMaybeAssertion(any);
 
@@ -94,7 +137,6 @@ const isFunc: Test<Func> = (val): val is Func => typeof val === 'function';
 const func = makeAssertion('Function', isFunc);
 const maybeFunc = makeMaybeAssertion(func);
 
-export type Nil = null | undefined;
 const isNil: Test<Nil> = (val: unknown): val is Nil => val == null;
 const nil = makeAssertion('nil', isNil, true);
 
@@ -115,15 +157,23 @@ const isUnknown: Test<unknown> = (val): val is unknown => true;
 const unknown = makeAssertion('unknown', isUnknown);
 const maybeUnknown = makeMaybeAssertion(unknown);
 
-// Makes a type test out of an assertion
-const makeTest = <T>(assert: Assertion<T>): Test<T> => (val): val is T => {
-    try {
-        assert(val, []);
-        return true;
-    } catch (err) {
-        return false;
-    }
-};
+/**
+ * Make a type test function out of an assertion
+ *
+ * @template T the type to test
+ * @param {Assertion<T>} assertion an assertion
+ * @returns {Test<T>} a type test that returns true if an unknown value is of type `T`
+ */
+function makeTest<T>(assertion: Assertion<T>): Test<T> {
+    return (val): val is T => {
+        try {
+            assertion(val, []);
+            return true;
+        } catch (err) {
+            return false;
+        }
+    };
+}
 
 export const tests = {
     isAny,
@@ -146,52 +196,117 @@ export const tests = {
     toAssertion: makeAssertion,
 };
 
-const arrayOf = <T>(asserts: Assertion<T>): Assertion<Array<T>> => (val, path) => {
-    const assertArray: Assertion<unknown[]> = array;
-    assertArray(val, path);
+/**
+ * Construct an assertion that an unknown value is an array with items of type `T`
+ *
+ * @template T the item type
+ * @param {Assertion<T>} assertion the assertion
+ * @returns {Assertion<Array<T>>} an assertion that asserts an unknown value is an array with
+ * items of type `T`
+ */
+function arrayOf<T>(assertion: Assertion<T>): Assertion<Array<T>> {
+    return (val, path) => {
+        const assertArray: Assertion<unknown[]> = array;
+        assertArray(val, path);
 
-    val.forEach((val, idx) => asserts(val, path.concat(`[${idx}]`)));
-};
+        val.forEach((val, idx) => assertion(val, path.concat(`[${idx}]`)));
+    };
+}
 
 const arrayOfString: Assertion<Array<string>> = arrayOf(string);
-const maybeArrayOfString: Assertion<Array<string> | Nil> = makeMaybeAssertion(arrayOfString);
 
-const maybeArrayOf = <T>(asserts: Assertion<T>): Assertion<Array<T> | Nil> => (val, path) => {
-    const assertArrayOf: Assertion<Array<T>> = arrayOf(asserts);
-    const assertMaybeArrayOf: Assertion<Array<T> | Nil> = makeMaybeAssertion(assertArrayOf);
-    assertMaybeArrayOf(val, path);
-};
+/**
+ * Construct an assertion that an unknown value is an array with items of type `T`, or `Nil`
+ *
+ * @template T the item type
+ * @param {Assertion<T>} assertion the assertion
+ * @returns {Assertion<Maybe<Array<T>>>} an assertion that asserts an unknown value is an array with
+ * items of type `T`, or `Nil`
+ */
+function maybeArrayOf<T>(assertion: Assertion<T>): Assertion<Maybe<Array<T>>> {
+    return (val, path) => {
+        const assertArrayOf: Assertion<Array<T>> = arrayOf(assertion);
+        const assertMaybeArrayOf: Assertion<Array<T> | Nil> = makeMaybeAssertion(assertArrayOf);
+        assertMaybeArrayOf(val, path);
+    };
+}
 
-const instanceOf = <T>(typeName: string, ctor: Newable<T> | Extends<T>): Assertion<T> => (val, path) => {
-    condition(!isNil(val), path, 'must be defined', UndefinedError);
-    condition(val instanceof ctor, path, `must be an instance of "${typeName}"`);
-};
+/**
+ * Construct an assertion that an unknown value is an instance of type `T`
+ *
+ * @template T the instance type
+ * @param {string} typeName the name of type `T`
+ * @param {Newable<T> | Extends<T>} ctor a constructor reference for type `T`
+ * @returns {Assertion<T>} an assertion that asserts an unknown value is an instance of type `T`
+ */
+function instanceOf<T>(typeName: string, ctor: Newable<T> | Extends<T>): Assertion<T> {
+    return (val, path) => {
+        condition(!isNil(val), path, 'must be defined', UndefinedError);
+        condition(val instanceof ctor, path, `must be an instance of "${typeName}"`);
+    };
+}
 
-const maybeInstanceOf = <T>(typeName: string, ctor: Newable<T> | Extends<T>): Assertion<T | Nil> => (val, path) => {
-    const assertInstanceOf: Assertion<T> = instanceOf(typeName, ctor);
-    const assertMaybeInstanceOf: Assertion<T | Nil> = makeMaybeAssertion(assertInstanceOf);
-    assertMaybeInstanceOf(val, path);
-};
+/**
+ * Construct an assertion that an unknown value is an instance of type `T`, or `Nil`
+ *
+ * @template T the instance type
+ * @param {string} typeName the name of type `T`
+ * @param {Newable<T> | Extends<T>} ctor a constructor reference for type `T`
+ * @returns {Assertion<Maybe<T>>} an assertion that asserts an unknown value is an instance of type `T`, or `Nil`
+ */
+function maybeInstanceOf<T>(typeName: string, ctor: Newable<T> | Extends<T>): Assertion<Maybe<T>> {
+    return (val, path) => {
+        const assertInstanceOf: Assertion<T> = instanceOf(typeName, ctor);
+        const assertMaybeInstanceOf: Assertion<T | Nil> = makeMaybeAssertion(assertInstanceOf);
+        assertMaybeInstanceOf(val, path);
+    };
+}
 
-const oneOf = <T>(...tests: Array<Test<T>>): Assertion<T> => (val, path) => {
-    condition(!isNil(val), path, 'must be defined', UndefinedError);
-    if (!tests.some((test) => test(val))) {
-        condition(false, path, 'is of wrong type');
-    }
-};
+/**
+ * Construct an assertion that an unknown value is of type `T`, likely a union type
+ *
+ * @template T the type, likely a union of other types
+ * @param {Array<Test<T>>} tests a set of tests for type `T`
+ * @returns {Assertion<T>} an assertion that asserts an unknown value is of type `T`
+ */
+function oneOf<T>(...tests: Array<Test<T>>): Assertion<T> {
+    return (val, path) => {
+        condition(!isNil(val), path, 'must be defined', UndefinedError);
+        if (!tests.some((test) => test(val))) {
+            condition(false, path, 'is of wrong type');
+        }
+    };
+}
 
-const maybeOneOf = <T>(...tests: Array<Test<T>>): Assertion<T | Nil> => (val, path) => {
-    const assertOneOf: Assertion<T> = oneOf(...tests);
-    const assertMaybeOneOf: Assertion<T | Nil> = makeMaybeAssertion(assertOneOf);
-    assertMaybeOneOf(val, path);
-};
+/**
+ * Construct an assertion that an unknown value is of type `T`, likely a union type, or `Nil`
+ *
+ * @template T the type, likely a union of other types
+ * @param {Array<Test<T>>} tests a set of tests for type `T`
+ * @returns {Assertion<Maybe<T>>} an assertion that asserts an unknown value is of type `T`, or `Nil`
+ */
+function maybeOneOf<T>(...tests: Array<Test<T>>): Assertion<Maybe<T>> {
+    return (val, path) => {
+        const assertOneOf: Assertion<T> = oneOf(...tests);
+        const assertMaybeOneOf: Assertion<T | Nil> = makeMaybeAssertion(assertOneOf);
+        assertMaybeOneOf(val, path);
+    };
+}
 
-// Note: this assertion does not actually assert that `val` is of type `T`. It is useful as the first
-// line in a nested assertion so that remaining assertion calls can leverage helpful intellisense. This
-// method is only exported under the `unsafe` keyword as a constant reminder of this fact.
-const objectAs = <T>(val: unknown, path: string[]): asserts val is T => {
-    condition(isObject(val), path, 'must be an object');
-};
+/**
+ * **UNSAFE**
+ * This assertion does not actually verify that `val` is of type `T`. It is useful as the first
+ * line in a nested assertion so that remaining assertion calls can leverage helpful intellisense.
+ * This method is only exported under the `unsafe` keyword as a constant reminder of this fact.
+ *
+ * @template T the type to cast `val` to, should extend `Dictionary<unknown>`, i.e. be itself an object
+ * @param {any} val the unknown value
+ * @param {string[]} path the accumulated assertion path
+ */
+function castObjectAs<T>(val: unknown, path: string[]): asserts val is T {
+    const assertWithCast: Assertion<T> = object;
+    assertWithCast(val, path);
+}
 
 export const assert = {
     condition,
@@ -235,7 +350,6 @@ export const assert = {
     arrayOf,
     maybeArrayOf,
     arrayOfString,
-    maybeArrayOfString,
 
     instanceOf,
     maybeInstanceOf,
@@ -249,5 +363,5 @@ export const assert = {
     makePartial: makePartialAssertion,
     toTest: makeTest,
 
-    unsafe: { objectAs },
+    unsafe: { castObjectAs },
 };

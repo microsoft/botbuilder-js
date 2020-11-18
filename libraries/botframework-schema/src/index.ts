@@ -30,7 +30,7 @@ export interface AttachmentView {
 }
 
 export const assertAttachmentView: Assertion<AttachmentView> = (value, path) => {
-    assert.unsafe.objectAs<AttachmentView>(value, path);
+    assert.unsafe.castObjectAs<AttachmentView>(value, path);
     assert.string(value.viewId, path.concat('viewId'));
     assert.number(value.size, path.concat('size'));
 };
@@ -58,7 +58,7 @@ export interface AttachmentInfo {
 }
 
 export const assertAttachmentInfo: Assertion<AttachmentInfo> = (value, path) => {
-    assert.unsafe.objectAs<AttachmentInfo>(value, path);
+    assert.unsafe.castObjectAs<AttachmentInfo>(value, path);
     assert.string(value.name, path.concat('name'));
     assert.array(value.views, path.concat('views'));
     assertAttachmentViewArray(value.views, path.concat('views'));
@@ -133,7 +133,7 @@ export interface ChannelAccount {
 }
 
 export const assertChannelAccount: Assertion<ChannelAccount> = (value, path) => {
-    assert.unsafe.objectAs<ChannelAccount>(value, path);
+    assert.unsafe.castObjectAs<ChannelAccount>(value, path);
     assert.string(value.id, path.concat('id'));
     assert.string(value.name, path.concat('name'));
     assert.maybeString(value.aadObjectId, path.concat('aadObjectId'));
@@ -187,7 +187,7 @@ export interface ConversationAccount {
 }
 
 export const assertConversationAccount: Assertion<ConversationAccount> = (value, path) => {
-    assert.unsafe.objectAs<ConversationAccount>(value, path);
+    assert.unsafe.castObjectAs<ConversationAccount>(value, path);
     assert.boolean(value.isGroup, path.concat('isGroup'));
     assert.string(value.conversationType, path.concat('conversationType'));
     assert.string(value.tenantId, path.concat('tenantId'));
@@ -211,7 +211,7 @@ export interface MessageReaction {
 }
 
 export const assertMessageReaction: Assertion<MessageReaction> = (value, path) => {
-    assert.unsafe.objectAs<MessageReaction>(value, path);
+    assert.unsafe.castObjectAs<MessageReaction>(value, path);
     assert.string(value.type, path.concat('type'));
 };
 
@@ -263,7 +263,7 @@ export interface CardAction {
 }
 
 export const assertCardAction: Assertion<CardAction> = (value, path) => {
-    assert.unsafe.objectAs<CardAction>(value, path);
+    assert.unsafe.castObjectAs<CardAction>(value, path);
     assert.string(value.type, path.concat('type'));
     assert.string(value.title, path.concat('title'));
     assert.maybeString(value.image, path.concat('image'));
@@ -294,7 +294,7 @@ export interface SuggestedActions {
 }
 
 export const assertSuggestedActions: Assertion<SuggestedActions> = (value, path) => {
-    assert.unsafe.objectAs<SuggestedActions>(value, path);
+    assert.unsafe.castObjectAs<SuggestedActions>(value, path);
     assert.arrayOfString(value.to, path.concat('to'));
     assertCardActionArray(value.actions, path.concat('actions'));
 };
@@ -328,7 +328,7 @@ export interface Attachment {
 }
 
 export const assertAttachment: Assertion<Attachment> = (value, path) => {
-    assert.unsafe.objectAs<Attachment>(value, path);
+    assert.unsafe.castObjectAs<Attachment>(value, path);
     assert.string(value.contentType, path.concat('contentType'));
     assert.maybeString(value.contentUrl, path.concat('contentUrl'));
     assert.maybeAny(value.content, path.concat('content'));
@@ -404,7 +404,7 @@ export interface ConversationReference {
 }
 
 export const assertConversationReference: Assertion<ConversationReference> = (value, path) => {
-    assert.unsafe.objectAs<ConversationReference>(value, path);
+    assert.unsafe.castObjectAs<ConversationReference>(value, path);
     assert.maybeString(value.activityId, path.concat('activityId'));
     assertMaybeChannelAccount(value.user, path.concat('user'));
     assert.maybeString(value.locale, path.concat('locale'));
@@ -452,7 +452,7 @@ export interface SemanticAction {
 }
 
 export const assertSemanticAction: Assertion<SemanticAction> = (value, path) => {
-    assert.unsafe.objectAs<SemanticAction>(value, path);
+    assert.unsafe.castObjectAs<SemanticAction>(value, path);
     assert.string(value.id, path.concat('id'));
     assert.string(value.state, path.concat('state'));
     assert.dictionary(value.entities, path.concat('entities'));
@@ -656,7 +656,7 @@ export interface Activity {
 }
 
 export const assertActivity: Assertion<Activity> = (value, path) => {
-    assert.unsafe.objectAs<Activity>(value, path);
+    assert.unsafe.castObjectAs<Activity>(value, path);
     assert.string(value.type, path.concat('type'));
     assert.maybeString(value.id, path.concat('id'));
     assert.maybeDate(value.timestamp, path.concat('timestamp'));
