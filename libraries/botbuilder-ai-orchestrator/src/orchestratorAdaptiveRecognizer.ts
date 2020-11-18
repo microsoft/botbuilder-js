@@ -48,7 +48,7 @@ export class OrchestratorAdaptiveRecognizer extends Recognizer implements Orches
     public static $kind = 'Microsoft.OrchestratorRecognizer';
 
     /**
-     * Path to the model to load.
+     * Path to Orchestrator base model folder.
      */
     public modelPath: StringExpression = new StringExpression('');
 
@@ -58,13 +58,13 @@ export class OrchestratorAdaptiveRecognizer extends Recognizer implements Orches
     public snapshotPath: StringExpression = new StringExpression('');
 
     /**
-     * Threshold value to use for ambiguous intent detection.
-     * Any intents that are classified with a score that is within this value from the top scoring intent is determined to be ambiguous.
+     * Threshold value to use for ambiguous intent detection. Defaults to 0.05.
+     * Recognizer returns ChooseIntent (disambiguation) if other intents are classified within this threshold of the top scoring intent.
      */
     public disambiguationScoreThreshold: NumberExpression = new NumberExpression(0.05);
 
     /**
-     * Enable ambiguous intent detection.
+     * Enable ambiguous intent detection. Defaults to false.
      */
     public detectAmbiguousIntents: BoolExpression = new BoolExpression(false);
 
@@ -296,7 +296,7 @@ export class OrchestratorAdaptiveRecognizer extends Recognizer implements Orches
      * @private
      */
     private Initialize() {
-        if (OrchestratorAdaptiveRecognizer.orchestrator == null && this.resolver == null) {
+        if (OrchestratorAdaptiveRecognizer.orchestrator === null || this.resolver == null) {
             if (this._modelPath == null) {
                 throw new Error(`Missing "ModelPath" information.`);
             }

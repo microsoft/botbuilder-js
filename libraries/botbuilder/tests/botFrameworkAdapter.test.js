@@ -1052,7 +1052,16 @@ describe('BotFrameworkAdapter', () => {
         });
 
         it(`should createConversation() with parameters.`, async () => {
-            await createConversation(reference, () => null, { createConversationParams: { isGroup: true } });
+            await createConversation(
+                reference,
+                (context) => {
+                    assert(context, `context not passed.`);
+                    assert(context.activity, `context has no request.`);
+                    assert(context.activity.conversation, `activity has no conversation`);
+                    assert(context.activity.conversation.isGroup, `activity isGroup is not true`);
+                },
+                { createConversationParams: { isGroup: true } }
+            );
         });
 
         it(`should createConversation() and assign new serviceUrl.`, async () => {

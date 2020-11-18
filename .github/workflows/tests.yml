@@ -1,23 +1,24 @@
-name: repoutils test
+name: tests.yml
 
 on:
   workflow_dispatch:
+  push:
+    branches:
+    - main
+    - 'releases/*'
   pull_request:
-    paths:
-    - 'libraries/botbuilder-repo-utils/**'
-    - '.github/workflows/repoutils-test.yml'
-    branches: 
+    branches:
     - main
     - 'releases/*'
 
 jobs:
   ubuntu:
-    name: ubuntu
+    name: "${{ github.workflow }} ubuntu (node ${{ matrix.node-version }})"
     runs-on: ubuntu-latest
 
     strategy:
       matrix:
-        node-version: [12.x]
+        node-version: [10.x, 12.x, 14.x]
 
     steps:
       - uses: actions/checkout@v2
@@ -40,15 +41,37 @@ jobs:
         run: yarn --frozen-lockfile
 
       - name: yarn test:repoutils
+        if: matrix.node-version == '14.x'
         run: yarn test:repoutils
 
+      - name: yarn lint
+        if: matrix.node-version == '12.x'
+        run: yarn lint
+
+      - name: yarn build
+        run: yarn build
+
+      - name: yarn test:github
+        run: yarn test:github
+
+      - name: coveralls
+        if: matrix.node-version == '12.x'
+        uses: coverallsapp/github-action@v1.1.2
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          path-to-lcov: .lcov.info
+
+      - name: yarn test:consumer
+        if: matrix.node-version == '14.x'
+        run: yarn test:consumer
+
   windows:
-    name: windows
+    name: "${{ github.workflow }} windows (node ${{ matrix.node-version }})"
     runs-on: windows-latest
 
     strategy:
       matrix:
-        node-version: [12.x]
+        node-version: [10.x, 12.x, 14.x]
 
     steps:
       - uses: actions/checkout@v2
@@ -71,4 +94,15 @@ jobs:
         run: yarn --frozen-lockfile
 
       - name: yarn test:repoutils
+        if: matrix.node-version == '14.x'
         run: yarn test:repoutils
+
+      - name: yarn lint
+        if: matrix.node-version == '12.x'
+        run: yarn lint
+
+      - name: yarn build
+        run: yarn build
+
+      - name: yarn test:github
+        run: yarn test:github

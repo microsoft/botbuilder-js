@@ -10,10 +10,11 @@ const { TurnContext, MessageFactory } = require('botbuilder-core');
 const { BotFrameworkAdapter } = require('../../botbuilder/lib');
 const { StringExpression, BoolExpression, NumberExpression } = require('adaptive-expressions');
 const { NumberEntityRecognizer } = require('botbuilder-dialogs-adaptive');
+const sinon = require('sinon');
 
 describe('OrchestratorAdpativeRecognizer tests', function() {
-    it('Test intent recognition', (done) => {
-        let result = [
+    it('Expect initialize is called when orchestrator obj is null', async () => {
+        const result = [
             {
                 score : 0.9,
                 label : {
@@ -21,23 +22,58 @@ describe('OrchestratorAdpativeRecognizer tests', function() {
                 }
             }
         ];
-        let mockResolver = new MockResolver(result);
-        let testPaths = "test";
-        let rec = new OrchestratorAdaptiveRecognizer(testPaths, testPaths, mockResolver);
+        const mockResolver = new MockResolver(result);
+        const testPaths = "test";
+
+        const rec = new OrchestratorAdaptiveRecognizer(testPaths, testPaths, mockResolver);
+        OrchestratorAdaptiveRecognizer.orchestrator = null;
+        rec.Initialize = sinon.fake();
+
+        const {dc, activity} = createTestDcAndActivity("hello");
+        const res = await rec.recognize(dc, activity);
+
+        assert(res.text, "hello");
+        assert(res.intents.mockLabel.score, 0.9);
+        assert(rec.Initialize.calledOnce);
+    });
+
+    it('Expect initialize is called when labelresolver is null', async () => {
+        const testPaths = "test";
+        const rec = new OrchestratorAdaptiveRecognizer(testPaths, testPaths, null);
+        OrchestratorAdaptiveRecognizer.orchestrator = null;
+        
+        rec.Initialize = sinon.fake();
+        
+        const {dc, activity} = createTestDcAndActivity("hello");
+        assert.rejects(async () => await rec.recognize(dc, activity));
+        
+        assert(rec.Initialize.calledOnce);
+    });
+
+    it('Test intent recognition', async () => {
+        const result = [
+            {
+                score : 0.9,
+                label : {
+                    name : "mockLabel"
+                }
+            }
+        ];
+        const mockResolver = new MockResolver(result);
+        const testPaths = "test";
+        const rec = new OrchestratorAdaptiveRecognizer(testPaths, testPaths, mockResolver);
+        OrchestratorAdaptiveRecognizer.orchestrator = "mock";
         rec.modelPath = new StringExpression(testPaths);
         rec.snapshotPath = new StringExpression(testPaths);
-        let {dc, activity} = createTestDcAndActivity("hello")
-        rec.recognize(dc, activity)
-            .then(res => {
-                assert(res.text, "hello");
-                assert(res.intents.mockLabel.score, 0.9);
-                done();
-            })
-            .catch(err => done(err))
+        const {dc, activity} = createTestDcAndActivity("hello");
+
+        const res = await rec.recognize(dc, activity)
+        assert(res.text, "hello");
+        assert(res.intents.mockLabel.score, 0.9);
     })
 
-    it('Test entity recognition', (done) => {
-        let result = [
+    it('Test entity recognition', async () => {
+        const result = [
             {
                 score : 0.9,
                 label : {
@@ -45,27 +81,25 @@ describe('OrchestratorAdpativeRecognizer tests', function() {
                 }
             }
         ];
-        let mockResolver = new MockResolver(result);
-        let testPaths = "test";
-        let rec = new OrchestratorAdaptiveRecognizer(testPaths, testPaths, mockResolver);
+        const mockResolver = new MockResolver(result);
+        const testPaths = "test";
+        const rec = new OrchestratorAdaptiveRecognizer(testPaths, testPaths, mockResolver);
+        OrchestratorAdaptiveRecognizer.orchestrator = "mock";
         rec.modelPath = new StringExpression(testPaths);
         rec.snapshotPath = new StringExpression(testPaths);
         rec.entityRecognizers = [
             new NumberEntityRecognizer()
         ];
-        let {dc, activity} = createTestDcAndActivity("hello 123")
-        rec.recognize(dc, activity)
-            .then(res => {
-                assert(res.text, "hello 123");
-                assert(res.intents.mockLabel.score, 0.9);
-                assert(res.entities.number[0], "123");
-                done();
-            })
-            .catch(err => done(err))
+        const {dc, activity} = createTestDcAndActivity("hello 123")
+        
+        const res = await rec.recognize(dc, activity)
+        assert(res.text, "hello 123");
+        assert(res.intents.mockLabel.score, 0.9);
+        assert(res.entities.number[0], "123");
     })
 
-    it('Test ambiguous intent recognition', (done) => {
-        let result = [
+    it('Test ambiguous intent recognition', async () => {
+        const result = [
             {
                 score : 0.9,
                 label : {
@@ -85,32 +119,29 @@ describe('OrchestratorAdpativeRecognizer tests', function() {
                 }
             }
         ];
-        let mockResolver = new MockResolver(result);
-        let testPaths = "test";
-        let rec = new OrchestratorAdaptiveRecognizer(testPaths, testPaths, mockResolver);
+        const mockResolver = new MockResolver(result);
+        const testPaths = "test";
+        const rec = new OrchestratorAdaptiveRecognizer(testPaths, testPaths, mockResolver);
         rec.modelPath = new StringExpression(testPaths);
         rec.snapshotPath = new StringExpression(testPaths);
         rec.detectAmbiguousIntents = new BoolExpression(true);
         rec.disambiguationScoreThreshold = new NumberExpression(0.1);
-        let {dc, activity} = createTestDcAndActivity("hello")
-        rec.recognize(dc, activity)
-            .then(res => {
-                assert(res.intents.ChooseIntent.score, 1);
-                assert(res.candidates[0].intent, "mockLabel1");
-                assert(res.candidates[1].intent, "mockLabel2");
-                done();
-            })
-            .catch(err => done(err))
+        const {dc, activity} = createTestDcAndActivity("hello");
+
+        const res = await rec.recognize(dc, activity);
+        assert(res.intents.ChooseIntent.score, 1);
+        assert(res.candidates[0].intent, "mockLabel1");
+        assert(res.candidates[1].intent, "mockLabel2");
     })
 })
 
 const createTestDcAndActivity = function (message) {
-    let settings = new TestAdapterSettings('appId', 'password');
-    let adapter = new BotFrameworkAdapter(settings);
-    let activity = MessageFactory.text(message);
-    let turnContext = new TurnContext(adapter, activity);
+    const settings = new TestAdapterSettings('appId', 'password');
+    const adapter = new BotFrameworkAdapter(settings);
+    const activity = MessageFactory.text(message);
+    const turnContext = new TurnContext(adapter, activity);
     turnContext.sendTraceActivity = function() {}
-    let state = [{dialogStack: []}];
-    let dc = new DialogContext(new DialogSet(), turnContext, state);
+    const state = [{dialogStack: []}];
+    const dc = new DialogContext(new DialogSet(), turnContext, state);
     return {dc, activity};
 }
