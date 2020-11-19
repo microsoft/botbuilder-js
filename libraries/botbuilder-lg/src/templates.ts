@@ -366,7 +366,7 @@ export class Templates implements Iterable<Template> {
             this.appendDiagnosticWithOffset(updatedTemplates.diagnostics, originalStartLine);
 
             if (updatedTemplates.toArray().length > 0) {
-                const newTemplate = this.adjustSingleTemplateRange(updatedTemplates.toArray()[0], content);
+                const newTemplate = this.recomputeSourceRange(updatedTemplates.toArray()[0], content);
 
                 this.adjustRangeForUpdateTemplate(template, newTemplate);
                 new StaticChecker(this).check().forEach((u): number => this.diagnostics.push(u));
@@ -407,11 +407,13 @@ export class Templates implements Iterable<Template> {
         this.appendDiagnosticWithOffset(updatedTemplates.diagnostics, originalStartLine);
 
         if (updatedTemplates.toArray().length > 0) {
-            const newTemplate = this.adjustSingleTemplateRange(updatedTemplates.toArray()[0], content);
+            const newTemplate = this.recomputeSourceRange(updatedTemplates.toArray()[0], content);
             this.adjustRangeForAddTemplate(newTemplate, originalStartLine);
 
-            // adjust the previous range
-            this.items[this.items.length - 1].sourceRange.range.end.line = newTemplate.sourceRange.range.start.line - 1;
+            // adjust the last template's range when adding the template
+            if (this.items.length > 0) {
+                this.items[this.items.length - 1].sourceRange.range.end.line = newTemplate.sourceRange.range.start.line - 1;
+            }
 
             this.items.push(newTemplate);
             new StaticChecker(this).check().forEach((u): number => this.diagnostics.push(u));
@@ -574,8 +576,9 @@ export class Templates implements Iterable<Template> {
 
     /**
      * @private
-     */
-    private adjustSingleTemplateRange(template: Template, content: string): Template {
+     * Use content range replace the range from lexer.
+     * */
+    private recomputeSourceRange(template: Template, content: string): Template {
         if (content != null) {
             const contentList: string[] = TemplateExtensions.readLine(content);
             template.sourceRange.range.start.line = 1;
