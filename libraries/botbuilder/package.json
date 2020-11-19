@@ -49,7 +49,7 @@
     "build:rollup": "yarn clean && yarn build && api-extractor run --verbose --local",
     "clean": "rimraf _ts3.4 lib tsconfig.tsbuildinfo",
     "lint": "eslint . --ext .js,.ts",
-    "postbuild": "downlevel-dts lib _ts3.4/lib",
+    "postbuild": "downlevel-dts lib _ts3.4/lib --checksum",
     "test": "yarn build && nyc mocha --recursive \"tests/**/*.test.js\"",
     "test:compat": "api-extractor run --verbose"
   },

@@ -1309,6 +1309,15 @@
   resolved "https://registry.yarnpkg.com/@sinonjs/text-encoding/-/text-encoding-0.7.1.tgz#8da5c6530915653f3a1f38fd5f101d8c3f8079c5"
   integrity sha512-+iTbntw2IZPb/anVDbypzfQa+ay64MW0Zo8aJ8gZPWMMK6/OubMVb6lUPMagqjOPnmtauXnFCACVl3O7ogjeqQ==
 
+"@standardlabs/downlevel-dts@^0.7.5":
+  version "0.7.5"
+  resolved "https://registry.yarnpkg.com/@standardlabs/downlevel-dts/-/downlevel-dts-0.7.5.tgz#1b767c1d92efd451ec2786bd574faa182ac74fdd"
+  integrity sha512-chqNw8lnqDedwkCU7OTjNvhV3qzqyowmaBuM2orGSNskycbqD1XZ7dwZ2E7y5GVI0CwCmE5Y4+wL9aJjt+XnOg==
+  dependencies:
+    semver "^7.3.2"
+    shelljs "^0.8.3"
+    typescript "^4.1.0-dev.20201026"
+
 "@testim/chrome-version@^1.0.7":
   version "1.0.7"
   resolved "https://registry.yarnpkg.com/@testim/chrome-version/-/chrome-version-1.0.7.tgz#0cd915785ec4190f08a3a6acc9b61fc38fb5f1a9"
