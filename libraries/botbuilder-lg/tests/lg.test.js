@@ -923,7 +923,7 @@ describe('LG', function () {
         assert.strictEqual(newTemplate.parameters.length, 2);
         assert.strictEqual(newTemplate.body.replace(/\r\n/g, '\n'), '- new hi\n- #hi2\n');
         assert.strictEqual(newTemplate.sourceRange.range.start.line, 17);
-        assert.strictEqual(newTemplate.sourceRange.range.end.line, 19);
+        assert.strictEqual(newTemplate.sourceRange.range.end.line, 20);
 
         // delete a middle template
         templates.deleteTemplate('newtemplateName');
@@ -931,7 +931,7 @@ describe('LG', function () {
         assert.strictEqual(templates.diagnostics.length, 0);
         newTemplate = templates.toArray()[2];
         assert.strictEqual(newTemplate.sourceRange.range.start.line, 14);
-        assert.strictEqual(newTemplate.sourceRange.range.end.line, 16);
+        assert.strictEqual(newTemplate.sourceRange.range.end.line, 17);
 
         // delete a tailing template
         templates.deleteTemplate('newtemplateName2');
@@ -1043,6 +1043,30 @@ describe('LG', function () {
         // delete error message
         templates.deleteTemplate('newtemplateName');
         assert.strictEqual(templates.diagnostics.length, 0);
+    });
+
+    it('TemplateUpdate_With_Trailing_Newline', function () {
+        var filePath = GetExampleFilePath('CrudInit.lg');
+        const resource = new LGResource(filePath, filePath, fs.readFileSync(filePath, 'utf-8'));
+        var templates = Templates.parseResource(resource);
+
+        templates = templates.updateTemplate('template1', 'template1', undefined, '-Hi\r\n-Hello\r\n');
+        let firstTemplateRange = templates.toArray()[0].sourceRange.range;
+        assert.strictEqual(firstTemplateRange.start.line, 3);
+        assert.strictEqual(firstTemplateRange.end.line, 6);
+
+        let secondTemplateRange = templates.toArray()[1].sourceRange.range;
+        assert.strictEqual(secondTemplateRange.start.line, 7);
+        assert.strictEqual(secondTemplateRange.end.line, 10);
+
+        templates = templates.updateTemplate('template2', 'template2', undefined, '-Hi');
+        firstTemplateRange = templates.toArray()[0].sourceRange.range;
+        assert.strictEqual(firstTemplateRange.start.line, 3);
+        assert.strictEqual(firstTemplateRange.end.line, 6);
+
+        secondTemplateRange = templates.toArray()[1].sourceRange.range;
+        assert.strictEqual(secondTemplateRange.start.line, 7);
+        assert.strictEqual(secondTemplateRange.end.line, 8);
     });
 
     it('TestMemoryScope', function () {
