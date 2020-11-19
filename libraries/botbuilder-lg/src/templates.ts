@@ -576,7 +576,7 @@ export class Templates implements Iterable<Template> {
 
     /**
      * @private
-     * Use content range replace the range from lexer.
+     * Compute LG SourceRange based on content instead of parsed token.
      * */
     private recomputeSourceRange(template: Template, content: string): Template {
         if (content != null) {
