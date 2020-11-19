@@ -409,6 +409,10 @@ export class Templates implements Iterable<Template> {
         if (updatedTemplates.toArray().length > 0) {
             const newTemplate = this.adjustSingleTemplateRange(updatedTemplates.toArray()[0], content);
             this.adjustRangeForAddTemplate(newTemplate, originalStartLine);
+
+            // adjust the previous range
+            this.items[this.items.length - 1].sourceRange.range.end.line = newTemplate.sourceRange.range.start.line - 1;
+
             this.items.push(newTemplate);
             new StaticChecker(this).check().forEach((u): number => this.diagnostics.push(u));
         }

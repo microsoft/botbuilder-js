@@ -939,7 +939,7 @@ describe('LG', function () {
         assert.strictEqual(templates.diagnostics.length, 0);
         newTemplate = templates.toArray()[1];
         assert.strictEqual(newTemplate.sourceRange.range.start.line, 9);
-        assert.strictEqual(newTemplate.sourceRange.range.end.line, 12);
+        assert.strictEqual(newTemplate.sourceRange.range.end.line, 13);
     });
 
     it('TemplateCRUD_RepeatAdd', function () {
