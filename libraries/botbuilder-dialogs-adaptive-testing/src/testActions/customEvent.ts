@@ -14,7 +14,7 @@ export interface CustomEventConfiguration {
     value?: unknown;
 }
 
-export class CustomEvent extends TestAction implements CustomEventConfiguration {
+export class CustomEvent<T = unknown> extends TestAction implements CustomEventConfiguration {
     public static $kind = 'Microsoft.Test.CustomEvent';
     /**
      * The event name.
@@ -24,7 +24,7 @@ export class CustomEvent extends TestAction implements CustomEventConfiguration 
     /**
      * Event value.
      */
-    public value?: unknown;
+    public value?: T;
 
     public async execute(testAdapter: TestAdapter, callback: (context: TurnContext) => Promise<void>): Promise<void> {
         if (!this.name) {
