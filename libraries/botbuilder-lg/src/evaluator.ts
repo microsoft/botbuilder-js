@@ -15,6 +15,7 @@ import {
     ExpressionParser,
     ExpressionEvaluator,
     ExpressionType,
+    Extensions,
     ReturnType,
     SimpleObjectMemory,
     Options,
@@ -245,7 +246,7 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGTempla
      */
     public visitNormalTemplateBody(ctx: lp.NormalTemplateBodyContext): any {
         const normalTemplateStrs: lp.TemplateStringContext[] = ctx.templateString();
-        const randomNumber: number = Math.floor(Math.random() * normalTemplateStrs.length);
+        const randomNumber = Extensions.randomNext(this.currentTarget().scope, 0, normalTemplateStrs.length);
 
         return this.visit(normalTemplateStrs[randomNumber].normalTemplateString());
     }

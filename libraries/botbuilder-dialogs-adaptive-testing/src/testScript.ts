@@ -24,6 +24,7 @@ import {
 } from 'botbuilder-dialogs-adaptive';
 import { ResourceExplorer } from 'botbuilder-dialogs-declarative';
 import { TestAction } from './testAction';
+import { SetTestOptionsMiddleware } from './setTestOptionsMiddleware';
 import { UserTokenMock, UserTokenMocksConverter } from './userTokenMocks';
 
 class DialogConverter implements Converter<string, Dialog> {
@@ -124,6 +125,8 @@ export class TestScript extends Configurable implements TestScriptConfiguration 
 
         const adapter = new TestAdapter(TestAdapter.createConversation(testName));
         useBotState(adapter, userState, convoState);
+        adapter.use(new SetTestOptionsMiddleware());
+
         middlewares.forEach((middleware) => {
             adapter.use(middleware);
         });

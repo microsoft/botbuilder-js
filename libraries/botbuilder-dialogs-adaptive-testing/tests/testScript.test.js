@@ -80,4 +80,8 @@ describe('TestScriptTests', function () {
     it('UserTyping', async () => {
         await TestUtils.runTestScript(resourceExplorer, 'TestScriptTests_UserTyping');
     });
+
+    it('CustomEvent', async () => {
+        await TestUtils.runTestScript(resourceExplorer, 'TestScriptTests_CustomEvent');
+    });
 });

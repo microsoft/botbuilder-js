@@ -20,6 +20,8 @@ import {
     AssertReplyConfiguration,
     AssertReplyOneOf,
     AssertReplyOneOfConfiguration,
+    CustomEvent,
+    CustomEventConfiguration,
     UserActivity,
     UserActivityConfiguration,
     UserConversationUpdate,
@@ -56,6 +58,7 @@ export class AdaptiveTestComponentRegistration extends ComponentRegistration imp
         this._addDeclarativeType<AssertReplyActivity, AssertReplyActivityConfiguration>(AssertReplyActivity);
         this._addDeclarativeType<AssertReplyOneOf, AssertReplyOneOfConfiguration>(AssertReplyOneOf);
         this._addDeclarativeType<UserActivity, UserActivityConfiguration>(UserActivity);
+        this._addDeclarativeType<CustomEvent, CustomEventConfiguration>(CustomEvent);
         this._addDeclarativeType<UserConversationUpdate, UserConversationUpdateConfiguration>(UserConversationUpdate);
         this._addDeclarativeType<UserDelay, UserDelayConfiguration>(UserDelay);
         this._addDeclarativeType<UserSays, UserSaysConfiguration>(UserSays);
