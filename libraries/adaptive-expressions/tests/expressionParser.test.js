@@ -717,6 +717,11 @@ const testCases = [
             ['jPath(jsonStr, \'.automobiles[0].maker\' )', ['Nissan']],
             ['string(merge(json1, json2))', '{"FirstName":"John","LastName":"Smith","Enabled":true,"Roles":["Customer","Admin"]}'],
             ['string(merge(json1, json2, json3))', '{"FirstName":"John","LastName":"Smith","Enabled":true,"Roles":["Customer","Admin"],"age":36}'],
+            [
+                'xml(\'{"person": {"name": "Sophia Owen", "city": "Seattle"}}\')',
+                '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n<person>\n  <name>Sophia Owen</name>\n  <city>Seattle</city>\n</person>',
+            ],
+            ['xpath(xmlStr,"/produce/item/name")', ['<name>Gala</name>', '<name>Honeycrisp</name>']],
         ],
     },
     {
@@ -942,6 +947,8 @@ const scope = {
         subTitle: 'Dialog Sub Title'
     },
     doubleNestedItems: [[{ x: 1 }, { x: 2 }], [{ x: 3 }]],
+    xmlStr:
+        "<?xml version='1.0'?> <produce> <item> <name>Gala</name> <type>apple</type> <count>20</count> </item> <item> <name>Honeycrisp</name> <type>apple</type> <count>10</count> </item> </produce>",
 };
 
 const generateParseTest = (input, expectedOutput, expectedRefs) => () => {
