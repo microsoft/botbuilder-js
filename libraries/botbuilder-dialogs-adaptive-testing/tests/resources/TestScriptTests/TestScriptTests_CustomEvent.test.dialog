@@ -1,0 +1,46 @@
+{
+  "$schema": "../../../schemas/sdk.schema",
+  "$kind": "Microsoft.Test.Script",
+  "description": "Test user options",
+  "dialog": {
+    "$kind": "Microsoft.AdaptiveDialog",
+    "triggers": [
+      {
+        "$kind": "Microsoft.OnEventActivity",
+        "condition": "turn.activity.name == 'SetTestOptions' && conversation.TestOptions.randomValue != null",
+        "actions": [
+          {
+            "$kind": "Microsoft.SendActivity",
+            "activity": "random value is ${rand(10, 20)}"
+          },
+          {
+            "$kind": "Microsoft.SetProperty",
+            "property": "Conversation.TestOptions.randomValue",
+            "value": 4
+          },
+          {
+            "$kind": "Microsoft.SendActivity",
+            "activity": "random value is ${rand(10, 20)}"
+          }
+        ]
+      }
+    ]
+  },
+  "script": [
+    {
+      "$kind": "Microsoft.Test.CustomEvent",
+      "name": "SetTestOptions",
+      "value": {
+        "randomValue": 5
+      }
+    },
+    {
+      "$kind": "Microsoft.Test.AssertReply",
+      "text": "random value is 15"
+    },
+    {
+      "$kind": "Microsoft.Test.AssertReply",
+      "text": "random value is 14"
+    }
+  ]
+}

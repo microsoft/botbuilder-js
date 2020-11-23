@@ -72,7 +72,7 @@ describe('ActivityHandlerBase', function() {
         const bot = new ActivityHandlerBase();
 
         bot.run({ activity: {} }).catch(error => {
-            if (error.message !== `Activity is missing it's type`) {
+            if (error.message !== `Activity is missing its type`) {
                 done(error);
             } else {
                 done();
