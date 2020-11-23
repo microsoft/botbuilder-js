@@ -34,14 +34,16 @@ export class DialogContextError extends Error {
 
         super(source instanceof Error ? source.message : source);
 
-        this.name = 'DialogContextError';
-
         if (source instanceof Error) {
             this.message = source.message;
             this.stack = source.stack;
         } else {
             this.message = source;
         }
+
+        Object.defineProperty(this, 'name', { enumerable: true, value: 'DialogContextError' });
+        Object.defineProperty(this, 'message', { enumerable: true });
+        Object.defineProperty(this, 'stack', { enumerable: true });
 
         this.dialogContext = {
             activeDialog: dialogContext.activeDialog ? dialogContext.activeDialog.id : undefined,
