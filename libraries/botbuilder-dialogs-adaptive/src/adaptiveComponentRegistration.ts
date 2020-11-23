@@ -24,6 +24,8 @@ import {
     CancelAllDialogs,
     CancelDialog,
     CancelAllDialogsBaseConfiguration,
+    ContinueConversationLater,
+    ContinueConversationLaterConfiguration,
     ContinueLoop,
     ContinueLoopConfiguration,
     DeleteActivity,
@@ -95,6 +97,7 @@ import {
     OnChoosePropertyConfiguration,
     OnCondition,
     OnConditionConfiguration,
+    OnContinueConversation,
     OnConversationUpdateActivity,
     OnDialogEvent,
     OnDialogEventConfiguration,
@@ -205,6 +208,9 @@ export class AdaptiveComponentRegistration extends ComponentRegistration impleme
         this._addDeclarativeType<BreakLoop, BreakLoopConfiguration>(BreakLoop);
         this._addDeclarativeType<CancelAllDialogs, CancelAllDialogsBaseConfiguration>(CancelAllDialogs);
         this._addDeclarativeType<CancelDialog, CancelAllDialogsBaseConfiguration>(CancelDialog);
+        this._addDeclarativeType<ContinueConversationLater, ContinueConversationLaterConfiguration>(
+            ContinueConversationLater
+        );
         this._addDeclarativeType<ContinueLoop, ContinueLoopConfiguration>(ContinueLoop);
         this._addDeclarativeType<DeleteActivity, DeleteActivityConfiguration>(DeleteActivity);
         this._addDeclarativeType<DeleteProperties, DeletePropertiesConfiguration>(DeleteProperties);
@@ -244,6 +250,7 @@ export class AdaptiveComponentRegistration extends ComponentRegistration impleme
         this._addDeclarativeType<OnChooseIntent, OnChooseIntentConfiguration>(OnChooseIntent);
         this._addDeclarativeType<OnChooseProperty, OnChoosePropertyConfiguration>(OnChooseProperty);
         this._addDeclarativeType<OnCondition, OnConditionConfiguration>(OnCondition);
+        this._addDeclarativeType<OnContinueConversation, OnActivityConfiguration>(OnContinueConversation);
         this._addDeclarativeType<OnConversationUpdateActivity, OnActivityConfiguration>(OnConversationUpdateActivity);
         this._addDeclarativeType<OnDialogEvent, OnDialogEventConfiguration>(OnDialogEvent);
         this._addDeclarativeType<OnEndOfActions, OnDialogEventConfiguration>(OnEndOfActions);

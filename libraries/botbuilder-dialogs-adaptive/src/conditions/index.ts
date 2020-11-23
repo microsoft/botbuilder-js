@@ -13,6 +13,7 @@ export * from './onChooseEntity';
 export * from './onChooseIntent';
 export * from './onChooseProperty';
 export * from './onCondition';
+export * from './onContinueConversation';
 export * from './onConversationUpdateActivity';
 export * from './onDialogEvent';
 export * from './onEndOfActions';
