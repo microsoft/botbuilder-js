@@ -247,6 +247,10 @@ describe('ActionTests', function () {
         await TestUtils.runTestScript(resourceExplorer, 'Action_TraceActivity');
     });
 
+    it('ThrowException', async () => {
+        await TestUtils.runTestScript(resourceExplorer, 'Action_ThrowException');
+    });
+
     it('UpdateActivity', async () => {
         await TestUtils.runTestScript(resourceExplorer, 'Action_UpdateActivity');
     });
