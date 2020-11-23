@@ -56,28 +56,30 @@ import {
     HttpRequest,
     HttpRequestConfiguration,
     IfCondition,
-    LogAction,
-    RepeatDialog,
-    ReplaceDialog,
-    SendActivity,
-    SetProperties,
-    SetProperty,
-    SignOutUser,
-    SwitchCondition,
-    TelemetryTrackEventAction,
-    TraceActivity,
-    UpdateActivity,
     IfConditionConfiguration,
+    LogAction,
     LogActionConfiguration,
+    RepeatDialog,
     RepeatDialogConfiguration,
+    ReplaceDialog,
     ReplaceDialogConfiguration,
+    SendActivity,
     SendActivityConfiguration,
+    SetProperties,
     SetPropertiesConfiguration,
+    SetProperty,
     SetPropertyConfiguration,
+    SignOutUser,
     SignOutUserConfiguration,
+    SwitchCondition,
     SwitchConditionConfiguration,
+    TelemetryTrackEventAction,
     TelemetryTrackEventActionConfiguration,
+    TraceActivity,
     TraceActivityConfiguration,
+    ThrowException,
+    ThrowExceptionConfiguration,
+    UpdateActivity,
     UpdateActivityConfiguration,
 } from './actions';
 import {
@@ -181,7 +183,7 @@ import { TriggerSelectorConfiguration } from './triggerSelector';
 
 type Type<T> = {
     $kind: string;
-    new (...args: unknown[]): T;
+    new(...args: unknown[]): T;
 };
 
 /**
@@ -232,6 +234,7 @@ export class AdaptiveComponentRegistration extends ComponentRegistration impleme
         this._addDeclarativeType<TelemetryTrackEventAction, TelemetryTrackEventActionConfiguration>(
             TelemetryTrackEventAction
         );
+        this._addDeclarativeType<ThrowException, ThrowExceptionConfiguration>(ThrowException);
         this._addDeclarativeType<TraceActivity, TraceActivityConfiguration>(TraceActivity);
         this._addDeclarativeType<UpdateActivity, UpdateActivityConfiguration>(UpdateActivity);
 
