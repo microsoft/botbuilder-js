@@ -20,6 +20,7 @@ export * from './onEndOfConversationActivity';
 export * from './onError';
 export * from './onEventActivity';
 export * from './onHandoffActivity';
+export * from './onInstallationUpdateActivity';
 export * from './onIntent';
 export * from './onInvokeActivity';
 export * from './onMessageActivity';
