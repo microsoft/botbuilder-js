@@ -25,5 +25,6 @@ module.exports = function (api) {
     return {
         presets,
         plugins,
+        compact: false,
     };
 };
