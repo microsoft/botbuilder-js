@@ -144,12 +144,6 @@ export interface BotFrameworkAdapterSettings {
      * Optional. Used when creating new ConnectorClients.
      */
     clientOptions?: ConnectorClientOptions;
-
-    /**
-     * Optional. Used to indicate whether the adapter should accept an activity prior to its completion.
-     * Note: this is unsafe and can cause loss of errors. Use with caution.
-     */
-    immediateAccept?: boolean | ((activity: Partial<Activity>) => boolean);
 }
 
 // Retrieve additional information, i.e., host operating system, host OS release, architecture, Node.js version
@@ -1110,21 +1104,6 @@ export class BotFrameworkAdapter
     }
 
     /**
-     * @private
-     * @param activity an activity to use when determine whether to immediate accept or not
-     */
-    private shouldImmediateAccept(activity: Partial<Activity>): boolean {
-        // Certain scenarios prohibit immediate accept functionality
-        if (activity.deliveryMode === DeliveryModes.ExpectReplies || activity.type === ActivityTypes.Invoke) {
-            return false;
-        }
-
-        // Okay, we _can_ immediate accept, so defer to the user.
-        const immediateAccept = this.settings.immediateAccept;
-        return typeof immediateAccept === 'function' ? immediateAccept(activity) === true : immediateAccept === true;
-    }
-
-    /**
      * Asynchronously creates a turn context and runs the middleware pipeline for an incoming activity.
      *
      * @param req An Express or Restify style request object.
@@ -1198,7 +1177,7 @@ export class BotFrameworkAdapter
 
             // Process received activity
             status = 500;
-            const context = this.createContext(request);
+            const context: TurnContext = this.createContext(request);
             context.turnState.set(this.BotIdentityKey, identity);
             const connectorClient = await this.createConnectorClientWithIdentity(request.serviceUrl, identity);
             context.turnState.set(this.ConnectorClientKey, connectorClient);
@@ -1209,23 +1188,7 @@ export class BotFrameworkAdapter
             context.turnState.set(this.OAuthScopeKey, oAuthScope);
 
             context.turnState.set(BotCallbackHandlerKey, logic);
-
-            // Note: do not unconditionally await as we may want to do immediateAccept on this request
-            const middlewarePromise = this.runMiddleware(context, logic);
-
-            // If we are immediateAccepting, fire off a response and then return the middleware chain promise
-            // to indicate to the caller of this method that they ought to wait on completion of the middleware
-            // chain.
-            if (this.shouldImmediateAccept(request)) {
-                res.status(StatusCodes.OK);
-                res.send('');
-                res.end();
-
-                return middlewarePromise;
-            }
-
-            // Okay, we can safely wait until middleware is done before completing.
-            await middlewarePromise;
+            await this.runMiddleware(context, logic);
 
             // NOTE: The factoring of the code differs here when compared to C# as processActivity() returns Promise<void>.
             //       This is due to the fact that the response to the incoming activity is sent from inside this implementation.
@@ -1246,7 +1209,7 @@ export class BotFrameworkAdapter
             } else if (request.type === ActivityTypes.Invoke) {
                 // Retrieve a cached Invoke response to handle Invoke scenarios.
                 // These scenarios deviate from the request/request model as the Bot should return a specific body and status.
-                const invokeResponse = context.turnState.get(INVOKE_RESPONSE_KEY);
+                const invokeResponse: any = context.turnState.get(INVOKE_RESPONSE_KEY);
                 if (invokeResponse && invokeResponse.value) {
                     const value: InvokeResponse = invokeResponse.value;
                     status = value.status;
