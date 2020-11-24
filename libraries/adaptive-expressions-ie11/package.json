@@ -40,7 +40,7 @@
   },
   "scripts": {
     "build:webpack": "webpack",
-    "build:copyfiles": "copyfiles -u 3 node_modules/adaptive-expressions/lib/**/*.d.ts dist",
+    "build:copyfiles": "copyfiles -u 3 ../adaptive-expressions/lib/**/*.d.ts dist",
     "build": "npm-run-all -p build:webpack build:copyfiles",
     "clean": "rimraf dist",
     "lint": "eslint . --ext .js,.ts"

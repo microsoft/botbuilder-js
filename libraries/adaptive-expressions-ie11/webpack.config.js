@@ -33,14 +33,14 @@ module.exports = () => {
                         },
                     ],
                     include: [
-                        path.resolve(__dirname, './node_modules/adaptive-expressions'),
+                        path.resolve(__dirname, '../adaptive-expressions'),
                         path.resolve(
                             __dirname,
-                            './node_modules/@microsoft/recognizers-text-data-types-timex-expression'
+                            '../../node_modules/@microsoft/recognizers-text-data-types-timex-expression'
                         ),
-                        path.resolve(__dirname, './node_modules/antlr4ts'),
-                        path.resolve(__dirname, './node_modules/lru-cache'),
-                        path.resolve(__dirname, './node_modules/yallist'),
+                        path.resolve(__dirname, '../../node_modules/antlr4ts'),
+                        path.resolve(__dirname, '../../node_modules/lru-cache'),
+                        path.resolve(__dirname, '../../node_modules/yallist'),
                     ],
                 },
             ],
