@@ -17,7 +17,7 @@
     "url": "https://github.com/Microsoft/botbuilder-js.git"
   },
   "main": "./dist/index.js",
-  "typings": "./dist/index.d.ts",
+  "types": "./dist/index.d.ts",
   "dependencies": {
     "adaptive-expressions": "4.1.6",
     "core-js": "^3.3.2"
@@ -31,7 +31,7 @@
     "@babel/preset-typescript": "^7.6.0",
     "@babel/runtime": "^7.6.3",
     "babel-loader": "^8.0.6",
-    "copyfiles": "2.4.0",
+    "clean-webpack-plugin": "^3.0.0",
     "terser-webpack-plugin": "^4.2.3",
     "ts-loader": "^7.0.5",
     "typescript": "3.5.3",
@@ -39,9 +39,7 @@
     "webpack-cli": "^3.3.12"
   },
   "scripts": {
-    "build:webpack": "webpack",
-    "build:copyfiles": "copyfiles -u 3 node_modules/adaptive-expressions/lib/**/*.d.ts dist",
-    "build": "npm-run-all -p build:webpack build:copyfiles",
+    "build": "webpack",
     "clean": "rimraf dist",
     "lint": "eslint . --ext .js,.ts"
   },
