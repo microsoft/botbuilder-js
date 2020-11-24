@@ -36,11 +36,8 @@ module.exports = () => {
                 },
                 {
                     test: /\.js$/,
-                    use: [
-                        {
-                            loader: 'babel-loader',
-                        },
-                    ],
+                    loader: 'babel-loader',
+                    query: { compact: false },
                     include: [
                         resolvePackageRoot('adaptive-expressions'),
                         resolvePackageRoot('@microsoft/recognizers-text-data-types-timex-expression'),
