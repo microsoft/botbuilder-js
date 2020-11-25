@@ -8,7 +8,7 @@ import { Activity, QueueStorage } from 'botbuilder-core';
  * Service used to add messages to an Azure Storage Queues.
  */
 export class AzureQueueStorage extends QueueStorage {
-    private _createQueueIfNotExists = true;
+    private _initializePromise: Promise<unknown>;
     private readonly _queueClient: QueueClient;
 
     /**
@@ -44,12 +44,7 @@ export class AzureQueueStorage extends QueueStorage {
         visibilityTimeout?: number,
         messageTimeToLive?: number
     ): Promise<string> {
-        if (this._createQueueIfNotExists) {
-            // This is an optimization flag to check if the container call has been made.
-            // It is okay if this is called more than once.
-            this._createQueueIfNotExists = false;
-            await this._queueClient.createIfNotExists();
-        }
+        this._initialize();
 
         // Convert activity to base64 string
         const activityString = JSON.stringify(activity);
@@ -60,5 +55,12 @@ export class AzureQueueStorage extends QueueStorage {
         });
 
         return JSON.stringify(receipt);
+    }
+
+    private _initialize(): Promise<unknown> {
+        if (!this._initializePromise) {
+            this._initializePromise = this._queueClient.createIfNotExists();
+        }
+        return this._initializePromise;
     }
 }
