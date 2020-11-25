@@ -30,7 +30,7 @@ export interface ThrowExceptionConfiguration extends DialogConfiguration {
 /**
  * Action which throws an exception declaratively.
  */
-export class ThrowException<O extends object = {}> extends Dialog<O> implements ThrowExceptionConfiguration {
+export class ThrowException extends Dialog implements ThrowExceptionConfiguration {
     public static $kind = 'Microsoft.ThrowException';
 
     /**
@@ -72,7 +72,7 @@ export class ThrowException<O extends object = {}> extends Dialog<O> implements 
      * @param options Optional. Initial information to pass to the dialog.
      * @returns A `Promise` representing the asynchronous operation.
      */
-    public async beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult> {
+    public async beginDialog(dc: DialogContext, options?: Record<string, unknown>): Promise<DialogTurnResult> {
         if (this.disabled && this.disabled.getValue(dc.state)) {
             return await dc.endDialog();
         }
