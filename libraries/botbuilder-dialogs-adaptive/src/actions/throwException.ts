@@ -81,7 +81,7 @@ export class ThrowException extends Dialog implements ThrowExceptionConfiguratio
         if (this.errorValue) {
             value = this.errorValue.getValue(dc.state);
         }
-        throw new Error(`${value}`);
+        throw new Error(value && `${value}`);
     }
 
     /**
