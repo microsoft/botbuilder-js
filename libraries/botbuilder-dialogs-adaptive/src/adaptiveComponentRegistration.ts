@@ -105,6 +105,7 @@ import {
     OnError,
     OnEventActivity,
     OnHandoffActivity,
+    OnInstallationUpdateActivity,
     OnIntent,
     OnIntentConfiguration,
     OnInvokeActivity,
@@ -254,6 +255,7 @@ export class AdaptiveComponentRegistration extends ComponentRegistration impleme
         this._addDeclarativeType<OnError, OnDialogEventConfiguration>(OnError);
         this._addDeclarativeType<OnEventActivity, OnActivityConfiguration>(OnEventActivity);
         this._addDeclarativeType<OnHandoffActivity, OnActivityConfiguration>(OnHandoffActivity);
+        this._addDeclarativeType<OnInstallationUpdateActivity, OnActivityConfiguration>(OnInstallationUpdateActivity);
         this._addDeclarativeType<OnIntent, OnIntentConfiguration>(OnIntent);
         this._addDeclarativeType<OnInvokeActivity, OnActivityConfiguration>(OnInvokeActivity);
         this._addDeclarativeType<OnMessageActivity, OnActivityConfiguration>(OnMessageActivity);
