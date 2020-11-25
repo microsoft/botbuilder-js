@@ -52,7 +52,8 @@ export class AzureQueueStorage extends QueueStorage {
         }
 
         // Convert activity to base64 string
-        const message = btoa(unescape(encodeURIComponent(JSON.stringify(activity))));
+        const activityString = JSON.stringify(activity);
+        const message = Buffer.from(activityString).toString('base64');
         const receipt = await this._queueClient.sendMessage(message, {
             visibilityTimeout,
             messageTimeToLive,
