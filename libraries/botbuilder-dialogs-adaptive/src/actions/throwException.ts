@@ -74,7 +74,7 @@ export class ThrowException extends Dialog implements ThrowExceptionConfiguratio
      */
     public async beginDialog(dc: DialogContext, options?: Record<string, unknown>): Promise<DialogTurnResult> {
         if (this.disabled && this.disabled.getValue(dc.state)) {
-            return await dc.endDialog();
+            return dc.endDialog();
         }
 
         let value: unknown;
