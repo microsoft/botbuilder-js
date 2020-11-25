@@ -15,7 +15,7 @@ import {
     ValueExpression,
     ValueExpressionConverter,
 } from 'adaptive-expressions';
-import { Activity, ActivityEventNames, ActivityTypes, QueueStorage, TurnContext } from 'botbuilder-core';
+import { Activity, ActivityEventNames, ActivityTypes, ConversationReference, QueueStorage, TurnContext } from 'botbuilder-core';
 import {
     Converter,
     ConverterFactory,
@@ -93,10 +93,15 @@ export class ContinueConversationLater<O extends object = {}>
         // create ContinuationActivity from the conversation reference.
         const reference = TurnContext.getConversationReference(dc.context.activity);
         const activity: Partial<Activity> = TurnContext.applyConversationReference(
-            { type: ActivityTypes.Event, name: ActivityEventNames.ContinueConversation },
+            {
+                type: ActivityTypes.Event,
+                name: ActivityEventNames.ContinueConversation,
+                relatesTo: reference as ConversationReference,
+            },
             reference,
             true
         );
+        activity.value = this.value && this.value.getValue(dc.state);
 
         const visibility = (date - Date.now()) / 1000;
         const ttl = visibility + 2 * 60;
@@ -117,6 +122,6 @@ export class ContinueConversationLater<O extends object = {}>
      * @returns {string} A `string` representing the compute Id.
      */
     protected onComputeId(): string {
-        return `ContinueConversationLater[${this.date ?? this.date.toString()}s]`;
+        return `ContinueConversationLater[${this.date && this.date.toString()}s]`;
     }
 }
