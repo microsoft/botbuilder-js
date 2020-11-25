@@ -43,7 +43,7 @@ export class ContinueConversationLater<O extends object = {}>
     /**
      * Gets or sets an optional expression which if is true will disable this action.
      */
-    public disabled: BoolExpression;
+    public disabled?: BoolExpression;
 
     /**
      * Gets or sets the expression which resolves to the date/time to continue the conversation.
@@ -77,7 +77,7 @@ export class ContinueConversationLater<O extends object = {}>
      */
     public async beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult> {
         if (this.disabled && this.disabled.getValue(dc.state)) {
-            return await dc.endDialog();
+            return dc.endDialog();
         }
 
         const dateString = this.date.getValue(dc.state);
@@ -114,7 +114,7 @@ export class ContinueConversationLater<O extends object = {}>
         const receipt = await queueStorage.queueActivity(activity, visibility, ttl);
 
         // return the receipt as the result.
-        return await dc.endDialog(receipt);
+        return dc.endDialog(receipt);
     }
 
     /**
