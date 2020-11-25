@@ -15,7 +15,14 @@ import {
     ValueExpression,
     ValueExpressionConverter,
 } from 'adaptive-expressions';
-import { Activity, ActivityEventNames, ActivityTypes, ConversationReference, QueueStorage, TurnContext } from 'botbuilder-core';
+import {
+    Activity,
+    ActivityEventNames,
+    ActivityTypes,
+    ConversationReference,
+    QueueStorage,
+    TurnContext,
+} from 'botbuilder-core';
 import {
     Converter,
     ConverterFactory,
@@ -35,9 +42,7 @@ export interface ContinueConversationLaterConfiguration extends DialogConfigurat
 /**
  * Action which schedules a conversation to be continued later by writing an EventActivity(Name=ContinueConversation) to a queue.
  */
-export class ContinueConversationLater<O extends object = {}>
-    extends Dialog<O>
-    implements ContinueConversationLaterConfiguration {
+export class ContinueConversationLater extends Dialog implements ContinueConversationLaterConfiguration {
     public static $kind = 'Microsoft.ContinueConversationLater';
 
     /**
@@ -75,7 +80,7 @@ export class ContinueConversationLater<O extends object = {}>
      * @param {object} options Optional. Initial information to pass to the dialog.
      * @returns {Promise<DialogTurnResult>} A `Promise` representing the asynchronous operation.
      */
-    public async beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult> {
+    public async beginDialog(dc: DialogContext, options?: Record<string, unknown>): Promise<DialogTurnResult> {
         if (this.disabled && this.disabled.getValue(dc.state)) {
             return dc.endDialog();
         }
