@@ -40,23 +40,33 @@ export class XPath extends ExpressionEvaluator {
         if (typeof window !== 'undefined' || typeof self !== 'undefined') {
             // this is for evaluating in browser environment, however it is not covered by any test currently
             let error: string;
-            const parser = new DOMParser();
-            const xmlDoc = parser.parseFromString(args[0] as string, 'text/xml');
-            const nodes = xmlDoc.evaluate(args[1] as string, xmlDoc, null, XPathResult.ANY_TYPE, null);
-            let node = nodes.iterateNext();
-            const result: string[] = [];
-            while (node) {
-                result.push(node.childNodes[0].nodeValue);
-                node = nodes.iterateNext();
+            let result: unknown;
+            let xmlDoc: Document;
+            try {
+                const parser = new DOMParser();
+                xmlDoc = parser.parseFromString(args[0] as string, 'text/xml');
+            } catch (err) {
+                error = error = `${args[0]} is not valid xml input`;
             }
 
-            if (result.length === 0){
-                error = `There is no matched nodes for the expression ${args[1]} in the xml: ${args[0]}`;
-                return { value: undefined, error: error };
-            } else if (result.length === 1) {
-                return { value: result[0], error: undefined };
-            } else {
-                return { value: result, error: undefined };
+            if (!error) {
+                const nodes = xmlDoc.evaluate(args[1] as string, xmlDoc, null, XPathResult.ANY_TYPE, null);
+                let node = nodes.iterateNext();
+                const evalResult: string[] = [];
+                while (node) {
+                    evalResult.push(node.childNodes[0].nodeValue);
+                    node = nodes.iterateNext();
+                }
+
+                if (evalResult.length === 0) {
+                    error = `There is no matched nodes for the expression ${args[1]} in the xml: ${args[0]}`;
+                } else if (evalResult.length === 1) {
+                    result = evalResult[0];
+                } else {
+                    result = evalResult;
+                }
+
+                return { value: result, error: error };
             }
         } else {
             let error: string;
@@ -74,7 +84,7 @@ export class XPath extends ExpressionEvaluator {
 
             if (!error) {
                 const nodes = xpath.select(args[1], doc);
-                if (Array.isArray(nodes)){
+                if (Array.isArray(nodes)) {
                     if (nodes.length === 0) {
                         error = `There is no matched nodes for the expression ${args[1]} in the xml: ${args[0]}`;
                     } else {

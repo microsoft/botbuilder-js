@@ -39,14 +39,22 @@ export class XML extends ExpressionEvaluator {
             // x2js package can run on browser environment, see ref: https://www.npmjs.com/package/x2js
             // eslint-disable-next-line @typescript-eslint/no-var-requires
             const X2JS = require('x2js');
+            let result: unknown;
+            let error: string;
             let obj: unknown;
-            if (typeof args[0] === 'string') {
-                obj = JSON.parse(args[0] as string);
-            } else if (typeof args[0] === 'object') {
-                obj = args[0];
+            try {
+                if (typeof args[0] === 'string') {
+                    obj = JSON.parse(args[0] as string);
+                } else if (typeof args[0] === 'object') {
+                    obj = args[0];
+                }
+
+                result = new X2JS.json2xml_str(obj);
+            } catch (err) {
+                error = `${args[0]} is not a valid json`;
             }
 
-            return { value: new X2JS.json2xml_str(obj), error: undefined };
+            return { value: result, error: error };
         } else {
             // xml2js only support node environment, see ref: https://github.com/Leonidas-from-XIV/node-xml2js
             let result: unknown;
