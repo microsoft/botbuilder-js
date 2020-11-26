@@ -721,7 +721,8 @@ const testCases = [
                 'xml(\'{"person": {"name": "Sophia Owen", "city": "Seattle"}}\')',
                 '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n<person>\n  <name>Sophia Owen</name>\n  <city>Seattle</city>\n</person>',
             ],
-            ['xpath(xmlStr,"/produce/item/name")', ['<name>Gala</name>', '<name>Honeycrisp</name>']],
+            ['xPath(xmlStr,"/produce/item/name")', ['<name>Gala</name>', '<name>Honeycrisp</name>']],
+            ['xPath(xmlStr,"sum(/produce/item/count)")', 30],
         ],
     },
     {

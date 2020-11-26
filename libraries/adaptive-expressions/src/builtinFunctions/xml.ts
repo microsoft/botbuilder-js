@@ -20,21 +20,22 @@ export class XML extends ExpressionEvaluator {
      * Initializes a new instance of the [EOL](xref:adaptive-expressions.EOL) class.
      */
     public constructor() {
-        super(ExpressionType.XML, XML.evaluator(), ReturnType.String, XML.validator);
+        super(ExpressionType.XML, XML.evaluator(), ReturnType.String, FunctionUtils.validateUnary);
     }
 
     /**
      * @private
      */
     private static evaluator(): EvaluateExpressionDelegate {
-        return FunctionUtils.apply((args: unknown[]): string => XML.platformSpecificXML(args));
+        return FunctionUtils.applyWithError((args: unknown[]): { value: unknown; error: string } => XML.platformSpecificXML(args));
     }
 
     /**
      * @private
      */
-    private static platformSpecificXML(args: unknown[]): string {
+    private static platformSpecificXML(args: unknown[]): { value: unknown; error: string } {
         if (typeof window !== 'undefined' || typeof self !== 'undefined') {
+            // this is for evaluating in browser environment, however it is not covered by any test currently
             // x2js package can run on browser environment, see ref: https://www.npmjs.com/package/x2js
             // eslint-disable-next-line @typescript-eslint/no-var-requires
             const X2JS = require('x2js');
@@ -45,27 +46,28 @@ export class XML extends ExpressionEvaluator {
                 obj = args[0];
             }
 
-            return new X2JS.json2xml_str(obj);
+            return { value: new X2JS.json2xml_str(obj), error: undefined };
         } else {
             // xml2js only support node environment, see ref: https://github.com/Leonidas-from-XIV/node-xml2js
+            let result: unknown;
+            let error: string;
             // eslint-disable-next-line @typescript-eslint/no-var-requires
             const xml2js = require('xml2js');
             let obj: unknown;
-            if (typeof args[0] === 'string') {
-                obj = JSON.parse(args[0] as string);
-            } else if (typeof args[0] === 'object') {
-                obj = args[0];
+            try {
+                if (typeof args[0] === 'string') {
+                    obj = JSON.parse(args[0] as string);
+                } else if (typeof args[0] === 'object') {
+                    obj = args[0];
+                }
+
+                const builder = new xml2js.Builder();
+                result = builder.buildObject(obj);
+            } catch (err) {
+                error = `${args[0]} is not a valid json`;
             }
 
-            const builder = new xml2js.Builder();
-            return builder.buildObject(obj);
+            return { value: result, error: error };
         }
-    }
-
-    /**
-     * @private
-     */
-    private static validator(expression: Expression): void {
-        FunctionUtils.validateUnary;
     }
 }

@@ -169,7 +169,7 @@ export class ExpressionType {
     public static readonly SetPathToValue: string = 'setPathToValue';
     public static readonly Merge: string = 'merge';
     public static readonly XML: string = 'xml';
-    public static readonly XPath: string = 'xpath';
+    public static readonly XPath: string = 'xPath';
 
     // URI parsing functions
     public static readonly UriHost: string = 'uriHost';
