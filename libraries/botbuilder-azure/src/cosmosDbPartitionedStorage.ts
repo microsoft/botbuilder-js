@@ -20,11 +20,11 @@ export interface CosmosDbPartitionedStorageOptions {
     /**
      * The CosmosDB endpoint.
      */
-    cosmosDbEndpoint: string;
+    cosmosDbEndpoint?: string;
     /**
      * The authentication key for Cosmos DB.
      */
-    authKey: string;
+    authKey?: string;
     /**
      * The database identifier for Cosmos DB instance.
      */
@@ -111,7 +111,6 @@ class DocumentStoreItem {
  */
 export class CosmosDbPartitionedStorage implements Storage {
     private container: Container;
-    private readonly cosmosDbStorageOptions: CosmosDbPartitionedStorageOptions;
     private client: CosmosClient;
     private compatabilityModePartitionKey = false;
 
@@ -121,14 +120,17 @@ export class CosmosDbPartitionedStorage implements Storage {
      *
      * @param cosmosDbStorageOptions Cosmos DB partitioned storage configuration options.
      */
-    public constructor(cosmosDbStorageOptions: CosmosDbPartitionedStorageOptions) {
+    public constructor(private readonly cosmosDbStorageOptions: CosmosDbPartitionedStorageOptions) {
         if (!cosmosDbStorageOptions) {
             throw new ReferenceError('CosmosDbPartitionedStorageOptions is required.');
         }
+        const { cosmosClientOptions } = cosmosDbStorageOptions;
+        cosmosDbStorageOptions.cosmosDbEndpoint ??= cosmosClientOptions?.endpoint;
         if (!cosmosDbStorageOptions.cosmosDbEndpoint) {
             throw new ReferenceError('cosmosDbEndpoint for CosmosDB is required.');
         }
-        if (!cosmosDbStorageOptions.authKey) {
+        cosmosDbStorageOptions.authKey ??= cosmosClientOptions?.key;
+        if (!cosmosDbStorageOptions.authKey && !cosmosClientOptions?.tokenProvider) {
             throw new ReferenceError('authKey for CosmosDB is required.');
         }
         if (!cosmosDbStorageOptions.databaseId) {
@@ -139,9 +141,7 @@ export class CosmosDbPartitionedStorage implements Storage {
         }
         // In order to support collections previously restricted to max key length of 255, we default
         // compatabilityMode to 'true'.  No compatibilityMode is opt-in only.
-        if (typeof cosmosDbStorageOptions.compatibilityMode === 'undefined') {
-            cosmosDbStorageOptions.compatibilityMode = true;
-        }
+        cosmosDbStorageOptions.compatibilityMode ??= true;
         if (cosmosDbStorageOptions.keySuffix) {
             if (cosmosDbStorageOptions.compatibilityMode) {
                 throw new ReferenceError('compatibilityMode cannot be true while using a keySuffix.');
@@ -155,8 +155,6 @@ export class CosmosDbPartitionedStorage implements Storage {
                 );
             }
         }
-
-        this.cosmosDbStorageOptions = cosmosDbStorageOptions;
     }
 
     /**
