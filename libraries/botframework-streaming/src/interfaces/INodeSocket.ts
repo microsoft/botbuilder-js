@@ -16,9 +16,3 @@ export interface INodeSocket {
     write(str: string, cb?: Function): boolean;
     destroy(error?: Error): void;
 }
-
-interface AddressInfo {
-    address: string;
-    family: string;
-    port: number;
-}
