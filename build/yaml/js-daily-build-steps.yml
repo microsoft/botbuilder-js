@@ -1,0 +1,86 @@
+#variables:
+#  PackageVersion: Define this in the calling pipeline.
+#  PreviewPackageVersion: Define this in Azure to be settable at queue time. Ex: 4.9.0-dev.{DateStamp}.{CommitHash}
+
+steps:
+- task: colinsalmcorner.colinsalmcorner-buildtasks.tag-build-task.tagBuildOrRelease@0
+  displayName: 'Tag Build with version number. (Skip if a fork PR to avoid access denied error.)'
+  inputs:
+    tags: |
+     v: $(PackageVersion)
+     preview v: $(PreviewPackageVersion)
+  continueOnError: true
+  condition: and(succeeded(), eq(variables['System.PullRequest.IsFork'], 'false'))
+
+- task: NodeTool@0
+  displayName: 'Use Node $(NodeVersion)'
+  inputs:
+    versionSpec: $(NodeVersion)
+
+- task: Npm@1
+  displayName: 'npm install lerna ...'
+  inputs:
+    command: custom
+    verbose: false
+    customCommand: 'install --global lerna@3.22.1 nyc mocha eslint-plugin-jsdoc'
+
+- task: Npm@1
+  displayName: '/tools npm install'
+  inputs:
+    workingDir: tools
+    verbose: false
+
+- bash: |
+   set -o xtrace
+   sed -i '' 's/${Version}/$(PackageVersion)/g' package.json 
+   sed -i '' 's/${Version}/$(PreviewPackageVersion)/g' libraries/botframework-expressions/package.json
+   sed -i '' 's/${Version}/$(PackageVersion)/g' libraries/botbuilder/package.json
+   sed -i '' 's/${Version}/$(PackageVersion)/g' libraries/botbuilder-ai/package.json
+   sed -i '' 's/${Version}/$(PackageVersion)/g' libraries/botbuilder-applicationinsights/package.json
+   sed -i '' 's/${Version}/$(PackageVersion)/g' libraries/botbuilder-azure/package.json
+   sed -i '' 's/${Version}/$(PackageVersion)/g' libraries/botbuilder-core/package.json
+   sed -i '' 's/${Version}/$(PackageVersion)/g' libraries/botbuilder-dialogs/package.json
+   sed -i '' 's/${Version}/$(PreviewPackageVersion)/g' libraries/botbuilder-lg/package.json
+   sed -i '' 's/${Version}/$(PackageVersion)/g' libraries/botbuilder-testing/package.json
+   sed -i '' 's/${Version}/$(PackageVersion)/g' libraries/botframework-config/package.json
+   sed -i '' 's/${Version}/$(PackageVersion)/g' libraries/botframework-connector/package.json
+   sed -i '' 's/${Version}/$(PackageVersion)/g' libraries/botframework-schema/package.json
+   sed -i '' 's/${Version}/$(PackageVersion)/g' libraries/botframework-streaming/package.json
+  displayName: 'Replace version number in package.json files'
+  continueOnError: true
+
+- bash: |
+   npm run update-versions
+  displayName: 'npm run update-versions'
+  env:
+    Version: $(PackageVersion)
+    PreviewPackageVersion: $(PreviewPackageVersion)
+
+- powershell: |
+   $fileName = 'package-lock.json'
+   Get-ChildItem -Path ./tools -File | Where-Object {$_.Name -eq $fileName};
+   Write-Host "`nDeleting any files listed above";
+   Get-ChildItem -Path ./tools -File | Where-Object {$_.Name -eq $fileName} | Remove-Item -Force;
+  displayName: 'Delete tools/package-lock.json. Maybe avoids intermittent error in \"npm run postinstall\" ENOENT: no such file or directory, lchown ''/Users/runner/.npm/_locks/staging-7c222bec8116519f.lock'''
+  continueOnError: true
+
+- task: Npm@1
+  displayName: 'npm run postinstall'
+  inputs:
+    command: custom
+    verbose: false
+    customCommand: 'run postinstall'
+
+- task: Npm@1
+  displayName: 'npm run build'
+  inputs:
+    command: custom
+    verbose: false
+    customCommand: 'run build'
+
+- task: Npm@1
+  displayName: 'npm run test'
+  inputs:
+    command: custom
+    verbose: false
+    customCommand: 'run test'
