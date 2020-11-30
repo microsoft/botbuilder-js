@@ -8,11 +8,11 @@
 
 import { Culture } from '@microsoft/recognizers-text';
 import { Entity } from 'botbuilder-core';
-import { Configurable, DialogContext, ModelResult } from 'botbuilder-dialogs';
+import { DialogContext, ModelResult } from 'botbuilder-dialogs';
 import { EntityRecognizer } from './entityRecognizer';
 import { TextEntity } from './textEntity';
 
-export abstract class TextEntityRecognizer extends Configurable implements EntityRecognizer {
+export abstract class TextEntityRecognizer extends EntityRecognizer {
     /**
      * Recognizes entities from an [Entity](xref:botframework-schema.Entity) list.
      * @param dialogContext The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
@@ -40,7 +40,7 @@ export abstract class TextEntityRecognizer extends Configurable implements Entit
 
         for (let i = 0; i < textEntities.length; i++) {
             const entity = textEntities[i];
-            const results = this.recognize(entity.text, culture);
+            const results = this._recognize(entity.text, culture);
             for (let j = 0; j < results.length; j++) {
                 const result = results[j];
                 const newEntity: Entity = Object.assign(
@@ -57,5 +57,5 @@ export abstract class TextEntityRecognizer extends Configurable implements Entit
         return newEntities;
     }
 
-    protected abstract recognize(text: string, culture: string): ModelResult[];
+    protected abstract _recognize(text: string, culture: string): ModelResult[];
 }
