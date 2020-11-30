@@ -33,7 +33,7 @@ steps:
 - bash: |
    set -o xtrace
    sed -i '' 's/${Version}/$(PackageVersion)/g' package.json 
-   sed -i '' 's/${Version}/$(PreviewPackageVersion)/g' libraries/adaptive-expressions/package.json
+   sed -i '' 's/${Version}/$(PreviewPackageVersion)/g' libraries/botframework-expressions/package.json
    sed -i '' 's/${Version}/$(PackageVersion)/g' libraries/botbuilder/package.json
    sed -i '' 's/${Version}/$(PackageVersion)/g' libraries/botbuilder-ai/package.json
    sed -i '' 's/${Version}/$(PackageVersion)/g' libraries/botbuilder-applicationinsights/package.json
