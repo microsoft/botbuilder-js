@@ -215,8 +215,9 @@ describe(`TokenResolver`, function () {
             doneReject = reject;
         });
         const returnTokenResponse = () => 
-        { 
-            doneResolve('done');
+        {
+            // Give token code 100ms to run 
+            setTimeout(() => doneResolve('done'), 100);
             return { properties: { tokenPollingSettings: { timeout: 0 } } };
         };
         const botLogic= (ctx) => {
@@ -246,7 +247,8 @@ describe(`TokenResolver`, function () {
             if (i < 2) {
                 return { properties: { tokenPollingSettings: { interval: 100 } } };
             } else {
-                doneResolve('done');
+                // Give token code 100ms to run
+                setTimeout(() => doneResolve('done'), 100);
                 return { properties: { tokenPollingSettings: { timeout: 0 } } };
             }
         };
