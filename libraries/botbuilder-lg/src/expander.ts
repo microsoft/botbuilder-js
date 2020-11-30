@@ -15,6 +15,7 @@ import {
     ExpressionEvaluator,
     ReturnType,
     ExpressionType,
+    Extensions,
     Constant,
     FunctionUtils,
     Options,
@@ -610,7 +611,7 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGTe
         const newScope: any = this.constructScope(templateName, Array.from(args));
 
         const value: string[] = this.expandTemplate(templateName, newScope);
-        const randomNumber: number = Math.floor(Math.random() * value.length);
+        const randomNumber = Extensions.randomNext(this.currentTarget().scope, 0, value.length);
 
         return value[randomNumber];
     };
