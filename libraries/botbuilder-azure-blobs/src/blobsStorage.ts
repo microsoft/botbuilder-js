@@ -26,7 +26,7 @@ export interface BlobsStorageOptions {
 export class BlobsStorage implements Storage {
     private readonly _containerClient: ContainerClient;
     private readonly _concurrency = Infinity;
-    private _initializePromise: Promise<unknown>;
+    private _initializePromise?: Promise<unknown>;
 
     /**
      * Constructs a BlobsStorage instance.
@@ -69,21 +69,27 @@ export class BlobsStorage implements Storage {
             await pmap<string, { key: string; value?: Record<string, unknown> }>(
                 keys,
                 async (key) => {
+                    const result = { key, value: undefined };
+
                     const blob = await ignoreError(
                         this._containerClient.getBlobClient(sanitizeBlobKey(key)).download(),
                         isStatusCodeError(404)
                     );
 
                     if (!blob) {
-                        return { key, value: null };
+                        return result;
                     }
 
                     const { etag: eTag, readableStreamBody: stream } = blob;
+                    if (!stream) {
+                        return result;
+                    }
 
                     const contents = await getStream(stream);
                     const parsed = JSON.parse(contents);
+                    result.value = { ...parsed, eTag };
 
-                    return { key, value: { ...parsed, eTag } };
+                    return result;
                 },
                 {
                     concurrency: this._concurrency,

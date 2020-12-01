@@ -34,6 +34,8 @@ function getConversationPrefix(channelId: string, conversationId: string): strin
 
 // Formats an activity as a blob key
 function getBlobKey(activity: Activity): string {
+    assert.date(activity.timestamp, ['activity', 'timestamp']);
+
     return sanitizeBlobKey(
         [activity.channelId, activity.conversation.id, `${formatTicks(activity.timestamp)}-${activity.id}.json`].join(
             '/'
@@ -66,7 +68,7 @@ export interface BlobsTranscriptStoreOptions {
 export class BlobsTranscriptStore implements TranscriptStore {
     private readonly _containerClient: ContainerClient;
     private readonly _concurrency = Infinity;
-    private _initializePromise: Promise<unknown>;
+    private _initializePromise?: Promise<unknown>;
 
     /**
      * Constructs a BlobsStorage instance.
@@ -131,23 +133,36 @@ export class BlobsTranscriptStore implements TranscriptStore {
             // activities after that start date. Otherwise we can simply return all activities in this page.
             const fromIdx =
                 startDate != null
-                    ? blobItems.findIndex((blobItem) => new Date(blobItem.metadata.timestamp) >= startDate)
+                    ? blobItems.findIndex(
+                          (blobItem) =>
+                              blobItem?.metadata?.timestamp && new Date(blobItem.metadata.timestamp) >= startDate
+                      )
                     : 0;
 
             if (fromIdx !== -1) {
-                return {
-                    continuationToken: response?.continuationToken,
-                    items: await pmap(
-                        blobItems.slice(fromIdx),
-                        async (blobItem) => {
-                            const blob = await this._containerClient.getBlobClient(blobItem.name).download();
-                            const { readableStreamBody: stream } = blob;
-                            const contents = await getStream(stream);
+                const activities = await pmap(
+                    blobItems.slice(fromIdx),
+                    async (blobItem) => {
+                        const blob = await this._containerClient.getBlobClient(blobItem.name).download();
 
-                            const activity = JSON.parse(contents);
-                            return { ...activity, timestamp: new Date(activity.timestamp) } as Activity;
-                        },
-                        { concurrency: this._concurrency }
+                        const { readableStreamBody: stream } = blob;
+                        if (!stream) {
+                            return null;
+                        }
+
+                        const contents = await getStream(stream);
+
+                        const activity = JSON.parse(contents);
+                        return { ...activity, timestamp: new Date(activity.timestamp) } as Activity;
+                    },
+                    { concurrency: this._concurrency }
+                );
+
+                return {
+                    continuationToken: response?.continuationToken ?? '',
+                    items: activities.reduce<Activity[]>(
+                        (acc, activity) => (activity ? acc.concat(activity) : acc),
+                        []
                     ),
                 };
             }
@@ -183,15 +198,13 @@ export class BlobsTranscriptStore implements TranscriptStore {
         const blobItems = response?.segment?.blobItems ?? [];
 
         return {
-            continuationToken: response?.continuationToken,
+            continuationToken: response?.continuationToken ?? '',
             items: blobItems.map((blobItem) => {
-                const [, conversationId] = decodeURIComponent(blobItem.name).split('/');
+                const [, id] = decodeURIComponent(blobItem.name).split('/');
 
-                return {
-                    channelId,
-                    id: conversationId,
-                    created: new Date(blobItem.metadata.timestamp),
-                };
+                const created = blobItem.metadata?.timestamp ? new Date(blobItem.metadata.timestamp) : new Date();
+
+                return { channelId, created, id };
             }),
         };
     }
@@ -245,13 +258,19 @@ export class BlobsTranscriptStore implements TranscriptStore {
         const blob = this._containerClient.getBlockBlobClient(getBlobKey(activity));
         const serialized = JSON.stringify(activity);
 
-        await blob.upload(serialized, serialized.length, {
-            metadata: {
-                Id: activity.id,
-                FromId: activity.from.id,
-                RecipientId: activity.recipient.id,
-                Timestamp: activity.timestamp.toJSON(),
-            },
-        });
+        const metadata: Record<string, string> = {
+            FromId: activity.from.id,
+            RecipientId: activity.recipient.id,
+        };
+
+        if (activity.id) {
+            metadata.Id = activity.id;
+        }
+
+        if (activity.timestamp) {
+            metadata.Timestamp = activity.timestamp.toJSON();
+        }
+
+        await blob.upload(serialized, serialized.length, { metadata });
     }
 }
