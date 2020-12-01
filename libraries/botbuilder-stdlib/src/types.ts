@@ -1,6 +1,9 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/ban-types */
+
 import { assertCondition } from './assertExt';
 
 // Nil describes a null or undefined value;
@@ -16,7 +19,7 @@ export type Newable<T> = new (...args: unknown[]) => T;
 export type Extends<T> = Function & { prototype: T }; // eslint-disable-line @typescript-eslint/ban-types
 
 // A dictionary type describes a common Javascript object
-export type Dictionary<V, K extends string | number = string | number> = Record<K, V>;
+export type Dictionary<V = unknown, K extends string | number = string | number> = Record<K, V>;
 
 // A type test function signature
 export type Test<T> = (val: unknown) => val is T;
@@ -55,7 +58,7 @@ function condition(
  * @template T the type to assert
  * @param {string} typeName the name of type `T`
  * @param {Test<T>} test a method to test if an unknown value is of type `T`
- * @param {boolean} acceptNil true if undefined values are acceptable
+ * @param {boolean} acceptNil true if null or undefined values are acceptable
  * @returns {Assertion<T>} an assertion that asserts an unknown value is of type `T`
  */
 function makeAssertion<T>(typeName: string, test: Test<T>, acceptNil = false): Assertion<T> {
@@ -91,7 +94,7 @@ function makeMaybeAssertion<T>(assertion: Assertion<T>): Assertion<Maybe<T>> {
  * @param {Assertion<T>} assertion an assertion that asserts an unknown value is of type `T`
  * @returns {Assertion<Partial<T>>} an assertion that asserts an unknown value is of type `Partial<T>`
  */
-function makePartialAssertion<T extends Dictionary<unknown>>(assertion: Assertion<T>): Assertion<Partial<T>> {
+function makePartialAssertion<T extends Dictionary>(assertion: Assertion<T>): Assertion<Partial<T>> {
     return (val, path) => {
         try {
             assertion(val, path);
@@ -103,59 +106,412 @@ function makePartialAssertion<T extends Dictionary<unknown>>(assertion: Assertio
     };
 }
 
-const isAny: Test<any> = (val): val is any => true; // eslint-disable-line @typescript-eslint/no-explicit-any
-const any = makeAssertion('any', isAny);
-const maybeAny = makeMaybeAssertion(any);
+/**
+ * Test if `val` is of type `any`.
+ *
+ * @param {any} val value to test
+ * @returns {boolean} true if `val` is of type `any`
+ */
+function isAny(val: unknown): val is any {
+    return true;
+}
 
-const isArray: Test<unknown[]> = (val): val is unknown[] => Array.isArray(val);
-const array = makeAssertion<unknown[]>('array', isArray);
-const maybeArray = makeMaybeAssertion(array);
+/**
+ * Assert that `val` is of type `any`.
+ *
+ * @param {any} val value to assert
+ * @param {string[]} path path to val (useful for nested assertions)
+ */
+function any(val: unknown, path: string[]): asserts val is any {
+    const assertion: Assertion<any> = makeAssertion('any', isAny);
+    assertion(val, path);
+}
 
-const isBoolean: Test<boolean> = (val): val is boolean => typeof val === 'boolean';
-const boolean = makeAssertion('boolean', isBoolean);
-const maybeBoolean = makeMaybeAssertion(boolean);
+/**
+ * Assert that `val` is of type `any`, or `Nil`.
+ *
+ * @param {any} val value to assert
+ * @param {string[]} path path to val (useful for nested assertions)
+ */
+function maybeAny(val: unknown, path: string[]): asserts val is Maybe<any> {
+    const assertion: Assertion<Maybe<any>> = makeMaybeAssertion(any);
+    assertion(val, path);
+}
 
-const isDate: Test<Date> = (val): val is Date => val instanceof Date;
-const date = makeAssertion('Date', isDate);
-const maybeDate = makeMaybeAssertion(date);
+/**
+ * Test if `val` is of type `array`.
+ *
+ * @param {any} val value to test
+ * @returns {boolean} true if `val` is of type `array`
+ */
+function isArray(val: unknown): val is unknown[] {
+    return Array.isArray(val);
+}
 
-const isDictionary: Test<Dictionary<unknown>> = (val): val is Dictionary<unknown> => isObject(val);
-const dictionary = makeAssertion('Dictionary', isDictionary);
-const maybeDictionary = makeMaybeAssertion(dictionary);
+/**
+ * Assert that `val` is of type `array`.
+ *
+ * @param {any} val value to assert
+ * @param {string[]} path path to val (useful for nested assertions)
+ */
+function array(val: unknown, path: string[]): asserts val is unknown[] {
+    const assertion: Assertion<unknown[]> = makeAssertion('array', isArray);
+    assertion(val, path);
+}
 
-const isError: Test<Error> = (val): val is Error => val instanceof Error;
-const error = makeAssertion('Error', isError);
+/**
+ * Assert that `val` is of type `array`, or `Nil`.
+ *
+ * @param {any} val value to assert
+ * @param {string[]} path path to val (useful for nested assertions)
+ */
+function maybeArray(val: unknown, path: string[]): asserts val is Maybe<unknown[]> {
+    const assertion: Assertion<Maybe<unknown[]>> = makeMaybeAssertion(array);
+    assertion(val, path);
+}
 
-const isTypeError: Test<TypeError> = (val): val is TypeError => val instanceof TypeError;
-const typeError = makeAssertion('TypeError', isTypeError);
+/**
+ * Test if `val` is of type `boolean`.
+ *
+ * @param {any} val value to test
+ * @returns {boolean} true if `val` is of type `boolean`
+ */
+function isBoolean(val: unknown): val is boolean {
+    return typeof val === 'boolean';
+}
 
-const isUndefinedError: Test<UndefinedError> = (val): val is UndefinedError => val instanceof UndefinedError;
-const undefinedError = makeAssertion('UndefinedError', isUndefinedError);
+/**
+ * Assert that `val` is of type `boolean`.
+ *
+ * @param {any} val value to assert
+ * @param {string[]} path path to val (useful for nested assertions)
+ */
+function boolean(val: unknown, path: string[]): asserts val is boolean {
+    const assertion: Assertion<boolean> = makeAssertion('boolean', isBoolean);
+    assertion(val, path);
+}
 
-export type Func<T = unknown> = (...args: unknown[]) => T;
-const isFunc: Test<Func> = (val): val is Func => typeof val === 'function';
-const func = makeAssertion('Function', isFunc);
-const maybeFunc = makeMaybeAssertion(func);
+/**
+ * Assert that `val` is of type `boolean`, or `Nil`.
+ *
+ * @param {any} val value to assert
+ * @param {string[]} path path to val (useful for nested assertions)
+ */
+function maybeBoolean(val: unknown, path: string[]): asserts val is Maybe<boolean> {
+    const assertion: Assertion<Maybe<boolean>> = makeMaybeAssertion(boolean);
+    assertion(val, path);
+}
 
-const isNil: Test<Nil> = (val: unknown): val is Nil => val == null;
-const nil = makeAssertion('nil', isNil, true);
+/**
+ * Test if `val` is of type `Date`.
+ *
+ * @param {any} val value to test
+ * @returns {boolean} true if `val` is of type `Date`
+ */
+function isDate(val: unknown): val is Date {
+    return val instanceof Date;
+}
 
-const isString: Test<string> = (val): val is string => typeof val === 'string';
-const string = makeAssertion('string', isString);
-const maybeString = makeMaybeAssertion(string);
+/**
+ * Assert that `val` is of type `Date`.
+ *
+ * @param {any} val value to assert
+ * @param {string[]} path path to val (useful for nested assertions)
+ */
+function date(val: unknown, path: string[]): asserts val is Date {
+    const assertion: Assertion<Date> = makeAssertion('Date', isDate);
+    assertion(val, path);
+}
 
-const isNumber: Test<number> = (val): val is number => typeof val === 'number' && !isNaN(val);
-const number = makeAssertion('number', isNumber);
-const maybeNumber = makeMaybeAssertion(number);
+/**
+ * Assert that `val` is of type `Date`, or `Nil`.
+ *
+ * @param {any} val value to assert
+ * @param {string[]} path path to val (useful for nested assertions)
+ */
+function maybeDate(val: unknown, path: string[]): asserts val is Maybe<Date> {
+    const assertion: Assertion<Maybe<Date>> = makeMaybeAssertion(date);
+    assertion(val, path);
+}
 
-// eslint-disable-next-line @typescript-eslint/ban-types
-const isObject: Test<object> = (val): val is object => typeof val === 'object' && !isArray(val);
-const object = makeAssertion('object', isObject);
-const maybeObject = makeMaybeAssertion(object);
+/**
+ * Test if `val` is of type `Dictionary`.
+ *
+ * @param {any} val value to test
+ * @returns {boolean} true if `val` is of type `Dictionary`
+ */
+function isDictionary(val: unknown): val is Dictionary {
+    return isObject(val);
+}
 
-const isUnknown: Test<unknown> = (val): val is unknown => true;
-const unknown = makeAssertion('unknown', isUnknown);
-const maybeUnknown = makeMaybeAssertion(unknown);
+/**
+ * Assert that `val` is of type `Dictionary`.
+ *
+ * @param {any} val value to assert
+ * @param {string[]} path path to val (useful for nested assertions)
+ */
+function dictionary(val: unknown, path: string[]): asserts val is Dictionary {
+    const assertion: Assertion<Dictionary> = makeAssertion('Dictionary', isDictionary);
+    assertion(val, path);
+}
+
+/**
+ * Assert that `val` is of type `Dictionary`, or `Nil`.
+ *
+ * @param {any} val value to assert
+ * @param {string[]} path path to val (useful for nested assertions)
+ */
+function maybeDictionary(val: unknown, path: string[]): asserts val is Maybe<Dictionary> {
+    const assertion: Assertion<Maybe<Dictionary>> = makeMaybeAssertion(dictionary);
+    assertion(val, path);
+}
+
+/**
+ * Test if `val` is of type `Error`.
+ *
+ * @param {any} val value to test
+ * @returns {boolean} true if `val` is of type `Error`
+ */
+function isError(val: unknown): val is Error {
+    return val instanceof Error;
+}
+
+/**
+ * Assert that `val` is of type `Error`.
+ *
+ * @param {any} val value to assert
+ * @param {string[]} path path to val (useful for nested assertions)
+ */
+function error(val: unknown, path: string[]): asserts val is Error {
+    const assertion: Assertion<Error> = makeAssertion('Error', isError);
+    assertion(val, path);
+}
+
+/**
+ * Test if `val` is of type `TypeError`.
+ *
+ * @param {any} val value to test
+ * @returns {boolean} true if `val` is of type `TypeError`
+ */
+function isTypeError(val: unknown): val is TypeError {
+    return val instanceof TypeError;
+}
+
+/**
+ * Assert that `val` is of type `TypeError`.
+ *
+ * @param {any} val value to assert
+ * @param {string[]} path path to val (useful for nested assertions)
+ */
+function typeError(val: unknown, path: string[]): asserts val is TypeError {
+    const assertion: Assertion<TypeError> = makeAssertion('TypeError', isTypeError);
+    assertion(val, path);
+}
+
+/**
+ * Test if `val` is of type `UndefinedError`.
+ *
+ * @param {any} val value to test
+ * @returns {boolean} true if `val` is of type `UndefinedError`
+ */
+function isUndefinedError(val: unknown): val is UndefinedError {
+    return val instanceof UndefinedError;
+}
+
+/**
+ * Assert that `val` is of type `UndefinedError`.
+ *
+ * @param {any} val value to assert
+ * @param {string[]} path path to val (useful for nested assertions)
+ */
+function undefinedError(val: unknown, path: string[]): asserts val is UndefinedError {
+    const assertion: Assertion<UndefinedError> = makeAssertion('UndefinedError', isUndefinedError);
+    assertion(val, path);
+}
+
+// Represents a generic function
+export type Func<T extends unknown[] = unknown[], R = unknown> = (...args: T) => R;
+
+/**
+ * Test if `val` is of type `Func`.
+ *
+ * @param {any} val value to test
+ * @returns {boolean} true if `val` is of type `Func`
+ */
+function isFunc(val: unknown): val is Func {
+    return typeof val === 'function';
+}
+
+/**
+ * Assert that `val` is of type `Func`.
+ *
+ * @param {any} val value to assert
+ * @param {string[]} path path to val (useful for nested assertions)
+ */
+function func(val: unknown, path: string[]): asserts val is Func {
+    const assertion: Assertion<Func> = makeAssertion('Function', isFunc);
+    assertion(val, path);
+}
+
+/**
+ * Assert that `val` is of type `Func`, or `Nil`.
+ *
+ * @param {any} val value to assert
+ * @param {string[]} path path to val (useful for nested assertions)
+ */
+function maybeFunc(val: unknown, path: string[]): asserts val is Maybe<Func> {
+    const assertion: Assertion<Maybe<Func>> = makeMaybeAssertion(func);
+    assertion(val, path);
+}
+
+/**
+ * Test if `val` is of type `Nil`.
+ *
+ * @param {any} val value to test
+ * @returns {boolean} true if `val` is of type `Func`
+ */
+function isNil(val: unknown): val is Nil {
+    return val == null;
+}
+
+/**
+ * Assert that `val` is of type `Nil`.
+ *
+ * @param {any} val value to assert
+ * @param {string[]} path path to val (useful for nested assertions)
+ */
+function nil(val: unknown, path: string[]): asserts val is Nil {
+    const assertion: Assertion<Nil> = makeAssertion('nil', isNil, true);
+    assertion(val, path);
+}
+
+/**
+ * Test if `val` is of type `string`.
+ *
+ * @param {any} val value to test
+ * @returns {boolean} true if `val` is of type `string`
+ */
+function isString(val: unknown): val is string {
+    return typeof val === 'string';
+}
+
+/**
+ * Assert that `val` is of type `string`.
+ *
+ * @param {any} val value to assert
+ * @param {string[]} path path to val (useful for nested assertions)
+ */
+function string(val: unknown, path: string[]): asserts val is string {
+    const assertion: Assertion<string> = makeAssertion('string', isString);
+    assertion(val, path);
+}
+
+/**
+ * Assert that `val` is of type `string`, or `Nil`.
+ *
+ * @param {any} val value to assert
+ * @param {string[]} path path to val (useful for nested assertions)
+ */
+function maybeString(val: unknown, path: string[]): asserts val is Maybe<string> {
+    const assertion: Assertion<Maybe<string>> = makeMaybeAssertion(string);
+    assertion(val, path);
+}
+
+/**
+ * Test if `val` is of type `number`.
+ *
+ * @param {any} val value to test
+ * @returns {boolean} true if `val` is of type `number`
+ */
+function isNumber(val: unknown): val is number {
+    return typeof val === 'number' && !isNaN(val);
+}
+
+/**
+ * Assert that `val` is of type `number`.
+ *
+ * @param {any} val value to assert
+ * @param {string[]} path path to val (useful for nested assertions)
+ */
+function number(val: unknown, path: string[]): asserts val is number {
+    const assertion: Assertion<number> = makeAssertion('number', isNumber);
+    assertion(val, path);
+}
+
+/**
+ * Assert that `val` is of type `number`, or `Nil`.
+ *
+ * @param {any} val value to assert
+ * @param {string[]} path path to val (useful for nested assertions)
+ */
+function maybeNumber(val: unknown, path: string[]): asserts val is Maybe<number> {
+    const assertion: Assertion<Maybe<number>> = makeMaybeAssertion(number);
+    assertion(val, path);
+}
+
+/**
+ * Test if `val` is of type `object`.
+ *
+ * @param {any} val value to test
+ * @returns {boolean} true if `val` is of type `object`
+ */
+function isObject(val: unknown): val is object {
+    return typeof val === 'object' && !isArray(val);
+}
+
+/**
+ * Assert that `val` is of type `object`.
+ *
+ * @param {any} val value to assert
+ * @param {string[]} path path to val (useful for nested assertions)
+ */
+function object(val: unknown, path: string[]): asserts val is object {
+    const assertion: Assertion<object> = makeAssertion('object', isObject);
+    assertion(val, path);
+}
+
+/**
+ * Assert that `val` is of type `object`, or `Nil`.
+ *
+ * @param {any} val value to assert
+ * @param {string[]} path path to val (useful for nested assertions)
+ */
+function maybeObject(val: unknown, path: string[]): asserts val is Maybe<object> {
+    const assertion: Assertion<Maybe<object>> = makeMaybeAssertion(object);
+    assertion(val, path);
+}
+
+/**
+ * Test if `val` is of type `unknown`.
+ *
+ * @param {any} val value to test
+ * @returns {boolean} true if `val` is of type `unknown`
+ */
+function isUnknown(val: unknown): val is unknown {
+    return true;
+}
+
+/**
+ * Assert that `val` is of type `unknown`.
+ *
+ * @param {any} val value to assert
+ * @param {string[]} path path to val (useful for nested assertions)
+ */
+function unknown(val: unknown, path: string[]): asserts val is unknown {
+    const assertion: Assertion<unknown> = makeAssertion('unknown', isUnknown);
+    assertion(val, path);
+}
+
+/**
+ * Assert that `val` is of type `unknown`, or `Nil`.
+ *
+ * @param {any} val value to assert
+ * @param {string[]} path path to val (useful for nested assertions)
+ */
+function maybeUnknown(val: unknown, path: string[]): asserts val is Maybe<unknown> {
+    const assertion: Assertion<Maybe<unknown>> = makeMaybeAssertion(unknown);
+    assertion(val, path);
+}
 
 /**
  * Make a type test function out of an assertion
@@ -201,8 +557,7 @@ export const tests = {
  *
  * @template T the item type
  * @param {Assertion<T>} assertion the assertion
- * @returns {Assertion<Array<T>>} an assertion that asserts an unknown value is an array with
- * items of type `T`
+ * @returns {Assertion<Array<T>>} an assertion that asserts an unknown value is an array with items of type `T`
  */
 function arrayOf<T>(assertion: Assertion<T>): Assertion<Array<T>> {
     return (val, path) => {
@@ -213,7 +568,16 @@ function arrayOf<T>(assertion: Assertion<T>): Assertion<Array<T>> {
     };
 }
 
-const arrayOfString: Assertion<Array<string>> = arrayOf(string);
+/**
+ * Assert that `val` is of type `string[]`.
+ *
+ * @param {any} val value to assert
+ * @param {string[]} path path to val (useful for nested assertions)
+ */
+function arrayOfString(val: unknown, path: string[]): asserts val is string[] {
+    const assertion: Assertion<string[]> = arrayOf(string);
+    assertion(val, path);
+}
 
 /**
  * Construct an assertion that an unknown value is an array with items of type `T`, or `Nil`

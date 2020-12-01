@@ -492,7 +492,7 @@ export interface Activity {
      */
     localTimezone: string;
     /**
-     * A string containing an IRI identifying the caller of a bot. This field is not intended to be transmitted over
+     * A string containing a URI identifying the caller of a bot. This field is not intended to be transmitted over
      * the wire, but is instead populated by bots and clients based on cryptographically verifiable data that asserts
      * the identity of the callers (e.g. tokens).
      */
@@ -662,7 +662,7 @@ export const assertActivity: Assertion<Activity> = (value, path) => {
     assert.maybeDate(value.timestamp, path.concat('timestamp'));
     assert.maybeDate(value.localTimestamp, path.concat('localTimestamp'));
     assert.string(value.localTimezone, path.concat('localTimezone'));
-    assert.string(value.callerId, path.concat('calledId'));
+    assert.maybeString(value.callerId, path.concat('callerId'));
     assert.string(value.serviceUrl, path.concat('serviceUrl'));
     assert.string(value.channelId, path.concat('channelId'));
     assertChannelAccount(value.from, path.concat('from'));
