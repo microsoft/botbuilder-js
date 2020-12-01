@@ -67,15 +67,8 @@ export class EntityRecognizer extends Recognizer {
                 const entityType = entityResult.type.toLowerCase();
 
                 // add value
-                let values = [];
-                if (!Object.prototype.hasOwnProperty.call(entities, entityType)) {
-                    entities[`${entityType}`] = values;
-                } else {
-                    values = entities[`${entityType}`] as unknown[];
-                }
-
-                // the Entity type names are not consistent, map everything to camel case so we can process them cleaner.
-                values.push(entityResult.text);
+                entities[`${entityType}`] ??= [];
+                (entities[`${entityType}`] as unknown[]).push(entityResult.text);
 
                 // get/create $instance
                 entities['$instance'] ??= {};
