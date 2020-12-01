@@ -1,0 +1,14 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+    "lib": ["es2015", "dom"],
+    "outDir": "lib",
+    "rootDir": "src",
+    "skipLibCheck": true
+  },
+  "include": [
+    "src/**/*"
+  ]
+}

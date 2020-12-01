@@ -1,0 +1,51 @@
+{
+  "name": "botbuilder-dialogs-adaptive-teams",
+  "author": "Microsoft Corp.",
+  "description": "Rule system for the Microsoft BotBuilder adaptive dialog system, with integration specific to Microsoft Teams.",
+  "version": "4.1.6",
+  "preview": true,
+  "license": "MIT",
+  "keywords": [
+    "botbuilder",
+    "botframework",
+    "bots",
+    "chatbots"
+  ],
+  "bugs": {
+    "url": "https://github.com/Microsoft/botbuilder-js/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Microsoft/botbuilder-js.git"
+  },
+  "main": "./lib/index.js",
+  "types": "./lib/index.d.ts",
+  "typesVersions": {
+    "<3.9": {
+      "*": [
+        "_ts3.4/*"
+      ]
+    }
+  },
+  "dependencies": {
+  },
+  "devDependencies": {
+  },
+  "scripts": {
+    "build": "npm-run-all build:src build:tests",
+    "build-docs": "typedoc --theme markdown --entryPoint botbuilder-dialogs-adaptive --excludePrivate --includeDeclarations --ignoreCompilerErrors --module amd --out ..\\..\\doc\\botbuilder-dialogs .\\lib\\index.d.ts --hideGenerator --name \"Bot Builder SDK - Dialogs\" --readme none",
+    "build:src": "tsc -b",
+    "build:tests": "tsc -p tests/tsconfig.json",
+    "clean": "rimraf _ts3.4 lib tsconfig.tsbuildinfo",
+    "lint": "eslint . --ext .js,.ts",
+    "postbuild": "downlevel-dts lib _ts3.4/lib --checksum",
+    "test": "yarn build && nyc mocha tests/",
+    "test:compat": "api-extractor run --verbose"
+  },
+  "files": [
+    "_ts3.4",
+    "lib",
+    "schemas",
+    "src"
+  ]
+}
