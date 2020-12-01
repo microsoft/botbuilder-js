@@ -4,14 +4,17 @@
 import assert from 'assert';
 import { Newable, tests } from './types';
 
+// Represents an error constructor
+export type NewableError = Newable<Error, [string]>;
+
 /**
  * Asserts `condition` to the Typescript compiler
  *
  * @param {any} condition a condition to assert
  * @param {string} message error message
- * @param {Newable<Error>} ctor an optional constructor that makes Error instances
+ * @param {NewableError} ctor an optional constructor that makes Error instances
  */
-export function assertCondition(condition: unknown, message: string, ctor: Newable<Error> = Error): asserts condition {
+export function assertCondition(condition: unknown, message: string, ctor: NewableError = Error): asserts condition {
     if (!condition) {
         throw new ctor(message);
     }

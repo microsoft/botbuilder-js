@@ -4,6 +4,8 @@
     "esModuleInterop": true,
     "outDir": "lib",
     "rootDir": "src",
+    "strict": true,
+    "strictNullChecks": true,
     "target": "es6"
   },
   "include": [

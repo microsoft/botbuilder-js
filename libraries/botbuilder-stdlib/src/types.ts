@@ -4,7 +4,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/ban-types */
 
-import { assertCondition } from './assertExt';
+import { NewableError, assertCondition } from './assertExt';
 
 // Nil describes a null or undefined value;
 export type Nil = null | undefined;
@@ -13,7 +13,7 @@ export type Nil = null | undefined;
 export type Maybe<T> = T | Nil;
 
 // Newable ensures that a given value is a constructor
-export type Newable<T> = new (...args: unknown[]) => T;
+export type Newable<T, A extends unknown[] = unknown[]> = new (...args: A) => T;
 
 // Extends<T> mimics Newable<T>, but works for abstract classes as well
 export type Extends<T> = Function & { prototype: T }; // eslint-disable-line @typescript-eslint/ban-types
@@ -41,14 +41,9 @@ export class UndefinedError extends Error {}
  * @param {any} cond a condition to assert
  * @param {string[]} path the accumulated path for the assertion
  * @param {string} message an error message to use
- * @param {Newable<Error>} errorCtor an optional error constructor
+ * @param {NewableError} errorCtor an optional error constructor
  */
-function condition(
-    cond: unknown,
-    path: string[],
-    message: string,
-    errorCtor: Newable<Error> = TypeError
-): asserts cond {
+function condition(cond: unknown, path: string[], message: string, errorCtor: NewableError = TypeError): asserts cond {
     assertCondition(cond, formatPathAndMessage(path, message), errorCtor);
 }
 
