@@ -5,6 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
+import { pickBy } from 'lodash';
 import { Activity, Entity, RecognizerResult } from 'botbuilder-core';
 import { Converter, ConverterFactory, DialogContext, Recognizer } from 'botbuilder-dialogs';
 import { IntentPattern } from './intentPattern';
@@ -58,8 +59,8 @@ export class RegexRecognizer extends Recognizer implements RegexRecognizerConfig
         telemetryProperties?: { [key: string]: string },
         telemetryMetrics?: { [key: string]: number }
     ): Promise<RecognizerResult> {
-        const text = activity.text || '';
-        const locale = activity.locale || 'en-us';
+        const text = activity.text ?? '';
+        const locale = activity.locale ?? 'en-us';
 
         const recognizerResult: RecognizerResult = {
             text: text,
@@ -72,19 +73,15 @@ export class RegexRecognizer extends Recognizer implements RegexRecognizerConfig
             return recognizerResult;
         }
 
-        const entityPool: Entity[] = [];
+        const textEntity: Entity = new TextEntity(text);
+        textEntity.start = 0;
+        textEntity.end = text.length;
+        textEntity.score = 1.0;
 
-        const textEntity = new TextEntity(text);
-        textEntity['start'] = 0;
-        textEntity['end'] = text.length;
-        textEntity['score'] = 1.0;
+        const entityPool: Entity[] = [textEntity];
 
-        entityPool.push(textEntity);
-
-        for (let i = 0; i < this.intents.length; i++) {
-            const intentPattern = this.intents[i];
-
-            const matches = [];
+        for (const intentPattern of this.intents) {
+            const matches: RegExpExecArray[] = [];
             let matched: RegExpExecArray;
             const regexp = intentPattern.regex;
             while ((matched = regexp.exec(text))) {
@@ -94,81 +91,67 @@ export class RegexRecognizer extends Recognizer implements RegexRecognizerConfig
                 }
             }
 
-            if (matches.length > 0) {
-                const intentKey = intentPattern.intent.split(' ').join('_');
-                if (!recognizerResult.intents.hasOwnProperty(intentKey)) {
-                    recognizerResult.intents[intentKey] = { score: 1.0 };
-                    recognizerResult.intents[intentKey]['pattern'] = intentPattern.pattern;
-                }
-
-                for (let j = 0; j < matches.length; j++) {
-                    const match = matches[j];
-                    if (match.groups) {
-                        for (const name in match.groups) {
-                            const text = match.groups[name];
-                            if (text) {
-                                const entity: Entity = {
-                                    type: name,
-                                };
-                                entity['text'] = text;
-                                entity['start'] = match.index;
-                                entity['end'] = match.index + text.length;
-                                entityPool.push(entity);
-                            }
-                        }
-                    }
-                }
-
-                break;
+            if (matches.length === 0) {
+                continue;
             }
+
+            // TODO length weighted match and multiple intents
+            const intentKey = intentPattern.intent.split(' ').join('_');
+            (recognizerResult.intents[`${intentKey}`] as { score: number; pattern: string }) ??= {
+                score: 1.0,
+                pattern: intentPattern.pattern,
+            };
+
+            matches.forEach((match: RegExpExecArray) => {
+                if (match.groups) {
+                    Object.entries(pickBy(match.groups)).forEach(([name, text]) => {
+                        const entity: Entity = {
+                            type: name,
+                            text,
+                            start: match.index,
+                            end: match.index + text.length,
+                        };
+                        entityPool.push(entity);
+                    });
+                }
+            });
+
+            break;
         }
 
         if (this.entities) {
-            const entitySet = new EntityRecognizerSet();
-            entitySet.push(...this.entities);
+            const entitySet = new EntityRecognizerSet(...this.entities);
             const newEntities = await entitySet.recognizeEntities(dialogContext, text, locale, entityPool);
-            if (newEntities.length > 0) {
-                entityPool.push(...newEntities);
-            }
+            entityPool.push(...newEntities);
         }
 
-        for (let i = 0; i < entityPool.length; i++) {
-            const entityResult = entityPool[i];
-            let values = [];
-            if (!recognizerResult.entities.hasOwnProperty(entityResult.type)) {
-                recognizerResult.entities[entityResult.type] = values;
-            } else {
-                values = recognizerResult.entities[entityResult.type];
-            }
-            values.push(entityResult['text']);
+        entityPool
+            .filter((e) => e !== textEntity)
+            .forEach((entityResult) => {
+                const { type: entityType, text: entityText } = entityResult;
 
-            let instanceRoot = {};
-            if (!recognizerResult.entities.hasOwnProperty('$instance')) {
-                recognizerResult.entities['$instance'] = instanceRoot;
-            } else {
-                instanceRoot = recognizerResult.entities['$instance'];
-            }
+                recognizerResult.entities[`${entityType}`] ??= [];
+                recognizerResult.entities[`${entityType}`].push(entityText);
 
-            let instanceData = [];
-            if (!instanceRoot.hasOwnProperty(entityResult.type)) {
-                instanceRoot[entityResult.type] = instanceData;
-            } else {
-                instanceData = instanceRoot[entityResult.type];
-            }
+                recognizerResult.entities['$instance'] ??= {};
+                const instanceRoot = recognizerResult.entities['$instance'];
 
-            const instance = {
-                startIndex: entityResult['start'],
-                endIndex: entityResult['end'],
-                score: 1.0,
-                text: entityResult['text'],
-                type: entityResult['type'],
-                resolution: entityResult['resolution'],
-            };
-            instanceData.push(instance);
-        }
+                instanceRoot[`${entityType}`] ??= [];
+                const instanceData = instanceRoot[`${entityType}`];
+
+                const instance = {
+                    startIndex: entityResult.start,
+                    endIndex: entityResult.end,
+                    score: 1.0,
+                    text: entityText,
+                    type: entityType,
+                    resolution: entityResult.resolution,
+                };
+                instanceData.push(instance);
+            });
 
         if (Object.entries(recognizerResult.intents).length == 0) {
-            recognizerResult.intents['None'] = { score: 1.0 };
+            recognizerResult.intents.None = { score: 1.0 };
         }
 
         await dialogContext.context.sendTraceActivity(

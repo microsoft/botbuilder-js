@@ -130,6 +130,11 @@ describe('RegexRecognizer Tests', () => {
         let result = await recognizer.recognize(dc, activity);
         validateCodeIntent(result);
 
+        // verify seed text is not exposed
+        const entities = result.entities;
+        assert.strictEqual(entities.text, undefined);
+        assert(entities.code);
+
         activity.text = 'I would like color red and orange';
         result = await recognizer.recognize(dc, activity);
         validateColorIntent(result);
