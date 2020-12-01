@@ -43,6 +43,7 @@
     "applicationinsights": "^1.7.5",
     "browserify": "^17.0.0",
     "downlevel-dts": "^0.7.0",
+    "@standardlabs/downlevel-dts": "^0.7.5",
     "eslint": "^7.12.1",
     "eslint-config-prettier": "^6.15.0",
     "eslint-plugin-jsdoc": "^30.7.7",
