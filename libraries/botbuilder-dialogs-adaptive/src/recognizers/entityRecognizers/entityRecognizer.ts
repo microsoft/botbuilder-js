@@ -30,7 +30,7 @@ export class EntityRecognizer extends Recognizer {
         telemetryMetrics?: Record<string, number>
     ): Promise<RecognizerResult> {
         // Identify matched intents
-        const text = activity.text || '';
+        const text = activity.text ?? '';
 
         const recognizerResult: RecognizerResult = {
             text,
@@ -78,20 +78,12 @@ export class EntityRecognizer extends Recognizer {
                 values.push(entityResult.text);
 
                 // get/create $instance
-                let instanceRoot = {};
-                if (!Object.prototype.hasOwnProperty.call(entities, '$instance')) {
-                    entities['$instance'] = instanceRoot;
-                } else {
-                    instanceRoot = entities['$instance'];
-                }
+                entities['$instance'] ??= {};
+                const instanceRoot = entities['$instance'];
 
                 // add instanceData
-                let instanceData = [];
-                if (!Object.prototype.hasOwnProperty.call(instanceRoot, entityType)) {
-                    instanceRoot[`${entityType}`] = instanceData;
-                } else {
-                    instanceData = instanceRoot[`${entityType}`];
-                }
+                instanceRoot[`${entityType}`] ??= [];
+                const instanceData = instanceRoot[`${entityType}`];
 
                 instanceData.push({
                     startIndex: entityResult.start,

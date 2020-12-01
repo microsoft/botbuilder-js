@@ -44,10 +44,7 @@ export class ChannelMentionEntityRecognizer extends Recognizer {
             activity.entities
                 .filter((e) => e.type === 'mention')
                 .forEach((entity) => {
-                    if (!entities.channelMention) {
-                        entities.channelMention = [];
-                    }
-
+                    entities.channelMention ??= [];
                     entities.channelMention.push(entity.mentioned);
 
                     let instance = entities['$instance'];
@@ -56,9 +53,7 @@ export class ChannelMentionEntityRecognizer extends Recognizer {
                         entities['$instance'] = instance;
                     }
 
-                    if (!instance.channelMention) {
-                        instance.channelMention = [];
-                    }
+                    instance.channelMention ??= [];
 
                     const mentionText = `${entity.text}`;
                     iStart = activity.text.indexOf(mentionText, iStart);
