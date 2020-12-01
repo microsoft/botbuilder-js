@@ -64,7 +64,7 @@ export class EntityRecognizer extends Recognizer {
         entityPool
             .filter((e) => e !== textEntity)
             .forEach((entityResult: Entity) => {
-                const entityType = entityResult.type.toLowerCase();
+                const entityType = entityResult.type;
 
                 // add value
                 entities[`${entityType}`] ??= [];
