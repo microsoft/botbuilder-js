@@ -42,10 +42,10 @@ export class EntityRecognizer extends Recognizer {
             return recognizerResult;
         }
 
-        const textEntity = new TextEntity(text);
-        textEntity['start'] = 0;
-        textEntity['end'] = text.length;
-        textEntity['score'] = 1.0;
+        const textEntity: Entity = new TextEntity(text);
+        textEntity.start = 0;
+        textEntity.end = text.length;
+        textEntity.score = 1.0;
 
         // add entities from regexRecognizer to the entities pool
         const entityPool: Entity[] = [textEntity];
