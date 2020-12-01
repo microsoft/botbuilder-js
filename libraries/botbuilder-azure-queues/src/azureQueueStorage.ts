@@ -44,7 +44,7 @@ export class AzureQueueStorage extends QueueStorage {
         visibilityTimeout?: number,
         messageTimeToLive?: number
     ): Promise<string> {
-        this._initialize();
+        await this._initialize();
 
         // Convert activity to base64 string
         const activityString = JSON.stringify(activity);
