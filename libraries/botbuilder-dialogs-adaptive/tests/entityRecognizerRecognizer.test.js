@@ -185,7 +185,7 @@ describe('EntityRecognizer Recognizer Tests', () => {
         assert.strictEqual(results.entities['$instance'].mention[0].text, '@joesmith');
         const startIndex = results.entities['$instance'].mention[0].startIndex;
         const endIndex = results.entities['$instance'].mention[0].endIndex;
-        assert.strictEqual(dc.context.activity.text.substr(startIndex, endIndex - startIndex + 1), '@joesmith');
+        assert.strictEqual(dc.context.activity.text.substr(startIndex, endIndex - startIndex), '@joesmith');
         assert.strictEqual(results.entities.boolean, undefined);
     });
 

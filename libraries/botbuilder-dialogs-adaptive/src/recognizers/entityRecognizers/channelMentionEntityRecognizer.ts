@@ -55,13 +55,13 @@ export class ChannelMentionEntityRecognizer extends Recognizer {
 
                     instance.channelMention ??= [];
 
-                    const mentionText = `${entity.text}`;
-                    iStart = activity.text.indexOf(mentionText, iStart);
+                    const mentionedText = `${entity.text}`;
+                    iStart = activity.text.indexOf(mentionedText, iStart);
                     if (iStart >= 0) {
                         instance.channelMention.push({
                             startIndex: iStart,
-                            endIndex: iStart + mentionText.length,
-                            text: mentionText,
+                            endIndex: iStart + mentionedText.length,
+                            text: mentionedText,
                             score: 1.0,
                         });
 
