@@ -34,10 +34,10 @@ export class AzureQueueStorage extends QueueStorage {
      * Queue an Activity to an Azure storage queues. The visibility timeout specifies how long the message should be visible
      * to Dequeue and Peek operations. The message content must be a UTF-8 encoded string that is up to 64KB in size.
      *
-     * @param {Partial<Activity>} activity The [Activity]{xref:botframework-core.Activity} to be queued for later processing.
+     * @param {Partial<Activity>} activity The [Activity](xref:botframework-core.Activity) to be queued for later processing.
      * @param {number} visibilityTimeout Default value of 0. Cannot be larger than 7 days.
      * @param {number} messageTimeToLive Specifies the time-to-live interval for the message.
-     * @returns {Promise<string>} [QueueSendMessageResponse]{xref:@azure/storage-queue.QueueSendMessageResponse} as a JSON string.
+     * @returns {Promise<string>} [QueueSendMessageResponse](xref:@azure/storage-queue.QueueSendMessageResponse) as a JSON string.
      */
     public async queueActivity(
         activity: Partial<Activity>,
