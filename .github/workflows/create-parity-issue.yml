@@ -36,6 +36,8 @@ jobs:
           body: |
              The changes in [${{ github.event.inputs.prTitle }} (#${{ github.event.inputs.prNumber }})](https://github.com/${{ github.event.inputs.sourceRepo }}/pull/${{ github.event.inputs.prNumber }}) may need to be ported to maintain parity with `${{ github.event.inputs.sourceRepo }}`.
 
-             > ${{ github.event.inputs.prDescription }}
+             <blockquote>
+             ${{ github.event.inputs.prDescription }}
+             </blockquote>
 
              Please review and, if necessary, port the changes.
