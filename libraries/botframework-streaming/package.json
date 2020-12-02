@@ -49,7 +49,7 @@
     "test": "tsc && nyc mocha tests/"
   },
   "files": [
-    "/lib",
-    "/src"
+    "lib",
+    "src"
   ]
 }
