@@ -47,12 +47,8 @@ export class ChannelMentionEntityRecognizer extends Recognizer {
                     entities.channelMention ??= [];
                     entities.channelMention.push(entity.mentioned);
 
-                    let instance = entities['$instance'];
-                    if (!instance) {
-                        instance = {};
-                        entities['$instance'] = instance;
-                    }
-
+                    entities['$instance'] ??= {};
+                    const instance = entities['$instance'];
                     instance.channelMention ??= [];
 
                     const mentionedText = `${entity.text}`;
