@@ -1,5 +1,6 @@
 {
     "name": "browser-echo",
+    "private": true,
     "version": "1.1.0",
     "description": "BotBuilder v4 echo bot using botframework-webchat",
     "author": "Microsoft",
