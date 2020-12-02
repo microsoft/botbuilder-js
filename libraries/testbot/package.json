@@ -1,5 +1,6 @@
 {
   "name": "testbot",
+  "private": true,
   "version": "1.0.0",
   "description": "a test bot for working locally",
   "main": "index.js",

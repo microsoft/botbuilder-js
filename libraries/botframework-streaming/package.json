@@ -50,8 +50,8 @@
     "test": "npm run build && nyc mocha tests/"
   },
   "files": [
-    "/lib",
-    "/src",
-    "/browser"
+    "lib",
+    "src",
+    "browser"
   ]
 }

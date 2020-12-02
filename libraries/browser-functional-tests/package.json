@@ -1,5 +1,6 @@
 {
   "name": "browser-functional-tests",
+  "private": true,
   "version": "1.0.0",
   "description": "Test to check browser compatibility",
   "main": "",
