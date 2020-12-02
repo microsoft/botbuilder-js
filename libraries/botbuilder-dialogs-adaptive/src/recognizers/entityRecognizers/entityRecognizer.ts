@@ -64,11 +64,16 @@ export class EntityRecognizer extends Recognizer {
         entityPool
             .filter((e) => e !== textEntity)
             .forEach((entityResult: Entity) => {
-                const entityType = entityResult.type;
+                const { type: entityType, text: entityText } = entityResult;
 
                 // add value
                 entities[`${entityType}`] ??= [];
-                (entities[`${entityType}`] as unknown[]).push(entityResult.text);
+                const value = entities[`${entityType}`];
+                if (Array.isArray(value)) {
+                    value.push(entityText);
+                } else {
+                    entities[`${entityType}`] = [value, entityText];
+                }
 
                 // get/create $instance
                 entities['$instance'] ??= {};
