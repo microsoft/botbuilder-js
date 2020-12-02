@@ -97,7 +97,7 @@ export class RegexRecognizer extends Recognizer implements RegexRecognizerConfig
 
             // TODO length weighted match and multiple intents
             const intentKey = intentPattern.intent.split(' ').join('_');
-            (recognizerResult.intents[`${intentKey}`] as { score: number; pattern: string }) ??= {
+            recognizerResult.intents[`${intentKey}`] ??= {
                 score: 1.0,
                 pattern: intentPattern.pattern,
             };
