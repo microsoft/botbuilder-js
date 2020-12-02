@@ -98,13 +98,13 @@ export class EntityRecognizer extends Recognizer {
     }
 
     /**
-     * Recognizes entities from an [Entity]{xref:botbuilder-core.Entity} list.
+     * Recognizes entities from an [Entity](xref:botbuilder-core.Entity) list.
      *
-     * @param {DialogContext} dialogContext The [DialogContext]{xref:botbuilder-dialogs.DialogContext} for the current turn of conversation.
+     * @param {DialogContext} dialogContext The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
      * @param {string} text Text to recognize.
      * @param {string} locale Locale to use.
-     * @param {Entity[]} entities The [Entity]{xref:botbuilder-core.Entity} list to be recognized.
-     * @returns {Promise<Entity[]>} Recognized [Entity]{xref:botbuilder-core.Entity} list.
+     * @param {Entity[]} entities The [Entity](xref:botbuilder-core.Entity) list to be recognized.
+     * @returns {Promise<Entity[]>} Recognized [Entity](xref:botbuilder-core.Entity) list.
      */
     public async recognizeEntities(
         dialogContext: DialogContext,
