@@ -28,7 +28,7 @@
     }
   },
   "dependencies": {
-    "@microsoft/recognizers-text-suite": "^1.3.0",
+    "@microsoft/recognizers-text-suite": "1.1.4",
     "adaptive-expressions": "4.1.6",
     "botbuilder-core": "4.1.6",
     "botbuilder-dialogs": "4.1.6",

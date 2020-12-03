@@ -240,11 +240,7 @@ describe('RegexRecognizer Tests', () => {
         const activity = createMessageActivity('the token is 21EC2020-3AEA-1069-A2DD-08002B30309D');
         const result = await recognizer.recognize(dc, activity);
         const entities = result.entities;
-        assert.strictEqual(
-            entities.guid[0],
-            '21EC2020-3AEA-1069-A2DD-08002B30309D'.toLowerCase(),
-            'should recognize guid'
-        );
+        assert.strictEqual(entities.guid[0], '21EC2020-3AEA-1069-A2DD-08002B30309D', 'should recognize guid');
     });
 
     it('recognize hashtag', async function () {
@@ -318,7 +314,7 @@ describe('RegexRecognizer Tests', () => {
         const activity = createMessageActivity('the temperature is 21 °C');
         let result = await recognizer.recognize(dc, activity);
         let entities = result.entities;
-        assert.strictEqual(entities.temperature[0], '21 °c', 'should recognize celsius temperature text');
+        assert.strictEqual(entities.temperature[0], '21 °C', 'should recognize celsius temperature text');
         let entity = entities['$instance'].temperature[0].resolution;
         assert.strictEqual(entity.value, '21', 'should recognize celsius temperature value');
         assert.strictEqual(entity.unit, 'C', 'should recognize celsius temperature unit');
@@ -326,7 +322,7 @@ describe('RegexRecognizer Tests', () => {
         activity.text = 'the temperature is 70 °F';
         result = await recognizer.recognize(dc, activity);
         entities = result.entities;
-        assert.strictEqual(entities.temperature[0], '70 °f', 'should recognize fahrenheit temperature text');
+        assert.strictEqual(entities.temperature[0], '70 °F', 'should recognize fahrenheit temperature text');
         entity = entities['$instance'].temperature[0].resolution;
         assert.strictEqual(entity.value, '70', 'should recognize fahrenheit temperature value');
         assert.strictEqual(entity.unit, 'F', 'should recognize fahrenheit temperature unit');
