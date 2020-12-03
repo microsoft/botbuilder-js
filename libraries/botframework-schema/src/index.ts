@@ -161,7 +161,7 @@ export interface ConversationAccount {
     /**
      * This conversation's tenant ID
      */
-    tenantId: string;
+    tenantId?: string;
     /**
      * Channel id for the user or bot on this channel (Example: joe@smith.com, or @joesmith or
      * 123456)
@@ -190,7 +190,7 @@ export const assertConversationAccount: Assertion<ConversationAccount> = (value,
     assert.unsafe.castObjectAs<ConversationAccount>(value, path);
     assert.boolean(value.isGroup, path.concat('isGroup'));
     assert.string(value.conversationType, path.concat('conversationType'));
-    assert.string(value.tenantId, path.concat('tenantId'));
+    assert.maybeString(value.tenantId, path.concat('tenantId'));
     assert.string(value.id, path.concat('id'));
     assert.string(value.name, path.concat('name'));
     assert.maybeString(value.aadObjectId, path.concat('aadObjectId'));
