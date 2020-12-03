@@ -5,7 +5,6 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { pickBy } from 'lodash';
 import { Activity, Entity, RecognizerResult } from 'botbuilder-core';
 import { Converter, ConverterFactory, DialogContext, Recognizer } from 'botbuilder-dialogs';
 import { IntentPattern } from './intentPattern';
@@ -104,7 +103,7 @@ export class RegexRecognizer extends Recognizer implements RegexRecognizerConfig
 
             matches.forEach((match: RegExpExecArray) => {
                 if (match.groups) {
-                    Object.entries(pickBy(match.groups)).forEach(([name, text]) => {
+                    Object.entries(match.groups).forEach(([name, text]) => {
                         const entity: Entity = {
                             type: name,
                             text,
