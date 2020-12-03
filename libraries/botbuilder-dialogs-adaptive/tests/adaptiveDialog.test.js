@@ -11,8 +11,6 @@ const {
 } = require('../lib');
 
 describe('AdaptiveDialog', function () {
-    this.timeout(5000);
-
     it('Replace parent', async () => {
         const root = new AdaptiveDialog('root').configure({
             autoEndDialog: false,

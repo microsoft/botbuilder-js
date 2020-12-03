@@ -336,12 +336,8 @@ export class DialogManager extends Configurable {
         return turnResult;
     }
 
-    /**
-     * @private
-     *
-     * @param {Dialog} dialog Root of the dialog subtree to iterate and register containers from.
-     * @param {boolean} registerRoot Whether to register the root of the subtree.
-     */
+    // Recursively traverses the dialog tree and registers intances of `DialogContainer` in the `DialogSet`
+    // for this `DialogManager` instance.
     private registerContainerDialogs(dialog: Dialog, registerRoot = true): void {
         if (dialog instanceof DialogContainer) {
             if (registerRoot) {
