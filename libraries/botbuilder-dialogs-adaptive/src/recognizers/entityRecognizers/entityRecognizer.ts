@@ -71,8 +71,6 @@ export class EntityRecognizer extends Recognizer {
                 const value = entities[`${entityType}`];
                 if (Array.isArray(value)) {
                     value.push(entityText);
-                } else {
-                    entities[`${entityType}`] = [value, entityText];
                 }
 
                 // get/create $instance
