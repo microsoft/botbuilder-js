@@ -212,7 +212,12 @@ export class OAuthInput extends InputDialog implements OAuthInputConfiguration {
         const state: OAuthPromptState = dc.activeDialog.state as OAuthPromptState;
         const expires = state[persistedExpires];
         const isMessage: boolean = dc.context.activity.type === ActivityTypes.Message;
-        const hasTimedOut: boolean = isMessage && new Date().getTime() > expires;
+        const isTimeoutActivityType =
+            isMessage ||
+            this.isTokenResponseEvent(dc.context) ||
+            this.isTeamsVerificationInvoke(dc.context) ||
+            this.isTokenExchangeRequestInvoke(dc.context);
+        const hasTimedOut: boolean = isTimeoutActivityType && new Date().getTime() > expires;
 
         if (hasTimedOut) {
             if (this.property) {
