@@ -38,6 +38,7 @@ import {
 } from 'botbuilder-dialogs';
 import { AdaptiveEvents } from '../adaptiveEvents';
 import { ActivityTemplate } from '../templates/activityTemplate';
+import { AttachmentInput } from './attachmentInput';
 import { StaticActivityTemplate } from '../templates/staticActivityTemplate';
 import { ActivityTemplateConverter } from '../converters';
 
@@ -455,7 +456,7 @@ export abstract class InputDialog extends Dialog implements InputDialogConfigura
 
         const activityProcessed = dc.state.getValue(TurnPath.activityProcessed);
         if (!activityProcessed && !input && turnCount > 0) {
-            if (this.constructor.name == 'AttachmentInput') {
+            if (this instanceof AttachmentInput) {
                 input = dc.context.activity.attachments || [];
             } else {
                 input = dc.context.activity.text;
