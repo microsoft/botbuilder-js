@@ -18,11 +18,13 @@ import { ComponentDeclarativeTypes } from '../componentDeclarativeTypes';
 import { DeclarativeType } from '../declarativeType';
 import { CustomDeserializer } from '../customDeserializer';
 import { DefaultLoader } from '../defaultLoader';
+import { ResourceExplorerOptions } from './resourceExplorerOptions';
 
 /**
  * Class which gives standard access to content resources.
  */
 export class ResourceExplorer {
+    private _declarativeTypes: ComponentDeclarativeTypes[];
     private _kindToType: Map<string, new () => unknown> = new Map();
     private _kindDeserializer: Map<string, CustomDeserializer<unknown, unknown>> = new Map();
     private _eventEmitter: EventEmitter = new EventEmitter();
@@ -30,10 +32,20 @@ export class ResourceExplorer {
 
     /**
      * Initializes a new instance of the `ResourceExplorer` class.
-     * @param providers Resource providers.
+     *
+     * @param {ResourceProvider[] | ResourceExplorerOptions} providersOrOptions Resource providers or resource explorer options.
      */
-    public constructor(providers: ResourceProvider[] = []) {
-        this.resourceProviders = providers;
+    public constructor(providersOrOptions: ResourceProvider[] | ResourceExplorerOptions = []) {
+        if (Array.isArray(providersOrOptions)) {
+            const providers: ResourceProvider[] = providersOrOptions;
+            this.resourceProviders = providers;
+        } else {
+            const options: ResourceExplorerOptions = providersOrOptions;
+            this.resourceProviders = options.providers ?? [];
+            if (options.declarativeTypes) {
+                this._declarativeTypes = options.declarativeTypes;
+            }
+        }
     }
 
     /**
@@ -63,7 +75,8 @@ export class ResourceExplorer {
 
     /**
      * Add a resource type to resource type set.
-     * @param type Resource type.
+     *
+     * @param {string} type Resource type.
      */
     public addResourceType(type: string): void {
         type = type.toLowerCase().replace(/^\./, '');
@@ -82,7 +95,9 @@ export class ResourceExplorer {
 
     /**
      * Add a resource provider to the resources managed by resource explorer.
-     * @param resourceProvider Resource provider to be added.
+     *
+     * @param {ResourceProvider} resourceProvider Resource provider to be added.
+     * @returns {ResourceExplorer} Resource explorer so that you can fluently call multiple methods on the resource explorer.
      */
     public addResourceProvider(resourceProvider: ResourceProvider): ResourceExplorer {
         if (this.resourceProviders.some((r): boolean => r.id === resourceProvider.id)) {
@@ -97,9 +112,10 @@ export class ResourceExplorer {
 
     /**
      * Add a folder resource.
-     * @param folder Folder to be included as a resource.
-     * @param includeSubFolders Whether to include subfolders.
-     * @param monitorChanges Whether to track changes.
+     * @param {string}  folder Folder to be included as a resource.
+     * @param {boolean} includeSubFolders Whether to include subfolders.
+     * @param {boolean} monitorChanges Whether to track changes.
+     * @returns {ResourceExplorer} Resource explorer so that you can fluently call multiple methods on the resource explorer.
      */
     public addFolder(folder: string, includeSubFolders = true, monitorChanges = true): ResourceExplorer {
         this.addResourceProvider(new FolderResourceProvider(this, folder, includeSubFolders, monitorChanges));
@@ -109,9 +125,11 @@ export class ResourceExplorer {
 
     /**
      * Add folder resources.
-     * @param folder Collection of folders to be included as resources.
-     * @param ignoreFolders Imediate subfolders to ignore.
-     * @param monitorChanges Whether to track changes.
+     *
+     * @param {string} folder Collection of folders to be included as resources.
+     * @param {string[]} ignoreFolders Imediate subfolders to ignore.
+     * @param {boolean} monitorChanges Whether to track changes.
+     * @returns {ResourceExplorer} Resource explorer so that you can fluently call multiple methods on the resource explorer.
      */
     public addFolders(folder: string, ignoreFolders?: string[], monitorChanges = true): ResourceExplorer {
         if (ignoreFolders) {
@@ -134,7 +152,9 @@ export class ResourceExplorer {
 
     /**
      * Get resources of a given type extension.
-     * @param fileExtension File extension filter.
+     *
+     * @param {string} fileExtension File extension filter.
+     * @returns {Resource[]} The resources.
      */
     public getResources(fileExtension: string): Resource[] {
         const resources: Resource[] = [];
@@ -149,7 +169,9 @@ export class ResourceExplorer {
 
     /**
      * Gets resource by id.
-     * @param id Resource id.
+     *
+     * @param {string} id Resource id.
+     * @returns {Resource} The resource, or undefined if not found.
      */
     public getResource(id: string): Resource {
         for (const rp of this.resourceProviders) {
@@ -217,8 +239,9 @@ export class ResourceExplorer {
 
     /**
      * Handler for onChanged events.
-     * @param event Event name.
-     * @param resources A collection of resources changed.
+     *
+     * @param {ResourceChangeEvent} event Event name.
+     * @param {Resource} resources A collection of resources changed.
      */
     protected onChanged(event: ResourceChangeEvent, resources: Resource[]): void {
         if (this._eventEmitter) {
@@ -226,9 +249,6 @@ export class ResourceExplorer {
         }
     }
 
-    /**
-     * @private
-     */
     private load<T>(value: { $kind: string } & Record<string, unknown>): T {
         const kind = value['$kind'] as string;
         const type = this._kindToType.get(kind);
@@ -239,18 +259,15 @@ export class ResourceExplorer {
         return loader.load(value, type) as T;
     }
 
-    /**
-     * @private
-     */
-    private getComponentRegistrations(): ComponentRegistration[] {
-        return ComponentRegistration.components.filter(
-            (component: ComponentRegistration) => 'getDeclarativeTypes' in component
+    private getComponentRegistrations(): ComponentDeclarativeTypes[] {
+        return (
+            this._declarativeTypes ??
+            (ComponentRegistration.components.filter(
+                (component: ComponentRegistration) => 'getDeclarativeTypes' in component
+            ) as ComponentDeclarativeTypes[])
         );
     }
 
-    /**
-     * @private
-     */
     private registerTypeInternal<T, C>(
         kind: string,
         type: new (...args: unknown[]) => T,
@@ -260,9 +277,6 @@ export class ResourceExplorer {
         this._kindDeserializer.set(kind, loader || new DefaultLoader(this));
     }
 
-    /**
-     * @private
-     */
     private registerComponentTypes(): void {
         if (this._typesLoaded) {
             return;
