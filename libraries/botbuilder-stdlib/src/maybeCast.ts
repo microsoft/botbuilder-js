@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-import { Newable } from 'ts-essentials';
+import { Newable } from './types';
 
 /**
  * Maybe cast value to a particular type

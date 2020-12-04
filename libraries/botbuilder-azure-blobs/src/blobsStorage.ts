@@ -4,8 +4,8 @@
 import getStream from 'get-stream';
 import pmap from 'p-map';
 import { ContainerClient, StoragePipelineOptions } from '@azure/storage-blob';
-import { Storage, StoreItems } from 'botbuilder-core';
-import { assert } from './assert';
+import { Storage, StoreItems, assertStoreItems } from 'botbuilder-core';
+import { assert } from 'botbuilder-stdlib';
 import { ignoreError, isStatusCodeError } from './ignoreError';
 import { sanitizeBlobKey } from './sanitizeBlobKey';
 
@@ -26,7 +26,7 @@ export interface BlobsStorageOptions {
 export class BlobsStorage implements Storage {
     private readonly _containerClient: ContainerClient;
     private readonly _concurrency = Infinity;
-    private _initializePromise: Promise<unknown>;
+    private _initializePromise?: Promise<unknown>;
 
     /**
      * Constructs a BlobsStorage instance.
@@ -36,11 +36,8 @@ export class BlobsStorage implements Storage {
      * @param {BlobsStorageOptions} options Other options for BlobsStorage
      */
     constructor(connectionString: string, containerName: string, options?: BlobsStorageOptions) {
-        assert(typeof connectionString === 'string', '`connectionString` must be a string');
-        assert(connectionString, '`connectionString` must be non-empty', Error);
-
-        assert(typeof containerName === 'string', '`containerName` must be a string');
-        assert(containerName, '`containerName` must be non-empty', Error);
+        assert.string(connectionString, ['connectionString']);
+        assert.string(containerName, ['containerName']);
 
         this._containerClient = new ContainerClient(connectionString, containerName, options?.storagePipelineOptions);
 
@@ -64,7 +61,7 @@ export class BlobsStorage implements Storage {
      * @returns {Promise<StoreItems>} The fetched [StoreItems](xref:botbuilder-core.StoreItems)
      */
     async read(keys: string[]): Promise<StoreItems> {
-        assert(Array.isArray(keys), '`keys` must be an array');
+        assert.arrayOfString(keys, ['keys']);
 
         await this._initialize();
 
@@ -72,21 +69,27 @@ export class BlobsStorage implements Storage {
             await pmap<string, { key: string; value?: Record<string, unknown> }>(
                 keys,
                 async (key) => {
+                    const result = { key, value: undefined };
+
                     const blob = await ignoreError(
                         this._containerClient.getBlobClient(sanitizeBlobKey(key)).download(),
                         isStatusCodeError(404)
                     );
 
                     if (!blob) {
-                        return { key, value: null };
+                        return result;
                     }
 
                     const { etag: eTag, readableStreamBody: stream } = blob;
+                    if (!stream) {
+                        return result;
+                    }
 
                     const contents = await getStream(stream);
                     const parsed = JSON.parse(contents);
+                    result.value = { ...parsed, eTag };
 
-                    return { key, value: { ...parsed, eTag } };
+                    return result;
                 },
                 {
                     concurrency: this._concurrency,
@@ -102,8 +105,7 @@ export class BlobsStorage implements Storage {
      * @returns {Promise<void>} A promise representing the async operation
      */
     async write(changes: StoreItems): Promise<void> {
-        assert(changes, '`changes` must not be null or undefined');
-        assert(typeof changes === 'object', '`changes` must be an object');
+        assertStoreItems(changes, ['changes']);
 
         await this._initialize();
 
@@ -130,7 +132,7 @@ export class BlobsStorage implements Storage {
      * @returns {Promise<void>} A promise representing the async operation
      */
     async delete(keys: string[]): Promise<void> {
-        assert(Array.isArray(keys), '`keys` must be an array');
+        assert.arrayOfString(keys, ['keys']);
 
         await this._initialize();
 
