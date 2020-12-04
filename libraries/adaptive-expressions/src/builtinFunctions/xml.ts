@@ -23,16 +23,10 @@ export class XML extends ExpressionEvaluator {
         super(ExpressionType.XML, XML.evaluator(), ReturnType.String, FunctionUtils.validateUnary);
     }
 
-    /**
-     * @private
-     */
     private static evaluator(): EvaluateExpressionDelegate {
         return FunctionUtils.applyWithError((args: unknown[]): { value: unknown; error: string } => XML.platformSpecificXML(args));
     }
 
-    /**
-     * @private
-     */
     private static platformSpecificXML(args: unknown[]): { value: unknown; error: string } {
         if (typeof window !== 'undefined' || typeof self !== 'undefined') {
             // this is for evaluating in browser environment, however it is not covered by any test currently

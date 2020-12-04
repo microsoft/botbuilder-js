@@ -23,19 +23,12 @@ export class XPath extends ExpressionEvaluator {
         super(ExpressionType.XPath, XPath.evaluator(), ReturnType.Object, XPath.validator);
     }
 
-    /**
-     * @private
-     */
     private static evaluator(): EvaluateExpressionDelegate {
         return FunctionUtils.applyWithError((args: unknown[]): { value: unknown; error: string } =>
             XPath.platformSpecificXPath(args)
         );
     }
 
-    /**
-     * @param args
-     * @private
-     */
     private static platformSpecificXPath(args: unknown[]): { value: unknown; error: string } {
         if (typeof window !== 'undefined' || typeof self !== 'undefined') {
             // this is for evaluating in browser environment, however it is not covered by any test currently
