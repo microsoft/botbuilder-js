@@ -1316,6 +1316,15 @@
   resolved "https://registry.yarnpkg.com/@sinonjs/text-encoding/-/text-encoding-0.7.1.tgz#8da5c6530915653f3a1f38fd5f101d8c3f8079c5"
   integrity sha512-+iTbntw2IZPb/anVDbypzfQa+ay64MW0Zo8aJ8gZPWMMK6/OubMVb6lUPMagqjOPnmtauXnFCACVl3O7ogjeqQ==
 
+"@standardlabs/downlevel-dts@^0.7.5":
+  version "0.7.5"
+  resolved "https://registry.yarnpkg.com/@standardlabs/downlevel-dts/-/downlevel-dts-0.7.5.tgz#1b767c1d92efd451ec2786bd574faa182ac74fdd"
+  integrity sha512-chqNw8lnqDedwkCU7OTjNvhV3qzqyowmaBuM2orGSNskycbqD1XZ7dwZ2E7y5GVI0CwCmE5Y4+wL9aJjt+XnOg==
+  dependencies:
+    semver "^7.3.2"
+    shelljs "^0.8.3"
+    typescript "^4.1.0-dev.20201026"
+
 "@testim/chrome-version@^1.0.7":
   version "1.0.7"
   resolved "https://registry.yarnpkg.com/@testim/chrome-version/-/chrome-version-1.0.7.tgz#0cd915785ec4190f08a3a6acc9b61fc38fb5f1a9"
@@ -1488,13 +1497,6 @@
   version "5.2.7"
   resolved "https://registry.yarnpkg.com/@types/mocha/-/mocha-5.2.7.tgz#315d570ccb56c53452ff8638738df60726d5b6ea"
   integrity sha512-NYrtPht0wGzhwe9+/idPaBB+TqkY9AhTvOLMkThm0IoEfLaiVQZwBwyJ5puCkO3AUCWrmcoePjp2mbFocKy4SQ==
-
-"@types/moment-timezone@^0.5.13":
-  version "0.5.30"
-  resolved "https://registry.yarnpkg.com/@types/moment-timezone/-/moment-timezone-0.5.30.tgz#340ed45fe3e715f4a011f5cfceb7cb52aad46fc7"
-  integrity sha512-aDVfCsjYnAQaV/E9Qc24C5Njx1CoDjXsEgkxtp9NyXDpYu4CCbmclb6QhWloS9UTU/8YROUEEdEkWI0D7DxnKg==
-  dependencies:
-    moment-timezone "*"
 
 "@types/node-fetch@^2.5.0", "@types/node-fetch@^2.5.3", "@types/node-fetch@^2.5.7":
   version "2.5.7"
@@ -3218,10 +3220,10 @@ chrome-trace-event@^1.0.2:
   dependencies:
     tslib "^1.9.0"
 
-chromedriver@^85.0.0:
-  version "85.0.1"
-  resolved "https://registry.yarnpkg.com/chromedriver/-/chromedriver-85.0.1.tgz#2e1b571845253368fcd112108f23eb9c778f7982"
-  integrity sha512-z8je3U4tXFZnx7AloRabM4Ep1lpFJvHxLoGuRvLg33Qy0UKk/z6OXmHUO2z6DKE0Oe6CFpjj/bdhuQ8dfvq9ug==
+chromedriver@^87.0.1:
+  version "87.0.1"
+  resolved "https://registry.yarnpkg.com/chromedriver/-/chromedriver-87.0.1.tgz#d05d2763d9e238398036eabfc455cd117591faef"
+  integrity sha512-tSvCV0pj47Sv2xTudV5IffLE50y7D4T1TWHzAAvN362rcetqJk0GipMO79kwZ5/muvIePRjQ1zXjOwS/8qzfFA==
   dependencies:
     "@testim/chrome-version" "^1.0.7"
     axios "^0.19.2"
@@ -7996,14 +7998,14 @@ mold-source-map@~0.4.0:
     convert-source-map "^1.1.0"
     through "~2.2.7"
 
-moment-timezone@*, moment-timezone@^0.5.28:
-  version "0.5.31"
-  resolved "https://registry.yarnpkg.com/moment-timezone/-/moment-timezone-0.5.31.tgz#9c40d8c5026f0c7ab46eda3d63e49c155148de05"
-  integrity sha512-+GgHNg8xRhMXfEbv81iDtrVeTcWt0kWmTEY1XQK14dICTXnWJnT0dxdlPspwqF3keKMVPXwayEsk1DI0AA/jdA==
+moment-timezone@^0.5.32:
+  version "0.5.32"
+  resolved "https://registry.yarnpkg.com/moment-timezone/-/moment-timezone-0.5.32.tgz#db7677cc3cc680fd30303ebd90b0da1ca0dfecc2"
+  integrity sha512-Z8QNyuQHQAmWucp8Knmgei8YNo28aLjJq6Ma+jy1ZSpSk5nyfRT8xgUbSQvD2+2UajISfenndwvFuH3NGS+nvA==
   dependencies:
     moment ">= 2.9.0"
 
-"moment@>= 2.9.0", moment@^2.19.3, moment@^2.21.0, moment@^2.22.2, moment@^2.25.1, moment@^2.29.1:
+"moment@>= 2.9.0", moment@^2.19.3, moment@^2.21.0, moment@^2.22.2, moment@^2.29.1:
   version "2.29.1"
   resolved "https://registry.yarnpkg.com/moment/-/moment-2.29.1.tgz#b2be769fa31940be9eeea6469c075e35006fa3d3"
   integrity sha512-kHmoybcPV8Sqy59DwNDY3Jefr64lK/by/da0ViFcuA4DH0vQg5Q6Ze5VimxkfQNSC+Mls/Kx53s7TjP1RhFEDQ==

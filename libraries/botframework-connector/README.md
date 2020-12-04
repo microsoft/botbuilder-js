@@ -41,14 +41,14 @@ async function connectToSlack() {
         isGroup: false
     });
 
-    var acivityResponse = await client.conversations.sendToConversation(conversationResponse.id, {
+    var activityResponse = await client.conversations.sendToConversation(conversationResponse.id, {
         type: 'message',
         from: { id: botId },
         recipient: { id: recipientId },
         text: 'This a message from Bot Connector Client (NodeJS)'
     });
 
-    console.log('Sent reply with ActivityId:', acivityResponse.id);
+    console.log('Sent reply with ActivityId:', activityResponse.id);
 }
 ````
 
