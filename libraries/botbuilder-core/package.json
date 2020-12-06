@@ -28,6 +28,7 @@
   },
   "dependencies": {
     "assert": "^1.4.1",
+    "botbuilder-stdlib": "4.1.6",
     "botframework-connector": "4.1.6",
     "botframework-schema": "4.1.6"
   },

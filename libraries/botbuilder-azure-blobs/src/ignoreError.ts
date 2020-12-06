@@ -37,6 +37,6 @@ export async function ignoreError<T>(promise: Promise<T>, ignore: IgnoreError): 
 export function isStatusCodeError(...codes: number[]): IgnoreError {
     const ignoredCodes = new Set(codes);
     return function (err) {
-        return err instanceof RestError && ignoredCodes.has(err.statusCode);
+        return err instanceof RestError && err.statusCode != null && ignoredCodes.has(err.statusCode);
     };
 }

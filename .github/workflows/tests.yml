@@ -12,12 +12,13 @@ on:
     - 'releases/*'
 
 jobs:
-  ubuntu:
-    name: "${{ github.workflow }} ubuntu (node ${{ matrix.node-version }})"
-    runs-on: ubuntu-latest
+  ci:
+    name: "${{ github.workflow }} ${{ matrix.os }} (node ${{ matrix.node-version }})"
+    runs-on: ${{ matrix.os }}-latest
 
     strategy:
       matrix:
+        os: [ubuntu, windows]
         node-version: [10.x, 12.x, 14.x]
 
     steps:
@@ -64,45 +65,3 @@ jobs:
       - name: yarn test:consumer
         if: matrix.node-version == '14.x'
         run: yarn test:consumer
-
-  windows:
-    name: "${{ github.workflow }} windows (node ${{ matrix.node-version }})"
-    runs-on: windows-latest
-
-    strategy:
-      matrix:
-        node-version: [10.x, 12.x, 14.x]
-
-    steps:
-      - uses: actions/checkout@v2
-
-      - name: use node ${{ matrix.node-version }}
-        uses: actions/setup-node@v2-beta
-        with:
-          node-version: ${{ matrix.node-version }}
-
-      - name: yarn cache dir
-        id: yarn-cache-dir
-        run: echo "::set-output name=dir::$(yarn cache dir)"
-
-      - uses: actions/cache@v2
-        with:
-          path: ${{ steps.yarn-cache-dir.outputs.dir }}
-          key: ${{ runner.os }}-node${{ matrix.node-version }}-yarn-${{ hashFiles('**/yarn.lock') }}
-
-      - name: yarn
-        run: yarn --frozen-lockfile
-
-      - name: yarn test:repoutils
-        if: matrix.node-version == '14.x'
-        run: yarn test:repoutils
-
-      - name: yarn lint
-        if: matrix.node-version == '12.x'
-        run: yarn lint
-
-      - name: yarn build
-        run: yarn build
-
-      - name: yarn test:github
-        run: yarn test:github
