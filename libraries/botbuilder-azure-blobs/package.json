@@ -30,19 +30,19 @@
   "dependencies": {
     "@azure/storage-blob": "^12.2.1",
     "botbuilder-core": "4.1.6",
+    "botbuilder-stdlib": "4.1.6",
     "get-stream": "^6.0.0",
     "p-map": "^4.0.0"
   },
   "devDependencies": {
-    "sinon": "^9.2.0",
-    "ts-essentials": "^7.0.1"
+    "sinon": "^9.2.0"
   },
   "scripts": {
     "build": "tsc -b",
     "build-docs": "typedoc --theme markdown --entryPoint botbuilder-azure-blobs --excludePrivate --includeDeclarations --ignoreCompilerErrors --module amd --out ..\\..\\doc\\botbuilder-azure-blobs .\\lib\\index.d.ts --hideGenerator --name \"Bot Builder SDK - Azure Blobs\" --readme none",
     "clean": "rimraf _ts3.4 lib tsconfig.tsbuildinfo",
     "lint": "eslint . --ext .js,.ts",
-    "postbuild": "downlevel-dts lib _ts3.4/lib",
+    "postbuild": "downlevel-dts lib _ts3.4/lib --checksum",
     "test": "yarn build && nyc mocha --check-leaks tests",
     "test:compat": "api-extractor run --verbose"
   },

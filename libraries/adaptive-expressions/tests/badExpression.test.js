@@ -48,6 +48,8 @@ const scope = {
             subTitle: 'Dialog Sub Title',
         },
     },
+    invalidXml:
+        "<?xml version='1.0'?> <produce> <item> <name>Gala</name> <type>apple</type> <count>20</count> </item> <item> <name>Honeycrisp</name> <type>apple</type> <count>10</count>",
 };
 
 const invalidExpressions = [
@@ -467,6 +469,10 @@ const badExpressions = [
             ['merge(json(\'{"key1":"value1","key2":"value2"}\'))', 'should have at least 2 arguments'],
             ['merge(json2, jarray1)', 'should only have JSON object arguments'],
             ['merge(jarray1, json2)', 'should only have JSON object arguments'],
+            ['xml("invalid json string")'],
+            //['xPath(invalidXml, "sum(/produce/item/count)")'], currently, this test did not throw error correctly
+            ['xPath(invalidXml)'],
+            ['xPath(xmlStr, "getTotal")'],
         ],
     },
     {

@@ -34,10 +34,9 @@
     "botframework-streaming": "4.1.6",
     "filenamify": "^4.1.0",
     "fs-extra": "^7.0.1",
-    "moment-timezone": "^0.5.28"
+    "moment-timezone": "^0.5.32"
   },
   "devDependencies": {
-    "@types/moment-timezone": "^0.5.13",
     "assert": "^1.4.1",
     "chatdown": "^1.0.2",
     "nock": "^11.9.1",
@@ -49,7 +48,7 @@
     "build:rollup": "yarn clean && yarn build && api-extractor run --verbose --local",
     "clean": "rimraf _ts3.4 lib tsconfig.tsbuildinfo",
     "lint": "eslint . --ext .js,.ts",
-    "postbuild": "downlevel-dts lib _ts3.4/lib",
+    "postbuild": "downlevel-dts lib _ts3.4/lib --checksum",
     "test": "yarn build && nyc mocha --recursive \"tests/**/*.test.js\"",
     "test:compat": "api-extractor run --verbose"
   },
