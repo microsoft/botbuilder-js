@@ -31,10 +31,17 @@ export class ResourceExplorer {
     private _typesLoaded = false;
 
     /**
-     * Initializes a new instance of the `ResourceExplorer` class.
+     * Initializes a new instance of the [ResourceExplorer](botbuilder-dialogs.declarative.ResourceExplorer) class.
      *
-     * @param {ResourceProvider[] | ResourceExplorerOptions} providersOrOptions Resource providers or resource explorer options.
+     * @param {ResourceProvider[]} providers The list of [ResourceProvider](botbuilder-dialogs-declarative.ResourceProvider) to initialize the current instance.
      */
+    public constructor(providers: ResourceProvider[]);
+    /**
+     * Initializes a new instance of the [ResourceExplorer](botbuilder-dialogs.declarative.ResourceExplorer) class.
+     *
+     * @param {ResourceExplorerOptions} options The configuration options.
+     */
+    public constructor(options?: ResourceExplorerOptions);
     public constructor(providersOrOptions: ResourceProvider[] | ResourceExplorerOptions = []) {
         if (Array.isArray(providersOrOptions)) {
             const providers: ResourceProvider[] = providersOrOptions;
