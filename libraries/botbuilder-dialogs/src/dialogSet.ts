@@ -204,4 +204,13 @@ export class DialogSet {
             this.dialogs[key].telemetryClient = this._telemetryClient;
         }
     }
+
+    /**
+     * Gets the Dialogs of the set.
+     *
+     * @returns {Dialog} An array of [Dialog](xref:botbuilder-dialogs.Dialog).
+     */
+    public getDialogs(): Dialog[] {
+        return Object.values(this.dialogs);
+    }
 }
