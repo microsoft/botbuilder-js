@@ -14,7 +14,7 @@ steps:
 
 - template: templates/test.yml
 
-- script: yarn update-versions "$(PackageVersion)" --preview "$(PreviewText)" --deprecated "$(DeprecatedText)" --date "$(DateFormat)" --git "$(IncludeGitSha)"
+- script: yarn update-versions "$(PackageVersion)" --internal "$(InternalText)" --preview "$(PreviewText)" --deprecated "$(DeprecatedText)" --date "$(DateFormat)" --git "$(IncludeGitSha)"
   displayName: yarn update-versions
 
 - script: yarn package

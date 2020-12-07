@@ -26,6 +26,9 @@
       ]
     }
   },
+  "dependencies": {
+    "botbuilder-stdlib": "4.1.6"
+  },
   "scripts": {
     "build": "tsc -b",
     "postbuild": "downlevel-dts lib _ts3.4/lib --checksum",
