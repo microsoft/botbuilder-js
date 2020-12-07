@@ -19,6 +19,7 @@ export interface PackageVersionOptions {
     commitSha?: string;
     date?: string;
     deprecated?: string;
+    internal?: string;
     preview?: string;
 }
 
@@ -39,6 +40,8 @@ export const getPackageVersion = (
 
     if (pkg.deprecated) {
         extra.unshift(options.deprecated);
+    } else if (pkg.internal) {
+        extra.unshift(options.internal);
     } else if (pkg.preview) {
         extra.unshift(options.preview);
     }
@@ -63,9 +66,10 @@ export const command = (argv: string[], quiet = false) => async (): Promise<Resu
         default: {
             deprecated: 'deprecated',
             git: 'false',
+            internal: 'internal',
             preview: 'preview',
         },
-        string: ['date', 'deprecated', 'git', 'preview'],
+        string: ['date', 'deprecated', 'git', 'internal', 'preview'],
     });
 
     // If `maybeNewVersion` is falsy use version from the root packge.json file
@@ -91,6 +95,7 @@ export const command = (argv: string[], quiet = false) => async (): Promise<Resu
                 commitSha,
                 date,
                 deprecated: flags.deprecated,
+                internal: flags.internal,
                 preview: flags.preview,
             }),
         }),

@@ -239,7 +239,7 @@ export interface TeamsMeetingParticipant {
     /**
      * @member {TeamsChannelAccount} [user] The user details
      */
-    user?: TeamsChannelAccount
+    user?: TeamsChannelAccount;
     /**
      * @member {Meeting} [meeting] The meeting details.
      */

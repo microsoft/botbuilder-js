@@ -35,6 +35,7 @@
   "devDependencies": {
     "@azure/ms-rest-js": "1.9.0",
     "@microsoft/api-extractor": "^7.11.2",
+    "@standardlabs/downlevel-dts": "^0.7.5",
     "@types/jsonwebtoken": "7.2.8",
     "@types/lodash": "^4.14.134",
     "@types/mocha": "^5.2.7",
@@ -42,8 +43,6 @@
     "@typescript-eslint/parser": "^4.6.1",
     "applicationinsights": "^1.7.5",
     "browserify": "^17.0.0",
-    "downlevel-dts": "^0.7.0",
-    "@standardlabs/downlevel-dts": "^0.7.5",
     "eslint": "^7.12.1",
     "eslint-config-prettier": "^6.15.0",
     "eslint-plugin-jsdoc": "^30.7.7",
