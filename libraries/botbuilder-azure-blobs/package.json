@@ -30,12 +30,12 @@
   "dependencies": {
     "@azure/storage-blob": "^12.2.1",
     "botbuilder-core": "4.1.6",
+    "botbuilder-stdlib": "4.1.6",
     "get-stream": "^6.0.0",
     "p-map": "^4.0.0"
   },
   "devDependencies": {
-    "sinon": "^9.2.0",
-    "ts-essentials": "^7.0.1"
+    "sinon": "^9.2.0"
   },
   "scripts": {
     "build": "tsc -b",
