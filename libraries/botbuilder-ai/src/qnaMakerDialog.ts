@@ -42,6 +42,7 @@ import { FeedbackRecord, FeedbackRecords, QnAMakerMetadata } from './qnamaker-in
 import { QnACardBuilder } from './qnaCardBuilder';
 import { BindToActivity } from './qnamaker-utils/bindToActivity';
 import { ActiveLearningUtils } from './qnamaker-utils/activeLearningUtils';
+import type { Agent } from 'http';
 
 class QnAMakerDialogActivityConverter
     implements Converter<string, TemplateInterface<Partial<Activity>, DialogStateManager>> {
@@ -206,7 +207,8 @@ export class QnAMakerDialog extends WaterfallDialog implements QnAMakerDialogCon
         cardNoMatchResponse?: Activity,
         strictFilters?: QnAMakerMetadata[],
         dialogId = 'QnAMakerDialog',
-        strictFiltersJoinOperator = JoinOperator.AND
+        strictFiltersJoinOperator = JoinOperator.AND,
+        private readonly agent?: Agent | ((url: URL) => Agent)
     ) {
         super(dialogId);
         if (knowledgeBaseId) {
@@ -322,13 +324,14 @@ export class QnAMakerDialog extends WaterfallDialog implements QnAMakerDialogCon
      */
     private async getQnAMakerOptions(dc: DialogContext): Promise<QnAMakerOptions> {
         return {
-            scoreThreshold: this.threshold && this.threshold.getValue(dc.state),
-            strictFilters: this.strictFilters && this.strictFilters.getValue(dc.state),
-            top: this.top && this.top.getValue(dc.state),
+            agent: this.agent,
+            isTest: this.isTest,
             qnaId: 0,
             rankerType: this.rankerType && (this.rankerType.getValue(dc.state) as string),
-            isTest: this.isTest,
+            scoreThreshold: this.threshold && this.threshold.getValue(dc.state),
+            strictFilters: this.strictFilters && this.strictFilters.getValue(dc.state),
             strictFiltersJoinOperator: this.strictFiltersJoinOperator,
+            top: this.top && this.top.getValue(dc.state),
         };
     }
 

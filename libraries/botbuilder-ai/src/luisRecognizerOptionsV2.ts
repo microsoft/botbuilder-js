@@ -10,12 +10,16 @@ import {
     LUISRuntimeClient as LuisClient,
     LUISRuntimeModels as LuisModels,
 } from '@azure/cognitiveservices-luis-runtime';
+
 import * as msRest from '@azure/ms-rest-js';
-import { LuisRecognizerInternal } from './luisRecognizerOptions';
-import { LuisApplication, LuisRecognizerOptionsV2 } from './luisRecognizer';
-import { NullTelemetryClient, TurnContext, RecognizerResult } from 'botbuilder-core';
 import * as os from 'os';
-const pjson = require('../package.json');
+import { LuisApplication, LuisRecognizerOptionsV2 } from './luisRecognizer';
+import { LuisRecognizerInternal } from './luisRecognizerOptions';
+import { NullTelemetryClient, TurnContext, RecognizerResult } from 'botbuilder-core';
+
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const pjson: Record<'name' | 'version', string> = require('../package.json');
+
 const LUIS_TRACE_TYPE = 'https://www.luis.ai/schemas/trace';
 const LUIS_TRACE_NAME = 'LuisRecognizer';
 const LUIS_TRACE_LABEL = 'Luis Trace';
@@ -25,7 +29,7 @@ const LUIS_TRACE_LABEL = 'Luis Trace';
  * @returns A boolean value that indicates param options is a [LuisRecognizerOptionsV2](xref:botbuilder-ai.LuisRecognizerOptionsV2).
  */
 export function isLuisRecognizerOptionsV2(options: any): options is LuisRecognizerOptionsV2 {
-    return options.apiVersion && options.apiVersion === 'v2';
+    return options.apiVersion === 'v2';
 }
 
 /**
@@ -39,13 +43,11 @@ export class LuisRecognizerV2 extends LuisRecognizerInternal {
      */
     constructor(application: LuisApplication, options?: LuisRecognizerOptionsV2) {
         super(application);
-        // Create client
-        // - We have to cast "creds as any" to avoid a build break relating to different versions
-        //   of autorest being used by our various components.  This is just a build issue and
-        //   shouldn't effect production bots.
-        const creds: msRest.TokenCredentials = new msRest.TokenCredentials(application.endpointKey);
-        const baseUri: string = application.endpoint || 'https://westus.api.cognitive.microsoft.com';
-        this.luisClient = new LuisClient(creds as any, baseUri);
+
+        const creds = new msRest.TokenCredentials(application.endpointKey);
+        const baseUri = application.endpoint || 'https://westus.api.cognitive.microsoft.com';
+
+        this.luisClient = new LuisClient(creds, baseUri);
 
         this.options = {
             includeAllIntents: false,

@@ -13,7 +13,6 @@ import { QnAMakerResults } from '../qnamaker-interfaces/qnamakerResults';
 import { QnAMakerEndpoint } from '../qnamaker-interfaces/qnamakerEndpoint';
 import { QnAMakerOptions } from '../qnamaker-interfaces/qnamakerOptions';
 import { QnAMakerTraceInfo } from '../qnamaker-interfaces/qnamakerTraceInfo';
-import { QnARequestContext } from '../qnamaker-interfaces/qnaRequestContext';
 import { HttpRequestUtils } from './httpRequestUtils';
 
 import { QNAMAKER_TRACE_TYPE, QNAMAKER_TRACE_LABEL, QNAMAKER_TRACE_NAME } from '..';
@@ -34,7 +33,7 @@ export class GenerateAnswerUtils {
      * @param endpoint The endpoint of the knowledge base to query.
      */
     constructor(public _options: QnAMakerOptions, private readonly endpoint: QnAMakerEndpoint) {
-        this.httpRequestUtils = new HttpRequestUtils();
+        this.httpRequestUtils = new HttpRequestUtils(_options.agent);
 
         this.validateOptions(this._options);
     }

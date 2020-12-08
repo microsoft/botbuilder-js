@@ -6,9 +6,10 @@
  * Licensed under the MIT License.
  */
 
-import { QnAMakerEndpoint } from '../qnamaker-interfaces/qnamakerEndpoint';
 import { FeedbackRecords } from '../qnamaker-interfaces/feedbackRecords';
 import { HttpRequestUtils } from './httpRequestUtils';
+import { QnAMakerEndpoint } from '../qnamaker-interfaces/qnamakerEndpoint';
+import { QnAMakerOptions } from '../qnamaker-interfaces';
 
 /**
  * Generate Answer api utils class.
@@ -22,9 +23,10 @@ export class TrainUtils {
     /**
      * Creates new instance for active learning train utils.
      * @param endpoint The endpoint of the knowledge base to query.
+     * @param options (Optional) QnAMaker options
      */
-    constructor(private readonly endpoint: QnAMakerEndpoint) {
-        this.httpRequestUtils = new HttpRequestUtils();
+    constructor(private readonly endpoint: QnAMakerEndpoint, options?: QnAMakerOptions) {
+        this.httpRequestUtils = new HttpRequestUtils(options?.agent);
     }
 
     /**

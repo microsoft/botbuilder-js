@@ -7,10 +7,11 @@
  */
 
 import { LUISRuntimeModels as LuisModels } from '@azure/cognitiveservices-luis-runtime';
-import { LuisRecognizerInternal } from './luisRecognizerOptions';
 import { LuisApplication, LuisRecognizerOptionsV3 } from './luisRecognizer';
+import { LuisRecognizerInternal } from './luisRecognizerOptions';
 import { NullTelemetryClient, TurnContext, RecognizerResult } from 'botbuilder-core';
-const fetch = require('node-fetch');
+import { getFetch, isBrowserFetch, isNodeFetch, isNodeRequestInit, isRequestInit, NodeResponse } from './fetch';
+
 const LUIS_TRACE_TYPE = 'https://www.luis.ai/schemas/trace';
 const LUIS_TRACE_NAME = 'LuisRecognizer';
 const LUIS_TRACE_LABEL = 'LuisV3 Trace';
@@ -20,7 +21,9 @@ const MetadataKey = '$instance';
 
 /**
  * Validates if the options provided are valid [LuisRecognizerOptionsV3](xref:botbuilder-ai.LuisRecognizerOptionsV3).
- * @returns A boolean value that indicates param options is a [LuisRecognizerOptionsV3](xref:botbuilder-ai.LuisRecognizerOptionsV3).
+ *
+ * @param {any} options options to type check
+ * @returns {boolean} boolean value that indicates param options is a [LuisRecognizerOptionsV3](xref:botbuilder-ai.LuisRecognizerOptionsV3).
  */
 export function isLuisRecognizerOptionsV3(options: any): options is LuisRecognizerOptionsV3 {
     return options.apiVersion && options.apiVersion === 'v3';
@@ -56,10 +59,13 @@ export class LuisRecognizerV3 extends LuisRecognizerInternal {
 
     /**
      * Calls LUIS to recognize intents and entities in a users utterance.
-     * @param context The [TurnContext](xref:botbuilder-core.TurnContext).
-     * @returns Analysis of utterance in form of [RecognizerResult](xref:botbuilder-core.RecognizerResult).
+     *
+     * @param {TurnContext} context The [TurnContext](xref:botbuilder-core.TurnContext).
+     * @returns {Promise<RecognizerResult>} Analysis of utterance in form of [RecognizerResult](xref:botbuilder-core.RecognizerResult).
      */
     async recognizeInternal(context: TurnContext): Promise<RecognizerResult> {
+        const fetch = await getFetch();
+
         const utterance: string = context.activity.text || '';
         if (!utterance.trim()) {
             // Bypass LUIS if the activity's text is null or whitespace
@@ -71,9 +77,21 @@ export class LuisRecognizerV3 extends LuisRecognizerInternal {
         }
 
         const uri = this.buildUrl();
-        const httpOptions = this.buildRequestBody(utterance);
 
-        const data = await fetch(uri, httpOptions);
+        const httpOptions = this.buildRequestOptions(utterance);
+        if (isNodeRequestInit(httpOptions)) {
+            httpOptions.agent = this.predictionOptions.agent;
+        }
+
+        let data: NodeResponse | Response;
+        if (isNodeFetch(fetch) && isNodeRequestInit(httpOptions)) {
+            data = await fetch(uri, httpOptions);
+        } else if (isBrowserFetch(fetch) && isRequestInit(httpOptions)) {
+            data = await fetch(uri, httpOptions);
+        } else {
+            throw new Error('unreachable');
+        }
+
         const response = await data.json();
         if (response.error) {
             const errObj = response.error;
@@ -97,9 +115,6 @@ export class LuisRecognizerV3 extends LuisRecognizerInternal {
         return result;
     }
 
-    /**
-     * @private
-     */
     private buildUrl() {
         const baseUri = this.application.endpoint || 'https://westus.api.cognitive.microsoft.com';
         let uri = `${baseUri}/luis/prediction/v3.0/apps/${this.application.applicationId}`;
@@ -116,10 +131,7 @@ export class LuisRecognizerV3 extends LuisRecognizerInternal {
         return uri;
     }
 
-    /**
-     * @private
-     */
-    private buildRequestBody(utterance: string) {
+    private buildRequestOptions(utterance: string): RequestInit {
         const content = {
             query: utterance,
             options: {
@@ -149,9 +161,6 @@ export class LuisRecognizerV3 extends LuisRecognizerInternal {
         };
     }
 
-    /**
-     * @private
-     */
     private emitTraceInfo(
         context: TurnContext,
         luisResult: LuisModels.LuisResult,

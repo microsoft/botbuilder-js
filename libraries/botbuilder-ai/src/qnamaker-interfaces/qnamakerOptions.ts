@@ -6,6 +6,7 @@
  * Licensed under the MIT License.
  */
 
+import type { Agent } from 'http';
 import { JoinOperator } from './joinOperator';
 import { QnAMakerMetadata } from './qnamakerMetadata';
 import { QnARequestContext } from './qnaRequestContext';
@@ -71,4 +72,9 @@ export interface QnAMakerOptions {
      * A value indicating choice for Strict Filters Join Operation.
      */
     strictFiltersJoinOperator?: JoinOperator;
+
+    /**
+     * Optional http agent to use for outbound requests
+     */
+    agent?: Agent | ((url: URL) => Agent);
 }

@@ -12,12 +12,12 @@ import {
     FeedbackRecords,
     JoinOperator,
     QnAMakerEndpoint,
-    QnAMakerMetadata,
     QnAMakerOptions,
     QnAMakerResult,
     QnAMakerResults,
     RankerTypes,
 } from './qnamaker-interfaces';
+
 import { ActiveLearningUtils, GenerateAnswerUtils, TrainUtils } from './qnamaker-utils';
 import { QnATelemetryConstants } from './qnaTelemetryConstants';
 
@@ -83,7 +83,7 @@ export class QnAMaker implements QnAMakerTelemetryClient {
      */
     constructor(
         private readonly endpoint: QnAMakerEndpoint,
-        options: QnAMakerOptions = {} as QnAMakerOptions,
+        options: QnAMakerOptions = {},
         telemetryClient?: BotTelemetryClient,
         logPersonalInformation?: boolean
     ) {
@@ -94,8 +94,8 @@ export class QnAMaker implements QnAMakerTelemetryClient {
         const {
             scoreThreshold = 0.3,
             top = 1,
-            strictFilters = [] as QnAMakerMetadata[],
-            metadataBoost = [] as QnAMakerMetadata[],
+            strictFilters = [],
+            metadataBoost = [],
             timeout = 100000,
             rankerType = RankerTypes.default,
             strictFiltersJoinOperator = JoinOperator.AND,
@@ -109,10 +109,10 @@ export class QnAMaker implements QnAMakerTelemetryClient {
             timeout,
             rankerType,
             strictFiltersJoinOperator,
-        } as QnAMakerOptions;
+        };
 
         this.generateAnswerUtils = new GenerateAnswerUtils(this._options, this.endpoint);
-        this.trainUtils = new TrainUtils(this.endpoint);
+        this.trainUtils = new TrainUtils(this.endpoint, this._options);
 
         this._telemetryClient = telemetryClient || new NullTelemetryClient();
         this._logPersonalInformation = logPersonalInformation || false;
@@ -183,9 +183,9 @@ export class QnAMaker implements QnAMakerTelemetryClient {
             throw new TypeError('QnAMaker.getAnswers() requires a TurnContext.');
         }
 
-        const queryResult: QnAMakerResult[] = [] as QnAMakerResult[];
+        const queryResult: QnAMakerResult[] = [];
         const question: string = this.getTrimmedMessageText(context);
-        const queryOptions: QnAMakerOptions = { ...this._options, ...options } as QnAMakerOptions;
+        const queryOptions: QnAMakerOptions = { ...this._options, ...options };
 
         this.generateAnswerUtils.validateOptions(queryOptions);
 
@@ -208,7 +208,7 @@ export class QnAMaker implements QnAMakerTelemetryClient {
         await Promise.all([
             // Log telemetry
             this.onQnaResults(queryResult, context, telemetryProperties, telemetryMetrics),
-            this.generateAnswerUtils.emitTraceInfo(context, queryResult, queryOptions)
+            this.generateAnswerUtils.emitTraceInfo(context, queryResult, queryOptions),
         ]);
 
         const qnaResponse: QnAMakerResults = {
@@ -280,7 +280,7 @@ export class QnAMaker implements QnAMakerTelemetryClient {
                 .sort((a: QnAMakerResult, b: QnAMakerResult) => b.score - a.score);
         }
 
-        return [] as QnAMakerResult[];
+        return [];
     }
 
     /**
@@ -311,7 +311,7 @@ export class QnAMaker implements QnAMakerTelemetryClient {
      * This is exposed to enable better unit testing of the service.
      */
     protected async callService(endpoint: QnAMakerEndpoint, question: string, top: number): Promise<QnAMakerResults> {
-        return this.generateAnswerUtils.queryQnaServiceRaw(endpoint, question, { top } as QnAMakerOptions);
+        return this.generateAnswerUtils.queryQnaServiceRaw(endpoint, question, { top });
     }
 
     /**

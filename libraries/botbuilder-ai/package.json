@@ -30,17 +30,18 @@
     "@azure/cognitiveservices-luis-runtime": "2.0.0",
     "@azure/ms-rest-js": "1.9.1",
     "@microsoft/recognizers-text-date-time": "1.1.4",
+    "@types/node-fetch": "^2.5.7",
     "adaptive-expressions": "4.1.6",
     "botbuilder-core": "4.1.6",
     "botbuilder-dialogs": "4.1.6",
-    "node-fetch": "^2.6.0",
+    "node-fetch": "^2.6.1",
     "url-parse": "^1.4.4"
   },
   "devDependencies": {
-    "@types/node-fetch": "^2.5.7",
     "dotenv": "^8.1.0",
     "fs-extra": "^7.0.1",
-    "nock": "^11.9.1"
+    "nock": "^13.0.5",
+    "sinon": "^9.2.1"
   },
   "scripts": {
     "build": "tsc -b",
@@ -49,8 +50,9 @@
     "clean": "rimraf _ts3.4 lib tsconfig.tsbuildinfo",
     "lint": "eslint . --ext .js,.ts",
     "postbuild": "downlevel-dts lib _ts3.4/lib --checksum",
-    "test": "yarn build && nyc mocha tests/",
-    "test:compat": "api-extractor run --verbose"
+    "test": "yarn build && yarn test:mocha",
+    "test:compat": "api-extractor run --verbose",
+    "test:mocha": "nyc mocha tests --recursive"
   },
   "files": [
     "_ts3.4",

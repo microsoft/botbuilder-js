@@ -14,29 +14,14 @@ import * as Url from 'url-parse';
 import { LuisTelemetryConstants } from './luisTelemetryConstants';
 import { isLuisRecognizerOptionsV2, LuisRecognizerV2 } from './luisRecognizerOptionsV2';
 import { isLuisRecognizerOptionsV3, LuisRecognizerV3 } from './luisRecognizerOptionsV3';
+import type { Agent } from 'http';
 
-/**
- * @private
- */
 interface LuisOptions {
     Staging?: boolean;
 }
 
-/**
- * @private
- */
 interface LuisModel {
     ModelID: string;
-}
-
-/**
- * @private
- */
-interface LuisTraceInfo {
-    recognizerResult: RecognizerResult;
-    luisResult: LuisModels.LuisResult;
-    luisOptions: LuisOptions;
-    luisModel: LuisModel;
 }
 
 /**
@@ -205,6 +190,11 @@ export interface LuisRecognizerOptionsV3 extends LuisRecognizerOptions {
      * If this is specified, then the <see cref="Slot"/> is ignored..
      */
     version?: string;
+
+    /**
+     * (Optional) HTTP agent to use for outbound requests
+     */
+    agent?: Agent | ((url: URL) => Agent);
 }
 
 export interface LuisRecognizerOptionsV2 extends LuisRecognizerOptions {
