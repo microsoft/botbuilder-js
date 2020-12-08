@@ -1,8 +1,7 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-import assert from 'assert';
-import { Newable, tests } from './types';
+import { Newable } from './types';
 
 // Represents an error constructor
 export type NewableError = Newable<Error, [string]>;
@@ -18,22 +17,4 @@ export function assertCondition(condition: unknown, message: string, ctor: Newab
     if (!condition) {
         throw new ctor(message);
     }
-}
-
-/**
- * Executes `block` and ensures it throws an exception with `message`
- *
- * @param {(...args: any[]) => any} block a function that should throw
- * @param {string} message expected error message
- */
-export function throwsMessage(block: (...args: unknown[]) => unknown, message: string): void {
-    try {
-        block();
-    } catch (err) {
-        assertCondition(tests.isError(err), 'expected block to throw an Error');
-        assert.strictEqual(err.message, message);
-        return;
-    }
-
-    throw new Error('promise did not throw');
 }

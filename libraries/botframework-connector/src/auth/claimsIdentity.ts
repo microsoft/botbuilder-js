@@ -20,8 +20,9 @@ export interface Claim {
 export class ClaimsIdentity {
     /**
      * Initializes a new instance of the [ClaimsIdentity](xref:botframework-connector.ClaimsIdentity) class.
-     * @param claims An array of [Claim](xref:botframework-connector.Claim).
-     * @param authenticationType The type of auth for this set of claims, or boolean to override isAuthenticated
+     *
+     * @param {Claim[]} claims An array of [Claim](xref:botframework-connector.Claim).
+     * @param {string | boolean} authenticationType The type of auth for this set of claims, or boolean to override isAuthenticated
      */
     constructor(public readonly claims: Claim[], private readonly authenticationType?: string | boolean) {}
 
@@ -41,6 +42,6 @@ export class ClaimsIdentity {
     public getClaimValue(claimType: string): string | null {
         const claim = this.claims.find((c) => c.type === claimType);
 
-        return claim ? claim.value : null;
+        return claim?.value ?? null;
     }
 }
