@@ -39,6 +39,7 @@ export class EvaluationOptions {
     private readonly strictModeKey = '@strict';
     private readonly replaceNullKey = '@replaceNull';
     private readonly lineBreakKey = '@lineBreakStyle';
+    private readonly cacheScopeKey = '@cacheScope';
 
     public strictMode: boolean | undefined;
 
@@ -80,19 +81,26 @@ export class EvaluationOptions {
                             const index = optionStr.indexOf('=');
                             const key = optionStr.substring(0, index).trim();
                             const value = optionStr.substring(index + 1).trim();
-                            if (key === this.strictModeKey) {
+                            if (key.toLowerCase() === this.strictModeKey.toLowerCase()) {
                                 if (value.toLowerCase() === 'true') {
                                     this.strictMode = true;
                                 }
-                            } else if (key === this.replaceNullKey) {
+                            } else if (key.toLowerCase() === this.replaceNullKey.toLowerCase()) {
                                 this.nullSubstitution = (path): any =>
                                     // eslint-disable-next-line security/detect-eval-with-expression
                                     eval('`' + value.replace(this.nullKeyReplaceStrRegex, '${path}') + '`');
-                            } else if (key === this.lineBreakKey) {
+                            } else if (key.toLowerCase() === this.lineBreakKey.toLowerCase()) {
                                 this.LineBreakStyle =
                                     value.toLowerCase() === LGLineBreakStyle.Markdown.toString().toLowerCase()
                                         ? LGLineBreakStyle.Markdown
                                         : LGLineBreakStyle.Default;
+                            } else if (key.toLowerCase() === this.cacheScopeKey.toLowerCase()) {
+                                for (const scope of Object.values(LGCacheScope)) {
+                                    if (value.toLowerCase() === scope.toLowerCase()) {
+                                        this.cacheScope = scope;
+                                        break;
+                                    }
+                                }
                             }
                         }
                     }
