@@ -9,6 +9,7 @@
 // NumberRangeEntityRecognizer not implemented due to lack of supoort in @microsoft/recognizers-text-suite
 
 export * from './ageEntityRecognizer';
+export * from './channelMentionEntityRecognizer';
 export * from './confirmationEntityRecognizer';
 export * from './currencyEntityRecognizer';
 export * from './dateTimeEntityRecognizer';

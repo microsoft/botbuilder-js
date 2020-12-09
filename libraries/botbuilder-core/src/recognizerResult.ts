@@ -6,6 +6,8 @@
  * Licensed under the MIT License.
  */
 
+import { IntentScore } from './intentScore';
+
 /**
  * Value returned from a recognizer.
  */
@@ -26,7 +28,7 @@ export interface RecognizerResult {
      * @remarks
      * A map of intent names to an object with score is returned.
      */
-    intents: { [name: string]: { score: number } };
+    intents: Record<string, IntentScore>;
 
     /**
      * (Optional) entities recognized.

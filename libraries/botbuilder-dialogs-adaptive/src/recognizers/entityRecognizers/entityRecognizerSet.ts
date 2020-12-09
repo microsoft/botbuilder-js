@@ -15,6 +15,8 @@ import { TextEntity } from './textEntity';
  * EntityRecognizerSet - Implements a workflow against a pool of [EntityRecognizer](xref:botbuilder-dialogs-adaptive.EntityRecognizer) instances, iterating until nobody has anything new to add.
  */
 export class EntityRecognizerSet extends Array<EntityRecognizer> {
+    public static $kind = 'Microsoft.EntityRecognizerSet';
+
     /**
      * Implement [EntityRecognizer.recognizeEntities](xref:botbuilder-dialogs-adaptive.EntityRecognizer.recognizeEntities) by iterating against the Recognizer pool.
      * @param dialogContext [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
