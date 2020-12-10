@@ -26,6 +26,7 @@ export class ResourceExplorer {
     private _kindToType: Map<string, new () => unknown> = new Map();
     private _kindDeserializer: Map<string, CustomDeserializer<unknown, unknown>> = new Map();
     private _eventEmitter: EventEmitter = new EventEmitter();
+    private _cache = new Map<string, unknown>();
     private _typesLoaded = false;
 
     /**
@@ -191,22 +192,32 @@ export class ResourceExplorer {
             throw new Error(`Resource ${typeof resourceOrId === 'string' ? resourceOrId : resourceOrId.id} not found.`);
         }
 
-        const json = resource.readText();
-        const result = JSON.parse(json, (_key: string, value: unknown): unknown => {
-            if (typeof value !== 'object') {
-                return value;
-            }
-            if (Array.isArray(value)) {
-                return value;
-            }
-            const kind = value['$kind'];
-            if (!kind) {
-                return value;
-            }
-            return this.load(value as { $kind: string } & Record<string, unknown>);
-        }) as T;
+        if (this._cache.has(resource.id)) {
+            return this._cache.get(resource.id) as T;
+        }
 
+        const json = resource.readText();
         const config = JSON.parse(json);
+
+        const result = this.preload<T>(config.$kind, resource.id);
+
+        Object.assign(
+            result,
+            JSON.parse(json, (_key: string, value: unknown): unknown => {
+                if (typeof value !== 'object') {
+                    return value;
+                }
+                if (Array.isArray(value)) {
+                    return value;
+                }
+                const kind = value['$kind'];
+                if (!kind) {
+                    return value;
+                }
+                return this.load(value as { $kind: string } & Record<string, unknown>);
+            })
+        );
+
         if (result instanceof Dialog && !config['id']) {
             // If there is no id for the dialog, then the resource id would be used as dialog id.
             result.id = resource.id;
@@ -226,9 +237,6 @@ export class ResourceExplorer {
         }
     }
 
-    /**
-     * @private
-     */
     private load<T>(value: { $kind: string } & Record<string, unknown>): T {
         const kind = value['$kind'] as string;
         const type = this._kindToType.get(kind);
@@ -239,18 +247,23 @@ export class ResourceExplorer {
         return loader.load(value, type) as T;
     }
 
-    /**
-     * @private
-     */
+    // preload type into cache.
+    private preload<T>(kind: string, resourceId: string): T {
+        const type = this._kindToType.get(kind);
+        if (!type) {
+            throw new Error(`Type ${kind} not registered.`);
+        }
+        const result = new type();
+        this._cache.set(resourceId, result);
+        return result as T;
+    }
+
     private getComponentRegistrations(): ComponentRegistration[] {
         return ComponentRegistration.components.filter(
             (component: ComponentRegistration) => 'getDeclarativeTypes' in component
         );
     }
 
-    /**
-     * @private
-     */
     private registerTypeInternal<T, C>(
         kind: string,
         type: new (...args: unknown[]) => T,
@@ -260,9 +273,6 @@ export class ResourceExplorer {
         this._kindDeserializer.set(kind, loader || new DefaultLoader(this));
     }
 
-    /**
-     * @private
-     */
     private registerComponentTypes(): void {
         if (this._typesLoaded) {
             return;
