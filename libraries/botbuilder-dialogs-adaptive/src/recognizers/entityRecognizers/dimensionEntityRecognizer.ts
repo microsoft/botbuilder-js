@@ -24,7 +24,7 @@ export class DimensionEntityRecognizer extends TextEntityRecognizer {
      * @param culture Culture to use.
      * @returns The recognized [ModelResult](xref:botbuilder-dialogs.ModelResult) list.
      */
-    protected recognize(text: string, culture: string): ModelResult[] {
+    protected _recognize(text: string, culture: string): ModelResult[] {
         return recognizeDimension(text, culture);
     }
 }
