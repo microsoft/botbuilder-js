@@ -14,7 +14,7 @@ import { ResourceProvider, ResourceChangeEvent } from './resourceProvider';
 import { FolderResourceProvider } from './folderResourceProvider';
 import { Resource } from './resource';
 import { PathUtil } from '../pathUtil';
-import { ComponentDeclarativeTypes } from '../componentDeclarativeTypes';
+import { ComponentDeclarativeTypes, isComponentDeclarativeTypes } from '../componentDeclarativeTypes';
 import { DeclarativeType } from '../declarativeType';
 import { CustomDeserializer } from '../customDeserializer';
 import { DefaultLoader } from '../defaultLoader';
@@ -266,12 +266,9 @@ export class ResourceExplorer {
         return loader.load(value, type) as T;
     }
 
-    private getComponentRegistrations(): ComponentDeclarativeTypes[] {
-        return (
-            this._declarativeTypes ??
-            (ComponentRegistration.components.filter(
-                (component: ComponentRegistration) => 'getDeclarativeTypes' in component
-            ) as ComponentDeclarativeTypes[])
+    private getComponentRegistrations(): ComponentRegistration[] {
+        return ComponentRegistration.components.filter((component: ComponentRegistration) =>
+            isComponentDeclarativeTypes(component)
         );
     }
 
