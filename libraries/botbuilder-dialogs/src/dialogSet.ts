@@ -5,7 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { BotTelemetryClient, StatePropertyAccessor, TurnContext, StringUtils } from 'botbuilder-core';
+import { BotTelemetryClient, StatePropertyAccessor, TurnContext, StringUtils, NullTelemetryClient } from 'botbuilder-core';
 import { Dialog } from './dialog';
 import { DialogContext, DialogState } from './dialogContext';
 
@@ -127,6 +127,14 @@ export class DialogSet {
 
         // Ensure dialogs ID is unique.
         if (this.dialogs.hasOwnProperty(dialog.id)) {
+            // If we are trying to add the same exact instance, it's not a name collision.
+            // No operation required since the instance is already in the dialog set.
+            if (this.dialogs[dialog.id] === dialog) {
+                return this;
+            }
+
+            // If we are adding a new dialog with a conflicting name, add a suffix to avoid
+            // dialog name collisions.
             let nextSuffix = 2;
             while (true) {
                 const suffixId = dialog.id + nextSuffix.toString();
@@ -199,10 +207,8 @@ export class DialogSet {
      * Future dialogs added to the set will also inherit this client.
      */
     public set telemetryClient(client: BotTelemetryClient) {
-        this._telemetryClient = client;
-        for (const key in this.dialogs) {
-            this.dialogs[key].telemetryClient = this._telemetryClient;
-        }
+        this._telemetryClient = client ?? new NullTelemetryClient();
+        Object.values(this.dialogs).forEach((dialog) => (dialog.telemetryClient = this._telemetryClient));
     }
 
     /**
