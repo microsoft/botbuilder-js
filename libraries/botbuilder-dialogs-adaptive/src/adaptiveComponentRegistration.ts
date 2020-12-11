@@ -139,6 +139,7 @@ import {
 } from './input';
 import {
     AgeEntityRecognizer,
+    ChannelMentionEntityRecognizer,
     ConfirmationEntityRecognizer,
     CrossTrainedRecognizerSet,
     CrossTrainedRecognizerSetConfiguration,
@@ -146,6 +147,7 @@ import {
     DateTimeEntityRecognizer,
     DimensionEntityRecognizer,
     EmailEntityRecognizer,
+    EntityRecognizerSet,
     GuidEntityRecognizer,
     HashtagEntityRecognizer,
     IpEntityRecognizer,
@@ -291,11 +293,13 @@ export class AdaptiveComponentRegistration extends ComponentRegistration impleme
         this._addDeclarativeType<RecognizerSet, RecognizerSetConfiguration>(RecognizerSet);
         this._addDeclarativeType<RegexRecognizer, RegexRecognizerConfiguration>(RegexRecognizer);
         this._addDeclarativeType<AgeEntityRecognizer, unknown>(AgeEntityRecognizer);
+        this._addDeclarativeType<ChannelMentionEntityRecognizer, unknown>(ChannelMentionEntityRecognizer);
         this._addDeclarativeType<ConfirmationEntityRecognizer, unknown>(ConfirmationEntityRecognizer);
         this._addDeclarativeType<CurrencyEntityRecognizer, unknown>(CurrencyEntityRecognizer);
         this._addDeclarativeType<DateTimeEntityRecognizer, unknown>(DateTimeEntityRecognizer);
         this._addDeclarativeType<DimensionEntityRecognizer, unknown>(DimensionEntityRecognizer);
         this._addDeclarativeType<EmailEntityRecognizer, unknown>(EmailEntityRecognizer);
+        this._addDeclarativeType<EntityRecognizerSet, unknown>(EntityRecognizerSet);
         this._addDeclarativeType<GuidEntityRecognizer, unknown>(GuidEntityRecognizer);
         this._addDeclarativeType<HashtagEntityRecognizer, unknown>(HashtagEntityRecognizer);
         this._addDeclarativeType<IpEntityRecognizer, unknown>(IpEntityRecognizer);

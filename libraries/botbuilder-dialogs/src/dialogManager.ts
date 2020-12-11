@@ -25,6 +25,7 @@ import { DialogEvents } from './dialogEvents';
 import { DialogTurnStateConstants } from './dialogTurnStateConstants';
 import { isSkillClaim } from './prompts/skillsHelpers';
 import { isFromParentToSkill, getActiveDialogContext, shouldSendEndOfConversationToParent } from './dialogHelper';
+import { DialogContainer } from './dialogContainer';
 
 const LAST_ACCESS = '_lastAccess';
 const CONVERSATION_STATE = 'ConversationState';
@@ -109,6 +110,7 @@ export class DialogManager extends Configurable {
             this._rootDialogId = value.id;
             this.dialogs.telemetryClient = value.telemetryClient;
             this.dialogs.add(value);
+            this.registerContainerDialogs(this.rootDialog, false);
         } else {
             this._rootDialogId = undefined;
         }
@@ -332,6 +334,20 @@ export class DialogManager extends Configurable {
         }
 
         return turnResult;
+    }
+
+    // Recursively traverses the dialog tree and registers intances of `DialogContainer` in the `DialogSet`
+    // for this `DialogManager` instance.
+    private registerContainerDialogs(dialog: Dialog, registerRoot = true): void {
+        if (dialog instanceof DialogContainer) {
+            if (registerRoot) {
+                this.dialogs.add(dialog);
+            }
+
+            dialog.dialogs.getDialogs().forEach((inner) => {
+                this.registerContainerDialogs(inner);
+            });
+        }
     }
 
     /**

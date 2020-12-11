@@ -57,7 +57,7 @@ export class ReplaceDialog<O extends object = {}> extends BaseInvokeDialog<O> im
      */
     public async beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult> {
         if (this.disabled && this.disabled.getValue(dc.state)) {
-            return await dc.endDialog();
+            return dc.endDialog();
         }
 
         const dialog = this.resolveDialog(dc);
@@ -66,6 +66,6 @@ export class ReplaceDialog<O extends object = {}> extends BaseInvokeDialog<O> im
         // set the activity processed state (default is true)
         dc.state.setValue(TurnPath.activityProcessed, this.activityProcessed.getValue(dc.state));
 
-        return await dc.replaceDialog(dialog.id, boundOptions);
+        return dc.parent.replaceDialog(dialog.id, boundOptions);
     }
 }
