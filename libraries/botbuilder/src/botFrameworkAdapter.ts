@@ -1358,10 +1358,7 @@ export class BotFrameworkAdapter
                         );
                     } else {
                         responses.push(
-                            await client.conversations.sendToConversation(
-                                activity.conversation.id,
-                                activity
-                            )
+                            await client.conversations.sendToConversation(activity.conversation.id, activity)
                         );
                     }
                     break;
