@@ -74,6 +74,7 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGTempla
         this.templates = templates;
         this.templateMap = keyBy(templates, (t: Template): string => t.name);
         this.lgOptions = opt;
+        this.cacheResult.clear();
 
         // generate a new customzied expression parser by injecting the templates as functions
         this.expressionParser = new ExpressionParser(this.customizedEvaluatorLookup(expressionParser.EvaluatorLookup));

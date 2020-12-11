@@ -13,5 +13,5 @@ export * from './expressionConverter';
 export * from './intExpressionConverter';
 export * from './numberExpressionConverter';
 export * from './objectExpressionConverter';
-export * from './stringExpressionConveter';
+export * from './stringExpressionConverter';
 export * from './valueExpressionConverter';
