@@ -34,6 +34,7 @@ import {
     HealthResults,
     ActivityEventNames,
 } from 'botbuilder-core';
+
 import {
     AuthenticationConfiguration,
     AuthenticationConstants,
@@ -73,7 +74,6 @@ import {
     WebSocketServer,
 } from 'botframework-streaming';
 
-import { ConnectorClientBuilder, WebRequest, WebResponse } from './interfaces';
 import {
     defaultPipeName,
     GET,
@@ -84,8 +84,10 @@ import {
     VERSION_PATH,
 } from './streaming';
 
-import { validateAndFixActivity } from './activityValidator';
+import { ConnectorClientBuilder, WebRequest, WebResponse } from './interfaces';
+import { delay } from 'botbuilder-stdlib';
 import { userAgentPolicy } from '@azure/ms-rest-js';
+import { validateAndFixActivity } from './activityValidator';
 
 /**
  * Contains settings used to configure a [BotFrameworkAdapter](xref:botbuilder.BotFrameworkAdapter) instance.
@@ -1318,11 +1320,11 @@ export class BotFrameworkAdapter
         for (let i = 0; i < activities.length; i++) {
             const activity: Partial<Activity> = activities[i];
             switch (activity.type) {
-                case 'delay':
+                case ActivityTypes.Delay:
                     await delay(typeof activity.value === 'number' ? activity.value : 1000);
                     responses.push({} as ResourceResponse);
                     break;
-                case 'invokeResponse':
+                case ActivityTypes.InvokeResponse:
                     // Cache response to context object. This will be retrieved when turn completes.
                     context.turnState.set(INVOKE_RESPONSE_KEY, activity);
                     responses.push({} as ResourceResponse);
@@ -2030,12 +2032,6 @@ function parseRequest(req: WebRequest): Promise<Activity> {
                 }
             });
         }
-    });
-}
-
-function delay(timeout: number): Promise<void> {
-    return new Promise((resolve): void => {
-        setTimeout(resolve, timeout);
     });
 }
 

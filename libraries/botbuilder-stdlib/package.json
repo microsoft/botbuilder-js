@@ -13,6 +13,9 @@
     "type": "git",
     "url": "https://github.com/Microsoft/botbuilder-js.git"
   },
+  "devDependencies": {
+    "sinon": "^9.2.2"
+  },
   "scripts": {
     "build": "tsc -b",
     "clean": "rimraf _ts3.4 lib tsconfig.tsbuildinfo",
