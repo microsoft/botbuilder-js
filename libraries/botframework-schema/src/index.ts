@@ -1947,6 +1947,7 @@ export enum ActivityTypes {
     Suggestion = 'suggestion',
     Trace = 'trace',
     Handoff = 'handoff',
+    Delay = 'delay',
 }
 
 /**

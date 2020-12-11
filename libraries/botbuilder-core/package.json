@@ -34,7 +34,6 @@
     "uuid": "^8.3.2"
   },
   "devDependencies": {
-    "sinon": "^9.2.4",
     "unzipper": "^0.10.9"
   },
   "scripts": {

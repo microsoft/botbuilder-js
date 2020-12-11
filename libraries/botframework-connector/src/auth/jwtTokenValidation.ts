@@ -34,7 +34,7 @@ export namespace JwtTokenValidation {
      * @returns {Promise<ClaimsIdentity>} Promise with ClaimsIdentity for the request.
      */
     export async function authenticateRequest(
-        activity: Activity,
+        activity: Partial<Activity>,
         authHeader: string,
         credentials: ICredentialProvider,
         channelService: string,

@@ -34,6 +34,7 @@ import {
     HealthResults,
     ActivityEventNames,
 } from 'botbuilder-core';
+
 import {
     AuthenticationConfiguration,
     AuthenticationConstants,
@@ -73,7 +74,6 @@ import {
     WebSocketServer,
 } from 'botframework-streaming';
 
-import { ConnectorClientBuilder, WebRequest, WebResponse } from './interfaces';
 import {
     defaultPipeName,
     GET,
@@ -84,8 +84,10 @@ import {
     VERSION_PATH,
 } from './streaming';
 
-import { validateAndFixActivity } from './activityValidator';
+import { ConnectorClientBuilder, WebRequest, WebResponse } from './interfaces';
+import { delay } from 'botbuilder-stdlib';
 import { userAgentPolicy } from '@azure/ms-rest-js';
+import { validateAndFixActivity } from './activityValidator';
 
 /**
  * Contains settings used to configure a [BotFrameworkAdapter](xref:botbuilder.BotFrameworkAdapter) instance.
@@ -1200,7 +1202,7 @@ export class BotFrameworkAdapter
             if (request.deliveryMode === DeliveryModes.ExpectReplies) {
                 // Handle "expectReplies" scenarios where all the activities have been buffered and sent back at once
                 // in an invoke response.
-                let activities = context.bufferedReplyActivities as Activity[];
+                let activities = context.bufferedReplyActivities;
 
                 // If the channel is not the emulator, do not send trace activities.
                 // Fixes: https://github.com/microsoft/botbuilder-js/issues/2732
@@ -1318,11 +1320,11 @@ export class BotFrameworkAdapter
         for (let i = 0; i < activities.length; i++) {
             const activity: Partial<Activity> = activities[i];
             switch (activity.type) {
-                case 'delay':
+                case ActivityTypes.Delay:
                     await delay(typeof activity.value === 'number' ? activity.value : 1000);
                     responses.push({} as ResourceResponse);
                     break;
-                case 'invokeResponse':
+                case ActivityTypes.InvokeResponse:
                     // Cache response to context object. This will be retrieved when turn completes.
                     context.turnState.set(INVOKE_RESPONSE_KEY, activity);
                     responses.push({} as ResourceResponse);
@@ -1351,14 +1353,14 @@ export class BotFrameworkAdapter
                             await client.conversations.replyToActivity(
                                 activity.conversation.id,
                                 activity.replyToId,
-                                activity as Activity
+                                activity
                             )
                         );
                     } else {
                         responses.push(
                             await client.conversations.sendToConversation(
                                 activity.conversation.id,
-                                activity as Activity
+                                activity
                             )
                         );
                     }
@@ -1393,7 +1395,7 @@ export class BotFrameworkAdapter
         }
 
         const client = this.getOrCreateConnectorClient(context, activity.serviceUrl, this.credentials);
-        return client.conversations.updateActivity(activity.conversation.id, activity.id, activity as Activity);
+        return client.conversations.updateActivity(activity.conversation.id, activity.id, activity);
     }
 
     /**
@@ -1654,7 +1656,7 @@ export class BotFrameworkAdapter
      */
     private authenticateRequestInternal(request: Partial<Activity>, authHeader: string): Promise<ClaimsIdentity> {
         return JwtTokenValidation.authenticateRequest(
-            request as Activity,
+            request,
             authHeader,
             this.credentialsProvider,
             this.settings.channelService,
@@ -2030,12 +2032,6 @@ function parseRequest(req: WebRequest): Promise<Activity> {
                 }
             });
         }
-    });
-}
-
-function delay(timeout: number): Promise<void> {
-    return new Promise((resolve): void => {
-        setTimeout(resolve, timeout);
     });
 }
 

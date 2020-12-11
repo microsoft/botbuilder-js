@@ -32,7 +32,6 @@
     "botbuilder-core": "4.1.6"
   },
   "devDependencies": {
-    "sinon": "^9.2.0",
     "ts-essentials": "^7.0.1"
   },
   "scripts": {
