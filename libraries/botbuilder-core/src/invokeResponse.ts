@@ -6,6 +6,8 @@
  * Licensed under the MIT License.
  */
 
+import { assert, Assertion, Nil } from 'botbuilder-stdlib';
+
 /**
  * Represents a response returned by a bot when it receives an `invoke` activity.
  *
@@ -22,3 +24,16 @@ export interface InvokeResponse<T = any> {
      */
     body?: T;
 }
+
+export const makeAssertInvokeResponse = <T>(bodyAssertion: Assertion<T>): Assertion<InvokeResponse<T>> => (
+    val,
+    path
+) => {
+    assert.unsafe.castObjectAs<InvokeResponse<unknown>>(val, path);
+    assert.number(val.status, path.concat('status'));
+
+    const assertMaybeBody: Assertion<T | Nil> = assert.makeMaybe(bodyAssertion);
+    assertMaybeBody(val.body, path.concat('body'));
+};
+
+export const assertInvokeResponse = makeAssertInvokeResponse(assert.unknown);

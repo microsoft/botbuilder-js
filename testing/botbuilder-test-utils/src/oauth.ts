@@ -16,8 +16,10 @@ export function mocha(): void {
 
 export type Options = {
     accessToken: string;
+    clientId: string;
     host: string;
     path: string;
+    scope: string;
     tenant: string;
     tokenType: string;
 };
@@ -38,14 +40,29 @@ export type Result = {
 export function stub(options: Partial<Options> = {}): Result {
     const {
         accessToken = 'access_token',
+        clientId,
         host = 'https://login.microsoftonline.com',
         path = '/oauth2/token',
+        scope = undefined,
         tenant = 'botframework.com',
         tokenType = 'Bearer',
     } = options;
 
     const expectation = nock(host)
-        .post((uri) => uri.indexOf(`/${tenant}${path}`) !== -1)
+        .post(
+            (uri) => uri.indexOf(`/${tenant}${path}`) !== -1,
+            (body) => {
+                if (clientId && body.client_id !== clientId) {
+                    return false;
+                }
+
+                if (scope && body.resource !== scope) {
+                    return false;
+                }
+
+                return true;
+            }
+        )
         .reply(200, { access_token: accessToken, token_type: tokenType });
 
     const match = (scope: nock.Scope): nock.Scope => scope.matchHeader('Authorization', `${tokenType} ${accessToken}`);

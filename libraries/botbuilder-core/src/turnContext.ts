@@ -2,6 +2,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
+import { assert, Assertion } from 'botbuilder-stdlib';
 import {
     Activity,
     ActivityTypes,
@@ -130,6 +131,9 @@ export interface TurnContext {}
  * created by a [BotAdapter](xref:botbuilder-core.BotAdapter) and persists for the length of the turn.
  */
 export class TurnContext {
+    static assert: Assertion<TurnContext> = assert.instanceOf('TurnContext', TurnContext);
+    static isType = assert.toTest(TurnContext.assert);
+
     private _adapter: BotAdapter | undefined;
     private _activity: Activity | undefined;
     private _respondedRef: { responded: boolean } = { responded: false };

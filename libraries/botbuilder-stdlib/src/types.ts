@@ -325,7 +325,7 @@ function undefinedError(val: unknown, path: string[]): asserts val is UndefinedE
 }
 
 // Represents a generic function
-export type Func<T extends unknown[] = unknown[], R = unknown> = (...args: T) => R;
+export type Func<T extends unknown[] = unknown[], U = unknown> = (...args: T) => U;
 
 /**
  * Test if `val` is of type `Func`.

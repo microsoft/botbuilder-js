@@ -7,6 +7,7 @@
  */
 
 export * from './appCredentials';
+export * from './authValidator';
 export * from './authenticationConfiguration';
 export * from './authenticationConstants';
 export * from './authenticationError';
@@ -22,6 +23,7 @@ export * from './enterpriseChannelValidation';
 export * from './governmentChannelValidation';
 export * from './governmentCloudBotFrameworkAuthentication';
 export * from './governmentConstants';
+export * from './jwtTokenExtractor';
 export * from './jwtTokenValidation';
 export * from './microsoftAppCredentials';
 export * from './parameterizedBotFrameworkAuthentication';

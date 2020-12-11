@@ -33,15 +33,18 @@
     "botbuilder-stdlib": "4.1.6",
     "botframework-connector": "4.1.6",
     "botframework-streaming": "4.1.6",
+    "dayjs": "^1.10.3",
     "filenamify": "^4.1.0",
     "fs-extra": "^7.0.1",
-    "dayjs": "^1.10.3",
     "uuid": "^8.3.2"
   },
   "devDependencies": {
     "assert": "^1.4.1",
+    "botbuilder-test-utils": "0.0.0",
     "chatdown": "^1.0.2",
-    "nock": "^11.9.1"
+    "nock": "^11.9.1",
+    "sinon": "^9.2.2",
+    "supertest": "^6.1.2"
   },
   "scripts": {
     "build": "tsc -b",
@@ -50,8 +53,9 @@
     "clean": "rimraf _ts3.4 lib tsconfig.tsbuildinfo",
     "lint": "eslint . --ext .js,.ts",
     "postbuild": "downlevel-dts lib _ts3.4/lib --checksum",
-    "test": "yarn build && nyc mocha --recursive \"tests/**/*.test.js\"",
-    "test:compat": "api-extractor run --verbose"
+    "test": "npm-run-all build test:mocha",
+    "test:compat": "api-extractor run --verbose",
+    "test:mocha": "nyc mocha tests"
   },
   "files": [
     "_ts3.4",

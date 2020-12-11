@@ -16,7 +16,8 @@ export class GovernmentCloudBotFrameworkAuthentication extends ParameterizedBotF
     constructor(
         credentialFactory: ServiceClientCredentialsFactory,
         authConfiguration: AuthenticationConfiguration,
-        verifyOptions?: Partial<VerifyOptions>
+        verifyOptions?: Partial<VerifyOptions>,
+        openIdMetadataUrl?: string
     ) {
         const authValidator = makeAuthValidator(
             Object.assign(
@@ -24,7 +25,7 @@ export class GovernmentCloudBotFrameworkAuthentication extends ParameterizedBotF
                 GovernmentChannelValidation.ToBotFromGovernmentChannelTokenValidationParameters,
                 verifyOptions
             ),
-            GovernmentConstants.ToBotFromChannelOpenIdMetadataUrl, // TODO: configurable
+            openIdMetadataUrl ?? GovernmentConstants.ToBotFromChannelOpenIdMetadataUrl,
             async (credentials, identity) => {
                 await GovernmentChannelValidation.validateIdentity(identity, credentials);
             }

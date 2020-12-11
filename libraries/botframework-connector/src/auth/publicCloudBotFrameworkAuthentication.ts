@@ -16,11 +16,12 @@ export class PublicCloudBotFrameworkAuthentication extends ParameterizedBotFrame
     constructor(
         credentialFactory: ServiceClientCredentialsFactory,
         authConfiguration: AuthenticationConfiguration,
-        verifyOptions?: Partial<VerifyOptions>
+        verifyOptions?: Partial<VerifyOptions>,
+        openIdMetadataUrl?: string
     ) {
         const authValidator = makeAuthValidator(
             Object.assign({}, ChannelValidation.ToBotFromChannelTokenValidationParameters, verifyOptions),
-            AuthenticationConstants.ToBotFromChannelOpenIdMetadataUrl, // TODO: configurable
+            openIdMetadataUrl ?? AuthenticationConstants.ToBotFromChannelOpenIdMetadataUrl,
             async (credentials, identity) => {
                 await ChannelValidation.validateIdentity(identity, credentials);
             }

@@ -15,7 +15,6 @@ const {
     GovernmentConstants,
     PasswordServiceClientCredentialFactory,
     PublicCloudBotFrameworkAuthentication,
-    UnauthorizedAccessError,
 } = require('../..');
 
 describe('ParameterizedBotFrameworkAuthentication', () => {
