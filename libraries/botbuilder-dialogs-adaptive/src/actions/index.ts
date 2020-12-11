@@ -42,4 +42,5 @@ export * from './signOutUser';
 export * from './switchCondition';
 export * from './telemetryTrackEventAction';
 export * from './traceActivity';
+export * from './throwException';
 export * from './updateActivity';
