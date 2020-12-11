@@ -6,7 +6,6 @@
  * Licensed under the MIT License.
  */
 
-import { ComponentRegistration } from 'botbuilder-core';
 import { tests } from 'botbuilder-stdlib';
 import { DeclarativeType } from './declarativeType';
 import { ResourceExplorer } from './resources';
@@ -25,6 +24,6 @@ export interface ComponentDeclarativeTypes {
  * @param {ComponentRegistration} component The component registration.
  * @returns {boolean} Type check result.
  */
-export function isComponentDeclarativeTypes(component: ComponentRegistration): component is ComponentDeclarativeTypes {
-    return tests.isObject(component) && tests.isFunc(component['getDeclarativeTypes']);
+export function isComponentDeclarativeTypes(component: any): component is ComponentDeclarativeTypes {
+    return tests.isObject(component) && tests.isFunc(component.getDeclarativeTypes);
 }
