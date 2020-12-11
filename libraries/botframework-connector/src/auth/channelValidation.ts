@@ -6,14 +6,57 @@
  * Licensed under the MIT License.
  */
 
-import { VerifyOptions } from 'jsonwebtoken';
-import { AuthenticationConstants } from './authenticationConstants';
+/* eslint-disable @typescript-eslint/no-namespace */
+
+import { AuthValidator, IdentityValidator, makeAuthValidator } from './authValidator';
 import { AuthenticationConfiguration } from './authenticationConfiguration';
+import { AuthenticationConstants } from './authenticationConstants';
+import { AuthenticationError } from './authenticationError';
 import { ClaimsIdentity } from './claimsIdentity';
 import { ICredentialProvider } from './credentialProvider';
-import { JwtTokenExtractor } from './jwtTokenExtractor';
-import { AuthenticationError } from './authenticationError';
 import { StatusCodes } from 'botframework-schema';
+import { VerifyOptions } from 'jsonwebtoken';
+
+const validateClaimsIdentity: IdentityValidator = async (credentials, identity) => {
+    // Now check that the AppID in the claimset matches
+    // what we're looking for. Note that in a multi-tenant bot, this value
+    // comes from developer code that may be reaching out to a service, hence the
+    // Async validation.
+
+    // Look for the "aud" claim, but only if issued from the Bot Framework
+    if (
+        identity.getClaimValue(AuthenticationConstants.IssuerClaim) !==
+        AuthenticationConstants.ToBotFromChannelTokenIssuer
+    ) {
+        // The relevant Audiance Claim MUST be present. Not Authorized.
+        throw new AuthenticationError('Unauthorized. Issuer Claim MUST be present.', StatusCodes.UNAUTHORIZED);
+    }
+
+    // The AppId from the claim in the token must match the AppId specified by the developer.
+    // In this case, the token is destined for the app, so we find the app ID in the audience claim.
+    const audClaim: string = identity.getClaimValue(AuthenticationConstants.AudienceClaim);
+    if (!(await credentials.isValidAppId(audClaim || ''))) {
+        // The AppId is not valid or not present. Not Authorized.
+        throw new AuthenticationError(
+            `Unauthorized. Invalid AppId passed on token: ${audClaim}`,
+            StatusCodes.UNAUTHORIZED
+        );
+    }
+};
+
+/**
+ * Construct a channel auth validator using a specific open ID metadata url
+ *
+ * @param {string} openIdMetadataUrl url to fetch open ID metadata
+ * @returns {AuthValidator} a channel auth validator
+ */
+export function makeChannelAuthValidator(openIdMetadataUrl: string): AuthValidator {
+    return makeAuthValidator(
+        ChannelValidation.ToBotFromChannelTokenValidationParameters,
+        openIdMetadataUrl,
+        validateClaimsIdentity
+    );
+}
 
 export namespace ChannelValidation {
     export let OpenIdMetadataEndpoint: string;
@@ -71,19 +114,11 @@ export namespace ChannelValidation {
         channelId: string,
         authConfig: AuthenticationConfiguration = new AuthenticationConfiguration()
     ): Promise<ClaimsIdentity> {
-        const tokenExtractor: JwtTokenExtractor = new JwtTokenExtractor(
-            ToBotFromChannelTokenValidationParameters,
-            OpenIdMetadataEndpoint ? OpenIdMetadataEndpoint : AuthenticationConstants.ToBotFromChannelOpenIdMetadataUrl,
-            AuthenticationConstants.AllowedSigningAlgorithms
+        const validateAuth = makeChannelAuthValidator(
+            OpenIdMetadataEndpoint ?? AuthenticationConstants.ToBotFromChannelOpenIdMetadataUrl
         );
 
-        const identity: ClaimsIdentity = await tokenExtractor.getIdentityFromAuthHeader(
-            authHeader,
-            channelId,
-            authConfig.requiredEndorsements
-        );
-
-        return await validateIdentity(identity, credentials);
+        return validateAuth(credentials, authConfig, authHeader, { channelId });
     }
 
     /**
@@ -101,30 +136,7 @@ export namespace ChannelValidation {
             throw new AuthenticationError('Unauthorized. Is not authenticated', StatusCodes.UNAUTHORIZED);
         }
 
-        // Now check that the AppID in the claimset matches
-        // what we're looking for. Note that in a multi-tenant bot, this value
-        // comes from developer code that may be reaching out to a service, hence the
-        // Async validation.
-
-        // Look for the "aud" claim, but only if issued from the Bot Framework
-        if (
-            identity.getClaimValue(AuthenticationConstants.IssuerClaim) !==
-            AuthenticationConstants.ToBotFromChannelTokenIssuer
-        ) {
-            // The relevant Audiance Claim MUST be present. Not Authorized.
-            throw new AuthenticationError('Unauthorized. Issuer Claim MUST be present.', StatusCodes.UNAUTHORIZED);
-        }
-
-        // The AppId from the claim in the token must match the AppId specified by the developer.
-        // In this case, the token is destined for the app, so we find the app ID in the audience claim.
-        const audClaim: string = identity.getClaimValue(AuthenticationConstants.AudienceClaim);
-        if (!(await credentials.isValidAppId(audClaim || ''))) {
-            // The AppId is not valid or not present. Not Authorized.
-            throw new AuthenticationError(
-                `Unauthorized. Invalid AppId passed on token: ${audClaim}`,
-                StatusCodes.UNAUTHORIZED
-            );
-        }
+        await validateClaimsIdentity(credentials, identity, {});
 
         return identity;
     }

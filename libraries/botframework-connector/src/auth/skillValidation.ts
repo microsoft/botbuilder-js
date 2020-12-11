@@ -8,13 +8,13 @@
 
 /* eslint-disable @typescript-eslint/no-namespace */
 
+import { AuthValidator, IdentityValidator, makeAuthValidator } from './authValidator';
 import { AuthenticationConfiguration } from './authenticationConfiguration';
 import { AuthenticationConstants } from './authenticationConstants';
 import { AuthenticationError } from './authenticationError';
 import { Claim, ClaimsIdentity } from './claimsIdentity';
 import { GovernmentConstants } from './governmentConstants';
 import { ICredentialProvider } from './credentialProvider';
-import { JwtTokenExtractor } from './jwtTokenExtractor';
 import { JwtTokenValidation } from './jwtTokenValidation';
 import { StatusCodes } from 'botframework-schema';
 import { decode, VerifyOptions } from 'jsonwebtoken';
@@ -38,6 +38,64 @@ const verifyOptions: VerifyOptions = {
     clockTolerance: 5 * 60,
     ignoreExpiration: false,
 };
+
+const validateClaimsIdentity: IdentityValidator = async (credentials, identity) => {
+    const versionClaim = identity.getClaimValue(AuthenticationConstants.VersionClaim);
+    if (!versionClaim) {
+        // No version claim
+        throw new AuthenticationError(
+            `SkillValidation.validateIdentity(): '${AuthenticationConstants.VersionClaim}' claim is required on skill Tokens.`,
+            StatusCodes.UNAUTHORIZED
+        );
+    }
+
+    // Look for the "aud" claim, but only if issued from the Bot Framework
+    const audienceClaim = identity.getClaimValue(AuthenticationConstants.AudienceClaim);
+    if (!audienceClaim) {
+        // Claim is not present or doesn't have a value. Not Authorized.
+        throw new AuthenticationError(
+            `SkillValidation.validateIdentity(): '${AuthenticationConstants.AudienceClaim}' claim is required on skill Tokens.`,
+            StatusCodes.UNAUTHORIZED
+        );
+    }
+
+    if (!(await credentials.isValidAppId(audienceClaim))) {
+        // The AppId is not valid. Not Authorized.
+        throw new AuthenticationError(
+            'SkillValidation.validateIdentity(): Invalid audience.',
+            StatusCodes.UNAUTHORIZED
+        );
+    }
+
+    const appId = JwtTokenValidation.getAppIdFromClaims(identity.claims);
+    if (!appId) {
+        // Invalid appId
+        throw new AuthenticationError('SkillValidation.validateIdentity(): Invalid appId.', StatusCodes.UNAUTHORIZED);
+    }
+
+    // TODO: check the appId against the registered skill client IDs.
+    // Check the AppId and ensure that only works against my whitelist authConfig can have info on how to get the
+    // whitelist AuthenticationConfiguration
+    // We may need to add a ClaimsIdentityValidator delegate or class that allows the dev to inject a custom validator.
+};
+
+/**
+ * Construct a skill auth validator using a specific open ID metadata url
+ *
+ * @param {string} openIdMetadataUrl url to fetch open ID metadata
+ * @returns {AuthValidator} a skill auth validator
+ */
+export function makeSkillAuthValidator(openIdMetadataUrl: string): AuthValidator {
+    return makeAuthValidator(verifyOptions, openIdMetadataUrl, validateClaimsIdentity);
+}
+
+export const governmentSkillAuthValidator = makeSkillAuthValidator(
+    GovernmentConstants.ToBotFromEmulatorOpenIdMetadataUrl
+);
+
+export const emulatorSkillAuthValidator = makeSkillAuthValidator(
+    AuthenticationConstants.ToBotFromEmulatorOpenIdMetadataUrl
+);
 
 /**
  * Validates JWT tokens sent to and from a Skill.
@@ -145,27 +203,11 @@ export namespace SkillValidation {
             );
         }
 
-        const openIdMetadataUrl = JwtTokenValidation.isGovernment(channelService)
-            ? GovernmentConstants.ToBotFromEmulatorOpenIdMetadataUrl
-            : AuthenticationConstants.ToBotFromEmulatorOpenIdMetadataUrl;
-
-        const tokenExtractor = new JwtTokenExtractor(
-            verifyOptions,
-            openIdMetadataUrl,
-            AuthenticationConstants.AllowedSigningAlgorithms
-        );
-
-        const parts: string[] = authHeader.split(' ');
-        const identity = await tokenExtractor.getIdentity(
-            parts[0],
-            parts[1],
-            channelId,
-            authConfig.requiredEndorsements
-        );
-
-        await validateIdentity(identity, credentials);
-
-        return identity;
+        if (JwtTokenValidation.isGovernment(channelService)) {
+            return governmentSkillAuthValidator(credentials, authConfig, authHeader, { channelId });
+        } else {
+            return emulatorSkillAuthValidator(credentials, authConfig, authHeader, { channelId });
+        }
     }
 
     /**
@@ -191,51 +233,13 @@ export namespace SkillValidation {
             );
         }
 
-        const versionClaim = identity.getClaimValue(AuthenticationConstants.VersionClaim);
-        // const versionClaim = identity.claims.FirstOrDefault(c => c.Type == AuthenticationConstants.VersionClaim);
-        if (!versionClaim) {
-            // No version claim
-            throw new AuthenticationError(
-                `SkillValidation.validateIdentity(): '${AuthenticationConstants.VersionClaim}' claim is required on skill Tokens.`,
-                StatusCodes.UNAUTHORIZED
-            );
-        }
-
-        // Look for the "aud" claim, but only if issued from the Bot Framework
-        const audienceClaim = identity.getClaimValue(AuthenticationConstants.AudienceClaim);
-        if (!audienceClaim) {
-            // Claim is not present or doesn't have a value. Not Authorized.
-            throw new AuthenticationError(
-                `SkillValidation.validateIdentity(): '${AuthenticationConstants.AudienceClaim}' claim is required on skill Tokens.`,
-                StatusCodes.UNAUTHORIZED
-            );
-        }
-
-        if (!(await credentials.isValidAppId(audienceClaim))) {
-            // The AppId is not valid. Not Authorized.
-            throw new AuthenticationError(
-                'SkillValidation.validateIdentity(): Invalid audience.',
-                StatusCodes.UNAUTHORIZED
-            );
-        }
-
-        const appId = JwtTokenValidation.getAppIdFromClaims(identity.claims);
-        if (!appId) {
-            // Invalid appId
-            throw new AuthenticationError(
-                'SkillValidation.validateIdentity(): Invalid appId.',
-                StatusCodes.UNAUTHORIZED
-            );
-        }
-
-        // TODO: check the appId against the registered skill client IDs.
-        // Check the AppId and ensure that only works against my whitelist authConfig can have info on how to get the
-        // whitelist AuthenticationConfiguration
-        // We may need to add a ClaimsIdentityValidator delegate or class that allows the dev to inject a custom validator.
+        await validateClaimsIdentity(credentials, identity, {});
     }
 
     /**
      * Creates a set of claims that represent an anonymous skill. Useful for testing bots locally in the emulator
+     *
+     * @returns {ClaimsIdentity} the claims
      */
     export function createAnonymousSkillClaim(): ClaimsIdentity {
         return new ClaimsIdentity(

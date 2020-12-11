@@ -23,6 +23,7 @@ function isErrorResponse(value: unknown): value is adal.ErrorResponse {
  * MicrosoftAppCredentials auth implementation
  */
 export class MicrosoftAppCredentials extends AppCredentials {
+    static Empty = new MicrosoftAppCredentials(undefined, undefined);
 
     /**
      * Initializes a new instance of the [MicrosoftAppCredentials](xref:botframework-connector.MicrosoftAppCredentials) class.

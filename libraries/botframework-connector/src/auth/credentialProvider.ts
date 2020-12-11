@@ -6,6 +6,8 @@
  * Licensed under the MIT License.
  */
 
+import { ServiceClientCredentialsFactory } from './serviceClientCredentialsFactory';
+
 /**
  * CredentialProvider interface. This interface allows Bots to provide their own
  * implementation of what is, and what is not, a valid appId and password. This is
@@ -106,5 +108,38 @@ export class SimpleCredentialProvider implements ICredentialProvider {
      */
     public isAuthenticationDisabled(): Promise<boolean> {
         return Promise.resolve(!this.appId);
+    }
+}
+
+// Delegate credential provider implementation to a credential factory.
+export class DelegatingCredentialProvider implements ICredentialProvider {
+    constructor(private readonly credentialFactory: ServiceClientCredentialsFactory) {}
+
+    /**
+     * Not implemented for this provider.
+     *
+     * @returns {Promise<string>} a promise that resolves to an app password
+     */
+    async getAppPassword(): Promise<string> {
+        return Promise.reject(new Error('Method not implemented.'));
+    }
+
+    /**
+     * Check if an app ID is valid.
+     *
+     * @param {string} appId the app ID to check
+     * @returns {Promise<boolean>} a promise that resolves to true if the app ID is valid
+     */
+    isValidAppId(appId: string): Promise<boolean> {
+        return this.credentialFactory.isValidAppId(appId);
+    }
+
+    /**
+     * Check if authentication is disabled.
+     *
+     * @returns {Promise<boolean>} a promise that resolves to true if authentication is disabled
+     */
+    isAuthenticationDisabled(): Promise<boolean> {
+        return this.credentialFactory.isAuthenticationDisabled();
     }
 }

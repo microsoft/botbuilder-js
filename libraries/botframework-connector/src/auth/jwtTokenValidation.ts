@@ -7,18 +7,17 @@
  */
 
 import { Activity, Channels, RoleTypes, StatusCodes } from 'botframework-schema';
-
 import { AppCredentials } from './appCredentials';
-import { AuthenticationError } from './authenticationError';
 import { AuthenticationConfiguration } from './authenticationConfiguration';
 import { AuthenticationConstants } from './authenticationConstants';
+import { AuthenticationError } from './authenticationError';
 import { ChannelValidation } from './channelValidation';
 import { Claim, ClaimsIdentity } from './claimsIdentity';
-import { ICredentialProvider } from './credentialProvider';
 import { EmulatorValidation } from './emulatorValidation';
 import { EnterpriseChannelValidation } from './enterpriseChannelValidation';
 import { GovernmentChannelValidation } from './governmentChannelValidation';
 import { GovernmentConstants } from './governmentConstants';
+import { ICredentialProvider } from './credentialProvider';
 import { SkillValidation } from './skillValidation';
 
 // eslint-disable-next-line @typescript-eslint/no-namespace
@@ -34,7 +33,7 @@ export namespace JwtTokenValidation {
      * @returns {Promise<ClaimsIdentity>} Promise with ClaimsIdentity for the request.
      */
     export async function authenticateRequest(
-        activity: Activity,
+        activity: Partial<Activity>,
         authHeader: string,
         credentials: ICredentialProvider,
         channelService: string,
@@ -117,100 +116,12 @@ export namespace JwtTokenValidation {
         return identity;
     }
 
-    // eslint-disable-next-line no-inner-declarations
-    async function authenticateToken(
-        authHeader: string,
-        credentials: ICredentialProvider,
-        channelService: string,
-        channelId: string,
-        authConfig: AuthenticationConfiguration,
-        serviceUrl: string
-    ): Promise<ClaimsIdentity> {
-        if (SkillValidation.isSkillToken(authHeader)) {
-            return await SkillValidation.authenticateChannelToken(
-                authHeader,
-                credentials,
-                channelService,
-                channelId,
-                authConfig
-            );
-        }
-
-        const usingEmulator = EmulatorValidation.isTokenFromEmulator(authHeader);
-
-        if (usingEmulator) {
-            return await EmulatorValidation.authenticateEmulatorToken(
-                authHeader,
-                credentials,
-                channelService,
-                channelId
-            );
-        }
-
-        if (isPublicAzure(channelService)) {
-            if (serviceUrl.trim()) {
-                return await ChannelValidation.authenticateChannelTokenWithServiceUrl(
-                    authHeader,
-                    credentials,
-                    serviceUrl,
-                    channelId
-                );
-            }
-
-            return await ChannelValidation.authenticateChannelToken(authHeader, credentials, channelId);
-        }
-
-        if (isGovernment(channelService)) {
-            if (serviceUrl.trim()) {
-                return await GovernmentChannelValidation.authenticateChannelTokenWithServiceUrl(
-                    authHeader,
-                    credentials,
-                    serviceUrl,
-                    channelId
-                );
-            }
-
-            return await GovernmentChannelValidation.authenticateChannelToken(authHeader, credentials, channelId);
-        }
-
-        // Otherwise use Enterprise Channel Validation
-        if (serviceUrl.trim()) {
-            return await EnterpriseChannelValidation.authenticateChannelTokenWithServiceUrl(
-                authHeader,
-                credentials,
-                serviceUrl,
-                channelId,
-                channelService
-            );
-        }
-
-        return await EnterpriseChannelValidation.authenticateChannelToken(
-            authHeader,
-            credentials,
-            channelId,
-            channelService
-        );
-    }
-
     /**
      * Validates the identity claims against the ClaimsValidator in AuthenticationConfiguration if present.
      *
      * @param authConfig
      * @param claims The list of claims to validate.
      */
-    // eslint-disable-next-line no-inner-declarations
-    async function validateClaims(authConfig: AuthenticationConfiguration, claims: Claim[] = []): Promise<void> {
-        if (authConfig.validateClaims) {
-            // Call the validation method if defined (it should throw an exception if the validation fails)
-            await authConfig.validateClaims(claims);
-        } else if (SkillValidation.isSkillClaim(claims)) {
-            // Skill claims must be validated using AuthenticationConfiguration validateClaims
-            throw new AuthenticationError(
-                'Unauthorized Access. Request is not authorized. Skill Claims require validation.',
-                StatusCodes.UNAUTHORIZED
-            );
-        }
-    }
 
     /**
      * Gets the AppId from a claims list.
@@ -258,11 +169,6 @@ export namespace JwtTokenValidation {
         return appId;
     }
 
-    // eslint-disable-next-line no-inner-declarations
-    function isPublicAzure(channelService: string): boolean {
-        return !channelService || channelService.length === 0;
-    }
-
     /**
      * Determine whether or not a channel service is government
      *
@@ -302,4 +208,90 @@ export namespace JwtTokenValidation {
 
         return true;
     }
+}
+
+async function authenticateToken(
+    authHeader: string,
+    credentials: ICredentialProvider,
+    channelService: string,
+    channelId: string,
+    authConfig: AuthenticationConfiguration,
+    serviceUrl: string
+): Promise<ClaimsIdentity> {
+    if (SkillValidation.isSkillToken(authHeader)) {
+        return await SkillValidation.authenticateChannelToken(
+            authHeader,
+            credentials,
+            channelService,
+            channelId,
+            authConfig
+        );
+    }
+
+    const usingEmulator = EmulatorValidation.isTokenFromEmulator(authHeader);
+
+    if (usingEmulator) {
+        return await EmulatorValidation.authenticateEmulatorToken(authHeader, credentials, channelService, channelId);
+    }
+
+    if (isPublicAzure(channelService)) {
+        if (serviceUrl.trim()) {
+            return await ChannelValidation.authenticateChannelTokenWithServiceUrl(
+                authHeader,
+                credentials,
+                serviceUrl,
+                channelId
+            );
+        }
+
+        return await ChannelValidation.authenticateChannelToken(authHeader, credentials, channelId);
+    }
+
+    if (JwtTokenValidation.isGovernment(channelService)) {
+        if (serviceUrl.trim()) {
+            return await GovernmentChannelValidation.authenticateChannelTokenWithServiceUrl(
+                authHeader,
+                credentials,
+                serviceUrl,
+                channelId
+            );
+        }
+
+        return await GovernmentChannelValidation.authenticateChannelToken(authHeader, credentials, channelId);
+    }
+
+    // Otherwise use Enterprise Channel Validation
+    if (serviceUrl.trim()) {
+        return await EnterpriseChannelValidation.authenticateChannelTokenWithServiceUrl(
+            authHeader,
+            credentials,
+            serviceUrl,
+            channelId,
+            channelService
+        );
+    }
+
+    return await EnterpriseChannelValidation.authenticateChannelToken(
+        authHeader,
+        credentials,
+        channelId,
+        channelService
+    );
+}
+
+async function validateClaims(authConfig: AuthenticationConfiguration, claims: Claim[] = []): Promise<void> {
+    if (authConfig.validateClaims) {
+        // Call the validation method if defined (it should throw an exception if the validation fails)
+        await authConfig.validateClaims(claims);
+    } else if (SkillValidation.isSkillClaim(claims)) {
+        // Skill claims must be validated using AuthenticationConfiguration validateClaims
+        throw new AuthenticationError(
+            'Unauthorized Access. Request is not authorized. Skill Claims require validation.',
+            StatusCodes.UNAUTHORIZED
+        );
+    }
+}
+
+function isPublicAzure(channelService: string): boolean {
+    return !channelService || channelService.length === 0;
 }

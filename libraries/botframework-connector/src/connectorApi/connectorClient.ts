@@ -7,9 +7,12 @@ import * as Mappers from './models/mappers';
 import * as Models from './models';
 import * as msRest from '@azure/ms-rest-js';
 import * as operations from './operations';
+import { assert, Assertion } from 'botbuilder-stdlib';
 import { ConnectorClientContext } from './connectorClientContext';
 
 class ConnectorClient extends ConnectorClientContext {
+    static assert: Assertion<ConnectorClient> = assert.instanceOf('ConnectorClient', ConnectorClient);
+    static isType = assert.toTest(ConnectorClient.assert);
 
     // Operation groups
     attachments: operations.Attachments;

@@ -6,6 +6,8 @@
  * Licensed under the MIT License.
  */
 
+import { assert, Assertion } from 'botbuilder-stdlib';
+
 /**
  * Represents a claim.
  */
@@ -18,6 +20,9 @@ export interface Claim {
  * Represents a claims-based identity.
  */
 export class ClaimsIdentity {
+    static assert: Assertion<ClaimsIdentity> = assert.instanceOf('ClaimsIdentity', ClaimsIdentity);
+    static isType = assert.toTest(ClaimsIdentity.assert);
+
     /**
      * Initializes a new instance of the [ClaimsIdentity](xref:botframework-connector.ClaimsIdentity) class.
      *
