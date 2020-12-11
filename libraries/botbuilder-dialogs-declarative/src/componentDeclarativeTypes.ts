@@ -25,5 +25,5 @@ export interface ComponentDeclarativeTypes {
  * @returns {boolean} Type check result.
  */
 export function isComponentDeclarativeTypes(component: any): component is ComponentDeclarativeTypes {
-    return tests.isObject(component) && tests.isFunc(component.getDeclarativeTypes);
+    return tests.isObject(component) && tests.isFunc(component['getDeclarativeTypes']);
 }
