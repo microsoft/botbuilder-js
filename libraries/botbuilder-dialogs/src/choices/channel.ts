@@ -46,6 +46,7 @@ export function supportsCardActions(channelId: string, buttonCnt = 100): boolean
         case Channels.Line:
             return buttonCnt <= 99;
         case Channels.Slack:
+        case Channels.Telegram:
         case Channels.Emulator:
         case Channels.Directline:
         case Channels.DirectlineSpeech:
