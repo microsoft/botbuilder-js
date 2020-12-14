@@ -576,7 +576,7 @@ const testCases = [
             ['addToTime(\'2018-01-01T08:00:00.000Z\', 1, \'Day\')', '2018-01-02T08:00:00.000Z'],
             ['addToTime(\'2018-01-01T08:00:00.000Z\', sub(3,1), \'Week\')', '2018-01-15T08:00:00.000Z'],
             ['addToTime(\'2018-01-01T08:00:00.000Z\', 1, \'Month\', \'MM-DD-YY\')', '02-01-18'],
-            ['convertFromUTC(\'2018-02-02T02:00:00.000Z\', \'Pacific Standard Time\')', '2018-02-01T18:00:00.000-08:00'],
+            ['convertFromUTC(\'2018-02-02T02:00:00.000Z\', \'Pacific Standard Time\')', '2018-02-01T18:00:00.0000000'],
             ['convertFromUTC(\'2018-02-02T02:00:00.000Z\', \'Pacific Standard Time\', \'MM-DD-YY\')', '02-01-18'],
             ['convertToUTC(\'2018-01-01T18:00:00.000\', \'Pacific Standard Time\')', '2018-01-02T02:00:00.000Z'],
             ['convertToUTC(\'2018-01-01T18:00:00.000\', \'Pacific Standard Time\', \'MM-DD-YY\')', '01-02-18'],
