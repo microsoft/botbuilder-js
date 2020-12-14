@@ -339,15 +339,20 @@ export class DialogManager extends Configurable {
     // Recursively traverses the dialog tree and registers intances of `DialogContainer` in the `DialogSet`
     // for this `DialogManager` instance.
     private registerContainerDialogs(dialog: Dialog, registerRoot = true): void {
-        if (dialog instanceof DialogContainer) {
-            if (registerRoot) {
-                this.dialogs.add(dialog);
-            }
-
-            dialog.dialogs.getDialogs().forEach((inner) => {
-                this.registerContainerDialogs(inner);
-            });
+        if (!(dialog instanceof DialogContainer)) {
+            return;
         }
+        const container = dialog;
+        if (registerRoot) {
+            if (this.dialogs.getDialogs().find((dlg) => dlg === container)) {
+                return;
+            }
+            this.dialogs.add(container);
+        }
+
+        container.dialogs.getDialogs().forEach((inner) => {
+            this.registerContainerDialogs(inner);
+        });
     }
 
     /**
