@@ -3,7 +3,8 @@
   "compilerOptions": {
     "tsBuildInfoFile": "tsconfig.tsbuildinfo",
     "rootDir": ".",
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "outDir": "../lib"
   },
   "include": [
     "**/*.test.ts"
