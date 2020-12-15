@@ -29,4 +29,3 @@ export * from './skillExtensions';
 export * from './telemetryExtensions';
 export * from './templates';
 export * from './triggerSelector';
-export * from './dynamicBeginDialogDeserializer';
