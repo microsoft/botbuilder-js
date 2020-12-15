@@ -9,6 +9,7 @@ const {
     SkillConversationReferenceKey,
     TestAdapter,
     UserState,
+    useBotState,
 } = require('botbuilder-core');
 const {
     ComponentDialog,
@@ -17,10 +18,10 @@ const {
     WaterfallDialog,
     DialogManager,
     DialogTurnStatus,
-    DialogEvents
+    DialogEvents,
 } = require('../');
 const { AuthConstants } = require('../lib/prompts/skillsHelpers');
-const { assert } = require('console');
+const { AdaptiveDialog, OnBeginDialog, SendActivity } = require('../../botbuilder-dialogs-adaptive/lib');
 
 const FlowTestCase = {
     RootBotOnly: 'RootBotOnly',
@@ -68,7 +69,7 @@ function createTestFlow(dialog, testCase = FlowTestCase.RootBotOnly, enabledTrac
         conversation: {
             isGroup: false,
             conversationType: conversationId,
-            id: conversationId
+            id: conversationId,
         },
     };
 
@@ -76,41 +77,47 @@ function createTestFlow(dialog, testCase = FlowTestCase.RootBotOnly, enabledTrac
     dm.userState = userState;
     dm.conversationState = convoState;
 
-    const adapter = new TestAdapter(async (context) => {
-        if (testCase !== FlowTestCase.RootBotOnly) {
-            // Create a skill ClaimsIdentity and put it in turnState so isSkillClaim() returns true.
-            const claimsIdentity = new ClaimsIdentity();
-            claimsIdentity.addClaim({ type: 'ver', value: '2.0' }); // AuthenticationConstants.VersionClaim
-            claimsIdentity.addClaim({ type: 'aud', value: SKILL_BOT_ID }); // AuthenticationConstants.AudienceClaim
-            claimsIdentity.addClaim({ type: 'azp', value: PARENT_BOT_ID }); // AuthenticationConstants.AuthorizedParty
-            context.turnState.set(context.adapter.BotIdentityKey, claimsIdentity);
+    const adapter = new TestAdapter(
+        async (context) => {
+            if (testCase !== FlowTestCase.RootBotOnly) {
+                // Create a skill ClaimsIdentity and put it in turnState so isSkillClaim() returns true.
+                const claimsIdentity = new ClaimsIdentity();
+                claimsIdentity.addClaim({ type: 'ver', value: '2.0' }); // AuthenticationConstants.VersionClaim
+                claimsIdentity.addClaim({ type: 'aud', value: SKILL_BOT_ID }); // AuthenticationConstants.AudienceClaim
+                claimsIdentity.addClaim({ type: 'azp', value: PARENT_BOT_ID }); // AuthenticationConstants.AuthorizedParty
+                context.turnState.set(context.adapter.BotIdentityKey, claimsIdentity);
 
-            if (testCase === FlowTestCase.RootBotConsumingSkill) {
-                // Simulate the SkillConversationReference with a channel OAuthScope stored in turnState.
-                // This emulates a response coming to a root bot through SkillHandler. 
-                context.turnState.set(SkillConversationReferenceKey, { oAuthScope: AuthConstants.ToBotFromChannelTokenIssuer });
-            }
+                if (testCase === FlowTestCase.RootBotConsumingSkill) {
+                    // Simulate the SkillConversationReference with a channel OAuthScope stored in turnState.
+                    // This emulates a response coming to a root bot through SkillHandler.
+                    context.turnState.set(SkillConversationReferenceKey, {
+                        oAuthScope: AuthConstants.ToBotFromChannelTokenIssuer,
+                    });
+                }
 
-            if (testCase === FlowTestCase.MiddleSkill) {
-                // Simulate the SkillConversationReference with a parent Bot ID stored in turnState.
-                // This emulates a response coming to a skill from another skill through SkillHandler. 
-                context.turnState.set(SkillConversationReferenceKey, { oAuthScope: PARENT_BOT_ID });
-            }
-        }
-
-        // Interceptor to capture the EoC activity if it was sent so we can assert it in the tests.
-        context.onSendActivities(async (tc, activities, next) => {
-            for (let idx = 0; idx < activities.length; idx++) {
-                if (activities[idx].type === ActivityTypes.EndOfConversation) {
-                    _eocSent = activities[idx];
-                    break;
+                if (testCase === FlowTestCase.MiddleSkill) {
+                    // Simulate the SkillConversationReference with a parent Bot ID stored in turnState.
+                    // This emulates a response coming to a skill from another skill through SkillHandler.
+                    context.turnState.set(SkillConversationReferenceKey, { oAuthScope: PARENT_BOT_ID });
                 }
             }
-            return await next();
-        });
 
-        _dmTurnResult = await dm.onTurn(context);
-    }, convRef, enabledTrace);
+            // Interceptor to capture the EoC activity if it was sent so we can assert it in the tests.
+            context.onSendActivities(async (tc, activities, next) => {
+                for (let idx = 0; idx < activities.length; idx++) {
+                    if (activities[idx].type === ActivityTypes.EndOfConversation) {
+                        _eocSent = activities[idx];
+                        break;
+                    }
+                }
+                return await next();
+            });
+
+            _dmTurnResult = await dm.onTurn(context);
+        },
+        convRef,
+        enabledTrace
+    );
     adapter.use(new AutoSaveStateMiddleware(userState, convoState));
 
     return adapter;
@@ -122,10 +129,9 @@ class SimpleComponentDialog extends ComponentDialog {
         this.TextPrompt = 'TextPrompt';
         this.WaterfallDialog = 'WaterfallDialog';
         this.addDialog(new TextPrompt(this.TextPrompt));
-        this.addDialog(new WaterfallDialog(this.WaterfallDialog, [
-            this.promptForName.bind(this),
-            this.finalStep.bind(this),
-        ]));
+        this.addDialog(
+            new WaterfallDialog(this.WaterfallDialog, [this.promptForName.bind(this), this.finalStep.bind(this)])
+        );
         this.initialDialogId = this.WaterfallDialog;
         this.endReason;
     }
@@ -138,18 +144,17 @@ class SimpleComponentDialog extends ComponentDialog {
     async promptForName(step) {
         return step.prompt(this.TextPrompt, {
             prompt: MessageFactory.text('Hello, what is your name?', undefined, InputHints.ExpectingInput),
-            retryPrompt: MessageFactory.text('Hello, what is your name again?', undefined, InputHints.ExpectingInput)
+            retryPrompt: MessageFactory.text('Hello, what is your name again?', undefined, InputHints.ExpectingInput),
         });
     }
 
     async finalStep(step) {
-        await step.context.sendActivity(`Hello ${ step.result }, nice to meet you!`);
+        await step.context.sendActivity(`Hello ${step.result}, nice to meet you!`);
         return step.endDialog(step.result);
     }
-
 }
 
-describe('DialogManager', function() {
+describe('DialogManager', function () {
     this.timeout(300);
 
     this.beforeEach(() => {
@@ -165,7 +170,8 @@ describe('DialogManager', function() {
         async function handlesBotAndSkillsTestCases(testCase, shouldSendEoc) {
             const dialog = new SimpleComponentDialog();
             const testFlow = createTestFlow(dialog, testCase);
-            await testFlow.send('Hi')
+            await testFlow
+                .send('Hi')
                 .assertReply('Hello, what is your name?')
                 .send('SomeName')
                 .assertReply('Hello SomeName, nice to meet you!')
@@ -202,7 +208,8 @@ describe('DialogManager', function() {
     it('SkillHandlesEoCFromParent', async () => {
         const dialog = new SimpleComponentDialog();
         const testFlow = createTestFlow(dialog, FlowTestCase.LeafSkill);
-        await testFlow.send('Hi')
+        await testFlow
+            .send('Hi')
             .assertReply('Hello, what is your name?')
             .send({ type: ActivityTypes.EndOfConversation })
             .startTest();
@@ -212,7 +219,8 @@ describe('DialogManager', function() {
     it('SkillHandlesRepromptFromParent', async () => {
         const dialog = new SimpleComponentDialog();
         const testFlow = createTestFlow(dialog, FlowTestCase.LeafSkill);
-        await testFlow.send('Hi')
+        await testFlow
+            .send('Hi')
             .assertReply('Hello, what is your name?')
             .send({ type: ActivityTypes.Event, name: DialogEvents.repromptDialog })
             .assertReply('Hello, what is your name?')
@@ -223,23 +231,23 @@ describe('DialogManager', function() {
     it('SkillShouldReturnEmptyOnRepromptWithNoDialog', async () => {
         const dialog = new SimpleComponentDialog();
         const testFlow = createTestFlow(dialog, FlowTestCase.LeafSkill);
-        await testFlow.send({ type: ActivityTypes.Event, name: DialogEvents.repromptDialog })
-            .startTest();
+        await testFlow.send({ type: ActivityTypes.Event, name: DialogEvents.repromptDialog }).startTest();
         strictEqual(_dmTurnResult.turnResult.status, DialogTurnStatus.empty);
     });
 
     it('Trace skill state', async () => {
         const dialog = new SimpleComponentDialog();
         const testFlow = createTestFlow(dialog, FlowTestCase.LeafSkill, true);
-        await testFlow.send('Hi')
+        await testFlow
+            .send('Hi')
             .assertReply('Hello, what is your name?')
-            .assertReply(reply => {
+            .assertReply((reply) => {
                 strictEqual(reply.type, ActivityTypes.Trace);
                 strictEqual(reply.label, 'Skill State');
             })
             .send('SomeName')
             .assertReply('Hello SomeName, nice to meet you!')
-            .assertReply(reply => {
+            .assertReply((reply) => {
                 strictEqual(reply.type, ActivityTypes.Trace);
                 strictEqual(reply.label, 'Skill State');
             })
@@ -250,15 +258,16 @@ describe('DialogManager', function() {
     it('Trace bot state', async () => {
         const dialog = new SimpleComponentDialog();
         const testFlow = createTestFlow(dialog, FlowTestCase.RootBotOnly, true);
-        await testFlow.send('Hi')
+        await testFlow
+            .send('Hi')
             .assertReply('Hello, what is your name?')
-            .assertReply(reply => {
+            .assertReply((reply) => {
                 strictEqual(reply.type, ActivityTypes.Trace);
                 strictEqual(reply.label, 'Bot State');
             })
             .send('SomeName')
             .assertReply('Hello SomeName, nice to meet you!')
-            .assertReply(reply => {
+            .assertReply((reply) => {
                 strictEqual(reply.type, ActivityTypes.Trace);
                 strictEqual(reply.label, 'Bot State');
             })
@@ -270,9 +279,77 @@ describe('DialogManager', function() {
         const dm = new DialogManager();
         const rootDialog = new SimpleComponentDialog();
         dm.rootDialog = rootDialog;
-        assert(dm.dialogs.find(rootDialog.id));
+        ok(dm.dialogs.find(rootDialog.id));
         strictEqual(dm.rootDialog.id, rootDialog.id);
         dm.rootDialog = undefined;
         strictEqual(dm.rootDialog, undefined);
+    });
+
+    it('Container registration', async () => {
+        const root = new AdaptiveDialog('root').configure({
+            triggers: [
+                new OnBeginDialog().configure({
+                    actions: [new AdaptiveDialog('inner')],
+                }),
+            ],
+        });
+        const dm = new DialogManager(root);
+
+        const storage = new MemoryStorage();
+
+        // The inner adaptive dialog should be registered on the DialogManager after onTurn
+        const adapter = new TestAdapter(async (context) => {
+            await dm.onTurn(context);
+        });
+        useBotState(adapter, new ConversationState(storage), new UserState(storage));
+
+        await adapter.send('hi').startTest();
+        ok(dm.dialogs.find('inner'));
+    });
+
+    it('Container registration double nesting', async () => {
+        const root = new AdaptiveDialog('root').configure({
+            triggers: [
+                new OnBeginDialog().configure({
+                    actions: [
+                        new AdaptiveDialog('inner').configure({
+                            triggers: [
+                                new OnBeginDialog().configure({
+                                    actions: [
+                                        new AdaptiveDialog('innerinner').configure({
+                                            triggers: [
+                                                new OnBeginDialog().configure({
+                                                    actions: [new SendActivity('hellworld')],
+                                                }),
+                                            ],
+                                        }),
+                                    ],
+                                }),
+                            ],
+                        }),
+                    ],
+                }),
+            ],
+        });
+        const dm = new DialogManager(root);
+
+        const storage = new MemoryStorage();
+
+        // The inner adaptive dialog should be registered on the DialogManager after onTurn
+        const adapter = new TestAdapter(async (context) => {
+            await dm.onTurn(context);
+        });
+        useBotState(adapter, new ConversationState(storage), new UserState(storage));
+
+        await adapter.send('hi').startTest();
+        // Top level containers should be registerd.
+        ok(dm.dialogs.find('inner'));
+        // Mid level containers should be registered.
+        ok(dm.dialogs.find('innerinner'));
+        // Leaf nodes / non-containers should not be registered.
+        strictEqual(
+            dm.dialogs.getDialogs().find((d) => d instanceof SendActivity),
+            undefined
+        );
     });
 });

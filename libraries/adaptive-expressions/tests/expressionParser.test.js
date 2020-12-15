@@ -576,7 +576,7 @@ const testCases = [
             ['addToTime(\'2018-01-01T08:00:00.000Z\', 1, \'Day\')', '2018-01-02T08:00:00.000Z'],
             ['addToTime(\'2018-01-01T08:00:00.000Z\', sub(3,1), \'Week\')', '2018-01-15T08:00:00.000Z'],
             ['addToTime(\'2018-01-01T08:00:00.000Z\', 1, \'Month\', \'MM-DD-YY\')', '02-01-18'],
-            ['convertFromUTC(\'2018-02-02T02:00:00.000Z\', \'Pacific Standard Time\')', '2018-02-01T18:00:00.000-08:00'],
+            ['convertFromUTC(\'2018-02-02T02:00:00.000Z\', \'Pacific Standard Time\')', '2018-02-01T18:00:00.0000000'],
             ['convertFromUTC(\'2018-02-02T02:00:00.000Z\', \'Pacific Standard Time\', \'MM-DD-YY\')', '02-01-18'],
             ['convertToUTC(\'2018-01-01T18:00:00.000\', \'Pacific Standard Time\')', '2018-01-02T02:00:00.000Z'],
             ['convertToUTC(\'2018-01-01T18:00:00.000\', \'Pacific Standard Time\', \'MM-DD-YY\')', '01-02-18'],
@@ -717,6 +717,12 @@ const testCases = [
             ['jPath(jsonStr, \'.automobiles[0].maker\' )', ['Nissan']],
             ['string(merge(json1, json2))', '{"FirstName":"John","LastName":"Smith","Enabled":true,"Roles":["Customer","Admin"]}'],
             ['string(merge(json1, json2, json3))', '{"FirstName":"John","LastName":"Smith","Enabled":true,"Roles":["Customer","Admin"],"age":36}'],
+            [
+                'xml(\'{"person": {"name": "Sophia Owen", "city": "Seattle"}}\')',
+                '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n<person>\n  <name>Sophia Owen</name>\n  <city>Seattle</city>\n</person>',
+            ],
+            ['xPath(xmlStr,"/produce/item/name")', ['<name>Gala</name>', '<name>Honeycrisp</name>']],
+            ['xPath(xmlStr,"sum(/produce/item/count)")', 30],
         ],
     },
     {
@@ -942,6 +948,8 @@ const scope = {
         subTitle: 'Dialog Sub Title'
     },
     doubleNestedItems: [[{ x: 1 }, { x: 2 }], [{ x: 3 }]],
+    xmlStr:
+        "<?xml version='1.0'?> <produce> <item> <name>Gala</name> <type>apple</type> <count>20</count> </item> <item> <name>Honeycrisp</name> <type>apple</type> <count>10</count> </item> </produce>",
 };
 
 const generateParseTest = (input, expectedOutput, expectedRefs) => () => {

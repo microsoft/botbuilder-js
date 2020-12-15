@@ -199,6 +199,20 @@ describe('ActionTests', function () {
         await TestUtils.runTestScript(resourceExplorer, 'Action_ReplaceDialog');
     });
 
+    it('ReplaceDialogDifferentLevel', async () => {
+        await TestUtils.runTestScript(resourceExplorer, 'Action_ReplaceDialogDifferentLevel');
+    });
+
+    /* Temporarily disable this test because we don't allow recursive dialog yet.
+    it('ReplaceDialogRecursive', async () => {
+        await TestUtils.runTestScript(resourceExplorer, 'Action_ReplaceDialogRecursive');
+    });
+    */
+
+    it('ReplaceDialogRoot', async () => {
+        await TestUtils.runTestScript(resourceExplorer, 'Action_ReplaceDialogRoot');
+    });
+
     it('SendActivity', async () => {
         await TestUtils.runTestScript(resourceExplorer, 'Action_SendActivity');
     });
@@ -245,6 +259,10 @@ describe('ActionTests', function () {
 
     it('TraceActivity', async () => {
         await TestUtils.runTestScript(resourceExplorer, 'Action_TraceActivity');
+    });
+
+    it('ThrowException', async () => {
+        await TestUtils.runTestScript(resourceExplorer, 'Action_ThrowException');
     });
 
     it('UpdateActivity', async () => {

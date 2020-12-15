@@ -162,4 +162,6 @@ export * from './uriQuery';
 export * from './uriScheme';
 export * from './utcNow';
 export * from './where';
+export * from './xml';
+export * from './xpath';
 export * from './year';

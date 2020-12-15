@@ -9,6 +9,7 @@ export interface Package {
     preview?: boolean;
     private?: boolean;
     deprecated?: boolean;
+    internal?: boolean;
 
     workspaces?: string[];
 

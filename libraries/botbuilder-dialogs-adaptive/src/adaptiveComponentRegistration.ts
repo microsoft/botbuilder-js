@@ -56,28 +56,30 @@ import {
     HttpRequest,
     HttpRequestConfiguration,
     IfCondition,
-    LogAction,
-    RepeatDialog,
-    ReplaceDialog,
-    SendActivity,
-    SetProperties,
-    SetProperty,
-    SignOutUser,
-    SwitchCondition,
-    TelemetryTrackEventAction,
-    TraceActivity,
-    UpdateActivity,
     IfConditionConfiguration,
+    LogAction,
     LogActionConfiguration,
+    RepeatDialog,
     RepeatDialogConfiguration,
+    ReplaceDialog,
     ReplaceDialogConfiguration,
+    SendActivity,
     SendActivityConfiguration,
+    SetProperties,
     SetPropertiesConfiguration,
+    SetProperty,
     SetPropertyConfiguration,
+    SignOutUser,
     SignOutUserConfiguration,
+    SwitchCondition,
     SwitchConditionConfiguration,
+    TelemetryTrackEventAction,
     TelemetryTrackEventActionConfiguration,
+    TraceActivity,
     TraceActivityConfiguration,
+    ThrowException,
+    ThrowExceptionConfiguration,
+    UpdateActivity,
     UpdateActivityConfiguration,
 } from './actions';
 import {
@@ -136,6 +138,7 @@ import {
 } from './input';
 import {
     AgeEntityRecognizer,
+    ChannelMentionEntityRecognizer,
     ConfirmationEntityRecognizer,
     CrossTrainedRecognizerSet,
     CrossTrainedRecognizerSetConfiguration,
@@ -143,6 +146,7 @@ import {
     DateTimeEntityRecognizer,
     DimensionEntityRecognizer,
     EmailEntityRecognizer,
+    EntityRecognizerSet,
     GuidEntityRecognizer,
     HashtagEntityRecognizer,
     IpEntityRecognizer,
@@ -182,7 +186,7 @@ import { TriggerSelectorConfiguration } from './triggerSelector';
 
 type Type<T> = {
     $kind: string;
-    new (...args: unknown[]): T;
+    new(...args: unknown[]): T;
 };
 
 /**
@@ -233,6 +237,7 @@ export class AdaptiveComponentRegistration extends ComponentRegistration impleme
         this._addDeclarativeType<TelemetryTrackEventAction, TelemetryTrackEventActionConfiguration>(
             TelemetryTrackEventAction
         );
+        this._addDeclarativeType<ThrowException, ThrowExceptionConfiguration>(ThrowException);
         this._addDeclarativeType<TraceActivity, TraceActivityConfiguration>(TraceActivity);
         this._addDeclarativeType<UpdateActivity, UpdateActivityConfiguration>(UpdateActivity);
 
@@ -284,11 +289,13 @@ export class AdaptiveComponentRegistration extends ComponentRegistration impleme
         this._addDeclarativeType<RecognizerSet, RecognizerSetConfiguration>(RecognizerSet);
         this._addDeclarativeType<RegexRecognizer, RegexRecognizerConfiguration>(RegexRecognizer);
         this._addDeclarativeType<AgeEntityRecognizer, unknown>(AgeEntityRecognizer);
+        this._addDeclarativeType<ChannelMentionEntityRecognizer, unknown>(ChannelMentionEntityRecognizer);
         this._addDeclarativeType<ConfirmationEntityRecognizer, unknown>(ConfirmationEntityRecognizer);
         this._addDeclarativeType<CurrencyEntityRecognizer, unknown>(CurrencyEntityRecognizer);
         this._addDeclarativeType<DateTimeEntityRecognizer, unknown>(DateTimeEntityRecognizer);
         this._addDeclarativeType<DimensionEntityRecognizer, unknown>(DimensionEntityRecognizer);
         this._addDeclarativeType<EmailEntityRecognizer, unknown>(EmailEntityRecognizer);
+        this._addDeclarativeType<EntityRecognizerSet, unknown>(EntityRecognizerSet);
         this._addDeclarativeType<GuidEntityRecognizer, unknown>(GuidEntityRecognizer);
         this._addDeclarativeType<HashtagEntityRecognizer, unknown>(HashtagEntityRecognizer);
         this._addDeclarativeType<IpEntityRecognizer, unknown>(IpEntityRecognizer);

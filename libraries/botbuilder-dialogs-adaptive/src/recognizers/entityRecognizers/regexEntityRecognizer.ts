@@ -61,7 +61,7 @@ export class RegexEntityRecognizer extends TextEntityRecognizer implements Regex
      * @param culture Culture to use.
      * @returns The matched [ModelResult](xref:botbuilder-dialogs.ModelResult) list.
      */
-    protected recognize(text: string, culture: string): ModelResult[] {
+    protected _recognize(text: string, culture: string): ModelResult[] {
         const results: ModelResult[] = [];
 
         const matches = [];

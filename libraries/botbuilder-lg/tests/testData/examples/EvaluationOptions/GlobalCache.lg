@@ -1,0 +1,3 @@
+> !# @cacheScope = global
+
+[import](../TemplateCache.lg) 

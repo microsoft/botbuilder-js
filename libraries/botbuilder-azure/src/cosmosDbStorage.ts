@@ -6,10 +6,11 @@
  * Licensed under the MIT License.
  */
 
-import { Storage, StoreItems } from 'botbuilder';
-import { ConnectionPolicy, DocumentClient, RequestOptions, UriFactory, FeedOptions } from 'documentdb';
 import * as semaphore from 'semaphore';
+import type { Agent } from 'http';
+import { ConnectionPolicy, DocumentClient, RequestOptions, UriFactory, FeedOptions } from 'documentdb';
 import { CosmosDbKeyEscape } from './cosmosDbKeyEscape';
+import { Storage, StoreItems } from 'botbuilder';
 
 const _semaphore: semaphore.Semaphore = semaphore(1);
 
@@ -51,6 +52,10 @@ export interface CosmosDbStorageSettings {
      * @deprecated Please use [[CosmosDbPartitionedStorage]]. See https://github.com/microsoft/botframework-sdk/issues/5467
      */
     partitionKey?: string;
+    /**
+     * (Optional) http agent to use for outbound requests
+     */
+    agent?: Agent;
 }
 
 /**
@@ -97,7 +102,7 @@ export class CosmosDbStorage implements Storage {
      */
     public constructor(
         settings: CosmosDbStorageSettings,
-        connectionPolicyConfigurator: (policy: ConnectionPolicy) => void = null
+        connectionPolicyConfigurator: (policy: ConnectionPolicy) => void = null,
     ) {
         if (!settings) {
             throw new Error('The settings parameter is required.');
@@ -128,6 +133,15 @@ export class CosmosDbStorage implements Storage {
         }
 
         this.client = new DocumentClient(settings.serviceEndpoint, { masterKey: settings.authKey }, policy);
+
+        // Note: hack, however it works with our version
+        if (settings.agent) {
+            const anyClient = this.client as any;
+            if (anyClient.requestAgent) {
+                anyClient.requestAgent = settings.agent;
+            }
+        }
+
         this.databaseCreationRequestOption = settings.databaseCreationRequestOptions;
         this.documentCollectionCreationRequestOption = settings.documentCollectionRequestOptions;
     }

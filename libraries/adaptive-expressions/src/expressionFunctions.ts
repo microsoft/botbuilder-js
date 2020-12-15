@@ -188,6 +188,8 @@ export class ExpressionFunctions {
             new BuiltinFunctions.UriScheme(),
             new BuiltinFunctions.UtcNow(),
             new BuiltinFunctions.Where(),
+            new BuiltinFunctions.XML(),
+            new BuiltinFunctions.XPath(),
             new BuiltinFunctions.Year(),
         ];
 

@@ -75,6 +75,11 @@ describe('LG', function () {
         inject: Templates.parseFile(GetExampleFilePath('./injectionTest/inject.lg')),
         injectWithoutNamespace: Templates.parseFile(GetExampleFilePath('./injectionTest/injectWithoutNamespace.lg')),
         StrictModeTrue: Templates.parseFile(GetExampleFilePath('./EvaluationOptions/StrictModeTrue.lg')),
+        DefaultCache: Templates.parseFile(GetExampleFilePath('./EvaluationOptions/DefaultCache.lg')),
+        GlobalCache_1: Templates.parseFile(GetExampleFilePath('./EvaluationOptions/GlobalCache_1.lg')),
+        GlobalCache: Templates.parseFile(GetExampleFilePath('./EvaluationOptions/GlobalCache.lg')),
+        NoneCache: Templates.parseFile(GetExampleFilePath('./EvaluationOptions/NoneCache.lg')),
+        LocalCache: Templates.parseFile(GetExampleFilePath('./EvaluationOptions/LocalCache.lg')),
         a1: Templates.parseFile(GetExampleFilePath('./EvaluationOptions/a1.lg')),
         a2: Templates.parseFile(GetExampleFilePath('./EvaluationOptions/a2.lg')),
         a3: Templates.parseFile(GetExampleFilePath('./EvaluationOptions/a3.lg')),
@@ -1162,24 +1167,79 @@ describe('LG', function () {
     it('TestTemplateCache', function () {
         var templates = preloaded.TemplateCache;
 
+        // Default cache policy
         var evaled = templates.evaluate('templateWithSameParams', { param: 'ms' });
-        assert.notStrictEqual(evaled, undefined);
-
         let resultList = evaled.split(' ');
-        assert.strictEqual(resultList.length, 2);
-
         assert.strictEqual(resultList[0], resultList[1]);
 
-        // maybe has different values
-        evaled = templates.evaluate('templateWithDifferentParams', { param1: 'ms', param2: 'newms' });
-
-        // global cache test
-        const options = new EvaluationOptions();
-        options.cacheScope = LGCacheScope.Global;
-        evaled = templates.evaluate('globalCache', { param: 'ms' }, options);
+        // with None cache override
+        // Notice, the expression is ${rand(1, 10000000)}, there still exist the probability of test failure
+        const noneCacheOptions = new EvaluationOptions();
+        noneCacheOptions.cacheScope = LGCacheScope.None;
+        evaled = templates.evaluate('templateWithSameParams', { param: 'ms' }, noneCacheOptions);
         resultList = evaled.split(' ');
-        assert.strictEqual(resultList.length, 2);
+        assert.notStrictEqual(resultList[0], resultList[1]);
 
+        // with different parameters
+        evaled = templates.evaluate('templateWithDifferentParams', { param1: 'ms', param2: 'newms' });
+        resultList = evaled.split(' ');
+        assert.notStrictEqual(resultList[0], resultList[1]);
+
+        // with None cache override
+        evaled = templates.evaluate('templateWithDifferentParams', { param1: 'ms', param2: 'newms' }, noneCacheOptions);
+        resultList = evaled.split(' ');
+        assert.notStrictEqual(resultList[0], resultList[1]);
+
+        // nested template test, with default cache policy
+        evaled = templates.evaluate('nestedTemplate', { param1: 'ms' });
+        resultList = evaled.split(' ');
+        assert.notStrictEqual(resultList[0], resultList[1]);
+
+        // with Global cache override
+        const globalCacheOptions = new EvaluationOptions();
+        globalCacheOptions.cacheScope = LGCacheScope.Global;
+        evaled = templates.evaluate('nestedTemplate', { param1: 'ms' }, globalCacheOptions);
+        resultList = evaled.split(' ');
+        assert.strictEqual(resultList[0], resultList[1]);
+    });
+
+    it('TestCacheScopeOption', function () {
+        //Global cache test
+        var evaled = preloaded.GlobalCache.evaluate('nestedTemplate', { param: 'ms' });
+        let resultList = evaled.split(' ');
+        assert.strictEqual(resultList[0], resultList[1]);
+
+        // Global cache effects one evaluation life cycle
+        var evaled2 = preloaded.GlobalCache.evaluate('nestedTemplate', { param: 'ms' });
+        assert.notStrictEqual(evaled, evaled2);
+
+        // Global cache import none cache, the entrance option would override the options in children
+        evaled = preloaded.GlobalCache_1.evaluate('nestedTemplate', { param: 'ms' });
+        resultList = evaled.split(' ');
+        assert.strictEqual(resultList[0], resultList[1]);
+
+        // locale cache test
+        evaled = preloaded.LocalCache.evaluate('templateWithSameParams', { param: 'ms' });
+        resultList = evaled.split(' ');
+        assert.strictEqual(resultList[0], resultList[1]);
+
+        // default cache test
+        evaled = preloaded.DefaultCache.evaluate('templateWithSameParams', { param: 'ms' });
+        resultList = evaled.split(' ');
+        assert.strictEqual(resultList[0], resultList[1]);
+
+        // None cache.
+        // Notice, the expression is ${rand(1, 10000000)}, there still exist the probability of test failure
+        evaled = preloaded.DefaultCache.evaluate('nestedTemplate', { param: 'ms' });
+        resultList = evaled.split(' ');
+        assert.notStrictEqual(resultList[0], resultList[1]);
+
+        // api override options in LG file
+        // use global cache to override the none cache.
+        const globalCacheOptions = new EvaluationOptions();
+        globalCacheOptions.cacheScope = LGCacheScope.Global;
+        evaled = preloaded.NoneCache.evaluate('nestedTemplate', { param: 'ms' }, globalCacheOptions);
+        resultList = evaled.split(' ');
         assert.strictEqual(resultList[0], resultList[1]);
     });
 
