@@ -4,7 +4,7 @@
 import 'mocha';
 import { ComponentRegistration } from 'botbuilder';
 import { ResourceExplorer } from 'botbuilder-dialogs-declarative';
-import { TeamsComponentRegistration } from 'botbuilder-dialogs-adaptive-teams';
+import { TeamsComponentRegistration } from '../../lib';
 import path = require('path');
 import { AdaptiveTestComponentRegistration, TestUtils } from 'botbuilder-dialogs-adaptive-testing';
 import { AdaptiveComponentRegistration } from 'botbuilder-dialogs-adaptive';
@@ -14,7 +14,11 @@ describe('Conditional Tests', function () {
     ComponentRegistration.add(new AdaptiveComponentRegistration());
     ComponentRegistration.add(new TeamsComponentRegistration());
 
-    const resourceExplorer = new ResourceExplorer().addFolder(path.join(__dirname, '../../tests/tests/conditionalTests'), true, false);
+    const resourceExplorer = new ResourceExplorer().addFolder(
+        path.join(__dirname, '../../tests/tests/conditionalTests'),
+        true,
+        false
+    );
 
     it('OnAppBasedLinkQuery', async () => {
         await TestUtils.runTestScript(resourceExplorer, 'ConditionalsTests_OnTeamsActivityTypes');
