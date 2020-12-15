@@ -36,11 +36,8 @@
     "botbuilder-lg": "4.1.6",
     "botframework-connector": "4.1.6",
     "botframework-schema": "4.1.6",
-    "downlevel-dts": "^0.7.0",
     "jsonpath": "^1.0.0",
-    "node-fetch": "^2.6.0",
-    "npm-run-all": "^4.1.5",
-    "typescript": "^4.1.2"
+    "node-fetch": "^2.6.0"
   },
   "devDependencies": {
     "@types/jsonpath": "^0.2.0",
