@@ -1,6 +1,4 @@
-/**/node_modules
-/**/.vscode
-/**/lib/*
+_ts3.4
+lib
 coverage
 .nyc_output
-package-lock.json
