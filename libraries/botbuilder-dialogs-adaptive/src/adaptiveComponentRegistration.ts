@@ -365,9 +365,9 @@ export class AdaptiveComponentRegistration extends ComponentRegistration impleme
     }
 
     /**
-     * @private
+     * @protected
      */
-    private _addDeclarativeType<T, C>(type: Type<T>, loader?: CustomDeserializer<T, C>): void {
+    protected _addDeclarativeType<T, C>(type: Type<T>, loader?: CustomDeserializer<T, C>): void {
         const declarativeType: DeclarativeType<T, C> = {
             kind: type.$kind,
             type,
