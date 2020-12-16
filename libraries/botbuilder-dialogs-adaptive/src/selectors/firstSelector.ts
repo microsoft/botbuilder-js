@@ -46,7 +46,7 @@ export class FirstSelector extends TriggerSelector {
         if (this._evaluate) {
             for (let i = 0; i < this._conditionals.length; i++) {
                 const conditional = this._conditionals[i];
-                const expression = conditional.getExpression(this.parser);
+                const expression = conditional.getExpression();
                 const { value, error } = expression.tryEvaluate(actionContext.state);
                 if (value && !error) {
                     const priority = conditional.currentPriority(actionContext);

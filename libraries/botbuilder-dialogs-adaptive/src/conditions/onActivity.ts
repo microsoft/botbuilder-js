@@ -5,8 +5,8 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
+import { Expression } from 'adaptive-expressions';
 import { Dialog, TurnPath } from 'botbuilder-dialogs';
-import { Expression, ExpressionType, ExpressionParserInterface } from 'adaptive-expressions';
 import { OnDialogEvent, OnDialogEventConfiguration } from './onDialogEvent';
 import { AdaptiveEvents } from '../adaptiveEvents';
 
@@ -37,13 +37,13 @@ export class OnActivity extends OnDialogEvent implements OnActivityConfiguration
     }
 
     /**
-     * Gets this activity representing expression.
-     * @param parser [ExpressionParserInterface](xref:adaptive-expressions.ExpressionParserInterface) used to parse a string into an [Expression](xref:adaptive-expressions.Expression).
-     * @returns An [Expression](xref:adaptive-expressions.Expression) representing the [Activity](xref:botframework-schema.Activity).
+     * Creates this activity representing expression.
+     *
+     * @returns {Expression} An [Expression](xref:adaptive-expressions.Expression) representing the [Activity](xref:botframework-schema.Activity).
      */
-    public getExpression(parser: ExpressionParserInterface): Expression {
+    protected createExpression(): Expression {
         // add constraints for activity type
-        const expression = parser.parse(`${TurnPath.activity}.type == '${this.type}'`);
-        return Expression.makeExpression(ExpressionType.And, undefined, expression, super.getExpression(parser));
+        const expression = Expression.parse(`${TurnPath.activity}.type == '${this.type}'`);
+        return Expression.andExpression(expression, super.createExpression());
     }
 }
