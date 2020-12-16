@@ -28,7 +28,7 @@ export class MostSpecificSelector extends TriggerSelector implements MostSpecifi
 
     public initialize(conditionals: OnCondition[], _evaluate: boolean): void {
         for (const conditional of conditionals) {
-            this._tree.addTrigger(conditional.getExpression(this.parser), conditional);
+            this._tree.addTrigger(conditional.getExpression(), conditional);
         }
     }
 

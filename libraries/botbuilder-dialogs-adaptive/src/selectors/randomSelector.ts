@@ -45,7 +45,7 @@ export class RandomSelector extends TriggerSelector {
         for (let i = 0; i < this._conditionals.length; i++) {
             const conditional = this._conditionals[i];
             if (this._evaluate) {
-                const expression = conditional.getExpression(this.parser);
+                const expression = conditional.getExpression();
                 const { value, error } = expression.tryEvaluate(actionContext.state);
                 if (value && !error) {
                     candidates.push(conditional);

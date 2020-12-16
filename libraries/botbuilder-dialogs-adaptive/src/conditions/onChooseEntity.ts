@@ -5,8 +5,8 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
+import { Expression } from 'adaptive-expressions';
 import { Dialog, TurnPath } from 'botbuilder-dialogs';
-import { Expression, ExpressionParserInterface } from 'adaptive-expressions';
 import { AdaptiveEvents } from '../adaptiveEvents';
 import { OnDialogEvent, OnDialogEventConfiguration } from './onDialogEvent';
 
@@ -45,19 +45,19 @@ export class OnChooseEntity extends OnDialogEvent implements OnChooseEntityConfi
     public entity: string;
 
     /**
-     * Get the expression for this rule.
-     * @param parser [ExpressionParserInterface](xref:adaptive-expressions.ExpressionParserInterface) used to parse a string into an [Expression](xref:adaptive-expressions.Expression).
-     * @returns [Expression](xref:adaptive-expressions.Expression) which will be cached and used to evaluate this rule.
+     * Creates the expression for this rule.
+     *
+     * @returns {Expression} [Expression](xref:adaptive-expressions.Expression) used to evaluate this rule.
      */
-    public getExpression(parser: ExpressionParserInterface): Expression {
-        const expressions = [super.getExpression(parser)];
+    public createExpression(): Expression {
+        const expressions = [super.createExpression()];
         if (this.property) {
-            expressions.push(parser.parse(`${TurnPath.dialogEvent}.value.property == '${this.property}'`));
+            expressions.push(Expression.parse(`${TurnPath.dialogEvent}.value.property == '${this.property}'`));
         }
         if (this.entity) {
-            expressions.push(parser.parse(`${TurnPath.dialogEvent}.value.entity.name == '${this.entity}'`));
+            expressions.push(Expression.parse(`${TurnPath.dialogEvent}.value.entity.name == '${this.entity}'`));
         }
 
-        return Expression.andExpression.apply(Expression, expressions);
+        return Expression.andExpression(...expressions);
     }
 }
