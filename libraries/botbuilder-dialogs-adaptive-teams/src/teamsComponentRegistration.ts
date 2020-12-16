@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 
-import { OnTeamsAppBasedLinkQuery } from './triggerConditions/onTeamsAppBasedLinkQuery';
+import { OnTeamsAppBasedLinkQuery } from './conditions/onTeamsAppBasedLinkQuery';
 import { ComponentDeclarativeTypes } from 'botbuilder-dialogs-declarative';
 import { AdaptiveComponentRegistration, OnActivityConfiguration } from 'botbuilder-dialogs-adaptive';
 
