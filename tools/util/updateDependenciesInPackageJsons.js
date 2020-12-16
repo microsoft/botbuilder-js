@@ -15,8 +15,9 @@ if(previewVersion === 'adaptive-expressions') {
 const previewPackages = {
     'botbuilder-ai-orchestrator': true,
     'botbuilder-dialogs-adaptive': true,
+    'botbuilder-dialogs-adaptive-teams': true,
     'botbuilder-dialogs-adaptive-testing': true,
-    'botbuilder-dialogs-declarative': true
+    'botbuilder-dialogs-declarative': true,
 }
 var dependencies = myArgs.slice(previewVersion ? 3 : 2);
 console.log('newVersion =', newVersion);
