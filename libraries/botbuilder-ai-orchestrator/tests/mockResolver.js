@@ -3,13 +3,11 @@
  * Licensed under the MIT License.
  */
 class MockResolver {
-    constructor(score)
-    {
+    constructor(score) {
         this._score = score;
     }
 
-    score(text) 
-    {
+    score(text) {
         return this._score;
     }
 }
@@ -21,4 +19,4 @@ class TestAdapterSettings {
     }
 }
 
-module.exports = {MockResolver, TestAdapterSettings};
+module.exports = { MockResolver, TestAdapterSettings };
