@@ -9538,7 +9538,7 @@ read-pkg@^3.0.0:
     normalize-package-data "^2.3.2"
     path-type "^3.0.0"
 
-read-text-file@1.1.0, read-text-file@^1.1.0:
+read-text-file@^1.1.0:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/read-text-file/-/read-text-file-1.1.0.tgz#d0c3f18768828f9107d61bb0b368ee7b90f71893"
   integrity sha1-0MPxh2iCj5EH1huws2jue5D3GJM=
