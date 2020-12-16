@@ -18,6 +18,7 @@
     "botbuilder-core": "4.1.6",
     "botbuilder-dialogs": "4.1.6",
     "botbuilder-dialogs-adaptive": "4.1.6",
+    "botbuilder-dialogs-adaptive-teams": "4.1.6",
     "botbuilder-dialogs-adaptive-testing": "4.1.6",
     "botbuilder-dialogs-declarative": "4.1.6",
     "botbuilder-lg": "4.1.6",
