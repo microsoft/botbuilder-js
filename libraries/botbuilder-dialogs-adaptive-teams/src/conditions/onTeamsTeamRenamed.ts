@@ -9,9 +9,14 @@
 import { Expression } from 'adaptive-expressions';
 import { Channels } from 'botbuilder';
 import { Dialog, TurnPath } from 'botbuilder-dialogs';
-import { OnInvokeActivity } from 'botbuilder-dialogs-adaptive';
+import { OnConversationUpdateActivity } from 'botbuilder-dialogs-adaptive';
 
-export class OnTeamsTeamRenamed extends OnInvokeActivity {
+/**
+ * Actions triggered when a Teams ConversationUpdate with channelData.eventType == 'teamRenamed'.
+ * Note: turn.activity.channelData.Teams has team data.
+ * @extends OnConversationUpdateActivity
+ */
+export class OnTeamsTeamRenamed extends OnConversationUpdateActivity {
     public static $kind = 'Teams.OnTeamRenamed';
 
     public constructor(actions?: Dialog[], condition?: string) {

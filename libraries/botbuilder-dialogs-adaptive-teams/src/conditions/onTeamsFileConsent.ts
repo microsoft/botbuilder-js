@@ -11,6 +11,10 @@ import { Channels } from 'botbuilder';
 import { Dialog, TurnPath } from 'botbuilder-dialogs';
 import { OnInvokeActivity } from 'botbuilder-dialogs-adaptive';
 
+/**
+ * Actions triggered when a Teams InvokeActivity is received with activity.name == 'fileConsent/invoke'.
+ * @extends OnInvokeActivity
+ */
 export class OnTeamsFileConsent extends OnInvokeActivity {
     public static $kind = 'Teams.OnFileConsent';
 
