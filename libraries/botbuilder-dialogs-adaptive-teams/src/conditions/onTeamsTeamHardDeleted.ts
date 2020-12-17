@@ -14,7 +14,6 @@ import { OnConversationUpdateActivity } from 'botbuilder-dialogs-adaptive';
 /**
  * Actions triggered when a Teams ConversationUpdate with channelData.eventType == 'teamHardDeleted'.
  * Note: turn.activity.channelData.Teams has team data.
- * @extends OnConversationUpdateActivity
  */
 export class OnTeamsTeamHardDeleted extends OnConversationUpdateActivity {
     public static $kind = 'Teams.OnTeamHardDeleted';

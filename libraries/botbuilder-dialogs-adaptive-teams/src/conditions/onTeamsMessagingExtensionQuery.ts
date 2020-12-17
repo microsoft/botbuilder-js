@@ -13,7 +13,6 @@ import { OnInvokeActivity } from 'botbuilder-dialogs-adaptive';
 
 /**
  * Actions triggered when a Teams InvokeActivity is received with activity.name='composeExtension/query'.
- * @extends OnInvokeActivity
  */
 export class OnTeamsMessagingExtensionQuery extends OnInvokeActivity {
     public static $kind = 'Teams.OnMessagingExtensionQuery';

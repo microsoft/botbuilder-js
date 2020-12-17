@@ -14,7 +14,6 @@ import { OnConversationUpdateActivity } from 'botbuilder-dialogs-adaptive';
 /**
  * Actions triggered when a Teams ConversationUpdate with channelData.eventType == 'teamRestored'.
  * Note: turn.activity.channelData.Teams has team data.
- * @extends OnConversationUpdateActivity
  */
 export class OnTeamsTeamRestored extends OnConversationUpdateActivity {
     public static $kind = 'Teams.OnTeamRestored';

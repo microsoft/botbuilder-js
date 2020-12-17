@@ -14,7 +14,6 @@ import { OnConversationUpdateActivity } from 'botbuilder-dialogs-adaptive';
 /**
  * Actions triggered when a Teams ConversationUpdate with channelData.eventType == 'teamRenamed'.
  * Note: turn.activity.channelData.Teams has team data.
- * @extends OnConversationUpdateActivity
  */
 export class OnTeamsTeamRenamed extends OnConversationUpdateActivity {
     public static $kind = 'Teams.OnTeamRenamed';

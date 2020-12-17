@@ -12,7 +12,6 @@ import { OnInvokeActivity } from 'botbuilder-dialogs-adaptive';
 
 /**
  * Actions triggered when a Teams InvokeActivity is received with activity.name == 'composeExtension/queryLink'.
- * @extends OnInvokeActivity
  */
 export class OnTeamsAppBasedLinkQuery extends OnInvokeActivity {
     public static $kind = 'Teams.OnAppBasedLinkQuery';

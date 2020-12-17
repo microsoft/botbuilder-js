@@ -33,7 +33,6 @@ export interface GetMeetingParticipantConfiguration extends DialogConfiguration 
 
 /**
  * Calls `TeamsInfo.getMeetingParticipant` ans sets the result to a memory property.
- * @extends Dialog
  */
 export class GetMeetingParticipant extends Dialog implements GetMeetingParticipantConfiguration {
     /**

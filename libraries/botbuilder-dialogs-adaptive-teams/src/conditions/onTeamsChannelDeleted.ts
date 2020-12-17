@@ -14,7 +14,6 @@ import { OnConversationUpdateActivity } from 'botbuilder-dialogs-adaptive';
 /**
  * Actions triggered when a Teams ConversationUpdateActivity with channelData.eventType == 'channelDeleted'.
  * Note: turn.activity.channelData.Teams has team data.
- * @extends OnConversationUpdateActivity
  */
 export class OnTeamsChannelDeleted extends OnConversationUpdateActivity {
     public static $kind = 'Teams.OnChannelDeleted';
