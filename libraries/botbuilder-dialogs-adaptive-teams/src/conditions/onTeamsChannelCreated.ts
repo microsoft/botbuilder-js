@@ -9,9 +9,14 @@
 import { Expression } from 'adaptive-expressions';
 import { Channels } from 'botbuilder';
 import { Dialog, TurnPath } from 'botbuilder-dialogs';
-import { OnInvokeActivity } from 'botbuilder-dialogs-adaptive';
+import { OnConversationUpdateActivity } from 'botbuilder-dialogs-adaptive';
 
-export class OnTeamsChannelCreated extends OnInvokeActivity {
+/**
+ * Actions triggered when a Teams ConversationUpdateActivity with channelData.eventType == 'channelCreated'.
+ * Note: turn.activity.channelData.Teams has team data.
+ * @extends OnConversationUpdateActivity
+ */
+export class OnTeamsChannelCreated extends OnConversationUpdateActivity {
     public static $kind = 'Teams.OnChannelCreated';
 
     public constructor(actions?: Dialog[], condition?: string) {

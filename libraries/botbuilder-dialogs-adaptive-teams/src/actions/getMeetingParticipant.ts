@@ -33,8 +33,12 @@ export interface GetMeetingParticipantConfiguration extends DialogConfiguration 
 
 /**
  * Calls `TeamsInfo.getMeetingParticipant` ans sets the result to a memory property.
+ * @extends Dialog
  */
 export class GetMeetingParticipant extends Dialog implements GetMeetingParticipantConfiguration {
+    /**
+     * Class identifier.
+     */
     public static $kind = 'Teams.GetMeetingParticipant';
 
     /**
@@ -97,7 +101,7 @@ export class GetMeetingParticipant extends Dialog implements GetMeetingParticipa
         const participantId = this.getValue(dc, this.participantId);
         const tenantId = this.getValue(dc, this.tenantId);
 
-        if (!participantId) {
+        if (participantId === null) {
             /**
              * TeamsInfo.getMeetingParticipant will default to retrieving the current meeting's participant
              * if none is provided. This could lead to unexpected results. Therefore, GetMeetingParticipant action
@@ -109,7 +113,11 @@ export class GetMeetingParticipant extends Dialog implements GetMeetingParticipa
         }
 
         const result = await TeamsInfo.getMeetingParticipant(dc.context, meetingId, participantId, tenantId);
-        dc.state.setValue(this.property.getValue(dc.state), result);
+
+        if (this.property != null) {
+            dc.state.setValue(this.property.getValue(dc.state), result);
+        }
+
         return dc.endDialog(result);
     }
 
@@ -130,6 +138,6 @@ export class GetMeetingParticipant extends Dialog implements GetMeetingParticipa
             }
             return value;
         }
-        return undefined;
+        return null;
     }
 }
