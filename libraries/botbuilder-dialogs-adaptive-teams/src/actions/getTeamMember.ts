@@ -24,22 +24,22 @@ import {
 } from 'botbuilder-dialogs';
 import { getValue } from './actionHelpers';
 
-export interface GetMeetingParticipantConfiguration extends DialogConfiguration {
+export interface GetTeamMemberConfiguration extends DialogConfiguration {
     disabled?: boolean | string | BoolExpression;
     property?: string | Expression | StringExpression;
-    meetingId?: string | Expression | StringExpression;
-    participantId?: string | Expression | StringExpression;
-    tenantId?: string | Expression | StringExpression;
+    memberId?: string | Expression | StringExpression;
+    teamId?: string | Expression | StringExpression;
 }
 
 /**
- * Calls `TeamsInfo.getMeetingParticipant` and sets the result to a memory property.
+ * Calls TeamsInfo.GetTeamMember to retrieve the list of members in a teams
+ * scoped conversation and sets the result to a memory property.
  */
-export class GetMeetingParticipant extends Dialog implements GetMeetingParticipantConfiguration {
+export class GetTeamMember extends Dialog implements GetTeamMemberConfiguration {
     /**
      * Class identifier.
      */
-    public static $kind = 'Teams.GetMeetingParticipant';
+    public static $kind = 'Teams.GetTeamMember';
 
     /**
      * Gets or sets an optional expression which if is true will disable this action.
@@ -55,36 +55,28 @@ export class GetMeetingParticipant extends Dialog implements GetMeetingParticipa
     public property: StringExpression;
 
     /**
-     * Gets or sets the expression to get the value to use for meeting id.
+     * Gets or sets the expression to get the value to use for member id.
      *
      * @default
-     * =turn.activity.channelData.meeting.id
+     * =turn.activity.from.id
      */
-    public meetingId = new StringExpression('=turn.activity.channelData.meeting.id');
+    public memberId = new StringExpression('=turn.activity.from.id');
 
     /**
-     * Gets or sets the expression to get the value to use for participant id.
+     * Gets or sets the expression to get the value to use for team id.
      *
      * @default
-     * =turn.activity.from.aadObjectId
+     * =turn.activity.channelData.team.id
      */
-    public participantId = new StringExpression('=turn.activity.from.aadObjectId');
+    public teamId = new StringExpression('=turn.activity.channelData.team.id');
 
-    /**
-     * Gets or sets the expression to get the value to use for tenant id.
-     *
-     * @default
-     * =turn.activity.channelData.tenant.id
-     */
-    public tenantId = new StringExpression('=turn.activity.channelData.tenant.id');
-
-    public getConverter(property: keyof GetMeetingParticipantConfiguration): Converter | ConverterFactory {
+    public getConverter(property: keyof GetTeamMemberConfiguration): Converter | ConverterFactory {
         switch (property) {
             case 'disabled':
                 return new BoolExpressionConverter();
             case 'property':
-            case 'meetingId':
-            case 'tenantId':
+            case 'memberId':
+            case 'teamId':
                 return new StringExpressionConverter();
             default:
                 return super.getConverter(property);
@@ -104,25 +96,18 @@ export class GetMeetingParticipant extends Dialog implements GetMeetingParticipa
         }
 
         if (dc.context.activity.channelId !== Channels.Msteams) {
-            throw new Error('TeamsInfo.getMeetingParticipant() works only on the Teams channel.');
+            throw new Error('TeamsInfo.getMember() works only on the Teams channel.');
         }
 
-        const meetingId = getValue(dc, this.meetingId);
-        const participantId = getValue(dc, this.participantId);
-        const tenantId = getValue(dc, this.tenantId);
+        const memberId = getValue(dc, this.memberId);
 
-        if (participantId === null) {
-            /**
-             * TeamsInfo.getMeetingParticipant will default to retrieving the current meeting's participant
-             * if none is provided. This could lead to unexpected results. Therefore, GetMeetingParticipant action
-             * throws an exception if the expression provided somehow maps to an invalid result.
-             */
-            throw new Error(
-                'GetMeetingParticipant could determine the participant id by expression value provided. participantId is required.'
-            );
+        if (!memberId) {
+            throw new Error(`Missing memberId in getMember()`);
         }
 
-        const result = await TeamsInfo.getMeetingParticipant(dc.context, meetingId, participantId, tenantId);
+        const teamId = getValue(dc, this.teamId);
+
+        const result = await TeamsInfo.getTeamMember(dc.context, teamId, memberId);
 
         if (this.property != null) {
             dc.state.setValue(this.property.getValue(dc.state), result);
@@ -137,10 +122,9 @@ export class GetMeetingParticipant extends Dialog implements GetMeetingParticipa
      * @returns {string} A string representing the compute Id.
      */
     protected onComputeId(): string {
-        return `GetMeetingParticipantId[
-            ${this.meetingId ?? ''},
-            ${this.participantId?.toString() ?? ''},
-            ${this.tenantId?.toString() ?? ''},
+        return `GetTeamMember[
+            ${this.memberId?.toString() ?? ''},
+            ${this.teamId?.toString() ?? ''},
             ${this.property?.toString() ?? ''}
         ]`;
     }

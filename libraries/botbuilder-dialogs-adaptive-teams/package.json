@@ -38,7 +38,7 @@
   },
   "scripts": {
     "build": "tsc -b",
-    "build-docs": "typedoc --theme markdown --entryPoint botbuilder-dialogs-adaptive --excludePrivate --includeDeclarations --ignoreCompilerErrors --module amd --out ..\\..\\doc\\botbuilder-dialogs .\\lib\\index.d.ts --hideGenerator --name \"Bot Builder SDK - Dialogs\" --readme none",
+    "build-docs": "typedoc --theme markdown --entryPoint botbuilder-dialogs-adaptive-teams --excludePrivate --includeDeclarations --ignoreCompilerErrors --module amd --out ..\\..\\doc\\botbuilder-dialogs-adaptive-teams .\\lib\\index.d.ts --hideGenerator --name \"Bot Builder SDK - Adaptive Dialogs - Teams\" --readme none",
     "build:tests": "tsc -p tests/tsconfig.json",
     "clean": "rimraf _ts3.4 lib tsconfig.tsbuildinfo",
     "lint": "eslint . --ext .js,.ts",
