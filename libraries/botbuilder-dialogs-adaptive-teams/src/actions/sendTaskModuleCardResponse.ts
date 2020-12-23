@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 
-import { BoolExpression, BoolExpressionConverter, EnumExpression } from 'adaptive-expressions';
+import { BoolExpression, BoolExpressionConverter } from 'adaptive-expressions';
 import { Activity, Attachment, TaskModuleContinueResponse, TaskModuleResponse, TaskModuleTaskInfo } from 'botbuilder';
 import {
     Converter,
@@ -19,7 +19,6 @@ import {
 } from 'botbuilder-dialogs';
 import { BaseSendTaskModuleContinueResponse } from './baseSendTaskModuleContinueResponse';
 import { BaseTeamsCacheInfoResponseDialog } from './baseTeamsCacheInfoResponseDialog';
-import { MessagingExtensionAttachmentLayoutResponseType } from './MessagingExtensionAttachmentLayoutResponseType';
 
 export interface SendTaskModuleCardResponseConfiguration extends DialogConfiguration {
     disabled?: boolean | string | BoolExpression;

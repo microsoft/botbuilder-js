@@ -9,18 +9,14 @@
 import {
     BoolExpression,
     BoolExpressionConverter,
-    EnumExpression,
     Expression,
     StringExpression,
     StringExpressionConverter,
 } from 'adaptive-expressions';
-import { TaskModuleContinueResponse, TaskModuleMessageResponse, TaskModuleResponse, TaskModuleTaskInfo } from 'botbuilder';
+import { TaskModuleContinueResponse, TaskModuleResponse, TaskModuleTaskInfo } from 'botbuilder';
 import { Converter, ConverterFactory, DialogConfiguration, DialogContext, DialogTurnResult } from 'botbuilder-dialogs';
-import { languageGeneratorKey } from 'botbuilder-dialogs-adaptive';
-import { getValue } from './actionHelpers';
 import { BaseSendTaskModuleContinueResponse } from './baseSendTaskModuleContinueResponse';
 import { BaseTeamsCacheInfoResponseDialog } from './baseTeamsCacheInfoResponseDialog';
-import { MessagingExtensionAttachmentLayoutResponseType } from './MessagingExtensionAttachmentLayoutResponseType';
 
 export interface SendTaskModuleUrlResponseConfiguration extends DialogConfiguration {
     disabled?: boolean | string | BoolExpression;

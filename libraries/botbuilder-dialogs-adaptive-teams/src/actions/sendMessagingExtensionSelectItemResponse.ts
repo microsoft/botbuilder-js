@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 
-import { BoolExpression, BoolExpressionConverter, EnumExpression } from 'adaptive-expressions';
+import { BoolExpression, BoolExpressionConverter } from 'adaptive-expressions';
 import { Activity, Attachment, MessagingExtensionAttachment, MessagingExtensionResult } from 'botbuilder';
 import {
     Converter,

@@ -9,7 +9,6 @@
 import {
     BoolExpression,
     BoolExpressionConverter,
-    EnumExpression,
     Expression,
     StringExpression,
     StringExpressionConverter,
@@ -19,7 +18,6 @@ import { Converter, ConverterFactory, DialogConfiguration, DialogContext, Dialog
 import { languageGeneratorKey } from 'botbuilder-dialogs-adaptive';
 import { getValue } from './actionHelpers';
 import { BaseTeamsCacheInfoResponseDialog } from './baseTeamsCacheInfoResponseDialog';
-import { MessagingExtensionAttachmentLayoutResponseType } from './MessagingExtensionAttachmentLayoutResponseType';
 
 export interface SendTaskModuleMessageResponseConfiguration extends DialogConfiguration {
     disabled?: boolean | string | BoolExpression;

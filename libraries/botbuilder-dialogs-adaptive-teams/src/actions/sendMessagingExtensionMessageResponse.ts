@@ -9,7 +9,6 @@
 import {
     BoolExpression,
     BoolExpressionConverter,
-    EnumExpression,
     Expression,
     StringExpression,
     StringExpressionConverter,
@@ -17,7 +16,6 @@ import {
 import { MessagingExtensionResponse, MessagingExtensionResult } from 'botbuilder';
 import { Converter, ConverterFactory, DialogConfiguration, DialogContext, DialogTurnResult } from 'botbuilder-dialogs';
 import { BaseTeamsCacheInfoResponseDialog } from './baseTeamsCacheInfoResponseDialog';
-import { MessagingExtensionAttachmentLayoutResponseType } from './MessagingExtensionAttachmentLayoutResponseType';
 import { MessagingExtensionResultResponseType } from './MessagingExtensionResultResponseType';
 
 export interface SendMessagingExtensionMessageResponseConfiguration extends DialogConfiguration {
