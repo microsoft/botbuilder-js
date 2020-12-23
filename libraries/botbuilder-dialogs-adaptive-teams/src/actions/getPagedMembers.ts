@@ -88,7 +88,7 @@ export class GetPagedMembers extends Dialog implements GetPagedMembersConfigurat
      * @returns {Promise<DialogTurnResult>} A promise representing the asynchronous operation.
      */
     public async beginDialog(dc: DialogContext, options?: Record<string, unknown>): Promise<DialogTurnResult> {
-        if (this.disabled && this.disabled.getValue(dc.state)) {
+        if (this.disabled && this.disabled?.getValue(dc.state)) {
             return dc.endDialog();
         }
 
@@ -102,7 +102,7 @@ export class GetPagedMembers extends Dialog implements GetPagedMembersConfigurat
         const result = await TeamsInfo.getPagedMembers(dc.context, pageSize, continuationToken);
 
         if (this.property != null) {
-            dc.state.setValue(this.property.getValue(dc.state), result);
+            dc.state.setValue(this.property?.getValue(dc.state), result);
         }
 
         return dc.endDialog(result);

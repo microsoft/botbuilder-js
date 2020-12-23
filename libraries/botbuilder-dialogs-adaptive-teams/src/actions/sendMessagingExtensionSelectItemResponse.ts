@@ -6,14 +6,8 @@
  * Licensed under the MIT License.
  */
 
-import {
-    BoolExpression,
-    BoolExpressionConverter,
-    Expression,
-    StringExpression,
-    StringExpressionConverter,
-} from 'adaptive-expressions';
-import { Activity, MessagingExtensionResult } from 'botbuilder';
+import { BoolExpression, BoolExpressionConverter, EnumExpression } from 'adaptive-expressions';
+import { Activity, Attachment, MessagingExtensionAttachment, MessagingExtensionResult } from 'botbuilder';
 import {
     Converter,
     ConverterFactory,
@@ -27,34 +21,33 @@ import { BaseTeamsCacheInfoResponseDialog } from './baseTeamsCacheInfoResponseDi
 import { MessagingExtensionAttachmentLayoutResponseType } from './MessagingExtensionAttachmentLayoutResponseType';
 import { MessagingExtensionResultResponseType } from './MessagingExtensionResultResponseType';
 
-export interface SendAppBasedLinkQueryResponseConfiguration extends DialogConfiguration {
+export interface SendMessagingExtensionSelectItemResponseConfiguration extends DialogConfiguration {
     disabled?: boolean | string | BoolExpression;
-    property?: string | Expression | StringExpression;
     card?: TemplateInterface<Activity, DialogStateManager>;
 }
 
 /**
- * Send a messaging extension 'result' response when a Teams Invoke Activity is received with activity.name='composeExtension/queryLink'.
+ * Send a messaging extension response when an item is selected.
  */
-export class SendAppBasedLinkQueryResponse
+export class SendMessagingExtensionSelectItemResponse
     extends BaseTeamsCacheInfoResponseDialog
-    implements SendAppBasedLinkQueryResponseConfiguration {
+    implements SendMessagingExtensionSelectItemResponseConfiguration {
     /**
      * Class identifier.
      */
-    public static $kind = 'Teams.SendAppBasedLinkQueryResponse';
+    public static $kind = 'Teams.SendMessagingExtensionSelectItemResponse';
 
     /**
      * Gets or sets template for the attachment template of a Thumbnail or Hero Card to send.
      */
     public card: TemplateInterface<Activity, DialogStateManager>;
 
-    public getConverter(property: keyof SendAppBasedLinkQueryResponseConfiguration): Converter | ConverterFactory {
+    public getConverter(
+        property: keyof SendMessagingExtensionSelectItemResponseConfiguration
+    ): Converter | ConverterFactory {
         switch (property) {
             case 'disabled':
                 return new BoolExpressionConverter();
-            case 'property':
-                return new StringExpressionConverter();
             default:
                 return super.getConverter(property);
         }
@@ -72,29 +65,30 @@ export class SendAppBasedLinkQueryResponse
             return dc.endDialog();
         }
 
-        let boundActivity;
-        if (this.card != null) {
-            boundActivity = await this.card.bind(dc, dc.state);
+        const boundActivity = await this.card.bind(dc, dc.state);
 
-            if (!boundActivity.attachments) {
-                throw new Error(
-                    'Invalid activity. An attachment is required for Send Messaging Extension Link Query Response.'
-                );
-            }
-        } else {
-            throw new Error('An attachment is required for Send Messaging Extension Link Query Response.');
+        if (!boundActivity.attachments) {
+            throw new Error(
+                `Invalid activity. A valid attachment is required for ${SendMessagingExtensionSelectItemResponse.$kind} .`
+            );
         }
 
-        const result = <MessagingExtensionResult>{
-            type: MessagingExtensionResultResponseType.result.toString(),
-            attachmentLayout: MessagingExtensionAttachmentLayoutResponseType.list.toString(),
-            attachments: boundActivity.attachments,
+        const attachment = boundActivity.attachments[0] as Attachment;
+        const extensionAttachment = <MessagingExtensionAttachment>{
+            contentType: attachment.contentType,
+            content: attachment.content,
         };
 
-        const invokeResponse = this.createMessagingExtensionInvokeResponseActivity(dc, result);
-        const resourceResponse = await dc.context.sendActivity(invokeResponse);
+        const response = <MessagingExtensionResult>{
+            type: MessagingExtensionResultResponseType.result.toString(),
+            attachmentLayout: MessagingExtensionAttachmentLayoutResponseType.list.toString(),
+            attachments: [extensionAttachment],
+        };
 
-        return dc.endDialog(resourceResponse);
+        const invokeResponse = this.createMessagingExtensionInvokeResponseActivity(dc, response);
+        const sendResponse = await dc.context.sendActivity(invokeResponse);
+
+        return dc.endDialog(sendResponse);
     }
 
     /**
@@ -103,7 +97,7 @@ export class SendAppBasedLinkQueryResponse
      * @returns {string} A string representing the compute Id.
      */
     protected onComputeId(): string {
-        return `SendAppBasedLinkQueryResponse[
+        return `SendMessagingExtensionSelectItemResponse[
             ${this.card?.toString() ?? ''}
         ]`;
     }

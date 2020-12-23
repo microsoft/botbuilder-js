@@ -13,9 +13,9 @@ export enum MessagingExtensionAttachmentLayoutResponseType {
     /**
      * List layout type.
      */
-    list,
+    list = 'list',
     /**
      * Grid layout type.
      */
-    grid,
+    grid = 'grid',
 }

@@ -13,7 +13,7 @@ import {
     StringExpression,
     StringExpressionConverter,
 } from 'adaptive-expressions';
-import { Channels, TeamsInfo } from 'botbuilder';
+import { Activity, Channels, TeamsInfo } from 'botbuilder';
 import {
     Converter,
     ConverterFactory,
@@ -32,7 +32,7 @@ export interface SendMessageToTeamsChannelConfiguration extends DialogConfigurat
     conversationReferenceProperty?: string | Expression | StringExpression;
     activityIdProperty?: string | Expression | StringExpression;
     teamsChannelId?: string | Expression | StringExpression;
-    activity?: TemplateInterface<string, DialogStateManager>;
+    activity?: TemplateInterface<Activity, DialogStateManager>;
 }
 
 /**
@@ -71,7 +71,7 @@ export class SendMessageToTeamsChannel extends Dialog implements SendMessageToTe
     /**
      * Gets or sets template for the activity expression containing the activity to send.
      */
-    public activity: TemplateInterface<string, DialogStateManager>;
+    public activity: TemplateInterface<Activity, DialogStateManager>;
 
     public getConverter(property: keyof SendMessageToTeamsChannelConfiguration): Converter | ConverterFactory {
         switch (property) {
@@ -94,7 +94,7 @@ export class SendMessageToTeamsChannel extends Dialog implements SendMessageToTe
      * @returns {Promise<DialogTurnResult>} A promise representing the asynchronous operation.
      */
     public async beginDialog(dc: DialogContext, options?: Record<string, unknown>): Promise<DialogTurnResult> {
-        if (this.disabled && this.disabled.getValue(dc.state)) {
+        if (this.disabled && this.disabled?.getValue(dc.state)) {
             return dc.endDialog();
         }
 
@@ -116,11 +116,11 @@ export class SendMessageToTeamsChannel extends Dialog implements SendMessageToTe
         const result = await TeamsInfo.sendMessageToTeamsChannel(dc.context, activity, teamsChannelId);
 
         if (this.conversationReferenceProperty != null) {
-            dc.state.setValue(this.conversationReferenceProperty.getValue(dc.state), result[0]);
+            dc.state.setValue(this.conversationReferenceProperty?.getValue(dc.state), result[0]);
         }
 
         if (this.activityIdProperty != null) {
-            dc.state.setValue(this.activityIdProperty.getValue(dc.state), result[1]);
+            dc.state.setValue(this.activityIdProperty?.getValue(dc.state), result[1]);
         }
 
         return dc.endDialog(result);

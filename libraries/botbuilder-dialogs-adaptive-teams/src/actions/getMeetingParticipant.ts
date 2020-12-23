@@ -99,7 +99,7 @@ export class GetMeetingParticipant extends Dialog implements GetMeetingParticipa
      * @returns {Promise<DialogTurnResult>} A promise representing the asynchronous operation.
      */
     public async beginDialog(dc: DialogContext, options?: Record<string, unknown>): Promise<DialogTurnResult> {
-        if (this.disabled && this.disabled.getValue(dc.state)) {
+        if (this.disabled && this.disabled?.getValue(dc.state)) {
             return dc.endDialog();
         }
 
@@ -125,7 +125,7 @@ export class GetMeetingParticipant extends Dialog implements GetMeetingParticipa
         const result = await TeamsInfo.getMeetingParticipant(dc.context, meetingId, participantId, tenantId);
 
         if (this.property != null) {
-            dc.state.setValue(this.property.getValue(dc.state), result);
+            dc.state.setValue(this.property?.getValue(dc.state), result);
         }
 
         return dc.endDialog(result);

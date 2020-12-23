@@ -13,21 +13,21 @@ export enum MessagingExtensionResultResponseType {
     /**
      * Result response type.
      */
-    result,
+    result = 'result',
     /**
      * Auth response type.
      */
-    auth,
+    auth = 'auth',
     /**
      * Config response type.
      */
-    config,
+    config = 'config',
     /**
      * Message response type.
      */
-    message,
+    message = 'message',
     /**
      * BotMessagePreview response type.
      */
-    botMessagePreview,
+    botMessagePreview = 'botMessagePreview',
 }

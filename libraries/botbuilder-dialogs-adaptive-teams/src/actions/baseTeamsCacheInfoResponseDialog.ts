@@ -84,8 +84,8 @@ export abstract class BaseTeamsCacheInfoResponseDialog
 
     protected getCacheInfo(dc: DialogContext): CacheInfo {
         if (this.cacheType != null && this.cacheDuration != null) {
-            const cacheType = this.cacheType.getValue(dc.state);
-            let cacheDuration = this.cacheDuration.getValue(dc.state);
+            const cacheType = this.cacheType?.getValue(dc.state);
+            let cacheDuration = this.cacheDuration?.getValue(dc.state);
 
             if (cacheDuration > 0 && cacheType != null) {
                 // Valid ranges for cacheDuration are 60 < > 2592000

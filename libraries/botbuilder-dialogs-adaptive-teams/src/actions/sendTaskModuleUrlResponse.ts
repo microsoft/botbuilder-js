@@ -9,52 +9,52 @@
 import {
     BoolExpression,
     BoolExpressionConverter,
+    EnumExpression,
     Expression,
     StringExpression,
     StringExpressionConverter,
 } from 'adaptive-expressions';
-import { Activity, MessagingExtensionActionResponse, TaskModuleContinueResponse, TaskModuleTaskInfo } from 'botbuilder';
-import {
-    Converter,
-    ConverterFactory,
-    DialogConfiguration,
-    DialogContext,
-    DialogStateManager,
-    DialogTurnResult,
-    TemplateInterface,
-} from 'botbuilder-dialogs';
+import { TaskModuleContinueResponse, TaskModuleMessageResponse, TaskModuleResponse, TaskModuleTaskInfo } from 'botbuilder';
+import { Converter, ConverterFactory, DialogConfiguration, DialogContext, DialogTurnResult } from 'botbuilder-dialogs';
+import { languageGeneratorKey } from 'botbuilder-dialogs-adaptive';
+import { getValue } from './actionHelpers';
 import { BaseSendTaskModuleContinueResponse } from './baseSendTaskModuleContinueResponse';
 import { BaseTeamsCacheInfoResponseDialog } from './baseTeamsCacheInfoResponseDialog';
+import { MessagingExtensionAttachmentLayoutResponseType } from './MessagingExtensionAttachmentLayoutResponseType';
 
-export interface SendMessagingExtensionActionResponseConfiguration extends DialogConfiguration {
+export interface SendTaskModuleUrlResponseConfiguration extends DialogConfiguration {
     disabled?: boolean | string | BoolExpression;
-    property?: string | Expression | StringExpression;
-    card?: TemplateInterface<Activity, DialogStateManager>;
+    url?: string | Expression | StringExpression;
+    fallbackUrl?: string | Expression | StringExpression;
 }
 
 /**
- * Send a messaging extension 'result' response when a Teams Invoke Activity is received with activity.name='composeExtension/queryLink'.
+ * Send a simple message task module response.
  */
-export class SendMessagingExtensionActionResponse
+export class SendTaskModuleUrlResponse
     extends BaseSendTaskModuleContinueResponse
-    implements SendMessagingExtensionActionResponseConfiguration {
+    implements SendTaskModuleUrlResponseConfiguration {
     /**
      * Class identifier.
      */
-    public static $kind = 'Teams.SendMessagingExtensionActionResponse';
+    public static $kind = 'Teams.SendTaskModuleUrlResponse';
 
     /**
-     * Gets or sets template for the attachment template of a Thumbnail or Hero Card to send.
+     * Gets or sets an optional expression for the Url of the Task Module response.
      */
-    public card: TemplateInterface<Activity, DialogStateManager>;
+    public url: StringExpression;
 
-    public getConverter(
-        property: keyof SendMessagingExtensionActionResponseConfiguration
-    ): Converter | ConverterFactory {
+    /**
+     * Gets or sets an optional expression for the Fallback Url the Task Module Task Info response.
+     */
+    public fallbackUrl: StringExpression;
+
+    public getConverter(property: keyof SendTaskModuleUrlResponseConfiguration): Converter | ConverterFactory {
         switch (property) {
             case 'disabled':
                 return new BoolExpressionConverter();
-            case 'property':
+            case 'url':
+            case 'fallbackUrl':
                 return new StringExpressionConverter();
             default:
                 return super.getConverter(property);
@@ -69,40 +69,39 @@ export class SendMessagingExtensionActionResponse
      * @returns {Promise<DialogTurnResult>} A promise representing the asynchronous operation.
      */
     public async beginDialog(dc: DialogContext, options?: Record<string, unknown>): Promise<DialogTurnResult> {
-        if (this.disabled && this.disabled?.getValue(dc.state)) {
+        if (this.disabled && this.disabled.getValue(dc.state)) {
             return dc.endDialog();
         }
 
-        let activity;
-        if (this.card != null) {
-            activity = await this.card.bind(dc, dc.state);
-        }
-
-        if (!activity?.attachments) {
-            throw new Error('Missing attachments in Messaging Extension Action Response');
+        const url = this.url?.getValue(dc.state);
+        if (!url) {
+            throw new Error('Missing Url for Task Module Continue Response.');
         }
 
         const title = this.title?.getValue(dc.state);
         const height = this.height?.getValue(dc.state);
         const width = this.width?.getValue(dc.state);
         const completionBotId = this.completionBotId?.getValue(dc.state);
+        const fallbackUrl = this.fallbackUrl?.getValue(dc.state);
 
-        const response = <MessagingExtensionActionResponse>{
+        const response = <TaskModuleResponse>{
             task: <TaskModuleContinueResponse>{
                 value: <TaskModuleTaskInfo>{
-                    card: activity.attachments[0],
                     height,
                     width,
                     title,
                     completionBotId,
+                    url,
+                    fallbackUrl,
                 },
             },
+            cacheInfo: this.getCacheInfo(dc),
         };
 
-        const invokeResponse = BaseTeamsCacheInfoResponseDialog.createInvokeResponseActivity(response);
-        const resourceResponse = await dc.context.sendActivity(invokeResponse);
+        const responseActivity = BaseTeamsCacheInfoResponseDialog.createInvokeResponseActivity(response);
+        const sendResponse = await dc.context.sendActivity(responseActivity);
 
-        return dc.endDialog(resourceResponse);
+        return dc.endDialog(sendResponse);
     }
 
     /**
@@ -111,8 +110,9 @@ export class SendMessagingExtensionActionResponse
      * @returns {string} A string representing the compute Id.
      */
     protected onComputeId(): string {
-        return `SendMessagingExtensionActionResponse[
-            ${this.card?.toString() ?? ''}
+        return `SendTaskModuleUrlResponse[
+            ${this.url?.toString() ?? ''},
+            ${this.title?.toString() ?? ''}
         ]`;
     }
 }

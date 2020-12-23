@@ -87,7 +87,7 @@ export class SendMessagingExtensionAuthResponse
      * @returns {Promise<DialogTurnResult>} A promise representing the asynchronous operation.
      */
     public async beginDialog(dc: DialogContext, options?: Record<string, unknown>): Promise<DialogTurnResult> {
-        if (this.disabled && this.disabled.getValue(dc.state)) {
+        if (this.disabled && this.disabled?.getValue(dc.state)) {
             return dc.endDialog();
         }
 
@@ -97,12 +97,12 @@ export class SendMessagingExtensionAuthResponse
             throw new Error('SendMessagingExtensionOauthResponse(): not supported by the current adapter');
         }
 
-        const connectionName = this.connectionName.getValue(dc.state);
+        const connectionName = this.connectionName?.getValue(dc.state);
         if (!connectionName) {
             throw new Error('Messaging Extension Auth Response requires a Connection Name.');
         }
 
-        const title = this.title.getValue(dc.state);
+        const title = this.title?.getValue(dc.state);
         if (!title) {
             throw new Error('Messaging Extension Auth Response requires a Title.');
         }
@@ -116,7 +116,7 @@ export class SendMessagingExtensionAuthResponse
             // We have the auth token, so the user is already signed in.
             // Similar to OAuthInput, just return the token in the property.
             if (this.property != null) {
-                dc.state.setValue(this.property.getValue(dc.state), tokenResponse);
+                dc.state.setValue(this.property?.getValue(dc.state), tokenResponse);
             }
 
             // End the dialog and return the token response

@@ -6,14 +6,14 @@
  * Licensed under the MIT License.
  */
 
+import { BoolExpression, BoolExpressionConverter } from 'adaptive-expressions';
 import {
-    BoolExpression,
-    BoolExpressionConverter,
-    Expression,
-    StringExpression,
-    StringExpressionConverter,
-} from 'adaptive-expressions';
-import { Activity, MessagingExtensionActionResponse, TaskModuleContinueResponse, TaskModuleTaskInfo } from 'botbuilder';
+    Activity,
+    Attachment,
+    MessageFactory,
+    MessagingExtensionActionResponse,
+    MessagingExtensionResult,
+} from 'botbuilder';
 import {
     Converter,
     ConverterFactory,
@@ -25,23 +25,23 @@ import {
 } from 'botbuilder-dialogs';
 import { BaseSendTaskModuleContinueResponse } from './baseSendTaskModuleContinueResponse';
 import { BaseTeamsCacheInfoResponseDialog } from './baseTeamsCacheInfoResponseDialog';
+import { MessagingExtensionResultResponseType } from './MessagingExtensionResultResponseType';
 
-export interface SendMessagingExtensionActionResponseConfiguration extends DialogConfiguration {
+export interface SendMessagingExtensionBotMessagePreviewResponseConfiguration extends DialogConfiguration {
     disabled?: boolean | string | BoolExpression;
-    property?: string | Expression | StringExpression;
     card?: TemplateInterface<Activity, DialogStateManager>;
 }
 
 /**
- * Send a messaging extension 'result' response when a Teams Invoke Activity is received with activity.name='composeExtension/queryLink'.
+ * Send a messaging extension 'botMessagePreview' response.
  */
-export class SendMessagingExtensionActionResponse
+export class SendMessagingExtensionAuthResponse
     extends BaseSendTaskModuleContinueResponse
-    implements SendMessagingExtensionActionResponseConfiguration {
+    implements SendMessagingExtensionBotMessagePreviewResponseConfiguration {
     /**
      * Class identifier.
      */
-    public static $kind = 'Teams.SendMessagingExtensionActionResponse';
+    public static $kind = 'Teams.SendMessagingExtensionBotMessagePreviewResponse';
 
     /**
      * Gets or sets template for the attachment template of a Thumbnail or Hero Card to send.
@@ -49,13 +49,11 @@ export class SendMessagingExtensionActionResponse
     public card: TemplateInterface<Activity, DialogStateManager>;
 
     public getConverter(
-        property: keyof SendMessagingExtensionActionResponseConfiguration
+        property: keyof SendMessagingExtensionBotMessagePreviewResponseConfiguration
     ): Converter | ConverterFactory {
         switch (property) {
             case 'disabled':
                 return new BoolExpressionConverter();
-            case 'property':
-                return new StringExpressionConverter();
             default:
                 return super.getConverter(property);
         }
@@ -73,30 +71,36 @@ export class SendMessagingExtensionActionResponse
             return dc.endDialog();
         }
 
-        let activity;
+        // Type check that dc.context.adapter matches interface, ExtendedUserTokenProvider
+        // eslint-disable-next-line no-prototype-builtins
+        if (!dc.context.adapter.hasOwnProperty('getUserToken')) {
+            throw new Error('SendMessagingExtensionBotMessagePreviewResponse(): not supported by the current adapter');
+        }
+
+        let attachment;
         if (this.card != null) {
-            activity = await this.card.bind(dc, dc.state);
-        }
+            const boundActivity = await this.card.bind(dc, dc.state);
 
-        if (!activity?.attachments) {
-            throw new Error('Missing attachments in Messaging Extension Action Response');
-        }
+            if (!boundActivity.attachments) {
+                throw new Error(
+                    'Invalid activity. The activity does not contain a valid attachment as required for Send Messaging Extension Bot Message Preview Response.'
+                );
+            }
 
-        const title = this.title?.getValue(dc.state);
-        const height = this.height?.getValue(dc.state);
-        const width = this.width?.getValue(dc.state);
-        const completionBotId = this.completionBotId?.getValue(dc.state);
+            attachment = boundActivity.attachments[0] as Attachment;
+        } else {
+            throw new Error('A valid card is required for Send Messaging Extension Bot Message Preview Response');
+        }
 
         const response = <MessagingExtensionActionResponse>{
-            task: <TaskModuleContinueResponse>{
-                value: <TaskModuleTaskInfo>{
-                    card: activity.attachments[0],
-                    height,
-                    width,
-                    title,
-                    completionBotId,
-                },
+            composeExtension: <MessagingExtensionResult>{
+                type: MessagingExtensionResultResponseType.botMessagePreview.toString(),
+                activityPreview: MessageFactory.attachment(<Attachment>{
+                    content: attachment.content,
+                    contentType: attachment.contentType,
+                }),
             },
+            cacheInfo: this.getCacheInfo(dc),
         };
 
         const invokeResponse = BaseTeamsCacheInfoResponseDialog.createInvokeResponseActivity(response);
@@ -111,7 +115,7 @@ export class SendMessagingExtensionActionResponse
      * @returns {string} A string representing the compute Id.
      */
     protected onComputeId(): string {
-        return `SendMessagingExtensionActionResponse[
+        return `SendMessagingExtensionBotMessagePreviewResponse[
             ${this.card?.toString() ?? ''}
         ]`;
     }

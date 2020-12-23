@@ -6,14 +6,8 @@
  * Licensed under the MIT License.
  */
 
-import {
-    BoolExpression,
-    BoolExpressionConverter,
-    Expression,
-    StringExpression,
-    StringExpressionConverter,
-} from 'adaptive-expressions';
-import { Activity, MessagingExtensionActionResponse, TaskModuleContinueResponse, TaskModuleTaskInfo } from 'botbuilder';
+import { BoolExpression, BoolExpressionConverter, EnumExpression } from 'adaptive-expressions';
+import { Activity, Attachment, TaskModuleContinueResponse, TaskModuleResponse, TaskModuleTaskInfo } from 'botbuilder';
 import {
     Converter,
     ConverterFactory,
@@ -25,37 +19,33 @@ import {
 } from 'botbuilder-dialogs';
 import { BaseSendTaskModuleContinueResponse } from './baseSendTaskModuleContinueResponse';
 import { BaseTeamsCacheInfoResponseDialog } from './baseTeamsCacheInfoResponseDialog';
+import { MessagingExtensionAttachmentLayoutResponseType } from './MessagingExtensionAttachmentLayoutResponseType';
 
-export interface SendMessagingExtensionActionResponseConfiguration extends DialogConfiguration {
+export interface SendTaskModuleCardResponseConfiguration extends DialogConfiguration {
     disabled?: boolean | string | BoolExpression;
-    property?: string | Expression | StringExpression;
     card?: TemplateInterface<Activity, DialogStateManager>;
 }
 
 /**
- * Send a messaging extension 'result' response when a Teams Invoke Activity is received with activity.name='composeExtension/queryLink'.
+ * Send a messaging extension 'message' response.
  */
-export class SendMessagingExtensionActionResponse
+export class SendTaskModuleCardResponse
     extends BaseSendTaskModuleContinueResponse
-    implements SendMessagingExtensionActionResponseConfiguration {
+    implements SendTaskModuleCardResponseConfiguration {
     /**
      * Class identifier.
      */
-    public static $kind = 'Teams.SendMessagingExtensionActionResponse';
+    public static $kind = 'Teams.SendTaskModuleCardResponse';
 
     /**
      * Gets or sets template for the attachment template of a Thumbnail or Hero Card to send.
      */
     public card: TemplateInterface<Activity, DialogStateManager>;
 
-    public getConverter(
-        property: keyof SendMessagingExtensionActionResponseConfiguration
-    ): Converter | ConverterFactory {
+    public getConverter(property: keyof SendTaskModuleCardResponseConfiguration): Converter | ConverterFactory {
         switch (property) {
             case 'disabled':
                 return new BoolExpressionConverter();
-            case 'property':
-                return new StringExpressionConverter();
             default:
                 return super.getConverter(property);
         }
@@ -73,13 +63,19 @@ export class SendMessagingExtensionActionResponse
             return dc.endDialog();
         }
 
-        let activity;
+        let attachment;
         if (this.card != null) {
-            activity = await this.card.bind(dc, dc.state);
-        }
+            const boundActivity = await this.card.bind(dc, dc.state);
 
-        if (!activity?.attachments) {
-            throw new Error('Missing attachments in Messaging Extension Action Response');
+            if (!boundActivity.attachments) {
+                throw new Error(
+                    'Invalid activity. The activity does not contain a valid attachment as required for Task Module Card Response.'
+                );
+            }
+
+            attachment = boundActivity.attachments[0] as Attachment;
+        } else {
+            throw new Error('A valid card is required for Task Module Card Response');
         }
 
         const title = this.title?.getValue(dc.state);
@@ -87,22 +83,23 @@ export class SendMessagingExtensionActionResponse
         const width = this.width?.getValue(dc.state);
         const completionBotId = this.completionBotId?.getValue(dc.state);
 
-        const response = <MessagingExtensionActionResponse>{
+        const response = <TaskModuleResponse>{
             task: <TaskModuleContinueResponse>{
                 value: <TaskModuleTaskInfo>{
-                    card: activity.attachments[0],
+                    card: attachment,
                     height,
                     width,
                     title,
                     completionBotId,
                 },
             },
+            cacheInfo: this.getCacheInfo(dc),
         };
 
-        const invokeResponse = BaseTeamsCacheInfoResponseDialog.createInvokeResponseActivity(response);
-        const resourceResponse = await dc.context.sendActivity(invokeResponse);
+        const responseActivity = BaseTeamsCacheInfoResponseDialog.createInvokeResponseActivity(response);
+        const sendResponse = await dc.context.sendActivity(responseActivity);
 
-        return dc.endDialog(resourceResponse);
+        return dc.endDialog(sendResponse);
     }
 
     /**
@@ -111,7 +108,7 @@ export class SendMessagingExtensionActionResponse
      * @returns {string} A string representing the compute Id.
      */
     protected onComputeId(): string {
-        return `SendMessagingExtensionActionResponse[
+        return `SendTaskModuleCardResponse[
             ${this.card?.toString() ?? ''}
         ]`;
     }

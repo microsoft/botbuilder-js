@@ -15,7 +15,7 @@ import {
     StringExpression,
     StringExpressionConverter,
 } from 'adaptive-expressions';
-import { MessagingExtensionResult } from 'botbuilder';
+import { Activity, MessagingExtensionResult } from 'botbuilder';
 import {
     Converter,
     ConverterFactory,
@@ -32,7 +32,7 @@ import { MessagingExtensionResultResponseType } from './MessagingExtensionResult
 export interface SendMessagingExtensionAttachmentsResponseConfiguration extends DialogConfiguration {
     disabled?: boolean | string | BoolExpression;
     property?: string | Expression | StringExpression;
-    attachments?: TemplateInterface<string, DialogStateManager>;
+    attachments?: TemplateInterface<Activity, DialogStateManager>;
     attachmentLayout?: string | Expression | EnumExpression<MessagingExtensionAttachmentLayoutResponseType>;
 }
 
@@ -50,7 +50,7 @@ export class SendMessagingExtensionAttachmentsResponse
     /**
      * Gets or sets the Activity containing the Attachments to send.
      */
-    public attachments: TemplateInterface<string, DialogStateManager>;
+    public attachments: TemplateInterface<Activity, DialogStateManager>;
 
     /**
      * Gets or sets the Attachment Layout type for the response ('grid' or 'list').
@@ -85,7 +85,7 @@ export class SendMessagingExtensionAttachmentsResponse
      * @returns {Promise<DialogTurnResult>} A promise representing the asynchronous operation.
      */
     public async beginDialog(dc: DialogContext, options?: Record<string, unknown>): Promise<DialogTurnResult> {
-        if (this.disabled && this.disabled.getValue(dc.state)) {
+        if (this.disabled && this.disabled?.getValue(dc.state)) {
             return dc.endDialog();
         }
 
@@ -98,7 +98,7 @@ export class SendMessagingExtensionAttachmentsResponse
             throw new Error('Missing attachments in Messaging Extension Attachments Response');
         }
 
-        const layout = this.attachmentLayout.getValue(dc.state);
+        const layout = this.attachmentLayout?.getValue(dc.state);
 
         const result = <MessagingExtensionResult>{
             type: MessagingExtensionResultResponseType.result.toString(),
