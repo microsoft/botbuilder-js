@@ -25,7 +25,7 @@ import {
 } from 'botbuilder-dialogs';
 import { BaseSendTaskModuleContinueResponse } from './baseSendTaskModuleContinueResponse';
 import { BaseTeamsCacheInfoResponseDialog } from './baseTeamsCacheInfoResponseDialog';
-import { MessagingExtensionResultResponseType } from './MessagingExtensionResultResponseType';
+import { MessagingExtensionResultResponseType } from './messagingExtensionResultResponseType';
 
 export interface SendMessagingExtensionBotMessagePreviewResponseConfiguration extends DialogConfiguration {
     disabled?: boolean | string | BoolExpression;
@@ -35,7 +35,7 @@ export interface SendMessagingExtensionBotMessagePreviewResponseConfiguration ex
 /**
  * Send a messaging extension 'botMessagePreview' response.
  */
-export class SendMessagingExtensionAuthResponse
+export class SendMessagingExtensionBotMessagePreviewResponse
     extends BaseSendTaskModuleContinueResponse
     implements SendMessagingExtensionBotMessagePreviewResponseConfiguration {
     /**

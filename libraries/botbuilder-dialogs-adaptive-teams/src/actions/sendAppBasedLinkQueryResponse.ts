@@ -24,8 +24,8 @@ import {
     TemplateInterface,
 } from 'botbuilder-dialogs';
 import { BaseTeamsCacheInfoResponseDialog } from './baseTeamsCacheInfoResponseDialog';
-import { MessagingExtensionAttachmentLayoutResponseType } from './MessagingExtensionAttachmentLayoutResponseType';
-import { MessagingExtensionResultResponseType } from './MessagingExtensionResultResponseType';
+import { MessagingExtensionAttachmentLayoutResponseType } from './messagingExtensionAttachmentLayoutResponseType';
+import { MessagingExtensionResultResponseType } from './messagingExtensionResultResponseType';
 
 export interface SendAppBasedLinkQueryResponseConfiguration extends DialogConfiguration {
     disabled?: boolean | string | BoolExpression;

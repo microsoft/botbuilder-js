@@ -15,7 +15,7 @@ import { OnConversationUpdateActivity } from 'botbuilder-dialogs-adaptive';
  * Actions triggered when a Teams ConversationUpdate with channelData.eventType == 'teamUnarchived'.
  * Note: turn.activity.channelData.Teams has team data.
  */
-export class OnTeamsTeamRestored extends OnConversationUpdateActivity {
+export class OnTeamsTeamUnarchived extends OnConversationUpdateActivity {
     public static $kind = 'Teams.OnTeamUnarchived';
 
     public constructor(actions?: Dialog[], condition?: string) {

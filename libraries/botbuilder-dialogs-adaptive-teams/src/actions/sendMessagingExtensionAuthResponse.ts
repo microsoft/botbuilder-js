@@ -31,7 +31,7 @@ import {
     DialogTurnResult,
 } from 'botbuilder-dialogs';
 import { BaseSendTaskModuleContinueResponse } from './baseSendTaskModuleContinueResponse';
-import { MessagingExtensionResultResponseType } from './MessagingExtensionResultResponseType';
+import { MessagingExtensionResultResponseType } from './messagingExtensionResultResponseType';
 
 export interface SendMessagingExtensionAuthResponseConfiguration extends DialogConfiguration {
     disabled?: boolean | string | BoolExpression;

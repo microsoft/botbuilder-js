@@ -26,8 +26,8 @@ import {
     TemplateInterface,
 } from 'botbuilder-dialogs';
 import { BaseSendTaskModuleContinueResponse } from './baseSendTaskModuleContinueResponse';
-import { MessagingExtensionAttachmentLayoutResponseType } from './MessagingExtensionAttachmentLayoutResponseType';
-import { MessagingExtensionResultResponseType } from './MessagingExtensionResultResponseType';
+import { MessagingExtensionAttachmentLayoutResponseType } from './messagingExtensionAttachmentLayoutResponseType';
+import { MessagingExtensionResultResponseType } from './messagingExtensionResultResponseType';
 
 export interface SendMessagingExtensionAttachmentsResponseConfiguration extends DialogConfiguration {
     disabled?: boolean | string | BoolExpression;

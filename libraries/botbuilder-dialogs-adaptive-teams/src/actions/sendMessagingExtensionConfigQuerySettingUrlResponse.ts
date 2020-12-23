@@ -22,7 +22,7 @@ import {
 } from 'botbuilder';
 import { Converter, ConverterFactory, DialogConfiguration, DialogContext, DialogTurnResult } from 'botbuilder-dialogs';
 import { BaseTeamsCacheInfoResponseDialog } from './baseTeamsCacheInfoResponseDialog';
-import { MessagingExtensionResultResponseType } from './MessagingExtensionResultResponseType';
+import { MessagingExtensionResultResponseType } from './messagingExtensionResultResponseType';
 
 export interface SendMessagingExtensionConfigQuerySettingUrlResponseConfiguration extends DialogConfiguration {
     disabled?: boolean | string | BoolExpression;
