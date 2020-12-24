@@ -258,7 +258,6 @@ export class OrchestratorAdaptiveRecognizer extends Recognizer implements Orches
         }
 
         if (!OrchestratorAdaptiveRecognizer.orchestrator && !this._resolver) {
-            console.time('Model load');
             // Create orchestrator core
             const fullModelPath = resolve(this._modelPath);
             if (!existsSync(fullModelPath)) {
@@ -269,7 +268,6 @@ export class OrchestratorAdaptiveRecognizer extends Recognizer implements Orches
                 throw new Error(`Model load failed.`);
             }
             OrchestratorAdaptiveRecognizer.orchestrator = orchestrator;
-            console.timeEnd('Model load');
         }
 
         if (!this._resolver) {
