@@ -12,4 +12,5 @@
 export class DialogTurnStateConstants {
     static dialogManager = Symbol('dialogManager');
     static telemetryClient = Symbol('telemetryClient');
+    static queueStorage = Symbol('queueStorage');
 }
