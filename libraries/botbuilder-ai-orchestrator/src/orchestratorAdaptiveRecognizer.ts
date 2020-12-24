@@ -31,6 +31,22 @@ export interface OrchestratorAdaptiveRecognizerConfiguration extends RecognizerC
     externalEntityRecognizer?: Recognizer;
 }
 
+type LabelResolver = {
+    score(
+        text: string
+    ): {
+        score: number;
+        closest_text: string;
+        label: {
+            name: string;
+        };
+    }[];
+};
+
+type Orchestrator = {
+    createLabelResolver(snapshot: Uint8Array): LabelResolver;
+};
+
 /**
  * Class that represents an adaptive Orchestrator recognizer.
  */
@@ -89,10 +105,10 @@ export class OrchestratorAdaptiveRecognizer extends Recognizer implements Orches
     }
 
     private readonly unknownIntentFilterScore = 0.4;
-    private static orchestrator: any = null;
-    private _resolver: any = null;
-    private _modelPath: string = null;
-    private _snapshotPath: string = null;
+    private static orchestrator: Orchestrator;
+    private _resolver: LabelResolver;
+    private _modelPath: string;
+    private _snapshotPath: string;
 
     /**
      * Returns an OrchestratorAdaptiveRecognizer instance.
@@ -101,7 +117,7 @@ export class OrchestratorAdaptiveRecognizer extends Recognizer implements Orches
      * @param {string} snapshotPath Path to snapshot.
      * @param {any} resolver Orchestrator resolver to use.
      */
-    public constructor(modelPath?: string, snapshotPath?: string, resolver?: any) {
+    public constructor(modelPath?: string, snapshotPath?: string, resolver?: LabelResolver) {
         super();
         if (modelPath) {
             this._modelPath = modelPath;
@@ -262,7 +278,7 @@ export class OrchestratorAdaptiveRecognizer extends Recognizer implements Orches
                 throw new Error(`Snapshot file does not exist at ${fullSnapshotPath}.`);
             }
             // Load the snapshot
-            const snapshot: Uint8Array = readFileSync(fullSnapshotPath) as Buffer;
+            const snapshot: Uint8Array = readFileSync(fullSnapshotPath);
 
             // Load snapshot and create resolver
             this._resolver = OrchestratorAdaptiveRecognizer.orchestrator.createLabelResolver(snapshot);
