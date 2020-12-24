@@ -6,11 +6,8 @@
  * Licensed under the MIT License.
  */
 
-import { BoolExpression, NumberExpression, StringExpression } from 'adaptive-expressions';
 import { RecognizerResult, TurnContext } from 'botbuilder-core';
-import { Configurable, DialogContext, DialogSet } from 'botbuilder-dialogs';
-import { EntityRecognizer } from 'botbuilder-dialogs-adaptive';
-
+import { Configurable, DialogContext, DialogSet, Recognizer } from 'botbuilder-dialogs';
 import { OrchestratorAdaptiveRecognizer } from './orchestratorAdaptiveRecognizer';
 
 /**
@@ -30,17 +27,17 @@ export class OrchestratorRecognizer extends Configurable {
     /**
      * Path to Orchestrator base model folder.
      */
-    public modelPath: string = null;
+    public modelPath: string;
 
     /**
      * Path to the snapshot (.blu file) to load.
      */
-    public snapshotPath: string = null;
+    public snapshotPath: string;
 
     /**
-     * The entity recognizers.
+     * The external entity recognizer.
      */
-    public entityRecognizers: EntityRecognizer[] = [];
+    public externalEntityRecognizer: Recognizer;
 
     /**
      * Threshold value to use for ambiguous intent detection. Defaults to 0.05.
@@ -55,18 +52,21 @@ export class OrchestratorRecognizer extends Configurable {
 
     /**
      * Returns recognition result. Also sends trace activity with recognition result.
-     * @param context Context for the current turn of conversation with the use.
+     *
+     * @param {TurnContext} turnContext Context for the current turn of conversation with the use.
+     * @returns {Promise<RecognizerResult>} Recognizer result.
      */
-    public async recognize(context: TurnContext): Promise<RecognizerResult> {
-        const rec = new OrchestratorAdaptiveRecognizer();
-        rec.id = this.id;
-        rec.modelPath = new StringExpression(this.modelPath);
-        rec.snapshotPath = new StringExpression(this.snapshotPath);
-        rec.entityRecognizers = this.entityRecognizers;
-        rec.disambiguationScoreThreshold = new NumberExpression(this.disambiguationScoreThreshold);
-        rec.detectAmbiguousIntents = new BoolExpression(this.detectAmbiguousIntents);
+    public async recognize(turnContext: TurnContext): Promise<RecognizerResult> {
+        const rec = new OrchestratorAdaptiveRecognizer().configure({
+            id: this.id,
+            detectAmbiguousIntents: this.detectAmbiguousIntents,
+            modelPath: this.modelPath,
+            snapshotPath: this.snapshotPath,
+            disambiguationScoreThreshold: this.disambiguationScoreThreshold,
+            externalEntityRecognizer: this.externalEntityRecognizer,
+        });
 
-        const dc = new DialogContext(new DialogSet(), context, { dialogStack: [] });
-        return await rec.recognize(dc, context.activity);
+        const dc = new DialogContext(new DialogSet(), turnContext, { dialogStack: [] });
+        return rec.recognize(dc, turnContext.activity);
     }
 }

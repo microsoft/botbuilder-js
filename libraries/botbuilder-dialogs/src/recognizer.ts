@@ -31,37 +31,65 @@ export class Recognizer extends Configurable implements RecognizerConfiguration 
      * The telemetry client for logging events.
      * Default this to the NullTelemetryClient, which does nothing.
      */
-    protected _telemetryClient: BotTelemetryClient = new NullTelemetryClient();
-
-    /**
-     * Gets the telemetry client for this dialog.
-     */
-    public get telemetryClient(): BotTelemetryClient {
-        return this._telemetryClient;
-    }
-
-    /**
-     * Sets the telemetry client for this dialog.
-     */
-    public set telemetryClient(client: BotTelemetryClient) {
-        this._telemetryClient = client ? client : new NullTelemetryClient();
-    }
+    public telemetryClient: BotTelemetryClient = new NullTelemetryClient();
 
     /**
      * To recognize intents and entities in a users utterance.
      *
-     * @param dialogContext Dialog Context.
-     * @param activity Activity.
-     * @param telemetryProperties Additional properties to be logged to telemetry with event.
-     * @param telemetryMetrics Additional metrics to be logged to telemetry with event.
+     * @param {DialogContext} dialogContext Dialog Context.
+     * @param {Partial<Activity>} activity Activity.
+     * @param {Record<string, string>} telemetryProperties Additional properties to be logged to telemetry with event.
+     * @param {Record<string, number>} telemetryMetrics Additional metrics to be logged to telemetry with event.
+     * @returns {Promise<RecognizerResult>} Recognized result.
      */
     public recognize(
         dialogContext: DialogContext,
         activity: Partial<Activity>,
-        telemetryProperties?: { [key: string]: string },
-        telemetryMetrics?: { [key: string]: number }
+        telemetryProperties?: Record<string, string>,
+        telemetryMetrics?: Record<string, number> 
     ): Promise<RecognizerResult> {
         throw new Error('Please implement recognize function.');
+    }
+
+    /**
+     * Creates choose intent result in the case that there is conflicting or ambigious signals from the recognizers.
+     *
+     * @param {Record<string, RecognizerResult>} recognizerResults A group of recognizer results.
+     * @returns {RecognizerResult} Recognizer result which is ChooseIntent.
+     */
+    protected createChooseIntentResult(recognizerResults: Record<string, RecognizerResult>): RecognizerResult {
+        let text: string;
+        type candidateType = { id: string; intent: string; score: number; result: RecognizerResult };
+        const candidates = Object.entries(recognizerResults).reduce((candidates: candidateType[], [key, result]) => {
+            text = result.text;
+            const { intent, score } = getTopScoringIntent(result);
+            if (intent !== 'None') {
+                candidates.push({
+                    id: key,
+                    intent,
+                    score,
+                    result,
+                });
+            }
+            return candidates;
+        }, []);
+
+        if (candidates.length) {
+            // return `ChooseIntent` with candidates array.
+            const recognizerResult: RecognizerResult = {
+                text,
+                intents: { ChooseIntent: { score: 1.0 } },
+                candidates,
+            };
+            return recognizerResult;
+        }
+
+        // just return a `None` intent.
+        const recognizerResult: RecognizerResult = {
+            text,
+            intents: { None: { score: 1.0 } },
+        };
+        return recognizerResult;
     }
 
     /**
@@ -126,18 +154,4 @@ export class Recognizer extends Configurable implements RecognizerConfiguration 
             metrics: telemetryMetrics,
         });
     }
-}
-
-export interface IntentMap {
-    [name: string]: { score: number };
-}
-
-export function createRecognizerResult(text: string, intents?: IntentMap, entities?: object): RecognizerResult {
-    if (!intents) {
-        intents = { None: { score: 0.0 } };
-    }
-    if (!entities) {
-        entities = {};
-    }
-    return { text: text, intents: intents, entities: entities };
 }

@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 
-import merge from 'lodash/merge';
+import { merge, pickBy } from 'lodash';
 import { Activity, RecognizerResult, getTopScoringIntent } from 'botbuilder-core';
 import { Converter, ConverterFactory, DialogContext, Recognizer, RecognizerConfiguration } from 'botbuilder-dialogs';
 import { RecognizerListConverter } from '../converters';
@@ -87,7 +87,7 @@ export class CrossTrainedRecognizerSet extends Recognizer implements CrossTraine
      * @param results A list of recognizer results to be processed.
      */
     private processResults(results: RecognizerResult[]): RecognizerResult {
-        const recognizerResults = {};
+        const recognizerResults: Record<string, RecognizerResult> = {};
         const intents = {};
         let text = '';
         for (let i = 0; i < results.length; i++) {
@@ -138,7 +138,13 @@ export class CrossTrainedRecognizerSet extends Recognizer implements CrossTraine
                     // this is more consensus for this recognizer
                     continue;
                 } else {
-                    return this.createChooseIntentResult(recognizerResults);
+                    // ambiguous because we have 2 or more real intents, so return `ChooseIntent`,
+                    // filter out redirect results and return `ChooseIntent`.
+                    const recognizersWithRealIntents = pickBy(
+                        recognizerResults,
+                        (value) => !this.isRedirect(getTopScoringIntent(value).intent)
+                    );
+                    return this.createChooseIntentResult(recognizersWithRealIntents);
                 }
             }
         }
@@ -156,44 +162,6 @@ export class CrossTrainedRecognizerSet extends Recognizer implements CrossTraine
             text,
             intents: { None: { score: 1.0 } },
             entities: mergedEntities
-        };
-        return recognizerResult;
-    }
-
-    /**
-     * Creates choose intent result in the case that there is conflicting or ambigious signals from the recognizers.
-     * @param recognizerResults A group of recognizer results.
-     */
-    private createChooseIntentResult(recognizerResults: { [name: string]: RecognizerResult }): RecognizerResult {
-        let text: string;
-        const candidates: object[] = [];
-
-        for (const key in recognizerResults) {
-            const result = recognizerResults[key];
-            text = result.text;
-            const { intent, score } = getTopScoringIntent(result);
-            if (!this.isRedirect(intent) && intent != 'None') {
-                candidates.push({
-                    id: key,
-                    intent,
-                    score,
-                    result,
-                });
-            }
-        }
-
-        if (candidates.length > 0) {
-            const recognizerResult: RecognizerResult = {
-                text,
-                intents: { ChooseIntent: { score: 1.0 } },
-                candidates,
-            };
-            return recognizerResult;
-        }
-
-        const recognizerResult: RecognizerResult = {
-            text,
-            intents: { None: { score: 1.0 } },
         };
         return recognizerResult;
     }

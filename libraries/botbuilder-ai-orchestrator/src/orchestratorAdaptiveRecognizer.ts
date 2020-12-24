@@ -6,9 +6,8 @@
  * Licensed under the MIT License.
  */
 
-import { existsSync } from 'fs';
+import { existsSync, readFileSync } from 'fs';
 import { resolve } from 'path';
-import { TextEncoder } from 'util';
 
 import {
     BoolExpression,
@@ -19,27 +18,34 @@ import {
     StringExpression,
     StringExpressionConverter,
 } from 'adaptive-expressions';
-import { Activity, Entity, RecognizerResult } from 'botbuilder-core';
-import {
-    createRecognizerResult,
-    Converter,
-    ConverterFactory,
-    DialogContext,
-    Recognizer,
-    RecognizerConfiguration,
-} from 'botbuilder-dialogs';
-import { EntityRecognizer, EntityRecognizerSet, TextEntity } from 'botbuilder-dialogs-adaptive';
+import { Activity, RecognizerResult } from 'botbuilder-core';
+import { Converter, ConverterFactory, DialogContext, Recognizer, RecognizerConfiguration } from 'botbuilder-dialogs';
 
-const oc: any = require('orchestrator-core/orchestrator-core.node');
-const ReadText: any = require('read-text-file');
+const oc = require('orchestrator-core');
 
 export interface OrchestratorAdaptiveRecognizerConfiguration extends RecognizerConfiguration {
     modelPath?: string | Expression | StringExpression;
     snapshotPath?: string | Expression | StringExpression;
     disambiguationScoreThreshold?: number | string | Expression | NumberExpression;
     detectAmbiguousIntents?: boolean | string | Expression | BoolExpression;
-    entityRecognizers?: EntityRecognizer[];
+    externalEntityRecognizer?: Recognizer;
 }
+
+type LabelResolver = {
+    score(
+        text: string
+    ): {
+        score: number;
+        closest_text: string;
+        label: {
+            name: string;
+        };
+    }[];
+};
+
+type Orchestrator = {
+    createLabelResolver(snapshot: Uint8Array): LabelResolver;
+};
 
 /**
  * Class that represents an adaptive Orchestrator recognizer.
@@ -50,12 +56,12 @@ export class OrchestratorAdaptiveRecognizer extends Recognizer implements Orches
     /**
      * Path to Orchestrator base model folder.
      */
-    public modelPath: StringExpression = new StringExpression('');
+    public modelPath: StringExpression = new StringExpression('=settings.orchestrator.modelPath');
 
     /**
      * Path to the snapshot (.blu file) to load.
      */
-    public snapshotPath: StringExpression = new StringExpression('');
+    public snapshotPath: StringExpression = new StringExpression('=settings.orchestrator.snapshotPath');
 
     /**
      * Threshold value to use for ambiguous intent detection. Defaults to 0.05.
@@ -69,24 +75,14 @@ export class OrchestratorAdaptiveRecognizer extends Recognizer implements Orches
     public detectAmbiguousIntents: BoolExpression = new BoolExpression(false);
 
     /**
-     * The entity recognizers.
+     * The external entity recognizer.
      */
-    public entityRecognizers: EntityRecognizer[] = [];
+    public externalEntityRecognizer: Recognizer;
 
     /**
      * Intent name if ambiguous intents are detected.
      */
     public readonly chooseIntent: string = 'ChooseIntent';
-
-    /**
-     * Property under which ambiguous intents are returned.
-     */
-    public readonly candidatesCollection: string = 'candidates';
-
-    /**
-     * Intent name when no intent matches.
-     */
-    public readonly noneIntent: string = 'None';
 
     /**
      * Full recognition results are available under this property
@@ -109,229 +105,195 @@ export class OrchestratorAdaptiveRecognizer extends Recognizer implements Orches
     }
 
     private readonly unknownIntentFilterScore = 0.4;
-    private static orchestrator: any = null;
-    private resolver: any = null;
-    private _modelPath: string = null;
-    private _snapshotPath: string = null;
+    private static orchestrator: Orchestrator;
+    private _resolver: LabelResolver;
+    private _modelPath: string;
+    private _snapshotPath: string;
 
     /**
      * Returns an OrchestratorAdaptiveRecognizer instance.
-     * @param modelPath Path to NLR model.
-     * @param snapshoPath Path to snapshot.
-     * @param resolver Orchestrator resolver to use.
+     *
+     * @param {string} modelPath Path to NLR model.
+     * @param {string} snapshotPath Path to snapshot.
+     * @param {any} resolver Orchestrator resolver to use.
      */
-    constructor(modelPath?: string, snapshoPath?: string, resolver?: any) {
+    public constructor(modelPath?: string, snapshotPath?: string, resolver?: LabelResolver) {
         super();
-        this._modelPath = modelPath !== undefined ? modelPath : null;
-        this._snapshotPath = snapshoPath !== undefined ? snapshoPath : null;
-        this.resolver = resolver !== undefined ? resolver : null;
+        if (modelPath) {
+            this._modelPath = modelPath;
+        }
+        if (snapshotPath) {
+            this._snapshotPath = snapshotPath;
+        }
+        this._resolver = resolver;
     }
 
     /**
      * Returns a new OrchestratorAdaptiveRecognizer instance.
-     * @param dialogContext Context for the current dialog.
-     * @param activity Current activity sent from user.
+     *
+     * @param {DialogContext} dc Context for the current dialog.
+     * @param {Partial<Activity>} activity Current activity sent from user.
+     * @param {Record<string, string>} telemetryProperties Additional properties to be logged to telemetry with event.
+     * @param {Record<string, number>} telemetryMetrics Additional metrics to be logged to telemetry with event.
+     * @returns {Promise<RecognizerResult>} Recognized result.
      */
-    public async recognize(dialogContext: DialogContext, activity: Activity): Promise<RecognizerResult> {
-        if (this.modelPath === null) {
+    public async recognize(
+        dc: DialogContext,
+        activity: Partial<Activity>,
+        telemetryProperties?: Record<string, string>,
+        telemetryMetrics?: Record<string, number>
+    ): Promise<RecognizerResult> {
+        if (!this.modelPath) {
             throw new Error(`Missing "ModelPath" information.`);
         }
 
-        if (this.snapshotPath === null) {
+        if (!this.snapshotPath) {
             throw new Error(`Missing "SnapshotPath" information.`);
         }
 
-        const text = activity.text || '';
-        this._modelPath = this.modelPath.getValue(dialogContext.state);
-        this._snapshotPath = this.snapshotPath.getValue(dialogContext.state);
-        const detectAmbiguity = this.detectAmbiguousIntents.getValue(dialogContext.state);
-        const disambiguationScoreThreshold = this.disambiguationScoreThreshold.getValue(dialogContext.state);
+        const text = activity.text ?? '';
+        this._modelPath = this.modelPath.getValue(dc.state);
+        this._snapshotPath = this.snapshotPath.getValue(dc.state);
+        const detectAmbiguity = this.detectAmbiguousIntents.getValue(dc.state);
 
-        const recognizerResult: RecognizerResult = createRecognizerResult(text, {}, {});
+        let recognizerResult: RecognizerResult = {
+            text,
+            intents: {},
+            entities: {},
+        };
 
         if (text === '') {
+            // nothing to recognize, return empty result.
             return recognizerResult;
         }
 
-        if (OrchestratorAdaptiveRecognizer.orchestrator === null || this.resolver === null) {
-            this.Initialize();
+        this._initializeModel();
+
+        if (this.externalEntityRecognizer) {
+            // Run external recognition
+            const externalResults = await this.externalEntityRecognizer.recognize(
+                dc,
+                activity,
+                telemetryProperties,
+                telemetryMetrics
+            );
+            recognizerResult.entities = externalResults.entities;
         }
 
-        // recognize text
-        const result = await this.resolver.score(text);
-
-        if (Object.entries(result).length !== 0) {
-            this.AddTopScoringIntent(result, recognizerResult);
-        }
-
-        // run entity recognizers
-        await this.recognizeEntities(dialogContext, text, activity.locale || '', recognizerResult);
+        // Score with orchestrator
+        const results = await this._resolver.score(text);
 
         // Add full recognition result as a 'result' property
-        recognizerResult[this.resultProperty] = result;
+        recognizerResult[this.resultProperty] = results;
 
-        // disambiguate
-        if (detectAmbiguity) {
-            const topScoringIntent = result[0].score;
-            const scoreDelta = topScoringIntent - disambiguationScoreThreshold;
-            const ambiguousIntents = result.filter((x) => x.score >= scoreDelta);
-            if (ambiguousIntents.length > 1) {
-                recognizerResult.intents = {};
-                recognizerResult.intents[this.chooseIntent] = { score: 1.0 };
-                recognizerResult[this.candidatesCollection] = [];
-                ambiguousIntents.forEach((item) => {
-                    const itemRecoResult = {
-                        text: text,
-                        intents: {},
-                        entities: {},
-                        score: item.score,
-                    };
-                    itemRecoResult.intents[item.label.name] = {
-                        score: item.score,
-                    };
-                    itemRecoResult.entities = recognizerResult.entities;
-                    recognizerResult[this.candidatesCollection].push({
-                        intent: item.label.name,
-                        score: item.score,
-                        closestText: item.closest_text,
-                        result: itemRecoResult,
-                    });
-                });
+        if (results.length) {
+            const topScoringIntent = results[0].label.name;
+            const topScore = results[0].score;
+
+            // if top scoring intent is less than threshold, return None
+            if (topScore < this.unknownIntentFilterScore) {
+                recognizerResult.intents.None = { score: 1.0 };
+            } else {
+                // add top score
+                recognizerResult.intents[`${topScoringIntent}`] ??= {
+                    score: topScore,
+                };
+
+                // disambiguate
+                if (detectAmbiguity) {
+                    const disambiguationScoreThreshold = this.disambiguationScoreThreshold.getValue(dc.state);
+                    const classifyingScore = topScore - disambiguationScoreThreshold;
+                    const ambiguousResults = results.filter(
+                        (item: { score: number }) => item.score >= classifyingScore
+                    );
+                    if (ambiguousResults.length > 1) {
+                        const recognizerResults: Record<string, RecognizerResult> = ambiguousResults
+                            .map(
+                                (result): RecognizerResult => ({
+                                    text,
+                                    alteredText: result.closest_text,
+                                    entities: recognizerResult.entities,
+                                    intents: { [result.label.name]: { score: result.score } },
+                                })
+                            )
+                            .reduce((results: Record<string, RecognizerResult>, result: RecognizerResult) => {
+                                const guid = generate_guid();
+                                results[`${guid}`] = result;
+                                return results;
+                            }, {});
+
+                        // replace RecognizerResult with ChooseIntent => Ambiguous recognizerResults as candidates.
+                        recognizerResult = this.createChooseIntentResult(recognizerResults);
+                    }
+                }
             }
+        } else {
+            // Return 'None' if no intent matched.
+            recognizerResult.intents.None = { score: 1.0 };
         }
 
-        if (Object.entries(recognizerResult.intents).length == 0) {
-            recognizerResult.intents[this.noneIntent] = { score: 1.0 };
-        }
-
-        await dialogContext.context.sendTraceActivity(
-            'OrchestratorRecognizer',
+        await dc.context.sendTraceActivity(
+            'OrchestratorAdaptiveRecognizer',
             recognizerResult,
-            'RecognizerResult',
-            'Orchestrator recognizer RecognizerResult'
+            'OrchestratorAdaptiveRecognizer',
+            'Orchestrator Recognition'
+        );
+        this.trackRecognizerResult(
+            dc,
+            'OrchestratorAdaptiveRecognizer',
+            this.fillRecognizerResultTelemetryProperties(recognizerResult, telemetryProperties),
+            telemetryMetrics
         );
 
         return recognizerResult;
     }
 
-    /**
-     * @private
-     */
-    private AddTopScoringIntent(result: any, recognizerResult: RecognizerResult): void {
-        const topScoringIntent = result[0].label.name;
-        const topScore = result[0].score;
-
-        // if top scoring intent is less than threshold, return None
-        if (topScore < this.unknownIntentFilterScore) {
-            recognizerResult.intents['None'] = { score: 1.0 };
-        } else if (!recognizerResult.intents[topScoringIntent]) {
-            recognizerResult.intents[topScoringIntent] = {
-                score: topScore,
-            };
-        }
-    }
-
-    /**
-     * @private
-     */
-    private async recognizeEntities(
-        dialogContext: DialogContext,
-        text: string,
-        locale: string,
-        recognizerResult: RecognizerResult
-    ) {
-        const entityPool: Entity[] = [];
-        const textEntity = new TextEntity(text);
-        textEntity['start'] = 0;
-        textEntity['end'] = text.length;
-        textEntity['score'] = 1.0;
-
-        entityPool.push(textEntity);
-        if (this.entityRecognizers) {
-            const entitySet = new EntityRecognizerSet();
-            entitySet.push(...this.entityRecognizers);
-            const newEntities = await entitySet.recognizeEntities(dialogContext, text, locale, entityPool);
-            if (newEntities.length > 0) {
-                entityPool.push(...newEntities);
-            }
+    private _initializeModel() {
+        if (!this._modelPath) {
+            throw new Error(`Missing "ModelPath" information.`);
         }
 
-        for (let i = 0; i < entityPool.length; i++) {
-            const entityResult = entityPool[i];
-            let values = [];
-            if (!recognizerResult.entities.hasOwnProperty(entityResult.type)) {
-                recognizerResult.entities[entityResult.type] = values;
-            } else {
-                values = recognizerResult.entities[entityResult.type];
-            }
-            values.push(entityResult['text']);
-
-            let instanceRoot = {};
-            if (!recognizerResult.entities.hasOwnProperty('$instance')) {
-                recognizerResult.entities['$instance'] = instanceRoot;
-            } else {
-                instanceRoot = recognizerResult.entities['$instance'];
-            }
-
-            let instanceData = [];
-            if (!instanceRoot.hasOwnProperty(entityResult.type)) {
-                instanceRoot[entityResult.type] = instanceData;
-            } else {
-                instanceData = instanceRoot[entityResult.type];
-            }
-
-            const instance = {
-                startIndex: entityResult['start'],
-                endIndex: entityResult['end'],
-                score: 1.0,
-                text: entityResult['text'],
-                type: entityResult['type'],
-                resolution: entityResult['resolution'],
-            };
-            instanceData.push(instance);
+        if (!this._snapshotPath) {
+            throw new Error(`Missing "ShapshotPath" information.`);
         }
-    }
 
-    /**
-     * @private
-     */
-    private Initialize() {
-        if (OrchestratorAdaptiveRecognizer.orchestrator === null || this.resolver == null) {
-            if (this._modelPath == null) {
-                throw new Error(`Missing "ModelPath" information.`);
-            }
-
-            if (this._snapshotPath == null) {
-                throw new Error(`Missing "ShapshotPath" information.`);
-            }
+        if (!OrchestratorAdaptiveRecognizer.orchestrator && !this._resolver) {
+            // Create orchestrator core
             const fullModelPath = resolve(this._modelPath);
-            const fullSnapshotPath = resolve(this._snapshotPath);
             if (!existsSync(fullModelPath)) {
                 throw new Error(`Model folder does not exist at ${fullModelPath}.`);
             }
+            const orchestrator = new oc.Orchestrator();
+            if (!orchestrator.load(fullModelPath)) {
+                throw new Error(`Model load failed.`);
+            }
+            OrchestratorAdaptiveRecognizer.orchestrator = orchestrator;
+        }
+
+        if (!this._resolver) {
+            const fullSnapshotPath = resolve(this._snapshotPath);
             if (!existsSync(fullSnapshotPath)) {
                 throw new Error(`Snapshot file does not exist at ${fullSnapshotPath}.`);
             }
+            // Load the snapshot
+            const snapshot: Uint8Array = readFileSync(fullSnapshotPath);
 
-            if (OrchestratorAdaptiveRecognizer.orchestrator == null) {
-                console.time('Model load');
-                // Create orchestrator core
-                OrchestratorAdaptiveRecognizer.orchestrator = new oc.Orchestrator();
-                if (OrchestratorAdaptiveRecognizer.orchestrator.load(fullModelPath) === false) {
-                    throw new Error(`Model load failed.`);
-                }
-                console.timeEnd('Model load');
-            }
-
-            if (this.resolver == null) {
-                // Load the snapshot
-                const encoder: any = new TextEncoder();
-                const fileContent: string = ReadText.readSync(fullSnapshotPath);
-                const snapshot: Uint8Array = encoder.encode(fileContent);
-
-                // Load snapshot and create resolver
-                this.resolver = OrchestratorAdaptiveRecognizer.orchestrator.createLabelResolver(snapshot);
-            }
+            // Load snapshot and create resolver
+            this._resolver = OrchestratorAdaptiveRecognizer.orchestrator.createLabelResolver(snapshot);
         }
     }
+}
+
+/*
+ * This function generates a GUID-like random number that should be sufficient for our purposes of tracking
+ * instances of a given waterfall dialog.
+ * Source: https://stackoverflow.com/questions/105034/create-guid-uuid-in-javascript
+ */
+function generate_guid() {
+    function s4() {
+        return Math.floor((1 + Math.random()) * 0x10000)
+            .toString(16)
+            .substring(1);
+    }
+    return s4() + s4() + '-' + s4() + '-' + s4() + '-' + s4() + '-' + s4() + s4() + s4();
 }
