@@ -20,7 +20,7 @@ describe('Conditional Tests', function () {
         false
     );
 
-    it('OnAppBasedLinkQuery', async () => {
+    it('OnTeamsActivityTypes', async () => {
         await TestUtils.runTestScript(resourceExplorer, 'ConditionalsTests_OnTeamsActivityTypes');
     });
 });
