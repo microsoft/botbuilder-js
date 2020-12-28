@@ -33,11 +33,12 @@ export class StartOfMonth extends ExpressionEvaluator {
      */
     private static evaluator(expr: Expression, state: MemoryInterface, options: Options): ValueWithError {
         let value: any;
+        let locale = options.locale ? options.locale : Intl.DateTimeFormat().resolvedOptions().locale;
+        let format = FunctionUtils.DefaultDateTimeFormat;
         const { args, error: childrenError } = FunctionUtils.evaluateChildren(expr, state, options);
         let error = childrenError;
         if (!error) {
-            const format: string =
-                args.length === 2 ? FunctionUtils.timestampFormatter(args[1]) : FunctionUtils.DefaultDateTimeFormat;
+            ({ format, locale } = FunctionUtils.determineFormatAndLocale(args, 3, format, locale));
             if (typeof args[0] === 'string') {
                 ({ value, error } = StartOfMonth.evalStartOfMonth(args[0], format));
             } else {
@@ -67,6 +68,6 @@ export class StartOfMonth extends ExpressionEvaluator {
      * @private
      */
     private static validator(expr: Expression): void {
-        FunctionUtils.validateOrder(expr, [ReturnType.String], ReturnType.String);
+        FunctionUtils.validateOrder(expr, [ReturnType.String, ReturnType.String], ReturnType.String);
     }
 }

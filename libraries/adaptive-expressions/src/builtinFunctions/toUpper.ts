@@ -6,8 +6,11 @@
  * Licensed under the MIT License.
  */
 
+import { ValueWithError } from '../expressionEvaluator';
 import { ExpressionType } from '../expressionType';
+import { FunctionUtils } from '../functionUtils';
 import { InternalFunctionUtils } from '../functionUtils.internal';
+import { Options } from '../options';
 import { StringTransformEvaluator } from './stringTransformEvaluator';
 
 /**
@@ -25,7 +28,12 @@ export class ToUpper extends StringTransformEvaluator {
     /**
      * @private
      */
-    private static evaluator(args: any[]): string {
-        return String(InternalFunctionUtils.parseStringOrUndefined(args[0])).toUpperCase();
+    private static evaluator(args: any[], options: Options): ValueWithError {
+        let locale = options.locale ? options.locale : Intl.DateTimeFormat().resolvedOptions().locale;
+        locale = FunctionUtils.determineLocale(args, 2, locale);
+        return {
+            value: (InternalFunctionUtils.parseStringOrUndefined(args[0]) as any).toUpperCase(),
+            error: undefined,
+        };
     }
 }

@@ -34,11 +34,13 @@ export class AddToTime extends ExpressionEvaluator {
     private static evaluator(expression: Expression, state: MemoryInterface, options: Options): ValueWithError {
         let value: any;
 
+        let locale = options.locale ? options.locale : Intl.DateTimeFormat().resolvedOptions().locale;
+        let format = FunctionUtils.DefaultDateTimeFormat;
         const { args, error: childrenError } = FunctionUtils.evaluateChildren(expression, state, options);
         let error = childrenError;
+
         if (!error) {
-            const format: string =
-                args.length === 4 ? FunctionUtils.timestampFormatter(args[3]) : FunctionUtils.DefaultDateTimeFormat;
+            ({ format, locale } = FunctionUtils.determineFormatAndLocale(args, 5, format, locale));
             if (typeof args[0] === 'string' && Number.isInteger(args[1]) && typeof args[2] === 'string') {
                 ({ value, error } = AddToTime.evalAddToTime(args[0], args[1], args[2], format));
             } else {

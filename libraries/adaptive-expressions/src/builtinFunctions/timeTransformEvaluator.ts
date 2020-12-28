@@ -36,19 +36,16 @@ export class TimeTransformEvaluator extends ExpressionEvaluator {
         return (expression: Expression, state: MemoryInterface, options: Options): ValueWithError => {
             let result: any;
             let value: any;
+            let locale = options.locale ? options.locale : Intl.DateTimeFormat().resolvedOptions().locale;
+            let format = FunctionUtils.DefaultDateTimeFormat;
             const { args, error: childrenError } = FunctionUtils.evaluateChildren(expression, state, options);
             let error = childrenError;
             if (!error) {
+                ({ format, locale } = FunctionUtils.determineFormatAndLocale(args, 4, format, locale));
                 if (typeof args[0] === 'string' && typeof args[1] === 'number') {
                     ({ value, error } = InternalFunctionUtils.parseTimestamp(args[0]));
                     if (!error) {
-                        if (args.length === 3 && typeof args[2] === 'string') {
-                            result = moment(func(value, args[1]))
-                                .utc()
-                                .format(FunctionUtils.timestampFormatter(args[2]));
-                        } else {
-                            result = func(value, args[1]).toISOString();
-                        }
+                        result = moment(func(value, args[1])).utc().format(format);
                     }
                 } else {
                     error = `${expression} should contain an ISO format timestamp and a time interval integer.`;
@@ -63,6 +60,11 @@ export class TimeTransformEvaluator extends ExpressionEvaluator {
      * @private
      */
     private static validator(expression: Expression): void {
-        FunctionUtils.validateOrder(expression, [ReturnType.String], ReturnType.String, ReturnType.Number);
+        FunctionUtils.validateOrder(
+            expression,
+            [ReturnType.String, ReturnType.String],
+            ReturnType.String,
+            ReturnType.Number
+        );
     }
 }

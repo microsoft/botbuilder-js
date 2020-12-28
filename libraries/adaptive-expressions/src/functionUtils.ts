@@ -593,6 +593,31 @@ export class FunctionUtils {
         return locale;
     }
 
+        /**
+     *
+     * @param args An array of arguments.
+     * @param format A format string.
+     * @param locale A locale string.
+     * @param maxArgsLength The max length of a given function.
+     */
+    public static determineFormatAndLocale(
+        args: unknown[],
+        maxArgsLength: number,
+        format: string,
+        locale = 'en-us'
+    ): { format: string; locale: string } {
+        if (maxArgsLength >= 2) {
+            if (args.length === maxArgsLength) {
+                format = FunctionUtils.timestampFormatter(args[maxArgsLength - 1] as string);
+                locale = args[maxArgsLength - 2] as string;
+            } else if (args.length === maxArgsLength - 1) {
+                format =  FunctionUtils.timestampFormatter(args[maxArgsLength - 2] as string);
+            }
+        }
+
+        return { format: format, locale: locale };
+    }
+
     /**
      * Timestamp formatter, convert C# datetime to moment js format.
      * @param formatter C# datetime format

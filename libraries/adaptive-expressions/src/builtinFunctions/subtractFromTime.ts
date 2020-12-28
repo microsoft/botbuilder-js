@@ -38,12 +38,13 @@ export class SubtractFromTime extends ExpressionEvaluator {
      */
     private static evaluator(expression: Expression, state: MemoryInterface, options: Options): ValueWithError {
         let value: any;
+        let locale = options.locale ? options.locale : Intl.DateTimeFormat().resolvedOptions().locale;
+        let format = FunctionUtils.DefaultDateTimeFormat;
         const { args, error: childrenError } = FunctionUtils.evaluateChildren(expression, state, options);
         let error = childrenError;
         if (!error) {
             if (typeof args[0] === 'string' && Number.isInteger(args[1]) && typeof args[2] === 'string') {
-                const format: string =
-                    args.length === 4 ? FunctionUtils.timestampFormatter(args[3]) : FunctionUtils.DefaultDateTimeFormat;
+                ({ format, locale } = FunctionUtils.determineFormatAndLocale(args, 5, format, locale));
                 const { duration, tsStr } = InternalFunctionUtils.timeUnitTransformer(args[1], args[2]);
                 if (tsStr === undefined) {
                     error = `${args[2]} is not a valid time unit.`;
