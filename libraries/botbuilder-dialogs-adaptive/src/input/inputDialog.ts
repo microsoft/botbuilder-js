@@ -356,6 +356,7 @@ export abstract class InputDialog extends Dialog implements InputDialogConfigura
 
         if (!msg) {
             template = this.prompt;
+            if (!template) throw new Error('InputDialog is missing Prompt.');
             msg = await this.prompt.bind(dc, dc.state);
         }
 
