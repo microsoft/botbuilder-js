@@ -36,10 +36,10 @@
   "dependencies": {
     "fs-extra": "^7.0.1",
     "read-text-file": "^1.1.0",
-    "uuid": "^3.4.0"
+    "uuid": "^8.3.2"
   },
   "devDependencies": {
-    "@types/uuid": "^3.4.3"
+    "@types/uuid": "^8.3.0"
   },
   "scripts": {
     "build": "tsc -b",

@@ -6,6 +6,7 @@
  * Licensed under the MIT License.
  */
 
+import { v4 as uuidv4 } from 'uuid';
 import { BotFrameworkAdapter } from '../botFrameworkAdapter';
 import {
     Activity,
@@ -136,7 +137,7 @@ export class TokenResolver {
         connectionName: string
     ): Partial<Activity> {
         const tokenResponse: Partial<Activity> = {
-            id: this.generate_guid(),
+            id: uuidv4(),
             timestamp: new Date(),
             type: ActivityTypes.Event,
             serviceUrl: relatesTo.serviceUrl,
@@ -153,17 +154,5 @@ export class TokenResolver {
             },
         };
         return tokenResponse;
-    }
-
-    /**
-     * @private
-     */
-    private static generate_guid(): string {
-        function s4() {
-            return Math.floor((1 + Math.random()) * 0x10000)
-                .toString(16)
-                .substring(1);
-        }
-        return s4() + s4() + '-' + s4() + '-' + s4() + '-' + s4() + '-' + s4() + s4() + s4();
     }
 }

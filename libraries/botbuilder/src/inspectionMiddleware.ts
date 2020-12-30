@@ -5,6 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
+import { v4 as uuidv4 } from 'uuid';
 import { MicrosoftAppCredentials, ConnectorClient } from 'botframework-connector';
 import {
     Activity,
@@ -324,16 +325,7 @@ export class InspectionMiddleware extends InterceptionMiddleware {
         sessions: InspectionSessionsByStatus,
         conversationReference: Partial<ConversationReference>
     ): string {
-        function generate_guid() {
-            function s4() {
-                return Math.floor((1 + Math.random()) * 0x10000)
-                    .toString(16)
-                    .substring(1);
-            }
-            return s4() + s4() + '-' + s4() + '-' + s4() + '-' + s4() + '-' + s4() + s4() + s4();
-        }
-
-        const sessionId = generate_guid();
+        const sessionId = uuidv4();
         sessions.openedSessions[sessionId] = conversationReference;
         return sessionId;
     }

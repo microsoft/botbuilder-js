@@ -5,7 +5,8 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { ActivityTypes, Severity } from 'botbuilder-core';
+import { v4 as uuidv4 } from 'uuid';
+import { ActivityTypes } from 'botbuilder-core';
 import { TurnContext, telemetryTrackDialogView } from 'botbuilder-core';
 import { DialogInstance } from './dialog';
 import { Dialog, DialogReason, DialogTurnResult } from './dialog';
@@ -156,7 +157,7 @@ export class WaterfallDialog<O extends object = {}> extends Dialog<O> {
         const state: WaterfallDialogState = dc.activeDialog.state as WaterfallDialogState;
         state.options = options || {};
         state.values = {
-            instanceId: generate_guid(),
+            instanceId: uuidv4(),
         };
 
         this.telemetryClient.trackEvent({
@@ -346,19 +347,4 @@ interface WaterfallDialogState {
     options: object;
     stepIndex: number;
     values: object;
-}
-
-/*
- * This function generates a GUID-like random number that should be sufficient for our purposes of tracking
- * instances of a given waterfall dialog.
- * Source: https://stackoverflow.com/questions/105034/create-guid-uuid-in-javascript
- */
-function generate_guid(): string {
-    function s4(): string {
-        return Math.floor((1 + Math.random()) * 0x10000)
-            .toString(16)
-            .substring(1);
-    }
-
-    return s4() + s4() + '-' + s4() + '-' + s4() + '-' + s4() + '-' + s4() + s4() + s4();
 }
