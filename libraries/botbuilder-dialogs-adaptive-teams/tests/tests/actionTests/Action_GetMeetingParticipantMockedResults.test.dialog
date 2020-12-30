@@ -52,7 +52,7 @@
         },
         {
             "$kind": "Microsoft.Test.AssertReply",
-            "text": "{\"user\":{\"userPrincipalName\":\"userPrincipalName-1\"},\"meeting\":{\"role\":\"Organizer\"},\"conversation\":{\"id\":\"meetigConversationId-1\"}}"
+            "text": "{\"user\":{\"userPrincipalName\":\"userPrincipalName-1\"},\"meeting\":{\"role\":\"Organizer\"},\"conversation\":{\"id\":\"meetingConversationId-1\"}}"
         }
     ]
 }
