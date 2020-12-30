@@ -37,7 +37,7 @@ export class GetMember extends Dialog implements GetMemberConfiguration {
     /**
      * Class identifier.
      */
-    public static $kind = 'Teams.GetMeetingParticipant';
+    public static $kind = 'Teams.GetMember';
 
     /**
      * Gets or sets an optional expression which if is true will disable this action.

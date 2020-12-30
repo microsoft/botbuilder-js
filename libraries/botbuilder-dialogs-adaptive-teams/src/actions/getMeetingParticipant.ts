@@ -84,6 +84,7 @@ export class GetMeetingParticipant extends Dialog implements GetMeetingParticipa
                 return new BoolExpressionConverter();
             case 'property':
             case 'meetingId':
+            case 'participantId':
             case 'tenantId':
                 return new StringExpressionConverter();
             default:
@@ -111,7 +112,7 @@ export class GetMeetingParticipant extends Dialog implements GetMeetingParticipa
         const participantId = getValue(dc, this.participantId);
         const tenantId = getValue(dc, this.tenantId);
 
-        if (participantId === null) {
+        if (participantId == null) {
             /**
              * TeamsInfo.getMeetingParticipant will default to retrieving the current meeting's participant
              * if none is provided. This could lead to unexpected results. Therefore, GetMeetingParticipant action
