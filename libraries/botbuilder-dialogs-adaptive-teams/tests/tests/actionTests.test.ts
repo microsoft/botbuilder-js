@@ -2,7 +2,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 
 import 'mocha';
-import { ComponentRegistration, ConversationState, TestAdapter, useBotState, MemoryStorage, UserState } from 'botbuilder';
+import { ComponentRegistration, ConversationState, TestAdapter, useBotState, MemoryStorage, UserState, Channels, ConversationReference } from 'botbuilder';
 import { ResourceExplorer } from 'botbuilder-dialogs-declarative';
 import { TeamsComponentRegistration } from '../../lib';
 import { AdaptiveTestComponentRegistration, TestUtils } from 'botbuilder-dialogs-adaptive-testing';
@@ -24,8 +24,8 @@ export function mocha(): void {
     afterEach(() => nock.cleanAll());
 }
 
-const getTeamsTestAdapter = (): TestAdapter => {
-    const adapter = new TestAdapter();
+const getTeamsTestAdapter = (cRef?: ConversationReference): TestAdapter => {
+    const adapter = new TestAdapter(cRef);
     // This is required because TeamsInfo checks that the adapter has a createConnectorClient method
     // and TestAdapter doesn't have one, natively.
     adapter.createConnectorClient = () => {
@@ -55,6 +55,17 @@ describe('Action Tests', function () {
     );
 
     it('Action_GetMeetingParticipantMockedResults', async () => {
+        const conversationReference = <ConversationReference>{
+            user: {
+                id: 'participant-id',
+                aadObjectId: 'participant-aad-id-1',
+            },
+            channelId: 'msteams',
+            conversation: {
+                id: 'meetingConversationId-1',
+            },
+            serviceUrl: 'https://localhost.intercept',
+        };
         const participant = {
             user: {
                 userPrincipalName: 'userPrincipalName-1',
@@ -62,17 +73,14 @@ describe('Action Tests', function () {
             meeting: {
                 role: 'Organizer',
             },
-            conversation: {
-                id: 'meetingConversationId-1',
-            },
+            conversation: conversationReference.conversation,
         };
 
-        // TestAdapter uses test.com for the serviceUrl
-        const fetchExpectation = nock('https://test.com')
+        const fetchExpectation = nock('https://localhost.intercept')
             .get('/v1/meetings/meeting-id-1/participants/participant-aad-id-1?tenantId=tenant-id-1')
             .reply(200, participant);
 
-        const adapter = getTeamsTestAdapter();
+        const adapter = getTeamsTestAdapter(conversationReference);
 
         await TestUtils.runTestScript(resourceExplorer, 'Action_GetMeetingParticipantMockedResults', adapter);
 

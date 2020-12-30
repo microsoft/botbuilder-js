@@ -35,10 +35,6 @@
             "activity": {
                 "type": "message",
                 "text": "hi",
-                "from": {
-                  "id": "participant-id",
-                  "aadObjectId": "participant-aad-id-1"
-                },
                 "channelData": {
                     "tenant":{
                       "id":"tenant-id-1"
@@ -46,8 +42,7 @@
                     "meeting": {
                       "id": "meeting-id-1"
                     }
-                },
-                "channelId": "msteams"
+                }
             }
         },
         {
