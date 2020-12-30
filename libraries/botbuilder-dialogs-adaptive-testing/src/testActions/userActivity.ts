@@ -48,11 +48,11 @@ export class UserActivity extends TestAction implements UserActivityConfiguratio
 
         const activity = Object.assign({}, this.activity);
         const reference = testAdapter.conversation;
-        activity.channelId = reference.channelId;
-        activity.serviceUrl = reference.serviceUrl;
-        activity.conversation = reference.conversation;
-        activity.from = reference.user;
-        activity.recipient = reference.bot;
+        activity.channelId = this.activity?.channelId ?? reference.channelId;
+        activity.serviceUrl = this.activity?.serviceUrl ?? reference.serviceUrl;
+        activity.conversation = this.activity?.conversation ?? reference.conversation;
+        activity.from = this.activity?.from ?? reference.user;
+        activity.recipient = this.activity?.recipient ?? reference.bot;
         if (reference.activityId) {
             activity.id = reference.activityId;
         }
