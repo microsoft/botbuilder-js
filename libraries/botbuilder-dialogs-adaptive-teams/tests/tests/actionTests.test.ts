@@ -54,7 +54,7 @@ const getTeamsTestAdapter = (convo?: ConversationReference): TestAdapter => {
     return adapter;
 };
 
-const getTeamsUser = ():ChannelAccount => {
+const getTeamsUser = (): ChannelAccount => {
     return {
         id: '29:User-Id',
         name: 'User Name',
@@ -127,7 +127,11 @@ describe('Actions', function () {
         false
     );
 
-    it('Action_GetMeetingParticipantMockedResult', async () => {
+    /**
+     * Note: With mocha, `this.test.title` refers to the test's name, so runTestScript
+     * is just calling a file with the same name as the test.
+     */
+    it('Action_GetMeetingParticipant', async function () {
         const conversationReference = getPersonalConversationReference();
         const participant = {
             user: {
@@ -145,16 +149,16 @@ describe('Actions', function () {
 
         const adapter = getTeamsTestAdapter(conversationReference);
 
-        await TestUtils.runTestScript(resourceExplorer, 'Action_GetMeetingParticipantMockedResults', adapter);
+        await TestUtils.runTestScript(resourceExplorer, this.test.title, adapter);
 
         ok(fetchExpectation.isDone());
     });
 
-    it('Action_GetMeetingParticipantError', async () => {
-        await TestUtils.runTestScript(resourceExplorer, 'Action_GetMeetingParticipantError');
+    it('Action_GetMeetingParticipantError', async function () {
+        await TestUtils.runTestScript(resourceExplorer, this.test.title);
     });
 
-    it('Action_GetMemberMockedResult', async () => {
+    it('Action_GetMember', async function () {
         const conversationReference = getPersonalConversationReference();
         const members = generateTeamMembers(1);
 
@@ -164,16 +168,16 @@ describe('Actions', function () {
 
         const adapter = getTeamsTestAdapter(conversationReference);
 
-        await TestUtils.runTestScript(resourceExplorer, 'Action_GetMemberMockedResult', adapter);
+        await TestUtils.runTestScript(resourceExplorer, this.test.title, adapter);
 
         ok(fetchExpectation.isDone());
     });
 
-    it('Action_GetMemberError', async () => {
-        await TestUtils.runTestScript(resourceExplorer, 'Action_GetMemberError');
+    it('Action_GetMemberError', async function () {
+        await TestUtils.runTestScript(resourceExplorer, this.test.title);
     });
 
-    it('Action_GetPagedMembersMockedResult', async () => {
+    it('Action_GetPagedMembers', async function () {
         const conversationReference = getGroupConversationReference();
         const members = generateTeamMembers(3);
 
@@ -183,16 +187,16 @@ describe('Actions', function () {
 
         const adapter = getTeamsTestAdapter(conversationReference);
 
-        await TestUtils.runTestScript(resourceExplorer, 'Action_GetPagedMembersMockedResult', adapter);
+        await TestUtils.runTestScript(resourceExplorer, this.test.title, adapter);
 
         ok(fetchExpectation.isDone());
     });
 
-    it('Action_GetPagedMembersError', async () => {
-        await TestUtils.runTestScript(resourceExplorer, 'Action_GetPagedMembersError');
+    it('Action_GetPagedMembersError', async function () {
+        await TestUtils.runTestScript(resourceExplorer, this.test.title);
     });
 
-    it('Action_GetPagedTeamMembersMockedResult', async () => {
+    it('Action_GetPagedTeamMembers', async function () {
         const conversationReference = getGroupConversationReference();
         const members = generateTeamMembers(3);
 
@@ -202,12 +206,31 @@ describe('Actions', function () {
 
         const adapter = getTeamsTestAdapter(conversationReference);
 
-        await TestUtils.runTestScript(resourceExplorer, 'Action_GetPagedTeamMembersMockedResult', adapter);
+        await TestUtils.runTestScript(resourceExplorer, this.test.title, adapter);
 
         ok(fetchExpectation.isDone());
     });
 
-    it('Action_GetPagedTeamMembersError', async () => {
-        await TestUtils.runTestScript(resourceExplorer, 'Action_GetPagedTeamMembersError');
+    it('Action_GetPagedTeamMembersError', async function () {
+        await TestUtils.runTestScript(resourceExplorer, this.test.title);
+    });
+
+    it('Action_GetTeamChannels', async function () {
+        const conversationReference = getGroupConversationReference();
+        const members = generateTeamMembers(3);
+
+        const fetchExpectation = nock('https://api.botframework.com')
+            .get('/v3/conversations/team-id-1/pagedmembers')
+            .reply(200, { continuationToken: 'token', members });
+
+        const adapter = getTeamsTestAdapter(conversationReference);
+
+        await TestUtils.runTestScript(resourceExplorer, this.test.title, adapter);
+
+        ok(fetchExpectation.isDone());
+    });
+
+    it('Action_GeTeamChannelsError', async function () {
+        await TestUtils.runTestScript(resourceExplorer, this.test.title);
     });
 });

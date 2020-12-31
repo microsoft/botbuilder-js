@@ -47,7 +47,7 @@
         },
         {
             "$kind": "Microsoft.Test.AssertReply",
-            "text": "[{\"id\":\"29:User-Id-0\",\"name\":\"User Name-0\",\"objectId\":\"User-0-Object-Id\",\"givenName\":\"User\",\"surname\":0,\"email\":\"User.0@microsoft.com\",\"userPrincipalName\":\"user0@microsoft.com\",\"tenantId\":\"tenant-id-1\"},{\"id\":\"29:User-Id-1\",\"name\":\"User Name-1\",\"objectId\":\"User-1-Object-Id\",\"givenName\":\"User\",\"surname\":1,\"email\":\"User.1@microsoft.com\",\"userPrincipalName\":\"user1@microsoft.com\",\"tenantId\":\"tenant-id-1\"},{\"id\":\"29:User-Id-2\",\"name\":\"User Name-2\",\"objectId\":\"User-2-Object-Id\",\"givenName\":\"User\",\"surname\":2,\"email\":\"User.2@microsoft.com\",\"userPrincipalName\":\"user2@microsoft.com\",\"tenantId\":\"tenant-id-1\"}]"
+            "text": "[{\"id\":\"29:User-Id-0\",\"name\":\"getTeamsUser-0\",\"objectId\":\"User-0-Object-Id\",\"givenName\":\"User\",\"surname\":0,\"email\":\"User.0@microsoft.com\",\"userPrincipalName\":\"user0@microsoft.com\",\"tenantId\":\"tenant-id-1\"},{\"id\":\"29:User-Id-1\",\"name\":\"getTeamsUser-1\",\"objectId\":\"User-1-Object-Id\",\"givenName\":\"User\",\"surname\":1,\"email\":\"User.1@microsoft.com\",\"userPrincipalName\":\"user1@microsoft.com\",\"tenantId\":\"tenant-id-1\"},{\"id\":\"29:User-Id-2\",\"name\":\"getTeamsUser-2\",\"objectId\":\"User-2-Object-Id\",\"givenName\":\"User\",\"surname\":2,\"email\":\"User.2@microsoft.com\",\"userPrincipalName\":\"user2@microsoft.com\",\"tenantId\":\"tenant-id-1\"}]"
         }
     ]
 }
