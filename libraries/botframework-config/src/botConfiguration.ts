@@ -8,7 +8,7 @@ import * as fsx from 'fs-extra';
 import * as path from 'path';
 import * as process from 'process';
 import * as txtfile from 'read-text-file';
-import * as uuid from 'uuid';
+import { v4 as uuidv4 } from 'uuid';
 import { BotConfigurationBase } from './botConfigurationBase';
 import * as encrypt from './encrypt';
 import { ConnectedService } from './models';
@@ -307,7 +307,7 @@ export class BotConfiguration extends BotConfigurationBase {
         try {
             if (!this.padlock || this.padlock.length === 0) {
                 // if no key, create a guid and enrypt that to use as secret validator
-                this.padlock = encrypt.encryptString(uuid(), secret);
+                this.padlock = encrypt.encryptString(uuidv4(), secret);
             } else {
                 // validate we can decrypt the padlock, this tells us we have the correct secret for the rest of the file.
                 encrypt.decryptString(this.padlock, secret);

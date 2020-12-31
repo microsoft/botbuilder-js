@@ -8,6 +8,7 @@
 
 import { existsSync, readFileSync } from 'fs';
 import { resolve } from 'path';
+import { v4 as uuidv4 } from 'uuid';
 
 import {
     BoolExpression,
@@ -217,7 +218,7 @@ export class OrchestratorAdaptiveRecognizer extends Recognizer implements Orches
                                 })
                             )
                             .reduce((results: Record<string, RecognizerResult>, result: RecognizerResult) => {
-                                const guid = generate_guid();
+                                const guid = uuidv4();
                                 results[`${guid}`] = result;
                                 return results;
                             }, {});
@@ -282,18 +283,4 @@ export class OrchestratorAdaptiveRecognizer extends Recognizer implements Orches
             this._resolver = OrchestratorAdaptiveRecognizer.orchestrator.createLabelResolver(snapshot);
         }
     }
-}
-
-/*
- * This function generates a GUID-like random number that should be sufficient for our purposes of tracking
- * instances of a given waterfall dialog.
- * Source: https://stackoverflow.com/questions/105034/create-guid-uuid-in-javascript
- */
-function generate_guid() {
-    function s4() {
-        return Math.floor((1 + Math.random()) * 0x10000)
-            .toString(16)
-            .substring(1);
-    }
-    return s4() + s4() + '-' + s4() + '-' + s4() + '-' + s4() + '-' + s4() + s4() + s4();
 }

@@ -7,6 +7,7 @@
  */
 // tslint:disable-next-line:no-require-imports
 import assert from 'assert';
+import { v4 as uuidv4 } from 'uuid';
 import {
     Activity,
     ActivityTypes,
@@ -248,7 +249,7 @@ export class TestAdapter extends BotAdapter implements ExtendedUserTokenProvider
             const activity = activities[i];
 
             if (!activity.id) {
-                activity.id = generate_guid();
+                activity.id = uuidv4();
             }
 
             if (!activity.timestamp) {
@@ -1001,18 +1002,4 @@ function validateTranscriptActivity(
         expected.suggestedActions,
         `failed "suggestedActions" assert on ${description}`
     );
-}
-
-/*
- * This function generates a GUID-like random number that should be sufficient for our purposes of tracking
- * instances of a given waterfall dialog.
- * Source: https://stackoverflow.com/questions/105034/create-guid-uuid-in-javascript
- */
-function generate_guid() {
-    function s4() {
-        return Math.floor((1 + Math.random()) * 0x10000)
-            .toString(16)
-            .substring(1);
-    }
-    return s4() + s4() + '-' + s4() + '-' + s4() + '-' + s4() + '-' + s4() + s4() + s4();
 }

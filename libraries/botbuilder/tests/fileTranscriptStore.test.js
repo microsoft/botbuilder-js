@@ -4,7 +4,7 @@ const assert = require('assert');
 const path = require('path');
 const os = require('os');
 const fs = require('fs-extra');
-const uuid = require('uuid');
+const { v4: uuidv4 } = require('uuid');
 const { ActivityTypes } = require('botbuilder-core');
 
 const workingFolder = path.join(os.tmpdir(), 'botbuilder-transcript-tests');
@@ -219,7 +219,7 @@ describe('The FileTranscriptStore', () => {
 			activities = [];
 			let ct = 100;
 			while (ct--) {
-				activities.push(...createActivities(uuid(), startDate, 1));
+				activities.push(...createActivities(uuidv4(), startDate, 1));
 			}
 			storage = new FileTranscriptStore(workingFolder);
 			return Promise.all(activities.map(activity => storage.logActivity(activity)));
@@ -256,7 +256,7 @@ function createActivities (conversationId, ts, count = 5) {
 		activities.push({
 			type: ActivityTypes.Message,
 			timestamp: ts,
-			id: uuid(),
+			id: uuidv4(),
 			text: i.toString(),
 			channelId: 'test',
 			from: { id: `User${i}` },
@@ -269,7 +269,7 @@ function createActivities (conversationId, ts, count = 5) {
 		activities.push({
 			type: ActivityTypes.Message,
 			timestamp: ts,
-			id: uuid(),
+			id: uuidv4(),
 			text: i.toString(),
 			channelId: 'test',
 			from: { id: 'Bot1', name: '2' },

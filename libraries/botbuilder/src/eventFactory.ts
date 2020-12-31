@@ -3,6 +3,7 @@
  * Licensed under the MIT License.
  */
 
+import { v4 as uuidv4 } from 'uuid';
 import { TurnContext } from 'botbuilder-core';
 import { Activity, Attachment, ConversationAccount, ConversationReference, Transcript } from 'botframework-schema';
 import * as moment from 'moment-timezone';
@@ -81,7 +82,7 @@ export class EventFactory {
 
         handoffEvent.name = name;
         handoffEvent.value = value;
-        handoffEvent.id = uuid();
+        handoffEvent.id = uuidv4();
         handoffEvent.timestamp = new Date(Date.now());
         // The timestamp does not contain the local offset which is a known limitation of Date objects in JavaScript.
         // Therefore, the localTimezone is included in the handoffEvent.
@@ -92,12 +93,4 @@ export class EventFactory {
 
         return handoffEvent as Activity;
     }
-}
-
-function uuid(): string {
-    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c): string => {
-        const r = (Math.random() * 16) | 0,
-            v = c == 'x' ? r : (r & 0x3) | 0x8;
-        return v.toString(16);
-    });
 }
