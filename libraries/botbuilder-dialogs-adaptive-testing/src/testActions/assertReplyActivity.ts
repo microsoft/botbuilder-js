@@ -8,7 +8,7 @@
 
 import { ExpressionParser } from 'adaptive-expressions';
 import { Activity, TurnContext, TestAdapter } from 'botbuilder-core';
-import { TestAction } from '../testAction';
+import { Inspector, TestAction } from '../testAction';
 
 export interface AssertReplyActivityConfiguration {
     description?: string;
@@ -66,9 +66,14 @@ export class AssertReplyActivity extends TestAction implements AssertReplyActivi
      * Execute the test.
      * @param testAdapter Adapter to execute against.
      * @param callback Logic for the bot to use.
+     * @param inspector Inspector for dialog context.
      * @returns A Promise that represents the work queued to execute.
      */
-    public async execute(testAdapter: TestAdapter, callback: (context: TurnContext) => Promise<any>): Promise<any> {
+    public async execute(
+        testAdapter: TestAdapter,
+        callback: (context: TurnContext) => Promise<any>,
+        inspector?: Inspector
+    ): Promise<any> {
         const start = new Date();
         while (true) {
             const current = new Date();

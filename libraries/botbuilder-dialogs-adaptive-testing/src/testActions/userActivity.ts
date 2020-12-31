@@ -7,7 +7,7 @@
  */
 
 import { Activity, TurnContext, TestAdapter } from 'botbuilder-core';
-import { TestAction } from '../testAction';
+import { Inspector, TestAction } from '../testAction';
 
 export interface UserActivityConfiguration {
     activity?: Activity;
@@ -34,9 +34,14 @@ export class UserActivity extends TestAction implements UserActivityConfiguratio
      * Execute the test.
      * @param testAdapter Adapter to execute against.
      * @param callback Logic for the bot to use.
+     * @param inspector Inspector for dialog context.
      * @returns A Promise that represents the work queued to execute.
      */
-    public async execute(testAdapter: TestAdapter, callback: (context: TurnContext) => Promise<void>): Promise<void> {
+    public async execute(
+        testAdapter: TestAdapter,
+        callback: (context: TurnContext) => Promise<void>,
+        inspector?: Inspector
+    ): Promise<void> {
         if (!this.activity) {
             throw new Error('You must define one of Text of Activity properties');
         }
