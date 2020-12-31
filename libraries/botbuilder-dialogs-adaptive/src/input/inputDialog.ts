@@ -37,9 +37,8 @@ import {
     TurnPath,
 } from 'botbuilder-dialogs';
 import { AdaptiveEvents } from '../adaptiveEvents';
-import { ActivityTemplate } from '../templates/activityTemplate';
 import { AttachmentInput } from './attachmentInput';
-import { StaticActivityTemplate } from '../templates/staticActivityTemplate';
+import { ActivityTemplate, StaticActivityTemplate } from '../templates';
 import { ActivityTemplateConverter } from '../converters';
 
 export enum InputState {
