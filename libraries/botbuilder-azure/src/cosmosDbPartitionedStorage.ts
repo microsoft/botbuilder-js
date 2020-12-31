@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-types */
 /**
  * @module botbuilder-azure
  */
@@ -6,12 +7,14 @@
  * Licensed under the MIT License.
  */
 
-import { Storage, StoreItems } from 'botbuilder';
 import { Container, CosmosClient, CosmosClientOptions } from '@azure/cosmos';
 import { CosmosDbKeyEscape } from './cosmosDbKeyEscape';
 import { DoOnce } from './doOnce';
+import { Storage, StoreItems } from 'botbuilder';
 
 const _doOnce: DoOnce<Container> = new DoOnce<Container>();
+
+const maxDepthAllowed = 127;
 
 /**
  * Cosmos DB Partitioned Storage Options.
@@ -63,36 +66,42 @@ export interface CosmosDbPartitionedStorageOptions {
     compatibilityMode?: boolean;
 }
 
-/**
- * @private
- * Internal data structure for storing items in a CosmosDB Collection.
- */
+//Internal data structure for storing items in a CosmosDB Collection.
 class DocumentStoreItem {
     /**
      * Gets the PartitionKey path to be used for this document type.
+     *
+     * @returns {string} the partition key path
      */
     public static get partitionKeyPath(): string {
         return '/id';
     }
+
     /**
      * Gets or sets the sanitized Id/Key used as PrimaryKey.
      */
     public id: string;
+
     /**
      * Gets or sets the un-sanitized Id/Key.
      *
      */
     public realId: string;
+
     /**
      * Gets or sets the persisted object.
      */
     public document: object;
+
     /**
      * Gets or sets the ETag information for handling optimistic concurrency updates.
      */
     public eTag: string;
+
     /**
      * Gets the PartitionKey value for the document.
+     *
+     * @returns {string} the partition key
      */
     public get partitionKey(): string {
         return this.id;
@@ -100,9 +109,10 @@ class DocumentStoreItem {
 
     // We can't make the partitionKey optional AND have it auto-get this.realId, so we'll use a constructor
     public constructor(storeItem: { id: string; realId: string; document: object; eTag?: string }) {
-        for (const prop in storeItem) {
-            this[prop] = storeItem[prop];
-        }
+        this.id = storeItem.id;
+        this.realId = storeItem.realId;
+        this.document = storeItem.document;
+        this.eTag = storeItem.eTag;
     }
 }
 
@@ -118,7 +128,7 @@ export class CosmosDbPartitionedStorage implements Storage {
      * Initializes a new instance of the <see cref="CosmosDbPartitionedStorage"/> class.
      * using the provided CosmosDB credentials, database ID, and container ID.
      *
-     * @param cosmosDbStorageOptions Cosmos DB partitioned storage configuration options.
+     * @param {CosmosDbPartitionedStorageOptions} cosmosDbStorageOptions Cosmos DB partitioned storage configuration options.
      */
     public constructor(private readonly cosmosDbStorageOptions: CosmosDbPartitionedStorageOptions) {
         if (!cosmosDbStorageOptions) {
@@ -159,8 +169,9 @@ export class CosmosDbPartitionedStorage implements Storage {
 
     /**
      * Read one or more items with matching keys from the Cosmos DB container.
-     * @param keys A collection of Ids for each item to be retrieved.
-     * @returns The read items.
+     *
+     * @param {string[]} keys A collection of Ids for each item to be retrieved.
+     * @returns {Promise<StoreItems>} The read items.
      */
     public async read(keys: string[]): Promise<StoreItems> {
         if (!keys) {
@@ -196,6 +207,7 @@ export class CosmosDbPartitionedStorage implements Storage {
                         // return an empty collection so in this instance we catch and do not rethrow.
                         // Throw for any other exception.
                         if (err.code === 404) {
+                            // no-op
                         }
                         // Throw unique error for 400s
                         else if (err.code === 400) {
@@ -216,8 +228,9 @@ export class CosmosDbPartitionedStorage implements Storage {
     }
 
     /**
-     * Insert or update one or more items into the Cosmos DB container. 
-     * @param changes Dictionary of items to be inserted or updated indexed by key.
+     * Insert or update one or more items into the Cosmos DB container.
+     *
+     * @param {StoreItems} changes Dictionary of items to be inserted or updated indexed by key.
      */
     public async write(changes: StoreItems): Promise<void> {
         if (!changes) {
@@ -229,41 +242,93 @@ export class CosmosDbPartitionedStorage implements Storage {
         await this.initialize();
 
         await Promise.all(
-            Object.keys(changes).map(
-                async (k: string): Promise<void> => {
-                    const changesCopy: any = { ...changes[k] };
-
-                    // Remove eTag from JSON object that was copied from IStoreItem.
-                    // The ETag information is updated as an _etag attribute in the document metadata.
-                    delete changesCopy.eTag;
-                    const documentChange = new DocumentStoreItem({
+            Object.entries(changes).map(
+                async ([key, { eTag, ...change }]): Promise<void> => {
+                    const document = new DocumentStoreItem({
                         id: CosmosDbKeyEscape.escapeKey(
-                            k,
+                            key,
                             this.cosmosDbStorageOptions.keySuffix,
                             this.cosmosDbStorageOptions.compatibilityMode
                         ),
-                        realId: k,
-                        document: changesCopy,
+                        realId: key,
+                        document: change,
                     });
 
-                    const eTag: string = changes[k].eTag;
-                    const ac =
+                    const accessCondition =
                         eTag !== '*' && eTag != null && eTag.length > 0
                             ? { accessCondition: { type: 'IfMatch', condition: eTag } }
                             : undefined;
+
                     try {
-                        await this.container.items.upsert(documentChange, ac);
+                        await this.container.items.upsert(document, accessCondition);
                     } catch (err) {
-                        this.throwInformativeError('Error upserting document', err);
+                        this.throwInformativeError(this.nestingErrorMessage(change) ?? 'Error upserting document', err);
                     }
                 }
             )
         );
     }
 
+    // return an informative error message if upsert failed due to deep nested recursion
+    private nestingErrorMessage(json: object): string | undefined {
+        const { object, ancestors } = this.findAtDepth(json, maxDepthAllowed) ?? {};
+        if (object) {
+            const message = `Maximum nesting depth of ${maxDepthAllowed} exceeded.`;
+
+            if (this.isInDialogState(ancestors)) {
+                return (
+                    `${message} This is most likely caused by recursive component dialogs. ` +
+                    'Try reworking your dialog code to make sure it does not keep dialogs on the stack ' +
+                    "that it's not using. For example, consider using ReplaceDialogAsync instead of BeginDialogAsync."
+                );
+            } else {
+                return `${message} Please check your data for signs of unintended recursion.`;
+            }
+        }
+
+        return undefined;
+    }
+
+    // find a nested object at a particular depth
+    private findAtDepth(
+        object: unknown,
+        depth: number,
+        ancestors: object[] = []
+    ): { object: object; ancestors: object[] } | null {
+        // undefined or non-object means we've reached end of recursion
+        if (object == null || typeof object !== 'object') {
+            return null;
+        }
+
+        // we've located our object!
+        if (depth === 0) {
+            return { object, ancestors };
+        }
+
+        // use either array items, or object values for recursion
+        const values = Array.isArray(object) ? object : Object.values(object);
+
+        // recurse, taking care to append `object` to ancestors
+        return (
+            values
+                .map((item) => this.findAtDepth(item, depth - 1, ancestors.concat(object)))
+                .find((value) => value !== null) ?? null
+        );
+    }
+
+    // determine if nesting was due to recursive dialogs
+    private isInDialogState(ancestors: object[]): boolean {
+        return (
+            ancestors.find(
+                (ancestor) => (ancestor['$type'] ?? '').indexOf('Microsoft.Bot.Builder.Dialogs.DialogState') === 0
+            ) != null
+        );
+    }
+
     /**
      * Delete one or more items from the Cosmos DB container.
-     * @param keys Array of Ids for the items to be deleted.
+     *
+     * @param {string[]} keys Array of Ids for the items to be deleted.
      */
     public async delete(keys: string[]): Promise<void> {
         await this.initialize();
@@ -281,6 +346,7 @@ export class CosmosDbPartitionedStorage implements Storage {
                     } catch (err) {
                         // If trying to delete a document that doesn't exist, do nothing. Otherwise, throw
                         if (err.code === 404) {
+                            // no-op
                         } else {
                             this.throwInformativeError('Unable to delete document', err);
                         }
@@ -353,22 +419,18 @@ export class CosmosDbPartitionedStorage implements Storage {
         }
     }
 
-    /**
-     * @private
-     */
     private getPartitionKey(key) {
         return this.compatabilityModePartitionKey ? undefined : key;
     }
 
-    /**
-     * The Cosmos JS SDK doesn't return very descriptive errors and not all errors contain a body.
-     * This provides more detailed errors and err['message'] prevents ReferenceError
-     */
-    private throwInformativeError(prependedMessage: string, err: Error | object | string): void {
+    // The Cosmos JS SDK doesn't return very descriptive errors and not all errors contain a body.
+    private throwInformativeError(prependedMessage: string, err: Error | Record<'message', string> | string): void {
         if (typeof err === 'string') {
             err = new Error(err);
         }
-        err['message'] = `[${prependedMessage}] ${err['message']}`;
+
+        err.message = `[${prependedMessage}] ${err.message}`;
+
         throw err;
     }
 }
