@@ -56,11 +56,8 @@ export class GetPagedTeamMembers extends Dialog implements GetPagedTeamMembersCo
 
     /**
      * Gets or sets the expression to get the value to use for the continuationToken.
-     *
-     * @default
-     * =turn.activity.from.id
      */
-    public continuationToken = new StringExpression('=turn.activity.from.id');
+    public continuationToken: StringExpression;
 
     /**
      * Gets or sets the expression to get the value to use for the page size.

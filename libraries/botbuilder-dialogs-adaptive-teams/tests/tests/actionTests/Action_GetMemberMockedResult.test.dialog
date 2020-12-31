@@ -9,12 +9,12 @@
                 "$kind": "Microsoft.OnBeginDialog",
                 "actions": [
                   {
-                      "$kind": "Teams.GetMeetingParticipant",
-                      "property": "user.participant"
+                      "$kind": "Teams.GetMember",
+                      "property": "user.member"
                   },
                   {
                     "$kind": "Microsoft.SendActivity",
-                    "activity": "${user.participant}"
+                    "activity": "${user.member}"
                   }
                 ]
             },
@@ -23,7 +23,7 @@
                 "actions": [
                   {
                     "$kind": "Microsoft.SendActivity",
-                    "activity": "${turn.dialogEvent.value.message}"
+                    "activity": "${turn}"
                   }
                 ]
             }
@@ -47,7 +47,7 @@
         },
         {
             "$kind": "Microsoft.Test.AssertReply",
-            "text": "{\"user\":{\"userPrincipalName\":\"userPrincipalName-1\"},\"meeting\":{\"role\":\"Organizer\"},\"conversation\":{\"id\":\"a:oneOnOneConversationId\",\"name\":\"oneOnOne\",\"tenantId\":\"tenantId-Guid\",\"conversationType\":\"personal\",\"isGroup\":false}}"
+            "text": "{\"0\":{\"id\":\"29:User-Id-0\",\"name\":\"User Name-0\",\"objectId\":\"User-0-Object-Id\",\"givenName\":\"User\",\"surname\":0,\"email\":\"User.0@microsoft.com\",\"userPrincipalName\":\"user0@microsoft.com\",\"tenantId\":\"tenant-id-1\"}}"
         }
     ]
 }

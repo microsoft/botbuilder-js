@@ -9,7 +9,7 @@
                 "$kind": "Microsoft.OnBeginDialog",
                 "actions": [
                     {
-                        "$kind": "Teams.GetMeetingParticipant",
+                        "$kind": "Teams.GetMember",
                         "property": "$user.participant"
                     },
                     {
@@ -36,7 +36,7 @@
         },
         {
             "$kind": "Microsoft.Test.AssertReply",
-            "text": "TeamsInfo.getMeetingParticipant() works only on the Teams channel."
+            "text": "TeamsInfo.getMember() works only on the Teams channel."
         }
     ]
 }
