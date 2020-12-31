@@ -14,6 +14,7 @@ import {
     TestAdapter,
     Middleware,
     TurnContext,
+    ActivityTypes,
 } from 'botbuilder-core';
 import { Configurable, Converter, ConverterFactory, Dialog, DialogManager } from 'botbuilder-dialogs';
 import {
@@ -23,9 +24,10 @@ import {
     ResourceExtensions,
 } from 'botbuilder-dialogs-adaptive';
 import { ResourceExplorer } from 'botbuilder-dialogs-declarative';
-import { TestAction } from './testAction';
+import { Inspector, TestAction } from './testAction';
 import { SetTestOptionsMiddleware } from './setTestOptionsMiddleware';
 import { UserTokenMock, UserTokenMocksConverter } from './userTokenMocks';
+import { DialogContextInspector, DialogInspector } from './dialogInspector';
 
 class DialogConverter implements Converter<string, Dialog> {
     public constructor(private readonly _resourceExplorer: ResourceExplorer) {}
@@ -114,6 +116,7 @@ export class TestScript extends Configurable implements TestScriptConfiguration 
 
     /**
      * Build default test adapter.
+     *
      * @param testName Name of test.
      * @param middlewares Middlewares to be added to the adapter.
      * @returns Test adapter.
@@ -140,6 +143,7 @@ export class TestScript extends Configurable implements TestScriptConfiguration 
 
     /**
      * Starts the execution of the test sequence.
+     *
      * @param resourceExplorer The resource explorer to use.
      * @param testName Name of the test.
      * @param callback The bot logic.
@@ -164,6 +168,16 @@ export class TestScript extends Configurable implements TestScriptConfiguration 
             userTokenMock.setup(adapter);
         });
 
+        const inspect: Inspector = async (inspector: DialogContextInspector): Promise<void> => {
+            const di = new DialogInspector(this.dialog, resourceExplorer);
+            const activity = TurnContext.applyConversationReference(
+                { name: 'inspector', type: ActivityTypes.Event },
+                adapter.conversation,
+                true
+            );
+            await adapter.processActivity(activity, async (turnContext) => await di.inspect(turnContext, inspector));
+        };
+
         if (!callback) {
             const dm = new DialogManager(this.dialog);
             ResourceExtensions.useResourceExplorer(dm, resourceExplorer);
@@ -178,7 +192,7 @@ export class TestScript extends Configurable implements TestScriptConfiguration 
 
         for (let i = 0; i < this.script.length; i++) {
             const testAction = this.script[i];
-            await testAction.execute(adapter, callback);
+            await testAction.execute(adapter, callback, inspect);
         }
     }
 }

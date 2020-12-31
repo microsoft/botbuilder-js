@@ -8,7 +8,20 @@
 
 import { TurnContext, TestAdapter } from 'botbuilder-core';
 import { Configurable } from 'botbuilder-dialogs';
+import { DialogContextInspector } from './dialogInspector';
 
+/**
+ * Allow inspecting/modifying the current dialog context.
+ */
+export type Inspector = (inspector: DialogContextInspector) => Promise<void>;
+
+/**
+ * Abstract base class for scripted actions.
+ */
 export abstract class TestAction extends Configurable {
-    public abstract execute(adapter: TestAdapter, callback: (context: TurnContext) => Promise<void>): void;
+    public abstract execute(
+        adapter: TestAdapter,
+        callback: (context: TurnContext) => Promise<void>,
+        inspector: Inspector
+    ): void;
 }
