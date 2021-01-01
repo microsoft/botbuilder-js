@@ -9,12 +9,12 @@
                 "$kind": "Microsoft.OnBeginDialog",
                 "actions": [
                   {
-                      "$kind": "Teams.GetMember",
-                      "property": "user.result"
+                      "$kind": "Teams.GetTeamDetails",
+                      "property": "user.response"
                   },
                   {
                     "$kind": "Microsoft.SendActivity",
-                    "activity": "${user.result}"
+                    "activity": "${user.response}"
                   }
                 ]
             },
@@ -39,15 +39,15 @@
                     "tenant":{
                       "id":"tenant-id-1"
                     },
-                    "meeting": {
-                      "id": "meeting-id-1"
+                    "team": {
+                      "id": "team-id-1"
                     }
                 }
             }
         },
         {
             "$kind": "Microsoft.Test.AssertReply",
-            "text": "{\"0\":{\"id\":\"29:User-Id-0\",\"name\":\"getTeamsUser-0\",\"objectId\":\"User-0-Object-Id\",\"givenName\":\"User\",\"surname\":0,\"email\":\"User.0@microsoft.com\",\"userPrincipalName\":\"user0@microsoft.com\",\"tenantId\":\"tenant-id-1\"}}"
+            "text": "{\"id\":\"19:generalChannelIdgeneralChannelId@thread.skype\",\"name\":\"TeamName\",\"aadGroupId\":\"Team-aadGroupId\"}"
         }
     ]
 }

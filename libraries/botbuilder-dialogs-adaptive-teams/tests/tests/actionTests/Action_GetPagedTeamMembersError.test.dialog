@@ -10,11 +10,11 @@
                 "actions": [
                     {
                         "$kind": "Teams.GetPagedTeamMembers",
-                        "property": "$user.members"
+                        "property": "$user.result"
                     },
                     {
                         "$kind": "Microsoft.SendActivity",
-                        "activity": "${user.members.members}"
+                        "activity": "${user.result.members}"
                     }
                 ]
             },

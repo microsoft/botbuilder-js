@@ -9,7 +9,7 @@
                 "$kind": "Microsoft.OnBeginDialog",
                 "actions": [
                     {
-                        "$kind": "Teams.GetPagedMembers",
+                        "$kind": "Teams.GetTeamDetails",
                         "property": "$user.result"
                     },
                     {
@@ -36,7 +36,7 @@
         },
         {
             "$kind": "Microsoft.Test.AssertReply",
-            "text": "TeamsInfo.getPagedMembers() works only on the Teams channel."
+            "text": "TeamsInfo.getTeamDetails() works only on the Teams channel."
         }
     ]
 }

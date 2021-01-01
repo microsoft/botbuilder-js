@@ -13,15 +13,19 @@ import {
     ConversationReference,
     ChannelAccount,
     ConversationAccount,
+    MessagingExtensionResult,
+    CardFactory,
 } from 'botbuilder';
 import { ResourceExplorer } from 'botbuilder-dialogs-declarative';
-import { TeamsComponentRegistration } from '../../lib';
+import { MessagingExtensionResultResponseType, TeamsComponentRegistration } from '../../lib';
 import { AdaptiveTestComponentRegistration, TestUtils } from 'botbuilder-dialogs-adaptive-testing';
 import { AdaptiveComponentRegistration } from 'botbuilder-dialogs-adaptive';
 import { ConnectorClient, MicrosoftAppCredentials } from 'botframework-connector';
 import { ok } from 'assert';
 import path = require('path');
 import nock = require('nock');
+
+// TODO: Write tests that catch all errors for each action.
 
 /**
  * Registers mocha hooks for proper usage
@@ -217,11 +221,23 @@ describe('Actions', function () {
 
     it('Action_GetTeamChannels', async function () {
         const conversationReference = getGroupConversationReference();
-        const members = generateTeamMembers(3);
+        const conversations = [
+            {
+                id: '19:ChannelIdgeneralChannelId@thread.skype',
+            },
+            {
+                id: '19:somechannelId2e5ab3df9ae9b594bdb@thread.skype',
+                name: 'Testing1',
+            },
+            {
+                id: '19:somechannelId388ade16aa4dd375e69@thread.skype',
+                name: 'Testing2',
+            },
+        ];
 
         const fetchExpectation = nock('https://api.botframework.com')
-            .get('/v3/conversations/team-id-1/pagedmembers')
-            .reply(200, { continuationToken: 'token', members });
+            .get('/v3/teams/team-id-1/conversations')
+            .reply(200, { conversations });
 
         const adapter = getTeamsTestAdapter(conversationReference);
 
@@ -230,7 +246,54 @@ describe('Actions', function () {
         ok(fetchExpectation.isDone());
     });
 
-    it('Action_GeTeamChannelsError', async function () {
+    it('Action_GetTeamChannelsError', async function () {
+        await TestUtils.runTestScript(resourceExplorer, this.test.title);
+    });
+
+    it('Action_GetTeamDetails', async function () {
+        const conversationReference = getGroupConversationReference();
+        const teamDetails = {
+            id: '19:generalChannelIdgeneralChannelId@thread.skype',
+            name: 'TeamName',
+            aadGroupId: 'Team-aadGroupId',
+        };
+
+        const fetchExpectation = nock('https://api.botframework.com')
+            .get('/v3/teams/team-id-1')
+            .reply(200, teamDetails);
+
+        const adapter = getTeamsTestAdapter(conversationReference);
+
+        await TestUtils.runTestScript(resourceExplorer, this.test.title, adapter);
+
+        ok(fetchExpectation.isDone());
+    });
+
+    it('Action_GetTeamDetailsError', async function () {
+        await TestUtils.runTestScript(resourceExplorer, this.test.title);
+    });
+
+    it('Action_GetTeamMember', async function () {
+        const conversationReference = getGroupConversationReference();
+        const members = generateTeamMembers(1);
+
+        const fetchExpectation = nock('https://api.botframework.com')
+            .get('/v3/conversations/team-id-1/members/29%3AUser-Id')
+            .reply(200, members[0]);
+
+        const adapter = getTeamsTestAdapter(conversationReference);
+
+        await TestUtils.runTestScript(resourceExplorer, this.test.title, adapter);
+
+        ok(fetchExpectation.isDone());
+    });
+
+    it('Action_GetTeamMemberError', async function () {
+        await TestUtils.runTestScript(resourceExplorer, this.test.title);
+    });
+
+    // TODO: Set breakpoint in assertReplyActivity.ts and copy some of the activity values over into SendAppBasedLinkQuery
+    it('Action_SendAppBasedLinkQueryResponse', async function () {
         await TestUtils.runTestScript(resourceExplorer, this.test.title);
     });
 });

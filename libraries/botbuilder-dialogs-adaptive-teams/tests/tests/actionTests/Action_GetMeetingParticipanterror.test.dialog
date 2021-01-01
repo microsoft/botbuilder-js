@@ -10,11 +10,11 @@
                 "actions": [
                     {
                         "$kind": "Teams.GetMeetingParticipant",
-                        "property": "$user.participant"
+                        "property": "$user.result"
                     },
                     {
                         "$kind": "Microsoft.SendActivity",
-                        "activity": "${user.participant}"
+                        "activity": "${user.result}"
                     }
                 ]
             },

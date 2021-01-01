@@ -96,7 +96,7 @@ export class GetTeamMember extends Dialog implements GetTeamMemberConfiguration 
         }
 
         if (dc.context.activity.channelId !== Channels.Msteams) {
-            throw new Error('TeamsInfo.getMember() works only on the Teams channel.');
+            throw new Error('TeamsInfo.getTeamMember() works only on the Teams channel.');
         }
 
         const memberId = getValue(dc, this.memberId);
