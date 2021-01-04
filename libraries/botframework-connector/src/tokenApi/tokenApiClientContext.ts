@@ -3,36 +3,29 @@
  * Licensed under the MIT License.
  */
 
-import * as msRest from "@azure/ms-rest-js";
-import * as Models from "./models";
+import { ServiceClient, ServiceClientCredentials } from '@azure/ms-rest-js';
+import { TokenApiClientOptions } from './models';
+import { resolveUserAgent } from '../userAgent';
 
-const packageName = "botframework-Token";
-const packageVersion = "4.0.0";
+export class TokenApiClientContext extends ServiceClient {
+    credentials: ServiceClientCredentials;
 
-export class TokenApiClientContext extends msRest.ServiceClient {
-  credentials: msRest.ServiceClientCredentials;
+    /**
+     * Initializes a new instance of the TokenApiClientContext class.
+     * @param credentials Subscription credentials which uniquely identify client subscription.
+     * @param [options] The parameter options
+     */
+    constructor(credentials: ServiceClientCredentials, options: TokenApiClientOptions = {}) {
+        if (credentials === null || credentials === undefined) {
+            throw new Error("'credentials' cannot be null.");
+        }
 
-  /**
-   * Initializes a new instance of the TokenApiClientContext class.
-   * @param credentials Subscription credentials which uniquely identify client subscription.
-   * @param [options] The parameter options
-   */
-  constructor(credentials: msRest.ServiceClientCredentials, options?: Models.TokenApiClientOptions) {
-    if (credentials === null || credentials === undefined) {
-      throw new Error('\'credentials\' cannot be null.');
+        options.userAgent = resolveUserAgent(options.userAgent, 'botframework-Token');
+
+        super(credentials, options);
+
+        this.baseUri = options.baseUri ?? this.baseUri ?? 'https://token.botframework.com';
+        this.requestContentType = 'application/json; charset=utf-8';
+        this.credentials = credentials;
     }
-
-    if (!options) {
-      options = {};
-    }
-    const defaultUserAgent = msRest.getDefaultUserAgentValue();
-    options.userAgent = `${packageName}/${packageVersion} ${defaultUserAgent} ${options.userAgent || ''}`;
-
-    super(credentials, options);
-
-    this.baseUri = options.baseUri || this.baseUri || "https://token.botframework.com";
-    this.requestContentType = "application/json; charset=utf-8";
-    this.credentials = credentials;
-
-  }
 }

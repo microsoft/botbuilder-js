@@ -3,38 +3,29 @@
  * Licensed under the MIT License.
  */
 
-import * as msRest from "@azure/ms-rest-js";
-import * as Models from "./models";
+import { ConnectorClientOptions } from './models';
+import { ServiceClient, ServiceClientCredentials } from '@azure/ms-rest-js';
+import { resolveUserAgent } from '../userAgent';
 
-const packageName = "botframework-connector";
-const packageVersion = "4.0.0";
+export class ConnectorClientContext extends ServiceClient {
+    credentials: ServiceClientCredentials;
 
-export class ConnectorClientContext extends msRest.ServiceClient {
-  credentials: msRest.ServiceClientCredentials;
+    /**
+     * Initializes a new instance of the ConnectorClientContext class.
+     * @param {ServiceClientCredentials} credentials Subscription credentials which uniquely identify client subscription.
+     * @param {ConnectorClientContext} options The parameter options
+     */
+    constructor(credentials: ServiceClientCredentials, options: ConnectorClientOptions = {}) {
+        if (credentials === null || credentials === undefined) {
+            throw new Error("'credentials' cannot be null.");
+        }
 
-  /**
-   * Initializes a new instance of the ConnectorClientContext class.
-   * @param credentials Subscription credentials which uniquely identify client subscription.
-   * @param [options] The parameter options
-   */
-  constructor(credentials: msRest.ServiceClientCredentials, options?: Models.ConnectorClientOptions) {
-    if (credentials === null || credentials === undefined) {
-      throw new Error('\'credentials\' cannot be null.');
+        options.userAgent = resolveUserAgent(options.userAgent);
+
+        super(credentials, options);
+
+        this.baseUri = options.baseUri ?? this.baseUri ?? 'https://api.botframework.com';
+        this.requestContentType = 'application/json; charset=utf-8';
+        this.credentials = credentials;
     }
-
-    if (!options) {
-      // NOTE: autogen creates a {} which is invalid, it needs to be cast
-      options = {} as Models.ConnectorClientOptions;
-    }
-    // TODO  This is to workaround fact that AddUserAgent() was removed.  
-    const defaultUserAgent = msRest.getDefaultUserAgentValue();
-    options.userAgent = `${packageName}/${packageVersion} ${defaultUserAgent} ${options.userAgent || ''}`;
-
-    super(credentials, options);
-
-    this.baseUri = options.baseUri || this.baseUri || "https://api.botframework.com";
-    this.requestContentType = "application/json; charset=utf-8";
-    this.credentials = credentials;
-
-  }
 }
