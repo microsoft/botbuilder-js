@@ -37,6 +37,11 @@ export interface EntityAssignment {
      * Value indicating whether this entity was in `DialogPath.ExpectedProperties`.
      */
     isExpected: boolean;
+
+    /**
+     * The number of times event has been raised.
+     */
+    raisedCount: number;
 }
 
 /**
