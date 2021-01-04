@@ -7,20 +7,34 @@
  */
 
 import { Activity, ActivityFactory, MessageFactory } from 'botbuilder-core';
-import { DialogContext, DialogStateManager, TemplateInterface } from 'botbuilder-dialogs';
+import {
+    Configurable,
+    Converter,
+    ConverterFactory,
+    DialogContext,
+    DialogStateManager,
+    TemplateInterface,
+} from 'botbuilder-dialogs';
 import { LanguageGenerator } from '../languageGenerator';
 import { languageGeneratorKey } from '../languageGeneratorExtensions';
+
+export interface ActivityTemplateConguration {
+    template?: string;
+}
 
 /**
  * Defines an activity template where the template expression is local aka "inline"
  * and processed through registered language generator.
  */
-export class ActivityTemplate implements TemplateInterface<Partial<Activity>, DialogStateManager> {
+export class ActivityTemplate
+    implements TemplateInterface<Partial<Activity>, DialogStateManager>, ActivityTemplateConguration, Configurable {
+    public static $kind = 'Microsoft.ActivityTemplate';
+
     /**
      * Initialize a new instance of ActivityTemplate class.
      * @param template The template to evaluate to create the activity.
      */
-    public constructor(template: string) {
+    public constructor(template?: string) {
         this.template = template;
     }
 
@@ -28,6 +42,16 @@ export class ActivityTemplate implements TemplateInterface<Partial<Activity>, Di
      * Gets or sets the template to evaluate to create the activity.
      */
     public template: string;
+
+    public getConverter(_property: keyof ActivityTemplateConguration): Converter | ConverterFactory {
+        return undefined;
+    }
+
+    public configure(config: ActivityTemplateConguration): this {
+        const { template } = config;
+        this.template = template;
+        return this;
+    }
 
     /**
      * Bind data to template.
