@@ -10,7 +10,6 @@
                 "actions": [
                     {
                         "$kind": "Teams.SendMessagingExtensionConfigQuerySettingUrlResponse",
-                        "property": "user.result",
                         "configUrl": "someBaseUrl.com/somePage.html"
                     }
                 ]
@@ -20,7 +19,7 @@
                 "actions": [
                     {
                         "$kind": "Microsoft.SendActivity",
-                        "activity": "${turn}"
+                        "activity": "${turn.dialogEvent.value.message}"
                     }
                 ]
             }

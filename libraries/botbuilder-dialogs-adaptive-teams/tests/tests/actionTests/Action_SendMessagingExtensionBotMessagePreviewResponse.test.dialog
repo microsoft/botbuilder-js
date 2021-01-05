@@ -10,11 +10,6 @@
                 "actions": [
                     {
                         "$kind": "Teams.SendMessagingExtensionBotMessagePreviewResponse",
-                        "property": "user.result",
-                        "title": "some title",
-                        "height": 1,
-                        "width": 2,
-                        "completionBotId": "someBotId",
                         "card": {
                             "type": "message",
                             "attachments": [
@@ -34,7 +29,7 @@
                 "actions": [
                     {
                         "$kind": "Microsoft.SendActivity",
-                        "activity": "${turn}"
+                        "activity": "${turn.dialogEvent.value.message}"
                     }
                 ]
             }

@@ -19,7 +19,7 @@
                 "actions": [
                     {
                         "$kind": "Microsoft.SendActivity",
-                        "activity": "${turn}"
+                        "activity": "${turn.dialogEvent.value.message}"
                     }
                 ]
             }

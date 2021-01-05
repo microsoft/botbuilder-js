@@ -13,11 +13,9 @@ import {
     ConversationReference,
     ChannelAccount,
     ConversationAccount,
-    MessagingExtensionResult,
-    CardFactory,
 } from 'botbuilder';
 import { ResourceExplorer } from 'botbuilder-dialogs-declarative';
-import { MessagingExtensionResultResponseType, TeamsComponentRegistration } from '../../lib';
+import { TeamsComponentRegistration } from '../../lib';
 import { AdaptiveTestComponentRegistration, TestUtils } from 'botbuilder-dialogs-adaptive-testing';
 import { AdaptiveComponentRegistration } from 'botbuilder-dialogs-adaptive';
 import { ConnectorClient, MicrosoftAppCredentials } from 'botframework-connector';

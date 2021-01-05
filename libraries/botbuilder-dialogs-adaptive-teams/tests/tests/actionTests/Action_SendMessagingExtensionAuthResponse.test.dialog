@@ -10,7 +10,6 @@
                 "actions": [
                     {
                         "$kind": "Teams.SendMessagingExtensionAuthResponse",
-                        "property": "user.result",
                         "connectionName": "test connection",
                         "title": "test title"
                     }
@@ -21,7 +20,7 @@
                 "actions": [
                     {
                         "$kind": "Microsoft.SendActivity",
-                        "activity": "${turn}"
+                        "activity": "${turn.dialogEvent.value.message}"
                     }
                 ]
             }

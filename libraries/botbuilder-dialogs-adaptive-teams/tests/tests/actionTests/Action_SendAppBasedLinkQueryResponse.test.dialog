@@ -10,7 +10,6 @@
                 "actions": [
                     {
                         "$kind": "Teams.SendAppBasedLinkQueryResponse",
-                        "property": "user.result",
                         "card": {
                             "type": "message",
                             "attachments": [
@@ -30,7 +29,7 @@
                 "actions": [
                     {
                         "$kind": "Microsoft.SendActivity",
-                        "activity": "${turn}"
+                        "activity": "${turn.dialogEvent.value.message}"
                     }
                 ]
             }

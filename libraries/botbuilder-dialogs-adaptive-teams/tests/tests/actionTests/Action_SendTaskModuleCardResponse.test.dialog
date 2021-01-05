@@ -10,7 +10,6 @@
                 "actions": [
                     {
                         "$kind": "Teams.SendTaskModuleCardResponse",
-                        "property": "user.result",
                         "title": "some title",
                         "height": 1,
                         "width": 2,
@@ -34,7 +33,7 @@
                 "actions": [
                     {
                         "$kind": "Microsoft.SendActivity",
-                        "activity": "${turn}"
+                        "activity": "${turn.dialogEvent.value.message}"
                     }
                 ]
             }
