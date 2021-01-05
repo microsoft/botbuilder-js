@@ -1,0 +1,66 @@
+{
+    "$schema": "../../../tests.schema",
+    "$kind": "Microsoft.Test.Script",
+    "dialog": {
+        "$kind": "Microsoft.AdaptiveDialog",
+        "id": "planningTest",
+        "triggers": [
+            {
+                "$kind": "Microsoft.OnBeginDialog",
+                "actions": [
+                  {
+                      "$kind": "Teams.SendMessagingExtensionBotMessagePreviewResponse",
+                      "property": "user.result",
+                      "title": "some title",
+                      "height": 1,
+                      "width": 2,
+                      "completionBotId": "someBotId",
+                      "card": {
+                        "type": "message",
+                        "attachments": [
+                          {
+                            "contentType": "application/vnd.microsoft.card.thumbnail",
+                            "content": {
+                              "title": "card-title"
+                            }
+                          }
+                        ]
+                      }
+                  }
+                ]
+            },
+            {
+                "$kind": "Microsoft.OnError",
+                "actions": [
+                  {
+                    "$kind": "Microsoft.SendActivity",
+                    "activity": "${turn}"
+                  }
+                ]
+            }
+        ]
+    },
+    "script": [
+        {
+            "$kind": "Microsoft.Test.UserActivity",
+            "activity": {
+                "type": "message",
+                "text": "hi",
+                "name": "composeExtension/queryLink"
+            }
+        },
+        {
+          "$kind": "Microsoft.Test.AssertReplyActivity",
+          "assertions": [
+              "type == 'invokeResponse'",
+              "conversation.id == 'Action_SendMessagingExtensionBotMessagePreviewResponse'",
+              "value.body.composeExtension.type == 'botMessagePreview'",
+              "value.body.composeExtension.activityPreview.attachmentLayout == 'list'",
+              "value.body.composeExtension.activityPreview.inputHint == 'acceptingInput'",
+              "value.body.composeExtension.activityPreview.type == 'message'",
+              "value.body.composeExtension.activityPreview.attachments[0].contentType == 'application/vnd.microsoft.card.thumbnail'",
+              "value.body.composeExtension.activityPreview.attachments[0].content.title == 'card-title'"
+          ]
+      }
+    ]
+}

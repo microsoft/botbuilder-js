@@ -68,7 +68,7 @@ export class SendMessagingExtensionMessageResponse
 
         const response = <MessagingExtensionResponse>{
             composeExtension: <MessagingExtensionResult>{
-                type: MessagingExtensionResultResponseType.config.toString(),
+                type: MessagingExtensionResultResponseType.message.toString(),
                 text: message,
             },
             cacheInfo: this.getCacheInfo(dc),

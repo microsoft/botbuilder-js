@@ -1,0 +1,49 @@
+{
+    "$schema": "../../../tests.schema",
+    "$kind": "Microsoft.Test.Script",
+    "dialog": {
+        "$kind": "Microsoft.AdaptiveDialog",
+        "id": "planningTest",
+        "triggers": [
+            {
+                "$kind": "Microsoft.OnBeginDialog",
+                "actions": [
+                  {
+                      "$kind": "Teams.SendMessagingExtensionConfigQuerySettingUrlResponse",
+                      "property": "user.result",
+                      "configUrl": "someBaseUrl.com/somePage.html"
+                  }
+                ]
+            },
+            {
+                "$kind": "Microsoft.OnError",
+                "actions": [
+                  {
+                    "$kind": "Microsoft.SendActivity",
+                    "activity": "${turn}"
+                  }
+                ]
+            }
+        ]
+    },
+    "script": [
+        {
+            "$kind": "Microsoft.Test.UserActivity",
+            "activity": {
+                "type": "message",
+                "text": "hi",
+                "name": "composeExtension/queryLink"
+            }
+        },
+        {
+          "$kind": "Microsoft.Test.AssertReplyActivity",
+          "assertions": [
+              "type == 'invokeResponse'",
+              "conversation.id == 'Action_SendMessagingExtensionConfigQuerySettingUrlResponse'",
+              "value.body.composeExtension.type == 'config'",
+              "value.body.composeExtension.suggestedActions.actions[0].type == 'openUrl'",
+              "value.body.composeExtension.suggestedActions.actions[0].value == 'someBaseUrl.com/somePage.html'"
+          ]
+      }
+    ]
+}

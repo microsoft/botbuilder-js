@@ -17,6 +17,7 @@ import {
     DialogTurnResult,
     TemplateInterface,
 } from 'botbuilder-dialogs';
+import { ActivityTemplateConverter } from 'botbuilder-dialogs-adaptive/lib/converters';
 import { BaseTeamsCacheInfoResponseDialog } from './baseTeamsCacheInfoResponseDialog';
 import { MessagingExtensionAttachmentLayoutResponseType } from './messagingExtensionAttachmentLayoutResponseType';
 import { MessagingExtensionResultResponseType } from './messagingExtensionResultResponseType';
@@ -48,6 +49,8 @@ export class SendMessagingExtensionSelectItemResponse
         switch (property) {
             case 'disabled':
                 return new BoolExpressionConverter();
+            case 'card':
+                return new ActivityTemplateConverter();
             default:
                 return super.getConverter(property);
         }

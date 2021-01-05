@@ -322,4 +322,32 @@ describe('Actions', function () {
 
         await TestUtils.runTestScript(resourceExplorer, this.test.title, adapter);
     });
+
+    it('Action_SendMessagingExtensionBotMessagePreviewResponse', async function () {
+        await TestUtils.runTestScript(resourceExplorer, this.test.title);
+    });
+
+    it('Action_SendMessagingExtensionConfigQuerySettingUrlResponse', async function () {
+        await TestUtils.runTestScript(resourceExplorer, this.test.title);
+    });
+
+    it('Action_SendMessagingExtensionMessageResponse', async function () {
+        await TestUtils.runTestScript(resourceExplorer, this.test.title);
+    });
+
+    it('Action_SendMessagingExtensionSelectItemResponse', async function () {
+        await TestUtils.runTestScript(resourceExplorer, this.test.title);
+    });
+
+    it('Action_SendTaskModuleCardResponse', async function () {
+        await TestUtils.runTestScript(resourceExplorer, this.test.title);
+    });
+
+    it('Action_SendTaskModuleMessageResponse', async function () {
+        await TestUtils.runTestScript(resourceExplorer, this.test.title);
+    });
+
+    it('Action_SendTaskModuleUrlResponse', async function () {
+        await TestUtils.runTestScript(resourceExplorer, this.test.title);
+    });
 });

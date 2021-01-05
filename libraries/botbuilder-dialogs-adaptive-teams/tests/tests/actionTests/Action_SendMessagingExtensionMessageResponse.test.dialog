@@ -1,0 +1,47 @@
+{
+    "$schema": "../../../tests.schema",
+    "$kind": "Microsoft.Test.Script",
+    "dialog": {
+        "$kind": "Microsoft.AdaptiveDialog",
+        "id": "planningTest",
+        "triggers": [
+            {
+                "$kind": "Microsoft.OnBeginDialog",
+                "actions": [
+                  {
+                      "$kind": "Teams.SendMessagingExtensionMessageResponse",
+                      "message": "i want to send this to the user"
+                  }
+                ]
+            },
+            {
+                "$kind": "Microsoft.OnError",
+                "actions": [
+                  {
+                    "$kind": "Microsoft.SendActivity",
+                    "activity": "${turn}"
+                  }
+                ]
+            }
+        ]
+    },
+    "script": [
+        {
+            "$kind": "Microsoft.Test.UserActivity",
+            "activity": {
+                "type": "message",
+                "text": "hi",
+                "name": "composeExtension/queryLink"
+            }
+        },
+        {
+            "$kind": "Microsoft.Test.AssertReplyActivity",
+            "assertions": [
+                "type == 'invokeResponse'",
+                "conversation.id == 'Action_SendMessagingExtensionMessageResponse'",
+                "value.body.composeExtension.type == 'message'",
+                "value.body.composeExtension.text == 'i want to send this to the user'"
+            ]
+        }
+    ]
+}

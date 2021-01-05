@@ -23,6 +23,7 @@ import {
     DialogTurnResult,
     TemplateInterface,
 } from 'botbuilder-dialogs';
+import { ActivityTemplateConverter } from 'botbuilder-dialogs-adaptive/lib/converters';
 import { BaseSendTaskModuleContinueResponse } from './baseSendTaskModuleContinueResponse';
 import { BaseTeamsCacheInfoResponseDialog } from './baseTeamsCacheInfoResponseDialog';
 import { MessagingExtensionResultResponseType } from './messagingExtensionResultResponseType';
@@ -54,6 +55,8 @@ export class SendMessagingExtensionBotMessagePreviewResponse
         switch (property) {
             case 'disabled':
                 return new BoolExpressionConverter();
+            case 'card':
+                return new ActivityTemplateConverter();
             default:
                 return super.getConverter(property);
         }
@@ -69,12 +72,6 @@ export class SendMessagingExtensionBotMessagePreviewResponse
     public async beginDialog(dc: DialogContext, options?: Record<string, unknown>): Promise<DialogTurnResult> {
         if (this.disabled && this.disabled?.getValue(dc.state)) {
             return dc.endDialog();
-        }
-
-        // Type check that dc.context.adapter matches interface, ExtendedUserTokenProvider
-        // eslint-disable-next-line no-prototype-builtins
-        if (!dc.context.adapter.hasOwnProperty('getUserToken')) {
-            throw new Error('SendMessagingExtensionBotMessagePreviewResponse(): not supported by the current adapter');
         }
 
         let attachment;
