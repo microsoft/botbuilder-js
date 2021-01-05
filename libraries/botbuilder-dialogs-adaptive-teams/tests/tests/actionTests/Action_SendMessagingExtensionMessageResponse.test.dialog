@@ -1,5 +1,5 @@
 {
-    "$schema": "../../../tests.schema",
+    "$schema": "../../../../botbuilder-dialogs-adaptive/tests/schema/test.schema",
     "$kind": "Microsoft.Test.Script",
     "dialog": {
         "$kind": "Microsoft.AdaptiveDialog",
@@ -8,19 +8,19 @@
             {
                 "$kind": "Microsoft.OnBeginDialog",
                 "actions": [
-                  {
-                      "$kind": "Teams.SendMessagingExtensionMessageResponse",
-                      "message": "i want to send this to the user"
-                  }
+                    {
+                        "$kind": "Teams.SendMessagingExtensionMessageResponse",
+                        "message": "i want to send this to the user"
+                    }
                 ]
             },
             {
                 "$kind": "Microsoft.OnError",
                 "actions": [
-                  {
-                    "$kind": "Microsoft.SendActivity",
-                    "activity": "${turn}"
-                  }
+                    {
+                        "$kind": "Microsoft.SendActivity",
+                        "activity": "${turn}"
+                    }
                 ]
             }
         ]

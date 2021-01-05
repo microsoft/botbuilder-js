@@ -1,5 +1,5 @@
 {
-    "$schema": "../../../tests.schema",
+    "$schema": "../../../../botbuilder-dialogs-adaptive/tests/schema/test.schema",
     "$kind": "Microsoft.Test.Script",
     "dialog": {
         "$kind": "Microsoft.AdaptiveDialog",
@@ -8,26 +8,25 @@
             {
                 "$kind": "Microsoft.OnBeginDialog",
                 "actions": [
-                  {
-                      "$kind": "Teams.SendTaskModuleUrlResponse",
-                      "property": "user.result",
-                      "title": "some title",
-                      "height": 1,
-                      "width": 2,
-                      "completionBotId": "someBotId",
-                      "url": "http://thisIsTheMainUrl.com",
-                      "fallbackUrl": "http://thisIsTheFallbackUrl.net/okay/falling/back_now"
-                      
-                  }
+                    {
+                        "$kind": "Teams.SendTaskModuleUrlResponse",
+                        "property": "user.result",
+                        "title": "some title",
+                        "height": 1,
+                        "width": 2,
+                        "completionBotId": "someBotId",
+                        "url": "http://thisIsTheMainUrl.com",
+                        "fallbackUrl": "http://thisIsTheFallbackUrl.net/okay/falling/back_now"
+                    }
                 ]
             },
             {
                 "$kind": "Microsoft.OnError",
                 "actions": [
-                  {
-                    "$kind": "Microsoft.SendActivity",
-                    "activity": "${turn}"
-                  }
+                    {
+                        "$kind": "Microsoft.SendActivity",
+                        "activity": "${turn}"
+                    }
                 ]
             }
         ]
@@ -42,17 +41,17 @@
             }
         },
         {
-          "$kind": "Microsoft.Test.AssertReplyActivity",
-          "assertions": [
-              "type == 'invokeResponse'",
-              "conversation.id == 'Action_SendTaskModuleUrlResponse'",
-              "value.body.task.value.completionBotId == 'someBotId'",
-              "value.body.task.value.height == 1",
-              "value.body.task.value.title == 'some title'",
-              "value.body.task.value.width == 2",
-              "value.body.task.value.url == 'http://thisIsTheMainUrl.com'",
-              "value.body.task.value.fallbackUrl == 'http://thisIsTheFallbackUrl.net/okay/falling/back_now'"
-          ]
-      }
+            "$kind": "Microsoft.Test.AssertReplyActivity",
+            "assertions": [
+                "type == 'invokeResponse'",
+                "conversation.id == 'Action_SendTaskModuleUrlResponse'",
+                "value.body.task.value.completionBotId == 'someBotId'",
+                "value.body.task.value.height == 1",
+                "value.body.task.value.title == 'some title'",
+                "value.body.task.value.width == 2",
+                "value.body.task.value.url == 'http://thisIsTheMainUrl.com'",
+                "value.body.task.value.fallbackUrl == 'http://thisIsTheFallbackUrl.net/okay/falling/back_now'"
+            ]
+        }
     ]
 }

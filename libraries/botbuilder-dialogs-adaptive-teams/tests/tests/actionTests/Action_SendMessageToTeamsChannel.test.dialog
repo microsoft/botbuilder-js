@@ -1,5 +1,5 @@
 {
-    "$schema": "../../../tests.schema",
+    "$schema": "../../../../botbuilder-dialogs-adaptive/tests/schema/test.schema",
     "$kind": "Microsoft.Test.Script",
     "dialog": {
         "$kind": "Microsoft.AdaptiveDialog",
@@ -8,27 +8,27 @@
             {
                 "$kind": "Microsoft.OnBeginDialog",
                 "actions": [
-                  {
-                    "$kind": "Teams.SendMessageToTeamsChannel",
-                    "conversationReferenceProperty": "user.conversationReferenceProperty",
-                    "activity": {
-                      "type": "message",
-                      "text": "This is a message to a Teams Channel"
-                      }
-                  },
-                  {
-                    "$kind": "Microsoft.SendActivity",
-                    "activity": "${user.conversationReferenceProperty}"
-                  }
+                    {
+                        "$kind": "Teams.SendMessageToTeamsChannel",
+                        "conversationReferenceProperty": "user.conversationReferenceProperty",
+                        "activity": {
+                            "type": "message",
+                            "text": "This is a message to a Teams Channel"
+                        }
+                    },
+                    {
+                        "$kind": "Microsoft.SendActivity",
+                        "activity": "${user.conversationReferenceProperty}"
+                    }
                 ]
             },
             {
                 "$kind": "Microsoft.OnError",
                 "actions": [
-                  {
-                    "$kind": "Microsoft.SendActivity",
-                    "activity": "${turn}"
-                  }
+                    {
+                        "$kind": "Microsoft.SendActivity",
+                        "activity": "${turn}"
+                    }
                 ]
             }
         ]
@@ -40,15 +40,15 @@
                 "type": "message",
                 "text": "hi",
                 "channelData": {
-                  "channel": {
-                    "id": "fakeTeamsChannelToSendTo"
-                  }
+                    "channel": {
+                        "id": "fakeTeamsChannelToSendTo"
+                    }
                 }
             }
         },
         {
-          "$kind": "Microsoft.Test.AssertReply",
-          "text": "{\"activityId\":\"0\",\"user\":{\"id\":\"29:User-Id\",\"name\":\"User Name\",\"aadObjectId\":\"participant-aad-id\"},\"conversation\":{\"name\":\"group\",\"tenantId\":\"tenantId-Guid\",\"conversationType\":\"groupChat\",\"isGroup\":true},\"channelId\":\"msteams\",\"locale\":\"en-us\"}"
+            "$kind": "Microsoft.Test.AssertReply",
+            "text": "{\"activityId\":\"0\",\"user\":{\"id\":\"29:User-Id\",\"name\":\"User Name\",\"aadObjectId\":\"participant-aad-id\"},\"conversation\":{\"name\":\"group\",\"tenantId\":\"tenantId-Guid\",\"conversationType\":\"groupChat\",\"isGroup\":true},\"channelId\":\"msteams\",\"locale\":\"en-us\"}"
         }
     ]
 }

@@ -1,5 +1,5 @@
 {
-    "$schema": "../../../tests.schema",
+    "$schema": "../../../../botbuilder-dialogs-adaptive/tests/schema/test.schema",
     "$kind": "Microsoft.Test.Script",
     "dialog": {
         "$kind": "Microsoft.AdaptiveDialog",
@@ -8,23 +8,23 @@
             {
                 "$kind": "Microsoft.OnBeginDialog",
                 "actions": [
-                  {
-                      "$kind": "Teams.GetTeamDetails",
-                      "property": "user.response"
-                  },
-                  {
-                    "$kind": "Microsoft.SendActivity",
-                    "activity": "${user.response}"
-                  }
+                    {
+                        "$kind": "Teams.GetTeamDetails",
+                        "property": "user.response"
+                    },
+                    {
+                        "$kind": "Microsoft.SendActivity",
+                        "activity": "${user.response}"
+                    }
                 ]
             },
             {
                 "$kind": "Microsoft.OnError",
                 "actions": [
-                  {
-                    "$kind": "Microsoft.SendActivity",
-                    "activity": "${turn}"
-                  }
+                    {
+                        "$kind": "Microsoft.SendActivity",
+                        "activity": "${turn}"
+                    }
                 ]
             }
         ]
@@ -36,11 +36,11 @@
                 "type": "message",
                 "text": "hi",
                 "channelData": {
-                    "tenant":{
-                      "id":"tenant-id-1"
+                    "tenant": {
+                        "id": "tenant-id-1"
                     },
                     "team": {
-                      "id": "team-id-1"
+                        "id": "team-id-1"
                     }
                 }
             }

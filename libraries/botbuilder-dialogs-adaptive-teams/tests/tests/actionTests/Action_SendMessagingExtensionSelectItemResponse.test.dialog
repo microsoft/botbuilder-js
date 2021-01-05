@@ -1,5 +1,5 @@
 {
-    "$schema": "../../../tests.schema",
+    "$schema": "../../../../botbuilder-dialogs-adaptive/tests/schema/test.schema",
     "$kind": "Microsoft.Test.Script",
     "dialog": {
         "$kind": "Microsoft.AdaptiveDialog",
@@ -8,30 +8,30 @@
             {
                 "$kind": "Microsoft.OnBeginDialog",
                 "actions": [
-                  {
-                      "$kind": "Teams.SendMessagingExtensionSelectItemResponse",
-                      "property": "user.result",
-                      "card": {
-                        "type": "message",
-                        "attachments": [
-                          {
-                            "contentType": "application/vnd.microsoft.card.thumbnail",
-                            "content": {
-                              "title": "card-title"
-                            }
-                          }
-                        ]
-                      }
-                  }
+                    {
+                        "$kind": "Teams.SendMessagingExtensionSelectItemResponse",
+                        "property": "user.result",
+                        "card": {
+                            "type": "message",
+                            "attachments": [
+                                {
+                                    "contentType": "application/vnd.microsoft.card.thumbnail",
+                                    "content": {
+                                        "title": "card-title"
+                                    }
+                                }
+                            ]
+                        }
+                    }
                 ]
             },
             {
                 "$kind": "Microsoft.OnError",
                 "actions": [
-                  {
-                    "$kind": "Microsoft.SendActivity",
-                    "activity": "${turn}"
-                  }
+                    {
+                        "$kind": "Microsoft.SendActivity",
+                        "activity": "${turn}"
+                    }
                 ]
             }
         ]

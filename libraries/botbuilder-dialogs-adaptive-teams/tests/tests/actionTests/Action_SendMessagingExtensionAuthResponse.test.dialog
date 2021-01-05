@@ -1,5 +1,5 @@
 {
-    "$schema": "../../../tests.schema",
+    "$schema": "../../../../botbuilder-dialogs-adaptive/tests/schema/test.schema",
     "$kind": "Microsoft.Test.Script",
     "dialog": {
         "$kind": "Microsoft.AdaptiveDialog",
@@ -8,21 +8,21 @@
             {
                 "$kind": "Microsoft.OnBeginDialog",
                 "actions": [
-                  {
-                      "$kind": "Teams.SendMessagingExtensionAuthResponse",
-                      "property": "user.result",
-                      "connectionName": "test connection",
-                      "title": "test title"
-                  }
+                    {
+                        "$kind": "Teams.SendMessagingExtensionAuthResponse",
+                        "property": "user.result",
+                        "connectionName": "test connection",
+                        "title": "test title"
+                    }
                 ]
             },
             {
                 "$kind": "Microsoft.OnError",
                 "actions": [
-                  {
-                    "$kind": "Microsoft.SendActivity",
-                    "activity": "${turn}"
-                  }
+                    {
+                        "$kind": "Microsoft.SendActivity",
+                        "activity": "${turn}"
+                    }
                 ]
             }
         ]
@@ -37,15 +37,15 @@
             }
         },
         {
-          "$kind": "Microsoft.Test.AssertReplyActivity",
-          "assertions": [
-              "type == 'invokeResponse'",
-              "conversation.id == 'Convo1'",
-              "value.body.composeExtension.type == 'auth'",
-              "value.body.composeExtension.suggestedActions.actions[0].title == 'test title'",
-              "value.body.composeExtension.suggestedActions.actions[0].type == 'openUrl'",
-              "value.body.composeExtension.suggestedActions.actions[0].value == 'https://fake.com/oauthsignin/test%20connection/test/user1'"
-          ]
-      }
+            "$kind": "Microsoft.Test.AssertReplyActivity",
+            "assertions": [
+                "type == 'invokeResponse'",
+                "conversation.id == 'Convo1'",
+                "value.body.composeExtension.type == 'auth'",
+                "value.body.composeExtension.suggestedActions.actions[0].title == 'test title'",
+                "value.body.composeExtension.suggestedActions.actions[0].type == 'openUrl'",
+                "value.body.composeExtension.suggestedActions.actions[0].value == 'https://fake.com/oauthsignin/test%20connection/test/user1'"
+            ]
+        }
     ]
 }
