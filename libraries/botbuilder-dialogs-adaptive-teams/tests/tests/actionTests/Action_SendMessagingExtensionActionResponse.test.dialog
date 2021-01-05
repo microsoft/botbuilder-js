@@ -9,8 +9,12 @@
                 "$kind": "Microsoft.OnBeginDialog",
                 "actions": [
                   {
-                      "$kind": "Teams.SendAppBasedLinkQueryResponse",
+                      "$kind": "Teams.SendMessagingExtensionActionResponse",
                       "property": "user.result",
+                      "title": "some title",
+                      "height": 1,
+                      "width": 2,
+                      "completionBotId": "someBotId",
                       "card": {
                         "type": "message",
                         "attachments": [
@@ -49,11 +53,13 @@
           "$kind": "Microsoft.Test.AssertReplyActivity",
           "assertions": [
               "type == 'invokeResponse'",
-              "conversation.id == 'Action_SendAppBasedLinkQueryResponse'",
-              "value.body.composeExtension.attachmentLayout == 'list'",
-              "value.body.composeExtension.type == 'result'",
-              "value.body.composeExtension.attachments[0].contentType == 'application/vnd.microsoft.card.thumbnail'",
-              "value.body.composeExtension.attachments[0].content.title == 'card-title'"
+              "conversation.id == 'Action_SendMessagingExtensionActionResponse'",
+              "value.body.task.value.completionBotId == 'someBotId'",
+              "value.body.task.value.height == 1",
+              "value.body.task.value.title == 'some title'",
+              "value.body.task.value.width == 2",
+              "value.body.task.value.card.contentType == 'application/vnd.microsoft.card.thumbnail'",
+              "value.body.task.value.card.content.title == 'card-title'"
           ]
       }
     ]

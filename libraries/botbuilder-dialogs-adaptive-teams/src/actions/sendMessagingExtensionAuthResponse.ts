@@ -16,6 +16,7 @@ import {
 import {
     ActionTypes,
     Activity,
+    BotFrameworkAdapter,
     CardAction,
     ExtendedUserTokenProvider,
     MessagingExtensionResult,
@@ -93,8 +94,8 @@ export class SendMessagingExtensionAuthResponse
 
         // Type check that dc.context.adapter matches interface, ExtendedUserTokenProvider
         // eslint-disable-next-line no-prototype-builtins
-        if (!dc.context.adapter.hasOwnProperty('getUserToken')) {
-            throw new Error('SendMessagingExtensionOauthResponse(): not supported by the current adapter');
+        if (!(typeof (dc.context.adapter as BotFrameworkAdapter)?.getUserToken === 'function')) {
+            throw new Error('SendMessagingExtensionAuthResponse(): not supported by the current adapter');
         }
 
         const connectionName = this.connectionName?.getValue(dc.state);
@@ -153,7 +154,7 @@ export class SendMessagingExtensionAuthResponse
         connectionName: string
     ): Promise<TokenResponse> {
         let magicCode;
-        if (Object.keys(dc.context.activity.value).length) {
+        if (Object.keys(dc.context.activity?.value || []).length) {
             magicCode = dc.context.activity.value.state;
         }
 
@@ -175,7 +176,7 @@ export class SendMessagingExtensionAuthResponse
                 actions: [
                     <CardAction>{
                         type: ActionTypes.OpenUrl,
-                        value: signInLink,
+                        value: encodeURI(signInLink),
                         title,
                     },
                 ],

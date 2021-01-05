@@ -25,7 +25,9 @@ import {
     DialogTurnResult,
     TemplateInterface,
 } from 'botbuilder-dialogs';
+import { ActivityTemplateConverter } from 'botbuilder-dialogs-adaptive/lib/converters';
 import { BaseSendTaskModuleContinueResponse } from './baseSendTaskModuleContinueResponse';
+import { BaseTeamsCacheInfoResponseDialog } from './baseTeamsCacheInfoResponseDialog';
 import { MessagingExtensionAttachmentLayoutResponseType } from './messagingExtensionAttachmentLayoutResponseType';
 import { MessagingExtensionResultResponseType } from './messagingExtensionResultResponseType';
 
@@ -40,7 +42,7 @@ export interface SendMessagingExtensionAttachmentsResponseConfiguration extends 
  * Send a messaging extension 'result' response when a Teams Invoke Activity is received with activity.name='composeExtension/queryLink'.
  */
 export class SendMessagingExtensionAttachmentsResponse
-    extends BaseSendTaskModuleContinueResponse
+    extends BaseTeamsCacheInfoResponseDialog
     implements SendMessagingExtensionAttachmentsResponseConfiguration {
     /**
      * Class identifier.
@@ -66,10 +68,10 @@ export class SendMessagingExtensionAttachmentsResponse
         property: keyof SendMessagingExtensionAttachmentsResponseConfiguration
     ): Converter | ConverterFactory {
         switch (property) {
-            case 'disabled':
-                return new BoolExpressionConverter();
             case 'property':
                 return new StringExpressionConverter();
+            case 'attachments':
+                return new ActivityTemplateConverter();
             case 'attachmentLayout':
                 return new EnumExpressionConverter(this.attachmentLayout);
             default:

@@ -24,6 +24,7 @@ import {
     DialogTurnResult,
     TemplateInterface,
 } from 'botbuilder-dialogs';
+import { ActivityTemplateConverter } from 'botbuilder-dialogs-adaptive/lib/converters';
 import { getValue } from './actionHelpers';
 
 export interface SendMessageToTeamsChannelConfiguration extends DialogConfiguration {
@@ -64,9 +65,9 @@ export class SendMessageToTeamsChannel extends Dialog implements SendMessageToTe
      * Gets or sets the expression to get the value to use for team id.
      *
      * @default
-     * ==turn.activity.channelData.team.id
+     * =turn.activity.channelData.channel.id
      */
-    public teamsChannelId: StringExpression = new StringExpression('=turn.activity.channelData.team.id');
+    public teamsChannelId: StringExpression = new StringExpression('=turn.activity.channelData.channel.id');
 
     /**
      * Gets or sets template for the activity expression containing the activity to send.
@@ -77,10 +78,12 @@ export class SendMessageToTeamsChannel extends Dialog implements SendMessageToTe
         switch (property) {
             case 'disabled':
                 return new BoolExpressionConverter();
-            case 'property':
             case 'conversationReferenceProperty':
             case 'activityIdProperty':
+            case 'teamsChannelId':
                 return new StringExpressionConverter();
+            case 'activity':
+                return new ActivityTemplateConverter();
             default:
                 return super.getConverter(property);
         }
@@ -110,7 +113,7 @@ export class SendMessageToTeamsChannel extends Dialog implements SendMessageToTe
         let teamsChannelId = getValue(dc, this.teamsChannelId);
 
         if (!teamsChannelId) {
-            teamsChannelId = dc.context.activity?.channelData?.team?.id;
+            teamsChannelId = dc.context.activity?.channelData?.channel?.id;
         }
 
         const result = await TeamsInfo.sendMessageToTeamsChannel(dc.context, activity, teamsChannelId);

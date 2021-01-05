@@ -9,19 +9,10 @@
                 "$kind": "Microsoft.OnBeginDialog",
                 "actions": [
                   {
-                      "$kind": "Teams.SendAppBasedLinkQueryResponse",
+                      "$kind": "Teams.SendMessagingExtensionAuthResponse",
                       "property": "user.result",
-                      "card": {
-                        "type": "message",
-                        "attachments": [
-                          {
-                            "contentType": "application/vnd.microsoft.card.thumbnail",
-                            "content": {
-                              "title": "card-title"
-                            }
-                          }
-                        ]
-                      }
+                      "connectionName": "test connection",
+                      "title": "test title"
                   }
                 ]
             },
@@ -49,11 +40,11 @@
           "$kind": "Microsoft.Test.AssertReplyActivity",
           "assertions": [
               "type == 'invokeResponse'",
-              "conversation.id == 'Action_SendAppBasedLinkQueryResponse'",
-              "value.body.composeExtension.attachmentLayout == 'list'",
-              "value.body.composeExtension.type == 'result'",
-              "value.body.composeExtension.attachments[0].contentType == 'application/vnd.microsoft.card.thumbnail'",
-              "value.body.composeExtension.attachments[0].content.title == 'card-title'"
+              "conversation.id == 'Convo1'",
+              "value.body.composeExtension.type == 'auth'",
+              "value.body.composeExtension.suggestedActions.actions[0].title == 'test title'",
+              "value.body.composeExtension.suggestedActions.actions[0].type == 'openUrl'",
+              "value.body.composeExtension.suggestedActions.actions[0].value == 'https://fake.com/oauthsignin/test%20connection/test/user1'"
           ]
       }
     ]

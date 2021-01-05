@@ -292,8 +292,34 @@ describe('Actions', function () {
         await TestUtils.runTestScript(resourceExplorer, this.test.title);
     });
 
-    // TODO: Set breakpoint in assertReplyActivity.ts and copy some of the activity values over into SendAppBasedLinkQuery
+    // TODO: Error tests for all below
     it('Action_SendAppBasedLinkQueryResponse', async function () {
         await TestUtils.runTestScript(resourceExplorer, this.test.title);
+    });
+
+    it('Action_SendMessageToTeamsChannel', async function () {
+        const conversationReference = getGroupConversationReference();
+        const adapter = getTeamsTestAdapter(conversationReference);
+
+        const fetchExpectation = nock('https://api.botframework.com').post('/v3/conversations').reply(200);
+
+        await TestUtils.runTestScript(resourceExplorer, this.test.title, adapter);
+
+        ok(fetchExpectation.isDone());
+    });
+
+    it('Action_SendMessagingExtensionActionResponse', async function () {
+        await TestUtils.runTestScript(resourceExplorer, this.test.title);
+    });
+
+    it('Action_SendMessagingExtensionAttachmentsResponse', async function () {
+        await TestUtils.runTestScript(resourceExplorer, this.test.title);
+    });
+
+    it('Action_SendMessagingExtensionAuthResponse', async function () {
+        const adapter = getTeamsTestAdapter();
+        adapter.addUserToken('test connection', 'test', 'user1', 'token');
+
+        await TestUtils.runTestScript(resourceExplorer, this.test.title, adapter);
     });
 });

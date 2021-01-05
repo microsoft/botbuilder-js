@@ -55,6 +55,8 @@ import {
     SendMessageToTeamsChannel,
     SendMessagingExtensionActionResponse,
     SendMessagingExtensionActionResponseConfiguration,
+    SendMessagingExtensionAttachmentsResponse,
+    SendMessagingExtensionAttachmentsResponseConfiguration,
     SendMessagingExtensionAuthResponse,
     SendMessagingExtensionAuthResponseConfiguration,
     SendMessagingExtensionBotMessagePreviewResponse,
@@ -96,6 +98,10 @@ export class TeamsComponentRegistration extends AdaptiveComponentRegistration im
             SendMessagingExtensionActionResponse,
             SendMessagingExtensionActionResponseConfiguration
         >(SendMessagingExtensionActionResponse);
+        this._addDeclarativeType<
+            SendMessagingExtensionAttachmentsResponse,
+            SendMessagingExtensionAttachmentsResponseConfiguration
+        >(SendMessagingExtensionAttachmentsResponse);
         this._addDeclarativeType<SendMessagingExtensionAuthResponse, SendMessagingExtensionAuthResponseConfiguration>(
             SendMessagingExtensionAuthResponse
         );

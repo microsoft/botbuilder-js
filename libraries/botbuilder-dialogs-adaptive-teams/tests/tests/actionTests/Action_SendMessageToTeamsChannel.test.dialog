@@ -1,0 +1,54 @@
+{
+    "$schema": "../../../tests.schema",
+    "$kind": "Microsoft.Test.Script",
+    "dialog": {
+        "$kind": "Microsoft.AdaptiveDialog",
+        "id": "planningTest",
+        "triggers": [
+            {
+                "$kind": "Microsoft.OnBeginDialog",
+                "actions": [
+                  {
+                    "$kind": "Teams.SendMessageToTeamsChannel",
+                    "conversationReferenceProperty": "user.conversationReferenceProperty",
+                    "activity": {
+                      "type": "message",
+                      "text": "This is a message to a Teams Channel"
+                      }
+                  },
+                  {
+                    "$kind": "Microsoft.SendActivity",
+                    "activity": "${user.conversationReferenceProperty}"
+                  }
+                ]
+            },
+            {
+                "$kind": "Microsoft.OnError",
+                "actions": [
+                  {
+                    "$kind": "Microsoft.SendActivity",
+                    "activity": "${turn}"
+                  }
+                ]
+            }
+        ]
+    },
+    "script": [
+        {
+            "$kind": "Microsoft.Test.UserActivity",
+            "activity": {
+                "type": "message",
+                "text": "hi",
+                "channelData": {
+                  "channel": {
+                    "id": "fakeTeamsChannelToSendTo"
+                  }
+                }
+            }
+        },
+        {
+          "$kind": "Microsoft.Test.AssertReply",
+          "text": "{\"activityId\":\"0\",\"user\":{\"id\":\"29:User-Id\",\"name\":\"User Name\",\"aadObjectId\":\"participant-aad-id\"},\"conversation\":{\"name\":\"group\",\"tenantId\":\"tenantId-Guid\",\"conversationType\":\"groupChat\",\"isGroup\":true},\"channelId\":\"msteams\",\"locale\":\"en-us\"}"
+        }
+    ]
+}

@@ -6,8 +6,16 @@
  * Licensed under the MIT License.
  */
 
-import { BoolExpression, Expression, IntExpression, StringExpression } from 'adaptive-expressions';
-import { Dialog, DialogContext } from 'botbuilder-dialogs';
+import {
+    BoolExpression,
+    BoolExpressionConverter,
+    Expression,
+    IntExpression,
+    IntExpressionConverter,
+    StringExpression,
+    StringExpressionConverter,
+} from 'adaptive-expressions';
+import { Converter, ConverterFactory, Dialog, DialogContext } from 'botbuilder-dialogs';
 import {
     Activity,
     ActivityTypes,
@@ -44,6 +52,21 @@ export abstract class BaseTeamsCacheInfoResponseDialog
      * Gets or sets cache duration in seconds for which the cached object should remain in the cache.
      */
     public cacheDuration: IntExpression;
+
+    public getConverter(
+        property: keyof BaseTeamsCacheInfoResponseDialogConfiguration | string
+    ): Converter | ConverterFactory {
+        switch (property) {
+            case 'disabled':
+                return new BoolExpressionConverter();
+            case 'cacheType':
+                return new StringExpressionConverter();
+            case 'cacheDuration':
+                return new IntExpressionConverter();
+            default:
+                return super.getConverter(property);
+        }
+    }
 
     protected static createInvokeResponseActivity(
         body: MessagingExtensionResponse,
