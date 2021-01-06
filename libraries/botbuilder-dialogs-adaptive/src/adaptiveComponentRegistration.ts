@@ -184,6 +184,14 @@ import {
     RandomSelector,
     TrueSelector,
 } from './selectors';
+import {
+    ActivityTemplate,
+    ActivityTemplateConguration,
+    StaticActivityTemplate,
+    StaticActivityTemplateConfiguration,
+    TextTemplate,
+    TextTemplateConfiguration,
+} from './templates';
 import { DynamicBeginDialogDeserializer } from './dynamicBeginDialogDeserializer';
 import { TriggerSelectorConfiguration } from './triggerSelector';
 
@@ -322,6 +330,11 @@ export class AdaptiveComponentRegistration extends ComponentRegistration impleme
         this._addDeclarativeType<ResourceMultiLanguageGenerator, ResourceMultiLanguageGeneratorConfiguration>(
             ResourceMultiLanguageGenerator
         );
+
+        // Templates
+        this._addDeclarativeType<ActivityTemplate, ActivityTemplateConguration>(ActivityTemplate);
+        this._addDeclarativeType<StaticActivityTemplate, StaticActivityTemplateConfiguration>(StaticActivityTemplate);
+        this._addDeclarativeType<TextTemplate, TextTemplateConfiguration>(TextTemplate);
 
         // Selectors
         this._addDeclarativeType<ConditionalSelector, ConditionalSelectorConfiguration>(ConditionalSelector);
