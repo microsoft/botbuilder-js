@@ -71,7 +71,7 @@ export class DialogInspector {
      *
      * @returns {Dialog} The root dialog.
      */
-    public get rootDialog(): Dialog {
+    public get rootDialog(): Dialog | undefined {
         if (this._rootDialogId) {
             return this.dialogs.find(this._rootDialogId);
         }
