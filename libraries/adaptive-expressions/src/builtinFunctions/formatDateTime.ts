@@ -32,7 +32,7 @@ export class FormatDateTime extends ExpressionEvaluator {
      * @private
      */
     private static evaluator(): EvaluateExpressionDelegate {
-        return FunctionUtils.applyWithOptionsAndError((args: any[], options: Options): any => {
+        return FunctionUtils.applyWithOptionsAndError((args: unknown[], options: Options): any => {
             let error: string;
             let arg: any = args[0];
             let locale = options.locale ? options.locale : Intl.DateTimeFormat().resolvedOptions().locale;

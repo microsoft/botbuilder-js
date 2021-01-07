@@ -20,10 +20,10 @@ export class StringTransformEvaluator extends ExpressionEvaluator {
      * @param type Name of the built-in function.
      * @param func The string transformation function, it takes a list of objects and returns an string.
      */
-    public constructor(type: string, func: (arg0: any[], options: Options) => ValueWithError) {
+    public constructor(type: string, func: (arg0: any[], options: Options) => string) {
         super(
             type,
-            FunctionUtils.applyWithOptionsAndError(func, FunctionUtils.verifyStringOrNull),
+            FunctionUtils.applyWithOptions(func, FunctionUtils.verifyStringOrNull),
             ReturnType.String,
             FunctionUtils.validateUnaryString
         );

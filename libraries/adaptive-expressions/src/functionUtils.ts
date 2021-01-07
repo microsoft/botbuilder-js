@@ -485,7 +485,10 @@ export class FunctionUtils {
      * @param verify Function to check each arg for validity.
      * @returns Delegate for evaluating an expression.
      */
-    public static applyWithError(func: (arg0: any[]) => any, verify?: VerifyExpression): EvaluateExpressionDelegate {
+    public static applyWithError(
+        func: (arg0: any[]) => ValueWithError,
+        verify?: VerifyExpression
+    ): EvaluateExpressionDelegate {
         return (expression: Expression, state: MemoryInterface, options: Options): ValueWithError => {
             let value: any;
             const { args, error: childrenError } = FunctionUtils.evaluateChildren(expression, state, options, verify);
@@ -509,17 +512,42 @@ export class FunctionUtils {
      * @returns Delegate for evaluating an expression.
      */
     public static applyWithOptionsAndError(
-        func: (arg0: unknown[], options: Options) => { value: unknown; error: string },
+        func: (arg0: any[], options: Options) => { value: unknown; error: string },
         verify?: VerifyExpression
     ): EvaluateExpressionDelegate {
         return (expression: Expression, state: MemoryInterface, options: Options): ValueWithError => {
             let value: unknown;
-            let error: string;
-            let args: unknown[];
-            ({ args, error } = FunctionUtils.evaluateChildren(expression, state, options, verify));
+            const { args, error: childrenError } = FunctionUtils.evaluateChildren(expression, state, options, verify);
+            let error = childrenError;
             if (!error) {
                 try {
                     ({ value, error } = func(args, options));
+                } catch (e) {
+                    error = e.message;
+                }
+            }
+
+            return { value, error };
+        };
+    }
+
+        /**
+     * Generate an expression delegate that applies function after verifying all children.
+     * @param func Function to apply.
+     * @param verify Function to check each arg for validity.
+     * @returns Delegate for evaluating an expression.
+     */
+    public static applyWithOptions(
+        func: (arg0: any[], options: Options) => unknown,
+        verify?: VerifyExpression
+    ): EvaluateExpressionDelegate {
+        return (expression: Expression, state: MemoryInterface, options: Options): ValueWithError => {
+            let value: unknown;
+            const { args, error: childrenError } = FunctionUtils.evaluateChildren(expression, state, options, verify);
+            let error = childrenError;
+            if (!error) {
+                try {
+                    value = func(args, options);
                 } catch (e) {
                     error = e.message;
                 }
@@ -587,7 +615,10 @@ export class FunctionUtils {
      */
     public static determineLocale(args: unknown[], maxArgsLength: number, locale = 'en-us'): string {
         if (args.length === maxArgsLength && typeof args[maxArgsLength - 1] === 'string') {
-            locale = args[maxArgsLength - 1] as string;
+            const lastArg = args[maxArgsLength - 1];
+            if (typeof lastArg === 'string') {
+                locale = lastArg;
+            }
         }
 
         return locale;

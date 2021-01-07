@@ -6,7 +6,6 @@
  * Licensed under the MIT License.
  */
 
-import { ValueWithError } from '../expressionEvaluator';
 import { ExpressionType } from '../expressionType';
 import { InternalFunctionUtils } from '../functionUtils.internal';
 import { StringTransformEvaluator } from './stringTransformEvaluator';
@@ -25,7 +24,10 @@ export class Trim extends StringTransformEvaluator {
     /**
      * @private
      */
-    private static evaluator(args: any[]): ValueWithError {
-        return { value: String(InternalFunctionUtils.parseStringOrUndefined(args[0])).trim(), error: undefined };
+    private static evaluator(args: unknown[]): string {
+        const firstArg = args[0];
+        if (typeof firstArg === 'string' || firstArg === undefined) {
+            return String(InternalFunctionUtils.parseStringOrUndefined(firstArg)).trim();
+        }
     }
 }

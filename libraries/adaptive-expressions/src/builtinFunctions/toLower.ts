@@ -6,7 +6,6 @@
  * Licensed under the MIT License.
  */
 
-import { ValueWithError } from '../expressionEvaluator';
 import { ExpressionType } from '../expressionType';
 import { FunctionUtils } from '../functionUtils';
 import { InternalFunctionUtils } from '../functionUtils.internal';
@@ -28,12 +27,12 @@ export class ToLower extends StringTransformEvaluator {
     /**
      * @private
      */
-    private static evaluator(args: any[], options: Options): ValueWithError {
+    private static evaluator(args: unknown[], options: Options): string {
         let locale = options.locale ? options.locale : Intl.DateTimeFormat().resolvedOptions().locale;
         locale = FunctionUtils.determineLocale(args, 2, locale);
-        return {
-            value: (InternalFunctionUtils.parseStringOrUndefined(args[0]) as any).toLocaleLowerCase(locale),
-            error: undefined,
-        };
+        const firstArg = args[0];
+        if (typeof firstArg === 'string' || firstArg === undefined) {
+            return (InternalFunctionUtils.parseStringOrUndefined(firstArg) as any).toLocaleLowerCase(locale);
+        }
     }
 }

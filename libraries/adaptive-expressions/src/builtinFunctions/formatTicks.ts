@@ -10,7 +10,7 @@ import bigInt from 'big-integer';
 import moment from 'moment';
 
 import { Expression } from '../expression';
-import { EvaluateExpressionDelegate, ExpressionEvaluator } from '../expressionEvaluator';
+import { EvaluateExpressionDelegate, ExpressionEvaluator, ValueWithError } from '../expressionEvaluator';
 import { ExpressionType } from '../expressionType';
 import { FunctionUtils } from '../functionUtils';
 import { InternalFunctionUtils } from '../functionUtils.internal';
@@ -32,39 +32,44 @@ export class FormatTicks extends ExpressionEvaluator {
      * @private
      */
     private static evaluator(): EvaluateExpressionDelegate {
-        return FunctionUtils.applyWithOptionsAndError((args: any[], options: Options): any => {
-            let error: string;
-            let arg: any = args[0];
-            let locale = options.locale ? options.locale : Intl.DateTimeFormat().resolvedOptions().locale;
-            let format = FunctionUtils.DefaultDateTimeFormat;
-            if (typeof arg === 'number') {
-                arg = bigInt(arg);
-            }
-            if (typeof arg === 'string') {
-                arg = bigInt(arg);
-            }
-            if (!bigInt.isInstance(arg)) {
-                error = `formatTicks first argument ${arg} is not a number, numeric string or bigInt`;
-            } else {
-                // Convert to ms
-                arg = arg
-                    .subtract(InternalFunctionUtils.UnixMilliSecondToTicksConstant)
-                    .divide(InternalFunctionUtils.MillisecondToTickConstant)
-                    .toJSNumber();
-            }
+        return FunctionUtils.applyWithOptionsAndError(
+            (args: unknown[], options: Options): ValueWithError => {
+                let error: string;
+                let arg = args[0];
+                let locale = options.locale ? options.locale : Intl.DateTimeFormat().resolvedOptions().locale;
+                let format = FunctionUtils.DefaultDateTimeFormat;
+                if (typeof arg === 'number') {
+                    arg = bigInt(arg);
+                }
+                if (typeof arg === 'string') {
+                    arg = bigInt(arg);
+                }
+                if (!bigInt.isInstance(arg)) {
+                    error = `formatTicks first argument ${arg} is not a number, numeric string or bigInt`;
+                } else {
+                    // Convert to ms
+                    arg = arg
+                        .subtract(InternalFunctionUtils.UnixMilliSecondToTicksConstant)
+                        .divide(InternalFunctionUtils.MillisecondToTickConstant)
+                        .toJSNumber();
+                }
 
-            let value: any;
-            if (!error) {
-                ({ format, locale } = FunctionUtils.determineFormatAndLocale(args, 3, format, locale));
-                const dateString: string = new Date(arg).toISOString();
-                value = moment(dateString).utc().format(FunctionUtils.timestampFormatter(format));
-            }
+                let value: any;
+                if (!error) {
+                    ({ format, locale } = FunctionUtils.determineFormatAndLocale(args, 3, format, locale));
+                    if (typeof arg === 'number') {
+                        const dateString: string = new Date(arg as number).toISOString();
+                        value = moment(dateString).utc().format(FunctionUtils.timestampFormatter(format));
+                    }
+                }
 
-            return { value, error };
-        });
+                return { value, error };
+            }
+        );
     }
 
     /**
+     * @param expression
      * @private
      */
     private static validator(expression: Expression): void {

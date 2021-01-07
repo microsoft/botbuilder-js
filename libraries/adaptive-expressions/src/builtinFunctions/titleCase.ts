@@ -7,7 +7,6 @@
  */
 
 import { FunctionUtils } from '..';
-import { ValueWithError } from '../expressionEvaluator';
 import { ExpressionType } from '../expressionType';
 import { InternalFunctionUtils } from '../functionUtils.internal';
 import { Options } from '../options';
@@ -25,22 +24,24 @@ export class TitleCase extends StringTransformEvaluator {
     }
 
     /**
+     * @param args
+     * @param options
      * @private
      */
-    private static evaluator(args: any[], options: Options): ValueWithError {
+    private static evaluator(args: unknown[], options: Options): string {
         let locale = options.locale ? options.locale : Intl.DateTimeFormat().resolvedOptions().locale;
         locale = FunctionUtils.determineLocale(args, 2, locale);
-        const inputStr = (InternalFunctionUtils.parseStringOrUndefined(args[0]) as any).toLocaleLowerCase(locale);
-        if (inputStr === '') {
-            return { value: inputStr, error: undefined };
-        } else {
-            return {
-                value: inputStr.replace(
+        const firstArg = args[0];
+        if (typeof firstArg === 'string' || firstArg === undefined) {
+            const inputStr = (InternalFunctionUtils.parseStringOrUndefined(firstArg) as any).toLocaleLowerCase(locale);
+            if (inputStr === '') {
+                return inputStr;
+            } else {
+                return inputStr.replace(
                     /\w\S*/g,
                     (txt): string => txt.charAt(0).toUpperCase() + txt.substr(1).toLocaleLowerCase(locale)
-                ),
-                error: undefined,
-            };
+                );
+            }
         }
     }
 }
