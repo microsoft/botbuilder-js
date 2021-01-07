@@ -51,7 +51,7 @@ export interface CosmosDbPartitionedStorageOptions {
      * When KeySuffix is used, keys will NOT be truncated but an exception will
      * be thrown if the key length is longer than allowed by CosmosDb.
      *
-     * The keySuffix must contain only valid ComosDb key characters.
+     * The keySuffix must contain only valid CosmosDb key characters.
      * (e.g. not: '\\', '?', '/', '#', '*')
      */
     keySuffix?: string;
@@ -122,7 +122,7 @@ class DocumentStoreItem {
 export class CosmosDbPartitionedStorage implements Storage {
     private container: Container;
     private client: CosmosClient;
-    private compatabilityModePartitionKey = false;
+    private compatibilityModePartitionKey = false;
 
     /**
      * Initializes a new instance of the <see cref="CosmosDbPartitionedStorage"/> class.
@@ -150,7 +150,7 @@ export class CosmosDbPartitionedStorage implements Storage {
             throw new ReferenceError('containerId for CosmosDB is required.');
         }
         // In order to support collections previously restricted to max key length of 255, we default
-        // compatabilityMode to 'true'.  No compatibilityMode is opt-in only.
+        // compatibilityMode to 'true'.  No compatibilityMode is opt-in only.
         cosmosDbStorageOptions.compatibilityMode ??= true;
         if (cosmosDbStorageOptions.keySuffix) {
             if (cosmosDbStorageOptions.compatibilityMode) {
@@ -262,67 +262,50 @@ export class CosmosDbPartitionedStorage implements Storage {
                     try {
                         await this.container.items.upsert(document, accessCondition);
                     } catch (err) {
-                        this.throwInformativeError(this.nestingErrorMessage(change) ?? 'Error upserting document', err);
+                        // This check could potentially be performed before even attempting to upsert the item
+                        // so that a request wouldn't be made to Cosmos if it's expected to fail.
+                        // However, performing the check here ensures that this custom exception is only thrown
+                        // if Cosmos returns an error first.
+                        // This way, the nesting limit is not imposed on the Bot Framework side
+                        // and no exception will be thrown if the limit is eventually changed on the Cosmos side.
+                        const nestingError = this.getNestingError(change);
+
+                        this.throwInformativeError(nestingError ?? 'Error upserting document', err);
                     }
                 }
             )
         );
     }
 
-    // return an informative error message if upsert failed due to deep nested recursion
-    private nestingErrorMessage(json: object): string | undefined {
-        const { object, ancestors } = this.findAtDepth(json, maxDepthAllowed) ?? {};
-        if (object) {
-            const message = `Maximum nesting depth of ${maxDepthAllowed} exceeded.`;
+    // Return an informative error message if upsert failed due to deeply nested data
+    private getNestingError(json: object): string | undefined {
+        const checkDepth = (obj: unknown, depth: number, isInDialogState: boolean) => {
+            if (depth > maxDepthAllowed) {
+                const message = `Maximum nesting depth of ${maxDepthAllowed} exceeded.`;
 
-            if (this.isInDialogState(ancestors)) {
-                return (
-                    `${message} This is most likely caused by recursive component dialogs. ` +
-                    'Try reworking your dialog code to make sure it does not keep dialogs on the stack ' +
-                    "that it's not using. For example, consider using ReplaceDialogAsync instead of BeginDialogAsync."
-                );
-            } else {
-                return `${message} Please check your data for signs of unintended recursion.`;
+                if (isInDialogState) {
+                    return (
+                        `${message} This is most likely caused by recursive component dialogs. ` +
+                        'Try reworking your dialog code to make sure it does not keep dialogs on the stack ' +
+                        "that it's not using. For example, consider using ReplaceDialogAsync instead of BeginDialogAsync."
+                    );
+                } else {
+                    return `${message} Please check your data for signs of unintended recursion.`;
+                }
+            } else if (obj && typeof (obj) === "object") {
+                depth++;
+                return Object.entries(obj).reduce(
+                    (result, entry) => result ?? checkDepth(
+                        entry[1],
+                        depth,
+                        entry[0] === 'dialogStack' ? true : isInDialogState),
+                    undefined);
             }
-        }
 
-        return undefined;
-    }
+            return undefined;
+        };
 
-    // find a nested object at a particular depth
-    private findAtDepth(
-        object: unknown,
-        depth: number,
-        ancestors: object[] = []
-    ): { object: object; ancestors: object[] } | null {
-        // undefined or non-object means we've reached end of recursion
-        if (object == null || typeof object !== 'object') {
-            return null;
-        }
-
-        // we've located our object!
-        if (depth === 0) {
-            return { object, ancestors };
-        }
-
-        // use either array items, or object values for recursion
-        const values = Array.isArray(object) ? object : Object.values(object);
-
-        // recurse, taking care to append `object` to ancestors
-        return (
-            values
-                .map((item) => this.findAtDepth(item, depth - 1, ancestors.concat(object)))
-                .find((value) => value !== null) ?? null
-        );
-    }
-
-    // determine if nesting was due to recursive dialogs
-    private isInDialogState(ancestors: object[]): boolean {
-        return (
-            ancestors.find(
-                (ancestor) => (ancestor['$type'] ?? '').indexOf('Microsoft.Bot.Builder.Dialogs.DialogState') === 0
-            ) != null
-        );
+        return checkDepth(json, 0, false);
     }
 
     /**
@@ -389,7 +372,7 @@ export class CosmosDbPartitionedStorage implements Storage {
                 if (paths) {
                     // Containers created with CosmosDbStorage had no partition key set, so the default was '/_partitionKey'.
                     if (paths.indexOf('/_partitionKey') !== -1) {
-                        this.compatabilityModePartitionKey = true;
+                        this.compatibilityModePartitionKey = true;
                     } else if (paths.indexOf(DocumentStoreItem.partitionKeyPath) === -1) {
                         // We are not supporting custom Partition Key Paths.
                         new Error(
@@ -397,7 +380,7 @@ export class CosmosDbPartitionedStorage implements Storage {
                         );
                     }
                 } else {
-                    this.compatabilityModePartitionKey = true;
+                    this.compatibilityModePartitionKey = true;
                 }
                 return container;
             } catch (err) {
@@ -420,7 +403,7 @@ export class CosmosDbPartitionedStorage implements Storage {
     }
 
     private getPartitionKey(key) {
-        return this.compatabilityModePartitionKey ? undefined : key;
+        return this.compatibilityModePartitionKey ? undefined : key;
     }
 
     // The Cosmos JS SDK doesn't return very descriptive errors and not all errors contain a body.
