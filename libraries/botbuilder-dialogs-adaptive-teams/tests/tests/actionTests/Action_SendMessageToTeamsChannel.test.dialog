@@ -1,33 +1,27 @@
 {
     "$schema": "../../../../botbuilder-dialogs-adaptive/tests/schema/test.schema",
     "$kind": "Microsoft.Test.Script",
+    "enableTrace": true,
     "dialog": {
         "$kind": "Microsoft.AdaptiveDialog",
         "id": "planningTest",
         "triggers": [
             {
-                "$kind": "Microsoft.OnBeginDialog",
+                "$kind": "Microsoft.OnUnknownIntent",
                 "actions": [
                     {
                         "$kind": "Teams.SendMessageToTeamsChannel",
-                        "conversationReferenceProperty": "user.conversationReferenceProperty",
+                        "conversationReferenceProperty": "$conversationReferenceProperty",
                         "activity": {
                             "type": "message",
                             "text": "This is a message to a Teams Channel"
                         }
                     },
                     {
-                        "$kind": "Microsoft.SendActivity",
-                        "activity": "${user.conversationReferenceProperty}"
-                    }
-                ]
-            },
-            {
-                "$kind": "Microsoft.OnError",
-                "actions": [
-                    {
-                        "$kind": "Microsoft.SendActivity",
-                        "activity": "${turn.dialogEvent.value.message}"
+                        "$kind": "Microsoft.TraceActivity",
+                        "name": "sendResult",
+                        "valueType": "memory",
+                        "value": "=$conversationReferenceProperty"
                     }
                 ]
             }
@@ -47,8 +41,15 @@
             }
         },
         {
-            "$kind": "Microsoft.Test.AssertReply",
-            "text": "{\"activityId\":\"0\",\"user\":{\"id\":\"29:User-Id\",\"name\":\"User Name\",\"aadObjectId\":\"participant-aad-id\"},\"conversation\":{\"name\":\"group\",\"tenantId\":\"tenantId-Guid\",\"conversationType\":\"groupChat\",\"isGroup\":true},\"channelId\":\"msteams\",\"locale\":\"en-us\"}"
+            "$kind": "Microsoft.Test.AssertReplyActivity",
+            "assertions": [
+                "value.activityId == '0'",
+                "value.channelId == 'msteams'",
+                "value.conversation.conversationType == 'groupChat'",
+                "value.conversation.isGroup == true",
+                "value.conversation.name == 'group'",
+                "value.conversation.tenantId == 'tenantId-Guid'"
+            ]
         }
     ]
 }

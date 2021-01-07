@@ -1,29 +1,23 @@
 {
     "$schema": "../../../../botbuilder-dialogs-adaptive/tests/schema/test.schema",
     "$kind": "Microsoft.Test.Script",
+    "enableTrace": true,
     "dialog": {
         "$kind": "Microsoft.AdaptiveDialog",
         "id": "planningTest",
         "triggers": [
             {
-                "$kind": "Microsoft.OnBeginDialog",
+                "$kind": "Microsoft.OnUnknownIntent",
                 "actions": [
                     {
                         "$kind": "Teams.GetTeamChannels",
-                        "property": "user.response"
+                        "property": "$result"
                     },
                     {
-                        "$kind": "Microsoft.SendActivity",
-                        "activity": "${user.response}"
-                    }
-                ]
-            },
-            {
-                "$kind": "Microsoft.OnError",
-                "actions": [
-                    {
-                        "$kind": "Microsoft.SendActivity",
-                        "activity": "${turn.dialogEvent.value.message}"
+                        "$kind": "Microsoft.TraceActivity",
+                        "name": "sendResult",
+                        "valueType": "memory",
+                        "value": "=$result"
                     }
                 ]
             }
@@ -46,8 +40,15 @@
             }
         },
         {
-            "$kind": "Microsoft.Test.AssertReply",
-            "text": "[{\"id\":\"19:ChannelIdgeneralChannelId@thread.skype\"},{\"id\":\"19:somechannelId2e5ab3df9ae9b594bdb@thread.skype\",\"name\":\"Testing1\"},{\"id\":\"19:somechannelId388ade16aa4dd375e69@thread.skype\",\"name\":\"Testing2\"}]"
+            "$kind": "Microsoft.Test.AssertReplyActivity",
+            "assertions": [
+                "value[0].id == '19:ChannelIdgeneralChannelId@thread.skype'",
+                "value[0].name == 'Testing0'",
+                "value[1].id == '19:somechannelId2e5ab3df9ae9b594bdb@thread.skype'",
+                "value[1].name == 'Testing1'",
+                "value[2].id == '19:somechannelId388ade16aa4dd375e69@thread.skype'",
+                "value[2].name == 'Testing2'"
+            ]
         }
     ]
 }

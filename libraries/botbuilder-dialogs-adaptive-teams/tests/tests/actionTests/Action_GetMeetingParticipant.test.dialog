@@ -1,29 +1,23 @@
 {
     "$schema": "../../../../botbuilder-dialogs-adaptive/tests/schema/test.schema",
     "$kind": "Microsoft.Test.Script",
+    "enableTrace": true,
     "dialog": {
         "$kind": "Microsoft.AdaptiveDialog",
         "id": "planningTest",
         "triggers": [
             {
-                "$kind": "Microsoft.OnBeginDialog",
+                "$kind": "Microsoft.OnUnknownIntent",
                 "actions": [
                     {
                         "$kind": "Teams.GetMeetingParticipant",
-                        "property": "user.result"
+                        "property": "$result"
                     },
                     {
-                        "$kind": "Microsoft.SendActivity",
-                        "activity": "${user.result}"
-                    }
-                ]
-            },
-            {
-                "$kind": "Microsoft.OnError",
-                "actions": [
-                    {
-                        "$kind": "Microsoft.SendActivity",
-                        "activity": "${turn.dialogEvent.value.message}"
+                        "$kind": "Microsoft.TraceActivity",
+                        "name": "sendResult",
+                        "valueType": "memory",
+                        "value": "=$result"
                     }
                 ]
             }
@@ -46,8 +40,17 @@
             }
         },
         {
-            "$kind": "Microsoft.Test.AssertReply",
-            "text": "{\"user\":{\"userPrincipalName\":\"userPrincipalName-1\"},\"meeting\":{\"role\":\"Organizer\"},\"conversation\":{\"id\":\"a:oneOnOneConversationId\",\"name\":\"oneOnOne\",\"tenantId\":\"tenantId-Guid\",\"conversationType\":\"personal\",\"isGroup\":false}}"
+            "$kind": "Microsoft.Test.AssertReplyActivity",
+            "assertions": [
+                "type == 'trace'",
+                "value.conversation.conversationType == 'personal'",
+                "value.conversation.id == 'a:oneOnOneConversationId'",
+                "value.conversation.isGroup == false",
+                "value.conversation.name == 'oneOnOne'",
+                "value.conversation.tenantId == 'tenantId-Guid'",
+                "value.meeting.role == 'Organizer'",
+                "value.user.userPrincipalName == 'userPrincipalName-1'"
+            ]
         }
     ]
 }

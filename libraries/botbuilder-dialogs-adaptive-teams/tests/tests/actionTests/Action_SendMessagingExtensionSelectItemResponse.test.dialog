@@ -6,7 +6,7 @@
         "id": "planningTest",
         "triggers": [
             {
-                "$kind": "Microsoft.OnBeginDialog",
+                "$kind": "Microsoft.OnUnknownIntent",
                 "actions": [
                     {
                         "$kind": "Teams.SendMessagingExtensionSelectItemResponse",
@@ -21,15 +21,6 @@
                                 }
                             ]
                         }
-                    }
-                ]
-            },
-            {
-                "$kind": "Microsoft.OnError",
-                "actions": [
-                    {
-                        "$kind": "Microsoft.SendActivity",
-                        "activity": "${turn.dialogEvent.value.message}"
                     }
                 ]
             }

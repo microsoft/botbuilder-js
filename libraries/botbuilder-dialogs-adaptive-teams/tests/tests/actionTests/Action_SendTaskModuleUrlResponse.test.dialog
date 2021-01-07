@@ -6,7 +6,7 @@
         "id": "planningTest",
         "triggers": [
             {
-                "$kind": "Microsoft.OnBeginDialog",
+                "$kind": "Microsoft.OnUnknownIntent",
                 "actions": [
                     {
                         "$kind": "Teams.SendTaskModuleUrlResponse",
@@ -17,15 +17,6 @@
                         "completionBotId": "someBotId",
                         "url": "http://thisIsTheMainUrl.com",
                         "fallbackUrl": "http://thisIsTheFallbackUrl.net/okay/falling/back_now"
-                    }
-                ]
-            },
-            {
-                "$kind": "Microsoft.OnError",
-                "actions": [
-                    {
-                        "$kind": "Microsoft.SendActivity",
-                        "activity": "${turn.dialogEvent.value.message}"
                     }
                 ]
             }

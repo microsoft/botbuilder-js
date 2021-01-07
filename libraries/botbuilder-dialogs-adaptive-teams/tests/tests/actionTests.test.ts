@@ -26,6 +26,14 @@ import nock = require('nock');
 // TODO: Write tests that catch all errors for each action.
 
 /**
+ * A NOTE ON HOW THE test.dialog FILES WORK
+ *
+ * Many of them use `Microsoft.TraceActivity` instead of `Microsoft.SendActivity` because at the time of this writing,
+ * there is no way to send an object from memory (e.g. $result) without it being formatted to text using SendActivity.
+ * In order to use `Microsoft.TraceActivity` like this, the test.dialog must also have the `enableTrace` property set to true.
+ */
+
+/**
  * Registers mocha hooks for proper usage
  * TODO: Import function from testing/botbuilder-test-utils after PR merged:
  * https://github.com/microsoft/botbuilder-js/pull/3138
@@ -222,6 +230,7 @@ describe('Actions', function () {
         const conversations = [
             {
                 id: '19:ChannelIdgeneralChannelId@thread.skype',
+                name: 'Testing0',
             },
             {
                 id: '19:somechannelId2e5ab3df9ae9b594bdb@thread.skype',

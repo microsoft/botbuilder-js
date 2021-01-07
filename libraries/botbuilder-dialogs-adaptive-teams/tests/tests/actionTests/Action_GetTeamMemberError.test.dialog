@@ -6,15 +6,15 @@
         "id": "planningTest",
         "triggers": [
             {
-                "$kind": "Microsoft.OnBeginDialog",
+                "$kind": "Microsoft.OnUnknownIntent",
                 "actions": [
                     {
                         "$kind": "Teams.GetTeamMember",
-                        "property": "$user.result"
+                        "property": "$result"
                     },
                     {
                         "$kind": "Microsoft.SendActivity",
-                        "activity": "${user.result}"
+                        "activity": "${$result}"
                     }
                 ]
             },
