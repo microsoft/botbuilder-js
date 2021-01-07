@@ -83,7 +83,7 @@ export class DialogInspector {
      *
      * @param {Dialog} dialog The root dialog.
      */
-    public set rootDialog(dialog: Dialog) {
+    public set rootDialog(dialog: Dialog | undefined) {
         this.dialogs = new DialogSet();
         if (dialog) {
             this._rootDialogId = dialog.id;
