@@ -7,7 +7,7 @@
  */
 
 import { TurnContext, TestAdapter } from 'botbuilder-core';
-import { TestAction } from '../testAction';
+import { Inspector, TestAction } from '../testAction';
 
 export interface UserDelayConfiguration {
     timespan?: number;
@@ -26,11 +26,16 @@ export class UserDelay extends TestAction implements UserDelayConfiguration {
 
     /**
      * Execute the test.
-     * @param _testAdapter Adapter to execute against.
-     * @param _callback Logic for the bot to use.
+     * @param testAdapter Adapter to execute against.
+     * @param callback Logic for the bot to use.
+     * @param inspector Inspector for dialog context.
      * @returns A Promise that represents the work queued to execute.
      */
-    public async execute(_testAdapter: TestAdapter, _callback: (context: TurnContext) => Promise<any>): Promise<void> {
+    public async execute(
+        testAdapter: TestAdapter,
+        callback: (context: TurnContext) => Promise<any>,
+        inspector?: Inspector
+    ): Promise<void> {
         await Promise.resolve((resolve) => setTimeout(resolve, this.timespan));
     }
 }

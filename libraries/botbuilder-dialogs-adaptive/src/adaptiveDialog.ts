@@ -833,6 +833,11 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> im
         const assignments = EntityAssignments.read(actionContext);
         const nextAssignment = assignments.nextAssignment;
         if (nextAssignment) {
+            nextAssignment.raisedCount ??= 0;
+            if (nextAssignment.raisedCount++ === 0) {
+                // Reset retries when new form event is first issued
+                actionContext.state.deleteValue(DialogPath.retries);
+            }
             evt = {
                 name: nextAssignment.event,
                 value: nextAssignment.alternative ? nextAssignment.alternatives : nextAssignment,
