@@ -27,16 +27,17 @@
     "antlr4ts": "0.5.0-alpha.3",
     "atob-lite": "^2.0.0",
     "big-integer": "^1.6.48",
+    "d3-format": "^1.4.4",
     "jspath": "^0.4.0",
     "lodash": "^4.17.19",
     "lru-cache": "^5.1.1",
-    "xml2js": "^0.4.23",
-    "x2js": "^3.4.0",
-    "xpath": "^0.0.32",
-    "xmldom": "^0.4.0",
-    "d3-format": "^1.4.4",
     "moment": "^2.29.1",
-    "moment-timezone": "^0.5.32"
+    "moment-timezone": "^0.5.32",
+    "uuid": "^8.3.2",
+    "x2js": "^3.4.0",
+    "xml2js": "^0.4.23",
+    "xmldom": "^0.4.0",
+    "xpath": "^0.0.32"
   },
   "devDependencies": {
     "@types/jspath": "^0.4.0",

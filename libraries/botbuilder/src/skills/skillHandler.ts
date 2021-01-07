@@ -6,6 +6,7 @@
  * Licensed under the MIT License.
  */
 
+import { v4 as uuidv4 } from 'uuid';
 import {
     Activity,
     ActivityHandlerBase,
@@ -288,7 +289,7 @@ export class SkillHandler extends ChannelServiceHandler {
         });
 
         if (!resourceResponse) {
-            resourceResponse = { id: uuid() };
+            resourceResponse = { id: uuidv4() };
         }
 
         return resourceResponse;
@@ -359,14 +360,4 @@ export class SkillHandler extends ChannelServiceHandler {
             }
         );
     }
-}
-
-// Helper function to generate an UUID.
-// Code is from @stevenic: https://github.com/stevenic
-function uuid(): string {
-    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c): string => {
-        const r = (Math.random() * 16) | 0,
-            v = c == 'x' ? r : (r & 0x3) | 0x8;
-        return v.toString(16);
-    });
 }

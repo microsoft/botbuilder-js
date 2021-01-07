@@ -6,20 +6,27 @@
  * Licensed under the MIT License.
  */
 
-import { DialogContext, TemplateInterface } from 'botbuilder-dialogs';
+import { Converter, ConverterFactory, Configurable, DialogContext, TemplateInterface } from 'botbuilder-dialogs';
 import { LanguageGenerator } from '../languageGenerator';
 import { languageGeneratorKey } from '../languageGeneratorExtensions';
+
+export interface TextTemplateConfiguration {
+    template?: string;
+}
 
 /**
  * Defines a text template where the template expression is local aka "inline"
  * and processed through registered language generator.
  */
-export class TextTemplate<D = Record<string, unknown>> implements TemplateInterface<string, D> {
+export class TextTemplate<D = Record<string, unknown>>
+    implements TemplateInterface<string, D>, TextTemplateConfiguration, Configurable {
+    public static $kind = 'Microsoft.TextTemplate';
+
     /**
      * Initialize a new instance of TextTemplate class.
      * @param template The template to evaluate to create text.
      */
-    public constructor(template: string) {
+    public constructor(template?: string) {
         this.template = template;
     }
 
@@ -27,6 +34,16 @@ export class TextTemplate<D = Record<string, unknown>> implements TemplateInterf
      * Gets or sets the template to evaluate to create the text.
      */
     public template: string;
+
+    public getConverter(_property: keyof TextTemplateConfiguration): Converter | ConverterFactory {
+        return undefined;
+    }
+
+    public configure(config: TextTemplateConfiguration): this {
+        const { template } = config;
+        this.template = template;
+        return this;
+    }
 
     /**
      * Bind data to template.

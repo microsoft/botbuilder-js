@@ -7,6 +7,7 @@
  * Licensed under the MIT License.
  */
 
+import { v4 as uuidv4 } from 'uuid';
 import { Template } from './template';
 import { TemplateImport } from './templateImport';
 import { Diagnostic, DiagnosticSeverity } from './diagnostic';
@@ -301,7 +302,7 @@ export class Templates implements Iterable<Template> {
 
         this.checkErrors();
 
-        const inlineTemplateId = `${Templates.inlineTemplateIdPrefix}${this.getramdonTemplateId()}`;
+        const inlineTemplateId = `${Templates.inlineTemplateIdPrefix}${this.getRandomTemplateId()}`;
 
         // wrap inline string with "# name and -" to align the evaluation process
         const multiLineMark = '```';
@@ -455,13 +456,8 @@ export class Templates implements Iterable<Template> {
     /**
      * @private
      */
-    private getramdonTemplateId(): string {
-        return 'xxxxxxxxxxxx4xxxyxxxxxxxxxxxxxxx'.replace(/[xy]/g, (c: any): string => {
-            const r: number = (Math.random() * 16) | 0;
-            const v: number = c === 'x' ? r : (r & 0x3) | 0x8;
-
-            return v.toString(16);
-        });
+    private getRandomTemplateId(): string {
+        return uuidv4().split('-').join('');
     }
 
     /**
