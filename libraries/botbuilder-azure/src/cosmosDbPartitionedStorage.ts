@@ -277,36 +277,6 @@ export class CosmosDbPartitionedStorage implements Storage {
         );
     }
 
-    // Return an informative error message if upsert failed due to deeply nested data
-    private checkForNestingError(json: object, err: Error | Record<'message', string> | string): void {
-        const checkDepth = (obj: unknown, depth: number, isInDialogState: boolean): void => {
-            if (depth > maxDepthAllowed) {
-                var message: string = `Maximum nesting depth of ${maxDepthAllowed} exceeded.`;
-
-                if (isInDialogState) {
-                    message += (
-                        ' This is most likely caused by recursive component dialogs. ' +
-                        'Try reworking your dialog code to make sure it does not keep dialogs on the stack ' +
-                        "that it's not using. For example, consider using ReplaceDialogAsync instead of BeginDialogAsync."
-                    );
-                } else {
-                    message += ' Please check your data for signs of unintended recursion.';
-                }
-                
-                this.throwInformativeError(message, err);
-            } else if (obj && typeof (obj) === "object") {
-                for (const [key, value] of Object.entries(obj)) {
-                    checkDepth(
-                        value,
-                        depth + 1,
-                        key === 'dialogStack' || isInDialogState);
-                }
-            }
-        };
-
-        checkDepth(json, 0, false);
-    }
-
     /**
      * Delete one or more items from the Cosmos DB container.
      *
@@ -403,6 +373,36 @@ export class CosmosDbPartitionedStorage implements Storage {
 
     private getPartitionKey(key) {
         return this.compatibilityModePartitionKey ? undefined : key;
+    }
+
+    // Return an informative error message if upsert failed due to deeply nested data
+    private checkForNestingError(json: object, err: Error | Record<'message', string> | string): void {
+        const checkDepth = (obj: unknown, depth: number, isInDialogState: boolean): void => {
+            if (depth > maxDepthAllowed) {
+                var message: string = `Maximum nesting depth of ${maxDepthAllowed} exceeded.`;
+
+                if (isInDialogState) {
+                    message += (
+                        ' This is most likely caused by recursive component dialogs. ' +
+                        'Try reworking your dialog code to make sure it does not keep dialogs on the stack ' +
+                        "that it's not using. For example, consider using ReplaceDialogAsync instead of BeginDialogAsync."
+                    );
+                } else {
+                    message += ' Please check your data for signs of unintended recursion.';
+                }
+
+                this.throwInformativeError(message, err);
+            } else if (obj && typeof (obj) === "object") {
+                for (const [key, value] of Object.entries(obj)) {
+                    checkDepth(
+                        value,
+                        depth + 1,
+                        key === 'dialogStack' || isInDialogState);
+                }
+            }
+        };
+
+        checkDepth(json, 0, false);
     }
 
     // The Cosmos JS SDK doesn't return very descriptive errors and not all errors contain a body.
