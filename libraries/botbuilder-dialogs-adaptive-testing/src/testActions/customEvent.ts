@@ -7,7 +7,7 @@
  */
 
 import { TurnContext, TestAdapter, ActivityTypes } from 'botbuilder-core';
-import { TestAction } from '../testAction';
+import { Inspector, TestAction } from '../testAction';
 
 export interface CustomEventConfiguration {
     name: string;
@@ -26,7 +26,18 @@ export class CustomEvent<T = unknown> extends TestAction implements CustomEventC
      */
     public value?: T;
 
-    public async execute(testAdapter: TestAdapter, callback: (context: TurnContext) => Promise<void>): Promise<void> {
+    /**
+     * Execute the test.
+     * @param testAdapter Adapter to execute against.
+     * @param callback Logic for the bot to use.
+     * @param inspector Inspector for dialog context.
+     * @returns A Promise that represents the work queued to execute.
+     */
+    public async execute(
+        testAdapter: TestAdapter,
+        callback: (context: TurnContext) => Promise<void>,
+        inspector?: Inspector
+    ): Promise<void> {
         if (!this.name) {
             throw Error('You must define the event name.');
         }

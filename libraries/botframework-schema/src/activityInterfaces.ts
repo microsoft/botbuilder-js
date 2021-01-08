@@ -1,3 +1,8 @@
+/**
+ * Copyright (c) Microsoft Corporation. All rights reserved.
+ * Licensed under the MIT License.
+ */
+
 import { ActivityImportance, ActivityTypes, Attachment, AttachmentLayoutTypes, ChannelAccount, ConversationAccount, ConversationReference, DeliveryModes, EndOfConversationCodes, Entity, InputHints, MessageReaction, SuggestedActions, TextFormatTypes, TextHighlight } from './index';
 
 export interface IActivity {
