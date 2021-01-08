@@ -1,66 +1,67 @@
 {
-    "env": {
-        "es6": true
+  "env": {
+    "es6": true
+  },
+  "extends": [
+    "eslint:recommended",
+    "plugin:security/recommended",
+    "plugin:@typescript-eslint/recommended",
+    "plugin:@typescript-eslint/eslint-recommended",
+    "prettier",
+    "plugin:prettier/recommended",
+    "prettier/@typescript-eslint",
+    "plugin:jsdoc/recommended"
+  ],
+  "ignorePatterns": [
+    "_ts3.4/",
+    "dist/",
+    "lib/",
+    "node_modules/"
+  ],
+  "overrides": [
+    {
+      "files": ["*.test.js", "*.test.ts"],
+      "env": {
+        "mocha": true,
+        "node": true
+      },
+      "rules": {
+        "@typescript-eslint/no-var-requires": 0
+      }
     },
-    "extends": [
-        "eslint:recommended",
-        "plugin:security/recommended",
-        "plugin:@typescript-eslint/recommended",
-        "plugin:@typescript-eslint/eslint-recommended",
-        "prettier",
-        "plugin:prettier/recommended",
-        "prettier/@typescript-eslint",
-        "plugin:jsdoc/recommended"
-    ],
-    "ignorePatterns": [
-        "_ts3.4/",
-        "dist/",
-        "lib/",
-        "node_modules/"
-    ],
-    "overrides": [
-        {
-            "files": ["*.test.js", "*.test.ts"],
-            "env": {
-                "mocha": true,
-                "node": true
-            },
-            "rules": {
-                "@typescript-eslint/no-var-requires": 0
-            }
-        },
-        {
-            "files": ["babel.config.js", "webpack.config.js"],
-            "globals": {
-                "__dirname": true,
-                "module": true,
-                "require": true
-            },
-            "rules": {
-                "@typescript-eslint/no-var-requires": 0
-            }
-        }
-    ],
-    "parser": "@typescript-eslint/parser",
-    "parserOptions": {
-        "ecmaVersion": 9,
-        "sourceType": "module",
-        "ecmaFeatures": {
-            "impliedStrict": true
-        }
-    },
-    "plugins": [
-        "@typescript-eslint",
-        "prettier",
-        "jsdoc",
-        "security"
-    ],
-    "rules": {
-        "jsdoc/require-jsdoc": ["error", {"publicOnly": true, "enableFixer": false}],
-        "jsdoc/require-param": ["error"],
-        "jsdoc/require-param-type": ["error"],
-        "jsdoc/require-returns": ["error"],
-        "jsdoc/require-returns-type": ["error"],
-        "prettier/prettier": "error"
+    {
+      "files": ["babel.config.js", "webpack.config.js"],
+      "globals": {
+        "__dirname": true,
+        "module": true,
+        "require": true
+      },
+      "rules": {
+        "@typescript-eslint/no-var-requires": 0
+      }
     }
+  ],
+  "parser": "@typescript-eslint/parser",
+  "parserOptions": {
+    "ecmaVersion": 9,
+    "sourceType": "module",
+    "ecmaFeatures": {
+      "impliedStrict": true
+    }
+  },
+  "plugins": [
+    "@typescript-eslint",
+    "prettier",
+    "jsdoc",
+    "security"
+  ],
+  "rules": {
+    "jsdoc/require-jsdoc": ["error", {"publicOnly": true, "enableFixer": false}],
+    "jsdoc/require-param": ["error"],
+    "jsdoc/require-param-type": ["error"],
+    "jsdoc/require-returns": ["error"],
+    "jsdoc/require-returns-type": ["error"],
+    "no-var": ["error"],
+    "prettier/prettier": "error"
+  }
 }
