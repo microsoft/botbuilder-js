@@ -385,7 +385,7 @@ export class CosmosDbPartitionedStorage implements Storage {
                     message +=
                         ' This is most likely caused by recursive component dialogs. ' +
                         'Try reworking your dialog code to make sure it does not keep dialogs on the stack ' +
-                        "that it's not using. For example, consider using ReplaceDialogAsync instead of BeginDialogAsync.";
+                        "that it's not using. For example, consider using replaceDialog instead of beginDialog.";
                 } else {
                     message += ' Please check your data for signs of unintended recursion.';
                 }
