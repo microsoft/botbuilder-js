@@ -248,6 +248,19 @@ describe('ActivityHandler', function() {
 
         processActivity({type: ActivityTypes.InstallationUpdate, action: 'add'}, bot, done);
     });
+    
+    it(`should fire onInstallationUpdateAddUpgrade`, async function(done) {
+
+        const bot = new ActivityHandler();
+
+        bot.onInstallationUpdateAdd(async (context, next) => {
+            assert(true, 'onInstallationUpdateAdd not called');
+            done();
+            await next();
+        });
+
+        processActivity({type: ActivityTypes.InstallationUpdate, action: 'add-upgrade'}, bot, done);
+    });
 
     it(`should fire onInstallationUpdateRemove`, async function(done) {
 
@@ -260,6 +273,19 @@ describe('ActivityHandler', function() {
         });
 
         processActivity({type: ActivityTypes.InstallationUpdate, action: 'remove'}, bot, done);
+    });
+
+    it(`should fire onInstallationUpdateRemoveUpgrade`, async function(done) {
+
+        const bot = new ActivityHandler();
+
+        bot.onInstallationUpdateRemove(async (context, next) => {
+            assert(true, 'onInstallationUpdateRemove not called');
+            done();
+            await next();
+        });
+
+        processActivity({type: ActivityTypes.InstallationUpdate, action: 'remove-upgrade'}, bot, done);
     });
 
     it(`should fire onUnrecognizedActivityType`, async function(done) {
