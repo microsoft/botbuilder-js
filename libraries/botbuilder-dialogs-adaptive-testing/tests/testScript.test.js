@@ -69,6 +69,18 @@ describe('TestScriptTests', function () {
         await TestUtils.runTestScript(resourceExplorer, 'TestScriptTests_AssertReplyOneOf');
     });
 
+    it('CustomEvent', async () => {
+        await TestUtils.runTestScript(resourceExplorer, 'TestScriptTests_CustomEvent');
+    });
+
+    it('OAuthInputRetries_WithNullMessageText', async () => {
+        await TestUtils.runTestScript(resourceExplorer, 'TestScriptTests_OAuthInputRetries_WithNullMessageText');
+    });
+
+    it('PropertyMock', async () => {
+        await TestUtils.runTestScript(resourceExplorer, 'TestScriptTests_PropertyMock');
+    });
+
     it('UserConversationUpdate', async () => {
         await TestUtils.runTestScript(resourceExplorer, 'TestScriptTests_UserConversationUpdate');
     });
@@ -79,9 +91,5 @@ describe('TestScriptTests', function () {
 
     it('UserTyping', async () => {
         await TestUtils.runTestScript(resourceExplorer, 'TestScriptTests_UserTyping');
-    });
-
-    it('CustomEvent', async () => {
-        await TestUtils.runTestScript(resourceExplorer, 'TestScriptTests_CustomEvent');
     });
 });
