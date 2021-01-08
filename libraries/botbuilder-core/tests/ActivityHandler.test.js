@@ -22,7 +22,7 @@ describe('ActivityHandler', function() {
         await bot.run(context).catch(error => done(error));
     }
 
-    it(`should fire onTurn for any inbound activity`, async function(done) {
+    it(`should fire onTurn for any inbound activity`, function(done) {
 
         const bot = new ActivityHandler();
 
@@ -35,7 +35,7 @@ describe('ActivityHandler', function() {
         processActivity({type: 'any'}, bot, done);
     });
 
-    it(`should fire onMessage for any message activities`, async function(done) {
+    it(`should fire onMessage for any message activities`, function(done) {
 
         const bot = new ActivityHandler();
 
@@ -48,7 +48,7 @@ describe('ActivityHandler', function() {
         processActivity({type: ActivityTypes.Message}, bot, done);
     });
 
-    it(`calling  next allows following events to firing`, async function(done) {
+    it(`calling  next allows following events to firing`, function(done) {
 
         const bot = new ActivityHandler();
 
@@ -66,7 +66,7 @@ describe('ActivityHandler', function() {
         processActivity({type: ActivityTypes.Message}, bot, done);
     });
 
-    it(`omitting call to next prevents following events from firing`, async function(done) {
+    it(`omitting call to next prevents following events from firing`, function(done) {
 
         const bot = new ActivityHandler();
 
@@ -83,7 +83,7 @@ describe('ActivityHandler', function() {
         processActivity({type: ActivityTypes.Message}, bot, done);
     });
 
-    it(`binding 2 methods to the same event both fire`, async function(done) {
+    it(`binding 2 methods to the same event both fire`, function(done) {
 
         const bot = new ActivityHandler();
         let count = 0;
@@ -106,7 +106,7 @@ describe('ActivityHandler', function() {
         processActivity({type: ActivityTypes.Message}, bot, done);
     });
 
-    it(`should fire onConversationUpdate`, async function(done) {
+    it(`should fire onConversationUpdate`, function(done) {
 
         const bot = new ActivityHandler();
 
@@ -119,7 +119,7 @@ describe('ActivityHandler', function() {
         processActivity({type: ActivityTypes.ConversationUpdate}, bot, done);
     });
 
-    it(`should fire onMembersAdded`, async function(done) {
+    it(`should fire onMembersAdded`, function(done) {
 
         const bot = new ActivityHandler();
 
@@ -132,7 +132,7 @@ describe('ActivityHandler', function() {
         processActivity({type: ActivityTypes.ConversationUpdate, membersAdded: [{id: 1}]}, bot, done);
     });
 
-    it(`should fire onMembersRemoved`, async function(done) {
+    it(`should fire onMembersRemoved`, function(done) {
 
         const bot = new ActivityHandler();
 
@@ -145,7 +145,7 @@ describe('ActivityHandler', function() {
         processActivity({type: ActivityTypes.ConversationUpdate, membersRemoved: [{id: 1}]}, bot, done);
     });
 
-    it(`should fire onMessageReaction`, async function(done) {
+    it(`should fire onMessageReaction`, function(done) {
 
         const bot = new ActivityHandler();
 
@@ -158,7 +158,7 @@ describe('ActivityHandler', function() {
         processActivity({type: ActivityTypes.MessageReaction}, bot, done);
     });
 
-    it(`should fire onReactionsAdded`, async function(done) {
+    it(`should fire onReactionsAdded`, function(done) {
 
         const bot = new ActivityHandler();
 
@@ -171,7 +171,7 @@ describe('ActivityHandler', function() {
         processActivity({type: ActivityTypes.MessageReaction, reactionsAdded: [{type: 'like'}]}, bot, done);
     });
 
-    it(`should fire onReactionsRemoved`, async function(done) {
+    it(`should fire onReactionsRemoved`, function(done) {
 
         const bot = new ActivityHandler();
 
@@ -184,7 +184,7 @@ describe('ActivityHandler', function() {
         processActivity({type: ActivityTypes.MessageReaction, reactionsRemoved: [{type: 'like'}]}, bot, done);
     });
     
-    it(`should fire onEvent`, async function(done) {
+    it(`should fire onEvent`, function(done) {
 
         const bot = new ActivityHandler();
 
@@ -197,7 +197,7 @@ describe('ActivityHandler', function() {
         processActivity({type: ActivityTypes.Event}, bot, done);
     });
 
-    it(`should fire onEndOfConversation`, async function(done) {
+    it(`should fire onEndOfConversation`, function(done) {
 
         const bot = new ActivityHandler();
 
@@ -210,7 +210,7 @@ describe('ActivityHandler', function() {
         processActivity({type: ActivityTypes.EndOfConversation}, bot, done);
     });
 
-    it(`should fire onTyping`, async function(done) {
+    it(`should fire onTyping`, function(done) {
 
         const bot = new ActivityHandler();
 
@@ -223,7 +223,7 @@ describe('ActivityHandler', function() {
         processActivity({type: ActivityTypes.Typing}, bot, done);
     });
 
-    it(`should fire onInstallationUpdate`, async function(done) {
+    it(`should fire onInstallationUpdate`, function(done) {
 
         const bot = new ActivityHandler();
 
@@ -236,7 +236,7 @@ describe('ActivityHandler', function() {
         processActivity({type: ActivityTypes.InstallationUpdate}, bot, done);
     });
 
-    it(`should fire onInstallationUpdateAdd`, async function(done) {
+    it(`should fire onInstallationUpdateAdd`, function(done) {
 
         const bot = new ActivityHandler();
 
@@ -249,7 +249,7 @@ describe('ActivityHandler', function() {
         processActivity({type: ActivityTypes.InstallationUpdate, action: 'add'}, bot, done);
     });
     
-    it(`should fire onInstallationUpdateAddUpgrade`, async function(done) {
+    it(`should fire onInstallationUpdateAddUpgrade`, function(done) {
 
         const bot = new ActivityHandler();
 
@@ -262,7 +262,7 @@ describe('ActivityHandler', function() {
         processActivity({type: ActivityTypes.InstallationUpdate, action: 'add-upgrade'}, bot, done);
     });
 
-    it(`should fire onInstallationUpdateRemove`, async function(done) {
+    it(`should fire onInstallationUpdateRemove`, function(done) {
 
         const bot = new ActivityHandler();
 
@@ -275,7 +275,7 @@ describe('ActivityHandler', function() {
         processActivity({type: ActivityTypes.InstallationUpdate, action: 'remove'}, bot, done);
     });
 
-    it(`should fire onInstallationUpdateRemoveUpgrade`, async function(done) {
+    it(`should fire onInstallationUpdateRemoveUpgrade`, function(done) {
 
         const bot = new ActivityHandler();
 
@@ -288,7 +288,7 @@ describe('ActivityHandler', function() {
         processActivity({type: ActivityTypes.InstallationUpdate, action: 'remove-upgrade'}, bot, done);
     });
 
-    it(`should fire onUnrecognizedActivityType`, async function(done) {
+    it(`should fire onUnrecognizedActivityType`, function(done) {
 
         const bot = new ActivityHandler();
 
@@ -301,7 +301,7 @@ describe('ActivityHandler', function() {
         processActivity({type: 'foo'}, bot, done);
     });
 
-    it(`should fire onDialog`, async function(done) {
+    it(`should fire onDialog`, function(done) {
 
         const bot = new ActivityHandler();
 
