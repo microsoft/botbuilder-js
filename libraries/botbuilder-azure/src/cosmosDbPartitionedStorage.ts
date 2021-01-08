@@ -268,9 +268,9 @@ export class CosmosDbPartitionedStorage implements Storage {
                         // if Cosmos returns an error first.
                         // This way, the nesting limit is not imposed on the Bot Framework side
                         // and no exception will be thrown if the limit is eventually changed on the Cosmos side.
-                        const nestingError = this.getNestingError(change);
+                        this.checkForNestingError(change, err);
 
-                        this.throwInformativeError(nestingError ?? 'Error upserting document', err);
+                        this.throwInformativeError('Error upserting document', err);
                     }
                 }
             )
@@ -278,34 +278,33 @@ export class CosmosDbPartitionedStorage implements Storage {
     }
 
     // Return an informative error message if upsert failed due to deeply nested data
-    private getNestingError(json: object): string | undefined {
-        const checkDepth = (obj: unknown, depth: number, isInDialogState: boolean) => {
+    private checkForNestingError(json: object, err: Error | Record<'message', string> | string): void {
+        const checkDepth = (obj: unknown, depth: number, isInDialogState: boolean): void => {
             if (depth > maxDepthAllowed) {
-                const message = `Maximum nesting depth of ${maxDepthAllowed} exceeded.`;
+                var message: string = `Maximum nesting depth of ${maxDepthAllowed} exceeded.`;
 
                 if (isInDialogState) {
-                    return (
-                        `${message} This is most likely caused by recursive component dialogs. ` +
+                    message += (
+                        ' This is most likely caused by recursive component dialogs. ' +
                         'Try reworking your dialog code to make sure it does not keep dialogs on the stack ' +
                         "that it's not using. For example, consider using ReplaceDialogAsync instead of BeginDialogAsync."
                     );
                 } else {
-                    return `${message} Please check your data for signs of unintended recursion.`;
+                    message += ' Please check your data for signs of unintended recursion.';
                 }
+                
+                this.throwInformativeError(message, err);
             } else if (obj && typeof (obj) === "object") {
-                depth++;
-                return Object.entries(obj).reduce(
-                    (result, entry) => result ?? checkDepth(
-                        entry[1],
-                        depth,
-                        entry[0] === 'dialogStack' ? true : isInDialogState),
-                    undefined);
+                for (const [key, value] of Object.entries(obj)) {
+                    checkDepth(
+                        value,
+                        depth + 1,
+                        key === 'dialogStack' || isInDialogState);
+                }
             }
-
-            return undefined;
         };
 
-        return checkDepth(json, 0, false);
+        checkDepth(json, 0, false);
     }
 
     /**
