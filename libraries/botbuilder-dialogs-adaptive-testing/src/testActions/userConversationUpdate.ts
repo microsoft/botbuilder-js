@@ -7,7 +7,7 @@
  */
 
 import { TurnContext, ActivityTypes, ChannelAccount, RoleTypes, TestAdapter } from 'botbuilder-core';
-import { TestAction } from '../testAction';
+import { Inspector, TestAction } from '../testAction';
 
 export interface UserConversationUpdateConfiguration {
     membersAdded?: string[];
@@ -34,9 +34,14 @@ export class UserConversationUpdate extends TestAction implements UserConversati
      * Execute the test.
      * @param testAdapter Adapter to execute against.
      * @param callback Logic for the bot to use.
+     * @param inspector Inspector for dialog context.
      * @returns A Promise that represents the work queued to execute.
      */
-    public async execute(testAdapter: TestAdapter, callback: (context: TurnContext) => Promise<void>): Promise<void> {
+    public async execute(
+        testAdapter: TestAdapter,
+        callback: (context: TurnContext) => Promise<void>,
+        inspector?: Inspector
+    ): Promise<void> {
         const activity = testAdapter.makeActivity();
         activity.type = ActivityTypes.ConversationUpdate;
 

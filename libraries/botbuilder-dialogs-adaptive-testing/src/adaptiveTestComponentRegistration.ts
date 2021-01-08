@@ -14,6 +14,8 @@ import {
     ResourceExplorer,
 } from 'botbuilder-dialogs-declarative';
 import {
+    AssertNoActivity,
+    AssertNoActivityConfiguration,
     AssertReply,
     AssertReplyActivity,
     AssertReplyActivityConfiguration,
@@ -22,6 +24,10 @@ import {
     AssertReplyOneOfConfiguration,
     CustomEvent,
     CustomEventConfiguration,
+    MemoryAssertions,
+    MemoryAssertionsConfiguration,
+    SetProperties,
+    SetPropertiesConfiguration,
     UserActivity,
     UserActivityConfiguration,
     UserConversationUpdate,
@@ -54,11 +60,14 @@ export class AdaptiveTestComponentRegistration extends ComponentRegistration imp
     public constructor() {
         super();
         this._addDeclarativeType<AssertCondition, AssertConditionConfiguration>(AssertCondition);
+        this._addDeclarativeType<AssertNoActivity, AssertNoActivityConfiguration>(AssertNoActivity);
         this._addDeclarativeType<AssertReply, AssertReplyConfiguration>(AssertReply);
         this._addDeclarativeType<AssertReplyActivity, AssertReplyActivityConfiguration>(AssertReplyActivity);
         this._addDeclarativeType<AssertReplyOneOf, AssertReplyOneOfConfiguration>(AssertReplyOneOf);
-        this._addDeclarativeType<UserActivity, UserActivityConfiguration>(UserActivity);
         this._addDeclarativeType<CustomEvent, CustomEventConfiguration>(CustomEvent);
+        this._addDeclarativeType<MemoryAssertions, MemoryAssertionsConfiguration>(MemoryAssertions);
+        this._addDeclarativeType<SetProperties, SetPropertiesConfiguration>(SetProperties);
+        this._addDeclarativeType<UserActivity, UserActivityConfiguration>(UserActivity);
         this._addDeclarativeType<UserConversationUpdate, UserConversationUpdateConfiguration>(UserConversationUpdate);
         this._addDeclarativeType<UserDelay, UserDelayConfiguration>(UserDelay);
         this._addDeclarativeType<UserSays, UserSaysConfiguration>(UserSays);

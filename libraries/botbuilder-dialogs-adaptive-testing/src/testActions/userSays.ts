@@ -7,7 +7,7 @@
  */
 
 import { TurnContext, TestAdapter } from 'botbuilder-core';
-import { TestAction } from '../testAction';
+import { Inspector, TestAction } from '../testAction';
 
 export interface UserSaysConfiguration {
     text?: string;
@@ -39,9 +39,14 @@ export class UserSays extends TestAction implements UserSaysConfiguration {
      * Execute the test.
      * @param testAdapter Adapter to execute against.
      * @param callback Logic for the bot to use.
+     * @param inspector Inspector for dialog context.
      * @returns A Promise that represents the work queued to execute.
      */
-    public async execute(testAdapter: TestAdapter, callback: (context: TurnContext) => Promise<void>): Promise<void> {
+    public async execute(
+        testAdapter: TestAdapter,
+        callback: (context: TurnContext) => Promise<void>,
+        inspector?: Inspector
+    ): Promise<void> {
         if (!this.text) {
             throw new Error('You must define the text property');
         }
