@@ -379,25 +379,21 @@ export class CosmosDbPartitionedStorage implements Storage {
     private checkForNestingError(json: object, err: Error | Record<'message', string> | string): void {
         const checkDepth = (obj: unknown, depth: number, isInDialogState: boolean): void => {
             if (depth > maxDepthAllowed) {
-                var message: string = `Maximum nesting depth of ${maxDepthAllowed} exceeded.`;
+                let message = `Maximum nesting depth of ${maxDepthAllowed} exceeded.`;
 
                 if (isInDialogState) {
-                    message += (
+                    message +=
                         ' This is most likely caused by recursive component dialogs. ' +
                         'Try reworking your dialog code to make sure it does not keep dialogs on the stack ' +
-                        "that it's not using. For example, consider using ReplaceDialogAsync instead of BeginDialogAsync."
-                    );
+                        "that it's not using. For example, consider using ReplaceDialogAsync instead of BeginDialogAsync.";
                 } else {
                     message += ' Please check your data for signs of unintended recursion.';
                 }
 
                 this.throwInformativeError(message, err);
-            } else if (obj && typeof (obj) === "object") {
+            } else if (obj && typeof obj === 'object') {
                 for (const [key, value] of Object.entries(obj)) {
-                    checkDepth(
-                        value,
-                        depth + 1,
-                        key === 'dialogStack' || isInDialogState);
+                    checkDepth(value, depth + 1, key === 'dialogStack' || isInDialogState);
                 }
             }
         };
