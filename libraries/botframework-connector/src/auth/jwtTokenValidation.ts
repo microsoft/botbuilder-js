@@ -5,6 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
+
 import { Activity, Channels, RoleTypes, StatusCodes } from 'botframework-schema';
 
 import { AppCredentials } from './appCredentials';

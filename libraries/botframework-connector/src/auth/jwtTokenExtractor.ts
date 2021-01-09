@@ -5,6 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
+
 import { decode, verify, VerifyOptions } from 'jsonwebtoken';
 import { Claim, ClaimsIdentity } from './claimsIdentity';
 import { EndorsementsValidator } from './endorsementsValidator';

@@ -1,6 +1,8 @@
 const assert = require('assert');
 const { CosmosDbPartitionedStorage } = require('../lib');
+const { AutoSaveStateMiddleware, ConversationState, TestAdapter } = require('../../botbuilder-core/lib');
 const { StorageBaseTests } = require('../../botbuilder-core/tests/storageBaseTests');
+const { ComponentDialog, Dialog, DialogSet, WaterfallDialog } = require('../../botbuilder-dialogs/lib');
 const { CosmosClient } = require('@azure/cosmos');
 const { MockMode, usingNock } = require('./mockHelper');
 const nock = require('nock');
@@ -33,7 +35,7 @@ const getSettings = () => {
         cosmosDbEndpoint: emulatorEndpoint,
         authKey: 'C2y6yDjf5/R+ob0N8A7Cgv30VRDJIWEHLM+4QDU5DE2nQ9nDuVTqobD4b8mGGyPMbIZnqyMsEcaGQy67XIw/Jw==',
         databaseId: 'CosmosPartitionedStorageTestDb',
-        containerId: `CosmosPartitionedStorageTestContainer-${ containerIdSuffix++ }`,
+        containerId: `CosmosPartitionedStorageTestContainer-${containerIdSuffix++}`,
         cosmosClientOptions: {
             agent: new https.Agent({ rejectUnauthorized: false }) // rejectUnauthorized disables the SSL verification for the locally-hosted Emulator
         }
@@ -57,8 +59,8 @@ const checkEmulator = async () => {
                 canConnectToEmulator = false;
             }
         }
-        if (!canConnectToEmulator) console.warn(`Unable to connect to Cosmos Emulator at ${ emulatorEndpoint }. Running tests against Nock recordings.`);
-        
+        if (!canConnectToEmulator) console.warn(`Unable to connect to Cosmos Emulator at ${emulatorEndpoint}. Running tests against Nock recordings.`);
+
     }
     return canConnectToEmulator;
 };
@@ -74,8 +76,7 @@ const cleanup = async () => {
 
     const settings = getSettings();
 
-    if (canConnectToEmulator)
-    {
+    if (canConnectToEmulator) {
         let client = new CosmosClient({ endpoint: settings.cosmosDbEndpoint, key: settings.authKey, agent: new https.Agent({ rejectUnauthorized: false }) });
         try {
             await client.database(settings.databaseId).delete();
@@ -87,7 +88,7 @@ const cleanup = async () => {
 const prep = async () => {
     nock.cleanAll();
     await checkEmulator();
-    
+
     let settings = getSettings();
 
     if (mode !== MockMode.lockdown) {
@@ -98,14 +99,14 @@ const prep = async () => {
 
     if (canConnectToEmulator) {
         let client = new CosmosClient({ endpoint: settings.cosmosDbEndpoint, key: settings.authKey, agent: new https.Agent({ rejectUnauthorized: false }) });
-    
+
         // This throws if the db is already created. We want to always create it if it doesn't exist,
         // so leaving this here should help prevent failures if the tests change in the future
         try {
             await client.databases.create({ id: settings.databaseId });
         } catch (err) { }
     }
-    
+
     storage = new CosmosDbPartitionedStorage(settings);
 };
 
@@ -156,7 +157,7 @@ describe('CosmosDbPartitionedStorage - Base Storage Tests', function() {
         settingsWithClientOptions.cosmosClientOptions = {
             agent: new https.Agent({ rejectUnauthorized: false }),
             connectionPolicy: { requestTimeout: 999 },
-            userAgentSuffix: 'test', 
+            userAgentSuffix: 'test',
         };
 
         const client = new CosmosDbPartitionedStorage(settingsWithClientOptions);
@@ -172,7 +173,7 @@ describe('CosmosDbPartitionedStorage - Base Storage Tests', function() {
         const { nockDone } = await usingNock(this.test, mode, options);
 
         const testRan = await StorageBaseTests.returnEmptyObjectWhenReadingUnknownKey(storage);
-        
+
         assert.strictEqual(testRan, true);
 
         return nockDone();
@@ -191,7 +192,7 @@ describe('CosmosDbPartitionedStorage - Base Storage Tests', function() {
         const { nockDone } = await usingNock(this.test, mode, options);
 
         const testRan = await StorageBaseTests.handleNullKeysWhenWriting(storage);
-        
+
         assert.strictEqual(testRan, true);
         return nockDone();
     });
@@ -200,7 +201,7 @@ describe('CosmosDbPartitionedStorage - Base Storage Tests', function() {
         const { nockDone } = await usingNock(this.test, mode, options);
 
         const testRan = await StorageBaseTests.doesNotThrowWhenWritingNoItems(storage);
-        
+
         assert.strictEqual(testRan, true);
         return nockDone();
     });
@@ -267,6 +268,7 @@ describe('CosmosDbPartitionedStorage - Base Storage Tests', function() {
         assert.strictEqual(testRan, true);
         return nockDone();
     });
+
     it('support using multiple databases', async function() {
         const { nockDone } = await usingNock(this.test, mode, options);
 
@@ -293,9 +295,10 @@ describe('CosmosDbPartitionedStorage - Base Storage Tests', function() {
         await assert.doesNotReject(async () => await newClient.client.database(newDb).container(settingsWithNewDb.containerId).read());
 
         await dbCreateClient.database(newDb).delete();
-        
+
         return nockDone();
     });
+
     it('support using multiple containers', async function() {
         const { nockDone } = await usingNock(this.test, mode, options);
 
@@ -312,6 +315,90 @@ describe('CosmosDbPartitionedStorage - Base Storage Tests', function() {
         await assert.doesNotReject(async () => await newClient.initialize());
 
         await assert.doesNotReject(async () => await newClient.client.database(settingsWithNewContainer.databaseId).container(newContainer).read());
+
+        return nockDone();
+    });
+
+    it('is aware of nesting limit', async function() {
+        const { nockDone } = await usingNock(this.test, mode, options);
+
+        async function testNest(depth) {
+            // This creates nested data with both objects and arrays
+            const createNestedData = (count, isArray = false) => count > 0
+                ? (isArray
+                    ? [createNestedData(count - 1, false)]
+                    : { 'data': createNestedData(count - 1, true) })
+                : null;
+
+            const changes = { 'CONTEXTKEY': createNestedData(depth) };
+
+            await storage.write(changes);
+        }
+
+        // Should not throw
+        await testNest(127);
+
+        try {
+            // Should either not throw or throw a special exception
+            await testNest(128);
+        } catch (err) {
+            // If the nesting limit is changed on the Cosmos side
+            // then this assertion won't be reached, which is okay
+            assert.strictEqual(err.message.includes('recursion'), true);
+        }
+
+        return nockDone();
+    });
+
+    it('is aware of nesting limit with dialogs', async function() {
+        const { nockDone } = await usingNock(this.test, mode, options);
+
+        async function testDialogNest(dialogDepth) {
+            const createNestedDialog = depth => new ComponentDialog('componentDialog')
+                .addDialog(depth > 0
+                    ? createNestedDialog(depth - 1)
+                    : new WaterfallDialog('waterfallDialog', [async () => Dialog.EndOfTurn]));
+
+            const convoState = new ConversationState(storage);
+            const dialogState = convoState.createProperty('dialogStateForNestingTest');
+            const dialogs = new DialogSet(dialogState);
+
+            const adapter = new TestAdapter(async (turnContext) => {
+                if (turnContext.activity.text == 'reset') {
+                    await dialogState.delete(turnContext);
+                } else {
+                    const dc = await dialogs.createContext(turnContext);
+
+                    await dc.beginDialog('componentDialog');
+                }
+            })
+                .use(new AutoSaveStateMiddleware(convoState));
+
+            adapter.conversation = TestAdapter.createConversation('nestingTest');
+
+            dialogs.add(createNestedDialog(dialogDepth));
+
+            await adapter.send('reset')
+                .send('hello')
+                .startTest();
+        }
+
+        // Note that the C# test places the "cutoff" between 23 and 24 dialogs.
+        // These tests use 29 and 30 because Node doesn't nest data as deeply
+        // due to the lack of type names, so more dialogs are needed to reach
+        // the limit of 128 levels.
+
+        // Should not throw
+        await testDialogNest(29);
+
+        try {
+            // Should either not throw or throw a special exception
+            await testDialogNest(30);
+        } catch (err) {
+            // If the nesting limit is changed on the Cosmos side
+            // then this assertion won't be reached, which is okay
+            assert.strictEqual(err.message.includes('dialogs'), true);
+        }
 
         return nockDone();
     });
