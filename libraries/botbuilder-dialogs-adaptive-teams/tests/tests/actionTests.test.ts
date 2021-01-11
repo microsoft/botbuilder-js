@@ -23,8 +23,6 @@ import { ok } from 'assert';
 import path = require('path');
 import nock = require('nock');
 
-// TODO: Write tests that catch all errors for each action.
-
 /**
  * Registers mocha hooks for proper usage
  * TODO: Import function from testing/botbuilder-test-utils after PR merged:
@@ -150,15 +148,27 @@ describe('Actions', function () {
             .get('/v1/meetings/meeting-id-1/participants/participant-aad-id?tenantId=tenant-id-1')
             .reply(200, participant);
 
+        const fetchExpectationCustomProperties = nock('https://api.botframework.com')
+            .get('/v1/meetings/customMeetingId/participants/customParticipantId?tenantId=customTenantId')
+            .reply(200, participant);
+
         const adapter = getTeamsTestAdapter(conversationReference);
 
         await TestUtils.runTestScript(resourceExplorer, this.test.title, adapter);
 
         ok(fetchExpectation.isDone());
+        ok(fetchExpectationCustomProperties.isDone());
     });
 
     it('Action_GetMeetingParticipantError', async function () {
         await TestUtils.runTestScript(resourceExplorer, this.test.title);
+    });
+
+    it('Action_GetMeetingParticipantErrorWithAdapter', async function () {
+        const conversationReference = getPersonalConversationReference();
+        const adapter = getTeamsTestAdapter(conversationReference);
+
+        await TestUtils.runTestScript(resourceExplorer, this.test.title, adapter);
     });
 
     it('Action_GetMember', async function () {
@@ -169,15 +179,27 @@ describe('Actions', function () {
             .get('/v3/conversations/a%3AoneOnOneConversationId/members/29%3AUser-Id')
             .reply(200, members[0]);
 
+        const fetchExpectationCustomProperties = nock('https://api.botframework.com')
+            .get('/v3/conversations/a%3AoneOnOneConversationId/members/customMemberId')
+            .reply(200, members[0]);
+
         const adapter = getTeamsTestAdapter(conversationReference);
 
         await TestUtils.runTestScript(resourceExplorer, this.test.title, adapter);
 
         ok(fetchExpectation.isDone());
+        ok(fetchExpectationCustomProperties.isDone());
     });
 
     it('Action_GetMemberError', async function () {
         await TestUtils.runTestScript(resourceExplorer, this.test.title);
+    });
+
+    it('Action_GetMemberErrorWithAdapter', async function () {
+        const conversationReference = getPersonalConversationReference();
+        const adapter = getTeamsTestAdapter(conversationReference);
+
+        await TestUtils.runTestScript(resourceExplorer, this.test.title, adapter);
     });
 
     it('Action_GetPagedMembers', async function () {
@@ -188,11 +210,16 @@ describe('Actions', function () {
             .get('/v3/conversations/19%3AgroupChatId%40thread.v2/pagedmembers')
             .reply(200, { continuationToken: 'token', members });
 
+        const fetchExpectationCustomProperties = nock('https://api.botframework.com')
+            .get('/v3/conversations/19%3AgroupChatId%40thread.v2/pagedmembers?pageSize=2&continuationToken=token')
+            .reply(200, { continuationToken: 'customToken', members: members.slice(0, 2) });
+
         const adapter = getTeamsTestAdapter(conversationReference);
 
         await TestUtils.runTestScript(resourceExplorer, this.test.title, adapter);
 
         ok(fetchExpectation.isDone());
+        ok(fetchExpectationCustomProperties.isDone());
     });
 
     it('Action_GetPagedMembersError', async function () {
@@ -207,11 +234,16 @@ describe('Actions', function () {
             .get('/v3/conversations/team-id-1/pagedmembers')
             .reply(200, { continuationToken: 'token', members });
 
+        const fetchExpectationCustomProperties = nock('https://api.botframework.com')
+            .get('/v3/conversations/team-id-1/pagedmembers?pageSize=2&continuationToken=token')
+            .reply(200, { continuationToken: 'customToken', members: members.slice(0, 2) });
+
         const adapter = getTeamsTestAdapter(conversationReference);
 
         await TestUtils.runTestScript(resourceExplorer, this.test.title, adapter);
 
         ok(fetchExpectation.isDone());
+        ok(fetchExpectationCustomProperties.isDone());
     });
 
     it('Action_GetPagedTeamMembersError', async function () {
@@ -239,11 +271,16 @@ describe('Actions', function () {
             .get('/v3/teams/team-id-1/conversations')
             .reply(200, { conversations });
 
+        const fetchExpectationCustomProperties = nock('https://api.botframework.com')
+            .get('/v3/teams/customTeamId/conversations')
+            .reply(200, { conversations });
+
         const adapter = getTeamsTestAdapter(conversationReference);
 
         await TestUtils.runTestScript(resourceExplorer, this.test.title, adapter);
 
         ok(fetchExpectation.isDone());
+        ok(fetchExpectationCustomProperties.isDone());
     });
 
     it('Action_GetTeamChannelsError', async function () {
@@ -262,11 +299,16 @@ describe('Actions', function () {
             .get('/v3/teams/team-id-1')
             .reply(200, teamDetails);
 
+        const fetchExpectationCustomProperties = nock('https://api.botframework.com')
+            .get('/v3/teams/customTeamId')
+            .reply(200, teamDetails);
+
         const adapter = getTeamsTestAdapter(conversationReference);
 
         await TestUtils.runTestScript(resourceExplorer, this.test.title, adapter);
 
         ok(fetchExpectation.isDone());
+        ok(fetchExpectationCustomProperties.isDone());
     });
 
     it('Action_GetTeamDetailsError', async function () {
@@ -281,19 +323,34 @@ describe('Actions', function () {
             .get('/v3/conversations/team-id-1/members/29%3AUser-Id')
             .reply(200, members[0]);
 
+        const fetchExpectationCustomProperties = nock('https://api.botframework.com')
+            .get('/v3/conversations/customTeamId/members/customMemberId')
+            .reply(200, members[0]);
+
         const adapter = getTeamsTestAdapter(conversationReference);
 
         await TestUtils.runTestScript(resourceExplorer, this.test.title, adapter);
 
         ok(fetchExpectation.isDone());
+        ok(fetchExpectationCustomProperties.isDone());
     });
 
     it('Action_GetTeamMemberError', async function () {
         await TestUtils.runTestScript(resourceExplorer, this.test.title);
     });
 
-    // TODO: Error tests for all below
+    it('Action_GetTeamMemberErrorWithAdapter', async function () {
+        const conversationReference = getGroupConversationReference();
+        const adapter = getTeamsTestAdapter(conversationReference);
+
+        await TestUtils.runTestScript(resourceExplorer, this.test.title, adapter);
+    });
+
     it('Action_SendAppBasedLinkQueryResponse', async function () {
+        await TestUtils.runTestScript(resourceExplorer, this.test.title);
+    });
+
+    it('Action_SendAppBasedLinkQueryResponseError', async function () {
         await TestUtils.runTestScript(resourceExplorer, this.test.title);
     });
 
@@ -301,18 +358,30 @@ describe('Actions', function () {
         const conversationReference = getGroupConversationReference();
         const adapter = getTeamsTestAdapter(conversationReference);
 
-        const fetchExpectation = nock('https://api.botframework.com').post('/v3/conversations').reply(200);
+        const fetchExpectation = nock('https://api.botframework.com').post('/v3/conversations').times(2).reply(200);
 
         await TestUtils.runTestScript(resourceExplorer, this.test.title, adapter);
 
         ok(fetchExpectation.isDone());
     });
 
+    it('Action_SendMessageToTeamsChannelError', async function () {
+        await TestUtils.runTestScript(resourceExplorer, this.test.title);
+    });
+
     it('Action_SendMessagingExtensionActionResponse', async function () {
         await TestUtils.runTestScript(resourceExplorer, this.test.title);
     });
 
+    it('Action_SendMessagingExtensionActionResponseError', async function () {
+        await TestUtils.runTestScript(resourceExplorer, this.test.title);
+    });
+
     it('Action_SendMessagingExtensionAttachmentsResponse', async function () {
+        await TestUtils.runTestScript(resourceExplorer, this.test.title);
+    });
+
+    it('Action_SendMessagingExtensionAttachmentsResponseError', async function () {
         await TestUtils.runTestScript(resourceExplorer, this.test.title);
     });
 
@@ -323,7 +392,24 @@ describe('Actions', function () {
         await TestUtils.runTestScript(resourceExplorer, this.test.title, adapter);
     });
 
+    it('Action_SendMessagingExtensionAuthResponseError', async function () {
+        const adapter = getTeamsTestAdapter();
+        adapter.getUserToken = null;
+        await TestUtils.runTestScript(resourceExplorer, this.test.title, adapter);
+    });
+
+    it('Action_SendMessagingExtensionAuthResponseErrorWithAdapter', async function () {
+        const adapter = getTeamsTestAdapter();
+        adapter.addUserToken('test connection', 'test', 'user1', 'token');
+
+        await TestUtils.runTestScript(resourceExplorer, this.test.title, adapter);
+    });
+
     it('Action_SendMessagingExtensionBotMessagePreviewResponse', async function () {
+        await TestUtils.runTestScript(resourceExplorer, this.test.title);
+    });
+
+    it('Action_SendMessagingExtensionBotMessagePreviewResponseError', async function () {
         await TestUtils.runTestScript(resourceExplorer, this.test.title);
     });
 
@@ -331,7 +417,15 @@ describe('Actions', function () {
         await TestUtils.runTestScript(resourceExplorer, this.test.title);
     });
 
+    it('Action_SendMessagingExtensionConfigQuerySettingUrlResponseError', async function () {
+        await TestUtils.runTestScript(resourceExplorer, this.test.title);
+    });
+
     it('Action_SendMessagingExtensionMessageResponse', async function () {
+        await TestUtils.runTestScript(resourceExplorer, this.test.title);
+    });
+
+    it('Action_SendMessagingExtensionMessageResponseError', async function () {
         await TestUtils.runTestScript(resourceExplorer, this.test.title);
     });
 
@@ -339,7 +433,15 @@ describe('Actions', function () {
         await TestUtils.runTestScript(resourceExplorer, this.test.title);
     });
 
+    it('Action_SendMessagingExtensionSelectItemResponseError', async function () {
+        await TestUtils.runTestScript(resourceExplorer, this.test.title);
+    });
+
     it('Action_SendTaskModuleCardResponse', async function () {
+        await TestUtils.runTestScript(resourceExplorer, this.test.title);
+    });
+
+    it('Action_SendTaskModuleCardResponseError', async function () {
         await TestUtils.runTestScript(resourceExplorer, this.test.title);
     });
 
@@ -348,6 +450,10 @@ describe('Actions', function () {
     });
 
     it('Action_SendTaskModuleUrlResponse', async function () {
+        await TestUtils.runTestScript(resourceExplorer, this.test.title);
+    });
+
+    it('Action_SendTaskModuleUrlResponseError', async function () {
         await TestUtils.runTestScript(resourceExplorer, this.test.title);
     });
 });

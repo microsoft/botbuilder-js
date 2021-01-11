@@ -85,7 +85,9 @@ export class SendAppBasedLinkQueryResponse
                 );
             }
         } else {
-            throw new Error('An attachment is required for Send Messaging Extension Link Query Response.');
+            throw new Error(
+                'An activity with attachments is required for Send Messaging Extension Link Query Response.'
+            );
         }
 
         const result = <MessagingExtensionResult>{

@@ -11,6 +11,13 @@
                     {
                         "$kind": "Teams.GetMeetingParticipant",
                         "property": "user.result"
+                    },
+                    {
+                        "$kind": "Teams.GetMeetingParticipant",
+                        "property": "user.resultWithCustomProperties",
+                        "meetingId": "customMeetingId",
+                        "participantId": "customParticipantId",
+                        "tenantId": "customTenantId"
                     }
                 ]
             }
@@ -41,7 +48,14 @@
                 "user.result.conversation.name == 'oneOnOne'",
                 "user.result.conversation.tenantId == 'tenantId-Guid'",
                 "user.result.meeting.role == 'Organizer'",
-                "user.result.user.userPrincipalName == 'userPrincipalName-1'"
+                "user.result.user.userPrincipalName == 'userPrincipalName-1'",
+                "user.resultWithCustomProperties.conversation.conversationType == 'personal'",
+                "user.resultWithCustomProperties.conversation.id == 'a:oneOnOneConversationId'",
+                "user.resultWithCustomProperties.conversation.isGroup == false",
+                "user.resultWithCustomProperties.conversation.name == 'oneOnOne'",
+                "user.resultWithCustomProperties.conversation.tenantId == 'tenantId-Guid'",
+                "user.resultWithCustomProperties.meeting.role == 'Organizer'",
+                "user.resultWithCustomProperties.user.userPrincipalName == 'userPrincipalName-1'"
             ]
         }
     ]

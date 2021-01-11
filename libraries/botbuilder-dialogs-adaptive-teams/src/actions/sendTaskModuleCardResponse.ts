@@ -77,7 +77,7 @@ export class SendTaskModuleCardResponse
 
             attachment = boundActivity.attachments[0] as Attachment;
         } else {
-            throw new Error('A valid card is required for Task Module Card Response');
+            throw new Error('A valid card is required for Task Module Card Response.');
         }
 
         const title = this.title?.getValue(dc.state);

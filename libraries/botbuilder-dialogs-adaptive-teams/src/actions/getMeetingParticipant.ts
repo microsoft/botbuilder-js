@@ -119,7 +119,7 @@ export class GetMeetingParticipant extends Dialog implements GetMeetingParticipa
              * throws an exception if the expression provided somehow maps to an invalid result.
              */
             throw new Error(
-                'GetMeetingParticipant could determine the participant id by expression value provided. participantId is required.'
+                'GetMeetingParticipant could not determine the participant id by expression value provided. participantId is required.'
             );
         }
 

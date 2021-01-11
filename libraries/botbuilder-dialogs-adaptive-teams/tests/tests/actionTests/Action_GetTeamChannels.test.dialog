@@ -11,6 +11,11 @@
                     {
                         "$kind": "Teams.GetTeamChannels",
                         "property": "user.result"
+                    },
+                    {
+                        "$kind": "Teams.GetTeamChannels",
+                        "property": "user.resultWithCustomProperties",
+                        "teamId": "customTeamId"
                     }
                 ]
             }
@@ -40,7 +45,13 @@
                 "user.result[1].id == '19:somechannelId2e5ab3df9ae9b594bdb@thread.skype'",
                 "user.result[1].name == 'Testing1'",
                 "user.result[2].id == '19:somechannelId388ade16aa4dd375e69@thread.skype'",
-                "user.result[2].name == 'Testing2'"
+                "user.result[2].name == 'Testing2'",
+                "user.resultWithCustomProperties[0].id == '19:ChannelIdgeneralChannelId@thread.skype'",
+                "user.resultWithCustomProperties[0].name == 'Testing0'",
+                "user.resultWithCustomProperties[1].id == '19:somechannelId2e5ab3df9ae9b594bdb@thread.skype'",
+                "user.resultWithCustomProperties[1].name == 'Testing1'",
+                "user.resultWithCustomProperties[2].id == '19:somechannelId388ade16aa4dd375e69@thread.skype'",
+                "user.resultWithCustomProperties[2].name == 'Testing2'"
             ]
         }
     ]

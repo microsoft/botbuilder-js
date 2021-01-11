@@ -11,6 +11,11 @@
                     {
                         "$kind": "Teams.GetTeamDetails",
                         "property": "user.result"
+                    },
+                    {
+                        "$kind": "Teams.GetTeamDetails",
+                        "property": "user.resultWithCustomProperties",
+                        "teamId": "customTeamId"
                     }
                 ]
             }
@@ -37,7 +42,10 @@
             "assertions": [
                 "user.result.aadGroupId == 'Team-aadGroupId'",
                 "user.result.id == '19:generalChannelIdgeneralChannelId@thread.skype'",
-                "user.result.name == 'TeamName'"
+                "user.result.name == 'TeamName'",
+                "user.resultWithCustomProperties.aadGroupId == 'Team-aadGroupId'",
+                "user.resultWithCustomProperties.id == '19:generalChannelIdgeneralChannelId@thread.skype'",
+                "user.resultWithCustomProperties.name == 'TeamName'"
             ]
         }
     ]

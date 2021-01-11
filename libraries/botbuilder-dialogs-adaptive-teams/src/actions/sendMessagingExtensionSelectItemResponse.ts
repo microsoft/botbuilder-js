@@ -72,7 +72,7 @@ export class SendMessagingExtensionSelectItemResponse
 
         if (!boundActivity.attachments) {
             throw new Error(
-                `Invalid activity. A valid attachment is required for ${SendMessagingExtensionSelectItemResponse.$kind} .`
+                `Invalid activity. A valid attachment is required for ${SendMessagingExtensionSelectItemResponse.$kind}.`
             );
         }
 

@@ -12,6 +12,12 @@
                     {
                         "$kind": "Teams.GetTeamMember",
                         "property": "user.result"
+                    },
+                    {
+                        "$kind": "Teams.GetTeamMember",
+                        "property": "user.resultWithCustomProperties",
+                        "memberId": "customMemberId",
+                        "teamId": "customTeamId"
                     }
                 ]
             }
@@ -43,7 +49,15 @@
                 "user.result.objectId == 'User-0-Object-Id'",
                 "user.result.surname == 0",
                 "user.result.tenantId == 'tenant-id-1'",
-                "user.result.userPrincipalName == 'user0@microsoft.com'"
+                "user.result.userPrincipalName == 'user0@microsoft.com'",
+                "user.resultWithCustomProperties.email == 'User.0@microsoft.com'",
+                "user.resultWithCustomProperties.givenName == 'User'",
+                "user.resultWithCustomProperties.id == '29:User-Id-0'",
+                "user.resultWithCustomProperties.name == 'getTeamsUser-0'",
+                "user.resultWithCustomProperties.objectId == 'User-0-Object-Id'",
+                "user.resultWithCustomProperties.surname == 0",
+                "user.resultWithCustomProperties.tenantId == 'tenant-id-1'",
+                "user.resultWithCustomProperties.userPrincipalName == 'user0@microsoft.com'"
             ]
         }
     ]

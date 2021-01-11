@@ -11,6 +11,12 @@
                     {
                         "$kind": "Teams.GetPagedMembers",
                         "property": "user.result"
+                    },
+                    {
+                        "$kind": "Teams.GetPagedMembers",
+                        "property": "user.resultWithCustomProperties",
+                        "continuationToken": "token",
+                        "pageSize": 2
                     }
                 ]
             }
@@ -44,7 +50,15 @@
                 "user.result.members[1].objectId == 'User-1-Object-Id'",
                 "user.result.members[2].email == 'User.2@microsoft.com'",
                 "user.result.members[2].id == '29:User-Id-2'",
-                "user.result.members[2].objectId == 'User-2-Object-Id'"
+                "user.result.members[2].objectId == 'User-2-Object-Id'",
+                "user.resultWithCustomProperties.continuationToken == 'customToken'",
+                "user.resultWithCustomProperties.members[0].email == 'User.0@microsoft.com'",
+                "user.resultWithCustomProperties.members[0].id == '29:User-Id-0'",
+                "user.resultWithCustomProperties.members[0].objectId == 'User-0-Object-Id'",
+                "user.resultWithCustomProperties.members[1].email == 'User.1@microsoft.com'",
+                "user.resultWithCustomProperties.members[1].id == '29:User-Id-1'",
+                "user.resultWithCustomProperties.members[1].objectId == 'User-1-Object-Id'",
+                "not(exists(user.resultWithCustomProperties.members[2]))"
             ]
         }
     ]

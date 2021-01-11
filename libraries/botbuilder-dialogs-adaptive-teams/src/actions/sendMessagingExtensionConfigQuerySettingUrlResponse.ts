@@ -75,7 +75,7 @@ export class SendMessagingExtensionConfigQuerySettingUrlResponse
 
         const configUrl = this.configUrl?.getValue(dc.state);
         if (!configUrl) {
-            throw new Error('configUrl is required for a Messaging Extension Config Response');
+            throw new Error('configUrl is required for a Messaging Extension Config Response.');
         }
 
         const response = <MessagingExtensionResponse>{

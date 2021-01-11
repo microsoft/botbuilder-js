@@ -66,6 +66,10 @@ export class SendMessagingExtensionMessageResponse
 
         const message = this.message?.getValue(dc.state);
 
+        if (!message) {
+            throw new Error(`A message is required for ${SendMessagingExtensionMessageResponse.$kind}.`);
+        }
+
         const response = <MessagingExtensionResponse>{
             composeExtension: <MessagingExtensionResult>{
                 type: MessagingExtensionResultResponseType.message.toString(),

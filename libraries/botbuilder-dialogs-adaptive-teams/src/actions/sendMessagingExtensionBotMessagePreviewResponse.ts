@@ -86,7 +86,7 @@ export class SendMessagingExtensionBotMessagePreviewResponse
 
             attachment = boundActivity.attachments[0] as Attachment;
         } else {
-            throw new Error('A valid card is required for Send Messaging Extension Bot Message Preview Response');
+            throw new Error('A valid card is required for Send Messaging Extension Bot Message Preview Response.');
         }
 
         const response = <MessagingExtensionActionResponse>{
