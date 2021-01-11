@@ -1,7 +1,6 @@
 {
     "$schema": "../../../../botbuilder-dialogs-adaptive/tests/schema/test.schema",
     "$kind": "Microsoft.Test.Script",
-    "enableTrace": true,
     "dialog": {
         "$kind": "Microsoft.AdaptiveDialog",
         "id": "planningTest",
@@ -11,17 +10,11 @@
                 "actions": [
                     {
                         "$kind": "Teams.SendMessageToTeamsChannel",
-                        "conversationReferenceProperty": "$conversationReferenceProperty",
+                        "conversationReferenceProperty": "user.result",
                         "activity": {
                             "type": "message",
                             "text": "This is a message to a Teams Channel"
                         }
-                    },
-                    {
-                        "$kind": "Microsoft.TraceActivity",
-                        "name": "sendResult",
-                        "valueType": "memory",
-                        "value": "=$conversationReferenceProperty"
                     }
                 ]
             }
@@ -41,14 +34,14 @@
             }
         },
         {
-            "$kind": "Microsoft.Test.AssertReplyActivity",
+            "$kind": "Microsoft.Test.MemoryAssertions",
             "assertions": [
-                "value.activityId == '0'",
-                "value.channelId == 'msteams'",
-                "value.conversation.conversationType == 'groupChat'",
-                "value.conversation.isGroup == true",
-                "value.conversation.name == 'group'",
-                "value.conversation.tenantId == 'tenantId-Guid'"
+                "user.result.activityId == '0'",
+                "user.result.channelId == 'msteams'",
+                "user.result.conversation.conversationType == 'groupChat'",
+                "user.result.conversation.isGroup == true",
+                "user.result.conversation.name == 'group'",
+                "user.result.conversation.tenantId == 'tenantId-Guid'"
             ]
         }
     ]

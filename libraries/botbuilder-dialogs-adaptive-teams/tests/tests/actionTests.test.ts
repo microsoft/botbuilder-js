@@ -26,14 +26,6 @@ import nock = require('nock');
 // TODO: Write tests that catch all errors for each action.
 
 /**
- * A NOTE ON HOW THE test.dialog FILES WORK
- *
- * Many of them use `Microsoft.TraceActivity` instead of `Microsoft.SendActivity` because at the time of this writing,
- * there is no way to send an object from memory (e.g. $result) without it being formatted to text using SendActivity.
- * In order to use `Microsoft.TraceActivity` like this, the test.dialog must also have the `enableTrace` property set to true.
- */
-
-/**
  * Registers mocha hooks for proper usage
  * TODO: Import function from testing/botbuilder-test-utils after PR merged:
  * https://github.com/microsoft/botbuilder-js/pull/3138
@@ -47,7 +39,8 @@ export function mocha(): void {
 
 const getTeamsTestAdapter = (convo?: ConversationReference): TestAdapter => {
     const adapter = new TestAdapter(convo);
-    // This is required because TeamsInfo checks that the adapter has a createConnectorClient method
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore: This is required because TeamsInfo checks that the adapter has a createConnectorClient method
     // and TestAdapter doesn't have one, natively.
     adapter.createConnectorClient = () => {
         return new ConnectorClient(new MicrosoftAppCredentials('', ''));
@@ -174,7 +167,7 @@ describe('Actions', function () {
 
         const fetchExpectation = nock('https://api.botframework.com')
             .get('/v3/conversations/a%3AoneOnOneConversationId/members/29%3AUser-Id')
-            .reply(200, members);
+            .reply(200, members[0]);
 
         const adapter = getTeamsTestAdapter(conversationReference);
 

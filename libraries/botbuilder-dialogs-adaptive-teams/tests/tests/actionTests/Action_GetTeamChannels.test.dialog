@@ -1,7 +1,6 @@
 {
     "$schema": "../../../../botbuilder-dialogs-adaptive/tests/schema/test.schema",
     "$kind": "Microsoft.Test.Script",
-    "enableTrace": true,
     "dialog": {
         "$kind": "Microsoft.AdaptiveDialog",
         "id": "planningTest",
@@ -11,13 +10,7 @@
                 "actions": [
                     {
                         "$kind": "Teams.GetTeamChannels",
-                        "property": "$result"
-                    },
-                    {
-                        "$kind": "Microsoft.TraceActivity",
-                        "name": "sendResult",
-                        "valueType": "memory",
-                        "value": "=$result"
+                        "property": "user.result"
                     }
                 ]
             }
@@ -40,14 +33,14 @@
             }
         },
         {
-            "$kind": "Microsoft.Test.AssertReplyActivity",
+            "$kind": "Microsoft.Test.MemoryAssertions",
             "assertions": [
-                "value[0].id == '19:ChannelIdgeneralChannelId@thread.skype'",
-                "value[0].name == 'Testing0'",
-                "value[1].id == '19:somechannelId2e5ab3df9ae9b594bdb@thread.skype'",
-                "value[1].name == 'Testing1'",
-                "value[2].id == '19:somechannelId388ade16aa4dd375e69@thread.skype'",
-                "value[2].name == 'Testing2'"
+                "user.result[0].id == '19:ChannelIdgeneralChannelId@thread.skype'",
+                "user.result[0].name == 'Testing0'",
+                "user.result[1].id == '19:somechannelId2e5ab3df9ae9b594bdb@thread.skype'",
+                "user.result[1].name == 'Testing1'",
+                "user.result[2].id == '19:somechannelId388ade16aa4dd375e69@thread.skype'",
+                "user.result[2].name == 'Testing2'"
             ]
         }
     ]

@@ -11,13 +11,7 @@
                 "actions": [
                     {
                         "$kind": "Teams.GetTeamMember",
-                        "property": "$result"
-                    },
-                    {
-                        "$kind": "Microsoft.TraceActivity",
-                        "name": "sendResult",
-                        "valueType": "memory",
-                        "value": "=$result"
+                        "property": "user.result"
                     }
                 ]
             }
@@ -40,16 +34,16 @@
             }
         },
         {
-            "$kind": "Microsoft.Test.AssertReplyActivity",
+            "$kind": "Microsoft.Test.MemoryAssertions",
             "assertions": [
-                "value.email == 'User.0@microsoft.com'",
-                "value.givenName == 'User'",
-                "value.id == '29:User-Id-0'",
-                "value.name == 'getTeamsUser-0'",
-                "value.objectId == 'User-0-Object-Id'",
-                "value.surname == 0",
-                "value.tenantId == 'tenant-id-1'",
-                "value.userPrincipalName == 'user0@microsoft.com'"
+                "user.result.email == 'User.0@microsoft.com'",
+                "user.result.givenName == 'User'",
+                "user.result.id == '29:User-Id-0'",
+                "user.result.name == 'getTeamsUser-0'",
+                "user.result.objectId == 'User-0-Object-Id'",
+                "user.result.surname == 0",
+                "user.result.tenantId == 'tenant-id-1'",
+                "user.result.userPrincipalName == 'user0@microsoft.com'"
             ]
         }
     ]

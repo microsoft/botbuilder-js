@@ -1,7 +1,6 @@
 {
     "$schema": "../../../../botbuilder-dialogs-adaptive/tests/schema/test.schema",
     "$kind": "Microsoft.Test.Script",
-    "enableTrace": true,
     "dialog": {
         "$kind": "Microsoft.AdaptiveDialog",
         "id": "planningTest",
@@ -11,13 +10,7 @@
                 "actions": [
                     {
                         "$kind": "Teams.GetTeamDetails",
-                        "property": "$result"
-                    },
-                    {
-                        "$kind": "Microsoft.TraceActivity",
-                        "name": "sendResult",
-                        "valueType": "memory",
-                        "value": "=$result"
+                        "property": "user.result"
                     }
                 ]
             }
@@ -40,11 +33,11 @@
             }
         },
         {
-            "$kind": "Microsoft.Test.AssertReplyActivity",
+            "$kind": "Microsoft.Test.MemoryAssertions",
             "assertions": [
-                "value.aadGroupId == 'Team-aadGroupId'",
-                "value.id == '19:generalChannelIdgeneralChannelId@thread.skype'",
-                "value.name == 'TeamName'"
+                "user.result.aadGroupId == 'Team-aadGroupId'",
+                "user.result.id == '19:generalChannelIdgeneralChannelId@thread.skype'",
+                "user.result.name == 'TeamName'"
             ]
         }
     ]

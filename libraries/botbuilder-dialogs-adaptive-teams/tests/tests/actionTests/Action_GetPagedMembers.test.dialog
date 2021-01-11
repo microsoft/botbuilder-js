@@ -1,7 +1,6 @@
 {
     "$schema": "../../../../botbuilder-dialogs-adaptive/tests/schema/test.schema",
     "$kind": "Microsoft.Test.Script",
-    "enableTrace": true,
     "dialog": {
         "$kind": "Microsoft.AdaptiveDialog",
         "id": "planningTest",
@@ -11,13 +10,7 @@
                 "actions": [
                     {
                         "$kind": "Teams.GetPagedMembers",
-                        "property": "$result"
-                    },
-                    {
-                        "$kind": "Microsoft.TraceActivity",
-                        "name": "sendResult",
-                        "valueType": "memory",
-                        "value": "=$result"
+                        "property": "user.result"
                     }
                 ]
             }
@@ -40,18 +33,18 @@
             }
         },
         {
-            "$kind": "Microsoft.Test.AssertReplyActivity",
+            "$kind": "Microsoft.Test.MemoryAssertions",
             "assertions": [
-                "value.continuationToken == 'token'",
-                "value.members[0].email == 'User.0@microsoft.com'",
-                "value.members[0].id == '29:User-Id-0'",
-                "value.members[0].objectId == 'User-0-Object-Id'",
-                "value.members[1].email == 'User.1@microsoft.com'",
-                "value.members[1].id == '29:User-Id-1'",
-                "value.members[1].objectId == 'User-1-Object-Id'",
-                "value.members[2].email == 'User.2@microsoft.com'",
-                "value.members[2].id == '29:User-Id-2'",
-                "value.members[2].objectId == 'User-2-Object-Id'"
+                "user.result.continuationToken == 'token'",
+                "user.result.members[0].email == 'User.0@microsoft.com'",
+                "user.result.members[0].id == '29:User-Id-0'",
+                "user.result.members[0].objectId == 'User-0-Object-Id'",
+                "user.result.members[1].email == 'User.1@microsoft.com'",
+                "user.result.members[1].id == '29:User-Id-1'",
+                "user.result.members[1].objectId == 'User-1-Object-Id'",
+                "user.result.members[2].email == 'User.2@microsoft.com'",
+                "user.result.members[2].id == '29:User-Id-2'",
+                "user.result.members[2].objectId == 'User-2-Object-Id'"
             ]
         }
     ]

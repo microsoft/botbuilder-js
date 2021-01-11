@@ -1,7 +1,6 @@
 {
     "$schema": "../../../../botbuilder-dialogs-adaptive/tests/schema/test.schema",
     "$kind": "Microsoft.Test.Script",
-    "enableTrace": true,
     "dialog": {
         "$kind": "Microsoft.AdaptiveDialog",
         "id": "planningTest",
@@ -11,13 +10,7 @@
                 "actions": [
                     {
                         "$kind": "Teams.GetMeetingParticipant",
-                        "property": "$result"
-                    },
-                    {
-                        "$kind": "Microsoft.TraceActivity",
-                        "name": "sendResult",
-                        "valueType": "memory",
-                        "value": "=$result"
+                        "property": "user.result"
                     }
                 ]
             }
@@ -40,16 +33,15 @@
             }
         },
         {
-            "$kind": "Microsoft.Test.AssertReplyActivity",
+            "$kind": "Microsoft.Test.MemoryAssertions",
             "assertions": [
-                "type == 'trace'",
-                "value.conversation.conversationType == 'personal'",
-                "value.conversation.id == 'a:oneOnOneConversationId'",
-                "value.conversation.isGroup == false",
-                "value.conversation.name == 'oneOnOne'",
-                "value.conversation.tenantId == 'tenantId-Guid'",
-                "value.meeting.role == 'Organizer'",
-                "value.user.userPrincipalName == 'userPrincipalName-1'"
+                "user.result.conversation.conversationType == 'personal'",
+                "user.result.conversation.id == 'a:oneOnOneConversationId'",
+                "user.result.conversation.isGroup == false",
+                "user.result.conversation.name == 'oneOnOne'",
+                "user.result.conversation.tenantId == 'tenantId-Guid'",
+                "user.result.meeting.role == 'Organizer'",
+                "user.result.user.userPrincipalName == 'userPrincipalName-1'"
             ]
         }
     ]
