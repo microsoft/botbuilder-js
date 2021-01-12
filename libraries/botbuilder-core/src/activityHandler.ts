@@ -573,10 +573,15 @@ export class ActivityHandler extends ActivityHandlerBase {
      * - Continue by calling [defaultNextEvent](xref:botbuilder-core.ActivityHandler.defaultNextEvent).
      */
     protected async dispatchInstallationUpdateActivity(context: TurnContext): Promise<void> {
-        if (context.activity.action == 'add' || context.activity.action == 'remove') {
-            await super.onInstallationUpdateActivity(context);
-        } else {
-            await this.defaultNextEvent(context)();
+        switch (context.activity.action) {
+            case 'add':
+            case 'add-upgrade':
+            case 'remove':
+            case 'remove-upgrade':
+                await super.onInstallationUpdateActivity(context);
+                break;
+            default:
+                await this.defaultNextEvent(context)();
         }
     }
 
