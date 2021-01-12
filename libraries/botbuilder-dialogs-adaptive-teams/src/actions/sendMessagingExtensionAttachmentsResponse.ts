@@ -8,14 +8,13 @@
 
 import {
     BoolExpression,
-    BoolExpressionConverter,
     EnumExpression,
     EnumExpressionConverter,
     Expression,
     StringExpression,
     StringExpressionConverter,
 } from 'adaptive-expressions';
-import { Activity, MessagingExtensionResult } from 'botbuilder';
+import { Activity, AttachmentLayout, MessagingExtensionResult } from 'botbuilder';
 import {
     Converter,
     ConverterFactory,
@@ -26,16 +25,13 @@ import {
     TemplateInterface,
 } from 'botbuilder-dialogs';
 import { ActivityTemplateConverter } from 'botbuilder-dialogs-adaptive/lib/converters';
-import { BaseSendTaskModuleContinueResponse } from './baseSendTaskModuleContinueResponse';
 import { BaseTeamsCacheInfoResponseDialog } from './baseTeamsCacheInfoResponseDialog';
-import { MessagingExtensionAttachmentLayoutResponseType } from './messagingExtensionAttachmentLayoutResponseType';
-import { MessagingExtensionResultResponseType } from './messagingExtensionResultResponseType';
 
 export interface SendMessagingExtensionAttachmentsResponseConfiguration extends DialogConfiguration {
     disabled?: boolean | string | BoolExpression;
     property?: string | Expression | StringExpression;
     attachments?: TemplateInterface<Activity, DialogStateManager>;
-    attachmentLayout?: string | Expression | EnumExpression<MessagingExtensionAttachmentLayoutResponseType>;
+    attachmentLayout?: string | Expression | EnumExpression<AttachmentLayout>;
 }
 
 /**
@@ -60,9 +56,7 @@ export class SendMessagingExtensionAttachmentsResponse
      * @default
      * list
      */
-    public attachmentLayout: EnumExpression<MessagingExtensionAttachmentLayoutResponseType> = new EnumExpression(
-        MessagingExtensionAttachmentLayoutResponseType.list
-    );
+    public attachmentLayout: EnumExpression<AttachmentLayout> = new EnumExpression('list');
 
     public getConverter(
         property: keyof SendMessagingExtensionAttachmentsResponseConfiguration
@@ -103,7 +97,7 @@ export class SendMessagingExtensionAttachmentsResponse
         const layout = this.attachmentLayout?.getValue(dc.state);
 
         const result = <MessagingExtensionResult>{
-            type: MessagingExtensionResultResponseType.result.toString(),
+            type: 'result',
             attachmentLayout: layout.toString(),
             attachments: activity.attachments,
         };

@@ -22,7 +22,6 @@ import {
 } from 'botbuilder';
 import { Converter, ConverterFactory, DialogConfiguration, DialogContext, DialogTurnResult } from 'botbuilder-dialogs';
 import { BaseTeamsCacheInfoResponseDialog } from './baseTeamsCacheInfoResponseDialog';
-import { MessagingExtensionResultResponseType } from './messagingExtensionResultResponseType';
 
 export interface SendMessagingExtensionConfigQuerySettingUrlResponseConfiguration extends DialogConfiguration {
     disabled?: boolean | string | BoolExpression;
@@ -80,7 +79,7 @@ export class SendMessagingExtensionConfigQuerySettingUrlResponse
 
         const response = <MessagingExtensionResponse>{
             composeExtension: <MessagingExtensionResult>{
-                type: MessagingExtensionResultResponseType.config.toString(),
+                type: 'config',
                 suggestedActions: <MessagingExtensionSuggestedAction>{
                     actions: [
                         <CardAction>{

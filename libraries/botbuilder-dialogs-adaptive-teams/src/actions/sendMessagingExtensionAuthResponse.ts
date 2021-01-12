@@ -32,7 +32,6 @@ import {
     DialogTurnResult,
 } from 'botbuilder-dialogs';
 import { BaseSendTaskModuleContinueResponse } from './baseSendTaskModuleContinueResponse';
-import { MessagingExtensionResultResponseType } from './messagingExtensionResultResponseType';
 
 export interface SendMessagingExtensionAuthResponseConfiguration extends DialogConfiguration {
     disabled?: boolean | string | BoolExpression;
@@ -171,7 +170,7 @@ export class SendMessagingExtensionAuthResponse
         const signInLink = await tokenProvider.getSignInLink(dc.context, connectionName);
 
         const result = <MessagingExtensionResult>{
-            type: MessagingExtensionResultResponseType.auth.toString(),
+            type: 'auth',
             suggestedActions: <MessagingExtensionSuggestedAction>{
                 actions: [
                     <CardAction>{

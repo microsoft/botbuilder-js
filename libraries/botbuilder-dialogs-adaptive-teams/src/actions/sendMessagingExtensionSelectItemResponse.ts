@@ -19,8 +19,6 @@ import {
 } from 'botbuilder-dialogs';
 import { ActivityTemplateConverter } from 'botbuilder-dialogs-adaptive/lib/converters';
 import { BaseTeamsCacheInfoResponseDialog } from './baseTeamsCacheInfoResponseDialog';
-import { MessagingExtensionAttachmentLayoutResponseType } from './messagingExtensionAttachmentLayoutResponseType';
-import { MessagingExtensionResultResponseType } from './messagingExtensionResultResponseType';
 
 export interface SendMessagingExtensionSelectItemResponseConfiguration extends DialogConfiguration {
     disabled?: boolean | string | BoolExpression;
@@ -60,10 +58,10 @@ export class SendMessagingExtensionSelectItemResponse
      * Called when the dialog is started and pushed onto the dialog stack.
      *
      * @param {DialogContext} dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
-     * @param {object} options Optional, initial information to pass to the dialog.
+     * @param {object} _options Optional, initial information to pass to the dialog.
      * @returns {Promise<DialogTurnResult>} A promise representing the asynchronous operation.
      */
-    public async beginDialog(dc: DialogContext, options?: Record<string, unknown>): Promise<DialogTurnResult> {
+    public async beginDialog(dc: DialogContext, _options?: Record<string, unknown>): Promise<DialogTurnResult> {
         if (this.disabled && this.disabled?.getValue(dc.state)) {
             return dc.endDialog();
         }
@@ -83,8 +81,8 @@ export class SendMessagingExtensionSelectItemResponse
         };
 
         const response = <MessagingExtensionResult>{
-            type: MessagingExtensionResultResponseType.result.toString(),
-            attachmentLayout: MessagingExtensionAttachmentLayoutResponseType.list.toString(),
+            type: 'result',
+            attachmentLayout: 'list',
             attachments: [extensionAttachment],
         };
 

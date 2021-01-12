@@ -16,7 +16,6 @@ import {
 import { MessagingExtensionResponse, MessagingExtensionResult } from 'botbuilder';
 import { Converter, ConverterFactory, DialogConfiguration, DialogContext, DialogTurnResult } from 'botbuilder-dialogs';
 import { BaseTeamsCacheInfoResponseDialog } from './baseTeamsCacheInfoResponseDialog';
-import { MessagingExtensionResultResponseType } from './messagingExtensionResultResponseType';
 
 export interface SendMessagingExtensionMessageResponseConfiguration extends DialogConfiguration {
     disabled?: boolean | string | BoolExpression;
@@ -72,7 +71,7 @@ export class SendMessagingExtensionMessageResponse
 
         const response = <MessagingExtensionResponse>{
             composeExtension: <MessagingExtensionResult>{
-                type: MessagingExtensionResultResponseType.message.toString(),
+                type: 'message',
                 text: message,
             },
             cacheInfo: this.getCacheInfo(dc),

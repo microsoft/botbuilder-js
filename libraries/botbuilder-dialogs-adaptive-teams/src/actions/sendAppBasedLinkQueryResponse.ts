@@ -25,8 +25,6 @@ import {
 } from 'botbuilder-dialogs';
 import { ActivityTemplateConverter } from 'botbuilder-dialogs-adaptive/lib/converters';
 import { BaseTeamsCacheInfoResponseDialog } from './baseTeamsCacheInfoResponseDialog';
-import { MessagingExtensionAttachmentLayoutResponseType } from './messagingExtensionAttachmentLayoutResponseType';
-import { MessagingExtensionResultResponseType } from './messagingExtensionResultResponseType';
 
 export interface SendAppBasedLinkQueryResponseConfiguration extends DialogConfiguration {
     disabled?: boolean | string | BoolExpression;
@@ -91,8 +89,8 @@ export class SendAppBasedLinkQueryResponse
         }
 
         const result = <MessagingExtensionResult>{
-            type: MessagingExtensionResultResponseType.result.toString(),
-            attachmentLayout: MessagingExtensionAttachmentLayoutResponseType.list.toString(),
+            type: 'result',
+            attachmentLayout: 'list',
             attachments: boundActivity.attachments,
         };
 

@@ -26,7 +26,6 @@ import {
 import { ActivityTemplateConverter } from 'botbuilder-dialogs-adaptive/lib/converters';
 import { BaseSendTaskModuleContinueResponse } from './baseSendTaskModuleContinueResponse';
 import { BaseTeamsCacheInfoResponseDialog } from './baseTeamsCacheInfoResponseDialog';
-import { MessagingExtensionResultResponseType } from './messagingExtensionResultResponseType';
 
 export interface SendMessagingExtensionBotMessagePreviewResponseConfiguration extends DialogConfiguration {
     disabled?: boolean | string | BoolExpression;
@@ -91,7 +90,7 @@ export class SendMessagingExtensionBotMessagePreviewResponse
 
         const response = <MessagingExtensionActionResponse>{
             composeExtension: <MessagingExtensionResult>{
-                type: MessagingExtensionResultResponseType.botMessagePreview.toString(),
+                type: 'botMessagePreview',
                 activityPreview: MessageFactory.attachment(<Attachment>{
                     content: attachment.content,
                     contentType: attachment.contentType,

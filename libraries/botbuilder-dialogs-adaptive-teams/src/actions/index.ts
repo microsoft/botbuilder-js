@@ -13,8 +13,6 @@ export * from './getPagedTeamMembers';
 export * from './getTeamChannels';
 export * from './getTeamDetails';
 export * from './getTeamMember';
-export * from './messagingExtensionAttachmentLayoutResponseType';
-export * from './messagingExtensionResultResponseType';
 export * from './sendAppBasedLinkQueryResponse';
 export * from './sendMessageToTeamsChannel';
 export * from './sendMessagingExtensionActionResponse';
