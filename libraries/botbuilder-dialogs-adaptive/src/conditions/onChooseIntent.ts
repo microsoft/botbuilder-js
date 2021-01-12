@@ -6,8 +6,8 @@
  * Licensed under the MIT License.
  */
 
-import { Expression } from 'adaptive-expressions';
 import { Dialog, TurnPath } from 'botbuilder-dialogs';
+import { Expression, ExpressionParserInterface } from 'adaptive-expressions';
 import { OnIntent, OnIntentConfiguration } from './onIntent';
 
 export interface OnChooseIntentConfiguration extends OnIntentConfiguration {
@@ -32,21 +32,19 @@ export class OnChooseIntent extends OnIntent implements OnChooseIntentConfigurat
     }
 
     /**
-     * Create the expression for this rule.
-     *
-     * @returns {Expression} [Expression](xref:adaptive-expressions.Expression) used to evaluate this rule.
+     * Get the expression for this rule.
+     * @param parser [ExpressionParserInterface](xref:adaptive-expressions.ExpressionParserInterface) used to parse a string into an [Expression](xref:adaptive-expressions.Expression).
+     * @returns [Expression](xref:adaptive-expressions.Expression) which will be cached and used to evaluate this rule.
      */
-    public createExpression(): Expression {
-        if (this.intents?.length) {
+    public getExpression(parser: ExpressionParserInterface): Expression {
+        if (this.intents.length > 0) {
             const constraints = this.intents.map(
                 (intent: string): Expression => {
-                    return Expression.parse(
-                        `contains(jPath(${TurnPath.recognized}, '.candidates.intent'), '${intent}')`
-                    );
+                    return parser.parse(`contains(jPath(${TurnPath.recognized}, '.candidates.intent'), '${intent}')`);
                 }
             );
-            return Expression.andExpression(super.createExpression(), ...constraints);
+            return Expression.andExpression(super.getExpression(parser), ...constraints);
         }
-        return super.createExpression();
+        return super.getExpression(parser);
     }
 }

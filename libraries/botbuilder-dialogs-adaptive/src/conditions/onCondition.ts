@@ -10,13 +10,13 @@ import {
     BoolExpressionConverter,
     Constant,
     Expression,
+    ExpressionParserInterface,
     ExpressionParser,
     ExpressionEvaluator,
     FunctionUtils,
     IntExpression,
     IntExpressionConverter,
     ReturnType,
-    ExpressionType,
 } from 'adaptive-expressions';
 import {
     Configurable,
@@ -121,15 +121,54 @@ export class OnCondition extends Configurable implements DialogDependencies, OnC
     }
 
     /**
-     * Get the cached expression for this condition.
-     *
-     * @returns {Expression} Cached [Expression](xref:adaptive-expressions.Expression) used to evaluate this rule.
+     * Get the expression for this condition
+     * @param parser Expression parser.
+     * @returns Expression which will be cached and used to evaluate this condition.
      */
-    public getExpression(): Expression {
+    public getExpression(parser: ExpressionParserInterface): Expression {
         if (!this._fullConstraint) {
-            // if fullConstraint is null then we need to calculate the complete constraint and cache it.
-            this._fullConstraint = this.createExpression();
+            const allExpressions: Expression[] = [];
+            if (this.condition) {
+                try {
+                    allExpressions.push(this.condition.toExpression());
+                } catch (err) {
+                    throw Error(`Invalid constraint expression: ${this.condition.toString()}, ${err.toString()}`);
+                }
+            }
+
+            if (this._extraConstraints.length > 0) {
+                allExpressions.push(...this._extraConstraints);
+            }
+
+            if (allExpressions.length > 0) {
+                this._fullConstraint = Expression.andExpression(...allExpressions);
+            } else {
+                this._fullConstraint = new Constant(true);
+            }
+
+            if (this.runOnce) {
+                // TODO: Once we add support for the MostSpecificSelector the code below will need
+                //       some tweaking to wrap runOnce with a call to 'ignore'.
+                const runOnce = new ExpressionEvaluator(
+                    `runOnce${this.id}`,
+                    (exp, state: DialogStateManager) => {
+                        const basePath = `${AdaptiveDialog.conditionTracker}.${this.id}.`;
+                        const lastRun: number = state.getValue(basePath + 'lastRun');
+                        const paths: string[] = state.getValue(basePath + 'paths');
+                        const changed = state.anyPathChanged(lastRun, paths);
+                        return { value: changed, error: undefined };
+                    },
+                    ReturnType.Boolean,
+                    FunctionUtils.validateUnary
+                );
+
+                this._fullConstraint = Expression.andExpression(
+                    this._fullConstraint,
+                    new Expression(runOnce.type, runOnce)
+                );
+            }
         }
+
         return this._fullConstraint;
     }
 
@@ -180,46 +219,6 @@ export class OnCondition extends Configurable implements DialogDependencies, OnC
      */
     public getDependencies(): Dialog[] {
         return [this.actionScope];
-    }
-
-    /**
-     * Create the expression for this condition.
-     *
-     * @returns {Expression} Expression used to evaluate this rule.
-     */
-    protected createExpression(): Expression {
-        const allExpressions: Expression[] = [];
-        if (this.condition) {
-            allExpressions.push(this.condition.toExpression());
-        }
-
-        if (this._extraConstraints.length) {
-            allExpressions.push(...this._extraConstraints);
-        }
-
-        if (this.runOnce) {
-            const runOnce = new ExpressionEvaluator(
-                `runOnce${this.id}`,
-                (exp, state: DialogStateManager) => {
-                    const basePath = `${AdaptiveDialog.conditionTracker}.${this.id}.`;
-                    const lastRun: number = state.getValue(basePath + 'lastRun');
-                    const paths: string[] = state.getValue(basePath + 'paths');
-                    const changed = state.anyPathChanged(lastRun, paths);
-                    return { value: changed, error: undefined };
-                },
-                ReturnType.Boolean,
-                FunctionUtils.validateUnary
-            );
-            allExpressions.push(
-                new Expression(undefined, Expression.lookup(ExpressionType.Ignore), new Expression(undefined, runOnce))
-            );
-        }
-
-        if (allExpressions.length) {
-            return Expression.andExpression(...allExpressions);
-        } else {
-            return new Constant(true);
-        }
     }
 
     /**

@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 
-import { Expression } from 'adaptive-expressions';
+import { Expression, ExpressionParserInterface } from 'adaptive-expressions';
 import { Channels } from 'botbuilder';
 import { Dialog, TurnPath } from 'botbuilder-dialogs';
 import { OnConversationUpdateActivity } from 'botbuilder-dialogs-adaptive';
@@ -22,13 +22,13 @@ export class OnTeamsTeamHardDeleted extends OnConversationUpdateActivity {
         super(actions, condition);
     }
 
-    protected createExpression(): Expression {
+    public getExpression(parser: ExpressionParserInterface): Expression {
         // if teams channel and eventType == 'teamHardDeleted'
         return Expression.andExpression(
             Expression.parse(
                 `${TurnPath.activity}.channelId == '${Channels.Msteams}' && ${TurnPath.activity}.channelData.eventType == 'teamHardDeleted'`
             ),
-            super.createExpression()
+            super.getExpression(parser)
         );
     }
 }

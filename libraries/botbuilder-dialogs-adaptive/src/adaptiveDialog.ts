@@ -6,7 +6,13 @@
  * Licensed under the MIT License.
  */
 
-import { BoolExpression, BoolExpressionConverter, Expression, IntExpression } from 'adaptive-expressions';
+import {
+    BoolExpression,
+    BoolExpressionConverter,
+    Expression,
+    ExpressionParser,
+    IntExpression,
+} from 'adaptive-expressions';
 import {
     Activity,
     ActivityTypes,
@@ -219,8 +225,9 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> im
             }
 
             // change if triggers type/constraint change
+            const parser = new ExpressionParser();
             this.triggers.forEach((trigger): void => {
-                version += trigger.getExpression().toString();
+                version += trigger.getExpression(parser).toString();
             });
 
             this._internalVersion = StringUtils.hash(version);
@@ -635,13 +642,17 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> im
         }
     }
 
+    /**
+     * @private
+     */
     private async queueFirstMatch(actionContext: ActionContext): Promise<boolean> {
         const selection: OnCondition[] = await this.selector.select(actionContext);
         if (selection.length > 0) {
             const evt = selection[0];
+            const parser = new ExpressionParser();
             const properties: { [key: string]: string } = {
                 DialogId: this.id,
-                Expression: evt.getExpression().toString(),
+                Expression: evt.getExpression(parser).toString(),
                 Kind: `Microsoft.${evt.constructor.name}`,
                 ConditionId: evt.id,
             };

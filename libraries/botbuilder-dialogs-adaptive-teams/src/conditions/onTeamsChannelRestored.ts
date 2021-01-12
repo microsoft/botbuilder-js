@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 
-import { Expression } from 'adaptive-expressions';
+import { Expression, ExpressionParserInterface } from 'adaptive-expressions';
 import { Channels } from 'botbuilder';
 import { Dialog, TurnPath } from 'botbuilder-dialogs';
 import { OnConversationUpdateActivity } from 'botbuilder-dialogs-adaptive';
@@ -22,13 +22,13 @@ export class OnTeamsChannelRestored extends OnConversationUpdateActivity {
         super(actions, condition);
     }
 
-    protected createExpression(): Expression {
+    public getExpression(parser: ExpressionParserInterface): Expression {
         // if teams channel and eventType == 'channelRestored'
         return Expression.andExpression(
             Expression.parse(
                 `${TurnPath.activity}.channelId == '${Channels.Msteams}' && ${TurnPath.activity}.channelData.eventType == 'channelRestored'`
             ),
-            super.createExpression()
+            super.getExpression(parser)
         );
     }
 }

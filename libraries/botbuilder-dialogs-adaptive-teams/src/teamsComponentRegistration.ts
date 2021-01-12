@@ -7,8 +7,13 @@
  */
 
 import { OnTeamsAppBasedLinkQuery } from './conditions/onTeamsAppBasedLinkQuery';
-import { ComponentDeclarativeTypes } from 'botbuilder-dialogs-declarative';
-import { AdaptiveComponentRegistration, OnActivityConfiguration } from 'botbuilder-dialogs-adaptive';
+import {
+    ComponentDeclarativeTypes,
+    CustomDeserializer,
+    DeclarativeType,
+    ResourceExplorer,
+} from 'botbuilder-dialogs-declarative';
+import { OnActivityConfiguration } from 'botbuilder-dialogs-adaptive';
 import {
     OnTeamsCardAction,
     OnTeamsChannelCreated,
@@ -74,10 +79,18 @@ import {
     SendTaskModuleUrlResponse,
     SendTaskModuleUrlResponseConfiguration,
 } from './actions';
+import { ComponentRegistration } from 'botbuilder';
+
+type Type<T> = {
+    $kind: string;
+    new (...args: unknown[]): T;
+};
 
 /* eslint-disable prettier/prettier */
 /* eslint-reason It's extremely difficult to read with limited line widths.*/
-export class TeamsComponentRegistration extends AdaptiveComponentRegistration implements ComponentDeclarativeTypes {
+export class TeamsComponentRegistration extends ComponentRegistration implements ComponentDeclarativeTypes {
+    private _declarativeTypes: DeclarativeType<unknown, unknown>[] = [];
+
     /**
      * Initializes a new instance of `TeamsComponentRegistration`.
      */
@@ -131,5 +144,24 @@ export class TeamsComponentRegistration extends AdaptiveComponentRegistration im
         this._addDeclarativeType<OnTeamsTeamRenamed, OnActivityConfiguration>(OnTeamsTeamRenamed);
         this._addDeclarativeType<OnTeamsTeamRestored, OnActivityConfiguration>(OnTeamsTeamRestored);
         this._addDeclarativeType<OnTeamsTeamUnarchived, OnActivityConfiguration>(OnTeamsTeamUnarchived);
+    }
+
+    /**
+     * Gets adaptive testing `DeclarativeType` resources.
+     *
+     * @param {ResourceExplorer} _resourceExplorer  `ResourceExplorer` with expected path to get all resources.
+     * @returns {DeclarativeType[]} Adaptive testing `DeclarativeType` resources.
+     */
+    public getDeclarativeTypes(_resourceExplorer: ResourceExplorer): DeclarativeType[] {
+        return this._declarativeTypes;
+    }
+
+    private _addDeclarativeType<T, C>(type: Type<T>, loader?: CustomDeserializer<T, C>): void {
+        const declarativeType: DeclarativeType<T, C> = {
+            kind: type.$kind,
+            type,
+            loader,
+        };
+        this._declarativeTypes.push(declarativeType);
     }
 }
