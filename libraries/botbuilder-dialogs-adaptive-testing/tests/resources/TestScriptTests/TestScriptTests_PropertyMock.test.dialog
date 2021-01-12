@@ -3,54 +3,65 @@
     "$kind": "Microsoft.Test.Script",
     "description": "Test setting memory",
     "dialog": {
-        "$kind": "Microsoft.AdaptiveDialog"
+      "$kind": "Microsoft.AdaptiveDialog",
+      "triggers": [
+        {
+          "$kind": "Microsoft.OnError",
+          "actions": [
+            {
+              "$kind": "Microsoft.SendActivity",
+              "activity": "${turn.dialogEvent.value.message}"
+            }
+          ]
+        }
+      ]
     },
     "script": [
-        {
-            "$kind": "Microsoft.Test.SetProperties",
-            "assignments": [
-                {
-                    "property": "settings.value",
-                    "value": "settings value"
-                },
-                {
-                    "property": "settings.value",
-                    "value": "settings overwrite"
-                },
-                {
-                    "property": "settings.object.value",
-                    "value": "within object value"
-                },
-                {
-                    "property": "user.number",
-                    "value": 123
-                },
-                {
-                    "property": "user.object",
-                    "value": {
-                        "value": "object value"
-                    }
-                },
-                {
-                    "property": "conversation.value",
-                    "value": "conversation value"
-                },
-                {
-                    "property": "dialog.value",
-                    "value": "dialog value"
-                }
-            ]
-        },
-        {
-            "$kind": "Microsoft.Test.MemoryAssertions",
-            "assertions": [
-                "settings.value == 'settings overwrite'",
-                "settings.object.value == 'within object value",
-                "user.number == 123",
-                "user.object.value == 'object value'",
-                "conversation.value == 'conversation.value'",
-                "dialog.value == 'dialog value'"
-            ]
-        }
-   ]
-}
+      {
+        "$kind": "Microsoft.Test.SetProperties",
+        "assignments": [
+          {
+            "property": "user.noOverwrite",
+            "value": "original"
+          },
+          {
+            "property": "user.overwrite",
+            "value": "original"
+          },
+          {
+            "property": "user.overwrite",
+            "value": "overwritten"
+          },
+          {
+            "property": "user.object",
+            "value": {
+              "innerValue": "value"
+            }
+          },
+          {
+            "property": "user.number",
+            "value": 123
+          },
+          {
+            "property": "conversation.value",
+            "value": "conversation value"
+          }
+        ]
+      },
+      {
+        "$kind": "Microsoft.Test.MemoryAssertions",
+        "assertions": [
+          "settings.file == 'set settings.file'",
+          "user.noOverwrite == 'original'",
+          "user.overwrite == 'overwritten'",
+          "user.object.innerValue == 'value'",
+          "user.number == 123",
+          "conversation.value == 'conversation value'"
+        ]
+      },
+      {
+        "$kind": "Microsoft.Test.AssertNoActivity",
+        "description":  "An error message was sent while performing PropertyMock test. Check that MemoryAssertions are accurate."
+      }
+    ]
+  }
