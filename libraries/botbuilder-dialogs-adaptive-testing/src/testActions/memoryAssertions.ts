@@ -47,7 +47,7 @@ export class MemoryAssertions extends TestAction implements MemoryAssertionsConf
             await inspector((dc) => {
                 this.assertions.forEach((assertion) => {
                     const { value, error } = Expression.parse(assertion).tryEvaluate(dc.state);
-                    if (error && !value) {
+                    if (error || !value) {
                         throw new Error(`${this.description} ${assertion} failed`);
                     }
                 });
