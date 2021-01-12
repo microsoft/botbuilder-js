@@ -27,7 +27,7 @@
     }
   },
   "dependencies": {
-    "@azure/ms-rest-js": "1.9.0",
+    "@azure/ms-rest-js": "1.9.1",
     "axios": "^0.21.1",
     "botbuilder-core": "4.1.6",
     "botframework-connector": "4.1.6",
