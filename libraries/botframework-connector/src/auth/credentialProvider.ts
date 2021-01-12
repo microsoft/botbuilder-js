@@ -22,7 +22,8 @@ export interface ICredentialProvider {
      *
      * This method is async to enable custom implementations
      * that may need to call out to serviced to validate the appId / password pair.
-     * @param  {string} appId bot appid
+     *
+     * @param {string} appId bot appid
      * @returns {Promise<boolean>} true if it is a valid AppId
      */
     isValidAppId(appId: string): Promise<boolean>;
@@ -32,7 +33,8 @@ export interface ICredentialProvider {
      *
      * This method is async to enable custom implementations
      * that may need to call out to serviced to validate the appId / password pair.
-     * @param  {string} appId bot appid
+     *
+     * @param {string} appId bot appid
      * @returns {Promise<string|null>} password or null for invalid appid
      */
     getAppPassword(appId: string): Promise<string | null>;
@@ -43,6 +45,7 @@ export interface ICredentialProvider {
      *
      * This method is async to enable custom implementations
      * that may need to call out to serviced to validate the appId / password pair.
+     *
      * @returns {Promise<boolean>} true if bot authentication is disabled.
      */
     isAuthenticationDisabled(): Promise<boolean>;
@@ -57,8 +60,9 @@ export class SimpleCredentialProvider implements ICredentialProvider {
 
     /**
      * Initializes a new instance of the [SimpleCredentialProvider](xref:botframework-connector.SimpleCredentialProvider) class with the provided credentials.
-     * @param appId The app ID.
-     * @param appPassword The app password.
+     *
+     * @param {string} appId The app ID.
+     * @param {string} appPassword The app password.
      */
     constructor(appId: string, appPassword: string) {
         this.appId = appId;
@@ -70,7 +74,8 @@ export class SimpleCredentialProvider implements ICredentialProvider {
      *
      * This method is async to enable custom implementations
      * that may need to call out to service to validate the appId / password pair.
-     * @param  {string} appId bot appid
+     *
+     * @param {string} appId bot appid
      * @returns {Promise<boolean>} true if it is a valid AppId
      */
     public isValidAppId(appId: string): Promise<boolean> {
@@ -82,7 +87,8 @@ export class SimpleCredentialProvider implements ICredentialProvider {
      *
      * This method is async to enable custom implementations
      * that may need to call out to serviced to validate the appId / password pair.
-     * @param  {string} appId bot appid
+     *
+     * @param {string} appId bot appid
      * @returns {Promise<string|null>} password or null for invalid appid
      */
     public getAppPassword(appId: string): Promise<string | null> {
@@ -95,6 +101,7 @@ export class SimpleCredentialProvider implements ICredentialProvider {
      *
      * This method is async to enable custom implementations
      * that may need to call out to serviced to validate the appId / password pair.
+     *
      * @returns {Promise<boolean>} true if bot authentication is disabled.
      */
     public isAuthenticationDisabled(): Promise<boolean> {

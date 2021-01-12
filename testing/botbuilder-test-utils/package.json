@@ -1,0 +1,26 @@
+{
+  "name": "botbuilder-test-utils",
+  "private": true,
+  "version": "0.0.0",
+  "main": "lib/index.js",
+  "license": "MIT",
+  "scripts": {
+    "build": "tsc -b",
+    "clean": "rimraf lib tsconfig.tsbuildinfo",
+    "lint": "eslint . --ext .js,.ts"
+  },
+  "peerDependencies": {
+    "jsonwebtoken": "*",
+    "nock": "*",
+    "sinon": "*"
+  },
+  "devDependencies": {
+    "@types/mocha": "^8.2.0",
+    "@types/node-forge": "^0.9.5"
+  },
+  "dependencies": {
+    "botbuilder-stdlib": "4.1.6",
+    "nanoid": "^3.1.20",
+    "node-forge": "^0.10.0"
+  }
+}

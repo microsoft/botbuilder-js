@@ -38,14 +38,11 @@ export class JwtTokenExtractor {
         this.openIdMetadata = JwtTokenExtractor.getOrAddOpenIdMetadata(metadataUrl);
     }
 
-    /**
-     * @private
-     */
     private static getOrAddOpenIdMetadata(metadataUrl: string): OpenIdMetadata {
-        let metadata: OpenIdMetadata = JwtTokenExtractor.openIdMetadataCache.get(metadataUrl);
+        let metadata = this.openIdMetadataCache.get(metadataUrl);
         if (!metadata) {
             metadata = new OpenIdMetadata(metadataUrl);
-            JwtTokenExtractor.openIdMetadataCache.set(metadataUrl, metadata);
+            this.openIdMetadataCache.set(metadataUrl, metadata);
         }
 
         return metadata;

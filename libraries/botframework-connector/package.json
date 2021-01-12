@@ -39,6 +39,7 @@
   },
   "devDependencies": {
     "azure": "^2.2.1-preview",
+    "botbuilder-test-utils": "0.0.0",
     "dotenv": "^6.2.0",
     "nock": "^11.9.1",
     "should": "^13.2.3"
@@ -53,7 +54,8 @@
     "clean": "rimraf _ts3.4 lib tsconfig.tsbuildinfo",
     "lint": "eslint . --ext .js,.ts",
     "postbuild": "npm-run-all -p build:browserify build:downlevel-dts",
-    "test": "yarn build && nyc mocha tests/ --timeout 60000 --inspect"
+    "test": "yarn build && yarn test:mocha",
+    "test:mocha": "nyc mocha tests --recursive"
   },
   "files": [
     "_ts3.4",

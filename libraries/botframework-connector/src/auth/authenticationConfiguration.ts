@@ -19,8 +19,10 @@ export type ValidateClaims = (claims: Claim[]) => Promise<void>;
 export class AuthenticationConfiguration {
     /**
      * General configuration settings for authentication.
-     * @param requiredEndorsements An array of JWT endorsements.
-     * @param validateClaims Function that validates a list of Claims and should throw an exception if the validation fails.
+     *
+     * @param {string[]} requiredEndorsements An array of JWT endorsements.
+     * @param {(claims: Claim[]) => Promise<void>} validateClaims Function that validates a list of Claims
+     * and should throw an exception if the validation fails.
      */
     constructor(public requiredEndorsements: string[] = [], public validateClaims?: ValidateClaims) {}
 }
