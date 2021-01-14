@@ -91,6 +91,10 @@ describe('TestScriptTests', function () {
         }
     });
 
+    it('UserActivity', async () => {
+        await TestUtils.runTestScript(resourceExplorer, 'TestScriptTests_UserActivity');
+    });
+
     it('UserConversationUpdate', async () => {
         await TestUtils.runTestScript(resourceExplorer, 'TestScriptTests_UserConversationUpdate');
     });
