@@ -8,6 +8,7 @@
 
 import { Activity, TurnContext, TestAdapter } from 'botbuilder-core';
 import { Inspector, TestAction } from '../testAction';
+import { tests } from 'botbuilder-stdlib';
 
 export interface UserActivityConfiguration {
     activity?: Activity;
@@ -46,7 +47,7 @@ export class UserActivity extends TestAction implements UserActivityConfiguratio
             throw new Error('You must define one of Text of Activity properties');
         }
 
-        const activity = Object.assign({}, this.activity);
+        const activity = { ...this.activity };
         const reference = testAdapter.conversation;
         activity.channelId = reference.channelId;
         activity.serviceUrl = reference.serviceUrl;
@@ -58,10 +59,10 @@ export class UserActivity extends TestAction implements UserActivityConfiguratio
         }
 
         if (this.user) {
-            activity.from = Object.assign({}, activity.from);
+            activity.from = { ...activity.from };
             activity.from.id = this.user;
             activity.from.name = this.user;
-        } else if (this.activity?.from && Object.keys(this.activity.from)) {
+        } else if (tests.isObject(this.activity?.from)) {
             activity.from = Object.assign({}, this.activity.from);
         }
 
