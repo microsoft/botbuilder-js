@@ -82,7 +82,7 @@ export class GetTeamDetails extends Dialog implements GetTeamDetailsConfiguratio
         }
 
         if (dc.context.activity.channelId !== Channels.Msteams) {
-            throw new Error('TeamsInfo.getTeamDetails() works only on the Teams channel.');
+            throw new Error(`${GetTeamDetails.$kind} works only on the Teams channel.`);
         }
 
         const teamId = getValue(dc, this.teamId);
@@ -102,7 +102,7 @@ export class GetTeamDetails extends Dialog implements GetTeamDetailsConfiguratio
      * @returns {string} A string representing the compute Id.
      */
     protected onComputeId(): string {
-        return `GetTeamDetails[
+        return `${this.constructor.name}[
             ${this.teamId?.toString() ?? ''},
             ${this.property?.toString() ?? ''}
         ]`;

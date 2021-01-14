@@ -1,5 +1,5 @@
 {
-    "$schema": "../../../../botbuilder-dialogs-adaptive/tests/schema/test.schema",
+    "$schema": "../../../tests.schema",
     "$kind": "Microsoft.Test.Script",
     "dialog": {
         "$kind": "Microsoft.AdaptiveDialog",
@@ -36,8 +36,8 @@
             "text": "hi"
         },
         {
-            "$kind": "Microsoft.Test.AssertReply",
-            "text": "Missing memberId in getMember()"
+          "$kind": "Microsoft.Test.AssertReply",
+          "text": "Missing MemberId in Teams.GetTeamMember."
         }
     ]
 }

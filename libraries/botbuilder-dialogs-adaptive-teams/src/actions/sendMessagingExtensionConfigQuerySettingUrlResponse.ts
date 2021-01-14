@@ -74,7 +74,7 @@ export class SendMessagingExtensionConfigQuerySettingUrlResponse
 
         const configUrl = this.configUrl?.getValue(dc.state);
         if (!configUrl) {
-            throw new Error('configUrl is required for a Messaging Extension Config Response.');
+            throw new Error(`ConfigUrl is required for ${SendMessagingExtensionConfigQuerySettingUrlResponse.$kind}.`);
         }
 
         const response = <MessagingExtensionResponse>{
@@ -104,7 +104,7 @@ export class SendMessagingExtensionConfigQuerySettingUrlResponse
      * @returns {string} A string representing the compute Id.
      */
     protected onComputeId(): string {
-        return `SendMessagingExtensionConfigQuerySettingUrlResponse[
+        return `${this.constructor.name}[
             ${this.configUrl?.toString() ?? ''}
         ]`;
     }

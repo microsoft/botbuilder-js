@@ -1,5 +1,5 @@
 {
-    "$schema": "../../../../botbuilder-dialogs-adaptive/tests/schema/test.schema",
+    "$schema": "../../../tests.schema",
     "$kind": "Microsoft.Test.Script",
     "dialog": {
         "$kind": "Microsoft.AdaptiveDialog",
@@ -10,11 +10,11 @@
                 "actions": [
                     {
                         "$kind": "Teams.GetMeetingParticipant",
-                        "property": "user.result"
+                        "property": "conversation.result"
                     },
                     {
                         "$kind": "Teams.GetMeetingParticipant",
-                        "property": "user.resultWithCustomProperties",
+                        "property": "conversation.resultWithCustomProperties",
                         "meetingId": "customMeetingId",
                         "participantId": "customParticipantId",
                         "tenantId": "customTenantId"
@@ -28,34 +28,38 @@
             "$kind": "Microsoft.Test.UserActivity",
             "activity": {
                 "type": "message",
-                "text": "hi",
-                "channelData": {
-                    "tenant": {
-                        "id": "tenant-id-1"
-                    },
-                    "meeting": {
-                        "id": "meeting-id-1"
-                    }
-                }
+              "text": "hi",
+              "from": {
+                  "id": "participant-id",
+                  "aadObjectId": "participant-aad-id-1"
+              },
+              "channelData": {
+                  "tenant": {
+                      "id": "tenant-id-1"
+                  },
+                  "meeting": {
+                      "id": "meeting-id-1"
+                  }
+              }
             }
         },
         {
             "$kind": "Microsoft.Test.MemoryAssertions",
             "assertions": [
-                "user.result.conversation.conversationType == 'personal'",
-                "user.result.conversation.id == 'a:oneOnOneConversationId'",
-                "user.result.conversation.isGroup == false",
-                "user.result.conversation.name == 'oneOnOne'",
-                "user.result.conversation.tenantId == 'tenantId-Guid'",
-                "user.result.meeting.role == 'Organizer'",
-                "user.result.user.userPrincipalName == 'userPrincipalName-1'",
-                "user.resultWithCustomProperties.conversation.conversationType == 'personal'",
-                "user.resultWithCustomProperties.conversation.id == 'a:oneOnOneConversationId'",
-                "user.resultWithCustomProperties.conversation.isGroup == false",
-                "user.resultWithCustomProperties.conversation.name == 'oneOnOne'",
-                "user.resultWithCustomProperties.conversation.tenantId == 'tenantId-Guid'",
-                "user.resultWithCustomProperties.meeting.role == 'Organizer'",
-                "user.resultWithCustomProperties.user.userPrincipalName == 'userPrincipalName-1'"
+                "conversation.result.conversation.conversationType == 'personal'",
+                "conversation.result.conversation.id == 'a:oneOnOneConversationId'",
+                "conversation.result.conversation.isGroup == false",
+                "conversation.result.conversation.name == 'oneOnOne'",
+                "conversation.result.conversation.tenantId == 'tenantId-Guid'",
+                "conversation.result.meeting.role == 'Organizer'",
+                "conversation.result.user.userPrincipalName == 'userPrincipalName-1'",
+                "conversation.resultWithCustomProperties.conversation.conversationType == 'personal'",
+                "conversation.resultWithCustomProperties.conversation.id == 'a:oneOnOneConversationId'",
+                "conversation.resultWithCustomProperties.conversation.isGroup == false",
+                "conversation.resultWithCustomProperties.conversation.name == 'oneOnOne'",
+                "conversation.resultWithCustomProperties.conversation.tenantId == 'tenantId-Guid'",
+                "conversation.resultWithCustomProperties.meeting.role == 'Organizer'",
+                "conversation.resultWithCustomProperties.user.userPrincipalName == 'userPrincipalName-1'"
             ]
         }
     ]

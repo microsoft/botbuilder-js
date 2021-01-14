@@ -105,7 +105,7 @@ export class GetMeetingParticipant extends Dialog implements GetMeetingParticipa
         }
 
         if (dc.context.activity.channelId !== Channels.Msteams) {
-            throw new Error('TeamsInfo.getMeetingParticipant() works only on the Teams channel.');
+            throw new Error(`${GetMeetingParticipant.$kind} works only on the Teams channel.`);
         }
 
         const meetingId = getValue(dc, this.meetingId);
@@ -119,7 +119,7 @@ export class GetMeetingParticipant extends Dialog implements GetMeetingParticipa
              * throws an exception if the expression provided somehow maps to an invalid result.
              */
             throw new Error(
-                'GetMeetingParticipant could not determine the participant id by expression value provided. participantId is required.'
+                `${GetMeetingParticipant.$kind} could not determine the participant id by expression value provided. participantId is required.`
             );
         }
 
@@ -138,7 +138,7 @@ export class GetMeetingParticipant extends Dialog implements GetMeetingParticipa
      * @returns {string} A string representing the compute Id.
      */
     protected onComputeId(): string {
-        return `GetMeetingParticipantId[
+        return `${this.constructor.name}[
             ${this.meetingId ?? ''},
             ${this.participantId?.toString() ?? ''},
             ${this.tenantId?.toString() ?? ''},

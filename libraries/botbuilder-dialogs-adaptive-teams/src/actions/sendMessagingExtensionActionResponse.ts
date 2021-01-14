@@ -80,7 +80,7 @@ export class SendMessagingExtensionActionResponse
         }
 
         if (!activity?.attachments) {
-            throw new Error('Missing attachments in Messaging Extension Action Response');
+            throw new Error(`Missing attachments in ${SendMessagingExtensionActionResponse.$kind}.`);
         }
 
         const title = this.title?.getValue(dc.state);
@@ -112,7 +112,7 @@ export class SendMessagingExtensionActionResponse
      * @returns {string} A string representing the compute Id.
      */
     protected onComputeId(): string {
-        return `SendMessagingExtensionActionResponse[
+        return `${this.constructor.name}[
             ${this.card?.toString() ?? ''}
         ]`;
     }

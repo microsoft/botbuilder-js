@@ -104,10 +104,10 @@ const generateTeamMembers = (amount: number): Record<string, unknown>[] => {
     for (let i = 0; i < amount; i++) {
         members.push({
             id: `${getTeamsUser().id}-${i}`,
-            name: `${getTeamsUser.name}-${i}`,
+            name: `${getTeamsUser().name}-${i}`,
             objectId: `User-${i}-Object-Id`,
             givenName: 'User',
-            surname: i,
+            surname: `Surname-${i}`,
             email: `User.${i}@microsoft.com`,
             userPrincipalName: `user${i}@microsoft.com`,
             tenantId: 'tenant-id-1',
@@ -386,8 +386,11 @@ describe('Actions', function () {
     });
 
     it('Action_SendMessagingExtensionAuthResponse', async function () {
-        const adapter = getTeamsTestAdapter();
-        adapter.addUserToken('test connection', 'test', 'user1', 'token');
+        // Note: the test.dialog for this test uses `StartsWith` at the end due to differences in JS and .NET TestAdapter.getSignInlink
+        const conversationReference = getPersonalConversationReference();
+        conversationReference.conversation.id = 'Action_SendMessagingExtensionAuthResponse';
+        const adapter = getTeamsTestAdapter(conversationReference);
+        adapter.addUserToken('testConnection', conversationReference.channelId, conversationReference.user.id, 'token');
 
         await TestUtils.runTestScript(resourceExplorer, this.test.title, adapter);
     });

@@ -62,7 +62,7 @@ export class SendMessagingExtensionAuthResponse
     public connectionName: StringExpression;
 
     /**
-     *Gets or sets an Title of the response.
+     * Gets or sets an Title of the response.
      */
     public title: StringExpression;
 
@@ -94,17 +94,17 @@ export class SendMessagingExtensionAuthResponse
         // Type check that dc.context.adapter matches interface, ExtendedUserTokenProvider
         // eslint-disable-next-line no-prototype-builtins
         if (!(typeof (dc.context.adapter as BotFrameworkAdapter)?.getUserToken === 'function')) {
-            throw new Error('SendMessagingExtensionAuthResponse(): not supported by the current adapter');
+            throw new Error(`${SendMessagingExtensionAuthResponse.$kind}: not supported by the current adapter.`);
         }
 
         const connectionName = this.connectionName?.getValue(dc.state);
         if (!connectionName) {
-            throw new Error('Messaging Extension Auth Response requires a Connection Name.');
+            throw new Error(`${SendMessagingExtensionAuthResponse.$kind} requires a Connection Name.`);
         }
 
         const title = this.title?.getValue(dc.state);
         if (!title) {
-            throw new Error('Messaging Extension Auth Response requires a Title.');
+            throw new Error(`${SendMessagingExtensionAuthResponse.$kind} requires a Title.`);
         }
 
         const tokenResponse = await SendMessagingExtensionAuthResponse.getUserToken(
@@ -142,7 +142,7 @@ export class SendMessagingExtensionAuthResponse
      * @returns {string} A string representing the compute Id.
      */
     protected onComputeId(): string {
-        return `SendMessagingExtensionAuthResponse[
+        return `${this.constructor.name}[
             ${this.title?.toString() ?? ''}
         ]`;
     }

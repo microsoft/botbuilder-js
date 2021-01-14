@@ -1,5 +1,5 @@
 {
-    "$schema": "../../../../botbuilder-dialogs-adaptive/tests/schema/test.schema",
+    "$schema": "../../../tests.schema",
     "$kind": "Microsoft.Test.Script",
     "dialog": {
         "$kind": "Microsoft.AdaptiveDialog",
@@ -37,16 +37,16 @@
         },
         {
             "$kind": "Microsoft.Test.AssertReplyActivity",
-            "assertions": [
-                "type == 'invokeResponse'",
-                "conversation.id == 'Action_SendMessagingExtensionBotMessagePreviewResponse'",
-                "value.body.composeExtension.type == 'botMessagePreview'",
-                "value.body.composeExtension.activityPreview.attachmentLayout == 'list'",
-                "value.body.composeExtension.activityPreview.inputHint == 'acceptingInput'",
-                "value.body.composeExtension.activityPreview.type == 'message'",
-                "value.body.composeExtension.activityPreview.attachments[0].contentType == 'application/vnd.microsoft.card.thumbnail'",
-                "value.body.composeExtension.activityPreview.attachments[0].content.title == 'card-title'"
-            ]
+          "assertions": [
+            "type == 'invokeResponse'",
+            "conversation.id == 'Action_SendMessagingExtensionBotMessagePreviewResponse'",
+            "value.body.composeExtension.type == 'botMessagePreview'",
+            "value.body.composeExtension.activityPreview.attachmentLayout == 'list'",
+            "value.body.composeExtension.activityPreview.inputHint == 'acceptingInput'",
+            "value.body.composeExtension.activityPreview.type == 'message'",
+            "value.body.composeExtension.activityPreview.attachments[0].contentType == 'application/vnd.microsoft.card.thumbnail'",
+            "value.body.composeExtension.activityPreview.attachments[0].content.title == 'card-title'"
+          ]
         }
     ]
 }

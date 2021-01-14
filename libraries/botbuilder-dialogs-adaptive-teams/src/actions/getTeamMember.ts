@@ -96,13 +96,13 @@ export class GetTeamMember extends Dialog implements GetTeamMemberConfiguration 
         }
 
         if (dc.context.activity.channelId !== Channels.Msteams) {
-            throw new Error('TeamsInfo.getTeamMember() works only on the Teams channel.');
+            throw new Error(`${GetTeamMember.$kind} works only on the Teams channel.`);
         }
 
         const memberId = getValue(dc, this.memberId);
 
         if (!memberId) {
-            throw new Error(`Missing memberId in getMember()`);
+            throw new Error(`Missing MemberId in ${GetTeamMember.$kind}.`);
         }
 
         const teamId = getValue(dc, this.teamId);
@@ -122,7 +122,7 @@ export class GetTeamMember extends Dialog implements GetTeamMemberConfiguration 
      * @returns {string} A string representing the compute Id.
      */
     protected onComputeId(): string {
-        return `GetTeamMember[
+        return `${this.constructor.name}[
             ${this.memberId?.toString() ?? ''},
             ${this.teamId?.toString() ?? ''},
             ${this.property?.toString() ?? ''}

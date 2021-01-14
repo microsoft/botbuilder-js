@@ -79,13 +79,11 @@ export class SendAppBasedLinkQueryResponse
 
             if (!boundActivity.attachments) {
                 throw new Error(
-                    'Invalid activity. An attachment is required for Send Messaging Extension Link Query Response.'
+                    `Invalid activity. An attachment is required for ${SendAppBasedLinkQueryResponse.$kind}.`
                 );
             }
         } else {
-            throw new Error(
-                'An activity with attachments is required for Send Messaging Extension Link Query Response.'
-            );
+            throw new Error(`An activity with attachments is required for ${SendAppBasedLinkQueryResponse.$kind}.`);
         }
 
         const result = <MessagingExtensionResult>{
@@ -106,7 +104,7 @@ export class SendAppBasedLinkQueryResponse
      * @returns {string} A string representing the compute Id.
      */
     protected onComputeId(): string {
-        return `SendAppBasedLinkQueryResponse[
+        return `${this.constructor.name}[
             ${this.card?.toString() ?? ''}
         ]`;
     }

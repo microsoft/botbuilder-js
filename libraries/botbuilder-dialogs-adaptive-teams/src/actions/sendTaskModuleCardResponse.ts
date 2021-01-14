@@ -71,13 +71,13 @@ export class SendTaskModuleCardResponse
 
             if (!boundActivity.attachments) {
                 throw new Error(
-                    'Invalid activity. The activity does not contain a valid attachment as required for Task Module Card Response.'
+                    `Invalid activity. The activity does not contain a valid attachment as required for ${SendTaskModuleCardResponse.$kind}.`
                 );
             }
 
             attachment = boundActivity.attachments[0] as Attachment;
         } else {
-            throw new Error('A valid card is required for Task Module Card Response.');
+            throw new Error(`A valid card is required for ${SendTaskModuleCardResponse.$kind}.`);
         }
 
         const title = this.title?.getValue(dc.state);
@@ -110,7 +110,7 @@ export class SendTaskModuleCardResponse
      * @returns {string} A string representing the compute Id.
      */
     protected onComputeId(): string {
-        return `SendTaskModuleCardResponse[
+        return `${this.constructor.name}[
             ${this.card?.toString() ?? ''}
         ]`;
     }

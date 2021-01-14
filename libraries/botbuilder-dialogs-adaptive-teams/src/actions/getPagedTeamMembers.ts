@@ -100,7 +100,7 @@ export class GetPagedTeamMembers extends Dialog implements GetPagedTeamMembersCo
         }
 
         if (dc.context.activity.channelId !== Channels.Msteams) {
-            throw new Error('TeamsInfo.getPagedTeamMembers() works only on the Teams channel.');
+            throw new Error(`${GetPagedTeamMembers.$kind} works only on the Teams channel.`);
         }
 
         const continuationToken = getValue(dc, this.continuationToken);
@@ -122,7 +122,7 @@ export class GetPagedTeamMembers extends Dialog implements GetPagedTeamMembersCo
      * @returns {string} A string representing the compute Id.
      */
     protected onComputeId(): string {
-        return `GetPagedTeamMembers[
+        return `${this.constructor.name}[
             ${this.teamId?.toString() ?? ''}],
             ${this.pageSize?.toString() ?? ''}],
             ${this.continuationToken?.toString() ?? ''},

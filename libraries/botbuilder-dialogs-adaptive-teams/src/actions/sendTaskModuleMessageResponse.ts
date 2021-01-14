@@ -92,7 +92,7 @@ export class SendTaskModuleMessageResponse
      * @returns {string} A string representing the compute Id.
      */
     protected onComputeId(): string {
-        return `SendTaskModuleMessageResponse[
+        return `${this.constructor.name}[
             ${this.message?.toString() ?? ''}
         ]`;
     }

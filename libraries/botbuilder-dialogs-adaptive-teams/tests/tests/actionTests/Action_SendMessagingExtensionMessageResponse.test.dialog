@@ -1,5 +1,5 @@
 {
-    "$schema": "../../../../botbuilder-dialogs-adaptive/tests/schema/test.schema",
+    "$schema": "../../../tests.schema",
     "$kind": "Microsoft.Test.Script",
     "dialog": {
         "$kind": "Microsoft.AdaptiveDialog",
@@ -27,12 +27,12 @@
         },
         {
             "$kind": "Microsoft.Test.AssertReplyActivity",
-            "assertions": [
-                "type == 'invokeResponse'",
-                "conversation.id == 'Action_SendMessagingExtensionMessageResponse'",
-                "value.body.composeExtension.type == 'message'",
-                "value.body.composeExtension.text == 'i want to send this to the user'"
-            ]
+          "assertions": [
+            "type == 'invokeResponse'",
+            "conversation.id == 'Action_SendMessagingExtensionMessageResponse'",
+            "value.body.composeExtension.type == 'message'",
+            "value.body.composeExtension.text == 'i want to send this to the user'"
+          ]
         }
     ]
 }

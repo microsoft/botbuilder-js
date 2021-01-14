@@ -1,5 +1,5 @@
 {
-    "$schema": "../../../../botbuilder-dialogs-adaptive/tests/schema/test.schema",
+    "$schema": "../../../tests.schema",
     "$kind": "Microsoft.Test.Script",
     "dialog": {
         "$kind": "Microsoft.AdaptiveDialog",
@@ -26,7 +26,7 @@
         },
         {
             "$kind": "Microsoft.Test.AssertReply",
-            "text": "configUrl is required for a Messaging Extension Config Response."
+            "text": "ConfigUrl is required for Teams.SendMessagingExtensionConfigQuerySettingUrlResponse."
         }
     ]
 }

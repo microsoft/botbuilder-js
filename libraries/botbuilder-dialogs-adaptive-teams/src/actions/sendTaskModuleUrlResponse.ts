@@ -71,7 +71,7 @@ export class SendTaskModuleUrlResponse
 
         const url = this.url?.getValue(dc.state);
         if (!url) {
-            throw new Error('Missing Url for Task Module Continue Response.');
+            throw new Error(`Missing Url for ${SendTaskModuleUrlResponse.$kind}.`);
         }
 
         const title = this.title?.getValue(dc.state);
@@ -106,7 +106,7 @@ export class SendTaskModuleUrlResponse
      * @returns {string} A string representing the compute Id.
      */
     protected onComputeId(): string {
-        return `SendTaskModuleUrlResponse[
+        return `${this.constructor.name}[
             ${this.url?.toString() ?? ''},
             ${this.title?.toString() ?? ''}
         ]`;

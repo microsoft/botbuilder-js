@@ -35,7 +35,7 @@
         },
         {
             "$kind": "Microsoft.Test.AssertReply",
-            "text": "SendMessagingExtensionAuthResponse(): not supported by the current adapter"
+            "text": "Teams.SendMessagingExtensionAuthResponse: not supported by the current adapter."
         }
     ]
 }

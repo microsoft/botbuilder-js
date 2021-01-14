@@ -79,13 +79,13 @@ export class SendMessagingExtensionBotMessagePreviewResponse
 
             if (!boundActivity.attachments) {
                 throw new Error(
-                    'Invalid activity. The activity does not contain a valid attachment as required for Send Messaging Extension Bot Message Preview Response.'
+                    `Invalid activity. The activity does not contain a valid attachment as required for ${SendMessagingExtensionBotMessagePreviewResponse.$kind}.`
                 );
             }
 
             attachment = boundActivity.attachments[0] as Attachment;
         } else {
-            throw new Error('A valid card is required for Send Messaging Extension Bot Message Preview Response.');
+            throw new Error(`A valid card is required for ${SendMessagingExtensionBotMessagePreviewResponse.$kind}.`);
         }
 
         const response = <MessagingExtensionActionResponse>{
@@ -111,7 +111,7 @@ export class SendMessagingExtensionBotMessagePreviewResponse
      * @returns {string} A string representing the compute Id.
      */
     protected onComputeId(): string {
-        return `SendMessagingExtensionBotMessagePreviewResponse[
+        return `${this.constructor.name}[
             ${this.card?.toString() ?? ''}
         ]`;
     }

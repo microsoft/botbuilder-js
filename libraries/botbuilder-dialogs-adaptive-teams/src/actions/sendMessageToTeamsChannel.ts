@@ -102,7 +102,7 @@ export class SendMessageToTeamsChannel extends Dialog implements SendMessageToTe
         }
 
         if (dc.context.activity.channelId !== Channels.Msteams) {
-            throw new Error('TeamsInfo.sendMessageToTeamsChannel() works only on the Teams channel.');
+            throw new Error(`${SendMessageToTeamsChannel.$kind} works only on the Teams channel.`);
         }
 
         let activity;
@@ -135,7 +135,7 @@ export class SendMessageToTeamsChannel extends Dialog implements SendMessageToTe
      * @returns {string} A string representing the compute Id.
      */
     protected onComputeId(): string {
-        return `SendMessageToTeamsChannel[
+        return `${this.constructor.name}[
             ${this.teamsChannelId?.toString() ?? ''},
             ${this.activityIdProperty?.toString() ?? ''},
             ${this.conversationReferenceProperty?.toString() ?? ''}

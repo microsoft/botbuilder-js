@@ -1,5 +1,5 @@
 {
-    "$schema": "../../../../botbuilder-dialogs-adaptive/tests/schema/test.schema",
+    "$schema": "../../../tests.schema",
     "$kind": "Microsoft.Test.Script",
     "dialog": {
         "$kind": "Microsoft.AdaptiveDialog",
@@ -10,7 +10,6 @@
                 "actions": [
                     {
                         "$kind": "Teams.SendTaskModuleUrlResponse",
-                        "property": "user.result",
                         "title": "some title",
                         "height": 1,
                         "width": 2,

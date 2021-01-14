@@ -1,5 +1,5 @@
 {
-    "$schema": "../../../../botbuilder-dialogs-adaptive/tests/schema/test.schema",
+    "$schema": "../../../tests.schema",
     "$kind": "Microsoft.Test.Script",
     "dialog": {
         "$kind": "Microsoft.AdaptiveDialog",
@@ -10,7 +10,7 @@
                 "actions": [
                     {
                         "$kind": "Teams.SendMessagingExtensionAttachmentsResponse",
-                        "card": {
+                        "attachments": {
                             "type": "message"
                         }
                     }
@@ -36,9 +36,9 @@
                 "name": "composeExtension/queryLink"
             }
         },
-        {
-            "$kind": "Microsoft.Test.AssertReply",
-            "text": "Missing attachments in Messaging Extension Attachments Response"
-        }
+      {
+        "$kind": "Microsoft.Test.AssertReply",
+        "text": "Missing attachments in Teams.SendMessagingExtensionAttachmentsResponse."
+      }
     ]
 }

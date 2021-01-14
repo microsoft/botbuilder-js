@@ -89,7 +89,7 @@ export class SendMessagingExtensionMessageResponse
      * @returns {string} A string representing the compute Id.
      */
     protected onComputeId(): string {
-        return `SendMessagingExtensionMessageResponse[
+        return `${this.constructor.name}[
             ${this.message?.toString() ?? ''}
         ]`;
     }

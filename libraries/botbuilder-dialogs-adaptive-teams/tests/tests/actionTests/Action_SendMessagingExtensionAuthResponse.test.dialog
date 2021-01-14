@@ -1,5 +1,5 @@
 {
-    "$schema": "../../../../botbuilder-dialogs-adaptive/tests/schema/test.schema",
+    "$schema": "../../../tests.schema",
     "$kind": "Microsoft.Test.Script",
     "dialog": {
         "$kind": "Microsoft.AdaptiveDialog",
@@ -10,7 +10,7 @@
                 "actions": [
                     {
                         "$kind": "Teams.SendMessagingExtensionAuthResponse",
-                        "connectionName": "test connection",
+                        "connectionName": "testConnection",
                         "title": "test title"
                     }
                 ]
@@ -28,14 +28,14 @@
         },
         {
             "$kind": "Microsoft.Test.AssertReplyActivity",
-            "assertions": [
-                "type == 'invokeResponse'",
-                "conversation.id == 'Convo1'",
-                "value.body.composeExtension.type == 'auth'",
-                "value.body.composeExtension.suggestedActions.actions[0].title == 'test title'",
-                "value.body.composeExtension.suggestedActions.actions[0].type == 'openUrl'",
-                "value.body.composeExtension.suggestedActions.actions[0].value == 'https://fake.com/oauthsignin/test%20connection/test/user1'"
-            ]
+          "assertions": [
+            "type == 'invokeResponse'",
+            "conversation.id == 'Action_SendMessagingExtensionAuthResponse'",
+            "value.body.composeExtension.type == 'auth'",
+            "value.body.composeExtension.suggestedActions.actions[0].title == 'test title'",
+            "value.body.composeExtension.suggestedActions.actions[0].type == 'openUrl'",
+            "startsWith(value.body.composeExtension.suggestedActions.actions[0].value, 'https://fake.com/oauthsignin/testConnection')"
+          ]
         }
     ]
 }

@@ -98,7 +98,7 @@ export class SendMessagingExtensionSelectItemResponse
      * @returns {string} A string representing the compute Id.
      */
     protected onComputeId(): string {
-        return `SendMessagingExtensionSelectItemResponse[
+        return `${this.constructor.name}[
             ${this.card?.toString() ?? ''}
         ]`;
     }

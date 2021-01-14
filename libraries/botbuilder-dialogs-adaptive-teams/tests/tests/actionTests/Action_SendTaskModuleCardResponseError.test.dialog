@@ -1,5 +1,5 @@
 {
-    "$schema": "../../../../botbuilder-dialogs-adaptive/tests/schema/test.schema",
+    "$schema": "../../../tests.schema",
     "$kind": "Microsoft.Test.Script",
     "dialog": {
         "$kind": "Microsoft.AdaptiveDialog",
@@ -61,7 +61,7 @@
         },
         {
             "$kind": "Microsoft.Test.AssertReply",
-            "text": "A valid card is required for Task Module Card Response."
+            "text": "A valid card is required for Teams.SendTaskModuleCardResponse."
         },
         {
             "$kind": "Microsoft.Test.UserActivity",
@@ -73,7 +73,7 @@
         },
         {
             "$kind": "Microsoft.Test.AssertReply",
-            "text": "Invalid activity. The activity does not contain a valid attachment as required for Task Module Card Response."
+            "text": "Invalid activity. The activity does not contain a valid attachment as required for Teams.SendTaskModuleCardResponse."
         }
     ]
 }

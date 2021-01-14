@@ -1,5 +1,5 @@
 {
-    "$schema": "../../../../botbuilder-dialogs-adaptive/tests/schema/test.schema",
+    "$schema": "../../../tests.schema",
     "$kind": "Microsoft.Test.Script",
     "dialog": {
         "$kind": "Microsoft.AdaptiveDialog",
@@ -11,6 +11,7 @@
                     {
                         "$kind": "Teams.SendMessagingExtensionAttachmentsResponse",
                         "attachments": {
+                            "type": "message",
                             "attachments": [
                                 {
                                     "contentType": "application/vnd.microsoft.card.thumbnail",
@@ -36,14 +37,14 @@
         },
         {
             "$kind": "Microsoft.Test.AssertReplyActivity",
-            "assertions": [
-                "type == 'invokeResponse'",
-                "conversation.id == 'Action_SendMessagingExtensionAttachmentsResponse'",
-                "value.body.composeExtension.attachmentLayout == 'list'",
-                "value.body.composeExtension.type == 'result'",
-                "value.body.composeExtension.attachments[0].contentType == 'application/vnd.microsoft.card.thumbnail'",
-                "value.body.composeExtension.attachments[0].content.title == 'card-title'"
-            ]
+          "assertions": [
+            "type == 'invokeResponse'",
+            "conversation.id == 'Action_SendMessagingExtensionAttachmentsResponse'",
+            "value.body.composeExtension.attachmentLayout == 'list'",
+            "value.body.composeExtension.type == 'result'",
+            "value.body.composeExtension.attachments[0].contentType == 'application/vnd.microsoft.card.thumbnail'",
+            "value.body.composeExtension.attachments[0].content.title == 'card-title'"
+          ]
         }
     ]
 }

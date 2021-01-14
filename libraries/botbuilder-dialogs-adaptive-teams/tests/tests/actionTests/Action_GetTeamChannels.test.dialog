@@ -1,5 +1,5 @@
 {
-    "$schema": "../../../../botbuilder-dialogs-adaptive/tests/schema/test.schema",
+    "$schema": "../../../tests.schema",
     "$kind": "Microsoft.Test.Script",
     "dialog": {
         "$kind": "Microsoft.AdaptiveDialog",
@@ -10,11 +10,11 @@
                 "actions": [
                     {
                         "$kind": "Teams.GetTeamChannels",
-                        "property": "user.result"
+                        "property": "conversation.result"
                     },
                     {
                         "$kind": "Teams.GetTeamChannels",
-                        "property": "user.resultWithCustomProperties",
+                        "property": "conversation.resultWithCustomProperties",
                         "teamId": "customTeamId"
                     }
                 ]
@@ -40,18 +40,18 @@
         {
             "$kind": "Microsoft.Test.MemoryAssertions",
             "assertions": [
-                "user.result[0].id == '19:ChannelIdgeneralChannelId@thread.skype'",
-                "user.result[0].name == 'Testing0'",
-                "user.result[1].id == '19:somechannelId2e5ab3df9ae9b594bdb@thread.skype'",
-                "user.result[1].name == 'Testing1'",
-                "user.result[2].id == '19:somechannelId388ade16aa4dd375e69@thread.skype'",
-                "user.result[2].name == 'Testing2'",
-                "user.resultWithCustomProperties[0].id == '19:ChannelIdgeneralChannelId@thread.skype'",
-                "user.resultWithCustomProperties[0].name == 'Testing0'",
-                "user.resultWithCustomProperties[1].id == '19:somechannelId2e5ab3df9ae9b594bdb@thread.skype'",
-                "user.resultWithCustomProperties[1].name == 'Testing1'",
-                "user.resultWithCustomProperties[2].id == '19:somechannelId388ade16aa4dd375e69@thread.skype'",
-                "user.resultWithCustomProperties[2].name == 'Testing2'"
+                "conversation.result[0].id == '19:ChannelIdgeneralChannelId@thread.skype'",
+                "conversation.result[0].name == 'Testing0'",
+                "conversation.result[1].id == '19:somechannelId2e5ab3df9ae9b594bdb@thread.skype'",
+                "conversation.result[1].name == 'Testing1'",
+                "conversation.result[2].id == '19:somechannelId388ade16aa4dd375e69@thread.skype'",
+                "conversation.result[2].name == 'Testing2'",
+                "conversation.resultWithCustomProperties[0].id == '19:ChannelIdgeneralChannelId@thread.skype'",
+                "conversation.resultWithCustomProperties[0].name == 'Testing0'",
+                "conversation.resultWithCustomProperties[1].id == '19:somechannelId2e5ab3df9ae9b594bdb@thread.skype'",
+                "conversation.resultWithCustomProperties[1].name == 'Testing1'",
+                "conversation.resultWithCustomProperties[2].id == '19:somechannelId388ade16aa4dd375e69@thread.skype'",
+                "conversation.resultWithCustomProperties[2].name == 'Testing2'"
             ]
         }
     ]
