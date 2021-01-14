@@ -9,27 +9,33 @@
 import * as adal from 'adal-node';
 import { AppCredentials } from './appCredentials';
 
+// Determines if an unknown value is of adal.ErrorResponse type
+function isErrorResponse(value: unknown): value is adal.ErrorResponse {
+    if (value) {
+        const { error, errorDescription } = value as adal.ErrorResponse;
+        return error != null && errorDescription != null;
+    }
+
+    return false;
+}
+
 /**
  * MicrosoftAppCredentials auth implementation
  */
 export class MicrosoftAppCredentials extends AppCredentials {
-    public appPassword: string;
 
     /**
      * Initializes a new instance of the [MicrosoftAppCredentials](xref:botframework-connector.MicrosoftAppCredentials) class.
-     * @param appId The Microsoft app ID.
-     * @param appPassword The Microsoft app password.
-     * @param channelAuthTenant Optional. The oauth token tenant.
-     * @param oAuthScope Optional. The scope for the token.
+     *
+     * @param {string} appId The Microsoft app ID.
+     * @param {string} appPassword The Microsoft app password.
+     * @param {string} channelAuthTenant Optional. The oauth token tenant.
+     * @param {string} oAuthScope Optional. The scope for the token.
      */
-    public constructor(appId: string, appPassword: string, channelAuthTenant?: string, oAuthScope?: string) {
+    public constructor(appId: string, public appPassword: string, channelAuthTenant?: string, oAuthScope?: string) {
         super(appId, channelAuthTenant, oAuthScope);
-        this.appPassword = appPassword;
     }
 
-    /**
-     * @protected
-     */
     protected async refreshToken(): Promise<adal.TokenResponse> {
         if (!this.refreshingToken) {
             this.refreshingToken = new Promise<adal.TokenResponse>((resolve, reject): void => {
@@ -37,16 +43,19 @@ export class MicrosoftAppCredentials extends AppCredentials {
                     this.oAuthScope,
                     this.appId,
                     this.appPassword,
-                    function (err, tokenResponse): void {
+                    (err, tokenResponse) => {
                         if (err) {
                             reject(err);
+                        } else if (isErrorResponse(tokenResponse)) {
+                            reject(tokenResponse.error);
                         } else {
-                            resolve(tokenResponse as adal.TokenResponse);
+                            resolve(tokenResponse);
                         }
                     }
                 );
             });
         }
+
         return this.refreshingToken;
     }
 }
