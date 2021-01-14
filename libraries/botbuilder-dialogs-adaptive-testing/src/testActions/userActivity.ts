@@ -61,7 +61,10 @@ export class UserActivity extends TestAction implements UserActivityConfiguratio
             activity.from = Object.assign({}, activity.from);
             activity.from.id = this.user;
             activity.from.name = this.user;
+        } else if (this.activity?.from && Object.keys(this.activity.from)) {
+            activity.from = Object.assign({}, this.activity.from);
         }
+
         activity.locale = testAdapter.locale;
 
         await testAdapter.processActivity(activity, callback);
