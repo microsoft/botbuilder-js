@@ -166,7 +166,7 @@ export class SendMessagingExtensionAuthResponse
         title: string,
         tokenProvider: ExtendedUserTokenProvider,
         connectionName: string
-    ): Promise<Activity> {
+    ): Promise<Partial<Activity>> {
         const signInLink = await tokenProvider.getSignInLink(dc.context, connectionName);
 
         const result = <MessagingExtensionResult>{

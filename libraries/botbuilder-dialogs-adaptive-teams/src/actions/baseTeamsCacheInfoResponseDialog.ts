@@ -16,14 +16,7 @@ import {
     StringExpressionConverter,
 } from 'adaptive-expressions';
 import { Converter, ConverterFactory, Dialog, DialogContext } from 'botbuilder-dialogs';
-import {
-    Activity,
-    ActivityTypes,
-    CacheInfo,
-    MessagingExtensionActionResponse,
-    MessagingExtensionResult,
-    StatusCodes,
-} from 'botframework-schema';
+import { Activity, ActivityTypes, CacheInfo, MessagingExtensionResult, StatusCodes } from 'botframework-schema';
 import { MessagingExtensionResponse } from 'botbuilder';
 
 export interface BaseTeamsCacheInfoResponseDialogConfiguration {
@@ -71,8 +64,8 @@ export abstract class BaseTeamsCacheInfoResponseDialog
     protected static createInvokeResponseActivity(
         body: MessagingExtensionResponse,
         statusCode: number = StatusCodes.OK
-    ): Activity {
-        return <Activity>{
+    ): Partial<Activity> {
+        return {
             value: {
                 status: statusCode,
                 body: body,
@@ -84,19 +77,19 @@ export abstract class BaseTeamsCacheInfoResponseDialog
     protected createMessagingExtensionInvokeResponseActivity(
         dc: DialogContext,
         result: MessagingExtensionResult
-    ): Activity {
+    ): Partial<Activity> {
         switch (dc.context.activity.name) {
             case 'composeExtension/queryLink':
             case 'composeExtension/query':
             case 'composeExtension/selectItem':
             case 'composeExtension/querySettingsUrl':
-                return BaseTeamsCacheInfoResponseDialog.createInvokeResponseActivity(<MessagingExtensionResponse>{
+                return BaseTeamsCacheInfoResponseDialog.createInvokeResponseActivity({
                     composeExtension: result,
                     cacheInfo: this.getCacheInfo(dc),
                 });
             case 'composeExtension/submitAction':
             case 'composeExtension/fetchTask':
-                return BaseTeamsCacheInfoResponseDialog.createInvokeResponseActivity(<MessagingExtensionActionResponse>{
+                return BaseTeamsCacheInfoResponseDialog.createInvokeResponseActivity({
                     composeExtension: result,
                     cacheInfo: this.getCacheInfo(dc),
                 });
@@ -113,7 +106,7 @@ export abstract class BaseTeamsCacheInfoResponseDialog
             if (cacheDuration > 0 && cacheType != null) {
                 // Valid ranges for cacheDuration are 60 < > 2592000
                 cacheDuration = Math.min(Math.max(60, cacheDuration), 2592000);
-                return <CacheInfo>{
+                return {
                     cacheType,
                     cacheDuration,
                 };

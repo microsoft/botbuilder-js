@@ -34,7 +34,7 @@
     "botbuilder-dialogs-adaptive": "4.1.6"
   },
   "devDependencies": {
-    "downlevel-dts": "^0.7.0"
+    "botbuilder-test-utils": "0.0.0"
   },
   "scripts": {
     "build": "tsc -b",

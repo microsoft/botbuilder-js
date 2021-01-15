@@ -1,7 +1,7 @@
 // Licensed under the MIT License.
 // Copyright (c) Microsoft Corporation. All rights reserved.
 
-import 'mocha';
+const { jwt } = require('botbuilder-test-utils');
 import {
     ComponentRegistration,
     ConversationState,
@@ -23,20 +23,10 @@ import { ok } from 'assert';
 import path = require('path');
 import nock = require('nock');
 
-/**
- * Registers mocha hooks for proper usage
- * TODO: Import function from testing/botbuilder-test-utils after PR merged:
- * https://github.com/microsoft/botbuilder-js/pull/3138
- */
-export function mocha(): void {
-    before(() => nock.disableNetConnect());
-    beforeEach(() => nock.cleanAll());
-    after(() => nock.enableNetConnect());
-    afterEach(() => nock.cleanAll());
-}
+jwt.mocha();
 
-const getTeamsTestAdapter = (convo?: ConversationReference): TestAdapter => {
-    const adapter = new TestAdapter(convo);
+const getTeamsTestAdapter = (convo?: Partial<ConversationReference>): TestAdapter => {
+    const adapter = new TestAdapter(convo as ConversationReference);
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore: This is required because TeamsInfo checks that the adapter has a createConnectorClient method
     // and TestAdapter doesn't have one, natively.
@@ -83,16 +73,16 @@ const getGroupConversation = (): ConversationAccount => {
     };
 };
 
-const getPersonalConversationReference = (): ConversationReference => {
-    return <ConversationReference>{
+const getPersonalConversationReference = (): Partial<ConversationReference> => {
+    return {
         user: getTeamsUser(),
         channelId: Channels.Msteams,
         conversation: getPersonalConversation(),
     };
 };
 
-const getGroupConversationReference = (): ConversationReference => {
-    return <ConversationReference>{
+const getGroupConversationReference = (): Partial<ConversationReference> => {
+    return {
         user: getTeamsUser(),
         channelId: Channels.Msteams,
         conversation: getGroupConversation(),

@@ -8,7 +8,7 @@
 
 import { Expression, ExpressionParserInterface } from 'adaptive-expressions';
 import { Channels } from 'botbuilder';
-import { Dialog, TurnPath } from 'botbuilder-dialogs';
+import { TurnPath } from 'botbuilder-dialogs';
 import { OnConversationUpdateActivity } from 'botbuilder-dialogs-adaptive';
 
 /**
@@ -17,10 +17,6 @@ import { OnConversationUpdateActivity } from 'botbuilder-dialogs-adaptive';
  */
 export class OnTeamsChannelRestored extends OnConversationUpdateActivity {
     public static $kind = 'Teams.OnChannelRestored';
-
-    public constructor(actions?: Dialog[], condition?: string) {
-        super(actions, condition);
-    }
 
     public getExpression(parser: ExpressionParserInterface): Expression {
         // if teams channel and eventType == 'channelRestored'

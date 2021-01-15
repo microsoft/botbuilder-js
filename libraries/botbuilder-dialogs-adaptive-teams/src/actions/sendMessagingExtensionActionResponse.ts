@@ -6,13 +6,7 @@
  * Licensed under the MIT License.
  */
 
-import {
-    BoolExpression,
-    BoolExpressionConverter,
-    Expression,
-    StringExpression,
-    StringExpressionConverter,
-} from 'adaptive-expressions';
+import { BoolExpression, Expression, StringExpression, StringExpressionConverter } from 'adaptive-expressions';
 import { Activity, MessagingExtensionActionResponse, TaskModuleContinueResponse, TaskModuleTaskInfo } from 'botbuilder';
 import {
     Converter,
