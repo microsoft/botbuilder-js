@@ -1,7 +1,6 @@
 // Licensed under the MIT License.
 // Copyright (c) Microsoft Corporation. All rights reserved.
 
-const { jwt } = require('botbuilder-test-utils');
 import {
     ComponentRegistration,
     ConversationState,
@@ -22,6 +21,7 @@ import { ConnectorClient, MicrosoftAppCredentials } from 'botframework-connector
 import { ok } from 'assert';
 import path = require('path');
 import nock = require('nock');
+import { jwt } from 'botbuilder-test-utils';
 
 jwt.mocha();
 
@@ -135,7 +135,7 @@ describe('Actions', function () {
         };
 
         const fetchExpectation = nock('https://api.botframework.com')
-            .get('/v1/meetings/meeting-id-1/participants/participant-aad-id?tenantId=tenant-id-1')
+            .get('/v1/meetings/meeting-id-1/participants/participant-aad-id-1?tenantId=tenant-id-1')
             .reply(200, participant);
 
         const fetchExpectationCustomProperties = nock('https://api.botframework.com')
@@ -166,7 +166,7 @@ describe('Actions', function () {
         const members = generateTeamMembers(1);
 
         const fetchExpectation = nock('https://api.botframework.com')
-            .get('/v3/conversations/a%3AoneOnOneConversationId/members/29%3AUser-Id')
+            .get('/v3/conversations/a%3AoneOnOneConversationId/members/member-id')
             .reply(200, members[0]);
 
         const fetchExpectationCustomProperties = nock('https://api.botframework.com')

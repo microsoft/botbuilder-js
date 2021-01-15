@@ -17,10 +17,8 @@ import {
     ActionTypes,
     Activity,
     BotFrameworkAdapter,
-    CardAction,
     ExtendedUserTokenProvider,
     MessagingExtensionResult,
-    MessagingExtensionSuggestedAction,
     TokenResponse,
 } from 'botbuilder';
 import {
@@ -32,6 +30,8 @@ import {
     DialogTurnResult,
 } from 'botbuilder-dialogs';
 import { BaseSendTaskModuleContinueResponse } from './baseSendTaskModuleContinueResponse';
+import { assert, Assertion } from 'botbuilder-stdlib';
+import { getComputeId } from './actionHelpers';
 
 export interface SendMessagingExtensionAuthResponseConfiguration extends DialogConfiguration {
     disabled?: boolean | string | BoolExpression;
@@ -39,6 +39,11 @@ export interface SendMessagingExtensionAuthResponseConfiguration extends DialogC
     connectionName?: string | Expression | StringExpression;
     title?: string | Expression | StringExpression;
 }
+
+const assertBotFrameworkAdapter: Assertion<BotFrameworkAdapter> = (val, path) => {
+    assert.unsafe.castObjectAs<BotFrameworkAdapter>(val, path);
+    assert.func(val.getUserToken, path.concat('getUserToken'));
+};
 
 /**
  * Send a messaging extension 'result' response when a Teams Invoke Activity is received with activity.name='composeExtension/queryLink'.
@@ -83,17 +88,17 @@ export class SendMessagingExtensionAuthResponse
      * Called when the dialog is started and pushed onto the dialog stack.
      *
      * @param {DialogContext} dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
-     * @param {object} options Optional, initial information to pass to the dialog.
+     * @param {object} _options Optional, initial information to pass to the dialog.
      * @returns {Promise<DialogTurnResult>} A promise representing the asynchronous operation.
      */
-    public async beginDialog(dc: DialogContext, options?: Record<string, unknown>): Promise<DialogTurnResult> {
-        if (this.disabled && this.disabled?.getValue(dc.state)) {
+    public async beginDialog(dc: DialogContext, _options?: Record<string, unknown>): Promise<DialogTurnResult> {
+        if (this.disabled?.getValue(dc.state)) {
             return dc.endDialog();
         }
 
-        // Type check that dc.context.adapter matches interface, ExtendedUserTokenProvider
-        // eslint-disable-next-line no-prototype-builtins
-        if (!(typeof (dc.context.adapter as BotFrameworkAdapter)?.getUserToken === 'function')) {
+        try {
+            assertBotFrameworkAdapter(dc.context.adapter, ['dc', 'context', 'adapter']);
+        } catch (err) {
             throw new Error(`${SendMessagingExtensionAuthResponse.$kind}: not supported by the current adapter.`);
         }
 
@@ -109,7 +114,7 @@ export class SendMessagingExtensionAuthResponse
 
         const tokenResponse = await SendMessagingExtensionAuthResponse.getUserToken(
             dc,
-            (dc.context.adapter as unknown) as ExtendedUserTokenProvider,
+            dc.context.adapter,
             connectionName
         );
         if (!tokenResponse) {
@@ -124,12 +129,7 @@ export class SendMessagingExtensionAuthResponse
         }
 
         // There is no token, so the user has not signed in yet.
-        const activity = await this.getInvokeResponseWithSignInLink(
-            dc,
-            title,
-            (dc.context.adapter as unknown) as ExtendedUserTokenProvider,
-            connectionName
-        );
+        const activity = await this.getInvokeResponseWithSignInLink(dc, title, dc.context.adapter, connectionName);
         await dc.context.sendActivity(activity);
 
         // Since a token was not retrieved above, end the turn.
@@ -142,9 +142,7 @@ export class SendMessagingExtensionAuthResponse
      * @returns {string} A string representing the compute Id.
      */
     protected onComputeId(): string {
-        return `${this.constructor.name}[
-            ${this.title?.toString() ?? ''}
-        ]`;
+        return getComputeId('SendMessagingExtensionAuthResponse', [this.title]);
     }
 
     private static async getUserToken(
@@ -169,11 +167,11 @@ export class SendMessagingExtensionAuthResponse
     ): Promise<Partial<Activity>> {
         const signInLink = await tokenProvider.getSignInLink(dc.context, connectionName);
 
-        const result = <MessagingExtensionResult>{
+        const result: MessagingExtensionResult = {
             type: 'auth',
-            suggestedActions: <MessagingExtensionSuggestedAction>{
+            suggestedActions: {
                 actions: [
-                    <CardAction>{
+                    {
                         type: ActionTypes.OpenUrl,
                         value: encodeURI(signInLink),
                         title,

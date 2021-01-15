@@ -13,8 +13,9 @@ import {
     StringExpression,
     StringExpressionConverter,
 } from 'adaptive-expressions';
-import { MessagingExtensionResponse, MessagingExtensionResult } from 'botbuilder';
+import { MessagingExtensionResponse } from 'botbuilder';
 import { Converter, ConverterFactory, DialogConfiguration, DialogContext, DialogTurnResult } from 'botbuilder-dialogs';
+import { getComputeId } from './actionHelpers';
 import { BaseTeamsCacheInfoResponseDialog } from './baseTeamsCacheInfoResponseDialog';
 
 export interface SendMessagingExtensionMessageResponseConfiguration extends DialogConfiguration {
@@ -55,11 +56,11 @@ export class SendMessagingExtensionMessageResponse
      * Called when the dialog is started and pushed onto the dialog stack.
      *
      * @param {DialogContext} dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
-     * @param {object} options Optional, initial information to pass to the dialog.
+     * @param {object} _options Optional, initial information to pass to the dialog.
      * @returns {Promise<DialogTurnResult>} A promise representing the asynchronous operation.
      */
-    public async beginDialog(dc: DialogContext, options?: Record<string, unknown>): Promise<DialogTurnResult> {
-        if (this.disabled && this.disabled.getValue(dc.state)) {
+    public async beginDialog(dc: DialogContext, _options?: Record<string, unknown>): Promise<DialogTurnResult> {
+        if (this.disabled?.getValue(dc.state)) {
             return dc.endDialog();
         }
 
@@ -69,8 +70,8 @@ export class SendMessagingExtensionMessageResponse
             throw new Error(`A message is required for ${SendMessagingExtensionMessageResponse.$kind}.`);
         }
 
-        const response = <MessagingExtensionResponse>{
-            composeExtension: <MessagingExtensionResult>{
+        const response: MessagingExtensionResponse = {
+            composeExtension: {
                 type: 'message',
                 text: message,
             },
@@ -89,8 +90,6 @@ export class SendMessagingExtensionMessageResponse
      * @returns {string} A string representing the compute Id.
      */
     protected onComputeId(): string {
-        return `${this.constructor.name}[
-            ${this.message?.toString() ?? ''}
-        ]`;
+        return getComputeId('SendMessagingExtensionMessageResponse', [this.message]);
     }
 }

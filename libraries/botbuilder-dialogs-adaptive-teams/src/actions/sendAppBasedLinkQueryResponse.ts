@@ -13,7 +13,7 @@ import {
     StringExpression,
     StringExpressionConverter,
 } from 'adaptive-expressions';
-import { Activity, MessagingExtensionResult } from 'botbuilder';
+import { Activity, MessagingExtensionAttachment, MessagingExtensionResult } from 'botbuilder';
 import {
     Converter,
     ConverterFactory,
@@ -24,6 +24,7 @@ import {
     TemplateInterface,
 } from 'botbuilder-dialogs';
 import { ActivityTemplateConverter } from 'botbuilder-dialogs-adaptive/lib/converters';
+import { getComputeId } from './actionHelpers';
 import { BaseTeamsCacheInfoResponseDialog } from './baseTeamsCacheInfoResponseDialog';
 
 export interface SendAppBasedLinkQueryResponseConfiguration extends DialogConfiguration {
@@ -69,27 +70,25 @@ export class SendAppBasedLinkQueryResponse
      * @returns {Promise<DialogTurnResult>} A promise representing the asynchronous operation.
      */
     public async beginDialog(dc: DialogContext, options?: Record<string, unknown>): Promise<DialogTurnResult> {
-        if (this.disabled && this.disabled?.getValue(dc.state)) {
+        if (this.disabled?.getValue(dc.state)) {
             return dc.endDialog();
         }
 
-        let boundActivity;
-        if (this.card != null) {
-            boundActivity = await this.card.bind(dc, dc.state);
-
-            if (!boundActivity.attachments) {
-                throw new Error(
-                    `Invalid activity. An attachment is required for ${SendAppBasedLinkQueryResponse.$kind}.`
-                );
-            }
-        } else {
+        if (!this.card) {
             throw new Error(`An activity with attachments is required for ${SendAppBasedLinkQueryResponse.$kind}.`);
         }
 
-        const result = <MessagingExtensionResult>{
+        const boundActivity = await this.card.bind(dc, dc.state);
+
+        const attachments: MessagingExtensionAttachment[] = boundActivity?.attachments ?? [];
+        if (!attachments.length) {
+            throw new Error(`Invalid activity. An attachment is required for ${SendAppBasedLinkQueryResponse.$kind}.`);
+        }
+
+        const result: MessagingExtensionResult = {
             type: 'result',
             attachmentLayout: 'list',
-            attachments: boundActivity.attachments,
+            attachments,
         };
 
         const invokeResponse = this.createMessagingExtensionInvokeResponseActivity(dc, result);
@@ -104,8 +103,6 @@ export class SendAppBasedLinkQueryResponse
      * @returns {string} A string representing the compute Id.
      */
     protected onComputeId(): string {
-        return `${this.constructor.name}[
-            ${this.card?.toString() ?? ''}
-        ]`;
+        return getComputeId('SendAppBasedLinkQuery', [this.card]);
     }
 }

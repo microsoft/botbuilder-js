@@ -7,13 +7,7 @@
  */
 
 import { BoolExpression, BoolExpressionConverter } from 'adaptive-expressions';
-import {
-    Activity,
-    Attachment,
-    MessageFactory,
-    MessagingExtensionActionResponse,
-    MessagingExtensionResult,
-} from 'botbuilder';
+import { Activity, MessageFactory, MessagingExtensionActionResponse } from 'botbuilder';
 import {
     Converter,
     ConverterFactory,
@@ -24,6 +18,7 @@ import {
     TemplateInterface,
 } from 'botbuilder-dialogs';
 import { ActivityTemplateConverter } from 'botbuilder-dialogs-adaptive/lib/converters';
+import { getComputeId } from './actionHelpers';
 import { BaseSendTaskModuleContinueResponse } from './baseSendTaskModuleContinueResponse';
 import { BaseTeamsCacheInfoResponseDialog } from './baseTeamsCacheInfoResponseDialog';
 
@@ -69,29 +64,26 @@ export class SendMessagingExtensionBotMessagePreviewResponse
      * @returns {Promise<DialogTurnResult>} A promise representing the asynchronous operation.
      */
     public async beginDialog(dc: DialogContext, options?: Record<string, unknown>): Promise<DialogTurnResult> {
-        if (this.disabled && this.disabled?.getValue(dc.state)) {
+        if (this.disabled?.getValue(dc.state)) {
             return dc.endDialog();
         }
 
-        let attachment;
-        if (this.card != null) {
-            const boundActivity = await this.card.bind(dc, dc.state);
-
-            if (!boundActivity.attachments) {
-                throw new Error(
-                    `Invalid activity. The activity does not contain a valid attachment as required for ${SendMessagingExtensionBotMessagePreviewResponse.$kind}.`
-                );
-            }
-
-            attachment = boundActivity.attachments[0] as Attachment;
-        } else {
+        if (!this.card) {
             throw new Error(`A valid card is required for ${SendMessagingExtensionBotMessagePreviewResponse.$kind}.`);
         }
+        const boundActivity = await this.card.bind(dc, dc.state);
 
-        const response = <MessagingExtensionActionResponse>{
-            composeExtension: <MessagingExtensionResult>{
+        const [attachment] = boundActivity?.attachments ?? [];
+        if (!attachment) {
+            throw new Error(
+                `Invalid activity. The activity does not contain a valid attachment as required for ${SendMessagingExtensionBotMessagePreviewResponse.$kind}.`
+            );
+        }
+
+        const response: MessagingExtensionActionResponse = {
+            composeExtension: {
                 type: 'botMessagePreview',
-                activityPreview: MessageFactory.attachment(<Attachment>{
+                activityPreview: <Activity>MessageFactory.attachment({
                     content: attachment.content,
                     contentType: attachment.contentType,
                 }),
@@ -111,8 +103,6 @@ export class SendMessagingExtensionBotMessagePreviewResponse
      * @returns {string} A string representing the compute Id.
      */
     protected onComputeId(): string {
-        return `${this.constructor.name}[
-            ${this.card?.toString() ?? ''}
-        ]`;
+        return getComputeId('SendMessagingExtensionBotMessagePreviewResponse', [this.card]);
     }
 }

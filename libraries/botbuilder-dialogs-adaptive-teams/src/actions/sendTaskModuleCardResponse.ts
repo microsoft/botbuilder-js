@@ -7,7 +7,7 @@
  */
 
 import { BoolExpression, BoolExpressionConverter } from 'adaptive-expressions';
-import { Activity, Attachment, TaskModuleContinueResponse, TaskModuleResponse, TaskModuleTaskInfo } from 'botbuilder';
+import { Activity, TaskModuleResponse } from 'botbuilder';
 import {
     Converter,
     ConverterFactory,
@@ -18,6 +18,7 @@ import {
     TemplateInterface,
 } from 'botbuilder-dialogs';
 import { ActivityTemplateConverter } from 'botbuilder-dialogs-adaptive/lib/converters';
+import { getComputeId } from './actionHelpers';
 import { BaseSendTaskModuleContinueResponse } from './baseSendTaskModuleContinueResponse';
 import { BaseTeamsCacheInfoResponseDialog } from './baseTeamsCacheInfoResponseDialog';
 
@@ -57,27 +58,25 @@ export class SendTaskModuleCardResponse
      * Called when the dialog is started and pushed onto the dialog stack.
      *
      * @param {DialogContext} dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
-     * @param {object} options Optional, initial information to pass to the dialog.
+     * @param {object} _options Optional, initial information to pass to the dialog.
      * @returns {Promise<DialogTurnResult>} A promise representing the asynchronous operation.
      */
-    public async beginDialog(dc: DialogContext, options?: Record<string, unknown>): Promise<DialogTurnResult> {
-        if (this.disabled && this.disabled?.getValue(dc.state)) {
+    public async beginDialog(dc: DialogContext, _options?: Record<string, unknown>): Promise<DialogTurnResult> {
+        if (this.disabled?.getValue(dc.state)) {
             return dc.endDialog();
         }
 
-        let attachment;
-        if (this.card != null) {
-            const boundActivity = await this.card.bind(dc, dc.state);
-
-            if (!boundActivity.attachments) {
-                throw new Error(
-                    `Invalid activity. The activity does not contain a valid attachment as required for ${SendTaskModuleCardResponse.$kind}.`
-                );
-            }
-
-            attachment = boundActivity.attachments[0] as Attachment;
-        } else {
+        if (!this.card) {
             throw new Error(`A valid card is required for ${SendTaskModuleCardResponse.$kind}.`);
+        }
+
+        const boundActivity = await this.card.bind(dc, dc.state);
+
+        const [attachment] = boundActivity?.attachments ?? [];
+        if (!attachment) {
+            throw new Error(
+                `Invalid activity. The activity does not contain a valid attachment as required for ${SendTaskModuleCardResponse.$kind}.`
+            );
         }
 
         const title = this.title?.getValue(dc.state);
@@ -85,9 +84,9 @@ export class SendTaskModuleCardResponse
         const width = this.width?.getValue(dc.state);
         const completionBotId = this.completionBotId?.getValue(dc.state);
 
-        const response = <TaskModuleResponse>{
-            task: <TaskModuleContinueResponse>{
-                value: <TaskModuleTaskInfo>{
+        const response: TaskModuleResponse = {
+            task: {
+                value: {
                     card: attachment,
                     height,
                     width,
@@ -110,8 +109,6 @@ export class SendTaskModuleCardResponse
      * @returns {string} A string representing the compute Id.
      */
     protected onComputeId(): string {
-        return `${this.constructor.name}[
-            ${this.card?.toString() ?? ''}
-        ]`;
+        return getComputeId('SendTaskModuleCardResponse', [this.card]);
     }
 }

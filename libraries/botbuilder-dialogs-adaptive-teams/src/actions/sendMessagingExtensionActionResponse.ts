@@ -7,7 +7,7 @@
  */
 
 import { BoolExpression, Expression, StringExpression, StringExpressionConverter } from 'adaptive-expressions';
-import { Activity, MessagingExtensionActionResponse, TaskModuleContinueResponse, TaskModuleTaskInfo } from 'botbuilder';
+import { Activity, MessagingExtensionActionResponse } from 'botbuilder';
 import {
     Converter,
     ConverterFactory,
@@ -18,6 +18,7 @@ import {
     TemplateInterface,
 } from 'botbuilder-dialogs';
 import { ActivityTemplateConverter } from 'botbuilder-dialogs-adaptive/lib/converters';
+import { getComputeId } from './actionHelpers';
 import { BaseSendTaskModuleContinueResponse } from './baseSendTaskModuleContinueResponse';
 import { BaseTeamsCacheInfoResponseDialog } from './baseTeamsCacheInfoResponseDialog';
 
@@ -64,7 +65,7 @@ export class SendMessagingExtensionActionResponse
      * @returns {Promise<DialogTurnResult>} A promise representing the asynchronous operation.
      */
     public async beginDialog(dc: DialogContext, options?: Record<string, unknown>): Promise<DialogTurnResult> {
-        if (this.disabled && this.disabled?.getValue(dc.state)) {
+        if (this.disabled?.getValue(dc.state)) {
             return dc.endDialog();
         }
 
@@ -73,7 +74,9 @@ export class SendMessagingExtensionActionResponse
             activity = await this.card.bind(dc, dc.state);
         }
 
-        if (!activity?.attachments) {
+        const [attachment] = activity?.attachments ?? [];
+
+        if (!attachment) {
             throw new Error(`Missing attachments in ${SendMessagingExtensionActionResponse.$kind}.`);
         }
 
@@ -82,10 +85,10 @@ export class SendMessagingExtensionActionResponse
         const width = this.width?.getValue(dc.state);
         const completionBotId = this.completionBotId?.getValue(dc.state);
 
-        const response = <MessagingExtensionActionResponse>{
-            task: <TaskModuleContinueResponse>{
-                value: <TaskModuleTaskInfo>{
-                    card: activity.attachments[0],
+        const response: MessagingExtensionActionResponse = {
+            task: {
+                value: {
+                    card: attachment,
                     height,
                     width,
                     title,
@@ -106,8 +109,6 @@ export class SendMessagingExtensionActionResponse
      * @returns {string} A string representing the compute Id.
      */
     protected onComputeId(): string {
-        return `${this.constructor.name}[
-            ${this.card?.toString() ?? ''}
-        ]`;
+        return getComputeId('SendMessagingExtensionActionResponse', [this.card]);
     }
 }

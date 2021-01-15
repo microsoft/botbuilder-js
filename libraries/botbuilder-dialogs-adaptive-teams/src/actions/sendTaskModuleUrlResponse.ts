@@ -13,8 +13,9 @@ import {
     StringExpression,
     StringExpressionConverter,
 } from 'adaptive-expressions';
-import { TaskModuleContinueResponse, TaskModuleResponse, TaskModuleTaskInfo } from 'botbuilder';
+import { TaskModuleResponse } from 'botbuilder';
 import { Converter, ConverterFactory, DialogConfiguration, DialogContext, DialogTurnResult } from 'botbuilder-dialogs';
+import { getComputeId } from './actionHelpers';
 import { BaseSendTaskModuleContinueResponse } from './baseSendTaskModuleContinueResponse';
 import { BaseTeamsCacheInfoResponseDialog } from './baseTeamsCacheInfoResponseDialog';
 
@@ -65,7 +66,7 @@ export class SendTaskModuleUrlResponse
      * @returns {Promise<DialogTurnResult>} A promise representing the asynchronous operation.
      */
     public async beginDialog(dc: DialogContext, options?: Record<string, unknown>): Promise<DialogTurnResult> {
-        if (this.disabled && this.disabled.getValue(dc.state)) {
+        if (this.disabled?.getValue(dc.state)) {
             return dc.endDialog();
         }
 
@@ -80,9 +81,9 @@ export class SendTaskModuleUrlResponse
         const completionBotId = this.completionBotId?.getValue(dc.state);
         const fallbackUrl = this.fallbackUrl?.getValue(dc.state);
 
-        const response = <TaskModuleResponse>{
-            task: <TaskModuleContinueResponse>{
-                value: <TaskModuleTaskInfo>{
+        const response: TaskModuleResponse = {
+            task: {
+                value: {
                     height,
                     width,
                     title,
@@ -106,9 +107,6 @@ export class SendTaskModuleUrlResponse
      * @returns {string} A string representing the compute Id.
      */
     protected onComputeId(): string {
-        return `${this.constructor.name}[
-            ${this.url?.toString() ?? ''},
-            ${this.title?.toString() ?? ''}
-        ]`;
+        return getComputeId('SendTaskModuleUrlResponse', [this.url, this.title]);
     }
 }

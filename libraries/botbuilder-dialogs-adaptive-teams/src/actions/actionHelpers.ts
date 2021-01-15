@@ -6,7 +6,9 @@
  * Licensed under the MIT License.
  */
 import { ExpressionProperty } from 'adaptive-expressions';
+import { StringUtils } from 'botbuilder';
 import { DialogContext } from 'botbuilder-dialogs';
+import { tests } from 'botbuilder-stdlib';
 
 /**
  * Get the value of the string expression from the Dialog Context.
@@ -26,4 +28,25 @@ export function getValue<T>(dc: DialogContext, expressionProperty: ExpressionPro
         return value;
     }
     return null;
+}
+
+/**
+ * Generate the ComputeId from an array of items that get stringified,
+ * then joined by commas.
+ *
+ * @param classId
+ * @param {any[]} otherIds An array of ids to join into a computeId.
+ * @returns {string} computeId.
+ */
+export function getComputeId(classId: string, otherIds: unknown[]): string {
+    const joinedOtherIds = otherIds
+        .map((item) => {
+            if (tests.isObject(item)) {
+                item = JSON.stringify(item, null, 0);
+            }
+
+            return StringUtils.ellipsis(item?.toString().trim() || '', 30);
+        })
+        .join(',');
+    return `${classId}[${joinedOtherIds}]`;
 }

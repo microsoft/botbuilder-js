@@ -24,7 +24,7 @@ import {
     DialogContext,
     DialogTurnResult,
 } from 'botbuilder-dialogs';
-import { getValue } from './actionHelpers';
+import { getComputeId, getValue } from './actionHelpers';
 
 export interface GetPagedMembersConfiguration extends DialogConfiguration {
     disabled?: boolean | string | BoolExpression;
@@ -81,11 +81,11 @@ export class GetPagedMembers extends Dialog implements GetPagedMembersConfigurat
      * Called when the dialog is started and pushed onto the dialog stack.
      *
      * @param {DialogContext} dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
-     * @param {object} options Optional, initial information to pass to the dialog.
+     * @param {object} _options Optional, initial information to pass to the dialog.
      * @returns {Promise<DialogTurnResult>} A promise representing the asynchronous operation.
      */
-    public async beginDialog(dc: DialogContext, options?: Record<string, unknown>): Promise<DialogTurnResult> {
-        if (this.disabled && this.disabled?.getValue(dc.state)) {
+    public async beginDialog(dc: DialogContext, _options?: Record<string, unknown>): Promise<DialogTurnResult> {
+        if (this.disabled?.getValue(dc.state)) {
             return dc.endDialog();
         }
 
@@ -111,10 +111,6 @@ export class GetPagedMembers extends Dialog implements GetPagedMembersConfigurat
      * @returns {string} A string representing the compute Id.
      */
     protected onComputeId(): string {
-        return `${this.constructor.name}[
-            ${this.continuationToken?.toString() ?? ''},
-            ${this.pageSize?.toString() ?? ''},
-            ${this.property?.toString() ?? ''}
-        ]`;
+        return getComputeId('GetPagedMembers', [this.continuationToken, this.pageSize, this.property]);
     }
 }

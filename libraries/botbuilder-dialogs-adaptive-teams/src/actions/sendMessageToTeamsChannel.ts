@@ -25,7 +25,7 @@ import {
     TemplateInterface,
 } from 'botbuilder-dialogs';
 import { ActivityTemplateConverter } from 'botbuilder-dialogs-adaptive/lib/converters';
-import { getValue } from './actionHelpers';
+import { getComputeId, getValue } from './actionHelpers';
 
 export interface SendMessageToTeamsChannelConfiguration extends DialogConfiguration {
     disabled?: boolean | string | BoolExpression;
@@ -93,11 +93,11 @@ export class SendMessageToTeamsChannel extends Dialog implements SendMessageToTe
      * Called when the dialog is started and pushed onto the dialog stack.
      *
      * @param {DialogContext} dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
-     * @param {object} options Optional, initial information to pass to the dialog.
+     * @param {object} _options Optional, initial information to pass to the dialog.
      * @returns {Promise<DialogTurnResult>} A promise representing the asynchronous operation.
      */
-    public async beginDialog(dc: DialogContext, options?: Record<string, unknown>): Promise<DialogTurnResult> {
-        if (this.disabled && this.disabled?.getValue(dc.state)) {
+    public async beginDialog(dc: DialogContext, _options?: Record<string, unknown>): Promise<DialogTurnResult> {
+        if (this.disabled?.getValue(dc.state)) {
             return dc.endDialog();
         }
 
@@ -135,10 +135,10 @@ export class SendMessageToTeamsChannel extends Dialog implements SendMessageToTe
      * @returns {string} A string representing the compute Id.
      */
     protected onComputeId(): string {
-        return `${this.constructor.name}[
-            ${this.teamsChannelId?.toString() ?? ''},
-            ${this.activityIdProperty?.toString() ?? ''},
-            ${this.conversationReferenceProperty?.toString() ?? ''}
-        ]`;
+        return getComputeId('SendMessageToTeamsChannel', [
+            this.teamsChannelId,
+            this.activityIdProperty,
+            this.conversationReferenceProperty,
+        ]);
     }
 }

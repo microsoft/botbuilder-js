@@ -7,7 +7,7 @@
  */
 
 import { BoolExpression, BoolExpressionConverter } from 'adaptive-expressions';
-import { Activity, Attachment, MessagingExtensionAttachment, MessagingExtensionResult } from 'botbuilder';
+import { Activity, MessagingExtensionAttachment, MessagingExtensionResult } from 'botbuilder';
 import {
     Converter,
     ConverterFactory,
@@ -18,6 +18,7 @@ import {
     TemplateInterface,
 } from 'botbuilder-dialogs';
 import { ActivityTemplateConverter } from 'botbuilder-dialogs-adaptive/lib/converters';
+import { getComputeId } from './actionHelpers';
 import { BaseTeamsCacheInfoResponseDialog } from './baseTeamsCacheInfoResponseDialog';
 
 export interface SendMessagingExtensionSelectItemResponseConfiguration extends DialogConfiguration {
@@ -62,25 +63,25 @@ export class SendMessagingExtensionSelectItemResponse
      * @returns {Promise<DialogTurnResult>} A promise representing the asynchronous operation.
      */
     public async beginDialog(dc: DialogContext, _options?: Record<string, unknown>): Promise<DialogTurnResult> {
-        if (this.disabled && this.disabled?.getValue(dc.state)) {
+        if (this.disabled?.getValue(dc.state)) {
             return dc.endDialog();
         }
 
         const boundActivity = await this.card.bind(dc, dc.state);
 
-        if (!boundActivity.attachments) {
+        const [attachment] = boundActivity?.attachments ?? [];
+        if (!attachment) {
             throw new Error(
                 `Invalid activity. A valid attachment is required for ${SendMessagingExtensionSelectItemResponse.$kind}.`
             );
         }
 
-        const attachment = boundActivity.attachments[0] as Attachment;
-        const extensionAttachment = <MessagingExtensionAttachment>{
+        const extensionAttachment: MessagingExtensionAttachment = {
             contentType: attachment.contentType,
             content: attachment.content,
         };
 
-        const response = <MessagingExtensionResult>{
+        const response: MessagingExtensionResult = {
             type: 'result',
             attachmentLayout: 'list',
             attachments: [extensionAttachment],
@@ -98,8 +99,6 @@ export class SendMessagingExtensionSelectItemResponse
      * @returns {string} A string representing the compute Id.
      */
     protected onComputeId(): string {
-        return `${this.constructor.name}[
-            ${this.card?.toString() ?? ''}
-        ]`;
+        return getComputeId('SendMessagingExtensionSelectItemResponse', [this.card]);
     }
 }

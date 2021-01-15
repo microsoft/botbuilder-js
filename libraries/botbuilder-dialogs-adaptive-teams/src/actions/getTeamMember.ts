@@ -22,7 +22,7 @@ import {
     DialogContext,
     DialogTurnResult,
 } from 'botbuilder-dialogs';
-import { getValue } from './actionHelpers';
+import { getComputeId, getValue } from './actionHelpers';
 
 export interface GetTeamMemberConfiguration extends DialogConfiguration {
     disabled?: boolean | string | BoolExpression;
@@ -91,7 +91,7 @@ export class GetTeamMember extends Dialog implements GetTeamMemberConfiguration 
      * @returns {Promise<DialogTurnResult>} A promise representing the asynchronous operation.
      */
     public async beginDialog(dc: DialogContext, options?: Record<string, unknown>): Promise<DialogTurnResult> {
-        if (this.disabled && this.disabled?.getValue(dc.state)) {
+        if (this.disabled?.getValue(dc.state)) {
             return dc.endDialog();
         }
 
@@ -122,10 +122,6 @@ export class GetTeamMember extends Dialog implements GetTeamMemberConfiguration 
      * @returns {string} A string representing the compute Id.
      */
     protected onComputeId(): string {
-        return `${this.constructor.name}[
-            ${this.memberId?.toString() ?? ''},
-            ${this.teamId?.toString() ?? ''},
-            ${this.property?.toString() ?? ''}
-        ]`;
+        return getComputeId('GetTeamMember', [this.memberId, this.teamId, this.property]);
     }
 }

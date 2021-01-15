@@ -13,14 +13,9 @@ import {
     StringExpression,
     StringExpressionConverter,
 } from 'adaptive-expressions';
-import {
-    ActionTypes,
-    CardAction,
-    MessagingExtensionResponse,
-    MessagingExtensionResult,
-    MessagingExtensionSuggestedAction,
-} from 'botbuilder';
+import { ActionTypes, CardAction, MessagingExtensionResponse } from 'botbuilder';
 import { Converter, ConverterFactory, DialogConfiguration, DialogContext, DialogTurnResult } from 'botbuilder-dialogs';
+import { getComputeId } from './actionHelpers';
 import { BaseTeamsCacheInfoResponseDialog } from './baseTeamsCacheInfoResponseDialog';
 
 export interface SendMessagingExtensionConfigQuerySettingUrlResponseConfiguration extends DialogConfiguration {
@@ -68,7 +63,7 @@ export class SendMessagingExtensionConfigQuerySettingUrlResponse
      * @returns {Promise<DialogTurnResult>} A promise representing the asynchronous operation.
      */
     public async beginDialog(dc: DialogContext, options?: Record<string, unknown>): Promise<DialogTurnResult> {
-        if (this.disabled && this.disabled.getValue(dc.state)) {
+        if (this.disabled?.getValue(dc.state)) {
             return dc.endDialog();
         }
 
@@ -77,10 +72,10 @@ export class SendMessagingExtensionConfigQuerySettingUrlResponse
             throw new Error(`ConfigUrl is required for ${SendMessagingExtensionConfigQuerySettingUrlResponse.$kind}.`);
         }
 
-        const response = <MessagingExtensionResponse>{
-            composeExtension: <MessagingExtensionResult>{
+        const response: MessagingExtensionResponse = {
+            composeExtension: {
                 type: 'config',
-                suggestedActions: <MessagingExtensionSuggestedAction>{
+                suggestedActions: {
                     actions: [
                         <CardAction>{
                             type: ActionTypes.OpenUrl,
@@ -104,8 +99,6 @@ export class SendMessagingExtensionConfigQuerySettingUrlResponse
      * @returns {string} A string representing the compute Id.
      */
     protected onComputeId(): string {
-        return `${this.constructor.name}[
-            ${this.configUrl?.toString() ?? ''}
-        ]`;
+        return getComputeId('SendMessagingExtensionConfigQuerySettingsUrlResponse', [this.configUrl]);
     }
 }

@@ -25,6 +25,7 @@ import {
     TemplateInterface,
 } from 'botbuilder-dialogs';
 import { ActivityTemplateConverter } from 'botbuilder-dialogs-adaptive/lib/converters';
+import { getComputeId } from './actionHelpers';
 import { BaseTeamsCacheInfoResponseDialog } from './baseTeamsCacheInfoResponseDialog';
 
 export interface SendMessagingExtensionAttachmentsResponseConfiguration extends DialogConfiguration {
@@ -77,11 +78,11 @@ export class SendMessagingExtensionAttachmentsResponse
      * Called when the dialog is started and pushed onto the dialog stack.
      *
      * @param {DialogContext} dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
-     * @param {object} options Optional, initial information to pass to the dialog.
+     * @param {object} _options Optional, initial information to pass to the dialog.
      * @returns {Promise<DialogTurnResult>} A promise representing the asynchronous operation.
      */
-    public async beginDialog(dc: DialogContext, options?: Record<string, unknown>): Promise<DialogTurnResult> {
-        if (this.disabled && this.disabled?.getValue(dc.state)) {
+    public async beginDialog(dc: DialogContext, _options?: Record<string, unknown>): Promise<DialogTurnResult> {
+        if (this.disabled?.getValue(dc.state)) {
             return dc.endDialog();
         }
 
@@ -90,15 +91,15 @@ export class SendMessagingExtensionAttachmentsResponse
             activity = await this.attachments.bind(dc, dc.state);
         }
 
-        if (!activity?.attachments) {
+        if (!activity?.attachments?.length) {
             throw new Error(`Missing attachments in ${SendMessagingExtensionAttachmentsResponse.$kind}.`);
         }
 
         const layout = this.attachmentLayout?.getValue(dc.state);
 
-        const result = <MessagingExtensionResult>{
+        const result: MessagingExtensionResult = {
             type: 'result',
-            attachmentLayout: layout.toString(),
+            attachmentLayout: layout,
             attachments: activity.attachments,
         };
 
@@ -114,8 +115,6 @@ export class SendMessagingExtensionAttachmentsResponse
      * @returns {string} A string representing the compute Id.
      */
     protected onComputeId(): string {
-        return `${this.constructor.name}[
-            ${this.attachments?.toString() ?? ''}
-        ]`;
+        return getComputeId('SendMessagingExtensionAttachmentsResponse', [this.attachments]);
     }
 }
