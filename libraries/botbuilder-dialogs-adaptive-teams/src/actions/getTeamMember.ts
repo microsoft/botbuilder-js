@@ -22,7 +22,7 @@ import {
     DialogContext,
     DialogTurnResult,
 } from 'botbuilder-dialogs';
-import { getComputeId, getValue } from './actionHelpers';
+import { getValue } from './actionHelpers';
 
 export interface GetTeamMemberConfiguration extends DialogConfiguration {
     disabled?: boolean | string | BoolExpression;
@@ -52,7 +52,7 @@ export class GetTeamMember extends Dialog implements GetTeamMemberConfiguration 
     /**
      * Gets or sets property path to put the value in.
      */
-    public property: StringExpression;
+    public property?: StringExpression;
 
     /**
      * Gets or sets the expression to get the value to use for member id.
@@ -122,6 +122,10 @@ export class GetTeamMember extends Dialog implements GetTeamMemberConfiguration 
      * @returns {string} A string representing the compute Id.
      */
     protected onComputeId(): string {
-        return getComputeId('GetTeamMember', [this.memberId, this.teamId, this.property]);
+        return `GetTeamMember[\
+            ${this.memberId?.toString() ?? ''},\
+            ${this.teamId?.toString() ?? ''},\
+            ${this.property?.toString() ?? ''}\
+        ]`;
     }
 }

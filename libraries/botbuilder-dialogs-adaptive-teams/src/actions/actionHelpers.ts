@@ -17,7 +17,7 @@ import { tests } from 'botbuilder-stdlib';
  * @param {ExpressionProperty<any>} expressionProperty The expressionProperty to use to retrieve a value from the DialogContext.
  * @returns {string} The value of the evaluated stringExpression.
  */
-export function getValue<T>(dc: DialogContext, expressionProperty: ExpressionProperty<T>): T {
+export function getValue<T>(dc: DialogContext, expressionProperty: ExpressionProperty<T> | undefined): T | undefined {
     if (expressionProperty) {
         const { value, error } = expressionProperty.tryGetValue(dc.state);
         if (error) {
@@ -27,26 +27,7 @@ export function getValue<T>(dc: DialogContext, expressionProperty: ExpressionPro
         }
         return value;
     }
-    return null;
-}
 
-/**
- * Generate the ComputeId from an array of items that get stringified,
- * then joined by commas.
- *
- * @param classId
- * @param {any[]} otherIds An array of ids to join into a computeId.
- * @returns {string} computeId.
- */
-export function getComputeId(classId: string, otherIds: unknown[]): string {
-    const joinedOtherIds = otherIds
-        .map((item) => {
-            if (tests.isObject(item)) {
-                item = JSON.stringify(item, null, 0);
-            }
-
-            return StringUtils.ellipsis(item?.toString().trim() || '', 30);
-        })
-        .join(',');
-    return `${classId}[${joinedOtherIds}]`;
+    // Downstream functions expect undefined instead of null.
+    return undefined;
 }

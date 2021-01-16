@@ -25,7 +25,7 @@ import {
     TemplateInterface,
 } from 'botbuilder-dialogs';
 import { ActivityTemplateConverter } from 'botbuilder-dialogs-adaptive/lib/converters';
-import { getComputeId, getValue } from './actionHelpers';
+import { getValue } from './actionHelpers';
 
 export interface SendMessageToTeamsChannelConfiguration extends DialogConfiguration {
     disabled?: boolean | string | BoolExpression;
@@ -54,12 +54,12 @@ export class SendMessageToTeamsChannel extends Dialog implements SendMessageToTe
      * Gets or sets property path to put the newly created activity's Conversation Reference.
      * This can be used to later send messages to this same conversation.
      */
-    public conversationReferenceProperty: StringExpression;
+    public conversationReferenceProperty?: StringExpression;
 
     /**
      *  Gets or sets property path to put the id of the activity sent.
      */
-    public activityIdProperty: StringExpression;
+    public activityIdProperty?: StringExpression;
 
     /**
      * Gets or sets the expression to get the value to use for team id.
@@ -72,7 +72,7 @@ export class SendMessageToTeamsChannel extends Dialog implements SendMessageToTe
     /**
      * Gets or sets template for the activity expression containing the activity to send.
      */
-    public activity: TemplateInterface<Activity, DialogStateManager>;
+    public activity?: TemplateInterface<Activity, DialogStateManager>;
 
     public getConverter(property: keyof SendMessageToTeamsChannelConfiguration): Converter | ConverterFactory {
         switch (property) {
@@ -110,7 +110,11 @@ export class SendMessageToTeamsChannel extends Dialog implements SendMessageToTe
             activity = await this.activity.bind(dc, dc.state);
         }
 
-        let teamsChannelId = getValue(dc, this.teamsChannelId);
+        if (!activity) {
+            throw new Error(`Missing Activity in ${SendMessageToTeamsChannel.$kind}.`);
+        }
+
+        let teamsChannelId = getValue(dc, this.teamsChannelId) ?? '';
 
         if (!teamsChannelId) {
             teamsChannelId = dc.context.activity?.channelData?.channel?.id;
@@ -135,10 +139,10 @@ export class SendMessageToTeamsChannel extends Dialog implements SendMessageToTe
      * @returns {string} A string representing the compute Id.
      */
     protected onComputeId(): string {
-        return getComputeId('SendMessageToTeamsChannel', [
-            this.teamsChannelId,
-            this.activityIdProperty,
-            this.conversationReferenceProperty,
-        ]);
+        return `SendMessageToTeamsChannel[\
+            ${this.teamsChannelId?.toString() ?? ''},\
+            ${this.activityIdProperty?.toString() ?? ''},\
+            ${this.conversationReferenceProperty?.toString() ?? ''}\
+        ]`;
     }
 }

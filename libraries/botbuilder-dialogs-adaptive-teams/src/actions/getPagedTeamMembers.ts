@@ -24,7 +24,7 @@ import {
     DialogContext,
     DialogTurnResult,
 } from 'botbuilder-dialogs';
-import { getComputeId, getValue } from './actionHelpers';
+import { getValue } from './actionHelpers';
 
 export interface GetPagedTeamMembersConfiguration extends DialogConfiguration {
     disabled?: boolean | string | BoolExpression;
@@ -52,17 +52,17 @@ export class GetPagedTeamMembers extends Dialog implements GetPagedTeamMembersCo
     /**
      * Gets or sets property path to put the value in.
      */
-    public property: StringExpression;
+    public property?: StringExpression;
 
     /**
      * Gets or sets the expression to get the value to use for the continuationToken.
      */
-    public continuationToken: StringExpression;
+    public continuationToken?: StringExpression;
 
     /**
      * Gets or sets the expression to get the value to use for the page size.
      */
-    public pageSize: IntExpression;
+    public pageSize?: IntExpression;
 
     /**
      * Gets or sets the expression to get the value to use for team id.
@@ -122,6 +122,11 @@ export class GetPagedTeamMembers extends Dialog implements GetPagedTeamMembersCo
      * @returns {string} A string representing the compute Id.
      */
     protected onComputeId(): string {
-        return getComputeId('GetPagedTeamMembers', [this.teamId, this.pageSize, this.continuationToken, this.property]);
+        return `GetPagedTeamMembers[\
+            ${this.teamId?.toString() ?? ''}],\
+            ${this.pageSize?.toString() ?? ''}],\
+            ${this.continuationToken?.toString() ?? ''},\
+            ${this.property?.toString() ?? ''}\
+        ]`;
     }
 }

@@ -15,7 +15,6 @@ import {
 } from 'adaptive-expressions';
 import { MessagingExtensionResponse } from 'botbuilder';
 import { Converter, ConverterFactory, DialogConfiguration, DialogContext, DialogTurnResult } from 'botbuilder-dialogs';
-import { getComputeId } from './actionHelpers';
 import { BaseTeamsCacheInfoResponseDialog } from './baseTeamsCacheInfoResponseDialog';
 
 export interface SendMessagingExtensionMessageResponseConfiguration extends DialogConfiguration {
@@ -37,7 +36,7 @@ export class SendMessagingExtensionMessageResponse
     /**
      * Gets or sets the template or text to use to generate the response message to send.
      */
-    public message: StringExpression;
+    public message?: StringExpression;
 
     public getConverter(
         property: keyof SendMessagingExtensionMessageResponseConfiguration
@@ -90,6 +89,8 @@ export class SendMessagingExtensionMessageResponse
      * @returns {string} A string representing the compute Id.
      */
     protected onComputeId(): string {
-        return getComputeId('SendMessagingExtensionMessageResponse', [this.message]);
+        return `SendMessagingExtensionMessageResponse[\
+            ${this.message?.toString() ?? ''}\
+        ]`;
     }
 }

@@ -73,19 +73,30 @@ const getGroupConversation = (): ConversationAccount => {
     };
 };
 
-const getPersonalConversationReference = (): Partial<ConversationReference> => {
+const getPersonalConversationReference = (): ConversationReference => {
     return {
         user: getTeamsUser(),
         channelId: Channels.Msteams,
         conversation: getPersonalConversation(),
+        bot: getBot(),
+        serviceUrl: 'https://api.botframework.com',
     };
 };
 
-const getGroupConversationReference = (): Partial<ConversationReference> => {
+const getBot = (): ChannelAccount => {
+    return {
+        id: 'botId',
+        name: 'Bot',
+    }
+}
+
+const getGroupConversationReference = (): ConversationReference => {
     return {
         user: getTeamsUser(),
         channelId: Channels.Msteams,
         conversation: getGroupConversation(),
+        bot: getBot(),
+        serviceUrl: 'https://api.botframework.com',
     };
 };
 
@@ -119,7 +130,7 @@ describe('Actions', function () {
     );
 
     /**
-     * Note: With mocha, `this.test.title` refers to the test's name, so runTestScript
+     * Note: With mocha, `this.test?.title` refers to the test's name, so runTestScript
      * is just calling a file with the same name as the test.
      */
     it('Action_GetMeetingParticipant', async function () {
@@ -144,21 +155,21 @@ describe('Actions', function () {
 
         const adapter = getTeamsTestAdapter(conversationReference);
 
-        await TestUtils.runTestScript(resourceExplorer, this.test.title, adapter);
+        await TestUtils.runTestScript(resourceExplorer, this.test?.title, adapter);
 
         ok(fetchExpectation.isDone());
         ok(fetchExpectationCustomProperties.isDone());
     });
 
     it('Action_GetMeetingParticipantError', async function () {
-        await TestUtils.runTestScript(resourceExplorer, this.test.title);
+        await TestUtils.runTestScript(resourceExplorer, this.test?.title);
     });
 
     it('Action_GetMeetingParticipantErrorWithAdapter', async function () {
         const conversationReference = getPersonalConversationReference();
         const adapter = getTeamsTestAdapter(conversationReference);
 
-        await TestUtils.runTestScript(resourceExplorer, this.test.title, adapter);
+        await TestUtils.runTestScript(resourceExplorer, this.test?.title, adapter);
     });
 
     it('Action_GetMember', async function () {
@@ -175,21 +186,21 @@ describe('Actions', function () {
 
         const adapter = getTeamsTestAdapter(conversationReference);
 
-        await TestUtils.runTestScript(resourceExplorer, this.test.title, adapter);
+        await TestUtils.runTestScript(resourceExplorer, this.test?.title, adapter);
 
         ok(fetchExpectation.isDone());
         ok(fetchExpectationCustomProperties.isDone());
     });
 
     it('Action_GetMemberError', async function () {
-        await TestUtils.runTestScript(resourceExplorer, this.test.title);
+        await TestUtils.runTestScript(resourceExplorer, this.test?.title);
     });
 
     it('Action_GetMemberErrorWithAdapter', async function () {
         const conversationReference = getPersonalConversationReference();
         const adapter = getTeamsTestAdapter(conversationReference);
 
-        await TestUtils.runTestScript(resourceExplorer, this.test.title, adapter);
+        await TestUtils.runTestScript(resourceExplorer, this.test?.title, adapter);
     });
 
     it('Action_GetPagedMembers', async function () {
@@ -206,14 +217,14 @@ describe('Actions', function () {
 
         const adapter = getTeamsTestAdapter(conversationReference);
 
-        await TestUtils.runTestScript(resourceExplorer, this.test.title, adapter);
+        await TestUtils.runTestScript(resourceExplorer, this.test?.title, adapter);
 
         ok(fetchExpectation.isDone());
         ok(fetchExpectationCustomProperties.isDone());
     });
 
     it('Action_GetPagedMembersError', async function () {
-        await TestUtils.runTestScript(resourceExplorer, this.test.title);
+        await TestUtils.runTestScript(resourceExplorer, this.test?.title);
     });
 
     it('Action_GetPagedTeamMembers', async function () {
@@ -230,14 +241,14 @@ describe('Actions', function () {
 
         const adapter = getTeamsTestAdapter(conversationReference);
 
-        await TestUtils.runTestScript(resourceExplorer, this.test.title, adapter);
+        await TestUtils.runTestScript(resourceExplorer, this.test?.title, adapter);
 
         ok(fetchExpectation.isDone());
         ok(fetchExpectationCustomProperties.isDone());
     });
 
     it('Action_GetPagedTeamMembersError', async function () {
-        await TestUtils.runTestScript(resourceExplorer, this.test.title);
+        await TestUtils.runTestScript(resourceExplorer, this.test?.title);
     });
 
     it('Action_GetTeamChannels', async function () {
@@ -267,14 +278,14 @@ describe('Actions', function () {
 
         const adapter = getTeamsTestAdapter(conversationReference);
 
-        await TestUtils.runTestScript(resourceExplorer, this.test.title, adapter);
+        await TestUtils.runTestScript(resourceExplorer, this.test?.title, adapter);
 
         ok(fetchExpectation.isDone());
         ok(fetchExpectationCustomProperties.isDone());
     });
 
     it('Action_GetTeamChannelsError', async function () {
-        await TestUtils.runTestScript(resourceExplorer, this.test.title);
+        await TestUtils.runTestScript(resourceExplorer, this.test?.title);
     });
 
     it('Action_GetTeamDetails', async function () {
@@ -295,14 +306,14 @@ describe('Actions', function () {
 
         const adapter = getTeamsTestAdapter(conversationReference);
 
-        await TestUtils.runTestScript(resourceExplorer, this.test.title, adapter);
+        await TestUtils.runTestScript(resourceExplorer, this.test?.title, adapter);
 
         ok(fetchExpectation.isDone());
         ok(fetchExpectationCustomProperties.isDone());
     });
 
     it('Action_GetTeamDetailsError', async function () {
-        await TestUtils.runTestScript(resourceExplorer, this.test.title);
+        await TestUtils.runTestScript(resourceExplorer, this.test?.title);
     });
 
     it('Action_GetTeamMember', async function () {
@@ -319,29 +330,29 @@ describe('Actions', function () {
 
         const adapter = getTeamsTestAdapter(conversationReference);
 
-        await TestUtils.runTestScript(resourceExplorer, this.test.title, adapter);
+        await TestUtils.runTestScript(resourceExplorer, this.test?.title, adapter);
 
         ok(fetchExpectation.isDone());
         ok(fetchExpectationCustomProperties.isDone());
     });
 
     it('Action_GetTeamMemberError', async function () {
-        await TestUtils.runTestScript(resourceExplorer, this.test.title);
+        await TestUtils.runTestScript(resourceExplorer, this.test?.title);
     });
 
     it('Action_GetTeamMemberErrorWithAdapter', async function () {
         const conversationReference = getGroupConversationReference();
         const adapter = getTeamsTestAdapter(conversationReference);
 
-        await TestUtils.runTestScript(resourceExplorer, this.test.title, adapter);
+        await TestUtils.runTestScript(resourceExplorer, this.test?.title, adapter);
     });
 
     it('Action_SendAppBasedLinkQueryResponse', async function () {
-        await TestUtils.runTestScript(resourceExplorer, this.test.title);
+        await TestUtils.runTestScript(resourceExplorer, this.test?.title);
     });
 
     it('Action_SendAppBasedLinkQueryResponseError', async function () {
-        await TestUtils.runTestScript(resourceExplorer, this.test.title);
+        await TestUtils.runTestScript(resourceExplorer, this.test?.title);
     });
 
     it('Action_SendMessageToTeamsChannel', async function () {
@@ -350,29 +361,29 @@ describe('Actions', function () {
 
         const fetchExpectation = nock('https://api.botframework.com').post('/v3/conversations').times(2).reply(200);
 
-        await TestUtils.runTestScript(resourceExplorer, this.test.title, adapter);
+        await TestUtils.runTestScript(resourceExplorer, this.test?.title, adapter);
 
         ok(fetchExpectation.isDone());
     });
 
     it('Action_SendMessageToTeamsChannelError', async function () {
-        await TestUtils.runTestScript(resourceExplorer, this.test.title);
+        await TestUtils.runTestScript(resourceExplorer, this.test?.title);
     });
 
     it('Action_SendMessagingExtensionActionResponse', async function () {
-        await TestUtils.runTestScript(resourceExplorer, this.test.title);
+        await TestUtils.runTestScript(resourceExplorer, this.test?.title);
     });
 
     it('Action_SendMessagingExtensionActionResponseError', async function () {
-        await TestUtils.runTestScript(resourceExplorer, this.test.title);
+        await TestUtils.runTestScript(resourceExplorer, this.test?.title);
     });
 
     it('Action_SendMessagingExtensionAttachmentsResponse', async function () {
-        await TestUtils.runTestScript(resourceExplorer, this.test.title);
+        await TestUtils.runTestScript(resourceExplorer, this.test?.title);
     });
 
     it('Action_SendMessagingExtensionAttachmentsResponseError', async function () {
-        await TestUtils.runTestScript(resourceExplorer, this.test.title);
+        await TestUtils.runTestScript(resourceExplorer, this.test?.title);
     });
 
     it('Action_SendMessagingExtensionAuthResponse', async function () {
@@ -380,73 +391,80 @@ describe('Actions', function () {
         const conversationReference = getPersonalConversationReference();
         conversationReference.conversation.id = 'Action_SendMessagingExtensionAuthResponse';
         const adapter = getTeamsTestAdapter(conversationReference);
-        adapter.addUserToken('testConnection', conversationReference.channelId, conversationReference.user.id, 'token');
+        adapter.addUserToken(
+            'testConnection',
+            conversationReference.channelId,
+            conversationReference.user?.id || '29:User-Id',
+            'token'
+        );
 
-        await TestUtils.runTestScript(resourceExplorer, this.test.title, adapter);
+        await TestUtils.runTestScript(resourceExplorer, this.test?.title, adapter);
     });
 
     it('Action_SendMessagingExtensionAuthResponseError', async function () {
         const adapter = getTeamsTestAdapter();
+        // eslint-disable-next-line
+        // @ts-ignore: We have to set this to null to test the error but tsconfig "strict" doesn't allow it.
         adapter.getUserToken = null;
-        await TestUtils.runTestScript(resourceExplorer, this.test.title, adapter);
+        await TestUtils.runTestScript(resourceExplorer, this.test?.title, adapter);
     });
 
     it('Action_SendMessagingExtensionAuthResponseErrorWithAdapter', async function () {
         const adapter = getTeamsTestAdapter();
         adapter.addUserToken('test connection', 'test', 'user1', 'token');
 
-        await TestUtils.runTestScript(resourceExplorer, this.test.title, adapter);
+        await TestUtils.runTestScript(resourceExplorer, this.test?.title, adapter);
     });
 
     it('Action_SendMessagingExtensionBotMessagePreviewResponse', async function () {
-        await TestUtils.runTestScript(resourceExplorer, this.test.title);
+        await TestUtils.runTestScript(resourceExplorer, this.test?.title);
     });
 
     it('Action_SendMessagingExtensionBotMessagePreviewResponseError', async function () {
-        await TestUtils.runTestScript(resourceExplorer, this.test.title);
+        await TestUtils.runTestScript(resourceExplorer, this.test?.title);
     });
 
     it('Action_SendMessagingExtensionConfigQuerySettingUrlResponse', async function () {
-        await TestUtils.runTestScript(resourceExplorer, this.test.title);
+        await TestUtils.runTestScript(resourceExplorer, this.test?.title);
     });
 
     it('Action_SendMessagingExtensionConfigQuerySettingUrlResponseError', async function () {
-        await TestUtils.runTestScript(resourceExplorer, this.test.title);
+        await TestUtils.runTestScript(resourceExplorer, this.test?.title);
     });
 
     it('Action_SendMessagingExtensionMessageResponse', async function () {
-        await TestUtils.runTestScript(resourceExplorer, this.test.title);
+        await TestUtils.runTestScript(resourceExplorer, this.test?.title);
     });
 
     it('Action_SendMessagingExtensionMessageResponseError', async function () {
-        await TestUtils.runTestScript(resourceExplorer, this.test.title);
+        await TestUtils.runTestScript(resourceExplorer, this.test?.title);
     });
 
     it('Action_SendMessagingExtensionSelectItemResponse', async function () {
-        await TestUtils.runTestScript(resourceExplorer, this.test.title);
+        await TestUtils.runTestScript(resourceExplorer, this.test?.title);
     });
 
     it('Action_SendMessagingExtensionSelectItemResponseError', async function () {
-        await TestUtils.runTestScript(resourceExplorer, this.test.title);
+        await TestUtils.runTestScript(resourceExplorer, this.test?.title);
     });
 
     it('Action_SendTaskModuleCardResponse', async function () {
-        await TestUtils.runTestScript(resourceExplorer, this.test.title);
+        await TestUtils.runTestScript(resourceExplorer, this.test?.title);
     });
 
     it('Action_SendTaskModuleCardResponseError', async function () {
-        await TestUtils.runTestScript(resourceExplorer, this.test.title);
+        await TestUtils.runTestScript(resourceExplorer, this.test?.title);
     });
 
     it('Action_SendTaskModuleMessageResponse', async function () {
-        await TestUtils.runTestScript(resourceExplorer, this.test.title);
+        await TestUtils.runTestScript(resourceExplorer, this.test?.title);
     });
 
     it('Action_SendTaskModuleUrlResponse', async function () {
-        await TestUtils.runTestScript(resourceExplorer, this.test.title);
+        await TestUtils.runTestScript(resourceExplorer, this.test?.title);
     });
 
     it('Action_SendTaskModuleUrlResponseError', async function () {
-        await TestUtils.runTestScript(resourceExplorer, this.test.title);
+        await TestUtils.runTestScript(resourceExplorer, this.test?.title);
     });
 });

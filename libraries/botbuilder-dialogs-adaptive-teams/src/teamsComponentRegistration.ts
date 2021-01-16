@@ -80,6 +80,17 @@ import {
     SendTaskModuleUrlResponseConfiguration,
 } from './actions';
 import { ComponentRegistration } from 'botbuilder';
+import { Dialog } from 'botbuilder-dialogs';
+
+type ActionType<T> = {
+    $kind: string;
+    new (dialogId?: string | undefined): T;
+};
+
+type ConditionType<T> = {
+    $kind: string;
+    new (actions?: Dialog<Record<string, unknown>>[] | undefined, condition?: string | undefined): T;
+};
 
 type Type<T> = {
     $kind: string;
@@ -156,10 +167,10 @@ export class TeamsComponentRegistration extends ComponentRegistration implements
         return this._declarativeTypes;
     }
 
-    private _addDeclarativeType<T, C>(type: Type<T>, loader?: CustomDeserializer<T, C>): void {
+    private _addDeclarativeType<T, C>(type: ActionType<T> | ConditionType<T>, loader?: CustomDeserializer<T, C>): void {
         const declarativeType: DeclarativeType<T, C> = {
             kind: type.$kind,
-            type,
+            type: <Type<T>>type,
             loader,
         };
         this._declarativeTypes.push(declarativeType);

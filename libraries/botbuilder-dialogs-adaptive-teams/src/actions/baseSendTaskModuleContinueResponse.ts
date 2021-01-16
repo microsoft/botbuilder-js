@@ -33,24 +33,24 @@ export abstract class BaseSendTaskModuleContinueResponse
     /**
      * Gets or sets the text or expression to use to generate the title of the response.
      */
-    public title: StringExpression;
+    public title?: StringExpression;
 
     /**
      * Gets or sets an optional expression for the height of the response.
      */
-    public height: IntExpression;
+    public height?: IntExpression;
 
     /**
      * Gets or sets an optional expression for the width of the response.
      */
-    public width: IntExpression;
+    public width?: IntExpression;
 
     /**
      * Gets or sets an optional expression for the Completion Bot Id of the Task Module Task Info response.
      * This is a bot App ID to send the result of the user's interaction with the task module to.
      * If specified, the bot will receive a task/submit invoke event with a JSON object in the event payload.
      */
-    public completionBotId: StringExpression;
+    public completionBotId?: StringExpression;
 
     public getConverter(
         property: keyof BaseSendTaskModuleContinueResponseConfiguration | string

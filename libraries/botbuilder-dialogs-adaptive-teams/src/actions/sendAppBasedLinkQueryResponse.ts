@@ -13,7 +13,7 @@ import {
     StringExpression,
     StringExpressionConverter,
 } from 'adaptive-expressions';
-import { Activity, MessagingExtensionAttachment, MessagingExtensionResult } from 'botbuilder';
+import { Activity, MessagingExtensionAttachment, MessagingExtensionResult, StringUtils } from 'botbuilder';
 import {
     Converter,
     ConverterFactory,
@@ -24,7 +24,6 @@ import {
     TemplateInterface,
 } from 'botbuilder-dialogs';
 import { ActivityTemplateConverter } from 'botbuilder-dialogs-adaptive/lib/converters';
-import { getComputeId } from './actionHelpers';
 import { BaseTeamsCacheInfoResponseDialog } from './baseTeamsCacheInfoResponseDialog';
 
 export interface SendAppBasedLinkQueryResponseConfiguration extends DialogConfiguration {
@@ -47,7 +46,7 @@ export class SendAppBasedLinkQueryResponse
     /**
      * Gets or sets template for the attachment template of a Thumbnail or Hero Card to send.
      */
-    public card: TemplateInterface<Activity, DialogStateManager>;
+    public card?: TemplateInterface<Activity, DialogStateManager>;
 
     public getConverter(property: keyof SendAppBasedLinkQueryResponseConfiguration): Converter | ConverterFactory {
         switch (property) {
@@ -103,6 +102,8 @@ export class SendAppBasedLinkQueryResponse
      * @returns {string} A string representing the compute Id.
      */
     protected onComputeId(): string {
-        return getComputeId('SendAppBasedLinkQuery', [this.card]);
+        return `SendAppBasedLinkQuery[\
+            ${StringUtils.ellipsisHash(this.card?.toString() ?? '', 20)}\
+        ]`;
     }
 }

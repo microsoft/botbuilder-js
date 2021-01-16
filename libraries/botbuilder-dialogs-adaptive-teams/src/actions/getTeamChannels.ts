@@ -22,7 +22,7 @@ import {
     DialogContext,
     DialogTurnResult,
 } from 'botbuilder-dialogs';
-import { getComputeId, getValue } from './actionHelpers';
+import { getValue } from './actionHelpers';
 
 export interface GetTeamChannelsConfiguration extends DialogConfiguration {
     disabled?: boolean | string | BoolExpression;
@@ -49,7 +49,7 @@ export class GetTeamChannels extends Dialog implements GetTeamChannelsConfigurat
     /**
      * Gets or sets property path to put the value in.
      */
-    public property: StringExpression;
+    public property?: StringExpression;
 
     /**
      * Gets or sets the expression to get the value to use for team id.
@@ -104,6 +104,9 @@ export class GetTeamChannels extends Dialog implements GetTeamChannelsConfigurat
      * @returns {string} A string representing the compute Id.
      */
     protected onComputeId(): string {
-        return getComputeId('GetTeamChannels', [this.teamId, this.property]);
+        return `GetTeamChannels[\
+            ${this.teamId?.toString() ?? ''},\
+            ${this.property?.toString() ?? ''}\
+        ]`;
     }
 }

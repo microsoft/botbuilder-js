@@ -7,7 +7,7 @@
  */
 
 import { BoolExpression, BoolExpressionConverter } from 'adaptive-expressions';
-import { Activity, TaskModuleResponse } from 'botbuilder';
+import { Activity, StringUtils, TaskModuleResponse } from 'botbuilder';
 import {
     Converter,
     ConverterFactory,
@@ -18,7 +18,6 @@ import {
     TemplateInterface,
 } from 'botbuilder-dialogs';
 import { ActivityTemplateConverter } from 'botbuilder-dialogs-adaptive/lib/converters';
-import { getComputeId } from './actionHelpers';
 import { BaseSendTaskModuleContinueResponse } from './baseSendTaskModuleContinueResponse';
 import { BaseTeamsCacheInfoResponseDialog } from './baseTeamsCacheInfoResponseDialog';
 
@@ -41,7 +40,7 @@ export class SendTaskModuleCardResponse
     /**
      * Gets or sets template for the attachment template of a Thumbnail or Hero Card to send.
      */
-    public card: TemplateInterface<Activity, DialogStateManager>;
+    public card?: TemplateInterface<Activity, DialogStateManager>;
 
     public getConverter(property: keyof SendTaskModuleCardResponseConfiguration): Converter | ConverterFactory {
         switch (property) {
@@ -109,6 +108,8 @@ export class SendTaskModuleCardResponse
      * @returns {string} A string representing the compute Id.
      */
     protected onComputeId(): string {
-        return getComputeId('SendTaskModuleCardResponse', [this.card]);
+        return `SendTaskModuleCardResponse[\
+            ${StringUtils.ellipsisHash(this.card?.toString() ?? '', 20)}\
+        ]`;
     }
 }

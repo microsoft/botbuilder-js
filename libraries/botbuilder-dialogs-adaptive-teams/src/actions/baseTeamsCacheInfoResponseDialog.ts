@@ -31,7 +31,7 @@ export abstract class BaseTeamsCacheInfoResponseDialog
     /**
      * Gets or sets an optional expression which if is true will disable this action.
      */
-    public disabled: BoolExpression;
+    public disabled?: BoolExpression;
 
     /**
      * Gets or sets config CacheType.
@@ -39,12 +39,12 @@ export abstract class BaseTeamsCacheInfoResponseDialog
      * @example
      * "cache" or "no_cache".
      */
-    public cacheType: StringExpression;
+    public cacheType?: StringExpression;
 
     /**
      * Gets or sets cache duration in seconds for which the cached object should remain in the cache.
      */
-    public cacheDuration: IntExpression;
+    public cacheDuration?: IntExpression;
 
     public getConverter(
         property: keyof BaseTeamsCacheInfoResponseDialogConfiguration | string
@@ -98,7 +98,7 @@ export abstract class BaseTeamsCacheInfoResponseDialog
         }
     }
 
-    protected getCacheInfo(dc: DialogContext): CacheInfo {
+    protected getCacheInfo(dc: DialogContext): CacheInfo | undefined {
         if (this.cacheType != null && this.cacheDuration != null) {
             const cacheType = this.cacheType?.getValue(dc.state);
             let cacheDuration = this.cacheDuration?.getValue(dc.state);
@@ -113,6 +113,7 @@ export abstract class BaseTeamsCacheInfoResponseDialog
             }
         }
 
-        return null;
+        // Return undefined instead of null because of downstream expectations.
+        return undefined;
     }
 }

@@ -31,7 +31,6 @@ import {
 } from 'botbuilder-dialogs';
 import { BaseSendTaskModuleContinueResponse } from './baseSendTaskModuleContinueResponse';
 import { assert, Assertion } from 'botbuilder-stdlib';
-import { getComputeId } from './actionHelpers';
 
 export interface SendMessagingExtensionAuthResponseConfiguration extends DialogConfiguration {
     disabled?: boolean | string | BoolExpression;
@@ -59,17 +58,12 @@ export class SendMessagingExtensionAuthResponse
     /**
      * Gets or sets property path to put the value in.
      */
-    public property: StringExpression;
+    public property?: StringExpression;
 
     /**
      * Gets or sets the name of the OAuth connection.
      */
-    public connectionName: StringExpression;
-
-    /**
-     * Gets or sets an Title of the response.
-     */
-    public title: StringExpression;
+    public connectionName?: StringExpression;
 
     public getConverter(property: keyof SendMessagingExtensionAuthResponseConfiguration): Converter | ConverterFactory {
         switch (property) {
@@ -142,7 +136,9 @@ export class SendMessagingExtensionAuthResponse
      * @returns {string} A string representing the compute Id.
      */
     protected onComputeId(): string {
-        return getComputeId('SendMessagingExtensionAuthResponse', [this.title]);
+        return `SendMessagingExtensionAuthResponse[\
+            ${this.title?.toString() ?? ''}\
+        ]`;
     }
 
     private static async getUserToken(

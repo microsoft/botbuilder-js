@@ -13,9 +13,8 @@ import {
     StringExpression,
     StringExpressionConverter,
 } from 'adaptive-expressions';
-import { TaskModuleResponse } from 'botbuilder';
+import { StringUtils, TaskModuleResponse } from 'botbuilder';
 import { Converter, ConverterFactory, DialogConfiguration, DialogContext, DialogTurnResult } from 'botbuilder-dialogs';
-import { getComputeId } from './actionHelpers';
 import { BaseSendTaskModuleContinueResponse } from './baseSendTaskModuleContinueResponse';
 import { BaseTeamsCacheInfoResponseDialog } from './baseTeamsCacheInfoResponseDialog';
 
@@ -39,12 +38,12 @@ export class SendTaskModuleUrlResponse
     /**
      * Gets or sets an optional expression for the Url of the Task Module response.
      */
-    public url: StringExpression;
+    public url?: StringExpression;
 
     /**
      * Gets or sets an optional expression for the Fallback Url the Task Module Task Info response.
      */
-    public fallbackUrl: StringExpression;
+    public fallbackUrl?: StringExpression;
 
     public getConverter(property: keyof SendTaskModuleUrlResponseConfiguration): Converter | ConverterFactory {
         switch (property) {
@@ -89,7 +88,7 @@ export class SendTaskModuleUrlResponse
                     title,
                     completionBotId,
                     url: encodeURI(url),
-                    fallbackUrl: encodeURI(fallbackUrl),
+                    fallbackUrl: encodeURI(fallbackUrl || ''),
                 },
             },
             cacheInfo: this.getCacheInfo(dc),
@@ -107,6 +106,9 @@ export class SendTaskModuleUrlResponse
      * @returns {string} A string representing the compute Id.
      */
     protected onComputeId(): string {
-        return getComputeId('SendTaskModuleUrlResponse', [this.url, this.title]);
+        return `SendTaskModuleUrlResponse[\
+            ${StringUtils.ellipsis(this.url?.toString() ?? '', 20)},\
+            ${this.title?.toString() ?? ''}\
+        ]`;
     }
 }

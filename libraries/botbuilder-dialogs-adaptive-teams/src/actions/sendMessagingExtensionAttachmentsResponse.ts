@@ -14,7 +14,7 @@ import {
     StringExpression,
     StringExpressionConverter,
 } from 'adaptive-expressions';
-import { Activity, AttachmentLayout, MessagingExtensionResult } from 'botbuilder';
+import { Activity, AttachmentLayout, MessagingExtensionResult, StringUtils } from 'botbuilder';
 import {
     Converter,
     ConverterFactory,
@@ -25,7 +25,6 @@ import {
     TemplateInterface,
 } from 'botbuilder-dialogs';
 import { ActivityTemplateConverter } from 'botbuilder-dialogs-adaptive/lib/converters';
-import { getComputeId } from './actionHelpers';
 import { BaseTeamsCacheInfoResponseDialog } from './baseTeamsCacheInfoResponseDialog';
 
 export interface SendMessagingExtensionAttachmentsResponseConfiguration extends DialogConfiguration {
@@ -49,7 +48,7 @@ export class SendMessagingExtensionAttachmentsResponse
     /**
      * Gets or sets the Activity containing the Attachments to send.
      */
-    public attachments: TemplateInterface<Activity, DialogStateManager>;
+    public attachments?: TemplateInterface<Activity, DialogStateManager>;
 
     /**
      * Gets or sets the Attachment Layout type for the response ('grid' or 'list').
@@ -115,6 +114,8 @@ export class SendMessagingExtensionAttachmentsResponse
      * @returns {string} A string representing the compute Id.
      */
     protected onComputeId(): string {
-        return getComputeId('SendMessagingExtensionAttachmentsResponse', [this.attachments]);
+        return `SendMessagingExtensionAttachmentsResponse[\
+            ${StringUtils.ellipsisHash(this.attachments?.toString() ?? '', 20)}\
+        ]`;
     }
 }

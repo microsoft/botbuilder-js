@@ -13,9 +13,8 @@ import {
     StringExpression,
     StringExpressionConverter,
 } from 'adaptive-expressions';
-import { ActionTypes, CardAction, MessagingExtensionResponse } from 'botbuilder';
+import { ActionTypes, CardAction, MessagingExtensionResponse, StringUtils } from 'botbuilder';
 import { Converter, ConverterFactory, DialogConfiguration, DialogContext, DialogTurnResult } from 'botbuilder-dialogs';
-import { getComputeId } from './actionHelpers';
 import { BaseTeamsCacheInfoResponseDialog } from './baseTeamsCacheInfoResponseDialog';
 
 export interface SendMessagingExtensionConfigQuerySettingUrlResponseConfiguration extends DialogConfiguration {
@@ -40,7 +39,7 @@ export class SendMessagingExtensionConfigQuerySettingUrlResponse
      * @example
      * `${config.siteUrl}/searchSettings.html?settings=${escapedSettings}`.
      */
-    public configUrl: StringExpression;
+    public configUrl?: StringExpression;
 
     public getConverter(
         property: keyof SendMessagingExtensionConfigQuerySettingUrlResponseConfiguration
@@ -99,6 +98,8 @@ export class SendMessagingExtensionConfigQuerySettingUrlResponse
      * @returns {string} A string representing the compute Id.
      */
     protected onComputeId(): string {
-        return getComputeId('SendMessagingExtensionConfigQuerySettingsUrlResponse', [this.configUrl]);
+        return `SendMessagingExtensionConfigQuerySettingsUrlResponse[\
+            ${StringUtils.ellipsis(this.configUrl?.toString() ?? '', 20)}\
+        ]`;
     }
 }

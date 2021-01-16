@@ -22,7 +22,7 @@ import {
     DialogContext,
     DialogTurnResult,
 } from 'botbuilder-dialogs';
-import { getComputeId, getValue } from './actionHelpers';
+import { getValue } from './actionHelpers';
 
 export interface GetMeetingParticipantConfiguration extends DialogConfiguration {
     disabled?: boolean | string | BoolExpression;
@@ -52,7 +52,7 @@ export class GetMeetingParticipant extends Dialog implements GetMeetingParticipa
     /**
      * Gets or sets property path to put the value in.
      */
-    public property: StringExpression;
+    public property?: StringExpression;
 
     /**
      * Gets or sets the expression to get the value to use for meeting id.
@@ -138,11 +138,11 @@ export class GetMeetingParticipant extends Dialog implements GetMeetingParticipa
      * @returns {string} A string representing the compute Id.
      */
     protected onComputeId(): string {
-        return getComputeId('GetMeetingParticipant', [
-            this.meetingId,
-            this.participantId,
-            this.tenantId,
-            this.property,
-        ]);
+        return `GetMeetingParticipant[
+            ${this.meetingId ?? ''},\
+            ${this.participantId?.toString() ?? ''},
+            ${this.tenantId?.toString() ?? ''},\
+            ${this.property?.toString() ?? ''}\
+        ]`;
     }
 }

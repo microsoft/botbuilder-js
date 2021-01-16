@@ -16,7 +16,7 @@ import {
 import { TaskModuleResponse } from 'botbuilder';
 import { Converter, ConverterFactory, DialogConfiguration, DialogContext, DialogTurnResult } from 'botbuilder-dialogs';
 import { languageGeneratorKey } from 'botbuilder-dialogs-adaptive';
-import { getComputeId, getValue } from './actionHelpers';
+import { getValue } from './actionHelpers';
 import { BaseTeamsCacheInfoResponseDialog } from './baseTeamsCacheInfoResponseDialog';
 
 export interface SendTaskModuleMessageResponseConfiguration extends DialogConfiguration {
@@ -38,7 +38,7 @@ export class SendTaskModuleMessageResponse
     /**
      * Gets or sets the template or text to use to generate the response message to send.
      */
-    public message: StringExpression;
+    public message?: StringExpression;
 
     public getConverter(property: keyof SendTaskModuleMessageResponseConfiguration): Converter | ConverterFactory {
         switch (property) {
@@ -92,6 +92,8 @@ export class SendTaskModuleMessageResponse
      * @returns {string} A string representing the compute Id.
      */
     protected onComputeId(): string {
-        return getComputeId('SendTaskModuleMessageResponse', [this.message]);
+        return `SendTaskModuleMessageResponse[\
+            ${this.message?.toString() ?? ''}\
+        ]`;
     }
 }
