@@ -87,8 +87,8 @@ const getBot = (): ChannelAccount => {
     return {
         id: 'botId',
         name: 'Bot',
-    }
-}
+    };
+};
 
 const getGroupConversationReference = (): ConversationReference => {
     return {
