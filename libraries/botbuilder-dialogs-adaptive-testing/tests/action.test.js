@@ -1,9 +1,115 @@
+const { createHash } = require('crypto');
 const path = require('path');
 const nock = require('nock');
-const { ComponentRegistration, MessageFactory } = require('botbuilder-core');
+const {
+    ActivityTypes,
+    ComponentRegistration,
+    MessageFactory,
+    SkillConversationIdFactoryBase,
+    TurnContext,
+} = require('botbuilder-core');
 const { ResourceExplorer } = require('botbuilder-dialogs-declarative');
 const { AdaptiveTestComponentRegistration, TestUtils } = require('../lib');
-const { AdaptiveComponentRegistration } = require('botbuilder-dialogs-adaptive');
+const {
+    AdaptiveComponentRegistration,
+    skillConversationIdFactoryKey,
+    skillClientKey,
+} = require('botbuilder-dialogs-adaptive');
+class MockSkillConversationIdFactory extends SkillConversationIdFactoryBase {
+    constructor(opts = { useCreateSkillConversationId: false }) {
+        super();
+        this._conversationRefs = new Map();
+        this.useCreateSkillConversationId = opts.useCreateSkillConversationId;
+    }
+
+    async createSkillConversationIdWithOptions(opts) {
+        if (this.useCreateSkillConversationId) {
+            return super.createSkillConversationIdWithOptions();
+        }
+        const key = createHash('md5')
+            .update(opts.activity.conversation.id + opts.activity.serviceUrl)
+            .digest('hex');
+
+        const ref = this._conversationRefs.has(key);
+        if (!ref) {
+            this._conversationRefs.set(key, {
+                conversationReference: TurnContext.getConversationReference(opts.activity),
+                oAuthScope: opts.fromBotOAuthScope,
+            });
+        }
+        return key;
+    }
+
+    async createSkillConversationId(convRef) {
+        const key = createHash('md5')
+            .update(convRef.conversation.id + convRef.serviceUrl)
+            .digest('hex');
+
+        const ref = this._conversationRefs.has(key);
+        if (!ref) {
+            this._conversationRefs.set(key, {
+                conversationReference: convRef,
+            });
+        }
+        return key;
+    }
+
+    async getConversationReference(skillConversationId) {
+        return this._conversationRefs.get(skillConversationId);
+    }
+
+    async getSkillConversationReference(skillConversationId) {
+        return this.getConversationReference(skillConversationId);
+    }
+
+    async deleteConversationReference() {
+        /* not used in BeginSkill */
+    }
+}
+
+class MockSkillBotFrameworkClient {
+    async postActivity(fromBotId, toBotId, toUrl, serviceUrl, conversationId, activity) {
+        let responseActivity = activity;
+
+        if (activity.text.indexOf('skill') >= 0) {
+            responseActivity = {
+                type: 'message',
+                text: 'This is the skill talking: hello',
+            };
+        }
+
+        if (activity.text.indexOf('end') >= 0) {
+            responseActivity = {
+                type: ActivityTypes.EndOfConversation,
+            };
+        }
+
+        return {
+            status: 200,
+            body: {
+                activities: [responseActivity],
+            },
+        };
+    }
+}
+
+class SetSkillConversationIdFactoryBaseMiddleware {
+    async onTurn(context, next) {
+        if (context.activity.type === ActivityTypes.Message) {
+            context.turnState.set(skillConversationIdFactoryKey, new MockSkillConversationIdFactory());
+            await next();
+        }
+    }
+}
+
+class SetSkillBotFrameworkClientMiddleware {
+    async onTurn(context, next) {
+        if (context.activity.type === ActivityTypes.Message) {
+            context.turnState.set(skillClientKey, new MockSkillBotFrameworkClient());
+            await next();
+        }
+    }
+}
 
 describe('ActionTests', function () {
     this.timeout(10000);
@@ -27,6 +133,26 @@ describe('ActionTests', function () {
 
     it('BeginDialogWithActivity', async () => {
         await TestUtils.runTestScript(resourceExplorer, 'Action_BeginDialogWithActivity');
+    });
+
+    it('BeginSkill', async () => {
+        await TestUtils.runTestScript(
+            resourceExplorer,
+            'Action_BeginSkill',
+            undefined,
+            new SetSkillConversationIdFactoryBaseMiddleware(),
+            new SetSkillBotFrameworkClientMiddleware()
+        );
+    });
+
+    it('BeginSkillEndDialog', async () => {
+        await TestUtils.runTestScript(
+            resourceExplorer,
+            'Action_BeginSkillEndDialog',
+            undefined,
+            new SetSkillConversationIdFactoryBaseMiddleware(),
+            new SetSkillBotFrameworkClientMiddleware()
+        );
     });
 
     it('CancelAllDialogs', async () => {
@@ -259,6 +385,10 @@ describe('ActionTests', function () {
 
     it('TraceActivity', async () => {
         await TestUtils.runTestScript(resourceExplorer, 'Action_TraceActivity');
+    });
+
+    it('ThrowException', async () => {
+        await TestUtils.runTestScript(resourceExplorer, 'Action_ThrowException');
     });
 
     it('UpdateActivity', async () => {

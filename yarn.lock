@@ -53,6 +53,27 @@
     uuid "^8.1.0"
     xml2js "^0.4.19"
 
+"@azure/core-http@^1.2.0":
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/@azure/core-http/-/core-http-1.2.0.tgz#eb2a1da9bdba8407a09d78450af5f13f8cc43d63"
+  integrity sha512-SQmyI1tpstWKePNmTseEUp8PMq1uNBslvGBrYF2zNM/fEfLD1q64XCatoH8nDQtSmDydEPsqlyyLSjjnuXrlOQ==
+  dependencies:
+    "@azure/abort-controller" "^1.0.0"
+    "@azure/core-auth" "^1.1.3"
+    "@azure/core-tracing" "1.0.0-preview.9"
+    "@azure/logger" "^1.0.0"
+    "@opentelemetry/api" "^0.10.2"
+    "@types/node-fetch" "^2.5.0"
+    "@types/tunnel" "^0.0.1"
+    form-data "^3.0.0"
+    node-fetch "^2.6.0"
+    process "^0.11.10"
+    tough-cookie "^4.0.0"
+    tslib "^2.0.0"
+    tunnel "^0.0.6"
+    uuid "^8.3.0"
+    xml2js "^0.4.19"
+
 "@azure/core-lro@^1.0.2":
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/@azure/core-lro/-/core-lro-1.0.2.tgz#b7b51ff7b84910b7eb152a706b0531d020864f31"
@@ -126,6 +147,20 @@
     uuid "^3.2.1"
     xml2js "^0.4.19"
 
+"@azure/ms-rest-js@1.9.1":
+  version "1.9.1"
+  resolved "https://registry.yarnpkg.com/@azure/ms-rest-js/-/ms-rest-js-1.9.1.tgz#93aef111b00bfdcc470a6bcb4520a13b36f21788"
+  integrity sha512-F1crHKhmsvFLM9fsnDyCGFd2E2KR9GEZm5oBVV5D5k2EBQ7u7idtSJlSF6RDLDIrGWtc4NnFdYwsoiW8NLlBQg==
+  dependencies:
+    "@types/tunnel" "0.0.0"
+    axios "^0.21.1"
+    form-data "^2.3.2"
+    tough-cookie "^2.4.3"
+    tslib "^1.9.2"
+    tunnel "0.0.6"
+    uuid "^3.2.1"
+    xml2js "^0.4.19"
+
 "@azure/storage-blob@^12.2.1":
   version "12.2.1"
   resolved "https://registry.yarnpkg.com/@azure/storage-blob/-/storage-blob-12.2.1.tgz#8397a492b44f0771d671880a841a8c8c0cd45b60"
@@ -139,6 +174,19 @@
     "@azure/logger" "^1.0.0"
     "@opentelemetry/api" "^0.10.2"
     events "^3.0.0"
+    tslib "^2.0.0"
+
+"@azure/storage-queue@^12.2.0":
+  version "12.2.0"
+  resolved "https://registry.yarnpkg.com/@azure/storage-queue/-/storage-queue-12.2.0.tgz#0c82a0531d82358ee57754c21e1a1fce4ae5e408"
+  integrity sha512-HxFMLs6f0VQ4q1pyj4BKpdgH2amwvSwcNh+SFFcOmVuu6PpjTgP1HLiVPAf982iZlLEAEwNjzwnw2XrLbDumMA==
+  dependencies:
+    "@azure/abort-controller" "^1.0.0"
+    "@azure/core-http" "^1.2.0"
+    "@azure/core-paging" "^1.1.1"
+    "@azure/core-tracing" "1.0.0-preview.9"
+    "@azure/logger" "^1.0.0"
+    "@opentelemetry/api" "^0.10.2"
     tslib "^2.0.0"
 
 "@babel/code-frame@^7.0.0", "@babel/code-frame@^7.10.4":
@@ -1498,6 +1546,11 @@
   resolved "https://registry.yarnpkg.com/@types/mocha/-/mocha-5.2.7.tgz#315d570ccb56c53452ff8638738df60726d5b6ea"
   integrity sha512-NYrtPht0wGzhwe9+/idPaBB+TqkY9AhTvOLMkThm0IoEfLaiVQZwBwyJ5puCkO3AUCWrmcoePjp2mbFocKy4SQ==
 
+"@types/mocha@^8.2.0":
+  version "8.2.0"
+  resolved "https://registry.yarnpkg.com/@types/mocha/-/mocha-8.2.0.tgz#3eb56d13a1de1d347ecb1957c6860c911704bc44"
+  integrity sha512-/Sge3BymXo4lKc31C8OINJgXLaw+7vL1/L1pGiBNpGrBiT8FQiaFpSYV0uhTaG4y78vcMBTMFsWaHDvuD+xGzQ==
+
 "@types/node-fetch@^2.5.0", "@types/node-fetch@^2.5.3", "@types/node-fetch@^2.5.7":
   version "2.5.7"
   resolved "https://registry.yarnpkg.com/@types/node-fetch/-/node-fetch-2.5.7.tgz#20a2afffa882ab04d44ca786449a276f9f6bbf3c"
@@ -1505,6 +1558,13 @@
   dependencies:
     "@types/node" "*"
     form-data "^3.0.0"
+
+"@types/node-forge@^0.9.5":
+  version "0.9.5"
+  resolved "https://registry.yarnpkg.com/@types/node-forge/-/node-forge-0.9.5.tgz#648231d79da197216290429020698d4e767365a0"
+  integrity sha512-rrN3xfA/oZIzwOnO3d2wRQz7UdeVkmMMPjWUCfpPTPuKFVb3D6G10LuiVHYYmvrivBBLMx4m0P/FICoDbNZUMA==
+  dependencies:
+    "@types/node" "*"
 
 "@types/node@*":
   version "14.14.6"
@@ -1624,10 +1684,10 @@
   dependencies:
     source-map "^0.6.1"
 
-"@types/uuid@^3.4.3":
-  version "3.4.9"
-  resolved "https://registry.yarnpkg.com/@types/uuid/-/uuid-3.4.9.tgz#fcf01997bbc9f7c09ae5f91383af076d466594e1"
-  integrity sha512-XDwyIlt/47l2kWLTzw/mtrpLdB+GPSskR2n/PIcPn+VYhVO77rGhRncIR5GPU0KRzXuqkDO+J5qqrG0Y8P6jzQ==
+"@types/uuid@^8.3.0":
+  version "8.3.0"
+  resolved "https://registry.yarnpkg.com/@types/uuid/-/uuid-8.3.0.tgz#215c231dff736d5ba92410e6d602050cce7e273f"
+  integrity sha512-eQ9qFW/fhfGJF8WKHGEHZEyVWfZxrT+6CLIJGBcZPfxUh/+BnEj+UCGYMlr9qZuX/2AltsvwrGqp0LhEW8D0zQ==
 
 "@types/webpack-sources@*":
   version "2.0.0"
@@ -2407,6 +2467,13 @@ axios@^0.19.0, axios@^0.19.2:
   integrity sha512-fjgm5MvRHLhx+osE2xoekY70AhARk3a6hkN+3Io1jc00jtquGvxYlKlsFUhmUET0V5te6CcZI7lcv2Ym61mjHA==
   dependencies:
     follow-redirects "1.5.10"
+
+axios@^0.21.1:
+  version "0.21.1"
+  resolved "https://registry.yarnpkg.com/axios/-/axios-0.21.1.tgz#22563481962f4d6bde9a76d516ef0e5d3c09b2b8"
+  integrity sha512-dKQiRHxGD9PPRIUNIWvZhPTPpl1rf/OxTYKsqKUDjBwYylTvV7SjSHJb9ratfyzM6wCdLCOYLzs73qpg5c4iGA==
+  dependencies:
+    follow-redirects "^1.10.0"
 
 azure-storage@2.10.2:
   version "2.10.2"
@@ -5060,6 +5127,11 @@ follow-redirects@1.5.10:
   integrity sha512-0V5l4Cizzvqt5D44aTXbFZz+FtyXV1vrDN6qrelxtfYQKW0KO0W2T/hkE8xvGa/540LkZlkaUjO4ailYTFtHVQ==
   dependencies:
     debug "=3.1.0"
+
+follow-redirects@^1.10.0:
+  version "1.13.1"
+  resolved "https://registry.yarnpkg.com/follow-redirects/-/follow-redirects-1.13.1.tgz#5f69b813376cee4fd0474a3aba835df04ab763b7"
+  integrity sha512-SSG5xmZh1mkPGyKzjZP8zLjltIfpW32Y5QpdNJyjcfGxK3qo3NDDkZOZSFiGn1A6SclQxY9GzEwAHQ3dmYRWpg==
 
 for-in@^1.0.1, for-in@^1.0.2:
   version "1.0.2"
@@ -8080,6 +8152,11 @@ nan@^2.12.1, nan@^2.14.0:
   resolved "https://registry.yarnpkg.com/nan/-/nan-2.14.2.tgz#f5376400695168f4cc694ac9393d0c9585eeea19"
   integrity sha512-M2ufzIiINKCuDfBSAUr1vWQ+vuVcA9kqx8JJUsbQi6yf1uGRyb7HfpdfUr5qLXf3B/t8dPvcjhKMmlfnP47EzQ==
 
+nanoid@^3.1.20:
+  version "3.1.20"
+  resolved "https://registry.yarnpkg.com/nanoid/-/nanoid-3.1.20.tgz#badc263c6b1dcf14b71efaa85f6ab4c1d6cfc788"
+  integrity sha512-a1cQNyczgKbLX9jwbS/+d7W8fX/RfgYR7lVWwWOGIPNgK2m0MWvrGF6/m4kk6U3QcFMnZf3RIhL0v2Jgh/0Uxw==
+
 nanomatch@^1.2.9:
   version "1.2.13"
   resolved "https://registry.yarnpkg.com/nanomatch/-/nanomatch-1.2.13.tgz#b87a8aa4fc0de8fe6be88895b38983ff265bd119"
@@ -8239,7 +8316,7 @@ node-fetch@2.6.1, node-fetch@^2.6.0:
   resolved "https://registry.yarnpkg.com/node-fetch/-/node-fetch-2.6.1.tgz#045bd323631f76ed2e2b55573394416b639a0052"
   integrity sha512-V4aYg89jEoVRxRb2fJdAg8FHvI7cEyYdVAh94HH0UIK8oJxUfkjlDQN9RbMx+bEjP7+ggMiFRprSti032Oipxw==
 
-node-forge@0.10.0:
+node-forge@0.10.0, node-forge@^0.10.0:
   version "0.10.0"
   resolved "https://registry.yarnpkg.com/node-forge/-/node-forge-0.10.0.tgz#32dea2afb3e9926f02ee5ce8794902691a676bf3"
   integrity sha512-PPmu8eEeG9saEUvI97fm4OYxXVB6bFvyNTyiUOBichBpFG8A1Ljw3bY62+5oOjDEMHRnd0Y7HQ+x7uzxOzC6JA==
@@ -9538,7 +9615,7 @@ read-pkg@^3.0.0:
     normalize-package-data "^2.3.2"
     path-type "^3.0.0"
 
-read-text-file@1.1.0, read-text-file@^1.1.0:
+read-text-file@^1.1.0:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/read-text-file/-/read-text-file-1.1.0.tgz#d0c3f18768828f9107d61bb0b368ee7b90f71893"
   integrity sha1-0MPxh2iCj5EH1huws2jue5D3GJM=
@@ -11395,6 +11472,11 @@ trim-right@^1.0.1:
   resolved "https://registry.yarnpkg.com/trim-right/-/trim-right-1.0.1.tgz#cb2e1203067e0c8de1f614094b9fe45704ea6003"
   integrity sha1-yy4SAwZ+DI3h9hQJS5/kVwTqYAM=
 
+ts-essentials@^7.0.1:
+  version "7.0.1"
+  resolved "https://registry.yarnpkg.com/ts-essentials/-/ts-essentials-7.0.1.tgz#d205508cae0cdadfb73c89503140cf2228389e2d"
+  integrity sha512-8lwh3QJtIc1UWhkQtr9XuksXu3O0YQdEE5g79guDfhCaU1FWTDIEDZ1ZSx4HTHUmlJZ8L812j3BZQ4a0aOUkSA==
+
 ts-loader@^7.0.5:
   version "7.0.5"
   resolved "https://registry.yarnpkg.com/ts-loader/-/ts-loader-7.0.5.tgz#789338fb01cb5dc0a33c54e50558b34a73c9c4c5"
@@ -11819,10 +11901,15 @@ uuid@^3.0.0, uuid@^3.1.0, uuid@^3.2.1, uuid@^3.3.2, uuid@^3.3.3, uuid@^3.4.0:
   resolved "https://registry.yarnpkg.com/uuid/-/uuid-3.4.0.tgz#b23e4358afa8a202fe7a100af1f5f883f02007ee"
   integrity sha512-HjSDRw6gZE5JMggctHBcjVak08+KEVhSIiDzFnT9S9aegmp85S/bReBVTb4QTFaRNptJ9kuYaNhnbNEOkbKb/A==
 
-uuid@^8.1.0:
+uuid@^8.1.0, uuid@^8.3.0:
   version "8.3.1"
   resolved "https://registry.yarnpkg.com/uuid/-/uuid-8.3.1.tgz#2ba2e6ca000da60fce5a196954ab241131e05a31"
   integrity sha512-FOmRr+FmWEIG8uhZv6C2bTgEVXsHk08kE7mPlrBbEe+c3r9pjceVPgupIfNIhc4yx55H69OXANrUaSuu9eInKg==
+
+uuid@^8.3.2:
+  version "8.3.2"
+  resolved "https://registry.yarnpkg.com/uuid/-/uuid-8.3.2.tgz#80d5b5ced271bb9af6c445f21a1a04c606cefbe2"
+  integrity sha512-+NYs2QeMWy+GWFOEm9xnn6HCDp0l7QBD7ml8zLUmJ+93Q5NF0NocErnwkTkXVFNiX3/fpC6afS8Dhb/gz7R7eg==
 
 v8-compile-cache@^2.0.3, v8-compile-cache@^2.1.1:
   version "2.2.0"

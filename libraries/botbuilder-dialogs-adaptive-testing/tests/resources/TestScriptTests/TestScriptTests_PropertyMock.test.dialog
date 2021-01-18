@@ -1,0 +1,67 @@
+{
+    "$schema": "../../../tests.schema",
+    "$kind": "Microsoft.Test.Script",
+    "description": "Test setting memory",
+    "dialog": {
+      "$kind": "Microsoft.AdaptiveDialog",
+      "triggers": [
+        {
+          "$kind": "Microsoft.OnError",
+          "actions": [
+            {
+              "$kind": "Microsoft.SendActivity",
+              "activity": "${turn.dialogEvent.value.message}"
+            }
+          ]
+        }
+      ]
+    },
+    "script": [
+      {
+        "$kind": "Microsoft.Test.SetProperties",
+        "assignments": [
+          {
+            "property": "user.noOverwrite",
+            "value": "original"
+          },
+          {
+            "property": "user.overwrite",
+            "value": "original"
+          },
+          {
+            "property": "user.overwrite",
+            "value": "overwritten"
+          },
+          {
+            "property": "user.object",
+            "value": {
+              "innerValue": "value"
+            }
+          },
+          {
+            "property": "user.number",
+            "value": 123
+          },
+          {
+            "property": "conversation.value",
+            "value": "conversation value"
+          }
+        ]
+      },
+      {
+        "$kind": "Microsoft.Test.MemoryAssertions",
+        "assertions": [
+          "settings.file == 'set settings.file'",
+          "user.noOverwrite == 'original'",
+          "user.overwrite == 'overwritten'",
+          "user.object.innerValue == 'value'",
+          "user.number == 123",
+          "conversation.value == 'conversation value'"
+        ]
+      },
+      {
+        "$kind": "Microsoft.Test.AssertNoActivity",
+        "description":  "An error message was sent while performing PropertyMock test. Check that MemoryAssertions are accurate."
+      }
+    ]
+  }

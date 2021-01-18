@@ -5,6 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
+
 import { decode, verify, VerifyOptions } from 'jsonwebtoken';
 import { Claim, ClaimsIdentity } from './claimsIdentity';
 import { EndorsementsValidator } from './endorsementsValidator';
@@ -37,14 +38,11 @@ export class JwtTokenExtractor {
         this.openIdMetadata = JwtTokenExtractor.getOrAddOpenIdMetadata(metadataUrl);
     }
 
-    /**
-     * @private
-     */
     private static getOrAddOpenIdMetadata(metadataUrl: string): OpenIdMetadata {
-        let metadata: OpenIdMetadata = JwtTokenExtractor.openIdMetadataCache.get(metadataUrl);
+        let metadata = this.openIdMetadataCache.get(metadataUrl);
         if (!metadata) {
             metadata = new OpenIdMetadata(metadataUrl);
-            JwtTokenExtractor.openIdMetadataCache.set(metadataUrl, metadata);
+            this.openIdMetadataCache.set(metadataUrl, metadata);
         }
 
         return metadata;

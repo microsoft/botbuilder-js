@@ -24,6 +24,8 @@ import {
     CancelAllDialogs,
     CancelDialog,
     CancelAllDialogsBaseConfiguration,
+    ContinueConversationLater,
+    ContinueConversationLaterConfiguration,
     ContinueLoop,
     ContinueLoopConfiguration,
     DeleteActivity,
@@ -56,28 +58,30 @@ import {
     HttpRequest,
     HttpRequestConfiguration,
     IfCondition,
-    LogAction,
-    RepeatDialog,
-    ReplaceDialog,
-    SendActivity,
-    SetProperties,
-    SetProperty,
-    SignOutUser,
-    SwitchCondition,
-    TelemetryTrackEventAction,
-    TraceActivity,
-    UpdateActivity,
     IfConditionConfiguration,
+    LogAction,
     LogActionConfiguration,
+    RepeatDialog,
     RepeatDialogConfiguration,
+    ReplaceDialog,
     ReplaceDialogConfiguration,
+    SendActivity,
     SendActivityConfiguration,
+    SetProperties,
     SetPropertiesConfiguration,
+    SetProperty,
     SetPropertyConfiguration,
+    SignOutUser,
     SignOutUserConfiguration,
+    SwitchCondition,
     SwitchConditionConfiguration,
+    TelemetryTrackEventAction,
     TelemetryTrackEventActionConfiguration,
+    TraceActivity,
     TraceActivityConfiguration,
+    ThrowException,
+    ThrowExceptionConfiguration,
+    UpdateActivity,
     UpdateActivityConfiguration,
 } from './actions';
 import {
@@ -95,6 +99,7 @@ import {
     OnChoosePropertyConfiguration,
     OnCondition,
     OnConditionConfiguration,
+    OnContinueConversation,
     OnConversationUpdateActivity,
     OnDialogEvent,
     OnDialogEventConfiguration,
@@ -179,12 +184,20 @@ import {
     RandomSelector,
     TrueSelector,
 } from './selectors';
+import {
+    ActivityTemplate,
+    ActivityTemplateConguration,
+    StaticActivityTemplate,
+    StaticActivityTemplateConfiguration,
+    TextTemplate,
+    TextTemplateConfiguration,
+} from './templates';
 import { DynamicBeginDialogDeserializer } from './dynamicBeginDialogDeserializer';
 import { TriggerSelectorConfiguration } from './triggerSelector';
 
 type Type<T> = {
     $kind: string;
-    new (...args: unknown[]): T;
+    new(...args: unknown[]): T;
 };
 
 /**
@@ -208,6 +221,9 @@ export class AdaptiveComponentRegistration extends ComponentRegistration impleme
         this._addDeclarativeType<BreakLoop, BreakLoopConfiguration>(BreakLoop);
         this._addDeclarativeType<CancelAllDialogs, CancelAllDialogsBaseConfiguration>(CancelAllDialogs);
         this._addDeclarativeType<CancelDialog, CancelAllDialogsBaseConfiguration>(CancelDialog);
+        this._addDeclarativeType<ContinueConversationLater, ContinueConversationLaterConfiguration>(
+            ContinueConversationLater
+        );
         this._addDeclarativeType<ContinueLoop, ContinueLoopConfiguration>(ContinueLoop);
         this._addDeclarativeType<DeleteActivity, DeleteActivityConfiguration>(DeleteActivity);
         this._addDeclarativeType<DeleteProperties, DeletePropertiesConfiguration>(DeleteProperties);
@@ -235,6 +251,7 @@ export class AdaptiveComponentRegistration extends ComponentRegistration impleme
         this._addDeclarativeType<TelemetryTrackEventAction, TelemetryTrackEventActionConfiguration>(
             TelemetryTrackEventAction
         );
+        this._addDeclarativeType<ThrowException, ThrowExceptionConfiguration>(ThrowException);
         this._addDeclarativeType<TraceActivity, TraceActivityConfiguration>(TraceActivity);
         this._addDeclarativeType<UpdateActivity, UpdateActivityConfiguration>(UpdateActivity);
 
@@ -247,6 +264,7 @@ export class AdaptiveComponentRegistration extends ComponentRegistration impleme
         this._addDeclarativeType<OnChooseIntent, OnChooseIntentConfiguration>(OnChooseIntent);
         this._addDeclarativeType<OnChooseProperty, OnChoosePropertyConfiguration>(OnChooseProperty);
         this._addDeclarativeType<OnCondition, OnConditionConfiguration>(OnCondition);
+        this._addDeclarativeType<OnContinueConversation, OnActivityConfiguration>(OnContinueConversation);
         this._addDeclarativeType<OnConversationUpdateActivity, OnActivityConfiguration>(OnConversationUpdateActivity);
         this._addDeclarativeType<OnDialogEvent, OnDialogEventConfiguration>(OnDialogEvent);
         this._addDeclarativeType<OnEndOfActions, OnDialogEventConfiguration>(OnEndOfActions);
@@ -312,6 +330,11 @@ export class AdaptiveComponentRegistration extends ComponentRegistration impleme
         this._addDeclarativeType<ResourceMultiLanguageGenerator, ResourceMultiLanguageGeneratorConfiguration>(
             ResourceMultiLanguageGenerator
         );
+
+        // Templates
+        this._addDeclarativeType<ActivityTemplate, ActivityTemplateConguration>(ActivityTemplate);
+        this._addDeclarativeType<StaticActivityTemplate, StaticActivityTemplateConfiguration>(StaticActivityTemplate);
+        this._addDeclarativeType<TextTemplate, TextTemplateConfiguration>(TextTemplate);
 
         // Selectors
         this._addDeclarativeType<ConditionalSelector, ConditionalSelectorConfiguration>(ConditionalSelector);

@@ -5,6 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
+
 import { Activity, Channels, RoleTypes, StatusCodes } from 'botframework-schema';
 
 import { AppCredentials } from './appCredentials';
@@ -24,9 +25,12 @@ import { SkillValidation } from './skillValidation';
 export namespace JwtTokenValidation {
     /**
      * Authenticates the request and sets the service url in the set of trusted urls.
-     * @param  {Activity} activity The incoming Activity from the Bot Framework or the Emulator
-     * @param  {string} authHeader The Bearer token included as part of the request
-     * @param  {ICredentialProvider} credentials The set of valid credentials, such as the Bot Application ID
+     *
+     * @param {Partial<Activity>} activity The incoming Activity from the Bot Framework or the Emulator
+     * @param {string} authHeader The Bearer token included as part of the request
+     * @param {ICredentialProvider} credentials The set of valid credentials, such as the Bot Application ID
+     * @param {string} channelService The channel service
+     * @param {AuthenticationConfiguration} authConfig Optional, the auth config
      * @returns {Promise<ClaimsIdentity>} Promise with ClaimsIdentity for the request.
      */
     export async function authenticateRequest(
@@ -78,6 +82,17 @@ export namespace JwtTokenValidation {
         return claimsIdentity;
     }
 
+    /**
+     * Validate an auth header.
+     *
+     * @param {string} authHeader the auth header
+     * @param {ICredentialProvider} credentials the credentials
+     * @param {string} channelService the channel service
+     * @param {string} channelId the channel ID
+     * @param {string} serviceUrl the service URL
+     * @param {AuthenticationConfiguration} authConfig the auth config
+     * @returns {Promise<ClaimsIdentity>} a promise that resolves to the validated claims, or rejects if validation fails
+     */
     export async function validateAuthHeader(
         authHeader: string,
         credentials: ICredentialProvider,
@@ -181,6 +196,7 @@ export namespace JwtTokenValidation {
 
     /**
      * Validates the identity claims against the ClaimsValidator in AuthenticationConfiguration if present.
+     *
      * @param authConfig
      * @param claims The list of claims to validate.
      */
@@ -200,14 +216,17 @@ export namespace JwtTokenValidation {
 
     /**
      * Gets the AppId from a claims list.
-     * @remarks
+     *
+     * @summary
      * In v1 tokens the AppId is in the "ver" AuthenticationConstants.AppIdClaim claim.
      * In v2 tokens the AppId is in the "azp" AuthenticationConstants.AuthorizedParty claim.
      * If the AuthenticationConstants.VersionClaim is not present, this method will attempt to
      * obtain the attribute from the AuthenticationConstants.AppIdClaim or if present.
      *
      * Throws a TypeError if claims is falsy.
-     * @param claims An object containing claims types and their values.
+     *
+     * @param {Claim[]} claims An object containing claims types and their values.
+     * @returns {string} the app ID
      */
     export function getAppIdFromClaims(claims: Claim[]): string {
         if (!claims) {
@@ -246,13 +265,20 @@ export namespace JwtTokenValidation {
         return !channelService || channelService.length === 0;
     }
 
+    /**
+     * Determine whether or not a channel service is government
+     *
+     * @param {string} channelService the channel service
+     * @returns {boolean} true if this is a government channel service
+     */
     export function isGovernment(channelService: string): boolean {
         return channelService && channelService.toLowerCase() === GovernmentConstants.ChannelService;
     }
 
     /**
      * Internal helper to check if the token has the shape we expect "Bearer [big long string]".
-     * @param authHeader A string containing the token header.
+     *
+     * @param {string} authHeader A string containing the token header.
      * @returns {boolean} True if the token is valid, false if not.
      */
     export function isValidTokenFormat(authHeader: string): boolean {

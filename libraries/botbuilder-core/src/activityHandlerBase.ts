@@ -219,9 +219,11 @@ export class ActivityHandlerBase {
     protected async onInstallationUpdateActivity(context: TurnContext): Promise<void> {
         switch (context.activity.action) {
             case 'add':
+            case 'add-upgrade':
                 await this.onInstallationUpdateAddActivity(context);
                 return;
             case 'remove':
+            case 'remove-upgrade':
                 await this.onInstallationUpdateRemoveActivity(context);
                 return;
         }

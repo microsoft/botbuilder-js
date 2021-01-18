@@ -5,6 +5,9 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
+
+/* eslint-disable @typescript-eslint/no-namespace */
+
 import { VerifyOptions } from 'jsonwebtoken';
 import { AuthenticationConfiguration } from './authenticationConfiguration';
 import { AuthenticationConstants } from './authenticationConstants';

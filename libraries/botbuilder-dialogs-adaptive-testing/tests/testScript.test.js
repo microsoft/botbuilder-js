@@ -69,6 +69,32 @@ describe('TestScriptTests', function () {
         await TestUtils.runTestScript(resourceExplorer, 'TestScriptTests_AssertReplyOneOf');
     });
 
+    it('CustomEvent', async () => {
+        await TestUtils.runTestScript(resourceExplorer, 'TestScriptTests_CustomEvent');
+    });
+
+    it('OAuthInputRetries_WithNullMessageText', async () => {
+        await TestUtils.runTestScript(resourceExplorer, 'TestScriptTests_OAuthInputRetries_WithNullMessageText');
+    });
+
+    it('PropertyMock', async () => {
+        const origFile = process.env.file;
+        process.env.file = 'set settings.file';
+
+        await TestUtils.runTestScript(resourceExplorer, 'TestScriptTests_PropertyMock');
+
+        // Cleanup, restoring original process.env.file, if any.
+        if (origFile) {
+            process.env.file = origFile;
+        } else {
+            delete process.env.file;
+        }
+    });
+
+    it('UserActivity', async () => {
+        await TestUtils.runTestScript(resourceExplorer, 'TestScriptTests_UserActivity');
+    });
+
     it('UserConversationUpdate', async () => {
         await TestUtils.runTestScript(resourceExplorer, 'TestScriptTests_UserConversationUpdate');
     });
@@ -79,9 +105,5 @@ describe('TestScriptTests', function () {
 
     it('UserTyping', async () => {
         await TestUtils.runTestScript(resourceExplorer, 'TestScriptTests_UserTyping');
-    });
-
-    it('CustomEvent', async () => {
-        await TestUtils.runTestScript(resourceExplorer, 'TestScriptTests_CustomEvent');
     });
 });

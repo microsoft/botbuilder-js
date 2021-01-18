@@ -7,7 +7,8 @@
  */
 
 import { Activity, TurnContext, TestAdapter } from 'botbuilder-core';
-import { TestAction } from '../testAction';
+import { Inspector, TestAction } from '../testAction';
+import { tests } from 'botbuilder-stdlib';
 
 export interface UserActivityConfiguration {
     activity?: Activity;
@@ -34,14 +35,19 @@ export class UserActivity extends TestAction implements UserActivityConfiguratio
      * Execute the test.
      * @param testAdapter Adapter to execute against.
      * @param callback Logic for the bot to use.
+     * @param inspector Inspector for dialog context.
      * @returns A Promise that represents the work queued to execute.
      */
-    public async execute(testAdapter: TestAdapter, callback: (context: TurnContext) => Promise<void>): Promise<void> {
+    public async execute(
+        testAdapter: TestAdapter,
+        callback: (context: TurnContext) => Promise<void>,
+        inspector?: Inspector
+    ): Promise<void> {
         if (!this.activity) {
             throw new Error('You must define one of Text of Activity properties');
         }
 
-        const activity = Object.assign({}, this.activity);
+        const activity = { ...this.activity };
         const reference = testAdapter.conversation;
         activity.channelId = reference.channelId;
         activity.serviceUrl = reference.serviceUrl;
@@ -53,10 +59,13 @@ export class UserActivity extends TestAction implements UserActivityConfiguratio
         }
 
         if (this.user) {
-            activity.from = Object.assign({}, activity.from);
+            activity.from = { ...activity.from };
             activity.from.id = this.user;
             activity.from.name = this.user;
+        } else if (tests.isObject(this.activity?.from)) {
+            activity.from = { ...this.activity.from };
         }
+
         activity.locale = testAdapter.locale;
 
         await testAdapter.processActivity(activity, callback);

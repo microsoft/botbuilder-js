@@ -6,6 +6,7 @@
  * Licensed under the MIT License.
  */
 
+import { v4 as uuidv4 } from 'uuid';
 import { Expression } from '../expression';
 import { EvaluateExpressionDelegate, ExpressionEvaluator } from '../expressionEvaluator';
 import { ExpressionType } from '../expressionType';
@@ -34,12 +35,7 @@ export class NewGuid extends ExpressionEvaluator {
      * @private
      */
     private static evalNewGuid(): string {
-        return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c: any): string => {
-            const r: number = (Math.random() * 16) | 0;
-            const v: number = c === 'x' ? r : (r & 0x3) | 0x8;
-
-            return v.toString(16);
-        });
+        return uuidv4();
     }
 
     /**

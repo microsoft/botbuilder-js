@@ -31,6 +31,7 @@ export * from './messageFactory';
 export * from './middlewareSet';
 export * from './privateConversationState';
 export * from './propertyManager';
+export * from './queueStorage';
 export * from './recognizerResult';
 export * from './registerClassMiddleware';
 export * from './showTypingMiddleware';

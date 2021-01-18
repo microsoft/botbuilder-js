@@ -5,6 +5,9 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
+
+/* eslint-disable @typescript-eslint/no-namespace */
+
 import { decode, VerifyOptions } from 'jsonwebtoken';
 import { ClaimsIdentity } from './claimsIdentity';
 import { AuthenticationConstants } from './authenticationConstants';
@@ -32,8 +35,8 @@ export namespace EmulatorValidation {
             'https://sts.windows.net/72f988bf-86f1-41af-91ab-2d7cd011db47/', // ???
             'https://sts.windows.net/cab8a31a-1906-4287-a0d8-4eef66b95f6e/', // US Gov Auth, 1.0 token
             'https://login.microsoftonline.us/cab8a31a-1906-4287-a0d8-4eef66b95f6e/v2.0', // US Gov Auth, 2.0 token
-            "https://login.microsoftonline.us/f8cdef31-a31e-4b4a-93e4-5f571e91255a/",           // Auth for US Gov, 1.0 token
-            "https://login.microsoftonline.us/f8cdef31-a31e-4b4a-93e4-5f571e91255a/v2.0",       // Auth for US Gov, 2.0 token
+            'https://login.microsoftonline.us/f8cdef31-a31e-4b4a-93e4-5f571e91255a/', // Auth for US Gov, 1.0 token
+            'https://login.microsoftonline.us/f8cdef31-a31e-4b4a-93e4-5f571e91255a/v2.0', // Auth for US Gov, 2.0 token
         ],
         audience: undefined, // Audience validation takes place manually in code.
         clockTolerance: 5 * 60,

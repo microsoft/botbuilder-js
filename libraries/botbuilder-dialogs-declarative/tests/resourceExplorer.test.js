@@ -1,4 +1,12 @@
-const { ComponentRegistration } = require('botbuilder-core');
+const {
+    ComponentRegistration,
+    TestAdapter,
+    MemoryStorage,
+    useBotState,
+    UserState,
+    ConversationState,
+} = require('botbuilder-core');
+const { DialogManager } = require('botbuilder-dialogs');
 const { AdaptiveComponentRegistration } = require('../../botbuilder-dialogs-adaptive/lib');
 const { ResourceExplorer, FolderResourceProvider, ResourceChangeEvent } = require('../lib');
 const assert = require('assert');
@@ -36,7 +44,7 @@ function assertResourceContents(explorer, id, contents) {
     assert.strictEqual(text, contents, `getResouces('dialog') contents not the same`);
 }
 
-describe('ResourecExplorer', function() {
+describe('ResourecExplorer', function () {
     this.timeout(5000);
 
     it('add folders recursively', async () => {
@@ -218,7 +226,6 @@ describe('ResourecExplorer', function() {
         assertResourceFound(explorer, 'foobar.dialog');
         assertResourceContents(explorer, 'foobar.dialog', '{"test": 123}');
 
-
         // modify the contents
         writeFileSync(testPath, '{"test": 1234}');
 
@@ -236,5 +243,29 @@ describe('ResourecExplorer', function() {
 
         const resourceProvider = explorer.resourceProviders[0];
         resourceProvider.watcher.close();
+    });
+
+    it('cycle reference', async () => {
+        ComponentRegistration.add(new AdaptiveComponentRegistration());
+        const resourceExplorer = new ResourceExplorer().addFolder(
+            join(__dirname, './resources/CycleDetection'),
+            false,
+            false
+        );
+        const root = resourceExplorer.loadType('root.dialog');
+        const dm = new DialogManager(root);
+        const adapter = new TestAdapter(async (context) => {
+            await dm.onTurn(context);
+        });
+        const storage = new MemoryStorage();
+        useBotState(adapter, new UserState(storage), new ConversationState(storage));
+        await adapter
+            .send('hi')
+            .assertReply('Hello')
+            .send('oh?')
+            .assertReply('World')
+            .send('hi')
+            .assertReply('Hello')
+            .startTest();
     });
 });

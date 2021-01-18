@@ -7,12 +7,19 @@
  */
 
 import { Activity } from 'botbuilder-core';
-import { DialogContext, TemplateInterface } from 'botbuilder-dialogs';
+import { Converter, ConverterFactory, Configurable, DialogContext, TemplateInterface } from 'botbuilder-dialogs';
+
+export interface StaticActivityTemplateConfiguration {
+    activity?: Partial<Activity>;
+}
 
 /**
  * Defines a static activity as a template.
  */
-export class StaticActivityTemplate implements TemplateInterface<Partial<Activity>, unknown> {
+export class StaticActivityTemplate
+    implements TemplateInterface<Partial<Activity>, unknown>, StaticActivityTemplateConfiguration, Configurable {
+    public static $kind = 'Microsoft.StaticActivityTemplate';
+
     /**
      * Intialize a new instance of StaticActivityTemplate class.
      * @param activity Activity as a template.
@@ -25,6 +32,16 @@ export class StaticActivityTemplate implements TemplateInterface<Partial<Activit
      * Gets or sets the activity as template.
      */
     public activity: Partial<Activity>;
+
+    public getConverter(_property: keyof StaticActivityTemplateConfiguration): Converter | ConverterFactory {
+        return undefined;
+    }
+
+    public configure(config: StaticActivityTemplateConfiguration): this {
+        const { activity } = config;
+        this.activity = activity;
+        return this;
+    }
 
     /**
      * Get predefined activity.
