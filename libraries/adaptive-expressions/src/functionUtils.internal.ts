@@ -195,11 +195,11 @@ export class InternalFunctionUtils {
     }
 
     /**
-     * Convert a string input to ticks number.
+     * Convert a string input to ticks bigInt.
      * @param timeStamp String timestamp input.
      */
     public static ticks(timeStamp: string): ValueWithError {
-        let result: any;
+        let result: bigInt.BigInteger;
         const { value: parsed, error } = this.parseTimestamp(timeStamp);
         if (!error) {
             const unixMilliSec: number = parseInt(moment(parsed).utc().format('x'), 10);
