@@ -7,7 +7,7 @@
  */
 
 import bigInt from 'big-integer';
-import moment from 'moment';
+import dayjs from 'dayjs';
 
 import { Expression } from '../expression';
 import { EvaluateExpressionDelegate, ExpressionEvaluator } from '../expressionEvaluator';
@@ -55,7 +55,7 @@ export class FormatTicks extends ExpressionEvaluator {
                 const dateString: string = new Date(arg).toISOString();
                 value =
                     args.length === 2
-                        ? moment(dateString).format(FunctionUtils.timestampFormatter(args[1]))
+                        ? dayjs(dateString).format(FunctionUtils.timestampFormatter(args[1]))
                         : dateString;
             }
 

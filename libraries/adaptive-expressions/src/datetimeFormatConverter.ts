@@ -56,11 +56,11 @@ enum State {
 }
 
 /**
- * Convert a CSharp style datetime format string to a Moment.js style datetime format string. Ref: https://docs.microsoft.com/en-us/dotnet/standard/base-types/custom-date-and-time-format-strings
- * @param fmtString A CSharp style datetime format string. Ref: https://devhints.io/moment
+ * Convert a CSharp style datetime format string to a Day.js style datetime format string. Ref: https://docs.microsoft.com/en-us/dotnet/standard/base-types/custom-date-and-time-format-strings
+ * @param fmtString A CSharp style datetime format string. Ref: https://day.js.org/docs/en/display/format
  * @returns A Momengt.js style datetime format string.
  */
-export function convertCSharpDateTimeToMomentJS(fmtString: string): string {
+export function convertCSharpDateTimeToDayjs(fmtString: string): string {
     let fmtResult = '';
     let fmtState: any = State.None;
     let lTokenBuffer = '';
@@ -71,15 +71,15 @@ export function convertCSharpDateTimeToMomentJS(fmtString: string): string {
         switch (fmtString) {
             case 'R':
             case 'r':
-                throw Error(`RFC 1123 not supported  in MomentJS`);
+                throw Error(`RFC 1123 not supported  in Day.js`);
             case 'O':
             case 'o':
                 fmtString = 'YYYY-MM-DDTHH:mm:ss.SSSSSSSZ';
                 break;
             case 'U':
-                throw new Error(`Universal Fulll Format not supported in MomentJS`);
+                throw new Error(`Universal Fulll Format not supported in Day.js`);
             case 'u':
-                throw new Error(`Universal Sortable Format not supported in MomentJS`);
+                throw new Error(`Universal Sortable Format not supported in Day.js`);
         }
     }
 
@@ -126,7 +126,7 @@ export function convertCSharpDateTimeToMomentJS(fmtString: string): string {
                 fmtResult += 'SSSSSSS';
                 break;
             case State.LowerG:
-                throw Error('Era not supported in MomentJS');
+                throw Error('Era not supported in Day.js');
             case State.LowerH1:
                 fmtResult += 'h';
                 break;

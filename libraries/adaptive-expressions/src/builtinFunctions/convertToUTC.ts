@@ -6,9 +6,9 @@
  * Licensed under the MIT License.
  */
 
-import moment from 'moment';
-import { tz } from 'moment-timezone';
-
+import dayjs from 'dayjs';
+import timezone from 'dayjs/plugin/timezone';
+dayjs.extend(timezone);
 import { Expression } from '../expression';
 import { ExpressionEvaluator, ValueWithError } from '../expressionEvaluator';
 import { ExpressionType } from '../expressionType';
@@ -53,8 +53,8 @@ export class ConvertToUTC extends ExpressionEvaluator {
      * @private
      */
     private static verifyTimeStamp(timeStamp: string): string | undefined {
-        const parsed = moment(timeStamp);
-        if (parsed.toString() === 'Invalid date') {
+        const parsed = dayjs(timeStamp);
+        if (parsed.toString() === 'Invalid Date') {
             return `${timeStamp} is a invalid datetime`;
         }
 
@@ -77,7 +77,7 @@ export class ConvertToUTC extends ExpressionEvaluator {
             error = this.verifyTimeStamp(timeStamp);
             if (!error) {
                 try {
-                    const sourceTime = tz(timeStamp, timeZone);
+                    const sourceTime = dayjs(timeStamp).tz(timeZone);
                     formattedSourceTime = sourceTime.format();
                 } catch (e) {
                     error = `${timeStamp} with ${timeZone} is not a valid timestamp with specified timeZone:`;
@@ -85,7 +85,7 @@ export class ConvertToUTC extends ExpressionEvaluator {
 
                 if (!error) {
                     try {
-                        result = tz(formattedSourceTime, 'Etc/UTC').format(format);
+                        result = dayjs(formattedSourceTime).tz('Etc/UTC').format(format);
                     } catch (e) {
                         error = `${format} is not a valid timestamp format`;
                     }

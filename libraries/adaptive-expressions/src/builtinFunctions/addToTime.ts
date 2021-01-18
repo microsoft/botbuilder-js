@@ -6,8 +6,9 @@
  * Licensed under the MIT License.
  */
 
-import moment from 'moment';
-
+import dayjs from 'dayjs';
+import utc from 'dayjs/plugin/utc';
+dayjs.extend(utc);
 import { Expression } from '../expression';
 import { ExpressionEvaluator, ValueWithError } from '../expressionEvaluator';
 import { ExpressionType } from '../expressionType';
@@ -62,7 +63,7 @@ export class AddToTime extends ExpressionEvaluator {
         const { value: parsed, error: parseError } = InternalFunctionUtils.parseTimestamp(timeStamp);
         let error = parseError;
         if (!error) {
-            const dt: any = moment(parsed).utc();
+            const dt: any = dayjs(parsed).utc();
             let addedTime = dt;
             let timeUnitMark: string;
             switch (timeUnit) {
@@ -108,8 +109,7 @@ export class AddToTime extends ExpressionEvaluator {
             }
 
             if (!error) {
-                addedTime = dt.add(interval, timeUnitMark);
-                ({ value: result, error } = InternalFunctionUtils.returnFormattedTimeStampStr(addedTime, format));
+                result = dt.add(interval, timeUnitMark).format(format);
             }
         }
 

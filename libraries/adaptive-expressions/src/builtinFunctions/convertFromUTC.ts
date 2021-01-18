@@ -6,8 +6,9 @@
  * Licensed under the MIT License.
  */
 
-import { tz } from 'moment-timezone';
-
+import dayjs from 'dayjs';
+import timezone from 'dayjs/plugin/timezone';
+dayjs.extend(timezone);
 import { Expression } from '../expression';
 import { ExpressionEvaluator, ValueWithError } from '../expressionEvaluator';
 import { ExpressionType } from '../expressionType';
@@ -68,7 +69,7 @@ export class ConvertFromUTC extends ExpressionEvaluator {
 
         if (!error) {
             try {
-                result = tz(timeStamp, timeZone).format(format);
+                result = dayjs(timeStamp).tz(timeZone).format(format);
             } catch (e) {
                 error = `${format} is not a valid timestamp format`;
             }

@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 
-import { parseZone } from 'moment';
+import dayjs from 'dayjs';
 
 import { EvaluateExpressionDelegate, ExpressionEvaluator } from '../expressionEvaluator';
 import { ExpressionType } from '../expressionType';
@@ -38,7 +38,7 @@ export class GetTimeOfDay extends ExpressionEvaluator {
             let value: any;
             const error: string = InternalFunctionUtils.verifyISOTimestamp(args[0]);
             if (!error) {
-                const thisTime: number = parseZone(args[0]).hour() * 100 + parseZone(args[0]).minute();
+                const thisTime: number = dayjs(args[0]).hour() * 100 + dayjs(args[0]).minute();
                 if (thisTime === 0) {
                     value = 'midnight';
                 } else if (thisTime > 0 && thisTime < 1200) {

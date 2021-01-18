@@ -6,8 +6,9 @@
  * Licensed under the MIT License.
  */
 
-import moment from 'moment';
-
+import dayjs, { OpUnitType } from 'dayjs';
+import utc from 'dayjs/plugin/utc';
+dayjs.extend(utc);
 import { Expression } from '../expression';
 import { ExpressionEvaluator, ValueWithError } from '../expressionEvaluator';
 import { ExpressionType } from '../expressionType';
@@ -51,8 +52,8 @@ export class SubtractFromTime extends ExpressionEvaluator {
                     const dur: any = duration;
                     ({ value, error } = InternalFunctionUtils.parseTimestamp(args[0], (dt: Date): string => {
                         return args.length === 4
-                            ? moment(dt).utc().subtract(dur, tsStr).format(format)
-                            : moment(dt).utc().subtract(dur, tsStr).toISOString();
+                            ? dayjs(dt).utc().subtract(dur, tsStr as OpUnitType).format(format)
+                            : dayjs(dt).utc().subtract(dur, tsStr as OpUnitType).toISOString();
                     }));
                 }
             } else {

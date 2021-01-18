@@ -6,8 +6,9 @@
  * Licensed under the MIT License.
  */
 
-import moment from 'moment';
-
+import dayjs from 'dayjs';
+import utc from 'dayjs/plugin/utc';
+dayjs.extend(utc);
 import { Expression } from '../expression';
 import { ExpressionEvaluator, ValueWithError } from '../expressionEvaluator';
 import { ExpressionType } from '../expressionType';
@@ -56,8 +57,7 @@ export class StartOfMonth extends ExpressionEvaluator {
         const { value: parsed, error: parseError } = InternalFunctionUtils.parseTimestamp(timeStamp);
         let error = parseError;
         if (!error) {
-            const startofMonth = moment(parsed).utc().date(1).hours(0).minutes(0).second(0).millisecond(0);
-            ({ value: result, error } = InternalFunctionUtils.returnFormattedTimeStampStr(startofMonth, format));
+            result = dayjs(parsed).utc().startOf('month').format(format);
         }
 
         return { value: result, error };

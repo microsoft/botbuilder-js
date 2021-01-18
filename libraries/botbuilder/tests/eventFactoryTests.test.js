@@ -1,5 +1,5 @@
 const { equal, ok: assert, strictEqual } = require('assert');
-const moment = require('moment-timezone');
+const dayjs = require('dayjs');
 
 const {
     ActivityTypes,
@@ -70,7 +70,7 @@ describe('EventFactory', function() {
             strictEqual(status, `{\"state\":\"${ state }\",\"message\":\"${ message }\"}`);
             assert(handoffEvent.attachments, 'handoffEvent.attachments should not be undefined.');
             assert(handoffEvent.id, 'handoffEvent.id should not be undefined.');
-            strictEqual(handoffEvent.localTimezone, moment.tz.guess());
+            strictEqual(handoffEvent.localTimezone, dayjs.tz.guess());
         });
 
         it('should succeed with no message', () => {

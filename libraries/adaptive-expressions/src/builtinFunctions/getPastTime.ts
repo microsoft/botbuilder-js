@@ -6,8 +6,9 @@
  * Licensed under the MIT License.
  */
 
-import moment from 'moment';
-
+import dayjs, { OpUnitType } from 'dayjs';
+import utc from 'dayjs/plugin/utc';
+dayjs.extend(utc);
 import { Expression } from '../expression';
 import { ExpressionEvaluator, ValueWithError } from '../expressionEvaluator';
 import { ExpressionType } from '../expressionType';
@@ -47,7 +48,7 @@ export class GetPastTime extends ExpressionEvaluator {
                     ({ value, error } = InternalFunctionUtils.parseTimestamp(
                         new Date().toISOString(),
                         (dt: Date): string => {
-                            return moment(dt).utc().subtract(dur, tsStr).format(format);
+                            return dayjs(dt).utc().subtract(dur, tsStr as OpUnitType).format(format);
                         }
                     ));
                 }
