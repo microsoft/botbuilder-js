@@ -82,7 +82,7 @@ const getBaseConversationReference = (): ConversationReference => {
         },
         serviceUrl: 'https://api.botframework.com',
     };
-}
+};
 
 const getPersonalConversationReference = (): ConversationReference => {
     return {
