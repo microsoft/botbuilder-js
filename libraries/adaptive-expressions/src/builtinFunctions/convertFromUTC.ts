@@ -23,7 +23,7 @@ import { TimeZoneConverter } from '../timeZoneConverter';
  * Convert a timestamp from Universal Time Coordinated (UTC) to a target time zone.
  */
 export class ConvertFromUTC extends ExpressionEvaluator {
-    private static readonly NoneUtcDefaultDateTimeFormat: string = 'YYYY-MM-DDTHH:mm:ss.SSSSSSS';
+    private static readonly NoneUtcDefaultDateTimeFormat: string = 'YYYY-MM-DDTHH:mm:ss.SSS0000';
 
     /**
      * Initializes a new instance of the [ConvertFromUTC](xref:adaptive-expressions.ConvertFromUTC) class.

@@ -15,17 +15,9 @@ enum State {
     LowerF1,
     LowerF2,
     LowerF3,
-    LowerF4,
-    LowerF5,
-    LowerF6,
-    LowerF7,
     CapitalF1,
     CapitalF2,
     CapitalF3,
-    CapitalF4,
-    CapitalF5,
-    CapitalF6,
-    CapitalF7,
     LowerG,
     LowerH1,
     LowerH2,
@@ -46,7 +38,6 @@ enum State {
     LowerY2,
     LowerY3,
     LowerY4,
-    LowerY5,
     LowerZ1,
     LowerZ2,
     LowerZ3,
@@ -74,7 +65,7 @@ export function convertCSharpDateTimeToDayjs(fmtString: string): string {
                 throw Error(`RFC 1123 not supported  in Day.js`);
             case 'O':
             case 'o':
-                fmtString = 'YYYY-MM-DDTHH:mm:ss.SSSSSSSZ';
+                fmtString = 'YYYY-MM-DDTHH:mm:ss.SSS0000Z';
                 break;
             case 'U':
                 throw new Error(`Universal Fulll Format not supported in Day.js`);
@@ -99,31 +90,13 @@ export function convertCSharpDateTimeToDayjs(fmtString: string): string {
                 break;
             case State.LowerF1:
             case State.CapitalF1:
-                fmtResult += 'S';
-                break;
+                throw Error('S not supported in Day.js');
             case State.LowerF2:
             case State.CapitalF2:
-                fmtResult += 'SS';
-                break;
+                throw Error('SS not supported in Day.js');
             case State.LowerF3:
             case State.CapitalF3:
                 fmtResult += 'SSS';
-                break;
-            case State.LowerF4:
-            case State.CapitalF4:
-                fmtResult += 'SSSS';
-                break;
-            case State.LowerF5:
-            case State.CapitalF5:
-                fmtResult += 'SSSSS';
-                break;
-            case State.LowerF6:
-            case State.CapitalF6:
-                fmtResult += 'SSSSSS';
-                break;
-            case State.LowerF7:
-            case State.CapitalF7:
-                fmtResult += 'SSSSSSS';
                 break;
             case State.LowerG:
                 throw Error('Era not supported in Day.js');
@@ -164,25 +137,16 @@ export function convertCSharpDateTimeToDayjs(fmtString: string): string {
                 fmtResult += 'ss';
                 break;
             case State.LowerT1:
-                fmtResult += 'A';
-                break;
             case State.LowerT2:
                 fmtResult += 'A';
                 break;
             case State.LowerY1:
-                fmtResult += 'YY';
-                break;
             case State.LowerY2:
                 fmtResult += 'YY';
                 break;
             case State.LowerY3:
-                fmtResult += 'YYYY';
-                break;
             case State.LowerY4:
                 fmtResult += 'YYYY';
-                break;
-            case State.LowerY5:
-                fmtResult += 'Y';
                 break;
             case State.LowerZ1:
             case State.LowerZ2:
@@ -249,18 +213,6 @@ export function convertCSharpDateTimeToDayjs(fmtString: string): string {
                             fmtState = State.LowerF3;
                             break;
                         case State.LowerF3:
-                            fmtState = State.LowerF4;
-                            break;
-                        case State.LowerF4:
-                            fmtState = State.LowerF5;
-                            break;
-                        case State.LowerF5:
-                            fmtState = State.LowerF6;
-                            break;
-                        case State.LowerF6:
-                            fmtState = State.LowerF7;
-                            break;
-                        case State.LowerF7:
                             break;
                         default:
                             changeState(State.LowerF1);
@@ -276,18 +228,6 @@ export function convertCSharpDateTimeToDayjs(fmtString: string): string {
                             fmtState = State.CapitalF3;
                             break;
                         case State.CapitalF3:
-                            fmtState = State.CapitalF4;
-                            break;
-                        case State.CapitalF4:
-                            fmtState = State.CapitalF5;
-                            break;
-                        case State.CapitalF5:
-                            fmtState = State.CapitalF6;
-                            break;
-                        case State.CapitalF6:
-                            fmtState = State.CapitalF7;
-                            break;
-                        case State.CapitalF7:
                             break;
                         default:
                             changeState(State.CapitalF1);
@@ -397,9 +337,6 @@ export function convertCSharpDateTimeToDayjs(fmtString: string): string {
                             fmtState = State.LowerY4;
                             break;
                         case State.LowerY4:
-                            fmtState = State.LowerY5;
-                            break;
-                        case State.LowerY5:
                             break;
                         default:
                             changeState(State.LowerY1);
