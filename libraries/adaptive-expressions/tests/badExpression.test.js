@@ -23,7 +23,7 @@ const scope = {
     nestedItems: [{ x: 1 }, { x: 2 }, { x: 3 }],
     timestamp: '2018-03-15T13:00:00.111Z',
     noISOTimestamp: '2018-03-15T13:00:00Z',
-    notValidTimestamp: '2018timestmap',
+    notValidTimestamp: 'timestmap',
     notValidTimestamp2: '1521118800',
     notValidTimestamp3: '20181115',
     relativeUri: '../catalog/shownew.htm?date=today',
