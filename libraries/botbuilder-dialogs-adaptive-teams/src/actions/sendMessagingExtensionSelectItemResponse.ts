@@ -70,12 +70,12 @@ export class SendMessagingExtensionSelectItemResponse
             throw new Error(`A valid card is required for ${SendMessagingExtensionSelectItemResponse.$kind}.`);
         }
 
-        const boundActivity = await this.card.bind(dc, dc.state);
+        const activity = await this.card.bind(dc, dc.state);
 
-        const [attachment] = boundActivity?.attachments ?? [];
+        const [attachment] = activity?.attachments ?? [];
         if (!attachment) {
             throw new Error(
-                `Invalid activity. A valid attachment is required for ${SendMessagingExtensionSelectItemResponse.$kind}.`
+                `Invalid activity. An attachment is required for ${SendMessagingExtensionSelectItemResponse.$kind}.`
             );
         }
 

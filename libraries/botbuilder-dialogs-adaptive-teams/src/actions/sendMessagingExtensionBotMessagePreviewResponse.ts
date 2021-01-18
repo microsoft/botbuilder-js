@@ -68,14 +68,14 @@ export class SendMessagingExtensionBotMessagePreviewResponse
         }
 
         if (!this.card) {
-            throw new Error(`A valid card is required for ${SendMessagingExtensionBotMessagePreviewResponse.$kind}.`);
+            throw new Error(`A valid Card is required for ${SendMessagingExtensionBotMessagePreviewResponse.$kind}.`);
         }
-        const boundActivity = await this.card.bind(dc, dc.state);
+        const activity = await this.card.bind(dc, dc.state);
 
-        const [attachment] = boundActivity?.attachments ?? [];
+        const [attachment] = activity?.attachments ?? [];
         if (!attachment) {
             throw new Error(
-                `Invalid activity. The activity does not contain a valid attachment as required for ${SendMessagingExtensionBotMessagePreviewResponse.$kind}.`
+                `Invalid activity. An attachment is required for ${SendMessagingExtensionBotMessagePreviewResponse.$kind}.`
             );
         }
 

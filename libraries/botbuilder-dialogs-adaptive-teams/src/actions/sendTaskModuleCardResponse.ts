@@ -66,16 +66,14 @@ export class SendTaskModuleCardResponse
         }
 
         if (!this.card) {
-            throw new Error(`A valid card is required for ${SendTaskModuleCardResponse.$kind}.`);
+            throw new Error(`A valid Card is required for ${SendTaskModuleCardResponse.$kind}.`);
         }
 
-        const boundActivity = await this.card.bind(dc, dc.state);
+        const activity = await this.card.bind(dc, dc.state);
 
-        const [attachment] = boundActivity?.attachments ?? [];
+        const [attachment] = activity?.attachments ?? [];
         if (!attachment) {
-            throw new Error(
-                `Invalid activity. The activity does not contain a valid attachment as required for ${SendTaskModuleCardResponse.$kind}.`
-            );
+            throw new Error(`Invalid activity. An attachment is required for ${SendTaskModuleCardResponse.$kind}.`);
         }
 
         const title = this.title?.getValue(dc.state);

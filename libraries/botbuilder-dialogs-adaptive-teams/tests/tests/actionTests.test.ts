@@ -34,9 +34,7 @@ const getTeamsTestAdapter = (convo?: Partial<ConversationReference>): TestAdapte
         return new ConnectorClient(new MicrosoftAppCredentials('', ''));
     };
 
-    // DialogManager requires conversationState and it's required for the tests so that we can store
-    // the nock response in user.participant, send it back as part of the test script, and AssertReply
-    // that we got the correct response
+    // DialogManager requires conversationState
     const storage = new MemoryStorage();
     const userState = new UserState(storage);
     const conversationState = new ConversationState(storage);
@@ -73,39 +71,40 @@ const getGroupConversation = (): ConversationAccount => {
     };
 };
 
-const getPersonalConversationReference = (): ConversationReference => {
+const getBaseConversationReference = (): ConversationReference => {
     return {
         user: getTeamsUser(),
         channelId: Channels.Msteams,
         conversation: getPersonalConversation(),
-        bot: getBot(),
+        bot: {
+            id: 'botId',
+            name: 'Bot',
+        },
         serviceUrl: 'https://api.botframework.com',
     };
-};
+}
 
-const getBot = (): ChannelAccount => {
+const getPersonalConversationReference = (): ConversationReference => {
     return {
-        id: 'botId',
-        name: 'Bot',
+        ...getBaseConversationReference(),
+        conversation: getPersonalConversation(),
     };
 };
 
 const getGroupConversationReference = (): ConversationReference => {
     return {
-        user: getTeamsUser(),
-        channelId: Channels.Msteams,
+        ...getBaseConversationReference(),
         conversation: getGroupConversation(),
-        bot: getBot(),
-        serviceUrl: 'https://api.botframework.com',
     };
 };
 
 const generateTeamMembers = (amount: number): Record<string, unknown>[] => {
     const members = [];
+    const baseUser = getTeamsUser();
     for (let i = 0; i < amount; i++) {
         members.push({
-            id: `${getTeamsUser().id}-${i}`,
-            name: `${getTeamsUser().name}-${i}`,
+            id: `${baseUser.id}-${i}`,
+            name: `${baseUser.name}-${i}`,
             objectId: `User-${i}-Object-Id`,
             givenName: 'User',
             surname: `Surname-${i}`,

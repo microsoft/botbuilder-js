@@ -77,9 +77,9 @@ export class SendAppBasedLinkQueryResponse
             throw new Error(`An activity with attachments is required for ${SendAppBasedLinkQueryResponse.$kind}.`);
         }
 
-        const boundActivity = await this.card.bind(dc, dc.state);
+        const activity = await this.card.bind(dc, dc.state);
 
-        const attachments: MessagingExtensionAttachment[] = boundActivity?.attachments ?? [];
+        const attachments: MessagingExtensionAttachment[] = activity?.attachments ?? [];
         if (!attachments.length) {
             throw new Error(`Invalid activity. An attachment is required for ${SendAppBasedLinkQueryResponse.$kind}.`);
         }

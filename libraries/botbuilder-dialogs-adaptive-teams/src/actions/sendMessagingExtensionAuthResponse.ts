@@ -98,12 +98,12 @@ export class SendMessagingExtensionAuthResponse
 
         const connectionName = this.connectionName?.getValue(dc.state);
         if (!connectionName) {
-            throw new Error(`${SendMessagingExtensionAuthResponse.$kind} requires a Connection Name.`);
+            throw new Error(`A valid ConnectionName is required for ${SendMessagingExtensionAuthResponse.$kind}.`);
         }
 
         const title = this.title?.getValue(dc.state);
         if (!title) {
-            throw new Error(`${SendMessagingExtensionAuthResponse.$kind} requires a Title.`);
+            throw new Error(`A valid Title is required for ${SendMessagingExtensionAuthResponse.$kind}.`);
         }
 
         const tokenResponse = await SendMessagingExtensionAuthResponse.getUserToken(
