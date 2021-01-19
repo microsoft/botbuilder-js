@@ -181,30 +181,14 @@ export class InternalFunctionUtils {
     }
 
     /**
-     * Transform a timestamp into another with customized function.
-     * @param timeStamp Original time stamp.
-     * @param transform Transform function.
-     * @returns New timestamp and error.
-     */
-    public static parseTimestamp(timeStamp: string, transform?: (arg0: Date) => any): ValueWithError {
-        let value: any;
-        const error: string = this.verifyISOTimestamp(timeStamp);
-        if (!error) {
-            value = transform !== undefined ? transform(new Date(timeStamp)) : timeStamp;
-        }
-
-        return { value, error };
-    }
-
-    /**
      * Convert a string input to ticks number.
      * @param timeStamp String timestamp input.
      */
     public static ticks(timeStamp: string): ValueWithError {
         let result: any;
-        const { value: parsed, error } = this.parseTimestamp(timeStamp);
+        const error = this.verifyISOTimestamp(timeStamp);
         if (!error) {
-            const unixMilliSec: number = dayjs(parsed).utc().valueOf();
+            const unixMilliSec: number = dayjs(timeStamp).utc().valueOf();
             result = this.UnixMilliSecondToTicksConstant.add(
                 bigInt(unixMilliSec).times(this.MillisecondToTickConstant)
             );

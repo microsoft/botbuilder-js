@@ -54,10 +54,9 @@ export class StartOfDay extends ExpressionEvaluator {
      */
     private static evalStartOfDay(timeStamp: string, format?: string): ValueWithError {
         let result: string;
-        const { value: parsed, error: parseError } = InternalFunctionUtils.parseTimestamp(timeStamp);
-        let error = parseError;
+        const error = InternalFunctionUtils.verifyISOTimestamp(timeStamp);
         if (!error) {
-            result = dayjs(parsed).utc().startOf('d').format(format);
+            result = dayjs(timeStamp).utc().startOf('d').format(format);
         }
 
         return { value: result, error };

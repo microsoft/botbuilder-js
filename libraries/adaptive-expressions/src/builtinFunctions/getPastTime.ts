@@ -44,13 +44,7 @@ export class GetPastTime extends ExpressionEvaluator {
                 if (tsStr === undefined) {
                     error = `${args[2]} is not a valid time unit.`;
                 } else {
-                    const dur: any = duration;
-                    ({ value, error } = InternalFunctionUtils.parseTimestamp(
-                        new Date().toISOString(),
-                        (dt: Date): string => {
-                            return dayjs(dt).utc().subtract(dur, tsStr as OpUnitType).format(format);
-                        }
-                    ));
+                    value = dayjs().utc().subtract(duration, tsStr as OpUnitType).format(format);
                 }
             } else {
                 error = `${expression} should contain a time interval integer, a string unit of time and an optional output format string.`;

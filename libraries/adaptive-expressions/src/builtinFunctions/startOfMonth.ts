@@ -54,10 +54,9 @@ export class StartOfMonth extends ExpressionEvaluator {
      */
     private static evalStartOfMonth(timeStamp: string, format?: string): ValueWithError {
         let result: string;
-        const { value: parsed, error: parseError } = InternalFunctionUtils.parseTimestamp(timeStamp);
-        let error = parseError;
+        const error = InternalFunctionUtils.verifyISOTimestamp(timeStamp);
         if (!error) {
-            result = dayjs(parsed).utc().startOf('month').format(format);
+            result = dayjs(timeStamp).utc().startOf('month').format(format);
         }
 
         return { value: result, error };

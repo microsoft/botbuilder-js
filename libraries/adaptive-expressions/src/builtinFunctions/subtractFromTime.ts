@@ -50,11 +50,12 @@ export class SubtractFromTime extends ExpressionEvaluator {
                     error = `${args[2]} is not a valid time unit.`;
                 } else {
                     const dur: any = duration;
-                    ({ value, error } = InternalFunctionUtils.parseTimestamp(args[0], (dt: Date): string => {
-                        return args.length === 4
-                            ? dayjs(dt).utc().subtract(dur, tsStr as OpUnitType).format(format)
-                            : dayjs(dt).utc().subtract(dur, tsStr as OpUnitType).toISOString();
-                    }));
+                    error = InternalFunctionUtils.verifyISOTimestamp(args[0]);
+                    if (!error) {
+                        value = args.length === 4
+                        ? dayjs(args[0]).utc().subtract(dur, tsStr as OpUnitType).format(format)
+                        : dayjs(args[0]).utc().subtract(dur, tsStr as OpUnitType).toISOString();
+                    }
                 }
             } else {
                 error = `${expression} should contain an ISO format timestamp, a time interval integer, a string unit of time and an optional output format string.`;

@@ -6,9 +6,6 @@
  * Licensed under the MIT License.
  */
 
-import dayjs from 'dayjs';
-import utc from 'dayjs/plugin/utc';
-dayjs.extend(utc);
 import { ExpressionType } from '../expressionType';
 import { TimeTransformEvaluator } from './timeTransformEvaluator';
 
@@ -20,6 +17,10 @@ export class AddMinutes extends TimeTransformEvaluator {
      * Initializes a new instance of the [AddMinutes](xref:adaptive-expressions.AddMinutes) class.
      */
     public constructor() {
-        super(ExpressionType.AddMinutes, (ts: Date, num: any): Date => dayjs(ts).utc().add(num, 'm').toDate());
+        super(ExpressionType.AddMinutes, (ts: Date, num: any): Date => {
+            const newDate = new Date(ts);
+            newDate.setMinutes(ts.getMinutes() + num);
+            return newDate;
+        });
     }
 }

@@ -32,9 +32,14 @@ export class DateFunc extends ExpressionEvaluator {
     private static evaluator(): EvaluateExpressionDelegate {
         return FunctionUtils.applyWithError(
             (args: any[]): any =>
-                InternalFunctionUtils.parseTimestamp(args[0], (timestamp: Date): string =>
-                dayjs(timestamp).utc().format('M/DD/YYYY')
-                ),
+            {
+                const error = InternalFunctionUtils.verifyISOTimestamp(args[0]);
+                if (!error) {
+                    return {value: dayjs(args[0]).utc().format('M/DD/YYYY'), error}
+                }
+
+                return {value: undefined, error}
+            },
             FunctionUtils.verifyString
         );
     }

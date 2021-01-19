@@ -34,9 +34,14 @@ export class DayOfYear extends ExpressionEvaluator {
     private static evaluator(): EvaluateExpressionDelegate {
         return FunctionUtils.applyWithError(
             (args: any[]): any =>
-                InternalFunctionUtils.parseTimestamp(args[0], (timestamp: Date): number =>
-                    dayjs(timestamp).utc().dayOfYear()
-                ),
+            {
+                const error = InternalFunctionUtils.verifyISOTimestamp(args[0]);
+                if (!error) {
+                    return {value: dayjs(args[0]).utc().dayOfYear(), error}
+                }
+
+                return {value: undefined, error}
+            },
             FunctionUtils.verifyString
         );
     }

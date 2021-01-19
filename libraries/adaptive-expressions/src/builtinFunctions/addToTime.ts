@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 
-import dayjs from 'dayjs';
+import dayjs, { OpUnitType } from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 dayjs.extend(utc);
 import { Expression } from '../expression';
@@ -60,57 +60,10 @@ export class AddToTime extends ExpressionEvaluator {
         format?: string
     ): ValueWithError {
         let result: string;
-        const { value: parsed, error: parseError } = InternalFunctionUtils.parseTimestamp(timeStamp);
-        let error = parseError;
+        let error = InternalFunctionUtils.verifyISOTimestamp(timeStamp);
         if (!error) {
-            const dt: any = dayjs(parsed).utc();
-            let addedTime = dt;
-            let timeUnitMark: string;
-            switch (timeUnit) {
-                case 'Second': {
-                    timeUnitMark = 's';
-                    break;
-                }
-
-                case 'Minute': {
-                    timeUnitMark = 'm';
-                    break;
-                }
-
-                case 'Hour': {
-                    timeUnitMark = 'h';
-                    break;
-                }
-
-                case 'Day': {
-                    timeUnitMark = 'd';
-                    break;
-                }
-
-                case 'Week': {
-                    timeUnitMark = 'week';
-                    break;
-                }
-
-                case 'Month': {
-                    timeUnitMark = 'month';
-                    break;
-                }
-
-                case 'Year': {
-                    timeUnitMark = 'year';
-                    break;
-                }
-
-                default: {
-                    error = `${timeUnit} is not valid time unit`;
-                    break;
-                }
-            }
-
-            if (!error) {
-                result = dt.add(interval, timeUnitMark).format(format);
-            }
+            const { duration, tsStr } = InternalFunctionUtils.timeUnitTransformer(interval, timeUnit);
+            result = dayjs(timeStamp).utc().add(duration, tsStr as OpUnitType).format(format);
         }
 
         return { value: result, error };

@@ -41,14 +41,14 @@ export class TimeTransformEvaluator extends ExpressionEvaluator {
             let error = childrenError;
             if (!error) {
                 if (typeof args[0] === 'string' && typeof args[1] === 'number') {
-                    ({ value, error } = InternalFunctionUtils.parseTimestamp(args[0]));
+                    error = InternalFunctionUtils.verifyISOTimestamp(args[0]);
                     if (!error) {
                         if (args.length === 3 && typeof args[2] === 'string') {
-                            result = dayjs(func(value, args[1]))
+                            result = dayjs(func(new Date(args[0]), args[1]))
                                 .utc()
                                 .format(FunctionUtils.timestampFormatter(args[2]));
                         } else {
-                            result = func(value, args[1]).toISOString();
+                            result = func(new Date(args[0]), args[1]).toISOString();
                         }
                     }
                 } else {
