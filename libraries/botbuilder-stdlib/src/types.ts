@@ -451,7 +451,7 @@ function maybeNumber(val: unknown, path: string[]): asserts val is Maybe<number>
  * @returns {boolean} true if `val` is of type `object`
  */
 function isObject(val: unknown): val is object {
-    return typeof val === 'object' && !isArray(val);
+    return !isNil(val) && typeof val === 'object' && !isArray(val);
 }
 
 /**

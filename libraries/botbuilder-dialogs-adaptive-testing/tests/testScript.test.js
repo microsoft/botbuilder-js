@@ -78,7 +78,21 @@ describe('TestScriptTests', function () {
     });
 
     it('PropertyMock', async () => {
+        const origFile = process.env.file;
+        process.env.file = 'set settings.file';
+
         await TestUtils.runTestScript(resourceExplorer, 'TestScriptTests_PropertyMock');
+
+        // Cleanup, restoring original process.env.file, if any.
+        if (origFile) {
+            process.env.file = origFile;
+        } else {
+            delete process.env.file;
+        }
+    });
+
+    it('UserActivity', async () => {
+        await TestUtils.runTestScript(resourceExplorer, 'TestScriptTests_UserActivity');
     });
 
     it('UserConversationUpdate', async () => {
