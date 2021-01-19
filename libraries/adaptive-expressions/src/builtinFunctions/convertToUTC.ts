@@ -77,7 +77,7 @@ export class ConvertToUTC extends ExpressionEvaluator {
             error = this.verifyTimeStamp(timeStamp);
             if (!error) {
                 try {
-                    const sourceTime = dayjs(timeStamp).tz(timeZone);
+                    const sourceTime = dayjs.tz(timeStamp, timeZone);
                     formattedSourceTime = sourceTime.format();
                 } catch (e) {
                     error = `${timeStamp} with ${timeZone} is not a valid timestamp with specified timeZone:`;
