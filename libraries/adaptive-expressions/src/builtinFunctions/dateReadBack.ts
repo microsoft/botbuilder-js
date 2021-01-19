@@ -31,7 +31,6 @@ export class DateReadBack extends ExpressionEvaluator {
      */
     private static evaluator(): EvaluateExpressionDelegate {
         return FunctionUtils.applyWithError((args: any[]): any => {
-            let value: any;
             const dateFormat = 'YYYY-MM-DD';
             let error = InternalFunctionUtils.verifyISOTimestamp(args[0]);
             if (!error) {
@@ -44,6 +43,7 @@ export class DateReadBack extends ExpressionEvaluator {
                     return { value: timex.toNaturalLanguage(timestamp1), error };
                 }
             }
+            return {undefined, error}
         }, FunctionUtils.verifyString);
     }
 

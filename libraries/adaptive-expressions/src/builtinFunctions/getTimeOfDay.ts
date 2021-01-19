@@ -6,9 +6,6 @@
  * Licensed under the MIT License.
  */
 
-import dayjs from 'dayjs';
-import utc from 'dayjs/plugin/utc';
-dayjs.extend(utc);
 import { EvaluateExpressionDelegate, ExpressionEvaluator } from '../expressionEvaluator';
 import { ExpressionType } from '../expressionType';
 import { FunctionUtils } from '../functionUtils';
@@ -39,7 +36,7 @@ export class GetTimeOfDay extends ExpressionEvaluator {
             let value: any;
             const error: string = InternalFunctionUtils.verifyISOTimestamp(args[0]);
             if (!error) {
-                const thisTime: number = dayjs(args[0]).utc().hour() * 100 + dayjs(args[0]).utc().minute();
+                const thisTime: number = new Date(args[0]).getUTCHours() * 100 + new Date(args[0]).getUTCMinutes();
                 if (thisTime === 0) {
                     value = 'midnight';
                 } else if (thisTime > 0 && thisTime < 1200) {
