@@ -536,8 +536,7 @@ const testCases = [
             ['formatDateTime(notISOTimestamp, \'ddd\')', 'Thu'],
             ['formatDateTime(notISOTimestamp, \'dddd\')', 'Thursday'],
             ['formatDateTime(\'2018-03-15T00:00:00.000Z\', \'yyyy\')', '2018'],
-            //    ['formatDateTime(\'2018-03-15T00:00:00.000Z\', \'yyyy-MM-dd-\\\\d\')', '2018-03-15-4'],
-            // - Fails in the US
+            ['formatDateTime(\'2018-03-15T00:00:00.000Z\', \'yyyy-MM-dd-\\\\d\')', '2018-03-15-4'],
             ['formatDateTime(\'2018-03-15T00:00:00.010Z\', \'FFF\')', '010'],
             ['formatDateTime(\'2018-03-15T09:00:00.010\', \'hh\')', '09'],
             ['formatDateTime(\'2018-03-15T09:00:00.010\', \'MMMM\')', 'March'],

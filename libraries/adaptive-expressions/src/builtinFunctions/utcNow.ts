@@ -32,7 +32,7 @@ export class UtcNow extends ExpressionEvaluator {
     private static evaluator(): EvaluateExpressionDelegate {
         return FunctionUtils.apply(
             (args: any[]): string =>
-                args.length === 1 ? dayjs(new Date()).utc().format(args[0]) : new Date().toISOString(),
+                args.length === 1 ? dayjs(new Date()).utc().format(FunctionUtils.timestampFormatter(args[0])) : new Date().toISOString(),
             FunctionUtils.verifyString
         );
     }
