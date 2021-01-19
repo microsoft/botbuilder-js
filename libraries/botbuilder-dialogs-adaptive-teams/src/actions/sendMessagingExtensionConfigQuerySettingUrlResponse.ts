@@ -79,7 +79,7 @@ export class SendMessagingExtensionConfigQuerySettingUrlResponse
                         {
                             type: ActionTypes.OpenUrl,
                             value: encodeURI(configUrl),
-                            title: ''
+                            title: '', // title is never seen by the user but is a required property in CardAction.
                         },
                     ],
                 },
