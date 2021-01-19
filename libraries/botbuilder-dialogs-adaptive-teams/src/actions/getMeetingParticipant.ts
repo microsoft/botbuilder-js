@@ -126,7 +126,7 @@ export class GetMeetingParticipant extends Dialog implements GetMeetingParticipa
         const result = await TeamsInfo.getMeetingParticipant(dc.context, meetingId, participantId, tenantId);
 
         if (this.property != null) {
-            dc.state.setValue(this.property?.getValue(dc.state), result);
+            dc.state.setValue(this.property.getValue(dc.state), result);
         }
 
         return dc.endDialog(result);
@@ -138,7 +138,7 @@ export class GetMeetingParticipant extends Dialog implements GetMeetingParticipa
      * @returns {string} A string representing the compute Id.
      */
     protected onComputeId(): string {
-        return `GetMeetingParticipant[
+        return `GetMeetingParticipant[\
             ${this.meetingId ?? ''},\
             ${this.participantId?.toString() ?? ''},
             ${this.tenantId?.toString() ?? ''},\

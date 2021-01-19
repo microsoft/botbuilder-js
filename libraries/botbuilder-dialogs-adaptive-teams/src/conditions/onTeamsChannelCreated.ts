@@ -19,7 +19,6 @@ export class OnTeamsChannelCreated extends OnConversationUpdateActivity {
     public static $kind = 'Teams.OnChannelCreated';
 
     public getExpression(parser: ExpressionParserInterface): Expression {
-        // if teams channel and eventType == 'channelCreated'
         return Expression.andExpression(
             Expression.parse(
                 `${TurnPath.activity}.channelId == '${Channels.Msteams}' && ${TurnPath.activity}.channelData.eventType == 'channelCreated'`

@@ -18,7 +18,6 @@ export class OnTeamsMessagingExtensionSelectItem extends OnInvokeActivity {
     public static $kind = 'Teams.OnMessagingExtensionSelectItem';
 
     public getExpression(parser: ExpressionParserInterface): Expression {
-        // if name is 'composeExtension/selectItem'
         return Expression.andExpression(
             Expression.parse(
                 `${TurnPath.activity}.channelId == '${Channels.Msteams}' && ${TurnPath.activity}.name == 'composeExtension/selectItem'`

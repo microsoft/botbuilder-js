@@ -18,7 +18,6 @@ export class OnTeamsTaskModuleSubmit extends OnInvokeActivity {
     public static $kind = 'Teams.OnTaskModuleSubmit';
 
     public getExpression(parser: ExpressionParserInterface): Expression {
-        // if name is 'task/submit'
         return Expression.andExpression(
             Expression.parse(
                 `${TurnPath.activity}.channelId == '${Channels.Msteams}' && ${TurnPath.activity}.name == 'task/submit'`

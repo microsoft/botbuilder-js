@@ -19,7 +19,6 @@ export class OnTeamsTeamArchived extends OnConversationUpdateActivity {
     public static $kind = 'Teams.OnTeamArchived';
 
     public getExpression(parser: ExpressionParserInterface): Expression {
-        // if teams channel and eventType == 'teamArchived'
         return Expression.andExpression(
             Expression.parse(
                 `${TurnPath.activity}.channelId == '${Channels.Msteams}' && ${TurnPath.activity}.channelData.eventType == 'teamArchived'`

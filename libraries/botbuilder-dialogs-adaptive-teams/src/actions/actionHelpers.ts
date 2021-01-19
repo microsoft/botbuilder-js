@@ -6,9 +6,7 @@
  * Licensed under the MIT License.
  */
 import { ExpressionProperty } from 'adaptive-expressions';
-import { StringUtils } from 'botbuilder';
 import { DialogContext } from 'botbuilder-dialogs';
-import { tests } from 'botbuilder-stdlib';
 
 /**
  * Get the value of the string expression from the Dialog Context.
@@ -17,7 +15,7 @@ import { tests } from 'botbuilder-stdlib';
  * @param {ExpressionProperty<any>} expressionProperty The expressionProperty to use to retrieve a value from the DialogContext.
  * @returns {string} The value of the evaluated stringExpression.
  */
-export function getValue<T>(dc: DialogContext, expressionProperty: ExpressionProperty<T> | undefined): T | undefined {
+export function getValue<T>(dc: DialogContext, expressionProperty?: ExpressionProperty<T>): T | undefined {
     if (expressionProperty) {
         const { value, error } = expressionProperty.tryGetValue(dc.state);
         if (error) {
@@ -28,6 +26,5 @@ export function getValue<T>(dc: DialogContext, expressionProperty: ExpressionPro
         return value;
     }
 
-    // Downstream functions expect undefined instead of null.
     return undefined;
 }

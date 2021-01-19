@@ -63,7 +63,7 @@ export abstract class BaseTeamsCacheInfoResponseDialog
 
     protected static createInvokeResponseActivity(
         body: MessagingExtensionResponse,
-        statusCode: number = StatusCodes.OK
+        statusCode = StatusCodes.OK
     ): Partial<Activity> {
         return {
             value: {
@@ -113,7 +113,6 @@ export abstract class BaseTeamsCacheInfoResponseDialog
             }
         }
 
-        // Return undefined instead of null because of downstream expectations.
         return undefined;
     }
 }

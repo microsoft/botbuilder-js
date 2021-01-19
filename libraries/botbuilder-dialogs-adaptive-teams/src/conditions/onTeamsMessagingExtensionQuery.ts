@@ -18,7 +18,6 @@ export class OnTeamsMessagingExtensionQuery extends OnInvokeActivity {
     public static $kind = 'Teams.OnMessagingExtensionQuery';
 
     public getExpression(parser: ExpressionParserInterface): Expression {
-        // if name is 'composeExtension/query'
         return Expression.andExpression(
             Expression.parse(
                 `${TurnPath.activity}.channelId == '${Channels.Msteams}' && ${TurnPath.activity}.name == 'composeExtension/query'`

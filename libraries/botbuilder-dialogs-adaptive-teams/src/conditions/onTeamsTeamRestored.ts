@@ -19,7 +19,6 @@ export class OnTeamsTeamRestored extends OnConversationUpdateActivity {
     public static $kind = 'Teams.OnTeamRestored';
 
     public getExpression(parser: ExpressionParserInterface): Expression {
-        // if teams channel and eventType == 'teamRestored'
         return Expression.andExpression(
             Expression.parse(
                 `${TurnPath.activity}.channelId == '${Channels.Msteams}' && ${TurnPath.activity}.channelData.eventType == 'teamRestored'`

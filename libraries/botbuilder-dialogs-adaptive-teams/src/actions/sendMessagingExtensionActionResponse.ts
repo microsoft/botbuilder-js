@@ -68,10 +68,7 @@ export class SendMessagingExtensionActionResponse
             return dc.endDialog();
         }
 
-        let activity;
-        if (this.card != null) {
-            activity = await this.card.bind(dc, dc.state);
-        }
+        const activity = await this.card?.bind(dc, dc.state);
 
         const [attachment] = activity?.attachments ?? [];
 

@@ -18,7 +18,6 @@ export class OnTeamsMessagingExtensionFetchTask extends OnInvokeActivity {
     public static $kind = 'Teams.OnMessagingExtensionFetchTask';
 
     public getExpression(parser: ExpressionParserInterface): Expression {
-        // if name is 'composeExtension/fetchTask'
         return Expression.andExpression(
             Expression.parse(
                 `${TurnPath.activity}.channelId == '${Channels.Msteams}' && ${TurnPath.activity}.name == 'composeExtension/fetchTask'`

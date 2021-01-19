@@ -17,7 +17,6 @@ export class OnTeamsAppBasedLinkQuery extends OnInvokeActivity {
     public static $kind = 'Teams.OnAppBasedLinkQuery';
 
     public getExpression(parser: ExpressionParserInterface): Expression {
-        // if name is 'composeExtension/queryLink'
         return Expression.andExpression(
             Expression.parse(`${TurnPath.activity}.name == 'composeExtension/queryLink'`),
             super.getExpression(parser)

@@ -76,9 +76,10 @@ export class SendMessagingExtensionConfigQuerySettingUrlResponse
                 type: 'config',
                 suggestedActions: {
                     actions: [
-                        <CardAction>{
+                        {
                             type: ActionTypes.OpenUrl,
                             value: encodeURI(configUrl),
+                            title: ''
                         },
                     ],
                 },

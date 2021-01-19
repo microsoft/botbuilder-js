@@ -19,7 +19,6 @@ export class OnTeamsTeamUnarchived extends OnConversationUpdateActivity {
     public static $kind = 'Teams.OnTeamUnarchived';
 
     public getExpression(parser: ExpressionParserInterface): Expression {
-        // if teams channel and eventType == 'teamUnarchived'
         return Expression.andExpression(
             Expression.parse(
                 `${TurnPath.activity}.channelId == '${Channels.Msteams}' && ${TurnPath.activity}.channelData.eventType == 'teamUnarchived'`

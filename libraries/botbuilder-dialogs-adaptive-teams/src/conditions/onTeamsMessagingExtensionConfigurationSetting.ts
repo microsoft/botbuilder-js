@@ -18,7 +18,6 @@ export class OnTeamsMessagingExtensionConfigurationSetting extends OnInvokeActiv
     public static $kind = 'Teams.OnMessagingExtensionConfigurationSetting';
 
     public getExpression(parser: ExpressionParserInterface): Expression {
-        // if name is 'composeExtension/setting'
         return Expression.andExpression(
             Expression.parse(
                 `${TurnPath.activity}.channelId == '${Channels.Msteams}' && ${TurnPath.activity}.name == 'composeExtension/setting'`

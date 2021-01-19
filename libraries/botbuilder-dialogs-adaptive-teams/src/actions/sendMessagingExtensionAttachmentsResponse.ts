@@ -85,10 +85,7 @@ export class SendMessagingExtensionAttachmentsResponse
             return dc.endDialog();
         }
 
-        let activity;
-        if (this.attachments != null) {
-            activity = await this.attachments.bind(dc, dc.state);
-        }
+        const activity = await this.attachments?.bind(dc, dc.state);
 
         if (!activity?.attachments?.length) {
             throw new Error(`Missing attachments in ${SendMessagingExtensionAttachmentsResponse.$kind}.`);

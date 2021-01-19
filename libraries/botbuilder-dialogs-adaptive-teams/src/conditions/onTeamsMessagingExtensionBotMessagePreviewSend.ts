@@ -19,7 +19,6 @@ export class OnTeamsMessagingExtensionBotMessagePreviewSend extends OnInvokeActi
     public static $kind = 'Teams.OnMessagingExtensionBotMessagePreviewEdit';
 
     public getExpression(parser: ExpressionParserInterface): Expression {
-        // if name is 'composeExtension/submitAction'
         return Expression.andExpression(
             Expression.parse(
                 `${TurnPath.activity}.channelId == '${Channels.Msteams}' && ${TurnPath.activity}.name == 'composeExtension/submitAction' && ` +

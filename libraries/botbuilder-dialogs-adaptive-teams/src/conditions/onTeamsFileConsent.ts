@@ -18,7 +18,6 @@ export class OnTeamsFileConsent extends OnInvokeActivity {
     public static $kind = 'Teams.OnFileConsent';
 
     public getExpression(parser: ExpressionParserInterface): Expression {
-        // if name is 'fileConsent/invoke'
         return Expression.andExpression(
             Expression.parse(
                 `${TurnPath.activity}.channelId == '${Channels.Msteams}' && ${TurnPath.activity}.name == 'fileConsent/invoke'`

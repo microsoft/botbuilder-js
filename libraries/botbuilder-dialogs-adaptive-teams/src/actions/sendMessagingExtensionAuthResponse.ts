@@ -13,14 +13,7 @@ import {
     StringExpression,
     StringExpressionConverter,
 } from 'adaptive-expressions';
-import {
-    ActionTypes,
-    Activity,
-    BotFrameworkAdapter,
-    ExtendedUserTokenProvider,
-    MessagingExtensionResult,
-    TokenResponse,
-} from 'botbuilder';
+import { ActionTypes, Activity, BotFrameworkAdapter, MessagingExtensionResult, TokenResponse } from 'botbuilder';
 import {
     Converter,
     ConverterFactory,
@@ -30,7 +23,8 @@ import {
     DialogTurnResult,
 } from 'botbuilder-dialogs';
 import { BaseSendTaskModuleContinueResponse } from './baseSendTaskModuleContinueResponse';
-import { assert, Assertion } from 'botbuilder-stdlib';
+import { Test, tests } from 'botbuilder-stdlib';
+import { isEmpty } from 'lodash';
 
 export interface SendMessagingExtensionAuthResponseConfiguration extends DialogConfiguration {
     disabled?: boolean | string | BoolExpression;
@@ -39,9 +33,15 @@ export interface SendMessagingExtensionAuthResponseConfiguration extends DialogC
     title?: string | Expression | StringExpression;
 }
 
-const assertBotFrameworkAdapter: Assertion<BotFrameworkAdapter> = (val, path) => {
-    assert.unsafe.castObjectAs<BotFrameworkAdapter>(val, path);
-    assert.func(val.getUserToken, path.concat('getUserToken'));
+// dc.context.adapter is typed as a BotAdapter, not containing getUserToken and getSignInLink. However, both
+// BotFrameworkAdapter and TestAdapter contain them, so we just need to make sure that dc.context.adapter contains
+// an adapter with the appropriate auth methods.
+const testAdapterHasAuthMethods: Test<BotFrameworkAdapter> = (val: unknown): val is BotFrameworkAdapter => {
+    return (
+        val instanceof BotFrameworkAdapter ||
+        (tests.isFunc((val as BotFrameworkAdapter).getUserToken) &&
+            tests.isFunc((val as BotFrameworkAdapter).getSignInLink))
+    );
 };
 
 /**
@@ -90,9 +90,7 @@ export class SendMessagingExtensionAuthResponse
             return dc.endDialog();
         }
 
-        try {
-            assertBotFrameworkAdapter(dc.context.adapter, ['dc', 'context', 'adapter']);
-        } catch (err) {
+        if (!testAdapterHasAuthMethods(dc.context.adapter)) {
             throw new Error(`${SendMessagingExtensionAuthResponse.$kind}: not supported by the current adapter.`);
         }
 
@@ -143,11 +141,11 @@ export class SendMessagingExtensionAuthResponse
 
     private static async getUserToken(
         dc: DialogContext,
-        tokenProvider: ExtendedUserTokenProvider,
+        tokenProvider: BotFrameworkAdapter,
         connectionName: string
     ): Promise<TokenResponse> {
         let magicCode;
-        if (Object.keys(dc.context.activity?.value || []).length) {
+        if (!isEmpty(dc.context.activity?.value)) {
             magicCode = dc.context.activity.value.state;
         }
 
@@ -158,7 +156,7 @@ export class SendMessagingExtensionAuthResponse
     private async getInvokeResponseWithSignInLink(
         dc: DialogContext,
         title: string,
-        tokenProvider: ExtendedUserTokenProvider,
+        tokenProvider: BotFrameworkAdapter,
         connectionName: string
     ): Promise<Partial<Activity>> {
         const signInLink = await tokenProvider.getSignInLink(dc.context, connectionName);

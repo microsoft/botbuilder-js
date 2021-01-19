@@ -18,7 +18,6 @@ export class OnTeamsMessagingExtensionConfigurationQuerySettingUrl extends OnInv
     public static $kind = 'Teams.OnMessagingExtensionConfigurationQuerySettingUrl';
 
     public getExpression(parser: ExpressionParserInterface): Expression {
-        // if name is 'composeExtension/querySettingUrl'
         return Expression.andExpression(
             Expression.parse(
                 `${TurnPath.activity}.channelId == '${Channels.Msteams}' && ${TurnPath.activity}.name == 'composeExtension/querySettingUrl'`

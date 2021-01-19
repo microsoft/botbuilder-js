@@ -19,7 +19,6 @@ export class OnTeamsTeamDeleted extends OnConversationUpdateActivity {
     public static $kind = 'Teams.OnTeamDeleted';
 
     public getExpression(parser: ExpressionParserInterface): Expression {
-        // if teams channel and eventType == 'teamDeleted'
         return Expression.andExpression(
             Expression.parse(
                 `${TurnPath.activity}.channelId == '${Channels.Msteams}' && ${TurnPath.activity}.channelData.eventType == 'teamDeleted'`

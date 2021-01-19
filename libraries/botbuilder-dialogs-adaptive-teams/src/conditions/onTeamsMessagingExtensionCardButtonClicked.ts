@@ -18,7 +18,6 @@ export class OnTeamsMessagingExtensionCardButtonClicked extends OnInvokeActivity
     public static $kind = 'Teams.OnMessagingExtensionCardButtonClicked';
 
     public getExpression(parser: ExpressionParserInterface): Expression {
-        // if name is 'composeExtension/onCardButtonClicked'
         return Expression.andExpression(
             Expression.parse(
                 `${TurnPath.activity}.channelId == '${Channels.Msteams}' && ${TurnPath.activity}.name == 'composeExtension/onCardButtonClicked'`

@@ -18,7 +18,6 @@ export class OnTeamsO365ConnectorCardAction extends OnInvokeActivity {
     public static $kind = 'Teams.OnO365ConnectorCardAction';
 
     public getExpression(parser: ExpressionParserInterface): Expression {
-        // if name is 'actionableMessage/executeAction'
         return Expression.andExpression(
             Expression.parse(
                 `${TurnPath.activity}.channelId == '${Channels.Msteams}' && ${TurnPath.activity}.name == 'actionableMessage/executeAction'`

@@ -18,7 +18,6 @@ export class OnTeamsCardAction extends OnInvokeActivity {
     public static $kind = 'Teams.OnCardAction';
 
     public getExpression(parser: ExpressionParserInterface): Expression {
-        // if name is null
         return Expression.andExpression(
             Expression.parse(
                 `${TurnPath.activity}.channelId == '${Channels.Msteams}' && ${TurnPath.activity}.name == null`

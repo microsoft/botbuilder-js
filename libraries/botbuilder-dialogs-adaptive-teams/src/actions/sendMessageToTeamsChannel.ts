@@ -105,20 +105,13 @@ export class SendMessageToTeamsChannel extends Dialog implements SendMessageToTe
             throw new Error(`${SendMessageToTeamsChannel.$kind} works only on the Teams channel.`);
         }
 
-        let activity;
-        if (this.activity) {
-            activity = await this.activity.bind(dc, dc.state);
-        }
+        const activity = await this.activity?.bind(dc, dc.state);
 
         if (!activity) {
             throw new Error(`Missing Activity in ${SendMessageToTeamsChannel.$kind}.`);
         }
 
-        let teamsChannelId = getValue(dc, this.teamsChannelId) ?? '';
-
-        if (!teamsChannelId) {
-            teamsChannelId = dc.context.activity?.channelData?.channel?.id;
-        }
+        const teamsChannelId = getValue(dc, this.teamsChannelId) ?? dc.context?.activity.channelData?.channel?.id;
 
         const result = await TeamsInfo.sendMessageToTeamsChannel(dc.context, activity, teamsChannelId);
 
