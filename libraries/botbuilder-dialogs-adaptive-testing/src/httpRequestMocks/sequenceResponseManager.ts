@@ -10,12 +10,11 @@ import { HttpResponseMessage, HttpResponseMock } from './httpResponseMock';
 import { HttpResponseMockMessage } from './httpResponseMockMessage';
 
 export class SequenceResponseManager {
-    private _id: number;
+    private _id = 0;
     private _messages: HttpResponseMockMessage[] = [];
 
     public constructor(responses?: HttpResponseMock[]) {
-        this._id = 0;
-        if (!responses || responses?.length === 0) {
+        if (!responses?.length) {
             // Create a default message for response
             this._messages.push(new HttpResponseMockMessage());
         } else {

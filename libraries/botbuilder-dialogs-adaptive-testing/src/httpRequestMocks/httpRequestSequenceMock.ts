@@ -31,7 +31,7 @@ export class HttpRequestSequenceMock extends HttpRequestMock implements HttpRequ
 
     public method: HttpMethod;
     public url: string;
-    public matchType: BodyMatchType = BodyMatchType.Partial;
+    public matchType = BodyMatchType.Partial;
     public body = '';
     public responses: HttpResponseMock[] = [];
 
