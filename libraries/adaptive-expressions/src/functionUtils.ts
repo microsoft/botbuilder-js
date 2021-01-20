@@ -531,7 +531,7 @@ export class FunctionUtils {
         };
     }
 
-        /**
+    /**
      * Generate an expression delegate that applies function after verifying all children.
      * @param func Function to apply.
      * @param verify Function to check each arg for validity.
@@ -614,7 +614,7 @@ export class FunctionUtils {
      * @param maxArgsLength The max length of a given function.
      */
     public static determineLocale(args: unknown[], maxArgsLength: number, locale = 'en-us'): string {
-        if (args.length === maxArgsLength && typeof args[maxArgsLength - 1] === 'string') {
+        if (args.length === maxArgsLength) {
             const lastArg = args[maxArgsLength - 1];
             if (typeof lastArg === 'string') {
                 locale = lastArg;
@@ -639,10 +639,17 @@ export class FunctionUtils {
     ): { format: string; locale: string } {
         if (maxArgsLength >= 2) {
             if (args.length === maxArgsLength) {
-                format = FunctionUtils.timestampFormatter(args[maxArgsLength - 1] as string);
-                locale = args[maxArgsLength - 2] as string;
+                const lastArg = args[maxArgsLength - 1];
+                const secondLastArg = args[maxArgsLength - 2];
+                if (typeof lastArg === 'string' && typeof secondLastArg === 'string') {
+                    format = FunctionUtils.timestampFormatter(lastArg);
+                    locale = secondLastArg;
+                }
             } else if (args.length === maxArgsLength - 1) {
-                format =  FunctionUtils.timestampFormatter(args[maxArgsLength - 2] as string);
+                const lastArg = args[maxArgsLength - 1];
+                if (typeof lastArg === 'string') {
+                    format = FunctionUtils.timestampFormatter(lastArg);
+                }
             }
         }
 

@@ -23,11 +23,6 @@ export class TitleCase extends StringTransformEvaluator {
         super(ExpressionType.TitleCase, TitleCase.evaluator);
     }
 
-    /**
-     * @param args
-     * @param options
-     * @private
-     */
     private static evaluator(args: unknown[], options: Options): string {
         let locale = options.locale ? options.locale : Intl.DateTimeFormat().resolvedOptions().locale;
         locale = FunctionUtils.determineLocale(args, 2, locale);

@@ -45,10 +45,8 @@ export class String extends ExpressionEvaluator {
                         result = args[0].toLocaleDateString(locale);
                     } else {
                         result = JSON.stringify(args[0])
-                            .replace(/(^\'*)/g, '') // remove the starting single quote
-                            .replace(/(\'*$)/g, '') // remove the ending single quote
-                            .replace(/(^\"*)/g, '') // remove the starting double quote
-                            .replace(/(\"*$)/g, ''); // remove the ending double quote
+                            .replace(/(^['"]*)/g, '') // remove the starting single or double quote
+                            .replace(/(['"]*$)/g, ''); // remove the ending single or double quote
                     }
                 }
 
