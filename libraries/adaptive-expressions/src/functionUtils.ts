@@ -646,7 +646,7 @@ export class FunctionUtils {
                     locale = secondLastArg;
                 }
             } else if (args.length === maxArgsLength - 1) {
-                const lastArg = args[maxArgsLength - 1];
+                const lastArg = args[maxArgsLength - 2];
                 if (typeof lastArg === 'string') {
                     format = FunctionUtils.timestampFormatter(lastArg);
                 }
