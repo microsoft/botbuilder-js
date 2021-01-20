@@ -14,13 +14,7 @@ export class HttpResponseMockMessage {
     private readonly _content: HttpResponseMockContent;
 
     public constructor(httpResponseMock?: HttpResponseMock) {
-        if (httpResponseMock) {
-            this._mock = httpResponseMock;
-        } else {
-            this._mock = {
-                content: '',
-            };
-        }
+        this._mock = httpResponseMock ?? { content: '' };
         this._content = new HttpResponseMockContent(this._mock);
     }
 

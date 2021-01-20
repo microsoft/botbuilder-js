@@ -61,14 +61,16 @@ export enum ResponseStatusCode {
     HttpVersionNotSupported = 505,
 }
 
+export type ResponseContent = string | Record<string, unknown>;
+
 export interface HttpResponseMock {
     statusCode?: ResponseStatusCode;
     reasonPhrase?: string;
     contentType?: ResponseContentType;
-    content: string | Record<string, unknown>;
+    content: ResponseContent;
 }
 
 export interface HttpResponseMessage {
     statusCode: ResponseStatusCode;
-    content: string | Record<string, unknown>;
+    content: ResponseContent;
 }

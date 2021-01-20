@@ -6,24 +6,19 @@
  * Licensed under the MIT License.
  */
 
-import { HttpResponseMock, ResponseContentType } from './httpResponseMock';
+import { HttpResponseMock, ResponseContent, ResponseContentType } from './httpResponseMock';
 
 export class HttpResponseMockContent {
     private readonly _contentType: ResponseContentType;
-    private readonly _content: string | Record<string, unknown>;
+    private readonly _content: ResponseContent;
 
     public constructor(httpResponseMock?: HttpResponseMock) {
-        if (!httpResponseMock) {
-            this._contentType = ResponseContentType.String;
-            this._content = '';
-        } else {
-            this._contentType = httpResponseMock.contentType ?? ResponseContentType.String;
-            this._content = httpResponseMock.content ?? '';
-        }
+        this._contentType = httpResponseMock?.contentType ?? ResponseContentType.String;
+        this._content = httpResponseMock?.content ?? '';
     }
 
-    public getHttpContent(): string | Record<string, unknown> {
-        let content: string | Record<string, unknown> = '';
+    public getHttpContent(): ResponseContent {
+        let content: ResponseContent = '';
         switch (this._contentType) {
             case ResponseContentType.String:
                 content = this._content;
