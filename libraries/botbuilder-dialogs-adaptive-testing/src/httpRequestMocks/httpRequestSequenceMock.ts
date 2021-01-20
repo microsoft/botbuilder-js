@@ -41,7 +41,8 @@ export class HttpRequestSequenceMock extends HttpRequestMock implements HttpRequ
         }
         const response = new SequenceResponseManager(this.responses);
         const url = parse(this.url);
-        const path = (url.pathname || '/') + url.query;
+        let path = this.url.substr(url.origin.length);
+        path = path.startsWith('/') ? path : '/' + path;
         if (this.method) {
             nock(url.origin)
                 .intercept(path, this.method, this._matchContent.bind(this))
@@ -65,11 +66,12 @@ export class HttpRequestSequenceMock extends HttpRequestMock implements HttpRequ
 
     private _httpMethods = [HttpMethod.GET, HttpMethod.PATCH, HttpMethod.DELETE, HttpMethod.POST, HttpMethod.PUT];
 
-    private _matchContent(body: string): boolean {
+    private _matchContent(body: unknown): boolean {
+        const content: string = typeof body === 'string' ? body : JSON.stringify(body, undefined, 2);
         if (this.matchType === BodyMatchType.Exact) {
-            return body === this.body;
+            return content === this.body;
         } else {
-            return body.indexOf(this.body) >= 0;
+            return content.indexOf(this.body) >= 0;
         }
     }
 }

@@ -31,8 +31,7 @@
     "url-parse": "^1.4.7"
   },
   "devDependencies": {
-    "@types/nock": "^11.1.0",
-    "@types/url-parse": "^1.4.3"
+    "@types/nock": "^11.1.0"
   },
   "author": "Microsoft",
   "license": "MIT",
