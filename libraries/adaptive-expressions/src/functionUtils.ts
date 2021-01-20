@@ -642,8 +642,11 @@ export class FunctionUtils {
                 const lastArg = args[maxArgsLength - 1];
                 const secondLastArg = args[maxArgsLength - 2];
                 if (typeof lastArg === 'string' && typeof secondLastArg === 'string') {
-                    format = FunctionUtils.timestampFormatter(lastArg);
-                    locale = secondLastArg;
+                    format =
+                        secondLastArg !== ''
+                            ? FunctionUtils.timestampFormatter(secondLastArg)
+                            : FunctionUtils.DefaultDateTimeFormat;
+                    locale = lastArg;
                 }
             } else if (args.length === maxArgsLength - 1) {
                 const lastArg = args[maxArgsLength - 2];

@@ -813,6 +813,7 @@ const testCases = [
 ];
 
 const mockedTimeTestCases = [
+    ['utcNow(\'MM-DD-YY HH\', \'de-DE\')', '08-01-20 00'],
     ['utcNow(\'MM-DD-YY HH\')', '08-01-20 00'],
     ['getPastTime(1, \'Year\', \'MM-dd-yy\')', '08-01-19'],
     ['getPastTime(1, \'Month\', \'MM-dd-yy\')', '07-01-20'],
