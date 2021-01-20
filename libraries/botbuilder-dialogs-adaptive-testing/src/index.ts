@@ -12,3 +12,4 @@ export * from './testScript';
 export * from './testAction';
 export * from './testActions';
 export * from './testUtils';
+export * from './policies';
