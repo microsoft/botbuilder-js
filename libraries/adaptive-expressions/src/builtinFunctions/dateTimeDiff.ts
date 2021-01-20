@@ -6,6 +6,7 @@
  * Licensed under the MIT License.
  */
 
+import bigInt from 'big-integer';
 import { Expression } from '../expression';
 import { ExpressionEvaluator, ValueWithError } from '../expressionEvaluator';
 import { ExpressionType } from '../expressionType';
@@ -43,7 +44,7 @@ export class DateTimeDiff extends ExpressionEvaluator {
         }
 
         if (!error) {
-            value = dateTimeStart - dateTimeEnd;
+            value = bigInt(dateTimeStart).minus(bigInt(dateTimeEnd)).toJSNumber();
         }
 
         return { value, error };
