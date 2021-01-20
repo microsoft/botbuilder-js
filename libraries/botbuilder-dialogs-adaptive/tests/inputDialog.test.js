@@ -5,6 +5,7 @@ const {
     MemoryStorage,
     TestAdapter,
     MessageFactory,
+    InputHints,
 } = require('botbuilder-core');
 const { DialogSet } = require('botbuilder-dialogs');
 const { InputDialog, StaticActivityTemplate } = require('../lib')
@@ -31,7 +32,7 @@ describe('InputDialog', function () {
 
     // Setup inputDialog dialog
     const dialog = new InputDialog();
-    dialog.prompt = new StaticActivityTemplate(MessageFactory.text('test'));
+    dialog.prompt = new StaticActivityTemplate({text:'test', type: 'message', inputHint:InputHints.AcceptingInput});
     dialog._telemetryClient = telemetryClient;
 
     it('eval promptUser()', async () => {
@@ -44,6 +45,7 @@ describe('InputDialog', function () {
             strictEqual(telemetryName, 'GeneratorResult');
             strictEqual(telemetryProperties.result.text, 'test');
             strictEqual(telemetryProperties.template.activity.text, 'test');
+            strictEqual(telemetryProperties.template.activity.inputHint, InputHints.AcceptingInput);
 
             ok(trackEventStub.calledOnce);
         });
