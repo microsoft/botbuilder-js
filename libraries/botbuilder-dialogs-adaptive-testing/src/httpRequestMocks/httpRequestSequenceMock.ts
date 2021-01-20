@@ -53,7 +53,6 @@ export class HttpRequestSequenceMock extends HttpRequestMock implements HttpRequ
         } else {
             this._httpMethods.forEach((method) => {
                 nock(url.origin)
-                    .persist()
                     .intercept(path, method, this._matchContent.bind(this))
                     .reply((_uri, _requestBody) => {
                         const message = response.getMessage();
