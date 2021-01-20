@@ -512,7 +512,7 @@ export class FunctionUtils {
      * @returns Delegate for evaluating an expression.
      */
     public static applyWithOptionsAndError(
-        func: (arg0: any[], options: Options) => { value: unknown; error: string },
+        func: (arg0: unknown[], options: Options) => { value: unknown; error: string },
         verify?: VerifyExpression
     ): EvaluateExpressionDelegate {
         return (expression: Expression, state: MemoryInterface, options: Options): ValueWithError => {
@@ -538,7 +538,7 @@ export class FunctionUtils {
      * @returns Delegate for evaluating an expression.
      */
     public static applyWithOptions(
-        func: (arg0: any[], options: Options) => unknown,
+        func: (arg0: unknown[], options: Options) => unknown,
         verify?: VerifyExpression
     ): EvaluateExpressionDelegate {
         return (expression: Expression, state: MemoryInterface, options: Options): ValueWithError => {
