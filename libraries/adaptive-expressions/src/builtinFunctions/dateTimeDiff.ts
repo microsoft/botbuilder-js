@@ -6,6 +6,7 @@
  * Licensed under the MIT License.
  */
 
+import bigInt from 'big-integer';
 import { Expression } from '../expression';
 import { ExpressionEvaluator, ValueWithError } from '../expressionEvaluator';
 import { ExpressionType } from '../expressionType';

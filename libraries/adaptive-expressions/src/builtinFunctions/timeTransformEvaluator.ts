@@ -26,17 +26,16 @@ export class TimeTransformEvaluator extends ExpressionEvaluator {
      * @param type Name of the built-in function.
      * @param func The evaluation function, it takes a timestamp and the number of transformation, and returns a `Date`.
      */
-    public constructor(type: string, func: (timestamp: Date, numOfTransformation: any) => Date) {
+    public constructor(type: string, func: (timestamp: Date, numOfTransformation: number) => Date) {
         super(type, TimeTransformEvaluator.evaluator(func), ReturnType.String, TimeTransformEvaluator.validator);
     }
 
     /**
      * @private
      */
-    private static evaluator(func: (timestamp: Date, numOfTransformation: any) => Date): EvaluateExpressionDelegate {
+    private static evaluator(func: (timestamp: Date, numOfTransformation: number) => Date): EvaluateExpressionDelegate {
         return (expression: Expression, state: MemoryInterface, options: Options): ValueWithError => {
-            let result: any;
-            let value: any;
+            let result: string;
             const { args, error: childrenError } = FunctionUtils.evaluateChildren(expression, state, options);
             let error = childrenError;
             if (!error) {

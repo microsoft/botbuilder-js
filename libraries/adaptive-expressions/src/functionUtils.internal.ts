@@ -9,7 +9,7 @@
 
 import { Constant } from './constant';
 import sortBy from 'lodash/sortBy';
-import dayjs from 'dayjs';
+import dayjs, { OpUnitType } from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 dayjs.extend(utc);
 import { Expression } from './expression';
@@ -185,7 +185,7 @@ export class InternalFunctionUtils {
      * @param timeStamp String timestamp input.
      */
     public static ticks(timeStamp: string): ValueWithError {
-        let result: any;
+        let result: bigInt.BigInteger;
         const error = this.verifyISOTimestamp(timeStamp);
         if (!error) {
             const unixMilliSec: number = dayjs(timeStamp).utc().valueOf();
@@ -363,22 +363,22 @@ export class InternalFunctionUtils {
      * @param duration C# duration
      * @param cSharpStr C# unit.
      */
-    public static timeUnitTransformer(duration: number, cSharpStr: string): { duration: number; tsStr: string } {
+    public static timeUnitTransformer(duration: number, cSharpStr: string): { duration: number; tsStr: OpUnitType } {
         switch (cSharpStr) {
             case 'Day':
-                return { duration, tsStr: 'd' };
+                return { duration, tsStr: 'day' };
             case 'Week':
-                return { duration: duration * 7, tsStr: 'd' };
+                return { duration: duration * 7, tsStr: 'day' };
             case 'Second':
-                return { duration, tsStr: 's' };
+                return { duration, tsStr: 'second' };
             case 'Minute':
-                return { duration, tsStr: 'm' };
+                return { duration, tsStr: 'minute' };
             case 'Hour':
-                return { duration, tsStr: 'h' };
+                return { duration, tsStr: 'hour' };
             case 'Month':
-                return { duration, tsStr: 'M' };
+                return { duration, tsStr: 'month' };
             case 'Year':
-                return { duration, tsStr: 'y' };
+                return { duration, tsStr: 'year' };
             default:
                 return { duration, tsStr: undefined };
         }

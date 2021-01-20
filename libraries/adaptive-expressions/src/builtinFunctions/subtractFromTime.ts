@@ -53,8 +53,8 @@ export class SubtractFromTime extends ExpressionEvaluator {
                     error = InternalFunctionUtils.verifyISOTimestamp(args[0]);
                     if (!error) {
                         value = args.length === 4
-                        ? dayjs(args[0]).utc().subtract(dur, tsStr as OpUnitType).format(format)
-                        : dayjs(args[0]).utc().subtract(dur, tsStr as OpUnitType).toISOString();
+                        ? dayjs(args[0]).utc().subtract(dur, tsStr).format(format)
+                        : dayjs(args[0]).utc().subtract(dur, tsStr).toISOString();
                     }
                 }
             } else {

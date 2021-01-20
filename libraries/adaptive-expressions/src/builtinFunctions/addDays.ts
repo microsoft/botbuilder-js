@@ -17,9 +17,8 @@ export class AddDays extends TimeTransformEvaluator {
      * Initializes a new instance of the [AddDays](xref:adaptive-expressions.AddDays) class.
      */
     public constructor() {
-        super(ExpressionType.AddDays, (ts: Date, num: any): Date => {
+        super(ExpressionType.AddDays, (ts: Date, num: number): Date => {
             const newDate = new Date(ts);
-            const s = typeof ts;
             newDate.setDate(ts.getDate() + num);
             return newDate;
         });

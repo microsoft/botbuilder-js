@@ -6,6 +6,7 @@
  * Licensed under the MIT License.
  */
 
+import bigInt from 'big-integer';
 import { EvaluateExpressionDelegate, ExpressionEvaluator } from '../expressionEvaluator';
 import { ExpressionType } from '../expressionType';
 import { FunctionUtils } from '../functionUtils';
@@ -28,6 +29,9 @@ export class Int extends ExpressionEvaluator {
     private static evaluator(): EvaluateExpressionDelegate {
         return FunctionUtils.applyWithError((args: any[]): any => {
             let error: string;
+            if (bigInt.isInstance(args[0])) {
+                return {value: args[0].toJSNumber(), error}
+            }
             const value: number = parseInt(args[0], 10);
             if (!FunctionUtils.isNumber(value)) {
                 error = `parameter ${args[0]} is not a valid number string.`;

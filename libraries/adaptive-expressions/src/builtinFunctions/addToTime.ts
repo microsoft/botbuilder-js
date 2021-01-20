@@ -63,7 +63,7 @@ export class AddToTime extends ExpressionEvaluator {
         let error = InternalFunctionUtils.verifyISOTimestamp(timeStamp);
         if (!error) {
             const { duration, tsStr } = InternalFunctionUtils.timeUnitTransformer(interval, timeUnit);
-            result = dayjs(timeStamp).utc().add(duration, tsStr as OpUnitType).format(format);
+            result = dayjs(timeStamp).utc().add(duration, tsStr).format(format);
         }
 
         return { value: result, error };

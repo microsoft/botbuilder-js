@@ -400,6 +400,7 @@ const testCases = [
             ['float(\'10.333\')', 10.333],
             ['float(\'10\')', 10.0],
             ['int(\'10\')', 10],
+            ['int(ticks)/100000000', 6372436242],
             ['string(\'str\')', 'str'],
             ['string(\'str"\')', 'str"'],
             ['string(one)', '1'], //ts-->1, C#-->1.0

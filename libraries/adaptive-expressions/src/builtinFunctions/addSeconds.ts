@@ -17,7 +17,7 @@ export class AddSeconds extends TimeTransformEvaluator {
      * Initializes a new instance of the [AddSeconds](xref:adaptive-expressions.AddSeconds) class.
      */
     public constructor() {
-        super(ExpressionType.AddSeconds, (ts: Date, num: any): Date => {
+        super(ExpressionType.AddSeconds, (ts: Date, num: number): Date => {
             const newDate = new Date(ts);
             newDate.setSeconds(ts.getSeconds() + num);
             return newDate;
