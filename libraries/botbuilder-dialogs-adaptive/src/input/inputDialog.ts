@@ -359,7 +359,9 @@ export abstract class InputDialog extends Dialog implements InputDialogConfigura
             msg = await this.prompt.bind(dc, dc.state);
         }
 
-        msg.inputHint = InputHints.ExpectingInput;
+        if (typeof msg?.inputHint !== 'string' || !msg.inputHint) {
+            msg.inputHint = InputHints.ExpectingInput;
+        }
 
         this.telemetryClient.trackEvent({
             name: 'GeneratorResult',
