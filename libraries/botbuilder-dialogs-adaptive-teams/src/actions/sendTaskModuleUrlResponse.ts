@@ -82,6 +82,7 @@ export class SendTaskModuleUrlResponse
 
         const response: TaskModuleResponse = {
             task: {
+                type: 'continue',
                 value: {
                     height,
                     width,

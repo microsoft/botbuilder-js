@@ -83,6 +83,7 @@ export class SendTaskModuleCardResponse
 
         const response: TaskModuleResponse = {
             task: {
+                type: 'continue',
                 value: {
                     card: attachment,
                     height,

@@ -75,6 +75,7 @@ export class SendTaskModuleMessageResponse
 
         const response: TaskModuleResponse = {
             task: {
+                type: 'message',
                 value: message,
             },
             cacheInfo: this.getCacheInfo(dc),
