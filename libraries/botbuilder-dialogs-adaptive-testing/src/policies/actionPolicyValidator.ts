@@ -55,9 +55,9 @@ export class ActionPolicyValidator {
         }
     }
     
-    private ValidateCondition(condition: OnCondition) {
-        let triggerKind = this._resources.getKindForType(condition);
-        let parentKinds: string[];
+    private ValidateCondition(condition: any) {
+        let triggerKind = condition.$kind;
+        let parentKinds: string[] = [];
         parentKinds.push(triggerKind);
         //  Validate the actions of the trigger
         this.ValidateKind(parentKinds, triggerKind, condition.actions);
@@ -72,9 +72,9 @@ export class ActionPolicyValidator {
         
         if ((dialogs != null)) {
             for (const dialog of dialogs) {
-                let actionKind = this._resources.getKindForType(dialog);
-                let parentKindsInner: string[];
-                parentKindsInner.concat(parentKinds);
+                let actionKind = (dialog as any).$kind;
+                let parentKindsInner: string[] = [];
+                parentKindsInner = parentKindsInner.concat(parentKinds);
                 parentKindsInner.push(actionKind);
 
                 let actionPolicy = this.actionPolicies.find((item) => item.Kind === actionKind);
@@ -123,7 +123,7 @@ export class ActionPolicyValidator {
 
                 while (childDialogs.length > 0) {
                     let childDialog = childDialogs[0];
-                    let childKind = this._resources.getKindForType(childDialog);
+                    let childKind = (childDialog as any).$kind;
                     let childPolicy = this.actionPolicies.find((item) => item.kind === childKind);
                     if (childPolicy && (childPolicy.ActionPolicyType == ActionPolicyType.Interactive)) {
                         //  Interactive action found below TriggerNotInteractive trigger
@@ -134,7 +134,7 @@ export class ActionPolicyValidator {
                     childDialogs.shift();
                     let innerChildDialogs = this.getDialogs(childDialog);
                     if ((innerChildDialogs != null)) {
-                        childDialogs.concat(innerChildDialogs);
+                        childDialogs = childDialogs.concat(innerChildDialogs);
                     }
                 }
                 
@@ -144,7 +144,7 @@ export class ActionPolicyValidator {
                 let childActions = dialogs.filter(d => d.id != dialog.id);
                 while (childActions.length > 0) {
                     let childDialog = childActions[0];
-                    let childKind = this._resources.getKindForType(childDialog);
+                    let childKind = (childDialog as any).$kind;
                     
                     if (policy.Actions.some((pa) => pa == childKind )) {
                         //  found the action required
@@ -154,7 +154,7 @@ export class ActionPolicyValidator {
                     childActions.shift();
                     let innerChildDialogs = this.getDialogs(childDialog);
                     if ((innerChildDialogs != null)) {
-                        childActions.concat(innerChildDialogs);
+                        childActions = childActions.concat(innerChildDialogs);
                     }
                     
                 }
@@ -176,15 +176,16 @@ export class ActionPolicyValidator {
             return dialog.actions;
         }
         
-        let dialogs: Dialog[];
+        let dialogs: Dialog[] = [];
         if (typeof ((dialog as any) as DialogDependencies).getDependencies == 'function') {
             for(const dependency of ((dialog as any) as DialogDependencies).getDependencies()) {
-
-                if ((dependency instanceof  ActionScope)) {
-                    dialogs.concat(dependency.actions);
+                const asAny = dependency as any;
+                if ((asAny.actions)) {
+                    dialogs = dialogs.concat(asAny.actions);
                 }
-
-                dialogs.push(dependency);
+                else {
+                    dialogs.push(dependency);
+                }
             }
         }
         

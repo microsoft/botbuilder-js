@@ -27,7 +27,6 @@ import { ResourceExplorerOptions } from './resourceExplorerOptions';
 export class ResourceExplorer {
     private _declarativeTypes: ComponentDeclarativeTypes[];
     private _kindToType: Map<string, Newable<unknown>> = new Map();
-    private _typeToKind: Map<Newable<unknown>, string> = new Map();
     private _kindDeserializer: Map<string, CustomDeserializer<unknown, unknown>> = new Map();
     private _eventEmitter: EventEmitter = new EventEmitter();
     private _cache = new Map<string, unknown>();
@@ -211,20 +210,6 @@ export class ResourceExplorer {
     }
 
     /**
-     * Retrieve a kind from a given type.
-     * @param any type.
-     */
-    public getKindForType(type: any): string | undefined {
-        this.registerComponentTypes();
-
-        const kind = this._typeToKind.get(type);
-        if (!kind) {
-            throw new Error(`No kind found for ${type}.`);
-        }
-        return kind;
-    }
-
-    /**
      * Load type from resource
      * @param resourceOrIdId resource or resource id to be parsed as a type.
      * @returns type parsed from resource
@@ -316,7 +301,6 @@ export class ResourceExplorer {
         loader?: CustomDeserializer<T, C>
     ): void {
         this._kindToType.set(kind, type);
-        this._typeToKind.set(type, kind);
         this._kindDeserializer.set(kind, loader || new DefaultLoader(this));
     }
 

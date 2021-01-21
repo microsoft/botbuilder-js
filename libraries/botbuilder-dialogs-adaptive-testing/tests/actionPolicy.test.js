@@ -12,6 +12,7 @@ const { ResourceExplorer } = require('botbuilder-dialogs-declarative');
 const { AdaptiveTestComponentRegistration, TestUtils, TestScript, ActionPolicyType, ActionPolicyValidator } = require('../lib');
 const {
     AdaptiveComponentRegistration,
+    BreakLoop
 } = require('botbuilder-dialogs-adaptive');
 
 describe('ActionPolicyTests', function () {
@@ -33,11 +34,9 @@ describe('ActionPolicyTests', function () {
             var testName = 'LastAction_BreakLoop_Invalid';
             var script = resourceExplorer.loadType(`${testName}.test.dialog`);
             validator.validatePolicies(script.dialog);
-            
-            // await TestUtils.runTestScript(resourceExplorer, 'LastAction_BreakLoop_Invalid');
         } catch (error) {
-            assert(BreakLoop.Kind === error.ActionPolicy.Kind, `kind of error does not match expected kind.`);
-            assert(ActionPolicyType.LastAction === error.ActionPolicyType, `policy type of error does not match.`);
+            assert(BreakLoop.$kind === error.policy.Kind, `kind of error does not match expected kind.`);
+            assert(ActionPolicyType.LastAction === error.policy.ActionPolicyType, `policy type of error does not match.`);
         }
     });
 
