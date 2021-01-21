@@ -1,18 +1,15 @@
-const { createHash } = require('crypto');
+const assert = require('assert');
 const path = require('path');
-const nock = require('nock');
 const {
-    ActivityTypes,
     ComponentRegistration,
-    MessageFactory,
-    SkillConversationIdFactoryBase,
-    TurnContext,
 } = require('botbuilder-core');
 const { ResourceExplorer } = require('botbuilder-dialogs-declarative');
 const { AdaptiveTestComponentRegistration, TestUtils, TestScript, ActionPolicyType, ActionPolicyValidator } = require('../lib');
 const {
     AdaptiveComponentRegistration,
-    BreakLoop
+    BreakLoop,
+    CancelAllDialogs,
+    OnEndOfConversationActivity
 } = require('botbuilder-dialogs-adaptive');
 
 describe('ActionPolicyTests', function () {
@@ -27,58 +24,53 @@ describe('ActionPolicyTests', function () {
         false
     );
 
-    const validator = new ActionPolicyValidator(resourceExplorer);
+    const validator = new ActionPolicyValidator();
 
     it('LastAction_BreakLoop', async () => {
+        let threwError = false;
         try {
-            var testName = 'LastAction_BreakLoop_Invalid';
-            var script = resourceExplorer.loadType(`${testName}.test.dialog`);
-            validator.validatePolicies(script.dialog);
+            validatePolicies('LastAction_BreakLoop_Invalid')
         } catch (error) {
+            threwError = true;
             assert(BreakLoop.$kind === error.policy.Kind, `kind of error does not match expected kind.`);
             assert(ActionPolicyType.LastAction === error.policy.ActionPolicyType, `policy type of error does not match.`);
         }
+
+        assert(threwError, 'LastAction_BreakLoop test failed');
     });
 
+    function validatePolicies(testName) {
+        var script = resourceExplorer.loadType(`${testName}.test.dialog`);
+        validator.validatePolicies(script.dialog);
+    }
+
     it('LastAction_CancelAllDialogs', async () => {
-        // await TestUtils.runTestScript(resourceExplorer, 'LastAction_CancelAllDialogs_Invalid');
+        let threwError = false;
+        try {
+            validatePolicies('LastAction_CancelAllDialogs_Invalid')
+        } catch (error) {
+            threwError = true;
+            assert(CancelAllDialogs.$kind === error.policy.Kind, `kind of error does not match expected kind.`);
+            assert(ActionPolicyType.LastAction === error.policy.ActionPolicyType, `policy type of error does not match.`);
+        }
+
+        assert(threwError, 'LastAction_CancelAllDialogs test failed');
     });
 
     it('OnEndOfConversationActivity', async () => {
-        // await TestUtils.runTestScript(resourceExplorer, 'OnEndOfConversationActivity_Valid');
+        validatePolicies('OnEndOfConversationActivity_Valid')
     });
 
     it('TriggerNotInteractive_OnEndOfConversationActivity', async () => {
-        // await TestUtils.runTestScript(resourceExplorer, 'TriggerNotInteractive_OnEndOfConversationActivity_Invalid.');
-    });
-/*
+        let threwError = false;
+        try {
+            validatePolicies('TriggerNotInteractive_OnEndOfConversationActivity_Invalid')
+        } catch (error) {
+            threwError = true;
+            assert(OnEndOfConversationActivity.$kind === error.policy.Kind, `kind of error does not match expected kind.`);
+            assert(ActionPolicyType.TriggerNotInteractive === error.policy.ActionPolicyType, `policy type of error does not match.`);
+        }
 
-    it('BeginSkill', async () => {
-        await TestUtils.runTestScript(
-            resourceExplorer,
-            'Action_BeginSkill',
-            undefined,
-            new SetSkillConversationIdFactoryBaseMiddleware(),
-            new SetSkillBotFrameworkClientMiddleware()
-        );
+        assert(threwError, 'TriggerNotInteractive_OnEndOfConversationActivity_Invalid test failed');
     });
-
-    it('HttpRequest', async () => {
-        nock('http://foo.com').post('/', 'Joe is 52').reply(200, 'string');
-        nock('http://foo.com').post('/', { text: 'Joe is 52', age: 52 }).reply(200, 'object');
-        nock('http://foo.com')
-            .post('/', [
-                { text: 'Joe is 52', age: 52 },
-                { text: 'text', age: 11 },
-            ])
-            .reply(200, 'array');
-        nock('http://foo.com').get('/image').reply(200, 'TestImage');
-        nock('http://foo.com').get('/json').reply(200, { test: 'test' });
-        nock('http://foo.com').get('/activity').reply(200, MessageFactory.text('testtest'));
-        nock('http://foo.com')
-            .get('/activities')
-            .reply(200, [MessageFactory.text('test1'), MessageFactory.text('test2'), MessageFactory.text('test3')]);
-        await TestUtils.runTestScript(resourceExplorer, 'Action_HttpRequest');
-    });
-    */
 });

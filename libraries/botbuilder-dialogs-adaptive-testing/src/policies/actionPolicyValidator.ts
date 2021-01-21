@@ -40,13 +40,6 @@ import { ActionPolicyException } from './ActionPolicyException';
 ///  if any policy violations are found.
 ///  </summary>
 export class ActionPolicyValidator {
-    
-    private _resources: ResourceExplorer;
-    
-    public constructor (resources: ResourceExplorer) {
-        this._resources = resources;
-    }
-    
     public validatePolicies(dialog: Dialog) {
         const asAdaptive = dialog as AdaptiveDialog;
         //  validate policies for all triggers and their child actions
@@ -119,7 +112,7 @@ export class ActionPolicyValidator {
                 break;
             case ActionPolicyType.TriggerNotInteractive:
                 //  ensure no dialogs, or child dialogs, are Input dialogs
-                let childDialogs = dialogs.filter(d => d.id != dialog.id);
+                let childDialogs = dialog ? dialogs.filter(d => d.id != dialog.id) : dialogs;
 
                 while (childDialogs.length > 0) {
                     let childDialog = childDialogs[0];
@@ -141,7 +134,7 @@ export class ActionPolicyValidator {
                 break;
             case ActionPolicyType.TriggerRequiresAction:
                 //  ensure the required action is present in the dialogs chain
-                let childActions = dialogs.filter(d => d.id != dialog.id);
+                let childActions = dialog ? dialogs.filter(d => d.id != dialog.id) : dialogs;
                 while (childActions.length > 0) {
                     let childDialog = childActions[0];
                     let childKind = (childDialog as any).$kind;
