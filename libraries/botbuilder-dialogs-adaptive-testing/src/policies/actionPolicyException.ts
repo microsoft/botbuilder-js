@@ -6,14 +6,13 @@
  * Licensed under the MIT License.
  */
 
-import { Dialog } from "botbuilder-dialogs";
-import { ActionPolicy } from "./actionPolicy";
+import { ActionPolicy } from './actionPolicy';
+import { Dialog } from 'botbuilder-dialogs';
 
 export class ActionPolicyException extends Error {
-    constructor(
-        public readonly policy: ActionPolicy,
-        public readonly dialog: Dialog
-    ) {
+    constructor(public readonly policy: ActionPolicy, public readonly dialog: Dialog) {
         super();
+
+        this.name = 'ActionPolicyException';
     }
 }

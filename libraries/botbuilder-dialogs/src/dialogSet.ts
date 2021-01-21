@@ -5,7 +5,14 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { BotTelemetryClient, StatePropertyAccessor, TurnContext, StringUtils, NullTelemetryClient } from 'botbuilder-core';
+import {
+    BotTelemetryClient,
+    StatePropertyAccessor,
+    TurnContext,
+    StringUtils,
+    NullTelemetryClient,
+} from 'botbuilder-core';
+import { Assertion, assert } from 'botbuilder-stdlib';
 import { Dialog } from './dialog';
 import { DialogContext, DialogState } from './dialogContext';
 
@@ -15,6 +22,13 @@ export interface DialogDependencies {
      */
     getDependencies(): Dialog[];
 }
+
+export const assertDialogDependencies: Assertion<DialogDependencies> = (val, path) => {
+    assert.unsafe.castObjectAs<DialogDependencies>(val, path);
+    assert.func(val.getDependencies, path.concat('getDependencies'));
+};
+
+export const isDialogDependencies = assert.toTest(assertDialogDependencies);
 
 /**
  * A related set of dialogs that can all call each other.

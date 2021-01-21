@@ -6,33 +6,41 @@
  * Licensed under the MIT License.
  */
 
-import { ResourceExplorer } from 'botbuilder-dialogs-declarative'
-import { ActionPolicyType  } from './actionPolicyTypes'
-import { ActionPolicy } from './actionPolicy'
-import { 
-    BreakLoop, 
-    ContinueLoop, 
-    GotoAction, 
+import { ResourceExplorer } from 'botbuilder-dialogs-declarative';
+import { ActionPolicyType } from './actionPolicyTypes';
+import { ActionPolicy } from './actionPolicy';
+import {
+    BreakLoop,
+    ContinueLoop,
+    GotoAction,
     CancelDialog,
-    CancelAllDialogs, 
-    EndDialog, 
-    RepeatDialog, 
-    ThrowException, 
-    Ask, 
-    AttachmentInput, 
-    ChoiceInput, 
-    ConfirmInput, 
-    DateTimeInput, 
+    CancelAllDialogs,
+    EndDialog,
+    RepeatDialog,
+    ThrowException,
+    Ask,
+    AttachmentInput,
+    ChoiceInput,
+    ConfirmInput,
+    DateTimeInput,
     NumberInput,
     OAuthInput,
     TextInput,
     OnEndOfConversationActivity,
     AdaptiveDialog,
     OnCondition,
-    ActionScope
-} from '../../../botbuilder-dialogs-adaptive'
-import { Dialog, DialogDependencies } from 'botbuilder-dialogs';
+    ActionScope,
+} from 'botbuilder-dialogs-adaptive';
+import { Dialog, isDialogDependencies } from 'botbuilder-dialogs';
 import { ActionPolicyException } from './ActionPolicyException';
+import { Assertion, assert } from 'botbuilder-stdlib';
+
+// Asserts that a given value is an instance of a constructor that, itself, has a static $kind property
+type ConstructorKind = { constructor: { $kind: string } };
+const assertConstructorKind: Assertion<ConstructorKind> = (val, path) => {
+    assert.unsafe.castObjectAs<ConstructorKind>(val, path);
+    assert.string(val.constructor?.$kind, path.concat('constructor', '$kind'));
+};
 
 ///  <summary>
 ///  Validator used to verify a dialog with its triggers and actions are not violating
@@ -40,153 +48,148 @@ import { ActionPolicyException } from './ActionPolicyException';
 ///  if any policy violations are found.
 ///  </summary>
 export class ActionPolicyValidator {
-    public validatePolicies(dialog: Dialog) {
-        const asAdaptive = dialog as AdaptiveDialog;
-        //  validate policies for all triggers and their child actions
-        for (const trigger of asAdaptive.triggers) {
-            this.ValidateCondition(trigger);
-        }
-    }
-    
-    private ValidateCondition(condition: any) {
-        let triggerKind = condition.$kind;
-        let parentKinds: string[] = [];
-        parentKinds.push(triggerKind);
-        //  Validate the actions of the trigger
-        this.ValidateKind(parentKinds, triggerKind, condition.actions);
-    }
-    
-    private ValidateKind(parentKinds: string[], kind: string, dialogs: Dialog[]) {
-        const  kindPolicy = this.actionPolicies.find((item) => item.Kind === kind);
-
-        if ((kindPolicy != null)) {
-            this.ValidatePolicy(parentKinds, kindPolicy, dialogs);
-        }
-        
-        if ((dialogs != null)) {
-            for (const dialog of dialogs) {
-                let actionKind = (dialog as any).$kind;
-                let parentKindsInner: string[] = [];
-                parentKindsInner = parentKindsInner.concat(parentKinds);
-                parentKindsInner.push(actionKind);
-
-                let actionPolicy = this.actionPolicies.find((item) => item.Kind === actionKind);
-                if ((actionPolicy != null)) {
-                    this.ValidatePolicy(parentKindsInner, actionPolicy, dialogs, dialog);
-                }
-                
-                this.ValidateKind(parentKindsInner, actionKind, this.getDialogs(dialog));
+    public validatePolicies(dialog: Dialog): void {
+        if (dialog instanceof AdaptiveDialog) {
+            for (const trigger of dialog.triggers) {
+                this.validateCondition(trigger);
             }
         }
     }
-    
-    private ValidatePolicy(parentKinds: string[], policy: ActionPolicy, dialogs: Dialog[], dialog: Dialog = undefined) {
-        switch (policy.ActionPolicyType) {
+
+    private validateCondition(condition: OnCondition): void {
+        assertConstructorKind(condition, ['condition']);
+        const triggerKind = condition.constructor.$kind;
+
+        this.validateKind([triggerKind], triggerKind, condition.actions);
+    }
+
+    private validateKind(parentKinds: string[], kind: string, dialogs?: Dialog[]): void {
+        const kindPolicy = this.actionPolicies.find((item) => item.kind === kind);
+        if (kindPolicy) {
+            this.validatePolicy(parentKinds, kindPolicy, dialogs);
+        }
+
+        if (dialogs?.length) {
+            for (const dialog of dialogs) {
+                assertConstructorKind(dialog, ['dialog']);
+
+                const actionKind = dialog.constructor?.$kind;
+                const parentKindsInner = [...parentKinds, actionKind];
+
+                const actionPolicy = this.actionPolicies.find((item) => item.kind === actionKind);
+                if (actionPolicy) {
+                    this.validatePolicy(parentKindsInner, actionPolicy, dialogs, dialog);
+                }
+
+                this.validateKind(parentKindsInner, actionKind, this.getDialogs(dialog));
+            }
+        }
+    }
+
+    private validatePolicy(parentKinds: string[], policy: ActionPolicy, dialogs: Dialog[], dialog?: Dialog): void {
+        switch (policy.actionPolicyType) {
             case ActionPolicyType.LastAction:
                 //  This dialog must be the last in the list
-                if ((dialogs.indexOf(dialog) < (dialogs.length - 1))) {
+                if (dialogs.indexOf(dialog) < dialogs.length - 1) {
                     throw new ActionPolicyException(policy, dialog);
                 }
-                
+
                 break;
-            case ActionPolicyType.Interactive:
+
+            case ActionPolicyType.Interactive: {
                 //  This dialog is interactive, so cannot be under NonInteractive triggers
-                for (let parentKind in parentKinds) {
-                    let parentPolicy = this.actionPolicies.find((item) => item.Kind === parentKind);
-                    if (((parentPolicy != null) 
-                                && (parentPolicy.ActionPolicyType == ActionPolicyType.TriggerNotInteractive))) {
+                for (const parentKind in parentKinds) {
+                    const parentPolicy = this.actionPolicies.find((item) => item.kind === parentKind);
+                    if (parentPolicy?.actionPolicyType === ActionPolicyType.TriggerNotInteractive) {
                         throw new ActionPolicyException(policy, dialog);
                     }
-                    
                 }
-                
+
                 break;
+            }
+
             case ActionPolicyType.AllowedTrigger:
                 //  ensure somewhere up the chain the specific trigger type is found
-                if (parentKinds.some( (pk) => policy.Actions.some((a) => pk == a))) {
+                if (parentKinds.some((pk) => policy.actions.some((a) => pk === a))) {
                     return;
                 }
 
                 //  Trigger type not found up the chain.  This action is in the wrong trigger.
                 throw new ActionPolicyException(policy, dialog);
-                break;
-            case ActionPolicyType.TriggerNotInteractive:
-                //  ensure no dialogs, or child dialogs, are Input dialogs
-                let childDialogs = dialog ? dialogs.filter(d => d.id != dialog.id) : dialogs;
 
-                while (childDialogs.length > 0) {
-                    let childDialog = childDialogs[0];
-                    let childKind = (childDialog as any).$kind;
-                    let childPolicy = this.actionPolicies.find((item) => item.kind === childKind);
-                    if (childPolicy && (childPolicy.ActionPolicyType == ActionPolicyType.Interactive)) {
+            case ActionPolicyType.TriggerNotInteractive: {
+                //  ensure no dialogs, or child dialogs, are Input dialogs
+                const childDialogs = dialogs.filter((d) => d.id !== dialog?.id);
+
+                while (childDialogs.length) {
+                    const childDialog = childDialogs.shift();
+                    assertConstructorKind(childDialog, ['childDialog']);
+
+                    const childKind = childDialog.constructor.$kind;
+                    const childPolicy = this.actionPolicies.find((item) => item.kind === childKind);
+                    if (childPolicy?.actionPolicyType === ActionPolicyType.Interactive) {
                         //  Interactive action found below TriggerNotInteractive trigger
                         throw new ActionPolicyException(policy, dialog);
                     }
-                    
-                
-                    childDialogs.shift();
-                    let innerChildDialogs = this.getDialogs(childDialog);
-                    if ((innerChildDialogs != null)) {
-                        childDialogs = childDialogs.concat(innerChildDialogs);
+
+                    const innerChildDialogs = this.getDialogs(childDialog);
+                    if (innerChildDialogs) {
+                        childDialogs.push(...innerChildDialogs);
                     }
                 }
-                
+
                 break;
-            case ActionPolicyType.TriggerRequiresAction:
+            }
+            case ActionPolicyType.TriggerRequiresAction: {
                 //  ensure the required action is present in the dialogs chain
-                let childActions = dialog ? dialogs.filter(d => d.id != dialog.id) : dialogs;
-                while (childActions.length > 0) {
-                    let childDialog = childActions[0];
-                    let childKind = (childDialog as any).$kind;
-                    
-                    if (policy.Actions.some((pa) => pa == childKind )) {
+                const childActions = dialogs.filter((d) => d.id !== dialog?.id);
+                while (childActions.length) {
+                    const childDialog = childActions.shift();
+                    assertConstructorKind(childDialog, ['childDialog']);
+
+                    const childKind = childDialog.constructor.$kind;
+                    if (policy.actions.some((pa) => pa === childKind)) {
                         //  found the action required
                         return;
                     }
-                    
-                    childActions.shift();
-                    let innerChildDialogs = this.getDialogs(childDialog);
-                    if ((innerChildDialogs != null)) {
-                        childActions = childActions.concat(innerChildDialogs);
+
+                    const innerChildDialogs = this.getDialogs(childDialog);
+                    if (innerChildDialogs) {
+                        childActions.push(...innerChildDialogs);
                     }
-                    
                 }
-                
+
                 //  Required action not found
                 throw new ActionPolicyException(policy, dialog);
+            }
             default:
-                throw new Error(`Invalid ActionPolicy.ActionPolicyType: ${policy.ActionPolicyType}`);
+                throw new Error(`Invalid ActionPolicy.ActionPolicyType: ${policy.actionPolicyType}`);
         }
-        
     }
-    
+
     private getDialogs(dialog: Dialog): Dialog[] {
-        if ((dialog instanceof AdaptiveDialog)) {
+        if (dialog instanceof AdaptiveDialog) {
             return dialog.dialogs.getDialogs();
         }
-        
-        if ((dialog instanceof  ActionScope)) {
+
+        if (dialog instanceof ActionScope) {
             return dialog.actions;
         }
-        
-        let dialogs: Dialog[] = [];
-        if (typeof ((dialog as any) as DialogDependencies).getDependencies == 'function') {
-            for(const dependency of ((dialog as any) as DialogDependencies).getDependencies()) {
-                const asAny = dependency as any;
-                if ((asAny.actions)) {
-                    dialogs = dialogs.concat(asAny.actions);
-                }
-                else {
-                    dialogs.push(dependency);
+
+        const dialogs: Dialog[] = [];
+
+        if (isDialogDependencies(dialog)) {
+            for (const dependency of dialog.getDependencies()) {
+                if (dependency instanceof ActionScope) {
+                    dialogs.push(...dependency.actions);
                 }
             }
         }
-        
+
         return dialogs;
     }
-    
+
     get actionPolicies(): ActionPolicy[] {
-        
         return [
             //  LastAction (dialog continues)
             new ActionPolicy(BreakLoop.$kind, ActionPolicyType.LastAction),
@@ -216,6 +219,6 @@ export class ActionPolicyValidator {
             // ? yield return new ActionPolicy(OnConversationUpdateActivity.Kind, ActionPolicyType.TriggerNotInteractive);
             // AllowedTrigger (Action only valid in n Triggers)
             // TriggerRequiresAction (Trigger requries one of n actions)
-        ]
+        ];
     }
 }
