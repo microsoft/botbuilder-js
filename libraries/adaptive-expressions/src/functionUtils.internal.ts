@@ -9,7 +9,9 @@
 
 import { Constant } from './constant';
 import sortBy from 'lodash/sortBy';
-import moment, { Moment } from 'moment';
+import dayjs, { OpUnitType } from 'dayjs';
+import utc from 'dayjs/plugin/utc';
+dayjs.extend(utc);
 import { Expression } from './expression';
 import { ExpressionType } from './expressionType';
 import { Options } from './options';
@@ -179,30 +181,14 @@ export class InternalFunctionUtils {
     }
 
     /**
-     * Transform a timestamp into another with customized function.
-     * @param timeStamp Original time stamp.
-     * @param transform Transform function.
-     * @returns New timestamp and error.
-     */
-    public static parseTimestamp(timeStamp: string, transform?: (arg0: Date) => any): ValueWithError {
-        let value: any;
-        const error: string = this.verifyISOTimestamp(timeStamp);
-        if (!error) {
-            value = transform !== undefined ? transform(new Date(timeStamp)) : timeStamp;
-        }
-
-        return { value, error };
-    }
-
-    /**
-     * Convert a string input to ticks bigInt.
+     * Convert a string input to ticks number.
      * @param timeStamp String timestamp input.
      */
     public static ticks(timeStamp: string): ValueWithError {
         let result: bigInt.BigInteger;
-        const { value: parsed, error } = this.parseTimestamp(timeStamp);
+        const error = this.verifyISOTimestamp(timeStamp);
         if (!error) {
-            const unixMilliSec: number = parseInt(moment(parsed).utc().format('x'), 10);
+            const unixMilliSec: number = dayjs(timeStamp).utc().valueOf();
             result = this.UnixMilliSecondToTicksConstant.add(
                 bigInt(unixMilliSec).times(this.MillisecondToTickConstant)
             );
@@ -377,42 +363,25 @@ export class InternalFunctionUtils {
      * @param duration C# duration
      * @param cSharpStr C# unit.
      */
-    public static timeUnitTransformer(duration: number, cSharpStr: string): { duration: number; tsStr: string } {
+    public static timeUnitTransformer(duration: number, cSharpStr: string): { duration: number; tsStr: OpUnitType } {
         switch (cSharpStr) {
             case 'Day':
-                return { duration, tsStr: 'days' };
+                return { duration, tsStr: 'day' };
             case 'Week':
-                return { duration: duration * 7, tsStr: 'days' };
+                return { duration: duration * 7, tsStr: 'day' };
             case 'Second':
-                return { duration, tsStr: 'seconds' };
+                return { duration, tsStr: 'second' };
             case 'Minute':
-                return { duration, tsStr: 'minutes' };
+                return { duration, tsStr: 'minute' };
             case 'Hour':
-                return { duration, tsStr: 'hours' };
+                return { duration, tsStr: 'hour' };
             case 'Month':
-                return { duration, tsStr: 'months' };
+                return { duration, tsStr: 'month' };
             case 'Year':
-                return { duration, tsStr: 'years' };
+                return { duration, tsStr: 'year' };
             default:
                 return { duration, tsStr: undefined };
         }
-    }
-
-    /**
-     * Format datetime.
-     * @param timedata Input date time.
-     * @param format Format flag.
-     */
-    public static returnFormattedTimeStampStr(timedata: Moment, format: string): ValueWithError {
-        let result: string;
-        let error: string;
-        try {
-            result = timedata.format(format);
-        } catch (e) {
-            error = `${format} is not a valid timestamp format`;
-        }
-
-        return { value: result, error };
     }
 
     /**

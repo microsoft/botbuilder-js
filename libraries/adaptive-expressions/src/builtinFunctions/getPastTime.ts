@@ -6,8 +6,9 @@
  * Licensed under the MIT License.
  */
 
-import moment from 'moment';
-
+import dayjs, { OpUnitType } from 'dayjs';
+import utc from 'dayjs/plugin/utc';
+dayjs.extend(utc);
 import { Expression } from '../expression';
 import { ExpressionEvaluator, ValueWithError } from '../expressionEvaluator';
 import { ExpressionType } from '../expressionType';
@@ -43,13 +44,7 @@ export class GetPastTime extends ExpressionEvaluator {
                 if (tsStr === undefined) {
                     error = `${args[2]} is not a valid time unit.`;
                 } else {
-                    const dur: any = duration;
-                    ({ value, error } = InternalFunctionUtils.parseTimestamp(
-                        new Date().toISOString(),
-                        (dt: Date): string => {
-                            return moment(dt).utc().subtract(dur, tsStr).format(format);
-                        }
-                    ));
+                    value = dayjs().utc().subtract(duration, tsStr).format(format);
                 }
             } else {
                 error = `${expression} should contain a time interval integer, a string unit of time and an optional output format string.`;

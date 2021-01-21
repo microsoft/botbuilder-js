@@ -6,8 +6,9 @@
  * Licensed under the MIT License.
  */
 
-import moment from 'moment';
-
+import dayjs from 'dayjs';
+import utc from 'dayjs/plugin/utc';
+dayjs.extend(utc);
 import { Expression } from '../expression';
 import { EvaluateExpressionDelegate, ExpressionEvaluator } from '../expressionEvaluator';
 import { ExpressionType } from '../expressionType';
@@ -54,7 +55,7 @@ export class FormatDateTime extends ExpressionEvaluator {
 
                 value =
                     args.length === 2
-                        ? moment(dateString).utc().format(FunctionUtils.timestampFormatter(args[1]))
+                        ? dayjs(dateString).utc().format(FunctionUtils.timestampFormatter(args[1]))
                         : dateString;
             }
 

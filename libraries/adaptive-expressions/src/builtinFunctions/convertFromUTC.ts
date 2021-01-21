@@ -6,8 +6,9 @@
  * Licensed under the MIT License.
  */
 
-import { tz } from 'moment-timezone';
-
+import dayjs from 'dayjs';
+import timezone from 'dayjs/plugin/timezone';
+dayjs.extend(timezone);
 import { Expression } from '../expression';
 import { ExpressionEvaluator, ValueWithError } from '../expressionEvaluator';
 import { ExpressionType } from '../expressionType';
@@ -22,7 +23,7 @@ import { TimeZoneConverter } from '../timeZoneConverter';
  * Convert a timestamp from Universal Time Coordinated (UTC) to a target time zone.
  */
 export class ConvertFromUTC extends ExpressionEvaluator {
-    private static readonly NoneUtcDefaultDateTimeFormat: string = 'YYYY-MM-DDTHH:mm:ss.SSSSSSS';
+    private static readonly NoneUtcDefaultDateTimeFormat: string = 'YYYY-MM-DDTHH:mm:ss.SSS0000';
 
     /**
      * Initializes a new instance of the [ConvertFromUTC](xref:adaptive-expressions.ConvertFromUTC) class.
@@ -68,7 +69,7 @@ export class ConvertFromUTC extends ExpressionEvaluator {
 
         if (!error) {
             try {
-                result = tz(timeStamp, timeZone).format(format);
+                result = dayjs(timeStamp).tz(timeZone).format(format);
             } catch (e) {
                 error = `${format} is not a valid timestamp format`;
             }

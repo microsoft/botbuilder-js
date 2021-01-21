@@ -15,8 +15,11 @@ import { InternalFunctionUtils } from '../functionUtils.internal';
 import { MemoryInterface } from '../memory/memoryInterface';
 import { Options } from '../options';
 import { TimeZoneConverter } from '../timeZoneConverter';
-import { tz } from 'moment-timezone';
-import moment from 'moment';
+import dayjs from 'dayjs';
+import timezone from 'dayjs/plugin/timezone';
+dayjs.extend(timezone);
+import utc from 'dayjs/plugin/utc';
+dayjs.extend(utc);
 import { TimexProperty } from '@microsoft/recognizers-text-data-types-timex-expression';
 
 /**
@@ -44,11 +47,11 @@ export class GetPreviousViableDate extends ExpressionEvaluator {
         options: Options
     ): { value: any; error: string } {
         let parsed: TimexProperty;
-        const currentTime = moment(new Date().toISOString());
+        const currentTime = dayjs(new Date().toISOString());
         let validYear = 0;
         let validMonth = 0;
         let validDay = 0;
-        let convertedDateTime: moment.Moment;
+        let convertedDateTime: dayjs.Dayjs;
         const { args, error: childrenError } = FunctionUtils.evaluateChildren(expr, state, options);
         let error = childrenError;
         if (!error) {
@@ -69,7 +72,7 @@ export class GetPreviousViableDate extends ExpressionEvaluator {
                 }
 
                 if (!error) {
-                    convertedDateTime = tz(currentTime.utc(), timeZone);
+                    convertedDateTime = currentTime.utc().tz(timeZone);
                 }
             } else {
                 convertedDateTime = currentTime.utc();

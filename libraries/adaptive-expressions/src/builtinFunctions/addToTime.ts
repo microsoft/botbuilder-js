@@ -6,8 +6,9 @@
  * Licensed under the MIT License.
  */
 
-import moment from 'moment';
-
+import dayjs, { OpUnitType } from 'dayjs';
+import utc from 'dayjs/plugin/utc';
+dayjs.extend(utc);
 import { Expression } from '../expression';
 import { ExpressionEvaluator, ValueWithError } from '../expressionEvaluator';
 import { ExpressionType } from '../expressionType';
@@ -59,58 +60,10 @@ export class AddToTime extends ExpressionEvaluator {
         format?: string
     ): ValueWithError {
         let result: string;
-        const { value: parsed, error: parseError } = InternalFunctionUtils.parseTimestamp(timeStamp);
-        let error = parseError;
+        let error = InternalFunctionUtils.verifyISOTimestamp(timeStamp);
         if (!error) {
-            const dt: any = moment(parsed).utc();
-            let addedTime = dt;
-            let timeUnitMark: string;
-            switch (timeUnit) {
-                case 'Second': {
-                    timeUnitMark = 's';
-                    break;
-                }
-
-                case 'Minute': {
-                    timeUnitMark = 'm';
-                    break;
-                }
-
-                case 'Hour': {
-                    timeUnitMark = 'h';
-                    break;
-                }
-
-                case 'Day': {
-                    timeUnitMark = 'd';
-                    break;
-                }
-
-                case 'Week': {
-                    timeUnitMark = 'week';
-                    break;
-                }
-
-                case 'Month': {
-                    timeUnitMark = 'month';
-                    break;
-                }
-
-                case 'Year': {
-                    timeUnitMark = 'year';
-                    break;
-                }
-
-                default: {
-                    error = `${timeUnit} is not valid time unit`;
-                    break;
-                }
-            }
-
-            if (!error) {
-                addedTime = dt.add(interval, timeUnitMark);
-                ({ value: result, error } = InternalFunctionUtils.returnFormattedTimeStampStr(addedTime, format));
-            }
+            const { duration, tsStr } = InternalFunctionUtils.timeUnitTransformer(interval, timeUnit);
+            result = dayjs(timeStamp).utc().add(duration, tsStr).format(format);
         }
 
         return { value: result, error };
