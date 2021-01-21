@@ -21,7 +21,7 @@ export class ToLower extends StringTransformEvaluator {
      * Initializes a new instance of the [ToLower](xref:adaptive-expressions.ToLower) class.
      */
     public constructor() {
-        super(ExpressionType.ToLower, ToLower.evaluator);
+        super(ExpressionType.ToLower, ToLower.evaluator, FunctionUtils.validateUnaryOrBinaryString);
     }
 
     /**

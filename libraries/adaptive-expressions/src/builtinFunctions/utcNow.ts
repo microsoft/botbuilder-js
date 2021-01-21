@@ -38,7 +38,7 @@ export class UtcNow extends ExpressionEvaluator {
                 ({ format, locale } = FunctionUtils.determineFormatAndLocale(args, 2, format, locale));
 
                 return {
-                    value: dayjs(new Date()).utc().format(format),
+                    value: dayjs(new Date()).locale(locale).utc().format(format),
                     error: undefined,
                 };
             }

@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 
-import { FunctionUtils } from '..';
+import { FunctionUtils } from '../functionUtils';
 import { ExpressionType } from '../expressionType';
 import { InternalFunctionUtils } from '../functionUtils.internal';
 import { Options } from '../options';
@@ -20,7 +20,7 @@ export class TitleCase extends StringTransformEvaluator {
      * Initializes a new instance of the [TitleCase](xref:adaptive-expressions.TitleCase) class.
      */
     public constructor() {
-        super(ExpressionType.TitleCase, TitleCase.evaluator);
+        super(ExpressionType.TitleCase, TitleCase.evaluator, FunctionUtils.validateUnaryOrBinaryString);
     }
 
     private static evaluator(args: unknown[], options: Options): string {

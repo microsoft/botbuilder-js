@@ -41,7 +41,7 @@ export class StartOfMonth extends ExpressionEvaluator {
         if (!error) {
             ({ format, locale } = FunctionUtils.determineFormatAndLocale(args, 3, format, locale));
             if (typeof args[0] === 'string') {
-                ({ value, error } = StartOfMonth.evalStartOfMonth(args[0], format));
+                ({ value, error } = StartOfMonth.evalStartOfMonth(args[0], format, locale));
             } else {
                 error = `${expr} should contain an ISO format timestamp and an optional output format string.`;
             }
@@ -53,11 +53,11 @@ export class StartOfMonth extends ExpressionEvaluator {
     /**
      * @private
      */
-    private static evalStartOfMonth(timeStamp: string, format?: string): ValueWithError {
+    private static evalStartOfMonth(timeStamp: string, format?: string, locale?: string): ValueWithError {
         let result: string;
         const error = InternalFunctionUtils.verifyISOTimestamp(timeStamp);
         if (!error) {
-            result = dayjs(timeStamp).utc().startOf('month').format(format);
+            result = dayjs(timeStamp).locale(locale).utc().startOf('month').format(format);
         }
 
         return { value: result, error };

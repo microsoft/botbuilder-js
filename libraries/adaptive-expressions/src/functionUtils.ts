@@ -646,7 +646,7 @@ export class FunctionUtils {
                         secondLastArg !== ''
                             ? FunctionUtils.timestampFormatter(secondLastArg)
                             : FunctionUtils.DefaultDateTimeFormat;
-                    locale = lastArg;
+                    locale = lastArg.substr(0, 2); //dayjs only support two-letter locale representattion
                 }
             } else if (args.length === maxArgsLength - 1) {
                 const lastArg = args[maxArgsLength - 2];
@@ -664,6 +664,9 @@ export class FunctionUtils {
      * @param formatter C# datetime format
      */
     public static timestampFormatter(formatter: string): string {
+        if (formatter === undefined || formatter === '') {
+            return FunctionUtils.DefaultDateTimeFormat;
+        }
         let result = formatter;
         try {
             result = convertCSharpDateTimeToDayjs(formatter);

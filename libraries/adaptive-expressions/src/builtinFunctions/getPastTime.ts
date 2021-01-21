@@ -45,7 +45,7 @@ export class GetPastTime extends ExpressionEvaluator {
                 if (tsStr === undefined) {
                     error = `${args[2]} is not a valid time unit.`;
                 } else {
-                    value = dayjs().utc().subtract(duration, tsStr).format(format);
+                    value = dayjs().locale(locale).utc().subtract(duration, tsStr).format(format);
                 }
             } else {
                 error = `${expression} should contain a time interval integer, a string unit of time and an optional output format string.`;
@@ -59,6 +59,6 @@ export class GetPastTime extends ExpressionEvaluator {
      * @private
      */
     private static validator(expression: Expression): void {
-        FunctionUtils.validateOrder(expression, [ReturnType.String], ReturnType.Number, ReturnType.String);
+        FunctionUtils.validateOrder(expression, [ReturnType.String, ReturnType.String], ReturnType.Number, ReturnType.String);
     }
 }

@@ -53,9 +53,8 @@ export class SubtractFromTime extends ExpressionEvaluator {
                     const dur: any = duration;
                     error = InternalFunctionUtils.verifyISOTimestamp(args[0]);
                     if (!error) {
-                        value = args.length === 4
-                        ? dayjs(args[0]).utc().subtract(dur, tsStr).format(format)
-                        : dayjs(args[0]).utc().subtract(dur, tsStr).toISOString();
+                        value = dayjs(args[0]).locale(locale).utc().subtract(dur, tsStr).format(format);
+
                     }
                 }
             } else {
@@ -72,7 +71,7 @@ export class SubtractFromTime extends ExpressionEvaluator {
     private static validator(expression: Expression): void {
         FunctionUtils.validateOrder(
             expression,
-            [ReturnType.String],
+            [ReturnType.String, ReturnType.String],
             ReturnType.String,
             ReturnType.Number,
             ReturnType.String

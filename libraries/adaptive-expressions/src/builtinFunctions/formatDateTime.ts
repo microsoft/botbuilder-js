@@ -57,7 +57,7 @@ export class FormatDateTime extends ExpressionEvaluator {
                     }
                 }
 
-                value = dayjs(dateString).utc().format(format);
+                value = dayjs(dateString).locale(locale).utc().format(format);
             }
 
             return { value, error };
@@ -68,6 +68,6 @@ export class FormatDateTime extends ExpressionEvaluator {
      * @private
      */
     private static validator(expression: Expression): void {
-        FunctionUtils.validateOrder(expression, [ReturnType.String], ReturnType.String);
+        FunctionUtils.validateOrder(expression, [ReturnType.String, ReturnType.String], ReturnType.String);
     }
 }

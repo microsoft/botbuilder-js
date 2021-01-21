@@ -6,10 +6,12 @@
  * Licensed under the MIT License.
  */
 
+import { Expression } from '../expression';
 import { ExpressionType } from '../expressionType';
 import { FunctionUtils } from '../functionUtils';
 import { InternalFunctionUtils } from '../functionUtils.internal';
 import { Options } from '../options';
+import { ReturnType } from '../returnType';
 import { StringTransformEvaluator } from './stringTransformEvaluator';
 
 /**
@@ -21,7 +23,7 @@ export class ToUpper extends StringTransformEvaluator {
      * Initializes a new instance of the [ToUpper](xref:adaptive-expressions.ToUpper) class.
      */
     public constructor() {
-        super(ExpressionType.ToUpper, ToUpper.evaluator);
+        super(ExpressionType.ToUpper, ToUpper.evaluator, FunctionUtils.validateUnaryOrBinaryString);
     }
 
     /**

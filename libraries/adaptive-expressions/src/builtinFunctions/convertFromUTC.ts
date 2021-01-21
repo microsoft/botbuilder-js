@@ -44,7 +44,7 @@ export class ConvertFromUTC extends ExpressionEvaluator {
         if (!error) {
             ({ format, locale } = FunctionUtils.determineFormatAndLocale(args, 4, format, locale));
             if (typeof args[0] === 'string' && typeof args[1] === 'string') {
-                ({ value, error } = ConvertFromUTC.evalConvertFromUTC(args[0], args[1], format));
+                ({ value, error } = ConvertFromUTC.evalConvertFromUTC(args[0], args[1], format, locale));
             } else {
                 error = `${expression} should contain an ISO format timestamp, an origin time zone string and an optional output format string.`;
             }
@@ -56,7 +56,7 @@ export class ConvertFromUTC extends ExpressionEvaluator {
     /**
      * @private
      */
-    private static evalConvertFromUTC(timeStamp: string, destinationTimeZone: string, format?: string): ValueWithError {
+    private static evalConvertFromUTC(timeStamp: string, destinationTimeZone: string, format?: string, locale?: string): ValueWithError {
         let result: string;
         let error: string;
         error = InternalFunctionUtils.verifyISOTimestamp(timeStamp);
@@ -67,7 +67,7 @@ export class ConvertFromUTC extends ExpressionEvaluator {
 
         if (!error) {
             try {
-                result = dayjs(timeStamp).tz(timeZone).format(format);
+                result = dayjs(timeStamp).locale(locale).tz(timeZone).format(format);
             } catch (e) {
                 error = `${format} is not a valid timestamp format`;
             }

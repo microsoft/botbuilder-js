@@ -36,7 +36,6 @@ export class TimeTransformEvaluator extends ExpressionEvaluator {
     private static evaluator(func: (timestamp: Date, numOfTransformation: number) => Date): EvaluateExpressionDelegate {
         return (expression: Expression, state: MemoryInterface, options: Options): ValueWithError => {
             let result: any;
-            let value: any;
             let locale = options.locale ? options.locale : Intl.DateTimeFormat().resolvedOptions().locale;
             let format = FunctionUtils.DefaultDateTimeFormat;
             const { args, error: childrenError } = FunctionUtils.evaluateChildren(expression, state, options);
@@ -46,7 +45,10 @@ export class TimeTransformEvaluator extends ExpressionEvaluator {
                 if (typeof args[0] === 'string' && typeof args[1] === 'number') {
                     error = InternalFunctionUtils.verifyISOTimestamp(args[0]);
                     if (!error) {
-                        result = dayjs(func(value, args[1])).utc().format(format);
+                        result = dayjs(func(new Date(args[0]), args[1]))
+                            .locale(locale)
+                            .utc()
+                            .format(format);
                     }
                 } else {
                     error = `${expression} should contain an ISO format timestamp and a time interval integer.`;

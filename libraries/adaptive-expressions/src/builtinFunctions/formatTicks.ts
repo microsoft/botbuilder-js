@@ -59,7 +59,7 @@ export class FormatTicks extends ExpressionEvaluator {
                     ({ format, locale } = FunctionUtils.determineFormatAndLocale(args, 3, format, locale));
                     if (typeof arg === 'number') {
                         const dateString: string = new Date(arg).toISOString();
-                        value = dayjs(dateString).utc().format(format);
+                        value = dayjs(dateString).locale(locale).utc().format(format);
                     }
                 }
 
@@ -73,6 +73,6 @@ export class FormatTicks extends ExpressionEvaluator {
      * @private
      */
     private static validator(expression: Expression): void {
-        FunctionUtils.validateOrder(expression, [ReturnType.String], ReturnType.Number);
+        FunctionUtils.validateOrder(expression, [ReturnType.String, ReturnType.String], ReturnType.Number);
     }
 }

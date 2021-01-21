@@ -41,7 +41,7 @@ export class StartOfDay extends ExpressionEvaluator {
         if (!error) {
             ({ format, locale } = FunctionUtils.determineFormatAndLocale(args, 3, format, locale));
             if (typeof args[0] === 'string') {
-                ({ value, error } = StartOfDay.evalStartOfDay(args[0], format));
+                ({ value, error } = StartOfDay.evalStartOfDay(args[0], format, locale));
             } else {
                 error = `${expression} should contain an ISO format timestamp and an optional output format string.`;
             }
@@ -53,11 +53,11 @@ export class StartOfDay extends ExpressionEvaluator {
     /**
      * @private
      */
-    private static evalStartOfDay(timeStamp: string, format?: string): ValueWithError {
+    private static evalStartOfDay(timeStamp: string, format?: string, locale?: string): ValueWithError {
         let result: string;
         const error = InternalFunctionUtils.verifyISOTimestamp(timeStamp);
         if (!error) {
-            result = dayjs(timeStamp).utc().startOf('day').format(format);
+            result = dayjs(timeStamp).locale(locale).utc().startOf('day').format(format);
         }
 
         return { value: result, error };
@@ -67,6 +67,6 @@ export class StartOfDay extends ExpressionEvaluator {
      * @private
      */
     private static validator(expression: Expression): void {
-        FunctionUtils.validateOrder(expression, [ReturnType.String], ReturnType.String);
+        FunctionUtils.validateOrder(expression, [ReturnType.String, ReturnType.String], ReturnType.String);
     }
 }

@@ -46,7 +46,7 @@ export class FormatEpoch extends ExpressionEvaluator {
             if (!error) {
                 ({ format, locale } = FunctionUtils.determineFormatAndLocale(args, 3, format, locale));
                 const dateString: string = new Date(arg).toISOString();
-                value = dayjs(dateString).utc().format(format);
+                value = dayjs(dateString).locale(locale).utc().format(format);
             }
 
             return { value, error };
@@ -57,6 +57,6 @@ export class FormatEpoch extends ExpressionEvaluator {
      * @private
      */
     private static validator(expression: Expression): void {
-        FunctionUtils.validateOrder(expression, [ReturnType.String], ReturnType.Number);
+        FunctionUtils.validateOrder(expression, [ReturnType.String, ReturnType.String], ReturnType.Number);
     }
 }
