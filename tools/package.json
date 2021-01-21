@@ -33,7 +33,6 @@
     "botframework-connector": "4.1.6",
     "dotenv": "^4.0.0",
     "mime": "^1.4.1",
-    "moment": "^2.29.1",
     "ms-rest": "^2.3.6",
     "ms-rest-azure": "^2.5.7",
     "request": "^2.88.0",

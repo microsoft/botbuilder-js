@@ -7,7 +7,7 @@
  */
 
 import bigInt from 'big-integer';
-import moment from 'moment';
+import dayjs from 'dayjs';
 
 import { Expression } from '../expression';
 import { EvaluateExpressionDelegate, ExpressionEvaluator, ValueWithError } from '../expressionEvaluator';
@@ -58,8 +58,8 @@ export class FormatTicks extends ExpressionEvaluator {
                 if (!error) {
                     ({ format, locale } = FunctionUtils.determineFormatAndLocale(args, 3, format, locale));
                     if (typeof arg === 'number') {
-                        const dateString: string = new Date(arg as number).toISOString();
-                        value = moment(dateString).utc().format(FunctionUtils.timestampFormatter(format));
+                        const dateString: string = new Date(arg).toISOString();
+                        value = dayjs(dateString).utc().format(format);
                     }
                 }
 

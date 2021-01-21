@@ -6,8 +6,9 @@
  * Licensed under the MIT License.
  */
 
-import moment from 'moment';
-
+import dayjs from 'dayjs';
+import utc from 'dayjs/plugin/utc';
+dayjs.extend(utc);
 import { Expression } from '../expression';
 import { ExpressionEvaluator, ValueWithError } from '../expressionEvaluator';
 import { ExpressionType } from '../expressionType';
@@ -54,11 +55,9 @@ export class StartOfHour extends ExpressionEvaluator {
      */
     private static evalStartOfHour(timeStamp: string, format?: string): ValueWithError {
         let result: string;
-        const { value: parsed, error: parseError } = InternalFunctionUtils.parseTimestamp(timeStamp);
-        let error = parseError;
+        const error = InternalFunctionUtils.verifyISOTimestamp(timeStamp);
         if (!error) {
-            const startofHour = moment(parsed).utc().minutes(0).second(0).millisecond(0);
-            ({ value: result, error } = InternalFunctionUtils.returnFormattedTimeStampStr(startofHour, format));
+            result = dayjs(timeStamp).utc().startOf('hour').format(format);
         }
 
         return { value: result, error };

@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 
-import moment from 'moment';
+import dayjs from 'dayjs';
 
 import { Expression } from '../expression';
 import { EvaluateExpressionDelegate, ExpressionEvaluator } from '../expressionEvaluator';
@@ -46,7 +46,7 @@ export class FormatEpoch extends ExpressionEvaluator {
             if (!error) {
                 ({ format, locale } = FunctionUtils.determineFormatAndLocale(args, 3, format, locale));
                 const dateString: string = new Date(arg).toISOString();
-                value = moment(dateString).utc().format(format);
+                value = dayjs(dateString).utc().format(format);
             }
 
             return { value, error };

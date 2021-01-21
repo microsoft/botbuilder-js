@@ -6,8 +6,9 @@
  * Licensed under the MIT License.
  */
 
-import moment from 'moment';
-
+import dayjs from 'dayjs';
+import utc from 'dayjs/plugin/utc';
+dayjs.extend(utc);
 import { Expression } from '../expression';
 import { EvaluateExpressionDelegate, ExpressionEvaluator, ValueWithError } from '../expressionEvaluator';
 import { FunctionUtils } from '../functionUtils';
@@ -25,14 +26,14 @@ export class TimeTransformEvaluator extends ExpressionEvaluator {
      * @param type Name of the built-in function.
      * @param func The evaluation function, it takes a timestamp and the number of transformation, and returns a `Date`.
      */
-    public constructor(type: string, func: (timestamp: Date, numOfTransformation: any) => Date) {
+    public constructor(type: string, func: (timestamp: Date, numOfTransformation: number) => Date) {
         super(type, TimeTransformEvaluator.evaluator(func), ReturnType.String, TimeTransformEvaluator.validator);
     }
 
     /**
      * @private
      */
-    private static evaluator(func: (timestamp: Date, numOfTransformation: any) => Date): EvaluateExpressionDelegate {
+    private static evaluator(func: (timestamp: Date, numOfTransformation: number) => Date): EvaluateExpressionDelegate {
         return (expression: Expression, state: MemoryInterface, options: Options): ValueWithError => {
             let result: any;
             let value: any;
@@ -43,9 +44,9 @@ export class TimeTransformEvaluator extends ExpressionEvaluator {
             if (!error) {
                 ({ format, locale } = FunctionUtils.determineFormatAndLocale(args, 4, format, locale));
                 if (typeof args[0] === 'string' && typeof args[1] === 'number') {
-                    ({ value, error } = InternalFunctionUtils.parseTimestamp(args[0]));
+                    error = InternalFunctionUtils.verifyISOTimestamp(args[0]);
                     if (!error) {
-                        result = moment(func(value, args[1])).utc().format(format);
+                        result = dayjs(func(value, args[1])).utc().format(format);
                     }
                 } else {
                     error = `${expression} should contain an ISO format timestamp and a time interval integer.`;

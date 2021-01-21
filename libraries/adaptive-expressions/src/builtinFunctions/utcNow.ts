@@ -6,8 +6,9 @@
  * Licensed under the MIT License.
  */
 
-import moment from 'moment';
-
+import dayjs from 'dayjs';
+import utc from 'dayjs/plugin/utc';
+dayjs.extend(utc);
 import { Expression } from '../expression';
 import { EvaluateExpressionDelegate, ExpressionEvaluator, ValueWithError } from '../expressionEvaluator';
 import { ExpressionType } from '../expressionType';
@@ -36,7 +37,10 @@ export class UtcNow extends ExpressionEvaluator {
                 let format = FunctionUtils.DefaultDateTimeFormat;
                 ({ format, locale } = FunctionUtils.determineFormatAndLocale(args, 2, format, locale));
 
-                return { value: moment(new Date()).utc().format(format), error: undefined };
+                return {
+                    value: dayjs(new Date()).utc().format(format),
+                    error: undefined,
+                };
             }
         );
     }

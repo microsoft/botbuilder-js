@@ -10,7 +10,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 
 import { Constant } from './constant';
-import { convertCSharpDateTimeToMomentJS } from './datetimeFormatConverter';
+import { convertCSharpDateTimeToDayjs } from './datetimeFormatConverter';
 import { Expression } from './expression';
 import { EvaluateExpressionDelegate, ValueWithError } from './expressionEvaluator';
 import { ExpressionType } from './expressionType';
@@ -660,13 +660,13 @@ export class FunctionUtils {
     }
 
     /**
-     * Timestamp formatter, convert C# datetime to moment js format.
+     * Timestamp formatter, convert C# datetime to day.js format.
      * @param formatter C# datetime format
      */
     public static timestampFormatter(formatter: string): string {
         let result = formatter;
         try {
-            result = convertCSharpDateTimeToMomentJS(formatter);
+            result = convertCSharpDateTimeToDayjs(formatter);
         } catch (e) {
             // do nothing
         }
