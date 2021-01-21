@@ -1,20 +1,16 @@
 const assert = require('assert');
 const path = require('path');
-const {
-    ComponentRegistration,
-} = require('botbuilder-core');
+const { AdaptiveTestComponentRegistration, ActionPolicyType, ActionPolicyValidator, ActionPolicy } = require('../lib');
+const { ComponentRegistration } = require('botbuilder-core');
 const { ResourceExplorer } = require('botbuilder-dialogs-declarative');
-const { AdaptiveTestComponentRegistration, TestUtils, TestScript, ActionPolicyType, ActionPolicyValidator } = require('../lib');
 const {
     AdaptiveComponentRegistration,
     BreakLoop,
     CancelAllDialogs,
-    OnEndOfConversationActivity
+    OnEndOfConversationActivity,
 } = require('botbuilder-dialogs-adaptive');
 
-describe('ActionPolicyTests', function () {
-    this.timeout(10000);
-
+describe('ActionPolicyTests', () => {
     ComponentRegistration.add(new AdaptiveComponentRegistration());
     ComponentRegistration.add(new AdaptiveTestComponentRegistration());
 
@@ -26,51 +22,33 @@ describe('ActionPolicyTests', function () {
 
     const validator = new ActionPolicyValidator();
 
-    it('LastAction_BreakLoop', async () => {
-        let threwError = false;
-        try {
-            validatePolicies('LastAction_BreakLoop_Invalid')
-        } catch (error) {
-            threwError = true;
-            assert(BreakLoop.$kind === error.policy.Kind, `kind of error does not match expected kind.`);
-            assert(ActionPolicyType.LastAction === error.policy.ActionPolicyType, `policy type of error does not match.`);
-        }
-
-        assert(threwError, 'LastAction_BreakLoop test failed');
+    it('LastAction_BreakLoop', () => {
+        assert.throws(() => validatePolicies('LastAction_BreakLoop_Invalid'), {
+            name: 'ActionPolicyException',
+            policy: new ActionPolicy(BreakLoop.$kind, ActionPolicyType.LastAction),
+        });
     });
 
     function validatePolicies(testName) {
-        var script = resourceExplorer.loadType(`${testName}.test.dialog`);
+        const script = resourceExplorer.loadType(`${testName}.test.dialog`);
         validator.validatePolicies(script.dialog);
     }
 
-    it('LastAction_CancelAllDialogs', async () => {
-        let threwError = false;
-        try {
-            validatePolicies('LastAction_CancelAllDialogs_Invalid')
-        } catch (error) {
-            threwError = true;
-            assert(CancelAllDialogs.$kind === error.policy.Kind, `kind of error does not match expected kind.`);
-            assert(ActionPolicyType.LastAction === error.policy.ActionPolicyType, `policy type of error does not match.`);
-        }
-
-        assert(threwError, 'LastAction_CancelAllDialogs test failed');
+    it('LastAction_CancelAllDialogs', () => {
+        assert.throws(() => validatePolicies('LastAction_CancelAllDialogs_Invalid'), {
+            name: 'ActionPolicyException',
+            policy: new ActionPolicy(CancelAllDialogs.$kind, ActionPolicyType.LastAction),
+        });
     });
 
-    it('OnEndOfConversationActivity', async () => {
-        validatePolicies('OnEndOfConversationActivity_Valid')
+    it('OnEndOfConversationActivity', () => {
+        validatePolicies('OnEndOfConversationActivity_Valid');
     });
 
-    it('TriggerNotInteractive_OnEndOfConversationActivity', async () => {
-        let threwError = false;
-        try {
-            validatePolicies('TriggerNotInteractive_OnEndOfConversationActivity_Invalid')
-        } catch (error) {
-            threwError = true;
-            assert(OnEndOfConversationActivity.$kind === error.policy.Kind, `kind of error does not match expected kind.`);
-            assert(ActionPolicyType.TriggerNotInteractive === error.policy.ActionPolicyType, `policy type of error does not match.`);
-        }
-
-        assert(threwError, 'TriggerNotInteractive_OnEndOfConversationActivity_Invalid test failed');
+    it('TriggerNotInteractive_OnEndOfConversationActivity', () => {
+        assert.throws(() => validatePolicies('TriggerNotInteractive_OnEndOfConversationActivity_Invalid'), {
+            name: 'ActionPolicyException',
+            policy: new ActionPolicy(OnEndOfConversationActivity.$kind, ActionPolicyType.TriggerNotInteractive),
+        });
     });
 });

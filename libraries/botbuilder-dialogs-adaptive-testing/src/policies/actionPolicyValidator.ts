@@ -65,7 +65,6 @@ export class ActionPolicyValidator {
 
     private validateKind(parentKinds: string[], kind: string, dialogs?: Dialog[]): void {
         const kindPolicy = this.actionPolicies.find((item) => item.kind === kind);
-
         if (kindPolicy) {
             this.validatePolicy(parentKinds, kindPolicy, dialogs);
         }
@@ -120,9 +119,9 @@ export class ActionPolicyValidator {
 
             case ActionPolicyType.TriggerNotInteractive: {
                 //  ensure no dialogs, or child dialogs, are Input dialogs
-                const childDialogs = dialogs.filter((d) => d.id !== dialog.id);
+                const childDialogs = dialogs.filter((d) => d.id !== dialog?.id);
 
-                while (childDialogs.length > 0) {
+                while (childDialogs.length) {
                     const childDialog = childDialogs.shift();
                     assertConstructorKind(childDialog, ['childDialog']);
 
@@ -143,7 +142,7 @@ export class ActionPolicyValidator {
             }
             case ActionPolicyType.TriggerRequiresAction: {
                 //  ensure the required action is present in the dialogs chain
-                const childActions = dialogs.filter((d) => d.id !== dialog.id);
+                const childActions = dialogs.filter((d) => d.id !== dialog?.id);
                 while (childActions.length) {
                     const childDialog = childActions.shift();
                     assertConstructorKind(childDialog, ['childDialog']);
@@ -177,7 +176,7 @@ export class ActionPolicyValidator {
             return dialog.actions;
         }
 
-        let dialogs: Dialog[];
+        const dialogs: Dialog[] = [];
 
         if (isDialogDependencies(dialog)) {
             for (const dependency of dialog.getDependencies()) {
