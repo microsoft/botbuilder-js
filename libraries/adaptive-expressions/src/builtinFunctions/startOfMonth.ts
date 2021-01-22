@@ -6,8 +6,9 @@
  * Licensed under the MIT License.
  */
 
-import moment from 'moment';
-
+import dayjs from 'dayjs';
+import utc from 'dayjs/plugin/utc';
+dayjs.extend(utc);
 import { Expression } from '../expression';
 import { ExpressionEvaluator, ValueWithError } from '../expressionEvaluator';
 import { ExpressionType } from '../expressionType';
@@ -33,13 +34,14 @@ export class StartOfMonth extends ExpressionEvaluator {
      */
     private static evaluator(expr: Expression, state: MemoryInterface, options: Options): ValueWithError {
         let value: any;
+        let locale = options.locale ? options.locale : Intl.DateTimeFormat().resolvedOptions().locale;
+        let format = FunctionUtils.DefaultDateTimeFormat;
         const { args, error: childrenError } = FunctionUtils.evaluateChildren(expr, state, options);
         let error = childrenError;
         if (!error) {
-            const format: string =
-                args.length === 2 ? FunctionUtils.timestampFormatter(args[1]) : FunctionUtils.DefaultDateTimeFormat;
+            ({ format, locale } = FunctionUtils.determineFormatAndLocale(args, 3, format, locale));
             if (typeof args[0] === 'string') {
-                ({ value, error } = StartOfMonth.evalStartOfMonth(args[0], format));
+                ({ value, error } = StartOfMonth.evalStartOfMonth(args[0], format, locale));
             } else {
                 error = `${expr} should contain an ISO format timestamp and an optional output format string.`;
             }
@@ -51,13 +53,11 @@ export class StartOfMonth extends ExpressionEvaluator {
     /**
      * @private
      */
-    private static evalStartOfMonth(timeStamp: string, format?: string): ValueWithError {
+    private static evalStartOfMonth(timeStamp: string, format?: string, locale?: string): ValueWithError {
         let result: string;
-        const { value: parsed, error: parseError } = InternalFunctionUtils.parseTimestamp(timeStamp);
-        let error = parseError;
+        const error = InternalFunctionUtils.verifyISOTimestamp(timeStamp);
         if (!error) {
-            const startofMonth = moment(parsed).utc().date(1).hours(0).minutes(0).second(0).millisecond(0);
-            ({ value: result, error } = InternalFunctionUtils.returnFormattedTimeStampStr(startofMonth, format));
+            result = dayjs(timeStamp).locale(locale).utc().startOf('month').format(format);
         }
 
         return { value: result, error };
@@ -67,6 +67,6 @@ export class StartOfMonth extends ExpressionEvaluator {
      * @private
      */
     private static validator(expr: Expression): void {
-        FunctionUtils.validateOrder(expr, [ReturnType.String], ReturnType.String);
+        FunctionUtils.validateOrder(expr, [ReturnType.String, ReturnType.String], ReturnType.String);
     }
 }

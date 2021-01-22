@@ -3837,6 +3837,11 @@ dateformat@^2.0.0:
   resolved "https://registry.yarnpkg.com/dateformat/-/dateformat-2.2.0.tgz#4065e2013cf9fb916ddfd82efb506ad4c6769062"
   integrity sha1-QGXiATz5+5Ft39gu+1Bq1MZ2kGI=
 
+dayjs@^1.10.3:
+  version "1.10.3"
+  resolved "https://registry.yarnpkg.com/dayjs/-/dayjs-1.10.3.tgz#cf3357c8e7f508432826371672ebf376cb7d619b"
+  integrity sha512-/2fdLN987N8Ki7Id8BUN2nhuiRyxTLumQnSQf9CNncFCyqFsSKb9TNhzRYcC8K8eJSJOKvbvkImo/MKKhNi4iw==
+
 debug-log@^1.0.1:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/debug-log/-/debug-log-1.0.1.tgz#2307632d4c04382b8df8a32f70b895046d52745f"
@@ -8061,14 +8066,7 @@ mold-source-map@~0.4.0:
     convert-source-map "^1.1.0"
     through "~2.2.7"
 
-moment-timezone@^0.5.32:
-  version "0.5.32"
-  resolved "https://registry.yarnpkg.com/moment-timezone/-/moment-timezone-0.5.32.tgz#db7677cc3cc680fd30303ebd90b0da1ca0dfecc2"
-  integrity sha512-Z8QNyuQHQAmWucp8Knmgei8YNo28aLjJq6Ma+jy1ZSpSk5nyfRT8xgUbSQvD2+2UajISfenndwvFuH3NGS+nvA==
-  dependencies:
-    moment ">= 2.9.0"
-
-"moment@>= 2.9.0", moment@^2.19.3, moment@^2.21.0, moment@^2.22.2, moment@^2.29.1:
+moment@^2.19.3, moment@^2.21.0, moment@^2.22.2:
   version "2.29.1"
   resolved "https://registry.yarnpkg.com/moment/-/moment-2.29.1.tgz#b2be769fa31940be9eeea6469c075e35006fa3d3"
   integrity sha512-kHmoybcPV8Sqy59DwNDY3Jefr64lK/by/da0ViFcuA4DH0vQg5Q6Ze5VimxkfQNSC+Mls/Kx53s7TjP1RhFEDQ==
@@ -8321,20 +8319,20 @@ node-forge@0.10.0, node-forge@^0.10.0:
   resolved "https://registry.yarnpkg.com/node-forge/-/node-forge-0.10.0.tgz#32dea2afb3e9926f02ee5ce8794902691a676bf3"
   integrity sha512-PPmu8eEeG9saEUvI97fm4OYxXVB6bFvyNTyiUOBichBpFG8A1Ljw3bY62+5oOjDEMHRnd0Y7HQ+x7uzxOzC6JA==
 
-node-gyp@7.0.0:
-  version "7.0.0"
-  resolved "https://registry.yarnpkg.com/node-gyp/-/node-gyp-7.0.0.tgz#2e88425ce84e9b1a4433958ed55d74c70fffb6be"
-  integrity sha512-ZW34qA3CJSPKDz2SJBHKRvyNQN0yWO5EGKKksJc+jElu9VA468gwJTyTArC1iOXU7rN3Wtfg/CMt/dBAOFIjvg==
+node-gyp@^7.1.2:
+  version "7.1.2"
+  resolved "https://registry.yarnpkg.com/node-gyp/-/node-gyp-7.1.2.tgz#21a810aebb187120251c3bcec979af1587b188ae"
+  integrity sha512-CbpcIo7C3eMu3dL1c3d0xw449fHIGALIJsRP4DDPHpyiW8vcriNY7ubh9TE4zEKfSxscY7PjeFnshE7h75ynjQ==
   dependencies:
     env-paths "^2.2.0"
     glob "^7.1.4"
     graceful-fs "^4.2.3"
-    nopt "^4.0.3"
+    nopt "^5.0.0"
     npmlog "^4.1.2"
     request "^2.88.2"
-    rimraf "^2.6.3"
+    rimraf "^3.0.2"
     semver "^7.3.2"
-    tar "^6.0.1"
+    tar "^6.0.2"
     which "^2.0.2"
 
 node-libs-browser@^2.2.1:
@@ -8366,7 +8364,7 @@ node-libs-browser@^2.2.1:
     util "^0.11.0"
     vm-browserify "^1.0.1"
 
-node-pre-gyp@0.15.0:
+node-pre-gyp@^0.15.0:
   version "0.15.0"
   resolved "https://registry.yarnpkg.com/node-pre-gyp/-/node-pre-gyp-0.15.0.tgz#c2fc383276b74c7ffa842925241553e8b40f1087"
   integrity sha512-7QcZa8/fpaU/BKenjcaeFF9hLz2+7S9AqyXFhlH/rilsQ/hPZKK32RtR5EQHJElgu+q5RfbJ34KriI79UWaorA==
@@ -8404,13 +8402,20 @@ noop-logger@^0.1.1:
   resolved "https://registry.yarnpkg.com/noop-logger/-/noop-logger-0.1.1.tgz#94a2b1633c4f1317553007d8966fd0e841b6a4c2"
   integrity sha1-lKKxYzxPExdVMAfYlm/Q6EG2pMI=
 
-nopt@^4.0.1, nopt@^4.0.3:
+nopt@^4.0.1:
   version "4.0.3"
   resolved "https://registry.yarnpkg.com/nopt/-/nopt-4.0.3.tgz#a375cad9d02fd921278d954c2254d5aa57e15e48"
   integrity sha512-CvaGwVMztSMJLOeXPrez7fyfObdZqNUK1cPAEzLHrTybIua9pMdmmPR5YwtfNftIOMv3DPUhFaxsZMNTQO20Kg==
   dependencies:
     abbrev "1"
     osenv "^0.1.4"
+
+nopt@^5.0.0:
+  version "5.0.0"
+  resolved "https://registry.yarnpkg.com/nopt/-/nopt-5.0.0.tgz#530942bb58a512fccafe53fe210f13a25355dc88"
+  integrity sha512-Tbj67rffqceeLpcRXrT7vKAN8CwfPeIBgM7E6iBkmKLV7bEMwpGgYLGv0jACUsECaa/vuxP0IjEont6umdMgtQ==
+  dependencies:
+    abbrev "1"
 
 normalize-package-data@^2.3.2:
   version "2.5.0"
@@ -8747,15 +8752,15 @@ ora@^4.0.3:
     strip-ansi "^6.0.0"
     wcwidth "^1.0.1"
 
-orchestrator-core@beta:
-  version "4.11.0-dev.20201024.0c5247b"
-  resolved "https://registry.yarnpkg.com/orchestrator-core/-/orchestrator-core-4.11.0-dev.20201024.0c5247b.tgz#4a6d219ff2184cdbb1ed9f73d144c636fb3c036c"
-  integrity sha512-MFSwy1+vsFxkt0DdjAFyn98hng7Hsy9BbMRBvHRKdu5aM/W0lrg1LkETSEWlbmd1Edzgi+GptkdClcdMpXqyUg==
+orchestrator-core@4.11.1-beta.6:
+  version "4.11.1-beta.6"
+  resolved "https://registry.yarnpkg.com/orchestrator-core/-/orchestrator-core-4.11.1-beta.6.tgz#39dcff8f923743ec997ffb8faff51055b53b6100"
+  integrity sha512-cdvqh31oAHKnor1mU1eMBNPdCJeQ7nDwBTeYeVuvI3W/5U9imlzuoOURBp78PqWdTuLkugBmTycovOjwQBJd2A==
   dependencies:
     bindings "1.2.1"
     node-addon-api "^3.0.0"
-    node-gyp "7.0.0"
-    node-pre-gyp "0.15.0"
+    node-gyp "^7.1.2"
+    node-pre-gyp "^0.15.0"
     onnxruntime "1.4.0"
 
 orchestrator@^0.3.0:
@@ -11216,7 +11221,7 @@ tar@^4.4.2:
     safe-buffer "^5.1.2"
     yallist "^3.0.3"
 
-tar@^6.0.1, tar@^6.0.2:
+tar@^6.0.2:
   version "6.0.5"
   resolved "https://registry.yarnpkg.com/tar/-/tar-6.0.5.tgz#bde815086e10b39f1dcd298e89d596e1535e200f"
   integrity sha512-0b4HOimQHj9nXNEAA7zWwMM91Zhhba3pspja6sQbgTpynOJf+bkjBnfybNYzbpLbnwXnbyB4LOREvlyXLkCHSg==

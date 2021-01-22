@@ -39,7 +39,7 @@ export class FormatNumber extends ExpressionEvaluator {
             let error: string;
             const number = args[0];
             const precision = args[1];
-            let locale = options.locale;
+            let locale = options.locale ? options.locale : Intl.DateTimeFormat().resolvedOptions().locale;
             locale = FunctionUtils.determineLocale(args, 3, locale);
             if (typeof number !== 'number') {
                 error = `formatNumber first argument ${number} must be a number`;

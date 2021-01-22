@@ -3,7 +3,7 @@
 
 import * as R from 'remeda';
 import minimist from 'minimist';
-import moment from 'moment';
+import dayjs from 'dayjs';
 import path from 'path';
 import { Package } from './package';
 import { collectWorkspacePackages } from './workspace';
@@ -79,7 +79,7 @@ export const command = (argv: string[], quiet = false) => async (): Promise<Resu
     }
 
     // Fetch and format date, if instructed
-    const date = flags.date ? moment().format(flags.date) : undefined;
+    const date = flags.date ? dayjs().format(flags.date) : undefined;
 
     // Read git commit sha if instructed (JSON.parse properly coerces strings to boolean)
     const commitSha = JSON.parse(flags.git) ? await gitSha(GIT_SHA_REF, GIT_SHA_LENGTH) : undefined;

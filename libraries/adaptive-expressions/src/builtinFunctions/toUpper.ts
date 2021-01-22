@@ -6,8 +6,12 @@
  * Licensed under the MIT License.
  */
 
+import { Expression } from '../expression';
 import { ExpressionType } from '../expressionType';
+import { FunctionUtils } from '../functionUtils';
 import { InternalFunctionUtils } from '../functionUtils.internal';
+import { Options } from '../options';
+import { ReturnType } from '../returnType';
 import { StringTransformEvaluator } from './stringTransformEvaluator';
 
 /**
@@ -19,13 +23,18 @@ export class ToUpper extends StringTransformEvaluator {
      * Initializes a new instance of the [ToUpper](xref:adaptive-expressions.ToUpper) class.
      */
     public constructor() {
-        super(ExpressionType.ToUpper, ToUpper.evaluator);
+        super(ExpressionType.ToUpper, ToUpper.evaluator, FunctionUtils.validateUnaryOrBinaryString);
     }
 
     /**
      * @private
      */
-    private static evaluator(args: any[]): string {
-        return String(InternalFunctionUtils.parseStringOrUndefined(args[0])).toUpperCase();
+    private static evaluator(args: unknown[], options: Options): string {
+        let locale = options.locale ? options.locale : Intl.DateTimeFormat().resolvedOptions().locale;
+        locale = FunctionUtils.determineLocale(args, 2, locale);
+        const firstArg = args[0];
+        if (typeof firstArg === 'string' || firstArg === undefined) {
+            return (InternalFunctionUtils.parseStringOrUndefined(firstArg) as any).toLocaleUpperCase(locale);
+        }
     }
 }

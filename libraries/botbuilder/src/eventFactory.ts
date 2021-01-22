@@ -6,7 +6,9 @@
 import { v4 as uuidv4 } from 'uuid';
 import { TurnContext } from 'botbuilder-core';
 import { Activity, Attachment, ConversationAccount, ConversationReference, Transcript } from 'botframework-schema';
-import * as moment from 'moment-timezone';
+import * as dayjs from 'dayjs';
+import * as timezone from 'dayjs/plugin/timezone';
+dayjs.extend(timezone);
 import { HandoffEventNames } from './handoffEventNames';
 
 /**
@@ -86,7 +88,7 @@ export class EventFactory {
         handoffEvent.timestamp = new Date(Date.now());
         // The timestamp does not contain the local offset which is a known limitation of Date objects in JavaScript.
         // Therefore, the localTimezone is included in the handoffEvent.
-        handoffEvent.localTimezone = moment.tz.guess();
+        handoffEvent.localTimezone = dayjs.tz.guess();
         handoffEvent.conversation = conversation;
         handoffEvent.attachments = [];
         handoffEvent.entities = [];
