@@ -624,7 +624,7 @@ export class FunctionUtils {
         return locale;
     }
 
-        /**
+    /**
      *
      * @param args An array of arguments.
      * @param format A format string.
@@ -664,7 +664,7 @@ export class FunctionUtils {
      * @param formatter C# datetime format
      */
     public static timestampFormatter(formatter: string): string {
-        if (formatter === undefined || formatter === '') {
+        if (!formatter) {
             return FunctionUtils.DefaultDateTimeFormat;
         }
         let result = formatter;
