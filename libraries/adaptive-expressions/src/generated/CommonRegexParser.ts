@@ -1,4 +1,4 @@
-// Generated from src/CommonRegex.g4 by ANTLR 4.7.3-SNAPSHOT
+// Generated from src/CommonRegex.g4 by ANTLR 4.9.0-SNAPSHOT
 
 /**
  * @module adaptive-expressions
@@ -223,6 +223,10 @@ export class CommonRegexParser extends Parser {
 
 	// @Override
 	public get serializedATN(): string { return CommonRegexParser._serializedATN; }
+
+	protected createFailedPredicateException(predicate?: string, message?: string): FailedPredicateException {
+		return new FailedPredicateException(this, predicate, message);
+	}
 
 	constructor(input: TokenStream) {
 		super(input);

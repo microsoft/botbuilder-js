@@ -1,4 +1,4 @@
-// Generated from src/parser/ExpressionAntlrParser.g4 by ANTLR 4.7.3-SNAPSHOT
+// Generated from src/parser/ExpressionAntlrParser.g4 by ANTLR 4.9.0-SNAPSHOT
 
 /**
  * @module adaptive-expressions
@@ -123,6 +123,10 @@ export class ExpressionAntlrParser extends Parser {
 	// @Override
 	public get serializedATN(): string { return ExpressionAntlrParser._serializedATN; }
 
+	protected createFailedPredicateException(predicate?: string, message?: string): FailedPredicateException {
+		return new FailedPredicateException(this, predicate, message);
+	}
+
 	constructor(input: TokenStream) {
 		super(input);
 		this._interp = new ParserATNSimulator(ExpressionAntlrParser._ATN, this);
@@ -239,7 +243,7 @@ export class ExpressionAntlrParser extends Parser {
 						this.pushNewRecursionContext(_localctx, _startState, ExpressionAntlrParser.RULE_expression);
 						this.state = 29;
 						if (!(this.precpred(this._ctx, 11))) {
-							throw new FailedPredicateException(this, "this.precpred(this._ctx, 11)");
+							throw this.createFailedPredicateException("this.precpred(this._ctx, 11)");
 						}
 						this.state = 30;
 						this.match(ExpressionAntlrParser.XOR);
@@ -254,7 +258,7 @@ export class ExpressionAntlrParser extends Parser {
 						this.pushNewRecursionContext(_localctx, _startState, ExpressionAntlrParser.RULE_expression);
 						this.state = 32;
 						if (!(this.precpred(this._ctx, 10))) {
-							throw new FailedPredicateException(this, "this.precpred(this._ctx, 10)");
+							throw this.createFailedPredicateException("this.precpred(this._ctx, 10)");
 						}
 						this.state = 33;
 						_la = this._input.LA(1);
@@ -279,7 +283,7 @@ export class ExpressionAntlrParser extends Parser {
 						this.pushNewRecursionContext(_localctx, _startState, ExpressionAntlrParser.RULE_expression);
 						this.state = 35;
 						if (!(this.precpred(this._ctx, 9))) {
-							throw new FailedPredicateException(this, "this.precpred(this._ctx, 9)");
+							throw this.createFailedPredicateException("this.precpred(this._ctx, 9)");
 						}
 						this.state = 36;
 						_la = this._input.LA(1);
@@ -304,7 +308,7 @@ export class ExpressionAntlrParser extends Parser {
 						this.pushNewRecursionContext(_localctx, _startState, ExpressionAntlrParser.RULE_expression);
 						this.state = 38;
 						if (!(this.precpred(this._ctx, 8))) {
-							throw new FailedPredicateException(this, "this.precpred(this._ctx, 8)");
+							throw this.createFailedPredicateException("this.precpred(this._ctx, 8)");
 						}
 						this.state = 39;
 						_la = this._input.LA(1);
@@ -329,7 +333,7 @@ export class ExpressionAntlrParser extends Parser {
 						this.pushNewRecursionContext(_localctx, _startState, ExpressionAntlrParser.RULE_expression);
 						this.state = 41;
 						if (!(this.precpred(this._ctx, 7))) {
-							throw new FailedPredicateException(this, "this.precpred(this._ctx, 7)");
+							throw this.createFailedPredicateException("this.precpred(this._ctx, 7)");
 						}
 						{
 						this.state = 42;
@@ -346,7 +350,7 @@ export class ExpressionAntlrParser extends Parser {
 						this.pushNewRecursionContext(_localctx, _startState, ExpressionAntlrParser.RULE_expression);
 						this.state = 44;
 						if (!(this.precpred(this._ctx, 6))) {
-							throw new FailedPredicateException(this, "this.precpred(this._ctx, 6)");
+							throw this.createFailedPredicateException("this.precpred(this._ctx, 6)");
 						}
 						this.state = 45;
 						_la = this._input.LA(1);
@@ -371,7 +375,7 @@ export class ExpressionAntlrParser extends Parser {
 						this.pushNewRecursionContext(_localctx, _startState, ExpressionAntlrParser.RULE_expression);
 						this.state = 47;
 						if (!(this.precpred(this._ctx, 5))) {
-							throw new FailedPredicateException(this, "this.precpred(this._ctx, 5)");
+							throw this.createFailedPredicateException("this.precpred(this._ctx, 5)");
 						}
 						this.state = 48;
 						this.match(ExpressionAntlrParser.DOUBLE_AND);
@@ -386,7 +390,7 @@ export class ExpressionAntlrParser extends Parser {
 						this.pushNewRecursionContext(_localctx, _startState, ExpressionAntlrParser.RULE_expression);
 						this.state = 50;
 						if (!(this.precpred(this._ctx, 4))) {
-							throw new FailedPredicateException(this, "this.precpred(this._ctx, 4)");
+							throw this.createFailedPredicateException("this.precpred(this._ctx, 4)");
 						}
 						this.state = 51;
 						this.match(ExpressionAntlrParser.DOUBLE_VERTICAL_CYLINDER);
@@ -401,7 +405,7 @@ export class ExpressionAntlrParser extends Parser {
 						this.pushNewRecursionContext(_localctx, _startState, ExpressionAntlrParser.RULE_expression);
 						this.state = 53;
 						if (!(this.precpred(this._ctx, 3))) {
-							throw new FailedPredicateException(this, "this.precpred(this._ctx, 3)");
+							throw this.createFailedPredicateException("this.precpred(this._ctx, 3)");
 						}
 						this.state = 54;
 						this.match(ExpressionAntlrParser.NULL_COALESCE);
@@ -416,7 +420,7 @@ export class ExpressionAntlrParser extends Parser {
 						this.pushNewRecursionContext(_localctx, _startState, ExpressionAntlrParser.RULE_expression);
 						this.state = 56;
 						if (!(this.precpred(this._ctx, 2))) {
-							throw new FailedPredicateException(this, "this.precpred(this._ctx, 2)");
+							throw this.createFailedPredicateException("this.precpred(this._ctx, 2)");
 						}
 						this.state = 57;
 						this.match(ExpressionAntlrParser.QUESTION_MARK);
@@ -589,7 +593,7 @@ export class ExpressionAntlrParser extends Parser {
 						this.pushNewRecursionContext(_localctx, _startState, ExpressionAntlrParser.RULE_primaryExpression);
 						this.state = 88;
 						if (!(this.precpred(this._ctx, 3))) {
-							throw new FailedPredicateException(this, "this.precpred(this._ctx, 3)");
+							throw this.createFailedPredicateException("this.precpred(this._ctx, 3)");
 						}
 						this.state = 89;
 						this.match(ExpressionAntlrParser.DOT);
@@ -604,7 +608,7 @@ export class ExpressionAntlrParser extends Parser {
 						this.pushNewRecursionContext(_localctx, _startState, ExpressionAntlrParser.RULE_primaryExpression);
 						this.state = 91;
 						if (!(this.precpred(this._ctx, 2))) {
-							throw new FailedPredicateException(this, "this.precpred(this._ctx, 2)");
+							throw this.createFailedPredicateException("this.precpred(this._ctx, 2)");
 						}
 						this.state = 93;
 						this._errHandler.sync(this);
@@ -639,7 +643,7 @@ export class ExpressionAntlrParser extends Parser {
 						this.pushNewRecursionContext(_localctx, _startState, ExpressionAntlrParser.RULE_primaryExpression);
 						this.state = 100;
 						if (!(this.precpred(this._ctx, 1))) {
-							throw new FailedPredicateException(this, "this.precpred(this._ctx, 1)");
+							throw this.createFailedPredicateException("this.precpred(this._ctx, 1)");
 						}
 						this.state = 101;
 						this.match(ExpressionAntlrParser.OPEN_SQUARE_BRACKET);
