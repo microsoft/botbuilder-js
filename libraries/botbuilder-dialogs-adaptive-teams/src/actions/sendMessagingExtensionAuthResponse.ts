@@ -13,7 +13,14 @@ import {
     StringExpression,
     StringExpressionConverter,
 } from 'adaptive-expressions';
-import { ActionTypes, Activity, BotFrameworkAdapter, MessagingExtensionResult, TokenResponse } from 'botbuilder';
+import {
+    ActionTypes,
+    Activity,
+    BotAdapter,
+    BotFrameworkAdapter,
+    MessagingExtensionResult,
+    TokenResponse,
+} from 'botbuilder';
 import {
     Converter,
     ConverterFactory,
@@ -36,7 +43,11 @@ export interface SendMessagingExtensionAuthResponseConfiguration extends DialogC
 // dc.context.adapter is typed as a BotAdapter, not containing getUserToken and getSignInLink. However, both
 // BotFrameworkAdapter and TestAdapter contain them, so we just need to make sure that dc.context.adapter contains
 // an adapter with the appropriate auth methods.
-const testAdapterHasAuthMethods: Test<BotFrameworkAdapter> = (val: unknown): val is BotFrameworkAdapter => {
+interface HasAuthMethods {
+    getUserToken: typeof BotFrameworkAdapter.prototype.getUserToken;
+    getSignInLink: typeof BotFrameworkAdapter.prototype.getSignInLink;
+}
+const testAdapterHasAuthMethods: Test<HasAuthMethods> = (val: unknown): val is HasAuthMethods => {
     return (
         val instanceof BotFrameworkAdapter ||
         (tests.isFunc((val as BotFrameworkAdapter).getUserToken) &&
@@ -141,7 +152,7 @@ export class SendMessagingExtensionAuthResponse
 
     private static async getUserToken(
         dc: DialogContext,
-        tokenProvider: BotFrameworkAdapter,
+        tokenProvider: BotAdapter & HasAuthMethods,
         connectionName: string
     ): Promise<TokenResponse> {
         let magicCode;
@@ -156,7 +167,7 @@ export class SendMessagingExtensionAuthResponse
     private async getInvokeResponseWithSignInLink(
         dc: DialogContext,
         title: string,
-        tokenProvider: BotFrameworkAdapter,
+        tokenProvider: BotAdapter & HasAuthMethods,
         connectionName: string
     ): Promise<Partial<Activity>> {
         const signInLink = await tokenProvider.getSignInLink(dc.context, connectionName);
