@@ -35,13 +35,15 @@ export class AddToTime extends ExpressionEvaluator {
     private static evaluator(expression: Expression, state: MemoryInterface, options: Options): ValueWithError {
         let value: any;
 
+        let locale = options.locale ? options.locale : Intl.DateTimeFormat().resolvedOptions().locale;
+        let format = FunctionUtils.DefaultDateTimeFormat;
         const { args, error: childrenError } = FunctionUtils.evaluateChildren(expression, state, options);
         let error = childrenError;
+
         if (!error) {
-            const format: string =
-                args.length === 4 ? FunctionUtils.timestampFormatter(args[3]) : FunctionUtils.DefaultDateTimeFormat;
+            ({ format, locale } = FunctionUtils.determineFormatAndLocale(args, 5, format, locale));
             if (typeof args[0] === 'string' && Number.isInteger(args[1]) && typeof args[2] === 'string') {
-                ({ value, error } = AddToTime.evalAddToTime(args[0], args[1], args[2], format));
+                ({ value, error } = AddToTime.evalAddToTime(args[0], args[1], args[2], format, locale));
             } else {
                 error = `${expression} should contain an ISO format timestamp, a time interval integer, a string unit of time and an optional output format string.`;
             }
@@ -57,13 +59,14 @@ export class AddToTime extends ExpressionEvaluator {
         timeStamp: string,
         interval: number,
         timeUnit: string,
-        format?: string
+        format?: string,
+        locale?: string
     ): ValueWithError {
         let result: string;
-        let error = InternalFunctionUtils.verifyISOTimestamp(timeStamp);
+        const error = InternalFunctionUtils.verifyISOTimestamp(timeStamp);
         if (!error) {
             const { duration, tsStr } = InternalFunctionUtils.timeUnitTransformer(interval, timeUnit);
-            result = dayjs(timeStamp).utc().add(duration, tsStr).format(format);
+            result = dayjs(timeStamp).locale(locale).utc().add(duration, tsStr).format(format);
         }
 
         return { value: result, error };
@@ -75,7 +78,7 @@ export class AddToTime extends ExpressionEvaluator {
     private static validator(expression: Expression): void {
         FunctionUtils.validateOrder(
             expression,
-            [ReturnType.String],
+            [ReturnType.String, ReturnType.String],
             ReturnType.String,
             ReturnType.Number,
             ReturnType.String

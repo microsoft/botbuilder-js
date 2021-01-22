@@ -34,13 +34,14 @@ export class ConvertToUTC extends ExpressionEvaluator {
      */
     private static evaluator(expression: Expression, state: MemoryInterface, options: Options): ValueWithError {
         let value: any;
+        let locale = options.locale ? options.locale : Intl.DateTimeFormat().resolvedOptions().locale;
+        let format = FunctionUtils.DefaultDateTimeFormat;
         const { args, error: childrenError } = FunctionUtils.evaluateChildren(expression, state, options);
         let error = childrenError;
         if (!error) {
-            const format: string =
-                args.length === 3 ? FunctionUtils.timestampFormatter(args[2]) : FunctionUtils.DefaultDateTimeFormat;
+            ({ format, locale } = FunctionUtils.determineFormatAndLocale(args, 4, format, locale));
             if (typeof args[0] === 'string' && typeof args[1] === 'string') {
-                ({ value, error } = ConvertToUTC.evalConvertToUTC(args[0], args[1], format));
+                ({ value, error } = ConvertToUTC.evalConvertToUTC(args[0], args[1], format, locale));
             } else {
                 error = `${expression} should contain an ISO format timestamp, a destination time zone string and an optional output format string.`;
             }
@@ -64,7 +65,7 @@ export class ConvertToUTC extends ExpressionEvaluator {
     /**
      * @private
      */
-    private static evalConvertToUTC(timeStamp: string, sourceTimezone: string, format?: string): ValueWithError {
+    private static evalConvertToUTC(timeStamp: string, sourceTimezone: string, format?: string, locale?: string): ValueWithError {
         let result: string;
         let error: string;
         let formattedSourceTime: string;
@@ -85,7 +86,7 @@ export class ConvertToUTC extends ExpressionEvaluator {
 
                 if (!error) {
                     try {
-                        result = dayjs(formattedSourceTime).tz('Etc/UTC').format(format);
+                        result = dayjs(formattedSourceTime).locale(locale).tz('Etc/UTC').format(format);
                     } catch (e) {
                         error = `${format} is not a valid timestamp format`;
                     }
@@ -100,6 +101,6 @@ export class ConvertToUTC extends ExpressionEvaluator {
      * @private
      */
     private static validator(expr: Expression): void {
-        FunctionUtils.validateOrder(expr, [ReturnType.String], ReturnType.String, ReturnType.String);
+        FunctionUtils.validateOrder(expr, [ReturnType.String, ReturnType.String], ReturnType.String, ReturnType.String);
     }
 }

@@ -10,9 +10,10 @@ import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 dayjs.extend(utc);
 import { Expression } from '../expression';
-import { EvaluateExpressionDelegate, ExpressionEvaluator } from '../expressionEvaluator';
+import { EvaluateExpressionDelegate, ExpressionEvaluator, ValueWithError } from '../expressionEvaluator';
 import { ExpressionType } from '../expressionType';
 import { FunctionUtils } from '../functionUtils';
+import { Options } from '../options';
 import { ReturnType } from '../returnType';
 
 /**
@@ -30,10 +31,17 @@ export class UtcNow extends ExpressionEvaluator {
      * @private
      */
     private static evaluator(): EvaluateExpressionDelegate {
-        return FunctionUtils.apply(
-            (args: any[]): string =>
-                args.length === 1 ? dayjs(new Date()).utc().format(FunctionUtils.timestampFormatter(args[0])) : new Date().toISOString(),
-            FunctionUtils.verifyString
+        return FunctionUtils.applyWithOptionsAndError(
+            (args: unknown[], options: Options): ValueWithError => {
+                let locale = options.locale ? options.locale : Intl.DateTimeFormat().resolvedOptions().locale;
+                let format = FunctionUtils.DefaultDateTimeFormat;
+                ({ format, locale } = FunctionUtils.determineFormatAndLocale(args, 2, format, locale));
+
+                return {
+                    value: dayjs(new Date()).locale(locale).utc().format(format),
+                    error: undefined,
+                };
+            }
         );
     }
 
@@ -41,6 +49,6 @@ export class UtcNow extends ExpressionEvaluator {
      * @private
      */
     private static validator(expression: Expression): void {
-        FunctionUtils.validateOrder(expression, [ReturnType.String]);
+        FunctionUtils.validateOrder(expression, [ReturnType.String, ReturnType.String]);
     }
 }

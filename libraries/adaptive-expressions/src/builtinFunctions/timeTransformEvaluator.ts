@@ -35,20 +35,20 @@ export class TimeTransformEvaluator extends ExpressionEvaluator {
      */
     private static evaluator(func: (timestamp: Date, numOfTransformation: number) => Date): EvaluateExpressionDelegate {
         return (expression: Expression, state: MemoryInterface, options: Options): ValueWithError => {
-            let result: string;
+            let result: any;
+            let locale = options.locale ? options.locale : Intl.DateTimeFormat().resolvedOptions().locale;
+            let format = FunctionUtils.DefaultDateTimeFormat;
             const { args, error: childrenError } = FunctionUtils.evaluateChildren(expression, state, options);
             let error = childrenError;
             if (!error) {
+                ({ format, locale } = FunctionUtils.determineFormatAndLocale(args, 4, format, locale));
                 if (typeof args[0] === 'string' && typeof args[1] === 'number') {
                     error = InternalFunctionUtils.verifyISOTimestamp(args[0]);
                     if (!error) {
-                        if (args.length === 3 && typeof args[2] === 'string') {
-                            result = dayjs(func(new Date(args[0]), args[1]))
-                                .utc()
-                                .format(FunctionUtils.timestampFormatter(args[2]));
-                        } else {
-                            result = func(new Date(args[0]), args[1]).toISOString();
-                        }
+                        result = dayjs(func(new Date(args[0]), args[1]))
+                            .locale(locale)
+                            .utc()
+                            .format(format);
                     }
                 } else {
                     error = `${expression} should contain an ISO format timestamp and a time interval integer.`;
@@ -63,6 +63,11 @@ export class TimeTransformEvaluator extends ExpressionEvaluator {
      * @private
      */
     private static validator(expression: Expression): void {
-        FunctionUtils.validateOrder(expression, [ReturnType.String], ReturnType.String, ReturnType.Number);
+        FunctionUtils.validateOrder(
+            expression,
+            [ReturnType.String, ReturnType.String],
+            ReturnType.String,
+            ReturnType.Number
+        );
     }
 }

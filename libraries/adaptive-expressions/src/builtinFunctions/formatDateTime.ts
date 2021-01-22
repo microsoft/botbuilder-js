@@ -14,6 +14,7 @@ import { EvaluateExpressionDelegate, ExpressionEvaluator } from '../expressionEv
 import { ExpressionType } from '../expressionType';
 import { FunctionUtils } from '../functionUtils';
 import { InternalFunctionUtils } from '../functionUtils.internal';
+import { Options } from '../options';
 import { ReturnType } from '../returnType';
 
 /**
@@ -32,9 +33,11 @@ export class FormatDateTime extends ExpressionEvaluator {
      * @private
      */
     private static evaluator(): EvaluateExpressionDelegate {
-        return FunctionUtils.applyWithError((args: any[]): any => {
+        return FunctionUtils.applyWithOptionsAndError((args: unknown[], options: Options): any => {
             let error: string;
             let arg: any = args[0];
+            let locale = options.locale ? options.locale : Intl.DateTimeFormat().resolvedOptions().locale;
+            let format = FunctionUtils.DefaultDateTimeFormat;
             if (typeof arg === 'string') {
                 error = InternalFunctionUtils.verifyTimestamp(arg.toString());
             } else {
@@ -42,6 +45,7 @@ export class FormatDateTime extends ExpressionEvaluator {
             }
             let value: any;
             if (!error) {
+                ({ format, locale } = FunctionUtils.determineFormatAndLocale(args, 3, format, locale));
                 let dateString: string;
                 if (arg.endsWith('Z')) {
                     dateString = new Date(arg).toISOString();
@@ -53,10 +57,7 @@ export class FormatDateTime extends ExpressionEvaluator {
                     }
                 }
 
-                value =
-                    args.length === 2
-                        ? dayjs(dateString).utc().format(FunctionUtils.timestampFormatter(args[1]))
-                        : dateString;
+                value = dayjs(dateString).locale(locale).utc().format(format);
             }
 
             return { value, error };
@@ -67,6 +68,6 @@ export class FormatDateTime extends ExpressionEvaluator {
      * @private
      */
     private static validator(expression: Expression): void {
-        FunctionUtils.validateOrder(expression, [ReturnType.String], ReturnType.String);
+        FunctionUtils.validateOrder(expression, [ReturnType.String, ReturnType.String], ReturnType.String);
     }
 }

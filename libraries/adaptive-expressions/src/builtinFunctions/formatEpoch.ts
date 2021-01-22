@@ -12,6 +12,7 @@ import { Expression } from '../expression';
 import { EvaluateExpressionDelegate, ExpressionEvaluator } from '../expressionEvaluator';
 import { ExpressionType } from '../expressionType';
 import { FunctionUtils } from '../functionUtils';
+import { Options } from '../options';
 import { ReturnType } from '../returnType';
 
 /**
@@ -29,9 +30,11 @@ export class FormatEpoch extends ExpressionEvaluator {
      * @private
      */
     private static evaluator(): EvaluateExpressionDelegate {
-        return FunctionUtils.applyWithError((args: any[]): any => {
+        return FunctionUtils.applyWithOptionsAndError((args: unknown[], options: Options): any => {
             let error: string;
             let arg: any = args[0];
+            let locale = options.locale ? options.locale : Intl.DateTimeFormat().resolvedOptions().locale;
+            let format = FunctionUtils.DefaultDateTimeFormat;
             if (typeof arg !== 'number') {
                 error = `formatEpoch first argument ${arg} must be a number`;
             } else {
@@ -41,11 +44,9 @@ export class FormatEpoch extends ExpressionEvaluator {
 
             let value: any;
             if (!error) {
+                ({ format, locale } = FunctionUtils.determineFormatAndLocale(args, 3, format, locale));
                 const dateString: string = new Date(arg).toISOString();
-                value =
-                    args.length === 2
-                        ? dayjs(dateString).format(FunctionUtils.timestampFormatter(args[1]))
-                        : dateString;
+                value = dayjs(dateString).locale(locale).utc().format(format);
             }
 
             return { value, error };
@@ -56,6 +57,6 @@ export class FormatEpoch extends ExpressionEvaluator {
      * @private
      */
     private static validator(expression: Expression): void {
-        FunctionUtils.validateOrder(expression, [ReturnType.String], ReturnType.Number);
+        FunctionUtils.validateOrder(expression, [ReturnType.String, ReturnType.String], ReturnType.Number);
     }
 }
