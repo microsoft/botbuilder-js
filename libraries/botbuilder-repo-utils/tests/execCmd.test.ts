@@ -82,16 +82,12 @@ describe('execCmd', () => {
                     });
 
                 if (!workspace.expects?.postReadFilter) {
-                    procMock
-                        .expects('execute')
-                        .withArgs(bin, args, sinon.match({ cwd: workspace.cwdPath }))
-                        .once()
-                        .resolves({ stdout: 'hello world', stderr: '' });
+                    procMock.expects('execute').withArgs(bin, args, workspace.cwdPath).once().resolves({ code: 0 });
                 }
             }
         });
 
-        const result = await command([bin, ...args, ...flags], true)();
+        const result = await command([bin, ...args, ...flags], null)();
         if (!isSuccess(result)) {
             assert.fail(result.message);
         }
