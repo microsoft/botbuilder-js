@@ -23,8 +23,6 @@ import path = require('path');
 import nock = require('nock');
 import { jwt } from 'botbuilder-test-utils';
 
-jwt.mocha();
-
 const getTeamsTestAdapter = (convo?: Partial<ConversationReference>): TestAdapter => {
     const adapter = new TestAdapter(convo as ConversationReference);
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -118,6 +116,8 @@ const generateTeamMembers = (amount: number): Record<string, unknown>[] => {
 };
 
 describe('Actions', function () {
+    jwt.mocha();
+
     ComponentRegistration.add(new AdaptiveTestComponentRegistration());
     ComponentRegistration.add(new AdaptiveComponentRegistration());
     ComponentRegistration.add(new TeamsComponentRegistration());
