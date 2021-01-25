@@ -13,6 +13,13 @@ import { execute } from './process';
 import { gitRoot } from './git';
 import { readJsonFile } from './file';
 
+function split(s = '', delim = ','): string[] {
+    return s
+        .split(delim)
+        .map((s) => s.trim())
+        .filter((s) => s);
+}
+
 /**
  * Execute a command across workspaces.
  *
@@ -60,12 +67,12 @@ export const command = (argv: string[], logger: log.Logger | null = log) => asyn
     }
 
     const workspaces = await collectWorkspacePackages(repoRoot, packageFile.workspaces, {
-        ignoreName: flags.ignoreName,
-        ignorePath: flags.ignorePath,
-        name: flags.name,
+        ignoreName: split(flags.ignoreName),
+        ignorePath: split(flags.ignorePath),
+        name: split(flags.name),
         noPrivate: flags.noPrivate,
         script: flags.script,
-        path: flags.path,
+        path: split(flags.path),
     });
 
     if (!workspaces.length) {
