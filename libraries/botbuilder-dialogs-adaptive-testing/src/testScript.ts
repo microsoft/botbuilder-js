@@ -28,6 +28,8 @@ import { Inspector, TestAction } from './testAction';
 import { SetTestOptionsMiddleware } from './setTestOptionsMiddleware';
 import { UserTokenMock, UserTokenMocksConverter } from './userTokenMocks';
 import { DialogContextInspector, DialogInspector } from './dialogInspector';
+import { HttpRequestMock, HttpRequestMocksConverter } from './httpRequestMocks/httpRequestMock';
+import { MockHttpRequestMiddleware } from './mocks/mockHttpRequestMiddleware';
 
 class DialogConverter implements Converter<string, Dialog> {
     public constructor(private readonly _resourceExplorer: ResourceExplorer) {}
@@ -54,10 +56,11 @@ export interface TestScriptConfiguration {
     description?: string;
     dialog?: string | Dialog;
     locale?: string;
+    languagePolicy?: Record<string, string[]> | LanguagePolicy;
+    httpRequestMocks?: string[] | HttpRequestMock[];
     userTokenMocks?: string[] | UserTokenMock[];
     script?: TestAction[];
     enableTrace?: boolean;
-    languagePolicy?: Record<string, string[]> | LanguagePolicy;
 }
 
 /**
@@ -87,6 +90,11 @@ export class TestScript extends Configurable implements TestScriptConfiguration 
     public languagePolicy: LanguagePolicy;
 
     /**
+     * Gets the mock data for Microsoft.HttpRequest.
+     */
+    public httpRequestMocks: HttpRequestMock[] = [];
+
+    /**
      * The mock data for Microsoft.OAuthInput.
      */
     public userTokenMocks: UserTokenMock[] = [];
@@ -105,10 +113,12 @@ export class TestScript extends Configurable implements TestScriptConfiguration 
         switch (property) {
             case 'dialog':
                 return DialogConverter;
-            case 'userTokenMocks':
-                return UserTokenMocksConverter;
             case 'languagePolicy':
                 return new LanguagePolicyConverter();
+            case 'httpRequestMocks':
+                return HttpRequestMocksConverter;
+            case 'userTokenMocks':
+                return UserTokenMocksConverter;
             default:
                 return super.getConverter(property);
         }
@@ -163,6 +173,7 @@ export class TestScript extends Configurable implements TestScriptConfiguration 
 
         adapter.enableTrace = this.enableTrace;
         adapter.locale = this.locale;
+        adapter.use(new MockHttpRequestMiddleware(this.httpRequestMocks));
 
         this.userTokenMocks.forEach((userTokenMock) => {
             userTokenMock.setup(adapter);
