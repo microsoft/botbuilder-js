@@ -4,57 +4,40 @@
 import getStream from 'get-stream';
 import { spawn } from 'child_process';
 
-// Options for executing a command
-export interface Options {
-    // Path to use for current working directory when executing a command
-    cwd?: string;
-    // Stream output to stdout/stderr rather than buffering
-    stream?: boolean;
-    // Suppress stdout output
-    silent?: boolean;
-    // Execute command in context of a shell
-    shell?: boolean;
-}
-
-// Result of executing a command
-export interface Result {
+export type Result = {
+    code: number;
     stdout?: string;
     stderr?: string;
-}
+};
 
 /**
  * Executes a command returning stdout/stderr.
  *
  * @param {string} bin name of a binary to execute
  * @param {string[]} args set of args to pass to binary
- * @param {Options} options options for execution
- * @returns {Promise<Result>} execution results
+ * @param {string} cwd working dir for command
+ * @param {boolean} silent suppress output
+ * @returns {Promise<Result>} exit code of command and stderr output (if any)
  */
-export async function execute(bin: string, args: string[], options: Options): Promise<Result> {
-    const cmd = spawn(bin, args, options);
+export async function execute(bin: string, args: string[], cwd: string, silent = false): Promise<Result> {
+    const cmd = spawn(bin, args, { cwd, shell: true });
 
-    let stdoutPromise = Promise.resolve<string | undefined>(undefined);
-    let stderrPromise = Promise.resolve<string | undefined>(undefined);
+    const stdout = silent ? getStream(cmd.stdout) : Promise.resolve(undefined);
+    const stderr = silent ? getStream(cmd.stderr) : Promise.resolve(undefined);
 
-    if (options.stream) {
-        if (!options.silent) {
-            cmd.stdout.on('data', (data) => console.log(data.toString('utf8').trim()));
-        }
-
-        cmd.stderr.on('data', (data) => console.error(data.toString('utf8').trim()));
-    } else {
-        if (!options.silent) {
-            stdoutPromise = getStream(cmd.stdout, { maxBuffer: Infinity });
-        }
-
-        stderrPromise = getStream(cmd.stderr, { maxBuffer: Infinity });
+    if (!silent) {
+        cmd.stdout.pipe(process.stdout);
+        cmd.stderr.pipe(process.stderr);
     }
 
-    await new Promise((resolve, reject) => {
-        cmd.on('close', resolve);
-        cmd.on('error', reject);
+    const code = await new Promise<number>((resolve, reject) => {
+        cmd.once('close', resolve);
+        cmd.once('error', reject);
     });
 
-    const [stdout, stderr] = await Promise.all([stdoutPromise, stderrPromise]);
-    return { stdout: stdout?.trim(), stderr: stderr?.trim() };
+    return {
+        code,
+        stdout: code !== 0 ? await stdout : undefined,
+        stderr: code !== 0 ? await stderr : undefined,
+    };
 }
