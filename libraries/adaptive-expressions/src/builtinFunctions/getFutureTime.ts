@@ -6,8 +6,9 @@
  * Licensed under the MIT License.
  */
 
-import moment from 'moment';
-
+import dayjs, { OpUnitType } from 'dayjs';
+import utc from 'dayjs/plugin/utc';
+dayjs.extend(utc);
 import { Expression } from '../expression';
 import { ExpressionEvaluator, ValueWithError } from '../expressionEvaluator';
 import { ExpressionType } from '../expressionType';
@@ -33,23 +34,18 @@ export class GetFutureTime extends ExpressionEvaluator {
      */
     private static evaluator(expression: Expression, state: MemoryInterface, options: Options): ValueWithError {
         let value: any;
+        let locale = options.locale ? options.locale : Intl.DateTimeFormat().resolvedOptions().locale;
+        let format = FunctionUtils.DefaultDateTimeFormat;
         const { args, error: childrenError } = FunctionUtils.evaluateChildren(expression, state, options);
         let error = childrenError;
         if (!error) {
             if (Number.isInteger(args[0]) && typeof args[1] === 'string') {
-                const format: string =
-                    args.length === 3 ? FunctionUtils.timestampFormatter(args[2]) : FunctionUtils.DefaultDateTimeFormat;
+                ({ format, locale } = FunctionUtils.determineFormatAndLocale(args, 4, format, locale));
                 const { duration, tsStr } = InternalFunctionUtils.timeUnitTransformer(args[0], args[1]);
                 if (tsStr === undefined) {
                     error = `${args[2]} is not a valid time unit.`;
                 } else {
-                    const dur: any = duration;
-                    ({ value, error } = InternalFunctionUtils.parseTimestamp(
-                        new Date().toISOString(),
-                        (dt: Date): string => {
-                            return moment(dt).utc().add(dur, tsStr).format(format);
-                        }
-                    ));
+                    value = dayjs().locale(locale).utc().add(duration, tsStr).format(format);
                 }
             } else {
                 error = `${expression} should contain a time interval integer, a string unit of time and an optional output format string.`;
@@ -63,6 +59,6 @@ export class GetFutureTime extends ExpressionEvaluator {
      * @private
      */
     private static validator(expression: Expression): void {
-        FunctionUtils.validateOrder(expression, [ReturnType.String], ReturnType.Number, ReturnType.String);
+        FunctionUtils.validateOrder(expression, [ReturnType.String, ReturnType.String], ReturnType.Number, ReturnType.String);
     }
 }

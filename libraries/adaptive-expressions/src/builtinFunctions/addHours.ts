@@ -6,8 +6,6 @@
  * Licensed under the MIT License.
  */
 
-import moment from 'moment';
-
 import { ExpressionType } from '../expressionType';
 import { TimeTransformEvaluator } from './timeTransformEvaluator';
 
@@ -19,6 +17,10 @@ export class AddHours extends TimeTransformEvaluator {
      * Initializes a new instance of the [AddHours](xref:adaptive-expressions.AddHours) class.
      */
     public constructor() {
-        super(ExpressionType.AddHours, (ts: Date, num: any): Date => moment(ts).utc().add(num, 'h').toDate());
+        super(ExpressionType.AddHours, (ts: Date, num: number): Date => {
+            const newDate = new Date(ts);
+            newDate.setHours(ts.getHours() + num);
+            return newDate;
+        });
     }
 }

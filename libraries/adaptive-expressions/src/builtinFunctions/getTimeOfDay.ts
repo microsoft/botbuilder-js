@@ -6,8 +6,6 @@
  * Licensed under the MIT License.
  */
 
-import { parseZone } from 'moment';
-
 import { EvaluateExpressionDelegate, ExpressionEvaluator } from '../expressionEvaluator';
 import { ExpressionType } from '../expressionType';
 import { FunctionUtils } from '../functionUtils';
@@ -38,7 +36,7 @@ export class GetTimeOfDay extends ExpressionEvaluator {
             let value: any;
             const error: string = InternalFunctionUtils.verifyISOTimestamp(args[0]);
             if (!error) {
-                const thisTime: number = parseZone(args[0]).hour() * 100 + parseZone(args[0]).minute();
+                const thisTime: number = new Date(args[0]).getUTCHours() * 100 + new Date(args[0]).getUTCMinutes();
                 if (thisTime === 0) {
                     value = 'midnight';
                 } else if (thisTime > 0 && thisTime < 1200) {

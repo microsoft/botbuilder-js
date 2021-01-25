@@ -11,10 +11,11 @@ import { Expression } from '../expression';
 import { ExpressionEvaluator, ValueWithError } from '../expressionEvaluator';
 import { ExpressionType } from '../expressionType';
 import { FunctionUtils } from '../functionUtils';
-import { InternalFunctionUtils } from '../functionUtils.internal';
+import dayjs from 'dayjs';
 import { MemoryInterface } from '../memory/memoryInterface';
 import { Options } from '../options';
 import { ReturnType } from '../returnType';
+import { InternalFunctionUtils } from '../functionUtils.internal';
 
 /**
  * Return a number of ticks that the two timestamps differ.
@@ -32,19 +33,17 @@ export class DateTimeDiff extends ExpressionEvaluator {
      */
     private static evaluator(expr: Expression, state: MemoryInterface, options: Options): ValueWithError {
         let value: any;
-        let dateTimeStart: any;
-        let dateTimeEnd: any;
         const { args, error: childrenError } = FunctionUtils.evaluateChildren(expr, state, options);
         let error = childrenError;
-        if (!error) {
-            ({ value: dateTimeStart, error: error } = InternalFunctionUtils.ticks(args[0]));
-            if (!error) {
-                ({ value: dateTimeEnd, error: error } = InternalFunctionUtils.ticks(args[1]));
-            }
-        }
 
         if (!error) {
-            value = bigInt(dateTimeStart).minus(bigInt(dateTimeEnd)).toJSNumber();
+            error = InternalFunctionUtils.verifyISOTimestamp(args[0]);
+            if (!error) {
+                error = InternalFunctionUtils.verifyISOTimestamp(args[1]);
+                if (!error) {
+                    value = dayjs(args[0]).diff(dayjs(args[1]), 'milliseconds') * 10000;
+                }
+            }
         }
 
         return { value, error };

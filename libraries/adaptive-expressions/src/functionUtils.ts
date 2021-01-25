@@ -10,7 +10,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 
 import { Constant } from './constant';
-import { convertCSharpDateTimeToMomentJS } from './datetimeFormatConverter';
+import { convertCSharpDateTimeToDayjs } from './datetimeFormatConverter';
 import { Expression } from './expression';
 import { EvaluateExpressionDelegate, ValueWithError } from './expressionEvaluator';
 import { ExpressionType } from './expressionType';
@@ -485,7 +485,10 @@ export class FunctionUtils {
      * @param verify Function to check each arg for validity.
      * @returns Delegate for evaluating an expression.
      */
-    public static applyWithError(func: (arg0: any[]) => any, verify?: VerifyExpression): EvaluateExpressionDelegate {
+    public static applyWithError(
+        func: (arg0: any[]) => ValueWithError,
+        verify?: VerifyExpression
+    ): EvaluateExpressionDelegate {
         return (expression: Expression, state: MemoryInterface, options: Options): ValueWithError => {
             let value: any;
             const { args, error: childrenError } = FunctionUtils.evaluateChildren(expression, state, options, verify);
@@ -514,12 +517,37 @@ export class FunctionUtils {
     ): EvaluateExpressionDelegate {
         return (expression: Expression, state: MemoryInterface, options: Options): ValueWithError => {
             let value: unknown;
-            let error: string;
-            let args: unknown[];
-            ({ args, error } = FunctionUtils.evaluateChildren(expression, state, options, verify));
+            const { args, error: childrenError } = FunctionUtils.evaluateChildren(expression, state, options, verify);
+            let error = childrenError;
             if (!error) {
                 try {
                     ({ value, error } = func(args, options));
+                } catch (e) {
+                    error = e.message;
+                }
+            }
+
+            return { value, error };
+        };
+    }
+
+    /**
+     * Generate an expression delegate that applies function after verifying all children.
+     * @param func Function to apply.
+     * @param verify Function to check each arg for validity.
+     * @returns Delegate for evaluating an expression.
+     */
+    public static applyWithOptions(
+        func: (arg0: unknown[], options: Options) => unknown,
+        verify?: VerifyExpression
+    ): EvaluateExpressionDelegate {
+        return (expression: Expression, state: MemoryInterface, options: Options): ValueWithError => {
+            let value: unknown;
+            const { args, error: childrenError } = FunctionUtils.evaluateChildren(expression, state, options, verify);
+            let error = childrenError;
+            if (!error) {
+                try {
+                    value = func(args, options);
                 } catch (e) {
                     error = e.message;
                 }
@@ -586,21 +614,62 @@ export class FunctionUtils {
      * @param maxArgsLength The max length of a given function.
      */
     public static determineLocale(args: unknown[], maxArgsLength: number, locale = 'en-us'): string {
-        if (args.length === maxArgsLength && typeof args[maxArgsLength - 1] === 'string') {
-            locale = args[maxArgsLength - 1] as string;
+        if (args.length === maxArgsLength) {
+            const lastArg = args[maxArgsLength - 1];
+            if (typeof lastArg === 'string') {
+                locale = lastArg;
+            }
         }
 
         return locale;
     }
 
     /**
-     * Timestamp formatter, convert C# datetime to moment js format.
+     *
+     * @param args An array of arguments.
+     * @param format A format string.
+     * @param locale A locale string.
+     * @param maxArgsLength The max length of a given function.
+     */
+    public static determineFormatAndLocale(
+        args: unknown[],
+        maxArgsLength: number,
+        format: string,
+        locale = 'en-us'
+    ): { format: string; locale: string } {
+        if (maxArgsLength >= 2) {
+            if (args.length === maxArgsLength) {
+                const lastArg = args[maxArgsLength - 1];
+                const secondLastArg = args[maxArgsLength - 2];
+                if (typeof lastArg === 'string' && typeof secondLastArg === 'string') {
+                    format =
+                        secondLastArg !== ''
+                            ? FunctionUtils.timestampFormatter(secondLastArg)
+                            : FunctionUtils.DefaultDateTimeFormat;
+                    locale = lastArg.substr(0, 2); //dayjs only support two-letter locale representattion
+                }
+            } else if (args.length === maxArgsLength - 1) {
+                const lastArg = args[maxArgsLength - 2];
+                if (typeof lastArg === 'string') {
+                    format = FunctionUtils.timestampFormatter(lastArg);
+                }
+            }
+        }
+
+        return { format: format, locale: locale };
+    }
+
+    /**
+     * Timestamp formatter, convert C# datetime to day.js format.
      * @param formatter C# datetime format
      */
     public static timestampFormatter(formatter: string): string {
+        if (!formatter) {
+            return FunctionUtils.DefaultDateTimeFormat;
+        }
         let result = formatter;
         try {
-            result = convertCSharpDateTimeToMomentJS(formatter);
+            result = convertCSharpDateTimeToDayjs(formatter);
         } catch (e) {
             // do nothing
         }
