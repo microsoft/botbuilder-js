@@ -155,10 +155,7 @@ export class SendMessagingExtensionAuthResponse
         tokenProvider: BotAdapter & HasAuthMethods,
         connectionName: string
     ): Promise<TokenResponse> {
-        let magicCode;
-        if (!isEmpty(dc.context.activity?.value)) {
-            magicCode = dc.context.activity.value.state;
-        }
+        const magicCode = !isEmpty(dc.context.activity?.value) ? dc.context.activity.value.state : undefined;
 
         // TODO: SSO and skills token exchange
         return tokenProvider.getUserToken(dc.context, connectionName, magicCode);
