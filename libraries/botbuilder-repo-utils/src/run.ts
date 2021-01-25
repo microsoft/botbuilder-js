@@ -62,7 +62,7 @@ export type Result = Success | Failure;
  * Executes `logic` and handles transforming the `Result` into proper process state. Logs errors and exits the process.
  *
  * @param {() => Promise<Result>} logic an operation to execute that yields a `Result`
- * @param {Logger} logger optional, a logger to use
+ * @param {log.Logger} logger optional, a logger to use
  * @returns {Promise<void>} a promise representing execution of `logic`
  */
 export async function run(logic: () => Promise<Result>, logger: log.Logger | null = log): Promise<void> {
