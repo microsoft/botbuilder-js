@@ -2,79 +2,37 @@
 // Licensed under the MIT License.
 
 import * as R from 'remeda';
-import assert from 'assert';
-import async from 'async';
+import log from 'npmlog';
 import minimist from 'minimist';
 import path from 'path';
-import pmap from 'p-map';
 import { Package } from './package';
 import { Result, failure, run, success } from './run';
 import { Workspace, collectWorkspacePackages } from './workspace';
+import { coordinatedExecutor, concurrentExecutor } from './executor';
 import { execute } from './process';
 import { gitRoot } from './git';
 import { readJsonFile } from './file';
 
-// Describes a function signature for an executor that accepts a list of workspaces,
-// a task, and a concurrency parameter and executes the task against all workspaces.
-type Executor = (
-    workspaces: Workspace[],
-    task: (workspace: Workspace) => Promise<unknown>,
-    concurrency?: number
-) => Promise<unknown>;
+function split(s = '', delim = ','): string[] {
+    return s
+        .split(delim)
+        .map((s) => s.trim())
+        .filter((s) => s);
+}
 
-// Executes `task` against `workspaces` ensuring that `task` is executed against dependencies
-// before consumers (if possible, cycles are broken).
-const coordinatedExecutor: Executor = (workspaces, task, concurrency) => {
-    const names = new Set(workspaces.map((workspace) => workspace.pkg.name));
-
-    // Collect packages with all workspace deps
-    const workspacesByPkgName: Record<string, { workspace: Workspace; dependencies: string[] }> = workspaces.reduce(
-        (acc, workspace) => ({
-            ...acc,
-            [workspace.pkg.name]: {
-                workspace,
-                dependencies: R.uniq([
-                    ...Object.keys(workspace.pkg.dependencies ?? {}).filter((name) => names.has(name)),
-                    ...Object.keys(workspace.pkg.devDependencies ?? {}).filter((name) => names.has(name)),
-                ]),
-            },
-        }),
-        {}
-    );
-
-    // Construct a DAG of tasks, with cycles removed, for async execution
-    const tasks = Object.entries(workspacesByPkgName).reduce((acc, [, { dependencies, workspace }]) => {
-        return {
-            ...acc,
-            [workspace.pkg.name]: [
-                ...R.reject(dependencies, (name) =>
-                    // eslint-disable-next-line security/detect-object-injection
-                    workspacesByPkgName[name].dependencies.includes(workspace.pkg.name)
-                ),
-                (...args: unknown[]) => {
-                    const callback = args.pop();
-                    assert(typeof callback === 'function');
-
-                    task(workspace)
-                        .then(() => callback())
-                        .catch((err) => callback(err));
-                },
-            ],
-        };
-    }, {});
-
-    return new Promise((resolve, reject) => async.auto(tasks, concurrency, (err) => (err ? reject(err) : resolve())));
-};
-
-// Executes `task` against `workspaces` concurrently with no coordination
-const concurrentExecutor: Executor = (workspaces, task, concurrency) => pmap(workspaces, task, { concurrency });
-
-export const command = (argv: string[], quiet = false) => async (): Promise<Result> => {
+/**
+ * Execute a command across workspaces.
+ *
+ * @param {string[]} argv args to parse
+ * @param {log.Logger | null} logger logger to use, or null to disable
+ * @returns {Promise<Result>} a promise that resolves to the result of execution
+ */
+export const command = (argv: string[], logger: log.Logger | null = log) => async (): Promise<Result> => {
     const { _: maybeCmd, ...flags } = minimist(argv, {
         '--': true,
-        boolean: ['continue', 'coordinated', 'noPrivate', 'silent', 'stream'],
-        default: { concurrency: '5', npm: 'yarn' },
-        string: ['concurrency', 'ignoreName', 'ignorePath', 'name', 'npm', 'path', 'script', 'scriptArgs'],
+        boolean: ['bail', 'coordinated', 'noPrivate', 'parallel'],
+        default: { bail: false, coordinated: false, npm: 'yarn', parallel: false },
+        string: ['ignoreName', 'ignorePath', 'name', 'npm', 'path', 'script', 'scriptArgs'],
     });
 
     // `--scriptArgs` can be passed zero, one, or many times which each result in a different
@@ -99,13 +57,7 @@ export const command = (argv: string[], quiet = false) => async (): Promise<Resu
         throw new Error('must provide a command to execute');
     }
 
-    let concurrency: number | undefined;
-    if (flags.concurrency) {
-        concurrency = parseInt(flags.concurrency, 10);
-        if (!concurrency || concurrency < 1) {
-            return failure('concurrency must be a positive number', 20);
-        }
-    }
+    const concurrency = flags.parallel ? 5 : 1;
 
     const repoRoot = await gitRoot();
 
@@ -115,64 +67,53 @@ export const command = (argv: string[], quiet = false) => async (): Promise<Resu
     }
 
     const workspaces = await collectWorkspacePackages(repoRoot, packageFile.workspaces, {
-        ignoreName: flags.ignoreName,
-        ignorePath: flags.ignorePath,
-        name: flags.name,
+        ignoreName: split(flags.ignoreName),
+        ignorePath: split(flags.ignorePath),
+        name: split(flags.name),
         noPrivate: flags.noPrivate,
         script: flags.script,
-        path: flags.path,
+        path: split(flags.path),
     });
 
     if (!workspaces.length) {
         return failure('no workspaces matched', 22);
     }
 
-    const task = async (workspace: Workspace) => {
-        const fmt = (message: string) => `[${workspace.pkg.name}]: ${message.trim()}`;
+    const task = async ({ absPath, pkg: { name } }: Workspace): Promise<boolean> => {
+        logger?.info(name, command.join(' '));
 
-        const log = (message: string) => !quiet && console.log(fmt(message));
+        const [bin, ...args] = command;
+        const { code, stdout, stderr } = await execute(bin, args, path.dirname(absPath), flags.parallel);
 
-        const error = (message: string) => {
-            if (flags.continue) {
-                if (!quiet) {
-                    console.error(fmt(message));
-                }
-            } else {
-                throw new Error(fmt(message));
+        if (code !== 0) {
+            logger?.error(name, `failed with exit code ${code}`);
+
+            if (stdout?.trim()) {
+                logger?.error(name, stdout.trim());
             }
-        };
 
-        try {
-            log(command.join(' '));
-
-            const [bin, ...args] = command;
-
-            const { stdout, stderr } = await execute(bin, args, {
-                cwd: path.dirname(workspace.absPath),
-                shell: true,
-                silent: flags.silent,
-                stream: flags.stream,
-            });
-
-            if (stderr) {
-                error(stderr);
-            } else {
-                log(stdout || 'done!');
+            if (stderr?.trim()) {
+                logger?.error(name, stderr.trim());
             }
-        } catch (err) {
-            error(err.message);
+
+            if (flags.bail) {
+                throw new Error();
+            } else {
+                return false;
+            }
         }
+
+        return true;
     };
 
-    let coordinator: Executor = concurrentExecutor;
-    if (flags.coordinated) {
-        coordinator = coordinatedExecutor;
-    }
+    const executor = flags.coordinated ? coordinatedExecutor : concurrentExecutor;
 
     try {
-        await coordinator(workspaces, task, concurrency);
-
-        return success();
+        if (await executor(workspaces, task, concurrency)) {
+            return success();
+        } else {
+            return failure('One or more tasks failed!');
+        }
     } catch (err) {
         return failure(err.message);
     }

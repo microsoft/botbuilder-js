@@ -23,7 +23,7 @@ const checkEmulator = async () => {
     try {
         await fetch(emulatorEndpoint);
         canConnectToEmulator = true;
-    } catch (err) {
+    } catch (_err) {
         canConnectToEmulator = false;
     }
     if (!canConnectToEmulator) {
