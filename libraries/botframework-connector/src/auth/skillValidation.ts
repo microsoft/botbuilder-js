@@ -8,15 +8,16 @@
 
 /* eslint-disable @typescript-eslint/no-namespace */
 
-import { AuthValidator, IdentityValidator, makeAuthValidator } from './authValidator';
+import { Activity, StatusCodes } from 'botframework-schema';
+import { AuthHeaderValidator } from './authHeaderValidator';
 import { AuthenticationConfiguration } from './authenticationConfiguration';
 import { AuthenticationConstants } from './authenticationConstants';
 import { AuthenticationError } from './authenticationError';
 import { Claim, ClaimsIdentity } from './claimsIdentity';
+import { ClaimsIdentityValidator } from './claimsIdentityValidator';
 import { GovernmentConstants } from './governmentConstants';
 import { ICredentialProvider } from './credentialProvider';
 import { JwtTokenValidation } from './jwtTokenValidation';
-import { StatusCodes } from 'botframework-schema';
 import { decode, VerifyOptions } from 'jsonwebtoken';
 
 /**
@@ -39,45 +40,54 @@ const verifyOptions: VerifyOptions = {
     ignoreExpiration: false,
 };
 
-const validateClaimsIdentity: IdentityValidator = async (credentials, identity) => {
-    const versionClaim = identity.getClaimValue(AuthenticationConstants.VersionClaim);
-    if (!versionClaim) {
-        // No version claim
-        throw new AuthenticationError(
-            `SkillValidation.validateIdentity(): '${AuthenticationConstants.VersionClaim}' claim is required on skill Tokens.`,
-            StatusCodes.UNAUTHORIZED
-        );
-    }
+class SkillClaimsIdentityValidator implements ClaimsIdentityValidator {
+    async validate(
+        credentials: ICredentialProvider,
+        claimsIdentity: ClaimsIdentity,
+        _activity: Partial<Activity>
+    ): Promise<void> {
+        const versionClaim = claimsIdentity.getClaimValue(AuthenticationConstants.VersionClaim);
+        if (!versionClaim) {
+            // No version claim
+            throw new AuthenticationError(
+                `SkillValidation.validateIdentity(): '${AuthenticationConstants.VersionClaim}' claim is required on skill Tokens.`,
+                StatusCodes.UNAUTHORIZED
+            );
+        }
 
-    // Look for the "aud" claim, but only if issued from the Bot Framework
-    const audienceClaim = identity.getClaimValue(AuthenticationConstants.AudienceClaim);
-    if (!audienceClaim) {
-        // Claim is not present or doesn't have a value. Not Authorized.
-        throw new AuthenticationError(
-            `SkillValidation.validateIdentity(): '${AuthenticationConstants.AudienceClaim}' claim is required on skill Tokens.`,
-            StatusCodes.UNAUTHORIZED
-        );
-    }
+        // Look for the "aud" claim, but only if issued from the Bot Framework
+        const audienceClaim = claimsIdentity.getClaimValue(AuthenticationConstants.AudienceClaim);
+        if (!audienceClaim) {
+            // Claim is not present or doesn't have a value. Not Authorized.
+            throw new AuthenticationError(
+                `SkillValidation.validateIdentity(): '${AuthenticationConstants.AudienceClaim}' claim is required on skill Tokens.`,
+                StatusCodes.UNAUTHORIZED
+            );
+        }
 
-    if (!(await credentials.isValidAppId(audienceClaim))) {
-        // The AppId is not valid. Not Authorized.
-        throw new AuthenticationError(
-            'SkillValidation.validateIdentity(): Invalid audience.',
-            StatusCodes.UNAUTHORIZED
-        );
-    }
+        if (!(await credentials.isValidAppId(audienceClaim))) {
+            // The AppId is not valid. Not Authorized.
+            throw new AuthenticationError(
+                'SkillValidation.validateIdentity(): Invalid audience.',
+                StatusCodes.UNAUTHORIZED
+            );
+        }
 
-    const appId = JwtTokenValidation.getAppIdFromClaims(identity.claims);
-    if (!appId) {
-        // Invalid appId
-        throw new AuthenticationError('SkillValidation.validateIdentity(): Invalid appId.', StatusCodes.UNAUTHORIZED);
-    }
+        const appId = JwtTokenValidation.getAppIdFromClaims(claimsIdentity.claims);
+        if (!appId) {
+            // Invalid appId
+            throw new AuthenticationError(
+                'SkillValidation.validateIdentity(): Invalid appId.',
+                StatusCodes.UNAUTHORIZED
+            );
+        }
 
-    // TODO: check the appId against the registered skill client IDs.
-    // Check the AppId and ensure that only works against my whitelist authConfig can have info on how to get the
-    // whitelist AuthenticationConfiguration
-    // We may need to add a ClaimsIdentityValidator delegate or class that allows the dev to inject a custom validator.
-};
+        // TODO: check the appId against the registered skill client IDs.
+        // Check the AppId and ensure that only works against my whitelist authConfig can have info on how to get the
+        // whitelist AuthenticationConfiguration
+        // We may need to add a ClaimsIdentityValidator delegate or class that allows the dev to inject a custom validator.
+    }
+}
 
 /**
  * Construct a skill auth validator using a specific open ID metadata url
@@ -85,8 +95,8 @@ const validateClaimsIdentity: IdentityValidator = async (credentials, identity) 
  * @param {string} openIdMetadataUrl url to fetch open ID metadata
  * @returns {AuthValidator} a skill auth validator
  */
-export function makeSkillAuthValidator(openIdMetadataUrl: string): AuthValidator {
-    return makeAuthValidator(verifyOptions, openIdMetadataUrl, validateClaimsIdentity);
+export function makeSkillAuthValidator(openIdMetadataUrl: string): AuthHeaderValidator {
+    return new AuthHeaderValidator(verifyOptions, openIdMetadataUrl, new SkillClaimsIdentityValidator());
 }
 
 export const governmentSkillAuthValidator = makeSkillAuthValidator(
@@ -204,9 +214,9 @@ export namespace SkillValidation {
         }
 
         if (JwtTokenValidation.isGovernment(channelService)) {
-            return governmentSkillAuthValidator(credentials, authConfig, authHeader, { channelId });
+            return governmentSkillAuthValidator.validate(credentials, authConfig, authHeader, { channelId });
         } else {
-            return emulatorSkillAuthValidator(credentials, authConfig, authHeader, { channelId });
+            return emulatorSkillAuthValidator.validate(credentials, authConfig, authHeader, { channelId });
         }
     }
 
@@ -233,7 +243,8 @@ export namespace SkillValidation {
             );
         }
 
-        await validateClaimsIdentity(credentials, identity, {});
+        const validator = new SkillClaimsIdentityValidator();
+        await validator.validate(credentials, identity, {});
     }
 
     /**

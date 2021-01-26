@@ -10,12 +10,12 @@ const { CloudAdapter, TurnContext, StatusCodes, ActivityTypes, DeliveryModes } =
 const { jwt, oauth, sinonExt } = require('botbuilder-test-utils');
 
 const {
+    AuthHeaderValidator,
     AuthenticationConfiguration,
     EmulatorValidation,
     ParameterizedBotFrameworkAuthentication,
     PasswordServiceClientCredentialFactory,
     SkillValidation,
-    makeAuthValidator,
 } = require('botframework-connector');
 
 const reference = {
@@ -44,7 +44,7 @@ const expectReplies = TurnContext.applyConversationReference(
     true
 );
 
-describe.only('CloudAdapter', () => {
+describe('CloudAdapter', () => {
     jwt.mocha();
     oauth.mocha();
     const sandbox = sinonExt.mocha();
@@ -66,17 +66,21 @@ describe.only('CloudAdapter', () => {
         const credentialFactory = new PasswordServiceClientCredentialFactory(appId, appPassword);
         const authConfig = new AuthenticationConfiguration();
 
-        const authValidator = (expectedClaim) =>
-            makeAuthValidator(
+        const authHeaderValidator = (expectedClaim) =>
+            new AuthHeaderValidator(
                 {
                     issuer,
                 },
                 metadata,
-                async (_, identity) => {
-                    assert(
-                        identity.claims.find((c) => c.type === expectedClaim.type && c.value === expectedClaim.value),
-                        'could not locate expected claim'
-                    );
+                {
+                    validate: async (_credentials, claimsIdentity) => {
+                        assert(
+                            claimsIdentity.claims.find(
+                                (c) => c.type === expectedClaim.type && c.value === expectedClaim.value
+                            ),
+                            'could not locate expected claim'
+                        );
+                    },
                 }
             );
 
@@ -87,9 +91,9 @@ describe.only('CloudAdapter', () => {
             loginUrl,
             oauthScope,
             callerId,
-            authValidator({ type: 'test', value: 'general' }),
-            authValidator({ type: 'test', value: 'emulator' }),
-            authValidator({ type: 'test', value: 'skill' })
+            authHeaderValidator({ type: 'test', value: 'general' }),
+            authHeaderValidator({ type: 'test', value: 'emulator' }),
+            authHeaderValidator({ type: 'test', value: 'skill' })
         );
 
         const adapter = new CloudAdapter(auth, appId);

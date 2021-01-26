@@ -8,15 +8,72 @@
 
 /* eslint-disable @typescript-eslint/no-namespace */
 
-import { VerifyOptions } from 'jsonwebtoken';
+import { Activity, StatusCodes } from 'botframework-schema';
+import { AuthHeaderValidator } from './authHeaderValidator';
 import { AuthenticationConfiguration } from './authenticationConfiguration';
 import { AuthenticationConstants } from './authenticationConstants';
-import { ClaimsIdentity } from './claimsIdentity';
-import { ICredentialProvider } from './credentialProvider';
-import { GovernmentConstants } from './governmentConstants';
-import { JwtTokenExtractor } from './jwtTokenExtractor';
 import { AuthenticationError } from './authenticationError';
-import { StatusCodes } from 'botframework-schema';
+import { ClaimsIdentity } from './claimsIdentity';
+import { ClaimsIdentityValidator } from './claimsIdentityValidator';
+import { GovernmentConstants } from './governmentConstants';
+import { ICredentialProvider } from './credentialProvider';
+import { JwtTokenExtractor } from './jwtTokenExtractor';
+import { VerifyOptions } from 'jsonwebtoken';
+
+class GovernmentClaimsIdentityValidator implements ClaimsIdentityValidator {
+    async validate(
+        credentials: ICredentialProvider,
+        claimsIdentity: ClaimsIdentity,
+        _activity: Partial<Activity>
+    ): Promise<void> {
+        // Now check that the AppID in the claimset matches
+        // what we're looking for. Note that in a multi-tenant bot, this value
+        // comes from developer code that may be reaching out to a service, hence the
+        // Async validation.
+
+        // Look for the "aud" claim, but only if issued from the Bot Framework
+        if (
+            claimsIdentity.getClaimValue(AuthenticationConstants.IssuerClaim) !==
+            GovernmentConstants.ToBotFromChannelTokenIssuer
+        ) {
+            // The relevant Audiance Claim MUST be present. Not Authorized.
+            throw new AuthenticationError('Unauthorized. Issuer Claim MUST be present.', StatusCodes.UNAUTHORIZED);
+        }
+
+        // The AppId from the claim in the token must match the AppId specified by the developer.
+        // In this case, the token is destined for the app, so we find the app ID in the audience claim.
+        const audClaim: string = claimsIdentity.getClaimValue(AuthenticationConstants.AudienceClaim);
+        if (!(await credentials.isValidAppId(audClaim || ''))) {
+            // The AppId is not valid or not present. Not Authorized.
+            throw new AuthenticationError(
+                `Unauthorized. Invalid AppId passed on token: ${audClaim}`,
+                StatusCodes.UNAUTHORIZED
+            );
+        }
+    }
+}
+
+/**
+ * Construct an emulator auth validator using a specific open ID metadata url
+ *
+ * @param {string} openIdMetadataUrl url to fetch open ID metadata
+ * @param {VerifyOptions} verifyOverrides verify options overrides
+ * @returns {AuthHeaderValidator} an emulator auth validator
+ */
+export function makeGovernmentAuthValidator(
+    openIdMetadataUrl: string,
+    verifyOverrides?: VerifyOptions
+): AuthHeaderValidator {
+    return new AuthHeaderValidator(
+        Object.assign(
+            {},
+            GovernmentChannelValidation.ToBotFromGovernmentChannelTokenValidationParameters,
+            verifyOverrides
+        ),
+        openIdMetadataUrl,
+        new GovernmentClaimsIdentityValidator()
+    );
+}
 
 export namespace GovernmentChannelValidation {
     export let OpenIdMetadataEndpoint: string;
@@ -71,23 +128,16 @@ export namespace GovernmentChannelValidation {
         channelId: string,
         authConfig: AuthenticationConfiguration = new AuthenticationConfiguration()
     ): Promise<ClaimsIdentity> {
-        const tokenExtractor: JwtTokenExtractor = new JwtTokenExtractor(
-            ToBotFromGovernmentChannelTokenValidationParameters,
-            OpenIdMetadataEndpoint ? OpenIdMetadataEndpoint : GovernmentConstants.ToBotFromChannelOpenIdMetadataUrl,
-            AuthenticationConstants.AllowedSigningAlgorithms
+        const validator = makeGovernmentAuthValidator(
+            OpenIdMetadataEndpoint ? OpenIdMetadataEndpoint : GovernmentConstants.ToBotFromChannelOpenIdMetadataUrl
         );
 
-        const identity: ClaimsIdentity = await tokenExtractor.getIdentityFromAuthHeader(
-            authHeader,
-            channelId,
-            authConfig.requiredEndorsements
-        );
-
-        return await validateIdentity(identity, credentials);
+        return validator.validate(credentials, authConfig, authHeader, { channelId });
     }
 
     /**
      * Validate the ClaimsIdentity to ensure it came from the channel service.
+     *
      * @param  {ClaimsIdentity} identity The identity to validate
      * @param  {ICredentialProvider} credentials The user defined set of valid credentials, such as the AppId.
      * @returns {Promise<ClaimsIdentity>} A valid ClaimsIdentity.
@@ -106,30 +156,8 @@ export namespace GovernmentChannelValidation {
             throw new AuthenticationError('Unauthorized. Is not authenticated', StatusCodes.UNAUTHORIZED);
         }
 
-        // Now check that the AppID in the claimset matches
-        // what we're looking for. Note that in a multi-tenant bot, this value
-        // comes from developer code that may be reaching out to a service, hence the
-        // Async validation.
-
-        // Look for the "aud" claim, but only if issued from the Bot Framework
-        if (
-            identity.getClaimValue(AuthenticationConstants.IssuerClaim) !==
-            GovernmentConstants.ToBotFromChannelTokenIssuer
-        ) {
-            // The relevant Audiance Claim MUST be present. Not Authorized.
-            throw new AuthenticationError('Unauthorized. Issuer Claim MUST be present.', StatusCodes.UNAUTHORIZED);
-        }
-
-        // The AppId from the claim in the token must match the AppId specified by the developer.
-        // In this case, the token is destined for the app, so we find the app ID in the audience claim.
-        const audClaim: string = identity.getClaimValue(AuthenticationConstants.AudienceClaim);
-        if (!(await credentials.isValidAppId(audClaim || ''))) {
-            // The AppId is not valid or not present. Not Authorized.
-            throw new AuthenticationError(
-                `Unauthorized. Invalid AppId passed on token: ${audClaim}`,
-                StatusCodes.UNAUTHORIZED
-            );
-        }
+        const validator = new GovernmentClaimsIdentityValidator();
+        await validator.validate(credentials, identity, {});
 
         return identity;
     }

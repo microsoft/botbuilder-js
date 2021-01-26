@@ -4,13 +4,12 @@
 import { AuthenticationConfiguration } from './authenticationConfiguration';
 import { AuthenticationConstants } from './authenticationConstants';
 import { CallerIdConstants } from 'botframework-schema';
-import { ChannelValidation } from './channelValidation';
 import { ParameterizedBotFrameworkAuthentication } from './parameterizedBotFrameworkAuthentication';
 import { ServiceClientCredentialsFactory } from './serviceClientCredentialsFactory';
 import { VerifyOptions } from 'jsonwebtoken';
 import { emulatorAuthValidator } from './emulatorValidation';
 import { emulatorSkillAuthValidator } from './skillValidation';
-import { makeAuthValidator } from './authValidator';
+import { makeChannelAuthValidator } from './channelValidation';
 
 export class PublicCloudBotFrameworkAuthentication extends ParameterizedBotFrameworkAuthentication {
     constructor(
@@ -19,12 +18,9 @@ export class PublicCloudBotFrameworkAuthentication extends ParameterizedBotFrame
         verifyOptions?: Partial<VerifyOptions>,
         openIdMetadataUrl?: string
     ) {
-        const authValidator = makeAuthValidator(
-            Object.assign({}, ChannelValidation.ToBotFromChannelTokenValidationParameters, verifyOptions),
+        const authHeaderValidator = makeChannelAuthValidator(
             openIdMetadataUrl ?? AuthenticationConstants.ToBotFromChannelOpenIdMetadataUrl,
-            async (credentials, identity) => {
-                await ChannelValidation.validateIdentity(identity, credentials);
-            }
+            verifyOptions,
         );
 
         super(
@@ -34,7 +30,7 @@ export class PublicCloudBotFrameworkAuthentication extends ParameterizedBotFrame
             AuthenticationConstants.ToChannelFromBotLoginUrl,
             AuthenticationConstants.ToChannelFromBotOAuthScope,
             CallerIdConstants.PublicAzureChannel,
-            authValidator,
+            authHeaderValidator,
             emulatorAuthValidator,
             emulatorSkillAuthValidator
         );

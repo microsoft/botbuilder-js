@@ -2,7 +2,7 @@
 // Licensed under the MIT License.
 
 import { Activity } from 'botframework-schema';
-import { AuthValidator } from './authValidator';
+import { AuthHeaderValidator } from './authHeaderValidator';
 import { AuthenticationConfiguration } from './authenticationConfiguration';
 import { ClaimsIdentity } from './claimsIdentity';
 import { DelegatingCredentialProvider, ICredentialProvider } from './credentialProvider';
@@ -31,9 +31,9 @@ export class ParameterizedBotFrameworkAuthentication extends BotFrameworkAuthent
      * @param {string} toChannelFromBotLoginUrl login url for messages from bot to channel
      * @param {string} toChannelFromBotOAuthScope oauth scope for messages from bot to channel
      * @param {string} callerId caller ID
-     * @param {AuthValidator} authValidator general auth validator
-     * @param {AuthValidator} emulatorAuthValidator emulator auth validator
-     * @param {AuthValidator} skillAuthValidator skill auth validator
+     * @param {AuthHeaderValidator} authHeaderValidator general auth validator
+     * @param {AuthHeaderValidator} emulatorAuthHeaderValidator emulator auth validator
+     * @param {AuthHeaderValidator} skillAuthHeaderValidator skill auth validator
      */
     constructor(
         private readonly credentialFactory: ServiceClientCredentialsFactory,
@@ -42,24 +42,24 @@ export class ParameterizedBotFrameworkAuthentication extends BotFrameworkAuthent
         private readonly toChannelFromBotLoginUrl: string,
         private readonly toChannelFromBotOAuthScope: string,
         private readonly callerId: string | undefined,
-        private readonly authValidator: AuthValidator,
-        private readonly emulatorAuthValidator: AuthValidator,
-        private readonly skillAuthValidator: AuthValidator
+        private readonly authHeaderValidator: AuthHeaderValidator,
+        private readonly emulatorAuthHeaderValidator: AuthHeaderValidator,
+        private readonly skillAuthHeaderValidator: AuthHeaderValidator
     ) {
         super();
         this.credentials = new DelegatingCredentialProvider(credentialFactory);
     }
 
     private async getClaimsIdentity(activity: Partial<Activity>, authHeader: string): Promise<ClaimsIdentity> {
-        let authValidator = this.authValidator;
+        let validator = this.authHeaderValidator;
 
         if (SkillValidation.isSkillToken(authHeader)) {
-            authValidator = this.skillAuthValidator;
+            validator = this.skillAuthHeaderValidator;
         } else if (EmulatorValidation.isTokenFromEmulator(authHeader)) {
-            authValidator = this.emulatorAuthValidator;
+            validator = this.emulatorAuthHeaderValidator;
         }
 
-        return authValidator(this.credentials, this.authConfiguration, authHeader, activity);
+        return validator.validate(this.credentials, this.authConfiguration, authHeader, activity);
     }
 
     async authenticateRequest(activity: Partial<Activity>, authHeader: string): Promise<AuthenticateRequestResult> {

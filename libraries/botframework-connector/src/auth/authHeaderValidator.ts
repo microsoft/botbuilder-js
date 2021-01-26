@@ -6,39 +6,24 @@ import { AuthenticationConfiguration } from './authenticationConfiguration';
 import { AuthenticationConstants } from './authenticationConstants';
 import { AuthenticationError } from './authenticationError';
 import { ClaimsIdentity } from './claimsIdentity';
+import { ClaimsIdentityValidator } from './claimsIdentityValidator';
 import { ICredentialProvider } from './credentialProvider';
 import { JwtTokenExtractor } from './jwtTokenExtractor';
 import { VerifyOptions } from 'jsonwebtoken';
 
-// AuthValidator is a function signature for logic that validates an HTTP auth header
-export type AuthValidator = (
-    credentials: ICredentialProvider,
-    authConfig: AuthenticationConfiguration,
-    authHeader: string,
-    activity: Partial<Activity>
-) => Promise<ClaimsIdentity>;
+export class AuthHeaderValidator {
+    constructor(
+        private readonly verifyOptions: VerifyOptions,
+        private readonly openIdMetadataUrl: string,
+        private readonly identityValidator: ClaimsIdentityValidator
+    ) {}
 
-// IdentityValidator is a function signature for logic that validates a set of JWT identity claims
-export type IdentityValidator = (
-    credentials: ICredentialProvider,
-    claimsIdentity: ClaimsIdentity,
-    activity: Partial<Activity>
-) => Promise<void>;
-
-/**
- * Make an auth validator
- *
- * @param {VerifyOptions} verifyOptions options for verifying JWTs
- * @param {string} openIdMetadata url to fetch open ID metadata
- * @param {IdentityValidator} identityValidator the identity validator logic
- * @returns {AuthValidator} an auth validator function
- */
-export function makeAuthValidator(
-    verifyOptions: VerifyOptions,
-    openIdMetadata: string,
-    identityValidator: IdentityValidator
-): AuthValidator {
-    return async (credentials, authConfig, authHeader, activity) => {
+    async validate(
+        credentials: ICredentialProvider,
+        authConfig: AuthenticationConfiguration,
+        authHeader: string,
+        activity: Partial<Activity>
+    ): Promise<ClaimsIdentity> {
         if (!authHeader.trim()) {
             const isAuthDisabled = await credentials.isAuthenticationDisabled();
             if (!isAuthDisabled) {
@@ -66,8 +51,8 @@ export function makeAuthValidator(
         }
 
         const tokenExtractor = new JwtTokenExtractor(
-            verifyOptions,
-            openIdMetadata,
+            this.verifyOptions,
+            this.openIdMetadataUrl,
             AuthenticationConstants.AllowedSigningAlgorithms
         );
 
@@ -85,8 +70,8 @@ export function makeAuthValidator(
             throw new AuthenticationError('Unauthorized. Is not authenticated', StatusCodes.UNAUTHORIZED);
         }
 
-        await identityValidator(credentials, claimsIdentity, activity);
+        await this.identityValidator.validate(credentials, claimsIdentity, activity);
 
         return claimsIdentity;
-    };
+    }
 }

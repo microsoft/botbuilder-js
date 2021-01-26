@@ -138,7 +138,7 @@ describe('JwtTokenValidation', () => {
                         'https://service.url'
                     );
                 },
-                label: 'succeeds with a specific tenant',
+                label: 'succeeds with a service URL',
                 makeActivity: () => ({ serviceUrl: 'https://service.url' }),
                 makeClaims,
             },

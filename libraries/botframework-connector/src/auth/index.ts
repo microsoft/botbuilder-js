@@ -7,7 +7,7 @@
  */
 
 export * from './appCredentials';
-export * from './authValidator';
+export * from './authHeaderValidator';
 export * from './authenticationConfiguration';
 export * from './authenticationConstants';
 export * from './authenticationError';
@@ -16,6 +16,7 @@ export * from './botFrameworkAuthenticationFactory';
 export * from './certificateAppCredentials';
 export * from './channelValidation';
 export * from './claimsIdentity';
+export * from './claimsIdentityValidator';
 export * from './credentialProvider';
 export * from './emulatorValidation';
 export * from './endorsementsValidator';

@@ -3,14 +3,13 @@
 
 import { AuthenticationConfiguration } from './authenticationConfiguration';
 import { CallerIdConstants } from 'botframework-schema';
-import { GovernmentChannelValidation } from './governmentChannelValidation';
 import { GovernmentConstants } from './governmentConstants';
 import { ParameterizedBotFrameworkAuthentication } from './parameterizedBotFrameworkAuthentication';
 import { ServiceClientCredentialsFactory } from './serviceClientCredentialsFactory';
 import { VerifyOptions } from 'jsonwebtoken';
 import { governmentEmulatorAuthValidator } from './emulatorValidation';
 import { governmentSkillAuthValidator } from './skillValidation';
-import { makeAuthValidator } from './authValidator';
+import { makeGovernmentAuthValidator } from './governmentChannelValidation';
 
 export class GovernmentCloudBotFrameworkAuthentication extends ParameterizedBotFrameworkAuthentication {
     constructor(
@@ -19,16 +18,9 @@ export class GovernmentCloudBotFrameworkAuthentication extends ParameterizedBotF
         verifyOptions?: Partial<VerifyOptions>,
         openIdMetadataUrl?: string
     ) {
-        const authValidator = makeAuthValidator(
-            Object.assign(
-                {},
-                GovernmentChannelValidation.ToBotFromGovernmentChannelTokenValidationParameters,
-                verifyOptions
-            ),
+        const authHeaderValidator = makeGovernmentAuthValidator(
             openIdMetadataUrl ?? GovernmentConstants.ToBotFromChannelOpenIdMetadataUrl,
-            async (credentials, identity) => {
-                await GovernmentChannelValidation.validateIdentity(identity, credentials);
-            }
+            verifyOptions
         );
 
         super(
@@ -38,7 +30,7 @@ export class GovernmentCloudBotFrameworkAuthentication extends ParameterizedBotF
             GovernmentConstants.ToChannelFromBotLoginUrl,
             GovernmentConstants.ToChannelFromBotOAuthScope,
             CallerIdConstants.USGovChannel,
-            authValidator,
+            authHeaderValidator,
             governmentEmulatorAuthValidator,
             governmentSkillAuthValidator
         );
