@@ -1,0 +1,14 @@
+{
+    "$schema": "../../../../tests.schema",
+    "$kind": "Microsoft.Test.SettingStringMock",
+    "assignments": [
+        {
+            "property": "base",
+            "value": "base"
+        },
+        {
+            "property": "baseoverwrite",
+            "value": "this is overwritten"
+        }
+    ]
+}
