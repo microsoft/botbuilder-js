@@ -1291,7 +1291,7 @@ export interface TabResponse {
  */
 export interface TabResponseCard {
     /**
-     * @member {Record<string, unknown>} [card] The adaptive card for this card tab response.
+     * @member {object} [card] The adaptive card for this card tab response.
      */
     card?: Record<string, unknown>;
 }
@@ -1303,7 +1303,7 @@ export interface TabResponseCard {
  */
 export interface TabResponseCards {
     /**
-     * @member {Record<string, unknown>[]} [cards] Adaptive cards for this card tab response.
+     * @member {object[]} [cards] Adaptive cards for this card tab response.
      */
     cards?: Record<string, unknown>[];
 }
@@ -1372,7 +1372,7 @@ export interface TabSubmitData {
  */
 export interface TabSuggestedActions {
     /**
-     * @member {Record<string, unknown>[]} [actions] Actions to show in the card response.
+     * @member {object[]} [actions] Actions to show in the card response.
      */
     actions?: Record<string, unknown>[];
 }
