@@ -1291,7 +1291,7 @@ export interface TabResponse {
  */
 export interface TabResponseCard {
     /**
-     * @member {object} [card] The adaptive card for this card tab response.
+     * @member {Record<string, any>} [card] The adaptive card for this card tab response.
      */
     card?: Record<string, unknown>;
 }
@@ -1303,7 +1303,7 @@ export interface TabResponseCard {
  */
 export interface TabResponseCards {
     /**
-     * @member {object[]} [cards] Adaptive cards for this card tab response.
+     * @member {Record<string, any>[]} [cards] Adaptive cards for this card tab response.
      */
     cards?: Record<string, unknown>[];
 }
@@ -1362,7 +1362,7 @@ export interface TabSubmitData {
     /**
      * @member {any} [any] Additional properties not otherwise defined in TabSubmit.
      */
-    [properties: string]: any;
+    [properties: string]: unknown;
 }
 
 /**
@@ -1372,7 +1372,7 @@ export interface TabSubmitData {
  */
 export interface TabSuggestedActions {
     /**
-     * @member {object[]} [actions] Actions to show in the card response.
+     * @member {Record<string, any>[]} [actions] Actions to show in the card response.
      */
     actions?: Record<string, unknown>[];
 }
@@ -1406,12 +1406,12 @@ export interface TaskModuleTaskInfo {
      * @member {any} [height] This can be a number, representing the task
      * module's height in pixels, or a string, one of: small, medium, large.
      */
-    height?: any;
+    height?: unknown;
     /**
      * @member {any} [width] This can be a number, representing the task module's
      * width in pixels, or a string, one of: small, medium, large.
      */
-    width?: any;
+    width?: unknown;
     /**
      * @member {string} [url] The URL of what is loaded as an iframe inside the
      * task module. One of url or card is required.
