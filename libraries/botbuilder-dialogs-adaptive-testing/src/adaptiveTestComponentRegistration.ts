@@ -42,6 +42,10 @@ import {
 import { AssertCondition, AssertConditionConfiguration } from './actions';
 import { TestScript, TestScriptConfiguration } from './testScript';
 import { UserTokenBasicMock, UserTokenBasicMockConfiguration } from './userTokenMocks';
+import {
+    HttpRequestSequenceMock,
+    HttpRequestSequenceMockConfiguration,
+} from './httpRequestMocks/httpRequestSequenceMock';
 
 type Type<T> = {
     $kind: string;
@@ -66,6 +70,9 @@ export class AdaptiveTestComponentRegistration extends ComponentRegistration imp
         this._addDeclarativeType<AssertReplyOneOf, AssertReplyOneOfConfiguration>(AssertReplyOneOf);
         this._addDeclarativeType<CustomEvent, CustomEventConfiguration>(CustomEvent);
         this._addDeclarativeType<MemoryAssertions, MemoryAssertionsConfiguration>(MemoryAssertions);
+        this._addDeclarativeType<HttpRequestSequenceMock, HttpRequestSequenceMockConfiguration>(
+            HttpRequestSequenceMock
+        );
         this._addDeclarativeType<SetProperties, SetPropertiesConfiguration>(SetProperties);
         this._addDeclarativeType<UserActivity, UserActivityConfiguration>(UserActivity);
         this._addDeclarativeType<UserConversationUpdate, UserConversationUpdateConfiguration>(UserConversationUpdate);

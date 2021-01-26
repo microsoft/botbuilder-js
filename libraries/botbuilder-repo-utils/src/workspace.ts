@@ -19,12 +19,12 @@ export interface Workspace {
 
 // Represents options to filter workspaces
 export interface Filters {
-    ignoreName: string;
-    ignorePath: string;
-    name: string;
+    ignoreName: string[];
+    ignorePath: string[];
+    name: string[];
     noPrivate: boolean;
     script: string;
-    path: string;
+    path: string[];
 }
 
 /**
@@ -54,11 +54,14 @@ export async function collectWorkspacePackages(
                 // Strip `package.json` filename for path filters
                 const relWorkspacePath = path.dirname(relPath);
 
-                if (filters.path && !minimatch(relWorkspacePath, filters.path)) {
+                if (filters.path?.length && !filters.path.some((path) => minimatch(relWorkspacePath, path))) {
                     return;
                 }
 
-                if (filters.ignorePath && minimatch(relWorkspacePath, filters.ignorePath)) {
+                if (
+                    filters.ignorePath?.length &&
+                    filters.ignorePath.some((ignorePath) => minimatch(relWorkspacePath, ignorePath))
+                ) {
                     return;
                 }
 
@@ -75,11 +78,14 @@ export async function collectWorkspacePackages(
                     return;
                 }
 
-                if (filters.name && !minimatch(pkg.name, filters.name)) {
+                if (filters.name?.length && !filters.name.some((name) => minimatch(pkg.name, name))) {
                     return;
                 }
 
-                if (filters.ignoreName && minimatch(pkg.name, filters.ignoreName)) {
+                if (
+                    filters.ignoreName?.length &&
+                    filters.ignoreName.some((ignoreName) => minimatch(pkg.name, ignoreName))
+                ) {
                     return;
                 }
 

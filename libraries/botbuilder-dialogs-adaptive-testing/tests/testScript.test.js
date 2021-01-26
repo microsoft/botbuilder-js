@@ -73,6 +73,10 @@ describe('TestScriptTests', function () {
         await TestUtils.runTestScript(resourceExplorer, 'TestScriptTests_CustomEvent');
     });
 
+    it('HttpRequestMock', async () => {
+        await TestUtils.runTestScript(resourceExplorer, 'TestScriptTests_HttpRequestMock');
+    });
+
     it('OAuthInputRetries_WithNullMessageText', async () => {
         await TestUtils.runTestScript(resourceExplorer, 'TestScriptTests_OAuthInputRetries_WithNullMessageText');
     });

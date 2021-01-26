@@ -15,8 +15,9 @@ import { InternalFunctionUtils } from '../functionUtils.internal';
 import { MemoryInterface } from '../memory/memoryInterface';
 import { Options } from '../options';
 import { TimeZoneConverter } from '../timeZoneConverter';
-import { tz } from 'moment-timezone';
-import moment from 'moment';
+import dayjs from 'dayjs';
+import timezone from 'dayjs/plugin/timezone';
+dayjs.extend(timezone);
 import { TimexProperty, Time } from '@microsoft/recognizers-text-data-types-timex-expression';
 /**
  * Return the previous viable time of a timex expression based on the current time and user's timezone.
@@ -43,11 +44,11 @@ export class GetPreviousViableTime extends ExpressionEvaluator {
         options: Options
     ): { value: any; error: string } {
         let parsed: TimexProperty;
-        const currentTime = moment(new Date().toISOString());
+        const currentTime = dayjs(new Date().toISOString());
         let validHour = 0;
         let validMinute = 0;
         let validSecond = 0;
-        let convertedDateTime: moment.Moment;
+        let convertedDateTime: dayjs.Dayjs;
         const formatRegex = /TXX:[0-5][0-9]:[0-5][0-9]/g;
         const { args, error: childrenError } = FunctionUtils.evaluateChildren(expr, state, options);
         let error = childrenError;
@@ -65,7 +66,7 @@ export class GetPreviousViableTime extends ExpressionEvaluator {
                 }
 
                 if (!error) {
-                    convertedDateTime = tz(currentTime.utc(), timeZone);
+                    convertedDateTime = currentTime.utc().tz(timeZone);
                 }
             } else {
                 convertedDateTime = currentTime.utc();

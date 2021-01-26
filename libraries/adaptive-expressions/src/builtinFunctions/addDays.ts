@@ -6,8 +6,6 @@
  * Licensed under the MIT License.
  */
 
-import moment from 'moment';
-
 import { ExpressionType } from '../expressionType';
 import { TimeTransformEvaluator } from './timeTransformEvaluator';
 
@@ -19,6 +17,10 @@ export class AddDays extends TimeTransformEvaluator {
      * Initializes a new instance of the [AddDays](xref:adaptive-expressions.AddDays) class.
      */
     public constructor() {
-        super(ExpressionType.AddDays, (ts: Date, num: any): Date => moment(ts).utc().add(num, 'd').toDate());
+        super(ExpressionType.AddDays, (ts: Date, num: number): Date => {
+            const newDate = new Date(ts);
+            newDate.setDate(ts.getDate() + num);
+            return newDate;
+        });
     }
 }

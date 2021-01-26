@@ -520,7 +520,7 @@ function makeTest<T>(assertion: Assertion<T>): Test<T> {
         try {
             assertion(val, []);
             return true;
-        } catch (err) {
+        } catch (_err) {
             return false;
         }
     };

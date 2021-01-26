@@ -20,7 +20,7 @@ export async function readJsonFile<T>(path: string): Promise<T | undefined> {
     try {
         const rawPackageJson = await readFile(path, 'utf8');
         return JSON.parse(rawPackageJson);
-    } catch (err) {
+    } catch (_err) {
         return undefined;
     }
 }

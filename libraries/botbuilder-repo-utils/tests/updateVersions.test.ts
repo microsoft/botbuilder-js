@@ -5,7 +5,7 @@ import * as file from '../src/file';
 import * as git from '../src/git';
 import * as workspace from '../src/workspace';
 import assert from 'assert';
-import moment from 'moment';
+import dayjs from 'dayjs';
 import path from 'path';
 import sinon from 'sinon';
 import { Package } from '../src/package';
@@ -265,7 +265,7 @@ describe('updateVersions', () => {
 
         it('includes git commit sha and date', async () => {
             const dateFormat = 'YYYYMM';
-            const formattedDate = moment().format(dateFormat);
+            const formattedDate = dayjs().format(dateFormat);
 
             const expectedVersion = `${packageVersion}-${formattedDate}.COMMIT`;
             const expectedPreviewVersion = `${packageVersion}-preview.${formattedDate}.COMMIT`;
