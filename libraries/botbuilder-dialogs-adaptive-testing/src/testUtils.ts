@@ -18,15 +18,18 @@ export class TestUtils {
      * @param resourceExplorer Resource explorer used in test.
      * @param testName Test name.
      * @param adapter Test adapter.
+     * @param configuration Test configuration.
      * @param middlewares Middlewares to be added in test.
      */
     public static async runTestScript(
         resourceExplorer: ResourceExplorer,
         testName?: string,
         adapter?: TestAdapter,
+        configuration?: Record<string, string>,
         ...middlewares: Middleware[]
     ): Promise<void> {
         const script = resourceExplorer.loadType<TestScript>(`${testName}.test.dialog`);
+        script.configuration = configuration ?? {};
         script.description = script.description ?? testName;
         await script.execute(resourceExplorer, testName, undefined, adapter, ...middlewares);
     }

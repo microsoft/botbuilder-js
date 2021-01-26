@@ -8,6 +8,7 @@
 
 export * from './adaptiveTestComponentRegistration';
 export * from './actions';
+export * from './mocks';
 export * from './testScript';
 export * from './testAction';
 export * from './testActions';
