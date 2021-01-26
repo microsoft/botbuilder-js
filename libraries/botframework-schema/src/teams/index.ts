@@ -928,6 +928,10 @@ export interface TaskModuleRequest {
      * the current theme
      */
     context?: TaskModuleRequestContext;
+    /**
+     * @member {TabEntityContext} [tabContext] Tab request context.
+     */
+    tabContext?: TabEntityContext;
 }
 
 /**
@@ -1223,6 +1227,167 @@ export interface FileConsentCardResponse {
      * contains information about the file to be uploaded.
      */
     uploadInfo?: FileUploadInfo;
+}
+
+/**
+ * @interface
+ * Current tab request context, i.e., the current theme.
+ */
+export interface TabContext {
+    /**
+     * @member {theme} [string] The current user's theme.
+     */
+    theme?: string;
+}
+
+/**
+ * @interface
+ * Current TabRequest entity context, or 'tabEntityId'.
+ *
+ */
+export interface TabEntityContext {
+    /**
+     * @member {string} [tabEntityId] The entity id of the tab.
+     */
+    tabEntityId?: string;
+}
+
+/**
+ * @interface
+ * Invoke ('tab/fetch') request value payload.
+ *
+ */
+export interface TabRequest {
+    /**
+     * @member {TabEntityContext} [tabContext] The current tab entity request context.
+     */
+    tabContext?: TabEntityContext;
+    /**
+     * @member {TabContext} [context] The current user context, i.e., the current theme.
+     */
+    context?: TabContext;
+    /**
+     * @member {string} [state] The magic code for OAuth flow.
+     */
+    state?: string;
+}
+
+/**
+ * @interface
+ * Envelope for Card Tab Response Payload.
+ *
+ */
+export interface TabResponse {
+    /**
+     * @member {TabResponsePayload} [tab] The response to the tab/fetch message.
+     */
+    tab?: TabResponsePayload;
+}
+
+/**
+ * @interface
+ * Envelope for cards for a Tab request.
+ *
+ */
+export interface TabResponseCard {
+    /**
+     * @member {Record<string, unknown>} [card] The adaptive card for this card tab response.
+     */
+    card?: Record<string, unknown>;
+}
+
+/**
+ * @interface
+ * Envelope for cards for a TabResponse.
+ *
+ */
+export interface TabResponseCards {
+    /**
+     * @member {Record<string, unknown>[]} [cards] Adaptive cards for this card tab response.
+     */
+    cards?: Record<string, unknown>[];
+}
+
+/**
+ * @interface
+ * Payload for Tab Response.
+ *
+ */
+export interface TabResponsePayload {
+    /**
+     * @member {'continue' | 'auth' | 'silentAuth'} [type] Choice of action options when responding to the tab/fetch message.
+     */
+    type?: 'continue' | 'auth' | 'silentAuth';
+    /**
+     * @member {TabResponseCards} [value] The TabResponseCards to send when responding to
+     * tab/fetch activity with type of 'continue'.
+     */
+    value?: TabResponseCards;
+    /**
+     * @member {TabSuggestedActions} [suggestedActions] The Suggested Actions for this card tab.
+     */
+    suggestedActions?: TabSuggestedActions;
+}
+
+/**
+ * @interface
+ * Invoke ('tab/submit') request value payload.
+ *
+ */
+export interface TabSubmit {
+    /**
+     * @member {TabEntityContext} [tabContext] The current tab's entity request context.
+     */
+    tabContext?: TabEntityContext;
+    /**
+     * @member {TabContext} [context] The current user context, i.e., the current theme.
+     */
+    context?: TabContext;
+    /**
+     * @member {TabSubmitData} [data] User input. Free payload containing properties of key-value pairs.
+     */
+    data?: TabSubmitData;
+}
+
+/**
+ * @interface
+ * Invoke ('tab/submit') request value payload data.
+ *
+ */
+export interface TabSubmitData {
+    /**
+     * @member {string} [type] Should currently be 'tab/submit'.
+     */
+    type?: string;
+    /**
+     * @member {any} [any] Additional properties not otherwise defined in TabSubmit.
+     */
+    [properties: string]: any;
+}
+
+/**
+ * @interface
+ * Tab SuggestedActions (Only when type is 'auth' or 'silentAuth').
+ *
+ */
+export interface TabSuggestedActions {
+    /**
+     * @member {Record<string, unknown>[]} [actions] Actions to show in the card response.
+     */
+    actions?: Record<string, unknown>[];
+}
+
+/**
+ * @interface
+ * Tab response to 'task/submit'.
+ *
+ * @extends TaskModuleResponseBase
+ */
+export interface TaskModuleCardResponse extends TaskModuleResponseBase {
+    /**
+     * @member {string} [value] JSON for Adaptive cards to appear in the tab.
+     */
+    value?: string;
 }
 
 /**

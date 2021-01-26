@@ -23,6 +23,8 @@ export * from './onTeamsMessagingExtensionQuery';
 export * from './onTeamsMessagingExtensionSelectItem';
 export * from './onTeamsMessagingExtensionSubmitAction';
 export * from './onTeamsO365ConnectorCardAction';
+export * from './onTeamsTabFetch';
+export * from './onTeamsTabSubmit';
 export * from './onTeamsTaskModuleFetch';
 export * from './onTeamsTaskModuleSubmit';
 export * from './onTeamsTeamArchived';
