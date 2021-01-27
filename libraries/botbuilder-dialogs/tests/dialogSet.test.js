@@ -1,5 +1,5 @@
-const { ConversationState, MemoryStorage, TestAdapter } = require('botbuilder-core');
-const { Dialog, DialogSet, WaterfallDialog, DialogTurnStatus } = require('../');
+const { ConversationState, MemoryStorage, TestAdapter, NullTelemetryClient } = require('botbuilder-core');
+const { Dialog, DialogSet, WaterfallDialog, DialogTurnStatus, ComponentDialog } = require('../');
 const assert = require('assert');
 
 const beginMessage = { text: `begin`, type: 'message' };
@@ -145,5 +145,16 @@ describe('DialogSet', function () {
         assert(hash != dialogs.getVersion(), `hash not updated.`);
 
         done();
+    });
+
+    it('Cyclical dialog structures', () => {
+        const component1 = new ComponentDialog('component1');
+        const component2 = new ComponentDialog('component2');
+
+        component1.addDialog(component2);
+        component2.addDialog(component1);
+
+        // This would trigger stack overflow if cycles were not properly handled
+        component1.telemetryClient = new NullTelemetryClient();
     });
 });
