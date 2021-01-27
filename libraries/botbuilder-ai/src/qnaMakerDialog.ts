@@ -36,7 +36,6 @@ import {
 } from 'botbuilder-dialogs';
 import { QnAMakerOptions } from './qnamaker-interfaces/qnamakerOptions';
 import { RankerTypes } from './qnamaker-interfaces/rankerTypes';
-import { JoinOperator } from './qnamaker-interfaces/joinOperator';
 import { QnAMaker, QnAMakerResult } from './';
 import { FeedbackRecord, FeedbackRecords, QnAMakerMetadata } from './qnamaker-interfaces';
 import { QnACardBuilder } from './qnaCardBuilder';
@@ -118,16 +117,9 @@ export interface QnAMakerDialogConfiguration extends DialogConfiguration {
 export class QnAMakerDialog extends WaterfallDialog implements QnAMakerDialogConfiguration {
     public static $kind = 'Microsoft.QnAMakerDialog';
 
-    /**
-     * Log personal information flag.
-     *
-     * @remarks
-     * Defauls to a value of `=settings.logPersonalInformation`, which retrieves
-     * `logPersonalInformation` flag from settings.
-     */
-    public logPersonalInformation = new BoolExpression('=settings.logPersonalInformation');
 
     // state and step value key constants
+
     /**
      * The path for storing and retrieving QnA Maker context data.
      *
@@ -136,7 +128,8 @@ export class QnAMakerDialog extends WaterfallDialog implements QnAMakerDialogCon
      * It is stored within the current step's [WaterfallStepContext](xref:botbuilder-dialogs.WaterfallStepContext).
      * It supports QnA Maker's follow-up prompt and active learning features.
      */
-    private qnAContextData = 'previousContextData';
+    protected qnAContextData = 'previousContextData';
+
     /**
      * The path for storing and retrieving the previous question ID.
      *
@@ -145,7 +138,8 @@ export class QnAMakerDialog extends WaterfallDialog implements QnAMakerDialogCon
      * It is stored within the current step's [WaterfallStepContext](xref:botbuilder-dialogs.WaterfallStepContext).
      * It supports QnA Maker's follow-up prompt and active learning features.
      */
-    private previousQnAId = 'previousQnAId';
+    protected previousQnAId = 'previousQnAId';
+
     /**
      * The path for storing and retrieving the options for this instance of the dialog.
      *
@@ -154,31 +148,104 @@ export class QnAMakerDialog extends WaterfallDialog implements QnAMakerDialogCon
      * It is stored within the current step's [WaterfallStepContext](xref:botbuilder-dialogs.WaterfallStepContext).
      * It supports QnA Maker and the dialog system.
      */
-    private options = 'options';
-    private qnAData = 'qnaData';
-    private currentQuery = 'currentQuery';
+    protected options = 'options';
 
     // Dialog options parameters
-    private defaultCardNoMatchResponse = `Thanks for the feedback.`;
-    private defaultNoAnswer = `No QnAMaker answers found.`;
 
+    /**
+     * The default threshold for answers returned, based on score.
+     */
+    protected defaultThreshold = 0.3;
+
+    /**
+     * The default maximum number of answers to be returned for the question.
+     */
+    protected defaultTopN = 3;
+
+    private currentQuery = 'currentQuery';
+    private qnAData = 'qnaData';
+    private defaultNoAnswer = 'No QnAMaker answers found.';
+
+    // Card parameters
+    private defaultCardTitle = 'Did you mean:';
+    private defaultCardNoMatchText = 'None of the above.';
+    private defaultCardNoMatchResponse = 'Thanks for the feedback.';
+
+    /**
+     * Gets or sets the QnA Maker knowledge base ID to query.
+     */
     public knowledgeBaseId: StringExpression;
+
+    /**
+     * Gets or sets the QnA Maker host URL for the knowledge base.
+     */
     public hostname: StringExpression;
+
+    /**
+     * Gets or sets the QnA Maker endpoint key to use to query the knowledge base.
+     */
     public endpointKey: StringExpression;
-    public threshold: NumberExpression = new NumberExpression(0.3);
-    public top: IntExpression = new IntExpression(3);
+
+    /**
+     * Gets or sets the threshold for answers returned, based on score.
+     */
+    public threshold: NumberExpression = new NumberExpression(this.defaultThreshold);
+
+    /**
+     * Gets or sets the maximum number of answers to return from the knowledge base.
+     */
+    public top: IntExpression = new IntExpression(this.defaultTopN);
+
+    /**
+     * Gets or sets the template to send to the user when QnA Maker does not find an answer.
+     */
     public noAnswer: TemplateInterface<Partial<Activity>, DialogStateManager> = new BindToActivity(
-        MessageFactory.text(this.defaultNoAnswer) as Activity
+        MessageFactory.text(this.defaultNoAnswer)
     );
+
+    /**
+     * Gets or sets the card title to use when showing active learning options to the user.
+     */
     public activeLearningCardTitle: StringExpression;
+
+    /**
+     * Gets or sets the button text to use with active learning options, allowing a user to
+     * indicate non of the options are applicable.
+     */
     public cardNoMatchText: StringExpression;
+
+    /**
+     * Gets or sets the template to send to the user if they select the no match option on an
+     * active learning card.
+     */
     public cardNoMatchResponse: TemplateInterface<Partial<Activity>, DialogStateManager> = new BindToActivity(
-        MessageFactory.text(this.defaultCardNoMatchResponse) as Activity
+        MessageFactory.text(this.defaultCardNoMatchResponse)
     );
+
+    /**
+     * Gets or sets the QnA Maker metadata with which to filter or boost queries to the knowledge base,
+     * or null to apply none.
+     */
     public strictFilters: ArrayExpression<QnAMakerMetadata>;
+
+    /**
+     * Gets or sets the flag to determine if personal information should be logged in telemetry.
+     *
+     * @remarks
+     * Defauls to a value of `=settings.telemetry.logPersonalInformation`, which retrieves
+     * `logPersonalInformation` flag from settings.
+     */
+    public logPersonalInformation = new BoolExpression('=settings.telemetry.logPersonalInformation');
+
+    /**
+     * Gets or sets a value indicating whether gets or sets environment of knowledgebase to be called.
+     */
     public isTest = false;
+
+    /**
+     * Gets or sets the QnA Maker ranker type to use.
+     */
     public rankerType: EnumExpression<RankerTypes> = new EnumExpression(RankerTypes.default);
-    private strictFiltersJoinOperator: JoinOperator;
 
     /**
      * Initializes a new instance of the [QnAMakerDialog](xref:QnAMakerDialog) class.
@@ -199,14 +266,13 @@ export class QnAMakerDialog extends WaterfallDialog implements QnAMakerDialogCon
         endpointKey?: string,
         hostname?: string,
         noAnswer?: Activity,
-        threshold = 0.3,
-        activeLearningCardTitle = 'Did you mean:',
-        cardNoMatchText = 'None of the above.',
-        top = 3,
+        threshold?: number,
+        activeLearningCardTitle?: string,
+        cardNoMatchText?: string,
+        top?: number,
         cardNoMatchResponse?: Activity,
         strictFilters?: QnAMakerMetadata[],
         dialogId = 'QnAMakerDialog',
-        strictFiltersJoinOperator = JoinOperator.AND
     ) {
         super(dialogId);
         if (knowledgeBaseId) {
@@ -225,7 +291,7 @@ export class QnAMakerDialog extends WaterfallDialog implements QnAMakerDialogCon
             this.top = new IntExpression(top);
         }
         if (activeLearningCardTitle) {
-            this.activeLearningCardTitle = new StringExpression(activeLearningCardTitle);
+            this.activeLearningCardTitle = new StringExpression(this.defaultCardTitle);
         }
         if (cardNoMatchText) {
             this.cardNoMatchText = new StringExpression(cardNoMatchText);
@@ -236,11 +302,10 @@ export class QnAMakerDialog extends WaterfallDialog implements QnAMakerDialogCon
         if (noAnswer) {
             this.noAnswer = new BindToActivity(noAnswer);
         }
-        if (cardNoMatchResponse) {
-            this.cardNoMatchResponse = new BindToActivity(cardNoMatchResponse);
-        }
 
-        this.strictFiltersJoinOperator = strictFiltersJoinOperator;
+        this.cardNoMatchResponse = new BindToActivity(
+            cardNoMatchResponse ?? MessageFactory.text(this.defaultCardNoMatchResponse)
+        );
 
         this.addStep(this.callGenerateAnswer.bind(this));
         this.addStep(this.callTrain.bind(this));
@@ -328,7 +393,6 @@ export class QnAMakerDialog extends WaterfallDialog implements QnAMakerDialogCon
             qnaId: 0,
             rankerType: this.rankerType && (this.rankerType.getValue(dc.state) as string),
             isTest: this.isTest,
-            strictFiltersJoinOperator: this.strictFiltersJoinOperator,
         };
     }
 
@@ -340,10 +404,10 @@ export class QnAMakerDialog extends WaterfallDialog implements QnAMakerDialogCon
      */
     private async getQnAResponseOptions(dc: DialogContext): Promise<QnAMakerDialogResponseOptions> {
         return {
-            activeLearningCardTitle: this.activeLearningCardTitle && this.activeLearningCardTitle.getValue(dc.state),
+            activeLearningCardTitle: this.activeLearningCardTitle?.getValue(dc.state) ?? this.defaultCardTitle,
             cardNoMatchResponse: this.cardNoMatchResponse && (await this.cardNoMatchResponse.bind(dc, dc.state)),
-            cardNoMatchText: this.cardNoMatchText && this.cardNoMatchText.getValue(dc.state),
-            noAnswer: this.noAnswer && (await this.noAnswer.bind(dc, dc.state)),
+            cardNoMatchText: this.cardNoMatchText?.getValue(dc.state) ?? this.defaultCardNoMatchText,
+            noAnswer: await this.noAnswer?.bind(dc, dc.state),
         };
     }
 
@@ -503,13 +567,13 @@ export class QnAMakerDialog extends WaterfallDialog implements QnAMakerDialogCon
      * is sent to the user. Alternatively, if no answer has been identified or the user has indicated 'no match' on an
      * active learning card, then an appropriate message is sent to the user.
      **/
-    private async displayQnAResult(step: WaterfallStepContext): Promise<DialogTurnResult> {
+    protected async displayQnAResult(step: WaterfallStepContext): Promise<DialogTurnResult> {
         const dialogOptions: QnAMakerDialogOptions = step.activeDialog.state[this.options];
         const reply = step.context.activity.text;
 
         if (reply == dialogOptions.qnaDialogResponseOptions.cardNoMatchText) {
             const activity = dialogOptions.qnaDialogResponseOptions.cardNoMatchResponse;
-            await step.context.sendActivity(activity || this.defaultCardNoMatchResponse);
+            await step.context.sendActivity(activity ?? this.defaultCardNoMatchResponse);
             return step.endDialog();
         }
 
