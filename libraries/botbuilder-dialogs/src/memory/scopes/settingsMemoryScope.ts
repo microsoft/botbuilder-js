@@ -183,8 +183,9 @@ export class SettingsMemoryScope extends MemoryScope {
         }
 
         // Convert all child into dictionary
-        const result = {};
-        node.children.forEach((u) => (result[u.value] = this.convertNodeToObject(u)));
-        return result;
+        return node.children.reduce((result, child) => {
+            result[child.value] = this.convertNodeToObject(child);
+            return result;
+        }, {});
     }
 }
