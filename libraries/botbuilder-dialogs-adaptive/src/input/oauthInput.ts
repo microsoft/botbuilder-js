@@ -249,11 +249,17 @@ export class OAuthInput extends InputDialog implements OAuthInputConfiguration {
                 if (!interrupted) {
                     // increase the turnCount as last step
                     dc.state.setValue(InputDialog.TURN_COUNT_PROPERTY, turnCount + 1);
-                    const prompt = await this.onRenderPrompt(dc, inputState);
-                    await dc.context.sendActivity(prompt);
+
+                    if (isMessage) {
+                        const prompt = await this.onRenderPrompt(dc, inputState);
+                        await dc.context.sendActivity(prompt);
+                    }
                 }
 
-                await this.sendOAuthCardAsync(dc, promptOptions && promptOptions.prompt);
+                if (isMessage) {
+                    await this.sendOAuthCardAsync(dc, promptOptions?.prompt);
+                }
+
                 return Dialog.EndOfTurn;
             } else {
                 if (this.defaultValue) {
