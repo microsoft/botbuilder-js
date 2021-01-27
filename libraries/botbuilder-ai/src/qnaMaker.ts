@@ -10,7 +10,6 @@ import { BotTelemetryClient, NullTelemetryClient, TurnContext } from 'botbuilder
 
 import {
     FeedbackRecords,
-    JoinOperator,
     QnAMakerEndpoint,
     QnAMakerMetadata,
     QnAMakerOptions,
@@ -98,7 +97,6 @@ export class QnAMaker implements QnAMakerTelemetryClient {
             metadataBoost = [] as QnAMakerMetadata[],
             timeout = 100000,
             rankerType = RankerTypes.default,
-            strictFiltersJoinOperator = JoinOperator.AND,
         } = options;
 
         this._options = {
@@ -108,7 +106,6 @@ export class QnAMaker implements QnAMakerTelemetryClient {
             metadataBoost,
             timeout,
             rankerType,
-            strictFiltersJoinOperator,
         } as QnAMakerOptions;
 
         this.generateAnswerUtils = new GenerateAnswerUtils(this._options, this.endpoint);
