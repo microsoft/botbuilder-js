@@ -47,11 +47,12 @@ export class LuisAdaptiveRecognizer extends Recognizer implements LuisAdaptiveRe
     /**
      * LUIS dynamic list.
      */
-    public dynamicLists: ArrayExpression<any>;
+    public dynamicLists: ArrayExpression<any>; // eslint-disable-line @typescript-eslint/no-explicit-any
 
     /**
      * LUIS endpoint to query.
-     * @remarks
+     *
+     * @summary
      * For example: "https://westus.api.cognitive.microsoft.com"
      */
     public endpoint: StringExpression;
@@ -63,7 +64,8 @@ export class LuisAdaptiveRecognizer extends Recognizer implements LuisAdaptiveRe
 
     /**
      * External entity recognizer.
-     * @remarks
+     *
+     * @summary
      * This recognizer is run before calling LUIS and the results are passed to LUIS.
      */
     // public externalEntityRecognizer: Recognizer;
@@ -92,17 +94,19 @@ export class LuisAdaptiveRecognizer extends Recognizer implements LuisAdaptiveRe
 
     /**
      * To recognize intents and entities in a users utterance.
-     * @param dialogContext The [DialogContext](xref:botbuilder-dialogs.DialogContext).
-     * @param activity The [Activity](xref:botbuilder-core.Activity).
-     * @param telemetryProperties Optional. Additional properties to be logged to telemetry with event.
-     * @param telemetryMetrics Optional. Additional metrics to be logged to telemetry with event.
+     *
+     * @param {DialogContext} dialogContext The [DialogContext](xref:botbuilder-dialogs.DialogContext).
+     * @param {Activity} activity The [Activity](xref:botbuilder-core.Activity).
+     * @param {object} telemetryProperties Optional. Additional properties to be logged to telemetry with event.
+     * @param {object} telemetryMetrics Optional. Additional metrics to be logged to telemetry with event.
+     * @returns {Promise<RecognizerResult>} A promise resolving to the recognizer result.
      */
     public async recognize(
         dialogContext: DialogContext,
         activity: Activity,
         telemetryProperties?: { [key: string]: string },
         telemetryMetrics?: { [key: string]: number }
-    ) {
+    ): Promise<RecognizerResult> {
         // Validate passed in activity matches turn activity
         const context = dialogContext.context;
         const utteranceMatches: boolean =
@@ -124,37 +128,45 @@ export class LuisAdaptiveRecognizer extends Recognizer implements LuisAdaptiveRe
         const wrapper = new LuisRecognizer(application, this.recognizerOptions(dialogContext));
 
         const result = await wrapper.recognize(context);
+
         this.trackRecognizerResult(
             dialogContext,
             'LuisResult',
             this.fillRecognizerResultTelemetryProperties(result, telemetryProperties, dialogContext),
             telemetryMetrics
         );
+
         return result;
     }
 
     /**
      * Construct V3 recognizer options from the current dialog context.
-     * @param dialogContext Current dialog context.
+     *
+     * @param {DialogContext} dialogContext Current dialog context.
+     * @returns {LuisRecognizerOptionsV3} luis recognizer options
      */
     public recognizerOptions(dialogContext: DialogContext): LuisRecognizerOptionsV3 {
-        const options: LuisRecognizerOptionsV3 = Object.assign({}, this.predictionOptions as any);
+        const options = Object.assign({}, this.predictionOptions);
+
         if (this.telemetryClient) {
             options.telemetryClient = this.telemetryClient;
         }
+
         if (this.dynamicLists != null) {
             options.dynamicLists = this.dynamicLists.getValue(dialogContext.state);
         }
-        return options;
+
+        return options as LuisRecognizerOptionsV3;
     }
 
     /**
      * Fills the event properties for LuisResult event for telemetry.
      * These properties are logged when the recognizer is called.
-     * @param recognizerResult Last activity sent from user.
-     * @param telemetryProperties Additional properties to be logged to telemetry with the LuisResult event.
-     * @param dialogContext Dialog context.
-     * @returns A dictionary that is sent as properties to BotTelemetryClient.trackEvent method for the LuisResult event.
+     *
+     * @param {RecognizerResult} recognizerResult Last activity sent from user.
+     * @param {object} telemetryProperties Additional properties to be logged to telemetry with the LuisResult event.
+     * @param {DialogContext} dialogContext Dialog context.
+     * @returns {object} A dictionary that is sent as properties to BotTelemetryClient.trackEvent method for the LuisResult event.
      */
     protected fillRecognizerResultTelemetryProperties(
         recognizerResult: RecognizerResult,

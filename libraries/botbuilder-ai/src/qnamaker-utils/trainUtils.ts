@@ -13,7 +13,7 @@ import { HttpRequestUtils } from './httpRequestUtils';
 /**
  * Generate Answer api utils class.
  *
- * @remarks
+ * @summary
  * This class is helper class for generate answer api, which is used to make queries to a single QnA Maker knowledge base and return the result.
  */
 export class TrainUtils {
@@ -21,7 +21,8 @@ export class TrainUtils {
 
     /**
      * Creates new instance for active learning train utils.
-     * @param endpoint The endpoint of the knowledge base to query.
+     *
+     * @param {QnAMakerEndpoint} endpoint The endpoint of the knowledge base to query.
      */
     constructor(private readonly endpoint: QnAMakerEndpoint) {
         this.httpRequestUtils = new HttpRequestUtils();
@@ -29,9 +30,10 @@ export class TrainUtils {
 
     /**
      * Train API to provide feedback.
-     * @param feedbackRecords Feedback record list.
+     *
+     * @param {FeedbackRecords} feedbackRecords Feedback record list.
      */
-    public async callTrain(feedbackRecords: FeedbackRecords) {
+    public async callTrain(feedbackRecords: FeedbackRecords): Promise<void> {
         if (!feedbackRecords) {
             throw new TypeError('Feedback records can not be null.');
         }
@@ -43,9 +45,6 @@ export class TrainUtils {
         await this.queryTrain(feedbackRecords);
     }
 
-    /**
-     * @private
-     */
     private async queryTrain(feedbackRecords: FeedbackRecords) {
         const url = `${this.endpoint.host}/knowledgebases/${this.endpoint.knowledgeBaseId}/train`;
         const payloadBody = JSON.stringify({

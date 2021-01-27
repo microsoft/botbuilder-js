@@ -69,7 +69,7 @@ class TelemetryOverrideRecognizer extends LuisRecognizer {
 
 class OverrideFillRecognizer extends LuisRecognizer {
     async onRecognizerResults(recognizerResult, turnContext, properties, metrics) {
-        var props = await this.fillTelemetryProperties(recognizerResult, turnContext, properties);
+        let props = await this.fillTelemetryProperties(recognizerResult, turnContext, properties);
         if (!('MyImportantProperty' in props)) {
             props.MyImportantProperty = 'myImportantValue';
         }
@@ -106,15 +106,12 @@ function isWithinDelta(left, right, delta, compare) {
     } else if (Array.isArray(left) && Array.isArray(right)) {
         within = left.length === right.length;
         for (let i = 0; within && i < left.length; i++) {
-            // eslint-disable-next-line security/detect-object-injection
             within = isWithinDelta(left[i], right[i], delta, compare);
         }
     } else if (typeof left === 'object' && typeof right === 'object') {
-        // eslint-disable-next-line security/detect-object-injection
         within = Object.keys(left).length === Object.keys(right).length;
 
         Object.keys(left).forEach((key) => {
-            // eslint-disable-next-line security/detect-object-injection
             within = isWithinDelta(left[key], right[key], delta, compare || key === 'score' || key === 'intents');
         });
     } else if (left !== right) {

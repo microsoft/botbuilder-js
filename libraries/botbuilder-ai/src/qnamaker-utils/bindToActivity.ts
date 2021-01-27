@@ -7,7 +7,7 @@
  */
 
 import { Activity } from 'botbuilder-core';
-import { DialogContext, TemplateInterface } from 'botbuilder-dialogs';
+import { TemplateInterface } from 'botbuilder-dialogs';
 
 export class BindToActivity implements TemplateInterface<Partial<Activity>> {
     private _activity: Partial<Activity>;
@@ -15,7 +15,8 @@ export class BindToActivity implements TemplateInterface<Partial<Activity>> {
     public constructor(activity: Partial<Activity>) {
         this._activity = activity;
     }
-    public async bind(context: DialogContext, data: object): Promise<Partial<Activity>> {
+
+    public async bind(): Promise<Partial<Activity>> {
         return this._activity;
     }
 }

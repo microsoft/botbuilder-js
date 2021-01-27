@@ -7,7 +7,7 @@
 /**
  * @class
  * Initializes a new instance of the Entity class.
- * @constructor
+ * @class
  * Luis entity. Look at https://www.luis.ai/Help for more information.
  *
  * @member {string} [role] Role of the entity.
@@ -30,17 +30,17 @@ export interface Entity {
     startIndex?: number;
     endIndex?: number;
     score?: number;
-    resolution?: { [propertyName: string]: any };
+    resolution?: { [propertyName: string]: any }; // eslint-disable-line @typescript-eslint/no-explicit-any
 }
 
 /**
  * @class
  * Initializes a new instance of the ActionParameter class.
- * @constructor
+ * @class
  * @member {string} [name] Name of the parameter.
  * @member {boolean} [required] True if the parameter is required, false
  * otherwise.
- * @member {array} [value] Value of extracted entities for this parameter.
+ * @member {Array} [value] Value of extracted entities for this parameter.
  */
 export interface ActionParameter {
     name?: string;
@@ -51,11 +51,11 @@ export interface ActionParameter {
 /**
  * @class
  * Initializes a new instance of the Action class.
- * @constructor
+ * @class
  * @member {boolean} [triggered] True if the Luis action is triggered, false
  * otherwise.
  * @member {string} [name] Name of the action.
- * @member {array} [parameters] The parameters for the action.
+ * @member {Array} [parameters] The parameters for the action.
  */
 export interface Action {
     triggered?: boolean;
@@ -66,13 +66,13 @@ export interface Action {
 /**
  * @class
  * Initializes a new instance of the Intent class.
- * @constructor
+ * @class
  * LUIS intent. Look at https://www.luis.ai/Help for more information.
  *
  * @member {string} [intent] The LUIS intent detected by LUIS service in
  * response to a query.
  * @member {number} [score] The score for the detected intent.
- * @member {array} [actions] The action associated with this Luis intent.
+ * @member {Array} [actions] The action associated with this Luis intent.
  */
 export interface Intent {
     intent?: string;
@@ -83,7 +83,7 @@ export interface Intent {
 /**
  * @class
  * Initializes a new instance of the CompositeChild class.
- * @constructor
+ * @class
  * Child entity in Luis composite entity.
  *
  * @member {string} type Type of child entity.
@@ -97,13 +97,13 @@ export interface CompositeChild {
 /**
  * @class
  * Initializes a new instance of the CompositeEntity class.
- * @constructor
+ * @class
  * Luis composite entity. Look at https://www.luis.ai/Help for more
  * information.
  *
  * @member {string} parentType Type of parent entity.
  * @member {string} value Value for entity extracted by LUIS.
- * @member {array} children
+ * @member {Array} children
  */
 export interface CompositeEntity {
     parentType: string;
@@ -114,7 +114,7 @@ export interface CompositeEntity {
 /**
  * @class
  * Initializes a new instance of the DialogResponse class.
- * @constructor
+ * @class
  * The dialog response.
  *
  * @member {string} [prompt] Prompt that should be asked.
@@ -135,17 +135,17 @@ export interface DialogResponse {
 /**
  * @class
  * Initializes a new instance of the LuisResult class.
- * @constructor
+ * @class
  * @member {string} query The query sent to LUIS.
  * @member {object} [topScoringIntent]
  * @member {string} [topScoringIntent.intent] The LUIS intent detected by LUIS
  * service in response to a query.
  * @member {number} [topScoringIntent.score] The score for the detected intent.
- * @member {array} [topScoringIntent.actions] The action associated with this
+ * @member {Array} [topScoringIntent.actions] The action associated with this
  * Luis intent.
- * @member {array} [intents] The intents found in the query text.
- * @member {array} entities The entities found in the query text.
- * @member {array} [compositeEntities] The composite entities found in the
+ * @member {Array} [intents] The intents found in the query text.
+ * @member {Array} entities The entities found in the query text.
+ * @member {Array} [compositeEntities] The composite entities found in the
  * utterance.
  * @member {object} [dialog]
  * @member {string} [dialog.prompt] Prompt that should be asked.

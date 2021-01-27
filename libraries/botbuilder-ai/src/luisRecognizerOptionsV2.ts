@@ -6,26 +6,33 @@
  * Licensed under the MIT License.
  */
 
+import * as msRest from '@azure/ms-rest-js';
+import * as os from 'os';
+import { LuisApplication, LuisRecognizerOptionsV2 } from './luisRecognizer';
+import { LuisRecognizerInternal } from './luisRecognizerOptions';
+import { NullTelemetryClient, TurnContext, RecognizerResult } from 'botbuilder-core';
+
 import {
     LUISRuntimeClient as LuisClient,
     LUISRuntimeModels as LuisModels,
 } from '@azure/cognitiveservices-luis-runtime';
-import * as msRest from '@azure/ms-rest-js';
-import { LuisRecognizerInternal } from './luisRecognizerOptions';
-import { LuisApplication, LuisRecognizerOptionsV2 } from './luisRecognizer';
-import { NullTelemetryClient, TurnContext, RecognizerResult } from 'botbuilder-core';
-import * as os from 'os';
-const pjson = require('../package.json');
+
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const pjson: Record<'name' | 'version', string> = require('../package.json');
+
 const LUIS_TRACE_TYPE = 'https://www.luis.ai/schemas/trace';
 const LUIS_TRACE_NAME = 'LuisRecognizer';
 const LUIS_TRACE_LABEL = 'Luis Trace';
 
 /**
  * Validates if the options provided are valid [LuisRecognizerOptionsV2](xref:botbuilder-ai.LuisRecognizerOptionsV2).
- * @returns A boolean value that indicates param options is a [LuisRecognizerOptionsV2](xref:botbuilder-ai.LuisRecognizerOptionsV2).
+ *
+ * @param {any} options options to type test
+ * @returns {boolean} A boolean value that indicates param options is a [LuisRecognizerOptionsV2](xref:botbuilder-ai.LuisRecognizerOptionsV2).
  */
-export function isLuisRecognizerOptionsV2(options: any): options is LuisRecognizerOptionsV2 {
-    return options.apiVersion && options.apiVersion === 'v2';
+export function isLuisRecognizerOptionsV2(options: unknown): options is LuisRecognizerOptionsV2 {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    return (options as any).apiVersion && (options as any).apiVersion === 'v2';
 }
 
 /**
@@ -34,17 +41,20 @@ export function isLuisRecognizerOptionsV2(options: any): options is LuisRecogniz
 export class LuisRecognizerV2 extends LuisRecognizerInternal {
     /**
      * Creates a new [LuisRecognizerV2](xref:botbuilder-ai.LuisRecognizerV2) instance.
-     * @param application An object conforming to the [LuisApplication](xref:botbuilder-ai.LuisApplication) definition or a string representing a LUIS application endpoint, usually retrieved from https://luis.ai.
-     * @param options Optional. Options object used to control predictions. Should conform to the [LuisRecognizerOptionsV2](xref:botbuilder-ai.LuisRecognizerOptionsV2) definition.
+     *
+     * @param {LuisApplication} application An object conforming to the [LuisApplication](xref:botbuilder-ai.LuisApplication) definition or a string representing a LUIS application endpoint, usually retrieved from https://luis.ai.
+     * @param {LuisRecognizerOptionsV2} options Optional. Options object used to control predictions. Should conform to the [LuisRecognizerOptionsV2](xref:botbuilder-ai.LuisRecognizerOptionsV2) definition.
      */
     constructor(application: LuisApplication, options?: LuisRecognizerOptionsV2) {
         super(application);
+
         // Create client
         // - We have to cast "creds as any" to avoid a build break relating to different versions
         //   of autorest being used by our various components.  This is just a build issue and
         //   shouldn't effect production bots.
-        const creds: msRest.TokenCredentials = new msRest.TokenCredentials(application.endpointKey);
-        const baseUri: string = application.endpoint || 'https://westus.api.cognitive.microsoft.com';
+        const creds = new msRest.TokenCredentials(application.endpointKey);
+        const baseUri = application.endpoint || 'https://westus.api.cognitive.microsoft.com';
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         this.luisClient = new LuisClient(creds as any, baseUri);
 
         this.options = {
@@ -66,8 +76,9 @@ export class LuisRecognizerV2 extends LuisRecognizerInternal {
 
     /**
      * Calls LUIS to recognize intents and entities in a users utterance.
-     * @param context The [TurnContext](xref:botbuilder-core.TurnContext).
-     * @returns Analysis of utterance in form of [RecognizerResult](xref:botbuilder-core.RecognizerResult).
+     *
+     * @param {TurnContext} context The [TurnContext](xref:botbuilder-core.TurnContext).
+     * @returns {Promise<RecognizerResult>} Analysis of utterance in form of [RecognizerResult](xref:botbuilder-core.RecognizerResult).
      */
     async recognizeInternal(context: TurnContext): Promise<RecognizerResult> {
         const luisPredictionOptions = this.options;
@@ -112,44 +123,34 @@ export class LuisRecognizerV2 extends LuisRecognizerInternal {
         return result;
     }
 
-    /**
-     * Remove role and ensure that dot and space are not a part of entity names since we want to do JSON paths.
-     * @param name Value to be normalized.
-     * @returns Normalized string value.
-     */
+    // Remove role and ensure that dot and space are not a part of entity names since we want to do JSON paths.
     private normalizeName(name: string): string {
         return name.replace(/\.| /g, '_');
     }
 
-    /**
-     * Get Intents from a LuisResult object.
-     * @param luisResult Prediction, based on the input query, containing intent(s) and entities.
-     * @returns LUIS Intents with a score number.
-     */
-    private getIntents(luisResult: LuisModels.LuisResult): any {
+    // Get Intents from a LuisResult object.
+    private getIntents(luisResult: LuisModels.LuisResult): Record<string, Record<'score', number>> {
         const intents: { [name: string]: { score: number } } = {};
         if (luisResult.intents) {
-            luisResult.intents.reduce((prev: any, curr: LuisModels.IntentModel) => {
+            luisResult.intents.reduce((prev, curr) => {
                 prev[this.normalizeName(curr.intent)] = { score: curr.score };
-
                 return prev;
             }, intents);
         } else {
-            const topScoringIntent: LuisModels.IntentModel = luisResult.topScoringIntent;
+            const topScoringIntent = luisResult.topScoringIntent;
             intents[this.normalizeName(topScoringIntent.intent)] = { score: topScoringIntent.score };
         }
 
         return intents;
     }
 
-    /**
-     * @private
-     */
     private getEntitiesAndMetadata(
         entities: LuisModels.EntityModel[],
         compositeEntities: LuisModels.CompositeEntityModel[] | undefined,
         verbose: boolean
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
     ): any {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const entitiesAndMetadata: any = verbose ? { $instance: {} } : {};
         let compositeEntityTypes: string[] = [];
 
@@ -185,16 +186,15 @@ export class LuisRecognizerV2 extends LuisRecognizerInternal {
         return entitiesAndMetadata;
     }
 
-    /**
-     * @private
-     */
     private populateCompositeEntity(
         compositeEntity: LuisModels.CompositeEntityModel,
         entities: LuisModels.EntityModel[],
-        entitiesAndMetadata: any,
+        entitiesAndMetadata: any, // eslint-disable-line @typescript-eslint/no-explicit-any
         verbose: boolean
     ): LuisModels.EntityModel[] {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const childrenEntities: any = verbose ? { $instance: {} } : {};
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         let childrenEntitiesMetadata: any = {};
 
         // This is now implemented as O(n^2) search and can be reduced to O(2n) using a map as an optimization if n grows
@@ -212,7 +212,7 @@ export class LuisRecognizerV2 extends LuisRecognizerInternal {
         }
 
         // This is now implemented as O(n*k) search and can be reduced to O(n + k) using a map as an optimization if n or k grow
-        const coveredSet: Set<any> = new Set();
+        const coveredSet = new Set();
         compositeEntity.children.forEach((childEntity: LuisModels.CompositeChildModel) => {
             for (let i = 0; i < entities.length; i++) {
                 const entity: LuisModels.EntityModel = entities[i];
@@ -264,9 +264,7 @@ export class LuisRecognizerV2 extends LuisRecognizerInternal {
         return filteredEntities;
     }
 
-    /**
-     * @private
-     */
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     private getEntityValue(entity: LuisModels.EntityModel): any {
         if (entity.type.startsWith('builtin.geographyV2.')) {
             return {
@@ -291,14 +289,18 @@ export class LuisRecognizerV2 extends LuisRecognizerInternal {
                 return entity.resolution;
             }
 
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             const vals: any = entity.resolution.values;
-            const type: any = vals[0].type;
-            const timexes: any[] = vals.map((t: any) => t.timex);
-            const distinct: any = timexes.filter((v: any, i: number, a: any[]) => a.indexOf(v) === i);
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            const type = vals[0].type;
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            const timexes = vals.map((t: any) => t.timex);
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            const distinct = timexes.filter((v, i, a) => a.indexOf(v) === i);
 
             return { type: type, timex: distinct };
         } else {
-            const res: any = entity.resolution;
+            const res = entity.resolution;
             switch (entity.type) {
                 case 'builtin.number':
                 case 'builtin.ordinal':
@@ -315,8 +317,8 @@ export class LuisRecognizerV2 extends LuisRecognizerInternal {
                 case 'builtin.dimension':
                 case 'builtin.currency':
                 case 'builtin.temperature': {
-                    const val: any = res.value;
-                    const obj: any = {};
+                    const val = res.value;
+                    const obj: Partial<Record<'number' | 'units', number>> = {};
                     if (val) {
                         obj.number = Number(val);
                     }
@@ -331,11 +333,8 @@ export class LuisRecognizerV2 extends LuisRecognizerInternal {
         }
     }
 
-    /**
-     * @private
-     */
-    private getEntityMetadata(entity: LuisModels.EntityModel): any {
-        const res: any = {
+    private getEntityMetadata(entity: LuisModels.EntityModel): Record<string, string | number> {
+        const res: Record<string, string | number> = {
             startIndex: entity.startIndex,
             endIndex: entity.endIndex + 1,
             score: entity.score,
@@ -349,12 +348,9 @@ export class LuisRecognizerV2 extends LuisRecognizerInternal {
         return res;
     }
 
-    /**
-     * @private
-     */
     private getNormalizedEntityName(entity: LuisModels.EntityModel): string {
         // Type::Role -> Role
-        let type: string = entity.type.split(':').pop();
+        let type = entity.type.split(':').pop();
         if (type.startsWith('builtin.datetimeV2.')) {
             type = 'datetime';
         } else if (type.startsWith('builtin.currency')) {
@@ -373,13 +369,9 @@ export class LuisRecognizerV2 extends LuisRecognizerInternal {
         return type.replace(/\.|\s/g, '_');
     }
 
-    /**
-     * If a property doesn't exist add it to a new array, otherwise append it to the existing array
-     * @param obj Object on which the property is to be set
-     * @param key Property Key
-     * @param value Property Value
-     */
-    private addProperty(obj: any, key: string, value: any): void {
+    // If a property doesn't exist add it to a new array, otherwise append it to the existing array
+    // eslint-disable-next-line @typescript-eslint/ban-types
+    private addProperty(obj: object, key: string, value: unknown): void {
         if (key in obj) {
             obj[key] = obj[key].concat(value);
         } else {
@@ -387,24 +379,15 @@ export class LuisRecognizerV2 extends LuisRecognizerInternal {
         }
     }
 
-    /**
-     * @private
-     */
-    private getSentiment(luis: LuisModels.LuisResult): any {
-        let result: any;
+    private getSentiment(luis: LuisModels.LuisResult): Record<'label' | 'score', unknown> | undefined {
         if (luis.sentimentAnalysis) {
-            result = {
+            return {
                 label: luis.sentimentAnalysis.label,
                 score: luis.sentimentAnalysis.score,
             };
         }
-
-        return result;
     }
 
-    /**
-     * @private
-     */
     private getUserAgent(): string {
         // Note when the ms-rest dependency the LuisClient uses has been updated
         // this code should be modified to use the client's addUserAgentInfo() function.
@@ -416,15 +399,12 @@ export class LuisRecognizerV2 extends LuisRecognizerInternal {
         return userAgent;
     }
 
-    /**
-     * @private
-     */
     private emitTraceInfo(
         context: TurnContext,
         luisResult: LuisModels.LuisResult,
         recognizerResult: RecognizerResult
-    ): Promise<any> {
-        const traceInfo: any = {
+    ): Promise<unknown> {
+        const traceInfo = {
             recognizerResult: recognizerResult,
             luisResult: luisResult,
             luisOptions: {

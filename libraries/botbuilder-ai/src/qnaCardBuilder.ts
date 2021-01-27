@@ -14,9 +14,11 @@ import { QnAMakerResult } from './';
 export class QnACardBuilder {
     /**
      * Returns an activity with a hero card attachment, containing buttons for active learning suggestions.
-     * @param suggestionsList List of suggestions to be displayed on hero card.
-     * @param cardTitle Title of the hero card.
-     * @param cardNoMatchText Text for button to be added to card to allow user to select 'no match'.
+     *
+     * @param {string[]} suggestionsList List of suggestions to be displayed on hero card.
+     * @param {string} cardTitle Title of the hero card.
+     * @param {string} cardNoMatchText Text for button to be added to card to allow user to select 'no match'.
+     * @returns {Partial<Activity>} Activity representing the suggestions as a card
      */
     public static getSuggestionsCard(
         suggestionsList: string[],
@@ -59,7 +61,9 @@ export class QnACardBuilder {
 
     /**
      * Returns an activity with answer text and a hero card attachment, containing buttons for multi turn prompts.
-     * @param result QnAMaker result containing the answer text and multi turn prompts to be displayed.
+     *
+     * @param {QnAMakerResult} result QnAMaker result containing the answer text and multi turn prompts to be displayed.
+     * @returns {Partial<Activity>} Activity representing the prompts as a card
      */
     public static getQnAPromptsCard(result: QnAMakerResult): Partial<Activity> {
         if (!result) {

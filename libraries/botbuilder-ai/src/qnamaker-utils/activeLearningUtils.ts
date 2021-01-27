@@ -17,7 +17,7 @@ const MaxLowScoreVariationMultiplier = 1.0;
 /**
  * Generate Answer api utils class.
  *
- * @remarks
+ * @summary
  * This class is helper class for generate answer api, which is used to make queries to a single QnA Maker knowledge base and return the result.
  */
 export class ActiveLearningUtils {
@@ -29,8 +29,9 @@ export class ActiveLearningUtils {
 
     /**
      * Returns list of qnaSearch results which have low score variation.
+     *
      * @param {QnAMakerResult[]} qnaSearchResults A list of results returned from the QnA getAnswer call.
-     * @returns List of filtered qnaSearch results.
+     * @returns {QnAMakerResult[]} List of filtered qnaSearch results.
      */
     public static getLowScoreVariation(qnaSearchResults: QnAMakerResult[]): QnAMakerResult[] {
         if (qnaSearchResults == null || qnaSearchResults.length == 0) {
@@ -76,9 +77,6 @@ export class ActiveLearningUtils {
         return filteredQnaSearchResult;
     }
 
-    /**
-     * @private
-     */
     private static includeForClustering(prevScore, currentScore, multiplier): boolean {
         return prevScore - currentScore < multiplier * Math.sqrt(prevScore);
     }
