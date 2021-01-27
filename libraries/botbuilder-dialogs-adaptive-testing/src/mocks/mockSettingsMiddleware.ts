@@ -30,7 +30,7 @@ export class MockSettingsMiddleware implements Middleware {
                 const mock = property;
                 mock.assignments.forEach((assignment) => {
                     // Note that settings use : as separator
-                    const newProperty = assignment.property.split('.').join(':');
+                    const newProperty = assignment.property.replace(/\./g, ':');
                     this._mockData.set(newProperty, assignment.value);
                 });
             }
