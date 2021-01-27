@@ -49,6 +49,7 @@ export interface QnAMakerRecognizerConfiguration extends RecognizerConfiguration
     metadata?: QnAMakerMetadata[] | string | Expression | ArrayExpression<QnAMakerMetadata>;
     context?: QnARequestContext | string | Expression | ObjectExpression<QnARequestContext>;
     qnaId?: number | string | Expression | IntExpression;
+    logPersonalInformation?: boolean | string | Expression | BoolExpression;
 }
 
 /**
@@ -118,6 +119,11 @@ export class QnAMakerRecognizer extends Recognizer implements QnAMakerRecognizer
      */
     public qnaId: IntExpression = new IntExpression(0);
 
+    /**
+     * The flag to indicate if personal information should be logged in telemetry.
+     */
+    public logPersonalInformation: BoolExpression = new BoolExpression('=settings.telemetry.logPersonalInformation');
+
     public getConverter(property: keyof QnAMakerRecognizerConfiguration): Converter | ConverterFactory {
         switch (property) {
             case 'knowledgeBaseId':
@@ -140,6 +146,8 @@ export class QnAMakerRecognizer extends Recognizer implements QnAMakerRecognizer
                 return new ObjectExpressionConverter<QnARequestContext>();
             case 'qnaId':
                 return new IntExpressionConverter();
+            case 'logPersonalInformation':
+                return new BoolExpressionConverter();
             default:
                 return super.getConverter(property);
         }
@@ -214,6 +222,7 @@ export class QnAMakerRecognizer extends Recognizer implements QnAMakerRecognizer
             qnaId: this.qnaId && this.qnaId.getValue(dc.state),
             rankerType: this.rankerType && this.rankerType.getValue(dc.state),
             isTest: this.isTest,
+            strictFiltersJoinOperator: this.strictFiltersJoinOperator,
         };
         const answers = await qnaMaker.getAnswers(dc.context, qnaMakerOptions);
 
@@ -261,15 +270,21 @@ export class QnAMakerRecognizer extends Recognizer implements QnAMakerRecognizer
      * @param dc The dialog context used to access state.
      */
     protected getQnAMaker(dc: DialogContext): QnAMaker {
-        const endpointKey = this.endpointKey && this.endpointKey.getValue(dc.state);
-        const hostname = this.hostname && this.hostname.getValue(dc.state);
-        const knowledgeBaseId = this.knowledgeBaseId && this.knowledgeBaseId.getValue(dc.state);
+        const { value: endpointKey, error } = this.endpointKey?.tryGetValue(dc.state);
+        if (!endpointKey || error) {
+            throw new Error(`Unable to get a value for endpointKey from state. ${error}`);
+        }
+        const { value: host, error: error2 } = this.hostname?.tryGetValue(dc.state);
+        if (!host || error2) {
+            throw new Error(`Unable to get a value for hostname from state. ${error2}`);
+        }
+        const { value: knowledgeBaseId, error: error3 } = this.knowledgeBaseId?.tryGetValue(dc.state);
+        if (!knowledgeBaseId || error3) {
+            throw new Error(`Unable to get a value for knowledgeBaseId from state. ${error3}`);
+        }
 
-        const endpoint: QnAMakerEndpoint = {
-            endpointKey: endpointKey,
-            host: hostname,
-            knowledgeBaseId: knowledgeBaseId,
-        };
-        return new QnAMaker(endpoint);
+        const endpoint: QnAMakerEndpoint = { endpointKey, host, knowledgeBaseId };
+        const logPersonalInfo = this.logPersonalInformation.getValue(dc.state);
+        return new QnAMaker(endpoint, {}, this.telemetryClient, logPersonalInfo);
     }
 }
