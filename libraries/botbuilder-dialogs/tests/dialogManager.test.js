@@ -21,7 +21,7 @@ const {
     DialogEvents,
 } = require('../');
 const { AuthConstants } = require('../lib/prompts/skillsHelpers');
-const { AdaptiveDialog, OnBeginDialog, SendActivity } = require('../../botbuilder-dialogs-adaptive/lib');
+const { AdaptiveDialog, OnBeginDialog, EndTurn, SendActivity } = require('../../botbuilder-dialogs-adaptive/lib');
 
 const FlowTestCase = {
     RootBotOnly: 'RootBotOnly',
@@ -305,6 +305,31 @@ describe('DialogManager', function () {
 
         await adapter.send('hi').startTest();
         ok(dm.dialogs.find('inner'));
+    });
+
+    it('Cyclical dialog structures', async () => {
+        const trigger = new OnBeginDialog();
+
+        const root = new AdaptiveDialog('root').configure({
+            triggers: [trigger],
+        });
+
+        trigger.actions = [new EndTurn(), root];
+
+        const dm = new DialogManager(root);
+
+        const adapter = new TestAdapter(async (context) => {
+            // First OnTurn invocation will trigger registration of dependencies.
+            // If registration is not protected against cyclical dialog structures,
+            // this call will result in a stack overflow.
+            await dm.onTurn(context);
+        });
+
+        const storage = new MemoryStorage();
+
+        useBotState(adapter, new ConversationState(storage), new UserState(storage));
+
+        await adapter.send('hi').startTest();
     });
 
     it('Container registration double nesting', async () => {
