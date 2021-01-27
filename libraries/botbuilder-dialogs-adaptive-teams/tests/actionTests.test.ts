@@ -122,7 +122,7 @@ describe('Actions', function () {
     ComponentRegistration.add(new AdaptiveComponentRegistration());
     ComponentRegistration.add(new TeamsComponentRegistration());
 
-    const resourceExplorer = new ResourceExplorer().addFolder(path.join(__dirname, './actionTests'), true, false);
+    const resourceExplorer = new ResourceExplorer().addFolder(path.join(__dirname, 'actionTests'), true, false);
 
     /**
      * Note: With mocha, `this.test?.title` refers to the test's name, so runTestScript

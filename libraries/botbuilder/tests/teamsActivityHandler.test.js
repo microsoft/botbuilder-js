@@ -516,12 +516,15 @@ describe('TeamsActivityHandler', () => {
             });
 
             const taskFetchActivity = createInvokeActivity('tab/fetch');
-            await adapter.send(taskFetchActivity)
+            await adapter
+                .send(taskFetchActivity)
                 .assertReply((activity) => {
                     assert.strictEqual(activity.type, 'invokeResponse');
-                    assert.strictEqual(activity.value.status, 501);
-                    assert.strictEqual(activity.value.body, undefined);
-                });
+                    assert.deepStrictEqual(activity.value, {
+                        status: 501,
+                    });
+                })
+                .startTest();
         });
 
         it('handleTeamsTabSubmit is not overridden', async () => {
@@ -532,12 +535,15 @@ describe('TeamsActivityHandler', () => {
             });
 
             const taskSubmitActivity = createInvokeActivity('tab/submit');
-            await adapter.send(taskSubmitActivity)
+            await adapter
+                .send(taskSubmitActivity)
                 .assertReply((activity) => {
                     assert.strictEqual(activity.type, 'invokeResponse');
-                    assert.strictEqual(activity.value.status, 501);
-                    assert.strictEqual(activity.value.body, undefined);
-                });
+                    assert.deepStrictEqual(activity.value, {
+                        status: 501,
+                    });
+                })
+                .startTest();
         });
 
         it('handleTeamsAppBasedLinkQuery is not overridden', done => {
@@ -834,13 +840,16 @@ describe('TeamsActivityHandler', () => {
                         theme: 'default',
                     },
                 });
-                await adapter.send(tabFetchActivity)
+                await adapter
+                    .send(tabFetchActivity)
                     .assertReply((activity) => {
                         assert.strictEqual(activity.type, 'invokeResponse');
-                        assert(activity.value, 'activity.value not found');
-                        assert.strictEqual(activity.value.status, 200);
-                        assert.strictEqual(activity.value.body, bot.tabFetchReturn);
-                    });
+                        assert.deepStrictEqual(activity.value, {
+                            status: 200,
+                            body: bot.tabFetchReturn,
+                        });
+                    })
+                    .startTest();
             });
 
             it('an overridden handleTeamsTabSubmit()', async () => {
@@ -859,13 +868,16 @@ describe('TeamsActivityHandler', () => {
                         theme: 'default',
                     },
                 });
-                await adapter.send(tabSubmitActivity)
+                await adapter
+                    .send(tabSubmitActivity)
                     .assertReply((activity) => {
                         assert.strictEqual(activity.type, 'invokeResponse');
-                        assert(activity.value, 'activity.value not found');
-                        assert.strictEqual(activity.value.status, 200);
-                        assert.strictEqual(activity.value.body, bot.tabSubmitReturn);
-                    });
+                        assert.deepStrictEqual(activity.value, {
+                            status: 200,
+                            body: bot.tabSubmitReturn,
+                        });
+                    })
+                    .startTest();
             });
         });
     });

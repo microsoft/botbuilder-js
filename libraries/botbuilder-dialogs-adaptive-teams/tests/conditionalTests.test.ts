@@ -14,7 +14,7 @@ describe('Conditional Tests', function () {
     ComponentRegistration.add(new AdaptiveComponentRegistration());
     ComponentRegistration.add(new TeamsComponentRegistration());
 
-    const resourceExplorer = new ResourceExplorer().addFolder(path.join(__dirname, './conditionalTests'), true, false);
+    const resourceExplorer = new ResourceExplorer().addFolder(path.join(__dirname, 'conditionalTests'), true, false);
 
     it('OnTeamsActivityTypes', async () => {
         await TestUtils.runTestScript(resourceExplorer, 'ConditionalsTests_OnTeamsActivityTypes');
