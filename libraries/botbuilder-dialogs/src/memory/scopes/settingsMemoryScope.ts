@@ -175,10 +175,9 @@ export class SettingsMemoryScope extends MemoryScope {
         if (pureNumberIndex) {
             // all children are int numbers, treat it as array.
             const listResult = new Array(indexMax + 1);
-            for (let i = 0; i < node.children.length; i++) {
-                listResult[indexArray[i]] = this.convertNodeToObject(node.children[i]);
-            }
-
+            node.children.forEach((child, index) => {
+                listResult[indexArray[index]] = this.convertNodeToObject(child);
+            });
             return listResult;
         }
 
