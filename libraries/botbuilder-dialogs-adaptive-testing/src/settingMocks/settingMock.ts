@@ -20,21 +20,19 @@ export abstract class SettingMock extends Configurable {}
 export class SettingMocksConverter implements Converter<string[], SettingMock[]> {
     public constructor(private readonly _resourceExplorer: ResourceExplorer) {}
 
-    public convert(value: string[] | SettingMock[]): SettingMock[] {
-        const settingMocks: SettingMock[] = [];
-        value.forEach((item: string | SettingMock) => {
+    public convert(value: (string | SettingMock)[]): SettingMock[] {
+        return value.map((item: string | SettingMock) => {
             if (typeof item === 'string') {
                 const settingMock = this._resourceExplorer.loadType<SettingMock>(`${item}.dialog`);
                 if (settingMock) {
-                    settingMocks.push(settingMock);
+                    return settingMock;
                 } else {
-                    settingMocks.push(this._resourceExplorer.loadType<SettingMock>(item));
+                    return this._resourceExplorer.loadType<SettingMock>(item);
                 }
             } else {
                 const kind = item['$kind'];
-                settingMocks.push(this._resourceExplorer.buildType<SettingMock, SettingMock>(kind, item));
+                return this._resourceExplorer.buildType<SettingMock, SettingMock>(kind, item);
             }
         });
-        return settingMocks;
     }
 }
