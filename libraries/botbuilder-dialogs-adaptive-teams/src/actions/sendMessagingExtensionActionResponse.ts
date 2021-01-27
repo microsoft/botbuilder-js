@@ -36,7 +36,7 @@ export class SendMessagingExtensionActionResponse
     /**
      * Class identifier.
      */
-    public static $kind = 'Teams.SendMessagingExtensionActionResponse';
+    public static readonly $kind = 'Teams.SendMessagingExtensionActionResponse';
 
     /**
      * Gets or sets template for the attachment template of a Thumbnail or Hero Card to send.

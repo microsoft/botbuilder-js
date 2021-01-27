@@ -35,7 +35,7 @@ export class SendTaskModuleCardResponse
     /**
      * Class identifier.
      */
-    public static $kind = 'Teams.SendTaskModuleCardResponse';
+    public static readonly $kind = 'Teams.SendTaskModuleCardResponse';
 
     /**
      * Gets or sets template for the attachment template of a Thumbnail or Hero Card to send.

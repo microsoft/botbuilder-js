@@ -33,7 +33,7 @@ export class SendTaskModuleUrlResponse
     /**
      * Class identifier.
      */
-    public static $kind = 'Teams.SendTaskModuleUrlResponse';
+    public static readonly $kind = 'Teams.SendTaskModuleUrlResponse';
 
     /**
      * Gets or sets an optional expression for the Url of the Task Module response.

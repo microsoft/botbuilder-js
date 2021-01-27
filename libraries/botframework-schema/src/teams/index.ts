@@ -1391,6 +1391,14 @@ export interface TaskModuleCardResponse extends TaskModuleResponseBase {
 }
 
 /**
+ * A string, representing the task module's height in pixels, one of: small, medium, large.
+ *
+ * @readonly
+ * @enum {string}
+ */
+export type TeamsTaskModuleSize = 'small' | 'medium' | 'large';
+
+/**
  * @interface
  * An interface representing TaskModuleTaskInfo.
  * Metadata for a Task Module.
@@ -1403,15 +1411,15 @@ export interface TaskModuleTaskInfo {
      */
     title?: string;
     /**
-     * @member {any} [height] This can be a number, representing the task
+     * @member {number | TeamsTaskModuleSize} [height] This can be a number, representing the task
      * module's height in pixels, or a string, one of: small, medium, large.
      */
-    height?: unknown;
+    height?: number | TeamsTaskModuleSize;
     /**
-     * @member {any} [width] This can be a number, representing the task module's
+     * @member {number | TeamsTaskModuleSize} [width] This can be a number, representing the task module's
      * width in pixels, or a string, one of: small, medium, large.
      */
-    width?: unknown;
+    width?: number | TeamsTaskModuleSize;
     /**
      * @member {string} [url] The URL of what is loaded as an iframe inside the
      * task module. One of url or card is required.
