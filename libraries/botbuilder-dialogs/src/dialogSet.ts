@@ -5,7 +5,14 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { BotTelemetryClient, StatePropertyAccessor, TurnContext, StringUtils, NullTelemetryClient } from 'botbuilder-core';
+import {
+    BotTelemetryClient,
+    StatePropertyAccessor,
+    TurnContext,
+    StringUtils,
+    NullTelemetryClient,
+} from 'botbuilder-core';
+
 import { Dialog } from './dialog';
 import { DialogContext, DialogState } from './dialogContext';
 
