@@ -15,8 +15,24 @@ import { merge } from 'lodash';
  * The setting node.
  */
 class Node {
+    /**
+     * Initializes a new instance of `Node`.
+     * @param value Value of the node. If the node is not leaf, value represents the current path.
+     */
     public constructor(public value?: string) {}
+
+    /**
+     * The child nodes of the node.
+     */
     public children: Node[] = [];
+
+    /**
+     * Indicates if the node is leaf node.
+     * @returns If the node is leaf node or not.
+     */
+    public isLeaf(): boolean {
+        return this.children.length === 0;
+    }
 }
 
 /**
@@ -132,7 +148,7 @@ export class SettingsMemoryScope extends MemoryScope {
         }
 
         // If the child is leaf node, return its value directly.
-        if (node.children.length === 1 && node.children[0].children.length === 0) {
+        if (node.children.length === 1 && node.children[0].isLeaf()) {
             return node.children[0].value;
         }
 
