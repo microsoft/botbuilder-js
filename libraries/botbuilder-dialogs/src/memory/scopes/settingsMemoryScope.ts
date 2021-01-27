@@ -9,7 +9,6 @@ import { MemoryScope } from './memoryScope';
 import { ScopePath } from '../scopePath';
 import { DialogContext } from '../../dialogContext';
 import { DialogTurnStateConstants } from '../../dialogTurnStateConstants';
-import { merge } from 'lodash';
 
 /**
  * The setting node.
@@ -52,19 +51,18 @@ export class SettingsMemoryScope extends MemoryScope {
      * @returns The memory for the scope.
      */
     public getMemory(dc: DialogContext): Record<string, unknown> {
-        let settings: Record<string, unknown> = {};
         if (dc.context.turnState.has(ScopePath.settings)) {
-            settings = dc.context.turnState.get(ScopePath.settings);
+            return dc.context.turnState.get(ScopePath.settings) ?? {};
         } else {
-            const configuration = dc.context.turnState.get(DialogTurnStateConstants.configuration);
-            if (configuration) {
-                settings = SettingsMemoryScope.loadSettings(configuration);
-                dc.context.turnState.set(ScopePath.settings, settings);
-            }
+            const configuration = dc.context.turnState.get(DialogTurnStateConstants.configuration) ?? {};
+            Object.entries(process.env).reduce((result, [key, value]) => {
+                result[`${key}`] = value;
+                return result;
+            }, configuration);
+            const settings = SettingsMemoryScope.loadSettings(configuration);
+            dc.context.turnState.set(ScopePath.settings, settings);
+            return settings;
         }
-        const envSettings = SettingsMemoryScope.loadSettings(process.env);
-        merge(settings, envSettings);
-        return settings;
     }
 
     /**
@@ -78,9 +76,10 @@ export class SettingsMemoryScope extends MemoryScope {
         if (configuration) {
             // load configuration into settings
             const root = this.convertFlattenSettingToNode(Object.entries(configuration));
-            root.children.forEach((u) => {
-                settings[u.value] = this.convertNodeToObject(u);
-            });
+            root.children.reduce((result, child) => {
+                result[child.value] = this.convertNodeToObject(child);
+                return result;
+            }, settings);
         }
         return settings;
     }
