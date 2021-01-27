@@ -138,12 +138,12 @@ export class SettingsMemoryScope extends MemoryScope {
 
         // check if all the children are number format.
         let pureNumberIndex = true;
-        let indexArray: number[] = [];
+        const indexArray: number[] = [];
         let indexMax = -1;
         for (let i = 0; i < node.children.length; i++) {
             const child = node.children[i];
             if (/^-?\d+$/.test(child.value)) {
-                const num = parseInt(child.value);
+                const num = parseInt(child.value, 10);
                 if (!isNaN(num) && num >= 0) {
                     indexArray.push(num);
                     if (num > indexMax) {
