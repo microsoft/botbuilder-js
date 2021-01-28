@@ -6,7 +6,7 @@
         "id": "planningTest",
         "recognizer": {
             "$kind": "Microsoft.QnAMakerRecognizer",
-            "knowldgeBaseId": "dummy-id",
+            "knowledgeBaseId": "dummy-id",
             "hostname": "https://dummy-hostname.azurewebsites.net",
             "endpointKey": "dummy-key"
         },
