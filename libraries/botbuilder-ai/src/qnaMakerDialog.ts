@@ -37,7 +37,7 @@ import {
 import { QnAMakerOptions } from './qnamaker-interfaces/qnamakerOptions';
 import { RankerTypes } from './qnamaker-interfaces/rankerTypes';
 import { QnAMaker, QnAMakerResult } from './';
-import { FeedbackRecord, FeedbackRecords, QnAMakerMetadata } from './qnamaker-interfaces';
+import { FeedbackRecord, FeedbackRecords, JoinOperator, QnAMakerMetadata } from './qnamaker-interfaces';
 import { QnACardBuilder } from './qnaCardBuilder';
 import { BindToActivity } from './qnamaker-utils/bindToActivity';
 import { ActiveLearningUtils } from './qnamaker-utils/activeLearningUtils';
@@ -231,7 +231,7 @@ export class QnAMakerDialog extends WaterfallDialog implements QnAMakerDialogCon
     /**
      * Gets or sets the flag to determine if personal information should be logged in telemetry.
      *
-     * @remarks
+     * @summary
      * Defauls to a value of `=settings.telemetry.logPersonalInformation`, which retrieves
      * `logPersonalInformation` flag from settings.
      */
@@ -273,6 +273,7 @@ export class QnAMakerDialog extends WaterfallDialog implements QnAMakerDialogCon
         cardNoMatchResponse?: Activity,
         strictFilters?: QnAMakerMetadata[],
         dialogId = 'QnAMakerDialog',
+        private strictFiltersJoinOperator?: JoinOperator
     ) {
         super(dialogId);
         if (knowledgeBaseId) {
@@ -387,12 +388,13 @@ export class QnAMakerDialog extends WaterfallDialog implements QnAMakerDialogCon
      */
     private async getQnAMakerOptions(dc: DialogContext): Promise<QnAMakerOptions> {
         return {
-            scoreThreshold: this.threshold && this.threshold.getValue(dc.state),
-            strictFilters: this.strictFilters && this.strictFilters.getValue(dc.state),
-            top: this.top && this.top.getValue(dc.state),
+            scoreThreshold: this.threshold?.getValue(dc.state) ?? this.defaultThreshold,
+            strictFilters: this.strictFilters?.getValue(dc.state),
+            top: this.top?.getValue(dc.state) ?? this.defaultTopN,
             qnaId: 0,
-            rankerType: this.rankerType && (this.rankerType.getValue(dc.state) as string),
+            rankerType: this.rankerType?.getValue(dc.state) ?? RankerTypes.default,
             isTest: this.isTest,
+            strictFiltersJoinOperator: this.strictFiltersJoinOperator,
         };
     }
 
