@@ -16,7 +16,8 @@ import { DialogTurnStateConstants } from '../../dialogTurnStateConstants';
 class Node {
     /**
      * Initializes a new instance of `Node`.
-     * @param value Value of the node. If the node is not leaf, value represents the current path.
+     *
+     * @param {string} value Value of the node. If the node is not leaf, value represents the current path.
      */
     public constructor(public value?: string) {}
 
@@ -27,7 +28,8 @@ class Node {
 
     /**
      * Indicates if the node is leaf node.
-     * @returns If the node is leaf node or not.
+     *
+     * @returns {boolean} If the node is leaf node or not.
      */
     public isLeaf(): boolean {
         return this.children.length === 0;
@@ -47,8 +49,9 @@ export class SettingsMemoryScope extends MemoryScope {
 
     /**
      * Gets the backing memory for this scope.
-     * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) object for this turn.
-     * @returns The memory for the scope.
+     *
+     * @param {DialogContext} dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) object for this turn.
+     * @returns {Record<string, ?>} The memory for the scope.
      */
     public getMemory(dc: DialogContext): Record<string, unknown> {
         if (dc.context.turnState.has(ScopePath.settings)) {
@@ -68,8 +71,8 @@ export class SettingsMemoryScope extends MemoryScope {
     /**
      * Build a dictionary view of configuration providers.
      *
-     * @param configuration The configuration that we are running with.
-     * @returns Projected dictionary for settings.
+     * @param {Record<string, string>} configuration The configuration that we are running with.
+     * @returns {Record<string, ?>} Projected dictionary for settings.
      */
     protected static loadSettings(configuration: Record<string, string>): Record<string, unknown> {
         const settings = {};
@@ -111,8 +114,8 @@ export class SettingsMemoryScope extends MemoryScope {
      *                              item1
      * The result is a Tree.
      *
-     * @param kvs Configurations with key value pairs.
-     * @returns The root node of the tree.
+     * @param {Array<[string, string]>} kvs Configurations with key value pairs.
+     * @returns {Node} The root node of the tree.
      */
     private static convertFlattenSettingToNode(kvs: Array<[key: string, value: string]>): Node {
         const root = new Node();
@@ -156,7 +159,7 @@ export class SettingsMemoryScope extends MemoryScope {
         const indexArray: number[] = [];
         let indexMax = -1;
         for (let i = 0; i < node.children.length; i++) {
-            const child = node.children[i];
+            const child = node.children[Number(i)];
             if (/^-?\d+$/.test(child.value)) {
                 const num = parseInt(child.value, 10);
                 if (!isNaN(num) && num >= 0) {
@@ -175,7 +178,7 @@ export class SettingsMemoryScope extends MemoryScope {
             // all children are int numbers, treat it as array.
             const listResult = new Array(indexMax + 1);
             node.children.forEach((child, index) => {
-                listResult[indexArray[index]] = this.convertNodeToObject(child);
+                listResult[indexArray[Number(index)]] = this.convertNodeToObject(child);
             });
             return listResult;
         }
