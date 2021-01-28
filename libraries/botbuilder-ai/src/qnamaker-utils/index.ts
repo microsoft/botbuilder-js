@@ -8,7 +8,8 @@
 
 export { ActiveLearningUtils } from './activeLearningUtils';
 
-// GenerateAnswerUtils, HttpRequestUtils and TrainUtils are internal.
+// BindToActivity, GenerateAnswerUtils, HttpRequestUtils and TrainUtils are internal.
+export { BindToActivity } from './bindToActivity';
 export { GenerateAnswerUtils } from './generateAnswerUtils';
 export { HttpRequestUtils } from './httpRequestUtils';
 export { TrainUtils } from './trainUtils';

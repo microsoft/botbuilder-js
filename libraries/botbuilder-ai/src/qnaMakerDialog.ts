@@ -34,13 +34,17 @@ import {
     TemplateInterface,
     WaterfallStepContext,
 } from 'botbuilder-dialogs';
-import { QnAMakerOptions } from './qnamaker-interfaces/qnamakerOptions';
-import { RankerTypes } from './qnamaker-interfaces/rankerTypes';
 import { QnAMaker, QnAMakerResult } from './';
-import { FeedbackRecord, FeedbackRecords, JoinOperator, QnAMakerMetadata } from './qnamaker-interfaces';
 import { QnACardBuilder } from './qnaCardBuilder';
-import { BindToActivity } from './qnamaker-utils/bindToActivity';
-import { ActiveLearningUtils } from './qnamaker-utils/activeLearningUtils';
+import {
+    FeedbackRecord,
+    FeedbackRecords,
+    JoinOperator,
+    QnAMakerMetadata,
+    QnAMakerOptions,
+    RankerTypes,
+} from './qnamaker-interfaces';
+import { ActiveLearningUtils, BindToActivity } from './qnamaker-utils';
 
 class QnAMakerDialogActivityConverter
     implements Converter<string, TemplateInterface<Partial<Activity>, DialogStateManager>> {
