@@ -95,6 +95,14 @@ describe('TestScriptTests', function () {
         }
     });
 
+    it('SettingMock', async () => {
+        const configuration = {
+            file: 'set settings.file',
+            fileoverwrite: 'this is overwritten',
+        };
+        await TestUtils.runTestScript(resourceExplorer, 'TestScriptTests_SettingMock', undefined, configuration);
+    });
+
     it('UserActivity', async () => {
         await TestUtils.runTestScript(resourceExplorer, 'TestScriptTests_UserActivity');
     });

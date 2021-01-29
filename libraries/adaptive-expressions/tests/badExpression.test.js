@@ -252,6 +252,11 @@ const badExpressions = [
             ['ceiling(1.2, -2)', 'the second parameter should be integer not less than 0'],
             ['ceiling(1.2, 16)', 'the second parameter should be integer not greater than 15'],
             ['ceiling(1.2, 12, 7)', 'should have one or two numeric parameters'],
+            ['abs()', 'should have one parameter'],
+            ['abs(hello)', 'should have one number parameter'],
+            ['sqrt()', 'should have one parameter'],
+            ['sqrt(hello)', 'should have one number parameter'],
+            ['sqrt(-1)', 'should have one non-nagitive number parameter'],
         ],
     },
     {

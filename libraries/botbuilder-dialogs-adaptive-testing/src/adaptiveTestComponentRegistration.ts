@@ -46,6 +46,7 @@ import {
     HttpRequestSequenceMock,
     HttpRequestSequenceMockConfiguration,
 } from './httpRequestMocks/httpRequestSequenceMock';
+import { SettingStringMock, SettingStringMockConfiguration } from './settingMocks/settingStringMock';
 
 type Type<T> = {
     $kind: string;
@@ -74,6 +75,7 @@ export class AdaptiveTestComponentRegistration extends ComponentRegistration imp
             HttpRequestSequenceMock
         );
         this._addDeclarativeType<SetProperties, SetPropertiesConfiguration>(SetProperties);
+        this._addDeclarativeType<SettingStringMock, SettingStringMockConfiguration>(SettingStringMock);
         this._addDeclarativeType<UserActivity, UserActivityConfiguration>(UserActivity);
         this._addDeclarativeType<UserConversationUpdate, UserConversationUpdateConfiguration>(UserConversationUpdate);
         this._addDeclarativeType<UserDelay, UserDelayConfiguration>(UserDelay);

@@ -15,8 +15,16 @@ import {
     Middleware,
     TurnContext,
     ActivityTypes,
+    RegisterClassMiddleware,
 } from 'botbuilder-core';
-import { Configurable, Converter, ConverterFactory, Dialog, DialogManager } from 'botbuilder-dialogs';
+import {
+    Configurable,
+    Converter,
+    ConverterFactory,
+    Dialog,
+    DialogManager,
+    DialogTurnStateConstants,
+} from 'botbuilder-dialogs';
 import {
     LanguageGeneratorExtensions,
     LanguagePolicy,
@@ -30,9 +38,11 @@ import { UserTokenMock, UserTokenMocksConverter } from './userTokenMocks';
 import { DialogContextInspector, DialogInspector } from './dialogInspector';
 import { HttpRequestMock, HttpRequestMocksConverter } from './httpRequestMocks/httpRequestMock';
 import { MockHttpRequestMiddleware } from './mocks/mockHttpRequestMiddleware';
+import { MockSettingsMiddleware } from './mocks/mockSettingsMiddleware';
+import { SettingMock, SettingMocksConverter } from './settingMocks/settingMock';
 
 class DialogConverter implements Converter<string, Dialog> {
-    public constructor(private readonly _resourceExplorer: ResourceExplorer) {}
+    public constructor(private readonly _resourceExplorer: ResourceExplorer) { }
 
     public convert(value: string | Dialog): Dialog {
         if (value instanceof Dialog) {
@@ -59,6 +69,7 @@ export interface TestScriptConfiguration {
     languagePolicy?: Record<string, string[]> | LanguagePolicy;
     httpRequestMocks?: string[] | HttpRequestMock[];
     userTokenMocks?: string[] | UserTokenMock[];
+    settingMocks?: string[] | SettingMock[];
     script?: TestAction[];
     enableTrace?: boolean;
 }
@@ -68,6 +79,11 @@ export interface TestScriptConfiguration {
  */
 export class TestScript extends Configurable implements TestScriptConfiguration {
     public static $kind = 'Microsoft.Test.Script';
+
+    /**
+     * Configuration to use for the test.
+     */
+    public configuration: Record<string, string>;
 
     /**
      * A description of the test sequence.
@@ -100,6 +116,11 @@ export class TestScript extends Configurable implements TestScriptConfiguration 
     public userTokenMocks: UserTokenMock[] = [];
 
     /**
+     * The mock data for settings.
+     */
+    public settingMocks: SettingMock[] = [];
+
+    /**
      * The sequence of test actions to perform to validate the dialog behavior.
      */
     public script: TestAction[] = [];
@@ -119,6 +140,8 @@ export class TestScript extends Configurable implements TestScriptConfiguration 
                 return HttpRequestMocksConverter;
             case 'userTokenMocks':
                 return UserTokenMocksConverter;
+            case 'settingMocks':
+                return SettingMocksConverter;
             default:
                 return super.getConverter(property);
         }
@@ -138,7 +161,9 @@ export class TestScript extends Configurable implements TestScriptConfiguration 
 
         const adapter = new TestAdapter(TestAdapter.createConversation(testName));
         useBotState(adapter, userState, convoState);
-        adapter.use(new SetTestOptionsMiddleware());
+        adapter
+            .use(new RegisterClassMiddleware(this.configuration, DialogTurnStateConstants.configuration))
+            .use(new SetTestOptionsMiddleware());
 
         middlewares.forEach((middleware) => {
             adapter.use(middleware);
@@ -174,6 +199,7 @@ export class TestScript extends Configurable implements TestScriptConfiguration 
         adapter.enableTrace = this.enableTrace;
         adapter.locale = this.locale;
         adapter.use(new MockHttpRequestMiddleware(this.httpRequestMocks));
+        adapter.use(new MockSettingsMiddleware(this.settingMocks));
 
         this.userTokenMocks.forEach((userTokenMock) => {
             userTokenMock.setup(adapter);

@@ -492,6 +492,11 @@ const testCases = [
             ['round(3.51)', 4],
             ['round(3.55, 1)', 3.6],
             ['round(3.12134, 3)', 3.121],
+            ['abs(3.12134)', 3.12134],
+            ['abs(-3.12134)', 3.12134],
+            ['abs(0)', 0],
+            ['sqrt(9)', 3],
+            ['sqrt(0)', 0],
         ],
     },
     // All the timestamp strings passed in must be in ISO format of YYYY-MM-DDTHH:mm:ss.sssZ
