@@ -9,8 +9,9 @@ import {
     LUISRuntimeClient as LuisClient,
     LUISRuntimeModels as LuisModels,
 } from '@azure/cognitiveservices-luis-runtime';
-import { BotTelemetryClient, NullTelemetryClient, RecognizerResult, TurnContext } from 'botbuilder-core';
+
 import * as Url from 'url-parse';
+import { BotTelemetryClient, NullTelemetryClient, RecognizerResult, TurnContext } from 'botbuilder-core';
 import { LuisTelemetryConstants } from './luisTelemetryConstants';
 import { isLuisRecognizerOptionsV2, LuisRecognizerV2 } from './luisRecognizerOptionsV2';
 import { isLuisRecognizerOptionsV3, LuisRecognizerV3 } from './luisRecognizerOptionsV3';
@@ -346,20 +347,32 @@ export class LuisRecognizer implements LuisRecognizerTelemetryClient {
      * @returns {string} the top intent
      */
     public static topIntent(results?: RecognizerResult, defaultIntent = 'None', minScore = 0): string {
-        let topIntent: string;
-        let topScore = -1;
-        if (results && results.intents) {
-            // for (const name in results.intents) {
-            Object.keys(results.intents).forEach((name: string) => {
-                const score = results.intents[name].score;
-                if (typeof score === 'number' && score > topScore && score >= minScore) {
-                    topIntent = name;
-                    topScore = score;
+        const sortedIntents = this.sortedIntents(results, minScore);
+        const topIntent = sortedIntents[0];
+        return topIntent?.intent || defaultIntent; // Note: `||` is intentionally not `??` and is covered by tests
+    }
+
+    /**
+     * Sorts recognizer result intents in ascending order by score, filtering those that
+     * have scores less that `minScore`.
+     *
+     * @param {RecognizerResult} result recognizer result to be sorted and filtered
+     * @param {number} minScore minimum score threshold, lower score results will be filtered
+     * @returns {Array<{intent: string; score: number}>} sorted result intents
+     */
+    public static sortedIntents(result?: RecognizerResult, minScore = 0): Array<{ intent: string; score: number }> {
+        return Object.entries(result?.intents ?? {})
+            .map(([intent, { score = 0 }]) => ({ intent, score }))
+            .filter(({ score }) => score > minScore)
+            .sort(({ score: left }, { score: right }) => {
+                if (left > right) {
+                    return -1;
+                } else if (left < right) {
+                    return 1;
+                } else {
+                    return 0;
                 }
             });
-        }
-
-        return topIntent || defaultIntent;
     }
 
     /**
@@ -475,17 +488,19 @@ export class LuisRecognizer implements LuisRecognizerTelemetryClient {
         turnContext: TurnContext,
         telemetryProperties?: { [key: string]: string }
     ): Promise<{ [key: string]: string }> {
-        const topLuisIntent: string = LuisRecognizer.topIntent(recognizerResult);
-        const intentScore: number =
-            recognizerResult.intents[topLuisIntent] && 'score' in recognizerResult.intents[topLuisIntent]
-                ? recognizerResult.intents[topLuisIntent].score
-                : 0;
+        const [firstIntent, secondIntent] = LuisRecognizer.sortedIntents(recognizerResult);
 
         // Add the intent score and conversation id properties
         const properties: { [key: string]: string } = {};
+
         properties[LuisTelemetryConstants.applicationIdProperty] = this.application.applicationId;
-        properties[LuisTelemetryConstants.intentProperty] = topLuisIntent;
-        properties[LuisTelemetryConstants.intentScoreProperty] = intentScore.toString();
+
+        properties[LuisTelemetryConstants.intentProperty] = firstIntent?.intent ?? '';
+        properties[LuisTelemetryConstants.intentScoreProperty] = (firstIntent?.score ?? 0).toString();
+
+        properties[LuisTelemetryConstants.intent2Property] = secondIntent?.intent ?? '';
+        properties[LuisTelemetryConstants.intentScore2Property] = (secondIntent?.score ?? 0).toString();
+
         if (turnContext.activity.from) {
             properties[LuisTelemetryConstants.fromIdProperty] = turnContext.activity.from.id;
         }

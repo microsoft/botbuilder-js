@@ -14,6 +14,7 @@ import {
     StringExpression,
     StringExpressionConverter,
 } from 'adaptive-expressions';
+
 import { Activity, RecognizerResult } from 'botbuilder-core';
 import { Converter, ConverterFactory, DialogContext, Recognizer, RecognizerConfiguration } from 'botbuilder-dialogs';
 import { LuisApplication, LuisPredictionOptions, LuisRecognizer, LuisRecognizerOptionsV3 } from './luisRecognizer';
@@ -176,15 +177,18 @@ export class LuisAdaptiveRecognizer extends Recognizer implements LuisAdaptiveRe
         const logPersonalInfo = this.logPersonalInformation.tryGetValue(dialogContext.state);
         const applicationId = this.applicationId.tryGetValue(dialogContext.state);
 
-        const topLuisIntent: string = LuisRecognizer.topIntent(recognizerResult);
-        const intentScore: number =
-            (recognizerResult.intents[topLuisIntent] && recognizerResult.intents[topLuisIntent].score) || 0;
+        const [firstIntent, secondIntent] = LuisRecognizer.sortedIntents(recognizerResult);
 
         // Add the intent score and conversation id properties
         const properties: { [key: string]: string } = {};
+
         properties[LuisTelemetryConstants.applicationIdProperty] = applicationId.value;
-        properties[LuisTelemetryConstants.intentProperty] = topLuisIntent;
-        properties[LuisTelemetryConstants.intentScoreProperty] = intentScore.toString();
+
+        properties[LuisTelemetryConstants.intentProperty] = firstIntent?.intent ?? '';
+        properties[LuisTelemetryConstants.intentScoreProperty] = (firstIntent?.score ?? 0).toString();
+        properties[LuisTelemetryConstants.intent2Property] = secondIntent?.intent ?? '';
+        properties[LuisTelemetryConstants.intentScore2Property] = (secondIntent?.score ?? 0).toString();
+
         properties[LuisTelemetryConstants.fromIdProperty] = dialogContext.context.activity.from.id;
 
         if (recognizerResult.sentiment) {
