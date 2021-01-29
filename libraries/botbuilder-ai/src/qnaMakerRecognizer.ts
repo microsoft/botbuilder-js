@@ -155,9 +155,10 @@ export class QnAMakerRecognizer extends Recognizer implements QnAMakerRecognizer
 
     /**
      * Initializes a new instance of `QnAMakerRecognizer`.
-     * @param hostname Hostname of QnAMaker KB.
-     * @param knowledgeBaseId Id of QnAMaker KB.
-     * @param endpointKey Endpoint key of QnAMaker KB.
+     *
+     * @param {string} hostname Hostname of QnAMaker KB.
+     * @param {string} knowledgeBaseId Id of QnAMaker KB.
+     * @param {string} endpointKey Endpoint key of QnAMaker KB.
      */
     public constructor(hostname?: string, knowledgeBaseId?: string, endpointKey?: string) {
         super();
@@ -174,10 +175,12 @@ export class QnAMakerRecognizer extends Recognizer implements QnAMakerRecognizer
 
     /**
      * Gets results of the call to QnA maker KB.
-     * @param dc Context object containing information for a single turn of coversation with a user.
-     * @param activity The incoming activity received from the user. The text value is used as the query to QnA Maker.
-     * @param telemetryProperties Additional properties to be logged to telemetry.
-     * @param telemetryMetrics Additional metrics to be logged to telemetry.
+     *
+     * @param {DialogContext} dc Context object containing information for a single turn of coversation with a user.
+     * @param {Activity} activity The incoming activity received from the user. The text value is used as the query to QnA Maker.
+     * @param {object} telemetryProperties Additional properties to be logged to telemetry.
+     * @param {object} telemetryMetrics Additional metrics to be logged to telemetry.
+     * @returns {Promise<RecognizerResult>} A promise resolving to the recognizer result
      */
     public async recognize(
         dc: DialogContext,
@@ -267,7 +270,9 @@ export class QnAMakerRecognizer extends Recognizer implements QnAMakerRecognizer
 
     /**
      * Gets an instance of `QnAMaker`.
-     * @param dc The dialog context used to access state.
+     *
+     * @param {DialogContext} dc The dialog context used to access state.
+     * @returns {QnAMaker} A qna maker instance
      */
     protected getQnAMaker(dc: DialogContext): QnAMaker {
         const { value: endpointKey, error } = this.endpointKey?.tryGetValue(dc.state) ?? {};

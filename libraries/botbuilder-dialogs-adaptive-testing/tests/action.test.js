@@ -140,6 +140,7 @@ describe('ActionTests', function () {
             resourceExplorer,
             'Action_BeginSkill',
             undefined,
+            undefined,
             new SetSkillConversationIdFactoryBaseMiddleware(),
             new SetSkillBotFrameworkClientMiddleware()
         );
@@ -149,6 +150,7 @@ describe('ActionTests', function () {
         await TestUtils.runTestScript(
             resourceExplorer,
             'Action_BeginSkillEndDialog',
+            undefined,
             undefined,
             new SetSkillConversationIdFactoryBaseMiddleware(),
             new SetSkillBotFrameworkClientMiddleware()

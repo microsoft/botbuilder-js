@@ -13,6 +13,7 @@ const {
     DialogSet,
     DialogContext,
     DialogContainer,
+    DialogTurnStateConstants,
 } = require('../');
 
 const beginMessage = {
@@ -446,7 +447,7 @@ describe('Memory - Memory Scopes', function () {
         assert(error);
     });
 
-    it('SettingsMemoryScope should return content of settings.', async function () {
+    it('SettingsMemoryScope should get settings from turnState.', async function () {
         // Create a DialogState property, DialogSet and register the dialogs.
         const convoState = new ConversationState(new MemoryStorage());
         const dialogState = convoState.createProperty('dialogs');
@@ -473,6 +474,7 @@ describe('Memory - Memory Scopes', function () {
         assert.equal(dc.state.getValue('settings.fakeArray.2'), 'two');
         assert.equal(dc.state.getValue('settings.fakeArray.3'), 'three');
         assert.equal(dc.state.getValue('settings.fakeArray.zzz'), 'cat');
+        /*
         for (const key in process.env) {
             if (typeof process.env[key] == 'string') {
                 assert(memory[key] == process.env[key]);
@@ -488,6 +490,76 @@ describe('Memory - Memory Scopes', function () {
             'two',
             'settings should be overriden by environment variables'
         );
+        */
+    });
+
+    it('SettingsMemoryScope should get settings from configuration.', async function () {
+        // Create a DialogState property, DialogSet and register the dialogs.
+        const convoState = new ConversationState(new MemoryStorage());
+        const dialogState = convoState.createProperty('dialogs');
+        const dialogs = new DialogSet(dialogState).add(new TestDialog('test', 'test message'));
+
+        // Create test context
+        const context = new TurnContext(new TestAdapter(), beginMessage);
+        const dc = await dialogs.createContext(context);
+        const configuration = {
+            simple: 'test',
+            'object:simple': 'test',
+            'array:0': 'one',
+            'array:1': 'two',
+            'object:array:0': 'one',
+            'object:array:1': 'two',
+        };
+        dc.context.turnState.set(DialogTurnStateConstants.configuration, configuration);
+
+        // Run test
+        const scope = new SettingsMemoryScope();
+        const memory = scope.getMemory(dc);
+        assert.strictEqual(typeof memory, 'object', `settings not returned`);
+        assert.strictEqual(memory.simple, 'test');
+        assert.strictEqual(memory.object.simple, 'test');
+        assert(Array.isArray(memory.array));
+        assert.strictEqual(memory.array[0], 'one');
+        assert.strictEqual(memory.array[1], 'two');
+        assert(Array.isArray(memory.object.array));
+        assert.strictEqual(memory.object.array[0], 'one');
+        assert.strictEqual(memory.object.array[1], 'two');
+    });
+
+    it('SettingsMemoryScope should get settings from configuration and environment variables.', async function () {
+        // Create a DialogState property, DialogSet and register the dialogs.
+        const convoState = new ConversationState(new MemoryStorage());
+        const dialogState = convoState.createProperty('dialogs');
+        const dialogs = new DialogSet(dialogState).add(new TestDialog('test', 'test message'));
+
+        // Create test context
+        const context = new TurnContext(new TestAdapter(), beginMessage);
+        const dc = await dialogs.createContext(context);
+        const configuration = {
+            simple: 'test',
+            to_be_overriden: 'one',
+            'object:simple': 'test',
+            'array:0': 'one',
+            'array:1': 'two',
+            'object:array:0': 'one',
+            'object:array:1': 'two',
+        };
+        dc.context.turnState.set(DialogTurnStateConstants.configuration, configuration);
+        process.env['to_be_overridden'] = 'two';
+
+        // Run test
+        const scope = new SettingsMemoryScope();
+        const memory = scope.getMemory(dc);
+        assert.strictEqual(typeof memory, 'object', `settings not returned`);
+        assert.strictEqual(memory.simple, 'test');
+        assert.strictEqual(memory.object.simple, 'test');
+        assert(Array.isArray(memory.array));
+        assert.strictEqual(memory.array[0], 'one');
+        assert.strictEqual(memory.array[1], 'two');
+        assert(Array.isArray(memory.object.array));
+        assert.strictEqual(memory.object.array[0], 'one');
+        assert.strictEqual(memory.object.array[1], 'two');
+        assert.strictEqual(memory.to_be_overridden, 'two');
     });
 
     it('ThisMemoryScope should return active dialogs state.', async function () {

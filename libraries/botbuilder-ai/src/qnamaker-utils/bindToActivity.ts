@@ -7,7 +7,7 @@
  */
 
 import { Activity } from 'botbuilder-core';
-import { DialogContext, TemplateInterface } from 'botbuilder-dialogs';
+import { TemplateInterface } from 'botbuilder-dialogs';
 
 export class BindToActivity implements TemplateInterface<Partial<Activity>> {
     private _activity: Partial<Activity>;
