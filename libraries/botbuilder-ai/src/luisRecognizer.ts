@@ -490,12 +490,6 @@ export class LuisRecognizer implements LuisRecognizerTelemetryClient {
     ): Promise<{ [key: string]: string }> {
         const [firstIntent, secondIntent] = LuisRecognizer.sortedIntents(recognizerResult);
 
-        // const topLuisIntent: string = LuisRecognizer.topIntent(recognizerResult);
-        // const intentScore: number =
-        //     recognizerResult.intents[topLuisIntent] && 'score' in recognizerResult.intents[topLuisIntent]
-        //         ? recognizerResult.intents[topLuisIntent].score
-        //         : 0;
-
         // Add the intent score and conversation id properties
         const properties: { [key: string]: string } = {};
 

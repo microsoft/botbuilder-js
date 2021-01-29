@@ -704,7 +704,9 @@ describe('LuisRecognizer', () => {
                         assert(telemetry.properties);
                         assert('applicationId' in telemetry.properties);
                         assert('intent' in telemetry.properties);
+                        assert('intent2' in telemetry.properties);
                         assert('intentScore' in telemetry.properties);
+                        assert('intent2Score' in telemetry.properties);
                         assert('sentimentLabel' in telemetry.properties);
                         assert('sentimentScore' in telemetry.properties);
                         assert('entities' in telemetry.properties);
@@ -754,7 +756,9 @@ describe('LuisRecognizer', () => {
                         assert(telemetry.properties);
                         assert('applicationId' in telemetry.properties);
                         assert('intent' in telemetry.properties);
+                        assert('intent2' in telemetry.properties);
                         assert('intentScore' in telemetry.properties);
+                        assert('intent2Score' in telemetry.properties);
                         assert('sentimentLabel' in telemetry.properties);
                         assert('sentimentScore' in telemetry.properties);
                         assert('entities' in telemetry.properties);
@@ -811,7 +815,9 @@ describe('LuisRecognizer', () => {
                         assert('applicationId' in telemetry.properties);
                         assert('intent' in telemetry.properties);
                         assert(telemetry.properties['intent'] === 'MYINTENT');
+                        assert('intent2' in telemetry.properties);
                         assert('intentScore' in telemetry.properties);
+                        assert('intent2Score' in telemetry.properties);
                         assert('sentimentLabel' in telemetry.properties);
                         assert('sentimentScore' in telemetry.properties);
                         assert('entities' in telemetry.properties);
