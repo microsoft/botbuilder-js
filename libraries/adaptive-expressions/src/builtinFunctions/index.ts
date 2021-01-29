@@ -6,6 +6,7 @@
  * Licensed under the MIT License.
  */
 
+export * from './abs';
 export * from './accessor';
 export * from './add';
 export * from './addDays';
@@ -128,6 +129,7 @@ export * from './skip';
 export * from './sortBy';
 export * from './sortByDescending';
 export * from './split';
+export * from './sqrt';
 export * from './startOfDay';
 export * from './startOfHour';
 export * from './startOfMonth';
