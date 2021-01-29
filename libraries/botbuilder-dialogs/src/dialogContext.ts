@@ -2,23 +2,28 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
+
 import { Activity, TurnContext, TurnContextStateCollection } from 'botbuilder-core';
 import { Choice } from './choices';
 import { Dialog, DialogInstance, DialogReason, DialogTurnResult, DialogTurnStatus, DialogEvent } from './dialog';
-import { DialogSet } from './dialogSet';
-import { PromptOptions } from './prompts';
-import { DialogStateManager, TurnPath } from './memory';
 import { DialogContainer } from './dialogContainer';
+import { DialogContextError } from './dialogContextError';
 import { DialogEvents } from './dialogEvents';
 import { DialogManager } from './dialogManager';
+import { DialogSet } from './dialogSet';
+import { DialogStateManager, TurnPath } from './memory';
 import { DialogTurnStateConstants } from './dialogTurnStateConstants';
-import { DialogContextError } from './dialogContextError';
+import { PromptOptions } from './prompts';
+import { TURN_STATE } from './memory/scopes/turnMemoryScope';
+import { assert, tests } from 'botbuilder-stdlib';
 
 /**
  * Wraps a promise in a try-catch that automatically enriches errors with extra dialog context.
  *
  * @param dialogContext source dialog context from which enriched error properties are sourced
  * @param promise a promise to await inside a try-catch for error enrichment
+ *
+ * @internal
  */
 const wrapErrors = async <T>(dialogContext: DialogContext, promise: Promise<T>): Promise<T> => {
     try {
@@ -32,9 +37,6 @@ const wrapErrors = async <T>(dialogContext: DialogContext, promise: Promise<T>):
     }
 };
 
-/**
- * @private
- */
 const ACTIVITY_RECEIVED_EMITTED = Symbol('ActivityReceivedEmitted');
 
 /**
@@ -191,14 +193,15 @@ export class DialogContext {
      * Obtain the CultureInfo in DialogContext.
      * @returns a locale string.
      */
-    public getLocale(): string
-    {
-        let locale: string = undefined;
-        if (this.context.locale !== undefined && this.context.locale !== null) {
-            locale = this.context.locale;
+    public getLocale(): string {
+        const turn = this.context.turnState.get(TURN_STATE) ?? {};
+        assert.dictionary(turn, ['context', 'turnState', 'TURN_STATE']);
+
+        if (tests.isString(turn.locale)) {
+            return turn.locale;
         }
-        
-        return locale;
+
+        return this.context.locale;
     }
 
     /**
@@ -347,12 +350,12 @@ export class DialogContext {
      * ```JavaScript
      * return await dc.prompt('confirmPrompt', `Are you sure you'd like to quit?`);
      * ```
-     */  
+     */
     public async prompt(
         dialogId: string,
         promptOrOptions: string | Partial<Activity> | PromptOptions
     ): Promise<DialogTurnResult>;
-    
+
     /**
      * Helper function to simplify formatting the options for calling a prompt dialog.
      * @param dialogId ID of the prompt dialog to start.
@@ -368,13 +371,13 @@ export class DialogContext {
      * ```JavaScript
      * return await dc.prompt('confirmPrompt', `Are you sure you'd like to quit?`);
      * ```
-     */    
+     */
     public async prompt(
         dialogId: string,
         promptOrOptions: string | Partial<Activity> | PromptOptions,
         choices: (string | Choice)[]
     ): Promise<DialogTurnResult>;
-    
+
     /**
      * Helper function to simplify formatting the options for calling a prompt dialog.
      * @param dialogId ID of the prompt dialog to start.
@@ -624,8 +627,8 @@ export class DialogContext {
 
     /**
      * @private
-     * @param reason 
-     * @param result 
+     * @param reason
+     * @param result
      */
     private async endActiveDialog(reason: DialogReason, result?: any): Promise<void> {
         const instance: DialogInstance<any> = this.activeDialog;

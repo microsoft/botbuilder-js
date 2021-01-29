@@ -9,10 +9,7 @@ import { MemoryScope } from './memoryScope';
 import { ScopePath } from '../scopePath';
 import { DialogContext } from '../../dialogContext';
 
-/**
- * @private
- */
-const TURN_STATE = Symbol('turn');
+export const TURN_STATE = Symbol('turn');
 
 /**
  * TurnMemoryScope represents memory scoped to the current turn.
