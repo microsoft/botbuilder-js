@@ -4,8 +4,7 @@
  */
 
 import { v4 as uuidv4 } from 'uuid';
-import { TurnContext } from 'botbuilder-core';
-import { Activity, Attachment, ConversationAccount, ConversationReference, Transcript } from 'botframework-schema';
+import { Activity, ActivityTypes, Attachment, ConversationAccount, ConversationReference, Transcript, TurnContext } from 'botbuilder-core';
 import * as dayjs from 'dayjs';
 import * as timezone from 'dayjs/plugin/timezone';
 dayjs.extend(timezone);
@@ -33,7 +32,7 @@ export class EventFactory {
         const handoffEvent = this.createHandoffEvent(
             HandoffEventNames.InitiateHandoff,
             handoffContext,
-            context.activity.conversation as ConversationAccount // TODO(joshgummersall) why is this necessary?
+            context.activity.conversation
         );
 
         handoffEvent.from = context.activity.from;
@@ -80,7 +79,7 @@ export class EventFactory {
         value: T,
         conversation: ConversationAccount
     ): Activity {
-        const handoffEvent: Partial<Activity> = {};
+        const handoffEvent: Partial<Activity> = { type: ActivityTypes.Event };
 
         handoffEvent.name = name;
         handoffEvent.value = value;
