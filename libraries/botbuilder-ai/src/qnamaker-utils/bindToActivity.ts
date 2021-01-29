@@ -15,7 +15,7 @@ export class BindToActivity implements TemplateInterface<Partial<Activity>> {
     public constructor(activity: Partial<Activity>) {
         this._activity = activity;
     }
-    public async bind(context: DialogContext, data: object): Promise<Partial<Activity>> {
+    public async bind(context: DialogContext, data?: object): Promise<Partial<Activity>> {
         return this._activity;
     }
 }
