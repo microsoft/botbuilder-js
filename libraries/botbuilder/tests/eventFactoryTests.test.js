@@ -38,6 +38,7 @@ describe('EventFactory', function() {
             const handoffEvent = EventFactory.createHandoffInitiation(context, { skill: skillValue }, transcript);
 
             strictEqual(handoffEvent.name, HandoffEventNames.InitiateHandoff);
+            strictEqual(handoffEvent.type, ActivityTypes.Event);
             const skill = handoffEvent.value && handoffEvent.value.skill;
             strictEqual(skill, skillValue);
             strictEqual(handoffEvent.from.id, fromId);
