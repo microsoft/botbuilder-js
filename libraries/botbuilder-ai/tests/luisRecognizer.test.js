@@ -273,7 +273,13 @@ describe('LuisRecognizer', () => {
         assert(res.intents);
         assert(res.intents.Delivery);
         assert(res.intents.Delivery.score > 0 && res.intents.Delivery.score <= 1);
+
         assert(LuisRecognizer.topIntent(res) === 'Delivery');
+
+        const sortedIntents = LuisRecognizer.sortedIntents(res);
+        assert(sortedIntents[0].intent) === 'Delivery';
+        assert(sortedIntents[sortedIntents.length - 1].intent) === 'EntityTests';
+
         assert(res.entities);
         assert(res.entities.number);
         assert(res.entities.number[0] === 2001);
@@ -698,7 +704,9 @@ describe('LuisRecognizer', () => {
                         assert(telemetry.properties);
                         assert('applicationId' in telemetry.properties);
                         assert('intent' in telemetry.properties);
+                        assert('intent2' in telemetry.properties);
                         assert('intentScore' in telemetry.properties);
+                        assert('intent2Score' in telemetry.properties);
                         assert('sentimentLabel' in telemetry.properties);
                         assert('sentimentScore' in telemetry.properties);
                         assert('entities' in telemetry.properties);
@@ -748,7 +756,9 @@ describe('LuisRecognizer', () => {
                         assert(telemetry.properties);
                         assert('applicationId' in telemetry.properties);
                         assert('intent' in telemetry.properties);
+                        assert('intent2' in telemetry.properties);
                         assert('intentScore' in telemetry.properties);
+                        assert('intent2Score' in telemetry.properties);
                         assert('sentimentLabel' in telemetry.properties);
                         assert('sentimentScore' in telemetry.properties);
                         assert('entities' in telemetry.properties);
@@ -805,7 +815,9 @@ describe('LuisRecognizer', () => {
                         assert('applicationId' in telemetry.properties);
                         assert('intent' in telemetry.properties);
                         assert(telemetry.properties['intent'] === 'MYINTENT');
+                        assert('intent2' in telemetry.properties);
                         assert('intentScore' in telemetry.properties);
+                        assert('intent2Score' in telemetry.properties);
                         assert('sentimentLabel' in telemetry.properties);
                         assert('sentimentScore' in telemetry.properties);
                         assert('entities' in telemetry.properties);
