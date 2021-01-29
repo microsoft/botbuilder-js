@@ -16,30 +16,6 @@ import { isLuisRecognizerOptionsV2, LuisRecognizerV2 } from './luisRecognizerOpt
 import { isLuisRecognizerOptionsV3, LuisRecognizerV3 } from './luisRecognizerOptionsV3';
 
 /**
- * @private
- */
-interface LuisOptions {
-    Staging?: boolean;
-}
-
-/**
- * @private
- */
-interface LuisModel {
-    ModelID: string;
-}
-
-/**
- * @private
- */
-interface LuisTraceInfo {
-    recognizerResult: RecognizerResult;
-    luisResult: LuisModels.LuisResult;
-    luisOptions: LuisOptions;
-    luisModel: LuisModel;
-}
-
-/**
  * Description of a LUIS application used for initializing a LuisRecognizer.
  */
 export interface LuisApplication {
@@ -123,12 +99,14 @@ export interface LuisRecognizerTelemetryClient {
 
     /**
      * Calls LUIS to recognize intents and entities in a users utterance.
-     * @remarks
+     *
+     * @summary
      * Returns a [RecognizerResult](../botbuilder-core/recognizerresult) containing any intents and entities recognized by LUIS.
      *
-     * @param context Context for the current turn of conversation with the use.
-     * @param telemetryProperties Additional properties to be logged to telemetry with the LuisResult event.
-     * @param telemetryMetrics Additional metrics to be logged to telemetry with the LuisResult event.
+     * @param {TurnContext} context Context for the current turn of conversation with the use.
+     * @param {object} telemetryProperties Additional properties to be logged to telemetry with the LuisResult event.
+     * @param {object} telemetryMetrics Additional metrics to be logged to telemetry with the LuisResult event.
+     * @returns {Promise<RecognizerResult>} A promise that resolves to the recognizer result.
      */
     recognize(
         context: TurnContext,
@@ -177,12 +155,12 @@ export interface LuisRecognizerOptionsV3 extends LuisRecognizerOptions {
     /**
      * (Optional) Dynamic lists of things like contact names to recognize at query time..
      */
-    dynamicLists?: Array<any>;
+    dynamicLists?: Array<any>; // eslint-disable-line @typescript-eslint/no-explicit-any
 
     /**
      * (Optional) External entities recognized in query.
      */
-    externalEntities?: Array<any>;
+    externalEntities?: Array<any>; // eslint-disable-line @typescript-eslint/no-explicit-any
 
     /**
      * (Optional) Boolean for if external entities should be preferred to the results from LUIS models.
@@ -252,7 +230,7 @@ export interface LuisRecognizerOptionsV2 extends LuisRecognizerOptions {
 /**
  * Recognize intents in a user utterance using a configured LUIS model.
  *
- * @remarks
+ * @summary
  * This class is used to recognize intents and extract entities from incoming messages.
  * See this class in action [in this sample application](https://github.com/microsoft/BotBuilder-Samples/tree/main/samples/javascript_nodejs/14.nlp-with-dispatch).
  *
@@ -272,6 +250,7 @@ export class LuisRecognizer implements LuisRecognizerTelemetryClient {
 
     /**
      * Creates a new [LuisRecognizer](xref:botbuilder-ai.LuisRecognizer) instance.
+     *
      * @param application The LUIS application endpoint, usually retrieved from https://luis.ai.
      * @param options Optional. Options object used to control predictions. Should conform to the [LuisPredictionOptions](xref:botbuilder-ai.LuisPredictionOptions) definition.
      * @param includeApiResults (Deprecated) Flag that if set to `true` will force the inclusion of LUIS Api call in results returned by the [LuisRecognizer.recognize](xref:botbuilder-ai.LuisRecognizer.recognize) method. Defaults to a value of `false`.
@@ -279,6 +258,7 @@ export class LuisRecognizer implements LuisRecognizerTelemetryClient {
     constructor(application: string, options?: LuisPredictionOptions, includeApiResults?: boolean);
     /**
      * Creates a new [LuisRecognizer](xref:botbuilder-ai.LuisRecognizer) instance.
+     *
      * @param application An object conforming to the [LuisApplication](xref:botbuilder-ai.LuisApplication) definition.
      * @param options Optional. Options object used to control predictions. Should conform to the [LuisPredictionOptions](xref:botbuilder-ai.LuisPredictionOptions) definition.
      * @param includeApiResults (Deprecated) Flag that if set to `true` will force the inclusion of LUIS Api call in results returned by the [LuisRecognizer.recognize](xref:botbuilder-ai.LuisRecognizer.recognize) method. Defaults to a value of `false`.
@@ -286,15 +266,17 @@ export class LuisRecognizer implements LuisRecognizerTelemetryClient {
     constructor(application: LuisApplication, options?: LuisPredictionOptions, includeApiResults?: boolean);
     /**
      * Creates a new [LuisRecognizer](xref:botbuilder-ai.LuisRecognizer) instance.
+     *
      * @param application An object conforming to the [LuisApplication](xref:botbuilder-ai.LuisApplication) definition or a string representing a LUIS application endpoint, usually retrieved from https://luis.ai.
      * @param options Optional. Options object used to control predictions. Should conform to the [LuisRecognizerOptionsV3](xref:botbuilder-ai.LuisRecognizerOptionsV3) or [LuisRecognizerOptionsV2](xref:botbuilder-ai.LuisRecognizerOptionsV2) definition.
      */
     constructor(application: LuisApplication | string, options?: LuisRecognizerOptionsV3 | LuisRecognizerOptionsV2);
     /**
      * Creates a new [LuisRecognizer](xref:botbuilder-ai.LuisRecognizer) instance.
-     * @param application An object conforming to the [LuisApplication](xref:botbuilder-ai.LuisApplication) definition or a string representing a LUIS application endpoint, usually retrieved from https://luis.ai.
-     * @param options Optional. Options object used to control predictions. Should conform to the [LuisPredictionOptions](xref:botbuilder-ai.LuisPredictionOptions), [LuisRecognizerOptionsV3](xref:botbuilder-ai.LuisRecognizerOptionsV3) or [LuisRecognizerOptionsV2](xref:botbuilder-ai.LuisRecognizerOptionsV2) definition.
-     * @param includeApiResults (Deprecated) Flag that if set to `true` will force the inclusion of LUIS Api call in results returned by the [LuisRecognizer.recognize](xref:botbuilder-ai.LuisRecognizer.recognize) method. Defaults to a value of `false`.
+     *
+     * @param {LuisApplication | string} application An object conforming to the [LuisApplication](xref:botbuilder-ai.LuisApplication) definition or a string representing a LUIS application endpoint, usually retrieved from https://luis.ai.
+     * @param {LuisRecognizerOptionsV3 | LuisRecognizerOptionsV2 | LuisPredictionOptions} options Optional. Options object used to control predictions. Should conform to the [LuisPredictionOptions](xref:botbuilder-ai.LuisPredictionOptions), [LuisRecognizerOptionsV3](xref:botbuilder-ai.LuisRecognizerOptionsV3) or [LuisRecognizerOptionsV2](xref:botbuilder-ai.LuisRecognizerOptionsV2) definition.
+     * @param {boolean} includeApiResults (Deprecated) Flag that if set to `true` will force the inclusion of LUIS Api call in results returned by the [LuisRecognizer.recognize](xref:botbuilder-ai.LuisRecognizer.recognize) method. Defaults to a value of `false`.
      */
     constructor(
         application: LuisApplication | string,
@@ -345,33 +327,31 @@ export class LuisRecognizer implements LuisRecognizerTelemetryClient {
         }
     }
 
-    /**
-     * Gets a value indicating whether determines whether to log personal information that came from the user.
-     */
+    // Gets a value indicating whether determines whether to log personal information that came from the user.
     public get logPersonalInformation(): boolean {
         return this._logPersonalInformation;
     }
 
-    /**
-     * Gets the currently configured botTelemetryClient that logs the events.
-     */
+    // Gets the currently configured botTelemetryClient that logs the events.
     public get telemetryClient(): BotTelemetryClient {
         return this._telemetryClient;
     }
 
     /**
      * Returns the name of the top scoring intent from a set of LUIS results.
-     * @param results Result set to be searched.
-     * @param defaultIntent (Optional) intent name to return should a top intent be found. Defaults to a value of `None`.
-     * @param minScore (Optional) minimum score needed for an intent to be considered as a top intent. If all intents in the set are below this threshold then the `defaultIntent` will be returned.  Defaults to a value of `0.0`.
+     *
+     * @param {RecognizerResult} results Result set to be searched.
+     * @param {string} defaultIntent (Optional) intent name to return should a top intent be found. Defaults to a value of `None`.
+     * @param {number} minScore (Optional) minimum score needed for an intent to be considered as a top intent. If all intents in the set are below this threshold then the `defaultIntent` will be returned.  Defaults to a value of `0.0`.
+     * @returns {string} the top intent
      */
-    public static topIntent(results: RecognizerResult | undefined, defaultIntent = 'None', minScore = 0): string {
+    public static topIntent(results?: RecognizerResult, defaultIntent = 'None', minScore = 0): string {
         let topIntent: string;
         let topScore = -1;
         if (results && results.intents) {
             // for (const name in results.intents) {
             Object.keys(results.intents).forEach((name: string) => {
-                const score: any = results.intents[name].score;
+                const score = results.intents[name].score;
                 if (typeof score === 'number' && score > topScore && score >= minScore) {
                     topIntent = name;
                     topScore = score;
@@ -384,7 +364,8 @@ export class LuisRecognizer implements LuisRecognizerTelemetryClient {
 
     /**
      * Calls LUIS to recognize intents and entities in a users utterance.
-     * @remarks
+     *
+     * @summary
      * Returns a [RecognizerResult](../botbuilder-core/recognizerresult) containing any intents and entities recognized by LUIS.
      *
      * In addition to returning the results from LUIS, [recognize()](#recognize) will also
@@ -408,10 +389,12 @@ export class LuisRecognizer implements LuisRecognizerTelemetryClient {
      *     }
      * }
      * ```
-     * @param context Context for the current turn of conversation with the use.
-     * @param telemetryProperties Additional properties to be logged to telemetry with the LuisResult event.
-     * @param telemetryMetrics Additional metrics to be logged to telemetry with the LuisResult event.
-     * @param options (Optional) options object used to override control predictions. Should conform to the [LuisRecognizerOptionsV2] or [LuisRecognizerOptionsV3] definition.
+     *
+     * @param {TurnContext} context Context for the current turn of conversation with the use.
+     * @param {object} telemetryProperties Additional properties to be logged to telemetry with the LuisResult event.
+     * @param {object} telemetryMetrics Additional metrics to be logged to telemetry with the LuisResult event.
+     * @param {LuisRecognizerOptionsV2 | LuisRecognizerOptionsV3 | LuisPredictionOptions} options (Optional) options object used to override control predictions. Should conform to the [LuisRecognizerOptionsV2] or [LuisRecognizerOptionsV3] definition.
+     * @returns {Promise<RecognizerResult>} A promise that resolved to the recognizer result.
      */
     public recognize(
         context: TurnContext,
@@ -419,10 +402,11 @@ export class LuisRecognizer implements LuisRecognizerTelemetryClient {
         telemetryMetrics?: { [key: string]: number },
         options?: LuisRecognizerOptionsV2 | LuisRecognizerOptionsV3 | LuisPredictionOptions
     ): Promise<RecognizerResult> {
-        const cached: any = context.turnState.get(this.cacheKey);
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const cached = context.turnState.get(this.cacheKey);
         const luisRecognizer = options ? this.buildRecognizer(options) : this.luisRecognizerInternal;
         if (!cached) {
-            const utterance: string = context.activity.text || '';
+            const utterance = context.activity.text || '';
             let recognizerPromise: Promise<RecognizerResult>;
 
             if (!utterance.trim()) {
@@ -446,7 +430,7 @@ export class LuisRecognizer implements LuisRecognizerTelemetryClient {
 
                     return recognizerResult;
                 })
-                .catch((error: any) => {
+                .catch((error) => {
                     this.prepareErrorMessage(error);
                     throw error;
                 });
@@ -457,10 +441,11 @@ export class LuisRecognizer implements LuisRecognizerTelemetryClient {
 
     /**
      * Invoked prior to a LuisResult Event being logged.
-     * @param recognizerResult The Luis Results for the call.
-     * @param turnContext Context object containing information for a single turn of conversation with a user.
-     * @param telemetryProperties Additional properties to be logged to telemetry with the LuisResult event.
-     * @param telemetryMetrics Additional metrics to be logged to telemetry with the LuisResult event.
+     *
+     * @param {RecognizerResult} recognizerResult The Luis Results for the call.
+     * @param {TurnContext} turnContext Context object containing information for a single turn of conversation with a user.
+     * @param {object} telemetryProperties Additional properties to be logged to telemetry with the LuisResult event.
+     * @param {object} telemetryMetrics Additional metrics to be logged to telemetry with the LuisResult event.
      */
     protected async onRecognizerResults(
         recognizerResult: RecognizerResult,
@@ -475,16 +460,15 @@ export class LuisRecognizer implements LuisRecognizerTelemetryClient {
                 metrics: telemetryMetrics,
             });
         });
-        return;
     }
 
     /**
-     * Fills the event properties for LuisResult event for telemetry.
-     * These properties are logged when the recognizer is called.
-     * @param recognizerResult Last activity sent from user.
-     * @param turnContext Context object containing information for a single turn of conversation with a user.
-     * @param telemetryProperties Additional properties to be logged to telemetry with the LuisResult event.
-     * @returns A dictionary that is sent as properties to BotTelemetryClient.trackEvent method for the LuisResult event.
+     * Fills the event properties for LuisResult event for telemetry. These properties are logged when the recognizer is called.
+     *
+     * @param {RecognizerResult} recognizerResult Last activity sent from user.
+     * @param {TurnContext} turnContext Context object containing information for a single turn of conversation with a user.
+     * @param {object} telemetryProperties Additional properties to be logged to telemetry with the LuisResult event.
+     * @returns {Promise<object>} A dictionary that is sent as properties to BotTelemetryClient.trackEvent method for the LuisResult event.
      */
     protected async fillTelemetryProperties(
         recognizerResult: RecognizerResult,
@@ -534,15 +518,15 @@ export class LuisRecognizer implements LuisRecognizerTelemetryClient {
         return properties;
     }
 
-    /**
-     * @private
-     */
     private prepareErrorMessage(error: Error): void {
         // If the `error` received is a azure-cognitiveservices-luis-runtime error,
         // it may have a `response` property and `response.statusCode`.
         // If these properties exist, we should populate the error with a correct and informative error message.
-        if ((error as any).response && (error as any).response.status) {
-            switch ((error as any).response.status) {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const response: Record<'status', number> = (error as any).response;
+
+        if (response?.status) {
+            switch (response.status) {
                 case 400:
                     error.message = [
                         `Response 400: The request's body or parameters are incorrect,`,
@@ -569,25 +553,22 @@ export class LuisRecognizer implements LuisRecognizerTelemetryClient {
                     break;
                 default:
                     error.message = [
-                        `Response ${(error as any).response.status}: Unexpected status code received.`,
+                        `Response ${response.status}: Unexpected status code received.`,
                         `Please verify that your LUIS application is properly setup.`,
                     ].join(' ');
             }
         }
     }
 
-    /**
-     * Merges the default options set by the Recognizer contructor with the 'user' options passed into the 'recognize' method
-     */
-    private setLuisPredictionOptions(defaultOptions: LuisPredictionOptions, userOptions: LuisPredictionOptions): any {
+    // Merges the default options set by the Recognizer contructor with the 'user' options passed into the 'recognize' method
+    private setLuisPredictionOptions(
+        defaultOptions: LuisPredictionOptions,
+        userOptions: LuisPredictionOptions
+    ): LuisPredictionOptions {
         return Object.assign(defaultOptions, userOptions);
     }
-
-    /**
-     * Performs a series of valdiations on `LuisRecognizer.application`.
-     *
-     * Note: Neither the LUIS Application ID nor the Endpoint Key are actual LUIS components, they are representations of what two valid values would appear as.
-     */
+    // Performs a series of valdiations on `LuisRecognizer.application`.
+    // Note: Neither the LUIS Application ID nor the Endpoint Key are actual LUIS components, they are representations of what two valid values would appear as.
     private validateLuisApplication(): void {
         if (!this.application.applicationId) {
             throw new Error(
@@ -601,9 +582,7 @@ export class LuisRecognizer implements LuisRecognizerTelemetryClient {
         }
     }
 
-    /**
-     * Builds a LuisRecognizer Strategy depending on the options passed
-     */
+    // Builds a LuisRecognizer Strategy depending on the options passed
     private buildRecognizer(
         userOptions: LuisRecognizerOptionsV2 | LuisRecognizerOptionsV3 | LuisPredictionOptions
     ): LuisRecognizerV3 | LuisRecognizerV2 {

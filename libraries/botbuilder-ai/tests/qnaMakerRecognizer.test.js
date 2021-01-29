@@ -7,14 +7,14 @@ const { QnAMakerRecognizer } = require('../');
 const hostname = 'https://dummy-hostname.azurewebsites.net';
 const knowledgeBaseId = 'dummy-id';
 const endpointKey = 'dummy-key';
-const testDataFolder = `${ __dirname }/qna/`;
+const testDataFolder = `${__dirname}/qna/`;
 
 const user = {
-    id: process.env['USER_ID'] || 'UK8CH2281:TKGSUQHQE'
+    id: process.env['USER_ID'] || 'UK8CH2281:TKGSUQHQE',
 };
 
 const bot = {
-    id: process.env['BOT_ID'] || 'BKGSYSTFG:TKGSUQHQE'
+    id: process.env['BOT_ID'] || 'BKGSYSTFG:TKGSUQHQE',
 };
 
 const createMessageActivity = (text) => {
@@ -23,21 +23,25 @@ const createMessageActivity = (text) => {
         text: text,
         recipient: user,
         from: bot,
-        locale: 'en-us'
+        locale: 'en-us',
     };
 };
 
 const validateAnswers = (result) => {
     assert.notEqual(result.answers, undefined, 'there should be answers');
-    assert.equal(Object.entries(result.entities.answer).length, 1, 'if there is a match there should only be 1 top answer');
+    assert.equal(
+        Object.entries(result.entities.answer).length,
+        1,
+        'if there is a match there should only be 1 top answer'
+    );
     assert.equal(result.entities.$instance.answer[0].startIndex, 0);
     assert(result.entities.$instance.answer[0].endIndex);
 };
 
-describe('QnAMakerRecognizer', function() {
+describe('QnAMakerRecognizer', function () {
     const recognizer = new QnAMakerRecognizer(hostname, knowledgeBaseId, endpointKey);
 
-    it('No text no answer', async function() {
+    it('No text no answer', async function () {
         const activity = createMessageActivity();
         const dc = new DialogContext(new DialogSet(), new TurnContext(new TestAdapter(), activity), {});
         const result = await recognizer.recognize(dc, activity);
@@ -47,8 +51,10 @@ describe('QnAMakerRecognizer', function() {
         assert.notEqual(result.intents.None, undefined);
     });
 
-    it('No Answer', async function() {
-        nock(hostname).post(/knowledgebases/).replyWithFile(200, testDataFolder + 'QnaMaker_ReturnsNoAnswer.json');
+    it('No Answer', async function () {
+        nock(hostname)
+            .post(/knowledgebases/)
+            .replyWithFile(200, testDataFolder + 'QnaMaker_ReturnsNoAnswer.json');
         const activity = createMessageActivity('test');
         const dc = new DialogContext(new DialogSet(), new TurnContext(new TestAdapter(), activity), {});
         const result = await recognizer.recognize(dc, activity);
@@ -58,8 +64,10 @@ describe('QnAMakerRecognizer', function() {
         assert.notEqual(result.intents.None, undefined);
     });
 
-    it('Return Answers', async function() {
-        nock(hostname).post(/knowledgebases/).replyWithFile(200, testDataFolder + 'QnaMaker_ReturnsAnswer.json');
+    it('Return Answers', async function () {
+        nock(hostname)
+            .post(/knowledgebases/)
+            .replyWithFile(200, testDataFolder + 'QnaMaker_ReturnsAnswer.json');
         const activity = createMessageActivity('test');
         const dc = new DialogContext(new DialogSet(), new TurnContext(new TestAdapter(), activity), {});
         const result = await recognizer.recognize(dc, activity);
@@ -68,8 +76,10 @@ describe('QnAMakerRecognizer', function() {
         assert.notEqual(result.intents.QnAMatch, undefined);
     });
 
-    it('Top N Answers', async function() {
-        nock(hostname).post(/knowledgebases/).replyWithFile(200, testDataFolder + 'QnaMaker_TopNAnswer.json');
+    it('Top N Answers', async function () {
+        nock(hostname)
+            .post(/knowledgebases/)
+            .replyWithFile(200, testDataFolder + 'QnaMaker_TopNAnswer.json');
         const activity = createMessageActivity('test');
         const dc = new DialogContext(new DialogSet(), new TurnContext(new TestAdapter(), activity), {});
         const result = await recognizer.recognize(dc, activity);
@@ -78,8 +88,10 @@ describe('QnAMakerRecognizer', function() {
         assert.notEqual(result.intents.QnAMatch, undefined);
     });
 
-    it('Return Answers with Intents', async function() {
-        nock(hostname).post(/knowledgebases/).replyWithFile(200, testDataFolder + 'QnaMaker_ReturnsAnswerWithIntent.json');
+    it('Return Answers with Intents', async function () {
+        nock(hostname)
+            .post(/knowledgebases/)
+            .replyWithFile(200, testDataFolder + 'QnaMaker_ReturnsAnswerWithIntent.json');
         const activity = createMessageActivity('test');
         const dc = new DialogContext(new DialogSet(), new TurnContext(new TestAdapter(), activity), {});
         const result = await recognizer.recognize(dc, activity);
