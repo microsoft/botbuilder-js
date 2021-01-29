@@ -13,7 +13,13 @@ import { LuisAdaptiveRecognizer } from './luisAdaptiveRecognizer';
  * Define component assets for Luis.
  */
 export class LuisComponentRegistration extends ComponentRegistration {
-    public getDeclarativeTypes(_resourceExplorer: unknown) {
+    /**
+     * Get declarative types for LUIS component registration.
+     *
+     * @param {any} _resourceExplorer resource explorer
+     * @returns {ComponentRegistration[]} component registrations
+     */
+    public getDeclarativeTypes(_resourceExplorer: unknown): ComponentRegistration[] {
         return [
             {
                 kind: LuisAdaptiveRecognizer.$kind,

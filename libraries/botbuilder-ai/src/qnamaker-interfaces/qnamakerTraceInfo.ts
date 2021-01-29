@@ -42,12 +42,12 @@ export interface QnAMakerTraceInfo {
     /**
      * Filters used on query. Not used in JavaScript SDK v4 yet.
      */
-    strictFilters: any[];
+    strictFilters: any[]; // eslint-disable-line @typescript-eslint/no-explicit-any
 
     /**
      * Metadata related to query. Not used in JavaScript SDK v4 yet.
      */
-    metadataBoost: any[];
+    metadataBoost: any[]; // eslint-disable-line @typescript-eslint/no-explicit-any
 
     /**
      * The context for multi-turn responses.

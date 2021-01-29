@@ -110,7 +110,7 @@ export interface QnAMakerDialogConfiguration extends DialogConfiguration {
 /**
  * A dialog that supports multi-step and adaptive-learning QnA Maker services.
  *
- * @remarks
+ * @summary
  * An instance of this class targets a specific QnA Maker knowledge base.
  * It supports knowledge bases that include follow-up prompt and active learning features.
  * The dialog will also present user with appropriate multi-turn prompt or active learning options.
@@ -121,7 +121,7 @@ export class QnAMakerDialog extends WaterfallDialog implements QnAMakerDialogCon
     /**
      * Log personal information flag.
      *
-     * @remarks
+     * @summary
      * Defauls to a value of `=settings.logPersonalInformation`, which retrieves
      * `logPersonalInformation` flag from settings.
      */
@@ -131,7 +131,7 @@ export class QnAMakerDialog extends WaterfallDialog implements QnAMakerDialogCon
     /**
      * The path for storing and retrieving QnA Maker context data.
      *
-     * @remarks
+     * @summary
      * This represents context about the current or previous call to QnA Maker.
      * It is stored within the current step's [WaterfallStepContext](xref:botbuilder-dialogs.WaterfallStepContext).
      * It supports QnA Maker's follow-up prompt and active learning features.
@@ -140,7 +140,7 @@ export class QnAMakerDialog extends WaterfallDialog implements QnAMakerDialogCon
     /**
      * The path for storing and retrieving the previous question ID.
      *
-     * @remarks
+     * @summary
      * This represents the QnA question ID from the previous turn.
      * It is stored within the current step's [WaterfallStepContext](xref:botbuilder-dialogs.WaterfallStepContext).
      * It supports QnA Maker's follow-up prompt and active learning features.
@@ -149,7 +149,7 @@ export class QnAMakerDialog extends WaterfallDialog implements QnAMakerDialogCon
     /**
      * The path for storing and retrieving the options for this instance of the dialog.
      *
-     * @remarks
+     * @summary
      * This includes the options with which the dialog was started and options expected by the QnA Maker service.
      * It is stored within the current step's [WaterfallStepContext](xref:botbuilder-dialogs.WaterfallStepContext).
      * It supports QnA Maker and the dialog system.
@@ -182,17 +182,19 @@ export class QnAMakerDialog extends WaterfallDialog implements QnAMakerDialogCon
 
     /**
      * Initializes a new instance of the [QnAMakerDialog](xref:QnAMakerDialog) class.
-     * @param knowledgeBaseId The ID of the QnA Maker knowledge base to query.
-     * @param endpointKey The QnA Maker endpoint key to use to query the knowledge base.
-     * @param hostName The QnA Maker host URL for the knowledge base, starting with "https://" and ending with "/qnamaker".
-     * @param noAnswer (Optional) The activity to send the user when QnA Maker does not find an answer.
-     * @param threshold (Optional) The threshold above which to treat answers found from the knowledgebase as a match.
-     * @param activeLearningCardTitle (Optional) The card title to use when showing active learning options to the user, if active learning is enabled.
-     * @param cardNoMatchText (Optional) The button text to use with active learning options, allowing a user to indicate none of the options are applicable.
-     * @param top (Optional) Maximum number of answers to return from the knowledge base.
-     * @param cardNoMatchResponse (Optional) The activity to send the user if they select the no match option on an active learning card.
-     * @param strictFilters (Optional) QnA Maker metadata with which to filter or boost queries to the knowledge base; or null to apply none.
-     * @param dialogId (Optional) Id of the created dialog. Default is 'QnAMakerDialog'.
+     *
+     * @param {string} knowledgeBaseId The ID of the QnA Maker knowledge base to query.
+     * @param {string} endpointKey The QnA Maker endpoint key to use to query the knowledge base.
+     * @param {string} hostname The QnA Maker host URL for the knowledge base, starting with "https://" and ending with "/qnamaker".
+     * @param {string} noAnswer (Optional) The activity to send the user when QnA Maker does not find an answer.
+     * @param {number} threshold (Optional) The threshold above which to treat answers found from the knowledgebase as a match.
+     * @param {string} activeLearningCardTitle (Optional) The card title to use when showing active learning options to the user, if active learning is enabled.
+     * @param {string} cardNoMatchText (Optional) The button text to use with active learning options, allowing a user to indicate none of the options are applicable.
+     * @param {number} top (Optional) Maximum number of answers to return from the knowledge base.
+     * @param {Activity} cardNoMatchResponse (Optional) The activity to send the user if they select the no match option on an active learning card.
+     * @param {QnAMakerMetadata[]} strictFilters (Optional) QnA Maker metadata with which to filter or boost queries to the knowledge base; or null to apply none.
+     * @param {string} dialogId (Optional) Id of the created dialog. Default is 'QnAMakerDialog'.
+     * @param {string} strictFiltersJoinOperator join operator for strict filters
      */
     public constructor(
         knowledgeBaseId?: string,
@@ -282,7 +284,7 @@ export class QnAMakerDialog extends WaterfallDialog implements QnAMakerDialogCon
     /**
      * Called when the dialog is started and pushed onto the dialog stack.
      *
-     * @remarks
+     * @summary
      * If the task is successful, the result indicates whether the dialog is still
      * active after the turn has been processed by the dialog.
      *
@@ -290,9 +292,11 @@ export class QnAMakerDialog extends WaterfallDialog implements QnAMakerDialogCon
      * which represents context from the previous query. To do so, the value should include a
      * `context` property of type [QnAResponseContext](#QnAResponseContext).
      *
-     * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
-     * @param options (Optional) Initial information to pass to the dialog.
+     * @param {DialogContext} dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
+     * @param {object} options (Optional) Initial information to pass to the dialog.
+     * @returns {Promise<DialogTurnResult>} A promise resolving to the turn result
      */
+    // eslint-disable-next-line @typescript-eslint/ban-types
     public async beginDialog(dc: DialogContext, options?: object): Promise<DialogTurnResult> {
         if (!dc) {
             throw new Error('Missing DialogContext');
@@ -314,12 +318,8 @@ export class QnAMakerDialog extends WaterfallDialog implements QnAMakerDialogCon
         return await super.beginDialog(dc, dialogOptions);
     }
 
-    /**
-     * Gets the options for the QnA Maker client that the dialog will use to query the knowledge base.
-     * @param dc The dialog context for the current turn of conversation.
-     * @remarks If the task is successful, the result contains the QnA Maker options to use.
-     * @returns A new instance of QnAMakerOptions.
-     */
+    // Gets the options for the QnA Maker client that the dialog will use to query the knowledge base.
+    // If the task is successful, the result contains the QnA Maker options to use.
     private async getQnAMakerOptions(dc: DialogContext): Promise<QnAMakerOptions> {
         return {
             scoreThreshold: this.threshold && this.threshold.getValue(dc.state),
@@ -332,12 +332,8 @@ export class QnAMakerDialog extends WaterfallDialog implements QnAMakerDialogCon
         };
     }
 
-    /**
-     * Gets the options the dialog will use to display query results to the user.
-     * @param dc The dialog context for the current turn of conversation.
-     * @remarks If the task is successful, the result contains the response options to use.
-     * @returns A new instance of QnAMakerDialogResponseOptions.
-     */
+    // Gets the options the dialog will use to display query results to the user.
+    // If the task is successful, the result contains the response options to use.
     private async getQnAResponseOptions(dc: DialogContext): Promise<QnAMakerDialogResponseOptions> {
         return {
             activeLearningCardTitle: this.activeLearningCardTitle && this.activeLearningCardTitle.getValue(dc.state),
@@ -347,10 +343,8 @@ export class QnAMakerDialog extends WaterfallDialog implements QnAMakerDialogCon
         };
     }
 
-    /**
-     * Queries the knowledgebase and either passes result to the next step or constructs and displays an active learning card
-     * if active learning is enabled and multiple score close answers are returned.
-     **/
+    // Queries the knowledgebase and either passes result to the next step or constructs and displays an active learning card
+    // if active learning is enabled and multiple score close answers are returned.
     private async callGenerateAnswer(step: WaterfallStepContext): Promise<DialogTurnResult> {
         const dialogOptions: QnAMakerDialogOptions = step.activeDialog.state[this.options];
         dialogOptions.qnaMakerOptions.qnaId = 0;
@@ -420,11 +414,9 @@ export class QnAMakerDialog extends WaterfallDialog implements QnAMakerDialogCon
         return await step.next(result);
     }
 
-    /**
-     * If active learning options were displayed in the previous step and the user has selected an option other
-     * than 'no match' then the training API is called, passing the user's chosen question back to the knowledgebase.
-     * If no active learning options were displayed in the previous step, the incoming result is immediately passed to the next step.
-     **/
+    // If active learning options were displayed in the previous step and the user has selected an option other
+    // than 'no match' then the training API is called, passing the user's chosen question back to the knowledgebase.
+    // If no active learning options were displayed in the previous step, the incoming result is immediately passed to the next step.
     private async callTrain(step: WaterfallStepContext): Promise<DialogTurnResult> {
         const dialogOptions: QnAMakerDialogOptions = step.activeDialog.state[this.options];
         const trainResponses: QnAMakerResult[] = step.values[this.qnAData];
@@ -465,11 +457,9 @@ export class QnAMakerDialog extends WaterfallDialog implements QnAMakerDialogCon
         return await step.next(step.result);
     }
 
-    /**
-     * If multi turn prompts are included with the answer returned from the knowledgebase, this step constructs
-     * and sends an activity with a hero card displaying the answer and the multi turn prompt options.
-     * If no multi turn prompts exist then the result incoming result is passed to the next step.
-     **/
+    // If multi turn prompts are included with the answer returned from the knowledgebase, this step constructs
+    // and sends an activity with a hero card displaying the answer and the multi turn prompt options.
+    // If no multi turn prompts exist then the result incoming result is passed to the next step.
     private async checkForMultiTurnPrompt(step: WaterfallStepContext): Promise<DialogTurnResult> {
         const dialogOptions: QnAMakerDialogOptions = step.activeDialog.state[this.options];
         const response: QnAMakerResult[] = step.result;
@@ -498,11 +488,9 @@ export class QnAMakerDialog extends WaterfallDialog implements QnAMakerDialogCon
         return step.next(step.result);
     }
 
-    /**
-     * Displays an appropriate response based on the incoming result to the user.If an answer has been identified it
-     * is sent to the user. Alternatively, if no answer has been identified or the user has indicated 'no match' on an
-     * active learning card, then an appropriate message is sent to the user.
-     **/
+    // Displays an appropriate response based on the incoming result to the user.If an answer has been identified it
+    // is sent to the user. Alternatively, if no answer has been identified or the user has indicated 'no match' on an
+    // active learning card, then an appropriate message is sent to the user.
     private async displayQnAResult(step: WaterfallStepContext): Promise<DialogTurnResult> {
         const dialogOptions: QnAMakerDialogOptions = step.activeDialog.state[this.options];
         const reply = step.context.activity.text;
@@ -529,9 +517,7 @@ export class QnAMakerDialog extends WaterfallDialog implements QnAMakerDialogCon
         return await step.endDialog(step.result);
     }
 
-    /**
-     * Creates and returns an instance of the QnAMaker class used to query the knowledgebase.
-     **/
+    // Creates and returns an instance of the QnAMaker class used to query the knowledgebase.
     private async getQnAClient(dc: DialogContext): Promise<QnAMaker> {
         const endpoint = {
             knowledgeBaseId: this.knowledgeBaseId.getValue(dc.state),
@@ -547,12 +533,11 @@ export class QnAMakerDialog extends WaterfallDialog implements QnAMakerDialogCon
         return new QnAMaker(endpoint, await this.getQnAMakerOptions(dc), this.telemetryClient, logPersonalInformation);
     }
 
-    /**
-     * Gets unmodified v5 API hostName or constructs v4 API hostName
-     * @remarks
-     * Example of a complete v5 API endpoint: "https://qnamaker-acom.azure.com/qnamaker/v5.0"
-     * Template literal to construct v4 API endpoint: `https://${ this.hostName }.azurewebsites.net/qnamaker`
-     */
+    // Gets unmodified v5 API hostName or constructs v4 API hostName
+    //
+    // Example of a complete v5 API endpoint: "https://qnamaker-acom.azure.com/qnamaker/v5.0"
+    //
+    // Template literal to construct v4 API endpoint: `https://${ this.hostName }.azurewebsites.net/qnamaker`
     private getHost(dc: DialogContext): string {
         let host: string = this.hostname.getValue(dc.state);
         // If hostName includes 'qnamaker/v5', return the v5 API hostName.

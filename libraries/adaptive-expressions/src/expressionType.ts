@@ -26,6 +26,8 @@ export class ExpressionType {
     public static readonly Floor: string = 'floor';
     public static readonly Ceiling: string = 'ceiling';
     public static readonly Round: string = 'round';
+    public static readonly Abs: string = 'abs';
+    public static readonly Sqrt: string = 'sqrt';
 
     // Comparisons
     public static readonly LessThan: string = '<';
