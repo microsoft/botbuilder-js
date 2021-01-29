@@ -198,16 +198,16 @@ export class QnAMakerRecognizer extends Recognizer implements QnAMakerRecognizer
         }
 
         const filters: QnAMakerMetadata[] = [];
-        if (this.includeDialogNameInMetadata && this.includeDialogNameInMetadata.getValue(dc.state)) {
+        if (this.includeDialogNameInMetadata?.getValue(dc.state)) {
             const metadata: QnAMakerMetadata = {
                 name: 'dialogName',
-                value: dc.activeDialog && dc.activeDialog.id,
+                value: dc.activeDialog?.id,
             };
             filters.push(metadata);
         }
 
         // if there is $qna.metadata set add to filters
-        const externalMetadata: QnAMakerMetadata[] = this.metadata && this.metadata.getValue(dc.state);
+        const externalMetadata: QnAMakerMetadata[] = this.metadata?.getValue(dc.state);
         if (externalMetadata) {
             filters.push(...externalMetadata);
         }
@@ -215,18 +215,18 @@ export class QnAMakerRecognizer extends Recognizer implements QnAMakerRecognizer
         // calling QnAMaker to get response
         const qnaMaker = this.getQnAMaker(dc);
         const qnaMakerOptions: QnAMakerOptions = {
-            context: this.context && this.context.getValue(dc.state),
-            scoreThreshold: this.threshold && this.threshold.getValue(dc.state),
+            context: this.context?.getValue(dc.state),
+            scoreThreshold: this.threshold?.getValue(dc.state),
             strictFilters: filters,
-            top: this.top && this.top.getValue(dc.state),
-            qnaId: this.qnaId && this.qnaId.getValue(dc.state),
-            rankerType: this.rankerType && this.rankerType.getValue(dc.state),
+            top: this.top?.getValue(dc.state),
+            qnaId: this.qnaId?.getValue(dc.state),
+            rankerType: this.rankerType?.getValue(dc.state),
             isTest: this.isTest,
             strictFiltersJoinOperator: this.strictFiltersJoinOperator,
         };
         const answers = await qnaMaker.getAnswers(dc.context, qnaMakerOptions);
 
-        if (answers && answers.length > 0) {
+        if (answers?.length > 0) {
             let topAnswer: QnAMakerResult;
             for (let i = 0; i < answers.length; i++) {
                 const answer = answers[i];

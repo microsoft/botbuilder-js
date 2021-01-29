@@ -459,7 +459,7 @@ export class QnAMakerDialog extends WaterfallDialog implements QnAMakerDialogCon
         ) {
             qnaResponse.answers = qna.getLowScoreVariation(qnaResponse.answers);
 
-            if (isActiveLearningEnabled && qnaResponse.answers && qnaResponse.answers.length > 1) {
+            if (isActiveLearningEnabled && qnaResponse.answers?.length > 1) {
                 const suggestedQuestions: string[] = [];
 
                 qnaResponse.answers.forEach((answer) => {
@@ -481,7 +481,7 @@ export class QnAMakerDialog extends WaterfallDialog implements QnAMakerDialogCon
 
         const result: QnAMakerResult[] = [];
 
-        if (response.answers && response.answers.length > 0) {
+        if (response.answers?.length > 0) {
             result.push(response.answers[0]);
         }
 
@@ -502,10 +502,10 @@ export class QnAMakerDialog extends WaterfallDialog implements QnAMakerDialogCon
 
         const reply = step.context.activity.text;
 
-        if (trainResponses && trainResponses.length > 1) {
+        if (trainResponses?.length > 1) {
             const qnaResult = trainResponses.filter((r) => r.questions[0] == reply);
 
-            if (qnaResult && qnaResult.length > 0) {
+            if (qnaResult?.length > 0) {
                 const results: QnAMakerResult[] = [];
                 results.push(qnaResult[0]);
                 step.values[this.qnAData] = results;
@@ -544,10 +544,10 @@ export class QnAMakerDialog extends WaterfallDialog implements QnAMakerDialogCon
         const dialogOptions: QnAMakerDialogOptions = step.activeDialog.state[this.options];
         const response: QnAMakerResult[] = step.result;
 
-        if (response && response.length > 0) {
+        if (response?.length > 0) {
             const answer = response[0];
 
-            if (answer.context && answer.context.prompts.length > 0) {
+            if (answer?.context?.prompts?.length > 0) {
                 const previousContextData: { [key: string]: number } = {};
 
                 answer.context.prompts.forEach((prompt) => {
@@ -589,7 +589,7 @@ export class QnAMakerDialog extends WaterfallDialog implements QnAMakerDialogCon
         }
 
         const response: QnAMakerResult[] = step.result;
-        if (response && response.length > 0) {
+        if (response?.length > 0) {
             await step.context.sendActivity(response[0].answer);
         } else {
             const activity = dialogOptions.qnaDialogResponseOptions.noAnswer;

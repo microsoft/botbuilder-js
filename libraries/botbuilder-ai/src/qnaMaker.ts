@@ -397,8 +397,6 @@ export class QnAMaker implements QnAMakerTelemetryClient {
      * Gets the message from the Activity in the TurnContext, trimmed of whitespaces.
      */
     private getTrimmedMessageText(context: TurnContext): string {
-        const question: string = context && context.activity && context.activity.text ? context.activity.text : '';
-
-        return question.trim();
+        return context?.activity?.text?.trim() ?? '';
     }
 }
