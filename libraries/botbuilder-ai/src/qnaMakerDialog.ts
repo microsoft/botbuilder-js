@@ -561,6 +561,9 @@ export class QnAMakerDialog extends WaterfallDialog implements QnAMakerDialogCon
      * Displays an appropriate response based on the incoming result to the user.If an answer has been identified it
      * is sent to the user. Alternatively, if no answer has been identified or the user has indicated 'no match' on an
      * active learning card, then an appropriate message is sent to the user.
+     *
+     * @param {WaterfallStepContext} step the waterfall step context
+     * @returns {Promise<DialogTurnResult>} a promise resolving to the dialog turn result
      **/
     protected async displayQnAResult(step: WaterfallStepContext): Promise<DialogTurnResult> {
         const dialogOptions: QnAMakerDialogOptions = step.activeDialog.state[this.options];

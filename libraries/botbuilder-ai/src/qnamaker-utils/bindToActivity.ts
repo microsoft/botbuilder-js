@@ -7,7 +7,7 @@
  */
 
 import { Activity } from 'botbuilder-core';
-import { TemplateInterface } from 'botbuilder-dialogs';
+import { DialogContext, TemplateInterface } from 'botbuilder-dialogs';
 
 export class BindToActivity implements TemplateInterface<Partial<Activity>> {
     private _activity: Partial<Activity>;
@@ -15,7 +15,9 @@ export class BindToActivity implements TemplateInterface<Partial<Activity>> {
     public constructor(activity: Partial<Activity>) {
         this._activity = activity;
     }
-    public async bind(context: DialogContext, data?: object): Promise<Partial<Activity>> {
+
+    // eslint-disable-next-line @typescript-eslint/ban-types
+    public async bind(_context: DialogContext, _data?: object): Promise<Partial<Activity>> {
         return this._activity;
     }
 }
