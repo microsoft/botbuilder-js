@@ -647,23 +647,6 @@ describe('BotFrameworkAdapter', () => {
             assert.strictEqual(credentials.certificatePrivateKey, certificatePrivateKey);
             assert.strictEqual(credentials.certificateThumbprint, certificateThumbprint);
         });
-
-        it(`createConnectorClientWithIdentity break`, async () => {
-            const appId = '01234567-4242-aaaa-bbbb-cccccccccccc';
-            const certificatePrivateKey = 'key';
-            const certificateThumbprint = 'thumbprint';
-            const adapter = new BotFrameworkAdapter({ appId, certificatePrivateKey, certificateThumbprint });
-
-            const connector = await adapter.createConnectorClientWithIdentity('https://serviceurl.com', new ClaimsIdentity([], true));
-            const credentials = connector.credentials;
-
-            assert(credentials instanceof CertificateAppCredentials);
-            assert.strictEqual(credentials.appId, appId);
-            assert.strictEqual(credentials.certificatePrivateKey, certificatePrivateKey);
-            assert.strictEqual(credentials.certificateThumbprint, certificateThumbprint);
-        });
-
-
     });
 
     it(`processActivity() should respect expectReplies if it's set via logic`, async () => {
