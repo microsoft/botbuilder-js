@@ -1580,7 +1580,7 @@ export class BotFrameworkAdapter
         let credentials: AppCredentials;
         if (this.settings.certificateThumbprint && this.settings.certificatePrivateKey) {
             credentials = new CertificateAppCredentials(
-                this.settings.appId,
+                appId,
                 this.settings.certificateThumbprint,
                 this.settings.certificatePrivateKey,
                 this.settings.channelAuthTenant

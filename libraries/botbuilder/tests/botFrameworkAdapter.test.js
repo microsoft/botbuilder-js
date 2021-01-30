@@ -641,7 +641,9 @@ describe('BotFrameworkAdapter', () => {
 
             const connector = await adapter.createConnectorClientWithIdentity(
                 'https://serviceurl.com',
-                new ClaimsIdentity([])
+                new ClaimsIdentity([
+                    { type: AuthenticationConstants.AppIdClaim, value: appId }
+                ])
             );
             const credentials = connector.credentials;
 
