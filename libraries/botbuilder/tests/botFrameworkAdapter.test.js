@@ -340,8 +340,6 @@ describe('BotFrameworkAdapter', () => {
             assert.strictEqual(adapter.settings.appPassword, appPassword);
         });
 
-        // TODO -- put here!!!
-
         it(`should read ChannelService and BotOpenIdMetadata env var if they exist`, function () {
             process.env.ChannelService = 'https://botframework.azure.us';
             process.env.BotOpenIdMetadata = 'https://someEndpoint.com';
