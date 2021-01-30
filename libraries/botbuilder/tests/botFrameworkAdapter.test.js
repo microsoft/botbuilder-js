@@ -639,7 +639,10 @@ describe('BotFrameworkAdapter', () => {
             const certificateThumbprint = 'thumbprint';
             const adapter = new BotFrameworkAdapter({ appId, certificatePrivateKey, certificateThumbprint });
 
-            const connector = await adapter.createConnectorClientWithIdentity('https://serviceurl.com', new ClaimsIdentity([], true));
+            const connector = await adapter.createConnectorClientWithIdentity(
+                'https://serviceurl.com',
+                new ClaimsIdentity([])
+            );
             const credentials = connector.credentials;
 
             assert(credentials instanceof CertificateAppCredentials);
