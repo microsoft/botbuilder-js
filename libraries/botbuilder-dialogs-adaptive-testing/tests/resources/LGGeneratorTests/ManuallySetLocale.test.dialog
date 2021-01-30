@@ -24,10 +24,6 @@
                     },
                     {
                         "$kind": "Microsoft.SendActivity",
-                        "activity": "${addDays('2018-01-02T02:00:00.000Z', 4, 'D')}"
-                    },
-                    {
-                        "$kind": "Microsoft.SendActivity",
                         "activity": "${formatNumber(3.1415926, 5)}"
                     }
                 ]
@@ -45,10 +41,6 @@
         {
             "$kind": "Microsoft.Test.AssertReply",
             "text": "1,1235"
-        },
-        {
-            "$kind": "Microsoft.Test.AssertReply",
-            "text": "Samstag, 6. Januar 2018"
         },
         {
             "$kind": "Microsoft.Test.AssertReply",
