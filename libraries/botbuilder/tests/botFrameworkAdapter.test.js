@@ -340,6 +340,29 @@ describe('BotFrameworkAdapter', () => {
             assert.strictEqual(adapter.settings.appPassword, appPassword);
         });
 
+        it(`should create a ConnectorClient with CertificateAppCredentials when certificateThumbprint and certificatePrivatekey are provided`, () => {
+            const appId = '01234567-4242-aaaa-bbbb-cccccccccccc';
+            const certificatePrivateKey = 'key';
+            const certificateThumbprint = 'thumbprint';
+            const adapter = new BotFrameworkAdapter({ appId, certificatePrivateKey, certificateThumbprint });
+            const { AudienceClaim, IssuerClaim, ServiceUrlClaim, ToBotFromChannelTokenIssuer } = AuthenticationConstants;
+            const identity = {
+                claims: [
+                    { type: AudienceClaim, value: appId },
+                    { type: IssuerClaim, value: ToBotFromChannelTokenIssuer },
+                    { type: ServiceUrlClaim, value: 'https://serviceurl.com' }
+                ],
+                authenticationType: true
+            };
+
+            const connector = adapter.createConnectorClientWithIdentity('https://serviceurl.com', identity);
+            const credentials = connector.credentials;
+            assert(credentials instanceof CertificateAppCredentials);
+            assert.strictEqual(credentials.appId, appId);
+            assert.strictEqual(credentials.certificatePrivateKey, certificatePrivateKey);
+            assert.strictEqual(credentials.certificateThumbprint, certificateThumbprint);
+        });
+
         it(`should read ChannelService and BotOpenIdMetadata env var if they exist`, function () {
             process.env.ChannelService = 'https://botframework.azure.us';
             process.env.BotOpenIdMetadata = 'https://someEndpoint.com';
