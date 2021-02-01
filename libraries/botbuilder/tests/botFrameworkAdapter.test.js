@@ -639,8 +639,6 @@ describe('BotFrameworkAdapter', () => {
             const certificateThumbprint = 'thumbprint';
             const adapter = new BotFrameworkAdapter({ appId, certificatePrivateKey, certificateThumbprint });
 
-            // TODO rethink again on where we should pull appId from
-            // Also check for Audience
             const connector = await adapter.createConnectorClientWithIdentity(
                 'https://serviceurl.com',
                 new ClaimsIdentity([
