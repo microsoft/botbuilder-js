@@ -25,8 +25,8 @@ import { Converter, ConverterFactory, DialogContext, Recognizer, RecognizerConfi
 const oc = require('orchestrator-core');
 
 export interface OrchestratorAdaptiveRecognizerConfiguration extends RecognizerConfiguration {
-    modelPath?: string | Expression | StringExpression;
-    snapshotPath?: string | Expression | StringExpression;
+    modelFolder?: string | Expression | StringExpression;
+    snapshotFile?: string | Expression | StringExpression;
     disambiguationScoreThreshold?: number | string | Expression | NumberExpression;
     detectAmbiguousIntents?: boolean | string | Expression | BoolExpression;
     externalEntityRecognizer?: Recognizer;
@@ -57,12 +57,12 @@ export class OrchestratorAdaptiveRecognizer extends Recognizer implements Orches
     /**
      * Path to Orchestrator base model folder.
      */
-    public modelPath: StringExpression = new StringExpression('=settings.orchestrator.modelPath');
+    public modelFolder: StringExpression = new StringExpression('=settings.orchestrator.modelFolder');
 
     /**
      * Path to the snapshot (.blu file) to load.
      */
-    public snapshotPath: StringExpression = new StringExpression('=settings.orchestrator.snapshotPath');
+    public snapshotFile: StringExpression = new StringExpression('=settings.orchestrator.snapshotFile');
 
     /**
      * Threshold value to use for ambiguous intent detection. Defaults to 0.05.
@@ -92,9 +92,9 @@ export class OrchestratorAdaptiveRecognizer extends Recognizer implements Orches
 
     public getConverter(property: keyof OrchestratorAdaptiveRecognizerConfiguration): Converter | ConverterFactory {
         switch (property) {
-            case 'modelPath':
+            case 'modelFolder':
                 return new StringExpressionConverter();
-            case 'snapshotPath':
+            case 'snapshotFile':
                 return new StringExpressionConverter();
             case 'disambiguationScoreThreshold':
                 return new NumberExpressionConverter();
@@ -108,23 +108,23 @@ export class OrchestratorAdaptiveRecognizer extends Recognizer implements Orches
     private readonly unknownIntentFilterScore = 0.4;
     private static orchestrator: Orchestrator;
     private _resolver: LabelResolver;
-    private _modelPath: string;
-    private _snapshotPath: string;
+    private _modelFolder: string;
+    private _snapshotFile: string;
 
     /**
      * Returns an OrchestratorAdaptiveRecognizer instance.
      *
-     * @param {string} modelPath Path to NLR model.
-     * @param {string} snapshotPath Path to snapshot.
+     * @param {string} modelFolder Path to NLR model.
+     * @param {string} snapshotFile Path to snapshot.
      * @param {any} resolver Orchestrator resolver to use.
      */
-    public constructor(modelPath?: string, snapshotPath?: string, resolver?: LabelResolver) {
+    public constructor(modelFolder?: string, snapshotFile?: string, resolver?: LabelResolver) {
         super();
-        if (modelPath) {
-            this._modelPath = modelPath;
+        if (modelFolder) {
+            this._modelFolder = modelFolder;
         }
-        if (snapshotPath) {
-            this._snapshotPath = snapshotPath;
+        if (snapshotFile) {
+            this._snapshotFile = snapshotFile;
         }
         this._resolver = resolver;
     }
@@ -144,17 +144,17 @@ export class OrchestratorAdaptiveRecognizer extends Recognizer implements Orches
         telemetryProperties?: Record<string, string>,
         telemetryMetrics?: Record<string, number>
     ): Promise<RecognizerResult> {
-        if (!this.modelPath) {
-            throw new Error(`Missing "ModelPath" information.`);
+        if (!this.modelFolder) {
+            throw new Error(`Missing "ModelFolder" information.`);
         }
 
-        if (!this.snapshotPath) {
-            throw new Error(`Missing "SnapshotPath" information.`);
+        if (!this.snapshotFile) {
+            throw new Error(`Missing "SnapshotFile" information.`);
         }
 
         const text = activity.text ?? '';
-        this._modelPath = this.modelPath.getValue(dc.state);
-        this._snapshotPath = this.snapshotPath.getValue(dc.state);
+        this._modelFolder = this.modelFolder.getValue(dc.state);
+        this._snapshotFile = this.snapshotFile.getValue(dc.state);
         const detectAmbiguity = this.detectAmbiguousIntents.getValue(dc.state);
 
         let recognizerResult: RecognizerResult = {
@@ -250,29 +250,29 @@ export class OrchestratorAdaptiveRecognizer extends Recognizer implements Orches
     }
 
     private _initializeModel() {
-        if (!this._modelPath) {
-            throw new Error(`Missing "ModelPath" information.`);
+        if (!this._modelFolder) {
+            throw new Error(`Missing "ModelFolder" information.`);
         }
 
-        if (!this._snapshotPath) {
-            throw new Error(`Missing "ShapshotPath" information.`);
+        if (!this._snapshotFile) {
+            throw new Error(`Missing "ShapshotFile" information.`);
         }
 
         if (!OrchestratorAdaptiveRecognizer.orchestrator && !this._resolver) {
             // Create orchestrator core
-            const fullModelPath = resolve(this._modelPath);
-            if (!existsSync(fullModelPath)) {
-                throw new Error(`Model folder does not exist at ${fullModelPath}.`);
+            const fullModelFolder = resolve(this._modelFolder);
+            if (!existsSync(fullModelFolder)) {
+                throw new Error(`Model folder does not exist at ${fullModelFolder}.`);
             }
             const orchestrator = new oc.Orchestrator();
-            if (!orchestrator.load(fullModelPath)) {
+            if (!orchestrator.load(fullModelFolder)) {
                 throw new Error(`Model load failed.`);
             }
             OrchestratorAdaptiveRecognizer.orchestrator = orchestrator;
         }
 
         if (!this._resolver) {
-            const fullSnapshotPath = resolve(this._snapshotPath);
+            const fullSnapshotPath = resolve(this._snapshotFile);
             if (!existsSync(fullSnapshotPath)) {
                 throw new Error(`Snapshot file does not exist at ${fullSnapshotPath}.`);
             }
