@@ -639,10 +639,12 @@ describe('BotFrameworkAdapter', () => {
             const certificateThumbprint = 'thumbprint';
             const adapter = new BotFrameworkAdapter({ appId, certificatePrivateKey, certificateThumbprint });
 
+            // TODO rethink again on where we should pull appId from
+            // Also check for Audience
             const connector = await adapter.createConnectorClientWithIdentity(
                 'https://serviceurl.com',
                 new ClaimsIdentity([
-                    { type: AuthenticationConstants.AppIdClaim, value: appId }
+                    { type: AuthenticationConstants.AppIdClaim, value: appId },
                 ])
             );
             const credentials = connector.credentials;
@@ -653,7 +655,7 @@ describe('BotFrameworkAdapter', () => {
             assert.strictEqual(credentials.certificateThumbprint, certificateThumbprint);
         });
 
-        it(`createConnectorClientWithIdentity should create a ConnectorClient with MicrosoftAppCredentials when certificateThumbprint and certificatePrivatekey are absent`, async () => {
+        it(`createConnectorClientWithIdentity should create a ConnectorClient with MicrosoftAppCredentials when certificateThumbprint and certificatePrivatekey are absent and ClaimsIdenity has AppIdClaim`, async () => {
             const appId = '01234567-4242-aaaa-bbbb-cccccccccccc';
             const appPassword = 'password123';
             const adapter = new BotFrameworkAdapter({ appId, appPassword });
@@ -662,6 +664,26 @@ describe('BotFrameworkAdapter', () => {
                 'https://serviceurl.com',
                 new ClaimsIdentity([
                     { type: AuthenticationConstants.AppIdClaim, value: appId }
+                ]
+            ));
+
+            const credentials = connector.credentials;
+
+            assert(credentials instanceof MicrosoftAppCredentials);
+            assert.strictEqual(credentials.appId, appId);
+            assert.strictEqual(credentials.certificatePrivateKey, undefined);
+            assert.strictEqual(credentials.certificateThumbprint, undefined);
+        });
+
+        it(`createConnectorClientWithIdentity should create a ConnectorClient with MicrosoftAppCredentials when certificateThumbprint and certificatePrivatekey are absent and ClaimsIdenity has AudienceClaim`, async () => {
+            const appId = '01234567-4242-aaaa-bbbb-cccccccccccc';
+            const appPassword = 'password123';
+            const adapter = new BotFrameworkAdapter({ appId, appPassword });
+
+            const connector = await adapter.createConnectorClientWithIdentity(
+                'https://serviceurl.com',
+                new ClaimsIdentity([
+                    { type: AuthenticationConstants.AudienceClaim, value: appId }
                 ]
             ));
 
