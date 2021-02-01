@@ -9,19 +9,19 @@
 /**
  * Enumeration of types of ranking.
  */
-export class RankerTypes {
+export enum RankerTypes {
     /**
      * Default Ranker Behaviour. i.e. Ranking based on Questions and Answer.
      */
-    public static readonly default: string = 'Default';
+    default = 'Default',
 
     /**
      * Ranker based on question Only.
      */
-    public static readonly questionOnly: string = 'QuestionOnly';
+    questionOnly = 'QuestionOnly',
 
     /**
      * Ranker based on Autosuggest for question field Only.
      */
-    public static readonly autoSuggestQuestion: string = 'AutoSuggestQuestion';
+    autoSuggestQuestion = 'AutoSuggestQuestion',
 }
