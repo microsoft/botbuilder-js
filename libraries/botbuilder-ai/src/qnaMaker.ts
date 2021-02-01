@@ -10,7 +10,6 @@ import { BotTelemetryClient, NullTelemetryClient, TurnContext } from 'botbuilder
 
 import {
     FeedbackRecords,
-    JoinOperator,
     QnAMakerEndpoint,
     QnAMakerMetadata,
     QnAMakerOptions,
@@ -100,7 +99,6 @@ export class QnAMaker implements QnAMakerTelemetryClient {
             metadataBoost = [] as QnAMakerMetadata[],
             timeout = 100000,
             rankerType = RankerTypes.default,
-            strictFiltersJoinOperator = JoinOperator.AND,
         } = options;
 
         this._options = {
@@ -110,7 +108,6 @@ export class QnAMaker implements QnAMakerTelemetryClient {
             metadataBoost,
             timeout,
             rankerType,
-            strictFiltersJoinOperator,
         } as QnAMakerOptions;
 
         this.generateAnswerUtils = new GenerateAnswerUtils(this._options, this.endpoint);
@@ -410,8 +407,6 @@ export class QnAMaker implements QnAMakerTelemetryClient {
 
     // Gets the message from the Activity in the TurnContext, trimmed of whitespaces.
     private getTrimmedMessageText(context: TurnContext): string {
-        const question: string = context && context.activity && context.activity.text ? context.activity.text : '';
-
-        return question.trim();
+        return context?.activity?.text?.trim() ?? '';
     }
 }
