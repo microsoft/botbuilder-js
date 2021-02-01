@@ -14,6 +14,7 @@ export * from './adaptiveEvents';
 export * from './conditions';
 export { DialogExpressionConverter } from './converters';
 export * from './expressions';
+export * from './functions';
 export * from './generators';
 export * from './input';
 export * from './languageGenerator';
