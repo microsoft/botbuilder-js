@@ -15,6 +15,9 @@ import { BotTelemetryClient, NullTelemetryClient, RecognizerResult, TurnContext 
 import { LuisTelemetryConstants } from './luisTelemetryConstants';
 import { isLuisRecognizerOptionsV2, LuisRecognizerV2 } from './luisRecognizerOptionsV2';
 import { isLuisRecognizerOptionsV3, LuisRecognizerV3 } from './luisRecognizerOptionsV3';
+import { DynamicList } from './dynamicList';
+import { ExternalEntity } from './externalEntity';
+import { Recognizer } from 'botbuilder-dialogs';
 
 /**
  * Description of a LUIS application used for initializing a LuisRecognizer.
@@ -139,6 +142,11 @@ export interface LuisRecognizerOptionsV3 extends LuisRecognizerOptions {
     apiVersion: 'v3';
 
     /**
+     * (Optional) External recognizer to recognize external entities to pass to LUIS.
+     */
+    externalEntityRecognizer?: Recognizer;
+
+    /**
      * (Optional) Determine if all intents come back or only the top one.
      */
     includeAllIntents?: boolean;
@@ -156,12 +164,12 @@ export interface LuisRecognizerOptionsV3 extends LuisRecognizerOptions {
     /**
      * (Optional) Dynamic lists of things like contact names to recognize at query time..
      */
-    dynamicLists?: Array<any>; // eslint-disable-line @typescript-eslint/no-explicit-any
+    dynamicLists?: Array<DynamicList>;
 
     /**
      * (Optional) External entities recognized in query.
      */
-    externalEntities?: Array<any>; // eslint-disable-line @typescript-eslint/no-explicit-any
+    externalEntities?: Array<ExternalEntity>;
 
     /**
      * (Optional) Boolean for if external entities should be preferred to the results from LUIS models.
