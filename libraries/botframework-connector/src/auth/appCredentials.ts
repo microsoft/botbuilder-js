@@ -7,8 +7,8 @@
  */
 
 import * as msrest from '@azure/ms-rest-js';
-import * as url from 'url';
 import * as adal from 'adal-node';
+import * as msal from '@azure/msal-node';
 import { AuthenticationConstants } from './authenticationConstants';
 
 /**
@@ -150,6 +150,10 @@ export abstract class AppCredentials implements msrest.ServiceClientCredentials 
         // 2. We have it, but it's expired
         // 3. We don't have it in the cache.
         const res: adal.TokenResponse = await this.refreshToken();
+        // TODO -- remove ADAL later
+        // leaving ADAL bits in while testing MSAL
+        const msalRes: msal.AuthenticationResult = await this.refreshToken2();
+
         this.refreshingToken = null;
 
         if (res && res.accessToken) {
@@ -164,13 +168,24 @@ export abstract class AppCredentials implements msrest.ServiceClientCredentials 
             // new token before it expires.
             res.expirationTime = Date.now() + res.expiresIn * 1000 - 300000;
             AppCredentials.cache.set(this.tokenCacheKey, res);
-            return res.accessToken;
+            // return res.accessToken;
+            
+            // TEST -- returning token from MSAL result
+            return msalRes.accessToken;
         } else {
             throw new Error('Authentication: No response or error received from ADAL.');
         }
     }
 
-    protected abstract async refreshToken(): Promise<adal.TokenResponse>;
+    // Getting this error:
+    // "'async' modifier cannot be used with 'abstract' modifier.ts(1243)"
+    // Removing async for now, however I don't know what that means for binary compatibility in JS
+    protected abstract refreshToken(): Promise<adal.TokenResponse>;
+
+    // TODO -- change name or investigate if we can extend return type/overload abstract method in TS
+    // Test token request to MSAL
+    // Additionally figure out msal return type
+    protected abstract refreshToken2(): Promise<msal.AuthenticationResult>;
 
     /**
      * @private

@@ -7,6 +7,7 @@
  */
 
 import * as adal from 'adal-node';
+import * as msal from '@azure/msal-node';
 import { AppCredentials } from './appCredentials';
 
 // Determines if an unknown value is of adal.ErrorResponse type
@@ -23,6 +24,9 @@ function isErrorResponse(value: unknown): value is adal.ErrorResponse {
  * MicrosoftAppCredentials auth implementation
  */
 export class MicrosoftAppCredentials extends AppCredentials {
+    // TODO -- do we need to adopt a more generic base class/interface?
+    // not all oauth flows use confidential clients (i.e. browser bots would be public clients)
+    private oauthClient: msal.ConfidentialClientApplication;
 
     /**
      * Initializes a new instance of the [MicrosoftAppCredentials](xref:botframework-connector.MicrosoftAppCredentials) class.
@@ -34,6 +38,14 @@ export class MicrosoftAppCredentials extends AppCredentials {
      */
     public constructor(appId: string, public appPassword: string, channelAuthTenant?: string, oAuthScope?: string) {
         super(appId, channelAuthTenant, oAuthScope);
+
+        this.oauthClient = new msal.ConfidentialClientApplication({
+            auth: {
+                clientId: this.appId,
+                authority: this.oAuthEndpoint,
+                clientSecret: this.appPassword
+            }
+        });
     }
 
     protected async refreshToken(): Promise<adal.TokenResponse> {
@@ -57,5 +69,20 @@ export class MicrosoftAppCredentials extends AppCredentials {
         }
 
         return this.refreshingToken;
+    }
+
+    protected async refreshToken2(): Promise<msal.AuthenticationResult> {
+        // TODO save this to a member on Credentials
+        let authRes: msal.AuthenticationResult;
+        // if (!this.refreshingToken) {
+            const clientCredentialRequest = {
+                scopes: [this.oAuthScope + '/.default'],
+            };
+
+            authRes = await this.oauthClient.acquireTokenByClientCredential(clientCredentialRequest);
+            console.log(`token from msal: ${authRes}`);
+        // }
+
+        return authRes;
     }
 }

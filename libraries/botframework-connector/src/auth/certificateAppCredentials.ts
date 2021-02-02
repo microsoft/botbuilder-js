@@ -7,6 +7,7 @@
  */
 
 import * as adal from 'adal-node';
+import * as msal from '@azure/msal-node';
 import { AppCredentials } from './appCredentials';
 
 /**
@@ -15,6 +16,7 @@ import { AppCredentials } from './appCredentials';
 export class CertificateAppCredentials extends AppCredentials {
     public certificateThumbprint: string;
     public certificatePrivateKey: string;
+    private oauthClient: msal.ConfidentialClientApplication;
 
     /**
      * Initializes a new instance of the [CertificateAppCredentials](xref:botframework-connector.CertificateAppCredentials) class.
@@ -34,6 +36,17 @@ export class CertificateAppCredentials extends AppCredentials {
         super(appId, channelAuthTenant, oAuthScope);
         this.certificateThumbprint = certificateThumbprint;
         this.certificatePrivateKey = certificatePrivateKey;
+
+        this.oauthClient = new msal.ConfidentialClientApplication({
+            auth: {
+                clientId: this.appId,
+                authority: this.oAuthEndpoint,
+                clientCertificate: {
+                    thumbprint: certificateThumbprint,
+                    privateKey: certificatePrivateKey
+                }
+            }
+        });
     }
 
     /**
@@ -58,5 +71,20 @@ export class CertificateAppCredentials extends AppCredentials {
             });
         }
         return this.refreshingToken;
+    }
+
+    protected async refreshToken2(): Promise<msal.AuthenticationResult> {
+        // TODO save this to a member on Credentials
+        let authRes: msal.AuthenticationResult;
+        // if (!this.refreshingToken) {
+            const clientCredentialRequest = {
+                scopes: [this.oAuthScope + '/.default'],
+            };
+
+            authRes = await this.oauthClient.acquireTokenByClientCredential(clientCredentialRequest);
+            console.log(`token from msal: ${authRes}`);
+        // }
+
+        return authRes;
     }
 }
