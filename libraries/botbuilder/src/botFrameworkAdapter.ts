@@ -1576,12 +1576,24 @@ export class BotFrameworkAdapter
         // There is no cache for AppCredentials in JS as opposed to C#.
         // Instead of retrieving an AppCredentials from the Adapter instance, generate a new one
         const appPassword = await this.credentialsProvider.getAppPassword(appId);
-        const credentials = new MicrosoftAppCredentials(
-            appId,
-            appPassword,
-            this.settings.channelAuthTenant,
-            oAuthScope
-        );
+
+        let credentials: AppCredentials;
+        if (this.settings.certificateThumbprint && this.settings.certificatePrivateKey) {
+            credentials = new CertificateAppCredentials(
+                appId,
+                this.settings.certificateThumbprint,
+                this.settings.certificatePrivateKey,
+                this.settings.channelAuthTenant
+            );
+        } else {
+            credentials = new MicrosoftAppCredentials(
+                appId,
+                appPassword,
+                this.settings.channelAuthTenant,
+                oAuthScope
+            );
+        }
+
         if (JwtTokenValidation.isGovernment(this.settings.channelService)) {
             credentials.oAuthEndpoint = GovernmentConstants.ToChannelFromBotLoginUrl;
             credentials.oAuthScope = oAuthScope || GovernmentConstants.ToChannelFromBotOAuthScope;
