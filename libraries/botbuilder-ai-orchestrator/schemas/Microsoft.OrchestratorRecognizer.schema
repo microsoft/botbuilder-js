@@ -13,14 +13,14 @@
         "modelFolder": {
             "$ref": "schema:#/definitions/stringExpression",
             "title": "Model",
-            "description": "NLR model file path.",
-            "default": "=settings.orchestrator.modelfolder"
+            "description": "Base model file path.",
+            "default": "=settings.orchestrator.modelFolder"
         },
         "snapshotFile": {
             "$ref": "schema:#/definitions/stringExpression",
-            "title": "Endpoint key",
-            "description": "SnapShot file path.",
-            "default": "=settings.orchestrator.shapshotfile"
+            "title": "Snapshot file",
+            "description": "Snapshot file path.",
+            "default": "=settings.orchestrator.snapshotFile"
         },
         "entityRecognizers": {
             "type": "array",
@@ -54,7 +54,7 @@
         }
     },
     "required": [
-        "model",
-        "shapShot"
+        "modelFolder",
+        "snapshotFile"
     ]
 }
