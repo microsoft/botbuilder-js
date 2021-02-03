@@ -1,13 +1,10 @@
 const { QnAMakerDialog, QnAMaker } = require('../lib');
-const { Dialog, DialogSet, DialogTurnStatus, DialogManager } = require('botbuilder-dialogs');
+const { BoolExpression } = require('adaptive-expressions');
+const { Dialog, DialogSet, DialogTurnStatus, DialogManager, ScopePath } = require('botbuilder-dialogs');
 const { ok, strictEqual } = require('assert');
 const { ConversationState, MemoryStorage, TestAdapter } = require('botbuilder-core');
 const fs = require('fs');
 const nock = require('nock');
-
-const path = require('path');
-const ENV_FILE = path.join(__dirname, '.env');
-require('dotenv').config({ path: ENV_FILE });
 
 const KB_ID = process.env.QNAKNOWLEDGEBASEID;
 const ENDPOINT_KEY = process.env.QNAENDPOINTKEY;
@@ -100,11 +97,10 @@ describe('QnAMakerDialog', function () {
             strictEqual(noAuthorityClient.endpoint.host, createHostName(NOT_V5_HOSTNAME));
         });
 
-        it('should log telemetry that includes question and username if logPersonalInformation is true in env file', async () => {
+        it('should log telemetry that includes question and username if logPersonalInformation is true', async () => {
             const convoState = new ConversationState(new MemoryStorage());
-            // Use DialogManager to set up scopes, including `settings` scope
-            // to be able to grab logPersonalInformation value from .env
             const dm = new DialogManager();
+            dm.initialTurnState.set(ScopePath.settings, { telemetry: { logPersonalInformation: true } });
             dm.conversationState = convoState;
 
             const qnaDialog = new QnAMakerDialog(kbId, endpointKey, HOSTNAME);
@@ -173,13 +169,12 @@ describe('QnAMakerDialog', function () {
 
         it('should log telemetry that excludes question and username if logPersonalInformation is false', async () => {
             const convoState = new ConversationState(new MemoryStorage());
-            // Use DialogManager to set up scopes, including `settings` scope
-            // to be able to grab logPersonalInformation value from .env
             const dm = new DialogManager();
+            dm.initialTurnState.set(ScopePath.settings, { telemetry: { logPersonalInformation: true } });
             dm.conversationState = convoState;
 
             const qnaDialog = new QnAMakerDialog(kbId, endpointKey, HOSTNAME);
-            qnaDialog.logPersonalInformation = false;
+            qnaDialog.logPersonalInformation = new BoolExpression(false);
 
             qnaDialog.steps.unshift(async (step) => {
                 ok(step);
