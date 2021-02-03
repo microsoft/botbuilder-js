@@ -17,7 +17,7 @@ import { isLuisRecognizerOptionsV2, LuisRecognizerV2 } from './luisRecognizerOpt
 import { isLuisRecognizerOptionsV3, LuisRecognizerV3 } from './luisRecognizerOptionsV3';
 import { DynamicList } from './dynamicList';
 import { ExternalEntity } from './externalEntity';
-import { Recognizer } from 'botbuilder-dialogs';
+import { DialogContext, Recognizer } from 'botbuilder-dialogs';
 
 /**
  * Description of a LUIS application used for initializing a LuisRecognizer.
@@ -251,9 +251,7 @@ export class LuisRecognizer implements LuisRecognizerTelemetryClient {
 
     private application: LuisApplication;
     private options: LuisPredictionOptions;
-    private includeApiResults: boolean;
 
-    private luisClient: LuisClient;
     private cacheKey = Symbol('results');
     private luisRecognizerInternal: LuisRecognizerV2 | LuisRecognizerV3;
 
@@ -411,23 +409,23 @@ export class LuisRecognizer implements LuisRecognizerTelemetryClient {
      * }
      * ```
      *
-     * @param {TurnContext} context Context for the current turn of conversation with the use.
+     * @param {DialogContext | TurnContext} context Context for the current turn of conversation with the use.
      * @param {object} telemetryProperties Additional properties to be logged to telemetry with the LuisResult event.
      * @param {object} telemetryMetrics Additional metrics to be logged to telemetry with the LuisResult event.
      * @param {LuisRecognizerOptionsV2 | LuisRecognizerOptionsV3 | LuisPredictionOptions} options (Optional) options object used to override control predictions. Should conform to the [LuisRecognizerOptionsV2] or [LuisRecognizerOptionsV3] definition.
      * @returns {Promise<RecognizerResult>} A promise that resolved to the recognizer result.
      */
-    public recognize(
-        context: TurnContext,
-        telemetryProperties?: { [key: string]: string },
-        telemetryMetrics?: { [key: string]: number },
+    public async recognize(
+        context: DialogContext | TurnContext,
+        telemetryProperties?: Record<string, string>,
+        telemetryMetrics?: Record<string, number>,
         options?: LuisRecognizerOptionsV2 | LuisRecognizerOptionsV3 | LuisPredictionOptions
     ): Promise<RecognizerResult> {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const cached = context.turnState.get(this.cacheKey);
+        const turnContext = context instanceof DialogContext ? context.context : context;
+        const cached = turnContext.turnState.get(this.cacheKey);
         const luisRecognizer = options ? this.buildRecognizer(options) : this.luisRecognizerInternal;
         if (!cached) {
-            const utterance = context.activity.text || '';
+            const utterance = turnContext.activity.text || '';
             let recognizerPromise: Promise<RecognizerResult>;
 
             if (!utterance.trim()) {
@@ -441,20 +439,18 @@ export class LuisRecognizer implements LuisRecognizerTelemetryClient {
                 recognizerPromise = luisRecognizer.recognizeInternal(context);
             }
 
-            return recognizerPromise
-                .then((recognizerResult: RecognizerResult) => {
-                    // Write to cache
-                    context.turnState.set(this.cacheKey, recognizerResult);
+            try {
+                const recognizerResult = await recognizerPromise;
+                // Write to cache
+                turnContext.turnState.set(this.cacheKey, recognizerResult);
 
-                    // Log telemetry
-                    this.onRecognizerResults(recognizerResult, context, telemetryProperties, telemetryMetrics);
-
-                    return recognizerResult;
-                })
-                .catch((error) => {
-                    this.prepareErrorMessage(error);
-                    throw error;
-                });
+                // Log telemetry
+                this.onRecognizerResults(recognizerResult, turnContext, telemetryProperties, telemetryMetrics);
+                return recognizerResult;
+            } catch (error) {
+                this.prepareErrorMessage(error);
+                throw error;
+            }
         }
 
         return Promise.resolve(cached);

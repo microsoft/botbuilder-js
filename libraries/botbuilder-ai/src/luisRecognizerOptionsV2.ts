@@ -10,12 +10,13 @@ import * as msRest from '@azure/ms-rest-js';
 import * as os from 'os';
 import { LuisApplication, LuisRecognizerOptionsV2 } from './luisRecognizer';
 import { LuisRecognizerInternal } from './luisRecognizerOptions';
-import { NullTelemetryClient, TurnContext, RecognizerResult } from 'botbuilder-core';
+import { NullTelemetryClient, TurnContext, RecognizerResult, Activity } from 'botbuilder-core';
 
 import {
     LUISRuntimeClient as LuisClient,
     LUISRuntimeModels as LuisModels,
 } from '@azure/cognitiveservices-luis-runtime';
+import { DialogContext } from 'botbuilder-dialogs';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const pjson: Record<'name' | 'version', string> = require('../package.json');
@@ -80,7 +81,8 @@ export class LuisRecognizerV2 extends LuisRecognizerInternal {
      * @param {TurnContext} context The [TurnContext](xref:botbuilder-core.TurnContext).
      * @returns {Promise<RecognizerResult>} Analysis of utterance in form of [RecognizerResult](xref:botbuilder-core.RecognizerResult).
      */
-    async recognizeInternal(context: TurnContext): Promise<RecognizerResult> {
+    async recognizeInternal(context: DialogContext | TurnContext): Promise<RecognizerResult> {
+        context = context instanceof TurnContext ? context : context.context;
         const luisPredictionOptions = this.options;
         const utterance: string = context.activity.text || '';
 

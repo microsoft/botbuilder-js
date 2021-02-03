@@ -119,8 +119,8 @@ export class LuisAdaptiveRecognizer extends Recognizer implements LuisAdaptiveRe
     public async recognize(
         dialogContext: DialogContext,
         activity: Activity,
-        telemetryProperties?: { [key: string]: string },
-        telemetryMetrics?: { [key: string]: number }
+        telemetryProperties?: Record<string, string>,
+        telemetryMetrics?: Record<string, number>
     ): Promise<RecognizerResult> {
         // Validate passed in activity matches turn activity
         const context = dialogContext.context;
@@ -142,7 +142,7 @@ export class LuisAdaptiveRecognizer extends Recognizer implements LuisAdaptiveRe
         // Create and call wrapper
         const recognizer = new LuisRecognizer(application, this.recognizerOptions(dialogContext));
 
-        const result = await recognizer.recognize(context);
+        const result = await recognizer.recognize(dialogContext);
         this.trackRecognizerResult(
             dialogContext,
             'LuisResult',

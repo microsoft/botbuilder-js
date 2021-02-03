@@ -10,7 +10,7 @@ import fetch from 'node-fetch';
 import { LUISRuntimeModels as LuisModels } from '@azure/cognitiveservices-luis-runtime';
 import { LuisApplication, LuisRecognizerOptionsV3 } from './luisRecognizer';
 import { LuisRecognizerInternal } from './luisRecognizerOptions';
-import { NullTelemetryClient, TurnContext, RecognizerResult } from 'botbuilder-core';
+import { NullTelemetryClient, TurnContext, RecognizerResult, Activity } from 'botbuilder-core';
 import { DialogContext } from 'botbuilder-dialogs';
 import { ExternalEntity, validateExternalEntity } from './externalEntity';
 import { validateDynamicList } from './dynamicList';
@@ -71,13 +71,11 @@ export class LuisRecognizerV3 extends LuisRecognizerInternal {
     async recognizeInternal(context: DialogContext | TurnContext): Promise<RecognizerResult> {
         if (context instanceof DialogContext) {
             const dialogContext = context;
+            const activity = dialogContext.context.activity;
             let options = this.predictionOptions;
             if (options.externalEntityRecognizer) {
                 // call external entity recognizer
-                const matches = await options.externalEntityRecognizer.recognize(
-                    dialogContext,
-                    dialogContext.context?.activity
-                );
+                const matches = await options.externalEntityRecognizer.recognize(dialogContext, activity);
                 // TODO: checking for 'text' because we get an extra non-real entity from the text recognizers
                 if (matches.entities && Object.entries(matches.entities).length) {
                     options = {
@@ -116,7 +114,7 @@ export class LuisRecognizerV3 extends LuisRecognizerInternal {
                 }
             }
             // call luis recognizer with options.externalEntities populated from externalEntityRecognizer
-            return this.recognize(dialogContext.context, dialogContext.context?.activity?.text ?? '', options);
+            return this.recognize(dialogContext.context, activity?.text ?? '', options);
         } else {
             const turnContext = context;
             return this.recognize(turnContext, turnContext?.activity?.text ?? '', this.predictionOptions);
