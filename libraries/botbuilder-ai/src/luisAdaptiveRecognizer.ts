@@ -167,7 +167,7 @@ export class LuisAdaptiveRecognizer extends Recognizer implements LuisAdaptiveRe
             datetimeReference: this.predictionOptions?.dateTimeReference?.getValue(dcState),
             externalEntities: this.predictionOptions?.externalEntities?.getValue(dcState),
             includeAllIntents: this.predictionOptions?.includeAllIntents?.getValue(dcState) ?? false,
-            includeInstanceData: this.predictionOptions.includeInstanceData?.getValue(dcState) ?? true,
+            includeInstanceData: this.predictionOptions?.includeInstanceData?.getValue(dcState) ?? true,
             includeAPIResults: this.predictionOptions?.includeAPIResults?.getValue(dcState) ?? false,
             log: this.predictionOptions?.log?.getValue(dcState) ?? true,
             preferExternalEntities: this.predictionOptions?.preferExternalEntities?.getValue(dcState) ?? true,
