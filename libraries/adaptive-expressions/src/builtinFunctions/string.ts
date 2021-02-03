@@ -6,11 +6,14 @@
  * Licensed under the MIT License.
  */
 
+import { formatLocale as d3formatLocale, format as d3format } from 'd3-format';
 import { EvaluateExpressionDelegate, ExpressionEvaluator, ValueWithError } from '../expressionEvaluator';
 import { ExpressionType } from '../expressionType';
 import { FunctionUtils } from '../functionUtils';
 import { Options } from '../options';
 import { ReturnType } from '../returnType';
+import { localeInfo } from '../localeInfo';
+import { Expression } from '../expression';
 
 /**
  * Return the string version of a value.
@@ -20,7 +23,7 @@ export class String extends ExpressionEvaluator {
      * Initializes a new instance of the [String](xref:adaptive-expressions.String) class.
      */
     public constructor() {
-        super(ExpressionType.String, String.evaluator(), ReturnType.String, FunctionUtils.validateUnary);
+        super(ExpressionType.String, String.evaluator(), ReturnType.String, String.validator);
     }
 
     /**
@@ -40,7 +43,19 @@ export class String extends ExpressionEvaluator {
                     if (typeof args[0] === 'string') {
                         result = args[0];
                     } else if (typeof args[0] === 'number') {
-                        result = args[0].toLocaleString(locale);
+                        const formatLocale = localeInfo[locale];
+                        const tempStrValue = args[0].toString();
+                        let precision = 0;
+                        if (tempStrValue.includes('.')) {
+                            precision = tempStrValue.split('.')[1].length;
+                        }
+
+                        const fixedNotation = `,.${precision}f`;
+                        if (formatLocale !== undefined) {
+                            result = d3formatLocale(formatLocale).format(fixedNotation)(args[0]);
+                        } else {
+                            result = d3format(fixedNotation)(args[0]);
+                        }
                     } else if (args[0] instanceof Date) {
                         result = args[0].toLocaleDateString(locale);
                     } else {
@@ -53,5 +68,12 @@ export class String extends ExpressionEvaluator {
                 return { value: result, error: error };
             }
         );
+    }
+
+    /**
+     * @private
+     */
+    private static validator(expr: Expression): void {
+        FunctionUtils.validateOrder(expr, [ReturnType.String], ReturnType.Object);
     }
 }

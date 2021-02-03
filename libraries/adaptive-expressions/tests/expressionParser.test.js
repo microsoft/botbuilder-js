@@ -232,6 +232,7 @@ const testCases = [
             ['substring(nullObj, 3)', ''],
             ['substring(nullObj, 0, 3)', ''],
             ['substring(\'hello\', 0, bag.index)', 'hel'],
+            ['string(1.22, "de-DE")', '1,22'],
             ['toLower(\'UpCase\')', 'upcase'],
             ['toLower(\'UpCase\', \'en-GB\')', 'upcase'],
             ['toLower(nullObj)', ''],
