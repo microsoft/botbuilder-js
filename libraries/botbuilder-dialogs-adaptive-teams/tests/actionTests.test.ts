@@ -14,7 +14,7 @@ import {
     ConversationAccount,
 } from 'botbuilder';
 import { ResourceExplorer } from 'botbuilder-dialogs-declarative';
-import { TeamsComponentRegistration } from '../../lib';
+import { TeamsComponentRegistration } from '../lib';
 import { AdaptiveTestComponentRegistration, TestUtils } from 'botbuilder-dialogs-adaptive-testing';
 import { AdaptiveComponentRegistration } from 'botbuilder-dialogs-adaptive';
 import { ConnectorClient, MicrosoftAppCredentials } from 'botframework-connector';
@@ -122,11 +122,7 @@ describe('Actions', function () {
     ComponentRegistration.add(new AdaptiveComponentRegistration());
     ComponentRegistration.add(new TeamsComponentRegistration());
 
-    const resourceExplorer = new ResourceExplorer().addFolder(
-        path.join(__dirname, '../../tests/tests/actionTests'),
-        true,
-        false
-    );
+    const resourceExplorer = new ResourceExplorer().addFolder(path.join(__dirname, 'actionTests'), true, false);
 
     /**
      * Note: With mocha, `this.test?.title` refers to the test's name, so runTestScript

@@ -64,7 +64,7 @@ export class SendMessagingExtensionAuthResponse
     /**
      * Class identifier.
      */
-    public static $kind = 'Teams.SendMessagingExtensionAuthResponse';
+    public static readonly $kind = 'Teams.SendMessagingExtensionAuthResponse';
 
     /**
      * Gets or sets property path to put the value in.
