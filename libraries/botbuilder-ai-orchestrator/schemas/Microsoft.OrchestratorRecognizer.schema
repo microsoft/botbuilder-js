@@ -10,17 +10,17 @@
             "title": "Id",
             "description": "Optional unique id using with RecognizerSet."
         },
-        "modelPath": {
+        "modelFolder": {
             "$ref": "schema:#/definitions/stringExpression",
             "title": "Model",
-            "description": "NLR model file path.",
-            "default": "=settings.orchestrator.modelpath"
+            "description": "Base model file path.",
+            "default": "=settings.orchestrator.modelFolder"
         },
-        "snapshotPath": {
+        "snapshotFile": {
             "$ref": "schema:#/definitions/stringExpression",
-            "title": "Endpoint key",
-            "description": "SnapShot file path.",
-            "default": "=settings.orchestrator.shapshotpath"
+            "title": "Snapshot file",
+            "description": "Snapshot file path.",
+            "default": "=settings.orchestrator.snapshotFile"
         },
         "entityRecognizers": {
             "type": "array",
@@ -54,7 +54,7 @@
         }
     },
     "required": [
-        "model",
-        "shapShot"
+        "modelFolder",
+        "snapshotFile"
     ]
 }
