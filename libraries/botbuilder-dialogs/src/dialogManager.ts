@@ -10,6 +10,7 @@ import {
     TurnContext,
     BotState,
     ConversationState,
+    EndOfConversationCodes,
     UserState,
     ActivityTypes,
     BotStateSet,
@@ -324,11 +325,16 @@ export class DialogManager extends Configurable {
         await this.sendStateSnapshotTrace(dc, 'Skill State');
 
         if (shouldSendEndOfConversationToParent(turnContext, turnResult)) {
+            const code =
+                turnResult.status == DialogTurnStatus.complete
+                    ? EndOfConversationCodes.CompletedSuccessfully
+                    : EndOfConversationCodes.UserCancelled;
             // Send End of conversation at the end.
             const activity: Partial<Activity> = {
                 type: ActivityTypes.EndOfConversation,
                 value: turnResult.result,
                 locale: turnContext.activity.locale,
+                code: code,
             };
             await turnContext.sendActivity(activity);
         }
