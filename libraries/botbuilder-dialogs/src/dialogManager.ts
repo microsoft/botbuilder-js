@@ -334,7 +334,7 @@ export class DialogManager extends Configurable {
                 type: ActivityTypes.EndOfConversation,
                 value: turnResult.result,
                 locale: turnContext.activity.locale,
-                code: code,
+                code,
             };
             await turnContext.sendActivity(activity);
         }
