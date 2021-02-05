@@ -45,7 +45,7 @@ export interface LuisAdaptiveRecognizerConfiguration extends RecognizerConfigura
     version?: string | Expression | StringExpression;
     endpoint?: string | Expression | StringExpression;
     endpointKey?: string | Expression | StringExpression;
-    externalEntityRecognizer?: Recognizer;
+    externalEntityRecognizer?: string | Recognizer;
     dynamicLists?: unknown[] | string | Expression | ArrayExpression<unknown>;
     predictionOptions?: LuisAdaptivePredictionOptionsConfiguration | LuisAdaptivePredictionOptions;
     logPersonalInformation?: boolean | string | Expression | BoolExpression;

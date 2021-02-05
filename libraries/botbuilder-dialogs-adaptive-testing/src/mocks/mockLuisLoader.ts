@@ -7,7 +7,8 @@
  */
 
 import { LuisAdaptiveRecognizer, LuisAdaptiveRecognizerConfiguration } from 'botbuilder-ai';
-import { CustomDeserializer } from 'botbuilder-dialogs-declarative';
+import { Recognizer } from 'botbuilder-dialogs';
+import { CustomDeserializer, ResourceExplorer } from 'botbuilder-dialogs-declarative';
 import { MockLuisRecognizer } from './mockLuisRecognizer';
 
 /**
@@ -15,22 +16,26 @@ import { MockLuisRecognizer } from './mockLuisRecognizer';
  */
 export class MockLuisLoader implements CustomDeserializer<MockLuisRecognizer, LuisAdaptiveRecognizerConfiguration> {
     private _appId = '.appId';
-    private _configuration: Record<string, string>;
 
     /**
      * Initializes a new instance of the MockLuisLoader class.
      *
-     * @param {Record<string, string>} configuration Configuration to use.
+     * @param {ResourceExplorer} _resourceExplorer ResourceExplorer to use.
+     * @param {Record<string, string>} _configuration Configuration to use.
      */
-    public constructor(configuration?: Record<string, string>) {
-        this._configuration = configuration;
-    }
+    public constructor(private _resourceExplorer: ResourceExplorer, private _configuration?: Record<string, string>) {}
 
     public load(
         config: LuisAdaptiveRecognizerConfiguration,
         type: new (...args: unknown[]) => MockLuisRecognizer
     ): MockLuisRecognizer {
         const recognizer = new LuisAdaptiveRecognizer().configure(config as Record<string, unknown>);
+        const externalEntityRecognizer = config.externalEntityRecognizer;
+        if (typeof externalEntityRecognizer === 'string') {
+            recognizer.externalEntityRecognizer = this._resourceExplorer.loadType<Recognizer>(
+                `${externalEntityRecognizer}.dialog`
+            );
+        }
         let name = recognizer.applicationId.toString();
         if (name.startsWith('=')) {
             if (name.endsWith(this._appId)) {
