@@ -7,18 +7,101 @@
  */
 
 import { Middleware, TurnContext } from 'botbuilder-core';
+import { HttpMethod } from 'botbuilder-dialogs-adaptive';
+import { ClientRequest } from 'http';
 import * as nock from 'nock';
+import * as parse from 'url-parse';
 import { HttpRequestMock } from '../httpRequestMocks/httpRequestMock';
+import { HttpRequestSequenceMock } from '../httpRequestMocks/httpRequestSequenceMock';
+import { HttpResponseMessage } from '../httpRequestMocks/httpResponseMock';
 
+/**
+ * Turn state key for MockHttpRequestMiddleware.
+ */
+export const MockHttpRequestMiddlewareKey = Symbol('MockHttpRequestMiddleware');
+
+/**
+ * Http request message.
+ */
+export type HttpRequestMessage = ClientRequest & {
+    headers: Record<string, string>;
+};
+
+/**
+ * Fallback function.
+ */
+export type FallbackFunc = (request: HttpRequestMessage) => HttpResponseMessage | Promise<HttpResponseMessage>;
+
+/**
+ * Middleware to mock http requests with an adapter.
+ */
 export class MockHttpRequestMiddleware implements Middleware {
-    public constructor(httpRequestMocks: HttpRequestMock[]) {
-        if (httpRequestMocks.length) {
-            nock.cleanAll();
-            httpRequestMocks.forEach((mock) => mock.setup());
+    /**
+     * Initializes a new instance of the [MockHttpRequestMiddleware](xref:botbuilder-dialogs-adaptive-testing.MockHttpRequestMiddleware) class.
+     *
+     * @param {HttpRequestMock[]} httpRequestMocks Mocks to use.
+     */
+    public constructor(httpRequestMocks: HttpRequestMock[] = []) {
+        if (!httpRequestMocks.length) {
+            return;
         }
+        nock.cleanAll();
+        httpRequestMocks.forEach((mock) => mock.setup());
+
+        const origins = new Set<string>(
+            httpRequestMocks
+                .filter((mock) => mock instanceof HttpRequestSequenceMock)
+                .map((mock: HttpRequestSequenceMock) => parse(mock.url).origin)
+        );
+
+        const middleware = this;
+
+        // call fallback functions if mocks not catched
+        origins.forEach((origin) => {
+            this._httpMethods.forEach((method) => {
+                nock(origin)
+                    .intercept(/.*/, method, (_body) => middleware._fallback !== undefined) // disable this if there is no fallback
+                    .reply(async function (_uri: string, _body: nock.Body) {
+                        if (middleware._fallback) {
+                            const message = await middleware._fallback(this.req);
+                            return [message.statusCode, message.content];
+                        }
+                        return [404, ''];
+                    })
+                    .persist();
+            });
+        });
+
+        // final fallbacks
+        this._httpMethods.forEach((method) => {
+            nock(/.*/)
+                .intercept(/.*/, method, (_body) => this._fallback !== undefined) // disable this if there is no fallback function
+                .reply(async function (_uri: string, _body: nock.Body) {
+                    if (middleware._fallback) {
+                        const message = await middleware._fallback(this.req);
+                        return [message.statusCode, message.content];
+                    }
+                    return [404, ''];
+                })
+                .persist();
+        });
     }
 
     public async onTurn(context: TurnContext, next: () => Promise<void>): Promise<void> {
+        context.turnState.set(MockHttpRequestMiddlewareKey, this);
         await next();
     }
+
+    /**
+     * Set fallback.
+     *
+     * @param {FallbackFunc} fallback New fallback or undefined.
+     */
+    public setFallback(fallback?: FallbackFunc): void {
+        this._fallback = fallback;
+    }
+
+    private _httpMethods = [HttpMethod.GET, HttpMethod.PATCH, HttpMethod.DELETE, HttpMethod.POST, HttpMethod.PUT];
+
+    private _fallback: FallbackFunc;
 }
