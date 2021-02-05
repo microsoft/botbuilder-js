@@ -10,10 +10,18 @@ import { LuisAdaptiveRecognizer, LuisAdaptiveRecognizerConfiguration } from 'bot
 import { CustomDeserializer } from 'botbuilder-dialogs-declarative';
 import { MockLuisRecognizer } from './mockLuisRecognizer';
 
+/**
+ * Custom json deserializer for mocking luis.
+ */
 export class MockLuisLoader implements CustomDeserializer<MockLuisRecognizer, LuisAdaptiveRecognizerConfiguration> {
     private _appId = '.appId';
     private _configuration: Record<string, string>;
 
+    /**
+     * Initializes a new instance of the MockLuisLoader class.
+     *
+     * @param {Record<string, string>} configuration Configuration to use.
+     */
     public constructor(configuration?: Record<string, string>) {
         this._configuration = configuration;
     }
