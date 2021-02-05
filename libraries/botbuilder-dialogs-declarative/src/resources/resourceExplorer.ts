@@ -193,6 +193,25 @@ export class ResourceExplorer {
     }
 
     /**
+     * Register a declarative type with the resource loader system.
+     *
+     * @template T The type of object.
+     * @param {string} kind The $kind name to map to this type.
+     * @param {new (...args: ?[]) => T} type Type of object to create.
+     * @param {CustomDeserializer}  loader Optional custom deserializer.
+     * @returns {ResourceExplorer} Resource explorer for fluent style multiple calls.
+     */
+    public registerType<T>(
+        kind: string,
+        type: new (...args: unknown[]) => T,
+        loader?: CustomDeserializer<T, Record<string, unknown>>
+    ): ResourceExplorer {
+        this.registerComponentTypes();
+        this.registerTypeInternal<T, Record<string, unknown>>(kind, type, loader);
+        return this;
+    }
+
+    /**
      * Build type for given $kind.
      * @param kind $kind.
      * @param config Source configuration object.
