@@ -120,6 +120,7 @@ export class ResourceExplorer {
 
     /**
      * Add a folder resource.
+     *
      * @param {string}  folder Folder to be included as a resource.
      * @param {boolean} includeSubFolders Whether to include subfolders.
      * @param {boolean} monitorChanges Whether to track changes.
@@ -212,9 +213,13 @@ export class ResourceExplorer {
     }
 
     /**
-     * Build type for given $kind.
-     * @param kind $kind.
-     * @param config Source configuration object.
+     * Build type for given $kind from configuration.
+     *
+     * @template T Type of object.
+     * @template C Type of configuration
+     * @param {string} kind $kind.
+     * @param {C} config Source configuration object.
+     * @returns {T} Instantiated object.
      */
     public buildType<T, C>(kind: string, config: C): T {
         this.registerComponentTypes();
@@ -229,9 +234,20 @@ export class ResourceExplorer {
 
     /**
      * Load type from resource
-     * @param resourceOrIdId resource or resource id to be parsed as a type.
-     * @returns type parsed from resource
+     *
+     * @template T Type of object.
+     * @param {string} resourceId Resource id to bind to.
+     * @returns {T} Type created from resource
      */
+    public loadType<T>(resourceId: string): T;
+    /**
+     * Load type from resource
+     *
+     * @template T Type of object.
+     * @param {Resource} resource Resource id to bind to.
+     * @returns {T} Type created from resource
+     */
+    public loadType<T>(resource: Resource): T;
     public loadType<T>(resourceOrId: Resource | string): T {
         this.registerComponentTypes();
 
