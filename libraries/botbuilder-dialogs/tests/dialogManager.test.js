@@ -3,6 +3,7 @@ const {
     ActivityTypes,
     AutoSaveStateMiddleware,
     ConversationState,
+    EndOfConversationCodes,
     InputHints,
     MemoryStorage,
     MessageFactory,
@@ -182,6 +183,7 @@ describe('DialogManager', function () {
             if (shouldSendEoc) {
                 ok(_eocSent, 'Skills should send EndConversation to channel');
                 strictEqual(_eocSent.type, ActivityTypes.EndOfConversation);
+                strictEqual(_eocSent.code, EndOfConversationCodes.CompletedSuccessfully);
                 strictEqual(_eocSent.value, 'SomeName');
             } else {
                 strictEqual(undefined, _eocSent, 'Root bot should not send EndConversation to channel');
