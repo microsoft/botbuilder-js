@@ -857,6 +857,15 @@ describe('LG', function () {
         assert.strictEqual(evaled, 5);
     });
 
+    it('TestProperties', function () {
+        var templates = preloaded.two;
+        assert.strictEqual(templates.toArray()[0].properties, undefined);
+
+        var templates = preloaded.StructuredTemplate;
+        assert.strictEqual(templates.toArray()[0].properties.Text, "${GetAge()}");
+        assert.strictEqual(templates.toArray()[0].properties.Speak, "${GetAge()}");
+    });
+
     it('TemplateCRUD_Normal', function () {
         var filePath = GetExampleFilePath('CrudInit.lg');
         const resource = new LGResource(filePath, filePath, fs.readFileSync(filePath, 'utf-8'));

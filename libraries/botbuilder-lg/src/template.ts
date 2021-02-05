@@ -39,6 +39,11 @@ export class Template {
     public templateBodyParseTree: lp.BodyContext;
 
     /**
+     * The extended properties for the object.
+     */
+    public properties?: { [propertyName: string]: any };
+
+    /**
      * Creates a new instance of the [Template](xref:botbuilder-lg.Template) class.
      * @param templatename Template name without parameters.
      * @param parameters Parameter list.
