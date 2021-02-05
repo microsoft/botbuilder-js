@@ -160,22 +160,40 @@ export class LuisAdaptiveRecognizer extends Recognizer implements LuisAdaptiveRe
      * @returns {LuisRecognizerOptionsV3} luis recognizer options
      */
     public recognizerOptions(dialogContext: DialogContext): LuisRecognizerOptionsV3 {
-        const dcState = dialogContext.state;
-        return {
+        const options: LuisRecognizerOptionsV3 = {
             apiVersion: 'v3',
             externalEntityRecognizer: this.externalEntityRecognizer,
-            datetimeReference: this.predictionOptions?.dateTimeReference?.getValue(dcState),
-            externalEntities: this.predictionOptions?.externalEntities?.getValue(dcState),
-            includeAllIntents: this.predictionOptions?.includeAllIntents?.getValue(dcState) ?? false,
-            includeInstanceData: this.predictionOptions?.includeInstanceData?.getValue(dcState) ?? true,
-            includeAPIResults: this.predictionOptions?.includeAPIResults?.getValue(dcState) ?? false,
-            log: this.predictionOptions?.log?.getValue(dcState) ?? true,
-            preferExternalEntities: this.predictionOptions?.preferExternalEntities?.getValue(dcState) ?? true,
-            slot: this.predictionOptions?.slot?.getValue(dcState) === 'staging' ? 'staging' : 'production',
-            version: this.version?.getValue(dcState),
             telemetryClient: this.telemetryClient,
-            dynamicLists: this.dynamicLists?.getValue(dcState),
+            includeAllIntents: false,
+            includeInstanceData: false,
+            includeAPIResults: false,
+            log: true,
+            preferExternalEntities: true,
+            slot: 'production',
         };
+
+        const dcState = dialogContext.state;
+
+        if (this.predictionOptions) {
+            options.datetimeReference = this.predictionOptions.dateTimeReference?.getValue(dcState);
+            options.externalEntities = this.predictionOptions.externalEntities?.getValue(dcState);
+            options.includeAllIntents = this.predictionOptions.includeAllIntents?.getValue(dcState) ?? false;
+            options.includeInstanceData = this.predictionOptions.includeInstanceData?.getValue(dcState) ?? true;
+            options.includeAPIResults = this.predictionOptions.includeAPIResults?.getValue(dcState) ?? false;
+            options.log = this.predictionOptions.log?.getValue(dcState) ?? true;
+            options.preferExternalEntities = this.predictionOptions.preferExternalEntities?.getValue(dcState) ?? true;
+            options.slot = this.predictionOptions.slot?.getValue(dcState) === 'staging' ? 'staging' : 'production';
+        }
+
+        if (this.version) {
+            options.version = this.version.getValue(dcState);
+        }
+
+        if (this.dynamicLists) {
+            options.dynamicLists = this.dynamicLists.getValue(dcState);
+        }
+
+        return options;
     }
 
     /**

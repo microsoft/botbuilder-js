@@ -63,7 +63,7 @@ export interface LuisAdaptivePredictionOptionsConfiguration {
 export class LuisAdaptivePredictionOptionsConverter
     implements Converter<LuisAdaptivePredictionOptionsConfiguration, LuisAdaptivePredictionOptions> {
     public convert(config: LuisAdaptivePredictionOptionsConfiguration): LuisAdaptivePredictionOptions {
-        return Object.entries(config).reduce((options: LuisAdaptivePredictionOptions, [key, value]) => {
+        const options = Object.entries(config).reduce((options: LuisAdaptivePredictionOptions, [key, value]) => {
             switch (key) {
                 case 'includeAllIntents':
                 case 'includeInstanceData':
@@ -82,6 +82,15 @@ export class LuisAdaptivePredictionOptionsConverter
             }
             return options;
         }, {});
+
+        // Assign default values
+        options.includeAllIntents ??= new BoolExpression(false);
+        options.includeInstanceData ??= new BoolExpression(false);
+        options.includeAPIResults ??= new BoolExpression(false);
+        options.log ??= new BoolExpression(true);
+        options.preferExternalEntities ??= new BoolExpression(true);
+        options.slot ??= new StringExpression('production');
+        return options;
     }
     private boolExpressionConverter = new BoolExpressionConverter();
     private stringExpressionConverter = new StringExpressionConverter();
