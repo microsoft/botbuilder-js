@@ -17,7 +17,7 @@ import {
 
 import { Activity, RecognizerResult } from 'botbuilder-core';
 import { Converter, ConverterFactory, DialogContext, Recognizer, RecognizerConfiguration } from 'botbuilder-dialogs';
-import { DynamicList } from './dynamicList';
+import { ListElement } from './listElement';
 import {
     LuisAdaptivePredictionOptions,
     LuisAdaptivePredictionOptionsConfiguration,
@@ -25,6 +25,20 @@ import {
 } from './luisAdaptivePredictionOptions';
 import { LuisApplication, LuisRecognizer, LuisRecognizerOptionsV3 } from './luisRecognizer';
 import { LuisTelemetryConstants } from './luisTelemetryConstants';
+
+/**
+ * Defines an extension for a list entity.
+ */
+type DynamicList = {
+    /**
+     * The name of the list to extend.
+     */
+    entity: string;
+    /**
+     * The lists to append on the extended list entity.
+     */
+    list: ListElement[];
+};
 
 export interface LuisAdaptiveRecognizerConfiguration extends RecognizerConfiguration {
     applicationId?: string | Expression | StringExpression;
@@ -190,7 +204,10 @@ export class LuisAdaptiveRecognizer extends Recognizer implements LuisAdaptiveRe
         }
 
         if (this.dynamicLists) {
-            options.dynamicLists = this.dynamicLists.getValue(dcState);
+            options.dynamicLists = this.dynamicLists.getValue(dcState).map((item) => ({
+                listEntityName: item.entity,
+                requestLists: item.list,
+            }));
         }
 
         return options;
