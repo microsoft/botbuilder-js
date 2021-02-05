@@ -42,49 +42,8 @@ export class MockHttpRequestMiddleware implements Middleware {
      * @param {HttpRequestMock[]} httpRequestMocks Mocks to use.
      */
     public constructor(httpRequestMocks: HttpRequestMock[] = []) {
-        if (!httpRequestMocks.length) {
-            return;
-        }
-        nock.cleanAll();
         httpRequestMocks.forEach((mock) => mock.setup());
-
-        const origins = new Set<string>(
-            httpRequestMocks
-                .filter((mock) => mock instanceof HttpRequestSequenceMock)
-                .map((mock: HttpRequestSequenceMock) => parse(mock.url).origin)
-        );
-
-        const middleware = this;
-
-        // call fallback functions if mocks not catched
-        origins.forEach((origin) => {
-            this._httpMethods.forEach((method) => {
-                nock(origin)
-                    .intercept(/.*/, method, (_body) => middleware._fallback !== undefined) // disable this if there is no fallback
-                    .reply(async function (_uri: string, _body: nock.Body) {
-                        if (middleware._fallback) {
-                            const message = await middleware._fallback(this.req);
-                            return [message.statusCode, message.content];
-                        }
-                        return [404, ''];
-                    })
-                    .persist();
-            });
-        });
-
-        // final fallbacks
-        this._httpMethods.forEach((method) => {
-            nock(/.*/)
-                .intercept(/.*/, method, (_body) => this._fallback !== undefined) // disable this if there is no fallback function
-                .reply(async function (_uri: string, _body: nock.Body) {
-                    if (middleware._fallback) {
-                        const message = await middleware._fallback(this.req);
-                        return [message.statusCode, message.content];
-                    }
-                    return [404, ''];
-                })
-                .persist();
-        });
+        this._httpRequestMocks = httpRequestMocks;
     }
 
     public async onTurn(context: TurnContext, next: () => Promise<void>): Promise<void> {
@@ -98,10 +57,51 @@ export class MockHttpRequestMiddleware implements Middleware {
      * @param {FallbackFunc} fallback New fallback or undefined.
      */
     public setFallback(fallback?: FallbackFunc): void {
-        this._fallback = fallback;
+        nock.cleanAll();
+        this._httpRequestMocks.forEach((mock) => mock.setup());
+
+        if (!fallback) {
+            return;
+        }
+
+        const origins = new Set<string>(
+            this._httpRequestMocks
+                .filter((mock) => mock instanceof HttpRequestSequenceMock)
+                .map((mock: HttpRequestSequenceMock) => parse(mock.url).origin)
+        );
+
+        // call fallback functions if mocks not catched
+        origins.forEach((origin) => {
+            this._httpMethods.forEach((method) => {
+                nock(origin)
+                    .intercept(/.*/, method)
+                    .reply(async function (_uri: string, _body: nock.Body) {
+                        if (fallback) {
+                            const message = await fallback(this.req);
+                            return [message.statusCode, message.content];
+                        }
+                        return [404, ''];
+                    })
+                    .persist();
+            });
+        });
+
+        // final fallbacks
+        this._httpMethods.forEach((method) => {
+            nock(/.*/)
+                .intercept(/.*/, method)
+                .reply(async function (_uri: string, _body: nock.Body) {
+                    if (fallback) {
+                        const message = await fallback(this.req);
+                        return [message.statusCode, message.content];
+                    }
+                    return [404, ''];
+                })
+                .persist();
+        });
     }
 
-    private _httpMethods = [HttpMethod.GET, HttpMethod.PATCH, HttpMethod.DELETE, HttpMethod.POST, HttpMethod.PUT];
+    private _httpRequestMocks: HttpRequestMock[];
 
-    private _fallback: FallbackFunc;
+    private _httpMethods = [HttpMethod.GET, HttpMethod.PATCH, HttpMethod.DELETE, HttpMethod.POST, HttpMethod.PUT];
 }
