@@ -24,6 +24,17 @@ import { ExternalEntity } from 'botbuilder-ai/lib/externalEntity';
 
 const stableHash = (source: string): number => mmh3.murmur32Sync(source);
 
+function xor(x: number, y: number): number {
+    const a = x.toString(2).split('').reverse();
+    const b = y.toString(2).split('').reverse();
+    const maxLength = Math.max(a.length, b.length);
+    const re = [];
+    for (let i = 0; i < maxLength; i++) {
+        re.push(a[i] && b[i] ? (a[i] != b[i] ? 1 : 0) : a[i] || b[i]);
+    }
+    return parseInt(re.reverse().join(''), 2);
+}
+
 /**
  * Test class for creating cached LUIS responses for testing.
  */
@@ -66,24 +77,24 @@ export class MockLuisRecognizer extends Recognizer {
         let hash: number = mmh3.murmur32Sync(utterance);
 
         if (options.externalEntityRecognizer) {
-            hash ^= stableHash('external');
+            hash = xor(hash, stableHash('external'));
         }
 
         if (options.includeAPIResults) {
-            hash ^= stableHash('api');
+            hash = xor(hash, stableHash('api'));
         }
 
         if (options.logPersonalInformation) {
-            hash ^= stableHash('personal');
+            hash = xor(hash, stableHash('personal'));
         }
 
         if (options.dynamicLists) {
             options.dynamicLists.forEach((dynamicList: DynamicList) => {
-                hash ^= stableHash(dynamicList.listEntityName);
+                hash = xor(hash, stableHash(dynamicList.listEntityName));
                 dynamicList.requestLists?.forEach((choices: ListElement) => {
-                    hash ^= stableHash(choices.canonicalForm);
+                    hash = xor(hash, stableHash(choices.canonicalForm));
                     choices.synonyms?.forEach((synonym) => {
-                        hash ^= stableHash(synonym);
+                        hash = xor(hash, stableHash(synonym));
                     });
                 });
             });
@@ -91,34 +102,34 @@ export class MockLuisRecognizer extends Recognizer {
 
         if (options.externalEntities) {
             options.externalEntities.forEach((external: ExternalEntity) => {
-                hash ^= stableHash(external.entityName);
-                hash ^= stableHash(`${external.startIndex}`);
-                hash ^= stableHash(`${external.entityLength}`);
+                hash = xor(hash, stableHash(external.entityName));
+                hash = xor(hash, stableHash(`${external.startIndex}`));
+                hash = xor(hash, stableHash(`${external.entityLength}`));
             });
         }
 
         if (options.includeAllIntents) {
-            hash ^= stableHash('all');
+            hash = xor(hash, stableHash('all'));
         }
 
         if (options.includeInstanceData) {
-            hash ^= stableHash('instance');
+            hash = xor(hash, stableHash('instance'));
         }
 
         if (options.log ?? false) {
-            hash ^= stableHash('log');
+            hash = xor(hash, stableHash('log'));
         }
 
         if (options.preferExternalEntities) {
-            hash ^= stableHash('prefer');
+            hash = xor(hash, stableHash('prefer'));
         }
 
         if (options.slot) {
-            hash ^= stableHash(options.slot);
+            hash = xor(hash, stableHash(options.slot));
         }
 
         if (options.version) {
-            hash ^= stableHash(options.version);
+            hash = xor(hash, stableHash(options.version));
         }
 
         return path.join(this._responseDir, `${hash}.json`);
