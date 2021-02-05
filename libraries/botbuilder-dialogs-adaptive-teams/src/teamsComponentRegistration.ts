@@ -31,6 +31,8 @@ import {
     OnTeamsMessagingExtensionSelectItem,
     OnTeamsMessagingExtensionSubmitAction,
     OnTeamsO365ConnectorCardAction,
+    OnTeamsTabFetch,
+    OnTeamsTabSubmit,
     OnTeamsTaskModuleFetch,
     OnTeamsTaskModuleSubmit,
     OnTeamsTeamArchived,
@@ -147,6 +149,8 @@ export class TeamsComponentRegistration extends ComponentRegistration implements
         this._addDeclarativeType<OnTeamsMessagingExtensionConfigurationSetting, OnActivityConfiguration>(OnTeamsMessagingExtensionConfigurationSetting);
         this._addDeclarativeType<OnTeamsMessagingExtensionSubmitAction, OnActivityConfiguration>(OnTeamsMessagingExtensionSubmitAction);
         this._addDeclarativeType<OnTeamsO365ConnectorCardAction, OnActivityConfiguration>(OnTeamsO365ConnectorCardAction);
+        this._addDeclarativeType<OnTeamsTabFetch, OnActivityConfiguration>(OnTeamsTabFetch);
+        this._addDeclarativeType<OnTeamsTabSubmit, OnActivityConfiguration>(OnTeamsTabSubmit);
         this._addDeclarativeType<OnTeamsTaskModuleFetch, OnActivityConfiguration>(OnTeamsTaskModuleFetch);
         this._addDeclarativeType<OnTeamsTaskModuleSubmit, OnActivityConfiguration>(OnTeamsTaskModuleSubmit);
         this._addDeclarativeType<OnTeamsTeamArchived, OnActivityConfiguration>(OnTeamsTeamArchived);

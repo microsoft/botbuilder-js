@@ -34,7 +34,7 @@ export class SendMessagingExtensionSelectItemResponse
     /**
      * Class identifier.
      */
-    public static $kind = 'Teams.SendMessagingExtensionSelectItemResponse';
+    public static readonly $kind = 'Teams.SendMessagingExtensionSelectItemResponse';
 
     /**
      * Gets or sets template for the attachment template of a Thumbnail or Hero Card to send.

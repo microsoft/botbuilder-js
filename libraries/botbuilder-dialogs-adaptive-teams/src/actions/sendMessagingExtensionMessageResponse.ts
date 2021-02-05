@@ -31,7 +31,7 @@ export class SendMessagingExtensionMessageResponse
     /**
      * Class identifier.
      */
-    public static $kind = 'Teams.SendMessagingExtensionMessageResponse';
+    public static readonly $kind = 'Teams.SendMessagingExtensionMessageResponse';
 
     /**
      * Gets or sets the template or text to use to generate the response message to send.
