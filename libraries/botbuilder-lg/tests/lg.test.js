@@ -864,6 +864,7 @@ describe('LG', function () {
         var templates = preloaded.StructuredTemplate;
         assert.strictEqual(templates.toArray()[0].properties.Text, "${GetAge()}");
         assert.strictEqual(templates.toArray()[0].properties.Speak, "${GetAge()}");
+        assert.strictEqual(templates.toArray()[0].properties['$type'], "Activity");
     });
 
     it('TemplateCRUD_Normal', function () {

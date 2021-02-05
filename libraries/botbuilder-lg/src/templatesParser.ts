@@ -606,17 +606,19 @@ class TemplateBodyTransformer extends AbstractParseTreeVisitor<any> implements L
                 if (body.keyValueStructureLine()) {
                     const structureKey = body.keyValueStructureLine().STRUCTURE_IDENTIFIER();
                     const structureValues = body.keyValueStructureLine().keyValueStructureValue();
-                    this.fillInProperties(structureKey.text.trim(), structureValues);
+                    const typeName = context.structuredBodyNameLine().STRUCTURE_NAME().text;
+                    this.fillInProperties(structureKey.text.trim(), structureValues, typeName);
                 }
             }
         }
     }
 
-    private fillInProperties(key: string, structureValues: KeyValueStructureValueContext[]): void {
+    private fillInProperties(key: string, structureValues: KeyValueStructureValueContext[], name: string): void {
         if (!this._template.properties) {
             this._template.properties = {};
         }
 
+        this._template.properties['$type'] = name;
         if (structureValues.length === 1) {
             this._template.properties[key] = structureValues[0].text;
         } else if (structureValues.length > 1) {
