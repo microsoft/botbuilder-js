@@ -27,6 +27,7 @@
     "botbuilder-dialogs": "4.1.6",
     "botbuilder-dialogs-adaptive": "4.1.6",
     "botbuilder-dialogs-declarative": "4.1.6",
+    "murmurhash3": "^0.5.0",
     "nock": "^11.9.1",
     "url-parse": "^1.4.7"
   },
