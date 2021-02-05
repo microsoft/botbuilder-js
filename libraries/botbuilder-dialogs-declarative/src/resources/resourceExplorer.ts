@@ -324,8 +324,11 @@ export class ResourceExplorer {
     }
 
     private getComponentRegistrations(): ComponentRegistration[] {
-        return ComponentRegistration.components.filter((component: ComponentRegistration) =>
-            isComponentDeclarativeTypes(component)
+        return (
+            this._declarativeTypes ??
+            ComponentRegistration.components.filter((component: ComponentRegistration) =>
+                isComponentDeclarativeTypes(component)
+            )
         );
     }
 
