@@ -10,7 +10,7 @@ import fetch from 'node-fetch';
 import { LUISRuntimeModels as LuisModels } from '@azure/cognitiveservices-luis-runtime';
 import { LuisApplication, LuisRecognizerOptionsV3 } from './luisRecognizer';
 import { LuisRecognizerInternal } from './luisRecognizerOptions';
-import { NullTelemetryClient, TurnContext, RecognizerResult, Activity } from 'botbuilder-core';
+import { NullTelemetryClient, TurnContext, RecognizerResult } from 'botbuilder-core';
 import { DialogContext } from 'botbuilder-dialogs';
 import { ExternalEntity, validateExternalEntity } from './externalEntity';
 import { validateDynamicList } from './dynamicList';

@@ -10,7 +10,7 @@ import * as msRest from '@azure/ms-rest-js';
 import * as os from 'os';
 import { LuisApplication, LuisRecognizerOptionsV2 } from './luisRecognizer';
 import { LuisRecognizerInternal } from './luisRecognizerOptions';
-import { NullTelemetryClient, TurnContext, RecognizerResult, Activity } from 'botbuilder-core';
+import { NullTelemetryClient, TurnContext, RecognizerResult } from 'botbuilder-core';
 
 import {
     LUISRuntimeClient as LuisClient,
