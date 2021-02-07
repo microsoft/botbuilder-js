@@ -46,18 +46,20 @@ export class IsDialogActiveFunction extends ExpressionEvaluator {
             return { value: undefined, error: 'dialogcontext.stack not found' };
         }
 
-        const args: string[] = [];
-        expression.children.forEach((child) => {
-            const { value, error } = child.tryEvaluate(state, options);
-            if (error) {
-                return { value: undefined, error };
-            }
-            args.push(value);
-        });
-
-        return {
-            value: stack.some((dlg) => args.includes(dlg)),
-            error: undefined,
-        };
+        try {
+            const args: string[] = expression.children.map((child) => {
+                const { value, error } = child.tryEvaluate(state, options);
+                if (error) {
+                    throw error;
+                }
+                return value;
+            });
+            return {
+                value: stack.some((dlg) => args.includes(dlg)),
+                error: undefined,
+            };
+        } catch (error) {
+            return { value: undefined, error };
+        }
     }
 }
