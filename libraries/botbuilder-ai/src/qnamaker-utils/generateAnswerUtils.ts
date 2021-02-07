@@ -82,14 +82,18 @@ export class GenerateAnswerUtils {
             ...queryOptions,
         });
 
-        const qnaResultJson = await this.httpRequestUtils.executeHttpRequest(
+        const qnaResults = await this.httpRequestUtils.executeHttpRequest(
             url,
             payloadBody,
             this.endpoint,
             queryOptions.timeout
         );
 
-        return this.formatQnaResult(qnaResultJson);
+        if (qnaResults?.answers && Array.isArray(qnaResults.answers)) {
+            return this.formatQnaResult(qnaResults);
+        }
+
+        throw new Error(`Failed to generate answers: ${qnaResults}`);
     }
 
     /**
@@ -166,22 +170,19 @@ export class GenerateAnswerUtils {
             .sort((a: QnAMakerResult, b: QnAMakerResult) => b.score - a.score);
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    private formatQnaResult(qnaResult: any): QnAMakerResults {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        qnaResult.answers = qnaResult.answers.map((ans: any) => {
-            ans.score = ans.score / 100;
+    private formatQnaResult(qnaResult: QnAMakerResults): QnAMakerResults {
+        qnaResult.answers = qnaResult.answers.map((answer: QnAMakerResult & { qnaId?: number }) => {
+            answer.score = answer.score / 100;
 
-            if (ans.qnaId) {
-                ans.id = ans.qnaId;
-                delete ans.qnaId;
+            if (answer.qnaId) {
+                answer.id = answer.qnaId;
+                delete answer.qnaId;
             }
 
-            return ans as QnAMakerResult;
+            return answer;
         });
 
-        qnaResult.activeLearningEnabled =
-            qnaResult.activeLearningEnabled != null ? qnaResult.activeLearningEnabled : true;
+        qnaResult.activeLearningEnabled ??= true;
 
         return qnaResult;
     }
