@@ -6,8 +6,9 @@
  * Licensed under the MIT License.
  */
 
+import buffer from 'bitwise/buffer';
 import * as fs from 'fs';
-import * as mmh3 from 'murmurhash3';
+import * as murmurhash from 'murmurhash-js';
 import * as path from 'path';
 import { LuisAdaptiveRecognizer, LuisRecognizerOptionsV3 } from 'botbuilder-ai';
 import { DialogContext, Recognizer } from 'botbuilder-dialogs';
@@ -22,17 +23,28 @@ import { DynamicList } from 'botbuilder-ai/lib/dynamicList';
 import { ListElement } from 'botbuilder-ai/lib/listElement';
 import { ExternalEntity } from 'botbuilder-ai/lib/externalEntity';
 
-const stableHash = (source: string): number => mmh3.murmur32Sync(source);
+/**
+ * Wrap murmurhash v3.
+ *
+ * @param {string} source Source string to compute hash.
+ * @returns {number} Computed hash result.
+ */
+const stableHash = (source: string): number => murmurhash.murmur3(source);
 
+/**
+ * Compute result of x XOR y.
+ *
+ * @param {number} x First parameter.
+ * @param {number} y Second parameter.
+ * @returns {number} Computed XOR result.
+ */
 function xor(x: number, y: number): number {
-    const a = x.toString(2).split('').reverse();
-    const b = y.toString(2).split('').reverse();
-    const maxLength = Math.max(a.length, b.length);
-    const re = [];
-    for (let i = 0; i < maxLength; i++) {
-        re.push(a[i] && b[i] ? (a[i] != b[i] ? 1 : 0) : a[i] || b[i]);
-    }
-    return parseInt(re.reverse().join(''), 2);
+    const bufferX = new ArrayBuffer(4);
+    new DataView(bufferX).setUint32(0, x);
+    const bufferY = new ArrayBuffer(4);
+    new DataView(bufferY).setUint32(0, y);
+    const result = buffer.xor(Buffer.from(bufferX), Buffer.from(bufferY));
+    return parseInt(result.toString('hex'), 16);
 }
 
 /**
@@ -74,7 +86,7 @@ export class MockLuisRecognizer extends Recognizer {
     }
 
     private _responsePath(utterance: string, options: LuisRecognizerOptionsV3): string {
-        let hash: number = mmh3.murmur32Sync(utterance);
+        let hash: number = stableHash(utterance);
 
         if (options.externalEntityRecognizer) {
             hash = xor(hash, stableHash('external'));
