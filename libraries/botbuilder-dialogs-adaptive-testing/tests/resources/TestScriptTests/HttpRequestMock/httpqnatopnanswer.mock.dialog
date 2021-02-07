@@ -3,7 +3,7 @@
     "$kind": "Microsoft.Test.HttpRequestSequenceMock",
     "method": "POST",
     "url": "https://dummy-hostname.azurewebsites.net/qnamaker/knowledgebases/dummy-id/generateanswer",
-    "body": "\"question\":\"QnaMaker_TopNAnswer\"",
+    "body": "\"question\": \"QnaMaker_TopNAnswer\"",
     "responses": [
         {
             "content": {
