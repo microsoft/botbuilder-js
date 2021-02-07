@@ -12,15 +12,15 @@ import { TurnPath } from 'botbuilder-dialogs';
 import { OnInvokeActivity } from 'botbuilder-dialogs-adaptive';
 
 /**
- * Actions triggered when a Teams InvokeActivity is received for 'actionableMessage/executeAction'.
+ * Actions triggered when a Teams InvokeActivity is received with activity.name='tab/fetch'.
  */
-export class OnTeamsO365ConnectorCardAction extends OnInvokeActivity {
-    public static readonly $kind = 'Teams.OnO365ConnectorCardAction';
+export class OnTeamsTabFetch extends OnInvokeActivity {
+    public static readonly $kind = 'Teams.OnTabFetch';
 
     public getExpression(parser: ExpressionParserInterface): Expression {
         return Expression.andExpression(
             Expression.parse(
-                `${TurnPath.activity}.channelId == '${Channels.Msteams}' && ${TurnPath.activity}.name == 'actionableMessage/executeAction'`
+                `${TurnPath.activity}.channelId == '${Channels.Msteams}' && ${TurnPath.activity}.name == 'tab/fetch'`
             ),
             super.getExpression(parser)
         );

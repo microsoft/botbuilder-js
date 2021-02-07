@@ -43,7 +43,7 @@ export class SendMessageToTeamsChannel extends Dialog implements SendMessageToTe
     /**
      * Class identifier.
      */
-    public static $kind = 'Teams.SendMessageToTeamsChannel';
+    public static readonly $kind = 'Teams.SendMessageToTeamsChannel';
 
     /**
      * Gets or sets an optional expression which if is true will disable this action.

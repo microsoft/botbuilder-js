@@ -15,7 +15,7 @@ import { OnInvokeActivity } from 'botbuilder-dialogs-adaptive';
  * Actions triggered when a Teams InvokeActivity is received with activity.name='composeExtension/submitAction'.
  */
 export class OnTeamsMessagingExtensionSubmitAction extends OnInvokeActivity {
-    public static $kind = 'Teams.OnMessagingExtensionSubmitAction';
+    public static readonly $kind = 'Teams.OnMessagingExtensionSubmitAction';
 
     public getExpression(parser: ExpressionParserInterface): Expression {
         return Expression.andExpression(

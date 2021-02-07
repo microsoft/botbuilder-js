@@ -15,7 +15,7 @@ import { OnInvokeActivity } from 'botbuilder-dialogs-adaptive';
  * Actions triggered when a Teams InvokeActivity is received when activity.name='composeExtension/fetchTask'.
  */
 export class OnTeamsMessagingExtensionFetchTask extends OnInvokeActivity {
-    public static $kind = 'Teams.OnMessagingExtensionFetchTask';
+    public static readonly $kind = 'Teams.OnMessagingExtensionFetchTask';
 
     public getExpression(parser: ExpressionParserInterface): Expression {
         return Expression.andExpression(

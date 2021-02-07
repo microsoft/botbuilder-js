@@ -1,7 +1,7 @@
 /* eslint-disable security/detect-object-injection */
 const assert = require('assert');
 const bigInt = require('big-integer');
-const { Expression, SimpleObjectMemory, FunctionUtils, Options } = require('../lib');
+const { Expression, SimpleObjectMemory, FunctionUtils, Options, NumericEvaluator } = require('../lib');
 const { TimexProperty } = require('@microsoft/recognizers-text-data-types-timex-expression');
 const { useFakeTimers } = require('sinon');
 const os = require('os');
@@ -232,6 +232,7 @@ const testCases = [
             ['substring(nullObj, 3)', ''],
             ['substring(nullObj, 0, 3)', ''],
             ['substring(\'hello\', 0, bag.index)', 'hel'],
+            ['string(1.22, "de-DE")', '1,22'],
             ['toLower(\'UpCase\')', 'upcase'],
             ['toLower(\'UpCase\', \'en-GB\')', 'upcase'],
             ['toLower(nullObj)', ''],
@@ -1116,6 +1117,15 @@ describe('expression parser functional test', () => {
         exp = Expression.parse('a[b]');
         ({ value, error } = exp.tryEvaluate(mockMemory, options));
         assert(error !== undefined);
+    });
+
+    it('Test NumericEvaluator', () => {
+        const functionName = 'Math.sum';
+        Expression.functions.add(functionName, new NumericEvaluator(functionName, (args) => args[0] + args[1]));
+
+        const { value, error } = Expression.parse("Math.sum(1, 2, 3)").tryEvaluate(undefined);
+        assert.strictEqual(value, 6);
+        assert(error == null);
     });
 });
 

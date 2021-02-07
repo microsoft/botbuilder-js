@@ -43,7 +43,7 @@ export class SendMessagingExtensionAttachmentsResponse
     /**
      * Class identifier.
      */
-    public static $kind = 'Teams.SendMessagingExtensionAttachmentsResponse';
+    public static readonly $kind = 'Teams.SendMessagingExtensionAttachmentsResponse';
 
     /**
      * Gets or sets the Activity containing the Attachments to send.

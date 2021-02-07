@@ -1,8 +1,8 @@
 {
     "$schema": "https://schemas.botframework.com/schemas/component/v1.0/component.schema",
     "$role": [ "implements(Microsoft.ITrigger)", "extends(Microsoft.OnCondition)" ],
-    "title": "OnTeamsAppBasedLinkQuery",
-    "description": "Actions triggered when a Teams activity is received with activity.name == 'composeExtension/queryLink'.",
+    "title": "On Teams Tab Fetch",
+    "description": "Actions triggered when a Teams InvokeActivity is received with activity.name='tab/fetch'.",
     "type": "object",
     "required": [
     ]
