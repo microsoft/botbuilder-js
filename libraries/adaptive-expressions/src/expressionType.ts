@@ -193,6 +193,9 @@ export class ExpressionType {
     public static readonly IsDateTime: string = 'isDateTime';
     public static readonly IsBoolean: string = 'isBoolean';
 
+    // StringOrValue
+    public static readonly StringOrValue: string = 'stringOrValue';
+
     public static readonly Ignore: string = 'ignore';
     public static readonly Optional: string = 'optional';
 }
