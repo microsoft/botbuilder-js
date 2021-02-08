@@ -226,11 +226,6 @@ export class SkillHandler extends ChannelServiceHandler {
     ): Promise<void> {
         const ref = await this.getSkillConversationReference(conversationId);
 
-        // Add the channel service URL to the trusted services list so we can send messages back.
-        // the service URL for skills is trusted because it is applied based on the original request
-        // received by the root bot.
-        AppCredentials.trustServiceUrl(ref.conversationReference.serviceUrl);
-
         return maybeCastAdapter(this.adapter).continueConversation(
             ref.conversationReference,
             ref.oAuthScope,
