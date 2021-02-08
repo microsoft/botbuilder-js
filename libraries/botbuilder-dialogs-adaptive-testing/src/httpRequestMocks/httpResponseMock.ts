@@ -6,11 +6,17 @@
  * Licensed under the MIT License.
  */
 
+/**
+ * Types of response content.
+ */
 export enum ResponseContentType {
     String = 'String',
     ByteArray = 'ByteArray',
 }
 
+/**
+ * Response status codes.
+ */
 export enum ResponseStatusCode {
     Continue = 100,
     SwitchingProtocols = 101,
@@ -61,15 +67,39 @@ export enum ResponseStatusCode {
     HttpVersionNotSupported = 505,
 }
 
+/**
+ * Http response content.
+ */
 export type ResponseContent = string | Record<string, unknown>;
 
+/**
+ * Http response mock used in HttpRequestSequenceMock.
+ */
 export interface HttpResponseMock {
+    /**
+     * The status code.
+     */
     statusCode?: ResponseStatusCode;
+
+    /**
+     * The reason phrase. (Not supported yet)
+     */
     reasonPhrase?: string;
+
+    /**
+     * The content type.
+     */
     contentType?: ResponseContentType;
+
+    /**
+     * The content.
+     */
     content: ResponseContent;
 }
 
+/**
+ * Http response message.
+ */
 export interface HttpResponseMessage {
     statusCode: ResponseStatusCode;
     content: ResponseContent;

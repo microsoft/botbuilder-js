@@ -9,10 +9,18 @@
 import { HttpResponseMessage, HttpResponseMock } from './httpResponseMock';
 import { HttpResponseMockMessage } from './httpResponseMockMessage';
 
+/**
+ * Manage sequence response for HttpRequestSequenceMock.
+ */
 export class SequenceResponseManager {
     private _id = 0;
     private _messages: HttpResponseMockMessage[] = [];
 
+    /**
+     * Initializes a new instance of the SequenceResponseManager class.
+     *
+     * @param {HttpResponseMock[]} responses The list of HttpResponseMock.
+     */
     public constructor(responses?: HttpResponseMock[]) {
         if (!responses?.length) {
             // Create a default message for response
@@ -22,6 +30,11 @@ export class SequenceResponseManager {
         }
     }
 
+    /**
+     * Gets the message in sequence order. The last one will be repeated.
+     *
+     * @returns {HttpResponseMessage} The HttpResponseMessage.
+     */
     public getMessage(): HttpResponseMessage {
         const result = this._messages[this._id];
         if (this._id < this._messages.length - 1) {
