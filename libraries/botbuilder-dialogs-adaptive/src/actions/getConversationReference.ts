@@ -31,7 +31,7 @@ export interface GetConversationReferenceConfiguration extends DialogConfigurati
 /**
  * Gets the current conversation reference and saves it to a memory property suitable to use in ContinueConversation action.
  */
-export class GetConversationReference extends Dialog {
+export class GetConversationReference extends Dialog implements GetConversationReferenceConfiguration {
     public static $kind = 'Microsoft.GetConversationReference';
 
     /**
