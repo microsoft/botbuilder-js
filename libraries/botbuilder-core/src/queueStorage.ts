@@ -14,7 +14,7 @@ import { Activity } from 'botframework-schema';
 export abstract class QueueStorage {
     /**
      * Enqueues an Activity for later processing. The visibility timeout specifies how long the message should be visible
-     * to Dequeue and Peek operations. The message content must be a UTF-8 encoded string that is up to 64KB in size.
+     * to Dequeue and Peek operations.
      *
      * @param {Partial<Activity>} activity The [Activity](xref:botframework-schema.Activity) to be queued for later processing.
      * @param {number} visibilityTimeout Visibility timeout in seconds. Optional with a default value of 0. Cannot be larger than 7 days.

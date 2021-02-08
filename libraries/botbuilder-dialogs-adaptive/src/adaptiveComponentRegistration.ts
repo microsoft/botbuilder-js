@@ -25,6 +25,8 @@ import {
     CancelAllDialogs,
     CancelDialog,
     CancelAllDialogsBaseConfiguration,
+    ContinueConversation,
+    ContinueConversationConfiguration,
     ContinueConversationLater,
     ContinueConversationLaterConfiguration,
     ContinueLoop,
@@ -54,6 +56,8 @@ import {
     GetActivityMembersConfiguration,
     GetConversationMembers,
     GetConversationMembersConfiguration,
+    GetConversationReference,
+    GetConversationReferenceConfiguration,
     GotoAction,
     GotoActionConfiguration,
     HttpRequest,
@@ -223,6 +227,7 @@ export class AdaptiveComponentRegistration extends ComponentRegistration impleme
         this._addDeclarativeType<BreakLoop, BreakLoopConfiguration>(BreakLoop);
         this._addDeclarativeType<CancelAllDialogs, CancelAllDialogsBaseConfiguration>(CancelAllDialogs);
         this._addDeclarativeType<CancelDialog, CancelAllDialogsBaseConfiguration>(CancelDialog);
+        this._addDeclarativeType<ContinueConversation, ContinueConversationConfiguration>(ContinueConversation);
         this._addDeclarativeType<ContinueConversationLater, ContinueConversationLaterConfiguration>(
             ContinueConversationLater
         );
@@ -239,6 +244,9 @@ export class AdaptiveComponentRegistration extends ComponentRegistration impleme
         this._addDeclarativeType<ForEachPage, ForEachPageConfiguration>(ForEachPage);
         this._addDeclarativeType<GetActivityMembers, GetActivityMembersConfiguration>(GetActivityMembers);
         this._addDeclarativeType<GetConversationMembers, GetConversationMembersConfiguration>(GetConversationMembers);
+        this._addDeclarativeType<GetConversationReference, GetConversationReferenceConfiguration>(
+            GetConversationReference
+        );
         this._addDeclarativeType<GotoAction, GotoActionConfiguration>(GotoAction);
         this._addDeclarativeType<HttpRequest, HttpRequestConfiguration>(HttpRequest);
         this._addDeclarativeType<IfCondition, IfConditionConfiguration>(IfCondition);

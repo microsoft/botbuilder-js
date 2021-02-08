@@ -40,10 +40,10 @@ export interface ContinueConversationLaterConfiguration extends DialogConfigurat
 }
 
 /**
- * Action which schedules a conversation to be continued later by writing an EventActivity(Name=ContinueConversation) to a queue.
+ * Action which schedules the current conversation to be continued at a later time.
  */
 export class ContinueConversationLater extends Dialog implements ContinueConversationLaterConfiguration {
-    public static $kind = 'Microsoft.ContinueConversationLater';
+    public static readonly $kind = 'Microsoft.ContinueConversationLater';
 
     /**
      * Gets or sets an optional expression which if is true will disable this action.
@@ -56,7 +56,7 @@ export class ContinueConversationLater extends Dialog implements ContinueConvers
     public date: StringExpression;
 
     /**
-     * Gets or sets the value to pass in the EventActivity payload.
+     * Gets or sets an optional value to use for EventActivity.Value.
      */
     public value: ValueExpression;
 
