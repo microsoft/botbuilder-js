@@ -861,10 +861,10 @@ describe('LG', function () {
         const templates = preloaded.two;
         assert.strictEqual(templates.toArray()[0].properties, undefined);
 
-        const templates = preloaded.StructuredTemplate;
-        assert.strictEqual(templates.toArray()[0].properties.Text, "${GetAge()}");
-        assert.strictEqual(templates.toArray()[0].properties.Speak, "${GetAge()}");
-        assert.strictEqual(templates.toArray()[0].properties['$type'], "Activity");
+        const structuredTemplates = preloaded.StructuredTemplate;
+        assert.strictEqual(structuredTemplates.toArray()[0].properties.Text, "${GetAge()}");
+        assert.strictEqual(structuredTemplates.toArray()[0].properties.Speak, "${GetAge()}");
+        assert.strictEqual(structuredTemplates.toArray()[0].properties['$type'], "Activity");
     });
 
     it('TemplateCRUD_Normal', function () {
