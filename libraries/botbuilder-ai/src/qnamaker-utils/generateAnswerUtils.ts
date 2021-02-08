@@ -89,7 +89,7 @@ export class GenerateAnswerUtils {
             queryOptions.timeout
         );
 
-        if (qnaResults?.answers && Array.isArray(qnaResults.answers)) {
+        if (Array.isArray(qnaResults?.answers)) {
             return this.formatQnaResult(qnaResults);
         }
 
