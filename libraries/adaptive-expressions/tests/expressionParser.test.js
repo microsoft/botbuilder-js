@@ -819,6 +819,13 @@ const testCases = [
         ],
     },
     {
+        label: 'StringOrValue',
+        testCases: [
+            ['stringOrValue("${one}")', 1.0],
+            ['stringOrValue("${one} item")', '1 item'],
+        ],
+    },
+    {
         label: 'Empty expression',
         testCases: [['', '']],
     },

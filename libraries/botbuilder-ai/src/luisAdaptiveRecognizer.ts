@@ -17,16 +17,38 @@ import {
 
 import { Activity, RecognizerResult } from 'botbuilder-core';
 import { Converter, ConverterFactory, DialogContext, Recognizer, RecognizerConfiguration } from 'botbuilder-dialogs';
-import { LuisApplication, LuisPredictionOptions, LuisRecognizer, LuisRecognizerOptionsV3 } from './luisRecognizer';
+import { ListElement } from './listElement';
+import {
+    LuisAdaptivePredictionOptions,
+    LuisAdaptivePredictionOptionsConfiguration,
+    LuisAdaptivePredictionOptionsConverter,
+} from './luisAdaptivePredictionOptions';
+import { LuisApplication, LuisRecognizer, LuisRecognizerOptionsV3 } from './luisRecognizer';
 import { LuisTelemetryConstants } from './luisTelemetryConstants';
+
+/**
+ * Defines an extension for a list entity.
+ */
+type DynamicList = {
+    /**
+     * The name of the list to extend.
+     */
+    entity: string;
+    /**
+     * The lists to append on the extended list entity.
+     */
+    list: ListElement[];
+};
 
 export interface LuisAdaptiveRecognizerConfiguration extends RecognizerConfiguration {
     applicationId?: string | Expression | StringExpression;
-    logPersonalInformation?: boolean | string | Expression | BoolExpression;
-    dynamicLists?: unknown[] | string | Expression | ArrayExpression<unknown>;
+    version?: string | Expression | StringExpression;
     endpoint?: string | Expression | StringExpression;
     endpointKey?: string | Expression | StringExpression;
-    predictionOptions?: LuisPredictionOptions;
+    externalEntityRecognizer?: string | Recognizer;
+    dynamicLists?: unknown[] | string | Expression | ArrayExpression<unknown>;
+    predictionOptions?: LuisAdaptivePredictionOptionsConfiguration | LuisAdaptivePredictionOptions;
+    logPersonalInformation?: boolean | string | Expression | BoolExpression;
 }
 
 /**
@@ -41,14 +63,9 @@ export class LuisAdaptiveRecognizer extends Recognizer implements LuisAdaptiveRe
     public applicationId: StringExpression;
 
     /**
-     * The flag to indicate in personal information should be logged in telemetry.
+     * LUIS application version.
      */
-    public logPersonalInformation: BoolExpression = new BoolExpression('=settings.telemetry.logPersonalInformation');
-
-    /**
-     * LUIS dynamic list.
-     */
-    public dynamicLists: ArrayExpression<any>; // eslint-disable-line @typescript-eslint/no-explicit-any
+    public version: StringExpression;
 
     /**
      * LUIS endpoint to query.
@@ -69,23 +86,34 @@ export class LuisAdaptiveRecognizer extends Recognizer implements LuisAdaptiveRe
      * @summary
      * This recognizer is run before calling LUIS and the results are passed to LUIS.
      */
-    // public externalEntityRecognizer: Recognizer;
+    public externalEntityRecognizer: Recognizer;
+
+    /**
+     * LUIS dynamic list.
+     */
+    public dynamicLists: ArrayExpression<DynamicList>;
 
     /**
      * LUIS prediction options.
      */
-    public predictionOptions: LuisPredictionOptions;
+    public predictionOptions: LuisAdaptivePredictionOptions;
+
+    /**
+     * The flag to indicate in personal information should be logged in telemetry.
+     */
+    public logPersonalInformation: BoolExpression = new BoolExpression('=settings.telemetry.logPersonalInformation');
 
     public getConverter(property: keyof LuisAdaptiveRecognizerConfiguration): Converter | ConverterFactory {
         switch (property) {
             case 'applicationId':
+            case 'version':
+            case 'endpoint':
+            case 'endpointKey':
                 return new StringExpressionConverter();
             case 'dynamicLists':
                 return new ArrayExpressionConverter();
-            case 'endpoint':
-                return new StringExpressionConverter();
-            case 'endpointKey':
-                return new StringExpressionConverter();
+            case 'predictionOptions':
+                return new LuisAdaptivePredictionOptionsConverter();
             case 'logPersonalInformation':
                 return new BoolExpressionConverter();
             default:
@@ -105,8 +133,8 @@ export class LuisAdaptiveRecognizer extends Recognizer implements LuisAdaptiveRe
     public async recognize(
         dialogContext: DialogContext,
         activity: Activity,
-        telemetryProperties?: { [key: string]: string },
-        telemetryMetrics?: { [key: string]: number }
+        telemetryProperties?: Record<string, string>,
+        telemetryMetrics?: Record<string, number>
     ): Promise<RecognizerResult> {
         // Validate passed in activity matches turn activity
         const context = dialogContext.context;
@@ -126,10 +154,9 @@ export class LuisAdaptiveRecognizer extends Recognizer implements LuisAdaptiveRe
         };
 
         // Create and call wrapper
-        const wrapper = new LuisRecognizer(application, this.recognizerOptions(dialogContext));
+        const recognizer = new LuisRecognizer(application, this.recognizerOptions(dialogContext));
 
-        const result = await wrapper.recognize(context);
-
+        const result = await recognizer.recognize(dialogContext);
         this.trackRecognizerResult(
             dialogContext,
             'LuisResult',
@@ -147,17 +174,43 @@ export class LuisAdaptiveRecognizer extends Recognizer implements LuisAdaptiveRe
      * @returns {LuisRecognizerOptionsV3} luis recognizer options
      */
     public recognizerOptions(dialogContext: DialogContext): LuisRecognizerOptionsV3 {
-        const options = Object.assign({}, this.predictionOptions);
+        const options: LuisRecognizerOptionsV3 = {
+            apiVersion: 'v3',
+            externalEntityRecognizer: this.externalEntityRecognizer,
+            telemetryClient: this.telemetryClient,
+            includeAllIntents: false,
+            includeInstanceData: false,
+            includeAPIResults: false,
+            log: true,
+            preferExternalEntities: true,
+            slot: 'production',
+        };
 
-        if (this.telemetryClient) {
-            options.telemetryClient = this.telemetryClient;
+        const dcState = dialogContext.state;
+
+        if (this.predictionOptions) {
+            options.datetimeReference = this.predictionOptions.dateTimeReference?.getValue(dcState);
+            options.externalEntities = this.predictionOptions.externalEntities?.getValue(dcState);
+            options.includeAllIntents = this.predictionOptions.includeAllIntents?.getValue(dcState) ?? false;
+            options.includeInstanceData = this.predictionOptions.includeInstanceData?.getValue(dcState) ?? true;
+            options.includeAPIResults = this.predictionOptions.includeAPIResults?.getValue(dcState) ?? false;
+            options.log = this.predictionOptions.log?.getValue(dcState) ?? true;
+            options.preferExternalEntities = this.predictionOptions.preferExternalEntities?.getValue(dcState) ?? true;
+            options.slot = this.predictionOptions.slot?.getValue(dcState) === 'staging' ? 'staging' : 'production';
         }
 
-        if (this.dynamicLists != null) {
-            options.dynamicLists = this.dynamicLists.getValue(dialogContext.state);
+        if (this.version) {
+            options.version = this.version.getValue(dcState);
         }
 
-        return options as LuisRecognizerOptionsV3;
+        if (this.dynamicLists) {
+            options.dynamicLists = this.dynamicLists.getValue(dcState).map((item) => ({
+                listEntityName: item.entity,
+                requestLists: item.list,
+            }));
+        }
+
+        return options;
     }
 
     /**

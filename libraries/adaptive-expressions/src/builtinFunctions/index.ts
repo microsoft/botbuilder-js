@@ -135,6 +135,7 @@ export * from './startOfHour';
 export * from './startOfMonth';
 export * from './startsWith';
 export * from './string';
+export * from './stringOrValue';
 export * from './stringTransformEvaluator';
 export * from './subArray';
 export * from './substring';

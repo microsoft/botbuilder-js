@@ -8,6 +8,7 @@
 
 import { LuisApplication, LuisRecognizerOptions } from './luisRecognizer';
 import { RecognizerResult, TurnContext } from 'botbuilder-core';
+import { DialogContext } from 'botbuilder-dialogs';
 
 /**
  * Abstract class for Luis Recognizer.
@@ -27,5 +28,5 @@ export abstract class LuisRecognizerInternal {
         this.application.endpoint ??= 'https://westus.api.cognitive.microsoft.com';
     }
 
-    abstract recognizeInternal(context: TurnContext): Promise<RecognizerResult>;
+    abstract recognizeInternal(context: DialogContext | TurnContext): Promise<RecognizerResult>;
 }
