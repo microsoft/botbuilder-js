@@ -9,7 +9,7 @@
 import * as os from 'os';
 
 import { QnAMakerEndpoint } from '../qnamaker-interfaces/qnamakerEndpoint';
-import { QnAMakerResult } from '../qnamaker-interfaces/qnamakerResult';
+import { QnAMakerResults } from '../qnamaker-interfaces/qnamakerResults';
 
 import { getFetch } from '../globals';
 const fetch = getFetch();
@@ -31,14 +31,14 @@ export class HttpRequestUtils {
      * @param {string} payloadBody Http request body.
      * @param {QnAMakerEndpoint} endpoint QnA Maker endpoint details.
      * @param {number} timeout (Optional)Timeout for http call
-     * @returns {QnAMakerResult} a promise that resolves to the QnAMakerResult
+     * @returns {QnAMakerResults} a promise that resolves to the QnAMakerResults
      */
     public async executeHttpRequest(
         requestUrl: string,
         payloadBody: string,
         endpoint: QnAMakerEndpoint,
         timeout?: number
-    ): Promise<QnAMakerResult> {
+    ): Promise<QnAMakerResults | undefined> {
         if (!requestUrl) {
             throw new TypeError('Request url cannot be null.');
         }
@@ -60,7 +60,7 @@ export class HttpRequestUtils {
             body: payloadBody,
         });
 
-        return qnaResult.status == 204 ? this.getSuccessful204Result() : await qnaResult.json();
+        return qnaResult.status !== 204 ? await qnaResult.json() : undefined;
     }
 
     /**
@@ -91,23 +91,5 @@ export class HttpRequestUtils {
         const platformUserAgent = `(${os.arch()}-${os.type()}-${os.release()}; Node.js,Version=${process.version})`;
 
         return `${packageUserAgent} ${platformUserAgent}`;
-    }
-
-    /**
-     * Creates a QnAMakerResult for successful responses from QnA Maker service that return status code 204 No-Content.
-     * The [Train API](https://docs.microsoft.com/en-us/rest/api/cognitiveservices/qnamakerruntime/runtime/train)
-     * is an example of one of QnA Maker's APIs that return a 204 status code.
-     *
-     * @private
-     */
-    private getSuccessful204Result(): QnAMakerResult {
-        return {
-            questions: [],
-            answer: '204 No-Content',
-            score: 100,
-            id: -1,
-            source: null,
-            metadata: [],
-        };
     }
 }
