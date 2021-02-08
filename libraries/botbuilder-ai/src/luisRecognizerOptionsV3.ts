@@ -7,6 +7,7 @@
  */
 
 import fetch from 'node-fetch';
+import { RequestInfo, RequestInit } from 'node-fetch';
 import { LUISRuntimeModels as LuisModels } from '@azure/cognitiveservices-luis-runtime';
 import { LuisApplication, LuisRecognizerOptionsV3 } from './luisRecognizer';
 import { LuisRecognizerInternal } from './luisRecognizerOptions';
@@ -162,7 +163,7 @@ export class LuisRecognizerV3 extends LuisRecognizerInternal {
         return result;
     }
 
-    private buildUrl(options: LuisRecognizerOptionsV3) {
+    private buildUrl(options: LuisRecognizerOptionsV3): RequestInfo {
         const baseUri = this.application.endpoint || 'https://westus.api.cognitive.microsoft.com';
         let uri = `${baseUri}/luis/prediction/v3.0/apps/${this.application.applicationId}`;
 
@@ -178,7 +179,7 @@ export class LuisRecognizerV3 extends LuisRecognizerInternal {
         return uri;
     }
 
-    private buildRequestBody(utterance: string, options: LuisRecognizerOptionsV3) {
+    private buildRequestBody(utterance: string, options: LuisRecognizerOptionsV3): RequestInit {
         const content = {
             query: utterance,
             options: {

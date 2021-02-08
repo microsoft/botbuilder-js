@@ -34,7 +34,7 @@ function flattenSettings(settings: Record<string, any>): Record<string, string> 
             continue;
         }
         const value = settings[key];
-        if (typeof value == 'object') {
+        if (typeof value === 'object') {
             const flatObject = flattenSettings(value);
             for (const child in flatObject) {
                 if (!Object.prototype.hasOwnProperty.call(flatObject, child)) {
