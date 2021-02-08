@@ -41,7 +41,7 @@ export class Template {
     /**
      * The extended properties for the object.
      */
-    public properties?: { [propertyName: string]: any };
+    public properties?: Record<string, unknown>;
 
     /**
      * Creates a new instance of the [Template](xref:botbuilder-lg.Template) class.

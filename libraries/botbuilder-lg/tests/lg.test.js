@@ -858,10 +858,10 @@ describe('LG', function () {
     });
 
     it('TestProperties', function () {
-        var templates = preloaded.two;
+        const templates = preloaded.two;
         assert.strictEqual(templates.toArray()[0].properties, undefined);
 
-        var templates = preloaded.StructuredTemplate;
+        const templates = preloaded.StructuredTemplate;
         assert.strictEqual(templates.toArray()[0].properties.Text, "${GetAge()}");
         assert.strictEqual(templates.toArray()[0].properties.Speak, "${GetAge()}");
         assert.strictEqual(templates.toArray()[0].properties['$type'], "Activity");

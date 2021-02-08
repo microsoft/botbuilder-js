@@ -493,7 +493,7 @@ export class TemplatesTransformer extends AbstractParseTreeVisitor<any> implemen
                 const templateBodyContext = this.antlrParseTemplate(template.body, startLine);
                 if (templateBodyContext) {
                     template.templateBodyParseTree = templateBodyContext;
-                    new TemplateBodyTransformer(template).transform();
+                    template = new TemplateBodyTransformer(template).transform();
                 }
             } catch (error) {
                 if (error instanceof TemplateException) {
@@ -580,22 +580,23 @@ export class TemplatesTransformer extends AbstractParseTreeVisitor<any> implemen
     }
 }
 
-class TemplateBodyTransformer extends AbstractParseTreeVisitor<any> implements LGTemplateParserVisitor<any> {
+class TemplateBodyTransformer extends AbstractParseTreeVisitor<void> implements LGTemplateParserVisitor<void> {
     private _template: Template;
     constructor(template: Template) {
         super();
         this._template = template;
     }
 
-    protected defaultResult() {
+    protected defaultResult(): void {
 
     }
 
-    public transform(): void {
+    public transform(): Template {
         this.visit(this._template.templateBodyParseTree);
+        return this._template;
     }
 
-    public visitStructuredTemplateBody(context: StructuredTemplateBodyContext): any {
+    public visitStructuredTemplateBody(context: StructuredTemplateBodyContext): void {
         if (!context.structuredBodyNameLine().errorStructuredName()
          && context.structuredBodyEndLine()
          && (!context.errorStructureLine() || context.errorStructureLine().length === 0)
