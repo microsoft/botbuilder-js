@@ -19,6 +19,7 @@ import { EvaluateExpressionDelegate, ValueWithError } from './expressionEvaluato
 import { MemoryInterface, SimpleObjectMemory, StackedMemory } from './memory';
 import { TimexProperty } from '@microsoft/recognizers-text-data-types-timex-expression';
 import bigInt = require('big-integer');
+import { FunctionUtils } from './functionUtils';
 
 /**
  * Utility functions only used internal
@@ -406,6 +407,12 @@ export class InternalFunctionUtils {
             InternalFunctionUtils.getPropertyCount(args[1]) === 0
         ) {
             return true;
+        }
+
+        if (FunctionUtils.isNumber(args[0]) && FunctionUtils.isNumber(args[1])) {
+            if (Math.abs(args[0] - args[1]) < Number.EPSILON) {
+                return true;
+            }
         }
 
         try {

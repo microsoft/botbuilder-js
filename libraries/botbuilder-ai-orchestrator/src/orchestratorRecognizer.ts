@@ -27,12 +27,12 @@ export class OrchestratorRecognizer extends Configurable {
     /**
      * Path to Orchestrator base model folder.
      */
-    public modelPath: string;
+    public modelFolder: string;
 
     /**
      * Path to the snapshot (.blu file) to load.
      */
-    public snapshotPath: string;
+    public snapshotFile: string;
 
     /**
      * The external entity recognizer.
@@ -60,8 +60,8 @@ export class OrchestratorRecognizer extends Configurable {
         const rec = new OrchestratorAdaptiveRecognizer().configure({
             id: this.id,
             detectAmbiguousIntents: this.detectAmbiguousIntents,
-            modelPath: this.modelPath,
-            snapshotPath: this.snapshotPath,
+            modelFolder: this.modelFolder,
+            snapshotFile: this.snapshotFile,
             disambiguationScoreThreshold: this.disambiguationScoreThreshold,
             externalEntityRecognizer: this.externalEntityRecognizer,
         });

@@ -16,7 +16,7 @@ import { OnConversationUpdateActivity } from 'botbuilder-dialogs-adaptive';
  * Note: turn.activity.channelData.Teams has team data.
  */
 export class OnTeamsTeamDeleted extends OnConversationUpdateActivity {
-    public static $kind = 'Teams.OnTeamDeleted';
+    public static readonly $kind = 'Teams.OnTeamDeleted';
 
     public getExpression(parser: ExpressionParserInterface): Expression {
         return Expression.andExpression(

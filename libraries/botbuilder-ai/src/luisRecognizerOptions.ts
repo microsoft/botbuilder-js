@@ -8,6 +8,7 @@
 
 import { LuisApplication, LuisRecognizerOptions } from './luisRecognizer';
 import { RecognizerResult, TurnContext } from 'botbuilder-core';
+import { DialogContext } from 'botbuilder-dialogs';
 
 /**
  * Abstract class for Luis Recognizer.
@@ -15,20 +16,17 @@ import { RecognizerResult, TurnContext } from 'botbuilder-core';
 export abstract class LuisRecognizerInternal {
     /**
      * Creates a new [LuisRecognizerInternal](xref:botbuilder-ai.LuisRecognizerInternal) instance.
-     * @param application An object conforming to the [LuisApplication](xref:botbuilder-ai.LuisApplication) definition.
-     * @param options Optional. Options object used to control predictions. Should conform to the [LuisRecognizerOptions](xref:botbuilder-ai.LuisRecognizerOptions) definition.
+     *
+     * @param {LuisApplication} application An object conforming to the [LuisApplication](xref:botbuilder-ai.LuisApplication) definition.
+     * @param {LuisRecognizerOptions} _options Optional. Options object used to control predictions. Should conform to the [LuisRecognizerOptions](xref:botbuilder-ai.LuisRecognizerOptions) definition.
      */
-    constructor(application: LuisApplication, options?: LuisRecognizerOptions) {
+    constructor(public application: LuisApplication, _options?: LuisRecognizerOptions) {
         if (!application) {
             throw new Error('Null Application\n');
         }
-        this.application = application;
-        this.application.endpoint = this.application.endpoint
-            ? this.application.endpoint
-            : 'https://westus.api.cognitive.microsoft.com';
+
+        this.application.endpoint ??= 'https://westus.api.cognitive.microsoft.com';
     }
 
-    application: LuisApplication;
-
-    abstract recognizeInternal(context: TurnContext): Promise<RecognizerResult>;
+    abstract recognizeInternal(context: DialogContext | TurnContext): Promise<RecognizerResult>;
 }

@@ -63,8 +63,8 @@ describe('OrchestratorAdpativeRecognizer tests', function () {
         const testPaths = 'test';
         const rec = new OrchestratorAdaptiveRecognizer(testPaths, testPaths, mockResolver);
         OrchestratorAdaptiveRecognizer.orchestrator = 'mock';
-        rec.modelPath = new StringExpression(testPaths);
-        rec.snapshotPath = new StringExpression(testPaths);
+        rec.modelFolder = new StringExpression(testPaths);
+        rec.snapshotFile = new StringExpression(testPaths);
         const { dc, activity } = createTestDcAndActivity('hello');
 
         const res = await rec.recognize(dc, activity);
@@ -85,8 +85,8 @@ describe('OrchestratorAdpativeRecognizer tests', function () {
         const testPaths = 'test';
         const rec = new OrchestratorAdaptiveRecognizer(testPaths, testPaths, mockResolver);
         OrchestratorAdaptiveRecognizer.orchestrator = 'mock';
-        rec.modelPath = new StringExpression(testPaths);
-        rec.snapshotPath = new StringExpression(testPaths);
+        rec.modelFolder = new StringExpression(testPaths);
+        rec.snapshotFile = new StringExpression(testPaths);
         rec.externalEntityRecognizer = new NumberEntityRecognizer();
         const { dc, activity } = createTestDcAndActivity('hello 123');
 
@@ -120,8 +120,8 @@ describe('OrchestratorAdpativeRecognizer tests', function () {
         const mockResolver = new MockResolver(result);
         const testPaths = 'test';
         const rec = new OrchestratorAdaptiveRecognizer(testPaths, testPaths, mockResolver);
-        rec.modelPath = new StringExpression(testPaths);
-        rec.snapshotPath = new StringExpression(testPaths);
+        rec.modelFolder = new StringExpression(testPaths);
+        rec.snapshotFile = new StringExpression(testPaths);
         rec.detectAmbiguousIntents = new BoolExpression(true);
         rec.disambiguationScoreThreshold = new NumberExpression(0.1);
         const { dc, activity } = createTestDcAndActivity('hello');

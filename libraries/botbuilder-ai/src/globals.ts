@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
+/* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 /**
  * @module botbuilder
  */
@@ -7,17 +8,21 @@
  * Licensed under the MIT License.
  */
 
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const window = require('./custom.window');
 
 /**
  * Gets the fetch library.
- * @returns The fetch library.
+ *
+ * @returns {any} The fetch library.
  */
 export function getFetch() {
-    const env = (global || window) as any;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const env: Record<'fetch', any> = global ?? window;
 
-    if (!env.hasOwnProperty('fetch')) {
+    if (!Object.hasOwnProperty.call(env, 'fetch')) {
         env.fetch = require('node-fetch');
     }
+
     return env.fetch;
 }

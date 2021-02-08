@@ -7,9 +7,12 @@
  */
 
 export * from './dateTimeSpec';
+export * from './dynamicList';
+export * from './externalEntity';
 export * from './geographyV2';
 export * from './instanceData';
 export * from './intentData';
+export * from './listElement';
 export * from './luisAdaptiveRecognizer';
 export * from './luisComponentRegistration';
 export * from './luisRecognizer';
@@ -41,5 +44,5 @@ export { QnAMakerDialog, QnAMakerDialogOptions, QnAMakerDialogResponseOptions } 
 export * from './qnaMakerComponentRegistration';
 export * from './qnaMakerRecognizer';
 
-// GenerateAnswerUtils, HttpRequestUtils and TrainUtils are internal.
+// BindToActivity, GenerateAnswerUtils, HttpRequestUtils and TrainUtils are internal.
 export { ActiveLearningUtils } from './qnamaker-utils';

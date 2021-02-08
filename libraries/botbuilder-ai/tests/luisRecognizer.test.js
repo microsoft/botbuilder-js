@@ -69,7 +69,7 @@ class TelemetryOverrideRecognizer extends LuisRecognizer {
 
 class OverrideFillRecognizer extends LuisRecognizer {
     async onRecognizerResults(recognizerResult, turnContext, properties, metrics) {
-        var props = await this.fillTelemetryProperties(recognizerResult, turnContext, properties);
+        let props = await this.fillTelemetryProperties(recognizerResult, turnContext, properties);
         if (!('MyImportantProperty' in props)) {
             props.MyImportantProperty = 'myImportantValue';
         }
@@ -106,15 +106,12 @@ function isWithinDelta(left, right, delta, compare) {
     } else if (Array.isArray(left) && Array.isArray(right)) {
         within = left.length === right.length;
         for (let i = 0; within && i < left.length; i++) {
-            // eslint-disable-next-line security/detect-object-injection
             within = isWithinDelta(left[i], right[i], delta, compare);
         }
     } else if (typeof left === 'object' && typeof right === 'object') {
-        // eslint-disable-next-line security/detect-object-injection
         within = Object.keys(left).length === Object.keys(right).length;
 
         Object.keys(left).forEach((key) => {
-            // eslint-disable-next-line security/detect-object-injection
             within = isWithinDelta(left[key], right[key], delta, compare || key === 'score' || key === 'intents');
         });
     } else if (left !== right) {
@@ -276,7 +273,13 @@ describe('LuisRecognizer', () => {
         assert(res.intents);
         assert(res.intents.Delivery);
         assert(res.intents.Delivery.score > 0 && res.intents.Delivery.score <= 1);
+
         assert(LuisRecognizer.topIntent(res) === 'Delivery');
+
+        const sortedIntents = LuisRecognizer.sortedIntents(res);
+        assert(sortedIntents[0].intent) === 'Delivery';
+        assert(sortedIntents[sortedIntents.length - 1].intent) === 'EntityTests';
+
         assert(res.entities);
         assert(res.entities.number);
         assert(res.entities.number[0] === 2001);
@@ -701,7 +704,9 @@ describe('LuisRecognizer', () => {
                         assert(telemetry.properties);
                         assert('applicationId' in telemetry.properties);
                         assert('intent' in telemetry.properties);
+                        assert('intent2' in telemetry.properties);
                         assert('intentScore' in telemetry.properties);
+                        assert('intentScore2' in telemetry.properties);
                         assert('sentimentLabel' in telemetry.properties);
                         assert('sentimentScore' in telemetry.properties);
                         assert('entities' in telemetry.properties);
@@ -751,7 +756,9 @@ describe('LuisRecognizer', () => {
                         assert(telemetry.properties);
                         assert('applicationId' in telemetry.properties);
                         assert('intent' in telemetry.properties);
+                        assert('intent2' in telemetry.properties);
                         assert('intentScore' in telemetry.properties);
+                        assert('intentScore2' in telemetry.properties);
                         assert('sentimentLabel' in telemetry.properties);
                         assert('sentimentScore' in telemetry.properties);
                         assert('entities' in telemetry.properties);
@@ -808,7 +815,9 @@ describe('LuisRecognizer', () => {
                         assert('applicationId' in telemetry.properties);
                         assert('intent' in telemetry.properties);
                         assert(telemetry.properties['intent'] === 'MYINTENT');
+                        assert('intent2' in telemetry.properties);
                         assert('intentScore' in telemetry.properties);
+                        assert('intentScore2' in telemetry.properties);
                         assert('sentimentLabel' in telemetry.properties);
                         assert('sentimentScore' in telemetry.properties);
                         assert('entities' in telemetry.properties);

@@ -6,11 +6,16 @@
  * Licensed under the MIT License.
  */
 
+import fetch from 'node-fetch';
+import { RequestInfo, RequestInit } from 'node-fetch';
 import { LUISRuntimeModels as LuisModels } from '@azure/cognitiveservices-luis-runtime';
-import { LuisRecognizerInternal } from './luisRecognizerOptions';
 import { LuisApplication, LuisRecognizerOptionsV3 } from './luisRecognizer';
+import { LuisRecognizerInternal } from './luisRecognizerOptions';
 import { NullTelemetryClient, TurnContext, RecognizerResult } from 'botbuilder-core';
-const fetch = require('node-fetch');
+import { DialogContext } from 'botbuilder-dialogs';
+import { ExternalEntity, validateExternalEntity } from './externalEntity';
+import { validateDynamicList } from './dynamicList';
+
 const LUIS_TRACE_TYPE = 'https://www.luis.ai/schemas/trace';
 const LUIS_TRACE_NAME = 'LuisRecognizer';
 const LUIS_TRACE_LABEL = 'LuisV3 Trace';
@@ -20,10 +25,13 @@ const MetadataKey = '$instance';
 
 /**
  * Validates if the options provided are valid [LuisRecognizerOptionsV3](xref:botbuilder-ai.LuisRecognizerOptionsV3).
- * @returns A boolean value that indicates param options is a [LuisRecognizerOptionsV3](xref:botbuilder-ai.LuisRecognizerOptionsV3).
+ *
+ * @param {any} options options to type test
+ * @returns {boolean} A boolean value that indicates param options is a [LuisRecognizerOptionsV3](xref:botbuilder-ai.LuisRecognizerOptionsV3).
  */
-export function isLuisRecognizerOptionsV3(options: any): options is LuisRecognizerOptionsV3 {
-    return options.apiVersion && options.apiVersion === 'v3';
+export function isLuisRecognizerOptionsV3(options: unknown): options is LuisRecognizerOptionsV3 {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    return (options as any).apiVersion && (options as any).apiVersion === 'v3';
 }
 
 /**
@@ -32,8 +40,9 @@ export function isLuisRecognizerOptionsV3(options: any): options is LuisRecogniz
 export class LuisRecognizerV3 extends LuisRecognizerInternal {
     /**
      * Creates a new [LuisRecognizerV3](xref:botbuilder-ai.LuisRecognizerV3) instance.
-     * @param application An object conforming to the [LuisApplication](xref:botbuilder-ai.LuisApplication) definition or a string representing a LUIS application endpoint, usually retrieved from https://luis.ai.
-     * @param options Optional. Options object used to control predictions. Should conform to the [LuisRecognizerOptionsV3](xref:botbuilder-ai.LuisRecognizerOptionsV3) definition.
+     *
+     * @param {LuisApplication} application An object conforming to the [LuisApplication](xref:botbuilder-ai.LuisApplication) definition or a string representing a LUIS application endpoint, usually retrieved from https://luis.ai.
+     * @param {LuisRecognizerOptionsV3} options Optional. Options object used to control predictions. Should conform to the [LuisRecognizerOptionsV3](xref:botbuilder-ai.LuisRecognizerOptionsV3) definition.
      */
     constructor(application: LuisApplication, options?: LuisRecognizerOptionsV3) {
         super(application);
@@ -56,11 +65,68 @@ export class LuisRecognizerV3 extends LuisRecognizerInternal {
 
     /**
      * Calls LUIS to recognize intents and entities in a users utterance.
-     * @param context The [TurnContext](xref:botbuilder-core.TurnContext).
-     * @returns Analysis of utterance in form of [RecognizerResult](xref:botbuilder-core.RecognizerResult).
+     *
+     * @param {TurnContext} context The [TurnContext](xref:botbuilder-core.TurnContext).
+     * @returns {Promise<RecognizerResult>} Analysis of utterance in form of [RecognizerResult](xref:botbuilder-core.RecognizerResult).
      */
-    async recognizeInternal(context: TurnContext): Promise<RecognizerResult> {
-        const utterance: string = context.activity.text || '';
+    async recognizeInternal(context: DialogContext | TurnContext): Promise<RecognizerResult> {
+        if (context instanceof DialogContext) {
+            const dialogContext = context;
+            const activity = dialogContext.context.activity;
+            let options = this.predictionOptions;
+            if (options.externalEntityRecognizer) {
+                // call external entity recognizer
+                const matches = await options.externalEntityRecognizer.recognize(dialogContext, activity);
+                // TODO: checking for 'text' because we get an extra non-real entity from the text recognizers
+                if (matches.entities && Object.entries(matches.entities).length) {
+                    options = {
+                        apiVersion: 'v3',
+                        externalEntities: [],
+                    };
+                    const entities = matches.entities;
+                    const instance = entities['$instance'];
+                    if (instance) {
+                        Object.entries(entities)
+                            .filter(([key, _value]) => key !== 'text' && key !== '$instance')
+                            .reduce((externalEntities: ExternalEntity[], [key, value]) => {
+                                const instances: unknown[] = instance[`${key}`];
+                                const values: unknown[] = Array.isArray(value) ? value : [];
+                                if (instances?.length === values?.length) {
+                                    instances.forEach((childInstance) => {
+                                        if (
+                                            childInstance &&
+                                            Object.prototype.hasOwnProperty.call(childInstance, 'startIndex') &&
+                                            Object.prototype.hasOwnProperty.call(childInstance, 'endIndex')
+                                        ) {
+                                            const start = childInstance['startIndex'];
+                                            const end = childInstance['endIndex'];
+                                            externalEntities.push({
+                                                entityName: key,
+                                                startIndex: start,
+                                                entityLength: end - start,
+                                                resolution: value,
+                                            });
+                                        }
+                                    });
+                                }
+                                return externalEntities;
+                            }, options.externalEntities);
+                    }
+                }
+            }
+            // call luis recognizer with options.externalEntities populated from externalEntityRecognizer
+            return this.recognize(dialogContext.context, activity?.text ?? '', options);
+        } else {
+            const turnContext = context;
+            return this.recognize(turnContext, turnContext?.activity?.text ?? '', this.predictionOptions);
+        }
+    }
+
+    private async recognize(
+        context: TurnContext,
+        utterance: string,
+        options: LuisRecognizerOptionsV3
+    ): Promise<RecognizerResult> {
         if (!utterance.trim()) {
             // Bypass LUIS if the activity's text is null or whitespace
             return Promise.resolve({
@@ -70,8 +136,8 @@ export class LuisRecognizerV3 extends LuisRecognizerInternal {
             });
         }
 
-        const uri = this.buildUrl();
-        const httpOptions = this.buildRequestBody(utterance);
+        const uri = this.buildUrl(options);
+        const httpOptions = this.buildRequestBody(utterance, options);
 
         const data = await fetch(uri, httpOptions);
         const response = await data.json();
@@ -92,51 +158,47 @@ export class LuisRecognizerV3 extends LuisRecognizerInternal {
             result.entities[MetadataKey] = result.entities[MetadataKey] ? result.entities[MetadataKey] : {};
         }
 
-        this.emitTraceInfo(context, response.prediction, result);
+        this.emitTraceInfo(context, response.prediction, result, options);
 
         return result;
     }
 
-    /**
-     * @private
-     */
-    private buildUrl() {
+    private buildUrl(options: LuisRecognizerOptionsV3): RequestInfo {
         const baseUri = this.application.endpoint || 'https://westus.api.cognitive.microsoft.com';
         let uri = `${baseUri}/luis/prediction/v3.0/apps/${this.application.applicationId}`;
 
-        if (this.predictionOptions.version) {
-            uri += `/versions/${this.predictionOptions.version}/predict`;
+        if (options.version) {
+            uri += `/versions/${options.version}/predict`;
         } else {
-            uri += `/slots/${this.predictionOptions.slot}/predict`;
+            uri += `/slots/${options.slot}/predict`;
         }
 
-        const params = `?verbose=${this.predictionOptions.includeInstanceData}&log=${this.predictionOptions.log}&show-all-intents=${this.predictionOptions.includeAllIntents}`;
+        const params = `?verbose=${options.includeInstanceData}&log=${options.log}&show-all-intents=${options.includeAllIntents}`;
 
         uri += params;
         return uri;
     }
 
-    /**
-     * @private
-     */
-    private buildRequestBody(utterance: string) {
+    private buildRequestBody(utterance: string, options: LuisRecognizerOptionsV3): RequestInit {
         const content = {
             query: utterance,
             options: {
-                preferExternalEntities: this.predictionOptions.preferExternalEntities,
+                preferExternalEntities: options.preferExternalEntities,
             },
         };
 
-        if (this.predictionOptions.datetimeReference) {
-            content.options['datetimeReference'] = this.predictionOptions.datetimeReference;
+        if (options.datetimeReference) {
+            content.options['datetimeReference'] = options.datetimeReference;
         }
 
-        if (this.predictionOptions.dynamicLists) {
-            content['dynamicLists'] = this.predictionOptions.dynamicLists;
+        if (options.dynamicLists) {
+            options.dynamicLists.forEach((list) => validateDynamicList(list));
+            content['dynamicLists'] = options.dynamicLists;
         }
 
-        if (this.predictionOptions.externalEntities) {
-            content['externalEntities'] = this.predictionOptions.externalEntities;
+        if (options.externalEntities) {
+            options.externalEntities.forEach((entity) => validateExternalEntity(entity));
+            content['externalEntities'] = options.externalEntities;
         }
 
         return {
@@ -149,18 +211,16 @@ export class LuisRecognizerV3 extends LuisRecognizerInternal {
         };
     }
 
-    /**
-     * @private
-     */
     private emitTraceInfo(
         context: TurnContext,
         luisResult: LuisModels.LuisResult,
-        recognizerResult: RecognizerResult
-    ): Promise<any> {
-        const traceInfo: any = {
+        recognizerResult: RecognizerResult,
+        options: LuisRecognizerOptionsV3
+    ): Promise<unknown> {
+        const traceInfo = {
             recognizerResult: recognizerResult,
             luisResult: luisResult,
-            luisOptions: this.predictionOptions,
+            luisOptions: options,
             luisModel: {
                 ModelID: this.application.applicationId,
             },
@@ -210,7 +270,7 @@ function mapProperties(source, inInstance) {
             }
 
             if (!inInstance && isGeographyV2) {
-                const geoEntity: any = {};
+                const geoEntity: Partial<Record<'location' | 'type', string>> = {};
                 for (const itemProps in item) {
                     if (itemProps === 'value') {
                         geoEntity.location = item[itemProps];
@@ -224,7 +284,13 @@ function mapProperties(source, inInstance) {
         }
         result = narr;
     } else if (source instanceof Object && typeof source !== 'string') {
-        const nobj: any = {};
+        const nobj: Partial<{
+            datetime: unknown;
+            datetimeV1: unknown;
+            type: string;
+            timex: unknown[];
+            units: unknown;
+        }> = {};
 
         // Fix datetime by reverting to simple timex
         if (!inInstance && source.type && typeof source.type === 'string' && _dateSubtypes.includes(source.type)) {
@@ -285,14 +351,11 @@ function extractEntitiesAndMetadata(prediction) {
     return mapProperties(entities, false);
 }
 
-function getSentiment(luis): any {
-    let result: any;
+function getSentiment(luis): Record<'label' | 'score', unknown> | undefined {
     if (luis.sentiment) {
-        result = {
+        return {
             label: luis.sentiment.label,
             score: luis.sentiment.score,
         };
     }
-
-    return result;
 }

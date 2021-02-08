@@ -1,6 +1,0 @@
-{
-    "$kind": "Microsoft.LuisRecognizer",
-    "applicationId": "SimpleIntentEntity",
-    "endpoint": "https://westus.api.cognitive.microsoft.com",
-    "endpointKey": "TEST_ENDPOINT_KEY"
-}

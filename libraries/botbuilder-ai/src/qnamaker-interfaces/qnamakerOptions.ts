@@ -17,7 +17,7 @@ export interface QnAMakerOptions {
     /**
      * (Optional) The minimum score threshold, used to filter returned results. Values range from score of 0.0 to 1.0.
      *
-     * @remarks
+     * @summary
      * Defaults to "0.3".
      */
     scoreThreshold?: number;
@@ -25,7 +25,7 @@ export interface QnAMakerOptions {
     /**
      * (Optional) number of results to return.
      *
-     * @remarks
+     * @summary
      * Defaults to "1".
      */
     top?: number;
@@ -43,7 +43,7 @@ export interface QnAMakerOptions {
     /**
      * (Optional) The time in milliseconds to wait before the request times out.
      *
-     * @remarks Defaults to "100000" milliseconds.
+     * @summary Defaults to "100000" milliseconds.
      */
     timeout?: number;
 

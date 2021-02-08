@@ -18,6 +18,9 @@ import {
     MessagingExtensionResponse,
     O365ConnectorCardActionQuery,
     SigninStateVerificationQuery,
+    TabRequest,
+    TabResponse,
+    TabSubmit,
     TaskModuleRequest,
     TaskModuleResponse,
     TeamsChannelData,
@@ -117,6 +120,16 @@ export class TeamsActivityHandler extends ActivityHandler {
                     case 'task/submit':
                         return ActivityHandler.createInvokeResponse(
                             await this.handleTeamsTaskModuleSubmit(context, context.activity.value)
+                        );
+
+                    case 'tab/fetch':
+                        return ActivityHandler.createInvokeResponse(
+                            await this.handleTeamsTabFetch(context, context.activity.value)
+                        );
+
+                    case 'tab/submit':
+                        return ActivityHandler.createInvokeResponse(
+                            await this.handleTeamsTabSubmit(context, context.activity.value)
                         );
 
                     default:
@@ -286,6 +299,26 @@ export class TeamsActivityHandler extends ActivityHandler {
         context: TurnContext,
         taskModuleRequest: TaskModuleRequest
     ): Promise<TaskModuleResponse> {
+        throw new Error('NotImplemented');
+    }
+
+    /**
+     * Receives invoke activities with Activity name of 'tab/fetch'
+     * @param context A context object for this turn.
+     * @param tabRequest The tab invoke request value payload.
+     * @returns A Tab Response for the request.
+     */
+    protected async handleTeamsTabFetch(context: TurnContext, tabRequest: TabRequest): Promise<TabResponse> {
+        throw new Error('NotImplemented');
+    }
+
+    /**
+     * Receives invoke activities with Activity name of 'tab/submit'
+     * @param context A context object for this turn.
+     * @param tabSubmit The tab submit invoke request value payload.
+     * @returns A Tab Response for the request.
+     */
+    protected async handleTeamsTabSubmit(context: TurnContext, tabSubmit: TabSubmit): Promise<TabResponse> {
         throw new Error('NotImplemented');
     }
 

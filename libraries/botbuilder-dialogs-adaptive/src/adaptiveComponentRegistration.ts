@@ -6,6 +6,7 @@
  * Licensed under the MIT License.
  */
 
+import { Expression } from 'adaptive-expressions';
 import { ComponentRegistration } from 'botbuilder-core';
 import {
     ResourceExplorer,
@@ -194,6 +195,7 @@ import {
 } from './templates';
 import { DynamicBeginDialogDeserializer } from './dynamicBeginDialogDeserializer';
 import { TriggerSelectorConfiguration } from './triggerSelector';
+import { HasPendingActionsFunction, IsDialogActiveFunction } from './functions';
 
 type Type<T> = {
     $kind: string;
@@ -342,6 +344,10 @@ export class AdaptiveComponentRegistration extends ComponentRegistration impleme
         this._addDeclarativeType<RandomSelector, TriggerSelectorConfiguration>(RandomSelector);
         this._addDeclarativeType<TrueSelector, TriggerSelectorConfiguration>(TrueSelector);
         this._addDeclarativeType<MostSpecificSelector, MostSpecificSelectorConfiguration>(MostSpecificSelector);
+
+        Expression.functions.add(IsDialogActiveFunction.functionName, new IsDialogActiveFunction());
+        Expression.functions.add(IsDialogActiveFunction.functionAlias, new IsDialogActiveFunction());
+        Expression.functions.add(HasPendingActionsFunction.functionName, new HasPendingActionsFunction());
     }
 
     /**

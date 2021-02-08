@@ -121,6 +121,7 @@ export class ResourceExplorer {
 
     /**
      * Add a folder resource.
+     *
      * @param {string}  folder Folder to be included as a resource.
      * @param {boolean} includeSubFolders Whether to include subfolders.
      * @param {boolean} monitorChanges Whether to track changes.
@@ -194,9 +195,32 @@ export class ResourceExplorer {
     }
 
     /**
-     * Build type for given $kind.
-     * @param kind $kind.
-     * @param config Source configuration object.
+     * Register a declarative type with the resource loader system.
+     *
+     * @template T The type of object.
+     * @param {string} kind The $kind name to map to this type.
+     * @param {Newable<T>} type Type of object to create.
+     * @param {CustomDeserializer}  loader Optional custom deserializer.
+     * @returns {ResourceExplorer} Resource explorer for fluent style multiple calls.
+     */
+    public registerType<T>(
+        kind: string,
+        type: Newable<T>,
+        loader?: CustomDeserializer<T, Record<string, unknown>>
+    ): ResourceExplorer {
+        this.registerComponentTypes();
+        this.registerTypeInternal(kind, type, loader);
+        return this;
+    }
+
+    /**
+     * Build type for given $kind from configuration.
+     *
+     * @template T Type of object.
+     * @template C Type of configuration
+     * @param {string} kind $kind.
+     * @param {C} config Source configuration object.
+     * @returns {T} Instantiated object.
      */
     public buildType<T, C>(kind: string, config: C): T {
         this.registerComponentTypes();
@@ -211,9 +235,20 @@ export class ResourceExplorer {
 
     /**
      * Load type from resource
-     * @param resourceOrIdId resource or resource id to be parsed as a type.
-     * @returns type parsed from resource
+     *
+     * @template T Type of object.
+     * @param {string} resourceId Resource id to bind to.
+     * @returns {T} Type created from resource
      */
+    public loadType<T>(resourceId: string): T;
+    /**
+     * Load type from resource
+     *
+     * @template T Type of object.
+     * @param {Resource} resource Resource id to bind to.
+     * @returns {T} Type created from resource
+     */
+    public loadType<T>(resource: Resource): T;
     public loadType<T>(resourceOrId: Resource | string): T {
         this.registerComponentTypes();
 
@@ -234,7 +269,7 @@ export class ResourceExplorer {
         Object.assign(
             result,
             JSON.parse(json, (_key: string, value: unknown): unknown => {
-                if (typeof value !== 'object') {
+                if (typeof value !== 'object' || value === null) {
                     return value;
                 }
                 if (Array.isArray(value)) {
@@ -290,16 +325,15 @@ export class ResourceExplorer {
     }
 
     private getComponentRegistrations(): ComponentRegistration[] {
-        return ComponentRegistration.components.filter((component: ComponentRegistration) =>
-            isComponentDeclarativeTypes(component)
+        return (
+            this._declarativeTypes ??
+            ComponentRegistration.components.filter((component: ComponentRegistration) =>
+                isComponentDeclarativeTypes(component)
+            )
         );
     }
 
-    private registerTypeInternal<T, C>(
-        kind: string,
-        type: new (...args: unknown[]) => T,
-        loader?: CustomDeserializer<T, C>
-    ): void {
+    private registerTypeInternal<T, C>(kind: string, type: Newable<T>, loader?: CustomDeserializer<T, C>): void {
         this._kindToType.set(kind, type);
         this._kindDeserializer.set(kind, loader || new DefaultLoader(this));
     }

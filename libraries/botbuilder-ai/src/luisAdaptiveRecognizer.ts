@@ -14,18 +14,41 @@ import {
     StringExpression,
     StringExpressionConverter,
 } from 'adaptive-expressions';
+
 import { Activity, RecognizerResult } from 'botbuilder-core';
 import { Converter, ConverterFactory, DialogContext, Recognizer, RecognizerConfiguration } from 'botbuilder-dialogs';
-import { LuisApplication, LuisPredictionOptions, LuisRecognizer, LuisRecognizerOptionsV3 } from './luisRecognizer';
+import { ListElement } from './listElement';
+import {
+    LuisAdaptivePredictionOptions,
+    LuisAdaptivePredictionOptionsConfiguration,
+    LuisAdaptivePredictionOptionsConverter,
+} from './luisAdaptivePredictionOptions';
+import { LuisApplication, LuisRecognizer, LuisRecognizerOptionsV3 } from './luisRecognizer';
 import { LuisTelemetryConstants } from './luisTelemetryConstants';
+
+/**
+ * Defines an extension for a list entity.
+ */
+type DynamicList = {
+    /**
+     * The name of the list to extend.
+     */
+    entity: string;
+    /**
+     * The lists to append on the extended list entity.
+     */
+    list: ListElement[];
+};
 
 export interface LuisAdaptiveRecognizerConfiguration extends RecognizerConfiguration {
     applicationId?: string | Expression | StringExpression;
-    logPersonalInformation?: boolean | string | Expression | BoolExpression;
-    dynamicLists?: unknown[] | string | Expression | ArrayExpression<unknown>;
+    version?: string | Expression | StringExpression;
     endpoint?: string | Expression | StringExpression;
     endpointKey?: string | Expression | StringExpression;
-    predictionOptions?: LuisPredictionOptions;
+    externalEntityRecognizer?: string | Recognizer;
+    dynamicLists?: unknown[] | string | Expression | ArrayExpression<unknown>;
+    predictionOptions?: LuisAdaptivePredictionOptionsConfiguration | LuisAdaptivePredictionOptions;
+    logPersonalInformation?: boolean | string | Expression | BoolExpression;
 }
 
 /**
@@ -40,18 +63,14 @@ export class LuisAdaptiveRecognizer extends Recognizer implements LuisAdaptiveRe
     public applicationId: StringExpression;
 
     /**
-     * The flag to indicate in personal information should be logged in telemetry.
+     * LUIS application version.
      */
-    public logPersonalInformation: BoolExpression = new BoolExpression('=settings.telemetry.logPersonalInformation');
-
-    /**
-     * LUIS dynamic list.
-     */
-    public dynamicLists: ArrayExpression<any>;
+    public version: StringExpression;
 
     /**
      * LUIS endpoint to query.
-     * @remarks
+     *
+     * @summary
      * For example: "https://westus.api.cognitive.microsoft.com"
      */
     public endpoint: StringExpression;
@@ -63,26 +82,38 @@ export class LuisAdaptiveRecognizer extends Recognizer implements LuisAdaptiveRe
 
     /**
      * External entity recognizer.
-     * @remarks
+     *
+     * @summary
      * This recognizer is run before calling LUIS and the results are passed to LUIS.
      */
-    // public externalEntityRecognizer: Recognizer;
+    public externalEntityRecognizer: Recognizer;
+
+    /**
+     * LUIS dynamic list.
+     */
+    public dynamicLists: ArrayExpression<DynamicList>;
 
     /**
      * LUIS prediction options.
      */
-    public predictionOptions: LuisPredictionOptions;
+    public predictionOptions: LuisAdaptivePredictionOptions;
+
+    /**
+     * The flag to indicate in personal information should be logged in telemetry.
+     */
+    public logPersonalInformation: BoolExpression = new BoolExpression('=settings.telemetry.logPersonalInformation');
 
     public getConverter(property: keyof LuisAdaptiveRecognizerConfiguration): Converter | ConverterFactory {
         switch (property) {
             case 'applicationId':
+            case 'version':
+            case 'endpoint':
+            case 'endpointKey':
                 return new StringExpressionConverter();
             case 'dynamicLists':
                 return new ArrayExpressionConverter();
-            case 'endpoint':
-                return new StringExpressionConverter();
-            case 'endpointKey':
-                return new StringExpressionConverter();
+            case 'predictionOptions':
+                return new LuisAdaptivePredictionOptionsConverter();
             case 'logPersonalInformation':
                 return new BoolExpressionConverter();
             default:
@@ -92,17 +123,19 @@ export class LuisAdaptiveRecognizer extends Recognizer implements LuisAdaptiveRe
 
     /**
      * To recognize intents and entities in a users utterance.
-     * @param dialogContext The [DialogContext](xref:botbuilder-dialogs.DialogContext).
-     * @param activity The [Activity](xref:botbuilder-core.Activity).
-     * @param telemetryProperties Optional. Additional properties to be logged to telemetry with event.
-     * @param telemetryMetrics Optional. Additional metrics to be logged to telemetry with event.
+     *
+     * @param {DialogContext} dialogContext The [DialogContext](xref:botbuilder-dialogs.DialogContext).
+     * @param {Activity} activity The [Activity](xref:botbuilder-core.Activity).
+     * @param {object} telemetryProperties Optional. Additional properties to be logged to telemetry with event.
+     * @param {object} telemetryMetrics Optional. Additional metrics to be logged to telemetry with event.
+     * @returns {Promise<RecognizerResult>} A promise resolving to the recognizer result.
      */
     public async recognize(
         dialogContext: DialogContext,
         activity: Activity,
-        telemetryProperties?: { [key: string]: string },
-        telemetryMetrics?: { [key: string]: number }
-    ) {
+        telemetryProperties?: Record<string, string>,
+        telemetryMetrics?: Record<string, number>
+    ): Promise<RecognizerResult> {
         // Validate passed in activity matches turn activity
         const context = dialogContext.context;
         const utteranceMatches: boolean =
@@ -121,40 +154,73 @@ export class LuisAdaptiveRecognizer extends Recognizer implements LuisAdaptiveRe
         };
 
         // Create and call wrapper
-        const wrapper = new LuisRecognizer(application, this.recognizerOptions(dialogContext));
+        const recognizer = new LuisRecognizer(application, this.recognizerOptions(dialogContext));
 
-        const result = await wrapper.recognize(context);
+        const result = await recognizer.recognize(dialogContext);
         this.trackRecognizerResult(
             dialogContext,
             'LuisResult',
             this.fillRecognizerResultTelemetryProperties(result, telemetryProperties, dialogContext),
             telemetryMetrics
         );
+
         return result;
     }
 
     /**
      * Construct V3 recognizer options from the current dialog context.
-     * @param dialogContext Current dialog context.
+     *
+     * @param {DialogContext} dialogContext Current dialog context.
+     * @returns {LuisRecognizerOptionsV3} luis recognizer options
      */
     public recognizerOptions(dialogContext: DialogContext): LuisRecognizerOptionsV3 {
-        const options: LuisRecognizerOptionsV3 = Object.assign({}, this.predictionOptions as any);
-        if (this.telemetryClient) {
-            options.telemetryClient = this.telemetryClient;
+        const options: LuisRecognizerOptionsV3 = {
+            apiVersion: 'v3',
+            externalEntityRecognizer: this.externalEntityRecognizer,
+            telemetryClient: this.telemetryClient,
+            includeAllIntents: false,
+            includeInstanceData: false,
+            includeAPIResults: false,
+            log: true,
+            preferExternalEntities: true,
+            slot: 'production',
+        };
+
+        const dcState = dialogContext.state;
+
+        if (this.predictionOptions) {
+            options.datetimeReference = this.predictionOptions.dateTimeReference?.getValue(dcState);
+            options.externalEntities = this.predictionOptions.externalEntities?.getValue(dcState);
+            options.includeAllIntents = this.predictionOptions.includeAllIntents?.getValue(dcState) ?? false;
+            options.includeInstanceData = this.predictionOptions.includeInstanceData?.getValue(dcState) ?? true;
+            options.includeAPIResults = this.predictionOptions.includeAPIResults?.getValue(dcState) ?? false;
+            options.log = this.predictionOptions.log?.getValue(dcState) ?? true;
+            options.preferExternalEntities = this.predictionOptions.preferExternalEntities?.getValue(dcState) ?? true;
+            options.slot = this.predictionOptions.slot?.getValue(dcState) === 'staging' ? 'staging' : 'production';
         }
-        if (this.dynamicLists != null) {
-            options.dynamicLists = this.dynamicLists.getValue(dialogContext.state);
+
+        if (this.version) {
+            options.version = this.version.getValue(dcState);
         }
+
+        if (this.dynamicLists) {
+            options.dynamicLists = this.dynamicLists.getValue(dcState).map((item) => ({
+                listEntityName: item.entity,
+                requestLists: item.list,
+            }));
+        }
+
         return options;
     }
 
     /**
      * Fills the event properties for LuisResult event for telemetry.
      * These properties are logged when the recognizer is called.
-     * @param recognizerResult Last activity sent from user.
-     * @param telemetryProperties Additional properties to be logged to telemetry with the LuisResult event.
-     * @param dialogContext Dialog context.
-     * @returns A dictionary that is sent as properties to BotTelemetryClient.trackEvent method for the LuisResult event.
+     *
+     * @param {RecognizerResult} recognizerResult Last activity sent from user.
+     * @param {object} telemetryProperties Additional properties to be logged to telemetry with the LuisResult event.
+     * @param {DialogContext} dialogContext Dialog context.
+     * @returns {object} A dictionary that is sent as properties to BotTelemetryClient.trackEvent method for the LuisResult event.
      */
     protected fillRecognizerResultTelemetryProperties(
         recognizerResult: RecognizerResult,
@@ -164,15 +230,18 @@ export class LuisAdaptiveRecognizer extends Recognizer implements LuisAdaptiveRe
         const logPersonalInfo = this.logPersonalInformation.tryGetValue(dialogContext.state);
         const applicationId = this.applicationId.tryGetValue(dialogContext.state);
 
-        const topLuisIntent: string = LuisRecognizer.topIntent(recognizerResult);
-        const intentScore: number =
-            (recognizerResult.intents[topLuisIntent] && recognizerResult.intents[topLuisIntent].score) || 0;
+        const [firstIntent, secondIntent] = LuisRecognizer.sortedIntents(recognizerResult);
 
         // Add the intent score and conversation id properties
         const properties: { [key: string]: string } = {};
+
         properties[LuisTelemetryConstants.applicationIdProperty] = applicationId.value;
-        properties[LuisTelemetryConstants.intentProperty] = topLuisIntent;
-        properties[LuisTelemetryConstants.intentScoreProperty] = intentScore.toString();
+
+        properties[LuisTelemetryConstants.intentProperty] = firstIntent?.intent ?? '';
+        properties[LuisTelemetryConstants.intentScoreProperty] = (firstIntent?.score ?? 0).toString();
+        properties[LuisTelemetryConstants.intent2Property] = secondIntent?.intent ?? '';
+        properties[LuisTelemetryConstants.intentScore2Property] = (secondIntent?.score ?? 0).toString();
+
         properties[LuisTelemetryConstants.fromIdProperty] = dialogContext.context.activity.from.id;
 
         if (recognizerResult.sentiment) {

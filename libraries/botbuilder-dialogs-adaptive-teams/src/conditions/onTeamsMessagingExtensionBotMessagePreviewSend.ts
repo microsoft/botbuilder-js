@@ -16,7 +16,7 @@ import { OnInvokeActivity } from 'botbuilder-dialogs-adaptive';
  * and activity.value.botMessagePreviewAction == 'send'.
  */
 export class OnTeamsMessagingExtensionBotMessagePreviewSend extends OnInvokeActivity {
-    public static $kind = 'Teams.OnMessagingExtensionBotMessagePreviewEdit';
+    public static readonly $kind = 'Teams.OnMessagingExtensionBotMessagePreviewEdit';
 
     public getExpression(parser: ExpressionParserInterface): Expression {
         return Expression.andExpression(

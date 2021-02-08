@@ -18,6 +18,12 @@
     "lib/",
     "node_modules/"
   ],
+  "settings": {
+    "jsdoc": {
+      "ignoreInternal": true,
+      "ignorePrivate": true
+    }
+  },
   "overrides": [
     {
       "files": ["*.test.js", "*.test.ts"],
@@ -26,7 +32,8 @@
         "node": true
       },
       "rules": {
-        "@typescript-eslint/no-var-requires": 0
+        "@typescript-eslint/no-var-requires": "off",
+        "security/detect-non-literal-fs-filename": "off"
       }
     },
     {
@@ -37,7 +44,7 @@
         "require": true
       },
       "rules": {
-        "@typescript-eslint/no-var-requires": 0
+        "@typescript-eslint/no-var-requires": "off"
       }
     }
   ],
@@ -56,6 +63,8 @@
     "security"
   ],
   "rules": {
+    "@typescript-eslint/no-empty-function": "off",
+    "@typescript-eslint/no-explicit-any": "error",
     "@typescript-eslint/no-unused-vars": ["error", {
       "args": "after-used",
       "argsIgnorePattern": "^_",
@@ -67,12 +76,13 @@
       "publicOnly": true,
       "enableFixer": false
     }],
-    "jsdoc/require-param": ["error"],
-    "jsdoc/require-param-type": ["error"],
-    "jsdoc/require-returns": ["error"],
-    "jsdoc/require-returns-type": ["error"],
+    "jsdoc/require-param": "error",
+    "jsdoc/require-param-type": "error",
+    "jsdoc/require-returns": "error",
+    "jsdoc/require-returns-type": "error",
     "no-unused-vars": "off",
     "no-var": "error",
-    "prettier/prettier": "error"
+    "prettier/prettier": "error",
+    "security/detect-object-injection": "off"
   }
 }

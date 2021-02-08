@@ -9,7 +9,7 @@
 /**
  * The date time recognizer can recognize a wide variety of time expressions.
  *
- * @remarks
+ * @summary
  * The LUIS recognizer handles time expressions like "next monday" and extracts them into objects with a
  * type and an array of timex expressions.
  *
@@ -21,7 +21,7 @@ export interface DateTimeSpec {
     /**
      * Type of expression.
      *
-     * @remarks
+     * @summary
      * Example types include:
      *
      * - **time**: simple time expression like "3pm".

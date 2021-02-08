@@ -3,7 +3,14 @@ const path = require('path');
 const { ComponentRegistration } = require('botbuilder-core');
 const { AdaptiveComponentRegistration } = require('botbuilder-dialogs-adaptive');
 const { ResourceExplorer } = require('botbuilder-dialogs-declarative');
-const { AdaptiveTestComponentRegistration, TestUtils } = require('../lib');
+const {
+    AdaptiveTestComponentRegistration,
+    MockLuisLoader,
+    MockLuisRecognizer,
+    TestUtils,
+    useMockLuisSettings,
+} = require('../lib');
+const { LuisAdaptiveRecognizer } = require('botbuilder-ai');
 
 describe('TestScriptTests', function () {
     this.timeout(5000);
@@ -73,8 +80,28 @@ describe('TestScriptTests', function () {
         await TestUtils.runTestScript(resourceExplorer, 'TestScriptTests_CustomEvent');
     });
 
+    it('HttpRequestLuisMock', async () => {
+        const resourceDir = path.join(__dirname, 'resources/TestScriptTests/LuisMock');
+        const config = useMockLuisSettings(resourceDir);
+        const explorer = new ResourceExplorer().addFolder(
+            path.join(__dirname, 'resources/TestScriptTests'),
+            true,
+            false
+        );
+        explorer.registerType(LuisAdaptiveRecognizer.$kind, MockLuisRecognizer, new MockLuisLoader(explorer, config));
+        await TestUtils.runTestScript(explorer, 'TestScriptTests_HttpRequestLuisMock', undefined, config);
+    });
+
     it('HttpRequestMock', async () => {
         await TestUtils.runTestScript(resourceExplorer, 'TestScriptTests_HttpRequestMock');
+    });
+
+    it('HttpRequestQnAMakerRecognizerMock', async () => {
+        await TestUtils.runTestScript(resourceExplorer, 'TestScriptTests_HttpRequestQnAMakerRecognizerMock');
+    });
+
+    it('HttpRequestQnAMakerDialogMock', async () => {
+        await TestUtils.runTestScript(resourceExplorer, 'TestScriptTests_HttpRequestQnAMakerDialogMock');
     });
 
     it('OAuthInputRetries_WithNullMessageText', async () => {
@@ -93,6 +120,14 @@ describe('TestScriptTests', function () {
         } else {
             delete process.env.file;
         }
+    });
+
+    it('SettingMock', async () => {
+        const configuration = {
+            file: 'set settings.file',
+            fileoverwrite: 'this is overwritten',
+        };
+        await TestUtils.runTestScript(resourceExplorer, 'TestScriptTests_SettingMock', undefined, configuration);
     });
 
     it('UserActivity', async () => {

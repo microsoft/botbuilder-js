@@ -10,7 +10,6 @@ import { BotTelemetryClient, NullTelemetryClient, TurnContext } from 'botbuilder
 
 import {
     FeedbackRecords,
-    JoinOperator,
     QnAMakerEndpoint,
     QnAMakerMetadata,
     QnAMakerOptions,
@@ -39,16 +38,17 @@ export interface QnAMakerTelemetryClient {
     /**
      * Calls the QnA Maker service to generate answer(s) for a question.
      *
-     * @remarks
+     * @summary
      * Returns an array of answers sorted by score with the top scoring answer returned first.
      *
      * In addition to returning the results from QnA Maker, [getAnswers()](#getAnswers) will also
      * emit a trace activity that contains the QnA Maker results.
      *
-     * @param context The Turn Context that contains the user question to be queried against your knowledge base.
-     * @param options (Optional) The options for the QnA Maker knowledge base. If null, constructor option is used for this instance.
-     * @param telemetryProperties Additional properties to be logged to telemetry with the QnaMessage event.
-     * @param telemetryMetrics Additional metrics to be logged to telemetry with the QnaMessage event.
+     * @param {TurnContext} context The Turn Context that contains the user question to be queried against your knowledge base.
+     * @param {QnAMakerOptions} options (Optional) The options for the QnA Maker knowledge base. If null, constructor option is used for this instance.
+     * @param {object} telemetryProperties Additional properties to be logged to telemetry with the QnaMessage event.
+     * @param {object} telemetryMetrics Additional metrics to be logged to telemetry with the QnaMessage event.
+     * @returns {Promise<QnAMakerResult[]>} A promise resolving to the QnAMaker result
      */
     getAnswers(
         context: TurnContext,
@@ -61,7 +61,7 @@ export interface QnAMakerTelemetryClient {
 /**
  * Query a QnA Maker knowledge base for answers and provide feedbacks.
  *
- * @remarks
+ * @summary
  * This class is used to make queries to a single QnA Maker knowledge base and return the result.
  *
  * Use this to process incoming messages with the [getAnswers()](#getAnswers) method.
@@ -76,14 +76,15 @@ export class QnAMaker implements QnAMakerTelemetryClient {
 
     /**
      * Creates a new QnAMaker instance.
-     * @param endpoint The endpoint of the knowledge base to query.
-     * @param options (Optional) additional settings used to configure the instance.
-     * @param telemetryClient The BotTelemetryClient used for logging telemetry events.
-     * @param logPersonalInformation Set to true to include personally indentifiable information in telemetry events.
+     *
+     * @param {QnAMakerEndpoint} endpoint The endpoint of the knowledge base to query.
+     * @param {QnAMakerOptions} options (Optional) additional settings used to configure the instance.
+     * @param {BotTelemetryClient} telemetryClient The BotTelemetryClient used for logging telemetry events.
+     * @param {boolean} logPersonalInformation Set to true to include personally indentifiable information in telemetry events.
      */
     constructor(
         private readonly endpoint: QnAMakerEndpoint,
-        options: QnAMakerOptions = {} as QnAMakerOptions,
+        options: QnAMakerOptions = {},
         telemetryClient?: BotTelemetryClient,
         logPersonalInformation?: boolean
     ) {
@@ -98,7 +99,6 @@ export class QnAMaker implements QnAMakerTelemetryClient {
             metadataBoost = [] as QnAMakerMetadata[],
             timeout = 100000,
             rankerType = RankerTypes.default,
-            strictFiltersJoinOperator = JoinOperator.AND,
         } = options;
 
         this._options = {
@@ -108,7 +108,6 @@ export class QnAMaker implements QnAMakerTelemetryClient {
             metadataBoost,
             timeout,
             rankerType,
-            strictFiltersJoinOperator,
         } as QnAMakerOptions;
 
         this.generateAnswerUtils = new GenerateAnswerUtils(this._options, this.endpoint);
@@ -118,16 +117,12 @@ export class QnAMaker implements QnAMakerTelemetryClient {
         this._logPersonalInformation = logPersonalInformation || false;
     }
 
-    /**
-     * Gets a value indicating whether determines whether to log personal information that came from the user.
-     */
+    // Gets a value indicating whether determines whether to log personal information that came from the user.
     public get logPersonalInformation(): boolean {
         return this._logPersonalInformation;
     }
 
-    /**
-     * Gets the currently configured botTelemetryClient that logs the events.
-     */
+    // Gets the currently configured botTelemetryClient that logs the events.
     public get telemetryClient(): BotTelemetryClient {
         return this._telemetryClient;
     }
@@ -135,16 +130,17 @@ export class QnAMaker implements QnAMakerTelemetryClient {
     /**
      * Calls the QnA Maker service to generate answer(s) for a question.
      *
-     * @remarks
+     * @summary
      * Returns an array of answers sorted by score with the top scoring answer returned first.
      *
      * In addition to returning the results from QnA Maker, [getAnswers()](#getAnswers) will also
      * emit a trace activity that contains the QnA Maker results.
      *
-     * @param context The Turn Context that contains the user question to be queried against your knowledge base.
-     * @param options (Optional) The options for the QnA Maker knowledge base. If null, constructor option is used for this instance.
-     * @param telemetryProperties Additional properties to be logged to telemetry with the QnaMessage event.
-     * @param telemetryMetrics Additional metrics to be logged to telemetry with the QnaMessage event.
+     * @param {TurnContext} context The Turn Context that contains the user question to be queried against your knowledge base.
+     * @param {QnAMakerOptions} options (Optional) The options for the QnA Maker knowledge base. If null, constructor option is used for this instance.
+     * @param {object} telemetryProperties Additional properties to be logged to telemetry with the QnaMessage event.
+     * @param {object} telemetryMetrics Additional metrics to be logged to telemetry with the QnaMessage event.
+     * @returns {Promise<QnAMakerResult>} A promise resolving to the QnAMaker result
      */
     public async getAnswers(
         context: TurnContext,
@@ -167,11 +163,12 @@ export class QnAMaker implements QnAMakerTelemetryClient {
 
     /**
      * Generates an answer from the knowledge base.
-     * @param context The [TurnContext](xref:botbuilder-core.TurnContext) that contains the user question to be queried against your knowledge base.
-     * @param options Optional. The [QnAMakerOptions](xref:botbuilder-ai.QnAMakerOptions) for the QnA Maker knowledge base. If null, constructor option is used for this instance.
-     * @param telemetryProperties Optional. Additional properties to be logged to telemetry with the QnaMessage event.
-     * @param telemetryMetrics Optional. Additional metrics to be logged to telemetry with the QnaMessage event.
-     * @returns A list of answers for the user query, sorted in decreasing order of ranking score.
+     *
+     * @param {TurnContext} context The [TurnContext](xref:botbuilder-core.TurnContext) that contains the user question to be queried against your knowledge base.
+     * @param {QnAMakerOptions} options Optional. The [QnAMakerOptions](xref:botbuilder-ai.QnAMakerOptions) for the QnA Maker knowledge base. If null, constructor option is used for this instance.
+     * @param {object} telemetryProperties Optional. Additional properties to be logged to telemetry with the QnaMessage event.
+     * @param {object} telemetryMetrics Optional. Additional metrics to be logged to telemetry with the QnaMessage event.
+     * @returns {Promise<QnAMakerResults>} A list of answers for the user query, sorted in decreasing order of ranking score.
      */
     public async getAnswersRaw(
         context: TurnContext,
@@ -208,7 +205,7 @@ export class QnAMaker implements QnAMakerTelemetryClient {
         await Promise.all([
             // Log telemetry
             this.onQnaResults(queryResult, context, telemetryProperties, telemetryMetrics),
-            this.generateAnswerUtils.emitTraceInfo(context, queryResult, queryOptions)
+            this.generateAnswerUtils.emitTraceInfo(context, queryResult, queryOptions),
         ]);
 
         const qnaResponse: QnAMakerResults = {
@@ -221,12 +218,14 @@ export class QnAMaker implements QnAMakerTelemetryClient {
 
     /**
      * Calls [generateAnswer()](#generateanswer) and sends the resulting answer as a reply to the user.
+     *
      * @deprecated Instead, favor using [QnAMaker.getAnswers()](#getAnswers) to generate answers for a question.
      *
-     * @remarks
+     * @summary
      * Returns a value of `true` if an answer was found and sent. If multiple answers are
      * returned the first one will be delivered.
-     * @param context Context for the current turn of conversation with the user.
+     * @param {TurnContext} context Context for the current turn of conversation with the user.
+     * @returns {Promise<boolean>} A promise resolving to true if an answer was sent
      */
     public async answer(context: TurnContext): Promise<boolean> {
         if (!context) {
@@ -253,12 +252,13 @@ export class QnAMaker implements QnAMakerTelemetryClient {
      *
      * @deprecated Instead, favor using [QnAMaker.getAnswers()](#getAnswers) to generate answers for a question.
      *
-     * @remarks
+     * @summary
      * Returns an array of answers sorted by score with the top scoring answer returned first.
      *
-     * @param question The question to answer.
-     * @param top (Optional) number of answers to return. Defaults to a value of `1`.
-     * @param scoreThreshold (Optional) minimum answer score needed to be considered a match to questions. Defaults to a value of `0.001`.
+     * @param {string | undefined} question The question to answer.
+     * @param {number} top (Optional) number of answers to return. Defaults to a value of `1`.
+     * @param {number} scoreThreshold (Optional) minimum answer score needed to be considered a match to questions. Defaults to a value of `0.001`.
+     * @returns {Promise<QnAMakerResult[]>} A promise resolving to the QnAMaker results
      */
     public async generateAnswer(
         question: string | undefined,
@@ -286,29 +286,34 @@ export class QnAMaker implements QnAMakerTelemetryClient {
     /**
      * Filters the ambiguous question for active learning.
      *
-     * @remarks
-     * Returns a filtered array of ambiguous question.
+     * @summary Returns a filtered array of ambiguous question.
      *
-     * @param queryResult User query output.
+     * @param {QnAMakerResult[]} queryResult User query output.
+     * @returns {QnAMakerResult[]} the filtered results
      */
-    public getLowScoreVariation(queryResult: QnAMakerResult[]) {
+    public getLowScoreVariation(queryResult: QnAMakerResult[]): QnAMakerResult[] {
         return ActiveLearningUtils.getLowScoreVariation(queryResult);
     }
 
     /**
      * Send feedback to the knowledge base.
      *
-     * @param feedbackRecords Feedback records.
+     * @param {FeedbackRecords} feedbackRecords Feedback records.
+     * @returns {Promise<void>} A promise representing the async operation
      */
-    public async callTrainAsync(feedbackRecords: FeedbackRecords) {
+    public async callTrainAsync(feedbackRecords: FeedbackRecords): Promise<void> {
         return await this.trainUtils.callTrain(feedbackRecords);
     }
 
     /**
      * Called internally to query the QnA Maker service.
      *
-     * @remarks
-     * This is exposed to enable better unit testing of the service.
+     * @summary This is exposed to enable better unit testing of the service.
+     *
+     * @param {QnAMakerEndpoint} endpoint the qna maker endpoint
+     * @param {string} question the question
+     * @param {number} top number of results to return
+     * @returns {Promise<QnAMakerResult>} a promise resolving to the qna maker results
      */
     protected async callService(endpoint: QnAMakerEndpoint, question: string, top: number): Promise<QnAMakerResults> {
         return this.generateAnswerUtils.queryQnaServiceRaw(endpoint, question, { top } as QnAMakerOptions);
@@ -316,10 +321,12 @@ export class QnAMaker implements QnAMakerTelemetryClient {
 
     /**
      * Invoked prior to a QnaMessage Event being logged.
-     * @param qnaResult The QnA Results for the call.
-     * @param turnContext Context object containing information for a single turn of conversation with a user.
-     * @param telemetryProperties Additional properties to be logged to telemetry with the QnaMessage event.
-     * @param telemetryMetrics Additional metrics to be logged to telemetry with the QnaMessage event.
+     *
+     * @param {QnAMakerResult[]} qnaResults The QnA Results for the call.
+     * @param {TurnContext} turnContext Context object containing information for a single turn of conversation with a user.
+     * @param {object} telemetryProperties Additional properties to be logged to telemetry with the QnaMessage event.
+     * @param {object} telemetryMetrics Additional metrics to be logged to telemetry with the QnaMessage event.
+     * @returns {Promise<void>} A promise representing the async operation
      */
     protected async onQnaResults(
         qnaResults: QnAMakerResult[],
@@ -340,10 +347,12 @@ export class QnAMaker implements QnAMakerTelemetryClient {
     /**
      * Fills the event properties for QnaMessage event for telemetry.
      * These properties are logged when the recognizer is called.
-     * @param qnaResult Last activity sent from user.
-     * @param turnContext Context object containing information for a single turn of conversation with a user.
-     * @param telemetryProperties Additional properties to be logged to telemetry with the QnaMessage event.
-     * @returns A dictionary that is sent as properties to BotTelemetryClient.trackEvent method for the QnaMessage event.
+     *
+     * @param {QnAMakerResult[]} qnaResults Last activity sent from user.
+     * @param {TurnContext} turnContext Context object containing information for a single turn of conversation with a user.
+     * @param {object} telemetryProperties Additional properties to be logged to telemetry with the QnaMessage event.
+     * @param {object} telemetryMetrics Additional properties to be logged to telemetry with the QnaMessage event.
+     * @returns {Promise<[object, object]>} A dictionary that is sent as properties to BotTelemetryClient.trackEvent method for the QnaMessage event.
      */
     protected async fillQnAEvent(
         qnaResults: QnAMakerResult[],
@@ -396,12 +405,8 @@ export class QnAMaker implements QnAMakerTelemetryClient {
         return [properties, metrics];
     }
 
-    /**
-     * Gets the message from the Activity in the TurnContext, trimmed of whitespaces.
-     */
+    // Gets the message from the Activity in the TurnContext, trimmed of whitespaces.
     private getTrimmedMessageText(context: TurnContext): string {
-        const question: string = context && context.activity && context.activity.text ? context.activity.text : '';
-
-        return question.trim();
+        return context?.activity?.text?.trim() ?? '';
     }
 }

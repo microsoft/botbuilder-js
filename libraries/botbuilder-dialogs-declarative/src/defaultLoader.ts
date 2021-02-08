@@ -7,6 +7,7 @@
  */
 
 import { Configurable } from 'botbuilder-dialogs';
+import { Newable } from 'botbuilder-stdlib';
 import { CustomDeserializer } from './customDeserializer';
 import { ResourceExplorer } from './resources';
 
@@ -16,17 +17,19 @@ import { ResourceExplorer } from './resources';
 export class DefaultLoader implements CustomDeserializer<Configurable, Record<string, unknown>> {
     /**
      * Intializes an instance of `DefaultLoader`.
-     * @param _resourceExplorer The `ResourceExplorer` used by the loader.
+     *
+     * @param {ResourceExplorer} _resourceExplorer The `ResourceExplorer` used by the loader.
      */
     public constructor(private readonly _resourceExplorer: ResourceExplorer) {}
 
     /**
      * The method that loads the configuration object to a requested type.
-     * @param config The configuration object to deserialize.
-     * @param type The object type that the configuration will be deserialized to.
-     * @returns A `Configurable` object created from the configuration.
+     *
+     * @param {Record<string, string>} config The configuration object to deserialize.
+     * @param {Newable<Configurable>} type The object type that the configuration will be deserialized to.
+     * @returns {Configurable} A `Configurable` object created from the configuration.
      */
-    public load(config: Record<string, unknown>, type: { new (...args: unknown[]): Configurable }): Configurable {
+    public load(config: Record<string, unknown>, type: Newable<Configurable>): Configurable {
         return Object.entries(config).reduce((instance, [key, value]) => {
             let converter = instance.getConverter(key);
             if (converter) {

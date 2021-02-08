@@ -49,6 +49,7 @@ export interface QnAMakerRecognizerConfiguration extends RecognizerConfiguration
     metadata?: QnAMakerMetadata[] | string | Expression | ArrayExpression<QnAMakerMetadata>;
     context?: QnARequestContext | string | Expression | ObjectExpression<QnARequestContext>;
     qnaId?: number | string | Expression | IntExpression;
+    logPersonalInformation?: boolean | string | Expression | BoolExpression;
 }
 
 /**
@@ -118,6 +119,11 @@ export class QnAMakerRecognizer extends Recognizer implements QnAMakerRecognizer
      */
     public qnaId: IntExpression = new IntExpression(0);
 
+    /**
+     * The flag to indicate if personal information should be logged in telemetry.
+     */
+    public logPersonalInformation: BoolExpression = new BoolExpression('=settings.telemetry.logPersonalInformation');
+
     public getConverter(property: keyof QnAMakerRecognizerConfiguration): Converter | ConverterFactory {
         switch (property) {
             case 'knowledgeBaseId':
@@ -140,6 +146,8 @@ export class QnAMakerRecognizer extends Recognizer implements QnAMakerRecognizer
                 return new ObjectExpressionConverter<QnARequestContext>();
             case 'qnaId':
                 return new IntExpressionConverter();
+            case 'logPersonalInformation':
+                return new BoolExpressionConverter();
             default:
                 return super.getConverter(property);
         }
@@ -147,9 +155,10 @@ export class QnAMakerRecognizer extends Recognizer implements QnAMakerRecognizer
 
     /**
      * Initializes a new instance of `QnAMakerRecognizer`.
-     * @param hostname Hostname of QnAMaker KB.
-     * @param knowledgeBaseId Id of QnAMaker KB.
-     * @param endpointKey Endpoint key of QnAMaker KB.
+     *
+     * @param {string} hostname Hostname of QnAMaker KB.
+     * @param {string} knowledgeBaseId Id of QnAMaker KB.
+     * @param {string} endpointKey Endpoint key of QnAMaker KB.
      */
     public constructor(hostname?: string, knowledgeBaseId?: string, endpointKey?: string) {
         super();
@@ -166,10 +175,12 @@ export class QnAMakerRecognizer extends Recognizer implements QnAMakerRecognizer
 
     /**
      * Gets results of the call to QnA maker KB.
-     * @param dc Context object containing information for a single turn of coversation with a user.
-     * @param activity The incoming activity received from the user. The text value is used as the query to QnA Maker.
-     * @param telemetryProperties Additional properties to be logged to telemetry.
-     * @param telemetryMetrics Additional metrics to be logged to telemetry.
+     *
+     * @param {DialogContext} dc Context object containing information for a single turn of coversation with a user.
+     * @param {Activity} activity The incoming activity received from the user. The text value is used as the query to QnA Maker.
+     * @param {object} telemetryProperties Additional properties to be logged to telemetry.
+     * @param {object} telemetryMetrics Additional metrics to be logged to telemetry.
+     * @returns {Promise<RecognizerResult>} A promise resolving to the recognizer result
      */
     public async recognize(
         dc: DialogContext,
@@ -190,16 +201,16 @@ export class QnAMakerRecognizer extends Recognizer implements QnAMakerRecognizer
         }
 
         const filters: QnAMakerMetadata[] = [];
-        if (this.includeDialogNameInMetadata && this.includeDialogNameInMetadata.getValue(dc.state)) {
+        if (this.includeDialogNameInMetadata?.getValue(dc.state)) {
             const metadata: QnAMakerMetadata = {
                 name: 'dialogName',
-                value: dc.activeDialog && dc.activeDialog.id,
+                value: dc.activeDialog?.id,
             };
             filters.push(metadata);
         }
 
         // if there is $qna.metadata set add to filters
-        const externalMetadata: QnAMakerMetadata[] = this.metadata && this.metadata.getValue(dc.state);
+        const externalMetadata: QnAMakerMetadata[] = this.metadata?.getValue(dc.state);
         if (externalMetadata) {
             filters.push(...externalMetadata);
         }
@@ -207,17 +218,18 @@ export class QnAMakerRecognizer extends Recognizer implements QnAMakerRecognizer
         // calling QnAMaker to get response
         const qnaMaker = this.getQnAMaker(dc);
         const qnaMakerOptions: QnAMakerOptions = {
-            context: this.context && this.context.getValue(dc.state),
-            scoreThreshold: this.threshold && this.threshold.getValue(dc.state),
+            context: this.context?.getValue(dc.state),
+            scoreThreshold: this.threshold?.getValue(dc.state),
             strictFilters: filters,
-            top: this.top && this.top.getValue(dc.state),
-            qnaId: this.qnaId && this.qnaId.getValue(dc.state),
-            rankerType: this.rankerType && this.rankerType.getValue(dc.state),
+            top: this.top?.getValue(dc.state),
+            qnaId: this.qnaId?.getValue(dc.state),
+            rankerType: this.rankerType?.getValue(dc.state),
             isTest: this.isTest,
+            strictFiltersJoinOperator: this.strictFiltersJoinOperator,
         };
         const answers = await qnaMaker.getAnswers(dc.context, qnaMakerOptions);
 
-        if (answers && answers.length > 0) {
+        if (answers?.length > 0) {
             let topAnswer: QnAMakerResult;
             for (let i = 0; i < answers.length; i++) {
                 const answer = answers[i];
@@ -258,18 +270,26 @@ export class QnAMakerRecognizer extends Recognizer implements QnAMakerRecognizer
 
     /**
      * Gets an instance of `QnAMaker`.
-     * @param dc The dialog context used to access state.
+     *
+     * @param {DialogContext} dc The dialog context used to access state.
+     * @returns {QnAMaker} A qna maker instance
      */
     protected getQnAMaker(dc: DialogContext): QnAMaker {
-        const endpointKey = this.endpointKey && this.endpointKey.getValue(dc.state);
-        const hostname = this.hostname && this.hostname.getValue(dc.state);
-        const knowledgeBaseId = this.knowledgeBaseId && this.knowledgeBaseId.getValue(dc.state);
+        const { value: endpointKey, error } = this.endpointKey?.tryGetValue(dc.state) ?? {};
+        if (!endpointKey || error) {
+            throw new Error(`Unable to get a value for endpointKey from state. ${error}`);
+        }
+        const { value: host, error: error2 } = this.hostname?.tryGetValue(dc.state) ?? {};
+        if (!host || error2) {
+            throw new Error(`Unable to get a value for hostname from state. ${error2}`);
+        }
+        const { value: knowledgeBaseId, error: error3 } = this.knowledgeBaseId?.tryGetValue(dc.state) ?? {};
+        if (!knowledgeBaseId || error3) {
+            throw new Error(`Unable to get a value for knowledgeBaseId from state. ${error3}`);
+        }
 
-        const endpoint: QnAMakerEndpoint = {
-            endpointKey: endpointKey,
-            host: hostname,
-            knowledgeBaseId: knowledgeBaseId,
-        };
-        return new QnAMaker(endpoint);
+        const endpoint: QnAMakerEndpoint = { endpointKey, host, knowledgeBaseId };
+        const logPersonalInfo = this.logPersonalInformation.getValue(dc.state);
+        return new QnAMaker(endpoint, {}, this.telemetryClient, logPersonalInfo);
     }
 }

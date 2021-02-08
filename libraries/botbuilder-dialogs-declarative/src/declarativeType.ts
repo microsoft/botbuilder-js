@@ -6,6 +6,7 @@
  * Licensed under the MIT License.
  */
 
+import { Newable } from 'botbuilder-stdlib';
 import { CustomDeserializer } from './customDeserializer';
 
 /**
@@ -13,6 +14,6 @@ import { CustomDeserializer } from './customDeserializer';
  */
 export interface DeclarativeType<T = unknown, C = Record<string, unknown>> {
     kind: string;
-    type: new (...args: unknown[]) => T;
+    type: Newable<T>;
     loader?: CustomDeserializer<T, C>;
 }

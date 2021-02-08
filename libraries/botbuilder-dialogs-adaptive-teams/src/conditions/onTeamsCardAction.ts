@@ -15,7 +15,7 @@ import { OnInvokeActivity } from 'botbuilder-dialogs-adaptive';
  * Actions triggered when a Teams InvokeActivity is received with no activity.name.
  */
 export class OnTeamsCardAction extends OnInvokeActivity {
-    public static $kind = 'Teams.OnCardAction';
+    public static readonly $kind = 'Teams.OnCardAction';
 
     public getExpression(parser: ExpressionParserInterface): Expression {
         return Expression.andExpression(

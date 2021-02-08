@@ -42,7 +42,10 @@ export class TextInput extends InputDialog implements TextInputConfiguration {
      */
     protected async onRecognizeInput(dc: DialogContext): Promise<InputState> {
         // Treat input as a string
-        let input: string = dc.state.getValue(InputDialog.VALUE_PROPERTY).toString();
+        let input: any = dc.state.getValue(InputDialog.VALUE_PROPERTY);
+        if (typeof input !== 'string') {
+            return InputState.invalid;
+        }
 
         if (this.outputFormat) {
             const value = this.outputFormat.getValue(dc.state);
