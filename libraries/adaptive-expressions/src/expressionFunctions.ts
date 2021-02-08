@@ -163,6 +163,7 @@ export class ExpressionFunctions {
             new BuiltinFunctions.StartOfMonth(),
             new BuiltinFunctions.StartsWith(),
             new BuiltinFunctions.String(),
+            new BuiltinFunctions.StringOrValue(),
             new BuiltinFunctions.SubArray(),
             new BuiltinFunctions.Substring(),
             new BuiltinFunctions.Subtract(),

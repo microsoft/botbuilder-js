@@ -521,6 +521,14 @@ const badExpressions = [
             ['isObject({}, false)', 'should have one parameter'],
         ],
     },
+    {
+        label: 'StringOrValue',
+        testCases: [
+            ['stringOrValue()', 'should have one parameter'],
+            ['stringOrValue(1)', 'should have string parameter'],
+            ['stringOrValue("${1/0} item")', 'throw error in evaluation stage'],
+        ],
+    },
 ];
 
 describe('expression functional test', () => {
