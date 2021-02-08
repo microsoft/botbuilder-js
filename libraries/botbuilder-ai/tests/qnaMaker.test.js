@@ -947,15 +947,6 @@ describe('QnAMaker', function () {
         const trainApi = `/knowledgebases/${testKbId}/train`;
         const feedbackRecords = [{ userId: 'user1', userQuestion: 'wi-fi', qnaId: '17' }];
 
-        const successfullyTrainedResult = {
-            questions: [],
-            answer: '204 No-Content',
-            score: 100,
-            id: -1,
-            source: null,
-            metadata: [],
-        };
-
         it('executeHttpRequest() should return JSON result from Train API response of 204 No-Content', async function () {
             nock(endpoint.host).post(trainApi).reply(204);
 
@@ -967,7 +958,7 @@ describe('QnAMaker', function () {
 
             const qnaResult = await httpUtils.executeHttpRequest(endpoint.host + trainApi, payloadBody, endpoint);
 
-            assert.deepStrictEqual(qnaResult, successfullyTrainedResult);
+            assert.strictEqual(qnaResult, undefined);
         });
 
         it('executeHttpRequest() should throw when payload to QnA Service is malformed', async function () {
