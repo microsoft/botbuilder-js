@@ -96,6 +96,14 @@ describe('TestScriptTests', function () {
         await TestUtils.runTestScript(resourceExplorer, 'TestScriptTests_HttpRequestMock');
     });
 
+    it('HttpRequestQnAMakerRecognizerMock', async () => {
+        await TestUtils.runTestScript(resourceExplorer, 'TestScriptTests_HttpRequestQnAMakerRecognizerMock');
+    });
+
+    it('HttpRequestQnAMakerDialogMock', async () => {
+        await TestUtils.runTestScript(resourceExplorer, 'TestScriptTests_HttpRequestQnAMakerDialogMock');
+    });
+
     it('OAuthInputRetries_WithNullMessageText', async () => {
         await TestUtils.runTestScript(resourceExplorer, 'TestScriptTests_OAuthInputRetries_WithNullMessageText');
     });
