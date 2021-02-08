@@ -393,8 +393,6 @@ export class BotFrameworkAdapter
         // to be trusted for the bot to acquire a token when sending activities to the conversation.
         // For anonymous flows, the serviceUrl should not be trusted.
         if (credentials.appId) {
-            AppCredentials.trustServiceUrl(reference.serviceUrl);
-
             // If the provided OAuthScope doesn't match the current one on the instance's credentials, create
             // a new AppCredentials with the correct OAuthScope.
             if (credentials.oAuthScope !== audience) {
@@ -1929,10 +1927,6 @@ export class BotFrameworkAdapter
             channelService,
             channelIdHeader
         );
-
-        // Add serviceUrl from claim to static cache to trigger token refreshes.
-        const serviceUrl = claims.getClaimValue(AuthenticationConstants.ServiceUrlClaim);
-        AppCredentials.trustServiceUrl(serviceUrl);
 
         if (!claims.isAuthenticated) {
             throw new AuthenticationError('Unauthorized Access. Request is not authorized', StatusCodes.UNAUTHORIZED);

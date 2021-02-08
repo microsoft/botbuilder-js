@@ -77,8 +77,6 @@ export namespace JwtTokenValidation {
             authConfig
         );
 
-        AppCredentials.trustServiceUrl(activity.serviceUrl);
-
         return claimsIdentity;
     }
 
