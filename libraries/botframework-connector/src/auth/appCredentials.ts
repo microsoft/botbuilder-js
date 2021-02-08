@@ -174,7 +174,7 @@ export abstract class AppCredentials implements msrest.ServiceClientCredentials 
         }
     }
 
-    protected abstract async refreshToken(): Promise<adal.TokenResponse>;
+    protected abstract refreshToken(): Promise<adal.TokenResponse>;
 
     /**
      * @private
