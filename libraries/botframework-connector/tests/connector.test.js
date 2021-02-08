@@ -106,8 +106,6 @@ describe('Bot Framework Connector SDK', function() {
             client = new ConnectorClient(credentials, { baseUri: hostURL });
             tokenApiClient = new TokenApiClient(credentials, { baseUri: 'https://token.botframework.com' });
         });
-        Credentials.trustServiceUrl(hostURL);
-        Credentials.trustServiceUrl('https://token.botframework.com');
         done();
     });
 	
