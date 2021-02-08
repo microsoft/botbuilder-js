@@ -32,7 +32,7 @@ import {
     ActionScope,
 } from 'botbuilder-dialogs-adaptive';
 import { Dialog, isDialogDependencies } from 'botbuilder-dialogs';
-import { ActionPolicyException } from './ActionPolicyException';
+import { ActionPolicyException } from './actionPolicyException';
 import { Assertion, assert } from 'botbuilder-stdlib';
 
 // Asserts that a given value is an instance of a constructor that, itself, has a static $kind property
