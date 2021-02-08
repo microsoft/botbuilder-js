@@ -9,7 +9,7 @@
 /**
  * Defines a user predicted entity that extends an already existing one.
  */
-export interface ExternalEntity {
+export interface ExternalEntity<T = unknown> {
     /**
      * The name of the entity to extend.
      */
@@ -28,7 +28,7 @@ export interface ExternalEntity {
     /**
      * A user supplied custom resolution to return as the entity's prediction.
      */
-    resolution?: unknown;
+    resolution?: T;
 }
 
 /**
