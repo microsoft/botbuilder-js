@@ -93,7 +93,9 @@ export abstract class AppCredentials implements msrest.ServiceClientCredentials 
     /**
      * Adds the host of service url to trusted hosts.
      * If expiration time is not provided, the expiration date will be current (utc) date + 1 day.
+     *
      * @deprecated
+     *
      * @param  {string} serviceUrl The service url
      * @param  {Date} expiration? The expiration date after which this service url is not trusted anymore
      */
@@ -104,7 +106,9 @@ export abstract class AppCredentials implements msrest.ServiceClientCredentials 
 
     /**
      * Checks if the service url is for a trusted host or not.
+     *
      * @deprecated
+     *
      * @param  {string} serviceUrl The service url
      * @returns {boolean} True if the host of the service url is trusted; False otherwise.
      */
@@ -170,7 +174,7 @@ export abstract class AppCredentials implements msrest.ServiceClientCredentials 
         }
     }
 
-    protected abstract async refreshToken(): Promise<adal.TokenResponse>;
+    protected abstract refreshToken(): Promise<adal.TokenResponse>;
 
     /**
      * @private
