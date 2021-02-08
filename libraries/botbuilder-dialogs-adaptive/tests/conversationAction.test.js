@@ -23,8 +23,12 @@ const {
 const { AssertCondition } = require('botbuilder-dialogs-adaptive-testing/lib')
 
 class MockQueue extends QueueStorage {
-    receipt = 1;
-    queue = [];
+    constructor() {
+        super();
+        this.receipt = 1;
+        this.queue = [];
+    }
+
     async queueActivity(activity, visibilityTimeout, _timeToLive) {
         if (visibilityTimeout) {
             setTimeout(() => {
