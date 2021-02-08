@@ -29,18 +29,11 @@ import * as path from 'path';
  */
 function flattenSettings(settings: Record<string, any>): Record<string, string> {
     const config = {};
-    for (const key in settings) {
-        if (!Object.prototype.hasOwnProperty.call(settings, key)) {
-            continue;
-        }
-        const value = settings[key];
+    for (const [key, value] of Object.entries(settings)) {
         if (typeof value === 'object') {
             const flatObject = flattenSettings(value);
-            for (const child in flatObject) {
-                if (!Object.prototype.hasOwnProperty.call(flatObject, child)) {
-                    continue;
-                }
-                config[key + ':' + child] = flatObject[child];
+            for (const [childKey, childValue] of Object.entries(flatObject)) {
+                config[key + ':' + childKey] = childValue;
             }
         } else {
             config[key] = value;
