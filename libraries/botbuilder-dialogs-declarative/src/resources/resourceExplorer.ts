@@ -209,7 +209,7 @@ export class ResourceExplorer {
         loader?: CustomDeserializer<T, Record<string, unknown>>
     ): ResourceExplorer {
         this.registerComponentTypes();
-        this.registerTypeInternal<T, Record<string, unknown>>(kind, type, loader);
+        this.registerTypeInternal(kind, type, loader);
         return this;
     }
 
