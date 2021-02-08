@@ -8,6 +8,7 @@
 
 import { ComponentRegistration } from 'botbuilder-core';
 import { Dialog } from 'botbuilder-dialogs';
+import { Newable } from 'botbuilder-stdlib';
 import { normalize, join } from 'path';
 import { EventEmitter } from 'events';
 import { ResourceProvider, ResourceChangeEvent } from './resourceProvider';
@@ -25,7 +26,7 @@ import { ResourceExplorerOptions } from './resourceExplorerOptions';
  */
 export class ResourceExplorer {
     private _declarativeTypes: ComponentDeclarativeTypes[];
-    private _kindToType: Map<string, new () => unknown> = new Map();
+    private _kindToType: Map<string, Newable<unknown>> = new Map();
     private _kindDeserializer: Map<string, CustomDeserializer<unknown, unknown>> = new Map();
     private _eventEmitter: EventEmitter = new EventEmitter();
     private _cache = new Map<string, unknown>();
@@ -198,13 +199,13 @@ export class ResourceExplorer {
      *
      * @template T The type of object.
      * @param {string} kind The $kind name to map to this type.
-     * @param {new (...args: ?[]) => T} type Type of object to create.
+     * @param {Newable<T>} type Type of object to create.
      * @param {CustomDeserializer}  loader Optional custom deserializer.
      * @returns {ResourceExplorer} Resource explorer for fluent style multiple calls.
      */
     public registerType<T>(
         kind: string,
-        type: new (...args: unknown[]) => T,
+        type: Newable<T>,
         loader?: CustomDeserializer<T, Record<string, unknown>>
     ): ResourceExplorer {
         this.registerComponentTypes();
@@ -332,11 +333,7 @@ export class ResourceExplorer {
         );
     }
 
-    private registerTypeInternal<T, C>(
-        kind: string,
-        type: new (...args: unknown[]) => T,
-        loader?: CustomDeserializer<T, C>
-    ): void {
+    private registerTypeInternal<T, C>(kind: string, type: Newable<T>, loader?: CustomDeserializer<T, C>): void {
         this._kindToType.set(kind, type);
         this._kindDeserializer.set(kind, loader || new DefaultLoader(this));
     }

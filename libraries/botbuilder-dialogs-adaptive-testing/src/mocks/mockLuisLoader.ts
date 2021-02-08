@@ -9,6 +9,7 @@
 import { LuisAdaptiveRecognizer, LuisAdaptiveRecognizerConfiguration } from 'botbuilder-ai';
 import { Recognizer } from 'botbuilder-dialogs';
 import { CustomDeserializer, ResourceExplorer } from 'botbuilder-dialogs-declarative';
+import { Newable } from 'botbuilder-stdlib';
 import { MockLuisRecognizer } from './mockLuisRecognizer';
 
 /**
@@ -25,10 +26,7 @@ export class MockLuisLoader implements CustomDeserializer<MockLuisRecognizer, Lu
      */
     public constructor(private _resourceExplorer: ResourceExplorer, private _configuration?: Record<string, string>) {}
 
-    public load(
-        config: LuisAdaptiveRecognizerConfiguration,
-        type: new (...args: unknown[]) => MockLuisRecognizer
-    ): MockLuisRecognizer {
+    public load(config: LuisAdaptiveRecognizerConfiguration, type: Newable<MockLuisRecognizer>): MockLuisRecognizer {
         const recognizer = new LuisAdaptiveRecognizer().configure(config as Record<string, unknown>);
         const externalEntityRecognizer = config.externalEntityRecognizer;
         if (typeof externalEntityRecognizer === 'string') {
