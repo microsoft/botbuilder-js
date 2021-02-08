@@ -6,7 +6,6 @@
  * Licensed under the MIT License.
  */
 
-import { v4 as uuidv4 } from 'uuid';
 import {
     BoolExpression,
     BoolExpressionConverter,
@@ -16,7 +15,14 @@ import {
     ValueExpression,
     ValueExpressionConverter,
 } from 'adaptive-expressions';
-import { Activity, ActivityEventNames, ActivityTypes, ConversationReference, QueueStorage } from 'botbuilder-core';
+import {
+    Activity,
+    ActivityEventNames,
+    ActivityTypes,
+    ConversationReference,
+    QueueStorage,
+    TurnContext,
+} from 'botbuilder-core';
 import {
     Converter,
     ConverterFactory,
@@ -80,24 +86,20 @@ export class ContinueConversation extends Dialog implements ContinueConversation
         }
 
         const conversationReference = this.conversationReference.getValue(dc.state);
-        const { channelId, locale, serviceUrl, conversation, bot: recipient, user: from } = conversationReference;
-        const continueActivity: Partial<Activity> = {
-            type: ActivityTypes.Event,
-            name: ActivityEventNames.ContinueConversation,
-            id: uuidv4(),
-            channelId,
-            locale,
-            serviceUrl,
-            conversation,
-            recipient,
-            from,
-            relatesTo: conversationReference,
-            value: this.value.getValue(dc.state),
-        };
+        const continueActivity: Partial<Activity> = TurnContext.applyConversationReference(
+            {
+                type: ActivityTypes.Event,
+                name: ActivityEventNames.ContinueConversation,
+                relatesTo: conversationReference,
+                value: this.value?.getValue(dc.state),
+            },
+            conversationReference,
+            true
+        );
 
         const queueStorage: QueueStorage = dc.context.turnState.get(DialogTurnStateConstants.queueStorage);
         if (!queueStorage) {
-            throw new Error('Unable to locate QueueStorage.');
+            throw new Error('Unable to locate QueueStorage in HostContext');
         }
 
         const receipt = await queueStorage.queueActivity(continueActivity);
