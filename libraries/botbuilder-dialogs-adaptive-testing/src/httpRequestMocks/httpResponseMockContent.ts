@@ -8,15 +8,28 @@
 
 import { HttpResponseMock, ResponseContent, ResponseContentType } from './httpResponseMock';
 
+/**
+ * Convert and store the actual content of HttpResponseMock.
+ */
 export class HttpResponseMockContent {
     private readonly _contentType: ResponseContentType;
     private readonly _content: ResponseContent;
 
+    /**
+     * Intiializes a new instance of the HttpResponseMockContent class.
+     *
+     * @param {HttpResponseMock} httpResponseMock The mock that provides content.
+     */
     public constructor(httpResponseMock?: HttpResponseMock) {
         this._contentType = httpResponseMock?.contentType ?? ResponseContentType.String;
         this._content = httpResponseMock?.content ?? '';
     }
 
+    /**
+     * Get a new ResponseContent based on content.
+     *
+     * @returns {ResponseContent} A new ResponseContent.
+     */
     public getHttpContent(): ResponseContent {
         let content: ResponseContent = '';
         switch (this._contentType) {

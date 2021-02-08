@@ -7,4 +7,7 @@
  */
 
 export * from './mockHttpRequestMiddleware';
+export * from './mockLuisExtensions';
+export * from './mockLuisLoader';
+export * from './mockLuisRecognizer';
 export * from './mockSettingsMiddleware';

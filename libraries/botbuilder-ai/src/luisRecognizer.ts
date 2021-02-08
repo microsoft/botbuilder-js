@@ -5,16 +5,16 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import {
-    LUISRuntimeClient as LuisClient,
-    LUISRuntimeModels as LuisModels,
-} from '@azure/cognitiveservices-luis-runtime';
+import { LUISRuntimeModels as LuisModels } from '@azure/cognitiveservices-luis-runtime';
 
 import * as Url from 'url-parse';
 import { BotTelemetryClient, NullTelemetryClient, RecognizerResult, TurnContext } from 'botbuilder-core';
 import { LuisTelemetryConstants } from './luisTelemetryConstants';
 import { isLuisRecognizerOptionsV2, LuisRecognizerV2 } from './luisRecognizerOptionsV2';
 import { isLuisRecognizerOptionsV3, LuisRecognizerV3 } from './luisRecognizerOptionsV3';
+import { DynamicList } from './dynamicList';
+import { ExternalEntity } from './externalEntity';
+import { DialogContext, Recognizer } from 'botbuilder-dialogs';
 
 /**
  * Description of a LUIS application used for initializing a LuisRecognizer.
@@ -139,6 +139,11 @@ export interface LuisRecognizerOptionsV3 extends LuisRecognizerOptions {
     apiVersion: 'v3';
 
     /**
+     * (Optional) External recognizer to recognize external entities to pass to LUIS.
+     */
+    externalEntityRecognizer?: Recognizer;
+
+    /**
      * (Optional) Determine if all intents come back or only the top one.
      */
     includeAllIntents?: boolean;
@@ -156,12 +161,12 @@ export interface LuisRecognizerOptionsV3 extends LuisRecognizerOptions {
     /**
      * (Optional) Dynamic lists of things like contact names to recognize at query time..
      */
-    dynamicLists?: Array<any>; // eslint-disable-line @typescript-eslint/no-explicit-any
+    dynamicLists?: Array<DynamicList>;
 
     /**
      * (Optional) External entities recognized in query.
      */
-    externalEntities?: Array<any>; // eslint-disable-line @typescript-eslint/no-explicit-any
+    externalEntities?: Array<ExternalEntity>;
 
     /**
      * (Optional) Boolean for if external entities should be preferred to the results from LUIS models.
@@ -243,9 +248,7 @@ export class LuisRecognizer implements LuisRecognizerTelemetryClient {
 
     private application: LuisApplication;
     private options: LuisPredictionOptions;
-    private includeApiResults: boolean;
 
-    private luisClient: LuisClient;
     private cacheKey = Symbol('results');
     private luisRecognizerInternal: LuisRecognizerV2 | LuisRecognizerV3;
 
@@ -403,23 +406,23 @@ export class LuisRecognizer implements LuisRecognizerTelemetryClient {
      * }
      * ```
      *
-     * @param {TurnContext} context Context for the current turn of conversation with the use.
+     * @param {DialogContext | TurnContext} context Context for the current turn of conversation with the use.
      * @param {object} telemetryProperties Additional properties to be logged to telemetry with the LuisResult event.
      * @param {object} telemetryMetrics Additional metrics to be logged to telemetry with the LuisResult event.
      * @param {LuisRecognizerOptionsV2 | LuisRecognizerOptionsV3 | LuisPredictionOptions} options (Optional) options object used to override control predictions. Should conform to the [LuisRecognizerOptionsV2] or [LuisRecognizerOptionsV3] definition.
      * @returns {Promise<RecognizerResult>} A promise that resolved to the recognizer result.
      */
-    public recognize(
-        context: TurnContext,
-        telemetryProperties?: { [key: string]: string },
-        telemetryMetrics?: { [key: string]: number },
+    public async recognize(
+        context: DialogContext | TurnContext,
+        telemetryProperties?: Record<string, string>,
+        telemetryMetrics?: Record<string, number>,
         options?: LuisRecognizerOptionsV2 | LuisRecognizerOptionsV3 | LuisPredictionOptions
     ): Promise<RecognizerResult> {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const cached = context.turnState.get(this.cacheKey);
+        const turnContext = context instanceof DialogContext ? context.context : context;
+        const cached = turnContext.turnState.get(this.cacheKey);
         const luisRecognizer = options ? this.buildRecognizer(options) : this.luisRecognizerInternal;
         if (!cached) {
-            const utterance = context.activity.text || '';
+            const utterance = turnContext.activity.text || '';
             let recognizerPromise: Promise<RecognizerResult>;
 
             if (!utterance.trim()) {
@@ -433,20 +436,18 @@ export class LuisRecognizer implements LuisRecognizerTelemetryClient {
                 recognizerPromise = luisRecognizer.recognizeInternal(context);
             }
 
-            return recognizerPromise
-                .then((recognizerResult: RecognizerResult) => {
-                    // Write to cache
-                    context.turnState.set(this.cacheKey, recognizerResult);
+            try {
+                const recognizerResult = await recognizerPromise;
+                // Write to cache
+                turnContext.turnState.set(this.cacheKey, recognizerResult);
 
-                    // Log telemetry
-                    this.onRecognizerResults(recognizerResult, context, telemetryProperties, telemetryMetrics);
-
-                    return recognizerResult;
-                })
-                .catch((error) => {
-                    this.prepareErrorMessage(error);
-                    throw error;
-                });
+                // Log telemetry
+                this.onRecognizerResults(recognizerResult, turnContext, telemetryProperties, telemetryMetrics);
+                return recognizerResult;
+            } catch (error) {
+                this.prepareErrorMessage(error);
+                throw error;
+            }
         }
 
         return Promise.resolve(cached);

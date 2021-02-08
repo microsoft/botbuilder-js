@@ -17,7 +17,7 @@ import { SettingStringMock } from '../settingMocks/settingStringMock';
 export class MockSettingsMiddleware implements Middleware {
     private readonly _mockData = new Map<string, string>();
     private _configured = false;
-    private _configuredConfiguration: Record<string, string> = {};
+    private _configuredConfiguration: Record<string, string>;
 
     /**
      * Initializes a new instance of the [MockSettingsMiddleware](botbuilder-dialogs-adaptive-testing.MockSettingsMiddleware) class.

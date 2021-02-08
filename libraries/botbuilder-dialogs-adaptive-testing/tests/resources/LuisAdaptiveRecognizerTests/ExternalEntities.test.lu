@@ -1,5 +1,4 @@
-$alphaEntity:word1=
-$alphaEntity:word2=
+$alphaEntity:simple
 
 $numberEntity:3= 
 - three
@@ -8,7 +7,7 @@ $numberEntity:4=
 - four
 
 # intent
-- word1
-- word2
+- {alphaEntity=word1}
+- {alphaEntity=word2
 - three
 - four

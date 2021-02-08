@@ -13,11 +13,23 @@ import { HttpRequestMock } from './httpRequestMock';
 import { HttpResponseMock } from './httpResponseMock';
 import { SequenceResponseManager } from './sequenceResponseManager';
 
+/**
+ * Type for how body matches against request's body.
+ */
 export enum BodyMatchType {
+    /**
+     * Exact match.
+     */
     Exact = 'Exact',
+    /**
+     * Match as a part.
+     */
     Partial = 'Partial',
 }
 
+/**
+ * Configuration for a HttpRequestSequenceMock.
+ */
 export interface HttpRequestSequenceMockConfiguration {
     method?: string | HttpMethod;
     url?: string;
@@ -26,15 +38,43 @@ export interface HttpRequestSequenceMockConfiguration {
     responses?: HttpResponseMock[];
 }
 
+/**
+ * Mock http request in sequence order. The last response will be repeated.
+ */
 export class HttpRequestSequenceMock extends HttpRequestMock implements HttpRequestSequenceMockConfiguration {
-    public static $kind = 'Microsoft.Test.HttpRequestSequenceMock';
+    /**
+     * The type of request.
+     */
+    public static readonly $kind = 'Microsoft.Test.HttpRequestSequenceMock';
 
+    /**
+     * Gets or sets the http method to match. Match to any method if not defined.
+     */
     public method: HttpMethod;
+
+    /**
+     * Gets or sets the url to match.
+     */
     public url: string;
+
+    /**
+     * Gets or sets the match type for body.
+     */
     public matchType = BodyMatchType.Partial;
+
+    /**
+     * Gets or sets the body to match against request's body.
+     */
     public body = '';
+
+    /**
+     * Gets the sequence of responses to reply. The last one will be repeated.
+     */
     public responses: HttpResponseMock[] = [];
 
+    /**
+     * Configures the initial conditions.
+     */
     public setup(): void {
         if (this.body && (this.method === HttpMethod.DELETE || this.method === HttpMethod.GET)) {
             throw new Error("GET and DELETE don't support matching body!");

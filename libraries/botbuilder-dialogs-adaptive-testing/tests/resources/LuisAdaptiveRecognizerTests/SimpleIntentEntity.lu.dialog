@@ -1,7 +1,0 @@
-{
-    "$kind": "Microsoft.MultiLanguageRecognizer",
-    "recognizers": {
-        "en-us": "SimpleIntentEntity.en-us.lu",
-        "": "SimpleIntentEntity.en-us.lu"
-    }
-}

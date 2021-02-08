@@ -7,9 +7,12 @@
  */
 
 export * from './dateTimeSpec';
+export * from './dynamicList';
+export * from './externalEntity';
 export * from './geographyV2';
 export * from './instanceData';
 export * from './intentData';
+export * from './listElement';
 export * from './luisAdaptiveRecognizer';
 export * from './luisComponentRegistration';
 export * from './luisRecognizer';
