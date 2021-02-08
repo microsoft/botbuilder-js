@@ -29,6 +29,7 @@ export * from './endTurn';
 export * from './forEach';
 export * from './forEachPage';
 export * from './getActivityMembers';
+export * from './getConversationReference';
 export * from './getConversationMembers';
 export * from './gotoAction';
 export * from './httpRequest';

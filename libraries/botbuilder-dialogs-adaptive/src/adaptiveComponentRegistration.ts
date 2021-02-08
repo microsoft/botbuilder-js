@@ -54,6 +54,8 @@ import {
     GetActivityMembersConfiguration,
     GetConversationMembers,
     GetConversationMembersConfiguration,
+    GetConversationReference,
+    GetConversationReferenceConfiguration,
     GotoAction,
     GotoActionConfiguration,
     HttpRequest,
@@ -239,6 +241,9 @@ export class AdaptiveComponentRegistration extends ComponentRegistration impleme
         this._addDeclarativeType<ForEachPage, ForEachPageConfiguration>(ForEachPage);
         this._addDeclarativeType<GetActivityMembers, GetActivityMembersConfiguration>(GetActivityMembers);
         this._addDeclarativeType<GetConversationMembers, GetConversationMembersConfiguration>(GetConversationMembers);
+        this._addDeclarativeType<GetConversationReference, GetConversationReferenceConfiguration>(
+            GetConversationReference
+        );
         this._addDeclarativeType<GotoAction, GotoActionConfiguration>(GotoAction);
         this._addDeclarativeType<HttpRequest, HttpRequestConfiguration>(HttpRequest);
         this._addDeclarativeType<IfCondition, IfConditionConfiguration>(IfCondition);
