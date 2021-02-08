@@ -28,7 +28,7 @@ import * as lp from './generated/LGFileParser';
 import { TemplateErrors } from './templateErrors';
 import { SourceRange } from './sourceRange';
 import { LGTemplateLexer } from './generated/LGTemplateLexer';
-import { LGTemplateParser, BodyContext } from './generated/LGTemplateParser';
+import { LGTemplateParser, BodyContext, StructuredTemplateBodyContext, KeyValueStructureValueContext } from './generated/LGTemplateParser';
 import { LGResource } from './lgResource';
 
 export declare type ImportResolverDelegate = (lgResource: LGResource, resourceId: string) => LGResource;
@@ -434,9 +434,8 @@ export class TemplatesTransformer extends AbstractParseTreeVisitor<any> implemen
 
             this.checkTemplateName(templateName, context.templateNameLine());
             this.checkTemplateParameters(parameters, context.templateNameLine());
-            template.templateBodyParseTree = this.checkTemplateBody(
-                templateName,
-                templateBody,
+            this.checkTemplateBody(
+                template,
                 context.templateBody(),
                 startLine
             );
@@ -478,21 +477,24 @@ export class TemplatesTransformer extends AbstractParseTreeVisitor<any> implemen
      * @private
      */
     private checkTemplateBody(
-        templateName: string,
-        templateBody: string,
+        template: Template,
         context: lp.TemplateBodyContext,
         startLine: number
     ): BodyContext {
-        if (templateBody === undefined || templateBody.trim() === '') {
+        if (template.body === undefined || template.body.trim() === '') {
             const diagnostic = this.buildTemplatesDiagnostic(
-                TemplateErrors.noTemplateBody(templateName),
+                TemplateErrors.noTemplateBody(template.name),
                 context,
                 DiagnosticSeverity.Warning
             );
             this.templates.diagnostics.push(diagnostic);
         } else {
             try {
-                return this.antlrParseTemplate(templateBody, startLine);
+                const templateBodyContext = this.antlrParseTemplate(template.body, startLine);
+                if (templateBodyContext) {
+                    template.templateBodyParseTree = templateBodyContext;
+                    template = new TemplateBodyTransformer(template).transform();
+                }
             } catch (error) {
                 if (error instanceof TemplateException) {
                     this.templates.diagnostics.push(...error.getDiagnostic());
@@ -575,5 +577,53 @@ export class TemplatesTransformer extends AbstractParseTreeVisitor<any> implemen
             severity,
             this.templates.source
         );
+    }
+}
+
+class TemplateBodyTransformer extends AbstractParseTreeVisitor<void> implements LGTemplateParserVisitor<void> {
+    private _template: Template;
+    constructor(template: Template) {
+        super();
+        this._template = template;
+    }
+
+    protected defaultResult(): void {
+
+    }
+
+    public transform(): Template {
+        this.visit(this._template.templateBodyParseTree);
+        return this._template;
+    }
+
+    public visitStructuredTemplateBody(context: StructuredTemplateBodyContext): void {
+        if (!context.structuredBodyNameLine().errorStructuredName()
+         && context.structuredBodyEndLine()
+         && (!context.errorStructureLine() || context.errorStructureLine().length === 0)
+         && (context.structuredBodyContentLine() && context.structuredBodyContentLine().length > 0)
+        ) {
+            const bodys = context.structuredBodyContentLine();
+            for (const body of bodys) {
+                if (body.keyValueStructureLine()) {
+                    const structureKey = body.keyValueStructureLine().STRUCTURE_IDENTIFIER();
+                    const structureValues = body.keyValueStructureLine().keyValueStructureValue();
+                    const typeName = context.structuredBodyNameLine().STRUCTURE_NAME().text.trim();
+                    this.fillInProperties(structureKey.text.trim(), structureValues, typeName);
+                }
+            }
+        }
+    }
+
+    private fillInProperties(key: string, structureValues: KeyValueStructureValueContext[], name: string): void {
+        if (!this._template.properties) {
+            this._template.properties = {};
+        }
+
+        this._template.properties['$type'] = name;
+        if (structureValues.length === 1) {
+            this._template.properties[key] = structureValues[0].text;
+        } else if (structureValues.length > 1) {
+            this._template.properties[key] = structureValues.map(u => u.text);
+        }
     }
 }
