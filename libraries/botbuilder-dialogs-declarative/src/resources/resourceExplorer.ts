@@ -233,7 +233,7 @@ export class ResourceExplorer {
         Object.assign(
             result,
             JSON.parse(json, (_key: string, value: unknown): unknown => {
-                if (typeof value !== 'object') {
+                if (typeof value !== 'object' || value === null) {
                     return value;
                 }
                 if (Array.isArray(value)) {
