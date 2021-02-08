@@ -15,6 +15,7 @@ export * from './cancelAllDialogs';
 export * from './cancelDialog';
 export * from './case';
 export * from './codeAction';
+export * from './continueConversation';
 export * from './continueConversationLater';
 export * from './continueLoop';
 export * from './deleteActivity';

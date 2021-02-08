@@ -25,6 +25,8 @@ import {
     CancelAllDialogs,
     CancelDialog,
     CancelAllDialogsBaseConfiguration,
+    ContinueConversation,
+    ContinueConversationConfiguration,
     ContinueConversationLater,
     ContinueConversationLaterConfiguration,
     ContinueLoop,
@@ -225,6 +227,7 @@ export class AdaptiveComponentRegistration extends ComponentRegistration impleme
         this._addDeclarativeType<BreakLoop, BreakLoopConfiguration>(BreakLoop);
         this._addDeclarativeType<CancelAllDialogs, CancelAllDialogsBaseConfiguration>(CancelAllDialogs);
         this._addDeclarativeType<CancelDialog, CancelAllDialogsBaseConfiguration>(CancelDialog);
+        this._addDeclarativeType<ContinueConversation, ContinueConversationConfiguration>(ContinueConversation);
         this._addDeclarativeType<ContinueConversationLater, ContinueConversationLaterConfiguration>(
             ContinueConversationLater
         );
