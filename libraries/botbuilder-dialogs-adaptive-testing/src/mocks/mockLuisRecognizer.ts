@@ -88,6 +88,9 @@ export class MockLuisRecognizer extends Recognizer {
         return result;
     }
 
+    // Computes response json file path from utterance and options.
+    // The utterance and all the option properties will be hashed with murmurhash v3 and XORed to compute a unique file name.
+    // Check out: https://github.com/microsoft/botbuilder-dotnet/blob/main/libraries/Microsoft.Bot.Builder.Dialogs.Adaptive.Testing/Mocks/MockLuisRecognizer.cs
     private _responsePath(utterance: string, options: LuisRecognizerOptionsV3): string {
         let hash: number = stableHash(utterance);
 
