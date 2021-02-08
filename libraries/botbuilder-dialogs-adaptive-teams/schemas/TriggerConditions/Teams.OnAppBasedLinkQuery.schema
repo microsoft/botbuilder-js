@@ -5,5 +5,17 @@
     "description": "Actions triggered when a Teams activity is received with activity.name == 'composeExtension/queryLink'.",
     "type": "object",
     "required": [
+    ],
+    "policies": [
+        {
+            "type": "triggerNotInteractive"
+        },
+        {
+            "type": "triggerRequiresAction",
+            "kinds": [
+                "Teams.SendAppBasedLinkQueryResponse",
+                "Teams.SendMessagingExtensionAuthResponse"
+            ]
+        }
     ]
 }
