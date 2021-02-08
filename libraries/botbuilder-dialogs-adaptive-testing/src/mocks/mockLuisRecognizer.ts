@@ -10,7 +10,13 @@ import buffer from 'bitwise/buffer';
 import * as fs from 'fs';
 import * as murmurhash from 'murmurhash-js';
 import * as path from 'path';
-import { LuisAdaptiveRecognizer, LuisRecognizerOptionsV3 } from 'botbuilder-ai';
+import {
+    DynamicList,
+    ExternalEntity,
+    ListElement,
+    LuisAdaptiveRecognizer,
+    LuisRecognizerOptionsV3,
+} from 'botbuilder-ai';
 import { DialogContext, Recognizer } from 'botbuilder-dialogs';
 import { Activity, RecognizerResult } from 'botbuilder-core';
 import {
@@ -19,9 +25,6 @@ import {
     MockHttpRequestMiddlewareKey,
 } from './mockHttpRequestMiddleware';
 import { HttpResponseMessage } from '../httpRequestMocks/httpResponseMock';
-import { DynamicList } from 'botbuilder-ai/lib/dynamicList';
-import { ListElement } from 'botbuilder-ai/lib/listElement';
-import { ExternalEntity } from 'botbuilder-ai/lib/externalEntity';
 
 /**
  * Wrap murmurhash v3.
