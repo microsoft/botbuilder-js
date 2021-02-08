@@ -607,7 +607,7 @@ class TemplateBodyTransformer extends AbstractParseTreeVisitor<void> implements 
                 if (body.keyValueStructureLine()) {
                     const structureKey = body.keyValueStructureLine().STRUCTURE_IDENTIFIER();
                     const structureValues = body.keyValueStructureLine().keyValueStructureValue();
-                    const typeName = context.structuredBodyNameLine().STRUCTURE_NAME().text;
+                    const typeName = context.structuredBodyNameLine().STRUCTURE_NAME().text.trim();
                     this.fillInProperties(structureKey.text.trim(), structureValues, typeName);
                 }
             }
