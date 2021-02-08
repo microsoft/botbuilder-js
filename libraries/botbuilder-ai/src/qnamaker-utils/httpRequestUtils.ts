@@ -38,7 +38,7 @@ export class HttpRequestUtils {
         payloadBody: string,
         endpoint: QnAMakerEndpoint,
         timeout?: number
-    ): Promise<QnAMakerResults> {
+    ): Promise<QnAMakerResults | undefined> {
         if (!requestUrl) {
             throw new TypeError('Request url cannot be null.');
         }
