@@ -2,8 +2,8 @@
 // Licensed under the MIT License.
 
 import forge from 'node-forge';
-import jwt from 'jsonwebtoken';
-import nock from 'nock';
+import jwt from 'jsonwebtoken'; // eslint-disable-line import/no-extraneous-dependencies
+import nock from 'nock'; // eslint-disable-line import/no-extraneous-dependencies
 import url from 'url';
 import { assert } from 'botbuilder-stdlib';
 import { nanoid } from 'nanoid';

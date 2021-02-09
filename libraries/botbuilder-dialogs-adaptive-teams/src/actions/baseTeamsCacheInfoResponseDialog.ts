@@ -6,6 +6,8 @@
  * Licensed under the MIT License.
  */
 
+import { Converter, ConverterFactory, Dialog, DialogContext } from 'botbuilder-dialogs';
+
 import {
     BoolExpression,
     BoolExpressionConverter,
@@ -15,9 +17,15 @@ import {
     StringExpression,
     StringExpressionConverter,
 } from 'adaptive-expressions';
-import { Converter, ConverterFactory, Dialog, DialogContext } from 'botbuilder-dialogs';
-import { Activity, ActivityTypes, CacheInfo, MessagingExtensionResult, StatusCodes } from 'botframework-schema';
-import { MessagingExtensionResponse } from 'botbuilder';
+
+import {
+    Activity,
+    ActivityTypes,
+    CacheInfo,
+    MessagingExtensionResponse,
+    MessagingExtensionResult,
+    StatusCodes,
+} from 'botbuilder';
 
 export interface BaseTeamsCacheInfoResponseDialogConfiguration {
     disabled?: boolean | string | BoolExpression;
