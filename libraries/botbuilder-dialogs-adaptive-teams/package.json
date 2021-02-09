@@ -34,7 +34,8 @@
     "botbuilder-dialogs-adaptive": "4.1.6"
   },
   "devDependencies": {
-    "botbuilder-test-utils": "0.0.0"
+    "botbuilder-test-utils": "0.0.0",
+    "mocha": "^8.2.1"
   },
   "scripts": {
     "build": "tsc -b",
@@ -43,8 +44,9 @@
     "clean": "rimraf _ts3.4 lib tsconfig.tsbuildinfo",
     "lint": "eslint . --ext .js,.ts",
     "postbuild": "downlevel-dts lib _ts3.4/lib --checksum",
-    "test": "yarn build && nyc mocha tests/**/*.{ts,js} --require ts-node/register",
-    "test:compat": "api-extractor run --verbose"
+    "test": "nyc mocha tests",
+    "test:compat": "api-extractor run --verbose",
+    "test:min": "yarn test --reporter dot"
   },
   "files": [
     "_ts3.4",
