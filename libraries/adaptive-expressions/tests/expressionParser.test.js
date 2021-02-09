@@ -1,7 +1,7 @@
 /* eslint-disable security/detect-object-injection */
 const assert = require('assert');
 const bigInt = require('big-integer');
-const { Expression, SimpleObjectMemory, FunctionUtils, Options, NumericEvaluator } = require('../lib');
+const { Expression, SimpleObjectMemory, FunctionUtils, Options, NumericEvaluator, StackedMemory } = require('../lib');
 const { TimexProperty } = require('@microsoft/recognizers-text-data-types-timex-expression');
 const { useFakeTimers } = require('sinon');
 const os = require('os');
@@ -1012,6 +1012,21 @@ describe('expression parser functional test', () => {
             testCases.forEach(([input, expectedOutput, expectedRefs]) => {
                 it(input.toString() || '(empty)', generateParseTest(input, expectedOutput, expectedRefs));
             });
+        });
+    });
+
+    describe('StackedMemory', () => {
+        it('supports null values', () => {
+            const sm = new StackedMemory();
+
+            sm.push(new SimpleObjectMemory({ a: 'a', b: 'b', c: null }));
+            sm.push(new SimpleObjectMemory({ c: 'c' }));
+            sm.push(new SimpleObjectMemory({ a: 'newa', b: null, d: 'd' }));
+
+            assert.deepStrictEqual(Expression.parse('d').tryEvaluate(sm), { error: undefined, value: 'd' }, 'd');
+            assert.deepStrictEqual(Expression.parse('a').tryEvaluate(sm), { error: undefined, value: 'newa' }, 'a');
+            assert.deepStrictEqual(Expression.parse('c').tryEvaluate(sm), { error: undefined, value: 'c' }, 'c');
+            assert.deepStrictEqual(Expression.parse('b').tryEvaluate(sm), { error: undefined, value: null }, 'b');
         });
     });
 
