@@ -7,13 +7,14 @@
  */
 
 import { Activity, Entity, RecognizerResult } from 'botbuilder-core';
-import { DialogContext, Recognizer } from 'botbuilder-dialogs';
+import { DialogContext } from 'botbuilder-dialogs';
+import { AdaptiveRecognizer } from '../adaptiveRecognizer';
 import { TextEntity } from './textEntity';
 
 /**
  * Entity recognizers base class.
  */
-export class EntityRecognizer extends Recognizer {
+export class EntityRecognizer extends AdaptiveRecognizer {
     /**
      * To recognize intents and entities in a users utterance.
      *

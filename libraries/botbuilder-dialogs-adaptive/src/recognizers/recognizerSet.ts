@@ -9,12 +9,13 @@
 import { Activity, RecognizerResult, getTopScoringIntent } from 'botbuilder-core';
 import { Converter, ConverterFactory, DialogContext, Recognizer, RecognizerConfiguration } from 'botbuilder-dialogs';
 import { RecognizerListConverter } from '../converters';
+import { AdaptiveRecognizer } from './adaptiveRecognizer';
 
 export interface RecognizerSetConfiguration extends RecognizerConfiguration {
     recognizers?: string[] | Recognizer[];
 }
 
-export class RecognizerSet extends Recognizer implements RecognizerSetConfiguration {
+export class RecognizerSet extends AdaptiveRecognizer implements RecognizerSetConfiguration {
     public static $kind = 'Microsoft.RecognizerSet';
 
     public recognizers: Recognizer[] = [];

@@ -10,6 +10,7 @@ import { merge, pickBy } from 'lodash';
 import { Activity, RecognizerResult, getTopScoringIntent } from 'botbuilder-core';
 import { Converter, ConverterFactory, DialogContext, Recognizer, RecognizerConfiguration } from 'botbuilder-dialogs';
 import { RecognizerListConverter } from '../converters';
+import { AdaptiveRecognizer } from './adaptiveRecognizer';
 
 /**
  * Standard cross trained intent name prefix.
@@ -23,7 +24,7 @@ export interface CrossTrainedRecognizerSetConfiguration extends RecognizerConfig
 /**
  * Recognizer for selecting between cross trained recognizers.
  */
-export class CrossTrainedRecognizerSet extends Recognizer implements CrossTrainedRecognizerSetConfiguration {
+export class CrossTrainedRecognizerSet extends AdaptiveRecognizer implements CrossTrainedRecognizerSetConfiguration {
     public static $kind = 'Microsoft.CrossTrainedRecognizerSet';
 
     /**

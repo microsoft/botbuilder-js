@@ -51,6 +51,10 @@ type Orchestrator = {
 /**
  * Class that represents an adaptive Orchestrator recognizer.
  */
+// TODO - discuss what we want to do with OrchestratorAdaptiveRecognizer
+// C# - has dependency on Dialogs.Adaptive, but in JS only has AdaptiveExpression dependency
+// Therefore no access to new, base class AdaptiveRecognizer
+// Might need to follow same pattern as LuisAdaptiveRecognizer and QnAMakerRecognizer
 export class OrchestratorAdaptiveRecognizer extends Recognizer implements OrchestratorAdaptiveRecognizerConfiguration {
     public static $kind = 'Microsoft.OrchestratorRecognizer';
 

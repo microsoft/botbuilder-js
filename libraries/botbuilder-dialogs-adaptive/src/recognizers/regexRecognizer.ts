@@ -6,10 +6,11 @@
  * Licensed under the MIT License.
  */
 import { Activity, Entity, RecognizerResult } from 'botbuilder-core';
-import { Converter, ConverterFactory, DialogContext, Recognizer } from 'botbuilder-dialogs';
+import { Converter, ConverterFactory, DialogContext } from 'botbuilder-dialogs';
 import { IntentPattern } from './intentPattern';
 import { EntityRecognizer, TextEntity, EntityRecognizerSet } from './entityRecognizers';
 import { RecognizerSetConfiguration } from './recognizerSet';
+import { AdaptiveRecognizer } from './adaptiveRecognizer';
 
 type IntentPatternInput = {
     intent: string;
@@ -30,7 +31,7 @@ export interface RegexRecognizerConfiguration extends RecognizerSetConfiguration
     intents?: IntentPatternInput[] | IntentPattern[];
 }
 
-export class RegexRecognizer extends Recognizer implements RegexRecognizerConfiguration {
+export class RegexRecognizer extends AdaptiveRecognizer implements RegexRecognizerConfiguration {
     public static $kind = 'Microsoft.RegexRecognizer';
 
     /**

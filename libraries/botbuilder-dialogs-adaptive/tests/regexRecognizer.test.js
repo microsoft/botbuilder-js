@@ -124,6 +124,16 @@ describe('RegexRecognizer Tests', () => {
         additionalProperties: 'additionalPropertiesValue',
     };
 
+    it('TEST TEST TEST - REGEX RECOGNIZER', async function () {
+        const dc = createContext('');
+        const activity = createMessageActivity('intent a1 b2');
+        let result = await recognizer.recognize(dc, activity);
+
+        validateCodeIntent(result);
+
+        
+    });
+
     it('recognize regex pattern with dialog context', async function () {
         const dc = createContext('');
         const activity = createMessageActivity('intent a1 b2');
