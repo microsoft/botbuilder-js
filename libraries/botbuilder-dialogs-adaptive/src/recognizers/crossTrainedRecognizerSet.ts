@@ -74,7 +74,7 @@ export class CrossTrainedRecognizerSet extends AdaptiveRecognizer implements Cro
         this.trackRecognizerResult(
             dialogContext,
             'CrossTrainedRecognizerSetResult',
-            this.fillRecognizerResultTelemetryProperties(result, telemetryProperties),
+            this.fillRecognizerResultTelemetryProperties(result, telemetryProperties, dialogContext),
             telemetryMetrics
         );
         return result;

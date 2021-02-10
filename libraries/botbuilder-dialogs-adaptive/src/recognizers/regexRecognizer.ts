@@ -163,7 +163,7 @@ export class RegexRecognizer extends AdaptiveRecognizer implements RegexRecogniz
         this.trackRecognizerResult(
             dialogContext,
             'RegexRecognizerResult',
-            this.fillRecognizerResultTelemetryProperties(recognizerResult, telemetryProperties),
+            this.fillRecognizerResultTelemetryProperties(recognizerResult, telemetryProperties, dialogContext),
             telemetryMetrics
         );
         return recognizerResult;

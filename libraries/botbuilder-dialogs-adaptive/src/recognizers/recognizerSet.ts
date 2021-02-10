@@ -121,7 +121,7 @@ export class RecognizerSet extends AdaptiveRecognizer implements RecognizerSetCo
         this.trackRecognizerResult(
             dialogContext,
             'RecognizerSetResult',
-            this.fillRecognizerResultTelemetryProperties(recognizerResult, telemetryProperties),
+            this.fillRecognizerResultTelemetryProperties(recognizerResult, telemetryProperties, dialogContext),
             telemetryMetrics
         );
 

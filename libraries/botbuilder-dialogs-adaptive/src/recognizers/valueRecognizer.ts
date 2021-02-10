@@ -41,7 +41,7 @@ export class ValueRecognizer extends AdaptiveRecognizer {
         this.trackRecognizerResult(
             dialogContext,
             'ValueRecognizerResult',
-            this.fillRecognizerResultTelemetryProperties(recognizerResult, telemetryProperties),
+            this.fillRecognizerResultTelemetryProperties(recognizerResult, telemetryProperties, dialogContext),
             telemetryMetrics
         );
 
