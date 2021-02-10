@@ -1,8 +1,6 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-import log from 'npmlog';
-
 // Represents successful execution
 export type Success = {
     _type: 'success';
@@ -62,15 +60,14 @@ export type Result = Success | Failure;
  * Executes `logic` and handles transforming the `Result` into proper process state. Logs errors and exits the process.
  *
  * @param {() => Promise<Result>} logic an operation to execute that yields a `Result`
- * @param {log.Logger} logger optional, a logger to use
  * @returns {Promise<void>} a promise representing execution of `logic`
  */
-export async function run(logic: () => Promise<Result>, logger: log.Logger | null = log): Promise<void> {
+export async function run(logic: () => Promise<Result>): Promise<void> {
     try {
         const result = await logic();
         if (isFailure(result)) {
             if (result.message) {
-                logger?.error('run', result.message);
+                console.error('run', result.message);
             }
 
             process.exit(result.statusCode);
@@ -78,7 +75,7 @@ export async function run(logic: () => Promise<Result>, logger: log.Logger | nul
 
         process.exit(0);
     } catch (err) {
-        logger?.error('run', err);
+        console.error('run', err);
         process.exit(-1);
     }
 }
