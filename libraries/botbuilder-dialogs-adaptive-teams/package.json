@@ -31,7 +31,10 @@
     "adaptive-expressions": "4.1.6",
     "botbuilder": "4.1.6",
     "botbuilder-dialogs": "4.1.6",
-    "botbuilder-dialogs-adaptive": "4.1.6"
+    "botbuilder-dialogs-adaptive": "4.1.6",
+    "botbuilder-dialogs-declarative": "4.1.6",
+    "botbuilder-stdlib": "4.1.6",
+    "lodash": "^4.17.19"
   },
   "devDependencies": {
     "botbuilder-test-utils": "0.0.0",
