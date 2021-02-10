@@ -243,7 +243,7 @@ export class InternalFunctionUtils {
      */
     public static wrapGetValue(state: MemoryInterface, path: string, options: Options): any {
         const result = state.getValue(path);
-        if (result !== undefined && result !== null) {
+        if (result !== undefined) {
             return result;
         }
 
