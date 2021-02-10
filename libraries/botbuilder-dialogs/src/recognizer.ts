@@ -125,7 +125,7 @@ export class Recognizer extends Configurable implements RecognizerConfiguration 
         return properties;
     }
 
-    private stringifyAdditionalPropertiesOfRecognizerResult(recognizerResult: RecognizerResult): string {
+    protected stringifyAdditionalPropertiesOfRecognizerResult(recognizerResult: RecognizerResult): string {
         const generalProperties = new Set(['text', 'alteredText', 'intents', 'entities']);
         const additionalProperties: { [key: string]: string } = {};
         for (const key in recognizerResult) {

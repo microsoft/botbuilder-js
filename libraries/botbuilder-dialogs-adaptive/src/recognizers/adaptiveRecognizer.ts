@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 import { BoolExpression } from "adaptive-expressions";
-import { RecognizerResult } from "botbuilder-core";
+import { getTopScoringIntent, RecognizerResult } from "botbuilder-core";
 import { DialogContext, Recognizer } from "botbuilder-dialogs";
 
 // TODO - look into JS Recognizer pattern 
@@ -18,7 +18,7 @@ export abstract class AdaptiveRecognizer extends Recognizer {
     /**
      * (Optional) Flag that designates whether personally identifiable information (PII) should log to telemetry.
      */
-    public logPersonalInformation: BoolExpression;
+    public logPersonalInformation = new BoolExpression('=settings.telemetry.logPersonalInformation');
 
     /**
      * Uses the RecognizerResult to create a list of propeties to be included when tracking the result in telemetry.
@@ -32,7 +32,34 @@ export abstract class AdaptiveRecognizer extends Recognizer {
         telemetryProperties: { [key: string]: string },
         dialogContext?: DialogContext
     ): { [key: string]: string } {
+        const { intent, score } = getTopScoringIntent(recognizerResult);
 
-        return {"test": "remove me" };
+        const properties: { [key: string]: string } = {
+            TopIntent: Object.entries(recognizerResult.intents).length > 0 ? intent : undefined,
+            TopIntentScore: Object.entries(recognizerResult.intents).length > 0 ? score.toString() : undefined,
+            Intents:
+                Object.entries(recognizerResult.intents).length > 0
+                    ? JSON.stringify(recognizerResult.intents)
+                    : undefined,
+            Entities: recognizerResult.entities ? JSON.stringify(recognizerResult.entities) : undefined,
+            AdditionalProperties: this.stringifyAdditionalPropertiesOfRecognizerResult(recognizerResult),
+        };
+
+        const logPersonalInformation =
+            this.logPersonalInformation instanceof BoolExpression
+                ? this.logPersonalInformation.getValue(dialogContext.state)
+                : this.logPersonalInformation;
+                
+        if (logPersonalInformation)
+        {
+            properties['Text'] = recognizerResult.text
+            properties['AlteredText'] = recognizerResult.alteredText
+        }
+
+        // Additional Properties can override "stock" properties.
+        if (telemetryProperties) {
+            return Object.assign({}, properties, telemetryProperties);
+        }
+        return properties;
     }
 }
