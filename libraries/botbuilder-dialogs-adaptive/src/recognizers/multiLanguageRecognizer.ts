@@ -73,8 +73,8 @@ export class MultiLanguageRecognizer extends AdaptiveRecognizer implements Multi
                 );
                 this.trackRecognizerResult(
                     dialogContext,
-                    'MultiLanguagesRecognizerResult',
-                    this.fillRecognizerResultTelemetryProperties(result, telemetryProperties),
+                    'MultiLanguageRecognizerResult',
+                    this.fillRecognizerResultTelemetryProperties(result, telemetryProperties, dialogContext),
                     telemetryMetrics
                 );
                 return result;

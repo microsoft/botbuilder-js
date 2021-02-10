@@ -9,9 +9,9 @@ import { BoolExpression } from "adaptive-expressions";
 import { getTopScoringIntent, RecognizerResult } from "botbuilder-core";
 import { DialogContext, Recognizer } from "botbuilder-dialogs";
 
-// TODO - look into JS Recognizer pattern 
+// TODO
 // (differs from C# in that it uses <name-of-recognizer>Configuration interfaces)
-// I think we might consider AdaptiveRecognizerConfiguration interface
+// AdaptiveRecognizerConfiguration interface
 // with optional BoolExpression logPersonalInformation
 
 export abstract class AdaptiveRecognizer extends Recognizer {
@@ -49,11 +49,11 @@ export abstract class AdaptiveRecognizer extends Recognizer {
             this.logPersonalInformation instanceof BoolExpression
                 ? this.logPersonalInformation.getValue(dialogContext.state)
                 : this.logPersonalInformation;
-                
+
         if (logPersonalInformation)
         {
-            properties['Text'] = recognizerResult.text
-            properties['AlteredText'] = recognizerResult.alteredText
+            properties['text'] = recognizerResult.text
+            properties['alteredText'] = recognizerResult.alteredText
         }
 
         // Additional Properties can override "stock" properties.
