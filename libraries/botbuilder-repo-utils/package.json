@@ -10,11 +10,7 @@
     "type": "git",
     "url": "https://github.com/Microsoft/botbuilder-js.git"
   },
-  "devDependencies": {
-    "@types/async": "^3.2.3",
-    "@types/minimist": "^1.2.1",
-    "@types/npmlog": "^4.1.2",
-    "@types/sinon": "^9.0.8",
+  "dependencies": {
     "async": "^3.2.0",
     "dayjs": "^1.10.3",
     "get-stream": "^6.0.0",
@@ -23,7 +19,13 @@
     "minimist": "^1.2.5",
     "npmlog": "^4.1.2",
     "p-map": "^4.0.0",
-    "remeda": "^0.0.26",
+    "remeda": "^0.0.26"
+  },
+  "devDependencies": {
+    "@types/async": "^3.2.3",
+    "@types/minimist": "^1.2.1",
+    "@types/npmlog": "^4.1.2",
+    "@types/sinon": "^9.0.8",
     "sinon": "^9.2.1",
     "ts-node": "^9.0.0",
     "typescript": "^4.0.5"

@@ -2,7 +2,7 @@
 // Licensed under the MIT License.
 
 import assert from 'assert';
-import nock from 'nock';
+import nock from 'nock'; // eslint-disable-line import/no-extraneous-dependencies
 
 /**
  * Registers mocha hooks for proper usage
