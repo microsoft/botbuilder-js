@@ -138,14 +138,13 @@ const hasValidEntities = (activity, propertyValue) => {
     const text = asMessageActivity(activity).text;
     const actualEntity = JSON.parse(propertyValue);
 
-    if (text == codeIntentText && !text in actualEntity) {
+    if (text == codeIntentText && !'code' in actualEntity) {
         return false;
     }
 
-    // if (text == ColorIntentText && !actualEntity.ContainsKey("color"))
-    // {
-    //     return false;
-    // }
+    if (text == colorIntentText && !'color' in actualEntity) {
+        return false;
+    }
 
     // if (text == GreetingIntentTextEnUs && actualEntity.Count != 0)
     // {

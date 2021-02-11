@@ -91,10 +91,9 @@ describe('RegexRecognizer Tests', () => {
             spy.restore();
         });
 
-        it('recognize intent and log PII when logPersonalInformation is true', async function () {
+        it('logs PII when logPersonalInformation is true', async function() {
             recognizer.logPersonalInformation = true;
-        
-            // dialog context activity
+
             await recognizeIntentAndValidateTelemetry({ 
                 text: codeIntentText, callCount: 1, recognizer, spy
             });
@@ -102,16 +101,14 @@ describe('RegexRecognizer Tests', () => {
                 text: colorIntentText, callCount: 2, recognizer, spy
             });
 
-            // custom activity
             await recognizeIntentAndValidateTelemetry_withCustomActivity({
                 text: codeIntentText, callCount: 3, recognizer, spy
             });
         });
 
-        it('recognize intent and does not log PII when logPersonalInformation is false', async function () {
+        it('does not log PII when logPersonalInformation is false', async function() {
             recognizer.logPersonalInformation = false;
-        
-            // dialog context activity
+
             await recognizeIntentAndValidateTelemetry({ 
                 text: codeIntentText, callCount: 1, recognizer, spy
             });
@@ -119,9 +116,40 @@ describe('RegexRecognizer Tests', () => {
                 text: colorIntentText, callCount: 2, recognizer, spy
             });
 
-            // custom activity
             await recognizeIntentAndValidateTelemetry_withCustomActivity({
                 text: codeIntentText, callCount: 3, recognizer, spy
+            });
+        });
+
+        it('should refrain from logging PII by default', async function() {
+            const defaultLogPiiRecognizer = new RegexRecognizer().configure({
+                intents: [
+                    new IntentPattern('codeIntent', '(?<code>[a-z][0-9])'),
+                    new IntentPattern('colorIntent', '(color|colour)'),
+                ],
+                entities: new EntityRecognizerSet(
+                    new NumberEntityRecognizer(),
+                    new OrdinalEntityRecognizer(),
+                    new RegexEntityRecognizer('color', '(red|green|blue|purple|orange|violet|white|black)'),
+                    new RegexEntityRecognizer('backgroundColor', '(back|background) {color}'),
+                    new RegexEntityRecognizer('foregroundColor', '(foreground|front) {color}')
+                ),
+            });
+            spy.restore();
+            spy = spyOnTelemetryClientTrackEvent(defaultLogPiiRecognizer);
+
+            await recognizeIntentAndValidateTelemetry({ 
+                text: codeIntentText,
+                callCount: 1,
+                recognizer: defaultLogPiiRecognizer,
+                spy
+            });
+
+            await recognizeIntentAndValidateTelemetry_withCustomActivity({
+                text: codeIntentText,
+                callCount: 2,
+                recognizer: defaultLogPiiRecognizer,
+                spy
             });
         });
     });
