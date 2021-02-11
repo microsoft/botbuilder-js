@@ -3,7 +3,7 @@ const { ComponentRegistration } = require('botbuilder-core');
 const { AdaptiveComponentRegistration, MultiLanguageRecognizer, RegexRecognizer, IntentPattern } = require('botbuilder-dialogs-adaptive');
 const { ResourceExplorer } = require('botbuilder-dialogs-declarative');
 const { AdaptiveTestComponentRegistration, TestUtils } = require('../lib');
-const { 
+const {
     greetingIntentTextEnUs,
     recognizeIntentAndValidateTelemetry,
     spyOnTelemetryClientTrackEvent
@@ -85,18 +85,18 @@ describe('MultiLanguageRecognizerTests', function () {
             spy.restore();
         });
 
-        it('Merge - should log PII when logPersonalInformation is true', async() => {
+        it('Merge - should log PII when logPersonalInformation is true', async () => {
             recognizer.logPersonalInformation = true;
 
-            await recognizeIntentAndValidateTelemetry({ 
+            await recognizeIntentAndValidateTelemetry({
                 text: greetingIntentTextEnUs, callCount: 1, recognizer, spy
             });
         });
 
-        it('Merge - should not log PII when logPersonalInformation is false', async() => {
+        it('Merge - should not log PII when logPersonalInformation is false', async () => {
             recognizer.logPersonalInformation = false;
 
-            await recognizeIntentAndValidateTelemetry({ 
+            await recognizeIntentAndValidateTelemetry({
                 text: greetingIntentTextEnUs, callCount: 1, recognizer, spy
             });
         });
@@ -105,7 +105,7 @@ describe('MultiLanguageRecognizerTests', function () {
             const recognizerWithDefaultLogPii = createRecognizer();
             const trackEventSpy = spyOnTelemetryClientTrackEvent(recognizerWithDefaultLogPii);
 
-            await recognizeIntentAndValidateTelemetry({ 
+            await recognizeIntentAndValidateTelemetry({
                 text: greetingIntentTextEnUs,
                 callCount: 1,
                 recognizer: recognizerWithDefaultLogPii,

@@ -3,7 +3,7 @@ const { ComponentRegistration } = require('botbuilder-core');
 const { AdaptiveComponentRegistration, EntityRecognizerSet, RecognizerSet, RegexRecognizer, IntentPattern } = require('botbuilder-dialogs-adaptive');
 const { ResourceExplorer } = require('botbuilder-dialogs-declarative');
 const { AdaptiveTestComponentRegistration, TestUtils } = require('../lib');
-const { 
+const {
     AgeEntityRecognizer,
     NumberEntityRecognizer,
     PercentageEntityRecognizer,
@@ -13,7 +13,7 @@ const {
     UrlEntityRecognizer
 } = require('botbuilder-dialogs-adaptive');
 
-const { 
+const {
     colorIntentText,
     codeIntentText,
     recognizeIntentAndValidateTelemetry,
@@ -26,7 +26,7 @@ const createRecognizer = () => {
         recognizers: [
             new RegexRecognizer().configure({
                 id: 'codeRecognizer',
-                intents: [ new IntentPattern('codeIntent', '(?<code>[a-z][0-9])') ],
+                intents: [new IntentPattern('codeIntent', '(?<code>[a-z][0-9])')],
                 entities: new EntityRecognizerSet(
                     new AgeEntityRecognizer(),
                     new NumberEntityRecognizer(),
@@ -37,7 +37,7 @@ const createRecognizer = () => {
             }),
             new RegexRecognizer().configure({
                 id: 'colorRecognizer',
-                intents: [ new IntentPattern('colorIntent', '(?i)(color|colour)') ],
+                intents: [new IntentPattern('colorIntent', '(?i)(color|colour)')],
                 entities: new EntityRecognizerSet(
                     new UrlEntityRecognizer(),
                     new RegexEntityRecognizer('color', '(?i)(red|green|blue|purple|orange|violet|white|black)'),
@@ -81,13 +81,13 @@ describe('RecognizerSetTests', function () {
             spy.restore();
         });
 
-        it('Merge - should log PII when logPersonalInformation is true', async() => {
+        it('Merge - should log PII when logPersonalInformation is true', async () => {
             recognizer.logPersonalInformation = true;
 
-            await recognizeIntentAndValidateTelemetry({ 
+            await recognizeIntentAndValidateTelemetry({
                 text: codeIntentText, callCount: 1, recognizer, spy
             });
-            await recognizeIntentAndValidateTelemetry({ 
+            await recognizeIntentAndValidateTelemetry({
                 text: colorIntentText, callCount: 2, recognizer, spy
             });
 
@@ -96,13 +96,13 @@ describe('RecognizerSetTests', function () {
             });
         });
 
-        it('Merge - should not log PII when logPersonalInformation is false', async() => {
+        it('Merge - should not log PII when logPersonalInformation is false', async () => {
             recognizer.logPersonalInformation = false;
 
-            await recognizeIntentAndValidateTelemetry({ 
+            await recognizeIntentAndValidateTelemetry({
                 text: codeIntentText, callCount: 1, recognizer, spy
             });
-            await recognizeIntentAndValidateTelemetry({ 
+            await recognizeIntentAndValidateTelemetry({
                 text: colorIntentText, callCount: 2, recognizer, spy
             });
 
@@ -111,11 +111,11 @@ describe('RecognizerSetTests', function () {
             });
         });
 
-        it('should refrain from logging PII by default', async() => {
+        it('should refrain from logging PII by default', async () => {
             const recognizerWithDefaultLogPii = createRecognizer();
             const trackEventSpy = spyOnTelemetryClientTrackEvent(recognizerWithDefaultLogPii);
 
-            await recognizeIntentAndValidateTelemetry({ 
+            await recognizeIntentAndValidateTelemetry({
                 text: codeIntentText,
                 callCount: 1,
                 recognizer: recognizerWithDefaultLogPii,

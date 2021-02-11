@@ -23,7 +23,7 @@ const {
     TemperatureEntityRecognizer,
     UrlEntityRecognizer,
 } = require('../');
-const { 
+const {
     colorIntentText,
     codeIntentText,
     recognizeIntentAndValidateTelemetry,
@@ -118,13 +118,13 @@ describe('RegexRecognizer Tests', () => {
             spy.restore();
         });
 
-        it('logs PII when logPersonalInformation is true', async function() {
+        it('logs PII when logPersonalInformation is true', async function () {
             recognizer.logPersonalInformation = true;
 
-            await recognizeIntentAndValidateTelemetry({ 
+            await recognizeIntentAndValidateTelemetry({
                 text: codeIntentText, callCount: 1, recognizer, spy
             });
-            await recognizeIntentAndValidateTelemetry({ 
+            await recognizeIntentAndValidateTelemetry({
                 text: colorIntentText, callCount: 2, recognizer, spy
             });
 
@@ -133,13 +133,13 @@ describe('RegexRecognizer Tests', () => {
             });
         });
 
-        it('does not log PII when logPersonalInformation is false', async function() {
+        it('does not log PII when logPersonalInformation is false', async function () {
             recognizer.logPersonalInformation = false;
 
-            await recognizeIntentAndValidateTelemetry({ 
+            await recognizeIntentAndValidateTelemetry({
                 text: codeIntentText, callCount: 1, recognizer, spy
             });
-            await recognizeIntentAndValidateTelemetry({ 
+            await recognizeIntentAndValidateTelemetry({
                 text: colorIntentText, callCount: 2, recognizer, spy
             });
 
@@ -148,7 +148,7 @@ describe('RegexRecognizer Tests', () => {
             });
         });
 
-        it('should refrain from logging PII by default', async function() {
+        it('should refrain from logging PII by default', async function () {
             const recognizerWithDefaultLogPii = new RegexRecognizer().configure({
                 intents: [
                     new IntentPattern('codeIntent', '(?<code>[a-z][0-9])'),
@@ -164,7 +164,7 @@ describe('RegexRecognizer Tests', () => {
             });
             const trackEventSpy = spyOnTelemetryClientTrackEvent(recognizerWithDefaultLogPii);
 
-            await recognizeIntentAndValidateTelemetry({ 
+            await recognizeIntentAndValidateTelemetry({
                 text: codeIntentText,
                 callCount: 1,
                 recognizer: recognizerWithDefaultLogPii,
