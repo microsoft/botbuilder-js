@@ -1,4 +1,4 @@
-function getCodeIntentProperties() {
+const getCodeIntentProperties = () => {
     return {
         'TopIntent': 'codeIntent',
         'TopIntentScore': '1',
@@ -9,7 +9,7 @@ function getCodeIntentProperties() {
     };
 }
 
-function getColorIntentProperties() {
+const getColorIntentProperties = () => {
     return {
         'TopIntent': 'colorIntent',
         'TopIntentScore': '1',
@@ -20,7 +20,7 @@ function getColorIntentProperties() {
     };
 }
 
-function getGreetingIntentProperties() {
+const getGreetingIntentProperties = () => {
     return {
         'TopIntent': 'greeting',
         'TopIntentScore': '1',
@@ -30,8 +30,20 @@ function getGreetingIntentProperties() {
     };
 }
 
+const getChooseIntentProperties = () => {
+    return {
+        'AdditionalProperties': '{\"candidates\":[{\"id\":\"y\",\"intent\":\"y\",\"score\":1,\"result\":{\"text\":\"criss-cross applesauce\",\"intents\":{\"y\":{\"score\":1,\"pattern\":\"criss-cross applesauce\"}},\"entities\":{}}},{\"id\":\"z\",\"intent\":\"z\",\"score\":1,\"result\":{\"text\":\"criss-cross applesauce\",\"intents\":{\"z\":{\"score\":1,\"pattern\":\"criss-cross applesauce\"}},\"entities\":{}}}]}',
+        // TODO - investigate why undefined and not {}
+        'Entities': undefined,
+        'Intents': '{\"ChooseIntent\":{\"score\":1}}',
+        'TopIntent': 'ChooseIntent',
+        'TopIntentScore': '1'
+    }
+}
+
 module.exports = {
     getCodeIntentProperties,
     getColorIntentProperties,
-    getGreetingIntentProperties
+    getGreetingIntentProperties,
+    getChooseIntentProperties
 }

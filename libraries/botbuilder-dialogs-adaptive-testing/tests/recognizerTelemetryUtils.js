@@ -5,26 +5,38 @@ const { NullTelemetryClient } = require('botbuilder-core');
 const { BoolExpression } = require('adaptive-expressions');
 const { asMessageActivity, createMessageActivity } = require('botframework-schema').ActivityEx;
 const { createContext } = require('./activityUtils');
-const { getCodeIntentProperties, getColorIntentProperties, getGreetingIntentProperties } = require('./testTelemetryProperties');
-const { validateCodeIntent, validateColorIntent, validateGreetingIntent } = require('./intentValidations')
+const { 
+    getCodeIntentProperties,
+    getColorIntentProperties,
+    getGreetingIntentProperties,
+    getChooseIntentProperties
+} = require('./testTelemetryProperties');
+const { 
+    validateCodeIntent,
+    validateColorIntent,
+    validateChooseIntent,
+    validateGreetingIntent 
+} = require('./intentValidations')
 
 
 const codeIntentText = 'intent a1 b2';
 const colorIntentText = 'I would like color red and orange';
 const greetingIntentTextEnUs = "howdy";
-const crossTrainIntentText = "criss-cross applesauce";
+const crossTrainText = "criss-cross applesauce";
 const xIntentText = "x";
 
 const expectedProperties = {
     [ codeIntentText ]: getCodeIntentProperties,
     [ colorIntentText ]: getColorIntentProperties,
     [ greetingIntentTextEnUs ]: getGreetingIntentProperties,
+    [ crossTrainText ]: getChooseIntentProperties
 };
 
 const intentValidations = {
     [ codeIntentText ]: validateCodeIntent,
     [ colorIntentText ]: validateColorIntent,
-    [ greetingIntentTextEnUs ]: validateGreetingIntent
+    [ greetingIntentTextEnUs ]: validateGreetingIntent,
+    [ crossTrainText ]: validateChooseIntent
 }
 
 const spyOnTelemetryClientTrackEvent = (recognizer) => {
@@ -63,7 +75,7 @@ async function recognizeIntentAndValidateTelemetry_withCustomActivity({ text, ca
 module.exports = {
     codeIntentText,
     colorIntentText,
-    crossTrainIntentText,
+    crossTrainText,
     greetingIntentTextEnUs,
     xIntentText,
     recognizeIntentAndValidateTelemetry,

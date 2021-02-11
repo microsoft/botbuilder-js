@@ -22,6 +22,7 @@ export abstract class AdaptiveRecognizer extends Recognizer {
 
     /**
      * Uses the RecognizerResult to create a list of propeties to be included when tracking the result in telemetry.
+     * 
      * @param recognizerResult Recognizer Result.
      * @param telemetryProperties A list of properties to append or override the properties created using the RecognizerResult.
      * @param dialogContext Dialog Context.
@@ -37,12 +38,12 @@ export abstract class AdaptiveRecognizer extends Recognizer {
             throw new Error('DialogContext needed for state in AdaptiveRecognizer.fillRecognizerResultTelemetryProperties method.');
         }
         const { intent, score } = getTopScoringIntent(recognizerResult);
-
+        const intents = Object.entries(recognizerResult.intents).length;
         const properties: { [key: string]: string } = {
-            TopIntent: Object.entries(recognizerResult.intents).length > 0 ? intent : undefined,
-            TopIntentScore: Object.entries(recognizerResult.intents).length > 0 ? score.toString() : undefined,
+            TopIntent: intents > 0 ? intent : undefined,
+            TopIntentScore: intents > 0 ? score.toString() : undefined,
             Intents:
-                Object.entries(recognizerResult.intents).length > 0
+                intents > 0
                     ? JSON.stringify(recognizerResult.intents)
                     : undefined,
             Entities: recognizerResult.entities ? JSON.stringify(recognizerResult.entities) : undefined,

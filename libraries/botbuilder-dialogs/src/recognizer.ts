@@ -80,6 +80,7 @@ export class Recognizer extends Configurable implements RecognizerConfiguration 
                 text,
                 intents: { ChooseIntent: { score: 1.0 } },
                 candidates,
+                entities: {}
             };
             return recognizerResult;
         }
@@ -105,23 +106,26 @@ export class Recognizer extends Configurable implements RecognizerConfiguration 
         dialogContext?: DialogContext
     ): { [key: string]: string } {
         const { intent, score } = getTopScoringIntent(recognizerResult);
+        const intents = Object.entries(recognizerResult.intents);
 
         const properties: { [key: string]: string } = {
             Text: recognizerResult.text,
             AlteredText: recognizerResult.alteredText,
-            TopIntent: Object.entries(recognizerResult.intents).length > 0 ? intent : undefined,
-            TopIntentScore: Object.entries(recognizerResult.intents).length > 0 ? score.toString() : undefined,
+            TopIntent: intents.length > 0 ? intent : undefined,
+            TopIntentScore: intents.length > 0 ? score.toString() : undefined,
             Intents:
-                Object.entries(recognizerResult.intents).length > 0
+                intents.length > 0
                     ? JSON.stringify(recognizerResult.intents)
                     : undefined,
             Entities: recognizerResult.entities ? JSON.stringify(recognizerResult.entities) : undefined,
             AdditionalProperties: this.stringifyAdditionalPropertiesOfRecognizerResult(recognizerResult),
         };
+
         // Additional Properties can override "stock" properties.
         if (telemetryProperties) {
             return Object.assign({}, properties, telemetryProperties);
         }
+        
         return properties;
     }
 
