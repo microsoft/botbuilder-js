@@ -80,6 +80,33 @@ describe('RegexRecognizer Tests', () => {
         additionalProperties: 'additionalPropertiesValue',
     };
 
+    it('recognize regex pattern with dialog context', async function () {
+        const dc = createContext(codeIntentText);
+        const activity = dc.context.activity;
+        let result = await recognizer.recognize(dc, activity);
+        validateCodeIntent(result);
+
+        // verify seed text is not exposed
+        const entities = result.entities;
+        assert.strictEqual(entities.text, undefined);
+        assert(entities.code);
+
+        activity.text = colorIntentText;
+        result = await recognizer.recognize(dc, activity);
+        validateColorIntent(result);
+    });
+
+    it('recognize regex pattern with custom activity', async function () {
+        const dc = createContext('');
+        const activity = createMessageActivity(codeIntentText);
+        let result = await recognizer.recognize(dc, activity);
+        validateCodeIntent(result);
+
+        activity.text = 'I would like color red and orange';
+        result = await recognizer.recognize(dc, activity);
+        validateColorIntent(result);
+    });
+
     describe('telemetry', () => {
         let spy;
 
@@ -122,7 +149,7 @@ describe('RegexRecognizer Tests', () => {
         });
 
         it('should refrain from logging PII by default', async function() {
-            const defaultLogPiiRecognizer = new RegexRecognizer().configure({
+            const recognizerWithDefaultLogPii = new RegexRecognizer().configure({
                 intents: [
                     new IntentPattern('codeIntent', '(?<code>[a-z][0-9])'),
                     new IntentPattern('colorIntent', '(color|colour)'),
@@ -135,50 +162,22 @@ describe('RegexRecognizer Tests', () => {
                     new RegexEntityRecognizer('foregroundColor', '(foreground|front) {color}')
                 ),
             });
-            spy.restore();
-            spy = spyOnTelemetryClientTrackEvent(defaultLogPiiRecognizer);
+            const trackEventSpy = spyOnTelemetryClientTrackEvent(recognizerWithDefaultLogPii);
 
             await recognizeIntentAndValidateTelemetry({ 
                 text: codeIntentText,
                 callCount: 1,
-                recognizer: defaultLogPiiRecognizer,
-                spy
+                recognizer: recognizerWithDefaultLogPii,
+                spy: trackEventSpy
             });
 
             await recognizeIntentAndValidateTelemetry_withCustomActivity({
                 text: codeIntentText,
                 callCount: 2,
-                recognizer: defaultLogPiiRecognizer,
-                spy
+                recognizer: recognizerWithDefaultLogPii,
+                spy: trackEventSpy
             });
         });
-    });
-
-    it('recognize regex pattern with dialog context', async function () {
-        const dc = createContext(codeIntentText);
-        const activity = dc.context.activity;
-        let result = await recognizer.recognize(dc, activity);
-        validateCodeIntent(result);
-
-        // verify seed text is not exposed
-        const entities = result.entities;
-        assert.strictEqual(entities.text, undefined);
-        assert(entities.code);
-
-        activity.text = colorIntentText;
-        result = await recognizer.recognize(dc, activity);
-        validateColorIntent(result);
-    });
-
-    it('recognize regex pattern with custom activity', async function () {
-        const dc = createContext('');
-        const activity = createMessageActivity(codeIntentText);
-        let result = await recognizer.recognize(dc, activity);
-        validateCodeIntent(result);
-
-        activity.text = 'I would like color red and orange';
-        result = await recognizer.recognize(dc, activity);
-        validateColorIntent(result);
     });
 
     it('recognize regex pattern with text and locale', async function () {

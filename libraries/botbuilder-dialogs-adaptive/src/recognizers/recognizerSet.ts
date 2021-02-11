@@ -64,13 +64,15 @@ export class RecognizerSet extends AdaptiveRecognizer implements RecognizerSetCo
 
                 // merge intents
                 for (const intentName in result.intents) {
-                    const intentScore = result.intents[intentName].score;
+                    const intent = result.intents[intentName];
+                    const intentScore = intent.score;
                     if (recognizerResult.intents.hasOwnProperty(intentName)) {
                         if (intentScore < recognizerResult.intents[intentName].score) {
                             continue;
                         }
                     }
-                    recognizerResult.intents[intentName] = { score: intentScore };
+                    // recognizerResult.intents[intentName] = { score: intentScore };
+                    recognizerResult.intents[intentName] = JSON.parse(JSON.stringify(intent));;
                 }
             }
 
