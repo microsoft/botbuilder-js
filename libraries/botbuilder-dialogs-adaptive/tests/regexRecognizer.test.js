@@ -23,61 +23,15 @@ const {
     TemperatureEntityRecognizer,
     UrlEntityRecognizer,
 } = require('../');
-const { colorIntentText, codeIntentText, recognizeIntentAndValidateTelemetry } = require('./recognizerTelemetryUtils');
+const { 
+    colorIntentText,
+    codeIntentText,
+    recognizeIntentAndValidateTelemetry,
+    recognizeIntentAndValidateTelemetry_withCustomActivity,
+    spyOnTelemetryClientTrackEvent
+} = require('./recognizerTelemetryUtils');
 const { createContext, createMessageActivity } = require('./activityUtils');
-
-// const user = {
-//     id: process.env['USER_ID'] || 'UK8CH2281:TKGSUQHQE',
-// };
-
-// const bot = {
-//     id: process.env['BOT_ID'] || 'BKGSYSTFG:TKGSUQHQE',
-// };
-
-const validateColorIntent = (result) => {
-    // intent assertions
-    const intents = result.intents;
-    assert.strictEqual(Object.entries(intents).length, 1, 'should recognize one intent');
-    assert.strictEqual(Object.keys(intents)[0], 'colorIntent', 'should recognize colorIntent');
-
-    // entity assertions from captured group
-    const entities = result.entities;
-    assert.notStrictEqual(entities.color, undefined, 'should find color');
-    assert.strictEqual(entities.code, undefined, 'should not find code');
-    assert.strictEqual(Object.entries(entities.color).length, 2, 'should find 2 colors');
-    assert.strictEqual(entities.color[0], 'red', 'should find red');
-    assert.strictEqual(entities.color[1], 'orange', 'should find orange');
-};
-
-const validateCodeIntent = (result) => {
-    // intent assertions
-    const intents = result.intents;
-    assert.strictEqual(Object.entries(intents).length, 1, 'should recognize one intent');
-    assert.strictEqual(Object.keys(intents)[0], 'codeIntent', 'should recognize codeIntent');
-
-    // entity assertions from captured group
-    const entities = result.entities;
-    assert.notStrictEqual(entities.code, undefined, 'should find code');
-    assert.strictEqual(entities.color, undefined, 'should not find color');
-    assert.strictEqual(Object.entries(entities.code).length, 2, 'should find 2 codes');
-    assert.strictEqual(entities.code[0], 'a1', 'should find a1');
-    assert.strictEqual(entities.code[1], 'b2', 'should find b2');
-};
-
-// const createMessageActivity = (text) => {
-//     return {
-//         type: 'message',
-//         text: text || 'test activity',
-//         recipient: user,
-//         from: bot,
-//         locale: 'en-us',
-//     };
-// };
-
-// const createContext = (text) => {
-//     const activity = createMessageActivity(text);
-//     return new DialogContext(new DialogSet(), new TurnContext(new TestAdapter(), activity), {});
-// };
+const { validateCodeIntent, validateColorIntent } = require('./intentValidations');
 
 describe('RegexRecognizer Tests', () => {
     const recognizer = new RegexRecognizer().configure({
@@ -125,24 +79,30 @@ describe('RegexRecognizer Tests', () => {
         additionalProperties: 'additionalPropertiesValue',
     };
 
-    it('TEST TEST TEST - REGEX RECOGNIZER', async function () {
-        // I'll probably just need to send:
-            // recognizer, logPii, intent text
-        // const dc = createContext(codeIntentText);
-        // const activity = createMessageActivity(codeIntentText);
-        recognizer.logPersonalInformation = true;
-        recognizeIntentAndValidateTelemetry(codeIntentText, recognizer);
+    describe('telemetry', () => {
+        let spy;
 
-        // await validateTelemetry(recognizer, dc, activity);
-        
-        // validateCodeIntent(result);
-        console.log('TEST');
+        beforeEach(() => {
+            spy = spyOnTelemetryClientTrackEvent(recognizer);
+        });
 
-        // debug and see telemetry client stub info
-    });
+        afterEach(() => {
+            spy.restore();
+        });
 
-    it('TEST2', async function() {
-        console.log(recognizer.logPersonalInformation);
+        it('recognize intent and log PII when logPersonalInformation is true', async function () {
+            recognizer.logPersonalInformation = true;
+            await recognizeIntentAndValidateTelemetry({ 
+                text: codeIntentText, callCount: 1, recognizer, spy
+            });
+            await recognizeIntentAndValidateTelemetry_withCustomActivity({
+                text: codeIntentText, callCount: 2, recognizer, spy
+            });
+        });
+    
+        it('TEST2', async function() {
+            console.log(recognizer.logPersonalInformation);
+        });
     });
 
     it('recognize regex pattern with dialog context', async function () {

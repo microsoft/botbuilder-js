@@ -1,11 +1,13 @@
 const { ok, strictEqual } = require('assert');
 const sinon = require('sinon');
-const { DialogContext } = require('botbuilder-dialogs');
+const { Culture } = require('@microsoft/recognizers-text-suite');
 const { NullTelemetryClient } = require('botbuilder-core');
 const { BoolExpression } = require('adaptive-expressions');
+const { asMessageActivity, createMessageActivity } = require('botframework-schema').ActivityEx;
+const { createContext } = require('./activityUtils');
 const { getCodeIntentProperties } = require('./testTelemetryProperties');
-const asMessageActivity = require('botframework-schema').ActivityEx.asMessageActivity;
-const { createContext, createMessageActivity } = require('./activityUtils');
+const { validateCodeIntent } = require('./intentValidations')
+
 
 const codeIntentText = 'intent a1 b2';
 const colorIntentText = 'I would like color red and orange';
@@ -13,54 +15,100 @@ const greetingIntentTextEnUs = "howdy";
 const crossTrainIntentText = "criss-cross applesauce";
 const xIntentText = "x";
 
-// how do I make it resolve the string from codeIntentText to be the key
 const expectedProperties = {
     [ codeIntentText ]: getCodeIntentProperties
 };
 
-// string text, AdaptiveRecognizer recognizer, Mock<IBotTelemetryClient> telemetryClient, int callCount
-async function recognizeIntentAndValidateTelemetry(text, recognizer) {
-    const dialogContext = createContext(text);
-    const activity = dialogContext.context.activity;
-    
+const intentValidations = {
+    [ codeIntentText ]: validateCodeIntent
+}
+
+const spyOnTelemetryClientTrackEvent = (recognizer) => {
     const telemetryClient = new NullTelemetryClient();
     const spy = sinon.spy(telemetryClient, 'trackEvent');
     recognizer.telemetryClient = telemetryClient;
 
+    return spy;
+}
+
+async function recognizeIntentAndValidateTelemetry({ text, callCount, recognizer, spy }) {
+    const dialogContext = createContext(text);
+    const activity = dialogContext.context.activity;
+
     let result = await recognizer.recognize(dialogContext, activity);
 
-    // TODO - validate intent
+    validateIntent(text, result);
+    validateTelemetry({
+        recognizer, dialogContext, spy, activity, result, callCount
+    });
+}
+async function recognizeIntentAndValidateTelemetry_withCustomActivity({ text, callCount, recognizer, spy}) {
+    const dialogContext = createContext(text);
+    const customActivity = createMessageActivity();
+    customActivity.text = text;
+    customActivity.locale = Culture.English;
 
-    const validationConfig = {
-        activity,
-        dialogContext,
-        recognizer,
-        result,
-        spy,
-        telemetryClient, 
-    };
+    let result = await recognizer.recognize(dialogContext, customActivity);
 
-    // ValidateTelemetry(recognizer, telemetryClient, dc, activity, result, callCount);
-    validateTelemetry(validationConfig);
+    validateIntent(text, result);
+    validateTelemetry({
+        recognizer, dialogContext, spy, activity: customActivity, result, callCount
+    });
 }
 
-// function validateTelemetry(recognizer, telemetryClient, dialogContext, result, callCount) {
-async function validateTelemetry(validationConfig) {
-    const { recognizer, spy, dialogContext, activity, result } = validationConfig;
-    const eventName = `${recognizer.constructor.name}Result`;
-    const logPersonalInformation = recognizer.logPersonalInformation instanceof BoolExpression
+module.exports = {
+    codeIntentText,
+    colorIntentText,
+    crossTrainIntentText,
+    greetingIntentTextEnUs,
+    xIntentText,
+    recognizeIntentAndValidateTelemetry,
+    recognizeIntentAndValidateTelemetry_withCustomActivity,
+    spyOnTelemetryClientTrackEvent
+}
+
+
+// **** PRIVATE **** //
+
+
+const validateIntent = (text, result) => {
+    if (!text in intentValidations) {
+        throw new Error(`No intent validations for '${text}'`);
+    }
+    intentValidations[text](result);
+}
+
+const validateTelemetry = async ({ recognizer, dialogContext, spy, activity, result, callCount }) => {
+    const logPii = getLogPersonalInformation(recognizer, dialogContext);
+    const expectedTelemetryProps = getExpectedProps(activity, result, logPii);
+    const actualTelemetryProps = spy.getCall(callCount - 1).args[0];
+    
+    strictEqual(spy.callCount, callCount);
+    strictEqual(actualTelemetryProps.name, `${recognizer.constructor.name}Result`);
+    ok(
+        hasValidTelemetryProps(actualTelemetryProps.properties, expectedTelemetryProps, activity)
+    );
+}
+
+const getLogPersonalInformation = (recognizer, dialogContext) => {
+    return recognizer.logPersonalInformation instanceof BoolExpression
         ? recognizer.logPersonalInformation.getValue(dialogContext.state)
         : recognizer.logPersonalInformation;
-    
-    const expectedTelemetryProps = getExpectedProps(activity, result, logPersonalInformation);
-    const actualTelemetryProps = spy.getCall(0).args[0];
-    
-    ok(spy.calledOnce);
-    strictEqual(actualTelemetryProps.name, eventName);
-    ok(hasValidTelemetryProps(actualTelemetryProps.properties, expectedTelemetryProps, activity));
 }
 
-function hasValidTelemetryProps(actual, expected, activity) {
+const getExpectedProps = (activity, result, logPersonalInformation) => {
+    const text = asMessageActivity(activity).text;
+    const expectedProps = text in expectedProperties ? expectedProperties[text]() : {};
+
+    if (logPersonalInformation) {
+        expectedProps['Text'] = text;
+        expectedProps['AlteredText'] = result.alteredText;
+    }
+
+    return expectedProps;
+}
+
+const hasValidTelemetryProps = (actual, expected, activity) => {
     if (Object.keys(actual).length !== Object.keys(expected).length) {
         return false;
     }
@@ -84,7 +132,7 @@ function hasValidTelemetryProps(actual, expected, activity) {
     return true;
 }
 
-function hasValidEntities(activity, propertyValue) {
+const hasValidEntities = (activity, propertyValue) => {
     const text = asMessageActivity(activity).text;
     const actualEntity = JSON.parse(propertyValue);
 
@@ -103,29 +151,5 @@ function hasValidEntities(activity, propertyValue) {
     // }
 
     return true;
-}
-
-module.exports = {
-    codeIntentText: codeIntentText,
-    colorIntentText: colorIntentText,
-    crossTrainIntentText: crossTrainIntentText,
-    greetingIntentTextEnUs: greetingIntentTextEnUs,
-    xIntentText: xIntentText,
-    recognizeIntentAndValidateTelemetry: recognizeIntentAndValidateTelemetry,
-    // validateTelemetry: validateTelemetry
-}
-
-
-// **** PRIVATE **** //
-function getExpectedProps(activity, result, logPersonalInformation) {
-    const text = asMessageActivity(activity).text;
-    const expectedProps = text in expectedProperties ? expectedProperties[text]() : {};
-
-    if (logPersonalInformation) {
-        expectedProps['Text'] = text;
-        expectedProps['AlteredText'] = result.alteredText;
-    }
-
-    return expectedProps;
 }
 
