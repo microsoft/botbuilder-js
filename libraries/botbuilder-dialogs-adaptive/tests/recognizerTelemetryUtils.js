@@ -15,11 +15,17 @@ const greetingIntentTextEnUs = "howdy";
 const crossTrainIntentText = "criss-cross applesauce";
 const xIntentText = "x";
 
+/**
+ * Get the expected properties based on the text/utterance that we run the recognizer against.
+ */
 const expectedProperties = {
     [ codeIntentText ]: getCodeIntentProperties,
     [ colorIntentText ]: getColorIntentProperties
 };
 
+/**
+ * Run the expected validations based on intent recognized.
+ */
 const intentValidations = {
     [ codeIntentText ]: validateCodeIntent,
     [ colorIntentText ]: validateColorIntent
@@ -33,6 +39,11 @@ const spyOnTelemetryClientTrackEvent = (recognizer) => {
     return spy;
 }
 
+/**
+ * Calls the recognizer's `recognize` method and validates that appropriate telemetry properties are logged.
+ * 
+ * @param {*} configuration 
+ */
 async function recognizeIntentAndValidateTelemetry({ text, callCount, recognizer, spy }) {
     const dialogContext = createContext(text);
     const activity = dialogContext.context.activity;
@@ -44,6 +55,13 @@ async function recognizeIntentAndValidateTelemetry({ text, callCount, recognizer
         recognizer, dialogContext, spy, activity, result, callCount
     });
 }
+
+/**
+ * Calls the recognizer's `recognize` method and validates that appropriate telemetry properties are logged,
+ * using a custom activity, separate from the activity found in `DialogContext.context`
+ * 
+ * @param {*} configuration 
+ */
 async function recognizeIntentAndValidateTelemetry_withCustomActivity({ text, callCount, recognizer, spy}) {
     const dialogContext = createContext(text);
     const customActivity = createMessageActivity();

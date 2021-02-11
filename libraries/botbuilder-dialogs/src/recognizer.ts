@@ -21,6 +21,9 @@ export interface RecognizerConfiguration {
     telemetryClient?: BotTelemetryClient;
 }
 
+/**
+ * Recognizer base class.
+ */
 export class Recognizer extends Configurable implements RecognizerConfiguration {
     /**
      * Recognizers unique ID.
@@ -46,13 +49,13 @@ export class Recognizer extends Configurable implements RecognizerConfiguration 
         dialogContext: DialogContext,
         activity: Partial<Activity>,
         telemetryProperties?: Record<string, string>,
-        telemetryMetrics?: Record<string, number> 
+        telemetryMetrics?: Record<string, number>
     ): Promise<RecognizerResult> {
         throw new Error('Please implement recognize function.');
     }
 
     /**
-     * Creates choose intent result in the case that there is conflicting or ambigious signals from the recognizers.
+     * Creates choose intent result in the case that there are conflicting or ambiguous signals from the recognizers.
      *
      * @param {Record<string, RecognizerResult>} recognizerResults A group of recognizer results.
      * @returns {RecognizerResult} Recognizer result which is ChooseIntent.
@@ -89,12 +92,14 @@ export class Recognizer extends Configurable implements RecognizerConfiguration 
         const recognizerResult: RecognizerResult = {
             text,
             intents: { None: { score: 1.0 } },
+            entities: {}
         };
         return recognizerResult;
     }
 
     /**
-     * Uses the RecognizerResult to create a list of propeties to be included when tracking the result in telemetry.
+     * Uses the RecognizerResult to create a list of properties to be included when tracking the result in telemetry.
+     * 
      * @param recognizerResult Recognizer Result.
      * @param telemetryProperties A list of properties to append or override the properties created using the RecognizerResult.
      * @param dialogContext Dialog Context.
@@ -102,13 +107,13 @@ export class Recognizer extends Configurable implements RecognizerConfiguration 
      */
     protected fillRecognizerResultTelemetryProperties(
         recognizerResult: RecognizerResult,
-        telemetryProperties: { [key: string]: string },
+        telemetryProperties: Record<string, string>,
         dialogContext?: DialogContext
-    ): { [key: string]: string } {
+    ): Record<string, string> {
         const { intent, score } = getTopScoringIntent(recognizerResult);
         const intents = Object.entries(recognizerResult.intents);
 
-        const properties: { [key: string]: string } = {
+        const properties: Record<string, string> = {
             Text: recognizerResult.text,
             AlteredText: recognizerResult.alteredText,
             TopIntent: intents.length > 0 ? intent : undefined,
@@ -125,7 +130,7 @@ export class Recognizer extends Configurable implements RecognizerConfiguration 
         if (telemetryProperties) {
             return Object.assign({}, properties, telemetryProperties);
         }
-        
+
         return properties;
     }
 

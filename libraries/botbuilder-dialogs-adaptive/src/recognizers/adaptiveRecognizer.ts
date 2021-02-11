@@ -14,6 +14,9 @@ import { DialogContext, Recognizer } from "botbuilder-dialogs";
 // AdaptiveRecognizerConfiguration interface
 // with optional BoolExpression logPersonalInformation
 
+/**
+ * Base class for adaptive recognizers.
+ */
 export abstract class AdaptiveRecognizer extends Recognizer {
     /**
      * (Optional) Flag that designates whether personally identifiable information (PII) should log to telemetry.
@@ -21,7 +24,7 @@ export abstract class AdaptiveRecognizer extends Recognizer {
     public logPersonalInformation = new BoolExpression('=settings.telemetry.logPersonalInformation');
 
     /**
-     * Uses the RecognizerResult to create a list of propeties to be included when tracking the result in telemetry.
+     * Uses the RecognizerResult to create a list of properties to be included when tracking the result in telemetry.
      * 
      * @param recognizerResult Recognizer Result.
      * @param telemetryProperties A list of properties to append or override the properties created using the RecognizerResult.
@@ -30,16 +33,15 @@ export abstract class AdaptiveRecognizer extends Recognizer {
      */
     protected fillRecognizerResultTelemetryProperties(
         recognizerResult: RecognizerResult,
-        telemetryProperties: { [key: string]: string },
+        telemetryProperties: Record<string, string>,
         dialogContext?: DialogContext
-    ): { [key: string]: string } {
-        if (dialogContext == null)
-        {
+    ): Record<string, string> {
+        if (!dialogContext) {
             throw new Error('DialogContext needed for state in AdaptiveRecognizer.fillRecognizerResultTelemetryProperties method.');
         }
         const { intent, score } = getTopScoringIntent(recognizerResult);
         const intents = Object.entries(recognizerResult.intents).length;
-        const properties: { [key: string]: string } = {
+        const properties: Record<string, string> = {
             TopIntent: intents > 0 ? intent : undefined,
             TopIntentScore: intents > 0 ? score.toString() : undefined,
             Intents:
@@ -55,8 +57,7 @@ export abstract class AdaptiveRecognizer extends Recognizer {
                 ? this.logPersonalInformation.getValue(dialogContext.state)
                 : this.logPersonalInformation;
 
-        if (logPersonalInformation)
-        {
+        if (logPersonalInformation) {
             properties['Text'] = recognizerResult.text
             properties['AlteredText'] = recognizerResult.alteredText
         }
