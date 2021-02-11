@@ -5,8 +5,8 @@ const { NullTelemetryClient } = require('botbuilder-core');
 const { BoolExpression } = require('adaptive-expressions');
 const { asMessageActivity, createMessageActivity } = require('botframework-schema').ActivityEx;
 const { createContext } = require('./activityUtils');
-const { getCodeIntentProperties, getColorIntentProperties } = require('./testTelemetryProperties');
-const { validateCodeIntent, validateColorIntent } = require('./intentValidations')
+const { getCodeIntentProperties, getColorIntentProperties, getGreetingIntentProperties } = require('./testTelemetryProperties');
+const { validateCodeIntent, validateColorIntent, validateGreetingIntent } = require('./intentValidations')
 
 
 const codeIntentText = 'intent a1 b2';
@@ -17,12 +17,14 @@ const xIntentText = "x";
 
 const expectedProperties = {
     [ codeIntentText ]: getCodeIntentProperties,
-    [ colorIntentText ]: getColorIntentProperties
+    [ colorIntentText ]: getColorIntentProperties,
+    [ greetingIntentTextEnUs ]: getGreetingIntentProperties,
 };
 
 const intentValidations = {
     [ codeIntentText ]: validateCodeIntent,
-    [ colorIntentText ]: validateColorIntent
+    [ colorIntentText ]: validateColorIntent,
+    [ greetingIntentTextEnUs ]: validateGreetingIntent
 }
 
 const spyOnTelemetryClientTrackEvent = (recognizer) => {

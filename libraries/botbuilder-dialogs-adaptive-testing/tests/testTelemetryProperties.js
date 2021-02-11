@@ -1,5 +1,4 @@
-function getCodeIntentProperties()
-{
+function getCodeIntentProperties() {
     return {
         'TopIntent': 'codeIntent',
         'TopIntentScore': '1',
@@ -10,8 +9,7 @@ function getCodeIntentProperties()
     };
 }
 
-function getColorIntentProperties()
-{
+function getColorIntentProperties() {
     return {
         'TopIntent': 'colorIntent',
         'TopIntentScore': '1',
@@ -22,7 +20,18 @@ function getColorIntentProperties()
     };
 }
 
+function getGreetingIntentProperties() {
+    return {
+        'TopIntent': 'greeting',
+        'TopIntentScore': '1',
+        'Intents': '{\"greeting\":{\"score\":1,\"pattern\":\"howdy\"}}',
+        'Entities': '{}',
+        'AdditionalProperties': undefined,
+    };
+}
+
 module.exports = {
     getCodeIntentProperties,
-    getColorIntentProperties
+    getColorIntentProperties,
+    getGreetingIntentProperties
 }

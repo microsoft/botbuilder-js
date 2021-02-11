@@ -1,8 +1,41 @@
 const path = require('path');
 const { ComponentRegistration } = require('botbuilder-core');
-const { AdaptiveComponentRegistration } = require('botbuilder-dialogs-adaptive');
+const { AdaptiveComponentRegistration, MultiLanguageRecognizer, RegexRecognizer, IntentPattern } = require('botbuilder-dialogs-adaptive');
 const { ResourceExplorer } = require('botbuilder-dialogs-declarative');
 const { AdaptiveTestComponentRegistration, TestUtils } = require('../lib');
+const { 
+    colorIntentText,
+    codeIntentText,
+    greetingIntentTextEnUs,
+    recognizeIntentAndValidateTelemetry,
+    recognizeIntentAndValidateTelemetry_withCustomActivity,
+    spyOnTelemetryClientTrackEvent
+} = require('./recognizerTelemetryUtils');
+
+const createRecognizer = () => {
+    return new MultiLanguageRecognizer().configure({
+        recognizers: {
+            'en-us': new RegexRecognizer().configure({
+                intents: [
+                    new IntentPattern('greeting', '(?i)howdy'),
+                    new IntentPattern('goodbye', '(?i)bye')
+                ]
+            }),
+            'en-gb': new RegexRecognizer().configure({
+                intents: [
+                    new IntentPattern('greeting', '(?i)hiya'),
+                    new IntentPattern('goodbye', '(?i)cheerio')
+                ]
+            }),
+            'en': new RegexRecognizer().configure({
+                intents: [
+                    new IntentPattern('greeting', '(?i)hello'),
+                    new IntentPattern('goodbye', '(?i)goodbye')
+                ]
+            })
+        }
+    });
+}
 
 describe('MultiLanguageRecognizerTests', function () {
     this.timeout(5000);
@@ -41,5 +74,46 @@ describe('MultiLanguageRecognizerTests', function () {
 
     it('LanguagePolicy', async () => {
         await TestUtils.runTestScript(resourceExplorer, 'MultiLanguageRecognizerTest_LanguagePolicy');
+    });
+
+    describe('Telemetry', () => {
+        const recognizer = createRecognizer();
+        let spy;
+
+        beforeEach(() => {
+            spy = spyOnTelemetryClientTrackEvent(recognizer);
+        });
+
+        afterEach(() => {
+            spy.restore();
+        });
+
+        it('Merge - should log PII when logPersonalInformation is true', async() => {
+            recognizer.logPersonalInformation = true;
+
+            await recognizeIntentAndValidateTelemetry({ 
+                text: greetingIntentTextEnUs, callCount: 1, recognizer, spy
+            });
+        });
+
+        it('Merge - should not log PII when logPersonalInformation is false', async() => {
+            recognizer.logPersonalInformation = false;
+
+            await recognizeIntentAndValidateTelemetry({ 
+                text: greetingIntentTextEnUs, callCount: 1, recognizer, spy
+            });
+        });
+
+        it('should refrain from logging PII by default', async () => {
+            const recognizerWithDefaultLogPii = createRecognizer();
+            const trackEventSpy = spyOnTelemetryClientTrackEvent(recognizerWithDefaultLogPii);
+
+            await recognizeIntentAndValidateTelemetry({ 
+                text: greetingIntentTextEnUs,
+                callCount: 1,
+                recognizer: recognizerWithDefaultLogPii,
+                spy: trackEventSpy
+            });
+        });
     });
 });

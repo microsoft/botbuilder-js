@@ -111,7 +111,7 @@ describe('RecognizerSetTests', function () {
             });
         });
 
-        it('should refrain from logging PII by default', async function() {
+        it('should refrain from logging PII by default', async() => {
             const recognizerWithDefaultLogPii = createRecognizer();
             const trackEventSpy = spyOnTelemetryClientTrackEvent(recognizerWithDefaultLogPii);
 

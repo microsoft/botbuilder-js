@@ -30,7 +30,14 @@ const validateColorIntent = (result) => {
     strictEqual(entities.color[1], 'orange', 'should find orange');
 };
 
+const validateGreetingIntent = (result) => {
+    const intentNames = Object.keys(result.intents);
+    strictEqual(intentNames.length, 1);
+    strictEqual(intentNames[0], 'greeting');
+}
+
 module.exports = {
     validateCodeIntent,
-    validateColorIntent
+    validateColorIntent,
+    validateGreetingIntent
 };
