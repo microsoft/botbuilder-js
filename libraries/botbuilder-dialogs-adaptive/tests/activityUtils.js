@@ -1,3 +1,4 @@
+const { Culture } = require('@microsoft/recognizers-text-suite');
 const { TestAdapter, TurnContext } = require('botbuilder-core');
 const { DialogContext, DialogSet } = require('botbuilder-dialogs');
 const user = {
@@ -14,7 +15,7 @@ const createMessageActivity = (text) => {
         text: text || 'test activity',
         recipient: user,
         from: bot,
-        locale: 'en-us',
+        locale: Culture.English,
     };
 };
 
@@ -24,6 +25,6 @@ const createContext = (text) => {
 };
 
 module.exports = {
-    createContext: createContext,
-    createMessageActivity: createMessageActivity,
+    createContext,
+    createMessageActivity,
 }

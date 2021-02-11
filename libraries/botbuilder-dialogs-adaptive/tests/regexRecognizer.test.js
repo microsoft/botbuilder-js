@@ -32,6 +32,7 @@ const {
 } = require('./recognizerTelemetryUtils');
 const { createContext, createMessageActivity } = require('./activityUtils');
 const { validateCodeIntent, validateColorIntent } = require('./intentValidations');
+const { Culture } = require('@microsoft/recognizers-text-suite');
 
 describe('RegexRecognizer Tests', () => {
     const recognizer = new RegexRecognizer().configure({
@@ -92,22 +93,42 @@ describe('RegexRecognizer Tests', () => {
 
         it('recognize intent and log PII when logPersonalInformation is true', async function () {
             recognizer.logPersonalInformation = true;
+        
+            // dialog context activity
             await recognizeIntentAndValidateTelemetry({ 
                 text: codeIntentText, callCount: 1, recognizer, spy
             });
+            await recognizeIntentAndValidateTelemetry({ 
+                text: colorIntentText, callCount: 2, recognizer, spy
+            });
+
+            // custom activity
             await recognizeIntentAndValidateTelemetry_withCustomActivity({
-                text: codeIntentText, callCount: 2, recognizer, spy
+                text: codeIntentText, callCount: 3, recognizer, spy
             });
         });
-    
-        it('TEST2', async function() {
-            console.log(recognizer.logPersonalInformation);
+
+        it('recognize intent and does not log PII when logPersonalInformation is false', async function () {
+            recognizer.logPersonalInformation = false;
+        
+            // dialog context activity
+            await recognizeIntentAndValidateTelemetry({ 
+                text: codeIntentText, callCount: 1, recognizer, spy
+            });
+            await recognizeIntentAndValidateTelemetry({ 
+                text: colorIntentText, callCount: 2, recognizer, spy
+            });
+
+            // custom activity
+            await recognizeIntentAndValidateTelemetry_withCustomActivity({
+                text: codeIntentText, callCount: 3, recognizer, spy
+            });
         });
     });
 
     it('recognize regex pattern with dialog context', async function () {
-        const dc = createContext('');
-        const activity = createMessageActivity(codeIntentText);
+        const dc = createContext(codeIntentText);
+        const activity = dc.context.activity;
         let result = await recognizer.recognize(dc, activity);
         validateCodeIntent(result);
 
@@ -135,7 +156,7 @@ describe('RegexRecognizer Tests', () => {
     it('recognize regex pattern with text and locale', async function () {
         const dc = createContext('');
         const activity = createMessageActivity(codeIntentText);
-        activity.locale = 'en-us';
+        activity.locale = Culture.English;
         let result = await recognizer.recognize(dc, activity);
         validateCodeIntent(result);
 
