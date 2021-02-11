@@ -21,7 +21,7 @@ export abstract class AdaptiveRecognizer extends Recognizer {
     /**
      * (Optional) Flag that designates whether personally identifiable information (PII) should log to telemetry.
      */
-    public logPersonalInformation = new BoolExpression('=settings.telemetry.logPersonalInformation');
+    public logPersonalInformation: BoolExpression = new BoolExpression('=settings.telemetry.logPersonalInformation');
 
     /**
      * Uses the RecognizerResult to create a list of properties to be included when tracking the result in telemetry.
@@ -34,7 +34,7 @@ export abstract class AdaptiveRecognizer extends Recognizer {
     protected fillRecognizerResultTelemetryProperties(
         recognizerResult: RecognizerResult,
         telemetryProperties: Record<string, string>,
-        dialogContext?: DialogContext
+        dialogContext: DialogContext
     ): Record<string, string> {
         if (!dialogContext) {
             throw new Error('DialogContext needed for state in AdaptiveRecognizer.fillRecognizerResultTelemetryProperties method.');
