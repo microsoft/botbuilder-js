@@ -32,6 +32,10 @@ export abstract class AdaptiveRecognizer extends Recognizer {
         telemetryProperties: { [key: string]: string },
         dialogContext?: DialogContext
     ): { [key: string]: string } {
+        if (dialogContext == null)
+        {
+            throw new Error('DialogContext needed for state in AdaptiveRecognizer.fillRecognizerResultTelemetryProperties method.');
+        }
         const { intent, score } = getTopScoringIntent(recognizerResult);
 
         const properties: { [key: string]: string } = {
@@ -52,8 +56,8 @@ export abstract class AdaptiveRecognizer extends Recognizer {
 
         if (logPersonalInformation)
         {
-            properties['text'] = recognizerResult.text
-            properties['alteredText'] = recognizerResult.alteredText
+            properties['Text'] = recognizerResult.text
+            properties['AlteredText'] = recognizerResult.alteredText
         }
 
         // Additional Properties can override "stock" properties.

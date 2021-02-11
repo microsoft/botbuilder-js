@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
 const assert = require('assert');
-const { TestAdapter, TurnContext } = require('botbuilder-core');
-const { DialogContext, DialogSet, Recognizer } = require('botbuilder-dialogs');
+const { Recognizer } = require('botbuilder-dialogs');
 const {
     RegexRecognizer,
     IntentPattern,
@@ -24,14 +23,16 @@ const {
     TemperatureEntityRecognizer,
     UrlEntityRecognizer,
 } = require('../');
+const { colorIntentText, codeIntentText, recognizeIntentAndValidateTelemetry } = require('./recognizerTelemetryUtils');
+const { createContext, createMessageActivity } = require('./activityUtils');
 
-const user = {
-    id: process.env['USER_ID'] || 'UK8CH2281:TKGSUQHQE',
-};
+// const user = {
+//     id: process.env['USER_ID'] || 'UK8CH2281:TKGSUQHQE',
+// };
 
-const bot = {
-    id: process.env['BOT_ID'] || 'BKGSYSTFG:TKGSUQHQE',
-};
+// const bot = {
+//     id: process.env['BOT_ID'] || 'BKGSYSTFG:TKGSUQHQE',
+// };
 
 const validateColorIntent = (result) => {
     // intent assertions
@@ -63,20 +64,20 @@ const validateCodeIntent = (result) => {
     assert.strictEqual(entities.code[1], 'b2', 'should find b2');
 };
 
-const createMessageActivity = (text) => {
-    return {
-        type: 'message',
-        text: text || 'test activity',
-        recipient: user,
-        from: bot,
-        locale: 'en-us',
-    };
-};
+// const createMessageActivity = (text) => {
+//     return {
+//         type: 'message',
+//         text: text || 'test activity',
+//         recipient: user,
+//         from: bot,
+//         locale: 'en-us',
+//     };
+// };
 
-const createContext = (text) => {
-    const activity = createMessageActivity(text);
-    return new DialogContext(new DialogSet(), new TurnContext(new TestAdapter(), activity), {});
-};
+// const createContext = (text) => {
+//     const activity = createMessageActivity(text);
+//     return new DialogContext(new DialogSet(), new TurnContext(new TestAdapter(), activity), {});
+// };
 
 describe('RegexRecognizer Tests', () => {
     const recognizer = new RegexRecognizer().configure({
@@ -125,18 +126,28 @@ describe('RegexRecognizer Tests', () => {
     };
 
     it('TEST TEST TEST - REGEX RECOGNIZER', async function () {
-        const dc = createContext('');
-        const activity = createMessageActivity('intent a1 b2');
-        let result = await recognizer.recognize(dc, activity);
+        // I'll probably just need to send:
+            // recognizer, logPii, intent text
+        // const dc = createContext(codeIntentText);
+        // const activity = createMessageActivity(codeIntentText);
+        recognizer.logPersonalInformation = true;
+        recognizeIntentAndValidateTelemetry(codeIntentText, recognizer);
 
-        validateCodeIntent(result);
-
+        // await validateTelemetry(recognizer, dc, activity);
         
+        // validateCodeIntent(result);
+        console.log('TEST');
+
+        // debug and see telemetry client stub info
+    });
+
+    it('TEST2', async function() {
+        console.log(recognizer.logPersonalInformation);
     });
 
     it('recognize regex pattern with dialog context', async function () {
         const dc = createContext('');
-        const activity = createMessageActivity('intent a1 b2');
+        const activity = createMessageActivity(codeIntentText);
         let result = await recognizer.recognize(dc, activity);
         validateCodeIntent(result);
 
@@ -145,14 +156,14 @@ describe('RegexRecognizer Tests', () => {
         assert.strictEqual(entities.text, undefined);
         assert(entities.code);
 
-        activity.text = 'I would like color red and orange';
+        activity.text = colorIntentText;
         result = await recognizer.recognize(dc, activity);
         validateColorIntent(result);
     });
 
     it('recognize regex pattern with custom activity', async function () {
         const dc = createContext('');
-        const activity = createMessageActivity('intent a1 b2');
+        const activity = createMessageActivity(codeIntentText);
         let result = await recognizer.recognize(dc, activity);
         validateCodeIntent(result);
 
@@ -163,7 +174,7 @@ describe('RegexRecognizer Tests', () => {
 
     it('recognize regex pattern with text and locale', async function () {
         const dc = createContext('');
-        const activity = createMessageActivity('intent a1 b2');
+        const activity = createMessageActivity(codeIntentText);
         activity.locale = 'en-us';
         let result = await recognizer.recognize(dc, activity);
         validateCodeIntent(result);
