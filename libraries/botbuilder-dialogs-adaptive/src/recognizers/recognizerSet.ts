@@ -71,7 +71,6 @@ export class RecognizerSet extends AdaptiveRecognizer implements RecognizerSetCo
                             continue;
                         }
                     }
-                    // recognizerResult.intents[intentName] = { score: intentScore };
                     recognizerResult.intents[intentName] = JSON.parse(JSON.stringify(intent));;
                 }
             }

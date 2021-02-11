@@ -4,11 +4,8 @@ const { AdaptiveComponentRegistration, MultiLanguageRecognizer, RegexRecognizer,
 const { ResourceExplorer } = require('botbuilder-dialogs-declarative');
 const { AdaptiveTestComponentRegistration, TestUtils } = require('../lib');
 const { 
-    colorIntentText,
-    codeIntentText,
     greetingIntentTextEnUs,
     recognizeIntentAndValidateTelemetry,
-    recognizeIntentAndValidateTelemetry_withCustomActivity,
     spyOnTelemetryClientTrackEvent
 } = require('./recognizerTelemetryUtils');
 
