@@ -61,6 +61,10 @@ export class RecognizerSet extends AdaptiveRecognizer implements RecognizerSetCo
                 } else if (result.text != recognizerResult.text) {
                     recognizerResult.alteredText = recognizerResult.text;
                 }
+                
+                // for (const [intentName, intent] of Object.entries(result.intents)) {
+                //     const score = intent.score ?? 0;
+                // }
 
                 // merge intents
                 for (const intentName in result.intents) {
@@ -71,7 +75,7 @@ export class RecognizerSet extends AdaptiveRecognizer implements RecognizerSetCo
                             continue;
                         }
                     }
-                    recognizerResult.intents[intentName] = JSON.parse(JSON.stringify(intent));;
+                    recognizerResult.intents[intentName] = JSON.parse(JSON.stringify(intent));
                 }
             }
 
