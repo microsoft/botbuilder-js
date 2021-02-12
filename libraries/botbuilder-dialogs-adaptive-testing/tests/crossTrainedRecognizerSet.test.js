@@ -5,6 +5,7 @@ const { ResourceExplorer } = require('botbuilder-dialogs-declarative');
 const { AdaptiveTestComponentRegistration, TestUtils } = require('../lib');
 const { 
     crossTrainText,
+    xIntentText,
     recognizeIntentAndValidateTelemetry,
     spyOnTelemetryClientTrackEvent
 } = require('./recognizerTelemetryUtils');
@@ -95,26 +96,34 @@ describe('CrossTrainedRecognizerSetTests', function () {
             await recognizeIntentAndValidateTelemetry({ 
                 text: crossTrainText, callCount: 1, recognizer, spy
             });
+
+            await recognizeIntentAndValidateTelemetry({ 
+                text: xIntentText, callCount: 2, recognizer, spy
+            });
         });
 
-        // it('Merge - should not log PII when logPersonalInformation is false', async() => {
-        //     recognizer.logPersonalInformation = false;
+        it('Merge - should not log PII when logPersonalInformation is false', async() => {
+            recognizer.logPersonalInformation = true;
 
-        //     await recognizeIntentAndValidateTelemetry({ 
-        //         text: crossTrainIntentText, callCount: 1, recognizer, spy
-        //     });
-        // });
+            await recognizeIntentAndValidateTelemetry({ 
+                text: crossTrainText, callCount: 1, recognizer, spy
+            });
 
-        // it('should refrain from logging PII by default', async () => {
-        //     const recognizerWithDefaultLogPii = createRecognizer();
-        //     const trackEventSpy = spyOnTelemetryClientTrackEvent(recognizerWithDefaultLogPii);
+            await recognizeIntentAndValidateTelemetry({ 
+                text: xIntentText, callCount: 2, recognizer, spy
+            });
+        });
 
-        //     await recognizeIntentAndValidateTelemetry({ 
-        //         text: crossTrainIntentText,
-        //         callCount: 1,
-        //         recognizer: recognizerWithDefaultLogPii,
-        //         spy: trackEventSpy
-        //     });
-        // });
+        it('should refrain from logging PII by default', async () => {
+            const recognizerWithDefaultLogPii = createRecognizer();
+            const trackEventSpy = spyOnTelemetryClientTrackEvent(recognizerWithDefaultLogPii);
+
+            await recognizeIntentAndValidateTelemetry({ 
+                text: crossTrainText,
+                callCount: 1,
+                recognizer: recognizerWithDefaultLogPii,
+                spy: trackEventSpy
+            });
+        });
     });
 });

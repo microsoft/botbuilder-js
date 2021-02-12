@@ -42,9 +42,16 @@ const validateChooseIntent = (result) => {
     strictEqual(intentNames[0], 'ChooseIntent');
 }
 
+const validateXIntent = (result) => {
+    const intentNames = Object.keys(result.intents);
+    strictEqual(intentNames.length, 1);
+    strictEqual(intentNames[0], 'x');
+}
+
 module.exports = {
     validateCodeIntent,
     validateColorIntent,
     validateChooseIntent,
-    validateGreetingIntent
+    validateGreetingIntent,
+    validateXIntent
 };

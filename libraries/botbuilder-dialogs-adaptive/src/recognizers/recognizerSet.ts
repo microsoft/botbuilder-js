@@ -15,6 +15,9 @@ export interface RecognizerSetConfiguration extends RecognizerConfiguration {
     recognizers?: string[] | Recognizer[];
 }
 
+/**
+ * A recognizer class whose result is the union of results from multiple recognizers into one RecognizerResult.
+ */
 export class RecognizerSet extends AdaptiveRecognizer implements RecognizerSetConfiguration {
     public static $kind = 'Microsoft.RecognizerSet';
 
@@ -68,7 +71,7 @@ export class RecognizerSet extends AdaptiveRecognizer implements RecognizerSetCo
                 $instance: {}
             }
         };
-    
+
         for (const result of results) {
             const { intent: intentName } = getTopScoringIntent(result);
             if (intentName && intentName !== 'None') {
@@ -78,21 +81,21 @@ export class RecognizerSet extends AdaptiveRecognizer implements RecognizerSetCo
                 } else if (result.text !== mergedRecognizerResult.text) {
                     mergedRecognizerResult.alteredText = result.text;
                 }
-    
+
                 // merge intents
                 for (const [intentName, intent] of Object.entries(result.intents)) {
                     const intentScore = intent.score ?? 0;
-                    if(mergedRecognizerResult.intents.hasOwnProperty(intentName)) {
+                    if (mergedRecognizerResult.intents.hasOwnProperty(intentName)) {
                         if (intentScore < mergedRecognizerResult.intents[intentName].score) {
                             // we already have a higher score for this intent
                             continue;
                         }
                     }
-    
+
                     mergedRecognizerResult.intents[intentName] = intent;
                 }
-            } 
-    
+            }
+
             // merge entities
             // entities shape is:
             //   {
@@ -131,7 +134,7 @@ export class RecognizerSet extends AdaptiveRecognizer implements RecognizerSetCo
         if (Object.entries(mergedRecognizerResult.intents).length === 0) {
             mergedRecognizerResult.intents['None'] = { score: 1.0 };
         }
-    
+
         return mergedRecognizerResult;
     }
 }

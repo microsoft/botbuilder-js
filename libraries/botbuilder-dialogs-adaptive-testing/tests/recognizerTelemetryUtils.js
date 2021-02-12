@@ -5,17 +5,19 @@ const { NullTelemetryClient } = require('botbuilder-core');
 const { BoolExpression } = require('adaptive-expressions');
 const { asMessageActivity, createMessageActivity } = require('botframework-schema').ActivityEx;
 const { createContext } = require('./activityUtils');
-const { 
+const {
     getCodeIntentProperties,
     getColorIntentProperties,
     getGreetingIntentProperties,
-    getChooseIntentProperties
+    getChooseIntentProperties,
+    getXIntentProperties
 } = require('./testTelemetryProperties');
-const { 
+const {
     validateCodeIntent,
     validateColorIntent,
     validateChooseIntent,
-    validateGreetingIntent 
+    validateGreetingIntent,
+    validateXIntent
 } = require('./intentValidations')
 
 
@@ -29,20 +31,22 @@ const xIntentText = "x";
  * Get the expected properties based on the text/utterance that we run the recognizer against.
  */
 const expectedProperties = {
-    [ codeIntentText ]: getCodeIntentProperties,
-    [ colorIntentText ]: getColorIntentProperties,
-    [ greetingIntentTextEnUs ]: getGreetingIntentProperties,
-    [ crossTrainText ]: getChooseIntentProperties
+    [codeIntentText]: getCodeIntentProperties,
+    [colorIntentText]: getColorIntentProperties,
+    [greetingIntentTextEnUs]: getGreetingIntentProperties,
+    [crossTrainText]: getChooseIntentProperties,
+    [xIntentText]: getXIntentProperties
 };
 
 /**
  * Run the expected validations based on intent recognized.
  */
 const intentValidations = {
-    [ codeIntentText ]: validateCodeIntent,
-    [ colorIntentText ]: validateColorIntent,
-    [ greetingIntentTextEnUs ]: validateGreetingIntent,
-    [ crossTrainText ]: validateChooseIntent
+    [codeIntentText]: validateCodeIntent,
+    [colorIntentText]: validateColorIntent,
+    [greetingIntentTextEnUs]: validateGreetingIntent,
+    [crossTrainText]: validateChooseIntent,
+    [xIntentText]: validateXIntent
 }
 
 const spyOnTelemetryClientTrackEvent = (recognizer) => {
@@ -116,11 +120,12 @@ const validateTelemetry = async ({ recognizer, dialogContext, spy, activity, res
     const logPii = getLogPersonalInformation(recognizer, dialogContext);
     const expectedTelemetryProps = getExpectedProps(activity, result, logPii);
     const actualTelemetryProps = spy.getCall(callCount - 1).args[0];
-    
+
     strictEqual(spy.callCount, callCount);
     strictEqual(actualTelemetryProps.name, `${recognizer.constructor.name}Result`);
     ok(
-        hasValidTelemetryProps(actualTelemetryProps.properties, expectedTelemetryProps, activity)
+        hasValidTelemetryProps(actualTelemetryProps.properties, expectedTelemetryProps, activity),
+        'Expected telemetry property did not match actual telemetry property logged.'
     );
 }
 
@@ -153,11 +158,13 @@ const hasValidTelemetryProps = (actual, expected, activity) => {
         }
 
         if (property === 'Entities') {
-            if(!hasValidEntities(activity, actual[property])) {
+            if (!hasValidEntities(activity, actual[property])) {
                 return false;
             }
         } else {
-            if (actual[property] !== expected[property]) {
+            const actualVal = actual[property];
+            const expectedVal = expected[property];
+            if (actualVal !== expectedVal) {
                 return false;
             }
         }
@@ -166,22 +173,25 @@ const hasValidTelemetryProps = (actual, expected, activity) => {
     return true;
 }
 
-const hasValidEntities = (activity, propertyValue) => {
+const hasValidEntities = (activity, entitiesSerialized) => {
     const text = asMessageActivity(activity).text;
-    const actualEntity = JSON.parse(propertyValue);
+    const entities = JSON.parse(entitiesSerialized);
 
-    if (text == codeIntentText && !'code' in actualEntity) {
+    if (text == codeIntentText && !'code' in entities) {
         return false;
     }
 
-    if (text == colorIntentText && !'color' in actualEntity) {
+    if (text == colorIntentText && !'color' in entities) {
         return false;
     }
 
-    // if (text == GreetingIntentTextEnUs && actualEntity.Count != 0)
-    // {
-    //     return false;
-    // }
+    const objCount = Object.entries(entities).length;
+    if (
+        (text == greetingIntentTextEnUs || text == crossTrainText || text == xIntentText)
+        && Object.entries(entities).length !== 0
+    ) {
+        return false;
+    }
 
     return true;
 }

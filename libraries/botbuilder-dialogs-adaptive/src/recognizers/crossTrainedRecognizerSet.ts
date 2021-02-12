@@ -64,8 +64,10 @@ export class CrossTrainedRecognizerSet extends AdaptiveRecognizer implements Cro
 
         const results = await Promise.all(
             this.recognizers.map(
-                (recognizer: Recognizer): Promise<RecognizerResult> => {
-                    return recognizer.recognize(dialogContext, activity, telemetryProperties, telemetryMetrics);
+                async (recognizer: Recognizer): Promise<RecognizerResult> => {
+                    const result = await recognizer.recognize(dialogContext, activity, telemetryProperties, telemetryMetrics);
+                    result['id'] = recognizer.id;
+                    return result;
                 }
             )
         );

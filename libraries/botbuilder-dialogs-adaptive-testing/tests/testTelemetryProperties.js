@@ -32,11 +32,20 @@ const getGreetingIntentProperties = () => {
 
 const getChooseIntentProperties = () => {
     return {
-        'AdditionalProperties': '{\"candidates\":[{\"id\":\"y\",\"intent\":\"y\",\"score\":1,\"result\":{\"text\":\"criss-cross applesauce\",\"intents\":{\"y\":{\"score\":1,\"pattern\":\"criss-cross applesauce\"}},\"entities\":{}}},{\"id\":\"z\",\"intent\":\"z\",\"score\":1,\"result\":{\"text\":\"criss-cross applesauce\",\"intents\":{\"z\":{\"score\":1,\"pattern\":\"criss-cross applesauce\"}},\"entities\":{}}}]}',
-        // TODO - investigate why undefined and not {}
-        'Entities': undefined,
+        'AdditionalProperties': '{\"candidates\":[{\"id\":\"y\",\"intent\":\"y\",\"score\":1,\"result\":{\"text\":\"criss-cross applesauce\",\"intents\":{\"y\":{\"score\":1,\"pattern\":\"criss-cross applesauce\"}},\"entities\":{},\"id\":\"y\"}},{\"id\":\"z\",\"intent\":\"z\",\"score\":1,\"result\":{\"text\":\"criss-cross applesauce\",\"intents\":{\"z\":{\"score\":1,\"pattern\":\"criss-cross applesauce\"}},\"entities\":{},\"id\":\"z\"}}]}',
+        'Entities': '{}',
         'Intents': '{\"ChooseIntent\":{\"score\":1}}',
         'TopIntent': 'ChooseIntent',
+        'TopIntentScore': '1'
+    }
+}
+
+const getXIntentProperties = () => {
+    return {
+        'AdditionalProperties': '{\"id\":\"x\"}',
+        'Entities': '{}',
+        'Intents': '{\"x\":{\"score\":1,\"pattern\":\"x\"}}',
+        'TopIntent': 'x',
         'TopIntentScore': '1'
     }
 }
@@ -45,5 +54,6 @@ module.exports = {
     getCodeIntentProperties,
     getColorIntentProperties,
     getGreetingIntentProperties,
-    getChooseIntentProperties
+    getChooseIntentProperties,
+    getXIntentProperties
 }
