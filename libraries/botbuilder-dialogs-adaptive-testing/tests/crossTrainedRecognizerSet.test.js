@@ -50,33 +50,33 @@ describe('CrossTrainedRecognizerSetTests', function () {
         false
     );
 
-    // it('AllNone', async () => {
-    //     await TestUtils.runTestScript(resourceExplorer, 'CrossTrainedRecognizerSetTests_AllNone');
-    // });
+    it('AllNone', async () => {
+        await TestUtils.runTestScript(resourceExplorer, 'CrossTrainedRecognizerSetTests_AllNone');
+    });
 
-    // it('CircleDefer', async () => {
-    //     await TestUtils.runTestScript(resourceExplorer, 'CrossTrainedRecognizerSetTests_CircleDefer');
-    // });
+    it('CircleDefer', async () => {
+        await TestUtils.runTestScript(resourceExplorer, 'CrossTrainedRecognizerSetTests_CircleDefer');
+    });
 
-    // it('DoubleDefer', async () => {
-    //     await TestUtils.runTestScript(resourceExplorer, 'CrossTrainedRecognizerSetTests_DoubleDefer');
-    // });
+    it('DoubleDefer', async () => {
+        await TestUtils.runTestScript(resourceExplorer, 'CrossTrainedRecognizerSetTests_DoubleDefer');
+    });
 
-    // it('DoubleIntent', async () => {
-    //     await TestUtils.runTestScript(resourceExplorer, 'CrossTrainedRecognizerSetTests_DoubleIntent');
-    // });
+    it('DoubleIntent', async () => {
+        await TestUtils.runTestScript(resourceExplorer, 'CrossTrainedRecognizerSetTests_DoubleIntent');
+    });
 
-    // it('Empty', async () => {
-    //     await TestUtils.runTestScript(resourceExplorer, 'CrossTrainedRecognizerSetTests_Empty');
-    // });
+    it('Empty', async () => {
+        await TestUtils.runTestScript(resourceExplorer, 'CrossTrainedRecognizerSetTests_Empty');
+    });
 
-    // it('NoneWithIntent', async () => {
-    //     await TestUtils.runTestScript(resourceExplorer, 'CrossTrainedRecognizerSetTests_NoneWithIntent');
-    // });
+    it('NoneWithIntent', async () => {
+        await TestUtils.runTestScript(resourceExplorer, 'CrossTrainedRecognizerSetTests_NoneWithIntent');
+    });
 
-    // it('EntitiesWithNoneIntent', async () => {
-    //     await TestUtils.runTestScript(resourceExplorer, 'CrossTrainedRecognizerSetTests_NoneIntentWithEntities');
-    // });
+    it('EntitiesWithNoneIntent', async () => {
+        await TestUtils.runTestScript(resourceExplorer, 'CrossTrainedRecognizerSetTests_NoneIntentWithEntities');
+    });
 
     describe('Telemetry', () => {
         const recognizer = createRecognizer();
