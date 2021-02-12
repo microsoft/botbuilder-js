@@ -35,14 +35,6 @@ export class RecognizerSet extends AdaptiveRecognizer implements RecognizerSetCo
         telemetryProperties?: { [key: string]: string },
         telemetryMetrics?: { [key: string]: number }
     ): Promise<RecognizerResult> {
-        const recognizerResult: RecognizerResult = {
-            text: undefined,
-            alteredText: undefined,
-            intents: {},
-            entities: {
-                $instance: {},
-            },
-        };
         const results = await Promise.all(
             this.recognizers.map(
                 (recognizer: Recognizer): Promise<RecognizerResult> => {
@@ -51,75 +43,9 @@ export class RecognizerSet extends AdaptiveRecognizer implements RecognizerSetCo
             )
         );
 
-        for (let i = 0; i < results.length; i++) {
-            const result = results[i];
-            const { intent } = getTopScoringIntent(result);
-            if (intent && intent != 'None') {
-                // merge text
-                if (!recognizerResult.text) {
-                    recognizerResult.text = result.text;
-                } else if (result.text != recognizerResult.text) {
-                    recognizerResult.alteredText = recognizerResult.text;
-                }
-                
-                // for (const [intentName, intent] of Object.entries(result.intents)) {
-                //     const score = intent.score ?? 0;
-                // }
+        const recognizerResult: RecognizerResult = this.mergeResults(results);
 
-                // merge intents
-                for (const intentName in result.intents) {
-                    const intent = result.intents[intentName];
-                    const intentScore = intent.score;
-                    if (recognizerResult.intents.hasOwnProperty(intentName)) {
-                        if (intentScore < recognizerResult.intents[intentName].score) {
-                            continue;
-                        }
-                    }
-                    recognizerResult.intents[intentName] = JSON.parse(JSON.stringify(intent));
-                }
-            }
-
-            // merge entities
-            // entities shape is:
-            //   {
-            //      "name": ["value1","value2","value3"],
-            //      "$instance": {
-            //          "name": [ { "startIndex" : 15, ... }, ... ]
-            //      }
-            //   }
-            for (const property in result.entities) {
-                if (property == '$instance') {
-                    const instanceData = result.entities['$instance'];
-                    for (const entityName in instanceData) {
-                        if (!recognizerResult.entities['$instance'].hasOwnProperty(entityName)) {
-                            recognizerResult.entities['$instance'][entityName] = [];
-                        }
-                        const entityValue = instanceData[entityName];
-                        recognizerResult.entities['$instance'][entityName].push(...entityValue);
-                    }
-                } else {
-                    if (!recognizerResult.entities.hasOwnProperty(property)) {
-                        recognizerResult.entities[property] = [];
-                    }
-                    const value = result.entities[property];
-                    recognizerResult.entities[property].push(...value);
-                }
-            }
-
-            for (const property in result) {
-                if (
-                    property != 'text' &&
-                    property != 'alteredText' &&
-                    property != 'intents' &&
-                    property != 'entities'
-                ) {
-                    // naive merge clobbers same key.
-                    recognizerResult[property] = result[property];
-                }
-            }
-        }
-
-        if (Object.entries(recognizerResult.intents).length == 0) {
+        if (Object.entries(recognizerResult.intents).length === 0) {
             recognizerResult.intents['None'] = { score: 1.0 };
         }
 
@@ -131,5 +57,81 @@ export class RecognizerSet extends AdaptiveRecognizer implements RecognizerSetCo
         );
 
         return recognizerResult;
+    }
+
+    private mergeResults(results: RecognizerResult[]) {
+        const mergedRecognizerResult: RecognizerResult = {
+            text: undefined,
+            alteredText: undefined,
+            intents: {},
+            entities: {
+                $instance: {}
+            }
+        };
+    
+        for (const result of results) {
+            const { intent: intentName } = getTopScoringIntent(result);
+            if (intentName && intentName !== 'None') {
+                // merge text
+                if (!mergedRecognizerResult.text) {
+                    mergedRecognizerResult.text = result.text;
+                } else if (result.text !== mergedRecognizerResult.text) {
+                    mergedRecognizerResult.alteredText = result.text;
+                }
+    
+                // merge intents
+                for (const [intentName, intent] of Object.entries(result.intents)) {
+                    const intentScore = intent.score ?? 0;
+                    if(mergedRecognizerResult.intents.hasOwnProperty(intentName)) {
+                        if (intentScore < mergedRecognizerResult.intents[intentName].score) {
+                            // we already have a higher score for this intent
+                            continue;
+                        }
+                    }
+    
+                    mergedRecognizerResult.intents[intentName] = intent;
+                }
+            } 
+    
+            // merge entities
+            // entities shape is:
+            //   {
+            //      "name": ["value1","value2","value3"],
+            //      "$instance": {
+            //          "name": [ { "startIndex" : 15, ... }, ... ]
+            //      }
+            //   }
+            for (const [propertyName, propertyVal] of Object.entries(result.entities)) {
+                if (propertyName === '$instance') {
+                    for (const [entityName, entityValue] of Object.entries(propertyVal)) {
+                        const mergedInstanceEntities = mergedRecognizerResult.entities['$instance'][entityName] ??= [];
+                        // note: remove "as any" in the SDK
+                        mergedInstanceEntities.push(...entityValue as any)
+                    }
+                } else {
+                    const mergedEntities = mergedRecognizerResult.entities[propertyName] ??= [];
+                    mergedEntities.push(...propertyVal as any);
+                }
+            }
+
+            for (const property in result) {
+                if (
+                    property != 'text' &&
+                    property != 'alteredText' &&
+                    property != 'intents' &&
+                    property != 'entities'
+                ) {
+                    // naive merge clobbers same key.
+                    mergedRecognizerResult[property] = result[property];
+                }
+            }
+        }
+
+
+        if (Object.entries(mergedRecognizerResult.intents).length === 0) {
+            mergedRecognizerResult.intents['None'] = { score: 1.0 };
+        }
+    
+        return mergedRecognizerResult;
     }
 }
