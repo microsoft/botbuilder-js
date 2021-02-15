@@ -6,7 +6,9 @@
  * Licensed under the MIT License.
  */
 import { ExpressionProperty } from 'adaptive-expressions';
+import { BotFrameworkAdapter } from 'botbuilder';
 import { DialogContext } from 'botbuilder-dialogs';
+import { Assertion, Test, tests } from 'botbuilder-stdlib';
 
 /**
  * Get the value of the string expression from the Dialog Context.
@@ -28,3 +30,27 @@ export function getValue<T>(dc: DialogContext, expressionProperty?: ExpressionPr
 
     return undefined;
 }
+
+/**
+ * dc.context.adapter is typed as a BotAdapter, not containing getUserToken and getSignInLink. However, both
+ * BotFrameworkAdapter and TestAdapter contain them, so we just need to make sure that dc.context.adapter contains
+ * an adapter with the appropriate auth methods.
+ */
+export interface HasAuthMethods {
+    getUserToken: typeof BotFrameworkAdapter.prototype.getUserToken;
+    getSignInLink: typeof BotFrameworkAdapter.prototype.getSignInLink;
+}
+
+/**
+ * Test to assert val has required auth methods.
+ *
+ * @param {any} val Usually context.adapter.
+ * @returns {Assertion} Asserts that val has required auth methods.
+ */
+export const testAdapterHasAuthMethods: Test<HasAuthMethods> = (val: unknown): val is HasAuthMethods => {
+    return (
+        val instanceof BotFrameworkAdapter ||
+        (tests.isFunc((val as BotFrameworkAdapter).getUserToken) &&
+            tests.isFunc((val as BotFrameworkAdapter).getSignInLink))
+    );
+};
