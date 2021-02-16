@@ -6,9 +6,8 @@
  * Licensed under the MIT License.
  */
 
-import { Activity, CardAction } from 'botbuilder';
+import { Activity, CardAction, TabResponse, TabResponsePayload } from 'botbuilder';
 import { DialogContext } from 'botbuilder-dialogs';
-import { TabResponse, TabResponsePayload } from 'botframework-schema';
 import { BaseAuthResponseDialog, BaseAuthResponseDialogConfiguration } from './baseAuthResponseDialog';
 import { BaseTeamsCacheInfoResponseDialog } from './baseTeamsCacheInfoResponseDialog';
 

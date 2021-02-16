@@ -102,11 +102,6 @@ export abstract class BaseAuthResponseDialog
         return Dialog.EndOfTurn;
     }
 
-    // Note: The following `createOAuthInvokeResponse...()` methods can be combined with overrides (as is done in .NET SDK),
-    //  but because of the wildly differing parameter types, it gets messy, fast. All are inherited in child classes in this
-    //  library and `createOAuthInvokeResponseActivityFromCardAction()` is the only one that differs in child implementations.
-
-    // eslint-disable-next-line jsdoc/require-returns-check
     /**
      * Create a type specific Auth Response using the provided CardAction.
      *

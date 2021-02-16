@@ -7,7 +7,7 @@
  */
 
 import { BoolExpressionConverter, StringExpressionConverter } from 'adaptive-expressions';
-import { Activity, InvokeResponse } from 'botbuilder';
+import { Activity, ActivityTypes, InvokeResponse, StatusCodes, TabResponse, TabResponseCard } from 'botbuilder';
 import {
     Converter,
     ConverterFactory,
@@ -17,7 +17,6 @@ import {
     TemplateInterface,
 } from 'botbuilder-dialogs';
 import { ActivityTemplateConverter } from 'botbuilder-dialogs-adaptive/lib/converters';
-import { ActivityTypes, StatusCodes, TabResponse, TabResponseCard } from 'botframework-schema';
 import { BaseAuthResponseDialog, BaseAuthResponseDialogConfiguration } from './baseAuthResponseDialog';
 
 export interface SendTabCardResponseConfiguration extends BaseAuthResponseDialogConfiguration {
