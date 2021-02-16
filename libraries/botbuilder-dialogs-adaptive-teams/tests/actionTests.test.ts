@@ -365,81 +365,70 @@ describe('Actions', function () {
         await TestUtils.runTestScript(resourceExplorer, this.test?.title);
     });
 
-    it('Action_SendMessagingExtensionActionResponse', async function () {
+    it('Action_SendMEActionResponse', async function () {
         await TestUtils.runTestScript(resourceExplorer, this.test?.title);
     });
 
-    it('Action_SendMessagingExtensionActionResponseError', async function () {
+    it('Action_SendMEActionResponseError', async function () {
         await TestUtils.runTestScript(resourceExplorer, this.test?.title);
     });
 
-    it('Action_SendMessagingExtensionAttachmentsResponse', async function () {
+    it('Action_SendMEAttachmentsResponse', async function () {
         await TestUtils.runTestScript(resourceExplorer, this.test?.title);
     });
 
-    it('Action_SendMessagingExtensionAttachmentsResponseError', async function () {
+    it('Action_SendMEAttachmentsResponseError', async function () {
         await TestUtils.runTestScript(resourceExplorer, this.test?.title);
     });
 
-    it('Action_SendMessagingExtensionAuthResponse', async function () {
-        // Note: the test.dialog for this test uses `StartsWith` at the end due to differences in JS and .NET TestAdapter.getSignInlink
-        const conversationReference = getPersonalConversationReference();
-        conversationReference.conversation.id = 'Action_SendMessagingExtensionAuthResponse';
-        const adapter = getTeamsTestAdapter(conversationReference);
-        adapter.addUserToken(
-            'testConnection',
-            conversationReference.channelId,
-            conversationReference.user?.id || '29:User-Id',
-            'token'
-        );
-
-        await TestUtils.runTestScript(resourceExplorer, this.test?.title, adapter);
+    it('Action_SendMEAuthResponse', async function () {
+        await TestUtils.runTestScript(resourceExplorer, this.test?.title);
     });
 
-    it('Action_SendMessagingExtensionAuthResponseError', async function () {
+    it('Action_SendMEAuthResponseError', async function () {
         const adapter = getTeamsTestAdapter();
         // eslint-disable-next-line
         // @ts-ignore: We have to set this to null to test the error but tsconfig "strict" doesn't allow it.
         adapter.getUserToken = null;
-        await TestUtils.runTestScript(resourceExplorer, this.test?.title, adapter);
+        await TestUtils.runTestScript(resourceExplorer, this.test?.title);
     });
 
-    it('Action_SendMessagingExtensionAuthResponseErrorWithAdapter', async function () {
+    it('Action_SendMEAuthResponseErrorWithAdapter', async function () {
         const adapter = getTeamsTestAdapter();
         adapter.addUserToken('test connection', 'test', 'user1', 'token');
 
         await TestUtils.runTestScript(resourceExplorer, this.test?.title, adapter);
     });
 
-    it('Action_SendMessagingExtensionBotMessagePreviewResponse', async function () {
+    it('Action_SendMEBotMessagePreviewResponse', async function () {
         await TestUtils.runTestScript(resourceExplorer, this.test?.title);
     });
 
-    it('Action_SendMessagingExtensionBotMessagePreviewResponseError', async function () {
+    it('Action_SendMEBotMessagePreviewResponseError', async function () {
         await TestUtils.runTestScript(resourceExplorer, this.test?.title);
     });
 
-    it('Action_SendMessagingExtensionConfigQuerySettingUrlResponse', async function () {
+    it('Action_SendMEConfigQuerySettingUrlResponse', async function () {
         await TestUtils.runTestScript(resourceExplorer, this.test?.title);
     });
 
-    it('Action_SendMessagingExtensionConfigQuerySettingUrlResponseError', async function () {
+    it('Action_SendMEConfigQuerySettingUrlResponseError', async function () {
         await TestUtils.runTestScript(resourceExplorer, this.test?.title);
     });
 
-    it('Action_SendMessagingExtensionMessageResponse', async function () {
+    it('Action_SendMEMessageResponse', async function () {
         await TestUtils.runTestScript(resourceExplorer, this.test?.title);
     });
 
-    it('Action_SendMessagingExtensionMessageResponseError', async function () {
+    it('Action_SendMEMessageResponseError', async function () {
         await TestUtils.runTestScript(resourceExplorer, this.test?.title);
     });
 
-    it('Action_SendMessagingExtensionSelectItemResponse', async function () {
+    it('Action_SendMESelectItemResponse', async function () {
         await TestUtils.runTestScript(resourceExplorer, this.test?.title);
     });
 
-    it('Action_SendMessagingExtensionSelectItemResponseError', async function () {
+    it('Action_SendMESelectItemResponseError', async function () {
         await TestUtils.runTestScript(resourceExplorer, this.test?.title);
     });
 
@@ -460,6 +449,22 @@ describe('Actions', function () {
     });
 
     it('Action_SendTaskModuleUrlResponseError', async function () {
+        await TestUtils.runTestScript(resourceExplorer, this.test?.title);
+    });
+
+    it('Action_SendTabCardResponseError', async function () {
+        await TestUtils.runTestScript(resourceExplorer, this.test?.title);
+    });
+
+    it('Action_SendTabCardResponse', async function () {
+        await TestUtils.runTestScript(resourceExplorer, this.test?.title);
+    });
+
+    it('Action_SendTabAuthResponseErrorWithAdapter', async function () {
+        await TestUtils.runTestScript(resourceExplorer, this.test?.title);
+    });
+
+    it('Action_SendTabAuthResponseError', async function () {
         await TestUtils.runTestScript(resourceExplorer, this.test?.title);
     });
 });
