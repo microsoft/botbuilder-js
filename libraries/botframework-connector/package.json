@@ -38,7 +38,6 @@
     "rsa-pem-from-mod-exp": "^0.8.4"
   },
   "devDependencies": {
-    "azure": "^2.2.1-preview",
     "botbuilder-test-utils": "0.0.0",
     "dotenv": "^6.2.0",
     "nock": "^11.9.1",
