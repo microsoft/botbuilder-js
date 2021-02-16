@@ -48,10 +48,6 @@ export class RecognizerSet extends AdaptiveRecognizer implements RecognizerSetCo
 
         const recognizerResult: RecognizerResult = this.mergeResults(results);
 
-        if (Object.entries(recognizerResult.intents).length === 0) {
-            recognizerResult.intents['None'] = { score: 1.0 };
-        }
-
         this.trackRecognizerResult(
             dialogContext,
             'RecognizerSetResult',
