@@ -19,7 +19,7 @@
     "functional-test": "yarn build && yarn workspace functional-tests test",
     "lint": "yarn execute --parallel --script lint --scriptArgs=--quiet",
     "lint:fix": "yarn lint --scriptArgs=--fix",
-    "package": "yarn execute --coordinated --no-private yarn pack",
+    "package": "yarn execute --coordinated --noPrivate yarn pack",
     "test": "npm-run-all build test:mocha test:teams test:nyc:report",
     "test:compat": "yarn execute --coordinated --script test:compat",
     "test:consumer": "yarn workspace consumer-test test",
