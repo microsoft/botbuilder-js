@@ -127,8 +127,8 @@ describe('QnAMakerRecognizer', function () {
                 .replyWithFile(200, testDataFolder + 'QnaMaker_ReturnsAnswer.json');
             const activity = createMessageActivity(qnaIntentText);
             const dialogContext = createContext(activity);
-
             recognizer.logPersonalInformation = true;
+
             const result = await recognizer.recognize(dialogContext, activity);
 
             validateAnswers(result);
@@ -146,8 +146,8 @@ describe('QnAMakerRecognizer', function () {
                 .replyWithFile(200, testDataFolder + 'QnaMaker_ReturnsAnswer.json');
             const activity = createMessageActivity(qnaIntentText);
             const dialogContext = createContext(activity);
-
             recognizer.logPersonalInformation = false;
+            
             const result = await recognizer.recognize(dialogContext, activity);
 
             validateAnswers(result);
