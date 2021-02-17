@@ -3,9 +3,6 @@
     "$kind": "Microsoft.Test.Script",
     "dialog": {
         "$kind": "Microsoft.AdaptiveDialog",
-        "generator": {
-            "$kind": "Microsoft.TemplateEngineLanguageGenerator"
-        },
         "recognizer": {
             "$schema": "../../../../schemas/sdk.schema",
             "$kind": "Microsoft.CrossTrainedRecognizerSet",
@@ -55,15 +52,6 @@
             ]
         },
         "triggers": [
-            {
-                "$kind": "Microsoft.OnError",
-                "actions": [
-                  {
-                    "$kind": "Microsoft.SendActivity",
-                    "activity": "${turn.dialogEvent.value.message}"
-                  }
-                ]
-            },
             {
                 "$kind": "Microsoft.OnChooseIntent",
                 "actions": [
