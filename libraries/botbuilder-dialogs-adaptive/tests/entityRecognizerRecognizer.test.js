@@ -328,8 +328,6 @@ describe('EntityRecognizer Recognizer Tests', () => {
             ok(result);
             strictEqual(Object.entries(result.intents).length, 0);
             strictEqual(Object.entries(result.entities).length, 0);
-
-            spy.restore();
         });
 
         it('EntityRecognizer does not log telemetry by default', async () => {
@@ -345,8 +343,6 @@ describe('EntityRecognizer Recognizer Tests', () => {
             ok(result);
             strictEqual(Object.entries(result.intents).length, 0);
             strictEqual(Object.entries(result.entities).length, 0);
-
-            spy.restore();
         });
     });
 });
