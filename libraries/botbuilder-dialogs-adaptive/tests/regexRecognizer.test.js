@@ -163,7 +163,6 @@ describe('RegexRecognizer Tests', () => {
                 ),
             });
             const trackEventSpy = spyOnTelemetryClientTrackEvent(recognizerWithDefaultLogPii);
-
             await recognizeIntentAndValidateTelemetry({
                 text: codeIntentText,
                 callCount: 1,

@@ -21,7 +21,7 @@ import {
     StringExpression,
     StringExpressionConverter,
 } from 'adaptive-expressions';
-import { RecognizerResult, Activity } from 'botbuilder-core';
+import { RecognizerResult, Activity, getTopScoringIntent } from 'botbuilder-core';
 import { Converter, ConverterFactory, DialogContext, Recognizer, RecognizerConfiguration } from 'botbuilder-dialogs';
 import { QnAMaker } from './qnaMaker';
 import {
@@ -122,7 +122,7 @@ export class QnAMakerRecognizer extends Recognizer implements QnAMakerRecognizer
     /**
      * The flag to indicate if personal information should be logged in telemetry.
      */
-    public logPersonalInformation: BoolExpression = new BoolExpression('=settings.telemetry.logPersonalInformation');
+    public logPersonalInformation: BoolExpression | boolean = new BoolExpression('=settings.telemetry.logPersonalInformation');
 
     public getConverter(property: keyof QnAMakerRecognizerConfiguration): Converter | ConverterFactory {
         switch (property) {
@@ -262,7 +262,7 @@ export class QnAMakerRecognizer extends Recognizer implements QnAMakerRecognizer
         this.trackRecognizerResult(
             dc,
             'QnAMakerRecognizerResult',
-            this.fillRecognizerResultTelemetryProperties(recognizerResult, telemetryProperties),
+            this.fillRecognizerResultTelemetryProperties(recognizerResult, telemetryProperties, dc),
             telemetryMetrics
         );
         return recognizerResult;
@@ -289,7 +289,56 @@ export class QnAMakerRecognizer extends Recognizer implements QnAMakerRecognizer
         }
 
         const endpoint: QnAMakerEndpoint = { endpointKey, host, knowledgeBaseId };
-        const logPersonalInfo = this.logPersonalInformation.getValue(dc.state);
+        const logPersonalInfo = this.getLogPersonalInformation(dc);
         return new QnAMaker(endpoint, {}, this.telemetryClient, logPersonalInfo);
+    }
+
+    /**
+     * Uses the RecognizerResult to create a list of properties to be included when tracking the result in telemetry.
+     * 
+     * @param recognizerResult Recognizer Result.
+     * @param telemetryProperties A list of properties to append or override the properties created using the RecognizerResult.
+     * @param dc Dialog Context.
+     * @returns A dictionary that can be included when calling the TrackEvent method on the TelemetryClient.
+     */
+    protected fillRecognizerResultTelemetryProperties(
+        recognizerResult: RecognizerResult,
+        telemetryProperties: Record<string, string>,
+        dc: DialogContext
+    ): Record<string, string> {
+        if (!dc) {
+            throw new Error('DialogContext needed for state in AdaptiveRecognizer.fillRecognizerResultTelemetryProperties method.');
+        }
+        const { intent, score } = getTopScoringIntent(recognizerResult);
+        const intents = Object.entries(recognizerResult.intents).length;
+        const properties: Record<string, string> = {
+            TopIntent: intents > 0 ? intent : undefined,
+            TopIntentScore: intents > 0 ? score.toString() : undefined,
+            Intents:
+                intents > 0
+                    ? JSON.stringify(recognizerResult.intents)
+                    : undefined,
+            Entities: recognizerResult.entities ? JSON.stringify(recognizerResult.entities) : undefined,
+            AdditionalProperties: this.stringifyAdditionalPropertiesOfRecognizerResult(recognizerResult),
+        };
+
+        const logPersonalInformation = this.getLogPersonalInformation(dc);
+
+        if (logPersonalInformation) {
+            properties['Text'] = recognizerResult.text
+            properties['AlteredText'] = recognizerResult.alteredText
+        }
+
+        // Additional Properties can override "stock" properties.
+        if (telemetryProperties) {
+            return Object.assign({}, properties, telemetryProperties);
+        }
+        return properties;
+    }
+
+    private getLogPersonalInformation(dc: DialogContext): boolean {
+        return this.logPersonalInformation instanceof BoolExpression
+            ? this.logPersonalInformation.getValue(dc.state)
+            : this.logPersonalInformation;
     }
 }

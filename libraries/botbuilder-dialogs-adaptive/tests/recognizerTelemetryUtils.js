@@ -165,11 +165,6 @@ const hasValidEntities = (activity, propertyValue) => {
         return false;
     }
 
-    // if (text == GreetingIntentTextEnUs && actualEntity.Count != 0)
-    // {
-    //     return false;
-    // }
-
     return true;
 }
 

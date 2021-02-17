@@ -1,5 +1,9 @@
 const { strictEqual, notStrictEqual } = require('assert');
 
+/**
+ * Validates the codeIntent utterance "intent a1 b2".
+ * @param {RecognizerResult} result 
+ */
 const validateCodeIntent = (result) => {
     // intent assertions
     const intents = result.intents;
@@ -15,6 +19,10 @@ const validateCodeIntent = (result) => {
     strictEqual(entities.code[1], 'b2', 'should find b2');
 };
 
+/**
+ * Validates the colorIntent utterance "I would like colors red and orange".
+ * @param {RecognizerResult} result 
+ */
 const validateColorIntent = (result) => {
     // intent assertions
     const intents = result.intents;
