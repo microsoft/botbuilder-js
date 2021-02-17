@@ -76,12 +76,19 @@ async function recognizeIntentAndValidateTelemetry_withCustomActivity({ text, ca
     });
 }
 
+const getLogPersonalInformation = (recognizer, dialogContext) => {
+    return recognizer.logPersonalInformation instanceof BoolExpression
+        ? recognizer.logPersonalInformation.getValue(dialogContext.state)
+        : recognizer.logPersonalInformation;
+}
+
 module.exports = {
     codeIntentText,
     colorIntentText,
     crossTrainIntentText,
     greetingIntentTextEnUs,
     xIntentText,
+    getLogPersonalInformation,
     recognizeIntentAndValidateTelemetry,
     recognizeIntentAndValidateTelemetry_withCustomActivity,
     spyOnTelemetryClientTrackEvent
@@ -108,12 +115,6 @@ const validateTelemetry = async ({ recognizer, dialogContext, spy, activity, res
     ok(
         hasValidTelemetryProps(actualTelemetryProps.properties, expectedTelemetryProps, activity)
     );
-}
-
-const getLogPersonalInformation = (recognizer, dialogContext) => {
-    return recognizer.logPersonalInformation instanceof BoolExpression
-        ? recognizer.logPersonalInformation.getValue(dialogContext.state)
-        : recognizer.logPersonalInformation;
 }
 
 const getExpectedProps = (activity, result, logPersonalInformation) => {

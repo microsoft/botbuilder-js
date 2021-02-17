@@ -1,4 +1,4 @@
-const { AssertionError } = require('assert');
+const { ok, strictEqual } = require('assert');
 const assert = require('assert');
 const { ActivityTypes, TestAdapter, TurnContext } = require('botbuilder-core');
 const { DialogContext, DialogSet } = require('botbuilder-dialogs');
@@ -22,7 +22,9 @@ const {
     UrlEntityRecognizer,
     RegexEntityRecognizer,
     ChannelMentionEntityRecognizer,
+    EntityRecognizer,
 } = require('botbuilder-dialogs-adaptive');
+const { getLogPersonalInformation, spyOnTelemetryClientTrackEvent } = require('./recognizerTelemetryUtils');
 
 const user = {
     id: process.env['USER_ID'] || 'UK8CH2281:TKGSUQHQE',
@@ -310,5 +312,41 @@ describe('EntityRecognizer Recognizer Tests', () => {
         assert.strictEqual(results.entities.color.length, 2);
         assert.strictEqual(results.entities.color[0], 'red');
         assert.strictEqual(results.entities.color[1], 'Blue');
+    });
+
+    describe('Telemetry', () => {
+        it('ChannelMentionEntityRecognizer does not log telemetry by default', async () => {
+            const recognizer = new ChannelMentionEntityRecognizer();
+            const spy = spyOnTelemetryClientTrackEvent(recognizer);
+            const dialogContext = getDialogContext('ChannelMentionEntityRecognizer - no telemetry', 'gobble gobble');
+            const logPii = getLogPersonalInformation(recognizer, dialogContext);
+            
+            const result = await recognizer.recognize(dialogContext, dialogContext.context.activity);
+            
+            strictEqual(spy.callCount, 0);
+            ok(!logPii);
+            ok(result);
+            strictEqual(Object.entries(result.intents).length, 0);
+            strictEqual(Object.entries(result.entities).length, 0);
+
+            spy.restore();
+        });
+
+        it('EntityRecognizer does not log telemetry by default', async () => {
+            const recognizer = new EntityRecognizer();
+            const spy = spyOnTelemetryClientTrackEvent(recognizer);
+            const dialogContext = getDialogContext('EntityRecognizer - no telemetry', 'gobble gobble');
+            const logPii = getLogPersonalInformation(recognizer, dialogContext);
+
+            const result = await recognizer.recognize(dialogContext, dialogContext.context.activity);
+
+            strictEqual(spy.callCount, 0);
+            ok(!logPii);
+            ok(result);
+            strictEqual(Object.entries(result.intents).length, 0);
+            strictEqual(Object.entries(result.entities).length, 0);
+
+            spy.restore();
+        });
     });
 });

@@ -1,18 +1,14 @@
 const path = require('path');
-const { ComponentRegistration, MemoryStorage, useBotState, ConversationState, UserState } = require('botbuilder-core');
-const { TemplateEngineLanguageGenerator, AdaptiveComponentRegistration, CrossTrainedRecognizerSet, RegexRecognizer, IntentPattern } = require('botbuilder-dialogs-adaptive');
+const { ComponentRegistration } = require('botbuilder-core');
+const { AdaptiveComponentRegistration, CrossTrainedRecognizerSet, RegexRecognizer, IntentPattern } = require('botbuilder-dialogs-adaptive');
 const { ResourceExplorer } = require('botbuilder-dialogs-declarative');
 const { AdaptiveTestComponentRegistration, TestUtils } = require('../lib');
-const { 
+const {
     crossTrainText,
     xIntentText,
     recognizeIntentAndValidateTelemetry,
     spyOnTelemetryClientTrackEvent
 } = require('./recognizerTelemetryUtils');
-const { createContext } = require('./activityUtils');
-const { OnUnknownIntent, AdaptiveDialog, OnIntent, SendActivity } = require('botbuilder-dialogs-adaptive');
-const { DialogManager } = require('botbuilder-dialogs');
-const { TestAdapter } = require('botbuilder-core');
 
 const createRecognizer = () => {
     return new CrossTrainedRecognizerSet().configure({
@@ -94,27 +90,27 @@ describe('CrossTrainedRecognizerSetTests', function () {
             spy.restore();
         });
 
-        
-        it('should log PII when logPersonalInformation is true', async() => {
+
+        it('should log PII when logPersonalInformation is true', async () => {
             recognizer.logPersonalInformation = true;
 
-            await recognizeIntentAndValidateTelemetry({ 
+            await recognizeIntentAndValidateTelemetry({
                 text: crossTrainText, callCount: 1, recognizer, spy
             });
 
-            await recognizeIntentAndValidateTelemetry({ 
+            await recognizeIntentAndValidateTelemetry({
                 text: xIntentText, callCount: 2, recognizer, spy
             });
         });
 
-        it('should not log PII when logPersonalInformation is false', async() => {
+        it('should not log PII when logPersonalInformation is false', async () => {
             recognizer.logPersonalInformation = false;
 
-            await recognizeIntentAndValidateTelemetry({ 
+            await recognizeIntentAndValidateTelemetry({
                 text: crossTrainText, callCount: 1, recognizer, spy
             });
 
-            await recognizeIntentAndValidateTelemetry({ 
+            await recognizeIntentAndValidateTelemetry({
                 text: xIntentText, callCount: 2, recognizer, spy
             });
         });
@@ -123,7 +119,7 @@ describe('CrossTrainedRecognizerSetTests', function () {
             const recognizerWithDefaultLogPii = createRecognizer();
             const trackEventSpy = spyOnTelemetryClientTrackEvent(recognizerWithDefaultLogPii);
 
-            await recognizeIntentAndValidateTelemetry({ 
+            await recognizeIntentAndValidateTelemetry({
                 text: crossTrainText,
                 callCount: 1,
                 recognizer: recognizerWithDefaultLogPii,
