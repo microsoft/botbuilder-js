@@ -122,7 +122,7 @@ export class QnAMakerRecognizer extends Recognizer implements QnAMakerRecognizer
     /**
      * The flag to indicate if personal information should be logged in telemetry.
      */
-    public logPersonalInformation: BoolExpression | boolean = new BoolExpression('=settings.telemetry.logPersonalInformation');
+    public logPersonalInformation: BoolExpression = new BoolExpression('=settings.telemetry.logPersonalInformation');
 
     public getConverter(property: keyof QnAMakerRecognizerConfiguration): Converter | ConverterFactory {
         switch (property) {
@@ -296,7 +296,7 @@ export class QnAMakerRecognizer extends Recognizer implements QnAMakerRecognizer
     /**
      * Uses the RecognizerResult to create a list of properties to be included when tracking the result in telemetry.
      * 
-     * @param recognizerResult Recognizer Result.
+     * @param recognizerResult The recognizer's recognized intent of an utterance in the form of a RecognizerResult.
      * @param telemetryProperties A list of properties to append or override the properties created using the RecognizerResult.
      * @param dc Dialog Context.
      * @returns A dictionary that can be included when calling the TrackEvent method on the TelemetryClient.
