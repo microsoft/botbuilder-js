@@ -95,7 +95,7 @@ describe('CrossTrainedRecognizerSetTests', function () {
         });
 
         
-        it('Merge - should log PII when logPersonalInformation is true', async() => {
+        it('should log PII when logPersonalInformation is true', async() => {
             recognizer.logPersonalInformation = true;
 
             await recognizeIntentAndValidateTelemetry({ 
@@ -107,28 +107,28 @@ describe('CrossTrainedRecognizerSetTests', function () {
             });
         });
 
-        // it('Merge - should not log PII when logPersonalInformation is false', async() => {
-        //     recognizer.logPersonalInformation = true;
+        it('should not log PII when logPersonalInformation is false', async() => {
+            recognizer.logPersonalInformation = false;
 
-        //     await recognizeIntentAndValidateTelemetry({ 
-        //         text: crossTrainText, callCount: 1, recognizer, spy
-        //     });
+            await recognizeIntentAndValidateTelemetry({ 
+                text: crossTrainText, callCount: 1, recognizer, spy
+            });
 
-        //     await recognizeIntentAndValidateTelemetry({ 
-        //         text: xIntentText, callCount: 2, recognizer, spy
-        //     });
-        // });
+            await recognizeIntentAndValidateTelemetry({ 
+                text: xIntentText, callCount: 2, recognizer, spy
+            });
+        });
 
-        // it('should refrain from logging PII by default', async () => {
-        //     const recognizerWithDefaultLogPii = createRecognizer();
-        //     const trackEventSpy = spyOnTelemetryClientTrackEvent(recognizerWithDefaultLogPii);
+        it('should refrain from logging PII by default', async () => {
+            const recognizerWithDefaultLogPii = createRecognizer();
+            const trackEventSpy = spyOnTelemetryClientTrackEvent(recognizerWithDefaultLogPii);
 
-        //     await recognizeIntentAndValidateTelemetry({ 
-        //         text: crossTrainText,
-        //         callCount: 1,
-        //         recognizer: recognizerWithDefaultLogPii,
-        //         spy: trackEventSpy
-        //     });
-        // });
+            await recognizeIntentAndValidateTelemetry({ 
+                text: crossTrainText,
+                callCount: 1,
+                recognizer: recognizerWithDefaultLogPii,
+                spy: trackEventSpy
+            });
+        });
     });
 });
