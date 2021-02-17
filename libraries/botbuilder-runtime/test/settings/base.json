@@ -1,0 +1,14 @@
+{
+  "flags": {
+    "bad": "howdy",
+    "on": true,
+    "off": false
+  },
+  "strings": {
+    "bad": false,
+    "ok": "howdy"
+  },
+  "root": {
+    "key": "base"
+  }
+}
