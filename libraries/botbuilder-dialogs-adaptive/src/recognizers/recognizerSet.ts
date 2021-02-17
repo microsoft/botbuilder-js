@@ -47,7 +47,7 @@ export class RecognizerSet extends AdaptiveRecognizer implements RecognizerSetCo
         );
 
         const recognizerResult: RecognizerResult = this.mergeResults(results);
-
+        
         this.trackRecognizerResult(
             dialogContext,
             'RecognizerSetResult',
@@ -100,16 +100,18 @@ export class RecognizerSet extends AdaptiveRecognizer implements RecognizerSetCo
             //          "name": [ { "startIndex" : 15, ... }, ... ]
             //      }
             //   }
-            for (const [propertyName, propertyVal] of Object.entries(result.entities)) {
-                if (propertyName === '$instance') {
-                    for (const [entityName, entityValue] of Object.entries(propertyVal)) {
-                        const mergedInstanceEntities = mergedRecognizerResult.entities['$instance'][entityName] ??= [];
-                        // note: remove "as any" in the SDK
-                        mergedInstanceEntities.push(...entityValue as any)
+            if (result.entities) {
+                for (const [propertyName, propertyVal] of Object.entries(result.entities)) {
+                    if (propertyName === '$instance') {
+                        for (const [entityName, entityValue] of Object.entries(propertyVal)) {
+                            const mergedInstanceEntities = mergedRecognizerResult.entities['$instance'][entityName] ??= [];
+                            // note: remove "as any" in the SDK
+                            mergedInstanceEntities.push(...entityValue as any)
+                        }
+                    } else {
+                        const mergedEntities = mergedRecognizerResult.entities[propertyName] ??= [];
+                        mergedEntities.push(...propertyVal as any);
                     }
-                } else {
-                    const mergedEntities = mergedRecognizerResult.entities[propertyName] ??= [];
-                    mergedEntities.push(...propertyVal as any);
                 }
             }
 
