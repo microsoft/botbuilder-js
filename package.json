@@ -12,16 +12,15 @@
   ],
   "scripts": {
     "browser-functional-test": "yarn workspace browser-functional-tests test",
-    "build": "yarn execute --bail --coordinated --parallel --script build",
-    "build-docs": "yarn execute --coordinated --script build-docs",
-    "clean": "yarn execute --parallel --script clean",
-    "execute": "yarn workspace botbuilder-repo-utils execute",
+    "build": "wsrun -e -m -t build",
+    "build-docs": "wsrun -e -m build-docs",
+    "clean": "wsrun clean",
     "functional-test": "yarn build && yarn workspace functional-tests test",
-    "lint": "yarn execute --parallel --script lint --scriptArgs=--quiet",
-    "lint:fix": "yarn lint --scriptArgs=--fix",
-    "package": "yarn execute --coordinated --no-private yarn pack",
+    "lint": "wsrun -m -l lint --quiet",
+    "lint:fix": "wsrun -m -l lint:fix --quiet",
+    "package": "wsrun -e -t -l --if is-not-private --bin yarn pack",
     "test": "npm-run-all build test:mocha test:teams test:nyc:report",
-    "test:compat": "yarn execute --coordinated --script test:compat",
+    "test:compat": "wsrun -e -m -t test:compat",
     "test:consumer": "yarn workspace consumer-test test",
     "test:devops": "npm-run-all test:teams test:mocha:junit test:nyc:cobertura",
     "test:github": "npm-run-all test:mocha:min test:teams:min test:nyc:lcov",
@@ -40,6 +39,7 @@
     "@azure/ms-rest-js": "1.9.0",
     "@microsoft/api-extractor": "^7.11.2",
     "@standardlabs/downlevel-dts": "^0.7.5",
+    "@standardlabs/is-private": "^1.0.1",
     "@types/jsonwebtoken": "7.2.8",
     "@types/lodash": "^4.14.134",
     "@types/mocha": "^5.2.7",
@@ -73,7 +73,8 @@
     "typedoc": "^0.19.2",
     "typedoc-plugin-external-module-name": "^4.0.3",
     "typedoc-plugin-markdown": "^3.0.11",
-    "typescript": "^4.0.5"
+    "typescript": "^4.0.5",
+    "wsrun": "^5.2.4"
   },
   "nyc": {
     "exclude": [

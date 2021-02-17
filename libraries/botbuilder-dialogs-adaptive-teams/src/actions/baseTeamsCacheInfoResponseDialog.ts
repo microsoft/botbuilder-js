@@ -25,6 +25,7 @@ import {
     MessagingExtensionResponse,
     MessagingExtensionResult,
     StatusCodes,
+    TabResponse,
 } from 'botbuilder';
 
 export interface BaseTeamsCacheInfoResponseDialogConfiguration {
@@ -70,7 +71,7 @@ export abstract class BaseTeamsCacheInfoResponseDialog
     }
 
     protected static createInvokeResponseActivity(
-        body: MessagingExtensionResponse,
+        body: MessagingExtensionResponse | TabResponse,
         statusCode = StatusCodes.OK
     ): Partial<Activity> {
         return {

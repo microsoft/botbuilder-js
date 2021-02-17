@@ -21,15 +21,15 @@ import {
     OnTeamsChannelRenamed,
     OnTeamsChannelRestored,
     OnTeamsFileConsent,
-    OnTeamsMessagingExtensionBotMessagePreviewEdit,
-    OnTeamsMessagingExtensionBotMessagePreviewSend,
-    OnTeamsMessagingExtensionCardButtonClicked,
-    OnTeamsMessagingExtensionConfigurationQuerySettingUrl,
-    OnTeamsMessagingExtensionConfigurationSetting,
-    OnTeamsMessagingExtensionFetchTask,
-    OnTeamsMessagingExtensionQuery,
-    OnTeamsMessagingExtensionSelectItem,
-    OnTeamsMessagingExtensionSubmitAction,
+    OnTeamsMEBotMessagePreviewEdit,
+    OnTeamsMEBotMessagePreviewSend,
+    OnTeamsMECardButtonClicked,
+    OnTeamsMEConfigQuerySettingUrl,
+    OnTeamsMEConfigurationSetting,
+    OnTeamsMEFetchTask,
+    OnTeamsMEQuery,
+    OnTeamsMESelectItem,
+    OnTeamsMESubmitAction,
     OnTeamsO365ConnectorCardAction,
     OnTeamsTabFetch,
     OnTeamsTabSubmit,
@@ -60,20 +60,19 @@ import {
     SendAppBasedLinkQueryResponse,
     SendAppBasedLinkQueryResponseConfiguration,
     SendMessageToTeamsChannel,
-    SendMessagingExtensionActionResponse,
-    SendMessagingExtensionActionResponseConfiguration,
-    SendMessagingExtensionAttachmentsResponse,
-    SendMessagingExtensionAttachmentsResponseConfiguration,
-    SendMessagingExtensionAuthResponse,
-    SendMessagingExtensionAuthResponseConfiguration,
-    SendMessagingExtensionBotMessagePreviewResponse,
-    SendMessagingExtensionBotMessagePreviewResponseConfiguration,
-    SendMessagingExtensionConfigQuerySettingUrlResponse,
-    SendMessagingExtensionConfigQuerySettingUrlResponseConfiguration,
-    SendMessagingExtensionMessageResponse,
-    SendMessagingExtensionMessageResponseConfiguration,
-    SendMessagingExtensionSelectItemResponse,
-    SendMessagingExtensionSelectItemResponseConfiguration,
+    SendMEActionResponse,
+    SendMEActionResponseConfiguration,
+    SendMEAttachmentsResponse,
+    SendMEAttachmentsResponseConfiguration,
+    SendMEAuthResponse,
+    SendMEBotMessagePreviewResponse,
+    SendMEBotMessagePreviewResponseConfiguration,
+    SendMEConfigQuerySettingUrlResponse,
+    SendMEConfigQuerySettingUrlResponseConfiguration,
+    SendMEMessageResponse,
+    SendMEMessageResponseConfiguration,
+    SendMESelectItemResponse,
+    SendMESelectItemResponseConfiguration,
     SendTaskModuleCardResponse,
     SendTaskModuleCardResponseConfiguration,
     SendTaskModuleMessageResponse,
@@ -83,6 +82,10 @@ import {
 } from './actions';
 import { ComponentRegistration } from 'botbuilder';
 import { Dialog } from 'botbuilder-dialogs';
+import { BaseAuthResponseDialogConfiguration } from './actions/baseAuthResponseDialog';
+import { SendTabAuthResponse } from './actions/sendTabAuthResponse';
+import { SendTabCardResponse } from './actions/sendTabCardResponse';
+import { OnTeamsMEConfigSetting } from './conditions/onTeamsMEConfigSetting';
 
 type ActionType<T> = {
     $kind: string;
@@ -120,16 +123,18 @@ export class TeamsComponentRegistration extends ComponentRegistration implements
         this._addDeclarativeType<GetTeamMember, GetTeamMemberConfiguration>(GetTeamMember);
         this._addDeclarativeType<SendAppBasedLinkQueryResponse, SendAppBasedLinkQueryResponseConfiguration>(SendAppBasedLinkQueryResponse);
         this._addDeclarativeType<SendMessageToTeamsChannel, SendMessageToTeamsChannel>(SendMessageToTeamsChannel);
-        this._addDeclarativeType<SendMessagingExtensionActionResponse, SendMessagingExtensionActionResponseConfiguration>(SendMessagingExtensionActionResponse);
-        this._addDeclarativeType<SendMessagingExtensionAttachmentsResponse,SendMessagingExtensionAttachmentsResponseConfiguration>(SendMessagingExtensionAttachmentsResponse);
-        this._addDeclarativeType<SendMessagingExtensionAuthResponse, SendMessagingExtensionAuthResponseConfiguration>(SendMessagingExtensionAuthResponse);
-        this._addDeclarativeType<SendMessagingExtensionBotMessagePreviewResponse,SendMessagingExtensionBotMessagePreviewResponseConfiguration>(SendMessagingExtensionBotMessagePreviewResponse);
-        this._addDeclarativeType<SendMessagingExtensionConfigQuerySettingUrlResponse,SendMessagingExtensionConfigQuerySettingUrlResponseConfiguration>(SendMessagingExtensionConfigQuerySettingUrlResponse);
-        this._addDeclarativeType<SendMessagingExtensionMessageResponse,SendMessagingExtensionMessageResponseConfiguration>(SendMessagingExtensionMessageResponse);
-        this._addDeclarativeType<SendMessagingExtensionSelectItemResponse,SendMessagingExtensionSelectItemResponseConfiguration>(SendMessagingExtensionSelectItemResponse);
+        this._addDeclarativeType<SendMEActionResponse, SendMEActionResponseConfiguration>(SendMEActionResponse);
+        this._addDeclarativeType<SendMEAttachmentsResponse,SendMEAttachmentsResponseConfiguration>(SendMEAttachmentsResponse);
+        this._addDeclarativeType<SendMEAuthResponse, BaseAuthResponseDialogConfiguration>(SendMEAuthResponse);
+        this._addDeclarativeType<SendMEBotMessagePreviewResponse,SendMEBotMessagePreviewResponseConfiguration>(SendMEBotMessagePreviewResponse);
+        this._addDeclarativeType<SendMEConfigQuerySettingUrlResponse,SendMEConfigQuerySettingUrlResponseConfiguration>(SendMEConfigQuerySettingUrlResponse);
+        this._addDeclarativeType<SendMEMessageResponse,SendMEMessageResponseConfiguration>(SendMEMessageResponse);
+        this._addDeclarativeType<SendMESelectItemResponse,SendMESelectItemResponseConfiguration>(SendMESelectItemResponse);
         this._addDeclarativeType<SendTaskModuleCardResponse, SendTaskModuleCardResponseConfiguration>(SendTaskModuleCardResponse);
         this._addDeclarativeType<SendTaskModuleMessageResponse, SendTaskModuleMessageResponseConfiguration>(SendTaskModuleMessageResponse);
         this._addDeclarativeType<SendTaskModuleUrlResponse, SendTaskModuleUrlResponseConfiguration>(SendTaskModuleUrlResponse);
+        this._addDeclarativeType<SendTabAuthResponse, BaseAuthResponseDialogConfiguration>(SendTabAuthResponse);
+        this._addDeclarativeType<SendTabCardResponse, BaseAuthResponseDialogConfiguration>(SendTabCardResponse);
 
         // Conditions
         this._addDeclarativeType<OnTeamsAppBasedLinkQuery, OnActivityConfiguration>(OnTeamsAppBasedLinkQuery);
@@ -139,15 +144,16 @@ export class TeamsComponentRegistration extends ComponentRegistration implements
         this._addDeclarativeType<OnTeamsChannelRenamed, OnActivityConfiguration>(OnTeamsChannelRenamed);
         this._addDeclarativeType<OnTeamsChannelRestored, OnActivityConfiguration>(OnTeamsChannelRestored);
         this._addDeclarativeType<OnTeamsFileConsent, OnActivityConfiguration>(OnTeamsFileConsent);
-        this._addDeclarativeType<OnTeamsMessagingExtensionBotMessagePreviewEdit, OnActivityConfiguration>(OnTeamsMessagingExtensionBotMessagePreviewEdit);
-        this._addDeclarativeType<OnTeamsMessagingExtensionBotMessagePreviewSend, OnActivityConfiguration>(OnTeamsMessagingExtensionBotMessagePreviewSend);
-        this._addDeclarativeType<OnTeamsMessagingExtensionCardButtonClicked, OnActivityConfiguration>(OnTeamsMessagingExtensionCardButtonClicked);
-        this._addDeclarativeType<OnTeamsMessagingExtensionConfigurationQuerySettingUrl, OnActivityConfiguration>(OnTeamsMessagingExtensionConfigurationQuerySettingUrl);
-        this._addDeclarativeType<OnTeamsMessagingExtensionFetchTask, OnActivityConfiguration>(OnTeamsMessagingExtensionFetchTask);
-        this._addDeclarativeType<OnTeamsMessagingExtensionQuery, OnActivityConfiguration>(OnTeamsMessagingExtensionQuery);
-        this._addDeclarativeType<OnTeamsMessagingExtensionSelectItem, OnActivityConfiguration>(OnTeamsMessagingExtensionSelectItem);
-        this._addDeclarativeType<OnTeamsMessagingExtensionConfigurationSetting, OnActivityConfiguration>(OnTeamsMessagingExtensionConfigurationSetting);
-        this._addDeclarativeType<OnTeamsMessagingExtensionSubmitAction, OnActivityConfiguration>(OnTeamsMessagingExtensionSubmitAction);
+        this._addDeclarativeType<OnTeamsMEBotMessagePreviewEdit, OnActivityConfiguration>(OnTeamsMEBotMessagePreviewEdit);
+        this._addDeclarativeType<OnTeamsMEBotMessagePreviewSend, OnActivityConfiguration>(OnTeamsMEBotMessagePreviewSend);
+        this._addDeclarativeType<OnTeamsMECardButtonClicked, OnActivityConfiguration>(OnTeamsMECardButtonClicked);
+        this._addDeclarativeType<OnTeamsMEConfigSetting, OnActivityConfiguration>(OnTeamsMEConfigSetting);
+        this._addDeclarativeType<OnTeamsMEConfigQuerySettingUrl, OnActivityConfiguration>(OnTeamsMEConfigQuerySettingUrl);
+        this._addDeclarativeType<OnTeamsMEFetchTask, OnActivityConfiguration>(OnTeamsMEFetchTask);
+        this._addDeclarativeType<OnTeamsMEQuery, OnActivityConfiguration>(OnTeamsMEQuery);
+        this._addDeclarativeType<OnTeamsMESelectItem, OnActivityConfiguration>(OnTeamsMESelectItem);
+        this._addDeclarativeType<OnTeamsMEConfigurationSetting, OnActivityConfiguration>(OnTeamsMEConfigurationSetting);
+        this._addDeclarativeType<OnTeamsMESubmitAction, OnActivityConfiguration>(OnTeamsMESubmitAction);
         this._addDeclarativeType<OnTeamsO365ConnectorCardAction, OnActivityConfiguration>(OnTeamsO365ConnectorCardAction);
         this._addDeclarativeType<OnTeamsTabFetch, OnActivityConfiguration>(OnTeamsTabFetch);
         this._addDeclarativeType<OnTeamsTabSubmit, OnActivityConfiguration>(OnTeamsTabSubmit);
