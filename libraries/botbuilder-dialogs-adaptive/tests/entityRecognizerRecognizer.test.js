@@ -320,9 +320,9 @@ describe('EntityRecognizer Recognizer Tests', () => {
             const spy = spyOnTelemetryClientTrackEvent(recognizer);
             const dialogContext = getDialogContext('ChannelMentionEntityRecognizer - no telemetry', 'gobble gobble');
             const logPii = getLogPersonalInformation(recognizer, dialogContext);
-            
+
             const result = await recognizer.recognize(dialogContext, dialogContext.context.activity);
-            
+
             strictEqual(spy.callCount, 0);
             ok(!logPii);
             ok(result);
