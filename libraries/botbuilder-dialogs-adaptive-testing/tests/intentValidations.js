@@ -1,8 +1,10 @@
 const { strictEqual, notStrictEqual } = require('assert');
+const { RecognizerResult } = require('botbuilder-core');
 
 /**
  * Validates the codeIntent utterance "intent a1 b2".
- * @param {RecognizerResult} result 
+ *
+ * @param {RecognizerResult} result The recognizer result.
  */
 const validateCodeIntent = (result) => {
     // intent assertions
@@ -21,7 +23,8 @@ const validateCodeIntent = (result) => {
 
 /**
  * Validates the colorIntent utterance "I would like colors red and orange".
- * @param {RecognizerResult} result 
+ *
+ * @param {RecognizerResult} result The recognizer result.
  */
 const validateColorIntent = (result) => {
     // intent assertions
@@ -42,24 +45,24 @@ const validateGreetingIntent = (result) => {
     const intentNames = Object.keys(result.intents);
     strictEqual(intentNames.length, 1);
     strictEqual(intentNames[0], 'greeting');
-}
+};
 
 const validateChooseIntent = (result) => {
     const intentNames = Object.keys(result.intents);
     strictEqual(intentNames.length, 1);
     strictEqual(intentNames[0], 'ChooseIntent');
-}
+};
 
 const validateXIntent = (result) => {
     const intentNames = Object.keys(result.intents);
     strictEqual(intentNames.length, 1);
     strictEqual(intentNames[0], 'x');
-}
+};
 
 module.exports = {
     validateCodeIntent,
     validateColorIntent,
     validateChooseIntent,
     validateGreetingIntent,
-    validateXIntent
+    validateXIntent,
 };
