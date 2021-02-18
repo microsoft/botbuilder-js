@@ -295,7 +295,7 @@ export class QnAMakerRecognizer extends Recognizer implements QnAMakerRecognizer
 
     /**
      * Uses the recognizer result to create a collection of properties to be included when tracking the result in telemetry.
-     * 
+     *
      * @param {RecognizerResult} recognizerResult The result of the intent recognized by the recognizer.
      * @param {Record<string, string>} telemetryProperties A list of properties created using the RecognizerResult.
      * @param {DialogContext} dc The DialogContext.

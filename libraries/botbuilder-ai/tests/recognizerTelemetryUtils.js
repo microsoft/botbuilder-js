@@ -27,16 +27,14 @@ const validateTelemetry = async ({ recognizer, dialogContext, spy, activity, res
 
     strictEqual(spy.callCount, callCount);
     strictEqual(actualTelemetryProps.name, `${recognizer.constructor.name}Result`);
-    ok(
-        hasValidTelemetryProps(actualTelemetryProps.properties, expectedTelemetryProps, activity)
-    );
+    ok(hasValidTelemetryProps(actualTelemetryProps.properties, expectedTelemetryProps, activity));
 };
 
 module.exports = {
     qnaIntentText,
     getLogPersonalInformation,
     spyOnTelemetryClientTrackEvent,
-    validateTelemetry
+    validateTelemetry,
 };
 
 // **** PRIVATE **** //
@@ -45,10 +43,11 @@ const getQnAIntentProps = () => {
     return {
         TopIntent: 'QnAMatch',
         TopIntentScore: '1',
-        Intents: '{\"QnAMatch\":{\"score\":1}}',
+        Intents: '{"QnAMatch":{"score":1}}',
         Entities:
-            '{\"answer\":[\"BaseCamp: You can use a damp rag to clean around the Power Pack\"],\"$instance\":{\"answer\":[{\"questions\":[\"how do I clean the stove?\"],\"answer\":\"BaseCamp: You can use a damp rag to clean around the Power Pack\",\"score\":1,\"id\":5,\"source\":\"Editorial\",\"metadata\":[],\"context\":{\"isContextOnly\":true,\"prompts\":[{\"displayOrder\":0,\"qnaId\":55,\"qna\":null,\"displayText\":\"Where can I buy?\"}]},\"startIndex\":0,\"endIndex\":25}]}}',
-        AdditionalProperties: '{\"answers\":[{\"questions\":[\"how do I clean the stove?\"],\"answer\":\"BaseCamp: You can use a damp rag to clean around the Power Pack\",\"score\":1,\"id\":5,\"source\":\"Editorial\",\"metadata\":[],\"context\":{\"isContextOnly\":true,\"prompts\":[{\"displayOrder\":0,\"qnaId\":55,\"qna\":null,\"displayText\":\"Where can I buy?\"}]},\"startIndex\":0,\"endIndex\":25}]}',
+            '{"answer":["BaseCamp: You can use a damp rag to clean around the Power Pack"],"$instance":{"answer":[{"questions":["how do I clean the stove?"],"answer":"BaseCamp: You can use a damp rag to clean around the Power Pack","score":1,"id":5,"source":"Editorial","metadata":[],"context":{"isContextOnly":true,"prompts":[{"displayOrder":0,"qnaId":55,"qna":null,"displayText":"Where can I buy?"}]},"startIndex":0,"endIndex":25}]}}',
+        AdditionalProperties:
+            '{"answers":[{"questions":["how do I clean the stove?"],"answer":"BaseCamp: You can use a damp rag to clean around the Power Pack","score":1,"id":5,"source":"Editorial","metadata":[],"context":{"isContextOnly":true,"prompts":[{"displayOrder":0,"qnaId":55,"qna":null,"displayText":"Where can I buy?"}]},"startIndex":0,"endIndex":25}]}',
     };
 };
 
