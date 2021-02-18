@@ -1,38 +1,34 @@
 const path = require('path');
 const { ComponentRegistration } = require('botbuilder-core');
-const { AdaptiveComponentRegistration, MultiLanguageRecognizer, RegexRecognizer, IntentPattern } = require('botbuilder-dialogs-adaptive');
+const {
+    AdaptiveComponentRegistration,
+    MultiLanguageRecognizer,
+    RegexRecognizer,
+    IntentPattern,
+} = require('botbuilder-dialogs-adaptive');
 const { ResourceExplorer } = require('botbuilder-dialogs-declarative');
 const { AdaptiveTestComponentRegistration, TestUtils } = require('../lib');
 const {
     greetingIntentTextEnUs,
     recognizeIntentAndValidateTelemetry,
-    spyOnTelemetryClientTrackEvent
+    spyOnTelemetryClientTrackEvent,
 } = require('./recognizerTelemetryUtils');
 
 const createRecognizer = () => {
     return new MultiLanguageRecognizer().configure({
         recognizers: {
             'en-us': new RegexRecognizer().configure({
-                intents: [
-                    new IntentPattern('greeting', '(?i)howdy'),
-                    new IntentPattern('goodbye', '(?i)bye')
-                ]
+                intents: [new IntentPattern('greeting', '(?i)howdy'), new IntentPattern('goodbye', '(?i)bye')],
             }),
             'en-gb': new RegexRecognizer().configure({
-                intents: [
-                    new IntentPattern('greeting', '(?i)hiya'),
-                    new IntentPattern('goodbye', '(?i)cheerio')
-                ]
+                intents: [new IntentPattern('greeting', '(?i)hiya'), new IntentPattern('goodbye', '(?i)cheerio')],
             }),
             'en': new RegexRecognizer().configure({
-                intents: [
-                    new IntentPattern('greeting', '(?i)hello'),
-                    new IntentPattern('goodbye', '(?i)goodbye')
-                ]
-            })
-        }
+                intents: [new IntentPattern('greeting', '(?i)hello'), new IntentPattern('goodbye', '(?i)goodbye')],
+            }),
+        },
     });
-}
+};
 
 describe('MultiLanguageRecognizerTests', function () {
     this.timeout(5000);
@@ -89,7 +85,10 @@ describe('MultiLanguageRecognizerTests', function () {
             recognizer.logPersonalInformation = true;
 
             await recognizeIntentAndValidateTelemetry({
-                text: greetingIntentTextEnUs, callCount: 1, recognizer, spy
+                text: greetingIntentTextEnUs,
+                callCount: 1,
+                recognizer,
+                spy,
             });
         });
 
@@ -97,7 +96,10 @@ describe('MultiLanguageRecognizerTests', function () {
             recognizer.logPersonalInformation = false;
 
             await recognizeIntentAndValidateTelemetry({
-                text: greetingIntentTextEnUs, callCount: 1, recognizer, spy
+                text: greetingIntentTextEnUs,
+                callCount: 1,
+                recognizer,
+                spy,
             });
         });
 
@@ -109,7 +111,7 @@ describe('MultiLanguageRecognizerTests', function () {
                 text: greetingIntentTextEnUs,
                 callCount: 1,
                 recognizer: recognizerWithDefaultLogPii,
-                spy: trackEventSpy
+                spy: trackEventSpy,
             });
         });
     });
