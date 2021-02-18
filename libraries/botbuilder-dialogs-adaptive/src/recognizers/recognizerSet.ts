@@ -47,7 +47,7 @@ export class RecognizerSet extends AdaptiveRecognizer implements RecognizerSetCo
         );
 
         const recognizerResult: RecognizerResult = this.mergeResults(results);
-        
+
         this.trackRecognizerResult(
             dialogContext,
             'RecognizerSetResult',
@@ -64,8 +64,8 @@ export class RecognizerSet extends AdaptiveRecognizer implements RecognizerSetCo
             alteredText: undefined,
             intents: {},
             entities: {
-                $instance: {}
-            }
+                $instance: {},
+            },
         };
 
         for (const result of results) {
@@ -104,12 +104,13 @@ export class RecognizerSet extends AdaptiveRecognizer implements RecognizerSetCo
                 for (const [propertyName, propertyVal] of Object.entries(result.entities)) {
                     if (propertyName === '$instance') {
                         for (const [entityName, entityValue] of Object.entries(propertyVal)) {
-                            const mergedInstanceEntities = mergedRecognizerResult.entities['$instance'][entityName] ??= [];
-                            // note: remove "as any" in the SDK
-                            mergedInstanceEntities.push(...entityValue as any)
+                            const mergedInstanceEntities = (mergedRecognizerResult.entities['$instance'][
+                                entityName
+                            ] ??= []);
+                            mergedInstanceEntities.push(...entityValue);
                         }
                     } else {
-                        const mergedEntities = mergedRecognizerResult.entities[propertyName] ??= [];
+                        const mergedEntities = (mergedRecognizerResult.entities[propertyName] ??= []);
                         mergedEntities.push(...propertyVal as any);
                     }
                 }
@@ -127,7 +128,6 @@ export class RecognizerSet extends AdaptiveRecognizer implements RecognizerSetCo
                 }
             }
         }
-
 
         if (Object.entries(mergedRecognizerResult.intents).length === 0) {
             mergedRecognizerResult.intents['None'] = { score: 1.0 };
