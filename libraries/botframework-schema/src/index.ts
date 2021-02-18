@@ -2148,3 +2148,28 @@ export interface IStatusCodeError {
     statusCode: StatusCodes;
     message?: string;
 }
+
+export interface AdaptiveCardAuthentication {
+    id: string;
+    connectionName: string;
+    token: string;
+}
+
+export interface AdaptiveCardInvokeAction {
+    type: string;
+    id: string;
+    verb: string;
+    data: Record<string, unknown>;
+}
+
+export interface AdaptiveCardInvokeResponse {
+    statusCode: number;
+    type: string;
+    value: Record<string, unknown>;
+}
+
+export interface AdaptiveCardInvokeValue {
+    action: AdaptiveCardInvokeAction;
+    authentication: AdaptiveCardAuthentication;
+    state: string;
+}
