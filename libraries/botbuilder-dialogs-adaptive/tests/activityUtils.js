@@ -27,4 +27,4 @@ const createContext = (text, locale = Culture.English) => {
 module.exports = {
     createContext,
     createMessageActivity,
-}
+};
