@@ -7,7 +7,7 @@ const {
     getLogPersonalInformation,
     spyOnTelemetryClientTrackEvent,
     qnaIntentText,
-    validateTelemetry
+    validateTelemetry,
 } = require('./recognizerTelemetryUtils');
 
 const hostname = 'https://dummy-hostname.azurewebsites.net';
@@ -35,7 +35,7 @@ const createMessageActivity = (text) => {
 
 const createContext = (activity) => {
     return new DialogContext(new DialogSet(), new TurnContext(new TestAdapter(), activity), {});
-}
+};
 
 const validateAnswers = (result) => {
     notStrictEqual(result.answers, undefined, 'there should be answers');
@@ -147,7 +147,7 @@ describe('QnAMakerRecognizer', function () {
             const activity = createMessageActivity(qnaIntentText);
             const dialogContext = createContext(activity);
             recognizer.logPersonalInformation = false;
-            
+
             const result = await recognizer.recognize(dialogContext, activity);
 
             validateAnswers(result);
@@ -157,7 +157,12 @@ describe('QnAMakerRecognizer', function () {
             // - once for QnAMessage event from within QnAMaker class
             // - once for QnAMakerRecognizerResult event from within QnAMakerRecognizer
             validateTelemetry({
-                recognizer, dialogContext, spy, activity, result, callCount: 2
+                recognizer,
+                dialogContext,
+                spy,
+                activity,
+                result,
+                callCount: 2,
             });
         });
 
@@ -165,7 +170,6 @@ describe('QnAMakerRecognizer', function () {
             nock(hostname)
                 .post(/knowledgebases/)
                 .replyWithFile(200, testDataFolder + 'QnaMaker_ReturnsAnswer.json');
-
 
             const recognizerWithDefaultLogPii = new QnAMakerRecognizer(hostname, knowledgeBaseId, endpointKey);
             const trackEventSpy = spyOnTelemetryClientTrackEvent(recognizerWithDefaultLogPii);
@@ -187,7 +191,7 @@ describe('QnAMakerRecognizer', function () {
                 spy: trackEventSpy,
                 activity,
                 result,
-                callCount: 2
+                callCount: 2,
             });
         });
     });

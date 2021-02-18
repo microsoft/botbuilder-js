@@ -294,12 +294,12 @@ export class QnAMakerRecognizer extends Recognizer implements QnAMakerRecognizer
     }
 
     /**
-     * Uses the RecognizerResult to create a list of properties to be included when tracking the result in telemetry.
+     * Uses the recognizer result to create a collection of properties to be included when tracking the result in telemetry.
      * 
-     * @param recognizerResult The recognizer's recognized intent of an utterance in the form of a RecognizerResult.
-     * @param telemetryProperties A list of properties to append or override the properties created using the RecognizerResult.
-     * @param dc Dialog Context.
-     * @returns A dictionary that can be included when calling the TrackEvent method on the TelemetryClient.
+     * @param {RecognizerResult} recognizerResult The result of the intent recognized by the recognizer.
+     * @param {Record<string, string>} telemetryProperties A list of properties created using the RecognizerResult.
+     * @param {DialogContext} dc The DialogContext.
+     * @returns {Record<string, string>} A collection of properties that can be used when calling the trackEvent method on the telemetry client.
      */
     protected fillRecognizerResultTelemetryProperties(
         recognizerResult: RecognizerResult,
@@ -307,17 +307,16 @@ export class QnAMakerRecognizer extends Recognizer implements QnAMakerRecognizer
         dc: DialogContext
     ): Record<string, string> {
         if (!dc) {
-            throw new Error('DialogContext needed for state in AdaptiveRecognizer.fillRecognizerResultTelemetryProperties method.');
+            throw new Error(
+                'DialogContext needed for state in AdaptiveRecognizer.fillRecognizerResultTelemetryProperties method.'
+            );
         }
         const { intent, score } = getTopScoringIntent(recognizerResult);
         const intents = Object.entries(recognizerResult.intents).length;
         const properties: Record<string, string> = {
             TopIntent: intents > 0 ? intent : undefined,
             TopIntentScore: intents > 0 ? score.toString() : undefined,
-            Intents:
-                intents > 0
-                    ? JSON.stringify(recognizerResult.intents)
-                    : undefined,
+            Intents: intents > 0 ? JSON.stringify(recognizerResult.intents) : undefined,
             Entities: recognizerResult.entities ? JSON.stringify(recognizerResult.entities) : undefined,
             AdditionalProperties: this.stringifyAdditionalPropertiesOfRecognizerResult(recognizerResult),
         };
@@ -325,8 +324,8 @@ export class QnAMakerRecognizer extends Recognizer implements QnAMakerRecognizer
         const logPersonalInformation = this.getLogPersonalInformation(dc);
 
         if (logPersonalInformation) {
-            properties['Text'] = recognizerResult.text
-            properties['AlteredText'] = recognizerResult.alteredText
+            properties['Text'] = recognizerResult.text;
+            properties['AlteredText'] = recognizerResult.alteredText;
         }
 
         // Additional Properties can override "stock" properties.

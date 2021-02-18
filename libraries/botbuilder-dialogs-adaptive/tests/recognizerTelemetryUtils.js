@@ -29,7 +29,7 @@ const expectedProperties = {
 const intentValidations = {
     [ codeIntentText ]: validateCodeIntent,
     [ colorIntentText ]: validateColorIntent
-}
+};
 
 const spyOnTelemetryClientTrackEvent = (recognizer) => {
     const telemetryClient = new NullTelemetryClient();
@@ -37,7 +37,7 @@ const spyOnTelemetryClientTrackEvent = (recognizer) => {
     recognizer.telemetryClient = telemetryClient;
 
     return spy;
-}
+};
 
 /**
  * Calls the recognizer's `recognize` method and validates that appropriate telemetry properties are logged.
@@ -54,7 +54,7 @@ async function recognizeIntentAndValidateTelemetry({ text, callCount, recognizer
     validateTelemetry({
         recognizer, dialogContext, spy, activity, result, callCount
     });
-}
+};
 
 /**
  * Calls the recognizer's `recognize` method and validates that appropriate telemetry properties are logged,
@@ -74,13 +74,13 @@ async function recognizeIntentAndValidateTelemetry_withCustomActivity({ text, ca
     validateTelemetry({
         recognizer, dialogContext, spy, activity: customActivity, result, callCount
     });
-}
+};
 
 const getLogPersonalInformation = (recognizer, dialogContext) => {
     return recognizer.logPersonalInformation instanceof BoolExpression
         ? recognizer.logPersonalInformation.getValue(dialogContext.state)
         : recognizer.logPersonalInformation;
-}
+};
 
 module.exports = {
     codeIntentText,
@@ -92,7 +92,7 @@ module.exports = {
     recognizeIntentAndValidateTelemetry,
     recognizeIntentAndValidateTelemetry_withCustomActivity,
     spyOnTelemetryClientTrackEvent
-}
+};
 
 
 // **** PRIVATE **** //
@@ -103,7 +103,7 @@ const validateIntent = (text, result) => {
         throw new Error(`No intent validations for '${text}'`);
     }
     intentValidations[text](result);
-}
+};
 
 const validateTelemetry = async ({ recognizer, dialogContext, spy, activity, result, callCount }) => {
     const logPii = getLogPersonalInformation(recognizer, dialogContext);
@@ -115,7 +115,7 @@ const validateTelemetry = async ({ recognizer, dialogContext, spy, activity, res
     ok(
         hasValidTelemetryProps(actualTelemetryProps.properties, expectedTelemetryProps, activity)
     );
-}
+};
 
 const getExpectedProps = (activity, result, logPersonalInformation) => {
     const text = asMessageActivity(activity).text;
@@ -127,7 +127,7 @@ const getExpectedProps = (activity, result, logPersonalInformation) => {
     }
 
     return expectedProps;
-}
+};
 
 const hasValidTelemetryProps = (actual, expected, activity) => {
     if (Object.keys(actual).length !== Object.keys(expected).length) {
@@ -151,7 +151,7 @@ const hasValidTelemetryProps = (actual, expected, activity) => {
     }
 
     return true;
-}
+};
 
 const hasValidEntities = (activity, propertyValue) => {
     const text = asMessageActivity(activity).text;
@@ -166,5 +166,4 @@ const hasValidEntities = (activity, propertyValue) => {
     }
 
     return true;
-}
-
+};
