@@ -9,15 +9,14 @@ import { BoolExpression } from "adaptive-expressions";
 import { getTopScoringIntent, RecognizerResult } from "botbuilder-core";
 import { DialogContext, Recognizer } from "botbuilder-dialogs";
 
-// TODO
-// (differs from C# in that it uses <name-of-recognizer>Configuration interfaces)
-// AdaptiveRecognizerConfiguration interface
-// with optional BoolExpression logPersonalInformation
+export interface AdaptiveRecognizerConfiguration {
+    logPersonalInformation?: BoolExpression;
+}
 
 /**
  * Base class for adaptive recognizers.
  */
-export abstract class AdaptiveRecognizer extends Recognizer {
+export abstract class AdaptiveRecognizer extends Recognizer implements AdaptiveRecognizerConfiguration {
     /**
      * (Optional) Flag that designates whether personally identifiable information (PII) should log to telemetry.
      */

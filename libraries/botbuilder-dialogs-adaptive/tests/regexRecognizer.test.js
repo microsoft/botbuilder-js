@@ -28,7 +28,7 @@ const {
     codeIntentText,
     recognizeIntentAndValidateTelemetry,
     recognizeIntentAndValidateTelemetry_withCustomActivity,
-    spyOnTelemetryClientTrackEvent
+    spyOnTelemetryClientTrackEvent,
 } = require('./recognizerTelemetryUtils');
 const { createContext, createMessageActivity } = require('./activityUtils');
 const { validateCodeIntent, validateColorIntent } = require('./intentValidations');
@@ -122,14 +122,23 @@ describe('RegexRecognizer Tests', () => {
             recognizer.logPersonalInformation = true;
 
             await recognizeIntentAndValidateTelemetry({
-                text: codeIntentText, callCount: 1, recognizer, spy
+                text: codeIntentText,
+                callCount: 1,
+                recognizer,
+                spy,
             });
             await recognizeIntentAndValidateTelemetry({
-                text: colorIntentText, callCount: 2, recognizer, spy
+                text: colorIntentText,
+                callCount: 2,
+                recognizer,
+                spy,
             });
 
             await recognizeIntentAndValidateTelemetry_withCustomActivity({
-                text: codeIntentText, callCount: 3, recognizer, spy
+                text: codeIntentText,
+                callCount: 3,
+                recognizer,
+                spy,
             });
         });
 
@@ -137,14 +146,23 @@ describe('RegexRecognizer Tests', () => {
             recognizer.logPersonalInformation = false;
 
             await recognizeIntentAndValidateTelemetry({
-                text: codeIntentText, callCount: 1, recognizer, spy
+                text: codeIntentText,
+                callCount: 1,
+                recognizer,
+                spy,
             });
             await recognizeIntentAndValidateTelemetry({
-                text: colorIntentText, callCount: 2, recognizer, spy
+                text: colorIntentText,
+                callCount: 2,
+                recognizer,
+                spy,
             });
 
             await recognizeIntentAndValidateTelemetry_withCustomActivity({
-                text: codeIntentText, callCount: 3, recognizer, spy
+                text: codeIntentText,
+                callCount: 3,
+                recognizer,
+                spy,
             });
         });
 
@@ -167,14 +185,14 @@ describe('RegexRecognizer Tests', () => {
                 text: codeIntentText,
                 callCount: 1,
                 recognizer: recognizerWithDefaultLogPii,
-                spy: trackEventSpy
+                spy: trackEventSpy,
             });
 
             await recognizeIntentAndValidateTelemetry_withCustomActivity({
                 text: codeIntentText,
                 callCount: 2,
                 recognizer: recognizerWithDefaultLogPii,
-                spy: trackEventSpy
+                spy: trackEventSpy,
             });
         });
     });
