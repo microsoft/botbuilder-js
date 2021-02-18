@@ -26,7 +26,7 @@ export abstract class AdaptiveRecognizer extends Recognizer implements AdaptiveR
      * Uses the RecognizerResult to create a list of properties to be included when tracking the result in telemetry.
      *
      * @param {RecognizerResult} recognizerResult Recognizer Result.
-     * @param {Record<string, string>} telemetryProperties A list of properties to append or override the properties created using the RecognizerResult.
+     * @param {object} telemetryProperties A list of properties to append or override the properties created using the RecognizerResult.
      * @param {DialogContext} dialogContext Dialog Context.
      * @returns {Record<string, string>} A collection of properties that can be included when calling the TrackEvent method on the TelemetryClient.
      */

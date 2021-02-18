@@ -43,12 +43,18 @@ export class CrossTrainedRecognizerSet extends AdaptiveRecognizer implements Cro
 
     /**
      * To recognize intents and entities in a users utterance.
+     *
+     * @param {DialogContext} dialogContext The dialog context.
+     * @param {Activity} activity The activity.
+     * @param {object} telemetryProperties Optional. Additional properties to be logged to telemetry with the recognizer result event.
+     * @param {object} telemetryMetrics Optional. Additional metrics to be logged to telemetry with the recognizer result event.
+     * @returns {Promise<RecognizerResult>} Promise of the intent recognized by the recognizer in the form of a RecognizerResult.
      */
     public async recognize(
         dialogContext: DialogContext,
         activity: Activity,
-        telemetryProperties?: { [key: string]: string },
-        telemetryMetrics?: { [key: string]: number }
+        telemetryProperties?: Record<string, string>,
+        telemetryMetrics?: Record<string, number>
     ): Promise<RecognizerResult> {
         if (!this.recognizers.length) {
             return {
@@ -65,7 +71,12 @@ export class CrossTrainedRecognizerSet extends AdaptiveRecognizer implements Cro
         const results = await Promise.all(
             this.recognizers.map(
                 async (recognizer: Recognizer): Promise<RecognizerResult> => {
-                    const result = await recognizer.recognize(dialogContext, activity, telemetryProperties, telemetryMetrics);
+                    const result = await recognizer.recognize(
+                        dialogContext,
+                        activity,
+                        telemetryProperties,
+                        telemetryMetrics
+                    );
                     result['id'] = recognizer.id;
                     return result;
                 }
@@ -87,7 +98,8 @@ export class CrossTrainedRecognizerSet extends AdaptiveRecognizer implements Cro
      * If there is consensus among the cross trained recognizers, the recognizerResult structure from
      * the consensus recognizer is returned.
      *
-     * @param results A list of recognizer results to be processed.
+     * @param {RecognizerResult[]} results A list of recognizer results to be processed.
+     * @returns {RecognizerResult} The the result cross-trained by the multiple results of the cross-training recognizers.
      */
     private processResults(results: RecognizerResult[]): RecognizerResult {
         const recognizerResults: Record<string, RecognizerResult> = {};
@@ -164,22 +176,26 @@ export class CrossTrainedRecognizerSet extends AdaptiveRecognizer implements Cro
         const recognizerResult: RecognizerResult = {
             text,
             intents: { None: { score: 1.0 } },
-            entities: mergedEntities
+            entities: mergedEntities,
         };
         return recognizerResult;
     }
 
     /**
      * Check if an intent is triggering redirects.
-     * @param intent
+     *
+     * @param {string} intent The intent.
+     * @returns {boolean} Boolean result of whether or not an intent begins with the `DeferToRecognizer_` prefix.
      */
     private isRedirect(intent: string): boolean {
         return intent.startsWith(deferPrefix);
     }
 
     /**
-     * Extracts the redirect id from an intent.
-     * @param intent Intent string contains redirect id.
+     * Extracts the redirect ID from an intent.
+     * 
+     * @param {string} intent Intent string contains redirect id.
+     * @returns {string} The redirect ID.
      */
     private getRedirectId(intent: string): string {
         return intent.substr(deferPrefix.length);
