@@ -5,9 +5,9 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { BoolExpression } from "adaptive-expressions";
-import { getTopScoringIntent, RecognizerResult } from "botbuilder-core";
-import { DialogContext, Recognizer } from "botbuilder-dialogs";
+import { BoolExpression } from 'adaptive-expressions';
+import { getTopScoringIntent, RecognizerResult } from 'botbuilder-core';
+import { DialogContext, Recognizer } from 'botbuilder-dialogs';
 
 export interface AdaptiveRecognizerConfiguration {
     logPersonalInformation?: BoolExpression;
@@ -24,11 +24,11 @@ export abstract class AdaptiveRecognizer extends Recognizer implements AdaptiveR
 
     /**
      * Uses the RecognizerResult to create a list of properties to be included when tracking the result in telemetry.
-     * 
-     * @param recognizerResult Recognizer Result.
-     * @param telemetryProperties A list of properties to append or override the properties created using the RecognizerResult.
-     * @param dialogContext Dialog Context.
-     * @returns A dictionary that can be included when calling the TrackEvent method on the TelemetryClient.
+     *
+     * @param {RecognizerResult} recognizerResult Recognizer Result.
+     * @param {Record<string, string>} telemetryProperties A list of properties to append or override the properties created using the RecognizerResult.
+     * @param {DialogContext} dialogContext Dialog Context.
+     * @returns {Record<string, string>} A collection of properties that can be included when calling the TrackEvent method on the TelemetryClient.
      */
     protected fillRecognizerResultTelemetryProperties(
         recognizerResult: RecognizerResult,
@@ -36,17 +36,16 @@ export abstract class AdaptiveRecognizer extends Recognizer implements AdaptiveR
         dialogContext: DialogContext
     ): Record<string, string> {
         if (!dialogContext) {
-            throw new Error('DialogContext needed for state in AdaptiveRecognizer.fillRecognizerResultTelemetryProperties method.');
+            throw new Error(
+                'DialogContext needed for state in AdaptiveRecognizer.fillRecognizerResultTelemetryProperties method.'
+            );
         }
         const { intent, score } = getTopScoringIntent(recognizerResult);
         const intents = Object.entries(recognizerResult.intents).length;
         const properties: Record<string, string> = {
             TopIntent: intents > 0 ? intent : undefined,
             TopIntentScore: intents > 0 ? score.toString() : undefined,
-            Intents:
-                intents > 0
-                    ? JSON.stringify(recognizerResult.intents)
-                    : undefined,
+            Intents: intents > 0 ? JSON.stringify(recognizerResult.intents) : undefined,
             Entities: recognizerResult.entities ? JSON.stringify(recognizerResult.entities) : undefined,
             AdditionalProperties: this.stringifyAdditionalPropertiesOfRecognizerResult(recognizerResult),
         };
@@ -57,8 +56,8 @@ export abstract class AdaptiveRecognizer extends Recognizer implements AdaptiveR
                 : this.logPersonalInformation;
 
         if (logPersonalInformation) {
-            properties['Text'] = recognizerResult.text
-            properties['AlteredText'] = recognizerResult.alteredText
+            properties['Text'] = recognizerResult.text;
+            properties['AlteredText'] = recognizerResult.alteredText;
         }
 
         // Additional Properties can override "stock" properties.
