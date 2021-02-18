@@ -10,22 +10,21 @@ const {
     getColorIntentProperties,
     getGreetingIntentProperties,
     getChooseIntentProperties,
-    getXIntentProperties
+    getXIntentProperties,
 } = require('./testTelemetryProperties');
 const {
     validateCodeIntent,
     validateColorIntent,
     validateChooseIntent,
     validateGreetingIntent,
-    validateXIntent
-} = require('./intentValidations')
-
+    validateXIntent,
+} = require('./intentValidations');
 
 const codeIntentText = 'intent a1 b2';
 const colorIntentText = 'I would like color red and orange';
-const greetingIntentTextEnUs = "howdy";
-const crossTrainText = "criss-cross applesauce";
-const xIntentText = "x";
+const greetingIntentTextEnUs = 'howdy';
+const crossTrainText = 'criss-cross applesauce';
+const xIntentText = 'x';
 
 /**
  * Get the expected properties based on the text/utterance that we run the recognizer against.
@@ -35,7 +34,7 @@ const expectedProperties = {
     [colorIntentText]: getColorIntentProperties,
     [greetingIntentTextEnUs]: getGreetingIntentProperties,
     [crossTrainText]: getChooseIntentProperties,
-    [xIntentText]: getXIntentProperties
+    [xIntentText]: getXIntentProperties,
 };
 
 /**
@@ -46,8 +45,8 @@ const intentValidations = {
     [colorIntentText]: validateColorIntent,
     [greetingIntentTextEnUs]: validateGreetingIntent,
     [crossTrainText]: validateChooseIntent,
-    [xIntentText]: validateXIntent
-}
+    [xIntentText]: validateXIntent,
+};
 
 const spyOnTelemetryClientTrackEvent = (recognizer) => {
     const telemetryClient = new NullTelemetryClient();
@@ -55,12 +54,12 @@ const spyOnTelemetryClientTrackEvent = (recognizer) => {
     recognizer.telemetryClient = telemetryClient;
 
     return spy;
-}
+};
 
 /**
  * Calls the recognizer's `recognize` method and validates that appropriate telemetry properties are logged.
- * 
- * @param {*} configuration 
+ *
+ * @param {*} configuration Configuration used to call recognizer's recognize method and validate telemetry logged.
  */
 async function recognizeIntentAndValidateTelemetry({ text, callCount, recognizer, spy: spy }) {
     const dialogContext = createContext(text);
@@ -70,15 +69,20 @@ async function recognizeIntentAndValidateTelemetry({ text, callCount, recognizer
 
     validateIntent(text, result);
     validateTelemetry({
-        recognizer, dialogContext, spy, activity, result, callCount
+        recognizer,
+        dialogContext,
+        spy,
+        activity,
+        result,
+        callCount,
     });
 }
 
 /**
  * Calls the recognizer's `recognize` method and validates that appropriate telemetry properties are logged,
  * using a custom activity, separate from the activity found in `DialogContext.context`
- * 
- * @param {*} configuration 
+ *
+ * @param {*} configuration Configuration used to call recognizer's recognize method and validate telemetry logged.
  */
 async function recognizeIntentAndValidateTelemetry_withCustomActivity({ text, callCount, recognizer, spy: spy }) {
     const dialogContext = createContext(text);
@@ -90,7 +94,12 @@ async function recognizeIntentAndValidateTelemetry_withCustomActivity({ text, ca
 
     validateIntent(text, result);
     validateTelemetry({
-        recognizer, dialogContext, spy, activity: customActivity, result, callCount
+        recognizer,
+        dialogContext,
+        spy,
+        activity: customActivity,
+        result,
+        callCount,
     });
 }
 
@@ -102,19 +111,17 @@ module.exports = {
     xIntentText,
     recognizeIntentAndValidateTelemetry,
     recognizeIntentAndValidateTelemetry_withCustomActivity,
-    spyOnTelemetryClientTrackEvent
-}
-
+    spyOnTelemetryClientTrackEvent,
+};
 
 // **** PRIVATE **** //
 
-
 const validateIntent = (text, result) => {
-    if (!text in intentValidations) {
+    if (!(text in intentValidations)) {
         throw new Error(`No intent validations for '${text}'`);
     }
     intentValidations[text](result);
-}
+};
 
 const validateTelemetry = async ({ recognizer, dialogContext, spy, activity, result, callCount }) => {
     const logPii = getLogPersonalInformation(recognizer, dialogContext);
@@ -127,13 +134,13 @@ const validateTelemetry = async ({ recognizer, dialogContext, spy, activity, res
         hasValidTelemetryProps(actualTelemetryProps.properties, expectedTelemetryProps, activity),
         'Expected telemetry property did not match actual telemetry property logged.'
     );
-}
+};
 
 const getLogPersonalInformation = (recognizer, dialogContext) => {
     return recognizer.logPersonalInformation instanceof BoolExpression
         ? recognizer.logPersonalInformation.getValue(dialogContext.state)
         : recognizer.logPersonalInformation;
-}
+};
 
 const getExpectedProps = (activity, result, logPersonalInformation) => {
     const text = asMessageActivity(activity).text;
@@ -145,15 +152,15 @@ const getExpectedProps = (activity, result, logPersonalInformation) => {
     }
 
     return expectedProps;
-}
+};
 
 const hasValidTelemetryProps = (actual, expected, activity) => {
     if (Object.keys(actual).length !== Object.keys(expected).length) {
         return false;
     }
 
-    for (let property in actual) {
-        if (!property in expected) {
+    for (const property in actual) {
+        if (!(property in expected)) {
             return false;
         }
 
@@ -171,28 +178,26 @@ const hasValidTelemetryProps = (actual, expected, activity) => {
     }
 
     return true;
-}
+};
 
 const hasValidEntities = (activity, entitiesSerialized) => {
     const text = asMessageActivity(activity).text;
     const entities = JSON.parse(entitiesSerialized);
 
-    if (text == codeIntentText && !'code' in entities) {
+    if (text == codeIntentText && !('code' in entities)) {
         return false;
     }
 
-    if (text == colorIntentText && !'color' in entities) {
+    if (text == colorIntentText && !('color' in entities)) {
         return false;
     }
 
-    const objCount = Object.entries(entities).length;
     if (
-        (text == greetingIntentTextEnUs || text == crossTrainText || text == xIntentText)
-        && Object.entries(entities).length !== 0
+        (text == greetingIntentTextEnUs || text == crossTrainText || text == xIntentText) &&
+        Object.entries(entities).length !== 0
     ) {
         return false;
     }
 
     return true;
-}
-
+};

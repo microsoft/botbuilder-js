@@ -68,7 +68,7 @@ const hasValidTelemetryProps = (actual, expected, activity) => {
         return false;
     }
 
-    for (let property in actual) {
+    for (const property in actual) {
         if (!property in expected) {
             return false;
         }
