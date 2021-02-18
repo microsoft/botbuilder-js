@@ -1,13 +1,18 @@
 const path = require('path');
 const { ComponentRegistration } = require('botbuilder-core');
-const { AdaptiveComponentRegistration, CrossTrainedRecognizerSet, RegexRecognizer, IntentPattern } = require('botbuilder-dialogs-adaptive');
+const {
+    AdaptiveComponentRegistration,
+    CrossTrainedRecognizerSet,
+    RegexRecognizer,
+    IntentPattern,
+} = require('botbuilder-dialogs-adaptive');
 const { ResourceExplorer } = require('botbuilder-dialogs-declarative');
 const { AdaptiveTestComponentRegistration, TestUtils } = require('../lib');
 const {
     crossTrainText,
     xIntentText,
     recognizeIntentAndValidateTelemetry,
-    spyOnTelemetryClientTrackEvent
+    spyOnTelemetryClientTrackEvent,
 } = require('./recognizerTelemetryUtils');
 
 const createRecognizer = () => {
@@ -15,26 +20,17 @@ const createRecognizer = () => {
         recognizers: [
             new RegexRecognizer().configure({
                 id: 'x',
-                intents: [
-                    new IntentPattern('DeferToRecognizer_y', crossTrainText),
-                    new IntentPattern('x', 'x')
-                ]
+                intents: [new IntentPattern('DeferToRecognizer_y', crossTrainText), new IntentPattern('x', 'x')],
             }),
             new RegexRecognizer().configure({
                 id: 'y',
-                intents: [
-                    new IntentPattern('y', crossTrainText),
-                    new IntentPattern('y', 'y')
-                ]
+                intents: [new IntentPattern('y', crossTrainText), new IntentPattern('y', 'y')],
             }),
             new RegexRecognizer().configure({
                 id: 'z',
-                intents: [
-                    new IntentPattern('z', crossTrainText),
-                    new IntentPattern('z', 'z')
-                ]
-            })
-        ]
+                intents: [new IntentPattern('z', crossTrainText), new IntentPattern('z', 'z')],
+            }),
+        ],
     });
 };
 
@@ -90,16 +86,21 @@ describe('CrossTrainedRecognizerSetTests', function () {
             spy.restore();
         });
 
-
         it('should log PII when logPersonalInformation is true', async () => {
             recognizer.logPersonalInformation = true;
 
             await recognizeIntentAndValidateTelemetry({
-                text: crossTrainText, callCount: 1, recognizer, spy
+                text: crossTrainText,
+                callCount: 1,
+                recognizer,
+                spy,
             });
 
             await recognizeIntentAndValidateTelemetry({
-                text: xIntentText, callCount: 2, recognizer, spy
+                text: xIntentText,
+                callCount: 2,
+                recognizer,
+                spy,
             });
         });
 
@@ -107,11 +108,17 @@ describe('CrossTrainedRecognizerSetTests', function () {
             recognizer.logPersonalInformation = false;
 
             await recognizeIntentAndValidateTelemetry({
-                text: crossTrainText, callCount: 1, recognizer, spy
+                text: crossTrainText,
+                callCount: 1,
+                recognizer,
+                spy,
             });
 
             await recognizeIntentAndValidateTelemetry({
-                text: xIntentText, callCount: 2, recognizer, spy
+                text: xIntentText,
+                callCount: 2,
+                recognizer,
+                spy,
             });
         });
 
@@ -123,7 +130,7 @@ describe('CrossTrainedRecognizerSetTests', function () {
                 text: crossTrainText,
                 callCount: 1,
                 recognizer: recognizerWithDefaultLogPii,
-                spy: trackEventSpy
+                spy: trackEventSpy,
             });
         });
     });
