@@ -1,6 +1,12 @@
 const path = require('path');
 const { ComponentRegistration } = require('botbuilder-core');
-const { AdaptiveComponentRegistration, EntityRecognizerSet, RecognizerSet, RegexRecognizer, IntentPattern } = require('botbuilder-dialogs-adaptive');
+const {
+    AdaptiveComponentRegistration,
+    EntityRecognizerSet,
+    RecognizerSet,
+    RegexRecognizer,
+    IntentPattern,
+} = require('botbuilder-dialogs-adaptive');
 const { ResourceExplorer } = require('botbuilder-dialogs-declarative');
 const { AdaptiveTestComponentRegistration, TestUtils } = require('../lib');
 const {
@@ -10,7 +16,7 @@ const {
     PhoneNumberEntityRecognizer,
     RegexEntityRecognizer,
     TemperatureEntityRecognizer,
-    UrlEntityRecognizer
+    UrlEntityRecognizer,
 } = require('botbuilder-dialogs-adaptive');
 
 const {
@@ -18,7 +24,7 @@ const {
     codeIntentText,
     recognizeIntentAndValidateTelemetry,
     recognizeIntentAndValidateTelemetry_withCustomActivity,
-    spyOnTelemetryClientTrackEvent
+    spyOnTelemetryClientTrackEvent,
 } = require('./recognizerTelemetryUtils');
 
 const createRecognizer = () => {
@@ -33,7 +39,7 @@ const createRecognizer = () => {
                     new PercentageEntityRecognizer(),
                     new PhoneNumberEntityRecognizer(),
                     new TemperatureEntityRecognizer()
-                )
+                ),
             }),
             new RegexRecognizer().configure({
                 id: 'colorRecognizer',
@@ -42,10 +48,10 @@ const createRecognizer = () => {
                     new UrlEntityRecognizer(),
                     new RegexEntityRecognizer('color', '(?i)(red|green|blue|purple|orange|violet|white|black)'),
                     new RegexEntityRecognizer('backgroundColor', '(?i)(back|background)'),
-                    new RegexEntityRecognizer('foregroundColor', '(?i)(foreground|front) {color}'),
-                )
-            })
-        ]
+                    new RegexEntityRecognizer('foregroundColor', '(?i)(foreground|front) {color}')
+                ),
+            }),
+        ],
     });
 };
 
@@ -85,14 +91,23 @@ describe('RecognizerSetTests', function () {
             recognizer.logPersonalInformation = true;
 
             await recognizeIntentAndValidateTelemetry({
-                text: codeIntentText, callCount: 1, recognizer, spy
+                text: codeIntentText,
+                callCount: 1,
+                recognizer,
+                spy,
             });
             await recognizeIntentAndValidateTelemetry({
-                text: colorIntentText, callCount: 2, recognizer, spy
+                text: colorIntentText,
+                callCount: 2,
+                recognizer,
+                spy,
             });
 
             await recognizeIntentAndValidateTelemetry_withCustomActivity({
-                text: codeIntentText, callCount: 3, recognizer, spy
+                text: codeIntentText,
+                callCount: 3,
+                recognizer,
+                spy,
             });
         });
 
@@ -100,14 +115,23 @@ describe('RecognizerSetTests', function () {
             recognizer.logPersonalInformation = false;
 
             await recognizeIntentAndValidateTelemetry({
-                text: codeIntentText, callCount: 1, recognizer, spy
+                text: codeIntentText,
+                callCount: 1,
+                recognizer,
+                spy,
             });
             await recognizeIntentAndValidateTelemetry({
-                text: colorIntentText, callCount: 2, recognizer, spy
+                text: colorIntentText,
+                callCount: 2,
+                recognizer,
+                spy,
             });
 
             await recognizeIntentAndValidateTelemetry_withCustomActivity({
-                text: codeIntentText, callCount: 3, recognizer, spy
+                text: codeIntentText,
+                callCount: 3,
+                recognizer,
+                spy,
             });
         });
 
@@ -119,16 +143,15 @@ describe('RecognizerSetTests', function () {
                 text: codeIntentText,
                 callCount: 1,
                 recognizer: recognizerWithDefaultLogPii,
-                spy: trackEventSpy
+                spy: trackEventSpy,
             });
 
             await recognizeIntentAndValidateTelemetry_withCustomActivity({
                 text: codeIntentText,
                 callCount: 2,
                 recognizer: recognizerWithDefaultLogPii,
-                spy: trackEventSpy
+                spy: trackEventSpy,
             });
         });
     });
 });
-
