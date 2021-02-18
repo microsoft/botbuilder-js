@@ -30,6 +30,7 @@
   "dependencies": {
     "botbuilder-core": "4.1.6",
     "botbuilder-dialogs": "4.1.6",
+    "botbuilder-stdlib": "4.1.6",
     "chokidar": "^3.4.0",
     "jsonpath": "^1.0.0"
   },
