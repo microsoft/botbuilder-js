@@ -298,30 +298,20 @@ export class InternalFunctionUtils {
         }
 
         if (!error) {
-            const iteratorName = (expression.children[1].children[0] as Constant).value as string;
-            let arr = [];
-            if (Array.isArray(instance)) {
-                arr = instance;
-            } else if (typeof instance === 'object') {
-                Object.keys(instance).forEach((u): number => arr.push({ key: u, value: instance[u] }));
+            const list = InternalFunctionUtils.convertToList(instance);
+            if (!list) {
+                error = `${expression.children[0]} is not a collection or structure object to run Foreach`;
             } else {
-                error = `${expression.children[0]} is not a collection or structure object to run foreach`;
-            }
-
-            if (!error) {
-                const stackedMemory = StackedMemory.wrap(state);
                 result = [];
-                for (const item of arr) {
-                    const local: Map<string, any> = new Map<string, any>([[iteratorName, item]]);
-
-                    stackedMemory.push(SimpleObjectMemory.wrap(local));
-                    const { value: r, error: e } = expression.children[2].tryEvaluate(stackedMemory, options);
-                    stackedMemory.pop();
-                    if (e !== undefined) {
-                        return { value: undefined, error: e };
+                InternalFunctionUtils.lambdaEvaluator(expression, state, options, list, (currentItem, r, e) => {
+                    if (e) {
+                        error = e;
+                        return true;
+                    } else {
+                        result.push(r);
+                        return false;
                     }
-                    result.push(r);
-                }
+                });
             }
         }
 
@@ -329,17 +319,63 @@ export class InternalFunctionUtils {
     }
 
     /**
+     * Lambda evaluator.
+     * @param expression expression.
+     * @param state memory state.
+     * @param options options.
+     * @param list item list.
+     * @param callback call back. return the should break flag.
+     */
+    public static lambdaEvaluator(expression: Expression, state: MemoryInterface, options: Options, list: unknown[] | undefined, callback: (currentItem: unknown, result: unknown, error: string) => boolean): void{
+        const iteratorName = (expression.children[1].children[0] as Constant).value as string;
+        const stackedMemory = StackedMemory.wrap(state);
+        for (const item of list) {
+            const currentItem = item;
+            const local: Map<string, any> = new Map<string, any>([[iteratorName, item]]);
+
+            // the local iterator is pushed as one memory layer in the memory stack
+            stackedMemory.push(SimpleObjectMemory.wrap(local));
+            const { value: r, error: e } = expression.children[2].tryEvaluate(stackedMemory, options);
+            stackedMemory.pop();
+
+            const shouldBreak = callback(currentItem, r, e);
+            if (shouldBreak) {
+                break;
+            }
+        }
+    }
+
+    /**
+     * Convert an object into array.
+     * If the instance is array, return itself.
+     * If the instance is object, return {key, value} pair list.
+     * Else return undefined.
+     * @param instance input instance.
+     */
+    public static convertToList(instance: unknown) : unknown[] | undefined {
+        let arr: unknown[] | undefined;
+        if (Array.isArray(instance)) {
+            arr = instance;
+        } else if (typeof instance === 'object') {
+            arr = [];
+            Object.keys(instance).forEach((u): number => arr.push({ key: u, value: instance[u] }));
+        }
+
+        return arr;
+    }
+
+    /**
      * Validator for foreach, select, and where functions.
      * @param expression
      */
-    public static validateForeach(expression: Expression): void {
+    public static ValidateLambdaExpression(expression: Expression): void {
         if (expression.children.length !== 3) {
-            throw new Error(`foreach expect 3 parameters, found ${expression.children.length}`);
+            throw new Error(`Lambda expression expect 3 parameters, found ${expression.children.length}`);
         }
 
         const second: any = expression.children[1];
         if (!(second.type === ExpressionType.Accessor && second.children.length === 1)) {
-            throw new Error(`Second parameter of foreach is not an identifier : ${second}`);
+            throw new Error(`Second parameter is not an identifier : ${second}`);
         }
     }
 
