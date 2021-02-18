@@ -21,7 +21,6 @@
     }
   },
   "dependencies": {
-    "@microsoft/recognizers-text-suite": "1.1.4",
     "adaptive-expressions": "4.1.6",
     "bitwise": "^2.0.4",
     "botbuilder-ai": "4.1.6",

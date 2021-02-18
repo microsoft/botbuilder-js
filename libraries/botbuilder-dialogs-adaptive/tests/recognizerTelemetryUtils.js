@@ -1,6 +1,5 @@
 const { ok, strictEqual } = require('assert');
 const sinon = require('sinon');
-const { Culture } = require('@microsoft/recognizers-text-suite');
 const { NullTelemetryClient } = require('botbuilder-core');
 const { BoolExpression } = require('adaptive-expressions');
 const { asMessageActivity, createMessageActivity } = require('botframework-schema').ActivityEx;
@@ -70,7 +69,7 @@ async function recognizeIntentAndValidateTelemetry_withCustomActivity({ text, ca
     const dialogContext = createContext(text);
     const customActivity = createMessageActivity();
     customActivity.text = text;
-    customActivity.locale = Culture.English;
+    customActivity.locale = 'en-us';
 
     let result = await recognizer.recognize(dialogContext, customActivity);
 

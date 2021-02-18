@@ -48,7 +48,7 @@ export abstract class PayloadDisassembler {
      * Gets the stream this disassembler is operating on.
      * @returns An [IStreamWrapper](xref:botframework-streaming.IStreamWrapper) with a Subscribable Stream.
      */
-    public abstract getStream(): Promise<IStreamWrapper>;
+    public abstract async getStream(): Promise<IStreamWrapper>;
 
     /**
      * Begins the process of disassembling a payload and sending the resulting chunks to the [PayloadSender](xref:botframework-streaming.PayloadSender) to dispatch over the transport.
