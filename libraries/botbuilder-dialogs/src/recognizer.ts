@@ -83,7 +83,7 @@ export class Recognizer extends Configurable implements RecognizerConfiguration 
                 text,
                 intents: { ChooseIntent: { score: 1.0 } },
                 candidates,
-                entities: {}
+                entities: {},
             };
             return recognizerResult;
         }
@@ -92,7 +92,7 @@ export class Recognizer extends Configurable implements RecognizerConfiguration 
         const recognizerResult: RecognizerResult = {
             text,
             intents: { None: { score: 1.0 } },
-            entities: {}
+            entities: {},
         };
         return recognizerResult;
     }
@@ -100,10 +100,10 @@ export class Recognizer extends Configurable implements RecognizerConfiguration 
     /**
      * Uses the RecognizerResult to create a list of properties to be included when tracking the result in telemetry.
      * 
-     * @param recognizerResult Recognizer Result.
-     * @param telemetryProperties A list of properties to append or override the properties created using the RecognizerResult.
-     * @param dialogContext Dialog Context.
-     * @returns A dictionary that can be included when calling the TrackEvent method on the TelemetryClient.
+     * @param {RecognizerResult} recognizerResult Recognizer Result.
+     * @param {Record<string, string>} telemetryProperties A list of properties to append or override the properties created using the RecognizerResult.
+     * @param {DialogContext} dialogContext Dialog Context.
+     * @returns {Record<string, string>} A collection of properties that can be included when calling the TrackEvent method on the TelemetryClient.
      */
     protected fillRecognizerResultTelemetryProperties(
         recognizerResult: RecognizerResult,
@@ -118,10 +118,7 @@ export class Recognizer extends Configurable implements RecognizerConfiguration 
             AlteredText: recognizerResult.alteredText,
             TopIntent: intents.length > 0 ? intent : undefined,
             TopIntentScore: intents.length > 0 ? score.toString() : undefined,
-            Intents:
-                intents.length > 0
-                    ? JSON.stringify(recognizerResult.intents)
-                    : undefined,
+            Intents: intents.length > 0 ? JSON.stringify(recognizerResult.intents) : undefined,
             Entities: recognizerResult.entities ? JSON.stringify(recognizerResult.entities) : undefined,
             AdditionalProperties: this.stringifyAdditionalPropertiesOfRecognizerResult(recognizerResult),
         };
