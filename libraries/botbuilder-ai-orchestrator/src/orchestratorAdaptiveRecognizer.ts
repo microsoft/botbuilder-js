@@ -19,6 +19,7 @@ import {
     StringExpression,
     StringExpressionConverter,
 } from 'adaptive-expressions';
+import { AdaptiveRecognizer } from 'botbuilder-dialogs-adaptive';
 import { Activity, RecognizerResult } from 'botbuilder-core';
 import { Converter, ConverterFactory, DialogContext, Recognizer, RecognizerConfiguration } from 'botbuilder-dialogs';
 
@@ -51,11 +52,9 @@ type Orchestrator = {
 /**
  * Class that represents an adaptive Orchestrator recognizer.
  */
-// TODO - discuss what we want to do with OrchestratorAdaptiveRecognizer
-// C# - has dependency on Dialogs.Adaptive, but in JS only has AdaptiveExpression dependency
-// Therefore no access to new, base class AdaptiveRecognizer
-// Might need to follow same pattern as LuisAdaptiveRecognizer and QnAMakerRecognizer
-export class OrchestratorAdaptiveRecognizer extends Recognizer implements OrchestratorAdaptiveRecognizerConfiguration {
+export class OrchestratorAdaptiveRecognizer
+    extends AdaptiveRecognizer
+    implements OrchestratorAdaptiveRecognizerConfiguration {
     public static $kind = 'Microsoft.OrchestratorRecognizer';
 
     /**
@@ -245,8 +244,8 @@ export class OrchestratorAdaptiveRecognizer extends Recognizer implements Orches
         );
         this.trackRecognizerResult(
             dc,
-            'OrchestratorAdaptiveRecognizer',
-            this.fillRecognizerResultTelemetryProperties(recognizerResult, telemetryProperties),
+            'OrchestratorAdaptiveRecognizerResult',
+            this.fillRecognizerResultTelemetryProperties(recognizerResult, telemetryProperties, dc),
             telemetryMetrics
         );
 
