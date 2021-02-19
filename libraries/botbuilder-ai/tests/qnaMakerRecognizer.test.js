@@ -156,14 +156,7 @@ describe('QnAMakerRecognizer', function () {
             // callCount is 2, because trackEvent gets called:
             // - once for QnAMessage event from within QnAMaker class
             // - once for QnAMakerRecognizerResult event from within QnAMakerRecognizer
-            validateTelemetry({
-                recognizer,
-                dialogContext,
-                spy,
-                activity,
-                result,
-                callCount: 2,
-            });
+            validateTelemetry({ recognizer, dialogContext, spy, activity, result, callCount: 2 });
         });
 
         it('should refrain from logging PII by default', async () => {

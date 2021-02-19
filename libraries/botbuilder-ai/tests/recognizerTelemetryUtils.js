@@ -69,7 +69,7 @@ const hasValidTelemetryProps = (actual, expected, activity) => {
     }
 
     for (const property in actual) {
-        if (!property in expected) {
+        if (!(property in expected)) {
             return false;
         }
 
@@ -91,7 +91,7 @@ const hasValidEntities = (activity, propertyValue) => {
     const text = asMessageActivity(activity).text;
     const actualEntity = JSON.parse(propertyValue);
 
-    if (text == qnaIntentText && !'answer' in actualEntity) {
+    if (text == qnaIntentText && !('answer' in actualEntity)) {
         return false;
     }
 
