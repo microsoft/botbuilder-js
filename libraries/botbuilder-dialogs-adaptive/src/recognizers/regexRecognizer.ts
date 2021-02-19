@@ -36,7 +36,7 @@ export class RegexRecognizer extends AdaptiveRecognizer implements RegexRecogniz
     public static $kind = 'Microsoft.RegexRecognizer';
 
     /**
-     * Dictionary of patterns -> intent names.
+     * Array of patterns -> intent names.
      */
     public intents: IntentPattern[] = [];
 
