@@ -172,44 +172,6 @@ describe('OrchestratorAdpativeRecognizer tests', function () {
             });
         });
 
-        it('should refrain from logging PII by default', async () => {
-            // Set up OrchestratorAdaptiveRecognizer
-            const result = [
-                {
-                    score: 0.9,
-                    label: {
-                        name: 'mockLabel',
-                    },
-                },
-            ];
-            const mockResolver = new MockResolver(result);
-            const testPaths = 'test';
-            const recognizerWithDefaultLogPii = new OrchestratorAdaptiveRecognizer(testPaths, testPaths, mockResolver);
-            OrchestratorAdaptiveRecognizer.orchestrator = 'mock';
-            recognizerWithDefaultLogPii.modelFolder = new StringExpression(testPaths);
-            recognizerWithDefaultLogPii.snapshotFile = new StringExpression(testPaths);
-
-            //Set up telemetry
-            const { dc, activity } = createTestDcAndActivity(orchestratorIntentText);
-            const telemetryClient = new NullTelemetryClient();
-            const spy = sinon.spy(telemetryClient, 'trackEvent');
-            recognizerWithDefaultLogPii.telemetryClient = telemetryClient;
-
-            const res = await recognizerWithDefaultLogPii.recognize(dc, activity);
-
-            ok(res.text, orchestratorIntentText);
-            ok(res.intents.mockLabel.score, 0.9);
-            ok(!getLogPersonalInformation(recognizerWithDefaultLogPii, dc));
-            validateTelemetry({
-                recognizer: recognizerWithDefaultLogPii,
-                dialogContext: dc,
-                spy,
-                activity,
-                result,
-                callCount: 1,
-            });
-        });
-
         it('does not log PII when logPersonalInformation is false', async () => {
             // Set up OrchestratorAdaptiveRecognizer
             const result = [
@@ -240,6 +202,44 @@ describe('OrchestratorAdpativeRecognizer tests', function () {
             ok(res.intents.mockLabel.score, 0.9);
             validateTelemetry({
                 recognizer,
+                dialogContext: dc,
+                spy,
+                activity,
+                result,
+                callCount: 1,
+            });
+        });
+
+        it('should refrain from logging PII by default', async () => {
+            // Set up OrchestratorAdaptiveRecognizer
+            const result = [
+                {
+                    score: 0.9,
+                    label: {
+                        name: 'mockLabel',
+                    },
+                },
+            ];
+            const mockResolver = new MockResolver(result);
+            const testPaths = 'test';
+            const recognizerWithDefaultLogPii = new OrchestratorAdaptiveRecognizer(testPaths, testPaths, mockResolver);
+            OrchestratorAdaptiveRecognizer.orchestrator = 'mock';
+            recognizerWithDefaultLogPii.modelFolder = new StringExpression(testPaths);
+            recognizerWithDefaultLogPii.snapshotFile = new StringExpression(testPaths);
+
+            //Set up telemetry
+            const { dc, activity } = createTestDcAndActivity(orchestratorIntentText);
+            const telemetryClient = new NullTelemetryClient();
+            const spy = sinon.spy(telemetryClient, 'trackEvent');
+            recognizerWithDefaultLogPii.telemetryClient = telemetryClient;
+
+            const res = await recognizerWithDefaultLogPii.recognize(dc, activity);
+
+            ok(res.text, orchestratorIntentText);
+            ok(res.intents.mockLabel.score, 0.9);
+            ok(!getLogPersonalInformation(recognizerWithDefaultLogPii, dc));
+            validateTelemetry({
+                recognizer: recognizerWithDefaultLogPii,
                 dialogContext: dc,
                 spy,
                 activity,

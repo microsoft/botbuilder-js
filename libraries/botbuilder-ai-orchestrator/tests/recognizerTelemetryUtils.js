@@ -72,27 +72,10 @@ const hasValidTelemetryProps = (actual, expected, activity) => {
             return false;
         }
 
-        if (property === 'Entities') {
-            if (!hasValidEntities(activity, actual[property])) {
-                return false;
-            }
-        } else {
-            if (actual[property] !== expected[property]) {
-                return false;
-            }
+        if (actual[property] !== expected[property]) {
+            return false;
         }
     }
-
-    return true;
-};
-
-const hasValidEntities = (activity, propertyValue) => {
-    const text = asMessageActivity(activity).text;
-    const actualEntity = JSON.parse(propertyValue);
-
-    // if (text == qnaIntentText && !'answer' in actualEntity) {
-    //     return false;
-    // }
 
     return true;
 };
