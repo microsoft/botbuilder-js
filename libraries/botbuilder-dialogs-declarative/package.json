@@ -31,11 +31,9 @@
     "botbuilder-core": "4.1.6",
     "botbuilder-dialogs": "4.1.6",
     "botbuilder-stdlib": "4.1.6",
-    "chokidar": "^3.4.0",
-    "jsonpath": "^1.0.0"
+    "chokidar": "^3.4.0"
   },
   "devDependencies": {
-    "@types/jsonpath": "^0.2.0"
   },
   "scripts": {
     "build": "tsc -b",
