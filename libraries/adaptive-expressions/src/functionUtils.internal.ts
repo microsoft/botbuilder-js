@@ -326,8 +326,13 @@ export class InternalFunctionUtils {
      * @param list item list.
      * @param callback call back. return the should break flag.
      */
-    public static lambdaEvaluator(expression: Expression, state: MemoryInterface, options: Options, list: unknown[], callback: (currentItem: unknown, result: unknown, error: string) => boolean): void{
-        const iteratorName = (expression.children[1].children[0] as Constant).value as string;
+    public static lambdaEvaluator<T = unknown, U = unknown>(expression: Expression, state: MemoryInterface, options: Options, list: T[], callback: (currentItem: T, result: U, error: string) => boolean): void{
+        const firstChild = expression.children[1].children[0];
+        if (!(firstChild instanceof Constant) || typeof firstChild.value !== 'string') {
+            return;
+        }
+
+        const iteratorName = firstChild.value;
         const stackedMemory = StackedMemory.wrap(state);
         for (const item of list) {
             const currentItem = item;

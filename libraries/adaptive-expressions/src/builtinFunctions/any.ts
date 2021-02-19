@@ -38,7 +38,7 @@ export class Any extends ExpressionEvaluator {
                 error = `${expression.children[0]} is not a collection or structure object to run Any`;
             } else {
                 InternalFunctionUtils.lambdaEvaluator(expression, state, options, list, (currentItem, r, e) => {
-                    if (InternalFunctionUtils.isLogicTrue(r) && !e) {
+                    if (!e && InternalFunctionUtils.isLogicTrue(r)) {
                         result = true;
                         return true;
                     }
