@@ -420,7 +420,6 @@ const badExpressions = [
             ['where(items, item, item2, item3)', 'should have three parameters'],
             ['where(items, add(1), item)', 'Second paramter of where is not an identifier'],
             ['where(items, 1, item)', 'Second paramter error'],
-            ['where(items, x, sum(x))', 'third paramter error'],
             ['indicesAndValues(items, 1)', 'should only have one parameter'],
             ['indicesAndValues(1)', 'shoud have array param'],
             ['union(one, two)', 'should have collection param'],

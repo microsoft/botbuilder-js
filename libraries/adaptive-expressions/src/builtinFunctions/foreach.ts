@@ -23,7 +23,7 @@ export class Foreach extends ExpressionEvaluator {
             ExpressionType.Foreach,
             InternalFunctionUtils.foreach,
             ReturnType.Array,
-            InternalFunctionUtils.validateForeach
+            InternalFunctionUtils.ValidateLambdaExpression
         );
     }
 }
