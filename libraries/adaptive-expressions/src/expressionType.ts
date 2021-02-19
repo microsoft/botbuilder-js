@@ -153,6 +153,8 @@ export class ExpressionType {
     public static readonly Flatten: string = 'flatten';
     public static readonly Unique: string = 'unique';
     public static readonly Reverse: string = 'reverse';
+    public static readonly Any: string = 'any';
+    public static readonly All: string = 'all';
 
     // Misc
     public static readonly Constant: string = 'Constant';

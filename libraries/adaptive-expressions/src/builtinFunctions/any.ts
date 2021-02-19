@@ -15,47 +15,36 @@ import { Options } from '../options';
 import { ReturnType } from '../returnType';
 
 /**
- * Filter on each element and return the new collection of filtered elements which match a specific condition.
+ * Determines whether any element of a sequence satisfies a condition.
  */
-export class Where extends ExpressionEvaluator {
+export class Any extends ExpressionEvaluator {
     /**
-     * Initializes a new instance of the [Where](xref:adaptive-expressions.Where) class.
+     * Initializes a new instance of the [Any](xref:adaptive-expressions.Any) class.
      */
     public constructor() {
-        super(ExpressionType.Where, Where.evaluator, ReturnType.Array, InternalFunctionUtils.ValidateLambdaExpression);
+        super(ExpressionType.Any, Any.evaluator, ReturnType.Boolean, InternalFunctionUtils.ValidateLambdaExpression);
     }
 
     /**
      * @private
      */
     private static evaluator(expression: Expression, state: MemoryInterface, options: Options): ValueWithError {
-        let result: any;
+        let result = false;
         const { value: instance, error: childrenError } = expression.children[0].tryEvaluate(state, options);
         let error = childrenError;
         if (!error) {
             const list = InternalFunctionUtils.convertToList(instance);
             if (!list) {
-                error = `${expression.children[0]} is not a collection or structure object to run Where`;
+                error = `${expression.children[0]} is not a collection or structure object to run Any`;
             } else {
-                result = [];
                 InternalFunctionUtils.lambdaEvaluator(expression, state, options, list, (currentItem, r, e) => {
-                    if (InternalFunctionUtils.isLogicTrue(r) && !e) {
-                        // add if only if it evaluates to true
-                        result.push(currentItem);
+                    if (!e && InternalFunctionUtils.isLogicTrue(r)) {
+                        result = true;
+                        return true;
                     }
 
                     return false;
                 });
-
-                //reconstruct object if instance is object, otherwise, return array result
-                if (!Array.isArray(instance)) {
-                    const objResult = {};
-                    for (const item of result) {
-                        objResult[item.key] = item.value;
-                    }
-
-                    result = objResult;
-                }
             }
         }
 
