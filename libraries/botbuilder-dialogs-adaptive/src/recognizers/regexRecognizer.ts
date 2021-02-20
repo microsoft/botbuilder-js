@@ -103,15 +103,17 @@ export class RegexRecognizer extends Recognizer implements RegexRecognizerConfig
 
             matches.forEach((match: RegExpExecArray) => {
                 if (match.groups) {
-                    Object.entries(match.groups).forEach(([name, text]) => {
-                        const entity: Entity = {
-                            type: name,
-                            text,
-                            start: match.index,
-                            end: match.index + text.length,
-                        };
-                        entityPool.push(entity);
-                    });
+                    Object.entries(match.groups)
+                        .filter(([_name, text]) => text !== undefined)
+                        .forEach(([name, text]) => {
+                            const entity: Entity = {
+                                type: name,
+                                text,
+                                start: match.index,
+                                end: match.index + text.length,
+                            };
+                            entityPool.push(entity);
+                        });
                 }
             });
 
