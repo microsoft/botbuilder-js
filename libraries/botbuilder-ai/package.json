@@ -34,7 +34,7 @@
     "botbuilder-core": "4.1.6",
     "botbuilder-dialogs": "4.1.6",
     "node-fetch": "^2.6.0",
-    "url-parse": "^1.4.4"
+    "url-parse": "^1.5.1"
   },
   "devDependencies": {
     "@types/node-fetch": "^2.5.7",
