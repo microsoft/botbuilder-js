@@ -41,7 +41,7 @@ export class TimeTransformEvaluator extends ExpressionEvaluator {
             const { args, error: childrenError } = FunctionUtils.evaluateChildren(expression, state, options);
             let error = childrenError;
             if (!error) {
-                ({ format, locale } = FunctionUtils.determineFormatAndLocale(args, 5, format, locale));
+                ({ format, locale } = FunctionUtils.determineFormatAndLocale(args, 4, format, locale));
                 if (typeof args[0] === 'string' && typeof args[1] === 'number') {
                     error = InternalFunctionUtils.verifyISOTimestamp(args[0]);
                     if (!error) {

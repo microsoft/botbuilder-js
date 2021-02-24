@@ -200,7 +200,7 @@ export class DialogContext {
         }
 
         const locale = this.context.activity?.locale;
-        if (locale) {
+        if (locale !== undefined) {
             return locale;
         }
 

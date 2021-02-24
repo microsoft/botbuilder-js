@@ -123,6 +123,8 @@ describe('LGLanguageGenerator', function() {
 
         this.beforeAll(async function() {
             const multiLanguageResources = await LanguageResourceLoader.groupByLocale(resourceExplorer);
+
+            Intl.DateTimeFormat('es-AR').resolvedOptions().locale;
         
             let resource = resourceExplorer.getResource('test.lg');
             lg.languageGenerators.set('', new TemplateEngineLanguageGenerator(resource, multiLanguageResources));
