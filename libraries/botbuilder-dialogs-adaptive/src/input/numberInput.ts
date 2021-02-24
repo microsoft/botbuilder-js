@@ -6,6 +6,7 @@
  * Licensed under the MIT License.
  */
 import * as Recognizers from '@microsoft/recognizers-text-number';
+import { ModelResult } from "@microsoft/recognizers-text";
 import {
     Expression,
     NumberExpression,
@@ -62,10 +63,10 @@ export class NumberInput extends InputDialog implements NumberInputConfiguration
         if (typeof input !== 'number') {
             // Find locale to use
             const activity: Activity = dc.context.activity;
-            const locale = activity.locale || this.defaultLocale.getValue(dc.state) || 'en-us';
+            const locale = activity.locale ?? this.defaultLocale?.getValue(dc.state) ?? 'en-us';
 
             // Recognize input
-            const results: any = Recognizers.recognizeNumber(input, locale);
+            const results: ModelResult[] = Recognizers.recognizeNumber(input, locale);
             if (results.length > 0 && results[0].resolution) {
                 input = parseFloat(results[0].resolution.value);
             } else {
