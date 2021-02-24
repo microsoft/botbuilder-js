@@ -137,7 +137,8 @@ export class TurnContext {
     private _onSendActivities: SendActivitiesHandler[] = [];
     private _onUpdateActivity: UpdateActivityHandler[] = [];
     private _onDeleteActivity: DeleteActivityHandler[] = [];
-    private readonly _turnLocale = 'turn.locale';
+    private readonly _turn = 'turn';
+    private readonly _locale = 'locale';
 
     /**
      * Creates an new instance of the [TurnContext](xref:xref:botbuilder-core.TurnContext) class.
@@ -764,14 +765,25 @@ export class TurnContext {
      * Gets the locale stored in the turnState.
      */
     public get locale(): string {
-        return this._turnState.get(this._turnLocale);
+        const turnObj = this._turnState.get(this._turn);
+        const locale = turnObj.get(this._locale);
+        if (locale && typeof locale === 'string') {
+            return locale;
+        }
+
+        return undefined;
     }
 
     /**
      * Sets the locale stored in the turnState.
      */
     public set locale(value: string) {
-        this._turnState.set(this._turnLocale, value);
+        const turnObj = this._turnState.get(this._turn);
+        if (turnObj) {
+            turnObj[this._locale] = value;
+        } else {
+            this._turnState[this._turn] = value;
+        }
     }
 
     /**

@@ -39,4 +39,8 @@ describe('LGGeneratorTests', function () {
     it('LocaleInExpr', async () => {
         await TestUtils.runTestScript(resourceExplorer, 'LocaleInExpr');
     });
+
+    it('Manually set locale', async () => {
+        await TestUtils.runTestScript(resourceExplorer, 'manuallySetLocale');
+    });
 });
