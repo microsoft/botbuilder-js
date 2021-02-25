@@ -69,18 +69,16 @@ export class CrossTrainedRecognizerSet extends AdaptiveRecognizer implements Cro
         }
 
         const results = await Promise.all(
-            this.recognizers.map(
-                async (recognizer: Recognizer): Promise<RecognizerResult> => {
-                    const result = await recognizer.recognize(
-                        dialogContext,
-                        activity,
-                        telemetryProperties,
-                        telemetryMetrics
-                    );
-                    result['id'] = recognizer.id;
-                    return result;
-                }
-            )
+            this.recognizers.map(async (recognizer) => {
+                const result = await recognizer.recognize(
+                    dialogContext,
+                    activity,
+                    telemetryProperties,
+                    telemetryMetrics
+                );
+                result['id'] = recognizer.id;
+                return result;
+            })
         );
 
         const result = this.processResults(results);
@@ -193,7 +191,7 @@ export class CrossTrainedRecognizerSet extends AdaptiveRecognizer implements Cro
 
     /**
      * Extracts the redirect ID from an intent.
-     * 
+     *
      * @param {string} intent Intent string contains redirect id.
      * @returns {string} The redirect ID.
      */
