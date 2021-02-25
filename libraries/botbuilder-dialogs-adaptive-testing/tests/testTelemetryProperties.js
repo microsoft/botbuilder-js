@@ -1,3 +1,8 @@
+/**
+ * Return expected properties for codeIntent utterance 'intent a1 b2'.
+ *
+ * @returns {*} Object of expected telemtry properties.
+ */
 const getCodeIntentProperties = () => {
     return {
         TopIntent: 'codeIntent',
@@ -9,6 +14,11 @@ const getCodeIntentProperties = () => {
     };
 };
 
+/**
+ * Return expected properties for colorIntent utterance 'I would like colors red and orange'.
+ *
+ * @returns {*} Object of expected telemtry properties.
+ */
 const getColorIntentProperties = () => {
     return {
         TopIntent: 'colorIntent',
@@ -20,6 +30,11 @@ const getColorIntentProperties = () => {
     };
 };
 
+/**
+ * Return expected properties for greetingIntent 'howdy'.
+ *
+ * @returns {*} Object of expected telemtry properties.
+ */
 const getGreetingIntentProperties = () => {
     return {
         TopIntent: 'greeting',
@@ -30,6 +45,11 @@ const getGreetingIntentProperties = () => {
     };
 };
 
+/**
+ * Return expected properties for CrossTrainedRecognizer ChooseIntent.
+ *
+ * @returns {*} Object of expected telemtry properties.
+ */
 const getChooseIntentProperties = () => {
     return {
         AdditionalProperties:
@@ -41,6 +61,11 @@ const getChooseIntentProperties = () => {
     };
 };
 
+/**
+ * Return expected properties for x intent.
+ *
+ * @returns {*} Object of expected telemtry properties.
+ */
 const getXIntentProperties = () => {
     return {
         AdditionalProperties: '{"id":"x"}',
