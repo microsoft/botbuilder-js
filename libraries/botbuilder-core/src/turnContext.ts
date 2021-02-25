@@ -777,7 +777,7 @@ export class TurnContext {
     /**
      * Sets the locale stored in the turnState.
      */
-    public set locale(value: string) {
+    public set locale(value: string | undefined) {
         const turnObj = this._turnState.get(this._turn);
         if (turnObj) {
             turnObj[this._locale] = value;
