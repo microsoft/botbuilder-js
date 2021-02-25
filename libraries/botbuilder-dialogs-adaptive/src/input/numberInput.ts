@@ -62,8 +62,8 @@ export class NumberInput extends InputDialog implements NumberInputConfiguration
         if (typeof input !== 'number') {
             // Find locale to use
             /**
-             * * @deprecated Note: Default locale will be considered for deprecation as part of 4.13.
-             * */
+             * @deprecated Note: Default locale will be considered for deprecation as part of 4.13.
+             */
             const locale = dc.getLocale() ?? this.defaultLocale?.getValue(dc.state) ?? '';
 
             // Recognize input

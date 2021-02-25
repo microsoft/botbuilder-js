@@ -5,8 +5,6 @@ const { ResourceExplorer } = require('botbuilder-dialogs-declarative');
 const { AdaptiveTestComponentRegistration, TestUtils } = require('../lib');
 
 describe('MultiLanguageGeneratorTests', function () {
-    this.timeout(5000);
-
     ComponentRegistration.add(new AdaptiveComponentRegistration());
     ComponentRegistration.add(new AdaptiveTestComponentRegistration());
 

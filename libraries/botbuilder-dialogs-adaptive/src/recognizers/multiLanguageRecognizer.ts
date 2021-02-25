@@ -49,7 +49,7 @@ export class MultiLanguageRecognizer extends Recognizer implements MultiLanguage
             }
         }
 
-        const locale = (activity.locale || '').toLowerCase();
+        const locale = (activity.locale ?? '').toLowerCase();
         const policy: string[] = [];
         if (languagepolicy.has(locale)) {
             languagepolicy.get(locale).forEach((u: string): number => policy.push(u));

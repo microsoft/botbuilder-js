@@ -208,8 +208,8 @@ export class ConfirmInput extends InputDialog implements ConfirmInputConfigurati
 
     private determineCulture(dc: DialogContext): string {
         /**
-         * * @deprecated Note: Default locale will be considered for deprecation as part of 4.13.
-         * */
+         * @deprecated Note: Default locale will be considered for deprecation as part of 4.13.
+         */
         const candidateLocale = dc.getLocale() ?? this.defaultLocale?.getValue(dc.state);
         let culture = PromptCultureModels.mapToNearestLanguage(candidateLocale);
         if (!(culture && ConfirmInput.defaultChoiceOptions.hasOwnProperty(culture))) {

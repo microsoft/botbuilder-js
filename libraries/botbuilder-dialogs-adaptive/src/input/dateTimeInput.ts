@@ -53,8 +53,8 @@ export class DateTimeInput extends InputDialog implements DateTimeInputConfigura
         // Recognize input and filter out non-attachments
         const input: object = dc.state.getValue(InputDialog.VALUE_PROPERTY);
         /**
-         * * @deprecated Note: Default locale will be considered for deprecation as part of 4.13.
-         * */
+         * @deprecated Note: Default locale will be considered for deprecation as part of 4.13.
+         */
         const locale: string = dc.getLocale() ?? this.defaultLocale?.getValue(dc.state);
         const results: any[] = Recognizers.recognizeDateTime(input.toString(), locale);
 

@@ -211,8 +211,8 @@ export class ChoiceInput extends InputDialog implements ChoiceInputConfiguration
 
     private determineCulture(dc: DialogContext, opt?: FindChoicesOptions): string {
         /**
-         * * @deprecated Note: opt.Locale and Default locale will be considered for deprecation as part of 4.13.
-         * */
+         * @deprecated Note: opt.Locale and Default locale will be considered for deprecation as part of 4.13.
+         */
         const candidateLocale = dc.getLocale() ?? opt?.locale ?? this.defaultLocale?.getValue(dc.state);
         let culture = PromptCultureModels.mapToNearestLanguage(candidateLocale);
 
