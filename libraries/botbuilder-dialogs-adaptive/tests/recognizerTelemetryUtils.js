@@ -118,7 +118,7 @@ const validateTelemetry = async ({ recognizer, dialogContext, spy, activity, res
 
     strictEqual(spy.callCount, callCount);
     strictEqual(actualTelemetryProps.name, `${recognizer.constructor.name}Result`);
-    ok(hasValidTelemetryProps(actualTelemetryProps.properties, expectedTelemetryProps, activity));
+    ok(hasValidTelemetryProps(actualTelemetryProps.properties, expectedTelemetryProps));
 };
 
 const getExpectedProps = (activity, result, logPersonalInformation) => {
@@ -133,41 +133,10 @@ const getExpectedProps = (activity, result, logPersonalInformation) => {
     return expectedProps;
 };
 
-const hasValidTelemetryProps = (actual, expected, activity) => {
+const hasValidTelemetryProps = (actual, expected) => {
     if (Object.keys(actual).length !== Object.keys(expected).length) {
         return false;
     }
 
-    for (const property in actual) {
-        if (!(property in expected)) {
-            return false;
-        }
-
-        if (property === 'Entities') {
-            if (!hasValidEntities(activity, actual[property])) {
-                return false;
-            }
-        } else {
-            if (actual[property] !== expected[property]) {
-                return false;
-            }
-        }
-    }
-
-    return true;
-};
-
-const hasValidEntities = (activity, propertyValue) => {
-    const text = asMessageActivity(activity).text;
-    const actualEntity = JSON.parse(propertyValue);
-
-    if (text == codeIntentText && !('code' in actualEntity)) {
-        return false;
-    }
-
-    if (text == colorIntentText && !('color' in actualEntity)) {
-        return false;
-    }
-
-    return true;
+    return Object.entries(actual).every(([key, value]) => expected[key] === value);
 };
