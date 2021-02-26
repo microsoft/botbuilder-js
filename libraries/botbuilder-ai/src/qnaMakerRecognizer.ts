@@ -21,9 +21,10 @@ import {
     StringExpression,
     StringExpressionConverter,
 } from 'adaptive-expressions';
-import { RecognizerResult, Activity } from 'botbuilder-core';
+import { RecognizerResult, Activity, getTopScoringIntent } from 'botbuilder-core';
 import { Converter, ConverterFactory, DialogContext, Recognizer, RecognizerConfiguration } from 'botbuilder-dialogs';
-import { QnAMaker } from './qnaMaker';
+import _ = require('lodash');
+import { QnAMaker, QnAMakerClient, QnAMakerClientKey } from './qnaMaker';
 import {
     JoinOperator,
     QnAMakerEndpoint,
@@ -262,7 +263,7 @@ export class QnAMakerRecognizer extends Recognizer implements QnAMakerRecognizer
         this.trackRecognizerResult(
             dc,
             'QnAMakerRecognizerResult',
-            this.fillRecognizerResultTelemetryProperties(recognizerResult, telemetryProperties),
+            this.fillRecognizerResultTelemetryProperties(recognizerResult, telemetryProperties, dc),
             telemetryMetrics
         );
         return recognizerResult;
@@ -271,6 +272,7 @@ export class QnAMakerRecognizer extends Recognizer implements QnAMakerRecognizer
     /**
      * Gets an instance of `QnAMaker`.
      *
+     * @deprecated Instead, favor using [QnAMakerRecognizer.getQnAMakerClient()](#getQnAMakerClient) to get instance of QnAMakerClient.
      * @param {DialogContext} dc The dialog context used to access state.
      * @returns {QnAMaker} A qna maker instance
      */
@@ -291,5 +293,82 @@ export class QnAMakerRecognizer extends Recognizer implements QnAMakerRecognizer
         const endpoint: QnAMakerEndpoint = { endpointKey, host, knowledgeBaseId };
         const logPersonalInfo = this.logPersonalInformation.getValue(dc.state);
         return new QnAMaker(endpoint, {}, this.telemetryClient, logPersonalInfo);
+    }
+
+    /**
+     * Gets an instance of [QnAMakerClient](xref:botbuilder-ai.QnAMakerClient)
+     *
+     * @param {DialogContext} dc The dialog context used to access state.
+     * @returns {QnAMakerClient} An instance of QnAMakerClient.
+     */
+    protected getQnAMakerClient(dc: DialogContext): QnAMakerClient {
+        const qnaClient = dc.context?.turnState?.get(QnAMakerClientKey);
+        if (qnaClient) {
+            return qnaClient;
+        }
+
+        const { value: endpointKey, error } = this.endpointKey?.tryGetValue(dc.state) ?? {};
+        if (!endpointKey || error) {
+            throw new Error(`Unable to get a value for endpointKey from state. ${error}`);
+        }
+        const { value: host, error: error2 } = this.hostname?.tryGetValue(dc.state) ?? {};
+        if (!host || error2) {
+            throw new Error(`Unable to get a value for hostname from state. ${error2}`);
+        }
+        const { value: knowledgeBaseId, error: error3 } = this.knowledgeBaseId?.tryGetValue(dc.state) ?? {};
+        if (!knowledgeBaseId || error3) {
+            throw new Error(`Unable to get a value for knowledgeBaseId from state. ${error3}`);
+        }
+
+        const endpoint: QnAMakerEndpoint = { endpointKey, host, knowledgeBaseId };
+        const logPersonalInfo = this.logPersonalInformation.getValue(dc.state);
+        return new QnAMaker(endpoint, {}, this.telemetryClient, logPersonalInfo);
+    }
+
+    /**
+     * Uses the RecognizerResult to create a list of properties to be included when tracking the result in telemetry.
+     *
+     * @param {RecognizerResult} recognizerResult Recognizer result.
+     * @param {Record<string, string>} telemetryProperties A list of properties to append or override the properties created using the RecognizerResult.
+     * @param {DialogContext} dialogContext Dialog context.
+     * @returns {Record<string, string>} A dictionary that can be included when calling the trackEvent method on the TelemetryClient.
+     */
+    protected fillRecognizerResultTelemetryProperties(
+        recognizerResult: RecognizerResult,
+        telemetryProperties: Record<string, string>,
+        dialogContext?: DialogContext
+    ): Record<string, string> {
+        if (!dialogContext) {
+            throw new Error(
+                'DialogContext needed for state in QnAMakerRecognizer.fillRecognizerResultTelemetryProperties method.'
+            );
+        }
+
+        const { intent: topIntent, score: topScore } = getTopScoringIntent(recognizerResult);
+        const properties: Record<string, string> = {
+            TopIntent: Object.entries(recognizerResult.intents).length > 0 ? topIntent : undefined,
+            TopIntentScore: Object.entries(recognizerResult.intents).length > 0 ? topScore.toString() : undefined,
+            Intents:
+                Object.entries(recognizerResult.intents).length > 0
+                    ? JSON.stringify(recognizerResult.intents)
+                    : undefined,
+            Entities: recognizerResult.entities ? JSON.stringify(recognizerResult.entities) : undefined,
+            AdditionalProperties: JSON.stringify(
+                _.omit(recognizerResult, ['text', 'alteredText', 'intents', 'entities'])
+            ),
+        };
+
+        const { value: logPersonalInformation } = this.logPersonalInformation.tryGetValue(dialogContext.state);
+        if (logPersonalInformation && recognizerResult.text) {
+            properties.Text = recognizerResult.text;
+            properties.AlteredText = recognizerResult.alteredText;
+        }
+
+        // Additional properties can override "stock" properties.
+        if (telemetryProperties) {
+            return Object.assign({}, properties, telemetryProperties);
+        }
+
+        return properties;
     }
 }

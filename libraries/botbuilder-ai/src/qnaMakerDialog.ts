@@ -28,14 +28,17 @@ import {
     Dialog,
     DialogConfiguration,
     DialogContext,
+    DialogEvent,
     DialogReason,
     DialogStateManager,
     DialogTurnResult,
     TemplateInterface,
+    TurnPath,
     WaterfallStepContext,
 } from 'botbuilder-dialogs';
 import { QnAMaker, QnAMakerResult } from './';
 import { QnACardBuilder } from './qnaCardBuilder';
+import { QnAMakerClient, QnAMakerClientKey } from './qnaMaker';
 import {
     FeedbackRecord,
     FeedbackRecords,
@@ -371,7 +374,7 @@ export class QnAMakerDialog extends WaterfallDialog implements QnAMakerDialogCon
             throw new Error('Missing DialogContext');
         }
 
-        if (dc.context.activity.type != ActivityTypes.Message) {
+        if (dc.context?.activity?.type !== ActivityTypes.Message) {
             return dc.endDialog();
         }
 
@@ -387,9 +390,97 @@ export class QnAMakerDialog extends WaterfallDialog implements QnAMakerDialogCon
         return await super.beginDialog(dc, dialogOptions);
     }
 
-    // Gets the options for the QnA Maker client that the dialog will use to query the knowledge base.
-    // If the task is successful, the result contains the QnA Maker options to use.
-    private async getQnAMakerOptions(dc: DialogContext): Promise<QnAMakerOptions> {
+    /**
+     * Called when the dialog is _continued_, where it is the active dialog and the
+     * user replies with a new [Activity](xref:botframework-schema.Activity).
+     *
+     * @param {DialogContext} dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
+     * @returns {DialogContext} A Promise representing the asynchronous operation.
+     */
+    public continueDialog(dc: DialogContext): Promise<DialogTurnResult> {
+        const interrupted = dc.state.getValue<boolean>(TurnPath.interrupted, false);
+        if (interrupted) {
+            // if qnamaker was interrupted then end the qnamaker dialog
+            return dc.endDialog();
+        }
+
+        return super.continueDialog(dc);
+    }
+
+    /**
+     * Called before an event is bubbled to its parent.
+     *
+     * @param {DialogContext} dc The dialog context for the current turn of conversation.
+     * @param {DialogEvent} e The event being raised.
+     * @returns {Promise<boolean>} Whether the event is handled by the current dialog and further processing should stop.
+     */
+    protected async onPreBubbleEvent(dc: DialogContext, e: DialogEvent): Promise<boolean> {
+        if (dc.context?.activity?.type === ActivityTypes.Message) {
+            // decide whether we want to allow interruption or not.
+            // if we don't get a response from QnA which signifies we expect it,
+            // then we allow interruption.
+
+            const reply = dc.context.activity.text;
+            const dialogOptions: QnAMakerDialogOptions = dc.activeDialog.state[this.options];
+
+            if (reply.toLowerCase() === dialogOptions.qnaDialogResponseOptions.cardNoMatchText.toLowerCase()) {
+                // it matches nomatch text, we like that.
+                return true;
+            }
+
+            const suggestedQuestions = dc.state.getValue<string[]>('this.suggestedQuestions');
+            if (suggestedQuestions?.some((question) => question.toLowerCase() === reply.trim())) {
+                // it matches one of the suggested actions, we like that.
+                return true;
+            }
+
+            // Calling QnAMaker to get response.
+            const qnaClient = await this.getQnAMakerClient(dc);
+            this.resetOptions(dc, dialogOptions);
+
+            const response = await qnaClient.getAnswersRaw(dc.context, dialogOptions.qnaMakerOptions);
+
+            // disable interruption if we have answers.
+            return response.answers?.length > 0 || false;
+        }
+
+        // call base for default behavior.
+        return this.onPostBubbleEvent(dc, e);
+    }
+
+    /**
+     * Gets an [QnAMakerClient](xref:botbuilder-ai.QnAMakerClient) to use to access the QnA Maker knowledge base.
+     *
+     * @param {DialogContext} dc The dialog context for the current turn of conversation.
+     * @returns {Promise<QnAMakerClient>} A promise of QnA Maker instance.
+     */
+    protected async getQnAMakerClient(dc: DialogContext): Promise<QnAMakerClient> {
+        const qnaClient = dc.context?.turnState?.get(QnAMakerClientKey);
+        if (qnaClient) {
+            return qnaClient;
+        }
+
+        const endpoint = {
+            knowledgeBaseId: this.knowledgeBaseId.getValue(dc.state),
+            endpointKey: this.endpointKey.getValue(dc.state),
+            host: this.getHost(dc),
+        };
+
+        const logPersonalInformation =
+            this.logPersonalInformation instanceof BoolExpression
+                ? this.logPersonalInformation.getValue(dc.state)
+                : this.logPersonalInformation;
+
+        return new QnAMaker(endpoint, await this.getQnAMakerOptions(dc), this.telemetryClient, logPersonalInformation);
+    }
+
+    /**
+     * Gets the options for the QnA Maker client that the dialog will use to query the knowledge base.
+     *
+     * @param {DialogContext} dc The dialog context for the current turn of conversation.
+     * @returns {Promise<QnAMakerOptions>} A promise of QnA Maker options to use.
+     */
+    protected async getQnAMakerOptions(dc: DialogContext): Promise<QnAMakerOptions> {
         return {
             scoreThreshold: this.threshold?.getValue(dc.state) ?? this.defaultThreshold,
             strictFilters: this.strictFilters?.getValue(dc.state),
@@ -401,9 +492,13 @@ export class QnAMakerDialog extends WaterfallDialog implements QnAMakerDialogCon
         };
     }
 
-    // Gets the options the dialog will use to display query results to the user.
-    // If the task is successful, the result contains the response options to use.
-    private async getQnAResponseOptions(dc: DialogContext): Promise<QnAMakerDialogResponseOptions> {
+    /**
+     * Gets the options the dialog will use to display query results to the user.
+     *
+     * @param {DialogContext} dc The dialog context for the current turn of conversation.
+     * @returns {Promise<QnAMakerDialogResponseOptions>} A promise of QnA Maker response options to use.
+     */
+    protected async getQnAResponseOptions(dc: DialogContext): Promise<QnAMakerDialogResponseOptions> {
         return {
             activeLearningCardTitle: this.activeLearningCardTitle?.getValue(dc.state) ?? this.defaultCardTitle,
             cardNoMatchResponse: this.cardNoMatchResponse && (await this.cardNoMatchResponse.bind(dc, dc.state)),
@@ -412,12 +507,71 @@ export class QnAMakerDialog extends WaterfallDialog implements QnAMakerDialogCon
         };
     }
 
+    /**
+     * Displays an appropriate response based on the incoming result to the user.If an answer has been identified it
+     * is sent to the user. Alternatively, if no answer has been identified or the user has indicated 'no match' on an
+     * active learning card, then an appropriate message is sent to the user.
+     *
+     * @param {WaterfallStepContext} step the waterfall step context
+     * @returns {Promise<DialogTurnResult>} a promise resolving to the dialog turn result
+     **/
+    protected async displayQnAResult(step: WaterfallStepContext): Promise<DialogTurnResult> {
+        const dialogOptions: QnAMakerDialogOptions = step.activeDialog.state[this.options];
+        const reply = step.context.activity.text;
+
+        if (reply == dialogOptions.qnaDialogResponseOptions.cardNoMatchText) {
+            const activity = dialogOptions.qnaDialogResponseOptions.cardNoMatchResponse;
+            await step.context.sendActivity(activity ?? this.defaultCardNoMatchResponse);
+            return step.endDialog();
+        }
+
+        const previousQnaId = step.activeDialog.state[this.previousQnAId];
+        if (previousQnaId > 0) {
+            return await super.runStep(step, 0, DialogReason.beginCalled);
+        }
+
+        const response: QnAMakerResult[] = step.result;
+        if (response?.length > 0) {
+            await step.context.sendActivity(response[0].answer);
+        } else {
+            const activity = dialogOptions.qnaDialogResponseOptions.noAnswer;
+            await step.context.sendActivity(activity || this.defaultNoAnswer);
+        }
+
+        return await step.endDialog(step.result);
+    }
+
+    private resetOptions(dc: DialogContext, dialogOptions: QnAMakerDialogOptions) {
+        // Resetting context and QnAId
+        dialogOptions.qnaMakerOptions.qnaId = 0;
+        dialogOptions.qnaMakerOptions.context = { previousQnAId: 0, previousUserQuery: '' };
+
+        // Check if previous context is present, if yes then put it with the query
+        // Check for id if query is present in reverse index.
+        const previousContextData: Record<string, number> = dc.activeDialog.state[this.qnAContextData] ?? {};
+        const previousQnAId = dc.activeDialog.state[this.previousQnAId] ?? 0;
+
+        if (previousQnAId > 0) {
+            dialogOptions.qnaMakerOptions.context = {
+                previousQnAId,
+                previousUserQuery: '',
+            };
+
+            const currentQnAId = previousContextData[dc.context.activity.text];
+            if (currentQnAId) {
+                dialogOptions.qnaMakerOptions.qnaId = currentQnAId;
+            }
+        }
+    }
+
     // Queries the knowledgebase and either passes result to the next step or constructs and displays an active learning card
     // if active learning is enabled and multiple score close answers are returned.
     private async callGenerateAnswer(step: WaterfallStepContext): Promise<DialogTurnResult> {
+        // clear suggestedQuestions between turns.
+        step.state.deleteValue('this.suggestedQuestions');
+
         const dialogOptions: QnAMakerDialogOptions = step.activeDialog.state[this.options];
-        dialogOptions.qnaMakerOptions.qnaId = 0;
-        dialogOptions.qnaMakerOptions.context = { previousQnAId: 0, previousUserQuery: '' };
+        this.resetOptions(step, dialogOptions);
 
         step.values[this.currentQuery] = step.context.activity.text;
         const previousContextData: { [key: string]: number } = step.activeDialog.state[this.qnAContextData] || {};
@@ -431,7 +585,7 @@ export class QnAMakerDialog extends WaterfallDialog implements QnAMakerDialogCon
             }
         }
 
-        const qna = await this.getQnAClient(step);
+        const qna = await this.getQnAMakerClient(step);
 
         const response = await qna.getAnswersRaw(step.context, dialogOptions.qnaMakerOptions);
 
@@ -467,7 +621,7 @@ export class QnAMakerDialog extends WaterfallDialog implements QnAMakerDialogCon
                 await step.context.sendActivity(message);
 
                 step.activeDialog.state[this.options] = dialogOptions;
-
+                step.state.setValue('this.suggestedQuestions', suggestedQuestions);
                 return Dialog.EndOfTurn;
             }
         }
@@ -510,7 +664,7 @@ export class QnAMakerDialog extends WaterfallDialog implements QnAMakerDialogCon
 
                 const feedbackRecords: FeedbackRecords = { feedbackRecords: records };
 
-                const qnaClient = await this.getQnAClient(step);
+                const qnaClient = await this.getQnAMakerClient(step);
                 await qnaClient.callTrainAsync(feedbackRecords);
 
                 return await step.next(qnaResult);
@@ -555,56 +709,6 @@ export class QnAMakerDialog extends WaterfallDialog implements QnAMakerDialogCon
         }
 
         return step.next(step.result);
-    }
-
-    /**
-     * Displays an appropriate response based on the incoming result to the user.If an answer has been identified it
-     * is sent to the user. Alternatively, if no answer has been identified or the user has indicated 'no match' on an
-     * active learning card, then an appropriate message is sent to the user.
-     *
-     * @param {WaterfallStepContext} step the waterfall step context
-     * @returns {Promise<DialogTurnResult>} a promise resolving to the dialog turn result
-     **/
-    protected async displayQnAResult(step: WaterfallStepContext): Promise<DialogTurnResult> {
-        const dialogOptions: QnAMakerDialogOptions = step.activeDialog.state[this.options];
-        const reply = step.context.activity.text;
-
-        if (reply == dialogOptions.qnaDialogResponseOptions.cardNoMatchText) {
-            const activity = dialogOptions.qnaDialogResponseOptions.cardNoMatchResponse;
-            await step.context.sendActivity(activity ?? this.defaultCardNoMatchResponse);
-            return step.endDialog();
-        }
-
-        const previousQnaId = step.activeDialog.state[this.previousQnAId];
-        if (previousQnaId > 0) {
-            return await super.runStep(step, 0, DialogReason.beginCalled);
-        }
-
-        const response: QnAMakerResult[] = step.result;
-        if (response?.length > 0) {
-            await step.context.sendActivity(response[0].answer);
-        } else {
-            const activity = dialogOptions.qnaDialogResponseOptions.noAnswer;
-            await step.context.sendActivity(activity || this.defaultNoAnswer);
-        }
-
-        return await step.endDialog(step.result);
-    }
-
-    // Creates and returns an instance of the QnAMaker class used to query the knowledgebase.
-    private async getQnAClient(dc: DialogContext): Promise<QnAMaker> {
-        const endpoint = {
-            knowledgeBaseId: this.knowledgeBaseId.getValue(dc.state),
-            endpointKey: this.endpointKey.getValue(dc.state),
-            host: this.getHost(dc),
-        };
-
-        const logPersonalInformation =
-            this.logPersonalInformation instanceof BoolExpression
-                ? this.logPersonalInformation.getValue(dc.state)
-                : this.logPersonalInformation;
-
-        return new QnAMaker(endpoint, await this.getQnAMakerOptions(dc), this.telemetryClient, logPersonalInformation);
     }
 
     // Gets unmodified v5 API hostName or constructs v4 API hostName
