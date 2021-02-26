@@ -24,6 +24,66 @@ export const QNAMAKER_TRACE_TYPE = 'https://www.qnamaker.ai/schemas/trace';
 export const QNAMAKER_TRACE_NAME = 'QnAMaker';
 export const QNAMAKER_TRACE_LABEL = 'QnAMaker Trace';
 
+/**
+ * Turn state key for QnAMakerClient.
+ */
+export const QnAMakerClientKey = Symbol('QnAMakerClient');
+
+/**
+ * Client to access a QnA Maker knowledge base.
+ */
+export interface QnAMakerClient {
+    /**
+     * Generates an answer from the knowledge base.
+     *
+     * @param {TurnContext} turnContext The Turn Context that contains the user question to be queried against your knowledge base.
+     * @param {QnAMakerOptions} options The options for the QnA Maker knowledge base. If null, constructor option is used for this instance.
+     * @param {Record<string, string>} telemetryProperties Additional properties to be logged to telemetry with the QnaMessage event.
+     * @param {Record<string, number>} telemetryMetrics Additional metrics to be logged to telemetry with the QnaMessage event.
+     * @returns {Promise<QnAMakerResult[]>} A list of answers for the user query, sorted in decreasing order of ranking score.
+     */
+    getAnswers(
+        turnContext: TurnContext,
+        options?: QnAMakerOptions,
+        telemetryProperties?: Record<string, string>,
+        telemetryMetrics?: Record<string, number>
+    ): Promise<QnAMakerResult[]>;
+
+    /**
+     * Generates an answer from the knowledge base.
+     *
+     * @param {TurnContext} turnContext The Turn Context that contains the user question to be queried against your knowledge base.
+     * @param {QnAMakerOptions} options The options for the QnA Maker knowledge base. If null, constructor option is used for this instance.
+     * @param {Record<string, string>} telemetryProperties Additional properties to be logged to telemetry with the QnaMessage event.
+     * @param {Record<string, number>} telemetryMetrics Additional metrics to be logged to telemetry with the QnaMessage event.
+     * @returns {Promise<QnAMakerResults>} A list of answers for the user query, sorted in decreasing order of ranking score.
+     */
+    getAnswersRaw(
+        turnContext: TurnContext,
+        options?: QnAMakerOptions,
+        telemetryProperties?: Record<string, string>,
+        telemetryMetrics?: Record<string, number>
+    ): Promise<QnAMakerResults>;
+
+    /**
+     * Filters the ambiguous question for active learning.
+     *
+     * @param {QnAMakerResult[]} queryResult User query output.
+     * @returns {QnAMakerResult[]} Filtered array of ambiguous question.
+     */
+    getLowScoreVariation(queryResult: QnAMakerResult[]): QnAMakerResult[];
+
+    /**
+     * Send feedback to the knowledge base.
+     *
+     * @param {FeedbackRecords} feedbackRecords Feedback records.
+     */
+    callTrainAsync(feedbackRecords: FeedbackRecords): Promise<void>;
+}
+
+/**
+ * Interface for adding telemetry logging capabilities to QnAMaker.
+ */
 export interface QnAMakerTelemetryClient {
     /**
      * Gets a value indicating whether determines whether to log personal information that came from the user.
@@ -66,7 +126,7 @@ export interface QnAMakerTelemetryClient {
  *
  * Use this to process incoming messages with the [getAnswers()](#getAnswers) method.
  */
-export class QnAMaker implements QnAMakerTelemetryClient {
+export class QnAMaker implements QnAMakerClient, QnAMakerTelemetryClient {
     private readonly _logPersonalInformation: boolean;
     private readonly _telemetryClient: BotTelemetryClient;
 
