@@ -130,7 +130,7 @@ const validateTelemetry = async ({ recognizer, dialogContext, spy, activity, res
     strictEqual(spy.callCount, callCount);
     strictEqual(actualTelemetryProps.name, `${recognizer.constructor.name}Result`);
     ok(
-        hasValidTelemetryProps(actualTelemetryProps.properties, expectedTelemetryProps, activity),
+        hasValidTelemetryProps(actualTelemetryProps.properties, expectedTelemetryProps),
         'Expected telemetry property did not match actual telemetry property logged.'
     );
 };
@@ -153,50 +153,10 @@ const getExpectedProps = (activity, result, logPersonalInformation) => {
     return expectedProps;
 };
 
-const hasValidTelemetryProps = (actual, expected, activity) => {
+const hasValidTelemetryProps = (actual, expected) => {
     if (Object.keys(actual).length !== Object.keys(expected).length) {
         return false;
     }
 
-    for (const property in actual) {
-        if (!(property in expected)) {
-            return false;
-        }
-
-        if (property === 'Entities') {
-            if (!hasValidEntities(activity, actual[property])) {
-                return false;
-            }
-        } else {
-            const actualVal = actual[property];
-            const expectedVal = expected[property];
-            if (actualVal !== expectedVal) {
-                return false;
-            }
-        }
-    }
-
-    return true;
-};
-
-const hasValidEntities = (activity, entitiesSerialized) => {
-    const text = asMessageActivity(activity).text;
-    const entities = JSON.parse(entitiesSerialized);
-
-    if (text == codeIntentText && !('code' in entities)) {
-        return false;
-    }
-
-    if (text == colorIntentText && !('color' in entities)) {
-        return false;
-    }
-
-    if (
-        (text == greetingIntentTextEnUs || text == crossTrainText || text == xIntentText) &&
-        Object.entries(entities).length !== 0
-    ) {
-        return false;
-    }
-
-    return true;
+    return Object.entries(actual).every(([key, value]) => expected[key] === value);
 };
