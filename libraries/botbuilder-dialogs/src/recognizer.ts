@@ -12,6 +12,7 @@ import {
     NullTelemetryClient,
     RecognizerResult,
 } from 'botbuilder-core';
+import _ = require('lodash');
 import { Configurable } from './configurable';
 import { DialogContext } from './dialogContext';
 import { DialogTurnStateConstants } from './dialogTurnStateConstants';
@@ -46,7 +47,7 @@ export class Recognizer extends Configurable implements RecognizerConfiguration 
         dialogContext: DialogContext,
         activity: Partial<Activity>,
         telemetryProperties?: Record<string, string>,
-        telemetryMetrics?: Record<string, number> 
+        telemetryMetrics?: Record<string, number>
     ): Promise<RecognizerResult> {
         throw new Error('Please implement recognize function.');
     }
@@ -94,60 +95,63 @@ export class Recognizer extends Configurable implements RecognizerConfiguration 
 
     /**
      * Uses the RecognizerResult to create a list of propeties to be included when tracking the result in telemetry.
-     * @param recognizerResult Recognizer Result.
-     * @param telemetryProperties A list of properties to append or override the properties created using the RecognizerResult.
-     * @param dialogContext Dialog Context.
-     * @returns A dictionary that can be included when calling the TrackEvent method on the TelemetryClient.
+     *
+     * @param {RecognizerResult} recognizerResult Recognizer Result.
+     * @param {Record<string, string>} telemetryProperties A list of properties to append or override the properties created using the RecognizerResult.
+     * @param {DialogContext} dialogContext Dialog Context.
+     * @returns {Record<string, string>} A dictionary that can be included when calling the TrackEvent method on the TelemetryClient.
      */
     protected fillRecognizerResultTelemetryProperties(
         recognizerResult: RecognizerResult,
-        telemetryProperties: { [key: string]: string },
+        telemetryProperties: Record<string, string>,
         dialogContext?: DialogContext
-    ): { [key: string]: string } {
-        const { intent, score } = getTopScoringIntent(recognizerResult);
+    ): Record<string, string> {
+        const { intent: topIntent, score: topScore } = getTopScoringIntent(recognizerResult);
 
-        const properties: { [key: string]: string } = {
+        const properties: Record<string, string> = {
             Text: recognizerResult.text,
             AlteredText: recognizerResult.alteredText,
-            TopIntent: Object.entries(recognizerResult.intents).length > 0 ? intent : undefined,
-            TopIntentScore: Object.entries(recognizerResult.intents).length > 0 ? score.toString() : undefined,
+            TopIntent: Object.entries(recognizerResult.intents).length > 0 ? topIntent : undefined,
+            TopIntentScore: Object.entries(recognizerResult.intents).length > 0 ? topScore.toString() : undefined,
             Intents:
                 Object.entries(recognizerResult.intents).length > 0
                     ? JSON.stringify(recognizerResult.intents)
                     : undefined,
             Entities: recognizerResult.entities ? JSON.stringify(recognizerResult.entities) : undefined,
-            AdditionalProperties: this.stringifyAdditionalPropertiesOfRecognizerResult(recognizerResult),
+            AdditionalProperties: JSON.stringify(
+                _.omit(recognizerResult, ['text', 'alteredText', 'intents', 'entities'])
+            ),
         };
+
         // Additional Properties can override "stock" properties.
         if (telemetryProperties) {
             return Object.assign({}, properties, telemetryProperties);
         }
+
         return properties;
     }
 
-    private stringifyAdditionalPropertiesOfRecognizerResult(recognizerResult: RecognizerResult): string {
-        const generalProperties = new Set(['text', 'alteredText', 'intents', 'entities']);
-        const additionalProperties: { [key: string]: string } = {};
-        for (const key in recognizerResult) {
-            if (!generalProperties.has(key)) {
-                additionalProperties[key] = recognizerResult[key];
-            }
-        }
-        return Object.keys(additionalProperties).length > 0 ? JSON.stringify(additionalProperties) : undefined;
-    }
-
+    /**
+     * Tracks an event with the event name provided using the TelemetryClient attaching the properties/metrics.
+     *
+     * @param {DialogContext} dialogContext Dialog context.
+     * @param {string} eventName The name of the event to track.
+     * @param {Record<string, string>} telemetryProperties The properties to be included as part of the event tracking.
+     * @param {Record<string, number>} telemetryMetrics The metrics to be included as part of the event tracking.
+     */
     protected trackRecognizerResult(
         dialogContext: DialogContext,
         eventName: string,
-        telemetryProperties?: { [key: string]: string },
-        telemetryMetrics?: { [key: string]: number }
+        telemetryProperties?: Record<string, string>,
+        telemetryMetrics?: Record<string, number>
     ): void {
         if (this.telemetryClient instanceof NullTelemetryClient) {
             const turnStateTelemetryClient = dialogContext.context.turnState.get(
                 DialogTurnStateConstants.telemetryClient
             );
-            this.telemetryClient = turnStateTelemetryClient || this.telemetryClient;
+            this.telemetryClient = turnStateTelemetryClient ?? this.telemetryClient;
         }
+
         this.telemetryClient.trackEvent({
             name: eventName,
             properties: telemetryProperties,
