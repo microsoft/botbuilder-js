@@ -669,11 +669,13 @@ export class ActivityHandler extends ActivityHandlerBase {
     private getAdaptiveCardInvokeValue(activity: Activity): AdaptiveCardInvokeValue {
         const { value } = activity;
         if (!value) {
-            throw this.createAdaptiveCardInvokeException(
+            const response = this.createAdaptiveCardInvokeErrorResponse(
                 StatusCodes.BAD_REQUEST,
                 'BadRequest',
                 'Missing value property'
             );
+
+            throw new InvokeException(StatusCodes.BAD_REQUEST, response);
         }
 
         const { action, authentication, state } = value;
@@ -696,16 +698,16 @@ export class ActivityHandler extends ActivityHandlerBase {
         };
     }
 
-    private createAdaptiveCardInvokeException(
+    private createAdaptiveCardInvokeErrorResponse(
         statusCode: StatusCodes,
         code: string,
         message: string
     ): AdaptiveCardInvokeResponse {
-        throw new InvokeException(statusCode, {
+        return {
             statusCode,
             type: 'application/vnd.microsoft.error',
             value: { code, message },
-        });
+        };
     }
 
     /**
