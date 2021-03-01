@@ -22,6 +22,7 @@ import {
 import { Activity, RecognizerResult } from 'botbuilder-core';
 import { Converter, ConverterFactory, DialogContext, Recognizer, RecognizerConfiguration } from 'botbuilder-dialogs';
 
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const oc = require('orchestrator-core');
 
 export interface OrchestratorAdaptiveRecognizerConfiguration extends RecognizerConfiguration {

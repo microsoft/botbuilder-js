@@ -2,12 +2,15 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
+
+/* eslint-disable @typescript-eslint/explicit-module-boundary-types */
+
 class MockResolver {
     constructor(score) {
         this._score = score;
     }
 
-    score(text) {
+    score(_text) {
         return this._score;
     }
 }
