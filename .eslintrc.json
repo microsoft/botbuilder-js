@@ -2,16 +2,6 @@
   "env": {
     "es6": true
   },
-  "extends": [
-    "eslint:recommended",
-    "plugin:security/recommended",
-    "plugin:@typescript-eslint/recommended",
-    "plugin:@typescript-eslint/eslint-recommended",
-    "prettier",
-    "plugin:prettier/recommended",
-    "prettier/@typescript-eslint",
-    "plugin:jsdoc/recommended"
-  ],
   "ignorePatterns": [
     "_ts3.4/",
     "dist/",
@@ -28,15 +18,27 @@
   },
   "plugins": [
     "@typescript-eslint",
-    "prettier",
+    "import",
     "jsdoc",
-    "security",
-    "import"
+    "lodash",
+    "prettier",
+    "security"
+  ],
+  "extends": [
+    "eslint:recommended",
+    "plugin:@typescript-eslint/eslint-recommended",
+    "plugin:@typescript-eslint/recommended",
+    "plugin:jsdoc/recommended",
+    "plugin:security/recommended",
+    "plugin:prettier/recommended"
   ],
   "settings": {
     "jsdoc": {
       "ignoreInternal": true,
-      "ignorePrivate": true
+      "ignorePrivate": true,
+      "tagNamePreference": {
+        "augments": "extends"
+      }
     }
   },
   "rules": {
@@ -60,6 +62,13 @@
         "peerDependencies": false
       }
     ],
+    "jsdoc/check-tag-names": [
+      "error",
+      {
+        "definedTags": ["remarks"]
+      }
+    ],
+    "jsdoc/empty-tags": "off",
     "jsdoc/require-jsdoc": [
       "error",
       {
@@ -71,6 +80,7 @@
     "jsdoc/require-param-type": "off",
     "jsdoc/require-returns": "error",
     "jsdoc/require-returns-type": "off",
+    "lodash/import-scope": [2],
     "no-unused-vars": "off",
     "no-var": "error",
     "prettier/prettier": "error",
@@ -79,8 +89,9 @@
   "overrides": [
     {
       "files": [
-        "*.test.js",
-        "*.test.ts"
+        "*.test.*",
+        "test/**/*",
+        "tests/**/*"
       ],
       "env": {
         "mocha": true,
@@ -89,18 +100,18 @@
       "rules": {
         "@typescript-eslint/no-var-requires": "off",
         "import/no-extraneous-dependencies": "off",
+        "jsdoc/require-jsdoc": "off",
+        "jsdoc/require-param": "off",
+        "jsdoc/require-returns": "off",
         "security/detect-non-literal-fs-filename": "off"
       }
     },
     {
       "files": [
-        "babel.config.js",
-        "webpack.config.js"
+        "*.config.js"
       ],
-      "globals": {
-        "__dirname": true,
-        "module": true,
-        "require": true
+      "env": {
+        "node": true
       },
       "rules": {
         "@typescript-eslint/no-var-requires": "off"
