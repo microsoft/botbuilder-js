@@ -665,7 +665,7 @@ export class QnAMakerDialog extends WaterfallDialog implements QnAMakerDialogCon
                 const feedbackRecords: FeedbackRecords = { feedbackRecords: records };
 
                 const qnaClient = await this.getQnAMakerClient(step);
-                await qnaClient.callTrainAsync(feedbackRecords);
+                await qnaClient.callTrain(feedbackRecords);
 
                 return await step.next(qnaResult);
             } else if (reply == dialogOptions.qnaDialogResponseOptions.cardNoMatchText) {

@@ -78,7 +78,7 @@ export interface QnAMakerClient {
      *
      * @param {FeedbackRecords} feedbackRecords Feedback records.
      */
-    callTrainAsync(feedbackRecords: FeedbackRecords): Promise<void>;
+    callTrain(feedbackRecords: FeedbackRecords): Promise<void>;
 }
 
 /**
@@ -361,7 +361,7 @@ export class QnAMaker implements QnAMakerClient, QnAMakerTelemetryClient {
      * @param {FeedbackRecords} feedbackRecords Feedback records.
      * @returns {Promise<void>} A promise representing the async operation
      */
-    public async callTrainAsync(feedbackRecords: FeedbackRecords): Promise<void> {
+    public async callTrain(feedbackRecords: FeedbackRecords): Promise<void> {
         return await this.trainUtils.callTrain(feedbackRecords);
     }
 
