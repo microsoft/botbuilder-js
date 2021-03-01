@@ -91,13 +91,25 @@ describe(`TelemetryMiddleware`, () => {
     it(`should log send and receive activities`, async () => {
         const { client, expectReceiveEvent, expectSendEvent } = makeTelemetryClient();
 
-        expectReceiveEvent({ fromName: sinon.match.string, recipientName: sinon.match.string, text: 'foo' });
-        expectSendEvent();
-        expectSendEvent({ text: 'echo:foo' });
+        expectReceiveEvent({
+            conversationId: sinon.match.string,
+            fromName: sinon.match.string,
+            recipientName: sinon.match.string,
+            text: 'foo',
+        });
 
-        expectReceiveEvent({ fromName: sinon.match.string, recipientName: sinon.match.string, text: 'bar' });
-        expectSendEvent();
-        expectSendEvent({ text: 'echo:bar' });
+        expectSendEvent({ conversationId: sinon.match.string });
+        expectSendEvent({ conversationId: sinon.match.string, text: 'echo:foo' });
+
+        expectReceiveEvent({
+            conversationId: sinon.match.string,
+            fromName: sinon.match.string,
+            recipientName: sinon.match.string,
+            text: 'bar',
+        });
+
+        expectSendEvent({ conversationId: sinon.match.string });
+        expectSendEvent({ conversationId: sinon.match.string, text: 'echo:bar' });
 
         const adapter = makeAdapter({
             makeLogger: () => new TelemetryLoggerMiddleware(client, true),
