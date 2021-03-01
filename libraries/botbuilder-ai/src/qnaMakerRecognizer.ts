@@ -338,7 +338,7 @@ export class QnAMakerRecognizer extends Recognizer implements QnAMakerRecognizer
     protected fillRecognizerResultTelemetryProperties(
         recognizerResult: RecognizerResult,
         telemetryProperties: Record<string, string>,
-        dialogContext?: DialogContext
+        dialogContext: DialogContext
     ): Record<string, string> {
         if (!dialogContext) {
             throw new Error(
