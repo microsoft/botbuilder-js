@@ -387,7 +387,7 @@ export class QnAMakerDialog extends WaterfallDialog implements QnAMakerDialogCon
             Object.assign(dialogOptions, options);
         }
 
-        return await super.beginDialog(dc, dialogOptions);
+        return super.beginDialog(dc, dialogOptions);
     }
 
     /**
@@ -441,7 +441,7 @@ export class QnAMakerDialog extends WaterfallDialog implements QnAMakerDialogCon
             const response = await qnaClient.getAnswersRaw(dc.context, dialogOptions.qnaMakerOptions);
 
             // disable interruption if we have answers.
-            return response.answers?.length > 0 || false;
+            return response.answers?.length > 0 ?? false;
         }
 
         // call base for default behavior.
@@ -508,7 +508,7 @@ export class QnAMakerDialog extends WaterfallDialog implements QnAMakerDialogCon
     }
 
     /**
-     * Displays an appropriate response based on the incoming result to the user.If an answer has been identified it
+     * Displays an appropriate response based on the incoming result to the user. If an answer has been identified it
      * is sent to the user. Alternatively, if no answer has been identified or the user has indicated 'no match' on an
      * active learning card, then an appropriate message is sent to the user.
      *
@@ -519,7 +519,7 @@ export class QnAMakerDialog extends WaterfallDialog implements QnAMakerDialogCon
         const dialogOptions: QnAMakerDialogOptions = step.activeDialog.state[this.options];
         const reply = step.context.activity.text;
 
-        if (reply == dialogOptions.qnaDialogResponseOptions.cardNoMatchText) {
+        if (reply === dialogOptions.qnaDialogResponseOptions.cardNoMatchText) {
             const activity = dialogOptions.qnaDialogResponseOptions.cardNoMatchResponse;
             await step.context.sendActivity(activity ?? this.defaultCardNoMatchResponse);
             return step.endDialog();
@@ -527,7 +527,7 @@ export class QnAMakerDialog extends WaterfallDialog implements QnAMakerDialogCon
 
         const previousQnaId = step.activeDialog.state[this.previousQnAId];
         if (previousQnaId > 0) {
-            return await super.runStep(step, 0, DialogReason.beginCalled);
+            return super.runStep(step, 0, DialogReason.beginCalled);
         }
 
         const response: QnAMakerResult[] = step.result;
@@ -538,7 +538,7 @@ export class QnAMakerDialog extends WaterfallDialog implements QnAMakerDialogCon
             await step.context.sendActivity(activity || this.defaultNoAnswer);
         }
 
-        return await step.endDialog(step.result);
+        return step.endDialog(step.result);
     }
 
     private resetOptions(dc: DialogContext, dialogOptions: QnAMakerDialogOptions) {
@@ -634,7 +634,7 @@ export class QnAMakerDialog extends WaterfallDialog implements QnAMakerDialogCon
 
         step.values[this.qnAData] = result;
         step.activeDialog.state[this.options] = dialogOptions;
-        return await step.next(result);
+        return step.next(result);
     }
 
     // If active learning options were displayed in the previous step and the user has selected an option other
@@ -648,7 +648,7 @@ export class QnAMakerDialog extends WaterfallDialog implements QnAMakerDialogCon
         const reply = step.context.activity.text;
 
         if (trainResponses?.length > 1) {
-            const qnaResult = trainResponses.filter((r) => r.questions[0] == reply);
+            const qnaResult = trainResponses.filter((r) => r.questions[0] === reply);
 
             if (qnaResult?.length > 0) {
                 const results: QnAMakerResult[] = [];
@@ -667,17 +667,17 @@ export class QnAMakerDialog extends WaterfallDialog implements QnAMakerDialogCon
                 const qnaClient = await this.getQnAMakerClient(step);
                 await qnaClient.callTrain(feedbackRecords);
 
-                return await step.next(qnaResult);
-            } else if (reply == dialogOptions.qnaDialogResponseOptions.cardNoMatchText) {
+                return step.next(qnaResult);
+            } else if (reply === dialogOptions.qnaDialogResponseOptions.cardNoMatchText) {
                 const activity = dialogOptions.qnaDialogResponseOptions.cardNoMatchResponse;
                 await step.context.sendActivity(activity || this.defaultCardNoMatchResponse);
                 return step.endDialog();
             } else {
-                return await super.runStep(step, 0, DialogReason.beginCalled);
+                return super.runStep(step, 0, DialogReason.beginCalled);
             }
         }
 
-        return await step.next(step.result);
+        return step.next(step.result);
     }
 
     // If multi turn prompts are included with the answer returned from the knowledgebase, this step constructs
