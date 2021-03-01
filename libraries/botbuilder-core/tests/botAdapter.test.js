@@ -58,12 +58,13 @@ describe('BotAdapter', () => {
     });
 
     describe('Get locale from activity', () => {
-        it('should have locale', async () => {
+        it.only('should have locale', async () => {
             const adapter = getAdapter();
             const activity = testMessage;
             activity.locale = 'de-DE';
             const handler = sandbox.fake((context) => {
                 assert('de-DE', context.activity.locale);
+                assert('de-DE', context.locale);
             });
 
             await adapter.processRequest(activity, handler);

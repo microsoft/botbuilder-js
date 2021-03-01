@@ -765,8 +765,8 @@ export class TurnContext {
      * Gets the locale stored in the turnState.
      */
     public get locale(): string | undefined {
-        const turnObj = this._turnState.get(this._turn);
-        const locale = turnObj.get(this._locale);
+        const turnObj = this._turnState[this._turn];
+        const locale = turnObj[this._locale];
         if (typeof locale === 'string') {
             return locale;
         }
@@ -778,11 +778,11 @@ export class TurnContext {
      * Sets the locale stored in the turnState.
      */
     public set locale(value: string | undefined) {
-        const turnObj = this._turnState.get(this._turn);
+        const turnObj = this._turnState[this._turn];
         if (turnObj) {
             turnObj[this._locale] = value;
         } else {
-            this._turnState[this._turn] = value;
+            this._turnState[this._turn] = { locale: value };
         }
     }
 
