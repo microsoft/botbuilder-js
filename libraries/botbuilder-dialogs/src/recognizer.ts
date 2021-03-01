@@ -12,7 +12,7 @@ import {
     NullTelemetryClient,
     RecognizerResult,
 } from 'botbuilder-core';
-import _ = require('lodash');
+import { omit } from 'lodash';
 import { Configurable } from './configurable';
 import { DialogContext } from './dialogContext';
 import { DialogTurnStateConstants } from './dialogTurnStateConstants';
@@ -119,7 +119,7 @@ export class Recognizer extends Configurable implements RecognizerConfiguration 
                     : undefined,
             Entities: recognizerResult.entities ? JSON.stringify(recognizerResult.entities) : undefined,
             AdditionalProperties: JSON.stringify(
-                _.omit(recognizerResult, ['text', 'alteredText', 'intents', 'entities'])
+                omit(recognizerResult, ['text', 'alteredText', 'intents', 'entities'])
             ),
         };
 

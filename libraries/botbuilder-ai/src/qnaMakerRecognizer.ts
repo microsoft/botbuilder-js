@@ -23,7 +23,7 @@ import {
 } from 'adaptive-expressions';
 import { RecognizerResult, Activity, getTopScoringIntent } from 'botbuilder-core';
 import { Converter, ConverterFactory, DialogContext, Recognizer, RecognizerConfiguration } from 'botbuilder-dialogs';
-import _ = require('lodash');
+import { omit } from 'lodash';
 import { QnAMaker, QnAMakerClient, QnAMakerClientKey } from './qnaMaker';
 import {
     JoinOperator,
@@ -354,7 +354,7 @@ export class QnAMakerRecognizer extends Recognizer implements QnAMakerRecognizer
                     : undefined,
             Entities: recognizerResult.entities ? JSON.stringify(recognizerResult.entities) : undefined,
             AdditionalProperties: JSON.stringify(
-                _.omit(recognizerResult, ['text', 'alteredText', 'intents', 'entities'])
+                omit(recognizerResult, ['text', 'alteredText', 'intents', 'entities'])
             ),
         };
 
