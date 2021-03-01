@@ -534,11 +534,11 @@ export class ActivityHandler extends ActivityHandlerBase {
      * @param context the context object for the current turn
      * @param invokeValue incoming activity value
      */
-    protected async onAdaptiveCardInvoke(
+    protected onAdaptiveCardInvoke(
         context: TurnContext,
         invokeValue: AdaptiveCardInvokeValue
     ): Promise<AdaptiveCardInvokeResponse> {
-        throw new InvokeException(StatusCodes.NOT_IMPLEMENTED);
+        return Promise.reject(new InvokeException(StatusCodes.NOT_IMPLEMENTED));
     }
 
     /**
