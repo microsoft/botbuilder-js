@@ -27,6 +27,7 @@ export namespace CosmosDbKeyEscape {
      * Converts the key into a DocumentID that can be used safely with CosmosDB.
      * The following characters are restricted and cannot be used in the Id property: '/', '\', '?', '#'
      * More information at https://docs.microsoft.com/en-us/dotnet/api/microsoft.azure.documents.resource.id?view=azure-dotnet#remarks
+     *
      * @param key The provided key to be escaped.
      * @param keySuffix The string to add a the end of all RowKeys.
      * @param compatibilityMode True if keys should be truncated in order to support previous CosmosDb

@@ -49,6 +49,7 @@ export interface CosmosDbStorageSettings {
     documentCollectionRequestOptions?: RequestOptions;
     /**
      * (Optional) partitionKey that are passed when the document CosmosDbStorage is created.
+     *
      * @deprecated Please use [[CosmosDbPartitionedStorage]]. See https://github.com/microsoft/botframework-sdk/issues/5467
      */
     partitionKey?: string;
@@ -102,7 +103,7 @@ export class CosmosDbStorage implements Storage {
      */
     public constructor(
         settings: CosmosDbStorageSettings,
-        connectionPolicyConfigurator: (policy: ConnectionPolicy) => void = null,
+        connectionPolicyConfigurator: (policy: ConnectionPolicy) => void = null
     ) {
         if (!settings) {
             throw new Error('The settings parameter is required.');
@@ -148,6 +149,7 @@ export class CosmosDbStorage implements Storage {
 
     /**
      * Read storage items from storage.
+     *
      * @param keys Keys of the items to read from the store.
      * @returns The read items.
      */
@@ -219,6 +221,7 @@ export class CosmosDbStorage implements Storage {
 
     /**
      * Write storage items to storage.
+     *
      * @param changes Items to write to storage, indexed by key.
      */
     public write(changes: StoreItems): Promise<void> {
@@ -279,6 +282,7 @@ export class CosmosDbStorage implements Storage {
 
     /**
      * Delete storage items from storage.
+     *
      * @param keys Keys of the items to remove from the store.
      */
     public delete(keys: string[]): Promise<void> {
