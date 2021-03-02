@@ -23,6 +23,7 @@
   "dependencies": {
     "botbuilder-runtime": "4.1.6",
     "botbuilder-runtime-core": "4.1.6",
+    "botbuilder-stdlib": "4.1.6",
     "restify": "^8.5.1",
     "runtypes": "^5.0.1"
   },

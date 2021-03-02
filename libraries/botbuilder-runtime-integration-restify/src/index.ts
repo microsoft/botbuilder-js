@@ -5,6 +5,7 @@ import * as t from 'runtypes';
 import restify from 'restify';
 import { Configuration, getRuntimeServices } from 'botbuilder-runtime';
 import { IServices, ServiceCollection } from 'botbuilder-runtime-core';
+import { tests } from 'botbuilder-stdlib';
 
 /**
  * Options for runtime restify adapter
@@ -14,10 +15,16 @@ export type Options = {
      * Port that server should listen on
      */
     port: number;
+
+    /**
+     * Path that the server will listen to for [Activities](xref:botframework-schema.Activity)
+     */
+    messagingEndpointPath: string;
 };
 
 const defaultOptions: Options = {
     port: 3978,
+    messagingEndpointPath: '/api/messages'
 };
 
 /**
@@ -30,24 +37,30 @@ const defaultOptions: Options = {
 export async function start(
     applicationRoot: string,
     settingsDirectory: string,
-    options = defaultOptions
+    options = {} as Options
 ): Promise<void> {
     const [services, configuration] = await getRuntimeServices(applicationRoot, settingsDirectory);
-    const server = await makeServer(services, configuration);
+    const { port, messagingEndpointPath } = tests.isObject(options)
+        ? { ...defaultOptions, ...options }
+        : defaultOptions;
 
-    server.listen(options.port, () => {
-        console.log(`server listening on port ${options.port}`);
+    const server = await makeServer(messagingEndpointPath, services, configuration);
+
+    server.listen(port, () => {
+        console.log(`server listening on port ${port}`);
     });
 }
 
 /**
  * Create a server using the runtime restify integration.
  *
+ * @param messagingEndpointPath path for receiving and processing [Activities](xref:botframework-schema.Activity)
  * @param services runtime service collection
  * @param configuration runtime configuration
  * @returns a restify server ready to listen for connections
  */
 export async function makeServer(
+    messagingEndpointPath: string,
     services: ServiceCollection<IServices>,
     configuration: Configuration
 ): Promise<restify.Server> {
@@ -55,7 +68,7 @@ export async function makeServer(
 
     const server = restify.createServer();
 
-    server.post('/api/messages', (req, res) => {
+    server.post(messagingEndpointPath, (req, res) => {
         adapter.processActivity(req, res, async (turnContext) => {
             await bot.run(turnContext);
         });
