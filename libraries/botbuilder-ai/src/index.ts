@@ -24,6 +24,8 @@ export {
     QNAMAKER_TRACE_NAME,
     QNAMAKER_TRACE_LABEL,
     QnAMakerTelemetryClient,
+    QnAMakerClient,
+    QnAMakerClientKey,
     QnAMaker,
 } from './qnaMaker';
 export {

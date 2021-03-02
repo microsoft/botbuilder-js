@@ -396,20 +396,6 @@ describe('RegexRecognizer Tests', () => {
         recognizer.recognize(context, activity, properties, metrics);
     });
 
-    it('check stringifyAdditionalPropertiesOfRecognizerResult', () => {
-        let recognizer = new Recognizer();
-        const additionalPropertiesInString = recognizer.stringifyAdditionalPropertiesOfRecognizerResult(
-            recognizerResultSample
-        );
-        if (additionalPropertiesInString) {
-            const additionalProperties = JSON.parse(additionalPropertiesInString);
-            assert(!('text' in additionalProperties));
-            assert(!('alteredText' in additionalProperties));
-            assert(!('intents' in additionalProperties));
-            assert(!('entities' in additionalProperties));
-        }
-    });
-
     it('check fillRecognizerResultTelemetryProperties', () => {
         let recognizer = new Recognizer();
         const telemetryProperties = {
