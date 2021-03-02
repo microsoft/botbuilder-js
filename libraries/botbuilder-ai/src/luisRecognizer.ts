@@ -7,7 +7,7 @@
  */
 import { LUISRuntimeModels as LuisModels } from '@azure/cognitiveservices-luis-runtime';
 
-import * as Url from 'url-parse';
+import Url from 'url-parse';
 import { BotTelemetryClient, NullTelemetryClient, RecognizerResult, TurnContext } from 'botbuilder-core';
 import { LuisTelemetryConstants } from './luisTelemetryConstants';
 import { isLuisRecognizerOptionsV2, LuisRecognizerV2 } from './luisRecognizerOptionsV2';
