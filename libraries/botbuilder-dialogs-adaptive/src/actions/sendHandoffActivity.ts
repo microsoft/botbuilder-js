@@ -23,7 +23,8 @@ export interface SendHandoffActivityConfiguration extends DialogConfiguration {
 }
 
 /**
- * Sends a handoff activity.
+ * Sends a handoff activity. Note that this is a single turn/step dialog (i.e. it calls
+ * this.endDialog).
  */
 export class SendHandoffActivity extends Dialog implements SendHandoffActivityConfiguration {
     public static $kind = 'Microsoft.SendHandoffActivity';
