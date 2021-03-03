@@ -37,7 +37,7 @@ const defaultOptions: Options = {
 export async function start(
     applicationRoot: string,
     settingsDirectory: string,
-    options = {} as Options
+    options: Partial<Options> = {}
 ): Promise<void> {
     const [services, configuration] = await getRuntimeServices(applicationRoot, settingsDirectory);
     const { port, messagingEndpointPath } = tests.isObject(options)
