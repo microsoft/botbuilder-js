@@ -58,7 +58,7 @@ describe('BotAdapter', () => {
     });
 
     describe('Get locale from activity', () => {
-        it.only('should have locale', async () => {
+        it('should have locale', async () => {
             const adapter = getAdapter();
             const activity = testMessage;
             activity.locale = 'de-DE';
