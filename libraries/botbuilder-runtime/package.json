@@ -1,10 +1,10 @@
 {
-  "name": "botbuilder-dialogs-adaptive-teams",
-  "author": "Microsoft Corp.",
-  "description": "Rule system for the Microsoft BotBuilder adaptive dialog system, with integration specific to Microsoft Teams.",
-  "version": "4.1.6",
+  "name": "botbuilder-runtime",
   "preview": true,
+  "author": "Microsoft Corp.",
+  "version": "4.1.6",
   "license": "MIT",
+  "description": "Bot Framework runtime",
   "keywords": [
     "botbuilder",
     "botframework",
@@ -18,7 +18,7 @@
     "type": "git",
     "url": "https://github.com/Microsoft/botbuilder-js.git"
   },
-  "main": "./lib/index.js",
+  "main": "lib/index.js",
   "types": "./lib/index.d.ts",
   "typesVersions": {
     "<3.9": {
@@ -28,33 +28,45 @@
     }
   },
   "dependencies": {
-    "adaptive-expressions": "4.1.6",
     "botbuilder": "4.1.6",
+    "botbuilder-ai": "4.1.6",
+    "botbuilder-applicationinsights": "4.1.6",
+    "botbuilder-azure-blobs": "4.1.6",
     "botbuilder-dialogs": "4.1.6",
     "botbuilder-dialogs-adaptive": "4.1.6",
     "botbuilder-dialogs-declarative": "4.1.6",
+    "botbuilder-runtime-core": "4.1.6",
     "botbuilder-stdlib": "4.1.6",
-    "lodash": "^4.17.19"
+    "botframework-connector": "4.1.6",
+    "dependency-graph": "^0.10.0",
+    "nconf": "^0.11.2",
+    "runtypes": "^5.0.1"
   },
   "devDependencies": {
-    "botbuilder-test-utils": "0.0.0",
-    "mocha": "^8.2.1"
+    "@types/nconf": "^0.10.0",
+    "mocha": "^8.2.1",
+    "nyc": "^15.1.0"
   },
   "scripts": {
     "build": "tsc -b",
-    "build-docs": "typedoc --theme markdown --entryPoint botbuilder-dialogs-adaptive-teams --excludePrivate --includeDeclarations --ignoreCompilerErrors --module amd --out ..\\..\\doc\\botbuilder-dialogs-adaptive-teams .\\lib\\index.d.ts --hideGenerator --name \"Bot Builder SDK - Adaptive Dialogs - Teams\" --readme none",
-    "build:tests": "tsc -p tests/tsconfig.json",
     "clean": "rimraf _ts3.4 lib tsconfig.tsbuildinfo",
     "lint": "eslint . --ext .js,.ts",
     "postbuild": "downlevel-dts lib _ts3.4/lib --checksum",
-    "test": "nyc mocha tests",
-    "test:compat": "api-extractor run --verbose",
-    "test:min": "nyc --silent mocha tests --reporter dot"
+    "test": "nyc mocha",
+    "test:min": "nyc --silent mocha --reporter dot"
+  },
+  "mocha": {
+    "exit": true,
+    "extension": ".test.ts",
+    "recursive": true,
+    "require": [
+      "ts-node/register",
+      "source-map-support/register"
+    ]
   },
   "files": [
     "_ts3.4",
     "lib",
-    "schemas",
     "src"
   ]
 }
