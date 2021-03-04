@@ -72,6 +72,8 @@ import {
     ReplaceDialogConfiguration,
     SendActivity,
     SendActivityConfiguration,
+    SendHandoffActivity,
+    SendHandoffActivityConfiguration,
     SetProperties,
     SetPropertiesConfiguration,
     SetProperty,
@@ -254,6 +256,7 @@ export class AdaptiveComponentRegistration extends ComponentRegistration impleme
         this._addDeclarativeType<RepeatDialog, RepeatDialogConfiguration>(RepeatDialog);
         this._addDeclarativeType<ReplaceDialog, ReplaceDialogConfiguration>(ReplaceDialog);
         this._addDeclarativeType<SendActivity, SendActivityConfiguration>(SendActivity);
+        this._addDeclarativeType<SendHandoffActivity, SendHandoffActivityConfiguration>(SendHandoffActivity);
         this._addDeclarativeType<SetProperties, SetPropertiesConfiguration>(SetProperties);
         this._addDeclarativeType<SetProperty, SetPropertyConfiguration>(SetProperty);
         this._addDeclarativeType<SignOutUser, SignOutUserConfiguration>(SignOutUser);
