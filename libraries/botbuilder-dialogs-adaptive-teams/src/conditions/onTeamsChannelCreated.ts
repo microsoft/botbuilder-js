@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 
-import { Expression, ExpressionParserInterface } from 'adaptive-expressions';
+import { Expression } from 'adaptive-expressions';
 import { Channels } from 'botbuilder';
 import { TurnPath } from 'botbuilder-dialogs';
 import { OnConversationUpdateActivity } from 'botbuilder-dialogs-adaptive';
