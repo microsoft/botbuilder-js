@@ -65,12 +65,14 @@ export class OnIntent extends OnDialogEvent implements OnIntentConfiguration {
         if (this.entities.length > 0) {
             intentExpression = Expression.andExpression(
                 intentExpression,
-                ...this.entities.map((entity) => {
-                    if (entity.startsWith('@') || entity.startsWith(TurnPath.recognized)) {
-                        return Expression.parse(`exists(${entity})`);
-                    }
-                    return Expression.parse(`exists(@${entity})`);
-                })
+                Expression.andExpression(
+                    ...this.entities.map((entity) => {
+                        if (entity.startsWith('@') || entity.startsWith(TurnPath.recognized)) {
+                            return Expression.parse(`exists(${entity})`);
+                        }
+                        return Expression.parse(`exists(@${entity})`);
+                    })
+                )
             );
         }
 
