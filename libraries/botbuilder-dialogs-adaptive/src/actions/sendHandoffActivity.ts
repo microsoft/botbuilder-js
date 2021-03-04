@@ -18,8 +18,8 @@ import {
 } from 'botbuilder-dialogs';
 
 export interface SendHandoffActivityConfiguration extends DialogConfiguration {
-    context?: string | Expression | ObjectExpression<any>;
-    transcript?: string | Expression | ObjectExpression<any>;
+    context?: string | Expression | ObjectExpression<Record<string, unknown>>;
+    transcript?: string | Expression | ObjectExpression<Transcript>;
 }
 
 /**
