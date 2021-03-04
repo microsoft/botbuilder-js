@@ -22,7 +22,7 @@ import {
     ConversationReference,
     QueueStorage,
     TurnContext,
-} from 'botbuilder-core';
+} from 'botbuilder';
 import {
     Converter,
     ConverterFactory,

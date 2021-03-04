@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 import { ExpressionParserInterface, Expression, ExpressionType } from 'adaptive-expressions';
-import { RecognizerResult } from 'botbuilder-core';
+import { RecognizerResult } from 'botbuilder';
 import { Dialog, TurnPath } from 'botbuilder-dialogs';
 import { OnDialogEvent, OnDialogEventConfiguration } from './onDialogEvent';
 import { ActionContext } from '../actionContext';

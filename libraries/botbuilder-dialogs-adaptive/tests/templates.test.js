@@ -5,7 +5,7 @@ const {
     TurnContext,
     TestAdapter,
     ActivityFactory,
-} = require('botbuilder-core');
+} = require('botbuilder');
 const { DialogContext, DialogSet } = require('botbuilder-dialogs');
 const { TextTemplate, languageGeneratorKey, TemplateEngineLanguageGenerator, ActivityTemplate, StaticActivityTemplate } = require('../lib');
 

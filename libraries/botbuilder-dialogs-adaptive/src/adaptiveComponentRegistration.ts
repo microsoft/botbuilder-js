@@ -7,7 +7,7 @@
  */
 
 import { Expression } from 'adaptive-expressions';
-import { ComponentRegistration } from 'botbuilder-core';
+import { ComponentRegistration } from 'botbuilder';
 import {
     ResourceExplorer,
     ComponentDeclarativeTypes,
