@@ -14,10 +14,10 @@ import {
 } from 'adaptive-expressions';
 import { Converter, ConverterFactory } from 'botbuilder-dialogs';
 import { OnCondition } from '../conditions/onCondition';
-import { TriggerSelector, TriggerSelectorConfiguration } from '../triggerSelector';
+import { TriggerSelector } from '../triggerSelector';
 import { ActionContext } from '../actionContext';
 
-export interface ConditionalSelectorConfiguration extends TriggerSelectorConfiguration {
+export interface ConditionalSelectorConfiguration {
     condition?: boolean | string | Expression | BoolExpression;
     ifTrue?: TriggerSelector;
     ifFalse?: TriggerSelector;

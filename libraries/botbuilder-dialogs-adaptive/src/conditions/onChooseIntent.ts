@@ -6,8 +6,8 @@
  * Licensed under the MIT License.
  */
 
+import { Expression } from 'adaptive-expressions';
 import { Dialog, TurnPath } from 'botbuilder-dialogs';
-import { Expression, ExpressionParserInterface } from 'adaptive-expressions';
 import { OnIntent, OnIntentConfiguration } from './onIntent';
 
 export interface OnChooseIntentConfiguration extends OnIntentConfiguration {
@@ -24,27 +24,30 @@ export class OnChooseIntent extends OnIntent implements OnChooseIntentConfigurat
 
     /**
      * Initializes a new instance of the [OnChooseIntent](xref:botbuilder-dialogs-adaptive.OnChooseIntent) class.
-     * @param actions Optional. A [Dialog](xref:botbuilder-dialogs.Dialog) list containing the actions to add to the plan when the rule constraints are met.
-     * @param condition Optional. Condition which needs to be met for the actions to be executed.
+     *
+     * @param {Dialog[]} actions Optional, actions to add to the plan when the rule constraints are met.
+     * @param {string} condition Optional, condition which needs to be met for the actions to be executed.
      */
-    public constructor(actons: Dialog[] = [], condition?: string) {
-        super('ChooseIntent', [], actons, condition);
+    public constructor(actions: Dialog[] = [], condition?: string) {
+        super('ChooseIntent', [], actions, condition);
     }
 
     /**
-     * Get the expression for this rule.
-     * @param parser [ExpressionParserInterface](xref:adaptive-expressions.ExpressionParserInterface) used to parse a string into an [Expression](xref:adaptive-expressions.Expression).
-     * @returns [Expression](xref:adaptive-expressions.Expression) which will be cached and used to evaluate this rule.
+     * Create the expression for this condition.
+     *
+     * @returns [Expression](xref:adaptive-expressions.Expression) used to evaluate this rule.
      */
-    public getExpression(parser: ExpressionParserInterface): Expression {
-        if (this.intents.length > 0) {
+    protected createExpression(): Expression {
+        if (this.intents?.length) {
             const constraints = this.intents.map(
                 (intent: string): Expression => {
-                    return parser.parse(`contains(jPath(${TurnPath.recognized}, '.candidates.intent'), '${intent}')`);
+                    return Expression.parse(
+                        `contains(jPath(${TurnPath.recognized}, '.candidates.intent'), '${intent}')`
+                    );
                 }
             );
-            return Expression.andExpression(super.getExpression(parser), ...constraints);
+            return Expression.andExpression(super.createExpression(), ...constraints);
         }
-        return super.getExpression(parser);
+        return super.createExpression();
     }
 }
