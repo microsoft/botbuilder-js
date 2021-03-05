@@ -5,22 +5,23 @@ import * as t from 'runtypes';
 import express from 'express';
 import { Configuration, getRuntimeServices } from 'botbuilder-runtime';
 import { IServices, ServiceCollection } from 'botbuilder-runtime-core';
-import { tests } from 'botbuilder-stdlib';
 
 /**
  * Options for runtime Express adapter
  */
-export type Options = {
+const TypedOptions = t.Record({
     /**
      * Port that server should listen on
      */
-    port: number;
+    port: t.Number,
 
     /**
      * Path that the server will listen to for [Activities](xref:botframework-schema.Activity)
      */
-    messagingEndpointPath: string;
-};
+    messagingEndpointPath: t.String,
+});
+
+export type Options = t.Static<typeof TypedOptions>;
 
 const defaultOptions: Options = {
     messagingEndpointPath: '/api/messages',
@@ -37,12 +38,11 @@ const defaultOptions: Options = {
 export async function start(
     applicationRoot: string,
     settingsDirectory: string,
-    options: Partial<Options> = {}
+    options: Partial<Options> = defaultOptions
 ): Promise<void> {
+    TypedOptions.check(options);
     const [services, configuration] = await getRuntimeServices(applicationRoot, settingsDirectory);
-    const { port, messagingEndpointPath } = tests.isObject(options)
-        ? { ...defaultOptions, ...options }
-        : defaultOptions;
+    const { port, messagingEndpointPath } = Object.assign({}, defaultOptions, options);
 
     const app = await makeApp(messagingEndpointPath, services, configuration);
     const { bot } = await services.mustMakeInstances('bot');

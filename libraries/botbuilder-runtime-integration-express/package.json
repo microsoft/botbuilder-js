@@ -29,7 +29,6 @@
   "dependencies": {
     "botbuilder-runtime": "4.1.6",
     "botbuilder-runtime-core": "4.1.6",
-    "botbuilder-stdlib": "4.1.6",
     "express": "^4.17.1",
     "runtypes": "^5.0.1"
   }
