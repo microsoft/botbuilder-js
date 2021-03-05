@@ -5,8 +5,8 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
+import { Expression } from 'adaptive-expressions';
 import { Dialog, TurnPath } from 'botbuilder-dialogs';
-import { Expression, ExpressionType, ExpressionParserInterface } from 'adaptive-expressions';
 import { OnDialogEvent, OnDialogEventConfiguration } from './onDialogEvent';
 import { AdaptiveEvents } from '../adaptiveEvents';
 
@@ -27,9 +27,10 @@ export class OnActivity extends OnDialogEvent implements OnActivityConfiguration
 
     /**
      * Initializes a new instance of the [OnActivity](xref:botbuilder-dialogs-adaptive.OnActivity) class.
-     * @param type Optional. ActivityType which must be matched for this event to trigger.
-     * @param actions Optional. A [Dialog](xref:botbuilder-dialogs.Dialog) list containing the actions to add to the plan when the rule constraints are met.
-     * @param condition Optional. Condition which needs to be met for the actions to be executed.
+     *
+     * @param type Optional, ActivityType which must be matched for this event to trigger.
+     * @param actions Optional, actions to add to the plan when the rule constraints are met.
+     * @param condition Optional, condition which needs to be met for the actions to be executed.
      */
     public constructor(type?: string, actions: Dialog[] = [], condition?: string) {
         super(AdaptiveEvents.activityReceived, actions, condition);
@@ -37,13 +38,15 @@ export class OnActivity extends OnDialogEvent implements OnActivityConfiguration
     }
 
     /**
-     * Gets this activity representing expression.
-     * @param parser [ExpressionParserInterface](xref:adaptive-expressions.ExpressionParserInterface) used to parse a string into an [Expression](xref:adaptive-expressions.Expression).
-     * @returns An [Expression](xref:adaptive-expressions.Expression) representing the [Activity](xref:botframework-schema.Activity).
+     * Create expression for this condition.
+     *
+     * @returns {Expression} An [Expression](xref:adaptive-expressions.Expression) used to evaluate this rule.
      */
-    public getExpression(parser: ExpressionParserInterface): Expression {
+    protected createExpression(): Expression {
         // add constraints for activity type
-        const expression = parser.parse(`${TurnPath.activity}.type == '${this.type}'`);
-        return Expression.makeExpression(ExpressionType.And, undefined, expression, super.getExpression(parser));
+        return Expression.andExpression(
+            Expression.parse(`${TurnPath.activity}.type == '${this.type}'`),
+            super.createExpression()
+        );
     }
 }
