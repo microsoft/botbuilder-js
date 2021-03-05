@@ -115,16 +115,21 @@ describe('QnAMakerRecognizer', function () {
 
         beforeEach(() => {
             spy = spyOnTelemetryClientTrackEvent(recognizer);
+
+            nock.disableNetConnect();
+            nock(hostname)
+                .post(/knowledgebases/)
+                .replyWithFile(200, testDataFolder + 'QnaMaker_ReturnsAnswer.json');
         });
 
         afterEach(() => {
             spy.restore();
+
+            nock.cleanAll();
+            nock.enableNetConnect();
         });
 
         it('logs PII when logPersonalInformation is true', async () => {
-            nock(hostname)
-                .post(/knowledgebases/)
-                .replyWithFile(200, testDataFolder + 'QnaMaker_ReturnsAnswer.json');
             const activity = createMessageActivity(qnaIntentText);
             const dialogContext = createContext(activity);
             recognizer.logPersonalInformation = true;
@@ -141,9 +146,6 @@ describe('QnAMakerRecognizer', function () {
         });
 
         it('does not log PII when logPersonalInformation is false', async () => {
-            nock(hostname)
-                .post(/knowledgebases/)
-                .replyWithFile(200, testDataFolder + 'QnaMaker_ReturnsAnswer.json');
             const activity = createMessageActivity(qnaIntentText);
             const dialogContext = createContext(activity);
             recognizer.logPersonalInformation = false;
@@ -160,10 +162,6 @@ describe('QnAMakerRecognizer', function () {
         });
 
         it('should refrain from logging PII by default', async () => {
-            nock(hostname)
-                .post(/knowledgebases/)
-                .replyWithFile(200, testDataFolder + 'QnaMaker_ReturnsAnswer.json');
-
             const recognizerWithDefaultLogPii = new QnAMakerRecognizer(hostname, knowledgeBaseId, endpointKey);
             const trackEventSpy = spyOnTelemetryClientTrackEvent(recognizerWithDefaultLogPii);
             const activity = createMessageActivity(qnaIntentText);
