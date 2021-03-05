@@ -25,7 +25,7 @@ export class Bool extends ComparisonEvaluator {
     /**
      * @private
      */
-    private static func(args: any[]): boolean {
+    private static func(args: readonly unknown[]): boolean {
         return InternalFunctionUtils.isLogicTrue(args[0]);
     }
 }

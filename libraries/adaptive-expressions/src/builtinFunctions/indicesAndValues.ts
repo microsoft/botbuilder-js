@@ -11,6 +11,7 @@ import { Expression } from '../expression';
 import { ExpressionEvaluator, ValueWithError } from '../expressionEvaluator';
 import { ExpressionType } from '../expressionType';
 import { FunctionUtils } from '../functionUtils';
+import { MemoryInterface } from '../memory/memoryInterface';
 import { Options } from '../options';
 import { ReturnType } from '../returnType';
 
@@ -35,10 +36,10 @@ export class IndicesAndValues extends ExpressionEvaluator {
     /**
      * @private
      */
-    private static evaluator(expression: Expression, state: any, options: Options): ValueWithError {
-        let result: object = undefined;
+    private static evaluator(expression: Expression, state: MemoryInterface, options: Options): ValueWithError {
+        let result: unknown[] = undefined;
         let error: string = undefined;
-        let value: any = undefined;
+        let value: unknown = undefined;
         ({ value, error } = expression.children[0].tryEvaluate(state, options));
         if (error === undefined) {
             if (Array.isArray(value)) {

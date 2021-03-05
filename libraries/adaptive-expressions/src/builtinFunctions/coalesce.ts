@@ -27,13 +27,13 @@ export class Coalesce extends ExpressionEvaluator {
      * @private
      */
     private static evaluator(): EvaluateExpressionDelegate {
-        return FunctionUtils.apply((args: any[][]): any => Coalesce.evalCoalesce(args as any[]));
+        return FunctionUtils.apply((args: readonly unknown[]) => Coalesce.evalCoalesce(args));
     }
 
     /**
      * @private
      */
-    private static evalCoalesce(objectList: any[]): any {
+    private static evalCoalesce(objectList: readonly unknown[]): unknown {
         for (const obj of objectList) {
             if (obj !== null && obj !== undefined) {
                 return obj;

@@ -29,16 +29,18 @@ export class JPath extends ExpressionEvaluator {
      * @private
      */
     private static evaluator(): EvaluateExpressionDelegate {
-        return FunctionUtils.applyWithError((args: any[][]): any => JPath.evalJPath(args[0], args[1].toString()));
+        return FunctionUtils.applyWithError(
+            (args: readonly unknown[]): ValueWithError => JPath.evalJPath(args[0], args[1].toString())
+        );
     }
 
     /**
      * @private
      */
-    private static evalJPath(jsonEntity: object | string, path: string): ValueWithError {
+    private static evalJPath(jsonEntity: unknown, path: string): ValueWithError {
         let error: string;
-        let evaled: any;
-        let json: object;
+        let evaled: unknown;
+        let json: Record<string, unknown>;
         if (typeof jsonEntity === 'string') {
             try {
                 json = JSON.parse(jsonEntity);
@@ -46,7 +48,7 @@ export class JPath extends ExpressionEvaluator {
                 error = `${jsonEntity} is not a valid json string`;
             }
         } else if (typeof jsonEntity === 'object') {
-            json = jsonEntity;
+            json = jsonEntity as Record<string, unknown>;
         } else {
             error = 'the first parameter should be either an object or a string';
         }

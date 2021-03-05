@@ -31,7 +31,7 @@ export class FormatNumber extends ExpressionEvaluator {
      * @private
      */
     private static evaluator(): EvaluateExpressionDelegate {
-        return FunctionUtils.applyWithOptionsAndError((args: unknown[], options: Options): {
+        return FunctionUtils.applyWithOptionsAndError((args: readonly unknown[], options: Options): {
             value: unknown;
             error: string;
         } => {

@@ -24,12 +24,12 @@ export class XPath extends ExpressionEvaluator {
     }
 
     private static evaluator(): EvaluateExpressionDelegate {
-        return FunctionUtils.applyWithError((args: unknown[]): { value: unknown; error: string } =>
+        return FunctionUtils.applyWithError((args: readonly unknown[]): { value: unknown; error: string } =>
             XPath.platformSpecificXPath(args)
         );
     }
 
-    private static platformSpecificXPath(args: unknown[]): { value: unknown; error: string } {
+    private static platformSpecificXPath(args: readonly unknown[]): { value: unknown; error: string } {
         if (typeof window !== 'undefined' || typeof self !== 'undefined') {
             // this is for evaluating in browser environment, however it is not covered by any test currently
             let error: string;
@@ -97,6 +97,6 @@ export class XPath extends ExpressionEvaluator {
      * @private
      */
     private static validator(expression: Expression): void {
-        FunctionUtils.validateOrder(expression, undefined, ReturnType.Object, ReturnType.String);
+        FunctionUtils.validateOrder(expression, undefined, ReturnType.String, ReturnType.String);
     }
 }

@@ -26,7 +26,7 @@ export class JsonStringify extends ExpressionEvaluator {
      * @private
      */
     private static evaluator(): EvaluateExpressionDelegate {
-        return FunctionUtils.apply((args: any[]): string => {
+        return FunctionUtils.apply((args: readonly unknown[]): string => {
             return JSON.stringify(args[0]);
         });
     }

@@ -11,6 +11,7 @@ import { Expression } from '../expression';
 import { ExpressionEvaluator, ValueWithError } from '../expressionEvaluator';
 import { ExpressionType } from '../expressionType';
 import { FunctionUtils } from '../functionUtils';
+import { MemoryInterface } from '../memory/memoryInterface';
 import { Options } from '../options';
 import { ReturnType } from '../returnType';
 
@@ -30,7 +31,7 @@ export class StringOrValue extends ExpressionEvaluator {
     /**
      * @private
      */
-    private static evaluator(expression: Expression, state: any, options: Options): ValueWithError {
+    private static evaluator(expression: Expression, state: MemoryInterface, options: Options): ValueWithError {
         const { value: stringInput, error: childrenError } = expression.children[0].tryEvaluate(state, options);
         let error = childrenError;
 

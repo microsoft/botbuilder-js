@@ -26,7 +26,7 @@ export class Base64 extends ExpressionEvaluator {
      * @private
      */
     private static evaluator(): EvaluateExpressionDelegate {
-        return FunctionUtils.apply((args: Readonly<any>): string | Uint8Array => {
+        return FunctionUtils.apply((args: readonly unknown[]): string | Uint8Array => {
             let result: string;
             if (typeof args[0] === 'string') {
                 result = Buffer.from(args[0]).toString('base64');

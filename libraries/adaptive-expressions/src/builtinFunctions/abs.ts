@@ -23,7 +23,7 @@ export class Abs extends NumberTransformEvaluator {
     /**
      * @private
      */
-    private static func(args: any[]): number {
+    private static func(args: readonly number[]): number {
         return Math.abs(args[0]);
     }
 }

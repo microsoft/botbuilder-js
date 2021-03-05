@@ -14,13 +14,13 @@ import { ReturnType } from './returnType';
  * Delegate for doing static validation on an expression.
  * Validators can and should throw exceptions if the expression is not valid.
  */
-export type ValidateExpressionDelegate = (expression: Expression) => any;
+export type ValidateExpressionDelegate = (expression: Expression) => void;
 
 /**
  * Value result with error.
  */
 export type ValueWithError = {
-    value: any;
+    value: unknown;
     error: string;
 };
 
@@ -74,7 +74,7 @@ export class ExpressionEvaluator {
         this._validator =
             validator ||
             // eslint-disable-next-line @typescript-eslint/no-unused-vars
-            ((_expr: Expression): any => {
+            ((_expr: Expression) => {
                 //noop
             });
     }

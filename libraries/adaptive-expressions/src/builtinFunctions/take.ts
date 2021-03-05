@@ -10,6 +10,7 @@ import { Expression } from '../expression';
 import { ExpressionEvaluator, ValueWithError } from '../expressionEvaluator';
 import { ExpressionType } from '../expressionType';
 import { FunctionUtils } from '../functionUtils';
+import { MemoryInterface } from '../memory/memoryInterface';
 import { Options } from '../options';
 import { ReturnType } from '../returnType';
 
@@ -27,24 +28,25 @@ export class Take extends ExpressionEvaluator {
     /**
      * @private
      */
-    private static evaluator(expression: Expression, state: any, options: Options): ValueWithError {
-        let result: any;
+    private static evaluator(expression: Expression, state: MemoryInterface, options: Options): ValueWithError {
+        let result: unknown;
         const { value: arr, error: childrenError } = expression.children[0].tryEvaluate(state, options);
         let error = childrenError;
 
         if (!error) {
             if (Array.isArray(arr) || typeof arr === 'string') {
-                let start: number;
-
                 const startExpr: Expression = expression.children[1];
-                ({ value: start, error } = startExpr.tryEvaluate(state, options));
-                if (!error && !Number.isInteger(start)) {
+                const startEvaluateResult = startExpr.tryEvaluate(state, options);
+                let start = startEvaluateResult.value;
+                error = startEvaluateResult.error;
+
+                if (!error && !FunctionUtils.isInteger(start)) {
                     error = `${startExpr} is not an integer.`;
                 }
 
                 if (!error) {
-                    start = Math.max(start, 0);
-                    result = arr.slice(0, start);
+                    start = Math.max(start as number, 0);
+                    result = arr.slice(0, start as number);
                 }
             } else {
                 error = `${expression.children[0]} is not array or string.`;

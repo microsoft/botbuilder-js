@@ -29,37 +29,41 @@ export class Substring extends ExpressionEvaluator {
      * @private
      */
     private static evaluator(expression: Expression, state: MemoryInterface, options: Options): ValueWithError {
-        let result: any;
+        let result: unknown;
         const { value: str, error: childrenError } = expression.children[0].tryEvaluate(state, options);
         let error = childrenError;
 
         if (!error) {
             if (typeof str === 'string') {
-                let start: number;
-
                 const startExpr: Expression = expression.children[1];
-                ({ value: start, error } = startExpr.tryEvaluate(state, options));
-                if (!error && !Number.isInteger(start)) {
+                const startEvaluateResult = startExpr.tryEvaluate(state, options);
+                const start = startEvaluateResult.value;
+                error = startEvaluateResult.error;
+
+                if (!error && !FunctionUtils.isInteger(start)) {
                     error = `${startExpr} is not an integer.`;
                 } else if (start < 0 || start >= str.length) {
                     error = `${startExpr}=${start} which is out of range for ${str}`;
                 }
                 if (!error) {
-                    let length: number;
+                    let length: unknown;
                     if (expression.children.length === 2) {
                         // Without length, compute to end
-                        length = str.length - start;
+                        length = str.length - (start as number);
                     } else {
                         const lengthExpr: Expression = expression.children[2];
-                        ({ value: length, error } = lengthExpr.tryEvaluate(state, options));
-                        if (!error && !Number.isInteger(length)) {
+                        const lengthEvaluateResult = lengthExpr.tryEvaluate(state, options);
+                        length = lengthEvaluateResult.value;
+                        error = lengthEvaluateResult.error;
+
+                        if (!error && !FunctionUtils.isInteger(length)) {
                             error = `${lengthExpr} is not an integer`;
-                        } else if (length < 0 || Number(start) + Number(length) > str.length) {
+                        } else if (length < 0 || (start as number) + (length as number) > str.length) {
                             error = `${lengthExpr}=${length} which is out of range for ${str}`;
                         }
                     }
                     if (!error) {
-                        result = str.substr(start, length);
+                        result = str.substr(start as number, length as number);
                     }
                 }
             } else if (str === undefined) {

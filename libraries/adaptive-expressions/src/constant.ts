@@ -48,7 +48,7 @@ export class Constant extends Expression {
      * Constructs an expression constant.
      * @param value Constant value.
      */
-    public constructor(value: any) {
+    public constructor(value: unknown) {
         super(
             ExpressionType.Constant,
             new ExpressionEvaluator(
@@ -91,7 +91,7 @@ export class Constant extends Expression {
             let result = this.value;
 
             result = result.replace(/\\/g, '\\\\');
-            result = this.reverseString(this.reverseString(result).replace(this.singleQuotRegex, (): any => "'\\"));
+            result = this.reverseString(this.reverseString(result).replace(this.singleQuotRegex, () => "'\\"));
             return `'${result}'`;
         } else if (typeof this.value === 'number') {
             return this.value.toString();

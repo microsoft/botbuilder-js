@@ -10,7 +10,7 @@ import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 dayjs.extend(utc);
 import { Expression } from '../expression';
-import { EvaluateExpressionDelegate, ExpressionEvaluator } from '../expressionEvaluator';
+import { EvaluateExpressionDelegate, ExpressionEvaluator, ValueWithError } from '../expressionEvaluator';
 import { ExpressionType } from '../expressionType';
 import { FunctionUtils } from '../functionUtils';
 import { InternalFunctionUtils } from '../functionUtils.internal';
@@ -33,9 +33,10 @@ export class FormatDateTime extends ExpressionEvaluator {
      * @private
      */
     private static evaluator(): EvaluateExpressionDelegate {
-        return FunctionUtils.applyWithOptionsAndError((args: unknown[], options: Options): any => {
+        return FunctionUtils.applyWithOptionsAndError(
+            (args: readonly unknown[], options: Options): ValueWithError => {
             let error: string;
-            let arg: any = args[0];
+            let arg: Date | string = args[0] as Date | string;
             let locale = options.locale ? options.locale : Intl.DateTimeFormat().resolvedOptions().locale;
             let format = FunctionUtils.DefaultDateTimeFormat;
             if (typeof arg === 'string') {
@@ -43,7 +44,7 @@ export class FormatDateTime extends ExpressionEvaluator {
             } else {
                 arg = arg.toISOString();
             }
-            let value: any;
+            let value: unknown;
             if (!error) {
                 ({ format, locale } = FunctionUtils.determineFormatAndLocale(args, 3, format, locale));
                 let dateString: string;
@@ -68,6 +69,6 @@ export class FormatDateTime extends ExpressionEvaluator {
      * @private
      */
     private static validator(expression: Expression): void {
-        FunctionUtils.validateOrder(expression, [ReturnType.String, ReturnType.String], ReturnType.String);
+        FunctionUtils.validateOrder(expression, [ReturnType.String, ReturnType.String], ReturnType.Object);
     }
 }

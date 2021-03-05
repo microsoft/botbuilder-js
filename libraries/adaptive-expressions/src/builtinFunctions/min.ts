@@ -26,15 +26,15 @@ export class Min extends ExpressionEvaluator {
      * @private
      */
     private static evaluator(): EvaluateExpressionDelegate {
-        return FunctionUtils.apply((args: any[]): number => {
+        return FunctionUtils.apply((args: readonly unknown[]): number => {
             let result = Number.POSITIVE_INFINITY;
             if (args.length === 1) {
                 if (Array.isArray(args[0])) {
-                    for (const value of args[0]) {
+                    for (const value of args[0] as number[]) {
                         result = Math.min(result, value);
                     }
                 } else {
-                    result = Math.min(result, args[0]);
+                    result = Math.min(result, args[0] as number);
                 }
             } else {
                 for (const arg of args) {
@@ -43,7 +43,7 @@ export class Min extends ExpressionEvaluator {
                             result = Math.min(result, value);
                         }
                     } else {
-                        result = Math.min(result, arg);
+                        result = Math.min(result, arg as number);
                     }
                 }
             }

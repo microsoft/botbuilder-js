@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 
-import { EvaluateExpressionDelegate, ExpressionEvaluator } from '../expressionEvaluator';
+import { EvaluateExpressionDelegate, ExpressionEvaluator, ValueWithError } from '../expressionEvaluator';
 import { ExpressionType } from '../expressionType';
 import { FunctionUtils } from '../functionUtils';
 import { InternalFunctionUtils } from '../functionUtils.internal';
@@ -27,17 +27,13 @@ export class DayOfWeek extends ExpressionEvaluator {
      * @private
      */
     private static evaluator(): EvaluateExpressionDelegate {
-        return FunctionUtils.applyWithError(
-            (args: any[]): any =>
-            {
-                const error = InternalFunctionUtils.verifyISOTimestamp(args[0]);
-                if (!error) {
-                    return {value: new Date(args[0]).getUTCDay(), error}
-                }
+        return FunctionUtils.applyWithError((args: readonly unknown[]): ValueWithError => {
+            const error = InternalFunctionUtils.verifyISOTimestamp(args[0]);
+            if (!error) {
+                return { value: new Date(args[0] as string).getUTCDay(), error };
+            }
 
-                return {value: undefined, error}
-            },
-            FunctionUtils.verifyString
-        );
+            return { value: undefined, error };
+        }, FunctionUtils.verifyString);
     }
 }

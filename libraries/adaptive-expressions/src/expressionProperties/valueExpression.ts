@@ -26,7 +26,7 @@ export class ValueExpression extends ExpressionProperty<any> {
      * Initializes a new instance of the [ValueExpression](xref:adaptive-expressions.ValueExpression) class.
      * @param value An object of `any` kind or a `string` expression.
      */
-    public constructor(value?: any | string | Expression) {
+    public constructor(value?: unknown | string | Expression) {
         super(value);
     }
 
@@ -34,10 +34,10 @@ export class ValueExpression extends ExpressionProperty<any> {
      * Set value as value expression.
      * @param value Value to set.
      */
-    public setValue(value: any | string | Expression): void {
+    public setValue(value: unknown | string | Expression): void {
         super.setValue(undefined);
 
-        if (typeof value == 'string') {
+        if (typeof value === 'string') {
             if (value.startsWith('=')) {
                 this.expressionText = value;
                 return;
@@ -47,7 +47,7 @@ export class ValueExpression extends ExpressionProperty<any> {
             }
 
             // keep the string as quoted expression, which will be literal unless string interpolation is used.
-            this.expressionText = `=\`${value.replace('`', '\\`')}\``;
+            this.expressionText = `=\`${(value as string).replace('`', '\\`')}\``;
             return;
         }
 

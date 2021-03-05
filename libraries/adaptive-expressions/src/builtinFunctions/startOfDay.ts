@@ -33,15 +33,16 @@ export class StartOfDay extends ExpressionEvaluator {
      * @private
      */
     private static evaluator(expression: Expression, state: MemoryInterface, options: Options): ValueWithError {
-        let value: any;
+        let value: unknown;
         let locale = options.locale ? options.locale : Intl.DateTimeFormat().resolvedOptions().locale;
         let format = FunctionUtils.DefaultDateTimeFormat;
         const { args, error: childrenError } = FunctionUtils.evaluateChildren(expression, state, options);
         let error = childrenError;
         if (!error) {
             ({ format, locale } = FunctionUtils.determineFormatAndLocale(args, 3, format, locale));
-            if (typeof args[0] === 'string') {
-                ({ value, error } = StartOfDay.evalStartOfDay(args[0], format, locale));
+            const firstChild = args[0];
+            if (typeof firstChild === 'string') {
+                ({ value, error } = StartOfDay.evalStartOfDay(firstChild, format, locale));
             } else {
                 error = `${expression} should contain an ISO format timestamp and an optional output format string.`;
             }

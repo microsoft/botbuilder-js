@@ -27,9 +27,9 @@ export class Flatten extends ExpressionEvaluator {
      * @private
      */
     private static evaluator(): EvaluateExpressionDelegate {
-        return FunctionUtils.apply((args: any[]): any[] => {
-            const array = args[0];
-            const depth = args.length > 1 ? args[1] : 100;
+        return FunctionUtils.apply((args: readonly unknown[]): unknown[] => {
+            const array = args[0] as unknown[];
+            const depth = args.length > 1 ? (args[1] as number) : 100;
             return Flatten.evalFlatten(array, depth);
         });
     }
@@ -37,14 +37,14 @@ export class Flatten extends ExpressionEvaluator {
     /**
      * @private
      */
-    private static evalFlatten(arr: any[], dept: number): any[] {
+    private static evalFlatten(arr: unknown[], dept: number): unknown[] {
         if (!FunctionUtils.isNumber(dept) || dept < 1) {
             dept = 1;
         }
 
         let res = JSON.parse(JSON.stringify(arr));
 
-        const reduceArr = (_arr): any => _arr.reduce((prevItem, curItem): any => prevItem.concat(curItem), []);
+        const reduceArr = (_arr): unknown => _arr.reduce((prevItem, curItem): unknown => prevItem.concat(curItem), []);
 
         for (let i = 0; i < dept; i++) {
             const hasArrayItem = res.some((item): boolean => Array.isArray(item));

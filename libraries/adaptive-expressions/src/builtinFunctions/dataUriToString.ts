@@ -32,7 +32,8 @@ export class DataUriToString extends ExpressionEvaluator {
      */
     private static evaluator(): EvaluateExpressionDelegate {
         return FunctionUtils.apply(
-            (args: any[]): string => Buffer.from(args[0].slice(args[0].indexOf(',') + 1), 'base64').toString(),
+            (args: readonly unknown[]): string =>
+                Buffer.from((args[0] as string).slice((args[0] as string).indexOf(',') + 1), 'base64').toString(),
             FunctionUtils.verifyString
         );
     }

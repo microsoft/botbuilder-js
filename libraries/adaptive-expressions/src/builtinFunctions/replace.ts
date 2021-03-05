@@ -7,7 +7,7 @@
  */
 
 import { Expression } from '../expression';
-import { EvaluateExpressionDelegate, ExpressionEvaluator } from '../expressionEvaluator';
+import { EvaluateExpressionDelegate, ExpressionEvaluator, ValueWithError } from '../expressionEvaluator';
 import { ExpressionType } from '../expressionType';
 import { FunctionUtils } from '../functionUtils';
 import { InternalFunctionUtils } from '../functionUtils.internal';
@@ -29,17 +29,17 @@ export class Replace extends ExpressionEvaluator {
      * @private
      */
     private static evaluator(): EvaluateExpressionDelegate {
-        return FunctionUtils.applyWithError((args: any[]): any => {
+        return FunctionUtils.applyWithError((args: readonly unknown[]): ValueWithError => {
             let error = undefined;
             let result = undefined;
-            if (InternalFunctionUtils.parseStringOrUndefined(args[1]).length === 0) {
+            if (InternalFunctionUtils.parseStringOrUndefined(args[1] as string).length === 0) {
                 error = `${args[1]} should be a string with length at least 1`;
             }
 
             if (!error) {
-                result = InternalFunctionUtils.parseStringOrUndefined(args[0])
-                    .split(InternalFunctionUtils.parseStringOrUndefined(args[1]))
-                    .join(InternalFunctionUtils.parseStringOrUndefined(args[2]));
+                result = InternalFunctionUtils.parseStringOrUndefined(args[0] as string)
+                    .split(InternalFunctionUtils.parseStringOrUndefined(args[1] as string))
+                    .join(InternalFunctionUtils.parseStringOrUndefined(args[2] as string));
             }
 
             return { value: result, error };

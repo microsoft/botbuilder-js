@@ -23,7 +23,7 @@ export class Floor extends NumberTransformEvaluator {
     /**
      * @private
      */
-    private static func(args: any[]): number {
+    private static func(args: readonly number[]): number {
         return Math.floor(args[0]);
     }
 }

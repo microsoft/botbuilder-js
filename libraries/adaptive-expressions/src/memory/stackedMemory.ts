@@ -33,7 +33,7 @@ export class StackedMemory extends Array<MemoryInterface> implements MemoryInter
      * @param path Given path.
      * @returns The value from the given path if found, otherwise, undefined.
      */
-    public getValue(path: string): any {
+    public getValue(path: string): unknown {
         if (this.length === 0) {
             return undefined;
         } else {
@@ -52,7 +52,7 @@ export class StackedMemory extends Array<MemoryInterface> implements MemoryInter
      * @param _path Memory path.
      * @param _value Value to set.
      */
-    public setValue(_path: string, _value: any): void {
+    public setValue(_path: string, _value: unknown): void {
         throw new Error(`Can't set value to ${_path}, stacked memory is read-only`);
     }
 

@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 
-import { EvaluateExpressionDelegate, ExpressionEvaluator } from '../expressionEvaluator';
+import { EvaluateExpressionDelegate, ExpressionEvaluator, ValueWithError } from '../expressionEvaluator';
 import { ExpressionType } from '../expressionType';
 import { FunctionUtils } from '../functionUtils';
 import { ReturnType } from '../returnType';
@@ -26,13 +26,13 @@ export class Range extends ExpressionEvaluator {
      * @private
      */
     private static evaluator(): EvaluateExpressionDelegate {
-        return FunctionUtils.applyWithError((args: any[]): any => {
+        return FunctionUtils.applyWithError((args: readonly unknown[]): ValueWithError => {
             let error: string;
             if (args[1] <= 0) {
                 error = 'Second paramter must be more than zero';
             }
 
-            const result: number[] = [...Array(args[1]).keys()].map((u: number): number => u + Number(args[0]));
+            const result: number[] = [...Array(args[1]).keys()].map((u: number): number => u + (args[0] as number));
 
             return { value: result, error };
         }, FunctionUtils.verifyInteger);

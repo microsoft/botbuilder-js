@@ -6,6 +6,7 @@
  * Licensed under the MIT License.
  */
 import { Expression } from '../expression';
+import { MemoryInterface } from '../memory/memoryInterface';
 
 /**
  * Base class which defines an Expression or value for a property.
@@ -85,7 +86,7 @@ export class ExpressionProperty<T> {
      * @param data Data to use for expression binding.
      * @returns The value.
      */
-    public getValue(data: object): T {
+    public getValue(data: MemoryInterface | unknown): T {
         const { value, error } = this.tryGetValue(data);
         if (error) {
             throw error;
@@ -99,13 +100,14 @@ export class ExpressionProperty<T> {
      * @param data Data to use for expression binding.
      * @returns the value or an error.
      */
-    public tryGetValue(data: object): { value: T; error: Error } {
+    public tryGetValue(data: MemoryInterface | unknown): { value: T; error: Error } {
         if (!this.expression && this.expressionText) {
             this.expression = Expression.parse(this.expressionText.replace(/^=/, ''));
         }
 
         if (this.expression) {
-            return this.expression.tryEvaluate(data) as any;
+            const result = this.expression.tryEvaluate(data);
+            return { value: result.value as T, error: result.error ? new Error(result.error) : undefined };
         }
 
         return { value: this.value, error: undefined };

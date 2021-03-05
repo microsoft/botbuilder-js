@@ -10,6 +10,7 @@ import { Expression } from '../expression';
 import { ExpressionEvaluator, ValueWithError } from '../expressionEvaluator';
 import { ExpressionType } from '../expressionType';
 import { FunctionUtils } from '../functionUtils';
+import { MemoryInterface } from '../memory/memoryInterface';
 import { Options } from '../options';
 import { ReturnType } from '../returnType';
 
@@ -27,8 +28,8 @@ export class Skip extends ExpressionEvaluator {
     /**
      * @private
      */
-    private static evaluator(expression: Expression, state: any, options: Options): ValueWithError {
-        let result: any;
+    private static evaluator(expression: Expression, state: MemoryInterface, options: Options): ValueWithError {
+        let result: unknown;
         const { value: arr, error: childrenError } = expression.children[0].tryEvaluate(state, options);
         let error = childrenError;
         if (!error) {
@@ -36,8 +37,11 @@ export class Skip extends ExpressionEvaluator {
                 let start: number;
 
                 const startExpr: Expression = expression.children[1];
-                ({ value: start, error } = startExpr.tryEvaluate(state, options));
-                if (!error && !Number.isInteger(start)) {
+                const evaluateResult = startExpr.tryEvaluate(state, options);
+                start = evaluateResult.value as number;
+                error = evaluateResult.error;
+
+                if (!error && !FunctionUtils.isInteger(start)) {
                     error = `${startExpr} is not an integer.`;
                 }
 

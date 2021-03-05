@@ -24,10 +24,10 @@ export class XML extends ExpressionEvaluator {
     }
 
     private static evaluator(): EvaluateExpressionDelegate {
-        return FunctionUtils.applyWithError((args: unknown[]): { value: unknown; error: string } => XML.platformSpecificXML(args));
+        return FunctionUtils.applyWithError((args: readonly unknown[]): { value: unknown; error: string } => XML.platformSpecificXML(args));
     }
 
-    private static platformSpecificXML(args: unknown[]): { value: unknown; error: string } {
+    private static platformSpecificXML(args: readonly unknown[]): { value: unknown; error: string } {
         if (typeof window !== 'undefined' || typeof self !== 'undefined') {
             // this is for evaluating in browser environment, however it is not covered by any test currently
             // x2js package can run on browser environment, see ref: https://www.npmjs.com/package/x2js
@@ -36,16 +36,17 @@ export class XML extends ExpressionEvaluator {
             let result: unknown;
             let error: string;
             let obj: unknown;
+            const firstChild = args[0];
             try {
-                if (typeof args[0] === 'string') {
-                    obj = JSON.parse(args[0] as string);
-                } else if (typeof args[0] === 'object') {
-                    obj = args[0];
+                if (typeof firstChild === 'string') {
+                    obj = JSON.parse(firstChild);
+                } else if (typeof firstChild === 'object') {
+                    obj = firstChild;
                 }
 
                 result = new X2JS.json2xml_str(obj);
             } catch (err) {
-                error = `${args[0]} is not a valid json`;
+                error = `${firstChild} is not a valid json`;
             }
 
             return { value: result, error: error };
@@ -56,17 +57,18 @@ export class XML extends ExpressionEvaluator {
             // eslint-disable-next-line @typescript-eslint/no-var-requires
             const xml2js = require('xml2js');
             let obj: unknown;
+            const firstChild = args[0];
             try {
-                if (typeof args[0] === 'string') {
-                    obj = JSON.parse(args[0] as string);
-                } else if (typeof args[0] === 'object') {
-                    obj = args[0];
+                if (typeof firstChild === 'string') {
+                    obj = JSON.parse(firstChild);
+                } else if (typeof firstChild === 'object') {
+                    obj = firstChild;
                 }
 
                 const builder = new xml2js.Builder();
                 result = builder.buildObject(obj);
             } catch (err) {
-                error = `${args[0]} is not a valid json`;
+                error = `${firstChild} is not a valid json`;
             }
 
             return { value: result, error: error };

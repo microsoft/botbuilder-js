@@ -28,7 +28,7 @@ export class IsFloat extends ExpressionEvaluator {
      */
     private static evaluator(): EvaluateExpressionDelegate {
         return FunctionUtils.apply(
-            (args: any[]): boolean => FunctionUtils.isNumber(args[0]) && !Number.isInteger(args[0])
+            (args: readonly unknown[]): boolean => FunctionUtils.isNumber(args[0]) && !FunctionUtils.isInteger(args[0])
         );
     }
 }

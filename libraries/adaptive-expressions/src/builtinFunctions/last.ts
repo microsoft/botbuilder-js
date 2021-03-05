@@ -27,14 +27,15 @@ export class Last extends ExpressionEvaluator {
      * @private
      */
     private static evaluator(): EvaluateExpressionDelegate {
-        return FunctionUtils.apply((args: any[]): any => {
-            let last: any;
-            if (typeof args[0] === 'string' && args[0].length > 0) {
-                last = args[0][args[0].length - 1];
+        return FunctionUtils.apply((args: readonly unknown[]): unknown => {
+            let last: unknown;
+            const firstChild = args[0];
+            if (typeof firstChild === 'string' && firstChild.length > 0) {
+                last = firstChild[firstChild.length - 1];
             }
 
-            if (Array.isArray(args[0]) && args[0].length > 0) {
-                last = InternalFunctionUtils.accessIndex(args[0], args[0].length - 1).value;
+            if (Array.isArray(firstChild) && firstChild.length > 0) {
+                last = InternalFunctionUtils.accessIndex(firstChild, firstChild.length - 1).value;
             }
 
             return last;

@@ -11,7 +11,7 @@ import { ANTLRErrorListener, RecognitionException, Recognizer } from 'antlr4ts';
 /**
  * Expression parser error listener.
  */
-export class ParseErrorListener implements ANTLRErrorListener<any> {
+export class ParseErrorListener implements ANTLRErrorListener<void> {
     public static readonly Instance: ParseErrorListener = new ParseErrorListener();
 
     /**
@@ -24,6 +24,7 @@ export class ParseErrorListener implements ANTLRErrorListener<any> {
      * @param _e The `RecognitionException`.
      */
     public syntaxError<T>(
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         _recognizer: Recognizer<T, any>,
         _offendingSymbol: T,
         line: number,

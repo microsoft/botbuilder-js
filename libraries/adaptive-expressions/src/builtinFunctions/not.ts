@@ -31,7 +31,7 @@ export class Not extends ExpressionEvaluator {
      * @private
      */
     private static evaluator(expression: Expression, state: MemoryInterface, options: Options): ValueWithError {
-        let result = false;
+        let result: unknown = false;
         let error: string;
         const newOptions = new Options(options);
         newOptions.nullSubstitution = undefined;

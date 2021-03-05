@@ -10,7 +10,7 @@ import { ExpressionEvaluator } from './expressionEvaluator';
 import { ExpressionFunctions } from './expressionFunctions';
 import { FunctionUtils } from './functionUtils';
 
-type customFunction = (args: any[]) => any;
+type customFunction = (args: unknown[]) => unknown;
 
 /**
  * FunctionTable is a dictionary which merges BuiltinFunctions.Functions with a CustomDictionary.
@@ -151,7 +151,7 @@ export class FunctionTable implements Map<string, ExpressionEvaluator> {
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         _callbackfn: (value: ExpressionEvaluator, key: string, map: Map<string, ExpressionEvaluator>) => void,
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        _thisArg?: any
+        _thisArg?: unknown
     ): void {
         throw Error(`forEach function not implemented`);
     }

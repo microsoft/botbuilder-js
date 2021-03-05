@@ -29,8 +29,8 @@ export class Union extends ExpressionEvaluator {
      * @private
      */
     private static evaluator(): EvaluateExpressionDelegate {
-        return FunctionUtils.apply((args: any[]): any => {
-            let result: any[] = [];
+        return FunctionUtils.apply((args: readonly unknown[]): unknown => {
+            let result: unknown[] = [];
             for (const arg of args) {
                 result = result.concat(arg);
             }

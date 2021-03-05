@@ -17,7 +17,7 @@ export class Extensions {
      * TODO: is there any better solution?
      * To judge if an object is implements MemoryInterface. Same with 'is MemoryInterface' in C#
      */
-    public static isMemoryInterface(obj: any): boolean {
+    public static isMemoryInterface(obj: unknown): boolean {
         if (obj === undefined) {
             return false;
         }
@@ -30,9 +30,9 @@ export class Extensions {
             'getValue' in obj &&
             'setValue' in obj &&
             'version' in obj &&
-            typeof obj.getValue === 'function' &&
-            typeof obj.setValue === 'function' &&
-            typeof obj.version === 'function'
+            typeof obj['getValue'] === 'function' &&
+            typeof obj['setValue'] === 'function' &&
+            typeof obj['version'] === 'function'
         );
     }
 

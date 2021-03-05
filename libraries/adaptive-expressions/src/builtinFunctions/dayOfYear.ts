@@ -11,7 +11,7 @@ import dayOfYear from 'dayjs/plugin/dayOfYear';
 dayjs.extend(dayOfYear);
 import utc from 'dayjs/plugin/utc';
 dayjs.extend(utc);
-import { EvaluateExpressionDelegate, ExpressionEvaluator } from '../expressionEvaluator';
+import { EvaluateExpressionDelegate, ExpressionEvaluator, ValueWithError } from '../expressionEvaluator';
 import { ExpressionType } from '../expressionType';
 import { FunctionUtils } from '../functionUtils';
 import { InternalFunctionUtils } from '../functionUtils.internal';
@@ -32,17 +32,18 @@ export class DayOfYear extends ExpressionEvaluator {
      * @private
      */
     private static evaluator(): EvaluateExpressionDelegate {
-        return FunctionUtils.applyWithError(
-            (args: any[]): any =>
-            {
-                const error = InternalFunctionUtils.verifyISOTimestamp(args[0]);
-                if (!error) {
-                    return {value: dayjs(args[0]).utc().dayOfYear(), error}
-                }
+        return FunctionUtils.applyWithError((args: readonly unknown[]): ValueWithError => {
+            const error = InternalFunctionUtils.verifyISOTimestamp(args[0]);
+            if (!error) {
+                return {
+                    value: dayjs(args[0] as string)
+                        .utc()
+                        .dayOfYear(),
+                    error,
+                };
+            }
 
-                return {value: undefined, error}
-            },
-            FunctionUtils.verifyString
-        );
+            return { value: undefined, error };
+        }, FunctionUtils.verifyString);
     }
 }

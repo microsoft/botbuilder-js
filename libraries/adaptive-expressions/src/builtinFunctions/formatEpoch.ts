@@ -9,7 +9,7 @@
 import dayjs from 'dayjs';
 
 import { Expression } from '../expression';
-import { EvaluateExpressionDelegate, ExpressionEvaluator } from '../expressionEvaluator';
+import { EvaluateExpressionDelegate, ExpressionEvaluator, ValueWithError } from '../expressionEvaluator';
 import { ExpressionType } from '../expressionType';
 import { FunctionUtils } from '../functionUtils';
 import { Options } from '../options';
@@ -30,9 +30,9 @@ export class FormatEpoch extends ExpressionEvaluator {
      * @private
      */
     private static evaluator(): EvaluateExpressionDelegate {
-        return FunctionUtils.applyWithOptionsAndError((args: unknown[], options: Options): any => {
+        return FunctionUtils.applyWithOptionsAndError((args: readonly unknown[], options: Options): ValueWithError => {
             let error: string;
-            let arg: any = args[0];
+            let arg: unknown = args[0];
             let locale = options.locale ? options.locale : Intl.DateTimeFormat().resolvedOptions().locale;
             let format = FunctionUtils.DefaultDateTimeFormat;
             if (typeof arg !== 'number') {
@@ -42,10 +42,10 @@ export class FormatEpoch extends ExpressionEvaluator {
                 arg = arg * 1000;
             }
 
-            let value: any;
+            let value: unknown;
             if (!error) {
                 ({ format, locale } = FunctionUtils.determineFormatAndLocale(args, 3, format, locale));
-                const dateString: string = new Date(arg).toISOString();
+                const dateString: string = new Date(arg as number).toISOString();
                 value = dayjs(dateString).locale(locale).utc().format(format);
             }
 

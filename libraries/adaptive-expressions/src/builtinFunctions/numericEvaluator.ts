@@ -19,14 +19,14 @@ export class NumericEvaluator extends ExpressionEvaluator {
      * @param type Name of the built-in function.
      * @param func The evaluation function, it takes a list of objects and returns a number.
      */
-    public constructor(type: string, func: (args: any[]) => any) {
+    public constructor(type: string, func: (args: readonly unknown[]) => unknown) {
         super(type, NumericEvaluator.evaluator(func), ReturnType.Number, FunctionUtils.validateNumber);
     }
 
     /**
      * @private
      */
-    private static evaluator(func: (args: any[]) => any): EvaluateExpressionDelegate {
+    private static evaluator(func: (args: readonly unknown[]) => unknown): EvaluateExpressionDelegate {
         return FunctionUtils.applySequence(func, FunctionUtils.verifyNumber);
     }
 }

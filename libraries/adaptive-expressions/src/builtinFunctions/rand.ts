@@ -27,9 +27,9 @@ export class Rand extends ExpressionEvaluator {
     }
 
     private static evaluator(expression: Expression, state: MemoryInterface, options: Options): ValueWithError {
-        let result;
-        let minValue;
-        let maxValue;
+        let result: unknown;
+        let minValue: unknown;
+        let maxValue: unknown;
         let error: string;
 
         const [maybeMinValue, maybeMaxValue] = expression.children;
@@ -38,7 +38,7 @@ export class Rand extends ExpressionEvaluator {
         if (error) {
             return { value: undefined, error };
         }
-        if (!Number.isInteger(minValue)) {
+        if (!FunctionUtils.isInteger(minValue)) {
             return { value: undefined, error: `${minValue} is not an integer.` };
         }
 
@@ -46,14 +46,14 @@ export class Rand extends ExpressionEvaluator {
         if (error) {
             return { value: undefined, error };
         }
-        if (!Number.isInteger(maxValue)) {
+        if (!FunctionUtils.isInteger(maxValue)) {
             return { value: undefined, error: `${maxValue} is not an integer.` };
         }
 
         if (minValue > maxValue) {
             error = `Min value ${minValue} cannot be greater than max value ${maxValue}.`;
         } else {
-            result = Extensions.randomNext(state, minValue, maxValue);
+            result = Extensions.randomNext(state, minValue as number, maxValue as number);
         }
 
         return { value: result, error };

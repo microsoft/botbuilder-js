@@ -33,7 +33,7 @@ export class FormatTicks extends ExpressionEvaluator {
      */
     private static evaluator(): EvaluateExpressionDelegate {
         return FunctionUtils.applyWithOptionsAndError(
-            (args: unknown[], options: Options): ValueWithError => {
+            (args: readonly unknown[], options: Options): ValueWithError => {
                 let error: string;
                 let arg = args[0];
                 let locale = options.locale ? options.locale : Intl.DateTimeFormat().resolvedOptions().locale;
@@ -54,7 +54,7 @@ export class FormatTicks extends ExpressionEvaluator {
                         .toJSNumber();
                 }
 
-                let value: any;
+                let value: unknown;
                 if (!error) {
                     ({ format, locale } = FunctionUtils.determineFormatAndLocale(args, 3, format, locale));
                     if (typeof arg === 'number') {

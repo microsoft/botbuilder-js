@@ -27,14 +27,15 @@ export class First extends ExpressionEvaluator {
      * @private
      */
     private static evaluator(): EvaluateExpressionDelegate {
-        return FunctionUtils.apply((args: any[]): any => {
-            let first: any;
-            if (typeof args[0] === 'string' && args[0].length > 0) {
-                first = args[0][0];
+        return FunctionUtils.apply((args: readonly unknown[]): unknown => {
+            let first: unknown;
+            const firstChild = args[0];
+            if (typeof firstChild === 'string' && firstChild.length > 0) {
+                first = firstChild[0];
             }
 
-            if (Array.isArray(args[0]) && args[0].length > 0) {
-                first = InternalFunctionUtils.accessIndex(args[0], 0).value;
+            if (Array.isArray(firstChild) && firstChild.length > 0) {
+                first = InternalFunctionUtils.accessIndex(firstChild, 0).value;
             }
 
             return first;

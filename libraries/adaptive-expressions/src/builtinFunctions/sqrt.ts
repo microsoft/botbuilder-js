@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 
-import { EvaluateExpressionDelegate, ExpressionEvaluator } from '../expressionEvaluator';
+import { EvaluateExpressionDelegate, ExpressionEvaluator, ValueWithError } from '../expressionEvaluator';
 import { ExpressionType } from '../expressionType';
 import { FunctionUtils } from '../functionUtils';
 import { ReturnType } from '../returnType';
@@ -26,21 +26,17 @@ export class Sqrt extends ExpressionEvaluator {
      * @private
      */
     private static evaluator(): EvaluateExpressionDelegate {
-        return FunctionUtils.applyWithError(
-            (args: any[]): any =>
-            {
-                let error: string;
-                let value: any;
-                const originalNumber = Number(args[0]);
-                if (originalNumber < 0) {
-                    error = 'Do not support square root extraction of negative numbers.';
-                } else {
-                    value = Math.sqrt(originalNumber);
-                }
+        return FunctionUtils.applyWithError((args: readonly unknown[]): ValueWithError => {
+            let error: string;
+            let value: unknown;
+            const originalNumber = args[0] as number;
+            if (originalNumber < 0) {
+                error = 'Do not support square root extraction of negative numbers.';
+            } else {
+                value = Math.sqrt(originalNumber);
+            }
 
-                return {value, error}
-            },
-            FunctionUtils.verifyNumber
-        );
+            return { value, error };
+        }, FunctionUtils.verifyNumber);
     }
 }

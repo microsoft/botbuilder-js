@@ -26,6 +26,6 @@ export class CreateArray extends ExpressionEvaluator {
      * @private
      */
     private static evaluator(): EvaluateExpressionDelegate {
-        return FunctionUtils.apply((args: any[]): any[] => Array.from(args));
+        return FunctionUtils.apply((args: readonly unknown[]): unknown[] => Array.from(args));
     }
 }

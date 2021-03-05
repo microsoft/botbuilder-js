@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 
-import { EvaluateExpressionDelegate, ExpressionEvaluator } from '../expressionEvaluator';
+import { EvaluateExpressionDelegate, ExpressionEvaluator, ValueWithError } from '../expressionEvaluator';
 import { ExpressionType } from '../expressionType';
 import { FunctionUtils } from '../functionUtils';
 import { ReturnType } from '../returnType';
@@ -26,9 +26,10 @@ export class Float extends ExpressionEvaluator {
      * @private
      */
     private static evaluator(): EvaluateExpressionDelegate {
-        return FunctionUtils.applyWithError((args: any[]): any => {
+        return FunctionUtils.applyWithError(
+            (args: readonly unknown[]): ValueWithError => {
             let error: string;
-            const value: number = parseFloat(args[0]);
+            const value: number = parseFloat(String(args[0]));
             if (!FunctionUtils.isNumber(value)) {
                 error = `parameter ${args[0]} is not a valid number string.`;
             }

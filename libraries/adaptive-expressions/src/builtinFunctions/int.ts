@@ -7,7 +7,7 @@
  */
 
 import bigInt from 'big-integer';
-import { EvaluateExpressionDelegate, ExpressionEvaluator } from '../expressionEvaluator';
+import { EvaluateExpressionDelegate, ExpressionEvaluator, ValueWithError } from '../expressionEvaluator';
 import { ExpressionType } from '../expressionType';
 import { FunctionUtils } from '../functionUtils';
 import { ReturnType } from '../returnType';
@@ -27,12 +27,12 @@ export class Int extends ExpressionEvaluator {
      * @private
      */
     private static evaluator(): EvaluateExpressionDelegate {
-        return FunctionUtils.applyWithError((args: any[]): any => {
+        return FunctionUtils.applyWithError((args: readonly unknown[]): ValueWithError => {
             let error: string;
             if (bigInt.isInstance(args[0])) {
-                return {value: args[0].toJSNumber(), error}
+                    return { value: (args[0] as bigInt.BigInteger).toJSNumber(), error };
             }
-            const value: number = parseInt(args[0], 10);
+            const value: number = parseInt(String(args[0]), 10);
             if (!FunctionUtils.isNumber(value)) {
                 error = `parameter ${args[0]} is not a valid number string.`;
             }

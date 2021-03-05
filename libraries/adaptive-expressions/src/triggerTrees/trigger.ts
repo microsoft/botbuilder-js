@@ -85,7 +85,7 @@ export class Trigger {
      * @param action Action to take when a trigger matches.
      * @param quantifiers Quantifiers to dynamically expand the expression.
      */
-    public constructor(tree: TriggerTree, expression?: Expression, action?: any, ...quantifiers: Quantifier[]) {
+    public constructor(tree: TriggerTree, expression?: Expression, action?: unknown, ...quantifiers: Quantifier[]) {
         this._tree = tree;
         this.action = action;
         this.originalExpression = expression;
@@ -159,7 +159,7 @@ export class Trigger {
      * @param state The scope for looking up variables.
      * @returns A boolean value inidicating whether there is a member matches.
      */
-    public matches(nodeClause: Clause, state: MemoryInterface | any): boolean {
+    public matches(nodeClause: Clause, state: MemoryInterface | unknown): boolean {
         return this.clauses.find((clause: Clause) => clause.matches(nodeClause, state)) !== undefined;
     }
 

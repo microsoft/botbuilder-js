@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 
-import { EvaluateExpressionDelegate, ExpressionEvaluator } from '../expressionEvaluator';
+import { EvaluateExpressionDelegate, ExpressionEvaluator, ValueWithError } from '../expressionEvaluator';
 import { ExpressionType } from '../expressionType';
 import { FunctionUtils } from '../functionUtils';
 import { ReturnType } from '../returnType';
@@ -26,10 +26,10 @@ export class Round extends ExpressionEvaluator {
      * @private
      */
     private static evaluator(): EvaluateExpressionDelegate {
-        return FunctionUtils.applyWithError((args: any[]): any => {
-            let result: any;
+        return FunctionUtils.applyWithError((args: readonly unknown[]): ValueWithError => {
+            let result: unknown;
             let error: string;
-            if (args.length === 2 && !Number.isInteger(args[1])) {
+            if (args.length === 2 && !FunctionUtils.isInteger(args[1])) {
                 error = `The second parameter ${args[1]} must be an integer.`;
             }
 
@@ -38,7 +38,7 @@ export class Round extends ExpressionEvaluator {
                 if (digits < 0 || digits > 15) {
                     error = `The second parameter ${args[1]} must be an integer between 0 and 15;`;
                 } else {
-                    result = Round.roundToPrecision(args[0], digits);
+                    result = Round.roundToPrecision(args[0] as number, digits);
                 }
             }
 

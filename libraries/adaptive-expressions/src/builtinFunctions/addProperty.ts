@@ -7,7 +7,7 @@
  */
 
 import { Expression } from '../expression';
-import { EvaluateExpressionDelegate, ExpressionEvaluator } from '../expressionEvaluator';
+import { EvaluateExpressionDelegate, ExpressionEvaluator, ValueWithError } from '../expressionEvaluator';
 import { ExpressionType } from '../expressionType';
 import { FunctionUtils } from '../functionUtils';
 import { ReturnType } from '../returnType';
@@ -28,18 +28,24 @@ export class AddProperty extends ExpressionEvaluator {
      * @private
      */
     private static evaluator(): EvaluateExpressionDelegate {
-        return FunctionUtils.applyWithError((args: any[]): any => {
-            let error: string;
-            const temp: any = args[0];
-            const prop = String(args[1]);
-            if (prop in temp) {
-                error = `${prop} already exists`;
-            } else {
-                temp[String(args[1])] = args[2];
-            }
+        return FunctionUtils.applyWithError(
+            (args: readonly unknown[]): ValueWithError => {
+                let error: string;
+                if (typeof args[0] !== 'object') {
+                    return { value: undefined, error: `${args[0]} is not a valid object.` };
+                }
 
-            return { value: temp, error };
-        });
+                const temp: Record<string, unknown> = args[0] as Record<string, unknown>;
+                const prop = args[1] as string;
+                if (prop in temp) {
+                    error = `${prop} already exists`;
+                } else {
+                    temp[args[1] as string] = args[2];
+                }
+
+                return { value: temp, error };
+            }
+        );
     }
 
     /**

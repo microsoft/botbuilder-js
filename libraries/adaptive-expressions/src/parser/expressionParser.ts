@@ -246,7 +246,7 @@ export class ExpressionParser implements ExpressionParserInterface {
         }
 
         private evalEscape(text: string): string {
-            const validCharactersDict: any = {
+            const validCharactersDict: Record<string, string> = {
                 '\\r': '\r',
                 '\\n': '\n',
                 '\\t': '\t',

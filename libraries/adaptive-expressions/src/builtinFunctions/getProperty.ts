@@ -31,8 +31,8 @@ export class GetProperty extends ExpressionEvaluator {
      * @private
      */
     private static evaluator(expression: Expression, state: MemoryInterface, options: Options): ValueWithError {
-        let value: any;
-        let property: any;
+        let value: unknown;
+        let property: unknown;
 
         const children: Expression[] = expression.children;
         const { value: firstItem, error: childrenError } = children[0].tryEvaluate(state, options);

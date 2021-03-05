@@ -29,9 +29,9 @@ export class Split extends ExpressionEvaluator {
      */
     private static evaluator(): EvaluateExpressionDelegate {
         return FunctionUtils.apply(
-            (args: any[]): string[] =>
-                InternalFunctionUtils.parseStringOrUndefined(args[0]).split(
-                    InternalFunctionUtils.parseStringOrUndefined(args[1] || '')
+            (args: readonly unknown[]): string[] =>
+                InternalFunctionUtils.parseStringOrUndefined(args[0] as string).split(
+                    InternalFunctionUtils.parseStringOrUndefined((args[1] as string) || '')
                 ),
             FunctionUtils.verifyStringOrNull
         );

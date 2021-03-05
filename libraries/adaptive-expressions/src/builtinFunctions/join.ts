@@ -29,21 +29,22 @@ export class Join extends ExpressionEvaluator {
      * @private
      */
     private static evaluator(expression: Expression, state: MemoryInterface, options: Options): ValueWithError {
-        let value: any;
+        let value: unknown;
         const { args, error: childrenError } = FunctionUtils.evaluateChildren(expression, state, options);
         let error = childrenError;
         if (!error) {
-            if (!Array.isArray(args[0])) {
-                error = `${expression.children[0]} evaluates to ${args[0]} which is not a list.`;
+            const firstChild = args[0];
+            if (!Array.isArray(firstChild)) {
+                error = `${expression.children[0]} evaluates to ${firstChild} which is not a list.`;
             } else {
                 if (args.length === 2) {
-                    value = args[0].join(args[1]);
+                    value = firstChild.join(args[1] as string);
                 } else {
-                    if (args[0].length < 3) {
-                        value = args[0].join(args[2]);
+                    if (firstChild.length < 3) {
+                        value = firstChild.join(args[2] as string);
                     } else {
-                        const firstPart: string = args[0].slice(0, args[0].length - 1).join(args[1]);
-                        value = firstPart.concat(args[2], args[0][args[0].length - 1]);
+                        const firstPart: string = firstChild.slice(0, firstChild.length - 1).join(args[1] as string);
+                        value = firstPart.concat(args[2] as string, firstChild[firstChild.length - 1] as string);
                     }
                 }
             }

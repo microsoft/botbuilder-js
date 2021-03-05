@@ -31,7 +31,7 @@ export class Or extends ExpressionEvaluator {
      * @private
      */
     private static evaluator(expression: Expression, state: MemoryInterface, options: Options): ValueWithError {
-        let result = false;
+        let result: unknown = false;
         let error: string;
         for (const child of expression.children) {
             const newOptions = new Options(options);

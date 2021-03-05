@@ -24,10 +24,10 @@ export class Trim extends StringTransformEvaluator {
     /**
      * @private
      */
-    private static evaluator(args: unknown[]): string {
+    private static evaluator(args: readonly unknown[]): string {
         const firstArg = args[0];
         if (typeof firstArg === 'string' || firstArg === undefined) {
-            return String(InternalFunctionUtils.parseStringOrUndefined(firstArg)).trim();
+            return InternalFunctionUtils.parseStringOrUndefined(firstArg).trim();
         }
     }
 }

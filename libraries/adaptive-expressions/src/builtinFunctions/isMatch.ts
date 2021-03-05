@@ -9,7 +9,7 @@
 import { CommonRegex } from '../commonRegex';
 import { Constant } from '../constant';
 import { Expression } from '../expression';
-import { EvaluateExpressionDelegate, ExpressionEvaluator } from '../expressionEvaluator';
+import { EvaluateExpressionDelegate, ExpressionEvaluator, ValueWithError } from '../expressionEvaluator';
 import { ExpressionType } from '../expressionType';
 import { FunctionUtils } from '../functionUtils';
 import { ReturnType } from '../returnType';
@@ -29,7 +29,7 @@ export class IsMatch extends ExpressionEvaluator {
      * @private
      */
     private static evaluator(): EvaluateExpressionDelegate {
-        return FunctionUtils.applyWithError((args: any[]): any => {
+        return FunctionUtils.applyWithError((args: readonly unknown[]): ValueWithError => {
             let value = false;
             let error: string;
             if (args[0] === undefined || args[0] === '') {

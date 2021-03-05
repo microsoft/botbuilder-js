@@ -28,6 +28,6 @@ export class IsObject extends ExpressionEvaluator {
      * @private
      */
     private static evaluator(): EvaluateExpressionDelegate {
-        return FunctionUtils.apply((args: any[]): boolean => typeof args[0] === 'object');
+        return FunctionUtils.apply((args: readonly unknown[]): boolean => typeof args[0] === 'object');
     }
 }

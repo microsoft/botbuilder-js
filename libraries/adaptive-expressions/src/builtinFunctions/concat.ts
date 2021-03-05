@@ -31,7 +31,7 @@ export class Concat extends ExpressionEvaluator {
      * @private
      */
     private static evaluator(): EvaluateExpressionDelegate {
-        return FunctionUtils.applySequence((args: any[]): string => {
+        return FunctionUtils.applySequence((args: readonly unknown[]): unknown => {
             const firstItem = args[0];
             const secondItem = args[1];
             const isFirstList = Array.isArray(firstItem);
@@ -44,7 +44,7 @@ export class Concat extends ExpressionEvaluator {
             } else if ((secondItem === null || secondItem === undefined) && isFirstList) {
                 return firstItem;
             } else if (isFirstList && isSecondList) {
-                return firstItem.concat(secondItem);
+                return (firstItem as Array<unknown>).concat(secondItem);
             } else {
                 return Concat.commonStringify(firstItem) + Concat.commonStringify(secondItem);
             }
@@ -54,7 +54,7 @@ export class Concat extends ExpressionEvaluator {
     /**
      * @private
      */
-    private static commonStringify(input: any): string {
+    private static commonStringify(input: unknown): string {
         if (input === null || input === undefined) {
             return '';
         }

@@ -25,17 +25,17 @@ export class Divide extends MultivariateNumericEvaluator {
     /**
      * @private
      */
-    private static func(args: any[]): number {
-        return Math.floor(Number(args[0]) / Number(args[1]));
+    private static func(args: readonly unknown[]): number {
+        return Math.floor((args[0] as number) / (args[1] as number));
     }
 
     /**
      * @private
      */
-    private static verify(val: any, expression: Expression, pos: number): string {
+    private static verify(val: unknown, expression: Expression, pos: number): string {
         let error: string = FunctionUtils.verifyNumber(val, expression, pos);
 
-        if (!error && pos > 0 && Number(val) === 0) {
+        if (!error && pos > 0 && (val as number) === 0) {
             error = `Cannot divide by 0 from ${expression}`;
         }
 

@@ -31,8 +31,8 @@ export class String extends ExpressionEvaluator {
      */
     private static evaluator(): EvaluateExpressionDelegate {
         return FunctionUtils.applyWithOptionsAndError(
-            (args: any[], options: Options): ValueWithError => {
-                let result: any;
+            (args: readonly unknown[], options: Options): ValueWithError => {
+                let result: string;
                 let error: string;
                 let locale = options.locale ? options.locale : Intl.DateTimeFormat().resolvedOptions().locale;
                 if (!error) {
@@ -40,11 +40,12 @@ export class String extends ExpressionEvaluator {
                 }
 
                 if (!error) {
-                    if (typeof args[0] === 'string') {
-                        result = args[0];
-                    } else if (typeof args[0] === 'number') {
+                    const firstChild = args[0];
+                    if (typeof firstChild === 'string') {
+                        result = firstChild;
+                    } else if (typeof firstChild === 'number') {
                         const formatLocale = localeInfo[locale];
-                        const tempStrValue = args[0].toString();
+                        const tempStrValue = firstChild.toString();
                         let precision = 0;
                         if (tempStrValue.includes('.')) {
                             precision = tempStrValue.split('.')[1].length;
@@ -52,14 +53,14 @@ export class String extends ExpressionEvaluator {
 
                         const fixedNotation = `,.${precision}f`;
                         if (formatLocale !== undefined) {
-                            result = d3formatLocale(formatLocale).format(fixedNotation)(args[0]);
+                            result = d3formatLocale(formatLocale).format(fixedNotation)(firstChild);
                         } else {
-                            result = d3format(fixedNotation)(args[0]);
+                            result = d3format(fixedNotation)(firstChild);
                         }
-                    } else if (args[0] instanceof Date) {
-                        result = args[0].toLocaleDateString(locale);
+                    } else if (firstChild instanceof Date) {
+                        result = firstChild.toLocaleDateString(locale);
                     } else {
-                        result = JSON.stringify(args[0])
+                        result = JSON.stringify(firstChild)
                             .replace(/(^['"]*)/g, '') // remove the starting single or double quote
                             .replace(/(['"]*$)/g, ''); // remove the ending single or double quote
                     }

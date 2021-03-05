@@ -35,13 +35,17 @@ export class Contains extends ExpressionEvaluator {
         const { args, error: childrenError } = FunctionUtils.evaluateChildren(expression, state, options);
         let error = childrenError;
         if (!error) {
-            if ((typeof args[0] === 'string' && typeof args[1] === 'string') || Array.isArray(args[0])) {
-                found = args[0].includes(args[1]);
-            } else if (args[0] instanceof Map) {
-                found = (args[0] as Map<string, any>).get(args[1]) !== undefined;
-            } else if (typeof args[1] === 'string') {
-                let value: any;
-                ({ value, error } = InternalFunctionUtils.accessProperty(args[0], args[1]));
+            const firstChild = args[0];
+            const secondChild = args[1];
+            if (typeof firstChild === 'string' && typeof secondChild === 'string') {
+                found = firstChild.includes(secondChild);
+            } else if (Array.isArray(firstChild)) {
+                found = firstChild.includes(secondChild);
+            } else if (firstChild instanceof Map) {
+                found = firstChild.get(secondChild) !== undefined;
+            } else if (typeof secondChild === 'string') {
+                let value: unknown;
+                ({ value, error } = InternalFunctionUtils.accessProperty(firstChild, secondChild));
                 found = !error && value !== undefined;
             }
         }

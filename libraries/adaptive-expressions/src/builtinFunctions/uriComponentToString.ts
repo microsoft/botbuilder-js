@@ -31,6 +31,9 @@ export class UriComponentToString extends ExpressionEvaluator {
      * @private
      */
     private static evaluator(): EvaluateExpressionDelegate {
-        return FunctionUtils.apply((args: any[]): string => decodeURIComponent(args[0]), FunctionUtils.verifyString);
+        return FunctionUtils.apply(
+            (args: readonly unknown[]): string => decodeURIComponent(args[0] as string),
+            FunctionUtils.verifyString
+        );
     }
 }

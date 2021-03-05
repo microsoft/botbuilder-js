@@ -35,16 +35,18 @@ export class LastIndexOf extends ExpressionEvaluator {
         const { args, error: childrenError } = FunctionUtils.evaluateChildren(expression, state, options);
         let error = childrenError;
         if (!error) {
-            if (args[0] == undefined || typeof args[0] === 'string') {
-                if (args[1] === undefined || typeof args[1] === 'string') {
-                    const str = InternalFunctionUtils.parseStringOrUndefined(args[0]);
-                    const searchValue = InternalFunctionUtils.parseStringOrUndefined(args[1]);
+            const firstChild = args[0];
+            const secondChild = args[1];
+            if (firstChild === undefined || typeof firstChild === 'string') {
+                if (secondChild === undefined || typeof secondChild === 'string') {
+                    const str = InternalFunctionUtils.parseStringOrUndefined(firstChild);
+                    const searchValue = InternalFunctionUtils.parseStringOrUndefined(secondChild);
                     value = str.lastIndexOf(searchValue, str.length - 1);
                 } else {
                     error = `Can only look for indexof string in ${expression}`;
                 }
-            } else if (Array.isArray(args[0])) {
-                value = args[0].lastIndexOf(args[1]);
+            } else if (Array.isArray(firstChild)) {
+                value = firstChild.lastIndexOf(secondChild);
             } else {
                 error = `${expression} works only on string or list.`;
             }

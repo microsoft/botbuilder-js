@@ -28,7 +28,7 @@ export class AddOrdinal extends ExpressionEvaluator {
      */
     private static evaluator(): EvaluateExpressionDelegate {
         return FunctionUtils.apply(
-            (args: any[]): string => AddOrdinal.evalAddOrdinal(args[0]),
+            (args: readonly unknown[]): string => AddOrdinal.evalAddOrdinal(args[0] as number),
             FunctionUtils.verifyInteger
         );
     }

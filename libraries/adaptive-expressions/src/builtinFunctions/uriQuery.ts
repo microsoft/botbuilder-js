@@ -30,12 +30,13 @@ export class UriQuery extends ExpressionEvaluator {
      * @private
      */
     private static evaluator(expr: Expression, state: MemoryInterface, options: Options): ValueWithError {
-        let value: any;
+        let value: unknown;
         const { args, error: childrenError } = FunctionUtils.evaluateChildren(expr, state, options);
         let error = childrenError;
         if (!error) {
-            if (typeof args[0] === 'string') {
-                ({ value, error } = UriQuery.evalUriQuery(args[0]));
+            const firstChild = args[0];
+            if (typeof firstChild === 'string') {
+                ({ value, error } = UriQuery.evalUriQuery(firstChild));
             } else {
                 error = `${expr} should contain a URI string.`;
             }

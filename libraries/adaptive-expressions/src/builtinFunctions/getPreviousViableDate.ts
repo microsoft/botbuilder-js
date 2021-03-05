@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 
-import { ExpressionEvaluator } from '../expressionEvaluator';
+import { ExpressionEvaluator, ValueWithError } from '../expressionEvaluator';
 import { Expression } from '../expression';
 import { ReturnType } from '../returnType';
 import { ExpressionType } from '../expressionType';
@@ -45,7 +45,7 @@ export class GetPreviousViableDate extends ExpressionEvaluator {
         expr: Expression,
         state: MemoryInterface,
         options: Options
-    ): { value: any; error: string } {
+    ): ValueWithError {
         let parsed: TimexProperty;
         const currentTime = dayjs(new Date().toISOString());
         let validYear = 0;
@@ -65,10 +65,11 @@ export class GetPreviousViableDate extends ExpressionEvaluator {
         }
 
         if (!error) {
-            if (args.length === 2 && typeof args[1] === 'string') {
-                const timeZone: string = TimeZoneConverter.windowsToIana(args[1]);
+            const secondChild = args[1];
+            if (args.length === 2 && typeof secondChild === 'string') {
+                const timeZone: string = TimeZoneConverter.windowsToIana(secondChild);
                 if (!TimeZoneConverter.verifyTimeZoneStr(timeZone)) {
-                    error = `${args[1]} is not a valid timezone`;
+                    error = `${secondChild} is not a valid timezone`;
                 }
 
                 if (!error) {

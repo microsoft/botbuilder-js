@@ -30,12 +30,13 @@ export class Ticks extends ExpressionEvaluator {
      * @private
      */
     private static evaluator(expr: Expression, state: MemoryInterface, options: Options): ValueWithError {
-        let value: any;
+        let value: unknown;
         const { args, error: childrenError } = FunctionUtils.evaluateChildren(expr, state, options);
         let error = childrenError;
         if (!error) {
-            if (typeof args[0] === 'string') {
-                ({ value, error } = InternalFunctionUtils.ticks(args[0]));
+            const firstChild = args[0];
+            if (typeof firstChild === 'string') {
+                ({ value, error } = InternalFunctionUtils.ticks(firstChild));
             } else {
                 error = `${expr} should contain an ISO format timestamp.`;
             }

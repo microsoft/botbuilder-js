@@ -32,7 +32,7 @@ export class DateTimeDiff extends ExpressionEvaluator {
      * @private
      */
     private static evaluator(expr: Expression, state: MemoryInterface, options: Options): ValueWithError {
-        let value: any;
+        let value: unknown;
         const { args, error: childrenError } = FunctionUtils.evaluateChildren(expr, state, options);
         let error = childrenError;
 
@@ -41,7 +41,9 @@ export class DateTimeDiff extends ExpressionEvaluator {
             if (!error) {
                 error = InternalFunctionUtils.verifyISOTimestamp(args[1]);
                 if (!error) {
-                    value = dayjs(args[0]).diff(dayjs(args[1]), 'milliseconds') * 10000;
+                    value =
+                        dayjs(args[0] as dayjs.ConfigType).diff(dayjs(args[1] as dayjs.ConfigType), 'milliseconds') *
+                        10000;
                 }
             }
         }

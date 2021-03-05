@@ -35,16 +35,18 @@ export class IndexOf extends ExpressionEvaluator {
         const { args, error: childrenError } = FunctionUtils.evaluateChildren(expression, state, options);
         let error = childrenError;
         if (!error) {
-            if (args[0] == undefined || typeof args[0] === 'string') {
-                if (args[1] === undefined || typeof args[1] === 'string') {
-                    value = InternalFunctionUtils.parseStringOrUndefined(args[0]).indexOf(
-                        InternalFunctionUtils.parseStringOrUndefined(args[1])
+            const firstChild = args[0];
+            const secondChild = args[1];
+            if (firstChild === undefined || typeof firstChild === 'string') {
+                if (secondChild === undefined || typeof secondChild === 'string') {
+                    value = InternalFunctionUtils.parseStringOrUndefined(firstChild).indexOf(
+                        InternalFunctionUtils.parseStringOrUndefined(secondChild)
                     );
                 } else {
                     error = `Can only look for indexof string in ${expression}`;
                 }
             } else if (Array.isArray(args[0])) {
-                value = args[0].indexOf(args[1]);
+                value = (args[0] as unknown[]).indexOf(args[1]);
             } else {
                 error = `${expression} works only on string or list.`;
             }

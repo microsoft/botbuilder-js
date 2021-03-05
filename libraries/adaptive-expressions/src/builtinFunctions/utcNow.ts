@@ -32,7 +32,7 @@ export class UtcNow extends ExpressionEvaluator {
      */
     private static evaluator(): EvaluateExpressionDelegate {
         return FunctionUtils.applyWithOptionsAndError(
-            (args: unknown[], options: Options): ValueWithError => {
+            (args: readonly unknown[], options: Options): ValueWithError => {
                 let locale = options.locale ? options.locale : Intl.DateTimeFormat().resolvedOptions().locale;
                 let format = FunctionUtils.DefaultDateTimeFormat;
                 ({ format, locale } = FunctionUtils.determineFormatAndLocale(args, 2, format, locale));

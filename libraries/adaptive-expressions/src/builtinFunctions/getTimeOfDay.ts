@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 
-import { EvaluateExpressionDelegate, ExpressionEvaluator } from '../expressionEvaluator';
+import { EvaluateExpressionDelegate, ExpressionEvaluator, ValueWithError } from '../expressionEvaluator';
 import { ExpressionType } from '../expressionType';
 import { FunctionUtils } from '../functionUtils';
 import { InternalFunctionUtils } from '../functionUtils.internal';
@@ -32,11 +32,12 @@ export class GetTimeOfDay extends ExpressionEvaluator {
      * @private
      */
     private static evaluator(): EvaluateExpressionDelegate {
-        return FunctionUtils.applyWithError((args: any[]): any => {
-            let value: any;
+        return FunctionUtils.applyWithError((args: readonly unknown[]): ValueWithError => {
+            let value: unknown;
             const error: string = InternalFunctionUtils.verifyISOTimestamp(args[0]);
             if (!error) {
-                const thisTime: number = new Date(args[0]).getUTCHours() * 100 + new Date(args[0]).getUTCMinutes();
+                const args0 = args[0] as string;
+                const thisTime: number = new Date(args0).getUTCHours() * 100 + new Date(args0).getUTCMinutes();
                 if (thisTime === 0) {
                     value = 'midnight';
                 } else if (thisTime > 0 && thisTime < 1200) {

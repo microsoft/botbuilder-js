@@ -25,7 +25,7 @@ export class GreaterThan extends ComparisonEvaluator {
     /**
      * @private
      */
-    private static func(args: any[]): boolean {
+    private static func(args: readonly unknown[]): boolean {
         if (
             (typeof args[0] === 'number' && typeof args[1] === 'number') ||
             (typeof args[0] === 'string' && typeof args[1] === 'string') ||

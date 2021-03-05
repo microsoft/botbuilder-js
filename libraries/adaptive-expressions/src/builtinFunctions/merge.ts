@@ -7,7 +7,7 @@
  */
 
 import { Expression } from '../expression';
-import { EvaluateExpressionDelegate, ExpressionEvaluator } from '../expressionEvaluator';
+import { EvaluateExpressionDelegate, ExpressionEvaluator, ValueWithError } from '../expressionEvaluator';
 import { ExpressionType } from '../expressionType';
 import { FunctionUtils } from '../functionUtils';
 import { ReturnType } from '../returnType';
@@ -27,8 +27,9 @@ export class Merge extends ExpressionEvaluator {
      * @private
      */
     private static evaluator(): EvaluateExpressionDelegate {
-        return FunctionUtils.applySequenceWithError((args: any[]): any => {
-            let value: any;
+        return FunctionUtils.applySequenceWithError(
+            (args: readonly unknown[]): ValueWithError => {
+            let value: unknown;
             let error: string;
             if (
                 typeof args[0] === 'object' &&

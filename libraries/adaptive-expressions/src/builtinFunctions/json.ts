@@ -27,7 +27,7 @@ export class Json extends ExpressionEvaluator {
      * @private
      */
     private static evaluator(): EvaluateExpressionDelegate {
-        return FunctionUtils.apply((args: any[]): any => JSON.parse(args[0].trim()));
+        return FunctionUtils.apply((args: readonly unknown[]): unknown => JSON.parse((args[0] as string).trim()));
     }
 
     /**

@@ -28,14 +28,14 @@ export class Empty extends ComparisonEvaluator {
     /**
      * @private
      */
-    private static func(args: any[]): boolean {
+    private static func(args: readonly unknown[]): boolean {
         return Empty.isEmpty(args[0]);
     }
 
     /**
      * @private
      */
-    private static isEmpty(instance: any): boolean {
+    private static isEmpty(instance: unknown): boolean {
         let result: boolean;
         if (instance === undefined) {
             result = true;

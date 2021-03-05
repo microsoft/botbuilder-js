@@ -26,6 +26,6 @@ export class IsBoolean extends ExpressionEvaluator {
      * @private
      */
     private static evaluator(): EvaluateExpressionDelegate {
-        return FunctionUtils.apply((args: any[]): boolean => typeof args[0] === 'boolean');
+        return FunctionUtils.apply((args: readonly unknown[]): boolean => typeof args[0] === 'boolean');
     }
 }

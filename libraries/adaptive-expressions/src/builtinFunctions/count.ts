@@ -27,14 +27,17 @@ export class Count extends ExpressionEvaluator {
      * @private
      */
     private static evaluator(): EvaluateExpressionDelegate {
-        return FunctionUtils.apply((args: any[]): number => {
+        return FunctionUtils.apply((args: readonly unknown[]): number => {
             let count: number;
-            if (typeof args[0] === 'string' || Array.isArray(args[0])) {
-                count = args[0].length;
-            } else if (args[0] instanceof Map) {
-                count = args[0].size;
-            } else if (typeof args[0] == 'object') {
-                count = Object.keys(args[0]).length;
+            const firstChild = args[0];
+            if (typeof firstChild === 'string') {
+                count = firstChild.length;
+            } else if (Array.isArray(firstChild)) {
+                count = firstChild.length;
+            } else if (firstChild instanceof Map) {
+                count = firstChild.size;
+            } else if (typeof firstChild === 'object') {
+                count = Object.keys(firstChild).length;
             }
 
             return count;

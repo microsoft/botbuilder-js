@@ -23,7 +23,7 @@ export class StringTransformEvaluator extends ExpressionEvaluator {
      */
     public constructor(
         type: string,
-        func: (arg0: any[], options: Options) => string,
+        func: (arg0: readonly unknown[], options: Options) => string,
         validator?: (expr: Expression) => void
     ) {
         super(
