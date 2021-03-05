@@ -5,7 +5,6 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { ExpressionParser, ExpressionParserInterface } from 'adaptive-expressions';
 import { OnCondition } from '../conditions/onCondition';
 import { TriggerSelector } from '../triggerSelector';
 import { ActionContext } from '../actionContext';
@@ -18,11 +17,6 @@ export class FirstSelector extends TriggerSelector {
 
     private _conditionals: OnCondition[];
     private _evaluate: boolean;
-
-    /**
-     * Gets or sets the expression parser to use.
-     */
-    public parser: ExpressionParserInterface = new ExpressionParser();
 
     /**
      * Initialize the selector with the set of rules.
@@ -46,7 +40,7 @@ export class FirstSelector extends TriggerSelector {
         if (this._evaluate) {
             for (let i = 0; i < this._conditionals.length; i++) {
                 const conditional = this._conditionals[i];
-                const expression = conditional.getExpression(this.parser);
+                const expression = conditional.getExpression();
                 const { value, error } = expression.tryEvaluate(actionContext.state);
                 if (value && !error) {
                     const priority = conditional.currentPriority(actionContext);

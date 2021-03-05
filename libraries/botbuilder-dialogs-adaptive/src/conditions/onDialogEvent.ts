@@ -5,8 +5,8 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
+import { Expression } from 'adaptive-expressions';
 import { Dialog, TurnPath } from 'botbuilder-dialogs';
-import { ExpressionParserInterface, Expression, ExpressionType } from 'adaptive-expressions';
 import { OnCondition, OnConditionConfiguration } from './onCondition';
 
 export interface OnDialogEventConfiguration extends OnConditionConfiguration {
@@ -36,16 +36,14 @@ export class OnDialogEvent extends OnCondition implements OnDialogEventConfigura
     }
 
     /**
-     * Get the expression for this rule.
-     * @param parser [ExpressionParserInterface](xref:adaptive-expressions.ExpressionParserInterface) used to parse a string into an [Expression](xref:adaptive-expressions.Expression).
-     * @returns [Expression](xref:adaptive-expressions.Expression) which will be cached and used to evaluate this rule.
+     * Create the expression for this condition.
+     *
+     * @returns [Expression](xref:adaptive-expressions.Expression) used to evaluate this rule.
      */
-    public getExpression(parser: ExpressionParserInterface): Expression {
-        return Expression.makeExpression(
-            ExpressionType.And,
-            undefined,
-            parser.parse(`${TurnPath.dialogEvent}.name == '${this.event}'`),
-            super.getExpression(parser)
+    protected createExpression(): Expression {
+        return Expression.andExpression(
+            Expression.parse(`${TurnPath.dialogEvent}.name == '${this.event}'`),
+            super.createExpression()
         );
     }
 }
