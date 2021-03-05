@@ -13,10 +13,10 @@ import {
     ExpressionParser,
     ExpressionEvaluator,
     FunctionUtils,
-    IntExpression,
-    IntExpressionConverter,
     ReturnType,
     ExpressionType,
+    NumberExpression,
+    NumberExpressionConverter,
 } from 'adaptive-expressions';
 import {
     Configurable,
@@ -38,7 +38,7 @@ import { DialogListConverter } from '../converters';
 export interface OnConditionConfiguration {
     condition?: boolean | string | Expression | BoolExpression;
     actions?: string[] | Dialog[];
-    priority?: number | string | Expression | IntExpression;
+    priority?: number | string | Expression | NumberExpression;
     runOnce?: boolean;
     id?: string;
 }
@@ -74,7 +74,7 @@ export class OnCondition extends Configurable implements DialogDependencies, OnC
     /**
      * Get or sets the rule priority expression where 0 is the highest and less than 0 is ignored.
      */
-    public priority: IntExpression = new IntExpression(0);
+    public priority: NumberExpression = new NumberExpression(0.0);
 
     /**
      * A value indicating whether rule should only run once per unique set of memory paths.
@@ -114,7 +114,7 @@ export class OnCondition extends Configurable implements DialogDependencies, OnC
             case 'actions':
                 return DialogListConverter;
             case 'priority':
-                return new IntExpressionConverter();
+                return new NumberExpressionConverter();
             default:
                 return super.getConverter(property);
         }
