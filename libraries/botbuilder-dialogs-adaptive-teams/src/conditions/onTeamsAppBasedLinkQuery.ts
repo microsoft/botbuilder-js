@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 
-import { Expression, ExpressionParserInterface } from 'adaptive-expressions';
+import { Expression } from 'adaptive-expressions';
 import { TurnPath } from 'botbuilder-dialogs';
 import { OnInvokeActivity } from 'botbuilder-dialogs-adaptive';
 
@@ -16,10 +16,15 @@ import { OnInvokeActivity } from 'botbuilder-dialogs-adaptive';
 export class OnTeamsAppBasedLinkQuery extends OnInvokeActivity {
     public static readonly $kind = 'Teams.OnAppBasedLinkQuery';
 
-    public getExpression(parser: ExpressionParserInterface): Expression {
+    /**
+     * Create expression for this condition.
+     *
+     * @returns {Expression} An [Expression](xref:adaptive-expressions.Expression) used to evaluate this rule.
+     */
+    protected createExpression(): Expression {
         return Expression.andExpression(
             Expression.parse(`${TurnPath.activity}.name == 'composeExtension/queryLink'`),
-            super.getExpression(parser)
+            super.createExpression()
         );
     }
 }
