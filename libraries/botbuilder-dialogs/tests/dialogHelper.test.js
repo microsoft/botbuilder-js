@@ -12,7 +12,7 @@ const {
 } = require('botbuilder-core');
 const { ComponentDialog, DialogReason, runDialog, TextPrompt, WaterfallDialog } = require('../');
 const { AuthConstants } = require('../lib/prompts/skillsHelpers');
-const { EndOfConversationCodes } = require('../../botbuilder-core');
+const { EndOfConversationCodes } = require('botbuilder-core');
 
 const FlowTestCase = {
     RootBotOnly: 'RootBotOnly',
@@ -141,9 +141,9 @@ class SimpleComponentDialog extends ComponentDialog {
 class ComponentDialogWithPrematureEnd extends ComponentDialog {
     constructor() {
         super('ComponentDialogWithPrematureEnd');
-        this.WaterfallDialog = 'WaterfallDialog';
-        this.addDialog(new WaterfallDialog(this.WaterfallDialog, [this.finalStep.bind(this)]));
-        this.initialDialogId = this.WaterfallDialog;
+        const waterfallDialog = 'waterfallDialog';
+        this.addDialog(new WaterfallDialog(waterfallDialog, [this.finalStep.bind(this)]));
+        this.initialDialogId = waterfallDialog;
         this.endReason;
     }
 
@@ -160,9 +160,9 @@ class ComponentDialogWithPrematureEnd extends ComponentDialog {
 class ComponentDialogWithCancellation extends ComponentDialog {
     constructor() {
         super('ComponentDialogWithCancellation');
-        this.WaterfallDialog = 'WaterfallDialog';
-        this.addDialog(new WaterfallDialog(this.WaterfallDialog, [this.finalStep.bind(this)]));
-        this.initialDialogId = this.WaterfallDialog;
+        const waterfallDialog = 'waterfallDialog';
+        this.addDialog(new WaterfallDialog(waterfallDialog, [this.finalStep.bind(this)]));
+        this.initialDialogId = waterfallDialog;
         this.endReason;
     }
 
