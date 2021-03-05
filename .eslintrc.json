@@ -68,9 +68,9 @@
       }
     ],
     "jsdoc/require-param": "error",
-    "jsdoc/require-param-type": "error",
+    "jsdoc/require-param-type": "off",
     "jsdoc/require-returns": "error",
-    "jsdoc/require-returns-type": "error",
+    "jsdoc/require-returns-type": "off",
     "no-unused-vars": "off",
     "no-var": "error",
     "prettier/prettier": "error",

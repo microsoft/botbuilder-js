@@ -5,7 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { ExpressionParserInterface, Expression, ExpressionType } from 'adaptive-expressions';
+import { Expression } from 'adaptive-expressions';
 import { RecognizerResult } from 'botbuilder-core';
 import { Dialog, TurnPath } from 'botbuilder-dialogs';
 import { OnDialogEvent, OnDialogEventConfiguration } from './onDialogEvent';
@@ -50,33 +50,33 @@ export class OnIntent extends OnDialogEvent implements OnIntentConfiguration {
     }
 
     /**
-     * Get the expression for this rule.
-     * @param parser [ExpressionParserInterface](xref:adaptive-expressions.ExpressionParserInterface) used to parse a string into an [Expression](xref:adaptive-expressions.Expression).
-     * @returns [Expression](xref:adaptive-expressions.Expression) which will be cached and used to evaluate this rule.
+     * Create the expression for this condition.
+     *
+     * @returns [Expression](xref:adaptive-expressions.Expression) used to evaluate this rule.
      */
-    public getExpression(parser: ExpressionParserInterface): Expression {
+    protected createExpression(): Expression {
         if (!this.intent) {
             throw new Error('Intent cannot be null.');
         }
 
         const trimmedIntent = this.intent.startsWith('#') ? this.intent.substring(1) : this.intent;
-        let intentExpression = parser.parse(`${TurnPath.recognized}.intent == '${trimmedIntent}'`);
+        let intentExpression = Expression.parse(`${TurnPath.recognized}.intent == '${trimmedIntent}'`);
 
         if (this.entities.length > 0) {
-            intentExpression = Expression.makeExpression(
-                ExpressionType.And,
-                undefined,
+            intentExpression = Expression.andExpression(
                 intentExpression,
-                ...this.entities.map((entity) => {
-                    if (entity.startsWith('@') || entity.startsWith(TurnPath.recognized)) {
-                        return parser.parse(`exists(${entity})`);
-                    }
-                    return parser.parse(`exists(@${entity})`);
-                })
+                Expression.andExpression(
+                    ...this.entities.map((entity) => {
+                        if (entity.startsWith('@') || entity.startsWith(TurnPath.recognized)) {
+                            return Expression.parse(`exists(${entity})`);
+                        }
+                        return Expression.parse(`exists(@${entity})`);
+                    })
+                )
             );
         }
 
-        return Expression.makeExpression(ExpressionType.And, undefined, intentExpression, super.getExpression(parser));
+        return Expression.andExpression(intentExpression, super.createExpression());
     }
 
     /**
