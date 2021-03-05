@@ -30,6 +30,7 @@
     "adaptive-expressions": "4.1.6",
     "botbuilder-core": "4.1.6",
     "botbuilder-dialogs": "4.1.6",
+    "botbuilder-dialogs-declarative": "4.1.6",
     "orchestrator-core": "4.12.0-preview",
     "uuid": "^8.3.2"
   },

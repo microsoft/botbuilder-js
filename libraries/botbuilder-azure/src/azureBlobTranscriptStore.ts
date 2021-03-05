@@ -40,6 +40,7 @@ export class AzureBlobTranscriptStore implements TranscriptStore {
 
     /**
      * Creates a new AzureBlobTranscriptStore instance.
+     *
      * @param settings Settings required for configuring an instance of BlobStorage
      */
     public constructor(settings: BlobStorageSettings) {
@@ -61,6 +62,7 @@ export class AzureBlobTranscriptStore implements TranscriptStore {
 
     /**
      * Log an activity to the transcript.
+     *
      * @param activity Activity being logged.
      */
     public async logActivity(activity: Activity): Promise<void> {
@@ -88,6 +90,7 @@ export class AzureBlobTranscriptStore implements TranscriptStore {
 
     /**
      * Get activities for a conversation (Aka the transcript)
+     *
      * @param channelId Channel Id.
      * @param conversationId Conversation Id.
      * @param continuationToken Continuation token to page through results.
@@ -135,6 +138,7 @@ export class AzureBlobTranscriptStore implements TranscriptStore {
 
     /**
      * List conversations in the channelId.
+     *
      * @param channelId Channel Id.
      * @param continuationToken ContinuationToken token to page through results.
      */
@@ -167,6 +171,7 @@ export class AzureBlobTranscriptStore implements TranscriptStore {
 
     /**
      * Delete a specific conversation and all of it's activities.
+     *
      * @param channelId Channel Id where conversation took place.
      * @param conversationId Id of the conversation to delete.
      */
@@ -192,6 +197,7 @@ export class AzureBlobTranscriptStore implements TranscriptStore {
 
     /**
      * Parse a BlobResult as an [Activity](xref:botframework-schema.Activity).
+     *
      * @param blob BlobResult to parse as an [Activity](xref:botframework-schema.Activity).
      * @returns The parsed [Activity](xref:botframework-schema.Activity).
      */
@@ -204,7 +210,7 @@ export class AzureBlobTranscriptStore implements TranscriptStore {
     }
 
     /**
-     * @private 
+     * @private
      */
     private async getActivityBlobs(
         blobs: azure.BlobService.BlobResult[],
@@ -321,6 +327,7 @@ export class AzureBlobTranscriptStore implements TranscriptStore {
 
     /**
      * Check if a container name is valid.
+     *
      * @param container String representing the container name to validate.
      * @returns A boolean value that indicates whether or not the name is valid.
      */
@@ -330,6 +337,7 @@ export class AzureBlobTranscriptStore implements TranscriptStore {
 
     /**
      * Get the blob name based on the [Activity](xref:botframework-schema.Activity).
+     *
      * @param activity [Activity](xref:botframework-schema.Activity) to get the blob name from.
      * @returns The blob name.
      */
@@ -344,6 +352,7 @@ export class AzureBlobTranscriptStore implements TranscriptStore {
 
     /**
      * Get the directory name.
+     *
      * @param channelId Channel Id.
      * @param conversationId Id of the conversation to get the directory name from.
      * @returns The sanitized directory name.
@@ -358,6 +367,7 @@ export class AzureBlobTranscriptStore implements TranscriptStore {
 
     /**
      * Escape a given key to be compatible for use with BlobStorage.
+     *
      * @param key Key to be sanitized(scaped).
      * @returns The sanitized key.
      */
@@ -391,6 +401,7 @@ export class AzureBlobTranscriptStore implements TranscriptStore {
 
     /**
      * Create a Blob Service.
+     *
      * @param param0 Settings required for configuring the Blob Service.
      * @param param0.storageAccountOrConnectionString Storage account or connection string.
      * @param param0.storageAccessKey Storage access key.

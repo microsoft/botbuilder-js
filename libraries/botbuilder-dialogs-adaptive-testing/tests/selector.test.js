@@ -36,6 +36,10 @@ describe('SelectorTests', function () {
         await TestUtils.runTestScript(resourceExplorer, 'SelectorTests_Priority');
     });
 
+    it('Priority', async () => {
+        await TestUtils.runTestScript(resourceExplorer, 'SelectorTests_Float_Priority');
+    });
+
     it('RandomSelector', async () => {
         await TestUtils.runTestScript(resourceExplorer, 'SelectorTests_RandomSelector');
     });

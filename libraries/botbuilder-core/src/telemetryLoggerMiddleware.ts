@@ -3,7 +3,9 @@
 
 import { BotTelemetryClient, NullTelemetryClient } from './botTelemetryClient';
 import { Middleware } from './middlewareSet';
+import { TelemetryConstants } from './telemetryConstants';
 import { TurnContext } from './turnContext';
+
 import {
     Activity,
     ActivityTypes,
@@ -11,7 +13,6 @@ import {
     ResourceResponse,
     TeamsChannelData,
 } from 'botframework-schema';
-import { TelemetryConstants } from './telemetryConstants';
 
 // Internal helper duplicated from
 // https://github.com/microsoft/botbuilder-js/commit/9277f901701ef270cf5af089e37e7aa7ab2579e1
@@ -45,10 +46,7 @@ export class TelemetryLoggerMiddleware implements Middleware {
     public static readonly botMsgDeleteEvent: string = 'BotMessageDelete';
 
     private readonly _telemetryClient: BotTelemetryClient;
-
-    // tslint:disable:variable-name
     private readonly _logPersonalInformation: boolean;
-    // tslint:enable:variable-name
 
     /**
      * Initializes a new instance of the TelemetryLoggerMiddleware class.
@@ -205,32 +203,33 @@ export class TelemetryLoggerMiddleware implements Middleware {
      */
     protected async fillReceiveEventProperties(
         activity: Activity,
-        telemetryProperties?: { [key: string]: string }
-    ): Promise<{ [key: string]: string }> {
-        const properties: { [key: string]: string } = {};
+        telemetryProperties?: Record<string, string>
+    ): Promise<Record<string, string>> {
+        const properties: Record<string, string> = {};
 
         if (activity) {
-            properties[TelemetryConstants.fromIdProperty] = activity.from && activity.from.id ? activity.from.id : '';
-            properties[TelemetryConstants.conversationNameProperty] =
-                activity.conversation && activity.conversation.name ? activity.conversation.name : '';
-            properties[TelemetryConstants.localeProperty] = activity.locale || '';
-            properties[TelemetryConstants.recipientIdProperty] =
-                activity.recipient && activity.recipient.id ? activity.recipient.id : '';
-            properties[TelemetryConstants.recipientNameProperty] =
-                activity.recipient && activity.recipient.name ? activity.recipient.name : '';
+            properties[TelemetryConstants.fromIdProperty] = activity.from?.id ?? '';
+            properties[TelemetryConstants.conversationIdProperty] = activity.conversation?.id ?? '';
+            properties[TelemetryConstants.conversationNameProperty] = activity.conversation?.name ?? '';
+            properties[TelemetryConstants.localeProperty] = activity.locale ?? '';
+            properties[TelemetryConstants.recipientIdProperty] = activity.recipient?.id ?? '';
+            properties[TelemetryConstants.recipientNameProperty] = activity.recipient?.name ?? '';
 
             // Use the LogPersonalInformation flag to toggle logging PII data, text and user name are common examples
             if (this.logPersonalInformation) {
-                if (activity.from && activity.from.name && activity.from.name.trim()) {
-                    properties[TelemetryConstants.fromNameProperty] = activity.from ? activity.from.name : '';
+                const fromName = activity.from?.name?.trim();
+                if (fromName) {
+                    properties[TelemetryConstants.fromNameProperty] = fromName;
                 }
 
-                if (activity.text && activity.text.trim()) {
-                    properties[TelemetryConstants.textProperty] = activity.text;
+                const activityText = activity.text?.trim();
+                if (activityText) {
+                    properties[TelemetryConstants.textProperty] = activityText;
                 }
 
-                if (activity.speak && activity.speak.trim()) {
-                    properties[TelemetryConstants.speakProperty] = activity.speak;
+                const activitySpeak = activity.speak?.trim();
+                if (activitySpeak) {
+                    properties[TelemetryConstants.speakProperty] = activitySpeak;
                 }
             }
 
@@ -259,33 +258,35 @@ export class TelemetryLoggerMiddleware implements Middleware {
      */
     protected async fillSendEventProperties(
         activity: Activity,
-        telemetryProperties?: { [key: string]: string }
-    ): Promise<{ [key: string]: string }> {
-        const properties: { [key: string]: string } = {};
+        telemetryProperties?: Record<string, string>
+    ): Promise<Record<string, string>> {
+        const properties: Record<string, string> = {};
 
         if (activity) {
-            properties[TelemetryConstants.replyActivityIdProperty] = activity.replyToId || '';
-            properties[TelemetryConstants.recipientIdProperty] =
-                activity.recipient && activity.recipient.id ? activity.recipient.id : '';
-            properties[TelemetryConstants.conversationNameProperty] =
-                activity.conversation && activity.conversation.name ? activity.conversation.name : '';
-            properties[TelemetryConstants.localeProperty] = activity.locale || '';
+            properties[TelemetryConstants.replyActivityIdProperty] = activity.replyToId ?? '';
+            properties[TelemetryConstants.recipientIdProperty] = activity.recipient?.id ?? '';
+            properties[TelemetryConstants.conversationIdProperty] = activity.conversation?.id ?? '';
+            properties[TelemetryConstants.conversationNameProperty] = activity.conversation?.name ?? '';
+            properties[TelemetryConstants.localeProperty] = activity.locale ?? '';
 
             // Use the LogPersonalInformation flag to toggle logging PII data, text and user name are common examples
             if (this.logPersonalInformation) {
-                if (activity.recipient && activity.recipient.name && activity.recipient.name.trim()) {
-                    properties[TelemetryConstants.recipientNameProperty] = activity.recipient.name;
+                const recipientName = activity.recipient?.name?.trim();
+                if (recipientName) {
+                    properties[TelemetryConstants.recipientNameProperty] = recipientName;
                 }
 
-                if (activity.text && activity.text.trim()) {
-                    properties[TelemetryConstants.textProperty] = activity.text;
+                const activityText = activity.text?.trim();
+                if (activityText) {
+                    properties[TelemetryConstants.textProperty] = activityText;
                 }
 
-                if (activity.speak && activity.speak.trim()) {
-                    properties[TelemetryConstants.speakProperty] = activity.speak;
+                const activitySpeak = activity.speak?.trim();
+                if (activitySpeak) {
+                    properties[TelemetryConstants.speakProperty] = activitySpeak;
                 }
 
-                if (activity.attachments && activity.attachments.length > 0) {
+                if (activity.attachments?.length) {
                     properties[TelemetryConstants.attachmentsProperty] = JSON.stringify(activity.attachments);
                 }
             }
@@ -310,22 +311,22 @@ export class TelemetryLoggerMiddleware implements Middleware {
      */
     protected async fillUpdateEventProperties(
         activity: Activity,
-        telemetryProperties?: { [key: string]: string }
-    ): Promise<{ [key: string]: string }> {
-        const properties: { [key: string]: string } = {};
+        telemetryProperties?: Record<string, string>
+    ): Promise<Record<string, string>> {
+        const properties: Record<string, string> = {};
 
         if (activity) {
-            properties[TelemetryConstants.recipientIdProperty] =
-                activity.recipient && activity.recipient.id ? activity.recipient.id : '';
-            properties[TelemetryConstants.conversationIdProperty] =
-                activity.conversation && activity.conversation.id ? activity.conversation.id : '';
-            properties[TelemetryConstants.conversationNameProperty] =
-                activity.conversation && activity.conversation.name ? activity.conversation.name : '';
-            properties[TelemetryConstants.localeProperty] = activity.locale || '';
+            properties[TelemetryConstants.recipientIdProperty] = activity.recipient?.id ?? '';
+            properties[TelemetryConstants.conversationIdProperty] = activity.conversation?.id ?? '';
+            properties[TelemetryConstants.conversationNameProperty] = activity.conversation?.name ?? '';
+            properties[TelemetryConstants.localeProperty] = activity.locale ?? '';
 
             // Use the LogPersonalInformation flag to toggle logging PII data, text is a common example
-            if (this.logPersonalInformation && activity.text && activity.text.trim()) {
-                properties[TelemetryConstants.textProperty] = activity.text;
+            if (this.logPersonalInformation) {
+                const activityText = activity.text?.trim();
+                if (activityText) {
+                    properties[TelemetryConstants.textProperty] = activityText;
+                }
             }
 
             // Additional Properties can override "stock" properties.
@@ -346,18 +347,15 @@ export class TelemetryLoggerMiddleware implements Middleware {
      */
     protected async fillDeleteEventProperties(
         activity: Activity,
-        telemetryProperties?: { [key: string]: string }
-    ): Promise<{ [key: string]: string }> {
-        const properties: { [key: string]: string } = {};
+        telemetryProperties?: Record<string, string>
+    ): Promise<Record<string, string>> {
+        const properties: Record<string, string> = {};
 
         if (activity) {
-            properties[TelemetryConstants.channelIdProperty] = activity.channelId || '';
-            properties[TelemetryConstants.recipientIdProperty] =
-                activity.recipient && activity.recipient.id ? activity.recipient.id : '';
-            properties[TelemetryConstants.conversationIdProperty] =
-                activity.conversation && activity.conversation.id ? activity.conversation.id : '';
-            properties[TelemetryConstants.conversationNameProperty] =
-                activity.conversation && activity.conversation.name ? activity.conversation.name : '';
+            properties[TelemetryConstants.channelIdProperty] = activity.channelId ?? '';
+            properties[TelemetryConstants.recipientIdProperty] = activity.recipient?.id ?? '';
+            properties[TelemetryConstants.conversationIdProperty] = activity.conversation?.id ?? '';
+            properties[TelemetryConstants.conversationNameProperty] = activity.conversation?.name ?? '';
 
             // Additional Properties can override "stock" properties.
             if (telemetryProperties) {
@@ -368,19 +366,18 @@ export class TelemetryLoggerMiddleware implements Middleware {
         return properties;
     }
 
-    /**
-     * @private
-     */
-    private populateAdditionalChannelProperties(activity: Activity, properties?: { [key: string]: string }): void {
+    private populateAdditionalChannelProperties(activity: Activity, properties?: Record<string, string>): void {
         if (activity) {
             const channelData = activity.channelData;
             switch (activity.channelId) {
                 case 'msteams':
-                    properties['TeamsUserAadObjectId'] = activity.from ? activity.from.aadObjectId : '';
+                    properties.TeamsUserAadObjectId = activity.from?.aadObjectId ?? '';
 
                     if (isTeamsChannelData(channelData)) {
-                        properties['TeamsTenantId'] = channelData.tenant ? channelData.tenant.id : '';
-                        properties['TeamsTeamInfo'] = channelData.team && JSON.stringify(channelData.team);
+                        properties.TeamsTenantId = channelData.tenant?.id ?? '';
+                        if (channelData.team) {
+                            properties.TeamsTeamInfo = JSON.stringify(channelData.team);
+                        }
                     }
 
                     break;

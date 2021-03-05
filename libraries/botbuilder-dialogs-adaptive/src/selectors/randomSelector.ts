@@ -5,7 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { ExpressionParserInterface, ExpressionParser, Extensions } from 'adaptive-expressions';
+import { Extensions } from 'adaptive-expressions';
 import { TriggerSelector } from '../triggerSelector';
 import { OnCondition } from '../conditions';
 import { ActionContext } from '../actionContext';
@@ -18,11 +18,6 @@ export class RandomSelector extends TriggerSelector {
 
     private _conditionals: OnCondition[];
     private _evaluate: boolean;
-
-    /**
-     * Gets or sets the expression parser to use.
-     */
-    public parser: ExpressionParserInterface = new ExpressionParser();
 
     /**
      * Initialize the selector with the set of rules.
@@ -45,7 +40,7 @@ export class RandomSelector extends TriggerSelector {
         for (let i = 0; i < this._conditionals.length; i++) {
             const conditional = this._conditionals[i];
             if (this._evaluate) {
-                const expression = conditional.getExpression(this.parser);
+                const expression = conditional.getExpression();
                 const { value, error } = expression.tryEvaluate(actionContext.state);
                 if (value && !error) {
                     candidates.push(conditional);

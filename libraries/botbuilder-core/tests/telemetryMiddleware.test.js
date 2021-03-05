@@ -1,585 +1,372 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License
 
-const { ok: assert, strictEqual } = require('assert');
-const { ActivityTypes, Channels, TestAdapter, TelemetryLoggerMiddleware } = require('../');
+const sinon = require('sinon');
+const { ActivityTypes, Channels, TestAdapter, TelemetryLoggerMiddleware, NullTelemetryClient } = require('../');
+const { strictEqual } = require('assert');
 
-class OverrideReceiveLogger extends TelemetryLoggerMiddleware {
-    async onReceiveActivity(activity) {
-        this.telemetryClient.trackEvent({
-            name: TelemetryLoggerMiddleware.botMsgReceiveEvent,
-            properties: {
-                foo: 'bar',
-                ImportantProperty: 'ImportantValue',
-            },
-        });
-        this.telemetryClient.trackEvent({
-            name: 'MyReceive',
-            properties: await this.fillReceiveEventProperties(activity, { conversationName: 'OVERRIDE' }),
-        });
-    }
-}
+const createReply = (activity, text, locale = null) => ({
+    type: ActivityTypes.Message,
+    from: { id: activity.recipient.id, name: activity.recipient.name },
+    recipient: { id: activity.from.id, name: activity.from.name },
+    replyToId: activity.id,
+    serviceUrl: activity.serviceUrl,
+    channelId: activity.channelId,
+    conversation: {
+        isGroup: activity.conversation.isGroup,
+        id: activity.conversation.id,
+        name: activity.conversation.name,
+    },
+    text: text || '',
+    locale: locale || activity.locale,
+});
 
-class OverrideSendLogger extends TelemetryLoggerMiddleware {
-    async onSendActivity(activity) {
-        this.telemetryClient.trackEvent({
-            name: TelemetryLoggerMiddleware.botMsgSendEvent,
-            properties: {
-                foo: 'bar',
-                ImportantProperty: 'ImportantValue',
-            },
-        });
-        this.telemetryClient.trackEvent({
-            name: 'MySend',
-            properties: await this.fillSendEventProperties(activity),
-        });
-    }
-}
-
-class OverrideUpdateDeleteLogger extends TelemetryLoggerMiddleware {
-    async onUpdateActivity() {
-        this.telemetryClient.trackEvent({
-            name: TelemetryLoggerMiddleware.botMsgUpdateEvent,
-            properties: {
-                foo: 'bar',
-                ImportantProperty: 'ImportantValue',
-            },
-        });
-    }
-    async onDeleteActivity() {
-        this.telemetryClient.trackEvent({
-            name: TelemetryLoggerMiddleware.botMsgDeleteEvent,
-            properties: {
-                foo: 'bar',
-                ImportantProperty: 'ImportantValue',
-            },
-        });
-    }
-}
-
-function createReply(activity, text, locale = null) {
-    return {
-        type: ActivityTypes.Message,
-        from: { id: activity.recipient.id, name: activity.recipient.name },
-        recipient: { id: activity.from.id, name: activity.from.name },
-        replyToId: activity.id,
-        serviceUrl: activity.serviceUrl,
-        channelId: activity.channelId,
-        conversation: {
-            isGroup: activity.conversation.isGroup,
-            id: activity.conversation.id,
-            name: activity.conversation.name,
-        },
-        text: text || '',
-        locale: locale || activity.locale,
-    };
-}
-
-describe(`TelemetryMiddleware`, function () {
-    this.timeout(5000);
-    it(`telemetry should log send and receive activities`, function (done) {
-        var callCount = 0;
-        var telemetryClient = {
-            trackEvent: (telemetry) => {
-                try {
-                    assert(telemetry, 'telemetry is null');
-                    switch (++callCount) {
-                        case 1:
-                            assert(telemetry.name === TelemetryLoggerMiddleware.botMsgReceiveEvent);
-                            assert(telemetry.properties);
-                            assert('fromId' in telemetry.properties);
-                            assert('conversationName' in telemetry.properties);
-                            assert('locale' in telemetry.properties);
-                            assert('recipientId' in telemetry.properties);
-                            assert('recipientName' in telemetry.properties);
-                            assert('fromName' in telemetry.properties);
-                            assert('text' in telemetry.properties);
-                            assert(telemetry.properties.text === 'foo');
-                            break;
-
-                        case 2:
-                            assert(telemetry.name === TelemetryLoggerMiddleware.botMsgSendEvent);
-                            assert(telemetry.properties);
-                            assert('replyActivityId' in telemetry.properties);
-                            assert('recipientId' in telemetry.properties);
-                            assert('conversationName' in telemetry.properties);
-                            assert('locale' in telemetry.properties);
-                            assert('recipientName' in telemetry.properties);
-                            break;
-                        case 3:
-                            assert(telemetry.name === TelemetryLoggerMiddleware.botMsgSendEvent);
-                            assert(telemetry.properties);
-                            assert('replyActivityId' in telemetry.properties);
-                            assert('recipientId' in telemetry.properties);
-                            assert('conversationName' in telemetry.properties);
-                            assert('locale' in telemetry.properties);
-                            assert('recipientName' in telemetry.properties);
-                            assert(telemetry.properties.text === 'echo:foo');
-                            break;
-                        case 4:
-                            assert(telemetry.name === TelemetryLoggerMiddleware.botMsgReceiveEvent);
-                            assert(telemetry.properties);
-                            assert('fromId' in telemetry.properties);
-                            assert('conversationName' in telemetry.properties);
-                            assert('locale' in telemetry.properties);
-                            assert('recipientId' in telemetry.properties);
-                            assert('recipientName' in telemetry.properties);
-                            assert('fromName' in telemetry.properties);
-                            assert('text' in telemetry.properties);
-                            assert(telemetry.properties.text === 'bar');
-                            break;
-                        case 5:
-                            assert(telemetry.name === TelemetryLoggerMiddleware.botMsgSendEvent);
-                            assert(telemetry.properties);
-                            assert('replyActivityId' in telemetry.properties);
-                            assert('recipientId' in telemetry.properties);
-                            assert('conversationName' in telemetry.properties);
-                            assert('locale' in telemetry.properties);
-                            assert('recipientName' in telemetry.properties);
-                            break;
-                        case 6:
-                            assert(telemetry.name === TelemetryLoggerMiddleware.botMsgSendEvent);
-                            assert(telemetry.properties);
-                            assert('replyActivityId' in telemetry.properties);
-                            assert('recipientId' in telemetry.properties);
-                            assert('conversationName' in telemetry.properties);
-                            assert('locale' in telemetry.properties);
-                            assert('recipientName' in telemetry.properties);
-                            assert(telemetry.properties.text === 'echo:bar');
-                            done();
-                            break;
-                        default:
-                            assert(false);
-                            break;
-                    }
-                } catch (err) {
-                    done(err);
-                }
-            },
-        };
-        let myLogger = new TelemetryLoggerMiddleware(telemetryClient, true);
-        var adapter = new TestAdapter(async (context) => {
-            var typingActivity = {
-                type: ActivityTypes.Typing,
-                relatesTo: context.activity.relatesTo,
-            };
-            await context.sendActivity(typingActivity);
-            await context.sendActivity(`echo:${context.activity.text}`);
-        }).use(myLogger);
-
-        adapter
-            .send('foo')
-            .assertReply((activity) => strictEqual(activity.type, ActivityTypes.Typing))
-            .assertReply('echo:foo')
-            .send('bar')
-            .assertReply((activity) => strictEqual(activity.type, ActivityTypes.Typing))
-            .assertReply('echo:bar');
+describe(`TelemetryMiddleware`, () => {
+    let sandbox;
+    beforeEach(() => {
+        sandbox = sinon.createSandbox();
     });
 
-    it(`telemetry null telemetryClient`, function (done) {
-        let myLogger = new TelemetryLoggerMiddleware(null, true);
-        var adapter = new TestAdapter(async (context) => {
-            var typingActivity = {
+    afterEach(() => {
+        sandbox.restore();
+    });
+
+    // Construct a mocked null telemetry client and return some helper methods for expression
+    // expectations.
+    const makeTelemetryClient = () => {
+        const client = new NullTelemetryClient();
+        const mock = sandbox.mock(client);
+
+        const expectExactEvent = (name, properties = {}) => {
+            mock.expects('trackEvent').withArgs(sinon.match({ name, properties })).once();
+        };
+
+        const expectTrackEvent = (name, properties = {}) => {
+            expectExactEvent(name, {
+                conversationName: sinon.match.string,
+                recipientId: sinon.match.string,
+                ...properties,
+            });
+        };
+
+        const expectReceiveEvent = (properties = {}) => {
+            expectTrackEvent(TelemetryLoggerMiddleware.botMsgReceiveEvent, {
+                fromId: sinon.match.string,
+                locale: sinon.match.string,
+                ...properties,
+            });
+        };
+
+        const expectSendEvent = (properties = {}) => {
+            expectTrackEvent(TelemetryLoggerMiddleware.botMsgSendEvent, {
+                replyActivityId: sinon.match.string,
+                locale: sinon.match.string,
+                ...properties,
+            });
+        };
+
+        return {
+            client,
+            expectExactEvent,
+            expectReceiveEvent,
+            expectSendEvent,
+            expectTrackEvent,
+        };
+    };
+
+    // Make an adapter with the supplied logic and telemetry logger
+    const makeAdapter = ({
+        adapterLogic = async (context) => {
+            await context.sendActivity({
                 type: ActivityTypes.Typing,
                 relatesTo: context.activity.relatesTo,
-            };
-            await context.sendActivity(typingActivity);
-            await context.sendActivity(`echo:${context.activity.text}`);
-        }).use(myLogger);
+            });
 
-        adapter
+            await context.sendActivity(`echo:${context.activity.text}`);
+        },
+        makeLogger = (telemetryClient, logPersonalInformation) =>
+            new TelemetryLoggerMiddleware(telemetryClient, logPersonalInformation),
+    }) => new TestAdapter(adapterLogic).use(makeLogger());
+
+    it(`should log send and receive activities`, async () => {
+        const { client, expectReceiveEvent, expectSendEvent } = makeTelemetryClient();
+
+        expectReceiveEvent({
+            conversationId: sinon.match.string,
+            fromName: sinon.match.string,
+            recipientName: sinon.match.string,
+            text: 'foo',
+        });
+
+        expectSendEvent({ conversationId: sinon.match.string });
+        expectSendEvent({ conversationId: sinon.match.string, text: 'echo:foo' });
+
+        expectReceiveEvent({
+            conversationId: sinon.match.string,
+            fromName: sinon.match.string,
+            recipientName: sinon.match.string,
+            text: 'bar',
+        });
+
+        expectSendEvent({ conversationId: sinon.match.string });
+        expectSendEvent({ conversationId: sinon.match.string, text: 'echo:bar' });
+
+        const adapter = makeAdapter({
+            makeLogger: () => new TelemetryLoggerMiddleware(client, true),
+        });
+
+        await adapter
             .send('foo')
             .assertReply((activity) => strictEqual(activity.type, ActivityTypes.Typing))
             .assertReply('echo:foo')
             .send('bar')
             .assertReply((activity) => strictEqual(activity.type, ActivityTypes.Typing))
             .assertReply('echo:bar')
-            .then(done);
+            .startTest();
+
+        sandbox.verify();
     });
 
-    it(`telemetry should not log PII properties for send and receive activities`, function (done) {
-        var callCount = 0;
-        var telemetryClient = {
-            trackEvent: (telemetry) => {
-                try {
-                    assert(telemetry, 'telemetry is null');
-                    switch (++callCount) {
-                        case 1:
-                            assert(telemetry.name === TelemetryLoggerMiddleware.botMsgReceiveEvent);
-                            assert(telemetry.properties);
-                            assert('fromId' in telemetry.properties);
-                            assert('conversationName' in telemetry.properties);
-                            assert('locale' in telemetry.properties);
-                            assert('recipientId' in telemetry.properties);
-                            assert('recipientName' in telemetry.properties);
-                            assert(!('fromName' in telemetry.properties));
-                            assert(!('text' in telemetry.properties));
-                            break;
+    it(`should work with null telemetryClient`, async () => {
+        const adapter = makeAdapter({
+            makeLogger: () => new TelemetryLoggerMiddleware(null, true),
+        });
 
-                        case 2:
-                            assert(telemetry.name === TelemetryLoggerMiddleware.botMsgSendEvent);
-                            assert(telemetry.properties);
-                            assert('replyActivityId' in telemetry.properties);
-                            assert('recipientId' in telemetry.properties);
-                            assert('conversationName' in telemetry.properties);
-                            assert('locale' in telemetry.properties);
-                            assert(!('recipientName' in telemetry.properties));
-                            break;
-                        case 3:
-                            assert(telemetry.name === TelemetryLoggerMiddleware.botMsgSendEvent);
-                            assert(telemetry.properties);
-                            assert('replyActivityId' in telemetry.properties);
-                            assert('recipientId' in telemetry.properties);
-                            assert('conversationName' in telemetry.properties);
-                            assert('locale' in telemetry.properties);
-                            assert(!('recipientName' in telemetry.properties));
-                            assert(!('text' in telemetry.properties));
-                            break;
-                        case 4:
-                            assert(telemetry.name === TelemetryLoggerMiddleware.botMsgReceiveEvent);
-                            assert(telemetry.properties);
-                            assert('fromId' in telemetry.properties);
-                            assert('conversationName' in telemetry.properties);
-                            assert('locale' in telemetry.properties);
-                            assert('recipientId' in telemetry.properties);
-                            assert('recipientName' in telemetry.properties);
-                            assert(!('fromName' in telemetry.properties));
-                            assert(!('text' in telemetry.properties));
-                            done();
-                            break;
-                        default:
-                            break;
-                    }
-                } catch (err) {
-                    done(err);
-                }
-            },
-        };
-        let myLogger = new TelemetryLoggerMiddleware(telemetryClient, false);
-        var adapter = new TestAdapter(async (context) => {
-            var typingActivity = {
-                type: ActivityTypes.Typing,
-                relatesTo: context.activity.relatesTo,
-            };
-            await context.sendActivity(typingActivity);
-            await context.sendActivity(`echo:${context.activity.text}`);
-        }).use(myLogger);
-
-        adapter
+        await adapter
             .send('foo')
             .assertReply((activity) => strictEqual(activity.type, ActivityTypes.Typing))
             .assertReply('echo:foo')
             .send('bar')
             .assertReply((activity) => strictEqual(activity.type, ActivityTypes.Typing))
-            .assertReply('echo:bar');
+            .assertReply('echo:bar')
+            .startTest();
+
+        sandbox.verify();
     });
 
-    it(`telemetry should log update activities`, function (done) {
-        var callCount = 0;
-        var telemetryClient = {
-            trackEvent: (telemetry) => {
-                try {
-                    assert(telemetry, 'telemetry is null');
-                    switch (++callCount) {
-                        case 4:
-                            assert(telemetry.name === TelemetryLoggerMiddleware.botMsgUpdateEvent);
-                            assert(telemetry.properties);
-                            assert('recipientId' in telemetry.properties);
-                            assert('conversationName' in telemetry.properties);
-                            assert('conversationId' in telemetry.properties);
-                            assert('locale' in telemetry.properties);
-                            assert('text' in telemetry.properties);
-                            assert(telemetry.properties.text === 'new response');
-                            done();
-                            break;
-                        default:
-                            //Everything passes through
-                            break;
-                    }
-                } catch (err) {
-                    done(err);
-                }
-            },
-        };
-        let myLogger = new TelemetryLoggerMiddleware(telemetryClient, true);
-        var adapter = new TestAdapter(async (context) => {
-            let activityToUpdate = context.activity;
-            if (context.activity.text === 'update') {
-                activityToUpdate.text = 'new response';
-                await context.updateActivity(activityToUpdate);
-            } else {
-                var activity = createReply(context.activity, 'response');
-                const response = await context.sendActivity(activity);
-                activity.id = response.id;
+    it(`should not log PII properties for send and receive activities`, async () => {
+        const { client, expectReceiveEvent, expectSendEvent } = makeTelemetryClient();
 
-                // clone the activity, so we can use it to do an update
-                activityToUpdate = JSON.parse(JSON.stringify(activity));
-            }
-        }).use(myLogger);
+        expectReceiveEvent({ fromName: undefined, text: undefined });
+        expectSendEvent({ recipientName: undefined });
+        expectSendEvent({ recipientName: undefined, text: undefined });
 
-        adapter.send('foo').delay(100).send('update').delay(100);
-    });
+        const adapter = makeAdapter({
+            makeLogger: () => new TelemetryLoggerMiddleware(client, false),
+        });
 
-    it(`telemetry should log delete activities`, function (done) {
-        var callCount = 0;
-        var activityId = null;
-        var telemetryClient = {
-            trackEvent: (telemetry) => {
-                try {
-                    assert(telemetry, 'telemetry is null');
-                    switch (++callCount) {
-                        case 4:
-                            assert(telemetry.name === TelemetryLoggerMiddleware.botMsgDeleteEvent);
-                            assert(telemetry.properties);
-                            assert('recipientId' in telemetry.properties);
-                            assert('conversationName' in telemetry.properties);
-                            assert('conversationId' in telemetry.properties);
-                            done();
-                            break;
-                        default:
-                            //Everything passes through
-                            break;
-                    }
-                } catch (err) {
-                    done(err);
-                }
-            },
-        };
-
-        let myLogger = new TelemetryLoggerMiddleware(telemetryClient, true);
-        var adapter = new TestAdapter(async (context) => {
-            if (context.activity.text === 'deleteIt') {
-                await context.deleteActivity(activityId);
-            } else {
-                var activity = createReply(context.activity, 'response');
-                var response = await context.sendActivity(activity);
-                activityId = response.id;
-            }
-        }).use(myLogger);
-
-        adapter.send('foo').assertReply('response').send('deleteIt').delay(500);
-    });
-
-    it(`telemetry override RECEIVE with custom derived logger class`, function (done) {
-        var callCount = 0;
-        var telemetryClient = {
-            trackEvent: (telemetry) => {
-                try {
-                    assert(telemetry, 'telemetry is null');
-                    switch (++callCount) {
-                        case 1:
-                            assert(telemetry.name === TelemetryLoggerMiddleware.botMsgReceiveEvent);
-                            assert(telemetry.properties);
-                            assert('foo' in telemetry.properties);
-                            assert(telemetry.properties.foo === 'bar');
-                            assert('ImportantProperty' in telemetry.properties);
-                            assert(telemetry.properties.ImportantProperty === 'ImportantValue');
-                            break;
-
-                        case 2:
-                            assert(telemetry.name === 'MyReceive');
-                            assert(telemetry.properties);
-                            assert('fromId' in telemetry.properties);
-                            assert('conversationName' in telemetry.properties);
-                            assert(telemetry.properties.conversationName === 'OVERRIDE');
-                            assert('locale' in telemetry.properties);
-                            assert('recipientId' in telemetry.properties);
-                            assert('recipientName' in telemetry.properties);
-                            assert('fromName' in telemetry.properties);
-                            assert('text' in telemetry.properties);
-                            assert(telemetry.properties.text === 'foo');
-                            break;
-
-                        case 3:
-                            assert(telemetry.name === TelemetryLoggerMiddleware.botMsgSendEvent);
-                            assert(telemetry.properties);
-                            assert('replyActivityId' in telemetry.properties);
-                            assert('recipientId' in telemetry.properties);
-                            assert('conversationName' in telemetry.properties);
-                            assert('locale' in telemetry.properties);
-                            assert('recipientName' in telemetry.properties);
-                            break;
-
-                        case 4:
-                            assert(telemetry.name === TelemetryLoggerMiddleware.botMsgSendEvent);
-                            assert(telemetry.properties);
-                            assert('replyActivityId' in telemetry.properties);
-                            assert('recipientId' in telemetry.properties);
-                            assert('conversationName' in telemetry.properties);
-                            assert('locale' in telemetry.properties);
-                            assert('recipientName' in telemetry.properties);
-                            assert(telemetry.properties.text === 'echo:foo');
-                            done();
-                            break;
-                        default:
-                            break;
-                    }
-                } catch (err) {
-                    done(err);
-                }
-            },
-        };
-        let myLogger = new OverrideReceiveLogger(telemetryClient, true);
-        var adapter = new TestAdapter(async (context) => {
-            var typingActivity = {
-                type: ActivityTypes.Typing,
-                relatesTo: context.activity.relatesTo,
-            };
-            await context.sendActivity(typingActivity);
-            await context.sendActivity(`echo:${context.activity.text}`);
-        }).use(myLogger);
-
-        adapter
+        await adapter
             .send('foo')
             .assertReply((activity) => strictEqual(activity.type, ActivityTypes.Typing))
             .assertReply('echo:foo')
-            .send('bar')
-            .assertReply((activity) => strictEqual(activity.type, ActivityTypes.Typing))
-            .assertReply('echo:bar');
+            .startTest();
+
+        sandbox.verify();
     });
 
-    it(`telemetry override SEND with custom derived logger class`, function (done) {
-        var callCount = 0;
-        var telemetryClient = {
-            trackEvent: (telemetry) => {
-                try {
-                    assert(telemetry, 'telemetry is null');
-                    switch (++callCount) {
-                        case 1:
-                            assert(telemetry.name === TelemetryLoggerMiddleware.botMsgReceiveEvent);
-                            assert(telemetry.properties);
-                            assert('fromId' in telemetry.properties);
-                            assert('conversationName' in telemetry.properties);
-                            assert('locale' in telemetry.properties);
-                            assert('recipientId' in telemetry.properties);
-                            assert('recipientName' in telemetry.properties);
-                            assert('fromName' in telemetry.properties);
-                            assert('text' in telemetry.properties);
-                            assert(telemetry.properties.text === 'foo');
-                            break;
+    it(`telemetry should log update activities`, async () => {
+        const { client, expectReceiveEvent, expectSendEvent, expectTrackEvent } = makeTelemetryClient();
 
-                        case 2:
-                            assert(telemetry.name === TelemetryLoggerMiddleware.botMsgSendEvent);
-                            assert(telemetry.properties);
-                            assert('foo' in telemetry.properties);
-                            assert(telemetry.properties.foo === 'bar');
-                            assert('ImportantProperty' in telemetry.properties);
-                            assert(telemetry.properties.ImportantProperty === 'ImportantValue');
-                            break;
+        expectReceiveEvent({ text: 'foo' });
+        expectSendEvent();
 
-                        case 3:
-                            assert(telemetry.name === 'MySend');
-                            assert(telemetry.properties);
-                            assert('replyActivityId' in telemetry.properties);
-                            assert('recipientId' in telemetry.properties);
-                            assert('conversationName' in telemetry.properties);
-                            assert('locale' in telemetry.properties);
-                            assert('recipientName' in telemetry.properties);
-                            done();
-                            break;
+        expectReceiveEvent({ text: 'update' });
+        expectTrackEvent(TelemetryLoggerMiddleware.botMsgUpdateEvent, {
+            conversationId: sinon.match.string,
+            text: 'new response',
+        });
 
-                        default:
-                            break;
-                    }
-                } catch (err) {
-                    done(err);
+        const adapter = makeAdapter({
+            adapterLogic: async (context) => {
+                if (context.activity.text === 'update') {
+                    await context.updateActivity({ ...context.activity, text: 'new response' });
+                } else {
+                    const activity = createReply(context.activity, 'response');
+                    await context.sendActivity(activity);
                 }
             },
-        };
-        let myLogger = new OverrideSendLogger(telemetryClient, true);
-        var adapter = new TestAdapter(async (context) => {
-            var typingActivity = {
-                type: ActivityTypes.Typing,
-                relatesTo: context.activity.relatesTo,
-            };
-            await context.sendActivity(typingActivity);
-            await context.sendActivity(`echo:${context.activity.text}`);
-        }).use(myLogger);
+            makeLogger: () => new TelemetryLoggerMiddleware(client, true),
+        });
 
-        adapter
+        await adapter.send('foo').delay(100).send('update').delay(100).startTest();
+
+        sandbox.verify();
+    });
+
+    it(`telemetry should log delete activities`, async () => {
+        const { client, expectReceiveEvent, expectSendEvent, expectTrackEvent } = makeTelemetryClient();
+
+        expectReceiveEvent({ text: 'foo' });
+        expectSendEvent({ text: 'response' });
+
+        expectReceiveEvent({ text: 'delete' });
+        expectTrackEvent(TelemetryLoggerMiddleware.botMsgDeleteEvent);
+
+        let response;
+        const adapter = makeAdapter({
+            adapterLogic: async (context) => {
+                if (context.activity.text === 'delete') {
+                    await context.deleteActivity(response.id);
+                } else {
+                    const activity = createReply(context.activity, 'response');
+                    response = await context.sendActivity(activity);
+                }
+            },
+            makeLogger: () => new TelemetryLoggerMiddleware(client, true),
+        });
+
+        await adapter.send('foo').assertReply('response').send('delete').delay(200).startTest();
+
+        sandbox.verify();
+    });
+
+    it(`telemetry override RECEIVE with custom derived logger class`, async () => {
+        class OverrideLogger extends TelemetryLoggerMiddleware {
+            async onReceiveActivity(activity) {
+                this.telemetryClient.trackEvent({
+                    name: TelemetryLoggerMiddleware.botMsgReceiveEvent,
+                    properties: {
+                        foo: 'bar',
+                        ImportantProperty: 'ImportantValue',
+                    },
+                });
+
+                this.telemetryClient.trackEvent({
+                    name: 'MyReceive',
+                    properties: await this.fillReceiveEventProperties(activity, { conversationName: 'OVERRIDE' }),
+                });
+            }
+        }
+
+        const { client, expectExactEvent, expectSendEvent } = makeTelemetryClient();
+
+        expectExactEvent(TelemetryLoggerMiddleware.botMsgReceiveEvent, {
+            foo: 'bar',
+            ImportantProperty: 'ImportantValue',
+        });
+        expectExactEvent('MyReceive', { conversationName: 'OVERRIDE' });
+
+        expectSendEvent();
+        expectSendEvent();
+
+        const adapter = makeAdapter({
+            makeLogger: () => new OverrideLogger(client, true),
+        });
+
+        await adapter
             .send('foo')
             .assertReply((activity) => strictEqual(activity.type, ActivityTypes.Typing))
             .assertReply('echo:foo')
-            .send('bar')
-            .assertReply((activity) => strictEqual(activity.type, ActivityTypes.Typing))
-            .assertReply('echo:bar');
+            .startTest();
+
+        sandbox.verify();
     });
 
-    it(`telemetry override UPDATE with custom derived logger class`, function (done) {
-        var callCount = 0;
-        var telemetryClient = {
-            trackEvent: (telemetry) => {
-                try {
-                    assert(telemetry, 'telemetry is null');
-                    switch (++callCount) {
-                        case 4:
-                            assert(telemetry.name === TelemetryLoggerMiddleware.botMsgUpdateEvent);
-                            assert(telemetry.properties);
-                            assert('foo' in telemetry.properties);
-                            assert(telemetry.properties.foo === 'bar');
-                            assert('ImportantProperty' in telemetry.properties);
-                            assert(telemetry.properties.ImportantProperty === 'ImportantValue');
-                            done();
-                            break;
-                        default:
-                            break;
-                    }
-                } catch (err) {
-                    done(err);
-                }
-            },
-        };
-        let myLogger = new OverrideUpdateDeleteLogger(telemetryClient, true);
-        var adapter = new TestAdapter(async (context) => {
-            let activityToUpdate = context.activity;
-            if (context.activity.text === 'update') {
-                activityToUpdate.text = 'new response';
-                await context.updateActivity(activityToUpdate);
-            } else {
-                var activity = createReply(context.activity, 'response');
-                const response = await context.sendActivity(activity);
-                activity.id = response.id;
+    it(`telemetry override SEND with custom derived logger class`, async () => {
+        class OverrideLogger extends TelemetryLoggerMiddleware {
+            async onSendActivity(activity) {
+                this.telemetryClient.trackEvent({
+                    name: TelemetryLoggerMiddleware.botMsgSendEvent,
+                    properties: {
+                        foo: 'bar',
+                        ImportantProperty: 'ImportantValue',
+                    },
+                });
 
-                // clone the activity, so we can use it to do an update
-                activityToUpdate = JSON.parse(JSON.stringify(activity));
+                this.telemetryClient.trackEvent({
+                    name: 'MySend',
+                    properties: await this.fillSendEventProperties(activity),
+                });
             }
-        }).use(myLogger);
+        }
 
-        adapter.send('foo').delay(100).send('update').delay(100);
+        const { client, expectExactEvent, expectReceiveEvent } = makeTelemetryClient();
+
+        expectReceiveEvent();
+
+        expectExactEvent(TelemetryLoggerMiddleware.botMsgSendEvent, {
+            foo: 'bar',
+            ImportantProperty: 'ImportantValue',
+        });
+        expectExactEvent('MySend');
+
+        expectExactEvent(TelemetryLoggerMiddleware.botMsgSendEvent, {
+            foo: 'bar',
+            ImportantProperty: 'ImportantValue',
+        });
+        expectExactEvent('MySend');
+
+        const adapter = makeAdapter({
+            makeLogger: () => new OverrideLogger(client, true),
+        });
+
+        await adapter
+            .send('foo')
+            .assertReply((activity) => strictEqual(activity.type, ActivityTypes.Typing))
+            .assertReply('echo:foo')
+            .startTest();
+
+        sandbox.verify();
     });
 
-    it(`telemetry should log channel specific properties`, function (done) {
-        let callCount = 0;
-        const telemetryClient = {
-            trackEvent: (telemetry) => {
-                switch (++callCount) {
-                    case 1:
-                        assert(telemetry.name === TelemetryLoggerMiddleware.botMsgReceiveEvent);
-                        assert(telemetry.properties);
-                        assert('TeamsTeamInfo' in telemetry.properties);
-                        assert('TeamsTenantId' in telemetry.properties);
-                        assert('TeamsUserAadObjectId' in telemetry.properties);
-                        assert(telemetry.properties.TeamsTeamInfo === '{"id":"teamid"}');
-                        assert(telemetry.properties.TeamsTenantId === 'tenantid');
-                        assert(telemetry.properties.TeamsUserAadObjectId === 'aadObjectId');
-                        break;
-                    case 2:
-                        assert(telemetry.name === TelemetryLoggerMiddleware.botMsgReceiveEvent);
-                        assert(telemetry.properties);
-                        assert('TeamsUserAadObjectId' in telemetry.properties);
-                        assert(telemetry.properties.TeamsUserAadObjectId === 'aadObjectId');
-                        break;
-                    default:
-                        break;
+    it(`telemetry override UPDATE with custom derived logger class`, async () => {
+        class OverrideLogger extends TelemetryLoggerMiddleware {
+            async onUpdateActivity() {
+                this.telemetryClient.trackEvent({
+                    name: TelemetryLoggerMiddleware.botMsgUpdateEvent,
+                    properties: {
+                        foo: 'bar',
+                        ImportantProperty: 'ImportantValue',
+                    },
+                });
+            }
+        }
+
+        const { client, expectExactEvent, expectReceiveEvent, expectSendEvent } = makeTelemetryClient();
+
+        expectReceiveEvent({ text: 'foo' });
+        expectSendEvent();
+
+        expectReceiveEvent({ text: 'update' });
+        expectExactEvent(TelemetryLoggerMiddleware.botMsgUpdateEvent, {
+            foo: 'bar',
+            ImportantProperty: 'ImportantValue',
+        });
+
+        const adapter = makeAdapter({
+            adapterLogic: async (context) => {
+                if (context.activity.text === 'update') {
+                    await context.updateActivity({ ...context.activity, text: 'new response' });
+                } else {
+                    const activity = createReply(context.activity, 'response');
+                    await context.sendActivity(activity);
                 }
             },
-        };
+            makeLogger: () => new OverrideLogger(client, true),
+        });
 
-        const myLogger = new TelemetryLoggerMiddleware(telemetryClient, true);
+        await adapter.send('foo').delay(100).send('update').delay(100).startTest();
 
-        const adapter = new TestAdapter(async () => {
-            // No logic required for test.
-        }).use(myLogger);
+        sandbox.verify();
+    });
+
+    it(`telemetry should log channel specific properties`, async () => {
+        const { client, expectReceiveEvent } = makeTelemetryClient();
+
+        expectReceiveEvent({
+            TeamsTeamInfo: '{"id":"teamid"}',
+            TeamsTenantId: 'tenantid',
+            TeamsUserAadObjectId: 'aadObjectId',
+        });
+
+        expectReceiveEvent({
+            TeamsUserAadObjectId: 'aadObjectId',
+        });
+
+        const adapter = makeAdapter({
+            adapterLogic: () => Promise.resolve(),
+            makeLogger: () => new TelemetryLoggerMiddleware(client, true),
+        });
 
         const teamsChannelData = {
             teamsChannelId: 'teamsChannelId',
@@ -598,15 +385,10 @@ describe(`TelemetryMiddleware`, function () {
         };
 
         // Unit test for https://github.com/microsoft/botbuilder-js/issues/2781
-        const noChannelData = Object.assign({ ...activity }, { channelData: undefined });
+        const noChannelData = Object.assign({}, activity, { channelData: undefined });
 
-        adapter
-            .send(activity)
-            .send(noChannelData)
-            .then(() => {
-                strictEqual(callCount, 2);
-                done();
-            })
-            .catch(done);
+        await adapter.send(activity).send(noChannelData).startTest();
+
+        sandbox.verify();
     });
 });
