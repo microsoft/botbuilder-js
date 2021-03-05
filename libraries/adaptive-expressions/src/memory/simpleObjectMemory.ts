@@ -44,7 +44,7 @@ export class SimpleObjectMemory implements MemoryInterface {
      * @param path Given path.
      * @returns The value in the given path or undefined.
      */
-    public getValue(path: string): unknown {
+    public getValue(path: string): any {
         if (this.memory === undefined || path.length === 0) {
             return undefined;
         }

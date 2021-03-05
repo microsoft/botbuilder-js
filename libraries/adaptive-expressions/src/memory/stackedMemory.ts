@@ -33,7 +33,7 @@ export class StackedMemory extends Array<MemoryInterface> implements MemoryInter
      * @param path Given path.
      * @returns The value from the given path if found, otherwise, undefined.
      */
-    public getValue(path: string): unknown {
+    public getValue(path: string): any {
         if (this.length === 0) {
             return undefined;
         } else {
