@@ -111,6 +111,7 @@ export class BlobStorage implements Storage {
 
     /**
      * Creates a new BlobStorage instance.
+     *
      * @param settings Settings for configuring an instance of BlobStorage.
      */
     public constructor(settings: BlobStorageSettings) {
@@ -137,6 +138,7 @@ export class BlobStorage implements Storage {
 
     /**
      * Retrieve entities from the configured blob container.
+     *
      * @param keys An array of entity keys.
      * @returns The read items.
      */
@@ -198,6 +200,7 @@ export class BlobStorage implements Storage {
 
     /**
      * Store a new entity in the configured blob container.
+     *
      * @param changes The changes to write to storage.
      */
     public write(changes: StoreItems): Promise<void> {
@@ -261,6 +264,7 @@ export class BlobStorage implements Storage {
 
     /**
      * Delete entity blobs from the configured container.
+     *
      * @param keys An array of entity keys.
      */
     public delete(keys: string[]): Promise<void> {
@@ -288,6 +292,7 @@ export class BlobStorage implements Storage {
 
     /**
      * Get a blob name validated representation of an entity to be used as a key.
+     *
      * @param key The key used to identify the entity.
      */
     private sanitizeKey(key: string): string {
@@ -309,6 +314,7 @@ export class BlobStorage implements Storage {
 
     /**
      * Check if a container name is valid.
+     *
      * @param container String representing the container name to validate.
      * @returns A boolean value that indicates whether or not the name is valid.
      */
@@ -330,6 +336,7 @@ export class BlobStorage implements Storage {
 
     /**
      * Create a Blob Service.
+     *
      * @param storageAccountOrConnectionString Azure CloudStorageAccount instance or Connection String.
      * @param storageAccessKey Blob Service Access Key.
      * @param host Blob Service Host.

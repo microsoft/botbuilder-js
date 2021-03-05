@@ -7,7 +7,7 @@
     "outDir": "lib",
     "rootDir": "src",
     "skipLibCheck": true
-    },
+  },
   "include": [
     "src/**/*"
   ]

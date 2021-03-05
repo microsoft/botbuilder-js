@@ -6,9 +6,9 @@
  * Licensed under the MIT License.
  */
 
- /**
-  * Task to perform only one time.
-  */
+/**
+ * Task to perform only one time.
+ */
 export class DoOnce<T> {
     private task: {
         [key: string]: Promise<T>;
@@ -16,6 +16,7 @@ export class DoOnce<T> {
 
     /**
      * Wait for the task to be executed.
+     *
      * @param key Key of the task.
      * @param fn Function to perform.
      */
