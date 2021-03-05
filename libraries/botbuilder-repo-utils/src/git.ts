@@ -23,11 +23,7 @@ export async function gitRoot(): Promise<string> {
  * @param {number} truncate how many characters to include in commit sha
  * @returns {Promise<string>} returns commit sha `ref` points to
  */
-export async function gitSha(ref: string, truncate?: number): Promise<string> {
-    const { stdout } = await execp(`git rev-parse ${ref}`);
-    let sha = stdout.trim();
-    if (truncate != null) {
-        sha = sha.slice(0, truncate);
-    }
-    return sha;
+export async function gitSha(ref: string, truncate = 7): Promise<string> {
+    const { stdout } = await execp(`git rev-parse --short=${truncate} ${ref}`);
+    return stdout.trim();
 }
