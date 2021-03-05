@@ -14,7 +14,7 @@ const MockMode = Object.freeze({
     wild: 'wild',
     dryrun: 'dryrun',
     record: 'record',
-    lockdown: 'lockdown'
+    lockdown: 'lockdown',
 });
 
 function usingNock(test, mode, options = null) {
@@ -38,16 +38,21 @@ function usingNock(test, mode, options = null) {
     const instanceIdRegEx = /"instanceId":"[\w-]{36}"/g;
     const instanceIdReplacement = 'fakeInstanceId';
 
-    const replaceCalledInstanceId = function(scope) {
+    const replaceCalledInstanceId = function (scope) {
         scope.filteringRequestBody = (body) => {
-            return body.replace(instanceIdRegEx, `"instanceId":"${ instanceIdReplacement }"`);
+            return body.replace(instanceIdRegEx, `"instanceId":"${instanceIdReplacement}"`);
         };
     };
 
-    const replaceRecordedInstanceId = function(requests) {
-        requests.map(req => {
-            if (req.body && req.body.document && req.body.document.dialogState && req.body.document.dialogState.dialogStack) {
-                req.body.document.dialogState.dialogStack.forEach(stack => {
+    const replaceRecordedInstanceId = function (requests) {
+        requests.map((req) => {
+            if (
+                req.body &&
+                req.body.document &&
+                req.body.document.dialogState &&
+                req.body.document.dialogState.dialogStack
+            ) {
+                req.body.document.dialogState.dialogStack.forEach((stack) => {
                     if (stack.state && stack.state.values && stack.state.values.instanceId) {
                         stack.state.values.instanceId = instanceIdReplacement;
                     }
@@ -59,9 +64,9 @@ function usingNock(test, mode, options = null) {
         return requests;
     };
 
-    const setFixedScope = function(requests) {
+    const setFixedScope = function (requests) {
         if (fixedScope) {
-            requests = requests.map(req => {
+            requests = requests.map((req) => {
                 req.scope = fixedScope;
                 return req;
             });
@@ -79,8 +84,8 @@ function usingNock(test, mode, options = null) {
             output_objects: true,
             dont_print: true,
             enable_reqheaders_recording: false,
-            use_separator: false
-        }
+            use_separator: false,
+        },
     };
 
     if (mode === MockMode.record) {
@@ -91,18 +96,18 @@ function usingNock(test, mode, options = null) {
 }
 
 function getMockDirectory(test) {
-    if(test && test.title && test.parent) {
+    if (test && test.title && test.parent) {
         return path.join(__dirname, 'TestData', test.parent.title);
     } else {
-        throw new Error('No \'test\' object has been provided.');
+        throw new Error("No 'test' object has been provided.");
     }
 }
 
 function getFormatedNockFileName(test) {
-    return `${ test.title.replace(/ /g, '_') }.json`;
+    return `${test.title.replace(/ /g, '_')}.json`;
 }
 
 module.exports = {
     MockMode: MockMode,
-    usingNock: usingNock
+    usingNock: usingNock,
 };

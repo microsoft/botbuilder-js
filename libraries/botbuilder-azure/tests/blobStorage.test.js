@@ -15,7 +15,7 @@ const emulatorPath = 'C:/Program Files (x86)/Microsoft Azure Storage Explorer/St
 
 const getSettings = (container = null) => ({
     storageAccountOrConnectionString: 'UseDevelopmentStorage=true;',
-    containerName: container || 'test'
+    containerName: container || 'test',
 });
 
 const reset = (done) => {
@@ -32,40 +32,46 @@ const reset = (done) => {
 
 const checkEmulator = () => {
     if (!fs.existsSync(emulatorPath)) {
-        console.warn('These tests require Azure Storage Emulator! go to https://docs.microsoft.com/en-us/azure/storage/common/storage-use-emulator#get-the-storage-emulator to download and install.');
+        console.warn(
+            'These tests require Azure Storage Emulator! go to https://docs.microsoft.com/en-us/azure/storage/common/storage-use-emulator#get-the-storage-emulator to download and install.'
+        );
     }
     return true;
 };
 
 const storage = new BlobStorage(getSettings());
 
-describe('BlobStorage - Constructor', function() {
+describe('BlobStorage - Constructor', function () {
     before('cleanup', reset);
     after('cleanup', reset);
 
-    it('missing settings should throw error', function() {
+    it('missing settings should throw error', function () {
         assert.throws(() => new BlobStorage(), Error, 'constructor should have thrown error about missing settings.');
     });
 
-    it('Invalid container name should throw error', function() {
-        assert.throws(() => new BlobStorage(getSettings('invalid--name')), Error, 'constructor should have thrown error about invalid container name.');
+    it('Invalid container name should throw error', function () {
+        assert.throws(
+            () => new BlobStorage(getSettings('invalid--name')),
+            Error,
+            'constructor should have thrown error about invalid container name.'
+        );
     });
 });
 
-describe('BlobStorage - Base Storage Tests', function() {
+describe('BlobStorage - Base Storage Tests', function () {
     before('cleanup', reset);
     before('check emulator', checkEmulator);
     after('cleanup', reset);
 
-    it('return empty object when reading unknown key', async function() {
+    it('return empty object when reading unknown key', async function () {
         const { nockDone } = await usingNock(this.test, mode);
         const testRan = await StorageBaseTests.returnEmptyObjectWhenReadingUnknownKey(storage);
-        
+
         assert.strictEqual(testRan, true);
         return nockDone();
     });
 
-    it('throws when reading null keys', async function() {
+    it('throws when reading null keys', async function () {
         const { nockDone } = await usingNock(this.test, mode);
         const testRan = await StorageBaseTests.handleNullKeysWhenReading(storage);
 
@@ -73,23 +79,23 @@ describe('BlobStorage - Base Storage Tests', function() {
         return nockDone();
     });
 
-    it('throws when writing null keys', async function() {
+    it('throws when writing null keys', async function () {
         const { nockDone } = await usingNock(this.test, mode);
         const testRan = await StorageBaseTests.handleNullKeysWhenWriting(storage);
-        
+
         assert.strictEqual(testRan, true);
         return nockDone();
     });
 
-    it('does not throw when writing no items', async function() {
+    it('does not throw when writing no items', async function () {
         const { nockDone } = await usingNock(this.test, mode);
         const testRan = await StorageBaseTests.doesNotThrowWhenWritingNoItems(storage);
-        
+
         assert.strictEqual(testRan, true);
         return nockDone();
     });
 
-    it('create an object', async function() {
+    it('create an object', async function () {
         const { nockDone } = await usingNock(this.test, mode);
         const testRan = await StorageBaseTests.createObject(storage);
 
@@ -97,7 +103,7 @@ describe('BlobStorage - Base Storage Tests', function() {
         return nockDone();
     });
 
-    it('handle crazy keys', async function() {
+    it('handle crazy keys', async function () {
         const { nockDone } = await usingNock(this.test, mode);
         const testRan = await StorageBaseTests.handleCrazyKeys(storage);
 
@@ -105,7 +111,7 @@ describe('BlobStorage - Base Storage Tests', function() {
         return nockDone();
     });
 
-    it('update an object', async function() {
+    it('update an object', async function () {
         const { nockDone } = await usingNock(this.test, mode);
         const testRan = await StorageBaseTests.updateObject(storage);
 
@@ -113,7 +119,7 @@ describe('BlobStorage - Base Storage Tests', function() {
         return nockDone();
     });
 
-    it('delete an object', async function() {
+    it('delete an object', async function () {
         const { nockDone } = await usingNock(this.test, mode);
         const testRan = await StorageBaseTests.deleteObject(storage);
 
@@ -121,7 +127,7 @@ describe('BlobStorage - Base Storage Tests', function() {
         return nockDone();
     });
 
-    it('does not throw when deleting an unknown object', async function() {
+    it('does not throw when deleting an unknown object', async function () {
         const { nockDone } = await usingNock(this.test, mode);
         const testRan = await StorageBaseTests.deleteUnknownObject(storage);
 
@@ -129,7 +135,7 @@ describe('BlobStorage - Base Storage Tests', function() {
         return nockDone();
     });
 
-    it('performs batch operations', async function() {
+    it('performs batch operations', async function () {
         const { nockDone } = await usingNock(this.test, mode);
         const testRan = await StorageBaseTests.performBatchOperations(storage);
 
@@ -137,7 +143,7 @@ describe('BlobStorage - Base Storage Tests', function() {
         return nockDone();
     });
 
-    it('proceeds through a waterfall dialog', async function() {
+    it('proceeds through a waterfall dialog', async function () {
         const { nockDone } = await usingNock(this.test, mode);
         const testRan = await StorageBaseTests.proceedsThroughWaterfall(storage);
 
