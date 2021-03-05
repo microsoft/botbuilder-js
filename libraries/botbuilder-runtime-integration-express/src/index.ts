@@ -38,11 +38,10 @@ const defaultOptions: Options = {
 export async function start(
     applicationRoot: string,
     settingsDirectory: string,
-    options: Partial<Options> = defaultOptions
+    options: Partial<Options> = {}
 ): Promise<void> {
-    TypedOptions.check(options);
+    const { port, messagingEndpointPath } = TypedOptions.check(Object.assign({}, defaultOptions, options));
     const [services, configuration] = await getRuntimeServices(applicationRoot, settingsDirectory);
-    const { port, messagingEndpointPath } = Object.assign({}, defaultOptions, options);
 
     const app = await makeApp(messagingEndpointPath, services, configuration);
     const { bot } = await services.mustMakeInstances('bot');
