@@ -59,7 +59,7 @@ export async function makeApp(
     services: ServiceCollection<IServices>,
     configuration: Configuration,
     options: Partial<Options> = {}
-): Promise<[express.Application, (callback?: () => void) => http.Server]> {
+): Promise<[app: express.Application, listen: (callback?: () => void) => http.Server]> {
     const { port, messagingEndpointPath } = TypedOptions.check(Object.assign({}, defaultOptions, options));
     const { adapter, bot, customAdapters } = await services.mustMakeInstances('adapter', 'bot', 'customAdapters');
     const app = express();
