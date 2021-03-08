@@ -1,14 +1,12 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-import * as t from 'runtypes';
 import express from 'express';
+import * as http from 'http';
+import * as t from 'runtypes';
 import { Configuration, getRuntimeServices } from 'botbuilder-runtime';
 import { IServices, ServiceCollection } from 'botbuilder-runtime-core';
 
-/**
- * Options for runtime Express adapter
- */
 const TypedOptions = t.Record({
     /**
      * Port that server should listen on
@@ -21,6 +19,9 @@ const TypedOptions = t.Record({
     messagingEndpointPath: t.String,
 });
 
+/**
+ * Options for runtime Express adapter
+ */
 export type Options = t.Static<typeof TypedOptions>;
 
 const defaultOptions: Options = {
@@ -40,44 +41,30 @@ export async function start(
     settingsDirectory: string,
     options: Partial<Options> = {}
 ): Promise<void> {
-    const { port, messagingEndpointPath } = TypedOptions.check(Object.assign({}, defaultOptions, options));
     const [services, configuration] = await getRuntimeServices(applicationRoot, settingsDirectory);
+    const [_, listen] = await makeApp(services, configuration, options);
 
-    const app = await makeApp(messagingEndpointPath, services, configuration);
-    const { bot } = await services.mustMakeInstances('bot');
-
-    // The 'upgrade' event handler for processing WebSocket requests needs to be registered on the Node.js http.Server, not the Express.Application.
-    // In Express the underlying http.Server is made available after the app starts listening for requests.
-    const server = app.listen(port, () => {
-        console.log(`server listening on port ${port}`);
-    });
-
-    server.on('upgrade', async (req, socket, head) => {
-        const adapter = await services.mustMakeInstance('adapter');
-        adapter.useWebSocket(req, socket, head, async (context) => {
-            await bot.run(context);
-        });
-    });
+    listen();
 }
 
 /**
  * Create an Express App using the runtime Express integration.
  *
- * @param messagingEndpointPath path for receiving and processing [Activities](xref:botframework-schema.Activity)
  * @param services runtime service collection
  * @param configuration runtime configuration
- * @returns an Express App ready to listen for connections
+ * @param options options bag for configuring Express Application
+ * @returns the Express Application and a function to start the App & handle "upgrade" requests for Streaming
  */
 export async function makeApp(
-    messagingEndpointPath: string,
     services: ServiceCollection<IServices>,
-    configuration: Configuration
-): Promise<express.Application> {
+    configuration: Configuration,
+    options: Partial<Options> = {}
+): Promise<[express.Application, (callback?: () => void) => http.Server]> {
+    const { port, messagingEndpointPath } = TypedOptions.check(Object.assign({}, defaultOptions, options));
     const { adapter, bot, customAdapters } = await services.mustMakeInstances('adapter', 'bot', 'customAdapters');
+    const app = express();
 
-    const server = express();
-
-    server.post(messagingEndpointPath, (req, res) => {
+    app.post(messagingEndpointPath, (req, res) => {
         adapter.processActivity(req, res, async (turnContext) => {
             await bot.run(turnContext);
         });
@@ -100,7 +87,7 @@ export async function makeApp(
         .forEach((settings) => {
             const adapter = customAdapters.get(settings.name);
             if (adapter) {
-                server.post(`/api/${settings.route}`, (req, res) => {
+                app.post(`/api/${settings.route}`, (req, res) => {
                     adapter.processActivity(req, res, async (turnContext) => {
                         await bot.run(turnContext);
                     });
@@ -110,5 +97,21 @@ export async function makeApp(
             }
         });
 
-    return server;
+    return [
+        app,
+        (callback) => {
+            // The 'upgrade' event handler for processing WebSocket requests needs to be registered on the Node.js http.Server, not the Express.Application.
+            // In Express the underlying http.Server is made available after the app starts listening for requests.
+            const server = app.listen(port, callback ?? (() => console.log(`server listening on port ${port}`)));
+
+            server.on('upgrade', async (req, socket, head) => {
+                const adapter = await services.mustMakeInstance('adapter');
+                adapter.useWebSocket(req, socket, head, async (context) => {
+                    await bot.run(context);
+                });
+            });
+
+            return server;
+        },
+    ];
 }
