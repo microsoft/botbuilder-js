@@ -17,7 +17,6 @@ import {
     BotAdapter,
     BotCallbackHandlerKey,
     ChannelAccount,
-    ConversationAccount,
     ConversationParameters,
     ConversationReference,
     ConversationsResult,
@@ -84,7 +83,8 @@ import {
     VERSION_PATH,
 } from './streaming';
 
-import { ConnectorClientBuilder, WebRequest, WebResponse } from './interfaces';
+import { BotFrameworkHttpAdapter } from './botFrameworkHttpAdapter';
+import { BotLogic, ConnectorClientBuilder, Emitter, Request, Response, WebRequest, WebResponse } from './interfaces';
 import { delay } from 'botbuilder-stdlib';
 import { userAgentPolicy } from '@azure/ms-rest-js';
 import { validateAndFixActivity } from './activityValidator';
@@ -197,7 +197,7 @@ const US_GOV_OAUTH_ENDPOINT = 'https://api.botframework.azure.us';
  */
 export class BotFrameworkAdapter
     extends BotAdapter
-    implements ConnectorClientBuilder, ExtendedUserTokenProvider, RequestHandler {
+    implements BotFrameworkHttpAdapter, ConnectorClientBuilder, ExtendedUserTokenProvider, RequestHandler {
     // These keys are public to permit access to the keys from the adapter when it's a being
     // from library that does not have access to static properties off of BotFrameworkAdapter.
     // E.g. botbuilder-dialogs
@@ -1583,12 +1583,7 @@ export class BotFrameworkAdapter
                 this.settings.channelAuthTenant
             );
         } else {
-            credentials = new MicrosoftAppCredentials(
-                appId,
-                appPassword,
-                this.settings.channelAuthTenant,
-                oAuthScope
-            );
+            credentials = new MicrosoftAppCredentials(appId, appPassword, this.settings.channelAuthTenant, oAuthScope);
         }
 
         if (JwtTokenValidation.isGovernment(this.settings.channelService)) {
@@ -1832,6 +1827,10 @@ export class BotFrameworkAdapter
         }
 
         return response;
+    }
+
+    process(req: Request & Emitter, res: Response, logic: BotLogic): Promise<void> {
+        return this.processActivity(req, res, logic);
     }
 
     /**
