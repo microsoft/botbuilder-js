@@ -6,7 +6,7 @@ const {
     TestAdapter,
     MessageFactory,
     InputHints,
-} = require('botbuilder-core');
+} = require('botbuilder');
 const { DialogSet } = require('botbuilder-dialogs');
 const { InputDialog, StaticActivityTemplate } = require('../lib')
 

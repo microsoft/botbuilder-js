@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 import { EnumExpression, EnumExpressionConverter, Expression } from 'adaptive-expressions';
-import { Attachment } from 'botbuilder-core';
+import { Attachment } from 'botbuilder';
 import { Converter, ConverterFactory, DialogContext } from 'botbuilder-dialogs';
 import { InputDialog, InputDialogConfiguration, InputState } from './inputDialog';
 

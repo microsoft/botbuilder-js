@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 
-import { BotFrameworkClient, SkillConversationIdFactoryBase } from 'botbuilder-core';
+import { BotFrameworkClient, SkillConversationIdFactoryBase } from 'botbuilder';
 import { DialogManager } from 'botbuilder-dialogs';
 
 /**

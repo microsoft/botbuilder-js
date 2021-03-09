@@ -30,7 +30,7 @@ import {
     TokenExchangeInvokeRequest,
     TokenResponse,
     TurnContext,
-} from 'botbuilder-core';
+} from 'botbuilder';
 import {
     Converter,
     ConverterFactory,

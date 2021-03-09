@@ -17,7 +17,7 @@ import {
     ValueExpression,
     ValueExpressionConverter,
 } from 'adaptive-expressions';
-import { ActivityTypes, Activity, InputHints, MessageFactory } from 'botbuilder-core';
+import { ActivityTypes, Activity, InputHints, MessageFactory } from 'botbuilder';
 import {
     Choice,
     ChoiceFactory,

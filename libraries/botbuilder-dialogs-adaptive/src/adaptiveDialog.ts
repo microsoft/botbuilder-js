@@ -15,7 +15,7 @@ import {
     StringUtils,
     TurnContext,
     telemetryTrackDialogView,
-} from 'botbuilder-core';
+} from 'botbuilder';
 import {
     Converter,
     ConverterFactory,

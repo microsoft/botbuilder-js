@@ -13,7 +13,7 @@ import {
     StringExpression,
     StringExpressionConverter,
 } from 'adaptive-expressions';
-import { TurnContext } from 'botbuilder-core';
+import { TurnContext } from 'botbuilder';
 import {
     Converter,
     ConverterFactory,
