@@ -12,10 +12,9 @@ import { ComparisonEvaluator } from './comparisonEvaluator';
 
 /**
  * Check whether an instance is empty. Return true if the input is empty. Empty means:
- * 1.Input is null or undefined.
- * 2.Input is a null or empty string.
- * 3.Input is zero size collection.
- * 4.Input is an object with no property.
+ * 1.Input is a null or empty string.
+ * 2.Input is zero size collection.
+ * 3.Input is an object with no property.
  */
 export class Empty extends ComparisonEvaluator {
     /**

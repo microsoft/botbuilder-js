@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 
-import { EvaluateExpressionDelegate, ExpressionEvaluator, ValueWithError } from '../expressionEvaluator';
+import { EvaluateExpressionDelegate, ExpressionEvaluator } from '../expressionEvaluator';
 import { ExpressionType } from '../expressionType';
 import { FunctionUtils } from '../functionUtils';
 import { ReturnType } from '../returnType';
@@ -35,11 +35,11 @@ export class Concat extends ExpressionEvaluator {
             const firstItem = args[0];
             const secondItem = args[1];
 
-            if ((firstItem === null || firstItem === undefined) && (secondItem === null || secondItem === undefined)) {
+            if (firstItem == null && secondItem == null) {
                 return undefined;
-            } else if ((firstItem === null || firstItem === undefined) && Array.isArray(secondItem)) {
+            } else if (firstItem == null && Array.isArray(secondItem)) {
                 return secondItem;
-            } else if ((secondItem === null || secondItem === undefined) && Array.isArray(firstItem)) {
+            } else if (secondItem == null && Array.isArray(firstItem)) {
                 return firstItem;
             } else if (Array.isArray(firstItem) && Array.isArray(secondItem)) {
                 return firstItem.concat(secondItem);
@@ -53,7 +53,7 @@ export class Concat extends ExpressionEvaluator {
      * @private
      */
     private static commonStringify(input: unknown): string {
-        if (input === null || input === undefined) {
+        if (input == null) {
             return '';
         }
         if (Array.isArray(input)) {
