@@ -27,7 +27,7 @@ const validateTelemetry = async ({ recognizer, dialogContext, spy, activity, res
 
     strictEqual(spy.callCount, callCount);
     strictEqual(actualTelemetryProps.name, `${recognizer.constructor.name}Result`);
-    ok(hasValidTelemetryProps(actualTelemetryProps.properties, expectedTelemetryProps, activity));
+    ok(hasValidTelemetryProps(actualTelemetryProps.properties, expectedTelemetryProps));
 };
 
 module.exports = {
@@ -43,10 +43,11 @@ const getOrchestratorIntentProps = () => {
     return {
         TopIntent: 'mockLabel',
         TopIntentScore: '0.9',
-        Intents: '{\"mockLabel\":{\"score\":0.9}}',
+        Intents: JSON.stringify({ mockLabel: { score: 0.9 } }),
         Entities: '{}',
-        AdditionalProperties:
-            '{\"result\":[{\"score\":0.9,\"label\":{\"name\":\"mockLabel\"}}]}',
+        AdditionalProperties: JSON.stringify({
+            result: [{ score: 0.9, label: { name: 'mockLabel' } }],
+        }),
     };
 };
 
@@ -62,13 +63,13 @@ const getExpectedProps = (activity, result, logPersonalInformation) => {
     return expectedProps;
 };
 
-const hasValidTelemetryProps = (actual, expected, activity) => {
+const hasValidTelemetryProps = (actual, expected) => {
     if (Object.keys(actual).length !== Object.keys(expected).length) {
         return false;
     }
 
     for (const property in actual) {
-        if (!property in expected) {
+        if (!(property in expected)) {
             return false;
         }
 
