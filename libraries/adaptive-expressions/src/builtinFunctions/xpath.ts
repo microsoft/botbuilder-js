@@ -11,7 +11,6 @@ import { EvaluateExpressionDelegate, ExpressionEvaluator } from '../expressionEv
 import { ExpressionType } from '../expressionType';
 import { FunctionUtils } from '../functionUtils';
 import { ReturnType } from '../returnType';
-import { assert } from 'botbuilder-stdlib';
 
 /**
  * Return the newline string according to the environment.
