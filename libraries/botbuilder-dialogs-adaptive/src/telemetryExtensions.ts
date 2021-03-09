@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 
-import { BotTelemetryClient } from 'botbuilder-core';
+import { BotTelemetryClient } from 'botbuilder';
 import { DialogManager, DialogTurnStateConstants } from 'botbuilder-dialogs';
 
 /**

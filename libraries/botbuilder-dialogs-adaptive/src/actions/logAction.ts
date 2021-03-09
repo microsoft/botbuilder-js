@@ -12,7 +12,7 @@ import {
     StringExpression,
     StringExpressionConverter,
 } from 'adaptive-expressions';
-import { Activity, ActivityTypes } from 'botbuilder-core';
+import { Activity, ActivityTypes } from 'botbuilder';
 import {
     Converter,
     ConverterFactory,

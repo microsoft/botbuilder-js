@@ -12,7 +12,7 @@ import {
     BoolExpressionConverter,
     Expression,
 } from 'adaptive-expressions';
-import { StringUtils } from 'botbuilder-core';
+import { StringUtils } from 'botbuilder';
 import {
     Converter,
     ConverterFactory,

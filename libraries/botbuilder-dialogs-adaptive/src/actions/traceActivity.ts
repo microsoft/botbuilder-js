@@ -14,7 +14,7 @@ import {
     ValueExpression,
     ValueExpressionConverter,
 } from 'adaptive-expressions';
-import { Activity, ActivityTypes } from 'botbuilder-core';
+import { Activity, ActivityTypes } from 'botbuilder';
 import {
     Converter,
     ConverterFactory,

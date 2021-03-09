@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 
-import { Entity } from 'botbuilder-core';
+import { Entity } from 'botbuilder';
 
 /**
  * Text entity base class.

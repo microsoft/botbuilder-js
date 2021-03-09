@@ -1,7 +1,7 @@
 // this test would be migrated to adaptive dialog package
 
 const { Templates } = require('botbuilder-lg');
-const {ActivityFactory, ActivityTypes } = require('botbuilder-core');
+const {ActivityFactory, ActivityTypes } = require('botbuilder');
 const assert = require('assert');
 
 function getTemplates(){
