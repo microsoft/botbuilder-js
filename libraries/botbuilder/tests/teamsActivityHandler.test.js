@@ -36,7 +36,6 @@ describe('TeamsActivityHandler', () => {
                     assert.strictEqual(activity.value.body, `I'm a teapot.`);
                     done();
                 })
-                .catch(err => done(err))
                 .startTest();
 
         });
@@ -58,7 +57,6 @@ describe('TeamsActivityHandler', () => {
                     assert.strictEqual(activity.text, 'Hello');
                     done();
                 })
-                .catch(err => done(err))
                 .startTest();
         });
     });
@@ -100,7 +98,6 @@ describe('TeamsActivityHandler', () => {
                     assert.strictEqual(activity.value.status, 501, 'should be a status code 501.');
                     done();
                 })
-                .catch(err => done(err))
                 .startTest();
         });
 
@@ -118,7 +115,6 @@ describe('TeamsActivityHandler', () => {
                     assert.strictEqual(activity.value.status, 200, 'should be status code 200.');
                     done();
                 })
-                .catch(err => done(err))
                 .startTest();
         });
 
@@ -136,7 +132,6 @@ describe('TeamsActivityHandler', () => {
                     assert.strictEqual(activity.value.status, 200, 'should be status code 200.');
                     done();
                 })
-                .catch(err => done(err))
                 .startTest();
         });
 
@@ -154,7 +149,6 @@ describe('TeamsActivityHandler', () => {
                     assert.strictEqual(activity.value.status, 200, 'should be status code 200.');
                     done();
                 })
-                .catch(err => done(err))
                 .startTest();
         });
 
@@ -172,7 +166,6 @@ describe('TeamsActivityHandler', () => {
                     assert.strictEqual(activity.value.status, 200, 'should be status code 200.');
                     done();
                 })
-                .catch(err => done(err))
                 .startTest();
         });
 
@@ -190,7 +183,6 @@ describe('TeamsActivityHandler', () => {
                     assert.strictEqual(activity.value.status, 200, 'should be status code 200.');
                     done();
                 })
-                .catch(err => done(err))
                 .startTest();
         });
 
@@ -208,7 +200,6 @@ describe('TeamsActivityHandler', () => {
                     assert.strictEqual(activity.value.status, 200, 'should be status code 200.');
                     done();
                 })
-                .catch(err => done(err))
                 .startTest();
         });
 
@@ -226,7 +217,6 @@ describe('TeamsActivityHandler', () => {
                     assert.strictEqual(activity.value.status, 200, 'should be status code 200.');
                     done();
                 })
-                .catch(err => done(err))
                 .startTest();
         });
 
@@ -244,7 +234,6 @@ describe('TeamsActivityHandler', () => {
                     assert.strictEqual(activity.value.status, 200, 'should be status code 200.');
                     done();
                 })
-                .catch(err => done(err))
                 .startTest();
         });
 
@@ -272,7 +261,6 @@ describe('TeamsActivityHandler', () => {
                     assert.strictEqual(activity.value.message, 'Cannot read property \'activity\' of null', 'should have thrown an error.');
                     done();
                 })
-                .catch(err => done(err))
                 .startTest();
         });
     });
@@ -294,7 +282,6 @@ describe('TeamsActivityHandler', () => {
                         `expected empty body for invokeResponse from fileConsent flow.\nReceived: ${ JSON.stringify(activity.value.body) }`);
                     done();
                 })
-                .catch(err => done(err))
                 .startTest();
         });
 
@@ -314,7 +301,6 @@ describe('TeamsActivityHandler', () => {
                         `expected empty body for invokeResponse from fileConsent flow.\nReceived: ${ JSON.stringify(activity.value.body) }`);
                     done();
                 })
-                .catch(err => done(err))
                 .startTest();
         });
     });
@@ -336,7 +322,6 @@ describe('TeamsActivityHandler', () => {
                         `expected empty body for invokeResponse from fileConsent flow.\nReceived: ${ JSON.stringify(activity.value.body) }`);
                     done();
                 })
-                .catch(err => done(err))
                 .startTest();
         });
 
@@ -356,7 +341,6 @@ describe('TeamsActivityHandler', () => {
                         `expected empty body for invokeResponse from fileConsent flow.\nReceived: ${ JSON.stringify(activity.value.body) }`);
                     done();
                 })
-                .catch(err => done(err))
                 .startTest();
         });
 
@@ -376,7 +360,6 @@ describe('TeamsActivityHandler', () => {
                         `expected empty body for invokeResponse from fileConsent flow.\nReceived: ${ JSON.stringify(activity.value.body) }`);
                     done();
                 })
-                .catch(err => done(err))
                 .startTest();
         });
 
@@ -396,7 +379,6 @@ describe('TeamsActivityHandler', () => {
                         `expected empty body for invokeResponse from fileConsent flow.\nReceived: ${ JSON.stringify(activity.value.body) }`);
                     done();
                 })
-                .catch(err => done(err))
                 .startTest();
         });
 
@@ -415,7 +397,6 @@ describe('TeamsActivityHandler', () => {
                     assert.strictEqual(activity.value.body, undefined);
                     done();
                 })
-                .catch(err => done(err))
                 .startTest();
         });
 
@@ -434,7 +415,6 @@ describe('TeamsActivityHandler', () => {
                     assert.strictEqual(activity.value.body, undefined);
                     done();
                 })
-                .catch(err => done(err))
                 .startTest();
         });
 
@@ -453,7 +433,6 @@ describe('TeamsActivityHandler', () => {
                     assert.strictEqual(activity.value.body, undefined);
                     done();
                 })
-                .catch(err => done(err))
                 .startTest();
         });
 
@@ -472,7 +451,6 @@ describe('TeamsActivityHandler', () => {
                     assert.strictEqual(activity.value.body, undefined);
                     done();
                 })
-                .catch(err => done(err))
                 .startTest();
         });
 
@@ -491,7 +469,6 @@ describe('TeamsActivityHandler', () => {
                     assert.strictEqual(activity.value.body, undefined);
                     done();
                 })
-                .catch(err => done(err))
                 .startTest();
         });
 
@@ -510,7 +487,6 @@ describe('TeamsActivityHandler', () => {
                     assert.strictEqual(activity.value.body, undefined);
                     done();
                 })
-                .catch(err => done(err))
                 .startTest();
         });
 
@@ -529,7 +505,6 @@ describe('TeamsActivityHandler', () => {
                     assert.strictEqual(activity.value.body, undefined);
                     done();
                 })
-                .catch(err => done(err))
                 .startTest();
         });
 
@@ -586,7 +561,6 @@ describe('TeamsActivityHandler', () => {
                     assert.strictEqual(activity.value.body, undefined);
                     done();
                 })
-                .catch(err => done(err))
                 .startTest();
         });
 
@@ -605,7 +579,6 @@ describe('TeamsActivityHandler', () => {
                     assert.strictEqual(activity.value.body, undefined);
                     done();
                 })
-                .catch(err => done(err))
                 .startTest();
         });
 
@@ -624,7 +597,6 @@ describe('TeamsActivityHandler', () => {
                     assert.strictEqual(activity.value.body, undefined);
                     done();
                 })
-                .catch(err => done(err))
                 .startTest();
         });
 
@@ -643,7 +615,6 @@ describe('TeamsActivityHandler', () => {
                     assert.strictEqual(activity.value.body, undefined);
                     done();
                 })
-                .catch(err => done(err))
                 .startTest();
         });
 
@@ -662,7 +633,6 @@ describe('TeamsActivityHandler', () => {
                     assert.strictEqual(activity.value.body, undefined);
                     done();
                 })
-                .catch(err => done(err))
                 .startTest();
         });
 
@@ -681,7 +651,6 @@ describe('TeamsActivityHandler', () => {
                     assert.strictEqual(activity.value.body, undefined);
                     done();
                 })
-                .catch(err => done(err))
                 .startTest();
         });
 
@@ -700,7 +669,6 @@ describe('TeamsActivityHandler', () => {
                     assert.strictEqual(activity.value.body, undefined);
                     done();
                 })
-                .catch(err => done(err))
                 .startTest();
         });
     });
@@ -734,7 +702,6 @@ describe('TeamsActivityHandler', () => {
                         `expected empty body for invokeResponse from fileConsent flow.\nReceived: ${ JSON.stringify(activity.value.body) }`);
                     done();
                 })
-                .catch(err => done(err))
                 .startTest();
         });
 
@@ -754,7 +721,6 @@ describe('TeamsActivityHandler', () => {
                         `expected empty body for invokeResponse from fileConsent flow.\nReceived: ${ JSON.stringify(activity.value.body) }`);
                     done();
                 })
-                .catch(err => done(err))
                 .startTest();
         });
 
@@ -780,7 +746,6 @@ describe('TeamsActivityHandler', () => {
                         `expected empty body for invokeResponse from fileConsent flow.\nReceived: ${ JSON.stringify(activity.value.body) }`);
                     done();
                 })
-                .catch(err => done(err))
                 .startTest();
         });
 
@@ -934,7 +899,6 @@ describe('TeamsActivityHandler', () => {
                     assert.strictEqual(activity.value.body, undefined);
                     done();
                 })
-                .catch(err => done(err))
                 .startTest();
         });
 
@@ -952,7 +916,6 @@ describe('TeamsActivityHandler', () => {
                     assert.strictEqual(activity.value.body, undefined);
                     done();
                 })
-                .catch(err => done(err))
                 .startTest();
         });
     });
@@ -1015,7 +978,6 @@ describe('TeamsActivityHandler', () => {
                     assert(fileConsentAcceptCalled, 'handleTeamsFileConsentAccept handler not called');
                     done();
                 })
-                .catch(err => done(err))
                 .startTest();
         });
 
@@ -1037,7 +999,6 @@ describe('TeamsActivityHandler', () => {
                     assert(fileConsentDeclineCalled, 'handleTeamsFileConsentDecline handler not called');
                     done();
                 })
-                .catch(err => done(err))
                 .startTest();
         });
     });
@@ -1104,7 +1065,6 @@ describe('TeamsActivityHandler', () => {
                     assert(onDialogCalled, 'onDialog handler not called');
                     done();
                 })
-                .catch(err => done(err))
                 .startTest();
         });
 
@@ -1127,7 +1087,6 @@ describe('TeamsActivityHandler', () => {
                     assert(onDialogCalled, 'onDialog handler not called');
                     done();
                 })
-                .catch(err => done(err))
                 .startTest();
         });
 
@@ -1150,7 +1109,6 @@ describe('TeamsActivityHandler', () => {
                     assert(onDialogCalled, 'onDialog handler not called');
                     done();
                 })
-                .catch(err => done(err))
                 .startTest();
         });
 
@@ -1208,7 +1166,6 @@ describe('TeamsActivityHandler', () => {
                     TeamsInfo.getMember = wasGetMember;
                     done();
                 })
-                .catch(err => done(err))
                 .startTest();
         });
 
@@ -1234,7 +1191,6 @@ describe('TeamsActivityHandler', () => {
                     assert(onDialogCalled, 'onDialog handler not called');
                     done();
                 })
-                .catch(err => done(err))
                 .startTest();
         });
 
@@ -1292,7 +1248,6 @@ describe('TeamsActivityHandler', () => {
                     TeamsInfo.getMember = wasGetMember;
                     done();
                 })
-                .catch(err => done(err))
                 .startTest();
         });
 
@@ -1416,7 +1371,6 @@ describe('TeamsActivityHandler', () => {
                     TeamsInfo.getMember = wasGetMember;
                     done();
                 })
-                .catch(err => done(err))
                 .startTest();
         });
 
@@ -1466,7 +1420,6 @@ describe('TeamsActivityHandler', () => {
                     assert(onDialogCalled, 'onDialog handler not called');
                     done();
                 })
-                .catch(err => done(err))
                 .startTest();
         });
 
@@ -1492,7 +1445,6 @@ describe('TeamsActivityHandler', () => {
                     assert(onDialogCalled, 'onDialog handler not called');
                     done();
                 })
-                .catch(err => done(err))
                 .startTest();
         });
 
@@ -1541,7 +1493,6 @@ describe('TeamsActivityHandler', () => {
                     assert(onDialogCalled, 'onDialog handler not called');
                     done();
                 })
-                .catch(err => done(err))
                 .startTest();
         });
 
@@ -1590,7 +1541,6 @@ describe('TeamsActivityHandler', () => {
                     assert(onDialogCalled, 'onDialog handler not called');
                     done();
                 })
-                .catch(err => done(err))
                 .startTest();
         });
 
@@ -1639,7 +1589,6 @@ describe('TeamsActivityHandler', () => {
                     assert(onDialogCalled, 'onDialog handler not called');
                     done();
                 })
-                .catch(err => done(err))
                 .startTest();
         });
 
@@ -1688,7 +1637,6 @@ describe('TeamsActivityHandler', () => {
                     assert(onDialogCalled, 'onDialog handler not called');
                     done();
                 })
-                .catch(err => done(err))
                 .startTest();
         });
         
@@ -1734,7 +1682,6 @@ describe('TeamsActivityHandler', () => {
                     assert(onDialogCalled, 'onDialog handler not called');
                     done();
                 })
-                .catch(err => done(err))
                 .startTest();
         });
 
@@ -1780,7 +1727,6 @@ describe('TeamsActivityHandler', () => {
                     assert(onDialogCalled, 'onDialog handler not called');
                     done();
                 })
-                .catch(err => done(err))
                 .startTest();
         });
 
@@ -1826,7 +1772,6 @@ describe('TeamsActivityHandler', () => {
                     assert(onDialogCalled, 'onDialog handler not called');
                     done();
                 })
-                .catch(err => done(err))
                 .startTest();
         });
 
@@ -1872,7 +1817,6 @@ describe('TeamsActivityHandler', () => {
                     assert(onDialogCalled, 'onDialog handler not called');
                     done();
                 })
-                .catch(err => done(err))
                 .startTest();
         });
 
@@ -1918,7 +1862,6 @@ describe('TeamsActivityHandler', () => {
                     assert(onDialogCalled, 'onDialog handler not called');
                     done();
                 })
-                .catch(err => done(err))
                 .startTest();
         });
 
@@ -1964,7 +1907,6 @@ describe('TeamsActivityHandler', () => {
                     assert(onDialogCalled, 'onDialog handler not called');
                     done();
                 })
-                .catch(err => done(err))
                 .startTest();
         });
 
@@ -2004,7 +1946,6 @@ describe('TeamsActivityHandler', () => {
                     assert(handleTeamsSigninVerifyStateCalled, 'handleTeamsSigninVerifyState handler not called');
                     done();
                 })
-                .catch(err => done(err))
                 .startTest();
         });
 
@@ -2044,7 +1985,6 @@ describe('TeamsActivityHandler', () => {
                     assert(handleTeamsSigninTokenExchangeCalled, 'handleTeamsSigninTokenExchange handler not called');
                     done();
                 })
-                .catch(err => done(err))
                 .startTest();
         });
     });
