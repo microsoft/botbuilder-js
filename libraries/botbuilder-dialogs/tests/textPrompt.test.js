@@ -34,7 +34,8 @@ describe('TextPrompt', function() {
         await adapter.send('Hello')
             .assertReply('Please say something.')
             .send('test')
-            .assertReply('test');
+            .assertReply('test')
+            .startTest();
     });
 
     it('should call TextPrompt with custom validator.', async function() {
@@ -65,7 +66,8 @@ describe('TextPrompt', function() {
             .send('i')
             .assertReply('Please say something.')
             .send('test')
-            .assertReply('test');
+            .assertReply('test')
+            .startTest();
     });
 
     it('should call TextPrompt with naughty strings.', async function() {
@@ -93,7 +95,8 @@ describe('TextPrompt', function() {
                 await adapter.send('Hello')
                     .assertReply('Enter some text')
                     .send(naughtyString)
-                    .assertReply(naughtyString);
+                    .assertReply(naughtyString)
+                    .startTest();
             }
         });
     });
@@ -123,7 +126,8 @@ describe('TextPrompt', function() {
             .send(invalidMessage)
             .assertReply('Text is required.')
             .send('test')
-            .assertReply('test');
+            .assertReply('test')
+            .startTest();
     });
 
     it('should send ignore retryPrompt if validator replies.', async function() {
@@ -158,7 +162,8 @@ describe('TextPrompt', function() {
             .send('i')
             .assertReply('too short')
             .send('test')
-            .assertReply('test');
+            .assertReply('test')
+            .startTest();
     });
 
     it('should not send any retryPrompt no prompt specified.', async function() {
@@ -184,6 +189,7 @@ describe('TextPrompt', function() {
         await adapter.send('Hello')
             .send(invalidMessage)
             .send('test')
-            .assertReply('test');
+            .assertReply('test')
+            .startTest();
     });
 });

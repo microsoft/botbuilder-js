@@ -45,6 +45,6 @@ describe('TelemetryTrackEventAction', function () {
             ok(trackEventStub.calledOnce);
         });
 
-        await adapter.send('test');
+        await adapter.send('test').startTest();
     });
 });

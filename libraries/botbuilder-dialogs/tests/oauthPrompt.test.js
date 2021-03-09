@@ -65,7 +65,8 @@ describe('OAuthPrompt', function() {
 
                 adapter.send(eventActivity);
             })
-            .assertReply('Logged in.');
+            .assertReply('Logged in.')
+            .startTest();
     });
 
     it('should call OAuthPrompt with code', async function() {
@@ -111,7 +112,8 @@ describe('OAuthPrompt', function() {
                 adapter.addUserToken(connectionName, activity.channelId, activity.recipient.id, token, magicCode);
             })
             .send(magicCode)
-            .assertReply('Logged in.');
+            .assertReply('Logged in.')
+            .startTest();
     });
 
     it('should timeout OAuthPrompt with message activity', async function() {
@@ -212,7 +214,8 @@ describe('OAuthPrompt', function() {
                 adapter.addExchangeableToken(connectionName, activity.channelId, activity.recipient.id, exchangeToken, token);
             })  
             .send('invalid text message here')
-            .assertReply('Ended');
+            .assertReply('Ended')
+            .startTest();
     });
 
     it('should see attemptCount increment', async function() {
@@ -290,7 +293,8 @@ describe('OAuthPrompt', function() {
             .send('123456')
             .assertReply('attemptCount 3')
             .send(magicCode)
-            .assertReply('Logged in');
+            .assertReply('Logged in')
+            .startTest();
     });
 
     it('should call OAuthPrompt for streaming connection', async function() {
@@ -367,7 +371,8 @@ describe('OAuthPrompt', function() {
 
                 adapter.send(eventActivity);
             })
-            .assertReply('Logged in.');
+            .assertReply('Logged in.')
+            .startTest();
     });
 
     describe('private methods', () => {
@@ -656,7 +661,8 @@ describe('OAuthPrompt', function() {
 
         it('Test adapter should be able to perform token exchanges for token', async function() {
             await adapter
-                .send('hello');
+                .send('hello')
+                .startTest();
         });
     });
 
@@ -727,7 +733,8 @@ describe('OAuthPrompt', function() {
                     assert.strictEqual(a.value.body.connectionName, connectionName);
                     assert(a.value.body.failureDetail === null);
                 })
-                .assertReply('Logged in.');
+                .assertReply('Logged in.')
+                .startTest();
         });
 
         it('Should reject token exchange requests if token cannot be exchanged', async function() {
@@ -754,7 +761,8 @@ describe('OAuthPrompt', function() {
                     assert(a.value);
                     assert.strictEqual(a.value.status, 412);
                     assert(a.value.body.failureDetail);
-                });
+                })
+                .startTest();
         });
 
         it('Should reject token exhchange requests with no body', async function() {
@@ -777,7 +785,8 @@ describe('OAuthPrompt', function() {
                     assert(a.value);
                     assert.strictEqual(a.value.status, 400);
                     assert(a.value.body.failureDetail);
-                });
+                })
+                .startTest();
         });
 
         it('Should reject token exhchange requests with wrong connection name', async function() {
@@ -805,7 +814,8 @@ describe('OAuthPrompt', function() {
                     assert.strictEqual(a.value.status, 400);
                     assert.strictEqual(a.value.body.connectionName, connectionName);
                     assert(a.value.body.failureDetail);
-                });
+                })
+                .startTest();
         });
     });
 });
@@ -908,5 +918,6 @@ async function testTimeout(oauthPromptActivity, shouldSucceed = true, tokenRespo
             adapter.addExchangeableToken(connectionName, activity.channelId, activity.recipient.id, exchangeToken, token);
         })  
         .send(oauthPromptActivity)
-        .assertReply(noTokenResponse);
+        .assertReply(noTokenResponse)
+        .startTest();
 }
