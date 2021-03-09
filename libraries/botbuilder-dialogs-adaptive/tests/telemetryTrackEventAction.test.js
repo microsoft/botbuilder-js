@@ -4,7 +4,7 @@ const {
     ConversationState,
     MemoryStorage,
     TestAdapter
-} = require('botbuilder-core');
+} = require('botbuilder');
 const { DialogSet } = require('botbuilder-dialogs');
 const { TelemetryTrackEventAction } = require('../lib');
 

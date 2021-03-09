@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 
-import { Activity, ActivityFactory, MessageFactory } from 'botbuilder-core';
+import { Activity, ActivityFactory, MessageFactory } from 'botbuilder';
 import {
     Configurable,
     Converter,

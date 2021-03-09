@@ -5,6 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
+
 export * from './actionScope';
 export * from './baseInvokeDialog';
 export * from './beginDialog';
@@ -39,6 +40,7 @@ export * from './logAction';
 export * from './repeatDialog';
 export * from './replaceDialog';
 export * from './sendActivity';
+export * from './sendHandoffActivity';
 export * from './setProperties';
 export * from './setProperty';
 export * from './signOutUser';
