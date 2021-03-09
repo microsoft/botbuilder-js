@@ -35,7 +35,7 @@ export class Coalesce extends ExpressionEvaluator {
      */
     private static evalCoalesce(objectList: readonly unknown[]): unknown {
         for (const obj of objectList) {
-            if (obj !== null && obj !== undefined) {
+            if (obj != null) {
                 return obj;
             }
         }

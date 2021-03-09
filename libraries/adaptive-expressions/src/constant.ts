@@ -94,7 +94,7 @@ export class Constant extends Expression {
             result = result.replace(/\\/g, '\\\\');
             result = this.reverseString(this.reverseString(result).replace(this.singleQuotRegex, () => "'\\"));
             return `'${result}'`;
-        } else if (typeof this.value === 'number') {
+        } else if (FunctionUtils.isNumber(this.value)) {
             return this.value.toString();
         } else if (typeof this.value === 'object') {
             return JSON.stringify(this.value);
