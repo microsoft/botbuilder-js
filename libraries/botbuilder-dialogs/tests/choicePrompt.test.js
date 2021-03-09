@@ -40,7 +40,8 @@ describe('ChoicePrompt', function () {
         await adapter.send('Hello')
             .assertReply('Please choose a color.')
             .send(answerMessage)
-            .assertReply('red');
+            .assertReply('red')
+            .startTest();
     });
 
     it('should send a prompt and choices if they are passed in via PromptOptions.', async function () {
@@ -68,7 +69,8 @@ describe('ChoicePrompt', function () {
         await adapter.send('Hello')
             .assertReply('Please choose a color.')
             .send(answerMessage)
-            .assertReply('red');
+            .assertReply('red')
+            .startTest();
     });
 
     it('should call ChoicePrompt with custom validator.', async function () {
@@ -100,7 +102,8 @@ describe('ChoicePrompt', function () {
             .send(invalidMessage)
             .assertReply('Please choose a color.')
             .send(answerMessage)
-            .assertReply('red');
+            .assertReply('red')
+            .startTest();
     });
 
     it('should convert incomplete Choices with `action` when using ListStyle.suggestedAction styling.', async function () {
@@ -134,7 +137,8 @@ describe('ChoicePrompt', function () {
             .send(invalidMessage)
             .assertReply('Please choose a color.')
             .send(answerMessage)
-            .assertReply('red');
+            .assertReply('red')
+            .startTest();
     });
 
     it('should appropriately apply ListStyle.none when set via PromptOptions', async function () {
@@ -167,7 +171,8 @@ describe('ChoicePrompt', function () {
         await adapter.send('Hello')
             .assertReply('Please choose a color.')
             .send(answerMessage)
-            .assertReply('red');
+            .assertReply('red')
+            .startTest();
     });
 
     it('should send custom retryPrompt.', async function () {
@@ -196,7 +201,8 @@ describe('ChoicePrompt', function () {
             .send(invalidMessage)
             .assertReply('Please choose red, blue, or green.')
             .send(answerMessage)
-            .assertReply('red');
+            .assertReply('red')
+            .startTest();
     });
 
     it('should send ignore retryPrompt if validator replies.', async function () {
@@ -231,7 +237,8 @@ describe('ChoicePrompt', function () {
             .send(invalidMessage)
             .assertReply('bad input.')
             .send(answerMessage)
-            .assertReply('red');
+            .assertReply('red')
+            .startTest();
     });
 
     it('should use defaultLocale when rendering choices', async function () {
@@ -267,7 +274,8 @@ describe('ChoicePrompt', function () {
             .send(invalidMessage)
             .assertReply('bad input.')
             .send({ text: 'red', type: ActivityTypes.Message, locale: undefined })
-            .assertReply('red');
+            .assertReply('red')
+            .startTest();
     });
 
     it('should use context.activity.locale when rendering choices', async function () {
@@ -299,7 +307,8 @@ describe('ChoicePrompt', function () {
         await adapter.send({ text: 'Hello', type: ActivityTypes.Message, locale: 'es-es' })
             .assertReply('Please choose a color. (1) red, (2) green, o (3) blue')
             .send(answerMessage)
-            .assertReply('red');
+            .assertReply('red')
+            .startTest();
     });
 
     it('should use context.activity.locale over defaultLocale when rendering choices', async function () {
@@ -331,7 +340,8 @@ describe('ChoicePrompt', function () {
         await adapter.send({ text: 'Hello', type: ActivityTypes.Message, locale: 'en-us' })
             .assertReply('Please choose a color. (1) red, (2) green, or (3) blue')
             .send(answerMessage)
-            .assertReply('red');
+            .assertReply('red')
+            .startTest();
     });
 
     it('should recognize locale variations of correct locales', async function () {
@@ -415,7 +425,8 @@ describe('ChoicePrompt', function () {
                             expectedAnswer = activity.text;
                         }
                         assert.strictEqual(activity.text, expectedAnswer);
-                    });
+                    })
+                    .startTest();
             }));
         }));      
     });
@@ -460,7 +471,8 @@ describe('ChoicePrompt', function () {
                         inlineSeparator: PromptCultureModels.English.separator,
                     }).text;
                     assert.strictEqual(activity.text, `Please choose a color.${ expectedChoices }`);
-                });
+                })
+                .startTest();
         }));   
     });
 
@@ -516,7 +528,8 @@ describe('ChoicePrompt', function () {
                     inlineSeparator: culture.separator
                 }).text;
                 assert.strictEqual(activity.text, `Please choose a color.${ expectedChoices }`);
-            });
+            })
+            .startTest();
     });
 
     it('should not render choices and not blow up if choices aren\'t passed in', async function () {
@@ -542,7 +555,8 @@ describe('ChoicePrompt', function () {
         dialogs.add(choicePrompt);
 
         await adapter.send('Hello')
-            .assertReply('Please choose a color.');
+            .assertReply('Please choose a color.')
+            .startTest();
     });
 
     it('should render choices if PromptOptions & choices are passed into DialogContext.prompt()', async function() {
@@ -570,7 +584,8 @@ describe('ChoicePrompt', function () {
         await adapter.send('Hello')
             .assertReply('Please choose a color. (1) red, (2) green, or (3) blue')
             .send(answerMessage)
-            .assertReply('red');
+            .assertReply('red')
+            .startTest();
     });
 
     it('should send a prompt and choices if they are passed in via third argument in dc.prompt().', async function () {
@@ -598,7 +613,8 @@ describe('ChoicePrompt', function () {
         await adapter.send('Hello')
             .assertReply('Please choose a color.')
             .send(answerMessage)
-            .assertReply('red');
+            .assertReply('red')
+            .startTest();
     });
 
     it('should not recognize if choices are not passed in.', async function () {
@@ -626,7 +642,8 @@ describe('ChoicePrompt', function () {
         await adapter.send('Hello')
             .assertReply('Please choose a color.')
             .send('hello')
-            .assertReply('Please choose a color.');
+            .assertReply('Please choose a color.')
+            .startTest();
     });
 
     it('should use a Partial Activity when calculating message text during appendChoices.', async function () {
@@ -658,7 +675,8 @@ describe('ChoicePrompt', function () {
         await adapter.send('Hello')
             .assertReply('Please choose a color.')
             .send(answerMessage)
-            .assertReply('red');
+            .assertReply('red')
+            .startTest();
     });
 
     it('should create prompt with inline choices when specified.', async function () {
@@ -690,7 +708,8 @@ describe('ChoicePrompt', function () {
         await adapter.send('Hello')
             .assertReply('Please choose a color. (1) red, (2) green, or (3) blue')
             .send(answerMessage)
-            .assertReply('red');
+            .assertReply('red')
+            .startTest();
     });
 
     it('should create prompt with list choices when specified.', async function () {
@@ -722,7 +741,8 @@ describe('ChoicePrompt', function () {
         await adapter.send('Hello')
             .assertReply('Please choose a color.\n\n   1. red\n   2. green\n   3. blue')
             .send(answerMessage)
-            .assertReply('red');
+            .assertReply('red')
+            .startTest();
     });
 
     it('should recognize valid number choice.', async function () {
@@ -753,7 +773,8 @@ describe('ChoicePrompt', function () {
         await adapter.send('Hello')
             .assertReply('Please choose a color.')
             .send('1')
-            .assertReply('red');
+            .assertReply('red')
+            .startTest();
     });
 
     it('should not recognize, then re-prompt without error for falsy input.', async function () {
@@ -788,7 +809,8 @@ describe('ChoicePrompt', function () {
             .send({ type: ActivityTypes.Message, text: null })
             .assertReply('Please choose a color.')
             .send('1')
-            .assertReply('red');
+            .assertReply('red')
+            .startTest();
     });
 
     it('should display choices on a hero card', async function () {
@@ -824,7 +846,8 @@ describe('ChoicePrompt', function () {
                 assert(activity.attachments[0].content.text === 'Please choose a size.');
             })
             .send('1')
-            .assertReply('large');
+            .assertReply('large')
+            .startTest();
     });
     
     it('should display choices on a hero card with an additional attachment', async function (done) {
@@ -866,7 +889,8 @@ describe('ChoicePrompt', function () {
                 assert(response.attachments.length === 2);
                 assert(response.attachments[0].contentType === CardFactory.contentTypes.adaptiveCard);
                 assert(response.attachments[1].contentType === CardFactory.contentTypes.heroCard);
-            });
+            })
+            .startTest();
         done();
     });
 

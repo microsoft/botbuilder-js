@@ -35,7 +35,8 @@ describe(`ShowTypingMiddleware`, function () {
             .send('bar')
             .assertReply(activity => assert.strictEqual(activity.type, ActivityTypes.Typing))
             .assertReply('echo:bar')
-            .then(done);
+            .then(done)
+            .startTest();
     });
 
     const noMiddlewareAdapter = new TestAdapter(async (context) => {
@@ -46,21 +47,24 @@ describe(`ShowTypingMiddleware`, function () {
         noMiddlewareAdapter
             .send('foo')
             .assertReply('echo:foo')
-            .then(done);
+            .then(done)
+            .startTest();
     });
 
     it('should not immediately respond with a message (rather get a typing indicator)', function (done) {
         adapter
             .send('foo')
             .assertReply(activity => assert.notStrictEqual(activity.type, ActivityTypes.Message))
-            .then(done);
+            .then(done)
+            .startTest();
     });
 
     it('should immediately respond with a message (rather get a typing indicator) if middleware not applied', function (done) {
         noMiddlewareAdapter
             .send('foo')
             .assertReply(activity => assert.strictEqual(activity.type, ActivityTypes.Message))
-            .then(done);
+            .then(done)
+            .startTest();
     });
 
     it('should not emit an uncaught exception when a promise is rejected', function (done) {
@@ -93,6 +97,7 @@ describe(`ShowTypingMiddleware`, function () {
         skillAdapter
             .send('foo')
             .assertReply('echo:foo')
-            .then(done);
+            .then(done)
+            .startTest();
     });
 });

@@ -34,7 +34,8 @@ describe('DatetimePrompt', function () {
         await adapter.send('Hello')
             .assertReply('Please say something.')
             .send(answerMessage)
-            .assertReply('2018-01-01T09');
+            .assertReply('2018-01-01T09')
+            .startTest();
     });
 
     it('should send a prompt if the prompt is passed in via PromptOptions.', async function () {
@@ -59,7 +60,8 @@ describe('DatetimePrompt', function () {
         await adapter.send('Hello')
             .assertReply('Please say something.')
             .send(answerMessage)
-            .assertReply('2018-01-01T09');
+            .assertReply('2018-01-01T09')
+            .startTest();
     });
 
     it('should call DateTimePrompt with custom validator.', async function () {
@@ -88,7 +90,8 @@ describe('DatetimePrompt', function () {
         await adapter.send('Hello')
             .assertReply('Please say something.')
             .send(answerMessage)
-            .assertReply('2018-01-01T09');
+            .assertReply('2018-01-01T09')
+            .startTest();
     });
 
     it('should send custom retryPrompt.', async function () {
@@ -119,7 +122,8 @@ describe('DatetimePrompt', function () {
             .send(invalidMessage)
             .assertReply('Please provide a valid datetime.')
             .send(answerMessage2)
-            .assertReply('2012-09-02');
+            .assertReply('2012-09-02')
+            .startTest();
     });
 
     it('should send ignore retryPrompt if validator replies.', async function () {
@@ -153,7 +157,8 @@ describe('DatetimePrompt', function () {
             .send(invalidMessage)
             .assertReply('That was a bad date.')
             .send(answerMessage2)
-            .assertReply('2012-09-02');
+            .assertReply('2012-09-02')
+            .startTest();
     });
 
     it('should not send any retryPrompt no prompt specified.', async function () {
@@ -182,7 +187,8 @@ describe('DatetimePrompt', function () {
         await adapter.send('Hello')
             .send(invalidMessage)
             .send(answerMessage2)
-            .assertReply('2012-09-02');
+            .assertReply('2012-09-02')
+            .startTest();
     });
 
     it('should not recognize, then re-prompt without error for falsy input.', async function () {
@@ -214,6 +220,7 @@ describe('DatetimePrompt', function () {
             .send({ type: ActivityTypes.Message, text: null })
             .assertReply('Enter a date.')
             .send(answerMessage)
-            .assertReply('2018-01-01T09');
+            .assertReply('2018-01-01T09')
+            .startTest();
     });
 });

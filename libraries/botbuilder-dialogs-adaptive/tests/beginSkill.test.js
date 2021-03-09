@@ -126,7 +126,7 @@ describe('BeginSkill', function () {
             ok(postActivityStub.calledOnce);
         });
 
-        await adapter.send('test');
+        await adapter.send('test').startTest();
     });
     
     it('should respect allow interruptions settings', async () => {
@@ -138,7 +138,7 @@ describe('BeginSkill', function () {
             strictEqual(bubbling, true);
         });
         
-        await adapter.send('test');
+        await adapter.send('test').startTest();
     });
 });
 

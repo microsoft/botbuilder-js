@@ -163,8 +163,11 @@ describe('QnAMakerDialog', function () {
                 }
             });
 
-            await adapter.send(beginMessage);
-            await adapter.send('hi').assertReply('Welcome to the **Smart lightbulb** bot.');
+            await adapter
+                .send(beginMessage)
+                .send('hi')
+                .assertReply('Welcome to the **Smart lightbulb** bot.')
+                .startTest();
             strictEqual(qnaMessageCount, 1);
         });
 
@@ -231,8 +234,11 @@ describe('QnAMakerDialog', function () {
                 }
             });
 
-            await adapter.send(beginMessage);
-            await adapter.send('hi').assertReply('Welcome to the **Smart lightbulb** bot.');
+            await adapter
+                .send(beginMessage)
+                .send('hi')
+                .assertReply('Welcome to the **Smart lightbulb** bot.')
+                .startTest();
             strictEqual(qnaMessageCount, 1);
         });
     });

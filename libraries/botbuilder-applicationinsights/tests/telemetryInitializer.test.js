@@ -53,7 +53,8 @@ describe(`TelemetryInitializerMiddleware`, function () {
             })
             .assertReply((activity) => assert.equal(activity.type, ActivityTypes.Typing))
             .assertReply('echo:bar')
-            .then(done);
+            .then(done)
+            .startTest();
     });
 
     it('calls logging middleware (when logActivityTelemetry is true)', function (done) {
@@ -86,7 +87,8 @@ describe(`TelemetryInitializerMiddleware`, function () {
             .send('bar')
             .assertReply((activity) => assert.equal(activity.type, ActivityTypes.Typing))
             .assertReply('echo:bar')
-            .then(done);
+            .then(done)
+            .startTest();
     });
 
     it('does not call logging middleware (when logActivityTelemetry is false)', function (done) {
@@ -115,7 +117,8 @@ describe(`TelemetryInitializerMiddleware`, function () {
             .send('bar')
             .assertReply((activity) => assert.equal(activity.type, ActivityTypes.Typing))
             .assertReply('echo:bar')
-            .then(done);
+            .then(done)
+            .startTest();
     });
 
     it('logActivityTelemetry() getter calls logActivityTelemetry function passed into constructor', function () {

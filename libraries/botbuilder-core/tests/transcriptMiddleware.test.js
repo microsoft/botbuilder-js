@@ -33,7 +33,8 @@ describe(`TranscriptLoggerMiddleware`, function () {
             .assertReply('echo:foo')
             .send('bar')
             .assertReply((activity) => assert.equal(activity.type, ActivityTypes.Typing))
-            .assertReply('echo:bar');
+            .assertReply('echo:bar')
+            .startTest();
 
         const pagedResult = await transcriptStore.getTranscriptActivities('test', conversationId);
         assert.equal(pagedResult.items.length, 6);
@@ -67,7 +68,7 @@ describe(`TranscriptLoggerMiddleware`, function () {
             }
         }).use(new TranscriptLoggerMiddleware(transcriptStore));
 
-        await adapter.send('foo').delay(100).send('update').delay(100);
+        await adapter.send('foo').delay(100).send('update').delay(100).startTest();
 
         const pagedResult = await transcriptStore.getTranscriptActivities('test', conversationId);
         assert(pagedResult.items.length, 4);
@@ -92,7 +93,7 @@ describe(`TranscriptLoggerMiddleware`, function () {
             }
         }).use(new TranscriptLoggerMiddleware(transcriptStore));
 
-        await adapter.send('foo').assertReply('response').send('deleteIt').delay(500);
+        await adapter.send('foo').assertReply('response').send('deleteIt').delay(500).startTest();
 
         const pagedResult = await transcriptStore.getTranscriptActivities('test', conversationId);
 
@@ -113,7 +114,8 @@ describe(`TranscriptLoggerMiddleware`, function () {
         await adapter
             .send('foo')
             .send('bar')
-            .send({ type: ActivityTypes.Event, name: ActivityEventNames.ContinueConversation });
+            .send({ type: ActivityTypes.Event, name: ActivityEventNames.ContinueConversation })
+            .startTest();
 
         const pagedResult = await transcriptStore.getTranscriptActivities('test', conversationId);
         assert.strictEqual(pagedResult.items.length, 2, 'only the two message activities should be logged');
@@ -150,7 +152,8 @@ describe(`TranscriptLoggerMiddleware`, function () {
             .assertReply('echo:foo')
             .send('bar')
             .assertReply((activity) => assert.equal(activity.type, ActivityTypes.Typing))
-            .assertReply('echo:bar');
+            .assertReply('echo:bar')
+            .startTest();
 
         const pagedResult = await transcriptStore.getTranscriptActivities('test', conversationId);
         assert.equal(pagedResult.items.length, 6);
@@ -203,7 +206,8 @@ describe(`TranscriptLoggerMiddleware`, function () {
             .assertReply('echo:foo')
             .send('bar')
             .assertReply((activity) => assert.equal(activity.type, ActivityTypes.Typing))
-            .assertReply('echo:bar');
+            .assertReply('echo:bar')
+            .startTest();
 
         const pagedResult = await transcriptStore.getTranscriptActivities('test', conversationId);
         assert.equal(pagedResult.items.length, 6);
@@ -246,7 +250,7 @@ describe(`TranscriptLoggerMiddleware`, function () {
         adapter.use(new TranscriptLoggerMiddleware(transcriptStore));
         adapter.use(new NoResourceResponseMiddleware());
 
-        await adapter.send('foo').assertReply('echo:foo');
+        await adapter.send('foo').assertReply('echo:foo').startTest();
 
         const pagedResult = await transcriptStore.getTranscriptActivities('test', conversationId);
         assert.equal(pagedResult.items.length, 2);
@@ -298,7 +302,7 @@ describe(`TranscriptLoggerMiddleware`, function () {
         adapter.use(new TranscriptLoggerMiddleware(transcriptStore));
         adapter.use(new Returns1Middleware());
 
-        await adapter.send('foo').assertReply('echo:foo');
+        await adapter.send('foo').assertReply('echo:foo').startTest();
 
         const pagedResult = await transcriptStore.getTranscriptActivities('test', conversationId);
         assert.equal(pagedResult.items.length, 2);
@@ -359,12 +363,12 @@ describe(`TranscriptLoggerMiddleware`, function () {
 
         testCases.forEach((testCase) => {
             it(`should print to console ${testCase.label} from synchronous logActivity()`, async function () {
-                await mockedAdapter(testCase.expectedError).send('test');
+                await mockedAdapter(testCase.expectedError).send('test').startTest();
                 sandbox.verify();
             });
 
             it(`should print to console ${testCase.label} from asynchronous logActivity().`, async function () {
-                await mockedAdapter(testCase.expectedError, true).send('test');
+                await mockedAdapter(testCase.expectedError, true).send('test').startTest();
                 await new Promise((resolve) => process.nextTick(resolve));
                 sandbox.verify();
             });
@@ -391,7 +395,8 @@ describe(`TranscriptLoggerMiddleware`, function () {
             // sent activities do not contain the id returned from the service, so it should be undefined here
             .assertReply((activity) => assert.equal(activity.id, undefined) && assert.equal(activity.text, 'echo:foo'))
             .send('bar')
-            .assertReply((activity) => assert.equal(activity.id, undefined) && assert.equal(activity.text, 'echo:bar'));
+            .assertReply((activity) => assert.equal(activity.id, undefined) && assert.equal(activity.text, 'echo:bar'))
+            .startTest();
 
         const pagedResult = await transcriptStore.getTranscriptActivities('test', conversationId);
         assert.equal(pagedResult.items.length, 4);
@@ -437,7 +442,8 @@ describe(`TranscriptLoggerMiddleware`, function () {
                 assert.equal(activity.id, undefined);
                 assert.equal(activity.text, 'echo:foo');
                 assert.equal(activity.timestamp, timestamp);
-            });
+            })
+            .startTest();
 
         const pagedResult = await transcriptStore.getTranscriptActivities('test', conversationId);
         assert.equal(pagedResult.items.length, 2);
@@ -483,7 +489,8 @@ describe(`TranscriptLoggerMiddleware`, function () {
             .assertReply((activity) => {
                 assert.equal(activity.id, undefined);
                 assert.equal(activity.text, 'echo:foo');
-            });
+            })
+            .startTest();
 
         const pagedResult = await transcriptStore.getTranscriptActivities('test', conversationId);
         assert.equal(pagedResult.items.length, 2);
