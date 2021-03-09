@@ -39,10 +39,7 @@ export class Add extends ExpressionEvaluator {
             ) {
                 error = "Operator '+' or add cannot be applied to operands of type 'number' and null object.";
             } else if (stringConcat) {
-                if (
-                    (firstChild === null || firstChild === undefined) &&
-                    (secondChild === null || secondChild === undefined)
-                ) {
+                if (firstChild == null && secondChild == null) {
                     value = '';
                 } else if (firstChild == null) {
                     value = secondChild.toString();

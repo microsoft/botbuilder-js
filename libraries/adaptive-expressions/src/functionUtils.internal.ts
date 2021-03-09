@@ -8,7 +8,6 @@
  */
 
 import { Constant } from './constant';
-import sortBy from 'lodash/sortBy';
 import dayjs, { OpUnitType } from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 dayjs.extend(utc);
@@ -98,10 +97,14 @@ export class InternalFunctionUtils {
                         if (!child1.error) {
                             propertyName = String(child1.value) || '';
                         }
+
+                        const sortBy = (key: string) => {
+                            return (a: unknown, b: unknown) => (a[key] > b[key] ? 1 : b[key] > a[key] ? -1 : 0);
+                        };
                         if (isDescending) {
-                            result = sortBy(arr, propertyName).reverse();
+                            result = arr.concat().sort(sortBy(propertyName)).reverse();
                         } else {
-                            result = sortBy(arr, propertyName);
+                            result = arr.concat().sort(sortBy(propertyName));
                         }
                     }
                 } else {
