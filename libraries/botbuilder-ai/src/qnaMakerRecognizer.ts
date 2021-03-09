@@ -292,7 +292,7 @@ export class QnAMakerRecognizer extends Recognizer implements QnAMakerRecognizer
         });
 
         const endpoint: QnAMakerEndpoint = { endpointKey, host, knowledgeBaseId };
-        const logPersonalInfo = this.logPersonalInformation.getValue(dc.state);
+        const logPersonalInfo = this.getLogPersonalInformation(dc);;
         return new QnAMaker(endpoint, {}, this.telemetryClient, logPersonalInfo);
     }
 
