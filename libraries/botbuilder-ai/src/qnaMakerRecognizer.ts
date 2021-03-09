@@ -23,7 +23,6 @@ import {
 } from 'adaptive-expressions';
 import { RecognizerResult, Activity, getTopScoringIntent } from 'botbuilder-core';
 import { Converter, ConverterFactory, DialogContext, Recognizer, RecognizerConfiguration } from 'botbuilder-dialogs';
-import omit from 'lodash/omit';
 import { QnAMaker, QnAMakerClient, QnAMakerClientKey } from './qnaMaker';
 import {
     JoinOperator,
@@ -292,7 +291,7 @@ export class QnAMakerRecognizer extends Recognizer implements QnAMakerRecognizer
         });
 
         const endpoint: QnAMakerEndpoint = { endpointKey, host, knowledgeBaseId };
-        const logPersonalInfo = this.getLogPersonalInformation(dc);;
+        const logPersonalInfo = this.getLogPersonalInformation(dc);
         return new QnAMaker(endpoint, {}, this.telemetryClient, logPersonalInfo);
     }
 
