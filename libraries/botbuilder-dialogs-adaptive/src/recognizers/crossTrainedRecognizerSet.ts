@@ -7,7 +7,7 @@
  */
 
 import { merge, pickBy } from 'lodash';
-import { Activity, RecognizerResult, getTopScoringIntent } from 'botbuilder-core';
+import { Activity, RecognizerResult, getTopScoringIntent } from 'botbuilder';
 import { Converter, ConverterFactory, DialogContext, Recognizer, RecognizerConfiguration } from 'botbuilder-dialogs';
 import { RecognizerListConverter } from '../converters';
 import { AdaptiveRecognizer } from './adaptiveRecognizer';

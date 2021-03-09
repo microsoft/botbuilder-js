@@ -16,6 +16,7 @@ describe('ChannelServiceRoutes - Integration Tests', function () {
 
         routes.register(app);
 
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const bfRoutes = (app._router.stack as Array<any>).filter((layer) => {
             const route: express.IRoute = layer.route;
             if (route) {
@@ -36,6 +37,7 @@ describe('ChannelServiceRoutes - Integration Tests', function () {
 
         routes.register(app, '/test');
 
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const bfRoutes = (app._router.stack as Array<any>).filter((layer) => {
             const route: express.IRoute = layer.route;
             if (route) {

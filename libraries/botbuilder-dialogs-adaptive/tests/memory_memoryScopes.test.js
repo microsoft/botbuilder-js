@@ -1,5 +1,5 @@
 const { BoolExpression } = require('adaptive-expressions');
-const { ConversationState, UserState, MemoryStorage, TestAdapter } = require('botbuilder-core');
+const { ConversationState, UserState, MemoryStorage, TestAdapter } = require('botbuilder');
 const { DialogManager } = require('botbuilder-dialogs');
 const {
     AdaptiveDialog,
@@ -47,7 +47,8 @@ describe('Memory - Memory Scopes', function () {
             .assertReply('adaptiveDialog2')
             .assertReply('false')
             .assertReply('true')
-            .assertReply('true');
+            .assertReply('true')
+            .startTest();
     });
 
     it('DialogContextMemoryScope interruption test', async function () {

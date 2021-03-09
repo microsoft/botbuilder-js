@@ -382,6 +382,21 @@ describe('RegexRecognizer Tests', () => {
         assert.strictEqual(entities.url[0], 'https://www.microsoft.com', 'should recognize url');
     });
 
+    it('optional match groups', async function () {
+        const recognizer = new RegexRecognizer().configure({
+            intents: [
+                new IntentPattern('AddIntent', '(?:add|create) .*(?:to-do|todo|task)(?: )?(?:named (?<title>.*))?'),
+            ],
+        });
+        const dc = createContext('');
+        let activity = createMessageActivity('add a todo named first');
+        let result = await recognizer.recognize(dc, activity);
+        assert.strictEqual(result.entities.title[0], 'first');
+        activity = createMessageActivity('add a todo');
+        result = await recognizer.recognize(dc, activity);
+        assert.strictEqual(result.entities.title, undefined);
+    });
+
     it('basic telemetry test', () => {
         let properties = {};
         properties['test'] = 'testvalue';
@@ -425,20 +440,6 @@ describe('RegexRecognizer Tests', () => {
         let recognizer = new MockTelemetryInRecognizer();
         recognizer.telemetryClient = telemetryClient;
         recognizer.recognize(context, activity, properties, metrics);
-    });
-
-    it('check stringifyAdditionalPropertiesOfRecognizerResult', () => {
-        let recognizer = new Recognizer();
-        const additionalPropertiesInString = recognizer.stringifyAdditionalPropertiesOfRecognizerResult(
-            recognizerResultSample
-        );
-        if (additionalPropertiesInString) {
-            const additionalProperties = JSON.parse(additionalPropertiesInString);
-            assert(!('text' in additionalProperties));
-            assert(!('alteredText' in additionalProperties));
-            assert(!('intents' in additionalProperties));
-            assert(!('entities' in additionalProperties));
-        }
     });
 
     it('check fillRecognizerResultTelemetryProperties', () => {

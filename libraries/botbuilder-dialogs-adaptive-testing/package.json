@@ -30,7 +30,7 @@
     "botbuilder-dialogs-declarative": "4.1.6",
     "murmurhash-js": "^1.0.0",
     "nock": "^11.9.1",
-    "url-parse": "^1.4.7"
+    "url-parse": "^1.5.1"
   },
   "devDependencies": {
     "@types/nock": "^11.1.0"

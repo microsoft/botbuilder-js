@@ -49,7 +49,7 @@
     "postbuild": "downlevel-dts lib _ts3.4/lib --checksum",
     "test": "nyc mocha tests",
     "test:compat": "api-extractor run --verbose",
-    "test:min": "yarn test --reporter dot"
+    "test:min": "nyc --silent mocha tests --reporter dot"
   },
   "files": [
     "_ts3.4",

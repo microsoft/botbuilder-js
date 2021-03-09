@@ -6,11 +6,11 @@
  * Licensed under the MIT License.
  */
 
-import { ComponentRegistration } from 'botbuilder-core';
+import { ComponentDeclarativeTypes, DeclarativeType } from 'botbuilder-dialogs-declarative';
 import { OrchestratorAdaptiveRecognizer } from './orchestratorAdaptiveRecognizer';
 
-export class OrchestratorComponentRegistration extends ComponentRegistration {
-    public getDeclarativeTypes(_resourceExplorer: unknown) {
+export class OrchestratorComponentRegistration implements ComponentDeclarativeTypes {
+    public getDeclarativeTypes(_resourceExplorer: unknown): DeclarativeType[] {
         return [
             {
                 kind: OrchestratorAdaptiveRecognizer.$kind,

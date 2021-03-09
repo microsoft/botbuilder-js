@@ -4,7 +4,7 @@ const {
     ConversationState,
     MemoryStorage,
     TestAdapter
-} = require('botbuilder-core');
+} = require('botbuilder');
 const { DialogSet } = require('botbuilder-dialogs');
 const { TelemetryTrackEventAction } = require('../lib');
 
@@ -45,6 +45,6 @@ describe('TelemetryTrackEventAction', function () {
             ok(trackEventStub.calledOnce);
         });
 
-        await adapter.send('test');
+        await adapter.send('test').startTest();
     });
 });

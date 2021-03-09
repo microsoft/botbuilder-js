@@ -12,6 +12,7 @@ import {
     NullTelemetryClient,
     RecognizerResult,
 } from 'botbuilder-core';
+import { omit } from 'lodash';
 import { Configurable } from './configurable';
 import { DialogContext } from './dialogContext';
 import { DialogTurnStateConstants } from './dialogTurnStateConstants';
@@ -120,7 +121,9 @@ export class Recognizer extends Configurable implements RecognizerConfiguration 
             TopIntentScore: intents.length > 0 ? score.toString() : undefined,
             Intents: intents.length > 0 ? JSON.stringify(recognizerResult.intents) : undefined,
             Entities: recognizerResult.entities ? JSON.stringify(recognizerResult.entities) : undefined,
-            AdditionalProperties: this.stringifyAdditionalPropertiesOfRecognizerResult(recognizerResult),
+            AdditionalProperties: JSON.stringify(
+                omit(recognizerResult, ['text', 'alteredText', 'intents', 'entities'])
+            ),
         };
 
         // Additional Properties can override "stock" properties.
@@ -142,18 +145,27 @@ export class Recognizer extends Configurable implements RecognizerConfiguration 
         return Object.keys(additionalProperties).length > 0 ? JSON.stringify(additionalProperties) : undefined;
     }
 
+    /**
+     * Tracks an event with the event name provided using the TelemetryClient attaching the properties/metrics.
+     *
+     * @param {DialogContext} dialogContext Dialog context.
+     * @param {string} eventName The name of the event to track.
+     * @param {Record<string, string>} telemetryProperties The properties to be included as part of the event tracking.
+     * @param {Record<string, number>} telemetryMetrics The metrics to be included as part of the event tracking.
+     */
     protected trackRecognizerResult(
         dialogContext: DialogContext,
         eventName: string,
-        telemetryProperties?: { [key: string]: string },
-        telemetryMetrics?: { [key: string]: number }
+        telemetryProperties?: Record<string, string>,
+        telemetryMetrics?: Record<string, number>
     ): void {
         if (this.telemetryClient instanceof NullTelemetryClient) {
             const turnStateTelemetryClient = dialogContext.context.turnState.get(
                 DialogTurnStateConstants.telemetryClient
             );
-            this.telemetryClient = turnStateTelemetryClient || this.telemetryClient;
+            this.telemetryClient = turnStateTelemetryClient ?? this.telemetryClient;
         }
+
         this.telemetryClient.trackEvent({
             name: eventName,
             properties: telemetryProperties,

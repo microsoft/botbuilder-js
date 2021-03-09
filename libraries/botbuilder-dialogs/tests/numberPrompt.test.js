@@ -37,7 +37,7 @@ describe('NumberPrompt', function () {
             (turnContext, result) => turnContext.sendActivity(result.toString())
         );
 
-        await adapter.send('Hello').assertReply('Please send a number.').send('35').assertReply('35');
+        await adapter.send('Hello').assertReply('Please send a number.').send('35').assertReply('35').startTest();
     });
 
     it('should call NumberPrompt with custom validator.', async function () {
@@ -57,7 +57,8 @@ describe('NumberPrompt', function () {
             .send('0')
             .assertReply('Please send a number.')
             .send('25')
-            .assertReply('25');
+            .assertReply('25')
+            .startTest();
     });
 
     it('should send custom retryPrompt.', async function () {
@@ -81,7 +82,8 @@ describe('NumberPrompt', function () {
             .send('0')
             .assertReply('Please send a number between 1 and 100.')
             .send('42')
-            .assertReply('42');
+            .assertReply('42')
+            .startTest();
     });
 
     it('should send ignore retryPrompt if validator replies.', async function () {
@@ -109,7 +111,8 @@ describe('NumberPrompt', function () {
             .send('-1')
             .assertReply('out of range')
             .send('67')
-            .assertReply('67');
+            .assertReply('67')
+            .startTest();
     });
 
     it('should not send any retryPrompt no prompt specified.', async function () {
@@ -123,7 +126,7 @@ describe('NumberPrompt', function () {
             }
         );
 
-        await adapter.send('Hello').send('0').send('25').assertReply('25');
+        await adapter.send('Hello').send('0').send('25').assertReply('25').startTest();
     });
 
     it('should recognize 0 and zero as valid values', async function () {
@@ -147,7 +150,8 @@ describe('NumberPrompt', function () {
             .send('Another!')
             .assertReply('Send me a zero')
             .send('zero')
-            .assertReply('0');
+            .assertReply('0')
+            .startTest();
     });
 
     it('should see attemptCount increment', async function () {
@@ -185,7 +189,8 @@ describe('NumberPrompt', function () {
             .send('300')
             .assertReply('attemptCount 3')
             .send('0')
-            .assertReply('ok');
+            .assertReply('ok')
+            .startTest();
     });
 
     it('should consider culture specified in constructor', async function () {
@@ -199,7 +204,7 @@ describe('NumberPrompt', function () {
             'es-es'
         );
 
-        await adapter.send('Hello').assertReply('Please send a number.').send('3,14');
+        await adapter.send('Hello').assertReply('Please send a number.').send('3,14').startTest();
     });
 
     it('should consider culture specified in activity', async function () {
@@ -216,7 +221,8 @@ describe('NumberPrompt', function () {
         await adapter
             .send('Hello')
             .assertReply('Please send a number.')
-            .send({ type: ActivityTypes.Message, text: '3,14', locale: 'es-es' });
+            .send({ type: ActivityTypes.Message, text: '3,14', locale: 'es-es' })
+            .startTest();
     });
 
     it('should consider default to en-us culture when no culture is specified', async function () {
@@ -228,7 +234,7 @@ describe('NumberPrompt', function () {
             }
         );
 
-        await adapter.send('Hello').assertReply('Please send a number.').send('1,500.25');
+        await adapter.send('Hello').assertReply('Please send a number.').send('1,500.25').startTest();
     });
 
     it('should fall back to default locale if culture is not registered', async function () {
@@ -243,6 +249,7 @@ describe('NumberPrompt', function () {
         await adapter
             .send('Hello')
             .assertReply('Please send a number.')
-            .send({ type: ActivityTypes.Message, text: '3,14', locale: 'it-it' });
+            .send({ type: ActivityTypes.Message, text: '3,14', locale: 'it-it' })
+            .startTest();
     });
 });

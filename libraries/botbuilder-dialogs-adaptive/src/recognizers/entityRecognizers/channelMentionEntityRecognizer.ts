@@ -6,9 +6,14 @@
  * Licensed under the MIT License.
  */
 
+<<<<<<< HEAD
 import { Activity, RecognizerResult } from 'botbuilder-core';
 import { DialogContext } from 'botbuilder-dialogs';
 import { AdaptiveRecognizer } from '../adaptiveRecognizer';
+=======
+import { Activity, RecognizerResult } from 'botbuilder';
+import { DialogContext, Recognizer } from 'botbuilder-dialogs';
+>>>>>>> 2ee1beb16e6a1252b2e463f171cee99b02546c57
 
 /**
  * Recognizer which maps channel activity.entities of type mention into [RecognizerResult](xref:botbuilder-core.RecognizerResult) format.

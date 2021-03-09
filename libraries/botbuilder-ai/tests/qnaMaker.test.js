@@ -712,7 +712,7 @@ describe('QnAMaker', function () {
             };
 
             // Provide feedback
-            await qna.callTrainAsync(feedbackRecords);
+            await qna.callTrain(feedbackRecords);
         });
     });
 
@@ -985,7 +985,7 @@ describe('QnAMaker', function () {
             );
         });
 
-        it('callTrainAsync() should send correct payload body to Train API', async function () {
+        it('callTrain() should send correct payload body to Train API', async function () {
             nock(endpoint.host).post(trainApi).reply(204);
 
             const trainUtils = new TrainUtils(endpoint);

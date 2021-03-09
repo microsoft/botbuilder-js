@@ -23,7 +23,8 @@ import {
 } from 'adaptive-expressions';
 import { RecognizerResult, Activity, getTopScoringIntent } from 'botbuilder-core';
 import { Converter, ConverterFactory, DialogContext, Recognizer, RecognizerConfiguration } from 'botbuilder-dialogs';
-import { QnAMaker } from './qnaMaker';
+import omit from 'lodash/omit';
+import { QnAMaker, QnAMakerClient, QnAMakerClientKey } from './qnaMaker';
 import {
     JoinOperator,
     QnAMakerEndpoint,
@@ -271,22 +272,55 @@ export class QnAMakerRecognizer extends Recognizer implements QnAMakerRecognizer
     /**
      * Gets an instance of `QnAMaker`.
      *
+     * @deprecated Instead, favor using [QnAMakerRecognizer.getQnAMakerClient()](#getQnAMakerClient) to get instance of QnAMakerClient.
      * @param {DialogContext} dc The dialog context used to access state.
      * @returns {QnAMaker} A qna maker instance
      */
     protected getQnAMaker(dc: DialogContext): QnAMaker {
-        const { value: endpointKey, error } = this.endpointKey?.tryGetValue(dc.state) ?? {};
-        if (!endpointKey || error) {
-            throw new Error(`Unable to get a value for endpointKey from state. ${error}`);
+        const options: Array<[StringExpression, string]> = [
+            [this.endpointKey, 'endpointKey'],
+            [this.hostname, 'host'],
+            [this.knowledgeBaseId, 'knowledgeBaseId'],
+        ];
+
+        const [endpointKey, host, knowledgeBaseId] = options.map(([expression, key]) => {
+            const { value, error } = expression?.tryGetValue(dc.state) ?? {};
+            if (!value || error) {
+                throw new Error(`Unable to get a value for ${key} from state. ${error}`);
+            }
+            return value;
+        });
+
+        const endpoint: QnAMakerEndpoint = { endpointKey, host, knowledgeBaseId };
+        const logPersonalInfo = this.logPersonalInformation.getValue(dc.state);
+        return new QnAMaker(endpoint, {}, this.telemetryClient, logPersonalInfo);
+    }
+
+    /**
+     * Gets an instance of [QnAMakerClient](xref:botbuilder-ai.QnAMakerClient)
+     *
+     * @param {DialogContext} dc The dialog context used to access state.
+     * @returns {QnAMakerClient} An instance of QnAMakerClient.
+     */
+    protected getQnAMakerClient(dc: DialogContext): QnAMakerClient {
+        const qnaClient = dc.context?.turnState?.get(QnAMakerClientKey);
+        if (qnaClient) {
+            return qnaClient;
         }
-        const { value: host, error: error2 } = this.hostname?.tryGetValue(dc.state) ?? {};
-        if (!host || error2) {
-            throw new Error(`Unable to get a value for hostname from state. ${error2}`);
-        }
-        const { value: knowledgeBaseId, error: error3 } = this.knowledgeBaseId?.tryGetValue(dc.state) ?? {};
-        if (!knowledgeBaseId || error3) {
-            throw new Error(`Unable to get a value for knowledgeBaseId from state. ${error3}`);
-        }
+
+        const options: Array<[StringExpression, string]> = [
+            [this.endpointKey, 'endpointKey'],
+            [this.hostname, 'host'],
+            [this.knowledgeBaseId, 'knowledgeBaseId'],
+        ];
+
+        const [endpointKey, host, knowledgeBaseId] = options.map(([expression, key]) => {
+            const { value, error } = expression?.tryGetValue(dc.state) ?? {};
+            if (!value || error) {
+                throw new Error(`Unable to get a value for ${key} from state. ${error}`);
+            }
+            return value;
+        });
 
         const endpoint: QnAMakerEndpoint = { endpointKey, host, knowledgeBaseId };
         const logPersonalInfo = this.getLogPersonalInformation(dc);

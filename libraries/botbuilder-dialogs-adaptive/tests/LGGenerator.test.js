@@ -7,7 +7,7 @@ const {
 const { ResourceExplorer } = require('botbuilder-dialogs-declarative');
 const assert = require('assert');
 const path = require('path');
-const { TestAdapter, TurnContext } = require('botbuilder-core');
+const { TestAdapter, TurnContext } = require('botbuilder');
 const { DialogContext, DialogSet } = require('botbuilder-dialogs');
 const { languageGeneratorKey, languageGeneratorManagerKey } = require('../lib/languageGeneratorExtensions');
 

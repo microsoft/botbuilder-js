@@ -6,7 +6,7 @@ const {
     TestAdapter,
     MessageFactory,
     InputHints,
-} = require('botbuilder-core');
+} = require('botbuilder');
 const { DialogSet } = require('botbuilder-dialogs');
 const { InputDialog, StaticActivityTemplate } = require('../lib')
 
@@ -50,6 +50,6 @@ describe('InputDialog', function () {
             ok(trackEventStub.calledOnce);
         });
 
-        await adapter.send('test');
+        await adapter.send('test').startTest();
     });
 });

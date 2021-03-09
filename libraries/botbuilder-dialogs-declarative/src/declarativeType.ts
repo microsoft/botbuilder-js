@@ -14,6 +14,6 @@ import { CustomDeserializer } from './customDeserializer';
  */
 export interface DeclarativeType<T = unknown, C = Record<string, unknown>> {
     kind: string;
-    type: Newable<T>;
+    type: Newable<T, any[]>;
     loader?: CustomDeserializer<T, C>;
 }

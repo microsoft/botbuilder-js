@@ -300,7 +300,8 @@ class StorageBaseTests {
 
         dialogs.add(new WaterfallDialog('waterfallDialog', steps));
 
-        await adapter.send('hello')
+        await adapter
+            .send('hello')
             .assertReply('step1')
             .send('hello')
             .assertReply('Please type your name.')

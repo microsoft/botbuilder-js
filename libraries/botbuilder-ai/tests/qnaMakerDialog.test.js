@@ -28,7 +28,8 @@ describe('QnAMakerDialog', function () {
                     nock(`https://${HOSTNAME}.azurewebsites.net`)
                         .matchHeader('User-Agent', /botbuilder-ai\/4.*/)
                         .post(/qnamaker/)
-                        .replyWithFile(200, filePath + file);
+                        .replyWithFile(200, filePath + file)
+                        .persist();
                 });
         }
     });
@@ -61,7 +62,7 @@ describe('QnAMakerDialog', function () {
 
             // Create QnAMakerDialog
             const qna = new QnAMakerDialog(kbId, endpointKey, V5_HOSTNAME);
-            const client = await qna.getQnAClient({ state: {} });
+            const client = await qna.getQnAMakerClient({ state: {} });
 
             ok(client instanceof QnAMaker);
             strictEqual(client.endpoint.knowledgeBaseId, kbId);
@@ -75,7 +76,7 @@ describe('QnAMakerDialog', function () {
 
             // Create QnAMakerDialog with incomplete hostname
             const qnaDialog = new QnAMakerDialog(kbId, endpointKey, INCOMPLETE_HOSTNAME);
-            const fixedClient = await qnaDialog.getQnAClient({ state: {} });
+            const fixedClient = await qnaDialog.getQnAMakerClient({ state: {} });
 
             ok(fixedClient instanceof QnAMaker);
             strictEqual(fixedClient.endpoint.knowledgeBaseId, kbId);
@@ -89,7 +90,7 @@ describe('QnAMakerDialog', function () {
 
             // Missing authority
             const noAuthority = new QnAMakerDialog(kbId, endpointKey, NOT_V5_HOSTNAME);
-            const noAuthorityClient = await noAuthority.getQnAClient({ state: {} });
+            const noAuthorityClient = await noAuthority.getQnAMakerClient({ state: {} });
 
             ok(noAuthorityClient instanceof QnAMaker);
             strictEqual(noAuthorityClient.endpoint.knowledgeBaseId, kbId);
@@ -106,7 +107,7 @@ describe('QnAMakerDialog', function () {
             const qnaDialog = new QnAMakerDialog(kbId, endpointKey, HOSTNAME);
             qnaDialog.steps.unshift(async (step) => {
                 ok(step);
-                const qnaClient = await qnaDialog.getQnAClient(step);
+                const qnaClient = await qnaDialog.getQnAMakerClient(step);
 
                 ok(qnaClient instanceof QnAMaker);
                 ok(qnaClient.telemetryClient);
@@ -162,8 +163,11 @@ describe('QnAMakerDialog', function () {
                 }
             });
 
-            await adapter.send(beginMessage);
-            await adapter.send('hi').assertReply('Welcome to the **Smart lightbulb** bot.');
+            await adapter
+                .send(beginMessage)
+                .send('hi')
+                .assertReply('Welcome to the **Smart lightbulb** bot.')
+                .startTest();
             strictEqual(qnaMessageCount, 1);
         });
 
@@ -178,7 +182,7 @@ describe('QnAMakerDialog', function () {
 
             qnaDialog.steps.unshift(async (step) => {
                 ok(step);
-                const qnaClient = await qnaDialog.getQnAClient(step);
+                const qnaClient = await qnaDialog.getQnAMakerClient(step);
 
                 ok(qnaClient instanceof QnAMaker);
                 ok(qnaClient.telemetryClient);
@@ -230,8 +234,11 @@ describe('QnAMakerDialog', function () {
                 }
             });
 
-            await adapter.send(beginMessage);
-            await adapter.send('hi').assertReply('Welcome to the **Smart lightbulb** bot.');
+            await adapter
+                .send(beginMessage)
+                .send('hi')
+                .assertReply('Welcome to the **Smart lightbulb** bot.')
+                .startTest();
             strictEqual(qnaMessageCount, 1);
         });
     });

@@ -35,6 +35,7 @@ describe(`ShowTypingMiddleware`, function () {
             .send('bar')
             .assertReply(activity => assert.strictEqual(activity.type, ActivityTypes.Typing))
             .assertReply('echo:bar')
+            .startTest()
             .then(done);
     });
 
@@ -46,6 +47,7 @@ describe(`ShowTypingMiddleware`, function () {
         noMiddlewareAdapter
             .send('foo')
             .assertReply('echo:foo')
+            .startTest()
             .then(done);
     });
 
@@ -53,6 +55,7 @@ describe(`ShowTypingMiddleware`, function () {
         adapter
             .send('foo')
             .assertReply(activity => assert.notStrictEqual(activity.type, ActivityTypes.Message))
+            .startTest()
             .then(done);
     });
 
@@ -60,6 +63,7 @@ describe(`ShowTypingMiddleware`, function () {
         noMiddlewareAdapter
             .send('foo')
             .assertReply(activity => assert.strictEqual(activity.type, ActivityTypes.Message))
+            .startTest()
             .then(done);
     });
 
@@ -93,6 +97,7 @@ describe(`ShowTypingMiddleware`, function () {
         skillAdapter
             .send('foo')
             .assertReply('echo:foo')
+            .startTest()
             .then(done);
     });
 });

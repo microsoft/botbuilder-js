@@ -6,7 +6,7 @@ const {
     MemoryStorage,
     TestAdapter,
     MessageFactory,
-} = require('botbuilder-core');
+} = require('botbuilder');
 const { DialogSet } = require('botbuilder-dialogs');
 const { UpdateActivity } = require('../lib')
 
@@ -50,6 +50,6 @@ describe('UpdateActivity', function () {
             ok(trackEventStub.calledOnce);
         });
 
-        await adapter.send('test');
+        await adapter.send('test').startTest();
     });
 });
