@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 
-import { Activity } from 'botbuilder-core';
+import { Activity } from 'botbuilder';
 import { Converter, DialogStateManager, TemplateInterface } from 'botbuilder-dialogs';
 import { ActivityTemplate, StaticActivityTemplate } from '../templates';
 

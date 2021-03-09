@@ -1,5 +1,5 @@
 const { stub } = require('sinon');
-const { NullTelemetryClient } = require('botbuilder-core');
+const { NullTelemetryClient } = require('botbuilder');
 
 /**
  * Create telemetry client and stub.

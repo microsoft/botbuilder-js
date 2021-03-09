@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 
-import { Activity, RecognizerResult } from 'botbuilder-core';
+import { Activity, RecognizerResult } from 'botbuilder';
 import { Converter, ConverterFactory, DialogContext, Recognizer, RecognizerConfiguration } from 'botbuilder-dialogs';
 import { LanguagePolicy, LanguagePolicyConverter } from '../languagePolicy';
 import { MultiLanguageRecognizerConverter } from '../converters';

@@ -1,5 +1,5 @@
 const { BoolExpression } = require('adaptive-expressions');
-const { ConversationState, UserState, MemoryStorage, TestAdapter } = require('botbuilder-core');
+const { ConversationState, UserState, MemoryStorage, TestAdapter } = require('botbuilder');
 const { DialogManager } = require('botbuilder-dialogs');
 const {
     AdaptiveDialog,

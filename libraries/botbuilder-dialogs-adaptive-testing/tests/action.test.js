@@ -12,6 +12,7 @@ const { ResourceExplorer } = require('botbuilder-dialogs-declarative');
 const { AdaptiveTestComponentRegistration, TestUtils } = require('../lib');
 const {
     AdaptiveComponentRegistration,
+    LanguageGenerationComponentRegistration,
     skillConversationIdFactoryKey,
     skillClientKey,
 } = require('botbuilder-dialogs-adaptive');
@@ -115,6 +116,7 @@ describe('ActionTests', function () {
     this.timeout(10000);
 
     ComponentRegistration.add(new AdaptiveComponentRegistration());
+    ComponentRegistration.add(new LanguageGenerationComponentRegistration());
     ComponentRegistration.add(new AdaptiveTestComponentRegistration());
 
     const resourceExplorer = new ResourceExplorer().addFolder(

@@ -5,7 +5,7 @@ const {
     TestAdapter,
     useBotState,
     UserState,
-} = require('botbuilder-core');
+} = require('botbuilder');
 const { DialogManager } = require('botbuilder-dialogs');
 const {
     ActivityTemplate,

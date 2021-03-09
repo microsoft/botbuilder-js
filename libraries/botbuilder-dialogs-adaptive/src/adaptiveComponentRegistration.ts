@@ -7,7 +7,7 @@
  */
 
 import { Expression } from 'adaptive-expressions';
-import { ComponentRegistration } from 'botbuilder-core';
+import { ComponentRegistration } from 'botbuilder';
 import {
     ResourceExplorer,
     ComponentDeclarativeTypes,
@@ -72,6 +72,8 @@ import {
     ReplaceDialogConfiguration,
     SendActivity,
     SendActivityConfiguration,
+    SendHandoffActivity,
+    SendHandoffActivityConfiguration,
     SetProperties,
     SetPropertiesConfiguration,
     SetProperty,
@@ -188,14 +190,6 @@ import {
     RandomSelector,
     TrueSelector,
 } from './selectors';
-import {
-    ActivityTemplate,
-    ActivityTemplateConguration,
-    StaticActivityTemplate,
-    StaticActivityTemplateConfiguration,
-    TextTemplate,
-    TextTemplateConfiguration,
-} from './templates';
 import { DynamicBeginDialogDeserializer } from './dynamicBeginDialogDeserializer';
 import { HasPendingActionsFunction, IsDialogActiveFunction } from './functions';
 
@@ -252,6 +246,7 @@ export class AdaptiveComponentRegistration extends ComponentRegistration impleme
         this._addDeclarativeType<RepeatDialog, RepeatDialogConfiguration>(RepeatDialog);
         this._addDeclarativeType<ReplaceDialog, ReplaceDialogConfiguration>(ReplaceDialog);
         this._addDeclarativeType<SendActivity, SendActivityConfiguration>(SendActivity);
+        this._addDeclarativeType<SendHandoffActivity, SendHandoffActivityConfiguration>(SendHandoffActivity);
         this._addDeclarativeType<SetProperties, SetPropertiesConfiguration>(SetProperties);
         this._addDeclarativeType<SetProperty, SetPropertyConfiguration>(SetProperty);
         this._addDeclarativeType<SignOutUser, SignOutUserConfiguration>(SignOutUser);
@@ -338,11 +333,6 @@ export class AdaptiveComponentRegistration extends ComponentRegistration impleme
         this._addDeclarativeType<ResourceMultiLanguageGenerator, ResourceMultiLanguageGeneratorConfiguration>(
             ResourceMultiLanguageGenerator
         );
-
-        // Templates
-        this._addDeclarativeType<ActivityTemplate, ActivityTemplateConguration>(ActivityTemplate);
-        this._addDeclarativeType<StaticActivityTemplate, StaticActivityTemplateConfiguration>(StaticActivityTemplate);
-        this._addDeclarativeType<TextTemplate, TextTemplateConfiguration>(TextTemplate);
 
         // Selectors
         this._addDeclarativeType<ConditionalSelector, ConditionalSelectorConfiguration>(ConditionalSelector);
