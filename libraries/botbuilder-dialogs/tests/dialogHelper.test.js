@@ -10,15 +10,9 @@ const {
     TestAdapter,
     UserState,
 } = require('botbuilder-core');
-const {
-    ComponentDialog,
-    DialogReason,
-    runDialog,
-    TextPrompt,
-    WaterfallDialog
-} = require('../');
+const { ComponentDialog, DialogReason, runDialog, TextPrompt, WaterfallDialog } = require('../');
 const { AuthConstants } = require('../lib/prompts/skillsHelpers');
-const { EndOfConversationCodes } = require('../../botbuilder-core')
+const { EndOfConversationCodes } = require('botbuilder-core');
 
 const FlowTestCase = {
     RootBotOnly: 'RootBotOnly',
@@ -34,6 +28,7 @@ class ClaimsIdentity {
     }
     /**
      * Returns a claim value (if its present)
+     *
      * @param  {string} claimType The claim type to look for
      * @returns {string|null} The claim value or null if not found
      */
@@ -65,7 +60,8 @@ function createTestFlow(dialog, testCase) {
         conversation: {
             isGroup: false,
             conversationType: conversationId,
-            id: conversationId },
+            id: conversationId,
+        },
     };
 
     const adapter = new TestAdapter(async (context) => {
@@ -74,18 +70,20 @@ function createTestFlow(dialog, testCase) {
             const claimsIdentity = new ClaimsIdentity();
             claimsIdentity.addClaim({ type: 'ver', value: '2.0' }); // AuthenticationConstants.VersionClaim
             claimsIdentity.addClaim({ type: 'aud', value: SKILL_BOT_ID }); // AuthenticationConstants.AudienceClaim
-            claimsIdentity.addClaim({ type: 'azp', value:  PARENT_BOT_ID }); // AuthenticationConstants.AuthorizedParty
+            claimsIdentity.addClaim({ type: 'azp', value: PARENT_BOT_ID }); // AuthenticationConstants.AuthorizedParty
             context.turnState.set(context.adapter.BotIdentityKey, claimsIdentity);
 
             if (testCase === FlowTestCase.RootBotConsumingSkill) {
                 // Simulate the SkillConversationReference with a channel OAuthScope stored in turnState.
-                // This emulates a response coming to a root bot through SkillHandler. 
-                context.turnState.set(SkillConversationReferenceKey, { oAuthScope: AuthConstants.ToBotFromChannelTokenIssuer });
+                // This emulates a response coming to a root bot through SkillHandler.
+                context.turnState.set(SkillConversationReferenceKey, {
+                    oAuthScope: AuthConstants.ToBotFromChannelTokenIssuer,
+                });
             }
 
             if (testCase === FlowTestCase.MiddleSkill) {
                 // Simulate the SkillConversationReference with a parent Bot ID stored in turnState.
-                // This emulates a response coming to a skill from another skill through SkillHandler. 
+                // This emulates a response coming to a skill from another skill through SkillHandler.
                 context.turnState.set(SkillConversationReferenceKey, { oAuthScope: PARENT_BOT_ID });
             }
         }
@@ -115,10 +113,9 @@ class SimpleComponentDialog extends ComponentDialog {
         this.TextPrompt = 'TextPrompt';
         this.WaterfallDialog = 'WaterfallDialog';
         this.addDialog(new TextPrompt(this.TextPrompt));
-        this.addDialog(new WaterfallDialog(this.WaterfallDialog, [
-            this.promptForName.bind(this),
-            this.finalStep.bind(this),
-        ]));
+        this.addDialog(
+            new WaterfallDialog(this.WaterfallDialog, [this.promptForName.bind(this), this.finalStep.bind(this)])
+        );
         this.initialDialogId = this.WaterfallDialog;
         this.endReason;
     }
@@ -131,18 +128,55 @@ class SimpleComponentDialog extends ComponentDialog {
     async promptForName(step) {
         return step.prompt(this.TextPrompt, {
             prompt: MessageFactory.text('Hello, what is your name?', undefined, InputHints.ExpectingInput),
-            retryPrompt: MessageFactory.text('Hello, what is your name again?', undefined, InputHints.ExpectingInput)
+            retryPrompt: MessageFactory.text('Hello, what is your name again?', undefined, InputHints.ExpectingInput),
         });
     }
 
     async finalStep(step) {
-        await step.context.sendActivity(`Hello ${ step.result }, nice to meet you!`);
+        await step.context.sendActivity(`Hello ${step.result}, nice to meet you!`);
         return step.endDialog(step.result);
     }
-
 }
 
-describe('runDialog()', function() {
+class ComponentDialogWithPrematureEnd extends ComponentDialog {
+    constructor() {
+        super('ComponentDialogWithPrematureEnd');
+        const waterfallDialog = 'waterfallDialog';
+        this.addDialog(new WaterfallDialog(waterfallDialog, [this.finalStep.bind(this)]));
+        this.initialDialogId = waterfallDialog;
+        this.endReason;
+    }
+
+    async onEndDialog(context, instance, reason) {
+        this.endReason = reason;
+        return super.onEndDialog(context, instance, reason);
+    }
+
+    async finalStep(step) {
+        return step.endDialog();
+    }
+}
+
+class ComponentDialogWithCancellation extends ComponentDialog {
+    constructor() {
+        super('ComponentDialogWithCancellation');
+        const waterfallDialog = 'waterfallDialog';
+        this.addDialog(new WaterfallDialog(waterfallDialog, [this.finalStep.bind(this)]));
+        this.initialDialogId = waterfallDialog;
+        this.endReason;
+    }
+
+    async onEndDialog(context, instance, reason) {
+        this.endReason = reason;
+        return super.onEndDialog(context, instance, reason);
+    }
+
+    async finalStep(step) {
+        return step.cancelAllDialogs(true);
+    }
+}
+
+describe('runDialog()', function () {
     this.timeout(300);
 
     describe('parameter validation', () => {
@@ -151,7 +185,8 @@ describe('runDialog()', function() {
                 () => done(new Error('should have throw error')),
                 (err) => {
                     done(strictEqual(err.message, 'runDialog(): missing dialog'));
-                });
+                }
+            );
         });
 
         it('should throw if missing context parameter', (done) => {
@@ -159,7 +194,8 @@ describe('runDialog()', function() {
                 () => done(new Error('should have throw error')),
                 (err) => {
                     done(strictEqual(err.message, 'runDialog(): missing context'));
-                });
+                }
+            );
         });
 
         it('should throw if missing context.activity', (done) => {
@@ -167,7 +203,8 @@ describe('runDialog()', function() {
                 () => done(new Error('should have throw error')),
                 (err) => {
                     done(strictEqual(err.message, 'runDialog(): missing context.activity'));
-                });
+                }
+            );
         });
 
         it('should throw if missing accessor parameter', (done) => {
@@ -175,9 +212,11 @@ describe('runDialog()', function() {
                 () => done(new Error('should have throw error')),
                 (err) => {
                     done(strictEqual(err.message, 'runDialog(): missing accessor'));
-                });
+                }
+            );
         });
     });
+
     describe('HandlesBotAndSkillsTestCases', () => {
         this.beforeEach(() => {
             _eocSent = undefined;
@@ -186,12 +225,13 @@ describe('runDialog()', function() {
         async function handlesBotAndSkillsTestCases(testCase, shouldSendEoc) {
             const dialog = new SimpleComponentDialog();
             const testFlow = createTestFlow(dialog, testCase);
-            await testFlow.send('Hi')
+            await testFlow
+                .send('Hi')
                 .assertReply('Hello, what is your name?')
                 .send('SomeName')
                 .assertReply('Hello SomeName, nice to meet you!')
                 .startTest();
-            
+
             strictEqual(dialog.endReason, DialogReason.endCalled);
             if (shouldSendEoc) {
                 ok(_eocSent, 'Skills should send EndConversation to channel');
@@ -217,6 +257,29 @@ describe('runDialog()', function() {
 
         it('leafSkill, sent EoC', async () => {
             await handlesBotAndSkillsTestCases(FlowTestCase.LeafSkill, true);
+        });
+    });
+
+    describe('HandlesEarlyDialogEndings', () => {
+        it('handles premature dialog ending', async () => {
+            const dialog = new ComponentDialogWithPrematureEnd();
+            const testFlow = createTestFlow(dialog, FlowTestCase.MiddleSkill);
+            await testFlow.send('Hi').startTest();
+
+            strictEqual(dialog.endReason, DialogReason.endCalled);
+            ok(_eocSent, 'Skills should send EndConversation to channel');
+            strictEqual(_eocSent.type, ActivityTypes.EndOfConversation);
+            strictEqual(_eocSent.code, EndOfConversationCodes.CompletedSuccessfully);
+        });
+        it('handles premature dialog cancellation', async () => {
+            const dialog = new ComponentDialogWithCancellation();
+            const testFlow = createTestFlow(dialog, FlowTestCase.MiddleSkill);
+            await testFlow.send('Hi').startTest();
+
+            strictEqual(dialog.endReason, DialogReason.cancelCalled);
+            ok(_eocSent, 'Skills should send EndConversation to channel');
+            strictEqual(_eocSent.type, ActivityTypes.EndOfConversation);
+            strictEqual(_eocSent.code, EndOfConversationCodes.UserCancelled);
         });
     });
 });
