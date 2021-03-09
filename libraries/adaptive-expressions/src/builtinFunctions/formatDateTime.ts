@@ -40,12 +40,17 @@ export class FormatDateTime extends ExpressionEvaluator {
                 const firstChild = args[0];
                 let locale = options.locale ? options.locale : Intl.DateTimeFormat().resolvedOptions().locale;
                 let format = FunctionUtils.DefaultDateTimeFormat;
+                let isoString: string;
                 if (typeof firstChild === 'string') {
                     error = InternalFunctionUtils.verifyTimestamp(firstChild);
+                    isoString = firstChild;
                 } else if (!(firstChild instanceof Date)) {
-                    error = `${args[0]} is not a string or a date object.`;
+                    error = `${firstChild} is not a string or a date object.`;
                 } else {
-                    const isoString = firstChild.toISOString();
+                    isoString = firstChild.toISOString();
+                }
+
+                if (!error) {
                     ({ format, locale } = FunctionUtils.determineFormatAndLocale(args, 3, format, locale));
                     let dateString: string;
                     if (isoString.endsWith('Z')) {
@@ -60,7 +65,6 @@ export class FormatDateTime extends ExpressionEvaluator {
 
                     value = dayjs(dateString).locale(locale).utc().format(format);
                 }
-
                 return { value, error };
             }
         );

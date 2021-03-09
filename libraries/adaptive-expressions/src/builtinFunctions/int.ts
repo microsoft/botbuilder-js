@@ -40,8 +40,8 @@ export class Int extends ExpressionEvaluator {
                     if (!FunctionUtils.isNumber(value)) {
                         error = `parameter ${args[0]} is not a valid number string.`;
                     }
-                } else if (FunctionUtils.isInteger(firstChild)) {
-                    value = firstChild;
+                } else if (FunctionUtils.isNumber(firstChild)) {
+                    value = parseInt(firstChild.toString(), 10);
                 }
 
                 return { value, error };
