@@ -11,6 +11,7 @@ import { EvaluateExpressionDelegate, ExpressionEvaluator } from '../expressionEv
 import { ExpressionType } from '../expressionType';
 import { FunctionUtils } from '../functionUtils';
 import { ReturnType } from '../returnType';
+import { assert } from 'botbuilder-stdlib';
 
 /**
  * Return the newline string according to the environment.
@@ -24,12 +25,13 @@ export class XPath extends ExpressionEvaluator {
     }
 
     private static evaluator(): EvaluateExpressionDelegate {
-        return FunctionUtils.applyWithError((args: readonly unknown[]): { value: unknown; error: string } =>
-            XPath.platformSpecificXPath(args)
+        return FunctionUtils.applyWithError(
+            (args: readonly string[]): { value: unknown; error: string } => XPath.platformSpecificXPath(args),
+            FunctionUtils.verifyString
         );
     }
 
-    private static platformSpecificXPath(args: readonly unknown[]): { value: unknown; error: string } {
+    private static platformSpecificXPath(args: readonly string[]): { value: unknown; error: string } {
         if (typeof window !== 'undefined' || typeof self !== 'undefined') {
             // this is for evaluating in browser environment, however it is not covered by any test currently
             let error: string;
@@ -37,13 +39,13 @@ export class XPath extends ExpressionEvaluator {
             let xmlDoc: Document;
             try {
                 const parser = new DOMParser();
-                xmlDoc = parser.parseFromString(args[0] as string, 'text/xml');
+                xmlDoc = parser.parseFromString(args[0], 'text/xml');
             } catch (err) {
                 error = error = `${args[0]} is not valid xml input`;
             }
 
             if (!error) {
-                const nodes = xmlDoc.evaluate(args[1] as string, xmlDoc, null, XPathResult.ANY_TYPE, null);
+                const nodes = xmlDoc.evaluate(args[1], xmlDoc, null, XPathResult.ANY_TYPE, null);
                 let node = nodes.iterateNext();
                 const evalResult: string[] = [];
                 while (node) {

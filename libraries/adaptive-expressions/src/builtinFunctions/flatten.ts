@@ -28,9 +28,14 @@ export class Flatten extends ExpressionEvaluator {
      */
     private static evaluator(): EvaluateExpressionDelegate {
         return FunctionUtils.apply((args: readonly unknown[]): unknown[] => {
-            const array = args[0] as unknown[];
-            const depth = args.length > 1 ? (args[1] as number) : 100;
-            return Flatten.evalFlatten(array, depth);
+            const firstChild = args[0];
+            const secondChild = args[1];
+            if (!Array.isArray(firstChild) || !FunctionUtils.isNumber(secondChild)) {
+                return [];
+            } else {
+                const depth = args.length > 1 ? secondChild : 100;
+                return Flatten.evalFlatten(firstChild, depth);
+            }
         });
     }
 

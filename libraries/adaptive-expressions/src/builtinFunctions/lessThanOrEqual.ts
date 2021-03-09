@@ -31,14 +31,16 @@ export class LessThanOrEqual extends ComparisonEvaluator {
      * @private
      */
     private static func(args: readonly unknown[]): boolean {
+        const firstChild = args[0];
+        const secondChild = args[1];
         if (
-            (typeof args[0] === 'number' && typeof args[1] === 'number') ||
-            (typeof args[0] === 'string' && typeof args[1] === 'string') ||
-            (args[0] instanceof Date && args[1] instanceof Date)
+            (FunctionUtils.isNumber(firstChild) && FunctionUtils.isNumber(secondChild)) ||
+            (typeof firstChild === 'string' && typeof secondChild === 'string') ||
+            (firstChild instanceof Date && secondChild instanceof Date)
         ) {
-            return args[0] <= args[1];
+            return firstChild <= secondChild;
         } else {
-            throw new Error(`${args[0]} and ${args[1]} must be comparable.`);
+            throw new Error(`${firstChild} and ${secondChild} must be comparable.`);
         }
     }
 }

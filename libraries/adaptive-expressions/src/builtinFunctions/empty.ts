@@ -37,15 +37,13 @@ export class Empty extends ComparisonEvaluator {
      */
     private static isEmpty(instance: unknown): boolean {
         let result: boolean;
-        if (instance === undefined) {
-            result = true;
-        } else if (typeof instance === 'string') {
+        if (typeof instance === 'string') {
             result = instance === '';
         } else if (Array.isArray(instance)) {
             result = instance.length === 0;
         } else if (instance instanceof Map) {
             result = instance.size === 0;
-        } else {
+        } else if (typeof instance === 'object') {
             result = Object.keys(instance).length === 0;
         }
 

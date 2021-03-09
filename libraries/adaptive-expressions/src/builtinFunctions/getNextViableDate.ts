@@ -63,12 +63,12 @@ export class GetNextViableDate extends ExpressionEvaluator {
                 error = `${args[0]} must be a timex string which only contains month and day-of-month, for example: 'XXXX-10-31'.`;
             }
         }
-
+        const secondChild = args[1];
         if (!error) {
-            if (args.length === 2 && typeof args[1] === 'string') {
-                const timeZone: string = TimeZoneConverter.windowsToIana(args[1] as string);
+            if (args.length === 2 && typeof secondChild === 'string') {
+                const timeZone: string = TimeZoneConverter.windowsToIana(secondChild);
                 if (!TimeZoneConverter.verifyTimeZoneStr(timeZone)) {
-                    error = `${args[1]} is not a valid timezone`;
+                    error = `${secondChild} is not a valid timezone`;
                 }
 
                 if (!error) {

@@ -28,10 +28,14 @@ export class SetProperty extends ExpressionEvaluator {
      */
     private static evaluator(): EvaluateExpressionDelegate {
         return FunctionUtils.apply((args: readonly unknown[]): unknown => {
-            const temp: Record<string, unknown> = args[0] as Record<string, unknown>;
-            temp[args[1] as string] = args[2];
+            const firstChild = args[0];
+            const secondChild = args[1];
 
-            return temp;
+            if (typeof firstChild === 'object' && typeof secondChild === 'string') {
+                firstChild[secondChild] = args[2];
+            }
+
+            return firstChild;
         });
     }
 

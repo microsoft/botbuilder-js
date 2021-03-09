@@ -27,7 +27,14 @@ export class Json extends ExpressionEvaluator {
      * @private
      */
     private static evaluator(): EvaluateExpressionDelegate {
-        return FunctionUtils.apply((args: readonly unknown[]): unknown => JSON.parse((args[0] as string).trim()));
+        return FunctionUtils.apply((args: readonly unknown[]): unknown => {
+            const firstChild = args[0];
+            if (typeof firstChild === 'string') {
+                return JSON.parse(firstChild.trim());
+            } else if (typeof firstChild === 'object') {
+                return firstChild;
+            } else return {};
+        });
     }
 
     /**

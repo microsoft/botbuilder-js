@@ -43,10 +43,11 @@ export class TimeTransformEvaluator extends ExpressionEvaluator {
             if (!error) {
                 ({ format, locale } = FunctionUtils.determineFormatAndLocale(args, 4, format, locale));
                 const firstChild = args[0];
-                if (typeof firstChild === 'string' && FunctionUtils.isNumber(args[1])) {
+                const secondChild = args[1];
+                if (typeof firstChild === 'string' && FunctionUtils.isNumber(secondChild)) {
                     error = InternalFunctionUtils.verifyISOTimestamp(firstChild);
                     if (!error) {
-                        result = dayjs(func(new Date(firstChild), args[1] as number))
+                        result = dayjs(func(new Date(firstChild), secondChild))
                             .locale(locale)
                             .utc()
                             .format(format);

@@ -9,6 +9,7 @@ import { Expression } from './expression';
 import { ReturnType } from './returnType';
 import { ExpressionEvaluator, ValueWithError } from './expressionEvaluator';
 import { ExpressionType } from './expressionType';
+import { FunctionUtils } from './functionUtils';
 
 /**
  * Construct an expression constant.
@@ -32,7 +33,7 @@ export class Constant extends Expression {
                 ? ReturnType.String
                 : typeof theValue === 'boolean'
                 ? ReturnType.Boolean
-                : typeof theValue === 'number' && !Number.isNaN(theValue)
+                : FunctionUtils.isNumber(theValue)
                 ? ReturnType.Number
                 : Array.isArray(theValue)
                 ? ReturnType.Array

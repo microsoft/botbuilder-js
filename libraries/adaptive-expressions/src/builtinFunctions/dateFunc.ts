@@ -30,13 +30,11 @@ export class DateFunc extends ExpressionEvaluator {
      * @private
      */
     private static evaluator(): EvaluateExpressionDelegate {
-        return FunctionUtils.applyWithError((args: readonly unknown[]): ValueWithError => {
+        return FunctionUtils.applyWithError((args: readonly string[]): ValueWithError => {
             const error = InternalFunctionUtils.verifyISOTimestamp(args[0]);
             if (!error) {
                 return {
-                    value: dayjs(args[0] as string)
-                        .utc()
-                        .format('M/DD/YYYY'),
+                    value: dayjs(args[0]).utc().format('M/DD/YYYY'),
                     error,
                 };
             }

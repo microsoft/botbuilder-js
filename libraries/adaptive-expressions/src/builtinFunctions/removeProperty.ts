@@ -28,10 +28,13 @@ export class RemoveProperty extends ExpressionEvaluator {
      */
     private static evaluator(): EvaluateExpressionDelegate {
         return FunctionUtils.apply((args: readonly unknown[]): unknown => {
-            const temp: Record<string, unknown> = args[0] as Record<string, unknown>;
-            delete temp[args[1] as string];
+            const firstChild = args[0];
+            const secondChild = args[1];
+            if (typeof firstChild === 'object' && typeof secondChild === 'string') {
+                delete firstChild[secondChild];
+            }
 
-            return temp;
+            return firstChild;
         });
     }
 

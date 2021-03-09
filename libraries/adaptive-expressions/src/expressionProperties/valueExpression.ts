@@ -6,7 +6,6 @@
  * Licensed under the MIT License.
  */
 import { ExpressionProperty } from './expressionProperty';
-import { Expression } from '../expression';
 
 /**
  * Represents a property which is an object of any kind or a string expression.
@@ -26,7 +25,7 @@ export class ValueExpression extends ExpressionProperty<any> {
      * Initializes a new instance of the [ValueExpression](xref:adaptive-expressions.ValueExpression) class.
      * @param value An object of `any` kind or a `string` expression.
      */
-    public constructor(value?: unknown | string | Expression) {
+    public constructor(value?: unknown) {
         super(value);
     }
 
@@ -34,7 +33,7 @@ export class ValueExpression extends ExpressionProperty<any> {
      * Set value as value expression.
      * @param value Value to set.
      */
-    public setValue(value: unknown | string | Expression): void {
+    public setValue(value: unknown): void {
         super.setValue(undefined);
 
         if (typeof value === 'string') {

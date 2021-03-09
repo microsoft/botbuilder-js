@@ -27,7 +27,7 @@ export class UriComponent extends ExpressionEvaluator {
      */
     private static evaluator(): EvaluateExpressionDelegate {
         return FunctionUtils.apply(
-            (args: readonly unknown[]): string => encodeURIComponent(args[0] as string),
+            (args: readonly string[]): string => encodeURIComponent(args[0]),
             FunctionUtils.verifyString
         );
     }

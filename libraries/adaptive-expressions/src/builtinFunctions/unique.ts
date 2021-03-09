@@ -27,7 +27,10 @@ export class Unique extends ExpressionEvaluator {
      * @private
      */
     private static evaluator(): EvaluateExpressionDelegate {
-        return FunctionUtils.apply((args: readonly unknown[]): unknown[] => [...new Set(args[0] as unknown[])]);
+        return FunctionUtils.apply(
+            (args: readonly unknown[][]): unknown[] => [...new Set(args[0])],
+            FunctionUtils.verifyList
+        );
     }
 
     /**

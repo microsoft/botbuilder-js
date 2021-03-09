@@ -30,10 +30,10 @@ export class Intersection extends ExpressionEvaluator {
      * @private
      */
     private static evaluator(): EvaluateExpressionDelegate {
-        return FunctionUtils.apply((args: readonly unknown[]): unknown => {
-            let result = args[0] as unknown[];
+        return FunctionUtils.apply((args: readonly unknown[][]): unknown => {
+            let result = args[0];
             for (const arg of args) {
-                result = result.filter((e): boolean => (arg as unknown[]).indexOf(e) > -1);
+                result = result.filter((e): boolean => arg.indexOf(e) > -1);
             }
 
             return Array.from(new Set(result));

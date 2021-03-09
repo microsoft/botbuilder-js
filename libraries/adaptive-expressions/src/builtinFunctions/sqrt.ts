@@ -26,10 +26,10 @@ export class Sqrt extends ExpressionEvaluator {
      * @private
      */
     private static evaluator(): EvaluateExpressionDelegate {
-        return FunctionUtils.applyWithError((args: readonly unknown[]): ValueWithError => {
+        return FunctionUtils.applyWithError((args: readonly number[]): ValueWithError => {
             let error: string;
             let value: unknown;
-            const originalNumber = args[0] as number;
+            const originalNumber = args[0];
             if (originalNumber < 0) {
                 error = 'Do not support square root extraction of negative numbers.';
             } else {

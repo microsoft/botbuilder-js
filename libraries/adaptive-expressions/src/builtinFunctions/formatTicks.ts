@@ -38,7 +38,8 @@ export class FormatTicks extends ExpressionEvaluator {
                 let arg = args[0];
                 let locale = options.locale ? options.locale : Intl.DateTimeFormat().resolvedOptions().locale;
                 let format = FunctionUtils.DefaultDateTimeFormat;
-                if (typeof arg === 'number') {
+
+                if (FunctionUtils.isNumber(arg)) {
                     arg = bigInt(arg);
                 }
                 if (typeof arg === 'string') {
@@ -57,7 +58,7 @@ export class FormatTicks extends ExpressionEvaluator {
                 let value: unknown;
                 if (!error) {
                     ({ format, locale } = FunctionUtils.determineFormatAndLocale(args, 3, format, locale));
-                    if (typeof arg === 'number') {
+                    if (FunctionUtils.isNumber(arg)) {
                         const dateString: string = new Date(arg).toISOString();
                         value = dayjs(dateString).locale(locale).utc().format(format);
                     }

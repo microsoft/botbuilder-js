@@ -30,26 +30,31 @@ export class Add extends ExpressionEvaluator {
         return FunctionUtils.applySequenceWithError((args: readonly unknown[]): ValueWithError => {
             let value: unknown;
             let error: string;
-            const stringConcat = !FunctionUtils.isNumber(args[0]) || !FunctionUtils.isNumber(args[1]);
+            const firstChild = args[0];
+            const secondChild = args[1];
+            const stringConcat = !FunctionUtils.isNumber(firstChild) || !FunctionUtils.isNumber(secondChild);
             if (
-                ((args[0] === null || args[0] === undefined) && FunctionUtils.isNumber(args[1])) ||
-                ((args[1] === null || args[1] === undefined) && FunctionUtils.isNumber(args[0]))
+                (firstChild == null && FunctionUtils.isNumber(secondChild)) ||
+                (secondChild == null && FunctionUtils.isNumber(firstChild))
             ) {
                 error = "Operator '+' or add cannot be applied to operands of type 'number' and null object.";
             } else if (stringConcat) {
-                if ((args[0] === null || args[0] === undefined) && (args[1] === null || args[1] === undefined)) {
+                if (
+                    (firstChild === null || firstChild === undefined) &&
+                    (secondChild === null || secondChild === undefined)
+                ) {
                     value = '';
-                } else if (args[0] === null || args[0] === undefined) {
-                    value = args[1].toString();
-                } else if (args[1] === null || args[1] === undefined) {
-                    value = args[0].toString();
+                } else if (firstChild == null) {
+                    value = secondChild.toString();
+                } else if (secondChild == null) {
+                    value = firstChild.toString();
                 } else {
-                    value = args[0].toString() + args[1].toString();
+                    value = firstChild.toString() + secondChild.toString();
                 }
-            } else if (FunctionUtils.isNumber(args[0]) && FunctionUtils.isNumber(args[1])) {
-                value = (args[0] as number) + (args[1] as number);
+            } else if (FunctionUtils.isNumber(firstChild) && FunctionUtils.isNumber(secondChild)) {
+                value = firstChild + secondChild;
             } else {
-                value = `${args[0]}${args[1]}`;
+                value = `${firstChild}${secondChild}`;
             }
 
             return { value, error };

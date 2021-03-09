@@ -27,10 +27,10 @@ export class Year extends ExpressionEvaluator {
      * @private
      */
     private static evaluator(): EvaluateExpressionDelegate {
-        return FunctionUtils.applyWithError((args: readonly unknown[]): ValueWithError => {
+        return FunctionUtils.applyWithError((args: readonly string[]): ValueWithError => {
             const error = InternalFunctionUtils.verifyISOTimestamp(args[0]);
             if (!error) {
-                return { value: new Date(args[0] as string).getUTCFullYear(), error };
+                return { value: new Date(args[0]).getUTCFullYear(), error };
             }
 
             return { value: undefined, error };

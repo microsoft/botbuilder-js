@@ -41,7 +41,9 @@ export class Where extends ExpressionEvaluator {
                 InternalFunctionUtils.lambdaEvaluator(expression, state, options, list, (currentItem, r, e) => {
                     if (InternalFunctionUtils.isLogicTrue(r) && !e) {
                         // add if only if it evaluates to true
-                        (result as unknown[]).push(currentItem);
+                        if (Array.isArray(result)) {
+                            result.push(currentItem);
+                        }
                     }
 
                     return false;

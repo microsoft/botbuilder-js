@@ -34,17 +34,17 @@ export class ReplaceIgnoreCase extends ExpressionEvaluator {
      * @private
      */
     private static evaluator(): EvaluateExpressionDelegate {
-        return FunctionUtils.applyWithError((args: readonly unknown[]): ValueWithError => {
+        return FunctionUtils.applyWithError((args: readonly string[]): ValueWithError => {
             let error = undefined;
             let result = undefined;
-            if (InternalFunctionUtils.parseStringOrUndefined(args[1] as string).length === 0) {
+            if (InternalFunctionUtils.parseStringOrUndefined(args[1]).length === 0) {
                 error = `${args[1]} should be a string with length at least 1`;
             }
 
             if (!error) {
-                result = InternalFunctionUtils.parseStringOrUndefined(args[0] as string).replace(
-                    new RegExp(InternalFunctionUtils.parseStringOrUndefined(args[1] as string), 'gi'),
-                    InternalFunctionUtils.parseStringOrUndefined(args[2] as string)
+                result = InternalFunctionUtils.parseStringOrUndefined(args[0]).replace(
+                    new RegExp(InternalFunctionUtils.parseStringOrUndefined(args[1]), 'gi'),
+                    InternalFunctionUtils.parseStringOrUndefined(args[2])
                 );
             }
 

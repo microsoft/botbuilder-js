@@ -40,13 +40,13 @@ export class Take extends ExpressionEvaluator {
                 let start = startEvaluateResult.value;
                 error = startEvaluateResult.error;
 
-                if (!error && !FunctionUtils.isInteger(start)) {
-                    error = `${startExpr} is not an integer.`;
-                }
-
                 if (!error) {
-                    start = Math.max(start as number, 0);
-                    result = arr.slice(0, start as number);
+                    if (FunctionUtils.isInteger(start)) {
+                        start = Math.max(start, 0);
+                        result = arr.slice(0, start);
+                    } else {
+                        error = `${startExpr} is not an integer.`;
+                    }
                 }
             } else {
                 error = `${expression.children[0]} is not array or string.`;

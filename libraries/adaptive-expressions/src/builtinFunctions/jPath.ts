@@ -40,7 +40,7 @@ export class JPath extends ExpressionEvaluator {
     private static evalJPath(jsonEntity: unknown, path: string): ValueWithError {
         let error: string;
         let evaled: unknown;
-        let json: Record<string, unknown>;
+        let json: unknown;
         if (typeof jsonEntity === 'string') {
             try {
                 json = JSON.parse(jsonEntity);
@@ -48,7 +48,7 @@ export class JPath extends ExpressionEvaluator {
                 error = `${jsonEntity} is not a valid json string`;
             }
         } else if (typeof jsonEntity === 'object') {
-            json = jsonEntity as Record<string, unknown>;
+            json = jsonEntity;
         } else {
             error = 'the first parameter should be either an object or a string';
         }

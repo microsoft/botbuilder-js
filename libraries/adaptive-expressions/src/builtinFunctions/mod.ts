@@ -26,13 +26,13 @@ export class Mod extends ExpressionEvaluator {
      * @private
      */
     private static evaluator(): EvaluateExpressionDelegate {
-        return FunctionUtils.applyWithError((args: readonly unknown[]): ValueWithError => {
+        return FunctionUtils.applyWithError((args: readonly number[]): ValueWithError => {
             let error: string;
             let value: number;
-            if ((args[1] as number) === 0) {
+            if (args[1] === 0) {
                 error = `Cannot mod by 0.`;
             } else {
-                value = (args[0] as number) % (args[1] as number);
+                value = args[0] % args[1];
             }
 
             return { value, error };

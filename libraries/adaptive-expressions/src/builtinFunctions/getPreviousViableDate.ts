@@ -53,19 +53,21 @@ export class GetPreviousViableDate extends ExpressionEvaluator {
         let validDay = 0;
         let convertedDateTime: dayjs.Dayjs;
         const { args, error: childrenError } = FunctionUtils.evaluateChildren(expr, state, options);
+        const firstChild = args[0];
+        const secondChild = args[1];
         let error = childrenError;
+
         if (!error) {
-            ({ timexProperty: parsed, error: error } = InternalFunctionUtils.parseTimexProperty(args[0]));
+            ({ timexProperty: parsed, error: error } = InternalFunctionUtils.parseTimexProperty(firstChild));
         }
 
         if (parsed && !error) {
             if (parsed.year || !parsed.month || !parsed.dayOfMonth) {
-                error = `${args[0]} must be a timex string which only contains month and day-of-month, for example: 'XXXX-10-31'.`;
+                error = `${firstChild} must be a timex string which only contains month and day-of-month, for example: 'XXXX-10-31'.`;
             }
         }
 
         if (!error) {
-            const secondChild = args[1];
             if (args.length === 2 && typeof secondChild === 'string') {
                 const timeZone: string = TimeZoneConverter.windowsToIana(secondChild);
                 if (!TimeZoneConverter.verifyTimeZoneStr(timeZone)) {

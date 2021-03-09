@@ -27,10 +27,10 @@ export class DayOfWeek extends ExpressionEvaluator {
      * @private
      */
     private static evaluator(): EvaluateExpressionDelegate {
-        return FunctionUtils.applyWithError((args: readonly unknown[]): ValueWithError => {
+        return FunctionUtils.applyWithError((args: readonly string[]): ValueWithError => {
             const error = InternalFunctionUtils.verifyISOTimestamp(args[0]);
             if (!error) {
-                return { value: new Date(args[0] as string).getUTCDay(), error };
+                return { value: new Date(args[0]).getUTCDay(), error };
             }
 
             return { value: undefined, error };

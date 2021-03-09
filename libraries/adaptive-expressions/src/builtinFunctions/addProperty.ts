@@ -31,19 +31,23 @@ export class AddProperty extends ExpressionEvaluator {
         return FunctionUtils.applyWithError(
             (args: readonly unknown[]): ValueWithError => {
                 let error: string;
-                if (typeof args[0] !== 'object') {
-                    return { value: undefined, error: `${args[0]} is not a valid object.` };
+                const firstChild = args[0];
+                const secondChild = args[1];
+                if (typeof firstChild !== 'object') {
+                    return { value: undefined, error: `${firstChild} is not a valid object.` };
                 }
 
-                const temp: Record<string, unknown> = args[0] as Record<string, unknown>;
-                const prop = args[1] as string;
-                if (prop in temp) {
-                    error = `${prop} already exists`;
+                if (typeof secondChild !== 'string') {
+                    return { value: undefined, error: `${secondChild} is not a valid string.` };
+                }
+
+                if (secondChild in firstChild) {
+                    error = `${secondChild} already exists`;
                 } else {
-                    temp[args[1] as string] = args[2];
+                    firstChild[secondChild] = args[2];
                 }
 
-                return { value: temp, error };
+                return { value: firstChild, error };
             }
         );
     }

@@ -27,17 +27,25 @@ export class Int extends ExpressionEvaluator {
      * @private
      */
     private static evaluator(): EvaluateExpressionDelegate {
-        return FunctionUtils.applyWithError((args: readonly unknown[]): ValueWithError => {
-            let error: string;
-            if (bigInt.isInstance(args[0])) {
-                    return { value: (args[0] as bigInt.BigInteger).toJSNumber(), error };
-            }
-            const value: number = parseInt(String(args[0]), 10);
-            if (!FunctionUtils.isNumber(value)) {
-                error = `parameter ${args[0]} is not a valid number string.`;
-            }
+        return FunctionUtils.applyWithError(
+            (args: readonly unknown[]): ValueWithError => {
+                let error: string;
+                let value: unknown;
+                const firstChild = args[0];
+                if (bigInt.isInstance(firstChild)) {
+                    return { value: firstChild.toJSNumber(), error };
+                }
+                if (typeof firstChild === 'string') {
+                    value = parseInt(firstChild, 10);
+                    if (!FunctionUtils.isNumber(value)) {
+                        error = `parameter ${args[0]} is not a valid number string.`;
+                    }
+                } else if (FunctionUtils.isInteger(firstChild)) {
+                    value = firstChild;
+                }
 
-            return { value, error };
-        });
+                return { value, error };
+            }
+        );
     }
 }

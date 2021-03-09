@@ -30,27 +30,25 @@ export class FormatEpoch extends ExpressionEvaluator {
      * @private
      */
     private static evaluator(): EvaluateExpressionDelegate {
-        return FunctionUtils.applyWithOptionsAndError((args: readonly unknown[], options: Options): ValueWithError => {
-            let error: string;
-            let arg: unknown = args[0];
-            let locale = options.locale ? options.locale : Intl.DateTimeFormat().resolvedOptions().locale;
-            let format = FunctionUtils.DefaultDateTimeFormat;
-            if (typeof arg !== 'number') {
-                error = `formatEpoch first argument ${arg} must be a number`;
-            } else {
-                // Convert to ms
-                arg = arg * 1000;
-            }
+        return FunctionUtils.applyWithOptionsAndError(
+            (args: readonly unknown[], options: Options): ValueWithError => {
+                let error: string;
+                let value: unknown;
+                const fitstChild = args[0];
+                let locale = options.locale ? options.locale : Intl.DateTimeFormat().resolvedOptions().locale;
+                let format = FunctionUtils.DefaultDateTimeFormat;
+                if (!FunctionUtils.isNumber(fitstChild)) {
+                    error = `formatEpoch first argument ${fitstChild} must be a number`;
+                } else {
+                    // Convert to ms
+                    ({ format, locale } = FunctionUtils.determineFormatAndLocale(args, 3, format, locale));
+                    const dateString: string = new Date(fitstChild * 1000).toISOString();
+                    value = dayjs(dateString).locale(locale).utc().format(format);
+                }
 
-            let value: unknown;
-            if (!error) {
-                ({ format, locale } = FunctionUtils.determineFormatAndLocale(args, 3, format, locale));
-                const dateString: string = new Date(arg as number).toISOString();
-                value = dayjs(dateString).locale(locale).utc().format(format);
+                return { value, error };
             }
-
-            return { value, error };
-        });
+        );
     }
 
     /**

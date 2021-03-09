@@ -37,19 +37,19 @@ export class FormatNumber extends ExpressionEvaluator {
         } => {
             let value: unknown = null;
             let error: string;
-            const number = args[0];
-            const precision = args[1];
+            const firstChild = args[0];
+            const secondChild = args[1];
             let locale = options.locale ? options.locale : Intl.DateTimeFormat().resolvedOptions().locale;
             locale = FunctionUtils.determineLocale(args, 3, locale);
-            if (typeof number !== 'number') {
-                error = `formatNumber first argument ${number} must be a number`;
-            } else if (typeof precision !== 'number') {
-                error = `formatNumber second argument ${precision} must be a number`;
+            if (!FunctionUtils.isNumber(firstChild)) {
+                error = `formatNumber first argument ${firstChild} must be a number`;
+            } else if (!FunctionUtils.isNumber(secondChild)) {
+                error = `formatNumber second argument ${secondChild} must be a number`;
             } else if (locale && typeof locale !== 'string') {
                 error = `formatNubmer third argument ${locale} is not a valid locale`;
             } else {
-                const fixedNotation = `,.${precision}f`;
-                const roundedNumber = this.roundToPrecision(number, precision);
+                const fixedNotation = `,.${secondChild}f`;
+                const roundedNumber = this.roundToPrecision(firstChild, secondChild);
                 const formatLocale = localeInfo[locale];
                 if (formatLocale !== undefined) {
                     value = d3formatLocale(formatLocale).format(fixedNotation)(roundedNumber);

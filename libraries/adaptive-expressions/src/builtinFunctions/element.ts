@@ -43,7 +43,7 @@ export class Element extends ExpressionEvaluator {
             ({ value: idxValue, error } = index.tryEvaluate(state, newOptions));
             if (!error) {
                 if (FunctionUtils.isInteger(idxValue)) {
-                    ({ value, error } = InternalFunctionUtils.accessIndex(inst, idxValue as number));
+                    ({ value, error } = InternalFunctionUtils.accessIndex(inst, idxValue));
                 } else if (typeof idxValue === 'string') {
                     ({ value, error } = InternalFunctionUtils.accessProperty(inst, idxValue.toString()));
                 } else {

@@ -32,7 +32,7 @@ export class UriComponentToString extends ExpressionEvaluator {
      */
     private static evaluator(): EvaluateExpressionDelegate {
         return FunctionUtils.apply(
-            (args: readonly unknown[]): string => decodeURIComponent(args[0] as string),
+            (args: readonly string[]): string => decodeURIComponent(args[0]),
             FunctionUtils.verifyString
         );
     }

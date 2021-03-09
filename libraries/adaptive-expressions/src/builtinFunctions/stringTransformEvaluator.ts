@@ -7,7 +7,7 @@
  */
 
 import { Expression } from '..';
-import { ExpressionEvaluator, ValueWithError } from '../expressionEvaluator';
+import { ExpressionEvaluator } from '../expressionEvaluator';
 import { FunctionUtils } from '../functionUtils';
 import { Options } from '../options';
 import { ReturnType } from '../returnType';
@@ -23,7 +23,7 @@ export class StringTransformEvaluator extends ExpressionEvaluator {
      */
     public constructor(
         type: string,
-        func: (arg0: readonly unknown[], options: Options) => string,
+        func: (arg0: readonly string[], options: Options) => string,
         validator?: (expr: Expression) => void
     ) {
         super(

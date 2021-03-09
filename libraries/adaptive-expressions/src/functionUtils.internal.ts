@@ -220,15 +220,14 @@ export class InternalFunctionUtils {
 
         let value: unknown;
         let error: string;
-        if (instance instanceof Map && (instance as Map<string, unknown>) !== undefined) {
-            const instanceMap: Map<string, unknown> = instance as Map<string, unknown>;
-            value = instanceMap.get(property);
+        if (instance instanceof Map) {
+            value = instance.get(property);
             if (value === undefined) {
-                const prop: string = Array.from(instanceMap.keys()).find(
+                const prop: string = Array.from(instance.keys()).find(
                     (k: string): boolean => k.toLowerCase() === property.toLowerCase()
                 );
                 if (prop !== undefined) {
-                    value = instanceMap.get(prop);
+                    value = instance.get(prop);
                 }
             }
         } else {
@@ -350,7 +349,7 @@ export class InternalFunctionUtils {
         const stackedMemory = StackedMemory.wrap(state);
         for (const item of list) {
             const currentItem = item;
-            const local: Map<string, unknown> = new Map<string, unknown>([[iteratorName, item]]);
+            const local = { [iteratorName]: item };
 
             // the local iterator is pushed as one memory layer in the memory stack
             stackedMemory.push(SimpleObjectMemory.wrap(local));
@@ -371,8 +370,10 @@ export class InternalFunctionUtils {
      * Else return undefined.
      * @param instance input instance.
      */
-    public static convertToList(instance: unknown): unknown[] | undefined {
-        let arr: unknown[] | undefined;
+    public static convertToList<T, S>(
+        instance: T[] | Record<string, S>
+    ): (T | { key: string; value: S })[] | undefined {
+        let arr: (T | { key: string; value: S })[] | undefined;
         if (Array.isArray(instance)) {
             arr = instance;
         } else if (typeof instance === 'object') {
@@ -444,39 +445,35 @@ export class InternalFunctionUtils {
      * Equal helper function.
      * @param args Input args. Compare the first param and second param.
      */
-    public static isEqual(args: readonly unknown[]): boolean {
-        if (args.length === 0) {
-            return false;
-        }
-
-        if (args[0] === undefined || args[0] === null || args[1] === undefined || args[1] === null) {
-            return (args[0] === undefined || args[0] === null) && (args[1] === undefined || args[1] === null);
+    public static isEqual(firstItem: unknown, secondItem: unknown): boolean {
+        if (firstItem === undefined || firstItem === null || secondItem === undefined || secondItem === null) {
+            return (firstItem === undefined || firstItem === null) && (secondItem === undefined || secondItem === null);
         }
 
         if (
-            Array.isArray(args[0]) &&
-            (args[0] as unknown[]).length === 0 &&
-            Array.isArray(args[1]) &&
-            (args[0] as unknown[]).length === 0
+            Array.isArray(firstItem) &&
+            firstItem.length === 0 &&
+            Array.isArray(secondItem) &&
+            secondItem.length === 0
         ) {
             return true;
         }
 
         if (
-            InternalFunctionUtils.getPropertyCount(args[0]) === 0 &&
-            InternalFunctionUtils.getPropertyCount(args[1]) === 0
+            InternalFunctionUtils.getPropertyCount(firstItem) === 0 &&
+            InternalFunctionUtils.getPropertyCount(secondItem) === 0
         ) {
             return true;
         }
 
-        if (FunctionUtils.isNumber(args[0]) && FunctionUtils.isNumber(args[1])) {
-            if (Math.abs((args[0] as number) - (args[1] as number)) < Number.EPSILON) {
+        if (FunctionUtils.isNumber(firstItem) && FunctionUtils.isNumber(secondItem)) {
+            if (Math.abs((firstItem as number) - (secondItem as number)) < Number.EPSILON) {
                 return true;
             }
         }
 
         try {
-            return args[0] === args[1];
+            return firstItem === secondItem;
         } catch {
             return false;
         }

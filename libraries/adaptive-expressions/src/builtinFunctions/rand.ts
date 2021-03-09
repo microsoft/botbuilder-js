@@ -53,7 +53,7 @@ export class Rand extends ExpressionEvaluator {
         if (minValue > maxValue) {
             error = `Min value ${minValue} cannot be greater than max value ${maxValue}.`;
         } else {
-            result = Extensions.randomNext(state, minValue as number, maxValue as number);
+            result = Extensions.randomNext(state, minValue, maxValue);
         }
 
         return { value: result, error };

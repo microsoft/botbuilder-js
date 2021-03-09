@@ -23,22 +23,19 @@ export class TitleCase extends StringTransformEvaluator {
         super(ExpressionType.TitleCase, TitleCase.evaluator, FunctionUtils.validateUnaryOrBinaryString);
     }
 
-    private static evaluator(args: readonly unknown[], options: Options): string {
+    private static evaluator(args: readonly string[], options: Options): string {
         let locale = options.locale ? options.locale : Intl.DateTimeFormat().resolvedOptions().locale;
         locale = FunctionUtils.determineLocale(args, 2, locale);
-        const firstArg = args[0];
-        if (typeof firstArg === 'string' || firstArg === undefined) {
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            const inputStr = (InternalFunctionUtils.parseStringOrUndefined(firstArg) as any).toLocaleLowerCase(locale);
-            if (inputStr === '') {
-                return inputStr;
-            } else {
-                return inputStr.replace(
-                    /\w\S*/g,
-                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                    (txt): string => txt.charAt(0).toUpperCase() + (txt.substr(1) as any).toLocaleLowerCase(locale)
-                );
-            }
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const inputStr = (InternalFunctionUtils.parseStringOrUndefined(args[0]) as any).toLocaleLowerCase(locale);
+        if (inputStr === '') {
+            return inputStr;
+        } else {
+            return inputStr.replace(
+                /\w\S*/g,
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                (txt): string => txt.charAt(0).toUpperCase() + (txt.substr(1) as any).toLocaleLowerCase(locale)
+            );
         }
     }
 }

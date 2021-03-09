@@ -30,14 +30,14 @@ export class DateReadBack extends ExpressionEvaluator {
      * @private
      */
     private static evaluator(): EvaluateExpressionDelegate {
-        return FunctionUtils.applyWithError((args: readonly unknown[]): ValueWithError => {
+        return FunctionUtils.applyWithError((args: readonly string[]): ValueWithError => {
             const dateFormat = 'YYYY-MM-DD';
             let error = InternalFunctionUtils.verifyISOTimestamp(args[0]);
             if (!error) {
-                const timestamp1 = new Date(dayjs(args[0] as string).format(dateFormat));
+                const timestamp1 = new Date(dayjs(args[0]).format(dateFormat));
                 error = InternalFunctionUtils.verifyISOTimestamp(args[1]);
                 if (!error) {
-                    const timestamp2 = dayjs(args[1] as string).format(dateFormat);
+                    const timestamp2 = dayjs(args[1]).format(dateFormat);
                     const timex = new TimexProperty(timestamp2);
 
                     return { value: timex.toNaturalLanguage(timestamp1), error };

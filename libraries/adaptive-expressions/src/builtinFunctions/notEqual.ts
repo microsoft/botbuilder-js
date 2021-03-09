@@ -26,6 +26,6 @@ export class NotEqual extends ComparisonEvaluator {
      * @private
      */
     private static func(args: readonly unknown[]): boolean {
-        return !InternalFunctionUtils.isEqual(args);
+        return !InternalFunctionUtils.isEqual(args[0], args[1]);
     }
 }

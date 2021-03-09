@@ -40,12 +40,9 @@ export class GetNextViableTime extends ExpressionEvaluator {
     /**
      * @private
      */
-    private static evaluator(
-        expr: Expression,
-        state: MemoryInterface,
-        options: Options
-    ): ValueWithError {
+    private static evaluator(expr: Expression, state: MemoryInterface, options: Options): ValueWithError {
         let parsed: TimexProperty;
+        let value: unknown;
         const currentTime = dayjs(new Date().toISOString());
         let validHour = 0;
         let validMinute = 0;
@@ -54,54 +51,57 @@ export class GetNextViableTime extends ExpressionEvaluator {
         const formatRegex = /TXX:[0-5][0-9]:[0-5][0-9]/g;
         const { args, error: childrenError } = FunctionUtils.evaluateChildren(expr, state, options);
         let error = childrenError;
-        if (!error) {
-            if (!formatRegex.test(args[0] as string)) {
-                error = `${args[0]}  must be a timex string which only contains minutes and seconds, for example: 'TXX:15:28'`;
-            }
-        }
+        const firstChild = args[0];
+        const secondChild = args[1];
 
         if (!error) {
-            const secondChild = args[1];
-            if (args.length === 2 && typeof secondChild === 'string') {
-                const timeZone: string = TimeZoneConverter.windowsToIana(secondChild);
-                if (!TimeZoneConverter.verifyTimeZoneStr(timeZone)) {
-                    error = `${secondChild} is not a valid timezone`;
+            if (typeof firstChild !== 'string') {
+                error = `${expr.children[0]} is not a valid string.`;
+            } else if (!formatRegex.test(firstChild)) {
+                error = `${firstChild}  must be a timex string which only contains minutes and seconds, for example: 'TXX:15:28'`;
+            } else {
+                if (args.length === 2 && typeof secondChild === 'string') {
+                    const timeZone: string = TimeZoneConverter.windowsToIana(secondChild);
+                    if (!TimeZoneConverter.verifyTimeZoneStr(timeZone)) {
+                        error = `${secondChild} is not a valid timezone`;
+                    }
+
+                    if (!error) {
+                        convertedDateTime = currentTime.utc().tz(timeZone);
+                    }
+                } else {
+                    convertedDateTime = currentTime.utc();
                 }
 
                 if (!error) {
-                    convertedDateTime = currentTime.utc().tz(timeZone);
+                    ({ timexProperty: parsed, error: error } = InternalFunctionUtils.parseTimexProperty(
+                        firstChild.replace('XX', '00')
+                    ));
                 }
-            } else {
-                convertedDateTime = currentTime.utc();
+
+                if (!error) {
+                    const hour = convertedDateTime.hour();
+                    const minute = convertedDateTime.minute();
+                    const second = convertedDateTime.second();
+
+                    if (parsed.minute > minute || (parsed.minute === minute && parsed.second >= second)) {
+                        validHour = hour;
+                    } else {
+                        validHour = hour + 1;
+                    }
+
+                    if (validHour >= 24) {
+                        validHour -= 24;
+                    }
+
+                    validMinute = parsed.minute;
+                    validSecond = parsed.second;
+                }
+
+                value = TimexProperty.fromTime(new Time(validHour, validMinute, validSecond)).timex;
             }
         }
 
-        if (!error) {
-            ({ timexProperty: parsed, error: error } = InternalFunctionUtils.parseTimexProperty(
-                (args[0] as string).replace('XX', '00')
-            ));
-        }
-
-        if (!error) {
-            const hour = convertedDateTime.hour();
-            const minute = convertedDateTime.minute();
-            const second = convertedDateTime.second();
-
-            if (parsed.minute > minute || (parsed.minute === minute && parsed.second >= second)) {
-                validHour = hour;
-            } else {
-                validHour = hour + 1;
-            }
-
-            if (validHour >= 24) {
-                validHour -= 24;
-            }
-
-            validMinute = parsed.minute;
-            validSecond = parsed.second;
-        }
-
-        const value = TimexProperty.fromTime(new Time(validHour, validMinute, validSecond)).timex;
         return { value, error };
     }
 }

@@ -34,17 +34,23 @@ export class Join extends ExpressionEvaluator {
         let error = childrenError;
         if (!error) {
             const firstChild = args[0];
+            const secondChild = args[1];
             if (!Array.isArray(firstChild)) {
                 error = `${expression.children[0]} evaluates to ${firstChild} which is not a list.`;
+            } else if (typeof secondChild !== 'string') {
+                error = `second parameter should be string.`;
             } else {
                 if (args.length === 2) {
-                    value = firstChild.join(args[1] as string);
+                    value = firstChild.join(secondChild);
                 } else {
-                    if (firstChild.length < 3) {
-                        value = firstChild.join(args[2] as string);
+                    const thirdChild = args[2];
+                    if (typeof thirdChild !== 'string') {
+                        error = `third parameter should be string.`;
+                    } else if (firstChild.length < 3) {
+                        value = firstChild.join(thirdChild);
                     } else {
-                        const firstPart: string = firstChild.slice(0, firstChild.length - 1).join(args[1] as string);
-                        value = firstPart.concat(args[2] as string, firstChild[firstChild.length - 1] as string);
+                        const firstPart = firstChild.slice(0, firstChild.length - 1).join(secondChild);
+                        value = firstPart.concat(thirdChild, firstChild[firstChild.length - 1]);
                     }
                 }
             }

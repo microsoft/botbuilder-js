@@ -27,13 +27,10 @@ export class ToUpper extends StringTransformEvaluator {
     /**
      * @private
      */
-    private static evaluator(args: readonly unknown[], options: Options): string {
+    private static evaluator(args: readonly string[], options: Options): string {
         let locale = options.locale ? options.locale : Intl.DateTimeFormat().resolvedOptions().locale;
         locale = FunctionUtils.determineLocale(args, 2, locale);
-        const firstArg = args[0];
-        if (typeof firstArg === 'string' || firstArg === undefined) {
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            return (InternalFunctionUtils.parseStringOrUndefined(firstArg) as any).toLocaleUpperCase(locale);
-        }
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        return (InternalFunctionUtils.parseStringOrUndefined(args[0]) as any).toLocaleUpperCase(locale);
     }
 }

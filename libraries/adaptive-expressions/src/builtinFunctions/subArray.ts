@@ -40,29 +40,35 @@ export class SubArray extends ExpressionEvaluator {
                 const start = startEvaluateResult.value;
                 error = startEvaluateResult.error;
 
-                if (!error && !FunctionUtils.isInteger(start)) {
-                    error = `${startExpr} is not an integer.`;
-                } else if (start < 0 || start >= arr.length) {
-                    error = `${startExpr}=${start} which is out of range for ${arr}`;
-                }
                 if (!error) {
-                    let end: unknown;
-                    if (expression.children.length === 2) {
-                        end = arr.length;
-                    } else {
-                        const endExpr: Expression = expression.children[2];
-                        const endEvaluateResult = endExpr.tryEvaluate(state, options);
-                        end = endEvaluateResult.value;
-                        error = endEvaluateResult.error;
+                    if (FunctionUtils.isInteger(start)) {
+                        if (start < 0 || start >= arr.length) {
+                            error = `${startExpr}=${start} which is out of range for ${arr}`;
+                        } else {
+                            let end: unknown;
+                            if (expression.children.length === 2) {
+                                end = arr.length;
+                            } else {
+                                const endExpr: Expression = expression.children[2];
+                                const endEvaluateResult = endExpr.tryEvaluate(state, options);
+                                end = endEvaluateResult.value;
+                                error = endEvaluateResult.error;
 
-                        if (!error && !FunctionUtils.isInteger(end)) {
-                            error = `${endExpr} is not an integer`;
-                        } else if (end < 0 || end > arr.length) {
-                            error = `${endExpr}=${end} which is out of range for ${arr}`;
+                                if (!error) {
+                                    if (FunctionUtils.isInteger(end)) {
+                                        if (end < 0 || end > arr.length) {
+                                            error = `${endExpr}=${end} which is out of range for ${arr}`;
+                                        } else {
+                                            result = arr.slice(start, end);
+                                        }
+                                    } else {
+                                        error = `${endExpr} is not an integer`;
+                                    }
+                                }
+                            }
                         }
-                    }
-                    if (!error) {
-                        result = arr.slice(start as number, end as number);
+                    } else {
+                        error = `${startExpr} is not an integer.`;
                     }
                 }
             } else {

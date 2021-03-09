@@ -45,10 +45,15 @@ export class SubtractFromTime extends ExpressionEvaluator {
         let error = childrenError;
         if (!error) {
             const firstChild = args[0];
+            const secondChild = args[1];
             const thirdChild = args[2];
-            if (typeof firstChild === 'string' && FunctionUtils.isInteger(args[1]) && typeof thirdChild === 'string') {
+            if (
+                typeof firstChild === 'string' &&
+                FunctionUtils.isInteger(secondChild) &&
+                typeof thirdChild === 'string'
+            ) {
                 ({ format, locale } = FunctionUtils.determineFormatAndLocale(args, 5, format, locale));
-                const { duration, tsStr } = InternalFunctionUtils.timeUnitTransformer(args[1] as number, thirdChild);
+                const { duration, tsStr } = InternalFunctionUtils.timeUnitTransformer(secondChild, thirdChild);
                 if (tsStr === undefined) {
                     error = `${thirdChild} is not a valid time unit.`;
                 } else {

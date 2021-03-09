@@ -43,7 +43,7 @@ export class String extends ExpressionEvaluator {
                     const firstChild = args[0];
                     if (typeof firstChild === 'string') {
                         result = firstChild;
-                    } else if (typeof firstChild === 'number') {
+                    } else if (FunctionUtils.isNumber(firstChild)) {
                         const formatLocale = localeInfo[locale];
                         const tempStrValue = firstChild.toString();
                         let precision = 0;

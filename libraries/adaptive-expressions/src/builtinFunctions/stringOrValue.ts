@@ -36,7 +36,7 @@ export class StringOrValue extends ExpressionEvaluator {
         let error = childrenError;
 
         if (typeof stringInput !== 'string') {
-            error = 'Parameter should be a string.';
+            error = `${expression.children[0]} is not a valid string.`;
         }
 
         if (!error) {

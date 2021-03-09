@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 
-import { EvaluateExpressionDelegate, ExpressionEvaluator } from '../expressionEvaluator';
+import { EvaluateExpressionDelegate, ExpressionEvaluator, ValueWithError } from '../expressionEvaluator';
 import { ExpressionType } from '../expressionType';
 import { FunctionUtils } from '../functionUtils';
 import { ReturnType } from '../returnType';
@@ -34,17 +34,15 @@ export class Concat extends ExpressionEvaluator {
         return FunctionUtils.applySequence((args: readonly unknown[]): unknown => {
             const firstItem = args[0];
             const secondItem = args[1];
-            const isFirstList = Array.isArray(firstItem);
-            const isSecondList = Array.isArray(secondItem);
 
             if ((firstItem === null || firstItem === undefined) && (secondItem === null || secondItem === undefined)) {
                 return undefined;
-            } else if ((firstItem === null || firstItem === undefined) && isSecondList) {
+            } else if ((firstItem === null || firstItem === undefined) && Array.isArray(secondItem)) {
                 return secondItem;
-            } else if ((secondItem === null || secondItem === undefined) && isFirstList) {
+            } else if ((secondItem === null || secondItem === undefined) && Array.isArray(firstItem)) {
                 return firstItem;
-            } else if (isFirstList && isSecondList) {
-                return (firstItem as Array<unknown>).concat(secondItem);
+            } else if (Array.isArray(firstItem) && Array.isArray(secondItem)) {
+                return firstItem.concat(secondItem);
             } else {
                 return Concat.commonStringify(firstItem) + Concat.commonStringify(secondItem);
             }

@@ -24,7 +24,7 @@ export class Power extends MultivariateNumericEvaluator {
     /**
      * @private
      */
-    private static func(args: readonly unknown[]): number {
-        return Math.pow(args[0] as number, args[1] as number);
+    private static func(args: readonly number[]): number {
+        return Math.pow(args[0], args[1]);
     }
 }

@@ -30,9 +30,9 @@ export class EndsWith extends ExpressionEvaluator {
      */
     private static evaluator(): EvaluateExpressionDelegate {
         return FunctionUtils.apply(
-            (args: readonly unknown[]): boolean =>
-                InternalFunctionUtils.parseStringOrUndefined(args[0] as string).endsWith(
-                    InternalFunctionUtils.parseStringOrUndefined(args[1] as string)
+            (args: readonly string[]): boolean =>
+                InternalFunctionUtils.parseStringOrUndefined(args[0]).endsWith(
+                    InternalFunctionUtils.parseStringOrUndefined(args[1])
                 ),
             FunctionUtils.verifyStringOrNull
         );

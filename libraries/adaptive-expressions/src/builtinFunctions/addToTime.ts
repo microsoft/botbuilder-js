@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 
-import dayjs, { OpUnitType } from 'dayjs';
+import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 dayjs.extend(utc);
 import { Expression } from '../expression';
@@ -43,9 +43,14 @@ export class AddToTime extends ExpressionEvaluator {
         if (!error) {
             ({ format, locale } = FunctionUtils.determineFormatAndLocale(args, 5, format, locale));
             const firstChild = args[0];
+            const secondChild = args[1];
             const thirdChild = args[2];
-            if (typeof firstChild === 'string' && FunctionUtils.isInteger(args[1]) && typeof thirdChild === 'string') {
-                ({ value, error } = AddToTime.evalAddToTime(firstChild, args[1] as number, thirdChild, format, locale));
+            if (
+                typeof firstChild === 'string' &&
+                FunctionUtils.isInteger(secondChild) &&
+                typeof thirdChild === 'string'
+            ) {
+                ({ value, error } = AddToTime.evalAddToTime(firstChild, secondChild, thirdChild, format, locale));
             } else {
                 error = `${expression} should contain an ISO format timestamp, a time interval integer, a string unit of time and an optional output format string.`;
             }

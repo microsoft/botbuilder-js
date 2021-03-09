@@ -33,7 +33,7 @@ export class FunctionUtils {
     /**
      * The default date time format string.
      */
-    public static readonly DefaultDateTimeFormat: string = 'YYYY-MM-DDTHH:mm:ss.SSS[Z]';
+    public static readonly DefaultDateTimeFormat = 'YYYY-MM-DDTHH:mm:ss.SSS[Z]';
 
     /**
      * Validate that expression has a certain number of children that are of any of the supported types.
@@ -384,7 +384,7 @@ export class FunctionUtils {
      */
     public static verifyNumberOrStringOrNull(value: unknown, expression: Expression, _: number): string | undefined {
         let error: string;
-        if (typeof value !== 'string' && value !== undefined && !FunctionUtils.isNumber(value)) {
+        if (typeof value !== 'string' && value != null && !FunctionUtils.isNumber(value)) {
             error = `${expression} is neither a number nor string`;
         }
 
@@ -515,7 +515,7 @@ export class FunctionUtils {
      * @returns Delegate for evaluating an expression.
      */
     public static applyWithOptionsAndError(
-        func: (arg0: readonly unknown[], options: Options) => { value: unknown; error: string },
+        func: (arg0: readonly unknown[], options: Options) => ValueWithError,
         verify?: VerifyExpression
     ): EvaluateExpressionDelegate {
         return (expression: Expression, state: MemoryInterface, options: Options): ValueWithError => {
@@ -740,8 +740,8 @@ export class FunctionUtils {
      * @param instance Input.
      * @returns True if the input is a number.
      */
-    public static isNumber(instance: unknown): boolean {
-        return instance !== undefined && instance !== null && typeof instance === 'number' && !Number.isNaN(instance);
+    public static isNumber(instance: unknown): instance is number {
+        return instance != null && typeof instance === 'number' && !Number.isNaN(instance);
     }
 
 
@@ -750,8 +750,8 @@ export class FunctionUtils {
      * @param instance Input.
      * @returns True if the input is an integer.
      */
-    public static isInteger(instance: unknown): boolean {
-        return FunctionUtils.isNumber(instance) && Number.isInteger(instance as number);
+    public static isInteger(instance: unknown): instance is number {
+        return FunctionUtils.isNumber(instance) && Number.isInteger(instance);
     }
 
     /**

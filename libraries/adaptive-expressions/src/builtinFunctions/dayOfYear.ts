@@ -32,13 +32,11 @@ export class DayOfYear extends ExpressionEvaluator {
      * @private
      */
     private static evaluator(): EvaluateExpressionDelegate {
-        return FunctionUtils.applyWithError((args: readonly unknown[]): ValueWithError => {
+        return FunctionUtils.applyWithError((args: readonly string[]): ValueWithError => {
             const error = InternalFunctionUtils.verifyISOTimestamp(args[0]);
             if (!error) {
                 return {
-                    value: dayjs(args[0] as string)
-                        .utc()
-                        .dayOfYear(),
+                    value: dayjs(args[0]).utc().dayOfYear(),
                     error,
                 };
             }

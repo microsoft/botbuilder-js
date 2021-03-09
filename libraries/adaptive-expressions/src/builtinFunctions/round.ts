@@ -26,7 +26,7 @@ export class Round extends ExpressionEvaluator {
      * @private
      */
     private static evaluator(): EvaluateExpressionDelegate {
-        return FunctionUtils.applyWithError((args: readonly unknown[]): ValueWithError => {
+        return FunctionUtils.applyWithError((args: readonly number[]): ValueWithError => {
             let result: unknown;
             let error: string;
             if (args.length === 2 && !FunctionUtils.isInteger(args[1])) {
@@ -34,11 +34,11 @@ export class Round extends ExpressionEvaluator {
             }
 
             if (!error) {
-                const digits = args.length === 2 ? (args[1] as number) : 0;
+                const digits = args.length === 2 ? args[1] : 0;
                 if (digits < 0 || digits > 15) {
                     error = `The second parameter ${args[1]} must be an integer between 0 and 15;`;
                 } else {
-                    result = Round.roundToPrecision(args[0] as number, digits);
+                    result = Round.roundToPrecision(args[0], digits);
                 }
             }
 

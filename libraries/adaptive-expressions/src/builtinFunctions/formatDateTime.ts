@@ -35,34 +35,35 @@ export class FormatDateTime extends ExpressionEvaluator {
     private static evaluator(): EvaluateExpressionDelegate {
         return FunctionUtils.applyWithOptionsAndError(
             (args: readonly unknown[], options: Options): ValueWithError => {
-            let error: string;
-            let arg: Date | string = args[0] as Date | string;
-            let locale = options.locale ? options.locale : Intl.DateTimeFormat().resolvedOptions().locale;
-            let format = FunctionUtils.DefaultDateTimeFormat;
-            if (typeof arg === 'string') {
-                error = InternalFunctionUtils.verifyTimestamp(arg.toString());
-            } else {
-                arg = arg.toISOString();
-            }
-            let value: unknown;
-            if (!error) {
-                ({ format, locale } = FunctionUtils.determineFormatAndLocale(args, 3, format, locale));
-                let dateString: string;
-                if (arg.endsWith('Z')) {
-                    dateString = new Date(arg).toISOString();
+                let error: string;
+                let value: unknown;
+                const firstChild = args[0];
+                let locale = options.locale ? options.locale : Intl.DateTimeFormat().resolvedOptions().locale;
+                let format = FunctionUtils.DefaultDateTimeFormat;
+                if (typeof firstChild === 'string') {
+                    error = InternalFunctionUtils.verifyTimestamp(firstChild);
+                } else if (!(firstChild instanceof Date)) {
+                    error = `${args[0]} is not a string or a date object.`;
                 } else {
-                    try {
-                        dateString = new Date(`${arg}Z`).toISOString();
-                    } catch (err) {
-                        dateString = new Date(arg).toISOString();
+                    const isoString = firstChild.toISOString();
+                    ({ format, locale } = FunctionUtils.determineFormatAndLocale(args, 3, format, locale));
+                    let dateString: string;
+                    if (isoString.endsWith('Z')) {
+                        dateString = new Date(isoString).toISOString();
+                    } else {
+                        try {
+                            dateString = new Date(`${isoString}Z`).toISOString();
+                        } catch (err) {
+                            dateString = new Date(isoString).toISOString();
+                        }
                     }
+
+                    value = dayjs(dateString).locale(locale).utc().format(format);
                 }
 
-                value = dayjs(dateString).locale(locale).utc().format(format);
+                return { value, error };
             }
-
-            return { value, error };
-        });
+        );
     }
 
     /**

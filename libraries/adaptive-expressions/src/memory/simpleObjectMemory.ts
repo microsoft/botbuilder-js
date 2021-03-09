@@ -2,6 +2,7 @@
 import { Extensions } from '../extensions';
 import { InternalFunctionUtils } from '../functionUtils.internal';
 import { MemoryInterface } from './memoryInterface';
+import { ValueWithError } from '../expressionEvaluator';
 
 /**
  * @module adaptive-expressions
@@ -103,7 +104,7 @@ export class SimpleObjectMemory implements MemoryInterface {
                     return u;
                 }
             });
-        let curScope: unknown = this.memory;
+        let curScope = this.memory;
         let curPath = '';
         let error: string = undefined;
 
@@ -191,7 +192,7 @@ export class SimpleObjectMemory implements MemoryInterface {
     /**
      * @private
      */
-    private setProperty(instance: unknown, property: string, value: unknown): { value: unknown; error: string } {
+    private setProperty(instance: unknown, property: string, value: unknown): ValueWithError {
         const result: unknown = value;
         if (instance instanceof Map) {
             instance.set(property, value);
