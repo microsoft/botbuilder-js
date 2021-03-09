@@ -34,7 +34,8 @@ describe('ConfirmPrompt', function () {
         await adapter.send('Hello')
             .assertReply('Please confirm. (1) Yes or (2) No')
             .send('yes')
-            .assertReply(`The result found is 'true'.`);
+            .assertReply(`The result found is 'true'.`)
+            .startTest();
     });
 
     it('should call ConfirmPrompt with custom validator.', async function () {
@@ -65,6 +66,7 @@ describe('ConfirmPrompt', function () {
             .assertReply('Please confirm. Yes or No')
             .send('no')
             .assertReply(`The result found is 'false'.`)
+            .startTest();
     });
 
     it('should send custom retryPrompt.', async function () {
@@ -98,6 +100,7 @@ describe('ConfirmPrompt', function () {
             .assertReply(`Please reply with 'Yes' or 'No'.`)
             .send('no')
             .assertReply(`The result found is 'false'.`)
+            .startTest();
     });
 
     it('should send custom retryPrompt if validator does not reply.', async function () {
@@ -133,6 +136,7 @@ describe('ConfirmPrompt', function () {
             .assertReply(`Please reply with 'Yes' or 'No'.`)
             .send('no')
             .assertReply(`The result found is 'false'.`)
+            .startTest();
     });
 
     it('should ignore retryPrompt if validator replies.', async function () {
@@ -172,6 +176,7 @@ describe('ConfirmPrompt', function () {
             .assertReply('The correct response is either yes or no. Please choose one.')
             .send('no')
             .assertReply(`The result found is 'false'.`)
+            .startTest();
     });
 
     it('should not send any retryPrompt if no prompt is specified.', async function () {
@@ -202,6 +207,7 @@ describe('ConfirmPrompt', function () {
             .assertReply('')
             .send('no')
             .assertReply(`The result found is 'false'.`)
+            .startTest();
     });
 
     it('should send retryPrompt if user sends attachment and no text.', async function () {
@@ -234,7 +240,8 @@ describe('ConfirmPrompt', function () {
             .send({ type: ActivityTypes.Message, attachments: ['ignoreThis']})
             .assertReply(`Please reply with 'Yes' or 'No'.`)
             .send('no')
-            .assertReply(`The result found is 'false'.`);
+            .assertReply(`The result found is 'false'.`)
+            .startTest();
     });
 
     it('should not recognize, then re-prompt without error for falsy input.', async function () {
@@ -269,7 +276,8 @@ describe('ConfirmPrompt', function () {
             .send({ type: ActivityTypes.Message, text: null })
             .assertReply('Please reply with \'Yes\' or \'No\'.')
             .send('no')
-            .assertReply(`The result found is 'false'.`);
+            .assertReply(`The result found is 'false'.`)
+            .startTest();
     });
 
     it('should use defaultLocale when rendering choices', async function () {
@@ -307,7 +315,8 @@ describe('ConfirmPrompt', function () {
             .send(invalidMessage)
             .assertReply('bad input.')
             .send({ text: 'はい', type: ActivityTypes.Message })
-            .assertReply('true');
+            .assertReply('true')
+            .startTest();
     });
 
     it('should use context.activity.locale when rendering choices', async function () {
@@ -343,7 +352,8 @@ describe('ConfirmPrompt', function () {
         await adapter.send({ text: 'Hello', type: ActivityTypes.Message, locale: 'ja-jp' })
             .assertReply('Please confirm. (1) はい または (2) いいえ')
             .send({ text: 'いいえ', type: ActivityTypes.Message, locale: 'ja-jp' })
-            .assertReply('false');
+            .assertReply('false')
+            .startTest();
     });
 
     it('should use context.activity.locale over defaultLocale when rendering choices', async function () {
@@ -379,7 +389,8 @@ describe('ConfirmPrompt', function () {
         await adapter.send({ text: 'Hello', type: ActivityTypes.Message, locale: 'ja-jp' })
             .assertReply('Please confirm. (1) はい または (2) いいえ')
             .send({ text: 'いいえ', type: ActivityTypes.Message, locale: 'ja-jp' })
-            .assertReply('false');
+            .assertReply('false')
+            .startTest();
     });
 
     it('should recognize locale variations of correct locales', async function () {
@@ -467,7 +478,8 @@ describe('ConfirmPrompt', function () {
                             expectedAnswer = activity.text;
                         }
                         assert.strictEqual(activity.text, expectedAnswer);
-                    });
+                    })
+                    .startTest();
             }));
         }));       
     });
@@ -526,7 +538,8 @@ describe('ConfirmPrompt', function () {
         await adapter.send({ text: 'Hello', type: ActivityTypes.Message, locale: culture.locale })
             .assertReply('Please confirm. (1) customYes customOr (2) customNo')
             .send('customYes')
-            .assertReply('true');
+            .assertReply('true')
+            .startTest();
     });
 
     it('should recognize yes with no PromptOptions.', async function () {
@@ -555,7 +568,8 @@ describe('ConfirmPrompt', function () {
             .send('lala')
             .assertReply(' (1) Yes or (2) No')
             .send('yes')
-            .assertReply(`The result found is 'true'.`);
+            .assertReply(`The result found is 'true'.`)
+            .startTest();
     });
 
     it('should recognize valid number when choiceOptions.includeNumbers is true.', async function () {
@@ -587,7 +601,8 @@ describe('ConfirmPrompt', function () {
             .send('lala')
             .assertReply('Please confirm, say "yes" or "no" or something like that. (1) Yes or (2) No')
             .send('1')
-            .assertReply(`The result found is 'true'.`);
+            .assertReply(`The result found is 'true'.`)
+            .startTest();
     });
 
     it('should recognize valid number and default to en if locale is null.', async function () {
@@ -622,7 +637,8 @@ describe('ConfirmPrompt', function () {
             .send('lala')
             .assertReply('Please confirm, say "yes" or "no" or something like that. (1) Yes or (2) No')
             .send('1')
-            .assertReply(`The result found is 'true'.`);
+            .assertReply(`The result found is 'true'.`)
+            .startTest();
     });
 
     it('should recognize valid number and default to en if locale invalid string.', async function () {
@@ -657,7 +673,8 @@ describe('ConfirmPrompt', function () {
             .send('lala')
             .assertReply('Please confirm, say "yes" or "no" or something like that. (1) Yes or (2) No')
             .send('1')
-            .assertReply(`The result found is 'true'.`);
+            .assertReply(`The result found is 'true'.`)
+            .startTest();
     });
 
     it('should recognize valid number and default to en if defaultLocale invalid string.', async function () {
@@ -690,7 +707,8 @@ describe('ConfirmPrompt', function () {
             .send('lala')
             .assertReply('Please confirm, say "yes" or "no" or something like that. (1) Yes or (2) No')
             .send('1')
-            .assertReply(`The result found is 'true'.`);
+            .assertReply(`The result found is 'true'.`)
+            .startTest();
     });
     
     it('should not recognize invalid number when choiceOptions.includeNumbers is true.', async function () {
@@ -722,7 +740,8 @@ describe('ConfirmPrompt', function () {
             .send('400')
             .assertReply('Please confirm, say "yes" or "no" or something like that. (1) Yes or (2) No')
             .send('1')
-            .assertReply(`The result found is 'true'.`);
+            .assertReply(`The result found is 'true'.`)
+            .startTest();
     });
 
     it('should not recognize valid number choice when choiceOptions.includeNumbers is false.', async function () {
@@ -754,7 +773,8 @@ describe('ConfirmPrompt', function () {
             .send('1')
             .assertReply('Please confirm, say "yes" or "no" or something like that. Yes or No')
             .send('no')
-            .assertReply(`The result found is 'false'.`);
+            .assertReply(`The result found is 'false'.`)
+            .startTest();
     });
 
     it('should recognize valid number when choiceOptions.includeNumbers is undefined.', async function () {
@@ -786,6 +806,7 @@ describe('ConfirmPrompt', function () {
             .send('lala')
             .assertReply('Please confirm, say "yes" or "no" or something like that. Yes or No')
             .send('1')
-            .assertReply(`The result found is 'true'.`);
+            .assertReply(`The result found is 'true'.`)
+            .startTest();
     });
 });

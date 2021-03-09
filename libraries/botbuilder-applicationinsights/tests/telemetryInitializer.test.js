@@ -53,6 +53,7 @@ describe(`TelemetryInitializerMiddleware`, function () {
             })
             .assertReply((activity) => assert.equal(activity.type, ActivityTypes.Typing))
             .assertReply('echo:bar')
+            .startTest()
             .then(done);
     });
 
@@ -86,6 +87,7 @@ describe(`TelemetryInitializerMiddleware`, function () {
             .send('bar')
             .assertReply((activity) => assert.equal(activity.type, ActivityTypes.Typing))
             .assertReply('echo:bar')
+            .startTest()
             .then(done);
     });
 
@@ -115,6 +117,7 @@ describe(`TelemetryInitializerMiddleware`, function () {
             .send('bar')
             .assertReply((activity) => assert.equal(activity.type, ActivityTypes.Typing))
             .assertReply('echo:bar')
+            .startTest()
             .then(done);
     });
 

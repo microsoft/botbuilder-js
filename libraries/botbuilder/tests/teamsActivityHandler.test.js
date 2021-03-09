@@ -36,7 +36,7 @@ describe('TeamsActivityHandler', () => {
                     assert.strictEqual(activity.value.body, `I'm a teapot.`);
                     done();
                 })
-                .catch(err => done(err));
+                .startTest();
 
         });
 
@@ -57,7 +57,7 @@ describe('TeamsActivityHandler', () => {
                     assert.strictEqual(activity.text, 'Hello');
                     done();
                 })
-                .catch(err => done(err));
+                .startTest();
         });
     });
 
@@ -98,7 +98,7 @@ describe('TeamsActivityHandler', () => {
                     assert.strictEqual(activity.value.status, 501, 'should be a status code 501.');
                     done();
                 })
-                .catch(err => done(err));
+                .startTest();
         });
 
         it('activity.name is "actionableMessage/executeAction". should return status code [200] when handleTeamsO365ConnectorCardAction method is overridden.', done => {
@@ -115,7 +115,7 @@ describe('TeamsActivityHandler', () => {
                     assert.strictEqual(activity.value.status, 200, 'should be status code 200.');
                     done();
                 })
-                .catch(err => done(err));
+                .startTest();
         });
 
         it('activity.name is "composeExtension/queryLink". should return status code [200] when handleTeamsAppBasedLinkQuery method is overridden.', done => {
@@ -132,7 +132,7 @@ describe('TeamsActivityHandler', () => {
                     assert.strictEqual(activity.value.status, 200, 'should be status code 200.');
                     done();
                 })
-                .catch(err => done(err));
+                .startTest();
         });
 
         it('activity.name is "composeExtension/query". should return status code [200] when handleTeamsMessagingExtensionQuery method is overridden.', done => {
@@ -149,7 +149,7 @@ describe('TeamsActivityHandler', () => {
                     assert.strictEqual(activity.value.status, 200, 'should be status code 200.');
                     done();
                 })
-                .catch(err => done(err));
+                .startTest();
         });
 
         it('activity.name is "composeExtension/selectItem". should return status code [200] when handleTeamsMessagingExtensionSelectItem method is overridden.', done => {
@@ -166,7 +166,7 @@ describe('TeamsActivityHandler', () => {
                     assert.strictEqual(activity.value.status, 200, 'should be status code 200.');
                     done();
                 })
-                .catch(err => done(err));
+                .startTest();
         });
 
         it('activity.name is "composeExtension/fetchTask". should return status code [200] when handleTeamsMessagingExtensionFetchTask method is overridden.', done => {
@@ -183,7 +183,7 @@ describe('TeamsActivityHandler', () => {
                     assert.strictEqual(activity.value.status, 200, 'should be status code 200.');
                     done();
                 })
-                .catch(err => done(err));
+                .startTest();
         });
 
         it('activity.name is "composeExtension/querySettingUrl". should return status code [200] when handleTeamsMessagingExtensionConfigurationQuerySettingUrl method is overridden.', done => {
@@ -200,7 +200,7 @@ describe('TeamsActivityHandler', () => {
                     assert.strictEqual(activity.value.status, 200, 'should be status code 200.');
                     done();
                 })
-                .catch(err => done(err));
+                .startTest();
         });
 
         it('activity.name is "composeExtension/setting". should return status code [200] when handleTeamsMessagingExtensionConfigurationSetting method is overridden.', done => {
@@ -217,7 +217,7 @@ describe('TeamsActivityHandler', () => {
                     assert.strictEqual(activity.value.status, 200, 'should be status code 200.');
                     done();
                 })
-                .catch(err => done(err));
+                .startTest();
         });
 
         it('activity.name is "composeExtension/onCardButtonClicked". should return status code [200] when handleTeamsMessagingExtensionCardButtonClicked method is overridden.', done => {
@@ -234,7 +234,7 @@ describe('TeamsActivityHandler', () => {
                     assert.strictEqual(activity.value.status, 200, 'should be status code 200.');
                     done();
                 })
-                .catch(err => done(err));
+                .startTest();
         });
 
         it('should throw an error when onInvokeActivity param context is null.', done => {
@@ -261,7 +261,7 @@ describe('TeamsActivityHandler', () => {
                     assert.strictEqual(activity.value.message, 'Cannot read property \'activity\' of null', 'should have thrown an error.');
                     done();
                 })
-                .catch(err => done(err));
+                .startTest();
         });
     });
 
@@ -282,7 +282,7 @@ describe('TeamsActivityHandler', () => {
                         `expected empty body for invokeResponse from fileConsent flow.\nReceived: ${ JSON.stringify(activity.value.body) }`);
                     done();
                 })
-                .catch(err => done(err));
+                .startTest();
         });
 
         it('a bad FileConsentCardResponse.action is received by the bot', done => {
@@ -301,7 +301,7 @@ describe('TeamsActivityHandler', () => {
                         `expected empty body for invokeResponse from fileConsent flow.\nReceived: ${ JSON.stringify(activity.value.body) }`);
                     done();
                 })
-                .catch(err => done(err));
+                .startTest();
         });
     });
 
@@ -322,7 +322,7 @@ describe('TeamsActivityHandler', () => {
                         `expected empty body for invokeResponse from fileConsent flow.\nReceived: ${ JSON.stringify(activity.value.body) }`);
                     done();
                 })
-                .catch(err => done(err));
+                .startTest();
         });
 
         it('onTeamsBotMessagePreviewEdit is not overridden', done => {
@@ -341,7 +341,7 @@ describe('TeamsActivityHandler', () => {
                         `expected empty body for invokeResponse from fileConsent flow.\nReceived: ${ JSON.stringify(activity.value.body) }`);
                     done();
                 })
-                .catch(err => done(err));
+                .startTest();
         });
 
         it('onTeamsBotMessagePreviewSend is not overridden', done => {
@@ -360,7 +360,7 @@ describe('TeamsActivityHandler', () => {
                         `expected empty body for invokeResponse from fileConsent flow.\nReceived: ${ JSON.stringify(activity.value.body) }`);
                     done();
                 })
-                .catch(err => done(err));
+                .startTest();
         });
 
         it('handleTeamsFileConsentAccept is not overridden', done => {
@@ -379,7 +379,7 @@ describe('TeamsActivityHandler', () => {
                         `expected empty body for invokeResponse from fileConsent flow.\nReceived: ${ JSON.stringify(activity.value.body) }`);
                     done();
                 })
-                .catch(err => done(err));
+                .startTest();
         });
 
         it('handleTeamsFileConsentDecline is not overridden', done => {
@@ -397,7 +397,7 @@ describe('TeamsActivityHandler', () => {
                     assert.strictEqual(activity.value.body, undefined);
                     done();
                 })
-                .catch(err => done(err));
+                .startTest();
         });
 
         it('handleTeamsO365ConnectorCardAction is not overridden', done => {
@@ -415,7 +415,7 @@ describe('TeamsActivityHandler', () => {
                     assert.strictEqual(activity.value.body, undefined);
                     done();
                 })
-                .catch(err => done(err));
+                .startTest();
         });
 
         it('handleTeamsSigninVerifyState is not overridden', done => {
@@ -433,7 +433,7 @@ describe('TeamsActivityHandler', () => {
                     assert.strictEqual(activity.value.body, undefined);
                     done();
                 })
-                .catch(err => done(err));
+                .startTest();
         });
 
         it('handleTeamsSigninTokenExchange is not overridden', done => {
@@ -451,7 +451,7 @@ describe('TeamsActivityHandler', () => {
                     assert.strictEqual(activity.value.body, undefined);
                     done();
                 })
-                .catch(err => done(err));
+                .startTest();
         });
 
         it('handleTeamsMessagingExtensionCardButtonClicked is not overridden', done => {
@@ -469,7 +469,7 @@ describe('TeamsActivityHandler', () => {
                     assert.strictEqual(activity.value.body, undefined);
                     done();
                 })
-                .catch(err => done(err));
+                .startTest();
         });
 
         it('handleTeamsTaskModuleFetch is not overridden', done => {
@@ -487,7 +487,7 @@ describe('TeamsActivityHandler', () => {
                     assert.strictEqual(activity.value.body, undefined);
                     done();
                 })
-                .catch(err => done(err));
+                .startTest();
         });
 
         it('handleTeamsTaskModuleSubmit is not overridden', done => {
@@ -505,7 +505,7 @@ describe('TeamsActivityHandler', () => {
                     assert.strictEqual(activity.value.body, undefined);
                     done();
                 })
-                .catch(err => done(err));
+                .startTest();
         });
 
         it('handleTeamsTabFetch is not overridden', async () => {
@@ -561,7 +561,7 @@ describe('TeamsActivityHandler', () => {
                     assert.strictEqual(activity.value.body, undefined);
                     done();
                 })
-                .catch(err => done(err));
+                .startTest();
         });
 
         it('handleTeamsMessagingExtensionConfigurationQuerySettingUrl is not overridden', done => {
@@ -579,7 +579,7 @@ describe('TeamsActivityHandler', () => {
                     assert.strictEqual(activity.value.body, undefined);
                     done();
                 })
-                .catch(err => done(err));
+                .startTest();
         });
 
         it('handleTeamsMessagingExtensionQuery is not overridden', done => {
@@ -597,7 +597,7 @@ describe('TeamsActivityHandler', () => {
                     assert.strictEqual(activity.value.body, undefined);
                     done();
                 })
-                .catch(err => done(err));
+                .startTest();
         });
 
         it('handleTeamsMessagingExtensionSelectItem is not overridden', done => {
@@ -615,7 +615,7 @@ describe('TeamsActivityHandler', () => {
                     assert.strictEqual(activity.value.body, undefined);
                     done();
                 })
-                .catch(err => done(err));
+                .startTest();
         });
 
         it('handleTeamsMessagingExtensionFetchTask is not overridden', done => {
@@ -633,7 +633,7 @@ describe('TeamsActivityHandler', () => {
                     assert.strictEqual(activity.value.body, undefined);
                     done();
                 })
-                .catch(err => done(err));
+                .startTest();
         });
 
         it('handleTeamsMessagingExtensionConfigurationQuerySettingUrl is not overridden', done => {
@@ -651,7 +651,7 @@ describe('TeamsActivityHandler', () => {
                     assert.strictEqual(activity.value.body, undefined);
                     done();
                 })
-                .catch(err => done(err));
+                .startTest();
         });
 
         it('handleTeamsMessagingExtensionConfigurationSetting is not overridden', done => {
@@ -669,7 +669,7 @@ describe('TeamsActivityHandler', () => {
                     assert.strictEqual(activity.value.body, undefined);
                     done();
                 })
-                .catch(err => done(err));
+                .startTest();
         });
     });
 
@@ -702,7 +702,7 @@ describe('TeamsActivityHandler', () => {
                         `expected empty body for invokeResponse from fileConsent flow.\nReceived: ${ JSON.stringify(activity.value.body) }`);
                     done();
                 })
-                .catch(err => done(err));
+                .startTest();
         });
 
         it('when a "fileConsent/invoke" activity is handled by handleTeamsFileConsentDecline', done => {
@@ -721,7 +721,7 @@ describe('TeamsActivityHandler', () => {
                         `expected empty body for invokeResponse from fileConsent flow.\nReceived: ${ JSON.stringify(activity.value.body) }`);
                     done();
                 })
-                .catch(err => done(err));
+                .startTest();
         });
 
         it('when a "fileConsent/invoke" activity handled by handleTeamsFileConsent', done => {
@@ -746,7 +746,7 @@ describe('TeamsActivityHandler', () => {
                         `expected empty body for invokeResponse from fileConsent flow.\nReceived: ${ JSON.stringify(activity.value.body) }`);
                     done();
                 })
-                .catch(err => done(err));
+                .startTest();
         });
 
 
@@ -802,7 +802,8 @@ describe('TeamsActivityHandler', () => {
                         assert.strictEqual(activity.value.body, bot.taskFetchReturn);
                         done();
                     })
-                    .catch(err => done(err));
+                    .catch(err => done(err))
+                    .startTest();
             });
 
             it('an overridden handleTeamsTaskModuleSubmit()', done => {
@@ -821,7 +822,8 @@ describe('TeamsActivityHandler', () => {
                         assert.strictEqual(activity.value.body, bot.taskSubmitReturn);
                         done();
                     })
-                    .catch(err => done(err));
+                    .catch(err => done(err))
+                    .startTest();
             });
 
             it('an overridden handleTeamsTabFetch()', async () => {
@@ -897,7 +899,7 @@ describe('TeamsActivityHandler', () => {
                     assert.strictEqual(activity.value.body, undefined);
                     done();
                 })
-                .catch(err => done(err));
+                .startTest();
         });
 
         it('handleTeamsMessagingExtensionSubmitActionDispatch() receives an unexpected botMessagePreviewAction value', done => {
@@ -914,7 +916,7 @@ describe('TeamsActivityHandler', () => {
                     assert.strictEqual(activity.value.body, undefined);
                     done();
                 })
-                .catch(err => done(err));
+                .startTest();
         });
     });
 
@@ -976,7 +978,7 @@ describe('TeamsActivityHandler', () => {
                     assert(fileConsentAcceptCalled, 'handleTeamsFileConsentAccept handler not called');
                     done();
                 })
-                .catch(err => done(err));
+                .startTest();
         });
 
         it('handleTeamsFileConsent handler before an handleTeamsFileConsentDecline handler', done => {
@@ -997,7 +999,7 @@ describe('TeamsActivityHandler', () => {
                     assert(fileConsentDeclineCalled, 'handleTeamsFileConsentDecline handler not called');
                     done();
                 })
-                .catch(err => done(err));
+                .startTest();
         });
     });
 
@@ -1063,7 +1065,7 @@ describe('TeamsActivityHandler', () => {
                     assert(onDialogCalled, 'onDialog handler not called');
                     done();
                 })
-                .catch(err => done(err));
+                .startTest();
         });
 
         it('MS-Teams with non-existent channelData.eventType routed activity', done => {
@@ -1085,7 +1087,7 @@ describe('TeamsActivityHandler', () => {
                     assert(onDialogCalled, 'onDialog handler not called');
                     done();
                 })
-                .catch(err => done(err));
+                .startTest();
         });
 
         it('MS-Teams with no channelData routed activity', done => {
@@ -1107,7 +1109,7 @@ describe('TeamsActivityHandler', () => {
                     assert(onDialogCalled, 'onDialog handler not called');
                     done();
                 })
-                .catch(err => done(err));
+                .startTest();
         });
 
         it('onTeamsMembersAdded routed activity', done => {
@@ -1164,7 +1166,7 @@ describe('TeamsActivityHandler', () => {
                     TeamsInfo.getMember = wasGetMember;
                     done();
                 })
-                .catch(err => done(err));
+                .startTest();
         });
 
         it('onTeamsMembersAdded routed activity with no TeamsMembersAddedEvent handler', done => {
@@ -1189,7 +1191,7 @@ describe('TeamsActivityHandler', () => {
                     assert(onDialogCalled, 'onDialog handler not called');
                     done();
                 })
-                .catch(err => done(err));
+                .startTest();
         });
 
         it('onTeamsMembersAdded for bot routed activity should throw a ConversationNotFound Error on TeamsInfo.getMember', done => {
@@ -1246,7 +1248,7 @@ describe('TeamsActivityHandler', () => {
                     TeamsInfo.getMember = wasGetMember;
                     done();
                 })
-                .catch(err => done(err));
+                .startTest();
         });
 
         it('onTeamsMembersAdded for bot routed activity should throw an Error on TeamsInfo.getMember', done => {
@@ -1310,7 +1312,8 @@ describe('TeamsActivityHandler', () => {
                     } else {
                         done(err);
                     }
-                });
+                })
+                .startTest();
         });
 
         it('onTeamsMembersAdded for bot routed activity does NOT call TeamsInfo.getMember', done => {
@@ -1368,7 +1371,7 @@ describe('TeamsActivityHandler', () => {
                     TeamsInfo.getMember = wasGetMember;
                     done();
                 })
-                .catch(err => done(err));
+                .startTest();
         });
 
         it('onTeamsMembersRemoved routed activity', done => {
@@ -1417,7 +1420,7 @@ describe('TeamsActivityHandler', () => {
                     assert(onDialogCalled, 'onDialog handler not called');
                     done();
                 })
-                .catch(err => done(err));
+                .startTest();
         });
 
         it('onTeamsMembersRemoved routed activity with no TeamsMembersRemovedEvent handler', done => {
@@ -1442,7 +1445,7 @@ describe('TeamsActivityHandler', () => {
                     assert(onDialogCalled, 'onDialog handler not called');
                     done();
                 })
-                .catch(err => done(err));
+                .startTest();
         });
 
         it('onTeamsChannelCreated routed activity', done => {
@@ -1490,7 +1493,7 @@ describe('TeamsActivityHandler', () => {
                     assert(onDialogCalled, 'onDialog handler not called');
                     done();
                 })
-                .catch(err => done(err));
+                .startTest();
         });
 
         it('onTeamsChannelDeleted routed activity', done => {
@@ -1538,7 +1541,7 @@ describe('TeamsActivityHandler', () => {
                     assert(onDialogCalled, 'onDialog handler not called');
                     done();
                 })
-                .catch(err => done(err));
+                .startTest();
         });
 
         it('onTeamsChannelRenamed routed activity', done => {
@@ -1586,7 +1589,7 @@ describe('TeamsActivityHandler', () => {
                     assert(onDialogCalled, 'onDialog handler not called');
                     done();
                 })
-                .catch(err => done(err));
+                .startTest();
         });
 
         it('onTeamsChannelRestored routed activity', done => {
@@ -1634,7 +1637,7 @@ describe('TeamsActivityHandler', () => {
                     assert(onDialogCalled, 'onDialog handler not called');
                     done();
                 })
-                .catch(err => done(err));
+                .startTest();
         });
         
         it('onTeamsTeamRenamed routed activity', done => {
@@ -1679,7 +1682,7 @@ describe('TeamsActivityHandler', () => {
                     assert(onDialogCalled, 'onDialog handler not called');
                     done();
                 })
-                .catch(err => done(err));
+                .startTest();
         });
 
         it('onTeamsTeamArchived routed activity', done => {
@@ -1724,7 +1727,7 @@ describe('TeamsActivityHandler', () => {
                     assert(onDialogCalled, 'onDialog handler not called');
                     done();
                 })
-                .catch(err => done(err));
+                .startTest();
         });
 
         it('onTeamsTeamDeleted routed activity', done => {
@@ -1769,7 +1772,7 @@ describe('TeamsActivityHandler', () => {
                     assert(onDialogCalled, 'onDialog handler not called');
                     done();
                 })
-                .catch(err => done(err));
+                .startTest();
         });
 
         it('onTeamsTeamHardDeleted routed activity', done => {
@@ -1814,7 +1817,7 @@ describe('TeamsActivityHandler', () => {
                     assert(onDialogCalled, 'onDialog handler not called');
                     done();
                 })
-                .catch(err => done(err));
+                .startTest();
         });
 
         it('onTeamsTeamRestored routed activity', done => {
@@ -1859,7 +1862,7 @@ describe('TeamsActivityHandler', () => {
                     assert(onDialogCalled, 'onDialog handler not called');
                     done();
                 })
-                .catch(err => done(err));
+                .startTest();
         });
 
         it('onTeamsTeamUnarchived routed activity', done => {
@@ -1904,7 +1907,7 @@ describe('TeamsActivityHandler', () => {
                     assert(onDialogCalled, 'onDialog handler not called');
                     done();
                 })
-                .catch(err => done(err));
+                .startTest();
         });
 
         it('signin/verifyState routed activity', done => {
@@ -1943,7 +1946,7 @@ describe('TeamsActivityHandler', () => {
                     assert(handleTeamsSigninVerifyStateCalled, 'handleTeamsSigninVerifyState handler not called');
                     done();
                 })
-                .catch(err => done(err));
+                .startTest();
         });
 
         it('signin/tokenExchange routed activity', done => {
@@ -1982,7 +1985,7 @@ describe('TeamsActivityHandler', () => {
                     assert(handleTeamsSigninTokenExchangeCalled, 'handleTeamsSigninTokenExchange handler not called');
                     done();
                 })
-                .catch(err => done(err));
+                .startTest();
         });
     });
 });
