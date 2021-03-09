@@ -1017,9 +1017,6 @@ const generateParseTest = (input, expectedOutput, expectedRefs) => () => {
 }
 
 describe('expression parser functional test', () => {
-    const parsed = Expression.parse('1 + 2 + null');
-    const result = parsed.tryEvaluate();
-
     describe('StackedMemory', () => {
         it('supports null values', () => {
             const sm = new StackedMemory();
