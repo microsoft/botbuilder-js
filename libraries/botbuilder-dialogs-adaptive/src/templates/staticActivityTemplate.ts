@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 
-import { Activity } from 'botbuilder-core';
+import { Activity } from 'botbuilder';
 import { Converter, ConverterFactory, Configurable, DialogContext, TemplateInterface } from 'botbuilder-dialogs';
 
 export interface StaticActivityTemplateConfiguration {

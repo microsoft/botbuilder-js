@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
 const assert = require('assert');
-const { TestAdapter, TurnContext } = require('botbuilder-core');
+const { TestAdapter, TurnContext } = require('botbuilder');
 const { DialogContext, DialogSet, Recognizer } = require('botbuilder-dialogs');
 const {
     RegexRecognizer,

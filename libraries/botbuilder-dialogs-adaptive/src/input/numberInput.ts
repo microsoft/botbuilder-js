@@ -13,7 +13,7 @@ import {
     StringExpression,
     StringExpressionConverter,
 } from 'adaptive-expressions';
-import { Activity } from 'botbuilder-core';
+import { Activity } from 'botbuilder';
 import { Converter, ConverterFactory, DialogContext } from 'botbuilder-dialogs';
 import { InputDialog, InputDialogConfiguration, InputState } from './inputDialog';
 

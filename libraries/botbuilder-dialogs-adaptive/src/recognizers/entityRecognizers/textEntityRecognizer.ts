@@ -7,7 +7,7 @@
  */
 
 import { Culture } from '@microsoft/recognizers-text';
-import { Entity } from 'botbuilder-core';
+import { Entity } from 'botbuilder';
 import { DialogContext, ModelResult } from 'botbuilder-dialogs';
 import { EntityRecognizer } from './entityRecognizer';
 import { TextEntity } from './textEntity';

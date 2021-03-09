@@ -1,5 +1,5 @@
 const assert = require('assert');
-const { ActivityTypes, TestAdapter, TurnContext } = require('botbuilder-core');
+const { ActivityTypes, TestAdapter, TurnContext } = require('botbuilder');
 const { DialogContext, DialogSet } = require('botbuilder-dialogs');
 const {
     AgeEntityRecognizer,

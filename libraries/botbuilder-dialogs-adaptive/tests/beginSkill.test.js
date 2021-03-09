@@ -11,7 +11,7 @@ const {
     StatusCodes,
     TurnContext,
     MessageFactory
-} = require('botbuilder-core');
+} = require('botbuilder');
 const { BoolExpression, StringExpression } = require('adaptive-expressions');
 const { DialogManager, DialogTurnStatus, DialogEvents, DialogSet } = require('botbuilder-dialogs');
 const { BeginSkill, SkillExtensions, StaticActivityTemplate } = require('../lib');
