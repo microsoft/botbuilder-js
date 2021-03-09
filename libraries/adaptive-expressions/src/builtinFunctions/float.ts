@@ -6,6 +6,7 @@
  * Licensed under the MIT License.
  */
 
+import bigInt from 'big-integer';
 import { EvaluateExpressionDelegate, ExpressionEvaluator, ValueWithError } from '../expressionEvaluator';
 import { ExpressionType } from '../expressionType';
 import { FunctionUtils } from '../functionUtils';
@@ -28,13 +29,23 @@ export class Float extends ExpressionEvaluator {
     private static evaluator(): EvaluateExpressionDelegate {
         return FunctionUtils.applyWithError(
             (args: readonly unknown[]): ValueWithError => {
-            let error: string;
-            const value: number = parseFloat(String(args[0]));
-            if (!FunctionUtils.isNumber(value)) {
-                error = `parameter ${args[0]} is not a valid number string.`;
-            }
+                let error: string;
+                let value: unknown;
+                const firstChild = args[0];
+                if (bigInt.isInstance(firstChild)) {
+                    return { value: firstChild.toJSNumber(), error };
+                }
+                if (typeof firstChild === 'string') {
+                    value = parseFloat(firstChild);
+                    if (!FunctionUtils.isNumber(value)) {
+                        error = `parameter ${args[0]} is not a valid number string.`;
+                    }
+                } else if (FunctionUtils.isNumber(firstChild)) {
+                    value = firstChild;
+                }
 
-            return { value, error };
-        });
+                return { value, error };
+            }
+        );
     }
 }

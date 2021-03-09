@@ -37,16 +37,17 @@ export class ValueExpression extends ExpressionProperty<any> {
         super.setValue(undefined);
 
         if (typeof value === 'string') {
-            if (value.startsWith('=')) {
-                this.expressionText = value;
+            let stringValue = value;
+            if (stringValue.startsWith('=')) {
+                this.expressionText = stringValue;
                 return;
-            } else if (value.startsWith('\\=')) {
+            } else if (stringValue.startsWith('\\=')) {
                 // Trim off the escape char for equals (\=foo) should simply be the string (=foo).
-                value = value.substr(1);
+                stringValue = stringValue.substr(1);
             }
 
             // keep the string as quoted expression, which will be literal unless string interpolation is used.
-            this.expressionText = `=\`${(value as string).replace('`', '\\`')}\``;
+            this.expressionText = `=\`${stringValue.replace('`', '\\`')}\``;
             return;
         }
 
