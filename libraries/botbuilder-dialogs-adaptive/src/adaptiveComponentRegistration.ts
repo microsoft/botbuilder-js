@@ -101,7 +101,6 @@ import {
     OnChooseIntent,
     OnChooseIntentConfiguration,
     OnChooseProperty,
-    OnChoosePropertyConfiguration,
     OnCondition,
     OnConditionConfiguration,
     OnContinueConversation,
@@ -198,7 +197,6 @@ import {
     TextTemplateConfiguration,
 } from './templates';
 import { DynamicBeginDialogDeserializer } from './dynamicBeginDialogDeserializer';
-import { TriggerSelectorConfiguration } from './triggerSelector';
 import { HasPendingActionsFunction, IsDialogActiveFunction } from './functions';
 
 type Type<T> = {
@@ -272,7 +270,7 @@ export class AdaptiveComponentRegistration extends ComponentRegistration impleme
         this._addDeclarativeType<OnCancelDialog, OnDialogEventConfiguration>(OnCancelDialog);
         this._addDeclarativeType<OnChooseEntity, OnChooseEntityConfiguration>(OnChooseEntity);
         this._addDeclarativeType<OnChooseIntent, OnChooseIntentConfiguration>(OnChooseIntent);
-        this._addDeclarativeType<OnChooseProperty, OnChoosePropertyConfiguration>(OnChooseProperty);
+        this._addDeclarativeType<OnChooseProperty, OnDialogEventConfiguration>(OnChooseProperty);
         this._addDeclarativeType<OnCondition, OnConditionConfiguration>(OnCondition);
         this._addDeclarativeType<OnContinueConversation, OnActivityConfiguration>(OnContinueConversation);
         this._addDeclarativeType<OnConversationUpdateActivity, OnActivityConfiguration>(OnConversationUpdateActivity);
@@ -348,9 +346,9 @@ export class AdaptiveComponentRegistration extends ComponentRegistration impleme
 
         // Selectors
         this._addDeclarativeType<ConditionalSelector, ConditionalSelectorConfiguration>(ConditionalSelector);
-        this._addDeclarativeType<FirstSelector, TriggerSelectorConfiguration>(FirstSelector);
-        this._addDeclarativeType<RandomSelector, TriggerSelectorConfiguration>(RandomSelector);
-        this._addDeclarativeType<TrueSelector, TriggerSelectorConfiguration>(TrueSelector);
+        this._addDeclarativeType<FirstSelector, unknown>(FirstSelector);
+        this._addDeclarativeType<RandomSelector, unknown>(RandomSelector);
+        this._addDeclarativeType<TrueSelector, unknown>(TrueSelector);
         this._addDeclarativeType<MostSpecificSelector, MostSpecificSelectorConfiguration>(MostSpecificSelector);
 
         Expression.functions.add(IsDialogActiveFunction.functionName, new IsDialogActiveFunction());

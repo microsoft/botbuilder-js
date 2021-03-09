@@ -84,9 +84,9 @@ export async function runDialog(
     }
 
     // Continue or start the dialog.
-    const result = await dialogContext.continueDialog();
+    let result = await dialogContext.continueDialog();
     if (result.status === DialogTurnStatus.empty) {
-        await dialogContext.beginDialog(dialog.id);
+        result = await dialogContext.beginDialog(dialog.id);
     }
 
     if (result.status === DialogTurnStatus.complete || result.status === DialogTurnStatus.cancelled) {

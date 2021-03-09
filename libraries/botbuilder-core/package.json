@@ -34,7 +34,7 @@
     "uuid": "^8.3.2"
   },
   "devDependencies": {
-    "sinon": "^7.5.0",
+    "sinon": "^9.2.4",
     "unzipper": "^0.10.9"
   },
   "scripts": {
@@ -44,8 +44,9 @@
     "clean": "rimraf _ts3.4 lib tsconfig.tsbuildinfo",
     "lint": "eslint . --ext .js,.ts",
     "postbuild": "downlevel-dts lib _ts3.4/lib --checksum",
-    "test": "yarn build && nyc mocha tests/",
-    "test:compat": "api-extractor run --verbose"
+    "test": "npm-run-all build test:mocha",
+    "test:compat": "api-extractor run --verbose",
+    "test:mocha": "nyc mocha tests"
   },
   "files": [
     "_ts3.4",
