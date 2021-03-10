@@ -5,26 +5,27 @@ import * as t from 'runtypes';
 import restify from 'restify';
 import { Configuration, getRuntimeServices } from 'botbuilder-runtime';
 import { IServices, ServiceCollection } from 'botbuilder-runtime-core';
-import { tests } from 'botbuilder-stdlib';
 
-/**
- * Options for runtime restify adapter
- */
-export type Options = {
+const TypedOptions = t.Record({
     /**
      * Port that server should listen on
      */
-    port: number;
+    port: t.Number,
 
     /**
      * Path that the server will listen to for [Activities](xref:botframework-schema.Activity)
      */
-    messagingEndpointPath: string;
-};
+    messagingEndpointPath: t.String,
+});
+
+/**
+ * Options for runtime restify adapter
+ */
+export type Options = t.Static<typeof TypedOptions>;
 
 const defaultOptions: Options = {
     port: 3978,
-    messagingEndpointPath: '/api/messages'
+    messagingEndpointPath: '/api/messages',
 };
 
 /**
@@ -37,12 +38,10 @@ const defaultOptions: Options = {
 export async function start(
     applicationRoot: string,
     settingsDirectory: string,
-    options = {} as Options
+    options: Partial<Options> = {}
 ): Promise<void> {
+    const { port, messagingEndpointPath } = TypedOptions.check(Object.assign({}, defaultOptions, options));
     const [services, configuration] = await getRuntimeServices(applicationRoot, settingsDirectory);
-    const { port, messagingEndpointPath } = tests.isObject(options)
-        ? { ...defaultOptions, ...options }
-        : defaultOptions;
 
     const server = await makeServer(messagingEndpointPath, services, configuration);
 
