@@ -130,7 +130,7 @@ const validateTelemetry = async ({ recognizer, dialogContext, spy, activity, res
     strictEqual(spy.callCount, callCount);
     strictEqual(actualTelemetryProps.name, `${recognizer.constructor.name}Result`);
     ok(
-        hasValidTelemetryProps(actualTelemetryProps.properties, expectedTelemetryProps, activity),
+        hasValidTelemetryProps(actualTelemetryProps.properties, expectedTelemetryProps),
         'Expected telemetry property did not match actual telemetry property logged.'
     );
 };
@@ -153,7 +153,7 @@ const getExpectedProps = (activity, result, logPersonalInformation) => {
     return expectedProps;
 };
 
-const hasValidTelemetryProps = (actual, expected, activity) => {
+const hasValidTelemetryProps = (actual, expected) => {
     if (Object.keys(actual).length !== Object.keys(expected).length) {
         return false;
     }

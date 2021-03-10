@@ -51,7 +51,7 @@ const getColorIntentProperties = () => ({
                     score: 1,
                     text: 'red',
                     type: 'color',
-                    resolution: {}
+                    resolution: {},
                 },
                 {
                     startIndex: 27,
@@ -59,11 +59,11 @@ const getColorIntentProperties = () => ({
                     score: 1,
                     text: 'orange',
                     type: 'color',
-                    resolution: {}
+                    resolution: {},
                 },
             ],
         },
-        color: ["red", "orange"],
+        color: ['red', 'orange'],
     }),
     AdditionalProperties: undefined,
 });
@@ -77,7 +77,7 @@ const getGreetingIntentProperties = () => ({
     TopIntent: 'greeting',
     TopIntentScore: '1',
     Intents: JSON.stringify({
-        greeting: { score: 1, pattern: 'howdy' }
+        greeting: { score: 1, pattern: 'howdy' },
     }),
     Entities: '{}',
     AdditionalProperties: undefined,
@@ -89,41 +89,44 @@ const getGreetingIntentProperties = () => ({
  * @returns {*} Object of expected telemtry properties.
  */
 const getChooseIntentProperties = () => ({
-    AdditionalProperties:
-        JSON.stringify({
-            candidates: [
-                {
+    AdditionalProperties: JSON.stringify({
+        candidates: [
+            {
+                id: 'y',
+                intent: 'y',
+                score: 1,
+                result: {
+                    text: 'criss-cross applesauce',
+                    intents: {
+                        y: {
+                            score: 1,
+                            pattern: 'criss-cross applesauce',
+                        },
+                    },
+                    entities: {},
                     id: 'y',
-                    intent: 'y',
-                    score: 1,
-                    result: {
-                        text: 'criss-cross applesauce',
-                        intents: { y: {
-                            score: 1,
-                            pattern: 'criss-cross applesauce'
-                        }},
-                        entities: {},
-                        id: 'y'
-                    },
                 },
-                {
+            },
+            {
+                id: 'z',
+                intent: 'z',
+                score: 1,
+                result: {
+                    text: 'criss-cross applesauce',
+                    intents: {
+                        z: {
+                            score: 1,
+                            pattern: 'criss-cross applesauce',
+                        },
+                    },
+                    entities: {},
                     id: 'z',
-                    intent: 'z',
-                    score: 1,
-                    result: {
-                        text: 'criss-cross applesauce',
-                        intents: { z: { 
-                            score: 1,
-                            pattern: 'criss-cross applesauce'
-                        }},
-                        entities: {},
-                        id: 'z'
-                    },
                 },
-            ],
-        }),
+            },
+        ],
+    }),
     Entities: '{}',
-    Intents: JSON.stringify({ ChooseIntent: { score:1 }}),
+    Intents: JSON.stringify({ ChooseIntent: { score: 1 } }),
     TopIntent: 'ChooseIntent',
     TopIntentScore: '1',
 });
@@ -134,9 +137,9 @@ const getChooseIntentProperties = () => ({
  * @returns {*} Object of expected telemtry properties.
  */
 const getXIntentProperties = () => ({
-    AdditionalProperties: JSON.stringify({ id: 'x'}),
+    AdditionalProperties: JSON.stringify({ id: 'x' }),
     Entities: '{}',
-    Intents: JSON.stringify({ x: { score: 1, pattern: 'x'}}),
+    Intents: JSON.stringify({ x: { score: 1, pattern: 'x' } }),
     TopIntent: 'x',
     TopIntentScore: '1',
 });

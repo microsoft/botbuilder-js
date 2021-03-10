@@ -15,23 +15,23 @@ const {
     spyOnTelemetryClientTrackEvent,
 } = require('./recognizerTelemetryUtils');
 
-const createRecognizer = () => new CrossTrainedRecognizerSet().configure({
-    recognizers: [
-        new RegexRecognizer().configure({
-            id: 'x',
-            intents: [new IntentPattern('DeferToRecognizer_y', crossTrainText), new IntentPattern('x', 'x')],
-        }),
-        new RegexRecognizer().configure({
-            id: 'y',
-            intents: [new IntentPattern('y', crossTrainText), new IntentPattern('y', 'y')],
-        }),
-        new RegexRecognizer().configure({
-            id: 'z',
-            intents: [new IntentPattern('z', crossTrainText), new IntentPattern('z', 'z')],
-        }),
-    ],
-});
-
+const createRecognizer = () =>
+    new CrossTrainedRecognizerSet().configure({
+        recognizers: [
+            new RegexRecognizer().configure({
+                id: 'x',
+                intents: [new IntentPattern('DeferToRecognizer_y', crossTrainText), new IntentPattern('x', 'x')],
+            }),
+            new RegexRecognizer().configure({
+                id: 'y',
+                intents: [new IntentPattern('y', crossTrainText), new IntentPattern('y', 'y')],
+            }),
+            new RegexRecognizer().configure({
+                id: 'z',
+                intents: [new IntentPattern('z', crossTrainText), new IntentPattern('z', 'z')],
+            }),
+        ],
+    });
 
 describe('CrossTrainedRecognizerSetTests', function () {
     this.timeout(5000);

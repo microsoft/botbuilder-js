@@ -14,19 +14,20 @@ const {
     spyOnTelemetryClientTrackEvent,
 } = require('./recognizerTelemetryUtils');
 
-const createRecognizer = () => new MultiLanguageRecognizer().configure({
-    recognizers: {
-        'en-us': new RegexRecognizer().configure({
-            intents: [new IntentPattern('greeting', '(?i)howdy'), new IntentPattern('goodbye', '(?i)bye')],
-        }),
-        'en-gb': new RegexRecognizer().configure({
-            intents: [new IntentPattern('greeting', '(?i)hiya'), new IntentPattern('goodbye', '(?i)cheerio')],
-        }),
-        'en': new RegexRecognizer().configure({
-            intents: [new IntentPattern('greeting', '(?i)hello'), new IntentPattern('goodbye', '(?i)goodbye')],
-        }),
-    },
-});
+const createRecognizer = () =>
+    new MultiLanguageRecognizer().configure({
+        recognizers: {
+            'en-us': new RegexRecognizer().configure({
+                intents: [new IntentPattern('greeting', '(?i)howdy'), new IntentPattern('goodbye', '(?i)bye')],
+            }),
+            'en-gb': new RegexRecognizer().configure({
+                intents: [new IntentPattern('greeting', '(?i)hiya'), new IntentPattern('goodbye', '(?i)cheerio')],
+            }),
+            en: new RegexRecognizer().configure({
+                intents: [new IntentPattern('greeting', '(?i)hello'), new IntentPattern('goodbye', '(?i)goodbye')],
+            }),
+        },
+    });
 
 describe('MultiLanguageRecognizerTests', function () {
     this.timeout(5000);
