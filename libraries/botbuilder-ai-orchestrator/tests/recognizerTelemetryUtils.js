@@ -68,15 +68,5 @@ const hasValidTelemetryProps = (actual, expected) => {
         return false;
     }
 
-    for (const property in actual) {
-        if (!(property in expected)) {
-            return false;
-        }
-
-        if (actual[property] !== expected[property]) {
-            return false;
-        }
-    }
-
-    return true;
+    return Object.entries(actual).every(([key, value]) => expected[key] === value);
 };

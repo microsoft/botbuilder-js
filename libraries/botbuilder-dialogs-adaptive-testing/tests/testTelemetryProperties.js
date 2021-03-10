@@ -8,7 +8,6 @@ const getCodeIntentProperties = () => ({
     TopIntentScore: '1',
     Intents: JSON.stringify({ codeIntent: { score: 1, pattern: '(?<code>[a-z][0-9])' } }),
     Entities: JSON.stringify({
-        code: ['a1', 'b2'],
         $instance: {
             code: [
                 {
@@ -27,6 +26,7 @@ const getCodeIntentProperties = () => ({
                 },
             ],
         },
+        code: ['a1', 'b2'],
     }),
     AdditionalProperties: undefined,
 });
@@ -43,7 +43,6 @@ const getColorIntentProperties = () => ({
         colorIntent: { score: 1, pattern: '(color|colour)' },
     }),
     Entities: JSON.stringify({
-        color: ["red", "orange"],
         $instance: {
             color: [
                 {
@@ -64,6 +63,7 @@ const getColorIntentProperties = () => ({
                 },
             ],
         },
+        color: ["red", "orange"],
     }),
     AdditionalProperties: undefined,
 });
