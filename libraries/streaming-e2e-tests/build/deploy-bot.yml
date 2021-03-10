@@ -1,4 +1,8 @@
 steps:
+  - script: npm install
+    displayName: 'npm install in bot'
+    workingDirectory: $(TargetProjectDir)
+
   - powershell: Compress-Archive "$(TargetProjectDir)/*" "$(TargetProjectDir)/bot.zip"
     displayName: 'Zipping Bot into bot.zip'
 

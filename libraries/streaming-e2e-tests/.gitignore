@@ -1,0 +1,2 @@
+# intentionally ignore lock files so that `npm install` properly picks up versions like "latest" and "next"
+package-lock.json

@@ -1,5 +1,5 @@
-# Ensure BotFramework-Streaming library works in the browser 
-# by running tests after deploying a streaming-enabled JS Echo Bot 
+# Ensure BotFramework-Streaming library works in the browser
+# by running tests after deploying a streaming-enabled JS Echo Bot
 # and hosting a React App that uses latest streaming bits in DLJS and WebChat 4.9.2.
 
 name: $(Build.BuildId)
@@ -11,7 +11,6 @@ pool:
 
 variables:
   ReactProjectDir: '$(System.DefaultWorkingDirectory)/libraries/streaming-e2e-tests/react-app'
-  DLJSDir: '$(System.DefaultWorkingDirectory)/libraries/streaming-e2e-tests/BotFramework-DirectLineJS'
   BotBuilder: 'botbuilder'
   BfStreaming: 'botframework-streaming'
   TestsDir: '$(System.DefaultWorkingDirectory)/libraries/streaming-e2e-tests/tests'
@@ -25,20 +24,18 @@ jobs:
       PackageName: $(BotBuilder)
       TargetProjectDir: '$(System.DefaultWorkingDirectory)/libraries/streaming-e2e-tests/bot'
     steps:
-      - template: configure-to-bbjs-daily.yml
       - template: deploy-bot.yml
-      
+
   - job: Create_React_App
     variables:
       PackageName: $(BfStreaming)
-      TargetProjectDir: $(DLJSDir)
       REACT_APP_BOT_HOSTNAME: $(BotName)
     steps:
       - template: create-react-app.yml
 
   - job: Run_Tests
     dependsOn:
-      - Deploy_Bot 
+      - Deploy_Bot
       - Create_React_App
     condition: succeeded()
     steps:
