@@ -9,15 +9,13 @@ const bot = {
     id: process.env['BOT_ID'] || 'BKGSYSTFG:TKGSUQHQE',
 };
 
-const createMessageActivity = (text, locale = Culture.English) => {
-    return {
-        type: ActivityTypes.Message,
-        text: text || 'test activity',
-        recipient: user,
-        from: bot,
-        locale: locale,
-    };
-};
+const createMessageActivity = (text, locale = Culture.English) => ({
+    type: ActivityTypes.Message,
+    text: text || 'test activity',
+    recipient: user,
+    from: bot,
+    locale: locale,
+});
 
 const createContext = (text, locale = Culture.English) => {
     const activity = createMessageActivity(text, locale);

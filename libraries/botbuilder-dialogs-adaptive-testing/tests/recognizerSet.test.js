@@ -27,33 +27,31 @@ const {
     spyOnTelemetryClientTrackEvent,
 } = require('./recognizerTelemetryUtils');
 
-const createRecognizer = () => {
-    return new RecognizerSet().configure({
-        recognizers: [
-            new RegexRecognizer().configure({
-                id: 'codeRecognizer',
-                intents: [new IntentPattern('codeIntent', '(?<code>[a-z][0-9])')],
-                entities: new EntityRecognizerSet(
-                    new AgeEntityRecognizer(),
-                    new NumberEntityRecognizer(),
-                    new PercentageEntityRecognizer(),
-                    new PhoneNumberEntityRecognizer(),
-                    new TemperatureEntityRecognizer()
-                ),
-            }),
-            new RegexRecognizer().configure({
-                id: 'colorRecognizer',
-                intents: [new IntentPattern('colorIntent', '(?i)(color|colour)')],
-                entities: new EntityRecognizerSet(
-                    new UrlEntityRecognizer(),
-                    new RegexEntityRecognizer('color', '(?i)(red|green|blue|purple|orange|violet|white|black)'),
-                    new RegexEntityRecognizer('backgroundColor', '(?i)(back|background)'),
-                    new RegexEntityRecognizer('foregroundColor', '(?i)(foreground|front) {color}')
-                ),
-            }),
-        ],
-    });
-};
+const createRecognizer = () => new RecognizerSet().configure({
+    recognizers: [
+        new RegexRecognizer().configure({
+            id: 'codeRecognizer',
+            intents: [new IntentPattern('codeIntent', '(?<code>[a-z][0-9])')],
+            entities: new EntityRecognizerSet(
+                new AgeEntityRecognizer(),
+                new NumberEntityRecognizer(),
+                new PercentageEntityRecognizer(),
+                new PhoneNumberEntityRecognizer(),
+                new TemperatureEntityRecognizer()
+            ),
+        }),
+        new RegexRecognizer().configure({
+            id: 'colorRecognizer',
+            intents: [new IntentPattern('colorIntent', '(?i)(color|colour)')],
+            entities: new EntityRecognizerSet(
+                new UrlEntityRecognizer(),
+                new RegexEntityRecognizer('color', '(?i)(red|green|blue|purple|orange|violet|white|black)'),
+                new RegexEntityRecognizer('backgroundColor', '(?i)(back|background)'),
+                new RegexEntityRecognizer('foregroundColor', '(?i)(foreground|front) {color}')
+            ),
+        }),
+    ],
+});
 
 describe('RecognizerSetTests', function () {
     this.timeout(5000);

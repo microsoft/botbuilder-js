@@ -41,11 +41,11 @@ export abstract class AdaptiveRecognizer extends Recognizer implements AdaptiveR
             );
         }
         const { intent, score } = getTopScoringIntent(recognizerResult);
-        const intents = Object.entries(recognizerResult.intents).length;
+        const intentsCount = Object.entries(recognizerResult.intents).length;
         const properties: Record<string, string> = {
-            TopIntent: intents > 0 ? intent : undefined,
-            TopIntentScore: intents > 0 ? score.toString() : undefined,
-            Intents: intents > 0 ? JSON.stringify(recognizerResult.intents) : undefined,
+            TopIntent: intentsCount > 0 ? intent : undefined,
+            TopIntentScore: intentsCount > 0 ? score.toString() : undefined,
+            Intents: intentsCount > 0 ? JSON.stringify(recognizerResult.intents) : undefined,
             Entities: recognizerResult.entities ? JSON.stringify(recognizerResult.entities) : undefined,
             AdditionalProperties: this.stringifyAdditionalPropertiesOfRecognizerResult(recognizerResult),
         };
