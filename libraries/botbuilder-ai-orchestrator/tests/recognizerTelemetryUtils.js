@@ -39,17 +39,15 @@ module.exports = {
 
 // **** PRIVATE **** //
 
-const getOrchestratorIntentProps = () => {
-    return {
-        TopIntent: 'mockLabel',
-        TopIntentScore: '0.9',
-        Intents: JSON.stringify({ mockLabel: { score: 0.9 } }),
-        Entities: '{}',
-        AdditionalProperties: JSON.stringify({
-            result: [{ score: 0.9, label: { name: 'mockLabel' } }],
-        }),
-    };
-};
+const getOrchestratorIntentProps = () => ({
+    TopIntent: 'mockLabel',
+    TopIntentScore: '0.9',
+    Intents: JSON.stringify({ mockLabel: { score: 0.9 } }),
+    Entities: '{}',
+    AdditionalProperties: JSON.stringify({
+        result: [{ score: 0.9, label: { name: 'mockLabel' } }],
+    }),
+});
 
 const getExpectedProps = (activity, result, logPersonalInformation) => {
     const text = asMessageActivity(activity).text;
