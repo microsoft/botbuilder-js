@@ -6,13 +6,14 @@
  * Licensed under the MIT License.
  */
 
-import { Activity, RecognizerResult } from 'botbuilder';
-import { DialogContext, Recognizer } from 'botbuilder-dialogs';
+import { Activity, RecognizerResult } from 'botbuilder-core';
+import { DialogContext } from 'botbuilder-dialogs';
+import { AdaptiveRecognizer } from '../adaptiveRecognizer';
 
 /**
  * Recognizer which maps channel activity.entities of type mention into [RecognizerResult](xref:botbuilder-core.RecognizerResult) format.
  */
-export class ChannelMentionEntityRecognizer extends Recognizer {
+export class ChannelMentionEntityRecognizer extends AdaptiveRecognizer {
     public static $kind = 'Microsoft.ChannelMentionEntityRecognizer';
 
     /**

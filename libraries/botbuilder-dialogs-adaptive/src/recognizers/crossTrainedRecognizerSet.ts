@@ -10,6 +10,7 @@ import { merge, pickBy } from 'lodash';
 import { Activity, RecognizerResult, getTopScoringIntent } from 'botbuilder';
 import { Converter, ConverterFactory, DialogContext, Recognizer, RecognizerConfiguration } from 'botbuilder-dialogs';
 import { RecognizerListConverter } from '../converters';
+import { AdaptiveRecognizer } from './adaptiveRecognizer';
 
 /**
  * Standard cross trained intent name prefix.
@@ -23,7 +24,7 @@ export interface CrossTrainedRecognizerSetConfiguration extends RecognizerConfig
 /**
  * Recognizer for selecting between cross trained recognizers.
  */
-export class CrossTrainedRecognizerSet extends Recognizer implements CrossTrainedRecognizerSetConfiguration {
+export class CrossTrainedRecognizerSet extends AdaptiveRecognizer implements CrossTrainedRecognizerSetConfiguration {
     public static $kind = 'Microsoft.CrossTrainedRecognizerSet';
 
     /**
@@ -42,12 +43,18 @@ export class CrossTrainedRecognizerSet extends Recognizer implements CrossTraine
 
     /**
      * To recognize intents and entities in a users utterance.
+     *
+     * @param {DialogContext} dialogContext The dialog context.
+     * @param {Activity} activity The activity.
+     * @param {object} telemetryProperties Optional. Additional properties to be logged to telemetry with the recognizer result event.
+     * @param {object} telemetryMetrics Optional. Additional metrics to be logged to telemetry with the recognizer result event.
+     * @returns {Promise<RecognizerResult>} Promise of the intent recognized by the recognizer in the form of a RecognizerResult.
      */
     public async recognize(
         dialogContext: DialogContext,
         activity: Activity,
-        telemetryProperties?: { [key: string]: string },
-        telemetryMetrics?: { [key: string]: number }
+        telemetryProperties?: Record<string, string>,
+        telemetryMetrics?: Record<string, number>
     ): Promise<RecognizerResult> {
         if (!this.recognizers.length) {
             return {
@@ -62,18 +69,23 @@ export class CrossTrainedRecognizerSet extends Recognizer implements CrossTraine
         }
 
         const results = await Promise.all(
-            this.recognizers.map(
-                (recognizer: Recognizer): Promise<RecognizerResult> => {
-                    return recognizer.recognize(dialogContext, activity, telemetryProperties, telemetryMetrics);
-                }
-            )
+            this.recognizers.map(async (recognizer) => {
+                const result = await recognizer.recognize(
+                    dialogContext,
+                    activity,
+                    telemetryProperties,
+                    telemetryMetrics
+                );
+                result['id'] = recognizer.id;
+                return result;
+            })
         );
 
         const result = this.processResults(results);
         this.trackRecognizerResult(
             dialogContext,
             'CrossTrainedRecognizerSetResult',
-            this.fillRecognizerResultTelemetryProperties(result, telemetryProperties),
+            this.fillRecognizerResultTelemetryProperties(result, telemetryProperties, dialogContext),
             telemetryMetrics
         );
         return result;
@@ -84,7 +96,8 @@ export class CrossTrainedRecognizerSet extends Recognizer implements CrossTraine
      * If there is consensus among the cross trained recognizers, the recognizerResult structure from
      * the consensus recognizer is returned.
      *
-     * @param results A list of recognizer results to be processed.
+     * @param {RecognizerResult[]} results A list of recognizer results to be processed.
+     * @returns {RecognizerResult} The the result cross-trained by the multiple results of the cross-training recognizers.
      */
     private processResults(results: RecognizerResult[]): RecognizerResult {
         const recognizerResults: Record<string, RecognizerResult> = {};
@@ -161,22 +174,26 @@ export class CrossTrainedRecognizerSet extends Recognizer implements CrossTraine
         const recognizerResult: RecognizerResult = {
             text,
             intents: { None: { score: 1.0 } },
-            entities: mergedEntities
+            entities: mergedEntities,
         };
         return recognizerResult;
     }
 
     /**
      * Check if an intent is triggering redirects.
-     * @param intent
+     *
+     * @param {string} intent The intent.
+     * @returns {boolean} Boolean result of whether or not an intent begins with the `DeferToRecognizer_` prefix.
      */
     private isRedirect(intent: string): boolean {
         return intent.startsWith(deferPrefix);
     }
 
     /**
-     * Extracts the redirect id from an intent.
-     * @param intent Intent string contains redirect id.
+     * Extracts the redirect ID from an intent.
+     *
+     * @param {string} intent Intent string contains redirect id.
+     * @returns {string} The redirect ID.
      */
     private getRedirectId(intent: string): string {
         return intent.substr(deferPrefix.length);

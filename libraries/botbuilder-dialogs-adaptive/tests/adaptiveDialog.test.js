@@ -1,11 +1,4 @@
-const {
-    ConversationState,
-    MessageFactory,
-    MemoryStorage,
-    TestAdapter,
-    useBotState,
-    UserState,
-} = require('botbuilder');
+const { ConversationState, MessageFactory, MemoryStorage, TestAdapter, useBotState, UserState } = require('botbuilder');
 const { DialogManager } = require('botbuilder-dialogs');
 const {
     ActivityTemplate,

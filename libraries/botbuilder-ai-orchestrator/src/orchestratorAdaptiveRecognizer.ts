@@ -19,6 +19,7 @@ import {
     StringExpression,
     StringExpressionConverter,
 } from 'adaptive-expressions';
+import { AdaptiveRecognizer } from 'botbuilder-dialogs-adaptive';
 import { Activity, RecognizerResult } from 'botbuilder-core';
 import { Converter, ConverterFactory, DialogContext, Recognizer, RecognizerConfiguration } from 'botbuilder-dialogs';
 
@@ -52,7 +53,9 @@ type Orchestrator = {
 /**
  * Class that represents an adaptive Orchestrator recognizer.
  */
-export class OrchestratorAdaptiveRecognizer extends Recognizer implements OrchestratorAdaptiveRecognizerConfiguration {
+export class OrchestratorAdaptiveRecognizer
+    extends AdaptiveRecognizer
+    implements OrchestratorAdaptiveRecognizerConfiguration {
     public static $kind = 'Microsoft.OrchestratorRecognizer';
 
     /**
@@ -242,8 +245,8 @@ export class OrchestratorAdaptiveRecognizer extends Recognizer implements Orches
         );
         this.trackRecognizerResult(
             dc,
-            'OrchestratorAdaptiveRecognizer',
-            this.fillRecognizerResultTelemetryProperties(recognizerResult, telemetryProperties),
+            'OrchestratorAdaptiveRecognizerResult',
+            this.fillRecognizerResultTelemetryProperties(recognizerResult, telemetryProperties, dc),
             telemetryMetrics
         );
 

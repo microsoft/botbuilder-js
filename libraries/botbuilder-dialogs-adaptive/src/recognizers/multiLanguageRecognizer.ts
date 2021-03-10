@@ -11,13 +11,14 @@ import { Converter, ConverterFactory, DialogContext, Recognizer, RecognizerConfi
 import { LanguagePolicy, LanguagePolicyConverter } from '../languagePolicy';
 import { MultiLanguageRecognizerConverter } from '../converters';
 import { languagePolicyKey } from '../languageGeneratorExtensions';
+import { AdaptiveRecognizer } from './adaptiveRecognizer';
 
 export interface MultiLanguageRecognizerConfiguration extends RecognizerConfiguration {
     languagePolicy?: Record<string, string[]> | LanguagePolicy;
     recognizers?: Record<string, string> | Record<string, Recognizer>;
 }
 
-export class MultiLanguageRecognizer extends Recognizer implements MultiLanguageRecognizerConfiguration {
+export class MultiLanguageRecognizer extends AdaptiveRecognizer implements MultiLanguageRecognizerConfiguration {
     public static $kind = 'Microsoft.MultiLanguageRecognizer';
 
     public languagePolicy: LanguagePolicy;
@@ -72,8 +73,8 @@ export class MultiLanguageRecognizer extends Recognizer implements MultiLanguage
                 );
                 this.trackRecognizerResult(
                     dialogContext,
-                    'MultiLanguagesRecognizerResult',
-                    this.fillRecognizerResultTelemetryProperties(result, telemetryProperties),
+                    'MultiLanguageRecognizerResult',
+                    this.fillRecognizerResultTelemetryProperties(result, telemetryProperties, dialogContext),
                     telemetryMetrics
                 );
                 return result;
@@ -88,7 +89,7 @@ export class MultiLanguageRecognizer extends Recognizer implements MultiLanguage
         this.trackRecognizerResult(
             dialogContext,
             'MultiLanguagesRecognizerResult',
-            this.fillRecognizerResultTelemetryProperties(recognizerResult, telemetryProperties),
+            this.fillRecognizerResultTelemetryProperties(recognizerResult, telemetryProperties, dialogContext),
             telemetryMetrics
         );
 

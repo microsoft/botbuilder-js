@@ -21,9 +21,9 @@ import {
     StringExpression,
     StringExpressionConverter,
 } from 'adaptive-expressions';
+import omit from 'lodash/omit';
 import { RecognizerResult, Activity, getTopScoringIntent } from 'botbuilder-core';
 import { Converter, ConverterFactory, DialogContext, Recognizer, RecognizerConfiguration } from 'botbuilder-dialogs';
-import omit from 'lodash/omit';
 import { QnAMaker, QnAMakerClient, QnAMakerClientKey } from './qnaMaker';
 import {
     JoinOperator,
@@ -292,7 +292,7 @@ export class QnAMakerRecognizer extends Recognizer implements QnAMakerRecognizer
         });
 
         const endpoint: QnAMakerEndpoint = { endpointKey, host, knowledgeBaseId };
-        const logPersonalInfo = this.logPersonalInformation.getValue(dc.state);
+        const logPersonalInfo = this.getLogPersonalInformation(dc);
         return new QnAMaker(endpoint, {}, this.telemetryClient, logPersonalInfo);
     }
 
@@ -323,54 +323,57 @@ export class QnAMakerRecognizer extends Recognizer implements QnAMakerRecognizer
         });
 
         const endpoint: QnAMakerEndpoint = { endpointKey, host, knowledgeBaseId };
-        const logPersonalInfo = this.logPersonalInformation.getValue(dc.state);
+        const logPersonalInfo = this.getLogPersonalInformation(dc);
         return new QnAMaker(endpoint, {}, this.telemetryClient, logPersonalInfo);
     }
 
     /**
-     * Uses the RecognizerResult to create a list of properties to be included when tracking the result in telemetry.
+     * Uses the recognizer result to create a collection of properties to be included when tracking the result in telemetry.
      *
-     * @param {RecognizerResult} recognizerResult Recognizer result.
-     * @param {Record<string, string>} telemetryProperties A list of properties to append or override the properties created using the RecognizerResult.
-     * @param {DialogContext} dialogContext Dialog context.
-     * @returns {Record<string, string>} A dictionary that can be included when calling the trackEvent method on the TelemetryClient.
+     * @param {RecognizerResult} recognizerResult The result of the intent recognized by the recognizer.
+     * @param {Record<string, string>} telemetryProperties A list of properties created using the RecognizerResult.
+     * @param {DialogContext} dc The DialogContext.
+     * @returns {Record<string, string>} A collection of properties that can be used when calling the trackEvent method on the telemetry client.
      */
     protected fillRecognizerResultTelemetryProperties(
         recognizerResult: RecognizerResult,
         telemetryProperties: Record<string, string>,
-        dialogContext: DialogContext
+        dc: DialogContext
     ): Record<string, string> {
-        if (!dialogContext) {
+        if (!dc) {
             throw new Error(
-                'DialogContext needed for state in QnAMakerRecognizer.fillRecognizerResultTelemetryProperties method.'
+                'DialogContext needed for state in AdaptiveRecognizer.fillRecognizerResultTelemetryProperties method.'
             );
         }
-
-        const { intent: topIntent, score: topScore } = getTopScoringIntent(recognizerResult);
+        const { intent, score } = getTopScoringIntent(recognizerResult);
+        const intentsCount = Object.entries(recognizerResult.intents).length;
         const properties: Record<string, string> = {
-            TopIntent: Object.entries(recognizerResult.intents).length > 0 ? topIntent : undefined,
-            TopIntentScore: Object.entries(recognizerResult.intents).length > 0 ? topScore.toString() : undefined,
-            Intents:
-                Object.entries(recognizerResult.intents).length > 0
-                    ? JSON.stringify(recognizerResult.intents)
-                    : undefined,
+            TopIntent: intentsCount > 0 ? intent : undefined,
+            TopIntentScore: intentsCount > 0 ? score.toString() : undefined,
+            Intents: intentsCount > 0 ? JSON.stringify(recognizerResult.intents) : undefined,
             Entities: recognizerResult.entities ? JSON.stringify(recognizerResult.entities) : undefined,
             AdditionalProperties: JSON.stringify(
                 omit(recognizerResult, ['text', 'alteredText', 'intents', 'entities'])
             ),
         };
 
-        const { value: logPersonalInformation } = this.logPersonalInformation.tryGetValue(dialogContext.state);
-        if (logPersonalInformation && recognizerResult.text) {
-            properties.Text = recognizerResult.text;
-            properties.AlteredText = recognizerResult.alteredText;
+        const logPersonalInformation = this.getLogPersonalInformation(dc);
+
+        if (logPersonalInformation) {
+            properties['Text'] = recognizerResult.text;
+            properties['AlteredText'] = recognizerResult.alteredText;
         }
 
-        // Additional properties can override "stock" properties.
+        // Additional Properties can override "stock" properties.
         if (telemetryProperties) {
             return Object.assign({}, properties, telemetryProperties);
         }
-
         return properties;
+    }
+
+    private getLogPersonalInformation(dc: DialogContext): boolean {
+        return this.logPersonalInformation instanceof BoolExpression
+            ? this.logPersonalInformation.getValue(dc.state)
+            : this.logPersonalInformation;
     }
 }

@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
 const assert = require('assert');
-const { TestAdapter, TurnContext } = require('botbuilder');
-const { DialogContext, DialogSet, Recognizer } = require('botbuilder-dialogs');
+const { Recognizer } = require('botbuilder-dialogs');
 const {
     RegexRecognizer,
     IntentPattern,
@@ -24,59 +23,16 @@ const {
     TemperatureEntityRecognizer,
     UrlEntityRecognizer,
 } = require('../');
-
-const user = {
-    id: process.env['USER_ID'] || 'UK8CH2281:TKGSUQHQE',
-};
-
-const bot = {
-    id: process.env['BOT_ID'] || 'BKGSYSTFG:TKGSUQHQE',
-};
-
-const validateColorIntent = (result) => {
-    // intent assertions
-    const intents = result.intents;
-    assert.strictEqual(Object.entries(intents).length, 1, 'should recognize one intent');
-    assert.strictEqual(Object.keys(intents)[0], 'colorIntent', 'should recognize colorIntent');
-
-    // entity assertions from captured group
-    const entities = result.entities;
-    assert.notStrictEqual(entities.color, undefined, 'should find color');
-    assert.strictEqual(entities.code, undefined, 'should not find code');
-    assert.strictEqual(Object.entries(entities.color).length, 2, 'should find 2 colors');
-    assert.strictEqual(entities.color[0], 'red', 'should find red');
-    assert.strictEqual(entities.color[1], 'orange', 'should find orange');
-};
-
-const validateCodeIntent = (result) => {
-    // intent assertions
-    const intents = result.intents;
-    assert.strictEqual(Object.entries(intents).length, 1, 'should recognize one intent');
-    assert.strictEqual(Object.keys(intents)[0], 'codeIntent', 'should recognize codeIntent');
-
-    // entity assertions from captured group
-    const entities = result.entities;
-    assert.notStrictEqual(entities.code, undefined, 'should find code');
-    assert.strictEqual(entities.color, undefined, 'should not find color');
-    assert.strictEqual(Object.entries(entities.code).length, 2, 'should find 2 codes');
-    assert.strictEqual(entities.code[0], 'a1', 'should find a1');
-    assert.strictEqual(entities.code[1], 'b2', 'should find b2');
-};
-
-const createMessageActivity = (text) => {
-    return {
-        type: 'message',
-        text: text || 'test activity',
-        recipient: user,
-        from: bot,
-        locale: 'en-us',
-    };
-};
-
-const createContext = (text) => {
-    const activity = createMessageActivity(text);
-    return new DialogContext(new DialogSet(), new TurnContext(new TestAdapter(), activity), {});
-};
+const {
+    colorIntentText,
+    codeIntentText,
+    recognizeIntentAndValidateTelemetry,
+    recognizeIntentAndValidateTelemetry_withCustomActivity,
+    spyOnTelemetryClientTrackEvent,
+} = require('./recognizerTelemetryUtils');
+const { createContext, createMessageActivity } = require('./activityUtils');
+const { validateCodeIntent, validateColorIntent } = require('./intentValidations');
+const { Culture } = require('@microsoft/recognizers-text-suite');
 
 describe('RegexRecognizer Tests', () => {
     const recognizer = new RegexRecognizer().configure({
@@ -125,8 +81,8 @@ describe('RegexRecognizer Tests', () => {
     };
 
     it('recognize regex pattern with dialog context', async function () {
-        const dc = createContext('');
-        const activity = createMessageActivity('intent a1 b2');
+        const dc = createContext(codeIntentText);
+        const activity = dc.context.activity;
         let result = await recognizer.recognize(dc, activity);
         validateCodeIntent(result);
 
@@ -135,14 +91,14 @@ describe('RegexRecognizer Tests', () => {
         assert.strictEqual(entities.text, undefined);
         assert(entities.code);
 
-        activity.text = 'I would like color red and orange';
+        activity.text = colorIntentText;
         result = await recognizer.recognize(dc, activity);
         validateColorIntent(result);
     });
 
     it('recognize regex pattern with custom activity', async function () {
         const dc = createContext('');
-        const activity = createMessageActivity('intent a1 b2');
+        const activity = createMessageActivity(codeIntentText);
         let result = await recognizer.recognize(dc, activity);
         validateCodeIntent(result);
 
@@ -151,10 +107,100 @@ describe('RegexRecognizer Tests', () => {
         validateColorIntent(result);
     });
 
+    describe('telemetry', () => {
+        let spy;
+
+        beforeEach(() => {
+            spy = spyOnTelemetryClientTrackEvent(recognizer);
+        });
+
+        afterEach(() => {
+            spy.restore();
+        });
+
+        it('logs PII when logPersonalInformation is true', async function () {
+            recognizer.logPersonalInformation = true;
+
+            await recognizeIntentAndValidateTelemetry({
+                text: codeIntentText,
+                callCount: 1,
+                recognizer,
+                spy,
+            });
+            await recognizeIntentAndValidateTelemetry({
+                text: colorIntentText,
+                callCount: 2,
+                recognizer,
+                spy,
+            });
+
+            await recognizeIntentAndValidateTelemetry_withCustomActivity({
+                text: codeIntentText,
+                callCount: 3,
+                recognizer,
+                spy,
+            });
+        });
+
+        it('does not log PII when logPersonalInformation is false', async function () {
+            recognizer.logPersonalInformation = false;
+
+            await recognizeIntentAndValidateTelemetry({
+                text: codeIntentText,
+                callCount: 1,
+                recognizer,
+                spy,
+            });
+            await recognizeIntentAndValidateTelemetry({
+                text: colorIntentText,
+                callCount: 2,
+                recognizer,
+                spy,
+            });
+
+            await recognizeIntentAndValidateTelemetry_withCustomActivity({
+                text: codeIntentText,
+                callCount: 3,
+                recognizer,
+                spy,
+            });
+        });
+
+        it('should refrain from logging PII by default', async function () {
+            const recognizerWithDefaultLogPii = new RegexRecognizer().configure({
+                intents: [
+                    new IntentPattern('codeIntent', '(?<code>[a-z][0-9])'),
+                    new IntentPattern('colorIntent', '(color|colour)'),
+                ],
+                entities: new EntityRecognizerSet(
+                    new NumberEntityRecognizer(),
+                    new OrdinalEntityRecognizer(),
+                    new RegexEntityRecognizer('color', '(red|green|blue|purple|orange|violet|white|black)'),
+                    new RegexEntityRecognizer('backgroundColor', '(back|background) {color}'),
+                    new RegexEntityRecognizer('foregroundColor', '(foreground|front) {color}')
+                ),
+            });
+            const trackEventSpy = spyOnTelemetryClientTrackEvent(recognizerWithDefaultLogPii);
+            await recognizeIntentAndValidateTelemetry({
+                text: codeIntentText,
+                callCount: 1,
+                recognizer: recognizerWithDefaultLogPii,
+                spy: trackEventSpy,
+            });
+
+            await recognizeIntentAndValidateTelemetry_withCustomActivity({
+                text: codeIntentText,
+                callCount: 2,
+                recognizer: recognizerWithDefaultLogPii,
+                spy: trackEventSpy,
+            });
+        });
+    });
+
     it('recognize regex pattern with text and locale', async function () {
         const dc = createContext('');
-        const activity = createMessageActivity('intent a1 b2');
-        activity.locale = 'en-us';
+        const activity = createMessageActivity(codeIntentText);
+        activity.locale = Culture.English;
         let result = await recognizer.recognize(dc, activity);
         validateCodeIntent(result);
 
