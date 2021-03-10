@@ -124,7 +124,7 @@ export class InternalFunctionUtils {
      */
     public static accessIndex(instance: unknown, index: number): ValueWithError {
         // NOTE: This returns undefined rather than an error if property is not present
-        if (instance === null || instance === undefined) {
+        if (instance == null) {
             return { value: undefined, error: undefined };
         }
 
@@ -286,7 +286,7 @@ export class InternalFunctionUtils {
 
         if (typeof instance === 'boolean') {
             result = instance;
-        } else if (instance === undefined || instance === null) {
+        } else if (instance == null) {
             result = false;
         }
 
@@ -449,8 +449,8 @@ export class InternalFunctionUtils {
      * @param args Input args. Compare the first param and second param.
      */
     public static isEqual(firstItem: unknown, secondItem: unknown): boolean {
-        if (firstItem === undefined || firstItem === null || secondItem === undefined || secondItem === null) {
-            return (firstItem === undefined || firstItem === null) && (secondItem === undefined || secondItem === null);
+        if (firstItem == null || secondItem == null) {
+            return firstItem == null && secondItem == null;
         }
 
         if (
@@ -479,6 +479,25 @@ export class InternalFunctionUtils {
             return firstItem === secondItem;
         } catch {
             return false;
+        }
+    }
+
+    /**
+     * Common Stringfy an object.
+     * @param input input object.
+     */
+    public static commonStringify(input: unknown): string {
+        if (input == null) {
+            return '';
+        }
+        if (Array.isArray(input)) {
+            return input.toString();
+        } else if (typeof input === 'object') {
+            return JSON.stringify(input)
+                .replace(/(^['"]*)/g, '')
+                .replace(/(['"]*$)/g, '');
+        } else {
+            return input.toString();
         }
     }
 

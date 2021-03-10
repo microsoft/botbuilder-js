@@ -29,15 +29,15 @@ export class IsMatch extends ExpressionEvaluator {
      * @private
      */
     private static evaluator(): EvaluateExpressionDelegate {
-        return FunctionUtils.applyWithError((args: readonly unknown[]): ValueWithError => {
+        return FunctionUtils.applyWithError((args: readonly string[]): ValueWithError => {
             let value = false;
             let error: string;
-            if (args[0] === undefined || args[0] === '') {
+            if (args[0] == null || args[0] === '') {
                 value = false;
                 error = 'regular expression is empty.';
             } else {
-                const regex: RegExp = CommonRegex.CreateRegex(args[1].toString());
-                value = regex.test(args[0].toString());
+                const regex: RegExp = CommonRegex.CreateRegex(args[1]);
+                value = regex.test(args[0]);
             }
 
             return { value, error };

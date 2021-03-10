@@ -31,16 +31,18 @@ export class Merge extends ExpressionEvaluator {
             (args: readonly unknown[]): ValueWithError => {
                 let value: unknown;
                 let error: string;
+                const firstChild = args[0];
+                const secondChild = args[1];
                 if (
-                    typeof args[0] === 'object' &&
-                    !Array.isArray(args[0]) &&
-                    typeof args[1] === 'object' &&
-                    !Array.isArray(args[1])
+                    typeof firstChild === 'object' &&
+                    !Array.isArray(firstChild) &&
+                    typeof secondChild === 'object' &&
+                    !Array.isArray(secondChild)
                 ) {
-                    Object.assign(args[0], args[1]);
-                    value = args[0];
+                    Object.assign(firstChild, secondChild);
+                    value = firstChild;
                 } else {
-                    error = `The argumets ${args[0]} and ${args[1]} must be JSON objects.`;
+                    error = `The argumets ${firstChild} and ${secondChild} must be JSON objects.`;
                 }
 
                 return { value, error };

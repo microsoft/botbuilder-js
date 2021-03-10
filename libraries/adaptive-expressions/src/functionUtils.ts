@@ -309,7 +309,7 @@ export class FunctionUtils {
      */
     public static verifyNotNull(value: unknown, expression: Expression, _: number): string | undefined {
         let error: string;
-        if (value === undefined || value === null) {
+        if (value == null) {
             error = `${expression} is null.`;
         }
 

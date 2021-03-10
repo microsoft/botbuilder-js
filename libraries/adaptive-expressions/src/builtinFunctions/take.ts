@@ -37,13 +37,12 @@ export class Take extends ExpressionEvaluator {
             if (Array.isArray(arr) || typeof arr === 'string') {
                 const startExpr: Expression = expression.children[1];
                 const startEvaluateResult = startExpr.tryEvaluate(state, options);
-                let start = startEvaluateResult.value;
+                const start = startEvaluateResult.value;
                 error = startEvaluateResult.error;
 
                 if (!error) {
                     if (FunctionUtils.isInteger(start)) {
-                        start = Math.max(start, 0);
-                        result = arr.slice(0, start);
+                        result = arr.slice(0, Math.max(start, 0));
                     } else {
                         error = `${startExpr} is not an integer.`;
                     }

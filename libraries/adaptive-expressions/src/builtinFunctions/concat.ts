@@ -10,6 +10,7 @@ import { EvaluateExpressionDelegate, ExpressionEvaluator } from '../expressionEv
 import { ExpressionType } from '../expressionType';
 import { FunctionUtils } from '../functionUtils';
 import { ReturnType } from '../returnType';
+import { InternalFunctionUtils } from '../functionUtils.internal';
 
 /**
  * Combine two or more strings, and return the combined string.
@@ -44,24 +45,10 @@ export class Concat extends ExpressionEvaluator {
             } else if (Array.isArray(firstItem) && Array.isArray(secondItem)) {
                 return firstItem.concat(secondItem);
             } else {
-                return Concat.commonStringify(firstItem) + Concat.commonStringify(secondItem);
+                return (
+                    InternalFunctionUtils.commonStringify(firstItem) + InternalFunctionUtils.commonStringify(secondItem)
+                );
             }
         });
-    }
-
-    /**
-     * @private
-     */
-    private static commonStringify(input: unknown): string {
-        if (input == null) {
-            return '';
-        }
-        if (Array.isArray(input)) {
-            return input.toString();
-        } else if (typeof input === 'object') {
-            return JSON.stringify(input);
-        } else {
-            return input.toString();
-        }
     }
 }

@@ -25,6 +25,7 @@ export class Year extends ExpressionEvaluator {
 
     /**
      * @private
+     *
      */
     private static evaluator(): EvaluateExpressionDelegate {
         return FunctionUtils.applyWithError((args: readonly string[]): ValueWithError => {

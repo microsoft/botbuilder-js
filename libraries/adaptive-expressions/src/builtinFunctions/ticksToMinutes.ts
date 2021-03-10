@@ -13,6 +13,7 @@ import { FunctionUtils } from '../functionUtils';
 import { MemoryInterface } from '../memory/memoryInterface';
 import { Options } from '../options';
 import { ReturnType } from '../returnType';
+import bigInt from 'big-integer';
 
 /**
  * Convert ticks to number of minutes.
@@ -43,6 +44,8 @@ export class TicksToMinutes extends ExpressionEvaluator {
         if (!error) {
             if (FunctionUtils.isInteger(firstChild)) {
                 value = firstChild / TicksToMinutes.TicksPerMinute;
+            } else if (bigInt.isInstance(firstChild)) {
+                value = firstChild.toJSNumber() / TicksToMinutes.TicksPerMinute;
             } else {
                 error = `${expr} should contain an integer of ticks`;
             }
