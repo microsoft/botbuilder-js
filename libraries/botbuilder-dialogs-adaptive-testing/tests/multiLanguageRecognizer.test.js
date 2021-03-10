@@ -42,4 +42,8 @@ describe('MultiLanguageRecognizerTests', function () {
     it('LanguagePolicy', async () => {
         await TestUtils.runTestScript(resourceExplorer, 'MultiLanguageRecognizerTest_LanguagePolicy');
     });
+
+    it('Locale case insensitivity', async () => {
+        await TestUtils.runTestScript(resourceExplorer, 'MultiLanguageRecognizerTest_LocaleCaseInsensitivity');
+    });
 });

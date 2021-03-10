@@ -1,4 +1,5 @@
 const assert = require('assert');
+const { uniqueId } = require('lodash');
 const sinon = require('sinon');
 const { BotAdapter, TurnContext } = require('../');
 
@@ -53,6 +54,20 @@ describe('BotAdapter', () => {
                 'every middleware was called'
             );
             assert(handler.called, 'handler was called');
+        });
+    });
+
+    describe('Get locale from activity', () => {
+        it('should have locale', async () => {
+            const adapter = getAdapter();
+            const activity = testMessage;
+            activity.locale = 'de-DE';
+            const handler = sandbox.fake((context) => {
+                assert('de-DE', context.activity.locale);
+                assert('de-DE', context.locale);
+            });
+
+            await adapter.processRequest(activity, handler);
         });
     });
 
