@@ -21,6 +21,7 @@ import {
     StringExpression,
     StringExpressionConverter,
 } from 'adaptive-expressions';
+import { omit } from 'lodash';
 import { RecognizerResult, Activity, getTopScoringIntent } from 'botbuilder-core';
 import { Converter, ConverterFactory, DialogContext, Recognizer, RecognizerConfiguration } from 'botbuilder-dialogs';
 import { QnAMaker, QnAMakerClient, QnAMakerClientKey } from './qnaMaker';
@@ -351,7 +352,9 @@ export class QnAMakerRecognizer extends Recognizer implements QnAMakerRecognizer
             TopIntentScore: intentsCount > 0 ? score.toString() : undefined,
             Intents: intentsCount > 0 ? JSON.stringify(recognizerResult.intents) : undefined,
             Entities: recognizerResult.entities ? JSON.stringify(recognizerResult.entities) : undefined,
-            AdditionalProperties: this.stringifyAdditionalPropertiesOfRecognizerResult(recognizerResult),
+            AdditionalProperties: JSON.stringify(
+                omit(recognizerResult, ['text', 'alteredText', 'intents', 'entities'])
+            ),
         };
 
         const logPersonalInformation = this.getLogPersonalInformation(dc);

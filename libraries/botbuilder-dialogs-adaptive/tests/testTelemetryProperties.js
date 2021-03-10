@@ -33,7 +33,7 @@ const getCodeIntentProperties = () => ({
             ],
         },
     }),
-    AdditionalProperties: undefined,
+    AdditionalProperties: '{}',
 });
 
 /**
@@ -70,7 +70,7 @@ const getColorIntentProperties = () => ({
             ],
         },
     }),
-    AdditionalProperties: undefined,
+    AdditionalProperties: '{}',
 });
 
 module.exports = {

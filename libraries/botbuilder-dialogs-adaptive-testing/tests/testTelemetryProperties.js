@@ -28,7 +28,7 @@ const getCodeIntentProperties = () => ({
         },
         code: ['a1', 'b2'],
     }),
-    AdditionalProperties: undefined,
+    AdditionalProperties: '{}',
 });
 
 /**
@@ -65,7 +65,7 @@ const getColorIntentProperties = () => ({
         },
         color: ['red', 'orange'],
     }),
-    AdditionalProperties: undefined,
+    AdditionalProperties: '{}',
 });
 
 /**
@@ -80,7 +80,7 @@ const getGreetingIntentProperties = () => ({
         greeting: { score: 1, pattern: 'howdy' },
     }),
     Entities: '{}',
-    AdditionalProperties: undefined,
+    AdditionalProperties: '{}',
 });
 
 /**

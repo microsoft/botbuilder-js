@@ -6,6 +6,7 @@
  * Licensed under the MIT License.
  */
 import { BoolExpression } from 'adaptive-expressions';
+import { omit } from 'lodash';
 import { getTopScoringIntent, RecognizerResult } from 'botbuilder-core';
 import { DialogContext, Recognizer } from 'botbuilder-dialogs';
 
@@ -47,7 +48,9 @@ export abstract class AdaptiveRecognizer extends Recognizer implements AdaptiveR
             TopIntentScore: intentsCount > 0 ? score.toString() : undefined,
             Intents: intentsCount > 0 ? JSON.stringify(recognizerResult.intents) : undefined,
             Entities: recognizerResult.entities ? JSON.stringify(recognizerResult.entities) : undefined,
-            AdditionalProperties: this.stringifyAdditionalPropertiesOfRecognizerResult(recognizerResult),
+            AdditionalProperties: JSON.stringify(
+                omit(recognizerResult, ['text', 'alteredText', 'intents', 'entities'])
+            ),
         };
 
         const logPersonalInformation =
