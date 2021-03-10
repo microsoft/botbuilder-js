@@ -9,17 +9,17 @@ const getCodeIntentProperties = () => ({
     Intents: JSON.stringify({
         codeIntent: {
             score: 1,
-            pattern: '(?<code>[a-z][0-9])'
-        }
+            pattern: '(?<code>[a-z][0-9])',
+        },
     }),
     Entities: JSON.stringify({
-        code: [ 'a1', 'b2' ],
+        code: ['a1', 'b2'],
         $instance: {
             code: [
                 {
                     startIndex: 7,
-                    endIndex:9,
-                    score:1,
+                    endIndex: 9,
+                    score: 1,
                     text: 'a1',
                     type: 'code',
                 },
@@ -41,32 +41,34 @@ const getCodeIntentProperties = () => ({
  *
  * @returns {*} Object of expected telemtry properties.
  */
- const getColorIntentProperties = () => ({
+const getColorIntentProperties = () => ({
     TopIntent: 'colorIntent',
     TopIntentScore: '1',
     Intents: JSON.stringify({
-        colorIntent: { score: 1, pattern: '(color|colour)'}
+        colorIntent: { score: 1, pattern: '(color|colour)' },
     }),
     Entities: JSON.stringify({
-        color: [ 'red', 'orange' ],
-        $instance: { color: [
-            {
-                startIndex: 19,
-                endIndex: 23,
-                score: 1,
-                text: 'red',
-                type: 'color',
-                resolution: {},
-            },
-            {
-                startIndex: 27,
-                endIndex: 34,
-                score: 1,
-                text: 'orange',
-                type: 'color',
-                resolution: {},
-            },
-        ]},
+        color: ['red', 'orange'],
+        $instance: {
+            color: [
+                {
+                    startIndex: 19,
+                    endIndex: 23,
+                    score: 1,
+                    text: 'red',
+                    type: 'color',
+                    resolution: {},
+                },
+                {
+                    startIndex: 27,
+                    endIndex: 34,
+                    score: 1,
+                    text: 'orange',
+                    type: 'color',
+                    resolution: {},
+                },
+            ],
+        },
     }),
     AdditionalProperties: undefined,
 });

@@ -3,11 +3,14 @@ const { NullTelemetryClient } = require('botbuilder');
 
 /**
  * Create telemetry client and stub.
+ *
  * @param {Function} captureTelemetryAction telemetry action callback.
  */
 function createTelemetryClientAndStub(captureTelemetryAction) {
     if (captureTelemetryAction && typeof captureTelemetryAction !== 'function') {
-        throw new TypeError(`Failed test arrangement - createtelemetryClientAndStub() received ${ typeof captureTelemetryAction } instead of undefined or a function.`);
+        throw new TypeError(
+            `Failed test arrangement - createtelemetryClientAndStub() received ${typeof captureTelemetryAction} instead of undefined or a function.`
+        );
     }
 
     function wrapAction(...args) {
@@ -24,6 +27,6 @@ function createTelemetryClientAndStub(captureTelemetryAction) {
     }
 
     return [telemetryClient, trackEventStub];
-};
+}
 
 module.exports.createTelemetryClientAndStub = createTelemetryClientAndStub;
