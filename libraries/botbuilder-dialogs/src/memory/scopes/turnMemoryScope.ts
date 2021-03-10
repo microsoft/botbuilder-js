@@ -12,7 +12,7 @@ import { DialogContext } from '../../dialogContext';
 /**
  * @private
  */
-const TURN_STATE = Symbol('turn');
+const TURN_STATE = 'turn';
 
 /**
  * TurnMemoryScope represents memory scoped to the current turn.

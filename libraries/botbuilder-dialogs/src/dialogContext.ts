@@ -191,14 +191,20 @@ export class DialogContext {
      * Obtain the CultureInfo in DialogContext.
      * @returns a locale string.
      */
-    public getLocale(): string
-    {
-        let locale: string = undefined;
-        if (this.context.locale !== undefined && this.context.locale !== null) {
-            locale = this.context.locale;
+    public getLocale(): string {
+        const _turnLocaleProperty = 'turn.locale';
+
+        const turnLocaleValue = this.state.getValue(_turnLocaleProperty);
+        if (turnLocaleValue) {
+            return turnLocaleValue;
         }
-        
-        return locale;
+
+        const locale = this.context.activity?.locale;
+        if (locale !== undefined) {
+            return locale;
+        }
+
+        return Intl.DateTimeFormat().resolvedOptions().locale;
     }
 
     /**

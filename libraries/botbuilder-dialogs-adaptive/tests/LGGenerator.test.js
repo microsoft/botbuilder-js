@@ -123,6 +123,8 @@ describe('LGLanguageGenerator', function() {
 
         this.beforeAll(async function() {
             const multiLanguageResources = await LanguageResourceLoader.groupByLocale(resourceExplorer);
+
+            //Should have a setup for the threadLocale here.
         
             let resource = resourceExplorer.getResource('test.lg');
             lg.languageGenerators.set('', new TemplateEngineLanguageGenerator(resource, multiLanguageResources));

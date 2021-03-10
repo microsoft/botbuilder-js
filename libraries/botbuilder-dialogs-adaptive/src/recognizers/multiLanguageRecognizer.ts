@@ -50,7 +50,7 @@ export class MultiLanguageRecognizer extends AdaptiveRecognizer implements Multi
             }
         }
 
-        const locale = activity.locale || '';
+        const locale = (activity.locale ?? '').toLowerCase();
         const policy: string[] = [];
         if (languagepolicy.has(locale)) {
             languagepolicy.get(locale).forEach((u: string): number => policy.push(u));
