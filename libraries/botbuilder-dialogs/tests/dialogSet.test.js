@@ -123,7 +123,8 @@ describe('DialogSet', function () {
             .assertReply('Greetings')
             .send(continueMessage)
             .assertReply('Good bye!')
-            .then(() => done());
+            .then(() => done())
+            .startTest();
     });
 
     it('should generate a version hash of added dialogs.', function (done) {

@@ -47,7 +47,8 @@ describe('Memory - Memory Scopes', function () {
             .assertReply('adaptiveDialog2')
             .assertReply('false')
             .assertReply('true')
-            .assertReply('true');
+            .assertReply('true')
+            .startTest();
     });
 
     it('DialogContextMemoryScope interruption test', async function () {

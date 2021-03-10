@@ -55,10 +55,6 @@ export abstract class MultiLanguageGeneratorBase<
      * @param data Data to bind to.
      */
     public async generate(dialogContext: DialogContext, template: string, data: D): Promise<T> {
-        const targetLocale = dialogContext.context.activity.locale
-            ? dialogContext.context.activity.locale.toLocaleLowerCase()
-            : '';
-
         // priority
         // 1. local policy
         // 2. shared policy in turnContext
@@ -72,6 +68,7 @@ export abstract class MultiLanguageGeneratorBase<
 
         // see if we have any locales that match
         const fallbackLocales = [];
+        const targetLocale = dialogContext.getLocale().toLowerCase();
         if (this.languagePolicy.has(targetLocale)) {
             this.languagePolicy.get(targetLocale).forEach((u: string): number => fallbackLocales.push(u));
         }

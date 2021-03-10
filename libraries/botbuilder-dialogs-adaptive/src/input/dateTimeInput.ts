@@ -52,7 +52,10 @@ export class DateTimeInput extends InputDialog implements DateTimeInputConfigura
     protected async onRecognizeInput(dc: DialogContext): Promise<InputState> {
         // Recognize input and filter out non-attachments
         const input: object = dc.state.getValue(InputDialog.VALUE_PROPERTY);
-        const locale: string = dc.context.activity.locale || this.defaultLocale.getValue(dc.state) || 'en-us';
+        /**
+         * @deprecated Note: Default locale will be considered for deprecation as part of 4.13.
+         */
+        const locale: string = dc.getLocale() ?? this.defaultLocale?.getValue(dc.state);
         const results: any[] = Recognizers.recognizeDateTime(input.toString(), locale);
 
         if (results.length > 0 && results[0].resolution) {

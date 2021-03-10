@@ -36,7 +36,8 @@ describe('AttachmentPrompt', function() {
         await adapter.send('Hello')
         .assertReply('Please send an attachment.')
         .send(answerMessage)
-        .assertReply('test1');
+        .assertReply('test1')
+        .startTest();
     });
 
     it('should call AttachmentPrompt with custom validator.', function (done) {
@@ -66,7 +67,8 @@ describe('AttachmentPrompt', function() {
         adapter.send('Hello')
         .assertReply('Please send an attachment.')
         .send(answerMessage)
-        .assertReply('test1');
+        .assertReply('test1')
+        .startTest();
         done();
     });
 
@@ -100,6 +102,7 @@ describe('AttachmentPrompt', function() {
         .assertReply('Please try again.')
         .send(answerMessage)
         .assertReply('test1')
+        .startTest();
         done();
     });
 
@@ -137,6 +140,7 @@ describe('AttachmentPrompt', function() {
         .assertReply('Bad input.')
         .send(answerMessage)
         .assertReply('test1')
+        .startTest();
         done();
     });
 
@@ -165,6 +169,7 @@ describe('AttachmentPrompt', function() {
         .send('what?')
         .send(answerMessage)
         .assertReply('test1')
+        .startTest();
         done();
     });
 

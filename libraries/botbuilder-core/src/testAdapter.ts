@@ -20,6 +20,7 @@ import {
     ChannelAccount,
     Channels,
     RoleTypes,
+    ActivityEx,
 } from 'botframework-schema';
 import { BotAdapter } from './botAdapter';
 import { ExtendedUserTokenProvider } from './extendedUserTokenProvider';
@@ -35,7 +36,7 @@ import { TurnContext } from './turnContext';
  * @param TestActivityInspector.activity The activity being inspected.
  * @param TestActivityInspector.description Text to log in the event of an error.
  */
-export type TestActivityInspector = (activity: Partial<Activity>, description: string) => void;
+export type TestActivityInspector = (activity: Partial<Activity>, description?: string) => void;
 
 /**
  * Test adapter used for unit tests. This adapter can be used to simulate sending messages from the
@@ -139,6 +140,7 @@ export class TestAdapter extends BotAdapter implements ExtendedUserTokenProvider
             conversation: { isGroup: false, id: name, name: name } as ConversationAccount,
             user: { id: user.toLowerCase(), name: user } as ChannelAccount,
             bot: { id: bot.toLowerCase(), name: bot } as ChannelAccount,
+            locale: 'en-us',
         };
         return conversationReference;
     }
@@ -611,7 +613,7 @@ export class TestAdapter extends BotAdapter implements ExtendedUserTokenProvider
             },
         };
     }
-  
+
     /**
      * Performs a token exchange operation such as for single sign-on.
      * @param context [TurnContext](xref:botbuilder-core.TurnContext) for the current turn of conversation with the user.
@@ -753,8 +755,13 @@ export class TestFlow {
      * INTERNAL: creates a new TestFlow instance.
      * @param previous Promise chain for the current test sequence.
      * @param adapter Adapter under tested.
+     * @param callback The bot turn processing logic to test.
      */
-    constructor(public previous: Promise<void>, private adapter: TestAdapter) {}
+    constructor(
+        public previous: Promise<void>,
+        private adapter: TestAdapter,
+        private callback?: (turnContext: TurnContext) => Promise<unknown>
+    ) {}
 
     /**
      * Send something to the bot and expects the bot to return with a given reply. This is simply a
@@ -780,8 +787,27 @@ export class TestFlow {
      */
     public send(userSays: string | Partial<Activity>): TestFlow {
         return new TestFlow(
-            this.previous.then(() => this.adapter.processActivity(userSays)),
-            this.adapter
+            this.previous.then(() => this.adapter.processActivity(userSays, this.callback)),
+            this.adapter,
+            this.callback
+        );
+    }
+
+    /**
+     * Creates a conversation update activity and process the activity.
+     *
+     * @returns {TestFlow} A new TestFlow object.
+     */
+    public sendConversationUpdate(): TestFlow {
+        return new TestFlow(
+            this.previous.then(() => {
+                const cu = ActivityEx.createConversationUpdateActivity();
+                cu.membersAdded ??= [];
+                cu.membersAdded.push(this.adapter.conversation.user);
+                return this.adapter.processActivity(cu, this.callback);
+            }),
+            this.adapter,
+            this.callback
         );
     }
 
@@ -860,7 +886,8 @@ export class TestFlow {
                     waitForActivity();
                 });
             }),
-            this.adapter
+            this.adapter,
+            this.callback
         );
     }
 
@@ -901,7 +928,8 @@ export class TestFlow {
                     waitForActivity();
                 });
             }),
-            this.adapter
+            this.adapter,
+            this.callback
         );
     }
 
@@ -941,7 +969,8 @@ export class TestFlow {
                     setTimeout(resolve, ms);
                 });
             }),
-            this.adapter
+            this.adapter,
+            this.callback
         );
     }
 
@@ -950,7 +979,7 @@ export class TestFlow {
      * @param onFulfilled Code to run if the test is currently passing.
      */
     public then(onFulfilled?: () => void): TestFlow {
-        return new TestFlow(this.previous.then(onFulfilled), this.adapter);
+        return new TestFlow(this.previous.then(onFulfilled), this.adapter, this.callback);
     }
 
     /**
@@ -958,7 +987,7 @@ export class TestFlow {
      * @param onRejected Code to run if the test has thrown an error.
      */
     public catch(onRejected?: (reason: any) => void): TestFlow {
-        return new TestFlow(this.previous.catch(onRejected), this.adapter);
+        return new TestFlow(this.previous.catch(onRejected), this.adapter, this.callback);
     }
 
     /**

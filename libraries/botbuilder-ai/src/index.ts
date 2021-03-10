@@ -19,6 +19,7 @@ export * from './luisRecognizer';
 export * from './luisTelemetryConstants';
 export * from './numberWithUnits';
 export * from './ordinalV2';
+export * from './qnaCardBuilder';
 export {
     QNAMAKER_TRACE_TYPE,
     QNAMAKER_TRACE_NAME,
