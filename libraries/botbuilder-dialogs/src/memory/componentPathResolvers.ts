@@ -20,9 +20,9 @@ export interface ComponentPathResolvers {
  * Check if a [ComponentRegistration](xref:botbuilder-core.ComponentRegistration) is
  * [ComponentPathResolvers](xref:botbuilder-dialogs.ComponentPathResolvers) or not.
  *
- * @param {ComponentRegistration} component The component registration.
+ * @param {any} component The component registration.
  * @returns {boolean} Type check result.
  */
-export function isComponentPathResolvers(component: any): component is ComponentPathResolvers {
-    return tests.isObject(component) && tests.isFunc(component['getPathResolvers']);
+export function isComponentPathResolvers(component: unknown): component is ComponentPathResolvers {
+    return tests.unsafe.isObjectAs<ComponentPathResolvers>(component) && tests.isFunc(component.getPathResolvers);
 }

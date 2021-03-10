@@ -20,9 +20,9 @@ export interface ComponentMemoryScopes {
  * Check if a [ComponentRegistration](xref:botbuilder-core.ComponentRegistration) is
  * [ComponentMemoryScopes](xref:botbuilder-dialogs.ComponentMemoryScopes) or not.
  *
- * @param {ComponentRegistration} component The component registration.
+ * @param {any} component The component registration.
  * @returns {boolean} Type check result.
  */
-export function isComponentMemoryScopes(component: any): component is ComponentMemoryScopes {
-    return tests.isObject(component) && tests.isFunc(component['getMemoryScopes']);
+export function isComponentMemoryScopes(component: unknown): component is ComponentMemoryScopes {
+    return tests.unsafe.isObjectAs<ComponentMemoryScopes>(component) && tests.isFunc(component.getMemoryScopes);
 }
