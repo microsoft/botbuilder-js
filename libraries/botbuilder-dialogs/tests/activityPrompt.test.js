@@ -44,7 +44,8 @@ describe('ActivityPrompt', function () {
         await adapter.send('Hello')
             .assertReply('Please send an activity.')
             .send('test')
-            .assertReply('You said test');
+            .assertReply('You said test')
+            .startTest();
     });
 
     it('should re-prompt with original prompt if validator returned false.', async function () {
@@ -73,7 +74,8 @@ describe('ActivityPrompt', function () {
         await adapter.send('Hello')
             .assertReply('Please send an activity.')
             .send('test')
-            .assertReply('Please send an activity.');
+            .assertReply('Please send an activity.')
+            .startTest();
     });
 
     it('should re-prompt with custom retryPrompt if validator returned false.', async function () {
@@ -102,7 +104,8 @@ describe('ActivityPrompt', function () {
         await adapter.send('Hello')
             .assertReply('Please send activity.')
             .send('test')
-            .assertReply('Activity not received.');
+            .assertReply('Activity not received.')
+            .startTest();
     });
 
     it('should see attemptCount increment.', async function() {
@@ -153,7 +156,8 @@ describe('ActivityPrompt', function () {
             .send('300')
             .assertReply('attemptCount 3')
             .send({ type: ActivityTypes.Event })
-            .assertReply(`You sent a(n) ${ ActivityTypes.Event }`);
+            .assertReply(`You sent a(n) ${ ActivityTypes.Event }`)
+            .startTest();
     });
 
     it('should not have resumeDialog() use the retry prompt.', async function() {

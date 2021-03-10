@@ -46,7 +46,8 @@ describe('Dialog', function () {
         dialogs.add(dialog);
 
         await adapter.send(beginMessage)
-            .assertReply('begin called');
+            .assertReply('begin called')
+            .startTest();
     });
 
     it('should receive dialog options when beginning a dialog from a dialog set.', async function () {
@@ -64,7 +65,8 @@ describe('Dialog', function () {
         dialogs.add(dialog);
 
         await adapter.send(beginMessage)
-            .assertReply('begin called');
+            .assertReply('begin called')
+            .startTest();
     });
 
     it('should continue() a multi-turn dialog.', async function () {
@@ -95,6 +97,7 @@ describe('Dialog', function () {
         await adapter.send(beginMessage)
             .assertReply('begin called')
             .send('continue')
-            .assertReply('120');
+            .assertReply('120')
+            .startTest();
     });
 });

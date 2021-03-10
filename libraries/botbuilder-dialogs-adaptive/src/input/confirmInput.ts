@@ -15,7 +15,7 @@ import {
     StringExpression,
     StringExpressionConverter,
 } from 'adaptive-expressions';
-import { Activity } from 'botbuilder-core';
+import { Activity } from 'botbuilder';
 import {
     Choice,
     ChoiceFactory,
@@ -207,7 +207,11 @@ export class ConfirmInput extends InputDialog implements ConfirmInputConfigurati
     }
 
     private determineCulture(dc: DialogContext): string {
-        let culture = PromptCultureModels.mapToNearestLanguage(dc.context.activity.locale || (this.defaultLocale && this.defaultLocale.getValue(dc.state)));
+        /**
+         * @deprecated Note: Default locale will be considered for deprecation as part of 4.13.
+         */
+        const candidateLocale = dc.getLocale() ?? this.defaultLocale?.getValue(dc.state);
+        let culture = PromptCultureModels.mapToNearestLanguage(candidateLocale);
         if (!(culture && ConfirmInput.defaultChoiceOptions.hasOwnProperty(culture))) {
             culture = PromptCultureModels.English.locale;
         }

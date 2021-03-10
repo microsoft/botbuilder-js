@@ -34,7 +34,7 @@ describe('DialogContext', function() {
             }
         ]));
 
-        adapter.send(beginMessage);
+        adapter.send(beginMessage).startTest();
     });
 
     it('beginDialog() should pass in dialogOptions to a begun dialog.', function (done) {
@@ -61,7 +61,7 @@ describe('DialogContext', function() {
             }
         ]));
 
-        adapter.send(beginMessage);
+        adapter.send(beginMessage).startTest();
     });
 
     it('should return error if beginDialog() called with invalid dialogId.', function (done) {
@@ -94,7 +94,7 @@ describe('DialogContext', function() {
             }
         ]));
 
-        adapter.send(beginMessage);
+        adapter.send(beginMessage).startTest();
     });
 
     it('should pass prompt() args to dialog.', function (done) {
@@ -118,7 +118,7 @@ describe('DialogContext', function() {
             }
         ]));
 
-        adapter.send(beginMessage);
+        adapter.send(beginMessage).startTest();
     });
 
     it('should pass undefined prompt() to dialog.', function (done) {
@@ -141,7 +141,7 @@ describe('DialogContext', function() {
             }
         ]));
 
-        adapter.send(beginMessage);
+        adapter.send(beginMessage).startTest();
     });
 
     it('should pass choice array to prompt() to dialog.', function (done) {
@@ -166,7 +166,7 @@ describe('DialogContext', function() {
             }
         ]));
 
-        adapter.send(beginMessage);
+        adapter.send(beginMessage).startTest();
     });
 
     it('should return a value to parent when endDialog() called with a value.', function (done) {
@@ -202,7 +202,7 @@ describe('DialogContext', function() {
             }
         ]));
 
-        adapter.send(beginMessage);
+        adapter.send(beginMessage).startTest();
     });
 
     it('should continue() execution of a dialog.', function (done) {
@@ -240,7 +240,8 @@ describe('DialogContext', function() {
         ]));
 
         adapter.send(beginMessage)
-            .send(continueMessage);
+            .send(continueMessage)
+            .startTest();
     });
 
     it('should return an error if dialog not found when continue() called.', function (done) {
@@ -283,7 +284,8 @@ describe('DialogContext', function() {
         ]));
 
         adapter.send(beginMessage)
-            .send(continueMessage);
+            .send(continueMessage)
+            .startTest();
     });
 
     it(`should return a DialogTurnResult if continue() is called without an activeDialog.`, function (done) {
@@ -301,7 +303,7 @@ describe('DialogContext', function() {
 
         const dialogs = new DialogSet(dialogState);        
 
-        adapter.send(beginMessage);
+        adapter.send(beginMessage).startTest();
     });
 
     it('should return to parent dialog when endDialog() called.', function (done) {
@@ -339,7 +341,7 @@ describe('DialogContext', function() {
             }
         ]));
 
-        adapter.send(beginMessage);
+        adapter.send(beginMessage).startTest();
     });
 
     it(`should accept calls to end when no activeDialogs or parent dialogs exist.`, function (done) {
@@ -365,7 +367,7 @@ describe('DialogContext', function() {
             }
         ]));
 
-        adapter.send(beginMessage);
+        adapter.send(beginMessage).startTest();
     });
 
     it(`should replace() dialog.`, function (done) {
@@ -399,7 +401,7 @@ describe('DialogContext', function() {
             }
         ]));
 
-        adapter.send(beginMessage);
+        adapter.send(beginMessage).startTest();
     });
 
     it(`should begin dialog if stack empty when replaceDialog() called with valid dialogId.`, function (done) {
@@ -422,6 +424,6 @@ describe('DialogContext', function() {
             }
         ]));
 
-        adapter.send(beginMessage);
+        adapter.send(beginMessage).startTest();
     });
 });

@@ -24,7 +24,7 @@ describe('updateVersions', () => {
         const testCases: Array<{
             expected: string;
             label: string;
-            options: Partial<Record<'commitSha' | 'date' | 'deprecated' | 'preview', string>>;
+            options: Partial<Record<'buildLabel' | 'commitSha' | 'date' | 'deprecated' | 'preview', string>>;
             pkg?: Partial<Package>;
         }> = [
             {
@@ -35,17 +35,22 @@ describe('updateVersions', () => {
             {
                 label: 'standard package with date',
                 options: { ...defaultOptions, date: 'DATE' },
-                expected: `${newVersion}-DATE`,
+                expected: `${newVersion}-date-DATE`,
             },
             {
                 label: 'standard package with commitSha',
                 options: { ...defaultOptions, commitSha: 'COMMIT' },
-                expected: `${newVersion}-COMMIT`,
+                expected: `${newVersion}-sha-COMMIT`,
             },
             {
                 label: 'standard package with date and commitSha',
                 options: { ...defaultOptions, commitSha: 'COMMIT', date: 'DATE' },
-                expected: `${newVersion}-DATE.COMMIT`,
+                expected: `${newVersion}-date-DATE.sha-COMMIT`,
+            },
+            {
+                label: 'standard package with date, commitSha, and buildLabel',
+                options: { ...defaultOptions, buildLabel: 'BUILD', commitSha: 'COMMIT', date: 'DATE' },
+                expected: `${newVersion}-BUILD.date-DATE.sha-COMMIT`,
             },
             {
                 label: 'preview package with defaults',
@@ -57,19 +62,25 @@ describe('updateVersions', () => {
                 label: 'preview package with date',
                 pkg: previewPackage,
                 options: { ...defaultOptions, date: 'DATE' },
-                expected: `${newVersion}-PREVIEW.DATE`,
+                expected: `${newVersion}-PREVIEW.date-DATE`,
             },
             {
                 label: 'preview package with commitSha',
                 pkg: previewPackage,
                 options: { ...defaultOptions, commitSha: 'COMMIT' },
-                expected: `${newVersion}-PREVIEW.COMMIT`,
+                expected: `${newVersion}-PREVIEW.sha-COMMIT`,
             },
             {
                 label: 'preview package with date and commitSha',
                 pkg: previewPackage,
                 options: { ...defaultOptions, commitSha: 'COMMIT', date: 'DATE' },
-                expected: `${newVersion}-PREVIEW.DATE.COMMIT`,
+                expected: `${newVersion}-PREVIEW.date-DATE.sha-COMMIT`,
+            },
+            {
+                label: 'preview package with date, commitSha, and build label',
+                pkg: previewPackage,
+                options: { ...defaultOptions, buildLabel: 'BUILD', commitSha: 'COMMIT', date: 'DATE' },
+                expected: `${newVersion}-BUILD.PREVIEW.date-DATE.sha-COMMIT`,
             },
             {
                 label: 'deprecated package with defaults',
@@ -81,19 +92,25 @@ describe('updateVersions', () => {
                 label: 'deprecated package with date',
                 pkg: deprecatedPackage,
                 options: { ...defaultOptions, date: 'DATE' },
-                expected: `${newVersion}-DEPRECATED.DATE`,
+                expected: `${newVersion}-DEPRECATED.date-DATE`,
             },
             {
                 label: 'deprecated package with commitSha',
                 pkg: deprecatedPackage,
                 options: { ...defaultOptions, commitSha: 'COMMIT' },
-                expected: `${newVersion}-DEPRECATED.COMMIT`,
+                expected: `${newVersion}-DEPRECATED.sha-COMMIT`,
             },
             {
                 label: 'deprecated package with date and commitSha',
                 pkg: deprecatedPackage,
                 options: { ...defaultOptions, commitSha: 'COMMIT', date: 'DATE' },
-                expected: `${newVersion}-DEPRECATED.DATE.COMMIT`,
+                expected: `${newVersion}-DEPRECATED.date-DATE.sha-COMMIT`,
+            },
+            {
+                label: 'deprecated package with date, commitSha, and buildLabel',
+                pkg: deprecatedPackage,
+                options: { ...defaultOptions, buildLabel: 'BUILD', commitSha: 'COMMIT', date: 'DATE' },
+                expected: `${newVersion}-BUILD.DEPRECATED.date-DATE.sha-COMMIT`,
             },
         ];
 
@@ -267,9 +284,9 @@ describe('updateVersions', () => {
             const dateFormat = 'YYYYMM';
             const formattedDate = dayjs().format(dateFormat);
 
-            const expectedVersion = `${packageVersion}-${formattedDate}.COMMIT`;
-            const expectedPreviewVersion = `${packageVersion}-preview.${formattedDate}.COMMIT`;
-            const expectedDeprecatedVersion = `${packageVersion}-deprecated.${formattedDate}.COMMIT`;
+            const expectedVersion = `${packageVersion}-dev.date-${formattedDate}.sha-COMMIT`;
+            const expectedPreviewVersion = `${packageVersion}-dev.preview.date-${formattedDate}.sha-COMMIT`;
+            const expectedDeprecatedVersion = `${packageVersion}-dev.deprecated.date-${formattedDate}.sha-COMMIT`;
 
             await runAndVerify(
                 [
@@ -297,7 +314,7 @@ describe('updateVersions', () => {
                         },
                     },
                 ],
-                ['--git', 'true', '--date', dateFormat],
+                ['--buildLabel', 'dev', '--git', 'true', '--date', dateFormat],
                 { commitSha: 'COMMIT' }
             );
         });

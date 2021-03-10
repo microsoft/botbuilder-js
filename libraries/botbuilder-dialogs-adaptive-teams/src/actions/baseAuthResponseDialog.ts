@@ -6,11 +6,12 @@
  * Licensed under the MIT License.
  */
 
-import { BoolExpressionConverter, Expression, StringExpression, StringExpressionConverter } from 'adaptive-expressions';
+import isEmpty from 'lodash/isEmpty';
 import { ActionTypes, Activity, CardAction, TokenResponse } from 'botbuilder';
+import { BoolExpressionConverter, Expression, StringExpression, StringExpressionConverter } from 'adaptive-expressions';
 import { Converter, ConverterFactory, Dialog, DialogContext, DialogTurnResult } from 'botbuilder-dialogs';
-import { isEmpty } from 'lodash';
 import { getValue, testAdapterHasAuthMethods } from './actionHelpers';
+
 import {
     BaseTeamsCacheInfoResponseDialog,
     BaseTeamsCacheInfoResponseDialogConfiguration,
@@ -102,6 +103,7 @@ export abstract class BaseAuthResponseDialog
         return Dialog.EndOfTurn;
     }
 
+    // eslint-disable-next-line jsdoc/require-returns-check
     /**
      * Create a type specific Auth Response using the provided CardAction.
      *

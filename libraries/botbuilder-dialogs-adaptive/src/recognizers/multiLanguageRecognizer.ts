@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 
-import { Activity, RecognizerResult } from 'botbuilder-core';
+import { Activity, RecognizerResult } from 'botbuilder';
 import { Converter, ConverterFactory, DialogContext, Recognizer, RecognizerConfiguration } from 'botbuilder-dialogs';
 import { LanguagePolicy, LanguagePolicyConverter } from '../languagePolicy';
 import { MultiLanguageRecognizerConverter } from '../converters';
@@ -49,7 +49,7 @@ export class MultiLanguageRecognizer extends Recognizer implements MultiLanguage
             }
         }
 
-        const locale = activity.locale || '';
+        const locale = (activity.locale ?? '').toLowerCase();
         const policy: string[] = [];
         if (languagepolicy.has(locale)) {
             languagepolicy.get(locale).forEach((u: string): number => policy.push(u));

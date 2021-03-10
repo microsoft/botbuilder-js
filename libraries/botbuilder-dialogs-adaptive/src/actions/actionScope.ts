@@ -5,7 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { StringUtils } from 'botbuilder-core';
+import { StringUtils } from 'botbuilder';
 import {
     Converter,
     ConverterFactory,

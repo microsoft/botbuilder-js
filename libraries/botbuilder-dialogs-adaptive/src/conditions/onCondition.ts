@@ -10,13 +10,13 @@ import {
     BoolExpressionConverter,
     Constant,
     Expression,
-    ExpressionParserInterface,
     ExpressionParser,
     ExpressionEvaluator,
     FunctionUtils,
-    IntExpression,
-    IntExpressionConverter,
     ReturnType,
+    ExpressionType,
+    NumberExpression,
+    NumberExpressionConverter,
 } from 'adaptive-expressions';
 import {
     Configurable,
@@ -38,7 +38,7 @@ import { DialogListConverter } from '../converters';
 export interface OnConditionConfiguration {
     condition?: boolean | string | Expression | BoolExpression;
     actions?: string[] | Dialog[];
-    priority?: number | string | Expression | IntExpression;
+    priority?: number | string | Expression | NumberExpression;
     runOnce?: boolean;
     id?: string;
 }
@@ -74,7 +74,7 @@ export class OnCondition extends Configurable implements DialogDependencies, OnC
     /**
      * Get or sets the rule priority expression where 0 is the highest and less than 0 is ignored.
      */
-    public priority: IntExpression = new IntExpression(0);
+    public priority: NumberExpression = new NumberExpression(0.0);
 
     /**
      * A value indicating whether rule should only run once per unique set of memory paths.
@@ -114,59 +114,20 @@ export class OnCondition extends Configurable implements DialogDependencies, OnC
             case 'actions':
                 return DialogListConverter;
             case 'priority':
-                return new IntExpressionConverter();
+                return new NumberExpressionConverter();
             default:
                 return super.getConverter(property);
         }
     }
 
     /**
-     * Get the expression for this condition
-     * @param parser Expression parser.
-     * @returns Expression which will be cached and used to evaluate this condition.
+     * Get the cached expression for this condition.
+     *
+     * @returns Cached expression used to evaluate this condition.
      */
-    public getExpression(parser: ExpressionParserInterface): Expression {
+    public getExpression(): Expression {
         if (!this._fullConstraint) {
-            const allExpressions: Expression[] = [];
-            if (this.condition) {
-                try {
-                    allExpressions.push(this.condition.toExpression());
-                } catch (err) {
-                    throw Error(`Invalid constraint expression: ${this.condition.toString()}, ${err.toString()}`);
-                }
-            }
-
-            if (this._extraConstraints.length > 0) {
-                allExpressions.push(...this._extraConstraints);
-            }
-
-            if (allExpressions.length > 0) {
-                this._fullConstraint = Expression.andExpression(...allExpressions);
-            } else {
-                this._fullConstraint = new Constant(true);
-            }
-
-            if (this.runOnce) {
-                // TODO: Once we add support for the MostSpecificSelector the code below will need
-                //       some tweaking to wrap runOnce with a call to 'ignore'.
-                const runOnce = new ExpressionEvaluator(
-                    `runOnce${this.id}`,
-                    (exp, state: DialogStateManager) => {
-                        const basePath = `${AdaptiveDialog.conditionTracker}.${this.id}.`;
-                        const lastRun: number = state.getValue(basePath + 'lastRun');
-                        const paths: string[] = state.getValue(basePath + 'paths');
-                        const changed = state.anyPathChanged(lastRun, paths);
-                        return { value: changed, error: undefined };
-                    },
-                    ReturnType.Boolean,
-                    FunctionUtils.validateUnary
-                );
-
-                this._fullConstraint = Expression.andExpression(
-                    this._fullConstraint,
-                    new Expression(runOnce.type, runOnce)
-                );
-            }
+            this._fullConstraint = this.createExpression();
         }
 
         return this._fullConstraint;
@@ -219,6 +180,51 @@ export class OnCondition extends Configurable implements DialogDependencies, OnC
      */
     public getDependencies(): Dialog[] {
         return [this.actionScope];
+    }
+
+    /**
+     * Create the expression for this condition.
+     *
+     * @returns {Expression} Expression used to evaluate this rule.
+     */
+    protected createExpression(): Expression {
+        const allExpressions: Expression[] = [];
+
+        if (this.condition) {
+            allExpressions.push(this.condition.toExpression());
+        }
+
+        if (this._extraConstraints?.length) {
+            allExpressions.push(...this._extraConstraints);
+        }
+
+        if (this.runOnce) {
+            const evaluator = new ExpressionEvaluator(
+                `runOnce${this.id}`,
+                (_expression, state: DialogStateManager, _) => {
+                    const basePath = `${AdaptiveDialog.conditionTracker}.${this.id}.`;
+                    const lastRun: number = state.getValue(basePath + 'lastRun');
+                    const paths: string[] = state.getValue(basePath + 'paths');
+                    const changed = state.anyPathChanged(lastRun, paths);
+                    return { value: changed, error: undefined };
+                },
+                ReturnType.Boolean,
+                FunctionUtils.validateUnary
+            );
+            allExpressions.push(
+                new Expression(
+                    ExpressionType.Ignore,
+                    Expression.lookup(ExpressionType.Ignore),
+                    new Expression(evaluator.type, evaluator)
+                )
+            );
+        }
+
+        if (allExpressions.length) {
+            return Expression.andExpression(...allExpressions);
+        }
+
+        return new Constant(true);
     }
 
     /**

@@ -14,7 +14,7 @@ import {
     StringExpression,
     StringExpressionConverter,
 } from 'adaptive-expressions';
-import { Activity } from 'botbuilder-core';
+import { Activity } from 'botbuilder';
 import {
     Choice,
     ChoiceFactory,
@@ -189,7 +189,7 @@ export class ChoiceInput extends InputDialog implements ChoiceInputConfiguration
      */
     protected async onRenderPrompt(dc: DialogContext, state: InputState): Promise<Partial<Activity>> {
         // Determine locale
-        let locale = this.determineCulture(dc);
+        const locale = this.determineCulture(dc);
 
         const choices = this.choices.getValue(dc.state);
 
@@ -210,11 +210,11 @@ export class ChoiceInput extends InputDialog implements ChoiceInputConfiguration
     }
 
     private determineCulture(dc: DialogContext, opt?: FindChoicesOptions): string {
-        const optLocale = opt && opt.locale ? opt.locale : null;
-        let culture = PromptCultureModels.mapToNearestLanguage(
-            dc.context.activity.locale ||
-            optLocale ||
-            (this.defaultLocale && this.defaultLocale.getValue(dc.state)));
+        /**
+         * @deprecated Note: opt.Locale and Default locale will be considered for deprecation as part of 4.13.
+         */
+        const candidateLocale = dc.getLocale() ?? opt?.locale ?? this.defaultLocale?.getValue(dc.state);
+        let culture = PromptCultureModels.mapToNearestLanguage(candidateLocale);
 
         if (!(culture && ChoiceInput.defaultChoiceOptions.hasOwnProperty(culture))) {
             culture = PromptCultureModels.English.locale;

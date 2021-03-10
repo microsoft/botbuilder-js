@@ -9,7 +9,7 @@ const {
     UserState,
     QueueStorage,
     ActivityEventNames,
-} = require('botbuilder-core');
+} = require('botbuilder');
 const { DialogManager, DialogTurnStateConstants } = require('botbuilder-dialogs');
 const {
     ContinueConversation,

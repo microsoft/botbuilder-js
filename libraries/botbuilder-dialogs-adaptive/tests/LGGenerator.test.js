@@ -7,7 +7,7 @@ const {
 const { ResourceExplorer } = require('botbuilder-dialogs-declarative');
 const assert = require('assert');
 const path = require('path');
-const { TestAdapter, TurnContext } = require('botbuilder-core');
+const { TestAdapter, TurnContext } = require('botbuilder');
 const { DialogContext, DialogSet } = require('botbuilder-dialogs');
 const { languageGeneratorKey, languageGeneratorManagerKey } = require('../lib/languageGeneratorExtensions');
 
@@ -123,6 +123,8 @@ describe('LGLanguageGenerator', function() {
 
         this.beforeAll(async function() {
             const multiLanguageResources = await LanguageResourceLoader.groupByLocale(resourceExplorer);
+
+            //Should have a setup for the threadLocale here.
         
             let resource = resourceExplorer.getResource('test.lg');
             lg.languageGenerators.set('', new TemplateEngineLanguageGenerator(resource, multiLanguageResources));

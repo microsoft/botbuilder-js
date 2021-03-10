@@ -13,7 +13,7 @@ import {
     StringExpression,
     StringExpressionConverter,
 } from 'adaptive-expressions';
-import { Activity } from 'botbuilder-core';
+import { Activity } from 'botbuilder';
 import { Converter, ConverterFactory, DialogContext } from 'botbuilder-dialogs';
 import { InputDialog, InputDialogConfiguration, InputState } from './inputDialog';
 
@@ -61,8 +61,10 @@ export class NumberInput extends InputDialog implements NumberInputConfiguration
         let input: any = dc.state.getValue(InputDialog.VALUE_PROPERTY);
         if (typeof input !== 'number') {
             // Find locale to use
-            const activity: Activity = dc.context.activity;
-            const locale = activity.locale || this.defaultLocale.getValue(dc.state) || 'en-us';
+            /**
+             * @deprecated Note: Default locale will be considered for deprecation as part of 4.13.
+             */
+            const locale = dc.getLocale() ?? this.defaultLocale?.getValue(dc.state) ?? '';
 
             // Recognize input
             const results: any = Recognizers.recognizeNumber(input, locale);

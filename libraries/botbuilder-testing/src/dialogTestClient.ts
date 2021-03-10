@@ -6,6 +6,8 @@
  * Licensed under the MIT License.
  */
 
+/* eslint-disable @typescript-eslint/ban-types */
+
 import {
     Activity,
     TestAdapter,
@@ -14,8 +16,10 @@ import {
     MemoryStorage,
     AutoSaveStateMiddleware,
     TurnContext,
+    StatePropertyAccessor,
 } from 'botbuilder-core';
-import { Dialog, DialogContext, DialogSet, DialogTurnStatus, DialogTurnResult } from 'botbuilder-dialogs';
+
+import { Dialog, DialogContext, DialogSet, DialogTurnStatus, DialogTurnResult, DialogState } from 'botbuilder-dialogs';
 
 /**
  * A client for testing dialogs in isolation.
@@ -42,6 +46,7 @@ export class DialogTestClient {
      * let reply = await client.sendActivity('first message');
      * assert.strictEqual(reply.text, 'first reply', 'reply failed');
      * ```
+     *
      * @param channelId The `channelId` to be used for the test.
      * Use 'emulator' or 'test' if you are uncertain of the channel you are targeting.
      * Otherwise, it is recommended that you use the id for the channel(s) your bot will be using and write a test case for each channel.
@@ -53,7 +58,7 @@ export class DialogTestClient {
     public constructor(
         channelId: string,
         targetDialog: Dialog,
-        initialDialogOptions?: any,
+        initialDialogOptions?: unknown,
         middlewares?: Middleware[],
         conversationState?: ConversationState
     );
@@ -64,6 +69,7 @@ export class DialogTestClient {
      * let reply = await client.sendActivity('first message');
      * assert.strictEqual(reply.text, 'first reply', 'reply failed');
      * ```
+     *
      * @param testAdapter The [TestAdapter](xref:botbuilder-core.TestAdapter) to use.
      * @param targetDialog The [Dialog](xref:botbuilder-dialogs.Dialog) to be tested. This will be the root dialog for the test client.
      * @param initialDialogOptions Optional. Additional argument(s) to pass to the [Dialog](xref:botbuilder-dialogs.Dialog) being started.
@@ -73,12 +79,13 @@ export class DialogTestClient {
     public constructor(
         testAdapter: TestAdapter,
         targetDialog: Dialog,
-        initialDialogOptions?: any,
+        initialDialogOptions?: unknown,
         middlewares?: Middleware[],
         conversationState?: ConversationState
     );
     /**
      * Creates a [DialogTestClient](xref:botbuilder-testing.DialogTestClient) to test a [Dialog](xref:botbuilder-dialogs.Dialog) without having to create a full-fledged adapter.
+     *
      * @param channelOrAdapter The `channelId` or the [TestAdapter](xref:botbuilder-core.TestAdapter) to be used for the test.
      * @param targetDialog The [Dialog](xref:botbuilder-dialogs.Dialog) to be tested. This will be the root dialog for the test client.
      * @param initialDialogOptions Optional. Additional argument(s) to pass to the [Dialog](xref:botbuilder-dialogs.Dialog) being started.
@@ -88,7 +95,7 @@ export class DialogTestClient {
     public constructor(
         channelOrAdapter: string | TestAdapter,
         targetDialog: Dialog,
-        initialDialogOptions?: any,
+        initialDialogOptions?: object,
         middlewares?: Middleware[],
         conversationState?: ConversationState
     ) {
@@ -113,8 +120,11 @@ export class DialogTestClient {
 
     /**
      * Gets a reference for the DialogContext.
+     *
      * @remarks
      * This property will be null until at least one activity is sent to DialogTestClient.
+     *
+     * @returns the dialog context
      */
     public get dialogContext(): DialogContext {
         return this._dialogContext;
@@ -122,13 +132,15 @@ export class DialogTestClient {
 
     /**
      * Send an activity into the dialog.
-     * @returns a TestFlow that can be used to assert replies etc
-     * @param activity an activity potentially with text
      *
      * ```javascript
      * DialogTest.send('hello').assertReply('hello yourself').then(done);
      * ```
+     *
+     * @param activity an activity potentially with text
+     * @returns a TestFlow that can be used to assert replies etc
      */
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     public async sendActivity(activity: Partial<Activity> | string): Promise<any> {
         await this._testAdapter.receiveActivity(activity);
         return this._testAdapter.activityBuffer.shift();
@@ -136,18 +148,17 @@ export class DialogTestClient {
 
     /**
      * Get the next reply waiting to be delivered (if one exists)
+     *
+     * @returns the next reply
      */
     public getNextReply(): Partial<Activity> {
         return this._testAdapter.activityBuffer.shift();
     }
 
-    /**
-     * @private
-     */
     private getDefaultCallback(
         targetDialog: Dialog,
-        initialDialogOptions: any,
-        dialogState: any
+        initialDialogOptions: object,
+        dialogState: StatePropertyAccessor<DialogState>
     ): (turnContext: TurnContext) => Promise<void> {
         return async (turnContext: TurnContext): Promise<void> => {
             const dialogSet = new DialogSet(dialogState);

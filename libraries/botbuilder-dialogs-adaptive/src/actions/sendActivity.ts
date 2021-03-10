@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 import { BoolExpression, BoolExpressionConverter, Expression } from 'adaptive-expressions';
-import { Activity, ActivityTypes, ResourceResponse, StringUtils } from 'botbuilder-core';
+import { Activity, ActivityTypes, ResourceResponse, StringUtils } from 'botbuilder';
 import {
     Converter,
     ConverterFactory,

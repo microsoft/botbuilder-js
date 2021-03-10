@@ -11,7 +11,7 @@ const {
     StatusCodes,
     TurnContext,
     MessageFactory
-} = require('botbuilder-core');
+} = require('botbuilder');
 const { BoolExpression, StringExpression } = require('adaptive-expressions');
 const { DialogManager, DialogTurnStatus, DialogEvents, DialogSet } = require('botbuilder-dialogs');
 const { BeginSkill, SkillExtensions, StaticActivityTemplate } = require('../lib');
@@ -126,7 +126,7 @@ describe('BeginSkill', function () {
             ok(postActivityStub.calledOnce);
         });
 
-        await adapter.send('test');
+        await adapter.send('test').startTest();
     });
     
     it('should respect allow interruptions settings', async () => {
@@ -138,7 +138,7 @@ describe('BeginSkill', function () {
             strictEqual(bubbling, true);
         });
         
-        await adapter.send('test');
+        await adapter.send('test').startTest();
     });
 });
 

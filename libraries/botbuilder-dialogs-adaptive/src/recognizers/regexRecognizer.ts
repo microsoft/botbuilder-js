@@ -5,7 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { Activity, Entity, RecognizerResult } from 'botbuilder-core';
+import { Activity, Entity, RecognizerResult } from 'botbuilder';
 import { Converter, ConverterFactory, DialogContext, Recognizer } from 'botbuilder-dialogs';
 import { IntentPattern } from './intentPattern';
 import { EntityRecognizer, TextEntity, EntityRecognizerSet } from './entityRecognizers';

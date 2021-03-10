@@ -49,7 +49,7 @@ describe('ComponentDialog', function () {
             const results = await dc.beginDialog('composite', { foo: 'bar' });
         });
 
-        adapter.send('Hi');
+        adapter.send('Hi').startTest();
         done();
     });
 
@@ -77,7 +77,7 @@ describe('ComponentDialog', function () {
                     done();
                 });
         });
-        adapter.send('Hi');
+        adapter.send('Hi').startTest();
     });
 
     it('should have DialogTurnResult.status equal DialogTurnStatus.complete when endComponent() is called.', (done) => {
@@ -104,7 +104,7 @@ describe('ComponentDialog', function () {
             done();
         });
 
-        adapter.send('Hi');
+        adapter.send('Hi').startTest();
     });
 
     it(`should return Dialog.EndOfTurn if the dialog's turnResult.status === 'waiting'.`, (done) => {
@@ -135,7 +135,7 @@ describe('ComponentDialog', function () {
             done();
         });
 
-        adapter.send('Hi');
+        adapter.send('Hi').startTest();
     });
 
     it('should return any found dialogs.', (done) => {
@@ -198,6 +198,7 @@ describe('ComponentDialog', function () {
             .send('Hi again')
             .assertReply('Called onContinueDialog.')
             .assertReply('Done.')
+            .startTest();
     });
 
     it('should cancel all Dialogs inside of ComponentDialog namespace.', () => {
@@ -213,7 +214,7 @@ describe('ComponentDialog', function () {
             },
             async step => {
                 simpleStepContextCheck(step);
-                await step.context.send('Should not have sent this message.');
+                await step.context.sendActivity('Should not have sent this message.');
                 return await step.endDialog();
             }
         ]);
@@ -242,7 +243,8 @@ describe('ComponentDialog', function () {
 
         adapter.send('Hi')
             .assertReply('Reached first component dialog child.')
-            .assertReply('Cancelling all component dialog dialogs.');
+            .assertReply('Cancelling all component dialog dialogs.')
+            .startTest();
     });
 
     it('should not cancel any Dialogs outside of ComponentDialog namespace.', () => {
@@ -292,7 +294,8 @@ describe('ComponentDialog', function () {
         adapter.send('Hi')
             .assertReply('Reached first component dialog child.')
             .assertReply('Cancelling all component dialog dialogs.')
-            .assertReply('Cancelled successfully.');
+            .assertReply('Cancelled successfully.')
+            .startTest();
     });
 
     it('should call a dialog defined in a parent component.', (done) => {
@@ -345,7 +348,8 @@ describe('ComponentDialog', function () {
             .assertReply('Child started.')
             .assertReply('Parent called with: test')
             .assertReply('Child finished.')
-            .then(() => done());
+            .then(() => done())
+            .startTest();
     });
 
     it('should handle that a components children have changed.', (done) => {
@@ -396,7 +400,8 @@ describe('ComponentDialog', function () {
             .assertReply('First step.')
             .send('Hi again')
             .assertReply('Second step.')
-            .assertReply('Done.');
+            .assertReply('Done.')
+            .startTest();
     });
 });
 

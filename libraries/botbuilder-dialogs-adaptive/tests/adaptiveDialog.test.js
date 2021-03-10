@@ -5,7 +5,7 @@ const {
     TestAdapter,
     useBotState,
     UserState,
-} = require('botbuilder-core');
+} = require('botbuilder');
 const { DialogManager } = require('botbuilder-dialogs');
 const {
     ActivityTemplate,
@@ -182,6 +182,7 @@ describe('AdaptiveDialog', function () {
             .assertReply('child dialog has ended and returned back')
             .send('where')
             .assertReply('outer dialog..')
+            .startTest();
     });
 
     it('Custom AttachmentInput dialog with no file', async () => {

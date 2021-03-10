@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 
-import { Expression, ExpressionParserInterface } from 'adaptive-expressions';
+import { Expression } from 'adaptive-expressions';
 import { Channels } from 'botbuilder';
 import { TurnPath } from 'botbuilder-dialogs';
 import { OnInvokeActivity } from 'botbuilder-dialogs-adaptive';
@@ -17,12 +17,17 @@ import { OnInvokeActivity } from 'botbuilder-dialogs-adaptive';
 export class OnTeamsMESubmitAction extends OnInvokeActivity {
     public static readonly $kind = 'Teams.OnMESubmitAction';
 
-    public getExpression(parser: ExpressionParserInterface): Expression {
+    /**
+     * Create expression for this condition.
+     *
+     * @returns {Expression} An [Expression](xref:adaptive-expressions.Expression) used to evaluate this rule.
+     */
+    protected createExpression(): Expression {
         return Expression.andExpression(
             Expression.parse(
                 `${TurnPath.activity}.channelId == '${Channels.Msteams}' && ${TurnPath.activity}.name == 'composeExtension/submitAction'`
             ),
-            super.getExpression(parser)
+            super.createExpression()
         );
     }
 }
