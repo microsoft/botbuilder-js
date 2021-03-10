@@ -21,7 +21,7 @@ import {
     StringExpression,
     StringExpressionConverter,
 } from 'adaptive-expressions';
-import { omit } from 'lodash';
+import omit from 'lodash/omit';
 import { RecognizerResult, Activity, getTopScoringIntent } from 'botbuilder-core';
 import { Converter, ConverterFactory, DialogContext, Recognizer, RecognizerConfiguration } from 'botbuilder-dialogs';
 import { QnAMaker, QnAMakerClient, QnAMakerClientKey } from './qnaMaker';
