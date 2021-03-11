@@ -6,9 +6,9 @@ steps:
     displayName: npm install in React App
     workingDirectory: $(ReactProjectDir)
 
-  - script: rm -rf botframework-streaming
-    displayName: remove botframework-streaming package for override
-    workingDirectory: $(ReactProjectDir)/node_modules/botframework-directlinejs
+  - script: 'rm -rf */**/botframework-streaming'
+    displayName: remove nested botframework-streaming packages so top level takes precedence
+    workingDirectory: $(ReactProjectDir)/node_modules
 
   - script: npm run build
     displayName: Build React App
