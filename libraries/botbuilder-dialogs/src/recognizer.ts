@@ -22,6 +22,9 @@ export interface RecognizerConfiguration {
     telemetryClient?: BotTelemetryClient;
 }
 
+/**
+ * Recognizer base class.
+ */
 export class Recognizer extends Configurable implements RecognizerConfiguration {
     /**
      * Recognizers unique ID.
@@ -53,7 +56,7 @@ export class Recognizer extends Configurable implements RecognizerConfiguration 
     }
 
     /**
-     * Creates choose intent result in the case that there is conflicting or ambigious signals from the recognizers.
+     * Creates choose intent result in the case that there are conflicting or ambiguous signals from the recognizers.
      *
      * @param {Record<string, RecognizerResult>} recognizerResults A group of recognizer results.
      * @returns {RecognizerResult} Recognizer result which is ChooseIntent.
@@ -81,6 +84,7 @@ export class Recognizer extends Configurable implements RecognizerConfiguration 
                 text,
                 intents: { ChooseIntent: { score: 1.0 } },
                 candidates,
+                entities: {},
             };
             return recognizerResult;
         }
@@ -89,34 +93,33 @@ export class Recognizer extends Configurable implements RecognizerConfiguration 
         const recognizerResult: RecognizerResult = {
             text,
             intents: { None: { score: 1.0 } },
+            entities: {},
         };
         return recognizerResult;
     }
 
     /**
-     * Uses the RecognizerResult to create a list of propeties to be included when tracking the result in telemetry.
-     *
+     * Uses the RecognizerResult to create a list of properties to be included when tracking the result in telemetry.
+     * 
      * @param {RecognizerResult} recognizerResult Recognizer Result.
      * @param {Record<string, string>} telemetryProperties A list of properties to append or override the properties created using the RecognizerResult.
      * @param {DialogContext} dialogContext Dialog Context.
-     * @returns {Record<string, string>} A dictionary that can be included when calling the TrackEvent method on the TelemetryClient.
+     * @returns {Record<string, string>} A collection of properties that can be included when calling the TrackEvent method on the TelemetryClient.
      */
     protected fillRecognizerResultTelemetryProperties(
         recognizerResult: RecognizerResult,
         telemetryProperties: Record<string, string>,
         dialogContext?: DialogContext
     ): Record<string, string> {
-        const { intent: topIntent, score: topScore } = getTopScoringIntent(recognizerResult);
+        const { intent, score } = getTopScoringIntent(recognizerResult);
+        const intents = Object.entries(recognizerResult.intents);
 
         const properties: Record<string, string> = {
             Text: recognizerResult.text,
             AlteredText: recognizerResult.alteredText,
-            TopIntent: Object.entries(recognizerResult.intents).length > 0 ? topIntent : undefined,
-            TopIntentScore: Object.entries(recognizerResult.intents).length > 0 ? topScore.toString() : undefined,
-            Intents:
-                Object.entries(recognizerResult.intents).length > 0
-                    ? JSON.stringify(recognizerResult.intents)
-                    : undefined,
+            TopIntent: intents.length > 0 ? intent : undefined,
+            TopIntentScore: intents.length > 0 ? score.toString() : undefined,
+            Intents: intents.length > 0 ? JSON.stringify(recognizerResult.intents) : undefined,
             Entities: recognizerResult.entities ? JSON.stringify(recognizerResult.entities) : undefined,
             AdditionalProperties: JSON.stringify(
                 omit(recognizerResult, ['text', 'alteredText', 'intents', 'entities'])
@@ -129,6 +132,17 @@ export class Recognizer extends Configurable implements RecognizerConfiguration 
         }
 
         return properties;
+    }
+
+    protected stringifyAdditionalPropertiesOfRecognizerResult(recognizerResult: RecognizerResult): string {
+        const generalProperties = new Set(['text', 'alteredText', 'intents', 'entities']);
+        const additionalProperties: { [key: string]: string } = {};
+        for (const key in recognizerResult) {
+            if (!generalProperties.has(key)) {
+                additionalProperties[key] = recognizerResult[key];
+            }
+        }
+        return Object.keys(additionalProperties).length > 0 ? JSON.stringify(additionalProperties) : undefined;
     }
 
     /**

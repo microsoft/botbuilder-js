@@ -48,13 +48,14 @@ export const getTopScoringIntent = (result: RecognizerResult): { intent: string;
 
     let topIntent: string;
     let topScore = -1;
-    for (const intent in result.intents) {
-        const score = result.intents[intent].score;
-        if (topIntent == undefined || score > topScore) {
-            topIntent = intent;
+    for (const [intentName, intent] of Object.entries(result.intents)) {
+        const score = intent.score ?? -1;
+        if (!topIntent || score > topScore) {
+            topIntent = intentName;
             topScore = score;
         }
     }
+
 
     return {
         intent: topIntent,

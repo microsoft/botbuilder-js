@@ -9,12 +9,16 @@
 import { Activity, RecognizerResult, getTopScoringIntent } from 'botbuilder';
 import { Converter, ConverterFactory, DialogContext, Recognizer, RecognizerConfiguration } from 'botbuilder-dialogs';
 import { RecognizerListConverter } from '../converters';
+import { AdaptiveRecognizer } from './adaptiveRecognizer';
 
 export interface RecognizerSetConfiguration extends RecognizerConfiguration {
     recognizers?: string[] | Recognizer[];
 }
 
-export class RecognizerSet extends Recognizer implements RecognizerSetConfiguration {
+/**
+ * A recognizer class whose result is the union of results from multiple recognizers into one RecognizerResult.
+ */
+export class RecognizerSet extends AdaptiveRecognizer implements RecognizerSetConfiguration {
     public static $kind = 'Microsoft.RecognizerSet';
 
     public recognizers: Recognizer[] = [];
@@ -34,14 +38,6 @@ export class RecognizerSet extends Recognizer implements RecognizerSetConfigurat
         telemetryProperties?: { [key: string]: string },
         telemetryMetrics?: { [key: string]: number }
     ): Promise<RecognizerResult> {
-        const recognizerResult: RecognizerResult = {
-            text: undefined,
-            alteredText: undefined,
-            intents: {},
-            entities: {
-                $instance: {},
-            },
-        };
         const results = await Promise.all(
             this.recognizers.map(
                 (recognizer: Recognizer): Promise<RecognizerResult> => {
@@ -50,26 +46,49 @@ export class RecognizerSet extends Recognizer implements RecognizerSetConfigurat
             )
         );
 
-        for (let i = 0; i < results.length; i++) {
-            const result = results[i];
-            const { intent } = getTopScoringIntent(result);
-            if (intent && intent != 'None') {
+        const recognizerResult: RecognizerResult = this.mergeResults(results);
+
+        this.trackRecognizerResult(
+            dialogContext,
+            'RecognizerSetResult',
+            this.fillRecognizerResultTelemetryProperties(recognizerResult, telemetryProperties, dialogContext),
+            telemetryMetrics
+        );
+
+        return recognizerResult;
+    }
+
+    private mergeResults(results: RecognizerResult[]) {
+        const mergedRecognizerResult: RecognizerResult = {
+            text: undefined,
+            alteredText: undefined,
+            intents: {},
+            entities: {
+                $instance: {},
+            },
+        };
+
+        for (const result of results) {
+            const { intent: intentName } = getTopScoringIntent(result);
+            if (intentName && intentName !== 'None') {
                 // merge text
-                if (!recognizerResult.text) {
-                    recognizerResult.text = result.text;
-                } else if (result.text != recognizerResult.text) {
-                    recognizerResult.alteredText = recognizerResult.text;
+                if (!mergedRecognizerResult.text) {
+                    mergedRecognizerResult.text = result.text;
+                } else if (result.text !== mergedRecognizerResult.text) {
+                    mergedRecognizerResult.alteredText = result.text;
                 }
 
                 // merge intents
-                for (const intentName in result.intents) {
-                    const intentScore = result.intents[intentName].score;
-                    if (recognizerResult.intents.hasOwnProperty(intentName)) {
-                        if (intentScore < recognizerResult.intents[intentName].score) {
+                for (const [intentName, intent] of Object.entries(result.intents)) {
+                    const intentScore = intent.score ?? 0;
+                    if (mergedRecognizerResult.intents.hasOwnProperty(intentName)) {
+                        if (intentScore < mergedRecognizerResult.intents[intentName].score) {
+                            // we already have a higher score for this intent
                             continue;
                         }
                     }
-                    recognizerResult.intents[intentName] = { score: intentScore };
+
+                    mergedRecognizerResult.intents[intentName] = intent;
                 }
             }
 
@@ -81,22 +100,19 @@ export class RecognizerSet extends Recognizer implements RecognizerSetConfigurat
             //          "name": [ { "startIndex" : 15, ... }, ... ]
             //      }
             //   }
-            for (const property in result.entities) {
-                if (property == '$instance') {
-                    const instanceData = result.entities['$instance'];
-                    for (const entityName in instanceData) {
-                        if (!recognizerResult.entities['$instance'].hasOwnProperty(entityName)) {
-                            recognizerResult.entities['$instance'][entityName] = [];
+            if (result.entities) {
+                for (const [propertyName, propertyVal] of Object.entries(result.entities)) {
+                    if (propertyName === '$instance') {
+                        for (const [entityName, entityValue] of Object.entries(propertyVal)) {
+                            const mergedInstanceEntities = (mergedRecognizerResult.entities['$instance'][
+                                entityName
+                            ] ??= []);
+                            mergedInstanceEntities.push(...entityValue);
                         }
-                        const entityValue = instanceData[entityName];
-                        recognizerResult.entities['$instance'][entityName].push(...entityValue);
+                    } else {
+                        const mergedEntities = (mergedRecognizerResult.entities[propertyName] ??= []);
+                        mergedEntities.push(...propertyVal as any);
                     }
-                } else {
-                    if (!recognizerResult.entities.hasOwnProperty(property)) {
-                        recognizerResult.entities[property] = [];
-                    }
-                    const value = result.entities[property];
-                    recognizerResult.entities[property].push(...value);
                 }
             }
 
@@ -108,22 +124,15 @@ export class RecognizerSet extends Recognizer implements RecognizerSetConfigurat
                     property != 'entities'
                 ) {
                     // naive merge clobbers same key.
-                    recognizerResult[property] = result[property];
+                    mergedRecognizerResult[property] = result[property];
                 }
             }
         }
 
-        if (Object.entries(recognizerResult.intents).length == 0) {
-            recognizerResult.intents['None'] = { score: 1.0 };
+        if (Object.entries(mergedRecognizerResult.intents).length === 0) {
+            mergedRecognizerResult.intents['None'] = { score: 1.0 };
         }
 
-        this.trackRecognizerResult(
-            dialogContext,
-            'RecognizerSetResult',
-            this.fillRecognizerResultTelemetryProperties(recognizerResult, telemetryProperties),
-            telemetryMetrics
-        );
-
-        return recognizerResult;
+        return mergedRecognizerResult;
     }
 }

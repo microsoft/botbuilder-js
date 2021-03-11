@@ -3,14 +3,15 @@
  * Licensed under the MIT License.
  */
 const { MockResolver, TestAdapterSettings } = require('./mockResolver');
-const assert = require('assert');
+const { ok, rejects } = require('assert');
 const { OrchestratorAdaptiveRecognizer } = require('../lib');
 const { DialogContext, DialogSet } = require('botbuilder-dialogs');
-const { TurnContext, MessageFactory } = require('botbuilder-core');
+const { TurnContext, MessageFactory, NullTelemetryClient } = require('botbuilder-core');
 const { BotFrameworkAdapter } = require('../../botbuilder/lib');
 const { StringExpression, BoolExpression, NumberExpression } = require('adaptive-expressions');
 const { NumberEntityRecognizer } = require('botbuilder-dialogs-adaptive');
 const sinon = require('sinon');
+const { orchestratorIntentText, getLogPersonalInformation, validateTelemetry } = require('./recognizerTelemetryUtils');
 
 describe('OrchestratorAdpativeRecognizer tests', function () {
     it('Expect initialize is called when orchestrator obj is null', async () => {
@@ -32,9 +33,9 @@ describe('OrchestratorAdpativeRecognizer tests', function () {
         const { dc, activity } = createTestDcAndActivity('hello');
         const res = await rec.recognize(dc, activity);
 
-        assert(res.text, 'hello');
-        assert(res.intents.mockLabel.score, 0.9);
-        assert(rec._initializeModel.calledOnce);
+        ok(res.text, 'hello');
+        ok(res.intents.mockLabel.score, 0.9);
+        ok(rec._initializeModel.calledOnce);
     });
 
     it('Expect initialize is called when labelresolver is null', async () => {
@@ -45,9 +46,9 @@ describe('OrchestratorAdpativeRecognizer tests', function () {
         rec._initializeModel = sinon.fake();
 
         const { dc, activity } = createTestDcAndActivity('hello');
-        assert.rejects(async () => await rec.recognize(dc, activity));
+        rejects(async () => await rec.recognize(dc, activity));
 
-        assert(rec._initializeModel.calledOnce);
+        ok(rec._initializeModel.calledOnce);
     });
 
     it('Test intent recognition', async () => {
@@ -68,8 +69,8 @@ describe('OrchestratorAdpativeRecognizer tests', function () {
         const { dc, activity } = createTestDcAndActivity('hello');
 
         const res = await rec.recognize(dc, activity);
-        assert(res.text, 'hello');
-        assert(res.intents.mockLabel.score, 0.9);
+        ok(res.text, 'hello');
+        ok(res.intents.mockLabel.score, 0.9);
     });
 
     it('Test entity recognition', async () => {
@@ -91,9 +92,9 @@ describe('OrchestratorAdpativeRecognizer tests', function () {
         const { dc, activity } = createTestDcAndActivity('hello 123');
 
         const res = await rec.recognize(dc, activity);
-        assert(res.text, 'hello 123');
-        assert(res.intents.mockLabel.score, 0.9);
-        assert(res.entities.number[0], '123');
+        ok(res.text, 'hello 123');
+        ok(res.intents.mockLabel.score, 0.9);
+        ok(res.entities.number[0], '123');
     });
 
     it('Test ambiguous intent recognition', async () => {
@@ -127,9 +128,125 @@ describe('OrchestratorAdpativeRecognizer tests', function () {
         const { dc, activity } = createTestDcAndActivity('hello');
 
         const res = await rec.recognize(dc, activity);
-        assert(res.intents.ChooseIntent.score, 1);
-        assert(res.candidates[0].intent, 'mockLabel1');
-        assert(res.candidates[1].intent, 'mockLabel2');
+        ok(res.intents.ChooseIntent.score, 1);
+        ok(res.candidates[0].intent, 'mockLabel1');
+        ok(res.candidates[1].intent, 'mockLabel2');
+    });
+
+    describe('telemetry', () => {
+        it('should log PII when logPersonalInformation is true', async () => {
+            // Set up OrchestratorAdaptiveRecognizer
+            const result = [
+                {
+                    score: 0.9,
+                    label: {
+                        name: 'mockLabel',
+                    },
+                },
+            ];
+            const mockResolver = new MockResolver(result);
+            const testPaths = 'test';
+            const recognizer = new OrchestratorAdaptiveRecognizer(testPaths, testPaths, mockResolver);
+            OrchestratorAdaptiveRecognizer.orchestrator = 'mock';
+            recognizer.modelFolder = new StringExpression(testPaths);
+            recognizer.snapshotFile = new StringExpression(testPaths);
+
+            //Set up telemetry
+            const { dc, activity } = createTestDcAndActivity(orchestratorIntentText);
+            const telemetryClient = new NullTelemetryClient();
+            const spy = sinon.spy(telemetryClient, 'trackEvent');
+            recognizer.telemetryClient = telemetryClient;
+            recognizer.logPersonalInformation = true;
+
+            const res = await recognizer.recognize(dc, activity);
+
+            ok(res.text, orchestratorIntentText);
+            ok(res.intents.mockLabel.score, 0.9);
+            validateTelemetry({
+                recognizer,
+                dialogContext: dc,
+                spy,
+                activity,
+                result,
+                callCount: 1,
+            });
+        });
+
+        it('does not log PII when logPersonalInformation is false', async () => {
+            // Set up OrchestratorAdaptiveRecognizer
+            const result = [
+                {
+                    score: 0.9,
+                    label: {
+                        name: 'mockLabel',
+                    },
+                },
+            ];
+            const mockResolver = new MockResolver(result);
+            const testPaths = 'test';
+            const recognizer = new OrchestratorAdaptiveRecognizer(testPaths, testPaths, mockResolver);
+            OrchestratorAdaptiveRecognizer.orchestrator = 'mock';
+            recognizer.modelFolder = new StringExpression(testPaths);
+            recognizer.snapshotFile = new StringExpression(testPaths);
+
+            //Set up telemetry
+            const { dc, activity } = createTestDcAndActivity(orchestratorIntentText);
+            const telemetryClient = new NullTelemetryClient();
+            const spy = sinon.spy(telemetryClient, 'trackEvent');
+            recognizer.telemetryClient = telemetryClient;
+            recognizer.logPersonalInformation = false;
+
+            const res = await recognizer.recognize(dc, activity);
+
+            ok(res.text, orchestratorIntentText);
+            ok(res.intents.mockLabel.score, 0.9);
+            validateTelemetry({
+                recognizer,
+                dialogContext: dc,
+                spy,
+                activity,
+                result,
+                callCount: 1,
+            });
+        });
+
+        it('should refrain from logging PII by default', async () => {
+            // Set up OrchestratorAdaptiveRecognizer
+            const result = [
+                {
+                    score: 0.9,
+                    label: {
+                        name: 'mockLabel',
+                    },
+                },
+            ];
+            const mockResolver = new MockResolver(result);
+            const testPaths = 'test';
+            const recognizerWithDefaultLogPii = new OrchestratorAdaptiveRecognizer(testPaths, testPaths, mockResolver);
+            OrchestratorAdaptiveRecognizer.orchestrator = 'mock';
+            recognizerWithDefaultLogPii.modelFolder = new StringExpression(testPaths);
+            recognizerWithDefaultLogPii.snapshotFile = new StringExpression(testPaths);
+
+            //Set up telemetry
+            const { dc, activity } = createTestDcAndActivity(orchestratorIntentText);
+            const telemetryClient = new NullTelemetryClient();
+            const spy = sinon.spy(telemetryClient, 'trackEvent');
+            recognizerWithDefaultLogPii.telemetryClient = telemetryClient;
+
+            const res = await recognizerWithDefaultLogPii.recognize(dc, activity);
+
+            ok(res.text, orchestratorIntentText);
+            ok(res.intents.mockLabel.score, 0.9);
+            ok(!getLogPersonalInformation(recognizerWithDefaultLogPii, dc));
+            validateTelemetry({
+                recognizer: recognizerWithDefaultLogPii,
+                dialogContext: dc,
+                spy,
+                activity,
+                result,
+                callCount: 1,
+            });
+        });
     });
 });
 
