@@ -60,7 +60,7 @@ async function echoMessageInBrowser(driver) {
     ]);
 
     console.log('Getting Web Chat sendbox...');
-    let wcSendBox = await driver.wait(until.elementLocated(By.className('webchat__send-box-text-box__input')), 10000);
+    const wcSendBox = await driver.wait(until.elementLocated(By.className('webchat__send-box-text-box__input')), 10000);
 
     console.log('Sending user message...');
     await wcSendBox.sendKeys(userMessage, Key.RETURN);
@@ -72,7 +72,7 @@ async function ensureNoBrowserErrors(driver) {
     console.log('Getting browser logs...');
     const browserConsoleErrors = await driver.manage().logs().get(logging.Type.BROWSER);
 
-    if (browserConsoleErrors.length == 0) {
+    if (!browserConsoleErrors.length) {
         return;
     }
     browserConsoleErrors.forEach((error) => console.log(error.level.name, error.message));
@@ -88,11 +88,7 @@ async function getTranscriptMessages(driver, minNumMessages) {
     const transcript = await getTranscript(driver);
     const messageBubbles = await getBubbles(transcript);
 
-    return await Promise.all(
-        messageBubbles.map(async (bubble) => {
-            return await bubble.findElement(By.css('p')).getText();
-        })
-    );
+    return await Promise.all(messageBubbles.map((bubble) => bubble.findElement(By.css('p')).getText()));
 }
 
 function minNumActivitiesShown(numActivities) {
@@ -117,10 +113,10 @@ function minNumActivitiesShown(numActivities) {
     });
 }
 
-async function getTranscript(driver) {
-    return await driver.findElement(By.css('.webchat__basic-transcript'));
+function getTranscript(driver) {
+    return driver.findElement(By.css('.webchat__basic-transcript'));
 }
 
-async function getBubbles(transcript) {
-    return await transcript.findElements(By.className('webchat__bubble__content'));
+function getBubbles(transcript) {
+    return transcript.findElements(By.className('webchat__bubble__content'));
 }
