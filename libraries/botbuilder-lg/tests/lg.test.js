@@ -72,6 +72,7 @@ describe('LG', function () {
         StringInterpolation: Templates.parseFile(GetExampleFilePath('StringInterpolation.lg')),
         MemoryAccess: Templates.parseFile(GetExampleFilePath('MemoryAccess.lg')),
         ReExecute: Templates.parseFile(GetExampleFilePath('ReExecute.lg')),
+        FileOperation: Templates.parseFile(GetExampleFilePath('FileOperation.lg')),
         inject: Templates.parseFile(GetExampleFilePath('./injectionTest/inject.lg')),
         injectWithoutNamespace: Templates.parseFile(GetExampleFilePath('./injectionTest/injectWithoutNamespace.lg')),
         StrictModeTrue: Templates.parseFile(GetExampleFilePath('./EvaluationOptions/StrictModeTrue.lg')),
@@ -1649,5 +1650,20 @@ describe('LG', function () {
         ({ value: evaled, error } = Expression.parse('greeting()').tryEvaluate({ name: 'Alice' }));
         assert(error === undefined);
         assert.strictEqual(evaled, 'hi Alice');
+    });
+
+    it('TestFileOperation', function () {
+        const templates = preloaded.FileOperation;
+        let evaled = templates.evaluate('FromFileWithoutEvaluation');
+        assert.strictEqual(evaled, 'hi ${name}');
+
+        evaled = templates.evaluate('FromFileWithEvaluation1', { name: 'Lucy' });
+        assert.strictEqual(evaled, 'hi Lucy');
+
+        evaled = templates.evaluate('FromFileWithEvaluation2', { name: 'Lucy' });
+        assert.strictEqual(evaled, 'hi Lucy');
+
+        evaled = templates.evaluate('FromFileBinary');
+        assert.strictEqual(evaled, 'hi ${name}');
     });
 });
