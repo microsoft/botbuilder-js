@@ -58,6 +58,8 @@ export class String extends ExpressionEvaluator {
                         }
                     } else if (args[0] instanceof Date) {
                         result = args[0].toLocaleDateString(locale);
+                    } else if (args[0] instanceof Uint8Array) {
+                        result = new TextDecoder('utf-8').decode(args[0]);
                     } else {
                         result = JSON.stringify(args[0])
                             .replace(/(^['"]*)/g, '') // remove the starting single or double quote

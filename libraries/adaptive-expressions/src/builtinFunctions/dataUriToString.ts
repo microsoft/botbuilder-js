@@ -10,6 +10,7 @@ import { EvaluateExpressionDelegate, ExpressionEvaluator } from '../expressionEv
 import { ExpressionType } from '../expressionType';
 import { FunctionUtils } from '../functionUtils';
 import { ReturnType } from '../returnType';
+import atob from 'atob-lite';
 
 /**
  * Return the string version of a data uniform resource identifier (URI).
@@ -32,7 +33,7 @@ export class DataUriToString extends ExpressionEvaluator {
      */
     private static evaluator(): EvaluateExpressionDelegate {
         return FunctionUtils.apply(
-            (args: any[]): string => Buffer.from(args[0].slice(args[0].indexOf(',') + 1), 'base64').toString(),
+            (args: any[]): string => atob(args[0].slice(args[0].indexOf(',') + 1)),
             FunctionUtils.verifyString
         );
     }

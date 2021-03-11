@@ -10,6 +10,7 @@ import { EvaluateExpressionDelegate, ExpressionEvaluator } from '../expressionEv
 import { ExpressionType } from '../expressionType';
 import { FunctionUtils } from '../functionUtils';
 import { ReturnType } from '../returnType';
+import btoa = require('btoa-lite');
 
 /**
  * Return the base64-encoded version of a string or byte array.
@@ -28,13 +29,10 @@ export class Base64 extends ExpressionEvaluator {
     private static evaluator(): EvaluateExpressionDelegate {
         return FunctionUtils.apply((args: Readonly<any>): string | Uint8Array => {
             let result: string;
-            if (typeof args[0] === 'string') {
-                result = Buffer.from(args[0]).toString('base64');
+            if (typeof args[0] === 'string' || args[0] instanceof Uint8Array) {
+                result = btoa(args[0]);
             }
 
-            if (args[0] instanceof Uint8Array) {
-                result = Buffer.from(args[0]).toString('base64');
-            }
             return result;
         });
     }

@@ -60,20 +60,6 @@ export class InternalFunctionUtils {
     }
 
     /**
-     * Convert string into Uint8Array object.
-     * @param stringToConvert Input string.
-     */
-    public static toBinary(stringToConvert: string): Uint8Array {
-        const result = new ArrayBuffer(stringToConvert.length);
-        const bufferView = new Uint8Array(result);
-        for (let i = 0; i < stringToConvert.length; i++) {
-            bufferView[i] = stringToConvert.charCodeAt(i);
-        }
-
-        return bufferView;
-    }
-
-    /**
      * Sort helper function.
      * @param isDescending Descending flag.
      */
