@@ -13107,8 +13107,8 @@ wsrun@^5.2.4:
 
 x2js@^3.4.0:
   version "3.4.0"
-  resolved "https://botbuilder.myget.org/F/botbuilder-v4-js-daily/npm/x2js/-/x2js-3.4.0.tgz#1414ad99062705086a4838e8dde4ecd06e8bd3a9"
-  integrity sha1-FBStmQYnBQhqSDjo3eTs0G6L06k=
+  resolved "https://registry.yarnpkg.com/x2js/-/x2js-3.4.0.tgz#1414ad99062705086a4838e8dde4ecd06e8bd3a9"
+  integrity sha512-1tozn7D51ghz2DAiy5U6R55qn9x2F3lHUxusOD0QtYlLSDGxyXjHfn0c508eXG1D7s8qqj54SiU5HsPEfhDIpg==
   dependencies:
     xmldom "^0.1.19"
 
@@ -13154,8 +13154,8 @@ xmlbuilder@~11.0.0:
 
 xmldom@^0.1.19:
   version "0.1.31"
-  resolved "https://botbuilder.myget.org/F/botbuilder-v4-js-daily/npm/xmldom/-/xmldom-0.1.31.tgz#b76c9a1bd9f0a9737e5a72dc37231cf38375e2ff"
-  integrity sha1-t2yaG9nwqXN+WnLcNyMc84N14v8=
+  resolved "https://registry.yarnpkg.com/xmldom/-/xmldom-0.1.31.tgz#b76c9a1bd9f0a9737e5a72dc37231cf38375e2ff"
+  integrity sha512-yS2uJflVQs6n+CyjHoaBmVSqIDevTAWrzMmjG1Gc7h1qQ7uVozNhEPJAwZXWyGQ/Gafo3fCwrcaokezLPupVyQ==
 
 xpath.js@~1.1.0:
   version "1.1.0"
@@ -13164,8 +13164,8 @@ xpath.js@~1.1.0:
 
 xpath@^0.0.32:
   version "0.0.32"
-  resolved "https://botbuilder.myget.org/F/botbuilder-v4-js-daily/npm/xpath/-/xpath-0.0.32.tgz#1b73d3351af736e17ec078d6da4b8175405c48af"
-  integrity sha1-G3PTNRr3NuF+wHjW2kuBdUBcSK8=
+  resolved "https://registry.yarnpkg.com/xpath/-/xpath-0.0.32.tgz#1b73d3351af736e17ec078d6da4b8175405c48af"
+  integrity sha512-rxMJhSIoiO8vXcWvSifKqhvV96GjiD5wYb8/QHdoRyQvraTpp4IEv944nhGausZZ3u7dhQXteZuZbaqfpB7uYw==
 
 xregexp@2.0.0:
   version "2.0.0"
