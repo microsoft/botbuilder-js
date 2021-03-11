@@ -40,29 +40,30 @@ export async function start(
     settingsDirectory: string,
     options: Partial<Options> = {}
 ): Promise<void> {
-    const { port, messagingEndpointPath } = TypedOptions.check(Object.assign({}, defaultOptions, options));
+    const validatedOptions = TypedOptions.check(Object.assign({}, defaultOptions, options));
     const [services, configuration] = await getRuntimeServices(applicationRoot, settingsDirectory);
 
-    const server = await makeServer(messagingEndpointPath, services, configuration);
+    const server = await makeServer(services, configuration, validatedOptions);
 
-    server.listen(port, () => {
-        console.log(`server listening on port ${port}`);
+    server.listen(validatedOptions.port, () => {
+        console.log(`server listening on port ${validatedOptions.port}`);
     });
 }
 
 /**
  * Create a server using the runtime restify integration.
  *
- * @param messagingEndpointPath path for receiving and processing [Activities](xref:botframework-schema.Activity)
  * @param services runtime service collection
  * @param configuration runtime configuration
- * @returns a restify server ready to listen for connections
+ * @param options options bag for configuring restify Server
+ * @returns a restify Server ready to listen for connections
  */
 export async function makeServer(
-    messagingEndpointPath: string,
     services: ServiceCollection<IServices>,
-    configuration: Configuration
+    configuration: Configuration,
+    options: Partial<Options> = {}
 ): Promise<restify.Server> {
+    const { messagingEndpointPath } = TypedOptions.check(Object.assign({}, defaultOptions, options));
     const { adapter, bot, customAdapters } = await services.mustMakeInstances('adapter', 'bot', 'customAdapters');
 
     const server = restify.createServer();
