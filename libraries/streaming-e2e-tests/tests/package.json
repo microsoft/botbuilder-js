@@ -5,7 +5,7 @@
   "description": "Test that botframework-streaming works end-to-end from SDK to browser",
   "main": "streaming-e2e.test.js",
   "scripts": {
-    "test": "mocha streaming-e2e.test.js"
+    "test": "mocha --exit streaming-e2e.test.js"
   },
   "keywords": [],
   "author": "",

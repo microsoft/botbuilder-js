@@ -21,27 +21,31 @@ describe('Chrome', function () {
         await ensureNoBrowserErrors(driver);
 
         console.log('Transcript received. Asserting...');
-        assert.strictEqual(transcriptMessages[0], userMessage);
-        assert.strictEqual(transcriptMessages[1], `Streaming Echo: ${userMessage}.`);
-        assert.strictEqual(transcriptMessages.length, 2);
+        assert.deepStrictEqual(transcriptMessages, [userMessage, `Streaming Echo: ${userMessage}.`]);
 
         await driver.quit();
     });
 });
 
+/**
+ * @param {string} browser browser to use when creating driver
+ * @returns {import('selenium-webdriver').WebDriver} selenium driver
+ */
 function createDriver(browser) {
     // For now, we are only using ChromeDriver
     // In future expansions on E2E streaming tests, we can expand to create options for multiple browsers
     const options = new Options().headless();
+
     const preferences = new logging.Preferences();
     preferences.setLevel(logging.Type.BROWSER, logging.Level.SEVERE);
     options.setLoggingPrefs(preferences);
 
-    const builder = new Builder().setChromeOptions(options).forBrowser(browser).build();
-
-    return builder;
+    return new Builder().setChromeOptions(options).forBrowser(browser).build();
 }
 
+/**
+ * @param {import('selenium-webdriver').WebDriver} driver selenium driver
+ */
 async function echoMessageInBrowser(driver) {
     console.log(`Navigating to "${reactAppEndpoint}"...`);
     await driver.get(reactAppEndpoint);
@@ -51,38 +55,46 @@ async function echoMessageInBrowser(driver) {
     console.log('Waiting for webchat to load or error is reported...');
     await Promise.race([
         driver
-            .wait(until.elementLocated(By.id('webchat-error')))
+            .wait(until.elementLocated(By.id('webchat-error')), 10000, 'timed out finding webchat-error')
             .getText()
             .then((message) => {
                 throw new Error(`Found #webchat-error DOM element: ${message}`);
             }),
-        driver.wait(until.elementLocated(By.id('react-webchat'))),
+        driver.wait(until.elementLocated(By.id('react-webchat')), 10000, 'timed out finding react-webchat'),
     ]);
 
     console.log('Getting Web Chat sendbox...');
-    const wcSendBox = await driver.wait(until.elementLocated(By.className('webchat__send-box-text-box__input')), 10000);
+    const wcSendBox = await driver.wait(
+        until.elementLocated(By.className('webchat__send-box-text-box__input')),
+        10000,
+        'timed out locating webchat sendbox'
+    );
 
     console.log('Sending user message...');
     await wcSendBox.sendKeys(userMessage, Key.RETURN);
-
-    return driver;
 }
 
+/**
+ * @param {import('selenium-webdriver').WebDriver} driver selenium driver
+ */
 async function ensureNoBrowserErrors(driver) {
     console.log('Getting browser logs...');
     const browserConsoleErrors = await driver.manage().logs().get(logging.Type.BROWSER);
 
-    if (!browserConsoleErrors.length) {
-        return;
-    }
-    browserConsoleErrors.forEach((error) => console.log(error.level.name, error.message));
+    if (browserConsoleErrors.length) {
+        browserConsoleErrors.forEach((error) => console.error(error.level.name, error.message));
 
-    throw new Error('SEVERE-level error found in browser.');
+        throw new Error('SEVERE-level error found in browser.');
+    }
 }
 
+/**
+ * @param {import('selenium-webdriver').WebDriver} driver selenium driver
+ * @param {number} minNumMessages minimum number of messages to wait for
+ */
 async function getTranscriptMessages(driver, minNumMessages) {
     console.log('Waiting for activities to load...');
-    await driver.wait(minNumActivitiesShown(minNumMessages), 10000);
+    await driver.wait(minNumActivitiesShown(minNumMessages), 20000, 'timed out waiting for activities to load');
 
     console.log('Activities loaded. Getting transcript...');
     const transcript = await getTranscript(driver);
@@ -91,6 +103,10 @@ async function getTranscriptMessages(driver, minNumMessages) {
     return await Promise.all(messageBubbles.map((bubble) => bubble.findElement(By.css('p')).getText()));
 }
 
+/**
+ * @param {number} numActivities minimum number of activities
+ * @returns {import('selenium-webdriver').Condition<Promise<boolean>>} selenium condition
+ */
 function minNumActivitiesShown(numActivities) {
     return new Condition(`${numActivities} activities is shown`, async (driver) => {
         // To run hooks (WebChatTest.runHook), the code internally creates an activity.
@@ -113,10 +129,18 @@ function minNumActivitiesShown(numActivities) {
     });
 }
 
+/**
+ * @param {import('selenium-webdriver').WebDriver} driver selenium driver
+ * @returns {Promise<import('selenium-webdriver').WebElement>} transcript element
+ */
 function getTranscript(driver) {
     return driver.findElement(By.css('.webchat__basic-transcript'));
 }
 
-function getBubbles(transcript) {
-    return transcript.findElements(By.className('webchat__bubble__content'));
+/**
+ * @param {import('selenium-webdriver').WebDriver} driver selenium driver
+ * @returns {Promise<Array<import('selenium-webdriver').WebElement>>} bubble elements
+ */
+function getBubbles(driver) {
+    return driver.findElements(By.className('webchat__bubble__content'));
 }

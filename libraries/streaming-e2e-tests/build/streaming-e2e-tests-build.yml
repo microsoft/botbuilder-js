@@ -38,5 +38,6 @@ jobs:
       - Deploy_Bot
       - Create_React_App
     condition: succeeded()
+    timeoutInMinutes: 15
     steps:
       - template: run-tests.yml
