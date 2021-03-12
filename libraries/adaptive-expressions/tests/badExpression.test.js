@@ -60,7 +60,6 @@ const invalidExpressions = [
     'func(A,b,b,)',
     '"hello\'',
     'user.lists.{dialog.listName}',
-    '\'hello\'.length()',
     '`hi` world',
 ];
 
@@ -534,7 +533,7 @@ describe('expression functional test', () => {
     describe('invalidExpressions', () => {
         invalidExpressions.forEach((invalidExpression) => {
             it(`${invalidExpression} throws an exception`, () => {
-                assert.throws(() => parser.parse(invalidExpression));
+                assert.throws(() => parser.parse(invalidExpression), /syntax error at line [0-9]+:[0-9]+ Invalid expression format./, 'Error message not match.');
             });
         });
     });

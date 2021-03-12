@@ -32,6 +32,7 @@ export class ParseErrorListener implements ANTLRErrorListener<any> {
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         _e: RecognitionException | undefined
     ): void {
-        throw Error(`syntax error at line ${line}:${charPositionInLine} ${msg}`);
+        const syntaxErrorMessage = "Invalid expression format.";
+        throw Error(`syntax error at line ${line}:${charPositionInLine} ${syntaxErrorMessage}`);
     }
 }
