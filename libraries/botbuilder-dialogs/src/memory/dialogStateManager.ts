@@ -5,28 +5,14 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import {
-    PathResolver,
-    DollarPathResolver,
-    HashPathResolver,
-    AtAtPathResolver,
-    AtPathResolver,
-    PercentPathResolver,
-} from './pathResolvers';
-import {
-    MemoryScope,
-    SettingsMemoryScope,
-    DialogMemoryScope,
-    ClassMemoryScope,
-    ThisMemoryScope,
-    TurnMemoryScope,
-    ConversationMemoryScope,
-    UserMemoryScope,
-    DialogClassMemoryScope,
-    DialogContextMemoryScope,
-} from './scopes';
+import { PathResolver } from './pathResolvers';
+import { MemoryScope } from './scopes';
 import { DialogContext } from '../dialogContext';
 import { DialogPath } from './dialogPath';
+import { ComponentRegistration } from 'botbuilder-core';
+import { DialogsComponentRegistration } from '../dialogsComponentRegistration';
+import { ComponentMemoryScopes, isComponentMemoryScopes } from './componentMemoryScopes';
+import { ComponentPathResolvers, isComponentPathResolvers } from './componentPathResolvers';
 
 export interface DialogStateManagerConfiguration {
     /**
@@ -61,12 +47,27 @@ export class DialogStateManager {
      * @param configuration Configuration for the dialog state manager.
      */
     public constructor(dc: DialogContext, configuration?: DialogStateManagerConfiguration) {
+        ComponentRegistration.add(new DialogsComponentRegistration());
+
         this.dialogContext = dc;
-        this.configuration = configuration
-            ? configuration
-            : dc.context.turnState.get(DIALOG_STATE_MANAGER_CONFIGURATION);
+        this.configuration = configuration ?? dc.context.turnState.get(DIALOG_STATE_MANAGER_CONFIGURATION);
         if (!this.configuration) {
-            this.configuration = DialogStateManager.createStandardConfiguration();
+            this.configuration = { memoryScopes: [], pathResolvers: [] };
+
+            // get all of the component memory scopes.
+            ComponentRegistration.components.filter((component: ComponentRegistration) =>
+                isComponentMemoryScopes(component)
+            ).forEach((component: ComponentMemoryScopes) => {
+                this.configuration.memoryScopes.push(...component.getMemoryScopes());
+            })
+
+            // get all of the component path resolvers.
+            ComponentRegistration.components.filter((component: ComponentRegistration) =>
+                isComponentPathResolvers(component)
+            ).forEach((component: ComponentPathResolvers) => {
+                this.configuration.pathResolvers.push(...component.getPathResolvers());
+            });
+
             // cache for any other new dialogStateManager instances in this turn
             dc.context.turnState.set(DIALOG_STATE_MANAGER_CONFIGURATION, this.configuration);
         }
@@ -593,35 +594,6 @@ export class DialogStateManager {
         }
 
         return undefined;
-    }
-
-    /**
-     * Creates a standard dialog state manager configuration.
-     * @returns A [DialogStateManagerConfiguration](xref:botbuilder-dialogs.DialogStateManagerConfiguration) with the standard configuration.
-     */
-    public static createStandardConfiguration(): DialogStateManagerConfiguration {
-        const config: DialogStateManagerConfiguration = {
-            pathResolvers: [
-                new DollarPathResolver(),
-                new HashPathResolver(),
-                new AtAtPathResolver(),
-                new AtPathResolver(),
-                new PercentPathResolver(),
-            ],
-            memoryScopes: [
-                new TurnMemoryScope(),
-                new SettingsMemoryScope(),
-                new DialogMemoryScope(),
-                new DialogClassMemoryScope(),
-                new ClassMemoryScope(),
-                new ThisMemoryScope(),
-                new ConversationMemoryScope(),
-                new UserMemoryScope(),
-                new DialogContextMemoryScope(),
-            ],
-        };
-
-        return config;
     }
 
     /**

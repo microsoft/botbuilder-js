@@ -21,9 +21,9 @@ export interface ComponentDeclarativeTypes {
  * Check if a [ComponentRegistration](xref:botbuilder-core.ComponentRegistration) is
  * [ComponentDeclarativeTypes](xref:botbuilder-dialogs-declarative.ComponentDeclarativeTypes) or not.
  *
- * @param {ComponentRegistration} component The component registration.
+ * @param {any} component The component registration.
  * @returns {boolean} Type check result.
  */
-export function isComponentDeclarativeTypes(component: any): component is ComponentDeclarativeTypes {
-    return tests.isObject(component) && tests.isFunc(component['getDeclarativeTypes']);
+export function isComponentDeclarativeTypes(component: unknown): component is ComponentDeclarativeTypes {
+    return tests.unsafe.isObjectAs<ComponentDeclarativeTypes>(component) && tests.isFunc(component.getDeclarativeTypes);
 }
