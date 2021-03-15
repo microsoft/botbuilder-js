@@ -7,7 +7,7 @@ const Validator = require('jsonschema').Validator;
 const { exec } = require('child_process');
 
 // Note: This file is intentionally not named *.test.js to ensure it isn't run
-// any time somebody calls `mocha` in this directory.
+// via `yarn run test` or `npm run test`.
 
 async function runCommand(command) {
     return new Promise((resolve, _reject) => {
