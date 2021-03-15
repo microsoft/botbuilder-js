@@ -11,9 +11,15 @@ const { exec } = require('child_process');
 
 async function runCommand(command) {
     return new Promise((resolve, _reject) => {
-        exec(command, (err, stdout, stderr) => {
-            resolve({ error: err && stderr, log: stdout });
-        });
+        exec(
+            command,
+            {
+                cwd: __dirname,
+            },
+            (err, stdout, stderr) => {
+                resolve({ error: err && stderr, log: stdout });
+            }
+        );
     });
 }
 
@@ -56,7 +62,7 @@ describe('Schema Merge Tests', function () {
             const newTestsSchemaFileResource = new FileResource(testsSchemaPath);
             const newSchema = JSON.parse(newTestsSchemaFileResource.readText());
             if (result.error || newSchema !== testsSchema) {
-                // We may get there because there was an error running bf dialog:merge or because 
+                // We may get there because there was an error running bf dialog:merge or because
                 // the generated file is different than the one that is in source control.
                 // In either case we try installing latest bf if the schema changed to make sure the
                 // discrepancy is not because we are using a different version of the CLI
