@@ -18,6 +18,7 @@ export * from './dialogContextError';
 export * from './dialogEvents';
 export { runDialog } from './dialogHelper';
 export * from './dialogManager';
+export * from './dialogsComponentRegistration';
 export * from './dialogSet';
 export * from './dialogTurnStateConstants';
 export * from './memory';
