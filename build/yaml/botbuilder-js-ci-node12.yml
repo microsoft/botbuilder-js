@@ -17,4 +17,5 @@ stages:
     steps:
     - template: templates/build.yml
     - template: templates/test.yml
+    - template: templates/test-schemas.yml
     - template: templates/list-files.yml
