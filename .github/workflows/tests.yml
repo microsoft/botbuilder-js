@@ -66,10 +66,6 @@ jobs:
         if: matrix.node-version == '14.x'
         run: yarn test:consumer
 
-      - name: install bf-cli
-        if: matrix.node-version == '14.x'
-        run: npm install -g --ignore-scripts bf-cli@latest
-
       - name: yarn test:schemas
         if: matrix.node-version == '14.x'
         run: yarn test:schemas

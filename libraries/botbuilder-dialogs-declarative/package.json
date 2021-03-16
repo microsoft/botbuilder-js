@@ -28,13 +28,13 @@
     }
   },
   "dependencies": {
-    "bf-cli": "^1.0.4",
     "botbuilder-core": "4.1.6",
     "botbuilder-dialogs": "4.1.6",
     "botbuilder-stdlib": "4.1.6",
     "chokidar": "^3.4.0"
   },
   "devDependencies": {
+    "bf-cli": "^1.0.4",
     "jsonschema": "^1.4.0"
   },
   "scripts": {
