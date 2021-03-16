@@ -77,7 +77,10 @@ describe('Schema Merge Tests', function () {
             // and we ensure it is installed while on it.
             try {
                 // Rerun merge command.
-                mergeCommand = 'npx -p @microsoft/botframework-cli ' + mergeCommand;
+                mergeCommand = [
+                    'npx -p @microsoft/botframework-cli', // invoke with npx to not alter repo dependencies
+                    'bf dialog:merge', // dialog merge command
+                ].join(' ');
                 await runCommand(mergeCommand);
             } catch (err2) {
                 assert.fail(`Unable to merge schemas.\nFirst error:\n${err}\nSecond error:\n${err2}`);
