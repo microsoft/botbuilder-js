@@ -24,7 +24,7 @@
     "@types/atob-lite": "^2.0.0",
     "@types/btoa-lite": "^1.0.0",
     "@types/lru-cache": "^5.1.0",
-    "@types/xmldom": "^0.1.29",
+    "@types/xmldom": "^0.1.30",
     "antlr4ts": "0.5.0-alpha.3",
     "atob-lite": "^2.0.0",
     "btoa-lite": "^1.0.0",
@@ -37,7 +37,7 @@
     "uuid": "^8.3.2",
     "x2js": "^3.4.0",
     "xml2js": "^0.4.23",
-    "xmldom": "^0.4.0",
+    "xmldom": "^0.5.0",
     "xpath": "^0.0.32"
   },
   "devDependencies": {
