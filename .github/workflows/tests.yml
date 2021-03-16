@@ -29,17 +29,13 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
 
-      - name: yarn cache dir
-        id: yarn-cache-dir
-        run: echo "::set-output name=dir::$(yarn cache dir)"
-
       - uses: actions/cache@v2
         with:
-          path: ${{ steps.yarn-cache-dir.outputs.dir }}
-          key: ${{ runner.os }}-node${{ matrix.node-version }}-yarn-${{ hashFiles('**/yarn.lock') }}
+          path: .yarn/cache
+          key: ${{ runner.os }}-node${{ matrix.node-version }}-yarn2-${{ hashFiles('**/yarn.lock') }}
 
       - name: yarn
-        run: yarn --frozen-lockfile
+        run: yarn --immutable
 
       - name: yarn test:repoutils
         if: matrix.node-version == '14.x'

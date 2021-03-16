@@ -8,7 +8,6 @@ pool:
 variables:
   NodeVersion: 12.x
   PackageVersion: $(Build.BuildId)
-  YARN_CACHE_FOLDER: $(Pipeline.Workspace)/.yarn
 
 stages:
 - stage: Build

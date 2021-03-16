@@ -11,7 +11,7 @@ steps:
   inputs:
     versionSpec: $(NodeVersion)
 
-- script: yarn --frozen-lockfile
+- script: yarn --immutable
   displayName: yarn install
 
 - script: yarn build

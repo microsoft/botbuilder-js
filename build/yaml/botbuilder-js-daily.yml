@@ -7,7 +7,6 @@ pool:
 
 variables:
   NodeVersion: 12.x
-  YARN_CACHE_FOLDER: $(Pipeline.Workspace)/.yarn
 
 steps:
 - template: templates/build.yml
