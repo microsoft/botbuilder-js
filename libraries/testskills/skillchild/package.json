@@ -4,8 +4,7 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
-  "scripts": {
-  },
+  "scripts": {},
   "author": "Microsoft Corp.",
   "license": "MIT",
   "dependencies": {

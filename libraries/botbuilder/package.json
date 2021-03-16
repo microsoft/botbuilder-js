@@ -32,9 +32,9 @@
     "botbuilder-core": "4.1.6",
     "botframework-connector": "4.1.6",
     "botframework-streaming": "4.1.6",
+    "dayjs": "^1.10.3",
     "filenamify": "^4.1.0",
     "fs-extra": "^7.0.1",
-    "dayjs": "^1.10.3",
     "uuid": "^8.3.2"
   },
   "devDependencies": {

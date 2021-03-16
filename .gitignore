@@ -311,7 +311,15 @@ coverage
 
 # misc. things
 /test-runner/out
-.yarn
+
+# yarn ignores for projects not using zero-installs
+.yarn/*
+!.yarn/patches
+!.yarn/releases
+!.yarn/plugins
+!.yarn/sdks
+!.yarn/versions
+.pnp.*
 
 # typescript assets
 *.tsbuildinfo

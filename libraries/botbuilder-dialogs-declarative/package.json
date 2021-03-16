@@ -33,8 +33,6 @@
     "botbuilder-stdlib": "4.1.6",
     "chokidar": "^3.4.0"
   },
-  "devDependencies": {
-  },
   "scripts": {
     "build": "tsc -b",
     "build-docs": "typedoc --theme markdown --entryPoint botbuilder-dialogs-adaptive --excludePrivate --includeDeclarations --ignoreCompilerErrors --module amd --out ..\\..\\doc\\botbuilder-dialogs .\\lib\\index.d.ts --hideGenerator --name \"Bot Builder SDK - Dialogs\" --readme none",

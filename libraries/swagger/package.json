@@ -4,8 +4,7 @@
   "version": "1.0.0",
   "description": "To regenerate the botframework-connector and botframework-schema libraries, install the dependencies for autorest via `npm i`, then run generateClient.cmd.",
   "main": "generateClient.cmd",
-  "scripts": {
-  },
+  "scripts": {},
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Microsoft/botbuilder-js.git"
