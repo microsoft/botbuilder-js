@@ -450,6 +450,30 @@ export class InternalFunctionUtils {
     }
 
     /**
+     * TextEncoder helper function.
+     */
+    public static getTextEncoder(): TextEncoder {
+        if (typeof window !== 'undefined' || typeof self !== 'undefined') {
+            return new TextEncoder();
+        }
+        // eslint-disable-next-line @typescript-eslint/no-var-requires
+        const util = require('util');
+        return new util.TextEncoder();
+    }
+
+    /**
+     * TextDecoder helper function.
+     */
+    public static getTextDecoder(code = 'utf-8'): TextDecoder {
+        if (typeof window !== 'undefined' || typeof self !== 'undefined') {
+            return new TextDecoder(code);
+        }
+        // eslint-disable-next-line @typescript-eslint/no-var-requires
+        const util = require('util');
+        return new util.TextDecoder(code);
+    }
+
+    /**
      * Helper function of get the number of properties of an object.
      * @param obj An object.
      */

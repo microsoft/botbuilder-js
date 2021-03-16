@@ -11,6 +11,7 @@ import { ExpressionType } from '../expressionType';
 import { FunctionUtils } from '../functionUtils';
 import { ReturnType } from '../returnType';
 import btoa from 'btoa-lite';
+import { InternalFunctionUtils } from '../functionUtils.internal';
 
 /**
  * Return the base64-encoded version of a string or byte array.
@@ -35,7 +36,7 @@ export class Base64 extends ExpressionEvaluator {
             }
 
             if (firstChild instanceof Uint8Array) {
-                const stringContent = new TextDecoder('utf-8').decode(firstChild);
+                const stringContent = InternalFunctionUtils.getTextDecoder().decode(firstChild);
                 result = btoa(stringContent);
             }
 

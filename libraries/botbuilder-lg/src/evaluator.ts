@@ -664,15 +664,9 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGTempla
     private readonly fromFile = (): any => (args: readonly any[]): any => {
         const filePath: string = TemplateExtensions.normalizePath(args[0].toString());
         const resourcePath: string = this.getResourcePath(filePath);
-        let format = FileFormat.Evaluated;
-        if (args.length > 1) {
-            for (const buildinFormat of Object.values(FileFormat)) {
-                if (args[1].toLowerCase() === buildinFormat.toLowerCase()) {
-                    format = buildinFormat;
-                    break;
-                }
-            }
-        }
+        const expected = args[1].toLowerCase();
+        const format =
+            Object.values(FileFormat).find((format) => format.toLowerCase() === expected) ?? FileFormat.Evaluated;
 
         let result: unknown;
         if (format === FileFormat.Binary) {

@@ -36,7 +36,7 @@ export class Base64ToBinary extends ExpressionEvaluator {
     private static evaluator(): EvaluateExpressionDelegate {
         return FunctionUtils.apply((args: Readonly<any>): Uint8Array => {
             const raw = atob(args[0].toString());
-            return new TextEncoder().encode(raw);
+            return InternalFunctionUtils.getTextEncoder().encode(raw);
         }, FunctionUtils.verifyString);
     }
 }
