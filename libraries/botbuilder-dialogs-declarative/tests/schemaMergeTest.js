@@ -17,7 +17,10 @@ async function runCommand(command) {
                 cwd: __dirname,
             },
             (err, stdout, stderr) => {
-                resolve({ error: err && stderr, log: stdout });
+                if (err || stderr) {
+                    console.error(err ?? stderr);
+                }
+                resolve({ error: err ?? stderr, log: stdout });
             }
         );
     });
