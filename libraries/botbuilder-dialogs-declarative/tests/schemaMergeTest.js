@@ -10,20 +10,25 @@ const { exec } = require('child_process');
 // via `yarn run test` or `npm run test`.
 
 async function runCommand(command) {
-    return new Promise((resolve, _reject) => {
-        exec(
-            command,
-            {
-                cwd: __dirname,
-            },
-            (err, stdout, stderr) => {
-                if (err || stderr) {
-                    console.error(err ?? stderr);
+    try {
+        return new Promise((resolve, _reject) => {
+            exec(
+                command,
+                {
+                    cwd: __dirname,
+                },
+                (err, stdout, stderr) => {
+                    if (err || stderr) {
+                        console.error(err ?? stderr);
+                    }
+                    resolve({ error: err ?? stderr, log: stdout });
                 }
-                resolve({ error: err ?? stderr, log: stdout });
-            }
-        );
-    });
+            );
+        });
+    } catch (error) {
+        // Errors *should* be handled in the callback above, but don't seem to be, so we'll try/catch as well.
+        return { error };
+    }
 }
 
 describe('Schema Merge Tests', function () {
