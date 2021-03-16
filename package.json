@@ -35,6 +35,7 @@
     "test:nyc:lcov": "nyc report --reporter=text-lcov > .lcov.info",
     "test:nyc:report": "nyc report",
     "test:repoutils": "yarn workspace botbuilder-repo-utils test",
+    "test:schemas": "mocha \"libraries/botbuilder-dialogs-declarative/tests/schemaMergeTest.js\" --exit",
     "update-versions": "yarn workspace botbuilder-repo-utils update-versions"
   },
   "devDependencies": {

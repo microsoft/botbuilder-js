@@ -65,3 +65,7 @@ jobs:
       - name: yarn test:consumer
         if: matrix.node-version == '14.x'
         run: yarn test:consumer
+
+      - name: yarn test:schemas
+        if: matrix.node-version == '10.x'
+        run: yarn test:schemas
