@@ -55,7 +55,7 @@ describe('Schema Merge Tests', function () {
     // This will install the latest version of botframework-cli if the schema changed and npm is present.
     // This only runs on Windows platforms.
     maybeIt('should generate a new tests.schema file', async function () {
-        this.timeout(50000);
+        this.timeout(100000);
         fs.unlinkSync(testsSchemaPath);
 
         // Merge all schema files.
@@ -89,7 +89,7 @@ describe('Schema Merge Tests', function () {
     });
 
     it('dialog resources are valid for schema', function () {
-        this.timeout(50000);
+        this.timeout(100000);
 
         for (const resource of dialogs) {
             const fileResource = new FileResource(resource.fullName);
