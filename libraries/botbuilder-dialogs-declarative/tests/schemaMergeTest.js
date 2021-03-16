@@ -22,8 +22,9 @@ async function runCommand(command) {
                 // Ignore stderr since npm warnings get routed there.
                 if (err) {
                     reject(err);
+                } else {
+                    resolve(stdout);
                 }
-                resolve(stdout);
             }
         );
     });

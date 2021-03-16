@@ -91,6 +91,5 @@
       "**/tools/**",
       "**/internal.*"
     ]
-  },
-  "dependencies": {}
+  }
 }
