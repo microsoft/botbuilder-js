@@ -1,5 +1,5 @@
 const { ConversationState, UserState, MemoryStorage, TurnContext, TestAdapter } = require('botbuilder-core');
-const { DialogStateManager, Dialog, DialogSet, DialogContext, DialogContainer, ConversationMemoryScope, UserMemoryScope } = require('../');
+const { Dialog, DialogSet, DialogContext, DialogContainer, ConversationMemoryScope, UserMemoryScope } = require('../');
 const assert = require('assert');
 
 const beginMessage = {
@@ -71,7 +71,6 @@ class TestContainer extends DialogContainer {
 async function createConfiguredTestDc(storage) {
     if (!storage) { storage = new MemoryStorage(); }
     const dc = await createTestDc(storage);
-    dc.state.configuration = DialogStateManager.createStandardConfiguration();
     await dc.state.loadAllScopes();
 
     return dc;
@@ -105,29 +104,6 @@ describe('Memory - Dialog State Manager', function() {
 
     before(async () => {
         dc = await createConfiguredTestDc();
-    });
-
-    it('Should create a standard configuration.', async function() {
-        // Run test
-        const config = DialogStateManager.createStandardConfiguration();
-        assert(config, `No config returned`);
-        assert(config.pathResolvers.length > 0, `No path resolvers`);
-        assert(config.memoryScopes.length > 0, `No memory scopes`);
-    });
-
-    it('Should create a standard configuration with added conversation state.', async function() {
-        // Run test
-        let convoScopeFound = false;
-        const storage = new MemoryStorage();
-        const convoState = new ConversationState(storage);
-        const config = DialogStateManager.createStandardConfiguration(convoState);
-        config.memoryScopes.forEach(scope => {
-            if (scope instanceof ConversationMemoryScope) {
-                convoScopeFound = true;
-                assert(scope.name == 'conversation');
-            }
-        });
-        assert(convoScopeFound, `no conversation scope added`);
     });
 
     it('Should create a standard configuration with added conversation and user state.', async function() {

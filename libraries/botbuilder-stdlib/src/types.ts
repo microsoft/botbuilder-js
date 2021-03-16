@@ -526,6 +526,22 @@ function makeTest<T>(assertion: Assertion<T>): Test<T> {
     };
 }
 
+/**
+ * **UNSAFE**
+ * Test if `val` is of type `object`.
+ * This test does not actually verify that `val` is of type `T`. It is useful as the first
+ * line in a nested assertion so that remaining assertion calls can leverage helpful intellisense.
+ * This method is only exported under the `unsafe` keyword as a constant reminder of this fact.
+ *
+ * @template T the type to cast `val` to, should extend `Dictionary<unknown>`, i.e. be itself an object
+ * @param {any} val value to test
+ * @returns {boolean} true if `val` is of type `object`
+ */
+function isObjectAs<T>(val: unknown): val is T {
+    castObjectAs<T>(val, []);
+    return isObject(val);
+}
+
 export const tests = {
     isAny,
     isArray,
@@ -545,6 +561,8 @@ export const tests = {
 
     fromAssertion: makeTest,
     toAssertion: makeAssertion,
+
+    unsafe: { isObjectAs },
 };
 
 /**
