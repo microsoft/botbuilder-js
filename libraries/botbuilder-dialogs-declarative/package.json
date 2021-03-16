@@ -34,7 +34,6 @@
     "chokidar": "^3.4.0"
   },
   "devDependencies": {
-    "@microsoft/botframework-cli": "^4.12.0",
     "jsonschema": "^1.4.0"
   },
   "scripts": {

@@ -56,12 +56,12 @@ describe('Schema Merge Tests', function () {
     // This will install the latest version of botframework-cli if the schema changed and npm is present.
     // This only runs on Windows platforms.
     maybeIt('should generate a new tests.schema file', async function () {
-        this.timeout(100000);
+        this.timeout(150000);
         fs.unlinkSync(testsSchemaPath);
 
         // Merge all schema files.
         const sdkRoot = path.join(__dirname, '..', '..', '..');
-        const mergeCommand = `bf dialog:merge ${sdkRoot}/libraries/**/*.schema ${sdkRoot}/libraries/**/*.uischema !**/testbot.schema !${sdkRoot}/libraries/botbuilder-dialogs-adaptive/tests/schema/*.* -o ${testsSchemaPath}`;
+        let mergeCommand = `bf dialog:merge ${sdkRoot}/libraries/**/*.schema ${sdkRoot}/libraries/**/*.uischema !**/testbot.schema !${sdkRoot}/libraries/botbuilder-dialogs-adaptive/tests/schema/*.* -o ${testsSchemaPath}`;
         try {
             await runCommand(mergeCommand);
 
@@ -75,11 +75,9 @@ describe('Schema Merge Tests', function () {
             // In either case we try installing latest bf if the schema changed to make sure the
             // discrepancy is not because we are using a different version of the CLI
             // and we ensure it is installed while on it.
-            const installCommand = 'npm i -g --ignore-scripts @microsoft/botframework-cli@next --force';
             try {
-                await runCommand(installCommand);
-
                 // Rerun merge command.
+                mergeCommand = 'npx -p @microsoft/botframework-cli ' + mergeCommand;
                 await runCommand(mergeCommand);
             } catch (err2) {
                 assert.fail(`Unable to merge schemas.\nFirst error:\n${err}\nSecond error:\n${err2}`);
