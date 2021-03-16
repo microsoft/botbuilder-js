@@ -79,7 +79,7 @@ describe('Schema Merge Tests', function () {
                 // Rerun merge command.
                 mergeCommand = [
                     'npx -p @microsoft/botframework-cli', // invoke with npx to not alter repo dependencies
-                    'bf dialog:merge', // dialog merge command
+                    mergeCommand, // dialog merge command
                 ].join(' ');
                 await runCommand(mergeCommand);
             } catch (err2) {
