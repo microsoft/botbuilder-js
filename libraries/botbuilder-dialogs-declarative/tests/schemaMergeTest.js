@@ -63,7 +63,7 @@ describe('Schema Merge Tests', function () {
 
             // Check if there were any errors or if the new schema file has changed.
             const newTestsSchemaFileResource = new FileResource(testsSchemaPath);
-            const newSchema = JSON.parse(newTestsSchemaFileResource.readText());
+            const newSchema = fs.existsSync(testsSchemaPath) && JSON.parse(newTestsSchemaFileResource.readText());
             if (result.error || newSchema !== testsSchema) {
                 // We may get there because there was an error running bf dialog:merge or because
                 // the generated file is different than the one that is in source control.
