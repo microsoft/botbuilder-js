@@ -8,6 +8,10 @@
     "bad": false,
     "ok": "howdy"
   },
+  "numbers": {
+    "bad": "uh oh",
+    "ok": 10
+  },
   "root": {
     "key": "base"
   }

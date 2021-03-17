@@ -1,6 +1,7 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
+import yargs from 'yargs-parser';
 import { Boolean, Runtype, String, Undefined, ValidationError } from 'runtypes';
 import { IConfiguration } from 'botbuilder-runtime-core';
 import { Provider } from 'nconf';
@@ -54,6 +55,23 @@ export class Configuration implements IConfiguration {
         return new Promise((resolve, reject) =>
             this.provider.set(this.key(path), value, (err) => (err ? reject(err) : resolve()))
         );
+    }
+
+    /**
+     * Load process.arguments as a configuration source.
+     *
+     * @param argv arguments to parse, defaults to `process.argv`
+     * @returns this for chaining
+     */
+    argv(argv = process.argv.slice(2)): this {
+        this.provider.argv({
+            argv: yargs(argv, {
+                configuration: {
+                    'parse-numbers': false,
+                },
+            }),
+        });
+        return this;
     }
 
     /**

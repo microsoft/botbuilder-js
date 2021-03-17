@@ -9,14 +9,14 @@ import { IServices, ServiceCollection } from 'botbuilder-runtime-core';
 
 const TypedOptions = t.Record({
     /**
-     * Port that server should listen on
-     */
-    port: t.Number,
-
-    /**
      * Path that the server will listen to for [Activities](xref:botframework-schema.Activity)
      */
     messagingEndpointPath: t.String,
+
+    /**
+     * Port that server should listen on
+     */
+    port: t.Union(t.String, t.Number),
 });
 
 /**
@@ -60,11 +60,23 @@ export async function makeApp(
     configuration: Configuration,
     options: Partial<Options> = {}
 ): Promise<[app: express.Application, listen: (callback?: () => void) => http.Server]> {
-    const { port, messagingEndpointPath } = TypedOptions.check(Object.assign({}, defaultOptions, options));
+    const configOverrides: Partial<Options> = {};
+
+    const port = (await Promise.all(['port', 'PORT'].map((key) => configuration.string([key])))).find(
+        (port) => port !== undefined
+    );
+
+    if (port !== undefined) {
+        configOverrides.port = port;
+    }
+
+    const validatedOptions = TypedOptions.check(Object.assign({}, defaultOptions, configOverrides, options));
+
     const { adapter, bot, customAdapters } = await services.mustMakeInstances('adapter', 'bot', 'customAdapters');
+
     const app = express();
 
-    app.post(messagingEndpointPath, (req, res) => {
+    app.post(validatedOptions.messagingEndpointPath, (req, res) => {
         adapter.processActivity(req, res, async (turnContext) => {
             await bot.run(turnContext);
         });
@@ -102,7 +114,10 @@ export async function makeApp(
         (callback) => {
             // The 'upgrade' event handler for processing WebSocket requests needs to be registered on the Node.js http.Server, not the Express.Application.
             // In Express the underlying http.Server is made available after the app starts listening for requests.
-            const server = app.listen(port, callback ?? (() => console.log(`server listening on port ${port}`)));
+            const server = app.listen(
+                validatedOptions.port,
+                callback ?? (() => console.log(`server listening on port ${validatedOptions.port}`))
+            );
 
             server.on('upgrade', async (req, socket, head) => {
                 const adapter = await services.mustMakeInstance('adapter');

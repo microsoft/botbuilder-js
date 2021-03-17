@@ -267,6 +267,7 @@ export async function getRuntimeServices(
     let configuration: Configuration;
     if (typeof configurationOrSettingsDirectory === 'string') {
         configuration = new Configuration()
+            .argv()
             .env()
             .file(path.join(configurationOrSettingsDirectory, 'appsettings.Development.json'))
             .file(path.join(configurationOrSettingsDirectory, 'appsettings.json'));

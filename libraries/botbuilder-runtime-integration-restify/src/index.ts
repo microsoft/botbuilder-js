@@ -8,14 +8,14 @@ import { IServices, ServiceCollection } from 'botbuilder-runtime-core';
 
 const TypedOptions = t.Record({
     /**
-     * Port that server should listen on
-     */
-    port: t.Number,
-
-    /**
      * Path that the server will listen to for [Activities](xref:botframework-schema.Activity)
      */
     messagingEndpointPath: t.String,
+
+    /**
+     * Port that server should listen on
+     */
+    port: t.Union(t.String, t.Number),
 });
 
 /**
@@ -24,9 +24,23 @@ const TypedOptions = t.Record({
 export type Options = t.Static<typeof TypedOptions>;
 
 const defaultOptions: Options = {
-    port: 3978,
     messagingEndpointPath: '/api/messages',
+    port: 3978,
 };
+
+async function resolveOptions(options: Partial<Options>, configuration: Configuration): Promise<Options> {
+    const configOverrides: Partial<Options> = {};
+
+    const port = (await Promise.all(['port', 'PORT'].map((key) => configuration.string([key])))).find(
+        (port) => port !== undefined
+    );
+
+    if (port !== undefined) {
+        configOverrides.port = port;
+    }
+
+    return TypedOptions.check(Object.assign({}, defaultOptions, configOverrides, options));
+}
 
 /**
  * Start a bot using the runtime restify integration.
@@ -40,14 +54,13 @@ export async function start(
     settingsDirectory: string,
     options: Partial<Options> = {}
 ): Promise<void> {
-    const validatedOptions = TypedOptions.check(Object.assign({}, defaultOptions, options));
     const [services, configuration] = await getRuntimeServices(applicationRoot, settingsDirectory);
 
-    const server = await makeServer(services, configuration, validatedOptions);
+    const resolvedOptions = await resolveOptions(options, configuration);
 
-    server.listen(validatedOptions.port, () => {
-        console.log(`server listening on port ${validatedOptions.port}`);
-    });
+    const server = await makeServer(services, configuration, resolvedOptions);
+
+    server.listen(resolvedOptions.port, () => console.log(`server listening on port ${resolvedOptions.port}`));
 }
 
 /**
@@ -63,12 +76,14 @@ export async function makeServer(
     configuration: Configuration,
     options: Partial<Options> = {}
 ): Promise<restify.Server> {
-    const { messagingEndpointPath } = TypedOptions.check(Object.assign({}, defaultOptions, options));
-    const { adapter, bot, customAdapters } = await services.mustMakeInstances('adapter', 'bot', 'customAdapters');
+    const [{ adapter, bot, customAdapters }, resolvedOptions] = await Promise.all([
+        services.mustMakeInstances('adapter', 'bot', 'customAdapters'),
+        resolveOptions(options, configuration),
+    ]);
 
     const server = restify.createServer();
 
-    server.post(messagingEndpointPath, (req, res) => {
+    server.post(resolvedOptions.messagingEndpointPath, (req, res) => {
         adapter.processActivity(req, res, async (turnContext) => {
             await bot.run(turnContext);
         });
