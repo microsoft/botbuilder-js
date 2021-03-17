@@ -665,8 +665,10 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGTempla
         const filePath: string = TemplateExtensions.normalizePath(args[0].toString());
         const resourcePath: string = this.getResourcePath(filePath);
         const expected = args[1].toLowerCase();
-        const format =
-            Object.values(FileFormat).find((format) => format.toLowerCase() === expected) ?? FileFormat.Evaluated;
+        let format = Object.values(FileFormat).find((format) => format.toLowerCase() === expected);
+        if (format == null) {
+            format = FileFormat.Evaluated;
+        }
 
         let result: unknown;
         if (format === FileFormat.Binary) {
