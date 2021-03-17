@@ -1,6 +1,6 @@
 {
     "title": "Test schema",
-    "description": "This file is to test SchemaHelper and PropertySchama.",
+    "description": "This file is to test SchemaHelper and PropertySchema.",
     "type": "object",
     "properties": {
         "$schema": {

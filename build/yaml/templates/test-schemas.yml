@@ -1,0 +1,10 @@
+steps:
+- task: Npm@1
+  displayName: 'install botframework-cli to set up for Schema merge tests.'
+  inputs:
+    command: custom
+    verbose: false
+    customCommand: 'install -g @microsoft/botframework-cli@next'
+
+- script: yarn test:schemas
+  displayName: yarn test:schemas 
