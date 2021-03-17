@@ -18,10 +18,11 @@ async function runCommand(command) {
             {
                 cwd: __dirname,
             },
-            (err, stdout, _stderr) => {
-                // Ignore stderr since npm warnings get routed there.
-                if (err) {
-                    reject(err);
+            (err, stdout, stderr) => {
+                // stderr may be used by VS Code Debugger, even without errors, so we ignore it in DEBUG environment.
+                // Note: You have to manually set "env": { "DEBUG": "true" } in launch.json for this check to work.
+                if (err || (stderr && process.env.DEBUG !== 'true')) {
+                    reject(err ?? stderr);
                 } else {
                     resolve(stdout);
                 }
@@ -55,36 +56,51 @@ describe('Schema Merge Tests', function () {
     // This fixture creates or updates test.schema by calling bf dialog:merge on all the schema files in the solution.
     // This will install the latest version of botframework-cli if the schema changed and npm is present.
     // This only runs on Windows platforms.
-    maybeIt('should generate a new tests.schema file', async function () {
+    maybeIt('should merge dialog schemas', async function () {
         this.timeout(150000);
         fs.unlinkSync(testsSchemaPath);
 
         // Merge all schema files.
         const sdkRoot = path.join(__dirname, '..', '..', '..');
-        let mergeCommand = `bf dialog:merge ${sdkRoot}/libraries/**/*.schema ${sdkRoot}/libraries/**/*.uischema !**/testbot.schema !${sdkRoot}/libraries/botbuilder-dialogs-adaptive/tests/schema/*.* -o ${testsSchemaPath}`;
+        const mergeCommand = [
+            `bf dialog:merge ${sdkRoot}/libraries/**/*.schema`,
+            `${sdkRoot}/libraries/**/*.uischema`,
+            '!**/testbot.schema',
+            `!${sdkRoot}/libraries/botbuilder-dialogs-adaptive/tests/schema/*.*`,
+            `-o ${testsSchemaPath}`,
+        ];
         try {
-            await runCommand(mergeCommand);
-
-            // Check if there were any errors or if the new schema file has changed.
-            const newTestsSchemaFileResource = new FileResource(testsSchemaPath);
-            const newSchema = fs.existsSync(testsSchemaPath) && JSON.parse(newTestsSchemaFileResource.readText());
-            assert(newSchema === testsSchema);
+            await runCommand(mergeCommand.join(' '));
         } catch (err) {
-            // We may get there because there was an error running bf dialog:merge or because
-            // the generated file is different than the one that is in source control.
-            // In either case we try installing latest bf if the schema changed to make sure the
+            // We may get there because there was an error running bf dialog:merge.
+            // Try installing latest bf if the schema changed to make sure the
             // discrepancy is not because we are using a different version of the CLI
             // and we ensure it is installed while on it.
             try {
                 // Rerun merge command.
-                mergeCommand = [
-                    'npx -p @microsoft/botframework-cli', // invoke with npx to not alter repo dependencies
-                    mergeCommand, // dialog merge command
-                ].join(' ');
-                await runCommand(mergeCommand);
+                await runCommand(
+                    [
+                        'npx -p @microsoft/botframework-cli@next', // invoke with npx to not alter repo dependencies
+                        ...mergeCommand,
+                    ].join(' ')
+                );
             } catch (err2) {
                 assert.fail(`Unable to merge schemas.\nFirst error:\n${err}\nSecond error:\n${err2}`);
             }
+        }
+
+        if (process.env.CI) {
+            // Check that newly-generated schema matches the schema from before the `dialog:merge`
+            // command was run. We only test for this in CI because these files are expected to differ
+            // when this test is run locally.
+            const newSchema = fs.existsSync(testsSchemaPath) && JSON.parse(testsSchemaFileResource.readText());
+            assert(
+                newSchema === testsSchema,
+                [
+                    'Generated schema differs from committed schema.',
+                    'Run this test locally and commit the tests.*schema files to upload the correct and updated schema.',
+                ].join('\n')
+            );
         }
 
         assert.ok(JSON.parse(testsSchemaFileResource.readText()));
