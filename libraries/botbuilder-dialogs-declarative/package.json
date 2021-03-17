@@ -34,6 +34,7 @@
     "chokidar": "^3.4.0"
   },
   "devDependencies": {
+    "jsonschema": "^1.4.0"
   },
   "scripts": {
     "build": "tsc -b",
@@ -41,7 +42,7 @@
     "clean": "rimraf _ts3.4 lib tsconfig.tsbuildinfo",
     "lint": "eslint . --ext .js,.ts",
     "postbuild": "downlevel-dts lib _ts3.4/lib --checksum",
-    "test": "yarn build && nyc mocha tests/ --exit",
+    "test": "yarn build && nyc mocha tests/**/*.test.js --exit",
     "test:compat": "api-extractor run --verbose"
   },
   "files": [
