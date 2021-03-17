@@ -22,7 +22,7 @@ async function runCommand(command) {
                 // stderr may be used by VS Code Debugger, even without errors, so we ignore it in DEBUG environment.
                 // Note: You have to manually set "env": { "DEBUG": "true" } in launch.json for this check to work.
                 if (err || (stderr && process.env.DEBUG !== 'true')) {
-                    reject(err ?? stderr);
+                    reject(err || stderr);
                 } else {
                     resolve(stdout);
                 }
