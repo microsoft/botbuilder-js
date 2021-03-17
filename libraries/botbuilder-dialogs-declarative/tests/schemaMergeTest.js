@@ -94,8 +94,9 @@ describe('Schema Merge Tests', function () {
             // command was run. We only test for this in CI because these files are expected to differ
             // when this test is run locally.
             const newSchema = fs.existsSync(testsSchemaPath) && JSON.parse(testsSchemaFileResource.readText());
-            assert(
-                newSchema === testsSchema,
+            assert.deepStrictEqual(
+                newSchema,
+                testsSchema,
                 [
                     'Generated schema differs from committed schema.',
                     'Run this test locally and commit the tests.*schema files to upload the correct and updated schema.',
