@@ -5,7 +5,7 @@
   "description": "Test to check browser compatibility",
   "main": "",
   "devDependencies": {
-    "chromedriver": "^87.0.1",
+    "chromedriver": "^89.0.0",
     "dotenv": "^8.0.0",
     "geckodriver": "^1.19.1",
     "nightwatch": "^1.2.4",
@@ -17,7 +17,6 @@
   "scripts": {
     "test": "node nightwatch.js -e"
   },
-  "keywords": [],
-  "author": "",
+  "author": "Microsoft Corp.",
   "license": "MIT"
 }
