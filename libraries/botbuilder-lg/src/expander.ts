@@ -657,10 +657,13 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGTe
     private readonly fromFile = (): any => (args: readonly any[]): any => {
         const filePath: string = TemplateExtensions.normalizePath(args[0].toString());
         const resourcePath: string = this.getResourcePath(filePath);
-        const expected = args[1].toLowerCase();
-        let format = Object.values(FileFormat).find((format) => format.toLowerCase() === expected);
-        if (format == null) {
-            format = FileFormat.Evaluated;
+        let format = FileFormat.Evaluated;
+        if (args.length > 1) {
+            const expected = args[1].toLowerCase();
+            const currentFormat = Object.values(FileFormat).find((f) => f.toLowerCase() === expected);
+            if (currentFormat != null) {
+                format = currentFormat;
+            }
         }
 
         let result: unknown;
