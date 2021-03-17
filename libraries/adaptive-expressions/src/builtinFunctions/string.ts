@@ -14,6 +14,7 @@ import { Options } from '../options';
 import { ReturnType } from '../returnType';
 import { localeInfo } from '../localeInfo';
 import { Expression } from '../expression';
+import { InternalFunctionUtils } from '../functionUtils.internal';
 
 /**
  * Return the string version of a value.
@@ -58,6 +59,8 @@ export class String extends ExpressionEvaluator {
                         }
                     } else if (args[0] instanceof Date) {
                         result = args[0].toLocaleDateString(locale);
+                    } else if (args[0] instanceof Uint8Array) {
+                        result = InternalFunctionUtils.getTextDecoder().decode(args[0]);
                     } else {
                         result = JSON.stringify(args[0])
                             .replace(/(^['"]*)/g, '') // remove the starting single or double quote
