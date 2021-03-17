@@ -60,20 +60,6 @@ export class InternalFunctionUtils {
     }
 
     /**
-     * Convert string into Uint8Array object.
-     * @param stringToConvert Input string.
-     */
-    public static toBinary(stringToConvert: string): Uint8Array {
-        const result = new ArrayBuffer(stringToConvert.length);
-        const bufferView = new Uint8Array(result);
-        for (let i = 0; i < stringToConvert.length; i++) {
-            bufferView[i] = stringToConvert.charCodeAt(i);
-        }
-
-        return bufferView;
-    }
-
-    /**
      * Sort helper function.
      * @param isDescending Descending flag.
      */
@@ -461,6 +447,30 @@ export class InternalFunctionUtils {
         } catch {
             return false;
         }
+    }
+
+    /**
+     * TextEncoder helper function.
+     */
+    public static getTextEncoder(): TextEncoder {
+        if (typeof window !== 'undefined' || typeof self !== 'undefined') {
+            return new TextEncoder();
+        }
+        // eslint-disable-next-line @typescript-eslint/no-var-requires
+        const util = require('util');
+        return new util.TextEncoder();
+    }
+
+    /**
+     * TextDecoder helper function.
+     */
+    public static getTextDecoder(code = 'utf-8'): TextDecoder {
+        if (typeof window !== 'undefined' || typeof self !== 'undefined') {
+            return new TextDecoder(code);
+        }
+        // eslint-disable-next-line @typescript-eslint/no-var-requires
+        const util = require('util');
+        return new util.TextDecoder(code);
     }
 
     /**

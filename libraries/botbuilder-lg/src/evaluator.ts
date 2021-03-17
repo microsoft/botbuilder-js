@@ -33,6 +33,27 @@ import { TemplateExtensions } from './templateExtensions';
 import { TemplateErrors } from './templateErrors';
 import { EvaluationOptions, LGCacheScope } from './evaluationOptions';
 import { Templates } from './templates';
+
+/**
+ * Filr formats.
+ */
+export enum FileFormat {
+    /**
+     * Get the evaluated result from the Raw.
+     */
+    Evaluated = 'Evaluated',
+
+    /**
+     * Get raw text content of the file.
+     */
+    Raw = 'Raw',
+
+    /**
+     * Get binary result from the file.
+     */
+    Binary = 'Binary',
+}
+
 /**
  * Evaluation runtime engine
  */
@@ -62,6 +83,7 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGTempla
     public static readonly isTemplateFunctionName = 'isTemplate';
     public static readonly expandTextFunctionName = 'expandText';
     public static readonly ReExecuteSuffix = '!';
+
 
     /**
      * Creates a new instance of the [Evaluator](xref:botbuilder-lg.Evaluator) class.
@@ -600,7 +622,7 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGTempla
                 Evaluator.fromFileFunctionName,
                 FunctionUtils.apply(this.fromFile()),
                 ReturnType.Object,
-                FunctionUtils.validateUnaryString
+                (expr): void => FunctionUtils.validateOrder(expr, [ReturnType.String], ReturnType.String)
             );
         }
 
@@ -642,19 +664,37 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGTempla
     private readonly fromFile = (): any => (args: readonly any[]): any => {
         const filePath: string = TemplateExtensions.normalizePath(args[0].toString());
         const resourcePath: string = this.getResourcePath(filePath);
-        const stringContent = fs.readFileSync(resourcePath, 'utf-8');
+        let format = FileFormat.Evaluated;
+        if (args.length > 1) {
+            const expected = args[1].toLowerCase();
+            const currentFormat = Object.values(FileFormat).find((f) => f.toLowerCase() === expected);
+            if (currentFormat != null) {
+                format = currentFormat;
+            }
+        }
 
-        const newScope = this.evaluationTargetStack.length > 0 ? this.currentTarget().scope : undefined;
-        const newTemplates = new Templates(
-            this.templates,
-            undefined,
-            undefined,
-            undefined,
-            undefined,
-            undefined,
-            this.expressionParser
-        );
-        return newTemplates.evaluateText(stringContent, newScope, this.lgOptions);
+        let result: unknown;
+        if (format === FileFormat.Binary) {
+            result = fs.readFileSync(resourcePath);
+        } else if (format === FileFormat.Raw) {
+            result = fs.readFileSync(resourcePath, 'utf-8');
+        } else {
+            const stringContent = fs.readFileSync(resourcePath, 'utf-8');
+
+            const newScope = this.evaluationTargetStack.length > 0 ? this.currentTarget().scope : undefined;
+            const newTemplates = new Templates(
+                this.templates,
+                undefined,
+                undefined,
+                undefined,
+                undefined,
+                undefined,
+                this.expressionParser
+            );
+            result = newTemplates.evaluateText(stringContent, newScope, this.lgOptions);
+        }
+
+        return result;
     };
 
     private readonly expandText = (): any => (args: readonly any[]): any => {

@@ -10,6 +10,7 @@ import { EvaluateExpressionDelegate, ExpressionEvaluator } from '../expressionEv
 import { ExpressionType } from '../expressionType';
 import { FunctionUtils } from '../functionUtils';
 import { ReturnType } from '../returnType';
+import atob from 'atob-lite';
 
 /**
  * Return the string version of a base64-encoded string, effectively decoding the base64 string.
@@ -31,9 +32,6 @@ export class Base64ToString extends ExpressionEvaluator {
      * @private
      */
     private static evaluator(): EvaluateExpressionDelegate {
-        return FunctionUtils.apply(
-            (args: Readonly<any>): string => Buffer.from(args[0], 'base64').toString(),
-            FunctionUtils.verifyString
-        );
+        return FunctionUtils.apply((args: Readonly<any>): string => atob(args[0]), FunctionUtils.verifyString);
     }
 }
