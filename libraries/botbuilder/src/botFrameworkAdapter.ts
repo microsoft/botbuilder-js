@@ -1320,7 +1320,7 @@ export class BotFrameworkAdapter
         for (let i = 0; i < activities.length; i++) {
             const activity: Partial<Activity> = activities[i];
             switch (activity.type) {
-                case ActivityTypes.Delay:
+                case 'delay':
                     await delay(typeof activity.value === 'number' ? activity.value : 1000);
                     responses.push({} as ResourceResponse);
                     break;
