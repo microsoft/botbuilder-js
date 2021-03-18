@@ -6,6 +6,10 @@ steps:
     displayName: npm ci in React App
     workingDirectory: $(ReactProjectDir)
 
+  - script: npm install botframework-streaming@next
+    displayName: npm install botframework-streaming@next in React App
+    workingDirectory: $(ReactProjectDir)
+
   - script: 'rm -rf */**/botframework-streaming'
     displayName: remove nested botframework-streaming packages so top level takes precedence
     workingDirectory: $(ReactProjectDir)/node_modules

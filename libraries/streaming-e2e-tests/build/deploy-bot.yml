@@ -3,6 +3,10 @@ steps:
     displayName: npm ci in bot
     workingDirectory: $(TargetProjectDir)
 
+  - script: npm install botbuilder@next
+    displayName: npm install botbuilder@next in bot
+    workingDirectory: $(TargetProjectDir)
+
   - powershell: Compress-Archive "$(TargetProjectDir)/*" "$(TargetProjectDir)/bot.zip"
     displayName: Zipping Bot into bot.zip
 
