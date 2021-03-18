@@ -8,7 +8,6 @@
  */
 
 import { Constant } from './constant';
-import sortBy from 'lodash/sortBy';
 import dayjs, { OpUnitType } from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 dayjs.extend(utc);
@@ -476,6 +475,23 @@ export class InternalFunctionUtils {
         // eslint-disable-next-line @typescript-eslint/no-var-requires
         const util = require('util');
         return new util.TextDecoder(code);
+    }
+
+    /**
+     * Common Stringfy an object.
+     * @param input input object.
+     */
+    public static commonStringify(input: unknown): string {
+        if (input == null) {
+            return '';
+        }
+        if (typeof input === 'object') {
+            return JSON.stringify(input)
+                .replace(/(^['"]*)/g, '')
+                .replace(/(['"]*$)/g, '');
+        } else {
+            return input.toString();
+        }
     }
 
     /**
