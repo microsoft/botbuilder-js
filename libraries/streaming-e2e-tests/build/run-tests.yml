@@ -12,10 +12,12 @@ steps:
     displayName: 'npx serve -p 3000'
     workingDirectory: $(ReactProjectDir)/build
 
-  - script: npm install
-    displayName: 'npm install tests'
+  - script: npm ci
+    displayName: npm ci in TestsDir
     workingDirectory: $(TestsDir)
 
+  - script: curl --silent --connect-timeout 5 --max-time 10 --retry 15 --retry-delay 0 --retry-max-time 120 --retry-connrefused "http://localhost:3000"
+    displayName: wait for react app to start
+
   - script: npm test
-    displayName: 'npm test'
     workingDirectory: $(TestsDir)

@@ -1,15 +1,18 @@
 steps:
-  - script: npm install
-    displayName: 'npm install in bot'
+  - script: npm ci
+    displayName: npm ci in bot
     workingDirectory: $(TargetProjectDir)
 
   - powershell: Compress-Archive "$(TargetProjectDir)/*" "$(TargetProjectDir)/bot.zip"
-    displayName: 'Zipping Bot into bot.zip'
+    displayName: Zipping Bot into bot.zip
 
   - task: AzureCLI@1
-    displayName: 'Deploy Bot'
+    displayName: Deploy Bot
     inputs:
       ConnectedServiceNameARM: $(ConnectedServiceNameARM)
       scriptType: ps
       scriptLocation: inlineScript
       inlineScript: call az webapp deployment source config-zip --resource-group "$(ResourceGroup)" --name "$(BotName)" --src "$(TargetProjectDir)/bot.zip"
+
+  - script: curl --silent --connect-timeout 5 --max-time 10 --retry 15 --retry-delay 0 --retry-max-time 120 --retry-connrefused "https://$(BotName).azurewebsites.net/.bot"
+    displayName: wait for bot to start

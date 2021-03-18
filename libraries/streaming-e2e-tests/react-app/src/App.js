@@ -32,24 +32,45 @@ function App({ bot }) {
 
     // Synchronize token with hostname
     useEffect(() => {
+        const abortController = new AbortController();
+
+        // dispatch mutates state which should only happen if component is still mounted
+        const maybeDispatch = (...args) => !abortController.signal.aborted && dispatch(...args);
+
         (async () => {
             try {
                 const resp = await fetch(`${hostname}/api/token/directlinease`, {
                     method: 'POST',
+                    signal: abortController.signal,
                 });
 
-                const text = await resp.clone().text();
+                if (abortController.signal.aborted) {
+                    return;
+                }
+
+                if (!resp.ok) {
+                    throw new Error(`request failed with ${resp.status}`);
+                }
 
                 try {
-                    const token = await resp.json();
-                    dispatch({ type: actions.token, value: token.token });
+                    const { token } = await resp.json();
+                    maybeDispatch({ type: actions.token, value: token });
                 } catch (err) {
-                    dispatch({type: actions.error, value: `${err.message} (raw body: ${text})`});
+                    try {
+                        // try to dispatch error with raw response text
+                        const text = await resp.clone().text();
+                        maybeDispatch({ type: actions.error, value: `${err.message} (raw body: ${text})` });
+                    } catch (_err) {
+                        // error decoding text should not override initial error
+                        throw err;
+                    }
                 }
             } catch (err) {
-                dispatch({ type: actions.error, value: err.message });
+                maybeDispatch({ type: actions.error, value: err.message });
             }
         })();
+
+        return () => abortController.abort();
     }, [hostname, dispatch]);
 
     // memo-ize directline client synchronized with hostname and token

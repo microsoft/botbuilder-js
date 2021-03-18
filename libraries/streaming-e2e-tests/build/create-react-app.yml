@@ -2,8 +2,8 @@
 # latest nightly version of botframework-streaming
 
 steps:
-  - script: npm install
-    displayName: npm install in React App
+  - script: npm ci
+    displayName: npm ci in React App
     workingDirectory: $(ReactProjectDir)
 
   - script: 'rm -rf */**/botframework-streaming'
