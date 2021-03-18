@@ -13,7 +13,7 @@ describe('Configuration', () => {
 
         configuration.argv(['--strings.argv', 'argv']);
 
-        process.env['strings:env'] = 'env';
+        process.env['strings__env'] = 'env';
         configuration.env();
 
         return configuration;
