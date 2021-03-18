@@ -8,7 +8,14 @@ import { Configuration } from '../src/configuration';
 describe('Configuration', () => {
     const makeConfiguration = (files = ['base.json']) => {
         const configuration = new Configuration();
+
         files.forEach((file) => configuration.file(path.join(__dirname, 'settings', file)));
+
+        configuration.argv(['--strings.argv', 'argv']);
+
+        process.env['strings:env'] = 'env';
+        configuration.env();
+
         return configuration;
     };
 
@@ -32,6 +39,9 @@ describe('Configuration', () => {
             assert.strictEqual(await strings.string(['unset']), undefined);
             strings.set(['unset'], 'set');
             assert.strictEqual(await strings.string(['unset']), 'set');
+
+            assert.strictEqual(await strings.string(['env']), 'env');
+            assert.strictEqual(await strings.string(['argv']), 'argv');
         });
     });
 
