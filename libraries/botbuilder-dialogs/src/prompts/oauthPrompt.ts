@@ -326,6 +326,13 @@ export class OAuthPrompt extends Dialog {
         return adapter.signOutUser(context, this.settings.connectionName, null, this.settings.oAuthAppCredentials);
     }
 
+    /**
+     * Sends an OAuth card.
+     *
+     * @param {OAuthPromptSettings} settings OAuth settings.
+     * @param {TurnContext} turnContext Turn context.
+     * @param {string | Partial<Activity>} prompt Message activity.
+     */
     public static async sendOAuthCard(
         settings: OAuthPromptSettings,
         turnContext: TurnContext,
