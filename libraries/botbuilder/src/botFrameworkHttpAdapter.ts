@@ -4,7 +4,7 @@
 import { BotLogic, Emitter, Request, Response } from './interfaces';
 
 /**
- * IBotFrameworkHttpAdapter is the interface that describes a Bot Framework
+ * BotFrameworkHttpAdapter is the interface that describes a Bot Framework
  * adapter that operates on HTTP requests.
  */
 export interface BotFrameworkHttpAdapter {
