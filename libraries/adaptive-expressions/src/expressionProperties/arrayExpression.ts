@@ -29,13 +29,7 @@ export class ArrayExpression<T> extends ExpressionProperty<T[]> {
      * @param value Value to set.
      */
     public setValue(value: T[] | string | Expression): void {
-        if (
-            value !== undefined &&
-            value !== null &&
-            !Array.isArray(value) &&
-            typeof value !== 'string' &&
-            !(value instanceof Expression)
-        ) {
+        if (value != null && !Array.isArray(value) && typeof value !== 'string' && !(value instanceof Expression)) {
             throw new Error('ArrayExpression accepts string, array or Expression as the value.');
         }
 

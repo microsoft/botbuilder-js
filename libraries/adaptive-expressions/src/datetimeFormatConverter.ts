@@ -173,13 +173,13 @@ export function convertCSharpDateTimeToDayjs(fmtString: string): string {
             lTokenBuffer += character;
             changeState(State.None);
         } else if (fmtState === State.InDoubleQuoteLiteral) {
-            if (character == '`') {
+            if (character === '`') {
                 changeState(State.None);
             } else {
                 lTokenBuffer += character;
             }
-        } else if (fmtState == State.InSingleQuoteLiteral) {
-            if (character == "'") {
+        } else if (fmtState === State.InSingleQuoteLiteral) {
+            if (character === "'") {
                 changeState(State.None);
             } else {
                 lTokenBuffer += character;
@@ -387,9 +387,9 @@ export function convertCSharpDateTimeToDayjs(fmtString: string): string {
     }
 
     if (
-        fmtState == State.EscapeSequence ||
-        fmtState == State.InDoubleQuoteLiteral ||
-        fmtState == State.InSingleQuoteLiteral
+        fmtState === State.EscapeSequence ||
+        fmtState === State.InDoubleQuoteLiteral ||
+        fmtState === State.InSingleQuoteLiteral
     ) {
         throw Error(`Invalid Format String`);
     }

@@ -84,10 +84,15 @@ export class InternalFunctionUtils {
                         if (!error) {
                             propertyName = propertyName || '';
                         }
+
+                        const sortBy = (key: string) => {
+                            return (a: unknown, b: unknown) => (a[key] > b[key] ? 1 : b[key] > a[key] ? -1 : 0);
+                        };
+
                         if (isDescending) {
-                            result = sortBy(arr, propertyName).reverse();
+                            result = arr.concat().sort(sortBy(propertyName)).reverse();
                         } else {
-                            result = sortBy(arr, propertyName);
+                            result = arr.concat().sort(sortBy(propertyName));
                         }
                     }
                 } else {
@@ -107,7 +112,7 @@ export class InternalFunctionUtils {
      */
     public static accessIndex(instance: any, index: number): ValueWithError {
         // NOTE: This returns undefined rather than an error if property is not present
-        if (instance === null || instance === undefined) {
+        if (instance == null) {
             return { value: undefined, error: undefined };
         }
 
@@ -262,7 +267,7 @@ export class InternalFunctionUtils {
 
         if (typeof instance === 'boolean') {
             result = instance;
-        } else if (instance === undefined || instance === null) {
+        } else if (instance == null) {
             result = false;
         }
 
@@ -421,8 +426,8 @@ export class InternalFunctionUtils {
             return false;
         }
 
-        if (args[0] === undefined || args[0] === null || args[1] === undefined || args[1] === null) {
-            return (args[0] === undefined || args[0] === null) && (args[1] === undefined || args[1] === null);
+        if (args[0] == null || args[1] == null) {
+            return args[0] == null && args[1] == null;
         }
 
         if (Array.isArray(args[0]) && args[0].length === 0 && Array.isArray(args[1]) && args[1].length === 0) {

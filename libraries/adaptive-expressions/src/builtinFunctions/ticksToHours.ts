@@ -13,6 +13,7 @@ import { FunctionUtils } from '../functionUtils';
 import { MemoryInterface } from '../memory/memoryInterface';
 import { Options } from '../options';
 import { ReturnType } from '../returnType';
+import bigInt from 'big-integer';
 
 /**
  * Convert ticks to number of hours.
@@ -40,8 +41,11 @@ export class TicksToHours extends ExpressionEvaluator {
         const { args, error: childrenError } = FunctionUtils.evaluateChildren(expr, state, options);
         let error = childrenError;
         if (!error) {
-            if (Number.isInteger(args[0])) {
-                value = args[0] / TicksToHours.TicksPerHour;
+            const firstChild = args[0];
+            if (Number.isInteger(firstChild)) {
+                value = firstChild / TicksToHours.TicksPerHour;
+            } else if (bigInt.isInstance(firstChild)) {
+                value = firstChild.toJSNumber() / TicksToHours.TicksPerHour;
             } else {
                 error = `${expr} should contain an integer of ticks`;
             }

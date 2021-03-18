@@ -27,13 +27,20 @@ export class Json extends ExpressionEvaluator {
      * @private
      */
     private static evaluator(): EvaluateExpressionDelegate {
-        return FunctionUtils.apply((args: any[]): any => JSON.parse(args[0].trim()));
+        return FunctionUtils.apply((args: any[]): any => {
+            const firstChild = args[0];
+            if (typeof firstChild === 'string') {
+                return JSON.parse(firstChild.trim());
+            } else if (typeof firstChild === 'object') {
+                return firstChild;
+            } else return {};
+        });
     }
 
     /**
      * @private
      */
     private static validator(expression: Expression): void {
-        FunctionUtils.validateOrder(expression, undefined, ReturnType.String);
+        FunctionUtils.validateOrder(expression, undefined, ReturnType.Object);
     }
 }

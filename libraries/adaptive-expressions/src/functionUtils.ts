@@ -89,9 +89,9 @@ export class FunctionUtils {
             const child: Expression = expression.children[i];
             const type: ReturnType = types[i];
             if (
-                (type & ReturnType.Object) == 0 &&
-                (child.returnType & ReturnType.Object) == 0 &&
-                (type & child.returnType) == 0
+                (type & ReturnType.Object) === 0 &&
+                (child.returnType & ReturnType.Object) === 0 &&
+                (type & child.returnType) === 0
             ) {
                 throw new Error(FunctionUtils.buildTypeValidatorError(type, child, expression));
             }
@@ -105,9 +105,9 @@ export class FunctionUtils {
             const child: Expression = expression.children[ic];
             const type: ReturnType = optional[i];
             if (
-                (type & ReturnType.Object) == 0 &&
-                (child.returnType & ReturnType.Object) == 0 &&
-                (type & child.returnType) == 0
+                (type & ReturnType.Object) === 0 &&
+                (child.returnType & ReturnType.Object) === 0 &&
+                (type & child.returnType) === 0
             ) {
                 throw new Error(FunctionUtils.buildTypeValidatorError(type, child, expression));
             }
@@ -309,7 +309,7 @@ export class FunctionUtils {
      */
     public static verifyNotNull(value: any, expression: Expression, _: number): string | undefined {
         let error: string;
-        if (value === undefined || value === null) {
+        if (value == null) {
             error = `${expression} is null.`;
         }
 
@@ -734,8 +734,8 @@ export class FunctionUtils {
      * @param instance Input.
      * @returns True if the input is a number.
      */
-    public static isNumber(instance: any): boolean {
-        return instance !== undefined && instance !== null && typeof instance === 'number' && !Number.isNaN(instance);
+    public static isNumber(instance: any): instance is number {
+        return instance != null && typeof instance === 'number' && !Number.isNaN(instance);
     }
 
     /**

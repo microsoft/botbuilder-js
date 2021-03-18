@@ -57,7 +57,7 @@ export class StringExpression extends ExpressionProperty<string> {
             return;
         }
 
-        if (value !== undefined && value !== null) {
+        if (value != null) {
             throw new Error('StringExpression accepts string or Expression as the value.');
         }
     }

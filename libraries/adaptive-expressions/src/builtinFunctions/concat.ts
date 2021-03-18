@@ -37,11 +37,11 @@ export class Concat extends ExpressionEvaluator {
             const isFirstList = Array.isArray(firstItem);
             const isSecondList = Array.isArray(secondItem);
 
-            if ((firstItem === null || firstItem === undefined) && (secondItem === null || secondItem === undefined)) {
+            if (firstItem == null && secondItem == null) {
                 return undefined;
-            } else if ((firstItem === null || firstItem === undefined) && isSecondList) {
+            } else if (firstItem == null && isSecondList) {
                 return secondItem;
-            } else if ((secondItem === null || secondItem === undefined) && isFirstList) {
+            } else if (secondItem == null && isFirstList) {
                 return firstItem;
             } else if (isFirstList && isSecondList) {
                 return firstItem.concat(secondItem);
@@ -55,7 +55,7 @@ export class Concat extends ExpressionEvaluator {
      * @private
      */
     private static commonStringify(input: any): string {
-        if (input === null || input === undefined) {
+        if (input == null) {
             return '';
         }
         if (Array.isArray(input)) {

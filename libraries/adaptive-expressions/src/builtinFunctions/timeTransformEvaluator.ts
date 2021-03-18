@@ -42,7 +42,7 @@ export class TimeTransformEvaluator extends ExpressionEvaluator {
             let error = childrenError;
             if (!error) {
                 ({ format, locale } = FunctionUtils.determineFormatAndLocale(args, 4, format, locale));
-                if (typeof args[0] === 'string' && typeof args[1] === 'number') {
+                if (typeof args[0] === 'string' && FunctionUtils.isNumber(args[1])) {
                     error = InternalFunctionUtils.verifyISOTimestamp(args[0]);
                     if (!error) {
                         result = dayjs(func(new Date(args[0]), args[1]))
