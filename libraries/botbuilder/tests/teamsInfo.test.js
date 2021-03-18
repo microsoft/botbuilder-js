@@ -147,14 +147,12 @@ const teamActivity = {
 };
 
 describe('TeamsInfo', () => {
-    beforeEach((done) => {
+    beforeEach(() => {
         nock.cleanAll();
-        done();
     });
 
-    afterEach((done) => {
+    afterEach(() => {
         nock.cleanAll();
-        done();
     });
 
     // Sets up nock expectation for an oauth token call, returning the expected auth header
@@ -807,23 +805,21 @@ describe('TeamsInfo', () => {
 
     describe('private methods', () => {
         describe('getConnectorClient()', () => {
-            it(`should error if the context doesn't have an adapter`, (done) => {
+            it(`should error if the context doesn't have an adapter`, function () {
                 try {
                     TeamsInfo.getConnectorClient({});
-                    done(new Error('should have thrown an error'));
+                    assert.fail('should have thrown an error');
                 } catch (err) {
                     assert.strictEqual(err.message, 'This method requires a connector client.');
-                    done();
                 }
             });
 
-            it(`should error if the adapter doesn't have a createConnectorClient method`, (done) => {
+            it(`should error if the adapter doesn't have a createConnectorClient method`, function () {
                 try {
                     TeamsInfo.getConnectorClient({ adapter: {} });
-                    done(new Error('should have thrown an error'));
+                    assert.fail('should have thrown an error');
                 } catch (err) {
                     assert.strictEqual(err.message, 'This method requires a connector client.');
-                    done();
                 }
             });
         });
