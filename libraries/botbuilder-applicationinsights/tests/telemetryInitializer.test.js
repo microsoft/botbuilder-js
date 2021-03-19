@@ -23,7 +23,7 @@ describe(`TelemetryInitializerMiddleware`, function () {
         sinon.restore();
     });
 
-    it('telemetry initializer stores activity', function (done) {
+    it('telemetry initializer stores activity', async function () {
         const telemetryClient = {
             trackEvent: () => {},
         };
@@ -40,7 +40,7 @@ describe(`TelemetryInitializerMiddleware`, function () {
             await context.sendActivity(`echo:${context.activity.text}`);
         }).use(initializerMiddleware);
 
-        adapter
+        await adapter
             .send('foo')
             .then(() => {
                 assert(initializerMiddleware.appInsightsCorrelationContext.activity.text == 'foo');
@@ -53,11 +53,10 @@ describe(`TelemetryInitializerMiddleware`, function () {
             })
             .assertReply((activity) => assert.equal(activity.type, ActivityTypes.Typing))
             .assertReply('echo:bar')
-            .startTest()
-            .then(done);
+            .startTest();
     });
 
-    it('calls logging middleware (when logActivityTelemetry is true)', function (done) {
+    it('calls logging middleware (when logActivityTelemetry is true)', async function () {
         let callCount = 0;
 
         const telemetryClient = {
@@ -80,18 +79,17 @@ describe(`TelemetryInitializerMiddleware`, function () {
             await context.sendActivity(`echo:${context.activity.text}`);
         }).use(initializerMiddleware);
 
-        adapter
+        await adapter
             .send('foo')
             .assertReply((activity) => assert.equal(activity.type, ActivityTypes.Typing))
             .assertReply('echo:foo')
             .send('bar')
             .assertReply((activity) => assert.equal(activity.type, ActivityTypes.Typing))
             .assertReply('echo:bar')
-            .startTest()
-            .then(done);
+            .startTest();
     });
 
-    it('does not call logging middleware (when logActivityTelemetry is false)', function (done) {
+    it('does not call logging middleware (when logActivityTelemetry is false)', async function () {
         const telemetryClient = {
             trackEvent: () => {
                 assert.fail('logging middleware was called');
@@ -110,15 +108,14 @@ describe(`TelemetryInitializerMiddleware`, function () {
             await context.sendActivity(`echo:${context.activity.text}`);
         }).use(initializerMiddleware);
 
-        adapter
+        await adapter
             .send('foo')
             .assertReply((activity) => assert.equal(activity.type, ActivityTypes.Typing))
             .assertReply('echo:foo')
             .send('bar')
             .assertReply((activity) => assert.equal(activity.type, ActivityTypes.Typing))
             .assertReply('echo:bar')
-            .startTest()
-            .then(done);
+            .startTest();
     });
 
     it('logActivityTelemetry() getter calls logActivityTelemetry function passed into constructor', function () {
@@ -143,23 +140,19 @@ describe(`TelemetryInitializerMiddleware`, function () {
         assert.strictEqual(client._telemetryClient.config.instrumentationKey, fakeKey);
     });
 
-    it('throws an error if onTurn() context is null', function (done) {
+    it('throws an error if onTurn() context is null', async function () {
         const logger = new TelemetryLoggerMiddleware(new TelemetryClient('fakeKey'));
         const client = new TelemetryInitializerMiddleware(logger);
 
-        client
-            .onTurn(
-                null,
-                () =>
-                    new Promise((resolve) => {
-                        resolve();
-                    })
-            )
-            .then(() => done('should have thrown'))
-            .catch((err) => {
+        await assert.rejects(
+            async () => {
+                await client.onTurn(null, () => new Promise((resolve) => resolve));
+            },
+            (err) => {
                 assert.strictEqual(err.message, 'context is null');
-                done();
-            });
+                return true;
+            }
+        );
     });
 
     it("onTurn() uses default appInsights CorrelationContext if instance's _correlationContext not set", async function () {

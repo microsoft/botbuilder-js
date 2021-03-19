@@ -22,9 +22,8 @@ class TestContext extends TurnContext {
     }
 }
 
-function TestJson(
+async function TestJson(
     file,
-    done,
     includeAllIntents,
     includeInstance,
     telemetryClient,
@@ -49,20 +48,19 @@ function TestJson(
     const options = oracleOptions ? oracleOptions : { apiVersion: 'v3' };
     const luisRecognizer = GetLuisRecognizer({ applicationId: luisAppId, endpointKey: endpointKey }, options, true);
 
-    luisRecognizer.recognize(context, telemetryProperties, telemetryMetrics).then((res) => {
-        res.v3 = {
-            response: res.luisResult,
-        };
-        res.v3.options = options;
-        delete res.luisResult;
-        if (!WithinDelta(oracle, res, 0.1, false) && res.v3 !== oldResponse) {
-            fs.outputJSONSync(newPath, res, { spaces: 2 });
-            assert(false, '\nReturned JSON\n  ' + newPath + '\n!= expected JSON\n  ' + expectedPath);
-        } else if (fs.existsSync(newPath)) {
-            fs.unlinkSync(newPath);
-        }
-        done(res);
-    });
+    const res = await luisRecognizer.recognize(context, telemetryProperties, telemetryMetrics);
+    res.v3 = {
+        response: res.luisResult,
+    };
+    res.v3.options = options;
+    delete res.luisResult;
+    if (!WithinDelta(oracle, res, 0.1, false) && res.v3 !== oldResponse) {
+        fs.outputJSONSync(newPath, res, { spaces: 2 });
+        assert(false, '\nReturned JSON\n  ' + newPath + '\n!= expected JSON\n  ' + expectedPath);
+    } else if (fs.existsSync(newPath)) {
+        fs.unlinkSync(newPath);
+    }
+    return res;
 }
 
 function GetExpected(oracle) {
@@ -100,17 +98,15 @@ function GetLuisRecognizer(application, options, includeApiResults) {
     return new LuisRecognizer(application, optsV3);
 }
 
-function throttle(callback) {
-    if (mockLuis) {
-        callback();
-    } else {
-        // If actually calling LUIS, need to throttle our requests
-        setTimeout(callback, 1000);
-    }
-}
-
 describe('LuisRecognizer V3', function () {
     this.timeout(15000);
+
+    afterEach(async function () {
+        if (!mockLuis) {
+            // If actually calling LUIS, need to throttle our requests
+            await new Promise((resolve) => setTimeout(resolve, 1000));
+        }
+    });
 
     if (!mockLuis && endpointKey === 'MockedKey') {
         console.warn(
@@ -119,40 +115,73 @@ describe('LuisRecognizer V3', function () {
         return;
     }
 
-    it('Composite1', (done) => TestJson('Composite1.json', () => throttle(done)));
+    it('Composite1', async function () {
+        await TestJson('Composite1.json');
+    });
 
-    it('Composite2', (done) => TestJson('Composite2.json', () => throttle(done)));
+    it('Composite2', async function () {
+        await TestJson('Composite2.json');
+    });
 
-    it('Composite 3', (done) => TestJson('Composite3.json', () => throttle(done)));
+    it('Composite3', async function () {
+        await TestJson('Composite3.json');
+    });
 
-    it('DynamicLists', (done) => TestJson('DynamicListsAndList.json', () => throttle(done)));
+    it('DynamicListsAndList', async function () {
+        await TestJson('DynamicListsAndList.json');
+    });
 
-    it('ExternalEntitiesAndBuiltin', (done) => TestJson('ExternalEntitiesAndBuiltin.json', () => throttle(done)));
+    it('ExternalEntitiesAndBuiltin', async function () {
+        await TestJson('ExternalEntitiesAndBuiltin.json');
+    });
 
-    it('ExternalEntitiesAndComposite', (done) => TestJson('ExternalEntitiesAndComposite.json', () => throttle(done)));
+    it('ExternalEntitiesAndComposite', async function () {
+        await TestJson('ExternalEntitiesAndComposite.json');
+    });
 
-    it('ExternalEntitiesAndList', (done) => TestJson('ExternalEntitiesAndList.json', () => throttle(done)));
+    it('ExternalEntitiesAndList', async function () {
+        await TestJson('ExternalEntitiesAndList.json');
+    });
 
-    it('ExternalEntitiesAndRegex', (done) => TestJson('ExternalEntitiesAndRegex.json', () => throttle(done)));
+    it('ExternalEntitiesAndRegex', async function () {
+        await TestJson('ExternalEntitiesAndRegex.json');
+    });
 
-    it('ExternalEntitiesAndSimple', (done) => TestJson('ExternalEntitiesAndSimple.json', () => throttle(done)));
+    it('ExternalEntitiesAndSimple', async function () {
+        await TestJson('ExternalEntitiesAndSimple.json');
+    });
 
-    it('ExternalEntitiesAndSimpleOverride', (done) =>
-        TestJson('ExternalEntitiesAndSimpleOverride.json', () => throttle(done)));
+    it('ExternalEntitiesAndSimpleOverride', async function () {
+        await TestJson('ExternalEntitiesAndSimpleOverride.json');
+    });
 
-    it('GeoPeopleOrdinal', (done) => TestJson('GeoPeopleOrdinal.json', () => throttle(done)));
+    it('GeoPeopleOrdinal', async function () {
+        await TestJson('GeoPeopleOrdinal.json');
+    });
 
-    it('Minimal', (done) => TestJson('Minimal.json', () => throttle(done)));
+    it('Minimal', async function () {
+        await TestJson('Minimal.json');
+    });
 
-    it('Prebuilt', (done) => TestJson('Prebuilt.json', () => throttle(done)));
+    it('Prebuilt', async function () {
+        await TestJson('Prebuilt.json');
+    });
 
-    it('Patterns', (done) => TestJson('Patterns.json', () => throttle(done)));
+    it('Patterns', async function () {
+        await TestJson('Patterns.json');
+    });
 
-    it('roles', (done) => TestJson('roles.json', () => throttle(done)));
+    it('roles', async function () {
+        await TestJson('roles.json');
+    });
 
-    it('NoEntitiesInstanceTrue', (done) => TestJson('NoEntitiesInstanceTrue.json', () => throttle(done)));
+    it('NoEntitiesInstanceTrue', async function () {
+        await TestJson('NoEntitiesInstanceTrue.json');
+    });
 
-    it('DateTimeReference', (done) => TestJson('DateTimeReference.json', () => throttle(done)));
+    it('DateTimeReference', async function () {
+        await TestJson('DateTimeReference.json');
+    });
 });
 
 function WithinDelta(token1, token2, delta, compare) {
