@@ -227,9 +227,9 @@ export class OAuthPrompt extends Dialog {
         const state: OAuthPromptState = dc.activeDialog.state as OAuthPromptState;
         const isMessage: boolean = dc.context.activity.type === ActivityTypes.Message;
         const isTimeoutActivityType: boolean =
-            isMessage ||
-            OAuthPrompt.isTokenResponseEvent(dc.context) ||
-            OAuthPrompt.isTeamsVerificationInvoke(dc.context) ||
+            isMessage ??
+            OAuthPrompt.isTokenResponseEvent(dc.context) ??
+            OAuthPrompt.isTeamsVerificationInvoke(dc.context) ??
             OAuthPrompt.isTokenExchangeRequestInvoke(dc.context);
 
         // If the incoming Activity is a message, or an Activity Type normally handled by OAuthPrompt,
