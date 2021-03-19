@@ -35,14 +35,14 @@ export class Empty extends ComparisonEvaluator {
      * @private
      */
     private static isEmpty(instance: any): boolean {
-        let result: boolean;
+        let result = false;
         if (typeof instance === 'string') {
             result = instance === '';
         } else if (Array.isArray(instance)) {
             result = instance.length === 0;
         } else if (instance instanceof Map) {
             result = instance.size === 0;
-        } else {
+        } else if (instance != null) {
             result = Object.keys(instance).length === 0;
         }
 

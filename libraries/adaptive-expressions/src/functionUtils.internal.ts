@@ -69,6 +69,7 @@ export class InternalFunctionUtils {
             let error = childrenError;
             if (!error) {
                 if (Array.isArray(oriArr)) {
+                    // Ensures we don't mutate the array in place.
                     const arr: any = oriArr.slice(0);
                     if (expression.children.length === 1) {
                         if (isDescending) {
@@ -84,14 +85,10 @@ export class InternalFunctionUtils {
                             propertyName = propertyName || '';
                         }
 
-                        const sortBy = (key: string) => {
-                            return (a: unknown, b: unknown) => (a[key] > b[key] ? 1 : b[key] > a[key] ? -1 : 0);
-                        };
-
                         if (isDescending) {
-                            result = arr.concat().sort(sortBy(propertyName)).reverse();
+                            result = arr.sort(InternalFunctionUtils.sortByKey(propertyName)).reverse();
                         } else {
-                            result = arr.concat().sort(sortBy(propertyName));
+                            result = arr.sort(InternalFunctionUtils.sortByKey(propertyName));
                         }
                     }
                 } else {
@@ -509,5 +506,12 @@ export class InternalFunctionUtils {
         }
 
         return count;
+    }
+
+    /**
+     * @private
+     */
+    private static sortByKey(key: string) {
+        return (a: unknown, b: unknown) => (a[key] > b[key] ? 1 : b[key] > a[key] ? -1 : 0);
     }
 }
