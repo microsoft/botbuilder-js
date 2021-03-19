@@ -77,10 +77,11 @@ export class Configuration implements IConfiguration {
     /**
      * Load environment variables as a configuration source.
      *
+     * @param separator value used to indicate nesting
      * @returns this for chaining
      */
-    env(): this {
-        this.provider.env();
+    env(separator = '__'): this {
+        this.provider.env(separator);
         return this;
     }
 
