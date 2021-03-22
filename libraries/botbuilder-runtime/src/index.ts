@@ -10,10 +10,11 @@ import { ok } from 'assert';
 import { AdaptiveComponentRegistration } from 'botbuilder-dialogs-adaptive';
 import { ApplicationInsightsTelemetryClient, TelemetryInitializerMiddleware } from 'botbuilder-applicationinsights';
 import { AuthenticationConfiguration, SimpleCredentialProvider } from 'botframework-connector';
-import { BlobsTranscriptStore } from 'botbuilder-azure-blobs';
+import { BlobsStorage, BlobsTranscriptStore } from 'botbuilder-azure-blobs';
 import { ComponentRegistration } from 'botbuilder';
 import { CoreBot } from './coreBot';
 import { CoreBotAdapter } from './coreBotAdapter';
+import { CosmosDbPartitionedStorage } from 'botbuilder-azure';
 import { IServices, ServiceCollection, TPlugin } from 'botbuilder-runtime-core';
 import { LuisComponentRegistration, QnAMakerComponentRegistration } from 'botbuilder-ai';
 import { ResourceExplorer } from 'botbuilder-dialogs-declarative';
@@ -46,15 +47,18 @@ function addFeatures(services: ServiceCollection<IServices>, configuration: Conf
             }
 
             if (await configuration.bool(['traceTranscript'])) {
-                const [connectionString, container] = await Promise.all([
-                    configuration.string(['blobTranscript', 'connectionString']),
-                    configuration.string(['blobTranscript', 'connectionString']),
-                ]);
+                const blobsTranscript = await configuration.type(
+                    ['blobTranscript'],
+                    t.Record({
+                        connectionString: t.String,
+                        containerName: t.String,
+                    })
+                );
 
                 middlewareSet.use(
                     new TranscriptLoggerMiddleware(
-                        connectionString && container
-                            ? new BlobsTranscriptStore(connectionString, container)
+                        blobsTranscript
+                            ? new BlobsTranscriptStore(blobsTranscript.connectionString, blobsTranscript.containerName)
                             : new ConsoleTranscriptLogger()
                     )
                 );
@@ -90,10 +94,51 @@ function addTelemetry(services: ServiceCollection<IServices>, configuration: Con
     );
 }
 
-function addState(services: ServiceCollection<IServices>): void {
-    services.addInstance('storage', new MemoryStorage());
+function addStorage(services: ServiceCollection<IServices>, configuration: Configuration): void {
     services.addFactory('conversationState', ['storage'], ({ storage }) => new ConversationState(storage));
     services.addFactory('userState', ['storage'], ({ storage }) => new UserState(storage));
+
+    services.addFactory('storage', async () => {
+        const storage = await configuration.string(['runtimeSettings', 'storage']);
+
+        switch (storage) {
+            case 'BlobsStorage': {
+                const blobsStorage = await configuration.type(
+                    ['BlobsStorage'],
+                    t.Record({
+                        connectionString: t.String,
+                        containerName: t.String,
+                    })
+                );
+
+                ok(blobsStorage);
+
+                return new BlobsStorage(blobsStorage.connectionString, blobsStorage.containerName);
+            }
+
+            case 'CosmosDbPartitionedStorage': {
+                const cosmosOptions = await configuration.type(
+                    ['CosmosDbPartitionedStorage'],
+                    t.Record({
+                        authKey: t.String.Or(t.Undefined),
+                        compatibilityMode: t.Boolean.Or(t.Undefined),
+                        containerId: t.String,
+                        containerThroughput: t.Number.Or(t.Undefined),
+                        cosmosDbEndpoint: t.String.Or(t.Undefined),
+                        databaseId: t.String,
+                        keySuffix: t.String.Or(t.Undefined),
+                    })
+                );
+
+                ok(cosmosOptions);
+
+                return new CosmosDbPartitionedStorage(cosmosOptions);
+            }
+
+            default:
+                return new MemoryStorage();
+        }
+    });
 }
 
 function addSkills(services: ServiceCollection<IServices>, configuration: Configuration): void {
@@ -298,7 +343,7 @@ export async function getRuntimeServices(
     addCoreBot(services, configuration);
     addFeatures(services, runtimeSettings.bind(['features']));
     addSkills(services, runtimeSettings.bind(['skills']));
-    addState(services);
+    addStorage(services, configuration);
     addTelemetry(services, runtimeSettings.bind(['telemetry']));
     await addPlugins(services, configuration);
 
