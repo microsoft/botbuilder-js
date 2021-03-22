@@ -18,14 +18,14 @@ describe('InspectionMiddleware', function () {
         nock.cleanAll();
     });
 
-    const storage = new MemoryStorage();
-    const inspectionState = new InspectionState(storage);
-    const userState = new UserState(storage);
-    const conversationState = new ConversationState(storage);
+    // const storage = new MemoryStorage();
+    // const inspectionState = new InspectionState(storage);
+    // const userState = new UserState(storage);
+    // const conversationState = new ConversationState(storage);
 
     it('should not change behavior when inspection middleware is added', async function () {
-        let inspectionState = new InspectionState(new MemoryStorage());
-        let inspectionMiddleware = new InspectionMiddleware(inspectionState);
+        const inspectionState = new InspectionState(new MemoryStorage());
+        const inspectionMiddleware = new InspectionMiddleware(inspectionState);
 
         const adapter = new TestAdapter(async (turnContext) => {
             await turnContext.sendActivity(MessageFactory.text('hi'));
@@ -70,15 +70,15 @@ describe('InspectionMiddleware', function () {
 
         // create the various storage and middleware objects we will be using
 
-        let storage = new MemoryStorage();
-        let inspectionState = new InspectionState(storage);
-        let userState = new UserState(storage);
-        let conversationState = new ConversationState(storage);
-        let inspectionMiddleware = new InspectionMiddleware(inspectionState, userState, conversationState);
+        const storage = new MemoryStorage();
+        const inspectionState = new InspectionState(storage);
+        const userState = new UserState(storage);
+        const conversationState = new ConversationState(storage);
+        const inspectionMiddleware = new InspectionMiddleware(inspectionState, userState, conversationState);
 
         // the emulator sends an /INSPECT open command - we can use another adapter here
 
-        let openActivity = MessageFactory.text('/INSPECT open');
+        const openActivity = MessageFactory.text('/INSPECT open');
 
         const inspectionAdapter = new TestAdapter(
             async (turnContext) => {
@@ -90,15 +90,15 @@ describe('InspectionMiddleware', function () {
 
         await inspectionAdapter.receiveActivity(openActivity);
 
-        let inspectionOpenResultActivity = inspectionAdapter.activityBuffer[0];
-        let attachCommand = inspectionOpenResultActivity.value;
+        const inspectionOpenResultActivity = inspectionAdapter.activityBuffer[0];
+        const attachCommand = inspectionOpenResultActivity.value;
 
         // the logic of teh bot including replying with a message and updating user and conversation state
 
-        let x = userState.createProperty('x');
-        let y = conversationState.createProperty('y');
+        const x = userState.createProperty('x');
+        const y = conversationState.createProperty('y');
 
-        let applicationAdapter = new TestAdapter(
+        const applicationAdapter = new TestAdapter(
             async (turnContext) => {
                 await turnContext.sendActivity(MessageFactory.text(`echo: ${turnContext.activity.text}`));
 
@@ -164,15 +164,15 @@ describe('InspectionMiddleware', function () {
 
         // create the various storage and middleware objects we will be using
 
-        let storage = new MemoryStorage();
-        let inspectionState = new InspectionState(storage);
-        let userState = new UserState(storage);
-        let conversationState = new ConversationState(storage);
-        let inspectionMiddleware = new InspectionMiddleware(inspectionState, userState, conversationState);
+        const storage = new MemoryStorage();
+        const inspectionState = new InspectionState(storage);
+        const userState = new UserState(storage);
+        const conversationState = new ConversationState(storage);
+        const inspectionMiddleware = new InspectionMiddleware(inspectionState, userState, conversationState);
 
         // the emulator sends an /INSPECT open command - we can use another adapter here
 
-        let openActivity = MessageFactory.text('/INSPECT open');
+        const openActivity = MessageFactory.text('/INSPECT open');
 
         const inspectionAdapter = new TestAdapter(
             async (turnContext) => {
@@ -184,17 +184,17 @@ describe('InspectionMiddleware', function () {
 
         await inspectionAdapter.receiveActivity(openActivity);
 
-        let inspectionOpenResultActivity = inspectionAdapter.activityBuffer[0];
+        const inspectionOpenResultActivity = inspectionAdapter.activityBuffer[0];
 
-        let recipientId = 'bot';
-        let attachCommand = `<at>${recipientId}</at> ${inspectionOpenResultActivity.value}`;
+        const recipientId = 'bot';
+        const attachCommand = `<at>${recipientId}</at> ${inspectionOpenResultActivity.value}`;
 
         // the logic of the bot including replying with a message and updating user and conversation state
 
-        let x = userState.createProperty('x');
-        let y = conversationState.createProperty('y');
+        const x = userState.createProperty('x');
+        const y = conversationState.createProperty('y');
 
-        let applicationAdapter = new TestAdapter(
+        const applicationAdapter = new TestAdapter(
             async (turnContext) => {
                 await turnContext.sendActivity(MessageFactory.text(`echo: ${turnContext.activity.text}`));
 
@@ -212,7 +212,7 @@ describe('InspectionMiddleware', function () {
 
         applicationAdapter.use(inspectionMiddleware);
 
-        let attachActivity = {
+        const attachActivity = {
             type: 'message',
             text: attachCommand,
             recipient: { id: recipientId },
@@ -276,15 +276,15 @@ describe('InspectionMiddleware', function () {
 
         // create the various storage and middleware objects we will be using
 
-        let storage = new MemoryStorage();
-        let inspectionState = new InspectionState(storage);
-        let userState = new UserState(storage);
-        let conversationState = new ConversationState(storage);
-        let inspectionMiddleware = new InspectionMiddleware(inspectionState, userState, conversationState);
+        const storage = new MemoryStorage();
+        const inspectionState = new InspectionState(storage);
+        const userState = new UserState(storage);
+        const conversationState = new ConversationState(storage);
+        const inspectionMiddleware = new InspectionMiddleware(inspectionState, userState, conversationState);
 
         // the emulator sends an /INSPECT open command - we can use another adapter here
 
-        let openActivity = MessageFactory.text('/INSPECT open');
+        const openActivity = MessageFactory.text('/INSPECT open');
 
         const inspectionAdapter = new TestAdapter(
             async (turnContext) => {
@@ -296,15 +296,15 @@ describe('InspectionMiddleware', function () {
 
         await inspectionAdapter.receiveActivity(openActivity);
 
-        let inspectionOpenResultActivity = inspectionAdapter.activityBuffer[0];
-        let attachCommand = inspectionOpenResultActivity.value;
+        const inspectionOpenResultActivity = inspectionAdapter.activityBuffer[0];
+        const attachCommand = inspectionOpenResultActivity.value;
 
         // the logic of teh bot including replying with a message and updating user and conversation state
 
-        let x = userState.createProperty('x');
-        let y = conversationState.createProperty('y');
+        const x = userState.createProperty('x');
+        const y = conversationState.createProperty('y');
 
-        let applicationAdapter = new TestAdapter(
+        const applicationAdapter = new TestAdapter(
             async (turnContext) => {
                 await turnContext.sendActivity(MessageFactory.text(`echo: ${turnContext.activity.text}`));
 
@@ -322,14 +322,14 @@ describe('InspectionMiddleware', function () {
 
         applicationAdapter.use(inspectionMiddleware);
 
-        let attachActivity = MessageFactory.text(attachCommand);
+        const attachActivity = MessageFactory.text(attachCommand);
         attachActivity.channelData = { team: { id: 'team-id' } };
 
         await applicationAdapter.receiveActivity(attachActivity);
 
         // the attach command response is a informational message
 
-        let hiActivity = MessageFactory.text('hi');
+        const hiActivity = MessageFactory.text('hi');
         hiActivity.channelData = { team: { id: 'team-id' } };
 
         await applicationAdapter.receiveActivity(hiActivity);
@@ -376,6 +376,10 @@ describe('InspectionMiddleware', function () {
             .reply(200, { id: 'test' });
 
         // create the various storage and middleware objects we will be using
+        const storage = new MemoryStorage();
+        const inspectionState = new InspectionState(storage);
+        const userState = new UserState(storage);
+        const conversationState = new ConversationState(storage);
         const inspectionMiddleware = new InspectionMiddleware(inspectionState, userState, conversationState);
 
         // the emulator sends an /INSPECT open command - we can use another adapter here
@@ -453,6 +457,10 @@ describe('InspectionMiddleware', function () {
             .reply(200, { id: 'test' });
 
         // create the various storage and middleware objects we will be using
+        const storage = new MemoryStorage();
+        const inspectionState = new InspectionState(storage);
+        const userState = new UserState(storage);
+        const conversationState = new ConversationState(storage);
         const inspectionMiddleware = new InspectionMiddleware(inspectionState, userState, conversationState);
 
         // the emulator sends an /INSPECT open command - we can use another adapter here
@@ -529,6 +537,10 @@ describe('InspectionMiddleware', function () {
             .reply(200, { id: 'test' });
 
         // create the various storage and middleware objects we will be using
+        const storage = new MemoryStorage();
+        const inspectionState = new InspectionState(storage);
+        const userState = new UserState(storage);
+        const conversationState = new ConversationState(storage);
         const inspectionMiddleware = new InspectionMiddleware(inspectionState, userState, conversationState);
 
         // the emulator sends an /INSPECT open command - we can use another adapter here
@@ -568,6 +580,10 @@ describe('InspectionMiddleware', function () {
     });
 
     it('should invokeInbound throw an error', async () => {
+        const storage = new MemoryStorage();
+        const inspectionState = new InspectionState(storage);
+        const userState = new UserState(storage);
+        const conversationState = new ConversationState(storage);
         const inspectionMiddleware = new InspectionMiddleware(inspectionState, userState, conversationState);
 
         // Override warn current behavior to intercept when it's called.
@@ -582,6 +598,10 @@ describe('InspectionMiddleware', function () {
     });
 
     it('should invokeOutbound throw an error', async () => {
+        const storage = new MemoryStorage();
+        const inspectionState = new InspectionState(storage);
+        const userState = new UserState(storage);
+        const conversationState = new ConversationState(storage);
         const inspectionMiddleware = new InspectionMiddleware(inspectionState, userState, conversationState);
 
         // Override warn current behavior to intercept when it's called.
@@ -596,6 +616,10 @@ describe('InspectionMiddleware', function () {
     });
 
     it('should invokeTraceState throw an error', async () => {
+        const storage = new MemoryStorage();
+        const inspectionState = new InspectionState(storage);
+        const userState = new UserState(storage);
+        const conversationState = new ConversationState(storage);
         const inspectionMiddleware = new InspectionMiddleware(inspectionState, userState, conversationState);
 
         // Override warn current behavior to intercept when it's called.
@@ -610,6 +634,10 @@ describe('InspectionMiddleware', function () {
     });
 
     it('should attachCommand return false', async () => {
+        const storage = new MemoryStorage();
+        const inspectionState = new InspectionState(storage);
+        const userState = new UserState(storage);
+        const conversationState = new ConversationState(storage);
         const inspectionMiddleware = new InspectionMiddleware(inspectionState, userState, conversationState);
 
         const result = await inspectionMiddleware.attachCommand(
