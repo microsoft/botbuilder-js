@@ -176,27 +176,24 @@ describe('SkillHandler', function () {
             const identity = new ClaimsIdentity([{ type: 'aud', value: 'audience' }]);
             const conversationId = 'conversationId';
 
-            it('should cache the ClaimsIdentity, ConnectorClient and SkillConversationReference on the turnState', (done) => {
+            it('should cache the ClaimsIdentity, ConnectorClient and SkillConversationReference on the turnState', async function () {
                 expectsGetSkillConversationReference(conversationId);
 
-                handler
-                    .continueConversation(identity, conversationId, async (adapter, ref, context) => {
-                        assert.deepStrictEqual(
-                            context.turnState.get(adapter.BotIdentityKey),
-                            identity,
-                            'cached identity exists'
-                        );
+                await handler.continueConversation(identity, conversationId, async (adapter, ref, context) => {
+                    assert.deepStrictEqual(
+                        context.turnState.get(adapter.BotIdentityKey),
+                        identity,
+                        'cached identity exists'
+                    );
 
-                        assert.deepStrictEqual(
-                            context.turnState.get(handler.SkillConversationReferenceKey),
-                            ref,
-                            'cached conversation ref exists'
-                        );
+                    assert.deepStrictEqual(
+                        context.turnState.get(handler.SkillConversationReferenceKey),
+                        ref,
+                        'cached conversation ref exists'
+                    );
 
-                        sandbox.verify();
-                        done();
-                    })
-                    .catch(done);
+                    sandbox.verify();
+                });
             });
         });
 
