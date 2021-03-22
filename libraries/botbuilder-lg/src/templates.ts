@@ -307,9 +307,10 @@ export class Templates implements Iterable<Template> {
         // wrap inline string with "# name and -" to align the evaluation process
         const multiLineMark = '```';
 
-        inlineStr = !(inlineStr.trim().startsWith(multiLineMark) && inlineStr.includes('\n'))
-            ? `${multiLineMark}${inlineStr}${multiLineMark}`
-            : inlineStr;
+        inlineStr =
+            !inlineStr.trim().startsWith(multiLineMark) && inlineStr.includes('\n')
+                ? `${multiLineMark}${inlineStr}${multiLineMark}`
+                : inlineStr;
 
         const newContent = `#${inlineTemplateId} ${this.newLine} - ${inlineStr}`;
 
@@ -413,7 +414,8 @@ export class Templates implements Iterable<Template> {
 
             // adjust the last template's range when adding the template
             if (this.items.length > 0) {
-                this.items[this.items.length - 1].sourceRange.range.end.line = newTemplate.sourceRange.range.start.line - 1;
+                this.items[this.items.length - 1].sourceRange.range.end.line =
+                    newTemplate.sourceRange.range.start.line - 1;
             }
 
             this.items.push(newTemplate);
