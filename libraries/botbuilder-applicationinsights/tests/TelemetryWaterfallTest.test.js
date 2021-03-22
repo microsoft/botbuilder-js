@@ -241,7 +241,7 @@ describe('TelemetryWaterfall', function () {
         adapter.send({ text: 'hello' }).startTest();
     });
 
-    it('should set telemetryClient on dialogs inside a component dialog', function (done) {
+    it('should set telemetryClient on dialogs inside a component dialog', function () {
         const component = new ComponentDialog('id');
 
         component.addDialog(new WaterfallDialog('secondary'), [
@@ -303,7 +303,5 @@ describe('TelemetryWaterfall', function () {
             component.telemetryClient instanceof NullTelemetryClient,
             'component should be reset to nulltelemetryclient'
         );
-
-        done();
     });
 });
