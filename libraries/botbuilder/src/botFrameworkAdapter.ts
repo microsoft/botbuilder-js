@@ -17,7 +17,6 @@ import {
     BotAdapter,
     BotCallbackHandlerKey,
     ChannelAccount,
-    ConversationAccount,
     ConversationParameters,
     ConversationReference,
     ConversationsResult,
@@ -34,6 +33,7 @@ import {
     HealthResults,
     ActivityEventNames,
 } from 'botbuilder-core';
+
 import {
     AuthenticationConfiguration,
     AuthenticationConstants,
@@ -73,7 +73,6 @@ import {
     WebSocketServer,
 } from 'botframework-streaming';
 
-import { ConnectorClientBuilder, WebRequest, WebResponse } from './interfaces';
 import {
     defaultPipeName,
     GET,
@@ -84,8 +83,11 @@ import {
     VERSION_PATH,
 } from './streaming';
 
-import { validateAndFixActivity } from './activityValidator';
+import { BotFrameworkHttpAdapter } from './botFrameworkHttpAdapter';
+import { BotLogic, ConnectorClientBuilder, Emitter, Request, Response, WebRequest, WebResponse } from './interfaces';
+import { delay } from 'botbuilder-stdlib';
 import { userAgentPolicy } from '@azure/ms-rest-js';
+import { validateAndFixActivity } from './activityValidator';
 
 /**
  * Contains settings used to configure a [BotFrameworkAdapter](xref:botbuilder.BotFrameworkAdapter) instance.
@@ -195,7 +197,7 @@ const US_GOV_OAUTH_ENDPOINT = 'https://api.botframework.azure.us';
  */
 export class BotFrameworkAdapter
     extends BotAdapter
-    implements ConnectorClientBuilder, ExtendedUserTokenProvider, RequestHandler {
+    implements BotFrameworkHttpAdapter, ConnectorClientBuilder, ExtendedUserTokenProvider, RequestHandler {
     // These keys are public to permit access to the keys from the adapter when it's a being
     // from library that does not have access to static properties off of BotFrameworkAdapter.
     // E.g. botbuilder-dialogs
@@ -1200,7 +1202,7 @@ export class BotFrameworkAdapter
             if (request.deliveryMode === DeliveryModes.ExpectReplies) {
                 // Handle "expectReplies" scenarios where all the activities have been buffered and sent back at once
                 // in an invoke response.
-                let activities = context.bufferedReplyActivities as Activity[];
+                let activities = context.bufferedReplyActivities;
 
                 // If the channel is not the emulator, do not send trace activities.
                 // Fixes: https://github.com/microsoft/botbuilder-js/issues/2732
@@ -1322,7 +1324,7 @@ export class BotFrameworkAdapter
                     await delay(typeof activity.value === 'number' ? activity.value : 1000);
                     responses.push({} as ResourceResponse);
                     break;
-                case 'invokeResponse':
+                case ActivityTypes.InvokeResponse:
                     // Cache response to context object. This will be retrieved when turn completes.
                     context.turnState.set(INVOKE_RESPONSE_KEY, activity);
                     responses.push({} as ResourceResponse);
@@ -1351,15 +1353,12 @@ export class BotFrameworkAdapter
                             await client.conversations.replyToActivity(
                                 activity.conversation.id,
                                 activity.replyToId,
-                                activity as Activity
+                                activity
                             )
                         );
                     } else {
                         responses.push(
-                            await client.conversations.sendToConversation(
-                                activity.conversation.id,
-                                activity as Activity
-                            )
+                            await client.conversations.sendToConversation(activity.conversation.id, activity)
                         );
                     }
                     break;
@@ -1393,7 +1392,7 @@ export class BotFrameworkAdapter
         }
 
         const client = this.getOrCreateConnectorClient(context, activity.serviceUrl, this.credentials);
-        return client.conversations.updateActivity(activity.conversation.id, activity.id, activity as Activity);
+        return client.conversations.updateActivity(activity.conversation.id, activity.id, activity);
     }
 
     /**
@@ -1584,12 +1583,7 @@ export class BotFrameworkAdapter
                 this.settings.channelAuthTenant
             );
         } else {
-            credentials = new MicrosoftAppCredentials(
-                appId,
-                appPassword,
-                this.settings.channelAuthTenant,
-                oAuthScope
-            );
+            credentials = new MicrosoftAppCredentials(appId, appPassword, this.settings.channelAuthTenant, oAuthScope);
         }
 
         if (JwtTokenValidation.isGovernment(this.settings.channelService)) {
@@ -1654,7 +1648,7 @@ export class BotFrameworkAdapter
      */
     private authenticateRequestInternal(request: Partial<Activity>, authHeader: string): Promise<ClaimsIdentity> {
         return JwtTokenValidation.authenticateRequest(
-            request as Activity,
+            request,
             authHeader,
             this.credentialsProvider,
             this.settings.channelService,
@@ -1833,6 +1827,10 @@ export class BotFrameworkAdapter
         }
 
         return response;
+    }
+
+    process(req: Request & Emitter, res: Response, logic: BotLogic): Promise<void> {
+        return this.processActivity(req, res, logic);
     }
 
     /**
@@ -2030,12 +2028,6 @@ function parseRequest(req: WebRequest): Promise<Activity> {
                 }
             });
         }
-    });
-}
-
-function delay(timeout: number): Promise<void> {
-    return new Promise((resolve): void => {
-        setTimeout(resolve, timeout);
     });
 }
 

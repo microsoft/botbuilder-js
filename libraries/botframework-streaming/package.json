@@ -37,8 +37,7 @@
   },
   "devDependencies": {
     "@types/chai": "^4.1.7",
-    "chai": "^4.2.0",
-    "sinon": "^7.5.0"
+    "chai": "^4.2.0"
   },
   "scripts": {
     "build": "npm-run-all -p build:lib build:es5",
