@@ -72,10 +72,7 @@ function WithinDelta(token1, token2, delta, compare) {
 // 1) Create a <name>.json file with an object { text:<query> } in it.
 // 2) Run this test sith mockLuis = false which will fail and generate a <name>.json.new file.
 // 3) Check the .new file and if correct, replace the original .json file with it.
-async function TestJson(file, includeAllIntents, includeInstance) {
-    if (includeAllIntents === undefined) includeAllIntents = true;
-    if (includeInstance === undefined) includeInstance = true;
-
+async function TestJson(file, includeAllIntents = true, includeInstance = true) {
     let expectedPath = ExpectedPath(file);
     let expected = GetExpected(expectedPath);
 
