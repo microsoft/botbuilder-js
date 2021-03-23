@@ -35,9 +35,6 @@
     "orchestrator-core": "4.12.0-preview",
     "uuid": "^8.3.2"
   },
-  "devDependencies": {
-    "sinon": "^9.2.1"
-  },
   "scripts": {
     "build": "tsc -b",
     "build-docs": "typedoc --theme markdown --entryPoint botbuilder-ai-orchestrator --excludePrivate --includeDeclarations --ignoreCompilerErrors --module amd --out ..\\..\\doc\\botbuilder-ai-orchestrator .\\lib\\index.d.ts --hideGenerator --name \"Bot Builder SDK - Orchestrator\" --readme none",

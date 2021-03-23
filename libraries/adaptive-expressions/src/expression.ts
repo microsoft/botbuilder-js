@@ -227,7 +227,7 @@ export class Expression {
      * @returns The expression object.
      */
     public static parse(expression: string, lookup?: EvaluatorLookup): Expression {
-        return new ExpressionParser(lookup || Expression.lookup).parse(expression);
+        return new ExpressionParser(lookup || Expression.lookup).parse(expression.replace(/^=/, ''));
     }
 
     /**

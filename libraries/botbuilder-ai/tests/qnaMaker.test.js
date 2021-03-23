@@ -47,7 +47,7 @@ describe('QnAMaker', function () {
         host: `https://${hostname}.azurewebsites.net/qnamaker`,
     };
 
-    beforeEach(function (done) {
+    beforeEach(function () {
         nock.cleanAll();
         if (mockQnA) {
             let fileName = replaceCharacters(this.currentTest.title);
@@ -63,12 +63,10 @@ describe('QnAMaker', function () {
                     .replyWithFile(200, filePath + file);
             });
         }
-        done();
     });
 
-    afterEach(function (done) {
+    afterEach(function () {
         nock.cleanAll();
-        done();
     });
 
     function replaceCharacters(testName, _testDesc) {
@@ -810,50 +808,45 @@ describe('QnAMaker', function () {
             );
         });
 
-        it('should emit trace info once per call to Answer', function (done) {
+        it('should emit trace info once per call to Answer', async function () {
             const context = new TestContext({ text: `how do I clean the stove?`, type: 'message' });
             const qna = new QnAMaker(endpoint, { top: 1 });
 
-            qna.answer(context).then((found) => {
-                assert.strictEqual(found, true, `Found answer should have returned 'true'.`);
-                let qnaMakerTraceActivies = context.sent.filter((s) => s.type === 'trace' && s.name === 'QnAMaker');
-                assert.strictEqual(qnaMakerTraceActivies.length, 1, 'Should have returned just one answer');
-                const traceActivity = qnaMakerTraceActivies[0];
-                assert.strictEqual(traceActivity.type, 'trace', `Should have returned 'trace'.`);
-                assert.strictEqual(traceActivity.name, 'QnAMaker', `Should have returned 'QnAMaker'.`);
-                assert.strictEqual(traceActivity.label, 'QnAMaker Trace', `Should have returned 'QnAMaker Trace'.`);
-                assert.strictEqual(
-                    traceActivity.valueType,
-                    'https://www.qnamaker.ai/schemas/trace',
-                    `Should have returned 'https://www.qnamaker.ai/schemas/trace'.`
-                );
-                assert(traceActivity['value'], `'traceActivity' should have 'value' property.`);
-                assert(traceActivity.value['message'], `'traceActivity.value' should have 'message' property.`);
-                assert(
-                    traceActivity.value['queryResults'],
-                    `'traceActivity.value' should have 'queryResults' property.'`
-                );
-                assert.strictEqual(
-                    traceActivity.value.knowledgeBaseId,
-                    knowledgeBaseId,
-                    `Should have returned '${knowledgeBaseId}'`
-                );
-                assert(
-                    traceActivity.value['scoreThreshold'],
-                    `'traceActivity.value' should have 'scoreThreshold' property.'`
-                );
-                done();
-            });
+            const found = await qna.answer(context);
+
+            assert.strictEqual(found, true, `Found answer should have returned 'true'.`);
+            let qnaMakerTraceActivies = context.sent.filter((s) => s.type === 'trace' && s.name === 'QnAMaker');
+            assert.strictEqual(qnaMakerTraceActivies.length, 1, 'Should have returned just one answer');
+            const traceActivity = qnaMakerTraceActivies[0];
+            assert.strictEqual(traceActivity.type, 'trace', `Should have returned 'trace'.`);
+            assert.strictEqual(traceActivity.name, 'QnAMaker', `Should have returned 'QnAMaker'.`);
+            assert.strictEqual(traceActivity.label, 'QnAMaker Trace', `Should have returned 'QnAMaker Trace'.`);
+            assert.strictEqual(
+                traceActivity.valueType,
+                'https://www.qnamaker.ai/schemas/trace',
+                `Should have returned 'https://www.qnamaker.ai/schemas/trace'.`
+            );
+            assert(traceActivity['value'], `'traceActivity' should have 'value' property.`);
+            assert(traceActivity.value['message'], `'traceActivity.value' should have 'message' property.`);
+            assert(traceActivity.value['queryResults'], `'traceActivity.value' should have 'queryResults' property.'`);
+            assert.strictEqual(
+                traceActivity.value.knowledgeBaseId,
+                knowledgeBaseId,
+                `Should have returned '${knowledgeBaseId}'`
+            );
+            assert(
+                traceActivity.value['scoreThreshold'],
+                `'traceActivity.value' should have 'scoreThreshold' property.'`
+            );
         });
 
-        it('should return "false" from answer() if no good answers found', function (done) {
+        it('should return "false" from answer() if no good answers found', async function () {
             const context = new TestContext({ text: `foo`, type: 'message' });
             const qna = new QnAMaker(endpoint, { top: 1 });
 
-            qna.answer(context).then((found) => {
-                assert.strictEqual(found, false, `Should have returned 'false' for questions with no good answers`);
-                done();
-            });
+            const found = await qna.answer(context);
+
+            assert.strictEqual(found, false, `Should have returned 'false' for questions with no good answers`);
         });
 
         it('should throw TypeError from answer() if no context', function () {

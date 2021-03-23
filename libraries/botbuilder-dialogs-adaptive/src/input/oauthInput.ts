@@ -13,19 +13,11 @@ import {
     StringExpressionConverter,
 } from 'adaptive-expressions';
 import {
-    ActionTypes,
     Activity,
     ActivityTypes,
-    Attachment,
-    BotAdapter,
-    CardFactory,
-    Channels,
     ExtendedUserTokenProvider,
     InputHints,
     IUserTokenProvider,
-    MessageFactory,
-    OAuthCard,
-    OAuthLoginTimeoutKey,
     StatusCodes,
     TokenExchangeInvokeRequest,
     TokenResponse,
@@ -36,15 +28,18 @@ import {
     ConverterFactory,
     Dialog,
     DialogContext,
+    DialogStateManager,
     DialogTurnResult,
+    OAuthPrompt,
+    OAuthPromptSettings,
     PromptOptions,
     PromptRecognizerResult,
     ThisPath,
     TurnPath,
 } from 'botbuilder-dialogs';
-import { SkillValidation } from 'botframework-connector';
-import { verifyStateOperationName, tokenExchangeOperationName, tokenResponseEventName } from 'botbuilder-core';
+import { verifyStateOperationName, tokenExchangeOperationName, tokenResponseEventName } from 'botbuilder';
 import { InputDialog, InputDialogConfiguration, InputState } from './inputDialog';
+import { TextTemplate } from '../templates';
 
 export const channels: any = {
     console: 'console',
@@ -186,7 +181,7 @@ export class OAuthInput extends InputDialog implements OAuthInputConfiguration {
             dc.state.setValue(InputDialog.TURN_COUNT_PROPERTY, 1);
 
             // Prompt user to login
-            await this.sendOAuthCardAsync(dc, state.options.prompt);
+            await this.sendOAuthCard(dc, state.options.prompt);
 
             return Dialog.EndOfTurn;
         }
@@ -257,7 +252,7 @@ export class OAuthInput extends InputDialog implements OAuthInputConfiguration {
                 }
 
                 if (isMessage) {
-                    await this.sendOAuthCardAsync(dc, promptOptions?.prompt);
+                    await this.sendOAuthCard(dc, promptOptions?.prompt);
                 }
 
                 return Dialog.EndOfTurn;
@@ -351,98 +346,25 @@ export class OAuthInput extends InputDialog implements OAuthInputConfiguration {
     /**
      * @private
      */
-    private async sendOAuthCardAsync(dc: DialogContext, prompt?: string | Partial<Activity>): Promise<void> {
-        const turnContext = dc.context;
-
-        // Validate adapter type
-        if (!('getUserToken' in turnContext.adapter)) {
-            throw new Error(`OAuthPrompt.sendOAuthCardAsync(): not supported for the current adapter.`);
+    private async sendOAuthCard(dc: DialogContext, prompt?: string | Partial<Activity>): Promise<void> {
+        let title: string =
+            (await new TextTemplate<DialogStateManager>(this.title.expressionText).bind(dc, dc.state)) ??
+            this.title.getValue(dc.state);
+        if (title?.startsWith('=')) {
+            title = Expression.parse(title).tryEvaluate(dc.state)?.value;
         }
-
-        // Initialize outgoing message
-        const msg: Partial<Activity> =
-            typeof prompt === 'object'
-                ? { ...prompt }
-                : MessageFactory.text(prompt, undefined, InputHints.AcceptingInput);
-        if (!Array.isArray(msg.attachments)) {
-            msg.attachments = [];
+        let text: string =
+            (await new TextTemplate<DialogStateManager>(this.text.expressionText).bind(dc, dc.state)) ??
+            this.text.getValue(dc.state);
+        if (text?.startsWith('=')) {
+            text = Expression.parse(text).tryEvaluate(dc.state)?.value;
         }
-
-        // Add login card as needed
-        if (this.channelSupportsOAuthCard(turnContext.activity.channelId)) {
-            const cards: Attachment[] = msg.attachments.filter(
-                (a: Attachment) => a.contentType === CardFactory.contentTypes.oauthCard
-            );
-            if (cards.length === 0) {
-                let cardActionType = ActionTypes.Signin;
-                const signInResource = await (turnContext.adapter as ExtendedUserTokenProvider).getSignInResource(
-                    turnContext,
-                    this.connectionName.getValue(dc.state),
-                    turnContext.activity.from.id
-                );
-                let link = signInResource.signInLink;
-                const identity = turnContext.turnState.get((turnContext.adapter as BotAdapter).BotIdentityKey);
-
-                // use the SignInLink when
-                //   in speech channel or
-                //   bot is a skill or
-                //   an extra OAuthAppCredentials is being passed in
-                if (
-                    (identity && SkillValidation.isSkillClaim(identity.claims)) ||
-                    this.isFromStreamingConnection(turnContext.activity)
-                ) {
-                    if (turnContext.activity.channelId === Channels.Emulator) {
-                        cardActionType = ActionTypes.OpenUrl;
-                    }
-                } else if (!this.channelRequiresSignInLink(turnContext.activity.channelId)) {
-                    link = undefined;
-                }
-
-                // Append oauth card
-                const card = CardFactory.oauthCard(
-                    this.connectionName.getValue(dc.state),
-                    this.title.getValue(dc.state),
-                    this.text.getValue(dc.state),
-                    link,
-                    signInResource.tokenExchangeResource
-                );
-
-                // Set the appropriate ActionType for the button.
-                (card.content as OAuthCard).buttons[0].type = cardActionType;
-                msg.attachments.push(card);
-            }
-        } else {
-            const cards: Attachment[] = msg.attachments.filter(
-                (a: Attachment) => a.contentType === CardFactory.contentTypes.signinCard
-            );
-            if (cards.length === 0) {
-                // Append signin card
-                const signInResource = await (turnContext.adapter as ExtendedUserTokenProvider).getSignInResource(
-                    turnContext,
-                    this.connectionName.getValue(dc.state),
-                    turnContext.activity.from.id
-                );
-                msg.attachments.push(
-                    CardFactory.signinCard(
-                        this.title.getValue(dc.state),
-                        signInResource.signInLink,
-                        this.text.getValue(dc.state)
-                    )
-                );
-            }
-        }
-
-        // Add the login timeout specified in OAuthPromptSettings to TurnState so it can be referenced if polling is needed
-        if (!turnContext.turnState.get(OAuthLoginTimeoutKey) && this.timeout) {
-            turnContext.turnState.set(OAuthLoginTimeoutKey, this.timeout.getValue(dc.state));
-        }
-
-        if (!msg.inputHint) {
-            msg.inputHint = InputHints.AcceptingInput;
-        }
-
-        // Send prompt
-        await turnContext.sendActivity(msg);
+        const settings: OAuthPromptSettings = {
+            connectionName: this.connectionName?.getValue(dc.state),
+            title,
+            text,
+        };
+        return OAuthPrompt.sendOAuthCard(settings, dc.context, prompt);
     }
 
     /**
@@ -543,13 +465,6 @@ export class OAuthInput extends InputDialog implements OAuthInputConfiguration {
     /**
      * @private
      */
-    private isFromStreamingConnection(activity: Activity): boolean {
-        return activity && activity.serviceUrl && !activity.serviceUrl.toLowerCase().startsWith('http');
-    }
-
-    /**
-     * @private
-     */
     private isTokenResponseEvent(context: TurnContext): boolean {
         const activity: Activity = context.activity;
 
@@ -587,22 +502,6 @@ export class OAuthInput extends InputDialog implements OAuthInputConfiguration {
     /**
      * @private
      */
-    private channelSupportsOAuthCard(channelId: string): boolean {
-        switch (channelId) {
-            case channels.msteams:
-            case channels.cortana:
-            case channels.skype:
-            case channels.skypeforbusiness:
-                return false;
-            default:
-        }
-
-        return true;
-    }
-
-    /**
-     * @private
-     */
     private async sendInvokeResponse(turnContext: TurnContext, status: StatusCodes, body?: object): Promise<void> {
         await turnContext.sendActivity({
             type: 'invokeResponse',
@@ -611,19 +510,6 @@ export class OAuthInput extends InputDialog implements OAuthInputConfiguration {
                 body,
             },
         });
-    }
-
-    /**
-     * @private
-     */
-    private channelRequiresSignInLink(channelId: string): boolean {
-        switch (channelId) {
-            case Channels.Msteams:
-                return true;
-            default:
-        }
-
-        return false;
     }
 }
 
