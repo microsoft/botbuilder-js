@@ -13,7 +13,7 @@ const { NumberEntityRecognizer } = require('botbuilder-dialogs-adaptive');
 const sinon = require('sinon');
 const { orchestratorIntentText, getLogPersonalInformation, validateTelemetry } = require('./recognizerTelemetryUtils');
 
-describe('OrchestratorAdpativeRecognizer tests', function () {
+describe('OrchestratorAdaptiveRecognizer tests', function () {
     it('Expect initialize is called when orchestrator obj is null', async () => {
         const result = [
             {

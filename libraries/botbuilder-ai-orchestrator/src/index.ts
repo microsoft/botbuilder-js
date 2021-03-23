@@ -8,4 +8,3 @@
 
 export { OrchestratorAdaptiveRecognizer } from './orchestratorAdaptiveRecognizer';
 export { OrchestratorComponentRegistration } from './orchestratorComponentRegistration';
-export { OrchestratorRecognizer } from './orchestratorRecognizer';

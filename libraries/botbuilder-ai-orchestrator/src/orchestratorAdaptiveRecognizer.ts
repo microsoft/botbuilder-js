@@ -34,6 +34,11 @@ export interface OrchestratorAdaptiveRecognizerConfiguration extends RecognizerC
     externalEntityRecognizer?: Recognizer;
 }
 
+enum LabelType {
+    Intent = 1,
+    Entity = 2,
+}
+
 type LabelResolver = {
     score(
         text: string
@@ -42,6 +47,21 @@ type LabelResolver = {
         closest_text: string;
         label: {
             name: string;
+        };
+    }[];
+
+    score(
+        text: string,
+        labelType: number,
+    ): {
+        score: number;
+        closest_text: string;
+        label: {
+            name: string;
+            span: {
+                offset: number;
+                length: number;
+            }
         };
     }[];
 };
@@ -56,7 +76,7 @@ type Orchestrator = {
 export class OrchestratorAdaptiveRecognizer
     extends AdaptiveRecognizer
     implements OrchestratorAdaptiveRecognizerConfiguration {
-    public static $kind = 'Microsoft.OrchestratorRecognizer';
+    public static $kind = 'Microsoft.OrchestratorAdaptiveRecognizer';
 
     /**
      * Path to Orchestrator base model folder.
@@ -83,6 +103,11 @@ export class OrchestratorAdaptiveRecognizer
      * The external entity recognizer.
      */
     public externalEntityRecognizer: Recognizer;
+
+    /**
+     * Enable entity detection if entity model exists inside modelFolder. Defaults to false.
+     */
+    public scoreEntities: BoolExpression = new BoolExpression(false);
 
     /**
      * Intent name if ambiguous intents are detected.
