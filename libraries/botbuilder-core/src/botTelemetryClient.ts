@@ -17,6 +17,11 @@ export enum Severity {
     Critical = 4,
 }
 
+/**
+ * Key used to store and fetch a [BotTelemetryClient](xref:botbuilder-core.BotTelemetryClient) from [TurnContext.turnState](xref:botbuilder-core.TurnContextStateCollection)
+ */
+export const BotTelemetryClientKey = 'BotTelemetryClient';
+
 export interface BotTelemetryClient {
     trackDependency(telemetry: TelemetryDependency);
     trackEvent(telemetry: TelemetryEvent);
