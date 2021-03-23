@@ -39,7 +39,6 @@ describe(`BotStatePropertyAccessor`, function () {
         });
 
         await tAdapter.receiveActivity(`Hello world!`);
-
     });
 
     it(`should save changes to registered Property multiple times.`, async function () {
@@ -54,9 +53,9 @@ describe(`BotStatePropertyAccessor`, function () {
             await botState.saveChanges(context);
         });
 
-        await tAdapter.test(`Hello world!`, `1`, `messageCount was not incremented.`)
+        await tAdapter
+            .test(`Hello world!`, `1`, `messageCount was not incremented.`)
             .test(`Hello world!`, `2`, `messageCount was not properly saved.`);
-
     });
 
     it(`should delete property value on state.`, async function () {
@@ -120,10 +119,13 @@ describe(`BotStatePropertyAccessor`, function () {
             let addressValue = await addressProperty.get(context, {
                 street: '1 Microsoft Way',
                 zipCode: 98052,
-                state: 'WA'
+                state: 'WA',
             });
             assert(typeof addressValue === 'object', `default value for PropertyAccessor was not properly set.`);
-            assert(addressValue.street === '1 Microsoft Way', `default value for PropertyAccessor was not properly set.`);
+            assert(
+                addressValue.street === '1 Microsoft Way',
+                `default value for PropertyAccessor was not properly set.`
+            );
             assert(addressValue.zipCode === 98052, `default value for PropertyAccessor was not properly set.`);
             assert(addressValue.state === 'WA', `default value for PropertyAccessor was not properly set.`);
             await botState.saveChanges(context);
@@ -132,23 +134,22 @@ describe(`BotStatePropertyAccessor`, function () {
         await tAdapter.receiveActivity(`Hello world!`);
     });
 
-    it(`should get() initial default value when a second get() with a second default value is called.`,
-        async function () {
-            const testState = new BotState(storage, (context => {
-                assert(context, `context was not passed into storage stateKey factory.`);
-                return 'testState';
-            }));
-            const WORD_PROPERTY = 'word';
-            const wordProperty = testState.createProperty(WORD_PROPERTY);
-
-            const tAdapter = new TestAdapter(async (turnContext) => {
-                let word = await wordProperty.get(turnContext, 'word');
-                assert(word === 'word', `default value for "wordProperty" was not properly set.`);
-
-                word = await wordProperty.get(turnContext, 'second');
-                assert(word === 'word', `expected value of "word" for word, received "${word}".`);
-            });
-
-            await tAdapter.receiveActivity(`Hello world!`);
+    it(`should get() initial default value when a second get() with a second default value is called.`, async function () {
+        const testState = new BotState(storage, (context) => {
+            assert(context, `context was not passed into storage stateKey factory.`);
+            return 'testState';
         });
+        const WORD_PROPERTY = 'word';
+        const wordProperty = testState.createProperty(WORD_PROPERTY);
+
+        const tAdapter = new TestAdapter(async (turnContext) => {
+            let word = await wordProperty.get(turnContext, 'word');
+            assert(word === 'word', `default value for "wordProperty" was not properly set.`);
+
+            word = await wordProperty.get(turnContext, 'second');
+            assert(word === 'word', `expected value of "word" for word, received "${word}".`);
+        });
+
+        await tAdapter.receiveActivity(`Hello world!`);
+    });
 });

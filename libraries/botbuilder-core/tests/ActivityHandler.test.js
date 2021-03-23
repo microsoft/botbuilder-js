@@ -1,8 +1,7 @@
 const assert = require('assert');
 const { ActivityHandler, ActivityTypes, TestAdapter, tokenResponseEventName, TurnContext } = require('../lib');
 
-describe('ActivityHandler', function() {
-
+describe('ActivityHandler', function () {
     const adapter = new TestAdapter();
 
     async function processActivity(activity, bot) {
@@ -27,7 +26,7 @@ describe('ActivityHandler', function() {
             await next();
         });
 
-        await processActivity({type: 'any'}, bot);
+        await processActivity({ type: 'any' }, bot);
         assert(onTurnCalled);
     });
 
@@ -40,7 +39,7 @@ describe('ActivityHandler', function() {
             await next();
         });
 
-        await processActivity({type: ActivityTypes.Message}, bot);
+        await processActivity({ type: ActivityTypes.Message }, bot);
         assert(onMessageCalled);
     });
 
@@ -59,12 +58,12 @@ describe('ActivityHandler', function() {
             await next();
         });
 
-        await processActivity({type: ActivityTypes.Message}, bot);
+        await processActivity({ type: ActivityTypes.Message }, bot);
         assert(onTurnCalled);
         assert(onMessageCalled);
     });
 
-    it(`omitting call to next prevents following events from firing`, async function() {
+    it(`omitting call to next prevents following events from firing`, async function () {
         const bot = new ActivityHandler();
 
         let onTurnCalled = false;
@@ -78,7 +77,7 @@ describe('ActivityHandler', function() {
             await next();
         });
 
-        await processActivity({type: ActivityTypes.Message}, bot);
+        await processActivity({ type: ActivityTypes.Message }, bot);
         assert(onTurnCalled);
         assert(!onMessageCalled);
     });
@@ -101,13 +100,13 @@ describe('ActivityHandler', function() {
             await next();
         });
 
-        await processActivity({type: ActivityTypes.Message}, bot);
+        await processActivity({ type: ActivityTypes.Message }, bot);
         assert(onMessageCalled);
         assert(onMessageCalledAgain);
         assert(count === 2, 'all events did fire');
     });
 
-    it(`should fire onConversationUpdate`, async function() {
+    it(`should fire onConversationUpdate`, async function () {
         const bot = new ActivityHandler();
 
         let onConversationUpdateCalled = false;
@@ -116,11 +115,11 @@ describe('ActivityHandler', function() {
             await next();
         });
 
-        await processActivity({type: ActivityTypes.ConversationUpdate}, bot);
+        await processActivity({ type: ActivityTypes.ConversationUpdate }, bot);
         assert(onConversationUpdateCalled);
     });
 
-    it(`should fire onMembersAdded`, async function() {
+    it(`should fire onMembersAdded`, async function () {
         const bot = new ActivityHandler();
 
         let onMembersAddedCalled = false;
@@ -129,7 +128,7 @@ describe('ActivityHandler', function() {
             await next();
         });
 
-        await processActivity({type: ActivityTypes.ConversationUpdate, membersAdded: [{id: 1}]}, bot);
+        await processActivity({ type: ActivityTypes.ConversationUpdate, membersAdded: [{ id: 1 }] }, bot);
         assert(onMembersAddedCalled);
     });
 
@@ -142,11 +141,11 @@ describe('ActivityHandler', function() {
             await next();
         });
 
-        await processActivity({type: ActivityTypes.ConversationUpdate, membersRemoved: [{id: 1}]}, bot);
+        await processActivity({ type: ActivityTypes.ConversationUpdate, membersRemoved: [{ id: 1 }] }, bot);
         assert(onMembersRemovedCalled);
     });
 
-    it(`should fire onMessageReaction`, async function() {
+    it(`should fire onMessageReaction`, async function () {
         const bot = new ActivityHandler();
 
         let onMessageReactionCalled = false;
@@ -155,11 +154,11 @@ describe('ActivityHandler', function() {
             await next();
         });
 
-        await processActivity({type: ActivityTypes.MessageReaction}, bot);
+        await processActivity({ type: ActivityTypes.MessageReaction }, bot);
         assert(onMessageReactionCalled);
     });
 
-    it(`should fire onReactionsAdded`, async function() {
+    it(`should fire onReactionsAdded`, async function () {
         const bot = new ActivityHandler();
 
         let onReactionsAddedCalled = false;
@@ -168,7 +167,7 @@ describe('ActivityHandler', function() {
             await next();
         });
 
-        await processActivity({type: ActivityTypes.MessageReaction, reactionsAdded: [{type: 'like'}]}, bot);
+        await processActivity({ type: ActivityTypes.MessageReaction, reactionsAdded: [{ type: 'like' }] }, bot);
         assert(onReactionsAddedCalled);
     });
 
@@ -181,10 +180,10 @@ describe('ActivityHandler', function() {
             await next();
         });
 
-        await processActivity({type: ActivityTypes.MessageReaction, reactionsRemoved: [{type: 'like'}]}, bot);
+        await processActivity({ type: ActivityTypes.MessageReaction, reactionsRemoved: [{ type: 'like' }] }, bot);
         assert(onReactionsRemovedCalled);
     });
-    
+
     it(`should fire onEvent`, async function () {
         const bot = new ActivityHandler();
 
@@ -194,7 +193,7 @@ describe('ActivityHandler', function() {
             await next();
         });
 
-        await processActivity({type: ActivityTypes.Event}, bot);
+        await processActivity({ type: ActivityTypes.Event }, bot);
         assert(onEventCalled);
     });
 
@@ -207,7 +206,7 @@ describe('ActivityHandler', function() {
             await next();
         });
 
-        await processActivity({type: ActivityTypes.EndOfConversation}, bot);
+        await processActivity({ type: ActivityTypes.EndOfConversation }, bot);
         assert(onEndConversationCalled);
     });
 
@@ -220,7 +219,7 @@ describe('ActivityHandler', function() {
             await next();
         });
 
-        await processActivity({type: ActivityTypes.Typing}, bot);
+        await processActivity({ type: ActivityTypes.Typing }, bot);
         assert(onTypingCalled);
     });
 
@@ -233,7 +232,7 @@ describe('ActivityHandler', function() {
             await next();
         });
 
-        await processActivity({type: ActivityTypes.InstallationUpdate}, bot);
+        await processActivity({ type: ActivityTypes.InstallationUpdate }, bot);
         assert(onInstallationUpdateCalled);
     });
 
@@ -246,10 +245,10 @@ describe('ActivityHandler', function() {
             await next();
         });
 
-        await processActivity({type: ActivityTypes.InstallationUpdate, action: 'add'}, bot);
+        await processActivity({ type: ActivityTypes.InstallationUpdate, action: 'add' }, bot);
         assert(onInstallationUpdateAddCalled);
     });
-    
+
     it(`should fire onInstallationUpdateAddUpgrade`, async function () {
         const bot = new ActivityHandler();
 
@@ -259,7 +258,7 @@ describe('ActivityHandler', function() {
             await next();
         });
 
-        await processActivity({type: ActivityTypes.InstallationUpdate, action: 'add-upgrade'}, bot);
+        await processActivity({ type: ActivityTypes.InstallationUpdate, action: 'add-upgrade' }, bot);
         assert(onInstallationUpdateAddCalled);
     });
 
@@ -272,7 +271,7 @@ describe('ActivityHandler', function() {
             await next();
         });
 
-        await processActivity({type: ActivityTypes.InstallationUpdate, action: 'remove'}, bot);
+        await processActivity({ type: ActivityTypes.InstallationUpdate, action: 'remove' }, bot);
         assert(onInstallationUpdateRemoveCalled);
     });
 
@@ -285,7 +284,7 @@ describe('ActivityHandler', function() {
             await next();
         });
 
-        await processActivity({type: ActivityTypes.InstallationUpdate, action: 'remove-upgrade'}, bot);
+        await processActivity({ type: ActivityTypes.InstallationUpdate, action: 'remove-upgrade' }, bot);
         assert(onInstallationUpdateRemoveCalled);
     });
 
@@ -298,11 +297,11 @@ describe('ActivityHandler', function() {
             await next();
         });
 
-        await processActivity({type: 'foo'}, bot);
+        await processActivity({ type: 'foo' }, bot);
         assert(onUnrecognizedActivityTypeCalled);
     });
 
-    it(`should fire onDialog`, async function() {
+    it(`should fire onDialog`, async function () {
         const bot = new ActivityHandler();
 
         let onDialogCalled = false;
@@ -311,7 +310,7 @@ describe('ActivityHandler', function() {
             await next();
         });
 
-        await processActivity({type: 'foo'}, bot);
+        await processActivity({ type: 'foo' }, bot);
         assert(onDialogCalled);
     });
 
@@ -329,7 +328,7 @@ describe('ActivityHandler', function() {
         let onUnrecognizedActivityTypeCalled = false;
         let onDialogCalled = false;
 
-        afterEach(function() {
+        afterEach(function () {
             onTurnCalled = false;
             onMessageCalled = false;
             onConversationUpdateCalled = false;
@@ -376,7 +375,7 @@ describe('ActivityHandler', function() {
                 await next();
             });
 
-            await processActivity({type: ActivityTypes.Message}, bot);
+            await processActivity({ type: ActivityTypes.Message }, bot);
             assertTrueFlag(onTurnCalled, 'onTurn');
             assertTrueFlag(onMessageCalled, 'onMessage');
         });
@@ -399,7 +398,7 @@ describe('ActivityHandler', function() {
                 await next();
             });
 
-            await processActivity({type: ActivityTypes.ConversationUpdate}, bot);
+            await processActivity({ type: ActivityTypes.ConversationUpdate }, bot);
             assertTrueFlag(onTurnCalled, 'onTurn');
             assertTrueFlag(onConversationUpdateCalled, 'onConversationUpdate');
         });
@@ -422,7 +421,7 @@ describe('ActivityHandler', function() {
                 await next();
             });
 
-            await processActivity({type: ActivityTypes.ConversationUpdate, membersAdded: [{id: 1}]}, bot);
+            await processActivity({ type: ActivityTypes.ConversationUpdate, membersAdded: [{ id: 1 }] }, bot);
             assertTrueFlag(onTurnCalled, 'onTurn', 'onMembersAdded');
             assertTrueFlag(onMembersAddedCalled, 'onMembersAdded', 'onTurn');
         });
@@ -445,7 +444,7 @@ describe('ActivityHandler', function() {
                 await next();
             });
 
-            await processActivity({type: ActivityTypes.ConversationUpdate, membersRemoved: [{id: 1}]}, bot);
+            await processActivity({ type: ActivityTypes.ConversationUpdate, membersRemoved: [{ id: 1 }] }, bot);
             assertTrueFlag(onTurnCalled, 'onTurn', 'onMembersRemoved');
             assertTrueFlag(onMembersRemovedCalled, 'onMembersRemoved', 'onTurn');
         });
@@ -468,7 +467,7 @@ describe('ActivityHandler', function() {
                 await next();
             });
 
-            await processActivity({type: ActivityTypes.MessageReaction, reactionsRemoved: [{type: 'like'}]}, bot);
+            await processActivity({ type: ActivityTypes.MessageReaction, reactionsRemoved: [{ type: 'like' }] }, bot);
             assertTrueFlag(onTurnCalled, 'onTurn', 'onMembersAdded');
             assertTrueFlag(onMessageReactionCalled, 'onMessageReaction', 'onTurn');
         });
@@ -502,7 +501,7 @@ describe('ActivityHandler', function() {
                 await next();
             });
 
-            await processActivity({type: ActivityTypes.MessageReaction, reactionsAdded: [{type: 'like'}]}, bot);
+            await processActivity({ type: ActivityTypes.MessageReaction, reactionsAdded: [{ type: 'like' }] }, bot);
             assertTrueFlag(onTurnCalled, 'onTurn', 'onMembersAdded');
             assertTrueFlag(onMessageReactionCalled, 'onMessageReaction');
             assertTrueFlag(onReactionsAddedCalled, 'onReactionsAdded', 'onMessageReaction', 'onTurn');
@@ -537,7 +536,7 @@ describe('ActivityHandler', function() {
                 await next();
             });
 
-            await processActivity({type: ActivityTypes.MessageReaction, reactionsRemoved: [{type: 'like'}]}, bot);
+            await processActivity({ type: ActivityTypes.MessageReaction, reactionsRemoved: [{ type: 'like' }] }, bot);
             assertTrueFlag(onTurnCalled, 'onTurn', 'onMembersAdded');
             assertTrueFlag(onMessageReactionCalled, 'onMessageReaction');
             assertTrueFlag(onReactionsRemovedCalled, 'onReactionsRemoved');
@@ -562,22 +561,25 @@ describe('ActivityHandler', function() {
             const testAdapter = new TestAdapter();
 
             testAdapter.healthCheck = async (context) => {
-                return { healthResults: {
-                    success: true,
-                    "user-agent": 'user-agent-header-value',
-                    authorization: 'authorization-header-value',
-                    messages: [ 'Health results from adapter.' ] } } 
+                return {
+                    healthResults: {
+                        success: true,
+                        'user-agent': 'user-agent-header-value',
+                        authorization: 'authorization-header-value',
+                        messages: ['Health results from adapter.'],
+                    },
+                };
             };
 
             const context = new TurnContext(testAdapter, activity);
             const bot = new ActivityHandler();
-            
+
             await bot.run(context);
 
             const invokeResponseActivity = testAdapter.activityBuffer.find((a) => a.type == 'invokeResponse');
             const healthCheckResponse = invokeResponseActivity.value.body;
             assert(true, healthCheckResponse.healthResults.success);
-            assert('user-agent-header-value', healthCheckResponse.healthResults["user-agent"]);
+            assert('user-agent-header-value', healthCheckResponse.healthResults['user-agent']);
             assert('authorization-header-value', healthCheckResponse.healthResults.authorization);
             assert('Health results from adapter.', healthCheckResponse.healthResults.messages[0]);
         });
@@ -631,7 +633,10 @@ describe('ActivityHandler', function() {
                 assertTrueFlag(onTurnCalled, 'onTurn');
                 assertTrueFlag(onEventCalled, 'onEvent');
                 assertFalseFlag(onTokenResponseEventCalled, 'onTokenResponseEvent', 'onTurn', 'onEvent');
-                assert(!onTokenResponseEventCalled, 'onEvent should not be true before onTurn and onEvent handlers complete.');
+                assert(
+                    !onTokenResponseEventCalled,
+                    'onEvent should not be true before onTurn and onEvent handlers complete.'
+                );
                 onTokenResponseEventCalled = true;
                 await next();
             });
@@ -656,7 +661,10 @@ describe('ActivityHandler', function() {
                 assertContextAndNext(context, next);
                 assertTrueFlag(onTurnCalled, 'onTurn');
                 assertFalseFlag(onUnrecognizedActivityTypeCalled, 'onUnrecognizedActivityType', 'onTurn');
-                assert(!onUnrecognizedActivityTypeCalled, 'onUnrecognizedActivityType should not be true before onTurn and onUnrecognizedActivityType handlers complete.');
+                assert(
+                    !onUnrecognizedActivityTypeCalled,
+                    'onUnrecognizedActivityType should not be true before onTurn and onUnrecognizedActivityType handlers complete.'
+                );
                 onUnrecognizedActivityTypeCalled = true;
                 await next();
             });

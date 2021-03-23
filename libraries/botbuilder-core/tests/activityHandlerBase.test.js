@@ -1,8 +1,7 @@
 const assert = require('assert');
 const { ActivityHandlerBase, ActivityTypes, TurnContext, TestAdapter } = require('../lib');
 
-describe('ActivityHandlerBase', function() {
-
+describe('ActivityHandlerBase', function () {
     const adapter = new TestAdapter();
 
     async function processActivity(activity, bot) {
@@ -28,7 +27,7 @@ describe('ActivityHandlerBase', function() {
     let onInstallationUpdateCalled = false;
     let onUnrecognizedActivity = false;
 
-    afterEach(function() {
+    afterEach(function () {
         onTurnActivityCalled = false;
         onMessageCalled = false;
         onConversationUpdateActivityCalled = false;
@@ -53,7 +52,7 @@ describe('ActivityHandlerBase', function() {
 
     it('should throw an error if context.activity is falsey', async function () {
         const bot = new ActivityHandlerBase();
-        
+
         try {
             await bot.run({});
             assert.fail('Should have failed');
@@ -61,7 +60,7 @@ describe('ActivityHandlerBase', function() {
             assert.strictEqual(error.message, 'TurnContext does not include an activity');
         }
     });
-    
+
     it('should throw an error if context.activity.type is falsey', async function () {
         const bot = new ActivityHandlerBase();
 
@@ -143,12 +142,12 @@ describe('ActivityHandlerBase', function() {
         const bot = new UpdatedActivityHandler();
 
         await processActivity({ type: ActivityTypes.Message }, bot);
-        await processActivity({type: ActivityTypes.ConversationUpdate}, bot);
-        await processActivity({type: ActivityTypes.MessageReaction}, bot);
-        await processActivity({type: ActivityTypes.Event}, bot);
-        await processActivity({type: ActivityTypes.EndOfConversation}, bot);
-        await processActivity({type: ActivityTypes.Typing}, bot);
-        await processActivity({type: ActivityTypes.InstallationUpdate}, bot);
+        await processActivity({ type: ActivityTypes.ConversationUpdate }, bot);
+        await processActivity({ type: ActivityTypes.MessageReaction }, bot);
+        await processActivity({ type: ActivityTypes.Event }, bot);
+        await processActivity({ type: ActivityTypes.EndOfConversation }, bot);
+        await processActivity({ type: ActivityTypes.Typing }, bot);
+        await processActivity({ type: ActivityTypes.InstallationUpdate }, bot);
         await processActivity({ type: 'unrecognized' }, bot);
 
         assert(onTurnActivityCalled, 'onTurnActivity was not called');
@@ -186,7 +185,7 @@ describe('ActivityHandlerBase', function() {
                 assert(membersAdded.length === 1, `unexpected number of membersAdded: ${membersAdded.length}`);
                 onMembersAddedActivityCalled = true;
             }
-    
+
             async onMembersRemovedActivity(membersRemoved, context) {
                 const value = context.activity.value;
                 if (value && value.skipSubtype) {
@@ -203,8 +202,8 @@ describe('ActivityHandlerBase', function() {
         let onConversationUpdateActivityCalled = false;
         let onMembersAddedActivityCalled = false;
         let onMembersRemovedActivityCalled = false;
-    
-        afterEach(function() {
+
+        afterEach(function () {
             onTurnActivityCalled = false;
             onConversationUpdateActivityCalled = false;
             onMembersAddedActivityCalled = false;
@@ -213,7 +212,7 @@ describe('ActivityHandlerBase', function() {
 
         function createConvUpdateActivity(recipientId, AddedOrRemoved, skipSubtype) {
             const recipient = { id: recipientId };
-            const activity = { type: ActivityTypes.ConversationUpdate, recipient, value: { }, ...AddedOrRemoved };
+            const activity = { type: ActivityTypes.ConversationUpdate, recipient, value: {}, ...AddedOrRemoved };
             if (skipSubtype) {
                 activity.value.skipSubtype = true;
             }
@@ -222,7 +221,7 @@ describe('ActivityHandlerBase', function() {
 
         it(`should call onMembersAddedActivity if the id of the member added does not match the recipient's id`, async function () {
             const bot = new ConversationUpdateActivityHandler();
-            const activity = createConvUpdateActivity('bot', { membersAdded: [ { id: 'user' } ] });
+            const activity = createConvUpdateActivity('bot', { membersAdded: [{ id: 'user' }] });
 
             await processActivity(activity, bot);
 
@@ -230,10 +229,10 @@ describe('ActivityHandlerBase', function() {
             assert(onConversationUpdateActivityCalled, 'onConversationUpdateActivity was not called');
             assert(onMembersAddedActivityCalled, 'onMembersAddedActivity was not called');
         });
-    
+
         it(`should call onMembersRemovedActivity if the id of the member removed does not match the recipient's id`, async function () {
             const bot = new ConversationUpdateActivityHandler();
-            const activity = createConvUpdateActivity('bot', { membersRemoved: [ { id: 'user' } ] });
+            const activity = createConvUpdateActivity('bot', { membersRemoved: [{ id: 'user' }] });
 
             await processActivity(activity, bot);
 
@@ -241,20 +240,20 @@ describe('ActivityHandlerBase', function() {
             assert(onConversationUpdateActivityCalled, 'onConversationUpdateActivity was not called');
             assert(onMembersRemovedActivityCalled, 'onMembersRemovedActivity was not called');
         });
-    
+
         it(`should not call onMembersAddedActivity if the id of the member added matches the recipient's id`, async function () {
             const bot = new ConversationUpdateActivityHandler();
-            const activity = createConvUpdateActivity('bot', { membersAdded: [ { id: 'bot' } ] }, true);
+            const activity = createConvUpdateActivity('bot', { membersAdded: [{ id: 'bot' }] }, true);
 
             await processActivity(activity, bot);
 
             assert(onTurnActivityCalled, 'onTurnActivity was not called');
             assert(onConversationUpdateActivityCalled, 'onConversationUpdateActivity was not called');
         });
-    
+
         it(`should not call onMembersRemovedActivity if the id of the member removed matches the recipient's id`, async function () {
             const bot = new ConversationUpdateActivityHandler();
-            const activity = createConvUpdateActivity('bot', { membersRemoved: [ { id: 'bot' } ] }, true);
+            const activity = createConvUpdateActivity('bot', { membersRemoved: [{ id: 'bot' }] }, true);
 
             await processActivity(activity, bot);
 
@@ -283,11 +282,14 @@ describe('ActivityHandlerBase', function() {
                 assert(reactionsAdded.length === 1, `unexpected number of reactionsAdded: ${reactionsAdded.length}`);
                 onReactionsAddedActivityCalled = true;
             }
-    
+
             async onReactionsRemovedActivity(reactionsRemoved, context) {
                 assert(context, 'context not found');
                 assert(reactionsRemoved, 'reactionsRemoved not found');
-                assert(reactionsRemoved.length === 1, `unexpected number of reactionsRemoved: ${reactionsRemoved.length}`);
+                assert(
+                    reactionsRemoved.length === 1,
+                    `unexpected number of reactionsRemoved: ${reactionsRemoved.length}`
+                );
                 onReactionsRemovedActivityCalled = true;
             }
         }
@@ -296,8 +298,8 @@ describe('ActivityHandlerBase', function() {
         let onMessageReactionActivityCalled = false;
         let onReactionsAddedActivityCalled = false;
         let onReactionsRemovedActivityCalled = false;
-    
-        afterEach(function() {
+
+        afterEach(function () {
             onTurnActivityCalled = false;
             onMessageReactionActivityCalled = false;
             onReactionsAddedActivityCalled = false;
@@ -312,7 +314,7 @@ describe('ActivityHandlerBase', function() {
 
         it(`should call onReactionsAddedActivity if reactionsAdded exists and reactionsAdded.length > 0`, async function () {
             const bot = new MessageReactionActivityHandler();
-            const activity = createMsgReactActivity('bot', { reactionsAdded: [ { type: 'like' } ] });
+            const activity = createMsgReactActivity('bot', { reactionsAdded: [{ type: 'like' }] });
 
             await processActivity(activity, bot);
 
@@ -320,10 +322,10 @@ describe('ActivityHandlerBase', function() {
             assert(onMessageReactionActivityCalled, 'onMessageReactionActivity was not called');
             assert(onReactionsAddedActivityCalled, 'onReactionsAddedActivity was not called');
         });
-    
+
         it(`should call onReactionsRemovedActivity if reactionsRemoved exists and reactionsRemoved.length > 0`, async function () {
             const bot = new MessageReactionActivityHandler();
-            const activity = createMsgReactActivity('bot', { reactionsRemoved: [ { type: 'like' } ] });
+            const activity = createMsgReactActivity('bot', { reactionsRemoved: [{ type: 'like' }] });
 
             await processActivity(activity, bot);
 

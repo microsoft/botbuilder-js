@@ -53,10 +53,9 @@ describe(`MiddlewareSet`, () => {
         child.use(middleware(1));
         const parent = new MiddlewareSet(child);
 
-        await parent
-            .run(context, () => {
-                assert.deepStrictEqual(stack, [1]);
-            });
+        await parent.run(context, () => {
+            assert.deepStrictEqual(stack, [1]);
+        });
     });
 
     it(`should run middleware with a leading and trailing edge.`, async () => {
@@ -118,7 +117,7 @@ describe(`MiddlewareSet`, () => {
     it(`should support passing middleware into the constructor of the set.`, async function () {
         const { middleware, stack } = stackMiddleware();
 
-        const set = new MiddlewareSet(middleware(1), middleware(2), middleware(3))
+        const set = new MiddlewareSet(middleware(1), middleware(2), middleware(3));
         await set.run(context, () => {
             assert.deepStrictEqual(stack, [3, 2, 1]);
         });

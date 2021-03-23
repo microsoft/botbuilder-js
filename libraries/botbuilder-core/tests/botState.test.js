@@ -9,7 +9,7 @@ function cachedState(context, stateKey) {
     return cached ? cached.state : undefined;
 }
 
-describe(`BotState`, function() {
+describe(`BotState`, function () {
     this.timeout(5000);
 
     const storage = new MemoryStorage();
@@ -24,16 +24,16 @@ describe(`BotState`, function() {
         assert(state === undefined, `state returned.`);
     });
 
-    it(`should load and save state from storage.`, async function() {
+    it(`should load and save state from storage.`, async function () {
         await botState.load(context);
         let state = cachedState(context, botState.stateKey);
         assert(state, `State not loaded`);
         state.test = 'foo';
         await botState.saveChanges(context);
-        
+
         const items = await storage.read([storageKey]);
         assert(items.hasOwnProperty(storageKey), `Saved state not found in storage.`);
-        assert(items[storageKey].test === 'foo', `Missing test value in stored state.`);        
+        assert(items[storageKey].test === 'foo', `Missing test value in stored state.`);
     });
 
     it(`should force load() of state from storage.`, async function () {
@@ -45,26 +45,26 @@ describe(`BotState`, function() {
         assert(cachedState(context, botState.stateKey).test === 'foo', `state not reloaded`);
     });
 
-    it(`should clear() state storage.`, async function() {
+    it(`should clear() state storage.`, async function () {
         await botState.load(context);
         assert(cachedState(context, botState.stateKey).test === 'foo', `invalid initial state`);
         await botState.clear(context);
         assert(!cachedState(context, botState.stateKey).hasOwnProperty('test'), `state not cleared on context.`);
         await botState.saveChanges(context);
-        
+
         const items = await storage.read([storageKey]);
-        assert(items[storageKey], `state removed from storage.`);        
-        assert(!items[storageKey].hasOwnProperty('test'), `state not cleared from storage.`);        
+        assert(items[storageKey], `state removed from storage.`);
+        assert(!items[storageKey].hasOwnProperty('test'), `state not cleared from storage.`);
     });
 
-    it(`should delete() state storage.`, async function() {
+    it(`should delete() state storage.`, async function () {
         await botState.load(context);
         assert(cachedState(context, botState.stateKey), `invalid initial state`);
         await botState.delete(context);
         assert(!cachedState(context, botState.stateKey), `state not cleared on context.`);
-        
+
         const items = await storage.read([storageKey]);
-        assert(!items.hasOwnProperty(storageKey), `state not removed from storage.`);        
+        assert(!items.hasOwnProperty(storageKey), `state not removed from storage.`);
     });
 
     it(`should force immediate saveChanges() of state to storage.`, async function () {

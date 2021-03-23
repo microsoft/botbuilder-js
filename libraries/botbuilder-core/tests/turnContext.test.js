@@ -1,30 +1,24 @@
 const assert = require('assert');
-const {
-    ActivityTypes,
-    BotAdapter,
-    DeliveryModes,
-    MessageFactory,
-    TurnContext
-} = require('../');
+const { ActivityTypes, BotAdapter, DeliveryModes, MessageFactory, TurnContext } = require('../');
 
 const activityId = `activity ID`;
 
 const testMessage = {
-    type: 'message', 
+    type: 'message',
     id: '1234',
     text: 'test',
     from: { id: 'user', name: 'User Name' },
     recipient: { id: 'bot', name: 'Bot Name' },
     conversation: { id: 'convo', name: 'Convo Name' },
     channelId: 'UnitTest',
-    serviceUrl: 'https://example.org'
+    serviceUrl: 'https://example.org',
 };
 
 const testTraceMessage = {
-    type: 'trace', 
+    type: 'trace',
     name: 'TestTrace',
     valueType: 'https://example.org/test/trace',
-    label: 'Test Trace'
+    label: 'Test Trace',
 };
 
 class SimpleAdapter extends BotAdapter {
@@ -51,7 +45,10 @@ class SimpleAdapter extends BotAdapter {
     deleteActivity(context, reference) {
         assert(context, `SimpleAdapter.deleteActivity: missing context.`);
         assert(reference, `SimpleAdapter.deleteActivity: missing reference.`);
-        assert(reference.activityId === '1234', `SimpleAdapter.deleteActivity: invalid activityId of "${reference.activityId}".`);
+        assert(
+            reference.activityId === '1234',
+            `SimpleAdapter.deleteActivity: invalid activityId of "${reference.activityId}".`
+        );
         return Promise.resolve();
     }
 }
@@ -115,18 +112,23 @@ describe(`TurnContext`, function () {
         context.responded = true;
         assert(context.responded === true, `responded not set.`);
     });
-    
+
     it(`should throw if you set responded to false.`, function () {
         const context = new TurnContext(new SimpleAdapter(), testMessage);
         context.responded = true;
-        assert.throws(() => context.responded = false, { message: 'TurnContext: cannot set \'responded\' to a value of \'false\'.' });
+        assert.throws(() => (context.responded = false), {
+            message: "TurnContext: cannot set 'responded' to a value of 'false'.",
+        });
     });
 
     it(`should cache a value using turnState.set() and services.get().`, function () {
         const context = new TurnContext(new SimpleAdapter(), testMessage);
         assert(context.turnState.get('foo') === undefined, `invalid initial state.`);
         context.turnState.set('foo', 'bar');
-        assert(context.turnState.get('foo') === 'bar', `invalid value of "${context.turnState.get('foo')}" after set().`);
+        assert(
+            context.turnState.get('foo') === 'bar',
+            `invalid value of "${context.turnState.get('foo')}" after set().`
+        );
     });
 
     it(`should inspect a value using has().`, function () {
@@ -152,7 +154,10 @@ describe(`TurnContext`, function () {
         const context = new TurnContext(new SimpleAdapter(), testMessage);
         context.turnState.set('foo', 'a');
         context.turnState.push('foo', 'b');
-        assert(context.turnState.get('foo') === 'b', `invalid value of "${context.turnState.get('foo')}" after push().`);
+        assert(
+            context.turnState.get('foo') === 'b',
+            `invalid value of "${context.turnState.get('foo')}" after push().`
+        );
         const old = context.turnState.pop('foo');
         assert(old == 'b', `popped value not returned.`);
         assert(context.turnState.get('foo') === 'a', `invalid value of "${context.turnState.get('foo')}" after pop().`);
@@ -181,7 +186,7 @@ describe(`TurnContext`, function () {
             assert(activities[0].text === 'test', `text wrong.`);
             assert(activities[0].speak === 'say test', `speak worng.`);
             assert(activities[0].inputHint === 'ignoringInput', `inputHint wrong.`);
-            return[];
+            return [];
         });
         await context.sendActivity('test', 'say test', 'ignoringInput');
     });
@@ -196,11 +201,10 @@ describe(`TurnContext`, function () {
             assert(activities[0].value === 'value-text', `value worng.`);
             assert(activities[0].valueType === 'valueType-text', `valeuType wrong.`);
             assert(activities[0].label === 'label-text', `label wrong.`);
-            return[];
+            return [];
         });
         await context.sendTraceActivity('name-text', 'value-text', 'valueType-text', 'label-text');
     });
-   
 
     it(`should send multiple activities via sendActivities().`, async function () {
         const context = new TurnContext(new SimpleAdapter(), testMessage);
@@ -210,7 +214,7 @@ describe(`TurnContext`, function () {
         assert(responses.length === 3, `invalid responses array length of "${responses.length}" returned.`);
         assert(responses[0].id === '5678', `invalid response id of "${responses[0].id}" sent back.`);
     });
-    
+
     it(`should call onSendActivity() hook before delivery.`, async function () {
         let count = 0;
         const context = new TurnContext(new SimpleAdapter(), testMessage);
@@ -232,7 +236,7 @@ describe(`TurnContext`, function () {
         const response = await context.sendActivity(testMessage);
         assert(response === undefined, `call not intercepted.`);
     });
-    
+
     it(`should call onUpdateActivity() hook before update.`, async function () {
         let called = false;
         const context = new TurnContext(new SimpleAdapter(), testMessage);
@@ -243,9 +247,9 @@ describe(`TurnContext`, function () {
             return next();
         });
         await context.updateActivity(testMessage);
-        assert(called, `update hook not called.`);        
+        assert(called, `update hook not called.`);
     });
-    
+
     it(`should be able to update an activity with MessageFactory`, async function () {
         let called = false;
         const context = new TurnContext(new SimpleAdapter(), testMessage);
@@ -290,22 +294,21 @@ describe(`TurnContext`, function () {
         await context.deleteActivity({ activityId: '1234' });
         assert(called, `delete hook not called.`);
     });
-    
+
     it(`should map an exception raised by a hook to a rejection.`, async function () {
         let called = false;
         const context = new TurnContext(new SimpleAdapter(), testMessage);
         context.onDeleteActivity((ctx, reference, next) => {
             throw new Error('failed');
         });
-        await assert.rejects(async () => await context.deleteActivity('1234'),
-        {
-            message: 'failed'
+        await assert.rejects(async () => await context.deleteActivity('1234'), {
+            message: 'failed',
         });
     });
 
     it(`should round trip a conversation reference using getConversationReference() and applyConversationRefernce().`, function () {
         // Convert to reference
-        const testMessageWithLocale = JSON.parse(JSON.stringify((testMessage)));
+        const testMessageWithLocale = JSON.parse(JSON.stringify(testMessage));
         testMessageWithLocale.locale = 'en_uS'; // Intentionally oddly-cased to check that it isn't defaulted somewhere, but tests stay in English
         const reference = TurnContext.getConversationReference(testMessageWithLocale);
         assert(reference.activityId, `reference missing activityId.`);
@@ -318,7 +321,7 @@ describe(`TurnContext`, function () {
         assert(reference.serviceUrl, `reference missing serviceUrl.`);
         assert(reference.user, `reference missing user.`);
         assert(reference.user.id === testMessage.from.id, `reference user.id doesn't match from.id.`);
-        
+
         // Round trip back to outgoing activity
         const activity = TurnContext.applyConversationReference({ text: 'foo', type: 'message' }, reference);
         assert(activity.text, `activity missing text`);
@@ -343,7 +346,7 @@ describe(`TurnContext`, function () {
         assert(activity2.recipient.id === reference.bot.id, `activity2 recipient.id doesn't match bot.id`);
         assert(activity2.locale, `activity2 missing locale.`);
         assert(activity2.locale === testMessageWithLocale.locale, `activity2 locale doesn't match locale`);
-        
+
         // Round trip outgoing activity without a replyToId
         delete reference.activityId;
         const activity3 = TurnContext.applyConversationReference({ text: 'foo', type: 'message' }, reference);
@@ -377,21 +380,20 @@ describe(`TurnContext`, function () {
         assert(context.responded, `responded was not set to true.`);
     });
 
-    it(`should get a conversation reference from a sent activity using getReplyConversationReference.`, async function() {
+    it(`should get a conversation reference from a sent activity using getReplyConversationReference.`, async function () {
         const context = new TurnContext(new SimpleAdapter(), testMessage);
-        
-        const reply = await context.sendActivity({text: 'test'});
-        assert(reply.id,'reply has an id');
+
+        const reply = await context.sendActivity({ text: 'test' });
+        assert(reply.id, 'reply has an id');
 
         const reference = TurnContext.getReplyConversationReference(context.activity, reply);
 
-        assert(reference.activityId,'reference has an activity id');
-        assert(reference.activityId === reply.id,'reference id matches outgoing reply id');
+        assert(reference.activityId, 'reference has an activity id');
+        assert(reference.activityId === reply.id, 'reference id matches outgoing reply id');
     });
 
-    it ('should remove at mention from activity', function() {
-
-        var activity = {
+    it('should remove at mention from activity', function () {
+        let activity = {
             type: 'message',
             text: '<at>TestOAuth619</at> test activity',
             recipient: { id: 'TestOAuth619' },
@@ -401,16 +403,16 @@ describe(`TurnContext`, function () {
                     text: `<at>TestOAuth619</at>`,
                     mentioned: {
                         name: 'Bot',
-                        id: `TestOAuth619`
-                    }
-                }
-            ]
+                        id: `TestOAuth619`,
+                    },
+                },
+            ],
         };
 
-        var text = TurnContext.removeRecipientMention(activity);
+        let text = TurnContext.removeRecipientMention(activity);
 
-        assert(text,' test activity');
-        assert(activity.text,' test activity');
+        assert(text, ' test activity');
+        assert(activity.text, ' test activity');
     });
 
     it(`should clear existing activity.id in context.sendActivity().`, async function () {
@@ -431,7 +433,7 @@ describe(`TurnContext`, function () {
         assert.strictEqual(responses.length, 2);
 
         // For expectReplies all ResourceResponses should have no id.
-        assert(responses.every(response => response.id === undefined));
+        assert(responses.every((response) => response.id === undefined));
 
         const replies = context.bufferedReplyActivities;
         assert.strictEqual(replies.length, 2);

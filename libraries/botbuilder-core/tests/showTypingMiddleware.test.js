@@ -10,7 +10,7 @@ class TestSkillAdapter extends TestAdapter {
                 { type: 'ver', value: '2.0' },
                 { type: 'aud', value: 'skill' },
                 { type: 'azp', value: 'bot' },
-            ]
+            ],
         });
 
         return context;
@@ -30,10 +30,10 @@ describe(`ShowTypingMiddleware`, function () {
     it('should automatically send a typing indicator', async function () {
         await adapter
             .send('foo')
-            .assertReply(activity => assert.strictEqual(activity.type, ActivityTypes.Typing))
+            .assertReply((activity) => assert.strictEqual(activity.type, ActivityTypes.Typing))
             .assertReply('echo:foo')
             .send('bar')
-            .assertReply(activity => assert.strictEqual(activity.type, ActivityTypes.Typing))
+            .assertReply((activity) => assert.strictEqual(activity.type, ActivityTypes.Typing))
             .assertReply('echo:bar')
             .startTest();
     });
@@ -43,23 +43,20 @@ describe(`ShowTypingMiddleware`, function () {
     });
 
     it('should NOT automatically send a typing indicator if middleware not applied', async function () {
-        await noMiddlewareAdapter
-            .send('foo')
-            .assertReply('echo:foo')
-            .startTest();
+        await noMiddlewareAdapter.send('foo').assertReply('echo:foo').startTest();
     });
 
     it('should not immediately respond with a message (rather get a typing indicator)', async function () {
         await adapter
             .send('foo')
-            .assertReply(activity => assert.notStrictEqual(activity.type, ActivityTypes.Message))
+            .assertReply((activity) => assert.notStrictEqual(activity.type, ActivityTypes.Message))
             .startTest();
     });
 
     it('should immediately respond with a message (rather get a typing indicator) if middleware not applied', async function () {
         await noMiddlewareAdapter
             .send('foo')
-            .assertReply(activity => assert.strictEqual(activity.type, ActivityTypes.Message))
+            .assertReply((activity) => assert.strictEqual(activity.type, ActivityTypes.Message))
             .startTest();
     });
 
@@ -78,20 +75,17 @@ describe(`ShowTypingMiddleware`, function () {
         adapter.onTurnError = (context, error) => {
             assert.strictEqual(error != null, true);
             assert.strictEqual(error.message, 'uh oh');
-        }
+        };
 
-        await adapter.send('foo').assertReply(activity => assert.strictEqual(activity.type, ActivityTypes.Message))
+        await adapter.send('foo').assertReply((activity) => assert.strictEqual(activity.type, ActivityTypes.Message));
     });
 
     it('should NOT send a typing indicator when bot is running as a skill', async function () {
-        const skillAdapter = new TestSkillAdapter(async context => {
+        const skillAdapter = new TestSkillAdapter(async (context) => {
             await sleep(100);
             await context.sendActivity(`echo:${context.activity.text}`);
         }).use(new ShowTypingMiddleware(1, 1000));
 
-        await skillAdapter
-            .send('foo')
-            .assertReply('echo:foo')
-            .startTest();
+        await skillAdapter.send('foo').assertReply('echo:foo').startTest();
     });
 });

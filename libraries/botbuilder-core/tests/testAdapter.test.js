@@ -6,7 +6,7 @@ const originalActivity = { text: 'original', type: 'message' };
 const updatedActivity = { text: 'update', type: 'message' };
 const deletedActivityId = '1234';
 
-describe(`TestAdapter`, function() {
+describe(`TestAdapter`, function () {
     this.timeout(5000);
 
     it(`should call bot logic when receiveActivity() is called.`, async function () {
@@ -50,7 +50,6 @@ describe(`TestAdapter`, function() {
         await adapter.receiveActivity({ text: 'test', type: ActivityTypes.Message, id: 'myId' });
     });
 
-
     it(`should call bot logic when send() is called.`, async function () {
         let called = false;
         const adapter = new TestAdapter((context) => {
@@ -66,19 +65,15 @@ describe(`TestAdapter`, function() {
         const adapter = new TestAdapter((context) => {
             return context.sendActivity(receivedMessage);
         });
-        await adapter.send('test')
-            .assertReply('received')
-            .startTest();
+        await adapter.send('test').assertReply('received').startTest();
     });
 
-    it(`async startTest().`, async function() {
+    it(`async startTest().`, async function () {
         const adapter = new TestAdapter((context) => {
             return context.sendActivity(receivedMessage);
         });
 
-        await adapter.send('test')
-            .assertReply('received')
-            .startTest();
+        await adapter.send('test').assertReply('received').startTest();
     });
 
     it(`should send and receive when test() is called.`, async function () {
@@ -94,45 +89,40 @@ describe(`TestAdapter`, function() {
             count++;
             return context.sendActivity(receivedMessage);
         });
-        await adapter.test('test', 'received')
+        await adapter
+            .test('test', 'received')
             .test('test', 'received')
             .test('test', 'received')
             .test('test', 'received')
             .test('test', 'received')
             .startTest();
-        assert(count == 5, `incorrect count of "${ count }".`);
+        assert(count == 5, `incorrect count of "${count}".`);
     });
 
-    it(`should support context.updateActivity() calls.`, async function() {
+    it(`should support context.updateActivity() calls.`, async function () {
         let activityId;
         const adapter = new TestAdapter(async (context) => {
             if (context.activity.text == 'update') {
-                await context.updateActivity(Object.assign({id: activityId}, updatedActivity));
+                await context.updateActivity(Object.assign({ id: activityId }, updatedActivity));
             } else {
                 const response = await context.sendActivity(originalActivity);
                 activityId = response.id;
             }
         });
-        await adapter.send('test')
-            .send('update')
-            .assertReply('update')
-            .startTest();
+        await adapter.send('test').send('update').assertReply('update').startTest();
     });
 
-    it(`should support context.deleteActivity() calls.`, async function() {
+    it(`should support context.deleteActivity() calls.`, async function () {
         let activityId;
         const adapter = new TestAdapter(async (context) => {
             if (context.activity.text == 'delete') {
-                await context.deleteActivity({activityId});
+                await context.deleteActivity({ activityId });
             } else {
                 const response = await context.sendActivity(originalActivity);
                 activityId = response.id;
             }
         });
-        await adapter.send('test')
-            .send('delete')
-            .assertNoReply()
-            .startTest();
+        await adapter.send('test').send('delete').assertNoReply().startTest();
     });
 
     it(`should delay() before running another test.`, async function () {
@@ -140,23 +130,16 @@ describe(`TestAdapter`, function() {
         const adapter = new TestAdapter((context) => {
             return context.sendActivity(receivedMessage);
         });
-        await adapter
-            .test('test', 'received')
-            .delay(600)
-            .test('test', 'received')
-            .startTest();
+        await adapter.test('test', 'received').delay(600).test('test', 'received').startTest();
         const end = new Date().getTime();
-        assert((end - start) >= 500, `didn't delay before moving on.`);
+        assert(end - start >= 500, `didn't delay before moving on.`);
     });
 
     it(`should support calling assertReply() with an expected Activity.`, async function () {
         const adapter = new TestAdapter((context) => {
             return context.sendActivity(receivedMessage);
         });
-        await adapter
-            .send('test')
-            .assertReply({ text: 'received' })
-            .startTest();
+        await adapter.send('test').assertReply({ text: 'received' }).startTest();
     });
 
     it(`should support calling assertReply() with a custom inspector.`, async function () {
@@ -180,13 +163,13 @@ describe(`TestAdapter`, function() {
                 setTimeout(() => resolve(), 600);
             });
         });
-        await assert.rejects(async () => await adapter
-            .send('test')
-            .assertReply('received', 'received failed', 500)
-            .startTest(), (err) => {
+        await assert.rejects(
+            async () => await adapter.send('test').assertReply('received', 'received failed', 500).startTest(),
+            (err) => {
                 assert.match(err.message, /.*Timed out after.*/);
                 return true;
-            });
+            }
+        );
     });
 
     it(`should timeout waiting for assertReply() when an Activity is expected.`, async function () {
@@ -195,13 +178,14 @@ describe(`TestAdapter`, function() {
                 setTimeout(() => resolve(), 600);
             });
         });
-        await assert.rejects(async () => await adapter
-            .send('test')
-            .assertReply({ text: 'received' }, 'received failed', 500)
-            .startTest(), (err) => {
+        await assert.rejects(
+            async () =>
+                await adapter.send('test').assertReply({ text: 'received' }, 'received failed', 500).startTest(),
+            (err) => {
                 assert.match(err.message, /.*Timed out after.*/);
                 return true;
-            });
+            }
+        );
     });
 
     it(`should timeout waiting for assertReply() when a custom inspector is expected.`, async function () {
@@ -210,13 +194,17 @@ describe(`TestAdapter`, function() {
                 setTimeout(() => resolve(), 600);
             });
         });
-        await assert.rejects(async () => await adapter
-            .send('test')
-            .assertReply(() => assert(false, `inspector shouldn't be called.`), 'received failed', 500)
-            .startTest(), (err) => {
+        await assert.rejects(
+            async () =>
+                await adapter
+                    .send('test')
+                    .assertReply(() => assert(false, `inspector shouldn't be called.`), 'received failed', 500)
+                    .startTest(),
+            (err) => {
                 assert.match(err.message, /.*Timed out after.*/);
                 return true;
-            });
+            }
+        );
     });
 
     it(`should timeout waiting for assertNoReply() when an Activity is not expected.`, async function () {
@@ -225,12 +213,11 @@ describe(`TestAdapter`, function() {
                 setTimeout(() => resolve(), 600);
             });
         });
-        await assert.doesNotReject(async () => await adapter
-            .send('test')
-            .assertNoReply('no message received', 500)
-            .startTest());
+        await assert.doesNotReject(
+            async () => await adapter.send('test').assertNoReply('no message received', 500).startTest()
+        );
     });
-    
+
     it(`should validate using assertNoReply() that no reply was received, when reply Activity not expected.`, async function () {
         const adapter = new TestAdapter((context) => {
             return context.sendActivity(receivedMessage);
@@ -247,45 +234,42 @@ describe(`TestAdapter`, function() {
             const activities = [receivedMessage, receivedMessage];
             return context.sendActivities(activities);
         });
-        await assert.rejects(async () => await adapter
-            .send('test')
-            .assertReply({ text: 'received' })
-            .assertNoReply('should be no additional replies')
-            .startTest(), (err) => {
+        await assert.rejects(
+            async () =>
+                await adapter
+                    .send('test')
+                    .assertReply({ text: 'received' })
+                    .assertNoReply('should be no additional replies')
+                    .startTest(),
+            (err) => {
                 assert.match(err.message, /.*should be no additional replies.*/);
                 return true;
-            });
+            }
+        );
     });
 
     it(`should support calling assertReplyOneOf().`, async function () {
         const adapter = new TestAdapter((context) => {
             return context.sendActivity(receivedMessage);
         });
-        await adapter
-            .send('test')
-            .assertReplyOneOf(['foo', 'bar', 'received'])
-            .startTest();
+        await adapter.send('test').assertReplyOneOf(['foo', 'bar', 'received']).startTest();
     });
 
     it(`should fail assertReplyOneOf() call for invalid response.`, async function () {
         const adapter = new TestAdapter((context) => {
             return context.sendActivity(receivedMessage);
         });
-        await assert.rejects(async () => await adapter
-            .send('test')
-            .assertReplyOneOf(['foo', 'bar'])
-            .startTest(), {
-                message: 'TestAdapter.assertReplyOneOf():  FAILED, Expected one of :[\"foo\",\"bar\"]'
-            });
+        await assert.rejects(async () => await adapter.send('test').assertReplyOneOf(['foo', 'bar']).startTest(), {
+            message: 'TestAdapter.assertReplyOneOf():  FAILED, Expected one of :["foo","bar"]',
+        });
     });
 
     it(`should return an error from continueConversation().`, async function () {
         const adapter = new TestAdapter((context) => {
-            assert.fail('shouldn\'t run bot logic.');
+            assert.fail("shouldn't run bot logic.");
         });
-        await assert.rejects(async () => await adapter.continueConversation(),
-        {
-            message: 'not implemented'
+        await assert.rejects(async () => await adapter.continueConversation(), {
+            message: 'not implemented',
         });
     });
 
@@ -299,8 +283,8 @@ describe(`TestAdapter`, function() {
             assert(context.activity.from.id === template.from.id, `activity from.id does not match template.`);
             assert(context.activity.from.name === template.from.name, `activity from.name does not match template.`);
             assert(context.activity.serviceUrl, `missing serviceUrl.`);
-        }, template)
-        
+        }, template);
+
         await adapter.send('test');
     });
 
@@ -320,24 +304,24 @@ describe(`TestAdapter`, function() {
                 from: {
                     role: 'User',
                     name: 'User',
-                    id: 'user'
+                    id: 'user',
                 },
                 type: 'message',
-                text: 'Hello'
+                text: 'Hello',
             },
             {
                 from: {
                     role: 'Bot',
                     name: 'Bot',
-                    id: 'bot'
+                    id: 'bot',
                 },
                 type: 'message',
-                text: 'Greetings User!'
-            }
+                text: 'Greetings User!',
+            },
         ];
 
-       await adapter.testActivities(activities);
-       assert(counter === 1, `should have only run bot logic once.`);
+        await adapter.testActivities(activities);
+        assert(counter === 1, `should have only run bot logic once.`);
     });
 
     it(`should run the bot's logic to activities without a from property via testActivities().`, async function () {
@@ -350,23 +334,19 @@ describe(`TestAdapter`, function() {
         const activities = [
             {
                 type: 'conversationUpdate',
-                membersAdded: [
-                    { name: 'Bot', id: 'bot' }
-                ]
+                membersAdded: [{ name: 'Bot', id: 'bot' }],
             },
             {
                 type: 'conversationUpdate',
-                membersAdded: [
-                    { name: 'User', id: 'user' }
-                ]
+                membersAdded: [{ name: 'User', id: 'user' }],
             },
             {
                 type: 'conversationUpdate',
                 membersRemoved: [
                     { name: 'Bot', id: 'bot' },
-                    { name: 'User', id: 'user' }
-                ]
-            }
+                    { name: 'User', id: 'user' },
+                ],
+            },
         ];
 
         await adapter.testActivities(activities);
@@ -377,11 +357,9 @@ describe(`TestAdapter`, function() {
         const adapter = new TestAdapter((context) => {
             return context.sendActivity(context.activity.text);
         });
-        await assert.rejects(async () => adapter.testActivities(),
-            {
-                message: 'Missing array of activities'
-            }
-        );
+        await assert.rejects(async () => adapter.testActivities(), {
+            message: 'Missing array of activities',
+        });
     });
 
     it(`getUserToken returns null`, async function () {
@@ -400,7 +378,7 @@ describe(`TestAdapter`, function() {
         await adapter.send('hi');
     });
 
-    it(`getUserToken returns token`, async function() {
+    it(`getUserToken returns token`, async function () {
         const adapter = new TestAdapter();
         const connectionName = 'myConnection';
         const channelId = 'directline';
@@ -409,19 +387,19 @@ describe(`TestAdapter`, function() {
         const activity = ActivityFactory.buildActivity({
             channelId,
             from: {
-                id: userId
-            }
+                id: userId,
+            },
         });
         const context = new TurnContext(adapter, activity);
         adapter.addUserToken(connectionName, channelId, userId, token);
-        
+
         const tokenResponse = await adapter.getUserToken(context, connectionName);
         assert(tokenResponse);
         assert.strictEqual(tokenResponse.token, token);
         assert.strictEqual(tokenResponse.connectionName, connectionName);
     });
 
-    it(`getUserToken returns token with code`, async function() {
+    it(`getUserToken returns token with code`, async function () {
         const adapter = new TestAdapter();
         const connectionName = 'myConnection';
         const channelId = 'directline';
@@ -431,21 +409,21 @@ describe(`TestAdapter`, function() {
         const activity = ActivityFactory.buildActivity({
             channelId,
             from: {
-                id: userId
-            }
+                id: userId,
+            },
         });
         const context = new TurnContext(adapter, activity);
         adapter.addUserToken(connectionName, channelId, userId, token, magicCode);
-        
+
         // First it's null
         let tokenResponse = await adapter.getUserToken(context, connectionName);
         assert.equal(tokenResponse, undefined);
-        
+
         // Can be retrieved with magic code
         tokenResponse = await adapter.getUserToken(context, connectionName, magicCode);
         assert(tokenResponse);
         assert.strictEqual(tokenResponse.token, token);
-        
+
         // Then can be retrieved without magic code
         tokenResponse = await adapter.getUserToken(context, connectionName);
         assert(tokenResponse);
@@ -467,7 +445,7 @@ describe(`TestAdapter`, function() {
         await adapter.send('hi');
     });
 
-    it(`signOutUser logs out user`, async function() {
+    it(`signOutUser logs out user`, async function () {
         const adapter = new TestAdapter();
         const connectionName = 'myConnection';
         const channelId = 'directline';
@@ -476,8 +454,8 @@ describe(`TestAdapter`, function() {
         const activity = ActivityFactory.buildActivity({
             channelId,
             from: {
-                id: userId
-            }
+                id: userId,
+            },
         });
         const context = new TurnContext(adapter, activity);
         adapter.addUserToken(connectionName, channelId, userId, token);
@@ -491,7 +469,7 @@ describe(`TestAdapter`, function() {
         assert.equal(tokenResponse, undefined);
     });
 
-    it(`signOutUser with no connectionName signs all out`, async function() {
+    it(`signOutUser with no connectionName signs all out`, async function () {
         const adapter = new TestAdapter();
         const channelId = 'directline';
         const userId = 'testUser';
@@ -499,8 +477,8 @@ describe(`TestAdapter`, function() {
         const activity = ActivityFactory.buildActivity({
             channelId,
             from: {
-                id: userId
-            }
+                id: userId,
+            },
         });
         const context = new TurnContext(adapter, activity);
         adapter.addUserToken('ABC', channelId, userId, token);
@@ -513,7 +491,7 @@ describe(`TestAdapter`, function() {
         tokenResponse = await adapter.getUserToken(context, 'DEF');
         assert(tokenResponse);
         assert.strictEqual(tokenResponse.token, token);
-        
+
         await adapter.signOutUser(context);
         tokenResponse = await adapter.getUserToken(context, 'ABC');
         assert.equal(tokenResponse, undefined);
@@ -526,7 +504,7 @@ describe(`TestAdapter`, function() {
             const statuses = await context.adapter.getTokenStatus(context, 'user');
             assert(statuses);
             assert(statuses.length == 2);
-            assert(statuses.reduce((j, status) => (j||status.ConnectionName === 'ABC'), false));
+            assert(statuses.reduce((j, status) => j || status.ConnectionName === 'ABC', false));
         });
 
         adapter.addUserToken('ABC', 'test', 'user', '123abc');
@@ -536,9 +514,8 @@ describe(`TestAdapter`, function() {
 
     it(`should throw when context parameter is not sent`, async function () {
         const adapter = new TestAdapter(async (context) => {
-        await assert.rejects(async () => await context.adapter.getTokenStatus(),
-            {
-                message: 'testAdapter.getTokenStatus(): context with activity is required'
+            await assert.rejects(async () => await context.adapter.getTokenStatus(), {
+                message: 'testAdapter.getTokenStatus(): context with activity is required',
             });
         });
 
@@ -548,10 +525,9 @@ describe(`TestAdapter`, function() {
 
     it(`should throw when userId parameter is not sent and context.activity.from.id is not present`, async function () {
         const adapter = new TestAdapter(async (context) => {
-        context.activity.from = undefined;
-        await assert.rejects(async () => await context.adapter.getTokenStatus(context),
-            {
-                message: 'testAdapter.getTokenStatus(): missing userId, from or from.id'
+            context.activity.from = undefined;
+            await assert.rejects(async () => await context.adapter.getTokenStatus(context), {
+                message: 'testAdapter.getTokenStatus(): missing userId, from or from.id',
             });
         });
 
