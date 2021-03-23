@@ -44,7 +44,7 @@ const testCases = [
             ['json(`{"key":${{text:"hello"}},"item": "${world}"}`).key.text', 'hello'],
             ['json(`{"key":${{text:"hello", cool: "hot", obj:{new: 123}}},"item": "${world}"}`).key.text', 'hello'],
             ['`hi\\`[1,2,3]`', 'hi`[1,2,3]'],
-            ['`hi ${[\'jack`\', \'queen\', \'king\']}`', 'hi jack`,queen,king'],
+            ['`hi ${[\'jack`\', \'queen\', \'king\']}`', 'hi ["jack`","queen","king"]'],
             ['`abc ${concat("[", "]")}`', 'abc []'],
             ['`[] ${concat("[]")}`', '[] []'],
             ['`hi ${count(["a", "b", "c"])}`', `hi 3`],

@@ -7,6 +7,7 @@
  */
 import { ExpressionProperty } from './expressionProperty';
 import { Expression } from '../expression';
+import { FunctionUtils } from '../functionUtils';
 
 /**
  * Represents a property which is either a int or a string expression which resolves to a int.
@@ -29,7 +30,7 @@ export class IntExpression extends ExpressionProperty<number> {
      */
     public tryGetValue(data: object): { value: number; error: Error } {
         const result = super.tryGetValue(data);
-        if (typeof result.value == 'number') {
+        if (FunctionUtils.isNumber(result.value)) {
             // Ensure returned value is an int.
             result.value = Math.trunc(result.value);
         }
@@ -43,9 +44,8 @@ export class IntExpression extends ExpressionProperty<number> {
      */
     public setValue(value: number | string | Expression): void {
         if (
-            value !== undefined &&
-            value !== null &&
-            typeof value !== 'number' &&
+            value != null &&
+            !FunctionUtils.isNumber(value) &&
             typeof value !== 'string' &&
             !(value instanceof Expression)
         ) {

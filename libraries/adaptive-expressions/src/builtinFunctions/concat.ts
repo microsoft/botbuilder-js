@@ -10,6 +10,7 @@ import { EvaluateExpressionDelegate, ExpressionEvaluator } from '../expressionEv
 import { ExpressionType } from '../expressionType';
 import { FunctionUtils } from '../functionUtils';
 import { ReturnType } from '../returnType';
+import { InternalFunctionUtils } from '../functionUtils.internal';
 
 /**
  * Combine two or more strings, and return the combined string.
@@ -37,33 +38,19 @@ export class Concat extends ExpressionEvaluator {
             const isFirstList = Array.isArray(firstItem);
             const isSecondList = Array.isArray(secondItem);
 
-            if ((firstItem === null || firstItem === undefined) && (secondItem === null || secondItem === undefined)) {
+            if (firstItem == null && secondItem == null) {
                 return undefined;
-            } else if ((firstItem === null || firstItem === undefined) && isSecondList) {
+            } else if (firstItem == null && isSecondList) {
                 return secondItem;
-            } else if ((secondItem === null || secondItem === undefined) && isFirstList) {
+            } else if (secondItem == null && isFirstList) {
                 return firstItem;
             } else if (isFirstList && isSecondList) {
                 return firstItem.concat(secondItem);
             } else {
-                return Concat.commonStringify(firstItem) + Concat.commonStringify(secondItem);
+                return (
+                    InternalFunctionUtils.commonStringify(firstItem) + InternalFunctionUtils.commonStringify(secondItem)
+                );
             }
         });
-    }
-
-    /**
-     * @private
-     */
-    private static commonStringify(input: any): string {
-        if (input === null || input === undefined) {
-            return '';
-        }
-        if (Array.isArray(input)) {
-            return input.toString();
-        } else if (typeof input === 'object') {
-            return JSON.stringify(input);
-        } else {
-            return input.toString();
-        }
     }
 }

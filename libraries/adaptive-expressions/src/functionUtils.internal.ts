@@ -8,7 +8,6 @@
  */
 
 import { Constant } from './constant';
-import sortBy from 'lodash/sortBy';
 import dayjs, { OpUnitType } from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 dayjs.extend(utc);
@@ -70,6 +69,7 @@ export class InternalFunctionUtils {
             let error = childrenError;
             if (!error) {
                 if (Array.isArray(oriArr)) {
+                    // Ensures we don't mutate the array in place.
                     const arr: any = oriArr.slice(0);
                     if (expression.children.length === 1) {
                         if (isDescending) {
@@ -84,10 +84,11 @@ export class InternalFunctionUtils {
                         if (!error) {
                             propertyName = propertyName || '';
                         }
+
                         if (isDescending) {
-                            result = sortBy(arr, propertyName).reverse();
+                            result = arr.sort(InternalFunctionUtils.sortByKey(propertyName)).reverse();
                         } else {
-                            result = sortBy(arr, propertyName);
+                            result = arr.sort(InternalFunctionUtils.sortByKey(propertyName));
                         }
                     }
                 } else {
@@ -107,7 +108,7 @@ export class InternalFunctionUtils {
      */
     public static accessIndex(instance: any, index: number): ValueWithError {
         // NOTE: This returns undefined rather than an error if property is not present
-        if (instance === null || instance === undefined) {
+        if (instance == null) {
             return { value: undefined, error: undefined };
         }
 
@@ -262,7 +263,7 @@ export class InternalFunctionUtils {
 
         if (typeof instance === 'boolean') {
             result = instance;
-        } else if (instance === undefined || instance === null) {
+        } else if (instance == null) {
             result = false;
         }
 
@@ -421,8 +422,8 @@ export class InternalFunctionUtils {
             return false;
         }
 
-        if (args[0] === undefined || args[0] === null || args[1] === undefined || args[1] === null) {
-            return (args[0] === undefined || args[0] === null) && (args[1] === undefined || args[1] === null);
+        if (args[0] == null || args[1] == null) {
+            return args[0] == null && args[1] == null;
         }
 
         if (Array.isArray(args[0]) && args[0].length === 0 && Array.isArray(args[1]) && args[1].length === 0) {
@@ -474,6 +475,23 @@ export class InternalFunctionUtils {
     }
 
     /**
+     * Common Stringfy an object.
+     * @param input input object.
+     */
+    public static commonStringify(input: unknown): string {
+        if (input == null) {
+            return '';
+        }
+        if (typeof input === 'object') {
+            return JSON.stringify(input)
+                .replace(/(^['"]*)/g, '')
+                .replace(/(['"]*$)/g, '');
+        } else {
+            return input.toString();
+        }
+    }
+
+    /**
      * Helper function of get the number of properties of an object.
      * @param obj An object.
      */
@@ -488,5 +506,12 @@ export class InternalFunctionUtils {
         }
 
         return count;
+    }
+
+    /**
+     * @private
+     */
+    private static sortByKey(key: string) {
+        return (a: unknown, b: unknown) => (a[key] > b[key] ? 1 : b[key] > a[key] ? -1 : 0);
     }
 }

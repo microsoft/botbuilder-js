@@ -43,7 +43,7 @@ export class String extends ExpressionEvaluator {
                 if (!error) {
                     if (typeof args[0] === 'string') {
                         result = args[0];
-                    } else if (typeof args[0] === 'number') {
+                    } else if (FunctionUtils.isNumber(args[0])) {
                         const formatLocale = localeInfo[locale];
                         const tempStrValue = args[0].toString();
                         let precision = 0;
@@ -62,9 +62,7 @@ export class String extends ExpressionEvaluator {
                     } else if (args[0] instanceof Uint8Array) {
                         result = InternalFunctionUtils.getTextDecoder().decode(args[0]);
                     } else {
-                        result = JSON.stringify(args[0])
-                            .replace(/(^['"]*)/g, '') // remove the starting single or double quote
-                            .replace(/(['"]*$)/g, ''); // remove the ending single or double quote
+                        result = InternalFunctionUtils.commonStringify(args[0]);
                     }
                 }
 
