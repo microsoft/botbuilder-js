@@ -8,7 +8,7 @@ const continueMessage = { text: `continue`, type: 'message' };
 describe('DialogContext', function() {
     this.timeout(5000);
 
-    it('should beginDialog() a new dialog.', function (done) {
+    it('should beginDialog() a new dialog.', async function () {
         // Initialize TestAdapter.
         const adapter = new TestAdapter(async (turnContext) => {
             const dc = await dialogs.createContext(turnContext);
@@ -16,7 +16,6 @@ describe('DialogContext', function() {
             const results = await dc.beginDialog('a');
             if (results.status === DialogTurnStatus.complete) {
                 assert(results.result === true, `End result from WaterfallDialog was not expected value.`);
-                done();
             }
             await convoState.saveChanges(turnContext);
         });
@@ -34,17 +33,16 @@ describe('DialogContext', function() {
             }
         ]));
 
-        adapter.send(beginMessage).startTest();
+        await adapter.send(beginMessage).startTest();
     });
 
-    it('beginDialog() should pass in dialogOptions to a begun dialog.', function (done) {
+    it('beginDialog() should pass in dialogOptions to a begun dialog.', async function () {
         const adapter = new TestAdapter(async (turnContext) => {
             const dc = await dialogs.createContext(turnContext);
         
             const results = await dc.beginDialog('a', { z: 'z' });
             if (results.status === DialogTurnStatus.complete) {
                 assert(results.result === true, `End result from WaterfallDialog was not expected value.`);
-                done();
             }
             await convoState.saveChanges(turnContext);
         });
@@ -61,27 +59,24 @@ describe('DialogContext', function() {
             }
         ]));
 
-        adapter.send(beginMessage).startTest();
+        await adapter.send(beginMessage).startTest();
     });
 
-    it('should return error if beginDialog() called with invalid dialogId.', function (done) {
+    it('should return error if beginDialog() called with invalid dialogId.', async function () {
         const adapter = new TestAdapter(async (turnContext) => {
             const dc = await dialogs.createContext(turnContext);
         
-            try {
-                let results = await dc.beginDialog('b');
+            await assert.rejects(async () => {
+                await dc.beginDialog('b');
                 await convoState.saveChanges(turnContext);
-            }
-            catch (err) {
-                assert(err);
+            },
+            (err) => {
                 assert.strictEqual(err.message, `DialogContext.beginDialog(): A dialog with an id of 'b' wasn't found.`, `unexpected error message thrown: "${err.message}"`);
 
                 assert(err instanceof DialogContextError, 'err should be a DialogContextError');
                 assert(err.dialogContext, 'err should include dialogContext');
-
-                return done();
-            }
-            throw new Error('Should have thrown an error.');
+                return true;
+            });
         });
 
         const convoState = new ConversationState(new MemoryStorage());
@@ -94,16 +89,15 @@ describe('DialogContext', function() {
             }
         ]));
 
-        adapter.send(beginMessage).startTest();
+        await adapter.send(beginMessage).startTest();
     });
 
-    it('should pass prompt() args to dialog.', function (done) {
+    it('should pass prompt() args to dialog.', async function () {
         const adapter = new TestAdapter(async (turnContext) => {
             const dc = await dialogs.createContext(turnContext);
         
             const results = await dc.prompt('a', 'test');
             await convoState.saveChanges(turnContext);
-            done();
         });
 
         const convoState = new ConversationState(new MemoryStorage());
@@ -118,16 +112,15 @@ describe('DialogContext', function() {
             }
         ]));
 
-        adapter.send(beginMessage).startTest();
+        await adapter.send(beginMessage).startTest();
     });
 
-    it('should pass undefined prompt() to dialog.', function (done) {
+    it('should pass undefined prompt() to dialog.', async function () {
         const adapter = new TestAdapter(async (turnContext) => {
             const dc = await dialogs.createContext(turnContext);
         
             const results = await dc.prompt('a');
             await convoState.saveChanges(turnContext);
-            done();
         });
 
         const convoState = new ConversationState(new MemoryStorage());
@@ -141,16 +134,15 @@ describe('DialogContext', function() {
             }
         ]));
 
-        adapter.send(beginMessage).startTest();
+        await adapter.send(beginMessage).startTest();
     });
 
-    it('should pass choice array to prompt() to dialog.', function (done) {
+    it('should pass choice array to prompt() to dialog.', async function () {
         const adapter = new TestAdapter(async (turnContext) => {
             const dc = await dialogs.createContext(turnContext);
         
             const results = await dc.prompt('a', 'test', ['red', 'green', 'blue']);
             await convoState.saveChanges(turnContext);
-            done();
         });
 
         const convoState = new ConversationState(new MemoryStorage());
@@ -166,17 +158,16 @@ describe('DialogContext', function() {
             }
         ]));
 
-        adapter.send(beginMessage).startTest();
+        await adapter.send(beginMessage).startTest();
     });
 
-    it('should return a value to parent when endDialog() called with a value.', function (done) {
+    it('should return a value to parent when endDialog() called with a value.', async function () {
         const adapter = new TestAdapter(async (turnContext) => {
             const dc = await dialogs.createContext(turnContext);
         
             const results = await dc.beginDialog('a');
             await convoState.saveChanges(turnContext);
             assert.strictEqual(results.result, 119, `unexpected results.result value received from 'a' dialog.`);
-            done();
         });
 
         const convoState = new ConversationState(new MemoryStorage());
@@ -202,10 +193,10 @@ describe('DialogContext', function() {
             }
         ]));
 
-        adapter.send(beginMessage).startTest();
+        await adapter.send(beginMessage).startTest();
     });
 
-    it('should continue() execution of a dialog.', function (done) {
+    it('should continue() execution of a dialog.', async function () {
         const adapter = new TestAdapter(async (turnContext) => {
             const dc = await dialogs.createContext(turnContext);
         
@@ -217,7 +208,6 @@ describe('DialogContext', function() {
                 
                 case DialogTurnStatus.complete:
                     assert.strictEqual(results.result, true, `received unexpected final result from dialog.`);
-                    done();
                     break;
             }
             await convoState.saveChanges(turnContext);
@@ -239,18 +229,22 @@ describe('DialogContext', function() {
             }
         ]));
 
-        adapter.send(beginMessage)
+        await adapter.send(beginMessage)
             .send(continueMessage)
             .startTest();
     });
 
-    it('should return an error if dialog not found when continue() called.', function (done) {
+    it('should return an error if dialog not found when continue() called.', async function () {
         const adapter = new TestAdapter(async (turnContext) => {
             const dc = await dialogs.createContext(turnContext);
 
             let results;
             try {
                 results = await dc.continueDialog();
+                if (results.status === DialogTurnStatus.empty) {
+                    await dc.beginDialog('a');
+                }
+                await convoState.saveChanges(turnContext);
             }
             catch (err) {
                 assert(err, `Error not found.`);
@@ -258,13 +252,7 @@ describe('DialogContext', function() {
 
                 assert(err instanceof DialogContextError, 'err should be a DialogContextError');
                 assert(err.dialogContext, 'err should include dialogContext');
-
-                return done();
             }
-            if (results.status === DialogTurnStatus.empty) {
-                await dc.beginDialog('a');
-            }
-            await convoState.saveChanges(turnContext);
         });
         
         const convoState = new ConversationState(new MemoryStorage());
@@ -283,19 +271,18 @@ describe('DialogContext', function() {
             }
         ]));
 
-        adapter.send(beginMessage)
+        await adapter.send(beginMessage)
             .send(continueMessage)
             .startTest();
     });
 
-    it(`should return a DialogTurnResult if continue() is called without an activeDialog.`, function (done) {
+    it(`should return a DialogTurnResult if continue() is called without an activeDialog.`, async function () {
         const adapter = new TestAdapter(async (turnContext) => {
             const dc = await dialogs.createContext(turnContext);
             const results = await dc.continueDialog();
             assert.strictEqual(typeof results, 'object', `results is not the expected object`);
             assert.strictEqual(results.status, DialogTurnStatus.empty, `results.status is not 'empty'.`);
             await convoState.saveChanges(turnContext);
-            done();
         });
 
         const convoState = new ConversationState(new MemoryStorage());
@@ -303,17 +290,16 @@ describe('DialogContext', function() {
 
         const dialogs = new DialogSet(dialogState);        
 
-        adapter.send(beginMessage).startTest();
+        await adapter.send(beginMessage).startTest();
     });
 
-    it('should return to parent dialog when endDialog() called.', function (done) {
+    it('should return to parent dialog when endDialog() called.', async function () {
         const adapter = new TestAdapter(async (turnContext) => {
             const dc = await dialogs.createContext(turnContext);
         
             const results = await dc.beginDialog('a');
             assert.strictEqual(results.result, true, `received unexpected final result from dialog.`);
             await convoState.saveChanges(turnContext);
-            done();
         });
 
         const convoState = new ConversationState(new MemoryStorage());
@@ -341,10 +327,10 @@ describe('DialogContext', function() {
             }
         ]));
 
-        adapter.send(beginMessage).startTest();
+        await adapter.send(beginMessage).startTest();
     });
 
-    it(`should accept calls to end when no activeDialogs or parent dialogs exist.`, function (done) {
+    it(`should accept calls to end when no activeDialogs or parent dialogs exist.`, async function () {
         const adapter = new TestAdapter(async (turnContext) => {
             const dc = await dialogs.createContext(turnContext);
             
@@ -352,7 +338,6 @@ describe('DialogContext', function() {
             await convoState.saveChanges(turnContext);
             assert.strictEqual(results.status, DialogTurnStatus.complete, `results.status not equal 'complete'.`);
             assert.strictEqual(results.result, undefined, `received unexpected value for results.result (expected undefined).`);
-            done();
         });
 
         const convoState = new ConversationState(new MemoryStorage());
@@ -367,17 +352,16 @@ describe('DialogContext', function() {
             }
         ]));
 
-        adapter.send(beginMessage).startTest();
+        await adapter.send(beginMessage).startTest();
     });
 
-    it(`should replace() dialog.`, function (done) {
+    it(`should replace() dialog.`, async function () {
         const adapter = new TestAdapter(async (turnContext) => {
             const dc = await dialogs.createContext(turnContext);
         
             const results = await dc.beginDialog('a', { z: 'z' });
             await convoState.saveChanges(turnContext);
             assert.strictEqual(results.result, 'z', `received unexpected final result from dialog.`);
-            done();
         });
 
         const convoState = new ConversationState(new MemoryStorage());
@@ -401,16 +385,15 @@ describe('DialogContext', function() {
             }
         ]));
 
-        adapter.send(beginMessage).startTest();
+        await adapter.send(beginMessage).startTest();
     });
 
-    it(`should begin dialog if stack empty when replaceDialog() called with valid dialogId.`, function (done) {
+    it(`should begin dialog if stack empty when replaceDialog() called with valid dialogId.`, async function () {
         const adapter = new TestAdapter(async (turnContext) => {
             const dc = await dialogs.createContext(turnContext);
 
             const results = await dc.replaceDialog('b');
             await convoState.saveChanges(turnContext);
-            done();
         });
         const convoState = new ConversationState(new MemoryStorage());
         
@@ -424,6 +407,6 @@ describe('DialogContext', function() {
             }
         ]));
 
-        adapter.send(beginMessage).startTest();
+        await adapter.send(beginMessage).startTest();
     });
 });

@@ -40,7 +40,7 @@ describe('AttachmentPrompt', function() {
         .startTest();
     });
 
-    it('should call AttachmentPrompt with custom validator.', function (done) {
+    it('should call AttachmentPrompt with custom validator.', async function () {
         const adapter = new TestAdapter(async (turnContext) => {
             const dc = await dialogs.createContext(turnContext);
 
@@ -64,15 +64,14 @@ describe('AttachmentPrompt', function() {
             return prompt.recognized.succeeded;
         }));
         
-        adapter.send('Hello')
+        await adapter.send('Hello')
         .assertReply('Please send an attachment.')
         .send(answerMessage)
         .assertReply('test1')
         .startTest();
-        done();
     });
 
-    it('should send custom retryPrompt.', function (done) {
+    it('should send custom retryPrompt.', async function () {
         const adapter = new TestAdapter(async (turnContext) => {
             const dc = await dialogs.createContext(turnContext);
 
@@ -96,17 +95,16 @@ describe('AttachmentPrompt', function() {
             return prompt.recognized.succeeded;
         }));
         
-        adapter.send('Hello')
+        await adapter.send('Hello')
         .assertReply('Please send an attachment.')
         .send(invalidMessage)
         .assertReply('Please try again.')
         .send(answerMessage)
         .assertReply('test1')
         .startTest();
-        done();
     });
 
-    it('should send ignore retryPrompt if validator replies.', function (done) {
+    it('should send ignore retryPrompt if validator replies.', async function () {
         const adapter = new TestAdapter(async (turnContext) => {
             const dc = await dialogs.createContext(turnContext);
 
@@ -134,17 +132,16 @@ describe('AttachmentPrompt', function() {
             return prompt.recognized.succeeded;
         }));
         
-        adapter.send('Hello')
+        await adapter.send('Hello')
         .assertReply('Please send an attachment.')
         .send(invalidMessage)
         .assertReply('Bad input.')
         .send(answerMessage)
         .assertReply('test1')
         .startTest();
-        done();
     });
 
-    it('should not send any retryPrompt if no prompt is specified.', function (done) {
+    it('should not send any retryPrompt if no prompt is specified.', async function () {
         const adapter = new TestAdapter(async (turnContext) => {
             const dc = await dialogs.createContext(turnContext);
 
@@ -165,12 +162,11 @@ describe('AttachmentPrompt', function() {
         const dialogs = new DialogSet(dialogState);
         dialogs.add(new AttachmentPrompt('prompt'));
         
-        adapter.send('Hello')
+        await adapter.send('Hello')
         .send('what?')
         .send(answerMessage)
         .assertReply('test1')
         .startTest();
-        done();
     });
 
 });

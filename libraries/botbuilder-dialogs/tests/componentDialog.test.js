@@ -10,7 +10,7 @@ function simpleStepContextCheck(step) {
 describe('ComponentDialog', function () {
     this.timeout(5000);
 
-    it('should set initial dialog to be first dialog added via addDialog()', (done) => {
+    it('should set initial dialog to be first dialog added via addDialog()', function () {
         const simpleWaterfall = new WaterfallDialog('simpleWaterfall', [
             async (step) => { }
         ]);
@@ -24,10 +24,9 @@ describe('ComponentDialog', function () {
         assert(component.initialDialogId === 'simpleWaterfall', `unexpected initialDialogId`);
         component.addDialog(simpleH2ofall);
         assert(component.initialDialogId === 'simpleWaterfall', `unexpected change in initialDialogId, it is now ${ component.initialDialogId }`);
-        done();
     });
 
-    it('should call ComponentDialog from another DialogSet.', (done) => {
+    it('should call ComponentDialog from another DialogSet.', async function () {
         const conversationState = new ConversationState(new MemoryStorage());
         const dialogState = conversationState.createProperty('dialog');
 
@@ -49,11 +48,10 @@ describe('ComponentDialog', function () {
             const results = await dc.beginDialog('composite', { foo: 'bar' });
         });
 
-        adapter.send('Hi').startTest();
-        done();
+        await adapter.send('Hi').startTest();
     });
 
-    it('should throw an error up if child dialog does not return DialogTurnResult on beginDialog.', (done) => {
+    it('should throw an error up if child dialog does not return DialogTurnResult on beginDialog.', async function () {
         const conversationState = new ConversationState(new MemoryStorage());
         const dialogState = conversationState.createProperty('dialog');
 
@@ -70,17 +68,12 @@ describe('ComponentDialog', function () {
 
         const adapter = new TestAdapter(async turnContext => {
             const dc = await dialogs.createContext(turnContext);
-            const results = await dc.beginDialog('composite')
-                .catch(err => {
-                    assert(err.message === `Cannot read property 'status' of undefined`,
-                        `unexpected Error thrown.`);
-                    done();
-                });
+            await assert.rejects(async () => await dc.beginDialog('composite'), { message: `Cannot read property 'status' of undefined` });
         });
-        adapter.send('Hi').startTest();
+        await adapter.send('Hi').startTest();
     });
 
-    it('should have DialogTurnResult.status equal DialogTurnStatus.complete when endComponent() is called.', (done) => {
+    it('should have DialogTurnResult.status equal DialogTurnStatus.complete when endComponent() is called.', async function () {
         const conversationState = new ConversationState(new MemoryStorage());
         const dialogState = conversationState.createProperty('dialog');
 
@@ -101,13 +94,12 @@ describe('ComponentDialog', function () {
             const results = await dc.beginDialog('composite');
             assert(results.status === DialogTurnStatus.complete, `unexpected DialogTurnStatus received: ${ results.status }`);
             assert(results.result === undefined, `unexpected results.result received: ${ results.result }`);
-            done();
         });
 
-        adapter.send('Hi').startTest();
+        await adapter.send('Hi').startTest();
     });
 
-    it(`should return Dialog.EndOfTurn if the dialog's turnResult.status === 'waiting'.`, (done) => {
+    it(`should return Dialog.EndOfTurn if the dialog's turnResult.status === 'waiting'.`, async function () {
         const conversationState = new ConversationState(new MemoryStorage());
         const dialogState = conversationState.createProperty('dialog');
 
@@ -132,13 +124,12 @@ describe('ComponentDialog', function () {
             const results = await dc.beginDialog('composite');
             assert(results.status === DialogTurnStatus.waiting, `unexpected DialogTurnStatus received: ${ results.status }`);
             assert(results.result === undefined, `unexpected results.result received: ${ results.result }`);
-            done();
         });
 
-        adapter.send('Hi').startTest();
+        await adapter.send('Hi').startTest();
     });
 
-    it('should return any found dialogs.', (done) => {
+    it('should return any found dialogs.', function () {
         const simpleWaterfall = new WaterfallDialog('simpleWaterfall', [
             async (step) => { }
         ]);
@@ -147,17 +138,15 @@ describe('ComponentDialog', function () {
         component.addDialog(simpleWaterfall);
         const dialog = component.findDialog('simpleWaterfall');
         assert(dialog === simpleWaterfall, `unexpected dialog returned`);
-        done();
     });
 
-    it('should return undefined for not found dialogs.', (done) => {
+    it('should return undefined for not found dialogs.', function () {
         const component = new ComponentDialog('component');
         const notADialog = component.findDialog('notADialog');
         assert(notADialog === undefined, `unexpected value returned: ${ typeof notADialog }`);
-        done();
     });
 
-    it('should continue from dc.continueDialog() and call onContinueDialog().', (done) => {
+    it('should continue from dc.continueDialog() and call onContinueDialog().', async function () {
         const conversationState = new ConversationState(new MemoryStorage());
         const dialogState = conversationState.createProperty('dialog');
 
@@ -188,12 +177,11 @@ describe('ComponentDialog', function () {
                 assert(results.status === DialogTurnStatus.complete, `results.status should be 'complete' not ${ results.status }`);
                 assert(results.result === undefined, `results.result should be undefined, not ${ results.result }`);
                 await turnContext.sendActivity('Done.');
-                done();
             }
             await conversationState.saveChanges(turnContext);
         });
 
-        adapter.send('Hi')
+        await adapter.send('Hi')
             .assertReply('First step.')
             .send('Hi again')
             .assertReply('Called onContinueDialog.')
@@ -201,7 +189,7 @@ describe('ComponentDialog', function () {
             .startTest();
     });
 
-    it('should cancel all Dialogs inside of ComponentDialog namespace.', () => {
+    it('should cancel all Dialogs inside of ComponentDialog namespace.', async function () {
         const conversationState = new ConversationState(new MemoryStorage());
         const dialogState = conversationState.createProperty('dialog');
 
@@ -241,13 +229,13 @@ describe('ComponentDialog', function () {
             assert(dc.stack.length === 0, `should have a dialogStack without 0 dialogs, not ${ dc.stack.length } dialogs`);
         });
 
-        adapter.send('Hi')
+        await adapter.send('Hi')
             .assertReply('Reached first component dialog child.')
             .assertReply('Cancelling all component dialog dialogs.')
             .startTest();
     });
 
-    it('should not cancel any Dialogs outside of ComponentDialog namespace.', () => {
+    it('should not cancel any Dialogs outside of ComponentDialog namespace.', async function () {
         const conversationState = new ConversationState(new MemoryStorage());
         const dialogState = conversationState.createProperty('dialog');
 
@@ -291,14 +279,14 @@ describe('ComponentDialog', function () {
             await dc.beginDialog('outerDialog');
         });
 
-        adapter.send('Hi')
+        await adapter.send('Hi')
             .assertReply('Reached first component dialog child.')
             .assertReply('Cancelling all component dialog dialogs.')
             .assertReply('Cancelled successfully.')
             .startTest();
     });
 
-    it('should call a dialog defined in a parent component.', (done) => {
+    it('should call a dialog defined in a parent component.', async function () {
         const conversationState = new ConversationState(new MemoryStorage());
         const dialogState = conversationState.createProperty('dialog');
 
@@ -339,20 +327,18 @@ describe('ComponentDialog', function () {
                 assert(results.status === DialogTurnStatus.complete, `results.status should be 'complete' not ${ results.status }`);
                 assert(results.result === undefined, `results.result should be undefined, not ${ results.result }`);
                 await turnContext.sendActivity('Done.');
-                done();
             }
             await conversationState.saveChanges(turnContext);
         });
 
-        adapter.send('Hi')
+        await adapter.send('Hi')
             .assertReply('Child started.')
             .assertReply('Parent called with: test')
             .assertReply('Child finished.')
-            .then(() => done())
             .startTest();
     });
 
-    it('should handle that a components children have changed.', (done) => {
+    it('should handle that a components children have changed.', async function () {
         const conversationState = new ConversationState(new MemoryStorage());
         const dialogState = conversationState.createProperty('dialog');
 
@@ -391,12 +377,11 @@ describe('ComponentDialog', function () {
                 assert(results.status === DialogTurnStatus.complete, `results.status should be 'complete' not ${ results.status }`);
                 assert(results.result === undefined, `results.result should be undefined, not ${ results.result }`);
                 await turnContext.sendActivity('Done.');
-                done();
             }
             await conversationState.saveChanges(turnContext);
         });
 
-        adapter.send('Hi')
+        await adapter.send('Hi')
             .assertReply('First step.')
             .send('Hi again')
             .assertReply('Second step.')
