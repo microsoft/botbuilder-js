@@ -165,10 +165,7 @@ describe(`TestAdapter`, function () {
         });
         await assert.rejects(
             async () => await adapter.send('test').assertReply('received', 'received failed', 500).startTest(),
-            (err) => {
-                assert(err.message.includes('Timed out after'));
-                return true;
-            }
+            /.*Timed out after.*/
         );
     });
 
@@ -181,10 +178,7 @@ describe(`TestAdapter`, function () {
         await assert.rejects(
             async () =>
                 await adapter.send('test').assertReply({ text: 'received' }, 'received failed', 500).startTest(),
-            (err) => {
-                assert(err.message.includes('Timed out after'));
-                return true;
-            }
+            /.*Timed out after.*/
         );
     });
 
@@ -200,10 +194,7 @@ describe(`TestAdapter`, function () {
                     .send('test')
                     .assertReply(() => assert(false, `inspector shouldn't be called.`), 'received failed', 500)
                     .startTest(),
-            (err) => {
-                assert(err.message.includes('Timed out after'));
-                return true;
-            }
+            /.*Timed out after.*/
         );
     });
 
@@ -241,10 +232,7 @@ describe(`TestAdapter`, function () {
                     .assertReply({ text: 'received' })
                     .assertNoReply('should be no additional replies')
                     .startTest(),
-            (err) => {
-                assert(err.message.includes('should be no additional replies'));
-                return true;
-            }
+            /.*should be no additional replies.*/
         );
     });
 
