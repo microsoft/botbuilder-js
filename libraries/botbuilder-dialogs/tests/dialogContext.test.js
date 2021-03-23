@@ -264,24 +264,11 @@ describe('DialogContext', function () {
         const adapter = new TestAdapter(async (turnContext) => {
             const dc = await dialogs.createContext(turnContext);
 
-            let results;
-            try {
-                results = await dc.continueDialog();
-                if (results.status === DialogTurnStatus.empty) {
-                    await dc.beginDialog('a');
-                }
-                await convoState.saveChanges(turnContext);
-            } catch (err) {
-                assert(err, `Error not found.`);
-                assert.strictEqual(
-                    err.message,
-                    `DialogContext.continueDialog(): Can't continue dialog. A dialog with an id of 'b' wasn't found.`,
-                    `unexpected error message thrown: "${err.message}"`
-                );
-
-                assert(err instanceof DialogContextError, 'err should be a DialogContextError');
-                assert(err.dialogContext, 'err should include dialogContext');
+            const results = await dc.continueDialog();
+            if (results.status === DialogTurnStatus.empty) {
+                await dc.beginDialog('a');
             }
+            await convoState.saveChanges(turnContext);
         });
 
         const convoState = new ConversationState(new MemoryStorage());
@@ -302,7 +289,21 @@ describe('DialogContext', function () {
             ])
         );
 
-        await adapter.send(beginMessage).send(continueMessage).startTest();
+        await assert.rejects(
+            async () => await adapter.send(beginMessage).send(continueMessage).startTest(),
+            (err) => {
+                assert(err, `Error not found.`);
+                assert.strictEqual(
+                    err.message,
+                    `DialogContext.continueDialog(): Can't continue dialog. A dialog with an id of 'b' wasn't found.`,
+                    `unexpected error message thrown: "${err.message}"`
+                );
+
+                assert(err instanceof DialogContextError, 'err should be a DialogContextError');
+                assert(err.dialogContext, 'err should include dialogContext');
+                return true;
+            }
+        );
     });
 
     it(`should return a DialogTurnResult if continue() is called without an activeDialog.`, async function () {
