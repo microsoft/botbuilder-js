@@ -5,12 +5,15 @@ function assertToken(token, start, end, text, normalized) {
     assert(token.start === start, `Invalid token.start of '${token.start}' for '${text}' token.`);
     assert(token.end === end, `Invalid token.end of '${token.end}' for '${text}' token.`);
     assert(token.text === text, `Invalid token.text of '${token.text}' for '${text}' token.`);
-    assert(token.normalized === normalized || text, `Invalid token.normalized of '${token.normalized}' for '${text}' token.`);
+    assert(
+        token.normalized === normalized || text,
+        `Invalid token.normalized of '${token.normalized}' for '${text}' token.`
+    );
 }
 
-describe('defaultTokenizer()', function() {
+describe('defaultTokenizer()', function () {
     this.timeout(5000);
-   
+
     it('should break on spaces.', function () {
         const tokens = defaultTokenizer(`how now brown cow`);
         assert(tokens.length === 4);

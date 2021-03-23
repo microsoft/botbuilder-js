@@ -89,7 +89,7 @@ function createTestFlow(dialog, testCase) {
         }
 
         // Interceptor to capture the EoC activity if it was sent so we can assert it in the tests.
-        context.onSendActivities(async (tc, activities, next) => {
+        context.onSendActivities(async (_tc, activities, next) => {
             for (let idx = 0; idx < activities.length; idx++) {
                 if (activities[idx].type === ActivityTypes.EndOfConversation) {
                     _eocSent = activities[idx];
@@ -181,30 +181,26 @@ describe('runDialog()', function () {
 
     describe('parameter validation', () => {
         it('should throw if missing dialog parameter', async function () {
-            await assert.rejects(async () => runDialog(),
-            {
-                message: 'runDialog(): missing dialog'
+            await assert.rejects(async () => runDialog(), {
+                message: 'runDialog(): missing dialog',
             });
         });
 
         it('should throw if missing context parameter', async function () {
-            await assert.rejects(async () => runDialog({}),
-            {
-                message: 'runDialog(): missing context'
+            await assert.rejects(async () => runDialog({}), {
+                message: 'runDialog(): missing context',
             });
         });
 
         it('should throw if missing context.activity', async function () {
-            await assert.rejects(async () => runDialog({}, {}),
-            {
-                message: 'runDialog(): missing context.activity'
+            await assert.rejects(async () => runDialog({}, {}), {
+                message: 'runDialog(): missing context.activity',
             });
         });
 
         it('should throw if missing accessor parameter', async function () {
-            await assert.rejects(async () => runDialog({}, { activity: {} }),
-            {
-                message: 'runDialog(): missing accessor'
+            await assert.rejects(async () => runDialog({}, { activity: {} }), {
+                message: 'runDialog(): missing accessor',
             });
         });
     });

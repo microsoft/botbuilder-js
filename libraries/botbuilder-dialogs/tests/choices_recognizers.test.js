@@ -24,7 +24,10 @@ function assertChoice(result, value, index, score, synonym) {
     assert(resolution.index === index, `Invalid resolution.index of '${resolution.index}' for '${value}' choice.`);
     assert(resolution.score === score, `Invalid resolution.score of '${resolution.score}' for '${value}' choice.`);
     if (synonym) {
-        assert(resolution.synonym === synonym, `Invalid resolution.synonym of '${resolution.synonym}' for '${value}' choice.`);
+        assert(
+            resolution.synonym === synonym,
+            `Invalid resolution.synonym of '${resolution.synonym}' for '${value}' choice.`
+        );
     }
 }
 
@@ -35,25 +38,24 @@ function assertChoice(result, value, index, score, synonym) {
 const colorValues = [
     { value: 'red', index: 0 },
     { value: 'green', index: 1 },
-    { value: 'blue', index: 2 }
+    { value: 'blue', index: 2 },
 ];
 
 const overlappingValues = [
     { value: 'bread', index: 0 },
     { value: 'bread pudding', index: 1 },
-    { value: 'pudding', index: 2 }
+    { value: 'pudding', index: 2 },
 ];
 
 const similarValues = [
     { value: 'option A', index: 0 },
     { value: 'option B', index: 1 },
-    { value: 'option C', index: 2 }
+    { value: 'option C', index: 2 },
 ];
 
-
-describe('findValues()', function() {
+describe('findValues()', function () {
     this.timeout(5000);
-   
+
     it('should find a simple value in an single word utterance.', function () {
         const found = findValues(`red`, colorValues);
         assert(found.length === 1, `Invalid token count of '${found.length}' returned.`);
@@ -98,9 +100,9 @@ describe('findValues()', function() {
 const colorChoices = ['red', 'green', 'blue'];
 const overlappingChoices = ['bread', 'bread pudding', 'pudding'];
 
-describe('findChoices()', function() {
+describe('findChoices()', function () {
     this.timeout(5000);
-   
+
     it('should find a single choice in an utterance.', function () {
         const found = findChoices(`the red one please.`, colorChoices);
         assert(found.length === 1, `Invalid token count of '${found.length}' returned.`);
@@ -129,9 +131,9 @@ describe('findChoices()', function() {
 // recognizeChoices() tests
 //=============================================================================
 
-describe('recognizeChoices()', function() {
+describe('recognizeChoices()', function () {
     this.timeout(5000);
-   
+
     it('should find a choice in an utterance by name.', function () {
         const found = recognizeChoices(`the red one please.`, colorChoices);
         assert(found.length === 1, `Invalid token count of '${found.length}' returned.`);
@@ -185,7 +187,10 @@ describe('recognizeChoices()', function() {
     });
 
     it('should not find a choice if both recognizeOrdinals and recognizeNumbers options are disabled.', function () {
-        const found = recognizeChoices(`the first and third one please.`, colorChoices, { recognizeOrdinals: false, recognizeNumbers: false });
+        const found = recognizeChoices(`the first and third one please.`, colorChoices, {
+            recognizeOrdinals: false,
+            recognizeNumbers: false,
+        });
         assert(found.length === 0, `Invalid token count of '${found.length}' returned.`);
     });
 });

@@ -1,8 +1,14 @@
-const { AliasPathResolver, AtAtPathResolver, AtPathResolver, 
-        DollarPathResolver, HashPathResolver, PercentPathResolver } =  require('../');
+const {
+    AliasPathResolver,
+    AtAtPathResolver,
+    AtPathResolver,
+    DollarPathResolver,
+    HashPathResolver,
+    PercentPathResolver,
+} = require('../');
 const assert = require('assert');
 
-describe('Memory - Path Resolvers', function() {
+describe('Memory - Path Resolvers', function () {
     this.timeout(5000);
 
     it('AliasPathResolver should should prefix paths.', function () {
