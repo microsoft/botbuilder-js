@@ -296,7 +296,6 @@ describe(`TurnContext`, function () {
     });
 
     it(`should map an exception raised by a hook to a rejection.`, async function () {
-        let called = false;
         const context = new TurnContext(new SimpleAdapter(), testMessage);
         context.onDeleteActivity((ctx, reference, next) => {
             throw new Error('failed');
@@ -393,7 +392,7 @@ describe(`TurnContext`, function () {
     });
 
     it('should remove at mention from activity', function () {
-        let activity = {
+        const activity = {
             type: 'message',
             text: '<at>TestOAuth619</at> test activity',
             recipient: { id: 'TestOAuth619' },
@@ -409,7 +408,7 @@ describe(`TurnContext`, function () {
             ],
         };
 
-        let text = TurnContext.removeRecipientMention(activity);
+        const text = TurnContext.removeRecipientMention(activity);
 
         assert(text, ' test activity');
         assert(activity.text, ' test activity');
