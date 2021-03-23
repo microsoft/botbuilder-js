@@ -359,7 +359,7 @@ export abstract class InputDialog extends Dialog implements InputDialogConfigura
             msg = await this.prompt.bind(dc, dc.state);
         }
 
-        if (typeof msg?.inputHint !== 'string' || !msg.inputHint) {
+        if (msg != null && (typeof msg?.inputHint !== 'string' || !msg.inputHint)) {
             msg.inputHint = InputHints.ExpectingInput;
         }
 
@@ -498,6 +498,9 @@ export abstract class InputDialog extends Dialog implements InputDialogConfigura
      */
     private async promptUser(dc: DialogContext, state: InputState): Promise<DialogTurnResult> {
         const prompt = await this.onRenderPrompt(dc, state);
+        if (prompt == null) {
+            throw new Error(`Call to onRenderPrompt() returned a null activity for state ${state}.`);
+        }
         await dc.context.sendActivity(prompt);
         return Dialog.EndOfTurn;
     }
