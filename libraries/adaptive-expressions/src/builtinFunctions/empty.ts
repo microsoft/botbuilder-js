@@ -12,9 +12,10 @@ import { ComparisonEvaluator } from './comparisonEvaluator';
 
 /**
  * Check whether an instance is empty. Return true if the input is empty. Empty means:
- * 1.Input is an empty string.
- * 2.Input is zero size collection.
- * 3.Input is an object with no property.
+ * 1.Input is null or undefined.
+ * 2.Input is a null or empty string.
+ * 3.Input is zero size collection.
+ * 4.Input is an object with no property.
  */
 export class Empty extends ComparisonEvaluator {
     /**
@@ -35,14 +36,16 @@ export class Empty extends ComparisonEvaluator {
      * @private
      */
     private static isEmpty(instance: any): boolean {
-        let result = false;
-        if (typeof instance === 'string') {
+        let result: boolean;
+        if (instance === undefined) {
+            result = true;
+        } else if (typeof instance === 'string') {
             result = instance === '';
         } else if (Array.isArray(instance)) {
             result = instance.length === 0;
         } else if (instance instanceof Map) {
             result = instance.size === 0;
-        } else if (instance != null) {
+        } else {
             result = Object.keys(instance).length === 0;
         }
 
