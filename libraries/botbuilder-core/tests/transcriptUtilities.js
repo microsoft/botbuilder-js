@@ -79,37 +79,32 @@ function assertBotLogicWithBotBuilderTranscript(relativeTranscriptPath, botLogic
  * @param {function} botLogicFactoryFun Function which accepts conversationState and userState and should return the bots logic to test.
  * @param {function} middlewareRegistrationFun (Optional) Function which accepts the testAdapter, conversationState and userState.
  */
-function assertBotLogicWithTranscript(transcriptPath, botLogicFactoryFun, middlewareRegistrationFun) {
+async function assertBotLogicWithTranscript(transcriptPath, botLogicFactoryFun, middlewareRegistrationFun) {
     var loadFun = transcriptPath.endsWith('.chat')
         ? getActivitiesFromChat
         : getActivitiesFromTranscript;
 
     // return a Mocha Test Definition, which accepts the done callback to indicate success or error
-    return function (done) {
-        loadFun(transcriptPath).then(activities => {
+    return async function () {
+        const activities = loadFun(transcriptPath);
+        // State
+        const storage = new MemoryStorage();
+        const conversationState = new ConversationState(storage);
+        const userState = new UserState(storage);
+        const state = new AutoSaveStateMiddleware(conversationState, userState);
 
-            // State
-            const storage = new MemoryStorage();
-            const conversationState = new ConversationState(storage);
-            const userState = new UserState(storage);
-            const state = new AutoSaveStateMiddleware(conversationState, userState);
+        // Bot logic + adapter
+        var botLogic = botLogicFactoryFun(conversationState, userState)
+        var adapter = new TestAdapter(botLogic);
+        adapter.use(state);
 
-            // Bot logic + adapter
-            var botLogic = botLogicFactoryFun(conversationState, userState)
-            var adapter = new TestAdapter(botLogic);
-            adapter.use(state);
+        // Middleware registration
+        if (typeof middlewareRegistrationFun === 'function') {
+            middlewareRegistrationFun(adapter, conversationState, userState);
+        }
 
-            // Middleware registration
-            if (typeof middlewareRegistrationFun === 'function') {
-                middlewareRegistrationFun(adapter, conversationState, userState);
-            }
-
-            // Assert chain of activities
-            return adapter.testActivities(activities)
-                .then(done)
-                .catch(done);
-
-        }).catch(done);
+        // Assert chain of activities
+        return adapter.testActivities(activities);
     }
 }
 

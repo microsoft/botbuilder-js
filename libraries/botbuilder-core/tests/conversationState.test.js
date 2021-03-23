@@ -64,16 +64,6 @@ describe(`ConversationState`, function() {
         }
     });
 
-    it(`should throw install exception if get() called without a cached entry.`, function(done) {
-        context.turnState.set('conversationState', undefined);
-        try {
-            conversationState.get(context);
-            assert(false, `exception not thrown.`);
-        } catch (err) {
-            done();
-        }
-    });
-
     it(`should throw NO_KEY error if getStorageKey() returns falsey value.`, async function() {
         conversationState.getStorageKey = turnContext => undefined;
         try {
