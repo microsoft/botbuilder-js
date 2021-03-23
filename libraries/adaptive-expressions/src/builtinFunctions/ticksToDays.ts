@@ -13,6 +13,7 @@ import { FunctionUtils } from '../functionUtils';
 import { MemoryInterface } from '../memory/memoryInterface';
 import { Options } from '../options';
 import { ReturnType } from '../returnType';
+import bigInt from 'big-integer';
 
 /**
  * Convert ticks to number of days.
@@ -35,8 +36,11 @@ export class TicksToDays extends ExpressionEvaluator {
         const { args, error: childrenError } = FunctionUtils.evaluateChildren(expr, state, options);
         let error = childrenError;
         if (!error) {
-            if (Number.isInteger(args[0])) {
-                value = args[0] / TicksToDays.TicksPerDay;
+            const firstChild = args[0];
+            if (Number.isInteger(firstChild)) {
+                value = firstChild / TicksToDays.TicksPerDay;
+            } else if (bigInt.isInstance(firstChild)) {
+                value = firstChild.toJSNumber() / TicksToDays.TicksPerDay;
             } else {
                 error = `${expr} should contain an integer of ticks`;
             }

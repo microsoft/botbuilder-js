@@ -9,6 +9,7 @@ import { Expression } from './expression';
 import { ReturnType } from './returnType';
 import { ExpressionEvaluator, ValueWithError } from './expressionEvaluator';
 import { ExpressionType } from './expressionType';
+import { FunctionUtils } from './functionUtils';
 
 /**
  * Construct an expression constant.
@@ -32,7 +33,7 @@ export class Constant extends Expression {
                 ? ReturnType.String
                 : typeof theValue === 'boolean'
                 ? ReturnType.Boolean
-                : typeof theValue === 'number' && !Number.isNaN(theValue)
+                : FunctionUtils.isNumber(theValue)
                 ? ReturnType.Number
                 : Array.isArray(theValue)
                 ? ReturnType.Array
@@ -93,7 +94,7 @@ export class Constant extends Expression {
             result = result.replace(/\\/g, '\\\\');
             result = this.reverseString(this.reverseString(result).replace(this.singleQuotRegex, (): any => "'\\"));
             return `'${result}'`;
-        } else if (typeof this.value === 'number') {
+        } else if (FunctionUtils.isNumber(this.value)) {
             return this.value.toString();
         } else if (typeof this.value === 'object') {
             return JSON.stringify(this.value);

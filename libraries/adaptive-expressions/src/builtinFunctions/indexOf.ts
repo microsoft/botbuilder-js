@@ -35,7 +35,7 @@ export class IndexOf extends ExpressionEvaluator {
         const { args, error: childrenError } = FunctionUtils.evaluateChildren(expression, state, options);
         let error = childrenError;
         if (!error) {
-            if (args[0] == undefined || typeof args[0] === 'string') {
+            if (args[0] == null || typeof args[0] === 'string') {
                 if (args[1] === undefined || typeof args[1] === 'string') {
                     value = InternalFunctionUtils.parseStringOrUndefined(args[0]).indexOf(
                         InternalFunctionUtils.parseStringOrUndefined(args[1])

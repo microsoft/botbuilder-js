@@ -35,7 +35,7 @@ export class FormatEpoch extends ExpressionEvaluator {
             let arg: any = args[0];
             let locale = options.locale ? options.locale : Intl.DateTimeFormat().resolvedOptions().locale;
             let format = FunctionUtils.DefaultDateTimeFormat;
-            if (typeof arg !== 'number') {
+            if (!FunctionUtils.isNumber(arg)) {
                 error = `formatEpoch first argument ${arg} must be a number`;
             } else {
                 // Convert to ms

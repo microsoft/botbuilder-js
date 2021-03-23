@@ -9,7 +9,7 @@
 import { TimexProperty } from '@microsoft/recognizers-text-data-types-timex-expression';
 import dayjs from 'dayjs';
 import { Expression } from '../expression';
-import { EvaluateExpressionDelegate, ExpressionEvaluator } from '../expressionEvaluator';
+import { EvaluateExpressionDelegate, ExpressionEvaluator, ValueWithError } from '../expressionEvaluator';
 import { ExpressionType } from '../expressionType';
 import { FunctionUtils } from '../functionUtils';
 import { InternalFunctionUtils } from '../functionUtils.internal';
@@ -30,7 +30,7 @@ export class DateReadBack extends ExpressionEvaluator {
      * @private
      */
     private static evaluator(): EvaluateExpressionDelegate {
-        return FunctionUtils.applyWithError((args: any[]): any => {
+        return FunctionUtils.applyWithError((args: any[]): ValueWithError => {
             const dateFormat = 'YYYY-MM-DD';
             let error = InternalFunctionUtils.verifyISOTimestamp(args[0]);
             if (!error) {
@@ -43,7 +43,7 @@ export class DateReadBack extends ExpressionEvaluator {
                     return { value: timex.toNaturalLanguage(timestamp1), error };
                 }
             }
-            return {undefined, error}
+            return { value: undefined, error };
         }, FunctionUtils.verifyString);
     }
 

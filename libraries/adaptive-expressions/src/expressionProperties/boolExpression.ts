@@ -28,8 +28,7 @@ export class BoolExpression extends ExpressionProperty<boolean> {
      */
     public setValue(value: boolean | string | Expression): void {
         if (
-            value !== undefined &&
-            value !== null &&
+            value != null &&
             typeof value !== 'boolean' &&
             typeof value !== 'string' &&
             !(value instanceof Expression)

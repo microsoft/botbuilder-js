@@ -7,7 +7,7 @@
  */
 
 import bigInt from 'big-integer';
-import { EvaluateExpressionDelegate, ExpressionEvaluator } from '../expressionEvaluator';
+import { EvaluateExpressionDelegate, ExpressionEvaluator, ValueWithError } from '../expressionEvaluator';
 import { ExpressionType } from '../expressionType';
 import { FunctionUtils } from '../functionUtils';
 import { ReturnType } from '../returnType';
@@ -27,17 +27,25 @@ export class Int extends ExpressionEvaluator {
      * @private
      */
     private static evaluator(): EvaluateExpressionDelegate {
-        return FunctionUtils.applyWithError((args: any[]): any => {
-            let error: string;
-            if (bigInt.isInstance(args[0])) {
-                return {value: args[0].toJSNumber(), error}
-            }
-            const value: number = parseInt(args[0], 10);
-            if (!FunctionUtils.isNumber(value)) {
-                error = `parameter ${args[0]} is not a valid number string.`;
-            }
+        return FunctionUtils.applyWithError(
+            (args: readonly unknown[]): ValueWithError => {
+                let error: string;
+                let value: unknown;
+                const firstChild = args[0];
+                if (bigInt.isInstance(firstChild)) {
+                    return { value: firstChild.toJSNumber(), error };
+                }
+                if (typeof firstChild === 'string') {
+                    value = parseInt(firstChild, 10);
+                    if (!FunctionUtils.isNumber(value)) {
+                        error = `parameter ${args[0]} is not a valid number string.`;
+                    }
+                } else if (FunctionUtils.isNumber(firstChild)) {
+                    value = parseInt(firstChild.toString(), 10);
+                }
 
-            return { value, error };
-        });
+                return { value, error };
+            }
+        );
     }
 }

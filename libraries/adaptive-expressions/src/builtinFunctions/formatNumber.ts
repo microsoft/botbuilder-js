@@ -41,9 +41,9 @@ export class FormatNumber extends ExpressionEvaluator {
             const precision = args[1];
             let locale = options.locale ? options.locale : Intl.DateTimeFormat().resolvedOptions().locale;
             locale = FunctionUtils.determineLocale(args, 3, locale);
-            if (typeof number !== 'number') {
+            if (!FunctionUtils.isNumber(number)) {
                 error = `formatNumber first argument ${number} must be a number`;
-            } else if (typeof precision !== 'number') {
+            } else if (!FunctionUtils.isNumber(precision)) {
                 error = `formatNumber second argument ${precision} must be a number`;
             } else if (locale && typeof locale !== 'string') {
                 error = `formatNubmer third argument ${locale} is not a valid locale`;
