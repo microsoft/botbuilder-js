@@ -30,7 +30,7 @@
         },
         {
             "$kind": "Microsoft.Test.AssertReply",
-            "text": "Text Call to onRenderPrompt() returned a null activity for state missing."
+            "text": "Call to onRenderPrompt() returned a null activity for state missing."
         }
     ]
 }
