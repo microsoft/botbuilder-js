@@ -256,7 +256,9 @@ export abstract class InputDialog extends Dialog implements InputDialogConfigura
                         },
                     });
 
-                    await dc.context.sendActivity(response);
+                    if (response != null) {
+                        await dc.context.sendActivity(response);
+                    }
                 }
 
                 const property = this.property.getValue(dc.state);
