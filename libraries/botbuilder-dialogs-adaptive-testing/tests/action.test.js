@@ -391,6 +391,10 @@ describe('ActionTests', function () {
         await TestUtils.runTestScript(resourceExplorer, 'Action_TextInputWithValueExpression');
     });
 
+    it('TextInputWithInvalidResponse', async () => {
+        await TestUtils.runTestScript(resourceExplorer, 'Action_TextInputWithInvalidResponse');
+    });
+
     it('TextInputWithNonStringInput', async () => {
         await TestUtils.runTestScript(resourceExplorer, 'Action_TextInputWithNonStringInput');
     });

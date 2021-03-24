@@ -1,8 +1,10 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-import assert from 'assert';
-import { JwtTokenValidation, SkillValidation, ValidateClaims } from 'botframework-connector';
+import { JwtTokenValidation } from './jwtTokenValidation';
+import { SkillValidation } from './skillValidation';
+import { ValidateClaims } from './authenticationConfiguration';
+import { ok } from 'assert';
 
 /**
  * Create an allowe callers claims validator
@@ -11,8 +13,8 @@ import { JwtTokenValidation, SkillValidation, ValidateClaims } from 'botframewor
  * @returns claims validator function
  */
 export function allowedCallersClaimsValidator(allowedCallers: string[]): ValidateClaims {
-    assert.ok(allowedCallers);
-    assert.ok(allowedCallers.length);
+    ok(allowedCallers);
+    ok(allowedCallers.length);
 
     const allowed = new Set(allowedCallers);
 

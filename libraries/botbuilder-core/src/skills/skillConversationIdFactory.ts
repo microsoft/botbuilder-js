@@ -1,14 +1,12 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-import {
-    ConversationReference,
-    SkillConversationIdFactoryBase,
-    SkillConversationIdFactoryOptions,
-    SkillConversationReference,
-    Storage,
-    TurnContext,
-} from 'botbuilder';
+import { ConversationReference } from 'botframework-schema';
+import { SkillConversationIdFactoryBase } from './skillConversationIdFactoryBase';
+import { SkillConversationIdFactoryOptions } from './skillConversationIdFactoryOptions';
+import { SkillConversationReference } from './skillConversationReference';
+import { Storage } from '../storage';
+import { TurnContext } from '../turnContext';
 
 export class SkillConversationIdFactory extends SkillConversationIdFactoryBase {
     constructor(private readonly storage: Storage) {
