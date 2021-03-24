@@ -38,29 +38,24 @@ describe(`MiddlewareSet`, () => {
         set.use(middleware('a'), middleware('b'), middleware('c'));
     });
 
-    it(`should run all middleware in order.`, (done) => {
+    it(`should run all middleware in order.`, async function () {
         const { middleware, set, stack } = stackMiddleware();
         set.use(middleware(1), middleware(2), middleware(3));
 
-        set.run(context, () => {
+        await set.run(context, () => {
             assert.deepStrictEqual(stack, [3, 2, 1], 'stack holds expected values');
-        })
-            .then(done)
-            .catch(done);
+        });
     });
 
-    it(`should run a middleware set added to another middleware set.`, (done) => {
+    it(`should run a middleware set added to another middleware set.`, async function () {
         const { middleware, set: child, stack } = stackMiddleware();
 
         child.use(middleware(1));
         const parent = new MiddlewareSet(child);
 
-        parent
-            .run(context, () => {
-                assert.deepStrictEqual(stack, [1]);
-            })
-            .then(done)
-            .catch(done);
+        await parent.run(context, () => {
+            assert.deepStrictEqual(stack, [1]);
+        });
     });
 
     it(`should run middleware with a leading and trailing edge.`, async () => {
@@ -81,63 +76,54 @@ describe(`MiddlewareSet`, () => {
         assert.deepStrictEqual(stack, [2, 3, 1]);
     });
 
-    it(`should support middleware added as an object.`, (done) => {
+    it(`should support middleware added as an object.`, async function () {
         const { middleware, set, stack } = stackMiddleware();
 
         set.use({ onTurn: middleware(1) }).use({ onTurn: middleware(2) });
 
-        set.run(context, () => {
+        await set.run(context, () => {
             assert.deepStrictEqual(stack, [2, 1]);
-        })
-            .then(done)
-            .catch(done);
+        });
     });
 
-    it(`not calling next() should intercept other middleware and bot logic.`, (done) => {
+    it(`not calling next() should intercept other middleware and bot logic.`, async function () {
         const { middleware, set, stack } = stackMiddleware();
 
         set.use(middleware(1), noop, middleware(2));
 
-        set.run(context, () => {
+        await set.run(context, () => {
             assert.deepStrictEqual(stack, [1]);
-        })
-            .then(done)
-            .catch(done);
+        });
     });
 
-    it(`should map an exception within middleware to a rejection.`, function (done) {
+    it(`should map an exception within middleware to a rejection.`, async function () {
         const { middleware, set, stack } = stackMiddleware();
 
         set.use(middleware(1), () => Promise.reject(new Error('rejected')), middleware(2));
 
-        set.run(context, noop)
-            .then(() => done(new Error('expected error')))
-            .catch(() => {
-                try {
-                    assert.deepStrictEqual(stack, [1]);
-                    done();
-                } catch (err) {
-                    done(err);
-                }
-            });
+        try {
+            await set.run(context, noop);
+            assert.fail('Expected error');
+        } catch (err) {
+            assert.strictEqual(err.message, 'rejected');
+            assert.deepStrictEqual(stack, [1]);
+        }
     });
 
     it(`should throw an error if an invalid plugin type is added.`, () => {
         assert.throws(() => new MiddlewareSet().use('bogus'));
     });
 
-    it(`should support passing middleware into the constructor of the set.`, (done) => {
+    it(`should support passing middleware into the constructor of the set.`, async function () {
         const { middleware, stack } = stackMiddleware();
 
-        new MiddlewareSet(middleware(1), middleware(2), middleware(3))
-            .run(context, () => {
-                assert.deepStrictEqual(stack, [3, 2, 1]);
-            })
-            .then(done)
-            .catch(done);
+        const set = new MiddlewareSet(middleware(1), middleware(2), middleware(3));
+        await set.run(context, () => {
+            assert.deepStrictEqual(stack, [3, 2, 1]);
+        });
     });
 
-    it('should unroll middleware even if some later middleware rejects', (done) => {
+    it('should unroll middleware even if some later middleware rejects', async function () {
         const { middleware, set, stack } = stackMiddleware();
 
         set.use(
@@ -154,20 +140,16 @@ describe(`MiddlewareSet`, () => {
             middleware(4)
         );
 
-        set.run(context, noop)
-            .then(() => done(new Error('expected error')))
-            .catch((err) => {
-                try {
-                    assert.strictEqual(err.message, 'rejected');
-                    assert.deepStrictEqual(stack, [1]);
-                    done();
-                } catch (err) {
-                    done(err);
-                }
-            });
+        try {
+            await set.run(context, noop);
+            assert.fail('Expected error');
+        } catch (err) {
+            assert.strictEqual(err.message, 'rejected');
+            assert.deepStrictEqual(stack, [1]);
+        }
     });
 
-    it('should unroll middleware even if the next handler reject', (done) => {
+    it('should unroll middleware even if the next handler reject', async function () {
         const { middleware, set, stack } = stackMiddleware();
 
         set.use(middleware(1), async (_, next) => {
@@ -179,16 +161,12 @@ describe(`MiddlewareSet`, () => {
             }
         });
 
-        set.run(context, () => Promise.reject(new Error('rejected')))
-            .then(() => done(new Error('expected error')))
-            .catch((err) => {
-                try {
-                    assert.strictEqual(err.message, 'rejected');
-                    assert.deepStrictEqual(stack, [1]);
-                    done();
-                } catch (err) {
-                    done(err);
-                }
-            });
+        try {
+            await set.run(context, () => Promise.reject(new Error('rejected')));
+            assert.fail('Expected error');
+        } catch (err) {
+            assert.strictEqual(err.message, 'rejected');
+            assert.deepStrictEqual(stack, [1]);
+        }
     });
 });
