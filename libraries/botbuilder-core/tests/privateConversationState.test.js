@@ -1,19 +1,25 @@
 const assert = require('assert');
 const { TurnContext, ActivityTypes, PrivateConversationState, MemoryStorage, TestAdapter } = require('../');
 
-const receivedMessage = { text: 'received', type: 'message', channelId: 'test', conversation: { id: 'convo' }, from: { id: 'user' } };
+const receivedMessage = {
+    text: 'received',
+    type: 'message',
+    channelId: 'test',
+    conversation: { id: 'convo' },
+    from: { id: 'user' },
+};
 const missingChannelId = { text: 'received', type: 'message', conversation: { id: 'convo' }, from: { id: 'user' } };
 const missingConversation = { text: 'received', type: 'message', channelId: 'test', from: { id: 'user' } };
-const missingFrom = { text: 'received', type: 'message', channelId: 'test', conversation: { id: 'convo' }, };
+const missingFrom = { text: 'received', type: 'message', channelId: 'test', conversation: { id: 'convo' } };
 
-describe(`PrivateConversationState`, function() {
+describe(`PrivateConversationState`, function () {
     this.timeout(5000);
 
     const storage = new MemoryStorage();
     const adapter = new TestAdapter();
     const context = new TurnContext(adapter, receivedMessage);
     const privateConversationState = new PrivateConversationState(storage);
-    it(`should load and save state from storage.`, async function() {
+    it(`should load and save state from storage.`, async function () {
         // Simulate a "Turn" in a conversation by loading the state,
         // changing it and then saving the changes to state.
         await privateConversationState.load(context);
@@ -30,7 +36,7 @@ describe(`PrivateConversationState`, function() {
         assert(items[key].test === 'foo', `Missing test value in stored state.`);
     });
 
-    it(`should ignore any activities that aren't "endOfConversation".`, async function() {
+    it(`should ignore any activities that aren't "endOfConversation".`, async function () {
         await privateConversationState.load(context);
         const key = privateConversationState.getStorageKey(context);
         assert(privateConversationState.get(context).test === 'foo', `invalid initial state`);
@@ -40,7 +46,7 @@ describe(`PrivateConversationState`, function() {
         assert(items[key].hasOwnProperty('test'), `state cleared and shouldn't have been.`);
     });
 
-    it(`should reject with error if channelId missing.`, async function() {
+    it(`should reject with error if channelId missing.`, async function () {
         const ctx = new TurnContext(adapter, missingChannelId);
         try {
             await privateConversationState.load(ctx);
@@ -51,7 +57,7 @@ describe(`PrivateConversationState`, function() {
         }
     });
 
-    it(`should reject with error if conversation missing.`, async function() {
+    it(`should reject with error if conversation missing.`, async function () {
         const ctx = new TurnContext(adapter, missingConversation);
         try {
             await privateConversationState.load(ctx);
@@ -62,7 +68,7 @@ describe(`PrivateConversationState`, function() {
         }
     });
 
-    it(`should reject with error if from missing.`, async function() {
+    it(`should reject with error if from missing.`, async function () {
         const ctx = new TurnContext(adapter, missingFrom);
         try {
             await privateConversationState.load(ctx);
@@ -73,23 +79,15 @@ describe(`PrivateConversationState`, function() {
         }
     });
 
-    it(`should throw install exception if get() called without a cached entry.`, function(done) {
-        context.turnState.set('privateConversationState', undefined);
-        try {
-            privateConversationState.get(context);
-            assert(false, `exception not thrown.`);
-        } catch (err) {
-            done();
-        }
-    });
-    
-    it(`should throw NO_KEY error if getStorageKey() returns falsey value.`, async function() {
-        privateConversationState.getStorageKey = turnContext => undefined;
+    it(`should throw NO_KEY error if getStorageKey() returns falsey value.`, async function () {
+        privateConversationState.getStorageKey = (turnContext) => undefined;
         try {
             await privateConversationState.load(context, true);
         } catch (err) {
-            assert(err.message === 'PrivateConversationState: overridden getStorageKey method did not return a key.',
-                `unexpected Error.message received: ${ err.message }`);
+            assert(
+                err.message === 'PrivateConversationState: overridden getStorageKey method did not return a key.',
+                `unexpected Error.message received: ${err.message}`
+            );
             return;
         }
         assert(false, `should have thrown an error.`);

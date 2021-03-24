@@ -14,7 +14,7 @@ describe(`UserState`, function () {
     const userState = new UserState(storage);
     it(`should load and save state from storage.`, async function () {
         let key;
-    
+
         // Simulate a "Turn" in a conversation by loading the state,
         // changing it and then saving the changes to state.
         await userState.load(context);
@@ -38,7 +38,7 @@ describe(`UserState`, function () {
             assert(false, `shouldn't have completed.`);
         } catch (err) {
             assert(err, `error object missing.`);
-            assert.equal(err.message, "missing activity.channelId");
+            assert.equal(err.message, 'missing activity.channelId');
         }
     });
 
@@ -49,27 +49,19 @@ describe(`UserState`, function () {
             assert(false, `shouldn't have completed.`);
         } catch (err) {
             assert(err, `error object missing.`);
-            assert.equal(err.message, "missing activity.from.id");
-        }
-    });
-
-    it(`should throw install exception if get() called without a cached entry.`, function (done) {
-        context.turnState.set('userState', undefined);
-        try {
-            UserState.get(context);
-            assert(false, `exception not thrown.`);
-        } catch (err) {
-            done();
+            assert.equal(err.message, 'missing activity.from.id');
         }
     });
 
     it(`should throw NO_KEY error if getStorageKey() returns falsey value.`, async function () {
-        userState.getStorageKey = turnContext => undefined;
+        userState.getStorageKey = (turnContext) => undefined;
         try {
             await userState.load(context, true);
         } catch (err) {
-            assert(err.message === 'UserState: overridden getStorageKey method did not return a key.',
-                `unexpected Error.message received: ${err.message}`);
+            assert(
+                err.message === 'UserState: overridden getStorageKey method did not return a key.',
+                `unexpected Error.message received: ${err.message}`
+            );
             return;
         }
         assert(false, `should have thrown an error.`);
