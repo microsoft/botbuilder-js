@@ -21,7 +21,7 @@ const {
     DialogTurnStatus,
     DialogEvents,
 } = require('../');
-const { AuthConstants } = require('../lib/prompts/skillsHelpers');
+const { AuthenticationConstants } = require('botframework-connector');
 const { AdaptiveDialog, OnBeginDialog, EndTurn, SendActivity } = require('../../botbuilder-dialogs-adaptive/lib');
 
 const FlowTestCase = {
@@ -93,7 +93,7 @@ function createTestFlow(dialog, testCase = FlowTestCase.RootBotOnly, enabledTrac
                     // Simulate the SkillConversationReference with a channel OAuthScope stored in turnState.
                     // This emulates a response coming to a root bot through SkillHandler.
                     context.turnState.set(SkillConversationReferenceKey, {
-                        oAuthScope: AuthConstants.ToBotFromChannelTokenIssuer,
+                        oAuthScope: AuthenticationConstants.ToBotFromChannelTokenIssuer,
                     });
                 }
 
