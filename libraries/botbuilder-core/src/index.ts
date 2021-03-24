@@ -37,12 +37,13 @@ export * from './registerClassMiddleware';
 export * from './showTypingMiddleware';
 export * from './signInConstants';
 export {
-    BotFrameworkSkill,
     BotFrameworkClient,
+    BotFrameworkSkill,
+    SkillConversationIdFactory,
     SkillConversationIdFactoryBase,
+    SkillConversationIdFactoryOptions,
     SkillConversationReference,
     SkillConversationReferenceKey,
-    SkillConversationIdFactoryOptions,
 } from './skills';
 export * from './skypeMentionNormalizeMiddleware';
 export * from './storage';
