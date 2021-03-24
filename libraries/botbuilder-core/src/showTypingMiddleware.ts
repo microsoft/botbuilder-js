@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 import { ActivityTypes } from 'botframework-schema';
-import { SkillValidation } from 'botframework-connector';
+import { ClaimsIdentity, SkillValidation } from 'botframework-connector';
 import { Middleware } from './middlewareSet';
 import { TurnContext } from './turnContext';
 
@@ -78,7 +78,7 @@ export class ShowTypingMiddleware implements Middleware {
     }
 
     private isSkillBot(context: TurnContext) {
-        const identity = context.turnState.get(context.adapter.BotIdentityKey);
+        const identity = context.turnState.get<ClaimsIdentity>(context.adapter.BotIdentityKey);
         return identity && SkillValidation.isSkillClaim(identity.claims);
     }
 

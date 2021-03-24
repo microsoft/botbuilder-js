@@ -15,7 +15,7 @@ const {
 const { spy } = require('sinon');
 const { ok, strictEqual } = require('assert');
 const { OAuthPrompt, DialogSet, DialogTurnStatus, ListStyle } = require('../');
-const { AuthConstants } = require('../lib/prompts/skillsHelpers');
+const { AuthenticationConstants } = require('botframework-connector');
 
 describe('OAuthPrompt', function () {
     this.timeout(60000);
@@ -621,7 +621,7 @@ describe('OAuthPrompt', function () {
                     new ClaimsIdentity([
                         { type: 'azp', value: uuid() },
                         { type: 'ver', value: '2.0' },
-                        { type: 'aud', value: AuthConstants.ToBotFromChannelTokenIssuer },
+                        { type: 'aud', value: AuthenticationConstants.ToBotFromChannelTokenIssuer },
                     ])
                 );
                 // Override sendActivity

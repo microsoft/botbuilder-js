@@ -11,6 +11,22 @@ const TURN_STATE_SCOPE_CACHE = Symbol('turnStateScopeCache');
  * as [Storage](xref:botbuilder-core.Storage), [BotState](xref:botbuilder-core.BotState), [ConversationState](xref:botbuilder-core.ConversationState), [LanguageGenerator](xref:botbuilder-dialogs-adaptive.LanguageGenerator), [ResourceExplorer](xref:botbuilder-dialogs-declarative.ResourceExplorer), etc.
  */
 export class TurnContextStateCollection extends Map<any, any> {
+
+    /**
+     * Gets a typed value from the [TurnContextStateCollection](xref:botbuilder-core.TurnContextStateCollection).
+     * @param key The values key.
+     */
+    public get<T = any>(key: any): T;
+
+    /**
+     * Gets a value from the [TurnContextStateCollection](xref:botbuilder-core.TurnContextStateCollection).
+     * @param key The values key.
+     */
+    public get(key: any): any;
+    public get(key: any): unknown {
+        return super.get(key);
+    }
+
     /**
      * Push a value by key to the turn's context.
      * @remarks

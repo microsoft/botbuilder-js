@@ -27,10 +27,11 @@ import {
     tokenExchangeOperationName,
     tokenResponseEventName,
 } from 'botbuilder-core';
+import { ClaimsIdentity, JwtTokenValidation, SkillValidation } from 'botframework-connector';
+
 import { Dialog, DialogTurnResult } from '../dialog';
 import { DialogContext } from '../dialogContext';
 import { PromptOptions, PromptRecognizerResult, PromptValidator } from './prompt';
-import { isSkillClaim, getAppIdFromClaims } from './skillsHelpers';
 
 /**
  * Response body returned for a token exchange invoke activity.
@@ -377,7 +378,7 @@ export class OAuthPrompt extends Dialog {
                 settings.oAuthAppCredentials
             );
             let link = signInResource.signInLink;
-            const identity = turnContext.turnState.get((turnContext.adapter as BotAdapter).BotIdentityKey);
+            const identity = turnContext.turnState.get<ClaimsIdentity>((turnContext.adapter as BotAdapter).BotIdentityKey);
 
             // use the SignInLink when
             //   in speech channel or
@@ -385,7 +386,7 @@ export class OAuthPrompt extends Dialog {
             //   an extra OAuthAppCredentials is being passed in
             if (
                 OAuthPrompt.isFromStreamingConnection(turnContext.activity) ||
-                (identity && isSkillClaim(identity.claims)) ||
+                (identity && SkillValidation.isSkillClaim(identity.claims)) ||
                 settings.oAuthAppCredentials
             ) {
                 if (turnContext.activity.channelId === Channels.Emulator) {
@@ -448,7 +449,7 @@ export class OAuthPrompt extends Dialog {
                 // The ConnectorClientBuilder interface is currently not browser friendly, and therefore
                 // not availble in botbuilder-dialogs. Instead the context.adapter is cast to any.
                 const connectorClientBuilder: any = context.adapter;
-                const claimsIdentity = context.turnState.get(context.adapter.BotIdentityKey);
+                const claimsIdentity = context.turnState.get<ClaimsIdentity>(context.adapter.BotIdentityKey);
                 const connectorClient = await (context.adapter as any).createConnectorClientWithIdentity(
                     dc.context.activity.serviceUrl,
                     claimsIdentity,
@@ -546,11 +547,11 @@ export class OAuthPrompt extends Dialog {
      * @private
      */
     private static createCallerInfo(context: TurnContext) {
-        const botIdentity = context.turnState.get(context.adapter.BotIdentityKey);
-        if (botIdentity && isSkillClaim(botIdentity.claims)) {
+        const botIdentity = context.turnState.get<ClaimsIdentity>(context.adapter.BotIdentityKey);
+        if (botIdentity && SkillValidation.isSkillClaim(botIdentity.claims)) {
             return {
                 callerServiceUrl: context.activity.serviceUrl,
-                scope: getAppIdFromClaims(botIdentity.claims),
+                scope: JwtTokenValidation.getAppIdFromClaims(botIdentity.claims),
             };
         }
 
