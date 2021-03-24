@@ -6,12 +6,20 @@
 /* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 
 class MockResolver {
-    constructor(score) {
+    constructor(score, entityScore = null) {
         this._score = score;
+        this._entityScore 
     }
 
-    score(_text) {
-        return this._score;
+    score(_text, labelType = 1) {
+        if (labelType == 1) {
+            return this._score;
+        }
+        else if (labelType == 2) {
+            return this._entityScore;
+        }
+        
+        throw new Error('Not supported!');
     }
 }
 

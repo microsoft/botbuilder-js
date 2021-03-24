@@ -32,7 +32,7 @@ export class GreaterThanOrEqual extends ComparisonEvaluator {
      */
     private static func(args: any[]): boolean {
         if (
-            (typeof args[0] === 'number' && typeof args[1] === 'number') ||
+            (FunctionUtils.isNumber(args[0]) && FunctionUtils.isNumber(args[1])) ||
             (typeof args[0] === 'string' && typeof args[1] === 'string') ||
             (args[0] instanceof Date && args[1] instanceof Date)
         ) {

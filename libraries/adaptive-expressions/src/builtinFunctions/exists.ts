@@ -25,6 +25,6 @@ export class Exists extends ComparisonEvaluator {
      * @private
      */
     private static func(args: any[]): boolean {
-        return args[0] !== undefined && args[0] !== null;
+        return args[0] != null;
     }
 }

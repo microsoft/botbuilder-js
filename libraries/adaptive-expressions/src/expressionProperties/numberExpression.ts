@@ -7,6 +7,7 @@
  */
 import { ExpressionProperty } from './expressionProperty';
 import { Expression } from '../expression';
+import { FunctionUtils } from '../functionUtils';
 
 /**
  * Represents a property which is either a float or a string expression which resolves to a float.
@@ -28,9 +29,8 @@ export class NumberExpression extends ExpressionProperty<number> {
      */
     public setValue(value: number | string | Expression): void {
         if (
-            value !== undefined &&
-            value !== null &&
-            typeof value !== 'number' &&
+            value != null &&
+            !FunctionUtils.isNumber(value) &&
             typeof value !== 'string' &&
             !(value instanceof Expression)
         ) {

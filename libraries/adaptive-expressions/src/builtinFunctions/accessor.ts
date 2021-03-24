@@ -36,7 +36,7 @@ export class Accessor extends ExpressionEvaluator {
             return { value: undefined, error };
         }
 
-        if (left == undefined) {
+        if (left == null) {
             // fully converted to path, so we just delegate to memory scope
             return { value: InternalFunctionUtils.wrapGetValue(state, path, options), error: undefined };
         } else {

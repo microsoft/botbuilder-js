@@ -10,6 +10,7 @@ import { EvaluateExpressionDelegate, ExpressionEvaluator } from '../expressionEv
 import { ExpressionType } from '../expressionType';
 import { FunctionUtils } from '../functionUtils';
 import { ReturnType } from '../returnType';
+import bigInt from 'big-integer';
 
 /**
  * Convert the string version of a floating-point number to a floating-point number.
@@ -27,10 +28,19 @@ export class Float extends ExpressionEvaluator {
      */
     private static evaluator(): EvaluateExpressionDelegate {
         return FunctionUtils.applyWithError((args: any[]): any => {
+            const firstChild = args[0];
             let error: string;
-            const value: number = parseFloat(args[0]);
-            if (!FunctionUtils.isNumber(value)) {
-                error = `parameter ${args[0]} is not a valid number string.`;
+            let value: unknown;
+            if (bigInt.isInstance(firstChild)) {
+                return { value: firstChild.toJSNumber(), error };
+            }
+            if (typeof firstChild === 'string') {
+                value = parseFloat(firstChild);
+                if (!FunctionUtils.isNumber(value)) {
+                    error = `parameter ${args[0]} is not a valid number string.`;
+                }
+            } else if (FunctionUtils.isNumber(firstChild)) {
+                value = firstChild;
             }
 
             return { value, error };

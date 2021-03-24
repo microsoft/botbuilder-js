@@ -33,7 +33,7 @@ export class Count extends ExpressionEvaluator {
                 count = args[0].length;
             } else if (args[0] instanceof Map) {
                 count = args[0].size;
-            } else if (typeof args[0] == 'object') {
+            } else if (typeof args[0] === 'object') {
                 count = Object.keys(args[0]).length;
             }
 

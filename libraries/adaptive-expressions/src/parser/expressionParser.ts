@@ -16,6 +16,7 @@ import { ExpressionType } from '../expressionType';
 import { ExpressionAntlrLexer, ExpressionAntlrParser, ExpressionAntlrParserVisitor } from './generated';
 import * as ep from './generated/ExpressionAntlrParser';
 import { ParseErrorListener } from './parseErrorListener';
+import { FunctionUtils } from '../functionUtils';
 
 /**
  * Parser to turn strings into Expression
@@ -115,7 +116,7 @@ export class ExpressionParser implements ExpressionParserInterface {
 
         public visitNumericAtom(context: ep.NumericAtomContext): Expression {
             const numberValue: number = parseFloat(context.text);
-            if (typeof numberValue === 'number' && !Number.isNaN(numberValue)) {
+            if (FunctionUtils.isNumber(numberValue)) {
                 return new Constant(numberValue);
             }
 
@@ -307,7 +308,7 @@ export class ExpressionParser implements ExpressionParserInterface {
      * @returns Expression tree.
      */
     public parse(expression: string): Expression {
-        if (expression === undefined || expression === null || expression === '') {
+        if (expression == null || expression === '') {
             return new Constant('');
         } else {
             return new this.ExpressionTransformer(this.EvaluatorLookup).transform(
