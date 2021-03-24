@@ -11,7 +11,7 @@ const {
     UserState,
 } = require('botbuilder-core');
 const { ComponentDialog, DialogReason, runDialog, TextPrompt, WaterfallDialog } = require('../');
-const { AuthConstants } = require('../lib/prompts/skillsHelpers');
+const { AuthenticationConstants } = require('botframework-connector');
 const { EndOfConversationCodes } = require('botbuilder-core');
 
 const FlowTestCase = {
@@ -77,7 +77,7 @@ function createTestFlow(dialog, testCase) {
                 // Simulate the SkillConversationReference with a channel OAuthScope stored in turnState.
                 // This emulates a response coming to a root bot through SkillHandler.
                 context.turnState.set(SkillConversationReferenceKey, {
-                    oAuthScope: AuthConstants.ToBotFromChannelTokenIssuer,
+                    oAuthScope: AuthenticationConstants.ToBotFromChannelTokenIssuer,
                 });
             }
 

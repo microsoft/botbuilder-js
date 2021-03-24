@@ -11,17 +11,20 @@ import {
     ActivityEx,
     ActivityTypes,
     EndOfConversationCodes,
+    BotTelemetryClient,
+    BotTelemetryClientKey,
     SkillConversationReference,
     SkillConversationReferenceKey,
     StatePropertyAccessor,
     TurnContext,
 } from 'botbuilder-core';
+import { AuthenticationConstants, ClaimsIdentity, GovernmentConstants, SkillValidation } from 'botframework-connector';
+
 import { DialogContext, DialogState } from './dialogContext';
 import { Dialog, DialogTurnStatus, DialogTurnResult } from './dialog';
 import { DialogEvents } from './dialogEvents';
 import { DialogSet } from './dialogSet';
 import { DialogStateManager } from './memory';
-import { AuthConstants, GovConstants, isSkillClaim } from './prompts/skillsHelpers';
 
 /**
  * Runs a dialog from a given context and accessor.
@@ -52,12 +55,9 @@ export async function runDialog(
     }
 
     const dialogSet = new DialogSet(accessor);
-    dialogSet.add(dialog);
+    dialogSet.telemetryClient = context.turnState.get<BotTelemetryClient>(BotTelemetryClientKey) ?? dialog.telemetryClient;
 
-    // This implementation differs from the .NET SDK's implementation. In the JS SDK, BotTelemetryClient's are not injected into the TurnState.
-    // If no BotTelemetryClient is set on a Dialog it automatically defaults to a new NullTelemetryClient instance.
-    // https://github.com/microsoft/botbuilder-dotnet/blob/e7240a7b53c3a6bef36e6d48c06646c4537cdf1e/libraries/Microsoft.Bot.Builder.Dialogs/DialogExtensions.cs#L37-L38
-    dialogSet.telemetryClient = dialog.telemetryClient;
+    dialogSet.add(dialog);
 
     const dialogContext = await dialogSet.createContext(context);
 
@@ -182,9 +182,9 @@ export function shouldSendEndOfConversationToParent(context: TurnContext, turnRe
         return false;
     }
 
-    const claimIdentity = context.turnState.get(context.adapter.BotIdentityKey);
+    const claimIdentity = context.turnState.get<ClaimsIdentity>(context.adapter.BotIdentityKey);
     // Inspect the cached ClaimsIdentity to determine if the bot was called from another bot.
-    if (claimIdentity && isSkillClaim(claimIdentity.claims)) {
+    if (claimIdentity && SkillValidation.isSkillClaim(claimIdentity.claims)) {
         // EoC Activities returned by skills are bounced back to the bot by SkillHandler.
         // In those cases we will have a SkillConversationReference instance in state.
         const skillConversationReference: SkillConversationReference = context.turnState.get(
@@ -193,8 +193,8 @@ export function shouldSendEndOfConversationToParent(context: TurnContext, turnRe
         if (skillConversationReference) {
             // If the skillConversationReference.OAuthScope is for one of the supported channels, we are at the root and we should not send an EoC.
             return (
-                skillConversationReference.oAuthScope !== AuthConstants.ToBotFromChannelTokenIssuer &&
-                skillConversationReference.oAuthScope !== GovConstants.ToBotFromChannelTokenIssuer
+                skillConversationReference.oAuthScope !== AuthenticationConstants.ToBotFromChannelTokenIssuer &&
+                skillConversationReference.oAuthScope !== GovernmentConstants.ToBotFromChannelTokenIssuer
             );
         }
 
@@ -232,15 +232,15 @@ export function isFromParentToSkill(context: TurnContext): boolean {
     }
 
     // Inspect the cached ClaimsIdentity to determine if the bot is acting as a skill.
-    const identity = context.turnState.get(context.adapter.BotIdentityKey);
-    return identity && isSkillClaim(identity.claims);
+    const identity = context.turnState.get<ClaimsIdentity>(context.adapter.BotIdentityKey);
+    return identity && SkillValidation.isSkillClaim(identity.claims);
 }
 
 // Helper to send a trace activity with a memory snapshot of the active dialog DC.
 const sendStateSnapshotTrace = async (dialogContext: DialogContext): Promise<void> => {
     const adapter = dialogContext.context.adapter;
-    const claimIdentity = dialogContext.context.turnState.get(adapter.BotIdentityKey);
-    const traceLabel = claimIdentity && isSkillClaim(claimIdentity.claims) ? 'Skill State' : 'Bot State';
+    const claimIdentity = dialogContext.context.turnState.get<ClaimsIdentity>(adapter.BotIdentityKey);
+    const traceLabel = claimIdentity && SkillValidation.isSkillClaim(claimIdentity.claims) ? 'Skill State' : 'Bot State';
 
     // Send trace of memory
     const snapshot = getActiveDialogContext(dialogContext).state.getMemorySnapshot();
