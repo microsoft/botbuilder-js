@@ -9,7 +9,7 @@
 import { existsSync, readFileSync } from 'fs';
 import { resolve } from 'path';
 import { v4 as uuidv4 } from 'uuid';
-
+import { omit } from 'lodash';
 import {
     BoolExpression,
     BoolExpressionConverter,
@@ -19,6 +19,7 @@ import {
     StringExpression,
     StringExpressionConverter,
 } from 'adaptive-expressions';
+
 import { AdaptiveRecognizer } from 'botbuilder-dialogs-adaptive';
 import { Activity, RecognizerResult } from 'botbuilder-core';
 import { Converter, ConverterFactory, DialogContext, Recognizer, RecognizerConfiguration } from 'botbuilder-dialogs';
@@ -199,10 +200,11 @@ export class OrchestratorAdaptiveRecognizer
             if (topScore < this.unknownIntentFilterScore) {
                 recognizerResult.intents.None = { score: 1.0 };
             } else {
-                // add top score
-                recognizerResult.intents[`${topScoringIntent}`] ??= {
-                    score: topScore,
-                };
+                // add all scores
+                recognizerResult.intents = results.reduce(function(intents, result){
+                    intents[result.label.name] = { score: result.score };
+                    return intents;
+                    }, {});
 
                 // disambiguate
                 if (detectAmbiguity) {
@@ -251,6 +253,67 @@ export class OrchestratorAdaptiveRecognizer
         );
 
         return recognizerResult;
+    }
+
+    private getTopTwoIntents(
+        result: RecognizerResult
+    ): { name: string; score: number }[] {
+        if (!result || !result.intents) {
+            throw new Error('result is empty');
+        }
+        const intents = Object.entries(result.intents)
+                            .map((intent) => {return {name: intent[0], score: +intent[1].score} })
+                            .sort((a,b) => (b.score - a.score))
+        intents.length = 2;
+
+        return intents;
+    }
+
+    /**
+     * Uses the RecognizerResult to create a list of properties to be included when tracking the result in telemetry.
+     * 
+     * @param {RecognizerResult} recognizerResult Recognizer Result.
+     * @param {Record<string, string>} telemetryProperties A list of properties to append or override the properties created using the RecognizerResult.
+     * @param {DialogContext} dialogContext Dialog Context.
+     * @returns {Record<string, string>} A collection of properties that can be included when calling the TrackEvent method on the TelemetryClient.
+     */
+    protected fillRecognizerResultTelemetryProperties(
+        recognizerResult: RecognizerResult,
+        telemetryProperties: Record<string, string>,
+        dialogContext?: DialogContext
+    ): Record<string, string> {
+        const topTwo = this.getTopTwoIntents(recognizerResult);
+        const intents = Object.entries(recognizerResult.intents);
+        const properties: Record<string, string> = {
+            TopIntent: intents.length > 0 ? topTwo[0].name : undefined,
+            TopIntentScore: intents.length > 0 ? topTwo[0].score.toString() : undefined,
+            NextIntent: intents.length > 1 ? topTwo[1].name : undefined,
+            NextIntentScore: intents.length > 1 ? topTwo[1].score.toString() : undefined,
+            Intents: intents.length > 0 ? JSON.stringify(recognizerResult.intents) : undefined,
+            Entities: recognizerResult.entities ? JSON.stringify(recognizerResult.entities) : undefined,
+            AdditionalProperties: JSON.stringify(
+                omit(recognizerResult, ['text', 'alteredText', 'intents', 'entities'])
+            ),
+        };
+
+        var logPersonalInformation =
+            this.logPersonalInformation instanceof BoolExpression
+                ? this.logPersonalInformation.getValue(dialogContext.state)
+                : this.logPersonalInformation;
+        if (logPersonalInformation == undefined)
+            logPersonalInformation = false;
+
+        if (logPersonalInformation) {
+            properties['Text'] = recognizerResult.text;
+            properties['AlteredText'] = recognizerResult.alteredText;
+        }
+
+        // Additional Properties can override "stock" properties.
+        if (telemetryProperties) {
+            return Object.assign({}, properties, telemetryProperties);
+        }
+
+        return properties;
     }
 
     private _initializeModel() {

@@ -143,6 +143,12 @@ describe('OrchestratorAdpativeRecognizer tests', function () {
                         name: 'mockLabel',
                     },
                 },
+                {
+                    score: 0.8,
+                    label: {
+                        name: 'mockLabel2',
+                    },
+                },
             ];
             const mockResolver = new MockResolver(result);
             const testPaths = 'test';
@@ -181,6 +187,12 @@ describe('OrchestratorAdpativeRecognizer tests', function () {
                         name: 'mockLabel',
                     },
                 },
+                {
+                    score: 0.8,
+                    label: {
+                        name: 'mockLabel2',
+                    },
+                },
             ];
             const mockResolver = new MockResolver(result);
             const testPaths = 'test';
@@ -217,6 +229,12 @@ describe('OrchestratorAdpativeRecognizer tests', function () {
                     score: 0.9,
                     label: {
                         name: 'mockLabel',
+                    },
+                },
+                {
+                    score: 0.8,
+                    label: {
+                        name: 'mockLabel2',
                     },
                 },
             ];
