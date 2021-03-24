@@ -8,9 +8,8 @@ describe("serialize", function () {
     const activity = {type: "message", 
                       entities: entity
                         };
-    it("should retain custom Entity properties", function (done) {
+    it("should retain custom Entity properties", function () {
       const serializedObject = Serializer.serialize(Mappers.Activity, activity);
-      assert.deepEqual(serializedObject.entities, entity);
-      done();
+      assert.deepStrictEqual(serializedObject.entities, entity);
     });
 });
