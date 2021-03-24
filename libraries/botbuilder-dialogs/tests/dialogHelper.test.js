@@ -1,4 +1,4 @@
-const { ok, strictEqual } = require('assert');
+const assert = require('assert');
 const {
     ActivityTypes,
     AutoSaveStateMiddleware,
@@ -89,7 +89,7 @@ function createTestFlow(dialog, testCase) {
         }
 
         // Interceptor to capture the EoC activity if it was sent so we can assert it in the tests.
-        context.onSendActivities(async (tc, activities, next) => {
+        context.onSendActivities(async (_tc, activities, next) => {
             for (let idx = 0; idx < activities.length; idx++) {
                 if (activities[idx].type === ActivityTypes.EndOfConversation) {
                     _eocSent = activities[idx];
@@ -180,40 +180,28 @@ describe('runDialog()', function () {
     this.timeout(300);
 
     describe('parameter validation', () => {
-        it('should throw if missing dialog parameter', (done) => {
-            runDialog().then(
-                () => done(new Error('should have throw error')),
-                (err) => {
-                    done(strictEqual(err.message, 'runDialog(): missing dialog'));
-                }
-            );
+        it('should throw if missing dialog parameter', async function () {
+            await assert.rejects(async () => runDialog(), {
+                message: 'runDialog(): missing dialog',
+            });
         });
 
-        it('should throw if missing context parameter', (done) => {
-            runDialog({}).then(
-                () => done(new Error('should have throw error')),
-                (err) => {
-                    done(strictEqual(err.message, 'runDialog(): missing context'));
-                }
-            );
+        it('should throw if missing context parameter', async function () {
+            await assert.rejects(async () => runDialog({}), {
+                message: 'runDialog(): missing context',
+            });
         });
 
-        it('should throw if missing context.activity', (done) => {
-            runDialog({}, {}).then(
-                () => done(new Error('should have throw error')),
-                (err) => {
-                    done(strictEqual(err.message, 'runDialog(): missing context.activity'));
-                }
-            );
+        it('should throw if missing context.activity', async function () {
+            await assert.rejects(async () => runDialog({}, {}), {
+                message: 'runDialog(): missing context.activity',
+            });
         });
 
-        it('should throw if missing accessor parameter', (done) => {
-            runDialog({}, { activity: {} }).then(
-                () => done(new Error('should have throw error')),
-                (err) => {
-                    done(strictEqual(err.message, 'runDialog(): missing accessor'));
-                }
-            );
+        it('should throw if missing accessor parameter', async function () {
+            await assert.rejects(async () => runDialog({}, { activity: {} }), {
+                message: 'runDialog(): missing accessor',
+            });
         });
     });
 
@@ -232,14 +220,14 @@ describe('runDialog()', function () {
                 .assertReply('Hello SomeName, nice to meet you!')
                 .startTest();
 
-            strictEqual(dialog.endReason, DialogReason.endCalled);
+            assert.strictEqual(dialog.endReason, DialogReason.endCalled);
             if (shouldSendEoc) {
-                ok(_eocSent, 'Skills should send EndConversation to channel');
-                strictEqual(_eocSent.type, ActivityTypes.EndOfConversation);
-                strictEqual(_eocSent.value, 'SomeName');
-                strictEqual(_eocSent.code, EndOfConversationCodes.CompletedSuccessfully);
+                assert.ok(_eocSent, 'Skills should send EndConversation to channel');
+                assert.strictEqual(_eocSent.type, ActivityTypes.EndOfConversation);
+                assert.strictEqual(_eocSent.value, 'SomeName');
+                assert.strictEqual(_eocSent.code, EndOfConversationCodes.CompletedSuccessfully);
             } else {
-                strictEqual(undefined, _eocSent, 'Root bot should not send EndConversation to channel');
+                assert.strictEqual(undefined, _eocSent, 'Root bot should not send EndConversation to channel');
             }
         }
 
@@ -266,20 +254,20 @@ describe('runDialog()', function () {
             const testFlow = createTestFlow(dialog, FlowTestCase.MiddleSkill);
             await testFlow.send('Hi').startTest();
 
-            strictEqual(dialog.endReason, DialogReason.endCalled);
-            ok(_eocSent, 'Skills should send EndConversation to channel');
-            strictEqual(_eocSent.type, ActivityTypes.EndOfConversation);
-            strictEqual(_eocSent.code, EndOfConversationCodes.CompletedSuccessfully);
+            assert.strictEqual(dialog.endReason, DialogReason.endCalled);
+            assert.ok(_eocSent, 'Skills should send EndConversation to channel');
+            assert.strictEqual(_eocSent.type, ActivityTypes.EndOfConversation);
+            assert.strictEqual(_eocSent.code, EndOfConversationCodes.CompletedSuccessfully);
         });
         it('handles premature dialog cancellation', async () => {
             const dialog = new ComponentDialogWithCancellation();
             const testFlow = createTestFlow(dialog, FlowTestCase.MiddleSkill);
             await testFlow.send('Hi').startTest();
 
-            strictEqual(dialog.endReason, DialogReason.cancelCalled);
-            ok(_eocSent, 'Skills should send EndConversation to channel');
-            strictEqual(_eocSent.type, ActivityTypes.EndOfConversation);
-            strictEqual(_eocSent.code, EndOfConversationCodes.UserCancelled);
+            assert.strictEqual(dialog.endReason, DialogReason.cancelCalled);
+            assert.ok(_eocSent, 'Skills should send EndConversation to channel');
+            assert.strictEqual(_eocSent.type, ActivityTypes.EndOfConversation);
+            assert.strictEqual(_eocSent.code, EndOfConversationCodes.UserCancelled);
         });
     });
 });

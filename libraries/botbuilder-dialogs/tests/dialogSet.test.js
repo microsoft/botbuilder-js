@@ -14,13 +14,12 @@ describe('DialogSet', function () {
 
     it('should throw on createContext(undefined)', async function () {
         const dialogSet = new DialogSet(dialogState);
-        try {
-            await dialogSet.createContext(undefined);
-            assert.fail('should have thrown error on undefined');
-        } catch (err) {}
+        await assert.rejects(async () => await dialogSet.createContext(undefined), {
+            message: "Cannot read property 'turnState' of undefined",
+        });
     });
 
-    it('should add a waterfall to the dialog set.', function (done) {
+    it('should add a waterfall to the dialog set.', function () {
         const dialogs = new DialogSet(dialogState);
         dialogs.add(
             new WaterfallDialog('a', [
@@ -29,7 +28,6 @@ describe('DialogSet', function () {
                 },
             ])
         );
-        done();
     });
 
     it('should throw an error if DialogSet.dialogState is falsey.', async function () {
@@ -45,7 +43,7 @@ describe('DialogSet', function () {
         }
     });
 
-    it('should add fluent dialogs to the dialog set.', function (done) {
+    it('should add fluent dialogs to the dialog set.', function () {
         // Create new ConversationState with MemoryStorage and instantiate DialogSet with PropertyAccessor.
         const dialogs = new DialogSet(dialogState);
         dialogs
@@ -65,11 +63,9 @@ describe('DialogSet', function () {
             );
         assert(dialogs.find('A'), `dialog A not found.`);
         assert(dialogs.find('B'), `dialog B not found.`);
-
-        done();
     });
 
-    it('should increment the dialog ID when adding the same dialog twice.', function (done) {
+    it('should increment the dialog ID when adding the same dialog twice.', function () {
         const dialogs = new DialogSet(dialogState);
         dialogs.add(new WaterfallDialog('a', [function () {}]));
 
@@ -77,19 +73,17 @@ describe('DialogSet', function () {
 
         assert(dialogs.find('a'));
         assert(dialogs.find('a2'), `second dialog didn't have ID incremented`);
-        done();
     });
 
-    it('should find() a dialog that was added.', function (done) {
+    it('should find() a dialog that was added.', function () {
         const dialogs = new DialogSet(dialogState);
         dialogs.add(new WaterfallDialog('a', [function () {}]));
 
         assert(dialogs.find('a'), `dialog not found.`);
         assert(!dialogs.find('b'), `dialog found that shouldn't exist.`);
-        done();
     });
 
-    it('should save dialog stack state between turns.', function (done) {
+    it('should save dialog stack state between turns.', async function () {
         const convoState = new ConversationState(new MemoryStorage());
 
         const dialogState = convoState.createProperty('dialogState');
@@ -118,25 +112,22 @@ describe('DialogSet', function () {
             await convoState.saveChanges(turnContext);
         });
 
-        adapter
+        await adapter
             .send(beginMessage)
             .assertReply('Greetings')
             .send(continueMessage)
             .assertReply('Good bye!')
-            .then(() => done())
             .startTest();
     });
 
-    it('should generate a version hash of added dialogs.', function (done) {
+    it('should generate a version hash of added dialogs.', function () {
         const dialogs = new DialogSet(dialogState);
         dialogs.add(new WaterfallDialog('A')).add(new WaterfallDialog('B'));
         const hash = dialogs.getVersion();
         assert(hash && hash.length > 0, `no hash generated.`);
-
-        done();
     });
 
-    it('Generated version hash should change when dialog set changes.', function (done) {
+    it('Generated version hash should change when dialog set changes.', function () {
         const dialogs = new DialogSet(dialogState);
         dialogs.add(new WaterfallDialog('A')).add(new WaterfallDialog('B'));
         const hash = dialogs.getVersion();
@@ -144,8 +135,6 @@ describe('DialogSet', function () {
 
         dialogs.add(new WaterfallDialog('C'));
         assert(hash != dialogs.getVersion(), `hash not updated.`);
-
-        done();
     });
 
     it('Cyclical dialog structures', () => {
