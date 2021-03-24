@@ -308,7 +308,7 @@ export class BotFrameworkAdapter
      * Used in streaming contexts to check if the streaming connection is still open for the bot to send activities.
      */
     public get isStreamingConnectionOpen(): boolean {
-        return this.streamingServer.isConnected;
+        return this.streamingServer?.isConnected ?? false;
     }
 
     /**
