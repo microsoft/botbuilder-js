@@ -5,13 +5,12 @@ import { ActivityTypes, Channels, Middleware, TurnContext } from 'botbuilder-cor
 import { parseDocument } from 'htmlparser2';
 import { tests } from 'botbuilder-stdlib';
 
-const supportedChannels = new Set([Channels.DirectlineSpeech, Channels.Emulator, 'telephony']);
+const supportedChannels = new Set([Channels.DirectlineSpeech, Channels.Emulator, Channels.Telephony]);
 
 // Iterate through `obj` and all children in an attempt to locale a key `tag`
 function hasTag(tag: string, nodes: unknown[]): boolean {
     while (nodes.length) {
         const item = nodes.shift();
-        console.log(item, tag);
 
         if (tests.isDictionary(item)) {
             if (item.tagName === tag) {
