@@ -100,8 +100,8 @@ async function TestJson(file, includeAllIntents = true, includeInstance = true) 
 }
 
 function findIntent(key, data) {
-    let i,
-        len = data.length;
+    let i;
+    const len = data.length;
     for (i = 0; i < len; i++) {
         if (data[i] && data[i].intent == key) {
             return data[i];
@@ -110,8 +110,8 @@ function findIntent(key, data) {
     return null;
 }
 function findEntityByType(key, data) {
-    let i,
-        len = data.length;
+    let i;
+    const len = data.length;
     for (i = 0; i < len; i++) {
         if (data[i] && data[i].type == key) {
             return data[i];
@@ -120,8 +120,8 @@ function findEntityByType(key, data) {
     return null;
 }
 function findEntity(key, data) {
-    let i,
-        len = data.length;
+    let i;
+    const len = data.length;
     for (i = 0; i < len; i++) {
         if (data[i] && data[i].entity == key) {
             return data[i];
@@ -131,8 +131,8 @@ function findEntity(key, data) {
 }
 
 function findCompositeByParentType(key, data) {
-    let i,
-        len = data.length;
+    let i;
+    const len = data.length;
     for (i = 0; i < len; i++) {
         if (data[i] && data[i].parentType == key) {
             return data[i];
