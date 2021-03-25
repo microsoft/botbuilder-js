@@ -306,6 +306,7 @@ export class OrchestratorAdaptiveRecognizer
     ): Record<string, string> {
         const topTwo = this.getTopTwoIntents(recognizerResult);
         const intent = Object.entries(recognizerResult.intents);
+        // eslint-disable-next-line  @typescript-eslint/no-unused-vars
         const { text, alteredText, intents, entities, ...customRecognizerProps } = recognizerResult;
         const properties: Record<string, string> = {
             TopIntent: intent.length > 0 ? topTwo[0].name : undefined,
@@ -314,9 +315,7 @@ export class OrchestratorAdaptiveRecognizer
             NextIntentScore: intent.length > 1 ? topTwo[1].score.toString() : undefined,
             Intents: intent.length > 0 ? JSON.stringify(recognizerResult.intents) : undefined,
             Entities: recognizerResult.entities ? JSON.stringify(recognizerResult.entities) : undefined,
-            AdditionalProperties: JSON.stringify( 
-                customRecognizerProps
-            ),
+            AdditionalProperties: JSON.stringify(customRecognizerProps),
         };
 
         let logPersonalInformation =
