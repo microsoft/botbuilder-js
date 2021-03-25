@@ -9,7 +9,7 @@
 import { existsSync, readFileSync } from 'fs';
 import { resolve } from 'path';
 import { v4 as uuidv4 } from 'uuid';
-import { omit } from 'lodash';
+import omit from 'lodash/omit';
 import {
     BoolExpression,
     BoolExpressionConverter,
@@ -40,21 +40,21 @@ export enum LabelType {
     Entity = 2,
 }
 
-type Label = {
+interface Label {
     name: string;
     span: {
         offset: number;
         length: number;
-    }
-};
+    };
+}
 
-type Result = { 
+interface Result {
     score: number;
     closest_text: string;
     label: Label;
 }
 
-type LabelResolver = {
+interface LabelResolver {
     score(
         text: string
     ): {
@@ -65,11 +65,8 @@ type LabelResolver = {
         };
     }[];
 
-    score(
-        text: string,
-        labelType: number,
-    ): Result[];
-};
+    score(text: string, labelType: number): Result[];
+}
 
 type Orchestrator = {
     createLabelResolver(snapshot: Uint8Array): LabelResolver;
@@ -112,22 +109,22 @@ export class OrchestratorAdaptiveRecognizer
     /**
      * Enable entity detection if entity model exists inside modelFolder. Defaults to false.
      */
-    public scoreEntities: boolean = false;
+    public scoreEntities = false;
 
     /**
      * Intent name if ambiguous intents are detected.
      */
-    public readonly chooseIntent: string = 'ChooseIntent';
+    public readonly chooseIntent = 'ChooseIntent';
 
     /**
      * Full intent recognition results are available under this property
      */
-    public readonly resultProperty: string = 'result';
+    public readonly resultProperty = 'result';
 
     /**
      * Full entity recognition results are available under this property
      */
-    public readonly entityProperty: string = 'entityResult';
+    public readonly entityProperty = 'entityResult';
 
     public getConverter(property: keyof OrchestratorAdaptiveRecognizerConfiguration): Converter | ConverterFactory {
         switch (property) {
@@ -235,10 +232,10 @@ export class OrchestratorAdaptiveRecognizer
                 recognizerResult.intents.None = { score: 1.0 };
             } else {
                 // add all scores
-                recognizerResult.intents = results.reduce(function(intents, result){
+                recognizerResult.intents = results.reduce(function (intents, result) {
                     intents[result.label.name] = { score: result.score };
                     return intents;
-                    }, {});
+                }, {});
 
                 // disambiguate
                 if (detectAmbiguity) {
@@ -291,15 +288,15 @@ export class OrchestratorAdaptiveRecognizer
         return recognizerResult;
     }
 
-    private getTopTwoIntents(
-        result: RecognizerResult
-    ): { name: string; score: number }[] {
+    private getTopTwoIntents(result: RecognizerResult): { name: string; score: number }[] {
         if (!result || !result.intents) {
             throw new Error('result is empty');
         }
         const intents = Object.entries(result.intents)
-                            .map((intent) => {return {name: intent[0], score: +intent[1].score} })
-                            .sort((a,b) => (b.score - a.score))
+            .map((intent) => {
+                return { name: intent[0], score: +intent[1].score };
+            })
+            .sort((a, b) => b.score - a.score);
         intents.length = 2;
 
         return intents;
@@ -307,7 +304,7 @@ export class OrchestratorAdaptiveRecognizer
 
     /**
      * Uses the RecognizerResult to create a list of properties to be included when tracking the result in telemetry.
-     * 
+     *
      * @param {RecognizerResult} recognizerResult Recognizer Result.
      * @param {Record<string, string>} telemetryProperties A list of properties to append or override the properties created using the RecognizerResult.
      * @param {DialogContext} dialogContext Dialog Context.
@@ -332,12 +329,11 @@ export class OrchestratorAdaptiveRecognizer
             ),
         };
 
-        var logPersonalInformation =
+        let logPersonalInformation =
             this.logPersonalInformation instanceof BoolExpression
                 ? this.logPersonalInformation.getValue(dialogContext.state)
                 : this.logPersonalInformation;
-        if (logPersonalInformation == undefined)
-            logPersonalInformation = false;
+        if (logPersonalInformation == undefined) logPersonalInformation = false;
 
         if (logPersonalInformation) {
             properties['Text'] = recognizerResult.text;
@@ -374,8 +370,7 @@ export class OrchestratorAdaptiveRecognizer
             const orchestrator = new oc.Orchestrator();
             if (this.scoreEntities && !orchestrator.load(fullModelFolder, entityModelFolder)) {
                 throw new Error(`Model load failed.`);
-            }
-            else if (!orchestrator.load(fullModelFolder)) {
+            } else if (!orchestrator.load(fullModelFolder)) {
                 throw new Error(`Model load failed.`);
             }
             OrchestratorAdaptiveRecognizer.orchestrator = orchestrator;
@@ -427,8 +422,8 @@ export class OrchestratorAdaptiveRecognizer
                     score: result.score,
                     text: entityText,
                     start: span.offset,
-                    end: span.offset + span.length   
-                });               
+                    end: span.offset + span.length,
+                });
 
                 // get/create $instance
                 let instanceRoot: any = recognizerResult.entities['$instance'];
