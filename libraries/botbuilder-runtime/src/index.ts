@@ -32,6 +32,7 @@ import {
     MemoryStorage,
     MiddlewareSet,
     NullTelemetryClient,
+    SetSpeakMiddleware,
     ShowTypingMiddleware,
     SkillHandler,
     SkillHttpClient,
@@ -47,6 +48,25 @@ function addFeatures(services: ServiceCollection<IServices>, configuration: Conf
         async ({ conversationState, storage, userState }, middlewareSet) => {
             if (await configuration.bool(['showTyping'])) {
                 middlewareSet.use(new ShowTypingMiddleware());
+            }
+
+            const setSpeak = await configuration.type(
+                ['setSpeak'],
+                t.Record({
+                    voiceFontName: t.String.Or(t.Undefined),
+                    lang: t.String,
+                    fallbackToTextForSpeechIfEmpty: t.Boolean,
+                })
+            );
+
+            if (setSpeak) {
+                middlewareSet.use(
+                    new SetSpeakMiddleware(
+                        setSpeak.voiceFontName ?? null,
+                        setSpeak.lang,
+                        setSpeak.fallbackToTextForSpeechIfEmpty
+                    )
+                );
             }
 
             if (await configuration.bool(['traceTranscript'])) {

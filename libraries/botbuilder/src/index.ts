@@ -6,13 +6,16 @@
  * Licensed under the MIT License.
  */
 
+export * from 'botbuilder-core';
+
 export * from './fileTranscriptStore';
 export * from './inspectionMiddleware';
+export * from './setSpeakMiddleware';
 export * from './skills';
 export * from './teamsActivityHandler';
 export * from './teamsActivityHelpers';
 export * from './teamsInfo';
-export * from 'botbuilder-core';
+
 export { BotFrameworkAdapter, BotFrameworkAdapterSettings } from './botFrameworkAdapter';
 export { BotFrameworkHttpClient } from './botFrameworkHttpClient';
 export { ChannelServiceHandler } from './channelServiceHandler';
