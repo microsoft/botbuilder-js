@@ -55,8 +55,7 @@ interface Result {
 }
 
 interface LabelResolver {
-    score(text: string): Result[];
-    score(text: string, labelType: number): Result[];
+    score(text: string, labelType?: number): Result[];
 }
 
 interface Orchestrator {
@@ -398,8 +397,7 @@ export class OrchestratorAdaptiveRecognizer
                 const entityType = result.label.name;
 
                 // add value
-                let values = recognizerResult.entities[entityType];
-                values ??= [];
+                const values = recognizerResult.entities[entityType] ?? [];
                 recognizerResult.entities[entityType] = values;
 
                 const span = result.label.span;
