@@ -60,41 +60,26 @@ describe('BotFrameworkAdapter Streaming tests', () => {
     it(`throws exception when trying to connect to a different named pipe than it's connected to`, async () => {
         const adapter = new ConnectionTestAdapter();
 
-        try {
-            // Don't await to try and connect at the same time
-            await adapter.useNamedPipe(async (_) => {
-                // no op
-            }, 'NamedPipeTest');
+        await adapter.useNamedPipe(async (_) => {}, 'NamedPipeTest');
 
-            // Try use same NamedPipe again to trigger error.
-            await adapter.useNamedPipe(async (_) => {
-                // no op
-            }, 'NotNamedPipeTest');
-
-            assert.fail('should have thrown error');
-        } catch (e) {
-            if (e instanceof assert.AssertionError) {
-                throw e;
+        // Try use same NamedPipe again to trigger error.
+        await assert.rejects(
+            adapter.useNamedPipe(async (_) => {}, 'NotNamedPipeTest'),
+            {
+                message:
+                    'This BotFrameworkAdapter instance is already connected to a different stream. Use a new instance to connect to the provided pipeName.',
             }
-
-            expect(e.message).to.equal(
-                'This BotFrameworkAdapter instance is already connected to a different stream. Use a new instance to connect to the provided pipeName.'
-            );
-        }
+        );
     });
 
     it(`doesn't throw while trying to connect to named pipe it's connected to`, async () => {
         const adapter = new ConnectionTestAdapter();
         const namedPipeName = 'NamedPipeTest';
 
-        await adapter.useNamedPipe(async (_) => {
-            // no op
-        }, namedPipeName);
+        await adapter.useNamedPipe(async (_) => {}, namedPipeName);
 
         // Use same NamedPipeName to test scenario.
-        await adapter.useNamedPipe(async (_) => {
-            // no op
-        }, namedPipeName);
+        await adapter.useNamedPipe(async (_) => {}, namedPipeName);
     });
 
     it('isStreamingConnectionOpen returns false without a streamingServer', () => {

@@ -1922,9 +1922,6 @@ export class BotFrameworkAdapter
         await this.startWebSocket(nodeWebSocket);
     }
 
-    /**
-     * @private
-     */
     private async startNamedPipeServer(pipeName: string): Promise<void> {
         this.namedPipeName = pipeName;
         this.streamingServer = new NamedPipeServer(pipeName, this);
@@ -1936,9 +1933,6 @@ export class BotFrameworkAdapter
         }
     }
 
-    /**
-     * @private
-     */
     private async authenticateConnection(req: WebRequest, channelService?: string): Promise<void> {
         if (!this.credentials.appId) {
             // auth is disabled
@@ -1969,17 +1963,11 @@ export class BotFrameworkAdapter
         await this.streamingServer.start();
     }
 
-    /**
-     * @private
-     */
     private async readRequestBodyAsString(request: IReceiveRequest): Promise<Activity> {
         const contentStream = request.streams[0];
         return await contentStream.readAsJson<Activity>();
     }
 
-    /**
-     * @private
-     */
     private async handleVersionRequest(
         request: IReceiveRequest,
         response: StreamingResponse
