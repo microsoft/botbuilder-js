@@ -163,7 +163,7 @@ export class ConfirmInput extends InputDialog implements ConfirmInputConfigurati
             } else {
                 // Fallback to trying the choice recognizer
                 const defaults = ConfirmInput.defaultChoiceOptions[locale].choices;
-                const confirmChoices = await this.getConfirmChoicesAsync(dc, defaults);
+                const confirmChoices = await this.getConfirmChoices(dc, defaults);
 
                 const choices = ChoiceFactory.toChoices(confirmChoices);
                 const results = recognizeChoices(input, choices);
@@ -189,11 +189,9 @@ export class ConfirmInput extends InputDialog implements ConfirmInputConfigurati
     protected async onRenderPrompt(dc: DialogContext, state: InputState): Promise<Partial<Activity>> {
         // Determine locale
         let locale = this.determineCulture(dc);
-
+        const defaults = ConfirmInput.defaultChoiceOptions[locale].choices;
         // Format choices
-        const confirmChoices =
-            (this.confirmChoices && this.confirmChoices.getValue(dc.state)) ||
-            ConfirmInput.defaultChoiceOptions[locale].choices;
+        const confirmChoices = await this.getConfirmChoices(dc, defaults);
         const choices = ChoiceFactory.toChoices(confirmChoices);
 
         // Format prompt to send
@@ -219,7 +217,7 @@ export class ConfirmInput extends InputDialog implements ConfirmInputConfigurati
         return culture;
     }
 
-    private async getConfirmChoicesAsync(dc: DialogContext, defaults: (string | Choice)[]): Promise<ChoiceSet> {
+    private async getConfirmChoices(dc: DialogContext, defaults: (string | Choice)[]): Promise<ChoiceSet> {
         let confirmChoices: ChoiceSet;
         if (this.confirmChoices != null) {
             if (
@@ -232,9 +230,12 @@ export class ConfirmInput extends InputDialog implements ConfirmInputConfigurati
                 // use Expression to bind
                 confirmChoices = this.confirmChoices.getValue(dc.state);
             }
-        } else {
-            confirmChoices = new ChoiceSet(defaults);
         }
-        return confirmChoices;
+
+        if (confirmChoices != null) {
+            return Promise.resolve(confirmChoices);
+        } else {
+            return Promise.resolve(new ChoiceSet(defaults));
+        }
     }
 }

@@ -51,7 +51,7 @@
         },
         {
             "$kind": "Microsoft.Test.AssertReply",
-            "text": "confirmation: True"
+            "text": "confirmation: true"
         }
     ]
 }
