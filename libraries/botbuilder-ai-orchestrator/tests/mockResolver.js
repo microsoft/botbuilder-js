@@ -5,7 +5,7 @@
 
 /* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 
-const { OrchestratorAdaptiveRecognizer, LabelType } = require('../lib');
+const { LabelType } = require('../lib');
 class MockResolver {
     constructor(score, entityScore) {
         this._score = score;
@@ -13,14 +13,14 @@ class MockResolver {
     }
 
     score(_text, labelType = LabelType.Intent) {
-        if (labelType === LabelType.Intent) {
-            return this._score;
+        switch (labelType) {
+            case LabelType.Intent:
+                return this._score;
+            case LabelType.Entity:
+                return this._entityScore;
+            default:
+                throw new Error('Label type not supported!');
         }
-        else if (labelType === LabelType.Entity) {
-            return this._entityScore;
-        }
-        
-        throw new Error('Not supported!');
     }
 }
 

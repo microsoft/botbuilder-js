@@ -45,30 +45,18 @@ type Label = {
     span: {
         offset: number;
         length: number;
-    }
+    };
 };
 
-type Result = { 
+type Result = {
     score: number;
     closest_text: string;
     label: Label;
-}
+};
 
 type LabelResolver = {
-    score(
-        text: string
-    ): {
-        score: number;
-        closest_text: string;
-        label: {
-            name: string;
-        };
-    }[];
-
-    score(
-        text: string,
-        labelType: number,
-    ): Result[];
+    score(text: string): Result[];
+    score(text: string, labelType: number): Result[];
 };
 
 type Orchestrator = {
@@ -112,7 +100,7 @@ export class OrchestratorAdaptiveRecognizer
     /**
      * Enable entity detection if entity model exists inside modelFolder. Defaults to false.
      */
-    public scoreEntities: boolean = false;
+    public scoreEntities = false;
 
     /**
      * Intent name if ambiguous intents are detected.
@@ -227,7 +215,6 @@ export class OrchestratorAdaptiveRecognizer
         recognizerResult[this.resultProperty] = results;
 
         if (results.length) {
-            const topScoringIntent = results[0].label.name;
             const topScore = results[0].score;
 
             // if top scoring intent is less than threshold, return None
@@ -235,11 +222,10 @@ export class OrchestratorAdaptiveRecognizer
                 recognizerResult.intents.None = { score: 1.0 };
             } else {
                 // add all scores
-                recognizerResult.intents = results.reduce(function(intents, result){
+                recognizerResult.intents = results.reduce(function(intents, result) {
                     intents[result.label.name] = { score: result.score };
                     return intents;
                     }, {});
-
                 // disambiguate
                 if (detectAmbiguity) {
                     const disambiguationScoreThreshold = this.disambiguationScoreThreshold.getValue(dc.state);
@@ -291,9 +277,7 @@ export class OrchestratorAdaptiveRecognizer
         return recognizerResult;
     }
 
-    private getTopTwoIntents(
-        result: RecognizerResult
-    ): { name: string; score: number }[] {
+    private getTopTwoIntents(result: RecognizerResult): { name: string; score: number }[] {
         if (!result || !result.intents) {
             throw new Error('result is empty');
         }
@@ -407,18 +391,15 @@ export class OrchestratorAdaptiveRecognizer
         // Add full entity recognition result as a 'result' property
         recognizerResult[this.entityProperty] = results;
         if (results.length) {
-            if (recognizerResult.entities === null) {
-                recognizerResult.entities = {};
-            }
+            recognizerResult.entities ??= {};
 
             results.forEach((result: Result) => {
                 const entityType = result.label.name;
 
                 // add value
                 let values: any[] = recognizerResult.entities[entityType];
-                if (!values) {
-                    values = recognizerResult.entities[entityType] = [];
-                }
+                values ??= [];
+                recognizerResult.entities[entityType] = values;
 
                 const span = result.label.span;
                 const entityText = text.substr(span.offset, span.length);
@@ -431,17 +412,10 @@ export class OrchestratorAdaptiveRecognizer
                 });               
 
                 // get/create $instance
-                let instanceRoot: any = recognizerResult.entities['$instance'];
-                if (!instanceRoot) {
-                    instanceRoot = recognizerResult.entities['$instance'] = {};
-                }
+                const instanceRoot = recognizerResult.entities['$instance'] ?? {};
 
                 // add instanceData
-                let instanceData: any[] = instanceRoot[entityType];
-                if (!instanceData) {
-                    instanceData = instanceRoot[entityType] = [];
-                }
-
+                const instanceData = instanceRoot[entityType] ?? [];
                 instanceData.push({
                     startIndex: span.offset,
                     endIndex: span.offset + span.length,

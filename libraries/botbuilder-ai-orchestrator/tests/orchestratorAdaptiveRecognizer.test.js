@@ -3,7 +3,7 @@
  * Licensed under the MIT License.
  */
 const { MockResolver, TestAdapterSettings } = require('./mockResolver');
-const { ok, rejects } = require('assert');
+const { ok, rejects, strictEqual } = require('assert');
 const { OrchestratorAdaptiveRecognizer, LabelType } = require('../lib');
 const { DialogContext, DialogSet } = require('botbuilder-dialogs');
 const { TurnContext, MessageFactory, NullTelemetryClient } = require('botbuilder-core');
@@ -33,9 +33,9 @@ describe('OrchestratorAdaptiveRecognizer tests', function () {
         const { dc, activity } = createTestDcAndActivity('hello');
         const res = await rec.recognize(dc, activity);
 
-        ok(res.text, 'hello');
-        ok(res.intents.mockLabel.score, 0.9);
-        ok(rec._initializeModel.calledOnce);
+        strictEqual(res.text, 'hello');
+        strictEqual(res.intents.mockLabel.score, 0.9);
+        strictEqual(rec._initializeModel.calledOnce);
     });
 
     it('Expect initialize is called when labelresolver is null', async () => {
@@ -69,8 +69,8 @@ describe('OrchestratorAdaptiveRecognizer tests', function () {
         const { dc, activity } = createTestDcAndActivity('hello');
 
         const res = await rec.recognize(dc, activity);
-        ok(res.text, 'hello');
-        ok(res.intents.mockLabel.score, 0.9);
+        strictEqual(res.text, 'hello');
+        strictEqual(res.intents.mockLabel.score, 0.9);
     });
 
     it('Test entity recognition', async () => {
@@ -85,12 +85,12 @@ describe('OrchestratorAdaptiveRecognizer tests', function () {
         const entityResult = [
             {
                 score: 0.75,
-                label: { 
-                    name: 'mockEntityLabel', 
-                    type: LabelType.Entity, 
-                    span: { 
-                        offset: 17, 
-                        length: 7 
+                label: {
+                    name: 'mockEntityLabel',
+                    type: LabelType.Entity,
+                    span: {
+                        offset: 17,
+                        length: 7,
                     },
                 },
             },
@@ -106,16 +106,16 @@ describe('OrchestratorAdaptiveRecognizer tests', function () {
         const { dc, activity } = createTestDcAndActivity('turn on light in room 12');
 
         const res = await rec.recognize(dc, activity);
-        ok(res.text, 'turn on light in room 12');
-        ok(res.intents.mockLabel.score, 0.9);
-        ok(res.entities.number[0], '12');
+        strictEqual(res.text, 'turn on light in room 12');
+        strictEqual(res.intents.mockLabel.score, 0.9);
+        strictEqual(res.entities.number[0], '12');
 
-        ok(res['entityResult'] = entityResult);
-        ok(res.entities.mockEntityLabel);
-        ok(res.entities.mockEntityLabel[0].score, 0.75);
-        ok(res.entities.mockEntityLabel[0].text, 'room 12');
-        ok(res.entities.mockEntityLabel[0].start, 17);
-        ok(res.entities.mockEntityLabel[0].end, 24);
+        strictEqual(res['entityResult'], entityResult);
+        strictEqual(res.entities.mockEntityLabel);
+        strictEqual(res.entities.mockEntityLabel[0].score, 0.75);
+        strictEqual(res.entities.mockEntityLabel[0].text, 'room 12');
+        strictEqual(res.entities.mockEntityLabel[0].start, 17);
+        strictEqual(res.entities.mockEntityLabel[0].end, 24);
     });
 
     it('Test ambiguous intent recognition', async () => {
