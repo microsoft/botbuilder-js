@@ -21,6 +21,7 @@
     "import",
     "jsdoc",
     "lodash",
+    "mocha",
     "prettier",
     "security"
   ],
@@ -103,6 +104,12 @@
         "jsdoc/require-jsdoc": "off",
         "jsdoc/require-param": "off",
         "jsdoc/require-returns": "off",
+        "mocha/handle-done-callback": ["error"],
+        "mocha/no-async-describe": ["error"],
+        "mocha/no-mocha-arrows": ["error"],
+        "mocha/no-return-from-async": ["error"],
+        "mocha/no-sibling-hooks": ["error"],
+        "prefer-const": ["error"],
         "security/detect-non-literal-fs-filename": "off"
       }
     },
