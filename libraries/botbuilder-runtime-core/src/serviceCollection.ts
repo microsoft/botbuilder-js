@@ -10,54 +10,45 @@ import { stringify } from './util';
 /**
  * Factory describes a generic factory function signature. The type is generic over a few parameters:
  *
- * @template Services an interface describing a set of services
- * @template Service the service this factory produces
- * @template Must true if the `initialValue` passed to the factory must not be undefined
+ * @template Type type the factory produces
+ * @template Initial true if the `initialValue` passed to the factory must be defined
  */
-export type Factory<Services, Service extends keyof Services, Must extends boolean> = (
-    initialValue: Must extends true ? Services[Service] : Services[Service] | undefined
-) => Services[Service] | Promise<Services[Service]>;
+export type Factory<Type, Initial extends boolean> = (
+    initialValue: Initial extends true ? Type : Type | undefined
+) => Type | Promise<Type>;
 
 /**
  * DependencyFactory is a function signature that produces an instance that depends on a set of
  * other services. The type is generic over a few parameters:
  *
- * @template Services an interface describing a set of services
- * @template Service the service this factory produces
+ * @template Type type the factory produces
  * @template Dependencies the services this factory function depends on
- * @template Must true if the `initialValue` passed to the factory must not be undefined
+ * @template Initial true if the `initialValue` passed to the factory must be defined
  */
-export type DependencyFactory<
-    Services,
-    Service extends keyof Services,
-    Dependencies extends keyof Omit<Services, Service>,
-    Must extends boolean
-> = (
-    dependencies: { [dependency in Dependencies]: Services[dependency] },
-    initialValue: Must extends true ? Services[Service] : Services[Service] | undefined
-) => Services[Service] | Promise<Services[Service]>;
+export type DependencyFactory<Type, Dependencies, Initial extends boolean> = (
+    dependencies: Dependencies,
+    initialValue: Initial extends true ? Type : Type | undefined
+) => Type | Promise<Type>;
 
 /**
  * ServiceCollection is an interface that describes a set of methods to register services. This, in a lighter way,
  * mimics the .NET dependency injection service collection functionality, except for instances rather than types.
  */
-export class ServiceCollection<S> {
+export class ServiceCollection {
     // We store the full set of dependencies as a workaround to the fact that `DepGraph` throws an error if you
     // attempt to register a dependency to a node that does not yet exist.
-    private readonly dependencies = new Map<string, Array<keyof S>>();
+    private readonly dependencies = new Map<string, string[]>();
 
     /**
      * `DepGraph` is a dependency graph data structure. In our case, the services we support are encoded as a
      * dependency graph where nodes are named with a key and store a list of factory methods.
      */
-    private readonly graph = new DepGraph<
-        Array<(dependencies: Partial<S>, initialValue: unknown) => unknown | Promise<unknown>>
-    >();
+    private readonly graph = new DepGraph<Array<DependencyFactory<unknown, Record<string, unknown>, true>>>();
 
     /**
      * Cache constructed instances for reuse
      */
-    private cache: Partial<S> = {};
+    private cache: Record<string, unknown> = {};
 
     /**
      * Construct a Providers instance
@@ -65,10 +56,9 @@ export class ServiceCollection<S> {
      * @template S services interface
      * @param defaultServices default set of services
      */
-    constructor(defaultServices: Partial<S> = {}) {
-        Object.entries(defaultServices).forEach(([key, value]) => {
-            // tsc doesn't infer these properly
-            this.addInstance(key as keyof S, value as S[keyof S]);
+    constructor(defaultServices: Record<string, unknown> = {}) {
+        Object.entries(defaultServices).forEach(([key, instance]) => {
+            this.addInstance(key, instance);
         });
     }
 
@@ -79,8 +69,8 @@ export class ServiceCollection<S> {
      * @param instance instance to provide
      * @returns this for chaining
      */
-    addInstance<K extends keyof S>(key: K, instance: S[K]): this {
-        this.graph.addNode(stringify(key), [() => instance]);
+    addInstance<InstanceType>(key: string, instance: InstanceType): this {
+        this.graph.addNode(key, [() => instance]);
         return this;
     }
 
@@ -91,7 +81,7 @@ export class ServiceCollection<S> {
      * @param factory function that creates an instance to provide
      * @returns this for chaining
      */
-    addFactory<K extends keyof S>(key: K, factory: Factory<S, K, false>): this;
+    addFactory<InstanceType>(key: string, factory: Factory<InstanceType, false>): this;
 
     /**
      * Register a factory for a key with a set of dependencies.
@@ -101,28 +91,23 @@ export class ServiceCollection<S> {
      * @param factory function that creates an instance to provide
      * @returns this for chaining
      */
-    addFactory<K extends keyof S, D extends keyof Omit<S, K>>(
-        key: K,
-        dependencies: D[],
-        factory: DependencyFactory<S, K, D, false>
+    addFactory<InstanceType, Dependencies>(
+        key: string,
+        dependencies: string[],
+        factory: DependencyFactory<InstanceType, Dependencies, false>
     ): this;
 
     /**
      * @internal
      */
-    addFactory<K extends keyof S, D extends keyof Omit<S, K>>(
-        key: K,
-        depsOrFactory: D[] | Factory<S, K, false>,
-        maybeFactory?: DependencyFactory<S, K, D, false>
+    addFactory<InstanceType, Dependencies>(
+        key: string,
+        depsOrFactory: string[] | Factory<InstanceType, false>,
+        maybeFactory?: DependencyFactory<InstanceType, Dependencies, false>
     ): this {
-        const node = stringify(key);
-
         const dependencies = Array.isArray(depsOrFactory) ? depsOrFactory : undefined;
 
-        let factory = maybeFactory;
-
-        // Coerce factory form of (S[K]?) => S[K] into internal form of ({[d in D]: S[d]}, S[K]?) => S[K]
-        // for consistent application in `buildServices`.
+        let factory: DependencyFactory<InstanceType, Dependencies, false> | undefined = maybeFactory;
         if (!factory && typeof depsOrFactory === 'function') {
             factory = (_services, value) => depsOrFactory(value);
         }
@@ -131,19 +116,19 @@ export class ServiceCollection<S> {
         ok(factory, 'illegal invocation with undefined factory');
 
         if (dependencies) {
-            this.dependencies.set(node, dependencies);
+            this.dependencies.set(key, dependencies);
         }
 
-        // If the graph already has this node, fetch its data and remove it (to be replaced)
+        // If the graph already has this key, fetch its data and remove it (to be replaced)
         let factories: unknown[] = [];
-        if (this.graph.hasNode(node)) {
-            factories = this.graph.getNodeData(node);
-            this.graph.removeNode(node);
+        if (this.graph.hasNode(key)) {
+            factories = this.graph.getNodeData(key);
+            this.graph.removeNode(key);
         }
 
         // Note: we have done the type checking above, so disabling no-explicit-any is okay.
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        this.graph.addNode(node, factories.concat(factory) as any);
+        this.graph.addNode(key, factories.concat(factory) as any);
 
         return this;
     }
@@ -155,7 +140,7 @@ export class ServiceCollection<S> {
      * @param instance instance to provide
      * @returns this for chaining
      */
-    composeFactory<K extends keyof S>(key: K, factory: Factory<S, K, true>): this;
+    composeFactory<InstanceType>(key: string, factory: Factory<InstanceType, true>): this;
 
     /**
      * Register a factory (that expects an initial value that is not undefined) for a key
@@ -166,22 +151,22 @@ export class ServiceCollection<S> {
      * @param factory function that creates an instance to provide
      * @returns this for chaining
      */
-    composeFactory<K extends keyof S, D extends keyof Omit<S, K>>(
-        key: K,
-        dependencies: D[],
-        factory: DependencyFactory<S, K, D, true>
+    composeFactory<InstanceType, Dependencies>(
+        key: string,
+        dependencies: string[],
+        factory: DependencyFactory<InstanceType, Dependencies, true>
     ): this;
 
     /**
      * @internal
      */
-    composeFactory<K extends keyof S, D extends keyof Omit<S, K>>(
-        key: K,
-        depsOrFactory: D[] | Factory<S, K, true>,
-        maybeFactory?: DependencyFactory<S, K, D, true>
+    composeFactory<InstanceType, Dependencies>(
+        key: string,
+        depsOrFactory: string[] | Factory<InstanceType, true>,
+        maybeFactory?: DependencyFactory<InstanceType, Dependencies, true>
     ): this {
         if (maybeFactory) {
-            return this.addFactory<K, D>(
+            return this.addFactory<InstanceType, Dependencies>(
                 key,
                 Array.isArray(depsOrFactory) ? depsOrFactory : [],
                 (dependencies, value) => {
@@ -193,7 +178,7 @@ export class ServiceCollection<S> {
         } else {
             ok(typeof depsOrFactory === 'function', 'illegal invocation with undefined factory');
 
-            return this.addFactory<K>(key, (value) => {
+            return this.addFactory<InstanceType>(key, (value) => {
                 ok(value, `unable to create ${key}, initial value undefined`);
 
                 return depsOrFactory(value);
@@ -203,7 +188,10 @@ export class ServiceCollection<S> {
 
     // Register dependencies and then build nodes. Note: `nodes` is a function because ordering may
     // depend on results of dependency registration
-    private async buildNodes(generateNodes: () => string[], reuseServices: Partial<S> = {}): Promise<Partial<S>> {
+    private async buildNodes<ReturnType = Record<string, unknown>>(
+        generateNodes: () => string[],
+        reuseServices: Record<string, unknown> = {}
+    ): Promise<ReturnType> {
         // Consume all dependencies and then reset so updating registrations without re-registering
         // dependencies works
         this.dependencies.forEach((dependencies, node) =>
@@ -215,31 +203,26 @@ export class ServiceCollection<S> {
 
         const services = await preduce(
             nodes,
-            async (services, node) => {
+            async (services, service) => {
                 // Extra precaution
-                if (!this.graph.hasNode(node)) {
+                if (!this.graph.hasNode(service)) {
                     return services;
                 }
 
-                // Note: safe because of `hasNode` check above
-                const service = node as keyof S;
-
                 // Helper to generate return value
-                const assignNodeValue = (value: unknown) => {
-                    return {
-                        ...services,
-                        [service]: value,
-                    };
-                };
+                const assignValue = (value: unknown) => ({
+                    ...services,
+                    [service]: value,
+                });
 
                 // Optionally reuse existing service
                 const reusedService = reuseServices[service];
                 if (reusedService !== undefined) {
-                    return assignNodeValue(reusedService);
+                    return assignValue(reusedService);
                 }
 
                 // Each node stores a list of factory methods.
-                const factories = this.graph.getNodeData(node);
+                const factories = this.graph.getNodeData(service);
 
                 // Produce the instance by reducing those factories, passing the instance along for composition.
                 const instance = await preduce(
@@ -248,15 +231,15 @@ export class ServiceCollection<S> {
                     <unknown>services[service]
                 );
 
-                return assignNodeValue(instance);
+                return assignValue(instance);
             },
-            <Partial<S>>{}
+            <Record<string, unknown>>{}
         );
 
         // Cache results for subsequent invocations that may desire pre-constructed instances
         Object.assign(this.cache, services);
 
-        return services;
+        return services as ReturnType;
     }
 
     /**
@@ -266,17 +249,19 @@ export class ServiceCollection<S> {
      * @param deep reconstruct all dependencies
      * @returns the service instance, or undefined
      */
-    async makeInstance<K extends keyof S>(key: K, deep = false): Promise<S[K] | undefined> {
-        const node = stringify(key);
-
+    async makeInstance<InstanceType = unknown>(key: string, deep = false): Promise<InstanceType | undefined> {
         // If this is not a deep reconstruction, reuse any services that `key` depends on
-        let initialServices: Partial<S> | undefined;
+        let initialServices: Record<string, unknown> | undefined;
         if (!deep) {
             const { [key]: _, ...cached } = this.cache;
-            initialServices = cached as Partial<S>; // tsc thinks Omit<Partial<S>, K> !== Partial<S> - silly!
+            initialServices = cached;
         }
 
-        const services = await this.buildNodes(() => this.graph.dependenciesOf(node).concat(node), initialServices);
+        const services = await this.buildNodes<Record<string, InstanceType | undefined>>(
+            () => this.graph.dependenciesOf(key).concat(key),
+            initialServices
+        );
+
         return services[key];
     }
 
@@ -287,8 +272,8 @@ export class ServiceCollection<S> {
      * @param deep reconstruct all dependencies
      * @returns the service instance
      */
-    async mustMakeInstance<K extends keyof S>(key: K, deep = false): Promise<S[K]> {
-        const instance = await this.makeInstance(key, deep);
+    async mustMakeInstance<InstanceType = unknown>(key: string, deep = false): Promise<InstanceType> {
+        const instance = await this.makeInstance<InstanceType>(key, deep);
         assert.ok(instance, `\`${key}\` instance undefined!`);
 
         return instance;
@@ -299,8 +284,8 @@ export class ServiceCollection<S> {
      *
      * @returns all resolved services
      */
-    makeInstances(): Promise<Partial<S>> {
-        return this.buildNodes(() => this.graph.overallOrder());
+    makeInstances<InstancesType>(): Promise<InstancesType> {
+        return this.buildNodes<InstancesType>(() => this.graph.overallOrder());
     }
 
     /**
@@ -309,13 +294,15 @@ export class ServiceCollection<S> {
      * @param keys instances that must be not undefined
      * @returns all resolve services
      */
-    async mustMakeInstances<K extends keyof S>(...keys: K[]): Promise<{ [k in K]: S[k] } & Partial<Omit<S, K>>> {
-        const instances = await this.makeInstances();
+    async mustMakeInstances<InstancesType extends Record<string, unknown> = Record<string, unknown>>(
+        ...keys: string[]
+    ): Promise<InstancesType> {
+        const instances = await this.makeInstances<InstancesType>();
 
         keys.forEach((key) => {
             assert.ok(instances[key], `\`${key}\` instance undefined!`);
         });
 
-        return instances as { [k in K]: S[k] } & Partial<Omit<S, K>>;
+        return instances;
     }
 }
