@@ -9,7 +9,7 @@
 import { existsSync, readFileSync } from 'fs';
 import { resolve } from 'path';
 import { v4 as uuidv4 } from 'uuid';
-import omit from 'lodash/omit';
+
 import {
     BoolExpression,
     BoolExpressionConverter,
