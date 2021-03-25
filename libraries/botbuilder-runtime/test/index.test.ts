@@ -8,20 +8,20 @@ import { CosmosDbPartitionedStorage } from 'botbuilder-azure';
 import { ok } from 'assert';
 import { plugin } from 'botbuilder-runtime-core';
 
-describe('getRuntimeServices', () => {
-    it('works', async () => {
+describe('getRuntimeServices', function () {
+    it('works', async function () {
         const [services] = await getRuntimeServices(__dirname, __dirname);
         ok(services);
         ok(await services.makeInstances());
     });
 
-    it('works with preset configuration', async () => {
+    it('works with preset configuration', async function () {
         const [services] = await getRuntimeServices(__dirname, new Configuration());
         ok(services);
         ok(await services.makeInstances());
     });
 
-    it('supports plugins and late binding configuration', async () => {
+    it('supports plugins and late binding configuration', async function () {
         const [services, configuration] = await getRuntimeServices(__dirname, __dirname);
 
         await Promise.resolve(
@@ -43,8 +43,8 @@ describe('getRuntimeServices', () => {
         ok(customAdapter.get('foo'));
     });
 
-    describe('storage', () => {
-        it('defaults to memory storage', async () => {
+    describe('storage', function () {
+        it('defaults to memory storage', async function () {
             const [services] = await getRuntimeServices(__dirname, __dirname);
             ok(services);
 
@@ -52,7 +52,7 @@ describe('getRuntimeServices', () => {
             ok(storage instanceof MemoryStorage);
         });
 
-        it('supports blobs storage', async () => {
+        it('supports blobs storage', async function () {
             const configuration = new Configuration().argv().env();
 
             configuration.set(['runtimeSettings', 'storage'], 'BlobsStorage');
@@ -69,7 +69,7 @@ describe('getRuntimeServices', () => {
             ok(storage instanceof BlobsStorage);
         });
 
-        it('supports cosmos storage', async () => {
+        it('supports cosmos storage', async function () {
             const configuration = new Configuration().argv().env();
 
             configuration.set(['runtimeSettings', 'storage'], 'CosmosDbPartitionedStorage');

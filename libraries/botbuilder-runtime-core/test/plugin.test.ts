@@ -12,8 +12,8 @@ interface TestServices {
     value: Value;
 }
 
-describe('Plugin', () => {
-    it('works', async () => {
+describe('Plugin', function () {
+    it('works', async function () {
         const fn = plugin<TestServices>(async (services, configuration) => {
             const value = (await configuration.get(['value'])) ?? '';
             ok(typeof value === 'string');

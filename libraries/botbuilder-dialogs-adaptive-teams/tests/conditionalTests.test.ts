@@ -16,7 +16,7 @@ describe('Conditional Tests', function () {
 
     const resourceExplorer = new ResourceExplorer().addFolder(path.join(__dirname, 'conditionalTests'), true, false);
 
-    it('OnTeamsActivityTypes', async () => {
+    it('OnTeamsActivityTypes', async function () {
         await TestUtils.runTestScript(resourceExplorer, 'ConditionalsTests_OnTeamsActivityTypes');
     });
 });
