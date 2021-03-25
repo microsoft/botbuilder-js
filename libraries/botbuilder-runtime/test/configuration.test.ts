@@ -20,38 +20,38 @@ describe('Configuration', () => {
     };
 
     describe('flags', () => {
-        it('works', async () => {
+        it('works', () => {
             const flags = makeConfiguration().bind(['flags']);
 
-            assert.strictEqual(await flags.bool(['on']), true);
-            assert.strictEqual(await flags.bool(['off']), false);
-            await assert.rejects(flags.bool(['bad']));
+            assert.strictEqual(flags.bool(['on']), true);
+            assert.strictEqual(flags.bool(['off']), false);
+            assert.throws(() => flags.bool(['bad']));
         });
     });
 
     describe('strings', () => {
-        it('works', async () => {
+        it('works', () => {
             const strings = makeConfiguration().bind(['strings']);
 
-            assert.strictEqual(await strings.string(['ok']), 'howdy');
-            await assert.rejects(strings.string(['bad']));
+            assert.strictEqual(strings.string(['ok']), 'howdy');
+            assert.throws(() => strings.string(['bad']));
 
-            assert.strictEqual(await strings.string(['unset']), undefined);
+            assert.strictEqual(strings.string(['unset']), undefined);
             strings.set(['unset'], 'set');
-            assert.strictEqual(await strings.string(['unset']), 'set');
+            assert.strictEqual(strings.string(['unset']), 'set');
 
-            assert.strictEqual(await strings.string(['env']), 'env');
-            assert.strictEqual(await strings.string(['argv']), 'argv');
+            assert.strictEqual(strings.string(['env']), 'env');
+            assert.strictEqual(strings.string(['argv']), 'argv');
         });
     });
 
     describe('nesting and layering', () => {
-        it('works', async () => {
+        it('works', () => {
             const base = makeConfiguration();
-            assert.strictEqual(await base.get(['root', 'key']), 'base');
+            assert.strictEqual(base.get(['root', 'key']), 'base');
 
             const layered = makeConfiguration(['layer.json', 'base.json']);
-            assert.strictEqual(await layered.get(['root', 'key']), 'layer');
+            assert.strictEqual(layered.get(['root', 'key']), 'layer');
         });
     });
 });
