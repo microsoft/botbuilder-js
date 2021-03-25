@@ -46,22 +46,22 @@ interface Label {
         offset: number;
         length: number;
     };
-};
+}
 
 interface Result {
     score: number;
     closest_text: string;
     label: Label;
-};
+}
 
 interface LabelResolver {
     score(text: string): Result[];
     score(text: string, labelType: number): Result[];
-};
+}
 
-type Orchestrator = {
+interface Orchestrator {
     createLabelResolver(snapshot: Uint8Array): LabelResolver;
-};
+}
 
 /**
  * Class that represents an adaptive Orchestrator recognizer.
@@ -398,7 +398,7 @@ export class OrchestratorAdaptiveRecognizer
                 const entityType = result.label.name;
 
                 // add value
-                let values: any[] = recognizerResult.entities[entityType];
+                let values = recognizerResult.entities[entityType];
                 values ??= [];
                 recognizerResult.entities[entityType] = values;
 

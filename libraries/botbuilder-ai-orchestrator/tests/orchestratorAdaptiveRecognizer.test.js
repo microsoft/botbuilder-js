@@ -35,7 +35,7 @@ describe('OrchestratorAdaptiveRecognizer tests', function () {
 
         strictEqual(res.text, 'hello');
         strictEqual(res.intents.mockLabel.score, 0.9);
-        strictEqual(rec._initializeModel.calledOnce);
+        ok(rec._initializeModel.calledOnce);
     });
 
     it('Expect initialize is called when labelresolver is null', async () => {
@@ -111,7 +111,7 @@ describe('OrchestratorAdaptiveRecognizer tests', function () {
         strictEqual(res.entities.number[0], '12');
 
         strictEqual(res['entityResult'], entityResult);
-        strictEqual(res.entities.mockEntityLabel);
+        ok(res.entities.mockEntityLabel);
         strictEqual(res.entities.mockEntityLabel[0].score, 0.75);
         strictEqual(res.entities.mockEntityLabel[0].text, 'room 12');
         strictEqual(res.entities.mockEntityLabel[0].start, 17);
