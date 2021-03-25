@@ -305,16 +305,17 @@ export class OrchestratorAdaptiveRecognizer
         dialogContext?: DialogContext
     ): Record<string, string> {
         const topTwo = this.getTopTwoIntents(recognizerResult);
-        const intents = Object.entries(recognizerResult.intents);
+        const intent = Object.entries(recognizerResult.intents);
+        const { text, alteredText, intents, entities, ...customRecognizerProps } = recognizerResult;
         const properties: Record<string, string> = {
-            TopIntent: intents.length > 0 ? topTwo[0].name : undefined,
-            TopIntentScore: intents.length > 0 ? topTwo[0].score.toString() : undefined,
-            NextIntent: intents.length > 1 ? topTwo[1].name : undefined,
-            NextIntentScore: intents.length > 1 ? topTwo[1].score.toString() : undefined,
-            Intents: intents.length > 0 ? JSON.stringify(recognizerResult.intents) : undefined,
+            TopIntent: intent.length > 0 ? topTwo[0].name : undefined,
+            TopIntentScore: intent.length > 0 ? topTwo[0].score.toString() : undefined,
+            NextIntent: intent.length > 1 ? topTwo[1].name : undefined,
+            NextIntentScore: intent.length > 1 ? topTwo[1].score.toString() : undefined,
+            Intents: intent.length > 0 ? JSON.stringify(recognizerResult.intents) : undefined,
             Entities: recognizerResult.entities ? JSON.stringify(recognizerResult.entities) : undefined,
-            AdditionalProperties: JSON.stringify(
-                omit(recognizerResult, ['text', 'alteredText', 'intents', 'entities'])
+            AdditionalProperties: JSON.stringify( 
+                customRecognizerProps
             ),
         };
 
