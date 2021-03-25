@@ -80,7 +80,7 @@ export class CoreBotAdapter extends BotFrameworkAdapter {
     }
 
     private isSkillBot(turnContext: TurnContext): boolean {
-        const claimsIdentity = turnContext.turnState.get<ClaimsIdentity>(BotAdapter.BotIdentityKey);
+        const claimsIdentity = turnContext.turnState.get<ClaimsIdentity>(turnContext.adapter.BotIdentityKey);
         return SkillValidation.isSkillClaim(claimsIdentity?.claims ?? []);
     }
 }
