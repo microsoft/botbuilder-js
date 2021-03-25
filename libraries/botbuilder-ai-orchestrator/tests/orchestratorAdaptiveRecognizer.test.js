@@ -116,6 +116,9 @@ describe('OrchestratorAdaptiveRecognizer tests', function () {
         strictEqual(res.entities.mockEntityLabel[0].text, 'room 12');
         strictEqual(res.entities.mockEntityLabel[0].start, 17);
         strictEqual(res.entities.mockEntityLabel[0].end, 24);
+        strictEqual(Object.keys(res.entities).length, 3);
+        strictEqual(Object.keys(res.entities.$instance).length, 2);
+        console.log('ENTITIES ' + JSON.stringify(res.entities));
     });
 
     it('Test ambiguous intent recognition', async () => {

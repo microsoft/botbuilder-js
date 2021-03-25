@@ -390,7 +390,7 @@ export class OrchestratorAdaptiveRecognizer
             throw new Error(`Failed scoring entities for: ${text}`);
         }
 
-        // Add full entity recognition result as a 'result' property
+        // Add full entity recognition result as a 'entityResult' property
         recognizerResult[this.entityProperty] = results;
         if (results.length) {
             recognizerResult.entities ??= {};
@@ -413,10 +413,12 @@ export class OrchestratorAdaptiveRecognizer
                 });
 
                 // get/create $instance
-                const instanceRoot = recognizerResult.entities['$instance'] ?? {};
+                recognizerResult.entities['$instance'] ??= {};
+                const instanceRoot = recognizerResult.entities['$instance'];
 
                 // add instanceData
-                const instanceData = instanceRoot[entityType] ?? [];
+                instanceRoot[entityType] ??= [];
+                const instanceData = instanceRoot[entityType];
                 instanceData.push({
                     startIndex: span.offset,
                     endIndex: span.offset + span.length,
