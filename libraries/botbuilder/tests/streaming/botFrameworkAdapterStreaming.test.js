@@ -51,9 +51,7 @@ describe('BotFrameworkAdapter Streaming tests', () => {
     it('starts and stops a namedpipe server', () => {
         const adapter = new BotFrameworkAdapter();
 
-        adapter.useNamedPipe('PipeyMcPipeface', async (_) => {
-            // no op
-        });
+        adapter.useNamedPipe(async (_) => {}, 'PipeyMcPipeface');
         expect(adapter.streamingServer.disconnect()).to.not.throw;
     });
 
