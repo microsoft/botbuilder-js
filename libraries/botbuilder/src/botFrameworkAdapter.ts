@@ -217,6 +217,8 @@ export class BotFrameworkAdapter
 
     private authConfiguration: AuthenticationConfiguration;
 
+    private namedPipeName?: string;
+
     /**
      * Creates a new instance of the [BotFrameworkAdapter](xref:botbuilder.BotFrameworkAdapter) class.
      *
@@ -1866,10 +1868,23 @@ export class BotFrameworkAdapter
             throw new Error('Bot logic needs to be provided to `useNamedPipe`');
         }
 
-        this.logic = logic;
+        if (this.isStreamingConnectionOpen) {
+            if (this.namedPipeName === pipeName) {
+                // Idempotent operation
+                return;
+            } else {
+                // BotFrameworkAdapters are scoped to one streaming connection.
+                // Switching streams is an advanced scenario, one not innately supported by the SDK.
+                // Each BotFrameworkAdapter instance is scoped to a stream, so switching streams
+                // results in dropped conversations that the bot cannot reconnect to.
+                throw new Error(
+                    `This BotFrameworkAdapter instance is already connected to a different stream. Use a new instance to connect to the provided pipeName.`
+                );
+            }
+        }
 
-        this.streamingServer = new NamedPipeServer(pipeName, this);
-        await this.streamingServer.start();
+        this.logic = logic;
+        await this.startNamedPipeServer(pipeName);
     }
 
     /**
@@ -1905,6 +1920,20 @@ export class BotFrameworkAdapter
         const nodeWebSocket = await webSocketFactory.createWebSocket(req, socket, head);
 
         await this.startWebSocket(nodeWebSocket);
+    }
+
+    /**
+     * @private
+     */
+    private async startNamedPipeServer(pipeName: string): Promise<void> {
+        this.namedPipeName = pipeName;
+        this.streamingServer = new NamedPipeServer(pipeName, this);
+
+        try {
+            await this.streamingServer.start();
+        } finally {
+            this.namedPipeName = undefined;
+        }
     }
 
     /**
