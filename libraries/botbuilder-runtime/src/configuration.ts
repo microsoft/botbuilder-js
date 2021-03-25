@@ -40,8 +40,8 @@ export class Configuration implements IConfiguration {
      * @param path path to value
      * @returns the value, or undefined
      */
-    get(path: string[]): Promise<unknown | undefined> {
-        return Promise.resolve(this.provider.get(this.key(path)));
+    get(path: string[]): unknown | undefined {
+        return this.provider.get(this.key(path));
     }
 
     /**
@@ -49,12 +49,9 @@ export class Configuration implements IConfiguration {
      *
      * @param path path to value
      * @param value value to set
-     * @returns a promise representing the async operation
      */
-    set(path: string[], value: unknown): Promise<void> {
-        return new Promise((resolve, reject) =>
-            this.provider.set(this.key(path), value, (err) => (err ? reject(err) : resolve()))
-        );
+    set(path: string[], value: unknown): void {
+        this.provider.set(this.key(path), value);
     }
 
     /**
@@ -102,8 +99,8 @@ export class Configuration implements IConfiguration {
      * @param path path to boolean value
      * @returns true or false depending on flag
      */
-    async bool(path: string[]): Promise<boolean> {
-        return (await this.type(path, Boolean)) === true;
+    bool(path: string[]): boolean {
+        return this.type(path, Boolean) === true;
     }
 
     /**
@@ -112,7 +109,7 @@ export class Configuration implements IConfiguration {
      * @param path path to string value
      * @returns the string or undefined
      */
-    string(path: string[]): Promise<string | undefined> {
+    string(path: string[]): string | undefined {
         return this.type(path, String);
     }
 
@@ -123,8 +120,9 @@ export class Configuration implements IConfiguration {
      * @param runtype runtype to use for type checking
      * @returns the value, or undefined
      */
-    async type<T>(path: string[], runtype: Runtype<T>): Promise<T | undefined> {
-        const value = await this.get(path);
+    type<T>(path: string[], runtype: Runtype<T>): T | undefined {
+        const value = this.get(path);
+
         try {
             return runtype.Or(Undefined).check(value);
         } catch (err) {

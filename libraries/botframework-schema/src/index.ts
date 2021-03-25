@@ -2118,6 +2118,7 @@ export enum Channels {
     Slack = 'slack',
     Sms = 'sms',
     Telegram = 'telegram',
+    Telephony = 'telephony',
     Test = 'test',
     Twilio = 'twilio-sms',
     Webchat = 'webchat',
