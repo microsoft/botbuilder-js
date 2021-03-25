@@ -5,7 +5,6 @@ import { AuthenticationConfiguration, ClaimsIdentity, SkillValidation } from 'bo
 
 import {
     ActivityEx,
-    BotAdapter,
     BotFrameworkAdapter,
     ConversationState,
     InputHints,
