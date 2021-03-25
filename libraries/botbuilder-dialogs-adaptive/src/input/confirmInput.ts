@@ -162,9 +162,9 @@ export class ConfirmInput extends InputDialog implements ConfirmInputConfigurati
                 return InputState.valid;
             } else {
                 // Fallback to trying the choice recognizer
-                const confirmChoices =
-                    (this.confirmChoices && this.confirmChoices.getValue(dc.state)) ||
-                    ConfirmInput.defaultChoiceOptions[locale].choices;
+                const defaults = ConfirmInput.defaultChoiceOptions[locale].choices;
+                const confirmChoices = await this.getConfirmChoicesAsync(dc, defaults);
+
                 const choices = ChoiceFactory.toChoices(confirmChoices);
                 const results = recognizeChoices(input, choices);
                 if (results.length > 0) {
@@ -217,5 +217,24 @@ export class ConfirmInput extends InputDialog implements ConfirmInputConfigurati
         }
 
         return culture;
+    }
+
+    private async getConfirmChoicesAsync(dc: DialogContext, defaults: (string | Choice)[]): Promise<ChoiceSet> {
+        let confirmChoices: ChoiceSet;
+        if (this.confirmChoices != null) {
+            if (
+                this.confirmChoices.expressionText != null &&
+                this.confirmChoices.expressionText.trimLeft().startsWith('${')
+            ) {
+                // use TemplateInterface to bind (aka LG)
+                confirmChoices = await new ChoiceSet(this.confirmChoices.expressionText).bind(dc, dc.state);
+            } else {
+                // use Expression to bind
+                confirmChoices = this.confirmChoices.getValue(dc.state);
+            }
+        } else {
+            confirmChoices = new ChoiceSet(defaults);
+        }
+        return confirmChoices;
     }
 }
