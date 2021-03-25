@@ -825,7 +825,7 @@ describe('TeamsInfo', () => {
         });
 
         describe('getMembersInternal()', () => {
-            it(`should error if an invalid conversationId is passed in.`, async () => {
+            it(`should error if an invalid conversationId is passed in.`, async function () {
                 try {
                     await TeamsInfo.getMembersInternal({}, undefined);
                     assert.fail('should have thrown');
@@ -834,7 +834,7 @@ describe('TeamsInfo', () => {
                 }
             });
 
-            it(`should error if an invalid conversationId is passed in.`, async () => {
+            it(`should error if an invalid conversationId is passed in.`, async function () {
                 try {
                     await TeamsInfo.getMemberInternal({}, undefined);
                     assert.fail('should have thrown');

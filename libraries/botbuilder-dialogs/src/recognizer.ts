@@ -8,6 +8,7 @@
 import {
     Activity,
     BotTelemetryClient,
+    BotTelemetryClientKey,
     getTopScoringIntent,
     NullTelemetryClient,
     RecognizerResult,
@@ -160,9 +161,8 @@ export class Recognizer extends Configurable implements RecognizerConfiguration 
         telemetryMetrics?: Record<string, number>
     ): void {
         if (this.telemetryClient instanceof NullTelemetryClient) {
-            const turnStateTelemetryClient = dialogContext.context.turnState.get(
-                DialogTurnStateConstants.telemetryClient
-            );
+            const turnStateTelemetryClient = dialogContext.context.turnState.get<BotTelemetryClient>(DialogTurnStateConstants.telemetryClient)
+                ?? dialogContext.context.turnState.get<BotTelemetryClient>(BotTelemetryClientKey);
             this.telemetryClient = turnStateTelemetryClient ?? this.telemetryClient;
         }
 

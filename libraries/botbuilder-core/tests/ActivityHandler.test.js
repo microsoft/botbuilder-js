@@ -1,11 +1,10 @@
 const assert = require('assert');
 const { ActivityHandler, ActivityTypes, TestAdapter, tokenResponseEventName, TurnContext } = require('../lib');
 
-describe('ActivityHandler', function() {
-
+describe('ActivityHandler', function () {
     const adapter = new TestAdapter();
 
-    async function processActivity(activity, bot, done) {
+    async function processActivity(activity, bot) {
         if (!activity) {
             throw new Error('Missing activity');
         }
@@ -14,304 +13,305 @@ describe('ActivityHandler', function() {
             throw new Error('Missing bot');
         }
 
-        if (!done) {
-            throw new Error('Missing done');
-        }
         const context = new TurnContext(adapter, activity);
-        // Adding the catch with `done(error)` makes sure that the correct error is surfaced
-        await bot.run(context).catch(error => done(error));
+        await bot.run(context);
     }
 
-    it(`should fire onTurn for any inbound activity`, function(done) {
-
+    it(`should fire onTurn for any inbound activity`, async function () {
         const bot = new ActivityHandler();
 
+        let onTurnCalled = false;
         bot.onTurn(async (context, next) => {
-            assert(true, 'onTurn not called');
-            done();
+            onTurnCalled = true;
             await next();
         });
 
-        processActivity({type: 'any'}, bot, done);
+        await processActivity({ type: 'any' }, bot);
+        assert(onTurnCalled);
     });
 
-    it(`should fire onMessage for any message activities`, function(done) {
-
+    it(`should fire onMessage for any message activities`, async function () {
         const bot = new ActivityHandler();
 
+        let onMessageCalled = false;
         bot.onMessage(async (context, next) => {
-            assert(true, 'onMessage not called');
-            done();
+            onMessageCalled = true;
             await next();
         });
 
-        processActivity({type: ActivityTypes.Message}, bot, done);
+        await processActivity({ type: ActivityTypes.Message }, bot);
+        assert(onMessageCalled);
     });
 
-    it(`calling  next allows following events to firing`, function(done) {
-
+    it(`calling  next allows following events to firing`, async function () {
         const bot = new ActivityHandler();
 
+        let onTurnCalled = false;
         bot.onTurn(async (context, next) => {
-            assert(true, 'onTurn not called');
+            onTurnCalled = true;
             await next();
         });
 
+        let onMessageCalled = false;
         bot.onMessage(async (context, next) => {
-            assert(true, 'onMessage not called');
-            done();
+            onMessageCalled = true;
             await next();
         });
 
-        processActivity({type: ActivityTypes.Message}, bot, done);
+        await processActivity({ type: ActivityTypes.Message }, bot);
+        assert(onTurnCalled);
+        assert(onMessageCalled);
     });
 
-    it(`omitting call to next prevents following events from firing`, function(done) {
-
+    it(`omitting call to next prevents following events from firing`, async function () {
         const bot = new ActivityHandler();
 
+        let onTurnCalled = false;
         bot.onTurn(async (context, next) => {
-            assert(true, 'onTurn not called');
-            done();
+            onTurnCalled = true;
         });
 
+        let onMessageCalled = false;
         bot.onMessage(async (context, next) => {
-            assert(false, 'onMessage called improperly!');
+            onMessageCalled = false;
             await next();
         });
 
-        processActivity({type: ActivityTypes.Message}, bot, done);
+        await processActivity({ type: ActivityTypes.Message }, bot);
+        assert(onTurnCalled);
+        assert(!onMessageCalled);
     });
 
-    it(`binding 2 methods to the same event both fire`, function(done) {
-
+    it(`binding 2 methods to the same event both fire`, async function () {
         const bot = new ActivityHandler();
         let count = 0;
 
+        let onMessageCalled = false;
         bot.onMessage(async (context, next) => {
-            assert(true, 'event 1 did not fire');
+            onMessageCalled = true;
             count++;
             await next();
         });
 
+        let onMessageCalledAgain = false;
         bot.onMessage(async (context, next) => {
-            assert(true, 'event 2 did not fire');
+            onMessageCalledAgain = true;
             count++;
-
-            assert(count === 2, 'all events did fire');
-            done();
             await next();
         });
 
-        processActivity({type: ActivityTypes.Message}, bot, done);
+        await processActivity({ type: ActivityTypes.Message }, bot);
+        assert(onMessageCalled);
+        assert(onMessageCalledAgain);
+        assert(count === 2, 'all events did fire');
     });
 
-    it(`should fire onConversationUpdate`, function(done) {
-
+    it(`should fire onConversationUpdate`, async function () {
         const bot = new ActivityHandler();
 
+        let onConversationUpdateCalled = false;
         bot.onConversationUpdate(async (context, next) => {
-            assert(true, 'onConversationUpdate not called');
-            done();
+            onConversationUpdateCalled = true;
             await next();
         });
 
-        processActivity({type: ActivityTypes.ConversationUpdate}, bot, done);
+        await processActivity({ type: ActivityTypes.ConversationUpdate }, bot);
+        assert(onConversationUpdateCalled);
     });
 
-    it(`should fire onMembersAdded`, function(done) {
-
+    it(`should fire onMembersAdded`, async function () {
         const bot = new ActivityHandler();
 
+        let onMembersAddedCalled = false;
         bot.onMembersAdded(async (context, next) => {
-            assert(true, 'onConversationUpdate not called');
-            done();
+            onMembersAddedCalled = true;
             await next();
         });
 
-        processActivity({type: ActivityTypes.ConversationUpdate, membersAdded: [{id: 1}]}, bot, done);
+        await processActivity({ type: ActivityTypes.ConversationUpdate, membersAdded: [{ id: 1 }] }, bot);
+        assert(onMembersAddedCalled);
     });
 
-    it(`should fire onMembersRemoved`, function(done) {
-
+    it(`should fire onMembersRemoved`, async function () {
         const bot = new ActivityHandler();
 
+        let onMembersRemovedCalled = false;
         bot.onMembersRemoved(async (context, next) => {
-            assert(true, 'onMembersRemoved not called');
-            done();
+            onMembersRemovedCalled = true;
             await next();
         });
 
-        processActivity({type: ActivityTypes.ConversationUpdate, membersRemoved: [{id: 1}]}, bot, done);
+        await processActivity({ type: ActivityTypes.ConversationUpdate, membersRemoved: [{ id: 1 }] }, bot);
+        assert(onMembersRemovedCalled);
     });
 
-    it(`should fire onMessageReaction`, function(done) {
-
+    it(`should fire onMessageReaction`, async function () {
         const bot = new ActivityHandler();
 
+        let onMessageReactionCalled = false;
         bot.onMessageReaction(async (context, next) => {
-            assert(true, 'onMessageReaction not called');
-            done();
+            onMessageReactionCalled = true;
             await next();
         });
 
-        processActivity({type: ActivityTypes.MessageReaction}, bot, done);
+        await processActivity({ type: ActivityTypes.MessageReaction }, bot);
+        assert(onMessageReactionCalled);
     });
 
-    it(`should fire onReactionsAdded`, function(done) {
-
+    it(`should fire onReactionsAdded`, async function () {
         const bot = new ActivityHandler();
 
+        let onReactionsAddedCalled = false;
         bot.onReactionsAdded(async (context, next) => {
-            assert(true, 'onReactionsAdded not called');
-            done();
+            onReactionsAddedCalled = true;
             await next();
         });
 
-        processActivity({type: ActivityTypes.MessageReaction, reactionsAdded: [{type: 'like'}]}, bot, done);
+        await processActivity({ type: ActivityTypes.MessageReaction, reactionsAdded: [{ type: 'like' }] }, bot);
+        assert(onReactionsAddedCalled);
     });
 
-    it(`should fire onReactionsRemoved`, function(done) {
-
+    it(`should fire onReactionsRemoved`, async function () {
         const bot = new ActivityHandler();
 
+        let onReactionsRemovedCalled = false;
         bot.onReactionsRemoved(async (context, next) => {
-            assert(true, 'onReactionsRemoved not called');
-            done();
+            onReactionsRemovedCalled = true;
             await next();
         });
 
-        processActivity({type: ActivityTypes.MessageReaction, reactionsRemoved: [{type: 'like'}]}, bot, done);
+        await processActivity({ type: ActivityTypes.MessageReaction, reactionsRemoved: [{ type: 'like' }] }, bot);
+        assert(onReactionsRemovedCalled);
     });
-    
-    it(`should fire onEvent`, function(done) {
 
+    it(`should fire onEvent`, async function () {
         const bot = new ActivityHandler();
 
+        let onEventCalled = false;
         bot.onEvent(async (context, next) => {
-            assert(true, 'onEvent not called');
-            done();
+            onEventCalled = true;
             await next();
         });
 
-        processActivity({type: ActivityTypes.Event}, bot, done);
+        await processActivity({ type: ActivityTypes.Event }, bot);
+        assert(onEventCalled);
     });
 
-    it(`should fire onEndOfConversation`, function(done) {
-
+    it(`should fire onEndOfConversation`, async function () {
         const bot = new ActivityHandler();
 
+        let onEndConversationCalled = false;
         bot.onEndOfConversation(async (context, next) => {
-            assert(true, 'onEndOfConversation not called');
-            done();
+            onEndConversationCalled = true;
             await next();
         });
 
-        processActivity({type: ActivityTypes.EndOfConversation}, bot, done);
+        await processActivity({ type: ActivityTypes.EndOfConversation }, bot);
+        assert(onEndConversationCalled);
     });
 
-    it(`should fire onTyping`, function(done) {
-
+    it(`should fire onTyping`, async function () {
         const bot = new ActivityHandler();
 
+        let onTypingCalled = false;
         bot.onTyping(async (context, next) => {
-            assert(true, 'onTyping not called');
-            done();
+            onTypingCalled = true;
             await next();
         });
 
-        processActivity({type: ActivityTypes.Typing}, bot, done);
+        await processActivity({ type: ActivityTypes.Typing }, bot);
+        assert(onTypingCalled);
     });
 
-    it(`should fire onInstallationUpdate`, function(done) {
-
+    it(`should fire onInstallationUpdate`, async function () {
         const bot = new ActivityHandler();
 
+        let onInstallationUpdateCalled = false;
         bot.onInstallationUpdate(async (context, next) => {
-            assert(true, 'onInstallationUpdate not called');
-            done();
+            onInstallationUpdateCalled = true;
             await next();
         });
 
-        processActivity({type: ActivityTypes.InstallationUpdate}, bot, done);
+        await processActivity({ type: ActivityTypes.InstallationUpdate }, bot);
+        assert(onInstallationUpdateCalled);
     });
 
-    it(`should fire onInstallationUpdateAdd`, function(done) {
-
+    it(`should fire onInstallationUpdateAdd`, async function () {
         const bot = new ActivityHandler();
 
+        let onInstallationUpdateAddCalled = false;
         bot.onInstallationUpdateAdd(async (context, next) => {
-            assert(true, 'onInstallationUpdateAdd not called');
-            done();
+            onInstallationUpdateAddCalled = true;
             await next();
         });
 
-        processActivity({type: ActivityTypes.InstallationUpdate, action: 'add'}, bot, done);
+        await processActivity({ type: ActivityTypes.InstallationUpdate, action: 'add' }, bot);
+        assert(onInstallationUpdateAddCalled);
     });
-    
-    it(`should fire onInstallationUpdateAddUpgrade`, function(done) {
 
+    it(`should fire onInstallationUpdateAddUpgrade`, async function () {
         const bot = new ActivityHandler();
 
+        let onInstallationUpdateAddCalled = false;
         bot.onInstallationUpdateAdd(async (context, next) => {
-            assert(true, 'onInstallationUpdateAdd not called');
-            done();
+            onInstallationUpdateAddCalled = true;
             await next();
         });
 
-        processActivity({type: ActivityTypes.InstallationUpdate, action: 'add-upgrade'}, bot, done);
+        await processActivity({ type: ActivityTypes.InstallationUpdate, action: 'add-upgrade' }, bot);
+        assert(onInstallationUpdateAddCalled);
     });
 
-    it(`should fire onInstallationUpdateRemove`, function(done) {
-
+    it(`should fire onInstallationUpdateRemove`, async function () {
         const bot = new ActivityHandler();
 
+        let onInstallationUpdateRemoveCalled = false;
         bot.onInstallationUpdateRemove(async (context, next) => {
-            assert(true, 'onInstallationUpdateRemove not called');
-            done();
+            onInstallationUpdateRemoveCalled = true;
             await next();
         });
 
-        processActivity({type: ActivityTypes.InstallationUpdate, action: 'remove'}, bot, done);
+        await processActivity({ type: ActivityTypes.InstallationUpdate, action: 'remove' }, bot);
+        assert(onInstallationUpdateRemoveCalled);
     });
 
-    it(`should fire onInstallationUpdateRemoveUpgrade`, function(done) {
-
+    it(`should fire onInstallationUpdateRemoveUpgrade`, async function () {
         const bot = new ActivityHandler();
 
+        let onInstallationUpdateRemoveCalled = false;
         bot.onInstallationUpdateRemove(async (context, next) => {
-            assert(true, 'onInstallationUpdateRemove not called');
-            done();
+            onInstallationUpdateRemoveCalled = true;
             await next();
         });
 
-        processActivity({type: ActivityTypes.InstallationUpdate, action: 'remove-upgrade'}, bot, done);
+        await processActivity({ type: ActivityTypes.InstallationUpdate, action: 'remove-upgrade' }, bot);
+        assert(onInstallationUpdateRemoveCalled);
     });
 
-    it(`should fire onUnrecognizedActivityType`, function(done) {
-
+    it(`should fire onUnrecognizedActivityType`, async function () {
         const bot = new ActivityHandler();
 
+        let onUnrecognizedActivityTypeCalled = false;
         bot.onUnrecognizedActivityType(async (context, next) => {
-            assert(true, 'onUnrecognizedActivityType not called');
-            done();
+            onUnrecognizedActivityTypeCalled = true;
             await next();
         });
 
-        processActivity({type: 'foo'}, bot, done);
+        await processActivity({ type: 'foo' }, bot);
+        assert(onUnrecognizedActivityTypeCalled);
     });
 
-    it(`should fire onDialog`, function(done) {
-
+    it(`should fire onDialog`, async function () {
         const bot = new ActivityHandler();
 
+        let onDialogCalled = false;
         bot.onDialog(async (context, next) => {
-            assert(true, 'onDialog not called');
-            done();
+            onDialogCalled = true;
             await next();
         });
 
-        processActivity({type: 'foo'}, bot, done);
+        await processActivity({ type: 'foo' }, bot);
+        assert(onDialogCalled);
     });
 
     describe('should by default', () => {
@@ -328,7 +328,7 @@ describe('ActivityHandler', function() {
         let onUnrecognizedActivityTypeCalled = false;
         let onDialogCalled = false;
 
-        afterEach(function() {
+        afterEach(function () {
             onTurnCalled = false;
             onMessageCalled = false;
             onConversationUpdateCalled = false;
@@ -356,7 +356,7 @@ describe('ActivityHandler', function() {
             assert(flag, `${args[0]}Called should be true after the ${args[0]} handlers are called.`);
         }
 
-        it('call "onTurn" handlers then dispatch by Activity Type "Message"', (done) => {
+        it('call "onTurn" handlers then dispatch by Activity Type "Message"', async function () {
             const bot = new ActivityHandler();
             bot.onTurn(async (context, next) => {
                 assertContextAndNext(context, next);
@@ -375,13 +375,12 @@ describe('ActivityHandler', function() {
                 await next();
             });
 
-            processActivity({type: ActivityTypes.Message}, bot, done);
+            await processActivity({ type: ActivityTypes.Message }, bot);
             assertTrueFlag(onTurnCalled, 'onTurn');
             assertTrueFlag(onMessageCalled, 'onMessage');
-            done();
         });
 
-        it('call "onTurn" handlers then dispatch by Activity Type "ConversationUpdate"', (done) => {
+        it('call "onTurn" handlers then dispatch by Activity Type "ConversationUpdate"', async function () {
             const bot = new ActivityHandler();
             bot.onTurn(async (context, next) => {
                 assertContextAndNext(context, next);
@@ -399,13 +398,12 @@ describe('ActivityHandler', function() {
                 await next();
             });
 
-            processActivity({type: ActivityTypes.ConversationUpdate}, bot, done);
+            await processActivity({ type: ActivityTypes.ConversationUpdate }, bot);
             assertTrueFlag(onTurnCalled, 'onTurn');
             assertTrueFlag(onConversationUpdateCalled, 'onConversationUpdate');
-            done();
         });
 
-        it('call "onTurn" handlers then dispatch by Activity Type "ConversationUpdate"-subtype "MembersAdded"', (done) => {
+        it('call "onTurn" handlers then dispatch by Activity Type "ConversationUpdate"-subtype "MembersAdded"', async function () {
             const bot = new ActivityHandler();
             bot.onTurn(async (context, next) => {
                 assertContextAndNext(context, next);
@@ -423,13 +421,12 @@ describe('ActivityHandler', function() {
                 await next();
             });
 
-            processActivity({type: ActivityTypes.ConversationUpdate, membersAdded: [{id: 1}]}, bot, done);
+            await processActivity({ type: ActivityTypes.ConversationUpdate, membersAdded: [{ id: 1 }] }, bot);
             assertTrueFlag(onTurnCalled, 'onTurn', 'onMembersAdded');
             assertTrueFlag(onMembersAddedCalled, 'onMembersAdded', 'onTurn');
-            done();
         });
 
-        it('call "onTurn" handlers then dispatch by Activity Type "ConversationUpdate"-subtype "MembersRemoved"', (done) => {
+        it('call "onTurn" handlers then dispatch by Activity Type "ConversationUpdate"-subtype "MembersRemoved"', async function () {
             const bot = new ActivityHandler();
             bot.onTurn(async (context, next) => {
                 assertContextAndNext(context, next);
@@ -447,13 +444,12 @@ describe('ActivityHandler', function() {
                 await next();
             });
 
-            processActivity({type: ActivityTypes.ConversationUpdate, membersRemoved: [{id: 1}]}, bot, done);
+            await processActivity({ type: ActivityTypes.ConversationUpdate, membersRemoved: [{ id: 1 }] }, bot);
             assertTrueFlag(onTurnCalled, 'onTurn', 'onMembersRemoved');
             assertTrueFlag(onMembersRemovedCalled, 'onMembersRemoved', 'onTurn');
-            done();
         });
 
-        it('call "onTurn" handlers then dispatch by Activity Type "MessageReaction"', (done) => {
+        it('call "onTurn" handlers then dispatch by Activity Type "MessageReaction"', async function () {
             const bot = new ActivityHandler();
             bot.onTurn(async (context, next) => {
                 assertContextAndNext(context, next);
@@ -471,13 +467,12 @@ describe('ActivityHandler', function() {
                 await next();
             });
 
-            processActivity({type: ActivityTypes.MessageReaction, reactionsRemoved: [{type: 'like'}]}, bot, done);
+            await processActivity({ type: ActivityTypes.MessageReaction, reactionsRemoved: [{ type: 'like' }] }, bot);
             assertTrueFlag(onTurnCalled, 'onTurn', 'onMembersAdded');
             assertTrueFlag(onMessageReactionCalled, 'onMessageReaction', 'onTurn');
-            done();
         });
 
-        it('call "onTurn" handlers then dispatch by Activity Type "MessageReaction"-subtype "ReactionsAdded"', (done) => {
+        it('call "onTurn" handlers then dispatch by Activity Type "MessageReaction"-subtype "ReactionsAdded"', async function () {
             const bot = new ActivityHandler();
             bot.onTurn(async (context, next) => {
                 assertContextAndNext(context, next);
@@ -506,14 +501,13 @@ describe('ActivityHandler', function() {
                 await next();
             });
 
-            processActivity({type: ActivityTypes.MessageReaction, reactionsAdded: [{type: 'like'}]}, bot, done);
+            await processActivity({ type: ActivityTypes.MessageReaction, reactionsAdded: [{ type: 'like' }] }, bot);
             assertTrueFlag(onTurnCalled, 'onTurn', 'onMembersAdded');
             assertTrueFlag(onMessageReactionCalled, 'onMessageReaction');
             assertTrueFlag(onReactionsAddedCalled, 'onReactionsAdded', 'onMessageReaction', 'onTurn');
-            done();
         });
 
-        it('call "onTurn" handlers then dispatch by Activity Type "MessageReaction"-subtype "ReactionsRemoved"', (done) => {
+        it('call "onTurn" handlers then dispatch by Activity Type "MessageReaction"-subtype "ReactionsRemoved"', async function () {
             const bot = new ActivityHandler();
             bot.onTurn(async (context, next) => {
                 assertContextAndNext(context, next);
@@ -542,57 +536,55 @@ describe('ActivityHandler', function() {
                 await next();
             });
 
-            processActivity({type: ActivityTypes.MessageReaction, reactionsRemoved: [{type: 'like'}]}, bot, done);
+            await processActivity({ type: ActivityTypes.MessageReaction, reactionsRemoved: [{ type: 'like' }] }, bot);
             assertTrueFlag(onTurnCalled, 'onTurn', 'onMembersAdded');
             assertTrueFlag(onMessageReactionCalled, 'onMessageReaction');
             assertTrueFlag(onReactionsRemovedCalled, 'onReactionsRemoved');
-            done();
         });
 
-        it('call the default onHealthCheck when called with Activity Type "Invoke" with name "healthCheck"', (done) => {
+        it('call the default onHealthCheck when called with Activity Type "Invoke" with name "healthCheck"', async function () {
             const activity = { type: ActivityTypes.Invoke, name: 'healthCheck' };
             const testAdapter = new TestAdapter();
             const context = new TurnContext(testAdapter, activity);
             const bot = new ActivityHandler();
-            bot.run(context)
-                .then(() => {
-                    const invokeResponseActivity = testAdapter.activityBuffer.find((a) => a.type == 'invokeResponse');
-                    const healthCheckResponse = invokeResponseActivity.value.body;
-                    assert(true, healthCheckResponse.healthResults.success);
-                    assert('Health check succeeded.', healthCheckResponse.healthResults.messages[0]);
-                    done();
-                })
-                .catch(error => done(error));
+
+            await bot.run(context);
+
+            const invokeResponseActivity = testAdapter.activityBuffer.find((a) => a.type == 'invokeResponse');
+            const healthCheckResponse = invokeResponseActivity.value.body;
+            assert(true, healthCheckResponse.healthResults.success);
+            assert('Health check succeeded.', healthCheckResponse.healthResults.messages[0]);
         });
 
-        it('call the default onHealthCheck when called with Activity Type "Invoke" with name "healthCheck" with results from the adapter', (done) => {
+        it('call the default onHealthCheck when called with Activity Type "Invoke" with name "healthCheck" with results from the adapter', async function () {
             const activity = { type: ActivityTypes.Invoke, name: 'healthCheck' };
             const testAdapter = new TestAdapter();
 
             testAdapter.healthCheck = async (context) => {
-                return { healthResults: {
-                    success: true,
-                    "user-agent": 'user-agent-header-value',
-                    authorization: 'authorization-header-value',
-                    messages: [ 'Health results from adapter.' ] } } 
+                return {
+                    healthResults: {
+                        success: true,
+                        'user-agent': 'user-agent-header-value',
+                        authorization: 'authorization-header-value',
+                        messages: ['Health results from adapter.'],
+                    },
+                };
             };
 
             const context = new TurnContext(testAdapter, activity);
             const bot = new ActivityHandler();
-            bot.run(context)
-                .then(() => {
-                    const invokeResponseActivity = testAdapter.activityBuffer.find((a) => a.type == 'invokeResponse');
-                    const healthCheckResponse = invokeResponseActivity.value.body;
-                    assert(true, healthCheckResponse.healthResults.success);
-                    assert('user-agent-header-value', healthCheckResponse.healthResults["user-agent"]);
-                    assert('authorization-header-value', healthCheckResponse.healthResults.authorization);
-                    assert('Health results from adapter.', healthCheckResponse.healthResults.messages[0]);
-                    done();
-                })
-                .catch(error => done(error));
+
+            await bot.run(context);
+
+            const invokeResponseActivity = testAdapter.activityBuffer.find((a) => a.type == 'invokeResponse');
+            const healthCheckResponse = invokeResponseActivity.value.body;
+            assert(true, healthCheckResponse.healthResults.success);
+            assert('user-agent-header-value', healthCheckResponse.healthResults['user-agent']);
+            assert('authorization-header-value', healthCheckResponse.healthResults.authorization);
+            assert('Health results from adapter.', healthCheckResponse.healthResults.messages[0]);
         });
 
-        it('call "onTurn" handlers then dispatch by Activity Type "event"', (done) => {
+        it('call "onTurn" handlers then dispatch by Activity Type "event"', async function () {
             const bot = new ActivityHandler();
             bot.onTurn(async (context, next) => {
                 assertContextAndNext(context, next);
@@ -611,13 +603,12 @@ describe('ActivityHandler', function() {
                 await next();
             });
 
-            processActivity({ type: ActivityTypes.Event }, bot, done);
+            await processActivity({ type: ActivityTypes.Event }, bot);
             assertTrueFlag(onTurnCalled, 'onTurn');
             assertTrueFlag(onEventCalled, 'onEvent');
-            done();
         });
 
-        it('call "onTurn" handlers then dispatch by Activity Type "event" with name "healthtokens/responseCheck', (done) => {
+        it('call "onTurn" handlers then dispatch by Activity Type "event" with name "healthtokens/responseCheck', async function () {
             const bot = new ActivityHandler();
             bot.onTurn(async (context, next) => {
                 assertContextAndNext(context, next);
@@ -642,19 +633,21 @@ describe('ActivityHandler', function() {
                 assertTrueFlag(onTurnCalled, 'onTurn');
                 assertTrueFlag(onEventCalled, 'onEvent');
                 assertFalseFlag(onTokenResponseEventCalled, 'onTokenResponseEvent', 'onTurn', 'onEvent');
-                assert(!onTokenResponseEventCalled, 'onEvent should not be true before onTurn and onEvent handlers complete.');
+                assert(
+                    !onTokenResponseEventCalled,
+                    'onEvent should not be true before onTurn and onEvent handlers complete.'
+                );
                 onTokenResponseEventCalled = true;
                 await next();
             });
 
-            processActivity({ type: ActivityTypes.Event, name: tokenResponseEventName }, bot, done);
+            await processActivity({ type: ActivityTypes.Event, name: tokenResponseEventName }, bot);
             assertTrueFlag(onTurnCalled, 'onTurn');
             assertTrueFlag(onEventCalled, 'onEvent');
             assertTrueFlag(onTokenResponseEventCalled, 'onTokenResponseEvent');
-            done();
         });
 
-        it('call "onTurn" handlers then dispatch for unrecognized ActivityTypes', (done) => {
+        it('call "onTurn" handlers then dispatch for unrecognized ActivityTypes', async function () {
             const bot = new ActivityHandler();
             bot.onTurn(async (context, next) => {
                 assertContextAndNext(context, next);
@@ -668,18 +661,20 @@ describe('ActivityHandler', function() {
                 assertContextAndNext(context, next);
                 assertTrueFlag(onTurnCalled, 'onTurn');
                 assertFalseFlag(onUnrecognizedActivityTypeCalled, 'onUnrecognizedActivityType', 'onTurn');
-                assert(!onUnrecognizedActivityTypeCalled, 'onUnrecognizedActivityType should not be true before onTurn and onUnrecognizedActivityType handlers complete.');
+                assert(
+                    !onUnrecognizedActivityTypeCalled,
+                    'onUnrecognizedActivityType should not be true before onTurn and onUnrecognizedActivityType handlers complete.'
+                );
                 onUnrecognizedActivityTypeCalled = true;
                 await next();
             });
 
-            processActivity({ type: 'not-a-real-type' }, bot, done);
+            await processActivity({ type: 'not-a-real-type' }, bot);
             assertTrueFlag(onTurnCalled, 'onTurn');
             assertTrueFlag(onUnrecognizedActivityTypeCalled, 'onUnrecognizedActivityType');
-            done();
         });
 
-        it('call "onTurn" handlers then by default dispatch to onDialog for all ActivityTypes', (done) => {
+        it('call "onTurn" handlers then by default dispatch to onDialog for all ActivityTypes', async function () {
             const bot = new ActivityHandler();
             bot.onTurn(async (context, next) => {
                 assertContextAndNext(context, next);
@@ -698,10 +693,9 @@ describe('ActivityHandler', function() {
                 await next();
             });
 
-            processActivity({ type: ActivityTypes.Event }, bot, done);
+            await processActivity({ type: ActivityTypes.Event }, bot);
             assertTrueFlag(onTurnCalled, 'onTurn');
             assertTrueFlag(onDialogCalled, 'onDialog');
-            done();
         });
     });
 });

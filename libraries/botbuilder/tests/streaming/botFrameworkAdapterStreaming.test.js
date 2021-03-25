@@ -50,6 +50,12 @@ describe('BotFrameworkAdapter Streaming tests', () => {
         expect(adapter.streamingServer.disconnect()).to.not.throw;
     });
 
+    it('isStreamingConnectionOpen returns false without a streamingServer', () => {
+        const adapter = new BotFrameworkAdapter();
+
+        expect(adapter.isStreamingConnectionOpen).to.be.false;
+    });
+
     it('sendActivities should throw an error if streaming connection is closed.', async () => {
         const activity = {
             serviceUrl: 'urn:botframework:WebSocket:wss://beep.com',

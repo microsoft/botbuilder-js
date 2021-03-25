@@ -6,19 +6,20 @@
  * Licensed under the MIT License.
  */
 
-export * from './credentialProvider';
-export * from './microsoftAppCredentials';
+export * from './allowedCallersClaimsValidator';
 export * from './appCredentials';
-export * from './certificateAppCredentials';
-export * from './jwtTokenValidation';
-export * from './channelValidation';
-export * from './governmentChannelValidation';
-export * from './governmentConstants';
-export * from './enterpriseChannelValidation';
-export * from './emulatorValidation';
-export * from './endorsementsValidator';
-export * from './claimsIdentity';
 export * from './authenticationConfiguration';
 export * from './authenticationConstants';
 export * from './authenticationError';
+export * from './certificateAppCredentials';
+export * from './channelValidation';
+export * from './claimsIdentity';
+export * from './credentialProvider';
+export * from './emulatorValidation';
+export * from './endorsementsValidator';
+export * from './enterpriseChannelValidation';
+export * from './governmentChannelValidation';
+export * from './governmentConstants';
+export * from './jwtTokenValidation';
+export * from './microsoftAppCredentials';
 export * from './skillValidation';

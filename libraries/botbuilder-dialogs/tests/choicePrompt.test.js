@@ -37,7 +37,8 @@ describe('ChoicePrompt', function () {
 
         dialogs.add(choicePrompt);
 
-        await adapter.send('Hello')
+        await adapter
+            .send('Hello')
             .assertReply('Please choose a color.')
             .send(answerMessage)
             .assertReply('red')
@@ -66,7 +67,8 @@ describe('ChoicePrompt', function () {
 
         dialogs.add(choicePrompt);
 
-        await adapter.send('Hello')
+        await adapter
+            .send('Hello')
             .assertReply('Please choose a color.')
             .send(answerMessage)
             .assertReply('red')
@@ -97,7 +99,8 @@ describe('ChoicePrompt', function () {
         choicePrompt.style = ListStyle.none;
         dialogs.add(choicePrompt);
 
-        await adapter.send('Hello')
+        await adapter
+            .send('Hello')
             .assertReply('Please choose a color.')
             .send(invalidMessage)
             .assertReply('Please choose a color.')
@@ -112,9 +115,13 @@ describe('ChoicePrompt', function () {
 
             const results = await dc.continueDialog();
             if (results.status === DialogTurnStatus.empty) {
-                await dc.prompt('prompt', 'Please choose a color.', stringChoices.map(choice => {
-                    return { value: choice, action: {} }
-                }));
+                await dc.prompt(
+                    'prompt',
+                    'Please choose a color.',
+                    stringChoices.map((choice) => {
+                        return { value: choice, action: {} };
+                    })
+                );
             } else if (results.status === DialogTurnStatus.complete) {
                 const selectedChoice = results.result;
                 await turnContext.sendActivity(selectedChoice.value);
@@ -132,7 +139,8 @@ describe('ChoicePrompt', function () {
         choicePrompt.style = ListStyle.suggestedAction;
         dialogs.add(choicePrompt);
 
-        await adapter.send('Hello')
+        await adapter
+            .send('Hello')
             .assertReply('Please choose a color.')
             .send(invalidMessage)
             .assertReply('Please choose a color.')
@@ -150,7 +158,7 @@ describe('ChoicePrompt', function () {
                 await dc.prompt('prompt', {
                     prompt: 'Please choose a color.',
                     choices: stringChoices,
-                    style: ListStyle.none
+                    style: ListStyle.none,
                 });
             } else if (results.status === DialogTurnStatus.complete) {
                 const selectedChoice = results.result;
@@ -168,7 +176,8 @@ describe('ChoicePrompt', function () {
 
         dialogs.add(choicePrompt);
 
-        await adapter.send('Hello')
+        await adapter
+            .send('Hello')
             .assertReply('Please choose a color.')
             .send(answerMessage)
             .assertReply('red')
@@ -181,7 +190,11 @@ describe('ChoicePrompt', function () {
 
             const results = await dc.continueDialog();
             if (results.status === DialogTurnStatus.empty) {
-                await dc.prompt('prompt', { prompt: 'Please choose a color.', retryPrompt: 'Please choose red, blue, or green.', choices: stringChoices });
+                await dc.prompt('prompt', {
+                    prompt: 'Please choose a color.',
+                    retryPrompt: 'Please choose red, blue, or green.',
+                    choices: stringChoices,
+                });
             } else if (results.status === DialogTurnStatus.complete) {
                 const selectedChoice = results.result;
                 await turnContext.sendActivity(selectedChoice.value);
@@ -196,7 +209,8 @@ describe('ChoicePrompt', function () {
         choicePrompt.style = ListStyle.none;
         dialogs.add(choicePrompt);
 
-        await adapter.send('Hello')
+        await adapter
+            .send('Hello')
             .assertReply('Please choose a color.')
             .send(invalidMessage)
             .assertReply('Please choose red, blue, or green.')
@@ -211,7 +225,11 @@ describe('ChoicePrompt', function () {
 
             const results = await dc.continueDialog();
             if (results.status === DialogTurnStatus.empty) {
-                await dc.prompt('prompt', { prompt: 'Please choose a color.', retryPrompt: 'Please choose red, blue, or green.', choices: stringChoices });
+                await dc.prompt('prompt', {
+                    prompt: 'Please choose a color.',
+                    retryPrompt: 'Please choose red, blue, or green.',
+                    choices: stringChoices,
+                });
             } else if (results.status === DialogTurnStatus.complete) {
                 const selectedChoice = results.result;
                 await turnContext.sendActivity(selectedChoice.value);
@@ -232,7 +250,8 @@ describe('ChoicePrompt', function () {
         choicePrompt.style = ListStyle.none;
         dialogs.add(choicePrompt);
 
-        await adapter.send('Hello')
+        await adapter
+            .send('Hello')
             .assertReply('Please choose a color.')
             .send(invalidMessage)
             .assertReply('bad input.')
@@ -258,16 +277,21 @@ describe('ChoicePrompt', function () {
 
         const dialogState = convoState.createProperty('dialogState');
         const dialogs = new DialogSet(dialogState);
-        const choicePrompt = new ChoicePrompt('prompt', async (prompt) => {
-            assert(prompt);
-            if (!prompt.recognized.succeeded) {
-                await prompt.context.sendActivity('bad input.');
-            }
-            return prompt.recognized.succeeded;
-        }, 'es-es');
+        const choicePrompt = new ChoicePrompt(
+            'prompt',
+            async (prompt) => {
+                assert(prompt);
+                if (!prompt.recognized.succeeded) {
+                    await prompt.context.sendActivity('bad input.');
+                }
+                return prompt.recognized.succeeded;
+            },
+            'es-es'
+        );
         dialogs.add(choicePrompt);
 
-        await adapter.send({ text: 'Hello', type: ActivityTypes.Message, locale: undefined })
+        await adapter
+            .send({ text: 'Hello', type: ActivityTypes.Message, locale: undefined })
             .assertReply((activity) => {
                 assert('Please choose a color. (1) red, (2) green, o (3) blue');
             })
@@ -304,7 +328,8 @@ describe('ChoicePrompt', function () {
         });
         dialogs.add(choicePrompt);
 
-        await adapter.send({ text: 'Hello', type: ActivityTypes.Message, locale: 'es-es' })
+        await adapter
+            .send({ text: 'Hello', type: ActivityTypes.Message, locale: 'es-es' })
             .assertReply('Please choose a color. (1) red, (2) green, o (3) blue')
             .send(answerMessage)
             .assertReply('red')
@@ -328,16 +353,21 @@ describe('ChoicePrompt', function () {
 
         const dialogState = convoState.createProperty('dialogState');
         const dialogs = new DialogSet(dialogState);
-        const choicePrompt = new ChoicePrompt('prompt', async (prompt) => {
-            assert(prompt);
-            if (!prompt.recognized.succeeded) {
-                await prompt.context.sendActivity('bad input.');
-            }
-            return prompt.recognized.succeeded;
-        }, 'es-es');
+        const choicePrompt = new ChoicePrompt(
+            'prompt',
+            async (prompt) => {
+                assert(prompt);
+                if (!prompt.recognized.succeeded) {
+                    await prompt.context.sendActivity('bad input.');
+                }
+                return prompt.recognized.succeeded;
+            },
+            'es-es'
+        );
         dialogs.add(choicePrompt);
 
-        await adapter.send({ text: 'Hello', type: ActivityTypes.Message, locale: 'en-us' })
+        await adapter
+            .send({ text: 'Hello', type: ActivityTypes.Message, locale: 'en-us' })
             .assertReply('Please choose a color. (1) red, (2) green, or (3) blue')
             .send(answerMessage)
             .assertReply('red')
@@ -345,20 +375,10 @@ describe('ChoicePrompt', function () {
     });
 
     it('should recognize locale variations of correct locales', async function () {
-        const locales = [
-            'es-es',
-            'nl-nl',
-            'en-us',
-            'fr-fr',
-            'de-de',
-            'it-it',
-            'ja-jp',
-            'pt-br',
-            'zh-cn'
-        ];
+        const locales = ['es-es', 'nl-nl', 'en-us', 'fr-fr', 'de-de', 'it-it', 'ja-jp', 'pt-br', 'zh-cn'];
         // es-ES
         const capEnding = (locale) => {
-            return `${ locale.split('-')[0] }-${ locale.split('-')[1].toUpperCase() }`;
+            return `${locale.split('-')[0]}-${locale.split('-')[1].toUpperCase()}`;
         };
         // es-Es
         const titleEnding = (locale) => {
@@ -381,20 +401,72 @@ describe('ChoicePrompt', function () {
                 capEnding(locale),
                 titleEnding(locale),
                 capTwoLetter(locale),
-                lowerTwoLetter(locale)
+                lowerTwoLetter(locale),
             ];
             return obj;
         }, {});
 
         // Test each valid locale
-        await Promise.all(Object.keys(localeTests).map(async (validLocale) => {
-            // Hold the correct answer from when a valid locale is used
-            let expectedAnswer;
-            // Test each of the test locales
-            await Promise.all(localeTests[validLocale].map(async (testLocale) => {
+        await Promise.all(
+            Object.keys(localeTests).map(async (validLocale) => {
+                // Hold the correct answer from when a valid locale is used
+                let expectedAnswer;
+                // Test each of the test locales
+                await Promise.all(
+                    localeTests[validLocale].map(async (testLocale) => {
+                        const adapter = new TestAdapter(async (turnContext) => {
+                            const dc = await dialogs.createContext(turnContext);
+
+                            const results = await dc.continueDialog();
+                            if (results.status === DialogTurnStatus.empty) {
+                                await dc.prompt('prompt', { prompt: 'Please choose a color.', choices: stringChoices });
+                            } else if (results.status === DialogTurnStatus.complete) {
+                                const selectedChoice = results.result;
+                                await turnContext.sendActivity(selectedChoice.value);
+                            }
+                            await convoState.saveChanges(turnContext);
+                        });
+                        const convoState = new ConversationState(new MemoryStorage());
+
+                        const dialogState = convoState.createProperty('dialogState');
+                        const dialogs = new DialogSet(dialogState);
+                        const choicePrompt = new ChoicePrompt(
+                            'prompt',
+                            async (prompt) => {
+                                assert(prompt);
+                                if (!prompt.recognized.succeeded) {
+                                    await prompt.context.sendActivity('bad input.');
+                                }
+                                return prompt.recognized.succeeded;
+                            },
+                            'es-es'
+                        );
+                        dialogs.add(choicePrompt);
+
+                        await adapter
+                            .send({ text: 'Hello', type: ActivityTypes.Message, locale: testLocale })
+                            .assertReply((activity) => {
+                                // if the valid locale is tested, save the answer because then we can test to see
+                                //    if the test locales produce the same answer
+                                if (validLocale === testLocale) {
+                                    expectedAnswer = activity.text;
+                                }
+                                assert.strictEqual(activity.text, expectedAnswer);
+                            })
+                            .startTest();
+                    })
+                );
+            })
+        );
+    });
+
+    it('should default to english locale', async function () {
+        const locales = [null, '', 'not-supported'];
+        await Promise.all(
+            locales.map(async (testLocale) => {
                 const adapter = new TestAdapter(async (turnContext) => {
                     const dc = await dialogs.createContext(turnContext);
-        
+
                     const results = await dc.continueDialog();
                     if (results.status === DialogTurnStatus.empty) {
                         await dc.prompt('prompt', { prompt: 'Please choose a color.', choices: stringChoices });
@@ -405,78 +477,38 @@ describe('ChoicePrompt', function () {
                     await convoState.saveChanges(turnContext);
                 });
                 const convoState = new ConversationState(new MemoryStorage());
-        
+
                 const dialogState = convoState.createProperty('dialogState');
                 const dialogs = new DialogSet(dialogState);
-                const choicePrompt = new ChoicePrompt('prompt', async (prompt) => {
-                    assert(prompt);
-                    if (!prompt.recognized.succeeded) {
-                        await prompt.context.sendActivity('bad input.');
-                    }
-                    return prompt.recognized.succeeded;
-                }, 'es-es');
-                dialogs.add(choicePrompt);
-        
-                await adapter.send({ text: 'Hello', type: ActivityTypes.Message, locale: testLocale })
-                    .assertReply((activity) => {
-                        // if the valid locale is tested, save the answer because then we can test to see
-                        //    if the test locales produce the same answer
-                        if (validLocale === testLocale) {
-                            expectedAnswer = activity.text;
+                const choicePrompt = new ChoicePrompt(
+                    'prompt',
+                    async (prompt) => {
+                        assert(prompt);
+                        if (!prompt.recognized.succeeded) {
+                            await prompt.context.sendActivity('bad input.');
                         }
-                        assert.strictEqual(activity.text, expectedAnswer);
+                        return prompt.recognized.succeeded;
+                    },
+                    null
+                );
+                dialogs.add(choicePrompt);
+
+                await adapter
+                    .send({ text: 'Hello', type: ActivityTypes.Message, locale: testLocale })
+                    .assertReply((activity) => {
+                        const expectedChoices = ChoiceFactory.inline(stringChoices, null, null, {
+                            inlineOr: PromptCultureModels.English.inlineOr,
+                            inlineOrMore: PromptCultureModels.English.inlineOrMore,
+                            inlineSeparator: PromptCultureModels.English.separator,
+                        }).text;
+                        assert.strictEqual(activity.text, `Please choose a color.${expectedChoices}`);
                     })
                     .startTest();
-            }));
-        }));      
+            })
+        );
     });
 
-    it('should default to english locale', async function () {
-        const locales = [
-            null,
-            '',
-            'not-supported'
-        ];
-        await Promise.all(locales.map(async (testLocale) => {
-            const adapter = new TestAdapter(async (turnContext) => {
-                const dc = await dialogs.createContext(turnContext);
-    
-                const results = await dc.continueDialog();
-                if (results.status === DialogTurnStatus.empty) {
-                    await dc.prompt('prompt', { prompt: 'Please choose a color.', choices: stringChoices });
-                } else if (results.status === DialogTurnStatus.complete) {
-                    const selectedChoice = results.result;
-                    await turnContext.sendActivity(selectedChoice.value);
-                }
-                await convoState.saveChanges(turnContext);
-            });
-            const convoState = new ConversationState(new MemoryStorage());
-    
-            const dialogState = convoState.createProperty('dialogState');
-            const dialogs = new DialogSet(dialogState);
-            const choicePrompt = new ChoicePrompt('prompt', async (prompt) => {
-                assert(prompt);
-                if (!prompt.recognized.succeeded) {
-                    await prompt.context.sendActivity('bad input.');
-                }
-                return prompt.recognized.succeeded;
-            }, null);
-            dialogs.add(choicePrompt);
-    
-            await adapter.send({ text: 'Hello', type: ActivityTypes.Message, locale: testLocale })
-                .assertReply((activity) => {
-                    const expectedChoices = ChoiceFactory.inline(stringChoices, null, null, {
-                        inlineOr: PromptCultureModels.English.inlineOr,
-                        inlineOrMore: PromptCultureModels.English.inlineOrMore,
-                        inlineSeparator: PromptCultureModels.English.separator,
-                    }).text;
-                    assert.strictEqual(activity.text, `Please choose a color.${ expectedChoices }`);
-                })
-                .startTest();
-        }));   
-    });
-
-    it('should accept and recognize custom locale dict', async function() {
+    it('should accept and recognize custom locale dict', async function () {
         const adapter = new TestAdapter(async (turnContext) => {
             const dc = await dialogs.createContext(turnContext);
 
@@ -497,7 +529,7 @@ describe('ChoicePrompt', function () {
             locale: 'custom-custom',
             separator: 'customSeparator',
             noInLanguage: 'customNo',
-            yesInLanguage: 'customYes'
+            yesInLanguage: 'customYes',
         };
 
         const customDict = {
@@ -506,33 +538,39 @@ describe('ChoicePrompt', function () {
                 inlineOrMore: culture.inlineOrMore,
                 inlineSeparator: culture.separator,
                 includeNumbers: true,
-            }
+            },
         };
 
         const dialogState = convoState.createProperty('dialogState');
         const dialogs = new DialogSet(dialogState);
-        const choicePrompt = new ChoicePrompt('prompt', async (prompt) => {
-            assert(prompt);
-            if (!prompt.recognized.succeeded) {
-                await prompt.context.sendActivity('bad input.');
-            }
-            return prompt.recognized.succeeded;
-        }, culture.locale, customDict);
+        const choicePrompt = new ChoicePrompt(
+            'prompt',
+            async (prompt) => {
+                assert(prompt);
+                if (!prompt.recognized.succeeded) {
+                    await prompt.context.sendActivity('bad input.');
+                }
+                return prompt.recognized.succeeded;
+            },
+            culture.locale,
+            customDict
+        );
         dialogs.add(choicePrompt);
 
-        await adapter.send({ text: 'Hello', type: ActivityTypes.Message, locale: culture.locale })
+        await adapter
+            .send({ text: 'Hello', type: ActivityTypes.Message, locale: culture.locale })
             .assertReply((activity) => {
                 const expectedChoices = ChoiceFactory.inline(stringChoices, undefined, undefined, {
                     inlineOr: culture.inlineOr,
                     inlineOrMore: culture.inlineOrMore,
-                    inlineSeparator: culture.separator
+                    inlineSeparator: culture.separator,
                 }).text;
-                assert.strictEqual(activity.text, `Please choose a color.${ expectedChoices }`);
+                assert.strictEqual(activity.text, `Please choose a color.${expectedChoices}`);
             })
             .startTest();
     });
 
-    it('should not render choices and not blow up if choices aren\'t passed in', async function () {
+    it("should not render choices and not blow up if choices aren't passed in", async function () {
         const adapter = new TestAdapter(async (turnContext) => {
             const dc = await dialogs.createContext(turnContext);
 
@@ -554,12 +592,10 @@ describe('ChoicePrompt', function () {
 
         dialogs.add(choicePrompt);
 
-        await adapter.send('Hello')
-            .assertReply('Please choose a color.')
-            .startTest();
+        await adapter.send('Hello').assertReply('Please choose a color.').startTest();
     });
 
-    it('should render choices if PromptOptions & choices are passed into DialogContext.prompt()', async function() {
+    it('should render choices if PromptOptions & choices are passed into DialogContext.prompt()', async function () {
         const adapter = new TestAdapter(async (turnContext) => {
             const dc = await dialogs.createContext(turnContext);
 
@@ -581,7 +617,8 @@ describe('ChoicePrompt', function () {
 
         dialogs.add(choicePrompt);
 
-        await adapter.send('Hello')
+        await adapter
+            .send('Hello')
             .assertReply('Please choose a color. (1) red, (2) green, or (3) blue')
             .send(answerMessage)
             .assertReply('red')
@@ -610,7 +647,8 @@ describe('ChoicePrompt', function () {
 
         dialogs.add(choicePrompt);
 
-        await adapter.send('Hello')
+        await adapter
+            .send('Hello')
             .assertReply('Please choose a color.')
             .send(answerMessage)
             .assertReply('red')
@@ -639,7 +677,8 @@ describe('ChoicePrompt', function () {
 
         dialogs.add(choicePrompt);
 
-        await adapter.send('Hello')
+        await adapter
+            .send('Hello')
             .assertReply('Please choose a color.')
             .send('hello')
             .assertReply('Please choose a color.')
@@ -652,11 +691,10 @@ describe('ChoicePrompt', function () {
 
             const results = await dc.continueDialog();
             if (results.status === DialogTurnStatus.empty) {
-                await dc.prompt('prompt',
-                    {
-                        prompt: { text: 'Please choose a color.', type: ActivityTypes.Message },
-                        choices: stringChoices
-                    });
+                await dc.prompt('prompt', {
+                    prompt: { text: 'Please choose a color.', type: ActivityTypes.Message },
+                    choices: stringChoices,
+                });
             } else if (results.status === DialogTurnStatus.complete) {
                 const selectedChoice = results.result;
                 await turnContext.sendActivity(selectedChoice.value);
@@ -672,7 +710,8 @@ describe('ChoicePrompt', function () {
 
         dialogs.add(choicePrompt);
 
-        await adapter.send('Hello')
+        await adapter
+            .send('Hello')
             .assertReply('Please choose a color.')
             .send(answerMessage)
             .assertReply('red')
@@ -685,11 +724,10 @@ describe('ChoicePrompt', function () {
 
             const results = await dc.continueDialog();
             if (results.status === DialogTurnStatus.empty) {
-                await dc.prompt('prompt',
-                    {
-                        prompt: { text: 'Please choose a color.', type: ActivityTypes.Message },
-                        choices: stringChoices
-                    });
+                await dc.prompt('prompt', {
+                    prompt: { text: 'Please choose a color.', type: ActivityTypes.Message },
+                    choices: stringChoices,
+                });
             } else if (results.status === DialogTurnStatus.complete) {
                 const selectedChoice = results.result;
                 await turnContext.sendActivity(selectedChoice.value);
@@ -705,7 +743,8 @@ describe('ChoicePrompt', function () {
 
         dialogs.add(choicePrompt);
 
-        await adapter.send('Hello')
+        await adapter
+            .send('Hello')
             .assertReply('Please choose a color. (1) red, (2) green, or (3) blue')
             .send(answerMessage)
             .assertReply('red')
@@ -718,11 +757,10 @@ describe('ChoicePrompt', function () {
 
             const results = await dc.continueDialog();
             if (results.status === DialogTurnStatus.empty) {
-                await dc.prompt('prompt',
-                    {
-                        prompt: { text: 'Please choose a color.', type: ActivityTypes.Message },
-                        choices: stringChoices
-                    });
+                await dc.prompt('prompt', {
+                    prompt: { text: 'Please choose a color.', type: ActivityTypes.Message },
+                    choices: stringChoices,
+                });
             } else if (results.status === DialogTurnStatus.complete) {
                 const selectedChoice = results.result;
                 await turnContext.sendActivity(selectedChoice.value);
@@ -738,7 +776,8 @@ describe('ChoicePrompt', function () {
 
         dialogs.add(choicePrompt);
 
-        await adapter.send('Hello')
+        await adapter
+            .send('Hello')
             .assertReply('Please choose a color.\n\n   1. red\n   2. green\n   3. blue')
             .send(answerMessage)
             .assertReply('red')
@@ -770,11 +809,7 @@ describe('ChoicePrompt', function () {
 
         dialogs.add(choicePrompt);
 
-        await adapter.send('Hello')
-            .assertReply('Please choose a color.')
-            .send('1')
-            .assertReply('red')
-            .startTest();
+        await adapter.send('Hello').assertReply('Please choose a color.').send('1').assertReply('red').startTest();
     });
 
     it('should not recognize, then re-prompt without error for falsy input.', async function () {
@@ -802,7 +837,8 @@ describe('ChoicePrompt', function () {
 
         dialogs.add(choicePrompt);
 
-        await adapter.send('Hello')
+        await adapter
+            .send('Hello')
             .assertReply('Please choose a color.')
             .send('')
             .assertReply('Please choose a color.')
@@ -839,8 +875,9 @@ describe('ChoicePrompt', function () {
 
         dialogs.add(choicePrompt);
 
-        await adapter.send('Hello')
-            .assertReply(activity => {
+        await adapter
+            .send('Hello')
+            .assertReply((activity) => {
                 assert(activity.attachments.length === 1);
                 assert(activity.attachments[0].contentType === CardFactory.contentTypes.heroCard);
                 assert(activity.attachments[0].content.text === 'Please choose a size.');
@@ -849,8 +886,8 @@ describe('ChoicePrompt', function () {
             .assertReply('large')
             .startTest();
     });
-    
-    it('should display choices on a hero card with an additional attachment', async function (done) {
+
+    it('should display choices on a hero card with an additional attachment', async function () {
         const sizeChoices = ['large', 'medium', 'small'];
         const adapter = new TestAdapter(async (turnContext) => {
             const dc = await dialogs.createContext(turnContext);
@@ -875,24 +912,22 @@ describe('ChoicePrompt', function () {
         choicePrompt.style = ListStyle.heroCard;
 
         const card = CardFactory.adaptiveCard({
-            "type": "AdaptiveCard",
-            "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
-            "version": "1.2",
-            "body": []
+            type: 'AdaptiveCard',
+            $schema: 'http://adaptivecards.io/schemas/adaptive-card.json',
+            version: '1.2',
+            body: [],
         });
 
-        const activity ={ attachments: [card], type: ActivityTypes.Message };
+        const activity = { attachments: [card], type: ActivityTypes.Message };
         dialogs.add(choicePrompt);
 
-        adapter.send('Hello')
-            .assertReply(response => {
+        await adapter
+            .send('Hello')
+            .assertReply((response) => {
                 assert(response.attachments.length === 2);
                 assert(response.attachments[0].contentType === CardFactory.contentTypes.adaptiveCard);
                 assert(response.attachments[1].contentType === CardFactory.contentTypes.heroCard);
             })
             .startTest();
-        done();
     });
-
-
 });

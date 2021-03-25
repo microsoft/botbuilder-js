@@ -9,17 +9,20 @@ import { ok } from 'assert';
 
 import { AdaptiveComponentRegistration } from 'botbuilder-dialogs-adaptive';
 import { ApplicationInsightsTelemetryClient, TelemetryInitializerMiddleware } from 'botbuilder-applicationinsights';
-import { AuthenticationConfiguration, SimpleCredentialProvider } from 'botframework-connector';
 import { BlobsStorage, BlobsTranscriptStore } from 'botbuilder-azure-blobs';
-import { ComponentRegistration } from 'botbuilder';
+import { ComponentRegistration, SkillConversationIdFactory } from 'botbuilder';
 import { CoreBot } from './coreBot';
 import { CoreBotAdapter } from './coreBotAdapter';
 import { CosmosDbPartitionedStorage } from 'botbuilder-azure';
 import { IServices, ServiceCollection, TPlugin } from 'botbuilder-runtime-core';
 import { LuisComponentRegistration, QnAMakerComponentRegistration } from 'botbuilder-ai';
 import { ResourceExplorer } from 'botbuilder-dialogs-declarative';
-import { SkillConversationIdFactory } from './skillConversationIdFactory';
-import { allowedCallersClaimsValidator } from './allowedCallersClaimsValidator';
+
+import {
+    AuthenticationConfiguration,
+    SimpleCredentialProvider,
+    allowedCallersClaimsValidator,
+} from 'botframework-connector';
 
 import {
     ConsoleTranscriptLogger,
@@ -29,6 +32,7 @@ import {
     MemoryStorage,
     MiddlewareSet,
     NullTelemetryClient,
+    SetSpeakMiddleware,
     ShowTypingMiddleware,
     SkillHandler,
     SkillHttpClient,
@@ -44,6 +48,25 @@ function addFeatures(services: ServiceCollection<IServices>, configuration: Conf
         async ({ conversationState, storage, userState }, middlewareSet) => {
             if (await configuration.bool(['showTyping'])) {
                 middlewareSet.use(new ShowTypingMiddleware());
+            }
+
+            const setSpeak = await configuration.type(
+                ['setSpeak'],
+                t.Record({
+                    voiceFontName: t.String.Or(t.Undefined),
+                    lang: t.String,
+                    fallbackToTextForSpeechIfEmpty: t.Boolean,
+                })
+            );
+
+            if (setSpeak) {
+                middlewareSet.use(
+                    new SetSpeakMiddleware(
+                        setSpeak.voiceFontName ?? null,
+                        setSpeak.lang,
+                        setSpeak.fallbackToTextForSpeechIfEmpty
+                    )
+                );
             }
 
             if (await configuration.bool(['traceTranscript'])) {
