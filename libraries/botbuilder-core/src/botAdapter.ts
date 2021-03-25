@@ -28,9 +28,14 @@ import { TurnContext } from './turnContext';
  */
 export abstract class BotAdapter {
     protected middleware: MiddlewareSet = new MiddlewareSet();
+
     private turnError: (context: TurnContext, error: Error) => Promise<void>;
-    public readonly BotIdentityKey: symbol = Symbol('BotIdentity');
-    public readonly OAuthScopeKey: symbol = Symbol('OAuthScope');
+
+    public static readonly BotIdentityKey = Symbol('BotIdentity');
+    public readonly BotIdentityKey = BotAdapter.BotIdentityKey;
+
+    public static readonly OAuthScopeKey = Symbol('OAuthScope');
+    public readonly OAuthScopeKey = BotAdapter.OAuthScopeKey;
 
     /**
      * Asynchronously sends a set of outgoing activities to a channel server.
