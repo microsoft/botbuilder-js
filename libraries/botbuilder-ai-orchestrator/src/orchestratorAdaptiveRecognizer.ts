@@ -40,6 +40,20 @@ enum LabelType {
     Entity = 2,
 }
 
+type Label = {
+    name: string;
+    span: {
+        offset: number;
+        length: number;
+    }
+};
+
+type Result = { 
+    score: number;
+    closest_text: string;
+    label: Label;
+}
+
 type LabelResolver = {
     score(
         text: string
@@ -54,17 +68,7 @@ type LabelResolver = {
     score(
         text: string,
         labelType: number,
-    ): {
-        score: number;
-        closest_text: string;
-        label: {
-            name: string;
-            span: {
-                offset: number;
-                length: number;
-            }
-        };
-    }[];
+    ): Result[];
 };
 
 type Orchestrator = {
@@ -116,9 +120,14 @@ export class OrchestratorAdaptiveRecognizer
     public readonly chooseIntent: string = 'ChooseIntent';
 
     /**
-     * Full recognition results are available under this property
+     * Full intent recognition results are available under this property
      */
     public readonly resultProperty: string = 'result';
+
+    /**
+     * Full entity recognition results are available under this property
+     */
+    public readonly entitiesProperty: string = 'entities';
 
     public getConverter(property: keyof OrchestratorAdaptiveRecognizerConfiguration): Converter | ConverterFactory {
         switch (property) {
@@ -264,6 +273,8 @@ export class OrchestratorAdaptiveRecognizer
             recognizerResult.intents.None = { score: 1.0 };
         }
 
+        await this.tryScoreEntities(text, recognizerResult);
+
         await dc.context.sendTraceActivity(
             'OrchestratorAdaptiveRecognizer',
             recognizerResult,
@@ -380,6 +391,66 @@ export class OrchestratorAdaptiveRecognizer
 
             // Load snapshot and create resolver
             this._resolver = OrchestratorAdaptiveRecognizer.orchestrator.createLabelResolver(snapshot);
+        }
+    }
+
+    private async tryScoreEntities(text: string, recognizerResult: RecognizerResult) {
+        if (!this.scoreEntities) {
+            return;
+        }
+
+        const results = await this._resolver.score(text, LabelType.Entity);
+
+        // Add full entity recognition result as a 'result' property
+        recognizerResult[this.entitiesProperty] = results;
+
+        if (results.length > 0) {
+            if (recognizerResult.entities === null) {
+                recognizerResult.entities = {};
+            }
+
+            results.forEach((result: Result) => {
+                const entityType = result.label.name;
+
+                // add value
+                let values: any[] = recognizerResult.entities[entityType];
+                if (!values)
+                {
+                    values = recognizerResult.entities[entityType] = [];
+                }
+
+                const span = result.label.span;
+                const entityText = text.substr(span.offset, span.length);
+                values.push({
+                    type: entityType,
+                    score: result.score,
+                    text: entityText,
+                    start: span.offset,
+                    end: span.offset + span.length   
+                });
+
+                // get/create $instance
+                let instanceRoot: any = recognizerResult.entities['$instance'];
+                if (!instanceRoot)
+                {
+                    instanceRoot = recognizerResult.entities['$instance'] = {};
+                }
+
+                // add instanceData
+                let instanceData: any[] = instanceRoot[entityType];
+                if (!instanceData)
+                {
+                    instanceData = instanceRoot[entityType] = [];
+                }
+
+                instanceData.push({
+                    startIndex: span.offset,
+                    endIndex: span.offset + span.length,
+                    score: result.score,
+                    text: entityText,
+                    type: entityType,
+                });
+            });
         }
     }
 }
