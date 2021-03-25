@@ -20,7 +20,8 @@
   "scripts": {
     "build": "tsc -b",
     "clean": "rimraf _ts3.4 lib tsconfig.tsbuildinfo",
-    "lint": "eslint . --ext .js,.ts"
+    "lint": "eslint . --ext .js,.ts",
+    "lint:fix": "eslint . --ext .js,.ts --fix"
   },
   "files": [
     "lib",

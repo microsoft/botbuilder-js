@@ -4,6 +4,7 @@
   "version": "1.0.0",
   "scripts": {
     "lint": "eslint . --ext .js,.ts",
+    "lint:fix": "eslint . --ext .js,.ts --fix",
     "test": "ts-node run.ts"
   },
   "dependencies": {
