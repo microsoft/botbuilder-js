@@ -306,6 +306,8 @@ export class OrchestratorAdaptiveRecognizer
     ): Record<string, string> {
         const topTwo = this.getTopTwoIntents(recognizerResult);
         const intent = Object.entries(recognizerResult.intents);
+        // customRecognizerProps = recognizerResult with following properties omitted:
+        //   text, alteredText, intents, entities
         // eslint-disable-next-line  @typescript-eslint/no-unused-vars
         const { text, alteredText, intents, entities, ...customRecognizerProps } = recognizerResult;
         const properties: Record<string, string> = {
