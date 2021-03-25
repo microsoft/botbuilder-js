@@ -35,7 +35,7 @@ export interface OrchestratorAdaptiveRecognizerConfiguration extends RecognizerC
     externalEntityRecognizer?: Recognizer;
 }
 
-enum LabelType {
+export enum LabelType {
     Intent = 1,
     Entity = 2,
 }
@@ -127,7 +127,7 @@ export class OrchestratorAdaptiveRecognizer
     /**
      * Full entity recognition results are available under this property
      */
-    public readonly entitiesProperty: string = 'entities';
+    public readonly entityProperty: string = 'entityResult';
 
     public getConverter(property: keyof OrchestratorAdaptiveRecognizerConfiguration): Converter | ConverterFactory {
         switch (property) {
@@ -400,11 +400,13 @@ export class OrchestratorAdaptiveRecognizer
         }
 
         const results = await this._resolver.score(text, LabelType.Entity);
+        if (!results) {
+            throw new Error(`Failed scoring entities for: ${text}`);
+        }
 
         // Add full entity recognition result as a 'result' property
-        recognizerResult[this.entitiesProperty] = results;
-
-        if (results.length > 0) {
+        recognizerResult[this.entityProperty] = results;
+        if (results.length) {
             if (recognizerResult.entities === null) {
                 recognizerResult.entities = {};
             }
@@ -414,8 +416,7 @@ export class OrchestratorAdaptiveRecognizer
 
                 // add value
                 let values: any[] = recognizerResult.entities[entityType];
-                if (!values)
-                {
+                if (!values) {
                     values = recognizerResult.entities[entityType] = [];
                 }
 
@@ -427,19 +428,17 @@ export class OrchestratorAdaptiveRecognizer
                     text: entityText,
                     start: span.offset,
                     end: span.offset + span.length   
-                });
+                });               
 
                 // get/create $instance
                 let instanceRoot: any = recognizerResult.entities['$instance'];
-                if (!instanceRoot)
-                {
+                if (!instanceRoot) {
                     instanceRoot = recognizerResult.entities['$instance'] = {};
                 }
 
                 // add instanceData
                 let instanceData: any[] = instanceRoot[entityType];
-                if (!instanceData)
-                {
+                if (!instanceData) {
                     instanceData = instanceRoot[entityType] = [];
                 }
 

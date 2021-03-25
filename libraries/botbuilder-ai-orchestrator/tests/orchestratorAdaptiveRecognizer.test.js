@@ -4,7 +4,7 @@
  */
 const { MockResolver, TestAdapterSettings } = require('./mockResolver');
 const { ok, rejects } = require('assert');
-const { OrchestratorAdaptiveRecognizer } = require('../lib');
+const { OrchestratorAdaptiveRecognizer, LabelType } = require('../lib');
 const { DialogContext, DialogSet } = require('botbuilder-dialogs');
 const { TurnContext, MessageFactory, NullTelemetryClient } = require('botbuilder-core');
 const { BotFrameworkAdapter } = require('../../botbuilder/lib');
@@ -82,19 +82,40 @@ describe('OrchestratorAdaptiveRecognizer tests', function () {
                 },
             },
         ];
-        const mockResolver = new MockResolver(result);
+        const entityResult = [
+            {
+                score: 0.75,
+                label: { 
+                    name: 'mockEntityLabel', 
+                    type: LabelType.Entity, 
+                    span: { 
+                        offset: 17, 
+                        length: 7 
+                    },
+                },
+            },
+        ];
+        const mockResolver = new MockResolver(result, entityResult);
         const testPaths = 'test';
         const rec = new OrchestratorAdaptiveRecognizer(testPaths, testPaths, mockResolver);
+        rec.scoreEntities = true;
         OrchestratorAdaptiveRecognizer.orchestrator = 'mock';
         rec.modelFolder = new StringExpression(testPaths);
         rec.snapshotFile = new StringExpression(testPaths);
         rec.externalEntityRecognizer = new NumberEntityRecognizer();
-        const { dc, activity } = createTestDcAndActivity('hello 123');
+        const { dc, activity } = createTestDcAndActivity('turn on light in room 12');
 
         const res = await rec.recognize(dc, activity);
-        ok(res.text, 'hello 123');
+        ok(res.text, 'turn on light in room 12');
         ok(res.intents.mockLabel.score, 0.9);
-        ok(res.entities.number[0], '123');
+        ok(res.entities.number[0], '12');
+
+        ok(res['entityResult'] = entityResult);
+        ok(res.entities.mockEntityLabel);
+        ok(res.entities.mockEntityLabel[0].score, 0.75);
+        ok(res.entities.mockEntityLabel[0].text, 'room 12');
+        ok(res.entities.mockEntityLabel[0].start, 17);
+        ok(res.entities.mockEntityLabel[0].end, 24);
     });
 
     it('Test ambiguous intent recognition', async () => {

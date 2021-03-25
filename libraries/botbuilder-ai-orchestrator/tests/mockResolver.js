@@ -5,17 +5,18 @@
 
 /* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 
+const { OrchestratorAdaptiveRecognizer, LabelType } = require('../lib');
 class MockResolver {
-    constructor(score, entityScore = null) {
+    constructor(score, entityScore) {
         this._score = score;
-        this._entityScore 
+        this._entityScore = entityScore;
     }
 
-    score(_text, labelType = 1) {
-        if (labelType == 1) {
+    score(_text, labelType = LabelType.Intent) {
+        if (labelType === LabelType.Intent) {
             return this._score;
         }
-        else if (labelType == 2) {
+        else if (labelType === LabelType.Entity) {
             return this._entityScore;
         }
         
