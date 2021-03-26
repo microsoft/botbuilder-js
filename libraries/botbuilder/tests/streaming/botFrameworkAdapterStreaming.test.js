@@ -1,10 +1,11 @@
+const assert = require('assert');
 const { Socket } = require('net');
 
 const { expect } = require('chai');
 const { spy } = require('sinon');
 const { ActivityHandler, ActivityTypes, StatusCodes, TurnContext } = require('botbuilder-core');
 
-const { BotFrameworkAdapter} = require('../../');
+const { BotFrameworkAdapter } = require('../../');
 
 // Import Helper Classes
 const { MockHttpRequest } = require('./mockHttpRequest');
@@ -22,8 +23,14 @@ class TestAdapterSettings {
     }
 }
 
-describe('BotFrameworkAdapter Streaming tests', () => {
+class ConnectionTestAdapter extends BotFrameworkAdapter {
+    startNamedPipeServer(pipeName) {
+        this.namedPipeName = pipeName;
+        this.streamingServer = { isConnected: true };
+    }
+}
 
+describe('BotFrameworkAdapter Streaming tests', () => {
     it('has the correct status codes', () => {
         expect(StatusCodes.OK).to.equal(200);
         expect(StatusCodes.BAD_REQUEST).to.equal(400);
@@ -44,10 +51,33 @@ describe('BotFrameworkAdapter Streaming tests', () => {
     it('starts and stops a namedpipe server', () => {
         const adapter = new BotFrameworkAdapter();
 
-        adapter.useNamedPipe('PipeyMcPipeface', async (context) => {
-            await bot.run(context);
-        });
+        adapter.useNamedPipe(async (_) => {}, 'PipeyMcPipeface');
         expect(adapter.streamingServer.disconnect()).to.not.throw;
+    });
+
+    it(`throws exception when trying to connect to a different named pipe than it's connected to`, async () => {
+        const adapter = new ConnectionTestAdapter();
+
+        await adapter.useNamedPipe(async (_) => {}, 'NamedPipeTest');
+
+        // Try use same NamedPipe again to trigger error.
+        await assert.rejects(
+            adapter.useNamedPipe(async (_) => {}, 'NotNamedPipeTest'),
+            {
+                message:
+                    'This BotFrameworkAdapter instance is already connected to a different stream. Use a new instance to connect to the provided pipeName.',
+            }
+        );
+    });
+
+    it(`doesn't throw while trying to connect to named pipe it's connected to`, async () => {
+        const adapter = new ConnectionTestAdapter();
+        const namedPipeName = 'NamedPipeTest';
+
+        await adapter.useNamedPipe(async (_) => {}, namedPipeName);
+
+        // Use same NamedPipeName to test scenario.
+        await adapter.useNamedPipe(async (_) => {}, namedPipeName);
     });
 
     it('isStreamingConnectionOpen returns false without a streamingServer', () => {
@@ -143,7 +173,7 @@ describe('BotFrameworkAdapter Streaming tests', () => {
             const settings = new TestAdapterSettings('appId', 'password');
             const adapter = new BotFrameworkAdapter(settings);
             const requestWithoutAuthHeader = new MockHttpRequest();
-            
+
             const socket = new MockNetSocket();
             const writeSpy = spy(socket, 'write');
             const destroySpy = spy(socket, 'destroy');
@@ -171,7 +201,7 @@ describe('BotFrameworkAdapter Streaming tests', () => {
             const uncallableLogic = null;
 
             try {
-                await adapter.useWebSocket(request, socket, Buffer.from([]), uncallableLogic);    
+                await adapter.useWebSocket(request, socket, Buffer.from([]), uncallableLogic);
             } catch (err) {
                 expect(err.message).to.equal('Streaming logic needs to be provided to `useWebSocket`');
                 expect(useWebSocketSpy.called).to.be.true;

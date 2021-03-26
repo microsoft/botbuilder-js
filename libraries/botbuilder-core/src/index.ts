@@ -25,6 +25,7 @@ export * from './conversationState';
 export * from './extendedUserTokenProvider';
 export * from './intentScore';
 export * from './invokeResponse';
+export * from './invokeException';
 export * from './memoryStorage';
 export * from './memoryTranscriptStore';
 export * from './messageFactory';
