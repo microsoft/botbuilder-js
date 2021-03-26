@@ -66,16 +66,14 @@ export class ActivityTemplate
                 DialogStateManager | Record<string, unknown>
             >;
 
-            if (languageGenerator == null) {
-                languageGenerator = new TemplateEngineLanguageGenerator<Partial<Activity>, Record<string, unknown>>();
-            }
+            languageGenerator ??= new TemplateEngineLanguageGenerator();
 
             const lgResult = await languageGenerator.generate(dialogContext, this.template, data);
             const result = ActivityFactory.fromObject(lgResult);
-            return Promise.resolve(result);
+            return result;
         }
 
-        return Promise.resolve(undefined);
+        return undefined;
     }
 
     public toString = (): string => {

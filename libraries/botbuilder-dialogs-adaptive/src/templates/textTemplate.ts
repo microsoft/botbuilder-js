@@ -57,14 +57,10 @@ export class TextTemplate<D = Record<string, unknown>>
         }
 
         let languageGenerator = dialogContext.services.get(languageGeneratorKey) as LanguageGenerator<string, unknown>;
-        if (languageGenerator == null) {
-            languageGenerator = new TemplateEngineLanguageGenerator<string, Record<string, DialogStateManager>>();
-        }
+        languageGenerator ??= new TemplateEngineLanguageGenerator();
 
         const lgResult = await languageGenerator.generate(dialogContext, this.template, data);
-        const result = lgResult ? lgResult.toString() : '';
-
-        return Promise.resolve(result);
+        return lgResult ? lgResult.toString() : '';
     }
 
     public toString = (): string => {
