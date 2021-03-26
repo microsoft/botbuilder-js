@@ -7313,7 +7313,7 @@
       }
     },
     "Microsoft.OrchestratorAdaptiveRecognizer": {
-      "$role": "implements(Microsoft.OrchestratorAdaptiveRecognizerConfiguration)",
+      "$role": "implements(Microsoft.IRecognizer)",
       "title": "Orchestrator recognizer",
       "description": "Orchestrator recognizer.",
       "type": "object",
