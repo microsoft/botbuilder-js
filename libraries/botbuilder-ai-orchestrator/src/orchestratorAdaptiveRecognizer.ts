@@ -19,6 +19,7 @@ import {
     StringExpression,
     StringExpressionConverter,
 } from 'adaptive-expressions';
+
 import { AdaptiveRecognizer } from 'botbuilder-dialogs-adaptive';
 import { Activity, RecognizerResult } from 'botbuilder-core';
 import { Converter, ConverterFactory, DialogContext, Recognizer, RecognizerConfiguration } from 'botbuilder-dialogs';
@@ -34,21 +35,32 @@ export interface OrchestratorAdaptiveRecognizerConfiguration extends RecognizerC
     externalEntityRecognizer?: Recognizer;
 }
 
-type LabelResolver = {
-    score(
-        text: string
-    ): {
-        score: number;
-        closest_text: string;
-        label: {
-            name: string;
-        };
-    }[];
-};
+export enum LabelType {
+    Intent = 1,
+    Entity = 2,
+}
 
-type Orchestrator = {
+interface Label {
+    name: string;
+    span: {
+        offset: number;
+        length: number;
+    };
+}
+
+interface Result {
+    score: number;
+    closest_text: string;
+    label: Label;
+}
+
+interface LabelResolver {
+    score(text: string, labelType?: number): Result[];
+}
+
+interface Orchestrator {
     createLabelResolver(snapshot: Uint8Array): LabelResolver;
-};
+}
 
 /**
  * Class that represents an adaptive Orchestrator recognizer.
@@ -56,7 +68,7 @@ type Orchestrator = {
 export class OrchestratorAdaptiveRecognizer
     extends AdaptiveRecognizer
     implements OrchestratorAdaptiveRecognizerConfiguration {
-    public static $kind = 'Microsoft.OrchestratorRecognizer';
+    public static $kind = 'Microsoft.OrchestratorAdaptiveRecognizer';
 
     /**
      * Path to Orchestrator base model folder.
@@ -85,14 +97,24 @@ export class OrchestratorAdaptiveRecognizer
     public externalEntityRecognizer: Recognizer;
 
     /**
-     * Intent name if ambiguous intents are detected.
+     * Enable entity detection if entity model exists inside modelFolder. Defaults to false.
      */
-    public readonly chooseIntent: string = 'ChooseIntent';
+    public scoreEntities = false;
 
     /**
-     * Full recognition results are available under this property
+     * Intent name if ambiguous intents are detected.
      */
-    public readonly resultProperty: string = 'result';
+    public readonly chooseIntent = 'ChooseIntent';
+
+    /**
+     * Full intent recognition results are available under this property
+     */
+    public readonly resultProperty = 'result';
+
+    /**
+     * Full entity recognition results are available under this property
+     */
+    public readonly entityProperty = 'entityResult';
 
     public getConverter(property: keyof OrchestratorAdaptiveRecognizerConfiguration): Converter | ConverterFactory {
         switch (property) {
@@ -192,17 +214,17 @@ export class OrchestratorAdaptiveRecognizer
         recognizerResult[this.resultProperty] = results;
 
         if (results.length) {
-            const topScoringIntent = results[0].label.name;
             const topScore = results[0].score;
 
             // if top scoring intent is less than threshold, return None
             if (topScore < this.unknownIntentFilterScore) {
                 recognizerResult.intents.None = { score: 1.0 };
             } else {
-                // add top score
-                recognizerResult.intents[`${topScoringIntent}`] ??= {
-                    score: topScore,
-                };
+                // add all scores
+                recognizerResult.intents = results.reduce(function (intents, result) {
+                    intents[result.label.name] = { score: result.score };
+                    return intents;
+                }, {});
 
                 // disambiguate
                 if (detectAmbiguity) {
@@ -237,6 +259,8 @@ export class OrchestratorAdaptiveRecognizer
             recognizerResult.intents.None = { score: 1.0 };
         }
 
+        await this.tryScoreEntities(text, recognizerResult);
+
         await dc.context.sendTraceActivity(
             'OrchestratorAdaptiveRecognizer',
             recognizerResult,
@@ -251,6 +275,68 @@ export class OrchestratorAdaptiveRecognizer
         );
 
         return recognizerResult;
+    }
+
+    private getTopTwoIntents(result: RecognizerResult): { name: string; score: number }[] {
+        if (!result || !result.intents) {
+            throw new Error('result is empty');
+        }
+        const intents = Object.entries(result.intents)
+            .map((intent) => {
+                return { name: intent[0], score: +intent[1].score };
+            })
+            .sort((a, b) => b.score - a.score);
+        intents.length = 2;
+
+        return intents;
+    }
+
+    /**
+     * Uses the RecognizerResult to create a list of properties to be included when tracking the result in telemetry.
+     *
+     * @param {RecognizerResult} recognizerResult Recognizer Result.
+     * @param {Record<string, string>} telemetryProperties A list of properties to append or override the properties created using the RecognizerResult.
+     * @param {DialogContext} dialogContext Dialog Context.
+     * @returns {Record<string, string>} A collection of properties that can be included when calling the TrackEvent method on the TelemetryClient.
+     */
+    protected fillRecognizerResultTelemetryProperties(
+        recognizerResult: RecognizerResult,
+        telemetryProperties: Record<string, string>,
+        dialogContext?: DialogContext
+    ): Record<string, string> {
+        const topTwo = this.getTopTwoIntents(recognizerResult);
+        const intent = Object.entries(recognizerResult.intents);
+        // customRecognizerProps = recognizerResult with following properties omitted:
+        //   text, alteredText, intents, entities
+        // eslint-disable-next-line  @typescript-eslint/no-unused-vars
+        const { text, alteredText, intents, entities, ...customRecognizerProps } = recognizerResult;
+        const properties: Record<string, string> = {
+            TopIntent: intent.length > 0 ? topTwo[0].name : undefined,
+            TopIntentScore: intent.length > 0 ? topTwo[0].score.toString() : undefined,
+            NextIntent: intent.length > 1 ? topTwo[1].name : undefined,
+            NextIntentScore: intent.length > 1 ? topTwo[1].score.toString() : undefined,
+            Intents: intent.length > 0 ? JSON.stringify(recognizerResult.intents) : undefined,
+            Entities: recognizerResult.entities ? JSON.stringify(recognizerResult.entities) : undefined,
+            AdditionalProperties: JSON.stringify(customRecognizerProps),
+        };
+
+        let logPersonalInformation =
+            this.logPersonalInformation instanceof BoolExpression
+                ? this.logPersonalInformation.getValue(dialogContext.state)
+                : this.logPersonalInformation;
+        if (logPersonalInformation == undefined) logPersonalInformation = false;
+
+        if (logPersonalInformation) {
+            properties['Text'] = recognizerResult.text;
+            properties['AlteredText'] = recognizerResult.alteredText;
+        }
+
+        // Additional Properties can override "stock" properties.
+        if (telemetryProperties) {
+            return Object.assign({}, properties, telemetryProperties);
+        }
+
+        return properties;
     }
 
     private _initializeModel() {
@@ -268,8 +354,14 @@ export class OrchestratorAdaptiveRecognizer
             if (!existsSync(fullModelFolder)) {
                 throw new Error(`Model folder does not exist at ${fullModelFolder}.`);
             }
+
+            const entityModelFolder = resolve(this._modelFolder, 'entity');
+            this.scoreEntities = existsSync(entityModelFolder);
+
             const orchestrator = new oc.Orchestrator();
-            if (!orchestrator.load(fullModelFolder)) {
+            if (this.scoreEntities && !orchestrator.load(fullModelFolder, entityModelFolder)) {
+                throw new Error(`Model load failed.`);
+            } else if (!orchestrator.load(fullModelFolder)) {
                 throw new Error(`Model load failed.`);
             }
             OrchestratorAdaptiveRecognizer.orchestrator = orchestrator;
@@ -285,6 +377,56 @@ export class OrchestratorAdaptiveRecognizer
 
             // Load snapshot and create resolver
             this._resolver = OrchestratorAdaptiveRecognizer.orchestrator.createLabelResolver(snapshot);
+        }
+    }
+
+    private async tryScoreEntities(text: string, recognizerResult: RecognizerResult) {
+        if (!this.scoreEntities) {
+            return;
+        }
+
+        const results = await this._resolver.score(text, LabelType.Entity);
+        if (!results) {
+            throw new Error(`Failed scoring entities for: ${text}`);
+        }
+
+        // Add full entity recognition result as a 'entityResult' property
+        recognizerResult[this.entityProperty] = results;
+        if (results.length) {
+            recognizerResult.entities ??= {};
+
+            results.forEach((result: Result) => {
+                const entityType = result.label.name;
+
+                // add value
+                const values = recognizerResult.entities[entityType] ?? [];
+                recognizerResult.entities[entityType] = values;
+
+                const span = result.label.span;
+                const entityText = text.substr(span.offset, span.length);
+                values.push({
+                    type: entityType,
+                    score: result.score,
+                    text: entityText,
+                    start: span.offset,
+                    end: span.offset + span.length,
+                });
+
+                // get/create $instance
+                recognizerResult.entities['$instance'] ??= {};
+                const instanceRoot = recognizerResult.entities['$instance'];
+
+                // add instanceData
+                instanceRoot[entityType] ??= [];
+                const instanceData = instanceRoot[entityType];
+                instanceData.push({
+                    startIndex: span.offset,
+                    endIndex: span.offset + span.length,
+                    score: result.score,
+                    text: entityText,
+                    type: entityType,
+                });
+            });
         }
     }
 }

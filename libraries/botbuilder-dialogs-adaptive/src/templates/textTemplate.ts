@@ -6,7 +6,8 @@
  * Licensed under the MIT License.
  */
 
-import { Converter, ConverterFactory, Configurable, DialogContext, TemplateInterface } from 'botbuilder-dialogs';
+import { Converter, ConverterFactory, Configurable, DialogContext, TemplateInterface, DialogStateManager } from 'botbuilder-dialogs';
+import { TemplateEngineLanguageGenerator } from '../generators/templateEngineLanguageGenerator';
 import { LanguageGenerator } from '../languageGenerator';
 import { languageGeneratorKey } from '../languageGeneratorExtensions';
 
@@ -55,15 +56,11 @@ export class TextTemplate<D = Record<string, unknown>>
             throw new Error(`ArgumentNullException: ${this.template}`);
         }
 
-        const languageGenerator = dialogContext.services.get(languageGeneratorKey) as LanguageGenerator<string, D>;
-        if (languageGenerator !== undefined) {
-            const lgResult = await languageGenerator.generate(dialogContext, this.template, data);
-            const result = lgResult ? lgResult.toString() : '';
+        let languageGenerator = dialogContext.services.get(languageGeneratorKey) as LanguageGenerator<string, unknown>;
+        languageGenerator ??= new TemplateEngineLanguageGenerator();
 
-            return Promise.resolve(result);
-        }
-
-        return Promise.resolve(undefined);
+        const lgResult = await languageGenerator.generate(dialogContext, this.template, data);
+        return lgResult ? lgResult.toString() : '';
     }
 
     public toString = (): string => {

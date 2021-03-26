@@ -151,7 +151,7 @@ export class OAuthInput extends InputDialog implements OAuthInputConfiguration {
             o.retryPrompt.inputHint = InputHints.AcceptingInput;
         }
 
-        const op = this.onInitializeOptions(dc, options);
+        const op = await this.onInitializeOptions(dc, options);
         dc.state.setValue(ThisPath.options, op);
         dc.state.setValue(InputDialog.TURN_COUNT_PROPERTY, 0);
 

@@ -24,6 +24,7 @@
     "test:consumer": "yarn workspace consumer-test test",
     "test:devops": "npm-run-all test:teams test:mocha:junit test:nyc:cobertura",
     "test:github": "npm-run-all test:mocha:min test:runtime:min test:teams:min test:nyc:lcov",
+    "test:orchestrator": "yarn workspace botbuilder-ai-orchestrator test",
     "test:runtime": "wsrun -m -p \"botbuilder-runtime*\" -t test",
     "test:runtime:min": "wsrun -m -p \"botbuilder-runtime*\" -t test:min",
     "test:teams": "yarn workspace botbuilder-dialogs-adaptive-teams test",

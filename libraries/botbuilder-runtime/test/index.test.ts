@@ -27,7 +27,7 @@ describe('getRuntimeServices', function () {
         await Promise.resolve(
             plugin(async (services, configuration) => {
                 services.composeFactory('customAdapters', async (customAdapters) => {
-                    const name = await configuration.get(['customAdapter', 'name']);
+                    const name = configuration.get(['customAdapter', 'name']);
                     ok(typeof name === 'string');
 
                     customAdapters.set(name, new BotFrameworkAdapter());
@@ -37,7 +37,7 @@ describe('getRuntimeServices', function () {
             })(services, configuration)
         );
 
-        await configuration.set(['customAdapter', 'name'], 'foo');
+        configuration.set(['customAdapter', 'name'], 'foo');
 
         const customAdapter = await services.mustMakeInstance('customAdapters');
         ok(customAdapter.get('foo'));
