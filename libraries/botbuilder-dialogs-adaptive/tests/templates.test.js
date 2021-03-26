@@ -23,6 +23,13 @@ describe('Templates', function() {
         assert.rejects(() => template.bind(dc, {}));
     });
 
+    it('TextTemplate should apply default language generator if language generator is not provided', async function() {
+        const template = new TextTemplate('test');
+        const dc = new DialogContext(dialogs, turnContext, dialogState);
+        const result = await template.bind(dc, {});
+        assert.strictEqual(result, 'test');
+    });
+
     it('TextTemplte should return result if language generator is provided', async function() {
         const template = new TextTemplate('${test}');
         const dc = new DialogContext(dialogs, turnContext, dialogState);
@@ -47,6 +54,15 @@ describe('Templates', function() {
         const template = new ActivityTemplate('${test}');
         const dc = new DialogContext(dialogs, turnContext, dialogState);
         dc.services.set(languageGeneratorKey, new TemplateEngineLanguageGenerator());
+        const result = await template.bind(dc, {test: 123});
+        assert(result);
+        assert.strictEqual(typeof result, 'object');
+        assert.strictEqual(result.text, '123');
+    });
+
+    it('ActivityTemplate should apply default language generator if language generator is not provided', async function() {
+        const template = new ActivityTemplate('${test}');
+        const dc = new DialogContext(dialogs, turnContext, dialogState);
         const result = await template.bind(dc, {test: 123});
         assert(result);
         assert.strictEqual(typeof result, 'object');
