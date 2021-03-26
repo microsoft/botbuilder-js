@@ -14,12 +14,20 @@ export * from './instanceData';
 export * from './intentData';
 export * from './listElement';
 export * from './luisAdaptiveRecognizer';
-export * from './luisComponentRegistration';
+export * from './luisBotComponent';
 export * from './luisRecognizer';
 export * from './luisTelemetryConstants';
 export * from './numberWithUnits';
 export * from './ordinalV2';
 export * from './qnaCardBuilder';
+export * from './qnaMakerBotComponent';
+export * from './qnaMakerRecognizer';
+
+// BindToActivity, GenerateAnswerUtils, HttpRequestUtils and TrainUtils are internal.
+export { ActiveLearningUtils } from './qnamaker-utils';
+
+export { QnAMakerDialog, QnAMakerDialogOptions, QnAMakerDialogResponseOptions } from './qnaMakerDialog';
+
 export {
     QNAMAKER_TRACE_TYPE,
     QNAMAKER_TRACE_NAME,
@@ -29,6 +37,7 @@ export {
     QnAMakerClientKey,
     QnAMaker,
 } from './qnaMaker';
+
 export {
     FeedbackRecord,
     FeedbackRecords,
@@ -43,9 +52,3 @@ export {
     QnAResponseContext,
     RankerTypes,
 } from './qnamaker-interfaces';
-export { QnAMakerDialog, QnAMakerDialogOptions, QnAMakerDialogResponseOptions } from './qnaMakerDialog';
-export * from './qnaMakerComponentRegistration';
-export * from './qnaMakerRecognizer';
-
-// BindToActivity, GenerateAnswerUtils, HttpRequestUtils and TrainUtils are internal.
-export { ActiveLearningUtils } from './qnamaker-utils';

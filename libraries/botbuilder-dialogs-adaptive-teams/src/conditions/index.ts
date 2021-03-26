@@ -7,6 +7,7 @@
  */
 
 export * from './onTeamsAppBasedLinkQuery';
+export * from './onTeamsAppBasedLinkQuery';
 export * from './onTeamsCardAction';
 export * from './onTeamsChannelCreated';
 export * from './onTeamsChannelDeleted';
@@ -17,6 +18,7 @@ export * from './onTeamsMEBotMessagePreviewEdit';
 export * from './onTeamsMEBotMessagePreviewSend';
 export * from './onTeamsMECardButtonClicked';
 export * from './onTeamsMEConfigQuerySettingUrl';
+export * from './onTeamsMEConfigSetting';
 export * from './onTeamsMEConfigurationSetting';
 export * from './onTeamsMEFetchTask';
 export * from './onTeamsMEQuery';
@@ -28,9 +30,9 @@ export * from './onTeamsTabSubmit';
 export * from './onTeamsTaskModuleFetch';
 export * from './onTeamsTaskModuleSubmit';
 export * from './onTeamsTeamArchived';
+export * from './onTeamsTeamArchived';
 export * from './onTeamsTeamDeleted';
 export * from './onTeamsTeamHardDeleted';
 export * from './onTeamsTeamRenamed';
 export * from './onTeamsTeamRestored';
-export * from './onTeamsTeamArchived';
 export * from './onTeamsTeamUnarchived';

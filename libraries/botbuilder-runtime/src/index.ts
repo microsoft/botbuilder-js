@@ -6,15 +6,16 @@ import fs from 'fs';
 import path from 'path';
 import { Configuration } from './configuration';
 
-import { AdaptiveComponentRegistration } from 'botbuilder-dialogs-adaptive';
+import { DialogsBotComponent, MemoryScope, PathResolver } from 'botbuilder-dialogs';
+import { AdaptiveBotComponent, LanguageGenerationBotComponent } from 'botbuilder-dialogs-adaptive';
 import { ApplicationInsightsTelemetryClient, TelemetryInitializerMiddleware } from 'botbuilder-applicationinsights';
 import { BlobsStorage, BlobsTranscriptStore } from 'botbuilder-azure-blobs';
 import { ConfigurationResourceExporer } from './configurationResourceExplorer';
 import { CoreBot } from './coreBot';
 import { CoreBotAdapter } from './coreBotAdapter';
 import { CosmosDbPartitionedStorage } from 'botbuilder-azure';
-import { LuisComponentRegistration, QnAMakerComponentRegistration } from 'botbuilder-ai';
-import { ResourceExplorer } from 'botbuilder-dialogs-declarative';
+import { ComponentDeclarativeTypes, ResourceExplorer } from 'botbuilder-dialogs-declarative';
+import { LuisBotComponent, QnAMakerBotComponent } from 'botbuilder-ai';
 import { ServiceCollection } from 'botbuilder-runtime-core';
 
 import {
@@ -32,7 +33,6 @@ import {
     BotFrameworkAdapter,
     BotTelemetryClient,
     ChannelServiceHandler,
-    ComponentRegistration,
     ConsoleTranscriptLogger,
     ConversationState,
     InspectionMiddleware,
@@ -237,6 +237,8 @@ function addCoreBot(services: ServiceCollection, configuration: Configuration): 
         {
             botTelemetryClient: BotTelemetryClient;
             conversationState: ConversationState;
+            memoryScopes: MemoryScope[];
+            pathResolvers: PathResolver[];
             resourceExplorer: ResourceExplorer;
             skillClient: SkillHttpClient;
             skillConversationIdFactory: SkillConversationIdFactoryBase;
@@ -245,12 +247,14 @@ function addCoreBot(services: ServiceCollection, configuration: Configuration): 
     >(
         'bot',
         [
-            'resourceExplorer',
-            'userState',
+            'botTelemetryClient',
             'conversationState',
+            'memoryScopes',
+            'pathResolvers',
+            'resourceExplorer',
             'skillClient',
             'skillConversationIdFactory',
-            'botTelemetryClient',
+            'userState',
         ],
         (dependencies) =>
             new CoreBot(
@@ -261,7 +265,9 @@ function addCoreBot(services: ServiceCollection, configuration: Configuration): 
                 dependencies.skillConversationIdFactory,
                 dependencies.botTelemetryClient,
                 configuration.string(['defaultLocale']) ?? 'en-US',
-                configuration.string(['defaultRootDialog']) ?? 'main.dialog'
+                configuration.string(['defaultRootDialog']) ?? 'main.dialog',
+                dependencies.memoryScopes,
+                dependencies.pathResolvers
             )
     );
 
@@ -292,7 +298,7 @@ function addCoreBot(services: ServiceCollection, configuration: Configuration): 
     );
 }
 
-async function addBotComponents(services: ServiceCollection, configuration: Configuration): Promise<void> {
+async function addSettingsBotComponents(services: ServiceCollection, configuration: Configuration): Promise<void> {
     const loadBotComponent = async (name: string): Promise<BotComponent | undefined> => {
         try {
             const DefaultExport = (await import(name))?.default;
@@ -326,7 +332,7 @@ async function addBotComponents(services: ServiceCollection, configuration: Conf
             throw new TypeError(`Unable to load ${botComponent} component`);
         }
 
-        await Promise.resolve(botComponent.configureServices(services, configuration.bind([settingsPrefix ?? name])));
+        botComponent.configureServices(services, configuration.bind([settingsPrefix ?? name]));
     }
 }
 
@@ -346,25 +352,21 @@ async function normalizeConfiguration(configuration: Configuration, applicationR
     );
 }
 
-function registerAdaptiveComponents(services: ServiceCollection): void {
-    services.composeFactory<typeof ComponentRegistration>('componentRegistration', (componentRegistration) => {
-        componentRegistration.add(new AdaptiveComponentRegistration());
-        return componentRegistration;
-    });
+function registerAdaptiveComponents(services: ServiceCollection, configuration: Configuration): void {
+    new AdaptiveBotComponent().configureServices(services, configuration);
+    new LanguageGenerationBotComponent().configureServices(services, configuration);
 }
 
-function registerLuisComponents(services: ServiceCollection): void {
-    services.composeFactory<typeof ComponentRegistration>('componentRegistration', (componentRegistration) => {
-        componentRegistration.add(new LuisComponentRegistration());
-        return componentRegistration;
-    });
+function registerDialogsComponents(services: ServiceCollection, configuration: Configuration): void {
+    new DialogsBotComponent().configureServices(services, configuration);
 }
 
-function registerQnAComponents(services: ServiceCollection): void {
-    services.composeFactory<typeof ComponentRegistration>('componentRegistration', (componentRegistration) => {
-        componentRegistration.add(new QnAMakerComponentRegistration());
-        return componentRegistration;
-    });
+function registerLuisComponents(services: ServiceCollection, configuration: Configuration): void {
+    new LuisBotComponent().configureServices(services, configuration);
+}
+
+function registerQnAComponents(services: ServiceCollection, configuration: Configuration): void {
+    new QnAMakerBotComponent().configureServices(services, configuration);
 }
 
 /**
@@ -413,20 +415,23 @@ export async function getRuntimeServices(
     await normalizeConfiguration(configuration, applicationRoot);
 
     const services = new ServiceCollection({
-        componentRegistration: ComponentRegistration,
         customAdapters: new Map(),
+        declarativeTypes: [],
+        memoryScopes: [],
         middlewares: new MiddlewareSet(),
+        pathResolvers: [],
     });
 
-    services.addFactory(
+    services.addFactory<ResourceExplorer, { declarativeTypes: ComponentDeclarativeTypes[] }>(
         'resourceExplorer',
-        ['componentRegistration'], // implicit dependency
-        () => new ConfigurationResourceExporer(configuration)
+        ['declarativeTypes'],
+        ({ declarativeTypes }) => new ConfigurationResourceExporer(configuration, declarativeTypes)
     );
 
-    registerAdaptiveComponents(services);
-    registerLuisComponents(services);
-    registerQnAComponents(services);
+    registerAdaptiveComponents(services, configuration);
+    registerDialogsComponents(services, configuration);
+    registerLuisComponents(services, configuration);
+    registerQnAComponents(services, configuration);
 
     const runtimeSettings = configuration.bind(['runtimeSettings']);
 
@@ -435,7 +440,7 @@ export async function getRuntimeServices(
     addSkills(services, runtimeSettings.bind(['skills']));
     addStorage(services, configuration);
     addTelemetry(services, runtimeSettings.bind(['telemetry']));
-    await addBotComponents(services, configuration);
+    await addSettingsBotComponents(services, configuration);
 
     return [services, configuration];
 }

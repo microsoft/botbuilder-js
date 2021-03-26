@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-import { DialogManager } from 'botbuilder-dialogs';
+import { DialogManager, MemoryScope, PathResolver } from 'botbuilder-dialogs';
 import { ResourceExplorer } from 'botbuilder-dialogs-declarative';
 
 import {
@@ -31,7 +31,9 @@ export class CoreBot extends ActivityHandler {
         skillConversationIdFactory: SkillConversationIdFactoryBase,
         botTelemetryClient: BotTelemetryClient,
         defaultLocale: string,
-        defaultRootDialog: string
+        defaultRootDialog: string,
+        memoryScopes: MemoryScope[],
+        pathResolvers: PathResolver[]
     ) {
         super();
 
@@ -41,6 +43,7 @@ export class CoreBot extends ActivityHandler {
         const dialogManager = new DialogManager(rootDialog).configure({
             conversationState,
             userState,
+            stateConfiguration: { memoryScopes, pathResolvers },
         });
 
         ResourceExtensions.useResourceExplorer(dialogManager, resourceExplorer);
