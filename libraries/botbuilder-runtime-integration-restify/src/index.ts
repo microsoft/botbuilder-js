@@ -32,10 +32,7 @@ const defaultOptions: Options = {
 async function resolveOptions(options: Partial<Options>, configuration: Configuration): Promise<Options> {
     const configOverrides: Partial<Options> = {};
 
-    const port = (await Promise.all(['port', 'PORT'].map((key) => configuration.string([key])))).find(
-        (port) => port !== undefined
-    );
-
+    const port = ['port', 'PORT'].map((key) => configuration.string([key])).find((port) => port !== undefined);
     if (port !== undefined) {
         configOverrides.port = port;
     }
@@ -77,14 +74,13 @@ export async function makeServer(
     configuration: Configuration,
     options: Partial<Options> = {}
 ): Promise<restify.Server> {
-    const [{ adapter, bot, customAdapters }, resolvedOptions] = await Promise.all([
-        services.mustMakeInstances<{
-            adapter: BotFrameworkAdapter;
-            bot: ActivityHandlerBase;
-            customAdapters: Map<string, BotFrameworkAdapter>;
-        }>('adapter', 'bot', 'customAdapters'),
-        resolveOptions(options, configuration),
-    ]);
+    const { adapter, bot, customAdapters } = services.mustMakeInstances<{
+        adapter: BotFrameworkAdapter;
+        bot: ActivityHandlerBase;
+        customAdapters: Map<string, BotFrameworkAdapter>;
+    }>('adapter', 'bot', 'customAdapters');
+
+    const resolvedOptions = await resolveOptions(options, configuration);
 
     const server = restify.createServer();
 
@@ -122,7 +118,8 @@ export async function makeServer(
         });
 
     server.on('upgrade', async (req, socket, head) => {
-        const adapter = await services.mustMakeInstance<BotFrameworkAdapter>('adapter');
+        const adapter = services.mustMakeInstance<BotFrameworkAdapter>('adapter');
+
         adapter.useWebSocket(req, socket, head, async (context) => {
             await bot.run(context);
         });

@@ -12,19 +12,19 @@ describe('getRuntimeServices', () => {
     it('works', async () => {
         const [services] = await getRuntimeServices(__dirname, __dirname);
         ok(services);
-        ok(await services.makeInstances());
+        ok(services.makeInstances());
     });
 
     it('works with preset configuration', async () => {
         const [services] = await getRuntimeServices(__dirname, new Configuration());
         ok(services);
-        ok(await services.makeInstances());
+        ok(services.makeInstances());
     });
 
     it('supports bot components and late binding configuration', async () => {
         class MyComponent extends BotComponent {
             configureServices(services: ServiceCollection, configuration: CoreConfiguration): void {
-                services.composeFactory<Map<string, BotFrameworkAdapter>>('customAdapters', async (customAdapters) => {
+                services.composeFactory<Map<string, BotFrameworkAdapter>>('customAdapters', (customAdapters) => {
                     const name = configuration.get(['customAdapter', 'name']);
                     ok(typeof name === 'string');
 
@@ -43,7 +43,7 @@ describe('getRuntimeServices', () => {
 
         configuration.set(['customAdapter', 'name'], 'foo');
 
-        const customAdapter = await services.mustMakeInstance<Map<string, BotFrameworkAdapter>>('customAdapters');
+        const customAdapter = services.mustMakeInstance<Map<string, BotFrameworkAdapter>>('customAdapters');
         ok(customAdapter.get('foo'));
     });
 
@@ -52,7 +52,7 @@ describe('getRuntimeServices', () => {
             const [services] = await getRuntimeServices(__dirname, __dirname);
             ok(services);
 
-            const storage = await services.mustMakeInstance('storage');
+            const storage = services.mustMakeInstance('storage');
             ok(storage instanceof MemoryStorage);
         });
 
@@ -69,7 +69,7 @@ describe('getRuntimeServices', () => {
             const [services] = await getRuntimeServices(__dirname, configuration);
             ok(services);
 
-            const storage = await services.mustMakeInstance('storage');
+            const storage = services.mustMakeInstance('storage');
             ok(storage instanceof BlobsStorage);
         });
 
@@ -88,7 +88,7 @@ describe('getRuntimeServices', () => {
             const [services] = await getRuntimeServices(__dirname, configuration);
             ok(services);
 
-            const storage = await services.mustMakeInstance('storage');
+            const storage = services.mustMakeInstance('storage');
             ok(storage instanceof CosmosDbPartitionedStorage);
         });
     });

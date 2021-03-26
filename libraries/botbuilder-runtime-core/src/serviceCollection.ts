@@ -2,7 +2,6 @@
 // Licensed under the MIT License.
 
 import assert from 'assert';
-import preduce from 'p-reduce';
 import { DepGraph } from 'dependency-graph';
 import { ok } from 'assert';
 import { stringify } from './util';
@@ -15,7 +14,7 @@ import { stringify } from './util';
  */
 export type Factory<Type, Initial extends boolean> = (
     initialValue: Initial extends true ? Type : Type | undefined
-) => Type | Promise<Type>;
+) => Type;
 
 /**
  * DependencyFactory is a function signature that produces an instance that depends on a set of
@@ -28,7 +27,7 @@ export type Factory<Type, Initial extends boolean> = (
 export type DependencyFactory<Type, Dependencies, Initial extends boolean> = (
     dependencies: Dependencies,
     initialValue: Initial extends true ? Type : Type | undefined
-) => Type | Promise<Type>;
+) => Type;
 
 /**
  * ServiceCollection is an interface that describes a set of methods to register services. This, in a lighter way,
@@ -188,10 +187,10 @@ export class ServiceCollection {
 
     // Register dependencies and then build nodes. Note: `nodes` is a function because ordering may
     // depend on results of dependency registration
-    private async buildNodes<ReturnType = Record<string, unknown>>(
+    private buildNodes<ReturnType = Record<string, unknown>>(
         generateNodes: () => string[],
         reuseServices: Record<string, unknown> = {}
-    ): Promise<ReturnType> {
+    ): ReturnType {
         // Consume all dependencies and then reset so updating registrations without re-registering
         // dependencies works
         this.dependencies.forEach((dependencies, node) =>
@@ -201,40 +200,32 @@ export class ServiceCollection {
         // Generate nodes after registering dependencies so ordering is correct
         const nodes = generateNodes();
 
-        const services = await preduce(
-            nodes,
-            async (services, service) => {
-                // Extra precaution
-                if (!this.graph.hasNode(service)) {
-                    return services;
-                }
+        const services = nodes.reduce((services, service) => {
+            // Extra precaution
+            if (!this.graph.hasNode(service)) {
+                return services;
+            }
 
-                // Helper to generate return value
-                const assignValue = (value: unknown) => ({
-                    ...services,
-                    [service]: value,
-                });
+            // Helper to generate return value
+            const assignValue = (value: unknown) => ({
+                ...services,
+                [service]: value,
+            });
 
-                // Optionally reuse existing service
-                const reusedService = reuseServices[service];
-                if (reusedService !== undefined) {
-                    return assignValue(reusedService);
-                }
+            // Optionally reuse existing service
+            const reusedService = reuseServices[service];
+            if (reusedService !== undefined) {
+                return assignValue(reusedService);
+            }
 
-                // Each node stores a list of factory methods.
-                const factories = this.graph.getNodeData(service);
+            // Each node stores a list of factory methods.
+            const factories = this.graph.getNodeData(service);
 
-                // Produce the instance by reducing those factories, passing the instance along for composition.
-                const instance = await preduce(
-                    factories,
-                    (value, factory) => factory(services, value),
-                    <unknown>services[service]
-                );
+            // Produce the instance by reducing those factories, passing the instance along for composition.
+            const instance = factories.reduce((value, factory) => factory(services, value), <unknown>services[service]);
 
-                return assignValue(instance);
-            },
-            <Record<string, unknown>>{}
-        );
+            return assignValue(instance);
+        }, <Record<string, unknown>>{});
 
         // Cache results for subsequent invocations that may desire pre-constructed instances
         Object.assign(this.cache, services);
@@ -249,7 +240,7 @@ export class ServiceCollection {
      * @param deep reconstruct all dependencies
      * @returns the service instance, or undefined
      */
-    async makeInstance<InstanceType = unknown>(key: string, deep = false): Promise<InstanceType | undefined> {
+    makeInstance<InstanceType = unknown>(key: string, deep = false): InstanceType | undefined {
         // If this is not a deep reconstruction, reuse any services that `key` depends on
         let initialServices: Record<string, unknown> | undefined;
         if (!deep) {
@@ -257,7 +248,7 @@ export class ServiceCollection {
             initialServices = cached;
         }
 
-        const services = await this.buildNodes<Record<string, InstanceType | undefined>>(
+        const services = this.buildNodes<Record<string, InstanceType | undefined>>(
             () => this.graph.dependenciesOf(key).concat(key),
             initialServices
         );
@@ -272,8 +263,8 @@ export class ServiceCollection {
      * @param deep reconstruct all dependencies
      * @returns the service instance
      */
-    async mustMakeInstance<InstanceType = unknown>(key: string, deep = false): Promise<InstanceType> {
-        const instance = await this.makeInstance<InstanceType>(key, deep);
+    mustMakeInstance<InstanceType = unknown>(key: string, deep = false): InstanceType {
+        const instance = this.makeInstance<InstanceType>(key, deep);
         assert.ok(instance, `\`${key}\` instance undefined!`);
 
         return instance;
@@ -284,7 +275,7 @@ export class ServiceCollection {
      *
      * @returns all resolved services
      */
-    makeInstances<InstancesType>(): Promise<InstancesType> {
+    makeInstances<InstancesType>(): InstancesType {
         return this.buildNodes<InstancesType>(() => this.graph.overallOrder());
     }
 
@@ -294,10 +285,10 @@ export class ServiceCollection {
      * @param keys instances that must be not undefined
      * @returns all resolve services
      */
-    async mustMakeInstances<InstancesType extends Record<string, unknown> = Record<string, unknown>>(
+    mustMakeInstances<InstancesType extends Record<string, unknown> = Record<string, unknown>>(
         ...keys: string[]
-    ): Promise<InstancesType> {
-        const instances = await this.makeInstances<InstancesType>();
+    ): InstancesType {
+        const instances = this.makeInstances<InstancesType>();
 
         keys.forEach((key) => {
             assert.ok(instances[key], `\`${key}\` instance undefined!`);

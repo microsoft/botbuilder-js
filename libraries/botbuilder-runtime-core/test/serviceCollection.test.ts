@@ -1,8 +1,8 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
+import assert from 'assert';
 import { ServiceCollection } from '../src/serviceCollection';
-import { deepStrictEqual, notStrictEqual, ok, rejects, strictEqual } from 'assert';
 
 class Foo {}
 
@@ -26,98 +26,98 @@ describe('ServiceCollection', () => {
         const services = new ServiceCollection(defaultServices);
 
         services.addInstance('foo', new Foo());
-        services.addFactory<Bar, { foo: Foo }>('bar', ['foo'], async ({ foo }) => new Bar(foo));
+        services.addFactory<Bar, { foo: Foo }>('bar', ['foo'], ({ foo }) => new Bar(foo));
         services.addFactory<Baz, { foo: Foo; bar: Bar }>('baz', ['foo', 'bar'], ({ foo, bar }) => new Baz(foo, bar));
 
         return services;
     };
 
     describe('makeInstances', () => {
-        it('works', async () => {
+        it('works', () => {
             const services = makeServiceCollection();
 
-            const { foo, bar, baz, bil } = await services.mustMakeInstances<{
+            const { foo, bar, baz, bil } = services.mustMakeInstances<{
                 foo: Foo;
                 bar: Bar;
                 baz: Baz;
                 bil?: unknown;
             }>('foo', 'bar', 'baz');
 
-            ok(bil === undefined);
+            assert.ok(bil === undefined);
 
-            strictEqual(bar.foo, foo);
-            strictEqual(baz.bar, bar);
-            strictEqual(baz.bar.foo, foo);
+            assert.strictEqual(bar.foo, foo);
+            assert.strictEqual(baz.bar, bar);
+            assert.strictEqual(baz.bar.foo, foo);
         });
 
         describe('providing defaults', () => {
-            it('initialValue style', async () => {
+            it('initialValue style', () => {
                 const services = new ServiceCollection();
 
-                services.addFactory<number[]>('values', async (values = [1]) => values.concat(2));
-                services.composeFactory<number[]>('values', async (values) => values.concat(3));
+                services.addFactory<number[]>('values', (values = [1]) => values.concat(2));
+                services.composeFactory<number[]>('values', (values) => values.concat(3));
 
-                const { values } = await services.makeInstances();
-                deepStrictEqual(values, [1, 2, 3]);
+                const { values } = services.makeInstances();
+                assert.deepStrictEqual(values, [1, 2, 3]);
             });
 
-            it('constructor style', async () => {
+            it('constructor style', () => {
                 const services = new ServiceCollection({
                     values: [1],
                 });
 
-                services.composeFactory<number[]>('values', async (values) => values.concat(2));
-                services.composeFactory<number[]>('values', async (values) => values.concat(3));
+                services.composeFactory<number[]>('values', (values) => values.concat(2));
+                services.composeFactory<number[]>('values', (values) => values.concat(3));
 
-                const { values } = await services.makeInstances();
-                deepStrictEqual(values, [1, 2, 3]);
+                const { values } = services.makeInstances();
+                assert.deepStrictEqual(values, [1, 2, 3]);
             });
         });
     });
 
     describe('mustMakeInstances', () => {
-        it('throws if a service instance is undefined', async () => {
+        it('throws if a service instance is undefined', () => {
             const services = new ServiceCollection();
-            await rejects(services.mustMakeInstances('value'));
+            assert.throws(() => services.mustMakeInstances('value'));
         });
     });
 
     describe('makeInstance', () => {
-        it('uses cached dependencies by default', async () => {
+        it('uses cached dependencies by default', () => {
             const services = makeServiceCollection();
 
-            const { bar, baz } = await services.mustMakeInstances<{ bar: Bar; baz: Baz }>('bar', 'baz');
-            const newBaz = await services.mustMakeInstance<Baz>('baz');
+            const { bar, baz } = services.mustMakeInstances<{ bar: Bar; baz: Baz }>('bar', 'baz');
+            const newBaz = services.mustMakeInstance<Baz>('baz');
 
-            notStrictEqual(newBaz, baz);
-            strictEqual(newBaz.bar, bar);
+            assert.notStrictEqual(newBaz, baz);
+            assert.strictEqual(newBaz.bar, bar);
         });
 
-        it('optionally fully reconstructs dependencies', async () => {
+        it('optionally fully reconstructs dependencies', () => {
             const services = makeServiceCollection();
 
-            const { foo, bar, baz } = await services.makeInstances();
-            ok(foo);
-            ok(bar);
-            ok(baz);
+            const { foo, bar, baz } = services.makeInstances();
+            assert.ok(foo);
+            assert.ok(bar);
+            assert.ok(baz);
 
-            const newBaz = await services.makeInstance<Baz>('baz', true);
-            ok(newBaz);
+            const newBaz = services.makeInstance<Baz>('baz', true);
+            assert.ok(newBaz);
 
-            notStrictEqual(newBaz, baz);
-            notStrictEqual(newBaz.bar, bar);
+            assert.notStrictEqual(newBaz, baz);
+            assert.notStrictEqual(newBaz.bar, bar);
         });
     });
 
     describe('mustMakeInstance', () => {
-        it('throws if a service instance is undefined', async () => {
+        it('throws if a service instance is undefined', () => {
             const services = new ServiceCollection();
-            await rejects(services.mustMakeInstance('value'));
+            assert.throws(() => services.mustMakeInstance('value'));
         });
     });
 
     describe('factory handling', () => {
-        it('works', async () => {
+        it('works', () => {
             const services = new ServiceCollection({
                 a: {},
                 b: {},
@@ -133,11 +133,11 @@ describe('ServiceCollection', () => {
                 ({ a }, b) => ({ ...a, ...b })
             );
 
-            const a = await services.mustMakeInstance('a');
-            deepStrictEqual(a, { key: 'value' });
+            const a = services.mustMakeInstance('a');
+            assert.deepStrictEqual(a, { key: 'value' });
         });
 
-        it('throws for undefined initial value', async () => {
+        it('throws for undefined initial value', () => {
             const services = new ServiceCollection({
                 a: {},
             });
@@ -147,7 +147,7 @@ describe('ServiceCollection', () => {
                 ['a'],
                 ({ a }, b) => ({ ...a, ...b })
             );
-            await rejects(services.makeInstance('b'));
+            assert.throws(() => services.makeInstance('b'));
         });
     });
 });
