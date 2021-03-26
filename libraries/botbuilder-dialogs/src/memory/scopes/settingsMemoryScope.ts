@@ -44,9 +44,8 @@ class Node {
 export class SettingsMemoryScope extends MemoryScope {
     /**
      * Initializes a new instance of the [SettingsMemoryScope](xref:botbuilder-dialogs.SettingsMemoryScope) class.
-     * @param _configuration optional runtime configuration instance
      */
-    public constructor(_configuration: Record<string, string>) {
+    public constructor() {
         super(ScopePath.settings, false);
     }
 

@@ -28,11 +28,9 @@ import {
 export class DialogsBotComponent extends BotComponent {
     configureServices(services: ServiceCollection, _configuration: Configuration): void {
         services.composeFactory<MemoryScope[]>('memoryScopes', (memoryScopes) => {
-            const configuration: Record<string, string> = {};
-
             return memoryScopes.concat(
                 new TurnMemoryScope(),
-                new SettingsMemoryScope(configuration),
+                new SettingsMemoryScope(),
                 new DialogMemoryScope(),
                 new DialogContextMemoryScope(),
                 new DialogClassMemoryScope(),
