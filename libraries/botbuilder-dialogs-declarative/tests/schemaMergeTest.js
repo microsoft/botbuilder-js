@@ -9,7 +9,7 @@ const { exec } = require('child_process');
 // Note: This file is intentionally not named *.test.js to ensure it isn't run
 // via `yarn run test` or `npm run test`.
 
-const maybeIt = process.platform === 'win32' ? it : it.skip;
+const maybeIt = process.env.FORCE_SCHEMA_MERGE || process.platform === 'win32' ? it : it.skip;
 
 async function runCommand(command) {
     return new Promise((resolve, reject) => {
@@ -100,6 +100,7 @@ describe('Schema Merge Tests', function () {
                 [
                     'Generated schema differs from committed schema.',
                     'Run this test locally and commit the tests.*schema files to upload the correct and updated schema.',
+                    'If you are running this test on a non-Windows platform, set an environment variable, FORCE_SCHEMA_MERGE to "true"',
                 ].join('\n')
             );
         }
