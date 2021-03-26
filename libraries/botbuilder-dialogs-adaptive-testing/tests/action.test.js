@@ -133,6 +133,18 @@ describe('ActionTests', function () {
         await TestUtils.runTestScript(resourceExplorer, 'Action_BeginDialog');
     });
 
+    it('BeginDialogWithExpr', async () => {
+        await TestUtils.runTestScript(resourceExplorer, 'Action_BeginDialogWithExpr');
+    });
+
+    it('BeginDialogWithExpr2', async () => {
+        await TestUtils.runTestScript(resourceExplorer, 'Action_BeginDialogWithExpr2');
+    });
+
+    it('BeginDialogWithExpr3', async () => {
+        await TestUtils.runTestScript(resourceExplorer, 'Action_BeginDialogWithExpr3');
+    });
+
     it('BeginDialogWithActivity', async () => {
         await TestUtils.runTestScript(resourceExplorer, 'Action_BeginDialogWithActivity');
     });
