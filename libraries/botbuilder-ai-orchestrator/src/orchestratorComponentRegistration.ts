@@ -7,14 +7,14 @@
  */
 
 import { ComponentDeclarativeTypes, DeclarativeType } from 'botbuilder-dialogs-declarative';
-import { OrchestratorAdaptiveRecognizer } from './orchestratorAdaptiveRecognizer';
+import { OrchestratorRecognizer } from './orchestratorRecognizer';
 
 export class OrchestratorComponentRegistration implements ComponentDeclarativeTypes {
     public getDeclarativeTypes(_resourceExplorer: unknown): DeclarativeType[] {
         return [
             {
-                kind: OrchestratorAdaptiveRecognizer.$kind,
-                type: OrchestratorAdaptiveRecognizer,
+                kind: OrchestratorRecognizer.$kind,
+                type: OrchestratorRecognizer,
             },
         ];
     }
