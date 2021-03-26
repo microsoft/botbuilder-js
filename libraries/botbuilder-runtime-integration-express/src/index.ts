@@ -1,11 +1,12 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-import express from 'express';
 import * as http from 'http';
 import * as t from 'runtypes';
+import express from 'express';
+import { ActivityHandlerBase, BotFrameworkAdapter } from 'botbuilder';
 import { Configuration, getRuntimeServices } from 'botbuilder-runtime';
-import { IServices, ServiceCollection } from 'botbuilder-runtime-core';
+import { ServiceCollection } from 'botbuilder-runtime-core';
 
 const TypedOptions = t.Record({
     /**
@@ -56,7 +57,7 @@ export async function start(
  * @returns the Express Application and a function to start the App & handle "upgrade" requests for Streaming
  */
 export async function makeApp(
-    services: ServiceCollection<IServices>,
+    services: ServiceCollection,
     configuration: Configuration,
     options: Partial<Options> = {}
 ): Promise<[app: express.Application, listen: (callback?: () => void) => http.Server]> {
@@ -72,7 +73,11 @@ export async function makeApp(
 
     const validatedOptions = TypedOptions.check(Object.assign({}, defaultOptions, configOverrides, options));
 
-    const { adapter, bot, customAdapters } = await services.mustMakeInstances('adapter', 'bot', 'customAdapters');
+    const { adapter, bot, customAdapters } = await services.mustMakeInstances<{
+        adapter: BotFrameworkAdapter;
+        bot: ActivityHandlerBase;
+        customAdapters: Map<string, BotFrameworkAdapter>;
+    }>('adapter', 'bot', 'customAdapters');
 
     const app = express();
 
@@ -83,7 +88,7 @@ export async function makeApp(
     });
 
     const adapters =
-        (await configuration.type(
+        configuration.type(
             ['runtimeSettings', 'adapters'],
             t.Array(
                 t.Record({
@@ -92,7 +97,7 @@ export async function makeApp(
                     route: t.String,
                 })
             )
-        )) ?? [];
+        ) ?? [];
 
     adapters
         .filter((settings) => settings.enabled)
@@ -120,7 +125,7 @@ export async function makeApp(
             );
 
             server.on('upgrade', async (req, socket, head) => {
-                const adapter = await services.mustMakeInstance('adapter');
+                const adapter = await services.mustMakeInstance<BotFrameworkAdapter>('adapter');
                 adapter.useWebSocket(req, socket, head, async (context) => {
                     await bot.run(context);
                 });

@@ -28,10 +28,6 @@
     }
   },
   "dependencies": {
-    "botbuilder": "4.1.6",
-    "botbuilder-dialogs-declarative": "4.1.6",
-    "botbuilder-stdlib": "4.1.6",
-    "botframework-connector": "4.1.6",
     "dependency-graph": "^0.10.0",
     "p-reduce": "^2.1.0",
     "runtypes": "^5.0.1"

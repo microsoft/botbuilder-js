@@ -37,7 +37,6 @@
     "botbuilder-dialogs-adaptive": "4.1.6",
     "botbuilder-dialogs-declarative": "4.1.6",
     "botbuilder-runtime-core": "4.1.6",
-    "botbuilder-stdlib": "4.1.6",
     "botframework-connector": "4.1.6",
     "dependency-graph": "^0.10.0",
     "nconf": "^0.11.2",

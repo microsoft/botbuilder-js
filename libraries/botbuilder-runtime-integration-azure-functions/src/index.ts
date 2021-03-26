@@ -3,10 +3,17 @@
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-import type { Activity, WebResponse } from 'botbuilder';
 import type { AzureFunction, Context, HttpRequest } from '@azure/functions';
 import { Configuration, getRuntimeServices } from 'botbuilder-runtime';
-import { IServices, ServiceCollection } from 'botbuilder-runtime-core';
+import { ServiceCollection } from 'botbuilder-runtime-core';
+
+import type {
+    Activity,
+    ActivityHandlerBase,
+    BotFrameworkAdapter,
+    ChannelServiceHandler,
+    WebResponse,
+} from 'botbuilder';
 
 // helper function to memoize the result of `func`
 function memoize<T>(func: () => T): () => T {
@@ -25,11 +32,15 @@ function memoize<T>(func: () => T): () => T {
  * @returns azure function triggers for `module.exports`
  */
 export function makeTriggers(
-    runtimeServices: () => Promise<[ServiceCollection<IServices>, Configuration]>
+    runtimeServices: () => Promise<[ServiceCollection, Configuration]>
 ): Record<string, AzureFunction> {
     const instances = memoize(async () => {
         const [services] = await runtimeServices();
-        return services.mustMakeInstances('adapter', 'bot', 'channelServiceHandler');
+        return services.mustMakeInstances<{
+            adapter: BotFrameworkAdapter;
+            bot: ActivityHandlerBase;
+            channelServiceHandler: ChannelServiceHandler;
+        }>('adapter', 'bot', 'channelServiceHandler');
     });
 
     return {
