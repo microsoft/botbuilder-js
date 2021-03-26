@@ -162,9 +162,9 @@ export class ConfirmInput extends InputDialog implements ConfirmInputConfigurati
                 return InputState.valid;
             } else {
                 // Fallback to trying the choice recognizer
-                const confirmChoices =
-                    (this.confirmChoices && this.confirmChoices.getValue(dc.state)) ||
-                    ConfirmInput.defaultChoiceOptions[locale].choices;
+                const defaults = ConfirmInput.defaultChoiceOptions[locale].choices;
+                const confirmChoices = await this.getConfirmChoices(dc, defaults);
+
                 const choices = ChoiceFactory.toChoices(confirmChoices);
                 const results = recognizeChoices(input, choices);
                 if (results.length > 0) {
@@ -189,11 +189,9 @@ export class ConfirmInput extends InputDialog implements ConfirmInputConfigurati
     protected async onRenderPrompt(dc: DialogContext, state: InputState): Promise<Partial<Activity>> {
         // Determine locale
         let locale = this.determineCulture(dc);
-
+        const defaults = ConfirmInput.defaultChoiceOptions[locale].choices;
         // Format choices
-        const confirmChoices =
-            (this.confirmChoices && this.confirmChoices.getValue(dc.state)) ||
-            ConfirmInput.defaultChoiceOptions[locale].choices;
+        const confirmChoices = await this.getConfirmChoices(dc, defaults);
         const choices = ChoiceFactory.toChoices(confirmChoices);
 
         // Format prompt to send
@@ -217,5 +215,28 @@ export class ConfirmInput extends InputDialog implements ConfirmInputConfigurati
         }
 
         return culture;
+    }
+
+    private async getConfirmChoices(dc: DialogContext, defaults: (string | Choice)[]): Promise<ChoiceSet> {
+        let confirmChoices: ChoiceSet;
+        if (this.confirmChoices != null) {
+            if (
+                this.confirmChoices.expressionText != null &&
+                this.confirmChoices.expressionText.trimLeft().startsWith('${')
+            ) {
+                // use TemplateInterface to bind (aka LG)
+                const choiceSet = new ChoiceSet(this.confirmChoices.expressionText);
+                confirmChoices = await choiceSet.bind(dc, dc.state);
+            } else {
+                // use Expression to bind
+                confirmChoices = this.confirmChoices.getValue(dc.state);
+            }
+        }
+
+        if (confirmChoices != null) {
+            return Promise.resolve(confirmChoices);
+        } else {
+            return Promise.resolve(new ChoiceSet(defaults));
+        }
     }
 }
