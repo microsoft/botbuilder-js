@@ -27,7 +27,7 @@ import { Converter, ConverterFactory, DialogContext, Recognizer, RecognizerConfi
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const oc = require('orchestrator-core');
 
-export interface OrchestratorAdaptiveRecognizerConfiguration extends RecognizerConfiguration {
+export interface OrchestratorRecognizerConfiguration extends RecognizerConfiguration {
     modelFolder?: string | Expression | StringExpression;
     snapshotFile?: string | Expression | StringExpression;
     disambiguationScoreThreshold?: number | string | Expression | NumberExpression;
@@ -65,10 +65,8 @@ interface Orchestrator {
 /**
  * Class that represents an adaptive Orchestrator recognizer.
  */
-export class OrchestratorAdaptiveRecognizer
-    extends AdaptiveRecognizer
-    implements OrchestratorAdaptiveRecognizerConfiguration {
-    public static $kind = 'Microsoft.OrchestratorAdaptiveRecognizer';
+export class OrchestratorRecognizer extends AdaptiveRecognizer implements OrchestratorRecognizerConfiguration {
+    public static $kind = 'Microsoft.OrchestratorRecognizer';
 
     /**
      * Path to Orchestrator base model folder.
@@ -116,7 +114,7 @@ export class OrchestratorAdaptiveRecognizer
      */
     public readonly entityProperty = 'entityResult';
 
-    public getConverter(property: keyof OrchestratorAdaptiveRecognizerConfiguration): Converter | ConverterFactory {
+    public getConverter(property: keyof OrchestratorRecognizerConfiguration): Converter | ConverterFactory {
         switch (property) {
             case 'modelFolder':
                 return new StringExpressionConverter();
@@ -138,7 +136,7 @@ export class OrchestratorAdaptiveRecognizer
     private _snapshotFile: string;
 
     /**
-     * Returns an OrchestratorAdaptiveRecognizer instance.
+     * Returns an OrchestratorRecognizer instance.
      *
      * @param {string} modelFolder Path to NLR model.
      * @param {string} snapshotFile Path to snapshot.
@@ -156,7 +154,7 @@ export class OrchestratorAdaptiveRecognizer
     }
 
     /**
-     * Returns a new OrchestratorAdaptiveRecognizer instance.
+     * Returns a new OrchestratorRecognizer instance.
      *
      * @param {DialogContext} dc Context for the current dialog.
      * @param {Partial<Activity>} activity Current activity sent from user.
@@ -262,14 +260,14 @@ export class OrchestratorAdaptiveRecognizer
         await this.tryScoreEntities(text, recognizerResult);
 
         await dc.context.sendTraceActivity(
-            'OrchestratorAdaptiveRecognizer',
+            'OrchestratorRecognizer',
             recognizerResult,
-            'OrchestratorAdaptiveRecognizer',
+            'OrchestratorRecognizer',
             'Orchestrator Recognition'
         );
         this.trackRecognizerResult(
             dc,
-            'OrchestratorAdaptiveRecognizerResult',
+            'OrchestratorRecognizerResult',
             this.fillRecognizerResultTelemetryProperties(recognizerResult, telemetryProperties, dc),
             telemetryMetrics
         );
@@ -348,7 +346,7 @@ export class OrchestratorAdaptiveRecognizer
             throw new Error(`Missing "ShapshotFile" information.`);
         }
 
-        if (!OrchestratorAdaptiveRecognizer.orchestrator && !this._resolver) {
+        if (!OrchestratorRecognizer.orchestrator && !this._resolver) {
             // Create orchestrator core
             const fullModelFolder = resolve(this._modelFolder);
             if (!existsSync(fullModelFolder)) {
@@ -364,7 +362,7 @@ export class OrchestratorAdaptiveRecognizer
             } else if (!orchestrator.load(fullModelFolder)) {
                 throw new Error(`Model load failed.`);
             }
-            OrchestratorAdaptiveRecognizer.orchestrator = orchestrator;
+            OrchestratorRecognizer.orchestrator = orchestrator;
         }
 
         if (!this._resolver) {
@@ -376,7 +374,7 @@ export class OrchestratorAdaptiveRecognizer
             const snapshot: Uint8Array = readFileSync(fullSnapshotPath);
 
             // Load snapshot and create resolver
-            this._resolver = OrchestratorAdaptiveRecognizer.orchestrator.createLabelResolver(snapshot);
+            this._resolver = OrchestratorRecognizer.orchestrator.createLabelResolver(snapshot);
         }
     }
 
