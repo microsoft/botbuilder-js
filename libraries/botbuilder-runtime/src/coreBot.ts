@@ -43,7 +43,6 @@ export class CoreBot extends ActivityHandler {
         const dialogManager = new DialogManager(rootDialog).configure({
             conversationState,
             userState,
-            stateConfiguration: { memoryScopes, pathResolvers },
         });
 
         ResourceExtensions.useResourceExplorer(dialogManager, resourceExplorer);
@@ -52,6 +51,21 @@ export class CoreBot extends ActivityHandler {
         SkillExtensions.useSkillClient(dialogManager, skillClient);
         SkillExtensions.useSkillConversationIdFactory(dialogManager, skillConversationIdFactory);
         useTelemetry(dialogManager, botTelemetryClient);
+
+        /* TODO(jgummersall) reconcile:
+         * _dialogManager.InitialTurnState.Set(botFrameworkClient);
+         * _dialogManager.InitialTurnState.Set(conversationIdfactory);
+         * _dialogManager.InitialTurnState.Set(_userState); (handled by useBotState?)
+         * _dialogManager.InitialTurnState.Set(_conversationState); (handled by useBotState?)
+         */
+
+        if (memoryScopes.length) {
+            dialogManager.initialTurnState.set('memoryScopes', memoryScopes);
+        }
+
+        if (pathResolvers.length) {
+            dialogManager.initialTurnState.set('pathResolvers', pathResolvers);
+        }
 
         this.onTurn(async (turnContext) => {
             await dialogManager.onTurn(turnContext);

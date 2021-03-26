@@ -52,20 +52,20 @@ export class DialogStateManager {
         ComponentRegistration.add(new DialogsComponentRegistration());
 
         this.dialogContext = dc;
-
         this.configuration = configuration ?? dc.context.turnState.get(DIALOG_STATE_MANAGER_CONFIGURATION);
 
         if (!this.configuration) {
             this.configuration = { memoryScopes: [], pathResolvers: [] };
 
             // get all of the component memory scopes.
-            // TODO(jpg) need to shim this for bot component use?
-
             ComponentRegistration.components
                 .filter((component: ComponentRegistration) => isComponentMemoryScopes(component))
                 .forEach((component: ComponentMemoryScopes) => {
                     this.configuration.memoryScopes.push(...component.getMemoryScopes());
                 });
+
+            // merge in turn state memory scopes
+            this.configuration.memoryScopes.push(...dc.context.turnState.get<MemoryScope[]>('memoryScopes'));
 
             // get all of the component path resolvers.
             ComponentRegistration.components
@@ -73,6 +73,9 @@ export class DialogStateManager {
                 .forEach((component: ComponentPathResolvers) => {
                     this.configuration.pathResolvers.push(...component.getPathResolvers());
                 });
+
+            // merge in turn state ones path resolvers
+            this.configuration.pathResolvers.push(...dc.context.turnState.get<PathResolver[]>('pathResolvers'));
 
             // cache for any other new dialogStateManager instances in this turn
             dc.context.turnState.set(DIALOG_STATE_MANAGER_CONFIGURATION, this.configuration);
