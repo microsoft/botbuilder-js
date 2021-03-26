@@ -26,7 +26,6 @@
   },
   "scripts": {
     "lint": "eslint . --ext .js,.ts",
-    "lint:fix": "eslint . --ext .js,.ts --fix",
     "test": "mocha -r ts-node/register tests/*.test.ts",
     "update-versions": "ts-node src/updateVersions.ts"
   }

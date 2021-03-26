@@ -39,7 +39,6 @@
     "build-docs": "typedoc --theme markdown --entryPoint botbuilder-azure-blobs --excludePrivate --includeDeclarations --ignoreCompilerErrors --module amd --out ..\\..\\doc\\botbuilder-azure-blobs .\\lib\\index.d.ts --hideGenerator --name \"Bot Builder SDK - Azure Blobs\" --readme none",
     "clean": "rimraf _ts3.4 lib tsconfig.tsbuildinfo",
     "lint": "eslint . --ext .js,.ts",
-    "lint:fix": "eslint . --ext .js,.ts --fix",
     "postbuild": "downlevel-dts lib _ts3.4/lib --checksum",
     "test": "yarn build && nyc mocha --check-leaks tests",
     "test:compat": "api-extractor run --verbose"
