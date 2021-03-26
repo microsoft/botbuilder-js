@@ -192,7 +192,7 @@ export abstract class InputDialog extends Dialog implements InputDialogConfigura
         }
 
         // Initialize and persist options
-        const opts = this.onInitializeOptions(dc, options || {});
+        const opts = await this.onInitializeOptions(dc, options || {});
         dc.state.setValue(InputDialog.OPTIONS_PROPERTY, opts);
 
         // Initialize turn count & input
@@ -319,8 +319,8 @@ export abstract class InputDialog extends Dialog implements InputDialogConfigura
      * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
      * @param options Initial information to pass to the dialog.
      */
-    protected onInitializeOptions(dc: DialogContext, options: any): any {
-        return Object.assign({}, options);
+    protected onInitializeOptions(dc: DialogContext, options: any): Promise<any> {
+        return Promise.resolve(Object.assign({}, options));
     }
 
     /**
