@@ -47,7 +47,7 @@ export class MicrosoftAppCredentials extends AppCredentials {
                         if (err) {
                             reject(err);
                         } else if (isErrorResponse(tokenResponse)) {
-                            reject(tokenResponse.error);
+                            reject(new Error(tokenResponse.error));
                         } else {
                             resolve(tokenResponse);
                         }
