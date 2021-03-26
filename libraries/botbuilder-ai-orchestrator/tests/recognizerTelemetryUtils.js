@@ -15,9 +15,12 @@ const spyOnTelemetryClientTrackEvent = (recognizer) => {
 };
 
 const getLogPersonalInformation = (recognizer, dialogContext) => {
-    return recognizer.logPersonalInformation instanceof BoolExpression
-        ? recognizer.logPersonalInformation.getValue(dialogContext.state)
-        : recognizer.logPersonalInformation;
+    const result =
+        recognizer.logPersonalInformation instanceof BoolExpression
+            ? recognizer.logPersonalInformation.getValue(dialogContext.state)
+            : recognizer.logPersonalInformation;
+    if (result == undefined) return false;
+    return result;
 };
 
 const validateTelemetry = async ({ recognizer, dialogContext, spy, activity, result, callCount }) => {
@@ -38,14 +41,18 @@ module.exports = {
 };
 
 // **** PRIVATE **** //
-
 const getOrchestratorIntentProps = () => ({
     TopIntent: 'mockLabel',
     TopIntentScore: '0.9',
-    Intents: JSON.stringify({ mockLabel: { score: 0.9 } }),
+    NextIntent: 'mockLabel2',
+    NextIntentScore: '0.8',
+    Intents: JSON.stringify({ mockLabel: { score: 0.9 }, mockLabel2: { score: 0.8 } }),
     Entities: '{}',
     AdditionalProperties: JSON.stringify({
-        result: [{ score: 0.9, label: { name: 'mockLabel' } }],
+        result: [
+            { score: 0.9, label: { name: 'mockLabel' } },
+            { score: 0.8, label: { name: 'mockLabel2' } },
+        ],
     }),
 });
 

@@ -5,13 +5,22 @@
 
 /* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 
+const { LabelType } = require('../lib');
 class MockResolver {
-    constructor(score) {
+    constructor(score, entityScore) {
         this._score = score;
+        this._entityScore = entityScore;
     }
 
-    score(_text) {
-        return this._score;
+    score(_text, labelType = LabelType.Intent) {
+        switch (labelType) {
+            case LabelType.Intent:
+                return this._score;
+            case LabelType.Entity:
+                return this._entityScore;
+            default:
+                throw new Error('Label type not supported!');
+        }
     }
 }
 

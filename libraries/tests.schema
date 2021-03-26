@@ -254,7 +254,7 @@
       "$ref": "#/definitions/Microsoft.OnUnknownIntent"
     },
     {
-      "$ref": "#/definitions/Microsoft.OrchestratorRecognizer"
+      "$ref": "#/definitions/Microsoft.OrchestratorAdaptiveRecognizer"
     },
     {
       "$ref": "#/definitions/Microsoft.OrdinalEntityRecognizer"
@@ -4269,7 +4269,7 @@
           "$ref": "#/definitions/Microsoft.NumberRangeEntityRecognizer"
         },
         {
-          "$ref": "#/definitions/Microsoft.OrchestratorRecognizer"
+          "$ref": "#/definitions/Microsoft.OrchestratorAdaptiveRecognizer"
         },
         {
           "$ref": "#/definitions/Microsoft.OrdinalEntityRecognizer"
@@ -7312,7 +7312,7 @@
         }
       }
     },
-    "Microsoft.OrchestratorRecognizer": {
+    "Microsoft.OrchestratorAdaptiveRecognizer": {
       "$role": "implements(Microsoft.IRecognizer)",
       "title": "Orchestrator recognizer",
       "description": "Orchestrator recognizer.",
@@ -7383,7 +7383,7 @@
           "description": "Defines the valid properties for the component you are configuring (from a dialog .schema file)",
           "type": "string",
           "pattern": "^[a-zA-Z][a-zA-Z0-9.]*$",
-          "const": "Microsoft.OrchestratorRecognizer"
+          "const": "Microsoft.OrchestratorAdaptiveRecognizer"
         },
         "$designer": {
           "title": "Designer information",
