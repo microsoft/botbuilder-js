@@ -23,13 +23,13 @@ describe('Templates', function() {
         assert.rejects(() => template.bind(dc, {}));
     });
 
-    it('TextTemplate should return undefined if language generator is not provided', async function() {
+    it('TextTemplate should apply default language generator if language generator is not provided', async function() {
         const template = new TextTemplate('test');
         const dc = new DialogContext(dialogs, turnContext, dialogState);
         const result = await template.bind(dc, {});
-        assert.strictEqual(result, undefined);
+        assert.strictEqual(result, 'test');
     });
-    
+
     it('TextTemplte should return result if language generator is provided', async function() {
         const template = new TextTemplate('${test}');
         const dc = new DialogContext(dialogs, turnContext, dialogState);
@@ -37,19 +37,19 @@ describe('Templates', function() {
         const result = await template.bind(dc, {test: 123});
         assert.strictEqual(result, '123');
     });
-    
+
     it('TextTemplate toString', async function() {
         const template = new TextTemplate('test');
         assert.strictEqual(template.toString(), 'TextTemplate(test)');
     });
-    
+
     it('ActivityTemplate should return undefined if template is not defined', async function() {
         const template = new ActivityTemplate();
         const dc = new DialogContext(dialogs, turnContext, dialogState);
         const result = await template.bind(dc, {});
         assert.strictEqual(result, undefined);
     });
-    
+
     it('ActivityTemplate should return lg result if language generator is provided', async function() {
         const template = new ActivityTemplate('${test}');
         const dc = new DialogContext(dialogs, turnContext, dialogState);
@@ -60,20 +60,20 @@ describe('Templates', function() {
         assert.strictEqual(result.text, '123');
     });
 
-    it('ActivityTemplate should return template result if language generator is not provided', async function() {
+    it('ActivityTemplate should apply default language generator if language generator is not provided', async function() {
         const template = new ActivityTemplate('${test}');
         const dc = new DialogContext(dialogs, turnContext, dialogState);
         const result = await template.bind(dc, {test: 123});
         assert(result);
         assert.strictEqual(typeof result, 'object');
-        assert.strictEqual(result.text, '${test}');
+        assert.strictEqual(result.text, '123');
     });
-    
+
     it('ActivityTemplate toString', async function() {
         const template = new ActivityTemplate('test');
         assert.strictEqual(template.toString(), 'ActivityTemplate(test)');
     });
-    
+
     it('StaticActivityTemplate should return template as Activity', async function() {
         const activity = ActivityFactory.buildActivityFromText('test');
         const template = new StaticActivityTemplate(activity);
