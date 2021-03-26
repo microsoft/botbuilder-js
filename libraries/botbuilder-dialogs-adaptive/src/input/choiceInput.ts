@@ -197,7 +197,7 @@ export class ChoiceInput extends InputDialog implements ChoiceInputConfiguration
             (this.choiceOptions && this.choiceOptions.getValue(dc.state)) || ChoiceInput.defaultChoiceOptions[locale];
         const style = this.style.getValue(dc.state);
         const options = dc.state.getValue(ChoiceInput.OPTIONS_PROPERTY);
-        return Promise.resolve(this.appendChoices(prompt, channelId, options.choices, style, choiceOptions));
+        return this.appendChoices(prompt, channelId, options.choices, style, choiceOptions);
     }
 
     /**
@@ -207,10 +207,11 @@ export class ChoiceInput extends InputDialog implements ChoiceInputConfiguration
         return `ChoiceInput[${this.prompt && this.prompt.toString()}]`;
     }
 
-    private async getChoiceSet(dc: DialogContext) {
+    private getChoiceSet(dc: DialogContext): Promise<ChoiceSet> {
         if (this.choices.expressionText != null && this.choices.expressionText.trimLeft().startsWith('${')) {
             // use TemplateInterface to bind (aka LG)
-            return await new ChoiceSet(this.choices.expressionText).bind(dc, dc.state);
+            const choiceSet = new ChoiceSet(this.choices.expressionText);
+            return choiceSet.bind(dc, dc.state);
         } else {
             // use Expression to bind
             return Promise.resolve(this.choices.getValue(dc.state));

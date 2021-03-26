@@ -319,7 +319,7 @@ export abstract class InputDialog extends Dialog implements InputDialogConfigura
      * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
      * @param options Initial information to pass to the dialog.
      */
-    protected async onInitializeOptions(dc: DialogContext, options: any): Promise<any> {
+    protected onInitializeOptions(dc: DialogContext, options: any): Promise<any> {
         return Promise.resolve(Object.assign({}, options));
     }
 

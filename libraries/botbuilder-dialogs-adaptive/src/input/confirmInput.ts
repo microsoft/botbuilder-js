@@ -225,7 +225,8 @@ export class ConfirmInput extends InputDialog implements ConfirmInputConfigurati
                 this.confirmChoices.expressionText.trimLeft().startsWith('${')
             ) {
                 // use TemplateInterface to bind (aka LG)
-                confirmChoices = await new ChoiceSet(this.confirmChoices.expressionText).bind(dc, dc.state);
+                const choiceSet = new ChoiceSet(this.confirmChoices.expressionText);
+                confirmChoices = await choiceSet.bind(dc, dc.state);
             } else {
                 // use Expression to bind
                 confirmChoices = this.confirmChoices.getValue(dc.state);
