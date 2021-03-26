@@ -63,11 +63,11 @@ describe('Schema Merge Tests', function () {
         // Merge all schema files.
         const sdkRoot = path.join(__dirname, '..', '..', '..');
         const mergeCommand = [
-            `bf dialog:merge ${sdkRoot}/libraries/**/*.schema`,
-            `${sdkRoot}/libraries/**/*.uischema`,
+            `bf dialog:merge "${sdkRoot}/libraries/**/*.schema"`,
+            `"${sdkRoot}/libraries/**/*.uischema"`,
             '!**/testbot.schema',
-            `!${sdkRoot}/libraries/botbuilder-dialogs-adaptive/tests/schema/*.*`,
-            `-o ${testsSchemaPath}`,
+            '!**/botbuilder-dialogs-adaptive/tests/schema/*.*',
+            `-o "${testsSchemaPath}"`,
         ];
         try {
             await runCommand(mergeCommand.join(' '));
