@@ -11,7 +11,7 @@ export interface IConfiguration {
      * @param path path to get
      * @returns the value, or undefined
      */
-    get(path: string[]): Promise<unknown | undefined>;
+    get(path: string[]): unknown | undefined;
 
     /**
      * Set a value by path.
@@ -19,5 +19,5 @@ export interface IConfiguration {
      * @param path path to get
      * @param value path to get
      */
-    set(path: string[], value: unknown): Promise<void>;
+    set(path: string[], value: unknown): void;
 }
