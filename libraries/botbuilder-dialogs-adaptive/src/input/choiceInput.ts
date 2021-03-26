@@ -130,15 +130,14 @@ export class ChoiceInput extends InputDialog implements ChoiceInputConfiguration
      * @param options Optional, initial information to pass to the dialog.
      * @returns The modified [ChoiceInputOptions](xref:botbuilder-dialogs-adaptive.ChoiceInputOptions) options.
      */
-    protected onInitializeOptions(dc: DialogContext, options: ChoiceInputOptions): ChoiceInputOptions {
+    protected async onInitializeOptions(dc: DialogContext, options: ChoiceInputOptions): Promise<ChoiceInputOptions> {
         if (!(options && options.choices && options.choices.length > 0)) {
             if (!options) {
                 options = { choices: [] };
             }
-            const choices = this.choices.getValue(dc.state);
-            options.choices = choices;
+            options.choices = await this.getChoiceSet(dc);
         }
-        return super.onInitializeOptions(dc, options);
+        return await super.onInitializeOptions(dc, options);
     }
 
     /**
@@ -191,15 +190,14 @@ export class ChoiceInput extends InputDialog implements ChoiceInputConfiguration
         // Determine locale
         const locale = this.determineCulture(dc);
 
-        const choices = this.choices.getValue(dc.state);
-
         // Format prompt to send
         const prompt = await super.onRenderPrompt(dc, state);
         const channelId = dc.context.activity.channelId;
         const choiceOptions =
             (this.choiceOptions && this.choiceOptions.getValue(dc.state)) || ChoiceInput.defaultChoiceOptions[locale];
         const style = this.style.getValue(dc.state);
-        return Promise.resolve(this.appendChoices(prompt, channelId, choices, style, choiceOptions));
+        const options = dc.state.getValue(ChoiceInput.OPTIONS_PROPERTY);
+        return this.appendChoices(prompt, channelId, options.choices, style, choiceOptions);
     }
 
     /**
@@ -207,6 +205,17 @@ export class ChoiceInput extends InputDialog implements ChoiceInputConfiguration
      */
     protected onComputeId(): string {
         return `ChoiceInput[${this.prompt && this.prompt.toString()}]`;
+    }
+
+    private getChoiceSet(dc: DialogContext): Promise<ChoiceSet> {
+        if (this.choices.expressionText != null && this.choices.expressionText.trimLeft().startsWith('${')) {
+            // use TemplateInterface to bind (aka LG)
+            const choiceSet = new ChoiceSet(this.choices.expressionText);
+            return choiceSet.bind(dc, dc.state);
+        } else {
+            // use Expression to bind
+            return Promise.resolve(this.choices.getValue(dc.state));
+        }
     }
 
     private determineCulture(dc: DialogContext, opt?: FindChoicesOptions): string {

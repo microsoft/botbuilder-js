@@ -134,7 +134,7 @@ export class DialogTestClient {
      * Send an activity into the dialog.
      *
      * ```javascript
-     * DialogTest.send('hello').assertReply('hello yourself').then(done);
+     * await DialogTest.send('hello').assertReply('hello yourself').startTest();
      * ```
      *
      * @param activity an activity potentially with text

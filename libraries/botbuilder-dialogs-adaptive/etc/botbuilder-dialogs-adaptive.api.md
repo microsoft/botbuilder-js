@@ -363,7 +363,7 @@ export class ChoiceInput extends InputDialog {
     // (undocumented)
     protected onComputeId(): string;
     // (undocumented)
-    protected onInitializeOptions(dc: DialogContext, options: ChoiceInputOptions): ChoiceInputOptions;
+    protected onInitializeOptions(dc: DialogContext, options: ChoiceInputOptions): Promise<ChoiceInputOptions>;
     // (undocumented)
     protected onRecognizeInput(dc: DialogContext): Promise<InputState>;
     // (undocumented)
@@ -806,7 +806,7 @@ export abstract class InputDialog extends Dialog {
     invalidPrompt: TemplateInterface<Partial<Activity>>;
     maxTurnCount?: IntExpression;
     // (undocumented)
-    protected onInitializeOptions(dc: DialogContext, options: any): any;
+    protected onInitializeOptions(dc: DialogContext, options: any): Promise<any>;
     // (undocumented)
     protected onPreBubbleEvent(dc: DialogContext, event: DialogEvent): Promise<boolean>;
     // (undocumented)

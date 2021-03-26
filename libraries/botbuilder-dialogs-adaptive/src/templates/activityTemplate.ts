@@ -15,6 +15,7 @@ import {
     DialogStateManager,
     TemplateInterface,
 } from 'botbuilder-dialogs';
+import { TemplateEngineLanguageGenerator } from '../generators';
 import { LanguageGenerator } from '../languageGenerator';
 import { languageGeneratorKey } from '../languageGeneratorExtensions';
 
@@ -60,22 +61,19 @@ export class ActivityTemplate
      */
     public async bind(dialogContext: DialogContext, data: DialogStateManager): Promise<Partial<Activity>> {
         if (this.template) {
-            const languageGenerator = dialogContext.services.get(languageGeneratorKey) as LanguageGenerator<
-                Partial<Activity>,
-                DialogStateManager
+            let languageGenerator = dialogContext.services.get(languageGeneratorKey) as LanguageGenerator<
+                unknown,
+                DialogStateManager | Record<string, unknown>
             >;
 
-            if (languageGenerator) {
-                const lgResult = await languageGenerator.generate(dialogContext, this.template, data);
-                const result = ActivityFactory.fromObject(lgResult);
-                return Promise.resolve(result);
-            } else {
-                const message = MessageFactory.text(this.template, this.template);
-                return Promise.resolve(message);
-            }
+            languageGenerator ??= new TemplateEngineLanguageGenerator();
+
+            const lgResult = await languageGenerator.generate(dialogContext, this.template, data);
+            const result = ActivityFactory.fromObject(lgResult);
+            return result;
         }
 
-        return Promise.resolve(undefined);
+        return undefined;
     }
 
     public toString = (): string => {

@@ -48,6 +48,10 @@
                                 }
                             }
                         }
+                    },
+                    {
+                        "$kind": "Microsoft.SendActivity",
+                        "activity": "hi ${titleCase('jack')}"
                     }
                 ]
             }
@@ -72,6 +76,10 @@
                 "text == undefined",
                 "channelData != undefined"
             ]
+        },
+        {
+            "$kind": "Microsoft.Test.AssertReply",
+            "text": "hi Jack"
         }
     ]
 }

@@ -199,6 +199,22 @@ describe('ActionTests', function () {
         await TestUtils.runTestScript(resourceExplorer, 'Action_ChoicesInMemory');
     });
 
+    it('ChoiceInputSimpleTemplate_en', async () => {
+        await TestUtils.runTestScript(resourceExplorer, 'Action_ChoiceInput_SimpleTemplate_en');
+    });
+
+    it('ChoiceInputSimpleTemplate_es', async () => {
+        await TestUtils.runTestScript(resourceExplorer, 'Action_ChoiceInput_SimpleTemplate_es');
+    });
+
+    it('ChoiceInputComplexTemplate_en', async () => {
+        await TestUtils.runTestScript(resourceExplorer, 'Action_ChoiceInput_ComplexTemplate_en');
+    });
+
+    it('ChoiceInputComplexTemplate_es', async () => {
+        await TestUtils.runTestScript(resourceExplorer, 'Action_ChoiceInput_ComplexTemplate_es');
+    });
+
     it('ChoiceStringInMemory', async () => {
         await TestUtils.runTestScript(resourceExplorer, 'Action_ChoiceStringInMemory');
     });
@@ -213,6 +229,22 @@ describe('ActionTests', function () {
 
     it('DatetimeInput', async () => {
         await TestUtils.runTestScript(resourceExplorer, 'Action_DatetimeInput');
+    });
+
+    it('ConfirmInputSimpleTemplate_en', async () => {
+        await TestUtils.runTestScript(resourceExplorer, 'Action_ConfirmInput_SimpleTemplate_en');
+    });
+
+    it('ConfirmInputComplexTemplate_en', async () => {
+        await TestUtils.runTestScript(resourceExplorer, 'Action_ConfirmInput_ComplexTemplate_en');
+    });
+
+    it('ConfirmInputSimpleTemplate_es', async () => {
+        await TestUtils.runTestScript(resourceExplorer, 'Action_ConfirmInput_SimpleTemplate_es');
+    });
+
+    it('ConfirmInputComplexTemplate_es', async () => {
+        await TestUtils.runTestScript(resourceExplorer, 'Action_ConfirmInput_ComplexTemplate_es');
     });
 
     it('DeleteProperties', async () => {
