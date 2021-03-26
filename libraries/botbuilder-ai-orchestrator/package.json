@@ -32,6 +32,7 @@
     "botbuilder-dialogs": "4.1.6",
     "botbuilder-dialogs-adaptive": "4.1.6",
     "botbuilder-dialogs-declarative": "4.1.6",
+    "botbuilder-runtime-core": "4.1.6",
     "orchestrator-core": "next",
     "uuid": "^8.3.2"
   },
