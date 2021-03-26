@@ -3,7 +3,7 @@
 
 import { BotComponent } from 'botbuilder-core';
 import { ComponentDeclarativeTypes } from 'botbuilder-dialogs-declarative';
-import { OrchestratorAdaptiveRecognizer } from './orchestratorAdaptiveRecognizer';
+import { OrchestratorRecognizer } from './orchestratorRecognizer';
 import { ServiceCollection, Configuration } from 'botbuilder-runtime-core';
 
 export class OrchestratorBotComponent extends BotComponent {
@@ -13,8 +13,8 @@ export class OrchestratorBotComponent extends BotComponent {
                 getDeclarativeTypes() {
                     return [
                         {
-                            kind: OrchestratorAdaptiveRecognizer.$kind,
-                            type: OrchestratorAdaptiveRecognizer,
+                            kind: OrchestratorRecognizer.$kind,
+                            type: OrchestratorRecognizer,
                         },
                     ];
                 },

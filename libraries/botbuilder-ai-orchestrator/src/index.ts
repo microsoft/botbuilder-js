@@ -6,5 +6,5 @@
  * Licensed under the MIT License.
  */
 
-export * from './orchestratorAdaptiveRecognizer';
+export * from './orchestratorRecognizer';
 export * from './orchestratorBotComponent';
