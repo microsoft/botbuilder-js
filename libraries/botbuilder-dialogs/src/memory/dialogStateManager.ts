@@ -65,7 +65,8 @@ export class DialogStateManager {
                 });
 
             // merge in turn state memory scopes
-            this.configuration.memoryScopes.push(...dc.context.turnState.get<MemoryScope[]>('memoryScopes'));
+            const memoryScopes = dc.context.turnState.get<MemoryScope[]>('memoryScopes') ?? [];
+            this.configuration.memoryScopes.push(...memoryScopes);
 
             // get all of the component path resolvers.
             ComponentRegistration.components
@@ -75,7 +76,8 @@ export class DialogStateManager {
                 });
 
             // merge in turn state ones path resolvers
-            this.configuration.pathResolvers.push(...dc.context.turnState.get<PathResolver[]>('pathResolvers'));
+            const pathResolvers = dc.context.turnState.get<PathResolver[]>('pathResolvers') ?? [];
+            this.configuration.pathResolvers.push(...pathResolvers);
 
             // cache for any other new dialogStateManager instances in this turn
             dc.context.turnState.set(DIALOG_STATE_MANAGER_CONFIGURATION, this.configuration);
