@@ -2,7 +2,7 @@ const assert = require('assert');
 const { AdaptiveBotComponent } = require('botbuilder-dialogs-adaptive');
 const { DialogManager } = require('botbuilder-dialogs');
 const { ResourceExplorer, FolderResourceProvider, ResourceChangeEvent } = require('../lib');
-const { ServiceCollection } = require('botbuilder-runtime-core');
+const { ServiceCollection, noOpConfiguration } = require('botbuilder-runtime-core');
 const { TestAdapter, MemoryStorage, useBotState, UserState, ConversationState } = require('botbuilder-core');
 const { extname, join } = require('path');
 const { writeFileSync, existsSync, unlinkSync } = require('fs');
@@ -101,7 +101,7 @@ describe('ResourceExplorer', function () {
             declarativeTypes: [],
         });
 
-        new AdaptiveBotComponent().configureServices(services, null);
+        new AdaptiveBotComponent().configureServices(services, noOpConfiguration);
 
         const declarativeTypes = services.mustMakeInstance('declarativeTypes');
         const explorer = new ResourceExplorer({ declarativeTypes }).addFolders(join(__dirname, 'resources'), [], false);
@@ -269,7 +269,7 @@ describe('ResourceExplorer', function () {
             declarativeTypes: [],
         });
 
-        new AdaptiveBotComponent().configureServices(services, null);
+        new AdaptiveBotComponent().configureServices(services, noOpConfiguration);
 
         const declarativeTypes = services.mustMakeInstance('declarativeTypes');
         const resourceExplorer = new ResourceExplorer({ declarativeTypes }).addFolder(

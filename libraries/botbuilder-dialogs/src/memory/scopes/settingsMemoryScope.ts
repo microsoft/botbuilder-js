@@ -6,7 +6,6 @@
  * Licensed under the MIT License.
  */
 
-import { Configuration } from 'botbuilder-runtime-core';
 import { DialogContext } from '../../dialogContext';
 import { DialogTurnStateConstants } from '../../dialogTurnStateConstants';
 import { MemoryScope } from './memoryScope';

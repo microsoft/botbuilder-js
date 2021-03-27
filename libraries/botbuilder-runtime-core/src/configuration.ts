@@ -21,3 +21,13 @@ export interface Configuration {
      */
     set(path: string[], value: unknown): void;
 }
+
+// noOpConfiguration is useful for shimming new BotComponents back to ComponentRegistrations
+export const noOpConfiguration: Configuration = {
+    get(_path: string[]): unknown | undefined {
+        return undefined;
+    },
+    set(_path: string[], _value: unknown): void {
+        // no-op
+    },
+};

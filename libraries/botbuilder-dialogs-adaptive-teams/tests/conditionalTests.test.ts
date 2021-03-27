@@ -6,7 +6,7 @@ import { AdaptiveBotComponent } from 'botbuilder-dialogs-adaptive';
 import { AdaptiveTeamsBotComponent } from '../src';
 import { AdaptiveTestBotComponent, TestUtils } from 'botbuilder-dialogs-adaptive-testing';
 import { ComponentDeclarativeTypes, ResourceExplorer } from 'botbuilder-dialogs-declarative';
-import { Configuration, ServiceCollection } from 'botbuilder-runtime-core';
+import { ServiceCollection, noOpConfiguration } from 'botbuilder-runtime-core';
 
 describe('Conditional Tests', function () {
     let resourceExplorer: ResourceExplorer;
@@ -15,16 +15,9 @@ describe('Conditional Tests', function () {
             declarativeTypes: [],
         });
 
-        const configuration: Configuration = {
-            get(_path) {
-                return undefined;
-            },
-            set(_path, _value) {},
-        };
-
-        new AdaptiveBotComponent().configureServices(services, configuration);
-        new AdaptiveTeamsBotComponent().configureServices(services, configuration);
-        new AdaptiveTestBotComponent().configureServices(services, configuration);
+        new AdaptiveBotComponent().configureServices(services, noOpConfiguration);
+        new AdaptiveTeamsBotComponent().configureServices(services, noOpConfiguration);
+        new AdaptiveTestBotComponent().configureServices(services, noOpConfiguration);
 
         const declarativeTypes = services.mustMakeInstance<ComponentDeclarativeTypes[]>('declarativeTypes');
 

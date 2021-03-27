@@ -8,7 +8,7 @@ import { AdaptiveTeamsBotComponent } from '../src/adaptiveTeamsBotComponent';
 import { AdaptiveTestBotComponent, TestUtils } from 'botbuilder-dialogs-adaptive-testing';
 import { ConnectorClient, MicrosoftAppCredentials } from 'botframework-connector';
 import { ComponentDeclarativeTypes, ResourceExplorer } from 'botbuilder-dialogs-declarative';
-import { Configuration, ServiceCollection } from 'botbuilder-runtime-core';
+import { ServiceCollection, noOpConfiguration } from 'botbuilder-runtime-core';
 import { jwt } from 'botbuilder-test-utils';
 import { ok } from 'assert';
 
@@ -125,16 +125,9 @@ describe('Actions', function () {
             declarativeTypes: [],
         });
 
-        const configuration: Configuration = {
-            get(_path) {
-                return undefined;
-            },
-            set(_path, _value) {},
-        };
-
-        new AdaptiveBotComponent().configureServices(services, configuration);
-        new AdaptiveTeamsBotComponent().configureServices(services, configuration);
-        new AdaptiveTestBotComponent().configureServices(services, configuration);
+        new AdaptiveBotComponent().configureServices(services, noOpConfiguration);
+        new AdaptiveTeamsBotComponent().configureServices(services, noOpConfiguration);
+        new AdaptiveTestBotComponent().configureServices(services, noOpConfiguration);
 
         const declarativeTypes = services.mustMakeInstance<ComponentDeclarativeTypes[]>('declarativeTypes');
 

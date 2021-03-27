@@ -5,18 +5,18 @@ const path = require('path');
 const { AdaptiveBotComponent } = require('botbuilder-dialogs-adaptive');
 const { AdaptiveTestBotComponent } = require('..');
 const { ResourceExplorer } = require('botbuilder-dialogs-declarative');
-const { ServiceCollection } = require('botbuilder-runtime-core');
+const { ServiceCollection, noOpConfiguration } = require('botbuilder-runtime-core');
 
 function makeResourceExplorer(resourceFolder, ...botComponents) {
     const services = new ServiceCollection({
         declarativeTypes: [],
     });
 
-    new AdaptiveBotComponent().configureServices(services, null);
-    new AdaptiveTestBotComponent().configureServices(services, null);
+    new AdaptiveBotComponent().configureServices(services, noOpConfiguration);
+    new AdaptiveTestBotComponent().configureServices(services, noOpConfiguration);
 
     botComponents.forEach((BotComponent) => {
-        new BotComponent().configureServices(services, null);
+        new BotComponent().configureServices(services, noOpConfiguration);
     });
 
     const declarativeTypes = services.mustMakeInstance('declarativeTypes');

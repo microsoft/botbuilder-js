@@ -3,7 +3,7 @@ const path = require('path');
 const { ResourceExplorer } = require('../lib');
 const { DialogManager } = require('botbuilder-dialogs');
 const { QnACardBuilder, RankerTypes, QnAMakerClientKey, QnAMakerBotComponent } = require('botbuilder-ai');
-const { ServiceCollection } = require('botbuilder-runtime-core');
+const { ServiceCollection, noOpConfiguration } = require('botbuilder-runtime-core');
 const { StringExpression } = require('adaptive-expressions');
 
 const {
@@ -142,8 +142,8 @@ describe('Json load tests', function () {
             declarativeTypes: [],
         });
 
-        new AdaptiveBotComponent().configureServices(services, null);
-        new QnAMakerBotComponent().configureServices(services, null);
+        new AdaptiveBotComponent().configureServices(services, noOpConfiguration);
+        new QnAMakerBotComponent().configureServices(services, noOpConfiguration);
 
         const declarativeTypes = services.mustMakeInstance('declarativeTypes');
 

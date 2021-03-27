@@ -7,7 +7,7 @@
  */
 
 import { ComponentRegistration } from 'botbuilder-core';
-import { ServiceCollection } from 'botbuilder-runtime-core';
+import { ServiceCollection, noOpConfiguration } from 'botbuilder-runtime-core';
 import { DialogsBotComponent } from './dialogsBotComponent';
 import { ComponentMemoryScopes, ComponentPathResolvers, MemoryScope, PathResolver } from './memory';
 
@@ -25,7 +25,7 @@ export class DialogsComponentRegistration
     constructor() {
         super();
 
-        new DialogsBotComponent().configureServices(this.services, null);
+        new DialogsBotComponent().configureServices(this.services, noOpConfiguration);
     }
 
     /**
