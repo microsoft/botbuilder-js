@@ -329,7 +329,7 @@ async function addSettingsBotComponents(services: ServiceCollection, configurati
     for (const { name, settingsPrefix } of components) {
         const botComponent = await loadBotComponent(name);
         if (!botComponent) {
-            throw new TypeError(`Unable to load ${botComponent} component`);
+            throw new TypeError(`Unable to load ${name} component`);
         }
 
         botComponent.configureServices(services, configuration.bind([settingsPrefix ?? name]));
