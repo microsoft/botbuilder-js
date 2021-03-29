@@ -5,7 +5,7 @@ import { AdaptiveDialog } from './adaptiveDialog';
 import { BotComponent } from 'botbuilder';
 import { ComponentDeclarativeTypes } from 'botbuilder-dialogs-declarative';
 import { ConditionalSelector, FirstSelector, MostSpecificSelector, RandomSelector, TrueSelector } from './selectors';
-import { Configuration, ServiceCollection } from 'botbuilder-runtime-core';
+import { Configuration, ServiceCollection } from 'botbuilder-dialogs-adaptive-runtime-core';
 import { DynamicBeginDialogDeserializer } from './dynamicBeginDialogDeserializer';
 import { Expression } from 'adaptive-expressions';
 import { HasPendingActionsFunction, IsDialogActiveFunction } from './functions';

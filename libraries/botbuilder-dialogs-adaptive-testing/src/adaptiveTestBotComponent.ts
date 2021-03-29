@@ -3,7 +3,7 @@
 
 import { BotComponent } from 'botbuilder-core';
 import { ComponentDeclarativeTypes } from 'botbuilder-dialogs-declarative';
-import { ServiceCollection, Configuration } from 'botbuilder-runtime-core';
+import { ServiceCollection, Configuration } from 'botbuilder-dialogs-adaptive-runtime-core';
 
 import { AssertCondition } from './actions';
 

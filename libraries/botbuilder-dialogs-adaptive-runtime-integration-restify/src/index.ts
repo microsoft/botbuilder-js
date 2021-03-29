@@ -4,8 +4,8 @@
 import * as t from 'runtypes';
 import restify from 'restify';
 import { ActivityHandlerBase, BotFrameworkAdapter } from 'botbuilder';
-import { Configuration, getRuntimeServices } from 'botbuilder-runtime';
-import { ServiceCollection } from 'botbuilder-runtime-core';
+import { Configuration, getRuntimeServices } from 'botbuilder-dialogs-adaptive-runtime';
+import { ServiceCollection } from 'botbuilder-dialogs-adaptive-runtime-core';
 
 const TypedOptions = t.Record({
     /**
