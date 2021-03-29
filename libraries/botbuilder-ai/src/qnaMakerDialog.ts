@@ -120,7 +120,7 @@ export interface QnAMakerDialogConfiguration extends DialogConfiguration {
  * Important: The activity returned should relay the noMatchesText as an option to the end user.
  *
  * @param suggestionsList List of suggestions.
- * @param noMatchesText If this text is received by the bot during a prompt,
+ * @param noMatchesText If this text is received by the bot during a prompt.
  */
 export type QnASuggestionsActivityFactory = (suggestionsList: string[], noMatchesText: string) => Partial<Activity>;
 

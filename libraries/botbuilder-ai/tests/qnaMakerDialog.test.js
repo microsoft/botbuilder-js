@@ -367,7 +367,7 @@ describe('QnAMakerDialog', function () {
             const kbId = 'dummyKbId';
             const endpointKey = 'dummyEndpointKey';
             throws(
-                () => new QnAMakerDialog(kbId, endpointKey, HOSTNAME, undefined, undefined, () => {}, undefined),
+                () => new QnAMakerDialog(kbId, endpointKey, HOSTNAME, undefined, undefined, (_) => {}, undefined),
                 new TypeError('cardNoMatchText is required when using the suggestionsActivityFactory.')
             );
         });
