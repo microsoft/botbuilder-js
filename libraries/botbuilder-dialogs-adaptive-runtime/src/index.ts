@@ -16,7 +16,7 @@ import { CoreBotAdapter } from './coreBotAdapter';
 import { CosmosDbPartitionedStorage } from 'botbuilder-azure';
 import { ComponentDeclarativeTypes, ResourceExplorer } from 'botbuilder-dialogs-declarative';
 import { LuisBotComponent, QnAMakerBotComponent } from 'botbuilder-ai';
-import { ServiceCollection } from 'botbuilder-runtime-core';
+import { ServiceCollection } from 'botbuilder-dialogs-adaptive-runtime-core';
 
 import {
     AuthenticationConfiguration,

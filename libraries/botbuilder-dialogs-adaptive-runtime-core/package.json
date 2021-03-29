@@ -1,10 +1,10 @@
 {
-  "name": "botbuilder-runtime-core",
+  "name": "botbuilder-dialogs-adaptive-runtime-core",
   "preview": true,
   "author": "Microsoft Corp.",
   "version": "4.1.6",
   "license": "MIT",
-  "description": "Bot Framework runtime core types and services",
+  "description": "Bot Framework adaptive runtime core types and services",
   "keywords": [
     "botbuilder",
     "botframework",

@@ -1,5 +1,5 @@
 {
-  "name": "botbuilder-runtime",
+  "name": "botbuilder-dialogs-adaptive-runtime",
   "preview": true,
   "author": "Microsoft Corp.",
   "version": "4.1.6",
@@ -35,8 +35,8 @@
     "botbuilder-azure-blobs": "4.1.6",
     "botbuilder-dialogs": "4.1.6",
     "botbuilder-dialogs-adaptive": "4.1.6",
+    "botbuilder-dialogs-adaptive-runtime-core": "4.1.6",
     "botbuilder-dialogs-declarative": "4.1.6",
-    "botbuilder-runtime-core": "4.1.6",
     "botframework-connector": "4.1.6",
     "dependency-graph": "^0.10.0",
     "nconf": "^0.11.2",

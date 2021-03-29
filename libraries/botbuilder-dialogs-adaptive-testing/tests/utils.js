@@ -5,7 +5,7 @@ const path = require('path');
 const { AdaptiveBotComponent } = require('botbuilder-dialogs-adaptive');
 const { AdaptiveTestBotComponent } = require('..');
 const { ResourceExplorer } = require('botbuilder-dialogs-declarative');
-const { ServiceCollection, noOpConfiguration } = require('botbuilder-runtime-core');
+const { ServiceCollection, noOpConfiguration } = require('botbuilder-dialogs-adaptive-runtime-core');
 
 function makeResourceExplorer(resourceFolder, ...botComponents) {
     const services = new ServiceCollection({

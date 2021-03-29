@@ -2,7 +2,7 @@
 // Licensed under the MIT License.
 
 import { Assertion, assert } from 'botbuilder-stdlib';
-import { Configuration, ServiceCollection } from 'botbuilder-runtime-core';
+import { Configuration, ServiceCollection } from 'botbuilder-dialogs-adaptive-runtime-core';
 
 /**
  * Definition of a BotComponent that allows registration of services, custom actions, memory scopes and adapters.
