@@ -9428,10 +9428,10 @@ ora@^4.0.3:
     strip-ansi "^6.0.0"
     wcwidth "^1.0.1"
 
-orchestrator-core@next:
-  version "4.13.0-dev.20210325.421845fh"
-  resolved "https://registry.yarnpkg.com/orchestrator-core/-/orchestrator-core-4.13.0-dev.20210325.421845fh.tgz#8d7481c7a48d3c144fc1611bb735c2b7e507fa1a"
-  integrity sha512-wnWEuWC4iR78F7j1p0R7v0YfKIv21atpmz0gTIcvfT7WrQudAFIlmp2uRUUx3AFdV+SngZiLBxTZ7lOKnp/Q9Q==
+orchestrator-core@rc:
+  version "4.13.0-rc0"
+  resolved "https://registry.yarnpkg.com/orchestrator-core/-/orchestrator-core-4.13.0-rc0.tgz#0277d3b3ac5c4317f15640b42760e2e5714b1bf8"
+  integrity sha512-0YbzNF8OQ8r0CSRDvcezRK8V6dFOh8jdVkfC+3JM+k7rotLrSMf0EI+UTGJUnSv9tI4roIfo5IM4AHT+KJ8l2A==
   dependencies:
     bindings "1.2.1"
     node-addon-api "^3.0.0"
