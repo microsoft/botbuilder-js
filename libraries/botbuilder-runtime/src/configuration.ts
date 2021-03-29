@@ -3,14 +3,14 @@
 
 import yargs from 'yargs-parser';
 import { Boolean, Runtype, String, Undefined, ValidationError } from 'runtypes';
-import { IConfiguration } from 'botbuilder-runtime-core';
+import { Configuration as CoreConfiguration } from 'botbuilder-runtime-core';
 import { Provider } from 'nconf';
 
 /**
  * Configuration implements the [IConfiguration](xref:botbuilder-runtime-core.IConfiguration) interface
  * and adds helper methods for setting values, layering sources, and getting type checked values.
  */
-export class Configuration implements IConfiguration {
+export class Configuration implements CoreConfiguration {
     private prefix: string[] = [];
     private provider = new Provider().use('memory');
 

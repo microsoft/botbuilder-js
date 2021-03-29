@@ -2,11 +2,11 @@
 // Licensed under the MIT License.
 
 import { BlobsStorage } from 'botbuilder-azure-blobs';
-import { BotFrameworkAdapter, MemoryStorage } from 'botbuilder';
+import { BotComponent, BotFrameworkAdapter, MemoryStorage } from 'botbuilder';
 import { Configuration, getRuntimeServices } from '../src';
 import { CosmosDbPartitionedStorage } from 'botbuilder-azure';
 import { ok } from 'assert';
-import { plugin } from 'botbuilder-runtime-core';
+import { ServiceCollection, Configuration as CoreConfiguration } from 'botbuilder-runtime-core';
 
 describe('getRuntimeServices', () => {
     it('works', async () => {
@@ -21,12 +21,10 @@ describe('getRuntimeServices', () => {
         ok(await services.makeInstances());
     });
 
-    it('supports plugins and late binding configuration', async () => {
-        const [services, configuration] = await getRuntimeServices(__dirname, __dirname);
-
-        await Promise.resolve(
-            plugin(async (services, configuration) => {
-                services.composeFactory('customAdapters', async (customAdapters) => {
+    it('supports bot components and late binding configuration', async () => {
+        class MyComponent extends BotComponent {
+            configureServices(services: ServiceCollection, configuration: CoreConfiguration): void {
+                services.composeFactory<Map<string, BotFrameworkAdapter>>('customAdapters', async (customAdapters) => {
                     const name = configuration.get(['customAdapter', 'name']);
                     ok(typeof name === 'string');
 
@@ -34,12 +32,18 @@ describe('getRuntimeServices', () => {
 
                     return customAdapters;
                 });
-            })(services, configuration)
-        );
+            }
+        }
+
+        const [services, configuration] = await getRuntimeServices(__dirname, __dirname);
+
+        const myComponent = new MyComponent();
+
+        await Promise.resolve(myComponent.configureServices(services, configuration));
 
         configuration.set(['customAdapter', 'name'], 'foo');
 
-        const customAdapter = await services.mustMakeInstance('customAdapters');
+        const customAdapter = await services.mustMakeInstance<Map<string, BotFrameworkAdapter>>('customAdapters');
         ok(customAdapter.get('foo'));
     });
 

@@ -5,44 +5,59 @@ import * as t from 'runtypes';
 import fs from 'fs';
 import path from 'path';
 import { Configuration } from './configuration';
-import { ok } from 'assert';
 
 import { AdaptiveComponentRegistration } from 'botbuilder-dialogs-adaptive';
 import { ApplicationInsightsTelemetryClient, TelemetryInitializerMiddleware } from 'botbuilder-applicationinsights';
 import { BlobsStorage, BlobsTranscriptStore } from 'botbuilder-azure-blobs';
-import { ComponentRegistration, SkillConversationIdFactory } from 'botbuilder';
 import { ConfigurationResourceExporer } from './configurationResourceExplorer';
 import { CoreBot } from './coreBot';
 import { CoreBotAdapter } from './coreBotAdapter';
 import { CosmosDbPartitionedStorage } from 'botbuilder-azure';
-import { IServices, ServiceCollection, TPlugin } from 'botbuilder-runtime-core';
 import { LuisComponentRegistration, QnAMakerComponentRegistration } from 'botbuilder-ai';
+import { ResourceExplorer } from 'botbuilder-dialogs-declarative';
+import { ServiceCollection } from 'botbuilder-runtime-core';
 
 import {
     AuthenticationConfiguration,
+    ICredentialProvider,
     SimpleCredentialProvider,
     allowedCallersClaimsValidator,
 } from 'botframework-connector';
 
 import {
+    ActivityHandlerBase,
+    BotAdapter,
+    BotComponent,
+    isBotComponent,
+    BotFrameworkAdapter,
+    BotTelemetryClient,
+    ChannelServiceHandler,
+    ComponentRegistration,
     ConsoleTranscriptLogger,
     ConversationState,
     InspectionMiddleware,
     InspectionState,
     MemoryStorage,
+    Middleware,
     MiddlewareSet,
     NullTelemetryClient,
     SetSpeakMiddleware,
     ShowTypingMiddleware,
+    SkillConversationIdFactory,
+    SkillConversationIdFactoryBase,
     SkillHandler,
     SkillHttpClient,
+    Storage,
     TelemetryLoggerMiddleware,
     TranscriptLoggerMiddleware,
     UserState,
 } from 'botbuilder';
 
-function addFeatures(services: ServiceCollection<IServices>, configuration: Configuration): void {
-    services.composeFactory(
+function addFeatures(services: ServiceCollection, configuration: Configuration): void {
+    services.composeFactory<
+        MiddlewareSet,
+        { conversationState: ConversationState; storage: Storage; userState: UserState }
+    >(
         'middlewares',
         ['storage', 'conversationState', 'userState'],
         ({ conversationState, storage, userState }, middlewareSet) => {
@@ -97,7 +112,7 @@ function addFeatures(services: ServiceCollection<IServices>, configuration: Conf
     );
 }
 
-function addTelemetry(services: ServiceCollection<IServices>, configuration: Configuration): void {
+function addTelemetry(services: ServiceCollection, configuration: Configuration): void {
     services.addFactory('botTelemetryClient', () => {
         const instrumentationKey = configuration.string(['instrumentationKey']);
 
@@ -117,7 +132,7 @@ function addTelemetry(services: ServiceCollection<IServices>, configuration: Con
     );
 }
 
-function addStorage(services: ServiceCollection<IServices>, configuration: Configuration): void {
+function addStorage(services: ServiceCollection, configuration: Configuration): void {
     services.addFactory('conversationState', ['storage'], ({ storage }) => new ConversationState(storage));
     services.addFactory('userState', ['storage'], ({ storage }) => new UserState(storage));
 
@@ -134,7 +149,9 @@ function addStorage(services: ServiceCollection<IServices>, configuration: Confi
                     })
                 );
 
-                ok(blobsStorage);
+                if (!blobsStorage) {
+                    throw new TypeError('`BlobsStorage` missing in configuration');
+                }
 
                 return new BlobsStorage(blobsStorage.connectionString, blobsStorage.containerName);
             }
@@ -153,7 +170,9 @@ function addStorage(services: ServiceCollection<IServices>, configuration: Confi
                     })
                 );
 
-                ok(cosmosOptions);
+                if (!cosmosOptions) {
+                    throw new TypeError('`CosmosDbPartitionedStorage` missing in configuration');
+                }
 
                 return new CosmosDbPartitionedStorage(cosmosOptions);
             }
@@ -164,7 +183,7 @@ function addStorage(services: ServiceCollection<IServices>, configuration: Confi
     });
 }
 
-function addSkills(services: ServiceCollection<IServices>, configuration: Configuration): void {
+function addSkills(services: ServiceCollection, configuration: Configuration): void {
     services.addInstance('credentialProvider', new SimpleCredentialProvider('appId', 'appPassword'));
 
     services.addFactory(
@@ -189,7 +208,16 @@ function addSkills(services: ServiceCollection<IServices>, configuration: Config
         );
     });
 
-    services.addFactory(
+    services.addFactory<
+        ChannelServiceHandler,
+        {
+            adapter: BotAdapter;
+            authenticationConfiguration: AuthenticationConfiguration;
+            bot: ActivityHandlerBase;
+            credentialProvider: ICredentialProvider;
+            skillConversationIdFactory: SkillConversationIdFactoryBase;
+        }
+    >(
         'channelServiceHandler',
         ['adapter', 'bot', 'skillConversationIdFactory', 'credentialProvider', 'authenticationConfiguration'],
         (dependencies) =>
@@ -203,8 +231,18 @@ function addSkills(services: ServiceCollection<IServices>, configuration: Config
     );
 }
 
-function addCoreBot(services: ServiceCollection<IServices>, configuration: Configuration): void {
-    services.addFactory(
+function addCoreBot(services: ServiceCollection, configuration: Configuration): void {
+    services.addFactory<
+        ActivityHandlerBase,
+        {
+            botTelemetryClient: BotTelemetryClient;
+            conversationState: ConversationState;
+            resourceExplorer: ResourceExplorer;
+            skillClient: SkillHttpClient;
+            skillConversationIdFactory: SkillConversationIdFactoryBase;
+            userState: UserState;
+        }
+    >(
         'bot',
         [
             'resourceExplorer',
@@ -227,7 +265,16 @@ function addCoreBot(services: ServiceCollection<IServices>, configuration: Confi
             )
     );
 
-    services.addFactory(
+    services.addFactory<
+        BotFrameworkAdapter,
+        {
+            authenticationConfiguration: AuthenticationConfiguration;
+            conversationState: ConversationState;
+            userState: UserState;
+            middlewares: MiddlewareSet;
+            telemetryMiddleware: Middleware;
+        }
+    >(
         'adapter',
         ['authenticationConfiguration', 'conversationState', 'userState', 'middlewares', 'telemetryMiddleware'],
         (dependencies) => {
@@ -245,14 +292,15 @@ function addCoreBot(services: ServiceCollection<IServices>, configuration: Confi
     );
 }
 
-async function addPlugins(services: ServiceCollection<IServices>, configuration: Configuration): Promise<void> {
-    const loadPlugin = async (name: string): Promise<TPlugin | undefined> => {
+async function addBotComponents(services: ServiceCollection, configuration: Configuration): Promise<void> {
+    const loadBotComponent = async (name: string): Promise<BotComponent | undefined> => {
         try {
-            const plugin = (await import(name))?.default;
-
-            if (plugin) {
-                ok(typeof plugin === 'function', `Failed to load ${name}`);
-                return plugin;
+            const DefaultExport = (await import(name))?.default;
+            if (DefaultExport) {
+                const instance = new DefaultExport();
+                if (isBotComponent(instance)) {
+                    return instance;
+                }
             }
         } catch (_err) {
             // no-op
@@ -261,9 +309,9 @@ async function addPlugins(services: ServiceCollection<IServices>, configuration:
         return undefined;
     };
 
-    const plugins =
+    const components =
         configuration.type(
-            ['runtimeSettings', 'plugins'],
+            ['runtimeSettings', 'components'],
             t.Array(
                 t.Record({
                     name: t.String,
@@ -272,11 +320,13 @@ async function addPlugins(services: ServiceCollection<IServices>, configuration:
             )
         ) ?? [];
 
-    for (const { name, settingsPrefix } of plugins) {
-        const plugin = await loadPlugin(name);
-        ok(plugin);
+    for (const { name, settingsPrefix } of components) {
+        const botComponent = await loadBotComponent(name);
+        if (!botComponent) {
+            throw new TypeError(`Unable to load ${botComponent} component`);
+        }
 
-        await Promise.resolve(plugin(services, configuration.bind([settingsPrefix ?? name])));
+        await Promise.resolve(botComponent.configureServices(services, configuration.bind([settingsPrefix ?? name])));
     }
 }
 
@@ -296,6 +346,27 @@ async function normalizeConfiguration(configuration: Configuration, applicationR
     );
 }
 
+function registerAdaptiveComponents(services: ServiceCollection): void {
+    services.composeFactory<typeof ComponentRegistration>('componentRegistration', (componentRegistration) => {
+        componentRegistration.add(new AdaptiveComponentRegistration());
+        return componentRegistration;
+    });
+}
+
+function registerLuisComponents(services: ServiceCollection): void {
+    services.composeFactory<typeof ComponentRegistration>('componentRegistration', (componentRegistration) => {
+        componentRegistration.add(new LuisComponentRegistration());
+        return componentRegistration;
+    });
+}
+
+function registerQnAComponents(services: ServiceCollection): void {
+    services.composeFactory<typeof ComponentRegistration>('componentRegistration', (componentRegistration) => {
+        componentRegistration.add(new QnAMakerComponentRegistration());
+        return componentRegistration;
+    });
+}
+
 /**
  * Construct all runtime services.
  *
@@ -306,7 +377,7 @@ async function normalizeConfiguration(configuration: Configuration, applicationR
 export async function getRuntimeServices(
     applicationRoot: string,
     configuration: Configuration
-): Promise<[ServiceCollection<IServices>, Configuration]>;
+): Promise<[ServiceCollection, Configuration]>;
 
 /**
  * Construct all runtime services.
@@ -318,7 +389,7 @@ export async function getRuntimeServices(
 export async function getRuntimeServices(
     applicationRoot: string,
     settingsDirectory: string
-): Promise<[ServiceCollection<IServices>, Configuration]>;
+): Promise<[ServiceCollection, Configuration]>;
 
 /**
  * @internal
@@ -326,11 +397,7 @@ export async function getRuntimeServices(
 export async function getRuntimeServices(
     applicationRoot: string,
     configurationOrSettingsDirectory: Configuration | string
-): Promise<[ServiceCollection<IServices>, Configuration]> {
-    ComponentRegistration.add(new AdaptiveComponentRegistration());
-    ComponentRegistration.add(new QnAMakerComponentRegistration());
-    ComponentRegistration.add(new LuisComponentRegistration());
-
+): Promise<[ServiceCollection, Configuration]> {
     // Resolve configuration
     let configuration: Configuration;
     if (typeof configurationOrSettingsDirectory === 'string') {
@@ -345,7 +412,7 @@ export async function getRuntimeServices(
 
     await normalizeConfiguration(configuration, applicationRoot);
 
-    const services = new ServiceCollection<IServices>({
+    const services = new ServiceCollection({
         componentRegistration: ComponentRegistration,
         customAdapters: new Map(),
         middlewares: new MiddlewareSet(),
@@ -357,6 +424,10 @@ export async function getRuntimeServices(
         () => new ConfigurationResourceExporer(configuration)
     );
 
+    registerAdaptiveComponents(services);
+    registerLuisComponents(services);
+    registerQnAComponents(services);
+
     const runtimeSettings = configuration.bind(['runtimeSettings']);
 
     addCoreBot(services, configuration);
@@ -364,7 +435,7 @@ export async function getRuntimeServices(
     addSkills(services, runtimeSettings.bind(['skills']));
     addStorage(services, configuration);
     addTelemetry(services, runtimeSettings.bind(['telemetry']));
-    await addPlugins(services, configuration);
+    await addBotComponents(services, configuration);
 
     return [services, configuration];
 }

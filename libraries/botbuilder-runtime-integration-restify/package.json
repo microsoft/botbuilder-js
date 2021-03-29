@@ -21,6 +21,7 @@
   "main": "lib/index.js",
   "types": "./lib/index.d.ts",
   "dependencies": {
+    "botbuilder": "4.1.6",
     "botbuilder-runtime": "4.1.6",
     "botbuilder-runtime-core": "4.1.6",
     "restify": "^8.5.1",

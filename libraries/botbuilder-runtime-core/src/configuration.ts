@@ -4,7 +4,7 @@
 /**
  * Configuration is an interface that is used to obtain configurable values
  */
-export interface IConfiguration {
+export interface Configuration {
     /**
      * Look up a value by path.
      *

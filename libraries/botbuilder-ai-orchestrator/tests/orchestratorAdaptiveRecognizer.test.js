@@ -3,8 +3,8 @@
  * Licensed under the MIT License.
  */
 const { MockResolver, TestAdapterSettings } = require('./mockResolver');
-const { ok, rejects } = require('assert');
-const { OrchestratorAdaptiveRecognizer } = require('../lib');
+const { ok, rejects, strictEqual } = require('assert');
+const { OrchestratorRecognizer, LabelType } = require('../lib');
 const { DialogContext, DialogSet } = require('botbuilder-dialogs');
 const { TurnContext, MessageFactory, NullTelemetryClient } = require('botbuilder-core');
 const { BotFrameworkAdapter } = require('../../botbuilder/lib');
@@ -13,7 +13,7 @@ const { NumberEntityRecognizer } = require('botbuilder-dialogs-adaptive');
 const sinon = require('sinon');
 const { orchestratorIntentText, getLogPersonalInformation, validateTelemetry } = require('./recognizerTelemetryUtils');
 
-describe('OrchestratorAdpativeRecognizer tests', function () {
+describe('OrchestratorRecognizer tests', function () {
     it('Expect initialize is called when orchestrator obj is null', async () => {
         const result = [
             {
@@ -26,22 +26,22 @@ describe('OrchestratorAdpativeRecognizer tests', function () {
         const mockResolver = new MockResolver(result);
         const testPaths = 'test';
 
-        const rec = new OrchestratorAdaptiveRecognizer(testPaths, testPaths, mockResolver);
-        OrchestratorAdaptiveRecognizer.orchestrator = null;
+        const rec = new OrchestratorRecognizer(testPaths, testPaths, mockResolver);
+        OrchestratorRecognizer.orchestrator = null;
         rec._initializeModel = sinon.fake();
 
         const { dc, activity } = createTestDcAndActivity('hello');
         const res = await rec.recognize(dc, activity);
 
-        ok(res.text, 'hello');
-        ok(res.intents.mockLabel.score, 0.9);
+        strictEqual(res.text, 'hello');
+        strictEqual(res.intents.mockLabel.score, 0.9);
         ok(rec._initializeModel.calledOnce);
     });
 
     it('Expect initialize is called when labelresolver is null', async () => {
         const testPaths = 'test';
-        const rec = new OrchestratorAdaptiveRecognizer(testPaths, testPaths, null);
-        OrchestratorAdaptiveRecognizer.orchestrator = null;
+        const rec = new OrchestratorRecognizer(testPaths, testPaths, null);
+        OrchestratorRecognizer.orchestrator = null;
 
         rec._initializeModel = sinon.fake();
 
@@ -62,15 +62,15 @@ describe('OrchestratorAdpativeRecognizer tests', function () {
         ];
         const mockResolver = new MockResolver(result);
         const testPaths = 'test';
-        const rec = new OrchestratorAdaptiveRecognizer(testPaths, testPaths, mockResolver);
-        OrchestratorAdaptiveRecognizer.orchestrator = 'mock';
+        const rec = new OrchestratorRecognizer(testPaths, testPaths, mockResolver);
+        OrchestratorRecognizer.orchestrator = 'mock';
         rec.modelFolder = new StringExpression(testPaths);
         rec.snapshotFile = new StringExpression(testPaths);
         const { dc, activity } = createTestDcAndActivity('hello');
 
         const res = await rec.recognize(dc, activity);
-        ok(res.text, 'hello');
-        ok(res.intents.mockLabel.score, 0.9);
+        strictEqual(res.text, 'hello');
+        strictEqual(res.intents.mockLabel.score, 0.9);
     });
 
     it('Test entity recognition', async () => {
@@ -82,19 +82,43 @@ describe('OrchestratorAdpativeRecognizer tests', function () {
                 },
             },
         ];
-        const mockResolver = new MockResolver(result);
+        const entityResult = [
+            {
+                score: 0.75,
+                label: {
+                    name: 'mockEntityLabel',
+                    type: LabelType.Entity,
+                    span: {
+                        offset: 17,
+                        length: 7,
+                    },
+                },
+            },
+        ];
+        const mockResolver = new MockResolver(result, entityResult);
         const testPaths = 'test';
-        const rec = new OrchestratorAdaptiveRecognizer(testPaths, testPaths, mockResolver);
-        OrchestratorAdaptiveRecognizer.orchestrator = 'mock';
+        const rec = new OrchestratorRecognizer(testPaths, testPaths, mockResolver);
+        rec.scoreEntities = true;
+        OrchestratorRecognizer.orchestrator = 'mock';
         rec.modelFolder = new StringExpression(testPaths);
         rec.snapshotFile = new StringExpression(testPaths);
         rec.externalEntityRecognizer = new NumberEntityRecognizer();
-        const { dc, activity } = createTestDcAndActivity('hello 123');
+        const { dc, activity } = createTestDcAndActivity('turn on light in room 12');
 
         const res = await rec.recognize(dc, activity);
-        ok(res.text, 'hello 123');
-        ok(res.intents.mockLabel.score, 0.9);
-        ok(res.entities.number[0], '123');
+        strictEqual(res.text, 'turn on light in room 12');
+        strictEqual(res.intents.mockLabel.score, 0.9);
+        strictEqual(res.entities.number[0], '12');
+
+        strictEqual(res['entityResult'], entityResult);
+        ok(res.entities.mockEntityLabel);
+        strictEqual(res.entities.mockEntityLabel[0].score, 0.75);
+        strictEqual(res.entities.mockEntityLabel[0].text, 'room 12');
+        strictEqual(res.entities.mockEntityLabel[0].start, 17);
+        strictEqual(res.entities.mockEntityLabel[0].end, 24);
+        strictEqual(Object.keys(res.entities).length, 3);
+        strictEqual(Object.keys(res.entities.$instance).length, 2);
+        console.log('ENTITIES ' + JSON.stringify(res.entities));
     });
 
     it('Test ambiguous intent recognition', async () => {
@@ -120,7 +144,7 @@ describe('OrchestratorAdpativeRecognizer tests', function () {
         ];
         const mockResolver = new MockResolver(result);
         const testPaths = 'test';
-        const rec = new OrchestratorAdaptiveRecognizer(testPaths, testPaths, mockResolver);
+        const rec = new OrchestratorRecognizer(testPaths, testPaths, mockResolver);
         rec.modelFolder = new StringExpression(testPaths);
         rec.snapshotFile = new StringExpression(testPaths);
         rec.detectAmbiguousIntents = new BoolExpression(true);
@@ -135,7 +159,7 @@ describe('OrchestratorAdpativeRecognizer tests', function () {
 
     describe('telemetry', () => {
         it('should log PII when logPersonalInformation is true', async () => {
-            // Set up OrchestratorAdaptiveRecognizer
+            // Set up OrchestratorRecognizer
             const result = [
                 {
                     score: 0.9,
@@ -143,11 +167,17 @@ describe('OrchestratorAdpativeRecognizer tests', function () {
                         name: 'mockLabel',
                     },
                 },
+                {
+                    score: 0.8,
+                    label: {
+                        name: 'mockLabel2',
+                    },
+                },
             ];
             const mockResolver = new MockResolver(result);
             const testPaths = 'test';
-            const recognizer = new OrchestratorAdaptiveRecognizer(testPaths, testPaths, mockResolver);
-            OrchestratorAdaptiveRecognizer.orchestrator = 'mock';
+            const recognizer = new OrchestratorRecognizer(testPaths, testPaths, mockResolver);
+            OrchestratorRecognizer.orchestrator = 'mock';
             recognizer.modelFolder = new StringExpression(testPaths);
             recognizer.snapshotFile = new StringExpression(testPaths);
 
@@ -173,7 +203,7 @@ describe('OrchestratorAdpativeRecognizer tests', function () {
         });
 
         it('does not log PII when logPersonalInformation is false', async () => {
-            // Set up OrchestratorAdaptiveRecognizer
+            // Set up OrchestratorRecognizer
             const result = [
                 {
                     score: 0.9,
@@ -181,11 +211,17 @@ describe('OrchestratorAdpativeRecognizer tests', function () {
                         name: 'mockLabel',
                     },
                 },
+                {
+                    score: 0.8,
+                    label: {
+                        name: 'mockLabel2',
+                    },
+                },
             ];
             const mockResolver = new MockResolver(result);
             const testPaths = 'test';
-            const recognizer = new OrchestratorAdaptiveRecognizer(testPaths, testPaths, mockResolver);
-            OrchestratorAdaptiveRecognizer.orchestrator = 'mock';
+            const recognizer = new OrchestratorRecognizer(testPaths, testPaths, mockResolver);
+            OrchestratorRecognizer.orchestrator = 'mock';
             recognizer.modelFolder = new StringExpression(testPaths);
             recognizer.snapshotFile = new StringExpression(testPaths);
 
@@ -211,7 +247,7 @@ describe('OrchestratorAdpativeRecognizer tests', function () {
         });
 
         it('should refrain from logging PII by default', async () => {
-            // Set up OrchestratorAdaptiveRecognizer
+            // Set up OrchestratorRecognizer
             const result = [
                 {
                     score: 0.9,
@@ -219,11 +255,17 @@ describe('OrchestratorAdpativeRecognizer tests', function () {
                         name: 'mockLabel',
                     },
                 },
+                {
+                    score: 0.8,
+                    label: {
+                        name: 'mockLabel2',
+                    },
+                },
             ];
             const mockResolver = new MockResolver(result);
             const testPaths = 'test';
-            const recognizerWithDefaultLogPii = new OrchestratorAdaptiveRecognizer(testPaths, testPaths, mockResolver);
-            OrchestratorAdaptiveRecognizer.orchestrator = 'mock';
+            const recognizerWithDefaultLogPii = new OrchestratorRecognizer(testPaths, testPaths, mockResolver);
+            OrchestratorRecognizer.orchestrator = 'mock';
             recognizerWithDefaultLogPii.modelFolder = new StringExpression(testPaths);
             recognizerWithDefaultLogPii.snapshotFile = new StringExpression(testPaths);
 

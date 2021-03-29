@@ -3,8 +3,9 @@
 
 import * as t from 'runtypes';
 import restify from 'restify';
+import { ActivityHandlerBase, BotFrameworkAdapter } from 'botbuilder';
 import { Configuration, getRuntimeServices } from 'botbuilder-runtime';
-import { IServices, ServiceCollection } from 'botbuilder-runtime-core';
+import { ServiceCollection } from 'botbuilder-runtime-core';
 
 const TypedOptions = t.Record({
     /**
@@ -72,12 +73,16 @@ export async function start(
  * @returns a restify Server ready to listen for connections
  */
 export async function makeServer(
-    services: ServiceCollection<IServices>,
+    services: ServiceCollection,
     configuration: Configuration,
     options: Partial<Options> = {}
 ): Promise<restify.Server> {
     const [{ adapter, bot, customAdapters }, resolvedOptions] = await Promise.all([
-        services.mustMakeInstances('adapter', 'bot', 'customAdapters'),
+        services.mustMakeInstances<{
+            adapter: BotFrameworkAdapter;
+            bot: ActivityHandlerBase;
+            customAdapters: Map<string, BotFrameworkAdapter>;
+        }>('adapter', 'bot', 'customAdapters'),
         resolveOptions(options, configuration),
     ]);
 
@@ -90,7 +95,7 @@ export async function makeServer(
     });
 
     const adapters =
-        (await configuration.type(
+        configuration.type(
             ['runtimeSettings', 'adapters'],
             t.Array(
                 t.Record({
@@ -99,7 +104,7 @@ export async function makeServer(
                     route: t.String,
                 })
             )
-        )) ?? [];
+        ) ?? [];
 
     adapters
         .filter((settings) => settings.enabled)
@@ -117,7 +122,7 @@ export async function makeServer(
         });
 
     server.on('upgrade', async (req, socket, head) => {
-        const adapter = await services.mustMakeInstance('adapter');
+        const adapter = await services.mustMakeInstance<BotFrameworkAdapter>('adapter');
         adapter.useWebSocket(req, socket, head, async (context) => {
             await bot.run(context);
         });
