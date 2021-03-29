@@ -7,5 +7,5 @@
  */
 
 export * from './actions';
+export * from './adaptiveTeamsBotComponent';
 export * from './conditions';
-export * from './teamsComponentRegistration';

@@ -21,3 +21,15 @@ export interface Configuration {
      */
     set(path: string[], value: unknown): void;
 }
+
+/**
+ * Useful for shimming BotComponents into ComponentRegistrations
+ */
+export const noOpConfiguration: Configuration = {
+    get(_path: string[]): unknown | undefined {
+        return undefined;
+    },
+    set(_path: string[], _value: unknown): void {
+        // no-op
+    },
+};

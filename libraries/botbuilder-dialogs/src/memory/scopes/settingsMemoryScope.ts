@@ -5,10 +5,11 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { MemoryScope } from './memoryScope';
-import { ScopePath } from '../scopePath';
+
 import { DialogContext } from '../../dialogContext';
 import { DialogTurnStateConstants } from '../../dialogTurnStateConstants';
+import { MemoryScope } from './memoryScope';
+import { ScopePath } from '../scopePath';
 
 /**
  * The setting node.
@@ -58,12 +59,15 @@ export class SettingsMemoryScope extends MemoryScope {
             return dc.context.turnState.get(ScopePath.settings) ?? {};
         } else {
             const configuration = dc.context.turnState.get(DialogTurnStateConstants.configuration) ?? {};
+
             Object.entries(process.env).reduce((result, [key, value]) => {
                 result[`${key}`] = value;
                 return result;
             }, configuration);
+
             const settings = SettingsMemoryScope.loadSettings(configuration);
             dc.context.turnState.set(ScopePath.settings, settings);
+
             return settings;
         }
     }
@@ -76,6 +80,7 @@ export class SettingsMemoryScope extends MemoryScope {
      */
     protected static loadSettings(configuration: Record<string, string>): Record<string, unknown> {
         const settings = {};
+
         if (configuration) {
             // load configuration into settings
             const root = this.convertFlattenSettingToNode(Object.entries(configuration));
@@ -84,6 +89,7 @@ export class SettingsMemoryScope extends MemoryScope {
                 return result;
             }, settings);
         }
+
         return settings;
     }
 

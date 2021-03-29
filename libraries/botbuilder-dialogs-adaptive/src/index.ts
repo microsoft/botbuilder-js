@@ -6,18 +6,17 @@
  * Licensed under the MIT License.
  */
 
-export * from './actions';
 export * from './actionContext';
+export * from './actions';
+export * from './adaptiveBotComponent';
 export * from './adaptiveDialog';
-export * from './adaptiveComponentRegistration';
 export * from './adaptiveEvents';
 export * from './conditions';
-export { DialogExpressionConverter } from './converters';
 export * from './expressions';
 export * from './functions';
 export * from './generators';
 export * from './input';
-export * from './languageGenerationComponentRegistration';
+export * from './languageGenerationBotComponent';
 export * from './languageGenerator';
 export * from './languageGeneratorExtensions';
 export * from './languagePolicy';
@@ -31,3 +30,5 @@ export * from './skillExtensions';
 export * from './telemetryExtensions';
 export * from './templates';
 export * from './triggerSelector';
+
+export { DialogExpressionConverter } from './converters';

@@ -1,21 +1,15 @@
-const { createHash } = require('crypto');
-const path = require('path');
 const nock = require('nock');
+const { ActivityTypes, MessageFactory, SkillConversationIdFactoryBase, TurnContext } = require('botbuilder-core');
+const { TestUtils } = require('..');
+const { createHash } = require('crypto');
+const { makeResourceExplorer } = require('./utils');
+
 const {
-    ActivityTypes,
-    ComponentRegistration,
-    MessageFactory,
-    SkillConversationIdFactoryBase,
-    TurnContext,
-} = require('botbuilder-core');
-const { ResourceExplorer } = require('botbuilder-dialogs-declarative');
-const { AdaptiveTestComponentRegistration, TestUtils } = require('../lib');
-const {
-    AdaptiveComponentRegistration,
-    LanguageGenerationComponentRegistration,
+    LanguageGenerationBotComponent,
     skillConversationIdFactoryKey,
     skillClientKey,
 } = require('botbuilder-dialogs-adaptive');
+
 class MockSkillConversationIdFactory extends SkillConversationIdFactoryBase {
     constructor(opts = { useCreateSkillConversationId: false }) {
         super();
@@ -113,17 +107,10 @@ class SetSkillBotFrameworkClientMiddleware {
 }
 
 describe('ActionTests', function () {
-    this.timeout(10000);
-
-    ComponentRegistration.add(new AdaptiveComponentRegistration());
-    ComponentRegistration.add(new LanguageGenerationComponentRegistration());
-    ComponentRegistration.add(new AdaptiveTestComponentRegistration());
-
-    const resourceExplorer = new ResourceExplorer().addFolder(
-        path.join(__dirname, 'resources/ActionTests'),
-        true,
-        false
-    );
+    let resourceExplorer;
+    before(function () {
+        resourceExplorer = makeResourceExplorer('ActionTests', LanguageGenerationBotComponent);
+    });
 
     it('AttachmentInput', async () => {
         await TestUtils.runTestScript(resourceExplorer, 'Action_AttachmentInput');

@@ -6,5 +6,5 @@
  * Licensed under the MIT License.
  */
 
-export { OrchestratorRecognizer, LabelType } from './orchestratorRecognizer';
-export { OrchestratorComponentRegistration } from './orchestratorComponentRegistration';
+export { LabelType, OrchestratorRecognizer } from './orchestratorRecognizer';
+export { OrchestratorBotComponent } from './orchestratorBotComponent';

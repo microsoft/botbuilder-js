@@ -7,8 +7,8 @@
  */
 
 import { Configurable } from 'botbuilder-dialogs';
-import { Newable } from 'botbuilder-stdlib';
 import { CustomDeserializer } from './customDeserializer';
+import { Newable } from 'botbuilder-stdlib';
 import { ResourceExplorer } from './resources';
 
 /**
@@ -32,6 +32,7 @@ export class DefaultLoader implements CustomDeserializer<Configurable, Record<st
     public load(config: Record<string, unknown>, type: Newable<Configurable>): Configurable {
         return Object.entries(config).reduce((instance, [key, value]) => {
             let converter = instance.getConverter(key);
+
             if (converter) {
                 if (typeof converter === 'function') {
                     converter = new converter(this._resourceExplorer);
@@ -40,6 +41,7 @@ export class DefaultLoader implements CustomDeserializer<Configurable, Record<st
             } else {
                 instance[`${key}`] = value;
             }
+
             return instance;
         }, new type());
     }

@@ -6,7 +6,6 @@
  * Licensed under the MIT License.
  */
 
-import { ComponentRegistration } from 'botbuilder-core';
 import { Dialog } from 'botbuilder-dialogs';
 import { Newable } from 'botbuilder-stdlib';
 import { normalize, join } from 'path';
@@ -324,26 +323,19 @@ export class ResourceExplorer {
         return result as T;
     }
 
-    private getComponentRegistrations(): ComponentRegistration[] {
-        return (
-            this._declarativeTypes ??
-            ComponentRegistration.components.filter((component: ComponentRegistration) =>
-                isComponentDeclarativeTypes(component)
-            )
-        );
-    }
-
     private registerTypeInternal<T, C>(kind: string, type: Newable<T>, loader?: CustomDeserializer<T, C>): void {
         this._kindToType.set(kind, type);
-        this._kindDeserializer.set(kind, loader || new DefaultLoader(this));
+        this._kindDeserializer.set(kind, loader ?? new DefaultLoader(this));
     }
 
     private registerComponentTypes(): void {
         if (this._typesLoaded) {
             return;
         }
+
         this._typesLoaded = true;
-        this.getComponentRegistrations().forEach((component: ComponentDeclarativeTypes) => {
+
+        this._declarativeTypes.forEach((component: ComponentDeclarativeTypes) => {
             component.getDeclarativeTypes(this).forEach((declarativeType: DeclarativeType) => {
                 const { kind, type, loader } = declarativeType;
                 this.registerTypeInternal(kind, type, loader);

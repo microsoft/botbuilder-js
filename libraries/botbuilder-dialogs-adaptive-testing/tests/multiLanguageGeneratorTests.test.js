@@ -1,18 +1,11 @@
-const path = require('path');
-const { ComponentRegistration } = require('botbuilder-core');
-const { AdaptiveComponentRegistration } = require('botbuilder-dialogs-adaptive');
-const { ResourceExplorer } = require('botbuilder-dialogs-declarative');
-const { AdaptiveTestComponentRegistration, TestUtils } = require('../lib');
+const { TestUtils } = require('../lib');
+const { makeResourceExplorer } = require('./utils');
 
 describe('MultiLanguageGeneratorTests', function () {
-    ComponentRegistration.add(new AdaptiveComponentRegistration());
-    ComponentRegistration.add(new AdaptiveTestComponentRegistration());
-
-    const resourceExplorer = new ResourceExplorer().addFolder(
-        path.join(__dirname, 'resources/MultiLanguageGeneratorTests'),
-        true,
-        false
-    );
+    let resourceExplorer;
+    before(function () {
+        resourceExplorer = makeResourceExplorer('MultiLanguageGeneratorTests');
+    });
 
     it('Switch Language Activity', async () => {
         await TestUtils.runTestScript(resourceExplorer, 'SwitchLanguageActivity');

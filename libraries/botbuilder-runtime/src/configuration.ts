@@ -41,6 +41,11 @@ export class Configuration implements CoreConfiguration {
      * @returns the value, or undefined
      */
     get(path: string[]): unknown | undefined {
+        // Note: empty path should yield the entire configuration
+        if (!path.length) {
+            return this.provider.get();
+        }
+
         return this.provider.get(this.key(path));
     }
 

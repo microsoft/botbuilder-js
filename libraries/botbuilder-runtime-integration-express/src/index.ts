@@ -63,17 +63,14 @@ export async function makeApp(
 ): Promise<[app: express.Application, listen: (callback?: () => void) => http.Server]> {
     const configOverrides: Partial<Options> = {};
 
-    const port = (await Promise.all(['port', 'PORT'].map((key) => configuration.string([key])))).find(
-        (port) => port !== undefined
-    );
-
+    const port = ['port', 'PORT'].map((key) => configuration.string([key])).find((port) => port !== undefined);
     if (port !== undefined) {
         configOverrides.port = port;
     }
 
     const validatedOptions = TypedOptions.check(Object.assign({}, defaultOptions, configOverrides, options));
 
-    const { adapter, bot, customAdapters } = await services.mustMakeInstances<{
+    const { adapter, bot, customAdapters } = services.mustMakeInstances<{
         adapter: BotFrameworkAdapter;
         bot: ActivityHandlerBase;
         customAdapters: Map<string, BotFrameworkAdapter>;
@@ -125,7 +122,8 @@ export async function makeApp(
             );
 
             server.on('upgrade', async (req, socket, head) => {
-                const adapter = await services.mustMakeInstance<BotFrameworkAdapter>('adapter');
+                const adapter = services.mustMakeInstance<BotFrameworkAdapter>('adapter');
+
                 adapter.useWebSocket(req, socket, head, async (context) => {
                     await bot.run(context);
                 });

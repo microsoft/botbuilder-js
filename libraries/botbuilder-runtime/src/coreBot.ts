@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-import { DialogManager } from 'botbuilder-dialogs';
+import { DialogManager, MemoryScope, PathResolver } from 'botbuilder-dialogs';
 import { ResourceExplorer } from 'botbuilder-dialogs-declarative';
 
 import {
@@ -31,7 +31,9 @@ export class CoreBot extends ActivityHandler {
         skillConversationIdFactory: SkillConversationIdFactoryBase,
         botTelemetryClient: BotTelemetryClient,
         defaultLocale: string,
-        defaultRootDialog: string
+        defaultRootDialog: string,
+        memoryScopes: MemoryScope[],
+        pathResolvers: PathResolver[]
     ) {
         super();
 
@@ -49,6 +51,21 @@ export class CoreBot extends ActivityHandler {
         SkillExtensions.useSkillClient(dialogManager, skillClient);
         SkillExtensions.useSkillConversationIdFactory(dialogManager, skillConversationIdFactory);
         useTelemetry(dialogManager, botTelemetryClient);
+
+        /* TODO(jgummersall) reconcile:
+         * _dialogManager.InitialTurnState.Set(botFrameworkClient);
+         * _dialogManager.InitialTurnState.Set(conversationIdfactory);
+         * _dialogManager.InitialTurnState.Set(_userState); (handled by useBotState?)
+         * _dialogManager.InitialTurnState.Set(_conversationState); (handled by useBotState?)
+         */
+
+        if (memoryScopes.length) {
+            dialogManager.initialTurnState.set('memoryScopes', memoryScopes);
+        }
+
+        if (pathResolvers.length) {
+            dialogManager.initialTurnState.set('pathResolvers', pathResolvers);
+        }
 
         this.onTurn(async (turnContext) => {
             await dialogManager.onTurn(turnContext);

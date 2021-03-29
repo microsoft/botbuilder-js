@@ -16,11 +16,10 @@ export * from './dialogContainer';
 export * from './dialogContext';
 export * from './dialogContextError';
 export * from './dialogEvents';
-export { runDialog } from './dialogHelper';
 export * from './dialogManager';
-export * from './dialogsComponentRegistration';
 export * from './dialogSet';
 export * from './dialogTurnStateConstants';
+export * from './dialogsBotComponent';
 export * from './memory';
 export * from './prompts';
 export * from './recognizer';
@@ -29,3 +28,5 @@ export * from './skillDialogOptions';
 export * from './template';
 export * from './waterfallDialog';
 export * from './waterfallStepContext';
+
+export { runDialog } from './dialogHelper';
