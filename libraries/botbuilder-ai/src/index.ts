@@ -28,7 +28,12 @@ export * from './qnaMakerRecognizer';
 // BindToActivity, GenerateAnswerUtils, HttpRequestUtils and TrainUtils are internal.
 export { ActiveLearningUtils } from './qnamaker-utils';
 
-export { QnAMakerDialog, QnAMakerDialogOptions, QnAMakerDialogResponseOptions } from './qnaMakerDialog';
+export {
+    QnAMakerDialog,
+    QnAMakerDialogOptions,
+    QnAMakerDialogResponseOptions,
+    QnASuggestionsActivityFactory,
+} from './qnaMakerDialog';
 
 export {
     QNAMAKER_TRACE_TYPE,
