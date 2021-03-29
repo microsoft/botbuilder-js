@@ -4,7 +4,7 @@
 import { ActivityTemplate, StaticActivityTemplate, TextTemplate } from './templates';
 import { BotComponent } from 'botbuilder';
 import { ComponentDeclarativeTypes } from 'botbuilder-dialogs-declarative';
-import { Configuration, ServiceCollection } from 'botbuilder-runtime-core';
+import { Configuration, ServiceCollection } from 'botbuilder-dialogs-adaptive-runtime-core';
 
 export class LanguageGenerationBotComponent extends BotComponent {
     configureServices(services: ServiceCollection, _configuration: Configuration): void {

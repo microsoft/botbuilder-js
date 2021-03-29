@@ -6,7 +6,7 @@ import { AdaptiveBotComponent } from 'botbuilder-dialogs-adaptive';
 import { AdaptiveTeamsBotComponent } from '../src';
 import { AdaptiveTestBotComponent, TestUtils } from 'botbuilder-dialogs-adaptive-testing';
 import { ComponentDeclarativeTypes, ResourceExplorer } from 'botbuilder-dialogs-declarative';
-import { ServiceCollection, noOpConfiguration } from 'botbuilder-runtime-core';
+import { ServiceCollection, noOpConfiguration } from 'botbuilder-dialogs-adaptive-runtime-core';
 
 describe('Conditional Tests', function () {
     let resourceExplorer: ResourceExplorer;

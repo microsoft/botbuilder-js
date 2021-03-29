@@ -3,12 +3,12 @@
 
 import yargs from 'yargs-parser';
 import { Boolean, Runtype, String, Undefined, ValidationError } from 'runtypes';
-import { Configuration as CoreConfiguration } from 'botbuilder-runtime-core';
+import { Configuration as CoreConfiguration } from 'botbuilder-dialogs-adaptive-runtime-core';
 import { Provider } from 'nconf';
 
 /**
- * Configuration implements the [IConfiguration](xref:botbuilder-runtime-core.IConfiguration) interface
- * and adds helper methods for setting values, layering sources, and getting type checked values.
+ * Configuration implements the [IConfiguration](xref:botbuilder-dialogs-adaptive-runtime-core.IConfiguration)
+ * interface and adds helper methods for setting values, layering sources, and getting type checked values.
  */
 export class Configuration implements CoreConfiguration {
     private prefix: string[] = [];

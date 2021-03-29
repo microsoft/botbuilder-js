@@ -6,7 +6,7 @@ import { BotComponent, BotFrameworkAdapter, MemoryStorage } from 'botbuilder';
 import { Configuration, getRuntimeServices } from '../src';
 import { CosmosDbPartitionedStorage } from 'botbuilder-azure';
 import { ok } from 'assert';
-import { ServiceCollection, Configuration as CoreConfiguration } from 'botbuilder-runtime-core';
+import { ServiceCollection, Configuration as CoreConfiguration } from 'botbuilder-dialogs-adaptive-runtime-core';
 
 describe('getRuntimeServices', () => {
     it('works', async () => {

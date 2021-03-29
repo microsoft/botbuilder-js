@@ -9,7 +9,7 @@
 import { ComponentDeclarativeTypes } from 'botbuilder-dialogs-declarative';
 import { ComponentRegistration } from 'botbuilder-core';
 import { LuisBotComponent } from './luisBotComponent';
-import { ServiceCollection, noOpConfiguration } from 'botbuilder-runtime-core';
+import { ServiceCollection, noOpConfiguration } from 'botbuilder-dialogs-adaptive-runtime-core';
 
 /**
  * Define component assets for Luis.

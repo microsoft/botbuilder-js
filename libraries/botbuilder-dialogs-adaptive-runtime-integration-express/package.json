@@ -1,10 +1,10 @@
 {
-  "name": "botbuilder-runtime-integration-express",
+  "name": "botbuilder-dialogs-adaptive-runtime-integration-express",
   "preview": true,
   "author": "Microsoft Corp.",
   "version": "4.1.6",
   "license": "MIT",
-  "description": "Bot Framework runtime Express integration library",
+  "description": "Bot Framework Adaptive Dialogs runtime Express integration library",
   "keywords": [
     "botbuilder",
     "botframework",
@@ -28,8 +28,8 @@
   ],
   "dependencies": {
     "botbuilder": "4.1.6",
-    "botbuilder-runtime": "4.1.6",
-    "botbuilder-runtime-core": "4.1.6",
+    "botbuilder-dialogs-adaptive-runtime": "4.1.6",
+    "botbuilder-dialogs-adaptive-runtime-core": "4.1.6",
     "express": "^4.17.1",
     "runtypes": "^5.0.1"
   }

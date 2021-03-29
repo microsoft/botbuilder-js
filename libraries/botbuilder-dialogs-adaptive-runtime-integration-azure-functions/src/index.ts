@@ -4,8 +4,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import type { AzureFunction, Context, HttpRequest } from '@azure/functions';
-import { Configuration, getRuntimeServices } from 'botbuilder-runtime';
-import { ServiceCollection } from 'botbuilder-runtime-core';
+import { Configuration, getRuntimeServices } from 'botbuilder-dialogs-adaptive-runtime';
+import { ServiceCollection } from 'botbuilder-dialogs-adaptive-runtime-core';
 
 import type {
     Activity,

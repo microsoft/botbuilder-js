@@ -7,7 +7,7 @@
  */
 
 import { ComponentRegistration } from 'botbuilder-core';
-import { ServiceCollection, noOpConfiguration } from 'botbuilder-runtime-core';
+import { ServiceCollection, noOpConfiguration } from 'botbuilder-dialogs-adaptive-runtime-core';
 import { DialogsBotComponent } from './dialogsBotComponent';
 import { ComponentMemoryScopes, ComponentPathResolvers, MemoryScope, PathResolver } from './memory';
 
