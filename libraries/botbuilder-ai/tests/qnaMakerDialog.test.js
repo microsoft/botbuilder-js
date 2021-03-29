@@ -1,6 +1,6 @@
 const fs = require('fs');
 const nock = require('nock');
-const { ok, strictEqual, throws } = require('assert');
+const { ok, rejects, strictEqual, throws } = require('assert');
 const { join } = require('path');
 const { BoolExpression } = require('adaptive-expressions');
 const {
@@ -368,11 +368,11 @@ describe('QnAMakerDialog', function () {
             const endpointKey = 'dummyEndpointKey';
             throws(
                 () => new QnAMakerDialog(kbId, endpointKey, HOSTNAME, undefined, undefined, (_) => {}, undefined),
-                new TypeError('cardNoMatchText is required when using the suggestionsActivityFactory.')
+                new Error('cardNoMatchText is required when using the suggestionsActivityFactory.')
             );
         });
 
-        it('should error if suggestionsActivityFactory returns void', async () => {
+        it('should error if suggestionsActivityFactory returns a number', async () => {
             const kbId = 'dummyKbId';
             const endpointKey = 'dummyEndpointKey';
             const convoState = new ConversationState(new MemoryStorage());
@@ -389,6 +389,7 @@ describe('QnAMakerDialog', function () {
                     ok(suggestionsList);
                     strictEqual(suggestionsList.length, 3);
                     strictEqual(noMatchingQuestionsText, cardNoMatchText);
+                    return 1;
                 },
                 cardNoMatchText
             );
@@ -398,14 +399,10 @@ describe('QnAMakerDialog', function () {
                 return dm.onTurn(turnContext);
             });
 
-            await adapter
-                .send('QnaMaker_TopNAnswer.json')
-                .catch((reason) => {
-                    ok(reason);
-                    strictEqual(reason.name, 'DialogContextError');
-                    strictEqual(reason.message, 'Activity with Active Learning suggestions was not generated.');
-                })
-                .startTest();
+            await rejects(
+                adapter.send('QnaMaker_TopNAnswer.json').startTest(),
+                (thrown) => thrown.message === '`suggestionsActivity` must be of type "object"'
+            );
         });
 
         it('should error if QnACardBuilder.getSuggestionsCard returns void', async () => {
@@ -438,14 +435,10 @@ describe('QnAMakerDialog', function () {
                 return dm.onTurn(turnContext);
             });
 
-            await adapter
-                .send('QnaMaker_TopNAnswer.json')
-                .catch((reason) => {
-                    ok(reason);
-                    strictEqual(reason.name, 'DialogContextError');
-                    strictEqual(reason.message, 'Activity with Active Learning suggestions was not generated.');
-                })
-                .startTest();
+            await rejects(
+                adapter.send('QnaMaker_TopNAnswer.json').startTest(),
+                (thrown) => thrown.message === '`suggestionsActivity` must be defined'
+            );
         });
     });
 });

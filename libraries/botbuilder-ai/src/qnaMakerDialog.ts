@@ -36,7 +36,7 @@ import {
     TurnPath,
     WaterfallStepContext,
 } from 'botbuilder-dialogs';
-import { Test, tests } from 'botbuilder-stdlib';
+import { assert, Test, tests } from 'botbuilder-stdlib';
 import { QnAMaker, QnAMakerResult } from './';
 import { QnACardBuilder } from './qnaCardBuilder';
 import { QnAMakerClient, QnAMakerClientKey } from './qnaMaker';
@@ -126,10 +126,6 @@ export type QnASuggestionsActivityFactory = (suggestionsList: string[], noMatche
 
 const isSuggestionsFactory: Test<QnASuggestionsActivityFactory> = (val): val is QnASuggestionsActivityFactory => {
     return tests.isFunc(val);
-};
-
-const isSuggestionsActivity: Test<Activity> = (val): val is Activity => {
-    return tests.isObject(val);
 };
 
 /**
@@ -381,7 +377,7 @@ export class QnAMakerDialog extends WaterfallDialog implements QnAMakerDialogCon
             if (!cardNoMatchText) {
                 // Without a developer-provided cardNoMatchText, the end user will not be able to tell the convey to the bot and QnA Maker that the suggested alternative questions were not correct.
                 // When the user's reply to a suggested alternatives Activity matches the cardNoMatchText, the QnAMakerDialog sends this information to the QnA Maker service for active learning.
-                throw new TypeError('cardNoMatchText is required when using the suggestionsActivityFactory.');
+                throw new Error('cardNoMatchText is required when using the suggestionsActivityFactory.');
             }
 
             this.suggestionsActivityFactory = activeLearningTitleOrFactory;
@@ -701,22 +697,18 @@ export class QnAMakerDialog extends WaterfallDialog implements QnAMakerDialogCon
             if (isActiveLearningEnabled && qnaResponse.answers?.length > 1) {
                 const suggestedQuestions = qnaResponse.answers.map((answer) => answer.questions[0]);
 
-                const message = this.suggestionsActivityFactory
-                    ? this.suggestionsActivityFactory(
-                          suggestedQuestions,
-                          dialogOptions.qnaDialogResponseOptions.cardNoMatchText
-                      )
-                    : QnACardBuilder.getSuggestionsCard(
-                          suggestedQuestions,
-                          dialogOptions.qnaDialogResponseOptions.activeLearningCardTitle,
-                          dialogOptions.qnaDialogResponseOptions.cardNoMatchText
-                      );
+                const message =
+                    this.suggestionsActivityFactory?.(
+                        suggestedQuestions,
+                        dialogOptions.qnaDialogResponseOptions.cardNoMatchText
+                    ) ??
+                    QnACardBuilder.getSuggestionsCard(
+                        suggestedQuestions,
+                        dialogOptions.qnaDialogResponseOptions.activeLearningCardTitle,
+                        dialogOptions.qnaDialogResponseOptions.cardNoMatchText
+                    );
 
-                // QnACardBuilder.getSuggestionsCard is a public static method and can be overridden by the developer.
-                // If either of these methods do not return an Activity, throw a TypeError.
-                if (!isSuggestionsActivity(message)) {
-                    throw new TypeError('Activity with Active Learning suggestions was not generated.');
-                }
+                assert.object(message, ['suggestionsActivity']);
                 await step.context.sendActivity(message);
 
                 step.activeDialog.state[this.options] = dialogOptions;
