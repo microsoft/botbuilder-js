@@ -15,12 +15,14 @@ export * from './intentData';
 export * from './listElement';
 export * from './luisAdaptiveRecognizer';
 export * from './luisBotComponent';
+export * from './luisComponentRegistration';
 export * from './luisRecognizer';
 export * from './luisTelemetryConstants';
 export * from './numberWithUnits';
 export * from './ordinalV2';
 export * from './qnaCardBuilder';
 export * from './qnaMakerBotComponent';
+export * from './qnaMakerComponentRegistration';
 export * from './qnaMakerRecognizer';
 
 // BindToActivity, GenerateAnswerUtils, HttpRequestUtils and TrainUtils are internal.
