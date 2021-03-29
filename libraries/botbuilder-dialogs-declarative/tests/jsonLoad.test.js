@@ -3,7 +3,7 @@ const path = require('path');
 const { ResourceExplorer } = require('../lib');
 const { DialogManager } = require('botbuilder-dialogs');
 const { QnACardBuilder, RankerTypes, QnAMakerClientKey, QnAMakerBotComponent } = require('botbuilder-ai');
-const { ServiceCollection, noOpConfiguration } = require('botbuilder-runtime-core');
+const { ServiceCollection, noOpConfiguration } = require('botbuilder-dialogs-adaptive-runtime-core');
 const { StringExpression } = require('adaptive-expressions');
 
 const {

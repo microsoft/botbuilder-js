@@ -3,7 +3,7 @@
 
 import { BotComponent } from 'botbuilder-core';
 import { ComponentDeclarativeTypes } from 'botbuilder-dialogs-declarative';
-import { Configuration, ServiceCollection } from 'botbuilder-runtime-core';
+import { Configuration, ServiceCollection } from 'botbuilder-dialogs-adaptive-runtime-core';
 import { QnAMakerDialog } from './qnaMakerDialog';
 import { QnAMakerRecognizer } from './qnaMakerRecognizer';
 

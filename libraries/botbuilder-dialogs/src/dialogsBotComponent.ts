@@ -2,7 +2,7 @@
 // Licensed under the MIT License.
 
 import { BotComponent } from 'botbuilder-core';
-import { Configuration, ServiceCollection } from 'botbuilder-runtime-core';
+import { Configuration, ServiceCollection } from 'botbuilder-dialogs-adaptive-runtime-core';
 import { MemoryScope, PathResolver } from './memory';
 
 import {

@@ -8,7 +8,7 @@ import { AdaptiveTeamsBotComponent } from '../src/adaptiveTeamsBotComponent';
 import { AdaptiveTestBotComponent, TestUtils } from 'botbuilder-dialogs-adaptive-testing';
 import { ConnectorClient, MicrosoftAppCredentials } from 'botframework-connector';
 import { ComponentDeclarativeTypes, ResourceExplorer } from 'botbuilder-dialogs-declarative';
-import { ServiceCollection, noOpConfiguration } from 'botbuilder-runtime-core';
+import { ServiceCollection, noOpConfiguration } from 'botbuilder-dialogs-adaptive-runtime-core';
 import { jwt } from 'botbuilder-test-utils';
 import { ok } from 'assert';
 
