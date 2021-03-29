@@ -4,7 +4,7 @@
   "author": "Microsoft Corp.",
   "version": "4.1.6",
   "license": "MIT",
-  "description": "Bot Framework dialogs adaptive runtime restify integration",
+  "description": "Bot Framework Adaptive Dialogs runtime restify integration",
   "keywords": [
     "botbuilder",
     "botframework",

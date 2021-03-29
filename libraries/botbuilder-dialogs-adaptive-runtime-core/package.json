@@ -4,7 +4,7 @@
   "author": "Microsoft Corp.",
   "version": "4.1.6",
   "license": "MIT",
-  "description": "Bot Framework adaptive runtime core types and services",
+  "description": "Bot Framework Adaptive Dialogs runtime core components",
   "keywords": [
     "botbuilder",
     "botframework",

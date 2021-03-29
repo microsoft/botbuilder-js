@@ -4,7 +4,7 @@
   "author": "Microsoft Corp.",
   "version": "4.1.6",
   "license": "MIT",
-  "description": "Bot Framework runtime",
+  "description": "Bot Framework Adaptive Dialogs runtime",
   "keywords": [
     "botbuilder",
     "botframework",
