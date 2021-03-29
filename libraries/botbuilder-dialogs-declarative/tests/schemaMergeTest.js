@@ -70,7 +70,7 @@ describe('Schema Merge Tests', function () {
             `-o "${testsSchemaPath}"`,
         ];
         try {
-            await runCommand(mergeCommand.join(' '));
+            await runCommand(['npx -p @microsoft/botframework-cli@latest', ...mergeCommand].join(' '));
         } catch (err) {
             // We may get there because there was an error running bf dialog:merge.
             // Try installing latest bf if the schema changed to make sure the
