@@ -30,8 +30,12 @@ export class Configuration implements CoreConfiguration {
         return configuration;
     }
 
-    private key(path: string[]): string {
-        return this.prefix.concat(path).join(':');
+    private key(path: string[]): string | undefined {
+        const scoped = [...this.prefix, ...path];
+
+        // If scoped path is totally empty, the intent is to return the entire configuration. nconf
+        // does this if the key is `undefined`
+        return scoped.length ? scoped.join(':') : undefined;
     }
 
     /**
@@ -41,11 +45,6 @@ export class Configuration implements CoreConfiguration {
      * @returns the value, or undefined
      */
     get(path: string[]): unknown | undefined {
-        // Note: empty path should yield the entire configuration
-        if (!path.length) {
-            return this.provider.get();
-        }
-
         return this.provider.get(this.key(path));
     }
 
@@ -56,7 +55,7 @@ export class Configuration implements CoreConfiguration {
      * @param value value to set
      */
     set(path: string[], value: unknown): void {
-        this.provider.set(this.key(path), value);
+        this.provider.set(this.key(path) ?? '', value);
     }
 
     /**

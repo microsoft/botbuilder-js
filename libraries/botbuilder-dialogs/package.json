@@ -37,6 +37,7 @@
     "botframework-connector": "4.1.6",
     "globalize": "^1.4.2",
     "lodash": "^4.17.21",
+    "runtypes": "^5.0.1",
     "uuid": "^8.3.2"
   },
   "devDependencies": {

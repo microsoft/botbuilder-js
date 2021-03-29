@@ -3,6 +3,7 @@
 
 import { BotComponent } from 'botbuilder-core';
 import { Configuration, ServiceCollection } from 'botbuilder-runtime-core';
+import { Dictionary, Unknown } from 'runtypes';
 import { MemoryScope, PathResolver } from './memory';
 
 import {
@@ -26,11 +27,14 @@ import {
 } from './memory/pathResolvers';
 
 export class DialogsBotComponent extends BotComponent {
-    configureServices(services: ServiceCollection, _configuration: Configuration): void {
+    configureServices(services: ServiceCollection, configuration: Configuration): void {
         services.composeFactory<MemoryScope[]>('memoryScopes', (memoryScopes) => {
+            const rootConfiguration = configuration.get([]);
+            const initialSettings = Dictionary(Unknown).guard(rootConfiguration) ? rootConfiguration : {};
+
             return memoryScopes.concat(
                 new TurnMemoryScope(),
-                new SettingsMemoryScope(),
+                new SettingsMemoryScope(initialSettings),
                 new DialogMemoryScope(),
                 new DialogContextMemoryScope(),
                 new DialogClassMemoryScope(),

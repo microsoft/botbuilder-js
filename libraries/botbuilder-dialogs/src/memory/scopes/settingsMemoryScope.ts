@@ -43,8 +43,10 @@ class Node {
 export class SettingsMemoryScope extends MemoryScope {
     /**
      * Initializes a new instance of the [SettingsMemoryScope](xref:botbuilder-dialogs.SettingsMemoryScope) class.
+     *
+     * @param initialSettings initial settings to derive from
      */
-    public constructor() {
+    public constructor(private readonly initialSettings?: Record<string, unknown>) {
         super(ScopePath.settings, false);
     }
 
@@ -56,20 +58,23 @@ export class SettingsMemoryScope extends MemoryScope {
      */
     public getMemory(dc: DialogContext): Record<string, unknown> {
         if (dc.context.turnState.has(ScopePath.settings)) {
-            return dc.context.turnState.get(ScopePath.settings) ?? {};
-        } else {
-            const configuration = dc.context.turnState.get(DialogTurnStateConstants.configuration) ?? {};
-
-            Object.entries(process.env).reduce((result, [key, value]) => {
-                result[`${key}`] = value;
-                return result;
-            }, configuration);
-
-            const settings = SettingsMemoryScope.loadSettings(configuration);
-            dc.context.turnState.set(ScopePath.settings, settings);
-
-            return settings;
+            return dc.context.turnState.get<Record<string, unknown>>(ScopePath.settings) ?? {};
         }
+
+        let settings: Record<string, unknown>;
+
+        const configuration = dc.context.turnState.get<Record<string, string>>(DialogTurnStateConstants.configuration);
+        if (configuration != null) {
+            settings = SettingsMemoryScope.loadSettings(
+                Object.entries(process.env).reduce((acc, [key, value]) => ({ ...acc, [key]: value }), configuration)
+            );
+
+            dc.context.turnState.set(ScopePath.settings, settings);
+        } else if (this.initialSettings != null) {
+            settings = this.initialSettings;
+        }
+
+        return settings ?? {};
     }
 
     /**
