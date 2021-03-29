@@ -1,8 +1,8 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
+import { Assertion, assert } from 'botbuilder-stdlib';
 import { Configuration, ServiceCollection } from 'botbuilder-runtime-core';
-import { Test, tests } from 'botbuilder-stdlib';
 
 /**
  * Definition of a BotComponent that allows registration of services, custom actions, memory scopes and adapters.
@@ -15,6 +15,7 @@ export abstract class BotComponent {
     abstract configureServices(services: ServiceCollection, configuration: Configuration): void;
 }
 
-export const isBotComponent: Test<BotComponent> = (val): val is BotComponent => {
-    return tests.unsafe.isObjectAs<BotComponent>(val) && tests.isFunc(val.configureServices);
+export const assertBotComponent: Assertion<BotComponent> = (val, path) => {
+    assert.unsafe.castObjectAs<BotComponent>(val, path);
+    assert.func(val.configureServices, path.concat('configureServices'));
 };

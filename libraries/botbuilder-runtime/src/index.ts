@@ -29,7 +29,6 @@ import {
     ActivityHandlerBase,
     BotAdapter,
     BotComponent,
-    isBotComponent,
     BotFrameworkAdapter,
     BotTelemetryClient,
     ChannelServiceHandler,
@@ -51,6 +50,7 @@ import {
     TelemetryLoggerMiddleware,
     TranscriptLoggerMiddleware,
     UserState,
+    assertBotComponent,
 } from 'botbuilder';
 
 function addFeatures(services: ServiceCollection, configuration: Configuration): void {
@@ -299,20 +299,21 @@ function addCoreBot(services: ServiceCollection, configuration: Configuration): 
 }
 
 async function addSettingsBotComponents(services: ServiceCollection, configuration: Configuration): Promise<void> {
-    const loadBotComponent = async (name: string): Promise<BotComponent | undefined> => {
-        try {
-            const DefaultExport = (await import(name))?.default;
-            if (DefaultExport) {
-                const instance = new DefaultExport();
-                if (isBotComponent(instance)) {
-                    return instance;
-                }
-            }
-        } catch (_err) {
-            // no-op
+    const loadBotComponent = async (name: string): Promise<BotComponent> => {
+        const Export = await import(name);
+        if (!Export) {
+            throw new Error(`Unable to import ${name}`);
         }
 
-        return undefined;
+        const DefaultExport = Export.default;
+        if (!DefaultExport) {
+            throw new Error(`${name} has no default export`);
+        }
+
+        const instance = new DefaultExport();
+        assertBotComponent(instance, [`import(${name})`, 'default']);
+
+        return instance;
     };
 
     const components =
@@ -326,13 +327,20 @@ async function addSettingsBotComponents(services: ServiceCollection, configurati
             )
         ) ?? [];
 
-    for (const { name, settingsPrefix } of components) {
-        const botComponent = await loadBotComponent(name);
-        if (!botComponent) {
-            throw new TypeError(`Unable to load ${name} component`);
-        }
+    const errs: Error[] = [];
 
-        botComponent.configureServices(services, configuration.bind([settingsPrefix ?? name]));
+    for (const { name, settingsPrefix } of components) {
+        try {
+            const botComponent = await loadBotComponent(name);
+
+            botComponent.configureServices(services, configuration.bind([settingsPrefix ?? name]));
+        } catch (err) {
+            errs.push(err);
+        }
+    }
+
+    if (errs.length) {
+        throw new Error(errs.map((err) => `[${err}]`).join(', '));
     }
 }
 
