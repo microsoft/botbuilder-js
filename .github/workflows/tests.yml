@@ -6,10 +6,12 @@ on:
     branches:
     - main
     - '4.12'
+    - '4.13'
   pull_request:
     branches:
     - main
     - '4.12'
+    - '4.13'
 
 jobs:
   ci:
