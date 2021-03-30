@@ -17,6 +17,11 @@ const TypedOptions = t.Record({
      * Port that server should listen on
      */
     port: t.Union(t.String, t.Number),
+
+    /**
+     * Log errors to stderr
+     */
+    logErrors: t.Boolean,
 });
 
 /**
@@ -25,6 +30,7 @@ const TypedOptions = t.Record({
 export type Options = t.Static<typeof TypedOptions>;
 
 const defaultOptions: Options = {
+    logErrors: true,
     messagingEndpointPath: '/api/messages',
     port: 3978,
 };
@@ -82,12 +88,27 @@ export async function makeServer(
 
     const resolvedOptions = await resolveOptions(options, configuration);
 
+    const errorHandler = (err: Error | string, res?: restify.Response): void => {
+        if (options.logErrors) {
+            console.error(err);
+        }
+
+        if (res && !res.headersSent) {
+            res.status(500);
+            res.json({ message: 'Internal server error' });
+        }
+    };
+
     const server = restify.createServer();
 
-    server.post(resolvedOptions.messagingEndpointPath, (req, res) => {
-        adapter.processActivity(req, res, async (turnContext) => {
-            await bot.run(turnContext);
-        });
+    server.post(resolvedOptions.messagingEndpointPath, async (req, res) => {
+        try {
+            await adapter.processActivity(req, res, async (turnContext) => {
+                await bot.run(turnContext);
+            });
+        } catch (err) {
+            return errorHandler(err, res);
+        }
     });
 
     const adapters =
@@ -107,10 +128,14 @@ export async function makeServer(
         .forEach((settings) => {
             const adapter = customAdapters.get(settings.name);
             if (adapter) {
-                server.post(`/api/${settings.route}`, (req, res) => {
-                    adapter.processActivity(req, res, async (turnContext) => {
-                        await bot.run(turnContext);
-                    });
+                server.post(`/api/${settings.route}`, async (req, res) => {
+                    try {
+                        await adapter.processActivity(req, res, async (turnContext) => {
+                            await bot.run(turnContext);
+                        });
+                    } catch (err) {
+                        return errorHandler(err, res);
+                    }
                 });
             } else {
                 console.warn(`Custom Adapter for \`${settings.name}\` not registered.`);
@@ -120,9 +145,13 @@ export async function makeServer(
     server.on('upgrade', async (req, socket, head) => {
         const adapter = services.mustMakeInstance<BotFrameworkAdapter>('adapter');
 
-        adapter.useWebSocket(req, socket, head, async (context) => {
-            await bot.run(context);
-        });
+        try {
+            await adapter.useWebSocket(req, socket, head, async (context) => {
+                await bot.run(context);
+            });
+        } catch (err) {
+            return errorHandler(err);
+        }
     });
 
     return server;
