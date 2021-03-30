@@ -18,6 +18,11 @@ const TypedOptions = t.Record({
      * Port that server should listen on
      */
     port: t.Union(t.String, t.Number),
+
+    /**
+     * Log errors to stderr
+     */
+    logErrors: t.Boolean,
 });
 
 /**
@@ -26,6 +31,7 @@ const TypedOptions = t.Record({
 export type Options = t.Static<typeof TypedOptions>;
 
 const defaultOptions: Options = {
+    logErrors: true,
     messagingEndpointPath: '/api/messages',
     port: 3978,
 };
@@ -68,7 +74,17 @@ export async function makeApp(
         configOverrides.port = port;
     }
 
-    const validatedOptions = TypedOptions.check(Object.assign({}, defaultOptions, configOverrides, options));
+    const resolvedOptions = TypedOptions.check(Object.assign({}, defaultOptions, configOverrides, options));
+
+    const errorHandler = (err: Error | string, res?: express.Response): void => {
+        if (options.logErrors) {
+            console.error(err);
+        }
+
+        if (res && !res.headersSent) {
+            res.status(500).json({ message: 'Internal server error' });
+        }
+    };
 
     const { adapter, bot, customAdapters } = services.mustMakeInstances<{
         adapter: BotFrameworkAdapter;
@@ -78,10 +94,14 @@ export async function makeApp(
 
     const app = express();
 
-    app.post(validatedOptions.messagingEndpointPath, (req, res) => {
-        adapter.processActivity(req, res, async (turnContext) => {
-            await bot.run(turnContext);
-        });
+    app.post(resolvedOptions.messagingEndpointPath, async (req, res) => {
+        try {
+            await adapter.processActivity(req, res, async (turnContext) => {
+                await bot.run(turnContext);
+            });
+        } catch (err) {
+            return errorHandler(err, res);
+        }
     });
 
     const adapters =
@@ -101,10 +121,14 @@ export async function makeApp(
         .forEach((settings) => {
             const adapter = customAdapters.get(settings.name);
             if (adapter) {
-                app.post(`/api/${settings.route}`, (req, res) => {
-                    adapter.processActivity(req, res, async (turnContext) => {
-                        await bot.run(turnContext);
-                    });
+                app.post(`/api/${settings.route}`, async (req, res) => {
+                    try {
+                        await adapter.processActivity(req, res, async (turnContext) => {
+                            await bot.run(turnContext);
+                        });
+                    } catch (err) {
+                        return errorHandler(err, res);
+                    }
                 });
             } else {
                 console.warn(`Custom Adapter for \`${settings.name}\` not registered.`);
@@ -117,16 +141,20 @@ export async function makeApp(
             // The 'upgrade' event handler for processing WebSocket requests needs to be registered on the Node.js http.Server, not the Express.Application.
             // In Express the underlying http.Server is made available after the app starts listening for requests.
             const server = app.listen(
-                validatedOptions.port,
-                callback ?? (() => console.log(`server listening on port ${validatedOptions.port}`))
+                resolvedOptions.port,
+                callback ?? (() => console.log(`server listening on port ${resolvedOptions.port}`))
             );
 
             server.on('upgrade', async (req, socket, head) => {
                 const adapter = services.mustMakeInstance<BotFrameworkAdapter>('adapter');
 
-                adapter.useWebSocket(req, socket, head, async (context) => {
-                    await bot.run(context);
-                });
+                try {
+                    await adapter.useWebSocket(req, socket, head, async (context) => {
+                        await bot.run(context);
+                    });
+                } catch (err) {
+                    return errorHandler(err);
+                }
             });
 
             return server;
