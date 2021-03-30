@@ -34,21 +34,23 @@ export const getPackageVersion = (
     newVersion: string,
     options: PackageVersionOptions
 ): string => {
-    const metadata = [];
-
-    // Build label like "dev" should come first in metadata, if defined
-    if (options.buildLabel) {
-        metadata.push(options.buildLabel);
-    }
+    const prerelease = [];
 
     // Include package status
     if (pkg.deprecated) {
-        metadata.push(options.deprecated);
+        prerelease.push(options.deprecated);
     } else if (pkg.internal) {
-        metadata.push(options.internal);
+        prerelease.push(options.internal);
     } else if (pkg.preview) {
-        metadata.push(options.preview);
+        prerelease.push(options.preview);
     }
+
+    // Include build label as well
+    if (options.buildLabel) {
+        prerelease.push(options.buildLabel);
+    }
+
+    const metadata = [];
 
     // Include extra metadata, if defined
     if (options.date) {
@@ -59,7 +61,15 @@ export const getPackageVersion = (
         metadata.push(`sha-${options.commitSha}`);
     }
 
-    return R.compact([newVersion, R.compact(metadata).join('.')]).join('-');
+    // Join MAJOR.MINOR.PATCH and LABEL with '-'
+    const formattedPrerelease = R.compact(prerelease).join('.');
+    const formattedVersion = R.compact([newVersion, formattedPrerelease]).join('-');
+
+    // Metadata is dot-delimited
+    const formattedMetadata = R.compact(metadata).join('.');
+
+    // Join formattedVersion and formattedMetadata with a "+"
+    return R.compact([formattedVersion, formattedMetadata]).join('+');
 };
 
 export const command = (argv: string[], quiet = false) => async (): Promise<Result> => {
