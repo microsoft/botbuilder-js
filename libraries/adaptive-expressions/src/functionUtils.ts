@@ -301,7 +301,7 @@ export class FunctionUtils {
         return error;
     }
 
-        /**
+    /**
      * Verify value contains elements or null.
      * @param value Value to check.
      * @param expression Expression that led to value.
