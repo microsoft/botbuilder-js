@@ -8,7 +8,6 @@ import { Assertion, Nil, assert } from 'botbuilder-stdlib';
 export * from './activityInterfaces';
 export * from './activityEx';
 export { CallerIdConstants } from './callerIdConstants';
-export { HealthCheckResponse, HealthResults } from './healthCheck';
 export { SpeechConstants } from './speechConstants';
 export { TokenExchangeInvokeRequest } from './tokenExchangeInvokeRequest';
 
