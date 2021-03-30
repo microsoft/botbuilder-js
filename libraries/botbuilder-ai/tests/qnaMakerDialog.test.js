@@ -277,6 +277,7 @@ describe('QnAMakerDialog', function () {
             const convoState = new ConversationState(new MemoryStorage());
             const dm = new DialogManager();
             dm.conversationState = convoState;
+            const activeLearningCardTitle = 'Suggested questions';
             const cardNoMatchText = 'Not helpful.';
             const qnaDialog = new QnAMakerDialog(
                 kbId,
@@ -284,7 +285,7 @@ describe('QnAMakerDialog', function () {
                 HOSTNAME,
                 undefined,
                 undefined,
-                undefined,
+                activeLearningCardTitle,
                 cardNoMatchText
             );
 
@@ -300,8 +301,9 @@ describe('QnAMakerDialog', function () {
                     strictEqual(reply.attachments && reply.attachments.length, 1);
                     strictEqual(reply.attachments[0].contentType, CardFactory.contentTypes.heroCard);
 
-                    // Verify the suggestions match the values received from QnA Maker.
                     const heroCard = reply.attachments[0].content;
+                    strictEqual(heroCard.title, activeLearningCardTitle);
+                    // Verify the suggestions match the values received from QnA Maker.
                     strictEqual(heroCard.buttons.length, 4);
 
                     for (let idx = 0; idx < heroCard.buttons.length; idx++) {
