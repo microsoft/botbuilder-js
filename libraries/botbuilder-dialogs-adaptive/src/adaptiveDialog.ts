@@ -28,6 +28,7 @@ import {
     DialogInstance,
     DialogPath,
     DialogReason,
+    DialogSet,
     DialogState,
     DialogTurnResult,
     DialogTurnStatus,
@@ -38,7 +39,7 @@ import { ActionContext } from './actionContext';
 import { AdaptiveDialogState } from './adaptiveDialogState';
 import { AdaptiveEvents } from './adaptiveEvents';
 import { OnCondition } from './conditions';
-import { LanguageGeneratorConverter, RecognizerConverter } from './converters';
+import { DialogSetConverter, LanguageGeneratorConverter, RecognizerConverter } from './converters';
 import { EntityAssignment } from './entityAssignment';
 import { EntityAssignments } from './entityAssignments';
 import { EntityInfo, NormalizedEntityInfos } from './entityInfo';
@@ -58,6 +59,7 @@ export interface AdaptiveDialogConfiguration extends DialogConfiguration {
     selector?: TriggerSelector;
     defaultResultProperty?: string;
     schema?: unknown;
+    dialogs?: string[] | Dialog[] | DialogSet;
 }
 
 /**
@@ -151,6 +153,8 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> im
                 return new LanguageGeneratorConverter();
             case 'autoEndDialog':
                 return new BoolExpressionConverter();
+            case 'dialogs':
+                return DialogSetConverter;
             default:
                 return super.getConverter(property);
         }
