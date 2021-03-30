@@ -7,31 +7,34 @@
  */
 
 import { ComponentRegistration } from 'botbuilder-core';
+import { ServiceCollection, noOpConfiguration } from 'botbuilder-dialogs-adaptive-runtime-core';
+import { DialogsBotComponent } from './dialogsBotComponent';
 import { ComponentMemoryScopes, ComponentPathResolvers, MemoryScope, PathResolver } from './memory';
-import { AtAtPathResolver, AtPathResolver, DollarPathResolver, HashPathResolver, PercentPathResolver } from './memory/pathResolvers';
-import { ClassMemoryScope, ConversationMemoryScope, DialogClassMemoryScope, DialogContextMemoryScope, DialogMemoryScope, SettingsMemoryScope, ThisMemoryScope, TurnMemoryScope, UserMemoryScope } from './memory/scopes';
 
 /**
  * Makes dialogs component available to the system registering functionality.
  */
-export class DialogsComponentRegistration extends ComponentRegistration implements ComponentMemoryScopes, ComponentPathResolvers {
+export class DialogsComponentRegistration
+    extends ComponentRegistration
+    implements ComponentMemoryScopes, ComponentPathResolvers {
+    private readonly services = new ServiceCollection({
+        memoryScopes: [],
+        pathResolvers: [],
+    });
+
+    constructor() {
+        super();
+
+        new DialogsBotComponent().configureServices(this.services, noOpConfiguration);
+    }
+
     /**
      * Gets the dialogs memory scopes.
      *
      * @returns {MemoryScope[]} A list of [MemoryScope](xref:botbuilder-dialogs.MemoryScope).
      */
     public getMemoryScopes(): MemoryScope[] {
-        return [
-            new TurnMemoryScope(),
-            new SettingsMemoryScope(),
-            new DialogMemoryScope(),
-            new DialogContextMemoryScope(),
-            new DialogClassMemoryScope(),
-            new ClassMemoryScope(),
-            new ThisMemoryScope(),
-            new ConversationMemoryScope(),
-            new UserMemoryScope(),
-        ];
+        return this.services.mustMakeInstance<MemoryScope[]>('memoryScopes');
     }
 
     /**
@@ -40,13 +43,6 @@ export class DialogsComponentRegistration extends ComponentRegistration implemen
      * @returns {PathResolver[]} A list of [PathResolver](xref:botbuilder-dialogs.PathResolver).
      */
     public getPathResolvers(): PathResolver[] {
-        return [
-            new DollarPathResolver(),
-            new HashPathResolver(),
-            new AtAtPathResolver(),
-            new AtPathResolver(),
-            new PercentPathResolver(),
-        ];
+        return this.services.mustMakeInstance<PathResolver[]>('pathResolvers');
     }
-
 }

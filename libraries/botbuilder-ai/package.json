@@ -33,6 +33,9 @@
     "adaptive-expressions": "4.1.6",
     "botbuilder-core": "4.1.6",
     "botbuilder-dialogs": "4.1.6",
+    "botbuilder-dialogs-adaptive-runtime-core": "4.1.6",
+    "botbuilder-dialogs-declarative": "4.1.6",
+    "botbuilder-stdlib": "4.1.6",
     "lodash": "^4.17.21",
     "node-fetch": "^2.6.0",
     "url-parse": "^1.5.1"

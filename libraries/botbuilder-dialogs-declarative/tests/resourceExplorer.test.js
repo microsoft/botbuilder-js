@@ -1,17 +1,11 @@
-const {
-    ComponentRegistration,
-    TestAdapter,
-    MemoryStorage,
-    useBotState,
-    UserState,
-    ConversationState,
-} = require('botbuilder-core');
-const { DialogManager } = require('botbuilder-dialogs');
-const { AdaptiveComponentRegistration } = require('../../botbuilder-dialogs-adaptive/lib');
-const { ResourceExplorer, FolderResourceProvider, ResourceChangeEvent } = require('../lib');
 const assert = require('assert');
-const { writeFileSync, existsSync, unlinkSync } = require('fs');
+const { AdaptiveBotComponent } = require('botbuilder-dialogs-adaptive');
+const { DialogManager } = require('botbuilder-dialogs');
+const { ResourceExplorer, FolderResourceProvider, ResourceChangeEvent } = require('../lib');
+const { ServiceCollection, noOpConfiguration } = require('botbuilder-dialogs-adaptive-runtime-core');
+const { TestAdapter, MemoryStorage, useBotState, UserState, ConversationState } = require('botbuilder-core');
 const { extname, join } = require('path');
+const { writeFileSync, existsSync, unlinkSync } = require('fs');
 
 function assertResourceType(explorer, resourceType) {
     const resources = explorer.getResources(resourceType);
@@ -23,30 +17,34 @@ function assertResourceFound(explorer, id) {
     const resource = explorer.getResource(id);
     assert(resource, `getResource(${id}) should return resource`);
     const dialogs = explorer.getResources('dialog');
-    assert(dialogs.some(dialog => dialog.id == id), `getResources('dialog') should return resources`);
+    assert(
+        dialogs.some((dialog) => dialog.id == id),
+        `getResources('dialog') should return resources`
+    );
 }
 
 function assertResourceNotFound(explorer, id) {
     const resource = explorer.getResource(id);
     assert.strictEqual(resource, undefined, `getResource(${id}) should not return resource`);
     const dialogs = explorer.getResources('dialog');
-    assert(dialogs.every(dialog => dialog.id != id), `getResouces('dialog') should not return resources`);
+    assert(
+        dialogs.every((dialog) => dialog.id != id),
+        `getResouces('dialog') should not return resources`
+    );
 }
 
 function assertResourceContents(explorer, id, contents) {
     const resource = explorer.getResource(id);
     let text = resource.readText();
     assert.strictEqual(text, contents, `getResource(${id}) contents not the same`);
-    const dialogs = explorer.getResources('dialog').filter(dialog => dialog.id == id);
+    const dialogs = explorer.getResources('dialog').filter((dialog) => dialog.id == id);
     assert(dialogs.length == 1, `getResouces('dialog') should return resources`);
     const dialog = dialogs[0];
     text = dialog.readText();
     assert.strictEqual(text, contents, `getResouces('dialog') contents not the same`);
 }
 
-describe('ResourecExplorer', function () {
-    this.timeout(5000);
-
+describe('ResourceExplorer', function () {
     it('add folders recursively', async () => {
         const explorer = new ResourceExplorer();
         explorer.addFolder(join(__dirname, 'resources'), true, false);
@@ -99,12 +97,21 @@ describe('ResourecExplorer', function () {
     });
 
     it('dialog id assignment', async () => {
-        const explorer = new ResourceExplorer();
-        explorer.addFolders(join(__dirname, 'resources'), [], false);
-        ComponentRegistration.add(new AdaptiveComponentRegistration());
+        const services = new ServiceCollection({
+            declarativeTypes: [],
+        });
+
+        new AdaptiveBotComponent().configureServices(services, noOpConfiguration);
+
+        const declarativeTypes = services.mustMakeInstance('declarativeTypes');
+        const explorer = new ResourceExplorer({ declarativeTypes }).addFolders(join(__dirname, 'resources'), [], false);
 
         const dialog = explorer.loadType('test.dialog');
-        assert.strictEqual(dialog.id, 'test.dialog', 'resource id should be used as default dialog id if none assigned.');
+        assert.strictEqual(
+            dialog.id,
+            'test.dialog',
+            'resource id should be used as default dialog id if none assigned.'
+        );
         assert.strictEqual(dialog.triggers[0].actions[0].id, '1234567890');
         assert.strictEqual(dialog.triggers[0].actions[1].id, 'test3.dialog');
 
@@ -126,13 +133,17 @@ describe('ResourecExplorer', function () {
 
         let event, resource;
         explorer.changed = (e, resources) => {
-            if (!event) { event = e; }
-            if (!resource) { resource = resources[0]; }
+            if (!event) {
+                event = e;
+            }
+            if (!resource) {
+                resource = resources[0];
+            }
         };
 
         // write test file
         writeFileSync(testPath, '{"test": 123}');
-        await new Promise(resolve => setTimeout(resolve, 200));
+        await new Promise((resolve) => setTimeout(resolve, 200));
         assert.strictEqual(event, ResourceChangeEvent.added);
         assert.strictEqual(resource.id, 'file_to_be_added.dialog');
 
@@ -155,17 +166,21 @@ describe('ResourecExplorer', function () {
 
         // write test file
         writeFileSync(testPath, '{"test": 123}');
-        await new Promise(resolve => setTimeout(resolve, 100));
+        await new Promise((resolve) => setTimeout(resolve, 100));
 
         let event, resource;
         explorer.changed = (e, resources) => {
-            if (!event) { event = e; }
-            if (!resource) { resource = resources[0]; }
+            if (!event) {
+                event = e;
+            }
+            if (!resource) {
+                resource = resources[0];
+            }
         };
 
         // change test file
         writeFileSync(testPath, '{"test": 1234}');
-        await new Promise(resolve => setTimeout(resolve, 200));
+        await new Promise((resolve) => setTimeout(resolve, 200));
         assert.strictEqual(event, ResourceChangeEvent.changed);
         assert.strictEqual(resource.id, 'file_to_be_changed.dialog');
 
@@ -188,17 +203,21 @@ describe('ResourecExplorer', function () {
 
         // write test file
         writeFileSync(testPath, '{"test": 123}');
-        await new Promise(resolve => setTimeout(resolve, 100));
+        await new Promise((resolve) => setTimeout(resolve, 100));
 
         let event, resource;
         explorer.changed = (e, resources) => {
-            if (!event) { event = e; }
-            if (!resource) { resource = resources[0]; }
+            if (!event) {
+                event = e;
+            }
+            if (!resource) {
+                resource = resources[0];
+            }
         };
 
         // remove test file
         unlinkSync(testPath);
-        await new Promise(resolve => setTimeout(resolve, 200));
+        await new Promise((resolve) => setTimeout(resolve, 200));
         assert.strictEqual(event, ResourceChangeEvent.removed);
         assert.strictEqual(resource.id, 'file_to_be_removed.dialog');
 
@@ -222,7 +241,7 @@ describe('ResourecExplorer', function () {
         writeFileSync(testPath, '{"test": 123}');
 
         // wait 200ms for file changes
-        await new Promise(resolve => setTimeout(resolve, 200));
+        await new Promise((resolve) => setTimeout(resolve, 200));
         assertResourceFound(explorer, 'foobar.dialog');
         assertResourceContents(explorer, 'foobar.dialog', '{"test": 123}');
 
@@ -230,7 +249,7 @@ describe('ResourecExplorer', function () {
         writeFileSync(testPath, '{"test": 1234}');
 
         // wait 200ms for file changes
-        await new Promise(resolve => setTimeout(resolve, 200));
+        await new Promise((resolve) => setTimeout(resolve, 200));
         assertResourceFound(explorer, 'foobar.dialog');
         assertResourceContents(explorer, 'foobar.dialog', '{"test": 1234}');
 
@@ -238,7 +257,7 @@ describe('ResourecExplorer', function () {
         unlinkSync(testPath);
 
         // wait 200ms for file changes
-        await new Promise(resolve => setTimeout(resolve, 200));
+        await new Promise((resolve) => setTimeout(resolve, 200));
         assertResourceNotFound(explorer, 'foobar.dialog');
 
         const resourceProvider = explorer.resourceProviders[0];
@@ -246,12 +265,19 @@ describe('ResourecExplorer', function () {
     });
 
     it('cycle reference', async () => {
-        ComponentRegistration.add(new AdaptiveComponentRegistration());
-        const resourceExplorer = new ResourceExplorer().addFolder(
+        const services = new ServiceCollection({
+            declarativeTypes: [],
+        });
+
+        new AdaptiveBotComponent().configureServices(services, noOpConfiguration);
+
+        const declarativeTypes = services.mustMakeInstance('declarativeTypes');
+        const resourceExplorer = new ResourceExplorer({ declarativeTypes }).addFolder(
             join(__dirname, './resources/CycleDetection'),
             false,
             false
         );
+
         const root = resourceExplorer.loadType('root.dialog');
         const dm = new DialogManager(root);
         const adapter = new TestAdapter(async (context) => {

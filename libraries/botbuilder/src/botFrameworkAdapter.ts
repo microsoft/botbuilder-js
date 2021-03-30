@@ -29,8 +29,6 @@ import {
     StatusCodes,
     TokenResponse,
     TurnContext,
-    HealthCheckResponse,
-    HealthResults,
     ActivityEventNames,
 } from 'botbuilder-core';
 
@@ -1833,26 +1831,6 @@ export class BotFrameworkAdapter
 
     process(req: Request & Emitter, res: Response, logic: BotLogic): Promise<void> {
         return this.processActivity(req, res, logic);
-    }
-
-    /**
-     * Invoked when the bot is sent a health check from the hosting infrastructure or, in the case of Skills the parent bot.
-     * @param context The [TurnContext](xref:botbuilder-core.TurnContext) for this turn.
-     *
-     * @returns The result of the health check.
-     */
-    public async healthCheck(context: TurnContext): Promise<HealthCheckResponse> {
-        const healthResults = <HealthResults>{
-            success: true,
-            'user-agent': USER_AGENT,
-            messages: ['Health check succeeded.'],
-        };
-        if (!(await this.credentialsProvider.isAuthenticationDisabled())) {
-            const credentials = context.turnState.get(this.ConnectorClientKey).credentials || this.credentials;
-            const token = await credentials.getToken();
-            healthResults.authorization = `Bearer ${token}`;
-        }
-        return { healthResults: healthResults };
     }
 
     /**

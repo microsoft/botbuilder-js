@@ -1,8 +1,18 @@
 // Licensed under the MIT License.
 // Copyright (c) Microsoft Corporation. All rights reserved.
 
+import nock = require('nock');
+import path = require('path');
+import { AdaptiveBotComponent } from 'botbuilder-dialogs-adaptive';
+import { AdaptiveTeamsBotComponent } from '../src/adaptiveTeamsBotComponent';
+import { AdaptiveTestBotComponent, TestUtils } from 'botbuilder-dialogs-adaptive-testing';
+import { ConnectorClient, MicrosoftAppCredentials } from 'botframework-connector';
+import { ComponentDeclarativeTypes, ResourceExplorer } from 'botbuilder-dialogs-declarative';
+import { ServiceCollection, noOpConfiguration } from 'botbuilder-dialogs-adaptive-runtime-core';
+import { jwt } from 'botbuilder-test-utils';
+import { ok } from 'assert';
+
 import {
-    ComponentRegistration,
     ConversationState,
     TestAdapter,
     useBotState,
@@ -13,15 +23,6 @@ import {
     ChannelAccount,
     ConversationAccount,
 } from 'botbuilder';
-import { ResourceExplorer } from 'botbuilder-dialogs-declarative';
-import { TeamsComponentRegistration } from '../lib';
-import { AdaptiveTestComponentRegistration, TestUtils } from 'botbuilder-dialogs-adaptive-testing';
-import { AdaptiveComponentRegistration } from 'botbuilder-dialogs-adaptive';
-import { ConnectorClient, MicrosoftAppCredentials } from 'botframework-connector';
-import { ok } from 'assert';
-import path = require('path');
-import nock = require('nock');
-import { jwt } from 'botbuilder-test-utils';
 
 const getTeamsTestAdapter = (convo?: Partial<ConversationReference>): TestAdapter => {
     const adapter = new TestAdapter(convo as ConversationReference);
@@ -118,11 +119,24 @@ const generateTeamMembers = (amount: number): Record<string, unknown>[] => {
 describe('Actions', function () {
     jwt.mocha();
 
-    ComponentRegistration.add(new AdaptiveTestComponentRegistration());
-    ComponentRegistration.add(new AdaptiveComponentRegistration());
-    ComponentRegistration.add(new TeamsComponentRegistration());
+    let resourceExplorer: ResourceExplorer;
+    beforeEach(function () {
+        const services = new ServiceCollection({
+            declarativeTypes: [],
+        });
 
-    const resourceExplorer = new ResourceExplorer().addFolder(path.join(__dirname, 'actionTests'), true, false);
+        new AdaptiveBotComponent().configureServices(services, noOpConfiguration);
+        new AdaptiveTeamsBotComponent().configureServices(services, noOpConfiguration);
+        new AdaptiveTestBotComponent().configureServices(services, noOpConfiguration);
+
+        const declarativeTypes = services.mustMakeInstance<ComponentDeclarativeTypes[]>('declarativeTypes');
+
+        resourceExplorer = new ResourceExplorer({ declarativeTypes }).addFolder(
+            path.join(__dirname, 'actionTests'),
+            true,
+            false
+        );
+    });
 
     /**
      * Note: With mocha, `this.test?.title` refers to the test's name, so runTestScript

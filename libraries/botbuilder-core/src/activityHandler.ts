@@ -7,7 +7,6 @@ import {
     Activity,
     AdaptiveCardInvokeResponse,
     AdaptiveCardInvokeValue,
-    HealthCheckResponse,
     MessageReaction,
 } from 'botframework-schema';
 
@@ -478,9 +477,6 @@ export class ActivityHandler extends ActivityHandlerBase {
                     await this.onSignInInvoke(context);
                     return { status: StatusCodes.OK };
 
-                case 'healthCheck':
-                    return await ActivityHandler.createInvokeResponse(await this.onHealthCheck(context));
-
                 default:
                     throw new InvokeException(StatusCodes.NOT_IMPLEMENTED);
             }
@@ -509,23 +505,6 @@ export class ActivityHandler extends ActivityHandlerBase {
      */
     protected async onSignInInvoke(context: TurnContext): Promise<void> {
         throw new InvokeException(StatusCodes.NOT_IMPLEMENTED);
-    }
-
-    /**
-     * Handle _healthCheck invoke activity type_.
-     *
-     * @param context The context object for the current turn.
-     *
-     * @remarks
-     * Overwrite this method to customize or extended the built in healthCheck behavior.
-     */
-    protected async onHealthCheck(context: TurnContext): Promise<HealthCheckResponse> {
-        const adapter = <any>context.adapter;
-        if (typeof adapter.healthCheck === 'function') {
-            return await adapter.healthCheck(context);
-        } else {
-            return { healthResults: { success: true, messages: ['Health check succeeded.'] } };
-        }
     }
 
     /**

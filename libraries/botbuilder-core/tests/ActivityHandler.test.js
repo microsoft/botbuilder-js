@@ -542,48 +542,6 @@ describe('ActivityHandler', function () {
             assertTrueFlag(onReactionsRemovedCalled, 'onReactionsRemoved');
         });
 
-        it('call the default onHealthCheck when called with Activity Type "Invoke" with name "healthCheck"', async function () {
-            const activity = { type: ActivityTypes.Invoke, name: 'healthCheck' };
-            const testAdapter = new TestAdapter();
-            const context = new TurnContext(testAdapter, activity);
-            const bot = new ActivityHandler();
-
-            await bot.run(context);
-
-            const invokeResponseActivity = testAdapter.activityBuffer.find((a) => a.type == 'invokeResponse');
-            const healthCheckResponse = invokeResponseActivity.value.body;
-            assert(true, healthCheckResponse.healthResults.success);
-            assert('Health check succeeded.', healthCheckResponse.healthResults.messages[0]);
-        });
-
-        it('call the default onHealthCheck when called with Activity Type "Invoke" with name "healthCheck" with results from the adapter', async function () {
-            const activity = { type: ActivityTypes.Invoke, name: 'healthCheck' };
-            const testAdapter = new TestAdapter();
-
-            testAdapter.healthCheck = async (context) => {
-                return {
-                    healthResults: {
-                        success: true,
-                        'user-agent': 'user-agent-header-value',
-                        authorization: 'authorization-header-value',
-                        messages: ['Health results from adapter.'],
-                    },
-                };
-            };
-
-            const context = new TurnContext(testAdapter, activity);
-            const bot = new ActivityHandler();
-
-            await bot.run(context);
-
-            const invokeResponseActivity = testAdapter.activityBuffer.find((a) => a.type == 'invokeResponse');
-            const healthCheckResponse = invokeResponseActivity.value.body;
-            assert(true, healthCheckResponse.healthResults.success);
-            assert('user-agent-header-value', healthCheckResponse.healthResults['user-agent']);
-            assert('authorization-header-value', healthCheckResponse.healthResults.authorization);
-            assert('Health results from adapter.', healthCheckResponse.healthResults.messages[0]);
-        });
-
         it('call "onTurn" handlers then dispatch by Activity Type "event"', async function () {
             const bot = new ActivityHandler();
             bot.onTurn(async (context, next) => {

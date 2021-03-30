@@ -9428,10 +9428,10 @@ ora@^4.0.3:
     strip-ansi "^6.0.0"
     wcwidth "^1.0.1"
 
-orchestrator-core@4.12.0-preview:
-  version "4.12.0-preview"
-  resolved "https://registry.yarnpkg.com/orchestrator-core/-/orchestrator-core-4.12.0-preview.tgz#e16703ff0fe45a96cd7b637fcec7697448584a36"
-  integrity sha512-RHQM5UK7xZuV9eN+NJKv/iGKBeQ/Pvxkki1j2Bgm1pq845Icor51MrlJKmAeJSIVxIUY0r4JBBNulLfq3I4UPA==
+orchestrator-core@rc:
+  version "4.13.0-rc0"
+  resolved "https://registry.yarnpkg.com/orchestrator-core/-/orchestrator-core-4.13.0-rc0.tgz#0277d3b3ac5c4317f15640b42760e2e5714b1bf8"
+  integrity sha512-0YbzNF8OQ8r0CSRDvcezRK8V6dFOh8jdVkfC+3JM+k7rotLrSMf0EI+UTGJUnSv9tI4roIfo5IM4AHT+KJ8l2A==
   dependencies:
     bindings "1.2.1"
     node-addon-api "^3.0.0"
@@ -9573,11 +9573,6 @@ p-map@^4.0.0:
   integrity sha512-/bjOqmgETBYB5BoEeGVea8dmvHb2m9GLy1E9W43yeyfP6QQCZGFNa+XRceJEuDB6zqr+gKpIAmlLebMpykw/MQ==
   dependencies:
     aggregate-error "^3.0.0"
-
-p-reduce@^2.1.0:
-  version "2.1.0"
-  resolved "https://registry.yarnpkg.com/p-reduce/-/p-reduce-2.1.0.tgz#09408da49507c6c274faa31f28df334bc712b64a"
-  integrity sha512-2USApvnsutq8uoxZBGbbWM0JIYLiEMJ9RlaN7fAzVNb9OZN0SHjjTTfIcb667XynS5Y1VhwDJVDa72TnPzAYWw==
 
 p-timeout@^2.0.1:
   version "2.0.1"
