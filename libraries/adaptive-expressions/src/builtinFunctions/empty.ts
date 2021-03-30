@@ -22,7 +22,7 @@ export class Empty extends ComparisonEvaluator {
      * Initializes a new instance of the [Empty](xref:adaptive-expressions.Empty) class.
      */
     public constructor() {
-        super(ExpressionType.Empty, Empty.func, FunctionUtils.validateUnary, FunctionUtils.verifyContainer);
+        super(ExpressionType.Empty, Empty.func, FunctionUtils.validateUnary, FunctionUtils.verifyContainerOrNull);
     }
 
     /**
@@ -37,7 +37,7 @@ export class Empty extends ComparisonEvaluator {
      */
     private static isEmpty(instance: any): boolean {
         let result: boolean;
-        if (instance === undefined) {
+        if (instance == null) {
             result = true;
         } else if (typeof instance === 'string') {
             result = instance === '';
