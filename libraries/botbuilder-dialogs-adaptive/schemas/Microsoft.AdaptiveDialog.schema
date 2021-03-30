@@ -26,6 +26,7 @@
         "dialogs": {
             "type": "array",
             "title": "Dialogs added to DialogSet",
+            "description": "A collection of callable Dialog objects",
             "items": {
                 "$kind": "Microsoft.IDialog",
                 "title": "Dialog",
