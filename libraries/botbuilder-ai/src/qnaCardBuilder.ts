@@ -53,8 +53,8 @@ export class QnACardBuilder {
             title: cardNoMatchText,
         });
 
-        const promptsCard = CardFactory.heroCard('', undefined, buttonList);
-        const message = MessageFactory.attachment(promptsCard, cardTitle);
+        const promptsCard = CardFactory.heroCard(cardTitle, undefined, buttonList);
+        const message = MessageFactory.attachment(promptsCard);
 
         return message;
     }
