@@ -184,12 +184,19 @@ function addStorage(services: ServiceCollection, configuration: Configuration): 
 }
 
 function addSkills(services: ServiceCollection, configuration: Configuration): void {
-    services.addInstance('credentialProvider', new SimpleCredentialProvider('appId', 'appPassword'));
-
     services.addFactory(
         'skillConversationIdFactory',
         ['storage'],
         ({ storage }) => new SkillConversationIdFactory(storage)
+    );
+
+    services.addFactory<ICredentialProvider>(
+        'credentialProvider',
+        () =>
+            new SimpleCredentialProvider(
+                configuration.string(['MicrosoftAppId']) ?? '',
+                configuration.string(['MicrosoftAppPassword']) ?? ''
+            )
     );
 
     services.addFactory(
@@ -274,28 +281,26 @@ function addCoreBot(services: ServiceCollection, configuration: Configuration): 
     services.addFactory<
         BotFrameworkAdapter,
         {
-            authenticationConfiguration: AuthenticationConfiguration;
             conversationState: ConversationState;
             userState: UserState;
             middlewares: MiddlewareSet;
             telemetryMiddleware: Middleware;
         }
-    >(
-        'adapter',
-        ['authenticationConfiguration', 'conversationState', 'userState', 'middlewares', 'telemetryMiddleware'],
-        (dependencies) => {
-            const adapter = new CoreBotAdapter(
-                dependencies.authenticationConfiguration,
-                dependencies.conversationState,
-                dependencies.userState
-            );
+    >('adapter', ['conversationState', 'userState', 'middlewares', 'telemetryMiddleware'], (dependencies) => {
+        const appId = configuration.string(['MicrosoftAppId']);
+        const appPassword = configuration.string(['MicrosoftAppPassword']);
 
-            adapter.use(dependencies.middlewares);
-            adapter.use(dependencies.telemetryMiddleware);
+        const adapter = new CoreBotAdapter(
+            { appId, appPassword },
+            dependencies.conversationState,
+            dependencies.userState
+        );
 
-            return adapter;
-        }
-    );
+        adapter.use(dependencies.middlewares);
+        adapter.use(dependencies.telemetryMiddleware);
+
+        return adapter;
+    });
 }
 
 async function addSettingsBotComponents(services: ServiceCollection, configuration: Configuration): Promise<void> {
