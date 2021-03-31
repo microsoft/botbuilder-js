@@ -184,7 +184,17 @@ function addStorage(services: ServiceCollection, configuration: Configuration): 
 }
 
 function addSkills(services: ServiceCollection, configuration: Configuration): void {
-    services.addInstance('credentialProvider', new SimpleCredentialProvider('appId', 'appPassword'));
+    const appId = configuration.string(['MicrosoftAppId']);
+    if (!appId) {
+        throw new Error('`MicrosoftAppId` not found in configuration');
+    }
+
+    const appPassword = configuration.string(['MicrosoftAppPassword']);
+    if (!appPassword) {
+        throw new Error('`MicrosoftAppPassword` not found in configuration');
+    }
+
+    services.addInstance('credentialProvider', new SimpleCredentialProvider(appId, appPassword));
 
     services.addFactory(
         'skillConversationIdFactory',
@@ -274,28 +284,33 @@ function addCoreBot(services: ServiceCollection, configuration: Configuration): 
     services.addFactory<
         BotFrameworkAdapter,
         {
-            authenticationConfiguration: AuthenticationConfiguration;
             conversationState: ConversationState;
             userState: UserState;
             middlewares: MiddlewareSet;
             telemetryMiddleware: Middleware;
         }
-    >(
-        'adapter',
-        ['authenticationConfiguration', 'conversationState', 'userState', 'middlewares', 'telemetryMiddleware'],
-        (dependencies) => {
-            const adapter = new CoreBotAdapter(
-                dependencies.authenticationConfiguration,
-                dependencies.conversationState,
-                dependencies.userState
-            );
-
-            adapter.use(dependencies.middlewares);
-            adapter.use(dependencies.telemetryMiddleware);
-
-            return adapter;
+    >('adapter', ['conversationState', 'userState', 'middlewares', 'telemetryMiddleware'], (dependencies) => {
+        const appId = configuration.string(['MicrosoftAppId']);
+        if (!appId) {
+            throw new Error('`MicrosoftAppId` not found in configuration');
         }
-    );
+
+        const appPassword = configuration.string(['MicrosoftAppPassword']);
+        if (!appPassword) {
+            throw new Error('`MicrosoftAppPassword` not found in configuration');
+        }
+
+        const adapter = new CoreBotAdapter(
+            { appId, appPassword },
+            dependencies.conversationState,
+            dependencies.userState
+        );
+
+        adapter.use(dependencies.middlewares);
+        adapter.use(dependencies.telemetryMiddleware);
+
+        return adapter;
+    });
 }
 
 async function addSettingsBotComponents(services: ServiceCollection, configuration: Configuration): Promise<void> {
