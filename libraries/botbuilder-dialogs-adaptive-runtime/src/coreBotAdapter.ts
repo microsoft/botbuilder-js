@@ -1,11 +1,12 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-import { AuthenticationConfiguration, ClaimsIdentity, SkillValidation } from 'botframework-connector';
+import { ClaimsIdentity, SkillValidation } from 'botframework-connector';
 
 import {
     ActivityEx,
     BotFrameworkAdapter,
+    BotFrameworkAdapterSettings,
     ConversationState,
     InputHints,
     MessageFactory,
@@ -16,11 +17,11 @@ import {
 
 export class CoreBotAdapter extends BotFrameworkAdapter {
     constructor(
-        authConfig: AuthenticationConfiguration,
+        settings: Partial<BotFrameworkAdapterSettings>,
         private readonly conversationState: ConversationState,
         userState: UserState
     ) {
-        super({ authConfig });
+        super(settings);
 
         // attach storage?
         useBotState(this, userState, conversationState);
