@@ -12,8 +12,8 @@ import { PackageVersion, command, getPackageVersion } from '../src/updateVersion
 import { Package } from '../src/package';
 import { isSuccess } from '../src/run';
 
-describe('updateVersions', () => {
-    describe('getPackageVersion', () => {
+describe('updateVersions', function () {
+    describe('getPackageVersion', function () {
         const newVersion = '1.2.3';
 
         const defaultOptions = { deprecated: 'DEPRECATED', preview: 'PREVIEW' };
@@ -115,20 +115,20 @@ describe('updateVersions', () => {
         ];
 
         testCases.forEach((testCase) => {
-            it(testCase.label, () => {
+            it(testCase.label, function () {
                 const actual = getPackageVersion(testCase.pkg ?? {}, newVersion, testCase.options);
                 assert.strictEqual(actual.toString(), testCase.expected);
             });
         });
     });
 
-    describe('command', () => {
+    describe('command', function () {
         let sandbox: sinon.SinonSandbox;
-        beforeEach(() => {
+        beforeEach(function () {
             sandbox = sinon.createSandbox();
         });
 
-        afterEach(() => {
+        afterEach(function () {
             sandbox.restore();
         });
 
@@ -218,8 +218,8 @@ describe('updateVersions', () => {
             sandbox.verify();
         };
 
-        it('updates packages properly', () =>
-            runAndVerify([
+        it('updates packages properly', function () {
+            return runAndVerify([
                 {
                     name: 'a',
                     dependsOn: ['b', 'c'],
@@ -243,9 +243,10 @@ describe('updateVersions', () => {
                         d: dummyVersion,
                     },
                 },
-            ]));
+            ]);
+        });
 
-        it('overrides package version', async () => {
+        it('overrides package version', async function () {
             const expectedVersion = '3.2.1';
             const expectedPreviewVersion = `${expectedVersion}-preview`;
             const expectedDeprecatedVersion = `${expectedVersion}-deprecated`;
@@ -280,7 +281,7 @@ describe('updateVersions', () => {
             );
         });
 
-        it('includes git commit sha and date', async () => {
+        it('includes git commit sha and date', async function () {
             const dateFormat = 'YYYYMM';
             const formattedDate = dayjs().format(dateFormat);
 

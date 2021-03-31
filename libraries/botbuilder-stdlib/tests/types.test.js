@@ -4,8 +4,8 @@
 const assert = require('assert');
 const { UndefinedError, assert: typeAssert, tests } = require('../lib/types');
 
-describe('assertType', () => {
-    describe('basic', () => {
+describe('assertType', function () {
+    describe('basic', function () {
         const testCases = [
             { label: 'any', assert: typeAssert.any, input: 0, throws: false },
             { label: 'any', assert: typeAssert.any, input: 0, throws: false },
@@ -73,7 +73,7 @@ describe('assertType', () => {
         testCases.forEach((testCase) => {
             it(`typeAssert.${testCase.label} with ${JSON.stringify(testCase.input)} ${
                 testCase.throws ? 'throws' : 'does not throw'
-            }`, () => {
+            }`, function () {
                 const test = () => testCase.assert(testCase.input, [testCase.label]);
 
                 if (testCase.throws) {
@@ -84,7 +84,7 @@ describe('assertType', () => {
             });
         });
 
-        it('maybeArrayOf works', () => {
+        it('maybeArrayOf works', function () {
             assert.doesNotThrow(() => typeAssert.maybeArrayOf(typeAssert.number)([1, 2, 3], []));
             assert.doesNotThrow(() => typeAssert.maybeArrayOf(typeAssert.number)(undefined, []));
             assert.throws(
@@ -93,7 +93,7 @@ describe('assertType', () => {
             );
         });
 
-        it('maybeInstanceOf works', () => {
+        it('maybeInstanceOf works', function () {
             assert.doesNotThrow(() => typeAssert.maybeInstanceOf('Error', Error)(new Error(), []));
             assert.doesNotThrow(() => typeAssert.maybeInstanceOf('Error', Error)(undefined, []));
             assert.throws(
@@ -102,7 +102,7 @@ describe('assertType', () => {
             );
         });
 
-        it('oneOf works', () => {
+        it('oneOf works', function () {
             assert.doesNotThrow(() => typeAssert.maybeOneOf(tests.isNumber, tests.isString)(10, []));
             assert.doesNotThrow(() => typeAssert.maybeOneOf(tests.isNumber, tests.isString)('11', []));
             assert.throws(
@@ -112,7 +112,7 @@ describe('assertType', () => {
         });
     });
 
-    describe('partial', () => {
+    describe('partial', function () {
         const assertBaz = (val, path) => {
             typeAssert.unsafe.castObjectAs(val, path);
             typeAssert.string(val.nested, path.concat('nested'));
@@ -139,7 +139,7 @@ describe('assertType', () => {
         ];
 
         testCases.forEach((testCase) => {
-            it(`${testCase.throws ? 'throws' : 'does not throw'} for ${JSON.stringify(testCase.thing)}`, () => {
+            it(`${testCase.throws ? 'throws' : 'does not throw'} for ${JSON.stringify(testCase.thing)}`, function () {
                 const test = () => assertThing(testCase.thing, ['thing']);
                 if (testCase.throws) {
                     assert.throws(test);
@@ -150,7 +150,7 @@ describe('assertType', () => {
 
             it(`partial ${testCase.throwsPartial ? 'throws' : 'does not throw'} for ${JSON.stringify(
                 testCase.thing
-            )}`, () => {
+            )}`, function () {
                 const test = () => typeAssert.makePartial(assertThing)(testCase.thing, ['thing']);
                 if (testCase.throwsPartial) {
                     assert.throws(test);
@@ -161,16 +161,16 @@ describe('assertType', () => {
         });
     });
 
-    describe('makeTest', () => {
-        it('works', () => {
+    describe('makeTest', function () {
+        it('works', function () {
             const isNumber = typeAssert.toTest(typeAssert.number);
             assert(isNumber(10));
             assert(!isNumber('foo'));
         });
     });
 
-    describe('nested assertion', () => {
-        it('collects labels', () => {
+    describe('nested assertion', function () {
+        it('collects labels', function () {
             const testAssert = (val, label) => {
                 typeAssert.object(val, label);
                 Object.entries(val).forEach(([key, val]) => typeAssert.string(val, label.concat(key)));
@@ -180,7 +180,7 @@ describe('assertType', () => {
             assert.throws(() => testAssert(object, ['object']), new TypeError('`object.baz` must be of type "string"'));
         });
 
-        it('works for instanceOf', () => {
+        it('works for instanceOf', function () {
             assert.throws(
                 () => typeAssert.instanceOf('Error', Error)(null, ['value']),
                 new UndefinedError('`value` must be defined')
@@ -191,7 +191,7 @@ describe('assertType', () => {
             );
         });
 
-        it('works for arrayOf', () => {
+        it('works for arrayOf', function () {
             assert.throws(
                 () => typeAssert.arrayOf(typeAssert.number)([0, 1, '2'], ['arr']),
                 new TypeError('`arr.[2]` must be of type "number"')

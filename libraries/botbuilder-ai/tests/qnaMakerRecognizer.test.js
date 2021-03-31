@@ -110,10 +110,10 @@ describe('QnAMakerRecognizer', function () {
         notStrictEqual(result.intents.DeferToRecognizer_xxx, undefined);
     });
 
-    describe('Telemetry', () => {
+    describe('Telemetry', function () {
         let spy;
 
-        beforeEach(() => {
+        beforeEach(function () {
             spy = spyOnTelemetryClientTrackEvent(recognizer);
 
             nock.disableNetConnect();
@@ -122,14 +122,14 @@ describe('QnAMakerRecognizer', function () {
                 .replyWithFile(200, testDataFolder + 'QnaMaker_ReturnsAnswer.json');
         });
 
-        afterEach(() => {
+        afterEach(function () {
             spy.restore();
 
             nock.cleanAll();
             nock.enableNetConnect();
         });
 
-        it('logs PII when logPersonalInformation is true', async () => {
+        it('logs PII when logPersonalInformation is true', async function () {
             const activity = createMessageActivity(qnaIntentText);
             const dialogContext = createContext(activity);
             recognizer.logPersonalInformation = true;
@@ -145,7 +145,7 @@ describe('QnAMakerRecognizer', function () {
             validateTelemetry({ recognizer, dialogContext, spy, activity, result, callCount: 2 });
         });
 
-        it('does not log PII when logPersonalInformation is false', async () => {
+        it('does not log PII when logPersonalInformation is false', async function () {
             const activity = createMessageActivity(qnaIntentText);
             const dialogContext = createContext(activity);
             recognizer.logPersonalInformation = false;
@@ -161,7 +161,7 @@ describe('QnAMakerRecognizer', function () {
             validateTelemetry({ recognizer, dialogContext, spy, activity, result, callCount: 2 });
         });
 
-        it('should refrain from logging PII by default', async () => {
+        it('should refrain from logging PII by default', async function () {
             const recognizerWithDefaultLogPii = new QnAMakerRecognizer(hostname, knowledgeBaseId, endpointKey);
             const trackEventSpy = spyOnTelemetryClientTrackEvent(recognizerWithDefaultLogPii);
             const activity = createMessageActivity(qnaIntentText);

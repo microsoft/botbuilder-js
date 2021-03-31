@@ -37,7 +37,7 @@ async function TestJson(
     if (telemetryProperties === undefined) telemetryProperties = null;
 
     const version = 'v3';
-    let expectedPath = ExpectedPath(file);
+    const expectedPath = ExpectedPath(file);
     const oracle = GetExpected(expectedPath);
     const oldResponse = oracle[version];
     const newPath = expectedPath + '.new';
@@ -64,7 +64,7 @@ async function TestJson(
 }
 
 function GetExpected(oracle) {
-    let expected = fs.readJSONSync(oracle);
+    const expected = fs.readJSONSync(oracle);
     let uri = `/luis/prediction/v3.0/apps/${luisAppId}`;
 
     if (expected.v3.options.version) {
@@ -74,7 +74,7 @@ function GetExpected(oracle) {
     }
 
     const params = `?verbose=${expected.v3.options.includeInstanceData}&log=${expected.v3.options.log}&show-all-intents=${expected.v3.options.includeAllIntents}`;
-    let responseBody = expected.v3.response;
+    const responseBody = expected.v3.response;
 
     if (mockLuis) {
         nock('https://westus.api.cognitive.microsoft.com')

@@ -5,17 +5,17 @@ const assert = require('assert');
 const sinon = require('sinon');
 const { delay } = require('../');
 
-describe('delay', () => {
+describe('delay', function () {
     let sandbox;
-    beforeEach(() => {
+    beforeEach(function () {
         sandbox = sinon.createSandbox({ useFakeTimers: true });
     });
 
-    afterEach(() => {
+    afterEach(function () {
         sandbox.restore();
     });
 
-    it('works with a promise arg', async () => {
+    it('works with a promise arg', async function () {
         const promise = Promise.resolve(10);
 
         let result = delay(promise, 250);
@@ -25,7 +25,7 @@ describe('delay', () => {
         assert.strictEqual(result, 10);
     });
 
-    it('works without a promise arg', async () => {
+    it('works without a promise arg', async function () {
         const promise = delay(250);
         sandbox.clock.tick(251);
 

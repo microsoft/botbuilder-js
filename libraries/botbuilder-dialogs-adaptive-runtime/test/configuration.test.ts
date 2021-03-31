@@ -5,7 +5,7 @@ import assert from 'assert';
 import path from 'path';
 import { Configuration } from '../src/configuration';
 
-describe('Configuration', () => {
+describe('Configuration', function () {
     const makeConfiguration = (files = ['base.json']) => {
         const configuration = new Configuration();
 
@@ -19,8 +19,8 @@ describe('Configuration', () => {
         return configuration;
     };
 
-    describe('flags', () => {
-        it('works', () => {
+    describe('flags', function () {
+        it('works', async function () {
             const flags = makeConfiguration().bind(['flags']);
 
             assert.strictEqual(flags.bool(['on']), true);
@@ -29,8 +29,8 @@ describe('Configuration', () => {
         });
     });
 
-    describe('strings', () => {
-        it('works', () => {
+    describe('strings', function () {
+        it('works', async function () {
             const strings = makeConfiguration().bind(['strings']);
 
             assert.strictEqual(strings.string(['ok']), 'howdy');
@@ -45,8 +45,8 @@ describe('Configuration', () => {
         });
     });
 
-    describe('nesting and layering', () => {
-        it('works', () => {
+    describe('nesting and layering', function () {
+        it('works', async function () {
             const base = makeConfiguration();
             assert.strictEqual(base.get(['root', 'key']), 'base');
 

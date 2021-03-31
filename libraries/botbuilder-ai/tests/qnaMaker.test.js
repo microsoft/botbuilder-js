@@ -50,9 +50,9 @@ describe('QnAMaker', function () {
     beforeEach(function () {
         nock.cleanAll();
         if (mockQnA) {
-            let fileName = replaceCharacters(this.currentTest.title);
-            let filePath = `${__dirname}/TestData/${this.test.parent.title}/`;
-            let arr = testFiles.filter(function (file) {
+            const fileName = replaceCharacters(this.currentTest.title);
+            const filePath = `${__dirname}/TestData/${this.test.parent.title}/`;
+            const arr = testFiles.filter(function (file) {
                 return file.startsWith(fileName + '.');
             });
 
@@ -427,7 +427,7 @@ describe('QnAMaker', function () {
         it('should log telemetry', async function () {
             // Arrange
             let callCount = 0;
-            let telemetryClient = {
+            const telemetryClient = {
                 trackEvent: (telemetry) => {
                     assert(telemetry, 'telemetry is null');
                     switch (++callCount) {
@@ -474,7 +474,7 @@ describe('QnAMaker', function () {
         it('should log telemetry when no answer found in kb', async function () {
             // Arrange
             let callCount = 0;
-            let telemetryClient = {
+            const telemetryClient = {
                 trackEvent: (telemetry) => {
                     assert(telemetry, 'telemetry is null');
                     switch (++callCount) {
@@ -520,7 +520,7 @@ describe('QnAMaker', function () {
         it('should not log telemetry pii', async function () {
             // Arrange
             let callCount = 0;
-            let telemetryClient = {
+            const telemetryClient = {
                 trackEvent: (telemetry) => {
                     assert(telemetry, 'telemetry is null');
                     switch (++callCount) {
@@ -567,7 +567,7 @@ describe('QnAMaker', function () {
         it('should log telemetry using derived qna', async function () {
             // Arrange
             let callCount = 0;
-            let telemetryClient = {
+            const telemetryClient = {
                 trackEvent: (telemetry) => {
                     assert(telemetry, 'telemetry is null');
                     switch (++callCount) {
@@ -625,7 +625,7 @@ describe('QnAMaker', function () {
         it('should log telemetry additionalprops', async function () {
             // Arrange
             let callCount = 0;
-            let telemetryClient = {
+            const telemetryClient = {
                 trackEvent: (telemetry) => {
                     assert(telemetry, 'telemetry is null');
                     switch (++callCount) {
@@ -690,11 +690,11 @@ describe('QnAMaker', function () {
         });
     });
 
-    describe('trainAPI()', async function () {
+    describe('trainAPI()', function () {
         it('should call train async function', async function () {
             const qna = new QnAMaker(endpoint);
 
-            let feedbackRecords = {
+            const feedbackRecords = {
                 feedbackRecords: [
                     {
                         userId: 'test',
@@ -748,7 +748,7 @@ describe('QnAMaker', function () {
 
         it('should return 0 answers for a question with no answer after a succesful call', async function () {
             const qna = new QnAMaker(endpoint, { top: 1 });
-            let answer = 'BaseCamp: You can use a damp rag to clean around the Power Pack';
+            const answer = 'BaseCamp: You can use a damp rag to clean around the Power Pack';
 
             const resultsWithAns = await qna.generateAnswer(`how do I clean the stove?`);
             assert.notStrictEqual(resultsWithAns, true, `The response was returned as 'undefined'.`);
@@ -815,7 +815,7 @@ describe('QnAMaker', function () {
             const found = await qna.answer(context);
 
             assert.strictEqual(found, true, `Found answer should have returned 'true'.`);
-            let qnaMakerTraceActivies = context.sent.filter((s) => s.type === 'trace' && s.name === 'QnAMaker');
+            const qnaMakerTraceActivies = context.sent.filter((s) => s.type === 'trace' && s.name === 'QnAMaker');
             assert.strictEqual(qnaMakerTraceActivies.length, 1, 'Should have returned just one answer');
             const traceActivity = qnaMakerTraceActivies[0];
             assert.strictEqual(traceActivity.type, 'trace', `Should have returned 'trace'.`);

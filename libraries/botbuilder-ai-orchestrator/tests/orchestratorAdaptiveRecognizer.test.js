@@ -13,8 +13,8 @@ const { NumberEntityRecognizer } = require('botbuilder-dialogs-adaptive');
 const sinon = require('sinon');
 const { orchestratorIntentText, getLogPersonalInformation, validateTelemetry } = require('./recognizerTelemetryUtils');
 
-describe('OrchestratorRecognizer tests', function () {
-    it('Expect initialize is called when orchestrator obj is null', async () => {
+describe('OrchestratorAdpativeRecognizer tests', function () {
+    it('Expect initialize is called when orchestrator obj is null', async function () {
         const result = [
             {
                 score: 0.9,
@@ -38,7 +38,7 @@ describe('OrchestratorRecognizer tests', function () {
         ok(rec._initializeModel.calledOnce);
     });
 
-    it('Expect initialize is called when labelresolver is null', async () => {
+    it('Expect initialize is called when labelresolver is null', async function () {
         const testPaths = 'test';
         const rec = new OrchestratorRecognizer(testPaths, testPaths, null);
         OrchestratorRecognizer.orchestrator = null;
@@ -51,7 +51,7 @@ describe('OrchestratorRecognizer tests', function () {
         ok(rec._initializeModel.calledOnce);
     });
 
-    it('Test intent recognition', async () => {
+    it('Test intent recognition', async function () {
         const result = [
             {
                 score: 0.9,
@@ -73,7 +73,7 @@ describe('OrchestratorRecognizer tests', function () {
         strictEqual(res.intents.mockLabel.score, 0.9);
     });
 
-    it('Test entity recognition', async () => {
+    it('Test entity recognition', async function () {
         const result = [
             {
                 score: 0.9,
@@ -121,7 +121,7 @@ describe('OrchestratorRecognizer tests', function () {
         console.log('ENTITIES ' + JSON.stringify(res.entities));
     });
 
-    it('Test ambiguous intent recognition', async () => {
+    it('Test ambiguous intent recognition', async function () {
         const result = [
             {
                 score: 0.9,
@@ -157,9 +157,9 @@ describe('OrchestratorRecognizer tests', function () {
         ok(res.candidates[1].intent, 'mockLabel2');
     });
 
-    describe('telemetry', () => {
-        it('should log PII when logPersonalInformation is true', async () => {
-            // Set up OrchestratorRecognizer
+    describe('telemetry', function () {
+        it('should log PII when logPersonalInformation is true', async function () {
+            // Set up OrchestratorAdaptiveRecognizer
             const result = [
                 {
                     score: 0.9,
@@ -202,8 +202,8 @@ describe('OrchestratorRecognizer tests', function () {
             });
         });
 
-        it('does not log PII when logPersonalInformation is false', async () => {
-            // Set up OrchestratorRecognizer
+        it('does not log PII when logPersonalInformation is false', async function () {
+            // Set up OrchestratorAdaptiveRecognizer
             const result = [
                 {
                     score: 0.9,
@@ -246,8 +246,8 @@ describe('OrchestratorRecognizer tests', function () {
             });
         });
 
-        it('should refrain from logging PII by default', async () => {
-            // Set up OrchestratorRecognizer
+        it('should refrain from logging PII by default', async function () {
+            // Set up OrchestratorAdaptiveRecognizer
             const result = [
                 {
                     score: 0.9,
