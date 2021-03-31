@@ -1,7 +1,7 @@
 
 # ![Bot Framework SDK v4 for JavaScript](./docs/media/BotFrameworkJavaScript_header.png)
 
-This repository contains code for the JavaScript version of the [Microsoft Bot Framework SDK](https://github.com/Microsoft/botframework-sdk), which is part of the Microsoft Bot Framework - a comprehensive framework for building enterprise-grade conversational AI experiences. 
+This repository contains code for the JavaScript version of the [Microsoft Bot Framework SDK](https://github.com/Microsoft/botframework-sdk), which is part of the Microsoft Bot Framework - a comprehensive framework for building enterprise-grade conversational AI experiences.
 
 This SDK enables developers to model conversation and build sophisticated bot applications using JavaScript. SDKs for [.NET](https://github.com/Microsoft/botbuilder-dotnet), [Python](https://github.com/Microsoft/botbuilder-python) and [Java (preview)](https://github.com/Microsoft/botbuilder-java) are also available.
 
@@ -20,7 +20,7 @@ For more information jump to a section below.
 
  | Branch | Description        | Build Status | Coverage Status | Windows Bot Test Status | Linux Bot Test Status |Browser Functional Tests
  |----|---------------|--------------|-----------------|--|--|--|
-|Main | 4.13.* Preview Builds |[![Build status](https://fuselabs.visualstudio.com/SDK_v4/_apis/build/status/JS/BotBuilder-JS-master-daily)](https://fuselabs.visualstudio.com/SDK_v4/_build/latest?definitionId=460)|[![Coverage Status](https://coveralls.io/repos/github/microsoft/botbuilder-js/badge.svg?branch=main)](https://coveralls.io/github/microsoft/botbuilder-js?branch=main)|[![Build Status](https://fuselabs.visualstudio.com/SDK_v4/_apis/build/status/JS/Run-JS-Functional-Tests-Windows?branchName=main)](https://fuselabs.visualstudio.com/SDK_v4/_build/latest?definitionId=548&branchName=main)|[![Build Status](https://fuselabs.visualstudio.com/SDK_v4/_apis/build/status/JS/Run-JS-Functional-Tests-Linux?branchName=main)](https://fuselabs.visualstudio.com/SDK_v4/_build/latest?definitionId=549&branchName=main)|[![Build Status](https://fuselabs.visualstudio.com/SDK_v4/_apis/build/status/SDK_v4-CI?branchName=main)](https://fuselabs.visualstudio.com/SDK_v4/_build/latest?definitionId=731&branchName=main)
+|Main | 4.14.* Preview Builds |[![Build status](https://fuselabs.visualstudio.com/SDK_v4/_apis/build/status/JS/BotBuilder-JS-master-daily)](https://fuselabs.visualstudio.com/SDK_v4/_build/latest?definitionId=460)|[![Coverage Status](https://coveralls.io/repos/github/microsoft/botbuilder-js/badge.svg?branch=main)](https://coveralls.io/github/microsoft/botbuilder-js?branch=main)|[![Build Status](https://fuselabs.visualstudio.com/SDK_v4/_apis/build/status/JS/Run-JS-Functional-Tests-Windows?branchName=main)](https://fuselabs.visualstudio.com/SDK_v4/_build/latest?definitionId=548&branchName=main)|[![Build Status](https://fuselabs.visualstudio.com/SDK_v4/_apis/build/status/JS/Run-JS-Functional-Tests-Linux?branchName=main)](https://fuselabs.visualstudio.com/SDK_v4/_build/latest?definitionId=549&branchName=main)|[![Build Status](https://fuselabs.visualstudio.com/SDK_v4/_apis/build/status/SDK_v4-CI?branchName=main)](https://fuselabs.visualstudio.com/SDK_v4/_build/latest?definitionId=731&branchName=main)
 
 ## Packages
 
@@ -52,7 +52,7 @@ The [Bot Framework Samples](https://github.com/microsoft/botbuilder-samples) inc
 If you want to debug an issue, would like to [contribute](#Contributing-and-our-code-of-conduct), or understand how the Bot Builder SDK works, instructions for building and testing the SDK are below.
 
 ### Prerequisites
-- [Git](https://git-scm.com/downloads) 
+- [Git](https://git-scm.com/downloads)
 - [Node.js](https://nodejs.org/en/)
 - [Yarn 1.x](https://classic.yarnpkg.com/)
 - Your favorite code-editor for example [VS Code](https://code.visualstudio.com/)
@@ -92,7 +92,7 @@ Use the following command to run the unit tests.
 yarn test
 ```
 
-The `prep-test.cmd` command is run to install test keys and start the [Azure Storage Emulator](https://docs.microsoft.com/en-us/azure/storage/common/storage-use-emulator) if its installed. Any unit tests needing test keys or the storage emulator are designed to be skipped if their dependencies are missing so most developers won't need to worry about running this command. 
+The `prep-test.cmd` command is run to install test keys and start the [Azure Storage Emulator](https://docs.microsoft.com/en-us/azure/storage/common/storage-use-emulator) if its installed. Any unit tests needing test keys or the storage emulator are designed to be skipped if their dependencies are missing so most developers won't need to worry about running this command.
 
 If you have a need to re-generate the LUIS or connector clients using the latest swagger you'll need to install `autorest` (requires Node 7.10.0 or higher), which you can do with the following command.
 
@@ -104,12 +104,12 @@ yarn global add global autorest
 Below are the various channels that are available to you for obtaining support and providing feedback. Please pay carful attention to which channel should be used for which type of content. e.g. general "how do I..." questions should be asked on Stack Overflow, Twitter or Gitter, with GitHub issues being for feature requests and bug reports.
 
 ### Github issues
-[Github issues](https://github.com/Microsoft/botbuilder-js/issues) should be used for bugs and feature requests. 
+[Github issues](https://github.com/Microsoft/botbuilder-js/issues) should be used for bugs and feature requests.
 
 ### Stack overflow
 [Stack Overflow](https://stackoverflow.com/questions/tagged/botframework) is a great place for getting high-quality answers. Our support team, as well as many of our community members are already on Stack Overflow providing answers to 'how-to' questions.
 
-### Azure Support 
+### Azure Support
 If you issues relates to [Azure Bot Service](https://azure.microsoft.com/en-gb/services/bot-service/), you can take advantage of the available [Azure support options](https://azure.microsoft.com/en-us/support/options/).
 
 ### Twitter
@@ -121,15 +121,15 @@ The [Gitter Channel](https://gitter.im/Microsoft/BotBuilder) provides a place wh
 ## Contributing and our code of conduct
 We welcome contributions and suggestions. Please see our [contributing guidelines](./Contributing.md) for more information.
 
-This project has adopted the [Microsoft Open Source Code of Conduct](https://opensource.microsoft.com/codeofconduct/). 
+This project has adopted the [Microsoft Open Source Code of Conduct](https://opensource.microsoft.com/codeofconduct/).
 For more information see the [Code of Conduct FAQ](https://opensource.microsoft.com/codeofconduct/faq/) or contact
  [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additional questions or comments.
 
 ## Reporting Security Issues
-Security issues and bugs should be reported privately, via email, to the Microsoft Security Response Center (MSRC) 
+Security issues and bugs should be reported privately, via email, to the Microsoft Security Response Center (MSRC)
 at [secure@microsoft.com](mailto:secure@microsoft.com).  You should receive a response within 24 hours.  If for some
- reason you do not, please follow up via email to ensure we received your original message. Further information, 
- including the [MSRC PGP](https://technet.microsoft.com/en-us/security/dn606155) key, can be found in the 
+ reason you do not, please follow up via email to ensure we received your original message. Further information,
+ including the [MSRC PGP](https://technet.microsoft.com/en-us/security/dn606155) key, can be found in the
 [Security TechCenter](https://technet.microsoft.com/en-us/security/default).
 
 Copyright (c) Microsoft Corporation. All rights reserved.

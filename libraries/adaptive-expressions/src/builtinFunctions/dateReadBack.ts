@@ -34,7 +34,7 @@ export class DateReadBack extends ExpressionEvaluator {
             const dateFormat = 'YYYY-MM-DD';
             let error = InternalFunctionUtils.verifyISOTimestamp(args[0]);
             if (!error) {
-                const timestamp1 = new Date(dayjs(args[0]).format(dateFormat));
+                const timestamp1 = dayjs(args[0]).toDate();
                 error = InternalFunctionUtils.verifyISOTimestamp(args[1]);
                 if (!error) {
                     const timestamp2 = dayjs(args[1]).format(dateFormat);
