@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-import { AuthenticationConfiguration, ClaimsIdentity, SkillValidation } from 'botframework-connector';
+import { ClaimsIdentity, SkillValidation } from 'botframework-connector';
 
 import {
     ActivityEx,

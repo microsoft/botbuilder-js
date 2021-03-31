@@ -184,22 +184,19 @@ function addStorage(services: ServiceCollection, configuration: Configuration): 
 }
 
 function addSkills(services: ServiceCollection, configuration: Configuration): void {
-    const appId = configuration.string(['MicrosoftAppId']);
-    if (!appId) {
-        throw new Error('`MicrosoftAppId` not found in configuration');
-    }
-
-    const appPassword = configuration.string(['MicrosoftAppPassword']);
-    if (!appPassword) {
-        throw new Error('`MicrosoftAppPassword` not found in configuration');
-    }
-
-    services.addInstance('credentialProvider', new SimpleCredentialProvider(appId, appPassword));
-
     services.addFactory(
         'skillConversationIdFactory',
         ['storage'],
         ({ storage }) => new SkillConversationIdFactory(storage)
+    );
+
+    services.addFactory<ICredentialProvider>(
+        'credentialProvider',
+        () =>
+            new SimpleCredentialProvider(
+                configuration.string(['MicrosoftAppId']) ?? '',
+                configuration.string(['MicrosoftAppPassword']) ?? ''
+            )
     );
 
     services.addFactory(
@@ -291,14 +288,7 @@ function addCoreBot(services: ServiceCollection, configuration: Configuration): 
         }
     >('adapter', ['conversationState', 'userState', 'middlewares', 'telemetryMiddleware'], (dependencies) => {
         const appId = configuration.string(['MicrosoftAppId']);
-        if (!appId) {
-            throw new Error('`MicrosoftAppId` not found in configuration');
-        }
-
         const appPassword = configuration.string(['MicrosoftAppPassword']);
-        if (!appPassword) {
-            throw new Error('`MicrosoftAppPassword` not found in configuration');
-        }
 
         const adapter = new CoreBotAdapter(
             { appId, appPassword },
@@ -458,6 +448,7 @@ export async function getRuntimeServices(
 
     const runtimeSettings = configuration.bind(['runtimeSettings']);
 
+    addCredentialProvider(services, configuration);
     addCoreBot(services, configuration);
     addFeatures(services, runtimeSettings.bind(['features']));
     addSkills(services, runtimeSettings.bind(['skills']));
