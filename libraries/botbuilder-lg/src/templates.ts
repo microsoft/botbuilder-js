@@ -357,19 +357,12 @@ export class Templates implements Iterable<Template> {
                 content
             );
 
-            let updatedTemplates = new Templates(
-                [],
-                [],
-                [],
-                [],
-                '',
-                this.id,
-                this.expressionParser,
-                this.importResolver,
-                [],
-                undefined,
-                this.namedReferences
-            );
+            let updatedTemplates = new Templates();
+            updatedTemplates.id = this.id;
+            updatedTemplates.expressionParser = this.expressionParser;
+            updatedTemplates.importResolver = this.importResolver;
+            updatedTemplates.namedReferences = this.namedReferences;
+
             const resource = new LGResource(this.id, this.id, content);
             updatedTemplates = new TemplatesTransformer(updatedTemplates).transform(
                 TemplatesParser.antlrParseTemplates(resource)
@@ -411,19 +404,12 @@ export class Templates implements Iterable<Template> {
 
         // update content
         this.content = `${this.content}${this.newLine}${templateNameLine}${this.newLine}${newTemplateBody}`;
-        let updatedTemplates = new Templates(
-            [],
-            [],
-            [],
-            [],
-            '',
-            this.id,
-            this.expressionParser,
-            this.importResolver,
-            [],
-            undefined,
-            this.namedReferences
-        );
+        let updatedTemplates = new Templates();
+        updatedTemplates.id = this.id;
+        updatedTemplates.expressionParser = this.expressionParser;
+        updatedTemplates.importResolver = this.importResolver;
+        updatedTemplates.namedReferences = this.namedReferences;
+
         const resource = new LGResource(this.id, this.id, content);
         updatedTemplates = new TemplatesTransformer(updatedTemplates).transform(
             TemplatesParser.antlrParseTemplates(resource)
