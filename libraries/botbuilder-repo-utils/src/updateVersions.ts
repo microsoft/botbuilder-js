@@ -21,6 +21,14 @@ export interface PackageVersionOptions {
     preview?: string;
 }
 
+export class PackageVersion {
+    constructor(readonly version: string, readonly metadata: string) {}
+
+    toString(): string {
+        return R.compact([this.version, this.metadata]).join('+');
+    }
+}
+
 /**
  * Computes the final version identifier components for a package.
  *
@@ -33,7 +41,7 @@ export const getPackageVersion = (
     pkg: Partial<Package>,
     newVersion: string,
     options: PackageVersionOptions
-): Record<'version' | 'metadata', string> => {
+): PackageVersion => {
     const prerelease = [];
 
     if (pkg.deprecated) {
@@ -58,10 +66,10 @@ export const getPackageVersion = (
         metadata.push(`date-${options.date}`);
     }
 
-    return {
-        version: R.compact([newVersion, R.compact(prerelease).join('.')]).join('-'),
-        metadata: R.compact(metadata).join('.'),
-    };
+    return new PackageVersion(
+        R.compact([newVersion, R.compact(prerelease).join('.')]).join('-'),
+        R.compact(metadata).join('.')
+    );
 };
 
 export const command = (argv: string[], quiet = false) => async (): Promise<Result> => {
@@ -103,7 +111,7 @@ export const command = (argv: string[], quiet = false) => async (): Promise<Resu
     const workspaces = await collectWorkspacePackages(repoRoot, packageFile.workspaces, { noPrivate: true });
 
     // Build an object mapping a package name to its new, updated version
-    const workspaceVersions = workspaces.reduce<Record<string, ReturnType<typeof getPackageVersion>>>(
+    const workspaceVersions = workspaces.reduce<Record<string, PackageVersion>>(
         (acc, { pkg }) => ({
             ...acc,
             [pkg.name]: getPackageVersion(pkg, newVersion, {
@@ -125,15 +133,13 @@ export const command = (argv: string[], quiet = false) => async (): Promise<Resu
     // Rewrite package.json files by updating version as well as dependencies and devDependencies.
     const results = await Promise.all<Result>(
         workspaces.map(async ({ absPath, pkg }) => {
-            const { version: newVersion, metadata: newMetadata } = workspaceVersions[pkg.name];
+            const newVersion = workspaceVersions[pkg.name];
 
             if (newVersion) {
-                const formattedVersion = R.compact([newVersion, newMetadata]).join('+');
-
                 if (!quiet) {
-                    console.log(`Updating ${pkg.name} to ${formattedVersion}`);
+                    console.log(`Updating ${pkg.name} to ${newVersion}`);
                 }
-                pkg.version = formattedVersion;
+                pkg.version = newVersion.toString();
             }
 
             if (pkg.dependencies) {

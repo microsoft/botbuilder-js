@@ -8,8 +8,8 @@ import assert from 'assert';
 import dayjs from 'dayjs';
 import path from 'path';
 import sinon from 'sinon';
+import { PackageVersion, command, getPackageVersion } from '../src/updateVersions';
 import { Package } from '../src/package';
-import { command, getPackageVersion } from '../src/updateVersions';
 import { isSuccess } from '../src/run';
 
 describe('updateVersions', () => {
@@ -117,7 +117,7 @@ describe('updateVersions', () => {
         testCases.forEach((testCase) => {
             it(testCase.label, () => {
                 const actual = getPackageVersion(testCase.pkg ?? {}, newVersion, testCase.options);
-                assert.strictEqual(actual, testCase.expected);
+                assert.strictEqual(actual.toString(), testCase.expected);
             });
         });
     });
@@ -284,31 +284,39 @@ describe('updateVersions', () => {
             const dateFormat = 'YYYYMM';
             const formattedDate = dayjs().format(dateFormat);
 
-            const expectedVersion = `${packageVersion}-dev.COMMIT+date-${formattedDate}`;
-            const expectedPreviewVersion = `${packageVersion}-preview.dev.COMMIT+date-${formattedDate}`;
-            const expectedDeprecatedVersion = `${packageVersion}-deprecated.dev.COMMIT+date-${formattedDate}`;
+            const expectedVersion = new PackageVersion(`${packageVersion}-dev.COMMIT`, `date-${formattedDate}`);
+
+            const expectedPreviewVersion = new PackageVersion(
+                `${packageVersion}-preview.dev.COMMIT`,
+                `date-${formattedDate}`
+            );
+
+            const expectedDeprecatedVersion = new PackageVersion(
+                `${packageVersion}-deprecated.dev.COMMIT`,
+                `date-${formattedDate}`
+            );
 
             await runAndVerify(
                 [
                     {
                         name: 'a',
                         dependsOn: ['b', 'c'],
-                        expectedVersion,
+                        expectedVersion: expectedVersion.toString(),
                         expectedDependencies: {
-                            b: expectedPreviewVersion,
-                            c: expectedDeprecatedVersion,
+                            b: expectedPreviewVersion.version,
+                            c: expectedDeprecatedVersion.version,
                         },
                     },
                     {
                         name: 'b',
                         preview: true,
-                        expectedVersion: expectedPreviewVersion,
+                        expectedVersion: expectedPreviewVersion.toString(),
                     },
                     {
                         name: 'c',
                         deprecated: true,
                         dependsOn: ['d'],
-                        expectedVersion: expectedDeprecatedVersion,
+                        expectedVersion: expectedDeprecatedVersion.toString(),
                         expectedDependencies: {
                             d: dummyVersion,
                         },
