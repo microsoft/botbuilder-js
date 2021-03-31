@@ -543,7 +543,7 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGTe
                 return new ExpressionEvaluator(
                     realTemplateName,
                     FunctionUtils.apply(
-                        this.evaluateWithTemplates(realTemplateName, this.templates.namedReference[alias])
+                        this.evaluateWithTemplates(realTemplateName, this.templates.namedReferences[alias])
                     ),
                     ReturnType.Object
                 );
@@ -703,6 +703,9 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGTe
                 undefined,
                 undefined,
                 this.templates.expressionParser,
+                undefined,
+                [],
+                undefined,
                 this.templates.namedReferences
             );
             result = newTemplates.evaluateText(stringContent, newScope, this.lgOptions);
@@ -723,6 +726,9 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGTe
             undefined,
             undefined,
             this.templates.expressionParser,
+            undefined,
+            [],
+            undefined,
             this.templates.namedReferences
         );
         return newTemplates.evaluateText(stringContent, newScope, this.lgOptions);

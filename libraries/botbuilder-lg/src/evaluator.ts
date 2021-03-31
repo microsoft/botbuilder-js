@@ -605,7 +605,7 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGTempla
                 return new ExpressionEvaluator(
                     realTemplateName,
                     FunctionUtils.apply(
-                        this.evaluateWithTemplates(realTemplateName, this.templates.namedReference[alias])
+                        this.evaluateWithTemplates(realTemplateName, this.templates.namedReferences[alias])
                     ),
                     ReturnType.Object
                 );
@@ -708,6 +708,9 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGTempla
                 undefined,
                 undefined,
                 this.expressionParser,
+                undefined,
+                [],
+                undefined,
                 this.templates.namedReferences
             );
             result = newTemplates.evaluateText(stringContent, newScope, this.lgOptions);
@@ -728,6 +731,9 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGTempla
             undefined,
             undefined,
             this.expressionParser,
+            undefined,
+            [],
+            undefined,
             this.templates.namedReferences
         );
         return newTemplates.evaluateText(stringContent, newScope, this.lgOptions);
