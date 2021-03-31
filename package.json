@@ -17,7 +17,6 @@
     "clean": "wsrun clean",
     "functional-test": "yarn build && yarn workspace functional-tests test",
     "lint": "wsrun -m -l lint --quiet",
-    "lint:fix": "wsrun -m -l lint:fix --quiet",
     "package": "wsrun -e -t -l --if is-not-private --bin yarn pack",
     "test": "npm-run-all build test:mocha test:runtime test:teams test:runtime test:nyc:report",
     "test:compat": "wsrun -e -m -t test:compat",

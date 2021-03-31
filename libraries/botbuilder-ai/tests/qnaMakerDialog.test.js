@@ -271,7 +271,7 @@ describe('QnAMakerDialog', function () {
             QnACardBuilder.getSuggestionsCard = originalGetSuggestionsCard;
         });
 
-        it('should send heroCard with suggestions', async () => {
+        it('should send heroCard with suggestions', async function () {
             const kbId = 'dummyKbId';
             const endpointKey = 'dummyEndpointKey';
             const convoState = new ConversationState(new MemoryStorage());
@@ -328,7 +328,7 @@ describe('QnAMakerDialog', function () {
                 .startTest();
         });
 
-        it('should use suggestionsActivityFactory', async () => {
+        it('should use suggestionsActivityFactory', async function () {
             const kbId = 'dummyKbId';
             const endpointKey = 'dummyEndpointKey';
             const convoState = new ConversationState(new MemoryStorage());
@@ -365,7 +365,7 @@ describe('QnAMakerDialog', function () {
                 .startTest();
         });
 
-        it('should error if suggestionsActivityFactory is passed in with falsy cardNoMatchText', () => {
+        it('should error if suggestionsActivityFactory is passed in with falsy cardNoMatchText', function () {
             const kbId = 'dummyKbId';
             const endpointKey = 'dummyEndpointKey';
             throws(
@@ -374,7 +374,7 @@ describe('QnAMakerDialog', function () {
             );
         });
 
-        it('should error if suggestionsActivityFactory returns a number', async () => {
+        it('should error if suggestionsActivityFactory returns a number', async function () {
             const kbId = 'dummyKbId';
             const endpointKey = 'dummyEndpointKey';
             const convoState = new ConversationState(new MemoryStorage());
@@ -407,7 +407,7 @@ describe('QnAMakerDialog', function () {
             );
         });
 
-        it('should error if QnACardBuilder.getSuggestionsCard returns void', async () => {
+        it('should error if QnACardBuilder.getSuggestionsCard returns void', async function () {
             const kbId = 'dummyKbId';
             const endpointKey = 'dummyEndpointKey';
             const convoState = new ConversationState(new MemoryStorage());
