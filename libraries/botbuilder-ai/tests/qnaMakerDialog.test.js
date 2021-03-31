@@ -417,7 +417,8 @@ describe('QnAMakerDialog', function () {
             dm.conversationState = convoState;
             const suggestionsCardTitle = 'Card Title';
             const cardNoMatchText = 'Not helpful.';
-            const suggestionsList = TopNAnswersData.answers.flatMap((ans) => [...ans.questions]);
+            const suggestionsList = TopNAnswersData.answers.reduce((list, ans) => list.concat(ans.questions), []);
+            // Remove low scoring answer from QnA Maker result. Low scoring answers are filtered out by ActiveLearningUtils.
             suggestionsList.pop();
             const mock = sandbox
                 .mock(QnACardBuilder)
