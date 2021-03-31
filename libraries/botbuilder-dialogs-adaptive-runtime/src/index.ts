@@ -448,7 +448,6 @@ export async function getRuntimeServices(
 
     const runtimeSettings = configuration.bind(['runtimeSettings']);
 
-    addCredentialProvider(services, configuration);
     addCoreBot(services, configuration);
     addFeatures(services, runtimeSettings.bind(['features']));
     addSkills(services, runtimeSettings.bind(['skills']));
