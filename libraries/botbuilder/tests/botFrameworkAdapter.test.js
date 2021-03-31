@@ -2104,18 +2104,4 @@ describe('BotFrameworkAdapter', () => {
             sandbox.verify();
         });
     });
-
-    describe('healthCheck', () => {
-        it('should run healthCheck on invoke activity with name healthCheck', async () => {
-            const bot = new ActivityHandler();
-            const activity = Object.assign({ name: 'healthCheck' }, incomingInvoke);
-
-            const { response, verify } = await processActivity((context) => bot.run(context), { activity });
-
-            assertResponse(response, StatusCodes.OK, true);
-            verify();
-
-            assert(response.body.healthResults.success);
-        });
-    });
 });

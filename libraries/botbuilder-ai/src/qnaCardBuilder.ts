@@ -13,7 +13,7 @@ import { QnAMakerResult } from './';
  */
 export class QnACardBuilder {
     /**
-     * Returns an activity with a hero card attachment, containing buttons for active learning suggestions.
+     * Returns an [activity](xref:botframework-schema.Activity) with a hero card attachment, containing buttons for active learning suggestions.
      *
      * @param {string[]} suggestionsList List of suggestions to be displayed on hero card.
      * @param {string} cardTitle Title of the hero card.
@@ -53,14 +53,14 @@ export class QnACardBuilder {
             title: cardNoMatchText,
         });
 
-        const promptsCard = CardFactory.heroCard('', undefined, buttonList);
-        const message = MessageFactory.attachment(promptsCard, cardTitle);
+        const promptsCard = CardFactory.heroCard(cardTitle, undefined, buttonList);
+        const message = MessageFactory.attachment(promptsCard);
 
         return message;
     }
 
     /**
-     * Returns an activity with answer text and a hero card attachment, containing buttons for multi turn prompts.
+     * Returns an [activity](xref:botframework-schema.Activity) with answer text and a hero card attachment, containing buttons for multi turn prompts.
      *
      * @param {QnAMakerResult} result QnAMaker result containing the answer text and multi turn prompts to be displayed.
      * @returns {Partial<Activity>} Activity representing the prompts as a card

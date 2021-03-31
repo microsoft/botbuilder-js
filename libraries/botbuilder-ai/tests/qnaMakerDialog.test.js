@@ -1,10 +1,19 @@
-const { QnAMakerDialog, QnAMaker } = require('../lib');
-const { BoolExpression } = require('adaptive-expressions');
-const { Dialog, DialogSet, DialogTurnStatus, DialogManager, ScopePath } = require('botbuilder-dialogs');
-const { ok, strictEqual } = require('assert');
-const { ConversationState, MemoryStorage, TestAdapter } = require('botbuilder-core');
 const fs = require('fs');
 const nock = require('nock');
+const { ok, rejects, strictEqual, throws } = require('assert');
+const { join } = require('path');
+const { BoolExpression } = require('adaptive-expressions');
+const {
+    ActionTypes,
+    ActivityTypes,
+    CardFactory,
+    ConversationState,
+    MemoryStorage,
+    MessageFactory,
+    TestAdapter,
+} = require('botbuilder-core');
+const { Dialog, DialogSet, DialogTurnStatus, DialogManager, ScopePath } = require('botbuilder-dialogs');
+const { QnAMakerDialog, QnAMaker, QnACardBuilder } = require('../lib');
 
 const KB_ID = process.env.QNAKNOWLEDGEBASEID;
 const ENDPOINT_KEY = process.env.QNAENDPOINTKEY;
@@ -240,6 +249,198 @@ describe('QnAMakerDialog', function () {
                 .assertReply('Welcome to the **Smart lightbulb** bot.')
                 .startTest();
             strictEqual(qnaMessageCount, 1);
+        });
+    });
+
+    describe('Active Learning', function () {
+        const testFilesPath = `${__dirname}/TestData/QnAMakerDialog/`;
+        const originalGetSuggestionsCard = QnACardBuilder.getSuggestionsCard;
+        beforeEach(function () {
+            nock.cleanAll();
+            nock(`https://${HOSTNAME}.azurewebsites.net`)
+                .matchHeader('User-Agent', /botbuilder-ai\/4.*/)
+                .post(/qnamaker/)
+                .replyWithFile(200, join(testFilesPath, 'QnaMaker_TopNAnswer.json'))
+                .persist();
+        });
+
+        const TopNAnswersData = JSON.parse(fs.readFileSync(join(testFilesPath, 'QnaMaker_TopNAnswer.json')));
+
+        afterEach(function () {
+            nock.cleanAll();
+            QnACardBuilder.getSuggestionsCard = originalGetSuggestionsCard;
+        });
+
+        it('should send heroCard with suggestions', async () => {
+            const kbId = 'dummyKbId';
+            const endpointKey = 'dummyEndpointKey';
+            const convoState = new ConversationState(new MemoryStorage());
+            const dm = new DialogManager();
+            dm.conversationState = convoState;
+            const activeLearningCardTitle = 'Suggested questions';
+            const cardNoMatchText = 'Not helpful.';
+            const qnaDialog = new QnAMakerDialog(
+                kbId,
+                endpointKey,
+                HOSTNAME,
+                undefined,
+                undefined,
+                activeLearningCardTitle,
+                cardNoMatchText
+            );
+
+            dm.rootDialog = qnaDialog;
+            const adapter = new TestAdapter((turnContext) => {
+                return dm.onTurn(turnContext);
+            });
+
+            await adapter
+                .send('QnaMaker_TopNAnswer.json')
+                .assertReply((reply) => {
+                    strictEqual(reply.type, ActivityTypes.Message);
+                    strictEqual(reply.attachments && reply.attachments.length, 1);
+                    strictEqual(reply.attachments[0].contentType, CardFactory.contentTypes.heroCard);
+
+                    const heroCard = reply.attachments[0].content;
+                    strictEqual(heroCard.title, activeLearningCardTitle);
+                    // Verify the suggestions match the values received from QnA Maker.
+                    strictEqual(heroCard.buttons.length, 4);
+
+                    for (let idx = 0; idx < heroCard.buttons.length; idx++) {
+                        const { title, type, value } = heroCard.buttons[idx];
+
+                        // With TopNAnswer's data, the last suggestion's low score of 50
+                        // means it is not included in suggestions passed to the QnACardBuilder.
+                        // The builder adds the cardNoMatchText button at the end.
+                        if (idx < heroCard.buttons.length - 1) {
+                            const suggestion = TopNAnswersData.answers[idx].questions[0];
+                            strictEqual(title, suggestion);
+                            strictEqual(type, ActionTypes.ImBack);
+                            strictEqual(value, suggestion);
+                        } else {
+                            // Assert cardNoMatchText param passed into constructor was used.
+                            strictEqual(title, cardNoMatchText);
+                            strictEqual(type, ActionTypes.ImBack);
+                            strictEqual(value, cardNoMatchText);
+                        }
+                    }
+                })
+                .startTest();
+        });
+
+        it('should use suggestionsActivityFactory', async () => {
+            const kbId = 'dummyKbId';
+            const endpointKey = 'dummyEndpointKey';
+            const convoState = new ConversationState(new MemoryStorage());
+            const dm = new DialogManager();
+            dm.conversationState = convoState;
+            const cardNoMatchText = 'Not helpful.';
+            const qnaDialog = new QnAMakerDialog(
+                kbId,
+                endpointKey,
+                HOSTNAME,
+                undefined,
+                undefined,
+                (suggestionsList, noMatchingQuestionsText) => {
+                    ok(suggestionsList);
+                    strictEqual(suggestionsList.length, 3);
+                    strictEqual(noMatchingQuestionsText, cardNoMatchText);
+                    return MessageFactory.suggestedActions(suggestionsList, noMatchingQuestionsText);
+                },
+                cardNoMatchText
+            );
+
+            dm.rootDialog = qnaDialog;
+            const adapter = new TestAdapter((turnContext) => {
+                return dm.onTurn(turnContext);
+            });
+
+            await adapter
+                .send('QnaMaker_TopNAnswer.json')
+                .assertReply((reply) => {
+                    strictEqual(reply.type, ActivityTypes.Message);
+                    strictEqual(reply.suggestedActions.actions.length, 3);
+                    strictEqual(reply.text, cardNoMatchText);
+                })
+                .startTest();
+        });
+
+        it('should error if suggestionsActivityFactory is passed in with falsy cardNoMatchText', () => {
+            const kbId = 'dummyKbId';
+            const endpointKey = 'dummyEndpointKey';
+            throws(
+                () => new QnAMakerDialog(kbId, endpointKey, HOSTNAME, undefined, undefined, (_) => {}, undefined),
+                new Error('cardNoMatchText is required when using the suggestionsActivityFactory.')
+            );
+        });
+
+        it('should error if suggestionsActivityFactory returns a number', async () => {
+            const kbId = 'dummyKbId';
+            const endpointKey = 'dummyEndpointKey';
+            const convoState = new ConversationState(new MemoryStorage());
+            const dm = new DialogManager();
+            dm.conversationState = convoState;
+            const cardNoMatchText = 'Not helpful.';
+            const qnaDialog = new QnAMakerDialog(
+                kbId,
+                endpointKey,
+                HOSTNAME,
+                undefined,
+                undefined,
+                (suggestionsList, noMatchingQuestionsText) => {
+                    ok(suggestionsList);
+                    strictEqual(suggestionsList.length, 3);
+                    strictEqual(noMatchingQuestionsText, cardNoMatchText);
+                    return 1;
+                },
+                cardNoMatchText
+            );
+
+            dm.rootDialog = qnaDialog;
+            const adapter = new TestAdapter((turnContext) => {
+                return dm.onTurn(turnContext);
+            });
+
+            await rejects(
+                adapter.send('QnaMaker_TopNAnswer.json').startTest(),
+                (thrown) => thrown.message === '`suggestionsActivity` must be of type "object"'
+            );
+        });
+
+        it('should error if QnACardBuilder.getSuggestionsCard returns void', async () => {
+            const kbId = 'dummyKbId';
+            const endpointKey = 'dummyEndpointKey';
+            const convoState = new ConversationState(new MemoryStorage());
+            const dm = new DialogManager();
+            dm.conversationState = convoState;
+            const suggestionsCardTitle = 'Card Title';
+            const cardNoMatchText = 'Not helpful.';
+            QnACardBuilder.getSuggestionsCard = (suggestionsList, cardTitle, noMatchingQuestionsText) => {
+                ok(suggestionsList);
+                strictEqual(suggestionsList.length, 3);
+                strictEqual(cardTitle, suggestionsCardTitle);
+                strictEqual(noMatchingQuestionsText, cardNoMatchText);
+            };
+
+            const qnaDialog = new QnAMakerDialog(
+                kbId,
+                endpointKey,
+                HOSTNAME,
+                undefined,
+                undefined,
+                suggestionsCardTitle,
+                cardNoMatchText
+            );
+
+            dm.rootDialog = qnaDialog;
+            const adapter = new TestAdapter((turnContext) => {
+                return dm.onTurn(turnContext);
+            });
+
+            await rejects(
+                adapter.send('QnaMaker_TopNAnswer.json').startTest(),
+                (thrown) => thrown.message === '`suggestionsActivity` must be defined'
+            );
         });
     });
 });

@@ -5,14 +5,15 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { PathResolver } from './pathResolvers';
-import { MemoryScope } from './scopes';
-import { DialogContext } from '../dialogContext';
-import { DialogPath } from './dialogPath';
-import { ComponentRegistration } from 'botbuilder-core';
-import { DialogsComponentRegistration } from '../dialogsComponentRegistration';
+
 import { ComponentMemoryScopes, isComponentMemoryScopes } from './componentMemoryScopes';
 import { ComponentPathResolvers, isComponentPathResolvers } from './componentPathResolvers';
+import { ComponentRegistration } from 'botbuilder-core';
+import { DialogContext } from '../dialogContext';
+import { DialogPath } from './dialogPath';
+import { DialogsComponentRegistration } from '../dialogsComponentRegistration';
+import { MemoryScope } from './scopes';
+import { PathResolver } from './pathResolvers';
 
 export interface DialogStateManagerConfiguration {
     /**
@@ -43,6 +44,7 @@ export class DialogStateManager {
 
     /**
      * Initializes a new instance of the [DialogStateManager](xref:botbuilder-dialogs.DialogStateManager) class.
+     *
      * @param dc The dialog context for the current turn of the conversation.
      * @param configuration Configuration for the dialog state manager.
      */
@@ -51,22 +53,31 @@ export class DialogStateManager {
 
         this.dialogContext = dc;
         this.configuration = configuration ?? dc.context.turnState.get(DIALOG_STATE_MANAGER_CONFIGURATION);
+
         if (!this.configuration) {
             this.configuration = { memoryScopes: [], pathResolvers: [] };
 
             // get all of the component memory scopes.
-            ComponentRegistration.components.filter((component: ComponentRegistration) =>
-                isComponentMemoryScopes(component)
-            ).forEach((component: ComponentMemoryScopes) => {
-                this.configuration.memoryScopes.push(...component.getMemoryScopes());
-            })
+            ComponentRegistration.components
+                .filter((component: ComponentRegistration) => isComponentMemoryScopes(component))
+                .forEach((component: ComponentMemoryScopes) => {
+                    this.configuration.memoryScopes.push(...component.getMemoryScopes());
+                });
+
+            // merge in turn state memory scopes
+            const memoryScopes = dc.context.turnState.get<MemoryScope[]>('memoryScopes') ?? [];
+            this.configuration.memoryScopes.push(...memoryScopes);
 
             // get all of the component path resolvers.
-            ComponentRegistration.components.filter((component: ComponentRegistration) =>
-                isComponentPathResolvers(component)
-            ).forEach((component: ComponentPathResolvers) => {
-                this.configuration.pathResolvers.push(...component.getPathResolvers());
-            });
+            ComponentRegistration.components
+                .filter((component: ComponentRegistration) => isComponentPathResolvers(component))
+                .forEach((component: ComponentPathResolvers) => {
+                    this.configuration.pathResolvers.push(...component.getPathResolvers());
+                });
+
+            // merge in turn state ones path resolvers
+            const pathResolvers = dc.context.turnState.get<PathResolver[]>('pathResolvers') ?? [];
+            this.configuration.pathResolvers.push(...pathResolvers);
 
             // cache for any other new dialogStateManager instances in this turn
             dc.context.turnState.set(DIALOG_STATE_MANAGER_CONFIGURATION, this.configuration);

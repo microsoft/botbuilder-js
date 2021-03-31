@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 
-export * from './adaptiveTestComponentRegistration';
+export * from './adaptiveTestBotComponent';
 export * from './actions';
 export * from './mocks';
 export * from './testScript';

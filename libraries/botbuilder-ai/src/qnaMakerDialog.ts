@@ -36,6 +36,7 @@ import {
     TurnPath,
     WaterfallStepContext,
 } from 'botbuilder-dialogs';
+import { assert, Test, tests } from 'botbuilder-stdlib';
 import { QnAMaker, QnAMakerResult } from './';
 import { QnACardBuilder } from './qnaCardBuilder';
 import { QnAMakerClient, QnAMakerClientKey } from './qnaMaker';
@@ -112,6 +113,20 @@ export interface QnAMakerDialogConfiguration extends DialogConfiguration {
     isTest?: boolean;
     rankerType?: RankerTypes | string | Expression | EnumExpression<RankerTypes>;
 }
+
+/**
+ * Returns an activity with active learning suggestions.
+ *
+ * Important: The activity returned should relay the noMatchesText as an option to the end user.
+ *
+ * @param suggestionsList List of suggestions.
+ * @param noMatchesText If this text is received by the bot during a prompt.
+ */
+export type QnASuggestionsActivityFactory = (suggestionsList: string[], noMatchesText: string) => Partial<Activity>;
+
+const isSuggestionsFactory: Test<QnASuggestionsActivityFactory> = (val): val is QnASuggestionsActivityFactory => {
+    return tests.isFunc(val);
+};
 
 /**
  * A dialog that supports multi-step and adaptive-learning QnA Maker services.
@@ -211,12 +226,16 @@ export class QnAMakerDialog extends WaterfallDialog implements QnAMakerDialogCon
 
     /**
      * Gets or sets the card title to use when showing active learning options to the user.
+     *
+     * _Note: If suggestionsActivityFactory is passed in, this member is unused._
      */
     public activeLearningCardTitle: StringExpression;
 
     /**
      * Gets or sets the button text to use with active learning options, allowing a user to
      * indicate non of the options are applicable.
+     *
+     * _Note: If suggestionsActivityFactory is passed in, this member is required._
      */
     public cardNoMatchText: StringExpression;
 
@@ -238,7 +257,7 @@ export class QnAMakerDialog extends WaterfallDialog implements QnAMakerDialogCon
      * Gets or sets the flag to determine if personal information should be logged in telemetry.
      *
      * @summary
-     * Defauls to a value of `=settings.telemetry.logPersonalInformation`, which retrieves
+     * Defaults to a value of `=settings.telemetry.logPersonalInformation`, which retrieves
      * `logPersonalInformation` flag from settings.
      */
     public logPersonalInformation = new BoolExpression('=settings.telemetry.logPersonalInformation');
@@ -252,6 +271,9 @@ export class QnAMakerDialog extends WaterfallDialog implements QnAMakerDialogCon
      * Gets or sets the QnA Maker ranker type to use.
      */
     public rankerType: EnumExpression<RankerTypes> = new EnumExpression(RankerTypes.default);
+
+    // TODO: Add Expressions support
+    private suggestionsActivityFactory?: QnASuggestionsActivityFactory;
 
     /**
      * Initializes a new instance of the [QnAMakerDialog](xref:QnAMakerDialog) class.
@@ -280,10 +302,62 @@ export class QnAMakerDialog extends WaterfallDialog implements QnAMakerDialogCon
         top?: number,
         cardNoMatchResponse?: Activity,
         strictFilters?: QnAMakerMetadata[],
+        dialogId?: string,
+        strictFiltersJoinOperator?: JoinOperator
+    );
+
+    /**
+     * Initializes a new instance of the [QnAMakerDialog](xref:QnAMakerDialog) class.
+     *
+     * @param {string} knowledgeBaseId The ID of the QnA Maker knowledge base to query.
+     * @param {string} endpointKey The QnA Maker endpoint key to use to query the knowledge base.
+     * @param {string} hostname The QnA Maker host URL for the knowledge base, starting with "https://" and ending with "/qnamaker".
+     * @param {string} noAnswer (Optional) The activity to send the user when QnA Maker does not find an answer.
+     * @param {number} threshold (Optional) The threshold above which to treat answers found from the knowledgebase as a match.
+     * @param {Function} suggestionsActivityFactory [QnASuggestionsActivityFactory](xref:botbuilder-ai.QnASuggestionsActivityFactory) used for custom Activity formatting.
+     * @param {string} cardNoMatchText The text to use with the active learning options, allowing a user to indicate none of the options are applicable.
+     * @param {number} top (Optional) Maximum number of answers to return from the knowledge base.
+     * @param {Activity} cardNoMatchResponse (Optional) The activity to send the user if they select the no match option on an active learning card.
+     * @param {QnAMakerMetadata[]} strictFilters (Optional) QnA Maker metadata with which to filter or boost queries to the knowledge base; or null to apply none.
+     * @param {string} dialogId (Optional) Id of the created dialog. Default is 'QnAMakerDialog'.
+     * @param {string} strictFiltersJoinOperator join operator for strict filters
+     */
+    public constructor(
+        knowledgeBaseId?: string,
+        endpointKey?: string,
+        hostname?: string,
+        noAnswer?: Activity,
+        threshold?: number,
+        suggestionsActivityFactory?: QnASuggestionsActivityFactory,
+        cardNoMatchText?: string,
+        top?: number,
+        cardNoMatchResponse?: Activity,
+        strictFilters?: QnAMakerMetadata[],
+        dialogId?: string,
+        strictFiltersJoinOperator?: JoinOperator
+    );
+
+    /**
+     * @internal
+     */
+    constructor(
+        knowledgeBaseId?: string,
+        endpointKey?: string,
+        hostname?: string,
+        noAnswer?: Activity,
+        threshold?: number,
+        activeLearningTitleOrFactory?: string | QnASuggestionsActivityFactory,
+        cardNoMatchText?: string,
+        top?: number,
+        cardNoMatchResponse?: Activity,
+        strictFilters?: QnAMakerMetadata[],
         dialogId = 'QnAMakerDialog',
+        // TODO: Should member exist in QnAMakerDialogConfiguration?
+        //       And be of type `string | JoinOperator | Expression | EnumExpression<JoinOperator>`?
         private strictFiltersJoinOperator?: JoinOperator
     ) {
         super(dialogId);
+
         if (knowledgeBaseId) {
             this.knowledgeBaseId = new StringExpression(knowledgeBaseId);
         }
@@ -299,9 +373,18 @@ export class QnAMakerDialog extends WaterfallDialog implements QnAMakerDialogCon
         if (top) {
             this.top = new IntExpression(top);
         }
-        if (activeLearningCardTitle) {
-            this.activeLearningCardTitle = new StringExpression(this.defaultCardTitle);
+        if (isSuggestionsFactory(activeLearningTitleOrFactory)) {
+            if (!cardNoMatchText) {
+                // Without a developer-provided cardNoMatchText, the end user will not be able to tell the convey to the bot and QnA Maker that the suggested alternative questions were not correct.
+                // When the user's reply to a suggested alternatives Activity matches the cardNoMatchText, the QnAMakerDialog sends this information to the QnA Maker service for active learning.
+                throw new Error('cardNoMatchText is required when using the suggestionsActivityFactory.');
+            }
+
+            this.suggestionsActivityFactory = activeLearningTitleOrFactory;
+        } else {
+            this.activeLearningCardTitle = new StringExpression(activeLearningTitleOrFactory ?? this.defaultCardTitle);
         }
+
         if (cardNoMatchText) {
             this.cardNoMatchText = new StringExpression(cardNoMatchText);
         }
@@ -415,7 +498,12 @@ export class QnAMakerDialog extends WaterfallDialog implements QnAMakerDialogCon
      * @returns {Promise<boolean>} Whether the event is handled by the current dialog and further processing should stop.
      */
     protected async onPreBubbleEvent(dc: DialogContext, e: DialogEvent): Promise<boolean> {
-        if (dc.context?.activity?.type === ActivityTypes.Message) {
+        // When the DialogEvent.name is 'error', it's possible to end in a loop where events
+        // keep firing if the error is encountered while trying to call QnA Maker.
+        // If an error is encountered, forward it to this dialog's parent.
+        if (e.name === 'error') {
+            return this.onPostBubbleEvent(dc, e);
+        } else if (dc.context?.activity?.type === ActivityTypes.Message) {
             // decide whether we want to allow interruption or not.
             // if we don't get a response from QnA which signifies we expect it,
             // then we allow interruption.
@@ -455,7 +543,7 @@ export class QnAMakerDialog extends WaterfallDialog implements QnAMakerDialogCon
      * @returns {Promise<QnAMakerClient>} A promise of QnA Maker instance.
      */
     protected async getQnAMakerClient(dc: DialogContext): Promise<QnAMakerClient> {
-        const qnaClient = dc.context?.turnState?.get(QnAMakerClientKey);
+        const qnaClient = dc.context?.turnState?.get<QnAMakerClient>(QnAMakerClientKey);
         if (qnaClient) {
             return qnaClient;
         }
@@ -578,7 +666,7 @@ export class QnAMakerDialog extends WaterfallDialog implements QnAMakerDialogCon
         let previousQnAId = step.activeDialog.state[this.previousQnAId] || 0;
 
         if (previousQnAId > 0) {
-            dialogOptions.qnaMakerOptions.context = { previousQnAId: previousQnAId, previousUserQuery: '' };
+            dialogOptions.qnaMakerOptions.context = { previousQnAId, previousUserQuery: '' };
 
             if (previousContextData[step.context.activity.text]) {
                 dialogOptions.qnaMakerOptions.qnaId = previousContextData[step.context.activity.text];
@@ -607,17 +695,20 @@ export class QnAMakerDialog extends WaterfallDialog implements QnAMakerDialogCon
             qnaResponse.answers = qna.getLowScoreVariation(qnaResponse.answers);
 
             if (isActiveLearningEnabled && qnaResponse.answers?.length > 1) {
-                const suggestedQuestions: string[] = [];
+                const suggestedQuestions = qnaResponse.answers.map((answer) => answer.questions[0]);
 
-                qnaResponse.answers.forEach((answer) => {
-                    suggestedQuestions.push(answer.questions[0]);
-                });
+                const message =
+                    this.suggestionsActivityFactory?.(
+                        suggestedQuestions,
+                        dialogOptions.qnaDialogResponseOptions.cardNoMatchText
+                    ) ??
+                    QnACardBuilder.getSuggestionsCard(
+                        suggestedQuestions,
+                        dialogOptions.qnaDialogResponseOptions.activeLearningCardTitle,
+                        dialogOptions.qnaDialogResponseOptions.cardNoMatchText
+                    );
 
-                const message = QnACardBuilder.getSuggestionsCard(
-                    suggestedQuestions,
-                    dialogOptions.qnaDialogResponseOptions.activeLearningCardTitle,
-                    dialogOptions.qnaDialogResponseOptions.cardNoMatchText
-                );
+                assert.object(message, ['suggestionsActivity']);
                 await step.context.sendActivity(message);
 
                 step.activeDialog.state[this.options] = dialogOptions;

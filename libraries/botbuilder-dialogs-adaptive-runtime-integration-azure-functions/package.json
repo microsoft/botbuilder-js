@@ -1,0 +1,38 @@
+{
+  "name": "botbuilder-dialogs-adaptive-runtime-integration-azure-functions",
+  "preview": true,
+  "author": "Microsoft Corp.",
+  "version": "4.1.6",
+  "license": "MIT",
+  "description": "Bot Framework Adaptive Dialogs Azure Functions integration",
+  "keywords": [
+    "botbuilder",
+    "botframework",
+    "bots",
+    "chatbots"
+  ],
+  "bugs": {
+    "url": "https://github.com/Microsoft/botbuilder-js/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Microsoft/botbuilder-js.git"
+  },
+  "main": "lib/index.js",
+  "types": "./lib/index.d.ts",
+  "dependencies": {
+    "@azure/functions": "^1.2.3",
+    "botbuilder": "4.1.6",
+    "botbuilder-dialogs-adaptive-runtime": "4.1.6",
+    "botbuilder-dialogs-adaptive-runtime-core": "4.1.6"
+  },
+  "scripts": {
+    "build": "tsc -b",
+    "clean": "rimraf _ts3.4 lib tsconfig.tsbuildinfo",
+    "lint": "eslint . --ext .js,.ts"
+  },
+  "files": [
+    "lib",
+    "src"
+  ]
+}

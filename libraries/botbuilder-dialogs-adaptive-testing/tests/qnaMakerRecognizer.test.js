@@ -1,23 +1,15 @@
-const path = require('path');
 const nock = require('nock');
-const { ComponentRegistration } = require('botbuilder-core');
-const { QnAMakerComponentRegistration } = require('botbuilder-ai');
-const { AdaptiveComponentRegistration } = require('botbuilder-dialogs-adaptive');
-const { ResourceExplorer } = require('botbuilder-dialogs-declarative');
-const { AdaptiveTestComponentRegistration, TestUtils } = require('../lib');
+const path = require('path');
+const { QnAMakerBotComponent } = require('botbuilder-ai');
+const { TestUtils } = require('../lib');
+const { makeResourceExplorer } = require('./utils');
 
 describe('QnAMakerRecognizerTests', function () {
-    this.timeout(5000);
+    let resourceExplorer;
+    before(function () {
+        resourceExplorer = makeResourceExplorer('QnAMakerRecognizerTests', QnAMakerBotComponent);
+    });
 
-    ComponentRegistration.add(new AdaptiveComponentRegistration());
-    ComponentRegistration.add(new AdaptiveTestComponentRegistration());
-    ComponentRegistration.add(new QnAMakerComponentRegistration());
-
-    const resourceExplorer = new ResourceExplorer().addFolder(
-        path.join(__dirname, 'resources/QnAMakerRecognizerTests'),
-        true,
-        false
-    );
     const hostname = 'https://dummy-hostname.azurewebsites.net';
 
     it('returns answer', async () => {

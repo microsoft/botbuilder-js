@@ -6,25 +6,32 @@
  * Licensed under the MIT License.
  */
 
+import { ComponentDeclarativeTypes } from 'botbuilder-dialogs-declarative';
 import { ComponentRegistration } from 'botbuilder-core';
-import { LuisAdaptiveRecognizer } from './luisAdaptiveRecognizer';
+import { LuisBotComponent } from './luisBotComponent';
+import { ServiceCollection, noOpConfiguration } from 'botbuilder-dialogs-adaptive-runtime-core';
 
 /**
  * Define component assets for Luis.
  */
 export class LuisComponentRegistration extends ComponentRegistration {
+    private readonly services = new ServiceCollection({
+        declarativeTypes: [],
+    });
+
+    constructor() {
+        super();
+
+        new LuisBotComponent().configureServices(this.services, noOpConfiguration);
+    }
+
     /**
      * Get declarative types for LUIS component registration.
      *
-     * @param {any} _resourceExplorer resource explorer
-     * @returns {ComponentRegistration[]} component registrations
+     * @param _resourceExplorer resource explorer
+     * @returns component registrations
      */
-    public getDeclarativeTypes(_resourceExplorer: unknown): ComponentRegistration[] {
-        return [
-            {
-                kind: LuisAdaptiveRecognizer.$kind,
-                type: LuisAdaptiveRecognizer,
-            },
-        ];
+    public getDeclarativeTypes(_resourceExplorer: unknown): ComponentDeclarativeTypes[] {
+        return this.services.mustMakeInstance<ComponentDeclarativeTypes[]>('declarativeTypes');
     }
 }

@@ -32,6 +32,7 @@
     "@microsoft/recognizers-text-number": "1.1.4",
     "@microsoft/recognizers-text-suite": "1.1.4",
     "botbuilder-core": "4.1.6",
+    "botbuilder-dialogs-adaptive-runtime-core": "4.1.6",
     "botbuilder-stdlib": "4.1.6",
     "botframework-connector": "4.1.6",
     "globalize": "^1.4.2",
@@ -49,7 +50,8 @@
     "clean": "rimraf _ts3.4 lib tsconfig.tsbuildinfo",
     "lint": "eslint . --ext .js,.ts",
     "postbuild": "downlevel-dts lib _ts3.4/lib --checksum",
-    "test": "yarn build && nyc mocha tests/",
+    "test": "npm-run-all build test:mocha",
+    "test:mocha": "nyc mocha tests",
     "test:compat": "api-extractor run --verbose"
   },
   "files": [

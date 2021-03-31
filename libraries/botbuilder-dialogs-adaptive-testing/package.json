@@ -28,6 +28,7 @@
     "botbuilder-dialogs": "4.1.6",
     "botbuilder-dialogs-adaptive": "4.1.6",
     "botbuilder-dialogs-declarative": "4.1.6",
+    "botbuilder-dialogs-adaptive-runtime-core": "4.1.6",
     "murmurhash-js": "^1.0.0",
     "nock": "^11.9.1",
     "url-parse": "^1.5.1"

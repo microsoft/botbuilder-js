@@ -1,5 +1,11 @@
 const assert = require('assert');
 const path = require('path');
+const { ResourceExplorer } = require('../lib');
+const { DialogManager } = require('botbuilder-dialogs');
+const { QnACardBuilder, RankerTypes, QnAMakerClientKey, QnAMakerBotComponent } = require('botbuilder-ai');
+const { ServiceCollection, noOpConfiguration } = require('botbuilder-dialogs-adaptive-runtime-core');
+const { StringExpression } = require('adaptive-expressions');
+
 const {
     TestFlow,
     MemoryStorage,
@@ -9,11 +15,12 @@ const {
     useBotState,
     ActivityTypes,
 } = require('botbuilder-core');
-const { DialogManager } = require('botbuilder-dialogs');
-const { ResourceExtensions, LanguageGeneratorExtensions } = require('../../botbuilder-dialogs-adaptive/lib');
-const { QnACardBuilder, RankerTypes, QnAMakerClientKey } = require('../../botbuilder-ai/lib');
-const { ResourceExplorer } = require('../lib');
-const { StringExpression } = require('adaptive-expressions');
+
+const {
+    AdaptiveBotComponent,
+    ResourceExtensions,
+    LanguageGeneratorExtensions,
+} = require('botbuilder-dialogs-adaptive');
 
 class MockQnAMakerClient {
     getAnswers(_turnContext, _options, _telemetryProperties, _telemetryMetrics) {
@@ -81,8 +88,6 @@ class MockQnAMakerClient {
     }
 }
 
-const resourceExplorer = new ResourceExplorer().addFolder(path.join(__dirname, 'resources/JsonDialog'), true, false);
-
 const initializeAdapter = (testName, sendTrace = false) => {
     const storage = new MemoryStorage();
     const convoState = new ConversationState(storage);
@@ -92,7 +97,7 @@ const initializeAdapter = (testName, sendTrace = false) => {
     return adapter;
 };
 
-const getTestFlow = (dialog, adapter) => {
+const getTestFlow = (resourceExplorer, dialog, adapter) => {
     const dm = new DialogManager(dialog);
     ResourceExtensions.useResourceExplorer(dm, resourceExplorer);
     LanguageGeneratorExtensions.useLanguageGeneration(dm);
@@ -104,37 +109,53 @@ const getTestFlow = (dialog, adapter) => {
     });
 };
 
-const buildTestFlow = (resourceName, testName, sendTrace = false) => {
+const buildTestFlow = (resourceExplorer, resourceName, testName, sendTrace = false) => {
     const adapter = initializeAdapter(testName, sendTrace);
     const dialog = resourceExplorer.loadType(resourceName);
-    return getTestFlow(dialog, adapter);
+    return getTestFlow(resourceExplorer, dialog, adapter);
 };
 
-const buildQnAMakerTestFlow = (testName) => {
+const buildQnAMakerTestFlow = (resourceExplorer, testName) => {
     const adapter = initializeAdapter(testName);
     const dialog = resourceExplorer.loadType('QnAMakerBot.main.dialog');
-    return getTestFlow(dialog, adapter);
+    return getTestFlow(resourceExplorer, dialog, adapter);
 };
 
-const buildQnAMakerTestFlowIsTest = (testName) => {
+const buildQnAMakerTestFlowIsTest = (resourceExplorer, testName) => {
     const adapter = initializeAdapter(testName);
     const dialog = resourceExplorer.loadType('QnAMakerBot.main.dialog');
     dialog.triggers[0].actions[0].isTest = true;
-    return getTestFlow(dialog, adapter);
+    return getTestFlow(resourceExplorer, dialog, adapter);
 };
 
-const buildQnAMakerTestFlowRankerTypeQuestionOnly = (testName) => {
+const buildQnAMakerTestFlowRankerTypeQuestionOnly = (resourceExplorer, testName) => {
     const adapter = initializeAdapter(testName);
     const dialog = resourceExplorer.loadType('QnAMakerBot.main.dialog');
     dialog.triggers[0].actions[0].rankerType = new StringExpression(RankerTypes.questionOnly);
-    return getTestFlow(dialog, adapter);
+    return getTestFlow(resourceExplorer, dialog, adapter);
 };
 
 describe('Json load tests', function () {
-    this.timeout(5000);
+    let resourceExplorer;
+    beforeEach(function () {
+        const services = new ServiceCollection({
+            declarativeTypes: [],
+        });
+
+        new AdaptiveBotComponent().configureServices(services, noOpConfiguration);
+        new QnAMakerBotComponent().configureServices(services, noOpConfiguration);
+
+        const declarativeTypes = services.mustMakeInstance('declarativeTypes');
+
+        resourceExplorer = new ResourceExplorer({ declarativeTypes }).addFolder(
+            path.join(__dirname, 'resources/JsonDialog'),
+            true,
+            false
+        );
+    });
 
     it('DoubleReference', async () => {
-        await buildTestFlow('DoubleReference.dialog', this.fullTitle())
+        await buildTestFlow(resourceExplorer, 'DoubleReference.dialog', this.fullTitle())
             .sendConversationUpdate()
             .assertReply('what is your name?')
             .send('c')
@@ -143,7 +164,7 @@ describe('Json load tests', function () {
     });
 
     it('CycleDetection', async () => {
-        await buildTestFlow('Root.dialog', this.fullTitle())
+        await buildTestFlow(resourceExplorer, 'Root.dialog', this.fullTitle())
             .sendConversationUpdate()
             .assertReply('Hello')
             .send('Hello what?')
@@ -162,7 +183,7 @@ describe('Json load tests', function () {
     });
 
     it('Actions', async () => {
-        await buildTestFlow('Actions.main.dialog', this.fullTitle())
+        await buildTestFlow(resourceExplorer, 'Actions.main.dialog', this.fullTitle())
             .sendConversationUpdate()
             .assertReply('Action 1')
             .assertReply('Action 2')
@@ -171,7 +192,7 @@ describe('Json load tests', function () {
     });
 
     it('EndTurn', async () => {
-        await buildTestFlow('EndTurn.main.dialog', this.fullTitle())
+        await buildTestFlow(resourceExplorer, 'EndTurn.main.dialog', this.fullTitle())
             .send('hello')
             .assertReply("What's up?")
             .send('Nothing')
@@ -180,7 +201,7 @@ describe('Json load tests', function () {
     });
 
     it('IfProerty', async () => {
-        await buildTestFlow('IfCondition.main.dialog', this.fullTitle())
+        await buildTestFlow(resourceExplorer, 'IfCondition.main.dialog', this.fullTitle())
             .sendConversationUpdate()
             .assertReply("Hello, I'm Zoidberg. What is your name?")
             .send('Carlos')
@@ -189,14 +210,14 @@ describe('Json load tests', function () {
     });
 
     it('SwitchCondition', async () => {
-        await buildTestFlow('SwitchCondition.main.dialog', this.fullTitle())
+        await buildTestFlow(resourceExplorer, 'SwitchCondition.main.dialog', this.fullTitle())
             .send('Hi')
             .assertReply('Age is 22!')
             .startTest();
     });
 
     it('TextInputWithoutProperty', async () => {
-        await buildTestFlow('TextInput.WithoutProperty.main.dialog', this.fullTitle())
+        await buildTestFlow(resourceExplorer, 'TextInput.WithoutProperty.main.dialog', this.fullTitle())
             .sendConversationUpdate()
             .assertReply("Hello, I'm Zoidberg. What is your name?")
             .send('Carlos')
@@ -205,7 +226,7 @@ describe('Json load tests', function () {
     });
 
     it('TextInput', async () => {
-        await buildTestFlow('TextInput.main.dialog', this.fullTitle())
+        await buildTestFlow(resourceExplorer, 'TextInput.main.dialog', this.fullTitle())
             .sendConversationUpdate()
             .assertReply("Hello, I'm Zoidberg. What is your name?")
             .send('Cancel')
@@ -220,7 +241,7 @@ describe('Json load tests', function () {
     });
 
     it('NumberInput', async () => {
-        await buildTestFlow('NumberInput.main.dialog', this.fullTitle())
+        await buildTestFlow(resourceExplorer, 'NumberInput.main.dialog', this.fullTitle())
             .sendConversationUpdate()
             .assertReply('What is your age?')
             .send('Blablabla')
@@ -234,7 +255,7 @@ describe('Json load tests', function () {
     });
 
     it('RepeatDialog', async () => {
-        await buildTestFlow('RepeatDialog.main.dialog', this.fullTitle())
+        await buildTestFlow(resourceExplorer, 'RepeatDialog.main.dialog', this.fullTitle())
             .sendConversationUpdate()
             .assertReply('RepeatDialog.main.dialog starting')
             .assertReply('Hello, what is your name?')
@@ -247,7 +268,7 @@ describe('Json load tests', function () {
     });
 
     it('TraceAndLog', async () => {
-        await buildTestFlow('TraceAndLog.main.dialog', this.fullTitle(), true)
+        await buildTestFlow(resourceExplorer, 'TraceAndLog.main.dialog', this.fullTitle(), true)
             .sendConversationUpdate()
             .assertReply('Hello, what is your name?')
             .send('Carlos')
@@ -264,7 +285,7 @@ describe('Json load tests', function () {
     });
 
     it('DoActions', async () => {
-        await buildTestFlow('DoActions.main.dialog', this.fullTitle())
+        await buildTestFlow(resourceExplorer, 'DoActions.main.dialog', this.fullTitle())
             .send({ type: ActivityTypes.ConversationUpdate, membersAdded: [{ id: 'bot', name: 'Bot' }] })
             .sendConversationUpdate()
             .assertReply("Hello, I'm Zoidberg. What is your name?")
@@ -283,7 +304,7 @@ describe('Json load tests', function () {
     });
 
     it('BeginDialog', async () => {
-        await buildTestFlow('BeginDialog.main.dialog', this.fullTitle())
+        await buildTestFlow(resourceExplorer, 'BeginDialog.main.dialog', this.fullTitle())
             .send({ type: ActivityTypes.ConversationUpdate, membersAdded: [{ id: 'bot', name: 'Bot' }] })
             .sendConversationUpdate()
             .assertReply("Hello, I'm Zoidberg. What is your name?")
@@ -302,7 +323,7 @@ describe('Json load tests', function () {
     });
 
     it('ChoiceInput', async () => {
-        await buildTestFlow('ChoiceInput.main.dialog', this.fullTitle())
+        await buildTestFlow(resourceExplorer, 'ChoiceInput.main.dialog', this.fullTitle())
             .sendConversationUpdate()
             .assertReply('Please select a value from below:\n\n   1. Test1\n   2. Test2\n   3. Test3')
             .send('Test1')
@@ -311,7 +332,7 @@ describe('Json load tests', function () {
     });
 
     it('ExternalLanguage', async () => {
-        await buildTestFlow('ExternalLanguage.main.dialog', this.fullTitle())
+        await buildTestFlow(resourceExplorer, 'ExternalLanguage.main.dialog', this.fullTitle())
             .sendConversationUpdate()
             .assertReplyOneOf([
                 'Zoidberg here, welcome to my world!',
@@ -334,7 +355,7 @@ describe('Json load tests', function () {
     });
 
     it('ToDoBot', async () => {
-        await buildTestFlow('ToDoBot.main.dialog', this.fullTitle())
+        await buildTestFlow(resourceExplorer, 'ToDoBot.main.dialog', this.fullTitle())
             .send({ type: ActivityTypes.ConversationUpdate, membersAdded: [{ id: 'bot', name: 'Bot' }] })
             .sendConversationUpdate()
             .assertReply('Hi! I\'m a ToDo bot. Say "add a todo named first" to get started.')
@@ -366,7 +387,7 @@ describe('Json load tests', function () {
     });
 
     it('HttpRequest', async () => {
-        await buildTestFlow('HttpRequest.main.dialog', this.fullTitle())
+        await buildTestFlow(resourceExplorer, 'HttpRequest.main.dialog', this.fullTitle())
             .send({ type: ActivityTypes.ConversationUpdate, membersAdded: [{ id: 'bot', name: 'Bot' }] })
             .assertReply('Welcome! Here is a http request sample, please enter a name for you visual pet.')
             .send('TestPetName')
@@ -387,7 +408,7 @@ describe('Json load tests', function () {
             'Did you mean:',
             'None of the above.'
         );
-        await buildQnAMakerTestFlow(this.fullTitle())
+        await buildQnAMakerTestFlow(resourceExplorer, this.fullTitle())
             .send('Q11')
             .assertReply((reply, _description) => {
                 assert(reply.attachments);
@@ -406,7 +427,7 @@ describe('Json load tests', function () {
             'None of the above.'
         );
         const noAnswerActivity = 'Answers not found in kb.';
-        await buildQnAMakerTestFlow(this.fullTitle())
+        await buildQnAMakerTestFlow(resourceExplorer, this.fullTitle())
             .send('Q11')
             .assertReply((reply, _description) => {
                 assert(reply.attachments);
@@ -424,7 +445,7 @@ describe('Json load tests', function () {
             'Did you mean:',
             'None of the above.'
         );
-        await buildQnAMakerTestFlow(this.fullTitle())
+        await buildQnAMakerTestFlow(resourceExplorer, this.fullTitle())
             .send('Q11')
             .assertReply((reply, _description) => {
                 assert(reply.attachments);
@@ -436,14 +457,14 @@ describe('Json load tests', function () {
     });
 
     it('QnAMakerDialog_isTest', async () => {
-        await buildQnAMakerTestFlowIsTest(this.fullTitle())
+        await buildQnAMakerTestFlowIsTest(resourceExplorer, this.fullTitle())
             .send('Surface book 2 price')
             .assertReply('Surface book 2 price is $1400.')
             .startTest();
     });
 
     it('QnAMakerDialog_RankerType_QuestionOnly', async () => {
-        await buildQnAMakerTestFlowRankerTypeQuestionOnly(this.fullTitle())
+        await buildQnAMakerTestFlowRankerTypeQuestionOnly(resourceExplorer, this.fullTitle())
             .send('What ranker do you want to use?')
             .assertReply('We are using QuestionOnly ranker.')
             .startTest();
