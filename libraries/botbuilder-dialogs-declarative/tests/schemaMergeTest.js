@@ -3,32 +3,21 @@ const path = require('path');
 const assert = require('assert');
 const fs = require('fs');
 const Validator = require('jsonschema').Validator;
+const util = require('util');
 // eslint-disable-next-line security/detect-child-process
-const { exec } = require('child_process');
+const exec = util.promisify(require('child_process').exec);
 
 // Note: This file is intentionally not named *.test.js to ensure it isn't run
 // via `yarn run test` or `npm run test`.
 
-const maybeIt = process.env.FORCE_SCHEMA_MERGE || process.platform === 'win32' ? it : it.skip;
-
 async function runCommand(command) {
-    return new Promise((resolve, reject) => {
-        exec(
-            command,
-            {
-                cwd: __dirname,
-            },
-            (err, stdout, stderr) => {
-                // stderr may be used by VS Code Debugger, even without errors, so we ignore it in DEBUG environment.
-                // Note: You have to manually set "env": { "DEBUG": "true" } in launch.json for this check to work.
-                if (err || (stderr && process.env.DEBUG !== 'true')) {
-                    reject(err || stderr);
-                } else {
-                    resolve(stdout);
-                }
-            }
-        );
-    });
+    const { stdout, stderr } = await exec(command);
+
+    if (stderr) {
+        throw stderr;
+    }
+
+    return { stdout, stderr };
 }
 
 describe('Schema Merge Tests', function () {
@@ -56,21 +45,20 @@ describe('Schema Merge Tests', function () {
     // This fixture creates or updates test.schema by calling bf dialog:merge on all the schema files in the solution.
     // This will install the latest version of botframework-cli if the schema changed and npm is present.
     // This only runs on Windows platforms.
-    maybeIt('should merge dialog schemas', async function () {
+    it('should merge dialog schemas', async function () {
         this.timeout(150000);
         fs.unlinkSync(testsSchemaPath);
 
         // Merge all schema files.
-        const sdkRoot = path.join(__dirname, '..', '..', '..');
         const mergeCommand = [
-            `bf dialog:merge "${sdkRoot}/libraries/**/*.schema"`,
-            `"${sdkRoot}/libraries/**/*.uischema"`,
-            '!**/testbot.schema',
-            '!**/botbuilder-dialogs-adaptive/tests/schema/*.*',
+            'bf dialog:merge ./libraries/**/*.schema',
+            './libraries/**/*.uischema',
+            '"!"**/testbot.schema',
+            '"!"**/botbuilder-dialogs-adaptive/tests/schema/*.*',
             `-o "${testsSchemaPath}"`,
         ];
         try {
-            await runCommand(['npx -p @microsoft/botframework-cli@latest', ...mergeCommand].join(' '));
+            await runCommand(mergeCommand.join(' '));
         } catch (err) {
             // We may get there because there was an error running bf dialog:merge.
             // Try installing latest bf if the schema changed to make sure the
@@ -100,7 +88,6 @@ describe('Schema Merge Tests', function () {
                 [
                     'Generated schema differs from committed schema.',
                     'Run this test locally and commit the tests.*schema files to upload the correct and updated schema.',
-                    'If you are running this test on a non-Windows platform, set an environment variable, FORCE_SCHEMA_MERGE to "true"',
                 ].join('\n')
             );
         }
