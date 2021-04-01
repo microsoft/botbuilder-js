@@ -12,7 +12,7 @@ import {
     StringExpression,
     StringExpressionConverter,
 } from 'adaptive-expressions';
-import { Activity, ActivityTypes, ConversationState, StringUtils, TurnContext } from 'botbuilder';
+import { Activity, ActivityTypes, StringUtils, TurnContext } from 'botbuilder';
 import {
     BeginSkillDialogOptions,
     Converter,
@@ -182,7 +182,7 @@ export class BeginSkill extends SkillDialog implements BeginSkillConfiguration {
             this.dialogOptions.connectionName = this.connectionName.getValue(dcState);
         }
         if (!this.dialogOptions.conversationState) {
-            this.dialogOptions.conversationState = dc.context.turnState.get<ConversationState>('ConversationState');
+            this.dialogOptions.conversationState = dc.context.turnState.get('ConversationState');
         }
         if (!this.dialogOptions.skillClient) {
             this.dialogOptions.skillClient = dc.context.turnState.get(skillClientKey);
@@ -329,6 +329,11 @@ export class BeginSkill extends SkillDialog implements BeginSkillConfiguration {
 
         this.dialogOptions.skillClient = context.turnState.get(skillClientKey);
         if (this.dialogOptions.skillClient == null) {
+            throw new ReferenceError('Unable to get an instance of skillHttpClient from turnState.');
+        }
+
+        this.dialogOptions.conversationState = context.turnState.get('ConversationState');
+        if (this.dialogOptions.conversationState == null) {
             throw new ReferenceError('Unable to get an instance of conversationState from turnState.');
         }
 
