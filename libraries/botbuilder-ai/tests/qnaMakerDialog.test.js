@@ -420,7 +420,7 @@ describe('QnAMakerDialog', function () {
             const suggestionsList = TopNAnswersData.answers.reduce((list, ans) => list.concat(ans.questions), []);
             // Remove low scoring answer from QnA Maker result. Low scoring answers are filtered out by ActiveLearningUtils.
             suggestionsList.pop();
-            const mock = sandbox
+            sandbox
                 .mock(QnACardBuilder)
                 .expects('getSuggestionsCard')
                 .withExactArgs(suggestionsList, suggestionsCardTitle, cardNoMatchText)
@@ -446,7 +446,7 @@ describe('QnAMakerDialog', function () {
                 (thrown) => thrown.message === '`suggestionsActivity` must be defined'
             );
 
-            mock.verify();
+            sandbox.verify();
         });
     });
 });
