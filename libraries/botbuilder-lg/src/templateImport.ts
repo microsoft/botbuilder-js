@@ -30,7 +30,7 @@ export class TemplateImport {
     /**
      * Alias for templates. For example: [import](path) as myAlias.
      */
-    public alias: string;
+    public alias?: string;
 
     /**
      * Creates a new instance of the [TemplateImport](xref:botbuilder-lg.TemplateImport) class.

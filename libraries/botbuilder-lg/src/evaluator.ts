@@ -20,6 +20,7 @@ import {
     SimpleObjectMemory,
     Options,
     FunctionUtils,
+    MemoryInterface,
 } from 'adaptive-expressions';
 import keyBy from 'lodash/keyBy';
 import { CustomizedMemory } from './customizedMemory';
@@ -343,7 +344,7 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGTempla
      * @returns The current scope if the number of arguments is 0, otherwise, returns a [CustomizedMemory](xref:botbuilder-lg.CustomizedMemory)
      * with the mapping of the parameter name to the argument value added to the scope.
      */
-    public constructScope(inputTemplateName: string, args: any[], allTemplates: Template[]): any {
+    public constructScope(inputTemplateName: string, args: unknown[], allTemplates: Template[]): MemoryInterface {
         const templateName = this.parseTemplateName(inputTemplateName).pureTemplateName;
 
         const templateMap = keyBy(allTemplates, (t: Template): string => t.name);
@@ -352,15 +353,15 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGTempla
         }
 
         const parameters: string[] = templateMap[templateName].parameters;
-        const currentScope: any = this.currentTarget().scope;
+        const currentScope = this.currentTarget().scope;
 
         if (args.length === 0) {
             // no args to construct, inherit from current scope
             return currentScope;
         }
 
-        const newScope: any = {};
-        parameters.map((e: string, i: number): void => (newScope[e] = args[i]));
+        const newScope: Record<string, unknown> = {};
+        parameters.map((e: string, i: number) => (newScope[e] = args[i]));
         const memory = currentScope as CustomizedMemory;
         if (!memory) {
             throw new Error(TemplateErrors.invalidMemory);
@@ -600,13 +601,12 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGTempla
         const pointIndex = name.indexOf('.');
         if (pointIndex > 0) {
             const alias = name.substr(0, pointIndex);
-            if (alias in this.templates.namedReferences) {
+            const realTemplate = this.templates.namedReferences[alias];
+            if (realTemplate) {
                 const realTemplateName = name.substr(pointIndex + 1);
                 return new ExpressionEvaluator(
                     realTemplateName,
-                    FunctionUtils.apply(
-                        this.evaluateWithTemplates(realTemplateName, this.templates.namedReferences[alias])
-                    ),
+                    FunctionUtils.apply(this.evaluateWithTemplates(realTemplateName, realTemplate)),
                     ReturnType.Object
                 );
             }
@@ -773,7 +773,9 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGTempla
         };
     };
 
-    private readonly evaluateWithTemplates = (templateName: string, templates: Templates): any => (args: readonly any[]): any => {
+    private readonly evaluateWithTemplates = (templateName: string, templates: Templates) => (
+        args: readonly unknown[]
+    ): unknown => {
         const newScope = this.constructScope(templateName, args.slice(0), templates.allTemplates);
 
         return templates.evaluate(templateName, newScope);
