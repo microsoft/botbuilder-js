@@ -14,10 +14,10 @@ async function runCommand(command) {
     const { stdout, stderr } = await exec(command);
 
     if (stderr) {
-        throw stderr;
+        throw new Error(stderr);
     }
 
-    return { stdout, stderr };
+    return stdout;
 }
 
 describe('Schema Merge Tests', function () {
