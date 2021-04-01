@@ -23,7 +23,6 @@ export class CoreBotAdapter extends BotFrameworkAdapter {
     ) {
         super(settings);
 
-        // attach storage?
         useBotState(this, userState, conversationState);
 
         this.onTurnError = async (turnContext, err) => {
