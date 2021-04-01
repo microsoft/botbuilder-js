@@ -35,16 +35,9 @@ export class SetSpeakMiddleware implements Middleware {
      * Initializes a new instance of the SetSpeakMiddleware class.
      *
      * @param voiceName The SSML voice name attribute value.
-     * @param lang The xml:lang value.
      * @param fallbackToTextForSpeak true if an empty Activity.Speak is populated with Activity.Text.
      */
-    constructor(
-        private readonly voiceName: string | null,
-        private readonly lang: string,
-        private readonly fallbackToTextForSpeak: boolean
-    ) {
-        if (!lang) throw new TypeError('`lang` must be a non-empty string');
-    }
+    constructor(private readonly voiceName: string | null, private readonly fallbackToTextForSpeak: boolean) {}
 
     /**
      * Processes an incoming activity.
@@ -75,7 +68,9 @@ export class SetSpeakMiddleware implements Middleware {
                                 activity.speak = `<voice name='${this.voiceName}'>${activity.speak}</voice>`;
                             }
 
-                            activity.speak = `<speak version='1.0' xmlns='http://www.w3.org/2001/10/synthesis' xml:lang='${this.lang}'>${activity.speak}</speak>`;
+                            activity.speak = `<speak version='1.0' xmlns='http://www.w3.org/2001/10/synthesis' xml:lang='${
+                                activity.locale ?? 'en-US'
+                            }'>${activity.speak}</speak>`;
                         }
                     }
                 })

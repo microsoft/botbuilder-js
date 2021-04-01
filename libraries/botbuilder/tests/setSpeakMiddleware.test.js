@@ -8,11 +8,7 @@ const { MessageFactory, TestAdapter } = require('botbuilder-core');
 describe('SetSpeakMiddleware', function () {
     describe('constructor', function () {
         it('works', function () {
-            new SetSpeakMiddleware('voiceName', 'lang', false);
-        });
-
-        it('throws for falsy lang param', function () {
-            assert.throws(() => new SetSpeakMiddleware('voiceName', '', false));
+            new SetSpeakMiddleware('voiceName', false);
         });
     });
 
@@ -25,7 +21,7 @@ describe('SetSpeakMiddleware', function () {
             },
             voice = 'male',
         } = {}) {
-            return new TestAdapter(logic, { channelId }).use(new SetSpeakMiddleware(voice, 'en-us', fallback));
+            return new TestAdapter(logic, { channelId }).use(new SetSpeakMiddleware(voice, fallback));
         }
 
         it('no fallback does nothing to speak', async function () {
