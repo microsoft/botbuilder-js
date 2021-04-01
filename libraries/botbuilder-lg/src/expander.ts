@@ -19,6 +19,8 @@ import {
     Constant,
     FunctionUtils,
     Options,
+    MemoryInterface,
+    SimpleObjectMemory,
 } from 'adaptive-expressions';
 import { keyBy } from 'lodash';
 import { EvaluationTarget } from './evaluationTarget';
@@ -40,7 +42,7 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGTe
     /**
      * Templates.
      */
-    public readonly templates: Template[];
+    public readonly templates: Templates;
 
     /**
      * Expander expression parser
@@ -51,8 +53,6 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGTe
      * Evaluator expression parser
      */
     private readonly evaluatorExpressionParser: ExpressionParser;
-
-    private readonly expressionParser: ExpressionParser;
 
     /**
      * TemplateMap.
@@ -67,19 +67,18 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGTe
      * @param expressionParser Given expression parser.
      * @param opt Options for LG.
      */
-    public constructor(templates: Template[], expressionParser: ExpressionParser, opt: EvaluationOptions = undefined) {
+    public constructor(templates: Templates, opt?: EvaluationOptions) {
         super();
         this.templates = templates;
-        this.templateMap = keyBy(templates, (t: Template): string => t.name);
+        this.templateMap = keyBy(templates.allTemplates, (t: Template): string => t.name);
         this.lgOptions = opt;
 
-        this.expressionParser = expressionParser;
         // generate a new customzied expression parser by injecting the template as functions
         this.expanderExpressionParser = new ExpressionParser(
-            this.customizedEvaluatorLookup(expressionParser.EvaluatorLookup, true)
+            this.customizedEvaluatorLookup(templates.expressionParser.EvaluatorLookup, true)
         );
         this.evaluatorExpressionParser = new ExpressionParser(
-            this.customizedEvaluatorLookup(expressionParser.EvaluatorLookup, false)
+            this.customizedEvaluatorLookup(templates.expressionParser.EvaluatorLookup, false)
         );
     }
 
@@ -385,21 +384,34 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGTe
      * Constructs the scope for mapping the values of arguments to the parameters of the template.
      * @param templateName The template name to evaluate.
      * @param args Arguments to map to the template parameters.
+     * @param allTemplates All templates.
      * @returns The current scope if the number of arguments is 0, otherwise, returns a CustomizedMemory
      * with the mapping of the parameter name to the argument value added to the scope.
      */
-    public constructScope(templateName: string, args: any[]): any {
-        const parameters: string[] = this.templateMap[templateName].parameters;
+    public constructScope(inputTemplateName: string, args: unknown[], allTemplates: Template[]): MemoryInterface {
+        const templateName = this.parseTemplateName(inputTemplateName).pureTemplateName;
+
+        const templateMap = keyBy(allTemplates, (t: Template): string => t.name);
+        if (!(templateName in templateMap)) {
+            throw new Error(TemplateErrors.templateNotExist(templateName));
+        }
+
+        const parameters: string[] = templateMap[templateName].parameters;
+        const currentScope = this.currentTarget().scope;
 
         if (args.length === 0) {
             // no args to construct, inherit from current scope
-            return this.currentTarget().scope;
+            return currentScope;
         }
 
-        const newScope: any = {};
-        parameters.map((e: string, i: number): any => (newScope[e] = args[i]));
+        const newScope: Record<string, unknown> = {};
+        parameters.map((e: string, i: number) => (newScope[e] = args[i]));
+        const memory = currentScope as CustomizedMemory;
+        if (!memory) {
+            throw new Error(TemplateErrors.invalidMemory);
+        }
 
-        return newScope;
+        return new CustomizedMemory(memory.globalMemory, SimpleObjectMemory.wrap(newScope));
     }
 
     /**
@@ -536,6 +548,20 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGTe
             return standardFunction;
         }
 
+        const pointIndex = name.indexOf('.');
+        if (pointIndex > 0) {
+            const alias = name.substr(0, pointIndex);
+            const realTemplate = this.templates.namedReferences[alias];
+            if (realTemplate) {
+                const realTemplateName = name.substr(pointIndex + 1);
+                return new ExpressionEvaluator(
+                    realTemplateName,
+                    FunctionUtils.apply(this.evaluateWithTemplates(realTemplateName, realTemplate)),
+                    ReturnType.Object
+                );
+            }
+        }
+
         if (name.startsWith('lg.')) {
             name = name.substring(3);
         }
@@ -607,8 +633,16 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGTe
         return undefined;
     };
 
+    private readonly evaluateWithTemplates = (templateName: string, templates: Templates) => (
+        args: readonly unknown[]
+    ): unknown => {
+        const newScope = this.constructScope(templateName, args.slice(0), templates.allTemplates);
+
+        return templates.evaluate(templateName, newScope);
+    };
+
     private readonly templateEvaluator = (templateName: string): any => (args: readonly any[]): any => {
-        const newScope: any = this.constructScope(templateName, Array.from(args));
+        const newScope: any = this.constructScope(templateName, Array.from(args), this.templates.allTemplates);
 
         const value: string[] = this.expandTemplate(templateName, newScope);
         const randomNumber = Extensions.randomNext(this.currentTarget().scope, 0, value.length);
@@ -617,7 +651,7 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGTe
     };
 
     private readonly templateExpander = (templateName: string): any => (args: readonly any[]): any[] => {
-        const newScope: any = this.constructScope(templateName, Array.from(args));
+        const newScope: any = this.constructScope(templateName, Array.from(args), this.templates.allTemplates);
 
         return this.expandTemplate(templateName, newScope);
     };
@@ -676,13 +710,17 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGTe
 
             const newScope = this.evaluationTargetStack.length > 0 ? this.currentTarget().scope : undefined;
             const newTemplates = new Templates(
-                this.templates,
+                this.templates.allTemplates,
                 undefined,
                 undefined,
                 undefined,
                 undefined,
                 undefined,
-                this.expressionParser
+                this.templates.expressionParser,
+                undefined,
+                [],
+                undefined,
+                this.templates.namedReferences
             );
             result = newTemplates.evaluateText(stringContent, newScope, this.lgOptions);
         }
@@ -695,13 +733,17 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGTe
 
         const newScope = this.evaluationTargetStack.length > 0 ? this.currentTarget().scope : undefined;
         const newTemplates = new Templates(
-            this.templates,
+            this.templates.allTemplates,
             undefined,
             undefined,
             undefined,
             undefined,
             undefined,
-            this.expressionParser
+            this.templates.expressionParser,
+            undefined,
+            [],
+            undefined,
+            this.templates.namedReferences
         );
         return newTemplates.evaluateText(stringContent, newScope, this.lgOptions);
     };
@@ -742,7 +784,7 @@ export class Expander extends AbstractParseTreeVisitor<string[]> implements LGTe
 
     private readonly templateFunction = (): any => (args: readonly any[]): any[] => {
         const templateName: string = args[0];
-        const newScope: any = this.constructScope(templateName, args.slice(1));
+        const newScope: any = this.constructScope(templateName, args.slice(1), this.templates.allTemplates);
         const value: any[] = this.expandTemplate(templateName, newScope);
 
         return value;

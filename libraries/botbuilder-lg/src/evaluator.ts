@@ -20,6 +20,7 @@ import {
     SimpleObjectMemory,
     Options,
     FunctionUtils,
+    MemoryInterface,
 } from 'adaptive-expressions';
 import { keyBy } from 'lodash';
 import { CustomizedMemory } from './customizedMemory';
@@ -61,7 +62,7 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGTempla
     /**
      * Templates.
      */
-    public readonly templates: Template[];
+    public readonly templates: Templates;
 
     /**
      * Expression parser.
@@ -87,19 +88,20 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGTempla
 
     /**
      * Creates a new instance of the [Evaluator](xref:botbuilder-lg.Evaluator) class.
-     * @param templates Template list.
-     * @param expressionParser Expression parser.
+     * @param templates Templates.
      * @param opt Options for LG.
      */
-    public constructor(templates: Template[], expressionParser: ExpressionParser, opt: EvaluationOptions = undefined) {
+    public constructor(templates: Templates, opt?: EvaluationOptions) {
         super();
         this.templates = templates;
-        this.templateMap = keyBy(templates, (t: Template): string => t.name);
+        this.templateMap = keyBy(templates.allTemplates, (t: Template): string => t.name);
         this.lgOptions = opt;
         this.cacheResult.clear();
 
         // generate a new customzied expression parser by injecting the templates as functions
-        this.expressionParser = new ExpressionParser(this.customizedEvaluatorLookup(expressionParser.EvaluatorLookup));
+        this.expressionParser = new ExpressionParser(
+            this.customizedEvaluatorLookup(templates.expressionParser.EvaluatorLookup)
+        );
     }
 
     /**
@@ -338,26 +340,28 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGTempla
      * Throws errors if certain errors detected [TemplateErrors](xref:botbuilder-lg.TemplateErrors).
      * @param inputTemplateName Template name to evaluate.
      * @param args Arguments to map to the template parameters.
+     * @param allTemplates All templates.
      * @returns The current scope if the number of arguments is 0, otherwise, returns a [CustomizedMemory](xref:botbuilder-lg.CustomizedMemory)
      * with the mapping of the parameter name to the argument value added to the scope.
      */
-    public constructScope(inputTemplateName: string, args: any[]): any {
+    public constructScope(inputTemplateName: string, args: unknown[], allTemplates: Template[]): MemoryInterface {
         const templateName = this.parseTemplateName(inputTemplateName).pureTemplateName;
 
-        if (!(templateName in this.templateMap)) {
+        const templateMap = keyBy(allTemplates, (t: Template): string => t.name);
+        if (!(templateName in templateMap)) {
             throw new Error(TemplateErrors.templateNotExist(templateName));
         }
 
-        const parameters: string[] = this.templateMap[templateName].parameters;
-        const currentScope: any = this.currentTarget().scope;
+        const parameters: string[] = templateMap[templateName].parameters;
+        const currentScope = this.currentTarget().scope;
 
         if (args.length === 0) {
             // no args to construct, inherit from current scope
             return currentScope;
         }
 
-        const newScope: any = {};
-        parameters.map((e: string, i: number): void => (newScope[e] = args[i]));
+        const newScope: Record<string, unknown> = {};
+        parameters.map((e: string, i: number) => (newScope[e] = args[i]));
         const memory = currentScope as CustomizedMemory;
         if (!memory) {
             throw new Error(TemplateErrors.invalidMemory);
@@ -594,6 +598,20 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGTempla
             return standardFunction;
         }
 
+        const pointIndex = name.indexOf('.');
+        if (pointIndex > 0) {
+            const alias = name.substr(0, pointIndex);
+            const realTemplate = this.templates.namedReferences[alias];
+            if (realTemplate) {
+                const realTemplateName = name.substr(pointIndex + 1);
+                return new ExpressionEvaluator(
+                    realTemplateName,
+                    FunctionUtils.apply(this.evaluateWithTemplates(realTemplateName, realTemplate)),
+                    ReturnType.Object
+                );
+            }
+        }
+
         if (name.startsWith('lg.')) {
             name = name.substring(3);
         }
@@ -683,13 +701,17 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGTempla
 
             const newScope = this.evaluationTargetStack.length > 0 ? this.currentTarget().scope : undefined;
             const newTemplates = new Templates(
-                this.templates,
+                this.templates.allTemplates,
                 undefined,
                 undefined,
                 undefined,
                 undefined,
                 undefined,
-                this.expressionParser
+                this.expressionParser,
+                undefined,
+                [],
+                undefined,
+                this.templates.namedReferences
             );
             result = newTemplates.evaluateText(stringContent, newScope, this.lgOptions);
         }
@@ -702,13 +724,17 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGTempla
 
         const newScope = this.evaluationTargetStack.length > 0 ? this.currentTarget().scope : undefined;
         const newTemplates = new Templates(
-            this.templates,
+            this.templates.allTemplates,
             undefined,
             undefined,
             undefined,
             undefined,
             undefined,
-            this.expressionParser
+            this.expressionParser,
+            undefined,
+            [],
+            undefined,
+            this.templates.namedReferences
         );
         return newTemplates.evaluateText(stringContent, newScope, this.lgOptions);
     };
@@ -747,9 +773,17 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGTempla
         };
     };
 
+    private readonly evaluateWithTemplates = (templateName: string, templates: Templates) => (
+        args: readonly unknown[]
+    ): unknown => {
+        const newScope = this.constructScope(templateName, args.slice(0), templates.allTemplates);
+
+        return templates.evaluate(templateName, newScope);
+    };
+
     private readonly templateFunction = (): any => (args: readonly any[]): any => {
         const templateName: string = args[0];
-        const newScope: any = this.constructScope(templateName, args.slice(1));
+        const newScope: any = this.constructScope(templateName, args.slice(1), this.templates.allTemplates);
 
         return this.evaluateTemplate(templateName, newScope);
     };
@@ -788,7 +822,7 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGTempla
     }
 
     private readonly templateEvaluator = (templateName: string): any => (args: readonly any[]): any => {
-        const newScope: any = this.constructScope(templateName, Array.from(args));
+        const newScope: any = this.constructScope(templateName, Array.from(args), this.templates.allTemplates);
 
         return this.evaluateTemplate(templateName, newScope);
     };

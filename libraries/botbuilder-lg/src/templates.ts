@@ -96,6 +96,11 @@ export class Templates implements Iterable<Template> {
     public options: string[];
 
     /**
+     * Map from import alias to templates.
+     */
+    public namedReferences: Record<string, Templates>;
+
+    /**
      * Creates a new instance of the [Templates](xref:botbuilder-lg.Templates) class.
      * @param items Optional. List of [Template](xref:botbuilder-lg.Template) instances.
      * @param imports Optional. List of [TemplateImport](xref:botbuilder-lg.TemplateImport) instances.
@@ -107,6 +112,7 @@ export class Templates implements Iterable<Template> {
      * @param importResolverDelegate Optional. Resolver to resolve LG import id to template text.
      * @param options Optional. List of strings representing the options during evaluation of the templates.
      * @param source Optional. Templates source.
+     * @param namedReferences Optional. eferences that imported with the "as" syntax，for example: [import](path.lg) as myAlias.
      */
     public constructor(
         items?: Template[],
@@ -118,7 +124,8 @@ export class Templates implements Iterable<Template> {
         expressionParser?: ExpressionParser,
         importResolverDelegate?: ImportResolverDelegate,
         options?: string[],
-        source?: string
+        source?: string,
+        namedReferences?: Record<string, Templates>
     ) {
         this.items = items || [];
         this.imports = imports || [];
@@ -130,6 +137,7 @@ export class Templates implements Iterable<Template> {
         this.importResolver = importResolverDelegate;
         this.options = options || [];
         this.source = source;
+        this.namedReferences = namedReferences || {};
         this.injectToExpressionFunction();
     }
 
@@ -254,7 +262,7 @@ export class Templates implements Iterable<Template> {
         this.checkErrors();
 
         const evalOpt = opt !== undefined ? opt.merge(this.lgOptions) : this.lgOptions;
-        const evaluator = new Evaluator(this.allTemplates, this.expressionParser, evalOpt);
+        const evaluator = new Evaluator(this, evalOpt);
         let result = evaluator.evaluateTemplate(templateName, scope);
         if (evalOpt.LineBreakStyle === LGLineBreakStyle.Markdown && typeof result === 'string') {
             result = result.replace(this.newLineRegex, '$1$1');
@@ -274,7 +282,7 @@ export class Templates implements Iterable<Template> {
         this.checkErrors();
 
         const evalOpt = opt !== undefined ? opt.merge(this.lgOptions) : this.lgOptions;
-        const expander = new Expander(this.allTemplates, this.expressionParser, evalOpt);
+        const expander = new Expander(this, evalOpt);
         return expander.expandTemplate(templateName, scope);
     }
 
@@ -286,7 +294,7 @@ export class Templates implements Iterable<Template> {
     public analyzeTemplate(templateName: string): AnalyzerResult {
         this.checkErrors();
 
-        const analyzer = new Analyzer(this.allTemplates, this.expressionParser);
+        const analyzer = new Analyzer(this);
         return analyzer.analyzeTemplate(templateName);
     }
 
@@ -349,16 +357,12 @@ export class Templates implements Iterable<Template> {
                 content
             );
 
-            let updatedTemplates = new Templates(
-                [],
-                [],
-                [],
-                [],
-                '',
-                this.id,
-                this.expressionParser,
-                this.importResolver
-            );
+            let updatedTemplates = new Templates();
+            updatedTemplates.id = this.id;
+            updatedTemplates.expressionParser = this.expressionParser;
+            updatedTemplates.importResolver = this.importResolver;
+            updatedTemplates.namedReferences = this.namedReferences;
+
             const resource = new LGResource(this.id, this.id, content);
             updatedTemplates = new TemplatesTransformer(updatedTemplates).transform(
                 TemplatesParser.antlrParseTemplates(resource)
@@ -400,7 +404,12 @@ export class Templates implements Iterable<Template> {
 
         // update content
         this.content = `${this.content}${this.newLine}${templateNameLine}${this.newLine}${newTemplateBody}`;
-        let updatedTemplates = new Templates([], [], [], [], '', this.id, this.expressionParser, this.importResolver);
+        let updatedTemplates = new Templates();
+        updatedTemplates.id = this.id;
+        updatedTemplates.expressionParser = this.expressionParser;
+        updatedTemplates.importResolver = this.importResolver;
+        updatedTemplates.namedReferences = this.namedReferences;
+
         const resource = new LGResource(this.id, this.id, content);
         updatedTemplates = new TemplatesTransformer(updatedTemplates).transform(
             TemplatesParser.antlrParseTemplates(resource)
@@ -631,11 +640,7 @@ export class Templates implements Iterable<Template> {
                                 let value: any;
                                 let error: string;
                                 let args: any[];
-                                const evaluator = new Evaluator(
-                                    this.allTemplates,
-                                    this.expressionParser,
-                                    this.lgOptions
-                                );
+                                const evaluator = new Evaluator(this, this.lgOptions);
                                 // eslint-disable-next-line prefer-const
                                 ({ args, error } = FunctionUtils.evaluateChildren(expr, state, options));
                                 if (!error) {

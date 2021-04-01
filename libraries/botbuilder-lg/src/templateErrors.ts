@@ -65,6 +65,8 @@ export class TemplateErrors {
     public static readonly invalidTemplateNameType: string =
         'Expected string type for the parameter of template function.';
 
+    public static readonly importFormatError: string = `Import format should follow '[x](y)' or '[x](y) as z'.`;
+
     public static readonly invalidStrucBody = (invalidBody: string): string =>
         `Invalid structure body: '${invalidBody}'. Body can include <PropertyName> = <Value> pairs or \${reference()} template reference.`;
 

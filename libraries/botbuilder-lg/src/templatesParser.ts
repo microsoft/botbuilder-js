@@ -50,7 +50,7 @@ export class TemplatesParser {
     /**
      * Import regex.
      */
-    public static readonly importRegex: RegExp = new RegExp(/\[([^\]]*)\]\(([^)]*)\)/);
+    public static readonly importRegex: RegExp = new RegExp(/\[([^\]]*)\]\(([^)]*)\)([\w\s]*)/);
 
     /**
      * parse a file and return LG file.
@@ -122,7 +122,7 @@ export class TemplatesParser {
         newTemplates.source = id;
         newTemplates.importResolver = originalTemplates.importResolver;
         newTemplates.options = originalTemplates.options;
-
+        newTemplates.namedReferences = originalTemplates.namedReferences;
         try {
             // eslint-disable-next-line @typescript-eslint/no-use-before-define
             const resource = new LGResource(id, id, content);
@@ -149,6 +149,13 @@ export class TemplatesParser {
      * @param resourceId Import path.
      */
     public static defaultFileResolver(resource: LGResource, resourceId: string): LGResource {
+        // If the import id contains "#", we would cut it to use the left path.
+        // for example: [import](a.b.c#d.lg), after convertion, id would be d.lg
+        const hashIndex = resourceId.indexOf('#');
+        if (hashIndex > 0) {
+            resourceId = resourceId.substr(hashIndex + 1);
+        }
+
         let importPath = TemplateExtensions.normalizePath(resourceId);
         if (!path.isAbsolute(importPath)) {
             // get full path for importPath relative to path which is doing the import.
@@ -289,6 +296,21 @@ export class TemplatesParser {
                 throw new TemplateException(errorMsg, [diagnostic]);
             }
 
+            if (importItem.alias) {
+                // Import as alias
+                // Append import templates into namedReferences property
+                const childResource = this.innerParseResource(
+                    resource,
+                    start.importResolver,
+                    start.expressionParser,
+                    cachedTemplates,
+                    parentTemplates
+                );
+                start.namedReferences[importItem.alias] = childResource;
+                continue;
+            }
+
+            // normal import
             if (Array.from(resourcesFound).every((u): boolean => u.id !== resource.id)) {
                 let childResource: Templates;
                 if (cachedTemplates.has(resource.id)) {
@@ -380,13 +402,32 @@ export class TemplatesTransformer extends AbstractParseTreeVisitor<any> implemen
     public visitImportDefinition(context: lp.ImportDefinitionContext): any {
         const importStr = context.IMPORT().text;
         const groups = importStr.match(TemplatesParser.importRegex);
-        if (groups && groups.length === 3) {
-            const description = groups[1].trim();
-            const id = groups[2].trim();
-            const sourceRange = new SourceRange(context, this.templates.source);
-            const templateImport = new TemplateImport(description, id, sourceRange);
-            this.templates.imports.push(templateImport);
+        if (!groups || (groups.length !== 3 && groups.length !== 4)) {
+            this.templates.diagnostics.push(this.buildTemplatesDiagnostic(TemplateErrors.importFormatError, context));
+            return;
         }
+
+        const description = groups[1].trim();
+        const id = groups[2].trim();
+        const sourceRange = new SourceRange(context, this.templates.source);
+        const templateImport = new TemplateImport(description, id, sourceRange);
+
+        if (groups.length === 4) {
+            const asAlias = groups[3].trim();
+            if (asAlias) {
+                const asAliasArray = asAlias.split(/\s+/);
+                if (asAliasArray.length !== 2 || asAliasArray[0] !== 'as') {
+                    this.templates.diagnostics.push(
+                        this.buildTemplatesDiagnostic(TemplateErrors.importFormatError, context)
+                    );
+                    return;
+                } else {
+                    templateImport.alias = asAliasArray[1].trim();
+                }
+            }
+        }
+
+        this.templates.imports.push(templateImport);
         return;
     }
 

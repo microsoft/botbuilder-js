@@ -66,6 +66,7 @@ describe('LG', function () {
         ConditionExpression: Templates.parseFile(GetExampleFilePath('ConditionExpression.lg')),
         ExpressionExtract: Templates.parseFile(GetExampleFilePath('ExpressionExtract.lg')),
         EmptyArrayAndObject: Templates.parseFile(GetExampleFilePath('EmptyArrayAndObject.lg')),
+        Alias: Templates.parseFile(GetExampleFilePath('Alias.lg')),
         LGOptionsTest: Templates.parseFile(GetExampleFilePath('./EvaluationOptions/LGOptionsTest.lg')),
         NullTolerant: Templates.parseFile(GetExampleFilePath('NullTolerant.lg')),
         IsTemplate: Templates.parseFile(GetExampleFilePath('IsTemplate.lg')),
@@ -1665,5 +1666,65 @@ describe('LG', function () {
 
         evaled = templates.evaluate('FromFileBinary');
         assert.strictEqual(evaled, 'hi ${name}');
+    });
+
+    it('TestImportAlias', function () {
+        const templates = preloaded.Alias;
+
+        // duplicated template name.
+        let evaled = templates.evaluate('wPhrase');
+        assert.strictEqual(evaled, 'hi');
+
+        // import from AliasBase1.lg
+        evaled = templates.evaluate('callWelcome1', { theName: 'Jack' });
+        assert.strictEqual(evaled, 'hi Jack');
+
+        // import from AliasBase1.lg
+        evaled = templates.evaluate('callWelcome2', { theName: 'Jack' });
+        assert.strictEqual(evaled, 'hello Jack');
+
+        // static/all import
+        evaled = templates.evaluate('callWelcome3', { theName: 'Jack' });
+        assert.strictEqual(evaled, 'welcome Jack');
+
+        // builtin function as the first place
+        evaled = templates.evaluate('callLength');
+        assert.strictEqual(evaled, 4);
+
+        // import from AliasBase1.lg
+        evaled = templates.evaluate('callBase1Length');
+        assert.strictEqual(evaled, 'my length');
+
+        // import from AliasBase2.lg
+        evaled = templates.evaluate('callBase2Length');
+        assert.strictEqual(evaled, 'my length2');
+
+        // static/all import. (use lg as the prefix)
+        evaled = templates.evaluate('callBase3Length');
+        assert.strictEqual(evaled, 'my base length');
+
+        ///////////inline evaluation//////////////////
+        // call normal template in current lg file
+        evaled = templates.evaluateText('${wPhrase()}');
+        assert.strictEqual(evaled, 'hi');
+
+        evaled = templates.evaluateText('${callBase1Length()}');
+        assert.strictEqual(evaled, 'my length');
+
+        // import from AliasBase1.lg
+        evaled = templates.evaluateText('${base1.welcome()}', { name: 'Jack' });
+        assert.strictEqual(evaled, 'hi Jack');
+
+        // call builtin function
+        evaled = templates.evaluateText("${length('hello')}");
+        assert.strictEqual(evaled, 5);
+
+        // call template length form import
+        evaled = templates.evaluateText('${lg.length()}');
+        assert.strictEqual(evaled, 'my base length');
+
+        // call length template in AliasBase1.lg
+        evaled = templates.evaluateText('${base1.length()}');
+        assert.strictEqual(evaled, 'my length');
     });
 });

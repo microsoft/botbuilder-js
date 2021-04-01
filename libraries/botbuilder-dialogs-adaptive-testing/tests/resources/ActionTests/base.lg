@@ -1,0 +1,9 @@
+> this is the base lg for alias
+# welcome(name)
+- hi ${name}
+
+# length
+- length in base
+
+# wPhrase
+- hi
