@@ -1,5 +1,6 @@
 const fs = require('fs');
 const nock = require('nock');
+const sinon = require('sinon');
 const { ok, rejects, strictEqual, throws } = require('assert');
 const { join } = require('path');
 const { BoolExpression } = require('adaptive-expressions');
@@ -253,8 +254,8 @@ describe('QnAMakerDialog', function () {
     });
 
     describe('Active Learning', function () {
+        let sandbox;
         const testFilesPath = `${__dirname}/TestData/QnAMakerDialog/`;
-        const originalGetSuggestionsCard = QnACardBuilder.getSuggestionsCard;
         beforeEach(function () {
             nock.cleanAll();
             nock(`https://${HOSTNAME}.azurewebsites.net`)
@@ -262,13 +263,14 @@ describe('QnAMakerDialog', function () {
                 .post(/qnamaker/)
                 .replyWithFile(200, join(testFilesPath, 'QnaMaker_TopNAnswer.json'))
                 .persist();
+            sandbox = sinon.createSandbox();
         });
 
         const TopNAnswersData = JSON.parse(fs.readFileSync(join(testFilesPath, 'QnaMaker_TopNAnswer.json')));
 
         afterEach(function () {
             nock.cleanAll();
-            QnACardBuilder.getSuggestionsCard = originalGetSuggestionsCard;
+            sandbox.restore();
         });
 
         it('should send heroCard with suggestions', async function () {
@@ -415,12 +417,14 @@ describe('QnAMakerDialog', function () {
             dm.conversationState = convoState;
             const suggestionsCardTitle = 'Card Title';
             const cardNoMatchText = 'Not helpful.';
-            QnACardBuilder.getSuggestionsCard = (suggestionsList, cardTitle, noMatchingQuestionsText) => {
-                ok(suggestionsList);
-                strictEqual(suggestionsList.length, 3);
-                strictEqual(cardTitle, suggestionsCardTitle);
-                strictEqual(noMatchingQuestionsText, cardNoMatchText);
-            };
+            const suggestionsList = TopNAnswersData.answers.reduce((list, ans) => list.concat(ans.questions), []);
+            // Remove low scoring answer from QnA Maker result. Low scoring answers are filtered out by ActiveLearningUtils.
+            suggestionsList.pop();
+            sandbox
+                .mock(QnACardBuilder)
+                .expects('getSuggestionsCard')
+                .withExactArgs(suggestionsList, suggestionsCardTitle, cardNoMatchText)
+                .returns(undefined);
 
             const qnaDialog = new QnAMakerDialog(
                 kbId,
@@ -441,6 +445,8 @@ describe('QnAMakerDialog', function () {
                 adapter.send('QnaMaker_TopNAnswer.json').startTest(),
                 (thrown) => thrown.message === '`suggestionsActivity` must be defined'
             );
+
+            sandbox.verify();
         });
     });
 });
