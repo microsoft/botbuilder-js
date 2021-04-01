@@ -12,7 +12,7 @@ const endpointKey = process.env.LUISAPPKEY || '77fe817cc79f48bd9323a0b4eafef9fa'
 // If it is false, the LUIS service will be called and if there are changes you will get a new oracle file.
 const mockLuis = true;
 
-let baseUrl = 'https://westus.api.cognitive.microsoft.com';
+const baseUrl = 'https://westus.api.cognitive.microsoft.com';
 const creds = new msRest.TokenCredentials(endpointKey);
 
 function ExpectedPath(file) {
@@ -20,14 +20,14 @@ function ExpectedPath(file) {
 }
 
 function GetExpected(oracle) {
-    let expected = fs.readJSONSync(oracle);
+    const expected = fs.readJSONSync(oracle);
 
-    let query = 'verbose=(true|false)(&staging=false&spellCheck=false&log=true|)';
-    let path = `/luis/v2\\.0/apps/${applicationId}`;
-    let pattern = `${path}\\?${query}`;
-    let uri = new RegExp(pattern); // eslint-disable-line security/detect-non-literal-regexp
-    let requestContent = expected.text != undefined ? `"${expected.text}"` : undefined;
-    let responseBody = expected;
+    const query = 'verbose=(true|false)(&staging=false&spellCheck=false&log=true|)';
+    const path = `/luis/v2\\.0/apps/${applicationId}`;
+    const pattern = `${path}\\?${query}`;
+    const uri = new RegExp(pattern); // eslint-disable-line security/detect-non-literal-regexp
+    const requestContent = expected.text != undefined ? `"${expected.text}"` : undefined;
+    const responseBody = expected;
 
     if (mockLuis) {
         nock('https://westus.api.cognitive.microsoft.com')
@@ -73,12 +73,12 @@ function WithinDelta(token1, token2, delta, compare) {
 // 2) Run this test sith mockLuis = false which will fail and generate a <name>.json.new file.
 // 3) Check the .new file and if correct, replace the original .json file with it.
 async function TestJson(file, includeAllIntents = true, includeInstance = true) {
-    let expectedPath = ExpectedPath(file);
-    let expected = GetExpected(expectedPath);
+    const expectedPath = ExpectedPath(file);
+    const expected = GetExpected(expectedPath);
 
-    let newPath = expectedPath + '.new';
+    const newPath = expectedPath + '.new';
 
-    let client = new LUISRuntimeClient(creds, baseUrl);
+    const client = new LUISRuntimeClient(creds, baseUrl);
     const result = await client.prediction.resolve(applicationId, expected.query, {
         includeAllIntents: includeAllIntents,
         includeInstance: includeInstance,
@@ -100,8 +100,8 @@ async function TestJson(file, includeAllIntents = true, includeInstance = true) 
 }
 
 function findIntent(key, data) {
-    let i,
-        len = data.length;
+    let i;
+    const len = data.length;
     for (i = 0; i < len; i++) {
         if (data[i] && data[i].intent == key) {
             return data[i];
@@ -110,8 +110,8 @@ function findIntent(key, data) {
     return null;
 }
 function findEntityByType(key, data) {
-    let i,
-        len = data.length;
+    let i;
+    const len = data.length;
     for (i = 0; i < len; i++) {
         if (data[i] && data[i].type == key) {
             return data[i];
@@ -120,8 +120,8 @@ function findEntityByType(key, data) {
     return null;
 }
 function findEntity(key, data) {
-    let i,
-        len = data.length;
+    let i;
+    const len = data.length;
     for (i = 0; i < len; i++) {
         if (data[i] && data[i].entity == key) {
             return data[i];
@@ -131,8 +131,8 @@ function findEntity(key, data) {
 }
 
 function findCompositeByParentType(key, data) {
-    let i,
-        len = data.length;
+    let i;
+    const len = data.length;
     for (i = 0; i < len; i++) {
         if (data[i] && data[i].parentType == key) {
             return data[i];
@@ -169,11 +169,11 @@ describe('LuisPredict', function () {
 
         assert(result);
         assert(result.query == 'My name is Emad');
-        let specifyName = findIntent('SpecifyName', result.intents);
+        const specifyName = findIntent('SpecifyName', result.intents);
         assert(specifyName != null);
         assert(specifyName.score > 0 && specifyName.score <= 1);
         assert(result.entities);
-        let name = findEntityByType('Name', result.entities);
+        const name = findEntityByType('Name', result.entities);
         assert(name);
         assert(name.entity === 'emad');
         assert(name.startIndex === 11);
@@ -187,17 +187,17 @@ describe('LuisPredict', function () {
         assert(result);
         assert(result.query == 'Please deliver February 2nd 2001');
         assert(result.intents);
-        let delivery = findIntent('Delivery', result.intents);
+        const delivery = findIntent('Delivery', result.intents);
         assert(delivery != null);
         assert(delivery.score > 0 && delivery.score <= 1);
         assert(result.topScoringIntent.intent == 'Delivery');
         assert(result.entities);
-        let year = findEntity('2001', result.entities);
+        const year = findEntity('2001', result.entities);
         assert(year);
         assert(year.type == 'builtin.number');
         assert(year.startIndex == 28);
         assert(year.endIndex == 31);
-        let dateTime = findEntityByType('builtin.datetimeV2.date', result.entities);
+        const dateTime = findEntityByType('builtin.datetimeV2.date', result.entities);
         assert(dateTime.startIndex == 15);
         assert(dateTime.endIndex == 31);
     });
@@ -208,14 +208,14 @@ describe('LuisPredict', function () {
         assert(result);
         assert(result.query == 'Please deliver February 2nd 2001 in room 201');
         assert(result.intents);
-        let deliveryIntent = findIntent('Delivery', result.intents);
+        const deliveryIntent = findIntent('Delivery', result.intents);
         assert(deliveryIntent != null);
         assert(deliveryIntent.score > 0 && deliveryIntent.score <= 1);
         assert(result.entities);
-        let dateTime = findEntityByType('builtin.datetimeV2.date', result.entities);
+        const dateTime = findEntityByType('builtin.datetimeV2.date', result.entities);
         assert(dateTime.startIndex == 15);
         assert(dateTime.endIndex == 31);
-        let builtin = findEntityByType('builtin.dimension', result.entities);
+        const builtin = findEntityByType('builtin.dimension', result.entities);
         assert(builtin.startIndex == 28);
         assert(builtin.endIndex == 34);
     });
@@ -226,11 +226,11 @@ describe('LuisPredict', function () {
         assert(result);
         assert(result.query == 'I want to travel on united');
         assert(result.intents);
-        let travelIntent = findIntent('Travel', result.intents);
+        const travelIntent = findIntent('Travel', result.intents);
         assert(travelIntent != null);
         assert(travelIntent.score > 0 && travelIntent.score <= 1);
         assert(result.entities);
-        let airline = findEntityByType('Airline', result.entities);
+        const airline = findEntityByType('Airline', result.entities);
         assert(airline);
         assert(airline.entity == 'united');
         assert(airline.startIndex);
@@ -245,17 +245,17 @@ describe('LuisPredict', function () {
         assert(result);
         assert(result.query == 'I want to travel on DL');
         assert(result.intents);
-        let travelIntent = findIntent('Travel', result.intents);
+        const travelIntent = findIntent('Travel', result.intents);
         assert(travelIntent != null);
         assert(travelIntent.score > 0 && travelIntent.score <= 1);
         assert(result.entities);
-        let builtIn = findEntityByType('builtin.dimension', result.entities);
+        const builtIn = findEntityByType('builtin.dimension', result.entities);
         assert(builtIn);
         assert(builtIn.startIndex);
         assert(builtIn.startIndex == 20);
         assert(builtIn.endIndex);
         assert(builtIn.endIndex == 21);
-        let airline = findEntityByType('Airline', result.entities);
+        const airline = findEntityByType('Airline', result.entities);
         assert(airline);
         assert(airline.startIndex);
         assert(airline.startIndex == 20);
@@ -269,26 +269,26 @@ describe('LuisPredict', function () {
         assert(result);
         assert(result.query == 'Please deliver it to 98033 WA');
         assert(result.intents);
-        let deliveryIntent = findIntent('Delivery', result.intents);
+        const deliveryIntent = findIntent('Delivery', result.intents);
         assert(deliveryIntent != null);
         assert(deliveryIntent.score > 0 && deliveryIntent.score <= 1);
         assert(result.entities);
-        let stateEntity = findEntityByType('State', result.entities);
+        const stateEntity = findEntityByType('State', result.entities);
         assert(stateEntity.entity === 'wa');
         assert(stateEntity.startIndex == 27);
         assert(stateEntity.endIndex == 28);
         assert(stateEntity);
-        let addressEntity = findEntityByType('Address', result.entities);
+        const addressEntity = findEntityByType('Address', result.entities);
         assert(addressEntity);
         assert(addressEntity.entity === '98033 wa');
         assert(addressEntity.startIndex == 21);
         assert(addressEntity.endIndex == 28);
-        let addressNumber = findEntityByType('builtin.number', result.entities);
+        const addressNumber = findEntityByType('builtin.number', result.entities);
         assert(addressNumber);
         assert(addressNumber.entity === '98033');
         assert(addressNumber.startIndex == 21);
         assert(addressNumber.endIndex == 25);
-        let composite = findCompositeByParentType('Address', result.compositeEntities);
+        const composite = findCompositeByParentType('Address', result.compositeEntities);
         assert(composite.value === '98033 wa');
     });
 });

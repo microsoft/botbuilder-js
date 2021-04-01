@@ -20,7 +20,7 @@ OPTION : WHITESPACE* '>' WHITESPACE* '!#' ~('\r'|'\n')+ { !this.startTemplate }?
 
 COMMENT : WHITESPACE* '>' ~('\r'|'\n')* { !this.startTemplate }?;
 
-IMPORT : WHITESPACE* '[' ~[\r\n[\]]*? ']' '(' ~[\r\n()]*? ')' WHITESPACE* { !this.startTemplate }?;
+IMPORT : WHITESPACE* '[' ~[\r\n[\]]*? ']' '(' ~[\r\n()]*? ')' ~('\r'|'\n')* { !this.startTemplate }?;
 
 TEMPLATE_NAME_LINE : WHITESPACE* '#' ~('\r'|'\n')* { this._tokenStartCharPositionInLine == 0 }? { this.startTemplate = true; };
 

@@ -30,6 +30,7 @@ describe(`LGExceptionTest`, function () {
         ErrorStructuredTemplate: GetDiagnostics(`ErrorStructuredTemplate.lg`),
         ErrorTemplateName: GetDiagnostics(`ErrorTemplateName.lg`),
         InvalidLGFileImportPath: GetDiagnostics(`InvalidLGFileImportPath.lg`),
+        InvalidImportFormat: GetDiagnostics(`InvalidImportFormat.lg`),
         LgTemplateFunctionError: GetDiagnostics(`LgTemplateFunctionError.lg`),
         MultiLineVariation: GetDiagnostics(`MultiLineVariation.lg`),
         MultiLineTemplate: GetDiagnostics(`MultiLineTemplate.lg`),
@@ -175,6 +176,14 @@ describe(`LGExceptionTest`, function () {
         assert.strictEqual(diagnostics.length, 1);
         assert.strictEqual(diagnostics[0].severity, DiagnosticSeverity.Error);
         assert(diagnostics[0].message.includes(`Could not find file`));
+    });
+
+    it(`TestInvalidImportFormat`, function () {
+        const diagnostics = preloaded.InvalidImportFormat;
+
+        assert.strictEqual(diagnostics.length, 1);
+        assert.strictEqual(diagnostics[0].severity, DiagnosticSeverity.Error);
+        assert.strictEqual(diagnostics[0].message, TemplateErrors.importFormatError);
     });
 
     it(`TestLgTemplateFunctionError`, function () {

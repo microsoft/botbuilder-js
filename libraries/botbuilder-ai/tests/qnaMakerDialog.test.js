@@ -1,5 +1,6 @@
 const fs = require('fs');
 const nock = require('nock');
+const sinon = require('sinon');
 const { ok, rejects, strictEqual, throws } = require('assert');
 const { join } = require('path');
 const { BoolExpression } = require('adaptive-expressions');
@@ -51,22 +52,22 @@ describe('QnAMakerDialog', function () {
         return testName.replace(/"/g, '').replace(/ /g, '_');
     }
 
-    it('should successfully construct', () => {
+    it('should successfully construct', function () {
         new QnAMakerDialog('kbId', 'endpointKey', 'https://myqnainstance.azurewebsites.net/qnamaker');
     });
 
-    it('should add instance to a dialog set', () => {
+    it('should add instance to a dialog set', function () {
         const dialogs = new DialogSet();
         const qna = new QnAMakerDialog('kbId', 'endpointKey', 'https://myqnainstance.azurewebsites.net/qnamaker');
 
         dialogs.add(qna);
     });
 
-    describe('getQnAClient()', () => {
+    describe('getQnAClient()', function () {
         const kbId = 'dummyKbId';
         const endpointKey = 'dummyEndpointKey';
 
-        it('should return unmodified v5 hostName value', async () => {
+        it('should return unmodified v5 hostName value', async function () {
             const V5_HOSTNAME = 'https://qnamaker-acom.azure.com/qnamaker/v5.0';
 
             // Create QnAMakerDialog
@@ -79,7 +80,7 @@ describe('QnAMakerDialog', function () {
             strictEqual(client.endpoint.host, V5_HOSTNAME);
         });
 
-        it('should construct v4 API endpoint', async () => {
+        it('should construct v4 API endpoint', async function () {
             const INCOMPLETE_HOSTNAME = 'myqnainstance';
             const HOSTNAME = 'https://myqnainstance.azurewebsites.net/qnamaker';
 
@@ -93,7 +94,7 @@ describe('QnAMakerDialog', function () {
             strictEqual(fixedClient.endpoint.host, HOSTNAME);
         });
 
-        it('should construct BAD v4 hostnames', async () => {
+        it('should construct BAD v4 hostnames', async function () {
             const createHostName = (hostName) => `https://${hostName}.azurewebsites.net/qnamaker`;
             const NOT_V5_HOSTNAME = 'myqnainstance.net/qnamaker';
 
@@ -107,7 +108,7 @@ describe('QnAMakerDialog', function () {
             strictEqual(noAuthorityClient.endpoint.host, createHostName(NOT_V5_HOSTNAME));
         });
 
-        it('should log telemetry that includes question and username if logPersonalInformation is true', async () => {
+        it('should log telemetry that includes question and username if logPersonalInformation is true', async function () {
             const convoState = new ConversationState(new MemoryStorage());
             const dm = new DialogManager();
             dm.initialTurnState.set(ScopePath.settings, { telemetry: { logPersonalInformation: true } });
@@ -180,7 +181,7 @@ describe('QnAMakerDialog', function () {
             strictEqual(qnaMessageCount, 1);
         });
 
-        it('should log telemetry that excludes question and username if logPersonalInformation is false', async () => {
+        it('should log telemetry that excludes question and username if logPersonalInformation is false', async function () {
             const convoState = new ConversationState(new MemoryStorage());
             const dm = new DialogManager();
             dm.initialTurnState.set(ScopePath.settings, { telemetry: { logPersonalInformation: true } });
@@ -253,8 +254,8 @@ describe('QnAMakerDialog', function () {
     });
 
     describe('Active Learning', function () {
+        let sandbox;
         const testFilesPath = `${__dirname}/TestData/QnAMakerDialog/`;
-        const originalGetSuggestionsCard = QnACardBuilder.getSuggestionsCard;
         beforeEach(function () {
             nock.cleanAll();
             nock(`https://${HOSTNAME}.azurewebsites.net`)
@@ -262,16 +263,17 @@ describe('QnAMakerDialog', function () {
                 .post(/qnamaker/)
                 .replyWithFile(200, join(testFilesPath, 'QnaMaker_TopNAnswer.json'))
                 .persist();
+            sandbox = sinon.createSandbox();
         });
 
         const TopNAnswersData = JSON.parse(fs.readFileSync(join(testFilesPath, 'QnaMaker_TopNAnswer.json')));
 
         afterEach(function () {
             nock.cleanAll();
-            QnACardBuilder.getSuggestionsCard = originalGetSuggestionsCard;
+            sandbox.restore();
         });
 
-        it('should send heroCard with suggestions', async () => {
+        it('should send heroCard with suggestions', async function () {
             const kbId = 'dummyKbId';
             const endpointKey = 'dummyEndpointKey';
             const convoState = new ConversationState(new MemoryStorage());
@@ -328,7 +330,7 @@ describe('QnAMakerDialog', function () {
                 .startTest();
         });
 
-        it('should use suggestionsActivityFactory', async () => {
+        it('should use suggestionsActivityFactory', async function () {
             const kbId = 'dummyKbId';
             const endpointKey = 'dummyEndpointKey';
             const convoState = new ConversationState(new MemoryStorage());
@@ -365,7 +367,7 @@ describe('QnAMakerDialog', function () {
                 .startTest();
         });
 
-        it('should error if suggestionsActivityFactory is passed in with falsy cardNoMatchText', () => {
+        it('should error if suggestionsActivityFactory is passed in with falsy cardNoMatchText', function () {
             const kbId = 'dummyKbId';
             const endpointKey = 'dummyEndpointKey';
             throws(
@@ -374,7 +376,7 @@ describe('QnAMakerDialog', function () {
             );
         });
 
-        it('should error if suggestionsActivityFactory returns a number', async () => {
+        it('should error if suggestionsActivityFactory returns a number', async function () {
             const kbId = 'dummyKbId';
             const endpointKey = 'dummyEndpointKey';
             const convoState = new ConversationState(new MemoryStorage());
@@ -407,7 +409,7 @@ describe('QnAMakerDialog', function () {
             );
         });
 
-        it('should error if QnACardBuilder.getSuggestionsCard returns void', async () => {
+        it('should error if QnACardBuilder.getSuggestionsCard returns void', async function () {
             const kbId = 'dummyKbId';
             const endpointKey = 'dummyEndpointKey';
             const convoState = new ConversationState(new MemoryStorage());
@@ -415,12 +417,14 @@ describe('QnAMakerDialog', function () {
             dm.conversationState = convoState;
             const suggestionsCardTitle = 'Card Title';
             const cardNoMatchText = 'Not helpful.';
-            QnACardBuilder.getSuggestionsCard = (suggestionsList, cardTitle, noMatchingQuestionsText) => {
-                ok(suggestionsList);
-                strictEqual(suggestionsList.length, 3);
-                strictEqual(cardTitle, suggestionsCardTitle);
-                strictEqual(noMatchingQuestionsText, cardNoMatchText);
-            };
+            const suggestionsList = TopNAnswersData.answers.reduce((list, ans) => list.concat(ans.questions), []);
+            // Remove low scoring answer from QnA Maker result. Low scoring answers are filtered out by ActiveLearningUtils.
+            suggestionsList.pop();
+            sandbox
+                .mock(QnACardBuilder)
+                .expects('getSuggestionsCard')
+                .withExactArgs(suggestionsList, suggestionsCardTitle, cardNoMatchText)
+                .returns(undefined);
 
             const qnaDialog = new QnAMakerDialog(
                 kbId,
@@ -441,6 +445,8 @@ describe('QnAMakerDialog', function () {
                 adapter.send('QnaMaker_TopNAnswer.json').startTest(),
                 (thrown) => thrown.message === '`suggestionsActivity` must be defined'
             );
+
+            sandbox.verify();
         });
     });
 });

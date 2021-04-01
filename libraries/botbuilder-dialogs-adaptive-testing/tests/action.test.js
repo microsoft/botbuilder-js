@@ -378,6 +378,10 @@ describe('ActionTests', function () {
         await TestUtils.runTestScript(resourceExplorer, 'Action_SendActivity');
     });
 
+    it('SendActivityWithLGAlias', async () => {
+        await TestUtils.runTestScript(resourceExplorer, 'Action_SendActivity_LGAlias');
+    });
+
     it('SetProperties', async () => {
         await TestUtils.runTestScript(resourceExplorer, 'Action_SetProperties');
     });

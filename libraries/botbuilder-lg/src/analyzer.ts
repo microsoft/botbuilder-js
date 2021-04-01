@@ -7,16 +7,18 @@
  * Licensed under the MIT License.
  */
 import { AbstractParseTreeVisitor } from 'antlr4ts/tree';
-import { Expression, ExpressionParserInterface, ExpressionParser } from 'adaptive-expressions';
 import { keyBy } from 'lodash';
+import { Expression, ExpressionParserInterface } from 'adaptive-expressions';
 import { EvaluationTarget } from './evaluationTarget';
 import { Evaluator } from './evaluator';
 import * as lp from './generated/LGTemplateParser';
 import { LGTemplateParserVisitor } from './generated/LGTemplateParserVisitor';
-import { Template } from './template';
 import { TemplateExtensions } from './templateExtensions';
 import { AnalyzerResult } from './analyzerResult';
 import { TemplateErrors } from './templateErrors';
+import { Templates } from './templates';
+import { EvaluationOptions } from './evaluationOptions';
+import { Template } from './template';
 
 /**
  * Analyzer engine. To get the static analyzer results.
@@ -27,7 +29,7 @@ export class Analyzer
     /**
      * Templates.
      */
-    public readonly templates: Template[];
+    public readonly templates: Templates;
 
     private readonly templateMap: { [name: string]: Template };
     private readonly evalutationTargetStack: EvaluationTarget[] = [];
@@ -35,16 +37,16 @@ export class Analyzer
 
     /**
      * Creates a new instance of the [Analyzer](xref:botbuilder-lg.Analyzer) class.
-     * @param templates Template list.
-     * @param expressionParser Expression parser.
+     * @param templates Templates.
+     * @param opt Options for LG.
      */
-    public constructor(templates: Template[], expressionParser: ExpressionParser) {
+    public constructor(templates: Templates, opt?: EvaluationOptions) {
         super();
         this.templates = templates;
-        this.templateMap = keyBy(templates, (t: Template): string => t.name);
+        this.templateMap = keyBy(templates.allTemplates, (t: Template): string => t.name);
 
         // create an evaluator to leverage its customized function look up for checking
-        const evaluator: Evaluator = new Evaluator(this.templates, expressionParser);
+        const evaluator: Evaluator = new Evaluator(this.templates, opt);
         this._expressionParser = evaluator.expressionParser;
     }
 

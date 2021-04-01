@@ -24,7 +24,6 @@ import { Template } from './template';
 export class StaticChecker
     extends AbstractParseTreeVisitor<Diagnostic[]>
     implements LGTemplateParserVisitor<Diagnostic[]> {
-    private readonly baseExpressionParser: ExpressionParser;
     private readonly templates: Templates;
     private currentTemplate: Template;
     private _expressionParser: ExpressionParserInterface;
@@ -36,7 +35,6 @@ export class StaticChecker
     public constructor(templates: Templates) {
         super();
         this.templates = templates;
-        this.baseExpressionParser = templates.expressionParser || new ExpressionParser();
     }
 
     /**
@@ -46,7 +44,7 @@ export class StaticChecker
     private get expressionParser(): ExpressionParserInterface {
         if (this._expressionParser === undefined) {
             // create an evaluator to leverage it's customized function look up for checking
-            const evaluator = new Evaluator(this.templates.allTemplates, this.baseExpressionParser);
+            const evaluator = new Evaluator(this.templates, this.templates.lgOptions);
             this._expressionParser = evaluator.expressionParser;
         }
 

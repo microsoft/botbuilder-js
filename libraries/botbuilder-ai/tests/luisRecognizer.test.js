@@ -69,7 +69,7 @@ class TelemetryOverrideRecognizer extends LuisRecognizer {
 
 class OverrideFillRecognizer extends LuisRecognizer {
     async onRecognizerResults(recognizerResult, turnContext, properties, metrics) {
-        let props = await this.fillTelemetryProperties(recognizerResult, turnContext, properties);
+        const props = await this.fillTelemetryProperties(recognizerResult, turnContext, properties);
         if (!('MyImportantProperty' in props)) {
             props.MyImportantProperty = 'myImportantValue';
         }
@@ -205,7 +205,7 @@ async function testJson(
     return result;
 }
 
-describe('LuisRecognizer', () => {
+describe('LuisRecognizer', function () {
     const recognizer = new LuisRecognizer(
         { applicationId: luisAppId, endpointKey: endpointKey },
         { includeAllIntents: true },
@@ -214,11 +214,11 @@ describe('LuisRecognizer', () => {
 
     const maybeIt = !mockLuis && endpointKey === 'MockedKey' ? it.skip : it;
 
-    beforeEach(() => {
+    beforeEach(function () {
         nock.cleanAll();
     });
 
-    afterEach(async () => {
+    afterEach(async function () {
         nock.cleanAll();
         await throttle();
     });

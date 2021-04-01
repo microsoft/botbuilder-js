@@ -19,7 +19,7 @@ class TestInitializerMiddleware extends TelemetryInitializerMiddleware {
 describe(`TelemetryInitializerMiddleware`, function () {
     this.timeout(5000);
 
-    afterEach(() => {
+    afterEach(function () {
         sinon.restore();
     });
 

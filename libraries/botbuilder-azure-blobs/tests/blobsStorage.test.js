@@ -11,25 +11,25 @@ const containerName = process.env.AZURE_BLOB_STORAGE_CONTAINER;
 const maybeClient = () =>
     connectionString && containerName ? new BlobsStorage(connectionString, containerName) : null;
 
-describe('BlobsStorage', () => {
+describe('BlobsStorage', function () {
     const client = maybeClient();
     const maybeIt = client ? it : it.skip;
 
     const foo = { foo: 'foo' };
     const bar = { bar: 'bar' };
 
-    describe('constructor()', () => {
-        it('throws for bad args', () => {
+    describe('constructor()', function () {
+        it('throws for bad args', function () {
             assert.throws(() => new BlobsStorage(), 'throws for missing connectionString');
             assert.throws(() => new BlobsStorage('connectionString'), 'throws for missing containerName');
         });
 
-        it('succeeds for good args', () => {
+        it('succeeds for good args', function () {
             new BlobsStorage('UseDevelopmentStorage=true;', 'container');
         });
     });
 
-    describe('write()', () => {
+    describe('write()', function () {
         maybeIt('should throw for bad args', async () => {
             await assert.rejects(() => client.write());
         });
@@ -39,9 +39,9 @@ describe('BlobsStorage', () => {
         });
     });
 
-    describe('delete()', () => {
+    describe('delete()', function () {
         if (client) {
-            beforeEach(async () => {
+            beforeEach(async function () {
                 await client.write({ foo, bar });
             });
         }
@@ -63,19 +63,19 @@ describe('BlobsStorage', () => {
         });
     });
 
-    describe('read()', () => {
+    describe('read()', function () {
         if (client) {
-            before(async () => {
+            before(async function () {
                 await client.write({ foo, bar });
             });
         }
 
         let sandbox;
-        beforeEach(() => {
+        beforeEach(function () {
             sandbox = sinon.createSandbox({});
         });
 
-        afterEach(() => {
+        afterEach(function () {
             sandbox.restore();
         });
 

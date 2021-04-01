@@ -28,7 +28,7 @@ describe('Conditional Tests', function () {
         );
     });
 
-    it('OnTeamsActivityTypes', async () => {
+    it('OnTeamsActivityTypes', async function () {
         await TestUtils.runTestScript(resourceExplorer, 'ConditionalsTests_OnTeamsActivityTypes');
     });
 });

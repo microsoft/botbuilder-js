@@ -9,26 +9,26 @@ const { ok: assert, strictEqual } = require('assert');
 
 describe('DialogTestClient', function () {
     it('should create a DialogTestClient', async function () {
-        let client = new DialogTestClient('test', null);
+        const client = new DialogTestClient('test', null);
         assert(client instanceof DialogTestClient, 'Created an invalid object');
     });
 
     it('should create a DialogTestClient with a custom channelId', async function () {
-        let client = new DialogTestClient('custom', null);
+        const client = new DialogTestClient('custom', null);
         assert(client._testAdapter.template.channelId == 'custom', 'Created with wrong channel id');
     });
 
     it('should set a dialogContext after an activity is received', async function () {
-        let dialog = new WaterfallDialog('waterfall', [
+        const dialog = new WaterfallDialog('waterfall', [
             async (step) => {
                 await step.context.sendActivity('hello');
                 return step.endDialog();
             },
         ]);
 
-        let client = new DialogTestClient('test', dialog);
+        const client = new DialogTestClient('test', dialog);
         strictEqual(client.dialogContext, null);
-        let reply = await client.sendActivity('hello');
+        const reply = await client.sendActivity('hello');
         assert(client.dialogContext, 'client.dialogContext not found');
         assert(reply.text == 'hello', 'dialog responded with incorrect message');
         assert(reply.channelId == 'test', 'test channel id didnt get set');
@@ -36,7 +36,7 @@ describe('DialogTestClient', function () {
     });
 
     it('should process a 2 turn waterfall dialog', async function () {
-        let dialog = new WaterfallDialog('waterfall', [
+        const dialog = new WaterfallDialog('waterfall', [
             async (step) => {
                 await step.context.sendActivity('hello');
                 await step.context.sendActivity({ type: 'typing' });
@@ -48,7 +48,7 @@ describe('DialogTestClient', function () {
             },
         ]);
 
-        let client = new DialogTestClient('test', dialog, null, [new DialogTestLogger()], null, null);
+        const client = new DialogTestClient('test', dialog, null, [new DialogTestLogger()], null, null);
         let reply = await client.sendActivity('hello');
         assert(reply.text == 'hello', 'dialog responded with incorrect message');
         // get typing
@@ -64,7 +64,7 @@ describe('DialogTestClient', function () {
             constructor(id) {
                 super(id);
 
-                let dialog = new WaterfallDialog('waterfall', [
+                const dialog = new WaterfallDialog('waterfall', [
                     async (step) => {
                         return step.prompt('textPrompt', 'Tell me something');
                     },
@@ -90,8 +90,8 @@ describe('DialogTestClient', function () {
             }
         }
 
-        let component = new MainDialog('component');
-        let client = new DialogTestClient('test', component, null, [new DialogTestLogger()]);
+        const component = new MainDialog('component');
+        const client = new DialogTestClient('test', component, null, [new DialogTestLogger()]);
         let reply = await client.sendActivity('hello');
         assert(reply.text == 'Tell me something', 'dialog responded with incorrect message');
         reply = await client.sendActivity('foo');
