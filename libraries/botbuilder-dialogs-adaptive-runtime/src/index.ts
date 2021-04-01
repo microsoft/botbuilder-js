@@ -69,18 +69,13 @@ function addFeatures(services: ServiceCollection, configuration: Configuration):
                 ['setSpeak'],
                 t.Record({
                     voiceFontName: t.String.Or(t.Undefined),
-                    lang: t.String,
                     fallbackToTextForSpeechIfEmpty: t.Boolean,
                 })
             );
 
             if (setSpeak) {
                 middlewareSet.use(
-                    new SetSpeakMiddleware(
-                        setSpeak.voiceFontName ?? null,
-                        setSpeak.lang,
-                        setSpeak.fallbackToTextForSpeechIfEmpty
-                    )
+                    new SetSpeakMiddleware(setSpeak.voiceFontName ?? null, setSpeak.fallbackToTextForSpeechIfEmpty)
                 );
             }
 
