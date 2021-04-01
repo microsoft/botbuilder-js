@@ -14,32 +14,15 @@
 # Global rule:
 * @microsoft/botframework-sdk
 
-# AI: LUIS + QnA Maker
-libraries/botbuilder-ai/**                                              @microsoft/bf-cog-services @microsoft/botframework-sdk
-
 # Adaptive/LG
 libraries/adaptive-expressions*/**                                      @microsoft/bf-adaptive @microsoft/botframework-sdk
 libraries/botbuilder-dialogs*/**                                        @microsoft/bf-adaptive @microsoft/botframework-sdk
 libraries/botbuilder-lg/**                                              @microsoft/bf-adaptive @microsoft/botframework-sdk
 
-# Streaming library
-libraries/botbuilder/*/streaming/**                                     @microsoft/bf-streaming @microsoft/botframework-sdk
-libraries/botframework-streaming/**                                     @microsoft/bf-streaming @microsoft/botframework-sdk
-
-# Bot Framework Authentication
-libraries/botbuilder-core/src/coreAppCredentials.ts                     @microsoft/bf-auth @microsoft/botframework-sdk
-libraries/botbuilder-core/src/extendedUserTokenProvider.ts              @microsoft/bf-auth @microsoft/botframework-sdk
-libraries/botframework-connector/src/auth/**                            @microsoft/bf-auth @microsoft/botframework-sdk
-libraries/botframework-connector/src/tokenApi/**                        @microsoft/bf-auth @microsoft/botframework-sdk
-libraries/botframework-connector/tests/appCredentials.test.js           @microsoft/bf-auth @microsoft/botframework-sdk
-libraries/botframework-connector/tests/recordings/*TokenApiClient*      @microsoft/bf-auth @microsoft/botframework-sdk
-
 # Ownership by specific files or file types
 # This section MUST stay at the bottom of the CODEOWNERS file. For more information, see
 # https://docs.github.com/en/github/creating-cloning-and-archiving-repositories/about-code-owners#example-of-a-codeowners-file
 
-# For all public API changes
-libraries/*/etc/*                                                       @microsoft/botframework-sdk
 
 # Critical monorepo/package/typescript files
 yarn.lock                                                               @stevengum @joshgummersall

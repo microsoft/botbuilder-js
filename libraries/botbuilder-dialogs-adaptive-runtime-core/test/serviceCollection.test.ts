@@ -21,7 +21,7 @@ interface TestServices {
     bil: string;
 }
 
-describe('ServiceCollection', () => {
+describe('ServiceCollection', function () {
     const makeServiceCollection = (defaultServices: Partial<TestServices> = {}) => {
         const services = new ServiceCollection(defaultServices);
 
@@ -32,8 +32,8 @@ describe('ServiceCollection', () => {
         return services;
     };
 
-    describe('makeInstances', () => {
-        it('works', () => {
+    describe('makeInstances', function () {
+        it('works', function () {
             const services = makeServiceCollection();
 
             const { foo, bar, baz, bil } = services.mustMakeInstances<{
@@ -50,8 +50,8 @@ describe('ServiceCollection', () => {
             assert.strictEqual(baz.bar.foo, foo);
         });
 
-        describe('providing defaults', () => {
-            it('initialValue style', () => {
+        describe('providing defaults', function () {
+            it('initialValue style', function () {
                 const services = new ServiceCollection();
 
                 services.addFactory<number[]>('values', (values = [1]) => values.concat(2));
@@ -61,7 +61,7 @@ describe('ServiceCollection', () => {
                 assert.deepStrictEqual(values, [1, 2, 3]);
             });
 
-            it('constructor style', () => {
+            it('constructor style', function () {
                 const services = new ServiceCollection({
                     values: [1],
                 });
@@ -75,15 +75,15 @@ describe('ServiceCollection', () => {
         });
     });
 
-    describe('mustMakeInstances', () => {
-        it('throws if a service instance is undefined', () => {
+    describe('mustMakeInstances', function () {
+        it('throws if a service instance is undefined', function () {
             const services = new ServiceCollection();
             assert.throws(() => services.mustMakeInstances('value'));
         });
     });
 
-    describe('makeInstance', () => {
-        it('uses cached dependencies by default', () => {
+    describe('makeInstance', function () {
+        it('uses cached dependencies by default', function () {
             const services = makeServiceCollection();
 
             const { bar, baz } = services.mustMakeInstances<{ bar: Bar; baz: Baz }>('bar', 'baz');
@@ -93,7 +93,7 @@ describe('ServiceCollection', () => {
             assert.strictEqual(newBaz.bar, bar);
         });
 
-        it('optionally fully reconstructs dependencies', () => {
+        it('optionally fully reconstructs dependencies', function () {
             const services = makeServiceCollection();
 
             const { foo, bar, baz } = services.makeInstances();
@@ -109,15 +109,15 @@ describe('ServiceCollection', () => {
         });
     });
 
-    describe('mustMakeInstance', () => {
-        it('throws if a service instance is undefined', () => {
+    describe('mustMakeInstance', function () {
+        it('throws if a service instance is undefined', function () {
             const services = new ServiceCollection();
             assert.throws(() => services.mustMakeInstance('value'));
         });
     });
 
-    describe('factory handling', () => {
-        it('works', () => {
+    describe('factory handling', function () {
+        it('works', function () {
             const services = new ServiceCollection({
                 a: {},
                 b: {},
@@ -137,7 +137,7 @@ describe('ServiceCollection', () => {
             assert.deepStrictEqual(a, { key: 'value' });
         });
 
-        it('throws for undefined initial value', () => {
+        it('throws for undefined initial value', function () {
             const services = new ServiceCollection({
                 a: {},
             });

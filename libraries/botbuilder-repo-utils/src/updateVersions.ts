@@ -21,6 +21,14 @@ export interface PackageVersionOptions {
     preview?: string;
 }
 
+export class PackageVersion {
+    constructor(readonly version: string, readonly metadata: string) {}
+
+    toString(): string {
+        return R.compact([this.version, this.metadata]).join('+');
+    }
+}
+
 /**
  * Computes the final version identifier components for a package.
  *
@@ -33,10 +41,9 @@ export const getPackageVersion = (
     pkg: Partial<Package>,
     newVersion: string,
     options: PackageVersionOptions
-): string => {
+): PackageVersion => {
     const prerelease = [];
 
-    // Include package status
     if (pkg.deprecated) {
         prerelease.push(options.deprecated);
     } else if (pkg.internal) {
@@ -45,31 +52,24 @@ export const getPackageVersion = (
         prerelease.push(options.preview);
     }
 
-    // Include build label as well
     if (options.buildLabel) {
         prerelease.push(options.buildLabel);
     }
 
+    if (options.commitSha) {
+        prerelease.push(options.commitSha);
+    }
+
     const metadata = [];
 
-    // Include extra metadata, if defined
     if (options.date) {
         metadata.push(`date-${options.date}`);
     }
 
-    if (options.commitSha) {
-        metadata.push(`sha-${options.commitSha}`);
-    }
-
-    // Join MAJOR.MINOR.PATCH and LABEL with '-'
-    const formattedPrerelease = R.compact(prerelease).join('.');
-    const formattedVersion = R.compact([newVersion, formattedPrerelease]).join('-');
-
-    // Metadata is dot-delimited
-    const formattedMetadata = R.compact(metadata).join('.');
-
-    // Join formattedVersion and formattedMetadata with a "+"
-    return R.compact([formattedVersion, formattedMetadata]).join('+');
+    return new PackageVersion(
+        R.compact([newVersion, R.compact(prerelease).join('.')]).join('-'),
+        R.compact(metadata).join('.')
+    );
 };
 
 export const command = (argv: string[], quiet = false) => async (): Promise<Result> => {
@@ -111,7 +111,7 @@ export const command = (argv: string[], quiet = false) => async (): Promise<Resu
     const workspaces = await collectWorkspacePackages(repoRoot, packageFile.workspaces, { noPrivate: true });
 
     // Build an object mapping a package name to its new, updated version
-    const workspaceVersions = workspaces.reduce<Record<string, string>>(
+    const workspaceVersions = workspaces.reduce<Record<string, PackageVersion>>(
         (acc, { pkg }) => ({
             ...acc,
             [pkg.name]: getPackageVersion(pkg, newVersion, {
@@ -128,8 +128,7 @@ export const command = (argv: string[], quiet = false) => async (): Promise<Resu
 
     // Rewrites the version for any dependencies found in `workspaceVersions`
     const rewriteWithNewVersions = (dependencies: Record<string, string>) =>
-        // eslint-disable-next-line security/detect-object-injection
-        R.mapValues(dependencies, (value, key) => workspaceVersions[key] ?? value);
+        R.mapValues(dependencies, (value, key) => workspaceVersions[key]?.version ?? value);
 
     // Rewrite package.json files by updating version as well as dependencies and devDependencies.
     const results = await Promise.all<Result>(
@@ -140,7 +139,7 @@ export const command = (argv: string[], quiet = false) => async (): Promise<Resu
                 if (!quiet) {
                     console.log(`Updating ${pkg.name} to ${newVersion}`);
                 }
-                pkg.version = newVersion;
+                pkg.version = newVersion.toString();
             }
 
             if (pkg.dependencies) {

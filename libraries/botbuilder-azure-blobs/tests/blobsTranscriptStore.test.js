@@ -11,7 +11,7 @@ const containerName = process.env.AZURE_BLOB_STORAGE_CONTAINER;
 const maybeClient = () =>
     connectionString && containerName ? new BlobsTranscriptStore(connectionString, containerName) : null;
 
-describe('BlobsStorage', () => {
+describe('BlobsStorage', function () {
     const client = maybeClient();
     const maybeIt = client ? it : it.skip;
 
@@ -48,11 +48,11 @@ describe('BlobsStorage', () => {
         });
 
         if (client) {
-            beforeEach(async () => {
+            beforeEach(async function () {
                 await pmap(activities, (activity) => client.logActivity(activity), { concurrency: 2 });
             });
 
-            afterEach(async () => {
+            afterEach(async function () {
                 await client.deleteTranscript(channelId, conversationId);
             });
         }
@@ -60,18 +60,18 @@ describe('BlobsStorage', () => {
         return { activities, channelId, conversationId };
     };
 
-    describe('constructor()', () => {
-        it('throws for bad args', () => {
+    describe('constructor()', function () {
+        it('throws for bad args', function () {
             assert.throws(() => new BlobsTranscriptStore(), 'throws for missing connectionString');
             assert.throws(() => new BlobsTranscriptStore('connectionString'), 'throws for missing containerName');
         });
 
-        it('succeeds for good args', () => {
+        it('succeeds for good args', function () {
             new BlobsTranscriptStore('UseDevelopmentStorage=true;', 'container');
         });
     });
 
-    describe('logActivity()', () => {
+    describe('logActivity()', function () {
         maybeIt('should throw for bad arguments', async () => {
             await assert.rejects(() => client.logActivity());
         });
@@ -81,7 +81,7 @@ describe('BlobsStorage', () => {
         });
     });
 
-    describe('getTranscriptActivites', () => {
+    describe('getTranscriptActivites', function () {
         const { activities, channelId, conversationId } = maybePreload();
 
         maybeIt('should throw for bad arguments', async () => {
@@ -114,7 +114,7 @@ describe('BlobsStorage', () => {
         });
     });
 
-    describe('deleteTranscript()', () => {
+    describe('deleteTranscript()', function () {
         const { channelId, conversationId } = maybePreload();
 
         maybeIt('should throw for bad arguments', async () => {
@@ -129,7 +129,7 @@ describe('BlobsStorage', () => {
         });
     });
 
-    describe('listTranscripts()', () => {
+    describe('listTranscripts()', function () {
         const { activities, channelId } = maybePreload();
 
         maybeIt('should throw for bad arguments', async () => {

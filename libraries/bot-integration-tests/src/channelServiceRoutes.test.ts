@@ -6,7 +6,7 @@ import { AuthenticationConfiguration, SimpleCredentialProvider } from 'botframew
 import express from 'express';
 
 describe('ChannelServiceRoutes - Integration Tests', function () {
-    it('should successfully configure all routes on an Express Application', () => {
+    it('should successfully configure all routes on an Express Application', function () {
         const app = express();
         const handler = new ChannelServiceHandler(
             new SimpleCredentialProvider('', ''),
@@ -27,7 +27,7 @@ describe('ChannelServiceRoutes - Integration Tests', function () {
         strictEqual(bfRoutes.length, 12);
     });
 
-    it('should successfully configure all routes on an Express Application with a provided basePath', () => {
+    it('should successfully configure all routes on an Express Application with a provided basePath', function () {
         const app = express();
         const handler = new ChannelServiceHandler(
             new SimpleCredentialProvider('', ''),
@@ -48,7 +48,7 @@ describe('ChannelServiceRoutes - Integration Tests', function () {
         strictEqual(bfRoutes.length, 12);
     });
 
-    it('should successfully configure all routes on a Restify Server', () => {
+    it('should successfully configure all routes on a Restify Server', function () {
         const server = createServer();
         const handler = new ChannelServiceHandler(
             new SimpleCredentialProvider('', ''),
@@ -72,7 +72,7 @@ describe('ChannelServiceRoutes - Integration Tests', function () {
         strictEqual(bfRoutes.length, 12);
     });
 
-    it('should successfully configure all routes on a Restify Server with a provided basePath', () => {
+    it('should successfully configure all routes on a Restify Server with a provided basePath', function () {
         const server = createServer();
         const handler = new ChannelServiceHandler(
             new SimpleCredentialProvider('', ''),

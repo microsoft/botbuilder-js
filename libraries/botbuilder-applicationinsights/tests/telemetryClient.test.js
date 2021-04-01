@@ -7,7 +7,7 @@ const sinon = require('sinon').createSandbox();
 
 describe('ApplicationInsightsTelemetryClient', function () {
     describe('Constructor', function () {
-        afterEach(() => {
+        afterEach(function () {
             appInsights.dispose();
         });
 
@@ -29,7 +29,7 @@ describe('ApplicationInsightsTelemetryClient', function () {
     });
 
     describe('Methods', function () {
-        afterEach(() => {
+        afterEach(function () {
             appInsights.dispose();
             sinon.restore();
         });
@@ -175,7 +175,7 @@ describe('ApplicationInsightsTelemetryClient', function () {
     });
 
     describe('ApplicationInsightsWebserverMiddleware', function () {
-        afterEach(() => {
+        afterEach(function () {
             sinon.restore();
         });
 
