@@ -22,7 +22,7 @@ import {
     FunctionUtils,
     MemoryInterface,
 } from 'adaptive-expressions';
-import keyBy from 'lodash/keyBy';
+import { keyBy } from 'lodash';
 import { CustomizedMemory } from './customizedMemory';
 import { EvaluationTarget } from './evaluationTarget';
 import * as lp from './generated/LGTemplateParser';

@@ -7,7 +7,7 @@
  * Licensed under the MIT License.
  */
 import { AbstractParseTreeVisitor } from 'antlr4ts/tree';
-import keyBy from 'lodash/keyBy';
+import { keyBy } from 'lodash';
 import { Expression, ExpressionParserInterface } from 'adaptive-expressions';
 import { EvaluationTarget } from './evaluationTarget';
 import { Evaluator } from './evaluator';

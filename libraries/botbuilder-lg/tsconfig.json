@@ -4,8 +4,7 @@
     "lib": ["es2015", "dom"],
     "outDir": "lib",
     "rootDir": "src",
-    "skipLibCheck": true,
-    "esModuleInterop": true,
+    "skipLibCheck": true
   },
   "include": [
     "src/**/*"
