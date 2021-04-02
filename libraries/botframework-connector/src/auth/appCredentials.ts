@@ -9,14 +9,21 @@
 import * as msrest from '@azure/ms-rest-js';
 import * as url from 'url';
 import * as adal from 'adal-node';
+// import * as msal from '@azure/msal-node';
+import { AuthenticationResult } from '@azure/msal-node';
 import { AuthenticationConstants } from './authenticationConstants';
 
+export type AuthResult = AuthenticationResult | adal.TokenResponse;
+
 /**
- * General AppCredentials auth implementation and cache. Supports any ADAL client credential flow.
+ * General AppCredentials auth implementation and cache. Supports any MSAL client credential flow.
  * Subclasses can implement refreshToken to acquire the token.
+ * 
+ * Note: previously this class supported ADAL auth flows, however due to the library's deprecation,
+ * this class continues to have ADAL-related methods, but they are now deprecated.
  */
 export abstract class AppCredentials implements msrest.ServiceClientCredentials {
-    private static readonly cache: Map<string, adal.TokenResponse> = new Map<string, adal.TokenResponse>();
+    private static readonly cache: Map<string, AuthResult> = new Map<string, AuthResult>();
 
     public appId: string;
 
@@ -140,11 +147,11 @@ export abstract class AppCredentials implements msrest.ServiceClientCredentials 
     public async getToken(forceRefresh = false): Promise<string> {
         if (!forceRefresh) {
             // check the global cache for the token. If we have it, and it's valid, we're done.
-            const oAuthToken: adal.TokenResponse = AppCredentials.cache.get(this.tokenCacheKey);
-            if (oAuthToken) {
+            const oAuthRes: AuthResult = AppCredentials.cache.get(this.tokenCacheKey);
+            if (oAuthRes) {
                 // we have the token. Is it valid?
-                if (oAuthToken.expirationTime > Date.now()) {
-                    return oAuthToken.accessToken;
+                if (this.getExpirationTime(oAuthRes) > Date.now()) {
+                    return oAuthRes.accessToken;
                 }
             }
         }
@@ -153,21 +160,14 @@ export abstract class AppCredentials implements msrest.ServiceClientCredentials 
         // 1. The user requested it via the forceRefresh parameter
         // 2. We have it, but it's expired
         // 3. We don't have it in the cache.
-        const res: adal.TokenResponse = await this.refreshToken();
-        this.refreshingToken = null;
-
+        // const res: adal.TokenResponse = await this.refreshToken();
+        // const res: AuthResult = await this.refreshToken();
+        // I think the option we go with is make a refreshTokenWithMsal() method and leave refreshToken() alone, since it's protected, and customers may have already derived from it
+        const res: AuthenticationResult = await this.refreshToken2(); 
+        
         if (res && res.accessToken) {
-            // `res` is equalivent to the results from the cached promise `this.refreshingToken`.
-            // Because the promise has been cached, we need to see if the body has been read.
-            // If the body has not been read yet, we can call res.json() to get the access_token.
-            // If the body has been read, the OAuthResponse for that call should have been cached already,
-            // in which case we can return the cache from there. If a cached OAuthResponse does not exist,
-            // call getToken() again to retry the authentication process.
-
-            // Subtract 5 minutes from expires_in so they'll we'll get a
-            // new token before it expires.
-            res.expirationTime = Date.now() + res.expiresIn * 1000 - 300000;
             AppCredentials.cache.set(this.tokenCacheKey, res);
+
             return res.accessToken;
         } else {
             throw new Error('Authentication: No response or error received from ADAL.');
@@ -176,10 +176,43 @@ export abstract class AppCredentials implements msrest.ServiceClientCredentials 
 
     protected abstract refreshToken(): Promise<adal.TokenResponse>;
 
+    // TODO - rename method
+    protected abstract refreshToken2(): Promise<AuthenticationResult>;
+
+
     /**
      * @private
      */
     private shouldSetToken(): boolean {
         return this.appId && this.appId !== AuthenticationConstants.AnonymousSkillAppId;
+    }
+
+    /**
+     * Get the expiration time of the access token. 
+     * The expiration time subtracts 5 minutes from actual expiration time
+     * to allow a buffer and ensure we request a new token before the current one expires.
+     * 
+     * @private
+     * @param res
+     * @returns 
+     */
+    private getExpirationTime(res: AuthResult): number {
+        if (this.isMsalAuthenticationResult(res)) {
+            return res.expiresOn.getTime() - 300000;
+        }
+
+        if (this.isAdalTokenResponse(res)) {
+            return Date.now() + res.expiresIn * 1000 - 300000;
+        }
+
+        return 0;
+    }
+
+    private isMsalAuthenticationResult(obj: any): obj is AuthenticationResult {
+        return (obj.accessToken && obj.authority) ? true : false;
+    }
+
+    private isAdalTokenResponse(obj: any): obj is adal.TokenResponse {
+        return (obj.accessToken && obj.expiresIn) ? true : false;
     }
 }

@@ -7,6 +7,7 @@
  */
 
 import * as adal from 'adal-node';
+import * as msal from '@azure/msal-node'; // TODO - narrow import
 import { AppCredentials } from './appCredentials';
 
 /**
@@ -15,6 +16,7 @@ import { AppCredentials } from './appCredentials';
 export class CertificateAppCredentials extends AppCredentials {
     public certificateThumbprint: string;
     public certificatePrivateKey: string;
+    private oAuthClient: msal.ConfidentialClientApplication;
 
     /**
      * Initializes a new instance of the [CertificateAppCredentials](xref:botframework-connector.CertificateAppCredentials) class.
@@ -34,29 +36,58 @@ export class CertificateAppCredentials extends AppCredentials {
         super(appId, channelAuthTenant, oAuthScope);
         this.certificateThumbprint = certificateThumbprint;
         this.certificatePrivateKey = certificatePrivateKey;
+
+        this.oAuthClient = new msal.ConfidentialClientApplication({
+            auth: {
+                clientId: this.appId,
+                authority: this.oAuthEndpoint,
+                clientCertificate: {
+                    thumbprint: certificateThumbprint,
+                    privateKey: certificatePrivateKey
+                }
+            }
+        });
     }
 
     /**
+     * Get a token using Azure Active Directory Authentication Library (ADAL).
+     * 
+     * @deprecated since version 4.14.x due to the deprecation of ADAL. Consider using `refreshToken2` (TODO change name),
+     * which leverages Microsoft's newer and favored Microsoft Authentication Library (MSAL).
+     * 
+     * For more details, see https://docs.microsoft.com/en-us/azure/active-directory/develop/msal-migration#frequently-asked-questions-faq.
      * @protected
      */
     protected async refreshToken(): Promise<adal.TokenResponse> {
-        if (!this.refreshingToken) {
-            this.refreshingToken = new Promise<adal.TokenResponse>((resolve, reject) => {
-                this.authenticationContext.acquireTokenWithClientCertificate(
-                    this.oAuthScope,
-                    this.appId,
-                    this.certificatePrivateKey,
-                    this.certificateThumbprint,
-                    function (err, tokenResponse) {
-                        if (err) {
-                            reject(err);
-                        } else {
-                            resolve(tokenResponse as adal.TokenResponse);
-                        }
+        return new Promise<adal.TokenResponse>((resolve, reject) => {
+            this.authenticationContext.acquireTokenWithClientCertificate(
+                this.oAuthScope,
+                this.appId,
+                this.certificatePrivateKey,
+                this.certificateThumbprint,
+                function (err, tokenResponse) { // TODO -- fat arrow ok?
+                    if (err) {
+                        reject(err);
+                    } else {
+                        resolve(tokenResponse as adal.TokenResponse);
                     }
-                );
-            });
-        }
-        return this.refreshingToken;
+                }
+            );
+        });
+    }
+
+    protected async refreshToken2(): Promise<msal.AuthenticationResult> {
+        // TODO save this to a member on Credentials -- might not be necessary?
+        let authRes: msal.AuthenticationResult;
+        // if (!this.refreshingToken) {
+            const clientCredentialRequest = {
+                scopes: [this.oAuthScope + '/.default'],
+            };
+
+            authRes = await this.oAuthClient.acquireTokenByClientCredential(clientCredentialRequest);
+            console.log(`token from msal: ${authRes}`);
+        // }
+
+        return authRes;
     }
 }

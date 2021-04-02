@@ -7,6 +7,7 @@
  */
 
 import * as adal from 'adal-node';
+import * as msal from '@azure/msal-node';
 import { AppCredentials } from './appCredentials';
 
 // Determines if an unknown value is of adal.ErrorResponse type
@@ -57,5 +58,10 @@ export class MicrosoftAppCredentials extends AppCredentials {
         }
 
         return this.refreshingToken;
+    }
+
+    protected async refreshToken2(): Promise<msal.AuthenticationResult> {
+        let authRes: msal.AuthenticationResult;
+        return authRes;
     }
 }

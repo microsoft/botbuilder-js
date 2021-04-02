@@ -28,6 +28,7 @@
   },
   "dependencies": {
     "@azure/ms-rest-js": "1.9.1",
+    "@azure/msal-node": "^1.0.1",
     "@types/jsonwebtoken": "7.2.8",
     "@types/node": "^10.17.27",
     "adal-node": "0.2.1",
