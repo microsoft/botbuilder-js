@@ -24,7 +24,7 @@ export class EvaluationTarget {
     /**
      * The children templates that this template has evaluated currently.
      */
-    public cachedEvaluatedChildren: Map<string, any>;
+    public cachedEvaluatedChildren: Map<string, unknown>;
 
     /**
      * Creates a new instance of the [EvaluationTarget](xref:botbuilder-lg.EvaluationTarget) class.
@@ -34,7 +34,7 @@ export class EvaluationTarget {
     public constructor(templateName: string, scope: MemoryInterface) {
         this.templateName = templateName;
         this.scope = scope;
-        this.cachedEvaluatedChildren = new Map<string, any>();
+        this.cachedEvaluatedChildren = new Map<string, unknown>();
     }
 
     /**

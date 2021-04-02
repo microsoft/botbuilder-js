@@ -34,6 +34,7 @@ import { TemplateExtensions } from './templateExtensions';
 import { TemplateErrors } from './templateErrors';
 import { EvaluationOptions, LGCacheScope } from './evaluationOptions';
 import { Templates } from './templates';
+import { stringify } from 'querystring';
 
 /**
  * Filr formats.
@@ -58,7 +59,7 @@ export enum FileFormat {
 /**
  * Evaluation runtime engine
  */
-export class Evaluator extends AbstractParseTreeVisitor<any> implements LGTemplateParserVisitor<any> {
+export class Evaluator extends AbstractParseTreeVisitor<unknown> implements LGTemplateParserVisitor<unknown> {
     /**
      * Templates.
      */
@@ -110,7 +111,7 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGTempla
      * @param scope Scope.
      * @returns Evaluate result.
      */
-    public evaluateTemplate(inputTemplateName: string, scope: any): any {
+    public evaluateTemplate(inputTemplateName: string, scope: unknown): unknown {
         const memory = scope instanceof CustomizedMemory ? scope : new CustomizedMemory(scope);
         const { reExecute, pureTemplateName: templateName } = this.parseTemplateName(inputTemplateName);
 
@@ -130,7 +131,7 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGTempla
             );
         }
 
-        let result: any;
+        let result: unknown;
         let hasResult = false;
         if (!reExecute) {
             if (this.lgOptions.cacheScope === LGCacheScope.Global) {
@@ -180,8 +181,8 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGTempla
      * @param ctx The parse tree.
      * @returns The result of visiting the structured template body.
      */
-    public visitStructuredTemplateBody(ctx: lp.StructuredTemplateBodyContext): any {
-        const result: any = {};
+    public visitStructuredTemplateBody(ctx: lp.StructuredTemplateBodyContext): unknown {
+        const result: Record<string, unknown> = {};
         const typeName: string = ctx.structuredBodyNameLine().STRUCTURE_NAME().text;
         result[Evaluator.LGType] = typeName;
 
@@ -193,7 +194,7 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGTempla
                 const value = this.visitStructureValue(body.keyValueStructureLine());
                 result[property] = value;
             } else {
-                const propertyObject: any = this.evalExpression(
+                const propertyObject = this.evalExpression(
                     body.expressionInStructure().text,
                     body.expressionInStructure(),
                     body.text
@@ -220,7 +221,7 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGTempla
     /**
      * @private
      */
-    private visitStructureValue(ctx: lp.KeyValueStructureLineContext): any {
+    private visitStructureValue(ctx: lp.KeyValueStructureLineContext): unknown {
         const values = ctx.keyValueStructureValue();
 
         const result = [];
@@ -260,7 +261,7 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGTempla
      * @param ctx The parse tree.
      * @returns The result of visiting the normal body.
      */
-    public visitNormalBody(ctx: lp.NormalBodyContext): any {
+    public visitNormalBody(ctx: lp.NormalBodyContext): unknown {
         return this.visit(ctx.normalTemplateBody());
     }
 
@@ -269,7 +270,7 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGTempla
      * @param ctx The parse tree.
      * @returns The result of visiting the normal template body.
      */
-    public visitNormalTemplateBody(ctx: lp.NormalTemplateBodyContext): any {
+    public visitNormalTemplateBody(ctx: lp.NormalTemplateBodyContext): unknown {
         const normalTemplateStrs: lp.TemplateStringContext[] = ctx.templateString();
         const randomNumber = Extensions.randomNext(this.currentTarget().scope, 0, normalTemplateStrs.length);
 
@@ -280,7 +281,7 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGTempla
      * Visit a parse tree produced by the ifElseBody labeled alternative in LGTemplateParser.body.
      * @param ctx The parse tree.
      */
-    public visitIfElseBody(ctx: lp.IfElseBodyContext): any {
+    public visitIfElseBody(ctx: lp.IfElseBodyContext): unknown {
         const ifRules: lp.IfConditionRuleContext[] = ctx.ifElseTemplateBody().ifConditionRule();
         for (const ifRule of ifRules) {
             if (this.evalCondition(ifRule.ifCondition()) && ifRule.normalTemplateBody() !== undefined) {
@@ -298,7 +299,7 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGTempla
      */
     public visitNormalTemplateString(ctx: lp.NormalTemplateStringContext): string {
         const prefixErrorMsg = TemplateExtensions.getPrefixErrorMessage(ctx);
-        const result: any[] = [];
+        const result: unknown[] = [];
         for (const child of ctx.children) {
             if (child instanceof lp.ExpressionContext) {
                 result.push(this.evalExpression(child.text, child, ctx.text, prefixErrorMsg));
@@ -321,11 +322,11 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGTempla
         }
 
         if (result.length === 1 && !(typeof result[0] === 'string')) {
-            return result[0];
+            return result[0].toString();
         }
 
         return result
-            .map((u: any): string => {
+            .map((u) => {
                 if (typeof u === 'string') {
                     return u;
                 } else {
@@ -375,7 +376,7 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGTempla
      * @param ctx The parse tree.
      * @returns The string result of visiting the switch case body.
      */
-    public visitSwitchCaseBody(ctx: lp.SwitchCaseBodyContext): string {
+    public visitSwitchCaseBody(ctx: lp.SwitchCaseBodyContext): unknown {
         const switchcaseNodes: lp.SwitchCaseRuleContext[] = ctx.switchCaseTemplateBody().switchCaseRule();
         const length: number = switchcaseNodes.length;
         const switchNode: lp.SwitchCaseRuleContext = switchcaseNodes[0];
@@ -430,7 +431,7 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGTempla
             .split('')
             .reverse()
             .join('')
-            .replace(regex, (sub: string): any =>
+            .replace(regex, (sub: string) =>
                 this.evalExpression(sub.split('').reverse().join('')).toString().split('').reverse().join('')
             )
             .split('')
@@ -476,7 +477,7 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGTempla
     public static checkExpressionResult(
         exp: string,
         error: string,
-        result: any,
+        result: unknown,
         templateName: string,
         inlineContent = '',
         errorPrefix = ''
@@ -561,7 +562,7 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGTempla
         expressionContext?: ParserRuleContext,
         inlineContent = '',
         errorPrefix = ''
-    ): any {
+    ): unknown {
         exp = TemplateExtensions.trimExpression(exp);
         const { value: result, error: error } = this.evalByAdaptiveExpression(exp, this.currentTarget().scope);
 
@@ -581,7 +582,7 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGTempla
     /**
      * @private
      */
-    private evalByAdaptiveExpression(exp: string, scope: any): { value: any; error: string } {
+    private evalByAdaptiveExpression(exp: string, scope: unknown): { value: unknown; error: string } {
         const parse: Expression = this.expressionParser.parse(exp);
         const opt = new Options();
         opt.nullSubstitution = this.lgOptions.nullSubstitution;
@@ -591,7 +592,7 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGTempla
     }
 
     // Genearte a new lookup function based on one lookup function
-    private readonly customizedEvaluatorLookup = (baseLookup: EvaluatorLookup): any => (name: string): any => {
+    private readonly customizedEvaluatorLookup = (baseLookup: EvaluatorLookup) => (name: string): ExpressionEvaluator => {
         const standardFunction = baseLookup(name);
 
         if (standardFunction !== undefined) {
@@ -674,17 +675,17 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGTempla
         return undefined;
     };
 
-    private readonly isTemplate = (): any => (args: readonly any[]): boolean => {
+    private readonly isTemplate = () => (args: readonly unknown[]): boolean => {
         const templateName = args[0].toString();
         return templateName in this.templateMap;
     };
 
-    private readonly fromFile = (): any => (args: readonly any[]): any => {
+    private readonly fromFile = () => (args: readonly unknown[]): unknown => {
         const filePath: string = TemplateExtensions.normalizePath(args[0].toString());
         const resourcePath: string = this.getResourcePath(filePath);
         let format = FileFormat.Evaluated;
         if (args.length > 1) {
-            const expected = args[1].toLowerCase();
+            const expected = args[1].toString().toLowerCase();
             const currentFormat = Object.values(FileFormat).find((f) => f.toLowerCase() === expected);
             if (currentFormat != null) {
                 format = currentFormat;
@@ -719,7 +720,7 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGTempla
         return result;
     };
 
-    private readonly expandText = (): any => (args: readonly any[]): any => {
+    private readonly expandText = () => (args: readonly unknown[]): unknown => {
         const stringContent = args[0].toString();
 
         const newScope = this.evaluationTargetStack.length > 0 ? this.currentTarget().scope : undefined;
@@ -765,7 +766,7 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGTempla
         return resourcePath;
     }
 
-    private readonly activityAttachment = (): any => (args: readonly any[]): any => {
+    private readonly activityAttachment = () => (args: readonly unknown[]): unknown => {
         return {
             [Evaluator.LGType]: 'attachment',
             contenttype: args[1].toString(),
@@ -781,9 +782,9 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGTempla
         return templates.evaluate(templateName, newScope);
     };
 
-    private readonly templateFunction = (): any => (args: readonly any[]): any => {
-        const templateName: string = args[0];
-        const newScope: any = this.constructScope(templateName, args.slice(1), this.templates.allTemplates);
+    private readonly templateFunction = () => (args: readonly unknown[]): unknown => {
+        const templateName: string = args[0].toString();
+        const newScope = this.constructScope(templateName, args.slice(1), this.templates.allTemplates);
 
         return this.evaluateTemplate(templateName, newScope);
     };
@@ -821,8 +822,8 @@ export class Evaluator extends AbstractParseTreeVisitor<any> implements LGTempla
         }
     }
 
-    private readonly templateEvaluator = (templateName: string): any => (args: readonly any[]): any => {
-        const newScope: any = this.constructScope(templateName, Array.from(args), this.templates.allTemplates);
+    private readonly templateEvaluator = (templateName: string) => (args: readonly unknown[]): unknown => {
+        const newScope = this.constructScope(templateName, Array.from(args), this.templates.allTemplates);
 
         return this.evaluateTemplate(templateName, newScope);
     };
