@@ -1,4 +1,5 @@
 const assert = require('assert');
+const { ActivityTypes } = require('botbuilder-core');
 const {
     OnActivity,
     OnAssignEntity,
@@ -7,6 +8,8 @@ const {
     OnChooseEntity,
     OnChooseIntent,
     OnChooseProperty,
+    OnCommandActivity,
+    OnCommandResultActivity,
     OnContinueConversation,
     OnConversationUpdateActivity,
     OnDialogEvent,
@@ -27,6 +30,7 @@ const {
     OnTypingActivity,
     OnUnknownIntent,
     OnCondition,
+    AdaptiveEvents,
 } = require('../lib');
 
 const assertExpression = (condition, expectedExpression) => {
@@ -34,8 +38,8 @@ const assertExpression = (condition, expectedExpression) => {
     assert.strictEqual(exp.toString(), expectedExpression);
 };
 
-describe('ConditionalsTests', () => {
-    it('verify getExpression', () => {
+describe('ConditionalsTests', function () {
+    it('verify getExpression', function () {
         const conditions = [
             new OnActivity(),
             new OnAssignEntity(),
@@ -45,6 +49,8 @@ describe('ConditionalsTests', () => {
             new OnChooseEntity(),
             new OnChooseIntent(),
             new OnChooseProperty(),
+            new OnCommandActivity(),
+            new OnCommandResultActivity(),
             new OnContinueConversation(),
             new OnConversationUpdateActivity(),
             new OnDialogEvent(),
@@ -70,7 +76,7 @@ describe('ConditionalsTests', () => {
         });
     });
 
-    it('OnCondition with conditioan', () => {
+    it('OnCondition with conditioan', function () {
         assertExpression(
             new OnActivity('event', [], 'turn.test == 1'),
             "((turn.activity.type == 'event') && ((turn.dialogEvent.name == 'activityReceived') && (turn.test == 1)))"
@@ -90,6 +96,14 @@ describe('ConditionalsTests', () => {
         assertExpression(
             new OnChooseEntity('property', 'entity', [], 'turn.test == 1'),
             "(((turn.dialogEvent.name == 'chooseEntity') && (turn.test == 1)) && (turn.dialogEvent.value.property == 'property') && (turn.dialogEvent.value.entity.name == 'entity'))"
+        );
+        assertExpression(
+            new OnCommandActivity([], 'turn.test == 1'),
+            `((turn.activity.type == '${ActivityTypes.Command}') && ((turn.dialogEvent.name == '${AdaptiveEvents.activityReceived}') && (turn.test == 1)))`
+        );
+        assertExpression(
+            new OnCommandResultActivity([], 'turn.test == 1'),
+            `((turn.activity.type == '${ActivityTypes.CommandResult}') && ((turn.dialogEvent.name == '${AdaptiveEvents.activityReceived}') && (turn.test == 1)))`
         );
         assertExpression(new OnCondition('turn.test == 1'), '(turn.test == 1)');
         assertExpression(
