@@ -78,6 +78,12 @@ export class ActivityHandlerBase {
             case ActivityTypes.InstallationUpdate:
                 await this.onInstallationUpdateActivity(context);
                 break;
+            case ActivityTypes.Command:
+                await this.onCommandActivity(context);
+                break;
+            case ActivityTypes.CommandResult:
+                await this.onCommandResultActivity(context);
+                break;
             default:
                 // handler for unknown or unhandled types
                 await this.onUnrecognizedActivity(context);
@@ -328,6 +334,32 @@ export class ActivityHandlerBase {
         reactionsRemoved: MessageReaction[],
         context: TurnContext
     ): Promise<void> {
+        return;
+    }
+
+    /**
+     * Invoked when a command activity is received when the base behavior of
+     * `onTurn()` is used.
+     * Commands are requests to perform an action and receivers typically respond with
+     * one or more commandResult activities. Receivers are also expected to explicitly
+     * reject unsupported command activities.
+     *
+     * @param context A context object for this turn.
+     * @returns A promise that represents the work queued to execute.
+     */
+    protected async onCommandActivity(context: TurnContext): Promise<void> {
+        return;
+    }
+
+    /**
+     * Invoked when a commandResult activity is received when the base behavior of
+     * `onTurn()` is used.
+     * CommandResult activity can be used to communicate the result of a command execution.
+     *
+     * @param context A context object for this turn.
+     * @returns A promise that represents the work queued to execute.
+     */
+    protected async onCommandResultActivity(context: TurnContext): Promise<void> {
         return;
     }
 

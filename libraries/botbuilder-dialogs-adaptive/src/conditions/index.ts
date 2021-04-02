@@ -12,6 +12,8 @@ export * from './onCancelDialog';
 export * from './onChooseEntity';
 export * from './onChooseIntent';
 export * from './onChooseProperty';
+export * from './onCommandActivity';
+export * from './onCommandResultActivity';
 export * from './onCondition';
 export * from './onContinueConversation';
 export * from './onConversationUpdateActivity';

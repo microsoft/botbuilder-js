@@ -1946,6 +1946,8 @@ export enum ActivityTypes {
     Suggestion = 'suggestion',
     Trace = 'trace',
     Handoff = 'handoff',
+    Command = 'command',
+    CommandResult = 'commandResult',
 }
 
 /**
