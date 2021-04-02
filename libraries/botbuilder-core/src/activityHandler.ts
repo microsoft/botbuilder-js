@@ -361,6 +361,36 @@ export class ActivityHandler extends ActivityHandlerBase {
     }
 
     /**
+     * Registers an activity event handler for the _command_ activity.
+     *
+     * @param handler The event handler.
+     *
+     * @remarks
+     * Returns a reference to the [ActivityHandler](xref:botbuilder-core.ActivityHandler) object.
+     *
+     * To handle a Command event, use the
+     * [onCommand](xref:botbuilder-core.ActivityHandler.onCommand) type-specific event handler.
+     */
+    public onCommand(handler: BotHandler): this {
+        return this.on('Command', handler);
+    }
+
+    /**
+     * Registers an activity event handler for the _CommandResult_ activity.
+     *
+     * @param handler The event handler.
+     *
+     * @remarks
+     * Returns a reference to the [ActivityHandler](xref:botbuilder-core.ActivityHandler) object.
+     *
+     * To handle a CommandResult event, use the
+     * [onCommandResult](xref:botbuilder-core.ActivityHandler.onCommandResult) type-specific event handler.
+     */
+    public onCommandResult(handler: BotHandler): this {
+        return this.on('CommandResult', handler);
+    }
+
+    /**
      * Registers an activity event handler for the _unrecognized activity type_ event, emitted for an
      * incoming activity with a type for which the [ActivityHandler](xref:botbuilder-core.ActivityHandler)
      * doesn't provide an event handler.
@@ -568,6 +598,24 @@ export class ActivityHandler extends ActivityHandlerBase {
         await this.handle(context, 'InstallationUpdate', async () => {
             await this.dispatchInstallationUpdateActivity(context);
         });
+    }
+
+    /**
+     * Runs all registered _command_ handlers and then continues the event emission process.
+     *
+     * @param context The context object for the current turn.
+     */
+    protected async onCommandActivity(context: TurnContext): Promise<void> {
+        await this.handle(context, 'Command', this.defaultNextEvent(context));
+    }
+
+    /**
+     * Runs all registered _commandresult_ handlers and then continues the event emission process.
+     *
+     * @param context The context object for the current turn.
+     */
+    protected async onCommandResultActivity(context: TurnContext): Promise<void> {
+        await this.handle(context, 'CommandResult', this.defaultNextEvent(context));
     }
 
     /**
