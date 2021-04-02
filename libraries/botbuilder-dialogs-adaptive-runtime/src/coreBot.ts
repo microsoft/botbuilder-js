@@ -48,16 +48,12 @@ export class CoreBot extends ActivityHandler {
         ResourceExtensions.useResourceExplorer(dialogManager, resourceExplorer);
         LanguageGeneratorExtensions.useLanguageGeneration(dialogManager);
         LanguageGeneratorExtensions.useLanguagePolicy(dialogManager, new LanguagePolicy(defaultLocale));
+
+        // Inserts skills dependencies into initial turn state
         SkillExtensions.useSkillClient(dialogManager, skillClient);
         SkillExtensions.useSkillConversationIdFactory(dialogManager, skillConversationIdFactory);
-        useTelemetry(dialogManager, botTelemetryClient);
 
-        /* TODO(jgummersall) reconcile:
-         * _dialogManager.InitialTurnState.Set(botFrameworkClient);
-         * _dialogManager.InitialTurnState.Set(conversationIdfactory);
-         * _dialogManager.InitialTurnState.Set(_userState); (handled by useBotState?)
-         * _dialogManager.InitialTurnState.Set(_conversationState); (handled by useBotState?)
-         */
+        useTelemetry(dialogManager, botTelemetryClient);
 
         if (memoryScopes.length) {
             dialogManager.initialTurnState.set('memoryScopes', memoryScopes);
