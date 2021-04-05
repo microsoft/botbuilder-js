@@ -45,7 +45,7 @@ export function makeTriggers(
 
     return {
         messageTrigger: async (context: Context, req: HttpRequest) => {
-            context.log('Messages endpoint triggerd.');
+            context.log('Messages endpoint triggered.');
 
             try {
                 const { adapter, bot } = await instances();
@@ -57,8 +57,6 @@ export function makeTriggers(
                 context.log.error(err);
                 throw err;
             }
-
-            context.log('Done.');
         },
 
         skillsTrigger: async function (context: Context, req: HttpRequest) {
@@ -86,8 +84,6 @@ export function makeTriggers(
                 context.log.error(err);
                 throw err;
             }
-
-            context.log('Done.');
         },
     };
 }
