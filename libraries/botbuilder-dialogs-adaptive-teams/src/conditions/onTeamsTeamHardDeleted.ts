@@ -16,7 +16,7 @@ import { OnConversationUpdateActivity } from 'botbuilder-dialogs-adaptive';
  * Note: turn.activity.channelData.Teams has team data.
  */
 export class OnTeamsTeamHardDeleted extends OnConversationUpdateActivity {
-    public static readonly $kind = 'Teams.OnTeamHardDeleted';
+    static $kind = 'Teams.OnTeamHardDeleted';
 
     /**
      * Create expression for this condition.

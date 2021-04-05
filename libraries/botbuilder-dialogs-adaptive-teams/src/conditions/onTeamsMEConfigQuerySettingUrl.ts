@@ -15,7 +15,7 @@ import { OnInvokeActivity } from 'botbuilder-dialogs-adaptive';
  * Actions triggered when a Teams InvokeActivity is received with activity.name='composeExtension/querySettingUrl'.
  */
 export class OnTeamsMEConfigQuerySettingUrl extends OnInvokeActivity {
-    public static readonly $kind = 'Teams.OnMEConfigQuerySettingUrl';
+    static $kind = 'Teams.OnMEConfigQuerySettingUrl';
 
     /**
      * Create expression for this condition.

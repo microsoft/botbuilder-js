@@ -34,7 +34,7 @@ export class SendMESelectItemResponse
     /**
      * Class identifier.
      */
-    public static readonly $kind = 'Teams.SendMESelectItemResponse';
+    static $kind = 'Teams.SendMESelectItemResponse';
 
     /**
      * Gets or sets template for the attachment template of a Thumbnail or Hero Card to send.

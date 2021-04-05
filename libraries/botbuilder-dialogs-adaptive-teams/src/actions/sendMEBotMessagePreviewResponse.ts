@@ -35,7 +35,7 @@ export class SendMEBotMessagePreviewResponse
     /**
      * Class identifier.
      */
-    public static readonly $kind = 'Teams.SendMEBotMessagePreviewResponse';
+    static $kind = 'Teams.SendMEBotMessagePreviewResponse';
 
     /**
      * Gets or sets template for the attachment template of a Thumbnail or Hero Card to send.

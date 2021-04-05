@@ -43,7 +43,7 @@ export interface ContinueConversationConfiguration extends DialogConfiguration {
  * Action which continues a conversation using a Conversation reference.
  */
 export class ContinueConversation extends Dialog implements ContinueConversationConfiguration {
-    public static readonly $kind = 'Microsoft.ContinueConversation';
+    static $kind = 'Microsoft.ContinueConversation';
 
     /**
      * Gets or sets an optional expression which if true will disable this action.

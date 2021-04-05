@@ -33,7 +33,7 @@ export class SendTaskModuleMessageResponse
     /**
      * Class identifier.
      */
-    public static readonly $kind = 'Teams.SendTaskModuleMessageResponse';
+    static $kind = 'Teams.SendTaskModuleMessageResponse';
 
     /**
      * Gets or sets the template or text to use to generate the response message to send.

@@ -17,7 +17,7 @@ export class SendMEAuthResponse extends BaseAuthResponseDialog implements BaseAu
     /**
      * Class identifier.
      */
-    public static readonly $kind = 'Teams.SendMEAuthResponse';
+    static $kind = 'Teams.SendMEAuthResponse';
 
     /**
      * Builds the compute Id for the dialog.

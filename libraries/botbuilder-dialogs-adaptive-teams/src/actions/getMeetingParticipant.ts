@@ -39,7 +39,7 @@ export class GetMeetingParticipant extends Dialog implements GetMeetingParticipa
     /**
      * Class identifier.
      */
-    public static readonly $kind = 'Teams.GetMeetingParticipant';
+    static $kind = 'Teams.GetMeetingParticipant';
 
     /**
      * Gets or sets an optional expression which if is true will disable this action.

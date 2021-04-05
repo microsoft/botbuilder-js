@@ -15,7 +15,7 @@ import { OnInvokeActivity } from 'botbuilder-dialogs-adaptive';
  * Actions triggered when a Teams InvokeActivity is received with activity.name='composeExtension/setting'.
  */
 export class OnTeamsMEConfigSetting extends OnInvokeActivity {
-    public static readonly $kind = 'Teams.OnMEConfigSetting';
+    static $kind = 'Teams.OnMEConfigSetting';
 
     /**
      * Create expression for this condition.

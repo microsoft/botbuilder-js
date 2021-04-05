@@ -43,7 +43,7 @@ export class SendMEAttachmentsResponse
     /**
      * Class identifier.
      */
-    public static readonly $kind = 'Teams.SendMEAttachmentsResponse';
+    static $kind = 'Teams.SendMEAttachmentsResponse';
 
     /**
      * Gets or sets the Activity containing the Attachments to send.

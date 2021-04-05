@@ -15,7 +15,7 @@ import { OnInvokeActivity } from 'botbuilder-dialogs-adaptive';
  * Actions triggered when a Teams InvokeActivity is received for 'actionableMessage/executeAction'.
  */
 export class OnTeamsO365ConnectorCardAction extends OnInvokeActivity {
-    public static readonly $kind = 'Teams.OnO365ConnectorCardAction';
+    static $kind = 'Teams.OnO365ConnectorCardAction';
 
     /**
      * Create expression for this condition.
