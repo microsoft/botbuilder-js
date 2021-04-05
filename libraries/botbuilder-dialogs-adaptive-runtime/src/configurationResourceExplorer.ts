@@ -14,7 +14,13 @@ export class ConfigurationResourceExporer extends ResourceExplorer {
         const applicationRoot = configuration.string(['applicationRoot']);
         ok(applicationRoot);
 
-        this.folderResourceProvider = new FolderResourceProvider(this, applicationRoot, true, true);
+        this.folderResourceProvider = new FolderResourceProvider(
+            this,
+            applicationRoot,
+            true,
+            configuration.string(['NODE_ENV']) === 'dev' // watch in dev only!
+        );
+
         this.addResourceProvider(this.folderResourceProvider);
     }
 }
