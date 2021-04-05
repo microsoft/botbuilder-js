@@ -15,7 +15,7 @@ import { OnInvokeActivity } from 'botbuilder-dialogs-adaptive';
  * Actions triggered when a Teams InvokeActivity is received with activity.name='tab/fetch'.
  */
 export class OnTeamsTabFetch extends OnInvokeActivity {
-    public static readonly $kind = 'Teams.OnTabFetch';
+    static $kind = 'Teams.OnTabFetch';
 
     /**
      * Create expression for this condition.

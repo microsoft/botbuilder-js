@@ -37,7 +37,7 @@ export class GetTeamDetails extends Dialog implements GetTeamDetailsConfiguratio
     /**
      * Class identifier.
      */
-    public static readonly $kind = 'Teams.GetTeamDetails';
+    static $kind = 'Teams.GetTeamDetails';
 
     /**
      * Gets or sets an optional expression which if is true will disable this action.

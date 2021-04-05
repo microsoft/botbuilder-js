@@ -31,7 +31,7 @@ export interface SettingStringAssignment {
  * Mock one or more settings with string value.
  */
 export class SettingStringMock extends SettingMock implements SettingStringMockConfiguration {
-    public static readonly $kind = 'Microsoft.Test.SettingStringMock';
+    static $kind = 'Microsoft.Test.SettingStringMock';
 
     /**
      * Setting assignments as settings.property=value pairs. Assign the settings in sequence.

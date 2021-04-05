@@ -41,7 +41,7 @@ export class SendAppBasedLinkQueryResponse
     /**
      * Class identifier.
      */
-    public static readonly $kind = 'Teams.SendAppBasedLinkQueryResponse';
+    static $kind = 'Teams.SendAppBasedLinkQueryResponse';
 
     /**
      * Gets or sets template for the attachment template of a Thumbnail or Hero Card to send.
