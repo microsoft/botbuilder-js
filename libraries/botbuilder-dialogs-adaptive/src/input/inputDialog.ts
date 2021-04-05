@@ -225,14 +225,15 @@ export abstract class InputDialog extends Dialog implements InputDialogConfigura
      * @returns A [DialogTurnResult](xref:botbuilder-dialogs.DialogTurnResult) `Promise` representing the asynchronous operation.
      */
     public async continueDialog(dc: DialogContext): Promise<DialogTurnResult> {
-        // Filter to only message activities
         const activity = dc.context.activity;
-        if (activity.type !== ActivityTypes.Message) {
+
+        // Interrupted dialogs reprompt so we can ignore the incoming activity.
+        const interrupted = dc.state.getValue<boolean>(TurnPath.interrupted, false);
+        if (!interrupted && activity.type !== ActivityTypes.Message) {
             return Dialog.EndOfTurn;
         }
 
         // Are we continuing after an interruption?
-        const interrupted = dc.state.getValue(TurnPath.interrupted, false);
         const turnCount = dc.state.getValue(InputDialog.TURN_COUNT_PROPERTY, 0);
         const state = await this.recognizeInput(dc, interrupted ? 0 : turnCount);
         if (state === InputState.valid) {
