@@ -9,6 +9,7 @@
 import {
     Activity,
     ActivityTypes,
+    Attachment,
     CardFactory,
     ConversationReference,
     DeliveryModes,
@@ -16,18 +17,19 @@ import {
     ExtendedUserTokenProvider,
     OAuthCard,
     SkillConversationIdFactoryOptions,
+    StatusCodes,
     TokenExchangeInvokeRequest,
-    tokenExchangeOperationName,
     TokenResponse,
     TurnContext,
-    Attachment,
-    StatusCodes,
+    tokenExchangeOperationName,
 } from 'botbuilder-core';
+
 import { BeginSkillDialogOptions } from './beginSkillDialogOptions';
 import { Dialog, DialogInstance, DialogReason, DialogTurnResult } from './dialog';
 import { DialogContext } from './dialogContext';
 import { DialogEvents } from './dialogEvents';
 import { SkillDialogOptions } from './skillDialogOptions';
+import { TurnPath } from './memory/turnPath';
 
 /**
  * A specialized Dialog that can wrap remote calls to a skill.
@@ -107,13 +109,21 @@ export class SkillDialog extends Dialog<Partial<BeginSkillDialogOptions>> {
      * return value.
      */
     public async continueDialog(dc: DialogContext): Promise<DialogTurnResult> {
+        // with adaptive dialogs, ResumeDialog is not called directly. Instead the Interrupted flag is set, which
+        // acts as the signal to the SkillDialog to resume the skill.
+        if (dc.state.getValue<boolean>(TurnPath.interrupted)) {
+            // resume dialog execution
+            dc.state.setValue(TurnPath.interrupted, false);
+            return this.resumeDialog(dc, DialogReason.endCalled);
+        }
+
         if (!this.onValidateActivity(dc.context.activity)) {
             return Dialog.EndOfTurn;
         }
 
         // Handle EndOfConversation from the skill (this will be sent to the this dialog by the SkillHandler if received from the Skill)
         if (dc.context.activity.type === ActivityTypes.EndOfConversation) {
-            return await dc.endDialog(dc.context.activity.value);
+            return dc.endDialog(dc.context.activity.value);
         }
 
         // Create deep clone of the original activity to avoid altering it before forwarding it.
@@ -126,7 +136,7 @@ export class SkillDialog extends Dialog<Partial<BeginSkillDialogOptions>> {
         // Just forward to the remote skill
         const eocActivity = await this.sendToSkill(dc.context, skillActivity, skillConversationId);
         if (eocActivity) {
-            return await dc.endDialog(eocActivity.value);
+            return dc.endDialog(eocActivity.value);
         }
 
         return Dialog.EndOfTurn;

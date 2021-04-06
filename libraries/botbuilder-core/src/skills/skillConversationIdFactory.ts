@@ -7,6 +7,7 @@ import { SkillConversationIdFactoryOptions } from './skillConversationIdFactoryO
 import { SkillConversationReference } from './skillConversationReference';
 import { Storage } from '../storage';
 import { TurnContext } from '../turnContext';
+import { v4 as uuid } from 'uuid';
 
 export class SkillConversationIdFactory extends SkillConversationIdFactoryBase {
     constructor(private readonly storage: Storage) {
@@ -16,12 +17,7 @@ export class SkillConversationIdFactory extends SkillConversationIdFactoryBase {
     public async createSkillConversationIdWithOptions(options: SkillConversationIdFactoryOptions): Promise<string> {
         const conversationReference = TurnContext.getConversationReference(options.activity);
 
-        const skillConversationId = [
-            options.fromBotId,
-            options.botFrameworkSkill.appId,
-            conversationReference.conversation?.id,
-            conversationReference.channelId,
-        ].join('-');
+        const skillConversationId = uuid();
 
         const skillConversationReference: SkillConversationReference = {
             conversationReference: conversationReference as ConversationReference,
