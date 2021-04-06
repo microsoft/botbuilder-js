@@ -34,7 +34,7 @@ export class SimpleObjectMemory implements MemoryInterface {
      */
     public static wrap(obj: unknown): MemoryInterface {
         if (Extensions.isMemoryInterface(obj)) {
-            return obj as MemoryInterface;
+            return obj;
         }
 
         return new SimpleObjectMemory(obj);

@@ -373,12 +373,15 @@ export class Expression {
      */
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     public tryEvaluate(state: MemoryInterface | unknown, options: Options = undefined): { value: any; error: string } {
-        if (!Extensions.isMemoryInterface(state)) {
-            state = SimpleObjectMemory.wrap(state);
+        let localState: MemoryInterface;
+        if (Extensions.isMemoryInterface(state)) {
+            localState = state;
+        } else {
+            localState = SimpleObjectMemory.wrap(state);
         }
 
         options = options ? options : new Options();
-        return this.evaluator.tryEvaluate(this, state as MemoryInterface, options);
+        return this.evaluator.tryEvaluate(this, localState, options);
     }
 
     /**
