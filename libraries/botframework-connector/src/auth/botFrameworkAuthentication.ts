@@ -7,7 +7,7 @@ import { BotFrameworkClient } from '../skills';
 import { ClaimsIdentity } from './claimsIdentity';
 import { ConnectorClient } from '../connectorApi/connectorClient';
 import { JwtTokenValidation } from './jwtTokenValidation';
-import { ServiceClientCredentialsFactory } from '../serviceClientCredentialsFactory';
+import { ServiceClientCredentialsFactory } from './serviceClientCredentialsFactory';
 import { SkillValidation } from './skillValidation';
 import { UserTokenClient } from './userTokenClient';
 
