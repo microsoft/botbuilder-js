@@ -16,7 +16,7 @@ export class Util {
      * @param char trim character
      */
     public static trim(str: string, char: string): string {
-        if (char !== undefined) {
+        if (char != null) {
             return str.replace(new RegExp(''.concat('^\\', char, '+|\\', char, '+$'), 'g'), '');
         }
 

@@ -60,7 +60,7 @@ export class TriggerTree {
      * @param quantifiers Quantifiers to use when expanding expressions.
      * @returns New trigger.
      */
-    public addTrigger(stringOrExpression: string | Expression, action: any, ...quantifiers: Quantifier[]): Trigger {
+    public addTrigger(stringOrExpression: string | Expression, action: unknown, ...quantifiers: Quantifier[]): Trigger {
         const expression: Expression =
             typeof stringOrExpression === 'string' ? Expression.parse(stringOrExpression) : stringOrExpression;
         const trigger = new Trigger(this, expression, action, ...quantifiers);
@@ -110,7 +110,7 @@ export class TriggerTree {
      * @param state State to evaluate against.
      * @returns List of possible matches.
      */
-    public matches(state: MemoryInterface | any): Trigger[] {
+    public matches(state: MemoryInterface | unknown): Trigger[] {
         return this.root.matches(state);
     }
 

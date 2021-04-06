@@ -6,7 +6,6 @@
  * Licensed under the MIT License.
  */
 import { ExpressionProperty } from './expressionProperty';
-import { Expression } from '../expression';
 
 /**
  * Represents a property which is an object of any kind or a string expression.
@@ -26,7 +25,7 @@ export class ValueExpression extends ExpressionProperty<any> {
      * Initializes a new instance of the [ValueExpression](xref:adaptive-expressions.ValueExpression) class.
      * @param value An object of `any` kind or a `string` expression.
      */
-    public constructor(value?: any | string | Expression) {
+    public constructor(value?: unknown) {
         super(value);
     }
 
@@ -34,20 +33,21 @@ export class ValueExpression extends ExpressionProperty<any> {
      * Set value as value expression.
      * @param value Value to set.
      */
-    public setValue(value: any | string | Expression): void {
+    public setValue(value: unknown): void {
         super.setValue(undefined);
 
-        if (typeof value == 'string') {
-            if (value.startsWith('=')) {
-                this.expressionText = value;
+        if (typeof value === 'string') {
+            let stringValue = value;
+            if (stringValue.startsWith('=')) {
+                this.expressionText = stringValue;
                 return;
-            } else if (value.startsWith('\\=')) {
+            } else if (stringValue.startsWith('\\=')) {
                 // Trim off the escape char for equals (\=foo) should simply be the string (=foo).
-                value = value.substr(1);
+                stringValue = stringValue.substr(1);
             }
 
             // keep the string as quoted expression, which will be literal unless string interpolation is used.
-            this.expressionText = `=\`${value.replace('`', '\\`')}\``;
+            this.expressionText = `=\`${stringValue.replace('`', '\\`')}\``;
             return;
         }
 

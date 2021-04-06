@@ -7,6 +7,7 @@
  */
 import { ExpressionProperty } from './expressionProperty';
 import { Expression } from '../expression';
+import { MemoryInterface } from '../memory/memoryInterface';
 import { FunctionUtils } from '../functionUtils';
 
 /**
@@ -28,7 +29,7 @@ export class IntExpression extends ExpressionProperty<number> {
      * @param data Data to use for expression binding.
      * @returns Value of int number
      */
-    public tryGetValue(data: object): { value: number; error: Error } {
+    public tryGetValue(data: MemoryInterface | unknown): { value: number; error: Error } {
         const result = super.tryGetValue(data);
         if (FunctionUtils.isNumber(result.value)) {
             // Ensure returned value is an int.

@@ -53,7 +53,7 @@ enum State {
  */
 export function convertCSharpDateTimeToDayjs(fmtString: string): string {
     let fmtResult = '';
-    let fmtState: any = State.None;
+    let fmtState: unknown = State.None;
     let lTokenBuffer = '';
     if (fmtString.length === 0) {
         return fmtResult;

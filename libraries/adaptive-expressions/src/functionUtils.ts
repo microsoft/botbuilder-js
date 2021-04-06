@@ -24,7 +24,7 @@ import { ReturnType } from './returnType';
  * @param expression Expression that produced value.
  * @param child Index of child expression.
  */
-export type VerifyExpression = (value: any, expression: Expression, child: number) => string | undefined;
+export type VerifyExpression = (value: unknown, expression: Expression, child: number) => string | undefined;
 
 /**
  * Utility functions in AdaptiveExpression.
@@ -33,7 +33,7 @@ export class FunctionUtils {
     /**
      * The default date time format string.
      */
-    public static readonly DefaultDateTimeFormat: string = 'YYYY-MM-DDTHH:mm:ss.SSS[Z]';
+    public static readonly DefaultDateTimeFormat = 'YYYY-MM-DDTHH:mm:ss.SSS[Z]';
 
     /**
      * Validate that expression has a certain number of children that are of any of the supported types.
@@ -224,7 +224,7 @@ export class FunctionUtils {
      * @param expression Expression that led to value.
      * @returns Error or undefined if invalid.
      */
-    public static verifyNumber(value: any, expression: Expression, _: number): string | undefined {
+    public static verifyNumber(value: unknown, expression: Expression, _: number): string | undefined {
         let error: string;
         if (!FunctionUtils.isNumber(value)) {
             error = `${expression} is not a number.`;
@@ -239,7 +239,7 @@ export class FunctionUtils {
      * @param expression Expression that led to value.
      * @returns Error or undefined if invalid.
      */
-    public static verifyNumberOrNumericList(value: any, expression: Expression, _: number): string | undefined {
+    public static verifyNumberOrNumericList(value: unknown, expression: Expression, _: number): string | undefined {
         let error: string;
         if (FunctionUtils.isNumber(value)) {
             return error;
@@ -265,7 +265,7 @@ export class FunctionUtils {
      * @param expression Expression that led to value.
      * @returns Error or undefined if invalid.
      */
-    public static verifyNumericList(value: any, expression: Expression, _: number): string | undefined {
+    public static verifyNumericList(value: unknown, expression: Expression, _: number): string | undefined {
         let error: string;
         if (!Array.isArray(value)) {
             error = `${expression} is not a list.`;
@@ -287,7 +287,7 @@ export class FunctionUtils {
      * @param expression Expression that led to value.
      * @returns Error or undefined if invalid.
      */
-    public static verifyContainer(value: any, expression: Expression, _: number): string | undefined {
+    public static verifyContainer(value: unknown, expression: Expression, _: number): string | undefined {
         let error: string;
         if (
             !(typeof value === 'string') &&
@@ -328,7 +328,7 @@ export class FunctionUtils {
      * @param expression Expression that led to value.
      * @returns Error or undefined if valid.
      */
-    public static verifyNotNull(value: any, expression: Expression, _: number): string | undefined {
+    public static verifyNotNull(value: unknown, expression: Expression, _: number): string | undefined {
         let error: string;
         if (value == null) {
             error = `${expression} is null.`;
@@ -343,9 +343,9 @@ export class FunctionUtils {
      * @param expression Expression that led to value.
      * @returns Error or undefined if invalid.
      */
-    public static verifyInteger(value: any, expression: Expression, _: number): string | undefined {
+    public static verifyInteger(value: unknown, expression: Expression, _: number): string | undefined {
         let error: string;
-        if (!Number.isInteger(value)) {
+        if (!FunctionUtils.isInteger(value)) {
             error = `${expression} is not a integer.`;
         }
 
@@ -358,7 +358,7 @@ export class FunctionUtils {
      * @param expression Expression that led to value.
      * @returns Error or undefined if invalid.
      */
-    public static verifyList(value: any, expression: Expression): string | undefined {
+    public static verifyList(value: unknown, expression: Expression): string | undefined {
         let error: string;
         if (!Array.isArray(value)) {
             error = `${expression} is not a list or array.`;
@@ -373,7 +373,7 @@ export class FunctionUtils {
      * @param expression Expression that led to value.
      * @returns Error or undefined if invalid.
      */
-    public static verifyString(value: any, expression: Expression, _: number): string | undefined {
+    public static verifyString(value: unknown, expression: Expression, _: number): string | undefined {
         let error: string;
         if (typeof value !== 'string') {
             error = `${expression} is not a string.`;
@@ -388,7 +388,7 @@ export class FunctionUtils {
      * @param expression Expression that led to value.
      * @returns Error or undefined if invalid.
      */
-    public static verifyStringOrNull(value: any, expression: Expression, _: number): string | undefined {
+    public static verifyStringOrNull(value: unknown, expression: Expression, _: number): string | undefined {
         let error: string;
         if (typeof value !== 'string' && value !== undefined) {
             error = `${expression} is neither a string nor a null object.`;
@@ -403,9 +403,9 @@ export class FunctionUtils {
      * @param expression Expression that led to value.
      * @returns Error or undefined if invalid.
      */
-    public static verifyNumberOrStringOrNull(value: any, expression: Expression, _: number): string | undefined {
+    public static verifyNumberOrStringOrNull(value: unknown, expression: Expression, _: number): string | undefined {
         let error: string;
-        if (typeof value !== 'string' && value !== undefined && !FunctionUtils.isNumber(value)) {
+        if (typeof value !== 'string' && value != null && !FunctionUtils.isNumber(value)) {
             error = `${expression} is neither a number nor string`;
         }
 
@@ -418,7 +418,7 @@ export class FunctionUtils {
      * @param expression Expression that led to value.
      * @returns Error or undefined if invalid.
      */
-    public static verifyNumberOrString(value: any, expression: Expression, _: number): string | undefined {
+    public static verifyNumberOrString(value: unknown, expression: Expression, _: number): string | undefined {
         let error: string;
         if (value === undefined || (!FunctionUtils.isNumber(value) && typeof value !== 'string')) {
             error = `${expression} is not string or number.`;
@@ -433,7 +433,7 @@ export class FunctionUtils {
      * @param expression Expression that led to value.
      * @returns Error or undefined if invalid.
      */
-    public static verifyBoolean(value: any, expression: Expression, _: number): string | undefined {
+    public static verifyBoolean(value: unknown, expression: Expression, _: number): string | undefined {
         let error: string;
         if (typeof value !== 'boolean') {
             error = `${expression} is not a boolean.`;
@@ -454,9 +454,9 @@ export class FunctionUtils {
         state: MemoryInterface,
         options: Options,
         verify?: VerifyExpression
-    ): { args: any[]; error: string } {
-        const args: any[] = [];
-        let value: any;
+    ): { args: any[]; error: string } { // change this later.
+        const args: unknown[] = [];
+        let value: unknown;
         let error: string;
         let pos = 0;
         for (const child of expression.children) {
@@ -485,7 +485,7 @@ export class FunctionUtils {
      */
     public static apply(func: (arg0: unknown[]) => unknown, verify?: VerifyExpression): EvaluateExpressionDelegate {
         return (expression: Expression, state: MemoryInterface, options: Options): ValueWithError => {
-            let value: any;
+            let value: unknown;
             const { args, error: childrenError } = FunctionUtils.evaluateChildren(expression, state, options, verify);
             let error = childrenError;
             if (!error) {
@@ -507,11 +507,11 @@ export class FunctionUtils {
      * @returns Delegate for evaluating an expression.
      */
     public static applyWithError(
-        func: (arg0: any[]) => ValueWithError,
+        func: (arg0: readonly unknown[]) => ValueWithError,
         verify?: VerifyExpression
     ): EvaluateExpressionDelegate {
         return (expression: Expression, state: MemoryInterface, options: Options): ValueWithError => {
-            let value: any;
+            let value: unknown;
             const { args, error: childrenError } = FunctionUtils.evaluateChildren(expression, state, options, verify);
             let error = childrenError;
             if (!error) {
@@ -533,7 +533,7 @@ export class FunctionUtils {
      * @returns Delegate for evaluating an expression.
      */
     public static applyWithOptionsAndError(
-        func: (arg0: unknown[], options: Options) => { value: unknown; error: string },
+        func: (arg0: readonly unknown[], options: Options) => ValueWithError,
         verify?: VerifyExpression
     ): EvaluateExpressionDelegate {
         return (expression: Expression, state: MemoryInterface, options: Options): ValueWithError => {
@@ -559,7 +559,7 @@ export class FunctionUtils {
      * @returns Delegate for evaluating an expression.
      */
     public static applyWithOptions(
-        func: (arg0: unknown[], options: Options) => unknown,
+        func: (arg0: readonly unknown[], options: Options) => unknown,
         verify?: VerifyExpression
     ): EvaluateExpressionDelegate {
         return (expression: Expression, state: MemoryInterface, options: Options): ValueWithError => {
@@ -584,10 +584,13 @@ export class FunctionUtils {
      * @param verify Function to check each arg for validity.
      * @returns Delegate for evaluating an expression.
      */
-    public static applySequence(func: (arg0: any[]) => any, verify?: VerifyExpression): EvaluateExpressionDelegate {
-        return FunctionUtils.apply((args: any[]): any => {
-            const binaryArgs: any[] = [undefined, undefined];
-            let soFar: any = args[0];
+    public static applySequence(
+        func: (arg0: readonly unknown[]) => unknown,
+        verify?: VerifyExpression
+    ): EvaluateExpressionDelegate {
+        return FunctionUtils.apply((args: readonly unknown[]): unknown => {
+            const binaryArgs: unknown[] = [undefined, undefined];
+            let soFar: unknown = args[0];
             for (let i = 1; i < args.length; i++) {
                 binaryArgs[0] = soFar;
                 binaryArgs[1] = args[i];
@@ -605,13 +608,13 @@ export class FunctionUtils {
      * @returns Delegate for evaluating an expression.
      */
     public static applySequenceWithError(
-        func: (arg0: any[]) => any,
+        func: (arg0: readonly unknown[]) => ValueWithError,
         verify?: VerifyExpression
     ): EvaluateExpressionDelegate {
-        return FunctionUtils.applyWithError((args: any[]): any => {
-            const binaryArgs: any[] = [undefined, undefined];
-            let soFar: any = args[0];
-            let value: any;
+        return FunctionUtils.applyWithError((args: readonly unknown[]): ValueWithError => {
+            const binaryArgs: unknown[] = [undefined, undefined];
+            let soFar: unknown = args[0];
+            let value: unknown;
             let error: string;
             for (let i = 1; i < args.length; i++) {
                 binaryArgs[0] = soFar;
@@ -634,7 +637,7 @@ export class FunctionUtils {
      * @param locale A locale string
      * @param maxArgsLength The max length of a given function.
      */
-    public static determineLocale(args: unknown[], maxArgsLength: number, locale = 'en-us'): string {
+    public static determineLocale(args: readonly unknown[], maxArgsLength: number, locale = 'en-us'): string {
         if (args.length === maxArgsLength) {
             const lastArg = args[maxArgsLength - 1];
             if (typeof lastArg === 'string') {
@@ -653,7 +656,7 @@ export class FunctionUtils {
      * @param maxArgsLength The max length of a given function.
      */
     public static determineFormatAndLocale(
-        args: unknown[],
+        args: readonly unknown[],
         maxArgsLength: number,
         format: string,
         locale = 'en-us'
@@ -709,7 +712,7 @@ export class FunctionUtils {
         expression: Expression,
         state: MemoryInterface,
         options: Options
-    ): { path: string; left: any; error: string } {
+    ): { path: string; left: Expression; error: string } {
         let path = '';
         let left = expression;
         while (left !== undefined) {
@@ -723,7 +726,7 @@ export class FunctionUtils {
                     return { path: undefined, left: undefined, error };
                 }
 
-                if (FunctionUtils.isNumber(parseInt(value))) {
+                if (FunctionUtils.isInteger(parseInt(String(value)))) {
                     path = `[${value}].${path}`;
                 } else if (typeof value === 'string') {
                     path = `['${value}'].${path}`;
@@ -755,8 +758,17 @@ export class FunctionUtils {
      * @param instance Input.
      * @returns True if the input is a number.
      */
-    public static isNumber(instance: any): instance is number {
+    public static isNumber(instance: unknown): instance is number {
         return instance != null && typeof instance === 'number' && !Number.isNaN(instance);
+    }
+
+    /**
+     * Is integer helper function.
+     * @param instance Input.
+     * @returns True if the input is an integer.
+     */
+    public static isInteger(instance: unknown): instance is number {
+        return FunctionUtils.isNumber(instance) && Number.isInteger(instance);
     }
 
     /**
