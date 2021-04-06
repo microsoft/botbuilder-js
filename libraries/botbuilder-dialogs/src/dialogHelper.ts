@@ -6,6 +6,13 @@
  * Licensed under the MIT License.
  */
 
+import { AuthenticationConstants, ClaimsIdentity, GovernmentConstants, SkillValidation } from 'botframework-connector';
+import { Dialog, DialogTurnStatus, DialogTurnResult } from './dialog';
+import { DialogContext, DialogState } from './dialogContext';
+import { DialogEvents } from './dialogEvents';
+import { DialogSet } from './dialogSet';
+import { DialogStateManager, DialogStateManagerConfiguration } from './memory';
+
 import {
     Activity,
     ActivityEx,
@@ -18,13 +25,6 @@ import {
     StatePropertyAccessor,
     TurnContext,
 } from 'botbuilder-core';
-import { AuthenticationConstants, ClaimsIdentity, GovernmentConstants, SkillValidation } from 'botframework-connector';
-
-import { DialogContext, DialogState } from './dialogContext';
-import { Dialog, DialogTurnStatus, DialogTurnResult } from './dialog';
-import { DialogEvents } from './dialogEvents';
-import { DialogSet } from './dialogSet';
-import { DialogStateManager } from './memory';
 
 /**
  * Runs a dialog from a given context and accessor.
@@ -67,14 +67,15 @@ export async function runDialog(
 export async function internalRun(
     context: TurnContext,
     dialogId: string,
-    dialogContext: DialogContext
+    dialogContext: DialogContext,
+    dialogStateManagerConfiguration?: DialogStateManagerConfiguration
 ): Promise<DialogTurnResult> {
     // map TurnState into root dialog context.services
     context.turnState.forEach((service, key) => {
         dialogContext.services.push(key, service);
     });
 
-    const dialogStateManager = new DialogStateManager(dialogContext);
+    const dialogStateManager = new DialogStateManager(dialogContext, dialogStateManagerConfiguration);
 
     await dialogStateManager.loadAllScopes();
     dialogContext.context.turnState.push('DialogStateManager', dialogStateManager);
