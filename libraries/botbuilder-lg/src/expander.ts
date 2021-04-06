@@ -262,16 +262,16 @@ export class Expander extends AbstractParseTreeVisitor<unknown[]> implements LGT
         for (const item of values) {
             if (TemplateExtensions.isPureExpression(item)) {
                 result.push(
-                    [this.evalExpression(item.expressionInStructure(0).text, item.expressionInStructure(0), ctx.text)]
+                    this.evalExpression(item.expressionInStructure(0).text, item.expressionInStructure(0), ctx.text)
                 );
             } else {
-                let itemStringResult = [''];
+                let itemStringResult: unknown[] = [''];
                 for (const child of item.children) {
                     if (child instanceof lp.ExpressionInStructureContext) {
                         const errorPrefix = `Property '${ctx.STRUCTURE_IDENTIFIER().text}':`;
                         itemStringResult = this.stringArrayConcat(
                             itemStringResult,
-                            this.evalExpression(child.text, child, ctx.text, errorPrefix).map(u => u.toString())
+                            this.evalExpression(child.text, child, ctx.text, errorPrefix)
                         );
                     } else {
                         const node = child as TerminalNode;
@@ -353,12 +353,12 @@ export class Expander extends AbstractParseTreeVisitor<unknown[]> implements LGT
      */
     public visitNormalTemplateString(ctx: lp.NormalTemplateStringContext): unknown[] {
         const prefixErrorMsg = TemplateExtensions.getPrefixErrorMessage(ctx);
-        let result: string[] = [undefined];
+        let result: unknown[] = [undefined];
         for (const child of ctx.children) {
             if (child instanceof lp.ExpressionContext) {
                 result = this.stringArrayConcat(
                     result,
-                    this.evalExpression(child.text, child, ctx.text, prefixErrorMsg).map(u => u.toString())
+                    this.evalExpression(child.text, child, ctx.text, prefixErrorMsg)
                 );
             } else {
                 const node = child as TerminalNode;
@@ -513,8 +513,8 @@ export class Expander extends AbstractParseTreeVisitor<unknown[]> implements LGT
     /**
      * @private
      */
-    private stringArrayConcat(array1: string[], array2: string[]): string[] {
-        const result: string[] = [];
+    private stringArrayConcat(array1: unknown[], array2: unknown[]): unknown[] {
+        const result: unknown[] = [];
         for (const item1 of array1) {
             for (const item2 of array2) {
                 if (item1 === undefined && item2 === undefined) {
@@ -528,7 +528,7 @@ export class Expander extends AbstractParseTreeVisitor<unknown[]> implements LGT
         return result;
     }
 
-    private stringConcat(str1: string, str2: string) {
+    private stringConcat(str1: unknown, str2: unknown) {
         if (!str1) {
             str1 = '';
         }
@@ -537,7 +537,7 @@ export class Expander extends AbstractParseTreeVisitor<unknown[]> implements LGT
             str2 = '';
         }
 
-        return str1 + str2;
+        return str1.toString() + str2.toString();
     }
 
     private readonly customizedEvaluatorLookup = (baseLookup: EvaluatorLookup, isExpander: boolean) => (

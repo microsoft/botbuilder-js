@@ -297,7 +297,7 @@ export class Evaluator extends AbstractParseTreeVisitor<unknown> implements LGTe
      * @param ctx The parse tree.
      * @returns The string result of visiting the normal template string.
      */
-    public visitNormalTemplateString(ctx: lp.NormalTemplateStringContext): string {
+    public visitNormalTemplateString(ctx: lp.NormalTemplateStringContext): unknown {
         const prefixErrorMsg = TemplateExtensions.getPrefixErrorMessage(ctx);
         const result: unknown[] = [];
         for (const child of ctx.children) {
@@ -322,7 +322,7 @@ export class Evaluator extends AbstractParseTreeVisitor<unknown> implements LGTe
         }
 
         if (result.length === 1 && !(typeof result[0] === 'string')) {
-            return result[0].toString();
+            return result[0];
         }
 
         return result
