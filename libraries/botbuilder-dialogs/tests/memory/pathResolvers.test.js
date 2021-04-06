@@ -1,3 +1,5 @@
+const assert = require('assert');
+
 const {
     AliasPathResolver,
     AtAtPathResolver,
@@ -5,12 +7,9 @@ const {
     DollarPathResolver,
     HashPathResolver,
     PercentPathResolver,
-} = require('../');
-const assert = require('assert');
+} = require('../..');
 
-describe('Memory - Path Resolvers', function () {
-    this.timeout(5000);
-
+describe('Path Resolvers', function () {
     it('AliasPathResolver should should prefix paths.', function () {
         const resolver = new AliasPathResolver('@', 'turn.recognized.entities.');
         const path = resolver.transformPath('@test');

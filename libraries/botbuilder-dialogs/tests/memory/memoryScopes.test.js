@@ -14,7 +14,7 @@ const {
     DialogContext,
     DialogContainer,
     DialogTurnStateConstants,
-} = require('../');
+} = require('../..');
 
 const beginMessage = {
     text: `begin`,
@@ -85,9 +85,7 @@ class TestContainer extends DialogContainer {
     }
 }
 
-describe('Memory - Memory Scopes', function () {
-    this.timeout(5000);
-
+describe('Memory Scopes', function () {
     it('ClassMemoryScope should find registered dialog.', async function () {
         // Create new ConversationState with MemoryStorage and register the state as middleware.
         const convoState = new ConversationState(new MemoryStorage());
@@ -456,7 +454,7 @@ describe('Memory - Memory Scopes', function () {
         // Create test context
         const context = new TurnContext(new TestAdapter(), beginMessage);
         const dc = await dialogs.createContext(context);
-        const settings = require('./test.settings.json');
+        const settings = require('../test.settings.json');
         dc.context.turnState.set('settings', settings);
 
         // Run test

@@ -51,7 +51,7 @@
     "lint": "eslint . --ext .js,.ts",
     "postbuild": "downlevel-dts lib _ts3.4/lib --checksum",
     "test": "npm-run-all build test:mocha",
-    "test:mocha": "nyc mocha tests",
+    "test:mocha": "nyc mocha --recursive --require source-map-support/register tests",
     "test:compat": "api-extractor run --verbose"
   },
   "files": [
