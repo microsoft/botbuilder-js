@@ -2264,3 +2264,70 @@ export interface AdaptiveCardInvokeValue {
      */
     state: string;
 }
+
+/**
+ * Represents a response returned by a bot when it receives an `invoke` activity.
+ *
+ * This interface supports the framework and is not intended to be called directly for your code.
+ */
+ export interface InvokeResponse<T = any> {
+    /**
+     * The HTTP status code of the response.
+     */
+    status: number;
+
+    /**
+     * Optional. The body of the response.
+     */
+    body?: T;
+}
+
+/**
+ * State object passed to the bot token service.
+ */
+ export type TokenExchangeState = {
+    /**
+     * The connection name that was used.
+     */
+    connectionName: string,
+
+    /**
+     * A reference to the conversation.
+     */
+    conversation: ConversationReference,
+
+    /**
+     * A reference to a related parent conversation conversation.
+     */
+    relatesTo: ConversationReference,
+
+    /**
+     * The URL of the bot messaging endpoint.
+     */
+    msAppId: string
+};
+
+/**
+ * The status of a particular token.
+ */
+ export type TokenStatus = {
+    /**
+     * The channel ID.
+     */
+    channelId: string,
+
+    /**
+     * The connection name.
+     */
+    connectionName: string,
+
+    /**
+     * Boolean indicating if a token is stored for this ConnectionName.
+     */
+    hasToken: boolean,
+
+    /**
+     * The display name of the service provider for which this Token belongs to.
+     */
+    serviceProviderDisplayName: string
+};

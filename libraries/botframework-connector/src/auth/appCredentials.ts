@@ -29,6 +29,7 @@ export abstract class AppCredentials implements msrest.ServiceClientCredentials 
 
     /**
      * Initializes a new instance of the [AppCredentials](xref:botframework-connector.AppCredentials) class.
+     *
      * @param appId The App ID.
      * @param channelAuthTenant Optional. The oauth token tenant.
      * @param oAuthScope The scope for the token.
@@ -119,6 +120,7 @@ export abstract class AppCredentials implements msrest.ServiceClientCredentials 
 
     /**
      * Apply the credentials to the HTTP request.
+     *
      * @param webResource The WebResource HTTP request.
      * @returns A Promise representing the asynchronous operation.
      */
@@ -132,6 +134,7 @@ export abstract class AppCredentials implements msrest.ServiceClientCredentials 
 
     /**
      * Gets an OAuth access token.
+     *
      * @param forceRefresh True to force a refresh of the token; or false to get
      * a cached token if it exists.
      * @returns A Promise that represents the work queued to execute.

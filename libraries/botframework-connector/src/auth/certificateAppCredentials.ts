@@ -18,6 +18,7 @@ export class CertificateAppCredentials extends AppCredentials {
 
     /**
      * Initializes a new instance of the [CertificateAppCredentials](xref:botframework-connector.CertificateAppCredentials) class.
+     *
      * @param appId Microsoft application Id related to the certificate.
      * @param certificateThumbprint A hex encoded thumbprint of the certificate.
      * @param certificatePrivateKey A PEM encoded certificate private key.

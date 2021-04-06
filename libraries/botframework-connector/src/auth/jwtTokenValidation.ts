@@ -8,7 +8,6 @@
 
 import { Activity, Channels, RoleTypes, StatusCodes } from 'botframework-schema';
 
-import { AppCredentials } from './appCredentials';
 import { AuthenticationError } from './authenticationError';
 import { AuthenticationConfiguration } from './authenticationConfiguration';
 import { AuthenticationConstants } from './authenticationConstants';

@@ -31,6 +31,7 @@ export namespace ChannelValidation {
     /**
      * Validate the incoming Auth Header as a token sent from the Bot Framework Service.
      * A token issued by the Bot Framework emulator will FAIL this check.
+     *
      * @param  {string} authHeader The raw HTTP header in the format: "Bearer [longString]"
      * @param  {ICredentialProvider} credentials The user defined set of valid credentials, such as the AppId.
      * @param  {string} serviceUrl The ServiceUrl Claim value that must match in the identity.
@@ -59,6 +60,7 @@ export namespace ChannelValidation {
     /**
      * Validate the incoming Auth Header as a token sent from the Bot Framework Service.
      * A token issued by the Bot Framework emulator will FAIL this check.
+     *
      * @param  {string} authHeader The raw HTTP header in the format: "Bearer [longString]"
      * @param  {ICredentialProvider} credentials The user defined set of valid credentials, such as the AppId.
      * @param  {string} channelId
@@ -88,6 +90,7 @@ export namespace ChannelValidation {
 
     /**
      * Validate the ClaimsIdentity to ensure it came from the channel service.
+     *
      * @param  {ClaimsIdentity} identity The identity to validate
      * @param  {ICredentialProvider} credentials The user defined set of valid credentials, such as the AppId.
      * @returns {Promise<ClaimsIdentity>} A valid ClaimsIdentity.

@@ -413,20 +413,19 @@ export namespace ActivityEx {
 
     /**
      * Creates a ConversationReference based on the source activity.
-     *
      * @param source The source activity.
      * @returns A conversation reference for the conversation that contains the activity.
      */
-    export function getConversationReference(source: Partial<Activity>): Partial<ConversationReference> {
+    export function getConversationReference(source: Partial<Activity>): ConversationReference {
         return {
             activityId: source.id,
-            user: source.from,
             bot: source.recipient,
-            conversation: source.conversation,
             channelId: source.channelId,
+            conversation: source.conversation,
             locale: source.locale,
             serviceUrl: source.serviceUrl,
-        } as ConversationReference;
+            user: source.from,
+        };
     }
 
     /**

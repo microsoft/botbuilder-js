@@ -30,9 +30,12 @@ export namespace EnterpriseChannelValidation {
     /**
      * Validate the incoming Auth Header as a token sent from the Bot Framework Service.
      * A token issued by the Bot Framework emulator will FAIL this check.
-     * @param  {string} authHeader The raw HTTP header in the format: "Bearer [longString]"
-     * @param  {ICredentialProvider} credentials The user defined set of valid credentials, such as the AppId.
-     * @param  {string} serviceUrl The ServiceUrl Claim value that must match in the identity.
+     *
+     * @param {string} authHeader The raw HTTP header in the format: "Bearer [longString]"
+     * @param {ICredentialProvider} credentials The user defined set of valid credentials, such as the AppId.
+     * @param {string} serviceUrl The ServiceUrl Claim value that must match in the identity.
+     * @param channelId
+     * @param channelService
      * @returns {Promise<ClaimsIdentity>} A valid ClaimsIdentity.
      */
     export async function authenticateChannelTokenWithServiceUrl(
@@ -61,8 +64,12 @@ export namespace EnterpriseChannelValidation {
     /**
      * Validate the incoming Auth Header as a token sent from the Bot Framework Service.
      * A token issued by the Bot Framework emulator will FAIL this check.
-     * @param  {string} authHeader The raw HTTP header in the format: "Bearer [longString]"
-     * @param  {ICredentialProvider} credentials The user defined set of valid credentials, such as the AppId.
+     *
+     * @param {string} authHeader The raw HTTP header in the format: "Bearer [longString]"
+     * @param {ICredentialProvider} credentials The user defined set of valid credentials, such as the AppId.
+     * @param channelId
+     * @param channelService
+     * @param authConfig
      * @returns {Promise<ClaimsIdentity>} A valid ClaimsIdentity.
      */
     export async function authenticateChannelToken(
@@ -94,6 +101,7 @@ export namespace EnterpriseChannelValidation {
 
     /**
      * Validate the ClaimsIdentity to ensure it came from the channel service.
+     *
      * @param  {ClaimsIdentity} identity The identity to validate
      * @param  {ICredentialProvider} credentials The user defined set of valid credentials, such as the AppId.
      * @returns {Promise<ClaimsIdentity>} A valid ClaimsIdentity.
