@@ -314,9 +314,11 @@ describe('ActivityHandler', function () {
         assert(onDialogCalled);
     });
 
-    describe('should by default', () => {
+    describe('should by default', function () {
         let onTurnCalled = false;
         let onMessageCalled = false;
+        let onCommandActivityCalled = false;
+        let onCommandResultActivityCalled = false;
         let onConversationUpdateCalled = false;
         let onMembersAddedCalled = false;
         let onMembersRemovedCalled = false;
@@ -331,6 +333,8 @@ describe('ActivityHandler', function () {
         afterEach(function () {
             onTurnCalled = false;
             onMessageCalled = false;
+            onCommandActivityCalled = false;
+            onCommandResultActivityCalled = false;
             onConversationUpdateCalled = false;
             onMembersAddedCalled = false;
             onMembersRemovedCalled = false;
@@ -378,6 +382,52 @@ describe('ActivityHandler', function () {
             await processActivity({ type: ActivityTypes.Message }, bot);
             assertTrueFlag(onTurnCalled, 'onTurn');
             assertTrueFlag(onMessageCalled, 'onMessage');
+        });
+
+        it('call "onTurn" handlers then dispatch by Activity Type "Command"', async function () {
+            const bot = new ActivityHandler();
+            bot.onTurn(async (context, next) => {
+                assertContextAndNext(context, next);
+                assertFalseFlag(onTurnCalled, 'onTurn');
+                onTurnCalled = true;
+                assertFalseFlag(onCommandActivityCalled, 'onCommandActivity', 'onTurn');
+                await next();
+            });
+
+            bot.onCommand(async (context, next) => {
+                assertContextAndNext(context, next);
+                assertTrueFlag(onTurnCalled, 'onTurn');
+                assertFalseFlag(onCommandActivityCalled, 'onCommandActivity', 'onTurn');
+                onCommandActivityCalled = true;
+                await next();
+            });
+
+            await processActivity({ type: ActivityTypes.Command }, bot);
+            assertTrueFlag(onTurnCalled, 'onTurn');
+            assertTrueFlag(onCommandActivityCalled, 'onCommandActivity');
+        });
+
+        it('call "onTurn" handlers then dispatch by Activity Type "CommandResult"', async function () {
+            const bot = new ActivityHandler();
+            bot.onTurn(async (context, next) => {
+                assertContextAndNext(context, next);
+                assertFalseFlag(onTurnCalled, 'onTurn');
+                onTurnCalled = true;
+                assertFalseFlag(onCommandResultActivityCalled, 'onCommandResultActivity', 'onTurn');
+                await next();
+            });
+
+            bot.onCommandResult(async (context, next) => {
+                assertContextAndNext(context, next);
+                assertTrueFlag(onTurnCalled, 'onTurn');
+                assertFalseFlag(onCommandResultActivityCalled, 'onCommandResultActivity', 'onTurn');
+                onCommandResultActivityCalled = true;
+                await next();
+            });
+
+            await processActivity({ type: ActivityTypes.CommandResult }, bot);
+            assertTrueFlag(onTurnCalled, 'onTurn');
+            assertTrueFlag(onCommandResultActivityCalled, 'onCommandResultActivity');
         });
 
         it('call "onTurn" handlers then dispatch by Activity Type "ConversationUpdate"', async function () {

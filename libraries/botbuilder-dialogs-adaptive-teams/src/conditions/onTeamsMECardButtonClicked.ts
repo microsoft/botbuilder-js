@@ -15,7 +15,7 @@ import { OnInvokeActivity } from 'botbuilder-dialogs-adaptive';
  * Actions triggered when a Teams InvokeActivity is received with activity.name='composeExtension/onCardButtonClicked'.
  */
 export class OnTeamsMECardButtonClicked extends OnInvokeActivity {
-    public static readonly $kind = 'Teams.OnMECardButtonClicked';
+    static $kind = 'Teams.OnMECardButtonClicked';
 
     /**
      * Create expression for this condition.

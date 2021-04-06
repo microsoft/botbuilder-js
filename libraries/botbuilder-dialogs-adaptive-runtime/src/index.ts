@@ -411,11 +411,16 @@ export async function getRuntimeServices(
     // Resolve configuration
     let configuration: Configuration;
     if (typeof configurationOrSettingsDirectory === 'string') {
-        configuration = new Configuration()
-            .argv()
-            .env()
-            .file(path.join(configurationOrSettingsDirectory, 'appsettings.Development.json'))
-            .file(path.join(configurationOrSettingsDirectory, 'appsettings.json'));
+        configuration = new Configuration().argv().env();
+
+        const files = ['appsettings.json'];
+
+        const { NODE_ENV: nodeEnv } = process.env;
+        if (nodeEnv) {
+            files.unshift(`appsettings.${nodeEnv}.json`);
+        }
+
+        files.forEach((file) => configuration.file(path.join(configurationOrSettingsDirectory, file)));
     } else {
         configuration = configurationOrSettingsDirectory;
     }

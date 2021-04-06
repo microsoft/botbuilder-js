@@ -39,7 +39,7 @@ export class GetTeamChannels extends Dialog implements GetTeamChannelsConfigurat
     /**
      * Class identifier.
      */
-    public static readonly $kind = 'Teams.GetTeamChannels';
+    static $kind = 'Teams.GetTeamChannels';
 
     /**
      * Gets or sets an optional expression which if is true will disable this action.

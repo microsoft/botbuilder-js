@@ -45,7 +45,7 @@ export class HttpRequestSequenceMock extends HttpRequestMock implements HttpRequ
     /**
      * The type of request.
      */
-    public static readonly $kind = 'Microsoft.Test.HttpRequestSequenceMock';
+    static $kind = 'Microsoft.Test.HttpRequestSequenceMock';
 
     /**
      * Gets or sets the http method to match. Match to any method if not defined.

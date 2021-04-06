@@ -43,7 +43,7 @@ export interface ContinueConversationLaterConfiguration extends DialogConfigurat
  * Action which schedules the current conversation to be continued at a later time.
  */
 export class ContinueConversationLater extends Dialog implements ContinueConversationLaterConfiguration {
-    public static readonly $kind = 'Microsoft.ContinueConversationLater';
+    static $kind = 'Microsoft.ContinueConversationLater';
 
     /**
      * Gets or sets an optional expression which if is true will disable this action.

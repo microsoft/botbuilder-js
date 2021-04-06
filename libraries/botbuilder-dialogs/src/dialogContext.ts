@@ -181,7 +181,9 @@ export class DialogContext {
     public services: TurnContextStateCollection = new TurnContextStateCollection();
 
     /**
-     * Returns the current dialog manager instance.
+     * Returns the current dialog manager instance. This property is obsolete.
+     *
+     * @obsolete This property serves no function.
      */
     public get dialogManager(): DialogManager {
         return this.context.turnState.get(DialogTurnStateConstants.dialogManager);
@@ -353,12 +355,12 @@ export class DialogContext {
      * ```JavaScript
      * return await dc.prompt('confirmPrompt', `Are you sure you'd like to quit?`);
      * ```
-     */  
+     */
     public async prompt(
         dialogId: string,
         promptOrOptions: string | Partial<Activity> | PromptOptions
     ): Promise<DialogTurnResult>;
-    
+
     /**
      * Helper function to simplify formatting the options for calling a prompt dialog.
      * @param dialogId ID of the prompt dialog to start.
@@ -374,13 +376,13 @@ export class DialogContext {
      * ```JavaScript
      * return await dc.prompt('confirmPrompt', `Are you sure you'd like to quit?`);
      * ```
-     */    
+     */
     public async prompt(
         dialogId: string,
         promptOrOptions: string | Partial<Activity> | PromptOptions,
         choices: (string | Choice)[]
     ): Promise<DialogTurnResult>;
-    
+
     /**
      * Helper function to simplify formatting the options for calling a prompt dialog.
      * @param dialogId ID of the prompt dialog to start.
@@ -630,8 +632,8 @@ export class DialogContext {
 
     /**
      * @private
-     * @param reason 
-     * @param result 
+     * @param reason
+     * @param result
      */
     private async endActiveDialog(reason: DialogReason, result?: any): Promise<void> {
         const instance: DialogInstance<any> = this.activeDialog;

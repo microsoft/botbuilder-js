@@ -182,7 +182,7 @@ export class BeginSkill extends SkillDialog implements BeginSkillConfiguration {
             this.dialogOptions.connectionName = this.connectionName.getValue(dcState);
         }
         if (!this.dialogOptions.conversationState) {
-            this.dialogOptions.conversationState = dc.dialogManager.conversationState;
+            this.dialogOptions.conversationState = dc.context.turnState.get('ConversationState');
         }
         if (!this.dialogOptions.skillClient) {
             this.dialogOptions.skillClient = dc.context.turnState.get(skillClientKey);
@@ -217,9 +217,9 @@ export class BeginSkill extends SkillDialog implements BeginSkillConfiguration {
         // Call the base to invoke the skill
         return await super.beginDialog(dc, options);
     }
-    
+
     /**
-     * Called when the [Dialog](xref:botbuilder-dialogs.Dialog) is _continued_, where it is the active dialog and the 
+     * Called when the [Dialog](xref:botbuilder-dialogs.Dialog) is _continued_, where it is the active dialog and the
      * user replies with a new activity.
      * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
      * @returns A `Promise` representing the asynchronous operation.
@@ -253,7 +253,7 @@ export class BeginSkill extends SkillDialog implements BeginSkillConfiguration {
      * Called when a child [Dialog](xref:botbuilder-dialogs.Dialog) completed its turn, returning control to this dialog.
      * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
      * @param reason [DialogReason](xref:botbuilder-dialogs.DialogReason), reason why the dialog resumed.
-     * @param result Optional. Value returned from the dialog that was called. The type 
+     * @param result Optional. Value returned from the dialog that was called. The type
      * of the value returned is dependent on the child dialog.
      * @returns A `Promise` representing the asynchronous operation.
      */
@@ -329,6 +329,11 @@ export class BeginSkill extends SkillDialog implements BeginSkillConfiguration {
 
         this.dialogOptions.skillClient = context.turnState.get(skillClientKey);
         if (this.dialogOptions.skillClient == null) {
+            throw new ReferenceError('Unable to get an instance of skillHttpClient from turnState.');
+        }
+
+        this.dialogOptions.conversationState = context.turnState.get('ConversationState');
+        if (this.dialogOptions.conversationState == null) {
             throw new ReferenceError('Unable to get an instance of conversationState from turnState.');
         }
 

@@ -41,7 +41,7 @@ export class GetPagedMembers extends Dialog implements GetPagedMembersConfigurat
     /**
      * Class identifier.
      */
-    public static readonly $kind = 'Teams.GetPagedMembers';
+    static $kind = 'Teams.GetPagedMembers';
 
     /**
      * Gets or sets an optional expression which if is true will disable this action.

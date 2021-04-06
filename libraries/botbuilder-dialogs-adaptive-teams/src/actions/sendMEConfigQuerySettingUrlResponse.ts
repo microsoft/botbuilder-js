@@ -31,7 +31,7 @@ export class SendMEConfigQuerySettingUrlResponse
     /**
      * Class identifier.
      */
-    public static readonly $kind = 'Teams.SendMEConfigQuerySettingUrlResponse';
+    static $kind = 'Teams.SendMEConfigQuerySettingUrlResponse';
 
     /**
      * Gets or sets config url response to send.
