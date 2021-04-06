@@ -109,7 +109,7 @@ export class OpenIdMetadata {
                 return {
                     key: getPem(modulus, exponent),
                     endorsements: key.endorsements,
-                } as IOpenIdMetadataKey;
+                };
             }
         }
 

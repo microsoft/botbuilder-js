@@ -11,16 +11,9 @@ describe('UserTokenClient', function () {
 
         paramsValidation.forEach((testConfig) => {
             it(`should throw with null ${testConfig.paramName}`, function () {
-                // TODO: Unpack why botbuilder-stdlib.assert isn't workng with assert.throws().
-                try {
-                    UserTokenClient.createTokenExchangeState(
-                        testConfig.values[0],
-                        testConfig.values[1],
-                        testConfig.values[2]
-                    );
-                } catch (err) {
-                    assert.strictEqual(err.message, `\`${testConfig.paramName}\` must be defined`);
-                }
+                assert.throws(() => UserTokenClient.createTokenExchangeState(...testConfig.values), {
+                    message: `\`${testConfig.paramName}\` must be defined`,
+                });
             });
         });
     });

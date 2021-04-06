@@ -9,6 +9,7 @@ export abstract class ConnectorFactory {
      *
      * @param serviceUrl The url for the client.
      * @param audience The audience for the credentials the client will use.
+     * @returns A ConnectorClient for sending activities to the audience at the serviceUrl.
      */
     abstract create(serviceUrl: string, audience: string): Promise<ConnectorClient>;
 }
