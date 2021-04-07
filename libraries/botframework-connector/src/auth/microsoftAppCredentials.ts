@@ -24,6 +24,7 @@ function isErrorResponse(value: unknown): value is adal.ErrorResponse {
  * MicrosoftAppCredentials auth implementation
  */
 export class MicrosoftAppCredentials extends AppCredentials {
+    private oAuthClient: msal.ConfidentialClientApplication;
 
     /**
      * Initializes a new instance of the [MicrosoftAppCredentials](xref:botframework-connector.MicrosoftAppCredentials) class.
@@ -35,6 +36,13 @@ export class MicrosoftAppCredentials extends AppCredentials {
      */
     public constructor(appId: string, public appPassword: string, channelAuthTenant?: string, oAuthScope?: string) {
         super(appId, channelAuthTenant, oAuthScope);
+        // this.oAuthClient = new msal.ConfidentialClientApplication({
+        //     auth: {
+        //         clientId: this.appId,
+        //         clientSecret: this.appPassword,
+        //         authority: this.oAuthEndpoint,
+        //     }
+        // });
     }
 
     protected async refreshToken(): Promise<adal.TokenResponse> {
@@ -61,7 +69,29 @@ export class MicrosoftAppCredentials extends AppCredentials {
     }
 
     protected async refreshToken2(): Promise<msal.AuthenticationResult> {
+        // for now, just creating a new cca each call while debugging
+        this.oAuthClient = new msal.ConfidentialClientApplication({
+            auth: {
+                clientId: this.appId,
+                clientSecret: this.appPassword,
+                authority: this.oAuthEndpoint,
+            }
+        });
+        // TODO save this to a member on Credentials -- might not be necessary?
         let authRes: msal.AuthenticationResult;
+        // if (!this.refreshingToken) {
+            // currently keeping behavior the same as when we targeted ADAL
+            // right now we are always request all default scopes
+            // MSAL allows us to be more specific with scopes, if need be
+            // TODO look up how to do this again
+            const clientCredentialRequest = {
+                scopes: [this.oAuthScope + '/.default'],
+            };
+
+            authRes = await this.oAuthClient.acquireTokenByClientCredential(clientCredentialRequest);
+            console.log(`token from msal: ${authRes}`);
+        // }
+
         return authRes;
     }
 }
