@@ -210,7 +210,7 @@ export class DialogManager extends Configurable {
         const dc = new DialogContext(this.dialogs, context, dialogState);
 
         // Call the common dialog "continue/begin" execution pattern shared with the classic RunAsync extension method
-        const turnResult = await internalRun(context, this._rootDialogId, dc);
+        const turnResult = await internalRun(context, this._rootDialogId, dc, this.stateConfiguration);
 
         // Save BotState changes
         await botStateSet.saveAllChanges(dc.context, false);

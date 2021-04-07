@@ -149,7 +149,7 @@ export interface HttpRequestConfiguration extends DialogConfiguration {
     headers?: HeadersInput | HeadersOutput;
     body?: unknown | ValueExpression;
     responseType?: ResponsesTypes | string | Expression | EnumExpression<ResponsesTypes>;
-    resultProperty?: string | Expression | StringExpression;
+    resultProperty: string | Expression | StringExpression;
     disabled?: boolean | string | Expression | BoolExpression;
 }
 
@@ -222,7 +222,7 @@ export class HttpRequest<O extends object = {}> extends Dialog<O> implements Htt
     /**
      * Gets or sets the property expression to store the HTTP response in.
      */
-    public resultProperty?: StringExpression;
+    public resultProperty: StringExpression = new StringExpression('turn.results');
 
     /**
      * An optional expression which if is true will disable this action.
