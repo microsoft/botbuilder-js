@@ -114,7 +114,7 @@ export class TemplateExtensions {
      * @returns Escaped text.
      */
     public static evalEscape(exp: string): string {
-        const validCharactersDict: any = {
+        const validCharactersDict: Record<string, string> = {
             '\\r': '\r',
             '\\n': '\n',
             '\\t': '\t',

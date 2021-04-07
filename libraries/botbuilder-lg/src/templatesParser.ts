@@ -336,7 +336,7 @@ export class TemplatesParser {
 /**
  * Templates transformer. Add more details and body context into the templates object.
  */
-export class TemplatesTransformer extends AbstractParseTreeVisitor<any> implements LGTemplateParserVisitor<any> {
+export class TemplatesTransformer extends AbstractParseTreeVisitor<void> implements LGTemplateParserVisitor<void> {
     private readonly identifierRegex: RegExp = new RegExp(/^[0-9a-zA-Z_]+$/);
     private readonly templateNamePartRegex: RegExp = new RegExp(/^[a-zA-Z_][0-9a-zA-Z_]*$/);
     private readonly templates: Templates;
@@ -374,7 +374,7 @@ export class TemplatesTransformer extends AbstractParseTreeVisitor<any> implemen
      * Gets the default value returned by visitor methods.
      * Method not implemented.
      */
-    protected defaultResult(): any {
+    protected defaultResult(): void {
         return;
     }
 
@@ -382,7 +382,7 @@ export class TemplatesTransformer extends AbstractParseTreeVisitor<any> implemen
      * Visit a parse tree produced by `LGFileParser.errorDefinition`.
      * @param context The parse tree.
      */
-    public visitErrorDefinition(context: lp.ErrorDefinitionContext): any {
+    public visitErrorDefinition(context: lp.ErrorDefinitionContext): void {
         const lineContent = context.INVALID_LINE().text;
         if (lineContent === undefined || lineContent.trim() === '') {
             this.templates.diagnostics.push(
@@ -392,14 +392,13 @@ export class TemplatesTransformer extends AbstractParseTreeVisitor<any> implemen
                 )
             );
         }
-        return;
     }
 
     /**
      * Visit a parse tree produced by `LGFileParser.importDefinition`.
      * @param context The parse tree.
      */
-    public visitImportDefinition(context: lp.ImportDefinitionContext): any {
+    public visitImportDefinition(context: lp.ImportDefinitionContext): void {
         const importStr = context.IMPORT().text;
         const groups = importStr.match(TemplatesParser.importRegex);
         if (!groups || (groups.length !== 3 && groups.length !== 4)) {
@@ -428,14 +427,13 @@ export class TemplatesTransformer extends AbstractParseTreeVisitor<any> implemen
         }
 
         this.templates.imports.push(templateImport);
-        return;
     }
 
     /**
      * Visit a parse tree produced by `LGFileParser.optionDefinition`.
      * @param context The parse tree.
      */
-    public visitOptionDefinition(context: lp.OptionDefinitionContext): any {
+    public visitOptionDefinition(context: lp.OptionDefinitionContext): void {
         const optionStr = context.OPTION().text;
         let result = '';
         if (optionStr != undefined && optionStr.trim() !== '') {
@@ -448,14 +446,13 @@ export class TemplatesTransformer extends AbstractParseTreeVisitor<any> implemen
         if (result.trim() !== '') {
             this.templates.options.push(result);
         }
-        return;
     }
 
     /**
      * Visit a parse tree produced by `LGFileParser.templateDefinition`.
      * @param context The parse tree.
      */
-    public visitTemplateDefinition(context: lp.TemplateDefinitionContext): any {
+    public visitTemplateDefinition(context: lp.TemplateDefinitionContext): void {
         const startLine = context.start.line;
 
         const templateNameLine = context.templateNameLine().TEMPLATE_NAME_LINE().text;
