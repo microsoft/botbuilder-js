@@ -38,7 +38,7 @@ export class Extractor
     public extract(): Map<string, string[] | Map<string, string[]>>[] {
         const result: Map<string, string[] | Map<string, string[]>>[] = [];
         this.templates.forEach((template: Template) => {
-            const templateResult: Map<string, string[] | Map<string, string[]>> = new Map<string, string[] | Map<string, string[]>>();
+            const templateResult = new Map<string, string[] | Map<string, string[]>>();
             const templateName: string = template.name;
             const templateBodies = this.visit(template.templateBodyParseTree);
             let isNormalTemplate = true;
