@@ -26,7 +26,11 @@ export class Divide extends MultivariateNumericEvaluator {
      * @private
      */
     private static func(args: any[]): number {
-        return Math.floor(Number(args[0]) / Number(args[1]));
+        const result: number = Number(args[0]) / Number(args[1]);
+        if (Number.isInteger(args[0]) && Number.isInteger(args[1])) {
+            return Math.floor(result);
+        }
+        return result;
     }
 
     /**
