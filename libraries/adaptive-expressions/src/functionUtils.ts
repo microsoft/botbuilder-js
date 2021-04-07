@@ -507,7 +507,7 @@ export class FunctionUtils {
      * @returns Delegate for evaluating an expression.
      */
     public static applyWithError(
-        func: (arg0: Readonly<unknown[]>) => ValueWithError,
+        func: (arg0: ReadonlyArray<unknown>) => ValueWithError,
         verify?: VerifyExpression
     ): EvaluateExpressionDelegate {
         return (expression: Expression, state: MemoryInterface, options: Options): ValueWithError => {
@@ -533,7 +533,7 @@ export class FunctionUtils {
      * @returns Delegate for evaluating an expression.
      */
     public static applyWithOptionsAndError(
-        func: (arg0: Readonly<unknown[]>, options: Options) => ValueWithError,
+        func: (arg0: ReadonlyArray<unknown>, options: Options) => ValueWithError,
         verify?: VerifyExpression
     ): EvaluateExpressionDelegate {
         return (expression: Expression, state: MemoryInterface, options: Options): ValueWithError => {
@@ -559,7 +559,7 @@ export class FunctionUtils {
      * @returns Delegate for evaluating an expression.
      */
     public static applyWithOptions(
-        func: (arg0: Readonly<unknown[]>, options: Options) => unknown,
+        func: (arg0: ReadonlyArray<unknown>, options: Options) => unknown,
         verify?: VerifyExpression
     ): EvaluateExpressionDelegate {
         return (expression: Expression, state: MemoryInterface, options: Options): ValueWithError => {
@@ -585,10 +585,10 @@ export class FunctionUtils {
      * @returns Delegate for evaluating an expression.
      */
     public static applySequence(
-        func: (arg0: Readonly<unknown[]>) => unknown,
+        func: (arg0: ReadonlyArray<unknown>) => unknown,
         verify?: VerifyExpression
     ): EvaluateExpressionDelegate {
-        return FunctionUtils.apply((args: Readonly<unknown[]>): unknown => {
+        return FunctionUtils.apply((args: ReadonlyArray<unknown>): unknown => {
             const binaryArgs: unknown[] = [undefined, undefined];
             let soFar: unknown = args[0];
             for (let i = 1; i < args.length; i++) {
@@ -608,10 +608,10 @@ export class FunctionUtils {
      * @returns Delegate for evaluating an expression.
      */
     public static applySequenceWithError(
-        func: (arg0: Readonly<unknown[]>) => ValueWithError,
+        func: (arg0: ReadonlyArray<unknown>) => ValueWithError,
         verify?: VerifyExpression
     ): EvaluateExpressionDelegate {
-        return FunctionUtils.applyWithError((args: Readonly<unknown[]>): ValueWithError => {
+        return FunctionUtils.applyWithError((args: ReadonlyArray<unknown>): ValueWithError => {
             const binaryArgs: unknown[] = [undefined, undefined];
             let soFar: unknown = args[0];
             let value: unknown;
@@ -637,7 +637,7 @@ export class FunctionUtils {
      * @param locale A locale string
      * @param maxArgsLength The max length of a given function.
      */
-    public static determineLocale(args: Readonly<unknown[]>, maxArgsLength: number, locale = 'en-us'): string {
+    public static determineLocale(args: ReadonlyArray<unknown>, maxArgsLength: number, locale = 'en-us'): string {
         if (args.length === maxArgsLength) {
             const lastArg = args[maxArgsLength - 1];
             if (typeof lastArg === 'string') {
@@ -656,7 +656,7 @@ export class FunctionUtils {
      * @param maxArgsLength The max length of a given function.
      */
     public static determineFormatAndLocale(
-        args: Readonly<unknown[]>,
+        args: ReadonlyArray<unknown>,
         maxArgsLength: number,
         format: string,
         locale = 'en-us'
