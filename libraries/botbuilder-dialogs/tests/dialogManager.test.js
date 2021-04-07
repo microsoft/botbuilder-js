@@ -1,4 +1,7 @@
-const { ok, strictEqual } = require('assert');
+const { AdaptiveDialog, OnBeginDialog, EndTurn, SendActivity } = require('../../botbuilder-dialogs-adaptive/lib');
+const { AuthenticationConstants } = require('botframework-connector');
+const { deepStrictEqual, ok, strictEqual } = require('assert');
+
 const {
     ActivityTypes,
     AutoSaveStateMiddleware,
@@ -9,20 +12,22 @@ const {
     MessageFactory,
     SkillConversationReferenceKey,
     TestAdapter,
+    TurnContext,
     UserState,
     useBotState,
 } = require('botbuilder-core');
+
 const {
     ComponentDialog,
+    DialogEvents,
+    DialogManager,
     DialogReason,
+    DialogTurnStateConstants,
+    DialogTurnStatus,
+    MemoryScope,
     TextPrompt,
     WaterfallDialog,
-    DialogManager,
-    DialogTurnStatus,
-    DialogEvents,
 } = require('../');
-const { AuthenticationConstants } = require('botframework-connector');
-const { AdaptiveDialog, OnBeginDialog, EndTurn, SendActivity } = require('../../botbuilder-dialogs-adaptive/lib');
 
 const FlowTestCase = {
     RootBotOnly: 'RootBotOnly',
@@ -105,14 +110,9 @@ function createTestFlow(dialog, testCase = FlowTestCase.RootBotOnly, enabledTrac
             }
 
             // Interceptor to capture the EoC activity if it was sent so we can assert it in the tests.
-            context.onSendActivities(async (tc, activities, next) => {
-                for (let idx = 0; idx < activities.length; idx++) {
-                    if (activities[idx].type === ActivityTypes.EndOfConversation) {
-                        _eocSent = activities[idx];
-                        break;
-                    }
-                }
-                return await next();
+            context.onSendActivities((_turnContext, activities, next) => {
+                _eocSent = activities.find((activity) => activity.type === ActivityTypes.EndOfConversation);
+                return next();
             });
 
             _dmTurnResult = await dm.onTurn(context);
@@ -120,13 +120,14 @@ function createTestFlow(dialog, testCase = FlowTestCase.RootBotOnly, enabledTrac
         convRef,
         enabledTrace
     );
+
     adapter.use(new AutoSaveStateMiddleware(userState, convoState));
 
     return adapter;
 }
 
 class SimpleComponentDialog extends ComponentDialog {
-    constructor(id, property) {
+    constructor(id, _property) {
         super(id || 'SimpleComponentDialog');
         this.TextPrompt = 'TextPrompt';
         this.WaterfallDialog = 'WaterfallDialog';
@@ -159,12 +160,12 @@ class SimpleComponentDialog extends ComponentDialog {
 describe('DialogManager', function () {
     this.timeout(300);
 
-    this.beforeEach(() => {
+    this.beforeEach(function () {
         _dmTurnResult = undefined;
     });
 
-    describe('HandlesBotAndSkillsTestCases', () => {
-        this.beforeEach(() => {
+    describe('HandlesBotAndSkillsTestCases', function () {
+        this.beforeEach(function () {
             _eocSent = undefined;
             _dmTurnResult = undefined;
         });
@@ -191,24 +192,24 @@ describe('DialogManager', function () {
             }
         }
 
-        it('rootBotOnly, no sent EoC', async () => {
+        it('rootBotOnly, no sent EoC', async function () {
             await handlesBotAndSkillsTestCases(FlowTestCase.RootBotOnly, false);
         });
 
-        it('rootBotConsumingSkill, no sent EoC', async () => {
+        it('rootBotConsumingSkill, no sent EoC', async function () {
             await handlesBotAndSkillsTestCases(FlowTestCase.RootBotConsumingSkill, false);
         });
 
-        it('middleSkill, sent EoC', async () => {
+        it('middleSkill, sent EoC', async function () {
             await handlesBotAndSkillsTestCases(FlowTestCase.MiddleSkill, true);
         });
 
-        it('leafSkill, sent EoC', async () => {
+        it('leafSkill, sent EoC', async function () {
             await handlesBotAndSkillsTestCases(FlowTestCase.LeafSkill, true);
         });
     });
 
-    it('SkillHandlesEoCFromParent', async () => {
+    it('SkillHandlesEoCFromParent', async function () {
         const dialog = new SimpleComponentDialog();
         const testFlow = createTestFlow(dialog, FlowTestCase.LeafSkill);
         await testFlow
@@ -219,7 +220,7 @@ describe('DialogManager', function () {
         strictEqual(_dmTurnResult.turnResult.status, DialogTurnStatus.cancelled);
     });
 
-    it('SkillHandlesRepromptFromParent', async () => {
+    it('SkillHandlesRepromptFromParent', async function () {
         const dialog = new SimpleComponentDialog();
         const testFlow = createTestFlow(dialog, FlowTestCase.LeafSkill);
         await testFlow
@@ -231,14 +232,14 @@ describe('DialogManager', function () {
         strictEqual(_dmTurnResult.turnResult.status, DialogTurnStatus.waiting);
     });
 
-    it('SkillShouldReturnEmptyOnRepromptWithNoDialog', async () => {
+    it('SkillShouldReturnEmptyOnRepromptWithNoDialog', async function () {
         const dialog = new SimpleComponentDialog();
         const testFlow = createTestFlow(dialog, FlowTestCase.LeafSkill);
         await testFlow.send({ type: ActivityTypes.Event, name: DialogEvents.repromptDialog }).startTest();
         strictEqual(_dmTurnResult.turnResult.status, DialogTurnStatus.empty);
     });
 
-    it('Trace skill state', async () => {
+    it('Trace skill state', async function () {
         const dialog = new SimpleComponentDialog();
         const testFlow = createTestFlow(dialog, FlowTestCase.LeafSkill, true);
         await testFlow
@@ -258,7 +259,7 @@ describe('DialogManager', function () {
         strictEqual(_dmTurnResult.turnResult.status, DialogTurnStatus.complete);
     });
 
-    it('Trace bot state', async () => {
+    it('Trace bot state', async function () {
         const dialog = new SimpleComponentDialog();
         const testFlow = createTestFlow(dialog, FlowTestCase.RootBotOnly, true);
         await testFlow
@@ -278,7 +279,7 @@ describe('DialogManager', function () {
         strictEqual(_dmTurnResult.turnResult.status, DialogTurnStatus.complete);
     });
 
-    it('Gets or sets root dialog', () => {
+    it('Gets or sets root dialog', function () {
         const dm = new DialogManager();
         const rootDialog = new SimpleComponentDialog();
         dm.rootDialog = rootDialog;
@@ -288,7 +289,7 @@ describe('DialogManager', function () {
         strictEqual(dm.rootDialog, undefined);
     });
 
-    it('Container registration', async () => {
+    it('Container registration', async function () {
         const root = new AdaptiveDialog('root').configure({
             triggers: [
                 new OnBeginDialog().configure({
@@ -310,7 +311,7 @@ describe('DialogManager', function () {
         ok(dm.dialogs.find('inner'));
     });
 
-    it('Cyclical dialog structures', async () => {
+    it('Cyclical dialog structures', async function () {
         const trigger = new OnBeginDialog();
 
         const root = new AdaptiveDialog('root').configure({
@@ -335,7 +336,7 @@ describe('DialogManager', function () {
         await adapter.send('hi').startTest();
     });
 
-    it('Container registration double nesting', async () => {
+    it('Container registration double nesting', async function () {
         const root = new AdaptiveDialog('root').configure({
             triggers: [
                 new OnBeginDialog().configure({
@@ -379,5 +380,49 @@ describe('DialogManager', function () {
             dm.dialogs.getDialogs().find((d) => d instanceof SendActivity),
             undefined
         );
+    });
+
+    it('State Configuration', async function () {
+        class CustomMemoryScope extends MemoryScope {
+            constructor() {
+                super('custom');
+            }
+        }
+
+        class CustomPathResolver {
+            transformPath() {
+                throw new Error('not implemented');
+            }
+        }
+
+        const dialog = new WaterfallDialog('test-dialog');
+
+        const memoryScope = new CustomMemoryScope();
+        const pathResolver = new CustomPathResolver();
+
+        const dialogManager = new DialogManager(dialog);
+        dialogManager.stateConfiguration = {
+            memoryScopes: [memoryScope],
+            pathResolvers: [pathResolver],
+        };
+
+        const adapter = new TestAdapter(async () => {});
+
+        const turnContext = new TurnContext(adapter, {
+            channelId: 'test-channel',
+            conversation: {
+                id: 'test-conversation-id',
+            },
+            from: {
+                id: 'test-id',
+            },
+        });
+
+        turnContext.turnState.set('ConversationState', new ConversationState(new MemoryStorage()));
+        await dialogManager.onTurn(turnContext);
+        const actual = turnContext.turnState.get(DialogTurnStateConstants.dialogManager);
+
+        deepStrictEqual(actual.stateConfiguration.memoryScopes, [memoryScope]);
+        deepStrictEqual(actual.stateConfiguration.pathResolvers, [pathResolver]);
     });
 });
