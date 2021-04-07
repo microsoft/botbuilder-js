@@ -22,7 +22,7 @@ export class TurnMemoryScope extends MemoryScope {
      * Initializes a new instance of the [TurnMemoryScope](xref:botbuilder-dialogs.TurnMemoryScope) class.
      */
     public constructor() {
-        super(ScopePath.turn);
+        super(ScopePath.turn, false);
     }
 
     /**
