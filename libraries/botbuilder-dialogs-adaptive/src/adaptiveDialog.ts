@@ -687,16 +687,27 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> im
         //   from the stack and we want to detect this so we can stop processing actions.
         const instanceId = this.getUniqueInstanceId(actionContext);
 
+        // Initialize local interruption detection
+        // Any steps containing a dialog stack after the first step indicates the action was interrupted.
+        // We want to force a re-prompt and then end the turn when we encounter an interrupted step.
+        let interrupted = false;
+
         // Create context for active action
         let actionDC = this.createChildContext(actionContext);
         while (actionDC) {
-            // Continue current action
-            let result = await actionDC.continueDialog();
-
-            // Start action if not continued
-            if (result.status == DialogTurnStatus.empty && this.getUniqueInstanceId(actionContext) == instanceId) {
+            let result: DialogTurnResult<unknown>;
+            if (actionDC.stack.length === 0) {
+                // Start step
                 const nextAction = actionContext.actions[0];
                 result = await actionDC.beginDialog(nextAction.dialogId, nextAction.options);
+            } else {
+                // Set interrupted flag only if it is undefined
+                if (interrupted && actionDC.state.getValue<boolean>(TurnPath.interrupted) === undefined) {
+                    actionDC.state.setValue(TurnPath.interrupted, true);
+                }
+
+                // Continue step execution
+                result = await actionDC.continueDialog();
             }
 
             // Is the step waiting for input or were we cancelled?
@@ -734,6 +745,7 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> im
             // Apply any locale changes and fetch next action
             await actionContext.applyChanges();
             actionDC = this.createChildContext(actionContext);
+            interrupted = true;
         }
 
         return await this.onEndOfActions(actionContext);
