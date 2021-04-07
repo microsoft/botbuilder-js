@@ -18,6 +18,7 @@ import {
     ReturnType,
     FunctionUtils,
     SimpleObjectMemory,
+    ValueWithError,
 } from 'adaptive-expressions';
 import { ImportResolverDelegate, TemplatesTransformer } from './templatesParser';
 import { Evaluator } from './evaluator';
@@ -636,17 +637,17 @@ export class Templates implements Iterable<Template> {
                         newGlobalName,
                         new ExpressionEvaluator(
                             newGlobalName,
-                            (expr, state, options): { value: any; error: string } => {
-                                let value: any;
+                            (expr, state, options): ValueWithError => {
+                                let value: unknown;
                                 let error: string;
-                                let args: any[];
+                                let args: unknown[];
                                 const evaluator = new Evaluator(this, this.lgOptions);
                                 // eslint-disable-next-line prefer-const
                                 ({ args, error } = FunctionUtils.evaluateChildren(expr, state, options));
                                 if (!error) {
                                     const parameters = evaluator.templateMap[templateName].parameters;
-                                    const newScope: any = {};
-                                    parameters.map((e: string, i: number): void => (newScope[e] = args[i]));
+                                    const newScope: Record<string, unknown> = {};
+                                    parameters.map((e: string, i: number) => (newScope[e] = args[i]));
                                     const scope = new CustomizedMemory(state, new SimpleObjectMemory(newScope));
                                     try {
                                         value = evaluator.evaluateTemplate(templateName, scope);

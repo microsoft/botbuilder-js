@@ -15,7 +15,7 @@ import { TemplateErrors } from './templateErrors';
 /**
  * LG parser error listener.
  */
-export class ErrorListener implements ANTLRErrorListener<any> {
+export class ErrorListener implements ANTLRErrorListener<void> {
     private readonly source: string;
     private lineOffset: number;
 

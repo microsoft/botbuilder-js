@@ -43,7 +43,7 @@ export class EvaluationOptions {
 
     public strictMode: boolean | undefined;
 
-    public nullSubstitution: (path: string) => any | undefined;
+    public nullSubstitution: (path: string) => unknown;
 
     public LineBreakStyle: LGLineBreakStyle | undefined;
 
@@ -86,7 +86,7 @@ export class EvaluationOptions {
                                     this.strictMode = true;
                                 }
                             } else if (key.toLowerCase() === this.replaceNullKey.toLowerCase()) {
-                                this.nullSubstitution = (path): any =>
+                                this.nullSubstitution = (path) =>
                                     // eslint-disable-next-line security/detect-eval-with-expression
                                     eval('`' + value.replace(this.nullKeyReplaceStrRegex, '${path}') + '`');
                             } else if (key.toLowerCase() === this.lineBreakKey.toLowerCase()) {
