@@ -34,7 +34,6 @@ import { TemplateExtensions } from './templateExtensions';
 import { TemplateErrors } from './templateErrors';
 import { EvaluationOptions, LGCacheScope } from './evaluationOptions';
 import { Templates } from './templates';
-import { stringify } from 'querystring';
 
 /**
  * Filr formats.
@@ -76,7 +75,7 @@ export class Evaluator extends AbstractParseTreeVisitor<unknown> implements LGTe
     public readonly templateMap: { [name: string]: Template };
     private readonly evaluationTargetStack: EvaluationTarget[] = [];
     private readonly lgOptions: EvaluationOptions;
-    private readonly cacheResult: Map<string, any> = new Map<string, any>();
+    private readonly cacheResult: Map<string, unknown> = new Map<string, unknown>();
 
     public static readonly LGType = 'lgType';
     public static readonly activityAttachmentFunctionName = 'ActivityAttachment';
@@ -592,7 +591,9 @@ export class Evaluator extends AbstractParseTreeVisitor<unknown> implements LGTe
     }
 
     // Genearte a new lookup function based on one lookup function
-    private readonly customizedEvaluatorLookup = (baseLookup: EvaluatorLookup) => (name: string): ExpressionEvaluator => {
+    private readonly customizedEvaluatorLookup = (baseLookup: EvaluatorLookup) => (
+        name: string
+    ): ExpressionEvaluator => {
         const standardFunction = baseLookup(name);
 
         if (standardFunction !== undefined) {

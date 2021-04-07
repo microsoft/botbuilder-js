@@ -43,8 +43,7 @@ export class Extractor
             const templateBodies = this.visit(template.templateBodyParseTree);
             let isNormalTemplate = true;
             templateBodies.forEach(
-                (templateBody) =>
-                    (isNormalTemplate = isNormalTemplate && templateBody === undefined)
+                (templateBody) => (isNormalTemplate = isNormalTemplate && templateBody === undefined)
             );
 
             if (isNormalTemplate) {
@@ -68,8 +67,8 @@ export class Extractor
      * @param context The parse tree.
      * @returns The result of visiting the normal template body.
      */
-    public visitNormalTemplateBody(context: lp.NormalTemplateBodyContext): Map<string,  string[]> {
-        const result: Map<string,  string[]> = new Map<string,  string[]>();
+    public visitNormalTemplateBody(context: lp.NormalTemplateBodyContext): Map<string, string[]> {
+        const result = new Map<string, string[]>();
         for (const templateStr of context.templateString()) {
             result.set(templateStr.normalTemplateString().text, undefined);
         }
@@ -82,8 +81,8 @@ export class Extractor
      * @param context The parse tree.
      * @returns The result of visiting the structured body.
      */
-    public visitStructuredBody(context: lp.StructuredBodyContext): Map<string,  string[]> {
-        const result: Map<string,  string[]> = new Map<string,  string[]>();
+    public visitStructuredBody(context: lp.StructuredBodyContext): Map<string, string[]> {
+        const result = new Map<string, string[]>();
         const lineStart = '    ';
         const structName = context.structuredTemplateBody().structuredBodyNameLine().text;
         let fullStr = structName + '\n';
@@ -102,8 +101,8 @@ export class Extractor
      * @param context The parse tree.
      * @returns The result of visiting the if else body.
      */
-    public visitIfElseBody(context: lp.IfElseBodyContext): Map<string,  string[]> {
-        const result: Map<string,  string[]> = new Map<string,  string[]>();
+    public visitIfElseBody(context: lp.IfElseBodyContext): Map<string, string[]> {
+        const result = new Map<string, string[]>();
         const ifRules: lp.IfConditionRuleContext[] = context.ifElseTemplateBody().ifConditionRule();
         for (const ifRule of ifRules) {
             const expressions = ifRule.ifCondition().expression();
@@ -118,7 +117,7 @@ export class Extractor
                 : conditionNode.ELSE();
             const conditionLabel: string = node.text.toLowerCase();
             const childTemplateBodyResult: string[] = [];
-            const templateBodies: Map<string, any> = this.visit(ifRule.normalTemplateBody());
+            const templateBodies = this.visit(ifRule.normalTemplateBody());
             for (const templateBody of templateBodies) {
                 childTemplateBodyResult.push(templateBody[0]);
             }
@@ -140,8 +139,8 @@ export class Extractor
      * @param context The parse tree.
      * @returns The result of visiting the switch case body.
      */
-    public visitSwitchCaseBody(context: lp.SwitchCaseBodyContext): Map<string,  string[]> {
-        const result: Map<string,  string[]> = new Map<string,  string[]>();
+    public visitSwitchCaseBody(context: lp.SwitchCaseBodyContext): Map<string, string[]> {
+        const result = new Map<string, string[]>();
         const switchCaseNodes: lp.SwitchCaseRuleContext[] = context.switchCaseTemplateBody().switchCaseRule();
         for (const iterNode of switchCaseNodes) {
             const expressions = iterNode.switchCaseStat().expression();
@@ -178,7 +177,7 @@ export class Extractor
      * Gets the default value returned by visitor methods.
      * @returns Empty Map<string,  string[]>.
      */
-    protected defaultResult(): Map<string,  string[]> {
-        return new Map<string,  string[]>();
+    protected defaultResult(): Map<string, string[]> {
+        return new Map<string, string[]>();
     }
 }
