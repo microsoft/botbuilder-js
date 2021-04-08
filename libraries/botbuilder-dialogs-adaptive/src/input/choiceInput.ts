@@ -5,16 +5,20 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
+import { Activity } from 'botbuilder';
+import { ChoiceSet } from './choiceSet';
+import { EnumProperty, ObjectProperty, StringProperty } from '../properties';
+import { InputDialog, InputDialogConfiguration, InputState } from './inputDialog';
+
 import {
     EnumExpression,
     EnumExpressionConverter,
-    Expression,
     ObjectExpression,
     ObjectExpressionConverter,
     StringExpression,
     StringExpressionConverter,
 } from 'adaptive-expressions';
-import { Activity } from 'botbuilder';
+
 import {
     Choice,
     ChoiceFactory,
@@ -27,8 +31,6 @@ import {
     PromptCultureModels,
     recognizeChoices,
 } from 'botbuilder-dialogs';
-import { InputDialog, InputDialogConfiguration, InputState } from './inputDialog';
-import { ChoiceSet } from './choiceSet';
 
 export enum ChoiceOutputFormat {
     value = 'value',
@@ -40,12 +42,12 @@ export interface ChoiceInputOptions {
 }
 
 export interface ChoiceInputConfiguration extends InputDialogConfiguration {
-    choices?: ChoiceSet | string | Expression | ObjectExpression<ChoiceSet>;
-    style?: ListStyle | string | Expression | EnumExpression<ListStyle>;
-    defaultLocale?: string | Expression | StringExpression;
-    outputFormat?: ChoiceOutputFormat | string | Expression | EnumExpression<ChoiceOutputFormat>;
-    choiceOptions?: ChoiceFactoryOptions | string | Expression | ObjectExpression<ChoiceFactoryOptions>;
-    recognizerOptions?: FindChoicesOptions | string | Expression | ObjectExpression<FindChoicesOptions>;
+    choices?: ObjectProperty<ChoiceSet>;
+    style?: EnumProperty<ListStyle>;
+    defaultLocale?: StringProperty;
+    outputFormat?: EnumProperty<ChoiceOutputFormat>;
+    choiceOptions?: ObjectProperty<ChoiceFactoryOptions>;
+    recognizerOptions?: ObjectProperty<FindChoicesOptions>;
 }
 
 /**
@@ -57,7 +59,7 @@ export class ChoiceInput extends InputDialog implements ChoiceInputConfiguration
     /**
      * Default options for rendering the choices to the user based on locale.
      */
-    private static defaultChoiceOptions: { [locale: string]: ChoiceFactoryOptions } = {
+    private static defaultChoiceOptions: Record<string, ChoiceFactoryOptions> = {
         'es-es': { inlineSeparator: ', ', inlineOr: ' o ', inlineOrMore: ', o ', includeNumbers: true },
         'nl-nl': { inlineSeparator: ', ', inlineOr: ' of ', inlineOrMore: ', of ', includeNumbers: true },
         'en-us': { inlineSeparator: ', ', inlineOr: ' or ', inlineOrMore: ', or ', includeNumbers: true },

@@ -5,8 +5,10 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { BoolExpression, BoolExpressionConverter, Expression } from 'adaptive-expressions';
+import { BoolExpression, BoolExpressionConverter } from 'adaptive-expressions';
+import { BoolProperty } from '../properties';
 import { StringUtils } from 'botbuilder';
+
 import {
     Converter,
     ConverterFactory,
@@ -19,7 +21,7 @@ import {
 export type CodeActionHandler = (dc: DialogContext, options?: object) => Promise<DialogTurnResult>;
 
 export interface CodeActionConfiguration extends DialogConfiguration {
-    disabled?: boolean | string | Expression | BoolExpression;
+    disabled?: BoolProperty;
 }
 
 /**

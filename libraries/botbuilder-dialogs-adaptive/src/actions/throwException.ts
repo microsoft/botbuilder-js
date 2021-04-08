@@ -5,6 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
+import { BoolProperty, UnknownProperty } from '../properties';
 
 import {
     BoolExpression,
@@ -12,6 +13,7 @@ import {
     ValueExpression,
     ValueExpressionConverter,
 } from 'adaptive-expressions';
+
 import {
     Converter,
     ConverterFactory,
@@ -23,8 +25,8 @@ import {
 } from 'botbuilder-dialogs';
 
 export interface ThrowExceptionConfiguration extends DialogConfiguration {
-    disabled?: boolean | string | BoolExpression;
-    errorValue?: unknown | ValueExpression;
+    disabled?: BoolProperty;
+    errorValue?: UnknownProperty;
 }
 
 /**

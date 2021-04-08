@@ -6,20 +6,20 @@
  * Licensed under the MIT License.
  */
 import * as Recognizers from '@microsoft/recognizers-text-number';
+import { Converter, ConverterFactory, DialogContext } from 'botbuilder-dialogs';
+import { InputDialog, InputDialogConfiguration, InputState } from './inputDialog';
+import { NumberProperty, StringProperty } from '../properties';
+
 import {
-    Expression,
     NumberExpression,
     NumberExpressionConverter,
     StringExpression,
     StringExpressionConverter,
 } from 'adaptive-expressions';
-import { Activity } from 'botbuilder';
-import { Converter, ConverterFactory, DialogContext } from 'botbuilder-dialogs';
-import { InputDialog, InputDialogConfiguration, InputState } from './inputDialog';
 
 export interface NumberInputConfiguration extends InputDialogConfiguration {
-    defaultLocale?: string | Expression | StringExpression;
-    outputFormat?: number | string | Expression | NumberExpression;
+    defaultLocale?: StringProperty;
+    outputFormat?: NumberProperty;
 }
 
 /**

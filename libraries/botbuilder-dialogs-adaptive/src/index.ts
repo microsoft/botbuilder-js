@@ -21,6 +21,7 @@ export * from './languageGenerator';
 export * from './languageGeneratorExtensions';
 export * from './languagePolicy';
 export * from './languageResourceLoader';
+export * from './properties';
 export * from './propertySchema';
 export * from './recognizers';
 export * from './resourceExtensions';

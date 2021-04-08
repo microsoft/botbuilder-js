@@ -6,7 +6,24 @@
  * Licensed under the MIT License.
  */
 
-import { BoolExpression, BoolExpressionConverter, Expression, IntExpression } from 'adaptive-expressions';
+import { ActionContext } from './actionContext';
+import { AdaptiveDialogState } from './adaptiveDialogState';
+import { AdaptiveEvents } from './adaptiveEvents';
+import { BoolExpression, BoolExpressionConverter, IntExpression } from 'adaptive-expressions';
+import { BoolProperty } from './properties';
+import { DialogSetConverter, LanguageGeneratorConverter, RecognizerConverter } from './converters';
+import { EntityAssignment } from './entityAssignment';
+import { EntityAssignments } from './entityAssignments';
+import { EntityInfo, NormalizedEntityInfos } from './entityInfo';
+import { FirstSelector, MostSpecificSelector } from './selectors';
+import { LanguageGenerator } from './languageGenerator';
+import { OnCondition } from './conditions';
+import { RecognizerSet } from './recognizers';
+import { SchemaHelper } from './schemaHelper';
+import { TriggerSelector } from './triggerSelector';
+import { ValueRecognizer } from './recognizers/valueRecognizer';
+import { languageGeneratorKey } from './languageGeneratorExtensions';
+
 import {
     Activity,
     ActivityTypes,
@@ -16,6 +33,7 @@ import {
     TurnContext,
     telemetryTrackDialogView,
 } from 'botbuilder';
+
 import {
     Converter,
     ConverterFactory,
@@ -35,27 +53,12 @@ import {
     Recognizer,
     TurnPath,
 } from 'botbuilder-dialogs';
-import { ActionContext } from './actionContext';
-import { AdaptiveDialogState } from './adaptiveDialogState';
-import { AdaptiveEvents } from './adaptiveEvents';
-import { OnCondition } from './conditions';
-import { DialogSetConverter, LanguageGeneratorConverter, RecognizerConverter } from './converters';
-import { EntityAssignment } from './entityAssignment';
-import { EntityAssignments } from './entityAssignments';
-import { EntityInfo, NormalizedEntityInfos } from './entityInfo';
-import { LanguageGenerator } from './languageGenerator';
-import { languageGeneratorKey } from './languageGeneratorExtensions';
-import { RecognizerSet } from './recognizers';
-import { ValueRecognizer } from './recognizers/valueRecognizer';
-import { SchemaHelper } from './schemaHelper';
-import { FirstSelector, MostSpecificSelector } from './selectors';
-import { TriggerSelector } from './triggerSelector';
 
 export interface AdaptiveDialogConfiguration extends DialogConfiguration {
     recognizer?: string | Recognizer;
     generator?: string | LanguageGenerator;
     triggers?: OnCondition[];
-    autoEndDialog?: boolean | string | Expression | BoolExpression;
+    autoEndDialog?: BoolProperty;
     selector?: TriggerSelector;
     defaultResultProperty?: string;
     schema?: unknown;

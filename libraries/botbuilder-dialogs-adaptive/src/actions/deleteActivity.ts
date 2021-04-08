@@ -5,13 +5,15 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
+import { BoolProperty, StringProperty } from '../properties';
+
 import {
     BoolExpression,
     BoolExpressionConverter,
-    Expression,
     StringExpression,
     StringExpressionConverter,
 } from 'adaptive-expressions';
+
 import {
     Converter,
     ConverterFactory,
@@ -22,8 +24,8 @@ import {
 } from 'botbuilder-dialogs';
 
 export interface DeleteActivityConfiguration extends DialogConfiguration {
-    activityId?: string | Expression | StringExpression;
-    disabled?: boolean | string | Expression | BoolExpression;
+    activityId?: StringProperty;
+    disabled?: BoolProperty;
 }
 
 /**
@@ -65,7 +67,7 @@ export class DeleteActivity<O extends object = {}> extends Dialog<O> implements 
                 return super.getConverter(property);
         }
     }
-  
+
     /**
      * Called when the [Dialog](xref:botbuilder-dialogs.Dialog) is started and pushed onto the dialog stack.
      * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.

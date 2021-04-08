@@ -5,25 +5,26 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
+import { ActionScope, ActionScopeConfiguration, ActionScopeResult } from './actionScope';
+import { BoolProperty, StringProperty } from '../properties';
+import { Converter, ConverterFactory, Dialog, DialogContext, DialogTurnResult } from 'botbuilder-dialogs';
+import { ForEachPageConfiguration } from './forEachPage';
+
 import {
-    StringExpression,
     BoolExpression,
     BoolExpressionConverter,
+    StringExpression,
     StringExpressionConverter,
-    Expression,
 } from 'adaptive-expressions';
-import { Converter, ConverterFactory, Dialog, DialogContext, DialogTurnResult } from 'botbuilder-dialogs';
-import { ActionScope, ActionScopeConfiguration, ActionScopeResult } from './actionScope';
-import { ForEachPageConfiguration } from './forEachPage';
 
 const INDEX = 'dialog.foreach.index';
 const VALUE = 'dialog.foreach.value';
 
 export interface ForEachConfiguration extends ActionScopeConfiguration {
-    itemsProperty?: string | Expression | StringExpression;
-    index?: string | Expression | StringExpression;
-    value?: string | Expression | StringExpression;
-    disabled?: boolean | string | Expression | BoolExpression;
+    itemsProperty?: StringProperty;
+    index?: StringProperty;
+    value?: StringProperty;
+    disabled?: BoolProperty;
 }
 
 /**
@@ -141,7 +142,7 @@ export class ForEach<O extends object = {}> extends ActionScope<O> implements Fo
      * @protected
      * Called when the [Dialog](xref:botbuilder-dialogs.Dialog) continues to the next action.
      * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
-     * @param result Optional. Value returned from the dialog that was called. The type 
+     * @param result Optional. Value returned from the dialog that was called. The type
      * of the value returned is dependent on the child dialog.
      * @returns A `Promise` representing the asynchronous operation.
      */

@@ -5,17 +5,19 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
+import { BoolProperty, EnumProperty, StringProperty, UnknownProperty } from '../properties';
+
 import {
     BoolExpression,
     BoolExpressionConverter,
     EnumExpression,
     EnumExpressionConverter,
-    Expression,
     StringExpression,
     StringExpressionConverter,
     ValueExpression,
     ValueExpressionConverter,
 } from 'adaptive-expressions';
+
 import {
     Converter,
     ConverterFactory,
@@ -34,11 +36,11 @@ export enum ArrayChangeType {
 }
 
 export interface EditArrayConfiguration extends DialogConfiguration {
-    changeType?: ArrayChangeType | string | Expression | EnumExpression<ArrayChangeType>;
-    itemsProperty?: string | Expression | StringExpression;
-    resultProperty?: string | Expression | StringExpression;
-    value?: unknown | ValueExpression;
-    disabled?: boolean | string | Expression | BoolExpression;
+    changeType?: EnumProperty<ArrayChangeType>;
+    itemsProperty?: StringProperty;
+    resultProperty?: StringProperty;
+    value?: UnknownProperty;
+    disabled?: BoolProperty;
 }
 
 /**

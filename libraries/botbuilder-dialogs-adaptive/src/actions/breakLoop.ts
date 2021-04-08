@@ -5,7 +5,10 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { BoolExpression, BoolExpressionConverter, Expression } from 'adaptive-expressions';
+import { ActionScopeResult, ActionScopeCommands } from './actionScope';
+import { BoolExpression, BoolExpressionConverter } from 'adaptive-expressions';
+import { BoolProperty } from '../properties';
+
 import {
     Converter,
     ConverterFactory,
@@ -14,10 +17,9 @@ import {
     DialogContext,
     DialogConfiguration,
 } from 'botbuilder-dialogs';
-import { ActionScopeResult, ActionScopeCommands } from './actionScope';
 
 export interface BreakLoopConfiguration extends DialogConfiguration {
-    disabled?: boolean | string | Expression | BoolExpression;
+    disabled?: BoolProperty;
 }
 
 /**

@@ -5,13 +5,16 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
+import { ActionScopeResult, ActionScopeCommands } from './actionScope';
+import { BoolProperty, StringProperty } from '../properties';
+
 import {
     BoolExpression,
     BoolExpressionConverter,
-    Expression,
     StringExpression,
     StringExpressionConverter,
 } from 'adaptive-expressions';
+
 import {
     Converter,
     ConverterFactory,
@@ -20,11 +23,10 @@ import {
     DialogContext,
     DialogTurnResult,
 } from 'botbuilder-dialogs';
-import { ActionScopeResult, ActionScopeCommands } from './actionScope';
 
 export interface GotoActionConfiguration extends DialogConfiguration {
-    actionId?: string | Expression | StringExpression;
-    disabled?: boolean | string | Expression | BoolExpression;
+    actionId?: StringProperty;
+    disabled?: BoolProperty;
 }
 
 /**

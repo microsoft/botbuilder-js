@@ -5,16 +5,17 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
+import { BoolProperty, StringProperty, UnknownProperty } from '../properties';
 
 import {
     BoolExpression,
     BoolExpressionConverter,
-    Expression,
     StringExpression,
     StringExpressionConverter,
     ValueExpression,
     ValueExpressionConverter,
 } from 'adaptive-expressions';
+
 import {
     Activity,
     ActivityEventNames,
@@ -23,6 +24,7 @@ import {
     QueueStorage,
     TurnContext,
 } from 'botbuilder';
+
 import {
     Converter,
     ConverterFactory,
@@ -34,9 +36,9 @@ import {
 } from 'botbuilder-dialogs';
 
 export interface ContinueConversationLaterConfiguration extends DialogConfiguration {
-    disabled?: boolean | string | Expression | BoolExpression;
-    date?: string | Expression | StringExpression;
-    value?: unknown | ValueExpression;
+    disabled?: BoolProperty;
+    date?: StringProperty;
+    value?: UnknownProperty;
 }
 
 /**

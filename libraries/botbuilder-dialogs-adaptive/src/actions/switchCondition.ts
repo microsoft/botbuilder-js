@@ -5,6 +5,10 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
+import { DialogListConverter } from '../converters';
+import { ActionScope } from './actionScope';
+import { Case } from './case';
+
 import {
     BoolExpression,
     BoolExpressionConverter,
@@ -14,6 +18,9 @@ import {
     ExpressionParser,
     ValueExpression,
 } from 'adaptive-expressions';
+
+import {BoolProperty, Property} from '../properties';
+
 import {
     Converter,
     ConverterFactory,
@@ -23,9 +30,6 @@ import {
     DialogDependencies,
     DialogTurnResult,
 } from 'botbuilder-dialogs';
-import { DialogListConverter } from '../converters';
-import { ActionScope } from './actionScope';
-import { Case } from './case';
 
 type CaseInput = {
     actions: Dialog[];
@@ -44,10 +48,10 @@ class CasesConverter implements Converter<Array<CaseInput | Case>, Case[]> {
  * Conditional branch with multiple cases.
  */
 export interface SwitchConditionConfiguration extends DialogConfiguration {
-    condition?: string | Expression;
+    condition?: Property;
     default?: string[] | Dialog[];
     cases?: CaseInput[] | Case[];
-    disabled?: boolean | string | Expression | BoolExpression;
+    disabled?: BoolProperty;
 }
 
 export class SwitchCondition<O extends object = {}>
