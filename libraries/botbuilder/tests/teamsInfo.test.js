@@ -146,12 +146,12 @@ const teamActivity = {
     },
 };
 
-describe('TeamsInfo', () => {
-    beforeEach(() => {
+describe('TeamsInfo', function () {
+    beforeEach(function () {
         nock.cleanAll();
     });
 
-    afterEach(() => {
+    afterEach(function () {
         nock.cleanAll();
     });
 
@@ -168,8 +168,8 @@ describe('TeamsInfo', () => {
         return { expectedAuthHeader: `${tokenType} ${accessToken}`, expectation };
     };
 
-    describe('sendMessageToTeamsChannel()', () => {
-        it('should work with correct information', async () => {
+    describe('sendMessageToTeamsChannel()', function () {
+        it('should work with correct information', async function () {
             const newConversation = [
                 {
                     activityid: 'activityid123',
@@ -198,14 +198,14 @@ describe('TeamsInfo', () => {
             assert(newConversation[1] == 'resourceresponseid');
         });
 
-        it('should error if context is null', async () => {
+        it('should error if context is null', async function () {
             await assert.rejects(
                 TeamsInfo.sendMessageToTeamsChannel(null, teamActivity, 'teamID'),
                 Error('TurnContext cannot be null')
             );
         });
 
-        it('should error if activity is null', async () => {
+        it('should error if activity is null', async function () {
             const context = new TestContext(teamActivity);
 
             await assert.rejects(
@@ -214,7 +214,7 @@ describe('TeamsInfo', () => {
             );
         });
 
-        it('should error if teamID is a blank string', async () => {
+        it('should error if teamID is a blank string', async function () {
             const context = new TestContext(teamActivity);
 
             await assert.rejects(
@@ -223,7 +223,7 @@ describe('TeamsInfo', () => {
             );
         });
 
-        it('should error if teamID is null', async () => {
+        it('should error if teamID is null', async function () {
             const context = new TestContext(teamActivity);
 
             await assert.rejects(
@@ -233,8 +233,8 @@ describe('TeamsInfo', () => {
         });
     });
 
-    describe('getTeamChannels()', () => {
-        it('should error in 1-on-1 chat', async () => {
+    describe('getTeamChannels()', function () {
+        it('should error in 1-on-1 chat', async function () {
             const context = new TestContext(oneOnOneActivity);
 
             await assert.rejects(
@@ -243,7 +243,7 @@ describe('TeamsInfo', () => {
             );
         });
 
-        it('should error in Group chat', async () => {
+        it('should error in Group chat', async function () {
             const context = new TestContext(groupChatActivity);
 
             await assert.rejects(
@@ -252,7 +252,7 @@ describe('TeamsInfo', () => {
             );
         });
 
-        it('should work in a channel in a Team', async () => {
+        it('should work in a channel in a Team', async function () {
             // This is the property on the ConversationList that contains the information about the channels from Teams.
             const conversations = [
                 {
@@ -291,7 +291,7 @@ describe('TeamsInfo', () => {
             );
         });
 
-        it('should work with a teamId passed in', async () => {
+        it('should work with a teamId passed in', async function () {
             // This is the property on the ConversationList that contains the information about the channels from Teams.
             const conversations = [
                 {
@@ -331,8 +331,8 @@ describe('TeamsInfo', () => {
         });
     });
 
-    describe('getTeamDetails()', () => {
-        it('should error in 1-on-1 chat', async () => {
+    describe('getTeamDetails()', function () {
+        it('should error in 1-on-1 chat', async function () {
             const context = new TestContext(oneOnOneActivity);
 
             await assert.rejects(
@@ -341,7 +341,7 @@ describe('TeamsInfo', () => {
             );
         });
 
-        it('should error in Group chat', async () => {
+        it('should error in Group chat', async function () {
             const context = new TestContext(groupChatActivity);
 
             await assert.rejects(
@@ -350,7 +350,7 @@ describe('TeamsInfo', () => {
             );
         });
 
-        it('should work in a channel in a Team', async () => {
+        it('should work in a channel in a Team', async function () {
             const teamDetails = {
                 id: '19:generalChannelIdgeneralChannelId@thread.skype',
                 name: 'TeamName',
@@ -376,7 +376,7 @@ describe('TeamsInfo', () => {
             assert(fetchedTeamDetails.aadGroupId === 'Team-aadGroupId');
         });
 
-        it('should work with a teamId passed in', async () => {
+        it('should work with a teamId passed in', async function () {
             const teamDetails = {
                 id: '19:ChannelIdgeneralChannelId@thread.skype',
                 name: 'TeamName',
@@ -406,8 +406,8 @@ describe('TeamsInfo', () => {
         });
     });
 
-    describe('getMembers()', () => {
-        it('should work in 1-on-1 chat', async () => {
+    describe('getMembers()', function () {
+        it('should work in 1-on-1 chat', async function () {
             const members = [
                 {
                     id: '29:User-One-Id',
@@ -440,7 +440,7 @@ describe('TeamsInfo', () => {
             );
         });
 
-        it('should work in Group chat', async () => {
+        it('should work in Group chat', async function () {
             const members = [
                 {
                     id: '29:User-One-Id',
@@ -493,7 +493,7 @@ describe('TeamsInfo', () => {
             );
         });
 
-        it('should work in a channel in a Team', async () => {
+        it('should work in a channel in a Team', async function () {
             const members = [
                 {
                     id: '29:User-Two-Id',
@@ -536,23 +536,20 @@ describe('TeamsInfo', () => {
             );
         });
 
-        it('should not work if conversationId is falsey', async () => {
+        it('should not work if conversationId is falsey', async function () {
             const context = new TestContext(oneOnOneActivity);
             context.activity.conversation.id = undefined;
 
-            await assert.rejects(
-                TeamsInfo.getMembers(context),
-                (err) => {
-                    assert.strictEqual(err.message, 'The getMembers operation needs a valid conversationId.');
-                    oneOnOneActivity.conversation.id = 'a:oneOnOneConversationId';
-                    return true;
-                }
-            );
+            await assert.rejects(TeamsInfo.getMembers(context), (err) => {
+                assert.strictEqual(err.message, 'The getMembers operation needs a valid conversationId.');
+                oneOnOneActivity.conversation.id = 'a:oneOnOneConversationId';
+                return true;
+            });
         });
     });
 
-    describe('getMember()', () => {
-        it('should work without a Team', async () => {
+    describe('getMember()', function () {
+        it('should work without a Team', async function () {
             const member = {
                 id: '29:User-One-Id',
                 name: 'User One',
@@ -580,7 +577,7 @@ describe('TeamsInfo', () => {
             assert.deepStrictEqual(fetchedMember, member);
         });
 
-        it('should work with a Team', async () => {
+        it('should work with a Team', async function () {
             const member = {
                 id: '29:User-One-Id',
                 name: 'User One',
@@ -609,8 +606,8 @@ describe('TeamsInfo', () => {
         });
     });
 
-    describe('getTeamMember()', () => {
-        it('should throw error when teamId is not present', async () => {
+    describe('getTeamMember()', function () {
+        it('should throw error when teamId is not present', async function () {
             const context = new TestContext({ type: ActionTypes.message });
 
             await assert.rejects(
@@ -620,10 +617,10 @@ describe('TeamsInfo', () => {
         });
     });
 
-    describe('getMeetingParticipant', () => {
+    describe('getMeetingParticipant', function () {
         const context = new TestContext(teamActivity);
 
-        it('should work with correct arguments', async () => {
+        it('should work with correct arguments', async function () {
             const participant = {
                 user: {
                     id: teamActivity.from.id,
@@ -659,16 +656,13 @@ describe('TeamsInfo', () => {
             assert.deepStrictEqual(fetchedParticipant, participant);
         });
 
-        it('should throw error for missing context', async () => {
-            await assert.rejects(
-                TeamsInfo.getMeetingParticipant(),
-                Error('context is required.')
-            );
+        it('should throw error for missing context', async function () {
+            await assert.rejects(TeamsInfo.getMeetingParticipant(), Error('context is required.'));
         });
     });
 
-    describe('getTeamMembers()', () => {
-        it('should error in 1-on-1 chat', async () => {
+    describe('getTeamMembers()', function () {
+        it('should error in 1-on-1 chat', async function () {
             const context = new TestContext(oneOnOneActivity);
 
             await assert.rejects(
@@ -677,7 +671,7 @@ describe('TeamsInfo', () => {
             );
         });
 
-        it('should error in Group chat', async () => {
+        it('should error in Group chat', async function () {
             const context = new TestContext(groupChatActivity);
 
             await assert.rejects(
@@ -686,7 +680,7 @@ describe('TeamsInfo', () => {
             );
         });
 
-        it('should work in a channel in a Team', async () => {
+        it('should work in a channel in a Team', async function () {
             const members = [
                 {
                     id: '29:User-Two-Id',
@@ -729,7 +723,7 @@ describe('TeamsInfo', () => {
             );
         });
 
-        it('should work with a teamId passed in', async () => {
+        it('should work with a teamId passed in', async function () {
             const members = [
                 {
                     id: '29:User-Two-Id',
@@ -773,8 +767,8 @@ describe('TeamsInfo', () => {
         });
     });
 
-    describe('private methods', () => {
-        describe('getConnectorClient()', () => {
+    describe('private methods', function () {
+        describe('getConnectorClient()', function () {
             it(`should error if the context doesn't have an adapter`, function () {
                 assert.throws(
                     () => TeamsInfo.getConnectorClient({}),
@@ -790,7 +784,7 @@ describe('TeamsInfo', () => {
             });
         });
 
-        describe('getMembersInternal()', () => {
+        describe('getMembersInternal()', function () {
             it(`should error if an invalid conversationId is passed in.`, async function () {
                 await assert.rejects(
                     TeamsInfo.getMembersInternal({}, undefined),
@@ -805,7 +799,7 @@ describe('TeamsInfo', () => {
                 );
             });
 
-            it(`should error if an invalid userId is passed in.`, async () => {
+            it(`should error if an invalid userId is passed in.`, async function () {
                 await assert.rejects(
                     TeamsInfo.getMemberInternal({}, 'conversationId', undefined),
                     Error('The getMember operation needs a valid userId.')
@@ -813,17 +807,17 @@ describe('TeamsInfo', () => {
             });
         });
 
-        describe('getPagedMembersInternal()', () => {
+        describe('getPagedMembersInternal()', function () {
             let sandbox;
-            beforeEach(() => {
+            beforeEach(function () {
                 sandbox = sinon.createSandbox();
             });
 
-            afterEach(() => {
+            afterEach(function () {
                 sandbox.restore();
             });
 
-            it(`should error if an invalid conversationId is passed in.`, async () => {
+            it(`should error if an invalid conversationId is passed in.`, async function () {
                 await assert.rejects(
                     TeamsInfo.getPagedMembersInternal({}, undefined, 'options'),
                     Error('The getPagedMembers operation needs a valid conversationId.')
@@ -869,19 +863,13 @@ describe('TeamsInfo', () => {
             });
         });
 
-        describe('getTeamId()', () => {
-            it(`should error if an invalid context is passed in.`, () => {
-                assert.throws(
-                    () => TeamsInfo.getTeamId(undefined),
-                    Error('Missing context parameter')
-                );
+        describe('getTeamId()', function () {
+            it(`should error if an invalid context is passed in.`, function () {
+                assert.throws(() => TeamsInfo.getTeamId(undefined), Error('Missing context parameter'));
             });
 
-            it(`should error if an invalid activity is passed in.`, () => {
-                assert.throws(
-                    () => TeamsInfo.getTeamId({ activity: undefined }),
-                    Error('Missing activity on context')
-                );
+            it(`should error if an invalid activity is passed in.`, function () {
+                assert.throws(() => TeamsInfo.getTeamId({ activity: undefined }), Error('Missing activity on context'));
             });
         });
     });

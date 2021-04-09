@@ -1,21 +1,16 @@
 const { equal, ok: assert, strictEqual } = require('assert');
 const dayjs = require('dayjs');
 
-const {
-    ActivityTypes,
-    EventFactory,
-    HandoffEventNames,
-    MessageFactory,
-    TestAdapter,
-    TurnContext
-} = require('../');
+const { ActivityTypes, EventFactory, HandoffEventNames, MessageFactory, TestAdapter, TurnContext } = require('../');
 
-describe('EventFactory', function() {
+describe('EventFactory', function () {
     this.timeout(5000);
 
-    describe('createHandoffInitiation', () => {
-        it('should succeed', () => {
-            const adapter = new TestAdapter(async context => { /* no op */ });
+    describe('createHandoffInitiation', function () {
+        it('should succeed', function () {
+            const adapter = new TestAdapter(async (context) => {
+                /* no op */
+            });
             const fromId = 'test';
             const activity = {
                 type: ActivityTypes.Message,
@@ -24,11 +19,11 @@ describe('EventFactory', function() {
                 recipient: {},
                 from: { id: fromId },
                 channelId: 'testchannel',
-                serviceUrl: 'http://myservice'
+                serviceUrl: 'http://myservice',
             };
 
             const context = new TurnContext(adapter, activity);
-            const transcript = { activities: [ MessageFactory.text('hello') ] };
+            const transcript = { activities: [MessageFactory.text('hello')] };
 
             equal(transcript.activities[0].channelId, undefined);
             equal(transcript.activities[0].serviceUrl, undefined);
@@ -44,7 +39,7 @@ describe('EventFactory', function() {
             strictEqual(handoffEvent.from.id, fromId);
         });
 
-        it('should throw if turnContext is falsy', () => {
+        it('should throw if turnContext is falsy', function () {
             assert.throws(
                 () => EventFactory.createHandoffInitiation(null, 'some text'),
                 TypeError('EventFactory.createHandoffInitiation(): Missing context.')
@@ -52,8 +47,8 @@ describe('EventFactory', function() {
         });
     });
 
-    describe('createHandoffStatus', () => {
-        it('should succeed', () => {
+    describe('createHandoffStatus', function () {
+        it('should succeed', function () {
             const state = 'failed';
             const message = 'timed out';
             const handoffEvent = EventFactory.createHandoffStatus({}, state, message);
@@ -67,13 +62,13 @@ describe('EventFactory', function() {
             strictEqual(messageFormEvent, message);
 
             const status = JSON.stringify(handoffEvent.value);
-            strictEqual(status, `{\"state\":\"${ state }\",\"message\":\"${ message }\"}`);
+            strictEqual(status, `{\"state\":\"${state}\",\"message\":\"${message}\"}`);
             assert(handoffEvent.attachments, 'handoffEvent.attachments should not be undefined.');
             assert(handoffEvent.id, 'handoffEvent.id should not be undefined.');
             strictEqual(handoffEvent.localTimezone, dayjs.tz.guess());
         });
 
-        it('should succeed with no message', () => {
+        it('should succeed with no message', function () {
             const state = 'failed';
             const handoffEvent = EventFactory.createHandoffStatus({}, state);
 
@@ -84,14 +79,14 @@ describe('EventFactory', function() {
             strictEqual(undefined, messageFormEvent);
         });
 
-        it('should throw if conversation is falsy', () => {
+        it('should throw if conversation is falsy', function () {
             assert.throws(
                 () => EventFactory.createHandoffStatus(null, 'some text'),
                 TypeError('EventFactory.createHandoffStatus(): missing conversation.')
             );
         });
 
-        it('should throw if state is falsy', () => {
+        it('should throw if state is falsy', function () {
             assert.throws(
                 () => EventFactory.createHandoffStatus({}, null),
                 TypeError('EventFactory.createHandoffStatus(): missing state.')

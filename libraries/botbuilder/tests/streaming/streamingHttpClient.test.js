@@ -1,23 +1,20 @@
 const assert = require('assert');
 const { StreamingHttpClient } = require('../../lib');
 
-describe('StreamingHttpClient', function() {
+describe('StreamingHttpClient', function () {
     this.timeout(3000);
 
-    it('should construct when provided a server', () => {
+    it('should construct when provided a server', function () {
         const server = { isConnected: true };
         const client = new StreamingHttpClient(server);
         assert.strictEqual(client.server, server);
     });
 
-    it('should throw an error if missing the "server" parameter', () => {
-        assert.throws(
-            () => new StreamingHttpClient(),
-            Error('StreamingHttpClient: Expected server.')
-        );
+    it('should throw an error if missing the "server" parameter', function () {
+        assert.throws(() => new StreamingHttpClient(), Error('StreamingHttpClient: Expected server.'));
     });
 
-    it('should throw an error on sendRequest if missing "httpRequest" parameter', async () => {
+    it('should throw an error on sendRequest if missing "httpRequest" parameter', async function () {
         const client = new StreamingHttpClient({});
 
         await assert.rejects(
@@ -26,12 +23,14 @@ describe('StreamingHttpClient', function() {
         );
     });
 
-    it('should throw an error on sendRequest if internal server is not connected', async () => {
+    it('should throw an error on sendRequest if internal server is not connected', async function () {
         const client = new StreamingHttpClient({});
 
         await assert.rejects(
             client.sendRequest({}),
-            Error('StreamingHttpClient.sendRequest(): Streaming connection is disconnected, and the request could not be sent.')
+            Error(
+                'StreamingHttpClient.sendRequest(): Streaming connection is disconnected, and the request could not be sent.'
+            )
         );
     });
 });

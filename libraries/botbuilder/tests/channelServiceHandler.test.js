@@ -36,20 +36,20 @@ const createDefaultErrorMessage = (methodName) => {
     return `ChannelServiceHandler.${methodName}(): 501: Not Implemented`;
 };
 
-describe('ChannelServiceHandler', () => {
+describe('ChannelServiceHandler', function () {
     const handler = new ChannelServiceHandler(CREDENTIALS, AUTH_CONFIG, 'channels');
 
     let sandbox;
-    beforeEach(() => {
+    beforeEach(function () {
         sandbox = sinon.createSandbox();
     });
 
-    afterEach(() => {
+    afterEach(function () {
         sandbox.restore();
     });
 
-    describe('constructor', () => {
-        it('should succeed with valid parameters', () => {
+    describe('constructor', function () {
+        it('should succeed with valid parameters', function () {
             const channelService = 'channels';
             const handler = new NoAuthHandler(CREDENTIALS, AUTH_CONFIG, channelService);
 
@@ -58,7 +58,7 @@ describe('ChannelServiceHandler', () => {
             assert.strictEqual(handler.channelService, channelService);
         });
 
-        it('should use process.env.ChannelService if no channelService is provided', () => {
+        it('should use process.env.ChannelService if no channelService is provided', function () {
             process.env[AuthenticationConstants.ChannelService] = 'test';
             const handler = new NoAuthHandler(CREDENTIALS, AUTH_CONFIG);
 
@@ -68,21 +68,15 @@ describe('ChannelServiceHandler', () => {
             delete process.env[AuthenticationConstants.ChannelService];
         });
 
-        it('should fail with invalid credentialProvider or authConfig', () => {
-            assert.throws(
-                () => new NoAuthHandler(),
-                Error('BotFrameworkHttpClient(): missing credentialProvider')
-            );
+        it('should fail with invalid credentialProvider or authConfig', function () {
+            assert.throws(() => new NoAuthHandler(), Error('BotFrameworkHttpClient(): missing credentialProvider'));
 
-            assert.throws(
-                () => new NoAuthHandler(CREDENTIALS),
-                Error('BotFrameworkHttpClient(): missing authConfig')
-            );
+            assert.throws(() => new NoAuthHandler(CREDENTIALS), Error('BotFrameworkHttpClient(): missing authConfig'));
         });
     });
 
-    describe('SendToConversation flow:', () => {
-        it('handleSendToConversation should call onSendToConversation', async () => {
+    describe('SendToConversation flow:', function () {
+        it('handleSendToConversation should call onSendToConversation', async function () {
             const handler = new NoAuthHandler(CREDENTIALS, AUTH_CONFIG);
 
             await assert.rejects(
@@ -92,8 +86,8 @@ describe('ChannelServiceHandler', () => {
         });
     });
 
-    describe('ReplyToActivity flow:', () => {
-        it('handleReplyToActivity should call onReplyToActivity', async () => {
+    describe('ReplyToActivity flow:', function () {
+        it('handleReplyToActivity should call onReplyToActivity', async function () {
             const handler = new NoAuthHandler(CREDENTIALS, AUTH_CONFIG);
 
             await assert.rejects(
@@ -103,8 +97,8 @@ describe('ChannelServiceHandler', () => {
         });
     });
 
-    describe('UpdateActivity flow:', () => {
-        it('handleUpdateActivity should call onUpdateActivity', async () => {
+    describe('UpdateActivity flow:', function () {
+        it('handleUpdateActivity should call onUpdateActivity', async function () {
             const handler = new NoAuthHandler(CREDENTIALS, AUTH_CONFIG);
 
             await assert.rejects(
@@ -114,8 +108,8 @@ describe('ChannelServiceHandler', () => {
         });
     });
 
-    describe('DeleteActivity flow:', () => {
-        it('handleDeleteActivity should call onDeleteActivity', async () => {
+    describe('DeleteActivity flow:', function () {
+        it('handleDeleteActivity should call onDeleteActivity', async function () {
             const handler = new NoAuthHandler(CREDENTIALS, AUTH_CONFIG);
 
             await assert.rejects(
@@ -125,8 +119,8 @@ describe('ChannelServiceHandler', () => {
         });
     });
 
-    describe('GetActivityMembers flow:', () => {
-        it('handleGetActivityMembers should call onGetActivityMembers', async () => {
+    describe('GetActivityMembers flow:', function () {
+        it('handleGetActivityMembers should call onGetActivityMembers', async function () {
             const handler = new NoAuthHandler(CREDENTIALS, AUTH_CONFIG);
 
             await assert.rejects(
@@ -136,8 +130,8 @@ describe('ChannelServiceHandler', () => {
         });
     });
 
-    describe('CreateConversation flow:', () => {
-        it('handleCreateConversation should call onCreateConversation', async () => {
+    describe('CreateConversation flow:', function () {
+        it('handleCreateConversation should call onCreateConversation', async function () {
             const handler = new NoAuthHandler(CREDENTIALS, AUTH_CONFIG);
 
             await assert.rejects(
@@ -147,8 +141,8 @@ describe('ChannelServiceHandler', () => {
         });
     });
 
-    describe('GetConversations flow:', () => {
-        it('handleGetConversations should call onGetConversations', async () => {
+    describe('GetConversations flow:', function () {
+        it('handleGetConversations should call onGetConversations', async function () {
             const handler = new NoAuthHandler(CREDENTIALS, AUTH_CONFIG);
 
             await assert.rejects(
@@ -158,8 +152,8 @@ describe('ChannelServiceHandler', () => {
         });
     });
 
-    describe('ConversationMembers flow:', () => {
-        it('handleGetConversationMembers should call onGetConversationMembers', async () => {
+    describe('ConversationMembers flow:', function () {
+        it('handleGetConversationMembers should call onGetConversationMembers', async function () {
             const handler = new NoAuthHandler(CREDENTIALS, AUTH_CONFIG);
 
             await assert.rejects(
@@ -168,7 +162,7 @@ describe('ChannelServiceHandler', () => {
             );
         });
 
-        it('handleGetConversationPagedMembers should call onGetConversationPagedMembers', async () => {
+        it('handleGetConversationPagedMembers should call onGetConversationPagedMembers', async function () {
             const handler = new NoAuthHandler(CREDENTIALS, AUTH_CONFIG);
 
             await assert.rejects(
@@ -177,7 +171,7 @@ describe('ChannelServiceHandler', () => {
             );
         });
 
-        it('handleDeleteConversationMember should call onDeleteConversationMember', async () => {
+        it('handleDeleteConversationMember should call onDeleteConversationMember', async function () {
             const handler = new NoAuthHandler(CREDENTIALS, AUTH_CONFIG);
 
             await assert.rejects(
@@ -187,8 +181,8 @@ describe('ChannelServiceHandler', () => {
         });
     });
 
-    describe('GetSendConversationHistory flow:', () => {
-        it('handleSendConversationHistory should call onSendConversationHistory', async () => {
+    describe('GetSendConversationHistory flow:', function () {
+        it('handleSendConversationHistory should call onSendConversationHistory', async function () {
             const handler = new NoAuthHandler(CREDENTIALS, AUTH_CONFIG);
 
             await assert.rejects(
@@ -198,8 +192,8 @@ describe('ChannelServiceHandler', () => {
         });
     });
 
-    describe('GetUploadAttachment flow:', () => {
-        it('handleUploadAttachment should call onUploadAttachment', async () => {
+    describe('GetUploadAttachment flow:', function () {
+        it('handleUploadAttachment should call onUploadAttachment', async function () {
             const handler = new NoAuthHandler(CREDENTIALS, AUTH_CONFIG);
 
             await assert.rejects(
@@ -209,8 +203,8 @@ describe('ChannelServiceHandler', () => {
         });
     });
 
-    describe('Authentication flow:', () => {
-        describe('authenticate() with no auth header', () => {
+    describe('Authentication flow:', function () {
+        describe('authenticate() with no auth header', function () {
             const mockAuthDisabled = (isDisabled) =>
                 sandbox
                     .mock(handler.credentialProvider)
@@ -218,7 +212,7 @@ describe('ChannelServiceHandler', () => {
                     .once()
                     .returns(Promise.resolve(isDisabled));
 
-            it('should return a skill claim when auth is disabled', async () => {
+            it('should return a skill claim when auth is disabled', async function () {
                 mockAuthDisabled(true);
 
                 const result = await handler.authenticate();
@@ -232,20 +226,17 @@ describe('ChannelServiceHandler', () => {
                 sandbox.verify();
             });
 
-            it('should throw an error when auth is enabled', async () => {
+            it('should throw an error when auth is enabled', async function () {
                 mockAuthDisabled(false);
 
-                await assert.rejects(
-                    handler.authenticate(),
-                    { statusCode: StatusCodes.UNAUTHORIZED }
-                );
+                await assert.rejects(handler.authenticate(), { statusCode: StatusCodes.UNAUTHORIZED });
 
                 sandbox.verify();
             });
         });
 
-        describe('authenticate() with an auth header', () => {
-            it('should return a valid claim identity', async () => {
+        describe('authenticate() with an auth header', function () {
+            it('should return a valid claim identity', async function () {
                 sandbox
                     .mock(JwtTokenValidation)
                     .expects('validateAuthHeader')
@@ -258,11 +249,8 @@ describe('ChannelServiceHandler', () => {
                 sandbox.verify();
             });
 
-            it('should throw an UNAUTHORIZED error for a bad auth header', async () => {
-                await assert.rejects(
-                    handler.authenticate(AUTH_HEADER),
-                    { statusCode: StatusCodes.UNAUTHORIZED }
-                );
+            it('should throw an UNAUTHORIZED error for a bad auth header', async function () {
+                await assert.rejects(handler.authenticate(AUTH_HEADER), { statusCode: StatusCodes.UNAUTHORIZED });
             });
         });
     });

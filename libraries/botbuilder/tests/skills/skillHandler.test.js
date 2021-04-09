@@ -28,10 +28,10 @@ describe('SkillHandler', function () {
     const handler = new SkillHandler(adapter, bot, factory, creds, authConfig);
 
     let sandbox;
-    beforeEach(() => {
+    beforeEach(function () {
         sandbox = sinon.createSandbox();
     });
-    afterEach(() => {
+    afterEach(function () {
         sandbox.restore();
     });
 
@@ -89,7 +89,7 @@ describe('SkillHandler', function () {
             )
             .once();
 
-    describe('constructor()', () => {
+    describe('constructor()', function () {
         const testCases = [
             { label: 'adapter', args: [undefined, bot, factory, {}, {}, {}] },
             { label: 'bot', args: [adapter, undefined, factory, {}, {}, {}] },
@@ -97,21 +97,18 @@ describe('SkillHandler', function () {
         ];
 
         testCases.forEach((testCase) => {
-            it(`should fail without required ${testCase.label}`, () => {
-                assert.throws(
-                    () => new SkillHandler(...testCase.args),
-                    Error(`missing ${testCase.label}.`)
-                );
+            it(`should fail without required ${testCase.label}`, function () {
+                assert.throws(() => new SkillHandler(...testCase.args), Error(`missing ${testCase.label}.`));
             });
         });
 
-        it('should succeed', () => {
+        it('should succeed', function () {
             new SkillHandler(adapter, bot, factory, creds, authConfig);
         });
     });
 
-    describe('onReplyToActivity()', () => {
-        it('should call processActivity()', async () => {
+    describe('onReplyToActivity()', function () {
+        it('should call processActivity()', async function () {
             const identity = new ClaimsIdentity([]);
             const convId = 'convId';
             const activityId = 'activityId';
@@ -123,8 +120,8 @@ describe('SkillHandler', function () {
         });
     });
 
-    describe('onSendToConversation()', () => {
-        it('should call processActivity()', async () => {
+    describe('onSendToConversation()', function () {
+        it('should call processActivity()', async function () {
             const identity = new ClaimsIdentity([]);
             const convId = 'convId';
             const skillActivity = { type: ActivityTypes.Message };
@@ -135,8 +132,8 @@ describe('SkillHandler', function () {
         });
     });
 
-    describe('updateActivity()', () => {
-        it('should call updateActivity on context', async () => {
+    describe('updateActivity()', function () {
+        it('should call updateActivity on context', async function () {
             const convId = 'convId';
             const activityId = 'activityId';
             const updatedActivity = {
@@ -156,8 +153,8 @@ describe('SkillHandler', function () {
         });
     });
 
-    describe('deleteActivity()', () => {
-        it('should call deleteActivity on context', async () => {
+    describe('deleteActivity()', function () {
+        it('should call deleteActivity on context', async function () {
             const convId = 'convId';
             const activityId = 'activityId';
 
@@ -169,8 +166,8 @@ describe('SkillHandler', function () {
         });
     });
 
-    describe('private methods', () => {
-        describe('continueConversation()', () => {
+    describe('private methods', function () {
+        describe('continueConversation()', function () {
             const identity = new ClaimsIdentity([{ type: 'aud', value: 'audience' }]);
             const conversationId = 'conversationId';
 
@@ -195,8 +192,8 @@ describe('SkillHandler', function () {
             });
         });
 
-        describe('processActivity()', () => {
-            it('should fail without a skillConversationReference', async () => {
+        describe('processActivity()', function () {
+            it('should fail without a skillConversationReference', async function () {
                 expectsFactoryGetSkillConversationReference(null);
 
                 await assert.rejects(
@@ -207,7 +204,7 @@ describe('SkillHandler', function () {
                 sandbox.verify();
             });
 
-            it('should fail without a conversationReference', async () => {
+            it('should fail without a conversationReference', async function () {
                 expectsFactoryGetSkillConversationReference({});
 
                 await assert.rejects(
@@ -218,7 +215,7 @@ describe('SkillHandler', function () {
                 sandbox.verify();
             });
 
-            it('should call bot logic for Event activities from a skill and modify context.activity', async () => {
+            it('should call bot logic for Event activities from a skill and modify context.activity', async function () {
                 const identity = new ClaimsIdentity([{ type: 'aud', value: 'audience' }]);
 
                 const skillActivity = {
@@ -241,7 +238,7 @@ describe('SkillHandler', function () {
                 sandbox.verify();
             });
 
-            it('should call bot logic for EndOfConversation activities from a skill and modify context.activity', async () => {
+            it('should call bot logic for EndOfConversation activities from a skill and modify context.activity', async function () {
                 const identity = new ClaimsIdentity(
                     [
                         { type: AuthenticationConstants.AudienceClaim, value: '00000000-0000-0000-0000-000000000001' },
@@ -271,7 +268,7 @@ describe('SkillHandler', function () {
                 sandbox.verify();
             });
 
-            it('should forward activity from Skill for other ActivityTypes', async () => {
+            it('should forward activity from Skill for other ActivityTypes', async function () {
                 const identity = new ClaimsIdentity([{ type: 'aud', value: 'audience' }]);
 
                 const skillActivity = {
@@ -294,7 +291,7 @@ describe('SkillHandler', function () {
                 sandbox.verify();
             });
 
-            it(`should use the skill's appId to set the callback's activity.callerId`, async () => {
+            it(`should use the skill's appId to set the callback's activity.callerId`, async function () {
                 const skillAppId = '00000000-0000-0000-0000-000000000000';
                 const skillConsumerAppId = '00000000-0000-0000-0000-000000000001';
 
