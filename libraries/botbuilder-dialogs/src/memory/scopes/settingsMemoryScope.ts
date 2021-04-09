@@ -43,8 +43,10 @@ class Node {
 export class SettingsMemoryScope extends MemoryScope {
     /**
      * Initializes a new instance of the [SettingsMemoryScope](xref:botbuilder-dialogs.SettingsMemoryScope) class.
+     *
+     * @param initialSettings initial set of settings to supply
      */
-    public constructor() {
+    public constructor(private readonly initialSettings?: Record<string, unknown>) {
         super(ScopePath.settings, false);
     }
 
@@ -57,19 +59,27 @@ export class SettingsMemoryScope extends MemoryScope {
     public getMemory(dc: DialogContext): Record<string, unknown> {
         if (dc.context.turnState.has(ScopePath.settings)) {
             return dc.context.turnState.get(ScopePath.settings) ?? {};
-        } else {
-            const configuration = dc.context.turnState.get(DialogTurnStateConstants.configuration) ?? {};
-
-            Object.entries(process.env).reduce((result, [key, value]) => {
-                result[`${key}`] = value;
-                return result;
-            }, configuration);
-
-            const settings = SettingsMemoryScope.loadSettings(configuration);
-            dc.context.turnState.set(ScopePath.settings, settings);
-
-            return settings;
         }
+
+        const configuration = dc.context.turnState.get(DialogTurnStateConstants.configuration) ?? {};
+
+        Object.entries(process.env).reduce((result, [key, value]) => {
+            result[`${key}`] = value;
+            return result;
+        }, configuration);
+
+        const settings = SettingsMemoryScope.loadSettings(configuration);
+        dc.context.turnState.set(ScopePath.settings, settings);
+
+        return settings;
+    }
+
+    public async load(dc: DialogContext): Promise<void> {
+        if (this.initialSettings) {
+            dc.context.turnState.set(ScopePath.settings, this.initialSettings);
+        }
+
+        await super.load(dc);
     }
 
     /**
@@ -79,15 +89,15 @@ export class SettingsMemoryScope extends MemoryScope {
      * @returns {Record<string, ?>} Projected dictionary for settings.
      */
     protected static loadSettings(configuration: Record<string, string>): Record<string, unknown> {
-        const settings = {};
+        let settings = {};
 
         if (configuration) {
             // load configuration into settings
             const root = this.convertFlattenSettingToNode(Object.entries(configuration));
-            root.children.reduce((result, child) => {
-                result[child.value] = this.convertNodeToObject(child);
-                return result;
-            }, settings);
+            settings = root.children.reduce(
+                (acc, child) => ({ ...acc, [child.value]: this.convertNodeToObject(child) }),
+                settings
+            );
         }
 
         return settings;

@@ -273,7 +273,7 @@ describe('Memory Scopes', function () {
     });
 
     describe('SettingsMemoryScope', function () {
-        async function initialize(fn) {
+        async function initialize(fn, initialSettings) {
             const convoState = new ConversationState(new MemoryStorage());
             const dialogState = convoState.createProperty('dialogs');
             const dialogs = new DialogSet(dialogState).add(new TestDialog('test', 'test message'));
@@ -282,7 +282,7 @@ describe('Memory Scopes', function () {
             const dc = await dialogs.createContext(context);
             await Promise.resolve(fn(dc));
 
-            const scope = new SettingsMemoryScope();
+            const scope = new SettingsMemoryScope(initialSettings);
             return { dc, memory: scope.getMemory(dc), scope };
         }
 
@@ -350,6 +350,27 @@ describe('Memory Scopes', function () {
                 simple: 'test',
                 to_be_overridden: 'two',
             });
+        });
+
+        it('gets settings from initialSettings only', async function () {
+            const initialSettings = {
+                array: ['one', 'two'],
+                object: {
+                    array: ['one', 'two'],
+                    simple: 'test',
+                },
+                simple: 'test',
+                to_be_overridden: 'two',
+            };
+
+            const { dc, scope } = await initialize(() => {
+                // no-op
+            }, initialSettings);
+
+            await scope.load(dc);
+            const memory = scope.getMemory(dc);
+
+            assert.deepStrictEqual(memory, initialSettings);
         });
     });
 
