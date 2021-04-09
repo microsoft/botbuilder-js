@@ -1,5 +1,7 @@
+const _ = require('lodash');
 const assert = require('assert');
 const { ConversationState, UserState, MemoryStorage, TurnContext, TestAdapter } = require('botbuilder-core');
+
 const {
     ClassMemoryScope,
     ConversationMemoryScope,
@@ -30,13 +32,11 @@ class TestDialog extends Dialog {
         super(id);
         this.message = message;
         this.expression = {
-            tryGetValue: (state) => {
-                return { value: 'resolved value' };
-            },
+            tryGetValue: () => ({ value: 'resolved value' }),
         };
     }
 
-    async beginDialog(dc, options) {
+    async beginDialog(dc) {
         dc.activeDialog.state.isDialog = true;
         await dc.context.sendActivity(this.message);
         return Dialog.EndOfTurn;
@@ -46,6 +46,7 @@ class TestDialog extends Dialog {
 class TestContainer extends DialogContainer {
     constructor(id, child) {
         super(id);
+
         if (child) {
             this.dialogs.add(child);
             this.childId = child.id;
@@ -55,10 +56,11 @@ class TestContainer extends DialogContainer {
     async beginDialog(dc, options) {
         const state = dc.activeDialog.state;
         state.isContainer = true;
+
         if (this.childId) {
             state.dialog = {};
             const childDc = this.createChildContext(dc);
-            return await childDc.beginDialog(this.childId, options);
+            return childDc.beginDialog(this.childId, options);
         } else {
             return Dialog.EndOfTurn;
         }
@@ -80,740 +82,409 @@ class TestContainer extends DialogContainer {
             childDc.parent = dc;
             return childDc;
         }
-
-        return undefined;
     }
 }
 
 describe('Memory Scopes', function () {
-    it('ClassMemoryScope should find registered dialog.', async function () {
-        // Create new ConversationState with MemoryStorage and register the state as middleware.
-        const convoState = new ConversationState(new MemoryStorage());
+    describe('ClassMemoryScope', function () {
+        async function initialize() {
+            const convoState = new ConversationState(new MemoryStorage());
+            const dialogState = convoState.createProperty('dialogs');
+            const dialogs = new DialogSet(dialogState);
+            const dialog = new TestDialog('test', 'test message');
+            dialogs.add(dialog);
 
-        // Create a DialogState property, DialogSet and register the dialogs.
-        const dialogState = convoState.createProperty('dialogs');
-        const dialogs = new DialogSet(dialogState);
-        const dialog = new TestDialog('test', 'test message');
-        dialogs.add(dialog);
+            const context = new TurnContext(new TestAdapter(), beginMessage);
+            const dc = await dialogs.createContext(context);
+            await dc.beginDialog('test');
 
-        // Create test context
-        const context = new TurnContext(new TestAdapter(), beginMessage);
-        await dialogState.set(context, {
-            dialogStack: [{ id: 'test', state: {} }],
-        });
-        const dc = await dialogs.createContext(context);
-
-        // Run test
-        const scope = new ClassMemoryScope();
-        const memory = scope.getMemory(dc);
-        assert(typeof memory == 'object', `memory not returned`);
-        assert(memory.message == 'test message');
-        assert(memory.expression == 'resolved value');
-    });
-
-    it('ClassMemoryScope should not allow setMemory() call.', async function () {
-        // Create new ConversationState with MemoryStorage and register the state as middleware.
-        const convoState = new ConversationState(new MemoryStorage());
-
-        // Create a DialogState property, DialogSet and register the dialogs.
-        const dialogState = convoState.createProperty('dialogs');
-        const dialogs = new DialogSet(dialogState);
-        const dialog = new TestDialog('test', 'test message');
-        dialogs.add(dialog);
-
-        // Create test context
-        const context = new TurnContext(new TestAdapter(), beginMessage);
-        await dialogState.set(context, {
-            dialogStack: [{ id: 'test', state: {} }],
-        });
-        const dc = await dialogs.createContext(context);
-
-        // Run test
-        let error = false;
-        try {
             const scope = new ClassMemoryScope();
-            scope.setMemory(dc, {});
-        } catch (err) {
-            error = true;
+
+            return { dc, dialog, memory: scope.getMemory(dc), scope };
         }
-        assert(error == true);
-    });
 
-    it('ClassMemoryScope should ignore load() and saveChanges() calls.', async function () {
-        // Create new ConversationState with MemoryStorage and register the state as middleware.
-        const convoState = new ConversationState(new MemoryStorage());
+        it('finds registered dialog', async function () {
+            const { memory } = await initialize();
 
-        // Create a DialogState property, DialogSet and register the dialogs.
-        const dialogState = convoState.createProperty('dialogs');
-        const dialogs = new DialogSet(dialogState);
-        const dialog = new TestDialog('test', 'test message');
-        dialogs.add(dialog);
-
-        // Create test context
-        const context = new TurnContext(new TestAdapter(), beginMessage);
-        await dialogState.set(context, {
-            dialogStack: [{ id: 'test', state: {} }],
+            assert.deepStrictEqual(_.pick(memory, 'message', 'expression'), {
+                message: 'test message',
+                expression: 'resolved value',
+            });
         });
-        const dc = await dialogs.createContext(context);
 
-        // Run test
-        const scope = new ClassMemoryScope();
-        await scope.load(dc);
-        const memory = scope.getMemory(dc);
-        memory.message = 'foo';
-        await scope.saveChanges(dc);
-        assert(dialog.message == 'test message');
-    });
-
-    it('ClassMemoryScope should not allow delete() call.', async function () {
-        // Create new ConversationState with MemoryStorage and register the state as middleware.
-        const convoState = new ConversationState(new MemoryStorage());
-
-        // Create a DialogState property, DialogSet and register the dialogs.
-        const dialogState = convoState.createProperty('dialogs');
-        const dialogs = new DialogSet(dialogState);
-        const dialog = new TestDialog('test', 'test message');
-        dialogs.add(dialog);
-
-        // Create test context
-        const context = new TurnContext(new TestAdapter(), beginMessage);
-        await dialogState.set(context, {
-            dialogStack: [{ id: 'test', state: {} }],
+        it('does not allow setMemory() calls', async function () {
+            const { dc, scope } = await initialize();
+            assert.throws(() => scope.setMemory(dc, {}));
         });
-        const dc = await dialogs.createContext(context);
 
-        // Run test
-        let error = false;
-        try {
-            const scope = new ClassMemoryScope();
-            await scope.delete(dc);
-        } catch (err) {
-            error = true;
+        it('ignores load() and saveChanges() calls', async function () {
+            const { dc, dialog, memory, scope } = await initialize();
+
+            await scope.load(dc);
+
+            memory.message = 'foo';
+            await scope.saveChanges(dc);
+
+            assert.strictEqual(dialog.message, 'test message');
+        });
+
+        it('does not allow delete() calls', async function () {
+            const { dc, scope } = await initialize();
+            await assert.rejects(scope.delete(dc));
+        });
+    });
+
+    describe('ConversationMemoryScope', function () {
+        it('returns conversation state', async function () {
+            const convoState = new ConversationState(new MemoryStorage());
+
+            const dialogState = convoState.createProperty('dialogs');
+            const dialogs = new DialogSet(dialogState);
+            dialogs.add(new TestDialog('test', 'test message'));
+
+            const context = new TurnContext(new TestAdapter(), beginMessage);
+            context.turnState.set('ConversationState', convoState);
+
+            await convoState.createProperty('conversation').set(context, { foo: 'bar' });
+            await convoState.saveChanges(context);
+
+            const dc = await dialogs.createContext(context);
+            const scope = new ConversationMemoryScope();
+            const memory = scope.getMemory(dc);
+            assert.deepStrictEqual(_.pick(memory, 'conversation'), { conversation: { foo: 'bar' } });
+        });
+    });
+
+    describe('UserMemoryScope', function () {
+        async function initialize() {
+            const storage = new MemoryStorage();
+
+            let context = new TurnContext(new TestAdapter(), beginMessage);
+            let userState = new UserState(storage);
+            context.turnState.set('UserState', userState);
+
+            await userState.createProperty('user').set(context, { foo: 'bar' });
+            await userState.saveChanges(context);
+
+            // Replace context and convoState with new instances
+            context = new TurnContext(new TestAdapter(), beginMessage);
+            userState = new UserState(storage);
+            context.turnState.set('UserState', userState);
+
+            // Create a DialogState property, DialogSet and register the dialogs.
+            const convoState = new ConversationState(storage);
+            const dialogState = convoState.createProperty('dialogs');
+            const dialogs = new DialogSet(dialogState);
+            dialogs.add(new TestDialog('test', 'test message'));
+
+            const dc = await dialogs.createContext(context);
+            const scope = new UserMemoryScope(userState);
+
+            return { dc, memory: scope.getMemory(dc), scope };
         }
-        assert(error == true);
+
+        it('does not return state if not loaded', async function () {
+            const { memory } = await initialize();
+            assert.strictEqual(memory, undefined);
+        });
+
+        it('returns state once loaded.', async function () {
+            const { dc, scope } = await initialize();
+            let memory = scope.getMemory(dc);
+            assert.strictEqual(memory, undefined);
+
+            await scope.load(dc);
+            memory = scope.getMemory(dc);
+            assert.deepStrictEqual(_.pick(memory, 'user'), { user: { foo: 'bar' } });
+        });
     });
 
-    it('ConversationMemoryScope should return conversation state.', async function () {
-        // Create new ConversationState with MemoryStorage and register the state as middleware.
-        const convoState = new ConversationState(new MemoryStorage());
+    describe('DialogMemoryScope', function () {
+        async function initialize(dialog = new TestContainer('container')) {
+            const convoState = new ConversationState(new MemoryStorage());
 
-        // Create a DialogState property, DialogSet and register the dialogs.
-        const dialogState = convoState.createProperty('dialogs');
-        const dialogs = new DialogSet(dialogState);
-        const dialog = new TestDialog('test', 'test message');
-        dialogs.add(dialog);
+            const dialogState = convoState.createProperty('dialogs');
+            const dialogs = new DialogSet(dialogState);
+            dialogs.add(dialog);
 
-        // Create test context
-        const context = new TurnContext(new TestAdapter(), beginMessage);
-        context.turnState.set('ConversationState', convoState);
-        const dc = await dialogs.createContext(context);
+            const context = new TurnContext(new TestAdapter(), beginMessage);
+            const dc = await dialogs.createContext(context);
+            await dc.beginDialog(dialog.id);
 
-        // Initialize conversation state
-        await convoState.createProperty('conversation').set(context, { foo: 'bar' });
-        await convoState.saveChanges(context);
-
-        // Run test
-        const scope = new ConversationMemoryScope();
-        const memory = scope.getMemory(dc);
-        assert.equal(typeof memory, 'object', `state not returned`);
-        assert.equal(memory.conversation.foo, 'bar');
-    });
-
-    it('UserMemoryScope should not return state if not loaded.', async function () {
-        // Initialize user state
-        const storage = new MemoryStorage();
-        let context = new TurnContext(new TestAdapter(), beginMessage);
-        let userState = new UserState(storage);
-        context.turnState.set('UserState', userState);
-        await userState.createProperty('user').set(context, { foo: 'bar' });
-        await userState.saveChanges(context);
-
-        // Replace context and convoState with new instances
-        context = new TurnContext(new TestAdapter(), beginMessage);
-        userState = new UserState(storage);
-        context.turnState.set('UserState', userState);
-
-        // Create a DialogState property, DialogSet and register the dialogs.
-        const convoState = new ConversationState(storage);
-        const dialogState = convoState.createProperty('dialogs');
-        const dialogs = new DialogSet(dialogState);
-        const dialog = new TestDialog('test', 'test message');
-        dialogs.add(dialog);
-
-        // Create test context
-        const dc = await dialogs.createContext(context);
-
-        // Run test
-        const scope = new UserMemoryScope(userState);
-        const memory = scope.getMemory(dc);
-        assert.equal(memory, undefined, `state returned`);
-    });
-
-    it('UserMemoryScope should return state once loaded.', async function () {
-        // Initialize user state
-        const storage = new MemoryStorage();
-        let context = new TurnContext(new TestAdapter(), beginMessage);
-        let userState = new UserState(storage);
-        context.turnState.set('UserState', userState);
-        await userState.createProperty('user').set(context, { foo: 'bar' });
-        await userState.saveChanges(context);
-
-        // Replace context and convoState with new instances
-        context = new TurnContext(new TestAdapter(), beginMessage);
-        userState = new UserState(storage);
-        context.turnState.set('UserState', userState);
-
-        // Create a DialogState property, DialogSet and register the dialogs.
-        const convoState = new ConversationState(storage);
-        context.turnState.set('ConversationState', convoState);
-        const dialogState = convoState.createProperty('dialogs');
-        const dialogs = new DialogSet(dialogState);
-        const dialog = new TestDialog('test', 'test message');
-        dialogs.add(dialog);
-
-        // Create test context
-        const dc = await dialogs.createContext(context);
-
-        // Run test
-        const scope = new UserMemoryScope();
-        let memory = scope.getMemory(dc);
-        assert.equal(memory, undefined, `state returned`);
-
-        await scope.load(dc);
-        memory = scope.getMemory(dc);
-        assert.equal(typeof memory, 'object', `state not returned`);
-        assert.equal(memory.user.foo, 'bar');
-    });
-
-    it('DialogMemoryScope should return containers state.', async function () {
-        // Create a DialogState property, DialogSet and register the dialogs.
-        const storage = new MemoryStorage();
-        const convoState = new ConversationState(storage);
-        const dialogState = convoState.createProperty('dialogs');
-        const dialogs = new DialogSet(dialogState);
-        const container = new TestContainer('container');
-        dialogs.add(container);
-
-        // Create test context
-        const context = new TurnContext(new TestAdapter(), beginMessage);
-        const dc = await dialogs.createContext(context);
-
-        // Run test
-        const scope = new DialogMemoryScope();
-        await dc.beginDialog('container');
-        const memory = scope.getMemory(dc);
-        assert(typeof memory == 'object', `state not returned`);
-        assert(memory.isContainer == true);
-    });
-
-    it('DialogMemoryScope should return parent containers state for children.', async function () {
-        // Create a DialogState property, DialogSet and register the dialogs.
-        const storage = new MemoryStorage();
-        const convoState = new ConversationState(storage);
-        const dialogState = convoState.createProperty('dialogs');
-        const dialogs = new DialogSet(dialogState);
-        const container = new TestContainer('container', new TestDialog('child', 'test message'));
-        dialogs.add(container);
-
-        // Create test context
-        const context = new TurnContext(new TestAdapter(), beginMessage);
-        const dc = await dialogs.createContext(context);
-
-        // Run test
-        const scope = new DialogMemoryScope();
-        await dc.beginDialog('container');
-        const childDc = dc.child;
-        assert(childDc != undefined, `No child DC`);
-        const memory = scope.getMemory(childDc);
-        assert(typeof memory == 'object', `state not returned`);
-        assert(memory.isContainer == true);
-    });
-
-    it('DialogMemoryScope should return childs state when no parent.', async function () {
-        // Create a DialogState property, DialogSet and register the dialogs.
-        const storage = new MemoryStorage();
-        const convoState = new ConversationState(storage);
-        const dialogState = convoState.createProperty('dialogs');
-        const dialogs = new DialogSet(dialogState);
-        const dialog = new TestDialog('test', 'test message');
-        dialogs.add(dialog);
-
-        // Create test context
-        const context = new TurnContext(new TestAdapter(), beginMessage);
-        const dc = await dialogs.createContext(context);
-
-        // Run test
-        const scope = new DialogMemoryScope();
-        await dc.beginDialog('test');
-        const memory = scope.getMemory(dc);
-        assert(typeof memory != undefined, `state not returned`);
-        assert(memory.isDialog == true);
-    });
-
-    it('DialogMemoryScope should overwrite parents memory.', async function () {
-        // Create a DialogState property, DialogSet and register the dialogs.
-        const storage = new MemoryStorage();
-        const convoState = new ConversationState(storage);
-        const dialogState = convoState.createProperty('dialogs');
-        const dialogs = new DialogSet(dialogState);
-        const container = new TestContainer('container', new TestDialog('child', 'test message'));
-        dialogs.add(container);
-
-        // Create test context
-        const context = new TurnContext(new TestAdapter(), beginMessage);
-        const dc = await dialogs.createContext(context);
-
-        // Run test
-        const scope = new DialogMemoryScope();
-        await dc.beginDialog('container');
-        const childDc = dc.child;
-        assert(childDc != undefined, `No child DC`);
-        scope.setMemory(childDc, { foo: 'bar' });
-        const memory = scope.getMemory(childDc);
-        assert(typeof memory == 'object', `state not returned`);
-        assert(memory.foo == 'bar');
-    });
-
-    it('DialogMemoryScope should overwrite active dialogs memory.', async function () {
-        // Create a DialogState property, DialogSet and register the dialogs.
-        const storage = new MemoryStorage();
-        const convoState = new ConversationState(storage);
-        const dialogState = convoState.createProperty('dialogs');
-        const dialogs = new DialogSet(dialogState);
-        const container = new TestContainer('container');
-        dialogs.add(container);
-
-        // Create test context
-        const context = new TurnContext(new TestAdapter(), beginMessage);
-        const dc = await dialogs.createContext(context);
-
-        // Run test
-        const scope = new DialogMemoryScope();
-        await dc.beginDialog('container');
-        scope.setMemory(dc, { foo: 'bar' });
-        const memory = scope.getMemory(dc);
-        assert(typeof memory == 'object', `state not returned`);
-        assert(memory.foo == 'bar');
-    });
-
-    it('DialogMemoryScope should raise error if setMemory() called without memory.', async function () {
-        // Create a DialogState property, DialogSet and register the dialogs.
-        const storage = new MemoryStorage();
-        const convoState = new ConversationState(storage);
-        const dialogState = convoState.createProperty('dialogs');
-        const dialogs = new DialogSet(dialogState);
-        const container = new TestContainer('container');
-        dialogs.add(container);
-
-        // Create test context
-        const context = new TurnContext(new TestAdapter(), beginMessage);
-        const dc = await dialogs.createContext(context);
-
-        // Run test
-        let error = false;
-        try {
             const scope = new DialogMemoryScope();
-            await dc.beginDialog('container');
-            scope.setMemory(dc, undefined);
-        } catch (err) {
-            error = true;
-        }
-        assert(error);
-    });
 
-    it('DialogMemoryScope should raise error if delete() called.', async function () {
-        // Create a DialogState property, DialogSet and register the dialogs.
-        const storage = new MemoryStorage();
-        const convoState = new ConversationState(storage);
-        const dialogState = convoState.createProperty('dialogs');
-        const dialogs = new DialogSet(dialogState);
-        const container = new TestContainer('container');
-        dialogs.add(container);
-
-        // Create test context
-        const context = new TurnContext(new TestAdapter(), beginMessage);
-        const dc = await dialogs.createContext(context);
-
-        // Run test
-        let error = false;
-        try {
-            const scope = new DialogMemoryScope();
-            await scope.delete(dc);
-        } catch (err) {
-            error = true;
-        }
-        assert(error);
-    });
-
-    it('SettingsMemoryScope should get settings from turnState.', async function () {
-        // Create a DialogState property, DialogSet and register the dialogs.
-        const convoState = new ConversationState(new MemoryStorage());
-        const dialogState = convoState.createProperty('dialogs');
-        const dialogs = new DialogSet(dialogState).add(new TestDialog('test', 'test message'));
-
-        // Create test context
-        const context = new TurnContext(new TestAdapter(), beginMessage);
-        const dc = await dialogs.createContext(context);
-        const settings = require('../test.settings.json');
-        dc.context.turnState.set('settings', settings);
-
-        // Run test
-        const scope = new SettingsMemoryScope();
-        const memory = scope.getMemory(dc);
-        assert.equal(typeof memory, 'object', `settings not returned`);
-        assert.equal(memory.string, 'test');
-        assert.equal(memory.int, 3);
-        assert.equal(memory.array[0], 'zero');
-        assert.equal(memory.array[1], 'one');
-        assert.equal(memory.array[2], 'two');
-        assert.equal(memory.array[3], 'three');
-        assert.equal(dc.state.getValue('settings.fakeArray.0'), 'zero');
-        assert.equal(dc.state.getValue('settings.fakeArray.1'), 'one');
-        assert.equal(dc.state.getValue('settings.fakeArray.2'), 'two');
-        assert.equal(dc.state.getValue('settings.fakeArray.3'), 'three');
-        assert.equal(dc.state.getValue('settings.fakeArray.zzz'), 'cat');
-        /*
-        for (const key in process.env) {
-            if (typeof process.env[key] == 'string') {
-                assert(memory[key] == process.env[key]);
-            }
+            return { dc, memory: scope.getMemory(dc), scope };
         }
 
-        // override settings with process.env
-        assert.equal(dc.state.getValue('settings.to_be_overridden'), 'one');
-        process.env['to_be_overridden'] = 'two';
-        assert.equal(dc.state.getValue('settings.not_to_be_overridden'), 'one');
-        assert.equal(
-            dc.state.getValue('settings.to_be_overridden'),
-            'two',
-            'settings should be overriden by environment variables'
-        );
-        */
-    });
+        it('returns containers state', async function () {
+            const { memory } = await initialize();
+            assert.deepStrictEqual(_.pick(memory, 'isContainer'), { isContainer: true });
+        });
 
-    it('SettingsMemoryScope should get settings from configuration.', async function () {
-        // Create a DialogState property, DialogSet and register the dialogs.
-        const convoState = new ConversationState(new MemoryStorage());
-        const dialogState = convoState.createProperty('dialogs');
-        const dialogs = new DialogSet(dialogState).add(new TestDialog('test', 'test message'));
+        it('returns parent containers state for children', async function () {
+            const { dc, scope } = await initialize(
+                new TestContainer('container', new TestDialog('child', 'test message'))
+            );
+            assert(dc.child);
 
-        // Create test context
-        const context = new TurnContext(new TestAdapter(), beginMessage);
-        const dc = await dialogs.createContext(context);
-        const configuration = {
-            simple: 'test',
-            'object:simple': 'test',
-            'array:0': 'one',
-            'array:1': 'two',
-            'object:array:0': 'one',
-            'object:array:1': 'two',
-        };
-        dc.context.turnState.set(DialogTurnStateConstants.configuration, configuration);
+            const memory = scope.getMemory(dc.child);
+            assert.deepStrictEqual(_.pick(memory, 'isContainer'), { isContainer: true });
+        });
 
-        // Run test
-        const scope = new SettingsMemoryScope();
-        const memory = scope.getMemory(dc);
-        assert.strictEqual(typeof memory, 'object', `settings not returned`);
-        assert.strictEqual(memory.simple, 'test');
-        assert.strictEqual(memory.object.simple, 'test');
-        assert(Array.isArray(memory.array));
-        assert.strictEqual(memory.array[0], 'one');
-        assert.strictEqual(memory.array[1], 'two');
-        assert(Array.isArray(memory.object.array));
-        assert.strictEqual(memory.object.array[0], 'one');
-        assert.strictEqual(memory.object.array[1], 'two');
-    });
+        it('returns childs state when no parent', async function () {
+            const { memory } = await initialize(new TestDialog('test', 'test message'));
+            assert.deepStrictEqual(_.pick(memory, 'isDialog'), { isDialog: true });
+        });
 
-    it('SettingsMemoryScope should get settings from configuration and environment variables.', async function () {
-        // Create a DialogState property, DialogSet and register the dialogs.
-        const convoState = new ConversationState(new MemoryStorage());
-        const dialogState = convoState.createProperty('dialogs');
-        const dialogs = new DialogSet(dialogState).add(new TestDialog('test', 'test message'));
+        it('overwrites parents memory', async function () {
+            const { dc, scope } = await initialize(
+                new TestContainer('container', new TestDialog('child', 'test message'))
+            );
+            assert(dc.child);
 
-        // Create test context
-        const context = new TurnContext(new TestAdapter(), beginMessage);
-        const dc = await dialogs.createContext(context);
-        const configuration = {
-            simple: 'test',
-            to_be_overriden: 'one',
-            'object:simple': 'test',
-            'array:0': 'one',
-            'array:1': 'two',
-            'object:array:0': 'one',
-            'object:array:1': 'two',
-        };
-        dc.context.turnState.set(DialogTurnStateConstants.configuration, configuration);
-        process.env['to_be_overridden'] = 'two';
+            scope.setMemory(dc.child, { foo: 'bar' });
+            const memory = scope.getMemory(dc);
 
-        // Run test
-        const scope = new SettingsMemoryScope();
-        const memory = scope.getMemory(dc);
-        assert.strictEqual(typeof memory, 'object', `settings not returned`);
-        assert.strictEqual(memory.simple, 'test');
-        assert.strictEqual(memory.object.simple, 'test');
-        assert(Array.isArray(memory.array));
-        assert.strictEqual(memory.array[0], 'one');
-        assert.strictEqual(memory.array[1], 'two');
-        assert(Array.isArray(memory.object.array));
-        assert.strictEqual(memory.object.array[0], 'one');
-        assert.strictEqual(memory.object.array[1], 'two');
-        assert.strictEqual(memory.to_be_overridden, 'two');
-    });
+            assert.deepStrictEqual(_.pick(memory, 'foo'), { foo: 'bar' });
+        });
 
-    it('ThisMemoryScope should return active dialogs state.', async function () {
-        // Create a DialogState property, DialogSet and register the dialogs.
-        const storage = new MemoryStorage();
-        const convoState = new ConversationState(storage);
-        const dialogState = convoState.createProperty('dialogs');
-        const dialogs = new DialogSet(dialogState);
-        const dialog = new TestDialog('test', 'test message');
-        dialogs.add(dialog);
+        it('overwrites active dialogs memory', async function () {
+            const { dc, scope } = await initialize();
 
-        // Create test context
-        const context = new TurnContext(new TestAdapter(), beginMessage);
-        const dc = await dialogs.createContext(context);
-
-        // Run test
-        const scope = new ThisMemoryScope();
-        await dc.beginDialog('test');
-        const memory = scope.getMemory(dc);
-        assert(typeof memory != undefined, `state not returned`);
-        assert(memory.isDialog == true);
-    });
-
-    it('ThisMemoryScope should overwrite active dialogs memory.', async function () {
-        // Create a DialogState property, DialogSet and register the dialogs.
-        const storage = new MemoryStorage();
-        const convoState = new ConversationState(storage);
-        const dialogState = convoState.createProperty('dialogs');
-        const dialogs = new DialogSet(dialogState);
-        const container = new TestContainer('container');
-        dialogs.add(container);
-
-        // Create test context
-        const context = new TurnContext(new TestAdapter(), beginMessage);
-        const dc = await dialogs.createContext(context);
-
-        // Run test
-        const scope = new ThisMemoryScope();
-        await dc.beginDialog('container');
-        scope.setMemory(dc, { foo: 'bar' });
-        const memory = scope.getMemory(dc);
-        assert(typeof memory == 'object', `state not returned`);
-        assert(memory.foo == 'bar');
-    });
-
-    it('ThisMemoryScope should raise error if setMemory() called without memory.', async function () {
-        // Create a DialogState property, DialogSet and register the dialogs.
-        const storage = new MemoryStorage();
-        const convoState = new ConversationState(storage);
-        const dialogState = convoState.createProperty('dialogs');
-        const dialogs = new DialogSet(dialogState);
-        const container = new TestContainer('container');
-        dialogs.add(container);
-
-        // Create test context
-        const context = new TurnContext(new TestAdapter(), beginMessage);
-        const dc = await dialogs.createContext(context);
-
-        // Run test
-        let error = false;
-        try {
-            const scope = new ThisMemoryScope();
-            await dc.beginDialog('container');
-            scope.setMemory(dc, undefined);
-        } catch (err) {
-            error = true;
-        }
-        assert(error);
-    });
-
-    it('ThisMemoryScope should raise error if setMemory() called without active dialog.', async function () {
-        // Create a DialogState property, DialogSet and register the dialogs.
-        const storage = new MemoryStorage();
-        const convoState = new ConversationState(storage);
-        const dialogState = convoState.createProperty('dialogs');
-        const dialogs = new DialogSet(dialogState);
-        const container = new TestContainer('container');
-        dialogs.add(container);
-
-        // Create test context
-        const context = new TurnContext(new TestAdapter(), beginMessage);
-        const dc = await dialogs.createContext(context);
-
-        // Run test
-        let error = false;
-        try {
-            const scope = new ThisMemoryScope();
             scope.setMemory(dc, { foo: 'bar' });
-        } catch (err) {
-            error = true;
-        }
-        assert(error);
+            const memory = scope.getMemory(dc);
+
+            assert.deepStrictEqual(_.pick(memory, 'foo'), { foo: 'bar' });
+        });
+
+        it('raises error if setMemory() called without memory', async function () {
+            const { dc, scope } = await initialize();
+            assert.throws(() => scope.setMemory(dc, undefined), {
+                message: 'DialogMemoryScope.setMemory: undefined memory object passed in.',
+            });
+        });
+
+        it('raises error if delete() called', async function () {
+            const { dc, scope } = await initialize();
+            await assert.rejects(scope.delete(dc), {
+                message: "MemoryScope.delete: The 'dialog' memory scope can't be deleted.",
+            });
+        });
     });
 
-    it('ThisMemoryScope should raise error if delete() called.', async function () {
-        // Create a DialogState property, DialogSet and register the dialogs.
-        const storage = new MemoryStorage();
-        const convoState = new ConversationState(storage);
-        const dialogState = convoState.createProperty('dialogs');
-        const dialogs = new DialogSet(dialogState);
-        const container = new TestContainer('container');
-        dialogs.add(container);
+    describe('SettingsMemoryScope', function () {
+        async function initialize(fn) {
+            const convoState = new ConversationState(new MemoryStorage());
+            const dialogState = convoState.createProperty('dialogs');
+            const dialogs = new DialogSet(dialogState).add(new TestDialog('test', 'test message'));
 
-        // Create test context
-        const context = new TurnContext(new TestAdapter(), beginMessage);
-        const dc = await dialogs.createContext(context);
+            const context = new TurnContext(new TestAdapter(), beginMessage);
+            const dc = await dialogs.createContext(context);
+            await Promise.resolve(fn(dc));
 
-        // Run test
-        let error = false;
-        try {
+            const scope = new SettingsMemoryScope();
+            return { dc, memory: scope.getMemory(dc), scope };
+        }
+
+        it('gets settings from turnState', async function () {
+            const { dc, memory } = await initialize((dc) => {
+                dc.context.turnState.set('settings', require('../test.settings.json'));
+            });
+
+            assert.deepStrictEqual(_.pick(memory, 'string', 'int', 'array'), {
+                string: 'test',
+                int: 3,
+                array: ['zero', 'one', 'two', 'three'],
+            });
+
+            assert.strictEqual(dc.state.getValue('settings.fakeArray.0'), 'zero');
+            assert.strictEqual(dc.state.getValue('settings.fakeArray.1'), 'one');
+            assert.strictEqual(dc.state.getValue('settings.fakeArray.2'), 'two');
+            assert.strictEqual(dc.state.getValue('settings.fakeArray.3'), 'three');
+            assert.strictEqual(dc.state.getValue('settings.fakeArray.zzz'), 'cat');
+        });
+
+        it('gets settings from configuration', async function () {
+            const { memory } = await initialize((dc) => {
+                dc.context.turnState.set(DialogTurnStateConstants.configuration, {
+                    simple: 'test',
+                    'object:simple': 'test',
+                    'array:0': 'one',
+                    'array:1': 'two',
+                    'object:array:0': 'one',
+                    'object:array:1': 'two',
+                });
+            });
+
+            assert.deepStrictEqual(_.pick(memory, 'array', 'object', 'simple'), {
+                array: ['one', 'two'],
+                object: {
+                    array: ['one', 'two'],
+                    simple: 'test',
+                },
+                simple: 'test',
+            });
+        });
+
+        it('gets settings from configuration and environment variables', async function () {
+            const { memory } = await initialize((dc) => {
+                dc.context.turnState.set(DialogTurnStateConstants.configuration, {
+                    simple: 'test',
+                    to_be_overriden: 'one',
+                    'object:simple': 'test',
+                    'array:0': 'one',
+                    'array:1': 'two',
+                    'object:array:0': 'one',
+                    'object:array:1': 'two',
+                });
+
+                process.env['to_be_overridden'] = 'two';
+            });
+
+            assert.deepStrictEqual(_.pick(memory, 'array', 'object', 'simple', 'to_be_overridden'), {
+                array: ['one', 'two'],
+                object: {
+                    array: ['one', 'two'],
+                    simple: 'test',
+                },
+                simple: 'test',
+                to_be_overridden: 'two',
+            });
+        });
+    });
+
+    describe('ThisMemoryScope', function () {
+        async function initialize({ beginDialog = true, dialog = new TestContainer('container') } = {}) {
+            const convoState = new ConversationState(new MemoryStorage());
+
+            const dialogState = convoState.createProperty('dialogs');
+            const dialogs = new DialogSet(dialogState);
+            dialogs.add(dialog);
+
+            const context = new TurnContext(new TestAdapter(), beginMessage);
+            const dc = await dialogs.createContext(context);
+
+            if (beginDialog) {
+                await dc.beginDialog(dialog.id);
+            }
+
             const scope = new ThisMemoryScope();
-            await scope.delete(dc);
-        } catch (err) {
-            error = true;
+
+            return { dc, dialog, memory: scope.getMemory(dc), scope };
         }
-        assert(error);
-    });
 
-    it('TurnMemoryScope should persist changes to turn state.', async function () {
-        // Create a DialogState property, DialogSet and register the dialogs.
-        const storage = new MemoryStorage();
-        const convoState = new ConversationState(storage);
-        const dialogState = convoState.createProperty('dialogs');
-        const dialogs = new DialogSet(dialogState);
-        const dialog = new TestDialog('test', 'test message');
-        dialogs.add(dialog);
-
-        // Create test context
-        const context = new TurnContext(new TestAdapter(), beginMessage);
-        const dc = await dialogs.createContext(context);
-
-        // Run test
-        const scope = new TurnMemoryScope();
-        let memory = scope.getMemory(dc);
-        assert(typeof memory != undefined, `state not returned`);
-        memory.foo = 'bar';
-        memory = scope.getMemory(dc);
-        assert(memory.foo == 'bar');
-    });
-
-    it('TurnMemoryScope should overwrite values in turn state.', async function () {
-        // Create a DialogState property, DialogSet and register the dialogs.
-        const storage = new MemoryStorage();
-        const convoState = new ConversationState(storage);
-        const dialogState = convoState.createProperty('dialogs');
-        const dialogs = new DialogSet(dialogState);
-        const dialog = new TestDialog('test', 'test message');
-        dialogs.add(dialog);
-
-        // Create test context
-        const context = new TurnContext(new TestAdapter(), beginMessage);
-        const dc = await dialogs.createContext(context);
-
-        // Run test
-        const scope = new TurnMemoryScope();
-        scope.setMemory(dc, { foo: 'bar' });
-        const memory = scope.getMemory(dc);
-        assert(typeof memory != undefined, `state not returned`);
-        assert(memory.foo == 'bar');
-    });
-
-    it('TurnMemoryScope should raise error when setMemory() called without memory.', async function () {
-        // Create a DialogState property, DialogSet and register the dialogs.
-        const storage = new MemoryStorage();
-        const convoState = new ConversationState(storage);
-        const dialogState = convoState.createProperty('dialogs');
-        const dialogs = new DialogSet(dialogState);
-        const dialog = new TestDialog('test', 'test message');
-        dialogs.add(dialog);
-
-        // Create test context
-        const context = new TurnContext(new TestAdapter(), beginMessage);
-        const dc = await dialogs.createContext(context);
-
-        // Run test
-        let error = false;
-        try {
-            const scope = new TurnMemoryScope();
-            scope.setMemory(dc, undefined);
-        } catch (err) {
-            error = true;
-        }
-        assert(error);
-    });
-
-    it('TurnMemoryScope should raise error when delete() called.', async function () {
-        // Create a DialogState property, DialogSet and register the dialogs.
-        const storage = new MemoryStorage();
-        const convoState = new ConversationState(storage);
-        const dialogState = convoState.createProperty('dialogs');
-        const dialogs = new DialogSet(dialogState);
-        const dialog = new TestDialog('test', 'test message');
-        dialogs.add(dialog);
-
-        // Create test context
-        const context = new TurnContext(new TestAdapter(), beginMessage);
-        const dc = await dialogs.createContext(context);
-
-        // Run test
-        let error = false;
-        try {
-            const scope = new TurnMemoryScope();
-            await scope.delete(dc);
-        } catch (err) {
-            error = true;
-        }
-        assert(error);
-    });
-
-    it('DialogContextMemoryScope should get dialog context.', async function () {
-        // Create new ConversationState with MemoryStorage and register the state as middleware.
-        const convoState = new ConversationState(new MemoryStorage());
-
-        // Create a DialogState property, DialogSet and register the dialogs.
-        const dialogState = convoState.createProperty('dialogs');
-        const dialogs = new DialogSet(dialogState);
-        const dialog = new TestDialog('test', 'test message');
-        dialogs.add(dialog);
-
-        // Create test context
-        const context = new TurnContext(new TestAdapter(), beginMessage);
-        await dialogState.set(context, {
-            dialogStack: [{ id: 'test', state: {} }],
+        it('returns active dialogs state', async function () {
+            const { memory } = await initialize({ dialog: new TestDialog('test', 'test message') });
+            assert(_.pick(memory, 'isDialog'), { isDialog: true });
         });
-        const dc = await dialogs.createContext(context);
 
-        // Run test
-        const scope = new DialogContextMemoryScope();
-        const memory = scope.getMemory(dc);
+        it('overwrites active dialogs memory', async function () {
+            const { dc, memory, scope } = await initialize();
+            scope.setMemory(dc, { foo: 'bar' });
+            assert(_.pick(memory, 'foo'), { foo: 'bar' });
+        });
 
-        assert.strictEqual(memory.activeDialog, 'test');
-        assert.strictEqual(memory.stack.length, 1);
-        assert.strictEqual(memory.parent, undefined);
+        it('raises error if setMemory() called without memory', async function () {
+            const { dc, scope } = await initialize();
+            assert.throws(() => scope.setMemory(dc, undefined), {
+                message: 'ThisMemoryScope.setMemory: undefined memory object passed in.',
+            });
+        });
+
+        it('raises error if setMemory() called without active dialog', async function () {
+            const { dc, scope } = await initialize({ beginDialog: false });
+            assert.throws(() => scope.setMemory(dc, { foo: 'bar' }), {
+                message: 'ThisMemoryScope.setMemory: no active dialog found.',
+            });
+        });
+
+        it('raises error if delete() called', async function () {
+            const { dc, scope } = await initialize();
+            await assert.rejects(scope.delete(dc), {
+                message: "MemoryScope.delete: The 'this' memory scope can't be deleted.",
+            });
+        });
     });
 
-    it('DialogContextMemoryScope should not allow setMemory() call.', async function () {
-        // Create new ConversationState with MemoryStorage and register the state as middleware.
-        const convoState = new ConversationState(new MemoryStorage());
+    describe('TurnMemoryScope', function () {
+        async function initialize() {
+            const convoState = new ConversationState(new MemoryStorage());
 
-        // Create a DialogState property, DialogSet and register the dialogs.
-        const dialogState = convoState.createProperty('dialogs');
-        const dialogs = new DialogSet(dialogState);
-        const dialog = new TestDialog('test', 'test message');
-        dialogs.add(dialog);
+            const dialogState = convoState.createProperty('dialogs');
+            const dialogs = new DialogSet(dialogState);
+            const dialog = new TestDialog('test', 'test message');
+            dialogs.add(dialog);
 
-        // Create test context
-        const context = new TurnContext(new TestAdapter(), beginMessage);
-        await dialogState.set(context, {
-            dialogStack: [{ id: 'test', state: {} }],
+            const context = new TurnContext(new TestAdapter(), beginMessage);
+            const dc = await dialogs.createContext(context);
+            await dc.beginDialog(dialog.id);
+
+            return { dc, scope: new TurnMemoryScope() };
+        }
+
+        it('persists changes to turn state', async function () {
+            const { dc, scope } = await initialize();
+
+            let memory = scope.getMemory(dc);
+            assert(memory);
+
+            memory.foo = 'bar';
+            memory = scope.getMemory(dc);
+
+            assert.strictEqual(memory.foo, 'bar');
         });
-        const dc = await dialogs.createContext(context);
 
-        // Run test
-        assert.throws(() => {
+        it('overwrites values in turn state', async function () {
+            const { dc, scope } = await initialize();
+            scope.setMemory(dc, { foo: 'bar' });
+
+            const memory = scope.getMemory(dc);
+            assert.deepStrictEqual(_.pick(memory, 'foo'), { foo: 'bar' });
+        });
+
+        it('raises error when setMemory() called without memory', async function () {
+            const { dc, scope } = await initialize();
+            assert.throws(() => scope.setMemory(dc, undefined), {
+                message: 'TurnMemoryScope.setMemory: undefined memory object passed in.',
+            });
+        });
+
+        it('raises error when delete() called', async function () {
+            const { dc, scope } = await initialize();
+            await assert.rejects(scope.delete(dc), {
+                message: "MemoryScope.delete: The 'turn' memory scope can't be deleted.",
+            });
+        });
+    });
+
+    describe('DialogContextMemoryScope', function () {
+        async function initialize() {
+            const convoState = new ConversationState(new MemoryStorage());
+
+            const dialogState = convoState.createProperty('dialogs');
+            const dialogs = new DialogSet(dialogState);
+            const dialog = new TestDialog('test', 'test message');
+            dialogs.add(dialog);
+
+            const context = new TurnContext(new TestAdapter(), beginMessage);
+            const dc = await dialogs.createContext(context);
+            await dc.beginDialog(dialog.id);
+
             const scope = new DialogContextMemoryScope();
-            scope.setMemory(dc, {});
+            return { dc, memory: scope.getMemory(dc), scope };
+        }
+
+        it('gets dialog context', async function () {
+            const { memory } = await initialize();
+
+            assert.strictEqual(memory.activeDialog, 'test');
+            assert.strictEqual(memory.stack.length, 1);
+            assert.strictEqual(memory.parent, undefined);
+        });
+
+        it('does not allow setMemory() call', async function () {
+            const { dc, scope } = await initialize();
+            assert.throws(() => scope.setMemory(dc, {}));
         });
     });
 });

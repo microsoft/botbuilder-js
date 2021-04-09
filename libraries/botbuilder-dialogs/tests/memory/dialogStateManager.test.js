@@ -22,6 +22,7 @@ const beginMessage = {
 class TestDialog extends Dialog {
     constructor(id, message) {
         super(id);
+
         this.message = message;
         this.dialogType = 'child';
     }
@@ -36,20 +37,22 @@ class TestDialog extends Dialog {
 class TestContainer extends DialogContainer {
     constructor(id, child) {
         super(id);
+
         if (child) {
             this.dialogs.add(child);
             this.childId = child.id;
         }
+
         this.dialogType = 'container';
     }
 
     async beginDialog(dc, options) {
         const state = dc.activeDialog.state;
         state.isContainer = true;
+
         if (this.childId) {
             state.dialog = {};
-            const childDc = this.createChildContext(dc);
-            return await childDc.beginDialog(this.childId, options);
+            return this.createChildContext(dc).beginDialog(this.childId, options);
         } else {
             return Dialog.EndOfTurn;
         }
@@ -58,7 +61,7 @@ class TestContainer extends DialogContainer {
     async continueDialog(dc) {
         const childDc = this.createChildContext(dc);
         if (childDc) {
-            return await childDc.continueDialog();
+            return childDc.continueDialog();
         } else {
             return Dialog.EndOfTurn;
         }
@@ -66,6 +69,7 @@ class TestContainer extends DialogContainer {
 
     createChildContext(dc) {
         const state = dc.activeDialog.state;
+
         if (state.dialog) {
             const childDc = new DialogContext(this.dialogs, dc.context, state.dialog);
             childDc.parent = dc;
@@ -77,406 +81,215 @@ class TestContainer extends DialogContainer {
 }
 
 async function createConfiguredTestDc(storage) {
-    if (!storage) {
-        storage = new MemoryStorage();
-    }
     const dc = await createTestDc(storage);
     await dc.state.loadAllScopes();
-
     return dc;
 }
 
-async function createTestDc(storage) {
-    if (!storage) {
-        storage = new MemoryStorage();
-    }
+async function createTestDc(storage = new MemoryStorage()) {
     const convoState = new ConversationState(storage);
     const userState = new UserState(storage);
-    // Create a DialogState property, DialogSet and register the dialogs.
+
     const dialogState = convoState.createProperty('dialogs');
     const dialogs = new DialogSet(dialogState);
     const container = new TestContainer('container', new TestDialog('child', 'test message'));
     dialogs.add(container);
 
-    // Create test context
     const context = new TurnContext(new TestAdapter(), beginMessage);
     context.turnState.set('ConversationState', convoState);
     context.turnState.set('UserState', userState);
     const dc = await dialogs.createContext(context);
 
-    // Start container dialog
     await dc.beginDialog('container');
+
     return dc;
 }
 
 describe('Dialog State Manager', function () {
-    let dc;
-    before(async () => {
-        dc = await createConfiguredTestDc();
+    beforeEach(async function () {
+        this.dc = await createConfiguredTestDc();
     });
 
-    it('Should create a standard configuration with added conversation and user state.', async function () {
-        // Run test
-        let convoScopeFound = false;
-        let userScopeFound = false;
-        const config = dc.state.configuration;
-        config.memoryScopes.forEach((scope) => {
-            if (scope instanceof ConversationMemoryScope) {
-                convoScopeFound = true;
-                assert(scope.name == 'conversation');
-            }
-            if (scope instanceof UserMemoryScope) {
-                userScopeFound = true;
-                assert(scope.name == 'user');
-            }
-        });
-        assert(convoScopeFound, `no conversation scope added`);
-        assert(userScopeFound, `no user scope added`);
+    it('create a standard configuration with added conversation and user state.', function () {
+        const config = this.dc.state.configuration;
+        assert(
+            config.memoryScopes.find(
+                (scope) => scope instanceof ConversationMemoryScope && scope.name === 'conversation'
+            )
+        );
+        assert(config.memoryScopes.find((scope) => scope instanceof UserMemoryScope && scope.name === 'user'));
     });
 
-    it('Should create a standard configuration by default.', async function () {
-        // Create test dc
-        const dc = await createTestDc();
-
-        // Run test
-        const config = dc.state.configuration;
+    it('create a standard configuration by default.', function () {
+        const config = this.dc.state.configuration;
         assert(config, `No config returned`);
         assert(config.pathResolvers.length > 0, `No path resolvers`);
         assert(config.memoryScopes.length > 0, `No memory scopes`);
     });
 
-    it('Should read & write values to TURN memory scope.', async function () {
-        // Create test dc
-        const dc = await createConfiguredTestDc();
-
-        // Run test
-        dc.state.setValue('turn.foo', 'bar');
-        const value = dc.state.getValue('turn.foo');
-        assert(value == 'bar', `value returned: ${value}`);
+    it('read values from the SETTINGS memory scope.', function () {
+        const entries = Object.entries(process.env);
+        assert(entries.length);
+        entries.every(([key, expected]) => assert.strictEqual(this.dc.state.getValue(`settings["${key}"]`), expected));
     });
 
-    it('Should read values from the SETTINGS memory scope.', async function () {
-        // Run test
-        let count = 0;
-        for (const key in process.env) {
-            const expected = process.env[key];
-            if (typeof expected == 'string') {
-                count++;
-                const value = dc.state.getValue(`settings["${key}"]`);
-                assert(value == expected, `Value returned for "${key}": ${value}`);
-            }
-        }
-        assert(count > 0, `no settings tested`);
+    it('Should read values from the CLASS memory scope.', function () {
+        assert.strictEqual(this.dc.state.getValue('class.dialogType'), 'container');
+        assert.strictEqual(this.dc.child.state.getValue('class.dialogType'), 'child');
     });
 
-    it('Should read & write values to DIALOG memory scope.', async function () {
-        // Create test dc
-        const dc = await createConfiguredTestDc();
+    ['turn', 'dialog', 'this', 'conversation', 'user'].forEach((scope) =>
+        it(`read & write values to ${scope} memory scope`, function () {
+            this.dc.state.setValue(`${scope}.foo`, 'bar');
+            assert.strictEqual(this.dc.state.getValue(`${scope}.foo`), 'bar');
+        })
+    );
 
-        // Run test
-        dc.state.setValue('dialog.foo', 'bar');
-        const value = dc.state.getValue('dialog.foo');
-        assert(value == 'bar', `value returned: ${value}`);
-    });
+    [
+        ['$', 'dialog'],
+        ['#', 'turn.recognized.intents'],
+        ['@@', 'turn.recognized.entities', ['bar'], assert.deepStrictEqual],
+    ].forEach(([short, long, value = 'bar', assertion = assert.strictEqual]) =>
+        it(`read & write values using ${short} alias`, function () {
+            this.dc.state.setValue(`${short}foo`, value);
+            assertion(this.dc.state.getValue(`${long}.foo`), value);
+            assertion(this.dc.state.getValue(`${short}foo`), value);
+        })
+    );
 
-    it('Should read values from the CLASS memory scope.', async function () {
-        // Run test
-        assert(dc.state.getValue('class.dialogType') === 'container');
-        assert(dc.child.state.getValue('class.dialogType') === 'child');
-    });
+    it('read entities using @ alias.', function () {
+        this.dc.state.setValue('@@foo', ['foo']);
+        this.dc.state.setValue('@@bar', [['bar']]);
+        assert.strictEqual(this.dc.state.getValue('@foo'), 'foo');
+        assert.strictEqual(this.dc.state.getValue('@bar'), 'bar');
 
-    it('Should read & write values to THIS memory scope.', async function () {
-        // Create test dc
-        const dc = await createConfiguredTestDc();
-
-        // Run test
-        dc.state.setValue('this.foo', 'bar');
-        const value = dc.state.getValue('this.foo');
-        assert(value == 'bar', `value returned: ${value}`);
-    });
-
-    it('Should read & write values to CONVERSATION memory scope.', async function () {
-        // Create test dc
-        const dc = await createConfiguredTestDc();
-
-        // Run test
-        dc.state.setValue('conversation.foo', 'bar');
-        const value = dc.state.getValue('conversation.foo');
-        assert(value == 'bar', `value returned: ${value}`);
-    });
-
-    it('Should read & write values to USER memory scope.', async function () {
-        // Create test dc
-        const dc = await createConfiguredTestDc();
-
-        // Run test
-        dc.state.setValue('user.foo', 'bar');
-        const value = dc.state.getValue('user.foo');
-        assert(value == 'bar', `value returned: ${value}`);
-    });
-
-    it('Should read & write values using $ alias.', async function () {
-        // Create test dc
-        const dc = await createConfiguredTestDc();
-
-        // Run test
-        dc.state.setValue('$foo', 'bar');
-        assert(dc.state.getValue('dialog.foo') == 'bar', `setValue() failed to use alias.`);
-        assert(dc.state.getValue('$foo') == 'bar', `getValue() failed to use alias.`);
-    });
-
-    it('Should read & write values using # alias.', async function () {
-        // Create test dc
-        const dc = await createConfiguredTestDc();
-
-        // Run test
-        dc.state.setValue('#foo', 'bar');
-        assert(dc.state.getValue('turn.recognized.intents.foo') == 'bar', `setValue() failed to use alias.`);
-        assert(dc.state.getValue('#foo') == 'bar', `getValue() failed to use alias.`);
-    });
-
-    it('Should read & write values using @@ alias.', async function () {
-        // Create test dc
-        const dc = await createConfiguredTestDc();
-
-        // Run test
-        dc.state.setValue('@@foo', ['bar']);
-        const value = dc.state.getValue('turn.recognized.entities.foo');
-        assert(Array.isArray(value) && value.length == 1, `setValue() failed to use alias.`);
-        assert(value[0] == 'bar');
-    });
-
-    it('Should read entities using @ alias.', async function () {
-        // Create test dc
-        const dc = await createConfiguredTestDc();
-
-        // Run test
-        dc.state.setValue('@@foo', ['foo']);
-        dc.state.setValue('@@bar', [['bar']]);
-        assert(dc.state.getValue('@foo') == 'foo', `Simple entities not returning.`);
-        assert(dc.state.getValue('@bar') == 'bar', `Nested entities not returning.`);
-
-        dc.state.setValue('turn.recognized.entities.single', ['test1', 'test2', 'test3']);
-        dc.state.setValue('turn.recognized.entities.double', [
+        this.dc.state.setValue('turn.recognized.entities.single', ['test1', 'test2', 'test3']);
+        this.dc.state.setValue('turn.recognized.entities.double', [
             ['testx', 'testy', 'testz'],
             ['test1', 'test2', 'test3'],
         ]);
-        assert.equal(dc.state.getValue('@single'), 'test1');
-        assert.equal(dc.state.getValue('@double'), 'testx');
-        assert.equal(dc.state.getValue('turn.recognized.entities.single.first()'), 'test1');
-        assert.equal(dc.state.getValue('turn.recognized.entities.double.first()'), 'testx');
+        assert.strictEqual(this.dc.state.getValue('@single'), 'test1');
+        assert.strictEqual(this.dc.state.getValue('@double'), 'testx');
+        assert.strictEqual(this.dc.state.getValue('turn.recognized.entities.single.first()'), 'test1');
+        assert.strictEqual(this.dc.state.getValue('turn.recognized.entities.double.first()'), 'testx');
 
-        dc.state.setValue('turn.recognized.entities.single', [{ name: 'test1' }, { name: 'test2' }, { name: 'test3' }]);
-        dc.state.setValue('turn.recognized.entities.double', [
+        this.dc.state.setValue('turn.recognized.entities.single', [
+            { name: 'test1' },
+            { name: 'test2' },
+            { name: 'test3' },
+        ]);
+        this.dc.state.setValue('turn.recognized.entities.double', [
             [{ name: 'testx' }, { name: 'testy' }, { name: 'testz' }],
             [{ name: 'test1' }, { name: 'test2' }, { name: 'test3' }],
         ]);
-        assert.equal(dc.state.getValue('@single.name'), 'test1');
-        assert.equal(dc.state.getValue('@double.name'), 'testx');
-        assert.equal(dc.state.getValue('turn.recognized.entities.single.first().name'), 'test1');
-        assert.equal(dc.state.getValue('turn.recognized.entities.double.first().name'), 'testx');
+        assert.strictEqual(this.dc.state.getValue('@single.name'), 'test1');
+        assert.strictEqual(this.dc.state.getValue('@double.name'), 'testx');
+        assert.strictEqual(this.dc.state.getValue('turn.recognized.entities.single.first().name'), 'test1');
+        assert.strictEqual(this.dc.state.getValue('turn.recognized.entities.double.first().name'), 'testx');
     });
 
-    it('Should write a entity using @ alias.', async function () {
-        // Create test dc
-        const dc = await createConfiguredTestDc();
-
-        // Run test
-        dc.state.setValue('@foo', 'bar');
-        assert(dc.state.getValue('@foo') == 'bar', `Entity not round tripping.`);
+    it('write an entity using @ alias.', function () {
+        this.dc.state.setValue('@foo', 'bar');
+        assert.strictEqual(this.dc.state.getValue('@foo'), 'bar');
     });
 
-    it('Should read values using % alias.', async function () {
-        // Run test
-        assert(dc.state.getValue('%dialogType') === 'container');
-        assert(dc.child.state.getValue('%dialogType') === 'child');
+    it('read values using % alias.', function () {
+        assert.strictEqual(this.dc.state.getValue('%dialogType'), 'container');
+        assert.strictEqual(this.dc.child.state.getValue('%dialogType'), 'child');
     });
 
-    it('Should delete values in a scope.', async function () {
-        // Create test dc
-        const dc = await createConfiguredTestDc();
-
-        // Run test
-        dc.state.setValue('turn.foo', 'bar');
-        dc.state.deleteValue('turn.foo');
-        const value = dc.state.getValue('turn.foo');
-        assert(value == undefined, `value returned: ${value}`);
+    it('delete values in a scope.', function () {
+        this.dc.state.setValue('turn.foo', 'bar');
+        this.dc.state.deleteValue('turn.foo');
+        assert.strictEqual(this.dc.state.getValue('turn.foo'), undefined);
     });
 
-    it('Should persist conversation & user values when saved.', async function () {
-        // Create test dc
+    it('persist conversation & user values when saved.', async function () {
         const storage = new MemoryStorage();
         let dc = await createConfiguredTestDc(storage);
 
-        // Initialize state and save
         dc.state.setValue('user.name', 'test user');
         dc.state.setValue('conversation.foo', 'bar');
         await dc.state.saveAllChanges();
 
-        // Create new dc and test loaded values
         dc = await createConfiguredTestDc(storage);
-        assert(dc.state.getValue('user.name') == 'test user', `user state not saved`);
-        assert(dc.state.getValue('conversation.foo') == 'bar', `conversation state not saved`);
+        assert.strictEqual(dc.state.getValue('user.name'), 'test user');
+        assert.strictEqual(dc.state.getValue('conversation.foo'), 'bar');
     });
 
-    it('Should return default value when getValue() called with empty path.', async function () {
-        assert(dc.state.getValue('', 'default') == 'default');
+    it('return default value when getValue() called with empty path.', function () {
+        assert.strictEqual(this.dc.state.getValue('', 'default'), 'default');
     });
 
-    it('Should support passing a function to getValue() for the default.', async function () {
-        assert(dc.state.getValue('', () => 'default') == 'default');
+    it('support passing a function to getValue() for the default.', function () {
+        assert.strictEqual(
+            this.dc.state.getValue('', () => 'default'),
+            'default'
+        );
     });
 
-    it('Should raise an error if getValue() called with an invalid scope.', async function () {
-        // Run test
-        let error = false;
-        try {
-            dc.state.getValue('foo.bar');
-        } catch (err) {
-            error = true;
-        }
-        assert(error);
+    it('raise an error if getValue() called with an invalid scope.', function () {
+        assert.throws(() => this.dc.state.getValue('foo.bar'));
     });
 
-    it('Should raise an error if setValue() called with missing path.', async function () {
-        // Create test dc
-        const storage = new MemoryStorage();
-        let dc = await createConfiguredTestDc(storage);
-
-        // Run test
-        let error = false;
-        try {
-            dc.state.setValue('', 'bar');
-        } catch (err) {
-            error = true;
-        }
-        assert(error);
+    it('raise an error if setValue() called with missing path.', function () {
+        assert.throws(() => this.dc.state.setValue('', 'bar'));
     });
 
-    it('Should raise an error if setValue() called with an invalid scope.', async function () {
-        // Create test dc
-        const storage = new MemoryStorage();
-        let dc = await createConfiguredTestDc(storage);
-
-        // Run test
-        let error = false;
-        try {
-            dc.state.setValue('foo', 'bar');
-        } catch (err) {
-            error = true;
-        }
-        assert(error);
+    it('raise an error if setValue() called with an invalid scope.', function () {
+        assert.throws(() => this.dc.state.setValue('foo', 'bar'));
     });
 
-    it('Should overwrite memory when setValue() called with just a scope.', async function () {
-        // Create test dc
-        const storage = new MemoryStorage();
-        let dc = await createConfiguredTestDc(storage);
-
-        // Run test
-        dc.state.setValue('turn', { foo: 'bar' });
-        assert(dc.state.getValue('turn.foo') == 'bar');
+    it('overwrite memory when setValue() called with just a scope.', function () {
+        this.dc.state.setValue('turn', { foo: 'bar' });
+        assert.strictEqual(this.dc.state.getValue('turn.foo'), 'bar');
     });
 
-    it('Should raise an error if deleteValue() called with < 2 path path.', async function () {
-        // Create test dc
-        const storage = new MemoryStorage();
-        let dc = await createConfiguredTestDc(storage);
-
-        // Run test
-        let error = false;
-        try {
-            dc.state.deleteValue('conversation');
-        } catch (err) {
-            error = true;
-        }
-        assert(error);
+    it('raise an error if deleteValue() called with < 2 path path.', function () {
+        assert.throws(() => this.dc.state.deleteValue('conversation'));
     });
 
-    it('Should raise an error if deleteValue() called with an invalid scope.', async function () {
-        // Create test dc
-        const storage = new MemoryStorage();
-        let dc = await createConfiguredTestDc(storage);
-
-        // Run test
-        let error = false;
-        try {
-            dc.state.deleteValue('foo.bar');
-        } catch (err) {
-            error = true;
-        }
-        assert(error);
+    it('raise an error if deleteValue() called with an invalid scope.', function () {
+        assert.throws(() => this.dc.state.deleteValue('foo.bar'));
     });
 
-    it('Should read & write array values.', async function () {
-        // Create test dc
-        const storage = new MemoryStorage();
-        let dc = await createConfiguredTestDc(storage);
-
-        // Run test
-        dc.state.setValue('turn.foo', ['bar']);
-        assert(dc.state.getValue('turn.foo[0]') == 'bar');
+    it('read & write array values.', function () {
+        this.dc.state.setValue('turn.foo', ['bar']);
+        assert.strictEqual(this.dc.state.getValue('turn.foo[0]'), 'bar');
     });
 
-    it('Should delete array values by index.', async function () {
-        // Create test dc
-        const storage = new MemoryStorage();
-        let dc = await createConfiguredTestDc(storage);
-
-        // Run test
-        dc.state.setValue('turn.test', ['foo', 'bar']);
-        dc.state.deleteValue('turn.test[0]');
-        assert(dc.state.getValue('turn.test[0]') == 'bar');
+    it('delete array values by index.', function () {
+        this.dc.state.setValue('turn.test', ['foo', 'bar']);
+        this.dc.state.deleteValue('turn.test[0]');
+        assert.strictEqual(this.dc.state.getValue('turn.test[0]'), 'bar');
     });
 
-    it('Should ignore array deletions that are out of range.', async function () {
-        // Create test dc
-        const storage = new MemoryStorage();
-        let dc = await createConfiguredTestDc(storage);
-
-        // Run test
-        dc.state.setValue('turn.test', []);
-        dc.state.deleteValue('turn.test[0]');
-        assert(dc.state.getValue('turn.test').length == 0);
+    it('ignore array deletions that are out of range.', function () {
+        this.dc.state.setValue('turn.test', []);
+        this.dc.state.deleteValue('turn.test[0]');
+        assert.deepStrictEqual(this.dc.state.getValue('turn.test'), []);
     });
 
-    it('Should ignore property deletions off non-object properties.', async function () {
-        // Create test dc
-        const storage = new MemoryStorage();
-        let dc = await createConfiguredTestDc(storage);
+    it('ignore groperty deletions off non-object properties.', function () {
+        this.dc.state.setValue('turn.foo', []);
+        this.dc.state.deleteValue('turn.foo.bar');
+        assert.deepStrictEqual(this.dc.state.getValue('turn.foo'), []);
 
-        // Run test
-        dc.state.setValue('turn.foo', []);
-        dc.state.deleteValue('turn.foo.bar');
-        assert(dc.state.getValue('turn.foo').length == 0);
-        dc.state.setValue('turn.bar', 'test');
-        dc.state.deleteValue('turn.bar.foo');
-        assert(dc.state.getValue('turn.bar') == 'test');
+        this.dc.state.setValue('turn.bar', 'test');
+        this.dc.state.deleteValue('turn.bar.foo');
+        assert.strictEqual(this.dc.state.getValue('turn.bar'), 'test');
     });
 
-    it('Should ignore property deletions of missing object properties.', async function () {
-        // Create test dc
-        const storage = new MemoryStorage();
-        let dc = await createConfiguredTestDc(storage);
+    it('ignore property deletions of missing object properties.', function () {
+        this.dc.state.setValue('turn.foo', { test: 'test' });
+        this.dc.state.deleteValue('turn.foo.bar');
 
-        // Run test
-        dc.state.setValue('turn.foo', { test: 'test' });
-        dc.state.deleteValue('turn.foo.bar');
-        let count = 0;
-        const value = dc.state.getValue('turn.foo');
-        for (const key in value) {
-            count++;
-        }
-        assert(count == 1);
+        const value = this.dc.state.getValue('turn.foo');
+        assert.deepStrictEqual(Object.keys(value), ['test']);
     });
 
-    it('Should resolve nested expressions.', async function () {
-        // Create test dc
-        const storage = new MemoryStorage();
-        let dc = await createConfiguredTestDc(storage);
-
-        // Run test
-        dc.state.setValue('turn.addresses', {
+    it('resolve nested expressions.', function () {
+        this.dc.state.setValue('turn.addresses', {
             work: {
                 street: 'one microsoft way',
                 city: 'Redmond',
@@ -484,19 +297,16 @@ describe('Dialog State Manager', function () {
                 zip: '98052',
             },
         });
-        dc.state.setValue('turn.addressKeys', ['work']);
-        dc.state.setValue('turn.preferredAddress', 0);
-        const value = dc.state.getValue('turn.addresses[turn.addressKeys[turn.preferredAddress]].zip');
+
+        this.dc.state.setValue('turn.addressKeys', ['work']);
+        this.dc.state.setValue('turn.preferredAddress', 0);
+
+        const value = this.dc.state.getValue('turn.addresses[turn.addressKeys[turn.preferredAddress]].zip');
         assert(value == '98052');
     });
 
-    it('Should find a property quoted with single quotes.', async function () {
-        // Create test dc
-        const storage = new MemoryStorage();
-        let dc = await createConfiguredTestDc(storage);
-
-        // Run test
-        dc.state.setValue('turn.addresses', {
+    it('find a property quoted with single quotes.', function () {
+        this.dc.state.setValue('turn.addresses', {
             work: {
                 street: 'one microsoft way',
                 city: 'Redmond',
@@ -504,17 +314,13 @@ describe('Dialog State Manager', function () {
                 zip: '98052',
             },
         });
-        const value = dc.state.getValue(`turn.addresses['work'].zip`);
+
+        const value = this.dc.state.getValue(`turn.addresses['work'].zip`);
         assert(value == '98052');
     });
 
-    it('Should find a property quoted with double quotes.', async function () {
-        // Create test dc
-        const storage = new MemoryStorage();
-        let dc = await createConfiguredTestDc(storage);
-
-        // Run test
-        dc.state.setValue('turn.addresses', {
+    it('find a property quoted with double quotes.', function () {
+        this.dc.state.setValue('turn.addresses', {
             work: {
                 street: 'one microsoft way',
                 city: 'Redmond',
@@ -522,17 +328,13 @@ describe('Dialog State Manager', function () {
                 zip: '98052',
             },
         });
-        const value = dc.state.getValue(`turn.addresses["work"].zip`);
+
+        const value = this.dc.state.getValue(`turn.addresses["work"].zip`);
         assert(value == '98052');
     });
 
-    it('Should find a property containing embedded quotes.', async function () {
-        // Create test dc
-        const storage = new MemoryStorage();
-        let dc = await createConfiguredTestDc(storage);
-
-        // Run test
-        dc.state.setValue('turn.addresses', {
+    it('find a property containing embedded quotes.', function () {
+        this.dc.state.setValue('turn.addresses', {
             '"work"': {
                 street: 'one microsoft way',
                 city: 'Redmond',
@@ -540,19 +342,14 @@ describe('Dialog State Manager', function () {
                 zip: '98052',
             },
         });
-        const value = dc.state.getValue(`turn.addresses['\\"work\\"'].zip`);
+
+        const value = this.dc.state.getValue(`turn.addresses['\\"work\\"'].zip`);
         assert(value == '98052');
     });
 
-    it('Should raise an error for paths with miss-matched quotes.', async function () {
-        // Create test dc
-        const storage = new MemoryStorage();
-        let dc = await createConfiguredTestDc(storage);
-
-        // Run test
-        let error = false;
-        try {
-            dc.state.setValue('turn.addresses', {
+    it('raise an error for paths with miss-matched quotes.', function () {
+        assert.throws(() => {
+            this.dc.state.setValue('turn.addresses', {
                 work: {
                     street: 'one microsoft way',
                     city: 'Redmond',
@@ -560,22 +357,14 @@ describe('Dialog State Manager', function () {
                     zip: '98052',
                 },
             });
-            dc.state.getValue(`turn.addresses['work"].zip`);
-        } catch (err) {
-            error = true;
-        }
-        assert(error);
+
+            this.dc.state.getValue(`turn.addresses['work"].zip`);
+        });
     });
 
-    it('Should raise an error for segments with invalid path chars.', async function () {
-        // Create test dc
-        const storage = new MemoryStorage();
-        let dc = await createConfiguredTestDc(storage);
-
-        // Run test
-        let error = false;
-        try {
-            dc.state.setValue('turn.addresses', {
+    it('raise an error for segments with invalid path chars.', function () {
+        assert.throws(() => {
+            this.dc.state.setValue('turn.addresses', {
                 '~work': {
                     street: 'one microsoft way',
                     city: 'Redmond',
@@ -583,123 +372,52 @@ describe('Dialog State Manager', function () {
                     zip: '98052',
                 },
             });
-            dc.state.getValue(`turn.addresses.~work.zip`);
-        } catch (err) {
-            error = true;
-        }
-        assert(error);
+
+            this.dc.state.getValue(`turn.addresses.~work.zip`);
+        });
     });
 
-    it('Should raise an error for assignments to a negative array index.', async function () {
-        // Create test dc
-        const storage = new MemoryStorage();
-        let dc = await createConfiguredTestDc(storage);
-
-        // Run test
-        let error = false;
-        try {
-            dc.state.setValue(`turn.foo[-1]`, 'test');
-        } catch (err) {
-            error = true;
-        }
-        assert(error);
+    it('raise an error for assignments to a negative array index.', function () {
+        assert.throws(() => this.dc.state.setValue(`turn.foo[-1]`, 'test'));
     });
 
-    it('Should raise an error for array assignments to non-array values.', async function () {
-        // Create test dc
-        const storage = new MemoryStorage();
-        let dc = await createConfiguredTestDc(storage);
-
-        // Run test
-        let error = false;
-        try {
-            dc.state.setValue('turn.foo', 'bar');
-            dc.state.setValue(`turn.foo[3]`, 'test');
-        } catch (err) {
-            error = true;
-        }
-        assert(error);
+    it('raise an error for array assignments to non-array values.', function () {
+        assert.throws(() => {
+            this.dc.state.setValue('turn.foo', 'bar');
+            this.dc.state.setValue(`turn.foo[3]`, 'test');
+        });
     });
 
-    it('Should raise an error for un-matched brackets.', async function () {
-        // Create test dc
-        const storage = new MemoryStorage();
-        let dc = await createConfiguredTestDc(storage);
-
-        // Run test
-        let error = false;
-        try {
-            dc.state.setValue(`turn.foo[0`, 'test');
-        } catch (err) {
-            error = true;
-        }
-        assert(error);
+    it('raise an error for un-matched brackets.', function () {
+        assert.throws(() => this.dc.state.setValue(`turn.foo[0`, 'test'));
     });
 
-    it('Should alow indexer based path lookups.', async function () {
-        // Create test dc
-        const storage = new MemoryStorage();
-        let dc = await createConfiguredTestDc(storage);
-
-        // Run test
-        dc.state.setValue('turn.foo', 'bar');
-        const value = dc.state.getValue('["turn"].["foo"]');
-        assert(value == 'bar');
+    it('alow indexer based path lookups.', function () {
+        this.dc.state.setValue('turn.foo', 'bar');
+        assert.strictEqual(this.dc.state.getValue('["turn"].["foo"]'), 'bar');
     });
 
-    it('Should return "undefined" for index lookups again non-arrays.', async function () {
-        // Create test dc
-        const storage = new MemoryStorage();
-        let dc = await createConfiguredTestDc(storage);
-
-        // Run test
-        dc.state.setValue('turn.foo', 'bar');
-        assert(dc.state.getValue('turn.foo[2]') == undefined);
+    it('return "undefined" for index lookups again non-arrays.', function () {
+        this.dc.state.setValue('turn.foo', 'bar');
+        assert.strictEqual(this.dc.state.getValue('turn.foo[2]'), undefined);
     });
 
-    it('Should return "undefined" when first() called for empty array.', async function () {
-        // Create test dc
-        const storage = new MemoryStorage();
-        let dc = await createConfiguredTestDc(storage);
-
-        // Run test
-        dc.state.setValue('turn.foo', []);
-        assert(dc.state.getValue('turn.foo.first()') == undefined);
+    it('return "undefined" when first() called for empty array.', function () {
+        this.dc.state.setValue('turn.foo', []);
+        assert.strictEqual(this.dc.state.getValue('turn.foo.first()'), undefined);
     });
 
-    it('Should return "undefined" when first() called for empty nested array.', async function () {
-        // Create test dc
-        const storage = new MemoryStorage();
-        let dc = await createConfiguredTestDc(storage);
-
-        // Run test
-        dc.state.setValue('turn.foo', [[]]);
-        assert(dc.state.getValue('turn.foo.first()') == undefined);
+    it('return "undefined" when first() called for empty nested array.', function () {
+        this.dc.state.setValue('turn.foo', [[]]);
+        assert.strictEqual(this.dc.state.getValue('turn.foo.first()'), undefined);
     });
 
-    it('Should return "undefined" for a missing segment.', async function () {
-        // Create test dc
-        const storage = new MemoryStorage();
-        let dc = await createConfiguredTestDc(storage);
-
-        // Run test
-        dc.state.setValue('turn.foo', 'bar');
-        const value = dc.state.getValue('turn..foo');
-        assert(value == undefined);
+    it('return "undefined" for a missing segment.', function () {
+        this.dc.state.setValue('turn.foo', 'bar');
+        assert.strictEqual(this.dc.state.getValue('turn..foo'), undefined);
     });
 
-    it('Should raise an error for paths starting with a ".".', async function () {
-        // Create test dc
-        const storage = new MemoryStorage();
-        let dc = await createConfiguredTestDc(storage);
-
-        // Run test
-        let error = false;
-        try {
-            dc.state.setValue('.turn.foo', 'bar');
-        } catch (err) {
-            error = true;
-        }
-        assert(error);
+    it('raise an error for paths starting with a ".".', function () {
+        assert.throws(() => this.dc.state.setValue('.turn.foo', 'bar'));
     });
 });
