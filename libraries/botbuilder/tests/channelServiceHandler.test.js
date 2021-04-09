@@ -69,159 +69,143 @@ describe('ChannelServiceHandler', () => {
         });
 
         it('should fail with invalid credentialProvider or authConfig', () => {
-            try {
-                new NoAuthHandler();
-                assert.fail('Should not have successfully constructed without credentialProvider');
-            } catch (e) {
-                assert.strictEqual(e.message, 'BotFrameworkHttpClient(): missing credentialProvider');
-            }
+            assert.throws(
+                () => new NoAuthHandler(),
+                Error('BotFrameworkHttpClient(): missing credentialProvider')
+            );
 
-            try {
-                new NoAuthHandler(CREDENTIALS);
-                assert.fail('Should not have successfully constructed without authConfig');
-            } catch (e) {
-                assert.strictEqual(e.message, 'BotFrameworkHttpClient(): missing authConfig');
-            }
+            assert.throws(
+                () => new NoAuthHandler(CREDENTIALS),
+                Error('BotFrameworkHttpClient(): missing authConfig')
+            );
         });
     });
 
     describe('SendToConversation flow:', () => {
         it('handleSendToConversation should call onSendToConversation', async () => {
             const handler = new NoAuthHandler(CREDENTIALS, AUTH_CONFIG);
-            try {
-                await handler.handleSendToConversation(AUTH_HEADER, 'convId', { type: ActivityTypes.Message });
-                assert.fail('should have thrown');
-            } catch (e) {
-                assert.strictEqual(e.message, createDefaultErrorMessage('onSendToConversation'));
-            }
+
+            await assert.rejects(
+                handler.handleSendToConversation(AUTH_HEADER, 'convId', { type: ActivityTypes.Message }),
+                Error(createDefaultErrorMessage('onSendToConversation'))
+            );
         });
     });
 
     describe('ReplyToActivity flow:', () => {
         it('handleReplyToActivity should call onReplyToActivity', async () => {
             const handler = new NoAuthHandler(CREDENTIALS, AUTH_CONFIG);
-            try {
-                await handler.handleReplyToActivity(AUTH_HEADER, 'convId', ACTIVITY.id, ACTIVITY);
-                assert.fail('should have thrown');
-            } catch (e) {
-                assert.strictEqual(e.message, createDefaultErrorMessage('onReplyToActivity'));
-            }
+
+            await assert.rejects(
+                handler.handleReplyToActivity(AUTH_HEADER, 'convId', ACTIVITY.id, ACTIVITY),
+                Error(createDefaultErrorMessage('onReplyToActivity'))
+            );
         });
     });
 
     describe('UpdateActivity flow:', () => {
         it('handleUpdateActivity should call onUpdateActivity', async () => {
             const handler = new NoAuthHandler(CREDENTIALS, AUTH_CONFIG);
-            try {
-                await handler.handleUpdateActivity(AUTH_HEADER, 'convId', ACTIVITY.id, ACTIVITY);
-                assert.fail('should have thrown');
-            } catch (e) {
-                assert.strictEqual(e.message, createDefaultErrorMessage('onUpdateActivity'));
-            }
+
+            await assert.rejects(
+                handler.handleUpdateActivity(AUTH_HEADER, 'convId', ACTIVITY.id, ACTIVITY),
+                Error(createDefaultErrorMessage('onUpdateActivity'))
+            );
         });
     });
 
     describe('DeleteActivity flow:', () => {
         it('handleDeleteActivity should call onDeleteActivity', async () => {
             const handler = new NoAuthHandler(CREDENTIALS, AUTH_CONFIG);
-            try {
-                await handler.handleDeleteActivity(AUTH_HEADER, 'convId', ACTIVITY.id, ACTIVITY);
-                assert.fail('should have thrown');
-            } catch (e) {
-                assert.strictEqual(e.message, createDefaultErrorMessage('onDeleteActivity'));
-            }
+
+            await assert.rejects(
+                handler.handleDeleteActivity(AUTH_HEADER, 'convId', ACTIVITY.id, ACTIVITY),
+                Error(createDefaultErrorMessage('onDeleteActivity'))
+            );
         });
     });
 
     describe('GetActivityMembers flow:', () => {
         it('handleGetActivityMembers should call onGetActivityMembers', async () => {
             const handler = new NoAuthHandler(CREDENTIALS, AUTH_CONFIG);
-            try {
-                await handler.handleGetActivityMembers(AUTH_HEADER, 'convId', ACTIVITY.id);
-                assert.fail('should have thrown');
-            } catch (e) {
-                assert.strictEqual(e.message, createDefaultErrorMessage('onGetActivityMembers'));
-            }
+
+            await assert.rejects(
+                handler.handleGetActivityMembers(AUTH_HEADER, 'convId', ACTIVITY.id),
+                Error(createDefaultErrorMessage('onGetActivityMembers'))
+            );
         });
     });
 
     describe('CreateConversation flow:', () => {
         it('handleCreateConversation should call onCreateConversation', async () => {
             const handler = new NoAuthHandler(CREDENTIALS, AUTH_CONFIG);
-            try {
-                await handler.handleCreateConversation(AUTH_HEADER, { isGroup: false });
-                assert.fail('should have thrown');
-            } catch (e) {
-                assert.strictEqual(e.message, createDefaultErrorMessage('onCreateConversation'));
-            }
+
+            await assert.rejects(
+                handler.handleCreateConversation(AUTH_HEADER, { isGroup: false }),
+                Error(createDefaultErrorMessage('onCreateConversation'))
+            );
         });
     });
 
     describe('GetConversations flow:', () => {
         it('handleGetConversations should call onGetConversations', async () => {
             const handler = new NoAuthHandler(CREDENTIALS, AUTH_CONFIG);
-            try {
-                await handler.handleGetConversations(AUTH_HEADER, 'convId');
-                assert.fail('should have thrown');
-            } catch (e) {
-                assert.strictEqual(e.message, createDefaultErrorMessage('onGetConversations'));
-            }
+
+            await assert.rejects(
+                handler.handleGetConversations(AUTH_HEADER, 'convId'),
+                Error(createDefaultErrorMessage('onGetConversations'))
+            );
         });
     });
 
     describe('ConversationMembers flow:', () => {
         it('handleGetConversationMembers should call onGetConversationMembers', async () => {
             const handler = new NoAuthHandler(CREDENTIALS, AUTH_CONFIG);
-            try {
-                await handler.handleGetConversationMembers(AUTH_HEADER, 'convId');
-                assert.fail('should have thrown');
-            } catch (e) {
-                assert.strictEqual(e.message, createDefaultErrorMessage('onGetConversationMembers'));
-            }
+
+            await assert.rejects(
+                handler.handleGetConversationMembers(AUTH_HEADER, 'convId'),
+                Error(createDefaultErrorMessage('onGetConversationMembers'))
+            );
         });
 
         it('handleGetConversationPagedMembers should call onGetConversationPagedMembers', async () => {
             const handler = new NoAuthHandler(CREDENTIALS, AUTH_CONFIG);
-            try {
-                await handler.handleGetConversationPagedMembers(AUTH_HEADER, 'convId');
-                assert.fail('should have thrown');
-            } catch (e) {
-                assert.strictEqual(e.message, createDefaultErrorMessage('onGetConversationPagedMembers'));
-            }
+
+            await assert.rejects(
+                handler.handleGetConversationPagedMembers(AUTH_HEADER, 'convId'),
+                Error(createDefaultErrorMessage('onGetConversationPagedMembers'))
+            );
         });
 
         it('handleDeleteConversationMember should call onDeleteConversationMember', async () => {
             const handler = new NoAuthHandler(CREDENTIALS, AUTH_CONFIG);
-            try {
-                await handler.handleDeleteConversationMember(AUTH_HEADER, 'convId', 'memberId');
-                assert.fail('should have thrown');
-            } catch (e) {
-                assert.strictEqual(e.message, createDefaultErrorMessage('onDeleteConversationMember'));
-            }
+
+            await assert.rejects(
+                handler.handleDeleteConversationMember(AUTH_HEADER, 'convId', 'memberId'),
+                Error(createDefaultErrorMessage('onDeleteConversationMember'))
+            );
         });
     });
 
     describe('GetSendConversationHistory flow:', () => {
         it('handleSendConversationHistory should call onSendConversationHistory', async () => {
             const handler = new NoAuthHandler(CREDENTIALS, AUTH_CONFIG);
-            try {
-                await handler.handleSendConversationHistory(AUTH_HEADER, 'convId', { ACTIVITY });
-                assert.fail('should have thrown');
-            } catch (e) {
-                assert.strictEqual(e.message, createDefaultErrorMessage('onSendConversationHistory'));
-            }
+
+            await assert.rejects(
+                handler.handleSendConversationHistory(AUTH_HEADER, 'convId', { ACTIVITY }),
+                Error(createDefaultErrorMessage('onSendConversationHistory'))
+            );
         });
     });
 
     describe('GetUploadAttachment flow:', () => {
         it('handleUploadAttachment should call onUploadAttachment', async () => {
             const handler = new NoAuthHandler(CREDENTIALS, AUTH_CONFIG);
-            try {
-                await handler.handleUploadAttachment(AUTH_HEADER, 'convId', { type: 'string', name: 'attachment' });
-                assert.fail('should have thrown');
-            } catch (e) {
-                assert.strictEqual(e.message, createDefaultErrorMessage('onUploadAttachment'));
-            }
+
+            await assert.rejects(
+                handler.handleUploadAttachment(AUTH_HEADER, 'convId', { type: 'string', name: 'attachment' }),
+                Error(createDefaultErrorMessage('onUploadAttachment'))
+            );
         });
     });
 
@@ -251,12 +235,10 @@ describe('ChannelServiceHandler', () => {
             it('should throw an error when auth is enabled', async () => {
                 mockAuthDisabled(false);
 
-                try {
-                    await handler.authenticate();
-                    assert.fail('should have thrown');
-                } catch (e) {
-                    assert.strictEqual(e.statusCode, StatusCodes.UNAUTHORIZED);
-                }
+                await assert.rejects(
+                    handler.authenticate(),
+                    { statusCode: StatusCodes.UNAUTHORIZED }
+                );
 
                 sandbox.verify();
             });
@@ -277,12 +259,10 @@ describe('ChannelServiceHandler', () => {
             });
 
             it('should throw an UNAUTHORIZED error for a bad auth header', async () => {
-                try {
-                    await handler.authenticate(AUTH_HEADER);
-                    assert.fail('should have thrown');
-                } catch (e) {
-                    assert.strictEqual(e.statusCode, StatusCodes.UNAUTHORIZED);
-                }
+                await assert.rejects(
+                    handler.authenticate(AUTH_HEADER),
+                    { statusCode: StatusCodes.UNAUTHORIZED }
+                );
             });
         });
     });

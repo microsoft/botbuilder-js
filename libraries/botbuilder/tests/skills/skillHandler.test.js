@@ -98,12 +98,10 @@ describe('SkillHandler', function () {
 
         testCases.forEach((testCase) => {
             it(`should fail without required ${testCase.label}`, () => {
-                try {
-                    new SkillHandler(...testCase.args);
-                    assert.fail('should have thrown');
-                } catch (err) {
-                    assert.strictEqual(err.message, `missing ${testCase.label}.`);
-                }
+                assert.throws(
+                    () => new SkillHandler(...testCase.args),
+                    Error(`missing ${testCase.label}.`)
+                );
             });
         });
 
@@ -201,12 +199,10 @@ describe('SkillHandler', function () {
             it('should fail without a skillConversationReference', async () => {
                 expectsFactoryGetSkillConversationReference(null);
 
-                try {
-                    await handler.processActivity({}, 'convId', 'replyId', {});
-                    assert.fail('should have thrown');
-                } catch (e) {
-                    assert.strictEqual(e.message, 'skillConversationReference not found');
-                }
+                await assert.rejects(
+                    handler.processActivity({}, 'convId', 'replyId', {}),
+                    Error('skillConversationReference not found')
+                );
 
                 sandbox.verify();
             });
@@ -214,12 +210,10 @@ describe('SkillHandler', function () {
             it('should fail without a conversationReference', async () => {
                 expectsFactoryGetSkillConversationReference({});
 
-                try {
-                    await handler.processActivity({}, 'convId', 'replyId', {});
-                    assert.fail('should have thrown');
-                } catch (e) {
-                    assert.strictEqual(e.message, 'conversationReference not found.');
-                }
+                await assert.rejects(
+                    handler.processActivity({}, 'convId', 'replyId', {}),
+                    Error('conversationReference not found.')
+                );
 
                 sandbox.verify();
             });

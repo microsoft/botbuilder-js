@@ -561,12 +561,10 @@ describe('InspectionMiddleware', function () {
 
         const adapter = new TestAdapter(
             async (turnContext) => {
-                try {
-                    await inspectionMiddleware.onTurn(turnContext, null);
-                    throw new Error('should have thrown an error.');
-                } catch (error) {
-                    assert.strictEqual(error.message, 'next is not a function', 'next function should be null');
-                }
+                await assert.rejects(
+                    inspectionMiddleware.onTurn(turnContext, null),
+                    TypeError('next is not a function', 'next function should be null')
+                );
             },
             null,
             true

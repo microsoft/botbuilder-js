@@ -78,14 +78,10 @@ describe('TeamsActivityHelpers method', function () {
         });
 
         it('should throw an error if no activity is passed in', () => {
-            try {
-                teamsGetChannelId(undefined);
-            } catch (err) {
-                assert.strictEqual(err.message, 'Missing activity parameter');
-                return;
-            }
-
-            throw new Error('Should have thrown');
+            assert.throws(
+                () => teamsGetChannelId(undefined),
+                Error('Missing activity parameter')
+            );
         });
     });
 
@@ -109,14 +105,10 @@ describe('TeamsActivityHelpers method', function () {
         });
 
         it('should throw an error if no activity is passed in', () => {
-            try {
-                teamsGetTeamId(undefined);
-            } catch (err) {
-                assert.strictEqual(err.message, 'Missing activity parameter');
-                return;
-            }
-
-            throw new Error('Should have thrown');
+            assert.throws(
+                () => teamsGetTeamId(undefined),
+                Error('Missing activity parameter')
+            );
         });
     });
 
@@ -134,14 +126,10 @@ describe('TeamsActivityHelpers method', function () {
         });
 
         it('should throw an error if no activity is passed in', () => {
-            try {
-                teamsNotifyUser(undefined);
-            } catch (err) {
-                assert.strictEqual(err.message, 'Missing activity parameter');
-                return;
-            }
-
-            throw new Error('Should have thrown');
+            assert.throws(
+                () => teamsNotifyUser(undefined),
+                Error('Missing activity parameter')
+            );
         });
 
         it('should add notify with no notification in channelData', async function () {
@@ -159,13 +147,10 @@ describe('TeamsActivityHelpers method', function () {
         });
 
         it('should throw an error if no activity is passed in', () => {
-            try {
-                teamsNotifyUser(undefined, true, 'externalUrl');
-            } catch (err) {
-                assert.strictEqual(err.message, 'Missing activity parameter');
-                return;
-            }
-            throw new Error('Should have thrown');
+            assert.throws(
+                () => teamsNotifyUser(undefined, true, 'externalUrl'),
+                Error('Missing activity parameter')
+            );
         });
     });
 
@@ -195,14 +180,10 @@ describe('TeamsActivityHelpers method', function () {
         });
 
         it('should throw an error if no activity is passed in', () => {
-            try {
-                teamsGetTeamInfo(undefined);
-            } catch (err) {
-                assert.strictEqual(err.message, 'Missing activity parameter');
-                return;
-            }
-
-            throw new Error('Should have thrown');
+            assert.throws(
+                () => teamsGetTeamInfo(undefined),
+                Error('Missing activity parameter')
+            );
         });
     });
 });

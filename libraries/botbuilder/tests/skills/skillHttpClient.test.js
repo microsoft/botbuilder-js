@@ -1,4 +1,4 @@
-const { strictEqual } = require('assert');
+const assert = require('assert');
 const { SkillHttpClient } = require('../../');
 const { SimpleCredentialProvider } = require('botframework-connector');
 
@@ -8,10 +8,9 @@ describe('SkillHttpClient', function() {
     });
 
     it('should fail to construct without required parameters', () => {
-        try {
-            new SkillHttpClient(new SimpleCredentialProvider('', ''));
-        } catch (e) {
-            strictEqual(e.message, 'conversationIdFactory missing');
-        }
+        assert.throws(
+            () => new SkillHttpClient(new SimpleCredentialProvider('', '')),
+            Error('conversationIdFactory missing')
+        );
     });
 });

@@ -84,66 +84,52 @@ describe('The FileTranscriptStore', () => {
 
 	describe('should throw when', () => {
 		it('is constructed without a root folder', () => {
-			try {
-				new FileTranscriptStore(null);
-				assert.fail('constructing a new FileTranscriptStore without a root folder should throw');
-			} catch (e) {
-				assert.ok(e.message === 'Missing folder.', 'An error should exist');
-			}
+			assert.throws(
+                () => new FileTranscriptStore(null),
+                Error('Missing folder.', 'An error should exist')
+            );
 		});
 
 		it('no activity is passed to the "logActivity" function', async () => {
-			try {
-				await storage.logActivity(null);
-				assert.fail('logActivity did not throw when a null activity was passed in');
-			} catch (e) {
-				assert.ok(e.message === 'activity cannot be null for logActivity()', 'An error should exist');
-			}
+			await assert.rejects(
+                storage.logActivity(null),
+                Error('activity cannot be null for logActivity()', 'An error should exist')
+            );
 		});
 
 		it('no channelId is passed to the "getTranscriptActivities" function', async () => {
-			try {
-				await storage.getTranscriptActivities(null, '123456');
-				assert.fail('getTranscriptActivities did not throw when a null channelId was passed in');
-			} catch (e) {
-				assert.ok(e.message === 'Missing channelId', 'An error should exist');
-			}
+			await assert.rejects(
+                storage.getTranscriptActivities(null, '123456'),
+                Error('Missing channelId', 'An error should exist')
+            );
 		});
 
 		it('no conversationId is passed to the "getTranscriptActivities" function', async () => {
-			try {
-				await storage.getTranscriptActivities({});
-				assert.fail('getTranscriptActivities did not throw when a null conversationId was passed in');
-			} catch (e) {
-				assert.ok(e.message === 'Missing conversationId', 'An error should exist');
-			}
+			await assert.rejects(
+                storage.getTranscriptActivities({}),
+                Error('Missing conversationId', 'An error should exist')
+            );
 		});
 
 		it('no channelId is passed to the "listTranscripts" function', async () => {
-			try {
-				await storage.listTranscripts();
-				assert.fail('listTranscripts did not throw when a null channelId was passed in');
-			} catch (e) {
-				assert.ok(e.message === 'Missing channelId', 'An error should exist');
-			}
+			await assert.rejects(
+                storage.listTranscripts(),
+                Error('Missing channelId', 'An error should exist')
+            );
 		});
 
 		it('no channelId is passed to the "deleteTranscript" function', async () => {
-			try {
-				await storage.deleteTranscript();
-				assert.fail('deleteTranscript did not throw when a null channelId was passed in');
-			} catch (e) {
-				assert.ok(e.message === 'Missing channelId', 'An error should exist');
-			}
+			await assert.rejects(
+                storage.deleteTranscript(),
+                Error('Missing channelId', 'An error should exist')
+            );
 		});
 
 		it('no conversationId is passed to the "deleteTranscript" function', async () => {
-			try {
-				await storage.deleteTranscript({});
-				assert.fail('deleteTranscript did not throw when a null conversationId was passed in');
-			} catch (e) {
-				assert.ok(e.message === 'Missing conversationId', 'An error should exist');
-			}
+			await assert.rejects(
+                storage.deleteTranscript({}),
+                Error('Missing conversationId', 'An error should exist')
+            );
 		});
 	});
 

@@ -98,11 +98,11 @@ describe('BotFrameworkAdapter Streaming tests', () => {
 
         const adapter = new BotFrameworkAdapter({});
         adapter.streamingServer = { isConnected: false };
-        try {
-            await adapter.sendActivities(new TurnContext(adapter, activity), [reply]);
-        } catch (err) {
-            expect(err.message).contains('BotFrameworkAdapter.sendActivities(): Unable to send activity as Streaming connection is closed.');
-        }
+
+        await assert.rejects(
+            adapter.sendActivities(new TurnContext(adapter, activity), [reply]),
+            Error('BotFrameworkAdapter.sendActivities(): Unable to send activity as Streaming connection is closed.')
+        );
     });
 
     it('starts and stops a websocket server', async () => {
@@ -154,18 +154,20 @@ describe('BotFrameworkAdapter Streaming tests', () => {
             const writeSpy = spy(socket, 'write');
             const destroySpy = spy(socket, 'destroy');
 
-            try {
-                await adapter.useWebSocket(request, socket, Buffer.from([]), async (context) => {
+            await assert.rejects(
+                adapter.useWebSocket(request, socket, Buffer.from([]), async (context) => {
                     await bot.run(context);
-                });
-            } catch (err) {
-                expect(err.statusCode).to.equal(StatusCodes.UNAUTHORIZED);
-                expect(err.message).to.equal('Unauthorized. Is not authenticated');
-                const socketResponse = MockNetSocket.createNonSuccessResponse(StatusCodes.UNAUTHORIZED, err.message);
-                expect(writeSpy.called).to.be.true;
-                expect(writeSpy.calledWithExactly(socketResponse)).to.be.true;
-                expect(destroySpy.calledOnceWithExactly()).to.be.true;
-            }
+                }),
+                (err) => {
+                    expect(err.statusCode).to.equal(StatusCodes.UNAUTHORIZED);
+                    expect(err.message).to.equal('Unauthorized. Is not authenticated');
+                    const socketResponse = MockNetSocket.createNonSuccessResponse(StatusCodes.UNAUTHORIZED, err.message);
+                    expect(writeSpy.called).to.be.true;
+                    expect(writeSpy.calledWithExactly(socketResponse)).to.be.true;
+                    expect(destroySpy.calledOnceWithExactly()).to.be.true;
+                    return true;
+                }
+            );
         });
 
         it('returns status code 400 when request is missing Authorization header', async () => {
@@ -178,18 +180,20 @@ describe('BotFrameworkAdapter Streaming tests', () => {
             const writeSpy = spy(socket, 'write');
             const destroySpy = spy(socket, 'destroy');
 
-            try {
-                await adapter.useWebSocket(requestWithoutAuthHeader, socket, Buffer.from([]), async (context) => {
+            await assert.rejects(
+                adapter.useWebSocket(requestWithoutAuthHeader, socket, Buffer.from([]), async (context) => {
                     await bot.run(context);
-                });
-            } catch (err) {
-                expect(err.message).to.equal("'authHeader' required.");
-                expect(err.statusCode).to.equal(StatusCodes.BAD_REQUEST);
-                const socketResponse = MockNetSocket.createNonSuccessResponse(StatusCodes.BAD_REQUEST, err.message);
-                expect(writeSpy.called).to.be.true;
-                expect(writeSpy.calledWithExactly(socketResponse)).to.be.true;
-                expect(destroySpy.calledOnceWithExactly()).to.be.true;
-            };
+                }),
+                (err) => {
+                    expect(err.message).to.equal("'authHeader' required.");
+                    expect(err.statusCode).to.equal(StatusCodes.BAD_REQUEST);
+                    const socketResponse = MockNetSocket.createNonSuccessResponse(StatusCodes.BAD_REQUEST, err.message);
+                    expect(writeSpy.called).to.be.true;
+                    expect(writeSpy.calledWithExactly(socketResponse)).to.be.true;
+                    expect(destroySpy.calledOnceWithExactly()).to.be.true;
+                    return true;
+                }
+            );
         });
 
         it('returns status code 500 when request logic is not callable', async () => {
@@ -200,12 +204,14 @@ describe('BotFrameworkAdapter Streaming tests', () => {
             const useWebSocketSpy = spy(adapter, 'useWebSocket');
             const uncallableLogic = null;
 
-            try {
-                await adapter.useWebSocket(request, socket, Buffer.from([]), uncallableLogic);
-            } catch (err) {
-                expect(err.message).to.equal('Streaming logic needs to be provided to `useWebSocket`');
-                expect(useWebSocketSpy.called).to.be.true;
-            }
+            await assert.rejects(
+                adapter.useWebSocket(request, socket, Buffer.from([]), uncallableLogic),
+                (err) => {
+                    expect(err.message).to.equal('Streaming logic needs to be provided to `useWebSocket`');
+                    expect(useWebSocketSpy.called).to.be.true;
+                    return true;
+                }
+            );
         });
     });
 

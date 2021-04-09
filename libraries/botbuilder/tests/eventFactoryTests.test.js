@@ -45,11 +45,10 @@ describe('EventFactory', function() {
         });
 
         it('should throw if turnContext is falsy', () => {
-            try {
-                EventFactory.createHandoffInitiation(null, 'some text');
-            } catch (e) {
-                strictEqual(e.message, 'EventFactory.createHandoffInitiation(): Missing context.');
-            }
+            assert.throws(
+                () => EventFactory.createHandoffInitiation(null, 'some text'),
+                TypeError('EventFactory.createHandoffInitiation(): Missing context.')
+            );
         });
     });
 
@@ -86,19 +85,17 @@ describe('EventFactory', function() {
         });
 
         it('should throw if conversation is falsy', () => {
-            try {
-                EventFactory.createHandoffStatus(null, 'some text');
-            } catch (e) {
-                strictEqual(e.message, 'EventFactory.createHandoffStatus(): missing conversation.');
-            }
+            assert.throws(
+                () => EventFactory.createHandoffStatus(null, 'some text'),
+                TypeError('EventFactory.createHandoffStatus(): missing conversation.')
+            );
         });
 
         it('should throw if state is falsy', () => {
-            try {
-                EventFactory.createHandoffStatus({}, null);
-            } catch (e) {
-                strictEqual(e.message, 'EventFactory.createHandoffStatus(): missing state.');
-            }
+            assert.throws(
+                () => EventFactory.createHandoffStatus({}, null),
+                TypeError('EventFactory.createHandoffStatus(): missing state.')
+            );
         });
     });
 });

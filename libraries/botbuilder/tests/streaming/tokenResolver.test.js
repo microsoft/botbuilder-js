@@ -55,15 +55,10 @@ describe(`TokenResolver`, function () {
         activity.attachments[0].content.connectionName = undefined;
         const context = adapter.createTurnContext(activity);
 
-        try
-        {
-            TokenResolver.checkForOAuthCards(adapter, context, activity);
-            assert(false, 'did not throw when should have');
-        }
-        catch(e)
-        {
-            assert(e.message === 'The OAuthPrompt\'s ConnectionName property is missing a value.', 'did not receive token');
-        }
+        await assert.throws(
+            () => TokenResolver.checkForOAuthCards(adapter, context, activity),
+            Error('The OAuthPrompt\'s ConnectionName property is missing a value.', 'did not receive token')
+        );
     });
 
     it(`no attachements is a no-op`, async function () {
