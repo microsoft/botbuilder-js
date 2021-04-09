@@ -109,11 +109,18 @@ function addFeatures(services: ServiceCollection, configuration: Configuration):
 
 function addTelemetry(services: ServiceCollection, configuration: Configuration): void {
     services.addFactory('botTelemetryClient', () => {
-        const instrumentationKey = configuration.string(['instrumentationKey']);
+        const telemetryOptions = configuration.type(
+            ['options'],
+            t
+                .Record({
+                    connectionString: t.String,
+                    instrumentationKey: t.String,
+                })
+                .asPartial()
+        );
 
-        return instrumentationKey
-            ? new ApplicationInsightsTelemetryClient(instrumentationKey)
-            : new NullTelemetryClient();
+        const setupString = telemetryOptions?.connectionString ?? telemetryOptions?.instrumentationKey;
+        return setupString ? new ApplicationInsightsTelemetryClient(setupString) : new NullTelemetryClient();
     });
 
     services.addFactory(
