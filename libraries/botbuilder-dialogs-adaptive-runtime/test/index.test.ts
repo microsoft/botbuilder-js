@@ -5,7 +5,7 @@ import { BlobsStorage } from 'botbuilder-azure-blobs';
 import { BotComponent, BotFrameworkAdapter, MemoryStorage } from 'botbuilder';
 import { Configuration, getRuntimeServices } from '../src';
 import { CosmosDbPartitionedStorage } from 'botbuilder-azure';
-import { ok } from 'assert';
+import { ok, strictEqual } from 'assert';
 import { ServiceCollection, Configuration as CoreConfiguration } from 'botbuilder-dialogs-adaptive-runtime-core';
 
 describe('getRuntimeServices', () => {
@@ -19,6 +19,20 @@ describe('getRuntimeServices', () => {
         const [services] = await getRuntimeServices(__dirname, new Configuration());
         ok(services);
         ok(services.makeInstances());
+    });
+
+    it('merges composer configuration', async function () {
+        const [, configuration] = await getRuntimeServices(__dirname, __dirname);
+        ok(configuration);
+
+        // Ensure bot root is merged in
+        strictEqual(configuration.string(['BotRoot']), '.');
+
+        // Ensure resolved luis endpoint is merged in
+        strictEqual(configuration.string(['luis', 'endpoint']), 'https://westus.api.cognitive.microsoft.com');
+
+        // Ensure that a setting in a generated file is merged in
+        strictEqual(configuration.string(['luis', 'fancySetting']), 'fancyValue');
     });
 
     it('supports bot components and late binding configuration', async () => {
