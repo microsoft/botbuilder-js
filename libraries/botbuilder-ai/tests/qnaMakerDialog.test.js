@@ -83,7 +83,7 @@ describe('QnAMakerDialog', function () {
         it('should construct v4 API endpoint', async function () {
             const INCOMPLETE_HOSTNAME = 'myqnainstance';
             const HOSTNAME = 'https://myqnainstance.azurewebsites.net/qnamaker';
-            const NON_AZURE_HOSTNAME = 'https://custom.someothersite.tld/qnamaker';
+            const NON_AZURE_HOSTNAME = 'https://custom.some-other-site.tld/qnamaker';
 
             // Create QnAMakerDialog with incomplete hostname
             const qnaDialog = new QnAMakerDialog(kbId, endpointKey, INCOMPLETE_HOSTNAME);
