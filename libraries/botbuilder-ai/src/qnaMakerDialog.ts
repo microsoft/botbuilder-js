@@ -816,7 +816,7 @@ export class QnAMakerDialog extends WaterfallDialog implements QnAMakerDialogCon
 
         // V4 API logic
         // If the hostname contains all the necessary information, return it
-        if (/^https:\/\/.*\.azurewebsites\.net\/qnamaker\/?/i.test(host)) {
+        if (/^https:\/\/.*\.*\.\w{2,}\/qnamaker\/?/i.test(host)) {
             return host;
         }
 

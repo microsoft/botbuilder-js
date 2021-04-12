@@ -83,15 +83,21 @@ describe('QnAMakerDialog', function () {
         it('should construct v4 API endpoint', async function () {
             const INCOMPLETE_HOSTNAME = 'myqnainstance';
             const HOSTNAME = 'https://myqnainstance.azurewebsites.net/qnamaker';
+            const NON_AZURE_HOSTNAME = 'https://custom.someothersite.tld/qnamaker';
 
             // Create QnAMakerDialog with incomplete hostname
             const qnaDialog = new QnAMakerDialog(kbId, endpointKey, INCOMPLETE_HOSTNAME);
             const fixedClient = await qnaDialog.getQnAMakerClient({ state: {} });
 
+            // Non-Azure Hostname
+            const qnaDialogNonAzure = new QnAMakerDialog(kbId, endpointKey, NON_AZURE_HOSTNAME);
+            const fixedClientNonAzure = await qnaDialogNonAzure.getQnAMakerClient({ state: {} });
+
             ok(fixedClient instanceof QnAMaker);
             strictEqual(fixedClient.endpoint.knowledgeBaseId, kbId);
             strictEqual(fixedClient.endpoint.endpointKey, endpointKey);
             strictEqual(fixedClient.endpoint.host, HOSTNAME);
+            strictEqual(fixedClientNonAzure.endpoint.host, NON_AZURE_HOSTNAME);
         });
 
         it('should construct BAD v4 hostnames', async function () {
