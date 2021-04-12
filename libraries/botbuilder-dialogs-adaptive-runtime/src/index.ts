@@ -351,7 +351,7 @@ async function addSettingsBotComponents(services: ServiceCollection, configurati
     }
 }
 
-async function addComposerConfiguration(configuration: Configuration): Promise<void> {
+function addComposerConfiguration(configuration: Configuration): void {
     const botRoot = configuration.string(['bot']) ?? '.';
     configuration.set(['BotRoot'], botRoot);
 
@@ -395,7 +395,7 @@ async function normalizeConfiguration(configuration: Configuration, applicationR
         )
     );
 
-    return addComposerConfiguration(configuration);
+    addComposerConfiguration(configuration);
 }
 
 function registerAdaptiveComponents(services: ServiceCollection, configuration: Configuration): void {
