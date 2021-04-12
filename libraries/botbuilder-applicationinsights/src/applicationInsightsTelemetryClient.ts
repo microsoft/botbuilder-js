@@ -74,16 +74,34 @@ export class ApplicationInsightsTelemetryClient implements BotTelemetryClient, B
     private config: appInsights.Configuration;
 
     /**
-     * Creates a new instance of the [ApplicationInsightsTelemetryClient](xref:botbuilder-applicationinsights.ApplicationInsightsTelemetryClient) class.
+     * Creates a new instance of the
+     * [ApplicationInsightsTelemetryClient](xref:botbuilder-applicationinsights.ApplicationInsightsTelemetryClient)
+     * class.
      *
-     * @param instrumentationKey The ApplicationInsights instrumentation key.
+     * @param connectionString The ApplicationInsights connection string.
+     *
      * @remarks The settings parameter is passed directly into appInsights.setup().
      * https://www.npmjs.com/package/applicationinsights#basic-usage
-     * This function currently takes an app insights instrumentation key only.
      */
-    constructor(instrumentationKey: string) {
+    constructor(connectionString: string);
+    /**
+     * Creates a new instance of the
+     * [ApplicationInsightsTelemetryClient](xref:botbuilder-applicationinsights.ApplicationInsightsTelemetryClient)
+     * class.
+     *
+     * @param instrumentationKey The ApplicationInsights instrumentation key.
+     *
+     * @remarks The settings parameter is passed directly into appInsights.setup().
+     * https://www.npmjs.com/package/applicationinsights#basic-usage
+     */
+    constructor(instrumentationKey: string);
+
+    /**
+     * @internal
+     */
+    constructor(setupString: string) {
         this.config = appInsights
-            .setup(instrumentationKey)
+            .setup(setupString)
             .setAutoDependencyCorrelation(true)
             .setAutoCollectRequests(true)
             .setAutoCollectPerformance(true)
