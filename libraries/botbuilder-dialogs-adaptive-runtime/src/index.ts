@@ -351,6 +351,35 @@ async function addSettingsBotComponents(services: ServiceCollection, configurati
     }
 }
 
+function addComposerConfiguration(configuration: Configuration): void {
+    const botRoot = configuration.string(['bot']) ?? '.';
+    configuration.set(['BotRoot'], botRoot);
+
+    const luisRegion =
+        configuration.string(['LUIS_AUTHORING_REGION']) ??
+        configuration.string(['luis', 'authoringRegion']) ??
+        configuration.string(['luis', 'region']) ??
+        'westus';
+
+    const luisEndpoint =
+        configuration.string(['luis', 'endpoint']) ?? `https://${luisRegion}.api.cognitive.microsoft.com`;
+    configuration.set(['luis', 'endpoint'], luisEndpoint);
+
+    const userName = process.env.USERNAME ?? process.env.USER;
+
+    let environment = configuration.string(['luis', 'environment']) ?? userName;
+    if (environment === 'Development') {
+        environment = userName;
+    }
+
+    configuration.file(path.join(botRoot, 'generated', `luis.settings.${environment}.${luisRegion}.json`));
+
+    const qnaRegion = configuration.string(['qna', 'qnaRegion']) ?? 'westus';
+    configuration.file(path.join(botRoot, 'generated', `qnamaker.settings.${environment}.${qnaRegion}.json`));
+
+    configuration.file(path.join(botRoot, 'generated', `orchestrator.settings.json`));
+}
+
 async function normalizeConfiguration(configuration: Configuration, applicationRoot: string): Promise<void> {
     // Override applicationRoot setting
     configuration.set(['applicationRoot'], applicationRoot);
@@ -365,6 +394,8 @@ async function normalizeConfiguration(configuration: Configuration, applicationR
             )
         )
     );
+
+    addComposerConfiguration(configuration);
 }
 
 function registerAdaptiveComponents(services: ServiceCollection, configuration: Configuration): void {
