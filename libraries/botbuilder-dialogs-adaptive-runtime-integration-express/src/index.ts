@@ -1,9 +1,20 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-import * as http from 'http';
+/**
+ * Files to serve:
+ *
+ * - skill manifest
+ * - lu and qna files (input for doing dispatch)
+ * - explicitly added to some directory, not implicit by default
+ * - explicit file match or 404s
+ * - content type must be registered, if not it 404s
+ */
+
 import * as t from 'runtypes';
 import express from 'express';
+import path from 'path';
+import type { Server } from 'http';
 import { ActivityHandlerBase, BotFrameworkAdapter } from 'botbuilder';
 import { Configuration, getRuntimeServices } from 'botbuilder-dialogs-adaptive-runtime';
 import { ServiceCollection } from 'botbuilder-dialogs-adaptive-runtime-core';
@@ -49,24 +60,34 @@ export async function start(
     options: Partial<Options> = {}
 ): Promise<void> {
     const [services, configuration] = await getRuntimeServices(applicationRoot, settingsDirectory);
-    const [_, listen] = await makeApp(services, configuration, options);
+    const [_, listen] = await makeApp(services, configuration, applicationRoot, options);
 
     listen();
 }
+
+// Content type overrides for specific file extensions
+const extensionContentTypes: Record<string, string> = {
+    '.lu': 'application/lu',
+    '.qna': 'application/qna',
+};
 
 /**
  * Create an Express App using the runtime Express integration.
  *
  * @param services runtime service collection
  * @param configuration runtime configuration
+ * @param applicationRoot application root directory
  * @param options options bag for configuring Express Application
+ * @param app optional predefined express app, useful to register middleware
  * @returns the Express Application and a function to start the App & handle "upgrade" requests for Streaming
  */
 export async function makeApp(
     services: ServiceCollection,
     configuration: Configuration,
-    options: Partial<Options> = {}
-): Promise<[app: express.Application, listen: (callback?: () => void) => http.Server]> {
+    applicationRoot: string,
+    options: Partial<Options> = {},
+    app = express()
+): Promise<[app: express.Application, listen: (callback?: () => void) => Server]> {
     const configOverrides: Partial<Options> = {};
 
     const port = ['port', 'PORT'].map((key) => configuration.string([key])).find((port) => port !== undefined);
@@ -92,7 +113,16 @@ export async function makeApp(
         customAdapters: Map<string, BotFrameworkAdapter>;
     }>('adapter', 'bot', 'customAdapters');
 
-    const app = express();
+    app.use(
+        express.static(path.join(applicationRoot, 'public'), {
+            setHeaders: (res, filePath) => {
+                const contentType = extensionContentTypes[path.extname(filePath)];
+                if (contentType) {
+                    res.setHeader('Content-Type', contentType);
+                }
+            },
+        })
+    );
 
     app.post(resolvedOptions.messagingEndpointPath, async (req, res) => {
         try {
@@ -138,8 +168,9 @@ export async function makeApp(
     return [
         app,
         (callback) => {
-            // The 'upgrade' event handler for processing WebSocket requests needs to be registered on the Node.js http.Server, not the Express.Application.
-            // In Express the underlying http.Server is made available after the app starts listening for requests.
+            // The 'upgrade' event handler for processing WebSocket requests needs to be registered on the Node.js
+            // http.Server, not the Express.Application. In Express the underlying http.Server is made available
+            // after the app starts listening for requests.
             const server = app.listen(
                 resolvedOptions.port,
                 callback ?? (() => console.log(`server listening on port ${resolvedOptions.port}`))
