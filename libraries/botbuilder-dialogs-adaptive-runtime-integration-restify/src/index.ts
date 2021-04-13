@@ -70,8 +70,8 @@ export async function start(
 
 // Content type overrides for specific file extensions
 const extensionContentTypes: Record<string, string> = {
-    '.lu': 'application/lu',
-    '.qna': 'application/qna',
+    '.lu': 'vnd.application/lu',
+    '.qna': 'vnd.application/qna',
 };
 
 /**
