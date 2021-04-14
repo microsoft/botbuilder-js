@@ -102,7 +102,7 @@ export class TeamsSSOTokenExchangeMiddleware implements Middleware {
 
             // Do NOT proceed processing this message, some other thread or machine already has processed it.
             // Send 200 invoke response.
-            if (message.includes('etag conflict') || message.includes('pre-condition is not met')) {
+            if (message.includes('etag conflict') || message.includes('precondition is not met')) {
                 await this.sendInvokeResponse(context);
                 return false;
             }
