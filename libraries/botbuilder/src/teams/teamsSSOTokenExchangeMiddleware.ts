@@ -1,11 +1,16 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-import * as signInConstants from '../signInConstants';
-import { ExtendedUserTokenProvider } from '../extendedUserTokenProvider';
-import { Middleware } from '../middlewareSet';
-import { Storage, StoreItem } from '../storage';
-import { TurnContext } from '../turnContext';
+import { Assertion, assert } from 'botbuilder-stdlib';
+
+import {
+    ExtendedUserTokenProvider,
+    Middleware,
+    Storage,
+    StoreItem,
+    TurnContext,
+    tokenExchangeOperationName,
+} from 'botbuilder-core';
 
 import {
     ActivityTypes,
@@ -20,21 +25,33 @@ function getStorageKey(context: TurnContext): string {
 
     const channelId = activity.channelId;
     if (!channelId) {
-        throw new Error('invalid activity-missing channelId');
+        throw new Error('invalid activity. Missing channelId');
     }
 
     const conversationId = activity.conversation?.id;
     if (!conversationId) {
-        throw new Error('invalid activity-missing Conversation.Id');
+        throw new Error('invalid activity. Missing conversation.id');
     }
 
     const value = activity.value;
     if (!value?.id) {
-        throw new Error('Invalid signin/tokenExchange. Missing activity.Value.Id.');
+        throw new Error('Invalid signin/tokenExchange. Missing activity.value.id.');
     }
 
     return `${channelId}/${conversationId}/${value.id}`;
 }
+
+async function sendInvokeResponse(context: TurnContext, body: unknown = null, status = StatusCodes.OK): Promise<void> {
+    await context.sendActivity({
+        type: ActivityTypes.InvokeResponse,
+        value: { body, status },
+    });
+}
+
+const assertExchangeToken: Assertion<Pick<ExtendedUserTokenProvider, 'exchangeToken'>> = (val, path) => {
+    assert.unsafe.castObjectAs<ExtendedUserTokenProvider>(val, path);
+    assert.func(val.exchangeToken, path.concat('exchangeToken'));
+};
 
 /**
  * If the activity name is signin/tokenExchange, this middleware will attempt to
@@ -43,15 +60,13 @@ function getStorageKey(context: TurnContext): string {
  *
  * If a user is signed into multiple Teams clients, the Bot could receive a
  * "signin/tokenExchange" from each client. Each token exchange request for a
- * specific user login will have an identical Activity.Value.Id.
+ * specific user login will have an identical activity.value.id.
  *
  * Only one of these token exchange requests should be processed by the bot.
- * The others return <see cref="System.Net.HttpStatusCode.PreconditionFailed"/>.
- * For a distributed bot in production, this requires a distributed storage
+ * The others return [StatusCodes.PRECONDITION_FAILED](xref:botframework-schema:StatusCodes.PRECONDITION_FAILED).
+ * For a distributed bot in production, this requires distributed storage
  * ensuring only one token exchange is processed. This middleware supports
- * CosmosDb storage found in Microsoft.Bot.Builder.Azure, or MemoryStorage for
- * local development. IStorage's ETag implementation for token exchange activity
- * deduplication.
+ * CosmosDb storage found in botbuilder-azure, or MemoryStorage for local development.
  */
 export class TeamsSSOTokenExchangeMiddleware implements Middleware {
     /**
@@ -69,14 +84,14 @@ export class TeamsSSOTokenExchangeMiddleware implements Middleware {
      * @param next Function to call to continue execution to the next step in the middleware chain.
      */
     async onTurn(context: TurnContext, next: () => Promise<void>): Promise<void> {
-        if (context.activity.name === signInConstants.tokenExchangeOperationName) {
-            // If the TokenExchange is NOT successful, the response will have already been sent by ExchangedTokenAsync
+        if (context.activity.name === tokenExchangeOperationName) {
+            // If the TokenExchange is NOT successful, the response will have already been sent by exchangedToken
             if (!(await this.exchangedToken(context))) {
                 return;
             }
 
             // Only one token exchange should proceed from here. Deduplication is performed second because in the case
-            // of failure due to consent required, every caller needs to receive the
+            // of failure due to consent required, every caller needs to receive a response
             if (!(await this.deduplicatedTokenExchangeId(context))) {
                 // If the token is not exchangeable, do not process this activity further.
                 return;
@@ -103,7 +118,7 @@ export class TeamsSSOTokenExchangeMiddleware implements Middleware {
             // Do NOT proceed processing this message, some other thread or machine already has processed it.
             // Send 200 invoke response.
             if (message.includes('etag conflict') || message.includes('precondition is not met')) {
-                await this.sendInvokeResponse(context);
+                await sendInvokeResponse(context);
                 return false;
             }
 
@@ -113,25 +128,12 @@ export class TeamsSSOTokenExchangeMiddleware implements Middleware {
         return true;
     }
 
-    private async sendInvokeResponse(
-        context: TurnContext,
-        body: unknown = null,
-        status = StatusCodes.OK
-    ): Promise<void> {
-        await context.sendActivity({
-            type: ActivityTypes.InvokeResponse,
-            value: { body, status },
-        });
-    }
-
     private async exchangedToken(context: TurnContext): Promise<boolean> {
         let tokenExchangeResponse: TokenResponse;
         const tokenExchangeRequest: TokenExchangeInvokeRequest = context.activity.value;
 
-        const tokenProvider = (context.adapter as unknown) as ExtendedUserTokenProvider;
-        if (!tokenProvider) {
-            throw new Error('Token Exchange is not supported by the current adapter.');
-        }
+        const tokenProvider = context.adapter;
+        assertExchangeToken(tokenProvider, ['context.adapter']);
 
         // TODO(jgummersall) convert to new user token client provider when available
         try {
@@ -157,7 +159,7 @@ export class TeamsSSOTokenExchangeMiddleware implements Middleware {
                 failureDetail: 'The bot is unable to exchange token. Proceed with regular login.',
             };
 
-            await this.sendInvokeResponse(context, invokeResponse, StatusCodes.PRECONDITION_FAILED);
+            await sendInvokeResponse(context, invokeResponse, StatusCodes.PRECONDITION_FAILED);
 
             return false;
         }
