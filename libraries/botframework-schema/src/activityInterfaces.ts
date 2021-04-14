@@ -304,7 +304,7 @@ export interface IHandoffActivity extends IActivity {
  * The value field of a ICommandActivity contains metadata related to a command.
  * An optional extensible data payload may be included if defined by the command activity name.
  */
-export interface CommandValue<T = unknown> {
+export interface CommandValue<T> {
     /**
      * ID of the command.
      */
@@ -319,7 +319,7 @@ export interface CommandValue<T = unknown> {
 /**
  * Asynchronous external command.
  */
-export interface ICommandActivity<T = unknown> extends IActivity {
+export interface ICommandActivity<T> extends IActivity {
     /**
      * The name of the event.
      */
@@ -335,7 +335,7 @@ export interface ICommandActivity<T = unknown> extends IActivity {
  * An optional extensible data payload may be included if defined by the command activity name.
  * The presence of an error field indicates that the original command failed to complete.
  */
-export interface CommandResultValue<T = unknown> {
+export interface CommandResultValue<T> {
     /**
      * ID of the command.
      */
@@ -354,7 +354,7 @@ export interface CommandResultValue<T = unknown> {
 /**
  * Asynchronous external command result.
  */
-export interface ICommandResultActivity<T = unknown> extends IActivity {
+export interface ICommandResultActivity<T> extends IActivity {
     name: string;
     value?: CommandResultValue<T>;
 }
