@@ -14,6 +14,7 @@ import {
 
 import {
     ActivityTypes,
+    Channels,
     StatusCodes,
     TokenExchangeInvokeRequest,
     TokenExchangeInvokeResponse,
@@ -84,7 +85,7 @@ export class TeamsSSOTokenExchangeMiddleware implements Middleware {
      * @param next Function to call to continue execution to the next step in the middleware chain.
      */
     async onTurn(context: TurnContext, next: () => Promise<void>): Promise<void> {
-        if (context.activity.name === tokenExchangeOperationName) {
+        if (context.activity.channelId === Channels.Msteams && context.activity.name === tokenExchangeOperationName) {
             // If the TokenExchange is NOT successful, the response will have already been sent by exchangedToken
             if (!(await this.exchangedToken(context))) {
                 return;
