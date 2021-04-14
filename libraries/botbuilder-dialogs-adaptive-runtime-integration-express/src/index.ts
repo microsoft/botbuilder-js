@@ -1,16 +1,6 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-/**
- * Files to serve:
- *
- * - skill manifest
- * - lu and qna files (input for doing dispatch)
- * - explicitly added to some directory, not implicit by default
- * - explicit file match or 404s
- * - content type must be registered, if not it 404s
- */
-
 import * as t from 'runtypes';
 import express from 'express';
 import path from 'path';
