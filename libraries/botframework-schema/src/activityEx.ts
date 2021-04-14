@@ -300,7 +300,7 @@ export namespace ActivityEx {
    * @param source The source activity.
    * @returns This activity as a command activity; or null.
    */
-     export function asCommandActivity<T>(source: Partial<Activity>): Partial<ICommandActivity<T>> {
+     export function asCommandActivity<T = unknown>(source: Partial<Activity>): Partial<ICommandActivity<T>> {
         return isActivity(source, ActivityTypes.Command) ? source : null;
     }
 
@@ -309,7 +309,7 @@ export namespace ActivityEx {
    * @param source The source activity.
    * @returns This activity as a command result activity; or null.
    */
-   export function asCommandResultActivity<T>(source: Partial<Activity>): Partial<ICommandResultActivity<T>> {
+   export function asCommandResultActivity<T = unknown>(source: Partial<Activity>): Partial<ICommandResultActivity<T>> {
     return isActivity(source, ActivityTypes.CommandResult) ? source : null;
 }
 
