@@ -10,6 +10,7 @@ export * from './activityEx';
 export { CallerIdConstants } from './callerIdConstants';
 export { SpeechConstants } from './speechConstants';
 export { TokenExchangeInvokeRequest } from './tokenExchangeInvokeRequest';
+export { TokenExchangeInvokeResponse } from './tokenExchangeInvokeResponse';
 
 // The Teams schemas was manually added to this library. This file has been updated to export those schemas.
 export * from './teams';
