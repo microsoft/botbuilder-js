@@ -134,7 +134,7 @@ export class TeamsSSOTokenExchangeMiddleware implements Middleware {
         const tokenExchangeRequest: TokenExchangeInvokeRequest = context.activity.value;
 
         const tokenProvider = context.adapter;
-        assertExchangeToken(tokenProvider, ['context.adapter']);
+        assertExchangeToken(tokenProvider, ['context', 'adapter']);
 
         // TODO(jgummersall) convert to new user token client provider when available
         try {
