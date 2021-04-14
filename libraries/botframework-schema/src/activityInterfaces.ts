@@ -327,7 +327,7 @@ export interface ICommandActivity<T> extends IActivity {
     /**
      * The value for this command.
      */
-    value?: CommandValue<T>;
+    value: CommandValue<T>;
 }
 
 /**
@@ -356,5 +356,5 @@ export interface CommandResultValue<T> {
  */
 export interface ICommandResultActivity<T> extends IActivity {
     name: string;
-    value?: CommandResultValue<T>;
+    value: CommandResultValue<T>;
 }
