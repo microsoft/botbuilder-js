@@ -3,6 +3,7 @@
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
+import * as t from 'runtypes';
 import fs from 'fs';
 import mime from 'mime';
 import path from 'path';
@@ -45,13 +46,17 @@ export function makeTriggers(
     runtimeServices: () => Promise<[ServiceCollection, Configuration]>,
     applicationRoot: string
 ): Record<string, AzureFunction> {
-    const instances = memoize(async () => {
-        const [services] = await runtimeServices();
-        return services.mustMakeInstances<{
+    const build = memoize(async () => {
+        const [services, configuration] = await runtimeServices();
+
+        const instances = services.mustMakeInstances<{
             adapter: BotFrameworkAdapter;
             bot: ActivityHandlerBase;
             channelServiceHandler: ChannelServiceHandler;
-        }>('adapter', 'bot', 'channelServiceHandler');
+            customAdapters: Map<string, BotFrameworkAdapter>;
+        }>('adapter', 'bot', 'channelServiceHandler', 'customAdapters');
+
+        return { configuration, instances };
     });
 
     const staticDirectory = path.join(applicationRoot, 'public');
@@ -60,10 +65,50 @@ export function makeTriggers(
         messageTrigger: async (context: Context, req: HttpRequest) => {
             context.log('Messages endpoint triggered.');
 
-            try {
-                const { adapter, bot } = await instances();
+            const res = context.res as WebResponse;
 
-                await adapter.processActivity(req, context.res as WebResponse, async (turnContext) => {
+            try {
+                const route = context.bindingData.route;
+
+                const {
+                    configuration,
+                    instances: { adapter, bot, customAdapters },
+                } = await build();
+
+                const defaultAdapterKey = '_defaultAdapter';
+                customAdapters.set(defaultAdapterKey, adapter);
+
+                const adapterSettings =
+                    configuration.type(
+                        ['runtimeSettings', 'adapters'],
+                        t.Array(
+                            t.Record({
+                                name: t.String,
+                                enabled: t.Union(t.Boolean, t.Undefined),
+                                route: t.String,
+                            })
+                        )
+                    ) ?? [];
+
+                const adapterSetting = adapterSettings
+                    .concat({ name: defaultAdapterKey, enabled: true, route: 'messages' })
+                    .filter((settings) => settings.enabled)
+                    .find((settings) => settings.route === route);
+
+                if (!adapterSetting) {
+                    res.status(404);
+                    res.end();
+                    return;
+                }
+
+                const resolvedAdapter = customAdapters.get(adapterSetting.name);
+                if (!resolvedAdapter) {
+                    res.status(404);
+                    res.end();
+                    return;
+                }
+
+                await resolvedAdapter.processActivity(req, res, async (turnContext) => {
                     await bot.run(turnContext);
                 });
             } catch (err) {
@@ -76,7 +121,9 @@ export function makeTriggers(
             context.log('Skill replyToActivity endpoint triggered.');
 
             try {
-                const { channelServiceHandler: skillHandler } = await instances();
+                const {
+                    instances: { channelServiceHandler: skillHandler },
+                } = await build();
 
                 const conversationId = context.bindingData.conversationId;
                 const activityId = context.bindingData.activityId;
