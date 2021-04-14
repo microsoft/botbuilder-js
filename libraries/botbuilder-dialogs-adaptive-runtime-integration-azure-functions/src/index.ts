@@ -3,6 +3,9 @@
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
+import fs from 'fs';
+import mime from 'mime';
+import path from 'path';
 import type { AzureFunction, Context, HttpRequest } from '@azure/functions';
 import { Configuration, getRuntimeServices } from 'botbuilder-dialogs-adaptive-runtime';
 import { ServiceCollection } from 'botbuilder-dialogs-adaptive-runtime-core';
@@ -25,14 +28,22 @@ function memoize<T>(func: () => T): () => T {
     };
 }
 
+// Content type overrides for specific file extensions
+const extensionContentTypes: Record<string, string> = {
+    '.lu': 'vnd.application/lu',
+    '.qna': 'vnd.application/qna',
+};
+
 /**
  * Create azure function triggers using the azure restify integration.
  *
  * @param runtimeServices result of calling `once(() => getRuntimeServices(...))`
+ * @param applicationRoot application root directory
  * @returns azure function triggers for `module.exports`
  */
 export function makeTriggers(
-    runtimeServices: () => Promise<[ServiceCollection, Configuration]>
+    runtimeServices: () => Promise<[ServiceCollection, Configuration]>,
+    applicationRoot: string
 ): Record<string, AzureFunction> {
     const instances = memoize(async () => {
         const [services] = await runtimeServices();
@@ -42,6 +53,8 @@ export function makeTriggers(
             channelServiceHandler: ChannelServiceHandler;
         }>('adapter', 'bot', 'channelServiceHandler');
     });
+
+    const staticDirectory = path.join(applicationRoot, 'public');
 
     return {
         messageTrigger: async (context: Context, req: HttpRequest) => {
@@ -59,7 +72,7 @@ export function makeTriggers(
             }
         },
 
-        skillsTrigger: async function (context: Context, req: HttpRequest) {
+        skillsTrigger: async (context: Context, req: HttpRequest) => {
             context.log('Skill replyToActivity endpoint triggered.');
 
             try {
@@ -85,6 +98,42 @@ export function makeTriggers(
                 throw err;
             }
         },
+
+        staticTrigger: async (context: Context) => {
+            context.log('Static endpoint triggered.');
+
+            const res = context.res as any;
+
+            const filePath = context.bindingData.path;
+            if (typeof filePath !== 'string') {
+                return res.status(404).end();
+            }
+
+            const contentType = extensionContentTypes[path.extname(filePath)] ?? mime.getType(filePath);
+            if (!contentType) {
+                return res.status(404).end();
+            }
+
+            try {
+                const contents = await new Promise((resolve, reject) =>
+                    // eslint-disable-next-line security/detect-non-literal-fs-filename
+                    fs.readFile(path.join(staticDirectory, filePath), 'utf8', (err, contents) =>
+                        err ? reject(err) : resolve(contents)
+                    )
+                );
+
+                res.status(200);
+                res.set('Content-Type', contentType);
+                res.end(contents);
+            } catch (err) {
+                if (err.message.includes('ENOENT')) {
+                    return res.status(404).end();
+                }
+
+                context.log.error(err);
+                throw err;
+            }
+        },
     };
 }
 
@@ -96,5 +145,8 @@ export function makeTriggers(
  * @returns azure function triggers for `module.exports`
  */
 export function triggers(applicationRoot: string, settingsDirectory: string): Record<string, AzureFunction> {
-    return makeTriggers(memoize(() => getRuntimeServices(applicationRoot, settingsDirectory)));
+    return makeTriggers(
+        memoize(() => getRuntimeServices(applicationRoot, settingsDirectory)),
+        applicationRoot
+    );
 }
