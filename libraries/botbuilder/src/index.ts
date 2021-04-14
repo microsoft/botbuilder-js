@@ -12,6 +12,7 @@ export * from './fileTranscriptStore';
 export * from './inspectionMiddleware';
 export * from './setSpeakMiddleware';
 export * from './skills';
+export * from './teams';
 export * from './teamsActivityHandler';
 export * from './teamsActivityHelpers';
 export * from './teamsInfo';

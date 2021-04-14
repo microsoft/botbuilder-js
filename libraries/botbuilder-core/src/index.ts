@@ -40,7 +40,6 @@ export * from './signInConstants';
 export * from './skypeMentionNormalizeMiddleware';
 export * from './storage';
 export * from './stringUtils';
-export * from './teams';
 export * from './telemetryLoggerMiddleware';
 export * from './testAdapter';
 export * from './transcriptLogger';
