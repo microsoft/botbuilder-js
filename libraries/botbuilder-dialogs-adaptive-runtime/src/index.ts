@@ -273,7 +273,7 @@ function addCoreBot(services: ServiceCollection, configuration: Configuration): 
                 dependencies.skillClient,
                 dependencies.skillConversationIdFactory,
                 dependencies.botTelemetryClient,
-                configuration.string(['defaultLocale']) ?? 'en-US',
+                configuration.string(['defaultLocale']) ?? 'en-us',
                 configuration.string(['defaultRootDialog']) ?? 'main.dialog',
                 dependencies.memoryScopes,
                 dependencies.pathResolvers
