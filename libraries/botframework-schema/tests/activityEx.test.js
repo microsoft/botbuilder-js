@@ -395,6 +395,46 @@ describe(`activityValidator`, function() {
         strictEqual(result, null);
     });
 
+    it('should return Activity as Command activity', () => {
+        const activity = CreateActivity();
+
+        activity.type = 'command';
+
+        const result = ActivityEx.asCommandActivity(activity);
+
+        strictEqual(result.type, ActivityTypes.Command);
+    });
+
+    it('should return null when Activity type is different than Command', () => {
+        const activity = CreateActivity();
+
+        activity.type = 'message';
+
+        const result = ActivityEx.asCommandActivity(activity);
+
+        strictEqual(result, null);
+    });
+
+    it('should return Activity as Command Result activity', () => {
+        const activity = CreateActivity();
+
+        activity.type = 'commandResult';
+
+        const result = ActivityEx.asCommandResultActivity(activity);
+
+        strictEqual(result.type, ActivityTypes.CommandResult);
+    });
+
+    it('should return null when Activity type is different than Command Result', () => {
+        const activity = CreateActivity();
+
+        activity.type = 'message';
+
+        const result = ActivityEx.asCommandResultActivity(activity);
+
+        strictEqual(result, null);
+    });
+
     it('should return false when Activity has no content', () => {
         const activity = CreateActivity();
 

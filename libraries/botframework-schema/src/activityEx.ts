@@ -17,15 +17,18 @@ import {
     IMessageUpdateActivity,
     IMessageDeleteActivity,
     IMessageReactionActivity,
-    ISuggestionActivity } from './activityInterfaces';
+    ISuggestionActivity,
+} from './activityInterfaces';
 import {
     Activity,
     ActivityTypes,
     ChannelAccount,
-    ConversationReference, 
+    ConversationReference,
     Mention,
-    ResourceResponse,
-    ConversationAccount} from './index';
+    ConversationAccount,
+    ICommandActivity,
+    ICommandResultActivity,
+} from './index';
 
 export namespace ActivityEx {
 
@@ -291,6 +294,24 @@ export namespace ActivityEx {
     export function asHandoffActivity(source: Partial<Activity>): Partial<IHandoffActivity> {
         return isActivity(source, ActivityTypes.Handoff) ? source : null;
     }
+
+  /**
+   * Returns the source activity as an ICommandActivity object; or null, if this is not that type of activity.
+   * @param source The source activity.
+   * @returns This activity as a command activity; or null.
+   */
+     export function asCommandActivity<T = unknown>(source: Partial<Activity>): Partial<ICommandActivity<T>> {
+        return isActivity(source, ActivityTypes.Command) ? source : null;
+    }
+
+  /**
+   * Returns the source activity as an ICommandResultActivity object; or null, if this is not that type of activity.
+   * @param source The source activity.
+   * @returns This activity as a command result activity; or null.
+   */
+   export function asCommandResultActivity<T = unknown>(source: Partial<Activity>): Partial<ICommandResultActivity<T>> {
+    return isActivity(source, ActivityTypes.CommandResult) ? source : null;
+}
 
   /**
    * Indicates whether the source activity has content.
