@@ -50,8 +50,7 @@ export class UserTokenClientImpl extends UserTokenClient {
         assert.string(connectionName, ['connectionName']);
         assert.string(channelId, ['channelId']);
 
-        const result = await this.client.userToken.signOut(userId, { channelId, connectionName });
-        return result._response.parsedBody;
+        await this.client.userToken.signOut(userId, { channelId, connectionName });
     }
 
     async getTokenStatus(userId: string, channelId: string, includeFilter: string): Promise<TokenStatus[]> {

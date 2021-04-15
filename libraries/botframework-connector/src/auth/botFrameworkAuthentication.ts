@@ -52,14 +52,14 @@ export abstract class BotFrameworkAuthentication {
      * Creates a BotFrameworkClient for calling Skills.
      */
     createBotFrameworkClient(): BotFrameworkClient {
-        return notImplementedError();
+        throw new Error('NotImplemented');
     }
 
     /**
      * Gets the originating audience from Bot OAuth scope.
      */
     getOriginatingAudience(): string {
-        return notImplementedError();
+        throw new Error('NotImplemented');
     }
 
     // TODO: Update docstring - this is a direct port from .NET
@@ -69,7 +69,7 @@ export abstract class BotFrameworkAuthentication {
      * @param authHeader The HTTP auth header in the skill request.
      */
     authenticateChannelRequest(authHeader: string): Promise<ClaimsIdentity> {
-        return notImplementedError();
+        throw new Error('NotImplemented');
     }
 
     /**
@@ -96,9 +96,3 @@ export abstract class BotFrameworkAuthentication {
             : callerId;
     }
 }
-
-const notImplementedError = () => {
-    const err = new Error('Not Implemented.');
-    err.name = 'NotImplementedError';
-    throw err;
-};
