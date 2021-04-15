@@ -76,7 +76,15 @@ export class TeamsSSOTokenExchangeMiddleware implements Middleware {
      * @param storage The [Storage](xref:botbuilder-core.Storage) to use for deduplication
      * @param oAuthConnectionName The connection name to use for the single sign on token exchange
      */
-    constructor(private readonly storage: Storage, private readonly oAuthConnectionName: string) {}
+    constructor(private readonly storage: Storage, private readonly oAuthConnectionName: string) {
+        if (!storage) {
+            throw new TypeError('`storage` parameter is required');
+        }
+
+        if (!oAuthConnectionName) {
+            throw new TypeError('`oAuthConnectionName` parameter is required');
+        }
+    }
 
     /**
      * Called each time the bot receives a new request.
@@ -150,7 +158,7 @@ export class TeamsSSOTokenExchangeMiddleware implements Middleware {
             // and hence we send back a failure invoke response to the caller.
         }
 
-        if (!tokenExchangeResponse.token) {
+        if (!tokenExchangeResponse?.token) {
             // The token could not be exchanged (which could be due to a consent requirement)
             // Notify the sender that PreconditionFailed so they can respond accordingly.
 
