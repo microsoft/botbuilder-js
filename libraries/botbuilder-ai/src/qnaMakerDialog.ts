@@ -49,7 +49,6 @@ import {
     RankerTypes,
 } from './qnamaker-interfaces';
 import { ActiveLearningUtils, BindToActivity } from './qnamaker-utils';
-import Url from 'url-parse';
 
 class QnAMakerDialogActivityConverter
     implements Converter<string, TemplateInterface<Partial<Activity>, DialogStateManager>> {
