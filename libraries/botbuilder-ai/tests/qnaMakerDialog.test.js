@@ -101,7 +101,7 @@ describe('QnAMakerDialog', function () {
         });
 
         it('should construct BAD v4 hostnames', async function () {
-            const createHostName = (hostName) => `https://${hostName}.azurewebsites.net/qnamaker`;
+            const createHostName = (hostName) => `https://${hostName}`;
             const NOT_V5_HOSTNAME = 'myqnainstance.net/qnamaker';
 
             // Missing authority
