@@ -275,7 +275,7 @@ export class QnAMakerDialog extends WaterfallDialog implements QnAMakerDialogCon
     // TODO: Add Expressions support
     private suggestionsActivityFactory?: QnASuggestionsActivityFactory;
 
-    private normalizedHostname: string;
+    private normalizedHost: string;
 
     /**
      * Initializes a new instance of the [QnAMakerDialog](xref:QnAMakerDialog) class.
@@ -810,11 +810,12 @@ export class QnAMakerDialog extends WaterfallDialog implements QnAMakerDialogCon
     //
     // Template literal to construct v4 API endpoint: `https://${ this.hostName }.azurewebsites.net/qnamaker`
     private getHost(dc: DialogContext): string {
-        if (this.normalizedHostname) {
-            return this.normalizedHostname;
-        }
-
         let host = this.hostname.getValue(dc.state);
+
+        // Return the memoized host, but allow it to change at runtime.
+        if (this.normalizedHost && this.normalizedHost.includes(host)) {
+            return this.normalizedHost;
+        }
 
         // Handle no protocol.
         if (!/^https?:\/\//.test(host)) {
@@ -827,11 +828,12 @@ export class QnAMakerDialog extends WaterfallDialog implements QnAMakerDialogCon
         }
 
         // Handle no pathname, only for azurewebsites.net domains.
-        if (!host.includes('qnamaker') && !host.includes('azurewebsites.net')) {
+        if (!host.includes('/qnamaker') && host.includes('azurewebsites.net')) {
             host = host + '/qnamaker';
         }
 
-        this.normalizedHostname = host;
+        // Memoize the host.
+        this.normalizedHost = host;
 
         return host;
     }

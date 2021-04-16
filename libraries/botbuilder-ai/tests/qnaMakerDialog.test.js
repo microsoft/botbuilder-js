@@ -114,6 +114,30 @@ describe('QnAMakerDialog', function () {
             strictEqual(noAuthorityClient.endpoint.host, createHostName(NOT_V5_HOSTNAME));
         });
 
+        it('host can change at runtime', async function () {
+            const TEST_HOSTNAME = 'https://test-qna-app.azurewebsites.net/qnamaker';
+            const qna = new QnAMakerDialog(kbId, endpointKey, TEST_HOSTNAME);
+            let client = await qna.getQnAMakerClient({ state: {} });
+
+            ok(client instanceof QnAMaker);
+            strictEqual(client.endpoint.knowledgeBaseId, kbId);
+            strictEqual(client.endpoint.endpointKey, endpointKey);
+            strictEqual(client.endpoint.host, TEST_HOSTNAME);
+
+            // Change normalizedHostname so that getHost() can see that it differs from TEST_HOSTNAME
+            const NEW_HOSTNAME = 'notTheSameAsBefore';
+            qna.normalizedHostname = NEW_HOSTNAME;
+
+            // This is going to call getHost(), which should result in client.endpoint.host
+            // equaling TEST_HOSTNAME, since NEW_HOSTNAME was "memoized".
+            client = await qna.getQnAMakerClient({ state: {} });
+
+            ok(client instanceof QnAMaker);
+            strictEqual(client.endpoint.knowledgeBaseId, kbId);
+            strictEqual(client.endpoint.endpointKey, endpointKey);
+            strictEqual(client.endpoint.host, TEST_HOSTNAME);
+        });
+
         it('should log telemetry that includes question and username if logPersonalInformation is true', async function () {
             const convoState = new ConversationState(new MemoryStorage());
             const dm = new DialogManager();
