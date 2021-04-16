@@ -29,7 +29,8 @@
   },
   "dependencies": {
     "botbuilder": "4.1.6",
-    "botbuilder-ai": "4.1.6",
+    "botbuilder-ai-luis": "4.1.6",
+    "botbuilder-ai-qna": "4.1.6",
     "botbuilder-applicationinsights": "4.1.6",
     "botbuilder-azure": "4.1.6",
     "botbuilder-azure-blobs": "4.1.6",
