@@ -1,6 +1,7 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
+import * as t from 'runtypes';
 import { BotComponent } from 'botbuilder-core';
 import { Configuration, ServiceCollection } from 'botbuilder-dialogs-adaptive-runtime-core';
 import { MemoryScope, PathResolver } from './memory';
@@ -25,12 +26,17 @@ import {
     PercentPathResolver,
 } from './memory/pathResolvers';
 
+const InitialSettings = t.Dictionary(t.Unknown, t.String);
+
 export class DialogsBotComponent extends BotComponent {
-    configureServices(services: ServiceCollection, _configuration: Configuration): void {
+    configureServices(services: ServiceCollection, configuration: Configuration): void {
         services.composeFactory<MemoryScope[]>('memoryScopes', (memoryScopes) => {
+            const rootConfiguration = configuration.get([]);
+            const initialSettings = InitialSettings.guard(rootConfiguration) ? rootConfiguration : undefined;
+
             return memoryScopes.concat(
                 new TurnMemoryScope(),
-                new SettingsMemoryScope(),
+                new SettingsMemoryScope(initialSettings),
                 new DialogMemoryScope(),
                 new DialogContextMemoryScope(),
                 new DialogClassMemoryScope(),
