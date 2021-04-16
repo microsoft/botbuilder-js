@@ -6,16 +6,17 @@ import fs from 'fs';
 import path from 'path';
 import { Configuration } from './configuration';
 
-import { DialogsBotComponent, MemoryScope, PathResolver } from 'botbuilder-dialogs';
+import LuisBotComponent from 'botbuilder-ai-luis';
+import QnAMakerBotComponent from 'botbuilder-ai-qna';
 import { AdaptiveBotComponent, LanguageGenerationBotComponent } from 'botbuilder-dialogs-adaptive';
 import { ApplicationInsightsTelemetryClient, TelemetryInitializerMiddleware } from 'botbuilder-applicationinsights';
 import { BlobsStorage, BlobsTranscriptStore } from 'botbuilder-azure-blobs';
+import { ComponentDeclarativeTypes, ResourceExplorer } from 'botbuilder-dialogs-declarative';
 import { ConfigurationResourceExporer } from './configurationResourceExplorer';
 import { CoreBot } from './coreBot';
 import { CoreBotAdapter } from './coreBotAdapter';
 import { CosmosDbPartitionedStorage } from 'botbuilder-azure';
-import { ComponentDeclarativeTypes, ResourceExplorer } from 'botbuilder-dialogs-declarative';
-import { LuisBotComponent, QnAMakerBotComponent } from 'botbuilder-ai';
+import { DialogsBotComponent, MemoryScope, PathResolver } from 'botbuilder-dialogs';
 import { ServiceCollection } from 'botbuilder-dialogs-adaptive-runtime-core';
 
 import {
