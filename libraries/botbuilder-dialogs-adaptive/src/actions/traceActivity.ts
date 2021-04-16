@@ -5,16 +5,18 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
+import { Activity, ActivityTypes } from 'botbuilder';
+import { BoolProperty, StringProperty, UnknownProperty } from '../properties';
+
 import {
     BoolExpression,
     BoolExpressionConverter,
-    Expression,
     StringExpression,
     StringExpressionConverter,
     ValueExpression,
     ValueExpressionConverter,
 } from 'adaptive-expressions';
-import { Activity, ActivityTypes } from 'botbuilder';
+
 import {
     Converter,
     ConverterFactory,
@@ -25,11 +27,11 @@ import {
 } from 'botbuilder-dialogs';
 
 export interface TraceActivityConfiguration extends DialogConfiguration {
-    name?: string | Expression | StringExpression;
-    valueType?: string | Expression | StringExpression;
-    value?: unknown | ValueExpression;
-    label?: string | Expression | StringExpression;
-    disabled?: boolean | string | Expression | BoolExpression;
+    name?: StringProperty;
+    valueType?: StringProperty;
+    value?: UnknownProperty;
+    label?: StringProperty;
+    disabled?: BoolProperty;
 }
 
 /**
@@ -48,7 +50,7 @@ export class TraceActivity<O extends object = {}> extends Dialog<O> implements T
      * @param label Label to use when describing a trace activity.
      */
     public constructor(name: string, valueType: string, value: any, label: string);
-    
+
     /**
      * Initializes a new instance of the [TraceActivity](xref:botbuilder-dialogs-adaptive.TraceActivity) class.
      * @param name Optional. Name of the trace activity.

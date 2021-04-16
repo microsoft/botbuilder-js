@@ -5,12 +5,13 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { Expression, StringExpression, StringExpressionConverter } from 'adaptive-expressions';
 import { Converter, ConverterFactory, DialogContext } from 'botbuilder-dialogs';
 import { InputDialog, InputDialogConfiguration, InputState } from './inputDialog';
+import { StringExpression, StringExpressionConverter } from 'adaptive-expressions';
+import { StringProperty } from '../properties';
 
 export interface TextInputConfiguration extends InputDialogConfiguration {
-    outputFormat?: string | Expression | StringExpression;
+    outputFormat?: StringProperty;
 }
 
 export class TextInput extends InputDialog implements TextInputConfiguration {

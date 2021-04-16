@@ -5,14 +5,15 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
+import { BoolProperty, StringProperty } from '../properties';
 
 import {
     BoolExpression,
     BoolExpressionConverter,
-    Expression,
     StringExpression,
     StringExpressionConverter,
 } from 'adaptive-expressions';
+
 import {
     Converter,
     ConverterFactory,
@@ -31,6 +32,7 @@ type PropertiesOutput = Record<string, StringExpression>;
 class TelemetryPropertiesConverter implements Converter<PropertiesInput, PropertiesOutput> {
     /**
      * Converts a [PropertiesInput](xref:botbuilder-dialogs-adaptive.PropertiesInput) or [PropertiesOutput](xref:botbuilder-dialogs-adaptive.PropertiesOutput) into telemetry [PropertiesOutput](xref:botbuilder-dialogs-adaptive.PropertiesOutput).
+     *
      * @param properties The [PropertiesInput](xref:botbuilder-dialogs-adaptive.PropertiesInput) or [PropertiesOutput](xref:botbuilder-dialogs-adaptive.PropertiesOutput) to convert.
      * @returns The converted [StringExpression](xref:adaptive-expressions.StringExpression).
      */
@@ -43,11 +45,11 @@ class TelemetryPropertiesConverter implements Converter<PropertiesInput, Propert
 }
 
 export interface TelemetryTrackEventActionConfiguration extends DialogConfiguration {
-    disabled?: boolean | string | Expression | BoolExpression;
-    eventName?: string | Expression | StringExpression;
+    disabled?: BoolProperty;
+    eventName?: StringProperty;
     properties?: PropertiesInput | PropertiesOutput;
 }
-  
+
 /**
  * Track a custom event.
  */

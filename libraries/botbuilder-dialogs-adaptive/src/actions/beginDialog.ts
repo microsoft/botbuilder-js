@@ -5,14 +5,16 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
+import { BaseInvokeDialog, BaseInvokeDialogConfiguration } from './baseInvokeDialog';
+import { BoolProperty, StringProperty } from '../properties';
 
 import {
     StringExpression,
     BoolExpression,
     StringExpressionConverter,
     BoolExpressionConverter,
-    Expression,
 } from 'adaptive-expressions';
+
 import {
     Converter,
     ConverterFactory,
@@ -21,11 +23,10 @@ import {
     DialogReason,
     TurnPath,
 } from 'botbuilder-dialogs';
-import { BaseInvokeDialog, BaseInvokeDialogConfiguration } from './baseInvokeDialog';
 
 export interface BeginDialogConfiguration extends BaseInvokeDialogConfiguration {
-    resultProperty?: string | Expression | StringExpression;
-    disabled?: boolean | string | Expression | BoolExpression;
+    resultProperty?: StringProperty;
+    disabled?: BoolProperty;
 }
 
 /**
@@ -39,8 +40,8 @@ export class BeginDialog<O extends object = {}> extends BaseInvokeDialog<O> impl
      * @param dialogIdToCall ID of the dialog to call.
      * @param options (Optional) static options to pass the called dialog.
      */
-    public constructor(dialogIdToCall: string, options?: O)
-    
+    public constructor(dialogIdToCall: string, options?: O);
+
     /**
      * Creates a new [BeginDialog](xref:botbuilder-dialogs-adaptive.BeginDialog) instance.
      * @param dialogIdToCall Optional. ID of the [Dialog](xref:botbuilder-dialogs.Dialog) to call.
@@ -96,7 +97,7 @@ export class BeginDialog<O extends object = {}> extends BaseInvokeDialog<O> impl
      * Called when a child [Dialog](xref:botbuilder-dialogs.Dialog) completed its turn, returning control to this dialog.
      * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
      * @param reason [DialogReason](xref:botbuilder-dialogs.DialogReason), reason why the dialog resumed.
-     * @param result Optional. Value returned from the dialog that was called. The type 
+     * @param result Optional. Value returned from the dialog that was called. The type
      * of the value returned is dependent on the child dialog.
      * @returns A `Promise` representing the asynchronous operation.
      */

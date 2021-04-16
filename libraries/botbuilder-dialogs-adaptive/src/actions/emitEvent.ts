@@ -5,16 +5,17 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
+import { BoolProperty, StringProperty, UnknownProperty } from '../properties';
 
 import {
     BoolExpression,
     BoolExpressionConverter,
-    Expression,
     StringExpression,
     StringExpressionConverter,
     ValueExpression,
     ValueExpressionConverter,
 } from 'adaptive-expressions';
+
 import {
     Converter,
     ConverterFactory,
@@ -25,10 +26,10 @@ import {
 } from 'botbuilder-dialogs';
 
 export interface EmitEventConfiguration extends DialogConfiguration {
-    eventName?: string | Expression | StringExpression;
-    eventValue?: unknown | ValueExpression;
-    bubbleEvent?: boolean | string | Expression | BoolExpression;
-    disabled?: boolean | string | Expression | BoolExpression;
+    eventName?: StringProperty;
+    eventValue?: UnknownProperty;
+    bubbleEvent?: BoolProperty;
+    disabled?: BoolProperty;
 }
 
 /**
@@ -36,7 +37,7 @@ export interface EmitEventConfiguration extends DialogConfiguration {
  */
 export class EmitEvent<O extends object = {}> extends Dialog<O> implements EmitEventConfiguration {
     public static $kind = 'Microsoft.EmitEvent';
-  
+
     public constructor();
 
     /**

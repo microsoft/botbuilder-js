@@ -5,14 +5,16 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
+import type { TurnContext } from 'botbuilder';
+import { BoolProperty, StringProperty } from '../properties';
+
 import {
     BoolExpression,
     BoolExpressionConverter,
-    Expression,
     StringExpression,
     StringExpressionConverter,
 } from 'adaptive-expressions';
-import { TurnContext } from 'botbuilder';
+
 import {
     Converter,
     ConverterFactory,
@@ -23,7 +25,7 @@ import {
 } from 'botbuilder-dialogs';
 
 interface CompatibleAdapter {
-    getConversationMembers(context: TurnContext);
+    getConversationMembers(context: TurnContext): unknown;
 }
 
 function isCompatibleAdapter(adapter: unknown): adapter is CompatibleAdapter {
@@ -31,8 +33,8 @@ function isCompatibleAdapter(adapter: unknown): adapter is CompatibleAdapter {
 }
 
 export interface GetConversationMembersConfiguration extends DialogConfiguration {
-    property?: string | Expression | StringExpression;
-    disabled?: boolean | string | Expression | BoolExpression;
+    property?: StringProperty;
+    disabled?: BoolProperty;
 }
 
 /**

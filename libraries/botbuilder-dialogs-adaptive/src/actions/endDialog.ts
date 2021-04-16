@@ -5,13 +5,16 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
+import { BoolProperty, UnknownProperty } from '../properties';
+import { replaceJsonRecursively } from '../jsonExtensions';
+
 import {
     BoolExpression,
     BoolExpressionConverter,
-    Expression,
     ValueExpression,
     ValueExpressionConverter,
 } from 'adaptive-expressions';
+
 import {
     Converter,
     ConverterFactory,
@@ -20,11 +23,10 @@ import {
     DialogContext,
     DialogTurnResult,
 } from 'botbuilder-dialogs';
-import { replaceJsonRecursively } from '../jsonExtensions';
 
 export interface EndDialogConfiguration extends DialogConfiguration {
-    value?: unknown | ValueExpression;
-    disabled?: boolean | string | Expression | BoolExpression;
+    value?: UnknownProperty;
+    disabled?: BoolProperty;
 }
 
 /**
@@ -92,7 +94,7 @@ export class EndDialog<O extends object = {}> extends Dialog<O> implements EndDi
     /**
      * Ends the parent [Dialog](xref:botbuilder-dialogs.Dialog).
      * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
-     * @param result Optional. Value returned from the dialog that was called. The type 
+     * @param result Optional. Value returned from the dialog that was called. The type
      * of the value returned is dependent on the child dialog.
      * @returns A `Promise` representing the asynchronous operation.
      */
