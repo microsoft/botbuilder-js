@@ -1,10 +1,10 @@
 {
-  "name": "botbuilder-dialogs-adaptive-runtime-integration-azure-functions",
+  "name": "botbuilder-ai-luis",
   "preview": true,
   "author": "Microsoft Corp.",
   "version": "4.1.6",
   "license": "MIT",
-  "description": "Bot Framework Adaptive Dialogs Azure Functions integration",
+  "description": "Luis component for Microsoft BotBuilder Adaptive Dialogs runtime",
   "keywords": [
     "botbuilder",
     "botframework",
@@ -19,21 +19,25 @@
     "url": "https://github.com/Microsoft/botbuilder-js.git"
   },
   "main": "lib/index.js",
-  "types": "./lib/index.d.ts",
+  "types": "lib/index.d.ts",
+  "typesVersions": {
+    "<3.9": {
+      "*": [
+        "_ts3.4/*"
+      ]
+    }
+  },
   "dependencies": {
-    "@azure/functions": "^1.2.3",
-    "botbuilder": "4.1.6",
-    "botbuilder-dialogs-adaptive-runtime": "4.1.6",
-    "botbuilder-dialogs-adaptive-runtime-core": "4.1.6",
-    "mime": "^2.5.2",
-    "runtypes": "~5.1.0"
+    "botbuilder-ai": "4.1.6"
   },
   "scripts": {
     "build": "tsc -b",
     "clean": "rimraf _ts3.4 lib tsconfig.tsbuildinfo",
-    "lint": "eslint . --ext .js,.ts"
+    "lint": "eslint . --ext .js,.ts",
+    "postbuild": "downlevel-dts lib _ts3.4/lib --checksum"
   },
   "files": [
+    "_ts3.4",
     "lib",
     "src"
   ]
