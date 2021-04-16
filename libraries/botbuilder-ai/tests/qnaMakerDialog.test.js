@@ -83,19 +83,25 @@ describe('QnAMakerDialog', function () {
         it('should construct v4 API endpoint', async function () {
             const INCOMPLETE_HOSTNAME = 'myqnainstance';
             const HOSTNAME = 'https://myqnainstance.azurewebsites.net/qnamaker';
+            const NON_AZURE_HOSTNAME = 'https://custom.some-other-site.tld/qnamaker';
 
             // Create QnAMakerDialog with incomplete hostname
             const qnaDialog = new QnAMakerDialog(kbId, endpointKey, INCOMPLETE_HOSTNAME);
             const fixedClient = await qnaDialog.getQnAMakerClient({ state: {} });
 
+            // Non-Azure Hostname
+            const qnaDialogNonAzure = new QnAMakerDialog(kbId, endpointKey, NON_AZURE_HOSTNAME);
+            const fixedClientNonAzure = await qnaDialogNonAzure.getQnAMakerClient({ state: {} });
+
             ok(fixedClient instanceof QnAMaker);
             strictEqual(fixedClient.endpoint.knowledgeBaseId, kbId);
             strictEqual(fixedClient.endpoint.endpointKey, endpointKey);
             strictEqual(fixedClient.endpoint.host, HOSTNAME);
+            strictEqual(fixedClientNonAzure.endpoint.host, NON_AZURE_HOSTNAME);
         });
 
         it('should construct BAD v4 hostnames', async function () {
-            const createHostName = (hostName) => `https://${hostName}.azurewebsites.net/qnamaker`;
+            const createHostName = (hostName) => `https://${hostName}`;
             const NOT_V5_HOSTNAME = 'myqnainstance.net/qnamaker';
 
             // Missing authority
@@ -106,6 +112,30 @@ describe('QnAMakerDialog', function () {
             strictEqual(noAuthorityClient.endpoint.knowledgeBaseId, kbId);
             strictEqual(noAuthorityClient.endpoint.endpointKey, endpointKey);
             strictEqual(noAuthorityClient.endpoint.host, createHostName(NOT_V5_HOSTNAME));
+        });
+
+        it('host can change at runtime', async function () {
+            const TEST_HOSTNAME = 'https://test-qna-app.azurewebsites.net/qnamaker';
+            const qna = new QnAMakerDialog(kbId, endpointKey, TEST_HOSTNAME);
+            let client = await qna.getQnAMakerClient({ state: {} });
+
+            ok(client instanceof QnAMaker);
+            strictEqual(client.endpoint.knowledgeBaseId, kbId);
+            strictEqual(client.endpoint.endpointKey, endpointKey);
+            strictEqual(client.endpoint.host, TEST_HOSTNAME);
+
+            // Change normalizedHostname so that getHost() can see that it differs from TEST_HOSTNAME
+            const NEW_HOSTNAME = 'notTheSameAsBefore';
+            qna.normalizedHostname = NEW_HOSTNAME;
+
+            // This is going to call getHost(), which should result in client.endpoint.host
+            // equaling TEST_HOSTNAME, since NEW_HOSTNAME was "memoized".
+            client = await qna.getQnAMakerClient({ state: {} });
+
+            ok(client instanceof QnAMaker);
+            strictEqual(client.endpoint.knowledgeBaseId, kbId);
+            strictEqual(client.endpoint.endpointKey, endpointKey);
+            strictEqual(client.endpoint.host, TEST_HOSTNAME);
         });
 
         it('should log telemetry that includes question and username if logPersonalInformation is true', async function () {

@@ -275,6 +275,8 @@ export class QnAMakerDialog extends WaterfallDialog implements QnAMakerDialogCon
     // TODO: Add Expressions support
     private suggestionsActivityFactory?: QnASuggestionsActivityFactory;
 
+    private normalizedHost: string;
+
     /**
      * Initializes a new instance of the [QnAMakerDialog](xref:QnAMakerDialog) class.
      *
@@ -808,35 +810,30 @@ export class QnAMakerDialog extends WaterfallDialog implements QnAMakerDialogCon
     //
     // Template literal to construct v4 API endpoint: `https://${ this.hostName }.azurewebsites.net/qnamaker`
     private getHost(dc: DialogContext): string {
-        let host: string = this.hostname.getValue(dc.state);
-        // If hostName includes 'qnamaker/v5', return the v5 API hostName.
-        if (host.includes('qnamaker/v5')) {
-            return host;
+        let host = this.hostname.getValue(dc.state);
+
+        // Return the memoized host, but allow it to change at runtime.
+        if (this.normalizedHost && this.normalizedHost.includes(host)) {
+            return this.normalizedHost;
         }
 
-        // V4 API logic
-        // If the hostname contains all the necessary information, return it
-        if (/^https:\/\/.*\.azurewebsites\.net\/qnamaker\/?/i.test(host)) {
-            return host;
-        }
-
-        // Otherwise add required components
-        if (!/https?:\/\//i.test(host)) {
+        // Handle no protocol.
+        if (!/^https?:\/\//.test(host)) {
             host = 'https://' + host;
         }
 
-        // Web App Bots provisioned through the QnAMaker portal have "xxx.azurewebsites.net" in their
-        // environment variables
-        if (host.endsWith('.azurewebsites.net')) {
-            // Add the remaining required path
-            return host + '/qnamaker';
+        // Handle no domain.
+        if (!host.includes('.')) {
+            host = host + '.azurewebsites.net';
         }
 
-        // If this.hostName is just the azurewebsite subdomain, finish the remaining V4 API behavior shipped in 4.8.0
-        // e.g. `https://${ this.hostName }.azurewebsites.net/qnamaker`
-        if (!host.endsWith('.azurewebsites.net/qnamaker')) {
-            host = host + '.azurewebsites.net/qnamaker';
+        // Handle no pathname, only for azurewebsites.net domains.
+        if (!host.includes('/qnamaker') && host.includes('azurewebsites.net')) {
+            host = host + '/qnamaker';
         }
+
+        // Memoize the host.
+        this.normalizedHost = host;
 
         return host;
     }
