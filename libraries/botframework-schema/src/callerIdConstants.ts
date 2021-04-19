@@ -22,6 +22,7 @@ export class CallerIdConstants {
 
     /**
      * The caller ID prefix when a bot initiates a request to another bot.
+     *
      * @remarks
      * This prefix will be followed by the Azure Active Directory App ID of the bot that initiated the call.
      */

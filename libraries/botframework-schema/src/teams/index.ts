@@ -1515,6 +1515,7 @@ export interface AppBasedLinkQuery {
 /**
  * Defines values for Type.
  * Possible values include: 'ViewAction', 'OpenUri', 'HttpPOST', 'ActionCard'
+ *
  * @readonly
  * @enum {string}
  */
@@ -1523,6 +1524,7 @@ export type Type = 'ViewAction' | 'OpenUri' | 'HttpPOST' | 'ActionCard';
 /**
  * Defines values for ActivityImageType.
  * Possible values include: 'avatar', 'article'
+ *
  * @readonly
  * @enum {string}
  */
@@ -1531,6 +1533,7 @@ export type ActivityImageType = 'avatar' | 'article';
 /**
  * Defines values for Os.
  * Possible values include: 'default', 'iOS', 'android', 'windows'
+ *
  * @readonly
  * @enum {string}
  */
@@ -1539,6 +1542,7 @@ export type Os = 'default' | 'iOS' | 'android' | 'windows';
 /**
  * Defines values for O365ConnectorCardInputBaseType.
  * Possible values include: 'textInput', 'dateInput', 'multichoiceInput'
+ *
  * @readonly
  * @enum {string}
  */
@@ -1552,6 +1556,7 @@ export type Type1 = O365ConnectorCardInputBaseType;
 /**
  * Defines values for Style.
  * Possible values include: 'compact', 'expanded'
+ *
  * @readonly
  * @enum {string}
  */
@@ -1560,6 +1565,7 @@ export type Style = 'compact' | 'expanded';
 /**
  * Defines values for UserIdentityType.
  * Possible values include: 'aadUser', 'onPremiseAadUser', 'anonymousGuest', 'federatedUser'
+ *
  * @readonly
  * @enum {string}
  */
@@ -1568,6 +1574,7 @@ export type UserIdentityType = 'aadUser' | 'onPremiseAadUser' | 'anonymousGuest'
 /**
  * Defines values for ApplicationIdentityType.
  * Possible values include: 'aadApplication', 'bot', 'tenantBot', 'office365Connector', 'webhook'
+ *
  * @readonly
  * @enum {string}
  */
@@ -1576,6 +1583,7 @@ export type ApplicationIdentityType = 'aadApplication' | 'bot' | 'tenantBot' | '
 /**
  * Defines values for ConversationIdentityType.
  * Possible values include: 'team', 'channel'
+ *
  * @readonly
  * @enum {string}
  */
@@ -1584,6 +1592,7 @@ export type ConversationIdentityType = 'team' | 'channel';
 /**
  * Defines values for ContentType.
  * Possible values include: 'html', 'text'
+ *
  * @readonly
  * @enum {string}
  */
@@ -1592,6 +1601,7 @@ export type ContentType = 'html' | 'text';
 /**
  * Defines values for ReactionType.
  * Possible values include: 'like', 'heart', 'laugh', 'surprised', 'sad', 'angry'
+ *
  * @readonly
  * @enum {string}
  */
@@ -1600,6 +1610,7 @@ export type ReactionType = 'like' | 'heart' | 'laugh' | 'surprised' | 'sad' | 'a
 /**
  * Defines values for MessageType.
  * Possible values include: 'message'
+ *
  * @readonly
  * @enum {string}
  */
@@ -1608,6 +1619,7 @@ export type MessageType = 'message';
 /**
  * Defines values for Importance.
  * Possible values include: 'normal', 'high', 'urgent'
+ *
  * @readonly
  * @enum {string}
  */
@@ -1616,6 +1628,7 @@ export type Importance = 'normal' | 'high' | 'urgent';
 /**
  * Defines values for CommandContext.
  * Possible values include: 'message', 'compose', 'commandbox'
+ *
  * @readonly
  * @enum {string}
  */
@@ -1624,6 +1637,7 @@ export type CommandContext = 'message' | 'compose' | 'commandbox';
 /**
  * Defines values for BotMessagePreviewActionType.
  * Possible values include: 'edit', 'send'
+ *
  * @readonly
  * @enum {string}
  */
@@ -1632,6 +1646,7 @@ export type BotMessagePreviewActionType = 'edit' | 'send';
 /**
  * Defines values for BotMessagePreviewType.
  * Possible values include: 'message', 'continue'
+ *
  * @readonly
  * @enum {string}
  */
@@ -1645,6 +1660,7 @@ export type Type2 = BotMessagePreviewType;
 /**
  * Defines values for AttachmentLayout.
  * Possible values include: 'list', 'grid'
+ *
  * @readonly
  * @enum {string}
  */
@@ -1653,6 +1669,7 @@ export type AttachmentLayout = 'list' | 'grid';
 /**
  * Defines values for MessagingExtensionResultType.
  * Possible values include: 'result', 'auth', 'config', 'message', 'botMessagePreview'
+ *
  * @readonly
  * @enum {string}
  */
@@ -1665,6 +1682,7 @@ export type Type3 = MessagingExtensionResultType;
 /**
  * Defines values for Action.
  * Possible values include: 'accept', 'decline'
+ *
  * @readonly
  * @enum {string}
  */

@@ -1483,6 +1483,7 @@ export interface TokenResponse {
 
 /**
  * W3C Payment Method Data for Microsoft Pay
+ *
  * @deprecated Bot Framework no longer supports payments
  */
 export interface MicrosoftPayMethodData {
@@ -1502,6 +1503,7 @@ export interface MicrosoftPayMethodData {
 
 /**
  * Address within a Payment Request
+ *
  * @deprecated Bot Framework no longer supports payments
  */
 export interface PaymentAddress {
@@ -1558,6 +1560,7 @@ export interface PaymentAddress {
 
 /**
  * Supplies monetary amounts
+ *
  * @deprecated Bot Framework no longer supports payments
  */
 export interface PaymentCurrencyAmount {
@@ -1577,6 +1580,7 @@ export interface PaymentCurrencyAmount {
 
 /**
  * Indicates what the payment request is for and the value asked for
+ *
  * @deprecated Bot Framework no longer supports payments
  */
 export interface PaymentItem {
@@ -1596,6 +1600,7 @@ export interface PaymentItem {
 
 /**
  * Describes a shipping option
+ *
  * @deprecated Bot Framework no longer supports payments
  */
 export interface PaymentShippingOption {
@@ -1619,6 +1624,7 @@ export interface PaymentShippingOption {
 
 /**
  * Provides details that modify the PaymentDetails based on payment method identifier
+ *
  * @deprecated Bot Framework no longer supports payments
  */
 export interface PaymentDetailsModifier {
@@ -1645,6 +1651,7 @@ export interface PaymentDetailsModifier {
 
 /**
  * Provides information about the requested transaction
+ *
  * @deprecated Bot Framework no longer supports payments
  */
 export interface PaymentDetails {
@@ -1673,6 +1680,7 @@ export interface PaymentDetails {
 /**
  * Indicates a set of supported payment methods and any associated payment method specific data for
  * those methods
+ *
  * @deprecated Bot Framework no longer supports payments
  */
 export interface PaymentMethodData {
@@ -1690,6 +1698,7 @@ export interface PaymentMethodData {
 
 /**
  * Provides information about the options desired for the payment request
+ *
  * @deprecated Bot Framework no longer supports payments
  */
 export interface PaymentOptions {
@@ -1722,6 +1731,7 @@ export interface PaymentOptions {
 
 /**
  * A request to make a payment
+ *
  * @deprecated Bot Framework no longer supports payments
  */
 export interface PaymentRequest {
@@ -1750,6 +1760,7 @@ export interface PaymentRequest {
 /**
  * A PaymentResponse is returned when a user has selected a payment method and approved a payment
  * request
+ *
  * @deprecated Bot Framework no longer supports payments
  */
 export interface PaymentResponse {
@@ -1788,6 +1799,7 @@ export interface PaymentResponse {
 
 /**
  * Payload delivered when completing a payment request
+ *
  * @deprecated Bot Framework no longer supports payments
  */
 export interface PaymentRequestComplete {
@@ -1807,6 +1819,7 @@ export interface PaymentRequestComplete {
 
 /**
  * Result from a completed payment request
+ *
  * @deprecated Bot Framework no longer supports payments
  */
 export interface PaymentRequestCompleteResult {
@@ -1818,6 +1831,7 @@ export interface PaymentRequestCompleteResult {
 
 /**
  * An update to a payment request
+ *
  * @deprecated Bot Framework no longer supports payments
  */
 export interface PaymentRequestUpdate {
@@ -1841,6 +1855,7 @@ export interface PaymentRequestUpdate {
 
 /**
  * A result object from a Payment Request Update invoke operation
+ *
  * @deprecated Bot Framework no longer supports payments
  */
 export interface PaymentRequestUpdateResult {
@@ -1902,6 +1917,7 @@ export interface TokenExchangeRequest {
 /**
  * Defines values for RoleTypes.
  * Possible values include: 'user', 'bot', 'skill'
+ *
  * @readonly
  * @enum {string}
  */
@@ -1914,6 +1930,7 @@ export enum RoleTypes {
 /**
  * Defines values for ActivityEventNames.
  * Possible values include: 'continueConversation', 'createConversation'
+ *
  * @readonly
  * @enum {string}
  */
@@ -1927,6 +1944,7 @@ export enum ActivityEventNames {
  * Possible values include: 'message', 'contactRelationUpdate', 'conversationUpdate', 'typing',
  * 'endOfConversation', 'event', 'invoke', 'deleteUserData', 'messageUpdate', 'messageDelete',
  * 'installationUpdate', 'messageReaction', 'suggestion', 'trace', 'handoff'
+ *
  * @readonly
  * @enum {string}
  */
@@ -1954,6 +1972,7 @@ export enum ActivityTypes {
 /**
  * Defines values for TextFormatTypes.
  * Possible values include: 'markdown', 'plain', 'xml'
+ *
  * @readonly
  * @enum {string}
  */
@@ -1966,6 +1985,7 @@ export enum TextFormatTypes {
 /**
  * Defines values for AttachmentLayoutTypes.
  * Possible values include: 'list', 'carousel'
+ *
  * @readonly
  * @enum {string}
  */
@@ -1977,6 +1997,7 @@ export enum AttachmentLayoutTypes {
 /**
  * Defines values for MessageReactionTypes.
  * Possible values include: 'like', 'plusOne'
+ *
  * @readonly
  * @enum {string}
  */
@@ -1988,6 +2009,7 @@ export enum MessageReactionTypes {
 /**
  * Defines values for InputHints.
  * Possible values include: 'acceptingInput', 'ignoringInput', 'expectingInput'
+ *
  * @readonly
  * @enum {string}
  */
@@ -2001,6 +2023,7 @@ export enum InputHints {
  * Defines values for ActionTypes.
  * Possible values include: 'openUrl', 'imBack', 'postBack', 'playAudio', 'playVideo', 'showImage',
  * 'downloadFile', 'signin', 'call', messageBack', 'openApp'
+ *
  * @readonly
  * @enum {string}
  */
@@ -2024,6 +2047,7 @@ export enum ActionTypes {
  * Defines values for EndOfConversationCodes.
  * Possible values include: 'unknown', 'completedSuccessfully', 'userCancelled', 'botTimedOut',
  * 'botIssuedInvalidMessage', 'channelFailed'
+ *
  * @readonly
  * @enum {string}
  */
@@ -2039,6 +2063,7 @@ export enum EndOfConversationCodes {
 /**
  * Defines values for ActivityImportance.
  * Possible values include: 'low', 'normal', 'high'
+ *
  * @readonly
  * @enum {string}
  */
@@ -2051,6 +2076,7 @@ export enum ActivityImportance {
 /**
  * Defines values for DeliveryModes.
  * Possible values include: 'normal', 'notification', 'expectReplies', 'ephemeral'
+ *
  * @readonly
  * @enum {string}
  */
@@ -2064,6 +2090,7 @@ export enum DeliveryModes {
 /**
  * Defines values for ContactRelationUpdateActionTypes.
  * Possible values include: 'add', 'remove'
+ *
  * @readonly
  * @enum {string}
  */
@@ -2075,6 +2102,7 @@ export enum ContactRelationUpdateActionTypes {
 /**
  * Defines values for InstallationUpdateActionTypes.
  * Possible values include: 'add', 'remove'
+ *
  * @readonly
  * @enum {string}
  */
@@ -2086,6 +2114,7 @@ export enum InstallationUpdateActionTypes {
 /**
  * Defines values for SemanticActionStateTypes.
  * Possible values include: 'start', 'continue', 'done'
+ *
  * @readonly
  * @enum {string}
  */
@@ -2100,6 +2129,7 @@ export enum SemanticActionStateTypes {
  * Possible values include: 'console', 'cortana', 'directline', 'directlinespeech', 'email',
  * 'emulator', 'facebook', 'groupme', 'kik', 'line', 'msteams', 'skype', 'skypeforbusiness',
  * 'slack', 'sms', 'telegram', 'test', 'twilio-sms', 'webchat'
+ *
  * @readonly
  * @enum {string}
  */
@@ -2129,6 +2159,7 @@ export enum Channels {
 /**
  * Defines values for StatusCodes.
  * Possible values include: 200, 400, 401, 404, 405, 409, 426, 500, 501, 502
+ *
  * @readonly
  * @enum {number}
  */
