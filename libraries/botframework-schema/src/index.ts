@@ -77,7 +77,7 @@ export interface InnerHttpError {
     /**
      * Body from failed request
      */
-    body: any;
+    body: any; // eslint-disable-line @typescript-eslint/no-explicit-any
 }
 
 /**
@@ -183,7 +183,7 @@ export interface ConversationAccount {
     /**
      * Custom properties object (optional)
      */
-    properties?: any;
+    properties?: any; // eslint-disable-line @typescript-eslint/no-explicit-any
 }
 
 export const assertConversationAccount: Assertion<ConversationAccount> = (value, path) => {
@@ -251,11 +251,11 @@ export interface CardAction {
     /**
      * Supplementary parameter for action. Content of this property depends on the ActionType
      */
-    value: any;
+    value: any; // eslint-disable-line @typescript-eslint/no-explicit-any
     /**
      * Channel-specific data associated with this action
      */
-    channelData?: any;
+    channelData?: any; // eslint-disable-line @typescript-eslint/no-explicit-any
     /**
      * Alternate image text to be used in place of the `image` field
      */
@@ -316,7 +316,7 @@ export interface Attachment {
     /**
      * Embedded content
      */
-    content?: any;
+    content?: any; // eslint-disable-line @typescript-eslint/no-explicit-any
     /**
      * (OPTIONAL) The name of the attachment
      */
@@ -352,7 +352,7 @@ export interface Entity {
     /**
      * Additional properties.
      */
-    [key: string]: any;
+    [key: string]: any; // eslint-disable-line @typescript-eslint/no-explicit-any
 }
 
 export const assertEntity: Assertion<Entity> = (value, path) => {
@@ -591,7 +591,7 @@ export interface Activity {
     /**
      * Contains channel-specific content.
      */
-    channelData?: any;
+    channelData?: any; // eslint-disable-line @typescript-eslint/no-explicit-any
     /**
      * Indicates whether the recipient of a contactRelationUpdate was added or removed from the
      * sender's contact list.
@@ -612,7 +612,7 @@ export interface Activity {
     /**
      * A value that is associated with the activity.
      */
-    value?: any;
+    value?: any; // eslint-disable-line @typescript-eslint/no-explicit-any
     /**
      * The name of the operation associated with an invoke or event activity.
      */
@@ -748,7 +748,7 @@ export interface ConversationParameters {
     /**
      * Channel specific payload for creating the conversation
      */
-    channelData: any;
+    channelData: any; // eslint-disable-line @typescript-eslint/no-explicit-any
 }
 
 /**
@@ -992,7 +992,7 @@ export interface AnimationCard {
     /**
      * Supplementary parameter for this card
      */
-    value: any;
+    value: any; // eslint-disable-line @typescript-eslint/no-explicit-any
 }
 
 /**
@@ -1048,7 +1048,7 @@ export interface AudioCard {
     /**
      * Supplementary parameter for this card
      */
-    value: any;
+    value: any; // eslint-disable-line @typescript-eslint/no-explicit-any
 }
 
 /**
@@ -1134,7 +1134,7 @@ export interface MediaCard {
     /**
      * Supplementary parameter for this card
      */
-    value: any;
+    value: any; // eslint-disable-line @typescript-eslint/no-explicit-any
 }
 
 /**
@@ -1344,7 +1344,7 @@ export interface VideoCard {
     /**
      * Supplementary parameter for this card
      */
-    value: any;
+    value: any; // eslint-disable-line @typescript-eslint/no-explicit-any
 }
 
 /**
@@ -1398,15 +1398,15 @@ export interface Place {
     /**
      * Address of the place (may be `string` or complex object of type `PostalAddress`)
      */
-    address: any;
+    address: any; // eslint-disable-line @typescript-eslint/no-explicit-any
     /**
      * Geo coordinates of the place (may be complex object of type `GeoCoordinates` or `GeoShape`)
      */
-    geo: any;
+    geo: any; // eslint-disable-line @typescript-eslint/no-explicit-any
     /**
      * Map to the place (may be `string` (URL) or complex object of type `Map`)
      */
-    hasMap: any;
+    hasMap: any; // eslint-disable-line @typescript-eslint/no-explicit-any
     /**
      * The type of the thing
      */
@@ -1438,7 +1438,7 @@ export interface MediaEventValue {
     /**
      * Callback parameter specified in the Value field of the MediaCard that originated this event
      */
-    cardValue: any;
+    cardValue: any; // eslint-disable-line @typescript-eslint/no-explicit-any
 }
 
 /**
@@ -1452,7 +1452,7 @@ export interface TokenRequest {
     /**
      * A collection of settings for the specific provider for this request
      */
-    settings: { [propertyName: string]: any };
+    settings: { [propertyName: string]: any }; // eslint-disable-line @typescript-eslint/no-explicit-any
 }
 
 /**
@@ -1478,7 +1478,7 @@ export interface TokenResponse {
     /**
      * A collection of properties about this response, such as token polling parameters
      */
-    properties?: { [propertyName: string]: any };
+    properties?: { [propertyName: string]: any }; // eslint-disable-line @typescript-eslint/no-explicit-any
 }
 
 /**
@@ -1646,7 +1646,7 @@ export interface PaymentDetailsModifier {
      * A JSON-serializable object that provides optional information that might be needed by the
      * supported payment methods
      */
-    data: any;
+    data: any; // eslint-disable-line @typescript-eslint/no-explicit-any
 }
 
 /**
@@ -1693,7 +1693,7 @@ export interface PaymentMethodData {
      * A JSON-serializable object that provides optional information that might be needed by the
      * supported payment methods
      */
-    data: any;
+    data: any; // eslint-disable-line @typescript-eslint/no-explicit-any
 }
 
 /**
@@ -1773,7 +1773,7 @@ export interface PaymentResponse {
      * A JSON-serializable object that provides a payment method specific message used by the
      * merchant to process the transaction and determine successful fund transfer
      */
-    details: any;
+    details: any; // eslint-disable-line @typescript-eslint/no-explicit-any
     /**
      * If the requestShipping flag was set to true in the PaymentOptions passed to the PaymentRequest
      * constructor, then shippingAddress will be the full and final shipping address chosen by the

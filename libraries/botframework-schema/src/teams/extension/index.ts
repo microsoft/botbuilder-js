@@ -22,7 +22,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 import { Attachment } from '../../';
-import * as teams from '../';
 import { FileDownloadInfo, ContentType } from '../';
 
 /**
@@ -42,7 +41,7 @@ export type O365ConnectorCardActionType = 'ViewAction' | 'OpenUri' | 'HttpPOST' 
  */
 export interface O365ConnectorCardActionBase {
     /**
-     * @member {Type} [type] Type of the action. Possible values include:
+     * @member {O365ConnectorCardActionType} [type] Type of the action. Possible values include:
      * 'ViewAction', 'OpenUri', 'HttpPOST', 'ActionCard'
      */
     '@type'?: O365ConnectorCardActionType;
@@ -74,7 +73,7 @@ export type O365ConnectorCardInputType = 'textInput' | 'dateInput' | 'multichoic
  */
 export interface O365ConnectorCardInputBase {
     /**
-     * @member {O365ConnectorCardInputBaseType} [type] Input type name. Possible values include:
+     * @member {O365ConnectorCardInputType} [type] Input type name. Possible values include:
      * 'textInput', 'dateInput', 'multichoiceInput'
      */
     '@type'?: O365ConnectorCardInputType;

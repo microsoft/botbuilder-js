@@ -614,7 +614,7 @@ export interface MessagingExtensionParameter {
     /**
      * @member {any} [value] Value of the parameter
      */
-    value?: any;
+    value?: any; // eslint-disable-line @typescript-eslint/no-explicit-any
 }
 
 /**
@@ -763,7 +763,7 @@ export interface MessageActionsPayloadAttachment {
      * @member {any} [content] The content of the attachment, in case of a code
      * snippet, email, or file.
      */
-    content?: any;
+    content?: any; // eslint-disable-line @typescript-eslint/no-explicit-any
     /**
      * @member {string} [name] The plaintext display name of the attachment.
      */
@@ -922,7 +922,7 @@ export interface TaskModuleRequest {
     /**
      * @member {any} [data] User input data. Free payload with key-value pairs.
      */
-    data?: any;
+    data?: any; // eslint-disable-line @typescript-eslint/no-explicit-any
     /**
      * @member {TaskModuleRequestContext} [context] Current user context, i.e.,
      * the current theme
@@ -953,7 +953,7 @@ export interface MessagingExtensionAction extends TaskModuleRequest {
      */
     commandContext?: CommandContext;
     /**
-     * @member {BotMessagePreviewAction} [botMessagePreviewAction] Bot message
+     * @member {BotMessagePreviewActionType} [botMessagePreviewAction] Bot message
      * preview action taken by user. Possible values include: 'edit', 'send'
      */
     botMessagePreviewAction?: BotMessagePreviewActionType;
@@ -1120,13 +1120,13 @@ export interface FileConsentCard {
      * consented to upload. This is free flow schema and is sent back in Value
      * field of Activity.
      */
-    acceptContext?: any;
+    acceptContext?: any; // eslint-disable-line @typescript-eslint/no-explicit-any
     /**
      * @member {any} [declineContext] Context sent back to the Bot if user
      * declined. This is free flow schema and is sent back in Value field of
      * Activity.
      */
-    declineContext?: any;
+    declineContext?: any; // eslint-disable-line @typescript-eslint/no-explicit-any
 }
 
 /**
@@ -1151,7 +1151,7 @@ export interface FileDownloadInfo {
     /**
      * @member {any} [etag] ETag for the file.
      */
-    etag?: any;
+    etag?: any; // eslint-disable-line @typescript-eslint/no-explicit-any
 }
 
 /**
@@ -1172,7 +1172,7 @@ export interface FileInfoCard {
     /**
      * @member {any} [etag] ETag for the file.
      */
-    etag?: any;
+    etag?: any; // eslint-disable-line @typescript-eslint/no-explicit-any
 }
 
 /**
@@ -1221,7 +1221,7 @@ export interface FileConsentCardResponse {
     /**
      * @member {any} [context] The context associated with the action.
      */
-    context?: any;
+    context?: any; // eslint-disable-line @typescript-eslint/no-explicit-any
     /**
      * @member {FileUploadInfo} [uploadInfo] If the user accepted the file,
      * contains information about the file to be uploaded.
@@ -1408,7 +1408,7 @@ export interface TaskModuleTaskInfo {
      */
     height?: number | 'small' | 'medium' | 'large';
     /**
-     * @member {number | TeamsTaskModuleSize} [width] This can be a number, representing the task module's
+     * @member {number | 'small' | 'medium' | 'large'} [width] This can be a number, representing the task module's
      * width in pixels, or a string, one of: small, medium, large.
      */
     width?: number | 'small' | 'medium' | 'large';

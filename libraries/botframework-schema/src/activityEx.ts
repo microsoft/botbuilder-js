@@ -30,6 +30,7 @@ import {
     ICommandResultActivity,
 } from './index';
 
+// eslint-disable-next-line @typescript-eslint/no-namespace
 export namespace ActivityEx {
     /**
      * Creates an Activity as an IMessageActivity object.
@@ -115,7 +116,7 @@ export namespace ActivityEx {
     export function createTraceActivity(
         name: string,
         valueType?: string,
-        value?: any,
+        value?: unknown,
         label?: string
     ): Partial<ITraceActivity> {
         return {
@@ -180,7 +181,7 @@ export namespace ActivityEx {
     export function createTrace(
         source: Activity,
         name: string,
-        value?: any,
+        value?: unknown,
         valueType?: string,
         label?: string
     ): ITraceActivity {
