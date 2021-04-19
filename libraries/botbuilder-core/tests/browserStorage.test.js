@@ -5,7 +5,7 @@ function testStorage(storage) {
     it('read of unknown key', function () {
         return storage
             .read(['unk'])
-            .catch((reson) => assert(false, 'should not throw on read of unknown key'))
+            .catch(() => assert(false, 'should not throw on read of unknown key'))
             .then((result) => {
                 assert(result != null, 'result should be object');
                 assert(!result.unk, 'key should be undefined');
@@ -51,7 +51,7 @@ function testStorage(storage) {
                     return storage
                         .write(result)
                         .then(() => assert(false, 'should throw an exception on second write with same etag'))
-                        .catch((reason) => {});
+                        .catch(() => {});
                 });
             });
     });
@@ -67,13 +67,13 @@ function testStorage(storage) {
                     result.keyUpdate3.count = 3;
                     return storage
                         .write(result)
-                        .catch((reason) => assert(false, 'should NOT fail on etag writes with wildcard'));
+                        .catch(() => assert(false, 'should NOT fail on etag writes with wildcard'));
                 });
             });
     });
 
     it('delete unknown', function () {
-        return storage.delete(['unknown']).catch((reason) => assert(false, 'should not fail delete of unknown key'));
+        return storage.delete(['unknown']).catch(() => assert(false, 'should not fail delete of unknown key'));
     });
 
     it('delete known', function () {

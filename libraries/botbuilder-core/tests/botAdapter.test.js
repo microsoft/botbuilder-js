@@ -1,5 +1,4 @@
 const assert = require('assert');
-const { uniqueId } = require('lodash');
 const sinon = require('sinon');
 const { BotAdapter, TurnContext } = require('../');
 

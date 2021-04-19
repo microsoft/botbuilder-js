@@ -7,7 +7,7 @@ const print = (o) => {
     return JSON.stringify(o, null, '  ');
 };
 
-testStorage = function () {
+function testStorage() {
     const storage = new MemoryTranscriptStore();
 
     it('bad args', function () {
@@ -60,7 +60,7 @@ testStorage = function () {
             .then(() => assert(true))
             .catch((reason) => assert(false, `should not throw: ${print(reason)}`));
     });
-};
+}
 
 describe('MemoryTranscriptStore', function () {
     this.timeout(10000);

@@ -61,6 +61,8 @@ export class TelemetryLoggerMiddleware implements Middleware {
 
     /**
      * Gets a value indicating whether determines whether to log personal information that came from the user.
+     *
+     * @returns log true if log personal information is enabled
      */
     public get logPersonalInformation(): boolean {
         return this._logPersonalInformation;
@@ -68,6 +70,8 @@ export class TelemetryLoggerMiddleware implements Middleware {
 
     /**
      * Gets the currently configured botTelemetryClient that logs the events.
+     *
+     * @returns bot telemetry client
      */
     public get telemetryClient(): BotTelemetryClient {
         return this._telemetryClient;
@@ -95,7 +99,7 @@ export class TelemetryLoggerMiddleware implements Middleware {
         // hook up onSend pipeline
         context.onSendActivities(
             async (
-                ctx: TurnContext,
+                _ctx: TurnContext,
                 activities: Partial<Activity>[],
                 nextSend: () => Promise<ResourceResponse[]>
             ): Promise<ResourceResponse[]> => {
@@ -111,7 +115,7 @@ export class TelemetryLoggerMiddleware implements Middleware {
 
         // hook up update activity pipeline
         context.onUpdateActivity(
-            async (ctx: TurnContext, activity: Partial<Activity>, nextUpdate: () => Promise<void>) => {
+            async (_ctx: TurnContext, activity: Partial<Activity>, nextUpdate: () => Promise<void>) => {
                 // run full pipeline
                 const response: void = await nextUpdate();
 
@@ -123,7 +127,7 @@ export class TelemetryLoggerMiddleware implements Middleware {
 
         // hook up delete activity pipeline
         context.onDeleteActivity(
-            async (ctx: TurnContext, reference: Partial<ConversationReference>, nextDelete: () => Promise<void>) => {
+            async (_ctx: TurnContext, reference: Partial<ConversationReference>, nextDelete: () => Promise<void>) => {
                 // run full pipeline
                 await nextDelete();
 
@@ -177,7 +181,8 @@ export class TelemetryLoggerMiddleware implements Middleware {
      * Performs logging of telemetry data using the botTelemetryClient.trackEvent() method.
      * The event name used is "BotMessageUpdate".
      *
-     * @param activity
+     * @param activity the activity to update
+     * @returns a promise representing the async operation
      */
     protected async onUpdateActivity(activity: Activity): Promise<void> {
         this.telemetryClient.trackEvent({
@@ -191,7 +196,8 @@ export class TelemetryLoggerMiddleware implements Middleware {
      * Performs logging of telemetry data using the botTelemetryClient.trackEvent() method.
      * The event name used is "BotMessageDelete".
      *
-     * @param activity
+     * @param activity the activity to delete
+     * @returns a promise representing the async operation
      */
     protected async onDeleteActivity(activity: Activity): Promise<void> {
         this.telemetryClient.trackEvent({

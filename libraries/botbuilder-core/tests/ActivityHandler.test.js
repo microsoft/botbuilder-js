@@ -21,7 +21,7 @@ describe('ActivityHandler', function () {
         const bot = new ActivityHandler();
 
         let onTurnCalled = false;
-        bot.onTurn(async (context, next) => {
+        bot.onTurn(async (_context, next) => {
             onTurnCalled = true;
             await next();
         });
@@ -34,7 +34,7 @@ describe('ActivityHandler', function () {
         const bot = new ActivityHandler();
 
         let onMessageCalled = false;
-        bot.onMessage(async (context, next) => {
+        bot.onMessage(async (_context, next) => {
             onMessageCalled = true;
             await next();
         });
@@ -47,13 +47,13 @@ describe('ActivityHandler', function () {
         const bot = new ActivityHandler();
 
         let onTurnCalled = false;
-        bot.onTurn(async (context, next) => {
+        bot.onTurn(async (_context, next) => {
             onTurnCalled = true;
             await next();
         });
 
         let onMessageCalled = false;
-        bot.onMessage(async (context, next) => {
+        bot.onMessage(async (_context, next) => {
             onMessageCalled = true;
             await next();
         });
@@ -67,12 +67,12 @@ describe('ActivityHandler', function () {
         const bot = new ActivityHandler();
 
         let onTurnCalled = false;
-        bot.onTurn(async (context, next) => {
+        bot.onTurn(async (_context, _next) => {
             onTurnCalled = true;
         });
 
         let onMessageCalled = false;
-        bot.onMessage(async (context, next) => {
+        bot.onMessage(async (_context, next) => {
             onMessageCalled = false;
             await next();
         });
@@ -87,14 +87,14 @@ describe('ActivityHandler', function () {
         let count = 0;
 
         let onMessageCalled = false;
-        bot.onMessage(async (context, next) => {
+        bot.onMessage(async (_context, next) => {
             onMessageCalled = true;
             count++;
             await next();
         });
 
         let onMessageCalledAgain = false;
-        bot.onMessage(async (context, next) => {
+        bot.onMessage(async (_context, next) => {
             onMessageCalledAgain = true;
             count++;
             await next();
@@ -110,7 +110,7 @@ describe('ActivityHandler', function () {
         const bot = new ActivityHandler();
 
         let onConversationUpdateCalled = false;
-        bot.onConversationUpdate(async (context, next) => {
+        bot.onConversationUpdate(async (_context, next) => {
             onConversationUpdateCalled = true;
             await next();
         });
@@ -123,7 +123,7 @@ describe('ActivityHandler', function () {
         const bot = new ActivityHandler();
 
         let onMembersAddedCalled = false;
-        bot.onMembersAdded(async (context, next) => {
+        bot.onMembersAdded(async (_context, next) => {
             onMembersAddedCalled = true;
             await next();
         });
@@ -136,7 +136,7 @@ describe('ActivityHandler', function () {
         const bot = new ActivityHandler();
 
         let onMembersRemovedCalled = false;
-        bot.onMembersRemoved(async (context, next) => {
+        bot.onMembersRemoved(async (_context, next) => {
             onMembersRemovedCalled = true;
             await next();
         });
@@ -149,7 +149,7 @@ describe('ActivityHandler', function () {
         const bot = new ActivityHandler();
 
         let onMessageReactionCalled = false;
-        bot.onMessageReaction(async (context, next) => {
+        bot.onMessageReaction(async (_context, next) => {
             onMessageReactionCalled = true;
             await next();
         });
@@ -162,7 +162,7 @@ describe('ActivityHandler', function () {
         const bot = new ActivityHandler();
 
         let onReactionsAddedCalled = false;
-        bot.onReactionsAdded(async (context, next) => {
+        bot.onReactionsAdded(async (_context, next) => {
             onReactionsAddedCalled = true;
             await next();
         });
@@ -175,7 +175,7 @@ describe('ActivityHandler', function () {
         const bot = new ActivityHandler();
 
         let onReactionsRemovedCalled = false;
-        bot.onReactionsRemoved(async (context, next) => {
+        bot.onReactionsRemoved(async (_context, next) => {
             onReactionsRemovedCalled = true;
             await next();
         });
@@ -188,7 +188,7 @@ describe('ActivityHandler', function () {
         const bot = new ActivityHandler();
 
         let onEventCalled = false;
-        bot.onEvent(async (context, next) => {
+        bot.onEvent(async (_context, next) => {
             onEventCalled = true;
             await next();
         });
@@ -201,7 +201,7 @@ describe('ActivityHandler', function () {
         const bot = new ActivityHandler();
 
         let onEndConversationCalled = false;
-        bot.onEndOfConversation(async (context, next) => {
+        bot.onEndOfConversation(async (_context, next) => {
             onEndConversationCalled = true;
             await next();
         });
@@ -214,7 +214,7 @@ describe('ActivityHandler', function () {
         const bot = new ActivityHandler();
 
         let onTypingCalled = false;
-        bot.onTyping(async (context, next) => {
+        bot.onTyping(async (_context, next) => {
             onTypingCalled = true;
             await next();
         });
@@ -227,7 +227,7 @@ describe('ActivityHandler', function () {
         const bot = new ActivityHandler();
 
         let onInstallationUpdateCalled = false;
-        bot.onInstallationUpdate(async (context, next) => {
+        bot.onInstallationUpdate(async (_context, next) => {
             onInstallationUpdateCalled = true;
             await next();
         });
@@ -240,7 +240,7 @@ describe('ActivityHandler', function () {
         const bot = new ActivityHandler();
 
         let onInstallationUpdateAddCalled = false;
-        bot.onInstallationUpdateAdd(async (context, next) => {
+        bot.onInstallationUpdateAdd(async (_context, next) => {
             onInstallationUpdateAddCalled = true;
             await next();
         });
@@ -253,7 +253,7 @@ describe('ActivityHandler', function () {
         const bot = new ActivityHandler();
 
         let onInstallationUpdateAddCalled = false;
-        bot.onInstallationUpdateAdd(async (context, next) => {
+        bot.onInstallationUpdateAdd(async (_context, next) => {
             onInstallationUpdateAddCalled = true;
             await next();
         });
@@ -266,7 +266,7 @@ describe('ActivityHandler', function () {
         const bot = new ActivityHandler();
 
         let onInstallationUpdateRemoveCalled = false;
-        bot.onInstallationUpdateRemove(async (context, next) => {
+        bot.onInstallationUpdateRemove(async (_context, next) => {
             onInstallationUpdateRemoveCalled = true;
             await next();
         });
@@ -279,7 +279,7 @@ describe('ActivityHandler', function () {
         const bot = new ActivityHandler();
 
         let onInstallationUpdateRemoveCalled = false;
-        bot.onInstallationUpdateRemove(async (context, next) => {
+        bot.onInstallationUpdateRemove(async (_context, next) => {
             onInstallationUpdateRemoveCalled = true;
             await next();
         });
@@ -292,7 +292,7 @@ describe('ActivityHandler', function () {
         const bot = new ActivityHandler();
 
         let onUnrecognizedActivityTypeCalled = false;
-        bot.onUnrecognizedActivityType(async (context, next) => {
+        bot.onUnrecognizedActivityType(async (_context, next) => {
             onUnrecognizedActivityTypeCalled = true;
             await next();
         });
@@ -305,7 +305,7 @@ describe('ActivityHandler', function () {
         const bot = new ActivityHandler();
 
         let onDialogCalled = false;
-        bot.onDialog(async (context, next) => {
+        bot.onDialog(async (_context, next) => {
             onDialogCalled = true;
             await next();
         });

@@ -13,12 +13,10 @@ describe(`ConversationState`, function () {
     const context = new TurnContext(adapter, receivedMessage);
     const conversationState = new ConversationState(storage);
     it(`should load and save state from storage.`, async function () {
-        let key;
-
         // Simulate a "Turn" in a conversation by loading the state,
         // changing it and then saving the changes to state.
         await conversationState.load(context);
-        key = conversationState.getStorageKey(context);
+        const key = conversationState.getStorageKey(context);
         const state = conversationState.get(context);
         assert(state, `State not loaded`);
         assert(key, `Key not found`);
@@ -27,19 +25,18 @@ describe(`ConversationState`, function () {
 
         // Check the storage to see if the changes to state were saved.
         const items = await storage.read([key]);
-        assert(items.hasOwnProperty(key), `Saved state not found in storage.`);
+        assert(items[key], `Saved state not found in storage.`);
         assert(items[key].test === 'foo', `Missing test value in stored state.`);
     });
 
     it(`should ignore any activities that aren't "endOfConversation".`, async function () {
-        let key;
         await conversationState.load(context);
-        key = conversationState.getStorageKey(context);
+        const key = conversationState.getStorageKey(context);
         assert(conversationState.get(context).test === 'foo', `invalid initial state`);
         await context.sendActivity({ type: ActivityTypes.Message, text: 'foo' });
 
         const items = await storage.read([key]);
-        assert(items[key].hasOwnProperty('test'), `state cleared and shouldn't have been.`);
+        assert(items[key].test, `state cleared and shouldn't have been.`);
     });
 
     it(`should reject with error if channelId missing.`, async function () {
@@ -65,7 +62,8 @@ describe(`ConversationState`, function () {
     });
 
     it(`should throw NO_KEY error if getStorageKey() returns falsey value.`, async function () {
-        conversationState.getStorageKey = (turnContext) => undefined;
+        conversationState.getStorageKey = () => undefined;
+
         try {
             await conversationState.load(context, true);
         } catch (err) {

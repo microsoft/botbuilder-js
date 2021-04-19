@@ -32,7 +32,7 @@ describe(`PrivateConversationState`, function () {
 
         // Check the storage to see if the changes to state were saved.
         const items = await storage.read([key]);
-        assert(items.hasOwnProperty(key), `Saved state not found in storage.`);
+        assert(items[key], `Saved state not found in storage.`);
         assert(items[key].test === 'foo', `Missing test value in stored state.`);
     });
 
@@ -43,7 +43,7 @@ describe(`PrivateConversationState`, function () {
         await context.sendActivity({ type: ActivityTypes.Message, text: 'foo' });
 
         const items = await storage.read([key]);
-        assert(items[key].hasOwnProperty('test'), `state cleared and shouldn't have been.`);
+        assert(items[key].test, `state cleared and shouldn't have been.`);
     });
 
     it(`should reject with error if channelId missing.`, async function () {
@@ -80,7 +80,7 @@ describe(`PrivateConversationState`, function () {
     });
 
     it(`should throw NO_KEY error if getStorageKey() returns falsey value.`, async function () {
-        privateConversationState.getStorageKey = (turnContext) => undefined;
+        privateConversationState.getStorageKey = () => undefined;
         try {
             await privateConversationState.load(context, true);
         } catch (err) {

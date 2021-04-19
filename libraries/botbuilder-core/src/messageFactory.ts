@@ -45,9 +45,11 @@ export class MessageFactory {
      * ```JavaScript
      * const message = MessageFactory.text('Greetings from example message');
      * ```
+     *
      * @param text Text to include in the message.
      * @param speak (Optional) SSML to include in the message.
      * @param inputHint (Optional) input hint for the message. Defaults to `acceptingInput`.
+     * @returns partial activity
      */
     public static text(text: string, speak?: string, inputHint?: InputHints | string): Partial<Activity> {
         const msg: Partial<Activity> = {
@@ -71,10 +73,12 @@ export class MessageFactory {
      * ```JavaScript
      * const message = MessageFactory.suggestedActions(['red', 'green', 'blue'], `Choose a color`);
      * ```
+     *
      * @param actions Array of card actions or strings to include. Strings will be converted to `messageBack` actions.
      * @param text (Optional) text of the message.
      * @param speak (Optional) SSML to include with the message.
      * @param inputHint (Optional) input hint for the message. Defaults to `acceptingInput`.
+     * @returns partial activity
      */
     public static suggestedActions(
         actions: (CardAction | string)[],
@@ -114,10 +118,12 @@ export class MessageFactory {
      *      )
      * );
      * ```
+     *
      * @param attachment Adaptive card to include in the message.
      * @param text (Optional) text of the message.
      * @param speak (Optional) SSML to include with the message.
      * @param inputHint (Optional) input hint for the message. Defaults to `acceptingInput`.
+     * @returns partial activity
      */
     public static attachment(
         attachment: Attachment,
@@ -141,10 +147,12 @@ export class MessageFactory {
      *    CardFactory.heroCard('title3', ['imageUrl3'], ['button3'])
      * ]);
      * ```
+     *
      * @param attachments Array of attachments to include in the message.
      * @param text (Optional) text of the message.
      * @param speak (Optional) SSML to include with the message.
      * @param inputHint (Optional) input hint for the message.
+     * @returns partial activity
      */
     public static list(
         attachments: Attachment[],
@@ -168,10 +176,12 @@ export class MessageFactory {
      *    CardFactory.heroCard('title3', ['imageUrl3'], ['button3'])
      * ]);
      * ```
+     *
      * @param attachments Array of attachments to include in the message.
      * @param text (Optional) text of the message.
      * @param speak (Optional) SSML to include with the message.
      * @param inputHint (Optional) input hint for the message.
+     * @returns partial activity
      */
     public static carousel(
         attachments: Attachment[],
@@ -191,12 +201,14 @@ export class MessageFactory {
      * ```JavaScript
      * const message = MessageFactory.contentUrl('https://example.com/hawaii.jpg', 'image/jpeg', 'Hawaii Trip', 'A photo from our family vacation.');
      * ```
+     *
      * @param url Url of the image/video to send.
      * @param contentType The MIME type of the image/video.
      * @param name (Optional) Name of the image/video file.
      * @param text (Optional) text of the message.
      * @param speak (Optional) SSML to include with the message.
      * @param inputHint (Optional) input hint for the message.
+     * @returns partial activity
      */
     public static contentUrl(
         url: string,

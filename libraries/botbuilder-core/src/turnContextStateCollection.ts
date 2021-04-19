@@ -3,6 +3,8 @@
  * Licensed under the MIT License.
  */
 
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 const TURN_STATE_SCOPE_CACHE = Symbol('turnStateScopeCache');
 
 /**

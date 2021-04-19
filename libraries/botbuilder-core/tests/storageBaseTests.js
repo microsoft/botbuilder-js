@@ -94,7 +94,7 @@ class StorageBaseTests {
     }
 
     static async handleCrazyKeys(storage) {
-        const key = `!@#$%^&*()~/\\><,.?';\"\`~`;
+        const key = `!@#$%^&*()~/\\><,.?';"\`~`;
         const storeItem = { id: 1 };
         const storeItems = { [key]: storeItem };
 
@@ -145,7 +145,7 @@ class StorageBaseTests {
             updatePocoItem.count = 123;
 
             await storage.write({ pocoItem: updatePocoItem });
-        } catch (err) {
+        } catch (_err) {
             assert.fail('Should not throw exception on write with pocoItem');
         }
 
@@ -155,7 +155,9 @@ class StorageBaseTests {
 
             await storage.write({ pocoStoreItem: updatePocoStoreItem });
             assert.fail('Should have thrown exception on write with store item because of old eTag');
-        } catch (err) {}
+        } catch (_err) {
+            // no-op
+        }
 
         const reloadedStoreItems2 = await storage.read(['pocoItem', 'pocoStoreItem']);
 
@@ -196,7 +198,9 @@ class StorageBaseTests {
             await storage.write(dict2);
 
             assert.fail('Should have thrown exception on write with storeItem because of empty eTag');
-        } catch (err) {}
+        } catch (_err) {
+            // no-op
+        }
 
         const finalStoreItems = await storage.read(['pocoItem', 'pocoStoreItem']);
         assert.strictEqual(finalStoreItems.pocoItem.count, 100);

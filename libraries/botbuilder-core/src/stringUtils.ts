@@ -15,6 +15,7 @@ export class StringUtils {
      *
      * @param text Text.
      * @param length Length to truncate text.
+     * @returns truncated string with ellipsis
      */
     public static ellipsis(text: string, length: number): string {
         text = text || '';
@@ -34,6 +35,7 @@ export class StringUtils {
      * https://werxltd.com/wp/2010/05/13/javascript-implementation-of-javas-string-hashcode-method/
      *
      * @param text Text to hash.
+     * @returns hashed text
      */
     public static hash(text: string): string {
         const length = text.length;
@@ -51,6 +53,7 @@ export class StringUtils {
      *
      * @param text Text to truncate.
      * @param length Length to truncate at.
+     * @returns truncated and hashed string
      */
     public static ellipsisHash(text: string, length: number): string {
         text = text || '';

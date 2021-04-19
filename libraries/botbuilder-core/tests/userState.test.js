@@ -13,12 +13,10 @@ describe(`UserState`, function () {
     const context = new TurnContext(adapter, receivedMessage);
     const userState = new UserState(storage);
     it(`should load and save state from storage.`, async function () {
-        let key;
-
         // Simulate a "Turn" in a conversation by loading the state,
         // changing it and then saving the changes to state.
         await userState.load(context);
-        key = userState.getStorageKey(context);
+        const key = userState.getStorageKey(context);
         const state = userState.get(context);
         assert(state, `State not loaded`);
         assert(key, `Key not found`);
@@ -27,7 +25,7 @@ describe(`UserState`, function () {
 
         // Check the storage to see if the changes to state were saved.
         const items = await storage.read([key]);
-        assert(items.hasOwnProperty(key), `Saved state not found in storage.`);
+        assert(items[key], `Saved state not found in storage.`);
         assert(items[key].test === 'foo', `Missing test value in stored state.`);
     });
 
@@ -54,7 +52,7 @@ describe(`UserState`, function () {
     });
 
     it(`should throw NO_KEY error if getStorageKey() returns falsey value.`, async function () {
-        userState.getStorageKey = (turnContext) => undefined;
+        userState.getStorageKey = () => undefined;
         try {
             await userState.load(context, true);
         } catch (err) {

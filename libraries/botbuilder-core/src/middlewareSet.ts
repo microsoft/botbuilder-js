@@ -72,8 +72,7 @@ export class MiddlewareSet implements Middleware {
     /**
      * Creates a new MiddlewareSet instance.
      *
-     * @param middleware One or more middleware handlers(s) to register.
-     * @param {...any} middlewares
+     * @param middlewares One or more middleware handlers(s) to register.
      */
     constructor(...middlewares: (MiddlewareHandler | Middleware)[]) {
         this.use(...middlewares);
@@ -84,6 +83,7 @@ export class MiddlewareSet implements Middleware {
      *
      * @param context [TurnContext](xref:botbuilder-core.TurnContext) object for this turn.
      * @param next Delegate to call to continue the bot middleware pipeline.
+     * @returns promise representing the async operation
      */
     public onTurn(context: TurnContext, next: () => Promise<void>): Promise<void> {
         return this.run(context, next);
@@ -92,9 +92,9 @@ export class MiddlewareSet implements Middleware {
     /**
      * Registers middleware handlers(s) with the set.
      *
-     * @remarks 
-This example adds a new piece of middleware to a set:
-     * 
+     * @remarks
+     * This example adds a new piece of middleware to a set:
+     *
      * ```JavaScript
      * set.use(async (context, next) => {
      * console.log(`Leading Edge`);
@@ -102,8 +102,9 @@ This example adds a new piece of middleware to a set:
      * console.log(`Trailing Edge`);
      * });
      * ```
-     * @param {...any} middlewares
-     * @param middleware One or more middleware handlers(s) to register.
+     *
+     * @param middlewares One or more middleware handlers(s) to register.
+     * @returns this for chaining
      */
     public use(...middlewares: (MiddlewareHandler | Middleware)[]): this {
         middlewares.forEach((plugin) => {

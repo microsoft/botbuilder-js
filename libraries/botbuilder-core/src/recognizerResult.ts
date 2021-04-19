@@ -33,12 +33,12 @@ export interface RecognizerResult {
     /**
      * (Optional) entities recognized.
      */
-    entities?: any;
+    entities?: any; // eslint-disable-line @typescript-eslint/no-explicit-any
 
     /**
      * (Optional) other properties
      */
-    [propName: string]: any;
+    [propName: string]: any; // eslint-disable-line @typescript-eslint/no-explicit-any
 }
 
 export const getTopScoringIntent = (result: RecognizerResult): { intent: string; score: number } => {

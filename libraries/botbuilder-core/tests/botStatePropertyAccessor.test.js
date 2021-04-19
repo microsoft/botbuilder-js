@@ -69,7 +69,7 @@ describe(`BotStatePropertyAccessor`, function () {
             await booleanProperty.set(context, booleanValue);
 
             // Retrieve the property value which should be true.
-            const retrievedValue = await booleanProperty.get(context);
+            await booleanProperty.get(context);
             assert(booleanValue, `value for PropertyAccessor was not properly saved.`);
 
             // Delete the value from state, and verify that the value is now undefined.

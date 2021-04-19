@@ -72,7 +72,7 @@ export interface StoreItem {
     /**
      * Key/value pairs.
      */
-    [key: string]: any;
+    [key: string]: any; // eslint-disable-line @typescript-eslint/no-explicit-any
 
     /**
      * (Optional) eTag field for stores that support optimistic concurrency.
@@ -87,7 +87,7 @@ export interface StoreItems {
     /**
      * List of store items indexed by key.
      */
-    [key: string]: any;
+    [key: string]: any; // eslint-disable-line @typescript-eslint/no-explicit-any
 }
 
 export const assertStoreItems: Assertion<StoreItems> = (val, path) => {
@@ -113,10 +113,12 @@ export const assertStoreItems: Assertion<StoreItems> = (val, path) => {
  *    await storage.write({ 'botState': state });
  * }
  * ```
+ *
  * @param item Item to calculate the change hash for.
+ * @returns a string representing the changes
  */
 export function calculateChangeHash(item: StoreItem): string {
-    const cpy: any = { ...item };
+    const cpy = { ...item };
     if (cpy.eTag) {
         delete cpy.eTag;
     }

@@ -1,14 +1,5 @@
 const assert = require('assert');
-
-const {
-    TurnContext,
-    BotStateSet,
-    BotState,
-    MemoryStorage,
-    UserState,
-    ConversationState,
-    TestAdapter,
-} = require('../lib');
+const { TurnContext, BotStateSet, MemoryStorage, UserState, ConversationState, TestAdapter } = require('../lib');
 
 const receivedMessage = {
     text: 'received',
@@ -17,32 +8,6 @@ const receivedMessage = {
     from: { id: 'testuser' },
     conversation: { id: 'conv' },
 };
-
-class BotStateMock {
-    constructor(state) {
-        this.state = state || {};
-        this.assertForce = false;
-        this.readCalled = false;
-        this.writeCalled = false;
-    }
-    load(context, force) {
-        assert(context, `BotStateMock.load() not passed context.`);
-        if (this.assertForce) assert(force, `BotStateMock.load(): force not set.`);
-        this.readCalled = true;
-        return new Promise((resolve, reject) => {
-            setTimeout(() => resolve(this.state), Math.random() * 50);
-        });
-    }
-
-    saveChanges(context, force) {
-        assert(context, `BotStateMock.saveChanges() not passed context.`);
-        if (this.assertForce) assert(force, `BotStateMock.saveChanges(): force not set.`);
-        this.writeCalled = true;
-        return new Promise((resolve, reject) => {
-            setTimeout(() => resolve(), Math.random() * 50);
-        });
-    }
-}
 
 describe(`BotStateSet`, function () {
     this.timeout(5000);

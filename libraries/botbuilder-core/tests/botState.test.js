@@ -32,7 +32,7 @@ describe(`BotState`, function () {
         await botState.saveChanges(context);
 
         const items = await storage.read([storageKey]);
-        assert(items.hasOwnProperty(storageKey), `Saved state not found in storage.`);
+        assert(items[storageKey], `Saved state not found in storage.`);
         assert(items[storageKey].test === 'foo', `Missing test value in stored state.`);
     });
 
@@ -49,12 +49,12 @@ describe(`BotState`, function () {
         await botState.load(context);
         assert(cachedState(context, botState.stateKey).test === 'foo', `invalid initial state`);
         await botState.clear(context);
-        assert(!cachedState(context, botState.stateKey).hasOwnProperty('test'), `state not cleared on context.`);
+        assert(!cachedState(context, botState.stateKey).test, `state not cleared on context.`);
         await botState.saveChanges(context);
 
         const items = await storage.read([storageKey]);
         assert(items[storageKey], `state removed from storage.`);
-        assert(!items[storageKey].hasOwnProperty('test'), `state not cleared from storage.`);
+        assert(!items[storageKey].test, `state not cleared from storage.`);
     });
 
     it(`should delete() state storage.`, async function () {
@@ -64,13 +64,13 @@ describe(`BotState`, function () {
         assert(!cachedState(context, botState.stateKey), `state not cleared on context.`);
 
         const items = await storage.read([storageKey]);
-        assert(!items.hasOwnProperty(storageKey), `state not removed from storage.`);
+        assert(!items[storageKey], `state not removed from storage.`);
     });
 
     it(`should force immediate saveChanges() of state to storage.`, async function () {
         await botState.load(context);
         const state = cachedState(context, botState.stateKey);
-        assert(!state.hasOwnProperty('foo'), `invalid initial state`);
+        assert(!state.foo, `invalid initial state`);
         state.test = 'foo';
         await botState.saveChanges(context, true);
         const items = await storage.read([storageKey]);

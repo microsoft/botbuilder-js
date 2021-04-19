@@ -180,7 +180,7 @@ describe(`TurnContext`, function () {
 
     it(`should send a text message with speak and inputHint added.`, async function () {
         const context = new TurnContext(new SimpleAdapter(), testMessage);
-        context.onSendActivities((ctx, activities, next) => {
+        context.onSendActivities((_ctx, activities, _next) => {
             assert(Array.isArray(activities), `activities not array.`);
             assert(activities.length === 1, `invalid count of activities.`);
             assert(activities[0].text === 'test', `text wrong.`);
@@ -193,7 +193,7 @@ describe(`TurnContext`, function () {
 
     it(`should send a trace activity.`, async function () {
         const context = new TurnContext(new SimpleAdapter(), testMessage);
-        context.onSendActivities((ctx, activities, next) => {
+        context.onSendActivities((_ctx, activities, _next) => {
             assert(Array.isArray(activities), `activities not array.`);
             assert(activities.length === 1, `invalid count of activities.`);
             assert(activities[0].type === ActivityTypes.Trace, `type wrong.`);
@@ -230,7 +230,7 @@ describe(`TurnContext`, function () {
 
     it(`should allow interception of delivery in onSendActivity() hook.`, async function () {
         const context = new TurnContext(new SimpleAdapter(), testMessage);
-        context.onSendActivities((ctx, activities, next) => {
+        context.onSendActivities((_ctx, _activities, _next) => {
             return [];
         });
         const response = await context.sendActivity(testMessage);
@@ -285,7 +285,7 @@ describe(`TurnContext`, function () {
     it(`should call onDeleteActivity() hook before delete by "reference".`, async function () {
         let called = false;
         const context = new TurnContext(new SimpleAdapter(), testMessage);
-        context.onDeleteActivity((ctx, reference, next) => {
+        context.onDeleteActivity((_ctx, reference, next) => {
             assert(reference, `missing reference`);
             assert(reference.activityId === '1234', `invalid activityId passed to hook`);
             called = true;
@@ -297,7 +297,7 @@ describe(`TurnContext`, function () {
 
     it(`should map an exception raised by a hook to a rejection.`, async function () {
         const context = new TurnContext(new SimpleAdapter(), testMessage);
-        context.onDeleteActivity((ctx, reference, next) => {
+        context.onDeleteActivity((_ctx, _reference, _next) => {
             throw new Error('failed');
         });
         await assert.rejects(async () => await context.deleteActivity('1234'), {
@@ -349,12 +349,12 @@ describe(`TurnContext`, function () {
         // Round trip outgoing activity without a replyToId
         delete reference.activityId;
         const activity3 = TurnContext.applyConversationReference({ text: 'foo', type: 'message' }, reference);
-        assert(!activity3.hasOwnProperty('replyToId'), `activity3 has replyToId`);
+        assert(!activity3.replyToId, `activity3 has replyToId`);
 
         // Round trip incoming activity without an id
         delete reference.activityId;
         const activity4 = TurnContext.applyConversationReference({ text: 'foo', type: 'message' }, reference, true);
-        assert(!activity4.hasOwnProperty('id'), `activity4 has id`);
+        assert(!activity4.id, `activity4 has id`);
     });
 
     it(`should not set TurnContext.responded to true if Trace activity is sent.`, async function () {

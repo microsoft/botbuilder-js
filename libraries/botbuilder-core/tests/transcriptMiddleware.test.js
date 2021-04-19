@@ -175,7 +175,7 @@ describe(`TranscriptLoggerMiddleware`, function () {
                     // In SendActivitiesHandlers developers are supposed to call:
                     //      return next();
                     // If this is not returned, then the next handler will not have the ResourceResponses[].
-                    const responses = await next();
+                    await next();
                 });
 
                 // Run the bot's application logic.
@@ -229,7 +229,7 @@ describe(`TranscriptLoggerMiddleware`, function () {
                     // In SendActivitiesHandlers developers are supposed to call:
                     //      return next();
                     // If this is not returned, then the next handler will not have the ResourceResponses[].
-                    const responses = await next();
+                    await next();
 
                     return {};
                 });
@@ -282,7 +282,7 @@ describe(`TranscriptLoggerMiddleware`, function () {
                     // In SendActivitiesHandlers developers are supposed to call:
                     //      return next();
                     // If this is not returned, then the next handler will not have the ResourceResponses[].
-                    const responses = await next();
+                    await next();
 
                     return 1;
                 });

@@ -22,7 +22,7 @@ export interface BotFrameworkClient {
      * @param conversationId A conversation ID to use for the conversation with the skill.
      * @param activity Activity to forward.
      */
-    postActivity: <T = any>(
+    postActivity: <T = any>( // eslint-disable-line @typescript-eslint/no-explicit-any
         fromBotId: string,
         toBotId: string,
         toUrl: string,

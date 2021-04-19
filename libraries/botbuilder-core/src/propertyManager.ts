@@ -18,5 +18,6 @@ export interface PropertyManager {
      * @param T (Optional) type of property to create. Defaults to `any` type.
      * @param name Name of the property being created.
      */
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     createProperty<T = any>(name: string): StatePropertyAccessor<T>;
 }

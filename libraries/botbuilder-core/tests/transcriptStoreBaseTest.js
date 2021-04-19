@@ -75,7 +75,7 @@ exports._badArgs = function _badArgs(store) {
         new Promise((resolve, reject) => {
             try {
                 promiseFunc().then(() => reject(errMessage));
-            } catch (error) {
+            } catch (_error) {
                 resolve('expected error');
             }
         });

@@ -56,7 +56,7 @@ export class TranscriptLoggerMiddleware implements Middleware {
 
         // hook up onSend pipeline
         context.onSendActivities(
-            async (ctx: TurnContext, activities: Partial<Activity>[], next: () => Promise<ResourceResponse[]>) => {
+            async (_ctx: TurnContext, activities: Partial<Activity>[], next: () => Promise<ResourceResponse[]>) => {
                 // Run full pipeline.
                 const responses = await next();
 
@@ -85,7 +85,7 @@ export class TranscriptLoggerMiddleware implements Middleware {
         );
 
         // hook up update activity pipeline
-        context.onUpdateActivity(async (ctx: TurnContext, activity: Partial<Activity>, next: () => Promise<void>) => {
+        context.onUpdateActivity(async (_ctx: TurnContext, activity: Partial<Activity>, next: () => Promise<void>) => {
             // run full pipeline
             const response: void = await next();
 
@@ -99,7 +99,7 @@ export class TranscriptLoggerMiddleware implements Middleware {
 
         // hook up delete activity pipeline
         context.onDeleteActivity(
-            async (ctx: TurnContext, reference: Partial<ConversationReference>, next: () => Promise<void>) => {
+            async (_ctx: TurnContext, reference: Partial<ConversationReference>, next: () => Promise<void>) => {
                 // run full pipeline
                 await next();
 
@@ -145,12 +145,7 @@ export class TranscriptLoggerMiddleware implements Middleware {
         }
     }
 
-    /**
-     * Logs the Activity.
-     *
-     * @param transcript
-     * @param activity Activity to log.
-     */
+    // Logs the Activity.
     private logActivity(transcript: Activity[], activity: Activity): void {
         if (!activity.timestamp) {
             activity.timestamp = new Date();
@@ -162,11 +157,7 @@ export class TranscriptLoggerMiddleware implements Middleware {
         }
     }
 
-    /**
-     * Clones the Activity entity.
-     *
-     * @param activity Activity to clone.
-     */
+    // Clones the Activity entity.
     private cloneActivity(activity: Partial<Activity>): Activity {
         return Object.assign(<Activity>{}, activity);
     }
@@ -176,6 +167,7 @@ export class TranscriptLoggerMiddleware implements Middleware {
      *
      * @param err Error or object to console.error out.
      */
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     private transcriptLoggerErrorHandler(err: Error | any): void {
         // tslint:disable:no-console
         if (err instanceof Error) {

@@ -43,8 +43,8 @@ export interface IUserTokenProvider {
         context: TurnContext,
         userId: string,
         includeFilter?: string,
-        oAuthAppCredentials?: any
-    ): Promise<any[]>;
+        oAuthAppCredentials?: any // eslint-disable-line @typescript-eslint/no-explicit-any
+    ): Promise<any[]>; // eslint-disable-line @typescript-eslint/no-explicit-any
 
     /**
      * Gets a signin link from the token server that can be sent as part of a SigninCard.
