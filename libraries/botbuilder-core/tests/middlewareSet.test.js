@@ -11,7 +11,7 @@ const noop = () => {
     // no-op
 };
 
-describe(`MiddlewareSet`, () => {
+describe(`MiddlewareSet`, function () {
     // Generates middleware helper that itself generates middleware that pushes a value
     // on a stack. Returns the middleware generator function, the stack, and a clean
     // MiddlewareSet instance for testing
@@ -28,12 +28,12 @@ describe(`MiddlewareSet`, () => {
         };
     };
 
-    it(`should use() middleware individually.`, () => {
+    it(`should use() middleware individually.`, function () {
         const { middleware, set } = stackMiddleware();
         set.use(middleware('a')).use(middleware('b'));
     });
 
-    it(`should use() a list of middleware.`, () => {
+    it(`should use() a list of middleware.`, function () {
         const { middleware, set } = stackMiddleware();
         set.use(middleware('a'), middleware('b'), middleware('c'));
     });
@@ -58,7 +58,7 @@ describe(`MiddlewareSet`, () => {
         });
     });
 
-    it(`should run middleware with a leading and trailing edge.`, async () => {
+    it(`should run middleware with a leading and trailing edge.`, async function () {
         const { set, stack } = stackMiddleware();
 
         set.use(async (_, next) => {
@@ -110,7 +110,7 @@ describe(`MiddlewareSet`, () => {
         }
     });
 
-    it(`should throw an error if an invalid plugin type is added.`, () => {
+    it(`should throw an error if an invalid plugin type is added.`, function () {
         assert.throws(() => new MiddlewareSet().use('bogus'));
     });
 

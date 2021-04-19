@@ -11,12 +11,12 @@ function assertActions(actions, count, titles) {
     assert(Array.isArray(actions), `actions not array.`);
     assert(actions.length === count, `wrong number of actions returned.`);
     for (let i = 0; i < count; i++) {
-        assert(actions[i].title, `title[${ i }] missing`);
+        assert(actions[i].title, `title[${i}] missing`);
         if (titles) {
-            assert(actions[i].title === titles[i], `title[${ i }] invalid`);
+            assert(actions[i].title === titles[i], `title[${i}] invalid`);
         }
-        assert(actions[i].type, `type[${ i }] missing`);
-        assert(actions[i].value, `value[${ i }] missing`);
+        assert(actions[i].type, `type[${i}] missing`);
+        assert(actions[i].value, `value[${i}] missing`);
     }
 }
 
@@ -24,9 +24,9 @@ function assertImages(images, count, links) {
     assert(Array.isArray(images), `images not array.`);
     assert(images.length === count, `wrong number of images returned.`);
     for (let i = 0; i < count; i++) {
-        assert(images[i].url, `image url[${ i }] missing`);
+        assert(images[i].url, `image url[${i}] missing`);
         if (links) {
-            assert(images[i].url === links[i], `image url[${ i }] invalid`);
+            assert(images[i].url === links[i], `image url[${i}] invalid`);
         }
     }
 }
@@ -35,9 +35,9 @@ function assertMedia(media, count, links) {
     assert(Array.isArray(media), `media not array.`);
     assert(media.length === count, `wrong number of media returned.`);
     for (let i = 0; i < count; i++) {
-        assert(media[i].url, `media url[${ i }] missing`);
+        assert(media[i].url, `media url[${i}] missing`);
         if (links) {
-            assert(media[i].url === links[i], `media url[${ i }] invalid`);
+            assert(media[i].url === links[i], `media url[${i}] invalid`);
         }
     }
 }
@@ -47,7 +47,7 @@ function assertOAuthActions(actions, title) {
     assert(actions.length === 1, `should have received only one action.`);
     const button = actions[0];
     assert(button.value === undefined, `OAuthCard actions' value should be undefined.`);
-    assert(button.title === title, `action's title [${ button.title }] is not expected "${ title }".`);
+    assert(button.title === title, `action's title [${button.title}] is not expected "${title}".`);
     assert(button.type === 'signin', `action's type [${button.type}] is not expected "signin".`);
 }
 
@@ -60,11 +60,13 @@ describe(`CardFactory`, function () {
     });
 
     it(`should support an array of CardAction options passed to actions().`, function () {
-        const actions = CardFactory.actions([{
-            title: 'foo',
-            type: 'postBack',
-            value: 'bar'
-        }]);
+        const actions = CardFactory.actions([
+            {
+                title: 'foo',
+                type: 'postBack',
+                value: 'bar',
+            },
+        ]);
         assertActions(actions, 1, ['foo']);
         assert(actions[0].type === 'postBack', `invalid action type`);
         assert(actions[0].value === 'bar', `invalid action value.`);
@@ -81,11 +83,13 @@ describe(`CardFactory`, function () {
     });
 
     it(`should support an array of CardImage options passed to images().`, function () {
-        const images = CardFactory.images([{
-            url: 'foo',
-            alt: 'bar',
-            tap: {}
-        }]);
+        const images = CardFactory.images([
+            {
+                url: 'foo',
+                alt: 'bar',
+                tap: {},
+            },
+        ]);
         assertImages(images, 1, ['foo']);
         assert(images[0].alt === 'bar', `invalid image.alt property.`);
         assert(typeof images[0].tap === 'object', `invalid image.type property.`);
@@ -102,10 +106,12 @@ describe(`CardFactory`, function () {
     });
 
     it(`should support an array of CardMedia options passed to media().`, function () {
-        const media = CardFactory.media([{
-            url: 'foo',
-            profile: 'bar'
-        }]);
+        const media = CardFactory.media([
+            {
+                url: 'foo',
+                profile: 'bar',
+            },
+        ]);
         assertMedia(media, 1, ['foo']);
         assert(media[0].profile === 'bar', `invalid media.profile property.`);
     });
@@ -345,21 +351,19 @@ describe(`CardFactory`, function () {
     });
 
     it(`should create an o365ConnectorCard.`, function () {
-        const attachment = CardFactory.o365ConnectorCard(
-            {
-                "title": "card title",
-                "text": "card text",
-                "summary": "O365 card summary",
-                "themeColor": "#E67A9E",
-                "sections": [
-                    {
-                        "title": "**section title**",
-                        "text": "section text",
-                        "activityTitle": "activity title",
-                     }
-                ]
-            }
-        );
+        const attachment = CardFactory.o365ConnectorCard({
+            title: 'card title',
+            text: 'card text',
+            summary: 'O365 card summary',
+            themeColor: '#E67A9E',
+            sections: [
+                {
+                    title: '**section title**',
+                    text: 'section text',
+                    activityTitle: 'activity title',
+                },
+            ],
+        });
         assertAttachment(attachment, CardFactory.contentTypes.o365ConnectorCard);
         const content = attachment.content;
         assert(content.title === 'card title', `wrong title.`);

@@ -18,6 +18,7 @@ interface CoreWebResource {
 
 /**
  * CoreAppCredentials
+ *
  * @remarks
  * Runtime-agnostic interface representing "ServiceClientCredentials" from @azure/ms-rest-js
  */

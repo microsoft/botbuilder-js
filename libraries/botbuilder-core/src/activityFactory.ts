@@ -115,6 +115,7 @@ export class ActivityFactory {
 
     /**
      * Generate the activity.
+     *
      * @param lgResult string result from languageGenerator.
      */
     public static fromObject(lgResult: any): Partial<Activity> {
@@ -131,6 +132,7 @@ export class ActivityFactory {
 
     /**
      * Given a lg result, create a text activity. This method will create a MessageActivity from text.
+     *
      * @param text lg text output.
      */
     private static buildActivityFromText(text: string): Partial<Activity> {
@@ -148,6 +150,7 @@ export class ActivityFactory {
 
     /**
      * Given a structured lg result, create an activity. This method will create an MessageActivity from object
+     *
      * @param lgValue lg output.
      */
     private static buildActivityFromLGStructuredResult(lgValue: any): Partial<Activity> {
@@ -167,6 +170,7 @@ export class ActivityFactory {
 
     /**
      * Builds an [Activity](xref:botframework-schema.Activity) with a given message.
+     *
      * @param messageValue Message value on which to base the activity.
      * @returns [Activity](xref:botframework-schema.Activity) with the given message.
      */

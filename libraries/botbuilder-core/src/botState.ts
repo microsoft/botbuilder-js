@@ -41,6 +41,7 @@ export class BotState implements PropertyManager {
 
     /**
      * Creates a new BotState instance.
+     *
      * @param storage Storage provider to persist the state object to.
      * @param storageKey Function called anytime the storage key for a given turn needs to be calculated.
      */
@@ -49,6 +50,7 @@ export class BotState implements PropertyManager {
     /**
      * Creates a new property accessor for reading and writing an individual property to the bot
      * states storage object.
+     *
      * @param T (Optional) type of property to create. Defaults to `any` type.
      * @param name Name of the property to add.
      */

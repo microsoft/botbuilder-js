@@ -131,9 +131,9 @@ export abstract class BotAdapter {
      * Adds middleware to the adapter's pipeline.
      *
      * @param middleware The middleware or middleware handlers to add.
-     *
-     * @remarks
-     * Middleware is added to the adapter at initialization time.
+     * @param {...any} middlewares
+     * @remarks 
+Middleware is added to the adapter at initialization time.
      * Each turn, the adapter calls its middleware in the order in which you added it.
      */
     public use(...middlewares: (MiddlewareHandler | Middleware)[]): this {

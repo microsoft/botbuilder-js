@@ -33,6 +33,7 @@ import { TurnContext } from './turnContext';
  * ```TypeScript
  * type TestActivityInspector = (activity: Partial<Activity>, description: string) => void;
  * ```
+ *
  * @param TestActivityInspector.activity The activity being inspected.
  * @param TestActivityInspector.description Text to log in the event of an error.
  */
@@ -59,8 +60,10 @@ export type TestActivityInspector = (activity: Partial<Activity>, description?: 
 export class TestAdapter extends BotAdapter implements ExtendedUserTokenProvider {
     /**
      * Creates a new TestAdapter instance.
+     *
      * @param logicOrConversation The bots logic that's under test.
      * @param template (Optional) activity containing default values to assign to all test messages received.
+     * @param sendTraceActivity
      */
     public constructor(
         logicOrConversation?: ((context: TurnContext) => Promise<void>) | ConversationReference,
@@ -129,6 +132,7 @@ export class TestAdapter extends BotAdapter implements ExtendedUserTokenProvider
 
     /**
      * Create a ConversationReference.
+     *
      * @param name name of the conversation (also id).
      * @param user name of the user (also id) default: User1.
      * @param bot name of the bot (also id) default: Bot.
@@ -157,6 +161,7 @@ export class TestAdapter extends BotAdapter implements ExtendedUserTokenProvider
 
     /**
      * Creates a message activity from text and the current conversational context.
+     *
      * @param text The message text.
      */
     public makeActivity(text?: string): Partial<Activity> {
@@ -175,6 +180,7 @@ export class TestAdapter extends BotAdapter implements ExtendedUserTokenProvider
 
     /**
      * Processes a message activity from a user.
+     *
      * @param userSays The text of the user's message.
      * @param callback The bot logic to invoke.
      */
@@ -195,6 +201,7 @@ export class TestAdapter extends BotAdapter implements ExtendedUserTokenProvider
 
     /**
      * Receives an activity and runs it through the middleware pipeline.
+     *
      * @param activity The activity to process.
      * @param callback The bot logic to invoke.
      */
@@ -324,6 +331,9 @@ export class TestAdapter extends BotAdapter implements ExtendedUserTokenProvider
     /**
      * The `TestAdapter` doesn't implement `continueConversation()` and will return an error if it's
      * called.
+     *
+     * @param reference
+     * @param logic
      */
     public continueConversation(
         reference: Partial<ConversationReference>,
@@ -422,6 +432,7 @@ export class TestAdapter extends BotAdapter implements ExtendedUserTokenProvider
 
     /**
      * Adds a fake user token so it can later be retrieved.
+     *
      * @param connectionName The connection name.
      * @param channelId The channel id.
      * @param userId The user id.
@@ -492,6 +503,7 @@ export class TestAdapter extends BotAdapter implements ExtendedUserTokenProvider
 
     /**
      * Retrieves the OAuth token for a user that is in a sign-in flow.
+     *
      * @param context Context for the current turn of conversation with the user.
      * @param connectionName Name of the auth connection to use.
      * @param magicCode (Optional) Optional user entered code to validate.
@@ -526,6 +538,7 @@ export class TestAdapter extends BotAdapter implements ExtendedUserTokenProvider
 
     /**
      * Signs the user out with the token server.
+     *
      * @param context Context for the current turn of conversation with the user.
      * @param connectionName Name of the auth connection to use.
      * @param userId User ID to sign out.
@@ -542,6 +555,7 @@ export class TestAdapter extends BotAdapter implements ExtendedUserTokenProvider
 
     /**
      * Gets a signin link from the token server that can be sent as part of a SigninCard.
+     *
      * @param context Context for the current turn of conversation with the user.
      * @param connectionName Name of the auth connection to use.
      */
@@ -551,8 +565,10 @@ export class TestAdapter extends BotAdapter implements ExtendedUserTokenProvider
 
     /**
      * Signs the user out with the token server.
+     *
      * @param context Context for the current turn of conversation with the user.
      * @param connectionName Name of the auth connection to use.
+     * @param resourceUrls
      */
     public async getAadTokens(
         context: TurnContext,
@@ -568,6 +584,7 @@ export class TestAdapter extends BotAdapter implements ExtendedUserTokenProvider
 
     /**
      * Adds a fake exchangeable token so it can be exchanged later.
+     *
      * @param connectionName Name of the auth connection to use.
      * @param channelId Channel ID.
      * @param userId User ID.
@@ -592,6 +609,7 @@ export class TestAdapter extends BotAdapter implements ExtendedUserTokenProvider
 
     /**
      * Gets a sign-in resource.
+     *
      * @param context [TurnContext](xref:botbuilder-core.TurnContext) for the current turn of conversation with the user.
      * @param connectionName Name of the auth connection to use.
      * @param userId User ID
@@ -616,6 +634,7 @@ export class TestAdapter extends BotAdapter implements ExtendedUserTokenProvider
 
     /**
      * Performs a token exchange operation such as for single sign-on.
+     *
      * @param context [TurnContext](xref:botbuilder-core.TurnContext) for the current turn of conversation with the user.
      * @param connectionName Name of the auth connection to use.
      * @param userId User id associated with the token.
@@ -654,6 +673,7 @@ export class TestAdapter extends BotAdapter implements ExtendedUserTokenProvider
 
     /**
      * Adds an instruction to throw an exception during exchange requests.
+     *
      * @param connectionName The connection name.
      * @param channelId The channel id.
      * @param userId The user id.
@@ -767,6 +787,7 @@ export class TestFlow {
      * Send something to the bot and expects the bot to return with a given reply. This is simply a
      * wrapper around calls to `send()` and `assertReply()`. This is such a common pattern that a
      * helper is provided.
+     *
      * @param userSays Text or activity simulating user input.
      * @param expected Expected text or activity of the reply sent by the bot.
      * @param description (Optional) Description of the test case. If not provided one will be generated.
@@ -783,6 +804,7 @@ export class TestFlow {
 
     /**
      * Sends something to the bot.
+     *
      * @param userSays Text or activity simulating user input.
      */
     public send(userSays: string | Partial<Activity>): TestFlow {
@@ -813,6 +835,7 @@ export class TestFlow {
 
     /**
      * Generates an assertion if the bots response doesn't match the expected text/activity.
+     *
      * @param expected Expected text or activity from the bot. Can be a callback to inspect the response using custom logic.
      * @param description (Optional) Description of the test case. If not provided one will be generated.
      * @param timeout (Optional) number of milliseconds to wait for a response from bot. Defaults to a value of `3000`.
@@ -893,6 +916,7 @@ export class TestFlow {
 
     /**
      * Generates an assertion that the turn processing logic did not generate a reply from the bot, as expected.
+     *
      * @param description (Optional) Description of the test case. If not provided one will be generated.
      * @param timeout (Optional) number of milliseconds to wait for a response from bot. Defaults to a value of `3000`.
      */
@@ -935,6 +959,7 @@ export class TestFlow {
 
     /**
      * Generates an assertion if the bots response is not one of the candidate strings.
+     *
      * @param candidates List of candidate responses.
      * @param description (Optional) Description of the test case. If not provided one will be generated.
      * @param timeout (Optional) number of milliseconds to wait for a response from bot. Defaults to a value of `3000`.
@@ -960,6 +985,7 @@ export class TestFlow {
 
     /**
      * Inserts a delay before continuing.
+     *
      * @param ms ms to wait
      */
     public delay(ms: number): TestFlow {
@@ -976,6 +1002,7 @@ export class TestFlow {
 
     /**
      * Adds a `then()` step to the tests promise chain.
+     *
      * @param onFulfilled Code to run if the test is currently passing.
      */
     public then(onFulfilled?: () => void): TestFlow {
@@ -984,6 +1011,7 @@ export class TestFlow {
 
     /**
      * Adds a `catch()` clause to the tests promise chain.
+     *
      * @param onRejected Code to run if the test has thrown an error.
      */
     public catch(onRejected?: (reason: any) => void): TestFlow {

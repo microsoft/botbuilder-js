@@ -14,6 +14,7 @@ export class ComponentRegistration {
 
     /**
      * Gets list of all ComponentRegistration objects registered.
+     *
      * @returns A list of ComponentRegistration objects.
      */
     public static get components(): ComponentRegistration[] {
@@ -22,6 +23,7 @@ export class ComponentRegistration {
 
     /**
      * Add a component, only one instance per type is allowed for components.
+     *
      * @param componentRegistration The component to be registered.
      */
     public static add(componentRegistration: ComponentRegistration): void {

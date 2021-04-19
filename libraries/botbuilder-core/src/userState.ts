@@ -28,6 +28,7 @@ const NO_KEY = `UserState: overridden getStorageKey method did not return a key.
 export class UserState extends BotState {
     /**
      * Creates a new UserState instance.
+     *
      * @param storage Storage provider to persist user state to.
      * @param namespace (Optional) namespace to append to storage keys. Defaults to an empty string.
      */
@@ -42,6 +43,7 @@ export class UserState extends BotState {
 
     /**
      * Returns the storage key for the current user state.
+     *
      * @param context Context for current turn of conversation with the user.
      */
     public getStorageKey(context: TurnContext): string | undefined {

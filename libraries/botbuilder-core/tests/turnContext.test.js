@@ -421,7 +421,7 @@ describe(`TurnContext`, function () {
         assert(response.id === undefined, `invalid response id of "${response.id}" sent back. Should be 'undefined'`);
     });
 
-    it('should add to bufferedReplyActivities if TurnContext.activity.deliveryMode === DeliveryModes.ExpectReplies', async () => {
+    it('should add to bufferedReplyActivities if TurnContext.activity.deliveryMode === DeliveryModes.ExpectReplies', async function () {
         const activity = JSON.parse(JSON.stringify(testMessage));
         activity.deliveryMode = DeliveryModes.ExpectReplies;
         const context = new TurnContext(new SimpleAdapter(), activity);

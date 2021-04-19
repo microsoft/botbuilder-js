@@ -29,6 +29,7 @@ const NO_KEY = `PrivateConversationState: overridden getStorageKey method did no
 export class PrivateConversationState extends BotState {
     /**
      * Creates a new PrivateConversationState instance.
+     *
      * @param storage Storage provider to persist PrivateConversation state to.
      * @param namespace (Optional) namespace to append to storage keys. Defaults to an empty string.
      */
@@ -43,6 +44,7 @@ export class PrivateConversationState extends BotState {
 
     /**
      * Returns the storage key for the current PrivateConversation state.
+     *
      * @param context Context for current turn of PrivateConversation with the user.
      */
     public getStorageKey(context: TurnContext): string | undefined {

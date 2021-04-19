@@ -12,6 +12,7 @@
 export class StringUtils {
     /**
      * Truncate string with ...
+     *
      * @param text Text.
      * @param length Length to truncate text.
      */
@@ -47,6 +48,7 @@ export class StringUtils {
 
     /**
      * EllipsisHash - create truncated string with unique hash for the truncated part.
+     *
      * @param text Text to truncate.
      * @param length Length to truncate at.
      */

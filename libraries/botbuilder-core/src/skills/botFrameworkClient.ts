@@ -12,6 +12,7 @@ import { InvokeResponse } from '../invokeResponse';
 export interface BotFrameworkClient {
     /**
      * Forwards an activity to a another bot.
+     *
      * @remarks
      *
      * @param fromBotId The MicrosoftAppId of the bot sending the activity.

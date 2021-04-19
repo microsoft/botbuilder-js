@@ -160,7 +160,7 @@ describe('ActivityHandlerBase', function () {
         assert(onUnrecognizedActivity, 'onUnrecognizedActivity was not called');
     });
 
-    describe('onConversationUpdateActivity', () => {
+    describe('onConversationUpdateActivity', function () {
         class ConversationUpdateActivityHandler extends ActivityHandlerBase {
             async onTurnActivity(context) {
                 assert(context, 'context not found');
@@ -261,7 +261,7 @@ describe('ActivityHandlerBase', function () {
         });
     });
 
-    describe('onMessageReaction', () => {
+    describe('onMessageReaction', function () {
         class MessageReactionActivityHandler extends ActivityHandlerBase {
             async onTurnActivity(context) {
                 assert(context, 'context not found');

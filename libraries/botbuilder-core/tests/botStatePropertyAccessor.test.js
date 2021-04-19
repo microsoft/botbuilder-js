@@ -20,7 +20,7 @@ describe(`BotStatePropertyAccessor`, function () {
         const userProperty = botState.createProperty(USER_COUNT);
 
         const tAdapter = new TestAdapter(async (context) => {
-            let userCount = await userProperty.get(context, 100);
+            const userCount = await userProperty.get(context, 100);
             assert(userCount === 100, `default value for PropertyAccessor was not used.`);
             await botState.saveChanges(context);
         });
@@ -33,7 +33,7 @@ describe(`BotStatePropertyAccessor`, function () {
         const testProperty = botState.createProperty(NO_DEFAULT_VALUE);
 
         const tAdapter = new TestAdapter(async (context) => {
-            let testValue = await testProperty.get(context);
+            const testValue = await testProperty.get(context);
             assert(testValue === undefined, `PropertyAccessor's value was not undefined.`);
             await botState.saveChanges(context);
         });
@@ -69,12 +69,12 @@ describe(`BotStatePropertyAccessor`, function () {
             await booleanProperty.set(context, booleanValue);
 
             // Retrieve the property value which should be true.
-            let retrievedValue = await booleanProperty.get(context);
+            const retrievedValue = await booleanProperty.get(context);
             assert(booleanValue, `value for PropertyAccessor was not properly saved.`);
 
             // Delete the value from state, and verify that the value is now undefined.
             await booleanProperty.delete(context);
-            let noPropertyValue = await booleanProperty.get(context);
+            const noPropertyValue = await booleanProperty.get(context);
             assert(noPropertyValue === undefined, `value for PropertyAccessor was not properly deleted.`);
             await botState.saveChanges(context);
         });
@@ -101,7 +101,7 @@ describe(`BotStatePropertyAccessor`, function () {
         const numbersProperty = botState.createProperty(NUMBERS_PROPERTY);
 
         const tAdapter = new TestAdapter(async (context) => {
-            let numbersValue = await numbersProperty.get(context, [1]);
+            const numbersValue = await numbersProperty.get(context, [1]);
             assert(Array.isArray(numbersValue), `default value for PropertyAccessor was not properly set.`);
             assert(numbersValue.length === 1, `numbersValue.length should be 1, not ${numbersValue.length}.`);
             assert(numbersValue[0] === 1, `numbersValue[0] should be 1, not ${numbersValue[0]}.`);
@@ -116,7 +116,7 @@ describe(`BotStatePropertyAccessor`, function () {
         const addressProperty = botState.createProperty(ADDRESS_PROPERTY);
 
         const tAdapter = new TestAdapter(async (context) => {
-            let addressValue = await addressProperty.get(context, {
+            const addressValue = await addressProperty.get(context, {
                 street: '1 Microsoft Way',
                 zipCode: 98052,
                 state: 'WA',

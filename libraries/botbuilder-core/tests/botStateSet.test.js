@@ -1,8 +1,22 @@
 const assert = require('assert');
 
-const { TurnContext, BotStateSet, BotState, MemoryStorage, UserState, ConversationState, TestAdapter } = require('../lib');
+const {
+    TurnContext,
+    BotStateSet,
+    BotState,
+    MemoryStorage,
+    UserState,
+    ConversationState,
+    TestAdapter,
+} = require('../lib');
 
-const receivedMessage = { text: 'received', type: 'message', channelId: 'test', from: { id: 'testuser' }, conversation: { id: 'conv' } };
+const receivedMessage = {
+    text: 'received',
+    type: 'message',
+    channelId: 'test',
+    from: { id: 'testuser' },
+    conversation: { id: 'conv' },
+};
 
 class BotStateMock {
     constructor(state) {
@@ -41,8 +55,7 @@ describe(`BotStateSet`, function () {
         const userState = new UserState(memoryStorage);
         const convState = new ConversationState(memoryStorage);
 
-        let botStateSet = new BotStateSet(userState)
-            .add(convState);
+        const botStateSet = new BotStateSet(userState).add(convState);
         assert.equal(botStateSet.botStates.length, 2);
     });
 
@@ -52,16 +65,16 @@ describe(`BotStateSet`, function () {
         {
             const userState = new UserState(memoryStorage);
             const convState = new ConversationState(memoryStorage);
-            let botStateSet = new BotStateSet(userState, convState);
+            const botStateSet = new BotStateSet(userState, convState);
 
-            let userProperty = userState.createProperty("userCount");
-            let convProperty = convState.createProperty("convCount");
+            const userProperty = userState.createProperty('userCount');
+            const convProperty = convState.createProperty('convCount');
 
             assert.equal(botStateSet.botStates.length, 2);
 
-            let userCount = await userProperty.get(turnContext, 0);
+            const userCount = await userProperty.get(turnContext, 0);
             assert.equal(userCount, 0);
-            let convCount = await convProperty.get(turnContext, 0);
+            const convCount = await convProperty.get(turnContext, 0);
             assert.equal(convCount, 0);
 
             await userProperty.set(turnContext, 10);
@@ -73,20 +86,19 @@ describe(`BotStateSet`, function () {
         {
             const userState = new UserState(memoryStorage);
             const convState = new ConversationState(memoryStorage);
-            let botStateSet = new BotStateSet(userState, convState);
+            const botStateSet = new BotStateSet(userState, convState);
 
-            let userProperty = userState.createProperty("userCount");
-            let convProperty = convState.createProperty("convCount");
+            const userProperty = userState.createProperty('userCount');
+            const convProperty = convState.createProperty('convCount');
 
             assert.equal(botStateSet.botStates.length, 2);
 
             await botStateSet.loadAll(turnContext);
 
-            let userCount = await userProperty.get(turnContext, 0);
+            const userCount = await userProperty.get(turnContext, 0);
             assert.equal(userCount, 10);
-            let convCount = await convProperty.get(turnContext, 0);
+            const convCount = await convProperty.get(turnContext, 0);
             assert.equal(convCount, 20);
         }
-
     });
 });

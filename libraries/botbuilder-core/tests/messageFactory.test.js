@@ -118,20 +118,19 @@ describe(`MessageFactory`, function () {
     });
 
     it(`should return a list().`, function () {
-        const activity = MessageFactory.list([
-            { contentType: 'a' },
-            { contentType: 'b' }
-        ]);
+        const activity = MessageFactory.list([{ contentType: 'a' }, { contentType: 'b' }]);
         assertMessage(activity);
         assertAttachments(activity, 2, ['a', 'b']);
         assert(activity.attachmentLayout === AttachmentLayoutTypes.List, `invalid attachmentLayout.`);
     });
 
     it(`should return list() with text, speak, and inputHint.`, function () {
-        const activity = MessageFactory.list([
-            { contentType: 'a' },
-            { contentType: 'b' }
-        ], 'foo', 'bar', InputHints.IgnoringInput);
+        const activity = MessageFactory.list(
+            [{ contentType: 'a' }, { contentType: 'b' }],
+            'foo',
+            'bar',
+            InputHints.IgnoringInput
+        );
         assertMessage(activity);
         assertAttachments(activity, 2, ['a', 'b']);
         assert(activity.attachmentLayout === AttachmentLayoutTypes.List, `invalid attachmentLayout.`);
@@ -141,20 +140,19 @@ describe(`MessageFactory`, function () {
     });
 
     it(`should return a carousel().`, function () {
-        const activity = MessageFactory.carousel([
-            { contentType: 'a' },
-            { contentType: 'b' }
-        ]);
+        const activity = MessageFactory.carousel([{ contentType: 'a' }, { contentType: 'b' }]);
         assertMessage(activity);
         assertAttachments(activity, 2, ['a', 'b']);
         assert(activity.attachmentLayout === AttachmentLayoutTypes.Carousel, `invalid attachmentLayout.`);
     });
 
     it(`should return carousel() with text, speak, and inputHint.`, function () {
-        const activity = MessageFactory.carousel([
-            { contentType: 'a' },
-            { contentType: 'b' }
-        ], 'foo', 'bar', InputHints.IgnoringInput);
+        const activity = MessageFactory.carousel(
+            [{ contentType: 'a' }, { contentType: 'b' }],
+            'foo',
+            'bar',
+            InputHints.IgnoringInput
+        );
         assertMessage(activity);
         assertAttachments(activity, 2, ['a', 'b']);
         assert(activity.attachmentLayout === AttachmentLayoutTypes.Carousel, `invalid attachmentLayout.`);
@@ -167,22 +165,38 @@ describe(`MessageFactory`, function () {
         const activity = MessageFactory.contentUrl('https://example.com/content', 'content-type');
         assertMessage(activity);
         assertAttachments(activity, 1, ['content-type']);
-        assert(activity.attachments[0].contentUrl === 'https://example.com/content', `invalid attachment[0].contentUrl.`);
+        assert(
+            activity.attachments[0].contentUrl === 'https://example.com/content',
+            `invalid attachment[0].contentUrl.`
+        );
     });
 
     it(`should return a contentUrl() with a name.`, function () {
         const activity = MessageFactory.contentUrl('https://example.com/content', 'content-type', 'file name');
         assertMessage(activity);
         assertAttachments(activity, 1, ['content-type']);
-        assert(activity.attachments[0].contentUrl === 'https://example.com/content', `invalid attachment[0].contentUrl.`);
+        assert(
+            activity.attachments[0].contentUrl === 'https://example.com/content',
+            `invalid attachment[0].contentUrl.`
+        );
         assert(activity.attachments[0].name === 'file name', `invalid attachment[0].name.`);
     });
 
     it(`should return a contentUrl() with a name, text, speak, and inputHint.`, function () {
-        const activity = MessageFactory.contentUrl('https://example.com/content', 'content-type', 'file name', 'foo', 'bar', InputHints.IgnoringInput);
+        const activity = MessageFactory.contentUrl(
+            'https://example.com/content',
+            'content-type',
+            'file name',
+            'foo',
+            'bar',
+            InputHints.IgnoringInput
+        );
         assertMessage(activity);
         assertAttachments(activity, 1, ['content-type']);
-        assert(activity.attachments[0].contentUrl === 'https://example.com/content', `invalid attachment[0].contentUrl.`);
+        assert(
+            activity.attachments[0].contentUrl === 'https://example.com/content',
+            `invalid attachment[0].contentUrl.`
+        );
         assert(activity.attachments[0].name === 'file name', `invalid attachment[0].name.`);
         assert(activity.text === 'foo', `invalid text field.`);
         assert(activity.speak === 'bar', `invalid speak field.`);

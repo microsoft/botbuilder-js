@@ -242,10 +242,10 @@ export class CardFactory {
      * @param title The title for the card's sign-in button.
      * @param text Optional. Additional text to include on the card.
      * @param link Optional. The sign-in link to use.
+     * @param tokenExchangeResource
      * @returns An [Attachment](xref:botframework-schema.Attachment).
-     *
-     * @remarks
-     * OAuth cards support the Bot Framework's single sign on (SSO) service.
+     * @remarks 
+OAuth cards support the Bot Framework's single sign on (SSO) service.
      */
     public static oauthCard(
         connectionName: string,
@@ -267,29 +267,29 @@ export class CardFactory {
     }
 
     /**
-    * Returns an attachment for an Office 365 connector card.
-    *
-    * @param card a description of the Office 365 connector card to return.
-    * @returns An [Attachment](xref:botframework-schema.Attachment).
-    *
-    * @remarks
-    * For example:
-    * ```JavaScript
-    * const card = CardFactory.o365ConnectorCard({
-    *   "title": "card title",
-    *   "text": "card text",
-    *   "summary": "O365 card summary",
-    *   "themeColor": "#E67A9E",
-    *   "sections": [
-    *       {
-    *           "title": "**section title**",
-    *           "text": "section text",
-    *           "activityTitle": "activity title",
-    *       }
-    *   ]
-    * });
-    * ```
-    */
+     * Returns an attachment for an Office 365 connector card.
+     *
+     * @param card a description of the Office 365 connector card to return.
+     * @returns An [Attachment](xref:botframework-schema.Attachment).
+     *
+     * @remarks
+     * For example:
+     * ```JavaScript
+     * const card = CardFactory.o365ConnectorCard({
+     *   "title": "card title",
+     *   "text": "card text",
+     *   "summary": "O365 card summary",
+     *   "themeColor": "#E67A9E",
+     *   "sections": [
+     *       {
+     *           "title": "**section title**",
+     *           "text": "section text",
+     *           "activityTitle": "activity title",
+     *       }
+     *   ]
+     * });
+     * ```
+     */
     public static o365ConnectorCard(card: O365ConnectorCard): Attachment {
         return { contentType: CardFactory.contentTypes.o365ConnectorCard, content: card };
     }

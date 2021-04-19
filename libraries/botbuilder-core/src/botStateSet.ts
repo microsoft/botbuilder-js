@@ -20,6 +20,7 @@ export class BotStateSet {
 
     /**
      * Creates a new BotStateSet instance.
+     *
      * @param botStates One or more BotState plugins to register.
      */
     public constructor(...botStates: BotState[]) {
@@ -28,6 +29,7 @@ export class BotStateSet {
 
     /**
      * Registers One or more `BotState` plugins with the set.
+     *
      * @param botStates One or more BotState plugins to register.
      */
     public add(...botStates: BotState[]): this {

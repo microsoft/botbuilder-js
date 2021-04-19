@@ -3,12 +3,7 @@
  * Licensed under the MIT License.
  */
 
-import {
-    Activity,
-    AdaptiveCardInvokeResponse,
-    AdaptiveCardInvokeValue,
-    MessageReaction,
-} from 'botframework-schema';
+import { Activity, AdaptiveCardInvokeResponse, AdaptiveCardInvokeValue, MessageReaction } from 'botframework-schema';
 
 import { ActivityHandlerBase } from './activityHandlerBase';
 import { InvokeException } from './invokeException';
@@ -486,6 +481,7 @@ export class ActivityHandler extends ActivityHandlerBase {
 
     /**
      * Provides default behavior for invoke activities.
+     *
      * @param context The context object for the current turn.
      *
      * @remarks
@@ -977,6 +973,7 @@ export class ActivityHandler extends ActivityHandlerBase {
 
     /**
      * An [InvokeResponse](xref:botbuilder.InvokeResponse) factory that initializes the body to the parameter passed and status equal to OK.
+     *
      * @param body JSON serialized content from a POST response.
      * @returns A new [InvokeResponse](xref:botbuilder.InvokeResponse) object.
      */

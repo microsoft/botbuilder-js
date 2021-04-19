@@ -7,19 +7,21 @@ const TURN_STATE_SCOPE_CACHE = Symbol('turnStateScopeCache');
 
 /**
  * Values persisted for the lifetime of the turn as part of the [TurnContext](xref:botbuilder-core.TurnContext).
+ *
  * @remarks Typical values stored here are objects which are needed for the lifetime of a turn, such
  * as [Storage](xref:botbuilder-core.Storage), [BotState](xref:botbuilder-core.BotState), [ConversationState](xref:botbuilder-core.ConversationState), [LanguageGenerator](xref:botbuilder-dialogs-adaptive.LanguageGenerator), [ResourceExplorer](xref:botbuilder-dialogs-declarative.ResourceExplorer), etc.
  */
 export class TurnContextStateCollection extends Map<any, any> {
-
     /**
      * Gets a typed value from the [TurnContextStateCollection](xref:botbuilder-core.TurnContextStateCollection).
+     *
      * @param key The values key.
      */
     public get<T = any>(key: any): T;
 
     /**
      * Gets a value from the [TurnContextStateCollection](xref:botbuilder-core.TurnContextStateCollection).
+     *
      * @param key The values key.
      */
     public get(key: any): any;
@@ -29,6 +31,7 @@ export class TurnContextStateCollection extends Map<any, any> {
 
     /**
      * Push a value by key to the turn's context.
+     *
      * @remarks
      * The keys current value (if any) will be saved and can be restored by calling [pop()](#pop).
      * @param key The values key.
@@ -54,6 +57,7 @@ export class TurnContextStateCollection extends Map<any, any> {
 
     /**
      * Restores a keys previous value, and returns the value that was removed.
+     *
      * @param key The values key.
      * @returns The removed value.
      */

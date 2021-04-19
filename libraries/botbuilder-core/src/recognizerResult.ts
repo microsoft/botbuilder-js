@@ -56,7 +56,6 @@ export const getTopScoringIntent = (result: RecognizerResult): { intent: string;
         }
     }
 
-
     return {
         intent: topIntent,
         score: topScore,

@@ -14,6 +14,7 @@ import { Assertion, assert } from 'botbuilder-stdlib';
  * ```TypeScript
  * type StorageKeyFactory = (context: TurnContext) => Promise<string>;
  * ```
+ *
  * @param StorageKeyFactory.context Context for the current turn of conversation with a user.
  */
 export type StorageKeyFactory = (context: TurnContext) => Promise<string>;

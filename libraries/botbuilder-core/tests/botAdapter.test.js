@@ -12,13 +12,13 @@ class SimpleAdapter extends BotAdapter {
     }
 }
 
-describe('BotAdapter', () => {
+describe('BotAdapter', function () {
     let sandbox;
-    beforeEach(() => {
+    beforeEach(function () {
         sandbox = sinon.createSandbox();
     });
 
-    afterEach(() => {
+    afterEach(function () {
         sandbox.restore();
     });
 
@@ -26,18 +26,18 @@ describe('BotAdapter', () => {
 
     const getAdapter = () => new SimpleAdapter();
 
-    describe('middleware handling', () => {
-        it('should use() middleware individually', () => {
+    describe('middleware handling', function () {
+        it('should use() middleware individually', function () {
             const adapter = getAdapter();
             adapter.use(getNextFake()).use(getNextFake());
         });
 
-        it('should use() a list of middleware', () => {
+        it('should use() a list of middleware', function () {
             const adapter = getAdapter();
             adapter.use(getNextFake(), getNextFake(), getNextFake());
         });
 
-        it('should run all middleware', async () => {
+        it('should run all middleware', async function () {
             const adapter = getAdapter();
 
             const middlewares = [getNextFake(), getNextFake()];
@@ -57,8 +57,8 @@ describe('BotAdapter', () => {
         });
     });
 
-    describe('Get locale from activity', () => {
-        it('should have locale', async () => {
+    describe('Get locale from activity', function () {
+        it('should have locale', async function () {
             const adapter = getAdapter();
             const activity = testMessage;
             activity.locale = 'de-DE';
@@ -71,7 +71,7 @@ describe('BotAdapter', () => {
         });
     });
 
-    describe('onTurnError', () => {
+    describe('onTurnError', function () {
         const testCases = [
             { label: 'promise is rejected', logic: () => Promise.reject('error') },
             {
@@ -83,7 +83,7 @@ describe('BotAdapter', () => {
         ];
 
         testCases.forEach(({ label, logic }) => {
-            it(`should reach onTurnError when a ${label}`, async () => {
+            it(`should reach onTurnError when a ${label}`, async function () {
                 const adapter = getAdapter();
 
                 adapter.onTurnError = sandbox.fake((context, error) => {
@@ -99,7 +99,7 @@ describe('BotAdapter', () => {
                 assert(handler.called, 'handler was called');
             });
 
-            it(`should propagate error when onTurnError is not defined and a ${label}`, async () => {
+            it(`should propagate error when onTurnError is not defined and a ${label}`, async function () {
                 const adapter = getAdapter();
 
                 const handler = sandbox.fake(logic);
@@ -112,7 +112,7 @@ describe('BotAdapter', () => {
                 assert(handler.called, 'handler was called');
             });
 
-            it(`should propagate error if a ${label} in onTurnError when a ${label} in handler`, async () => {
+            it(`should propagate error if a ${label} in onTurnError when a ${label} in handler`, async function () {
                 const adapter = getAdapter();
 
                 adapter.onTurnError = sandbox.fake((context, error) => {
@@ -134,8 +134,8 @@ describe('BotAdapter', () => {
         });
     });
 
-    describe('proxy context revocation', () => {
-        it('should revoke after execution', async () => {
+    describe('proxy context revocation', function () {
+        it('should revoke after execution', async function () {
             const adapter = getAdapter();
 
             const handler = sandbox.fake((context) => {
@@ -149,7 +149,7 @@ describe('BotAdapter', () => {
             assert.throws(() => context.activity, 'accessing context property should throw since it has been revoked');
         });
 
-        it('should revoke after onTurnError', async () => {
+        it('should revoke after onTurnError', async function () {
             const adapter = getAdapter();
 
             adapter.onTurnError = sandbox.fake((context) => {
@@ -165,7 +165,7 @@ describe('BotAdapter', () => {
             assert.throws(() => context.activity, 'accessing context property should throw since it has been revoked');
         });
 
-        it('should revoke after unhandled error', async () => {
+        it('should revoke after unhandled error', async function () {
             const adapter = getAdapter();
 
             const handler = sandbox.fake(() => Promise.reject('error'));

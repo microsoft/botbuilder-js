@@ -26,7 +26,7 @@ describe(`BotState`, function () {
 
     it(`should load and save state from storage.`, async function () {
         await botState.load(context);
-        let state = cachedState(context, botState.stateKey);
+        const state = cachedState(context, botState.stateKey);
         assert(state, `State not loaded`);
         state.test = 'foo';
         await botState.saveChanges(context);
@@ -100,7 +100,7 @@ describe(`BotState`, function () {
     });
 
     it(`should create new PropertyAccessors`, async function () {
-        let count = botState.createProperty('count', 1);
+        const count = botState.createProperty('count', 1);
         assert(count !== undefined, `did not successfully create PropertyAccessor.`);
     });
 });

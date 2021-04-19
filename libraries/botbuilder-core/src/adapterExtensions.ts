@@ -13,6 +13,7 @@ import { RegisterClassMiddleware } from './registerClassMiddleware';
 /**
  * Adds middleware to the adapter to register one or more BotState objects on the turn context.
  * The middleware registers the state objects on the turn context at the start of each turn.
+ *
  * @param botAdapter The adapter on which to register the state objects.
  * @param botStates The state objects to register.
  */

@@ -6,13 +6,13 @@ const { BlobStorage, CosmosDbPartitionedStorage } = require('../../botbuilder-az
 /**
  * Base tests that all storage providers should implement in their own tests.
  * They handle the storage-based assertions, internally.
- * 
+ *
  * All tests return true if assertions pass to indicate that the code ran to completion, passing internal assertions.
  * Therefore, all tests using theses static tests should strictly check that the method returns true.
- * 
+ *
  * @example
  * const testRan = await StorageBaseTests.returnEmptyObjectWhenReadingUnknownKey(storage);
- * assert.strictEqual(testRan, true); 
+ * assert.strictEqual(testRan, true);
  */
 class StorageBaseTests {
     static async returnEmptyObjectWhenReadingUnknownKey(storage) {
@@ -31,10 +31,16 @@ class StorageBaseTests {
 
     static async handleNullKeysWhenReading(storage) {
         if (storage instanceof BlobStorage) {
-            await assert.rejects(async () => await storage.read(null), Error('Please provide at least one key to read from storage.'));
-        } else if (storage instanceof CosmosDbPartitionedStorage || storage instanceof MemoryStorage){
-            await assert.rejects(async () => await storage.read(null), ReferenceError('Keys are required when reading.'));
-        // CosmosDbStorage and catch-all
+            await assert.rejects(
+                async () => await storage.read(null),
+                Error('Please provide at least one key to read from storage.')
+            );
+        } else if (storage instanceof CosmosDbPartitionedStorage || storage instanceof MemoryStorage) {
+            await assert.rejects(
+                async () => await storage.read(null),
+                ReferenceError('Keys are required when reading.')
+            );
+            // CosmosDbStorage and catch-all
         } else {
             const result = await storage.read(null);
             assert.strictEqual(Object.keys(result).length, 0);
@@ -45,10 +51,16 @@ class StorageBaseTests {
 
     static async handleNullKeysWhenWriting(storage) {
         if (storage instanceof BlobStorage) {
-            await assert.rejects(async () => await storage.write(null), Error('Please provide a StoreItems with changes to persist.'));
-        } else if (storage instanceof CosmosDbPartitionedStorage || storage instanceof MemoryStorage){
-            await assert.rejects(async () => await storage.write(null), ReferenceError('Changes are required when writing.'));
-        // CosmosDbStorage and catch-all
+            await assert.rejects(
+                async () => await storage.write(null),
+                Error('Please provide a StoreItems with changes to persist.')
+            );
+        } else if (storage instanceof CosmosDbPartitionedStorage || storage instanceof MemoryStorage) {
+            await assert.rejects(
+                async () => await storage.write(null),
+                ReferenceError('Changes are required when writing.')
+            );
+            // CosmosDbStorage and catch-all
         } else {
             const result = await storage.write(null);
             assert.strictEqual(result, undefined);
@@ -133,7 +145,7 @@ class StorageBaseTests {
             updatePocoItem.count = 123;
 
             await storage.write({ pocoItem: updatePocoItem });
-        } catch(err) {
+        } catch (err) {
             assert.fail('Should not throw exception on write with pocoItem');
         }
 
@@ -143,7 +155,7 @@ class StorageBaseTests {
 
             await storage.write({ pocoStoreItem: updatePocoStoreItem });
             assert.fail('Should have thrown exception on write with store item because of old eTag');
-        } catch(err) { }
+        } catch (err) {}
 
         const reloadedStoreItems2 = await storage.read(['pocoItem', 'pocoStoreItem']);
 
@@ -161,7 +173,7 @@ class StorageBaseTests {
 
         const wildcardEtagdict = {
             pocoItem: reloadedPocoItem2,
-            pocoStoreItem: reloadedPocoStoreItem2
+            pocoStoreItem: reloadedPocoStoreItem2,
         };
 
         await storage.write(wildcardEtagdict);
@@ -184,7 +196,7 @@ class StorageBaseTests {
             await storage.write(dict2);
 
             assert.fail('Should have thrown exception on write with storeItem because of empty eTag');
-        } catch (err) { }
+        } catch (err) {}
 
         const finalStoreItems = await storage.read(['pocoItem', 'pocoStoreItem']);
         assert.strictEqual(finalStoreItems.pocoItem.count, 100);
@@ -192,10 +204,10 @@ class StorageBaseTests {
 
         return true;
     }
-    
+
     static async deleteObject(storage) {
         const storeItems = {
-            delete1: { id: 1, count: 1 }
+            delete1: { id: 1, count: 1 },
         };
 
         await storage.write(storeItems);
@@ -213,7 +225,7 @@ class StorageBaseTests {
 
         return true;
     }
-    
+
     static async deleteUnknownObject(storage) {
         await assert.doesNotReject(async () => {
             await storage.delete(['unknown_key']);
@@ -237,8 +249,8 @@ class StorageBaseTests {
         assert(result.batch1.count > 0);
         assert(result.batch2.count > 0);
         assert(result.batch3.count > 0);
-        assert.notStrictEqual(result.batch1.eTag, null);	
-        assert.notStrictEqual(result.batch2.eTag, null);	
+        assert.notStrictEqual(result.batch1.eTag, null);
+        assert.notStrictEqual(result.batch2.eTag, null);
         assert.notStrictEqual(result.batch3.eTag, null);
 
         await storage.delete(['batch1', 'batch2', 'batch3']);
@@ -265,34 +277,39 @@ class StorageBaseTests {
             if (!turnContext.responded) {
                 await dc.beginDialog('waterfallDialog');
             }
-        })
-            .use(new AutoSaveStateMiddleware(convoState));
+        }).use(new AutoSaveStateMiddleware(convoState));
 
-        dialogs.add(new TextPrompt('textPrompt', async (promptContext) => {
-            const result = promptContext.recognized.value;
-            if (result.length > 3) {
-                const succeededMessage = MessageFactory.text(`You got it at the ${ promptContext.attemptCount }th try!`);
-                await promptContext.context.sendActivity(succeededMessage);
-                return true;
-            }
+        dialogs.add(
+            new TextPrompt('textPrompt', async (promptContext) => {
+                const result = promptContext.recognized.value;
+                if (result.length > 3) {
+                    const succeededMessage = MessageFactory.text(
+                        `You got it at the ${promptContext.attemptCount}th try!`
+                    );
+                    await promptContext.context.sendActivity(succeededMessage);
+                    return true;
+                }
 
-            const reply = MessageFactory.text(`Please send a name that is longer than 3 characters. ${ promptContext.attemptCount }`);
-            await promptContext.context.sendActivity(reply);
-            return false;
-        }));
+                const reply = MessageFactory.text(
+                    `Please send a name that is longer than 3 characters. ${promptContext.attemptCount}`
+                );
+                await promptContext.context.sendActivity(reply);
+                return false;
+            })
+        );
 
         const steps = [
             async (stepContext) => {
-                assert.strictEqual(typeof(stepContext.activeDialog.state['stepIndex']), 'number');
+                assert.strictEqual(typeof stepContext.activeDialog.state['stepIndex'], 'number');
                 await stepContext.context.sendActivity('step1');
                 return Dialog.EndOfTurn;
             },
             async (stepContext) => {
-                assert.strictEqual(typeof(stepContext.activeDialog.state['stepIndex']), 'number');
+                assert.strictEqual(typeof stepContext.activeDialog.state['stepIndex'], 'number');
                 await stepContext.prompt('textPrompt', { prompt: MessageFactory.text('Please type your name.') });
             },
             async (stepContext) => {
-                assert.strictEqual(typeof(stepContext.activeDialog.state['stepIndex']), 'number');
+                assert.strictEqual(typeof stepContext.activeDialog.state['stepIndex'], 'number');
                 await stepContext.context.sendActivity('step3');
                 return Dialog.EndOfTurn;
             },

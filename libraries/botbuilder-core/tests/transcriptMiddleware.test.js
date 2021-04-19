@@ -18,7 +18,7 @@ describe(`TranscriptLoggerMiddleware`, function () {
         const transcriptStore = new MemoryTranscriptStore();
         const adapter = new TestAdapter(async (context) => {
             conversationId = context.activity.conversation.id;
-            var typingActivity = {
+            const typingActivity = {
                 type: ActivityTypes.Typing,
                 relatesTo: context.activity.relatesTo,
             };
@@ -59,7 +59,7 @@ describe(`TranscriptLoggerMiddleware`, function () {
                 activityToUpdate.text = 'new response';
                 await context.updateActivity(activityToUpdate);
             } else {
-                var activity = createReply(context.activity, 'response');
+                const activity = createReply(context.activity, 'response');
                 const response = await context.sendActivity(activity);
                 activity.id = response.id;
 
@@ -104,7 +104,7 @@ describe(`TranscriptLoggerMiddleware`, function () {
         assert(pagedResult.items[3].type, ActivityTypes.MessageDelete);
     });
 
-    it('should filter continueConversation events', async () => {
+    it('should filter continueConversation events', async function () {
         let conversationId;
         const transcriptStore = new MemoryTranscriptStore();
         const adapter = new TestAdapter(async (context) => {
@@ -121,7 +121,7 @@ describe(`TranscriptLoggerMiddleware`, function () {
         assert.strictEqual(pagedResult.items.length, 2, 'only the two message activities should be logged');
     });
 
-    it(`should not error for sent activities if no ResourceResponses are received`, async () => {
+    it(`should not error for sent activities if no ResourceResponses are received`, async function () {
         class NoResourceResponseAdapter extends TestAdapter {
             constructor(logic) {
                 super(logic);
@@ -168,7 +168,7 @@ describe(`TranscriptLoggerMiddleware`, function () {
         });
     });
 
-    it(`should not error for sent activities if another handler does not return next()`, async () => {
+    it(`should not error for sent activities if another handler does not return next()`, async function () {
         class NoResourceResponseMiddleware {
             async onTurn(context, next) {
                 context.onSendActivities(async (context, activities, next) => {
@@ -222,7 +222,7 @@ describe(`TranscriptLoggerMiddleware`, function () {
         });
     });
 
-    it(`should not error for sent activities if another handler does not return an array`, async () => {
+    it(`should not error for sent activities if another handler does not return an array`, async function () {
         class NoResourceResponseMiddleware {
             async onTurn(context, next) {
                 context.onSendActivities(async (context, activities, next) => {
@@ -262,7 +262,7 @@ describe(`TranscriptLoggerMiddleware`, function () {
         });
     });
 
-    it(`should not error when logging sent activities and return the actual value from next()`, async () => {
+    it(`should not error when logging sent activities and return the actual value from next()`, async function () {
         // This middleware should receive 1 from `next()`
         class AssertionMiddleware {
             async onTurn(context, next) {
@@ -316,11 +316,11 @@ describe(`TranscriptLoggerMiddleware`, function () {
 
     describe("'s error handling", function () {
         let sandbox;
-        beforeEach(() => {
+        beforeEach(function () {
             sandbox = sinon.createSandbox();
         });
 
-        afterEach(() => {
+        afterEach(function () {
             sandbox.restore();
         });
 
@@ -414,7 +414,7 @@ describe(`TranscriptLoggerMiddleware`, function () {
         });
     });
 
-    it(`should use outgoing activity's timestamp for activity id when activity id and resourceResponse is empty`, async () => {
+    it(`should use outgoing activity's timestamp for activity id when activity id and resourceResponse is empty`, async function () {
         let conversationId, timestamp;
         const transcriptStore = new MemoryTranscriptStore();
 
