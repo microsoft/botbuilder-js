@@ -2906,7 +2906,7 @@
     },
     "Microsoft.EditActions": {
       "$role": "implements(Microsoft.IDialog)",
-      "title": "Edit actions.",
+      "title": "Edit actions",
       "description": "Edit the current list of actions.",
       "type": "object",
       "required": [
