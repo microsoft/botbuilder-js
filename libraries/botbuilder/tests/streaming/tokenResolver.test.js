@@ -43,8 +43,6 @@ function createOAuthCardActivity() {
 }
 
 describe(`TokenResolver`, function () {
-    this.timeout(50000000);
-
     it(`should throw on empty connectionName`, async function () {
         const returnTokenResponse = () => {
             return { token: '1234', connectionName: 'foo' };
@@ -65,7 +63,7 @@ describe(`TokenResolver`, function () {
         );
     });
 
-    it(`no attachements is a no-op`, async function () {
+    it(`no attachments is a no-op`, async function () {
         let fail = false;
         const returnTokenResponse = () => {
             fail = true;
@@ -183,6 +181,8 @@ describe(`TokenResolver`, function () {
     });
 
     it(`should get the token on the second try`, async function () {
+        this.timeout(10000);
+
         let gotToken = false;
         let i = 0;
         const returnTokenResponse = () => {
