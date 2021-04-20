@@ -84,7 +84,7 @@ INVALID_TOKEN
 mode NORMAL_TEMPLATE_BODY_MODE;
 
 WS_IN_BODY
-  : WHITESPACE+  {this.ignoreWS}? -> skip
+  : WHITESPACE {this.ignoreWS}? WHITESPACE* -> skip
   ;
 
 MULTILINE_PREFIX
@@ -174,7 +174,7 @@ STRUCTURED_COMMENTS
   ;
 
 WS_IN_STRUCTURE_BODY
-  : WHITESPACE+ {this.ignoreWS}? -> skip
+  : WHITESPACE {ignoreWS}? WHITESPACE* -> skip
   ;
 
 STRUCTURED_NEWLINE
