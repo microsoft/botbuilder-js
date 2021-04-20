@@ -3,10 +3,25 @@
  * Licensed under the MIT License.
  */
 
-import { ActivityImportance, ActivityTypes, Attachment, AttachmentLayoutTypes, ChannelAccount, ConversationAccount, ConversationReference, DeliveryModes, EndOfConversationCodes, Entity, InputHints, MessageReaction, SuggestedActions, TextFormatTypes, TextHighlight } from './index';
+import {
+    ActivityImportance,
+    ActivityTypes,
+    Attachment,
+    AttachmentLayoutTypes,
+    ChannelAccount,
+    ConversationAccount,
+    ConversationReference,
+    DeliveryModes,
+    EndOfConversationCodes,
+    Entity,
+    InputHints,
+    MessageReaction,
+    SuggestedActions,
+    TextFormatTypes,
+    TextHighlight,
+} from './index';
 
 export interface IActivity {
-
     /**
      * Contains the activity type 'iActivity'
      */
@@ -29,7 +44,7 @@ export interface IActivity {
 
     /**
      * Contains the local date and time of the message, expressed in ISO-8601 format.
-     * 
+     *
      * For example, 2016-09-23T13:07:49.4714686-07:00.
      */
     localTimestamp?: Date;
@@ -67,11 +82,10 @@ export interface IActivity {
     /**
      * Contains channel-specific content.
      */
-    channelData?: any;
+    channelData?: any; // eslint-disable-line @typescript-eslint/no-explicit-any
 }
 
 export interface IConversationUpdateActivity extends IActivity {
-
     /**
      * The collection of members added to the conversation.
      */
@@ -94,7 +108,6 @@ export interface IConversationUpdateActivity extends IActivity {
 }
 
 export interface IContactRelationUpdateActivity extends IActivity {
-
     /**
      * Indicates whether the recipient of a contactRelationUpdate was added or removed from the
      * sender's contact list.
@@ -103,7 +116,6 @@ export interface IContactRelationUpdateActivity extends IActivity {
 }
 
 export interface IInstallationUpdateActivity extends IActivity {
-
     /**
      * Indicates whether the recipient of a contactRelationUpdate was added or removed from the
      * sender's contact list.
@@ -112,7 +124,6 @@ export interface IInstallationUpdateActivity extends IActivity {
 }
 
 export interface IMessageActivity extends IActivity {
-
     /**
      * A locale name for the contents of the text field.
      * The locale name is a combination of an ISO 639 two- or three-letter culture code associated
@@ -185,17 +196,14 @@ export interface IMessageActivity extends IActivity {
     /**
      * A value that is associated with the activity.
      */
-    value?: any;
+    value?: any; // eslint-disable-line @typescript-eslint/no-explicit-any
 }
 
-export interface IMessageUpdateActivity extends IMessageActivity, IActivity {
-}
+export interface IMessageUpdateActivity extends IMessageActivity, IActivity {}
 
-export interface IMessageDeleteActivity extends IActivity {
-}
+export type IMessageDeleteActivity = IActivity;
 
 export interface IMessageReactionActivity extends IActivity {
-
     /**
      * The collection of reactions added to the conversation.
      */
@@ -208,18 +216,15 @@ export interface IMessageReactionActivity extends IActivity {
 }
 
 export interface ISuggestionActivity extends IMessageActivity, IActivity {
-
     /**
      * The collection of text fragments to highlight when the activity contains a ReplyToId value.
      */
     textHighlights?: TextHighlight[];
 }
 
-export interface ITypingActivity extends IActivity {
-}
+export type ITypingActivity = IActivity;
 
 export interface IEndOfConversationActivity extends IActivity {
-
     /**
      * The a code for endOfConversation activities that indicates why the conversation ended.
      * Possible values include: 'unknown', 'completedSuccessfully', 'userCancelled', 'botTimedOut',
@@ -234,7 +239,6 @@ export interface IEndOfConversationActivity extends IActivity {
 }
 
 export interface IEventActivity extends IActivity {
-
     /**
      * The name of the operation associated with an invoke or event activity.
      */
@@ -243,7 +247,7 @@ export interface IEventActivity extends IActivity {
     /**
      * A value that is associated with the activity.
      */
-    value?: any;
+    value?: any; // eslint-disable-line @typescript-eslint/no-explicit-any
 
     /**
      * A reference to another conversation or activity.
@@ -252,7 +256,6 @@ export interface IEventActivity extends IActivity {
 }
 
 export interface IInvokeActivity extends IActivity {
-
     /**
      * The name of the operation associated with an invoke or event activity.
      */
@@ -261,7 +264,7 @@ export interface IInvokeActivity extends IActivity {
     /**
      * A value that is associated with the activity.
      */
-    value?: any;
+    value?: any; // eslint-disable-line @typescript-eslint/no-explicit-any
 
     /**
      * A reference to another conversation or activity.
@@ -270,7 +273,6 @@ export interface IInvokeActivity extends IActivity {
 }
 
 export interface ITraceActivity extends IActivity {
-
     /**
      * The name of the operation associated with an invoke or event activity.
      */
@@ -289,7 +291,7 @@ export interface ITraceActivity extends IActivity {
     /**
      * A value that is associated with the activity.
      */
-    value?: any;
+    value?: any; // eslint-disable-line @typescript-eslint/no-explicit-any
 
     /**
      * A reference to another conversation or activity.
@@ -297,8 +299,7 @@ export interface ITraceActivity extends IActivity {
     relatesTo?: ConversationReference;
 }
 
-export interface IHandoffActivity extends IActivity {
-}
+export type IHandoffActivity = IActivity;
 
 /**
  * The value field of a ICommandActivity contains metadata related to a command.
