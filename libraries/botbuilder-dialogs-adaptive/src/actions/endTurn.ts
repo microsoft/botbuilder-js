@@ -5,8 +5,10 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { BoolExpression, BoolExpressionConverter, Expression } from 'adaptive-expressions';
 import { ActivityTypes } from 'botbuilder';
+import { BoolExpression, BoolExpressionConverter } from 'adaptive-expressions';
+import { BoolProperty } from '../properties';
+
 import {
     Converter,
     ConverterFactory,
@@ -17,7 +19,7 @@ import {
 } from 'botbuilder-dialogs';
 
 export interface EndTurnConfiguration extends DialogConfiguration {
-    disabled?: boolean | string | Expression | BoolExpression;
+    disabled?: BoolProperty;
 }
 
 /**
@@ -54,7 +56,7 @@ export class EndTurn<O extends object = {}> extends Dialog<O> implements EndTurn
     }
 
     /**
-     * Called when the [Dialog](xref:botbuilder-dialogs.Dialog) is _continued_, where it is the active dialog and the 
+     * Called when the [Dialog](xref:botbuilder-dialogs.Dialog) is _continued_, where it is the active dialog and the
      * user replies with a new activity.
      * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
      * @returns A `Promise` representing the asynchronous operation.

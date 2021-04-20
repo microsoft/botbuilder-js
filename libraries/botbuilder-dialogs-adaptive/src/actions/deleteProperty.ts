@@ -5,13 +5,15 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
+import { BoolProperty, StringProperty } from '../properties';
+
 import {
     BoolExpression,
     BoolExpressionConverter,
-    Expression,
     StringExpression,
     StringExpressionConverter,
 } from 'adaptive-expressions';
+
 import {
     Converter,
     ConverterFactory,
@@ -22,8 +24,8 @@ import {
 } from 'botbuilder-dialogs';
 
 export interface DeletePropertyConfiguration extends DialogConfiguration {
-    property?: string | Expression | StringExpression;
-    disabled?: boolean | string | BoolExpression;
+    property?: StringProperty;
+    disabled?: BoolProperty;
 }
 
 /**

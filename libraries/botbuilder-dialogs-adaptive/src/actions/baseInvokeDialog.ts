@@ -5,14 +5,19 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
+import { BoolProperty, DialogProperty, ObjectProperty } from '../properties';
+import { DialogExpression } from '../expressions';
+import { DialogExpressionConverter } from '../converters';
+import { replaceJsonRecursively } from '../jsonExtensions';
+
 import {
     ValueExpression,
     BoolExpression,
     BoolExpressionConverter,
     ObjectExpression,
     ObjectExpressionConverter,
-    Expression,
 } from 'adaptive-expressions';
+
 import {
     Dialog,
     DialogDependencies,
@@ -22,14 +27,11 @@ import {
     ConverterFactory,
     DialogConfiguration,
 } from 'botbuilder-dialogs';
-import { DialogExpression } from '../expressions';
-import { replaceJsonRecursively } from '../jsonExtensions';
-import { DialogExpressionConverter } from '../converters';
 
 export interface BaseInvokeDialogConfiguration extends DialogConfiguration {
-    options?: object | string | Expression | ObjectExpression<object>;
-    dialog?: Dialog | string | Expression | DialogExpression;
-    activityProcessed?: boolean | string | Expression | BoolExpression;
+    options?: ObjectProperty<object>;
+    dialog?: DialogProperty;
+    activityProcessed?: BoolProperty;
 }
 
 /**

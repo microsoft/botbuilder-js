@@ -5,27 +5,28 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
+import { ActionScope, ActionScopeConfiguration, ActionScopeResult } from './actionScope';
+import { BoolProperty, IntProperty, StringProperty } from '../properties';
+import { Converter, ConverterFactory, Dialog, DialogContext, DialogTurnResult } from 'botbuilder-dialogs';
+
 import {
     BoolExpression,
     BoolExpressionConverter,
-    Expression,
     IntExpression,
     IntExpressionConverter,
     StringExpression,
     StringExpressionConverter,
 } from 'adaptive-expressions';
-import { Converter, ConverterFactory, Dialog, DialogContext, DialogTurnResult } from 'botbuilder-dialogs';
-import { ActionScope, ActionScopeConfiguration, ActionScopeResult } from './actionScope';
 
 const FOREACHPAGE = 'dialog.foreach.page';
 const FOREACHPAGEINDEX = 'dialog.foreach.pageindex';
 
 export interface ForEachPageConfiguration extends ActionScopeConfiguration {
-    itemsProperty?: string | Expression | StringExpression;
-    page?: string | Expression | StringExpression;
-    pageIndex?: string | Expression | StringExpression;
-    pageSize?: number | string | Expression | IntExpression;
-    disabled?: boolean | string | Expression | BoolExpression;
+    itemsProperty?: StringProperty;
+    page?: StringProperty;
+    pageIndex?: StringProperty;
+    pageSize?: IntProperty;
+    disabled?: BoolProperty;
 }
 
 /**
@@ -47,7 +48,7 @@ export class ForEachPage<O extends object = {}> extends ActionScope<O> implement
      * @param itemsProperty Optional. Expression used to compute the list that should be enumerated.
      * @param pageSize Default = `10`. Page size.
      */
-    public constructor(itemsProperty?: string, pageSize: number = 10) {
+    public constructor(itemsProperty?: string, pageSize = 10) {
         super();
         if (itemsProperty) {
             this.itemsProperty = new StringExpression(itemsProperty);
@@ -124,7 +125,7 @@ export class ForEachPage<O extends object = {}> extends ActionScope<O> implement
      * @protected
      * Called when the [Dialog](xref:botbuilder-dialogs.Dialog) continues to the next action.
      * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
-     * @param result Optional. Value returned from the dialog that was called. The type 
+     * @param result Optional. Value returned from the dialog that was called. The type
      * of the value returned is dependent on the child dialog.
      * @returns A `Promise` representing the asynchronous operation.
      */
@@ -168,7 +169,7 @@ export class ForEachPage<O extends object = {}> extends ActionScope<O> implement
     /**
      * @private
      * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
-     * @returns A `Promise` representing the asynchronous operation.    
+     * @returns A `Promise` representing the asynchronous operation.
      */
     private async nextPage(dc: DialogContext): Promise<DialogTurnResult> {
         let pageIndex = dc.state.getValue(this.pageIndex.getValue(dc.state), 0);

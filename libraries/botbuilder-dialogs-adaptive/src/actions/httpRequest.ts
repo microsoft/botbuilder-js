@@ -6,19 +6,22 @@
  * Licensed under the MIT License.
  */
 import fetch from 'node-fetch';
+import { Activity } from 'botbuilder';
+import { BoolProperty, EnumProperty, StringProperty, UnknownProperty } from '../properties';
 import { Response, Headers } from 'node-fetch';
+import { replaceJsonRecursively } from '../jsonExtensions';
+
 import {
     BoolExpression,
     BoolExpressionConverter,
     EnumExpression,
     EnumExpressionConverter,
-    Expression,
     StringExpression,
     StringExpressionConverter,
     ValueExpression,
     ValueExpressionConverter,
 } from 'adaptive-expressions';
-import { Activity } from 'botbuilder';
+
 import {
     Converter,
     ConverterFactory,
@@ -27,7 +30,6 @@ import {
     DialogTurnResult,
     DialogConfiguration,
 } from 'botbuilder-dialogs';
-import { replaceJsonRecursively } from '../jsonExtensions';
 
 type HeadersInput = Record<string, string>;
 type HeadersOutput = Record<string, StringExpression>;
@@ -144,13 +146,13 @@ export class Result {
 
 export interface HttpRequestConfiguration extends DialogConfiguration {
     method?: HttpMethod;
-    contentType?: string | Expression | StringExpression;
-    url?: string | Expression | StringExpression;
+    contentType?: StringProperty;
+    url?: StringProperty;
     headers?: HeadersInput | HeadersOutput;
-    body?: unknown | ValueExpression;
-    responseType?: ResponsesTypes | string | Expression | EnumExpression<ResponsesTypes>;
-    resultProperty: string | Expression | StringExpression;
-    disabled?: boolean | string | Expression | BoolExpression;
+    body?: UnknownProperty;
+    responseType?: EnumProperty<ResponsesTypes>;
+    resultProperty: StringProperty;
+    disabled?: BoolProperty;
 }
 
 /**

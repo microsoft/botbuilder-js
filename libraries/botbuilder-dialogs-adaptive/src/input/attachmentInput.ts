@@ -5,9 +5,10 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { EnumExpression, EnumExpressionConverter, Expression } from 'adaptive-expressions';
 import { Attachment } from 'botbuilder';
 import { Converter, ConverterFactory, DialogContext } from 'botbuilder-dialogs';
+import { EnumExpression, EnumExpressionConverter } from 'adaptive-expressions';
+import { EnumProperty } from '../properties';
 import { InputDialog, InputDialogConfiguration, InputState } from './inputDialog';
 
 export enum AttachmentOutputFormat {
@@ -16,7 +17,7 @@ export enum AttachmentOutputFormat {
 }
 
 export interface AttachmentInputConfiguration extends InputDialogConfiguration {
-    outputFormat?: AttachmentOutputFormat | string | Expression | EnumExpression<AttachmentOutputFormat>;
+    outputFormat?: EnumProperty<AttachmentOutputFormat>;
 }
 
 /**

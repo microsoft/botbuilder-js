@@ -2,6 +2,7 @@
 // Licensed under the MIT License.
 
 import * as t from 'runtypes';
+import path from 'path';
 import restify from 'restify';
 import { ActivityHandlerBase, BotFrameworkAdapter } from 'botbuilder';
 import { Configuration, getRuntimeServices } from 'botbuilder-dialogs-adaptive-runtime';
@@ -62,23 +63,33 @@ export async function start(
 
     const resolvedOptions = await resolveOptions(options, configuration);
 
-    const server = await makeServer(services, configuration, resolvedOptions);
+    const server = await makeServer(services, configuration, applicationRoot, resolvedOptions);
 
     server.listen(resolvedOptions.port, () => console.log(`server listening on port ${resolvedOptions.port}`));
 }
+
+// Content type overrides for specific file extensions
+const extensionContentTypes: Record<string, string> = {
+    '.lu': 'vnd.application/lu',
+    '.qna': 'vnd.application/qna',
+};
 
 /**
  * Create a server using the runtime restify integration.
  *
  * @param services runtime service collection
  * @param configuration runtime configuration
+ * @param applicationRoot application root directory
  * @param options options bag for configuring restify Server
+ * @param server optional predefined restify server, useful to register middleware
  * @returns a restify Server ready to listen for connections
  */
 export async function makeServer(
     services: ServiceCollection,
     configuration: Configuration,
-    options: Partial<Options> = {}
+    applicationRoot: string,
+    options: Partial<Options> = {},
+    server = restify.createServer()
 ): Promise<restify.Server> {
     const { adapter, bot, customAdapters } = services.mustMakeInstances<{
         adapter: BotFrameworkAdapter;
@@ -98,8 +109,6 @@ export async function makeServer(
             res.json({ message: 'Internal server error' });
         }
     };
-
-    const server = restify.createServer();
 
     server.post(resolvedOptions.messagingEndpointPath, async (req, res) => {
         try {
@@ -141,6 +150,18 @@ export async function makeServer(
                 console.warn(`Custom Adapter for \`${settings.name}\` not registered.`);
             }
         });
+
+    server.get(
+        '*',
+        restify.plugins.serveStaticFiles(path.join(applicationRoot, 'public'), {
+            setHeaders: (res, filePath) => {
+                const contentType = extensionContentTypes[path.extname(filePath)];
+                if (contentType) {
+                    res.setHeader('Content-Type', contentType);
+                }
+            },
+        })
+    );
 
     server.on('upgrade', async (req, socket, head) => {
         const adapter = services.mustMakeInstance<BotFrameworkAdapter>('adapter');

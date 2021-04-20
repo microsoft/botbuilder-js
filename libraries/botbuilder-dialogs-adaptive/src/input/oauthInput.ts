@@ -5,6 +5,11 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
+import { InputDialog, InputDialogConfiguration, InputState } from './inputDialog';
+import { IntProperty, StringProperty } from '../properties';
+import { TextTemplate } from '../templates';
+import { verifyStateOperationName, tokenExchangeOperationName, tokenResponseEventName } from 'botbuilder';
+
 import {
     Expression,
     IntExpression,
@@ -12,6 +17,7 @@ import {
     StringExpression,
     StringExpressionConverter,
 } from 'adaptive-expressions';
+
 import {
     Activity,
     ActivityTypes,
@@ -23,6 +29,7 @@ import {
     TokenResponse,
     TurnContext,
 } from 'botbuilder';
+
 import {
     Converter,
     ConverterFactory,
@@ -37,11 +44,8 @@ import {
     ThisPath,
     TurnPath,
 } from 'botbuilder-dialogs';
-import { verifyStateOperationName, tokenExchangeOperationName, tokenResponseEventName } from 'botbuilder';
-import { InputDialog, InputDialogConfiguration, InputState } from './inputDialog';
-import { TextTemplate } from '../templates';
 
-export const channels: any = {
+export const channels = {
     console: 'console',
     cortana: 'cortana',
     directline: 'directline',
@@ -66,10 +70,10 @@ const persistedExpires = 'expires';
 const attemptCountKey = 'attemptCount';
 
 export interface OAuthInputConfiguration extends InputDialogConfiguration {
-    connectionName?: string | Expression | StringExpression;
-    title?: string | Expression | StringExpression;
-    text?: string | Expression | StringExpression;
-    timeout?: number | string | Expression | IntExpression;
+    connectionName?: StringProperty;
+    title?: StringProperty;
+    text?: StringProperty;
+    timeout?: IntProperty;
 }
 
 /**

@@ -10,6 +10,7 @@ export * from './activityEx';
 export { CallerIdConstants } from './callerIdConstants';
 export { SpeechConstants } from './speechConstants';
 export { TokenExchangeInvokeRequest } from './tokenExchangeInvokeRequest';
+export { TokenExchangeInvokeResponse } from './tokenExchangeInvokeResponse';
 
 // The Teams schemas was manually added to this library. This file has been updated to export those schemas.
 export * from './teams';
@@ -76,7 +77,7 @@ export interface InnerHttpError {
     /**
      * Body from failed request
      */
-    body: any;
+    body: any; // eslint-disable-line @typescript-eslint/no-explicit-any
 }
 
 /**
@@ -182,7 +183,7 @@ export interface ConversationAccount {
     /**
      * Custom properties object (optional)
      */
-    properties?: any;
+    properties?: any; // eslint-disable-line @typescript-eslint/no-explicit-any
 }
 
 export const assertConversationAccount: Assertion<ConversationAccount> = (value, path) => {
@@ -250,11 +251,11 @@ export interface CardAction {
     /**
      * Supplementary parameter for action. Content of this property depends on the ActionType
      */
-    value: any;
+    value: any; // eslint-disable-line @typescript-eslint/no-explicit-any
     /**
      * Channel-specific data associated with this action
      */
-    channelData?: any;
+    channelData?: any; // eslint-disable-line @typescript-eslint/no-explicit-any
     /**
      * Alternate image text to be used in place of the `image` field
      */
@@ -315,7 +316,7 @@ export interface Attachment {
     /**
      * Embedded content
      */
-    content?: any;
+    content?: any; // eslint-disable-line @typescript-eslint/no-explicit-any
     /**
      * (OPTIONAL) The name of the attachment
      */
@@ -351,7 +352,7 @@ export interface Entity {
     /**
      * Additional properties.
      */
-    [key: string]: any;
+    [key: string]: any; // eslint-disable-line @typescript-eslint/no-explicit-any
 }
 
 export const assertEntity: Assertion<Entity> = (value, path) => {
@@ -590,7 +591,7 @@ export interface Activity {
     /**
      * Contains channel-specific content.
      */
-    channelData?: any;
+    channelData?: any; // eslint-disable-line @typescript-eslint/no-explicit-any
     /**
      * Indicates whether the recipient of a contactRelationUpdate was added or removed from the
      * sender's contact list.
@@ -611,7 +612,7 @@ export interface Activity {
     /**
      * A value that is associated with the activity.
      */
-    value?: any;
+    value?: any; // eslint-disable-line @typescript-eslint/no-explicit-any
     /**
      * The name of the operation associated with an invoke or event activity.
      */
@@ -747,7 +748,7 @@ export interface ConversationParameters {
     /**
      * Channel specific payload for creating the conversation
      */
-    channelData: any;
+    channelData: any; // eslint-disable-line @typescript-eslint/no-explicit-any
 }
 
 /**
@@ -991,7 +992,7 @@ export interface AnimationCard {
     /**
      * Supplementary parameter for this card
      */
-    value: any;
+    value: any; // eslint-disable-line @typescript-eslint/no-explicit-any
 }
 
 /**
@@ -1047,7 +1048,7 @@ export interface AudioCard {
     /**
      * Supplementary parameter for this card
      */
-    value: any;
+    value: any; // eslint-disable-line @typescript-eslint/no-explicit-any
 }
 
 /**
@@ -1133,7 +1134,7 @@ export interface MediaCard {
     /**
      * Supplementary parameter for this card
      */
-    value: any;
+    value: any; // eslint-disable-line @typescript-eslint/no-explicit-any
 }
 
 /**
@@ -1343,7 +1344,7 @@ export interface VideoCard {
     /**
      * Supplementary parameter for this card
      */
-    value: any;
+    value: any; // eslint-disable-line @typescript-eslint/no-explicit-any
 }
 
 /**
@@ -1397,15 +1398,15 @@ export interface Place {
     /**
      * Address of the place (may be `string` or complex object of type `PostalAddress`)
      */
-    address: any;
+    address: any; // eslint-disable-line @typescript-eslint/no-explicit-any
     /**
      * Geo coordinates of the place (may be complex object of type `GeoCoordinates` or `GeoShape`)
      */
-    geo: any;
+    geo: any; // eslint-disable-line @typescript-eslint/no-explicit-any
     /**
      * Map to the place (may be `string` (URL) or complex object of type `Map`)
      */
-    hasMap: any;
+    hasMap: any; // eslint-disable-line @typescript-eslint/no-explicit-any
     /**
      * The type of the thing
      */
@@ -1437,7 +1438,7 @@ export interface MediaEventValue {
     /**
      * Callback parameter specified in the Value field of the MediaCard that originated this event
      */
-    cardValue: any;
+    cardValue: any; // eslint-disable-line @typescript-eslint/no-explicit-any
 }
 
 /**
@@ -1451,7 +1452,7 @@ export interface TokenRequest {
     /**
      * A collection of settings for the specific provider for this request
      */
-    settings: { [propertyName: string]: any };
+    settings: { [propertyName: string]: any }; // eslint-disable-line @typescript-eslint/no-explicit-any
 }
 
 /**
@@ -1477,11 +1478,12 @@ export interface TokenResponse {
     /**
      * A collection of properties about this response, such as token polling parameters
      */
-    properties?: { [propertyName: string]: any };
+    properties?: { [propertyName: string]: any }; // eslint-disable-line @typescript-eslint/no-explicit-any
 }
 
 /**
  * W3C Payment Method Data for Microsoft Pay
+ *
  * @deprecated Bot Framework no longer supports payments
  */
 export interface MicrosoftPayMethodData {
@@ -1501,6 +1503,7 @@ export interface MicrosoftPayMethodData {
 
 /**
  * Address within a Payment Request
+ *
  * @deprecated Bot Framework no longer supports payments
  */
 export interface PaymentAddress {
@@ -1557,6 +1560,7 @@ export interface PaymentAddress {
 
 /**
  * Supplies monetary amounts
+ *
  * @deprecated Bot Framework no longer supports payments
  */
 export interface PaymentCurrencyAmount {
@@ -1576,6 +1580,7 @@ export interface PaymentCurrencyAmount {
 
 /**
  * Indicates what the payment request is for and the value asked for
+ *
  * @deprecated Bot Framework no longer supports payments
  */
 export interface PaymentItem {
@@ -1595,6 +1600,7 @@ export interface PaymentItem {
 
 /**
  * Describes a shipping option
+ *
  * @deprecated Bot Framework no longer supports payments
  */
 export interface PaymentShippingOption {
@@ -1618,6 +1624,7 @@ export interface PaymentShippingOption {
 
 /**
  * Provides details that modify the PaymentDetails based on payment method identifier
+ *
  * @deprecated Bot Framework no longer supports payments
  */
 export interface PaymentDetailsModifier {
@@ -1639,11 +1646,12 @@ export interface PaymentDetailsModifier {
      * A JSON-serializable object that provides optional information that might be needed by the
      * supported payment methods
      */
-    data: any;
+    data: any; // eslint-disable-line @typescript-eslint/no-explicit-any
 }
 
 /**
  * Provides information about the requested transaction
+ *
  * @deprecated Bot Framework no longer supports payments
  */
 export interface PaymentDetails {
@@ -1672,6 +1680,7 @@ export interface PaymentDetails {
 /**
  * Indicates a set of supported payment methods and any associated payment method specific data for
  * those methods
+ *
  * @deprecated Bot Framework no longer supports payments
  */
 export interface PaymentMethodData {
@@ -1684,11 +1693,12 @@ export interface PaymentMethodData {
      * A JSON-serializable object that provides optional information that might be needed by the
      * supported payment methods
      */
-    data: any;
+    data: any; // eslint-disable-line @typescript-eslint/no-explicit-any
 }
 
 /**
  * Provides information about the options desired for the payment request
+ *
  * @deprecated Bot Framework no longer supports payments
  */
 export interface PaymentOptions {
@@ -1721,6 +1731,7 @@ export interface PaymentOptions {
 
 /**
  * A request to make a payment
+ *
  * @deprecated Bot Framework no longer supports payments
  */
 export interface PaymentRequest {
@@ -1749,6 +1760,7 @@ export interface PaymentRequest {
 /**
  * A PaymentResponse is returned when a user has selected a payment method and approved a payment
  * request
+ *
  * @deprecated Bot Framework no longer supports payments
  */
 export interface PaymentResponse {
@@ -1761,7 +1773,7 @@ export interface PaymentResponse {
      * A JSON-serializable object that provides a payment method specific message used by the
      * merchant to process the transaction and determine successful fund transfer
      */
-    details: any;
+    details: any; // eslint-disable-line @typescript-eslint/no-explicit-any
     /**
      * If the requestShipping flag was set to true in the PaymentOptions passed to the PaymentRequest
      * constructor, then shippingAddress will be the full and final shipping address chosen by the
@@ -1787,6 +1799,7 @@ export interface PaymentResponse {
 
 /**
  * Payload delivered when completing a payment request
+ *
  * @deprecated Bot Framework no longer supports payments
  */
 export interface PaymentRequestComplete {
@@ -1806,6 +1819,7 @@ export interface PaymentRequestComplete {
 
 /**
  * Result from a completed payment request
+ *
  * @deprecated Bot Framework no longer supports payments
  */
 export interface PaymentRequestCompleteResult {
@@ -1817,6 +1831,7 @@ export interface PaymentRequestCompleteResult {
 
 /**
  * An update to a payment request
+ *
  * @deprecated Bot Framework no longer supports payments
  */
 export interface PaymentRequestUpdate {
@@ -1840,6 +1855,7 @@ export interface PaymentRequestUpdate {
 
 /**
  * A result object from a Payment Request Update invoke operation
+ *
  * @deprecated Bot Framework no longer supports payments
  */
 export interface PaymentRequestUpdateResult {
@@ -1901,6 +1917,7 @@ export interface TokenExchangeRequest {
 /**
  * Defines values for RoleTypes.
  * Possible values include: 'user', 'bot', 'skill'
+ *
  * @readonly
  * @enum {string}
  */
@@ -1913,6 +1930,7 @@ export enum RoleTypes {
 /**
  * Defines values for ActivityEventNames.
  * Possible values include: 'continueConversation', 'createConversation'
+ *
  * @readonly
  * @enum {string}
  */
@@ -1926,6 +1944,7 @@ export enum ActivityEventNames {
  * Possible values include: 'message', 'contactRelationUpdate', 'conversationUpdate', 'typing',
  * 'endOfConversation', 'event', 'invoke', 'deleteUserData', 'messageUpdate', 'messageDelete',
  * 'installationUpdate', 'messageReaction', 'suggestion', 'trace', 'handoff'
+ *
  * @readonly
  * @enum {string}
  */
@@ -1953,6 +1972,7 @@ export enum ActivityTypes {
 /**
  * Defines values for TextFormatTypes.
  * Possible values include: 'markdown', 'plain', 'xml'
+ *
  * @readonly
  * @enum {string}
  */
@@ -1965,6 +1985,7 @@ export enum TextFormatTypes {
 /**
  * Defines values for AttachmentLayoutTypes.
  * Possible values include: 'list', 'carousel'
+ *
  * @readonly
  * @enum {string}
  */
@@ -1976,6 +1997,7 @@ export enum AttachmentLayoutTypes {
 /**
  * Defines values for MessageReactionTypes.
  * Possible values include: 'like', 'plusOne'
+ *
  * @readonly
  * @enum {string}
  */
@@ -1987,6 +2009,7 @@ export enum MessageReactionTypes {
 /**
  * Defines values for InputHints.
  * Possible values include: 'acceptingInput', 'ignoringInput', 'expectingInput'
+ *
  * @readonly
  * @enum {string}
  */
@@ -2000,6 +2023,7 @@ export enum InputHints {
  * Defines values for ActionTypes.
  * Possible values include: 'openUrl', 'imBack', 'postBack', 'playAudio', 'playVideo', 'showImage',
  * 'downloadFile', 'signin', 'call', messageBack', 'openApp'
+ *
  * @readonly
  * @enum {string}
  */
@@ -2023,6 +2047,7 @@ export enum ActionTypes {
  * Defines values for EndOfConversationCodes.
  * Possible values include: 'unknown', 'completedSuccessfully', 'userCancelled', 'botTimedOut',
  * 'botIssuedInvalidMessage', 'channelFailed'
+ *
  * @readonly
  * @enum {string}
  */
@@ -2038,6 +2063,7 @@ export enum EndOfConversationCodes {
 /**
  * Defines values for ActivityImportance.
  * Possible values include: 'low', 'normal', 'high'
+ *
  * @readonly
  * @enum {string}
  */
@@ -2050,6 +2076,7 @@ export enum ActivityImportance {
 /**
  * Defines values for DeliveryModes.
  * Possible values include: 'normal', 'notification', 'expectReplies', 'ephemeral'
+ *
  * @readonly
  * @enum {string}
  */
@@ -2063,6 +2090,7 @@ export enum DeliveryModes {
 /**
  * Defines values for ContactRelationUpdateActionTypes.
  * Possible values include: 'add', 'remove'
+ *
  * @readonly
  * @enum {string}
  */
@@ -2074,6 +2102,7 @@ export enum ContactRelationUpdateActionTypes {
 /**
  * Defines values for InstallationUpdateActionTypes.
  * Possible values include: 'add', 'remove'
+ *
  * @readonly
  * @enum {string}
  */
@@ -2085,6 +2114,7 @@ export enum InstallationUpdateActionTypes {
 /**
  * Defines values for SemanticActionStateTypes.
  * Possible values include: 'start', 'continue', 'done'
+ *
  * @readonly
  * @enum {string}
  */
@@ -2099,6 +2129,7 @@ export enum SemanticActionStateTypes {
  * Possible values include: 'console', 'cortana', 'directline', 'directlinespeech', 'email',
  * 'emulator', 'facebook', 'groupme', 'kik', 'line', 'msteams', 'skype', 'skypeforbusiness',
  * 'slack', 'sms', 'telegram', 'test', 'twilio-sms', 'webchat'
+ *
  * @readonly
  * @enum {string}
  */
@@ -2128,6 +2159,7 @@ export enum Channels {
 /**
  * Defines values for StatusCodes.
  * Possible values include: 200, 400, 401, 404, 405, 409, 426, 500, 501, 502
+ *
  * @readonly
  * @enum {number}
  */

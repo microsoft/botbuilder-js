@@ -5,8 +5,9 @@
  * @module botbuilder-dialogs-adaptive
  */
 
-import { Expression, ObjectExpression, ObjectExpressionConverter } from 'adaptive-expressions';
 import { EventFactory, ResourceResponse, Transcript } from 'botbuilder';
+import { ObjectExpression, ObjectExpressionConverter } from 'adaptive-expressions';
+import { ObjectProperty } from '../properties';
 
 import {
     Converter,
@@ -18,8 +19,8 @@ import {
 } from 'botbuilder-dialogs';
 
 export interface SendHandoffActivityConfiguration extends DialogConfiguration {
-    context?: string | Expression | ObjectExpression<Record<string, unknown>>;
-    transcript?: string | Expression | ObjectExpression<Transcript>;
+    context?: ObjectProperty<Record<string, unknown>>;
+    transcript?: ObjectProperty<Transcript>;
 }
 
 /**

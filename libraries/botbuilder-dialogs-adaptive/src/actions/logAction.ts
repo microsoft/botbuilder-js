@@ -5,14 +5,18 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
+import { Activity, ActivityTypes } from 'botbuilder';
+import { BoolProperty, StringProperty } from '../properties';
+import { TextTemplate } from '../templates';
+import { TextTemplateConverter } from '../converters/textTemplateConverter';
+
 import {
     BoolExpression,
     BoolExpressionConverter,
-    Expression,
     StringExpression,
     StringExpressionConverter,
 } from 'adaptive-expressions';
-import { Activity, ActivityTypes } from 'botbuilder';
+
 import {
     Converter,
     ConverterFactory,
@@ -23,14 +27,12 @@ import {
     DialogTurnResult,
     TemplateInterface,
 } from 'botbuilder-dialogs';
-import { TextTemplate } from '../templates';
-import { TextTemplateConverter } from '../converters/textTemplateConverter';
 
 export interface LogActionConfiguration extends DialogConfiguration {
     text?: string | TemplateInterface<string, DialogStateManager>;
-    traceActivity?: boolean | string | Expression | BoolExpression;
-    label?: string | Expression | StringExpression;
-    disabled?: boolean | string | Expression | BoolExpression;
+    traceActivity?: BoolProperty;
+    label?: StringProperty;
+    disabled?: BoolProperty;
 }
 
 /**
@@ -44,7 +46,7 @@ export class LogAction<O extends object = {}> extends Dialog<O> implements LogAc
      * @param template The text template to log.
      */
     public constructor(text: string);
-    
+
     /**
      * Creates a new [LogAction](xref:botbuilder-dialogs-adaptive.LogAction) instance.
      * @param text Optional. The text template to log.

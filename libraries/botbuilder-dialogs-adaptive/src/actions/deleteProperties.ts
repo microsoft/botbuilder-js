@@ -5,7 +5,9 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { BoolExpression, BoolExpressionConverter, Expression, StringExpression } from 'adaptive-expressions';
+import { BoolExpression, BoolExpressionConverter, StringExpression } from 'adaptive-expressions';
+import { BoolProperty } from '../properties';
+
 import {
     Converter,
     ConverterFactory,
@@ -16,18 +18,14 @@ import {
 } from 'botbuilder-dialogs';
 
 class PropertiesConverter implements Converter<string[], StringExpression[]> {
-    public convert(value: string[] | StringExpression[]): StringExpression[] {
-        const results: StringExpression[] = [];
-        value.forEach((item: string | StringExpression) => {
-            results.push(item instanceof StringExpression ? item : new StringExpression(item));
-        });
-        return results;
+    public convert(items: Array<string | StringExpression>): StringExpression[] {
+        return items.map((item) => (typeof item === 'string' ? new StringExpression(item) : item));
     }
 }
 
 export interface DeletePropertiesConfiguration extends DialogConfiguration {
-    properties?: string[] | StringExpression[];
-    disabled?: boolean | string | Expression | BoolExpression;
+    properties?: Array<string | StringExpression>;
+    disabled?: BoolProperty;
 }
 
 /**

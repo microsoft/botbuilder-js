@@ -513,7 +513,7 @@ describe('TriggerTree', () => {
         assert.strictEqual(matches[1].action, 3);
     });
 
-    it('Test Tree', () => {
+    it.skip('Test Tree', () => {
         const numPredicates = 50;
         const numSingletons = 25;
         const numConjunctions = 50;
