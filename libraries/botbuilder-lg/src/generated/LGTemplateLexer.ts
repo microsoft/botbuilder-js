@@ -523,7 +523,7 @@ export class LGTemplateLexer extends Lexer {
 	private WS_IN_STRUCTURE_BODY_sempred(_localctx: RuleContext, predIndex: number): boolean {
 		switch (predIndex) {
 		case 10:
-			return ignoreWS;
+			return this.ignoreWS;
 		}
 		return true;
 	}
