@@ -7,4 +7,9 @@
  */
 
 export { LabelType, OrchestratorRecognizer } from './orchestratorRecognizer';
-export { OrchestratorBotComponent } from './orchestratorBotComponent';
+
+import { OrchestratorBotComponent } from './orchestratorBotComponent';
+export { OrchestratorBotComponent };
+
+// This export ensures that the botbuilder-ai-orchestrator package works as a component in the runtime
+export default OrchestratorBotComponent;
