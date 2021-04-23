@@ -9457,10 +9457,10 @@ ora@^4.0.3:
     strip-ansi "^6.0.0"
     wcwidth "^1.0.1"
 
-orchestrator-core@4.13.0:
-  version "4.13.0"
-  resolved "https://registry.yarnpkg.com/orchestrator-core/-/orchestrator-core-4.13.0.tgz#d4b3c84d9d464da06c6d43e36438ee73485ae82c"
-  integrity sha512-MJj/Fa0dExB3VldmiASnRoFvbM9OV4SwkI5qTNzv6HukhnaYPyrWidxAkufOJeavka66cpM4M8Cft+Fscc3auQ==
+orchestrator-core@4.13.1:
+  version "4.13.1"
+  resolved "https://registry.yarnpkg.com/orchestrator-core/-/orchestrator-core-4.13.1.tgz#87246cedd1377d9f7854f0c301254279f35c3f37"
+  integrity sha512-3V4Rzlc5uogicxjkdv6HryouFsT8koPzXtxGPFwmNPIF4HQXVQl93EIefF3uu8deuaoVeu6uKl6BJwSafLhssQ==
   dependencies:
     "@mapbox/node-pre-gyp" "^1.0.3"
     bindings "1.2.1"
