@@ -33,7 +33,7 @@
     "botbuilder-dialogs-adaptive": "4.1.6",
     "botbuilder-dialogs-declarative": "4.1.6",
     "botbuilder-dialogs-adaptive-runtime-core": "4.1.6",
-    "orchestrator-core": "4.13.0",
+    "orchestrator-core": "4.13.1",
     "uuid": "^8.3.2"
   },
   "scripts": {
