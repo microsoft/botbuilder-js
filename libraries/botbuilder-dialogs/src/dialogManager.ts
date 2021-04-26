@@ -78,7 +78,7 @@ export class DialogManager extends Configurable {
         if (rootDialog) {
             this.rootDialog = rootDialog;
         }
-        this._dialogStateProperty = dialogStateProperty || 'DialogStateProperty';
+        this._dialogStateProperty = dialogStateProperty || 'DialogState';
         this._initialTurnState.set(DialogTurnStateConstants.dialogManager, this);
     }
 
