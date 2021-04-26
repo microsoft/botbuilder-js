@@ -125,6 +125,6 @@ export class SetProperty<O extends object = {}> extends Dialog<O> implements Set
      * @returns A `string` representing the compute Id.
      */
     protected onComputeId(): string {
-        return `SetProperty[${this.value.toString()}]`;
+        return `SetProperty[${this.property.toString()}]`;
     }
 }

@@ -13,6 +13,7 @@ import {
     StringExpression,
     StringExpressionConverter,
 } from 'adaptive-expressions';
+import { StringUtils } from 'botbuilder-core';
 import {
     Converter,
     ConverterFactory,
@@ -23,7 +24,9 @@ import {
     DialogTurnStatus,
     TurnPath,
 } from 'botbuilder-dialogs';
+import { Activity } from 'botframework-connector/lib/teams/models/mappers';
 import { SendActivity, SendActivityConfiguration } from '../actions/sendActivity';
+import { ActivityTemplate } from '../templates';
 
 export interface AskConfiguration extends SendActivityConfiguration {
     expectedProperties?: string[] | string | Expression | ArrayExpression<string>;
@@ -48,6 +51,7 @@ export class Ask extends SendActivity implements AskConfiguration {
     public constructor(text?: string, expectedProperties?: ArrayExpression<string>) {
         super(text);
         this.expectedProperties = expectedProperties;
+        this.activity = new ActivityTemplate(text);
     }
 
     /**
@@ -111,5 +115,12 @@ export class Ask extends SendActivity implements AskConfiguration {
         const result = await super.beginDialog(dc, options);
         result.status = DialogTurnStatus.completeAndWait;
         return result;
+    }
+
+    protected onComputeId(): string {
+        if (this.activity instanceof ActivityTemplate) {
+            return `Ask[${StringUtils.ellipsis(this.activity.template.trim(), 30)}]`;
+        }
+        return `Ask[${StringUtils.ellipsis(this.activity && this.activity.toString().trim(), 30)}]`;
     }
 }

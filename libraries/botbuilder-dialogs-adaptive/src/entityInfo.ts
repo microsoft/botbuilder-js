@@ -51,9 +51,9 @@ export interface EntityInfo {
     text: string;
 
     /**
-     * Role the entity played in utterance.
+     * Root entity where this entity was found.
      */
-    role: string;
+    rootEntity: string;
 
     /**
      * Type of entity.
@@ -124,6 +124,24 @@ export class EntityInfo {
             _this.end >= entity.end &&
             _this.end - _this.start > entity.end - entity.start
         );
+    }
+
+    /**
+     * Returns true if entities share the same root.
+     * @param _this Source entity.
+     * @param entity Entity to compare.
+     */
+     public static sharesRoot(_this: Partial<EntityInfo>, entity: Partial<EntityInfo>): boolean {
+        return _this.rootEntity === entity.rootEntity;
+    }
+
+    /**
+     * Returns true if entities are the same.
+     * @param _this Source entity.
+     * @param entity Entity to compare.
+     */
+     public static isSameEntity(_this: Partial<EntityInfo>, entity: Partial<EntityInfo>): boolean {
+        return EntityInfo.sharesRoot(_this, entity) && EntityInfo.alternative(_this, entity);
     }
 
     /**
