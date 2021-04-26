@@ -12,7 +12,8 @@ import { OnDialogEvent, OnDialogEventConfiguration } from './onDialogEvent';
 
 export interface OnChooseEntityConfiguration extends OnDialogEventConfiguration {
     property?: string;
-    entity?: string;
+    value?: string;
+    operation?: string;
 }
 
 /**
@@ -24,15 +25,24 @@ export class OnChooseEntity extends OnDialogEvent implements OnChooseEntityConfi
     /**
      * Initializes a new instance of the [OnChooseEntity](xref:botbuilder-dialogs-adaptive.OnChooseEntity) class.
      *
-     * @param {string} property Optional, property filter on event.
-     * @param {string} entity Optional, entity filter on event.
+     * @param {string} property Optional, property for filtering events.
+     * @param {string} value Optional, value filtering events.
+     * @param {string} operation Optional, operation for filtering events.
      * @param {Dialog[]} actions Optional, actions to add to the plan when the rule constraints are met.
-     * @param {string} condition Optional, condition which needs to be met for the actions to be executed.
+     * @param {string} value Optional, condition which needs to be met for the actions to be executed.
+     * @param condition
      */
-    public constructor(property?: string, entity?: string, actions: Dialog[] = [], condition?: string) {
+    public constructor(
+        property?: string,
+        value?: string,
+        operation?: string,
+        actions: Dialog[] = [],
+        condition?: string
+    ) {
         super(AdaptiveEvents.chooseEntity, actions, condition);
         this.property = property;
-        this.entity = entity;
+        this.value = value;
+        this.operation = operation;
     }
 
     /**
@@ -41,9 +51,14 @@ export class OnChooseEntity extends OnDialogEvent implements OnChooseEntityConfi
     public property: string;
 
     /**
-     * Gets or sets the entity filter on event.
+     * Gets or sets the value filter on event.
      */
-    public entity: string;
+    public value: string;
+
+    /**
+     * Gets or sets operation filter on event.
+     */
+    public operation: string;
 
     /**
      * Create the expression for this condition.
@@ -56,8 +71,11 @@ export class OnChooseEntity extends OnDialogEvent implements OnChooseEntityConfi
         if (this.property) {
             expressions.push(Expression.parse(`${TurnPath.dialogEvent}.value.property == '${this.property}'`));
         }
-        if (this.entity) {
-            expressions.push(Expression.parse(`${TurnPath.dialogEvent}.value.entity.name == '${this.entity}'`));
+        if (this.value) {
+            expressions.push(Expression.parse(`${TurnPath.dialogEvent}.value.value.name == '${this.value}'`));
+        }
+        if (this.operation) {
+            expressions.push(Expression.parse(`${TurnPath.dialogEvent}.value.operation == '${this.operation}'`));
         }
 
         return Expression.andExpression(...expressions);

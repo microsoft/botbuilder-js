@@ -1071,10 +1071,11 @@ export class OnCancelDialog extends OnDialogEvent {
 
 // @public
 export class OnChooseEntity extends OnDialogEvent {
-    constructor(property?: string, entity?: string, actions?: Dialog[], condition?: string);
+    constructor(property?: string, entity?: string, operation? string, actions?: Dialog[], condition?: string);
     entity: string;
     // (undocumented)
     getExpression(parser: ExpressionParserInterface): Expression;
+    operation: string;
     property: string;
 }
 
