@@ -335,7 +335,7 @@ describe('Streaming Extensions NamedPipe Library Tests', function () {
             expect(server).to.be.instanceOf(np.NamedPipeServer);
             server.start();
             try {
-                server.onConnectionDisconnected();
+                server.disconnect();
             } catch (err) {
                 expect(err).to.equal(`address already in use \\.\pipe\pipeA.incoming`);
             }
