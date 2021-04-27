@@ -192,9 +192,7 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> im
 
             // Install any dependencies
             if (isDialogDependencies(trigger)) {
-                ((trigger as unknown) as DialogDependencies)
-                    .getDependencies()
-                    .forEach((child) => this.dialogs.add(child));
+                trigger.getDependencies().forEach((child) => this.dialogs.add(child));
             }
 
             if (trigger.runOnce) {
