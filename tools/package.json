@@ -36,7 +36,7 @@
     "ms-rest": "^2.3.6",
     "ms-rest-azure": "^2.5.7",
     "request": "^2.88.0",
-    "underscore": "1.8.3",
+    "underscore": "^1.13.1",
     "uuid": "^3.3.2"
   },
   "devDependencies": {
