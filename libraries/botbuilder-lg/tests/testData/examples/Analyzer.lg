@@ -1,17 +1,17 @@
 # wPhrase
 - Hi ${userName}
- 
+
 # pizzaOrderConfirmation
 - Your pizza order of ${base} with toppings ${join(topping, ',', 'and')} is confirmed.
- 
+
 # sandwichOrderConfirmation
 - Your ${bread} sandwich with ${meat} is on its way. Thanks.
- 
+
 # orderReadOut
 - IF: ${orderType == 'pizza'}
-- ${wPhrase()} ${pizzaOrderConfirmation()} 
+- ${wPhrase()} ${pizzaOrderConfirmation()}
 - ELSEIF: ${orderType == 'sandwich'}
-- ${sandwichOrderConfirmation()} 
+- ${sandwichOrderConfirmation()}
 
 # template1
 - ${template2()} ${age} ${template4()} ${template6(age)}
@@ -65,4 +65,12 @@ ${city} ${template5()}
 [MyStruct
     Speak = bar
     Text = ${newText}
-] 
+]
+
+> Add entries into object
+# addEntries(object, entries)
+- ${if(count(entries) == 1, addEntry(object, first(entries)), addEntries(addEntry(object, first(entries)), subArray(entries, 1, count(entries))))}
+
+# addEntry(object, entry)
+> Add an {index, value} entry to object
+- ${addProperty(object, entry.index, entry.value)}
