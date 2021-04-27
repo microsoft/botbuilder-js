@@ -1,4 +1,3 @@
-/* eslint-disable prettier/prettier */
 /**
  * @module botbuilder-dialogs-adaptive
  */
@@ -37,7 +36,6 @@ import {
     TurnPath,
 } from 'botbuilder-dialogs';
 import cloneDeep from 'lodash/cloneDeep';
-import isArray from 'lodash/isArray';
 import isEmpty from 'lodash/isEmpty';
 import isEqual from 'lodash/isEqual';
 import { ActionContext } from './actionContext';
@@ -71,7 +69,7 @@ export interface AdaptiveDialogConfiguration extends DialogConfiguration {
 /**
  * The Adaptive Dialog models conversation using events and events to adapt dynamically to changing conversation flow.
  */
- export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> implements AdaptiveDialogConfiguration {
+export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> implements AdaptiveDialogConfiguration {
     public static $kind = 'Microsoft.AdaptiveDialog';
     public static conditionTracker = 'dialog._tracker.conditions';
 
@@ -151,7 +149,7 @@ export interface AdaptiveDialogConfiguration extends DialogConfiguration {
 
     /**
      * JSON Schema for the dialog.
-     * 
+     *
      * @returns The dialog schema.
      */
     public get schema(): object {
@@ -190,7 +188,9 @@ export interface AdaptiveDialogConfiguration extends DialogConfiguration {
 
             // Install any dependencies
             if (typeof ((trigger as unknown) as DialogDependencies).getDependencies == 'function') {
-                ((trigger as unknown) as DialogDependencies).getDependencies().forEach((child) => this.dialogs.add(child));
+                ((trigger as unknown) as DialogDependencies)
+                    .getDependencies()
+                    .forEach((child) => this.dialogs.add(child));
             }
 
             if (trigger.runOnce) {
@@ -245,7 +245,7 @@ export interface AdaptiveDialogConfiguration extends DialogConfiguration {
 
         return this._internalVersion;
     }
-    
+
     protected onComputeId(): string {
         return `AdaptiveDialog[]`;
     }
@@ -984,11 +984,12 @@ export interface AdaptiveDialogConfiguration extends DialogConfiguration {
         const entities = actionContext.state.getValue(TurnPath.recognized + '.entities');
         if (entities) {
             const turn = actionContext.state.getValue(DialogPath.eventCounter);
-            const operations: string[] = (this.dialogSchema.schema && this.dialogSchema.schema[this.operationsKey]) || [];
-            const properties = Object.keys(this.dialogSchema?.schema['properties']);
+            const operations: string[] =
+                (this.dialogSchema.schema && this.dialogSchema.schema[this.operationsKey]) || [];
+            const properties = Object.keys(this.dialogSchema?.schema['properties'] || {});
             this.expandEntityObject(entities, null, null, null, operations, properties, turn, text, entityToInfo);
         }
-        
+
         // When there are multiple possible resolutions for the same entity that overlap, pick the
         // one that covers the most of the utterance.
         for (const name in entityToInfo) {
@@ -1104,7 +1105,7 @@ export interface AdaptiveDialogConfiguration extends DialogConfiguration {
                         text,
                         entityToInfo
                     );
-                } else if (typeof entity === 'object') {
+                } else if (typeof entity === 'object' && entity !== null) {
                     if (isEmpty(entity)) {
                         if (isOp) {
                             // Handle operator with no children.
@@ -1160,8 +1161,8 @@ export interface AdaptiveDialogConfiguration extends DialogConfiguration {
                 value,
                 operation: op,
                 property,
-                start: <number>rootInstance.startIndex ?? 0,
-                end: <number>rootInstance.endIndex ?? 0,
+                start: <number>rootInstance.startIndex,
+                end: <number>rootInstance.endIndex,
                 rootEntity: <string>rootInstance.type,
                 text: <string>rootInstance.text ?? '',
                 type: <string>instance.type,
@@ -1193,8 +1194,8 @@ export interface AdaptiveDialogConfiguration extends DialogConfiguration {
         askDefault: Record<string, unknown>,
         dialogDefault: Record<string, unknown>
     ): EntityAssignment[] {
-        const globalExpectedOnly: string[] = this.dialogSchema.schema[this.expectedOnlyKey] as string[] || [];
-        const requiresValue: string[] = this.dialogSchema.schema[this.requiresValueKey] as string[] || [];
+        const globalExpectedOnly: string[] = (this.dialogSchema.schema[this.expectedOnlyKey] as string[]) || [];
+        const requiresValue: string[] = (this.dialogSchema.schema[this.requiresValueKey] as string[]) || [];
         const assignments: EntityAssignment[] = [];
 
         // Add entities with a recognized property.
@@ -1218,10 +1219,10 @@ export interface AdaptiveDialogConfiguration extends DialogConfiguration {
             const isExpected = expected.includes(propSchema.name);
             const expectedOnly = propSchema.expectedOnly ?? globalExpectedOnly;
 
-            propSchema.entities.forEach((propEntity) => {
+            for (const propEntity of propSchema.entities) {
                 const entityName = this.stripProperty(propEntity);
                 if (entities[entityName] && (isExpected || !expectedOnly.includes(entityName))) {
-                    entities[entityName].forEach((entity) => {
+                    for (const entity of entities[entityName]) {
                         if (!entity.property) {
                             assignments.push(
                                 new EntityAssignment({
@@ -1242,13 +1243,13 @@ export interface AdaptiveDialogConfiguration extends DialogConfiguration {
                                 })
                             );
                         }
-                    });
+                    }
                 }
-            });
+            }
         });
 
         // Add default operations.
-        assignments.forEach((assignment) => {
+        for (const assignment of assignments) {
             if (!assignment.operation) {
                 // Assign missing operation.
                 if (lastEvent == AdaptiveEvents.chooseEntity && assignment.value.property === nextAssignment.property) {
@@ -1260,11 +1261,11 @@ export interface AdaptiveDialogConfiguration extends DialogConfiguration {
                     assignment.operation = this.defaultOperation(assignment, askDefault, dialogDefault);
                 }
             }
-        });
+        }
 
         // Add choose property matches.
         if (lastEvent === AdaptiveEvents.chooseProperty) {
-            Object.values(entities).forEach((alternatives) => {
+            for (const alternatives of Object.values(entities)) {
                 alternatives.forEach((alternative) => {
                     if (!alternative.value) {
                         // If alternative matches one alternative, it answers chooseProperty.
@@ -1282,11 +1283,11 @@ export interface AdaptiveDialogConfiguration extends DialogConfiguration {
                         }
                     }
                 });
-            });
+            }
         }
 
         // Add pure operations.
-        Object.values(entities).forEach((alternatives) => {
+        for (const alternatives of Object.values(entities)) {
             alternatives.forEach((alternative) => {
                 if (alternative.operation && !alternative.property && !alternative.value) {
                     assignments.push(
@@ -1299,14 +1300,14 @@ export interface AdaptiveDialogConfiguration extends DialogConfiguration {
                     );
                 }
             });
-        });
+        }
 
         // Preserve expectedProperties if there is no property.
-        assignments.forEach((assignment) => {
+        for (const assignment of assignments) {
             if (!assignment.property) {
                 assignment.expectedProperties = expected;
             }
-        });
+        }
 
         return assignments;
     }
@@ -1353,11 +1354,15 @@ export interface AdaptiveDialogConfiguration extends DialogConfiguration {
     /**
      * @private
      */
-    private defaultOperation(assignment: EntityAssignment, askDefault: Record<string, unknown>, dialogDefault: Record<string, unknown>): string {
+    private defaultOperation(
+        assignment: EntityAssignment,
+        askDefault: Record<string, unknown>,
+        dialogDefault: Record<string, unknown>
+    ): string {
         let operation: string;
         if (assignment.property) {
             if (askDefault) {
-                operation = askDefault[assignment.value.name] as string || askDefault[''] as string;
+                operation = (askDefault[assignment.value.name] as string) || (askDefault[''] as string);
             } else if (dialogDefault) {
                 const entities = dialogDefault[assignment.property] || dialogDefault[''];
                 let dialogOp;
@@ -1378,18 +1383,18 @@ export interface AdaptiveDialogConfiguration extends DialogConfiguration {
      */
     private removeOverlappingPerProperty(candidates: EntityAssignment[]): EntityAssignment[] {
         // Group mappings by property
-        const perProperty = candidates.reduce<{ [path: string]: EntityAssignment[] }>(
-            (accumulator, assignment): Record<string, EntityAssignment[]> => {
-                const groupBy = assignment.property;
-                if (accumulator[groupBy]) {
-                    accumulator[groupBy].push(assignment);
-                } else {
-                    accumulator[groupBy] = [assignment];
-                }
-                return accumulator;
-            },
-            {}
-        );
+        const perProperty = candidates.reduce<{ [path: string]: EntityAssignment[] }>((accumulator, assignment): Record<
+            string,
+            EntityAssignment[]
+        > => {
+            const groupBy = assignment.property;
+            if (accumulator[groupBy]) {
+                accumulator[groupBy].push(assignment);
+            } else {
+                accumulator[groupBy] = [assignment];
+            }
+            return accumulator;
+        }, {});
 
         const output: EntityAssignment[] = [];
         for (const propChoices in perProperty) {
@@ -1414,7 +1419,10 @@ export interface AdaptiveDialogConfiguration extends DialogConfiguration {
                         if (candidate) {
                             // Remove any overlapping entities without a common root.
                             choices = choices.filter(
-                                (choice): boolean => !isEqual(choice, candidate) || (EntityInfo.sharesRoot(choice.value, candidate.value) && !EntityInfo.overlaps(choice.value, candidate.value))
+                                (choice): boolean =>
+                                    !isEqual(choice, candidate) ||
+                                    (EntityInfo.sharesRoot(choice.value, candidate.value) &&
+                                        !EntityInfo.overlaps(choice.value, candidate.value))
                             );
                             output.push(candidate);
                         }
@@ -1442,7 +1450,8 @@ export interface AdaptiveDialogConfiguration extends DialogConfiguration {
         const askDefaultOp = actionContext.state.getValue<Record<string, unknown>>(DialogPath.defaultOperation);
 
         // default operation from the current adaptive dialog.
-        const defaultOp = this.dialogSchema.schema && this.dialogSchema.schema[this.defaultOperationKey] as Record<string, unknown>;
+        const defaultOp =
+            this.dialogSchema.schema && (this.dialogSchema.schema[this.defaultOperationKey] as Record<string, unknown>);
 
         const nextAssignment = existing.nextAssignment;
         let candidates = this.removeOverlappingPerProperty(
@@ -1459,7 +1468,7 @@ export interface AdaptiveDialogConfiguration extends DialogConfiguration {
             const remaining: EntityAssignment[] = [];
             let alternatives: EntityAssignment[] = [];
 
-            candidates.forEach((alt) => {
+            for (const alt of candidates) {
                 if (
                     EntityInfo.overlaps(candidate.value, alt.value) &&
                     (!EntityInfo.sharesRoot(candidate.value, alt.value) || isEqual(candidate.value, alt.value))
@@ -1468,7 +1477,7 @@ export interface AdaptiveDialogConfiguration extends DialogConfiguration {
                 } else {
                     remaining.push(alt);
                 }
-            });
+            }
 
             candidates = remaining;
             alternatives.forEach((alternative) => usedEntities.add(alternative.value));
@@ -1487,8 +1496,7 @@ export interface AdaptiveDialogConfiguration extends DialogConfiguration {
             })[0];
 
             // Remove all alternatives that are fully contained in largest
-            alternatives = alternatives
-                .filter((a): boolean => !EntityInfo.covers(candidate.value, a.value));
+            alternatives = alternatives.filter((a): boolean => !EntityInfo.covers(candidate.value, a.value));
 
             // Process any disambiguation task.
             let mapped = false;
@@ -1496,11 +1504,11 @@ export interface AdaptiveDialogConfiguration extends DialogConfiguration {
                 // Property has resolution so remove entity ambiguity.
                 const entityChoices = existing.dequeue(actionContext);
                 candidate.operation = entityChoices.operation;
-                if (isArray(candidate.value?.value) && candidate.value.value.length > 1) {
+                if (Array.isArray(candidate.value?.value) && candidate.value.value?.length > 1) {
                     // Resolve ambiguous response to one of the original choices.
                     const originalChoices = entityChoices.value.value;
-                    const intersection = candidate.value.value.filter((choice) => originalChoices.includes(choice));
-                    if (intersection.length) {
+                    const intersection = candidate.value.value?.filter((choice) => originalChoices.includes(choice));
+                    if (intersection?.length) {
                         candidate.value.value = intersection;
                     }
                 }
@@ -1515,7 +1523,7 @@ export interface AdaptiveDialogConfiguration extends DialogConfiguration {
                     if (choice.property) {
                         expectedChoices.push(choice.property);
                     } else if (choice.expectedProperties) {
-                        expectedChoices.push(...choice.expectedProperties);
+                        expectedChoices.concat(choice.expectedProperties);
                     }
 
                     this.addAssignment(choice, assignments);
@@ -1540,8 +1548,7 @@ export interface AdaptiveDialogConfiguration extends DialogConfiguration {
             // Add back in any non-overlapping choices that have not been resolved.
             while (choices.length) {
                 const choice = choices[0];
-                const overlaps = choices
-                    .filter((alt) => EntityInfo.overlaps(choice, alt));
+                const overlaps = choices.filter((alt) => EntityInfo.overlaps(choice, alt));
                 choice.addAlternatives(overlaps);
                 this.addAssignment(choice, assignments);
                 choices = choices.filter((c): boolean => !EntityInfo.overlaps(c, choice.value));
@@ -1550,7 +1557,9 @@ export interface AdaptiveDialogConfiguration extends DialogConfiguration {
             existing.dequeue(actionContext);
         }
 
-        const operations = new EntityAssignmentComparer(this.dialogSchema.schema[this.operationsKey] as string[] ?? []);
+        const operations = new EntityAssignmentComparer(
+            (this.dialogSchema.schema[this.operationsKey] as string[]) ?? []
+        );
         this.mergeAssignments(assignments, existing, operations);
         return [...usedEntities.values()];
     }
@@ -1562,11 +1571,7 @@ export interface AdaptiveDialogConfiguration extends DialogConfiguration {
         let replaces = 0;
         for (const aAlt of a.alternatives) {
             for (const bAlt of b.alternatives) {
-                if (
-                    aAlt.property === bAlt.property &&
-                    aAlt.value?.value &&
-                    bAlt.value?.value
-                ) {
+                if (aAlt.property === bAlt.property && aAlt.value?.value && bAlt.value?.value) {
                     const prop = this.dialogSchema.pathToSchema(aAlt.property);
                     if (!Array.isArray(prop)) {
                         if (aAlt.value.whenRecognized > bAlt.value.whenRecognized) {
@@ -1606,18 +1611,18 @@ export interface AdaptiveDialogConfiguration extends DialogConfiguration {
         comparer: EntityAssignmentComparer
     ): void {
         let list = old.assignments;
-        newAssignments.assignments.forEach((assign) => {
-            // Only one outstanding per singleton property.
+        for (const assign of newAssignments.assignments) {
+            // Only one outstanding operation per singleton property
             let add = true;
             const newList: EntityAssignment[] = [];
-            list.forEach((oldAssign) => {
+            for (const oldAssign of list) {
                 let keep = true;
                 if (add) {
                     switch (this.replaces(assign, oldAssign)) {
                         case -1:
                             keep = false;
                             break;
-                        case +1:
+                        case 1:
                             add = false;
                             break;
                     }
@@ -1626,14 +1631,14 @@ export interface AdaptiveDialogConfiguration extends DialogConfiguration {
                 if (keep) {
                     newList.push(oldAssign);
                 }
-            });
+            }
 
             if (add) {
                 newList.push(assign);
             }
 
             list = newList;
-        });
+        }
 
         old.assignments = list;
         list.sort((a, b) => comparer.compare(a, b));

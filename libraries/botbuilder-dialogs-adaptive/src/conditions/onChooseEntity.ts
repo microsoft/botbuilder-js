@@ -29,8 +29,7 @@ export class OnChooseEntity extends OnDialogEvent implements OnChooseEntityConfi
      * @param {string} value Optional, value filtering events.
      * @param {string} operation Optional, operation for filtering events.
      * @param {Dialog[]} actions Optional, actions to add to the plan when the rule constraints are met.
-     * @param {string} value Optional, condition which needs to be met for the actions to be executed.
-     * @param condition
+     * @param {string} condition Optional, condition which needs to be met for the actions to be executed.
      */
     public constructor(
         property?: string,

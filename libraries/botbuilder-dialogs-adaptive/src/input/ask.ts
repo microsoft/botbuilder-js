@@ -13,7 +13,7 @@ import {
     StringExpression,
     StringExpressionConverter,
 } from 'adaptive-expressions';
-import { StringUtils } from 'botbuilder-core';
+import { StringUtils } from 'botbuilder';
 import {
     Converter,
     ConverterFactory,
@@ -24,7 +24,6 @@ import {
     DialogTurnStatus,
     TurnPath,
 } from 'botbuilder-dialogs';
-import { Activity } from 'botframework-connector/lib/teams/models/mappers';
 import { SendActivity, SendActivityConfiguration } from '../actions/sendActivity';
 import { ActivityTemplate } from '../templates';
 
@@ -68,6 +67,7 @@ export class Ask extends SendActivity implements AskConfiguration {
      * Called when the [Dialog](xref:botbuilder-dialogs.Dialog) is started and pushed onto the dialog stack.
      * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
      * @param options Optional, initial information to pass to the [Dialog](xref:botbuilder-dialogs.Dialog).
+     * @param property
      * @returns A [DialogTurnResult](xref:botbuilder-dialogs.DialogTurnResult) `Promise` representing the asynchronous operation.
      */
     public getConverter(property: keyof AskConfiguration): Converter | ConverterFactory {
