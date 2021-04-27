@@ -25,6 +25,8 @@ import {
     DialogTurnStatus,
     TurnPath,
 } from 'botbuilder-dialogs';
+import { StringUtils } from 'botbuilder';
+import { ActivityTemplate } from '..';
 
 export interface AskConfiguration extends SendActivityConfiguration {
     expectedProperties?: ArrayProperty<string>;

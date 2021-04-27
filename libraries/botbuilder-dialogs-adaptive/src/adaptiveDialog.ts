@@ -6,24 +6,7 @@
  * Licensed under the MIT License.
  */
 
-import { ActionContext } from './actionContext';
-import { AdaptiveDialogState } from './adaptiveDialogState';
-import { AdaptiveEvents } from './adaptiveEvents';
 import { BoolExpression, BoolExpressionConverter, IntExpression } from 'adaptive-expressions';
-import { BoolProperty } from './properties';
-import { DialogSetConverter, LanguageGeneratorConverter, RecognizerConverter } from './converters';
-import { EntityAssignment } from './entityAssignment';
-import { EntityAssignments } from './entityAssignments';
-import { EntityInfo, NormalizedEntityInfos } from './entityInfo';
-import { FirstSelector, MostSpecificSelector } from './selectors';
-import { LanguageGenerator } from './languageGenerator';
-import { OnCondition } from './conditions';
-import { RecognizerSet } from './recognizers';
-import { SchemaHelper } from './schemaHelper';
-import { TriggerSelector } from './triggerSelector';
-import { ValueRecognizer } from './recognizers/valueRecognizer';
-import { languageGeneratorKey } from './languageGeneratorExtensions';
-
 import {
     Activity,
     ActivityTypes,
@@ -67,6 +50,7 @@ import { EntityAssignments } from './entityAssignments';
 import { EntityInfo, NormalizedEntityInfos } from './entityInfo';
 import { LanguageGenerator } from './languageGenerator';
 import { languageGeneratorKey } from './languageGeneratorExtensions';
+import { BoolProperty } from './properties';
 import { RecognizerSet } from './recognizers';
 import { ValueRecognizer } from './recognizers/valueRecognizer';
 import { SchemaHelper } from './schemaHelper';
