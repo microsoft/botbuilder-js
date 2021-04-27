@@ -5,15 +5,18 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
+import { BoolProperty, StringProperty, UnknownProperty } from '../properties';
+import { replaceJsonRecursively } from '../jsonExtensions';
+
 import {
     BoolExpression,
     BoolExpressionConverter,
-    Expression,
     StringExpression,
     StringExpressionConverter,
     ValueExpression,
     ValueExpressionConverter,
 } from 'adaptive-expressions';
+
 import {
     Converter,
     ConverterFactory,
@@ -22,12 +25,11 @@ import {
     DialogContext,
     DialogTurnResult,
 } from 'botbuilder-dialogs';
-import { replaceJsonRecursively } from '../jsonExtensions';
 
 export interface SetPropertyConfiguration extends DialogConfiguration {
-    property?: string | Expression | StringExpression;
-    value?: unknown | ValueExpression;
-    disabled?: boolean | string | Expression | BoolExpression;
+    property?: StringProperty;
+    value?: UnknownProperty;
+    disabled?: BoolProperty;
 }
 
 /**

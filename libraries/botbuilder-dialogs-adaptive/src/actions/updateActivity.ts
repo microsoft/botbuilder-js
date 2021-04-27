@@ -5,14 +5,18 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
+import { Activity, StringUtils } from 'botbuilder';
+import { ActivityTemplate, StaticActivityTemplate } from '../templates';
+import { ActivityTemplateConverter } from '../converters';
+import { BoolProperty, StringProperty, TemplateInterfaceProperty } from '../properties';
+
 import {
     StringExpression,
     BoolExpression,
     BoolExpressionConverter,
     StringExpressionConverter,
-    Expression,
 } from 'adaptive-expressions';
-import { Activity, StringUtils } from 'botbuilder';
+
 import {
     Converter,
     ConverterFactory,
@@ -23,17 +27,15 @@ import {
     DialogTurnResult,
     TemplateInterface,
 } from 'botbuilder-dialogs';
-import { ActivityTemplate, StaticActivityTemplate } from '../templates';
-import { ActivityTemplateConverter } from '../converters';
 
 type D = DialogStateManager & {
     utterance: string;
 };
 
 export interface UpdateActivityConfiguration extends DialogConfiguration {
-    activity?: string | Partial<Activity> | TemplateInterface<Partial<Activity>, D>;
-    activityId?: string | Expression | StringExpression;
-    disabled?: boolean | string | Expression | BoolExpression;
+    activity?: TemplateInterfaceProperty<Partial<Activity>, D>;
+    activityId?: StringProperty;
+    disabled?: BoolProperty;
 }
 
 /**

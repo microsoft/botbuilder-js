@@ -5,15 +5,16 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
+import { ArrayProperty, StringProperty } from '../properties';
+import { SendActivity, SendActivityConfiguration } from '../actions/sendActivity';
 
 import {
     ArrayExpression,
     ArrayExpressionConverter,
-    Expression,
     StringExpression,
     StringExpressionConverter,
 } from 'adaptive-expressions';
-import { StringUtils } from 'botbuilder';
+
 import {
     Converter,
     ConverterFactory,
@@ -24,12 +25,10 @@ import {
     DialogTurnStatus,
     TurnPath,
 } from 'botbuilder-dialogs';
-import { SendActivity, SendActivityConfiguration } from '../actions/sendActivity';
-import { ActivityTemplate } from '../templates';
 
 export interface AskConfiguration extends SendActivityConfiguration {
-    expectedProperties?: string[] | string | Expression | ArrayExpression<string>;
-    defaultOperation?: string | Expression | StringExpression;
+    expectedProperties?: ArrayProperty<string>;
+    defaultOperation?: StringProperty;
 }
 
 /**

@@ -5,14 +5,18 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import * as Recognizers from '@microsoft/recognizers-text-date-time';
-import { Expression, StringExpression, StringExpressionConverter } from 'adaptive-expressions';
+
 import { Converter, ConverterFactory, DialogContext } from 'botbuilder-dialogs';
+import { StringExpression, StringExpressionConverter } from 'adaptive-expressions';
 import { InputDialog, InputDialogConfiguration, InputState } from './inputDialog';
+import { StringProperty } from '../properties';
+
+// eslint-disable-next-line import/no-extraneous-dependencies
+import * as Recognizers from '@microsoft/recognizers-text-date-time';
 
 export interface DateTimeInputConfiguration extends InputDialogConfiguration {
-    defaultLocale?: string | Expression | StringExpression;
-    outputFormat?: string | Expression | StringExpression;
+    defaultLocale?: StringProperty;
+    outputFormat?: StringProperty;
 }
 
 /**

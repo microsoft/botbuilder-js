@@ -5,12 +5,13 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { BoolExpression, BoolExpressionConverter, Expression } from 'adaptive-expressions';
-import { Converter, ConverterFactory, DialogContext, DialogTurnResult, TurnPath } from 'botbuilder-dialogs';
 import { BaseInvokeDialog, BaseInvokeDialogConfiguration } from './baseInvokeDialog';
+import { BoolExpression, BoolExpressionConverter } from 'adaptive-expressions';
+import { BoolProperty } from '../properties';
+import { Converter, ConverterFactory, DialogContext, DialogTurnResult, TurnPath } from 'botbuilder-dialogs';
 
 export interface ReplaceDialogConfiguration extends BaseInvokeDialogConfiguration {
-    disabled?: boolean | string | Expression | BoolExpression;
+    disabled?: BoolProperty;
 }
 
 /**
@@ -25,7 +26,7 @@ export class ReplaceDialog<O extends object = {}> extends BaseInvokeDialog<O> im
      * @param options Optional, static options to pass the [Dialog](xref:botbuilder-dialogs.Dialog).
      */
     public constructor(dialogIdToCall: string, options?: O);
-        
+
     /**
      * Creates a new [ReplaceDialog](xref:botbuilder-dialogs-adaptive.ReplaceDialog) instance.
      * @param dialogId Optional. ID of the [Dialog](xref:botbuilder-dialogs.Dialog) to goto.

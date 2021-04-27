@@ -5,6 +5,8 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
+import { BoolProperty, StringProperty, UnknownProperty } from '../properties';
+
 import {
     Converter,
     ConverterFactory,
@@ -15,21 +17,21 @@ import {
     DialogTurnResult,
     TurnPath,
 } from 'botbuilder-dialogs';
+
 import {
-    StringExpression,
     BoolExpression,
-    ValueExpression,
-    StringExpressionConverter,
-    ValueExpressionConverter,
     BoolExpressionConverter,
-    Expression,
+    StringExpression,
+    StringExpressionConverter,
+    ValueExpression,
+    ValueExpressionConverter,
 } from 'adaptive-expressions';
 
 export interface CancelAllDialogsBaseConfiguration extends DialogConfiguration {
-    eventName?: string | Expression | StringExpression;
-    eventValue?: unknown | ValueExpression;
-    disabled?: boolean | string | Expression | BoolExpression;
-    activityProcessed?: boolean | string | Expression | BoolExpression;
+    eventName?: StringProperty;
+    eventValue?: UnknownProperty;
+    disabled?: BoolProperty;
+    activityProcessed?: BoolProperty;
 }
 
 /**
@@ -133,7 +135,7 @@ export class CancelAllDialogsBase<O extends object = {}>
             return turnResult;
         }
     }
-    
+
     /**
      * @protected
      * Builds the compute Id for the [Dialog](xref:botbuilder-dialogs.Dialog).

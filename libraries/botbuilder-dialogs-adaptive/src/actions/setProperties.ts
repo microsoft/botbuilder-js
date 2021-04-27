@@ -5,14 +5,11 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import {
-    ValueExpression,
-    StringExpression,
-    BoolExpression,
-    BoolExpressionConverter,
-    Expression,
-} from 'adaptive-expressions';
+import { BoolProperty } from '../properties';
 import { StringUtils } from 'botbuilder';
+import { ValueExpression, StringExpression, BoolExpression, BoolExpressionConverter } from 'adaptive-expressions';
+import { replaceJsonRecursively } from '../jsonExtensions';
+
 import {
     Converter,
     ConverterFactory,
@@ -21,7 +18,6 @@ import {
     DialogContext,
     DialogTurnResult,
 } from 'botbuilder-dialogs';
-import { replaceJsonRecursively } from '../jsonExtensions';
 
 type AssignmentInput<T> = {
     property: string;
@@ -29,16 +25,11 @@ type AssignmentInput<T> = {
 };
 
 class PropertyAssignmentsConverter<T = unknown> implements Converter<AssignmentInput<T>[], PropertyAssignment[]> {
-    public convert(items: AssignmentInput<T>[] | PropertyAssignment[]): PropertyAssignment[] {
-        const assignments: PropertyAssignment[] = [];
-        items.forEach((item) => {
-            const { property, value } = item;
-            assignments.push({
-                property: property instanceof StringExpression ? property : new StringExpression(property),
-                value: value instanceof ValueExpression ? value : new ValueExpression(value),
-            });
-        });
-        return assignments;
+    public convert(items: Array<AssignmentInput<T> | PropertyAssignment>): PropertyAssignment[] {
+        return items.map(({ property, value }) => ({
+            property: property instanceof StringExpression ? property : new StringExpression(property),
+            value: value instanceof ValueExpression ? value : new ValueExpression(value),
+        }));
     }
 }
 
@@ -49,7 +40,7 @@ export interface PropertyAssignment {
 
 export interface SetPropertiesConfiguration extends DialogConfiguration {
     assignments?: AssignmentInput<unknown>[] | PropertyAssignment[];
-    disabled?: boolean | string | Expression | BoolExpression;
+    disabled?: BoolProperty;
 }
 
 /**
