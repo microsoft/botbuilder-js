@@ -51,7 +51,6 @@ export class Ask extends SendActivity implements AskConfiguration {
     public constructor(text?: string, expectedProperties?: ArrayExpression<string>) {
         super(text);
         this.expectedProperties = expectedProperties;
-        this.activity = new ActivityTemplate(text);
     }
 
     /**

@@ -57,6 +57,11 @@ import { SchemaHelper } from './schemaHelper';
 import { FirstSelector, MostSpecificSelector } from './selectors';
 import { TriggerSelector } from './triggerSelector';
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function isDialogDependencies(val: any): val is DialogDependencies {
+    return typeof ((val as unknown) as DialogDependencies).getDependencies == 'function';
+}
+
 export interface AdaptiveDialogConfiguration extends DialogConfiguration {
     recognizer?: string | Recognizer;
     generator?: string | LanguageGenerator;
@@ -142,9 +147,6 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> im
      */
     public defaultResultProperty = 'dialog.result';
 
-    /**
-     * JSON Schema for the dialog.
-     */
     public set schema(value: object) {
         this.dialogSchema = new SchemaHelper(value);
     }
@@ -189,7 +191,7 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> im
             const trigger = this.triggers[i];
 
             // Install any dependencies
-            if (typeof ((trigger as unknown) as DialogDependencies).getDependencies == 'function') {
+            if (isDialogDependencies(trigger)) {
                 ((trigger as unknown) as DialogDependencies)
                     .getDependencies()
                     .forEach((child) => this.dialogs.add(child));
@@ -439,13 +441,12 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> im
      */
     public createChildContext(dc: DialogContext): DialogContext {
         const activeDialogState = dc.activeDialog.state;
-        let state: AdaptiveDialogState = activeDialogState[this.adaptiveKey];
+        const state: AdaptiveDialogState = activeDialogState[this.adaptiveKey];
         if (!state) {
-            state = { actions: [] };
-            activeDialogState[this.adaptiveKey] = state;
+            activeDialogState[this.adaptiveKey] = { actions: [] };
         }
 
-        if (state.actions && state.actions.length > 0) {
+        if (state.actions?.length > 0) {
             const childContext = new DialogContext(this.dialogs, dc, state.actions[0]);
             this.onSetScopedServices(childContext);
             return childContext;
@@ -637,7 +638,7 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> im
     protected async onRecognize(actionContext: ActionContext, activity: Activity): Promise<RecognizerResult> {
         const { text } = activity;
         const noneIntent: RecognizerResult = {
-            text: text || '',
+            text: text ?? '',
             intents: { None: { score: 0.0 } },
             entities: {},
         };
@@ -982,13 +983,13 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> im
 
     private normalizeEntities(actionContext: ActionContext): Record<string, EntityInfo[]> {
         const entityToInfo = {};
-        const text = actionContext.state.getValue(TurnPath.recognized + '.text');
-        const entities = actionContext.state.getValue(TurnPath.recognized + '.entities');
+        const text = actionContext.state.getValue(`${TurnPath.recognized}.text`);
+        const entities = actionContext.state.getValue(`${TurnPath.recognized}.entities`);
         if (entities) {
             const turn = actionContext.state.getValue(DialogPath.eventCounter);
             const operations: string[] =
-                (this.dialogSchema.schema && this.dialogSchema.schema[this.operationsKey]) || [];
-            const properties = Object.keys(this.dialogSchema?.schema['properties'] || {});
+                (this.dialogSchema.schema && this.dialogSchema.schema[this.operationsKey]) ?? [];
+            const properties = Object.keys(this.dialogSchema?.schema['properties'] ?? {});
             this.expandEntityObject(entities, null, null, null, operations, properties, turn, text, entityToInfo);
         }
 
@@ -1038,7 +1039,7 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> im
         turn: number,
         text: string,
         entityToInfo: Record<string, EntityInfo[]>
-    ) {
+    ): void {
         Object.keys(entities).forEach((entityName) => {
             const instances = entities[this.instanceKey][entityName];
             this.expandEntities(
@@ -1069,7 +1070,7 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> im
         turn: number,
         text: string,
         entityToInfo: Record<string, EntityInfo[]>
-    ) {
+    ): void {
         if (!name.startsWith('$')) {
             // Entities representing schema properties end in "Property" to prevent name collisions with the property itself.
             const propName = this.stripProperty(name);
@@ -1137,7 +1138,7 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> im
         }
     }
 
-    private stripProperty(name: string) {
+    private stripProperty(name: string): string {
         return name.endsWith(this.propertyEnding) ? name.substring(0, name.length - this.propertyEnding.length) : name;
     }
 
@@ -1151,11 +1152,9 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> im
         turn: number,
         text: string,
         entityToInfo: Record<string, EntityInfo[]>
-    ) {
+    ): void {
         if (instance && rootInstance) {
-            if (!entityToInfo[name]) {
-                entityToInfo[name] = [];
-            }
+            entityToInfo[name] ??= [];
 
             const info: EntityInfo = {
                 whenRecognized: turn,
@@ -1196,8 +1195,8 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> im
         askDefault: Record<string, unknown>,
         dialogDefault: Record<string, unknown>
     ): EntityAssignment[] {
-        const globalExpectedOnly: string[] = (this.dialogSchema.schema[this.expectedOnlyKey] as string[]) || [];
-        const requiresValue: string[] = (this.dialogSchema.schema[this.requiresValueKey] as string[]) || [];
+        const globalExpectedOnly: string[] = (this.dialogSchema.schema[this.expectedOnlyKey] as string[]) ?? [];
+        const requiresValue: string[] = (this.dialogSchema.schema[this.requiresValueKey] as string[]) ?? [];
         const assignments: EntityAssignment[] = [];
 
         // Add entities with a recognized property.
@@ -1364,14 +1363,14 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> im
         let operation: string;
         if (assignment.property) {
             if (askDefault) {
-                operation = (askDefault[assignment.value.name] as string) || (askDefault[''] as string);
+                operation = (askDefault[assignment.value.name] as string) ?? (askDefault[''] as string);
             } else if (dialogDefault) {
-                const entities = dialogDefault[assignment.property] || dialogDefault[''];
+                const entities = dialogDefault[assignment.property] ?? dialogDefault[''];
                 let dialogOp;
                 if (entities) {
-                    dialogOp = entities[assignment.value.name] || entities[''];
+                    dialogOp = entities[assignment.value.name] ?? entities[''];
                 } else {
-                    dialogOp = dialogDefault[assignment.value.name] || dialogDefault[''];
+                    dialogOp = dialogDefault[assignment.value.name] ?? dialogDefault[''];
                 }
                 operation = dialogOp;
             }
@@ -1409,14 +1408,7 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> im
                 for (const entity of entityPreferences) {
                     let candidate: EntityAssignment;
                     do {
-                        candidate = undefined;
-                        for (let i = 0; i < choices.length; i++) {
-                            const mapping = choices[i];
-                            if (mapping.value.name == entity) {
-                                candidate = mapping;
-                                break;
-                            }
-                        }
+                        candidate = choices.find(mapping => mapping.value.name === entity);
 
                         if (candidate) {
                             // Remove any overlapping entities without a common root.

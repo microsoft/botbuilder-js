@@ -89,72 +89,72 @@ export interface NormalizedEntityInfos {
 export class EntityInfo {
     /**
      * Print an entity as a string.
-     * @param _this Source entity.
+     * @param source Source entity.
      */
-    public static toString(_this: Partial<EntityInfo>): string {
-        return `${_this.name}:${_this.value} P${_this.priority} ${_this.score} ${_this.coverage}`;
+    public static toString(source: Partial<EntityInfo>): string {
+        return `${source.name}:${source.value} P${source.priority} ${source.score} ${source.coverage}`;
     }
 
     /**
      * Returns true if entities share text in utterance.
-     * @param _this Source entity.
+     * @param source Source entity.
      * @param entity Entity to compare.
      */
-    public static overlaps(_this: Partial<EntityInfo>, entity: Partial<EntityInfo>): boolean {
-        return _this.start <= entity.end && _this.end >= entity.start;
+    public static overlaps(source: Partial<EntityInfo>, entity: Partial<EntityInfo>): boolean {
+        return source.start <= entity.end && source.end >= entity.start;
     }
 
     /**
      * Returns true if entities come from exactly the same text in the utterance.
-     * @param _this Source entity.
+     * @param source Source entity.
      * @param entity Entity to compare.
      */
-    public static alternative(_this: Partial<EntityInfo>, entity: Partial<EntityInfo>): boolean {
-        return _this.start == entity.start && _this.end == entity.end;
+    public static alternative(source: Partial<EntityInfo>, entity: Partial<EntityInfo>): boolean {
+        return source.start == entity.start && source.end == entity.end;
     }
 
     /**
      * Returns true entity text completely includes another entity text.
-     * @param _this Source entity.
+     * @param source Source entity.
      * @param entity Entity to compare.
      */
-    public static covers(_this: Partial<EntityInfo>, entity: Partial<EntityInfo>): boolean {
+    public static covers(source: Partial<EntityInfo>, entity: Partial<EntityInfo>): boolean {
         return (
-            _this.start <= entity.start &&
-            _this.end >= entity.end &&
-            _this.end - _this.start > entity.end - entity.start
+            source.start <= entity.start &&
+            source.end >= entity.end &&
+            source.end - source.start > entity.end - entity.start
         );
     }
 
     /**
      * Returns true if entities share the same root.
-     * @param _this Source entity.
+     * @param source Source entity.
      * @param entity Entity to compare.
      */
-     public static sharesRoot(_this: Partial<EntityInfo>, entity: Partial<EntityInfo>): boolean {
-        return _this.rootEntity === entity.rootEntity;
+     public static sharesRoot(source: Partial<EntityInfo>, entity: Partial<EntityInfo>): boolean {
+        return source.rootEntity === entity.rootEntity;
     }
 
     /**
      * Returns true if entities are the same.
-     * @param _this Source entity.
+     * @param source Source entity.
      * @param entity Entity to compare.
      */
-     public static isSameEntity(_this: Partial<EntityInfo>, entity: Partial<EntityInfo>): boolean {
-        return EntityInfo.sharesRoot(_this, entity) && EntityInfo.alternative(_this, entity);
+     public static isSameEntity(source: Partial<EntityInfo>, entity: Partial<EntityInfo>): boolean {
+        return EntityInfo.sharesRoot(source, entity) && EntityInfo.alternative(source, entity);
     }
 
     /**
      * @private
      * Remove any entities that overlap a selected entity.
-     * @param _this Source entity.
+     * @param source Source entity.
      * @param entities Normalized set of entities to modify.
      */
-    public static removeOverlappingEntities(_this: EntityInfo, entities: NormalizedEntityInfos): void {
+    public static removeOverlappingEntities(source: EntityInfo, entities: NormalizedEntityInfos): void {
         for (const name in entities) {
             const infos = entities[name];
             if (Array.isArray(infos)) {
-                entities[name] = infos.filter((e) => !EntityInfo.overlaps(e, _this));
+                entities[name] = infos.filter((e) => !EntityInfo.overlaps(e, source));
             }
         }
     }

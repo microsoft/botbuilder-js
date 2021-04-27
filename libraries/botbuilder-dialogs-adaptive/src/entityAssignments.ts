@@ -28,10 +28,7 @@ export class EntityAssignments implements EntityAssignmentsConfiguration {
      * @param actionContext Memory context.
      */
     public static read(actionContext: ActionContext): EntityAssignments {
-        let queuesObject: EntityAssignments = actionContext.state.getValue(events);
-        if (!queuesObject) {
-            queuesObject = new EntityAssignments();
-        }
+        const queuesObject = actionContext.state.getValue(events, new EntityAssignments());
 
         const assignments = queuesObject.assignments?.map((assignment) => new EntityAssignment(assignment));
 

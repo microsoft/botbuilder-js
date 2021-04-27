@@ -4,19 +4,23 @@
 
 ```ts
 
-import { Activity } from 'botbuilder-core';
+import { Activity } from 'botbuilder';
+import { Activity as Activity_2 } from 'botbuilder-core';
 import { ArrayExpression } from 'adaptive-expressions';
 import { BeginSkillDialogOptions } from 'botbuilder-dialogs';
 import { BoolExpression } from 'adaptive-expressions';
-import { BotFrameworkClient } from 'botbuilder-core';
-import { BotTelemetryClient } from 'botbuilder-core';
-import { BuilderRegistration } from 'botbuilder-dialogs-declarative';
+import { BotComponent } from 'botbuilder';
+import { BotFrameworkClient } from 'botbuilder';
+import { BotTelemetryClient } from 'botbuilder';
 import { Choice } from 'botbuilder-dialogs';
 import { ChoiceFactoryOptions } from 'botbuilder-dialogs';
-import { ComponentRegistration } from 'botbuilder-dialogs-declarative';
 import { Configurable } from 'botbuilder-dialogs';
-import { Converter } from 'botbuilder-dialogs-declarative';
+import { Configuration } from 'botbuilder-dialogs-adaptive-runtime-core';
+import { ConversationReference } from 'botbuilder';
+import { Converter } from 'botbuilder-dialogs';
+import { ConverterFactory } from 'botbuilder-dialogs';
 import { Dialog } from 'botbuilder-dialogs';
+import { DialogConfiguration } from 'botbuilder-dialogs';
 import { DialogContainer } from 'botbuilder-dialogs';
 import { DialogContext } from 'botbuilder-dialogs';
 import { DialogDependencies } from 'botbuilder-dialogs';
@@ -27,10 +31,13 @@ import { DialogManager } from 'botbuilder-dialogs';
 import { DialogReason } from 'botbuilder-dialogs';
 import { DialogSet } from 'botbuilder-dialogs';
 import { DialogState } from 'botbuilder-dialogs';
+import { DialogStateManager } from 'botbuilder-dialogs';
 import { DialogTurnResult } from 'botbuilder-dialogs';
 import { Entity } from 'botbuilder-core';
+import { Entity as Entity_2 } from 'botbuilder';
 import { EnumExpression } from 'adaptive-expressions';
 import { Expression } from 'adaptive-expressions';
+import { ExpressionEvaluator } from 'adaptive-expressions';
 import { ExpressionParserInterface } from 'adaptive-expressions';
 import { ExpressionProperty } from 'adaptive-expressions';
 import { FindChoicesOptions } from 'botbuilder-dialogs';
@@ -38,68 +45,58 @@ import { Headers as Headers_2 } from 'node-fetch';
 import { ImportResolverDelegate } from 'botbuilder-lg';
 import { IntExpression } from 'adaptive-expressions';
 import { ListStyle } from 'botbuilder-dialogs';
-import { LuisPredictionOptions } from 'botbuilder-ai';
-import { LuisRecognizerOptionsV3 } from 'botbuilder-ai';
 import { ModelResult } from 'botbuilder-dialogs';
 import { NumberExpression } from 'adaptive-expressions';
 import { ObjectExpression } from 'adaptive-expressions';
 import { PromptOptions } from 'botbuilder-dialogs';
-import { QnAMaker } from 'botbuilder-ai';
-import { QnAMakerMetadata } from 'botbuilder-ai';
-import { QnARequestContext } from 'botbuilder-ai';
-import { RecognizerResult } from 'botbuilder-core';
+import { Recognizer } from 'botbuilder-dialogs';
+import { RecognizerConfiguration } from 'botbuilder-dialogs';
+import { RecognizerResult } from 'botbuilder';
+import { RecognizerResult as RecognizerResult_2 } from 'botbuilder-core';
 import { Resource } from 'botbuilder-dialogs-declarative';
 import { ResourceExplorer } from 'botbuilder-dialogs-declarative';
-import { SkillConversationIdFactoryBase } from 'botbuilder-core';
+import { ResourceResponse } from 'botbuilder';
+import { ServiceCollection } from 'botbuilder-dialogs-adaptive-runtime-core';
+import { SkillConversationIdFactoryBase } from 'botbuilder';
 import { SkillDialog } from 'botbuilder-dialogs';
 import { SkillDialogOptions } from 'botbuilder-dialogs';
 import { StringExpression } from 'adaptive-expressions';
+import { TemplateInterface } from 'botbuilder-dialogs';
 import { Templates } from 'botbuilder-lg';
-import { TokenResponse } from 'botbuilder-core';
-import { TurnContext } from 'botbuilder-core';
-import { TypeBuilder } from 'botbuilder-dialogs-declarative';
+import { TokenResponse } from 'botbuilder';
+import { Transcript } from 'botbuilder';
+import { TurnContext } from 'botbuilder';
 import { ValueExpression } from 'adaptive-expressions';
 
-// @public (undocumented)
+// @public
 export class ActionContext extends DialogContext {
     // Warning: (ae-forgotten-export) The symbol "ActionState" needs to be exported by the entry point index.d.ts
     constructor(dialogs: DialogSet, parentDialogContext: DialogContext, state: DialogState, actions: ActionState[], changeKey: symbol);
     actions: ActionState[];
     applyChanges(): Promise<boolean>;
     // Warning: (ae-forgotten-export) The symbol "ActionChangeList" needs to be exported by the entry point index.d.ts
-    readonly changes: ActionChangeList[];
+    get changes(): ActionChangeList[];
     queueChanges(changes: ActionChangeList): void;
 }
 
-// @public (undocumented)
-export class ActionScope<O extends object = {}> extends Dialog<O> implements DialogDependencies {
+// @public
+export class ActionScope<O extends object = {}> extends Dialog<O> implements DialogDependencies, ActionScopeConfiguration {
     constructor(actions?: Dialog[]);
     actions: Dialog[];
-    // (undocumented)
     protected beginAction(dc: DialogContext, offset: number): Promise<DialogTurnResult>;
-    // (undocumented)
     beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult>;
-    // (undocumented)
     continueDialog(dc: DialogContext): Promise<DialogTurnResult>;
     // (undocumented)
+    getConverter(property: keyof ActionScopeConfiguration): Converter | ConverterFactory;
     getDependencies(): Dialog[];
-    // (undocumented)
     getVersion(): string;
-    // (undocumented)
     protected onActionScopeResult(dc: DialogContext, actionScopeResult: ActionScopeResult): Promise<DialogTurnResult>;
-    // (undocumented)
     protected onBreakLoop(dc: DialogContext, actionScopeResult: ActionScopeResult): Promise<DialogTurnResult>;
-    // (undocumented)
     protected onComputeId(): string;
-    // (undocumented)
     protected onContinueLoop(dc: DialogContext, actionScopeResult: ActionScopeResult): Promise<DialogTurnResult>;
-    // (undocumented)
     protected onEndOfActions(dc: DialogContext, result?: any): Promise<DialogTurnResult>;
-    // (undocumented)
     protected onGotoAction(dc: DialogContext, actionScopeResult: ActionScopeResult): Promise<DialogTurnResult>;
-    // (undocumented)
     protected onNextAction(dc: DialogContext, result?: any): Promise<DialogTurnResult>;
-    // (undocumented)
     resumeDialog(dc: DialogContext, _reason: DialogReason, result?: any): Promise<DialogTurnResult>;
 }
 
@@ -114,6 +111,12 @@ export enum ActionScopeCommands {
 }
 
 // @public (undocumented)
+export interface ActionScopeConfiguration extends DialogConfiguration {
+    // (undocumented)
+    actions?: string[] | Dialog[];
+}
+
+// @public (undocumented)
 export interface ActionScopeResult {
     // (undocumented)
     actionId?: string;
@@ -122,72 +125,91 @@ export interface ActionScopeResult {
 }
 
 // @public
-export class ActivityTemplate implements TemplateInterface<Partial<Activity>> {
-    constructor(template: string);
-    bind(dialogContext: DialogContext, data: object): Promise<Partial<Activity>>;
+export class ActivityTemplate implements TemplateInterface<Partial<Activity>, DialogStateManager>, ActivityTemplateConguration, Configurable {
+    // (undocumented)
+    static $kind: string;
+    constructor(template?: string);
+    bind(dialogContext: DialogContext, data: DialogStateManager): Promise<Partial<Activity>>;
+    // (undocumented)
+    configure(config: ActivityTemplateConguration): this;
+    // (undocumented)
+    getConverter(_property: keyof ActivityTemplateConguration): Converter | ConverterFactory;
     template: string;
     // (undocumented)
     toString: () => string;
 }
 
 // @public (undocumented)
-export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> {
-    constructor(dialogId?: string);
-    autoEndDialog: boolean;
+export interface ActivityTemplateConguration {
     // (undocumented)
+    template?: string;
+}
+
+// @public (undocumented)
+export class AdaptiveBotComponent extends BotComponent {
+    // (undocumented)
+    configureServices(services: ServiceCollection, _configuration: Configuration): void;
+}
+
+// @public
+export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> implements AdaptiveDialogConfiguration {
+    // (undocumented)
+    static $kind: string;
+    constructor(dialogId?: string);
+    autoEndDialog: BoolExpression;
     beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult>;
     // (undocumented)
     static conditionTracker: string;
-    // (undocumented)
     protected continueActions(dc: DialogContext): Promise<DialogTurnResult>;
-    // (undocumented)
     continueDialog(dc: DialogContext): Promise<DialogTurnResult>;
-    // (undocumented)
     createChildContext(dc: DialogContext): DialogContext;
     defaultResultProperty: string;
-    // (undocumented)
     protected endCurrentAction(actionContext: ActionContext): Promise<boolean>;
-    // (undocumented)
     endDialog(turnContext: TurnContext, instance: DialogInstance, reason: DialogReason): Promise<void>;
-    // (undocumented)
     protected ensureDependenciesInstalled(): void;
     generator?: LanguageGenerator;
     // (undocumented)
+    getConverter(property: keyof AdaptiveDialogConfiguration): Converter | ConverterFactory;
     getDependencies(): Dialog[];
-    // (undocumented)
     protected getInternalVersion(): string;
     // (undocumented)
     protected onComputeId(): string;
-    // (undocumented)
     protected onEndOfActions(actionContext: ActionContext): Promise<DialogTurnResult>;
-    // (undocumented)
     protected onPostBubbleEvent(dc: DialogContext, event: DialogEvent): Promise<boolean>;
-    // (undocumented)
     protected onPreBubbleEvent(dc: DialogContext, event: DialogEvent): Promise<boolean>;
-    // (undocumented)
     protected onRecognize(actionContext: ActionContext, activity: Activity): Promise<RecognizerResult>;
-    // (undocumented)
     protected onSetScopedServices(dialogContext: DialogContext): void;
-    // (undocumented)
     protected processEvent(actionContext: ActionContext, dialogEvent: DialogEvent, preBubble: boolean): Promise<boolean>;
     recognizer?: Recognizer;
-    // (undocumented)
     repromptDialog(context: DialogContext | TurnContext, instance: DialogInstance): Promise<void>;
-    // (undocumented)
-    resumeDialog(dc: DialogContext, reason: DialogReason, result?: any): Promise<DialogTurnResult>;
-    schema: object;
+    resumeDialog(dc: DialogContext, _reason?: DialogReason, _result?: any): Promise<DialogTurnResult>;
+    set schema(value: object);
+    get schema(): object;
     selector: TriggerSelector;
     triggers: OnCondition[];
     }
 
 // @public (undocumented)
-export class AdaptiveDialogComponentRegistration implements ComponentRegistration {
-    constructor(resourceExplorer: ResourceExplorer);
+export interface AdaptiveDialogConfiguration extends DialogConfiguration {
     // (undocumented)
-    getTypeBuilders(): BuilderRegistration[];
-    }
+    autoEndDialog?: BoolProperty;
+    // (undocumented)
+    defaultResultProperty?: string;
+    // (undocumented)
+    dialogs?: string[] | Dialog[] | DialogSet;
+    // (undocumented)
+    generator?: string | LanguageGenerator;
+    // (undocumented)
+    recognizer?: string | Recognizer;
+    // (undocumented)
+    schema?: unknown;
+    // (undocumented)
+    selector?: TriggerSelector;
+    // (undocumented)
+    triggers?: OnCondition[];
+}
 
-// @public (undocumented)
+// @public
 export class AdaptiveEvents extends DialogEvents {
     static readonly assignEntity = "assignEntity";
     static readonly chooseEntity = "chooseEntity";
@@ -198,21 +220,25 @@ export class AdaptiveEvents extends DialogEvents {
     static readonly unknownIntent = "unknownIntent";
 }
 
+// @public
+export abstract class AdaptiveRecognizer extends Recognizer implements AdaptiveRecognizerConfiguration {
+    protected fillRecognizerResultTelemetryProperties(recognizerResult: RecognizerResult_2, telemetryProperties: Record<string, string>, dialogContext: DialogContext): Record<string, string>;
+    logPersonalInformation: BoolExpression;
+}
+
 // @public (undocumented)
-export class AdaptiveTypeBuilder implements TypeBuilder {
-    constructor(factory: new () => object, resourceExplorer: ResourceExplorer, converters: {
-        [key: string]: Converter;
-    });
+export interface AdaptiveRecognizerConfiguration {
     // (undocumented)
-    build(config: object): object;
-    }
+    logPersonalInformation?: BoolExpression;
+}
 
 // Warning: (ae-forgotten-export) The symbol "TextEntityRecognizer" needs to be exported by the entry point index.d.ts
 //
-// @public (undocumented)
+// @public
 export class AgeEntityRecognizer extends TextEntityRecognizer {
     // (undocumented)
-    protected recognize(text: string, culture: string): ModelResult[];
+    static $kind: string;
+    protected _recognize(text: string, culture: string): ModelResult[];
 }
 
 // @public (undocumented)
@@ -229,23 +255,48 @@ export enum ArrayChangeType {
     take = "take"
 }
 
+// @public (undocumented)
+export type ArrayProperty<T> = T[] | ArrayExpression<T> | Property;
+
 // @public
-export class Ask extends SendActivity {
+export class Ask extends SendActivity implements AskConfiguration {
+    // (undocumented)
+    static $kind: string;
     constructor(text?: string, expectedProperties?: ArrayExpression<string>);
     // (undocumented)
     beginDialog(dc: DialogContext, options?: object): Promise<DialogTurnResult>;
     defaultOperation: StringExpression;
     expectedProperties: ArrayExpression<string>;
+    getConverter(property: keyof AskConfiguration): Converter | ConverterFactory;
+    // (undocumented)
+    protected onComputeId(): string;
 }
 
 // @public (undocumented)
-export class AttachmentInput extends InputDialog {
+export interface AskConfiguration extends SendActivityConfiguration {
+    // (undocumented)
+    defaultOperation?: StringProperty;
+    // (undocumented)
+    expectedProperties?: ArrayProperty<string>;
+}
+
+// @public
+export class AttachmentInput extends InputDialog implements AttachmentInputConfiguration {
+    // (undocumented)
+    static $kind: string;
+    // (undocumented)
+    getConverter(property: keyof AttachmentInputConfiguration): Converter | ConverterFactory;
     // (undocumented)
     protected onComputeId(): string;
-    // (undocumented)
     protected onRecognizeInput(dc: DialogContext): Promise<InputState>;
     // (undocumented)
     outputFormat: EnumExpression<AttachmentOutputFormat>;
+}
+
+// @public (undocumented)
+export interface AttachmentInputConfiguration extends InputDialogConfiguration {
+    // (undocumented)
+    outputFormat?: EnumProperty<AttachmentOutputFormat>;
 }
 
 // @public (undocumented)
@@ -256,56 +307,73 @@ export enum AttachmentOutputFormat {
     first = "first"
 }
 
-// @public (undocumented)
-export class BaseInvokeDialog<O extends object = {}> extends Dialog<O> implements DialogDependencies {
+// @public
+export class BaseInvokeDialog<O extends object = {}> extends Dialog<O> implements DialogDependencies, BaseInvokeDialogConfiguration {
     constructor(dialogIdToCall?: string, bindingOptions?: O);
     activityProcessed: BoolExpression;
-    // (undocumented)
     beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult<any>>;
-    // (undocumented)
     protected bindOptions(dc: DialogContext, options: object): object;
     dialog: DialogExpression;
     // (undocumented)
+    getConverter(property: keyof BaseInvokeDialogConfiguration): Converter | ConverterFactory;
     getDependencies(): Dialog<{}>[];
-    // (undocumented)
     protected onComputeId(): string;
     options: ObjectExpression<object>;
-    // (undocumented)
     protected resolveDialog(dc: DialogContext): Dialog;
 }
 
 // @public (undocumented)
-export class BeginDialog<O extends object = {}> extends BaseInvokeDialog<O> {
-    constructor();
-    constructor(dialogIdToCall: string, options?: O);
+export interface BaseInvokeDialogConfiguration extends DialogConfiguration {
     // (undocumented)
+    activityProcessed?: BoolProperty;
+    // (undocumented)
+    dialog?: DialogProperty;
+    // (undocumented)
+    options?: ObjectProperty<object>;
+}
+
+// @public
+export class BeginDialog<O extends object = {}> extends BaseInvokeDialog<O> implements BeginDialogConfiguration {
+    // (undocumented)
+    static $kind: string;
+    constructor(dialogIdToCall: string, options?: O);
     beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult>;
     disabled?: BoolExpression;
-    resultProperty?: StringExpression;
     // (undocumented)
+    getConverter(property: keyof BeginDialogConfiguration): Converter | ConverterFactory;
+    resultProperty?: StringExpression;
     resumeDialog(dc: DialogContext, reason: DialogReason, result?: any): Promise<DialogTurnResult>;
 }
 
 // @public (undocumented)
-export class BeginSkill extends SkillDialog {
-    constructor(options?: SkillDialogOptions);
-    activity: TemplateInterface<Partial<Activity>>;
-    activityProcessed: BoolExpression;
+export interface BeginDialogConfiguration extends BaseInvokeDialogConfiguration {
     // (undocumented)
+    disabled?: BoolProperty;
+    // (undocumented)
+    resultProperty?: StringProperty;
+}
+
+// @public
+export class BeginSkill extends SkillDialog implements BeginSkillConfiguration {
+    // (undocumented)
+    static $kind: string;
+    constructor(options?: SkillDialogOptions);
+    activity: TemplateInterface<Partial<Activity>, DialogStateManager>;
+    activityProcessed: BoolExpression;
+    allowInterruptions: BoolExpression;
     beginDialog(dc: DialogContext, options?: BeginSkillDialogOptions): Promise<DialogTurnResult>;
     botId: StringExpression;
     connectionName: StringExpression;
-    // (undocumented)
     continueDialog(dc: DialogContext): Promise<DialogTurnResult>;
     disabled?: BoolExpression;
-    // (undocumented)
     endDialog(turnContext: TurnContext, instance: DialogInstance, reason: DialogReason): Promise<void>;
     // (undocumented)
+    getConverter(property: keyof BeginSkillConfiguration): Converter | ConverterFactory;
     protected onComputeId(): string;
     // (undocumented)
+    protected onPreBubbleEvent(dc: DialogContext, e: DialogEvent): Promise<boolean>;
     repromptDialog(turnContext: TurnContext, instance: DialogInstance): Promise<void>;
     resultProperty?: StringExpression;
-    // (undocumented)
     resumeDialog(dc: DialogContext, reason: DialogReason, result?: any): Promise<DialogTurnResult<any>>;
     skillAppId: StringExpression;
     skillEndpoint: StringExpression;
@@ -313,64 +381,145 @@ export class BeginSkill extends SkillDialog {
 }
 
 // @public (undocumented)
-export class BreakLoop<O extends object = {}> extends Dialog<O> {
+export interface BeginSkillConfiguration extends DialogConfiguration {
     // (undocumented)
+    activity?: TemplateInterfaceProperty<Partial<Activity>, DialogStateManager>;
+    // (undocumented)
+    activityProcessed?: BoolProperty;
+    // (undocumented)
+    allowInterruptions?: BoolProperty;
+    // (undocumented)
+    botId?: StringProperty;
+    // (undocumented)
+    connectionName?: StringProperty;
+    // (undocumented)
+    disabled?: BoolProperty;
+    // (undocumented)
+    resultProperty?: StringProperty;
+    // (undocumented)
+    skillAppId?: StringProperty;
+    // (undocumented)
+    skillEndpoint?: StringProperty;
+    // (undocumented)
+    skillHostEndpoint?: StringProperty;
+}
+
+// @public (undocumented)
+export type BoolProperty = boolean | BoolExpression | Property;
+
+// @public
+export class BreakLoop<O extends object = {}> extends Dialog<O> implements BreakLoopConfiguration {
+    // (undocumented)
+    static $kind: string;
     beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult>;
     disabled?: BoolExpression;
     // (undocumented)
+    getConverter(property: keyof BreakLoopConfiguration): Converter | ConverterFactory;
     protected onComputeId(): string;
+}
+
+// @public (undocumented)
+export interface BreakLoopConfiguration extends DialogConfiguration {
+    // (undocumented)
+    disabled?: BoolProperty;
 }
 
 // Warning: (ae-forgotten-export) The symbol "CancelAllDialogsBase" needs to be exported by the entry point index.d.ts
 //
-// @public (undocumented)
+// @public
 export class CancelAllDialogs<O extends object = {}> extends CancelAllDialogsBase<O> {
+    // (undocumented)
+    static $kind: string;
     constructor();
     constructor(eventName: string, eventValue?: string);
 }
 
 // @public (undocumented)
+export interface CancelAllDialogsBaseConfiguration extends DialogConfiguration {
+    // (undocumented)
+    activityProcessed?: BoolProperty;
+    // (undocumented)
+    disabled?: BoolProperty;
+    // (undocumented)
+    eventName?: StringProperty;
+    // (undocumented)
+    eventValue?: UnknownProperty;
+}
+
+// @public
 export class CancelDialog<O extends object = {}> extends CancelAllDialogsBase<O> {
+    // (undocumented)
+    static $kind: string;
     constructor();
     constructor(eventName: string, eventValue?: string);
 }
 
-// @public (undocumented)
+// @public
 export class Case extends ActionScope {
     constructor(value?: string, actions?: Dialog[]);
-    createValueExpression(): Expression;
     value: string;
 }
 
-// @public (undocumented)
-export class CaseConverter implements Converter {
-    constructor(resourceExplorer: ResourceExplorer);
+// @public
+export class ChannelMentionEntityRecognizer extends AdaptiveRecognizer {
     // (undocumented)
-    convert(config: {
-        value: string;
-        actions: Dialog[];
-    }): Case;
-    }
+    static $kind: string;
+    recognize(dialogContext: DialogContext, activity: Partial<Activity_2>, telemetryProperties?: Record<string, string>, telemetryMetrics?: Record<string, number>): Promise<RecognizerResult_2>;
+}
 
 // @public (undocumented)
-export const channels: any;
+export const channels: {
+    console: string;
+    cortana: string;
+    directline: string;
+    email: string;
+    emulator: string;
+    facebook: string;
+    groupme: string;
+    kik: string;
+    line: string;
+    msteams: string;
+    skype: string;
+    skypeforbusiness: string;
+    slack: string;
+    sms: string;
+    telegram: string;
+    webchat: string;
+};
 
-// @public (undocumented)
-export class ChoiceInput extends InputDialog {
+// @public
+export class ChoiceInput extends InputDialog implements ChoiceInputConfiguration {
+    // (undocumented)
+    static $kind: string;
     choiceOptions?: ObjectExpression<ChoiceFactoryOptions>;
     choices: ObjectExpression<ChoiceSet>;
     defaultLocale?: StringExpression;
     // (undocumented)
+    getConverter(property: keyof ChoiceInputConfiguration): Converter | ConverterFactory;
+    // (undocumented)
     protected onComputeId(): string;
-    // (undocumented)
     protected onInitializeOptions(dc: DialogContext, options: ChoiceInputOptions): Promise<ChoiceInputOptions>;
-    // (undocumented)
     protected onRecognizeInput(dc: DialogContext): Promise<InputState>;
-    // (undocumented)
     protected onRenderPrompt(dc: DialogContext, state: InputState): Promise<Partial<Activity>>;
     outputFormat: EnumExpression<ChoiceOutputFormat>;
     recognizerOptions?: ObjectExpression<FindChoicesOptions>;
     style: EnumExpression<ListStyle>;
+}
+
+// @public (undocumented)
+export interface ChoiceInputConfiguration extends InputDialogConfiguration {
+    // (undocumented)
+    choiceOptions?: ObjectProperty<ChoiceFactoryOptions>;
+    // (undocumented)
+    choices?: ObjectProperty<ChoiceSet>;
+    // (undocumented)
+    defaultLocale?: StringProperty;
+    // (undocumented)
+    outputFormat?: EnumProperty<ChoiceOutputFormat>;
+    // (undocumented)
+    recognizerOptions?: ObjectProperty<FindChoicesOptions>;
+    // (undocumented)
+    style?: EnumProperty<ListStyle>;
 }
 
 // @public (undocumented)
@@ -387,299 +536,509 @@ export enum ChoiceOutputFormat {
     value = "value"
 }
 
-// @public (undocumented)
-export class ChoiceSet extends Array<Choice> {
+// @public
+export class ChoiceSet extends Array<Choice> implements TemplateInterface<ChoiceSet, DialogStateManager> {
     constructor(obj: any);
-}
+    bind(dialogContext: DialogContext, data?: DialogStateManager): Promise<ChoiceSet>;
+    }
 
-// @public (undocumented)
+// @public
 export class CodeAction<O extends object = {}> extends Dialog<O> {
     constructor(codeHandler: CodeActionHandler);
-    // (undocumented)
     beginDialog(dc: DialogContext, options: O): Promise<DialogTurnResult>;
     // (undocumented)
     disabled?: BoolExpression;
     // (undocumented)
+    getConverter(property: keyof CodeActionConfiguration): Converter | ConverterFactory;
     protected onComputeId(): string;
+}
+
+// @public (undocumented)
+export interface CodeActionConfiguration extends DialogConfiguration {
+    // (undocumented)
+    disabled?: BoolProperty;
 }
 
 // @public (undocumented)
 export type CodeActionHandler = (dc: DialogContext, options?: object) => Promise<DialogTurnResult>;
 
 // @public
-export class ConditionalSelector implements TriggerSelector {
+export class ConditionalSelector extends TriggerSelector implements ConditionalSelectorConfiguration {
+    // (undocumented)
+    static $kind: string;
     condition: BoolExpression;
+    // (undocumented)
+    getConverter(property: keyof ConditionalSelectorConfiguration): Converter | ConverterFactory;
     ifFalse: TriggerSelector;
     ifTrue: TriggerSelector;
-    // (undocumented)
     initialize(conditionals: OnCondition[], evaluate: boolean): void;
     parser: ExpressionParserInterface;
-    // (undocumented)
-    select(actionContext: ActionContext): Promise<number[]>;
+    select(actionContext: ActionContext): Promise<OnCondition[]>;
 }
 
 // @public (undocumented)
+export interface ConditionalSelectorConfiguration {
+    // (undocumented)
+    condition?: BoolProperty;
+    // (undocumented)
+    ifFalse?: TriggerSelector;
+    // (undocumented)
+    ifTrue?: TriggerSelector;
+}
+
+// @public
 export class ConfirmationEntityRecognizer extends TextEntityRecognizer {
     // (undocumented)
-    protected recognize(text: string, culture: string): ModelResult[];
+    static $kind: string;
+    protected _recognize(text: string, culture: string): ModelResult[];
 }
 
-// @public (undocumented)
-export class ConfirmInput extends InputDialog {
+// @public
+export class ConfirmInput extends InputDialog implements ConfirmInputConfiguration {
+    // (undocumented)
+    static $kind: string;
     choiceOptions?: ObjectExpression<ChoiceFactoryOptions>;
     confirmChoices?: ObjectExpression<ChoiceSet>;
     defaultLocale?: StringExpression;
     // (undocumented)
+    getConverter(property: keyof ConfirmInputConfiguration): Converter | ConverterFactory;
+    // (undocumented)
     protected onComputeId(): string;
-    // (undocumented)
     protected onRecognizeInput(dc: DialogContext): Promise<InputState>;
-    // (undocumented)
     protected onRenderPrompt(dc: DialogContext, state: InputState): Promise<Partial<Activity>>;
     outputFormat: StringExpression;
     style: EnumExpression<ListStyle>;
 }
 
 // @public (undocumented)
-export class ContinueLoop<O extends object = {}> extends Dialog<O> {
+export interface ConfirmInputConfiguration extends InputDialogConfiguration {
     // (undocumented)
+    choiceOptions?: ObjectProperty<ChoiceFactoryOptions>;
+    // (undocumented)
+    confirmChoices?: ObjectProperty<ChoiceSet>;
+    // (undocumented)
+    defaultLocale?: StringProperty;
+    // (undocumented)
+    outputFormat?: StringProperty;
+    // (undocumented)
+    style?: EnumProperty<ListStyle>;
+}
+
+// @public
+export class ContinueConversation extends Dialog implements ContinueConversationConfiguration {
+    // (undocumented)
+    static $kind: string;
+    beginDialog(dc: DialogContext, _options?: Record<string, unknown>): Promise<DialogTurnResult>;
+    conversationReference: ObjectExpression<ConversationReference>;
+    disabled: BoolExpression;
+    // (undocumented)
+    getConverter(property: keyof ContinueConversationConfiguration): Converter | ConverterFactory;
+    protected onComputeId(): string;
+    value: ValueExpression;
+}
+
+// @public (undocumented)
+export interface ContinueConversationConfiguration extends DialogConfiguration {
+    // (undocumented)
+    conversationReference?: ObjectProperty<ConversationReference>;
+    // (undocumented)
+    disabled?: BoolProperty;
+    // (undocumented)
+    value?: UnknownProperty;
+}
+
+// @public
+export class ContinueConversationLater extends Dialog implements ContinueConversationLaterConfiguration {
+    // (undocumented)
+    static $kind: string;
+    beginDialog(dc: DialogContext, options?: Record<string, unknown>): Promise<DialogTurnResult>;
+    date: StringExpression;
+    disabled?: BoolExpression;
+    // (undocumented)
+    getConverter(property: keyof ContinueConversationLaterConfiguration): Converter | ConverterFactory;
+    // (undocumented)
+    protected onComputeId(): string;
+    value: ValueExpression;
+}
+
+// @public (undocumented)
+export interface ContinueConversationLaterConfiguration extends DialogConfiguration {
+    // (undocumented)
+    date?: StringProperty;
+    // (undocumented)
+    disabled?: BoolProperty;
+    // (undocumented)
+    value?: UnknownProperty;
+}
+
+// @public
+export class ContinueLoop<O extends object = {}> extends Dialog<O> implements ContinueLoopConfiguration {
+    // (undocumented)
+    static $kind: string;
     beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult>;
     disabled?: BoolExpression;
     // (undocumented)
+    getConverter(property: keyof ContinueLoopConfiguration): Converter | ConverterFactory;
     protected onComputeId(): string;
 }
 
 // @public (undocumented)
-export function createRecognizerResult(text: string, intents?: IntentMap, entities?: object): RecognizerResult;
+export interface ContinueLoopConfiguration extends DialogConfiguration {
+    // (undocumented)
+    disabled?: BoolProperty;
+}
 
 // @public
-export class CrossTrainedRecognizerSet extends Recognizer {
-    recognize(dialogContext: DialogContext, activity: Activity, telemetryProperties?: {
-        [key: string]: string;
-    }, telemetryMetrics?: {
-        [key: string]: number;
-    }): Promise<RecognizerResult>;
+export class CrossTrainedRecognizerSet extends AdaptiveRecognizer implements CrossTrainedRecognizerSetConfiguration {
+    // (undocumented)
+    static $kind: string;
+    // (undocumented)
+    getConverter(property: keyof CrossTrainedRecognizerSetConfiguration): Converter | ConverterFactory;
+    recognize(dialogContext: DialogContext, activity: Activity, telemetryProperties?: Record<string, string>, telemetryMetrics?: Record<string, number>): Promise<RecognizerResult>;
     recognizers: Recognizer[];
 }
 
 // @public (undocumented)
+export interface CrossTrainedRecognizerSetConfiguration extends RecognizerConfiguration {
+    // (undocumented)
+    recognizers?: string[] | Recognizer[];
+}
+
+// @public
 export class CurrencyEntityRecognizer extends TextEntityRecognizer {
     // (undocumented)
-    protected recognize(text: string, culture: string): ModelResult[];
+    static $kind: string;
+    protected _recognize(text: string, culture: string): ModelResult[];
 }
 
-// @public (undocumented)
+// @public
 export class DateTimeEntityRecognizer extends TextEntityRecognizer {
     // (undocumented)
-    protected recognize(text: string, culture: string): ModelResult[];
+    static $kind: string;
+    protected _recognize(text: string, culture: string): ModelResult[];
 }
 
-// @public (undocumented)
-export class DateTimeInput extends InputDialog {
+// @public
+export class DateTimeInput extends InputDialog implements DateTimeInputConfiguration {
+    // (undocumented)
+    static $kind: string;
     // (undocumented)
     defaultLocale: StringExpression;
     // (undocumented)
-    protected onComputeId(): string;
+    getConverter(property: keyof DateTimeInputConfiguration): Converter | ConverterFactory;
     // (undocumented)
+    protected onComputeId(): string;
     protected onRecognizeInput(dc: DialogContext): Promise<InputState>;
     // (undocumented)
     outputFormat: StringExpression;
 }
 
 // @public (undocumented)
-export class DeleteActivity<O extends object = {}> extends Dialog<O> {
+export interface DateTimeInputConfiguration extends InputDialogConfiguration {
+    // (undocumented)
+    defaultLocale?: StringProperty;
+    // (undocumented)
+    outputFormat?: StringProperty;
+}
+
+// @public
+export class DeleteActivity<O extends object = {}> extends Dialog<O> implements DeleteActivityConfiguration {
+    // (undocumented)
+    static $kind: string;
     constructor();
     activityId: StringExpression;
-    // (undocumented)
     beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult>;
     disabled?: BoolExpression;
     // (undocumented)
+    getConverter(property: keyof DeleteActivityConfiguration): Converter | ConverterFactory;
     protected onComputeId(): string;
 }
 
 // @public (undocumented)
-export class DeleteProperties<O extends object = {}> extends Dialog<O> {
-    constructor();
+export interface DeleteActivityConfiguration extends DialogConfiguration {
     // (undocumented)
+    activityId?: StringProperty;
+    // (undocumented)
+    disabled?: BoolProperty;
+}
+
+// @public
+export class DeleteProperties<O extends object = {}> extends Dialog<O> implements DeletePropertiesConfiguration {
+    // (undocumented)
+    static $kind: string;
+    constructor();
     beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult>;
     disabled?: BoolExpression;
     // (undocumented)
+    getConverter(property: keyof DeletePropertiesConfiguration): Converter | ConverterFactory;
     protected onComputeId(): string;
     properties: StringExpression[];
 }
 
 // @public (undocumented)
-export class DeleteProperty<O extends object = {}> extends Dialog<O> {
-    constructor();
+export interface DeletePropertiesConfiguration extends DialogConfiguration {
     // (undocumented)
+    disabled?: BoolProperty;
+    // (undocumented)
+    properties?: Array<string | StringExpression>;
+}
+
+// @public
+export class DeleteProperty<O extends object = {}> extends Dialog<O> implements DeletePropertyConfiguration {
+    // (undocumented)
+    static $kind: string;
+    constructor(property?: string);
     beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult>;
     disabled?: BoolExpression;
     // (undocumented)
+    getConverter(property: keyof DeletePropertyConfiguration): Converter | ConverterFactory;
     protected onComputeId(): string;
     property: StringExpression;
+}
+
+// @public (undocumented)
+export interface DeletePropertyConfiguration extends DialogConfiguration {
+    // (undocumented)
+    disabled?: BoolProperty;
+    // (undocumented)
+    property?: StringProperty;
 }
 
 // @public
 export class DialogExpression extends ExpressionProperty<Dialog> {
     constructor(value?: Dialog | string | Expression);
-    // (undocumented)
     setValue(value: Dialog | string | Expression): void;
 }
 
-// @public (undocumented)
-export class DialogExpressionConverter implements Converter {
-    constructor(resouceExplorer: ResourceExplorer);
-    // (undocumented)
-    convert(value: string | object): DialogExpression;
+// Warning: (ae-forgotten-export) The symbol "Input" needs to be exported by the entry point index.d.ts
+//
+// @public
+export class DialogExpressionConverter implements Converter<Input, DialogExpression> {
+    constructor(_resourceExplorer: ResourceExplorer);
+    convert(value: Input | DialogExpression): DialogExpression;
     }
 
 // @public (undocumented)
+export type DialogProperty = Dialog | DialogExpression | Property;
+
+// @public
 export class DimensionEntityRecognizer extends TextEntityRecognizer {
     // (undocumented)
-    protected recognize(text: string, culture: string): ModelResult[];
+    static $kind: string;
+    protected _recognize(text: string, culture: string): ModelResult[];
 }
 
-// @public (undocumented)
+// @public
 export class DynamicBeginDialog extends BeginDialog {
     // (undocumented)
-    protected bindOptions(dc: DialogContext, options: object): object;
+    static $kind: string;
+    protected bindOptions(dc: DialogContext, _options: object): object;
 }
 
-// @public (undocumented)
-export class EditActions<O extends object = {}> extends Dialog<O> implements DialogDependencies {
+// @public
+export class EditActions<O extends object = {}> extends Dialog<O> implements DialogDependencies, EditActionsConfiguration {
+    // (undocumented)
+    static $kind: string;
     constructor();
     // Warning: (ae-forgotten-export) The symbol "ActionChangeType" needs to be exported by the entry point index.d.ts
     constructor(changeType: ActionChangeType, actions?: Dialog[]);
     actions: Dialog[];
-    // (undocumented)
     beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult>;
     changeType: EnumExpression<ActionChangeType>;
     disabled?: BoolExpression;
     // (undocumented)
+    getConverter(property: keyof EditActionsConfiguration): Converter | ConverterFactory;
     getDependencies(): Dialog[];
-    // (undocumented)
     protected onComputeId(): string;
 }
 
 // @public (undocumented)
-export class EditArray<O extends object = {}> extends Dialog<O> {
+export interface EditActionsConfiguration extends DialogConfiguration {
+    // (undocumented)
+    actions?: string[] | Dialog[];
+    // (undocumented)
+    changeType?: EnumProperty<ActionChangeType>;
+    // (undocumented)
+    disabled?: BoolProperty;
+}
+
+// @public
+export class EditArray<O extends object = {}> extends Dialog<O> implements EditArrayConfiguration {
+    // (undocumented)
+    static $kind: string;
     constructor();
     constructor(changeType: ArrayChangeType, itemsProperty: string, value?: any, resultProperty?: string);
-    // (undocumented)
     beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult>;
     changeType: EnumExpression<ArrayChangeType>;
     disabled?: BoolExpression;
-    itemsProperty: StringExpression;
     // (undocumented)
+    getConverter(property: keyof EditArrayConfiguration): Converter | ConverterFactory;
+    itemsProperty: StringExpression;
     protected onComputeId(): string;
     resultProperty: StringExpression;
     value: ValueExpression;
 }
 
 // @public (undocumented)
-export class EmailEntityRecognizer extends TextEntityRecognizer {
+export interface EditArrayConfiguration extends DialogConfiguration {
     // (undocumented)
-    protected recognize(text: string, culture: string): ModelResult[];
+    changeType?: EnumProperty<ArrayChangeType>;
+    // (undocumented)
+    disabled?: BoolProperty;
+    // (undocumented)
+    itemsProperty?: StringProperty;
+    // (undocumented)
+    resultProperty?: StringProperty;
+    // (undocumented)
+    value?: UnknownProperty;
 }
 
-// @public (undocumented)
-export class EmitEvent<O extends object = {}> extends Dialog<O> {
+// @public
+export class EmailEntityRecognizer extends TextEntityRecognizer {
+    // (undocumented)
+    static $kind: string;
+    protected _recognize(text: string, culture: string): ModelResult[];
+}
+
+// @public
+export class EmitEvent<O extends object = {}> extends Dialog<O> implements EmitEventConfiguration {
+    // (undocumented)
+    static $kind: string;
     constructor();
     constructor(eventName: string, eventValue?: string, bubbleEvent?: boolean);
-    // (undocumented)
     beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult>;
     bubbleEvent: BoolExpression;
     disabled?: BoolExpression;
     eventName: StringExpression;
     eventValue: ValueExpression;
     // (undocumented)
+    getConverter(property: keyof EmitEventConfiguration): Converter | ConverterFactory;
     protected onComputeId(): string;
 }
 
 // @public (undocumented)
-export class EndDialog<O extends object = {}> extends Dialog<O> {
-    constructor();
+export interface EmitEventConfiguration extends DialogConfiguration {
     // (undocumented)
+    bubbleEvent?: BoolProperty;
+    // (undocumented)
+    disabled?: BoolProperty;
+    // (undocumented)
+    eventName?: StringProperty;
+    // (undocumented)
+    eventValue?: UnknownProperty;
+}
+
+// @public
+export class EndDialog<O extends object = {}> extends Dialog<O> implements EndDialogConfiguration {
+    // (undocumented)
+    static $kind: string;
+    constructor(value?: any);
     beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult>;
     disabled?: BoolExpression;
-    // (undocumented)
     protected endParentDialog(dc: DialogContext, result?: any): Promise<DialogTurnResult>;
     // (undocumented)
+    getConverter(property: keyof EndDialogConfiguration): Converter | ConverterFactory;
     protected onComputeId(): string;
     value: ValueExpression;
 }
 
 // @public (undocumented)
-export class EndTurn<O extends object = {}> extends Dialog<O> {
+export interface EndDialogConfiguration extends DialogConfiguration {
     // (undocumented)
-    beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult>;
+    disabled?: BoolProperty;
     // (undocumented)
-    continueDialog(dc: DialogContext): Promise<DialogTurnResult>;
-    disabled?: BoolExpression;
-    // (undocumented)
-    protected onComputeId(): string;
-}
-
-// @public (undocumented)
-export interface EntityRecognizer {
-    // (undocumented)
-    recognizeEntities(dialogContext: DialogContext, text: string, locale: string, entities: Entity[]): Promise<Entity[]>;
-}
-
-// @public (undocumented)
-export class EntityRecognizerSet extends Array<EntityRecognizer> {
-    // (undocumented)
-    recognizeEntities(dialogContext: DialogContext, text: string, locale: string, entities?: Entity[]): Promise<Entity[]>;
+    value?: UnknownProperty;
 }
 
 // @public
-export class FirstSelector implements TriggerSelector {
+export class EndTurn<O extends object = {}> extends Dialog<O> implements EndTurnConfiguration {
     // (undocumented)
-    initialize(conditionals: OnCondition[], evaluate: boolean): void;
-    parser: ExpressionParserInterface;
+    static $kind: string;
+    beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult>;
+    continueDialog(dc: DialogContext): Promise<DialogTurnResult>;
+    disabled?: BoolExpression;
     // (undocumented)
-    select(actionContext: ActionContext): Promise<number[]>;
+    getConverter(property: keyof EndTurnConfiguration): Converter | ConverterFactory;
+    protected onComputeId(): string;
 }
 
 // @public (undocumented)
-export class ForEach<O extends object = {}> extends ActionScope<O> {
+export interface EndTurnConfiguration extends DialogConfiguration {
+    // (undocumented)
+    disabled?: BoolProperty;
+}
+
+// @public
+export class EntityRecognizer extends AdaptiveRecognizer {
+    recognize(dialogContext: DialogContext, activity: Partial<Activity_2>, telemetryProperties?: Record<string, string>, telemetryMetrics?: Record<string, number>): Promise<RecognizerResult_2>;
+    recognizeEntities(dialogContext: DialogContext, text: string, locale: string, entities: Entity[]): Promise<Entity[]>;
+}
+
+// @public
+export class EntityRecognizerSet extends Array<EntityRecognizer> {
+    // (undocumented)
+    static $kind: string;
+    recognizeEntities(dialogContext: DialogContext, text: string, locale: string, entities?: Entity_2[]): Promise<Entity_2[]>;
+}
+
+// @public (undocumented)
+export type EnumProperty<T> = T | EnumExpression<T> | Property;
+
+// @public
+export class FirstSelector extends TriggerSelector {
+    // (undocumented)
+    static $kind: string;
+    initialize(conditionals: OnCondition[], evaluate: boolean): void;
+    select(actionContext: ActionContext): Promise<OnCondition[]>;
+}
+
+// @public
+export class ForEach<O extends object = {}> extends ActionScope<O> implements ForEachPageConfiguration {
+    // (undocumented)
+    static $kind: string;
     constructor();
     constructor(itemsProperty: string, actions: Dialog[]);
-    // (undocumented)
     beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult>;
     disabled?: BoolExpression;
     // (undocumented)
+    getConverter(property: keyof ForEachConfiguration): Converter | ConverterFactory;
     getDependencies(): Dialog[];
     index: StringExpression;
     itemsProperty: StringExpression;
-    // (undocumented)
     protected nextItem(dc: DialogContext): Promise<DialogTurnResult>;
-    // (undocumented)
     protected onBreakLoop(dc: DialogContext, actionScopeResult: ActionScopeResult): Promise<DialogTurnResult>;
-    // (undocumented)
     protected onComputeId(): string;
-    // (undocumented)
     protected onContinueLoop(dc: DialogContext, actionScopeResult: ActionScopeResult): Promise<DialogTurnResult>;
-    // (undocumented)
     protected onEndOfActions(dc: DialogContext, result?: any): Promise<DialogTurnResult>;
     value: StringExpression;
 }
 
-// @public
-export class ForEachPage<O extends object = {}> extends ActionScope<O> {
-    constructor();
+// @public (undocumented)
+export interface ForEachConfiguration extends ActionScopeConfiguration {
     // (undocumented)
+    disabled?: BoolProperty;
+    // (undocumented)
+    index?: StringProperty;
+    // (undocumented)
+    itemsProperty?: StringProperty;
+    // (undocumented)
+    value?: StringProperty;
+}
+
+// @public
+export class ForEachPage<O extends object = {}> extends ActionScope<O> implements ForEachPageConfiguration {
+    // (undocumented)
+    static $kind: string;
+    constructor();
     beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult>;
     disabled?: BoolExpression;
     // (undocumented)
+    getConverter(property: keyof ForEachPageConfiguration): Converter | ConverterFactory;
     getDependencies(): Dialog[];
     itemsProperty: StringExpression;
-    // (undocumented)
     protected onBreakLoop(dc: DialogContext, actionScopeResult: ActionScopeResult): Promise<DialogTurnResult>;
-    // (undocumented)
     protected onComputeId(): string;
-    // (undocumented)
     protected onContinueLoop(dc: DialogContext, actionScopeResult: ActionScopeResult): Promise<DialogTurnResult>;
-    // (undocumented)
     protected onEndOfActions(dc: DialogContext, result?: any): Promise<DialogTurnResult>;
     page: StringExpression;
     pageIndex: StringExpression;
@@ -687,57 +1046,123 @@ export class ForEachPage<O extends object = {}> extends ActionScope<O> {
 }
 
 // @public (undocumented)
-export class GetActivityMembers<O extends object = {}> extends Dialog {
+export interface ForEachPageConfiguration extends ActionScopeConfiguration {
+    // (undocumented)
+    disabled?: BoolProperty;
+    // (undocumented)
+    itemsProperty?: StringProperty;
+    // (undocumented)
+    page?: StringProperty;
+    // (undocumented)
+    pageIndex?: StringProperty;
+    // (undocumented)
+    pageSize?: IntProperty;
+}
+
+// @public
+export class GetActivityMembers<O extends object = {}> extends Dialog implements GetActivityMembersConfiguration {
+    // (undocumented)
+    static $kind: string;
     constructor();
     activityId: StringExpression;
-    // (undocumented)
     beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult>;
     disabled?: BoolExpression;
     // (undocumented)
+    getConverter(property: keyof GetActivityMembersConfiguration): Converter | ConverterFactory;
     protected onComputeId(): string;
     property: StringExpression;
 }
 
 // @public (undocumented)
-export class GetConversationMembers<O extends object = {}> extends Dialog<O> {
+export interface GetActivityMembersConfiguration extends DialogConfiguration {
+    // (undocumented)
+    activityId?: StringProperty;
+    // (undocumented)
+    disabled?: BoolProperty;
+    // (undocumented)
+    property?: StringProperty;
+}
+
+// @public
+export class GetConversationMembers<O extends object = {}> extends Dialog<O> implements GetConversationMembersConfiguration {
+    // (undocumented)
+    static $kind: string;
     constructor();
-    // (undocumented)
     beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult>;
     disabled?: BoolExpression;
     // (undocumented)
+    getConverter(property: keyof GetConversationMembersConfiguration): Converter | ConverterFactory;
     protected onComputeId(): string;
     property: StringExpression;
 }
 
 // @public (undocumented)
-export class GotoAction<O extends object = {}> extends Dialog<O> {
+export interface GetConversationMembersConfiguration extends DialogConfiguration {
+    // (undocumented)
+    disabled?: BoolProperty;
+    // (undocumented)
+    property?: StringProperty;
+}
+
+// @public
+export class GetConversationReference extends Dialog implements GetConversationReferenceConfiguration {
+    // (undocumented)
+    static $kind: string;
+    beginDialog(dc: DialogContext, _options?: Record<string, unknown>): Promise<DialogTurnResult>;
+    disabled: BoolExpression;
+    // (undocumented)
+    getConverter(property: keyof GetConversationReferenceConfiguration): Converter | ConverterFactory;
+    protected onComputeId(): string;
+    property: StringExpression;
+}
+
+// @public (undocumented)
+export interface GetConversationReferenceConfiguration extends DialogConfiguration {
+    // (undocumented)
+    disabled?: BoolProperty;
+    // (undocumented)
+    property?: StringProperty;
+}
+
+// @public
+export class GotoAction<O extends object = {}> extends Dialog<O> implements GotoActionConfiguration {
+    // (undocumented)
+    static $kind: string;
     constructor();
     actionId: StringExpression;
-    // (undocumented)
     beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult>;
     disabled?: BoolExpression;
     // (undocumented)
+    getConverter(property: keyof GotoActionConfiguration): Converter | ConverterFactory;
     protected onComputeId(): string;
 }
 
 // @public (undocumented)
+export interface GotoActionConfiguration extends DialogConfiguration {
+    // (undocumented)
+    actionId?: StringProperty;
+    // (undocumented)
+    disabled?: BoolProperty;
+}
+
+// @public
 export class GuidEntityRecognizer extends TextEntityRecognizer {
     // (undocumented)
-    protected recognize(text: string, culture: string): ModelResult[];
+    static $kind: string;
+    protected _recognize(text: string, culture: string): ModelResult[];
 }
 
-// @public (undocumented)
+// @public
 export class HashtagEntityRecognizer extends TextEntityRecognizer {
     // (undocumented)
-    protected recognize(text: string, culture: string): ModelResult[];
+    static $kind: string;
+    protected _recognize(text: string, culture: string): ModelResult[];
 }
 
-// @public (undocumented)
-export class HttpHeadersConverter implements Converter {
-    // (undocumented)
-    convert(value: object): {
-        [key: string]: StringExpression;
-    };
+// @public
+export class HasPendingActionsFunction extends ExpressionEvaluator {
+    constructor();
+    static readonly functionName = "hasPendingActions";
 }
 
 // @public (undocumented)
@@ -749,83 +1174,143 @@ export enum HttpMethod {
     PUT = "PUT"
 }
 
-// @public (undocumented)
-export class HttpRequest<O extends object = {}> extends Dialog<O> implements Configurable {
+// @public
+export class HttpRequest<O extends object = {}> extends Dialog<O> implements HttpRequestConfiguration {
+    // (undocumented)
+    static $kind: string;
     constructor();
     constructor(method: HttpMethod, url: string, headers: {
         [key: string]: string;
     }, body: any);
-    // (undocumented)
     beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult>;
     body?: ValueExpression;
     contentType?: StringExpression;
     disabled?: BoolExpression;
+    // (undocumented)
+    getConverter(property: keyof HttpRequestConfiguration): Converter | ConverterFactory;
     headers?: {
         [key: string]: StringExpression;
     };
     method?: HttpMethod;
-    // (undocumented)
     protected onComputeId(): string;
     responseType?: EnumExpression<ResponsesTypes>;
-    resultProperty?: StringExpression;
+    resultProperty: StringExpression;
     url?: StringExpression;
 }
 
 // @public (undocumented)
-export class IfCondition<O extends object = {}> extends Dialog<O> implements DialogDependencies {
+export interface HttpRequestConfiguration extends DialogConfiguration {
+    // (undocumented)
+    body?: UnknownProperty;
+    // (undocumented)
+    contentType?: StringProperty;
+    // (undocumented)
+    disabled?: BoolProperty;
+    // Warning: (ae-forgotten-export) The symbol "HeadersInput" needs to be exported by the entry point index.d.ts
+    // Warning: (ae-forgotten-export) The symbol "HeadersOutput" needs to be exported by the entry point index.d.ts
+    //
+    // (undocumented)
+    headers?: HeadersInput | HeadersOutput;
+    // (undocumented)
+    method?: HttpMethod;
+    // (undocumented)
+    responseType?: EnumProperty<ResponsesTypes>;
+    // (undocumented)
+    resultProperty: StringProperty;
+    // (undocumented)
+    url?: StringProperty;
+}
+
+// @public
+export class IfCondition<O extends object = {}> extends Dialog<O> implements DialogDependencies, IfConditionConfiguration {
+    // (undocumented)
+    static $kind: string;
     constructor();
     actions: Dialog[];
-    // (undocumented)
     beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult>;
     condition: BoolExpression;
     disabled?: BoolExpression;
     elseActions: Dialog[];
+    protected get falseScope(): ActionScope;
     // (undocumented)
-    protected readonly falseScope: ActionScope;
-    // (undocumented)
+    getConverter(property: keyof IfConditionConfiguration): Converter | ConverterFactory;
     getDependencies(): Dialog[];
-    // (undocumented)
     protected onComputeId(): string;
-    // (undocumented)
-    protected readonly trueScope: ActionScope;
+    protected get trueScope(): ActionScope;
     }
 
 // @public (undocumented)
-export abstract class InputDialog extends Dialog {
+export interface IfConditionConfiguration extends DialogConfiguration {
+    // (undocumented)
+    actions?: string[] | Dialog[];
+    // (undocumented)
+    condition?: BoolProperty;
+    // (undocumented)
+    disabled?: BoolProperty;
+    // (undocumented)
+    elseActions?: string[] | Dialog[];
+}
+
+// @public
+export abstract class InputDialog extends Dialog implements InputDialogConfiguration {
     constructor(property?: string, prompt?: Partial<Activity> | string);
     allowInterruptions: BoolExpression;
     alwaysPrompt: BoolExpression;
     protected appendChoices(prompt: Partial<Activity>, channelId: string, choices: Choice[], style: ListStyle, options?: ChoiceFactoryOptions): Partial<Activity>;
-    // (undocumented)
     beginDialog(dc: DialogContext, options?: any): Promise<DialogTurnResult>;
-    // (undocumented)
     continueDialog(dc: DialogContext): Promise<DialogTurnResult>;
     defaultValue?: ValueExpression;
-    defaultValueResponse: TemplateInterface<Partial<Activity>>;
+    defaultValueResponse: TemplateInterface<Partial<Activity>, DialogStateManager>;
     disabled?: BoolExpression;
-    invalidPrompt: TemplateInterface<Partial<Activity>>;
+    // (undocumented)
+    getConverter(property: keyof InputDialogConfiguration): Converter | ConverterFactory;
+    invalidPrompt: TemplateInterface<Partial<Activity>, DialogStateManager>;
     maxTurnCount?: IntExpression;
-    // (undocumented)
     protected onInitializeOptions(dc: DialogContext, options: any): Promise<any>;
-    // (undocumented)
     protected onPreBubbleEvent(dc: DialogContext, event: DialogEvent): Promise<boolean>;
     // (undocumented)
     protected abstract onRecognizeInput(dc: DialogContext): Promise<InputState>;
-    // (undocumented)
     protected onRenderPrompt(dc: DialogContext, state: InputState): Promise<Partial<Activity>>;
     // (undocumented)
     static OPTIONS_PROPERTY: string;
-    prompt: TemplateInterface<Partial<Activity>>;
+    prompt: TemplateInterface<Partial<Activity>, DialogStateManager>;
     property: StringExpression;
-    // (undocumented)
     resumeDialog(dc: DialogContext, reason: DialogReason, result?: any): Promise<DialogTurnResult>;
     // (undocumented)
     static TURN_COUNT_PROPERTY: string;
-    unrecognizedPrompt: TemplateInterface<Partial<Activity>>;
+    unrecognizedPrompt: TemplateInterface<Partial<Activity>, DialogStateManager>;
     validations: string[];
     value: ValueExpression;
     // (undocumented)
     static VALUE_PROPERTY: string;
+}
+
+// @public (undocumented)
+export interface InputDialogConfiguration extends DialogConfiguration {
+    // (undocumented)
+    allowInterruptions?: BoolProperty;
+    // (undocumented)
+    alwaysPrompt?: BoolProperty;
+    // (undocumented)
+    defaultValue?: UnknownProperty;
+    // (undocumented)
+    defaultValueResponse?: TemplateInterfaceProperty<Partial<Activity>, DialogStateManager>;
+    // (undocumented)
+    disabled?: BoolProperty;
+    // (undocumented)
+    invalidPrompt?: TemplateInterfaceProperty<Partial<Activity>, DialogStateManager>;
+    // (undocumented)
+    maxTurnCount?: IntProperty;
+    // (undocumented)
+    prompt?: TemplateInterfaceProperty<Partial<Activity>, DialogStateManager>;
+    // (undocumented)
+    property?: StringProperty;
+    // (undocumented)
+    unrecognizedPrompt?: TemplateInterfaceProperty<Partial<Activity>, DialogStateManager>;
+    // (undocumented)
+    validations?: string[];
+    // (undocumented)
+    value?: UnknownProperty;
 }
 
 // @public (undocumented)
@@ -840,43 +1325,45 @@ export enum InputState {
     valid = "valid"
 }
 
-// @public (undocumented)
-export interface IntentMap {
-    // (undocumented)
-    [name: string]: {
-        score: number;
-    };
-}
-
-// @public (undocumented)
+// @public
 export class IntentPattern {
     constructor(intent?: string, pattern?: string);
     // (undocumented)
-    intent: string;
+    get intent(): string;
+    set intent(value: string);
     // (undocumented)
-    pattern: string;
+    get pattern(): string;
+    set pattern(value: string);
     // (undocumented)
-    readonly regex: RegExp;
+    get regex(): RegExp;
 }
 
 // @public (undocumented)
-export class IntentPatternConverter implements Converter {
-    // (undocumented)
-    convert(value: {
-        intent: string;
-        pattern: string;
-    }): IntentPattern;
-}
+export type IntProperty = number | IntExpression | Property;
 
-// @public (undocumented)
+// @public
 export class IpEntityRecognizer extends TextEntityRecognizer {
     // (undocumented)
-    protected recognize(text: string, culture: string): ModelResult[];
+    static $kind: string;
+    protected _recognize(text: string, culture: string): ModelResult[];
 }
 
 // @public
-export interface LanguageGenerator {
-    generate(dialogContext: DialogContext, template: string, data: object): Promise<string>;
+export class IsDialogActiveFunction extends ExpressionEvaluator {
+    constructor();
+    static readonly functionAlias = "isActionActive";
+    static readonly functionName = "isDialogActive";
+}
+
+// @public (undocumented)
+export class LanguageGenerationBotComponent extends BotComponent {
+    // (undocumented)
+    configureServices(services: ServiceCollection, _configuration: Configuration): void;
+}
+
+// @public
+export interface LanguageGenerator<T = unknown, D = Record<string, unknown>> {
+    generate(dialogContext: DialogContext, template: string, data: D): Promise<T>;
 }
 
 // @public
@@ -889,10 +1376,9 @@ export class LanguageGeneratorExtensions {
 export const languageGeneratorKey: unique symbol;
 
 // @public
-export class LanguageGeneratorManager {
+export class LanguageGeneratorManager<T = unknown, D extends Record<string, unknown> = Record<string, unknown>> {
     constructor(resourceManager: ResourceExplorer);
-    languageGenerators: Map<string, LanguageGenerator>;
-    // (undocumented)
+    languageGenerators: Map<string, LanguageGenerator<T, D>>;
     static resourceExplorerResolver(locale: string, resourceMapping: Map<string, Resource[]>): ImportResolverDelegate;
     }
 
@@ -902,16 +1388,14 @@ export const languageGeneratorManagerKey: unique symbol;
 // @public
 export class LanguagePolicy extends Map<string, string[]> {
     constructor(...defaultLanguages: string[]);
-    // (undocumented)
     static defaultPolicy(defaultLanguages?: string[]): Map<string, string[]>;
     // (undocumented)
     static readonly locales: string[];
 }
 
-// @public (undocumented)
-export class LanguagePolicyConverter implements Converter {
-    // (undocumented)
-    convert(value: object): LanguagePolicy;
+// @public
+export class LanguagePolicyConverter implements Converter<Record<string, string[]>, LanguagePolicy> {
+    convert(value: Record<string, string[]> | LanguagePolicy): LanguagePolicy;
 }
 
 // @public
@@ -927,50 +1411,62 @@ export class LanguageResourceLoader {
     };
 }
 
-// @public (undocumented)
-export class LogAction<O extends object = {}> extends Dialog<O> {
-    constructor();
-    constructor(text: string);
+// @public
+export class LogAction<O extends object = {}> extends Dialog<O> implements LogActionConfiguration {
     // (undocumented)
+    static $kind: string;
+    constructor(text: string);
     beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult>;
     disabled?: BoolExpression;
-    label: StringExpression;
     // (undocumented)
+    getConverter(property: keyof LogActionConfiguration): Converter | ConverterFactory;
+    label: StringExpression;
     protected onComputeId(): string;
-    text: TemplateInterface<string>;
+    text: TemplateInterface<string, DialogStateManager>;
     traceActivity: BoolExpression;
 }
 
 // @public (undocumented)
-export class LuisAdaptiveRecognizer extends Recognizer {
-    applicationId: StringExpression;
-    dynamicLists: ArrayExpression<any>;
-    endpoint: StringExpression;
-    endpointKey: StringExpression;
-    protected fillRecognizerResultTelemetryProperties(recognizerResult: RecognizerResult, telemetryProperties: {
-        [key: string]: string;
-    }, dialogContext: DialogContext): {
-        [key: string]: string;
-    };
-    logPersonalInformation: BoolExpression;
-    predictionOptions: LuisPredictionOptions;
+export interface LogActionConfiguration extends DialogConfiguration {
     // (undocumented)
-    recognize(dialogContext: DialogContext, activity: Activity, telemetryProperties?: {
-        [key: string]: string;
-    }, telemetryMetrics?: {
-        [key: string]: number;
-    }): Promise<RecognizerResult>;
-    recognizerOptions(dialogContext: DialogContext): LuisRecognizerOptionsV3;
+    disabled?: BoolProperty;
+    // (undocumented)
+    label?: StringProperty;
+    // (undocumented)
+    text?: string | TemplateInterface<string, DialogStateManager>;
+    // (undocumented)
+    traceActivity?: BoolProperty;
+}
+
+// @public
+export class MentionEntityRecognizer extends TextEntityRecognizer {
+    // (undocumented)
+    static $kind: string;
+    protected _recognize(text: string, culture: string): ModelResult[];
 }
 
 // @public (undocumented)
-export class MentionEntityRecognizer extends TextEntityRecognizer {
+export class MostSpecificSelector extends TriggerSelector implements MostSpecificSelectorConfiguration {
     // (undocumented)
-    protected recognize(text: string, culture: string): ModelResult[];
+    static $kind: string;
+    // (undocumented)
+    initialize(conditionals: OnCondition[], _evaluate: boolean): void;
+    // (undocumented)
+    select(context: ActionContext): Promise<OnCondition[]>;
+    // (undocumented)
+    selector: TriggerSelector;
+    }
+
+// @public (undocumented)
+export interface MostSpecificSelectorConfiguration {
+    // (undocumented)
+    selector?: TriggerSelector;
 }
 
 // @public
 export class MultiLanguageGenerator extends MultiLanguageGeneratorBase {
+    // (undocumented)
+    static $kind: string;
     languageGenerators: Map<string, LanguageGenerator>;
     tryGetGenerator(dialogContext: DialogContext, locale: string): {
         exist: boolean;
@@ -979,17 +1475,29 @@ export class MultiLanguageGenerator extends MultiLanguageGeneratorBase {
 }
 
 // @public
-export abstract class MultiLanguageGeneratorBase implements LanguageGenerator {
-    generate(dialogContext: DialogContext, template: string, data: object): Promise<string>;
+export abstract class MultiLanguageGeneratorBase<T = unknown, D extends Record<string, unknown> = Record<string, unknown>> extends Configurable implements LanguageGenerator<T, D>, MultiLanguageGeneratorBaseConfiguration {
+    generate(dialogContext: DialogContext, template: string, data: D): Promise<T>;
+    // (undocumented)
+    getConverter(property: keyof MultiLanguageGeneratorBaseConfiguration): Converter | ConverterFactory;
     languagePolicy: LanguagePolicy;
     abstract tryGetGenerator(dialogContext: DialogContext, locale: string): {
         exist: boolean;
-        result: LanguageGenerator;
+        result: LanguageGenerator<T, D>;
     };
 }
 
 // @public (undocumented)
-export class MultiLanguageRecognizer extends Recognizer {
+export interface MultiLanguageGeneratorBaseConfiguration {
+    // (undocumented)
+    languagePolicy?: Record<string, string[]> | LanguagePolicy;
+}
+
+// @public (undocumented)
+export class MultiLanguageRecognizer extends AdaptiveRecognizer implements MultiLanguageRecognizerConfiguration {
+    // (undocumented)
+    static $kind: string;
+    // (undocumented)
+    getConverter(property: keyof MultiLanguageRecognizerConfiguration): Converter | ConverterFactory;
     // (undocumented)
     languagePolicy: LanguagePolicy;
     // (undocumented)
@@ -1005,35 +1513,59 @@ export class MultiLanguageRecognizer extends Recognizer {
 }
 
 // @public (undocumented)
-export class NumberEntityRecognizer extends TextEntityRecognizer {
+export interface MultiLanguageRecognizerConfiguration extends RecognizerConfiguration {
     // (undocumented)
-    protected recognize(text: string, culture: string): ModelResult[];
+    languagePolicy?: Record<string, string[]> | LanguagePolicy;
+    // (undocumented)
+    recognizers?: Record<string, string> | Record<string, Recognizer>;
 }
 
-// @public (undocumented)
-export class NumberInput extends InputDialog {
+// @public
+export class NumberEntityRecognizer extends TextEntityRecognizer {
+    // (undocumented)
+    static $kind: string;
+    protected _recognize(text: string, culture: string): ModelResult[];
+}
+
+// @public
+export class NumberInput extends InputDialog implements NumberInputConfiguration {
+    // (undocumented)
+    static $kind: string;
     // (undocumented)
     defaultLocale?: StringExpression;
     // (undocumented)
-    protected onComputeId(): string;
+    getConverter(property: keyof NumberInputConfiguration): Converter | ConverterFactory;
     // (undocumented)
+    protected onComputeId(): string;
     protected onRecognizeInput(dc: DialogContext): Promise<InputState>;
     // (undocumented)
     outputFormat?: NumberExpression;
 }
 
 // @public (undocumented)
-export class OAuthInput extends InputDialog {
-    constructor(connectionName?: string, title?: string, text?: string, timeout?: number);
+export interface NumberInputConfiguration extends InputDialogConfiguration {
     // (undocumented)
+    defaultLocale?: StringProperty;
+    // (undocumented)
+    outputFormat?: NumberProperty;
+}
+
+// @public (undocumented)
+export type NumberProperty = number | NumberExpression | Property;
+
+// @public
+export class OAuthInput extends InputDialog implements OAuthInputConfiguration {
+    // (undocumented)
+    static $kind: string;
+    constructor(connectionName?: string, title?: string, text?: string, timeout?: number);
     beginDialog(dc: DialogContext, options?: PromptOptions): Promise<DialogTurnResult>;
     connectionName: StringExpression;
-    // (undocumented)
     continueDialog(dc: DialogContext): Promise<DialogTurnResult>;
+    // (undocumented)
+    getConverter(property: keyof OAuthInputConfiguration): Converter | ConverterFactory;
     getUserToken(dc: DialogContext, code?: string): Promise<TokenResponse | undefined>;
     // (undocumented)
     protected onComputeId(): string;
-    // (undocumented)
     protected onRecognizeInput(dc: DialogContext): Promise<InputState>;
     signOutUser(dc: DialogContext): Promise<void>;
     text?: StringExpression;
@@ -1041,194 +1573,344 @@ export class OAuthInput extends InputDialog {
     title: StringExpression;
 }
 
-// @public
-export class OnActivity extends OnDialogEvent {
-    constructor(type?: string, actions?: Dialog[], condition?: string);
+// @public (undocumented)
+export interface OAuthInputConfiguration extends InputDialogConfiguration {
     // (undocumented)
-    getExpression(parser: ExpressionParserInterface): Expression;
+    connectionName?: StringProperty;
+    // (undocumented)
+    text?: StringProperty;
+    // (undocumented)
+    timeout?: IntProperty;
+    // (undocumented)
+    title?: StringProperty;
+}
+
+// @public (undocumented)
+export type ObjectProperty<T> = T | ObjectExpression<T> | Property;
+
+// @public
+export class OnActivity extends OnDialogEvent implements OnActivityConfiguration {
+    // (undocumented)
+    static $kind: string;
+    constructor(type?: string, actions?: Dialog[], condition?: string);
+    protected createExpression(): Expression;
     type: string;
 }
 
-// @public
-export class OnAssignEntity extends OnDialogEvent {
-    constructor(property?: string, entity?: string, operation?: string, actions?: Dialog[], condition?: string);
-    entity: string;
+// @public (undocumented)
+export interface OnActivityConfiguration extends OnDialogEventConfiguration {
     // (undocumented)
-    getExpression(parser: ExpressionParserInterface): Expression;
+    type?: string;
+}
+
+// @public
+export class OnAssignEntity extends OnDialogEvent implements OnAssignEntityConfiguration {
+    // (undocumented)
+    static $kind: string;
+    constructor(property?: string, value?: string, operation?: string, actions?: Dialog[], condition?: string);
+    protected createExpression(): Expression;
     operation: string;
     property: string;
+    value: string;
+}
+
+// @public (undocumented)
+export interface OnAssignEntityConfiguration extends OnDialogEventConfiguration {
+    // (undocumented)
+    operation?: string;
+    // (undocumented)
+    property?: string;
+    // (undocumented)
+    value?: string;
 }
 
 // @public
 export class OnBeginDialog extends OnDialogEvent {
+    // (undocumented)
+    static $kind: string;
     constructor(actions?: Dialog[], condition?: string);
 }
 
 // @public
 export class OnCancelDialog extends OnDialogEvent {
+    // (undocumented)
+    static $kind: string;
     constructor(actions?: Dialog[], condtion?: string);
 }
 
 // @public
-export class OnChooseEntity extends OnDialogEvent {
-    constructor(property?: string, value?: string, operation? string, actions?: Dialog[], condition?: string);
-    entity: string;
+export class OnChooseEntity extends OnDialogEvent implements OnChooseEntityConfiguration {
     // (undocumented)
-    getExpression(parser: ExpressionParserInterface): Expression;
+    static $kind: string;
+    constructor(property?: string, value?: string, operation?: string, actions?: Dialog[], condition?: string);
+    protected createExpression(): Expression;
     operation: string;
     property: string;
+    value: string;
 }
 
 // @public (undocumented)
-export class OnChooseIntent extends OnIntent {
-    constructor(actons?: Dialog[], condition?: string);
+export interface OnChooseEntityConfiguration extends OnDialogEventConfiguration {
     // (undocumented)
-    getExpression(parser: ExpressionParserInterface): Expression;
+    operation?: string;
+    // (undocumented)
+    property?: string;
+    // (undocumented)
+    value?: string;
+}
+
+// @public
+export class OnChooseIntent extends OnIntent implements OnChooseIntentConfiguration {
+    // (undocumented)
+    static $kind: string;
+    constructor(actions?: Dialog[], condition?: string);
+    protected createExpression(): Expression;
     // (undocumented)
     intents: string[];
 }
 
+// @public (undocumented)
+export interface OnChooseIntentConfiguration extends OnIntentConfiguration {
+    // (undocumented)
+    intents?: string[];
+}
+
 // @public
 export class OnChooseProperty extends OnDialogEvent {
-    constructor(properties?: string[], entities?: string[], actions?: Dialog[], condition?: string);
-    entities: string[];
     // (undocumented)
-    getExpression(parser: ExpressionParserInterface): Expression;
-    properties: string[];
-}
-
-// @public (undocumented)
-export class OnCondition implements DialogDependencies {
-    constructor(condition?: string, actions?: Dialog[]);
-    actions: Dialog[];
-    // (undocumented)
-    protected readonly actionScope: ActionScope;
-    addExternalCondition(condition: string): void;
-    condition: BoolExpression;
-    currentPriority(actionContext: ActionContext): number;
-    execute(actionContext: ActionContext): Promise<ActionChangeList[]>;
-    getDependencies(): Dialog[];
-    getExpression(parser: ExpressionParserInterface): Expression;
-    id: string;
-    // (undocumented)
-    protected onCreateChangeList(actionContext: ActionContext, dialogOptions?: any): ActionChangeList;
-    priority: IntExpression;
-    runOnce: boolean;
-}
-
-// @public
-export class OnConversationUpdateActivity extends OnActivity {
+    static $kind: string;
     constructor(actions?: Dialog[], condition?: string);
 }
 
 // @public
-export class OnDialogEvent extends OnCondition {
-    constructor(event?: string, actions?: Dialog[], condition?: string);
-    event: string;
+export class OnCommandActivity extends OnActivity {
     // (undocumented)
-    getExpression(parser: ExpressionParserInterface): Expression;
+    static $kind: string;
+    constructor(actions?: Dialog[], condition?: string);
+}
+
+// @public
+export class OnCommandResultActivity extends OnActivity {
+    // (undocumented)
+    static $kind: string;
+    constructor(actions?: Dialog[], condition?: string);
+}
+
+// @public
+export class OnCondition extends Configurable implements DialogDependencies, OnConditionConfiguration {
+    // (undocumented)
+    static $kind: string;
+    constructor(condition?: string, actions?: Dialog[]);
+    actions: Dialog[];
+    // (undocumented)
+    protected get actionScope(): ActionScope;
+    addExternalCondition(condition: string): void;
+    condition: BoolExpression;
+    protected createExpression(): Expression;
+    currentPriority(actionContext: ActionContext): number;
+    execute(actionContext: ActionContext): Promise<ActionChangeList[]>;
+    // (undocumented)
+    getConverter(property: keyof OnConditionConfiguration): Converter | ConverterFactory;
+    getDependencies(): Dialog[];
+    getExpression(): Expression;
+    id: string;
+    protected onCreateChangeList(actionContext: ActionContext, dialogOptions?: any): ActionChangeList;
+    priority: NumberExpression;
+    runOnce: boolean;
+}
+
+// @public (undocumented)
+export interface OnConditionConfiguration {
+    // (undocumented)
+    actions?: string[] | Dialog[];
+    // (undocumented)
+    condition?: BoolProperty;
+    // (undocumented)
+    id?: string;
+    // (undocumented)
+    priority?: NumberProperty;
+    // (undocumented)
+    runOnce?: boolean;
+}
+
+// @public
+export class OnContinueConversation extends OnEventActivity {
+    // (undocumented)
+    static $kind: string;
+    constructor(actions?: Dialog[], condition?: string);
+    protected createExpression(): Expression;
+}
+
+// @public
+export class OnConversationUpdateActivity extends OnActivity {
+    // (undocumented)
+    static $kind: string;
+    constructor(actions?: Dialog[], condition?: string);
+}
+
+// @public
+export class OnDialogEvent extends OnCondition implements OnDialogEventConfiguration {
+    // (undocumented)
+    static $kind: string;
+    constructor(event?: string, actions?: Dialog[], condition?: string);
+    protected createExpression(): Expression;
+    event: string;
+}
+
+// @public (undocumented)
+export interface OnDialogEventConfiguration extends OnConditionConfiguration {
+    // (undocumented)
+    event?: string;
 }
 
 // @public
 export class OnEndOfActions extends OnDialogEvent {
+    // (undocumented)
+    static $kind: string;
     constructor(actions?: Dialog[], condition?: string);
 }
 
 // @public
 export class OnEndOfConversationActivity extends OnActivity {
+    // (undocumented)
+    static $kind: string;
     constructor(actions?: Dialog[], condition?: string);
 }
 
 // @public
 export class OnError extends OnDialogEvent {
-    constructor(actions?: Dialog[], condition?: string);
     // (undocumented)
+    static $kind: string;
+    constructor(actions?: Dialog[], condition?: string);
     onCreateChangeList(actionContext: ActionContext, dialogOptions?: any): ActionChangeList;
 }
 
 // @public
 export class OnEventActivity extends OnActivity {
-    constructor(actions?: Dialog[], condition?: string);
-}
-
-// @public (undocumented)
-export class OnHandoffActivity extends OnActivity {
+    // (undocumented)
+    static $kind: string;
     constructor(actions?: Dialog[], condition?: string);
 }
 
 // @public
-export class OnIntent extends OnDialogEvent {
+export class OnHandoffActivity extends OnActivity {
+    // (undocumented)
+    static $kind: string;
+    constructor(actions?: Dialog[], condition?: string);
+}
+
+// @public
+export class OnInstallationUpdateActivity extends OnActivity {
+    // (undocumented)
+    static $kind: string;
+    constructor(actions?: Dialog[], condition?: string);
+}
+
+// @public
+export class OnIntent extends OnDialogEvent implements OnIntentConfiguration {
+    // (undocumented)
+    static $kind: string;
     constructor(intent?: string, entities?: string[], actions?: Dialog[], condition?: string);
+    protected createExpression(): Expression;
     entities: string[];
-    // (undocumented)
-    getExpression(parser: ExpressionParserInterface): Expression;
     intent: string;
-    // (undocumented)
     protected onCreateChangeList(actionContext: ActionContext, dialogOptions?: any): ActionChangeList;
+}
+
+// @public (undocumented)
+export interface OnIntentConfiguration extends OnDialogEventConfiguration {
+    // (undocumented)
+    entities?: string[];
+    // (undocumented)
+    intent?: string;
 }
 
 // @public
 export class OnInvokeActivity extends OnActivity {
+    // (undocumented)
+    static $kind: string;
     constructor(actions?: Dialog[], condition?: string);
 }
 
 // @public
 export class OnMessageActivity extends OnActivity {
+    // (undocumented)
+    static $kind: string;
     constructor(actions?: Dialog[], condition?: string);
 }
 
 // @public
 export class OnMessageDeleteActivity extends OnActivity {
+    // (undocumented)
+    static $kind: string;
     constructor(actions?: Dialog[], condition?: string);
 }
 
 // @public
 export class OnMessageReactionActivity extends OnActivity {
+    // (undocumented)
+    static $kind: string;
     constructor(actions?: Dialog[], condition?: string);
 }
 
 // @public
 export class OnMessageUpdateActivity extends OnActivity {
+    // (undocumented)
+    static $kind: string;
     constructor(actions?: Dialog[], condition?: string);
 }
 
 // @public
 export class OnQnAMatch extends OnIntent {
+    // (undocumented)
+    static $kind: string;
     constructor(actions?: Dialog[], condition?: string);
 }
 
 // @public
 export class OnRepromptDialog extends OnDialogEvent {
+    // (undocumented)
+    static $kind: string;
     constructor(actions?: Dialog[], condition?: string);
 }
 
 // @public
 export class OnTypingActivity extends OnActivity {
+    // (undocumented)
+    static $kind: string;
     constructor(actions?: Dialog[], condition?: string);
 }
 
 // @public
 export class OnUnknownIntent extends OnDialogEvent {
+    // (undocumented)
+    static $kind: string;
     constructor(actions?: Dialog[], condition?: string);
 }
 
-// @public (undocumented)
+// @public
 export class OrdinalEntityRecognizer extends TextEntityRecognizer {
     // (undocumented)
-    protected recognize(text: string, culture: string): ModelResult[];
+    static $kind: string;
+    protected _recognize(text: string, culture: string): ModelResult[];
 }
 
-// @public (undocumented)
+// @public
 export class PercentageEntityRecognizer extends TextEntityRecognizer {
     // (undocumented)
-    protected recognize(text: string, culture: string): ModelResult[];
+    static $kind: string;
+    protected _recognize(text: string, culture: string): ModelResult[];
+}
+
+// @public
+export class PhoneNumberEntityRecognizer extends TextEntityRecognizer {
+    // (undocumented)
+    static $kind: string;
+    protected _recognize(text: string, culture: string): ModelResult[];
 }
 
 // @public (undocumented)
-export class PhoneNumberEntityRecognizer extends TextEntityRecognizer {
-    // (undocumented)
-    protected recognize(text: string, culture: string): ModelResult[];
-}
+export type Property = string | Expression;
 
 // @public (undocumented)
 export interface PropertyAssignment {
@@ -1238,88 +1920,35 @@ export interface PropertyAssignment {
     value: ValueExpression;
 }
 
-// @public (undocumented)
-export class PropertyAssignmentConverter implements Converter {
-    // (undocumented)
-    convert(assignment: {
-        property: string;
-        value: any;
-    }): PropertyAssignment;
-}
-
 // @public
 export class PropertySchema {
     constructor(path: string, schema: object, children?: PropertySchema[]);
-    readonly children: PropertySchema[];
-    readonly entities: string[];
-    readonly expectedOnly: string[];
+    get children(): PropertySchema[];
+    get entities(): string[];
+    get expectedOnly(): string[];
     isArray(): boolean;
     isEnum(): boolean;
-    readonly name: string;
-    readonly parent: PropertySchema | undefined;
+    get name(): string;
+    get parent(): PropertySchema | undefined;
     readonly path: string;
     readonly schema: object;
-    readonly type: string;
+    get type(): string;
 }
 
 // @public
-export class QnAMakerRecognizer extends Recognizer {
-    constructor(hostname?: string, knowledgeBaseId?: string, endpointKey?: string);
-    context: ObjectExpression<QnARequestContext>;
-    endpointKey: StringExpression;
-    protected getQnAMaker(dc: DialogContext): QnAMaker;
-    hostname: StringExpression;
-    includeDialogNameInMetadata: BoolExpression;
-    isTest: boolean;
-    knowledgeBaseId: StringExpression;
-    metadata: ArrayExpression<QnAMakerMetadata>;
-    qnaId: IntExpression;
+export class RandomSelector extends TriggerSelector {
     // (undocumented)
-    static readonly qnaMatchIntent = "QnAMatch";
-    rankerType: StringExpression;
-    recognize(dc: DialogContext, activity: Activity, telemetryProperties?: {
-        [key: string]: string;
-    }, telemetryMetrics?: {
-        [key: string]: number;
-    }): Promise<RecognizerResult>;
-    threshold: NumberExpression;
-    top: IntExpression;
-}
-
-// @public
-export class RandomSelector implements TriggerSelector {
-    // (undocumented)
+    static $kind: string;
     initialize(conditionals: OnCondition[], evaluate: boolean): void;
-    parser: ExpressionParserInterface;
-    // (undocumented)
-    select(actionContext: ActionContext): Promise<number[]>;
+    select(actionContext: ActionContext): Promise<OnCondition[]>;
 }
 
-// @public (undocumented)
-export class Recognizer {
-    protected fillRecognizerResultTelemetryProperties(recognizerResult: RecognizerResult, telemetryProperties: {
-        [key: string]: string;
-    }, dialogContext?: DialogContext): {
-        [key: string]: string;
-    };
-    id: string;
-    recognize(dialogContext: DialogContext, activity: Partial<Activity>, telemetryProperties?: {
-        [key: string]: string;
-    }, telemetryMetrics?: {
-        [key: string]: number;
-    }): Promise<RecognizerResult>;
-    telemetryClient: BotTelemetryClient;
-    protected _telemetryClient: BotTelemetryClient;
+// @public
+export class RecognizerSet extends AdaptiveRecognizer implements RecognizerSetConfiguration {
     // (undocumented)
-    protected trackRecognizerResult(dialogContext: DialogContext, eventName: string, telemetryProperties?: {
-        [key: string]: string;
-    }, telemetryMetrics?: {
-        [key: string]: number;
-    }): void;
-}
-
-// @public (undocumented)
-export class RecognizerSet extends Recognizer {
+    static $kind: string;
+    // (undocumented)
+    getConverter(property: keyof RecognizerSetConfiguration): Converter | ConverterFactory;
     // (undocumented)
     recognize(dialogContext: DialogContext, activity: Activity, telemetryProperties?: {
         [key: string]: string;
@@ -1330,45 +1959,91 @@ export class RecognizerSet extends Recognizer {
     recognizers: Recognizer[];
 }
 
-// @public
-export class RegexEntityRecognizer extends TextEntityRecognizer {
+// @public (undocumented)
+export interface RecognizerSetConfiguration extends RecognizerConfiguration {
+    // (undocumented)
+    recognizers?: string[] | Recognizer[];
+}
+
+// @public (undocumented)
+export class RegexEntityRecognizer extends TextEntityRecognizer implements RegexEntityRecognizerConfiguration {
+    // (undocumented)
+    static $kind: string;
     constructor();
     // (undocumented)
     name: string;
+    get pattern(): string;
+    set pattern(value: string);
+    protected _recognize(text: string, culture: string): ModelResult[];
+}
+
+// @public
+export interface RegexEntityRecognizerConfiguration {
     // (undocumented)
-    pattern: string;
+    name?: string;
     // (undocumented)
-    protected recognize(text: string, culture: string): ModelResult[];
+    pattern?: string;
 }
 
 // @public (undocumented)
-export class RegexRecognizer extends Recognizer {
+export class RegexRecognizer extends AdaptiveRecognizer implements RegexRecognizerConfiguration {
+    // (undocumented)
+    static $kind: string;
     entities: EntityRecognizer[];
+    // (undocumented)
+    getConverter(property: keyof RegexRecognizerConfiguration): Converter | ConverterFactory;
     intents: IntentPattern[];
     // (undocumented)
-    recognize(dialogContext: DialogContext, activity: Activity, telemetryProperties?: {
+    recognize(dialogContext: DialogContext, activity: Activity_2, telemetryProperties?: {
         [key: string]: string;
     }, telemetryMetrics?: {
         [key: string]: number;
-    }): Promise<RecognizerResult>;
+    }): Promise<RecognizerResult_2>;
 }
 
 // @public (undocumented)
-export class RepeatDialog<O extends object = {}> extends BaseInvokeDialog<O> {
+export interface RegexRecognizerConfiguration extends RecognizerSetConfiguration {
+    // Warning: (ae-forgotten-export) The symbol "IntentPatternInput" needs to be exported by the entry point index.d.ts
+    //
+    // (undocumented)
+    intents?: IntentPatternInput[] | IntentPattern[];
+}
+
+// @public
+export class RepeatDialog<O extends object = {}> extends BaseInvokeDialog<O> implements RepeatDialogConfiguration {
+    // (undocumented)
+    static $kind: string;
     constructor();
     allowLoop?: BoolExpression;
-    // (undocumented)
     beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult>;
     disabled?: BoolExpression;
+    // (undocumented)
+    getConverter(property: keyof RepeatDialogConfiguration): Converter | ConverterFactory;
 }
 
 // @public (undocumented)
-export class ReplaceDialog<O extends object = {}> extends BaseInvokeDialog<O> {
-    constructor();
-    constructor(dialogIdToCall: string, options?: O);
+export interface RepeatDialogConfiguration extends BaseInvokeDialogConfiguration {
     // (undocumented)
+    allowLoop?: BoolProperty;
+    // (undocumented)
+    disabled?: BoolProperty;
+}
+
+// @public
+export class ReplaceDialog<O extends object = {}> extends BaseInvokeDialog<O> implements ReplaceDialogConfiguration {
+    // (undocumented)
+    static $kind: string;
+    constructor(dialogIdToCall: string, options?: O);
     beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult>;
     disabled?: BoolExpression;
+    // (undocumented)
+    getConverter(property: keyof ReplaceDialogConfiguration): Converter | ConverterFactory;
+}
+
+// @public (undocumented)
+export interface ReplaceDialogConfiguration extends BaseInvokeDialogConfiguration {
+    // (undocumented)
+    disabled?: BoolProperty;
 }
 
 // @public
@@ -1380,13 +2055,21 @@ export class ResourceExtensions {
 }
 
 // @public (undocumented)
-export class ResourceMultiLanguageGenerator extends MultiLanguageGeneratorBase {
+export class ResourceMultiLanguageGenerator<T = unknown, D extends Record<string, unknown> = Record<string, unknown>> extends MultiLanguageGeneratorBase<T, D> implements ResourceMultiLanguageGeneratorConfiguration {
+    // (undocumented)
+    static $kind: string;
     constructor(resourceId?: string);
     resourceId: string;
     tryGetGenerator(dialogContext: DialogContext, locale: string): {
         exist: boolean;
-        result: LanguageGenerator;
+        result: LanguageGenerator<T, D>;
     };
+}
+
+// @public
+export interface ResourceMultiLanguageGeneratorConfiguration extends MultiLanguageGeneratorBaseConfiguration {
+    // (undocumented)
+    resourceId?: string;
 }
 
 // @public (undocumented)
@@ -1414,55 +2097,121 @@ export class SchemaHelper {
     constructor(schema: object);
     pathToSchema(path: string): PropertySchema | undefined;
     readonly property: PropertySchema;
-    readonly required: string[];
+    get required(): string[];
     readonly schema: object;
 }
 
-// @public (undocumented)
-export class SendActivity<O extends object = {}> extends Dialog<O> {
-    constructor(activity?: Partial<Activity> | string);
-    activity: TemplateInterface<Partial<Activity>>;
+// @public
+export class SendActivity<O extends object = {}> extends Dialog<O> implements SendActivityConfiguration {
     // (undocumented)
+    static $kind: string;
+    constructor(activity?: Partial<Activity> | string);
+    // Warning: (ae-forgotten-export) The symbol "D" needs to be exported by the entry point index.d.ts
+    activity: TemplateInterface<Partial<Activity>, D & O>;
     beginDialog(dc: DialogContext, options: O): Promise<DialogTurnResult>;
     disabled?: BoolExpression;
     // (undocumented)
+    getConverter(property: keyof SendActivityConfiguration): Converter | ConverterFactory;
     protected onComputeId(): string;
 }
 
 // @public (undocumented)
-export class SetProperties<O extends object = {}> extends Dialog<O> {
+export interface SendActivityConfiguration extends DialogConfiguration {
+    // (undocumented)
+    activity?: TemplateInterfaceProperty<Partial<Activity>, D>;
+    // (undocumented)
+    disabled?: BoolProperty;
+}
+
+// @public
+export class SendHandoffActivity extends Dialog implements SendHandoffActivityConfiguration {
+    // (undocumented)
+    static $kind: string;
+    beginDialog(dc: DialogContext): Promise<DialogTurnResult<ResourceResponse>>;
+    context: ObjectExpression<Record<string, unknown>>;
+    // (undocumented)
+    getConverter(property: keyof SendHandoffActivityConfiguration): Converter | ConverterFactory;
+    transcript: ObjectExpression<Transcript>;
+}
+
+// @public (undocumented)
+export interface SendHandoffActivityConfiguration extends DialogConfiguration {
+    // (undocumented)
+    context?: ObjectProperty<Record<string, unknown>>;
+    // (undocumented)
+    transcript?: ObjectProperty<Transcript>;
+}
+
+// @public
+export class SetProperties<O extends object = {}> extends Dialog<O> implements SetPropertiesConfiguration {
+    // (undocumented)
+    static $kind: string;
     constructor();
     assignments: PropertyAssignment[];
-    // (undocumented)
     beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult>;
     disabled?: BoolExpression;
     // (undocumented)
+    getConverter(property: keyof SetPropertiesConfiguration): Converter | ConverterFactory;
     protected onComputeId(): string;
 }
 
 // @public (undocumented)
-export class SetProperty<O extends object = {}> extends Dialog<O> {
+export interface SetPropertiesConfiguration extends DialogConfiguration {
+    // Warning: (ae-forgotten-export) The symbol "AssignmentInput" needs to be exported by the entry point index.d.ts
+    //
+    // (undocumented)
+    assignments?: AssignmentInput<unknown>[] | PropertyAssignment[];
+    // (undocumented)
+    disabled?: BoolProperty;
+}
+
+// @public
+export class SetProperty<O extends object = {}> extends Dialog<O> implements SetPropertyConfiguration {
+    // (undocumented)
+    static $kind: string;
     constructor();
     constructor(property: string, value: any);
-    // (undocumented)
     beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult>;
     disabled?: BoolExpression;
     // (undocumented)
+    getConverter(property: keyof SetPropertyConfiguration): Converter | ConverterFactory;
     protected onComputeId(): string;
     property: StringExpression;
     value: ValueExpression;
 }
 
 // @public (undocumented)
-export class SignOutUser<O extends object = {}> extends Dialog<O> {
-    constructor();
+export interface SetPropertyConfiguration extends DialogConfiguration {
     // (undocumented)
+    disabled?: BoolProperty;
+    // (undocumented)
+    property?: StringProperty;
+    // (undocumented)
+    value?: UnknownProperty;
+}
+
+// @public
+export class SignOutUser<O extends object = {}> extends Dialog<O> implements SignOutUserConfiguration {
+    // (undocumented)
+    static $kind: string;
+    constructor();
     beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult>;
     connectionName: StringExpression;
     disabled?: BoolExpression;
     // (undocumented)
+    getConverter(property: keyof SignOutUserConfiguration): Converter | ConverterFactory;
     protected onComputeId(): string;
     userId: StringExpression;
+}
+
+// @public (undocumented)
+export interface SignOutUserConfiguration extends DialogConfiguration {
+    // (undocumented)
+    connectionName?: StringProperty;
+    // (undocumented)
+    disabled?: BoolProperty;
+    // (undocumented)
+    userId?: StringProperty;
 }
 
 // @public
@@ -1478,57 +2227,120 @@ export class SkillExtensions {
 }
 
 // @public
-export class StaticActivityTemplate implements TemplateInterface<Partial<Activity>> {
+export class StaticActivityTemplate implements TemplateInterface<Partial<Activity>, unknown>, StaticActivityTemplateConfiguration, Configurable {
+    // (undocumented)
+    static $kind: string;
     constructor(activity?: Partial<Activity>);
     activity: Partial<Activity>;
-    bind(dialogContext: DialogContext, data: object): Promise<Partial<Activity>>;
+    bind(dialogContext: DialogContext, data: unknown): Promise<Partial<Activity>>;
+    // (undocumented)
+    configure(config: StaticActivityTemplateConfiguration): this;
+    // (undocumented)
+    getConverter(_property: keyof StaticActivityTemplateConfiguration): Converter | ConverterFactory;
     // (undocumented)
     toString: () => string;
 }
 
 // @public (undocumented)
-export class SwitchCondition<O extends object = {}> extends Dialog<O> implements DialogDependencies {
+export interface StaticActivityTemplateConfiguration {
+    // (undocumented)
+    activity?: Partial<Activity>;
+}
+
+// @public (undocumented)
+export type StringProperty = StringExpression | Property;
+
+// @public (undocumented)
+export class SwitchCondition<O extends object = {}> extends Dialog<O> implements DialogDependencies, SwitchConditionConfiguration {
+    // (undocumented)
+    static $kind: string;
     constructor();
     constructor(condition: string, defaultDialogs: Dialog[], cases: Case[]);
-    // (undocumented)
     beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult>;
     cases: Case[];
     condition: Expression;
     default: Dialog[];
-    // (undocumented)
-    protected readonly defaultScope: ActionScope;
+    protected get defaultScope(): ActionScope;
     disabled?: BoolExpression;
     // (undocumented)
+    getConverter(property: keyof SwitchConditionConfiguration): Converter | ConverterFactory;
     getDependencies(): Dialog[];
-    // (undocumented)
     protected onComputeId(): string;
 }
 
 // @public
-export const telemetryClientKey: unique symbol;
-
-// @public (undocumented)
-export class TemperatureEntityRecognizer extends TextEntityRecognizer {
+export interface SwitchConditionConfiguration extends DialogConfiguration {
+    // Warning: (ae-forgotten-export) The symbol "CaseInput" needs to be exported by the entry point index.d.ts
+    //
     // (undocumented)
-    protected recognize(text: string, culture: string): ModelResult[];
+    cases?: CaseInput[] | Case[];
+    // (undocumented)
+    condition?: Property;
+    // (undocumented)
+    default?: string[] | Dialog[];
+    // (undocumented)
+    disabled?: BoolProperty;
 }
 
 // @public
-export class TemplateEngineLanguageGenerator implements LanguageGenerator {
-    constructor(arg1?: Templates | Resource, arg2?: Map<string, Resource[]>);
+export class TelemetryTrackEventAction<O extends object = {}> extends Dialog implements TelemetryTrackEventActionConfiguration {
     // (undocumented)
-    generate(dialogContext: DialogContext, template: string, data: object): Promise<string>;
+    static $kind: string;
+    constructor(eventName: string, properties: {
+        [name: string]: string;
+    });
+    beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult>;
+    disabled: BoolExpression;
+    eventName: StringExpression;
+    // (undocumented)
+    getConverter(property: keyof TelemetryTrackEventActionConfiguration): Converter | ConverterFactory;
+    protected onComputeId(): string;
+    properties: {
+        [name: string]: StringExpression;
+    };
+}
+
+// @public (undocumented)
+export interface TelemetryTrackEventActionConfiguration extends DialogConfiguration {
+    // (undocumented)
+    disabled?: BoolProperty;
+    // (undocumented)
+    eventName?: StringProperty;
+    // Warning: (ae-forgotten-export) The symbol "PropertiesInput" needs to be exported by the entry point index.d.ts
+    // Warning: (ae-forgotten-export) The symbol "PropertiesOutput" needs to be exported by the entry point index.d.ts
+    //
+    // (undocumented)
+    properties?: PropertiesInput | PropertiesOutput;
+}
+
+// @public
+export class TemperatureEntityRecognizer extends TextEntityRecognizer {
+    // (undocumented)
+    static $kind: string;
+    protected _recognize(text: string, culture: string): ModelResult[];
+}
+
+// @public
+export class TemplateEngineLanguageGenerator<T = unknown, D extends Record<string, unknown> = Record<string, unknown>> extends Configurable implements LanguageGenerator<T, D>, TemplateEngineLanguageGeneratorConfiguration {
+    // (undocumented)
+    static $kind: string;
+    constructor(arg1?: Templates | Resource, arg2?: Map<string, Resource[]>);
+    generate(dialogContext: DialogContext, template: string, data: D): Promise<T>;
     // (undocumented)
     id: string;
     }
 
-// @public
-export interface TemplateInterface<T> {
-    bind(dialogContext: DialogContext, data?: object): Promise<T>;
+// @public (undocumented)
+export interface TemplateEngineLanguageGeneratorConfiguration {
+    // (undocumented)
+    id?: string;
 }
 
 // @public (undocumented)
-export class TextEntity implements Entity {
+export type TemplateInterfaceProperty<T, D> = T | TemplateInterface<T, D> | string;
+
+// @public
+export class TextEntity implements Entity_2 {
     constructor(text?: string);
     // (undocumented)
     text: string;
@@ -1537,71 +2349,144 @@ export class TextEntity implements Entity {
 }
 
 // @public (undocumented)
-export class TextInput extends InputDialog {
+export class TextInput extends InputDialog implements TextInputConfiguration {
+    // (undocumented)
+    static $kind: string;
+    // (undocumented)
+    getConverter(property: keyof TextInputConfiguration): Converter | ConverterFactory;
     // (undocumented)
     protected onComputeId(): string;
-    // (undocumented)
     protected onRecognizeInput(dc: DialogContext): Promise<InputState>;
     // (undocumented)
     outputFormat: StringExpression;
 }
 
+// @public (undocumented)
+export interface TextInputConfiguration extends InputDialogConfiguration {
+    // (undocumented)
+    outputFormat?: StringProperty;
+}
+
 // @public
-export class TextTemplate implements TemplateInterface<string> {
-    constructor(template: string);
-    bind(dialogContext: DialogContext, data: object): Promise<string>;
+export class TextTemplate<D = Record<string, unknown>> implements TemplateInterface<string, D>, TextTemplateConfiguration, Configurable {
+    // (undocumented)
+    static $kind: string;
+    constructor(template?: string);
+    bind(dialogContext: DialogContext, data: D): Promise<string>;
+    // (undocumented)
+    configure(config: TextTemplateConfiguration): this;
+    // (undocumented)
+    getConverter(_property: keyof TextTemplateConfiguration): Converter | ConverterFactory;
     template: string;
     // (undocumented)
     toString: () => string;
 }
 
 // @public (undocumented)
-export class TraceActivity<O extends object = {}> extends Dialog<O> {
+export interface TextTemplateConfiguration {
+    // (undocumented)
+    template?: string;
+}
+
+// @public
+export class ThrowException extends Dialog implements ThrowExceptionConfiguration {
+    // (undocumented)
+    static $kind: string;
+    constructor(errorValue: unknown);
+    beginDialog(dc: DialogContext, options?: Record<string, unknown>): Promise<DialogTurnResult>;
+    disabled?: BoolExpression;
+    errorValue?: ValueExpression;
+    // (undocumented)
+    getConverter(property: keyof ThrowExceptionConfiguration): Converter | ConverterFactory;
+    protected onComputeId(): string;
+}
+
+// @public (undocumented)
+export interface ThrowExceptionConfiguration extends DialogConfiguration {
+    // (undocumented)
+    disabled?: BoolProperty;
+    // (undocumented)
+    errorValue?: UnknownProperty;
+}
+
+// @public
+export class TraceActivity<O extends object = {}> extends Dialog<O> implements TraceActivityConfiguration {
+    // (undocumented)
+    static $kind: string;
     constructor();
     constructor(name: string, valueType: string, value: any, label: string);
-    // (undocumented)
     beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult>;
     disabled?: BoolExpression;
+    // (undocumented)
+    getConverter(property: keyof TraceActivityConfiguration): Converter | ConverterFactory;
     label?: StringExpression;
     name?: StringExpression;
-    // (undocumented)
     protected onComputeId(): string;
     value?: ValueExpression;
     valueType?: StringExpression;
 }
 
-// @public
-export interface TriggerSelector {
-    initialize(conditionHandlers: OnCondition[], evaluate: boolean): void;
-    parser: ExpressionParserInterface;
-    select(actionContext: ActionContext): Promise<number[]>;
+// @public (undocumented)
+export interface TraceActivityConfiguration extends DialogConfiguration {
+    // (undocumented)
+    disabled?: BoolProperty;
+    // (undocumented)
+    label?: StringProperty;
+    // (undocumented)
+    name?: StringProperty;
+    // (undocumented)
+    value?: UnknownProperty;
+    // (undocumented)
+    valueType?: StringProperty;
 }
 
 // @public
-export class TrueSelector implements TriggerSelector {
+export abstract class TriggerSelector extends Configurable {
+    abstract initialize(conditionHandlers: OnCondition[], evaluate: boolean): void;
+    abstract select(actionContext: ActionContext): Promise<OnCondition[]>;
+}
+
+// @public
+export class TrueSelector extends TriggerSelector {
     // (undocumented)
+    static $kind: string;
     initialize(conditionals: OnCondition[], evaluate: boolean): void;
-    parser: ExpressionParserInterface;
-    // (undocumented)
-    select(actionContext: ActionContext): Promise<number[]>;
+    select(actionContext: ActionContext): Promise<OnCondition[]>;
 }
 
 // @public (undocumented)
-export class UpdateActivity<O extends object = {}> extends Dialog<O> {
-    constructor();
-    activity: TemplateInterface<Partial<Activity>>;
-    activityId: StringExpression;
+export type UnknownProperty = unknown | ValueExpression;
+
+// @public
+export class UpdateActivity<O extends object = {}> extends Dialog<O> implements UpdateActivityConfiguration {
     // (undocumented)
+    static $kind: string;
+    constructor();
+    // Warning: (ae-forgotten-export) The symbol "D" needs to be exported by the entry point index.d.ts
+    activity: TemplateInterface<Partial<Activity>, D_2 & O>;
+    activityId: StringExpression;
     beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult>;
     disabled?: BoolExpression;
     // (undocumented)
+    getConverter(property: keyof UpdateActivityConfiguration): Converter | ConverterFactory;
     protected onComputeId(): string;
 }
 
 // @public (undocumented)
+export interface UpdateActivityConfiguration extends DialogConfiguration {
+    // (undocumented)
+    activity?: TemplateInterfaceProperty<Partial<Activity>, D_2>;
+    // (undocumented)
+    activityId?: StringProperty;
+    // (undocumented)
+    disabled?: BoolProperty;
+}
+
+// @public
 export class UrlEntityRecognizer extends TextEntityRecognizer {
     // (undocumented)
-    protected recognize(text: string, culture: string): ModelResult[];
+    static $kind: string;
+    protected _recognize(text: string, culture: string): ModelResult[];
 }
 
 // @public

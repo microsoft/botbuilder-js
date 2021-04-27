@@ -9,7 +9,7 @@ import { AdaptiveEvents } from './adaptiveEvents';
 import { EntityAssignment } from './entityAssignment';
 
 export class EntityAssignmentComparer {
-    private static eventPreference: string[] = [
+    private static eventPreference = [
         AdaptiveEvents.assignEntity,
         AdaptiveEvents.chooseProperty,
         AdaptiveEvents.chooseEntity,
@@ -24,9 +24,7 @@ export class EntityAssignmentComparer {
             EntityAssignmentComparer.eventPreference.indexOf(y.event);
         if (comparison === 0) {
             // Order by operations.
-            comparison =
-                EntityAssignmentComparer.eventPreference.indexOf(x.operation) -
-                EntityAssignmentComparer.eventPreference.indexOf(y.operation);
+            comparison = this.operationPreference.indexOf(x.operation) - this.operationPreference.indexOf(y.operation);
             if (comparison === 0) {
                 // Unexpected before expected.
                 if (x.isExpected === y.isExpected) {

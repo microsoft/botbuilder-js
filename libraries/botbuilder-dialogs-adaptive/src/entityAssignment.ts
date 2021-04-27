@@ -95,6 +95,7 @@ export class EntityAssignment implements EntityAssignmentConfiguration {
     public expectedProperties: string[];
 
     constructor(assignment: Partial<EntityAssignmentConfiguration>) {
+        // Some properties are defined by `<prop> ?? undefined` in order to pass object equality checks.
         const newEntity: Partial<EntityAssignmentConfiguration> = {
             alternative: assignment.alternative ?? undefined,
             event: assignment.event ?? undefined,
