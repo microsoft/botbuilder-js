@@ -3,7 +3,6 @@
   "author": "Microsoft Corp.",
   "description": "Orchestrator recognizer",
   "version": "4.1.6",
-  "preview": true,
   "license": "MIT",
   "keywords": [
     "botbuilder",
