@@ -1056,6 +1056,9 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> im
         });
     }
 
+    // There's a decent amount of type casting in this method and expandEntity() due to the complex
+    // nested structure of `entities`. It can be solved by defining types, but the changes necessary to remove the type casting
+    // are numerous and it can be argued that it adds complexity to do so.
     private expandEntities(
         name: string,
         entities: unknown[],
@@ -1190,11 +1193,11 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> im
         expected: string[],
         lastEvent: string,
         nextAssignment: EntityAssignment,
-        askDefault: Record<string, unknown>,
+        askDefault: Record<string, string>,
         dialogDefault: Record<string, unknown>
     ): EntityAssignment[] {
-        const globalExpectedOnly: string[] = (this.dialogSchema.schema[this.expectedOnlyKey] as string[]) ?? [];
-        const requiresValue: string[] = (this.dialogSchema.schema[this.requiresValueKey] as string[]) ?? [];
+        const globalExpectedOnly: string[] = this.dialogSchema.schema[this.expectedOnlyKey] ?? [];
+        const requiresValue: string[] = this.dialogSchema.schema[this.requiresValueKey] ?? [];
         const assignments: EntityAssignment[] = [];
 
         // Add entities with a recognized property.
@@ -1341,7 +1344,7 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> im
     private entityPreferences(property: string): string[] {
         if (!property) {
             if (this.dialogSchema.schema && this.dialogSchema.schema[this.entitiesKey]) {
-                return this.dialogSchema.schema[this.entitiesKey] as string[];
+                return this.dialogSchema.schema[this.entitiesKey];
             } else {
                 return [this.propertyNameKey];
             }
@@ -1355,13 +1358,13 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> im
      */
     private defaultOperation(
         assignment: EntityAssignment,
-        askDefault: Record<string, unknown>,
+        askDefault: Record<string, string>,
         dialogDefault: Record<string, unknown>
     ): string {
         let operation: string;
         if (assignment.property) {
             if (askDefault) {
-                operation = (askDefault[assignment.value.name] as string) ?? (askDefault[''] as string);
+                operation = askDefault[assignment.value.name] ?? askDefault[''];
             } else if (dialogDefault) {
                 const entities = dialogDefault[assignment.property] ?? dialogDefault[''];
                 let dialogOp;
@@ -1439,11 +1442,10 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> im
         const expected: string[] = actionContext.state.getValue(DialogPath.expectedProperties, []);
 
         // default operation from the last Ask action.
-        const askDefaultOp = actionContext.state.getValue<Record<string, unknown>>(DialogPath.defaultOperation);
+        const askDefaultOp = actionContext.state.getValue<Record<string, string>>(DialogPath.defaultOperation);
 
         // default operation from the current adaptive dialog.
-        const defaultOp =
-            this.dialogSchema.schema && (this.dialogSchema.schema[this.defaultOperationKey] as Record<string, unknown>);
+        const defaultOp = this.dialogSchema.schema && this.dialogSchema.schema[this.defaultOperationKey];
 
         const nextAssignment = existing.nextAssignment;
         let candidates = this.removeOverlappingPerProperty(
@@ -1549,8 +1551,9 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> im
             existing.dequeue(actionContext);
         }
 
+        // eslint-disable-next-line prettier/prettier
         const operations = new EntityAssignmentComparer(
-            (this.dialogSchema.schema[this.operationsKey] as string[]) ?? []
+            (this.dialogSchema.schema[this.operationsKey]) ?? []
         );
         this.mergeAssignments(assignments, existing, operations);
         return [...usedEntities.values()];
