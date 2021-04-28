@@ -584,6 +584,8 @@ const testCases = [
             ['subtractFromTime(timestamp, 1, \'Second\')', '2018-03-15T12:59:59.111Z'],
             ['dateReadBack(timestamp, addDays(timestamp, 1))', 'tomorrow'],
             ['dateReadBack(addDays(timestamp, 1),timestamp)', 'yesterday'],
+            ['getTimeOfDay(convertFromUTC(\'2018-03-15T11:00:00.000Z\', \'W. Europe Standard Time\'))', 'noon'],
+            ['getTimeOfDay(\'2018-03-15T00:00:00.0000000\')', 'midnight'],
             ['getTimeOfDay(\'2018-03-15T00:00:00.000Z\')', 'midnight'],
             ['getTimeOfDay(\'2018-03-15T08:00:00.000Z\')', 'morning'],
             ['getTimeOfDay(\'2018-03-15T12:00:00.000Z\')', 'noon'],
