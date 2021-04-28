@@ -816,10 +816,7 @@ export class FunctionUtils {
      */
     private static getPropertyCount(obj: unknown): number {
         let count = -1;
-        if (obj == null) {
-            return count;
-        }
-        if (!Array.isArray(obj)) {
+        if (obj != null && !Array.isArray(obj)) {
             if (obj instanceof Map) {
                 count = obj.size;
             } else if (typeof obj === 'object' && !(obj instanceof Date)) {
