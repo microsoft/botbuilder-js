@@ -433,6 +433,11 @@ describe('LG', function () {
                 variableOptions: ['text', 'newText'],
                 templateRefOptions: ['ST2'],
             },
+            {
+                name: 'addEntries',
+                variableOptions: ['object', 'entries'],
+                templateRefOptions: ['addEntry', 'addEntries'],
+            },
         ];
 
         var templates = preloaded.Analyzer;
