@@ -410,7 +410,7 @@ export class Evaluator extends AbstractParseTreeVisitor<unknown> implements LGTe
                 caseNode.switchCaseStat().text,
                 caseErrorPrefix
             );
-            if (switchExprResult === caseExprResult) {
+            if (FunctionUtils.commonEquals(switchExprResult, caseExprResult)) {
                 return this.visit(caseNode.normalTemplateBody());
             }
 
