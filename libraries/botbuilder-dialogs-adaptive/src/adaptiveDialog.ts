@@ -59,7 +59,7 @@ import { TriggerSelector } from './triggerSelector';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function isDialogDependencies(val: any): val is DialogDependencies {
-    return typeof ((val as unknown) as DialogDependencies).getDependencies == 'function';
+    return typeof ((val as unknown) as DialogDependencies).getDependencies === 'function';
 }
 
 export interface AdaptiveDialogConfiguration extends DialogConfiguration {
@@ -442,13 +442,12 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> im
         const state: AdaptiveDialogState = activeDialogState[this.adaptiveKey];
         if (!state) {
             activeDialogState[this.adaptiveKey] = { actions: [] };
-        }
-
-        if (state.actions?.length > 0) {
+        } else if (state.actions?.length > 0) {
             const childContext = new DialogContext(this.dialogs, dc, state.actions[0]);
             this.onSetScopedServices(childContext);
             return childContext;
         }
+
         return undefined;
     }
 
@@ -659,9 +658,6 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> im
         }
     }
 
-    /**
-     * @private
-     */
     private async queueFirstMatch(actionContext: ActionContext): Promise<boolean> {
         const selection: OnCondition[] = await this.selector.select(actionContext);
         if (selection.length > 0) {
@@ -819,16 +815,10 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> im
         return { status: DialogTurnStatus.cancelled };
     }
 
-    /**
-     * @private
-     */
     private getUniqueInstanceId(dc: DialogContext): string {
         return dc.stack.length > 0 ? `${dc.stack.length}:${dc.activeDialog.id}` : '';
     }
 
-    /**
-     * @private
-     */
     private toActionContext(dc: DialogContext): ActionContext {
         const activeDialogState = dc.activeDialog.state;
         let state: AdaptiveDialogState = activeDialogState[this.adaptiveKey];
@@ -957,9 +947,6 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> im
         }
     }
 
-    /**
-     * @private
-     */
     private splitUtterance(utterance: string, recognized: Partial<EntityInfo>[]): string[] {
         const unrecognized = [];
         let current = 0;
@@ -1145,7 +1132,7 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> im
 
     private expandEntity(
         name: string,
-        value: Record<string, unknown>,
+        value: Record<string, unknown> | null,
         instance: Record<string, unknown>,
         rootInstance: Record<string, unknown>,
         op: string,
@@ -1185,9 +1172,6 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> im
         );
     }
 
-    /**
-     * @private
-     */
     private candidates(
         entities: NormalizedEntityInfos,
         expected: string[],
@@ -1314,9 +1298,6 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> im
         return assignments;
     }
 
-    /**
-     * @private
-     */
     private addAssignment(assignment: EntityAssignment, assignments: EntityAssignments): void {
         // Entities without a property or operation are available as entities only when found
         if (assignment.property || assignment.operation) {
@@ -1338,9 +1319,6 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> im
         }
     }
 
-    /**
-     * @private
-     */
     private entityPreferences(property: string): string[] {
         if (!property) {
             if (this.dialogSchema.schema && this.dialogSchema.schema[this.entitiesKey]) {
@@ -1353,9 +1331,6 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> im
         }
     }
 
-    /**
-     * @private
-     */
     private defaultOperation(
         assignment: EntityAssignment,
         askDefault: Record<string, string>,
@@ -1380,23 +1355,15 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> im
         return operation;
     }
 
-    /**
-     * @private
-     */
     private removeOverlappingPerProperty(candidates: EntityAssignment[]): EntityAssignment[] {
         // Group mappings by property
-        const perProperty = candidates.reduce<{ [path: string]: EntityAssignment[] }>((accumulator, assignment): Record<
-            string,
-            EntityAssignment[]
-        > => {
-            const groupBy = assignment.property;
-            if (accumulator[groupBy]) {
-                accumulator[groupBy].push(assignment);
-            } else {
-                accumulator[groupBy] = [assignment];
-            }
-            return accumulator;
-        }, {});
+        const perProperty = candidates.reduce(
+            (acc, assignment) => ({
+                ...acc,
+                [assignment.property]: [...acc[assignment.property], assignment],
+            }),
+            {}
+        );
 
         const output: EntityAssignment[] = [];
         for (const propChoices in perProperty) {
@@ -1409,7 +1376,7 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> im
                 for (const entity of entityPreferences) {
                     let candidate: EntityAssignment;
                     do {
-                        candidate = choices.find(mapping => mapping.value.name === entity);
+                        candidate = choices.find((mapping) => mapping.value.name === entity);
 
                         if (candidate) {
                             // Remove any overlapping entities without a common root.
@@ -1429,9 +1396,6 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> im
         return output;
     }
 
-    /**
-     * @private
-     */
     private assignEntities(
         actionContext: ActionContext,
         entities: NormalizedEntityInfos,
@@ -1551,17 +1515,11 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> im
             existing.dequeue(actionContext);
         }
 
-        // eslint-disable-next-line prettier/prettier
-        const operations = new EntityAssignmentComparer(
-            (this.dialogSchema.schema[this.operationsKey]) ?? []
-        );
+        const operations = new EntityAssignmentComparer(this.dialogSchema.schema[this.operationsKey] ?? []);
         this.mergeAssignments(assignments, existing, operations);
         return [...usedEntities.values()];
     }
 
-    /**
-     * @private
-     */
     private replaces(a: EntityAssignment, b: EntityAssignment): number {
         let replaces = 0;
         for (const aAlt of a.alternatives) {
@@ -1597,9 +1555,6 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> im
         return replaces;
     }
 
-    /**
-     * @private
-     */
     private mergeAssignments(
         newAssignments: EntityAssignments,
         old: EntityAssignments,

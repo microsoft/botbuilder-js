@@ -96,6 +96,8 @@ export class EntityAssignment implements EntityAssignmentConfiguration {
 
     constructor(assignment: Partial<EntityAssignmentConfiguration>) {
         // Some properties are defined by `<prop> ?? undefined` in order to pass object equality checks.
+        // Specifically, lodash's isEqual() will treat `{ a: undefined }` as not equal to `{ }`, so we explicitly add
+        // the properties as `undefined` in order to pass equality checks when the instances are semantically equal.
         const newEntity: Partial<EntityAssignmentConfiguration> = {
             alternative: assignment.alternative ?? undefined,
             event: assignment.event ?? undefined,
