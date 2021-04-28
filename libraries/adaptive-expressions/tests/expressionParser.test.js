@@ -710,6 +710,7 @@ const testCases = [
             ['take(createArray(\'a\', \'b\', \'c\', \'d\'), one)', ['a']],
             ['take(createArray(\'a\', \'b\', \'c\', \'d\'), -1)', []],
             ['take(createArray(\'a\', \'b\', \'c\', \'d\'), 10)', ['a', 'b', 'c', 'd']],
+            ['subArray(createArray(\'a\', \'b\', \'c\', \'d\'), 1, 3)', ['b', 'c']],
             ['subArray(createArray(\'a\', \'b\', \'c\', \'d\'), 4, 4)', []],
             ['subArray(createArray(\'a\', \'b\', \'c\', \'d\'), 1)', ['b', 'c', 'd']],
             ['range(1, 4)', [1, 2, 3, 4]],
