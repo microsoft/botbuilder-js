@@ -19,13 +19,10 @@ export class NotEqual extends ComparisonEvaluator {
      * Initializes a new instance of the [NotEqual](xref:adaptive-expressions.NotEqual) class.
      */
     public constructor() {
-        super(ExpressionType.NotEqual, NotEqual.func, FunctionUtils.validateBinary);
-    }
-
-    /**
-     * @private
-     */
-    private static func(args: any[]): boolean {
-        return !InternalFunctionUtils.isEqual(args);
+        super(
+            ExpressionType.NotEqual,
+            (args) => !FunctionUtils.commonEquals(args[0], args[1]),
+            FunctionUtils.validateBinary
+        );
     }
 }
