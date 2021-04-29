@@ -345,12 +345,12 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> im
             DialogId: this.id,
             Kind: 'Microsoft.AdaptiveDialog',
         };
-        if (reason == DialogReason.cancelCalled) {
+        if (reason === DialogReason.cancelCalled) {
             this.telemetryClient.trackEvent({
                 name: 'AdaptiveDialogCancel',
                 properties: properties,
             });
-        } else if (reason == DialogReason.endCalled) {
+        } else if (reason === DialogReason.endCalled) {
             this.telemetryClient.trackEvent({
                 name: 'AdaptiveDialogComplete',
                 properties: properties,
@@ -565,7 +565,7 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> im
                     }
                     break;
                 case AdaptiveEvents.recognizeUtterance:
-                    if (activity.type == ActivityTypes.Message) {
+                    if (activity.type === ActivityTypes.Message) {
                         // Recognize utterance
                         const recognizedResult = await this.onRecognize(actionContext, activity);
                         // TODO figure out way to not use turn state to pass this value back to caller.
@@ -599,7 +599,7 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> im
                 case AdaptiveEvents.activityReceived:
                     if (activity.type === ActivityTypes.Message) {
                         // Do we have an empty sequence?
-                        if (actionContext.actions.length == 0) {
+                        if (actionContext.actions.length === 0) {
                             const unknownIntentEvent: DialogEvent = {
                                 name: AdaptiveEvents.unknownIntent,
                                 bubble: false,
@@ -641,14 +641,14 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> im
         };
 
         if (this.recognizer) {
-            if (this._recognizerSet.recognizers.length == 0) {
+            if (this._recognizerSet.recognizers.length === 0) {
                 this._recognizerSet.recognizers.push(this.recognizer);
                 this._recognizerSet.recognizers.push(new ValueRecognizer());
             }
             const recognized = await this._recognizerSet.recognize(actionContext, activity);
             const { intent } = getTopScoringIntent(recognized);
             for (const key in recognized.intents) {
-                if (key != intent) {
+                if (key !== intent) {
                     delete recognized[key];
                 }
             }
@@ -727,14 +727,14 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> im
             }
 
             // Is the step waiting for input or were we cancelled?
-            if (result.status == DialogTurnStatus.waiting || this.getUniqueInstanceId(actionContext) != instanceId) {
+            if (result.status === DialogTurnStatus.waiting || this.getUniqueInstanceId(actionContext) !== instanceId) {
                 return result;
             }
 
             // End current step
             await this.endCurrentAction(actionContext);
 
-            if (result.status == DialogTurnStatus.completeAndWait) {
+            if (result.status === DialogTurnStatus.completeAndWait) {
                 // Child dialog completed, but wants us to wait for a new activity
                 result.status = DialogTurnStatus.waiting;
                 return result;
@@ -865,7 +865,7 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> im
                 bubble: false,
             };
 
-            if (nextAssignment.event == AdaptiveEvents.assignEntity) {
+            if (nextAssignment.event === AdaptiveEvents.assignEntity) {
                 // TODO: (from C#) For now, I'm going to dereference to a one-level array value.  There is a bug in the current code in the distinction between
                 // @ which is supposed to unwrap down to non-array and @@ which returns the whole thing. @ in the curent code works by doing [0] which
                 // is not enough.
@@ -921,7 +921,7 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> im
 
             const assignments = EntityAssignments.read(actionContext);
             const entities = this.normalizeEntities(actionContext);
-            const utterance = activity.type == ActivityTypes.Message ? activity.text : '';
+            const utterance = activity.type === ActivityTypes.Message ? activity.text : '';
 
             // Utterance is a special entity that corresponds to the full utterance
             entities[this.utteranceKey] = [
@@ -984,7 +984,7 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> im
             const infos = entityToInfo[name];
             infos.sort((entity1, entity2): number => {
                 let val = 0;
-                if (entity1.start == entity2.start) {
+                if (entity1.start === entity2.start) {
                     if (entity1.end > entity2.end) {
                         val = -1;
                     } else if (entity1.end < entity2.end) {
@@ -1238,7 +1238,10 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> im
         for (const assignment of assignments) {
             if (!assignment.operation) {
                 // Assign missing operation.
-                if (lastEvent == AdaptiveEvents.chooseEntity && assignment.value.property === nextAssignment.property) {
+                if (
+                    lastEvent === AdaptiveEvents.chooseEntity &&
+                    assignment.value.property === nextAssignment.property
+                ) {
                     // Property and value match ambiguous entity.
                     assignment.operation = AdaptiveEvents.chooseEntity;
                     assignment.isExpected = true;
@@ -1441,7 +1444,7 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> im
             alternatives.forEach((alternative) => usedEntities.add(alternative.value));
 
             // If expected binds entity, drop unexpected alternatives unless they have an explicit operation
-            if (candidate.isExpected && candidate.value.name != this.utteranceKey) {
+            if (candidate.isExpected && candidate.value.name !== this.utteranceKey) {
                 alternatives = alternatives.filter((a): boolean => a.isExpected && a.operation != null);
             }
 
@@ -1534,7 +1537,7 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> im
                         } else {
                             replaces = 0;
                         }
-                        if (replaces == 0) {
+                        if (replaces === 0) {
                             if (aAlt.value.start > bAlt.value.start) {
                                 replaces = -1;
                             } else if (aAlt.value.start < bAlt.value.start) {
@@ -1544,7 +1547,7 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> im
                             }
                         }
 
-                        if (replaces != 0) {
+                        if (replaces !== 0) {
                             break;
                         }
                     }
