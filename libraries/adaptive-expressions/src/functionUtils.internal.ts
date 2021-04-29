@@ -414,43 +414,6 @@ export class InternalFunctionUtils {
     }
 
     /**
-     * Equal helper function.
-     * @param args Input args. Compare the first param and second param.
-     */
-    public static isEqual(args: any[]): boolean {
-        if (args.length === 0) {
-            return false;
-        }
-
-        if (args[0] == null || args[1] == null) {
-            return args[0] == null && args[1] == null;
-        }
-
-        if (Array.isArray(args[0]) && args[0].length === 0 && Array.isArray(args[1]) && args[1].length === 0) {
-            return true;
-        }
-
-        if (
-            InternalFunctionUtils.getPropertyCount(args[0]) === 0 &&
-            InternalFunctionUtils.getPropertyCount(args[1]) === 0
-        ) {
-            return true;
-        }
-
-        if (FunctionUtils.isNumber(args[0]) && FunctionUtils.isNumber(args[1])) {
-            if (Math.abs(args[0] - args[1]) < Number.EPSILON) {
-                return true;
-            }
-        }
-
-        try {
-            return args[0] === args[1];
-        } catch {
-            return false;
-        }
-    }
-
-    /**
      * TextEncoder helper function.
      */
     public static getTextEncoder(): TextEncoder {
@@ -489,23 +452,6 @@ export class InternalFunctionUtils {
         } else {
             return input.toString();
         }
-    }
-
-    /**
-     * Helper function of get the number of properties of an object.
-     * @param obj An object.
-     */
-    private static getPropertyCount(obj: any): number {
-        let count = -1;
-        if (!Array.isArray(obj)) {
-            if (obj instanceof Map) {
-                count = obj.size;
-            } else if (typeof obj === 'object' && !(obj instanceof Date)) {
-                count = Object.keys(obj).length;
-            }
-        }
-
-        return count;
     }
 
     /**

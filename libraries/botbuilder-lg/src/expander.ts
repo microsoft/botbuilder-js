@@ -336,8 +336,7 @@ export class Expander extends AbstractParseTreeVisitor<unknown[]> implements LGT
                 caseNode.switchCaseStat().text,
                 caseErrorPrefix
             );
-            //condition: check whether two string array have same elements
-            if (switchExprResult.sort().toString() === caseExprResult.sort().toString()) {
+            if (FunctionUtils.commonEquals(switchExprResult[0], caseExprResult[0])) {
                 return this.visit(caseNode.normalTemplateBody());
             }
 

@@ -760,6 +760,36 @@ export class FunctionUtils {
     }
 
     /**
+     * Equal helper function.
+     * @param args Input args. Compare the first param and second param.
+     */
+    public static commonEquals(obj1: unknown, obj2: unknown): boolean {
+        if (obj1 == null || obj2 == null) {
+            return obj1 == null && obj2 == null;
+        }
+
+        if (Array.isArray(obj1) && obj1.length === 0 && Array.isArray(obj2) && obj2.length === 0) {
+            return true;
+        }
+
+        if (FunctionUtils.getPropertyCount(obj1) === 0 && FunctionUtils.getPropertyCount(obj2) === 0) {
+            return true;
+        }
+
+        if (FunctionUtils.isNumber(obj1) && FunctionUtils.isNumber(obj2)) {
+            if (Math.abs(obj1 - obj2) < Number.EPSILON) {
+                return true;
+            }
+        }
+
+        try {
+            return obj1 === obj2;
+        } catch {
+            return false;
+        }
+    }
+
+    /**
      * @private
      */
     private static buildTypeValidatorError(returnType: ReturnType, childExpr: Expression, expr: Expression): string {
@@ -778,5 +808,22 @@ export class FunctionUtils {
             const typesStr = types.join(', ');
             return `${childExpr} in ${expr} is not any of [${typesStr}].`;
         }
+    }
+
+    /**
+     * Helper function of get the number of properties of an object.
+     * @param obj An object.
+     */
+    private static getPropertyCount(obj: unknown): number {
+        let count = -1;
+        if (obj != null && !Array.isArray(obj)) {
+            if (obj instanceof Map) {
+                count = obj.size;
+            } else if (typeof obj === 'object' && !(obj instanceof Date)) {
+                count = Object.keys(obj).length;
+            }
+        }
+
+        return count;
     }
 }
