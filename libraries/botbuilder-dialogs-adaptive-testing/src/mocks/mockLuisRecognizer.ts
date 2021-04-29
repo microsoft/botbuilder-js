@@ -69,7 +69,7 @@ export class MockLuisRecognizer extends Recognizer {
         this._recognizer = recognizer;
         this._responseDir = path.join(resourceDir, 'cachedResponses', name);
         if (!fs.existsSync(this._responseDir)) {
-            fs.mkdirSync(this._responseDir);
+            fs.mkdirSync(this._responseDir, { recursive: true });
         }
     }
 

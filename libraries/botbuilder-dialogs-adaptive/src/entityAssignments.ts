@@ -11,28 +11,28 @@ import { EntityAssignment } from './entityAssignment';
 
 const events = 'this.events';
 
+export interface EntityAssignmentsConfiguration {
+    assignments: EntityAssignment[];
+}
+
 /**
  * Tracks entity related events to surface.
  * @remarks When processing entities possible ambiguities are identified and when resolved they turn into assign events.
  * This tracking persists across multiple input utterances.
  */
-export class EntityAssignments {
-    /**
-     * Queue of entity assignments.
-     */
-    public assignments: Partial<EntityAssignment>[] = [];
+export class EntityAssignments implements EntityAssignmentsConfiguration {
+    constructor(public assignments: EntityAssignment[] = []) {}
 
     /**
      * Read entity event queue from memory.
      * @param actionContext Memory context.
      */
     public static read(actionContext: ActionContext): EntityAssignments {
-        let queues: EntityAssignments = actionContext.state.getValue(events);
-        if (!queues) {
-            queues = new EntityAssignments();
-        }
+        const queuesObject = actionContext.state.getValue(events, new EntityAssignments());
 
-        return queues;
+        const assignments = queuesObject.assignments?.map((assignment) => new EntityAssignment(assignment));
+
+        return new EntityAssignments(assignments);
     }
 
     /**
@@ -46,7 +46,7 @@ export class EntityAssignments {
     /**
      * Returns the next entity event to surface.
      */
-    public get nextAssignment(): Partial<EntityAssignment> {
+    public get nextAssignment(): EntityAssignment {
         if (this.assignments.length > 0) {
             return this.assignments[0];
         }
@@ -58,7 +58,7 @@ export class EntityAssignments {
      * Remove the current event and update the memory.
      * @param actionContext Memory context.
      */
-    public dequeue(actionContext: ActionContext): Partial<EntityAssignment> {
+    public dequeue(actionContext: ActionContext): EntityAssignment {
         const assignment = this.assignments.shift();
         this.write(actionContext);
 

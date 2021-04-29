@@ -25,6 +25,8 @@ import {
     DialogTurnStatus,
     TurnPath,
 } from 'botbuilder-dialogs';
+import { StringUtils } from 'botbuilder';
+import { ActivityTemplate } from '..';
 
 export interface AskConfiguration extends SendActivityConfiguration {
     expectedProperties?: ArrayProperty<string>;
@@ -65,6 +67,7 @@ export class Ask extends SendActivity implements AskConfiguration {
      * Called when the [Dialog](xref:botbuilder-dialogs.Dialog) is started and pushed onto the dialog stack.
      * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
      * @param options Optional, initial information to pass to the [Dialog](xref:botbuilder-dialogs.Dialog).
+     * @param property
      * @returns A [DialogTurnResult](xref:botbuilder-dialogs.DialogTurnResult) `Promise` representing the asynchronous operation.
      */
     public getConverter(property: keyof AskConfiguration): Converter | ConverterFactory {
@@ -112,5 +115,12 @@ export class Ask extends SendActivity implements AskConfiguration {
         const result = await super.beginDialog(dc, options);
         result.status = DialogTurnStatus.completeAndWait;
         return result;
+    }
+
+    protected onComputeId(): string {
+        if (this.activity instanceof ActivityTemplate) {
+            return `Ask[${StringUtils.ellipsis(this.activity.template.trim(), 30)}]`;
+        }
+        return `Ask[${StringUtils.ellipsis(this.activity && this.activity.toString().trim(), 30)}]`;
     }
 }
