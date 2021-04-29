@@ -1363,7 +1363,7 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> im
         const perProperty = candidates.reduce(
             (acc, assignment) => ({
                 ...acc,
-                [assignment.property]: [...acc[assignment.property], assignment],
+                [assignment.property]: [...(acc[assignment.property] ?? []), assignment],
             }),
             {}
         );
