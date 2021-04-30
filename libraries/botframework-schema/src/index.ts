@@ -2270,7 +2270,8 @@ export interface AdaptiveCardInvokeValue {
  *
  * This interface supports the framework and is not intended to be called directly for your code.
  */
- export interface InvokeResponse<T = any> {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export interface InvokeResponse<T = any> {
     /**
      * The HTTP status code of the response.
      */
@@ -2285,49 +2286,49 @@ export interface AdaptiveCardInvokeValue {
 /**
  * State object passed to the bot token service.
  */
- export type TokenExchangeState = {
+export type TokenExchangeState = {
     /**
      * The connection name that was used.
      */
-    connectionName: string,
+    connectionName: string;
 
     /**
      * A reference to the conversation.
      */
-    conversation: ConversationReference,
+    conversation: ConversationReference;
 
     /**
      * A reference to a related parent conversation conversation.
      */
-    relatesTo: ConversationReference,
+    relatesTo: ConversationReference;
 
     /**
      * The URL of the bot messaging endpoint.
      */
-    msAppId: string
+    msAppId: string;
 };
 
 /**
  * The status of a particular token.
  */
- export type TokenStatus = {
+export type TokenStatus = {
     /**
      * The channel ID.
      */
-    channelId: string,
+    channelId: string;
 
     /**
      * The connection name.
      */
-    connectionName: string,
+    connectionName: string;
 
     /**
      * Boolean indicating if a token is stored for this ConnectionName.
      */
-    hasToken: boolean,
+    hasToken: boolean;
 
     /**
      * The display name of the service provider for which this Token belongs to.
      */
-    serviceProviderDisplayName: string
+    serviceProviderDisplayName: string;
 };
