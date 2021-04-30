@@ -23,6 +23,7 @@ export abstract class UserTokenClient {
      * @param connectionName Name of the auth connection to use.
      * @param channelId The channel Id that will be associated with the token.
      * @param magicCode (Optional) Optional user entered code to validate.
+     * @returns {Promise<UserTokenClient>} A [TokenResponse](xref:botframework-schema.TokenResponse) object.
      */
     abstract getUserToken(
         userId: string,
@@ -37,6 +38,7 @@ export abstract class UserTokenClient {
      * @param connectionName Name of the auth connection to use.
      * @param activity The [Activity](xref:botframework-schema.Activity) from which to derive the token exchange state.
      * @param finalRediect The final URL that the OAuth flow will redirect to.
+     * @returns {Promise<SignInUrlResponse>} A [SignInUrlResponse](xref:botframework-schema.SignInUrlResponse).
      */
     abstract getSignInResource(
         connectionName: string,
@@ -59,6 +61,7 @@ export abstract class UserTokenClient {
      * @param userId The user id that will be associated with the token.
      * @param channelId The channel Id that will be associated with the token.
      * @param includeFilter The includeFilter.
+     * @returns {Promise<TokenStatus[]>} A list of [TokenStatus](xref:botframework-schema.TokenStatus) objects.
      */
     abstract getTokenStatus(userId: string, channelId: string, includeFilter: string): Promise<TokenStatus[]>;
 
@@ -69,6 +72,7 @@ export abstract class UserTokenClient {
      * @param connectionName Name of the auth connection to use.
      * @param resourceUrls The list of resource URLs to retrieve tokens for.
      * @param channelId The channel Id that will be associated with the token.
+     * @returns {Promise<Record<string, TokenResponse>>} A Dictionary of resourceUrls to the corresponding [TokenResponse](xref:botframework-schema.TokenResponse).
      */
     abstract getAadTokens(
         userId: string,
@@ -84,6 +88,7 @@ export abstract class UserTokenClient {
      * @param connectionName Name of the auth connection to use.
      * @param channelId The channel Id that will be associated with the token.
      * @param exchangeRequest The exchange request details, either a token to exchange or a uri to exchange.
+     * @returns {Promise<TokenResponse>} A [TokenResponse](xref:botframework-schema.TokenResponse) object.
      */
     abstract exchangeToken(
         userId: string,

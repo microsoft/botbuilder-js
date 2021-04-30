@@ -12,11 +12,13 @@ export abstract class ServiceClientCredentialsFactory {
      * Validates an app ID.
      *
      * @param appId The app ID to validate.
+     * @returns {Promise<boolean>} The result is true if `appId` is valid for the controller; otherwise, false.
      */
     abstract isValidAppId(appId: string): Promise<boolean>;
 
     /**
      * Checks whether bot authentication is disabled.
+     * @returns {Promise<boolean>} If bot authentication is disabled, the result is true; otherwise, false.
      */
     abstract isAuthenticationDisabled(): Promise<boolean>;
 
@@ -27,6 +29,7 @@ export abstract class ServiceClientCredentialsFactory {
      * @param audience The audience.
      * @param loginEndpoint The login url.
      * @param validateAuthority The validate authority vale to use.
+     * @returns {Promise<ServiceClientCredentials>} A [ServiceClientCredentials](xref:botframework-connector.ServiceClientCredentials).
      */
     abstract createCredentials(
         appId: string,
