@@ -28,7 +28,7 @@ export abstract class ServiceClientCredentialsFactory {
      * @param appId The appId.
      * @param audience The audience.
      * @param loginEndpoint The login url.
-     * @param validateAuthority The validate authority vale to use.
+     * @param validateAuthority The validate authority value to use.
      * @returns {Promise<ServiceClientCredentials>} A [ServiceClientCredentials](xref:botframework-connector.ServiceClientCredentials).
      */
     abstract createCredentials(
