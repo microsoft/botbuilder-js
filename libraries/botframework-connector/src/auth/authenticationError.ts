@@ -13,18 +13,17 @@ export type StatusCode = number;
 export class AuthenticationError extends Error implements IStatusCodeError {
     /**
      * Initializes a new instance of the [AuthenticationError](xref:botframework-connector.AuthenticationError) class.
+     *
      * @param message The Error message.
      * @param statusCode The `StatusCode` number to use.
      */
-    constructor(
-        message: string,
-        public readonly statusCode: StatusCode
-    ) {
+    constructor(message: string, public readonly statusCode: StatusCode) {
         super(message);
     }
 
     /**
      * Corroborates that the error is of type [IStatusCodeError](xref:botbuilder.IStatusCodeError).
+     *
      * @param err The error to validate.
      */
     public static isStatusCodeError(err: any): err is IStatusCodeError {
@@ -33,6 +32,7 @@ export class AuthenticationError extends Error implements IStatusCodeError {
 
     /**
      * Used to determine a status code from the error message for non-`IStatusCodeError`'s.
+     *
      * @param err The error thrown, used to determine an appropriate status code.
      */
     public static determineStatusCodeAndBuildMessage(err: any): string {
@@ -42,7 +42,7 @@ export class AuthenticationError extends Error implements IStatusCodeError {
 
         return `HTTP/1.1 ${code} ${StatusCodes[code]}\r\n${errMessage}\r\n${connectionHeader}\r\n`;
     }
-    
+
     /**
      * @private
      */

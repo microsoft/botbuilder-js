@@ -5,7 +5,7 @@ const assert = require('assert');
 const { jwt } = require('botbuilder-test-utils');
 const { JwtTokenExtractor } = require('../../lib/auth/jwtTokenExtractor');
 
-describe('JwtTokenExtractor', () => {
+describe('JwtTokenExtractor', function () {
     jwt.mocha();
 
     const initialize = () => {
@@ -22,8 +22,8 @@ describe('JwtTokenExtractor', () => {
         return { client, issuer, sign, verify };
     };
 
-    describe('getIdentityFromAuthHeader', () => {
-        it('works end-to-end', async () => {
+    describe('getIdentityFromAuthHeader', function () {
+        it('works end-to-end', async function () {
             const { client, issuer, sign, verify } = initialize();
 
             const key = 'value';

@@ -5,30 +5,7 @@
 
 import { ServiceClientOptions } from "@azure/ms-rest-js";
 import * as msRest from "@azure/ms-rest-js";
-import { SignInUrlResponse } from "botframework-schema";
-
-/**
- * @interface
- * An interface representing TokenResponse.
- */
-export interface TokenResponse {
-  /**
-   * @member {string} [channelId]
-   */
-  channelId?: string;
-  /**
-   * @member {string} [connectionName]
-   */
-  connectionName?: string;
-  /**
-   * @member {string} [token]
-   */
-  token?: string;
-  /**
-   * @member {string} [expiration]
-   */
-  expiration?: string;
-}
+import { SignInUrlResponse, TokenResponse, TokenStatus } from "botframework-schema";
 
 /**
  * @interface
@@ -84,34 +61,6 @@ export interface AadResourceUrls {
    * @member {string[]} [resourceUrls]
    */
   resourceUrls?: string[];
-}
-
-/**
- * @interface
- * An interface representing TokenStatus.
- * The status of a particular token
- *
- */
-export interface TokenStatus {
-  /**
-   * @member {string} [channelId] The channelId of the token status pertains to
-   */
-  channelId?: string;
-  /**
-   * @member {string} [connectionName] The name of the connection the token
-   * status pertains to
-   */
-  connectionName?: string;
-  /**
-   * @member {boolean} [hasToken] True if a token is stored for this
-   * ConnectionName
-   */
-  hasToken?: boolean;
-  /**
-   * @member {string} [serviceProviderDisplayName] The display name of the
-   * service provider for which this Token belongs to
-   */
-  serviceProviderDisplayName?: string;
 }
 
 /**

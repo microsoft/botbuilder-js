@@ -15,6 +15,7 @@ import fetch from 'cross-fetch';
 export class EmulatorApiClient {
     /**
      * OAuth card emulation.
+     *
      * @param credentials [AppCredentials](xref:botframework-connector.AppCredentials) for OAuth.
      * @param emulatorUrl The URL of the emulator.
      * @param emulate `true` to send an emulated OAuth card to the emulator; or `false` to not send the card.

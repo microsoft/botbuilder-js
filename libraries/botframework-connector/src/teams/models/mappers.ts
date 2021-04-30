@@ -1613,7 +1613,7 @@ export const CacheInfo: msRest.CompositeMapper = {
                 serializedName: 'cacheDuration',
                 type: {
                     name: 'Number',
-                }
+                },
             },
         },
     },
