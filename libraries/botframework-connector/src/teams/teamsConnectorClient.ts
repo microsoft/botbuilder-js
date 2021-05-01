@@ -15,6 +15,7 @@ class TeamsConnectorClient extends TeamsConnectorClientContext {
 
     /**
      * Initializes a new instance of the TeamsConnectorClient class.
+     *
      * @param credentials Subscription credentials which uniquely identify client subscription.
      * @param [options] The parameter options
      */

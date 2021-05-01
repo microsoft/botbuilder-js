@@ -22,6 +22,7 @@ export class OpenIdMetadata {
 
     /**
      * Initializes a new instance of the [OpenIdMetadata](xref:botframework-connector.OpenIdMetadata) class.
+     *
      * @param url Metadata Url.
      */
     constructor(url: string) {
@@ -30,6 +31,7 @@ export class OpenIdMetadata {
 
     /**
      * Gets the Signing key.
+     *
      * @param keyId The key ID to search for.
      * @returns A `Promise` representation for either a [IOpenIdMetadataKey](botframework-connector:module.IOpenIdMetadataKey) or `null`.
      */
@@ -104,7 +106,10 @@ export class OpenIdMetadata {
                 const modulus: any = base64url.toBase64(key.n);
                 const exponent: string = key.e;
 
-                return { key: getPem(modulus, exponent), endorsements: key.endorsements } as IOpenIdMetadataKey;
+                return {
+                    key: getPem(modulus, exponent),
+                    endorsements: key.endorsements,
+                };
             }
         }
 
