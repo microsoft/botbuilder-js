@@ -167,7 +167,7 @@ function addStorage(services: ServiceCollection, configuration: Configuration): 
                         compatibilityMode: t.Boolean.Or(t.Undefined),
                         containerId: t.String,
                         containerThroughput: t.Number.Or(t.Undefined),
-                        cosmosDbEndpoint: t.String.Or(t.Undefined),
+                        cosmosDBEndpoint: t.String.Or(t.Undefined),
                         databaseId: t.String,
                         keySuffix: t.String.Or(t.Undefined),
                     })
@@ -177,7 +177,8 @@ function addStorage(services: ServiceCollection, configuration: Configuration): 
                     throw new TypeError('`CosmosDbPartitionedStorage` missing in configuration');
                 }
 
-                return new CosmosDbPartitionedStorage(cosmosOptions);
+                const { cosmosDBEndpoint, ...rest } = cosmosOptions;
+                return new CosmosDbPartitionedStorage({ ...rest, cosmosDbEndpoint: cosmosDBEndpoint });
             }
 
             default:
