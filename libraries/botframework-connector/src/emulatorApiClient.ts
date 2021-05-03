@@ -16,9 +16,12 @@ export class EmulatorApiClient {
     /**
      * OAuth card emulation.
      *
+     * @remarks If the emulation fails, an error containing the status code from the server is thrown.
+     *
      * @param credentials [AppCredentials](xref:botframework-connector.AppCredentials) for OAuth.
      * @param emulatorUrl The URL of the emulator.
      * @param emulate `true` to send an emulated OAuth card to the emulator; or `false` to not send the card.
+     * @returns `true` on a successful emulation of OAuthCards.
      */
     public static async emulateOAuthCards(
         credentials: AppCredentials,

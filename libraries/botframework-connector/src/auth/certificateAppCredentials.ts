@@ -37,9 +37,6 @@ export class CertificateAppCredentials extends AppCredentials {
         this.certificatePrivateKey = certificatePrivateKey;
     }
 
-    /**
-     * @protected
-     */
     protected async refreshToken(): Promise<adal.TokenResponse> {
         if (!this.refreshingToken) {
             this.refreshingToken = new Promise<adal.TokenResponse>((resolve, reject) => {

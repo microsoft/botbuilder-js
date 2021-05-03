@@ -18,6 +18,7 @@ export abstract class ServiceClientCredentialsFactory {
 
     /**
      * Checks whether bot authentication is disabled.
+     *
      * @returns {Promise<boolean>} If bot authentication is disabled, the result is true; otherwise, false.
      */
     abstract isAuthenticationDisabled(): Promise<boolean>;

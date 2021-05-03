@@ -7,7 +7,6 @@
  */
 
 import * as msrest from '@azure/ms-rest-js';
-import * as url from 'url';
 import * as adal from 'adal-node';
 import { AuthenticationConstants } from './authenticationConstants';
 
@@ -47,6 +46,8 @@ export abstract class AppCredentials implements msrest.ServiceClientCredentials 
 
     /**
      * Gets tenant to be used for channel authentication.
+     *
+     * @returns The channel auth token tenant for this credential.
      */
     private get tenant(): string {
         return this._tenant;
@@ -61,6 +62,8 @@ export abstract class AppCredentials implements msrest.ServiceClientCredentials 
 
     /**
      * Gets the OAuth scope to use.
+     *
+     * @returns The OAuth scope to use.
      */
     public get oAuthScope(): string {
         return this._oAuthScope;
@@ -76,6 +79,8 @@ export abstract class AppCredentials implements msrest.ServiceClientCredentials 
 
     /**
      * Gets the OAuth endpoint to use.
+     *
+     * @returns The OAuthEndpoint to use.
      */
     public get oAuthEndpoint(): string {
         return this._oAuthEndpoint;

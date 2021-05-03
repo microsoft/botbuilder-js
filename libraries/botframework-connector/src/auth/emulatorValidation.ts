@@ -75,6 +75,7 @@ export namespace EmulatorValidation {
         }
 
         // Parse the Big Long String into an actual token.
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const token: any = decode(bearerToken, { complete: true });
         if (!token) {
             return false;
@@ -107,8 +108,8 @@ export namespace EmulatorValidation {
      * @param  {string} authHeader The raw HTTP header in the format: "Bearer [longString]"
      * @param  {ICredentialProvider} credentials The user defined set of valid credentials, such as the AppId.
      * @param  {string} channelService The channelService value that distinguishes public Azure from US Government Azure.
-     * @param  {string} channelId
-     * @param  {AuthenticationConfiguration} authConfig
+     * @param  {string} channelId The ID of the channel to validate.
+     * @param  {AuthenticationConfiguration} authConfig The authentication configuration.
      * @returns {Promise<ClaimsIdentity>} A valid ClaimsIdentity.
      */
     export async function authenticateEmulatorToken(

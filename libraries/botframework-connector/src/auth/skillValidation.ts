@@ -242,6 +242,8 @@ export namespace SkillValidation {
 
     /**
      * Creates a set of claims that represent an anonymous skill. Useful for testing bots locally in the emulator
+     *
+     * @returns A [ClaimsIdentity](xref.botframework-connector.ClaimsIdentity) instance with authentication type set to [AuthenticationConstants.AnonymousAuthType](xref.botframework-connector.AuthenticationConstants) and a reserved [AuthenticationConstants.AnonymousSkillAppId](xref.botframework-connector.AuthenticationConstants) claim.
      */
     export function createAnonymousSkillClaim(): ClaimsIdentity {
         return new ClaimsIdentity(

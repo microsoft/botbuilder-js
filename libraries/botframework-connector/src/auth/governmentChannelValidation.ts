@@ -65,7 +65,7 @@ export namespace GovernmentChannelValidation {
      * @param  {string} authHeader The raw HTTP header in the format: "Bearer [longString]"
      * @param  {ICredentialProvider} credentials The user defined set of valid credentials, such as the AppId.
      * @param  {string} channelId The ID of the channel to validate.
-     * @param  {AuthenticationConfiguration} authConfig
+     * @param  {AuthenticationConfiguration} authConfig The authentication configuration.
      * @returns {Promise<ClaimsIdentity>} A valid ClaimsIdentity.
      */
     export async function authenticateChannelToken(

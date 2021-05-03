@@ -16,7 +16,6 @@ import { StatusCodes } from 'botframework-schema';
  * Class in charge of manage OpenId metadata.
  */
 export class OpenIdMetadata {
-    private url: string;
     private lastUpdated = 0;
     private keys: IKey[];
 
@@ -25,9 +24,7 @@ export class OpenIdMetadata {
      *
      * @param url Metadata Url.
      */
-    constructor(url: string) {
-        this.url = url;
-    }
+    constructor(private url: string) {}
 
     /**
      * Gets the Signing key.
@@ -38,20 +35,14 @@ export class OpenIdMetadata {
     public async getKey(keyId: string): Promise<IOpenIdMetadataKey | null> {
         // If keys are more than 24 hours old, refresh them
         if (this.lastUpdated < Date.now() - 1000 * 60 * 60 * 24) {
-            try {
-                await this.refreshCache();
+            await this.refreshCache();
 
-                // Search the cache even if we failed to refresh
-                const key: IOpenIdMetadataKey = this.findKey(keyId);
-                return key;
-            } catch (err) {
-                //logger.error('Error retrieving OpenId metadata at ' + this.url + ', error: ' + err.toString());
-                // fall through and return cached key on error
-                throw err;
-            }
+            // Search the cache even if we failed to refresh
+            const key = this.findKey(keyId);
+            return key;
         } else {
             // Otherwise read from cache
-            const key: IOpenIdMetadataKey = this.findKey(keyId);
+            const key = this.findKey(keyId);
             // Refresh the cache if a key is not found (max once per hour)
             if (!key && this.lastUpdated < Date.now() - 1000 * 60 * 60) {
                 await this.refreshCache();
@@ -103,8 +94,8 @@ export class OpenIdMetadata {
                     return null;
                 }
 
-                const modulus: any = base64url.toBase64(key.n);
-                const exponent: string = key.e;
+                const modulus = base64url.toBase64(key.n);
+                const exponent = key.e;
 
                 return {
                     key: getPem(modulus, exponent),
