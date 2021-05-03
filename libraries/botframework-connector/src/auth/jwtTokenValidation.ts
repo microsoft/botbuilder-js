@@ -116,7 +116,7 @@ export namespace JwtTokenValidation {
         return identity;
     }
 
-    // eslint-disable-next-line no-inner-declarations
+    // eslint-disable-next-line jsdoc/require-jsdoc, no-inner-declarations
     async function authenticateToken(
         authHeader: string,
         credentials: ICredentialProvider,
@@ -194,7 +194,7 @@ export namespace JwtTokenValidation {
     /**
      * Validates the identity claims against the ClaimsValidator in AuthenticationConfiguration if present.
      *
-     * @param authConfig
+     * @param authConfig The authentication configuration.
      * @param claims The list of claims to validate.
      */
     // eslint-disable-next-line no-inner-declarations
@@ -257,7 +257,7 @@ export namespace JwtTokenValidation {
         return appId;
     }
 
-    // eslint-disable-next-line no-inner-declarations
+    // eslint-disable-next-line jsdoc/require-jsdoc, no-inner-declarations
     function isPublicAzure(channelService: string): boolean {
         return !channelService || channelService.length === 0;
     }

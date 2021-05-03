@@ -15,6 +15,7 @@ import { JwtTokenExtractor } from './jwtTokenExtractor';
 import { AuthenticationError } from './authenticationError';
 import { StatusCodes } from 'botframework-schema';
 
+// eslint-disable-next-line @typescript-eslint/no-namespace
 export namespace ChannelValidation {
     export let OpenIdMetadataEndpoint: string;
 
@@ -35,8 +36,8 @@ export namespace ChannelValidation {
      * @param  {string} authHeader The raw HTTP header in the format: "Bearer [longString]"
      * @param  {ICredentialProvider} credentials The user defined set of valid credentials, such as the AppId.
      * @param  {string} serviceUrl The ServiceUrl Claim value that must match in the identity.
-     * @param  {string} channelId
-     * @param  {AuthenticationConfiguration} authConfig
+     * @param  {string} channelId The ID of the channel to validate.
+     * @param  {AuthenticationConfiguration} authConfig The authentication configuration.
      * @returns {Promise<ClaimsIdentity>} A valid ClaimsIdentity.
      */
     export async function authenticateChannelTokenWithServiceUrl(
@@ -63,8 +64,8 @@ export namespace ChannelValidation {
      *
      * @param  {string} authHeader The raw HTTP header in the format: "Bearer [longString]"
      * @param  {ICredentialProvider} credentials The user defined set of valid credentials, such as the AppId.
-     * @param  {string} channelId
-     * @param  {AuthenticationConfiguration} authConfig
+     * @param  {string} channelId The ID of the channel to validate.
+     * @param  {AuthenticationConfiguration} authConfig The authentication configuration.
      * @returns {Promise<ClaimsIdentity>} A valid ClaimsIdentity.
      */
     export async function authenticateChannelToken(
