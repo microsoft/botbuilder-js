@@ -41,7 +41,7 @@
     "botframework-connector": "4.1.6",
     "dependency-graph": "^0.10.0",
     "nconf": "^0.11.2",
-    "runtypes": "~5.1.0",
+    "runtypes": "~6.3.0",
     "yargs-parser": "^20.2.7"
   },
   "devDependencies": {
