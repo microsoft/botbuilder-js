@@ -84,7 +84,7 @@ export function makeTriggers(
                         t.Array(
                             t.Record({
                                 name: t.String,
-                                enabled: t.Union(t.Boolean, t.Undefined),
+                                enabled: t.Boolean.optional(),
                                 route: t.String,
                             })
                         )

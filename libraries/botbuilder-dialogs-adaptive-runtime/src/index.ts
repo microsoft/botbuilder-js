@@ -69,7 +69,7 @@ function addFeatures(services: ServiceCollection, configuration: Configuration):
             const setSpeak = configuration.type(
                 ['setSpeak'],
                 t.Record({
-                    voiceFontName: t.String.Or(t.Undefined),
+                    voiceFontName: t.String.optional(),
                     fallbackToTextForSpeechIfEmpty: t.Boolean,
                 })
             );
@@ -163,13 +163,13 @@ function addStorage(services: ServiceCollection, configuration: Configuration): 
                 const cosmosOptions = configuration.type(
                     ['CosmosDbPartitionedStorage'],
                     t.Record({
-                        authKey: t.String.Or(t.Undefined),
-                        compatibilityMode: t.Boolean.Or(t.Undefined),
+                        authKey: t.String.optional(),
+                        compatibilityMode: t.Boolean.optional(),
                         containerId: t.String,
-                        containerThroughput: t.Number.Or(t.Undefined),
-                        cosmosDBEndpoint: t.String.Or(t.Undefined),
+                        containerThroughput: t.Number.optional(),
+                        cosmosDBEndpoint: t.String.optional(),
                         databaseId: t.String,
-                        keySuffix: t.String.Or(t.Undefined),
+                        keySuffix: t.String.optional(),
                     })
                 );
 
@@ -331,7 +331,7 @@ async function addSettingsBotComponents(services: ServiceCollection, configurati
             t.Array(
                 t.Record({
                     name: t.String,
-                    settingsPrefix: t.String.Or(t.Undefined),
+                    settingsPrefix: t.String.optional(),
                 })
             )
         ) ?? [];

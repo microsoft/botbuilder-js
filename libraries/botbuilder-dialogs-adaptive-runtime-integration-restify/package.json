@@ -25,7 +25,7 @@
     "botbuilder-dialogs-adaptive-runtime": "4.1.6",
     "botbuilder-dialogs-adaptive-runtime-core": "4.1.6",
     "restify": "^8.5.1",
-    "runtypes": "~5.1.0"
+    "runtypes": "~6.3.0"
   },
   "scripts": {
     "build": "tsc -b",
