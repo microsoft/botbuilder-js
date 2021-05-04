@@ -9,7 +9,9 @@
     "botbuilder",
     "botframework",
     "bots",
-    "chatbots"
+    "chatbots",
+    "msbot-component",
+    "msbot-recognizer"
   ],
   "bugs": {
     "url": "https://github.com/Microsoft/botbuilder-js/issues"
