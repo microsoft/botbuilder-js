@@ -101,13 +101,14 @@ describe(`MiddlewareSet`, () => {
 
         set.use(middleware(1), () => Promise.reject(new Error('rejected')), middleware(2));
 
-        try {
-            await set.run(context, noop);
-            assert.fail('Expected error');
-        } catch (err) {
-            assert.strictEqual(err.message, 'rejected');
-            assert.deepStrictEqual(stack, [1]);
-        }
+        await assert.rejects(
+            set.run(context, noop),
+            (err) => {
+                assert.strictEqual(err.message, 'rejected');
+                assert.deepStrictEqual(stack, [1]);
+                return true;
+            }
+        );
     });
 
     it(`should throw an error if an invalid plugin type is added.`, () => {
@@ -140,13 +141,14 @@ describe(`MiddlewareSet`, () => {
             middleware(4)
         );
 
-        try {
-            await set.run(context, noop);
-            assert.fail('Expected error');
-        } catch (err) {
-            assert.strictEqual(err.message, 'rejected');
-            assert.deepStrictEqual(stack, [1]);
-        }
+        await assert.rejects(
+            set.run(context, noop),
+            (err) => {
+                assert.strictEqual(err.message, 'rejected');
+                assert.deepStrictEqual(stack, [1]);
+                return true;
+            }
+        );
     });
 
     it('should unroll middleware even if the next handler reject', async function () {
@@ -161,12 +163,13 @@ describe(`MiddlewareSet`, () => {
             }
         });
 
-        try {
-            await set.run(context, () => Promise.reject(new Error('rejected')));
-            assert.fail('Expected error');
-        } catch (err) {
-            assert.strictEqual(err.message, 'rejected');
-            assert.deepStrictEqual(stack, [1]);
-        }
+        await assert.rejects(
+            set.run(context, () => Promise.reject(new Error('rejected'))),
+            (err) => {
+                assert.strictEqual(err.message, 'rejected');
+                assert.deepStrictEqual(stack, [1]);
+                return true;
+            }
+        );
     });
 });

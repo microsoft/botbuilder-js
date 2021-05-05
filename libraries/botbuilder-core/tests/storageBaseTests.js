@@ -129,21 +129,13 @@ class StorageBaseTests {
         assert.strictEqual(reloadedUpdatePocoStoreItem.count, 2);
 
         // Write with old eTag should succeed for non-storeitem
-        try {
-            updatePocoItem.count = 123;
+        updatePocoItem.count = 123;
 
-            await storage.write({ pocoItem: updatePocoItem });
-        } catch(err) {
-            assert.fail('Should not throw exception on write with pocoItem');
-        }
+        await assert.doesNotReject(storage.write({ pocoItem: updatePocoItem }));
 
         // Write with old eTag should FAIL for storeItem
-        try {
-            updatePocoStoreItem.count = 123;
-
-            await storage.write({ pocoStoreItem: updatePocoStoreItem });
-            assert.fail('Should have thrown exception on write with store item because of old eTag');
-        } catch(err) { }
+        updatePocoStoreItem.count = 123;
+        await assert.rejects(storage.write({ pocoStoreItem: updatePocoStoreItem }));
 
         const reloadedStoreItems2 = await storage.read(['pocoItem', 'pocoStoreItem']);
 
@@ -170,21 +162,6 @@ class StorageBaseTests {
 
         assert.strictEqual(reloadedStoreItems3.pocoItem.count, 100);
         assert.strictEqual(reloadedStoreItems3.pocoStoreItem.count, 100);
-
-        // Write with empty etag should not work
-        try {
-            const reloadedStoreItems4 = await storage.read(['pocoStoreItem']);
-            const reloadedStoreItem4 = reloadedStoreItems4.pocoStoreItem;
-
-            assert.notStrictEqual(reloadedStoreItem4, null);
-
-            reloadedStoreItem4.eTag = '';
-            const dict2 = { pocoStoreItem: reloadedStoreItem4 };
-
-            await storage.write(dict2);
-
-            assert.fail('Should have thrown exception on write with storeItem because of empty eTag');
-        } catch (err) { }
 
         const finalStoreItems = await storage.read(['pocoItem', 'pocoStoreItem']);
         assert.strictEqual(finalStoreItems.pocoItem.count, 100);

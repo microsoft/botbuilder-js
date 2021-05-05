@@ -490,91 +490,69 @@ describe('LuisRecognizer', function () {
         returnStatusCode(400);
 
         const context = new TestContext({ text: 'Hello world!' });
-        try {
-            await recognizer.recognize(context);
-            assert.fail('should have thrown');
-        } catch (error) {
-            const expectedError = `Response 400: The request's body or parameters are incorrect, meaning they are missing, malformed, or too large.`;
-            assert(error.message === expectedError, `unexpected error message thrown.`);
-        }
+        await assert.rejects(
+            recognizer.recognize(context),
+            Error(
+                "Response 400: The request's body or parameters are incorrect, meaning they are missing, malformed, or too large."
+            )
+        );
     });
 
     maybeIt('should throw expected 401 error message.', async () => {
         returnStatusCode(401);
 
         const context = new TestContext({ text: 'Hello world!' });
-        try {
-            await recognizer.recognize(context);
-            assert.fail('should have thrown');
-        } catch (error) {
-            const expectedError = `Response 401: The key used is invalid, malformed, empty, or doesn't match the region.`;
-            assert(error.message === expectedError, `unexpected error message thrown.`);
-        }
+        await assert.rejects(
+            recognizer.recognize(context),
+            Error("Response 401: The key used is invalid, malformed, empty, or doesn't match the region.")
+        );
     });
 
     maybeIt('should throw expected 403 error message.', async () => {
         returnStatusCode(403);
 
         const context = new TestContext({ text: 'Hello world!' });
-        try {
-            await recognizer.recognize(context);
-            assert.fail('should have thrown');
-        } catch (error) {
-            const expectedError = `Response 403: Total monthly key quota limit exceeded.`;
-            assert(error.message === expectedError, `unexpected error message thrown.`);
-        }
+        await assert.rejects(
+            recognizer.recognize(context),
+            Error('Response 403: Total monthly key quota limit exceeded.')
+        );
     });
 
     maybeIt('should throw expected 409 error message.', async () => {
         returnStatusCode(409);
 
         const context = new TestContext({ text: 'Hello world!' });
-        try {
-            await recognizer.recognize(context);
-            assert.fail('should have thrown');
-        } catch (error) {
-            const expectedError = `Response 409: Application loading in progress, please try again.`;
-            assert(error.message === expectedError, `unexpected error message thrown.`);
-        }
+        await assert.rejects(
+            recognizer.recognize(context),
+            Error('Response 409: Application loading in progress, please try again.')
+        );
     });
 
     maybeIt('should throw expected 410 error message.', async () => {
         returnStatusCode(410);
 
         const context = new TestContext({ text: 'Hello world!' });
-        try {
-            await recognizer.recognize(context);
-            assert.fail('should have thrown');
-        } catch (error) {
-            const expectedError = `Response 410: Please retrain and republish your application.`;
-            assert(error.message === expectedError, `unexpected error message thrown.`);
-        }
+        await assert.rejects(
+            recognizer.recognize(context),
+            Error('Response 410: Please retrain and republish your application.')
+        );
     });
 
     maybeIt('should throw expected 414 error message.', async () => {
         returnStatusCode(414);
 
         const context = new TestContext({ text: 'Hello world!' });
-        try {
-            await recognizer.recognize(context);
-            assert.fail('should have thrown');
-        } catch (error) {
-            const expectedError = `Response 414: The query is too long. Please reduce the query length to 500 or less characters.`;
-            assert(error.message === expectedError, `unexpected error message thrown.`);
-        }
+        await assert.rejects(
+            recognizer.recognize(context),
+            Error('Response 414: The query is too long. Please reduce the query length to 500 or less characters.')
+        );
     });
 
-    maybeIt('should throw expected 429 error message.', async () => {
+    maybeIt('should throw expected 429 error m`essage.', async () => {
         returnStatusCode(429);
 
         const context = new TestContext({ text: 'Hello world!' });
-        try {
-            await recognizer.recognize(context);
-            assert.fail('should have thrown');
-        } catch (error) {
-            const expectedError = `Response 429: Too many requests.`;
-            assert(error.message === expectedError, `unexpected error message thrown.`);
-        }
+        await assert.rejects(recognizer.recognize(context), Error('Response 429: Too many requests.'));
     });
 
     maybeIt('should throw unexpected error message with correct status code.', async () => {
@@ -582,13 +560,12 @@ describe('LuisRecognizer', function () {
         returnStatusCode(statusCode);
 
         const context = new TestContext({ text: 'Hello world!' });
-        try {
-            await recognizer.recognize(context);
-            assert.fail('should have thrown');
-        } catch (error) {
-            const expectedError = `Response ${statusCode}: Unexpected status code received. Please verify that your LUIS application is properly setup.`;
-            assert(error.message === expectedError, `unexpected error message thrown.`);
-        }
+        await assert.rejects(
+            recognizer.recognize(context),
+            Error(
+                `Response ${statusCode}: Unexpected status code received. Please verify that your LUIS application is properly setup.`
+            )
+        );
     });
 
     maybeIt(
@@ -596,13 +573,7 @@ describe('LuisRecognizer', function () {
         async () => {
             const recognizer = new ThrowErrorRecognizer();
             const context = new TestContext({ text: 'Hello world!' });
-            try {
-                await recognizer.recognize(context);
-                assert.fail('should have thrown');
-            } catch (error) {
-                const expectedError = 'Test';
-                assert(error.message === expectedError, `unexpected error message thrown.`);
-            }
+            await assert.rejects(recognizer.recognize(context), Error('Test'));
         }
     );
 
@@ -633,42 +604,33 @@ describe('LuisRecognizer', function () {
         const endpointWithNoSubscriptionKey =
             'https://westus.api.cognitive.microsoft.com/luis/v2.0/apps/b31aeaf3-3511-495b-a07f-571fc873214b?verbose=true&timezoneOffset=-360&q=';
         const expectedSubscriptionKey = undefined;
-        try {
-            new LuisRecognizer(endpointWithNoSubscriptionKey);
-            assert.fail('should have thrown');
-        } catch (e) {
-            assert.strictEqual(
-                e.message,
+        assert.throws(
+            () => new LuisRecognizer(endpointWithNoSubscriptionKey),
+            Error(
                 `Invalid \`endpointKey\` value detected: ${expectedSubscriptionKey}\nPlease make sure your endpointKey is a valid LUIS Endpoint Key, e.g. "048ec46dc58e495482b0c447cfdbd291".`
-            );
-        }
+            )
+        );
     });
 
     const expectedApplicationId = undefined;
     maybeIt('should throw an error when parsing application endpoint with no application ID.', () => {
         const endpointWithNoAppId =
             'https://westus.api.cognitive.microsoft.com?verbose=true&timezoneOffset=-360&subscription-key=048ec46dc58e495482b0c447cfdbd291&q=';
-        try {
-            new LuisRecognizer(endpointWithNoAppId);
-            assert(false, 'should have thrown an error.');
-        } catch (e) {
-            assert(
-                e.message ===
-                    `Invalid \`applicationId\` value detected: ${expectedApplicationId}\nPlease make sure your applicationId is a valid LUIS Application Id, e.g. "b31aeaf3-3511-495b-a07f-571fc873214b".`
-            );
-        }
+        assert.throws(
+            () => new LuisRecognizer(endpointWithNoAppId),
+            Error(
+                `Invalid \`applicationId\` value detected: ${expectedApplicationId}\nPlease make sure your applicationId is a valid LUIS Application Id, e.g. "b31aeaf3-3511-495b-a07f-571fc873214b".`
+            )
+        );
     });
 
     maybeIt('should throw an error when parsing non-URL value.', () => {
-        try {
-            new LuisRecognizer('this.is.not.a.url');
-            assert(false, 'should have thrown an error.');
-        } catch (e) {
-            assert(
-                e.message ===
-                    `Invalid \`applicationId\` value detected: ${expectedApplicationId}\nPlease make sure your applicationId is a valid LUIS Application Id, e.g. "b31aeaf3-3511-495b-a07f-571fc873214b".`
-            );
-        }
+        assert.throws(
+            () => new LuisRecognizer('this.is.not.a.url'),
+            Error(
+                `Invalid \`applicationId\` value detected: ${expectedApplicationId}\nPlease make sure your applicationId is a valid LUIS Application Id, e.g. "b31aeaf3-3511-495b-a07f-571fc873214b".`
+            )
+        );
     });
 
     maybeIt('null telemetryClient should work.', async () => {

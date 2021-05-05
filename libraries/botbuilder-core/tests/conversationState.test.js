@@ -42,39 +42,21 @@ describe(`ConversationState`, function () {
         assert(items[key].hasOwnProperty('test'), `state cleared and shouldn't have been.`);
     });
 
-    it(`should reject with error if channelId missing.`, async function () {
+    it(`should reject with error if channelId missing.`, function () {
         const ctx = new TurnContext(adapter, missingChannelId);
-        try {
-            await conversationState.load(ctx);
-            assert(false, `shouldn't have completed.`);
-        } catch (err) {
-            assert(err, `error object missing.`);
-            assert.equal(err.message, 'missing activity.channelId');
-        }
+        assert.throws(() => conversationState.load(ctx), Error('missing activity.channelId'));
     });
 
-    it(`should reject with error if conversation missing.`, async function () {
+    it(`should reject with error if conversation missing.`, function () {
         const ctx = new TurnContext(adapter, missingConversation);
-        try {
-            await conversationState.load(ctx);
-            assert(false, `shouldn't have completed.`);
-        } catch (err) {
-            assert(err, `error object missing.`);
-            assert.equal(err.message, 'missing activity.conversation.id');
-        }
+        assert.throws(() => conversationState.load(ctx), Error('missing activity.conversation.id'));
     });
 
     it(`should throw NO_KEY error if getStorageKey() returns falsey value.`, async function () {
         conversationState.getStorageKey = (turnContext) => undefined;
-        try {
-            await conversationState.load(context, true);
-        } catch (err) {
-            assert(
-                err.message === 'ConversationState: overridden getStorageKey method did not return a key.',
-                `unexpected Error.message received: ${err.message}`
-            );
-            return;
-        }
-        assert(false, `should have thrown an error.`);
+        await assert.rejects(
+            conversationState.load(context, true),
+            Error('ConversationState: overridden getStorageKey method did not return a key.')
+        );
     });
 });

@@ -31,39 +31,27 @@ describe(`UserState`, function () {
         assert(items[key].test === 'foo', `Missing test value in stored state.`);
     });
 
-    it(`should reject with error if channelId missing.`, async function () {
+    it(`should reject with error if channelId missing.`, function () {
         const ctx = new TurnContext(adapter, missingChannelId);
-        try {
-            await userState.load(ctx);
-            assert(false, `shouldn't have completed.`);
-        } catch (err) {
-            assert(err, `error object missing.`);
-            assert.equal(err.message, 'missing activity.channelId');
-        }
+        assert.throws(
+            () => userState.load(ctx),
+            Error('missing activity.channelId')
+        );
     });
 
-    it(`should reject with error if from missing.`, async function () {
+    it(`should reject with error if from missing.`, function () {
         const ctx = new TurnContext(adapter, missingFrom);
-        try {
-            await userState.load(ctx);
-            assert(false, `shouldn't have completed.`);
-        } catch (err) {
-            assert(err, `error object missing.`);
-            assert.equal(err.message, 'missing activity.from.id');
-        }
+        assert.throws(
+            () => userState.load(ctx),
+            Error('missing activity.from.id')
+        );
     });
 
     it(`should throw NO_KEY error if getStorageKey() returns falsey value.`, async function () {
         userState.getStorageKey = (turnContext) => undefined;
-        try {
-            await userState.load(context, true);
-        } catch (err) {
-            assert(
-                err.message === 'UserState: overridden getStorageKey method did not return a key.',
-                `unexpected Error.message received: ${err.message}`
-            );
-            return;
-        }
-        assert(false, `should have thrown an error.`);
+        await assert.rejects(
+            userState.load(context, true),
+            Error('UserState: overridden getStorageKey method did not return a key.')
+        );
     });
 });

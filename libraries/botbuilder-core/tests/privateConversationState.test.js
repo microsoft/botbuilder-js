@@ -48,48 +48,33 @@ describe(`PrivateConversationState`, function () {
 
     it(`should reject with error if channelId missing.`, async function () {
         const ctx = new TurnContext(adapter, missingChannelId);
-        try {
-            await privateConversationState.load(ctx);
-            assert(false, `shouldn't have completed.`);
-        } catch (err) {
-            assert(err, `error object missing.`);
-            assert.equal(err.message, 'missing activity.channelId');
-        }
+        assert.throws(
+            () => privateConversationState.load(ctx),
+            Error('missing activity.channelId')
+        );
     });
 
     it(`should reject with error if conversation missing.`, async function () {
         const ctx = new TurnContext(adapter, missingConversation);
-        try {
-            await privateConversationState.load(ctx);
-            assert(false, `shouldn't have completed.`);
-        } catch (err) {
-            assert(err, `error object missing.`);
-            assert.equal(err.message, 'missing activity.conversation.id');
-        }
+        assert.throws(
+            () => privateConversationState.load(ctx),
+            Error('missing activity.conversation.id')
+        );
     });
 
     it(`should reject with error if from missing.`, async function () {
         const ctx = new TurnContext(adapter, missingFrom);
-        try {
-            await privateConversationState.load(ctx);
-            assert(false, `shouldn't have completed.`);
-        } catch (err) {
-            assert(err, `error object missing.`);
-            assert.equal(err.message, 'missing activity.from.id');
-        }
+        assert.throws(
+            () => privateConversationState.load(ctx),
+            Error('missing activity.from.id')
+        );
     });
 
     it(`should throw NO_KEY error if getStorageKey() returns falsey value.`, async function () {
         privateConversationState.getStorageKey = (turnContext) => undefined;
-        try {
-            await privateConversationState.load(context, true);
-        } catch (err) {
-            assert(
-                err.message === 'PrivateConversationState: overridden getStorageKey method did not return a key.',
-                `unexpected Error.message received: ${err.message}`
-            );
-            return;
-        }
-        assert(false, `should have thrown an error.`);
+        await assert.rejects(
+            privateConversationState.load(context, true),
+            Error('PrivateConversationState: overridden getStorageKey method did not return a key.')
+        );
     });
 });

@@ -88,12 +88,10 @@ describe(`AutoSaveStateMiddleware`, function () {
     });
 
     it(`should throw exception if invalid plugin passed in.`, function () {
-        try {
-            const set = new AutoSaveStateMiddleware(fooState, { read: () => {} });
-            assert.fail('bogus plugin added to set.');
-        } catch (err) {
-            assert.strictEqual(err.message, "BotStateSet: a object was added that isn't an instance of BotState.");
-        }
+        assert.throws(
+            () => new AutoSaveStateMiddleware(fooState, { read: () => {} }),
+            Error("BotStateSet: a object was added that isn't an instance of BotState.")
+        );
     });
 
     it(`should not add any BotState on construction if none are passed in.`, async function () {

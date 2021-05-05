@@ -32,15 +32,10 @@ describe('DialogSet', function () {
 
     it('should throw an error if DialogSet.dialogState is falsey.', async function () {
         const dialogs = new DialogSet();
-        try {
-            await dialogs.createContext({ type: 'message', text: 'hi' });
-        } catch (err) {
-            assert(
-                err.message ===
-                    'DialogSet.createContext(): the dialog set was not bound to a stateProperty when constructed.',
-                `unexpected error thrown: ${err.message}`
-            );
-        }
+        await assert.rejects(
+            dialogs.createContext({ type: 'message', text: 'hi' }),
+            Error('DialogSet.createContext(): the dialog set was not bound to a stateProperty when constructed.')
+        );
     });
 
     it('should add fluent dialogs to the dialog set.', function () {

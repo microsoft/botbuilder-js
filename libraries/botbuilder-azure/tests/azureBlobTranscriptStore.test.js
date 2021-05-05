@@ -104,111 +104,73 @@ describe('The AzureBlobTranscriptStore', () => {
 
     describe('should throw when', () => {
         it('is constructed with null settings', () => {
-            try {
-                new AzureBlobTranscriptStore(null);
-                assert.fail('Expected to throw but did not');
-            } catch (e) {
-                assert.ok(
-                    e.message === 'The settings parameter is required.',
-                    `The error was: ${e.message}, which was not expected`
-                );
-            }
+            assert.throws(
+                () => new AzureBlobTranscriptStore(null),
+                Error('The settings parameter is required.')
+            );
         });
 
         it('it is constructed with no container name', () => {
-            try {
-                new AzureBlobTranscriptStore({});
-                assert.fail('Expected to throw but did not');
-            } catch (e) {
-                assert.ok(
-                    e.message === 'The containerName is required.',
-                    `The error was: ${e.message}, which was not expected`
-                );
-            }
+            assert.throws(
+                () => new AzureBlobTranscriptStore({}),
+                Error('The containerName is required.')
+            );
         });
 
         it('it is constructed with an invalid container name', () => {
-            try {
-                new AzureBlobTranscriptStore({ containerName: '$%^$@' });
-                assert.fail('Expected to throw but did not');
-            } catch (e) {
-                assert.ok(
-                    e.message === 'Invalid container name.',
-                    `The error was: ${e.message}, which was not expected`
-                );
-            }
+            assert.throws(
+                () => new AzureBlobTranscriptStore({ containerName: '$%^$@' }),
+                Error('Invalid container name.')
+            );
         });
 
         it('it is constructed without the storageAccountOrConnectionString in the settings', () => {
-            try {
-                new AzureBlobTranscriptStore({ ...getSettings(), storageAccountOrConnectionString: '' });
-                assert.fail('Expected to throw but did not');
-            } catch (e) {
-                assert.ok(
-                    e.message === 'The storageAccountOrConnectionString parameter is required.',
-                    `The error was: ${e.message}, which was not expected`
-                );
-            }
+            assert.throws(
+                () => new AzureBlobTranscriptStore({ ...getSettings(), storageAccountOrConnectionString: '' }),
+                Error('The storageAccountOrConnectionString parameter is required.')
+            );
         });
 
         it('no activity is passed to the "logActivity" function', async () => {
-            try {
-                await storage.logActivity(null);
-                assert.fail('logActivity did not throw when a null activity was passed in');
-            } catch (e) {
-                assert.ok(e.message === 'Missing activity.', `The error was: ${e.message}, which was not expected`);
-            }
+            await assert.rejects(
+                storage.logActivity(null),
+                Error('Missing activity.')
+            );
         });
 
         it('no channelId is passed to the "getTranscriptActivities" function', async () => {
-            try {
-                await storage.getTranscriptActivities(null, '123456');
-                assert.fail('getTranscriptActivities did not throw when a null channelId was passed in');
-            } catch (e) {
-                assert.ok(e.message === 'Missing channelId', `The error was: ${e.message}, which was not expected`);
-            }
+            await assert.rejects(
+                storage.getTranscriptActivities(null, '123456'),
+                Error('Missing channelId')
+            );
         });
 
         it('no conversationId is passed to the "getTranscriptActivities" function', async () => {
-            try {
-                await storage.getTranscriptActivities({});
-                assert.fail('getTranscriptActivities did not throw when a null conversationId was passed in');
-            } catch (e) {
-                assert.ok(
-                    e.message === 'Missing conversationId',
-                    `The error was: ${e.message}, which was not expected`
-                );
-            }
+            await assert.rejects(
+                storage.getTranscriptActivities({}),
+                Error('Missing conversationId')
+            );
         });
 
         it('no channelId is passed to the "listTranscripts" function', async () => {
-            try {
-                await storage.listTranscripts();
-                assert.fail('listTranscripts did not throw when a null channelId was passed in');
-            } catch (e) {
-                assert.ok(e.message === 'Missing channelId', `The error was: ${e.message}, which was not expected`);
-            }
+            await assert.rejects(
+                storage.listTranscripts(),
+                Error('Missing channelId')
+            );
         });
 
         it('no channelId is passed to the "deleteTranscript" function', async () => {
-            try {
-                await storage.deleteTranscript();
-                assert.fail('deleteTranscript did not throw when a null channelId was passed in');
-            } catch (e) {
-                assert.ok(e.message === 'Missing channelId', `The error was: ${e.message}, which was not expected`);
-            }
+            await assert.rejects(
+                storage.deleteTranscript(),
+                Error('Missing channelId')
+            );
         });
 
         it('no conversationId is passed to the "deleteTranscript" function', async () => {
-            try {
-                await storage.deleteTranscript({});
-                assert.fail('deleteTranscript did not throw when a null conversationId was passed in');
-            } catch (e) {
-                assert.ok(
-                    e.message === 'Missing conversationId',
-                    `The error was: ${e.message}, which was not expected`
-                );
-            }
+            await assert.rejects(
+                storage.deleteTranscript({}),
+                Error('Missing conversationId')
+            );
         });
     });
 

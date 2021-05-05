@@ -458,14 +458,10 @@ describe('OAuthPrompt', function () {
                     },
                 });
 
-                try {
-                    await OAuthPrompt.sendOAuthCard({}, context);
-                } catch (e) {
-                    assert.strictEqual(
-                        e.message,
-                        `OAuthPrompt.sendOAuthCard(): not supported for the current adapter.`
-                    );
-                }
+                await assert.rejects(
+                    OAuthPrompt.sendOAuthCard({}, context),
+                    Error('OAuthPrompt.sendOAuthCard(): not supported for the current adapter.')
+                );
             });
 
             it('should send a well-constructed OAuthCard for channels with OAuthCard support', async () => {
@@ -683,17 +679,18 @@ describe('OAuthPrompt', function () {
 
                 setActiveDialog(dc, oAuthPrompt);
 
-                try {
-                    await oAuthPrompt.recognizeToken(dc);
-                    throw new Error('recognizeToken call should have failed');
-                } catch (err) {
-                    ok(isTokenResponseEventSpy.calledOnce, 'isTokenResponseEventSpy called more than once');
-                    ok(err instanceof TypeError, `unexpected error: ${err.toString()}`);
-                    strictEqual(
-                        err.message,
-                        'OAuthPrompt: ConnectorClientBuilder interface not implemented by the current adapter'
-                    );
-                }
+                await assert.rejects(
+                    oAuthPrompt.recognizeToken(dc),
+                    (err) => {
+                        ok(isTokenResponseEventSpy.calledOnce, 'isTokenResponseEventSpy called more than once');
+                        ok(err instanceof TypeError, `unexpected error: ${err.toString()}`);
+                        strictEqual(
+                            err.message,
+                            'OAuthPrompt: ConnectorClientBuilder interface not implemented by the current adapter'
+                        );
+                        return true;
+                    }
+                );
             });
         });
     });
