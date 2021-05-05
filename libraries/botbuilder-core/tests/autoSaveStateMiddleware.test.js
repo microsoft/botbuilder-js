@@ -14,7 +14,7 @@ class BotStateMock {
         assert(context, `BotStateMock.load() not passed context.`);
         if (this.assertForce) assert(force, `BotStateMock.load(): force not set.`);
         this.readCalled = true;
-        return new Promise((resolve, reject) => {
+        return new Promise((resolve, _reject) => {
             setTimeout(() => resolve(this.state), Math.random() * 50);
         });
     }
@@ -23,7 +23,7 @@ class BotStateMock {
         assert(context, `BotStateMock.saveChanges() not passed context.`);
         if (this.assertForce) assert(force, `BotStateMock.saveChanges(): force not set.`);
         this.writeCalled = true;
-        return new Promise((resolve, reject) => {
+        return new Promise((resolve, _reject) => {
             setTimeout(() => resolve(), Math.random() * 50);
         });
     }

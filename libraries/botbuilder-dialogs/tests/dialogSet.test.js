@@ -132,7 +132,7 @@ describe('DialogSet', function () {
         assert(hash != dialogs.getVersion(), `hash not updated.`);
     });
 
-    it('Cyclical dialog structures', () => {
+    it('Cyclical dialog structures', function () {
         const component1 = new ComponentDialog('component1');
         const component2 = new ComponentDialog('component2');
 

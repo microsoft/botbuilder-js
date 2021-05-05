@@ -3,7 +3,7 @@ const { MemoryTranscriptStore } = require('../');
 const assert = require('assert');
 const base = require('./transcriptStoreBaseTest');
 
-const testStorage = function() {
+const testStorage = function () {
     const storage = new MemoryTranscriptStore();
 
     it('bad args', async function () {
@@ -36,7 +36,7 @@ const testStorage = function() {
     });
 };
 
-describe('MemoryTranscriptStore', function() {
+describe('MemoryTranscriptStore', function () {
     this.timeout(10000);
     testStorage();
 });

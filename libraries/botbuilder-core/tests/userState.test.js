@@ -33,18 +33,12 @@ describe(`UserState`, function () {
 
     it(`should reject with error if channelId missing.`, function () {
         const ctx = new TurnContext(adapter, missingChannelId);
-        assert.throws(
-            () => userState.load(ctx),
-            Error('missing activity.channelId')
-        );
+        assert.throws(() => userState.load(ctx), Error('missing activity.channelId'));
     });
 
     it(`should reject with error if from missing.`, function () {
         const ctx = new TurnContext(adapter, missingFrom);
-        assert.throws(
-            () => userState.load(ctx),
-            Error('missing activity.from.id')
-        );
+        assert.throws(() => userState.load(ctx), Error('missing activity.from.id'));
     });
 
     it(`should throw NO_KEY error if getStorageKey() returns falsey value.`, async function () {

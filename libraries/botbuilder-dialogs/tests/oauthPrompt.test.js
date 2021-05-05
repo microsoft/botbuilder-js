@@ -14,15 +14,15 @@ const {
 } = require('botbuilder-core');
 const { spy } = require('sinon');
 const { ok, strictEqual } = require('assert');
-const { OAuthPrompt, DialogSet, DialogTurnStatus, ListStyle } = require('../');
+const { OAuthPrompt, DialogSet, DialogTurnStatus } = require('../');
 const { AuthenticationConstants } = require('botframework-connector');
 
 describe('OAuthPrompt', function () {
     this.timeout(60000);
 
     it('should call OAuthPrompt', async function () {
-        var connectionName = 'myConnection';
-        var token = 'abc123';
+        const connectionName = 'myConnection';
+        const token = 'abc123';
 
         // Initialize TestAdapter.
         const adapter = new TestAdapter(async (turnContext) => {
@@ -66,9 +66,9 @@ describe('OAuthPrompt', function () {
                 // send a mock EventActivity back to the bot with the token
                 adapter.addUserToken(connectionName, activity.channelId, activity.recipient.id, token);
 
-                var eventActivity = createReply(activity);
+                const eventActivity = createReply(activity);
                 eventActivity.type = ActivityTypes.Event;
-                var from = eventActivity.from;
+                const from = eventActivity.from;
                 eventActivity.from = eventActivity.recipient;
                 eventActivity.recipient = from;
                 eventActivity.name = 'tokens/response';
@@ -84,9 +84,9 @@ describe('OAuthPrompt', function () {
     });
 
     it('should call OAuthPrompt with code', async function () {
-        var connectionName = 'myConnection';
-        var token = 'abc123';
-        var magicCode = '888999';
+        const connectionName = 'myConnection';
+        const token = 'abc123';
+        const magicCode = '888999';
 
         // Initialize TestAdapter.
         const adapter = new TestAdapter(async (turnContext) => {
@@ -173,15 +173,9 @@ describe('OAuthPrompt', function () {
     });
 
     it('should end OAuthPrompt on invalid message when endOnInvalidMessage', async function () {
-        const message = {
-            activityId: '1234',
-            type: ActivityTypes.Event,
-            name: 'custom_event_name',
-        };
-
-        var connectionName = 'myConnection';
-        var token = 'abc123';
-        var magicCode = '888999';
+        const connectionName = 'myConnection';
+        const token = 'abc123';
+        const magicCode = '888999';
         const exchangeToken = 'exch123';
 
         // Create new ConversationState with MemoryStorage
@@ -247,9 +241,9 @@ describe('OAuthPrompt', function () {
     });
 
     it('should see attemptCount increment', async function () {
-        var connectionName = 'myConnection';
-        var token = 'abc123';
-        var magicCode = '888999';
+        const connectionName = 'myConnection';
+        const token = 'abc123';
+        const magicCode = '888999';
 
         // Create new ConversationState with MemoryStorage
         const convoState = new ConversationState(new MemoryStorage());
@@ -335,8 +329,8 @@ describe('OAuthPrompt', function () {
     });
 
     it('should call OAuthPrompt for streaming connection', async function () {
-        var connectionName = 'myConnection';
-        var token = 'abc123';
+        const connectionName = 'myConnection';
+        const token = 'abc123';
 
         // Initialize TestAdapter.
         const adapter = new TestAdapter(async (turnContext) => {
@@ -397,9 +391,9 @@ describe('OAuthPrompt', function () {
                 // send a mock EventActivity back to the bot with the token
                 adapter.addUserToken(connectionName, activity.channelId, activity.recipient.id, token);
 
-                var eventActivity = createReply(activity);
+                const eventActivity = createReply(activity);
                 eventActivity.type = ActivityTypes.Event;
-                var from = eventActivity.from;
+                const from = eventActivity.from;
                 eventActivity.from = eventActivity.recipient;
                 eventActivity.recipient = from;
                 eventActivity.name = 'tokens/response';
@@ -414,8 +408,8 @@ describe('OAuthPrompt', function () {
             .startTest();
     });
 
-    describe('static methods', () => {
-        describe('sendOAuthCard()', () => {
+    describe('static methods', function () {
+        describe('sendOAuthCard()', function () {
             class SendActivityAdapter {
                 constructor(settings = {}) {
                     // Lazily and forcefully assign all properties and values to SendActivityAdapter instance.
@@ -449,7 +443,7 @@ describe('OAuthPrompt', function () {
                 }
             }
 
-            it(`should fail if adapter does not have 'getUserToken'`, async () => {
+            it(`should fail if adapter does not have 'getUserToken'`, async function () {
                 const fakeAdapter = {};
                 const context = new TurnContext(fakeAdapter, {
                     activity: {
@@ -464,7 +458,7 @@ describe('OAuthPrompt', function () {
                 );
             });
 
-            it('should send a well-constructed OAuthCard for channels with OAuthCard support', async () => {
+            it('should send a well-constructed OAuthCard for channels with OAuthCard support', async function () {
                 const connectionName = 'connection';
                 const title = 'myTitle';
                 const text = 'Sign in here';
@@ -507,7 +501,7 @@ describe('OAuthPrompt', function () {
                 await OAuthPrompt.sendOAuthCard({ connectionName, title, text }, context);
             });
 
-            it('should send a well-constructed OAuthCard for channels with OAuthCard support from a skill', async () => {
+            it('should send a well-constructed OAuthCard for channels with OAuthCard support from a skill', async function () {
                 const connectionName = 'connection';
                 const title = 'myTitle';
                 const text = 'Sign in here';
@@ -556,7 +550,7 @@ describe('OAuthPrompt', function () {
                 await OAuthPrompt.sendOAuthCard({ connectionName, title, text }, context);
             });
 
-            it('should send a well-constructed OAuthCard for a streaming connection for channels with OAuthCard support', async () => {
+            it('should send a well-constructed OAuthCard for a streaming connection for channels with OAuthCard support', async function () {
                 const connectionName = 'connection';
                 const title = 'myTitle';
                 const text = 'Sign in here';
@@ -594,7 +588,7 @@ describe('OAuthPrompt', function () {
                 await OAuthPrompt.sendOAuthCard({ connectionName, title, text }, context);
             });
 
-            it('should use the passed in activity as a base for the prompt', async () => {
+            it('should use the passed in activity as a base for the prompt', async function () {
                 const connectionName = 'connection';
                 const title = 'myTitle';
                 const text = 'Sign in here';
@@ -642,14 +636,14 @@ describe('OAuthPrompt', function () {
             });
         });
 
-        describe('recognizeToken()', () => {
-            it('should throw an error during a Token Response Event and adapter is missing "createConnectorClientWithIdentity"', async () => {
+        describe('recognizeToken()', function () {
+            it('should throw an error during a Token Response Event and adapter is missing "createConnectorClientWithIdentity"', async function () {
                 const oAuthPrompt = new OAuthPrompt('OAuthPrompt');
                 // Create spy for private instance method called during recognizeToken
                 const isTokenResponseEventSpy = spy(OAuthPrompt, 'isTokenResponseEvent');
                 isTokenResponseEventSpy.returnValues = [true];
 
-                const adapter = new TestAdapter(async (context) => {
+                const adapter = new TestAdapter(async (_context) => {
                     /* no-op */
                 });
                 const conversationState = new ConversationState(new MemoryStorage());
@@ -679,23 +673,20 @@ describe('OAuthPrompt', function () {
 
                 setActiveDialog(dc, oAuthPrompt);
 
-                await assert.rejects(
-                    oAuthPrompt.recognizeToken(dc),
-                    (err) => {
-                        ok(isTokenResponseEventSpy.calledOnce, 'isTokenResponseEventSpy called more than once');
-                        ok(err instanceof TypeError, `unexpected error: ${err.toString()}`);
-                        strictEqual(
-                            err.message,
-                            'OAuthPrompt: ConnectorClientBuilder interface not implemented by the current adapter'
-                        );
-                        return true;
-                    }
-                );
+                await assert.rejects(oAuthPrompt.recognizeToken(dc), (err) => {
+                    ok(isTokenResponseEventSpy.calledOnce, 'isTokenResponseEventSpy called more than once');
+                    ok(err instanceof TypeError, `unexpected error: ${err.toString()}`);
+                    strictEqual(
+                        err.message,
+                        'OAuthPrompt: ConnectorClientBuilder interface not implemented by the current adapter'
+                    );
+                    return true;
+                });
             });
         });
     });
 
-    describe('Test Adapter should be able to exchange tokens for uri and token', async function () {
+    describe('Test Adapter should be able to exchange tokens for uri and token', function () {
         let adapter;
         const connectionName = 'myConnection';
         const exchangeToken = 'exch123';
@@ -735,7 +726,7 @@ describe('OAuthPrompt', function () {
         });
     });
 
-    describe('OAuthPrompt should be able to exchange tokens', async function () {
+    describe('OAuthPrompt should be able to exchange tokens', function () {
         let adapter;
         const connectionName = 'myConnection';
         const exchangeToken = 'exch123';
@@ -911,8 +902,9 @@ function createReply(activity) {
 }
 
 class ClaimsIdentity {
-    /**
+    /**w
      * Each claim should be { type: 'type', value: 'value' }
+     *
      * @param {*} claims
      * @param {*} isAuthenticated
      */
@@ -942,9 +934,9 @@ async function testTimeout(
     tokenResponse = 'Failed',
     noTokenResponse = 'Ended'
 ) {
-    var connectionName = 'myConnection';
-    var token = 'abc123';
-    var magicCode = '888999';
+    const connectionName = 'myConnection';
+    const token = 'abc123';
+    const magicCode = '888999';
     const exchangeToken = 'exch123';
 
     // Create new ConversationState with MemoryStorage
