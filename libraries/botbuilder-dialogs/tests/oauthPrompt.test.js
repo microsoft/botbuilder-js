@@ -454,7 +454,7 @@ describe('OAuthPrompt', function () {
 
                 await assert.rejects(
                     OAuthPrompt.sendOAuthCard({}, context),
-                    Error('OAuthPrompt.sendOAuthCard(): not supported for the current adapter.')
+                    new Error('OAuthPrompt.sendOAuthCard(): not supported for the current adapter.')
                 );
             });
 

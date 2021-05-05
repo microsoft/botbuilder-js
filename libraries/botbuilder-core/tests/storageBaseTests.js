@@ -33,7 +33,7 @@ class StorageBaseTests {
         if (storage instanceof BlobStorage) {
             await assert.rejects(
                 async () => await storage.read(null),
-                Error('Please provide at least one key to read from storage.')
+                new Error('Please provide at least one key to read from storage.')
             );
         } else if (storage instanceof CosmosDbPartitionedStorage || storage instanceof MemoryStorage) {
             await assert.rejects(
@@ -53,7 +53,7 @@ class StorageBaseTests {
         if (storage instanceof BlobStorage) {
             await assert.rejects(
                 async () => await storage.write(null),
-                Error('Please provide a StoreItems with changes to persist.')
+                new Error('Please provide a StoreItems with changes to persist.')
             );
         } else if (storage instanceof CosmosDbPartitionedStorage || storage instanceof MemoryStorage) {
             await assert.rejects(

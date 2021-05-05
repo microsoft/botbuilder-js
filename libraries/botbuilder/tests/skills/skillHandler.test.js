@@ -198,7 +198,7 @@ describe('SkillHandler', function () {
 
                 await assert.rejects(
                     handler.processActivity({}, 'convId', 'replyId', {}),
-                    Error('skillConversationReference not found')
+                    new Error('skillConversationReference not found')
                 );
 
                 sandbox.verify();
@@ -209,7 +209,7 @@ describe('SkillHandler', function () {
 
                 await assert.rejects(
                     handler.processActivity({}, 'convId', 'replyId', {}),
-                    Error('conversationReference not found.')
+                    new Error('conversationReference not found.')
                 );
 
                 sandbox.verify();

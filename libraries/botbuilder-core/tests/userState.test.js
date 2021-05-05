@@ -45,7 +45,7 @@ describe(`UserState`, function () {
         userState.getStorageKey = (turnContext) => undefined;
         await assert.rejects(
             userState.load(context, true),
-            Error('UserState: overridden getStorageKey method did not return a key.')
+            new Error('UserState: overridden getStorageKey method did not return a key.')
         );
     });
 });

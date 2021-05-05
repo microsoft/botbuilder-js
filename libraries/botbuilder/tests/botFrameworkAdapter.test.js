@@ -407,7 +407,7 @@ describe('BotFrameworkAdapter', function () {
             const adapter = new AdapterUnderTest({ appId: 'bogusApp', appPassword: 'bogusPassword' });
             await assert.rejects(
                 adapter.testAuthenticateRequest(req, ''),
-                Error('Unauthorized Access. Request is not authorized')
+                new Error('Unauthorized Access. Request is not authorized')
             );
         });
     });
@@ -528,7 +528,7 @@ describe('BotFrameworkAdapter', function () {
             const adapter = new BotFrameworkAdapter();
             await assert.rejects(
                 adapter.createConnectorClientWithIdentity('https://serviceurl.com'),
-                Error('BotFrameworkAdapter.createConnectorClientWithIdentity(): invalid identity parameter.')
+                new Error('BotFrameworkAdapter.createConnectorClientWithIdentity(): invalid identity parameter.')
             );
         });
 
@@ -1402,7 +1402,7 @@ describe('BotFrameworkAdapter', function () {
         const adapter = new AdapterUnderTest();
         await assert.rejects(
             adapter.deleteConversationMember({ activity: {} }),
-            Error('BotFrameworkAdapter.deleteConversationMember(): missing serviceUrl')
+            new Error('BotFrameworkAdapter.deleteConversationMember(): missing serviceUrl')
         );
     });
 
@@ -1410,7 +1410,7 @@ describe('BotFrameworkAdapter', function () {
         const adapter = new AdapterUnderTest();
         await assert.rejects(
             adapter.deleteConversationMember({ activity: { serviceUrl: 'https://test.com' } }),
-            Error('BotFrameworkAdapter.deleteConversationMember(): missing conversation or conversation.id')
+            new Error('BotFrameworkAdapter.deleteConversationMember(): missing conversation or conversation.id')
         );
     });
 
@@ -1418,7 +1418,7 @@ describe('BotFrameworkAdapter', function () {
         const adapter = new AdapterUnderTest();
         await assert.rejects(
             adapter.deleteConversationMember({ activity: { serviceUrl: 'https://test.com', conversation: {} } }),
-            Error('BotFrameworkAdapter.deleteConversationMember(): missing conversation or conversation.id')
+            new Error('BotFrameworkAdapter.deleteConversationMember(): missing conversation or conversation.id')
         );
     });
 
@@ -1442,7 +1442,7 @@ describe('BotFrameworkAdapter', function () {
         const adapter = new AdapterUnderTest();
         await assert.rejects(
             adapter.getActivityMembers({ activity: {} }),
-            Error('BotFrameworkAdapter.getActivityMembers(): missing serviceUrl')
+            new Error('BotFrameworkAdapter.getActivityMembers(): missing serviceUrl')
         );
     });
 
@@ -1450,7 +1450,7 @@ describe('BotFrameworkAdapter', function () {
         const adapter = new AdapterUnderTest();
         await assert.rejects(
             adapter.getActivityMembers({ activity: { serviceUrl: 'https://test.com' } }),
-            Error('BotFrameworkAdapter.getActivityMembers(): missing conversation or conversation.id')
+            new Error('BotFrameworkAdapter.getActivityMembers(): missing conversation or conversation.id')
         );
     });
 
@@ -1458,7 +1458,7 @@ describe('BotFrameworkAdapter', function () {
         const adapter = new AdapterUnderTest();
         await assert.rejects(
             adapter.getActivityMembers({ activity: { serviceUrl: 'https://test.com', conversation: {} } }),
-            Error('BotFrameworkAdapter.getActivityMembers(): missing conversation or conversation.id')
+            new Error('BotFrameworkAdapter.getActivityMembers(): missing conversation or conversation.id')
         );
     });
 
@@ -1468,7 +1468,7 @@ describe('BotFrameworkAdapter', function () {
             adapter.getActivityMembers({
                 activity: { serviceUrl: 'https://test.com', conversation: { id: '1' } },
             }),
-            Error('BotFrameworkAdapter.getActivityMembers(): missing both activityId and context.activity.id')
+            new Error('BotFrameworkAdapter.getActivityMembers(): missing both activityId and context.activity.id')
         );
     });
 
@@ -1493,7 +1493,7 @@ describe('BotFrameworkAdapter', function () {
         const adapter = new AdapterUnderTest();
         await assert.rejects(
             adapter.getConversationMembers({ activity: {} }),
-            Error('BotFrameworkAdapter.getConversationMembers(): missing serviceUrl')
+            new Error('BotFrameworkAdapter.getConversationMembers(): missing serviceUrl')
         );
     });
 
@@ -1501,7 +1501,7 @@ describe('BotFrameworkAdapter', function () {
         const adapter = new AdapterUnderTest();
         await assert.rejects(
             adapter.getConversationMembers({ activity: { serviceUrl: 'https://test.com' } }),
-            Error('BotFrameworkAdapter.getConversationMembers(): missing conversation or conversation.id')
+            new Error('BotFrameworkAdapter.getConversationMembers(): missing conversation or conversation.id')
         );
     });
 
@@ -1509,7 +1509,7 @@ describe('BotFrameworkAdapter', function () {
         const adapter = new AdapterUnderTest();
         await assert.rejects(
             adapter.getConversationMembers({ activity: { serviceUrl: 'https://test.com', conversation: {} } }),
-            Error('BotFrameworkAdapter.getConversationMembers(): missing conversation or conversation.id')
+            new Error('BotFrameworkAdapter.getConversationMembers(): missing conversation or conversation.id')
         );
     });
 
@@ -1532,7 +1532,7 @@ describe('BotFrameworkAdapter', function () {
         const adapter = new AdapterUnderTest();
         await assert.rejects(
             adapter.getUserToken({ activity: {}, turnState: new Map() }),
-            Error('BotFrameworkAdapter.getUserToken(): missing from or from.id')
+            new Error('BotFrameworkAdapter.getUserToken(): missing from or from.id')
         );
     });
 
@@ -1540,7 +1540,7 @@ describe('BotFrameworkAdapter', function () {
         const adapter = new AdapterUnderTest();
         await assert.rejects(
             adapter.getUserToken({ activity: { from: {} }, turnState: new Map() }),
-            Error('BotFrameworkAdapter.getUserToken(): missing from or from.id')
+            new Error('BotFrameworkAdapter.getUserToken(): missing from or from.id')
         );
     });
 
@@ -1548,7 +1548,7 @@ describe('BotFrameworkAdapter', function () {
         const adapter = new AdapterUnderTest();
         await assert.rejects(
             adapter.getUserToken({ activity: { from: { id: 'some id' } }, turnState: new Map() }),
-            Error('getUserToken() requires a connectionName but none was provided.')
+            new Error('getUserToken() requires a connectionName but none was provided.')
         );
     });
 
@@ -1579,7 +1579,7 @@ describe('BotFrameworkAdapter', function () {
         const adapter = new AdapterUnderTest();
         await assert.rejects(
             adapter.signOutUser({ activity: {}, turnState: new Map() }),
-            Error('BotFrameworkAdapter.signOutUser(): missing from or from.id')
+            new Error('BotFrameworkAdapter.signOutUser(): missing from or from.id')
         );
     });
 
@@ -1587,7 +1587,7 @@ describe('BotFrameworkAdapter', function () {
         const adapter = new AdapterUnderTest();
         await assert.rejects(
             adapter.signOutUser({ activity: { from: {} }, turnState: new Map() }),
-            Error('BotFrameworkAdapter.signOutUser(): missing from or from.id')
+            new Error('BotFrameworkAdapter.signOutUser(): missing from or from.id')
         );
     });
 
@@ -1608,7 +1608,7 @@ describe('BotFrameworkAdapter', function () {
         const adapter = new AdapterUnderTest();
         await assert.rejects(
             adapter.getAadTokens({ activity: {}, turnState: new Map() }),
-            Error('BotFrameworkAdapter.getAadTokens(): missing from or from.id')
+            new Error('BotFrameworkAdapter.getAadTokens(): missing from or from.id')
         );
     });
 
@@ -1616,7 +1616,7 @@ describe('BotFrameworkAdapter', function () {
         const adapter = new AdapterUnderTest();
         await assert.rejects(
             adapter.getAadTokens({ activity: { from: {} }, turnState: new Map() }),
-            Error('BotFrameworkAdapter.getAadTokens(): missing from or from.id')
+            new Error('BotFrameworkAdapter.getAadTokens(): missing from or from.id')
         );
     });
 
@@ -1726,7 +1726,7 @@ describe('BotFrameworkAdapter', function () {
             const { adapter, context } = getMockedAdapter();
             await assert.rejects(
                 adapter.getSignInResource(context),
-                Error(`getUserToken() requires a connectionName but none was provided.`)
+                new Error(`getUserToken() requires a connectionName but none was provided.`)
             );
         });
 
@@ -1737,7 +1737,7 @@ describe('BotFrameworkAdapter', function () {
             const { adapter, context } = getMockedAdapter(activity);
             await assert.rejects(
                 adapter.getSignInResource(context, 'TestConnectionName'),
-                Error(`BotFrameworkAdapter.getSignInResource(): missing from or from.id`)
+                new Error(`BotFrameworkAdapter.getSignInResource(): missing from or from.id`)
             );
         });
 
@@ -1748,7 +1748,7 @@ describe('BotFrameworkAdapter', function () {
             const { adapter, context } = getMockedAdapter(activity);
             await assert.rejects(
                 adapter.getSignInResource(context, 'TestConnectionName'),
-                Error(`BotFrameworkAdapter.getSignInResource(): missing from or from.id`)
+                new Error(`BotFrameworkAdapter.getSignInResource(): missing from or from.id`)
             );
         });
 
@@ -1756,7 +1756,7 @@ describe('BotFrameworkAdapter', function () {
             const { adapter, context } = getMockedAdapter();
             await assert.rejects(
                 adapter.getSignInResource(context, 'TestConnectionName', 'OtherUserId'),
-                Error(
+                new Error(
                     'BotFrameworkAdapter.getSiginInResource(): cannot get signin resource for a user that is different from the conversation'
                 )
             );
@@ -1786,7 +1786,7 @@ describe('BotFrameworkAdapter', function () {
             const { adapter, context } = getMockedAdapter();
             await assert.rejects(
                 adapter.exchangeToken(context),
-                Error(`exchangeToken() requires a connectionName but none was provided.`)
+                new Error(`exchangeToken() requires a connectionName but none was provided.`)
             );
         });
 
@@ -1794,7 +1794,7 @@ describe('BotFrameworkAdapter', function () {
             const { adapter, context } = getMockedAdapter();
             await assert.rejects(
                 adapter.exchangeToken(context, 'TestConnectionName'),
-                Error(`exchangeToken() requires an userId but none was provided.`)
+                new Error(`exchangeToken() requires an userId but none was provided.`)
             );
         });
 
@@ -1802,7 +1802,7 @@ describe('BotFrameworkAdapter', function () {
             const { adapter, context } = getMockedAdapter();
             await assert.rejects(
                 adapter.exchangeToken(context, 'TestConnectionName', 'TestUser', {}),
-                Error(
+                new Error(
                     `BotFrameworkAdapter.exchangeToken(): Either a Token or Uri property is required on the TokenExchangeRequest`
                 )
             );
@@ -1852,7 +1852,7 @@ describe('BotFrameworkAdapter', function () {
             const adapter = new AdapterUnderTest();
             await assert.rejects(
                 adapter.getTokenStatus({ activity: {}, turnState: new Map() }),
-                Error('BotFrameworkAdapter.getTokenStatus(): missing from or from.id')
+                new Error('BotFrameworkAdapter.getTokenStatus(): missing from or from.id')
             );
         });
 
@@ -1860,7 +1860,7 @@ describe('BotFrameworkAdapter', function () {
             const adapter = new AdapterUnderTest();
             await assert.rejects(
                 adapter.getTokenStatus({ activity: { from: {} }, turnState: new Map() }),
-                Error('BotFrameworkAdapter.getTokenStatus(): missing from or from.id')
+                new Error('BotFrameworkAdapter.getTokenStatus(): missing from or from.id')
             );
         });
     });
@@ -2057,7 +2057,7 @@ describe('BotFrameworkAdapter', function () {
 
             await assert.rejects(
                 adapter.processActivityDirect(createActivity(), () => null),
-                Error('BotFrameworkAdapter.processActivityDirect(): ERROR\n test-error')
+                new Error('BotFrameworkAdapter.processActivityDirect(): ERROR\n test-error')
             );
 
             sandbox.verify();
@@ -2069,7 +2069,7 @@ describe('BotFrameworkAdapter', function () {
 
             await assert.rejects(
                 adapter.processActivityDirect(createActivity(), 'callbackLogic'),
-                Error('BotFrameworkAdapter.processActivityDirect(): ERROR')
+                new Error('BotFrameworkAdapter.processActivityDirect(): ERROR')
             );
 
             sandbox.verify();

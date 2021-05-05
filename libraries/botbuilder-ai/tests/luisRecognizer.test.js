@@ -492,7 +492,7 @@ describe('LuisRecognizer', function () {
         const context = new TestContext({ text: 'Hello world!' });
         await assert.rejects(
             recognizer.recognize(context),
-            Error(
+            new Error(
                 "Response 400: The request's body or parameters are incorrect, meaning they are missing, malformed, or too large."
             )
         );
@@ -504,7 +504,7 @@ describe('LuisRecognizer', function () {
         const context = new TestContext({ text: 'Hello world!' });
         await assert.rejects(
             recognizer.recognize(context),
-            Error("Response 401: The key used is invalid, malformed, empty, or doesn't match the region.")
+            new Error("Response 401: The key used is invalid, malformed, empty, or doesn't match the region.")
         );
     });
 
@@ -514,7 +514,7 @@ describe('LuisRecognizer', function () {
         const context = new TestContext({ text: 'Hello world!' });
         await assert.rejects(
             recognizer.recognize(context),
-            Error('Response 403: Total monthly key quota limit exceeded.')
+            new Error('Response 403: Total monthly key quota limit exceeded.')
         );
     });
 
@@ -524,7 +524,7 @@ describe('LuisRecognizer', function () {
         const context = new TestContext({ text: 'Hello world!' });
         await assert.rejects(
             recognizer.recognize(context),
-            Error('Response 409: Application loading in progress, please try again.')
+            new Error('Response 409: Application loading in progress, please try again.')
         );
     });
 
@@ -534,7 +534,7 @@ describe('LuisRecognizer', function () {
         const context = new TestContext({ text: 'Hello world!' });
         await assert.rejects(
             recognizer.recognize(context),
-            Error('Response 410: Please retrain and republish your application.')
+            new Error('Response 410: Please retrain and republish your application.')
         );
     });
 
@@ -544,7 +544,7 @@ describe('LuisRecognizer', function () {
         const context = new TestContext({ text: 'Hello world!' });
         await assert.rejects(
             recognizer.recognize(context),
-            Error('Response 414: The query is too long. Please reduce the query length to 500 or less characters.')
+            new Error('Response 414: The query is too long. Please reduce the query length to 500 or less characters.')
         );
     });
 
@@ -562,7 +562,7 @@ describe('LuisRecognizer', function () {
         const context = new TestContext({ text: 'Hello world!' });
         await assert.rejects(
             recognizer.recognize(context),
-            Error(
+            new Error(
                 `Response ${statusCode}: Unexpected status code received. Please verify that your LUIS application is properly setup.`
             )
         );
@@ -606,7 +606,7 @@ describe('LuisRecognizer', function () {
         const expectedSubscriptionKey = undefined;
         assert.throws(
             () => new LuisRecognizer(endpointWithNoSubscriptionKey),
-            Error(
+            new Error(
                 `Invalid \`endpointKey\` value detected: ${expectedSubscriptionKey}\nPlease make sure your endpointKey is a valid LUIS Endpoint Key, e.g. "048ec46dc58e495482b0c447cfdbd291".`
             )
         );
@@ -618,7 +618,7 @@ describe('LuisRecognizer', function () {
             'https://westus.api.cognitive.microsoft.com?verbose=true&timezoneOffset=-360&subscription-key=048ec46dc58e495482b0c447cfdbd291&q=';
         assert.throws(
             () => new LuisRecognizer(endpointWithNoAppId),
-            Error(
+            new Error(
                 `Invalid \`applicationId\` value detected: ${expectedApplicationId}\nPlease make sure your applicationId is a valid LUIS Application Id, e.g. "b31aeaf3-3511-495b-a07f-571fc873214b".`
             )
         );
@@ -627,7 +627,7 @@ describe('LuisRecognizer', function () {
     maybeIt('should throw an error when parsing non-URL value.', () => {
         assert.throws(
             () => new LuisRecognizer('this.is.not.a.url'),
-            Error(
+            new Error(
                 `Invalid \`applicationId\` value detected: ${expectedApplicationId}\nPlease make sure your applicationId is a valid LUIS Application Id, e.g. "b31aeaf3-3511-495b-a07f-571fc873214b".`
             )
         );

@@ -34,7 +34,7 @@ describe('DialogSet', function () {
         const dialogs = new DialogSet();
         await assert.rejects(
             dialogs.createContext({ type: 'message', text: 'hi' }),
-            Error('DialogSet.createContext(): the dialog set was not bound to a stateProperty when constructed.')
+            new Error('DialogSet.createContext(): the dialog set was not bound to a stateProperty when constructed.')
         );
     });
 

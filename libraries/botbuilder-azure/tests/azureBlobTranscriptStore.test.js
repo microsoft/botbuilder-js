@@ -114,14 +114,14 @@ describe('The AzureBlobTranscriptStore', function () {
         it('it is constructed with an invalid container name', function () {
             assert.throws(
                 () => new AzureBlobTranscriptStore({ containerName: '$%^$@' }),
-                Error('Invalid container name.')
+                new Error('Invalid container name.')
             );
         });
 
         it('it is constructed without the storageAccountOrConnectionString in the settings', function () {
             assert.throws(
                 () => new AzureBlobTranscriptStore({ ...getSettings(), storageAccountOrConnectionString: '' }),
-                Error('The storageAccountOrConnectionString parameter is required.')
+                new Error('The storageAccountOrConnectionString parameter is required.')
             );
         });
 
