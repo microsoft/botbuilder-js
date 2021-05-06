@@ -32,15 +32,10 @@ describe('DialogSet', function () {
 
     it('should throw an error if DialogSet.dialogState is falsey.', async function () {
         const dialogs = new DialogSet();
-        try {
-            await dialogs.createContext({ type: 'message', text: 'hi' });
-        } catch (err) {
-            assert(
-                err.message ===
-                    'DialogSet.createContext(): the dialog set was not bound to a stateProperty when constructed.',
-                `unexpected error thrown: ${err.message}`
-            );
-        }
+        await assert.rejects(
+            dialogs.createContext({ type: 'message', text: 'hi' }),
+            new Error('DialogSet.createContext(): the dialog set was not bound to a stateProperty when constructed.')
+        );
     });
 
     it('should add fluent dialogs to the dialog set.', function () {
@@ -137,7 +132,7 @@ describe('DialogSet', function () {
         assert(hash != dialogs.getVersion(), `hash not updated.`);
     });
 
-    it('Cyclical dialog structures', () => {
+    it('Cyclical dialog structures', function () {
         const component1 = new ComponentDialog('component1');
         const component2 = new ComponentDialog('component2');
 

@@ -42,34 +42,19 @@ describe('ActivityHandlerBase', function () {
     it('should throw an error if context is not passed in', async function () {
         const bot = new ActivityHandlerBase();
 
-        try {
-            await bot.run();
-            assert.fail('Should have failed');
-        } catch (error) {
-            assert.strictEqual(error.message, 'Missing TurnContext parameter');
-        }
+        await assert.rejects(bot.run(), Error('Missing TurnContext parameter'));
     });
 
     it('should throw an error if context.activity is falsey', async function () {
         const bot = new ActivityHandlerBase();
 
-        try {
-            await bot.run({});
-            assert.fail('Should have failed');
-        } catch (error) {
-            assert.strictEqual(error.message, 'TurnContext does not include an activity');
-        }
+        await assert.rejects(bot.run({}), Error('TurnContext does not include an activity'));
     });
 
     it('should throw an error if context.activity.type is falsey', async function () {
         const bot = new ActivityHandlerBase();
 
-        try {
-            await bot.run({ activity: {} });
-            assert.fail('Should have failed');
-        } catch (error) {
-            assert.strictEqual(error.message, 'Activity is missing its type');
-        }
+        await assert.rejects(bot.run({ activity: {} }), Error('Activity is missing its type'));
     });
 
     class OverrideOnTurnActivity extends ActivityHandlerBase {
@@ -160,7 +145,7 @@ describe('ActivityHandlerBase', function () {
         assert(onUnrecognizedActivity, 'onUnrecognizedActivity was not called');
     });
 
-    describe('onConversationUpdateActivity', () => {
+    describe('onConversationUpdateActivity', function () {
         class ConversationUpdateActivityHandler extends ActivityHandlerBase {
             async onTurnActivity(context) {
                 assert(context, 'context not found');
@@ -261,7 +246,7 @@ describe('ActivityHandlerBase', function () {
         });
     });
 
-    describe('onMessageReaction', () => {
+    describe('onMessageReaction', function () {
         class MessageReactionActivityHandler extends ActivityHandlerBase {
             async onTurnActivity(context) {
                 assert(context, 'context not found');
