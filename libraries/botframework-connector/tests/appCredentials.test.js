@@ -4,7 +4,7 @@
  */
 
 const { AuthenticationConstants, CertificateAppCredentials, MicrosoftAppCredentials } = require('../');
-const { fail, ok: assert, strictEqual } = require('assert');
+const { ok: assert, strictEqual } = require('assert');
 const { WebResource } = require('@azure/ms-rest-js');
 
 const APP_ID = '2cd87869-38a0-4182-9251-d056e8f0ac24';

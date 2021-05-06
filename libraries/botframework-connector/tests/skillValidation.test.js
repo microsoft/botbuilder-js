@@ -19,7 +19,7 @@ describe('SkillValidation', function () {
             const audience = uuid();
             const appId = uuid();
 
-            // No claims (falsey value)
+            // No claims (falsy value)
             assert.throws(
                 () => SkillValidation.isSkillClaim(),
                 new TypeError('SkillValidation.isSkillClaim(): missing claims.')
@@ -171,7 +171,7 @@ describe('SkillValidation', function () {
             return { credentials, identity };
         };
 
-        it('should fail with a falsey identity', async function () {
+        it('should fail with a falsy identity', async function () {
             const { credentials } = makeCredentialsAndIdentity();
 
             await assert.rejects(
@@ -198,7 +198,9 @@ describe('SkillValidation', function () {
 
             await assert.rejects(
                 SkillValidation.validateIdentity(identity, credentials),
-                new Error(`SkillValidation.validateIdentity(): '${AuthenticationConstants.VersionClaim}' claim is required on skill Tokens.`)
+                new Error(
+                    `SkillValidation.validateIdentity(): '${AuthenticationConstants.VersionClaim}' claim is required on skill Tokens.`
+                )
             );
         });
 
@@ -209,7 +211,9 @@ describe('SkillValidation', function () {
 
             await assert.rejects(
                 SkillValidation.validateIdentity(identity, credentials),
-                new Error(`SkillValidation.validateIdentity(): '${AuthenticationConstants.AudienceClaim}' claim is required on skill Tokens.`)
+                new Error(
+                    `SkillValidation.validateIdentity(): '${AuthenticationConstants.AudienceClaim}' claim is required on skill Tokens.`
+                )
             );
         });
 
@@ -225,7 +229,7 @@ describe('SkillValidation', function () {
             );
         });
 
-        it('should fail if appid claim is falsey', async function () {
+        it('should fail if appid claim is falsy', async function () {
             const { credentials, identity } = makeCredentialsAndIdentity({
                 audience: uuid(),
                 appId: '',
