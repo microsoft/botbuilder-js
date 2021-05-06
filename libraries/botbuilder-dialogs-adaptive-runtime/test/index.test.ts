@@ -33,6 +33,9 @@ describe('getRuntimeServices', () => {
 
         // Ensure that a setting in a generated file is merged in
         strictEqual(configuration.string(['luis', 'fancySetting']), 'fancyValue');
+
+        // Ensure that a setting in a generated file takes precedence over appsettings
+        strictEqual(configuration.string(['luis', 'override']), 'new value');
     });
 
     it('supports bot components and late binding configuration', async () => {
