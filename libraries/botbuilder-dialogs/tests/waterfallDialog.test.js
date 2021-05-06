@@ -128,11 +128,7 @@ describe('WaterfallDialog', function () {
             const results = await dc.continueDialog();
             switch (results.status) {
                 case DialogTurnStatus.empty:
-                    try {
-                        await dc.beginDialog('a');
-                    } catch (err) {
-                        assert.fail(err);
-                    }
+                    await dc.beginDialog('a');
                     break;
 
                 case DialogTurnStatus.complete:

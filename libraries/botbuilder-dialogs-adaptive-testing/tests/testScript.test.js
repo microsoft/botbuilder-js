@@ -19,11 +19,13 @@ describe('TestScriptTests', function () {
     });
 
     it('AssertReply_Assertions_Failed', async () => {
-        try {
-            await TestUtils.runTestScript(resourceExplorer, 'TestScriptTests_AssertReply_Assertions_Failed');
-        } catch (error) {
-            assert(error.message.includes('"text":"hi User1"'), `assertion should have failed.`);
-        }
+        await assert.rejects(
+            TestUtils.runTestScript(resourceExplorer, 'TestScriptTests_AssertReply_Assertions_Failed'),
+            (err) => {
+                assert(err.message.includes('undefined text.length == 0 {"type":"message","text":"hi User1"'));
+                return true;
+            }
+        );
     });
 
     it('AssertReply_Exact', async () => {

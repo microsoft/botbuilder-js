@@ -46,46 +46,34 @@ describe("EncryptionTests", () => {
     });
 
     it("EncryptWithNullSecretThrows", () => {
-        try {
-            encrypt.encryptString(value);
-            assert.fail("did not throw error or exception");
-        }
-        catch (Error) {
-            assert.ok(true);
-        }
+        assert.throws(
+            () => encrypt.encryptString(value),
+            new Error('you must pass a secret')
+        );
     });
 
     it("DecryptWithNullSecretThrows", () => {
         let secret = encrypt.generateKey();
         let encrypted = encrypt.encryptString(value, secret);
 
-        try {
-            encrypt.decryptString(encrypted, null);
-            assert.fail("did not throw error or exception");
-        }
-        catch (Error) {
-            assert.ok(true);
-        }
+        assert.throws(
+            () => encrypt.decryptString(encrypted, null),
+            new Error('you must pass a secret')
+        );
     });
 
     it("DecryptWithBadSecretThrows", () => {
         let secret = encrypt.generateKey();
         let encrypted = encrypt.encryptString(value, secret);
 
-        try {
-            encrypt.decryptString(encrypted, "bad");
-            assert.fail("did not throw error or exception");
-        }
-        catch (Error) {
-            assert.ok(true);
-        }
+        assert.throws(
+            () => encrypt.decryptString(encrypted, "bad"),
+            new Error('The secret is not valid format')
+        );
 
-        try {
-            encrypt.decryptString(encrypted, encrypt.generateKey());
-            assert.fail("Decrypt with different key should throw");
-        }
-        catch (Error) {
-            assert.ok(true);
-        }
+        assert.throws(
+            () => encrypt.decryptString(encrypted, encrypt.generateKey()),
+            new Error('error:06065064:digital envelope routines:EVP_DecryptFinal_ex:bad decrypt')
+        );
     });
 });

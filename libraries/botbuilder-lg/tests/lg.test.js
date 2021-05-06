@@ -776,18 +776,14 @@ describe('LG', function () {
         assert.strictEqual(evaled[0], undefined);
 
         templates = preloaded.StrictModeTrue;
-
-        let errMessage = '';
-        try {
-            templates.expandTemplate('StrictTrue');
-        } catch (e) {
-            errMessage = e.toString();
-        }
-
-        assert(
-            errMessage.includes(
-                "'variable_not_defined' evaluated to null. [StrictTrue]  Error occurred when evaluating '-${variable_not_defined}'"
-            )
+        assert.throws(
+            () => templates.expandTemplate('StrictTrue'),
+            (err) => {
+                assert(err.message.includes(
+                    "'variable_not_defined' evaluated to null. [StrictTrue]  Error occurred when evaluating '-${variable_not_defined}'"
+                ));
+                return true;
+            }
         );
     });
 
@@ -802,15 +798,15 @@ describe('LG', function () {
         evaled = templates.evaluateText('${wPhrase()}');
         var options = ['Hi', 'Hello', 'Hiya'];
         assert(options.includes(evaled));
-
-        var errMessage = '';
-        try {
-            templates.evaluateText('${ErrrorTemplate()}');
-        } catch (e) {
-            errMessage = e.toString();
-        }
-
-        assert(errMessage.includes(`it's not a built-in function or a custom function`));
+        assert.throws(
+            () => templates.evaluateText('${ErrrorTemplate()}'),
+            (err) => {
+                assert(err.message.includes(
+                    "it's not a built-in function or a custom function"
+                ));
+                return true;
+            }
+        );
     });
 
     it('TestEvalExpression', function () {

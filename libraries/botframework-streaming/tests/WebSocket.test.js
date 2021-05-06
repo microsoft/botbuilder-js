@@ -186,12 +186,7 @@ describe('Streaming Extensions WebSocket Library Tests', () => {
         });
 
         it('throws a TypeError during construction if missing the "socket" parameter', () => {
-            try {
-                new WebSocketServer();
-            } catch (err) {
-                expect(err).to.be.instanceOf(TypeError);
-                expect(err.message).to.contain('WebSocketServer: Missing socket parameter');
-            }
+            expect(() => new WebSocketServer()).to.throw('WebSocketServer: Missing socket parameter');
         });
 
         it('connects', (done) => {

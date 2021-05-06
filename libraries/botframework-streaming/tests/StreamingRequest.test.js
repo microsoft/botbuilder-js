@@ -41,12 +41,7 @@ describe('Streaming Extensions Request tests', () => {
         expect(r.verb).to.equal('POST');
         expect(r.path).to.equal('some/where');
 
-        try {
-            r.addStream(undefined);
-        }
-        catch (err) {
-            expect(err.message).to.equal('Argument Undefined Exception: content undefined.');
-        }
+        expect(() => r.addStream(undefined)).to.throw('Argument Undefined Exception: content undefined.');
     });
 
     it('throws when attempting to add undefined streams', () => {

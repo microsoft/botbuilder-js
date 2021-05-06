@@ -138,11 +138,7 @@ describe('PayloadAssemblerManager', () => {
 
     it('throws if not given an ID', () => {
         let header = { payloadType: PayloadTypes.PayloadTypes.request, payloadLength: '5', id: undefined, end: true };
-        try {
-            new PayloadAssembler.PayloadAssembler(streamManager, { header: header, onCompleted: function() { done(); } });
-        } catch (result) {
-            expect(result.message).to.equal('An ID must be supplied when creating an assembler.');
-        }
+        expect(() => new PayloadAssembler.PayloadAssembler(streamManager, { header: header, onCompleted: function() { done(); } })).to.throw('An ID must be supplied when creating an assembler.');
     });
 
     it('processes a response with streams without throwing.', (done) => {

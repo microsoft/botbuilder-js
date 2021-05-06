@@ -346,12 +346,7 @@ describe('Streaming Extensions NamedPipe Library Tests', () => {
         });
 
         it('throws a TypeError during construction if missing the "baseName" parameter', () => {
-            try {
-                new np.NamedPipeServer();
-            } catch (err) {
-                expect(err).to.be.instanceOf(TypeError);
-                expect(err.message).to.contain('NamedPipeServer: Missing baseName parameter');
-            }
+            expect(() => new np.NamedPipeServer()).to.throw('NamedPipeServer: Missing baseName parameter');
         });
 
         it('starts the server without throwing', () => {

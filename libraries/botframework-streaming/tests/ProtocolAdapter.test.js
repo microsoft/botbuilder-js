@@ -188,12 +188,8 @@ describe('Streaming Extensions ProtocolAdapter', () => {
         pa.connect(receiver);
 
         expect(pa.isConnected).to.be.true;
-        try
-        {
-            pa.connect(receiver);
-        } catch(result) {
-            expect(result.message).to.equal('Already connected.');
-        }
+
+        expect(() => pa.connect(receiver)).to.throw('Already connected.');
 
         pa.disconnect();
     });

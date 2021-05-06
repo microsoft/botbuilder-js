@@ -10,14 +10,6 @@ describe('NodeWebSocket', () => {
         expect(socket.close()).to.not.throw;
     });
 
-    it('requires a valid URL', () => {
-        try {
-            const socket = new NodeWebSocket(new FauxSock);
-        } catch (error) {
-            expect(error.message).to.equal('Invalid URL: fakeURL');
-        }
-    });
-
     it('starts out connected', () => {
         const socket = new NodeWebSocket(new FauxSock);
         expect(socket.isConnected).to.be.true;

@@ -1,4 +1,4 @@
-const { fail, ok, strictEqual } = require('assert');
+const assert = require('assert');
 const { createHash } = require('crypto');
 const {
     ActivityTypes,
@@ -18,125 +18,143 @@ const { spy, stub } = require('sinon');
 const { Dialog, DialogTurnStatus, SkillDialog, DialogSet } = require('../');
 
 const DEFAULT_OAUTHSCOPE = 'https://api.botframework.com';
-const DEFAULT_GOV_OAUTHSCOPE = 'https://api.botframework.us';
 
-const defaultSkillDialogOptions = {
-    botId: 'botId',
-    conversationIdFactory: {},
-    conversationState: {},
-    skill: {},
-    skillHostEndpoint: {}
-};
-
-function typeErrorValidator(e, expectedMessage) {
-    ok(e instanceof TypeError);
-    strictEqual(e.message, expectedMessage);
-}
-
-describe('SkillDialog', function() {
+describe('SkillDialog', function () {
     this.timeout(3000);
 
-    describe('beginDialog should call skill', () => {
+    describe('beginDialog should call skill', function () {
         let BOTBUILDER = null;
         let BOTBUILDER_TESTING = null;
         // Use botbuilder for tests
         try {
             BOTBUILDER = require('../../botbuilder');
             BOTBUILDER_TESTING = require('../../botbuilder-testing');
-        } catch (err) {
-            console.warn('=====\nUnable to load botbuilder or botbuilder-testing module. "beginDialog should call skill" tests will not be run.\n');
+        } catch (_err) {
+            console.warn(
+                '=====\nUnable to load botbuilder or botbuilder-testing module. "beginDialog should call skill" tests will not be run.\n'
+            );
+        }
+
+        const { DialogTestClient } = BOTBUILDER_TESTING;
+
+        /**
+         * @remarks
+         * Port of BeginDialogShouldCallSkill from C#
+         * https://github.com/microsoft/botbuilder-dotnet/blob/41120728b22c709ec2d9247393505fdc778b2de1/tests/Microsoft.Bot.Builder.Dialogs.Tests/SkillDialogTests.cs#L47-L49
+         * @param {string} deliveryMode
+         */
+        async function beginDialogShouldCallSkill(deliveryMode, useCreateSkillConversationId = false) {
+            let activitySent; // Activity
+            let fromBotIdSent; // string
+            let toBotIdSent; // string
+            let toUriSent; // string (URI)
+
+            // Callback to capture the parameters sent to the skill
+            const captureAction = (fromBotId, toBotId, toUri, serviceUrl, conversationId, activity) => {
+                // Capture values sent to the skill so we can assert the right parameters were used.
+                fromBotIdSent = fromBotId;
+                toBotIdSent = toBotId;
+                toUriSent = toUri;
+                activitySent = activity;
+            };
+
+            // Create BotFrameworkHttpClient and postActivityStub
+            const [skillClient, postActivityStub] = createSkillClientAndStub(captureAction);
+
+            // Use Memory for conversation state
+            const conversationState = new ConversationState(new MemoryStorage());
+            const dialogOptions = createSkillDialogOptions(
+                conversationState,
+                skillClient,
+                undefined,
+                useCreateSkillConversationId
+            );
+
+            let createSkillConversationIdSpy;
+            if (useCreateSkillConversationId) {
+                createSkillConversationIdSpy = spy(dialogOptions.conversationIdFactory, 'createSkillConversationId');
+            }
+
+            // Create the SkillDialogInstance and the activity to send.
+            const dialog = new SkillDialog(dialogOptions, 'SkillDialog');
+            const activityToSend = { type: ActivityTypes.Message, attachments: [], entities: [] }; // Activity.CreateMessageActivity()
+            activityToSend.deliveryMode = deliveryMode;
+            const activityToSendText = 'activityToSendText';
+            activityToSend.text = activityToSendText;
+            const client = new DialogTestClient(
+                Channels.Test,
+                dialog,
+                { activity: activityToSend },
+                undefined,
+                conversationState
+            );
+
+            assert.strictEqual(dialogOptions.conversationIdFactory.createCount, 0);
+
+            // Send something to the dialog to start it
+            await client.sendActivity('irrelevant');
+
+            // Assert results and data sent to the SkillClient for first turn
+            assert.strictEqual(fromBotIdSent, dialogOptions.botId);
+            assert.strictEqual(toBotIdSent, dialogOptions.skill.appId);
+            assert.strictEqual(toUriSent, dialogOptions.skill.skillEndpoint);
+            assert.strictEqual(activitySent.text, activityToSendText);
+            assert.strictEqual(client.dialogTurnResult.status, DialogTurnStatus.waiting);
+            assert.ok(postActivityStub.calledOnce);
+
+            // Send a second message to continue the dialog
+            await client.sendActivity('Second message');
+
+            // Assert results for second turn
+            assert.strictEqual(activitySent.text, 'Second message');
+            assert.strictEqual(client.dialogTurnResult.status, DialogTurnStatus.waiting);
+            assert.ok(postActivityStub.calledTwice);
+
+            // Send EndOfConversation to the dialog
+            await client.sendActivity({ type: ActivityTypes.EndOfConversation }); // Activity.CreateEndOfConversationActivity()
+
+            // Assert we are done.
+            assert.strictEqual(client.dialogTurnResult.status, DialogTurnStatus.complete);
+            assert.ok(postActivityStub.calledTwice);
+
+            if (useCreateSkillConversationId) {
+                assert.ok(createSkillConversationIdSpy.called);
+            }
+            assert.strictEqual(
+                await dialogOptions.conversationIdFactory.getSkillConversationReference('Convo1'),
+                undefined,
+                'no test should use TestAdapter ConversationId as SkillConversationId.'
+            );
+            assert.strictEqual(
+                await dialogOptions.conversationIdFactory.getSkillConversationReference(undefined),
+                undefined,
+                'no test should use TestAdapter ConversationId as SkillConversationId.'
+            );
         }
 
         if (BOTBUILDER !== null && BOTBUILDER_TESTING !== null) {
-            const { DialogTestClient } = BOTBUILDER_TESTING;
-
-            /**
-             * @remarks
-             * Port of BeginDialogShouldCallSkill from C#
-             * https://github.com/microsoft/botbuilder-dotnet/blob/41120728b22c709ec2d9247393505fdc778b2de1/tests/Microsoft.Bot.Builder.Dialogs.Tests/SkillDialogTests.cs#L47-L49
-             * @param {string} deliveryMode 
-             */
-            async function beginDialogShouldCallSkill(deliveryMode, useCreateSkillConversationId = false) {
-                let activitySent; // Activity
-                let fromBotIdSent; // string
-                let toBotIdSent; // string
-                let toUriSent; // string (URI)
-
-                // Callback to capture the parameters sent to the skill
-                const captureAction = (fromBotId, toBotId, toUri, serviceUrl, conversationId, activity) => {
-                    // Capture values sent to the skill so we can assert the right parameters were used.
-                    fromBotIdSent = fromBotId;
-                    toBotIdSent = toBotId;
-                    toUriSent = toUri;
-                    activitySent = activity;
-                }
-
-                // Create BotFrameworkHttpClient and postActivityStub
-                const [skillClient, postActivityStub] = createSkillClientAndStub(captureAction);
-
-                // Use Memory for conversation state
-                const conversationState = new ConversationState(new MemoryStorage());
-                const dialogOptions = createSkillDialogOptions(conversationState, skillClient, undefined, useCreateSkillConversationId);
-
-                let createSkillConversationIdSpy;
-                if (useCreateSkillConversationId) {
-                    createSkillConversationIdSpy = spy(dialogOptions.conversationIdFactory, 'createSkillConversationId');
-                }
-
-                // Create the SkillDialogInstance and the activity to send.
-                const dialog = new SkillDialog(dialogOptions, 'SkillDialog');
-                const activityToSend = { type: ActivityTypes.Message, attachments: [], entities: [] }; // Activity.CreateMessageActivity()
-                activityToSend.deliveryMode = deliveryMode;
-                const activityToSendText = 'activityToSendText';
-                activityToSend.text = activityToSendText;
-                const client = new DialogTestClient(Channels.Test, dialog, { activity: activityToSend }, undefined, conversationState);
-
-                strictEqual(dialogOptions.conversationIdFactory.createCount, 0);
-
-                // Send something to the dialog to start it
-                await client.sendActivity('irrelevant');
-
-                // Assert results and data sent to the SkillClient for first turn
-                strictEqual(fromBotIdSent, dialogOptions.botId);
-                strictEqual(toBotIdSent, dialogOptions.skill.appId);
-                strictEqual(toUriSent, dialogOptions.skill.skillEndpoint);
-                strictEqual(activitySent.text, activityToSendText);
-                strictEqual(client.dialogTurnResult.status, DialogTurnStatus.waiting);
-                ok(postActivityStub.calledOnce);
-
-                // Send a second message to continue the dialog
-                await client.sendActivity('Second message');
-
-                // Assert results for second turn
-                strictEqual(activitySent.text, 'Second message');
-                strictEqual(client.dialogTurnResult.status, DialogTurnStatus.waiting);
-                ok(postActivityStub.calledTwice);
-
-                // Send EndOfConversation to the dialog
-                await client.sendActivity({ type: ActivityTypes.EndOfConversation }); // Activity.CreateEndOfConversationActivity()
-
-                // Assert we are done.
-                strictEqual(client.dialogTurnResult.status, DialogTurnStatus.complete);
-                ok(postActivityStub.calledTwice);
-
-                if (useCreateSkillConversationId) {
-                    ok(createSkillConversationIdSpy.called);
-                }
-                strictEqual(await dialogOptions.conversationIdFactory.getSkillConversationReference('Convo1'), undefined, 'no test should use TestAdapter ConversationId as SkillConversationId.');
-                strictEqual(await dialogOptions.conversationIdFactory.getSkillConversationReference(undefined), undefined, 'no test should use TestAdapter ConversationId as SkillConversationId.');
-            };
-
-            it('should delete conversation from conversationIdFactory when receiving EndOfConversation from skill and ExpectReplies is true', async () => {
+            it('should delete conversation from conversationIdFactory when receiving EndOfConversation from skill and ExpectReplies is true', async function () {
                 const adapter = new TestAdapter(/* logic param not required */);
 
-                const activity = { type: ActivityTypes.Message, deliveryMode: DeliveryModes.ExpectReplies, channelId: Channels.Directline, conversation: { id: '1' } };
+                const activity = {
+                    type: ActivityTypes.Message,
+                    deliveryMode: DeliveryModes.ExpectReplies,
+                    channelId: Channels.Directline,
+                    conversation: { id: '1' },
+                };
                 const context = new TurnContext(adapter, activity);
                 context.turnState.set(adapter.OAuthScopeKey, DEFAULT_OAUTHSCOPE);
 
                 // Create BotFrameworkHttpClient and postActivityStub
                 const expectedReply = { type: ActivityTypes.EndOfConversation, attachments: [], entities: [] };
                 const expectedReplies = { activities: [expectedReply] };
-                const [skillClient, postActivityStub] = createSkillClientAndStub(() => { return; }, undefined, expectedReplies );
+                const [skillClient] = createSkillClientAndStub(
+                    () => {
+                        return;
+                    },
+                    undefined,
+                    expectedReplies
+                );
                 const conversationState = new ConversationState(new MemoryStorage());
                 const dialogOptions = createSkillDialogOptions(conversationState, skillClient, undefined, false);
 
@@ -150,24 +168,24 @@ describe('SkillDialog', function() {
 
                 await dialog.beginDialog(dc, { activity });
 
-                strictEqual(1, dialogOptions.conversationIdFactory.createCount);
-                strictEqual(0, dialogOptions.conversationIdFactory._conversationRefs.size);
+                assert.strictEqual(1, dialogOptions.conversationIdFactory.createCount);
+                assert.strictEqual(0, dialogOptions.conversationIdFactory._conversationRefs.size);
             });
 
             // "Data Rows"
-            it('when deliveryMode is undefined', async () => {
+            it('when deliveryMode is undefined', async function () {
                 await beginDialogShouldCallSkill();
             });
 
-            it('when deliveryMode is DeliveryModes.ExpectReplies', async () => {
+            it('when deliveryMode is DeliveryModes.ExpectReplies', async function () {
                 await beginDialogShouldCallSkill(DeliveryModes.ExpectReplies);
             });
 
-            it('calls createSkillConversationId if createSkillConversationIdWithOptions is not implemented', async () => {
+            it('calls createSkillConversationId if createSkillConversationIdWithOptions is not implemented', async function () {
                 await beginDialogShouldCallSkill(DeliveryModes.ExpectReplies, true);
             });
 
-            it('and handle Invoke activities', async () => {
+            it('and handle Invoke activities', async function () {
                 let activitySent; // Activity
                 let fromBotIdSent; // string
                 let toBotIdSent; // string
@@ -194,202 +212,197 @@ describe('SkillDialog', function() {
                 const activityToSend = { type: ActivityTypes.Invoke }; // Activity.CreateInvokeActivity()
                 const activityToSendName = 'activityToSendName';
                 activityToSend.name = activityToSendName;
-                const client = new DialogTestClient(Channels.Test, dialog, { activity: activityToSend }, undefined, conversationState);
+                const client = new DialogTestClient(
+                    Channels.Test,
+                    dialog,
+                    { activity: activityToSend },
+                    undefined,
+                    conversationState
+                );
 
-                strictEqual(dialogOptions.conversationIdFactory.createCount, 0);
+                assert.strictEqual(dialogOptions.conversationIdFactory.createCount, 0);
 
                 // Send something to the dialog to start it
                 await client.sendActivity('irrelevant');
 
                 // Assert results and data sent to the SkillClient for first turn
-                strictEqual(dialogOptions.conversationIdFactory.createCount, 1);
-                strictEqual(fromBotIdSent, dialogOptions.botId);
-                strictEqual(toBotIdSent, dialogOptions.skill.appId);
-                strictEqual(toUriSent, dialogOptions.skill.skillEndpoint);
-                strictEqual(activitySent.name, activityToSendName);
-                strictEqual(activitySent.deliveryMode, DeliveryModes.ExpectReplies);
-                strictEqual(client.dialogTurnResult.status, DialogTurnStatus.waiting);
-                ok(postActivityStub.calledOnce);
+                assert.strictEqual(dialogOptions.conversationIdFactory.createCount, 1);
+                assert.strictEqual(fromBotIdSent, dialogOptions.botId);
+                assert.strictEqual(toBotIdSent, dialogOptions.skill.appId);
+                assert.strictEqual(toUriSent, dialogOptions.skill.skillEndpoint);
+                assert.strictEqual(activitySent.name, activityToSendName);
+                assert.strictEqual(activitySent.deliveryMode, DeliveryModes.ExpectReplies);
+                assert.strictEqual(client.dialogTurnResult.status, DialogTurnStatus.waiting);
+                assert.ok(postActivityStub.calledOnce);
 
                 // Send a second message to continue the dialog
                 await client.sendActivity('Second message');
-                strictEqual(dialogOptions.conversationIdFactory.createCount, 1);
+                assert.strictEqual(dialogOptions.conversationIdFactory.createCount, 1);
 
                 // Assert results for second turn
-                strictEqual(activitySent.text, 'Second message');
-                strictEqual(client.dialogTurnResult.status, DialogTurnStatus.waiting);
-                ok(postActivityStub.calledTwice);
+                assert.strictEqual(activitySent.text, 'Second message');
+                assert.strictEqual(client.dialogTurnResult.status, DialogTurnStatus.waiting);
+                assert.ok(postActivityStub.calledTwice);
 
                 // Send EndOfConversation to the dialog
                 await client.sendActivity({ type: ActivityTypes.EndOfConversation }); // Activity.CreateEndOfConversationActivity()
 
                 // Assert we are done.
-                strictEqual(client.dialogTurnResult.status, DialogTurnStatus.complete);
-                ok(postActivityStub.calledTwice);
+                assert.strictEqual(client.dialogTurnResult.status, DialogTurnStatus.complete);
+                assert.ok(postActivityStub.calledTwice);
             });
         }
     });
 
-    it('repromptDialog() should call sendToSkill()', async () => {
+    it('repromptDialog() should call sendToSkill()', async function () {
         const adapter = new TestAdapter(/* logic param not required */);
         const context = new TurnContext(adapter, { type: ActivityTypes.Message, id: 'activity-id' });
         context.turnState.set(adapter.OAuthScopeKey, DEFAULT_OAUTHSCOPE);
-        const dialog = new SkillDialog({} , 'SkillDialog');
-        
+        const dialog = new SkillDialog({}, 'SkillDialog');
+
         let sendToSkillCalled = false;
         dialog.sendToSkill = () => {
             sendToSkillCalled = true;
         };
-        
+
         await dialog.repromptDialog(context, {});
-        ok(sendToSkillCalled, 'sendToSkill not called');
+        assert.ok(sendToSkillCalled, 'sendToSkill not called');
     });
 
-    it('resumeDialog() should call repromptDialog()', async () => {
+    it('resumeDialog() should call repromptDialog()', async function () {
         const adapter = new TestAdapter(/* logic param not required */);
         const context = new TurnContext(adapter, { type: ActivityTypes.Message, id: 'activity-id' });
         context.turnState.set(adapter.OAuthScopeKey, DEFAULT_OAUTHSCOPE);
-        const dialog = new SkillDialog({} , 'SkillDialog');
-        
+        const dialog = new SkillDialog({}, 'SkillDialog');
+
         let repromptDialogCalled = false;
         dialog.repromptDialog = () => {
             repromptDialogCalled = true;
         };
-        
+
         const result = await dialog.resumeDialog(context, {});
-        ok(repromptDialogCalled, 'sendToSkill not called');
-        strictEqual(result, Dialog.EndOfTurn);
+        assert.ok(repromptDialogCalled, 'sendToSkill not called');
+        assert.strictEqual(result, Dialog.EndOfTurn);
     });
 
-    describe('(private) validateBeginDialogArgs()', () => {
-        it('should fail if options is falsy', () => {
+    describe('(private) validateBeginDialogArgs()', function () {
+        it('should fail if options is falsy', function () {
             const activity = {
                 type: ActivityTypes.Message,
-                text: 'Hello SkillDialog!'
+                text: 'Hello SkillDialog!',
             };
             const dialog = new SkillDialog({}, 'SkillDialog');
             const validatedArgs = dialog.validateBeginDialogArgs({ activity });
             const validatedActivity = validatedArgs.activity;
-            strictEqual(validatedActivity.type, ActivityTypes.Message);
-            strictEqual(validatedActivity.text, 'Hello SkillDialog!');
+            assert.strictEqual(validatedActivity.type, ActivityTypes.Message);
+            assert.strictEqual(validatedActivity.text, 'Hello SkillDialog!');
         });
 
-        it('should fail if options is falsy', () => {
-            try {
-                const dialog = new SkillDialog({}, 'SkillDialog');
-                dialog.validateBeginDialogArgs();
-            } catch (e) {
-                typeErrorValidator(e, 'Missing options parameter');
-            }
+        it('should fail if options is falsy', function () {
+            const dialog = new SkillDialog({}, 'SkillDialog');
+            assert.throws(() => dialog.validateBeginDialogArgs(), new TypeError('Missing options parameter'));
         });
 
-        it('should fail if dialogArgs.activity is falsy', () => {
-            try {
-                const dialog = new SkillDialog({}, 'SkillDialog');
-                dialog.validateBeginDialogArgs({});
-            } catch (e) {
-                typeErrorValidator(e, '"activity" is undefined or null in options.');
-            }
-        });
-
-        it('should fail if dialogArgs.activity.type is not "message" or "event"', () => {
-            const type = ActivityTypes.EndOfConversation;
-            try {
-                const dialog = new SkillDialog({}, 'SkillDialog');
-                dialog.validateBeginDialogArgs({ activity: { type } });
-            } catch (e) {
-                typeErrorValidator(e, `Only "${ ActivityTypes.Message }" and "${ ActivityTypes.Event }" activities are supported. Received activity of type "${ type }" in options.`);
-            }
+        it('should fail if dialogArgs.activity is falsy', function () {
+            const dialog = new SkillDialog({}, 'SkillDialog');
+            assert.throws(
+                () => dialog.validateBeginDialogArgs({}),
+                new TypeError('"activity" is undefined or null in options.')
+            );
         });
     });
 
-    describe('(private) sendToSkill()', () => {
-        it(`should rethrow the error if its message is not "Not Implemented" error`, async () => {
+    describe('(private) sendToSkill()', function () {
+        it(`should rethrow the error if its message is not "Not Implemented" error`, async function () {
             const adapter = new TestAdapter(/* logic param not required */);
             const activity = { type: ActivityTypes.Message, channelId: Channels.Directline, conversation: { id: '1' } };
             const context = new TurnContext(adapter, activity);
             context.turnState.set(adapter.OAuthScopeKey, DEFAULT_OAUTHSCOPE);
-            const dialog = new SkillDialog({
-                botId: 'botId',
-                conversationIdFactory: { createSkillConversationIdWithOptions: async () => { throw new Error('Whoops'); }
+            const dialog = new SkillDialog(
+                {
+                    botId: 'botId',
+                    conversationIdFactory: {
+                        createSkillConversationIdWithOptions: async () => {
+                            throw new Error('Whoops');
+                        },
+                    },
+                    conversationState: {},
+                    skill: {},
+                    skillHostEndpoint: 'http://localhost:3980/api/messages',
                 },
-                conversationState: {},
-                skill: {},
-                skillHostEndpoint: 'http://localhost:3980/api/messages'
-            } , 'SkillDialog');
+                'SkillDialog'
+            );
             dialog.state = {};
-            
+
             const conversationState = new ConversationState(new MemoryStorage());
             const dialogState = conversationState.createProperty('dialogState');
             const dialogs = new DialogSet(dialogState);
             dialogs.add(dialog);
             const dc = await dialogs.createContext(context);
             dc.stack = [dialog];
-            try {
-                await dialog.beginDialog(dc, { activity });
-            } catch (e) {
-                strictEqual(e.message, 'Whoops');
-            }
+            await assert.rejects(dialog.beginDialog(dc, { activity }), new Error('Whoops'));
         });
 
-        it('should not rethrow if Error.message is "Not Implemented"', async () => {
+        it('should not rethrow if Error.message is "Not Implemented"', async function () {
             const adapter = new TestAdapter(/* logic param not required */);
             const activity = { type: ActivityTypes.Message, channelId: Channels.Directline, conversation: { id: '1' } };
             const context = new TurnContext(adapter, activity);
             context.turnState.set(adapter.OAuthScopeKey, DEFAULT_OAUTHSCOPE);
-            const dialog = new SkillDialog({
-                botId: 'botId',
-                conversationIdFactory: { 
-                    createSkillConversationIdWithOptions: async () => { throw new Error('Not Implemented'); },
-                    createSkillConversationId: async () => {}
+            const dialog = new SkillDialog(
+                {
+                    botId: 'botId',
+                    conversationIdFactory: {
+                        createSkillConversationIdWithOptions: async () => {
+                            throw new Error('Not Implemented');
+                        },
+                        createSkillConversationId: async () => {},
+                    },
+                    conversationState: {
+                        saveChanges: () => null,
+                    },
+                    skill: {},
+                    skillHostEndpoint: 'http://localhost:3980/api/messages',
+                    skillClient: {
+                        postActivity: async () => {
+                            return { status: 200 };
+                        },
+                    },
                 },
-                conversationState: {
-                    saveChanges: () => null
-                },
-                skill: {},
-                skillHostEndpoint: 'http://localhost:3980/api/messages',
-                skillClient: {
-                    postActivity: async () => { return { status: 200 }; }
-                }
-            } , 'SkillDialog');
+                'SkillDialog'
+            );
 
             dialog.state = {};
-            
+
             const conversationState = new ConversationState(new MemoryStorage());
             const dialogState = conversationState.createProperty('dialogState');
             const dialogs = new DialogSet(dialogState);
             dialogs.add(dialog);
             const dc = await dialogs.createContext(context);
             dc.stack = [dialog];
-            
-            let result;
-            try {
-                result = await dialog.beginDialog(dc, { activity });
-            } catch(err) {
-                fail(err);
-            }
-            strictEqual(result.status, 'waiting');
+
+            const result = await dialog.beginDialog(dc, { activity });
+            assert.strictEqual(result.status, 'waiting');
         });
     });
 
-    describe('intercepting OAuthCards', () => {
+    describe('intercepting OAuthCards', function () {
         let BOTBUILDER = null;
         let BOTBUILDER_TESTING = null;
         // Use botbuilder for tests
         try {
             BOTBUILDER = require('../../botbuilder');
             BOTBUILDER_TESTING = require('../../botbuilder-testing');
-        } catch (err) {
-            console.warn('=====\nUnable to load botbuilder module. "intercepting OAuthCards" tests will not be run.\n')
+        } catch (_err) {
+            console.warn('=====\nUnable to load botbuilder module. "intercepting OAuthCards" tests will not be run.\n');
         }
 
         if (BOTBUILDER !== null && BOTBUILDER_TESTING !== null) {
             const { BotFrameworkHttpClient } = BOTBUILDER;
             const { DialogTestClient } = BOTBUILDER_TESTING;
 
-            it('should intercept OAuthCards for SSO', async () => {
+            it('should intercept OAuthCards for SSO', async function () {
                 const connectionName = 'connectionName';
-                const firstResponse = { activities: [ createOAuthCardAttachmentActivity('https://test')] };
+                const firstResponse = { activities: [createOAuthCardAttachmentActivity('https://test')] };
                 const skillClient = new BotFrameworkHttpClient({});
                 const postActivityStub = stub(skillClient, 'postActivity');
                 postActivityStub.onFirstCall().returns(Promise.resolve({ status: 200, body: firstResponse }));
@@ -403,17 +416,29 @@ describe('SkillDialog', function() {
                 const activityToSend = createSendActivity();
                 const beginSkillDialogOptions = { activity: activityToSend };
 
-                const client = new DialogTestClient(Channels.Test, dialogUnderTest, beginSkillDialogOptions, [new AutoSaveStateMiddleware(conversationState)], conversationState);
-                client._testAdapter.addExchangeableToken(connectionName, Channels.Test, 'user1', 'https://test', 'https://test1');
+                const client = new DialogTestClient(
+                    Channels.Test,
+                    dialogUnderTest,
+                    beginSkillDialogOptions,
+                    [new AutoSaveStateMiddleware(conversationState)],
+                    conversationState
+                );
+                client._testAdapter.addExchangeableToken(
+                    connectionName,
+                    Channels.Test,
+                    'user1',
+                    'https://test',
+                    'https://test1'
+                );
 
                 const finalActivity = await client.sendActivity('irrelevant');
-                ok(sendTokenExchangeSpy.calledOnce);
-                strictEqual(finalActivity, undefined);
+                assert.ok(sendTokenExchangeSpy.calledOnce);
+                assert.strictEqual(finalActivity, undefined);
             });
 
-            it('should not intercept OAuthCards for empty ConnectionName', async () => {
+            it('should not intercept OAuthCards for empty ConnectionName', async function () {
                 const connectionName = 'connectionName';
-                const firstResponse = { activities: [ createOAuthCardAttachmentActivity('https://test')] };
+                const firstResponse = { activities: [createOAuthCardAttachmentActivity('https://test')] };
                 const skillClient = new BotFrameworkHttpClient({});
                 const postActivityStub = stub(skillClient, 'postActivity');
                 postActivityStub.onFirstCall().returns({ status: 200, body: firstResponse });
@@ -426,17 +451,29 @@ describe('SkillDialog', function() {
                 const activityToSend = createSendActivity();
                 const beginSkillDialogOptions = { activity: activityToSend };
 
-                const client = new DialogTestClient(Channels.Test, dialogUnderTest, beginSkillDialogOptions, [new AutoSaveStateMiddleware(conversationState)], conversationState);
-                client._testAdapter.addExchangeableToken(connectionName, Channels.Test, 'user1', 'https://test', 'https://test1');
+                const client = new DialogTestClient(
+                    Channels.Test,
+                    dialogUnderTest,
+                    beginSkillDialogOptions,
+                    [new AutoSaveStateMiddleware(conversationState)],
+                    conversationState
+                );
+                client._testAdapter.addExchangeableToken(
+                    connectionName,
+                    Channels.Test,
+                    'user1',
+                    'https://test',
+                    'https://test1'
+                );
 
                 const finalActivity = await client.sendActivity('irrelevant');
-                ok(sendTokenExchangeSpy.notCalled);
-                ok(finalActivity !== undefined);
-                strictEqual(finalActivity.attachments.length, 1);
+                assert.ok(sendTokenExchangeSpy.notCalled);
+                assert.ok(finalActivity !== undefined);
+                assert.strictEqual(finalActivity.attachments.length, 1);
             });
 
-            it('should not intercept OAuthCards for EmptyToken', async () => {
-                const firstResponse = { activities: [ createOAuthCardAttachmentActivity('https://test')] };
+            it('should not intercept OAuthCards for EmptyToken', async function () {
+                const firstResponse = { activities: [createOAuthCardAttachmentActivity('https://test')] };
                 const skillClient = new BotFrameworkHttpClient({});
                 const postActivityStub = stub(skillClient, 'postActivity');
                 postActivityStub.onFirstCall().returns({ status: 200, body: firstResponse });
@@ -448,20 +485,25 @@ describe('SkillDialog', function() {
                 const sendTokenExchangeSpy = spy(dialogUnderTest, 'sendTokenExchangeInvokeToSkill');
                 const activityToSend = createSendActivity();
                 const beginSkillDialogOptions = { activity: activityToSend };
-    
-    
-                const client = new DialogTestClient(Channels.Test, dialogUnderTest, beginSkillDialogOptions, [new AutoSaveStateMiddleware(conversationState)], conversationState);
+
+                const client = new DialogTestClient(
+                    Channels.Test,
+                    dialogUnderTest,
+                    beginSkillDialogOptions,
+                    [new AutoSaveStateMiddleware(conversationState)],
+                    conversationState
+                );
                 // dont add exchangeable token to test adapter
                 const finalActivity = await client.sendActivity('irrelevant');
 
-                ok(sendTokenExchangeSpy.notCalled);
-                ok(finalActivity !== undefined);
-                strictEqual(finalActivity.attachments.length, 1);
+                assert.ok(sendTokenExchangeSpy.notCalled);
+                assert.ok(finalActivity !== undefined);
+                assert.strictEqual(finalActivity.attachments.length, 1);
             });
 
-            it('should not intercept OAuthCards for TokenException', async () => {
+            it('should not intercept OAuthCards for TokenException', async function () {
                 const connectionName = 'connectionName';
-                const firstResponse = { activities: [ createOAuthCardAttachmentActivity('https://test')] };
+                const firstResponse = { activities: [createOAuthCardAttachmentActivity('https://test')] };
                 const skillClient = new BotFrameworkHttpClient({});
                 const postActivityStub = stub(skillClient, 'postActivity');
                 postActivityStub.onFirstCall().returns({ status: 200, body: firstResponse });
@@ -474,18 +516,24 @@ describe('SkillDialog', function() {
                 const activityToSend = createSendActivity();
                 const beginSkillDialogOptions = { activity: activityToSend };
 
-                const client = new DialogTestClient(Channels.Test, dialogUnderTest, beginSkillDialogOptions, [new AutoSaveStateMiddleware(conversationState)], conversationState);
+                const client = new DialogTestClient(
+                    Channels.Test,
+                    dialogUnderTest,
+                    beginSkillDialogOptions,
+                    [new AutoSaveStateMiddleware(conversationState)],
+                    conversationState
+                );
                 client._testAdapter.addExchangeableToken(connectionName, Channels.Test, 'user1', 'https://test');
 
-                const finalActivity = await client.sendActivity({ text: 'irrelevant'});
-                ok(sendTokenExchangeSpy.notCalled);
-                ok(finalActivity !== undefined);
-                strictEqual(finalActivity.attachments.length, 1);
+                const finalActivity = await client.sendActivity({ text: 'irrelevant' });
+                assert.ok(sendTokenExchangeSpy.notCalled);
+                assert.ok(finalActivity !== undefined);
+                assert.strictEqual(finalActivity.attachments.length, 1);
             });
 
-            it('should not intercept OAuthCards for BadRequest', async () => {
+            it('should not intercept OAuthCards for BadRequest', async function () {
                 const connectionName = 'connectionName';
-                const firstResponse = { activities: [ createOAuthCardAttachmentActivity('https://test')] };
+                const firstResponse = { activities: [createOAuthCardAttachmentActivity('https://test')] };
                 const skillClient = new BotFrameworkHttpClient({});
                 const postActivityStub = stub(skillClient, 'postActivity');
                 postActivityStub.onFirstCall().returns({ status: 200, body: firstResponse });
@@ -500,13 +548,25 @@ describe('SkillDialog', function() {
                 const activityToSend = createSendActivity();
                 const beginSkillDialogOptions = { activity: activityToSend };
 
-                const client = new DialogTestClient(Channels.Test, dialogUnderTest, beginSkillDialogOptions, [new AutoSaveStateMiddleware(conversationState)], conversationState);
-                client._testAdapter.addExchangeableToken(connectionName, Channels.Test, 'user1', 'https://test', 'https://test1');
+                const client = new DialogTestClient(
+                    Channels.Test,
+                    dialogUnderTest,
+                    beginSkillDialogOptions,
+                    [new AutoSaveStateMiddleware(conversationState)],
+                    conversationState
+                );
+                client._testAdapter.addExchangeableToken(
+                    connectionName,
+                    Channels.Test,
+                    'user1',
+                    'https://test',
+                    'https://test1'
+                );
 
                 const finalActivity = await client.sendActivity('irrelevant');
-                ok(sendTokenExchangeSpy.called);
-                ok(finalActivity !== undefined);
-                strictEqual(finalActivity.attachments.length, 1);
+                assert.ok(sendTokenExchangeSpy.called);
+                assert.ok(finalActivity !== undefined);
+                assert.strictEqual(finalActivity.attachments.length, 1);
             });
         }
     });
@@ -516,7 +576,7 @@ describe('SkillDialog', function() {
  * @remarks
  * captureAction should match the below signature:
  * `(fromBotId: string, toBotId: string, toUrl: string, serviceUrl: string, conversationId: string, activity: Activity) => void`
- * @param {Function} captureAction 
+ * @param {Function} captureAction
  * @param {StatusCodes} returnStatusCode Defaults to StatusCodes.OK
  * @returns [BotFrameworkHttpClient, postActivityStub]
  */
@@ -525,13 +585,15 @@ function createSkillClientAndStub(captureAction, returnStatusCode = StatusCodes.
     const { BotFrameworkHttpClient } = require('../../botbuilder');
 
     if (captureAction && typeof captureAction !== 'function') {
-        throw new TypeError(`Failed test arrangement - createSkillClientAndStub() received ${typeof captureAction} instead of undefined or a function.`);
+        throw new TypeError(
+            `Failed test arrangement - createSkillClientAndStub() received ${typeof captureAction} instead of undefined or a function.`
+        );
     }
 
     // Create ExpectedReplies object for response body
     const dummyActivity = { type: ActivityTypes.Message, attachments: [], entities: [] };
     dummyActivity.text = 'dummy activity';
-    const activityList =  expectedReplies ? expectedReplies : { activities: [dummyActivity] };
+    const activityList = expectedReplies ? expectedReplies : { activities: [dummyActivity] };
 
     // Create wrapper for captureAction
     function wrapAction(...args) {
@@ -548,21 +610,21 @@ function createSkillClientAndStub(captureAction, returnStatusCode = StatusCodes.
         postActivityStub.returns({ status: returnStatusCode, body: activityList });
     }
 
-    return [ skillClient, postActivityStub ];
+    return [skillClient, postActivityStub];
 }
 
 /**
- * 
- * @param {string} uri 
+ *
+ * @param {string} uri
  */
 function createOAuthCardAttachmentActivity(uri) {
     const oauthCard = {
-        tokenExchangeResource: { uri }
+        tokenExchangeResource: { uri },
     };
 
     const attachment = {
         contentType: CardFactory.contentTypes.oauthCard,
-        content: oauthCard
+        content: oauthCard,
     };
 
     const attachmentActivity = MessageFactory.attachment(attachment);
@@ -573,7 +635,7 @@ function createOAuthCardAttachmentActivity(uri) {
 }
 
 /**
- * @param {*} conversationState 
+ * @param {*} conversationState
  * @param {*} mockSkillClient
  * @returns A Skill Dialog Options object.
  */
@@ -587,8 +649,8 @@ function createSkillDialogOptions(conversationState, mockSkillClient, connection
         skillClient: mockSkillClient,
         skill: {
             appId: 'SkillId',
-            skillEndpoint: 'http://testskill.contoso.com/api/messages'
-        }
+            skillEndpoint: 'http://testskill.contoso.com/api/messages',
+        },
     };
 
     return dialogOptions;
@@ -599,7 +661,7 @@ function createSendActivity(deliveryMode = DeliveryModes.ExpectReplies) {
         type: ActivityTypes.Message,
         attachments: [],
         entities: [],
-        deliveryMode
+        deliveryMode,
     };
     activityToSend.text = uuid();
     return activityToSend;
@@ -619,13 +681,15 @@ class SimpleConversationIdFactory extends SkillConversationIdFactoryBase {
         if (this.useCreateSkillConversationId) {
             return super.createSkillConversationIdWithOptions();
         }
-        const key = createHash('md5').update(options.activity.conversation.id + options.activity.serviceUrl).digest('hex');
+        const key = createHash('md5')
+            .update(options.activity.conversation.id + options.activity.serviceUrl)
+            .digest('hex');
 
         const ref = this._conversationRefs.has(key);
         if (!ref) {
             this._conversationRefs.set(key, {
                 conversationReference: TurnContext.getConversationReference(options.activity),
-                oAuthScope: options.fromBotOAuthScope
+                oAuthScope: options.fromBotOAuthScope,
             });
         }
         return key;
@@ -634,22 +698,28 @@ class SimpleConversationIdFactory extends SkillConversationIdFactoryBase {
     async createSkillConversationId(convRef) {
         this.createCount++;
 
-        const key = createHash('md5').update(convRef.conversation.id + convRef.serviceUrl).digest('hex');
+        const key = createHash('md5')
+            .update(convRef.conversation.id + convRef.serviceUrl)
+            .digest('hex');
 
         const ref = this._conversationRefs.has(key);
         if (!ref) {
             this._conversationRefs.set(key, {
-                conversationReference: convRef
+                conversationReference: convRef,
             });
         }
         return key;
     }
 
-    async getConversationReference(skillConversationId) { return this._conversationRefs.get(skillConversationId) }
+    async getConversationReference(skillConversationId) {
+        return this._conversationRefs.get(skillConversationId);
+    }
 
-    async getSkillConversationReference(skillConversationId) { return this.getConversationReference(skillConversationId) }
+    async getSkillConversationReference(skillConversationId) {
+        return this.getConversationReference(skillConversationId);
+    }
 
-    async deleteConversationReference(skillConversationId) { 
+    async deleteConversationReference(skillConversationId) {
         if (!this.useCreateSkillConversationId) {
             this._conversationRefs.delete(skillConversationId);
         }
@@ -658,13 +728,15 @@ class SimpleConversationIdFactory extends SkillConversationIdFactoryBase {
 
 /**
  * Create an UUID
+ *
  * @remarks
  * Replace `Guid.NewGuid().ToString();` with this function call.
- * @returns UUID string 
+ * @returns UUID string
  */
 function uuid() {
     return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
-        var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+        const r = (Math.random() * 16) | 0,
+            v = c == 'x' ? r : (r & 0x3) | 0x8;
         return v.toString(16);
     });
 }

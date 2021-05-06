@@ -79,15 +79,15 @@ describe("LoadAndSaveTests", () => {
         var secret = bf.BotConfiguration.generateKey();
         var config = bf.BotConfiguration.loadSync(testBotPath);
 
-        try {
-            config.saveAsSync(null, secret);
-            assert.fail("saveAsSync with null should throw");
-        } catch (err) { }
+        assert.throws(
+            () => config.saveAsSync(null, secret),
+            new Error('missing path')
+        );
 
-        try {
-            await config.saveAs(null, secret);
-            assert.fail("saveAs with null should throw");
-        } catch (err) { }
+        await assert.rejects(
+            config.saveAs(null, secret),
+            new Error('missing path')
+        );
     });
 
     it("CantLoadWithoutSecret", async () => {
@@ -95,28 +95,10 @@ describe("LoadAndSaveTests", () => {
         var config = await bf.BotConfiguration.load(testBotPath);
         await config.saveAs(saveBotPath, secret);
 
-        try {
-            await bf.BotConfiguration.load(saveBotPath);
-            assert.fail("Load should have thrown due to no secret");
-        }
-        catch (Error) { }
-    });
-
-    if ("CantSaveWithoutSecret", async () => {
-        let secret = bf.BotConfiguration.generateKey();
-        var config = await bf.BotConfiguration.load(testBotPath);
-        await config.saveAs(saveBotPath, secret);
-
-        var config2 = await bf.BotConfiguration.load(saveBotPath, secret);
-        try {
-            await config2.saveAs(saveBotPath);
-            assert.fail("Save() should have thrown due to no secret");
-        }
-        catch (Error) {
-
-        }
-        config2.ClearSecret();
-        await config2.saveAs(saveBotPath, secret);
+        await assert.rejects(
+            bf.BotConfiguration.load(saveBotPath),
+            new Error('You are attempting to perform an operation which needs access to the secret and --secret is missing')
+        );
     });
 
     it("LoadAndVerifyChannelServiceSync", async () => {
