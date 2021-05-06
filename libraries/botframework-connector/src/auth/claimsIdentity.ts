@@ -36,6 +36,7 @@ export class ClaimsIdentity {
 
     /**
      * Returns a claim value (if its present)
+     *
      * @param  {string} claimType The claim type to look for
      * @returns {string|null} The claim value or null if not found
      */

@@ -12,7 +12,7 @@ import { OnDialogEvent, OnDialogEventConfiguration } from './onDialogEvent';
 
 export interface OnAssignEntityConfiguration extends OnDialogEventConfiguration {
     property?: string;
-    entity?: string;
+    value?: string;
     operation?: string;
 }
 
@@ -26,21 +26,21 @@ export class OnAssignEntity extends OnDialogEvent implements OnAssignEntityConfi
      * Initializes a new instance of the [OnAssignEntity](xref:botbuilder-dialogs-adaptive.OnAssignEntity) class.
      *
      * @param property Optional, property filter on event.
-     * @param entity Optional, entity filter on event.
+     * @param value Optional, value filter on event.
      * @param operation Optional, operation filter on event.
      * @param actions Optional, actions to add to the plan when the rule constraints are met.
      * @param condition Optional, condition which needs to be met for the actions to be executed.
      */
     public constructor(
         property?: string,
-        entity?: string,
+        value?: string,
         operation?: string,
         actions: Dialog[] = [],
         condition?: string
     ) {
         super(AdaptiveEvents.assignEntity, actions, condition);
         this.property = property;
-        this.entity = entity;
+        this.value = value;
         this.operation = operation;
     }
 
@@ -50,9 +50,9 @@ export class OnAssignEntity extends OnDialogEvent implements OnAssignEntityConfi
     public property: string;
 
     /**
-     * Gets or sets the entity filter on events.
+     * Gets or sets the value filter on events.
      */
-    public entity: string;
+    public value: string;
 
     /**
      * Gets or sets the operation filter on events.
@@ -70,8 +70,8 @@ export class OnAssignEntity extends OnDialogEvent implements OnAssignEntityConfi
         if (this.property) {
             expressions.push(Expression.parse(`${TurnPath.dialogEvent}.value.property == '${this.property}'`));
         }
-        if (this.entity) {
-            expressions.push(Expression.parse(`${TurnPath.dialogEvent}.value.entity.name == '${this.entity}'`));
+        if (this.value) {
+            expressions.push(Expression.parse(`${TurnPath.dialogEvent}.value.value.name == '${this.value}'`));
         }
         if (this.operation) {
             expressions.push(Expression.parse(`${TurnPath.dialogEvent}.value.operation == '${this.operation}'`));

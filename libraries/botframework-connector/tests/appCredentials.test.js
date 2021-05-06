@@ -3,11 +3,7 @@
  * CertificateAppCredentials & MicrosoftAppCredentials
  */
 
-const {
-    AuthenticationConstants,
-    CertificateAppCredentials,
-    MicrosoftAppCredentials,
-} = require('../');
+const { AuthenticationConstants, CertificateAppCredentials, MicrosoftAppCredentials } = require('../');
 const { fail, ok: assert, strictEqual } = require('assert');
 const { WebResource } = require('@azure/ms-rest-js');
 
@@ -17,8 +13,8 @@ const CERT_KEY = 'key';
 const CERT_THUMBPRINT = 'thumbprint';
 const TENANT = 'tenantId';
 
-describe('AppCredentials', () => {
-    it('should have oAuthScope, oAuthEndpoint already configured on construction', async () => {
+describe('AppCredentials', function () {
+    it('should have oAuthScope, oAuthEndpoint already configured on construction', async function () {
         // AppCredentials is an Abstract class, so we are testing its subclasses:
         // CertificateAppCredentials and MicrosoftAppCredentials.
         const certCreds = new CertificateAppCredentials(APP_ID, CERT_THUMBPRINT, CERT_KEY);
@@ -33,7 +29,7 @@ describe('AppCredentials', () => {
         strictEqual(msAppCreds.oAuthScope, AuthenticationConstants.ToBotFromChannelTokenIssuer);
     });
 
-    it('should have set subclass specific properties with constructor parameters', async () => {
+    it('should have set subclass specific properties with constructor parameters', async function () {
         const certCreds = new CertificateAppCredentials(APP_ID, CERT_THUMBPRINT, CERT_KEY);
         strictEqual(certCreds.appId, APP_ID);
         strictEqual(certCreds.certificateThumbprint, CERT_THUMBPRINT);
@@ -44,28 +40,28 @@ describe('AppCredentials', () => {
         strictEqual(msAppCreds.appPassword, APP_PASSWORD);
     });
 
-    describe('signRequest', () => {
-        it('should not sign request when appId is falsy', async () => {
+    describe('signRequest', function () {
+        it('should not sign request when appId is falsy', async function () {
             const creds = new MicrosoftAppCredentials('');
             const webRequest = await creds.signRequest(new WebResource());
             assert(!webRequest.headers.Authorization);
         });
 
-        it('should not sign request when appId is anonymous skill appId', async () => {
+        it('should not sign request when appId is anonymous skill appId', async function () {
             const creds = new MicrosoftAppCredentials(AuthenticationConstants.AnonymousSkillAppId);
             const webRequest = await creds.signRequest(new WebResource());
             assert(!webRequest.headers.Authorization);
         });
     });
 
-    describe('MicrosoftAppCredentials', () => {
-        it('should set oAuthScope when passed in the constructor', () => {
+    describe('MicrosoftAppCredentials', function () {
+        it('should set oAuthScope when passed in the constructor', function () {
             const oAuthScope = 'oAuthScope';
             const tokenGenerator = new MicrosoftAppCredentials(APP_ID, undefined, undefined, oAuthScope);
             strictEqual(tokenGenerator.oAuthScope, oAuthScope);
         });
 
-        it('should set update the tokenCacheKey when oAuthScope is set after construction', () => {
+        it('should set update the tokenCacheKey when oAuthScope is set after construction', function () {
             const tokenGenerator = new MicrosoftAppCredentials(APP_ID);
             strictEqual(
                 tokenGenerator.tokenCacheKey,
@@ -86,7 +82,7 @@ describe('AppCredentials', () => {
             strictEqual(certCreds.tokenCacheKey, `${APP_ID}${oAuthScope}-cache`);
         });
 
-        it('should fail to get a token with an appId and no appPassword', async () => {
+        it('should fail to get a token with an appId and no appPassword', async function () {
             const tokenGenerator = new MicrosoftAppCredentials(APP_ID);
             try {
                 await tokenGenerator.getToken(true);

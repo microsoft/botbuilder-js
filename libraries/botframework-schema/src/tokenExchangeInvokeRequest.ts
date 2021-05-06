@@ -4,7 +4,7 @@
  */
 
 /**
- *  A request to exchange a token.
+ * A request to exchange a token.
  */
 export interface TokenExchangeInvokeRequest {
     /**

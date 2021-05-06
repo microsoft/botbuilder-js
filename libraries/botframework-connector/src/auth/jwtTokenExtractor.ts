@@ -28,6 +28,7 @@ export class JwtTokenExtractor {
 
     /**
      * Initializes a new instance of the [JwtTokenExtractor](xref:botframework-connector.JwtTokenExtractor) class. Extracts relevant data from JWT Tokens.
+     *
      * @param tokenValidationParameters Token validation parameters.
      * @param metadataUrl Metadata Url.
      * @param allowedSigningAlgorithms Allowed signing algorithms.
@@ -50,6 +51,7 @@ export class JwtTokenExtractor {
 
     /**
      * Gets the claims identity associated with a request.
+     *
      * @param authorizationHeader The raw HTTP header in the format: "Bearer [longString]".
      * @param channelId The Id of the channel being validated in the original request.
      * @param requiredEndorsements The required JWT endorsements.
@@ -74,6 +76,7 @@ export class JwtTokenExtractor {
 
     /**
      * Gets the claims identity associated with a request.
+     *
      * @param scheme The associated scheme.
      * @param parameter The token.
      * @param channelId The Id of the channel being validated in the original request.
