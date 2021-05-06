@@ -41,7 +41,7 @@ export class Substring extends ExpressionEvaluator {
                 ({ value: start, error } = startExpr.tryEvaluate(state, options));
                 if (!error && !Number.isInteger(start)) {
                     error = `${startExpr} is not an integer.`;
-                } else if (start < 0 || start >= str.length) {
+                } else if (start < 0 || start > str.length) {
                     error = `${startExpr}=${start} which is out of range for ${str}`;
                 }
                 if (!error) {
