@@ -353,6 +353,7 @@ async function addSettingsBotComponents(services: ServiceCollection, configurati
     }
 }
 
+// Note: any generated files take precedence over `appsettings.json`.
 function addComposerConfiguration(configuration: Configuration): void {
     const botRoot = configuration.string(['bot']) ?? '.';
     configuration.set(['BotRoot'], botRoot);
@@ -374,12 +375,12 @@ function addComposerConfiguration(configuration: Configuration): void {
         environment = userName;
     }
 
-    configuration.file(path.join(botRoot, 'generated', `luis.settings.${environment}.${luisRegion}.json`));
+    configuration.file(path.join(botRoot, 'generated', `luis.settings.${environment}.${luisRegion}.json`), true);
 
     const qnaRegion = configuration.string(['qna', 'qnaRegion']) ?? 'westus';
-    configuration.file(path.join(botRoot, 'generated', `qnamaker.settings.${environment}.${qnaRegion}.json`));
+    configuration.file(path.join(botRoot, 'generated', `qnamaker.settings.${environment}.${qnaRegion}.json`), true);
 
-    configuration.file(path.join(botRoot, 'generated', `orchestrator.settings.json`));
+    configuration.file(path.join(botRoot, 'generated', `orchestrator.settings.json`), true);
 }
 
 async function normalizeConfiguration(configuration: Configuration, applicationRoot: string): Promise<void> {
@@ -461,11 +462,13 @@ export async function getRuntimeServices(
         }
 
         files.forEach((file) => configuration.file(path.join(configurationOrSettingsDirectory, file)));
+
+        await normalizeConfiguration(configuration, applicationRoot);
     } else {
         configuration = configurationOrSettingsDirectory;
-    }
 
-    await normalizeConfiguration(configuration, applicationRoot);
+        await normalizeConfiguration(configuration, applicationRoot);
+    }
 
     const services = new ServiceCollection({
         customAdapters: new Map(),
