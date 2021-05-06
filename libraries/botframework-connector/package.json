@@ -32,6 +32,7 @@
     "@types/node": "^10.17.27",
     "adal-node": "0.2.1",
     "base64url": "^3.0.0",
+    "botbuilder-stdlib": "4.1.6",
     "botframework-schema": "4.1.6",
     "cross-fetch": "^3.0.5",
     "jsonwebtoken": "8.0.1",

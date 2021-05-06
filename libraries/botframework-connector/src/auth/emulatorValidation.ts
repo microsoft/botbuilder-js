@@ -45,6 +45,7 @@ export namespace EmulatorValidation {
 
     /**
      * Determines if a given Auth header is from the Bot Framework Emulator
+     *
      * @param  {string} authHeader Bearer Token, in the "Bearer [Long String]" Format.
      * @returns {boolean} True, if the token was issued by the Emulator. Otherwise, false.
      */
@@ -74,6 +75,7 @@ export namespace EmulatorValidation {
         }
 
         // Parse the Big Long String into an actual token.
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const token: any = decode(bearerToken, { complete: true });
         if (!token) {
             return false;
@@ -102,11 +104,12 @@ export namespace EmulatorValidation {
     /**
      * Validate the incoming Auth Header as a token sent from the Bot Framework Emulator.
      * A token issued by the Bot Framework will FAIL this check. Only Emulator tokens will pass.
+     *
      * @param  {string} authHeader The raw HTTP header in the format: "Bearer [longString]"
      * @param  {ICredentialProvider} credentials The user defined set of valid credentials, such as the AppId.
      * @param  {string} channelService The channelService value that distinguishes public Azure from US Government Azure.
-     * @param  {string} channelId
-     * @param  {AuthenticationConfiguration} authConfig
+     * @param  {string} channelId The ID of the channel to validate.
+     * @param  {AuthenticationConfiguration} authConfig The authentication configuration.
      * @returns {Promise<ClaimsIdentity>} A valid ClaimsIdentity.
      */
     export async function authenticateEmulatorToken(

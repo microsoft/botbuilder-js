@@ -45,6 +45,7 @@ const verifyOptions: VerifyOptions = {
 export namespace SkillValidation {
     /**
      * Determines if a given Auth header is from a skill to bot or bot to skill request.
+     *
      * @param  {string} authHeader Bearer Token, in the "Bearer [Long String]" Format.
      * @returns {boolean} True, if the token was issued for a skill to bot communication. Otherwise, false.
      */
@@ -63,7 +64,10 @@ export namespace SkillValidation {
 
         let claims: Claim[] = [];
         if (payload && typeof payload === 'object') {
-            claims = Object.entries(payload).map(([type, value]) => ({ type, value }));
+            claims = Object.entries(payload).map(([type, value]) => ({
+                type,
+                value,
+            }));
         }
 
         return isSkillClaim(claims);
@@ -71,6 +75,7 @@ export namespace SkillValidation {
 
     /**
      * Checks if the given object of claims represents a skill.
+     *
      * @remarks
      * A skill claim should contain:
      *     An "AuthenticationConstants.VersionClaim" claim.
@@ -124,6 +129,7 @@ export namespace SkillValidation {
 
     /**
      * Validates that the incoming Auth Header is a token sent from a bot to a skill or from a skill to a bot.
+     *
      * @param authHeader The raw HTTP header in the format: "Bearer [longString]".
      * @param credentials The user defined set of valid credentials, such as the AppId.
      * @param channelService The channelService value that distinguishes public Azure from US Government Azure.
@@ -236,6 +242,8 @@ export namespace SkillValidation {
 
     /**
      * Creates a set of claims that represent an anonymous skill. Useful for testing bots locally in the emulator
+     *
+     * @returns A [ClaimsIdentity](xref.botframework-connector.ClaimsIdentity) instance with authentication type set to [AuthenticationConstants.AnonymousAuthType](xref.botframework-connector.AuthenticationConstants) and a reserved [AuthenticationConstants.AnonymousSkillAppId](xref.botframework-connector.AuthenticationConstants) claim.
      */
     export function createAnonymousSkillClaim(): ClaimsIdentity {
         return new ClaimsIdentity(

@@ -94,7 +94,7 @@ describe('getRuntimeServices', function () {
 
             configuration.set(['CosmosDbPartitionedStorage'], {
                 authKey: 'authKey',
-                cosmosDbEndpoint: 'cosmosDbEndpoint',
+                cosmosDBEndpoint: 'cosmosDbEndpoint',
                 containerId: 'containerId',
                 databaseId: 'databaseId',
             });

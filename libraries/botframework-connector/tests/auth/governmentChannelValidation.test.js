@@ -5,17 +5,17 @@ const assert = require('assert');
 const { ClaimsIdentity, GovernmentChannelValidation, SimpleCredentialProvider, AuthenticationError } = require('../..');
 const { StatusCodes } = require('botframework-schema');
 
-describe('GovernmentChannelValidator', () => {
+describe('GovernmentChannelValidator', function () {
     const credentials = new SimpleCredentialProvider('2cd87869-38a0-4182-9251-d056e8f0ac24', '2.30Vs3VQLKt974F');
 
-    it('validateIdentity should fail if no identity', async () => {
+    it('validateIdentity should fail if no identity', async function () {
         await assert.rejects(
             GovernmentChannelValidation.validateIdentity(new ClaimsIdentity([], false), undefined),
             new AuthenticationError('Unauthorized. Is not authenticated', StatusCodes.UNAUTHORIZED)
         );
     });
 
-    it('validateIdentity should fail if wrong issuer', async () => {
+    it('validateIdentity should fail if wrong issuer', async function () {
         await assert.rejects(
             GovernmentChannelValidation.validateIdentity(
                 new ClaimsIdentity([{ type: 'iss', value: 'peanut' }], true),
@@ -25,7 +25,7 @@ describe('GovernmentChannelValidator', () => {
         );
     });
 
-    it('validateIdentity should fail if no audience', async () => {
+    it('validateIdentity should fail if no audience', async function () {
         await assert.rejects(
             GovernmentChannelValidation.validateIdentity(
                 new ClaimsIdentity([{ type: 'iss', value: 'https://api.botframework.us' }], true),
@@ -35,7 +35,7 @@ describe('GovernmentChannelValidator', () => {
         );
     });
 
-    it('validateIdentity should fail if wrong audience', async () => {
+    it('validateIdentity should fail if wrong audience', async function () {
         await assert.rejects(
             GovernmentChannelValidation.validateIdentity(
                 new ClaimsIdentity(
@@ -51,8 +51,8 @@ describe('GovernmentChannelValidator', () => {
         );
     });
 
-    it('validateIdentity should work', () =>
-        GovernmentChannelValidation.validateIdentity(
+    it('validateIdentity should work', function () {
+        return GovernmentChannelValidation.validateIdentity(
             new ClaimsIdentity(
                 [
                     { type: 'iss', value: 'https://api.botframework.us' },
@@ -61,5 +61,6 @@ describe('GovernmentChannelValidator', () => {
                 true
             ),
             credentials
-        ));
+        );
+    });
 });

@@ -16,6 +16,7 @@ export class Teams {
 
     /**
      * Create a Teams.
+     *
      * @param {TeamsConnectorClientContext} client Reference to the service client.
      */
     constructor(client: TeamsConnectorClientContext) {
@@ -24,6 +25,7 @@ export class Teams {
 
     /**
      * Fetches channel list for a given team.
+     *
      * @param teamId Team Id.
      * @param options Optional. The options object to be used in every request.
      * @returns A `Promise<Models.TeamsFetchChannelListResponse>`.
@@ -34,12 +36,14 @@ export class Teams {
     ): Promise<Models.TeamsFetchChannelListResponse>;
     /**
      * Fetches channel list for a given team.
+     *
      * @param teamId Team Id.
      * @param callback The callback.
      */
     fetchChannelList(teamId: string, callback: msRest.ServiceCallback<ConversationList>): void;
     /**
      * Fetches channel list for a given team.
+     *
      * @param teamId Team Id.
      * @param options The options object to be used in every request.
      * @param callback The callback.
@@ -51,6 +55,7 @@ export class Teams {
     ): void;
     /**
      * Fetches channel list for a given team.
+     *
      * @param teamId Team Id.
      * @param options Optional. The options object to be used in every request.
      * @param callback The callback.
@@ -73,6 +78,7 @@ export class Teams {
 
     /**
      * Fetches details related to a team.
+     *
      * @param teamId Team Id.
      * @param options Optional. The options object to be used in every request.
      * @returns A `Promise<Models.TeamsFetchTeamDetailsResponse>`.
@@ -83,12 +89,14 @@ export class Teams {
     ): Promise<Models.TeamsFetchTeamDetailsResponse>;
     /**
      * Fetches details related to a team.
+     *
      * @param teamId Team Id.
      * @param callback The callback.
      */
     fetchTeamDetails(teamId: string, callback: msRest.ServiceCallback<TeamDetails>): void;
     /**
      * Fetches details related to a team.
+     *
      * @param teamId Team Id.
      * @param options The options object to be used in every request.
      * @param callback The callback.
@@ -100,6 +108,7 @@ export class Teams {
     ): void;
     /**
      * Fetches details related to a team.
+     *
      * @param teamId Team Id.
      * @param options Optional. The options object to be used in every request.
      * @param callback The callback.
@@ -122,6 +131,7 @@ export class Teams {
 
     /**
      * Fetch a meeting participant
+     *
      * @summary Fetches a meeting participant
      * @param meetingId Meeting Id
      * @param participantId Participant Id
