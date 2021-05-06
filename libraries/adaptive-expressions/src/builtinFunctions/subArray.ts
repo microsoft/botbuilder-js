@@ -40,7 +40,7 @@ export class SubArray extends ExpressionEvaluator {
                 ({ value: start, error } = startExpr.tryEvaluate(state, options));
                 if (!error && !Number.isInteger(start)) {
                     error = `${startExpr} is not an integer.`;
-                } else if (start < 0 || start >= arr.length) {
+                } else if (start < 0 || start > arr.length) {
                     error = `${startExpr}=${start} which is out of range for ${arr}`;
                 }
                 if (!error) {
