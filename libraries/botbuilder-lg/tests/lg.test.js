@@ -997,7 +997,7 @@ describe('LG', function () {
         // add an exist template
         assert.throws(
             () => templates.addTemplate('newtemplate', undefined, '- hi2 '),
-            Error(TemplateErrors.templateExist('newtemplate'))
+            new Error(TemplateErrors.templateExist('newtemplate'))
         );
     });
 

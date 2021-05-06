@@ -81,7 +81,7 @@ describe('ChannelServiceHandler', function () {
 
             await assert.rejects(
                 handler.handleSendToConversation(AUTH_HEADER, 'convId', { type: ActivityTypes.Message }),
-                Error(createDefaultErrorMessage('onSendToConversation'))
+                new Error(createDefaultErrorMessage('onSendToConversation'))
             );
         });
     });
@@ -92,7 +92,7 @@ describe('ChannelServiceHandler', function () {
 
             await assert.rejects(
                 handler.handleReplyToActivity(AUTH_HEADER, 'convId', ACTIVITY.id, ACTIVITY),
-                Error(createDefaultErrorMessage('onReplyToActivity'))
+                new Error(createDefaultErrorMessage('onReplyToActivity'))
             );
         });
     });
@@ -103,7 +103,7 @@ describe('ChannelServiceHandler', function () {
 
             await assert.rejects(
                 handler.handleUpdateActivity(AUTH_HEADER, 'convId', ACTIVITY.id, ACTIVITY),
-                Error(createDefaultErrorMessage('onUpdateActivity'))
+                new Error(createDefaultErrorMessage('onUpdateActivity'))
             );
         });
     });
@@ -114,7 +114,7 @@ describe('ChannelServiceHandler', function () {
 
             await assert.rejects(
                 handler.handleDeleteActivity(AUTH_HEADER, 'convId', ACTIVITY.id, ACTIVITY),
-                Error(createDefaultErrorMessage('onDeleteActivity'))
+                new Error(createDefaultErrorMessage('onDeleteActivity'))
             );
         });
     });
@@ -125,7 +125,7 @@ describe('ChannelServiceHandler', function () {
 
             await assert.rejects(
                 handler.handleGetActivityMembers(AUTH_HEADER, 'convId', ACTIVITY.id),
-                Error(createDefaultErrorMessage('onGetActivityMembers'))
+                new Error(createDefaultErrorMessage('onGetActivityMembers'))
             );
         });
     });
@@ -136,7 +136,7 @@ describe('ChannelServiceHandler', function () {
 
             await assert.rejects(
                 handler.handleCreateConversation(AUTH_HEADER, { isGroup: false }),
-                Error(createDefaultErrorMessage('onCreateConversation'))
+                new Error(createDefaultErrorMessage('onCreateConversation'))
             );
         });
     });
@@ -147,7 +147,7 @@ describe('ChannelServiceHandler', function () {
 
             await assert.rejects(
                 handler.handleGetConversations(AUTH_HEADER, 'convId'),
-                Error(createDefaultErrorMessage('onGetConversations'))
+                new Error(createDefaultErrorMessage('onGetConversations'))
             );
         });
     });
@@ -158,7 +158,7 @@ describe('ChannelServiceHandler', function () {
 
             await assert.rejects(
                 handler.handleGetConversationMembers(AUTH_HEADER, 'convId'),
-                Error(createDefaultErrorMessage('onGetConversationMembers'))
+                new Error(createDefaultErrorMessage('onGetConversationMembers'))
             );
         });
 
@@ -167,7 +167,7 @@ describe('ChannelServiceHandler', function () {
 
             await assert.rejects(
                 handler.handleGetConversationPagedMembers(AUTH_HEADER, 'convId'),
-                Error(createDefaultErrorMessage('onGetConversationPagedMembers'))
+                new Error(createDefaultErrorMessage('onGetConversationPagedMembers'))
             );
         });
 
@@ -176,7 +176,7 @@ describe('ChannelServiceHandler', function () {
 
             await assert.rejects(
                 handler.handleDeleteConversationMember(AUTH_HEADER, 'convId', 'memberId'),
-                Error(createDefaultErrorMessage('onDeleteConversationMember'))
+                new Error(createDefaultErrorMessage('onDeleteConversationMember'))
             );
         });
     });
@@ -187,7 +187,7 @@ describe('ChannelServiceHandler', function () {
 
             await assert.rejects(
                 handler.handleSendConversationHistory(AUTH_HEADER, 'convId', { ACTIVITY }),
-                Error(createDefaultErrorMessage('onSendConversationHistory'))
+                new Error(createDefaultErrorMessage('onSendConversationHistory'))
             );
         });
     });
@@ -198,7 +198,7 @@ describe('ChannelServiceHandler', function () {
 
             await assert.rejects(
                 handler.handleUploadAttachment(AUTH_HEADER, 'convId', { type: 'string', name: 'attachment' }),
-                Error(createDefaultErrorMessage('onUploadAttachment'))
+                new Error(createDefaultErrorMessage('onUploadAttachment'))
             );
         });
     });
