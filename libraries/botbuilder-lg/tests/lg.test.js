@@ -90,8 +90,8 @@ describe('LG', function () {
 
     it('TestEnumeration', function () {
         let cnt = 0;
-        let templates = preloaded.two;
-        for (let t of templates) {
+        const templates = preloaded.two;
+        for (const t of templates) {
             assert.strictEqual(typeof t, 'object');
             assert.strictEqual(t.name, 'wPhrase');
             cnt++;
@@ -111,21 +111,21 @@ describe('LG', function () {
     });
 
     it('TestBasicTemplateReference', function () {
-        let templates = preloaded.three;
-        let evaled = templates.evaluate('welcome_user', undefined);
+        const templates = preloaded.three;
+        const evaled = templates.evaluate('welcome_user', undefined);
         const options = ['Hi', 'Hello', 'Hiya', 'Hi :)', 'Hello :)', 'Hiya :)'];
         assert(options.includes(evaled), `The result ${evaled} is not in those options [${options.join(',')}]`);
     });
 
     it('TestBasicTemplateRefAndEntityRef', function () {
-        let templates = preloaded.four;
-        let userName = 'DL';
-        let evaled = templates.evaluate('welcome_user', { userName: userName });
+        const templates = preloaded.four;
+        const userName = 'DL';
+        const evaled = templates.evaluate('welcome_user', { userName: userName });
         assert(evaled.includes(userName), `The result ${evaled} does not contiain ${userName}`);
     });
 
     it('TestBasicConditionalTemplate', function () {
-        let templates = preloaded['five'];
+        const templates = preloaded['five'];
 
         let evaled = templates.evaluate('time_of_day_readout', { timeOfDay: 'morning' });
         assert(evaled === 'Good morning' || evaled === 'Morning! ', `Evaled is ${evaled}`);
@@ -135,7 +135,7 @@ describe('LG', function () {
     });
 
     it('TestMultiline', function () {
-        let templates = preloaded.Multiline;
+        const templates = preloaded.Multiline;
         let evaled = templates.evaluate('template1').toString();
         let generatedTemplates = Templates.parseResource(new LGResource('', '', evaled));
         let result = generatedTemplates.evaluate('generated1');
@@ -161,7 +161,7 @@ describe('LG', function () {
     });
 
     it('TestMultiLineExprLG', function () {
-        let templates = preloaded.MultiLineExpr;
+        const templates = preloaded.MultiLineExpr;
 
         let evaled = templates.evaluate('ExprInCondition', { userName: 'Henry', day: 'Monday' });
         assert(evaled === 'Not today', `Evaled is ${evaled}`);
@@ -175,10 +175,10 @@ describe('LG', function () {
         evaled = templates.evaluate('crtObj');
         assert.deepStrictEqual(evaled, { a: 1, c: 3, b: 2 });
 
-        var evaledArray = templates.evaluate('crtArr');
+        const evaledArray = templates.evaluate('crtArr');
         assert.deepStrictEqual(evaledArray, [1, 2, 3, 4]);
 
-        var evaledMultilineResult = templates.evaluate('evalMultiLineObj');
+        const evaledMultilineResult = templates.evaluate('evalMultiLineObj');
         assert.strictEqual(evaledMultilineResult, '{"a":1,"b":2,"c":{"d":4,"e":5}}');
 
         evaled = templates.evaluate('crtObj1');
@@ -198,7 +198,7 @@ describe('LG', function () {
     });
 
     it('TestBasicConditionalTemplateWithoutDefault', function () {
-        let templates = preloaded.five;
+        const templates = preloaded.five;
 
         let evaled = templates.evaluate('time_of_day_readout_without_default', { timeOfDay: 'morning' });
         assert(evaled === 'Good morning' || evaled === 'Morning! ', `Evaled is ${evaled}`);
@@ -211,7 +211,7 @@ describe('LG', function () {
     });
 
     it('TestExpandText', function () {
-        let templates = preloaded.ExpandText;
+        const templates = preloaded.ExpandText;
 
         const scope = {
             '@answer': 'hello ${user.name}',
@@ -228,7 +228,7 @@ describe('LG', function () {
     });
 
     it('TestBasicTemplateRefWithParameters', function () {
-        let templates = preloaded.six;
+        const templates = preloaded.six;
 
         let evaled = templates.evaluate('welcome', undefined);
         const options1 = ['Hi DongLei :)', 'Hey DongLei :)', 'Hello DongLei :)'];
@@ -240,16 +240,16 @@ describe('LG', function () {
     });
 
     it('TestBasicSwitchCaseTemplate', function () {
-        let templates = preloaded.switchcase;
-        let evaled1 = templates.evaluate('greetInAWeek', { day: 'Saturday' });
+        const templates = preloaded.switchcase;
+        const evaled1 = templates.evaluate('greetInAWeek', { day: 'Saturday' });
         assert(evaled1 === 'Happy Saturday!', `Evaled is ${evaled1}`);
 
-        let evaled3 = templates.evaluate('greetInAWeek', { day: 'Monday' });
+        const evaled3 = templates.evaluate('greetInAWeek', { day: 'Monday' });
         assert(evaled3 === 'Work Hard!', `Evaled is ${evaled3}`);
     });
 
     it('TestBasicListSupport', function () {
-        let templates = preloaded.BasicList;
+        const templates = preloaded.BasicList;
 
         let evaled = templates.evaluate('BasicJoin', { items: ['1'] });
         assert.strictEqual(evaled, '1', `Evaled is ${evaled}`);
@@ -262,7 +262,7 @@ describe('LG', function () {
     });
 
     it('TestBasicExtendedFunctions', function () {
-        let templates = preloaded.six;
+        const templates = preloaded.six;
         const alarms = [
             {
                 time: '7 am',
@@ -285,7 +285,7 @@ describe('LG', function () {
     });
 
     it('TestCaseInsensitive', function () {
-        let templates = preloaded.CaseInsensitive;
+        const templates = preloaded.CaseInsensitive;
         const alarms = [
             {
                 time: '7 am',
@@ -297,16 +297,16 @@ describe('LG', function () {
             },
         ];
 
-        let evaled = templates.evaluate('ShowAlarms', { alarms: alarms });
+        const evaled = templates.evaluate('ShowAlarms', { alarms: alarms });
         assert.strictEqual(evaled, 'You have two alarms', `Evaled is ${evaled}`);
 
-        let evaled1 = templates.evaluate('greetInAWeek', { day: 'Saturday' });
+        const evaled1 = templates.evaluate('greetInAWeek', { day: 'Saturday' });
         assert.strictEqual(evaled1, 'Happy Saturday!', `Evaled is ${evaled1}`);
     });
 
     it('TestListWithOnlyOneElement', function () {
-        var templates = preloaded.eight;
-        var evaled = templates.evaluate('ShowTasks', { recentTasks: ['Task1'] });
+        const templates = preloaded.eight;
+        const evaled = templates.evaluate('ShowTasks', { recentTasks: ['Task1'] });
         assert.strictEqual(
             evaled,
             'Your most recent task is Task1. You can let me know if you want to add or complete a task.',
@@ -315,40 +315,40 @@ describe('LG', function () {
     });
 
     it('TestTemplateNameWithDotIn', function () {
-        var templates = preloaded.TemplateNameWithDot;
-        var evaled1 = templates.evaluate('Hello.World', '');
+        const templates = preloaded.TemplateNameWithDot;
+        const evaled1 = templates.evaluate('Hello.World', '');
         assert.strictEqual(evaled1, 'Hello World', `Evaled is ${evaled1}`);
 
-        var evaled2 = templates.evaluate('Hello', '');
+        const evaled2 = templates.evaluate('Hello', '');
         assert.strictEqual(evaled2, 'Hello World', `Evaled is ${evaled2}`);
     });
 
     it('TestMultiLine', function () {
-        var templates = preloaded.MultilineTextForAdaptiveCard;
-        var evaled1 = templates.evaluate('wPhrase', '');
-        var options1 = ['\r\ncardContent\r\n', 'hello', '\ncardContent\n'];
+        const templates = preloaded.MultilineTextForAdaptiveCard;
+        const evaled1 = templates.evaluate('wPhrase', '');
+        const options1 = ['\r\ncardContent\r\n', 'hello', '\ncardContent\n'];
         assert(options1.includes(evaled1), `1.Evaled is ${evaled1}`);
 
-        var evaled2 = templates.evaluate('nameTemplate', { name: 'N' });
-        var options2 = ['\r\nN\r\n', 'N', '\nN\n'];
+        const evaled2 = templates.evaluate('nameTemplate', { name: 'N' });
+        const options2 = ['\r\nN\r\n', 'N', '\nN\n'];
         assert(options2.includes(evaled2), `2.Evaled is ${evaled2}`);
 
         templates.evaluate('adaptivecardsTemplate', '');
 
-        var evaled4 = templates.evaluate('refTemplate', '');
-        var options4 = ['\r\nhi\r\n', '\nhi\n'];
+        const evaled4 = templates.evaluate('refTemplate', '');
+        const options4 = ['\r\nhi\r\n', '\nhi\n'];
         assert(options4.includes(evaled4), `4.Evaled is ${evaled4}`);
     });
 
     it('TestTemplateRef', function () {
-        var templates = preloaded.TemplateRef;
-        var scope = { time: 'morning', name: 'Dong Lei' };
-        var evaled1 = templates.evaluate('Hello', scope);
+        const templates = preloaded.TemplateRef;
+        const scope = { time: 'morning', name: 'Dong Lei' };
+        const evaled1 = templates.evaluate('Hello', scope);
         assert.strictEqual(evaled1, 'Good morning Dong Lei', `Evaled is ${evaled1}`);
     });
 
     it('TestEscapeCharacter', function () {
-        var templates = preloaded.EscapeCharacter;
+        const templates = preloaded.EscapeCharacter;
         let evaled = templates.evaluate('wPhrase', undefined);
         assert.strictEqual(evaled, 'Hi \r\n\t\\', 'Happy path failed.');
 
@@ -401,7 +401,7 @@ describe('LG', function () {
     });
 
     it('TestAnalyzer', function () {
-        var testData = [
+        const testData = [
             {
                 name: 'orderReadOut',
                 variableOptions: ['orderType', 'userName', 'base', 'topping', 'bread', 'meat'],
@@ -440,24 +440,24 @@ describe('LG', function () {
             },
         ];
 
-        var templates = preloaded.Analyzer;
+        const templates = preloaded.Analyzer;
         for (const testItem of testData) {
-            var evaled1 = templates.analyzeTemplate(testItem.name);
-            var variableEvaled = evaled1.Variables;
-            var variableEvaledOptions = testItem.variableOptions;
+            const evaled1 = templates.analyzeTemplate(testItem.name);
+            const variableEvaled = evaled1.Variables;
+            const variableEvaledOptions = testItem.variableOptions;
             assert.strictEqual(variableEvaled.length, variableEvaledOptions.length);
             variableEvaledOptions.forEach((element) => assert.strictEqual(variableEvaled.includes(element), true));
-            var templateEvaled = evaled1.TemplateReferences;
-            var templateEvaledOptions = testItem.templateRefOptions;
+            const templateEvaled = evaled1.TemplateReferences;
+            const templateEvaledOptions = testItem.templateRefOptions;
             assert.strictEqual(templateEvaled.length, templateEvaledOptions.length);
             templateEvaledOptions.forEach((element) => assert.strictEqual(templateEvaled.includes(element), true));
         }
     });
 
     it('TestlgTemplateFunction', function () {
-        var templates = preloaded.lgTemplate;
-        var evaled = templates.evaluate('TemplateC', '');
-        var options = ['Hi', 'Hello'];
+        const templates = preloaded.lgTemplate;
+        let evaled = templates.evaluate('TemplateC', '');
+        let options = ['Hi', 'Hello'];
         assert(options.includes(evaled));
 
         evaled = templates.evaluate('TemplateD', { b: 'morning' });
@@ -466,9 +466,9 @@ describe('LG', function () {
     });
 
     it('TestTemplateAsFunction', function () {
-        var templates = preloaded.TemplateAsFunction;
+        const templates = preloaded.TemplateAsFunction;
 
-        var evaled = templates.evaluate('Test2');
+        let evaled = templates.evaluate('Test2');
         assert.strictEqual(evaled, 'hello world', `Evaled is ${evaled}`);
 
         evaled = templates.evaluate('Test3');
@@ -485,23 +485,23 @@ describe('LG', function () {
     });
 
     it('TestAnalyzelgTemplateFunction', function () {
-        var templates = preloaded.lgTemplate;
-        var evaled = templates.analyzeTemplate('TemplateD');
-        var variableEvaled = evaled.Variables;
-        var options = ['b'];
+        const templates = preloaded.lgTemplate;
+        const evaled = templates.analyzeTemplate('TemplateD');
+        const variableEvaled = evaled.Variables;
+        const options = ['b'];
         assert.strictEqual(variableEvaled.length, options.length);
         options.forEach((e) => assert(variableEvaled.includes(e)));
     });
 
     it('TestImporttemplates', function () {
-        var templates = preloaded.import;
+        let templates = preloaded.import;
 
         // Assert 6.lg is imported only once when there are several relative paths which point to the same file.
         // Assert import cycle loop is handled well as expected when a file imports itself.
         assert.strictEqual(templates.allTemplates.length, 14);
 
         const options1 = ['Hi', 'Hello', 'Hey'];
-        var evaled = templates.evaluate('basicTemplate');
+        let evaled = templates.evaluate('basicTemplate');
         assert(options1.includes(evaled), `Evaled is ${evaled}`);
 
         const options2 = ['Hi DongLei :)', 'Hey DongLei :)', 'Hello DongLei :)'];
@@ -541,7 +541,7 @@ describe('LG', function () {
     });
 
     it('TestRegex', function () {
-        var templates = preloaded.Regex;
+        const templates = preloaded.Regex;
         let evaled = templates.evaluate('wPhrase');
         assert.strictEqual(evaled, 'Hi');
 
@@ -553,10 +553,10 @@ describe('LG', function () {
     });
 
     it('TestExpandTemplate', function () {
-        var templates = preloaded.Expand;
+        const templates = preloaded.Expand;
 
         // without scope
-        var evaled = templates.expandTemplate('FinalGreeting');
+        let evaled = templates.expandTemplate('FinalGreeting');
         assert.strictEqual(evaled.length, 4, `Evaled is ${evaled}`);
         let expectedResults = ['Hi Morning', 'Hi Evening', 'Hello Morning', 'Hello Evening'];
         expectedResults.forEach((x) => assert(evaled.includes(x)));
@@ -575,7 +575,7 @@ describe('LG', function () {
     });
 
     it('TestExpandTemplateWithRef', function () {
-        var templates = preloaded.Expand;
+        const templates = preloaded.Expand;
 
         const alarms = [
             {
@@ -588,14 +588,14 @@ describe('LG', function () {
             },
         ];
 
-        var evaled = templates.expandTemplate('ShowAlarmsWithLgTemplate', { alarms });
+        const evaled = templates.expandTemplate('ShowAlarmsWithLgTemplate', { alarms });
         assert.strictEqual(evaled.length, 2, `Evaled is ${evaled}`);
         assert.strictEqual(evaled[0], 'You have 2 alarms, they are 8 pm at tomorrow', `Evaled is ${evaled}`);
         assert.strictEqual(evaled[1], 'You have 2 alarms, they are 8 pm of tomorrow', `Evaled is ${evaled}`);
     });
 
     it('TestExpandTemplateWithRefInMultiLine', function () {
-        var templates = preloaded.Expand;
+        const templates = preloaded.Expand;
 
         const alarms = [
             {
@@ -608,7 +608,7 @@ describe('LG', function () {
             },
         ];
 
-        var evaled = templates.expandTemplate('ShowAlarmsWithMultiLine', { alarms });
+        const evaled = templates.expandTemplate('ShowAlarmsWithMultiLine', { alarms });
         assert.strictEqual(evaled.length, 2, `Evaled is ${evaled}`);
         const eval1Options = [
             '\r\nYou have 2 alarms.\r\nThey are 8 pm at tomorrow\r\n',
@@ -623,7 +623,7 @@ describe('LG', function () {
     });
 
     it('TestExpandTemplateWithFunction', function () {
-        var templates = preloaded.Expand;
+        const templates = preloaded.Expand;
 
         const alarms = [
             {
@@ -636,7 +636,7 @@ describe('LG', function () {
             },
         ];
 
-        var evaled = templates.expandTemplate('ShowAlarmsWithForeach', { alarms });
+        let evaled = templates.expandTemplate('ShowAlarmsWithForeach', { alarms });
         assert.strictEqual(evaled.length, 1, `Evaled is ${evaled}`);
         const evalOptions = [
             'You have 2 alarms, 7 am at tomorrow and 8 pm at tomorrow',
@@ -677,7 +677,7 @@ describe('LG', function () {
     it('TestExpandTemplateWithTemplateFunction', function () {
         const templates = preloaded.Expand;
 
-        let evaled = templates.expandTemplate('template3', { templateName: 'Greeting' });
+        const evaled = templates.expandTemplate('template3', { templateName: 'Greeting' });
         assert.strictEqual(evaled.length, 2);
         assert.strictEqual(evaled[0], 'Hi');
         assert.strictEqual(evaled[1], 'Hello');
@@ -686,7 +686,7 @@ describe('LG', function () {
     it('TestExpandTemplateWithDoubleQuotation', function () {
         const templates = preloaded.Expand;
 
-        let evaled = templates.expandTemplate('ExpanderT1');
+        const evaled = templates.expandTemplate('ExpanderT1');
         assert.strictEqual(evaled.length, 2);
         const expectedResults = [
             '{"lgType":"MyStruct","text":"Hi \\"quotes\\" allowed","speak":"how old are you?"}',
@@ -700,7 +700,7 @@ describe('LG', function () {
 
     it('TestExpandTemplateWithEscapeCharacter', function () {
         const templates = preloaded.EscapeCharacter;
-        var evaled = templates.expandTemplate('wPhrase');
+        let evaled = templates.expandTemplate('wPhrase');
         assert.strictEqual(evaled[0], 'Hi \r\n\t\\');
 
         evaled = templates.expandTemplate('AtEscapeChar');
@@ -727,7 +727,7 @@ describe('LG', function () {
         evaled = templates.expandTemplate('escapeInExpression6');
         assert.strictEqual(evaled[0], 'Hi hello\n');
 
-        var todos = ['A', 'B', 'C'];
+        const todos = ['A', 'B', 'C'];
         evaled = templates.expandTemplate('showTodo', { todos });
         assert.strictEqual(
             evaled[0].toString().replace(/\r\n/g, '\n'),
@@ -751,16 +751,16 @@ describe('LG', function () {
     });
 
     it('TestExpandTemplateWithEmptyListInStructuredLG', function () {
-        let templates = preloaded.Expand;
-        let data = {
+        const templates = preloaded.Expand;
+        const data = {
             Data: {
                 Name: 'NAME',
                 Address: 'ADDRESS',
             },
         };
 
-        let name = 'PointOfInterestSuggestedActionName';
-        let evaled = templates.expandTemplate(name, data);
+        const name = 'PointOfInterestSuggestedActionName';
+        const evaled = templates.expandTemplate(name, data);
 
         assert.strictEqual(evaled[0]['text'], 'NAME at ADDRESS');
         assert.strictEqual(evaled[0]['speak'], 'NAME at ADDRESS');
@@ -772,51 +772,47 @@ describe('LG', function () {
     it('TestExpandTemplateWithStrictMode', function () {
         let templates = preloaded.StrictModeFalse;
 
-        let evaled = templates.expandTemplate('StrictFalse');
+        const evaled = templates.expandTemplate('StrictFalse');
         assert.strictEqual(evaled[0], undefined);
 
         templates = preloaded.StrictModeTrue;
-
-        let errMessage = '';
-        try {
-            templates.expandTemplate('StrictTrue');
-        } catch (e) {
-            errMessage = e.toString();
-        }
-
-        assert(
-            errMessage.includes(
-                "'variable_not_defined' evaluated to null. [StrictTrue]  Error occurred when evaluating '-${variable_not_defined}'"
-            )
+        assert.throws(
+            () => templates.expandTemplate('StrictTrue'),
+            (err) => {
+                assert(
+                    err.message.includes(
+                        "'variable_not_defined' evaluated to null. [StrictTrue]  Error occurred when evaluating '-${variable_not_defined}'"
+                    )
+                );
+                return true;
+            }
         );
     });
 
     it('TestInlineEvaluate', function () {
-        var templates = preloaded.two;
-        var evaled = templates.evaluateText('hello');
+        const templates = preloaded.two;
+        let evaled = templates.evaluateText('hello');
         assert.strictEqual('hello', evaled);
 
         evaled = templates.evaluateText('');
         assert.strictEqual('', evaled);
 
         evaled = templates.evaluateText('${wPhrase()}');
-        var options = ['Hi', 'Hello', 'Hiya'];
+        const options = ['Hi', 'Hello', 'Hiya'];
         assert(options.includes(evaled));
-
-        var errMessage = '';
-        try {
-            templates.evaluateText('${ErrrorTemplate()}');
-        } catch (e) {
-            errMessage = e.toString();
-        }
-
-        assert(errMessage.includes(`it's not a built-in function or a custom function`));
+        assert.throws(
+            () => templates.evaluateText('${ErrrorTemplate()}'),
+            (err) => {
+                assert(err.message.includes("it's not a built-in function or a custom function"));
+                return true;
+            }
+        );
     });
 
     it('TestEvalExpression', function () {
-        var templates = preloaded.EvalExpression;
+        const templates = preloaded.EvalExpression;
         const userName = 'MS';
-        var evaled = templates.evaluate('template1', { userName });
+        let evaled = templates.evaluate('template1', { userName });
         assert.strictEqual(evaled, 'Hi MS', `Evaled is ${evaled}`);
 
         evaled = templates.evaluate('template2', { userName });
@@ -853,7 +849,7 @@ describe('LG', function () {
     });
 
     it('TestRecursiveTemplate', function () {
-        var templates = preloaded.RecursiveTemplate;
+        const templates = preloaded.RecursiveTemplate;
         let evaled = templates.evaluate('RecursiveAccumulate', { number: 10 });
         assert.strictEqual(evaled, 55);
 
@@ -869,15 +865,15 @@ describe('LG', function () {
         assert.strictEqual(templates.toArray()[0].properties, undefined);
 
         const structuredTemplates = preloaded.StructuredTemplate;
-        assert.strictEqual(structuredTemplates.toArray()[0].properties.Text, "${GetAge()}");
-        assert.strictEqual(structuredTemplates.toArray()[0].properties.Speak, "${GetAge()}");
-        assert.strictEqual(structuredTemplates.toArray()[0].properties['$type'], "Activity");
+        assert.strictEqual(structuredTemplates.toArray()[0].properties.Text, '${GetAge()}');
+        assert.strictEqual(structuredTemplates.toArray()[0].properties.Speak, '${GetAge()}');
+        assert.strictEqual(structuredTemplates.toArray()[0].properties['$type'], 'Activity');
     });
 
     it('TemplateCRUD_Normal', function () {
-        var filePath = GetExampleFilePath('CrudInit.lg');
+        const filePath = GetExampleFilePath('CrudInit.lg');
         const resource = new LGResource(filePath, filePath, fs.readFileSync(filePath, 'utf-8'));
-        var templates = Templates.parseResource(resource);
+        const templates = Templates.parseResource(resource);
 
         assert.strictEqual(templates.toArray().length, 2);
         assert.strictEqual(templates.imports.length, 0);
@@ -965,9 +961,9 @@ describe('LG', function () {
     });
 
     it('TemplateCRUD_RepeatAdd', function () {
-        var filePath = GetExampleFilePath('CrudInit.lg');
+        const filePath = GetExampleFilePath('CrudInit.lg');
         const resource = new LGResource(filePath, filePath, fs.readFileSync(filePath, 'utf-8'));
-        var templates = Templates.parseResource(resource);
+        const templates = Templates.parseResource(resource);
 
         // Add template
         templates.addTemplate('newtemplate', ['age', 'name'], '- hi ');
@@ -1002,9 +998,9 @@ describe('LG', function () {
     });
 
     it('TemplateCRUD_RepeatDelete', function () {
-        var filePath = GetExampleFilePath('CrudInit.lg');
+        const filePath = GetExampleFilePath('CrudInit.lg');
         const resource = new LGResource(filePath, filePath, fs.readFileSync(filePath, 'utf-8'));
-        var templates = Templates.parseResource(resource);
+        const templates = Templates.parseResource(resource);
 
         // Delete template
         templates.deleteTemplate('template1');
@@ -1034,9 +1030,9 @@ describe('LG', function () {
     });
 
     it('TemplateCRUD_Diagnostic', function () {
-        var filePath = GetExampleFilePath('CrudInit.lg');
+        const filePath = GetExampleFilePath('CrudInit.lg');
         const resource = new LGResource(filePath, filePath, fs.readFileSync(filePath, 'utf-8'));
-        var templates = Templates.parseResource(resource);
+        const templates = Templates.parseResource(resource);
 
         // add error template name (error in template)
         templates.addTemplate('newtemplate#$%', ['age', 'name'], '- hi ');
@@ -1068,9 +1064,9 @@ describe('LG', function () {
     });
 
     it('TemplateUpdate_With_Trailing_Newline', function () {
-        var filePath = GetExampleFilePath('CrudInit.lg');
+        const filePath = GetExampleFilePath('CrudInit.lg');
         const resource = new LGResource(filePath, filePath, fs.readFileSync(filePath, 'utf-8'));
-        var templates = Templates.parseResource(resource);
+        let templates = Templates.parseResource(resource);
 
         templates = templates.updateTemplate('template1', 'template1', undefined, '-Hi\r\n-Hello\r\n');
         let firstTemplateRange = templates.toArray()[0].sourceRange.range;
@@ -1092,8 +1088,8 @@ describe('LG', function () {
     });
 
     it('TestMemoryScope', function () {
-        var templates = preloaded.MemoryScope;
-        var evaled = templates.evaluate('T1', { turn: { name: 'Dong', count: 3 } });
+        const templates = preloaded.MemoryScope;
+        let evaled = templates.evaluate('T1', { turn: { name: 'Dong', count: 3 } });
         assert.strictEqual(
             evaled,
             'Hi Dong, welcome to Seattle, Seattle is a beautiful place, how many burgers do you want, 3?'
@@ -1106,16 +1102,16 @@ describe('LG', function () {
                 },
             },
         };
-        var scope = new SimpleObjectMemory(objscope);
+        const scope = new SimpleObjectMemory(objscope);
 
         evaled = templates.evaluate('AskBread', scope);
         assert.strictEqual(evaled, 'Which Bread, A or B do you want?');
     });
 
     it('TestStructuredTemplate', function () {
-        var templates = preloaded.StructuredTemplate;
+        const templates = preloaded.StructuredTemplate;
 
-        var evaled = templates.evaluate('AskForAge.prompt');
+        let evaled = templates.evaluate('AskForAge.prompt');
         assert.equal(evaled.text, evaled.speak);
 
         evaled = templates.evaluate('AskForAge.prompt2');
@@ -1182,10 +1178,10 @@ describe('LG', function () {
     });
 
     it('TestTemplateCache', function () {
-        var templates = preloaded.TemplateCache;
+        const templates = preloaded.TemplateCache;
 
         // Default cache policy
-        var evaled = templates.evaluate('templateWithSameParams', { param: 'ms' });
+        let evaled = templates.evaluate('templateWithSameParams', { param: 'ms' });
         let resultList = evaled.split(' ');
         assert.strictEqual(resultList[0], resultList[1]);
 
@@ -1222,12 +1218,12 @@ describe('LG', function () {
 
     it('TestCacheScopeOption', function () {
         //Global cache test
-        var evaled = preloaded.GlobalCache.evaluate('nestedTemplate', { param: 'ms' });
+        let evaled = preloaded.GlobalCache.evaluate('nestedTemplate', { param: 'ms' });
         let resultList = evaled.split(' ');
         assert.strictEqual(resultList[0], resultList[1]);
 
         // Global cache effects one evaluation life cycle
-        var evaled2 = preloaded.GlobalCache.evaluate('nestedTemplate', { param: 'ms' });
+        const evaled2 = preloaded.GlobalCache.evaluate('nestedTemplate', { param: 'ms' });
         assert.notStrictEqual(evaled, evaled2);
 
         // Global cache import none cache, the entrance option would override the options in children
@@ -1261,9 +1257,9 @@ describe('LG', function () {
     });
 
     it('TestConditionExpression', function () {
-        var templates = preloaded.ConditionExpression;
+        const templates = preloaded.ConditionExpression;
 
-        var evaled = templates.evaluate('conditionTemplate', { num: 1 });
+        let evaled = templates.evaluate('conditionTemplate', { num: 1 });
         assert.strictEqual(evaled, 'Your input is one');
 
         evaled = templates.evaluate('conditionTemplate', { num: 2 });
@@ -1277,9 +1273,9 @@ describe('LG', function () {
     });
 
     it('TestExpandTemplateWithStructuredLG', function () {
-        var templates = preloaded.StructuredTemplate;
+        const templates = preloaded.StructuredTemplate;
 
-        var evaled = templates.expandTemplate('AskForAge.prompt');
+        let evaled = templates.expandTemplate('AskForAge.prompt');
         assert.strictEqual(evaled.length, 4, `Evaled is ${evaled}`);
 
         let expectedResults = [
@@ -1309,11 +1305,11 @@ describe('LG', function () {
     });
 
     it('TestExpressionextract', function () {
-        var templates = preloaded.ExpressionExtract;
+        const templates = preloaded.ExpressionExtract;
 
-        var evaled1 = templates.evaluate('templateWithBrackets');
-        var evaled2 = templates.evaluate('templateWithBrackets2');
-        var evaled3 = templates.evaluate('templateWithBrackets3').toString().trim();
+        let evaled1 = templates.evaluate('templateWithBrackets');
+        let evaled2 = templates.evaluate('templateWithBrackets2');
+        let evaled3 = templates.evaluate('templateWithBrackets3').toString().trim();
         let espectedResult = "don't mix {} and '{}'";
         assert.strictEqual(evaled1, espectedResult);
         assert.strictEqual(evaled2, espectedResult);
@@ -1345,9 +1341,9 @@ describe('LG', function () {
     });
 
     it('TestEmptyArrayAndObject', function () {
-        var templates = preloaded.EmptyArrayAndObject;
+        const templates = preloaded.EmptyArrayAndObject;
 
-        var evaled = templates.evaluate('template', { list: [], obj: {} });
+        let evaled = templates.evaluate('template', { list: [], obj: {} });
         assert.strictEqual(evaled, 'list and obj are both empty');
 
         evaled = templates.evaluate('template', { list: [], obj: new Map() });
@@ -1370,9 +1366,9 @@ describe('LG', function () {
 
     it('TestLGOptions', function () {
         //LGOptionTest has no import files.
-        var templates = preloaded.LGOptionsTest;
+        const templates = preloaded.LGOptionsTest;
 
-        var evaled = templates.evaluate('SayHello');
+        let evaled = templates.evaluate('SayHello');
         assert.strictEqual('hi The user.name is undefined', evaled);
 
         evaled = templates.evaluate('testInlineString');
@@ -1381,9 +1377,9 @@ describe('LG', function () {
         //a1.lg imports b1.lg.
         //a1's option is strictMode is false, replaceNull = ${path} is undefined, and defalut lineBreakStyle.
         //b1's option is strictMode is true, replaceNull = The ${path} is undefined, and markdown lineBreakStyle.
-        var templates2 = preloaded.a1;
+        const templates2 = preloaded.a1;
 
-        var evaled2 = templates2.evaluate('SayHello');
+        const evaled2 = templates2.evaluate('SayHello');
 
         assert.strictEqual('hi user.name is undefined', evaled2);
         assert.strictEqual(templates2.lgOptions.LineBreakStyle, LGLineBreakStyle.Default);
@@ -1392,9 +1388,9 @@ describe('LG', function () {
         //a2.lg: replaceNull = The ${path} is undefined
         //b2.lg: strict = true, replaceNull = ${path} is evaluated to null, please check!
         //c2: lineBreakStyle = markdown
-        var templates3 = preloaded.a2;
+        const templates3 = preloaded.a2;
 
-        var evaled3 = templates3.evaluate('SayHello');
+        const evaled3 = templates3.evaluate('SayHello');
 
         assert.strictEqual(evaled3, 'hi The user.name is undefined');
 
@@ -1406,21 +1402,21 @@ describe('LG', function () {
         //b3.lg: lineBreakStyle = default
         //d3: replaceNull = ${path} is evaluated to null in d3!
         //c3: replaceNull = ${path} is evaluated to null in c3!
-        var templates4 = preloaded.a3;
+        const templates4 = preloaded.a3;
 
-        var evaled4 = templates4.evaluate('SayHello');
+        let evaled4 = templates4.evaluate('SayHello');
 
         assert.strictEqual(evaled4, 'hi the user.name is undefined a3!');
 
         assert.strictEqual(templates4.lgOptions.LineBreakStyle, LGLineBreakStyle.Markdown);
 
         //Test use an defined option in Evaluate method, which will override all options in LG files.
-        var optionStrList = [
+        const optionStrList = [
             '@strictMode = false',
             '@replaceNull = ${ path } is undefined',
             '@lineBreakStyle = defalut',
         ];
-        var newOpt = new EvaluationOptions(optionStrList);
+        const newOpt = new EvaluationOptions(optionStrList);
         evaled4 = templates4.evaluate('SayHello', undefined, newOpt);
 
         assert.strictEqual(evaled4, 'hi user.name is undefined');
@@ -1435,9 +1431,9 @@ describe('LG', function () {
         //b4.lg, c4.lg: nothing but import statement.
         //d4: only have template definition.
         //f4: only options, strictMode = true, replaceNull = The ${path} is undefined, lineBreaStyle = markdown.
-        var templates5 = preloaded.a4;
+        const templates5 = preloaded.a4;
 
-        var evaled5 = templates5.evaluate('SayHello');
+        const evaled5 = templates5.evaluate('SayHello');
 
         assert.strictEqual(evaled5, 'hi the user.name is undefined a4!');
 
@@ -1447,15 +1443,15 @@ describe('LG', function () {
     });
 
     it('TestNullTolerant', function () {
-        var templates = preloaded.NullTolerant;
+        const templates = preloaded.NullTolerant;
 
-        var evaled = templates.evaluate('template1');
+        let evaled = templates.evaluate('template1');
         assert.strictEqual(evaled, undefined);
 
         evaled = templates.evaluate('template2');
         assert.strictEqual(evaled, 'result is undefined');
 
-        var jObjEvaled = templates.evaluate('template3');
+        const jObjEvaled = templates.evaluate('template3');
         assert.strictEqual(jObjEvaled['key1'], undefined);
 
         evaled = templates.evaluate('template5');
@@ -1466,9 +1462,9 @@ describe('LG', function () {
     });
 
     it('TestIsTemplateFunction', function () {
-        var templates = preloaded.IsTemplate;
+        const templates = preloaded.IsTemplate;
 
-        var evaled = templates.evaluate('template2', { templateName: 'template1' });
+        let evaled = templates.evaluate('template2', { templateName: 'template1' });
         assert.strictEqual(evaled, 'template template1 exists');
 
         evaled = templates.evaluate('template2', { templateName: 'wPhrase' });
@@ -1479,9 +1475,9 @@ describe('LG', function () {
     });
 
     it('TestStringInterpolation', function () {
-        var templates = preloaded.StringInterpolation;
+        const templates = preloaded.StringInterpolation;
 
-        var evaled = templates.evaluate('simpleStringTemplate');
+        let evaled = templates.evaluate('simpleStringTemplate');
         assert.strictEqual(evaled, 'say hi');
 
         evaled = templates.evaluate('StringTemplateWithVariable', { w: 'world' });
@@ -1501,7 +1497,7 @@ describe('LG', function () {
     });
 
     it('TestMemoryAccessPath', function () {
-        var templates = preloaded.MemoryAccess;
+        const templates = preloaded.MemoryAccess;
 
         const scope = {
             myProperty: {
@@ -1519,7 +1515,7 @@ describe('LG', function () {
         // this evaulate will hit memory access twice
         // first for "property", and get "p1", from local
         // sencond for "turn.property[p1].enum" and get "p1enum" from global
-        var evaled = templates.evaluate('T1', scope);
+        let evaled = templates.evaluate('T1', scope);
         assert.strictEqual(evaled, 'p1enum');
 
         // this evaulate will hit memory access twice
@@ -1530,13 +1526,13 @@ describe('LG', function () {
     });
 
     it('TestReExecute', function () {
-        var templates = preloaded.ReExecute;
+        const templates = preloaded.ReExecute;
 
         // may be has different values
-        let evaled = templates.evaluate('templateWithSameParams', { param1: 'ms', param2: 'newms' });
+        const evaled = templates.evaluate('templateWithSameParams', { param1: 'ms', param2: 'newms' });
 
         // the third one should be the same with the first one
-        let resultList = evaled.split(' ');
+        const resultList = evaled.split(' ');
         assert(resultList.length, 3);
 
         assert(resultList[0], resultList[2]);
@@ -1544,7 +1540,7 @@ describe('LG', function () {
 
     it('TestCustomFunction', function () {
         this.timeout(5000); // We can't preload the template, so need increased timeout
-        let parser = new ExpressionParser((func) => {
+        const parser = new ExpressionParser((func) => {
             if (func === 'custom') {
                 return new NumericEvaluator('custom', (args) => {
                     return args[0] + args[1];
@@ -1553,7 +1549,7 @@ describe('LG', function () {
                 return Expression.lookup(func);
             }
         });
-        let templates = Templates.parseFile(GetExampleFilePath('CustomFunction.lg'), undefined, parser);
+        const templates = Templates.parseFile(GetExampleFilePath('CustomFunction.lg'), undefined, parser);
         assert.strictEqual(templates.expressionParser, parser);
         let result = templates.evaluate('template', {});
         assert.strictEqual(result, 3);
@@ -1573,8 +1569,8 @@ describe('LG', function () {
             return result;
         });
 
-        let templates = Templates.parseFile(GetExampleFilePath('CustomFunction2.lg'), undefined);
-        var evaled = templates.evaluate('custom', {});
+        const templates = Templates.parseFile(GetExampleFilePath('CustomFunction2.lg'), undefined);
+        const evaled = templates.evaluate('custom', {});
         assert.strictEqual(evaled, 6.0);
     });
 
@@ -1610,7 +1606,7 @@ describe('LG', function () {
         ({ value: evaled, error } = Expression.parse('common.looking()').tryEvaluate());
         assert.strictEqual(evaled, 'John');
 
-        var scope1 = { a: ['cat', 'dog'], b: 12.1, c: ['lion'] };
+        const scope1 = { a: ['cat', 'dog'], b: 12.1, c: ['lion'] };
         ({ value: evaled, error } = Expression.parse('common.countTotal(a, c)').tryEvaluate(scope1));
         assert.strictEqual(error, undefined);
         assert.strictEqual(evaled, 3);
@@ -1627,7 +1623,7 @@ describe('LG', function () {
             `list2 is not a list or array. [countTotal]  Error occurred when evaluating '-\${count(union(list1,list2))}'.`
         );
 
-        var scope2 = { i: 1, j: 2, k: 3, l: 4 };
+        const scope2 = { i: 1, j: 2, k: 3, l: 4 };
         ({ value: evaled, error } = Expression.parse('common.sumFourNumbers(i, j, k, l)').tryEvaluate(scope2));
         assert.strictEqual(evaled, 10);
     });

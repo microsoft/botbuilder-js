@@ -9,16 +9,16 @@ const RequestHandler = require('../lib/requestHandler');
 const Response = require('../lib/streamingResponse');
 const Request = require('../lib/streamingRequest');
 const StreamManager = require('../lib/payloads/streamManager');
-const  chai  = require('chai');
-var sinon = require('sinon');
-var expect = chai.expect;
+const chai = require('chai');
+const sinon = require('sinon');
+const expect = chai.expect;
 
 class TestRequestHandler extends RequestHandler.RequestHandler {
-    constructor(){
+    constructor() {
         super();
     }
-    processRequest(request, logger) {
-        let response = new Response.StreamingResponse();
+    processRequest(_request, _logger) {
+        const response = new Response.StreamingResponse();
         response.statusCode = 111;
         response.setBody('Test body.');
 
@@ -27,173 +27,151 @@ class TestRequestHandler extends RequestHandler.RequestHandler {
 }
 
 class TestRequestManager {
-    constructor(){ }
+    constructor() {}
     getResponse() {
-        let response = {statusCode: 200};
+        const response = { statusCode: 200 };
         return response;
     }
 }
 
 class TestPayloadSender {
     constructor() {}
-    sendPayload(){
+    sendPayload() {
         return;
     }
 }
 
-describe('Streaming Extensions ProtocolAdapter', () => {
-    it('constructs properly.', () => {
-        let requestHandler = new RequestHandler.RequestHandler();
-        let requestManager = new RequestManager.RequestManager();
-        let payloadSender = new PayloadSender.PayloadSender();
-        let paylaodReceiver = new PayloadReceiver.PayloadReceiver();
-        let protocolAdapter = new ProtocolAdapter.ProtocolAdapter(
+describe('Streaming Extensions ProtocolAdapter', function () {
+    it('constructs properly.', function () {
+        const requestHandler = new RequestHandler.RequestHandler();
+        const requestManager = new RequestManager.RequestManager();
+        const payloadSender = new PayloadSender.PayloadSender();
+        const payloadReceiver = new PayloadReceiver.PayloadReceiver();
+        const protocolAdapter = new ProtocolAdapter.ProtocolAdapter(
             requestHandler,
             requestManager,
             payloadSender,
-            paylaodReceiver);
+            payloadReceiver
+        );
 
-        expect(protocolAdapter.assemblerManager)
-            .to
-            .not
-            .be
-            .undefined;
+        expect(protocolAdapter.assemblerManager).to.not.be.undefined;
 
-        expect(protocolAdapter.payloadReceiver)
-            .to
-            .not
-            .be
-            .undefined;
+        expect(protocolAdapter.payloadReceiver).to.not.be.undefined;
 
-        expect(protocolAdapter.payloadSender)
-            .to
-            .not
-            .be
-            .undefined;
+        expect(protocolAdapter.payloadSender).to.not.be.undefined;
 
-        expect(protocolAdapter.sendOperations)
-            .to
-            .not
-            .be
-            .undefined;
+        expect(protocolAdapter.sendOperations).to.not.be.undefined;
 
-        expect(protocolAdapter.streamManager)
-            .to
-            .not
-            .be
-            .undefined;
+        expect(protocolAdapter.streamManager).to.not.be.undefined;
 
-        expect(protocolAdapter.requestHandler)
-            .to
-            .not
-            .be
-            .undefined;
+        expect(protocolAdapter.requestHandler).to.not.be.undefined;
 
-        expect(protocolAdapter.requestManager)
-            .to
-            .not
-            .be
-            .undefined;
+        expect(protocolAdapter.requestManager).to.not.be.undefined;
     });
 
-    it('processes requests.', async () => {
-        let requestHandler = new TestRequestHandler();
-        let requestManager = new RequestManager.RequestManager();
-        let payloadSender = new PayloadSender.PayloadSender();
-        let paylaodReceiver = {
-            subscribe: function(){},
+    it('processes requests.', async function () {
+        const requestHandler = new TestRequestHandler();
+        const requestManager = new RequestManager.RequestManager();
+        const payloadSender = new PayloadSender.PayloadSender();
+        const payloadReceiver = {
+            subscribe: function () {},
         };
-        let protocolAdapter = new ProtocolAdapter.ProtocolAdapter(
+        const protocolAdapter = new ProtocolAdapter.ProtocolAdapter(
             requestHandler,
             requestManager,
             payloadSender,
-            paylaodReceiver);
+            payloadReceiver
+        );
 
-        var requestHandlerSpy = sinon.spy(requestHandler, 'processRequest');
+        const requestHandlerSpy = sinon.spy(requestHandler, 'processRequest');
 
-        protocolAdapter.onReceiveRequest('42', {verb: 'POST', path: '/api/messages', streams: [] });
+        protocolAdapter.onReceiveRequest('42', { verb: 'POST', path: '/api/messages', streams: [] });
         expect(requestHandlerSpy.called).to.be.true;
     });
 
-    it('processes responses.', async () => {
-        let requestHandler = new TestRequestHandler();
-        let requestManager = new RequestManager.RequestManager();
-        let payloadSender = new PayloadSender.PayloadSender();
-        let paylaodReceiver = {
-            subscribe: function(){},
+    it('processes responses.', async function () {
+        const requestHandler = new TestRequestHandler();
+        const requestManager = new RequestManager.RequestManager();
+        const payloadSender = new PayloadSender.PayloadSender();
+        const payloadReceiver = {
+            subscribe: function () {},
         };
-        let protocolAdapter = new ProtocolAdapter.ProtocolAdapter(
+        const protocolAdapter = new ProtocolAdapter.ProtocolAdapter(
             requestHandler,
             requestManager,
             payloadSender,
-            paylaodReceiver);
+            payloadReceiver
+        );
 
-        var requestManagerSpy = sinon.spy(requestManager, 'signalResponse');
+        const requestManagerSpy = sinon.spy(requestManager, 'signalResponse');
 
-        protocolAdapter.onReceiveResponse('42', {statusCode: '200', streams: [] });
+        protocolAdapter.onReceiveResponse('42', { statusCode: '200', streams: [] });
         expect(requestManagerSpy.called).to.be.true;
     });
 
-    it('does not throw when processing a cancellation for an already processed stream', async () => {
-        let requestHandler = new TestRequestHandler();
-        let requestManager = new RequestManager.RequestManager();
-        let payloadSender = new PayloadSender.PayloadSender();
-        let paylaodReceiver = {
-            subscribe: function(){},
+    it('does not throw when processing a cancellation for an already processed stream', async function () {
+        const requestHandler = new TestRequestHandler();
+        const requestManager = new RequestManager.RequestManager();
+        const payloadSender = new PayloadSender.PayloadSender();
+        const payloadReceiver = {
+            subscribe: function () {},
         };
-        let protocolAdapter = new ProtocolAdapter.ProtocolAdapter(
+        const protocolAdapter = new ProtocolAdapter.ProtocolAdapter(
             requestHandler,
             requestManager,
             payloadSender,
-            paylaodReceiver);
-        let header = {payloadType: 'A', payloadLength: '5', id: '100', end: true};
-        let assembler = new PayloadAssembler.PayloadAssembler(new StreamManager.StreamManager(), {header: header, onCompleted: function() {} });
+            payloadReceiver
+        );
+        const header = { payloadType: 'A', payloadLength: '5', id: '100', end: true };
+        const assembler = new PayloadAssembler.PayloadAssembler(new StreamManager.StreamManager(), {
+            header: header,
+            onCompleted: function () {},
+        });
 
         expect(protocolAdapter.onCancelStream(assembler)).to.not.throw;
     });
 
-    it('sends requests.', async (done) => {
-        let requestHandler = new TestRequestHandler();
-        let requestManager = new TestRequestManager();
-        let payloadSender = new TestPayloadSender();
-        let paylaodReceiver = new PayloadReceiver.PayloadReceiver();
-        let protocolAdapter = new ProtocolAdapter.ProtocolAdapter(
+    it('sends requests.', async function (done) {
+        const requestHandler = new TestRequestHandler();
+        const requestManager = new TestRequestManager();
+        const payloadSender = new TestPayloadSender();
+        const payloadReceiver = new PayloadReceiver.PayloadReceiver();
+        const protocolAdapter = new ProtocolAdapter.ProtocolAdapter(
             requestHandler,
             requestManager,
             payloadSender,
-            paylaodReceiver);
+            payloadReceiver
+        );
 
-        expect(protocolAdapter.sendRequest(new Request.StreamingRequest()))
-            .to.not.throw;
+        expect(protocolAdapter.sendRequest(new Request.StreamingRequest())).to.not.throw;
         done();
     });
 
-    it('payloadreceiver responds with an error when told to connect twice', () => {
-        let pa = new PayloadReceiver.PayloadReceiver();
-        let buffer =Buffer.alloc(Number(PayloadConstants.PayloadConstants.MaxHeaderLength));
+    it('payloadreceiver responds with an error when told to connect twice', function () {
+        const pa = new PayloadReceiver.PayloadReceiver();
+        const buffer = Buffer.alloc(Number(PayloadConstants.PayloadConstants.MaxHeaderLength));
         buffer.write('A.000168.68e999ca-a651-40f4-ad8f-3aaf781862b4.1\n');
-        let receiver = {
-
-            receive: function(){return buffer;},
-            close: function(){throw new Error('Test error!');},
-
+        const receiver = {
+            receive: function () {
+                return buffer;
+            },
+            close: function () {
+                throw new Error('Test error!');
+            },
         };
-        let s = new SubscribableStream.SubscribableStream();
-        s.write('{"statusCode": "12345","streams": [{"id": "1","contentType": "text","length": "2"},{"id": "2","contentType": "text","length": "2"},{"id": "3","contentType": "text","length": "2"}]}');
-        let rp = {verb: 'POST', path: '/some/path'};
+        const s = new SubscribableStream.SubscribableStream();
+        s.write(
+            '{"statusCode": "12345","streams": [{"id": "1","contentType": "text","length": "2"},{"id": "2","contentType": "text","length": "2"},{"id": "3","contentType": "text","length": "2"}]}'
+        );
+        const rp = { verb: 'POST', path: '/some/path' };
         rp.streams = [];
         rp.streams.push(s);
-
 
         pa.connect(receiver);
 
         expect(pa.isConnected).to.be.true;
-        try
-        {
-            pa.connect(receiver);
-        } catch(result) {
-            expect(result.message).to.equal('Already connected.');
-        }
+
+        expect(() => pa.connect(receiver)).to.throw('Already connected.');
 
         pa.disconnect();
     });

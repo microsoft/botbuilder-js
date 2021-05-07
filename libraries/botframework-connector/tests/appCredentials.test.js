@@ -4,7 +4,7 @@
  */
 
 const { AuthenticationConstants, CertificateAppCredentials, MicrosoftAppCredentials } = require('../');
-const { fail, ok: assert, strictEqual } = require('assert');
+const { ok: assert, strictEqual } = require('assert');
 const { WebResource } = require('@azure/ms-rest-js');
 
 const APP_ID = '2cd87869-38a0-4182-9251-d056e8f0ac24';
@@ -84,14 +84,12 @@ describe('AppCredentials', function () {
 
         it('should fail to get a token with an appId and no appPassword', async function () {
             const tokenGenerator = new MicrosoftAppCredentials(APP_ID);
-            try {
-                await tokenGenerator.getToken(true);
-                fail('Should not have successfully retrieved token.');
-            } catch (e) {
+            await assert.rejects(
+                tokenGenerator.getToken(true),
                 // e.message evaluation per adal-node@0.2.1:
                 // https://github.com/AzureAD/azure-activedirectory-library-for-nodejs/blob/eeff5215bd7a6629edbd1d71450a0db68f029838/lib/authentication-context.js#L277
-                strictEqual(e.message, 'The clientSecret parameter is required.');
-            }
+                new Error('The clientSecret parameter is required.')
+            );
         });
     });
 });

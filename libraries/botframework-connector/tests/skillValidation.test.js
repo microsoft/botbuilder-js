@@ -19,13 +19,11 @@ describe('SkillValidation', function () {
             const audience = uuid();
             const appId = uuid();
 
-            // No claims (falsey value)
-            try {
-                assert(!SkillValidation.isSkillClaim());
-                throw new Error('SkillValidation.isSkillClaim() should have failed with undefined parameter');
-            } catch (e) {
-                assert.strictEqual(e.message, 'SkillValidation.isSkillClaim(): missing claims.');
-            }
+            // No claims (falsy value)
+            assert.throws(
+                () => SkillValidation.isSkillClaim(),
+                new TypeError('SkillValidation.isSkillClaim(): missing claims.')
+            );
 
             // Empty list of claims
             assert(!SkillValidation.isSkillClaim(claims));
@@ -128,19 +126,15 @@ describe('SkillValidation', function () {
 
     describe('authenticateChannelToken()', function () {
         it('should throw an error when missing authConfig', async function () {
-            try {
-                await SkillValidation.authenticateChannelToken(
+            await assert.rejects(
+                SkillValidation.authenticateChannelToken(
                     'authHeader',
                     new SimpleCredentialProvider('', ''),
                     '',
                     'unknown'
-                );
-            } catch (e) {
-                assert.strictEqual(
-                    e.message,
-                    'SkillValidation.authenticateChannelToken(): invalid authConfig parameter'
-                );
-            }
+                ),
+                new Error('SkillValidation.authenticateChannelToken(): invalid authConfig parameter')
+            );
         });
     });
 
@@ -177,15 +171,13 @@ describe('SkillValidation', function () {
             return { credentials, identity };
         };
 
-        it('should fail with a falsey identity', async function () {
+        it('should fail with a falsy identity', async function () {
             const { credentials } = makeCredentialsAndIdentity();
 
-            try {
-                await SkillValidation.validateIdentity(undefined, credentials);
-                assert.fail('should have thrown');
-            } catch (e) {
-                assert.strictEqual(e.message, 'SkillValidation.validateIdentity(): Invalid identity');
-            }
+            await assert.rejects(
+                SkillValidation.validateIdentity(undefined, credentials),
+                new Error('SkillValidation.validateIdentity(): Invalid identity')
+            );
         });
 
         it('should fail if ClaimsIdentity authType is false', async function () {
@@ -193,12 +185,10 @@ describe('SkillValidation', function () {
                 authType: false,
             });
 
-            try {
-                await SkillValidation.validateIdentity(identity, credentials);
-                assert.fail('should have thrown');
-            } catch (e) {
-                assert.strictEqual(e.message, 'SkillValidation.validateIdentity(): Token not authenticated');
-            }
+            await assert.rejects(
+                SkillValidation.validateIdentity(identity, credentials),
+                new Error('SkillValidation.validateIdentity(): Token not authenticated')
+            );
         });
 
         it('should fail with no version claim', async function () {
@@ -206,15 +196,12 @@ describe('SkillValidation', function () {
                 version: null,
             });
 
-            try {
-                await SkillValidation.validateIdentity(identity, credentials);
-                assert.fail('should have thrown');
-            } catch (e) {
-                assert.strictEqual(
-                    e.message,
+            await assert.rejects(
+                SkillValidation.validateIdentity(identity, credentials),
+                new Error(
                     `SkillValidation.validateIdentity(): '${AuthenticationConstants.VersionClaim}' claim is required on skill Tokens.`
-                );
-            }
+                )
+            );
         });
 
         it('should fail with no audience claim', async function () {
@@ -222,15 +209,12 @@ describe('SkillValidation', function () {
                 audience: null,
             });
 
-            try {
-                await SkillValidation.validateIdentity(identity, credentials);
-                assert.fail('should have thrown');
-            } catch (e) {
-                assert.strictEqual(
-                    e.message,
+            await assert.rejects(
+                SkillValidation.validateIdentity(identity, credentials),
+                new Error(
                     `SkillValidation.validateIdentity(): '${AuthenticationConstants.AudienceClaim}' claim is required on skill Tokens.`
-                );
-            }
+                )
+            );
         });
 
         it('should fail if audience claim is not appId', async function () {
@@ -239,26 +223,22 @@ describe('SkillValidation', function () {
                 appId: uuid(),
             });
 
-            try {
-                await SkillValidation.validateIdentity(identity, credentials);
-                assert.fail('should have thrown');
-            } catch (e) {
-                assert.strictEqual(e.message, 'SkillValidation.validateIdentity(): Invalid audience.');
-            }
+            await assert.rejects(
+                SkillValidation.validateIdentity(identity, credentials),
+                new Error('SkillValidation.validateIdentity(): Invalid audience.')
+            );
         });
 
-        it('should fail if appid claim is falsey', async function () {
+        it('should fail if appid claim is falsy', async function () {
             const { credentials, identity } = makeCredentialsAndIdentity({
                 audience: uuid(),
                 appId: '',
             });
 
-            try {
-                await SkillValidation.validateIdentity(identity, credentials);
-                assert.fail('should have thrown');
-            } catch (e) {
-                assert.strictEqual(e.message, 'SkillValidation.validateIdentity(): Invalid appId.');
-            }
+            await assert.rejects(
+                SkillValidation.validateIdentity(identity, credentials),
+                new Error('SkillValidation.validateIdentity(): Invalid appId.')
+            );
         });
 
         it('should fail if appid claim is missing', async function () {
@@ -267,12 +247,10 @@ describe('SkillValidation', function () {
                 appId: null,
             });
 
-            try {
-                await SkillValidation.validateIdentity(identity, credentials);
-                assert.fail('should have thrown');
-            } catch (e) {
-                assert.strictEqual(e.message, 'SkillValidation.validateIdentity(): Invalid appId.');
-            }
+            await assert.rejects(
+                SkillValidation.validateIdentity(identity, credentials),
+                new Error('SkillValidation.validateIdentity(): Invalid appId.')
+            );
         });
 
         it('should succeed', async function () {
