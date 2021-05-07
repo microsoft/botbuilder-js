@@ -19,7 +19,7 @@ describe('StreamingHttpClient', function () {
 
         await assert.rejects(
             client.sendRequest(),
-            Error('StreamingHttpClient.sendRequest(): missing "httpRequest" parameter')
+            new Error('StreamingHttpClient.sendRequest(): missing "httpRequest" parameter')
         );
     });
 
@@ -28,7 +28,7 @@ describe('StreamingHttpClient', function () {
 
         await assert.rejects(
             client.sendRequest({}),
-            Error(
+            new Error(
                 'StreamingHttpClient.sendRequest(): Streaming connection is disconnected, and the request could not be sent.'
             )
         );

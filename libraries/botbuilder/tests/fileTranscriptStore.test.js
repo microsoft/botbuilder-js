@@ -119,21 +119,21 @@ describe('The FileTranscriptStore', function () {
         it('no activity is passed to the "logActivity" function', async function () {
             await assert.rejects(
                 storage.logActivity(null),
-                Error('activity cannot be null for logActivity()', 'An error should exist')
+                new Error('activity cannot be null for logActivity()', 'An error should exist')
             );
         });
 
         it('no channelId is passed to the "getTranscriptActivities" function', async function () {
             await assert.rejects(
                 storage.getTranscriptActivities(null, '123456'),
-                Error('Missing channelId', 'An error should exist')
+                new Error('Missing channelId', 'An error should exist')
             );
         });
 
         it('no conversationId is passed to the "getTranscriptActivities" function', async function () {
             await assert.rejects(
                 storage.getTranscriptActivities({}),
-                Error('Missing conversationId', 'An error should exist')
+                new Error('Missing conversationId', 'An error should exist')
             );
         });
 
@@ -148,7 +148,7 @@ describe('The FileTranscriptStore', function () {
         it('no conversationId is passed to the "deleteTranscript" function', async function () {
             await assert.rejects(
                 storage.deleteTranscript({}),
-                Error('Missing conversationId', 'An error should exist')
+                new Error('Missing conversationId', 'An error should exist')
             );
         });
     });

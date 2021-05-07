@@ -201,7 +201,7 @@ describe('TeamsInfo', function () {
         it('should error if context is null', async function () {
             await assert.rejects(
                 TeamsInfo.sendMessageToTeamsChannel(null, teamActivity, 'teamID'),
-                Error('TurnContext cannot be null')
+                new Error('TurnContext cannot be null')
             );
         });
 
@@ -210,7 +210,7 @@ describe('TeamsInfo', function () {
 
             await assert.rejects(
                 TeamsInfo.sendMessageToTeamsChannel(context, null, 'teamID'),
-                Error('Activity cannot be null')
+                new Error('Activity cannot be null')
             );
         });
 
@@ -219,7 +219,7 @@ describe('TeamsInfo', function () {
 
             await assert.rejects(
                 TeamsInfo.sendMessageToTeamsChannel(context, teamActivity, ''),
-                Error('The teamsChannelId cannot be null or empty')
+                new Error('The teamsChannelId cannot be null or empty')
             );
         });
 
@@ -228,7 +228,7 @@ describe('TeamsInfo', function () {
 
             await assert.rejects(
                 TeamsInfo.sendMessageToTeamsChannel(context, teamActivity, null),
-                Error('The teamsChannelId cannot be null or empty')
+                new Error('The teamsChannelId cannot be null or empty')
             );
         });
     });
@@ -239,7 +239,7 @@ describe('TeamsInfo', function () {
 
             await assert.rejects(
                 TeamsInfo.getTeamChannels(context),
-                Error('This method is only valid within the scope of a MS Teams Team.')
+                new Error('This method is only valid within the scope of a MS Teams Team.')
             );
         });
 
@@ -248,7 +248,7 @@ describe('TeamsInfo', function () {
 
             await assert.rejects(
                 TeamsInfo.getTeamChannels(context),
-                Error('This method is only valid within the scope of a MS Teams Team.')
+                new Error('This method is only valid within the scope of a MS Teams Team.')
             );
         });
 
@@ -337,7 +337,7 @@ describe('TeamsInfo', function () {
 
             await assert.rejects(
                 TeamsInfo.getTeamDetails(context),
-                Error('This method is only valid within the scope of a MS Teams Team.')
+                new Error('This method is only valid within the scope of a MS Teams Team.')
             );
         });
 
@@ -346,7 +346,7 @@ describe('TeamsInfo', function () {
 
             await assert.rejects(
                 TeamsInfo.getTeamDetails(context),
-                Error('This method is only valid within the scope of a MS Teams Team.')
+                new Error('This method is only valid within the scope of a MS Teams Team.')
             );
         });
 
@@ -612,7 +612,7 @@ describe('TeamsInfo', function () {
 
             await assert.rejects(
                 TeamsInfo.getTeamMember(context),
-                Error('This method is only valid within the scope of a MS Teams Team.')
+                new Error('This method is only valid within the scope of a MS Teams Team.')
             );
         });
     });
@@ -667,7 +667,7 @@ describe('TeamsInfo', function () {
 
             await assert.rejects(
                 TeamsInfo.getTeamMembers(context),
-                Error('This method is only valid within the scope of a MS Teams Team.')
+                new Error('This method is only valid within the scope of a MS Teams Team.')
             );
         });
 
@@ -676,7 +676,7 @@ describe('TeamsInfo', function () {
 
             await assert.rejects(
                 TeamsInfo.getTeamMembers(context),
-                Error('This method is only valid within the scope of a MS Teams Team.')
+                new Error('This method is only valid within the scope of a MS Teams Team.')
             );
         });
 
@@ -772,14 +772,14 @@ describe('TeamsInfo', function () {
             it(`should error if the context doesn't have an adapter`, function () {
                 assert.throws(
                     () => TeamsInfo.getConnectorClient({}),
-                    Error('This method requires a connector client.')
+                    new Error('This method requires a connector client.')
                 );
             });
 
             it(`should error if the adapter doesn't have a createConnectorClient method`, function () {
                 assert.rejects(
                     () => TeamsInfo.getConnectorClient({ adapter: {} }),
-                    Error('This method requires a connector client.')
+                    new Error('This method requires a connector client.')
                 );
             });
         });
@@ -788,21 +788,21 @@ describe('TeamsInfo', function () {
             it(`should error if an invalid conversationId is passed in.`, async function () {
                 await assert.rejects(
                     TeamsInfo.getMembersInternal({}, undefined),
-                    Error('The getMembers operation needs a valid conversationId.')
+                    new Error('The getMembers operation needs a valid conversationId.')
                 );
             });
 
             it(`should error if an invalid conversationId is passed in.`, async function () {
                 await assert.rejects(
                     TeamsInfo.getMemberInternal({}, undefined),
-                    Error('The getMember operation needs a valid conversationId.')
+                    new Error('The getMember operation needs a valid conversationId.')
                 );
             });
 
             it(`should error if an invalid userId is passed in.`, async function () {
                 await assert.rejects(
                     TeamsInfo.getMemberInternal({}, 'conversationId', undefined),
-                    Error('The getMember operation needs a valid userId.')
+                    new Error('The getMember operation needs a valid userId.')
                 );
             });
         });
@@ -820,7 +820,7 @@ describe('TeamsInfo', function () {
             it(`should error if an invalid conversationId is passed in.`, async function () {
                 await assert.rejects(
                     TeamsInfo.getPagedMembersInternal({}, undefined, 'options'),
-                    Error('The getPagedMembers operation needs a valid conversationId.')
+                    new Error('The getPagedMembers operation needs a valid conversationId.')
                 );
             });
 

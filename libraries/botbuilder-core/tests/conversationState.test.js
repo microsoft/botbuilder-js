@@ -13,12 +13,10 @@ describe(`ConversationState`, function () {
     const context = new TurnContext(adapter, receivedMessage);
     const conversationState = new ConversationState(storage);
     it(`should load and save state from storage.`, async function () {
-        let key;
-
         // Simulate a "Turn" in a conversation by loading the state,
         // changing it and then saving the changes to state.
         await conversationState.load(context);
-        key = conversationState.getStorageKey(context);
+        const key = conversationState.getStorageKey(context);
         const state = conversationState.get(context);
         assert(state, `State not loaded`);
         assert(key, `Key not found`);
@@ -27,54 +25,35 @@ describe(`ConversationState`, function () {
 
         // Check the storage to see if the changes to state were saved.
         const items = await storage.read([key]);
-        assert(items.hasOwnProperty(key), `Saved state not found in storage.`);
+        assert(items[key], `Saved state not found in storage.`);
         assert(items[key].test === 'foo', `Missing test value in stored state.`);
     });
 
     it(`should ignore any activities that aren't "endOfConversation".`, async function () {
-        let key;
         await conversationState.load(context);
-        key = conversationState.getStorageKey(context);
+        const key = conversationState.getStorageKey(context);
         assert(conversationState.get(context).test === 'foo', `invalid initial state`);
         await context.sendActivity({ type: ActivityTypes.Message, text: 'foo' });
 
         const items = await storage.read([key]);
-        assert(items[key].hasOwnProperty('test'), `state cleared and shouldn't have been.`);
+        assert(items[key].test != null, `state cleared and shouldn't have been.`);
     });
 
-    it(`should reject with error if channelId missing.`, async function () {
+    it(`should reject with error if channelId missing.`, function () {
         const ctx = new TurnContext(adapter, missingChannelId);
-        try {
-            await conversationState.load(ctx);
-            assert(false, `shouldn't have completed.`);
-        } catch (err) {
-            assert(err, `error object missing.`);
-            assert.equal(err.message, 'missing activity.channelId');
-        }
+        assert.throws(() => conversationState.load(ctx), Error('missing activity.channelId'));
     });
 
-    it(`should reject with error if conversation missing.`, async function () {
+    it(`should reject with error if conversation missing.`, function () {
         const ctx = new TurnContext(adapter, missingConversation);
-        try {
-            await conversationState.load(ctx);
-            assert(false, `shouldn't have completed.`);
-        } catch (err) {
-            assert(err, `error object missing.`);
-            assert.equal(err.message, 'missing activity.conversation.id');
-        }
+        assert.throws(() => conversationState.load(ctx), Error('missing activity.conversation.id'));
     });
 
     it(`should throw NO_KEY error if getStorageKey() returns falsey value.`, async function () {
-        conversationState.getStorageKey = (turnContext) => undefined;
-        try {
-            await conversationState.load(context, true);
-        } catch (err) {
-            assert(
-                err.message === 'ConversationState: overridden getStorageKey method did not return a key.',
-                `unexpected Error.message received: ${err.message}`
-            );
-            return;
-        }
-        assert(false, `should have thrown an error.`);
+        conversationState.getStorageKey = (_turnContext) => undefined;
+        await assert.rejects(
+            conversationState.load(context, true),
+            new Error('ConversationState: overridden getStorageKey method did not return a key.')
+        );
     });
 });

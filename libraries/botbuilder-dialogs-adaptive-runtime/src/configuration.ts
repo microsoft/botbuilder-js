@@ -91,10 +91,38 @@ export class Configuration implements CoreConfiguration {
      * Load a file as a configuration source.
      *
      * @param name file name
+     * @param override optional flag that ensures this file takes precedence over other files
      * @returns this for chaining
      */
-    file(name: string): this {
+    file(name: string, override = false): this {
         this.provider.file(name, name);
+
+        // If we are given a key to override, we need to reach into the nconf provider and rearrange things.
+        // The nconf provider maintains an object that maps names to stores. When looking up a key, nconf iterates
+        // through the stores in insertion order and returns the first value it finds. This is not ideal because,
+        // in order to rearrange stores, we have to essentially reconstruct the object so the insertion order is
+        // correct. So this code does that.
+        if (override) {
+            // Construct list of entries in current insertion order
+            const stores = this.provider.stores ?? {};
+            const entries = Object.entries<Record<string, string>>(stores);
+
+            // Locate store to override, if it exists
+            const index = entries.findIndex(([, store]) => store.type === 'file');
+
+            // If store exists, we need to remove the store we just added, splice it into entries, and then reduce
+            // it back into an object.
+            if (index !== -1) {
+                // insert this store before the store to override
+                entries.splice(index, 0, [name, stores[name]]);
+
+                // slice this store from end of list, then reduce back into object
+                this.provider.stores = entries
+                    .slice(0, entries.length - 1)
+                    .reduce((acc, [key, value]) => ({ ...acc, [key]: value }), {});
+            }
+        }
+
         return this;
     }
 

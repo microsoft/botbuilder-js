@@ -101,7 +101,7 @@ describe('BotFrameworkAdapter Streaming tests', function () {
 
         await assert.rejects(
             adapter.sendActivities(new TurnContext(adapter, activity), [reply]),
-            Error('BotFrameworkAdapter.sendActivities(): Unable to send activity as Streaming connection is closed.')
+            new Error('BotFrameworkAdapter.sendActivities(): Unable to send activity as Streaming connection is closed.')
         );
     });
 
