@@ -123,7 +123,9 @@ export class QnAMakerRecognizer extends Recognizer implements QnAMakerRecognizer
     /**
      * The flag to indicate if personal information should be logged in telemetry.
      */
-    public logPersonalInformation: BoolExpression = new BoolExpression('=settings.telemetry.logPersonalInformation');
+    public logPersonalInformation: BoolExpression = new BoolExpression(
+        '=settings.runtimeSettings.telemetry.logPersonalInformation'
+    );
 
     public getConverter(property: keyof QnAMakerRecognizerConfiguration): Converter | ConverterFactory {
         switch (property) {
