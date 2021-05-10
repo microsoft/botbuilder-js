@@ -7,7 +7,9 @@
   "keywords": [
     "botbuilder",
     "botframework",
-    "orchestrator"
+    "orchestrator",
+    "msbot-component",
+    "msbot-recognizer"
   ],
   "bugs": {
     "url": "https://github.com/Microsoft/botbuilder-js/issues"
