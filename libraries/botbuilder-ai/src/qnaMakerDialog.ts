@@ -260,7 +260,7 @@ export class QnAMakerDialog extends WaterfallDialog implements QnAMakerDialogCon
      * Defaults to a value of `=settings.telemetry.logPersonalInformation`, which retrieves
      * `logPersonalInformation` flag from settings.
      */
-    public logPersonalInformation = new BoolExpression('=settings.telemetry.logPersonalInformation');
+    public logPersonalInformation = new BoolExpression('=settings.runtimeSettings.telemetry.logPersonalInformation');
 
     /**
      * Gets or sets a value indicating whether gets or sets environment of knowledgebase to be called.
