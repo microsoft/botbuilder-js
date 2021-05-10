@@ -101,7 +101,9 @@ export class LuisAdaptiveRecognizer extends Recognizer implements LuisAdaptiveRe
     /**
      * The flag to indicate in personal information should be logged in telemetry.
      */
-    public logPersonalInformation: BoolExpression = new BoolExpression('=settings.telemetry.logPersonalInformation');
+    public logPersonalInformation: BoolExpression = new BoolExpression(
+        '=settings.runtimeSettings.telemetry.logPersonalInformation'
+    );
 
     public getConverter(property: keyof LuisAdaptiveRecognizerConfiguration): Converter | ConverterFactory {
         switch (property) {
