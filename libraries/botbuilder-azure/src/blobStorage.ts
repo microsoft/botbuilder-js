@@ -103,6 +103,8 @@ const checkedCollections: { [key: string]: Promise<azure.BlobService.ContainerRe
  * The BlobStorage implements its storage using a single Azure Storage Blob Container. Each entity
  * is serialized into a JSON string and stored in an individual text blob. Each blob
  * is named after the key which is encoded and ensure it conforms a valid blob name.
+ *
+ * @deprecated This class is deprecated in favor of [BlobsStorage](xref:botbuilder-azure-blobs.BlobsStorage)
  */
 export class BlobStorage implements Storage {
     private settings: BlobStorageSettings;
