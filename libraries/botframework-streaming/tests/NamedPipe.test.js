@@ -317,30 +317,11 @@ describe('Streaming Extensions NamedPipe Library Tests', function () {
                 .then(done());
         });
 
-        it('handles being disconnected', function (done) {
+        it('handles being disconnected', function () {
             const server = new np.NamedPipeServer('pipeA', new protocol.RequestHandler(), false);
             expect(server).to.be.instanceOf(np.NamedPipeServer);
             server.start();
-            try {
-                server.onConnectionDisconnected();
-            } catch (err) {
-                expect(err).to.equal(`address already in use \\.\pipe\pipeA.incoming`);
-            }
             expect(server.disconnect()).to.not.throw;
-            done();
-        });
-
-        it('handles being disconnected and tries to reconnect', function (done) {
-            const server = new np.NamedPipeServer('pipeA', new protocol.RequestHandler(), true);
-            expect(server).to.be.instanceOf(np.NamedPipeServer);
-            server.start();
-            try {
-                server.disconnect();
-            } catch (err) {
-                expect(err).to.equal(`address already in use \\.\pipe\pipeA.incoming`);
-            }
-            expect(server.disconnect()).to.not.throw;
-            done();
         });
 
         it("calling createNodeServer() should throw if passing in a callback that's not a function", function () {

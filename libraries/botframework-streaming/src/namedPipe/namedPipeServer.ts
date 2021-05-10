@@ -30,7 +30,7 @@ export class NamedPipeServer implements IStreamingTransportServer {
      *
      * @param baseName The named pipe to connect to.
      * @param requestHandler Optional [RequestHandler](xref:botframework-streaming.RequestHandler) to process incoming messages received by this client.
-     * @param autoReconnect Optional flag to indicate that server should reconnect instead of closing
+     * @param autoReconnect Deprecated: Automatic reconnection is the default behavior.
      */
     public constructor(private readonly baseName: string, requestHandler?: RequestHandler, autoReconnect?: boolean) {
         if (!baseName) {
