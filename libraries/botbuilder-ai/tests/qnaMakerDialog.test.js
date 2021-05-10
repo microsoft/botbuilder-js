@@ -110,7 +110,9 @@ describe('QnAMakerDialog', function () {
         it('should log telemetry that includes question and username if logPersonalInformation is true', async () => {
             const convoState = new ConversationState(new MemoryStorage());
             const dm = new DialogManager();
-            dm.initialTurnState.set(ScopePath.settings, { telemetry: { logPersonalInformation: true } });
+            dm.initialTurnState.set(ScopePath.settings, {
+                runtimeSettings: { telemetry: { logPersonalInformation: true } },
+            });
             dm.conversationState = convoState;
 
             const qnaDialog = new QnAMakerDialog(kbId, endpointKey, HOSTNAME);
@@ -183,7 +185,9 @@ describe('QnAMakerDialog', function () {
         it('should log telemetry that excludes question and username if logPersonalInformation is false', async () => {
             const convoState = new ConversationState(new MemoryStorage());
             const dm = new DialogManager();
-            dm.initialTurnState.set(ScopePath.settings, { telemetry: { logPersonalInformation: true } });
+            dm.initialTurnState.set(ScopePath.settings, {
+                runtimeSettings: { telemetry: { logPersonalInformation: true } },
+            });
             dm.conversationState = convoState;
 
             const qnaDialog = new QnAMakerDialog(kbId, endpointKey, HOSTNAME);

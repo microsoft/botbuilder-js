@@ -457,7 +457,7 @@ export class OAuthInput extends InputDialog implements OAuthInputConfiguration {
                 const id = tokenExchangeRequest.id;
                 if (!tokenExchangeResponse || !tokenExchangeResponse.token) {
                     const failureDetail = 'The bot is unable to exchange token. Proceed with regular login.';
-                    await this.sendInvokeResponse(turnContext, StatusCodes.CONFLICT, {
+                    await this.sendInvokeResponse(turnContext, StatusCodes.PRECONDITION_FAILED, {
                         id,
                         connectionName,
                         failureDetail,
