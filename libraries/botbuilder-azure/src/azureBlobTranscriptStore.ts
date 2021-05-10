@@ -27,6 +27,8 @@ export const checkedCollectionsKey = Symbol('checkedCollectionsKey');
  * @remarks
  * Each activity is stored as JSON blob with a structure of
  * `container/{channelId]/{conversationId}/{Timestamp.ticks}-{activity.id}.json`.
+ *
+ * @deprecated This class is deprecated in favor of [BlobsTranscriptStore](xref:botbuilder-azure-blobs.BlobsTranscriptStore)
  */
 export class AzureBlobTranscriptStore implements TranscriptStore {
     /**
