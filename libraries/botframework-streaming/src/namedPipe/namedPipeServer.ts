@@ -63,23 +63,36 @@ export class NamedPipeServer implements IStreamingTransportServer {
     public async start(): Promise<string> {
         const { PipePath, ServerIncomingPath, ServerOutgoingPath } = NamedPipeTransport;
 
-        const incoming = new Promise<void>((resolve, reject) => {
-            const server = createNodeServer((socket) => {
-                if (this._receiver.isConnected) {
-                    return;
-                }
+        // The first promise resolves as soon as the server is listening. The second resolves when the server
+        // closes, or an error occurs. We want to ensure we are listening to the servers in series so that, if two
+        // processes start at the same time, only one is able to listen on both the incoming and outgoing sockets.
+        // We await the first promise to that we only proceed once we have the socket.
+        const incoming = await new Promise<Promise<void>>((resolveListening, rejectListening) => {
+            return new Promise<void>((resolveClosed, rejectClosed) => {
+                const server = createNodeServer((socket) => {
+                    if (this._receiver.isConnected) {
+                        return;
+                    }
 
-                this._receiver.connect(new NamedPipeTransport(socket));
+                    this._receiver.connect(new NamedPipeTransport(socket));
+                });
+
+                this._incomingServer = server;
+
+                server.once('closed', resolveClosed);
+
+                server.once('error', (err) => {
+                    rejectListening(err);
+                    rejectClosed(err);
+                });
+
+                server.listen(PipePath + this.baseName + ServerIncomingPath, resolveListening);
             });
-
-            server.once('closed', resolve);
-            server.once('error', reject);
-            server.listen(PipePath + this.baseName + ServerIncomingPath);
-
-            this._incomingServer = server;
         });
 
-        const outgoing = new Promise<void>((resolve, reject) => {
+        // Now that we absolutely have the incoming socket, bind the outgoing socket as well. No need to do the double
+        // promise dance now.
+        const outgoing = new Promise<Promise<void>>((resolve, reject) => {
             const server = createNodeServer((socket) => {
                 if (this._sender.isConnected) {
                     return;
