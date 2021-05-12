@@ -366,31 +366,33 @@ async function addSettingsBotComponents(services: ServiceCollection, configurati
     }
 }
 
-// Note: any generated files take precedence over `appsettings.json`.
+// Notes:
+// - Liberal `||` needed as many settings are initialized as `""` and should still be overridden
+// - Any generated files take precedence over `appsettings.json`.
 function addComposerConfiguration(configuration: Configuration): void {
-    const botRoot = configuration.string(['bot']) ?? '.';
+    const botRoot = configuration.string(['bot']) || '.';
     configuration.set(['BotRoot'], botRoot);
 
     const luisRegion =
-        configuration.string(['LUIS_AUTHORING_REGION']) ??
-        configuration.string(['luis', 'authoringRegion']) ??
-        configuration.string(['luis', 'region']) ??
+        configuration.string(['LUIS_AUTHORING_REGION']) ||
+        configuration.string(['luis', 'authoringRegion']) ||
+        configuration.string(['luis', 'region']) ||
         'westus';
 
     const luisEndpoint =
-        configuration.string(['luis', 'endpoint']) ?? `https://${luisRegion}.api.cognitive.microsoft.com`;
+        configuration.string(['luis', 'endpoint']) || `https://${luisRegion}.api.cognitive.microsoft.com`;
     configuration.set(['luis', 'endpoint'], luisEndpoint);
 
-    const userName = process.env.USERNAME ?? process.env.USER;
+    const userName = process.env.USERNAME || process.env.USER;
 
-    let environment = configuration.string(['luis', 'environment']) ?? userName;
+    let environment = configuration.string(['luis', 'environment']) || userName;
     if (environment === 'Development') {
         environment = userName;
     }
 
     configuration.file(path.join(botRoot, 'generated', `luis.settings.${environment}.${luisRegion}.json`), true);
 
-    const qnaRegion = configuration.string(['qna', 'qnaRegion']) ?? 'westus';
+    const qnaRegion = configuration.string(['qna', 'qnaRegion']) || 'westus';
     configuration.file(path.join(botRoot, 'generated', `qnamaker.settings.${environment}.${qnaRegion}.json`), true);
 
     configuration.file(path.join(botRoot, 'generated', `orchestrator.settings.json`), true);
