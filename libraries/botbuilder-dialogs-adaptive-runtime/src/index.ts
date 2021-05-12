@@ -33,6 +33,7 @@ import {
     BotFrameworkAdapter,
     BotTelemetryClient,
     ChannelServiceHandler,
+    ChannelServiceRoutes,
     ConsoleTranscriptLogger,
     ConversationState,
     InspectionMiddleware,
@@ -240,6 +241,12 @@ function addSkills(services: ServiceCollection, configuration: Configuration): v
                 dependencies.credentialProvider,
                 dependencies.authenticationConfiguration
             )
+    );
+
+    services.addFactory<ChannelServiceRoutes, { channelServiceHandler: ChannelServiceHandler }>(
+        'channelServiceRoutes',
+        ['channelServiceHandler'],
+        (dependencies) => new ChannelServiceRoutes(dependencies.channelServiceHandler)
     );
 }
 
