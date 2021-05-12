@@ -33,6 +33,7 @@ import {
     BotFrameworkAdapter,
     BotTelemetryClient,
     ChannelServiceHandler,
+    ChannelServiceRoutes,
     ConsoleTranscriptLogger,
     ConversationState,
     InspectionMiddleware,
@@ -211,7 +212,8 @@ function addSkills(services: ServiceCollection, configuration: Configuration): v
     );
 
     services.addFactory('authenticationConfiguration', () => {
-        const allowedCallers = configuration.type(['allowedCallers'], t.Array(t.String)) ?? [];
+        const allowedCallers =
+            configuration.type(['runtimeSettings', 'skills', 'allowedCallers'], t.Array(t.String)) ?? [];
 
         return new AuthenticationConfiguration(
             undefined,
@@ -239,6 +241,12 @@ function addSkills(services: ServiceCollection, configuration: Configuration): v
                 dependencies.credentialProvider,
                 dependencies.authenticationConfiguration
             )
+    );
+
+    services.addFactory<ChannelServiceRoutes, { channelServiceHandler: ChannelServiceHandler }>(
+        'channelServiceRoutes',
+        ['channelServiceHandler'],
+        (dependencies) => new ChannelServiceRoutes(dependencies.channelServiceHandler)
     );
 }
 
@@ -285,26 +293,31 @@ function addCoreBot(services: ServiceCollection, configuration: Configuration): 
     services.addFactory<
         BotFrameworkAdapter,
         {
+            authenticationConfiguration: AuthenticationConfiguration;
             conversationState: ConversationState;
-            userState: UserState;
             middlewares: MiddlewareSet;
             telemetryMiddleware: Middleware;
+            userState: UserState;
         }
-    >('adapter', ['conversationState', 'userState', 'middlewares', 'telemetryMiddleware'], (dependencies) => {
-        const appId = configuration.string(['MicrosoftAppId']);
-        const appPassword = configuration.string(['MicrosoftAppPassword']);
+    >(
+        'adapter',
+        ['authenticationConfiguration', 'conversationState', 'userState', 'middlewares', 'telemetryMiddleware'],
+        (dependencies) => {
+            const appId = configuration.string(['MicrosoftAppId']);
+            const appPassword = configuration.string(['MicrosoftAppPassword']);
 
-        const adapter = new CoreBotAdapter(
-            { appId, appPassword },
-            dependencies.conversationState,
-            dependencies.userState
-        );
+            const adapter = new CoreBotAdapter(
+                { appId, appPassword, authConfig: dependencies.authenticationConfiguration },
+                dependencies.conversationState,
+                dependencies.userState
+            );
 
-        adapter.use(dependencies.middlewares);
-        adapter.use(dependencies.telemetryMiddleware);
+            adapter.use(dependencies.middlewares);
+            adapter.use(dependencies.telemetryMiddleware);
 
-        return adapter;
-    });
+            return adapter;
+        }
+    );
 }
 
 async function addSettingsBotComponents(services: ServiceCollection, configuration: Configuration): Promise<void> {
@@ -353,31 +366,33 @@ async function addSettingsBotComponents(services: ServiceCollection, configurati
     }
 }
 
-// Note: any generated files take precedence over `appsettings.json`.
+// Notes:
+// - Liberal `||` needed as many settings are initialized as `""` and should still be overridden
+// - Any generated files take precedence over `appsettings.json`.
 function addComposerConfiguration(configuration: Configuration): void {
-    const botRoot = configuration.string(['bot']) ?? '.';
+    const botRoot = configuration.string(['bot']) || '.';
     configuration.set(['BotRoot'], botRoot);
 
     const luisRegion =
-        configuration.string(['LUIS_AUTHORING_REGION']) ??
-        configuration.string(['luis', 'authoringRegion']) ??
-        configuration.string(['luis', 'region']) ??
+        configuration.string(['LUIS_AUTHORING_REGION']) ||
+        configuration.string(['luis', 'authoringRegion']) ||
+        configuration.string(['luis', 'region']) ||
         'westus';
 
     const luisEndpoint =
-        configuration.string(['luis', 'endpoint']) ?? `https://${luisRegion}.api.cognitive.microsoft.com`;
+        configuration.string(['luis', 'endpoint']) || `https://${luisRegion}.api.cognitive.microsoft.com`;
     configuration.set(['luis', 'endpoint'], luisEndpoint);
 
-    const userName = process.env.USERNAME ?? process.env.USER;
+    const userName = process.env.USERNAME || process.env.USER;
 
-    let environment = configuration.string(['luis', 'environment']) ?? userName;
+    let environment = configuration.string(['luis', 'environment']) || userName;
     if (environment === 'Development') {
         environment = userName;
     }
 
     configuration.file(path.join(botRoot, 'generated', `luis.settings.${environment}.${luisRegion}.json`), true);
 
-    const qnaRegion = configuration.string(['qna', 'qnaRegion']) ?? 'westus';
+    const qnaRegion = configuration.string(['qna', 'qnaRegion']) || 'westus';
     configuration.file(path.join(botRoot, 'generated', `qnamaker.settings.${environment}.${qnaRegion}.json`), true);
 
     configuration.file(path.join(botRoot, 'generated', `orchestrator.settings.json`), true);
@@ -493,7 +508,7 @@ export async function getRuntimeServices(
 
     addCoreBot(services, configuration);
     addFeatures(services, runtimeSettings.bind(['features']));
-    addSkills(services, runtimeSettings.bind(['skills']));
+    addSkills(services, configuration);
     addStorage(services, configuration);
     addTelemetry(services, runtimeSettings.bind(['telemetry']));
     await addSettingsBotComponents(services, configuration);
