@@ -4,15 +4,20 @@
 import * as t from 'runtypes';
 import path from 'path';
 import restify from 'restify';
-import { ActivityHandlerBase, BotFrameworkAdapter } from 'botbuilder';
+import type { ActivityHandlerBase, BotFrameworkAdapter, ChannelServiceRoutes } from 'botbuilder';
 import { Configuration, getRuntimeServices } from 'botbuilder-dialogs-adaptive-runtime';
-import { ServiceCollection } from 'botbuilder-dialogs-adaptive-runtime-core';
+import type { ServiceCollection } from 'botbuilder-dialogs-adaptive-runtime-core';
 
 const TypedOptions = t.Record({
     /**
      * Path that the server will listen to for [Activities](xref:botframework-schema.Activity)
      */
     messagingEndpointPath: t.String,
+
+    /**
+     * Path that the server will listen to for skills requests
+     */
+    skillsEndpointPrefix: t.String,
 
     /**
      * Port that server should listen on
@@ -33,6 +38,7 @@ export type Options = t.Static<typeof TypedOptions>;
 const defaultOptions: Options = {
     logErrors: true,
     messagingEndpointPath: '/api/messages',
+    skillsEndpointPrefix: '/api/skills',
     port: 3978,
 };
 
@@ -91,11 +97,12 @@ export async function makeServer(
     options: Partial<Options> = {},
     server = restify.createServer()
 ): Promise<restify.Server> {
-    const { adapter, bot, customAdapters } = services.mustMakeInstances<{
+    const { adapter, bot, channelServiceRoutes, customAdapters } = services.mustMakeInstances<{
         adapter: BotFrameworkAdapter;
         bot: ActivityHandlerBase;
+        channelServiceRoutes: ChannelServiceRoutes;
         customAdapters: Map<string, BotFrameworkAdapter>;
-    }>('adapter', 'bot', 'customAdapters');
+    }>('adapter', 'bot', 'channelServiceRoutes', 'customAdapters');
 
     const resolvedOptions = await resolveOptions(options, configuration);
 
@@ -119,6 +126,8 @@ export async function makeServer(
             return errorHandler(err, res);
         }
     });
+
+    channelServiceRoutes.register(server, resolvedOptions.skillsEndpointPrefix);
 
     const adapters =
         configuration.type(

@@ -5,15 +5,20 @@ import * as t from 'runtypes';
 import express from 'express';
 import path from 'path';
 import type { Server } from 'http';
-import { ActivityHandlerBase, BotFrameworkAdapter } from 'botbuilder';
+import type { ActivityHandlerBase, BotFrameworkAdapter, ChannelServiceRoutes } from 'botbuilder';
 import { Configuration, getRuntimeServices } from 'botbuilder-dialogs-adaptive-runtime';
-import { ServiceCollection } from 'botbuilder-dialogs-adaptive-runtime-core';
+import type { ServiceCollection } from 'botbuilder-dialogs-adaptive-runtime-core';
 
 const TypedOptions = t.Record({
     /**
      * Path that the server will listen to for [Activities](xref:botframework-schema.Activity)
      */
     messagingEndpointPath: t.String,
+
+    /**
+     * Path that the server will listen to for skills requests
+     */
+    skillsEndpointPrefix: t.String,
 
     /**
      * Port that server should listen on
@@ -34,6 +39,7 @@ export type Options = t.Static<typeof TypedOptions>;
 const defaultOptions: Options = {
     logErrors: true,
     messagingEndpointPath: '/api/messages',
+    skillsEndpointPrefix: '/api/skills',
     port: 3978,
 };
 
@@ -97,11 +103,12 @@ export async function makeApp(
         }
     };
 
-    const { adapter, bot, customAdapters } = services.mustMakeInstances<{
+    const { adapter, bot, channelServiceRoutes, customAdapters } = services.mustMakeInstances<{
         adapter: BotFrameworkAdapter;
         bot: ActivityHandlerBase;
+        channelServiceRoutes: ChannelServiceRoutes;
         customAdapters: Map<string, BotFrameworkAdapter>;
-    }>('adapter', 'bot', 'customAdapters');
+    }>('adapter', 'bot', 'channelServiceRoutes', 'customAdapters');
 
     app.use(
         express.static(path.join(applicationRoot, 'public'), {
@@ -123,6 +130,8 @@ export async function makeApp(
             return errorHandler(err, res);
         }
     });
+
+    channelServiceRoutes.register(app, resolvedOptions.skillsEndpointPrefix);
 
     const adapters =
         configuration.type(
