@@ -129,11 +129,14 @@ export function makeTriggers(
                 const activityId = context.bindingData.activityId;
 
                 const authHeader = req.headers.authorization || req.headers.Authorization || '';
+
+                const activity: Activity = typeof req.body === 'string' ? JSON.parse(req.body) : req.body;
+
                 const result = await skillHandler.handleReplyToActivity(
                     authHeader,
                     conversationId,
                     activityId,
-                    JSON.parse(req.body) as Activity
+                    activity
                 );
 
                 const res = context.res as WebResponse;
