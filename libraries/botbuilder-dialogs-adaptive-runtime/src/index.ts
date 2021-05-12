@@ -286,26 +286,31 @@ function addCoreBot(services: ServiceCollection, configuration: Configuration): 
     services.addFactory<
         BotFrameworkAdapter,
         {
+            authenticationConfiguration: AuthenticationConfiguration;
             conversationState: ConversationState;
-            userState: UserState;
             middlewares: MiddlewareSet;
             telemetryMiddleware: Middleware;
+            userState: UserState;
         }
-    >('adapter', ['conversationState', 'userState', 'middlewares', 'telemetryMiddleware'], (dependencies) => {
-        const appId = configuration.string(['MicrosoftAppId']);
-        const appPassword = configuration.string(['MicrosoftAppPassword']);
+    >(
+        'adapter',
+        ['authenticationConfiguration', 'conversationState', 'userState', 'middlewares', 'telemetryMiddleware'],
+        (dependencies) => {
+            const appId = configuration.string(['MicrosoftAppId']);
+            const appPassword = configuration.string(['MicrosoftAppPassword']);
 
-        const adapter = new CoreBotAdapter(
-            { appId, appPassword },
-            dependencies.conversationState,
-            dependencies.userState
-        );
+            const adapter = new CoreBotAdapter(
+                { appId, appPassword, authConfig: dependencies.authenticationConfiguration },
+                dependencies.conversationState,
+                dependencies.userState
+            );
 
-        adapter.use(dependencies.middlewares);
-        adapter.use(dependencies.telemetryMiddleware);
+            adapter.use(dependencies.middlewares);
+            adapter.use(dependencies.telemetryMiddleware);
 
-        return adapter;
-    });
+            return adapter;
+        }
+    );
 }
 
 async function addSettingsBotComponents(services: ServiceCollection, configuration: Configuration): Promise<void> {
