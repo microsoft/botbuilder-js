@@ -17,6 +17,8 @@ import { ExpressionType } from './expressionType';
 import { MemoryInterface } from './memory';
 import { Options } from './options';
 import { ReturnType } from './returnType';
+// eslint-disable-next-line lodash/import-scope
+import isEqual from 'lodash.isequal';
 
 /**
  * Verify the result of an expression is of the appropriate type and return a string if not.
@@ -768,14 +770,43 @@ export class FunctionUtils {
             return obj1 == null && obj2 == null;
         }
 
-        if (Array.isArray(obj1) && obj1.length === 0 && Array.isArray(obj2) && obj2.length === 0) {
-            return true;
+        // Array Comparison
+        if (Array.isArray(obj1) && Array.isArray(obj2)) {
+            if (obj1.length !== obj2.length) {
+                return false;
+            }
+
+            let isEqual = true;
+            for (let i = 0; i < obj1.length; i++) {
+                if (!FunctionUtils.commonEquals(obj1[i], obj2[i])) {
+                    isEqual = false;
+                    break;
+                }
+            }
+            return isEqual;
         }
 
-        if (FunctionUtils.getPropertyCount(obj1) === 0 && FunctionUtils.getPropertyCount(obj2) === 0) {
-            return true;
+        // Object Comparison
+        const propertyCountOfObj1 = FunctionUtils.getPropertyCount(obj1);
+        const propertyCountOfObj2 = FunctionUtils.getPropertyCount(obj2);
+        if (propertyCountOfObj1 >= 0 && propertyCountOfObj2 >= 0) {
+            if (propertyCountOfObj1 !== propertyCountOfObj2) {
+                return false;
+            }
+            let jsonObj1 = obj1;
+            let jsonObj2 = obj2;
+            if (obj1 instanceof Map) {
+                jsonObj1 = FunctionUtils.convertToObj(obj1);
+            }
+
+            if (obj2 instanceof Map) {
+                jsonObj2 = FunctionUtils.convertToObj(obj2);
+            }
+
+            return isEqual(jsonObj1, jsonObj2);
         }
 
+        // Number Comparison
         if (FunctionUtils.isNumber(obj1) && FunctionUtils.isNumber(obj2)) {
             if (Math.abs(obj1 - obj2) < Number.EPSILON) {
                 return true;
@@ -825,5 +856,38 @@ export class FunctionUtils {
         }
 
         return count;
+    }
+
+    /**
+     * @private
+     */
+    private static convertToObj(instance: unknown) {
+        if (FunctionUtils.getPropertyCount(instance) >= 0) {
+            if (instance instanceof Map) {
+                // Convert Map to Object
+                const obj = {};
+                for (const [key, value] of instance) {
+                    obj[key] = FunctionUtils.convertToObj(value);
+                }
+                return obj;
+            } else {
+                // Convert Object recursionly
+                const objInstance = instance as Record<string, unknown>;
+                const obj = {};
+                for (const key in objInstance) {
+                    obj[key] = FunctionUtils.convertToObj(objInstance[key]);
+                }
+                return obj;
+            }
+        } else if (Array.isArray(instance)) {
+            // Convert Array
+            const result = [];
+            for (const item of instance) {
+                result.push(FunctionUtils.convertToObj(item));
+            }
+            return result;
+        }
+
+        return instance;
     }
 }
