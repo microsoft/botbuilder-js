@@ -211,7 +211,8 @@ function addSkills(services: ServiceCollection, configuration: Configuration): v
     );
 
     services.addFactory('authenticationConfiguration', () => {
-        const allowedCallers = configuration.type(['allowedCallers'], t.Array(t.String)) ?? [];
+        const allowedCallers =
+            configuration.type(['runtimeSettings', 'skills', 'allowedCallers'], t.Array(t.String)) ?? [];
 
         return new AuthenticationConfiguration(
             undefined,
@@ -493,7 +494,7 @@ export async function getRuntimeServices(
 
     addCoreBot(services, configuration);
     addFeatures(services, runtimeSettings.bind(['features']));
-    addSkills(services, runtimeSettings.bind(['skills']));
+    addSkills(services, configuration);
     addStorage(services, configuration);
     addTelemetry(services, runtimeSettings.bind(['telemetry']));
     await addSettingsBotComponents(services, configuration);
