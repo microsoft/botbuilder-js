@@ -72,7 +72,7 @@ describe('Schema Merge Tests', function () {
             process.env[telemSettingPath] = false;
 
             try {
-                // Rerun merge command..
+                // Rerun merge command.
                 await runCommand(
                     [
                         'npx -p @microsoft/botframework-cli@next', // invoke with npx to not alter repo dependencies
