@@ -64,8 +64,15 @@ describe('Schema Merge Tests', function () {
             // Try installing latest bf if the schema changed to make sure the
             // discrepancy is not because we are using a different version of the CLI
             // and we ensure it is installed while on it.
+
+            // When installing bf-cli, there is sometimes a prompt during install to allow telemetry.
+            // We need to set an environment variable so the prompt doesn't appear and halt install, causing a timeout.
+            const telemSettingPath = 'BF_CLI_TELEMETRY';
+            const originalTelemSetting = process.env[telemSettingPath];
+            process.env[telemSettingPath] = false;
+
             try {
-                // Rerun merge command.
+                // Rerun merge command..
                 await runCommand(
                     [
                         'npx -p @microsoft/botframework-cli@next', // invoke with npx to not alter repo dependencies
@@ -74,6 +81,8 @@ describe('Schema Merge Tests', function () {
                 );
             } catch (err2) {
                 assert.fail(`Unable to merge schemas.\nFirst error:\n${err}\nSecond error:\n${err2}`);
+            } finally {
+                process.env[telemSettingPath] = originalTelemSetting;
             }
         }
 
