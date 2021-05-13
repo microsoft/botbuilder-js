@@ -8,26 +8,34 @@ import type { ActivityHandlerBase, BotFrameworkAdapter, ChannelServiceRoutes } f
 import { Configuration, getRuntimeServices } from 'botbuilder-dialogs-adaptive-runtime';
 import type { ServiceCollection } from 'botbuilder-dialogs-adaptive-runtime-core';
 
+// Explicitly fails checks for `""`
+const NonEmptyString = t.String.withConstraint((str) => str.length > 0 || 'must be non-empty string');
+
 const TypedOptions = t.Record({
     /**
      * Path that the server will listen to for [Activities](xref:botframework-schema.Activity)
      */
-    messagingEndpointPath: t.String,
+    messagingEndpointPath: NonEmptyString,
 
     /**
      * Path that the server will listen to for skills requests
      */
-    skillsEndpointPrefix: t.String,
+    skillsEndpointPrefix: NonEmptyString,
 
     /**
      * Port that server should listen on
      */
-    port: t.Union(t.String, t.Number),
+    port: t.Union(NonEmptyString, t.Number),
 
     /**
      * Log errors to stderr
      */
     logErrors: t.Boolean,
+
+    /**
+     * Path inside applicationRoot that should be served as static files
+     */
+    staticDirectory: NonEmptyString,
 });
 
 /**
@@ -40,6 +48,7 @@ const defaultOptions: Options = {
     messagingEndpointPath: '/api/messages',
     skillsEndpointPrefix: '/api/skills',
     port: 3978,
+    staticDirectory: 'wwwroot',
 };
 
 async function resolveOptions(options: Partial<Options>, configuration: Configuration): Promise<Options> {
@@ -162,7 +171,7 @@ export async function makeServer(
 
     server.get(
         '*',
-        restify.plugins.serveStaticFiles(path.join(applicationRoot, 'public'), {
+        restify.plugins.serveStaticFiles(path.join(applicationRoot, resolvedOptions.staticDirectory), {
             setHeaders: (res, filePath) => {
                 const contentType = extensionContentTypes[path.extname(filePath)];
                 if (contentType) {
