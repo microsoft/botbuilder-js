@@ -19,6 +19,28 @@ import type {
     WebResponse,
 } from 'botbuilder';
 
+const TypedOptions = t.Record({
+    /**
+     * Log errors to stderr
+     */
+    logErrors: t.Boolean,
+
+    /**
+     * Path inside applicationRoot that should be served as static files
+     */
+    staticDirectory: t.String.withConstraint((str) => str.length > 0 || 'must be non-empty string'),
+});
+
+/**
+ * Options for runtime Azure Functions adapter
+ */
+export type Options = t.Static<typeof TypedOptions>;
+
+const defaultOptions: Options = {
+    logErrors: true,
+    staticDirectory: 'wwwroot',
+};
+
 // helper function to memoize the result of `func`
 function memoize<T>(func: () => T): () => T {
     let result: T;
@@ -40,12 +62,16 @@ const extensionContentTypes: Record<string, string> = {
  *
  * @param runtimeServices result of calling `once(() => getRuntimeServices(...))`
  * @param applicationRoot application root directory
+ * @param options options bag for configuring Azure Functions
  * @returns azure function triggers for `module.exports`
  */
 export function makeTriggers(
     runtimeServices: () => Promise<[ServiceCollection, Configuration]>,
-    applicationRoot: string
+    applicationRoot: string,
+    options: Partial<Options> = {}
 ): Record<string, AzureFunction> {
+    const resolvedOptions = TypedOptions.check(Object.assign({}, defaultOptions, options));
+
     const build = memoize(async () => {
         const [services, configuration] = await runtimeServices();
 
@@ -59,7 +85,7 @@ export function makeTriggers(
         return { configuration, instances };
     });
 
-    const staticDirectory = path.join(applicationRoot, 'public');
+    const staticDirectory = path.join(applicationRoot, resolvedOptions.staticDirectory);
 
     return {
         messageTrigger: async (context: Context, req: HttpRequest) => {
@@ -112,7 +138,10 @@ export function makeTriggers(
                     await bot.run(turnContext);
                 });
             } catch (err) {
-                context.log.error(err);
+                if (resolvedOptions.logErrors) {
+                    context.log.error(err);
+                }
+
                 throw err;
             }
         },
@@ -144,7 +173,10 @@ export function makeTriggers(
                 res.send(result);
                 res.end();
             } catch (err) {
-                context.log.error(err);
+                if (resolvedOptions.logErrors) {
+                    context.log.error(err);
+                }
+
                 throw err;
             }
         },
@@ -180,7 +212,10 @@ export function makeTriggers(
                     return res.status(404).end();
                 }
 
-                context.log.error(err);
+                if (resolvedOptions.logErrors) {
+                    context.log.error(err);
+                }
+
                 throw err;
             }
         },
@@ -192,11 +227,17 @@ export function makeTriggers(
  *
  * @param applicationRoot application root directory
  * @param settingsDirectory settings directory
+ * @param options options bag for configuring Azure Functions
  * @returns azure function triggers for `module.exports`
  */
-export function triggers(applicationRoot: string, settingsDirectory: string): Record<string, AzureFunction> {
+export function triggers(
+    applicationRoot: string,
+    settingsDirectory: string,
+    options: Partial<Options> = {}
+): Record<string, AzureFunction> {
     return makeTriggers(
         memoize(() => getRuntimeServices(applicationRoot, settingsDirectory)),
-        applicationRoot
+        applicationRoot,
+        options
     );
 }
