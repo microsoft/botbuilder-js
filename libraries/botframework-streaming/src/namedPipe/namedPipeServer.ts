@@ -58,42 +58,42 @@ export class NamedPipeServer implements IStreamingTransportServer {
     /**
      * Used to establish the connection used by this server and begin listening for incoming messages.
      *
+     * @param callback Optional callback parameter that fires when server is listening on incoming/outgoing pipes
      * @returns A promised string that will not resolve as long as the server is running.
      */
-    public async start(): Promise<string> {
+    public async start(callback?: () => void): Promise<string> {
         const { PipePath, ServerIncomingPath, ServerOutgoingPath } = NamedPipeTransport;
 
         // The first promise resolves as soon as the server is listening. The second resolves when the server
-        // closes, or an error occurs. We want to ensure we are listening to the servers in series so that, if two
-        // processes start at the same time, only one is able to listen on both the incoming and outgoing sockets.
-        // We await the first promise to that we only proceed once we have the socket.
-        const incoming = await new Promise<Promise<void>>((resolveListening, rejectListening) => {
-            return new Promise<void>((resolveClosed, rejectClosed) => {
-                const server = createNodeServer((socket) => {
-                    if (this._receiver.isConnected) {
-                        return;
-                    }
+        // closes, or an error occurs. Wrapping with an array ensures the initial await only waits for the listening
+        // promise.
+        //
+        // We want to ensure we are listening to the servers in series so that, if two processes start at the same
+        // time, only one is able to listen on both the incoming and outgoing sockets.
+        const [incoming] = await new Promise<[Promise<void>]>((resolve, reject) => {
+            this._incomingServer = createNodeServer((socket) => {
+                if (this._receiver.isConnected) {
+                    return;
+                }
 
-                    this._receiver.connect(new NamedPipeTransport(socket));
-                });
+                this._receiver.connect(new NamedPipeTransport(socket));
+            }).once('error', reject);
 
-                this._incomingServer = server;
-
-                server.once('closed', resolveClosed);
-
-                server.once('error', (err) => {
-                    rejectListening(err);
-                    rejectClosed(err);
-                });
-
-                server.listen(PipePath + this.baseName + ServerIncomingPath, resolveListening);
+            const listening = new Promise<void>((resolve, reject) => {
+                this._incomingServer.once('closed', resolve);
+                this._incomingServer.once('error', reject);
             });
+
+            this._incomingServer.once('listening', () => {
+                resolve([listening]);
+            });
+
+            this._incomingServer.listen(PipePath + this.baseName + ServerIncomingPath);
         });
 
-        // Now that we absolutely have the incoming socket, bind the outgoing socket as well. No need to do the double
-        // promise dance now.
-        const outgoing = new Promise<Promise<void>>((resolve, reject) => {
-            const server = createNodeServer((socket) => {
+        // Now that we absolutely have the incoming socket, bind the outgoing socket as well
+        const [outgoing] = await new Promise<[Promise<void>]>((resolve, reject) => {
+            this._outgoingServer = createNodeServer((socket) => {
                 if (this._sender.isConnected) {
                     return;
                 }
@@ -102,14 +102,21 @@ export class NamedPipeServer implements IStreamingTransportServer {
                 // reconnections are allowed
                 this._sender.connect(new NamedPipeTransport(socket));
                 socket.once('close', () => this._sender.disconnect());
+            }).once('error', reject);
+
+            const listening = new Promise<void>((resolve, reject) => {
+                this._outgoingServer.once('closed', resolve);
+                this._outgoingServer.once('error', reject);
             });
 
-            server.once('closed', resolve);
-            server.once('error', reject);
-            server.listen(PipePath + this.baseName + ServerOutgoingPath);
+            this._outgoingServer.once('listening', () => {
+                resolve([listening]);
+            });
 
-            this._outgoingServer = server;
+            this._outgoingServer.listen(PipePath + this.baseName + ServerOutgoingPath);
         });
+
+        callback?.();
 
         await Promise.all([incoming, outgoing]);
 
@@ -121,16 +128,12 @@ export class NamedPipeServer implements IStreamingTransportServer {
      */
     public disconnect(): void {
         this._receiver.disconnect();
-        if (this._incomingServer) {
-            this._incomingServer.close();
-            this._incomingServer = null;
-        }
+        this._incomingServer?.close();
+        this._incomingServer = null;
 
         this._sender.disconnect();
-        if (this._outgoingServer) {
-            this._outgoingServer.close();
-            this._outgoingServer = null;
-        }
+        this._outgoingServer?.close();
+        this._outgoingServer = null;
     }
 
     /**

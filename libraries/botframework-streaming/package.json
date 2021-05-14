@@ -53,6 +53,10 @@
     "test:compat": "api-extractor run --verbose",
     "test:mocha": "nyc mocha tests"
   },
+  "mocha": {
+    "checkLeaks": true,
+    "exit": true
+  },
   "files": [
     "_ts3.4",
     "lib",
