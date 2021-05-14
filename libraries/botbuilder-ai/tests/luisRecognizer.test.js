@@ -735,7 +735,7 @@ describe('LuisRecognizer', function () {
                         assert('sentimentScore' in telemetry.properties);
                         assert('entities' in telemetry.properties);
                         assert('question' in telemetry.properties);
-                        assert.strictEqual(telemetry.properties.question,'I want to travel on DL');
+                        assert.strictEqual(telemetry.properties.question, 'I want to travel on DL');
                         break;
 
                     default:
