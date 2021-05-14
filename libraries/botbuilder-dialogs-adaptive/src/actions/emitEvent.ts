@@ -84,7 +84,7 @@ export class EmitEvent<O extends object = {}> extends Dialog<O> implements EmitE
     /**
      * The property path to store whether the event was handled or not.
      */
-    public handledProperty: StringExpression;
+    public handledProperty: StringExpression = new StringExpression('turn.EventHandled');
 
     /**
      * An optional expression which if is true will disable this action.
@@ -140,7 +140,7 @@ export class EmitEvent<O extends object = {}> extends Dialog<O> implements EmitE
         }
 
         // Save results of operation.
-        const handledProperty = this.handledProperty?.getValue(dc.state) ?? null;
+        const handledProperty = this.handledProperty?.getValue(dc.state);
         if (handledProperty) {
             dc.state.setValue(handledProperty, handled);
         }
