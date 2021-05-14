@@ -71,3 +71,7 @@ jobs:
       - name: yarn test:schemas
         if: matrix.node-version == '10.x'
         run: yarn test:schemas
+
+      - name: yarn test:compat
+        if: matrix.node-version == '10.x'
+        run: yarn test:compat
