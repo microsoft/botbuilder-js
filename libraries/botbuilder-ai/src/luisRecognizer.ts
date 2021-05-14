@@ -454,6 +454,7 @@ export class LuisRecognizer implements LuisRecognizerTelemetryClient {
         maybeTelemetryMetrics?: Record<string, number>,
         maybeOptions?: LuisRecognizerOptionsV2 | LuisRecognizerOptionsV3 | LuisPredictionOptions
     ): Promise<RecognizerResult> {
+        // This type check, when true, logically implies that the function is being invoked as the two-argument string + optional options overload variant.
         if (typeof contextOrUtterance === 'string') {
             const utterance = contextOrUtterance;
             const options = UnsafeLuisRecognizerUnion.optional().check(maybeTelemetryPropertiesOrOptions);

@@ -15,6 +15,7 @@ import { NullTelemetryClient, TurnContext, RecognizerResult } from 'botbuilder-c
 import { DialogContext } from 'botbuilder-dialogs';
 import { ExternalEntity, validateExternalEntity } from './externalEntity';
 import { validateDynamicList } from './dynamicList';
+import * as t from 'runtypes';
 
 const LUIS_TRACE_TYPE = 'https://www.luis.ai/schemas/trace';
 const LUIS_TRACE_NAME = 'LuisRecognizer';
@@ -110,9 +111,9 @@ export class LuisRecognizerV3 extends LuisRecognizerInternal {
                                     if (instances?.length === values?.length) {
                                         instances.forEach((childInstance) => {
                                             if (
-                                                childInstance &&
-                                                Object.prototype.hasOwnProperty.call(childInstance, 'startIndex') &&
-                                                Object.prototype.hasOwnProperty.call(childInstance, 'endIndex')
+                                                t
+                                                    .Record({ startIndex: t.Number, endIndex: t.Number })
+                                                    .guard(childInstance)
                                             ) {
                                                 const start = childInstance['startIndex'];
                                                 const end = childInstance['endIndex'];
