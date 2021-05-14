@@ -1837,7 +1837,7 @@ export class BotFrameworkAdapter
      * Connects the handler to a Named Pipe server and begins listening for incoming requests.
      * @param logic The logic that will handle incoming requests.
      * @param pipeName The name of the named pipe to use when creating the server.
-     * @param onListen Callback to be executed when server is listening on pipes
+     * @param onListen Optional callback that fires once when server is listening on both incoming and outgoing pipe
      */
     public async useNamedPipe(
         logic: (context: TurnContext) => Promise<any>,

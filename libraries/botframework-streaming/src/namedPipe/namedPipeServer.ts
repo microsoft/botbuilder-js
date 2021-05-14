@@ -58,7 +58,7 @@ export class NamedPipeServer implements IStreamingTransportServer {
     /**
      * Used to establish the connection used by this server and begin listening for incoming messages.
      *
-     * @param onListen Optional callback that fires when server is listening on incoming/outgoing pipes
+     * @param onListen Optional callback that fires once when server is listening on both incoming and outgoing pipe
      * @returns A promised string that will not resolve as long as the server is running.
      */
     public async start(onListen?: () => void): Promise<string> {
