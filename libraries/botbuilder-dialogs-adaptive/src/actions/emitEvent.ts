@@ -84,7 +84,7 @@ export class EmitEvent<O extends object = {}> extends Dialog<O> implements EmitE
     /**
      * The property path to store whether the event was handled or not.
      */
-    public handledProperty: StringExpression = new StringExpression('turn.EventHandled');
+    public handledProperty: StringExpression = new StringExpression('turn.eventHandled');
 
     /**
      * An optional expression which if is true will disable this action.
