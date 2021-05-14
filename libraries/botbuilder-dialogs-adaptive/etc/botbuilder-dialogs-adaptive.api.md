@@ -5,10 +5,12 @@
 ```ts
 
 import { Activity } from 'botbuilder';
+import { ActivityHandler } from 'botbuilder';
 import { ArrayExpression } from 'adaptive-expressions';
 import { BeginSkillDialogOptions } from 'botbuilder-dialogs';
 import { BoolExpression } from 'adaptive-expressions';
 import { BotComponent } from 'botbuilder';
+import { BotFrameworkAuthentication } from 'botframework-connector';
 import { BotFrameworkClient } from 'botbuilder';
 import { BotTelemetryClient } from 'botbuilder';
 import { Choice } from 'botbuilder-dialogs';
@@ -16,6 +18,7 @@ import { ChoiceFactoryOptions } from 'botbuilder-dialogs';
 import { Configurable } from 'botbuilder-dialogs';
 import { Configuration } from 'botbuilder-dialogs-adaptive-runtime-core';
 import { ConversationReference } from 'botbuilder';
+import { ConversationState } from 'botbuilder';
 import { Converter } from 'botbuilder-dialogs';
 import { ConverterFactory } from 'botbuilder-dialogs';
 import { Dialog } from 'botbuilder-dialogs';
@@ -43,9 +46,11 @@ import { Headers as Headers_2 } from 'node-fetch';
 import { ImportResolverDelegate } from 'botbuilder-lg';
 import { IntExpression } from 'adaptive-expressions';
 import { ListStyle } from 'botbuilder-dialogs';
+import { MemoryScope } from 'botbuilder-dialogs';
 import { ModelResult } from 'botbuilder-dialogs';
 import { NumberExpression } from 'adaptive-expressions';
 import { ObjectExpression } from 'adaptive-expressions';
+import { PathResolver } from 'botbuilder-dialogs';
 import { PromptOptions } from 'botbuilder-dialogs';
 import { Recognizer } from 'botbuilder-dialogs';
 import { RecognizerConfiguration } from 'botbuilder-dialogs';
@@ -63,6 +68,7 @@ import { Templates } from 'botbuilder-lg';
 import { TokenResponse } from 'botbuilder';
 import { Transcript } from 'botbuilder';
 import { TurnContext } from 'botbuilder';
+import { UserState } from 'botbuilder';
 import { ValueExpression } from 'adaptive-expressions';
 
 // @public
@@ -184,6 +190,11 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> im
     get schema(): object;
     selector: TriggerSelector;
     triggers: OnCondition[];
+    }
+
+// @public (undocumented)
+export class AdaptiveDialogBot extends ActivityHandler {
+    constructor(adaptiveDialogId: string, languageGeneratorId: string, resourceExplorer: ResourceExplorer, conversationState: ConversationState, userState: UserState, skillConversationIdFactoryBase: SkillConversationIdFactoryBase, languagePolicy: LanguagePolicy, botFrameworkAuthentication: BotFrameworkAuthentication, telemetryClient: BotTelemetryClient, memoryScopes?: MemoryScope[], pathResolvers?: PathResolver[], dialogs?: Dialog[]);
     }
 
 // @public (undocumented)

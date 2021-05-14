@@ -5,6 +5,7 @@ import sinon from 'sinon';
 import { AuthenticationConfiguration, AuthenticationConstants, SkillValidation } from 'botframework-connector';
 import { BlobsStorage } from 'botbuilder-azure-blobs';
 import { Configuration, getRuntimeServices } from '../src';
+import { ConfigurationConstants } from '../src/configurationConstants';
 import { CosmosDbPartitionedStorage } from 'botbuilder-azure';
 import { ServiceCollection, Configuration as CoreConfiguration } from 'botbuilder-dialogs-adaptive-runtime-core';
 import { ok, rejects, strictEqual } from 'assert';
@@ -97,7 +98,7 @@ describe('getRuntimeServices', function () {
         it('supports blobs storage', async function () {
             const configuration = new Configuration().argv().env();
 
-            configuration.set(['runtimeSettings', 'storage'], 'BlobsStorage');
+            configuration.set([ConfigurationConstants.RuntimeSettingsKey, 'storage'], 'BlobsStorage');
 
             configuration.set(['BlobsStorage'], {
                 connectionString: 'UseDevelopmentStorage=true',
@@ -114,7 +115,7 @@ describe('getRuntimeServices', function () {
         it('supports cosmos storage', async function () {
             const configuration = new Configuration().argv().env();
 
-            configuration.set(['runtimeSettings', 'storage'], 'CosmosDbPartitionedStorage');
+            configuration.set([ConfigurationConstants.RuntimeSettingsKey, 'storage'], 'CosmosDbPartitionedStorage');
 
             configuration.set(['CosmosDbPartitionedStorage'], {
                 authKey: 'authKey',

@@ -4,10 +4,10 @@
 import * as z from 'zod';
 import express, { Application } from 'express';
 import path from 'path';
-import type { ActivityHandlerBase, BotFrameworkHttpAdapter, ChannelServiceRoutes } from 'botbuilder';
 import type { Server } from 'http';
+import type { ActivityHandlerBase, BotFrameworkHttpAdapter, ChannelServiceRoutes } from 'botbuilder';
+import { Configuration, ConfigurationConstants, getRuntimeServices } from 'botbuilder-dialogs-adaptive-runtime';
 import type { ServiceCollection } from 'botbuilder-dialogs-adaptive-runtime-core';
-import { Configuration, getRuntimeServices } from 'botbuilder-dialogs-adaptive-runtime';
 import { json, urlencoded } from 'body-parser';
 
 // Explicitly fails checks for `""`
@@ -153,7 +153,7 @@ export async function makeApp(
 
     const adapters =
         configuration.type(
-            ['runtimeSettings', 'adapters'],
+            [ConfigurationConstants.RuntimeSettingsKey, 'adapters'],
             z.array(
                 z.object({
                     name: z.string(),

@@ -8,10 +8,16 @@ import fs from 'fs';
 import mime from 'mime';
 import path from 'path';
 import type { AzureFunction, Context, HttpRequest } from '@azure/functions';
-import { Configuration, getRuntimeServices } from 'botbuilder-dialogs-adaptive-runtime';
+import { Configuration, ConfigurationConstants, getRuntimeServices } from 'botbuilder-dialogs-adaptive-runtime';
 import { ServiceCollection } from 'botbuilder-dialogs-adaptive-runtime-core';
-import type { Activity, ActivityHandlerBase, BotFrameworkHttpAdapter, ChannelServiceHandler } from 'botbuilder';
-import type { Response } from 'botbuilder/lib/interfaces';
+
+import type {
+    Activity,
+    ActivityHandlerBase,
+    BotFrameworkHttpAdapter,
+    ChannelServiceHandler,
+    Response,
+} from 'botbuilder';
 
 const TypedOptions = z.object({
     /**
@@ -100,7 +106,7 @@ export function makeTriggers(
 
                 const adapterSettings =
                     configuration.type(
-                        ['runtimeSettings', 'adapters'],
+                        [ConfigurationConstants.RuntimeSettingsKey, 'adapters'],
                         z.array(
                             z.object({
                                 name: z.string(),

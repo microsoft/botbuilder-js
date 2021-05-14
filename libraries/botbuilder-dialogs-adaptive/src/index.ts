@@ -32,4 +32,5 @@ export * from './telemetryExtensions';
 export * from './templates';
 export * from './triggerSelector';
 
+export { AdaptiveDialogBot } from './adaptiveDialogBot';
 export { DialogExpressionConverter } from './converters';

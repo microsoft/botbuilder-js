@@ -5,8 +5,8 @@ import * as z from 'zod';
 import path from 'path';
 import restify from 'restify';
 import type { ActivityHandlerBase, BotFrameworkHttpAdapter, ChannelServiceRoutes } from 'botbuilder';
+import { Configuration, ConfigurationConstants, getRuntimeServices } from 'botbuilder-dialogs-adaptive-runtime';
 import type { ServiceCollection } from 'botbuilder-dialogs-adaptive-runtime-core';
-import { Configuration, getRuntimeServices } from 'botbuilder-dialogs-adaptive-runtime';
 
 // Explicitly fails checks for `""`
 const NonEmptyString = z.string().refine((str) => str.length > 0, { message: 'must be non-empty string' });
@@ -149,7 +149,7 @@ export async function makeServer(
 
     const adapters =
         configuration.type(
-            ['runtimeSettings', 'adapters'],
+            [ConfigurationConstants.RuntimeSettingsKey, 'adapters'],
             z.array(
                 z.object({
                     name: z.string(),
