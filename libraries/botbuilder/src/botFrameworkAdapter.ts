@@ -1835,12 +1835,14 @@ export class BotFrameworkAdapter
 
     /**
      * Connects the handler to a Named Pipe server and begins listening for incoming requests.
-     * @param pipeName The name of the named pipe to use when creating the server.
      * @param logic The logic that will handle incoming requests.
+     * @param pipeName The name of the named pipe to use when creating the server.
+     * @param onListen Callback to be executed when server is listening on pipes
      */
     public async useNamedPipe(
         logic: (context: TurnContext) => Promise<any>,
-        pipeName: string = defaultPipeName
+        pipeName = defaultPipeName,
+        onListen?: () => void
     ): Promise<void> {
         if (!logic) {
             throw new Error('Bot logic needs to be provided to `useNamedPipe`');
@@ -1862,7 +1864,7 @@ export class BotFrameworkAdapter
         }
 
         this.logic = logic;
-        await this.startNamedPipeServer(pipeName);
+        await this.startNamedPipeServer(pipeName, onListen);
     }
 
     /**
@@ -1900,12 +1902,12 @@ export class BotFrameworkAdapter
         await this.startWebSocket(nodeWebSocket);
     }
 
-    private async startNamedPipeServer(pipeName: string): Promise<void> {
+    private async startNamedPipeServer(pipeName: string, onListen?: () => void): Promise<void> {
         this.namedPipeName = pipeName;
         this.streamingServer = new NamedPipeServer(pipeName, this);
 
         try {
-            await this.streamingServer.start();
+            await this.streamingServer.start(onListen);
         } finally {
             this.namedPipeName = undefined;
         }
