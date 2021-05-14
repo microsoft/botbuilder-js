@@ -15,6 +15,7 @@ import { isLuisRecognizerOptionsV3, LuisRecognizerV3 } from './luisRecognizerOpt
 import { DynamicList } from './dynamicList';
 import { ExternalEntity } from './externalEntity';
 import { DialogContext, Recognizer } from 'botbuilder-dialogs';
+import * as t from 'runtypes';
 
 /**
  * Description of a LUIS application used for initializing a LuisRecognizer.
@@ -233,6 +234,16 @@ export interface LuisRecognizerOptionsV2 extends LuisRecognizerOptions {
     timezoneOffset?: number;
 }
 
+// This run type is purely used for type assertions in a scenario where we
+// know better than the compiler does that we'll have a value of this type.
+// This is just meant to operate as a simple type assertion.
+const UnsafeLuisRecognizerUnion = t.Guard(
+    (val: unknown): val is LuisRecognizerOptionsV2 | LuisRecognizerOptionsV3 | LuisPredictionOptions => {
+        return t.Dictionary(t.Unknown, t.String).guard(val);
+    },
+    { name: 'LuisRecognizerOptionsV2 | LuisRecognizerOptionsV3 | LuisPredictionOptions' }
+);
+
 /**
  * Recognize intents in a user utterance using a configured LUIS model.
  *
@@ -417,40 +428,83 @@ export class LuisRecognizer implements LuisRecognizerTelemetryClient {
         telemetryProperties?: Record<string, string>,
         telemetryMetrics?: Record<string, number>,
         options?: LuisRecognizerOptionsV2 | LuisRecognizerOptionsV3 | LuisPredictionOptions
+    ): Promise<RecognizerResult>;
+
+    /**
+     * Calls LUIS to recognize intents and entities in a users utterance.
+     *
+     * @param {string} utterance The utterance to be recognized.
+     * @param {LuisRecognizerOptionsV2 | LuisRecognizerOptionsV3 | LuisPredictionOptions} options (Optional) options object used to override control predictions. Should conform to the [LuisRecognizerOptionsV2] or [LuisRecognizerOptionsV3] definition.
+     */
+    public async recognize(
+        utterance: string,
+        options?: LuisRecognizerOptionsV2 | LuisRecognizerOptionsV3 | LuisPredictionOptions
+    ): Promise<RecognizerResult>;
+
+    /**
+     * @internal
+     */
+    public async recognize(
+        contextOrUtterance: DialogContext | TurnContext | string,
+        maybeTelemetryPropertiesOrOptions?:
+            | Record<string, string>
+            | LuisRecognizerOptionsV2
+            | LuisRecognizerOptionsV3
+            | LuisPredictionOptions,
+        maybeTelemetryMetrics?: Record<string, number>,
+        maybeOptions?: LuisRecognizerOptionsV2 | LuisRecognizerOptionsV3 | LuisPredictionOptions
     ): Promise<RecognizerResult> {
-        const turnContext = context instanceof DialogContext ? context.context : context;
-        const cached = turnContext.turnState.get(this.cacheKey);
-        const luisRecognizer = options ? this.buildRecognizer(options) : this.luisRecognizerInternal;
-        if (!cached) {
-            const utterance = turnContext.activity.text || '';
-            let recognizerPromise: Promise<RecognizerResult>;
+        if (typeof contextOrUtterance === 'string') {
+            const utterance = contextOrUtterance;
+            const options = UnsafeLuisRecognizerUnion.optional().check(maybeTelemetryPropertiesOrOptions);
 
-            if (!utterance.trim()) {
-                // Bypass LUIS if the activity's text is null or whitespace
-                recognizerPromise = Promise.resolve({
-                    text: utterance,
-                    intents: { '': { score: 1 } },
-                    entities: {},
-                });
-            } else {
-                recognizerPromise = luisRecognizer.recognizeInternal(context);
+            const luisRecognizer = options ? this.buildRecognizer(options) : this.luisRecognizerInternal;
+
+            return luisRecognizer.recognizeInternal(utterance);
+        } else {
+            const telemetryProperties = t
+                .Dictionary(t.String, t.String)
+                .optional()
+                .nullable()
+                .check(maybeTelemetryPropertiesOrOptions);
+            const turnContext =
+                contextOrUtterance instanceof DialogContext ? contextOrUtterance.context : contextOrUtterance;
+            const cached = turnContext.turnState.get(this.cacheKey);
+
+            if (!cached) {
+                const utterance = turnContext.activity.text || '';
+                let recognizerPromise: Promise<RecognizerResult>;
+
+                if (!utterance.trim()) {
+                    // Bypass LUIS if the activity's text is null or whitespace
+                    recognizerPromise = Promise.resolve({
+                        text: utterance,
+                        intents: { '': { score: 1 } },
+                        entities: {},
+                    });
+                } else {
+                    const luisRecognizer = maybeOptions
+                        ? this.buildRecognizer(maybeOptions)
+                        : this.luisRecognizerInternal;
+                    recognizerPromise = luisRecognizer.recognizeInternal(turnContext);
+                }
+
+                try {
+                    const recognizerResult = await recognizerPromise;
+                    // Write to cache
+                    turnContext.turnState.set(this.cacheKey, recognizerResult);
+
+                    // Log telemetry
+                    this.onRecognizerResults(recognizerResult, turnContext, telemetryProperties, maybeTelemetryMetrics);
+                    return recognizerResult;
+                } catch (error) {
+                    this.prepareErrorMessage(error);
+                    throw error;
+                }
             }
 
-            try {
-                const recognizerResult = await recognizerPromise;
-                // Write to cache
-                turnContext.turnState.set(this.cacheKey, recognizerResult);
-
-                // Log telemetry
-                this.onRecognizerResults(recognizerResult, turnContext, telemetryProperties, telemetryMetrics);
-                return recognizerResult;
-            } catch (error) {
-                this.prepareErrorMessage(error);
-                throw error;
-            }
+            return Promise.resolve(cached);
         }
-
-        return Promise.resolve(cached);
     }
 
     /**

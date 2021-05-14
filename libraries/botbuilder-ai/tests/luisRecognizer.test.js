@@ -486,6 +486,17 @@ describe('LuisRecognizer', function () {
         assert(traceActivity.value.luisModel);
     });
 
+    maybeIt('should not emit trace info if recognize called with utterance instead of TurnContext', async () => {
+        const expectedData = getExpectedData(getExpectedPath('SingleIntent_SimplyEntity.json'));
+
+        const res = await recognizer.recognize(expectedData.text);
+        assert(res);
+        assert(res.text === expectedData.text);
+
+        const traceActivity = context.sent?.find((s) => s.type === 'trace' && s.name === 'LuisRecognizer');
+        assert(!traceActivity);
+    });
+
     maybeIt('should call prepareErrorMessage when a non-200 status code is received.', async () => {
         returnStatusCode(400);
 
