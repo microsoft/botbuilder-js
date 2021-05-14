@@ -83,7 +83,7 @@ import {
 
 import { BotFrameworkHttpAdapter } from './botFrameworkHttpAdapter';
 import { BotLogic, ConnectorClientBuilder, Emitter, Request, Response, WebRequest, WebResponse } from './interfaces';
-import { delay } from 'botbuilder-stdlib';
+import { delay, retry } from 'botbuilder-stdlib';
 import { userAgentPolicy } from '@azure/ms-rest-js';
 import { validateAndFixActivity } from './activityValidator';
 
@@ -1835,13 +1835,16 @@ export class BotFrameworkAdapter
 
     /**
      * Connects the handler to a Named Pipe server and begins listening for incoming requests.
+     *
      * @param logic The logic that will handle incoming requests.
      * @param pipeName The name of the named pipe to use when creating the server.
+     * @param retryCount Number of times to attempt to bind incoming and outgoing pipe
      * @param onListen Optional callback that fires once when server is listening on both incoming and outgoing pipe
      */
     public async useNamedPipe(
         logic: (context: TurnContext) => Promise<any>,
         pipeName = defaultPipeName,
+        retryCount = 7,
         onListen?: () => void
     ): Promise<void> {
         if (!logic) {
@@ -1864,7 +1867,8 @@ export class BotFrameworkAdapter
         }
 
         this.logic = logic;
-        await this.startNamedPipeServer(pipeName, onListen);
+
+        await retry(() => this.startNamedPipeServer(pipeName, onListen), retryCount);
     }
 
     /**
