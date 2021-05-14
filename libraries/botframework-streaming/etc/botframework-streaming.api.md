@@ -6,45 +6,25 @@
 
 import { Duplex } from 'stream';
 import { DuplexOptions } from 'stream';
-import * as WebSocket from 'ws';
+import * as WebSocket_2 from 'ws';
 
-// @public (undocumented)
-export class BrowserWebSocket implements ISocket {
-    // Warning: (ae-forgotten-export) The symbol "IBrowserWebSocket" needs to be exported by the entry point index.d.ts
-    constructor(socket?: IBrowserWebSocket);
-    close(): void;
-    connect(serverAddress: string): Promise<void>;
-    readonly isConnected: boolean;
-    setOnCloseHandler(handler: (x: any) => void): void;
-    setOnErrorHandler(handler: (x: any) => void): void;
-    setOnMessageHandler(handler: (x: any) => void): void;
-    write(buffer: INodeBuffer): void;
-}
-
-// @public (undocumented)
+// @public
 export class ContentStream {
     // Warning: (ae-forgotten-export) The symbol "PayloadAssembler" needs to be exported by the entry point index.d.ts
     constructor(id: string, assembler: PayloadAssembler);
-    // (undocumented)
     cancel(): void;
-    // (undocumented)
-    readonly contentType: string;
-    // (undocumented)
+    get contentType(): string;
     getStream(): SubscribableStream;
     // (undocumented)
     id: string;
-    // (undocumented)
-    readonly length: number;
-    // (undocumented)
+    get length(): number;
     readAsJson<T>(): Promise<T>;
-    // (undocumented)
     readAsString(): Promise<string>;
     }
 
-// @public (undocumented)
+// @public
 export class HttpContent {
     constructor(headers: IHttpContentHeaders, stream: SubscribableStream);
-    // (undocumented)
     getStream(): SubscribableStream;
     // Warning: (ae-forgotten-export) The symbol "IHttpContentHeaders" needs to be exported by the entry point index.d.ts
     //
@@ -178,15 +158,15 @@ export interface INodeSocket {
     // (undocumented)
     [Symbol.asyncIterator](): AsyncIterableIterator<any>;
     // (undocumented)
-    addListener(event: "close", listener: () => void): this;
+    addListener(event: 'close', listener: () => void): this;
     // (undocumented)
-    addListener(event: "data", listener: (chunk: any) => void): this;
+    addListener(event: 'data', listener: (chunk: any) => void): this;
     // (undocumented)
-    addListener(event: "end", listener: () => void): this;
+    addListener(event: 'end', listener: () => void): this;
     // (undocumented)
-    addListener(event: "readable", listener: () => void): this;
+    addListener(event: 'readable', listener: () => void): this;
     // (undocumented)
-    addListener(event: "error", listener: (err: Error) => void): this;
+    addListener(event: 'error', listener: (err: Error) => void): this;
     // (undocumented)
     addListener(event: string | symbol, listener: (...args: any[]) => void): this;
     // Warning: (ae-forgotten-export) The symbol "AddressInfo" needs to be exported by the entry point index.d.ts
@@ -218,15 +198,15 @@ export interface INodeSocket {
     // (undocumented)
     destroyed: boolean;
     // (undocumented)
-    emit(event: "close"): boolean;
+    emit(event: 'close'): boolean;
     // (undocumented)
-    emit(event: "data", chunk: any): boolean;
+    emit(event: 'data', chunk: any): boolean;
     // (undocumented)
-    emit(event: "end"): boolean;
+    emit(event: 'end'): boolean;
     // (undocumented)
-    emit(event: "readable"): boolean;
+    emit(event: 'readable'): boolean;
     // (undocumented)
-    emit(event: "error", err: Error): boolean;
+    emit(event: 'error', err: Error): boolean;
     // (undocumented)
     emit(event: string | symbol, ...args: any[]): boolean;
     // (undocumented)
@@ -256,25 +236,25 @@ export interface INodeSocket {
     // (undocumented)
     on(event: string, listener: (...args: any[]) => void): this;
     // (undocumented)
-    on(event: "close", listener: (had_error: boolean) => void): this;
+    on(event: 'close', listener: (had_error: boolean) => void): this;
     // (undocumented)
-    on(event: "connect", listener: () => void): this;
+    on(event: 'connect', listener: () => void): this;
     // (undocumented)
-    on(event: "data", listener: (data: INodeBuffer) => void): this;
+    on(event: 'data', listener: (data: INodeBuffer) => void): this;
     // (undocumented)
-    on(event: "end", listener: () => void): this;
+    on(event: 'end', listener: () => void): this;
     // (undocumented)
-    on(event: "error", listener: (err: Error) => void): this;
+    on(event: 'error', listener: (err: Error) => void): this;
     // (undocumented)
-    once(event: "close", listener: () => void): this;
+    once(event: 'close', listener: () => void): this;
     // (undocumented)
-    once(event: "data", listener: (chunk: any) => void): this;
+    once(event: 'data', listener: (chunk: any) => void): this;
     // (undocumented)
-    once(event: "end", listener: () => void): this;
+    once(event: 'end', listener: () => void): this;
     // (undocumented)
-    once(event: "readable", listener: () => void): this;
+    once(event: 'readable', listener: () => void): this;
     // (undocumented)
-    once(event: "error", listener: (err: Error) => void): this;
+    once(event: 'error', listener: (err: Error) => void): this;
     // (undocumented)
     once(event: string | symbol, listener: (...args: any[]) => void): this;
     // (undocumented)
@@ -282,31 +262,31 @@ export interface INodeSocket {
     // Warning: (ae-forgotten-export) The symbol "WritableStream" needs to be exported by the entry point index.d.ts
     //
     // (undocumented)
-    pipe<T extends WritableStream>(destination: T, options?: {
+    pipe<T extends WritableStream_2>(destination: T, options?: {
         end?: boolean;
     }): T;
     // (undocumented)
-    prependListener(event: "close", listener: () => void): this;
+    prependListener(event: 'close', listener: () => void): this;
     // (undocumented)
-    prependListener(event: "data", listener: (chunk: any) => void): this;
+    prependListener(event: 'data', listener: (chunk: any) => void): this;
     // (undocumented)
-    prependListener(event: "end", listener: () => void): this;
+    prependListener(event: 'end', listener: () => void): this;
     // (undocumented)
-    prependListener(event: "readable", listener: () => void): this;
+    prependListener(event: 'readable', listener: () => void): this;
     // (undocumented)
-    prependListener(event: "error", listener: (err: Error) => void): this;
+    prependListener(event: 'error', listener: (err: Error) => void): this;
     // (undocumented)
     prependListener(event: string | symbol, listener: (...args: any[]) => void): this;
     // (undocumented)
-    prependOnceListener(event: "close", listener: () => void): this;
+    prependOnceListener(event: 'close', listener: () => void): this;
     // (undocumented)
-    prependOnceListener(event: "data", listener: (chunk: any) => void): this;
+    prependOnceListener(event: 'data', listener: (chunk: any) => void): this;
     // (undocumented)
-    prependOnceListener(event: "end", listener: () => void): this;
+    prependOnceListener(event: 'end', listener: () => void): this;
     // (undocumented)
-    prependOnceListener(event: "readable", listener: () => void): this;
+    prependOnceListener(event: 'readable', listener: () => void): this;
     // (undocumented)
-    prependOnceListener(event: "error", listener: (err: Error) => void): this;
+    prependOnceListener(event: 'error', listener: (err: Error) => void): this;
     // (undocumented)
     prependOnceListener(event: string | symbol, listener: (...args: any[]) => void): this;
     // (undocumented)
@@ -319,6 +299,8 @@ export interface INodeSocket {
     _read(size: number): void;
     // (undocumented)
     readable: boolean;
+    // (undocumented)
+    readonly readableFlowing: boolean | null;
     // (undocumented)
     readonly readableHighWaterMark: number;
     // (undocumented)
@@ -456,33 +438,33 @@ export class NamedPipeClient implements IStreamingTransportClient {
 export class NamedPipeServer implements IStreamingTransportServer {
     constructor(baseName: string, requestHandler?: RequestHandler, autoReconnect?: boolean);
     disconnect(): void;
-    readonly isConnected: boolean;
+    get isConnected(): boolean;
     send(request: StreamingRequest): Promise<IReceiveResponse>;
     start(): Promise<string>;
 }
 
-// @public (undocumented)
+// @public
 export class NodeWebSocket implements ISocket {
-    constructor(wsSocket?: WebSocket);
+    constructor(wsSocket?: WebSocket_2);
     close(code?: number, data?: string): void;
     connect(serverAddress: any, port?: number): Promise<void>;
     create(req: INodeIncomingMessage, socket: INodeSocket, head: INodeBuffer): Promise<void>;
-    readonly isConnected: boolean;
+    get isConnected(): boolean;
     setOnCloseHandler(handler: (x: any) => void): void;
     setOnErrorHandler(handler: (x: any) => void): void;
     setOnMessageHandler(handler: (x: any) => void): void;
     write(buffer: INodeBuffer): void;
     // (undocumented)
-    protected wsServer: WebSocket.Server;
+    protected wsServer: WebSocket_2.Server;
     }
 
-// @public (undocumented)
+// @public
 export class NodeWebSocketFactory extends NodeWebSocketFactoryBase {
     constructor();
     createWebSocket(req: INodeIncomingMessage, socket: INodeSocket, head: INodeBuffer): Promise<NodeWebSocket>;
 }
 
-// @public (undocumented)
+// @public
 export abstract class NodeWebSocketFactoryBase {
     // (undocumented)
     abstract createWebSocket(req: INodeIncomingMessage, socket: INodeSocket, head: INodeBuffer): Promise<ISocket>;
@@ -493,7 +475,7 @@ export abstract class RequestHandler {
     abstract processRequest(request: IReceiveRequest): Promise<StreamingResponse>;
 }
 
-// @public (undocumented)
+// @public
 export class StreamingRequest {
     addStream(content: HttpContent): void;
     static create(method: string, path?: string, body?: HttpContent): StreamingRequest;
@@ -504,7 +486,7 @@ export class StreamingRequest {
     verb: string;
 }
 
-// @public (undocumented)
+// @public
 export class StreamingResponse {
     addStream(content: HttpContent): void;
     static create(statusCode: number, body?: HttpContent): StreamingResponse;
@@ -515,16 +497,13 @@ export class StreamingResponse {
     streams: HttpContentStream[];
 }
 
-// @public (undocumented)
+// @public
 export class SubscribableStream extends Duplex {
     constructor(options?: DuplexOptions);
     // (undocumented)
     length: number;
-    // (undocumented)
     _read(size: number): void;
-    // (undocumented)
     subscribe(onData: (chunk: any) => void): void;
-    // (undocumented)
     _write(chunk: any, encoding: string, callback: (error?: Error | null) => void): void;
 }
 
@@ -544,7 +523,7 @@ export class WebSocketClient implements IStreamingTransportClient {
 export class WebSocketServer implements IStreamingTransportServer {
     constructor(socket: ISocket, requestHandler?: RequestHandler);
     disconnect(): void;
-    readonly isConnected: boolean;
+    get isConnected(): boolean;
     send(request: StreamingRequest): Promise<IReceiveResponse>;
     start(): Promise<string>;
     }
