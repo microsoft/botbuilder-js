@@ -493,8 +493,7 @@ describe('LuisRecognizer', function () {
         assert(res);
         assert(res.text === expectedData.text);
 
-        const traceActivity = context.sent?.find((s) => s.type === 'trace' && s.name === 'LuisRecognizer');
-        assert(!traceActivity);
+        assert(!context.sent);
     });
 
     maybeIt('should call prepareErrorMessage when a non-200 status code is received.', async () => {
