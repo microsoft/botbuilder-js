@@ -18,6 +18,9 @@ export async function retry<T>(
         n = 1,
         maybeError: Error | undefined;
 
+    // Take care of negative or zero
+    maxRetries = Math.max(maxRetries, 1);
+
     while (n <= maxRetries) {
         try {
             // Note: return await intentional so we can catch errors

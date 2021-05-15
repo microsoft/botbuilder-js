@@ -12,6 +12,18 @@ describe('retry', function () {
         assert.strictEqual(fake.callCount, 1);
     });
 
+    it('handles zero retries', async function () {
+        const fake = sinon.fake((n) => Promise.resolve(n));
+        assert.strictEqual(await retry(fake, 0, 0), 1);
+        assert.strictEqual(fake.callCount, 1);
+    });
+
+    it('handles negative retries', async function () {
+        const fake = sinon.fake((n) => Promise.resolve(n));
+        assert.strictEqual(await retry(fake, -10, 0), 1);
+        assert.strictEqual(fake.callCount, 1);
+    });
+
     it('succeeds eventually', async function () {
         const fake = sinon.fake((n) => (n < 3 ? Promise.reject() : Promise.resolve(10)));
         assert.strictEqual(await retry(fake, 3, 0), 10);
