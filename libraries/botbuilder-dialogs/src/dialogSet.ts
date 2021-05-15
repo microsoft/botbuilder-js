@@ -209,10 +209,6 @@ export class DialogSet {
         return this._telemetryClient;
     }
 
-    /**
-     * Set the telemetry client for this dialog set and apply it to all current dialogs.
-     * Future dialogs added to the set will also inherit this client.
-     */
     public set telemetryClient(client: BotTelemetryClient) {
         this._telemetryClient = client ?? new NullTelemetryClient();
         Object.values(this.dialogs).forEach((dialog) => (dialog.telemetryClient = this._telemetryClient));

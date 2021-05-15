@@ -5,7 +5,6 @@
 ```ts
 
 import { Activity } from 'botbuilder-core';
-import { Activity as Activity_2 } from 'botframework-schema';
 import { ActivityHandler } from 'botbuilder-core';
 import { ActivityHandlerBase } from 'botbuilder-core';
 import { AppBasedLinkQuery } from 'botbuilder-core';
@@ -21,7 +20,7 @@ import { ChannelInfo } from 'botbuilder-core';
 import { ClaimsIdentity } from 'botframework-connector';
 import { ConnectorClient } from 'botframework-connector';
 import { ConnectorClientOptions } from 'botframework-connector';
-import { ConversationAccount } from 'botframework-schema';
+import { ConversationAccount } from 'botbuilder-core';
 import { ConversationParameters } from 'botbuilder-core';
 import { ConversationReference } from 'botbuilder-core';
 import { ConversationResourceResponse } from 'botbuilder-core';
@@ -30,7 +29,6 @@ import { ConversationState } from 'botbuilder-core';
 import { CoreAppCredentials } from 'botbuilder-core';
 import { ExtendedUserTokenProvider } from 'botbuilder-core';
 import { FileConsentCardResponse } from 'botbuilder-core';
-import { HealthCheckResponse } from 'botbuilder-core';
 import { HttpClient } from '@azure/ms-rest-js';
 import { HttpOperationResponse } from '@azure/ms-rest-js';
 import { ICredentialProvider } from 'botframework-connector';
@@ -58,35 +56,41 @@ import { SkillConversationIdFactoryBase } from 'botbuilder-core';
 import { StatusCodes } from 'botbuilder-core';
 import { Storage as Storage_2 } from 'botbuilder-core';
 import { StreamingResponse } from 'botframework-streaming';
+import { TabRequest } from 'botbuilder-core';
+import { TabResponse } from 'botbuilder-core';
+import { TabSubmit } from 'botbuilder-core';
 import { TaskModuleRequest } from 'botbuilder-core';
 import { TaskModuleResponse } from 'botbuilder-core';
 import { TeamDetails } from 'botbuilder-core';
 import { TeamInfo } from 'botbuilder-core';
 import { TeamsChannelAccount } from 'botbuilder-core';
+import { TeamsMeetingInfo } from 'botbuilder-core';
+import { TeamsMeetingParticipant } from 'botbuilder-core';
 import { TeamsPagedMembersResult } from 'botbuilder-core';
+import { TenantInfo } from 'botbuilder-core';
 import { TokenApiClient } from 'botframework-connector';
 import { TokenExchangeRequest } from 'botframework-connector';
 import { TokenResponse } from 'botbuilder-core';
 import { TokenStatus } from 'botframework-connector';
 import { Transcript } from 'botbuilder-core';
-import { Transcript as Transcript_2 } from 'botframework-schema';
 import { TranscriptInfo } from 'botbuilder-core';
 import { TranscriptStore } from 'botbuilder-core';
 import { TurnContext } from 'botbuilder-core';
 import { UserState } from 'botbuilder-core';
 import { WebResource } from '@azure/ms-rest-js';
 
+// Warning: (ae-forgotten-export) The symbol "BotFrameworkHttpAdapter" needs to be exported by the entry point index.d.ts
 // Warning: (ae-forgotten-export) The symbol "ConnectorClientBuilder" needs to be exported by the entry point index.d.ts
 //
 // @public
-export class BotFrameworkAdapter extends BotAdapter implements ConnectorClientBuilder, ExtendedUserTokenProvider, RequestHandler {
+export class BotFrameworkAdapter extends BotAdapter implements BotFrameworkHttpAdapter, ConnectorClientBuilder, ExtendedUserTokenProvider, RequestHandler {
     constructor(settings?: Partial<BotFrameworkAdapterSettings>);
     protected authenticateRequest(request: Partial<Activity>, authHeader: string): Promise<void>;
     // (undocumented)
     protected buildCredentials(appId: string, oAuthScope?: string): Promise<AppCredentials>;
     protected checkEmulatingOAuthCards(context: TurnContext): void;
     // (undocumented)
-    readonly ConnectorClientKey: Symbol;
+    readonly ConnectorClientKey: symbol;
     continueConversation(reference: Partial<ConversationReference>, logic: (context: TurnContext) => Promise<void>): Promise<void>;
     // (undocumented)
     continueConversation(reference: Partial<ConversationReference>, oAuthScope: string, logic: (context: TurnContext) => Promise<void>): Promise<void>;
@@ -94,7 +98,8 @@ export class BotFrameworkAdapter extends BotAdapter implements ConnectorClientBu
     createConnectorClientWithIdentity(serviceUrl: string, identity: ClaimsIdentity): Promise<ConnectorClient>;
     createConnectorClientWithIdentity(serviceUrl: string, identity: ClaimsIdentity, audience: string): Promise<ConnectorClient>;
     protected createContext(request: Partial<Activity>): TurnContext;
-    createConversation(reference: Partial<ConversationReference>, logic?: (context: TurnContext) => Promise<void>): Promise<void>;
+    createConversation(reference: Partial<ConversationReference>, logic: (context: TurnContext) => Promise<void>): Promise<void>;
+    createConversation(reference: Partial<ConversationReference>, parameters: Partial<ConversationParameters>, logic: (context: TurnContext) => Promise<void>): Promise<void>;
     protected createTokenApiClient(serviceUrl: string, oAuthAppCredentials?: CoreAppCredentials): TokenApiClient;
     // (undocumented)
     protected readonly credentials: AppCredentials;
@@ -124,10 +129,15 @@ export class BotFrameworkAdapter extends BotAdapter implements ConnectorClientBu
     getUserToken(context: TurnContext, connectionName: string, magicCode?: string): Promise<TokenResponse>;
     // (undocumented)
     getUserToken(context: TurnContext, connectionName: string, magicCode?: string, oAuthAppCredentials?: CoreAppCredentials): Promise<TokenResponse>;
-    // (undocumented)
-    healthCheck(context: TurnContext): Promise<HealthCheckResponse>;
-    readonly isStreamingConnectionOpen: boolean;
+    get isStreamingConnectionOpen(): boolean;
     protected oauthApiUrl(contextOrServiceUrl: TurnContext | string): string;
+    // Warning: (ae-forgotten-export) The symbol "Request" needs to be exported by the entry point index.d.ts
+    // Warning: (ae-forgotten-export) The symbol "Emitter" needs to be exported by the entry point index.d.ts
+    // Warning: (ae-forgotten-export) The symbol "Response" needs to be exported by the entry point index.d.ts
+    // Warning: (ae-forgotten-export) The symbol "BotLogic" needs to be exported by the entry point index.d.ts
+    //
+    // (undocumented)
+    process(req: Request_2 & Emitter, res: Response_2, logic: BotLogic): Promise<void>;
     processActivity(req: WebRequest, res: WebResponse, logic: (context: TurnContext) => Promise<any>): Promise<void>;
     processActivityDirect(activity: Activity, logic: (context: TurnContext) => Promise<any>): Promise<void>;
     processRequest(request: IReceiveRequest): Promise<StreamingResponse>;
@@ -138,8 +148,8 @@ export class BotFrameworkAdapter extends BotAdapter implements ConnectorClientBu
     // (undocumented)
     signOutUser(context: TurnContext, connectionName?: string, userId?: string, oAuthAppCredentials?: CoreAppCredentials): Promise<void>;
     // (undocumented)
-    readonly TokenApiClientCredentialsKey: Symbol;
-    updateActivity(context: TurnContext, activity: Partial<Activity>): Promise<void>;
+    readonly TokenApiClientCredentialsKey: symbol;
+    updateActivity(context: TurnContext, activity: Partial<Activity>): Promise<ResourceResponse | void>;
     useNamedPipe(logic: (context: TurnContext) => Promise<any>, pipeName?: string): Promise<void>;
     useWebSocket(req: WebRequest, socket: INodeSocket, head: INodeBuffer, logic: (context: TurnContext) => Promise<any>): Promise<void>;
     }
@@ -162,13 +172,10 @@ export interface BotFrameworkAdapterSettings {
 // @public
 export class BotFrameworkHttpClient implements BotFrameworkClient {
     constructor(credentialProvider: ICredentialProvider, channelService?: string);
-    // (undocumented)
     protected buildCredentials(appId: string, oAuthScope?: string): Promise<AppCredentials>;
     // (undocumented)
     protected readonly channelService: string;
-    postActivity<T>(fromBotId: string, toBotId: string, toUrl: string, serviceUrl: string, conversationId: string, activity: Activity): Promise<InvokeResponse<T>>;
-    // (undocumented)
-    postActivity(fromBotId: string, toBotId: string, toUrl: string, serviceUrl: string, conversationId: string, activity: Activity): Promise<InvokeResponse>;
+    postActivity<T = any>(fromBotId: string, toBotId: string, toUrl: string, serviceUrl: string, conversationId: string, activity: Activity): Promise<InvokeResponse<T>>;
 }
 
 // @public
@@ -176,29 +183,17 @@ export class ChannelServiceHandler {
     constructor(credentialProvider: ICredentialProvider, authConfig: AuthenticationConfiguration, channelService?: string);
     // (undocumented)
     protected readonly channelService: string;
-    // (undocumented)
     handleCreateConversation(authHeader: string, parameters: ConversationParameters): Promise<ConversationResourceResponse>;
-    // (undocumented)
     handleDeleteActivity(authHeader: string, conversationId: string, activityId: string): Promise<void>;
-    // (undocumented)
     handleDeleteConversationMember(authHeader: string, conversationId: string, memberId: string): Promise<void>;
-    // (undocumented)
     handleGetActivityMembers(authHeader: string, conversationId: string, activityId: string): Promise<ChannelAccount[]>;
-    // (undocumented)
     handleGetConversationMembers(authHeader: string, conversationId: string): Promise<ChannelAccount[]>;
-    // (undocumented)
     handleGetConversationPagedMembers(authHeader: string, conversationId: string, pageSize?: number, continuationToken?: string): Promise<PagedMembersResult>;
-    // (undocumented)
     handleGetConversations(authHeader: string, conversationId: string, continuationToken?: string): Promise<ConversationsResult>;
-    // (undocumented)
     handleReplyToActivity(authHeader: string, conversationId: string, activityId: string, activity: Activity): Promise<ResourceResponse>;
-    // (undocumented)
     handleSendConversationHistory(authHeader: string, conversationId: string, transcript: Transcript): Promise<ResourceResponse>;
-    // (undocumented)
     handleSendToConversation(authHeader: string, conversationId: string, activity: Activity): Promise<ResourceResponse>;
-    // (undocumented)
     handleUpdateActivity(authHeader: string, conversationId: string, activityId: string, activity: Activity): Promise<ResourceResponse>;
-    // (undocumented)
     handleUploadAttachment(authHeader: string, conversationId: string, attachmentUpload: AttachmentData): Promise<ResourceResponse>;
     protected onCreateConversation(claimsIdentity: ClaimsIdentity, parameters: ConversationParameters): Promise<ConversationResourceResponse>;
     protected onDeleteActivity(claimsIdentity: ClaimsIdentity, conversationId: string, activityId: string): Promise<void>;
@@ -214,7 +209,7 @@ export class ChannelServiceHandler {
     protected onUploadAttachment(claimsIdentity: ClaimsIdentity, conversationId: string, attachmentUpload: AttachmentData): Promise<ResourceResponse>;
 }
 
-// @public (undocumented)
+// @public
 export class ChannelServiceRoutes {
     constructor(channelServiceHandler: ChannelServiceHandler);
     register(server: WebServer, basePath?: string): void;
@@ -222,8 +217,8 @@ export class ChannelServiceRoutes {
 
 // @public
 export class EventFactory {
-    static createHandoffInitiation(context: TurnContext, handoffContext: any, transcript?: Transcript_2): Activity_2;
-    static createHandoffStatus(conversation: ConversationAccount, state: string, message?: string): Activity_2;
+    static createHandoffInitiation<T = unknown>(context: TurnContext, handoffContext: T, transcript?: Transcript): Activity;
+    static createHandoffStatus(conversation: ConversationAccount, state: string, message?: string): Activity;
 }
 
 // @public
@@ -248,20 +243,15 @@ export class HandoffEventNames {
 // @public
 export class InspectionMiddleware extends InterceptionMiddleware {
     constructor(inspectionState: InspectionState, userState?: UserState, conversationState?: ConversationState, credentials?: Partial<MicrosoftAppCredentials>);
-    // (undocumented)
     protected inbound(turnContext: TurnContext, traceActivity: Partial<Activity>): Promise<any>;
-    // (undocumented)
     protected outbound(turnContext: TurnContext, traceActivities: Partial<Activity>[]): Promise<any>;
-    // (undocumented)
     processCommand(turnContext: TurnContext): Promise<any>;
-    // (undocumented)
     protected traceState(turnContext: TurnContext): Promise<any>;
     }
 
 // @public
 export class InspectionState extends BotState {
     constructor(storage: Storage_2);
-    // (undocumented)
     protected getStorageKey(turnContext: TurnContext): string;
 }
 
@@ -269,10 +259,18 @@ export class InspectionState extends BotState {
 export type RouteHandler = (request: WebRequest, response: WebResponse) => void;
 
 // @public
+export class SetSpeakMiddleware implements Middleware {
+    constructor(voiceName: string | null, fallbackToTextForSpeak: boolean);
+    onTurn(turnContext: TurnContext, next: () => Promise<void>): Promise<void>;
+    }
+
+// @public
 export class SkillHandler extends ChannelServiceHandler {
     constructor(adapter: BotAdapter, bot: ActivityHandlerBase, conversationIdFactory: SkillConversationIdFactoryBase, credentialProvider: ICredentialProvider, authConfig: AuthenticationConfiguration, channelService?: string);
+    protected onDeleteActivity(claimsIdentity: ClaimsIdentity, conversationId: string, activityId: string): Promise<void>;
     protected onReplyToActivity(claimsIdentity: ClaimsIdentity, conversationId: string, activityId: string, activity: Activity): Promise<ResourceResponse>;
     protected onSendToConversation(claimsIdentity: ClaimsIdentity, conversationId: string, activity: Activity): Promise<ResourceResponse>;
+    protected onUpdateActivity(claimsIdentity: ClaimsIdentity, conversationId: string, activityId: string, activity: Activity): Promise<ResourceResponse>;
     readonly SkillConversationReferenceKey: symbol;
 }
 
@@ -284,24 +282,23 @@ export class SkillHttpClient extends BotFrameworkHttpClient {
     postToSkill(fromBotId: string, toSkill: BotFrameworkSkill, callbackUrl: string, activity: Activity): Promise<InvokeResponse>;
 }
 
-// @public (undocumented)
+// @public
 export class StatusCodeError extends Error {
     constructor(statusCode: StatusCodes, message?: string);
     // (undocumented)
     readonly statusCode: StatusCodes;
 }
 
-// @public (undocumented)
+// @public
 export class StreamingHttpClient implements HttpClient {
     constructor(server: IStreamingTransportServer);
     sendRequest(httpRequest: WebResource): Promise<HttpOperationResponse>;
     }
 
-// @public (undocumented)
+// @public
 export class TeamsActivityHandler extends ActivityHandler {
     protected dispatchConversationUpdateActivity(context: TurnContext): Promise<void>;
     protected handleTeamsAppBasedLinkQuery(context: TurnContext, query: AppBasedLinkQuery): Promise<MessagingExtensionResponse>;
-    // (undocumented)
     protected handleTeamsCardActionInvoke(context: TurnContext): Promise<InvokeResponse>;
     protected handleTeamsFileConsent(context: TurnContext, fileConsentCardResponse: FileConsentCardResponse): Promise<void>;
     protected handleTeamsFileConsentAccept(context: TurnContext, fileConsentCardResponse: FileConsentCardResponse): Promise<void>;
@@ -319,70 +316,79 @@ export class TeamsActivityHandler extends ActivityHandler {
     protected handleTeamsO365ConnectorCardAction(context: TurnContext, query: O365ConnectorCardActionQuery): Promise<void>;
     protected handleTeamsSigninTokenExchange(context: TurnContext, query: SigninStateVerificationQuery): Promise<void>;
     protected handleTeamsSigninVerifyState(context: TurnContext, query: SigninStateVerificationQuery): Promise<void>;
+    protected handleTeamsTabFetch(context: TurnContext, tabRequest: TabRequest): Promise<TabResponse>;
+    protected handleTeamsTabSubmit(context: TurnContext, tabSubmit: TabSubmit): Promise<TabResponse>;
     protected handleTeamsTaskModuleFetch(context: TurnContext, taskModuleRequest: TaskModuleRequest): Promise<TaskModuleResponse>;
     protected handleTeamsTaskModuleSubmit(context: TurnContext, taskModuleRequest: TaskModuleRequest): Promise<TaskModuleResponse>;
-    // (undocumented)
     protected onInvokeActivity(context: TurnContext): Promise<InvokeResponse>;
-    // (undocumented)
     protected onSignInInvoke(context: TurnContext): Promise<void>;
-    // (undocumented)
     protected onTeamsChannelCreated(context: any): Promise<void>;
-    // (undocumented)
     onTeamsChannelCreatedEvent(handler: (channelInfo: ChannelInfo, teamInfo: TeamInfo, context: TurnContext, next: () => Promise<void>) => Promise<void>): this;
-    // (undocumented)
     protected onTeamsChannelDeleted(context: any): Promise<void>;
-    // (undocumented)
     onTeamsChannelDeletedEvent(handler: (channelInfo: ChannelInfo, teamInfo: TeamInfo, context: TurnContext, next: () => Promise<void>) => Promise<void>): this;
-    // (undocumented)
     protected onTeamsChannelRenamed(context: any): Promise<void>;
-    // (undocumented)
     onTeamsChannelRenamedEvent(handler: (channelInfo: ChannelInfo, teamInfo: TeamInfo, context: TurnContext, next: () => Promise<void>) => Promise<void>): this;
-    protected onTeamsMembersAdded(context: TurnContext): Promise<void>;
     // (undocumented)
+    protected onTeamsChannelRestored(context: any): Promise<void>;
+    onTeamsChannelRestoredEvent(handler: (channelInfo: ChannelInfo, teamInfo: TeamInfo, context: TurnContext, next: () => Promise<void>) => Promise<void>): this;
+    protected onTeamsMembersAdded(context: TurnContext): Promise<void>;
     onTeamsMembersAddedEvent(handler: (membersAdded: TeamsChannelAccount[], teamInfo: TeamInfo, context: TurnContext, next: () => Promise<void>) => Promise<void>): this;
     protected onTeamsMembersRemoved(context: TurnContext): Promise<void>;
-    // (undocumented)
     onTeamsMembersRemovedEvent(handler: (membersRemoved: TeamsChannelAccount[], teamInfo: TeamInfo, context: TurnContext, next: () => Promise<void>) => Promise<void>): this;
-    // (undocumented)
+    protected onTeamsTeamArchived(context: any): Promise<void>;
+    onTeamsTeamArchivedEvent(handler: (teamInfo: TeamInfo, context: TurnContext, next: () => Promise<void>) => Promise<void>): this;
+    protected onTeamsTeamDeleted(context: any): Promise<void>;
+    onTeamsTeamDeletedEvent(handler: (teamInfo: TeamInfo, context: TurnContext, next: () => Promise<void>) => Promise<void>): this;
+    protected onTeamsTeamHardDeleted(context: any): Promise<void>;
+    onTeamsTeamHardDeletedEvent(handler: (teamInfo: TeamInfo, context: TurnContext, next: () => Promise<void>) => Promise<void>): this;
     protected onTeamsTeamRenamed(context: any): Promise<void>;
-    // (undocumented)
     onTeamsTeamRenamedEvent(handler: (teamInfo: TeamInfo, context: TurnContext, next: () => Promise<void>) => Promise<void>): this;
+    protected onTeamsTeamRestored(context: any): Promise<void>;
+    onTeamsTeamRestoredEvent(handler: (teamInfo: TeamInfo, context: TurnContext, next: () => Promise<void>) => Promise<void>): this;
+    protected onTeamsTeamUnarchived(context: any): Promise<void>;
+    onTeamsTeamUnarchivedEvent(handler: (teamInfo: TeamInfo, context: TurnContext, next: () => Promise<void>) => Promise<void>): this;
 }
 
 // @public
-export function teamsGetChannelId(activity: Activity): string;
+export function teamsGetChannelId(activity: Activity): string | null;
 
-// @public (undocumented)
-export function teamsGetTeamId(activity: Activity): string;
+// @public
+export function teamsGetTeamId(activity: Activity): string | null;
 
-// @public (undocumented)
+// @public
+export function teamsGetTeamInfo(activity: Activity): TeamInfo | null;
+
+// @public
+export function teamsGetTeamMeetingInfo(activity: Activity): TeamsMeetingInfo | null;
+
+// @public
+export function teamsGetTenant(activity: Activity): TenantInfo | null;
+
+// @public
 export class TeamsInfo {
-    // (undocumented)
+    static getMeetingParticipant(context: TurnContext, meetingId?: string, participantId?: string, tenantId?: string): Promise<TeamsMeetingParticipant>;
     static getMember(context: TurnContext, userId: string): Promise<TeamsChannelAccount>;
-    // (undocumented)
     static getMembers(context: TurnContext): Promise<TeamsChannelAccount[]>;
-    // (undocumented)
     static getPagedMembers(context: TurnContext, pageSize?: number, continuationToken?: string): Promise<TeamsPagedMembersResult>;
-    // (undocumented)
     static getPagedTeamMembers(context: TurnContext, teamId?: string, pageSize?: number, continuationToken?: string): Promise<TeamsPagedMembersResult>;
-    // (undocumented)
     static getTeamChannels(context: TurnContext, teamId?: string): Promise<ChannelInfo[]>;
-    // (undocumented)
     static getTeamDetails(context: TurnContext, teamId?: string): Promise<TeamDetails>;
-    // (undocumented)
     static getTeamMember(context: TurnContext, teamId?: string, userId?: string): Promise<TeamsChannelAccount>;
-    // (undocumented)
     static getTeamMembers(context: TurnContext, teamId?: string): Promise<TeamsChannelAccount[]>;
-    // (undocumented)
     static sendMessageToTeamsChannel(context: TurnContext, activity: Activity, teamsChannelId: string): Promise<[ConversationReference, string]>;
 }
 
-// @public (undocumented)
-export function teamsNotifyUser(activity: Activity): void;
+// @public
+export function teamsNotifyUser(activity: Activity, alertInMeeting?: boolean, externalResourceUrl?: string): void;
+
+// @public
+export class TeamsSSOTokenExchangeMiddleware implements Middleware {
+    constructor(storage: Storage_2, oAuthConnectionName: string);
+    onTurn(context: TurnContext, next: () => Promise<void>): Promise<void>;
+    }
 
 // @public
 export class TokenResolver {
-    // (undocumented)
     static checkForOAuthCards(adapter: BotFrameworkAdapter, context: TurnContext, activity: Activity, log?: string[]): void;
     }
 

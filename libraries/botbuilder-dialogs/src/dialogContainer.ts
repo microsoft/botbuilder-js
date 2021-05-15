@@ -91,10 +91,6 @@ export abstract class DialogContainer<O extends object = {}> extends Dialog<O> {
         }
     }
 
-    /**
-     * Set the telemetry client, and also apply it to all child dialogs.
-     * Future dialogs added to the component will also inherit this client.
-     */
     public set telemetryClient(client: BotTelemetryClient) {
         this._telemetryClient = client ?? new NullTelemetryClient();
         if (this.dialogs.telemetryClient !== this._telemetryClient) {

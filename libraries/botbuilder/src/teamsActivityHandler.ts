@@ -38,7 +38,7 @@ import { TeamsInfo } from './teamsInfo';
  * Developers may handle Conversation Update activities sent from Microsoft Teams via two methods:
  *  1. Overriding methods starting with `on..` and *not* ending in `..Event()` (e.g. `onTeamsMembersAdded()`), or instead
  *  2. Passing callbacks to methods starting with `on..` *and* ending in `...Event()` (e.g. `onTeamsMembersAddedEvent()`),
- *      to stay in line with older {@link ActivityHandler} implementation.
+ *      to stay in line with older {@see ActivityHandler} implementation.
  *
  * Developers should use either #1 or #2, above for all Conversation Update activities and not *both* #2 and #3 for the same activity. Meaning,
  *   developers should override `onTeamsMembersAdded()` and not use both `onTeamsMembersAdded()` and `onTeamsMembersAddedEvent()`.

@@ -99,9 +99,6 @@ export class DialogManager extends Configurable {
         return this._initialTurnState;
     }
 
-    /**
-     * Root dialog to start from [onTurn()](#onturn) method.
-     */
     public set rootDialog(value: Dialog) {
         this.dialogs = new DialogSet();
         if (value) {
