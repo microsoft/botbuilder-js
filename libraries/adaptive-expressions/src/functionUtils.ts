@@ -849,22 +849,8 @@ export class FunctionUtils {
      */
     private static convertToObj(instance: unknown) {
         if (FunctionUtils.getPropertyCount(instance) >= 0) {
-            if (instance instanceof Map) {
-                // Convert Map to Object
-                const obj = {};
-                for (const [key, value] of instance) {
-                    obj[key] = FunctionUtils.convertToObj(value);
-                }
-                return obj;
-            } else {
-                // Convert Object recursionly
-                const obj = {};
-                for (const [key, val] of Object.entries(instance)) {
-                    obj[key] = FunctionUtils.convertToObj(val);
-                }
-
-                return obj;
-            }
+            const entries = instance instanceof Map ? Array.from(instance.entries()) : Object.entries(instance);
+            return entries.reduce((acc, [key, value]) => ({ ...acc, [key]: FunctionUtils.convertToObj(value) }), {});
         } else if (Array.isArray(instance)) {
             // Convert Array
             return instance.map((item) => FunctionUtils.convertToObj(item));
