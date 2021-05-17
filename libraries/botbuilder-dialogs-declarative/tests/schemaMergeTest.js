@@ -10,8 +10,12 @@ const exec = util.promisify(require('child_process').exec);
 // Note: This file is intentionally not named *.test.js to ensure it isn't run
 // via `yarn run test` or `npm run test`.
 
-async function runCommand(command) {
-    const { stdout, stderr } = await exec(command);
+async function runCommand(command, envObject) {
+    // We need to combine our process.env with envObject so,
+    //  1) We can use existing env vars (like from CI), and
+    //  2) npx doesn't like to install without the existing APPDATA windows env var.
+    const env = { ...process.env, ...envObject };
+    const { stdout, stderr } = await exec(command, { env });
 
     if (stderr) {
         throw new Error(stderr);
@@ -64,13 +68,19 @@ describe('Schema Merge Tests', function () {
             // Try installing latest bf if the schema changed to make sure the
             // discrepancy is not because we are using a different version of the CLI
             // and we ensure it is installed while on it.
+
             try {
                 // Rerun merge command.
                 await runCommand(
                     [
                         'npx -p @microsoft/botframework-cli@next', // invoke with npx to not alter repo dependencies
                         ...mergeCommand,
-                    ].join(' ')
+                    ].join(' '),
+                    {
+                        // When installing bf-cli, there is sometimes a prompt during install to allow telemetry.
+                        // We need to set an environment variable so the prompt doesn't appear and halt install, causing a timeout.
+                        BF_CLI_TELEMETRY: true,
+                    }
                 );
             } catch (err2) {
                 assert.fail(`Unable to merge schemas.\nFirst error:\n${err}\nSecond error:\n${err2}`);
