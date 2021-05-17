@@ -7,7 +7,6 @@
  */
 
 export * from './botLogic';
-export * from './emitter';
 export * from './request';
 export * from './response';
 export { ConnectorClientBuilder } from './connectorClientBuilder';

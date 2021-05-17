@@ -6,7 +6,12 @@
  * Licensed under the MIT License.
  */
 
+import { BotFrameworkHttpAdapter } from './botFrameworkHttpAdapter';
+import { HttpClient, userAgentPolicy } from '@azure/ms-rest-js';
+import { INodeBufferT, INodeSocketT } from './runtypes';
 import { arch, release, type } from 'os';
+import { delay, retry } from 'botbuilder-stdlib';
+import { validateAndFixActivity } from './activityValidator';
 
 import {
     Activity,
@@ -81,11 +86,16 @@ import {
     VERSION_PATH,
 } from './streaming';
 
-import { BotFrameworkHttpAdapter } from './botFrameworkHttpAdapter';
-import { BotLogic, ConnectorClientBuilder, Emitter, Request, Response, WebRequest, WebResponse } from './interfaces';
-import { delay, retry } from 'botbuilder-stdlib';
-import { HttpClient, userAgentPolicy } from '@azure/ms-rest-js';
-import { validateAndFixActivity } from './activityValidator';
+import {
+    BotLogic,
+    BotLogicT,
+    ConnectorClientBuilder,
+    Request,
+    Response,
+    ResponseT,
+    WebRequest,
+    WebResponse,
+} from './interfaces';
 
 /**
  * Contains settings used to configure a [BotFrameworkAdapter](xref:botbuilder.BotFrameworkAdapter) instance.
@@ -199,7 +209,6 @@ export class BotFrameworkAdapter
     // These keys are public to permit access to the keys from the adapter when it's a being
     // from library that does not have access to static properties off of BotFrameworkAdapter.
     // E.g. botbuilder-dialogs
-    public readonly ConnectorClientKey: symbol = Symbol('ConnectorClient');
     public readonly TokenApiClientCredentialsKey: symbol = Symbol('TokenApiClientCredentials');
 
     protected readonly credentials: AppCredentials;
@@ -361,16 +370,22 @@ export class BotFrameworkAdapter
         reference: Partial<ConversationReference>,
         logic: (context: TurnContext) => Promise<void>
     ): Promise<void>;
+
+    /**
+     * Asynchronously resumes a conversation with a user, possibly after some time has gone by.
+     *
+     * @param reference [ConversationReference](xref:botframework-schema.ConversationReference) of the conversation to continue.
+     * @param oAuthScopeOrlogic The intended recipient of any sent activities or the function to call to continue the conversation.
+     * @param logic Optional. The asynchronous method to call after the adapter middleware runs.
+     */
     public async continueConversation(
         reference: Partial<ConversationReference>,
         oAuthScope: string,
         logic: (context: TurnContext) => Promise<void>
     ): Promise<void>;
+
     /**
-     * Asynchronously resumes a conversation with a user, possibly after some time has gone by.
-     * @param reference [ConversationReference](xref:botframework-schema.ConversationReference) of the conversation to continue.
-     * @param oAuthScopeOrlogic The intended recipient of any sent activities or the function to call to continue the conversation.
-     * @param logic Optional. The asynchronous method to call after the adapter middleware runs.
+     * @internal
      */
     public async continueConversation(
         reference: Partial<ConversationReference>,
@@ -1829,8 +1844,24 @@ export class BotFrameworkAdapter
         return response;
     }
 
-    process(req: Request & Emitter, res: Response, logic: BotLogic): Promise<void> {
-        return this.processActivity(req, res, logic);
+    async process(req: Request, res: Response, logic: BotLogic): Promise<void>;
+    async process(req: Request, socket: INodeSocket, head: INodeBuffer, logic: BotLogic): Promise<void>;
+    async process(
+        req: Request,
+        resOrSocket: Response | INodeSocket,
+        logicOrHead: BotLogic | INodeBuffer,
+        maybeLogic?: BotLogic
+    ): Promise<void> {
+        if (maybeLogic) {
+            return this.useWebSocket(
+                req,
+                INodeSocketT.check(resOrSocket),
+                INodeBufferT.check(logicOrHead),
+                BotLogicT.check(maybeLogic)
+            );
+        } else {
+            return this.processActivity(req, ResponseT.check(resOrSocket), BotLogicT.check(logicOrHead));
+        }
     }
 
     /**

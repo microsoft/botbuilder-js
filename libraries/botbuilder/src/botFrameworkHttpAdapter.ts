@@ -1,7 +1,8 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-import { BotLogic, Emitter, Request, Response } from './interfaces';
+import type { INodeBuffer, INodeSocket } from 'botframework-streaming';
+import { BotLogic, Request, Response } from './interfaces';
 
 /**
  * BotFrameworkHttpAdapter is the interface that describes a Bot Framework
@@ -13,5 +14,10 @@ export interface BotFrameworkHttpAdapter {
      * decode the request, apply the bot logic function, and encodes the result in
      * the response.
      */
-    process(req: Request & Emitter, res: Response, logic: BotLogic): Promise<void>;
+    process(req: Request, res: Response, logic: BotLogic): Promise<void>;
+
+    /**
+     * TODO(jpg) this
+     */
+    process(req: Request, socket: INodeSocket, head: INodeBuffer, logic: BotLogic): Promise<void>;
 }
