@@ -1,10 +1,10 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
+import * as t from 'runtypes';
 import getStream from 'get-stream';
 import pmap from 'p-map';
-import { Activity, PagedResult, TranscriptInfo, TranscriptStore, assertActivity } from 'botbuilder-core';
-import { assert } from 'botbuilder-stdlib';
+import { Activity, PagedResult, TranscriptInfo, TranscriptStore } from 'botbuilder-core';
 import { maybeCast } from 'botbuilder-stdlib/lib/maybeCast';
 import { sanitizeBlobKey } from './sanitizeBlobKey';
 
@@ -32,14 +32,14 @@ function getConversationPrefix(channelId: string, conversationId: string): strin
     return sanitizeBlobKey(`${channelId}/${conversationId}`);
 }
 
+const DateT = t.Guard((val: unknown): val is Date => val instanceof Date, { name: 'Date' });
+
 // Formats an activity as a blob key
 function getBlobKey(activity: Activity): string {
-    assert.date(activity.timestamp, ['activity', 'timestamp']);
+    const { timestamp } = t.Record({ timestamp: DateT }).check(activity);
 
     return sanitizeBlobKey(
-        [activity.channelId, activity.conversation.id, `${formatTicks(activity.timestamp)}-${activity.id}.json`].join(
-            '/'
-        )
+        [activity.channelId, activity.conversation.id, `${formatTicks(timestamp)}-${activity.id}.json`].join('/')
     );
 }
 
@@ -78,8 +78,7 @@ export class BlobsTranscriptStore implements TranscriptStore {
      * @param {BlobsTranscriptStoreOptions} options Other options for BlobsTranscriptStore
      */
     constructor(connectionString: string, containerName: string, options?: BlobsTranscriptStoreOptions) {
-        assert.string(connectionString, ['connectionString']);
-        assert.string(containerName, ['containerName']);
+        t.Record({ connectionString: t.String, containerName: t.String }).check({ connectionString, containerName });
 
         this._containerClient = new ContainerClient(connectionString, containerName, options?.storagePipelineOptions);
 
@@ -112,8 +111,7 @@ export class BlobsTranscriptStore implements TranscriptStore {
         continuationToken?: string,
         startDate?: Date
     ): Promise<PagedResult<Activity>> {
-        assert.string(channelId, ['channelId']);
-        assert.string(conversationId, ['conversationId']);
+        t.Record({ channelId: t.String, conversationId: t.String }).check({ channelId, conversationId });
 
         await this._initialize();
 
@@ -182,7 +180,7 @@ export class BlobsTranscriptStore implements TranscriptStore {
      * [PagedResult](xref:botbuilder-core.PagedResult) of [Activity](xref:botbuilder-core.Activity) items
      */
     async listTranscripts(channelId: string, continuationToken?: string): Promise<PagedResult<TranscriptInfo>> {
-        assert.string(channelId, ['channelId']);
+        t.Record({ channelId: t.String }).check({ channelId });
 
         await this._initialize();
 
@@ -217,8 +215,7 @@ export class BlobsTranscriptStore implements TranscriptStore {
      * @returns {Promise<void>} A promise representing the async operation.
      */
     async deleteTranscript(channelId: string, conversationId: string): Promise<void> {
-        assert.string(channelId, ['channelId']);
-        assert.string(conversationId, ['conversationId']);
+        t.Record({ channelId: t.String, conversationId: t.String }).check({ channelId, conversationId });
 
         await this._initialize();
 
@@ -251,7 +248,7 @@ export class BlobsTranscriptStore implements TranscriptStore {
      * @returns {Promise<void>} A promise representing the async operation.
      */
     async logActivity(activity: Activity): Promise<void> {
-        assertActivity(activity, ['activity']);
+        t.Record({ activity: t.Dictionary(t.Unknown, t.String) }).check({ activity });
 
         await this._initialize();
 
