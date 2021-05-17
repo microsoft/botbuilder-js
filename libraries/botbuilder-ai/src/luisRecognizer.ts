@@ -504,7 +504,7 @@ export class LuisRecognizer implements LuisRecognizerTelemetryClient {
                 }
             }
 
-            return Promise.resolve(cached);
+            return cached;
         }
     }
 

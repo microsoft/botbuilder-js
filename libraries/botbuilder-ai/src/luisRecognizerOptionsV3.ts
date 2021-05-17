@@ -177,6 +177,10 @@ export class LuisRecognizerV3 extends LuisRecognizerInternal {
             result.entities[MetadataKey] = result.entities[MetadataKey] ? result.entities[MetadataKey] : {};
         }
 
+        // Intentionally not using "context != null" (loose inequality) check here because context should explicitly be null from the
+        // internal recognizeInternal() "if (typeof contextOrUtterance === 'string')" block. This route is taken
+        // when recognize is called with a string utterance and not a TurnContext. So, if context is undefined (not null)
+        // at this point, we have a bigger issue that needs to be caught.
         if (context !== null) {
             this.emitTraceInfo(context, response.prediction, result, options);
         }
