@@ -776,14 +776,7 @@ export class FunctionUtils {
                 return false;
             }
 
-            let isEqual = true;
-            for (let i = 0; i < obj1.length; i++) {
-                if (!FunctionUtils.commonEquals(obj1[i], obj2[i])) {
-                    isEqual = false;
-                    break;
-                }
-            }
-            return isEqual;
+            return obj1.every((item, i) => FunctionUtils.commonEquals(item, obj2[i]));
         }
 
         // Object Comparison
@@ -793,15 +786,8 @@ export class FunctionUtils {
             if (propertyCountOfObj1 !== propertyCountOfObj2) {
                 return false;
             }
-            let jsonObj1 = obj1;
-            let jsonObj2 = obj2;
-            if (obj1 instanceof Map) {
-                jsonObj1 = FunctionUtils.convertToObj(obj1);
-            }
-
-            if (obj2 instanceof Map) {
-                jsonObj2 = FunctionUtils.convertToObj(obj2);
-            }
+            const jsonObj1 = FunctionUtils.convertToObj(obj1);
+            const jsonObj2 = FunctionUtils.convertToObj(obj2);
 
             return isEqual(jsonObj1, jsonObj2);
         }
@@ -863,29 +849,11 @@ export class FunctionUtils {
      */
     private static convertToObj(instance: unknown) {
         if (FunctionUtils.getPropertyCount(instance) >= 0) {
-            if (instance instanceof Map) {
-                // Convert Map to Object
-                const obj = {};
-                for (const [key, value] of instance) {
-                    obj[key] = FunctionUtils.convertToObj(value);
-                }
-                return obj;
-            } else {
-                // Convert Object recursionly
-                const objInstance = instance as Record<string, unknown>;
-                const obj = {};
-                for (const key in objInstance) {
-                    obj[key] = FunctionUtils.convertToObj(objInstance[key]);
-                }
-                return obj;
-            }
+            const entries = instance instanceof Map ? Array.from(instance.entries()) : Object.entries(instance);
+            return entries.reduce((acc, [key, value]) => ({ ...acc, [key]: FunctionUtils.convertToObj(value) }), {});
         } else if (Array.isArray(instance)) {
             // Convert Array
-            const result = [];
-            for (const item of instance) {
-                result.push(FunctionUtils.convertToObj(item));
-            }
-            return result;
+            return instance.map((item) => FunctionUtils.convertToObj(item));
         }
 
         return instance;

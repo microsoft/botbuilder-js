@@ -5,25 +5,38 @@ import * as t from 'runtypes';
 import express from 'express';
 import path from 'path';
 import type { Server } from 'http';
-import { ActivityHandlerBase, BotFrameworkAdapter } from 'botbuilder';
+import type { ActivityHandlerBase, BotFrameworkAdapter, ChannelServiceRoutes } from 'botbuilder';
 import { Configuration, getRuntimeServices } from 'botbuilder-dialogs-adaptive-runtime';
-import { ServiceCollection } from 'botbuilder-dialogs-adaptive-runtime-core';
+import type { ServiceCollection } from 'botbuilder-dialogs-adaptive-runtime-core';
+
+// Explicitly fails checks for `""`
+const NonEmptyString = t.String.withConstraint((str) => str.length > 0 || 'must be non-empty string');
 
 const TypedOptions = t.Record({
     /**
      * Path that the server will listen to for [Activities](xref:botframework-schema.Activity)
      */
-    messagingEndpointPath: t.String,
+    messagingEndpointPath: NonEmptyString,
+
+    /**
+     * Path that the server will listen to for skills requests
+     */
+    skillsEndpointPrefix: NonEmptyString,
 
     /**
      * Port that server should listen on
      */
-    port: t.Union(t.String, t.Number),
+    port: t.Union(NonEmptyString, t.Number),
 
     /**
      * Log errors to stderr
      */
     logErrors: t.Boolean,
+
+    /**
+     * Path inside applicationRoot that should be served as static files
+     */
+    staticDirectory: NonEmptyString,
 });
 
 /**
@@ -34,7 +47,9 @@ export type Options = t.Static<typeof TypedOptions>;
 const defaultOptions: Options = {
     logErrors: true,
     messagingEndpointPath: '/api/messages',
+    skillsEndpointPrefix: '/api/skills',
     port: 3978,
+    staticDirectory: 'wwwroot',
 };
 
 /**
@@ -50,7 +65,7 @@ export async function start(
     options: Partial<Options> = {}
 ): Promise<void> {
     const [services, configuration] = await getRuntimeServices(applicationRoot, settingsDirectory);
-    const [_, listen] = await makeApp(services, configuration, applicationRoot, options);
+    const [, listen] = await makeApp(services, configuration, applicationRoot, options);
 
     listen();
 }
@@ -97,14 +112,15 @@ export async function makeApp(
         }
     };
 
-    const { adapter, bot, customAdapters } = services.mustMakeInstances<{
+    const { adapter, bot, channelServiceRoutes, customAdapters } = services.mustMakeInstances<{
         adapter: BotFrameworkAdapter;
         bot: ActivityHandlerBase;
+        channelServiceRoutes: ChannelServiceRoutes;
         customAdapters: Map<string, BotFrameworkAdapter>;
-    }>('adapter', 'bot', 'customAdapters');
+    }>('adapter', 'bot', 'channelServiceRoutes', 'customAdapters');
 
     app.use(
-        express.static(path.join(applicationRoot, 'public'), {
+        express.static(path.join(applicationRoot, resolvedOptions.staticDirectory), {
             setHeaders: (res, filePath) => {
                 const contentType = extensionContentTypes[path.extname(filePath)];
                 if (contentType) {
@@ -123,6 +139,8 @@ export async function makeApp(
             return errorHandler(err, res);
         }
     });
+
+    channelServiceRoutes.register(app, resolvedOptions.skillsEndpointPrefix);
 
     const adapters =
         configuration.type(
