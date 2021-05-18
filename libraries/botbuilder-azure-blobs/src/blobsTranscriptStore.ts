@@ -71,7 +71,7 @@ export class BlobsTranscriptStore implements TranscriptStore {
     private _initializePromise?: Promise<unknown>;
 
     /**
-     * Constructs a BlobsStorage instance.
+     * Constructs a BlobsTranscriptStore instance.
      *
      * @param {string} connectionString Azure Blob Storage connection string
      * @param {string} containerName Azure Blob Storage container name
@@ -90,7 +90,7 @@ export class BlobsTranscriptStore implements TranscriptStore {
 
     // Protects against JSON.stringify cycles
     private toJSON(): unknown {
-        return { name: 'BlobsStorage' };
+        return { name: 'BlobsTranscriptStore' };
     }
 
     private _initialize(): Promise<unknown> {
