@@ -167,6 +167,11 @@ export class CosmosDbPartitionedStorage implements Storage {
         }
     }
 
+    // Protects against JSON.stringify cycles
+    private toJSON(): unknown {
+        return { name: 'CosmosDbPartitionedStorage' };
+    }
+
     /**
      * Read one or more items with matching keys from the Cosmos DB container.
      *
