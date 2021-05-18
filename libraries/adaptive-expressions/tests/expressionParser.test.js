@@ -181,6 +181,7 @@ const testCases = [
             ['timestampObj2 <= timestampObj', true],
             ['timestampObj == timestampObj2', false],
             ['timestampObj == timestampObj', true],
+            ['where([{a: 1, b:{c: 2}}, {b: 2}], x, x == { b: { c: 2}, a: 1})[0].b.c', 2],
         ],
     },
     {
@@ -652,6 +653,7 @@ const testCases = [
             ['contains(items, \'hi\')', false],
             ['contains(bag, \'three\')', true],
             ['contains(bag, \'xxx\')', false],
+            ['contains([{ a: 1, b: { c: 2} }, { b: 2}], { a: 1, b: { c: 2} })', true],
             ['concat(null, [1, 2], null)', [1, 2]],
             ['concat(createArray(1, 2), createArray(3, 4))', [1, 2, 3, 4]],
             ['concat([\'a\', \'b\'], [\'b\', \'c\'], [\'c\', \'d\'])', ['a', 'b', 'b', 'c', 'c', 'd']],

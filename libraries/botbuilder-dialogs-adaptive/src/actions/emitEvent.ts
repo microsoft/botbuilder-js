@@ -29,6 +29,7 @@ export interface EmitEventConfiguration extends DialogConfiguration {
     eventName?: StringProperty;
     eventValue?: UnknownProperty;
     bubbleEvent?: BoolProperty;
+    handledProperty?: StringProperty;
     disabled?: BoolProperty;
 }
 
@@ -81,6 +82,11 @@ export class EmitEvent<O extends object = {}> extends Dialog<O> implements EmitE
     public bubbleEvent: BoolExpression;
 
     /**
+     * The property path to store whether the event was handled or not.
+     */
+    public handledProperty: StringExpression = new StringExpression('turn.eventHandled');
+
+    /**
      * An optional expression which if is true will disable this action.
      */
     public disabled?: BoolExpression;
@@ -88,11 +94,11 @@ export class EmitEvent<O extends object = {}> extends Dialog<O> implements EmitE
     public getConverter(property: keyof EmitEventConfiguration): Converter | ConverterFactory {
         switch (property) {
             case 'eventName':
+            case 'handledProperty':
                 return new StringExpressionConverter();
             case 'eventValue':
                 return new ValueExpressionConverter();
             case 'bubbleEvent':
-                return new BoolExpressionConverter();
             case 'disabled':
                 return new BoolExpressionConverter();
             default:
@@ -131,6 +137,12 @@ export class EmitEvent<O extends object = {}> extends Dialog<O> implements EmitE
             handled = await dc.parent.emitEvent(eventName, eventValue, bubbleEvent, false);
         } else {
             handled = await dc.emitEvent(eventName, eventValue, bubbleEvent, false);
+        }
+
+        // Save results of operation.
+        const handledProperty = this.handledProperty?.getValue(dc.state);
+        if (handledProperty) {
+            dc.state.setValue(handledProperty, handled);
         }
 
         return await dc.endDialog(handled);
