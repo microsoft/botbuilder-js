@@ -25,7 +25,6 @@ export * from './governmentChannelValidation';
 export * from './governmentConstants';
 export * from './jwtTokenValidation';
 export * from './microsoftAppCredentials';
-export * from './parameterizedBotFrameworkAuthentication';
 export * from './passwordServiceClientCredentialFactory';
 export * from './skillValidation';
 export * from './serviceClientCredentialsFactory';

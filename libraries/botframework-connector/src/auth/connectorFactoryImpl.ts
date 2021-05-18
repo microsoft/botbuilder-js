@@ -9,7 +9,7 @@ import { ServiceClientCredentialsFactory } from './serviceClientCredentialsFacto
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const packageInfo: Record<'name' | 'version', string> = require('../../package.json');
-export const USER_AGENT = `${packageInfo.name}/${packageInfo.version} ${getDefaultUserAgentValue()} `;
+export const USER_AGENT = `Microsoft-BotFramework/3.1 ${packageInfo.name}/${packageInfo.version} ${getDefaultUserAgentValue()} `;
 
 // Internal
 export class ConnectorFactoryImpl extends ConnectorFactory {
