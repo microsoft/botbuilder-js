@@ -114,6 +114,11 @@ export class ApplicationInsightsTelemetryClient implements BotTelemetryClient, B
         this.client.addTelemetryProcessor(addBotIdentifiers);
     }
 
+    // Protects against JSON.stringify cycles
+    private toJSON(): unknown {
+        return { name: 'ApplicationInsightsTelemetryClient' };
+    }
+
     /**
      * Provides access to the Application Insights configuration that is running here.
      * Allows developers to adjust the options, for example:
