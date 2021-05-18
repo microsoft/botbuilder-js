@@ -46,6 +46,11 @@ export class BlobsStorage implements Storage {
         }
     }
 
+    // Protects against JSON.stringify cycles
+    private toJSON(): unknown {
+        return { name: 'BlobsStorage' };
+    }
+
     private _initialize(): Promise<unknown> {
         if (!this._initializePromise) {
             this._initializePromise = this._containerClient.createIfNotExists();
