@@ -84,7 +84,7 @@ import {
 import { BotFrameworkHttpAdapter } from './botFrameworkHttpAdapter';
 import { BotLogic, ConnectorClientBuilder, Emitter, Request, Response, WebRequest, WebResponse } from './interfaces';
 import { delay, retry } from 'botbuilder-stdlib';
-import { userAgentPolicy } from '@azure/ms-rest-js';
+import { HttpClient, userAgentPolicy } from '@azure/ms-rest-js';
 import { validateAndFixActivity } from './activityValidator';
 
 /**
@@ -1482,7 +1482,7 @@ export class BotFrameworkAdapter
         return new ConnectorClient(credentials, clientOptions);
     }
 
-    private getClientOptions(serviceUrl: string, httpClient?: any): ConnectorClientOptions {
+    private getClientOptions(serviceUrl: string, httpClient?: HttpClient): ConnectorClientOptions {
         const { requestPolicyFactories, ...clientOptions } = this.settings.clientOptions ?? {};
 
         const options: ConnectorClientOptions = Object.assign({}, { baseUri: serviceUrl }, clientOptions);

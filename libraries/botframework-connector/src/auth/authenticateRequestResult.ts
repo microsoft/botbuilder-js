@@ -24,5 +24,5 @@ export type AuthenticateRequestResult = {
     /**
      * A value for the ConnectorFactory.
      */
-    connectorFactory: ConnectorFactory;
+    connectorFactory?: ConnectorFactory;
 };
