@@ -1,7 +1,7 @@
 /**
  * Config file for API Extractor.  For more info, please visit: https://api-extractor.com
  */
-{
+ {
   "$schema": "https://developer.microsoft.com/json-schemas/api-extractor/v7/api-extractor.schema.json",
 
   /**
@@ -60,7 +60,7 @@
    * This would direct API Extractor to embed those types directly in the .d.ts rollup, as if they had been
    * local files for library1.
    */
-  "bundledPackages": [],
+  "bundledPackages": [ ],
 
   /**
    * Determines how the TypeScript compiler engine will be invoked by API Extractor.
@@ -78,6 +78,7 @@
      * DEFAULT VALUE: "<projectFolder>/tsconfig.json"
      */
     // "tsconfigFilePath": "<projectFolder>/tsconfig.json",
+
     /**
      * Provides a compiler configuration that will be used instead of reading the tsconfig.json file from disk.
      * The object must conform to the TypeScript tsconfig schema:
@@ -91,6 +92,7 @@
     // "overrideTsconfig": {
     //   . . .
     // }
+
     /**
      * This option causes the compiler to be invoked with the --skipLibCheck option. This option is not recommended
      * and may cause API Extractor to produce incomplete or incorrect declarations, but it may be required when
@@ -109,7 +111,7 @@
     /**
      * (REQUIRED) Whether to generate an API report.
      */
-    "enabled": true
+    "enabled": true,
 
     /**
      * The filename for the API report files.  It will be combined with "reportFolder" or "reportTempFolder" to produce
@@ -160,7 +162,7 @@
     /**
      * (REQUIRED) Whether to generate a doc model file.
      */
-    "enabled": true
+    "enabled": true,
 
     /**
      * The output path for the doc model file.  The file extension should be ".api.json".
@@ -181,7 +183,7 @@
     /**
      * (REQUIRED) Whether to generate the .d.ts rollup file.
      */
-    "enabled": true
+    "enabled": true,
 
     /**
      * Specifies the output path for a .d.ts rollup file to be generated without any trimming.
@@ -208,6 +210,7 @@
      * DEFAULT VALUE: ""
      */
     // "betaTrimmedFilePath": "<projectFolder>/dist/<unscopedPackageName>-beta.d.ts",
+
 
     /**
      * Specifies the output path for a .d.ts rollup file to be generated with trimming for a "public" release.
@@ -243,6 +246,7 @@
      * DEFAULT VALUE: true
      */
     // "enabled": true,
+
     /**
      * Specifies where the TSDoc metadata file should be written.
      *
@@ -271,7 +275,7 @@
   /**
    * Configures how API Extractor reports error and warning messages produced during analysis.
    *
-   * There are three sources of messages:  compiler messages, API Extractor messages, and TSDoc messages.
+   * There are three sources of messages: compiler messages, API Extractor messages, and TSDoc messages.
    */
   "messages": {
     /**
@@ -299,7 +303,7 @@
          *
          * DEFAULT VALUE: "warning"
          */
-        "logLevel": "warning"
+        "logLevel": "warning",
 
         /**
          * When addToApiReportFile is true:  If API Extractor is configured to write an API report file (.api.md),
@@ -309,7 +313,7 @@
          * DEFAULT VALUE: false
          */
         // "addToApiReportFile": false
-      }
+      },
 
       // "TS2551": {
       //   "logLevel": "warning",
@@ -328,13 +332,24 @@
      */
     "extractorMessageReporting": {
       "default": {
-        "logLevel": "error"
+        "logLevel": "error",
         // "addToApiReportFile": false
       },
 
       "ae-missing-release-tag": {
         "logLevel": "none"
+      },
+
+      "ae-setter-with-docs": {
+        "logLevel": "warning",
+        "addToApiReportFile": true
+      },
+
+      "ae-missing-getter": {
+        "logLevel": "warning",
+        "addToApiReportFile": true
       }
+
       // "ae-extra-release-tag": {
       //   "logLevel": "warning",
       //   "addToApiReportFile": true
@@ -355,13 +370,6 @@
         "logLevel": "none"
         // "addToApiReportFile": false
       }
-
-      // "tsdoc-link-tag-unescaped-text": {
-      //   "logLevel": "warning",
-      //   "addToApiReportFile": true
-      // },
-      //
-      // . . .
     }
   }
 }

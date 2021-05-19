@@ -1,7 +1,7 @@
 /**
  * Config file for API Extractor.  For more info, please visit: https://api-extractor.com
  */
-{
+ {
   "$schema": "https://developer.microsoft.com/json-schemas/api-extractor/v7/api-extractor.schema.json",
 
   /**
@@ -338,6 +338,16 @@
 
       "ae-missing-release-tag": {
         "logLevel": "none"
+      },
+
+      "ae-setter-with-docs": {
+        "logLevel": "warning",
+        "addToApiReportFile": true
+      },
+
+      "ae-missing-getter": {
+        "logLevel": "warning",
+        "addToApiReportFile": true
       }
 
       // "ae-extra-release-tag": {
