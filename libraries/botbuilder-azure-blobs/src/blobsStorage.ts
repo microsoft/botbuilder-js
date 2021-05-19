@@ -1,11 +1,11 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
+import * as t from 'runtypes';
 import getStream from 'get-stream';
 import pmap from 'p-map';
 import { ContainerClient, StoragePipelineOptions } from '@azure/storage-blob';
-import { Storage, StoreItems, assertStoreItems } from 'botbuilder-core';
-import { assert } from 'botbuilder-stdlib';
+import { Storage, StoreItems } from 'botbuilder-core';
 import { ignoreError, isStatusCodeError } from './ignoreError';
 import { sanitizeBlobKey } from './sanitizeBlobKey';
 
@@ -36,8 +36,7 @@ export class BlobsStorage implements Storage {
      * @param {BlobsStorageOptions} options Other options for BlobsStorage
      */
     constructor(connectionString: string, containerName: string, options?: BlobsStorageOptions) {
-        assert.string(connectionString, ['connectionString']);
-        assert.string(containerName, ['containerName']);
+        t.Record({ connectionString: t.String, containerName: t.String }).check({ connectionString, containerName });
 
         this._containerClient = new ContainerClient(connectionString, containerName, options?.storagePipelineOptions);
 
@@ -45,6 +44,11 @@ export class BlobsStorage implements Storage {
         if (connectionString.trim() === 'UseDevelopmentStorage=true;') {
             this._concurrency = 1;
         }
+    }
+
+    // Protects against JSON.stringify cycles
+    private toJSON(): unknown {
+        return { name: 'BlobsStorage' };
     }
 
     private _initialize(): Promise<unknown> {
@@ -61,7 +65,7 @@ export class BlobsStorage implements Storage {
      * @returns {Promise<StoreItems>} The fetched [StoreItems](xref:botbuilder-core.StoreItems)
      */
     async read(keys: string[]): Promise<StoreItems> {
-        assert.arrayOfString(keys, ['keys']);
+        t.Record({ keys: t.Array(t.String) }).check({ keys });
 
         await this._initialize();
 
@@ -105,7 +109,7 @@ export class BlobsStorage implements Storage {
      * @returns {Promise<void>} A promise representing the async operation
      */
     async write(changes: StoreItems): Promise<void> {
-        assertStoreItems(changes, ['changes']);
+        t.Dictionary(t.Unknown, t.String).withBrand('StoreItems').check(changes);
 
         await this._initialize();
 
@@ -132,7 +136,7 @@ export class BlobsStorage implements Storage {
      * @returns {Promise<void>} A promise representing the async operation
      */
     async delete(keys: string[]): Promise<void> {
-        assert.arrayOfString(keys, ['keys']);
+        t.Record({ keys: t.Array(t.String) }).check({ keys });
 
         await this._initialize();
 

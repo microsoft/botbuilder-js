@@ -1494,6 +1494,21 @@ describe('LG', function () {
 
         evaled = templates.evaluate('StringTemplateWithTemplateRef');
         assert.strictEqual(evaled, 'hello jack , welcome. nice weather!');
+
+        evaled = templates.evaluate('StringTemplateWithPureObjectDefinition', { item: 'item1' });
+        assert.deepStrictEqual(evaled, { text: 'I would like item1 today' });
+
+        evaled = templates.evaluate('StringTemplateWithObjectDefinition', { item: 'item1' });
+        assert.strictEqual(evaled, "get 'text' value : I would like item1 today");
+
+        evaled = templates.evaluate('StringTemplateWithPureArrayDefinition', { item: 'item1' });
+        assert.deepStrictEqual(evaled, ['I would like item1 today']);
+
+        evaled = templates.evaluate('StringTemplateWithArrayDefinition', { item: 'item1' });
+        assert.strictEqual(evaled, 'get first value : I would like item1 today');
+
+        evaled = templates.evaluate('StringTemplateWithNestedDefinition', { item1: 'item1', item2: 'item2' });
+        assert.strictEqual(evaled, 'two values: I would like item1 today, I would like item2 today');
     });
 
     it('TestMemoryAccessPath', function () {
