@@ -41,7 +41,8 @@
     "clean": "rimraf _ts3.4 lib tsconfig.tsbuildinfo",
     "lint": "eslint . --ext .js,.ts",
     "postbuild": "downlevel-dts lib _ts3.4/lib --checksum",
-    "test": "yarn build && nyc mocha --check-leaks tests"
+    "test": "yarn build && nyc mocha --check-leaks tests",
+    "test:compat": "api-extractor run --verbose"
   },
   "files": [
     "_ts3.4",

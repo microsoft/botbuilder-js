@@ -9,7 +9,8 @@
     "lint": "eslint . --ext .js,.ts",
     "postbuild": "downlevel-dts lib _ts3.4/lib --checksum",
     "test": "npm-run-all build test:mocha",
-    "test:mocha": "mocha tests/*.test.js"
+    "test:mocha": "mocha tests/*.test.js",
+    "test:compat": "api-extractor run --verbose"
   },
   "main": "./lib/index.js",
   "types": "./lib/index.d.ts",
