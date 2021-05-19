@@ -3,6 +3,9 @@
   "intents": {
     "Delivery": {
       "score": 0.8688843
+    },
+    "EntityTests": {
+      "score": 0.52405857
     }
   },
   "entities": {
@@ -68,6 +71,16 @@
   },
   "v2": {
     "query": "Please deliver February 2nd 2001",
+    "intents": [
+      {
+        "intent": "Delivery",
+        "score": 0.8688843
+      },
+      {
+        "intent": "EntityTests",
+        "score": 0.52405857
+      }
+    ],
     "topScoringIntent": {
       "intent": "Delivery",
       "score": 0.8688843

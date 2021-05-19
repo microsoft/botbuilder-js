@@ -38,6 +38,7 @@
     "botbuilder-stdlib": "4.1.6",
     "lodash": "^4.17.21",
     "node-fetch": "^2.6.0",
+    "runtypes": "~6.3.0",
     "url-parse": "^1.5.1"
   },
   "devDependencies": {

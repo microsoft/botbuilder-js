@@ -15,6 +15,7 @@ import { NullTelemetryClient, TurnContext, RecognizerResult } from 'botbuilder-c
 import { DialogContext } from 'botbuilder-dialogs';
 import { ExternalEntity, validateExternalEntity } from './externalEntity';
 import { validateDynamicList } from './dynamicList';
+import * as t from 'runtypes';
 
 const LUIS_TRACE_TYPE = 'https://www.luis.ai/schemas/trace';
 const LUIS_TRACE_NAME = 'LuisRecognizer';
@@ -69,56 +70,73 @@ export class LuisRecognizerV3 extends LuisRecognizerInternal {
      * @param {TurnContext} context The [TurnContext](xref:botbuilder-core.TurnContext).
      * @returns {Promise<RecognizerResult>} Analysis of utterance in form of [RecognizerResult](xref:botbuilder-core.RecognizerResult).
      */
-    async recognizeInternal(context: DialogContext | TurnContext): Promise<RecognizerResult> {
-        if (context instanceof DialogContext) {
-            const dialogContext = context;
-            const activity = dialogContext.context.activity;
-            let options = this.predictionOptions;
-            if (options.externalEntityRecognizer) {
-                // call external entity recognizer
-                const matches = await options.externalEntityRecognizer.recognize(dialogContext, activity);
-                // TODO: checking for 'text' because we get an extra non-real entity from the text recognizers
-                if (matches.entities && Object.entries(matches.entities).length) {
-                    options = {
-                        apiVersion: 'v3',
-                        externalEntities: [],
-                    };
-                    const entities = matches.entities;
-                    const instance = entities['$instance'];
-                    if (instance) {
-                        Object.entries(entities)
-                            .filter(([key, _value]) => key !== 'text' && key !== '$instance')
-                            .reduce((externalEntities: ExternalEntity[], [key, value]) => {
-                                const instances: unknown[] = instance[`${key}`];
-                                const values: unknown[] = Array.isArray(value) ? value : [];
-                                if (instances?.length === values?.length) {
-                                    instances.forEach((childInstance) => {
-                                        if (
-                                            childInstance &&
-                                            Object.prototype.hasOwnProperty.call(childInstance, 'startIndex') &&
-                                            Object.prototype.hasOwnProperty.call(childInstance, 'endIndex')
-                                        ) {
-                                            const start = childInstance['startIndex'];
-                                            const end = childInstance['endIndex'];
-                                            externalEntities.push({
-                                                entityName: key,
-                                                startIndex: start,
-                                                entityLength: end - start,
-                                                resolution: value,
-                                            });
-                                        }
-                                    });
-                                }
-                                return externalEntities;
-                            }, options.externalEntities);
+    async recognizeInternal(context: DialogContext | TurnContext): Promise<RecognizerResult>;
+
+    /**
+     * Calls LUIS to recognize intents and entities in a users utterance.
+     *
+     * @param {string} utterance The utterance to be recognized.
+     */
+    async recognizeInternal(utterance: string): Promise<RecognizerResult>;
+
+    /**
+     * @internal
+     */
+    async recognizeInternal(contextOrUtterance: DialogContext | TurnContext | string): Promise<RecognizerResult> {
+        if (typeof contextOrUtterance === 'string') {
+            const utterance = contextOrUtterance;
+            return this.recognize(null, utterance, this.predictionOptions);
+        } else {
+            if (contextOrUtterance instanceof DialogContext) {
+                const dialogContext = contextOrUtterance;
+                const activity = dialogContext.context.activity;
+                let options = this.predictionOptions;
+                if (options.externalEntityRecognizer) {
+                    // call external entity recognizer
+                    const matches = await options.externalEntityRecognizer.recognize(dialogContext, activity);
+                    // TODO: checking for 'text' because we get an extra non-real entity from the text recognizers
+                    if (matches.entities && Object.entries(matches.entities).length) {
+                        options = {
+                            apiVersion: 'v3',
+                            externalEntities: [],
+                        };
+                        const entities = matches.entities;
+                        const instance = entities['$instance'];
+                        if (instance) {
+                            Object.entries(entities)
+                                .filter(([key, _value]) => key !== 'text' && key !== '$instance')
+                                .reduce((externalEntities: ExternalEntity[], [key, value]) => {
+                                    const instances: unknown[] = instance[`${key}`];
+                                    const values: unknown[] = Array.isArray(value) ? value : [];
+                                    if (instances?.length === values?.length) {
+                                        instances.forEach((childInstance) => {
+                                            if (
+                                                t
+                                                    .Record({ startIndex: t.Number, endIndex: t.Number })
+                                                    .guard(childInstance)
+                                            ) {
+                                                const start = childInstance['startIndex'];
+                                                const end = childInstance['endIndex'];
+                                                externalEntities.push({
+                                                    entityName: key,
+                                                    startIndex: start,
+                                                    entityLength: end - start,
+                                                    resolution: value,
+                                                });
+                                            }
+                                        });
+                                    }
+                                    return externalEntities;
+                                }, options.externalEntities);
+                        }
                     }
                 }
+                // call luis recognizer with options.externalEntities populated from externalEntityRecognizer
+                return this.recognize(dialogContext.context, activity?.text ?? '', options);
+            } else {
+                const turnContext = contextOrUtterance;
+                return this.recognize(turnContext, turnContext?.activity?.text ?? '', this.predictionOptions);
             }
-            // call luis recognizer with options.externalEntities populated from externalEntityRecognizer
-            return this.recognize(dialogContext.context, activity?.text ?? '', options);
-        } else {
-            const turnContext = context;
-            return this.recognize(turnContext, turnContext?.activity?.text ?? '', this.predictionOptions);
         }
     }
 
@@ -146,6 +164,7 @@ export class LuisRecognizerV3 extends LuisRecognizerInternal {
             const errMessage = errObj.code ? `${errObj.code}: ${errObj.message}` : errObj.message;
             throw new Error(`[LUIS Recognition Error]: ${errMessage}`);
         }
+
         const result: RecognizerResult = {
             text: utterance,
             intents: getIntents(response.prediction),
@@ -158,7 +177,13 @@ export class LuisRecognizerV3 extends LuisRecognizerInternal {
             result.entities[MetadataKey] = result.entities[MetadataKey] ? result.entities[MetadataKey] : {};
         }
 
-        this.emitTraceInfo(context, response.prediction, result, options);
+        // Intentionally not using "context != null" (loose inequality) check here because context should explicitly be null from the
+        // internal recognizeInternal() "if (typeof contextOrUtterance === 'string')" block. This route is taken
+        // when recognize is called with a string utterance and not a TurnContext. So, if context is undefined (not null)
+        // at this point, we have a bigger issue that needs to be caught.
+        if (context !== null) {
+            this.emitTraceInfo(context, response.prediction, result, options);
+        }
 
         return result;
     }

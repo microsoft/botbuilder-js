@@ -251,51 +251,51 @@ describe('LuisRecognizer', function () {
         const res = await testJson('SingleIntent_SimplyEntity.json', { includeAllIntents: false });
 
         assert(res);
-        assert(res.text == 'My name is Emad');
-        assert(Object.keys(res.intents).length == 1);
+        assert.strictEqual(res.text, 'My name is Emad');
+        assert.strictEqual(Object.keys(res.intents).length, 1);
         assert(res.intents.SpecifyName);
         assert(res.intents.SpecifyName.score > 0 && res.intents.SpecifyName.score <= 1);
         assert(res.entities);
         assert(res.entities.Name);
-        assert(res.entities.Name[0] === 'emad');
+        assert.strictEqual(res.entities.Name[0], 'emad');
         assert(res.entities.$instance);
         assert(res.entities.$instance.Name);
-        assert(res.entities.$instance.Name[0].startIndex === 11);
-        assert(res.entities.$instance.Name[0].endIndex === 15);
+        assert.strictEqual(res.entities.$instance.Name[0].startIndex, 11);
+        assert.strictEqual(res.entities.$instance.Name[0].endIndex, 15);
         assert(res.entities.$instance.Name[0].score > 0 && res.entities.$instance.Name[0].score <= 1);
     });
 
     maybeIt('should return multiple intents and prebuilt entities with a single value', async () => {
-        const res = await testJson('MultipleIntents_PrebuiltEntity.json', { includeAllIntents: false });
+        const res = await testJson('MultipleIntents_PrebuiltEntity.json', { includeAllIntents: true });
 
         assert(res);
-        assert(res.text == 'Please deliver February 2nd 2001');
+        assert.strictEqual(res.text, 'Please deliver February 2nd 2001');
         assert(res.intents);
         assert(res.intents.Delivery);
         assert(res.intents.Delivery.score > 0 && res.intents.Delivery.score <= 1);
 
-        assert(LuisRecognizer.topIntent(res) === 'Delivery');
+        assert.strictEqual(LuisRecognizer.topIntent(res), 'Delivery');
 
         const sortedIntents = LuisRecognizer.sortedIntents(res);
-        assert(sortedIntents[0].intent) === 'Delivery';
-        assert(sortedIntents[sortedIntents.length - 1].intent) === 'EntityTests';
+        assert.strictEqual(sortedIntents[0].intent, 'Delivery');
+        assert.strictEqual(sortedIntents[sortedIntents.length - 1].intent, 'EntityTests');
 
         assert(res.entities);
         assert(res.entities.number);
-        assert(res.entities.number[0] === 2001);
+        assert.strictEqual(res.entities.number[0], 2001);
         assert(res.entities.datetime);
-        assert(res.entities.datetime[0].timex[0] === '2001-02-02');
+        assert.strictEqual(res.entities.datetime[0].timex[0], '2001-02-02');
         assert(res.entities.$instance);
         assert(res.entities.$instance.number);
-        assert(res.entities.$instance.number[0].startIndex === 28);
-        assert(res.entities.$instance.number[0].endIndex === 32);
+        assert.strictEqual(res.entities.$instance.number[0].startIndex, 28);
+        assert.strictEqual(res.entities.$instance.number[0].endIndex, 32);
         assert(res.entities.$instance.number[0].text);
-        assert(res.entities.$instance.number[0].text === '2001');
+        assert.strictEqual(res.entities.$instance.number[0].text, '2001');
         assert(res.entities.$instance.datetime);
-        assert(res.entities.$instance.datetime[0].startIndex === 15);
-        assert(res.entities.$instance.datetime[0].endIndex === 32);
+        assert.strictEqual(res.entities.$instance.datetime[0].startIndex, 15);
+        assert.strictEqual(res.entities.$instance.datetime[0].endIndex, 32);
         assert(res.entities.$instance.datetime[0].text);
-        assert(res.entities.$instance.datetime[0].text === 'february 2nd 2001');
+        assert.strictEqual(res.entities.$instance.datetime[0].text, 'february 2nd 2001');
     });
 
     maybeIt('should return multiple intents and prebuilt entities with multiple values', async () => {
@@ -304,100 +304,100 @@ describe('LuisRecognizer', function () {
         });
 
         assert(res);
-        assert(res.text == 'Please deliver February 2nd 2001 in room 201');
+        assert.strictEqual(res.text, 'Please deliver February 2nd 2001 in room 201');
         assert(res.intents);
         assert(res.intents.Delivery);
         assert(res.intents.Delivery.score > 0 && res.intents.Delivery.score <= 1);
         assert(res.entities);
         assert(res.entities.number);
-        assert(res.entities.number.length == 2);
+        assert.strictEqual(res.entities.number.length, 2);
         assert(res.entities.number.indexOf(2001) > -1);
         assert(res.entities.number.indexOf(201) > -1);
         assert(res.entities.datetime);
-        assert(res.entities.datetime[0].timex[0] === '2001-02-02');
+        assert.strictEqual(res.entities.datetime[0].timex[0], '2001-02-02');
     });
 
     maybeIt('should return multiple intents and a list entity with a single value', async () => {
         const res = await testJson('MultipleIntents_ListEntityWithSingleValue.json', { includeAllIntents: false });
 
         assert(res);
-        assert(res.text == 'I want to travel on united');
+        assert.strictEqual(res.text, 'I want to travel on united');
         assert(res.intents);
         assert(res.intents.Travel);
         assert(res.intents.Travel.score > 0 && res.intents.Travel.score <= 1);
         assert(res.entities);
         assert(res.entities.Airline);
-        assert(res.entities.Airline[0][0] === 'United');
+        assert.strictEqual(res.entities.Airline[0][0], 'United');
         assert(res.entities.$instance);
         assert(res.entities.$instance.Airline);
         assert(res.entities.$instance.Airline[0].startIndex);
-        assert(res.entities.$instance.Airline[0].startIndex === 20);
+        assert.strictEqual(res.entities.$instance.Airline[0].startIndex, 20);
         assert(res.entities.$instance.Airline[0].endIndex);
-        assert(res.entities.$instance.Airline[0].endIndex === 26);
+        assert.strictEqual(res.entities.$instance.Airline[0].endIndex, 26);
         assert(res.entities.$instance.Airline[0].text);
-        assert(res.entities.$instance.Airline[0].text === 'united');
+        assert.strictEqual(res.entities.$instance.Airline[0].text, 'united');
     });
 
     maybeIt('should return multiple intents and a list entity with multiple values', async () => {
         const res = await testJson('MultipleIntents_ListEntityWithMultiValues.json', { includeAllIntents: false });
 
         assert(res);
-        assert(res.text == 'I want to travel on DL');
+        assert.strictEqual(res.text, 'I want to travel on DL');
         assert(res.intents);
         assert(res.intents.Travel);
         assert(res.intents.Travel.score > 0 && res.intents.Travel.score <= 1);
         assert(res.entities);
         assert(res.entities.Airline[0]);
-        assert(res.entities.Airline[0].length == 2);
+        assert.strictEqual(res.entities.Airline[0].length, 2);
         assert(res.entities.Airline[0].indexOf('Delta') > -1);
         assert(res.entities.Airline[0].indexOf('Virgin') > -1);
         assert(res.entities.$instance);
         assert(res.entities.$instance.Airline);
         assert(res.entities.$instance.Airline[0].startIndex);
-        assert(res.entities.$instance.Airline[0].startIndex === 20);
+        assert.strictEqual(res.entities.$instance.Airline[0].startIndex, 20);
         assert(res.entities.$instance.Airline[0].endIndex);
-        assert(res.entities.$instance.Airline[0].endIndex === 22);
+        assert.strictEqual(res.entities.$instance.Airline[0].endIndex, 22);
         assert(res.entities.$instance.Airline[0].text);
-        assert(res.entities.$instance.Airline[0].text === 'dl');
+        assert.strictEqual(res.entities.$instance.Airline[0].text, 'dl');
     });
 
     maybeIt('should return multiple intents and a single composite entity', async () => {
         const res = await testJson('MultipleIntents_CompositeEntityModel.json', { includeAllIntents: false });
 
         assert(res);
-        assert(res.text == 'Please deliver it to 98033 WA');
+        assert.strictEqual(res.text, 'Please deliver it to 98033 WA');
         assert(res.intents);
         assert(res.intents.Delivery);
         assert(res.intents.Delivery.score > 0 && res.intents.Delivery.score <= 1);
         assert(res.entities);
-        assert(res.entities.number === undefined);
-        assert(res.entities.State === undefined);
+        assert.strictEqual(res.entities.number, undefined);
+        assert.strictEqual(res.entities.State, undefined);
         assert(res.entities.Address);
-        assert(res.entities.Address[0].number[0] === 98033);
+        assert.strictEqual(res.entities.Address[0].number[0], 98033);
         assert(res.entities.Address[0].State);
-        assert(res.entities.Address[0].State[0] === 'wa');
+        assert.strictEqual(res.entities.Address[0].State[0], 'wa');
         assert(res.entities.$instance);
-        assert(res.entities.$instance.number === undefined);
-        assert(res.entities.$instance.State === undefined);
+        assert.strictEqual(res.entities.$instance.number, undefined);
+        assert.strictEqual(res.entities.$instance.State, undefined);
         assert(res.entities.$instance.Address);
         assert(res.entities.$instance.Address[0].startIndex);
-        assert(res.entities.$instance.Address[0].startIndex === 21);
+        assert.strictEqual(res.entities.$instance.Address[0].startIndex, 21);
         assert(res.entities.$instance.Address[0].endIndex);
-        assert(res.entities.$instance.Address[0].endIndex === 29);
+        assert.strictEqual(res.entities.$instance.Address[0].endIndex, 29);
         assert(res.entities.$instance.Address[0].score);
         assert(res.entities.$instance.Address[0].score > 0 && res.entities.$instance.Address[0].score <= 1);
         assert(res.entities.Address[0].$instance.number);
         assert(res.entities.Address[0].$instance.number[0].startIndex);
-        assert(res.entities.Address[0].$instance.number[0].startIndex === 21);
+        assert.strictEqual(res.entities.Address[0].$instance.number[0].startIndex, 21);
         assert(res.entities.Address[0].$instance.number[0].endIndex);
-        assert(res.entities.Address[0].$instance.number[0].endIndex === 26);
+        assert.strictEqual(res.entities.Address[0].$instance.number[0].endIndex, 26);
         assert(res.entities.Address[0].$instance.number[0].text);
-        assert(res.entities.Address[0].$instance.number[0].text === '98033');
+        assert.strictEqual(res.entities.Address[0].$instance.number[0].text, '98033');
         assert(res.entities.Address[0].$instance.State);
         assert(res.entities.Address[0].$instance.State[0].startIndex);
-        assert(res.entities.Address[0].$instance.State[0].startIndex === 27);
+        assert.strictEqual(res.entities.Address[0].$instance.State[0].startIndex, 27);
         assert(res.entities.Address[0].$instance.State[0].endIndex);
-        assert(res.entities.Address[0].$instance.State[0].endIndex === 29);
+        assert.strictEqual(res.entities.Address[0].$instance.State[0].endIndex, 29);
         assert(res.entities.Address[0].$instance.State[0].score);
         assert(
             res.entities.Address[0].$instance.State[0].score > 0 &&
@@ -421,7 +421,7 @@ describe('LuisRecognizer', function () {
         res.text = 'cached';
         res = await recognizer.recognize(context);
         assert(res);
-        assert(res.text === 'cached');
+        assert.strictEqual(res.text, 'cached');
     });
 
     maybeIt('should only return $instance metadata for entities if verbose flag set', async () => {
@@ -429,7 +429,7 @@ describe('LuisRecognizer', function () {
 
         assert(res);
         assert(res.entities);
-        assert(res.entities.$instance === undefined);
+        assert.strictEqual(res.entities.$instance, undefined);
     });
 
     maybeIt('should only return $instance metadata for composite entities if verbose flag set', async () => {
@@ -437,7 +437,7 @@ describe('LuisRecognizer', function () {
 
         assert(res);
         assert(res.entities);
-        assert(res.entities.$instance === undefined);
+        assert.strictEqual(res.entities.$instance, undefined);
     });
 
     maybeIt('should only return empty intent for empty text', async () => {
@@ -445,19 +445,19 @@ describe('LuisRecognizer', function () {
 
         const top = LuisRecognizer.topIntent(res);
 
-        assert(top === 'None'); // topIntent() converts '' to 'None'
-        assert(Object.keys(res.intents).length == 1);
+        assert.strictEqual(top, 'None'); // topIntent() converts '' to 'None'
+        assert.strictEqual(Object.keys(res.intents).length, 1);
         assert('' in res.intents);
     });
 
     maybeIt('should return defaultIntent from topIntent() if results undefined', () => {
         const top = LuisRecognizer.topIntent(undefined);
-        assert(top === 'None');
+        assert.strictEqual(top, 'None');
     });
 
     maybeIt('should return defaultIntent from topIntent() if intent scores below threshold', () => {
         const top = LuisRecognizer.topIntent({ intents: { TestIntent: 0.49 } }, 'None', 0.5);
-        assert(top === 'None');
+        assert.strictEqual(top, 'None');
     });
 
     maybeIt('should emit trace info once per call to recognize', async () => {
@@ -470,20 +470,30 @@ describe('LuisRecognizer', function () {
 
         const res = await recognizer.recognize(context);
         assert(res);
-        assert(res.text === expectedData.text);
+        assert.strictEqual(res.text, expectedData.text);
 
         const traceActivity = context.sent.find((s) => s.type === 'trace' && s.name === 'LuisRecognizer');
         assert(traceActivity);
 
-        assert(traceActivity.type === 'trace');
-        assert(traceActivity.name === 'LuisRecognizer');
-        assert(traceActivity.label === 'Luis Trace');
-        assert(traceActivity.valueType === 'https://www.luis.ai/schemas/trace');
+        assert.strictEqual(traceActivity.type, 'trace');
+        assert.strictEqual(traceActivity.name, 'LuisRecognizer');
+        assert.strictEqual(traceActivity.label, 'Luis Trace');
+        assert.strictEqual(traceActivity.valueType, 'https://www.luis.ai/schemas/trace');
         assert(traceActivity.value);
         assert(traceActivity.value.luisResult);
         assert(traceActivity.value.recognizerResult);
         assert(traceActivity.value.luisOptions);
         assert(traceActivity.value.luisModel);
+    });
+
+    maybeIt('should not emit trace info if recognize called with utterance instead of TurnContext', async () => {
+        const expectedData = getExpectedData(getExpectedPath('SingleIntent_SimplyEntity.json'));
+
+        const res = await recognizer.recognize(expectedData.text);
+        assert(res);
+        assert.strictEqual(res.text, expectedData.text);
+
+        assert(!context.sent);
     });
 
     maybeIt('should call prepareErrorMessage when a non-200 status code is received.', async () => {
@@ -595,9 +605,9 @@ describe('LuisRecognizer', function () {
 
         const recognizer = new LuisRecognizer(mockedEndpoint);
 
-        assert(recognizer.application.applicationId === 'b31aeaf3-3511-495b-a07f-571fc873214b');
-        assert(recognizer.application.endpointKey === '048ec46dc58e495482b0c447cfdbd291');
-        assert(recognizer.application.endpoint === 'https://westus.api.cognitive.microsoft.com');
+        assert.strictEqual(recognizer.application.applicationId, 'b31aeaf3-3511-495b-a07f-571fc873214b');
+        assert.strictEqual(recognizer.application.endpointKey, '048ec46dc58e495482b0c447cfdbd291');
+        assert.strictEqual(recognizer.application.endpoint, 'https://westus.api.cognitive.microsoft.com');
     });
 
     maybeIt('should throw an error when parsing application endpoint with no subscription-key.', () => {
@@ -639,17 +649,17 @@ describe('LuisRecognizer', function () {
         });
 
         assert(res);
-        assert(res.text == 'My name is Emad');
-        assert(Object.keys(res.intents).length == 1);
+        assert.strictEqual(res.text, 'My name is Emad');
+        assert.strictEqual(Object.keys(res.intents).length, 1);
         assert(res.intents.SpecifyName);
         assert(res.intents.SpecifyName.score > 0 && res.intents.SpecifyName.score <= 1);
         assert(res.entities);
         assert(res.entities.Name);
-        assert(res.entities.Name[0] === 'emad');
+        assert.strictEqual(res.entities.Name[0], 'emad');
         assert(res.entities.$instance);
         assert(res.entities.$instance.Name);
-        assert(res.entities.$instance.Name[0].startIndex === 11);
-        assert(res.entities.$instance.Name[0].endIndex === 15);
+        assert.strictEqual(res.entities.$instance.Name[0].startIndex, 11);
+        assert.strictEqual(res.entities.$instance.Name[0].endIndex, 15);
         assert(res.entities.$instance.Name[0].score > 0 && res.entities.$instance.Name[0].score <= 1);
     });
 
@@ -662,7 +672,7 @@ describe('LuisRecognizer', function () {
                     case 1:
                         // console.log('Call number:' + callCount);
                         // console.log(telemetry);
-                        assert(telemetry.name === 'LuisResult');
+                        assert.strictEqual(telemetry.name, 'LuisResult');
                         assert(telemetry.properties);
                         assert('applicationId' in telemetry.properties);
                         assert('intent' in telemetry.properties);
@@ -673,7 +683,7 @@ describe('LuisRecognizer', function () {
                         assert('sentimentScore' in telemetry.properties);
                         assert('entities' in telemetry.properties);
                         assert('question' in telemetry.properties);
-                        assert(telemetry.properties.question === 'My name is Emad');
+                        assert.strictEqual(telemetry.properties.question, 'My name is Emad');
                         break;
 
                     default:
@@ -691,17 +701,17 @@ describe('LuisRecognizer', function () {
         });
 
         assert(res);
-        assert(res.text == 'My name is Emad');
-        assert(Object.keys(res.intents).length == 1);
+        assert.strictEqual(res.text, 'My name is Emad');
+        assert.strictEqual(Object.keys(res.intents).length, 1);
         assert(res.intents.SpecifyName);
         assert(res.intents.SpecifyName.score > 0 && res.intents.SpecifyName.score <= 1);
         assert(res.entities);
         assert(res.entities.Name);
-        assert(res.entities.Name[0] === 'emad');
+        assert.strictEqual(res.entities.Name[0], 'emad');
         assert(res.entities.$instance);
         assert(res.entities.$instance.Name);
-        assert(res.entities.$instance.Name[0].startIndex === 11);
-        assert(res.entities.$instance.Name[0].endIndex === 15);
+        assert.strictEqual(res.entities.$instance.Name[0].startIndex, 11);
+        assert.strictEqual(res.entities.$instance.Name[0].endIndex, 15);
         assert(res.entities.$instance.Name[0].score > 0 && res.entities.$instance.Name[0].score <= 1);
     });
 
@@ -714,7 +724,7 @@ describe('LuisRecognizer', function () {
                     case 1:
                         // console.log('Call number:' + callCount);
                         // console.log(telemetry);
-                        assert(telemetry.name === 'LuisResult');
+                        assert.strictEqual(telemetry.name, 'LuisResult');
                         assert(telemetry.properties);
                         assert('applicationId' in telemetry.properties);
                         assert('intent' in telemetry.properties);
@@ -725,7 +735,7 @@ describe('LuisRecognizer', function () {
                         assert('sentimentScore' in telemetry.properties);
                         assert('entities' in telemetry.properties);
                         assert('question' in telemetry.properties);
-                        assert(telemetry.properties.question === 'I want to travel on DL');
+                        assert.strictEqual(telemetry.properties.question, 'I want to travel on DL');
                         break;
 
                     default:
@@ -740,23 +750,23 @@ describe('LuisRecognizer', function () {
         const res = await testJson('MultipleIntents_ListEntityWithMultiValuesTelemetry.json', { telemetryClient });
 
         assert(res);
-        assert(res.text == 'I want to travel on DL');
+        assert.strictEqual(res.text, 'I want to travel on DL');
         assert(res.intents);
         assert(res.intents.Travel);
         assert(res.intents.Travel.score > 0 && res.intents.Travel.score <= 1);
         assert(res.entities);
         assert(res.entities.Airline[0]);
-        assert(res.entities.Airline[0].length == 2);
+        assert.strictEqual(res.entities.Airline[0].length, 2);
         assert(res.entities.Airline[0].indexOf('Delta') > -1);
         assert(res.entities.Airline[0].indexOf('Virgin') > -1);
         assert(res.entities.$instance);
         assert(res.entities.$instance.Airline);
         assert(res.entities.$instance.Airline[0].startIndex);
-        assert(res.entities.$instance.Airline[0].startIndex === 20);
+        assert.strictEqual(res.entities.$instance.Airline[0].startIndex, 20);
         assert(res.entities.$instance.Airline[0].endIndex);
-        assert(res.entities.$instance.Airline[0].endIndex === 22);
+        assert.strictEqual(res.entities.$instance.Airline[0].endIndex, 22);
         assert(res.entities.$instance.Airline[0].text);
-        assert(res.entities.$instance.Airline[0].text === 'dl');
+        assert.strictEqual(res.entities.$instance.Airline[0].text, 'dl');
     });
 
     maybeIt('override telemetry properties on logging.', async () => {
@@ -768,15 +778,15 @@ describe('LuisRecognizer', function () {
                     case 1:
                         // console.log('Call number:' + callCount);
                         // console.log(telemetry);
-                        assert(telemetry.name === 'LuisResult');
+                        assert.strictEqual(telemetry.name, 'LuisResult');
                         assert(telemetry.properties);
                         assert('test' in telemetry.properties);
-                        assert(telemetry.properties['test'] === 'testvalue');
+                        assert.strictEqual(telemetry.properties['test'], 'testvalue');
                         assert('foo' in telemetry.properties);
-                        assert(telemetry.properties['foo'] === 'foovalue');
+                        assert.strictEqual(telemetry.properties['foo'], 'foovalue');
                         assert('applicationId' in telemetry.properties);
                         assert('intent' in telemetry.properties);
-                        assert(telemetry.properties['intent'] === 'MYINTENT');
+                        assert.strictEqual(telemetry.properties['intent'], 'MYINTENT');
                         assert('intent2' in telemetry.properties);
                         assert('intentScore' in telemetry.properties);
                         assert('intentScore2' in telemetry.properties);
@@ -784,7 +794,7 @@ describe('LuisRecognizer', function () {
                         assert('sentimentScore' in telemetry.properties);
                         assert('entities' in telemetry.properties);
                         assert('question' in telemetry.properties);
-                        assert(telemetry.properties.question === 'My name is Emad');
+                        assert.strictEqual(telemetry.properties.question, 'My name is Emad');
                         break;
 
                     default:
@@ -805,17 +815,17 @@ describe('LuisRecognizer', function () {
         const res = await testJson('SingleIntent_SimplyEntityTelemetry.json', { telemetryClient, telemetryProperties });
 
         assert(res);
-        assert(res.text == 'My name is Emad');
-        assert(Object.keys(res.intents).length == 1);
+        assert.strictEqual(res.text, 'My name is Emad');
+        assert.strictEqual(Object.keys(res.intents).length, 1);
         assert(res.intents.SpecifyName);
         assert(res.intents.SpecifyName.score > 0 && res.intents.SpecifyName.score <= 1);
         assert(res.entities);
         assert(res.entities.Name);
-        assert(res.entities.Name[0] === 'emad');
+        assert.strictEqual(res.entities.Name[0], 'emad');
         assert(res.entities.$instance);
         assert(res.entities.$instance.Name);
-        assert(res.entities.$instance.Name[0].startIndex === 11);
-        assert(res.entities.$instance.Name[0].endIndex === 15);
+        assert.strictEqual(res.entities.$instance.Name[0].startIndex, 11);
+        assert.strictEqual(res.entities.$instance.Name[0].endIndex, 15);
         assert(res.entities.$instance.Name[0].score > 0 && res.entities.$instance.Name[0].score <= 1);
     });
 
@@ -828,24 +838,24 @@ describe('LuisRecognizer', function () {
                     case 1:
                         // console.log('Call number:' + callCount);
                         // console.log(telemetry);
-                        assert(telemetry.name === 'LuisResult');
+                        assert.strictEqual(telemetry.name, 'LuisResult');
                         assert(telemetry.properties);
                         assert('test' in telemetry.properties);
-                        assert(telemetry.properties['test'] === 'testvalue');
+                        assert.strictEqual(telemetry.properties['test'], 'testvalue');
                         assert('foo' in telemetry.properties);
-                        assert(telemetry.properties['foo'] === 'foovalue');
+                        assert.strictEqual(telemetry.properties['foo'], 'foovalue');
                         assert('MyImportantProperty' in telemetry.properties);
-                        assert(telemetry.properties.MyImportantProperty === 'myImportantValue');
+                        assert.strictEqual(telemetry.properties.MyImportantProperty, 'myImportantValue');
 
                         break;
 
                     case 2:
                         // console.log('Call number:' + callCount);
                         // console.log(telemetry);
-                        assert(telemetry.name === 'MySecondEvent');
+                        assert.strictEqual(telemetry.name, 'MySecondEvent');
                         assert(telemetry.properties);
                         assert('MyImportantProperty2' in telemetry.properties);
-                        assert(telemetry.properties['MyImportantProperty2'] === 'myImportantValue2');
+                        assert.strictEqual(telemetry.properties['MyImportantProperty2'], 'myImportantValue2');
                         break;
 
                     default:
@@ -904,27 +914,27 @@ describe('LuisRecognizer', function () {
                     case 1:
                         // console.log('Call number:' + callCount);
                         // console.log(telemetry);
-                        assert(telemetry.name === 'LuisResult');
+                        assert.strictEqual(telemetry.name, 'LuisResult');
                         assert(telemetry.properties);
                         assert('MyImportantProperty' in telemetry.properties);
-                        assert(telemetry.properties.MyImportantProperty === 'myImportantValue');
+                        assert.strictEqual(telemetry.properties.MyImportantProperty, 'myImportantValue');
                         assert('test' in telemetry.properties);
-                        assert(telemetry.properties['test'] === 'testvalue');
+                        assert.strictEqual(telemetry.properties['test'], 'testvalue');
                         assert('foo' in telemetry.properties);
-                        assert(telemetry.properties['foo'] === 'foovalue');
+                        assert.strictEqual(telemetry.properties['foo'], 'foovalue');
                         assert('moo' in telemetry.metrics);
-                        assert(telemetry.metrics['moo'] === 3.14159);
+                        assert.strictEqual(telemetry.metrics['moo'], 3.14159);
                         assert('boo' in telemetry.metrics);
-                        assert(telemetry.metrics['boo'] === 2.11);
+                        assert.strictEqual(telemetry.metrics['boo'], 2.11);
                         break;
 
                     case 2:
                         // console.log('Call number:' + callCount);
                         // console.log(telemetry);
-                        assert(telemetry.name === 'MySecondEvent');
+                        assert.strictEqual(telemetry.name, 'MySecondEvent');
                         assert(telemetry.properties);
                         assert('MyImportantProperty2' in telemetry.properties);
-                        assert(telemetry.properties['MyImportantProperty2'] === 'myImportantValue2');
+                        assert.strictEqual(telemetry.properties['MyImportantProperty2'], 'myImportantValue2');
                         break;
 
                     default:
@@ -972,17 +982,17 @@ describe('LuisRecognizer', function () {
             assert(false, '\nReturned JSON\n  ' + newPath + '\n!= expected JSON\n  ' + expectedPath);
         }
 
-        assert(res.text == 'My name is Emad');
-        assert(Object.keys(res.intents).length == 1);
+        assert.strictEqual(res.text, 'My name is Emad');
+        assert.strictEqual(Object.keys(res.intents).length, 1);
         assert(res.intents.SpecifyName);
         assert(res.intents.SpecifyName.score > 0 && res.intents.SpecifyName.score <= 1);
         assert(res.entities);
         assert(res.entities.Name);
-        assert(res.entities.Name[0] === 'emad');
+        assert.strictEqual(res.entities.Name[0], 'emad');
         assert(res.entities.$instance);
         assert(res.entities.$instance.Name);
-        assert(res.entities.$instance.Name[0].startIndex === 11);
-        assert(res.entities.$instance.Name[0].endIndex === 15);
+        assert.strictEqual(res.entities.$instance.Name[0].startIndex, 11);
+        assert.strictEqual(res.entities.$instance.Name[0].endIndex, 15);
         assert(res.entities.$instance.Name[0].score > 0 && res.entities.$instance.Name[0].score <= 1);
     });
 
@@ -1003,8 +1013,8 @@ describe('LuisRecognizer', function () {
         const mergedOptions = luisPredictionUserOptions
             ? recognizer.setLuisPredictionOptions(recognizer.options, luisPredictionUserOptions)
             : recognizer.options;
-        assert(mergedOptions.includeAllIntents === false);
-        assert(mergedOptions.includeInstanceData === false);
+        assert.strictEqual(mergedOptions.includeAllIntents, false);
+        assert.strictEqual(mergedOptions.includeInstanceData, false);
     });
 
     maybeIt('should accept LuisRecognizerOptions passed into recognizer "recognize" method', () => {
@@ -1024,8 +1034,8 @@ describe('LuisRecognizer', function () {
             true
         );
         const mergedOptions = recognizer.buildRecognizer(luisPredictionUserOptions);
-        assert(mergedOptions.predictionOptions.includeAllIntents === false);
-        assert(mergedOptions.predictionOptions.includeInstanceData === false);
+        assert.strictEqual(mergedOptions.predictionOptions.includeAllIntents, false);
+        assert.strictEqual(mergedOptions.predictionOptions.includeInstanceData, false);
     });
 
     maybeIt('should accept LuisRecognizerOptions passed into recognizer "recognize" method. v3 to v2', () => {
@@ -1045,8 +1055,8 @@ describe('LuisRecognizer', function () {
             true
         );
         const mergedOptions = recognizer.buildRecognizer(luisPredictionUserOptions);
-        assert(mergedOptions.options.includeAllIntents === false);
-        assert(mergedOptions.options.includeInstanceData === false);
+        assert.strictEqual(mergedOptions.options.includeAllIntents, false);
+        assert.strictEqual(mergedOptions.options.includeInstanceData, false);
     });
 
     maybeIt('should use default Luis prediction options if no user options passed in', () => {
@@ -1065,7 +1075,7 @@ describe('LuisRecognizer', function () {
             ? recognizer.setLuisPredictionOptions(recognizer.options, luisPredictionUserOptions)
             : recognizer.options;
 
-        assert(mergedOptions.includeAllIntents === true);
-        assert(mergedOptions.includeInstanceData === true);
+        assert.strictEqual(mergedOptions.includeAllIntents, true);
+        assert.strictEqual(mergedOptions.includeInstanceData, true);
     });
 });

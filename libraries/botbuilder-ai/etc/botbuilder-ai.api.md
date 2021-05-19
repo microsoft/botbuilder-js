@@ -228,6 +228,7 @@ export class LuisRecognizer implements LuisRecognizerTelemetryClient {
         [key: string]: number;
     }): Promise<void>;
     recognize(context: DialogContext | TurnContext, telemetryProperties?: Record<string, string>, telemetryMetrics?: Record<string, number>, options?: LuisRecognizerOptionsV2 | LuisRecognizerOptionsV3 | LuisPredictionOptions): Promise<RecognizerResult>;
+    recognize(utterance: string, options?: LuisRecognizerOptionsV2 | LuisRecognizerOptionsV3 | LuisPredictionOptions): Promise<RecognizerResult>;
     static sortedIntents(result?: RecognizerResult, minScore?: number): Array<{
         intent: string;
         score: number;
