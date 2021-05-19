@@ -3,7 +3,7 @@
  * Licensed under the MIT License.
  */
 
-import { Assertion, Nil, assert } from 'botbuilder-stdlib';
+import { Assertion, Nil, assert, Test } from 'botbuilder-stdlib';
 
 export * from './activityInterfaces';
 export * from './activityEx';
@@ -37,7 +37,7 @@ export const assertAttachmentView: Assertion<AttachmentView> = (value, path) => 
 
 const assertAttachmentViewArray: Assertion<Array<AttachmentView>> = assert.arrayOf(assertAttachmentView);
 
-export const isAttachmentView = assert.toTest(assertAttachmentView);
+export const isAttachmentView: Test<AttachmentView> = assert.toTest(assertAttachmentView);
 
 /**
  * Metadata for an attachment

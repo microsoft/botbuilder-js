@@ -64,7 +64,7 @@ describe('PayloadTransport', () => {
                 end: true
             };
 
-            const psSenderSpy = sinon.spy(ps.sender, 'send');
+            const psSenderSpy = sinon.spy(ps._sender, 'send');
             expect(ps.sendPayload(header, stream, ()=>done()));
             expect(psSenderSpy.calledTwice).to.be.true;
         });
@@ -73,7 +73,7 @@ describe('PayloadTransport', () => {
             const ps = new PayloadSender.PayloadSender();
             ps.connect(new FauxSock);
             expect(ps.isConnected).to.equal(true);
-    
+
             const stream = new SubscribableStream.SubscribableStream();
             let testString;
             let count = 250;
@@ -81,7 +81,7 @@ describe('PayloadTransport', () => {
                 testString += 'This is a LARGE test stream.';
                 count--;
             }
-    
+
             stream.write(testString);
             // Max PayloadLength is 4096
             const header = {
@@ -90,14 +90,14 @@ describe('PayloadTransport', () => {
                 id: '100',
                 end: true
             };
-            const psSenderSpy = sinon.spy(ps.sender, 'send');
-            
+            const psSenderSpy = sinon.spy(ps._sender, 'send');
+
             expect(ps.sendPayload(header, stream, () => {
-                // This try-catch is required as chai failures need to be caught and bubbled up via done(). 
+                // This try-catch is required as chai failures need to be caught and bubbled up via done().
                 try {
                     expect(psSenderSpy.callCount).to.equal(4);
                     done();
-                } catch (e) { 
+                } catch (e) {
                     done(e);
                 }
             }));
@@ -152,12 +152,12 @@ describe('PayloadTransport', () => {
 
         it('begins disconnected.', () => {
             let pr = new PayloadReceiver.PayloadReceiver();
-            expect(pr.isConnected).to.be.undefined;
+            expect(pr.isConnected).to.be.false;
         });
 
         it('connects to and reads a header with no payload from the transport.', () => {
             let pr = new PayloadReceiver.PayloadReceiver();
-            expect(pr.isConnected).to.be.undefined;
+            expect(pr.isConnected).to.be.false;
 
             let sock = new FauxSock(['A.000000.68e999ca-a651-40f4-ad8f-3aaf781862b4.1\n']);
             sock.setReceiver(pr);
@@ -168,7 +168,7 @@ describe('PayloadTransport', () => {
 
         it('connects to and reads a header with a stream the transport.', (done) => {
             let pr = new PayloadReceiver.PayloadReceiver();
-            expect(pr.isConnected).to.be.undefined;
+            expect(pr.isConnected).to.be.false;
 
             let sock = new FauxSock(['S.000005.68e999ca-a651-40f4-ad8f-3aaf781862b4.1\n', '12345']);
             sock.setReceiver(pr);

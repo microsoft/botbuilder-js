@@ -15,10 +15,10 @@ import { TurnContext } from 'botbuilder-core';
 
 // @public
 export class DialogTestClient {
-    constructor(channelId: string, targetDialog: Dialog, initialDialogOptions?: any, middlewares?: Middleware[], conversationState?: ConversationState);
-    constructor(testAdapter: TestAdapter, targetDialog: Dialog, initialDialogOptions?: any, middlewares?: Middleware[], conversationState?: ConversationState);
+    constructor(channelId: string, targetDialog: Dialog, initialDialogOptions?: unknown, middlewares?: Middleware[], conversationState?: ConversationState);
+    constructor(testAdapter: TestAdapter, targetDialog: Dialog, initialDialogOptions?: unknown, middlewares?: Middleware[], conversationState?: ConversationState);
     conversationState: ConversationState;
-    readonly dialogContext: DialogContext;
+    get dialogContext(): DialogContext;
     dialogTurnResult: DialogTurnResult;
     getNextReply(): Partial<Activity>;
     sendActivity(activity: Partial<Activity> | string): Promise<any>;
@@ -26,12 +26,14 @@ export class DialogTestClient {
 
 // @public
 export class DialogTestLogger implements Middleware {
-    constructor(logger?: {
-        log: (any: any) => void;
-    });
-    // (undocumented)
+    constructor(logger?: Logger);
     onTurn(context: TurnContext, next: () => Promise<void>): Promise<void>;
     }
+
+// @public
+export interface Logger {
+    log: (...args: unknown[]) => void;
+}
 
 
 // (No @packageDocumentation comment for this package)
