@@ -913,6 +913,7 @@ export class EmitEvent<O extends object = {}> extends Dialog<O> implements EmitE
     eventValue: ValueExpression;
     // (undocumented)
     getConverter(property: keyof EmitEventConfiguration): Converter | ConverterFactory;
+    handledProperty: StringExpression;
     protected onComputeId(): string;
 }
 
@@ -926,6 +927,8 @@ export interface EmitEventConfiguration extends DialogConfiguration {
     eventName?: StringProperty;
     // (undocumented)
     eventValue?: UnknownProperty;
+    // (undocumented)
+    handledProperty?: StringProperty;
 }
 
 // @public

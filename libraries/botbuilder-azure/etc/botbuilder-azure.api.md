@@ -5,6 +5,7 @@
 ```ts
 
 import { Activity } from 'botbuilder';
+import type { Agent } from 'http';
 import { ConnectionPolicy } from 'documentdb';
 import { CosmosClientOptions } from '@azure/cosmos';
 import { PagedResult } from 'botbuilder';
@@ -14,7 +15,7 @@ import { StoreItems } from 'botbuilder';
 import { TranscriptInfo } from 'botbuilder';
 import { TranscriptStore } from 'botbuilder';
 
-// @public
+// @public @deprecated
 export class AzureBlobTranscriptStore implements TranscriptStore {
     constructor(settings: BlobStorageSettings);
     deleteTranscript(channelId: string, conversationId: string): Promise<void>;
@@ -23,14 +24,11 @@ export class AzureBlobTranscriptStore implements TranscriptStore {
     logActivity(activity: Activity): Promise<void>;
     }
 
-// @public
+// @public @deprecated
 export class BlobStorage implements Storage_2 {
     constructor(settings: BlobStorageSettings);
-    // (undocumented)
     delete(keys: string[]): Promise<void>;
-    // (undocumented)
     read(keys: string[]): Promise<StoreItems>;
-    // (undocumented)
     write(changes: StoreItems): Promise<void>;
 }
 
@@ -53,23 +51,20 @@ export namespace CosmosDbKeyEscape {
 // @public
 export class CosmosDbPartitionedStorage implements Storage_2 {
     constructor(cosmosDbStorageOptions: CosmosDbPartitionedStorageOptions);
-    // (undocumented)
     delete(keys: string[]): Promise<void>;
     initialize(): Promise<void>;
-    // (undocumented)
     read(keys: string[]): Promise<StoreItems>;
-    // (undocumented)
     write(changes: StoreItems): Promise<void>;
 }
 
 // @public
 export interface CosmosDbPartitionedStorageOptions {
-    authKey: string;
+    authKey?: string;
     compatibilityMode?: boolean;
     containerId: string;
     containerThroughput?: number;
     cosmosClientOptions?: CosmosClientOptions;
-    cosmosDbEndpoint: string;
+    cosmosDbEndpoint?: string;
     databaseId: string;
     keySuffix?: string;
 }
@@ -77,16 +72,14 @@ export interface CosmosDbPartitionedStorageOptions {
 // @public @deprecated
 export class CosmosDbStorage implements Storage_2 {
     constructor(settings: CosmosDbStorageSettings, connectionPolicyConfigurator?: (policy: ConnectionPolicy) => void);
-    // (undocumented)
     delete(keys: string[]): Promise<void>;
-    // (undocumented)
     read(keys: string[]): Promise<StoreItems>;
-    // (undocumented)
     write(changes: StoreItems): Promise<void>;
 }
 
 // @public @deprecated
 export interface CosmosDbStorageSettings {
+    agent?: Agent;
     authKey: string;
     collectionId: string;
     databaseCreationRequestOptions?: RequestOptions;
