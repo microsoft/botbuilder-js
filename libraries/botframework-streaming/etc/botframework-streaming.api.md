@@ -423,7 +423,7 @@ export interface IStreamingTransportServer {
     // (undocumented)
     send(request: StreamingRequest): Promise<IReceiveResponse>;
     // (undocumented)
-    start(): Promise<string>;
+    start(onListen?: () => void): Promise<string>;
 }
 
 // @public
@@ -440,7 +440,7 @@ export class NamedPipeServer implements IStreamingTransportServer {
     disconnect(): void;
     get isConnected(): boolean;
     send(request: StreamingRequest): Promise<IReceiveResponse>;
-    start(): Promise<string>;
+    start(onListen?: () => void): Promise<string>;
 }
 
 // @public

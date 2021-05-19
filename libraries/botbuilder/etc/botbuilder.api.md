@@ -150,7 +150,7 @@ export class BotFrameworkAdapter extends BotAdapter implements BotFrameworkHttpA
     // (undocumented)
     readonly TokenApiClientCredentialsKey: symbol;
     updateActivity(context: TurnContext, activity: Partial<Activity>): Promise<ResourceResponse | void>;
-    useNamedPipe(logic: (context: TurnContext) => Promise<any>, pipeName?: string): Promise<void>;
+    useNamedPipe(logic: (context: TurnContext) => Promise<any>, pipeName?: string, retryCount?: number, onListen?: () => void): Promise<void>;
     useWebSocket(req: WebRequest, socket: INodeSocket, head: INodeBuffer, logic: (context: TurnContext) => Promise<any>): Promise<void>;
     }
 
