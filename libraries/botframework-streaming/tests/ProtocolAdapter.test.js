@@ -147,7 +147,7 @@ describe('Streaming Extensions ProtocolAdapter', function () {
         done();
     });
 
-    it('payloadreceiver responds with an error when told to connect twice', function () {
+    it('payloadreceiver ignores duplicate connections', function () {
         const pa = new PayloadReceiver.PayloadReceiver();
         const buffer = Buffer.alloc(Number(PayloadConstants.PayloadConstants.MaxHeaderLength));
         buffer.write('A.000168.68e999ca-a651-40f4-ad8f-3aaf781862b4.1\n');
@@ -168,10 +168,8 @@ describe('Streaming Extensions ProtocolAdapter', function () {
         rp.streams.push(s);
 
         pa.connect(receiver);
-
         expect(pa.isConnected).to.be.true;
-
-        expect(() => pa.connect(receiver)).to.throw('Already connected.');
+        expect(() => pa.connect(receiver)).to.not.throw();
 
         pa.disconnect();
     });
