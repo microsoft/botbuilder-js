@@ -1,9 +1,10 @@
-const np = require('../lib');
-const npt = require('../lib/namedPipe/namedPipeTransport');
-const { createNodeServer, getServerFactory } = require('../lib/utilities/createNodeServer');
-const protocol = require('../lib');
+const assert = require('assert');
 const chai = require('chai');
 const expect = chai.expect;
+const np = require('../lib');
+const npt = require('../lib/namedPipe/namedPipeTransport');
+const protocol = require('../lib');
+const { createNodeServer, getServerFactory } = require('../lib/utilities/createNodeServer');
 
 class FauxSock {
     constructor(contentString) {
@@ -317,30 +318,52 @@ describe('Streaming Extensions NamedPipe Library Tests', function () {
                 .then(done());
         });
 
-        it('handles being disconnected', function (done) {
+        it('handles being disconnected', function () {
             const server = new np.NamedPipeServer('pipeA', new protocol.RequestHandler(), false);
             expect(server).to.be.instanceOf(np.NamedPipeServer);
             server.start();
-            try {
-                server.onConnectionDisconnected();
-            } catch (err) {
-                expect(err).to.equal(`address already in use \\.\pipe\pipeA.incoming`);
-            }
             expect(server.disconnect()).to.not.throw;
-            done();
         });
 
-        it('handles being disconnected and tries to reconnect', function (done) {
-            const server = new np.NamedPipeServer('pipeA', new protocol.RequestHandler(), true);
-            expect(server).to.be.instanceOf(np.NamedPipeServer);
-            server.start();
+        it('ensures that two servers cannot get into a split brain scenario', async function () {
+            const servers = [
+                new np.NamedPipeServer('pipeA', new protocol.RequestHandler()),
+                new np.NamedPipeServer('pipeA', new protocol.RequestHandler()),
+            ];
+
             try {
-                server.onConnectionDisconnected();
-            } catch (err) {
-                expect(err).to.equal(`address already in use \\.\pipe\pipeA.incoming`);
+                await assert.rejects(
+                    Promise.all(
+                        servers.map(async (server) => {
+                            // introduce jitter which should _not_ matter since we acquire sockets sequentially
+                            await new Promise((resolve) => setTimeout(resolve, Math.ceil(Math.random() * 10) + 10));
+
+                            // start up server, taking care to attach server to thrown errors for later inspection
+                            try {
+                                await new Promise((resolve, reject) => server.start(resolve).catch(reject));
+                            } catch (err) {
+                                err.server = server;
+                                throw err;
+                            }
+                        })
+                    ),
+                    (err) => {
+                        // Verify we did get an addr in use error
+                        assert(err.message.indexOf('listen EADDRINUSE: address already in use') === 0);
+
+                        assert(err.server, 'server attached to error');
+                        assert(
+                            err.server._incomingServer && !err.server._incomingServer.listening,
+                            'incoming server attached but not listening'
+                        );
+                        assert(!err.server._outgoingServer, 'no outgoing server attached');
+
+                        return true;
+                    }
+                );
+            } finally {
+                servers.forEach((server) => server.disconnect());
             }
-            expect(server.disconnect()).to.not.throw;
-            done();
         });
 
         it("calling createNodeServer() should throw if passing in a callback that's not a function", function () {
