@@ -268,6 +268,9 @@ export abstract class Dialog<O extends object = {}> extends Configurable {
         return this._id;
     }
 
+    /**
+     * Sets the unique ID of the dialog.
+     */
     public set id(value: string) {
         this._id = value;
     }
@@ -279,6 +282,9 @@ export abstract class Dialog<O extends object = {}> extends Configurable {
         return this._telemetryClient;
     }
 
+    /**
+     * Sets the telemetry client for this dialog.
+     */
     public set telemetryClient(client: BotTelemetryClient) {
         this._telemetryClient = client ? client : new NullTelemetryClient();
     }

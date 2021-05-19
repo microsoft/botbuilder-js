@@ -45,6 +45,9 @@ export class TelemetryInitializerMiddleware implements Middleware {
         return this._telemetryLoggerMiddleware;
     }
 
+    /**
+     * Sets the correlation context so that a mock context can be passed in for testing purposes.
+     */
     protected set appInsightsCorrelationContext(value: CorrelationContext) {
         this._correlationContext = value;
     }

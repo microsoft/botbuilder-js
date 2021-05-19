@@ -42,10 +42,6 @@ export abstract class ResourceProvider {
      * Event which is fired if any resource managed by the resource provider detects changes to the underlining resource.
      * @param callback Callback function to be called when an event fired.
      */
-    public get changed(): (event: ResourceChangeEvent, resources: Resource[]) => void {
-        return;
-    }
-
     public set changed(callback: (event: ResourceChangeEvent, resources: Resource[]) => void) {
         this._eventEmitter.on(ResourceChangeEvent.added, (resources: Resource[]): void => {
             callback(ResourceChangeEvent.added, resources);

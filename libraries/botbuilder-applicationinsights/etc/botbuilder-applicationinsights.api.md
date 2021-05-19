@@ -37,6 +37,7 @@ export const ApplicationInsightsWebserverMiddleware: any;
 // @public
 export class TelemetryInitializerMiddleware implements Middleware {
     constructor(telemetryLoggerMiddleware: TelemetryLoggerMiddleware, logActivityTelemetry?: boolean);
+    // Warning: (ae-setter-with-docs) The doc comment for the property "appInsightsCorrelationContext" must appear on the getter, not the setter.
     protected set appInsightsCorrelationContext(value: CorrelationContext);
     protected get appInsightsCorrelationContext(): CorrelationContext;
     get logActivityTelemetry(): boolean;

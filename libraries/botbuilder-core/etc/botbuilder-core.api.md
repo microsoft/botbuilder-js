@@ -142,6 +142,7 @@ export abstract class BotAdapter {
     // (undocumented)
     readonly OAuthScopeKey: symbol;
     get onTurnError(): (context: TurnContext, error: Error) => Promise<void>;
+    // Warning: (ae-setter-with-docs) The doc comment for the property "onTurnError" must appear on the getter, not the setter.
     set onTurnError(value: (context: TurnContext, error: Error) => Promise<void>);
     protected runMiddleware(context: TurnContext, next: (revocableContext: TurnContext) => Promise<void>): Promise<void>;
     abstract sendActivities(context: TurnContext, activities: Partial<Activity>[]): Promise<ResourceResponse[]>;
@@ -681,6 +682,7 @@ export class TestAdapter extends BotAdapter implements ExtendedUserTokenProvider
     static createConversation(name: string, user?: string, bot?: string): ConversationReference;
     deleteActivity(context: TurnContext, reference: Partial<ConversationReference>): Promise<void>;
     get enableTrace(): boolean;
+    // Warning: (ae-setter-with-docs) The doc comment for the property "enableTrace" must appear on the getter, not the setter.
     set enableTrace(value: boolean);
     exchangeToken(context: TurnContext, connectionName: string, userId: string, tokenExchangeRequest: TokenExchangeRequest): Promise<TokenResponse>;
     getAadTokens(context: TurnContext, connectionName: string, resourceUrls: string[]): Promise<{
@@ -781,6 +783,7 @@ export class TurnContext {
     static getMentions(activity: Partial<Activity>): Mention[];
     static getReplyConversationReference(activity: Partial<Activity>, reply: ResourceResponse): Partial<ConversationReference>;
     get locale(): string | undefined;
+    // Warning: (ae-setter-with-docs) The doc comment for the property "locale" must appear on the getter, not the setter.
     set locale(value: string | undefined);
     onDeleteActivity(handler: DeleteActivityHandler): this;
     onSendActivities(handler: SendActivitiesHandler): this;
@@ -788,6 +791,7 @@ export class TurnContext {
     static removeMentionText(activity: Partial<Activity>, id: string): string;
     static removeRecipientMention(activity: Partial<Activity>): string;
     get responded(): boolean;
+    // Warning: (ae-setter-with-docs) The doc comment for the property "responded" must appear on the getter, not the setter.
     set responded(value: boolean);
     sendActivities(activities: Partial<Activity>[]): Promise<ResourceResponse[]>;
     sendActivity(activityOrText: string | Partial<Activity>, speak?: string, inputHint?: string): Promise<ResourceResponse | undefined>;

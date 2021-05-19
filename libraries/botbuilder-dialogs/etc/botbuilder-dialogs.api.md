@@ -213,6 +213,7 @@ export abstract class Dialog<O extends object = {}> extends Configurable {
     static EndOfTurn: DialogTurnResult;
     getVersion(): string;
     get id(): string;
+    // Warning: (ae-setter-with-docs) The doc comment for the property "id" must appear on the getter, not the setter.
     set id(value: string);
     protected onComputeId(): string;
     onDialogEvent(dc: DialogContext, e: DialogEvent): Promise<boolean>;
@@ -221,6 +222,7 @@ export abstract class Dialog<O extends object = {}> extends Configurable {
     repromptDialog(context: TurnContext, instance: DialogInstance): Promise<void>;
     resumeDialog(dc: DialogContext, reason: DialogReason, result?: any): Promise<DialogTurnResult>;
     get telemetryClient(): BotTelemetryClient;
+    // Warning: (ae-setter-with-docs) The doc comment for the property "telemetryClient" must appear on the getter, not the setter.
     set telemetryClient(client: BotTelemetryClient);
     protected _telemetryClient: BotTelemetryClient;
 }
@@ -246,6 +248,7 @@ export abstract class DialogContainer<O extends object = {}> extends Dialog<O> {
     findDialog(dialogId: string): Dialog | undefined;
     protected getInternalVersion(): string;
     onDialogEvent(dc: DialogContext, e: DialogEvent): Promise<boolean>;
+    // Warning: (ae-setter-with-docs) The doc comment for the property "telemetryClient" must appear on the getter, not the setter.
     set telemetryClient(client: BotTelemetryClient);
     get telemetryClient(): BotTelemetryClient;
 }
@@ -330,6 +333,7 @@ export class DialogManager extends Configurable {
     expireAfter?: number;
     get initialTurnState(): TurnContextStateCollection;
     onTurn(context: TurnContext): Promise<DialogManagerResult>;
+    // Warning: (ae-setter-with-docs) The doc comment for the property "rootDialog" must appear on the getter, not the setter.
     set rootDialog(value: Dialog);
     get rootDialog(): Dialog;
     stateConfiguration?: DialogStateManagerConfiguration;
@@ -403,6 +407,7 @@ export class DialogSet {
     getDialogs(): Dialog[];
     getVersion(): string;
     get telemetryClient(): BotTelemetryClient;
+    // Warning: (ae-setter-with-docs) The doc comment for the property "telemetryClient" must appear on the getter, not the setter.
     set telemetryClient(client: BotTelemetryClient);
     }
 

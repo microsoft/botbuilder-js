@@ -69,10 +69,6 @@ export class ResourceExplorer {
     /**
      * Event which fires when a resource is changed.
      */
-    public get changed(): (event: ResourceChangeEvent, resources: Resource[]) => void {
-        return;
-    }
-
     public set changed(callback: (event: ResourceChangeEvent, resources: Resource[]) => void) {
         this._eventEmitter.on(ResourceChangeEvent.added, (resources: Resource[]): void => {
             callback(ResourceChangeEvent.added, resources);

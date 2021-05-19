@@ -86,7 +86,7 @@ export class ResourceExplorer {
     addResourceProvider(resourceProvider: ResourceProvider): ResourceExplorer;
     addResourceType(type: string): void;
     buildType<T, C>(kind: string, config: C): T;
-    get changed(): (event: ResourceChangeEvent, resources: Resource[]) => void;
+    // Warning: (ae-missing-getter) The property "changed" has a setter but no getter.
     set changed(callback: (event: ResourceChangeEvent, resources: Resource[]) => void);
     getResource(id: string): Resource;
     getResources(fileExtension: string): Resource[];
@@ -109,7 +109,7 @@ export interface ResourceExplorerOptions {
 // @public
 export abstract class ResourceProvider {
     constructor(resourceExplorer: ResourceExplorer);
-    get changed(): (event: ResourceChangeEvent, resources: Resource[]) => void;
+    // Warning: (ae-missing-getter) The property "changed" has a setter but no getter.
     set changed(callback: (event: ResourceChangeEvent, resources: Resource[]) => void);
     abstract getResource(id: string): Resource;
     abstract getResources(extension: string): Resource[];

@@ -105,6 +105,9 @@ export class TestAdapter extends BotAdapter implements ExtendedUserTokenProvider
         return this._sendTraceActivity;
     }
 
+    /**
+     * Sets a value inidicating whether to send trace activities.
+     */
     public set enableTrace(value: boolean) {
         this._sendTraceActivity = value;
     }
