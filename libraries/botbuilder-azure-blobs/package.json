@@ -32,7 +32,8 @@
     "botbuilder-core": "4.1.6",
     "botbuilder-stdlib": "4.1.6",
     "get-stream": "^6.0.0",
-    "p-map": "^4.0.0"
+    "p-map": "^4.0.0",
+    "runtypes": "~6.3.0"
   },
   "scripts": {
     "build": "tsc -b",

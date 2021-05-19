@@ -17,6 +17,8 @@ import { ExpressionType } from './expressionType';
 import { MemoryInterface } from './memory';
 import { Options } from './options';
 import { ReturnType } from './returnType';
+// eslint-disable-next-line lodash/import-scope
+import isEqual from 'lodash.isequal';
 
 /**
  * Verify the result of an expression is of the appropriate type and return a string if not.
@@ -768,14 +770,29 @@ export class FunctionUtils {
             return obj1 == null && obj2 == null;
         }
 
-        if (Array.isArray(obj1) && obj1.length === 0 && Array.isArray(obj2) && obj2.length === 0) {
-            return true;
+        // Array Comparison
+        if (Array.isArray(obj1) && Array.isArray(obj2)) {
+            if (obj1.length !== obj2.length) {
+                return false;
+            }
+
+            return obj1.every((item, i) => FunctionUtils.commonEquals(item, obj2[i]));
         }
 
-        if (FunctionUtils.getPropertyCount(obj1) === 0 && FunctionUtils.getPropertyCount(obj2) === 0) {
-            return true;
+        // Object Comparison
+        const propertyCountOfObj1 = FunctionUtils.getPropertyCount(obj1);
+        const propertyCountOfObj2 = FunctionUtils.getPropertyCount(obj2);
+        if (propertyCountOfObj1 >= 0 && propertyCountOfObj2 >= 0) {
+            if (propertyCountOfObj1 !== propertyCountOfObj2) {
+                return false;
+            }
+            const jsonObj1 = FunctionUtils.convertToObj(obj1);
+            const jsonObj2 = FunctionUtils.convertToObj(obj2);
+
+            return isEqual(jsonObj1, jsonObj2);
         }
 
+        // Number Comparison
         if (FunctionUtils.isNumber(obj1) && FunctionUtils.isNumber(obj2)) {
             if (Math.abs(obj1 - obj2) < Number.EPSILON) {
                 return true;
@@ -825,5 +842,20 @@ export class FunctionUtils {
         }
 
         return count;
+    }
+
+    /**
+     * @private
+     */
+    private static convertToObj(instance: unknown) {
+        if (FunctionUtils.getPropertyCount(instance) >= 0) {
+            const entries = instance instanceof Map ? Array.from(instance.entries()) : Object.entries(instance);
+            return entries.reduce((acc, [key, value]) => ({ ...acc, [key]: FunctionUtils.convertToObj(value) }), {});
+        } else if (Array.isArray(instance)) {
+            // Convert Array
+            return instance.map((item) => FunctionUtils.convertToObj(item));
+        }
+
+        return instance;
     }
 }
