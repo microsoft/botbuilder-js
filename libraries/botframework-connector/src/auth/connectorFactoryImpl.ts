@@ -26,7 +26,7 @@ export class ConnectorFactoryImpl extends ConnectorFactory {
         super();
     }
 
-    async create(serviceUrl: string, audience: string): Promise<ConnectorClient> {
+    async create(serviceUrl: string, audience?: string): Promise<ConnectorClient> {
         // Use the credentials factory to create credentails specific to this particular cloud environment.
         const credentials = await this.credentialFactory.createCredentials(
             this.appId,

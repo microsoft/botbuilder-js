@@ -11,5 +11,5 @@ export abstract class ConnectorFactory {
      * @param audience The audience for the credentials the client will use.
      * @returns A [ConnectorClient](xref:botframework-connector.ConnectorClient) for sending activities to the audience at the serviceUrl.
      */
-    abstract create(serviceUrl: string, audience: string): Promise<ConnectorClient>;
+    abstract create(serviceUrl: string, audience?: string): Promise<ConnectorClient>;
 }
