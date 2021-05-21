@@ -27,5 +27,7 @@ export { StatusCodeError } from './statusCodeError';
 export { StreamingHttpClient, TokenResolver } from './streaming';
 export { WebRequest, WebResponse } from './interfaces';
 
+export { BotFrameworkHttpAdapter } from './botFrameworkHttpAdapter';
+export { CloudAdapter } from './cloudAdapter';
 export { CloudAdapterBase } from './cloudAdapterBase';
 export { Request, Response } from './interfaces';

@@ -4,10 +4,11 @@
 import * as t from 'runtypes';
 import express from 'express';
 import path from 'path';
+import type { ActivityHandlerBase, BotFrameworkHttpAdapter, ChannelServiceRoutes } from 'botbuilder';
 import type { Server } from 'http';
-import type { ActivityHandlerBase, BotFrameworkAdapter, ChannelServiceRoutes } from 'botbuilder';
-import { Configuration, getRuntimeServices } from 'botbuilder-dialogs-adaptive-runtime';
 import type { ServiceCollection } from 'botbuilder-dialogs-adaptive-runtime-core';
+import { Configuration, getRuntimeServices } from 'botbuilder-dialogs-adaptive-runtime';
+import { json, urlencoded } from 'body-parser';
 
 // Explicitly fails checks for `""`
 const NonEmptyString = t.String.withConstraint((str) => str.length > 0 || 'must be non-empty string');
@@ -103,7 +104,7 @@ export async function makeApp(
     const resolvedOptions = TypedOptions.check(Object.assign({}, defaultOptions, configOverrides, options));
 
     const errorHandler = (err: Error | string, res?: express.Response): void => {
-        if (options.logErrors) {
+        if (resolvedOptions.logErrors) {
             console.error(err);
         }
 
@@ -113,11 +114,14 @@ export async function makeApp(
     };
 
     const { adapter, bot, channelServiceRoutes, customAdapters } = services.mustMakeInstances<{
-        adapter: BotFrameworkAdapter;
+        adapter: BotFrameworkHttpAdapter;
         bot: ActivityHandlerBase;
         channelServiceRoutes: ChannelServiceRoutes;
-        customAdapters: Map<string, BotFrameworkAdapter>;
+        customAdapters: Map<string, BotFrameworkHttpAdapter>;
     }>('adapter', 'bot', 'channelServiceRoutes', 'customAdapters');
+
+    app.use(urlencoded({ extended: false }));
+    app.use(json());
 
     app.use(
         express.static(path.join(applicationRoot, resolvedOptions.staticDirectory), {
@@ -132,7 +136,7 @@ export async function makeApp(
 
     app.post(resolvedOptions.messagingEndpointPath, async (req, res) => {
         try {
-            await adapter.processActivity(req, res, async (turnContext) => {
+            await adapter.process(req, res, async (turnContext) => {
                 await bot.run(turnContext);
             });
         } catch (err) {
@@ -161,7 +165,7 @@ export async function makeApp(
             if (adapter) {
                 app.post(`/api/${settings.route}`, async (req, res) => {
                     try {
-                        await adapter.processActivity(req, res, async (turnContext) => {
+                        await adapter.process(req, res, async (turnContext) => {
                             await bot.run(turnContext);
                         });
                     } catch (err) {
@@ -185,10 +189,10 @@ export async function makeApp(
             );
 
             server.on('upgrade', async (req, socket, head) => {
-                const adapter = services.mustMakeInstance<BotFrameworkAdapter>('adapter');
+                const adapter = services.mustMakeInstance<BotFrameworkHttpAdapter>('adapter');
 
                 try {
-                    await adapter.useWebSocket(req, socket, head, async (context) => {
+                    await adapter.process(req, socket, head, async (context) => {
                         await bot.run(context);
                     });
                 } catch (err) {

@@ -24,13 +24,14 @@ import {
     ICredentialProvider,
     SimpleCredentialProvider,
     allowedCallersClaimsValidator,
+    BotFrameworkAuthentication,
 } from 'botframework-connector';
 
 import {
     ActivityHandlerBase,
     BotAdapter,
     BotComponent,
-    BotFrameworkAdapter,
+    BotFrameworkHttpAdapter,
     BotTelemetryClient,
     ChannelServiceHandler,
     ChannelServiceRoutes,
@@ -53,6 +54,7 @@ import {
     TranscriptLoggerMiddleware,
     UserState,
     assertBotComponent,
+    createBotFrameworkAuthenticationFromConfiguration,
 } from 'botbuilder';
 
 function addFeatures(services: ServiceCollection, configuration: Configuration): void {
@@ -240,6 +242,7 @@ function addSkills(services: ServiceCollection, configuration: Configuration): v
                 dependencies.skillConversationIdFactory,
                 dependencies.credentialProvider,
                 dependencies.authenticationConfiguration
+                dependencies.botFrameworkAuthentication
             )
     );
 
@@ -251,6 +254,17 @@ function addSkills(services: ServiceCollection, configuration: Configuration): v
 }
 
 function addCoreBot(services: ServiceCollection, configuration: Configuration): void {
+    services.addFactory<BotFrameworkAuthentication, { authenticationConfiguration: AuthenticationConfiguration }>(
+        'botFrameworkAuthentication',
+        ['authenticationConfiguration'],
+        (dependencies) =>
+            createBotFrameworkAuthenticationFromConfiguration(
+                configuration,
+                undefined,
+                dependencies.authenticationConfiguration
+            )
+    );
+
     services.addFactory<
         ActivityHandlerBase,
         {
@@ -291,9 +305,9 @@ function addCoreBot(services: ServiceCollection, configuration: Configuration): 
     );
 
     services.addFactory<
-        BotFrameworkAdapter,
+        BotFrameworkHttpAdapter,
         {
-            authenticationConfiguration: AuthenticationConfiguration;
+            botFrameworkAuthentication: BotFrameworkAuthentication;
             conversationState: ConversationState;
             middlewares: MiddlewareSet;
             telemetryMiddleware: Middleware;
@@ -301,22 +315,15 @@ function addCoreBot(services: ServiceCollection, configuration: Configuration): 
         }
     >(
         'adapter',
-        ['authenticationConfiguration', 'conversationState', 'userState', 'middlewares', 'telemetryMiddleware'],
-        (dependencies) => {
-            const appId = configuration.string(['MicrosoftAppId']);
-            const appPassword = configuration.string(['MicrosoftAppPassword']);
-
-            const adapter = new CoreBotAdapter(
-                { appId, appPassword, authConfig: dependencies.authenticationConfiguration },
+        ['botFrameworkAuthentication', 'conversationState', 'userState', 'middlewares', 'telemetryMiddleware'],
+        (dependencies) =>
+            new CoreBotAdapter(
+                dependencies.botFrameworkAuthentication,
                 dependencies.conversationState,
                 dependencies.userState
-            );
-
-            adapter.use(dependencies.middlewares);
-            adapter.use(dependencies.telemetryMiddleware);
-
-            return adapter;
-        }
+            )
+                .use(dependencies.middlewares)
+                .use(dependencies.telemetryMiddleware)
     );
 }
 

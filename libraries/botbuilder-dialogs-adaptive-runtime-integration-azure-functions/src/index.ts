@@ -10,14 +10,8 @@ import path from 'path';
 import type { AzureFunction, Context, HttpRequest } from '@azure/functions';
 import { Configuration, getRuntimeServices } from 'botbuilder-dialogs-adaptive-runtime';
 import { ServiceCollection } from 'botbuilder-dialogs-adaptive-runtime-core';
-
-import type {
-    Activity,
-    ActivityHandlerBase,
-    BotFrameworkAdapter,
-    ChannelServiceHandler,
-    WebResponse,
-} from 'botbuilder';
+import type { Activity, ActivityHandlerBase, BotFrameworkHttpAdapter, ChannelServiceHandler } from 'botbuilder';
+import type { Response } from 'botbuilder/lib/interfaces';
 
 const TypedOptions = t.Record({
     /**
@@ -76,10 +70,10 @@ export function makeTriggers(
         const [services, configuration] = await runtimeServices();
 
         const instances = services.mustMakeInstances<{
-            adapter: BotFrameworkAdapter;
+            adapter: BotFrameworkHttpAdapter;
             bot: ActivityHandlerBase;
             channelServiceHandler: ChannelServiceHandler;
-            customAdapters: Map<string, BotFrameworkAdapter>;
+            customAdapters: Map<string, BotFrameworkHttpAdapter>;
         }>('adapter', 'bot', 'channelServiceHandler', 'customAdapters');
 
         return { configuration, instances };
@@ -91,7 +85,7 @@ export function makeTriggers(
         messageTrigger: async (context: Context, req: HttpRequest) => {
             context.log('Messages endpoint triggered.');
 
-            const res = context.res as WebResponse;
+            const res = context.res as Response;
 
             try {
                 const route = context.bindingData.route;
@@ -134,9 +128,17 @@ export function makeTriggers(
                     return;
                 }
 
-                await resolvedAdapter.processActivity(req, res, async (turnContext) => {
-                    await bot.run(turnContext);
-                });
+                await resolvedAdapter.process(
+                    {
+                        headers: req.headers,
+                        body: req.body,
+                        method: req.method ?? undefined,
+                    },
+                    res,
+                    async (turnContext) => {
+                        await bot.run(turnContext);
+                    }
+                );
             } catch (err) {
                 if (resolvedOptions.logErrors) {
                     context.log.error(err);
@@ -168,7 +170,7 @@ export function makeTriggers(
                     activity
                 );
 
-                const res = context.res as WebResponse;
+                const res = context.res as Response;
                 res.status(200);
                 res.send(result);
                 res.end();

@@ -149,11 +149,7 @@ export class ParameterizedBotFrameworkAuthentication extends BotFrameworkAuthent
             }
 
             // Check if the activity is for a skill call and is coming from the Emulator.
-            if (
-                activity.channelId === Channels.Emulator &&
-                activity.recipient &&
-                activity.recipient.role === RoleTypes.Skill
-            ) {
+            if (activity.channelId === Channels.Emulator && activity.recipient?.role === RoleTypes.Skill) {
                 return SkillValidation.createAnonymousSkillClaim();
             }
 

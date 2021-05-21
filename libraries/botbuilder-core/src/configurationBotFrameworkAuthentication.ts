@@ -205,8 +205,8 @@ export class ConfigurationBotFrameworkAuthentication extends BotFrameworkAuthent
  */
 export function createBotFrameworkAuthenticationFromConfiguration(
     configuration: Configuration,
-    credentialsFactory: ServiceClientCredentialsFactory = null,
-    authConfiguration: AuthenticationConfiguration = null,
+    credentialsFactory?: ServiceClientCredentialsFactory,
+    authConfiguration?: AuthenticationConfiguration,
     botFrameworkClientFetch?: (input: RequestInfo, init?: RequestInit) => Promise<Response>,
     connectorClientOptions: ConnectorClientOptions = {}
 ): BotFrameworkAuthentication {
