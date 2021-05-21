@@ -34,7 +34,9 @@ import {
     BotFrameworkHttpAdapter,
     BotTelemetryClient,
     ChannelServiceHandler,
+    ChannelServiceHandlerBase,
     ChannelServiceRoutes,
+    CloudSkillHandler,
     ConsoleTranscriptLogger,
     ConversationState,
     InspectionMiddleware,
@@ -47,7 +49,6 @@ import {
     ShowTypingMiddleware,
     SkillConversationIdFactory,
     SkillConversationIdFactoryBase,
-    SkillHandler,
     SkillHttpClient,
     Storage,
     TelemetryLoggerMiddleware,
@@ -224,24 +225,21 @@ function addSkills(services: ServiceCollection, configuration: Configuration): v
     });
 
     services.addFactory<
-        ChannelServiceHandler,
+        ChannelServiceHandlerBase,
         {
             adapter: BotAdapter;
-            authenticationConfiguration: AuthenticationConfiguration;
             bot: ActivityHandlerBase;
-            credentialProvider: ICredentialProvider;
+            botFrameworkAuthentication: BotFrameworkAuthentication;
             skillConversationIdFactory: SkillConversationIdFactoryBase;
         }
     >(
         'channelServiceHandler',
-        ['adapter', 'bot', 'skillConversationIdFactory', 'credentialProvider', 'authenticationConfiguration'],
+        ['adapter', 'bot', 'botFrameworkAuthentication', 'skillConversationIdFactory'],
         (dependencies) =>
-            new SkillHandler(
+            new CloudSkillHandler(
                 dependencies.adapter,
-                dependencies.bot,
+                (context) => dependencies.bot.run(context),
                 dependencies.skillConversationIdFactory,
-                dependencies.credentialProvider,
-                dependencies.authenticationConfiguration
                 dependencies.botFrameworkAuthentication
             )
     );

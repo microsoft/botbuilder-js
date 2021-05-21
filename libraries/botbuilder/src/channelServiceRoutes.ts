@@ -8,7 +8,7 @@
 
 import { Activity, AttachmentData, ConversationParameters, StatusCodes, Transcript } from 'botbuilder-core';
 
-import { ChannelServiceHandler } from './channelServiceHandler';
+import { ChannelServiceHandlerBase } from './channelServiceHandlerBase';
 import { StatusCodeError } from './statusCodeError';
 import { WebRequest, WebResponse } from './interfaces';
 
@@ -39,9 +39,7 @@ export class ChannelServiceRoutes {
     /**
      * @param channelServiceHandler
      */
-    constructor(private readonly channelServiceHandler: ChannelServiceHandler) {
-        this.channelServiceHandler = channelServiceHandler;
-    }
+    constructor(private readonly channelServiceHandler: ChannelServiceHandlerBase) {}
 
     /**
      * Registers all Channel Service paths on the provided WebServer.
@@ -402,12 +400,8 @@ export class ChannelServiceRoutes {
      * @private
      */
     private static handleError(err: any, res: WebResponse): void {
-        if (err instanceof StatusCodeError) {
-            res.send(err.message);
-            res.status(err.statusCode);
-        } else {
-            res.status(500);
-        }
+        res.status(typeof err?.statusCode === 'number' ? err.statusCode : 500);
+        res.send(err instanceof Error ? err.message : err);
         res.end();
     }
 }

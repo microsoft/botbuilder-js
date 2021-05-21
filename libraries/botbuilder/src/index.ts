@@ -20,6 +20,7 @@ export * from './teamsInfo';
 export { BotFrameworkAdapter, BotFrameworkAdapterSettings } from './botFrameworkAdapter';
 export { BotFrameworkHttpClient } from './botFrameworkHttpClient';
 export { ChannelServiceHandler } from './channelServiceHandler';
+export { ChannelServiceHandlerBase } from './channelServiceHandlerBase';
 export { ChannelServiceRoutes, RouteHandler, WebServer } from './channelServiceRoutes';
 export { EventFactory } from './eventFactory';
 export { HandoffEventNames } from './handoffEventNames';

@@ -116,7 +116,7 @@ export abstract class BotAdapter {
         audience: string | undefined,
         logic: (context: TurnContext) => Promise<void>
     ): Promise<void> {
-        return Promise.reject(new Error('Not implemented'));
+        return Promise.reject(new Error('NotImplemented'));
     }
 
     /**
