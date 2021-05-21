@@ -2166,6 +2166,7 @@ export enum Channels {
  */
 export enum StatusCodes {
     OK = 200,
+    CREATED = 201,
     MULTIPLE_CHOICES = 300,
     BAD_REQUEST = 400,
     UNAUTHORIZED = 401,

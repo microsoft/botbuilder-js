@@ -3,19 +3,19 @@
  * Licensed under the MIT License.
  */
 
+import { ActivityHandlerBase } from './activityHandlerBase';
+import { InvokeException } from './invokeException';
+import { InvokeResponse } from './invokeResponse';
+import { TurnContext } from './turnContext';
+import { verifyStateOperationName, tokenExchangeOperationName, tokenResponseEventName } from './signInConstants';
+
 import {
     Activity,
     AdaptiveCardInvokeResponse,
     AdaptiveCardInvokeValue,
     MessageReaction,
+    StatusCodes,
 } from 'botframework-schema';
-
-import { ActivityHandlerBase } from './activityHandlerBase';
-import { InvokeException } from './invokeException';
-import { InvokeResponse } from './invokeResponse';
-import { StatusCodes } from './statusCodes';
-import { TurnContext } from './turnContext';
-import { verifyStateOperationName, tokenExchangeOperationName, tokenResponseEventName } from './signInConstants';
 
 /**
  * Describes a bot activity event handler, for use with an [ActivityHandler](xref:botbuilder-core.ActivityHandler) object.
