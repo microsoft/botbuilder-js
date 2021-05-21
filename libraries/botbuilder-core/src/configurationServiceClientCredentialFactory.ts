@@ -37,25 +37,24 @@ export class ConfigurationServiceClientCredentialFactory extends PasswordService
      *
      * @param factoryOptions A [ConfigurationServiceClientCredentialFactoryOptions](xref:botbuilder-core.ConfigurationServiceClientCredentialFactoryOptions) object.
      */
-    constructor(factoryOptions: ConfigurationServiceClientCredentialFactoryOptions)
+    constructor(factoryOptions: ConfigurationServiceClientCredentialFactoryOptions) {
+        super(null, null);
+        
+        this.appId = factoryOptions.MicrosoftAppId;
+        this.password = factoryOptions.MicrosoftAppPassword;
+    }
+
     /**
-     * Initializes a new instance of the [ConfigurationServiceClientCredentialFactory](xref:botbuilder-core.ConfigurationServiceClientCredentialFactory) class.
+     * Creates a new instance of the [ConfigurationServiceClientCredentialFactory](xref:botbuilder-core.ConfigurationServiceClientCredentialFactory) class.
      *
      * @remarks
      * The [Configuration](xref:botbuilder-dialogs-adaptive-runtime-core.Configuration) instance provided to the constructor should
      * have the desired authentication values available at the root, using the properties of [ConfigurationServiceClientCredentialFactoryOptions](xref:botbuilder-core.ConfigurationServiceClientCredentialFactoryOptions) as its keys.
      * @param configuration A [Configuration](xref:botbuilder-dialogs-adaptive-runtime-core.Configuration) instance.
+     * @returns A [ConfigurationServiceClientCredentialFactory](xref:botbuilder-core.ConfigurationServiceClientCredentialFactory) instance.
      */
-    constructor(configuration: Configuration)
-    /**
-     * @internal
-     */
-    constructor(factoryOptsOrConfig: ConfigurationServiceClientCredentialFactoryOptions | Configuration) {
-        super(null, null);
-        const config = isRuntimeConfiguration(factoryOptsOrConfig)
-            ? (factoryOptsOrConfig.get([]) as ConfigurationServiceClientCredentialFactoryOptions)
-            : factoryOptsOrConfig;
-        this.appId = config.MicrosoftAppId;
-        this.password = config.MicrosoftAppPassword;
+    static useConfiguration(configuration: Configuration): ConfigurationServiceClientCredentialFactory {
+        const factoryOptions = configuration.get<ConfigurationServiceClientCredentialFactoryOptions>();
+        return new ConfigurationServiceClientCredentialFactory(factoryOptions);
     }
 }

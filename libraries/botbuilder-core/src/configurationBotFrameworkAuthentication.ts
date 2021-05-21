@@ -18,8 +18,7 @@ import {
 import { Configuration } from 'botbuilder-dialogs-adaptive-runtime-core';
 import { tests } from 'botbuilder-stdlib';
 import * as t from 'runtypes';
-import yn from 'yn';
-import { ConfigurationServiceClientCredentialFactory } from './configurationServiceClientCredentialFactory';
+import { ConfigurationServiceClientCredentialFactory, ConfigurationServiceClientCredentialFactoryOptions } from './configurationServiceClientCredentialFactory';
 
 const TypedOptions = t.Record({
     /**
@@ -116,41 +115,9 @@ export class ConfigurationBotFrameworkAuthentication extends BotFrameworkAuthent
         credentialsFactory?: ServiceClientCredentialsFactory,
         authConfiguration?: AuthenticationConfiguration,
         botFrameworkClientFetch?: (input: RequestInfo, init?: RequestInit) => Promise<Response>,
-        connectorClientOptions?: ConnectorClientOptions
-    );
-    /**
-     * Initializes a new instance of the [ConfigurationBotFrameworkAuthentication](xref:botbuilder-core.ConfigurationBotFrameworkAuthentication) class.
-     *
-     * @remarks
-     * The [Configuration](xref:botbuilder-dialogs-adaptive-runtime-core.Configuration) instance provided to the constructor should
-     * have the desired authentication values available at the root, using the properties of [ConfigurationBotFrameworkAuthenticationOptions](xref:botbuilder-core.ConfigurationBotFrameworkAuthenticationOptions) as its keys.
-     * @param configuration A [Configuration](xref:botbuilder-dialogs-adaptive-runtime-core.Configuration) instance.
-     * @param credentialsFactory A [ServiceClientCredentialsFactory](xref:botframework-connector.ServiceClientCredentialsFactory) instance.
-     * @param authConfiguration A [Configuration](xref:botframework-connector.AuthenticationConfiguration) object.
-     * @param botFrameworkClientFetch A custom Fetch implementation to be used in the [BotFrameworkClient](xref:botframework-connector.BotFrameworkClient).
-     * @param connectorClientOptions A [ConnectorClientOptions](xref:botframework-connector.ConnectorClientOptions) object.
-     */
-    constructor(
-        configuration: Configuration,
-        credentialsFactory?: ServiceClientCredentialsFactory,
-        authConfiguration?: AuthenticationConfiguration,
-        botFrameworkClientFetch?: (input: RequestInfo, init?: RequestInit) => Promise<Response>,
-        connectorClientOptions?: ConnectorClientOptions
-    );
-    /**
-     * @internal
-     */
-    constructor(
-        bfAuthConfigOrConfiguration: Partial<ConfigurationBotFrameworkAuthenticationOptions> | Configuration,
-        credentialsFactory: ServiceClientCredentialsFactory = null,
-        authConfiguration: AuthenticationConfiguration = null,
-        botFrameworkClientFetch?: (input: RequestInfo, init?: RequestInit) => Promise<Response>,
         connectorClientOptions: ConnectorClientOptions = {}
     ) {
         super();
-        const rootConfiguration = isRuntimeConfiguration(bfAuthConfigOrConfiguration)
-            ? (bfAuthConfigOrConfiguration.get([]) as ConfigurationBotFrameworkAuthenticationOptions)
-            : bfAuthConfigOrConfiguration;
         const {
             ChannelService,
             ToChannelFromBotLoginUrl,
@@ -158,13 +125,18 @@ export class ConfigurationBotFrameworkAuthentication extends BotFrameworkAuthent
             ToBotFromChannelTokenIssuer,
             ToBotFromEmulatorOpenIdMetadataUrl,
             CallerId,
-        } = rootConfiguration;
+        } = botFrameworkAuthConfig;
 
         const ToBotFromChannelOpenIdMetadataUrl =
-            rootConfiguration.ToBotFromChannelOpenIdMetadataUrl ??
-            rootConfiguration[AuthenticationConstants.BotOpenIdMetadataKey];
-        const OAuthUrl = rootConfiguration.OAuthUrl ?? rootConfiguration[AuthenticationConstants.OAuthUrlKey];
-        const ValidateAuthority = yn(rootConfiguration.ValidateAuthority);
+            botFrameworkAuthConfig.ToBotFromChannelOpenIdMetadataUrl ??
+            botFrameworkAuthConfig[AuthenticationConstants.BotOpenIdMetadataKey];
+        const OAuthUrl = botFrameworkAuthConfig.OAuthUrl ?? botFrameworkAuthConfig[AuthenticationConstants.OAuthUrlKey];
+        let ValidateAuthority = true;
+        try {
+            ValidateAuthority = Boolean(JSON.parse(botFrameworkAuthConfig.ValidateAuthority as string));
+        } catch (_err) {
+            // no-op
+        }
         TypedOptions.check({
             CallerId,
             ChannelService,
@@ -188,8 +160,37 @@ export class ConfigurationBotFrameworkAuthentication extends BotFrameworkAuthent
             ToBotFromEmulatorOpenIdMetadataUrl,
             CallerId,
             credentialsFactory ??
-                new ConfigurationServiceClientCredentialFactory(bfAuthConfigOrConfiguration as Configuration),
+                new ConfigurationServiceClientCredentialFactory(botFrameworkAuthConfig as ConfigurationServiceClientCredentialFactoryOptions),
             authConfiguration ?? ({} as AuthenticationConfiguration),
+            botFrameworkClientFetch,
+            connectorClientOptions
+        );
+    }
+
+    /**
+     * Creates a new instance of the [ConfigurationBotFrameworkAuthentication](xref:botbuilder-core.ConfigurationBotFrameworkAuthentication) class.
+     *
+     * @remarks
+     * The [Configuration](xref:botbuilder-dialogs-adaptive-runtime-core.Configuration) instance provided to the constructor should
+     * have the desired authentication values available at the root, using the properties of [ConfigurationBotFrameworkAuthenticationOptions](xref:botbuilder-core.ConfigurationBotFrameworkAuthenticationOptions) as its keys.
+     * @param configuration A [Configuration](xref:botbuilder-dialogs-adaptive-runtime-core.Configuration) instance.
+     * @param credentialsFactory A [ServiceClientCredentialsFactory](xref:botframework-connector.ServiceClientCredentialsFactory) instance.
+     * @param authConfiguration A [Configuration](xref:botframework-connector.AuthenticationConfiguration) object.
+     * @param botFrameworkClientFetch A custom Fetch implementation to be used in the [BotFrameworkClient](xref:botframework-connector.BotFrameworkClient).
+     * @param connectorClientOptions A [ConnectorClientOptions](xref:botframework-connector.ConnectorClientOptions) object.
+     * @returns A [ConfigurationBotFrameworkAuthentication](xref:botbuilder-core.ConfigurationBotFrameworkAuthentication) instance.
+     */
+    static useConfiguration(configuration: Configuration,
+        credentialsFactory: ServiceClientCredentialsFactory = null,
+        authConfiguration: AuthenticationConfiguration = null,
+        botFrameworkClientFetch?: (input: RequestInfo, init?: RequestInit) => Promise<Response>,
+        connectorClientOptions: ConnectorClientOptions = {}
+    ): ConfigurationBotFrameworkAuthentication {
+        const botFrameworkAuthConfig = configuration?.get<ConfigurationBotFrameworkAuthenticationOptions>();
+        return new ConfigurationBotFrameworkAuthentication(
+            botFrameworkAuthConfig,
+            credentialsFactory,
+            authConfiguration,
             botFrameworkClientFetch,
             connectorClientOptions
         );
