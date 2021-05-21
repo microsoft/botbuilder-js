@@ -2,6 +2,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
+import { ClaimsIdentity } from 'botframework-connector';
 import { Activity, ConversationReference, ResourceResponse } from 'botframework-schema';
 import { makeRevocable } from './internal';
 import { Middleware, MiddlewareHandler, MiddlewareSet } from './middlewareSet';
@@ -99,6 +100,24 @@ export abstract class BotAdapter {
         reference: Partial<ConversationReference>,
         logic: (revocableContext: TurnContext) => Promise<void>
     ): Promise<void>;
+
+    /**
+     * Asynchronously resumes a conversation with a user, possibly after some time has gone by.
+     *
+     * @param claimsIdentity A [ClaimsIdentity](xref:botframework-connector) for the conversation.
+     * @param reference A reference to the conversation to continue.
+     * @param audience A value signifying the recipient of the proactive message.</param>
+     * @param logic The asynchronous method to call after the adapter middleware runs.
+     * @returns a promise representing the async operation
+     */
+    public continueConversationWithClaims(
+        claimsIdentity: ClaimsIdentity,
+        reference: Partial<ConversationReference>,
+        audience: string | undefined,
+        logic: (context: TurnContext) => Promise<void>
+    ): Promise<void> {
+        return Promise.reject(new Error('Not implemented'));
+    }
 
     /**
      * Gets or sets an error handler that can catch exceptions in the middleware or application.
