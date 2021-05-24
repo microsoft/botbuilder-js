@@ -2138,16 +2138,16 @@ acorn@^7.0.0, acorn@^7.1.1, acorn@^7.4.0:
   resolved "https://registry.yarnpkg.com/acorn/-/acorn-7.4.1.tgz#feaed255973d2e77555b83dbc08851a6c63520fa"
   integrity sha512-nQyp0o1/mNdbTO1PO6kHkwSrmgZ0MT/jCCpNiwbUjGoRN4dlBhqJtoQuCnEOKzgTVwg0ZWiCoQy6SxMebQVh8A==
 
-adal-node@0.2.1:
-  version "0.2.1"
-  resolved "https://registry.yarnpkg.com/adal-node/-/adal-node-0.2.1.tgz#19e401bd579977448c1a77ce0e5b4c9accdc334e"
-  integrity sha512-C/oasZuTy0NIqh5wPWjG/09XaG+zS7elC8upf1ZVExt9lSRncme4Ejbx8CKYk+wsGgj609y84txtRAXQVvqApg==
+adal-node@0.2.2:
+  version "0.2.2"
+  resolved "https://registry.yarnpkg.com/adal-node/-/adal-node-0.2.2.tgz#95f6cce0fb6c508f1bbcd677b764b2172c4e8c3b"
+  integrity sha512-luzQ9cXOjUlZoCiWeYbyR+nHwScSrPTDTbOInFphQs/PnwNz6wAIVkbsHEXtvYBnjLctByTTI8ccfpGX100oRQ==
   dependencies:
     "@types/node" "^8.0.47"
     async "^2.6.3"
+    axios "^0.21.1"
     date-utils "*"
     jws "3.x.x"
-    request "^2.88.0"
     underscore ">= 1.3.1"
     uuid "^3.1.0"
     xmldom ">= 0.1.x"
