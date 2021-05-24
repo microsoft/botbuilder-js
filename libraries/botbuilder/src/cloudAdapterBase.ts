@@ -170,7 +170,7 @@ export abstract class CloudAdapterBase extends BotAdapter {
      * @param claimsIdentity The [ClaimsIdentity](xref:botframework-connector.ClaimsIdentity) for the conversation.
      * @param continuationActivity The continuation [Activity](xref:botframework-schema.Activity) used to create the [TurnContext](xref:botbuilder-core.TurnContext).
      * @param audience The audience for the call.
-     * @param logic The logic to call for the resulting bot turn.
+     * @param logic The [BotLogic](xref:botbuilder.BotLogic) to call for the resulting bot turn.
      * @returns a Promise representing the async operation
      */
     protected async processProactive(
@@ -208,7 +208,7 @@ export abstract class CloudAdapterBase extends BotAdapter {
      *
      * @param authHeader The authorization header from the http request.
      * @param activity The [Activity](xref:botframework-schema.Activity) to process.
-     * @param logic The logic to call for the resulting bot turn.
+     * @param logic The [BotLogic](xref:botbuilder.BotLogic) to call for the resulting bot turn.
      * @returns a Promise resolving to an invoke response, or undefined.
      */
     protected processActivity(
@@ -222,7 +222,7 @@ export abstract class CloudAdapterBase extends BotAdapter {
      *
      * @param authenticateRequestResult The [AuthenticateRequestResult](xref:botframework-connector.AuthenticateRequestResult) for this turn.
      * @param activity The [Activity](xref:botframework-schema.Activity) to process.
-     * @param logic The logic to call for the resulting bot turn.
+     * @param logic The [BotLogic](xref:botbuilder.BotLogic) to call for the resulting bot turn.
      * @returns a Promise resolving to an invoke response, or undefined.
      */
     protected processActivity(

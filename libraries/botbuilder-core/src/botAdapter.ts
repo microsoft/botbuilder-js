@@ -105,7 +105,7 @@ export abstract class BotAdapter {
      * Asynchronously resumes a conversation with a user, possibly after some time has gone by.
      *
      * @param claimsIdentity A [ClaimsIdentity](xref:botframework-connector) for the conversation.
-     * @param reference A reference to the conversation to continue.
+     * @param reference A partial [ConversationReference](xref:botframework-schema.ConversationReference) to the conversation to continue.
      * @param audience A value signifying the recipient of the proactive message.</param>
      * @param logic The asynchronous method to call after the adapter middleware runs.
      * @returns a promise representing the async operation

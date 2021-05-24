@@ -125,6 +125,7 @@ export class SkillHandlerImpl {
                 claimsIdentity.claims
             )}`;
 
+            // Legacy BotFrameworkAdapter flows rely on connector client being set inside turn context
             if (this.adapter instanceof BotFrameworkAdapter) {
                 const client = this.adapter.createConnectorClient(newActivity.serviceUrl);
                 context.turnState.set(this.adapter.ConnectorClientKey, client);

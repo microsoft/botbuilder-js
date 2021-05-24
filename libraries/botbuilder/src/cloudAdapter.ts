@@ -34,7 +34,6 @@ import {
     StreamingResponse,
     WebSocketServer,
 } from 'botframework-streaming';
-import { validateAndFixActivity } from './activityValidator';
 
 // TODO(jpg): do better lol
 const ActivityT = t.Unknown.withGuard((val: unknown): val is Activity => t.Dictionary(t.Unknown, t.String).guard(val), {
@@ -45,30 +44,31 @@ export class CloudAdapter extends CloudAdapterBase implements BotFrameworkHttpAd
     /**
      * Initializes a new instance of the [CloudAdapter](xref:botbuilder:CloudAdapter) class.
      *
-     * @param botFrameworkAuthentication optional [BotFrameworkAuthentication](xref:botframework-connector.BotFrameworkAuthentication) instance
+     * @param botFrameworkAuthentication Optional [BotFrameworkAuthentication](xref:botframework-connector.BotFrameworkAuthentication) instance
      */
     constructor(botFrameworkAuthentication = BotFrameworkAuthenticationFactory.create()) {
         super(botFrameworkAuthentication);
     }
 
     /**
-     * TODO(jpg) this
+     * Process a web request by applying a [BotLogic](xref:botbuilder.BotLogic) function.
      *
-     * @param req request
-     * @param res response
-     * @param logic bot logic
-     * @returns a promise representing the async operation
+     * @param req An incoming HTTP [Request](xref:botbuilder.Request)
+     * @param req The corresponding HTTP [Response](xref:botbuilder.Response)
+     * @param logic The [BotLogic](xref:botbuilder.BotLogic) callback function to apply
+     * @returns a promise representing the asynchronous operation.
      */
     async process(req: Request, res: Response, logic: BotLogic): Promise<void>;
 
     /**
-     * TODO(jpg) this
+     * Handle a web socket connection by applying a [BotLogic](xref:botbuilder.BotLogic) function to
+     * each streaming request.
      *
-     * @param req request
-     * @param socket incoming socket, used to establish websocket connection
-     * @param head used to establish websocket connection
-     * @param logic bot logic
-     * @returns a promise representing the async operation
+     * @param req An incoming HTTP [Request](xref:botbuilder.Request)
+     * @param socket The corresponding [INodeSocket](xref:botframework-streaming.INodeSocket)
+     * @param head The corresponding [INodeBuffer](xref:botframework-streaming.INodeBuffer)
+     * @param logic The [BotLogic](xref:botbuilder.BotLogic) callback function to apply
+     * @returns a promise representing the asynchronous operation.
      */
     async process(req: Request, socket: INodeSocket, head: INodeBuffer, logic: BotLogic): Promise<void>;
 
@@ -158,7 +158,7 @@ export class CloudAdapter extends CloudAdapterBase implements BotFrameworkHttpAd
             logic: BotLogicT,
             appId: t.String,
             audience: t.String,
-            callerId: t.String,
+            callerId: t.Optional(t.String),
         }).check({ pipeName, logic, appId, audience, callerId });
 
         // The named pipe is local and so there is no network authentication to perform: so we can create the result here.
@@ -219,6 +219,8 @@ export class CloudAdapter extends CloudAdapterBase implements BotFrameworkHttpAd
 
 /**
  * QUESTION(jpg): why doesn't this already exist? What is IStreamingActivityProcessor
+ *
+ * @internal
  */
 class StreamingRequestHandler extends RequestHandler {
     public server?: IStreamingTransportServer;
@@ -285,6 +287,9 @@ class StreamingRequestHandler extends RequestHandler {
     }
 }
 
+/**
+ * @internal
+ */
 class StreamingConnectorFactory implements ConnectorFactory {
     private serviceUrl?: string;
 
@@ -305,7 +310,11 @@ class StreamingConnectorFactory implements ConnectorFactory {
     }
 }
 
-// QUESTION(jpg): is this thing responsible for making calls back to the user? or what?
+/**
+ * QUESTION(jpg): is this thing responsible for making calls back to the user? or what?
+ *
+ * @internal
+ */
 class StreamingHttpClient implements HttpClient {
     constructor(private readonly requestHandler: StreamingRequestHandler) {}
 

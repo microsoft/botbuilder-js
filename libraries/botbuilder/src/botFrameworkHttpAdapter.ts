@@ -10,14 +10,13 @@ import { BotLogic, Request, Response } from './interfaces';
  */
 export interface BotFrameworkHttpAdapter {
     /**
-     * `process` accepts a request, response, and a bot logic function. It should
-     * decode the request, apply the bot logic function, and encodes the result in
-     * the response.
+     * Process a web request by applying a [BotLogic](xref:botbuilder.BotLogic) function.
      */
     process(req: Request, res: Response, logic: BotLogic): Promise<void>;
 
     /**
-     * TODO(jpg) this
+     * Handle a web socket connection by applying a [BotLogic](xref:botbuilder.BotLogic) function to
+     * each streaming request.
      */
     process(req: Request, socket: INodeSocket, head: INodeBuffer, logic: BotLogic): Promise<void>;
 }
