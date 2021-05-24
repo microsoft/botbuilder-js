@@ -2,7 +2,6 @@
 // Licensed under the MIT License.
 
 import * as adal from 'adal-node';
-import * as t from 'runtypes';
 import { ServiceClientCredentials } from '@azure/ms-rest-js';
 import { Maybe, tests } from 'botbuilder-stdlib';
 import { MicrosoftAppCredentials } from './microsoftAppCredentials';
@@ -48,14 +47,11 @@ export class PasswordServiceClientCredentialFactory implements ServiceClientCred
         loginEndpoint: string,
         validateAuthority: boolean
     ): Promise<ServiceClientCredentials> {
-        t.Record({
-            appId: t.String.withConstraint((s) => s === this.appId),
-            audience: t.String.optional(),
-            loginEndpoint: t.String.optional(),
-            validateAuthority: t.Boolean.optional(),
-        }).check({ appId, audience, loginEndpoint, validateAuthority });
+        if (!await this.isValidAppId(appId)) {
+            throw new Error('appId did not match');
+        }
 
-        const normalizedEndpoint = loginEndpoint.toLowerCase();
+        const normalizedEndpoint = loginEndpoint?.toLowerCase();
         if (normalizedEndpoint.startsWith(AuthenticationConstants.ToChannelFromBotLoginUrlPrefix)) {
             return this.appId == null
                 ? MicrosoftAppCredentials.Empty
@@ -100,7 +96,9 @@ class PrivateCloudAppCredentials extends MicrosoftAppCredentials {
     }
 
     /**
-     * 
+     * Gets a value indicating whether to validate the Authority.
+     *
+     * @returns The ValidateAuthority value to use.
      */
     get validateAuthority(): boolean {
         return this._validateAuthority;

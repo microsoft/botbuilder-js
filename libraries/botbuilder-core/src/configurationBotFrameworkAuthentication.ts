@@ -90,11 +90,6 @@ const TypedOptions = t.Record({
  */
 export type ConfigurationBotFrameworkAuthenticationOptions = t.Static<typeof TypedOptions>;
 
-const isRuntimeConfiguration = (val: unknown): val is Configuration => {
-    const config = val as Configuration;
-    return tests.isFunc(config.get) && tests.isFunc(config.set);
-};
-
 /**
  * Creates a [BotFrameworkAuthentication](xref:botframework-connector.BotFrameworkAuthentication) instance from an object with the authentication values or a [Configuration](xref:botbuilder-dialogs-adaptive-runtime-core.Configuration) instance.
  */

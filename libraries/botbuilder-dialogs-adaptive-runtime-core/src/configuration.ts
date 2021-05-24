@@ -26,10 +26,10 @@ export interface Configuration {
  * Useful for shimming BotComponents into ComponentRegistrations
  */
 export const noOpConfiguration: Configuration = {
-    get(_path: string[]): undefined {
+    get(_path: string[]) {
         return undefined;
     },
-    set(_path: string[], _value: unknown): void {
+    set(_path: string[], _value: unknown) {
         // no-op
     },
 };
