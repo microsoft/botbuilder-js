@@ -13,7 +13,7 @@ import { StreamingRequest } from '../streamingRequest';
  * Example possible implementations include WebSocket transport server or NamedPipe transport server.
  */
 export interface IStreamingTransportServer {
-    start(): Promise<string>;
+    start(onListen?: () => void): Promise<string>;
     disconnect(): void;
     send(request: StreamingRequest): Promise<IReceiveResponse>;
     isConnected?: boolean;
