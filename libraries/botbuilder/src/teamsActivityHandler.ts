@@ -8,6 +8,7 @@
 
 import {
     ActivityHandler,
+    AdaptiveCardActionResponse,
     AppBasedLinkQuery,
     ChannelInfo,
     FileConsentCardResponse,
@@ -131,6 +132,9 @@ export class TeamsActivityHandler extends ActivityHandler {
                         return ActivityHandler.createInvokeResponse(
                             await this.handleTeamsTabSubmit(context, context.activity.value)
                         );
+
+                    case 'adaptiveCard/action':
+                        return ActivityHandler.createInvokeResponse(await this.handleAdaptiveCardAction(context));
 
                     default:
                         runEvents = false;
@@ -459,6 +463,15 @@ export class TeamsActivityHandler extends ActivityHandler {
         context: TurnContext,
         query: MessagingExtensionQuery
     ): Promise<MessagingExtensionResponse> {
+        throw new Error('NotImplemented');
+    }
+
+    /**
+     * Receives invoke activities with the name 'adaptiveCard/action'
+     * @param context A context object for this turn.
+     * @returns The Messaging Extension Action Response for the query.
+     */
+    protected async handleAdaptiveCardAction(context: TurnContext): Promise<AdaptiveCardActionResponse> {
         throw new Error('NotImplemented');
     }
 

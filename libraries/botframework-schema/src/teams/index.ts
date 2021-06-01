@@ -1231,6 +1231,34 @@ export interface FileConsentCardResponse {
 
 /**
  * @interface
+ * Tab response to 'task/submit'.
+ */
+export interface AdaptiveCardActionResponse {
+    /**
+     * @member {number} [statusCode] An HTTP response status code of 200
+     * does NOT necessarily mean the Bot was able to successfully process
+     * the request. A client application MUST always look at the statucCode
+     * property in the response's body to know how the Bot processed the request.
+     * statusCode is a number ranging from 200-599 that mirrors HTTP status
+     * code values and is meant to be a sub-status for the result of the bot
+     * processing the Invoke. A missing, null, or undefined value for statusCode
+     * implies a 200 (Success).
+     */
+    statusCode: number;
+    /**
+     * @member {string} [type] A set of well-known string constants that
+     * describe the expected shape of the value property
+     */
+    type: string;
+    /**
+     * @member {any} [value] An object that is specific to the type of
+     * response body. This can be an adaptive card, text, or an Oauth card
+     */
+    value?: any; // eslint-disable-line @typescript-eslint/no-explicit-any
+}
+
+/**
+ * @interface
  * Current tab request context, i.e., the current theme.
  */
 export interface TabContext {

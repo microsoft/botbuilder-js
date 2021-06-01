@@ -84,6 +84,8 @@ describe('TeamsActivityHandler', () => {
             handleTeamsMessagingExtensionConfigurationSetting() {}
 
             handleTeamsMessagingExtensionCardButtonClicked() {}
+
+            handleAdaptiveCardAction() {}
         }
 
         it('activity.name is not defined. should return status code [501].', async function () {
@@ -230,6 +232,24 @@ describe('TeamsActivityHandler', () => {
             });
 
             const activity = createInvokeActivity('composeExtension/onCardButtonClicked');
+
+            await adapter
+                .send(activity)
+                .assertReply((activity) => {
+                    assert.strictEqual(activity.value.status, 200, 'should be status code 200.');
+                })
+                .startTest();
+        });
+
+        
+        it('activity.name is "adaptiveCard/action". should return status code [200] when handleAdaptiveCardAction method is overridden.', async function () {
+            const bot = new InvokeActivityEmptyHandlers();
+
+            const adapter = new TestAdapter(async (context) => {
+                await bot.run(context);
+            });
+
+            const activity = createInvokeActivity('adaptiveCard/action');
 
             await adapter
                 .send(activity)
@@ -759,6 +779,25 @@ describe('TeamsActivityHandler', () => {
                 })
                 .startTest();
         });
+
+        it('handleAdaptiveCardAction is not overridden', async function () {
+            const bot = new TeamsActivityHandler();
+
+            const adapter = new TestAdapter(async (context) => {
+                await bot.run(context);
+            });
+
+            const taskFetchActivity = createInvokeActivity('adaptiveCard/action');
+
+            await adapter
+                .send(taskFetchActivity)
+                .assertReply((activity) => {
+                    assert.strictEqual(activity.type, 'invokeResponse');
+                    assert.strictEqual(activity.value.status, 501);
+                    assert.strictEqual(activity.value.body, undefined);
+                })
+                .startTest();
+        });
     });
 
     describe('should send an OK status code', () => {
@@ -876,6 +915,7 @@ describe('TeamsActivityHandler', () => {
                     this.taskSubmitReturn = { task: { type: 'message', value: 'test' } };
                     this.tabFetchReturn = { tab: { type: 'continue', value: { title: 'test' } } };
                     this.tabSubmitReturn = { task: { type: 'message', value: 'test' } };
+                    this.adaptiveCardActionReturn = { statusCode: 200, type: "application/vnd.microsoft.activity.message", value: "res"}
                 }
 
                 async handleTeamsTaskModuleFetch(context, taskModuleRequest) {
@@ -900,6 +940,11 @@ describe('TeamsActivityHandler', () => {
                     assert(context, 'context not found');
                     assert(tabRequest, 'tabRequest not found');
                     return this.tabSubmitReturn;
+                }
+
+                async handleAdaptiveCardAction(context) {
+                    assert(context, 'context not found');
+                    return this.adaptiveCardActionReturn;
                 }
             }
 
@@ -995,6 +1040,24 @@ describe('TeamsActivityHandler', () => {
                             status: 200,
                             body: bot.tabSubmitReturn,
                         });
+                    })
+                    .startTest();
+            });
+
+            it('an overridden handleAdaptiveCardAction()', async function () {
+                const bot = new TaskHandler();
+
+                const adapter = new TestAdapter(async (context) => {
+                    await bot.run(context);
+                });
+
+                const taskAdaptiveCardActionActivity = createInvokeActivity('adaptiveCard/action', { data: '' });
+                await adapter
+                    .send(taskAdaptiveCardActionActivity)
+                    .assertReply((activity) => {
+                        assert.strictEqual(activity.type, 'invokeResponse');
+                        assert.strictEqual(activity.value.status, 200);
+                        assert.strictEqual(activity.value.body, bot.adaptiveCardActionReturn);
                     })
                     .startTest();
             });
