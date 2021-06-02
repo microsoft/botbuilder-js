@@ -8,7 +8,7 @@
 
 import {
     ActivityHandler,
-    AdaptiveCardActionResponse,
+    AdaptiveCardInvokeResponse,
     AppBasedLinkQuery,
     ChannelInfo,
     FileConsentCardResponse,
@@ -471,7 +471,7 @@ export class TeamsActivityHandler extends ActivityHandler {
      * @param context A context object for this turn.
      * @returns The Messaging Extension Action Response for the query.
      */
-    protected async handleAdaptiveCardAction(context: TurnContext): Promise<AdaptiveCardActionResponse> {
+    protected async handleAdaptiveCardAction(context: TurnContext): Promise<AdaptiveCardInvokeResponse> {
         throw new Error('NotImplemented');
     }
 
