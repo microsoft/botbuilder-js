@@ -81,8 +81,12 @@ export class HttpRequestSequenceMock extends HttpRequestMock implements HttpRequ
         }
         const response = new SequenceResponseManager(this.responses);
         const url = parse(this.url);
-        let path = this.url.substr(url.origin.length);
+        let path: string | RegExp = this.url.substr(url.origin.length);
         path = path.startsWith('/') ? path : '/' + path;
+        if (path.includes('*')) {
+            // eslint-disable-next-line security/detect-non-literal-regexp
+            path = new RegExp(path.replace('*', '.*'));
+        }
         if (this.method) {
             nock(url.origin)
                 .intercept(path, this.method, this._matchContent.bind(this))
