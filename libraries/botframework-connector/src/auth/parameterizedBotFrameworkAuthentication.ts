@@ -89,11 +89,8 @@ export class ParameterizedBotFrameworkAuthentication extends BotFrameworkAuthent
         authHeader: string,
         channelIdHeader: string
     ): Promise<AuthenticateRequestResult> {
-        if (
-            (typeof channelIdHeader !== 'string' || channelIdHeader.trim() === '') &&
-            !(await this.credentialsFactory.isAuthenticationDisabled())
-        ) {
-            throw new AuthenticationError("'authHeader' required.", StatusCodes.BAD_REQUEST);
+        if (!channelIdHeader?.trim() && !(await this.credentialsFactory.isAuthenticationDisabled())) {
+            throw new AuthenticationError("'channelIdHeader' required.", StatusCodes.UNAUTHORIZED);
         }
 
         const claimsIdentity = await this.JwtTokenValidation_validateAuthHeader(authHeader, channelIdHeader, null);
@@ -174,7 +171,7 @@ export class ParameterizedBotFrameworkAuthentication extends BotFrameworkAuthent
         serviceUrl = ''
     ): Promise<ClaimsIdentity> {
         if (!authHeader.trim()) {
-            throw new AuthenticationError("'authHeader' required.", StatusCodes.BAD_REQUEST);
+            throw new AuthenticationError("'authHeader' required.", StatusCodes.UNAUTHORIZED);
         }
 
         const identity = await this.JwtTokenValidation_authenticateToken(authHeader, channelId, serviceUrl);

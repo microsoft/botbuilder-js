@@ -1,6 +1,7 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
+import * as t from 'runtypes';
 import { BotFrameworkAuthentication, ClaimsIdentity, SkillValidation } from 'botframework-connector';
 
 import {
@@ -9,10 +10,16 @@ import {
     ConversationState,
     InputHints,
     MessageFactory,
+    Response,
     TurnContext,
     UserState,
     useBotState,
 } from 'botbuilder';
+
+const ErrorT = t.Record({
+    message: t.String,
+    statusCode: t.Optional(t.Number),
+});
 
 export class CoreBotAdapter extends CloudAdapter {
     constructor(
@@ -24,26 +31,46 @@ export class CoreBotAdapter extends CloudAdapter {
 
         useBotState(this, userState, conversationState);
 
-        this.onTurnError = async (turnContext, err) => {
+        this.onTurnError = async (context, err) => {
             console.error('[onTurnError] unhandled error', err);
 
-            await this.sendErrorMessage(turnContext, err);
-            await this.sendEoCToParentIfSkill(turnContext, err);
-            await this.clearConversationState(turnContext);
+            const res = context.turnState.get<Response | undefined>(this.ResponseKey);
+
+            if (res) {
+                // Try to extract errors wrapped in, for example, DialogContextError
+                let anyErr = err as any; // eslint-disable-line @typescript-eslint/no-explicit-any
+                if (anyErr.error instanceof Error) {
+                    anyErr = anyErr.error;
+                }
+
+                if (ErrorT.guard(anyErr)) {
+                    res.status(anyErr.statusCode ?? 500);
+                    res.send(anyErr.message);
+                } else {
+                    res.status(500);
+                    res.send(anyErr);
+                }
+
+                res.end();
+            }
+
+            await this.sendErrorMessage(context, err);
+            await this.sendEoCToParentIfSkill(context, err);
+            await this.clearConversationState(context);
         };
     }
 
-    private async sendErrorMessage(turnContext: TurnContext, error: Error): Promise<void> {
+    private async sendErrorMessage(context: TurnContext, error: Error): Promise<void> {
         try {
             let errorMessageText = 'The bot encountered an error or bug';
             let errorMessage = MessageFactory.text(errorMessageText, errorMessageText, InputHints.IgnoringInput);
-            await turnContext.sendActivity(errorMessage);
+            await context.sendActivity(errorMessage);
 
             errorMessageText = 'To continue to run this bot, please fix the bot source code.';
             errorMessage = MessageFactory.text(errorMessageText, errorMessageText, InputHints.ExpectingInput);
-            await turnContext.sendActivity(errorMessage);
+            await context.sendActivity(errorMessage);
 
-            await turnContext.sendTraceActivity(
+            await context.sendTraceActivity(
                 'OnTurnError Trace',
                 error,
                 'https://www.botframework.com/schemas/error',
@@ -54,8 +81,8 @@ export class CoreBotAdapter extends CloudAdapter {
         }
     }
 
-    private async sendEoCToParentIfSkill(turnContext: TurnContext, error: Error): Promise<void> {
-        if (!this.isSkillBot(turnContext)) {
+    private async sendEoCToParentIfSkill(context: TurnContext, error: Error): Promise<void> {
+        if (!this.isSkillBot(context)) {
             return;
         }
 
@@ -63,22 +90,22 @@ export class CoreBotAdapter extends CloudAdapter {
             const endOfConversation = ActivityEx.createEndOfConversationActivity();
             endOfConversation.code = 'SkillError';
             endOfConversation.text = error.message;
-            await turnContext.sendActivity(endOfConversation);
+            await context.sendActivity(endOfConversation);
         } catch (err) {
             console.error('Exception caught in sendEoCToParentIfSkill', err);
         }
     }
 
-    private async clearConversationState(turnContext: TurnContext): Promise<void> {
+    private async clearConversationState(context: TurnContext): Promise<void> {
         try {
-            await this.conversationState.delete(turnContext);
+            await this.conversationState.delete(context);
         } catch (err) {
             console.error('Exception caught in clearConversationState', err);
         }
     }
 
-    private isSkillBot(turnContext: TurnContext): boolean {
-        const claimsIdentity = turnContext.turnState.get<ClaimsIdentity>(turnContext.adapter.BotIdentityKey);
+    private isSkillBot(context: TurnContext): boolean {
+        const claimsIdentity = context.turnState.get<ClaimsIdentity>(context.adapter.BotIdentityKey);
         return SkillValidation.isSkillClaim(claimsIdentity?.claims ?? []);
     }
 }

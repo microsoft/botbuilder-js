@@ -125,7 +125,7 @@ export class CloudAdapter extends CloudAdapterBase implements BotFrameworkHttpAd
         const authHeader = t.String.check(req.headers.Authorization ?? req.headers.authorization ?? '');
 
         try {
-            const invokeResponse = await this.processActivity(authHeader, activity, logic);
+            const invokeResponse = await this.processActivity(authHeader, activity, logic, req, res);
             return end(invokeResponse?.status ?? StatusCodes.OK, invokeResponse?.body);
         } catch (err) {
             return end(
