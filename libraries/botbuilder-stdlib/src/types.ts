@@ -391,6 +391,17 @@ function isString(val: unknown): val is string {
 }
 
 /**
+ * Test if `val` is of type `string` with zero length or `Nil`.
+ *
+ * @remarks
+ * Implementation of string.IsNullOrEmpty(): https://docs.microsoft.com/en-us/dotnet/api/system.string.isnullorempty?view=netcore-3.1
+ * @param {any} val value to test 
+ */
+ function isStringNullOrEmpty(val: unknown): val is Maybe<string> {
+    return tests.isNil(val) || (tests.isString(val) && !val.length);
+};
+
+/**
  * Assert that `val` is of type `string`.
  *
  * @param {any} val value to assert
@@ -553,6 +564,7 @@ export const tests = {
     isNumber,
     isObject,
     isString,
+    isStringNullOrEmpty,
     isUnknown,
 
     isError,

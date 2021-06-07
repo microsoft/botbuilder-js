@@ -1,19 +1,15 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-import { CallerIdConstants, ConnectorClientOptions } from '../connectorApi/models';
+import { CallerIdConstants } from 'botframework-schema';
+import { ConnectorClientOptions } from '../connectorApi/models';
 import type { AuthenticationConfiguration } from './authenticationConfiguration';
 import { AuthenticationConstants } from './authenticationConstants';
-import { BotFrameworkAuthentication } from './botFrameworkAuthentication';
+import type { BotFrameworkAuthentication } from './botFrameworkAuthentication';
 import { GovernmentConstants } from './governmentConstants';
 import { ParameterizedBotFrameworkAuthentication } from './parameterizedBotFrameworkAuthentication';
 import type { ServiceClientCredentialsFactory } from './serviceClientCredentialsFactory';
-import { Maybe, tests } from 'botbuilder-stdlib';
-
-// Implementation of string.IsNullOrEmpty(): https://docs.microsoft.com/en-us/dotnet/api/system.string.isnullorempty?view=netcore-3.1
-const stringIsNullOrEmpty = (val: unknown): val is Maybe<string> => {
-    return tests.isNil(val) || (tests.isString(val) && !val.length);
-};
+import { tests } from 'botbuilder-stdlib';
 
 /**
  * A factory for [BotFrameworkAuthentication](xref:botframework-connector.BotFrameworkAuthentication) which encapsulates the environment specific Bot Framework Protocol auth code.
@@ -75,13 +71,13 @@ export class BotFrameworkAuthenticationFactory {
         maybeConnectorClientOptions: ConnectorClientOptions = {}
     ): BotFrameworkAuthentication {
         if (
-            !stringIsNullOrEmpty(maybeToChannelFromBotLoginUrl) ||
-            !stringIsNullOrEmpty(maybeToChannelFromBotOAuthScope) ||
-            !stringIsNullOrEmpty(maybeToBotFromChannelTokenIssuer) ||
-            !stringIsNullOrEmpty(maybeOAuthUrl) ||
-            !stringIsNullOrEmpty(maybeToBotFromChannelOpenIdMetadataUrl) ||
-            !stringIsNullOrEmpty(maybeToBotFromEmulatorOpenIdMetadataUrl) ||
-            !stringIsNullOrEmpty(maybeCallerId)
+            !tests.isStringNullOrEmpty(maybeToChannelFromBotLoginUrl) ||
+            !tests.isStringNullOrEmpty(maybeToChannelFromBotOAuthScope) ||
+            !tests.isStringNullOrEmpty(maybeToBotFromChannelTokenIssuer) ||
+            !tests.isStringNullOrEmpty(maybeOAuthUrl) ||
+            !tests.isStringNullOrEmpty(maybeToBotFromChannelOpenIdMetadataUrl) ||
+            !tests.isStringNullOrEmpty(maybeToBotFromEmulatorOpenIdMetadataUrl) ||
+            !tests.isStringNullOrEmpty(maybeCallerId)
         ) {
             // If any of the 'parameterized' properties are defined, assume all parameters are intentional.
             return new ParameterizedBotFrameworkAuthentication(
@@ -100,7 +96,7 @@ export class BotFrameworkAuthenticationFactory {
             );
         } else {
             // else apply the built in default behavior, which is either the public cloud or the gov cloud depending on whether we have a channelService value present
-            if (stringIsNullOrEmpty(maybeChannelService)) {
+            if (tests.isStringNullOrEmpty(maybeChannelService)) {
                 return new ParameterizedBotFrameworkAuthentication(
                     true,
                     AuthenticationConstants.ToChannelFromBotLoginUrl,

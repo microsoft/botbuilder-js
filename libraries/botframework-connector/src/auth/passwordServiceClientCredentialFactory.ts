@@ -2,17 +2,12 @@
 // Licensed under the MIT License.
 
 import * as adal from 'adal-node';
-import { ServiceClientCredentials } from '@azure/ms-rest-js';
-import { Maybe, tests } from 'botbuilder-stdlib';
+import type { ServiceClientCredentials } from '@azure/ms-rest-js';
+import { tests } from 'botbuilder-stdlib';
 import { MicrosoftAppCredentials } from './microsoftAppCredentials';
 import { ServiceClientCredentialsFactory } from './serviceClientCredentialsFactory';
 import { AuthenticationConstants } from './authenticationConstants';
 import { GovernmentConstants } from './governmentConstants';
-
-// Implementation of string.IsNullOrEmpty(): https://docs.microsoft.com/en-us/dotnet/api/system.string.isnullorempty?view=netcore-3.1
-const stringIsNullOrEmpty = (val: unknown): val is Maybe<string> => {
-    return tests.isNil(val) || (tests.isString(val) && !val.length);
-};
 
 /**
  * A simple implementation of the [ServiceClientCredentialsFactory](xref:botframework-connector.ServiceClientCredentialsFactory) interface.
@@ -38,7 +33,7 @@ export class PasswordServiceClientCredentialFactory implements ServiceClientCred
     }
 
     async isAuthenticationDisabled(): Promise<boolean> {
-        return stringIsNullOrEmpty(this.appId);
+        return tests.isStringNullOrEmpty(this.appId);
     }
 
     async createCredentials(
@@ -47,35 +42,48 @@ export class PasswordServiceClientCredentialFactory implements ServiceClientCred
         loginEndpoint: string,
         validateAuthority: boolean
     ): Promise<ServiceClientCredentials> {
-        if (!await this.isValidAppId(appId)) {
+        if (!(await this.isValidAppId(appId))) {
             throw new Error('appId did not match');
         }
 
-        const normalizedEndpoint = loginEndpoint?.toLowerCase();
-        if (normalizedEndpoint.startsWith(AuthenticationConstants.ToChannelFromBotLoginUrlPrefix)) {
-            return this.appId == null
-                ? MicrosoftAppCredentials.Empty
-                : new MicrosoftAppCredentials(this.appId, this.password, undefined, audience);
-        } else if (normalizedEndpoint === GovernmentConstants.ToChannelFromBotLoginUrl) {
-            return this.appId == null
-                ? new MicrosoftAppCredentials(null, null, null, GovernmentConstants.ToChannelFromBotOAuthScope)
-                : new MicrosoftAppCredentials(
-                      this.appId,
-                      this.password,
-                      null,
-                      GovernmentConstants.ToChannelFromBotOAuthScope
-                  );
+        let credentials: MicrosoftAppCredentials;
+        let normalizedEndpoint = loginEndpoint?.toLowerCase();
+        if (normalizedEndpoint?.startsWith(AuthenticationConstants.ToChannelFromBotLoginUrlPrefix)) {
+            credentials =
+                this.appId == null
+                    ? MicrosoftAppCredentials.Empty
+                    : new MicrosoftAppCredentials(this.appId, this.password, undefined, audience);
+        } else if (normalizedEndpoint == GovernmentConstants.ToChannelFromBotLoginUrl) {
+            credentials =
+                this.appId == null
+                    ? new MicrosoftAppCredentials(
+                          undefined,
+                          undefined,
+                          undefined,
+                          GovernmentConstants.ToChannelFromBotOAuthScope
+                      )
+                    : new MicrosoftAppCredentials(this.appId, this.password, undefined, audience);
+            normalizedEndpoint = loginEndpoint;
         } else {
-            return this.appId == null
-                ? new PrivateCloudAppCredentials(null, null, null, loginEndpoint, validateAuthority)
-                : new PrivateCloudAppCredentials(
-                      this.appId,
-                      this.password,
-                      audience,
-                      normalizedEndpoint,
-                      validateAuthority
-                  );
+            credentials =
+                this.appId == null
+                    ? new PrivateCloudAppCredentials(
+                          undefined,
+                          undefined,
+                          undefined,
+                          normalizedEndpoint,
+                          validateAuthority
+                      )
+                    : new PrivateCloudAppCredentials(
+                          this.appId,
+                          this.password,
+                          audience,
+                          normalizedEndpoint,
+                          validateAuthority
+                      );
         }
+        credentials.oAuthEndpoint = normalizedEndpoint;
+        return credentials;
     }
 }
 

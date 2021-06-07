@@ -1,49 +1,40 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-import { ConnectorFactory } from '../connectorFactory';
-import { BotFrameworkClient } from '../skills';
+import { Activity, Channels, RoleTypes, StatusCodes } from 'botframework-schema';
 import { AuthenticateRequestResult } from './authenticateRequestResult';
-import { AuthenticationConfiguration } from './authenticationConfiguration';
+import type { AuthenticationConfiguration } from './authenticationConfiguration';
+import { AuthenticationConstants } from './authenticationConstants';
 import { AuthenticationError } from './authenticationError';
 import { BotFrameworkAuthentication } from './botFrameworkAuthentication';
+import { ConnectorClientOptions } from '../connectorApi/models';
+import type { ConnectorFactory } from './connectorFactory';
+import { ConnectorFactoryImpl } from './connectorFactoryImpl';
+import type { BotFrameworkClient } from '../skills';
 import { BotFrameworkClientImpl } from './botFrameworkClientImpl';
 import { Claim, ClaimsIdentity } from './claimsIdentity';
-import { JwtTokenValidation } from './jwtTokenValidation';
-import { ServiceClientCredentialsFactory } from './serviceClientCredentialsFactory';
-import { SkillValidation } from './skillValidation';
-import { Activity, Channels, RoleTypes, StatusCodes } from 'botframework-schema';
-import { AuthenticationConstants } from './authenticationConstants';
-import { GovernmentConstants } from './governmentConstants';
-import { JwtTokenExtractor } from './jwtTokenExtractor';
-import { VerifyOptions } from 'jsonwebtoken';
 import { EmulatorValidation } from './emulatorValidation';
-import { ConnectorClientOptions } from '../connectorApi/models';
-import { ConnectorFactoryImpl } from './connectorFactoryImpl';
+import { JwtTokenExtractor } from './jwtTokenExtractor';
+import { JwtTokenValidation } from './jwtTokenValidation';
+import type { ServiceClientCredentialsFactory } from './serviceClientCredentialsFactory';
+import { SkillValidation } from './skillValidation';
+import { ToBotFromBotOrEmulatorTokenValidationParameters } from './tokenValidationParameters';
 import { UserTokenClientImpl } from './userTokenClientImpl';
-import { UserTokenClient } from './userTokenClient';
+import type { UserTokenClient } from './userTokenClient';
+import { VerifyOptions } from 'jsonwebtoken';
 
-// Clean up tokenValidationParameters
+function getAppId(claimsIdentity: ClaimsIdentity): string | null {
+    // For requests from channel App Id is in Audience claim of JWT token. For emulator it is in AppId claim. For
+    // unauthenticated requests we have anonymous claimsIdentity provided auth is disabled.
+    // For Activities coming from Emulator AppId claim contains the Bot's AAD AppId.
+    return (
+        claimsIdentity.getClaimValue(AuthenticationConstants.AudienceClaim) ??
+        claimsIdentity.getClaimValue(AuthenticationConstants.AppIdClaim)
+    );
+}
 
 // Internal
 export class ParameterizedBotFrameworkAuthentication extends BotFrameworkAuthentication {
-    private static SkillAndEmulatorTokenValidationParameters: VerifyOptions = {
-        issuer: [
-            'https://sts.windows.net/d6d49420-f39b-4df7-a1dc-d59a935871db/', // Auth v3.1, 1.0 token
-            'https://login.microsoftonline.com/d6d49420-f39b-4df7-a1dc-d59a935871db/v2.0', // Auth v3.1, 2.0 token
-            'https://sts.windows.net/f8cdef31-a31e-4b4a-93e4-5f571e91255a/', // Auth v3.2, 1.0 token
-            'https://login.microsoftonline.com/f8cdef31-a31e-4b4a-93e4-5f571e91255a/v2.0', // Auth v3.2, 2.0 token
-            'https://sts.windows.net/72f988bf-86f1-41af-91ab-2d7cd011db47/', // ???
-            'https://sts.windows.net/cab8a31a-1906-4287-a0d8-4eef66b95f6e/', // US Gov Auth, 1.0 token
-            'https://login.microsoftonline.us/cab8a31a-1906-4287-a0d8-4eef66b95f6e/v2.0', // US Gov Auth, 2.0 token
-            'https://login.microsoftonline.us/f8cdef31-a31e-4b4a-93e4-5f571e91255a/', // Auth for US Gov, 1.0 token
-            'https://login.microsoftonline.us/f8cdef31-a31e-4b4a-93e4-5f571e91255a/v2.0', // Auth for US Gov, 2.0 token
-        ],
-        audience: undefined, // Audience validation takes place manually in code.
-        clockTolerance: 5 * 60,
-        ignoreExpiration: false,
-    };
-
     constructor(
         private readonly validateAuthority: boolean,
         private readonly toChannelFromBotLoginUrl: string,
@@ -56,7 +47,7 @@ export class ParameterizedBotFrameworkAuthentication extends BotFrameworkAuthent
         private readonly credentialsFactory: ServiceClientCredentialsFactory,
         private readonly authConfiguration: AuthenticationConfiguration,
         private readonly botFrameworkClientFetch?: (input: RequestInfo, init?: RequestInit) => Promise<Response>,
-        private readonly connectorClientOptions: ConnectorClientOptions = {},
+        private readonly connectorClientOptions: ConnectorClientOptions = {}
     ) {
         super();
     }
@@ -72,23 +63,36 @@ export class ParameterizedBotFrameworkAuthentication extends BotFrameworkAuthent
     async authenticateRequest(activity: Activity, authHeader: string): Promise<AuthenticateRequestResult> {
         const claimsIdentity = await this.JwtTokenValidation_authenticateRequest(activity, authHeader);
 
-        const outboundAudience = SkillValidation.isSkillClaim(claimsIdentity.claims) ? JwtTokenValidation.getAppIdFromClaims(claimsIdentity.claims) : this.toChannelFromBotOAuthScope;
+        const outboundAudience = SkillValidation.isSkillClaim(claimsIdentity.claims)
+            ? JwtTokenValidation.getAppIdFromClaims(claimsIdentity.claims)
+            : this.toChannelFromBotOAuthScope;
 
         const callerId = await this.generateCallerId(this.credentialsFactory, claimsIdentity, this.callerId);
 
-        var connectorFactory = new ConnectorFactoryImpl(
-            ParameterizedBotFrameworkAuthentication.getAppId(claimsIdentity),
+        const connectorFactory = new ConnectorFactoryImpl(
+            getAppId(claimsIdentity),
             this.toChannelFromBotOAuthScope,
             this.toChannelFromBotLoginUrl,
             this.validateAuthority,
             this.credentialsFactory
         );
 
-        return { audience: outboundAudience, callerId, claimsIdentity, connectorFactory };
+        return {
+            audience: outboundAudience,
+            callerId,
+            claimsIdentity,
+            connectorFactory,
+        };
     }
 
-    async authenticateStreamingRequest(authHeader: string, channelIdHeader: string): Promise<AuthenticateRequestResult> {
-        if ((typeof channelIdHeader !== 'string' || channelIdHeader.trim() === '') && !await this.credentialsFactory.isAuthenticationDisabled()) {
+    async authenticateStreamingRequest(
+        authHeader: string,
+        channelIdHeader: string
+    ): Promise<AuthenticateRequestResult> {
+        if (
+            (typeof channelIdHeader !== 'string' || channelIdHeader.trim() === '') &&
+            !(await this.credentialsFactory.isAuthenticationDisabled())
+        ) {
             throw new AuthenticationError("'authHeader' required.", StatusCodes.BAD_REQUEST);
         }
 
@@ -102,7 +106,7 @@ export class ParameterizedBotFrameworkAuthentication extends BotFrameworkAuthent
     }
 
     async createUserTokenClient(claimsIdentity: ClaimsIdentity): Promise<UserTokenClient> {
-        const appId = ParameterizedBotFrameworkAuthentication.getAppId(claimsIdentity);
+        const appId = getAppId(claimsIdentity);
         const credentials = await this.credentialsFactory.createCredentials(
             appId,
             this.toChannelFromBotOAuthScope,
@@ -110,17 +114,12 @@ export class ParameterizedBotFrameworkAuthentication extends BotFrameworkAuthent
             this.validateAuthority
         );
 
-        return new UserTokenClientImpl(
-            appId,
-            credentials,
-            this.oAuthUrl,
-            this.connectorClientOptions
-        )
+        return new UserTokenClientImpl(appId, credentials, this.oAuthUrl, this.connectorClientOptions);
     }
 
     createConnectorFactory(claimsIdentity: ClaimsIdentity): ConnectorFactory {
         return new ConnectorFactoryImpl(
-            ParameterizedBotFrameworkAuthentication.getAppId(claimsIdentity),
+            getAppId(claimsIdentity),
             this.toChannelFromBotOAuthScope,
             this.toChannelFromBotLoginUrl,
             this.validateAuthority,
@@ -136,17 +135,9 @@ export class ParameterizedBotFrameworkAuthentication extends BotFrameworkAuthent
         );
     }
 
-    static getAppId(claimsIdentity: ClaimsIdentity): string | null {
-        // For requests from channel App Id is in Audience claim of JWT token. For emulator it is in AppId claim. For
-        // unauthenticated requests we have anonymous claimsIdentity provided auth is disabled.
-        // For Activities coming from Emulator AppId claim contains the Bot's AAD AppId.
-        return claimsIdentity.getClaimValue(AuthenticationConstants.AudienceClaim)
-            ?? claimsIdentity.getClaimValue(AuthenticationConstants.AppIdClaim);
-    }
-
     private async JwtTokenValidation_authenticateRequest(
         activity: Partial<Activity>,
-        authHeader: string,
+        authHeader: string
     ): Promise<ClaimsIdentity> {
         if (!authHeader.trim()) {
             const isAuthDisabled = await this.credentialsFactory.isAuthenticationDisabled();
@@ -175,7 +166,7 @@ export class ParameterizedBotFrameworkAuthentication extends BotFrameworkAuthent
         const claimsIdentity: ClaimsIdentity = await this.JwtTokenValidation_validateAuthHeader(
             authHeader,
             activity.channelId,
-            activity.serviceUrl,
+            activity.serviceUrl
         );
 
         return claimsIdentity;
@@ -184,17 +175,13 @@ export class ParameterizedBotFrameworkAuthentication extends BotFrameworkAuthent
     private async JwtTokenValidation_validateAuthHeader(
         authHeader: string,
         channelId: string,
-        serviceUrl = '',
+        serviceUrl = ''
     ): Promise<ClaimsIdentity> {
         if (!authHeader.trim()) {
             throw new AuthenticationError("'authHeader' required.", StatusCodes.BAD_REQUEST);
         }
 
-        const identity = await this.JwtTokenValidation_authenticateToken(
-            authHeader,
-            channelId,
-            serviceUrl
-        );
+        const identity = await this.JwtTokenValidation_authenticateToken(authHeader, channelId, serviceUrl);
 
         await this.JwtTokenValidation_validateClaims(identity.claims);
 
@@ -233,10 +220,10 @@ export class ParameterizedBotFrameworkAuthentication extends BotFrameworkAuthent
 
     private async SkillValidation_authenticateChannelToken(
         authHeader: string,
-        channelId: string,
+        channelId: string
     ): Promise<ClaimsIdentity> {
         const tokenExtractor = new JwtTokenExtractor(
-            ParameterizedBotFrameworkAuthentication.SkillAndEmulatorTokenValidationParameters,
+            ToBotFromBotOrEmulatorTokenValidationParameters,
             this.toBotFromEmulatorOpenIdMetadataUrl,
             AuthenticationConstants.AllowedSigningAlgorithms
         );
@@ -310,10 +297,10 @@ export class ParameterizedBotFrameworkAuthentication extends BotFrameworkAuthent
 
     private async EmulatorValidation_authenticateEmulatorToken(
         authHeader: string,
-        channelId: string,
+        channelId: string
     ): Promise<ClaimsIdentity> {
         const tokenExtractor: JwtTokenExtractor = new JwtTokenExtractor(
-            ParameterizedBotFrameworkAuthentication.SkillAndEmulatorTokenValidationParameters,
+            ToBotFromBotOrEmulatorTokenValidationParameters,
             this.toBotFromEmulatorOpenIdMetadataUrl,
             AuthenticationConstants.AllowedSigningAlgorithms
         );
@@ -389,7 +376,7 @@ export class ParameterizedBotFrameworkAuthentication extends BotFrameworkAuthent
             );
         }
 
-        return identity;   
+        return identity;
     }
 
     private async ChannelValidation_authenticateChannelToken(
@@ -412,7 +399,7 @@ export class ParameterizedBotFrameworkAuthentication extends BotFrameworkAuthent
 
         return this.governmentChannelValidation_ValidateIdentity(identity, serviceUrl);
     }
-    
+
     private ChannelValidation_GetTokenValidationParameters(): VerifyOptions {
         return {
             issuer: [this.toBotFromChannelTokenIssuer],
@@ -420,7 +407,6 @@ export class ParameterizedBotFrameworkAuthentication extends BotFrameworkAuthent
             clockTolerance: 5 * 60,
             ignoreExpiration: false,
         };
-
     }
 
     private async governmentChannelValidation_ValidateIdentity(
@@ -443,10 +429,7 @@ export class ParameterizedBotFrameworkAuthentication extends BotFrameworkAuthent
         // Async validation.
 
         // Look for the "aud" claim, but only if issued from the Bot Framework
-        if (
-            identity.getClaimValue(AuthenticationConstants.IssuerClaim) !==
-            GovernmentConstants.ToBotFromChannelTokenIssuer
-        ) {
+        if (identity.getClaimValue(AuthenticationConstants.IssuerClaim) !== this.toBotFromChannelTokenIssuer) {
             // The relevant Audiance Claim MUST be present. Not Authorized.
             throw new AuthenticationError('Unauthorized. Issuer Claim MUST be present.', StatusCodes.UNAUTHORIZED);
         }

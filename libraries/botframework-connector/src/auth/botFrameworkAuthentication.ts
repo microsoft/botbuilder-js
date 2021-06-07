@@ -3,13 +3,13 @@
 
 import { Activity, CallerIdConstants } from 'botframework-schema';
 import { AuthenticateRequestResult } from './authenticateRequestResult';
-import { BotFrameworkClient } from '../skills';
+import type { BotFrameworkClient } from '../skills';
 import { ClaimsIdentity } from './claimsIdentity';
-import { ConnectorFactory } from '../connectorFactory';
+import type { ConnectorFactory } from './connectorFactory';
 import { JwtTokenValidation } from './jwtTokenValidation';
-import { ServiceClientCredentialsFactory } from './serviceClientCredentialsFactory';
+import type { ServiceClientCredentialsFactory } from './serviceClientCredentialsFactory';
 import { SkillValidation } from './skillValidation';
-import { UserTokenClient } from './userTokenClient';
+import type { UserTokenClient } from './userTokenClient';
 
 /**
  * Represents a Cloud Environment used to authenticate Bot Framework Protocol network calls within this environment.

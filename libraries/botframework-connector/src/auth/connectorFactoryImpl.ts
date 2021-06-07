@@ -4,12 +4,14 @@
 import { getDefaultUserAgentValue, userAgentPolicy } from '@azure/ms-rest-js';
 import { ConnectorClient } from '../connectorApi/connectorClient';
 import { ConnectorClientOptions } from '../connectorApi/models';
-import { ConnectorFactory } from '../connectorFactory';
-import { ServiceClientCredentialsFactory } from './serviceClientCredentialsFactory';
+import { ConnectorFactory } from './connectorFactory';
+import type { ServiceClientCredentialsFactory } from './serviceClientCredentialsFactory';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const packageInfo: Record<'name' | 'version', string> = require('../../package.json');
-export const USER_AGENT = `Microsoft-BotFramework/3.1 ${packageInfo.name}/${packageInfo.version} ${getDefaultUserAgentValue()} `;
+export const USER_AGENT = `Microsoft-BotFramework/3.1 ${packageInfo.name}/${
+    packageInfo.version
+} ${getDefaultUserAgentValue()} `;
 
 // Internal
 export class ConnectorFactoryImpl extends ConnectorFactory {

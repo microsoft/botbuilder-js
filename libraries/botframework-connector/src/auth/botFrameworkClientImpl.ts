@@ -18,10 +18,12 @@ const botFrameworkClientFetchImpl = async (input: RequestInfo, init?: RequestIni
     assert.string(input, ['input']);
     assert.string(init.body, ['init']);
     const activity = JSON.parse(init.body) as Activity;
-  
-    const response = await axios.post(input, activity, config);
-    return { status: response.status, json: async () => response.data } as Response;
 
+    const response = await axios.post(input, activity, config);
+    return {
+        status: response.status,
+        json: async () => response.data,
+    } as Response;
 };
 
 // Internal
@@ -29,8 +31,10 @@ export class BotFrameworkClientImpl implements BotFrameworkClient {
     constructor(
         private readonly credentialsFactory: ServiceClientCredentialsFactory,
         private readonly loginEndpoint: string,
-        private readonly botFrameworkClientFetch:
-            (input: RequestInfo, init?: RequestInit) => Promise<Response> = botFrameworkClientFetchImpl
+        private readonly botFrameworkClientFetch: (
+            input: RequestInfo,
+            init?: RequestInit
+        ) => Promise<Response> = botFrameworkClientFetchImpl
     ) {
         assert.maybeFunc(botFrameworkClientFetch, ['botFrameworkClientFetch']);
     }
@@ -90,17 +94,11 @@ export class BotFrameworkClientImpl implements BotFrameworkClient {
             }
             activity.recipient.role = RoleTypes.Skill;
 
-            const webRequest = new WebResource(
-                toUrl,
-                'POST',
-                JSON.stringify(activity),
-                undefined,
-                {
-                    Accept: 'application/json',
-                    'Content-Type': 'application/json',
-                    'User-Agent': USER_AGENT,
-                }
-            );
+            const webRequest = new WebResource(toUrl, 'POST', JSON.stringify(activity), undefined, {
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
+                'User-Agent': USER_AGENT,
+            });
             const request = await credentials.signRequest(webRequest);
 
             const config: RequestInit = {
@@ -108,7 +106,7 @@ export class BotFrameworkClientImpl implements BotFrameworkClient {
                 headers: request.headers.rawHeaders(),
             };
             const response = await this.botFrameworkClientFetch(request.url, config);
-            
+
             return { status: response.status, body: await response.json() };
         } finally {
             // Restore activity properties.
@@ -119,4 +117,3 @@ export class BotFrameworkClientImpl implements BotFrameworkClient {
         }
     }
 }
-
