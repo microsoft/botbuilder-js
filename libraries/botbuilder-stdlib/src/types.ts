@@ -395,11 +395,12 @@ function isString(val: unknown): val is string {
  *
  * @remarks
  * Implementation of string.IsNullOrEmpty(): https://docs.microsoft.com/en-us/dotnet/api/system.string.isnullorempty?view=netcore-3.1
- * @param {any} val value to test 
+ * @param {any} val value to test
+ * @returns {boolean} true if `val` is of `string` with zero length or `Nil`
  */
- function isStringNullOrEmpty(val: unknown): val is Maybe<string> {
+function isStringNullOrEmpty(val: unknown): val is Maybe<string> {
     return tests.isNil(val) || (tests.isString(val) && !val.length);
-};
+}
 
 /**
  * Assert that `val` is of type `string`.
