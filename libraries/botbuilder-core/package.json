@@ -31,6 +31,7 @@
     "botbuilder-stdlib": "4.1.6",
     "botframework-connector": "4.1.6",
     "botframework-schema": "4.1.6",
+    "runtypes": "~6.3.0",
     "uuid": "^8.3.2"
   },
   "devDependencies": {

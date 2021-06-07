@@ -31,7 +31,7 @@ const InitialSettings = z.record(z.string());
 export class DialogsBotComponent extends BotComponent {
     configureServices(services: ServiceCollection, configuration: Configuration): void {
         services.composeFactory<MemoryScope[]>('memoryScopes', (memoryScopes) => {
-            const rootConfiguration = configuration.get([]);
+            const rootConfiguration = configuration.get();
             const initialSettings = InitialSettings.check(rootConfiguration) ? rootConfiguration : undefined;
 
             return memoryScopes.concat(
