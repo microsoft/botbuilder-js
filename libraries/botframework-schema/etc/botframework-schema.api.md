@@ -192,13 +192,6 @@ export enum ActivityTypes {
 }
 
 // @public
-export interface AdaptiveCardAuthentication {
-    connectionName: string;
-    id: string;
-    token: string;
-}
-
-// @public
 export interface AdaptiveCardInvokeAction {
     data: Record<string, unknown>;
     id: string;
@@ -216,7 +209,7 @@ export interface AdaptiveCardInvokeResponse {
 // @public
 export interface AdaptiveCardInvokeValue {
     action: AdaptiveCardInvokeAction;
-    authentication: AdaptiveCardAuthentication;
+    authentication: TokenExchangeInvokeRequest;
     state: string;
 }
 
