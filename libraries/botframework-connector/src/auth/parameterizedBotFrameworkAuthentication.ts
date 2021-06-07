@@ -23,13 +23,14 @@ import { UserTokenClientImpl } from './userTokenClientImpl';
 import type { UserTokenClient } from './userTokenClient';
 import { VerifyOptions } from 'jsonwebtoken';
 
-function getAppId(claimsIdentity: ClaimsIdentity): string | null {
+function getAppId(claimsIdentity: ClaimsIdentity): string | undefined {
     // For requests from channel App Id is in Audience claim of JWT token. For emulator it is in AppId claim. For
     // unauthenticated requests we have anonymous claimsIdentity provided auth is disabled.
     // For Activities coming from Emulator AppId claim contains the Bot's AAD AppId.
     return (
         claimsIdentity.getClaimValue(AuthenticationConstants.AudienceClaim) ??
-        claimsIdentity.getClaimValue(AuthenticationConstants.AppIdClaim)
+        claimsIdentity.getClaimValue(AuthenticationConstants.AppIdClaim) ??
+        undefined
     );
 }
 

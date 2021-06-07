@@ -28,7 +28,7 @@ export class PasswordServiceClientCredentialFactory implements ServiceClientCred
         this.password = password;
     }
 
-    async isValidAppId(appId: string): Promise<boolean> {
+    async isValidAppId(appId = ''): Promise<boolean> {
         return appId === this.appId;
     }
 
