@@ -2190,7 +2190,7 @@ export interface IStatusCodeError {
  */
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface AdaptiveCardAuthentication extends TokenExchangeInvokeRequest {
-    // No-op. This class was accidentally created as a duplicate of TokenExchangeInvokeRequest but must remain for backwards-compatibility.
+    // No-op. This interface was accidentally created as a duplicate of TokenExchangeInvokeRequest but must remain for backwards-compatibility.
 }
 
 /**
