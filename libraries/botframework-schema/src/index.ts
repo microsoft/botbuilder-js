@@ -2185,6 +2185,15 @@ export interface IStatusCodeError {
 }
 
 /**
+ * Defines the structure that arrives in the Activity.Value.Authentication for Invoke
+ * activity with Name of 'adaptiveCard/action'.
+ */
+// eslint-disable-next-line @typescript-eslint/no-empty-interface
+export interface AdaptiveCardAuthentication extends TokenExchangeInvokeRequest {
+    // No-op. This class was accidentally created as a duplicate of TokenExchangeInvokeRequest but must remain for backwards-compatibility.
+}
+
+/**
  * Defines the structure that arrives in the Activity.Value.Action for Invoke
  * activity with Name of 'adaptiveCard/action'.
  */
@@ -2237,10 +2246,10 @@ export interface AdaptiveCardInvokeValue {
      */
     action: AdaptiveCardInvokeAction;
     /**
-     * The [TokenExchangeInvokeRequest](xref:botframework-schema.TokenExchangeInvokeRequest)
+     * The [AdaptiveCardAuthentication](xref:botframework-schema.AdaptiveCardAuthentication)
      * for this adaptive card invoke action value.
      */
-    authentication: TokenExchangeInvokeRequest;
+    authentication: AdaptiveCardAuthentication;
     /**
      * The 'state' or magic code for an OAuth flow.
      */
