@@ -51,7 +51,6 @@ export function supportsCardActions(channelId: string, buttonCnt = 100): boolean
         case Channels.Directline:
         case Channels.DirectlineSpeech:
         case Channels.Webchat:
-        case Channels.Cortana:
             return buttonCnt <= 100;
         default:
             return false;
@@ -60,15 +59,16 @@ export function supportsCardActions(channelId: string, buttonCnt = 100): boolean
 
 /**
  * @private
- * @param channelId id of a channel
+ * @param _channelId id of a channel
  */
-export function hasMessageFeed(channelId: string): boolean {
-    switch (channelId) {
-        case Channels.Cortana:
-            return false;
-        default:
-            return true;
-    }
+export function hasMessageFeed(_channelId: string): boolean {
+    // The removed 'cortana' channel was the only channel that returned false.
+    // This channel is no longer available for bot developers and was removed from
+    // the Channels enum while addressing issue #3603.
+    // Though it's marked as private in the docstring, the contents of channel.ts
+    // are publically available but not documented in the official reference docs.
+    // Thus, the method is retained.
+    return true;
 }
 
 /**
