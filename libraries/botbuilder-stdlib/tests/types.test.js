@@ -110,6 +110,12 @@ describe('assertType', function () {
                 new TypeError('`val` is of wrong type')
             );
         });
+
+        it('isStringNullOrEmpty works', function () {
+            assert(tests.isStringNullOrEmpty(''));
+            assert(tests.isStringNullOrEmpty(undefined));
+            assert(!tests.isStringNullOrEmpty(2));
+        });
     });
 
     describe('partial', function () {

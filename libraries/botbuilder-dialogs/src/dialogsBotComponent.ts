@@ -31,7 +31,7 @@ const InitialSettings = t.Dictionary(t.Unknown, t.String);
 export class DialogsBotComponent extends BotComponent {
     configureServices(services: ServiceCollection, configuration: Configuration): void {
         services.composeFactory<MemoryScope[]>('memoryScopes', (memoryScopes) => {
-            const rootConfiguration = configuration.get([]);
+            const rootConfiguration = configuration.get();
             const initialSettings = InitialSettings.guard(rootConfiguration) ? rootConfiguration : undefined;
 
             return memoryScopes.concat(
