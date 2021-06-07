@@ -45,7 +45,7 @@ export class AzureBlobTranscriptStore implements TranscriptStore {
      *
      * @param settings Settings required for configuring an instance of BlobStorage
      */
-    public constructor(settings: BlobStorageSettings) {
+    constructor(settings: BlobStorageSettings) {
         if (!settings) {
             throw new Error('The settings parameter is required.');
         }
@@ -67,7 +67,7 @@ export class AzureBlobTranscriptStore implements TranscriptStore {
      *
      * @param activity Activity being logged.
      */
-    public async logActivity(activity: Activity): Promise<void> {
+    async logActivity(activity: Activity): Promise<void> {
         if (!activity) {
             throw new Error('Missing activity.');
         }
@@ -98,7 +98,7 @@ export class AzureBlobTranscriptStore implements TranscriptStore {
      * @param continuationToken Continuation token to page through results.
      * @param startDate Earliest time to include.
      */
-    public async getTranscriptActivities(
+    async getTranscriptActivities(
         channelId: string,
         conversationId: string,
         continuationToken?: string,
@@ -144,7 +144,7 @@ export class AzureBlobTranscriptStore implements TranscriptStore {
      * @param channelId Channel Id.
      * @param continuationToken ContinuationToken token to page through results.
      */
-    public async listTranscripts(channelId: string, continuationToken?: string): Promise<PagedResult<TranscriptInfo>> {
+    async listTranscripts(channelId: string, continuationToken?: string): Promise<PagedResult<TranscriptInfo>> {
         if (!channelId) {
             throw new Error('Missing channelId');
         }
@@ -177,7 +177,7 @@ export class AzureBlobTranscriptStore implements TranscriptStore {
      * @param channelId Channel Id where conversation took place.
      * @param conversationId Id of the conversation to delete.
      */
-    public async deleteTranscript(channelId: string, conversationId: string): Promise<void> {
+    async deleteTranscript(channelId: string, conversationId: string): Promise<void> {
         if (!channelId) {
             throw new Error('Missing channelId');
         }

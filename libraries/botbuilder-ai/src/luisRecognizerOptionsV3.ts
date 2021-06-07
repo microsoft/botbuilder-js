@@ -62,7 +62,7 @@ export class LuisRecognizerV3 extends LuisRecognizerInternal {
         };
     }
 
-    public predictionOptions: LuisRecognizerOptionsV3;
+    predictionOptions: LuisRecognizerOptionsV3;
 
     /**
      * Calls LUIS to recognize intents and entities in a users utterance.

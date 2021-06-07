@@ -343,12 +343,12 @@ export class LuisRecognizer implements LuisRecognizerTelemetryClient {
     }
 
     // Gets a value indicating whether determines whether to log personal information that came from the user.
-    public get logPersonalInformation(): boolean {
+    get logPersonalInformation(): boolean {
         return this._logPersonalInformation;
     }
 
     // Gets the currently configured botTelemetryClient that logs the events.
-    public get telemetryClient(): BotTelemetryClient {
+    get telemetryClient(): BotTelemetryClient {
         return this._telemetryClient;
     }
 
@@ -360,7 +360,7 @@ export class LuisRecognizer implements LuisRecognizerTelemetryClient {
      * @param {number} minScore (Optional) minimum score needed for an intent to be considered as a top intent. If all intents in the set are below this threshold then the `defaultIntent` will be returned.  Defaults to a value of `0.0`.
      * @returns {string} the top intent
      */
-    public static topIntent(results?: RecognizerResult, defaultIntent = 'None', minScore = 0): string {
+    static topIntent(results?: RecognizerResult, defaultIntent = 'None', minScore = 0): string {
         const sortedIntents = this.sortedIntents(results, minScore);
         const topIntent = sortedIntents[0];
         return topIntent?.intent || defaultIntent; // Note: `||` is intentionally not `??` and is covered by tests
@@ -374,7 +374,7 @@ export class LuisRecognizer implements LuisRecognizerTelemetryClient {
      * @param {number} minScore minimum score threshold, lower score results will be filtered
      * @returns {Array<{intent: string; score: number}>} sorted result intents
      */
-    public static sortedIntents(result?: RecognizerResult, minScore = 0): Array<{ intent: string; score: number }> {
+    static sortedIntents(result?: RecognizerResult, minScore = 0): Array<{ intent: string; score: number }> {
         return Object.entries(result?.intents ?? {})
             .map(([intent, { score = 0 }]) => ({ intent, score }))
             .filter(({ score }) => score > minScore)
@@ -423,7 +423,7 @@ export class LuisRecognizer implements LuisRecognizerTelemetryClient {
      * @param {LuisRecognizerOptionsV2 | LuisRecognizerOptionsV3 | LuisPredictionOptions} options (Optional) options object used to override control predictions. Should conform to the [LuisRecognizerOptionsV2] or [LuisRecognizerOptionsV3] definition.
      * @returns {Promise<RecognizerResult>} A promise that resolved to the recognizer result.
      */
-    public async recognize(
+    async recognize(
         context: DialogContext | TurnContext,
         telemetryProperties?: Record<string, string>,
         telemetryMetrics?: Record<string, number>,
@@ -436,7 +436,7 @@ export class LuisRecognizer implements LuisRecognizerTelemetryClient {
      * @param {string} utterance The utterance to be recognized.
      * @param {LuisRecognizerOptionsV2 | LuisRecognizerOptionsV3 | LuisPredictionOptions} options (Optional) options object used to override control predictions. Should conform to the [LuisRecognizerOptionsV2] or [LuisRecognizerOptionsV3] definition.
      */
-    public async recognize(
+    async recognize(
         utterance: string,
         options?: LuisRecognizerOptionsV2 | LuisRecognizerOptionsV3 | LuisPredictionOptions
     ): Promise<RecognizerResult>;
@@ -444,7 +444,7 @@ export class LuisRecognizer implements LuisRecognizerTelemetryClient {
     /**
      * @internal
      */
-    public async recognize(
+    async recognize(
         contextOrUtterance: DialogContext | TurnContext | string,
         maybeTelemetryPropertiesOrOptions?:
             | Record<string, string>

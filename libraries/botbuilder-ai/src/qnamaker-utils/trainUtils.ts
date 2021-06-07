@@ -33,7 +33,7 @@ export class TrainUtils {
      *
      * @param {FeedbackRecords} feedbackRecords Feedback record list.
      */
-    public async callTrain(feedbackRecords: FeedbackRecords): Promise<void> {
+    async callTrain(feedbackRecords: FeedbackRecords): Promise<void> {
         if (!feedbackRecords) {
             throw new TypeError('Feedback records can not be null.');
         }

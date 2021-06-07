@@ -20,7 +20,7 @@ export class QnACardBuilder {
      * @param {string} cardNoMatchText Text for button to be added to card to allow user to select 'no match'.
      * @returns {Partial<Activity>} Activity representing the suggestions as a card
      */
-    public static getSuggestionsCard(
+    static getSuggestionsCard(
         suggestionsList: string[],
         cardTitle: string,
         cardNoMatchText: string
@@ -65,7 +65,7 @@ export class QnACardBuilder {
      * @param {QnAMakerResult} result QnAMaker result containing the answer text and multi turn prompts to be displayed.
      * @returns {Partial<Activity>} Activity representing the prompts as a card
      */
-    public static getQnAPromptsCard(result: QnAMakerResult): Partial<Activity> {
+    static getQnAPromptsCard(result: QnAMakerResult): Partial<Activity> {
         if (!result) {
             throw new Error('Missing QnAMaker result');
         }

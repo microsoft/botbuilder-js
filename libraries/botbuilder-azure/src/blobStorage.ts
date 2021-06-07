@@ -116,7 +116,7 @@ export class BlobStorage implements Storage {
      *
      * @param settings Settings for configuring an instance of BlobStorage.
      */
-    public constructor(settings: BlobStorageSettings) {
+    constructor(settings: BlobStorageSettings) {
         if (!settings) {
             throw new Error('The settings parameter is required.');
         }
@@ -144,7 +144,7 @@ export class BlobStorage implements Storage {
      * @param keys An array of entity keys.
      * @returns The read items.
      */
-    public read(keys: string[]): Promise<StoreItems> {
+    read(keys: string[]): Promise<StoreItems> {
         if (!keys) {
             throw new Error('Please provide at least one key to read from storage.');
         }
@@ -205,7 +205,7 @@ export class BlobStorage implements Storage {
      *
      * @param changes The changes to write to storage.
      */
-    public write(changes: StoreItems): Promise<void> {
+    write(changes: StoreItems): Promise<void> {
         if (!changes) {
             throw new Error('Please provide a StoreItems with changes to persist.');
         }
@@ -269,7 +269,7 @@ export class BlobStorage implements Storage {
      *
      * @param keys An array of entity keys.
      */
-    public delete(keys: string[]): Promise<void> {
+    delete(keys: string[]): Promise<void> {
         if (!keys) {
             throw new Error('Please provide at least one key to delete from storage.');
         }

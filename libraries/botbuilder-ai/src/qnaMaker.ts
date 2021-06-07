@@ -178,12 +178,12 @@ export class QnAMaker implements QnAMakerClient, QnAMakerTelemetryClient {
     }
 
     // Gets a value indicating whether determines whether to log personal information that came from the user.
-    public get logPersonalInformation(): boolean {
+    get logPersonalInformation(): boolean {
         return this._logPersonalInformation;
     }
 
     // Gets the currently configured botTelemetryClient that logs the events.
-    public get telemetryClient(): BotTelemetryClient {
+    get telemetryClient(): BotTelemetryClient {
         return this._telemetryClient;
     }
 
@@ -202,7 +202,7 @@ export class QnAMaker implements QnAMakerClient, QnAMakerTelemetryClient {
      * @param {object} telemetryMetrics Additional metrics to be logged to telemetry with the QnaMessage event.
      * @returns {Promise<QnAMakerResult>} A promise resolving to the QnAMaker result
      */
-    public async getAnswers(
+    async getAnswers(
         context: TurnContext,
         options?: QnAMakerOptions,
         telemetryProperties?: { [key: string]: string },
@@ -230,7 +230,7 @@ export class QnAMaker implements QnAMakerClient, QnAMakerTelemetryClient {
      * @param {object} telemetryMetrics Optional. Additional metrics to be logged to telemetry with the QnaMessage event.
      * @returns {Promise<QnAMakerResults>} A list of answers for the user query, sorted in decreasing order of ranking score.
      */
-    public async getAnswersRaw(
+    async getAnswersRaw(
         context: TurnContext,
         options?: QnAMakerOptions,
         telemetryProperties?: { [key: string]: string },
@@ -287,7 +287,7 @@ export class QnAMaker implements QnAMakerClient, QnAMakerTelemetryClient {
      * @param {TurnContext} context Context for the current turn of conversation with the user.
      * @returns {Promise<boolean>} A promise resolving to true if an answer was sent
      */
-    public async answer(context: TurnContext): Promise<boolean> {
+    async answer(context: TurnContext): Promise<boolean> {
         if (!context) {
             throw new TypeError('QnAMaker.answer() requires a TurnContext.');
         }
@@ -320,7 +320,7 @@ export class QnAMaker implements QnAMakerClient, QnAMakerTelemetryClient {
      * @param {number} scoreThreshold (Optional) minimum answer score needed to be considered a match to questions. Defaults to a value of `0.001`.
      * @returns {Promise<QnAMakerResult[]>} A promise resolving to the QnAMaker results
      */
-    public async generateAnswer(
+    async generateAnswer(
         question: string | undefined,
         top?: number,
         scoreThreshold?: number
@@ -351,7 +351,7 @@ export class QnAMaker implements QnAMakerClient, QnAMakerTelemetryClient {
      * @param {QnAMakerResult[]} queryResult User query output.
      * @returns {QnAMakerResult[]} the filtered results
      */
-    public getLowScoreVariation(queryResult: QnAMakerResult[]): QnAMakerResult[] {
+    getLowScoreVariation(queryResult: QnAMakerResult[]): QnAMakerResult[] {
         return ActiveLearningUtils.getLowScoreVariation(queryResult);
     }
 
@@ -361,7 +361,7 @@ export class QnAMaker implements QnAMakerClient, QnAMakerTelemetryClient {
      * @param {FeedbackRecords} feedbackRecords Feedback records.
      * @returns {Promise<void>} A promise representing the async operation
      */
-    public callTrain(feedbackRecords: FeedbackRecords): Promise<void> {
+    callTrain(feedbackRecords: FeedbackRecords): Promise<void> {
         return this.trainUtils.callTrain(feedbackRecords);
     }
 

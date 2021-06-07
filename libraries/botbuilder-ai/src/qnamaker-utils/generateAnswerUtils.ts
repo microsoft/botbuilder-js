@@ -47,7 +47,7 @@ export class GenerateAnswerUtils {
      * @param {QnAMakerOptions} options (Optional) The options for the QnA Maker knowledge base. If null, constructor option is used for this instance.
      * @returns {Promise<QnAMakerResult[]>} a promise that resolves to the query results
      */
-    public async queryQnaService(
+    async queryQnaService(
         endpoint: QnAMakerEndpoint,
         question: string,
         options?: QnAMakerOptions
@@ -65,7 +65,7 @@ export class GenerateAnswerUtils {
      * @param {QnAMakerOptions} options (Optional) The options for the QnA Maker knowledge base. If null, constructor option is used for this instance.
      * @returns {Promise<QnAMakerResult[]>} a promise that resolves to the raw query results
      */
-    public async queryQnaServiceRaw(
+    async queryQnaServiceRaw(
         endpoint: QnAMakerEndpoint,
         question: string,
         options?: QnAMakerOptions
@@ -104,7 +104,7 @@ export class GenerateAnswerUtils {
      * @param {QnAMakerOptions} queryOptions (Optional) The options for the QnA Maker knowledge base. If null, constructor option is used for this instance.
      * @returns {Promise<any>} a promise representing the async operation
      */
-    public async emitTraceInfo(
+    async emitTraceInfo(
         turnContext: TurnContext,
         answers: QnAMakerResult[],
         queryOptions?: QnAMakerOptions
@@ -139,7 +139,7 @@ export class GenerateAnswerUtils {
      *
      * @param {QnAMakerOptions} options The options for the QnA Maker knowledge base. If null, constructor option is used for this instance.
      */
-    public validateOptions(options: QnAMakerOptions): void {
+    validateOptions(options: QnAMakerOptions): void {
         const { scoreThreshold, top } = options;
 
         if (scoreThreshold) {
@@ -159,7 +159,7 @@ export class GenerateAnswerUtils {
      * @param {QnAMakerOptions} queryOptions (Optional) The options for the QnA Maker knowledge base. If null, constructor option is used for this instance.
      * @returns {QnAMakerResult[]} the sorted and filtered results
      */
-    public static sortAnswersWithinThreshold(
+    static sortAnswersWithinThreshold(
         answers: QnAMakerResult[] = [] as QnAMakerResult[],
         queryOptions: QnAMakerOptions
     ): QnAMakerResult[] {
