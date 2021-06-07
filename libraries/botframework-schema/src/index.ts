@@ -4,6 +4,7 @@
  */
 
 import { Assertion, Nil, assert, Test } from 'botbuilder-stdlib';
+import { TokenExchangeInvokeRequest } from './tokenExchangeInvokeRequest';
 
 export * from './activityInterfaces';
 export * from './activityEx';
@@ -2184,25 +2185,6 @@ export interface IStatusCodeError {
 }
 
 /**
- * Defines the structure that arrives in the Activity.Value.Authentication for Invoke
- * activity with Name of 'adaptiveCard/action'.
- */
-export interface AdaptiveCardAuthentication {
-    /**
-     * The id of this adaptive card invoke action value's 'authentication'.
-     */
-    id: string;
-    /**
-     * The connection name of the adaptive card authentication.
-     */
-    connectionName: string;
-    /**
-     * The token of the adaptive card authentication.
-     */
-    token: string;
-}
-
-/**
  * Defines the structure that arrives in the Activity.Value.Action for Invoke
  * activity with Name of 'adaptiveCard/action'.
  */
@@ -2255,10 +2237,10 @@ export interface AdaptiveCardInvokeValue {
      */
     action: AdaptiveCardInvokeAction;
     /**
-     * The [AdaptiveCardAuthentication](xref:botframework-schema.AdaptiveCardAuthentication)
+     * The [TokenExchangeInvokeRequest](xref:botframework-schema.TokenExchangeInvokeRequest)
      * for this adaptive card invoke action value.
      */
-    authentication: AdaptiveCardAuthentication;
+    authentication: TokenExchangeInvokeRequest;
     /**
      * The 'state' or magic code for an OAuth flow.
      */
