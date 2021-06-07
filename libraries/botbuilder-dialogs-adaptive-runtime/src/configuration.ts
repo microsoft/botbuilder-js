@@ -40,9 +40,9 @@ export class Configuration implements CoreConfiguration {
      * @param path path to value
      * @returns the value, or undefined
      */
-    get(path: string[]): unknown | undefined {
+    get<T = unknown>(path?: string[]): T | undefined {
         // Note: empty path should yield the entire configuration
-        if (!path.length) {
+        if (!path?.length) {
             return this.provider.get();
         }
 

@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-import { ConnectorClient } from './connectorApi/connectorClient';
+import { ConnectorClient } from '../connectorApi/connectorClient';
 
 export abstract class ConnectorFactory {
     /**
