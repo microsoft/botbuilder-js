@@ -641,7 +641,6 @@ export class OAuthPrompt extends Dialog {
      */
     private static channelSupportsOAuthCard(channelId: string): boolean {
         switch (channelId) {
-            case Channels.Cortana:
             case Channels.Skype:
             case Channels.Skypeforbusiness:
                 return false;

@@ -2137,7 +2137,6 @@ export enum SemanticActionStateTypes {
 export enum Channels {
     Alexa = 'alexa',
     Console = 'console',
-    Cortana = 'cortana',
     Directline = 'directline',
     DirectlineSpeech = 'directlinespeech',
     Email = 'email',
