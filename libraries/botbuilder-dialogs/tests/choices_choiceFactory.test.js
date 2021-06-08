@@ -8,20 +8,14 @@ function assertActivity(received, expected) {
         const v = received[key];
         assert(v !== undefined, `Activity.${key} missing.`);
         const ev = expected[key];
-        assert(typeof v === typeof ev, `Activity.${key} has invalid type of '${typeof v}'.`);
+        assert.strictEqual(typeof v, typeof ev);
         if (Array.isArray(ev)) {
-            assert(v.length === ev.length, `Activity.${key} has invalid length of '${v.length}'.`);
-            assert(
-                JSON.stringify(v) === JSON.stringify(ev),
-                `Activity.${key} has invalid contents: ` + JSON.stringify(v)
-            );
+            assert.strictEqual(v.length, ev.length);
+            assert.strictEqual(JSON.stringify(v), JSON.stringify(ev));
         } else if (typeof ev === 'object') {
-            assert(
-                JSON.stringify(v) === JSON.stringify(ev),
-                `Activity.${key} has invalid contents: ` + JSON.stringify(v)
-            );
+            assert.strictEqual(JSON.stringify(v), JSON.stringify(ev));
         } else {
-            assert(v === ev, `Activity.${key} has invalid value of '${v}'.`);
+            assert.strictEqual(v, ev);
         }
     }
 }
@@ -112,17 +106,14 @@ const choicesWithPostBacks = [
     },
 ];
 
-function assertChoices(choices, actionValues, actionType = 'imBack') {
-    assert(choices.length === actionValues.length, 'test data prepared incorrectly.');
+function assertChoices(choices, actionValues, actionType = ActionTypes.ImBack) {
+    assert.strictEqual(choices.length, actionValues.length);
     for (let i = 0; i < choices.length; i++) {
         const choice = choices[i];
         const val = actionValues[i];
-        assert(
-            choice.action.type === actionType,
-            `Expected action.type === ${actionType}, received ${choice.action.type}`
-        );
-        assert(choice.action.value === val, `Expected action.value === ${val}, received ${choice.action.value}`);
-        assert(choice.action.title === val, `Expected action.title === ${val}, received ${choice.action.title}`);
+        assert.strictEqual(choice.action.type, actionType);
+        assert.strictEqual(choice.action.value, val);
+        assert.strictEqual(choice.action.title, val);
     }
 }
 
@@ -157,10 +148,7 @@ describe('The ChoiceFactory', function () {
 
     it('should suggest the same action when a suggested action is provided', function () {
         const activity = ChoiceFactory.suggestedAction([{ value: 'Signin', action: { type: ActionTypes.Signin } }]);
-        assert.ok(
-            activity.suggestedActions.actions[0].type === ActionTypes.Signin,
-            `Expected the suggestion action to be ${ActionTypes.Signin} but got: ${activity.suggestedActions.actions[0].type}`
-        );
+        assert.strictEqual(activity.suggestedActions.actions[0].type, ActionTypes.Signin);
     });
 
     it('should use hero cards for channels that do not support choices (i.e. Teams)', function () {
@@ -249,6 +237,6 @@ describe('The ChoiceFactory', function () {
 
     it('should return a stylized list.', function () {
         const listActivity = ChoiceFactory.forChannel('emulator', ['choiceTitleOverTwentyChars'], 'Test');
-        assert(listActivity.text === 'Test\n\n   1. choiceTitleOverTwentyChars');
+        assert.strictEqual(listActivity.text, 'Test\n\n   1. choiceTitleOverTwentyChars');
     });
 });

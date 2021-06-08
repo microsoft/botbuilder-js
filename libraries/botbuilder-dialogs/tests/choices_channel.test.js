@@ -6,92 +6,75 @@ describe('channel methods', function () {
     this.timeout(5000);
 
     it('should return true for supportsSuggestedActions() with line and 13', function () {
-        const validNumOfSuggestedActions = supportsSuggestedActions('line', 13);
-        assert(validNumOfSuggestedActions, 'returned false.');
+        assert(supportsSuggestedActions(Channels.Line, 13));
     });
 
     it('should return false for supportsSuggestedActions() with line and 14', function () {
-        const validNumOfSuggestedActions = supportsSuggestedActions('line', 14);
-        assert(validNumOfSuggestedActions === false, 'returned true.');
+        assert.strictEqual(supportsSuggestedActions(Channels.Line, 14), false);
     });
 
     it('should return true for supportsSuggestedActions() with skype and 10', function () {
-        const validNumOfSuggestedActions = supportsSuggestedActions('skype', 10);
-        assert(validNumOfSuggestedActions, 'returned false.');
+        assert(supportsSuggestedActions(Channels.Skype, 10));
     });
 
     it('should return false for supportsSuggestedActions() with skype and 11', function () {
-        const validNumOfSuggestedActions = supportsSuggestedActions('skype', 11);
-        assert(validNumOfSuggestedActions === false, 'returned true.');
+        assert.strictEqual(supportsSuggestedActions(Channels.Skype, 11), false);
     });
 
     it('should return true for supportsSuggestedActions() with kik and 20', function () {
-        const validNumOfSuggestedActions = supportsSuggestedActions('kik', 20);
-        assert(validNumOfSuggestedActions, 'returned false.');
+        assert(supportsSuggestedActions(Channels.Kik, 20));
     });
 
     it('should return false for supportsSuggestedActions() with kik and 21', function () {
-        const validNumOfSuggestedActions = supportsSuggestedActions('kik', 21);
-        assert(validNumOfSuggestedActions === false, 'returned true.');
+        assert.strictEqual(supportsSuggestedActions(Channels.Kik, 21), false);
     });
 
     it('should return true for supportsSuggestedActions() with emulator and 100', function () {
-        const validNumOfSuggestedActions = supportsSuggestedActions('emulator', 100);
-        assert(validNumOfSuggestedActions, 'returned false.');
+        assert(supportsSuggestedActions(Channels.Emulator, 100));
     });
 
     it('should return false for supportsSuggestedActions() with emulator and 101', function () {
-        const validNumOfSuggestedActions = supportsSuggestedActions('emulator', 101);
-        assert(validNumOfSuggestedActions === false, 'returned true.');
+        assert.strictEqual(supportsSuggestedActions(Channels.Emulator, 101), false);
     });
 
     it('should return true for supportsCardActions() with line and 99', function () {
-        const validNumOfCardActions = supportsCardActions('line', 99);
-        assert(validNumOfCardActions, 'returned false.');
+        assert(supportsCardActions(Channels.Line, 99));
     });
 
     it('should return false for supportsCardActions() with line and 100', function () {
-        const validNumOfCardActions = supportsCardActions('line', 100);
-        assert(validNumOfCardActions === false, 'returned false.');
+        assert.strictEqual(supportsCardActions(Channels.Line, 100), false);
     });
 
     it('should return false for supportsCardActions() with slack and 101', function () {
-        const validNumOfCardActions = supportsCardActions('slack', 101);
-        assert(validNumOfCardActions === false, 'returned true.');
+        assert.strictEqual(supportsCardActions(Channels.Slack, 101), false);
     });
 
     it('should return true for supportsCardActions() with skype and 3', function () {
-        const validNumOfCardActions = supportsCardActions('skype', 3);
-        assert(validNumOfCardActions, 'returned false.');
+        assert(supportsCardActions(Channels.Skype, 3));
     });
 
     it('should return false for supportsCardActions() with skype and 5', function () {
-        const validNumOfCardActions = supportsCardActions('skype', 5);
-        assert(validNumOfCardActions === false, 'returned true.');
+        assert.strictEqual(supportsCardActions(Channels.Skype, 5), false);
     });
 
     it('should return the channelId from context.activity.', function () {
-        const channel = getChannelId({ activity: { channelId: 'facebook' } });
-        assert(channel === 'facebook', 'expected "facebook", instead received ${channel}');
+        assert.strictEqual(getChannelId({ activity: { channelId: Channels.Facebook } }), Channels.Facebook);
     });
 
     it('should return true for any channel', function () {
-        assert(hasMessageFeed('directline'));
+        assert(hasMessageFeed(Channels.Directline));
     });
 
     it('should return an empty string if context.activity.channelId is falsey.', function () {
-        const channel = getChannelId({ activity: {} });
-        assert(channel === '', 'expected "", instead received ${channel}');
+        assert.strictEqual(getChannelId({ activity: {} }), '');
     });
 
     // "directlinespeech" tests
     it('should return true for supportsSuggestedActions() with directlinespeech and 100', function () {
-        const validNumOfSuggestedActions = supportsSuggestedActions(Channels.DirectlineSpeech, 100);
-        assert(validNumOfSuggestedActions, 'returned false.');
+        assert(supportsSuggestedActions(Channels.DirectlineSpeech, 100));
     });
 
     it('should return true for supportsCardActions() with directlinespeech and 100', function () {
-        const validNumOfCardActions = supportsCardActions(Channels.DirectlineSpeech, 100);
-        assert(validNumOfCardActions, 'returned false.');
+        assert(supportsCardActions(Channels.DirectlineSpeech, 100));
     });
 });
