@@ -20,7 +20,7 @@ export class DoOnce<T> {
      * @param key Key of the task.
      * @param fn Function to perform.
      */
-    public waitFor(key: string, fn: () => Promise<T>): Promise<T> {
+    waitFor(key: string, fn: () => Promise<T>): Promise<T> {
         if (!this.task[key]) {
             this.task[key] = fn();
         }

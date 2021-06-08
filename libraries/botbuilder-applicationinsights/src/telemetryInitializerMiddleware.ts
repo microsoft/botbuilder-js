@@ -32,7 +32,7 @@ export class TelemetryInitializerMiddleware implements Middleware {
      *
      * @returns whether or not to log activity telemetry
      */
-    public get logActivityTelemetry(): boolean {
+    get logActivityTelemetry(): boolean {
         return this._logActivityTelemetry;
     }
 
@@ -41,7 +41,7 @@ export class TelemetryInitializerMiddleware implements Middleware {
      *
      * @returns telemetry logger middleware
      */
-    public get telemetryClient(): TelemetryLoggerMiddleware {
+    get telemetryClient(): TelemetryLoggerMiddleware {
         return this._telemetryLoggerMiddleware;
     }
 
@@ -67,7 +67,7 @@ export class TelemetryInitializerMiddleware implements Middleware {
      * @param context The context object for this turn.
      * @param next The delegate to call to continue the bot middleware pipeline
      */
-    public async onTurn(context: TurnContext, next: () => Promise<void>): Promise<void> {
+    async onTurn(context: TurnContext, next: () => Promise<void>): Promise<void> {
         if (context === null) {
             throw new Error('context is null');
         }

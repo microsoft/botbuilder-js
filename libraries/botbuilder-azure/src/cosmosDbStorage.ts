@@ -101,7 +101,7 @@ export class CosmosDbStorage implements Storage {
      * @param settings Setting to configure the provider.
      * @param connectionPolicyConfigurator (Optional) An optional delegate that accepts a ConnectionPolicy for customizing policies. More information at http://azure.github.io/azure-documentdb-node/global.html#ConnectionPolicy
      */
-    public constructor(
+    constructor(
         settings: CosmosDbStorageSettings,
         connectionPolicyConfigurator: (policy: ConnectionPolicy) => void = null
     ) {
@@ -153,7 +153,7 @@ export class CosmosDbStorage implements Storage {
      * @param keys Keys of the items to read from the store.
      * @returns The read items.
      */
-    public read(keys: string[]): Promise<StoreItems> {
+    read(keys: string[]): Promise<StoreItems> {
         if (!keys || keys.length === 0) {
             // No keys passed in, no result to return.
             return Promise.resolve({});
@@ -224,7 +224,7 @@ export class CosmosDbStorage implements Storage {
      *
      * @param changes Items to write to storage, indexed by key.
      */
-    public write(changes: StoreItems): Promise<void> {
+    write(changes: StoreItems): Promise<void> {
         if (!changes || Object.keys(changes).length === 0) {
             return Promise.resolve();
         }
@@ -285,7 +285,7 @@ export class CosmosDbStorage implements Storage {
      *
      * @param keys Keys of the items to remove from the store.
      */
-    public delete(keys: string[]): Promise<void> {
+    delete(keys: string[]): Promise<void> {
         if (!keys || keys.length === 0) {
             return Promise.resolve();
         }
