@@ -41,7 +41,7 @@ const TypedOptions = t.Record({
      *
      * Other values result in a custom authentication configuration derived from the values passed in on the [ConfigurationBotFrameworkAuthenticationOptions](xef:botbuilder-core.ConfigurationBotFrameworkAuthenticationOptions) instance.
      */
-    [AuthenticationConstants.ChannelService]: t.String,
+    [AuthenticationConstants.ChannelService]: t.Optional(t.Union(t.String, t.Null)),
 
     /**
      * Flag indicating whether or not to validate the address.
@@ -153,7 +153,7 @@ export class ConfigurationBotFrameworkAuthentication extends BotFrameworkAuthent
                     new ConfigurationServiceClientCredentialFactory(
                         typedBotFrameworkAuthConfig as ConfigurationServiceClientCredentialFactoryOptions
                     ),
-                authConfiguration ?? ({} as AuthenticationConfiguration),
+                authConfiguration ?? { requiredEndorsements: [] },
                 botFrameworkClientFetch,
                 connectorClientOptions
             );
