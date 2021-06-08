@@ -25,7 +25,7 @@ export class DialogContextError extends Error {
      * @param {DialogContext} dialogContext Dialog context that is the source of the error.
      */
     public constructor(public readonly error: Error | string, dialogContext: DialogContext) {
-        super(error instanceof Error ? error.message : error);
+        super();
 
         if (!(error instanceof Error) && typeof error !== 'string') {
             throw new Error('`error` argument must be an Error or a string');
@@ -36,6 +36,7 @@ export class DialogContextError extends Error {
         }
 
         this.name = 'DialogContextError';
+        this.message = error instanceof Error ? error.message : error;
 
         this.dialogContext = {
             activeDialog: dialogContext.activeDialog?.id,
