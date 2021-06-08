@@ -8,7 +8,7 @@
 
 import { Activity, AttachmentData, ConversationParameters, StatusCodes, Transcript } from 'botbuilder-core';
 
-import { ChannelServiceHandlerBase } from './channelServiceHandlerBase';
+import type { ChannelServiceHandlerBase } from './channelServiceHandlerBase';
 import { StatusCodeError } from './statusCodeError';
 import { WebRequest, WebResponse } from './interfaces';
 

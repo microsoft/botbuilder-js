@@ -21,18 +21,17 @@ import {
     ConfigurationServiceClientCredentialFactoryOptions,
 } from './configurationServiceClientCredentialFactory';
 import * as t from 'runtypes';
-import { ValidationError } from 'runtypes';
 
 const TypedOptions = t.Record({
     /**
      * (Optional) The OAuth URL used to get a token from OAuthApiClient. The "OAuthUrl" member takes precedence over this value.
      */
-    [AuthenticationConstants.OAuthUrlKey]: t.String.nullable().optional(),
+    [AuthenticationConstants.OAuthUrlKey]: t.Optional(t.Union(t.String, t.Null)),
 
     /**
      * (Optional) The OpenID metadata document used for authenticating tokens coming from the channel. The "ToBotFromChannelOpenIdMetadataUrl" member takes precedence over this value.
      */
-    [AuthenticationConstants.BotOpenIdMetadataKey]: t.String.nullable().optional(),
+    [AuthenticationConstants.BotOpenIdMetadataKey]: t.Optional(t.Union(t.String, t.Null)),
 
     /**
      * A string used to indicate if which cloud the bot is operating in (e.g. Public Azure or US Government).
@@ -42,12 +41,12 @@ const TypedOptions = t.Record({
      *
      * Other values result in a custom authentication configuration derived from the values passed in on the [ConfigurationBotFrameworkAuthenticationOptions](xef:botbuilder-core.ConfigurationBotFrameworkAuthenticationOptions) instance.
      */
-    [AuthenticationConstants.ChannelService]: t.String.nullable().optional(),
+    [AuthenticationConstants.ChannelService]: t.String,
 
     /**
      * Flag indicating whether or not to validate the address.
      */
-    ValidateAuthority: t.String.Or(t.Boolean),
+    ValidateAuthority: t.Union(t.String, t.Boolean),
 
     /**
      * The Login URL used to specify the tenant from which the bot should obtain access tokens from.
@@ -109,60 +108,62 @@ export class ConfigurationBotFrameworkAuthentication extends BotFrameworkAuthent
      * @param connectorClientOptions A [ConnectorClientOptions](xref:botframework-connector.ConnectorClientOptions) object.
      */
     constructor(
-        botFrameworkAuthConfig: Partial<ConfigurationBotFrameworkAuthenticationOptions>,
+        botFrameworkAuthConfig: Partial<ConfigurationBotFrameworkAuthenticationOptions> = {},
         credentialsFactory?: ServiceClientCredentialsFactory,
         authConfiguration?: AuthenticationConfiguration,
         botFrameworkClientFetch?: (input: RequestInfo, init?: RequestInit) => Promise<Response>,
         connectorClientOptions: ConnectorClientOptions = {}
     ) {
         super();
+
         try {
-            TypedOptions.check(botFrameworkAuthConfig);
+            const typedBotFrameworkAuthConfig = TypedOptions.asPartial().check(botFrameworkAuthConfig);
+
+            const {
+                CallerId,
+                ChannelService,
+                OAuthUrl = typedBotFrameworkAuthConfig[AuthenticationConstants.OAuthUrlKey],
+                ToBotFromChannelOpenIdMetadataUrl = typedBotFrameworkAuthConfig[
+                    AuthenticationConstants.BotOpenIdMetadataKey
+                ],
+                ToBotFromChannelTokenIssuer,
+                ToBotFromEmulatorOpenIdMetadataUrl,
+                ToChannelFromBotLoginUrl,
+                ToChannelFromBotOAuthScope,
+            } = typedBotFrameworkAuthConfig;
+
+            let ValidateAuthority = true;
+            try {
+                ValidateAuthority = Boolean(JSON.parse(`${typedBotFrameworkAuthConfig.ValidateAuthority ?? true}`));
+            } catch (_err) {
+                // no-op
+            }
+
+            this.inner = BotFrameworkAuthenticationFactory.create(
+                ChannelService,
+                ValidateAuthority,
+                ToChannelFromBotLoginUrl,
+                ToChannelFromBotOAuthScope,
+                ToBotFromChannelTokenIssuer,
+                OAuthUrl,
+                ToBotFromChannelOpenIdMetadataUrl,
+                ToBotFromEmulatorOpenIdMetadataUrl,
+                CallerId,
+                credentialsFactory ??
+                    new ConfigurationServiceClientCredentialFactory(
+                        typedBotFrameworkAuthConfig as ConfigurationServiceClientCredentialFactoryOptions
+                    ),
+                authConfiguration ?? ({} as AuthenticationConfiguration),
+                botFrameworkClientFetch,
+                connectorClientOptions
+            );
         } catch (err) {
             // Throw a new error with the validation details prominently featured.
-            if (err instanceof ValidationError && err.details) {
+            if (err instanceof t.ValidationError && err.details) {
                 throw new Error(JSON.stringify(err.details, undefined, 2));
             }
             throw err;
         }
-        const {
-            ChannelService,
-            ToChannelFromBotLoginUrl,
-            ToChannelFromBotOAuthScope,
-            ToBotFromChannelTokenIssuer,
-            ToBotFromEmulatorOpenIdMetadataUrl,
-            CallerId,
-        } = botFrameworkAuthConfig;
-
-        const ToBotFromChannelOpenIdMetadataUrl =
-            botFrameworkAuthConfig.ToBotFromChannelOpenIdMetadataUrl ??
-            botFrameworkAuthConfig[AuthenticationConstants.BotOpenIdMetadataKey];
-        const OAuthUrl = botFrameworkAuthConfig.OAuthUrl ?? botFrameworkAuthConfig[AuthenticationConstants.OAuthUrlKey];
-        let ValidateAuthority = true;
-        try {
-            ValidateAuthority = Boolean(JSON.parse(botFrameworkAuthConfig.ValidateAuthority as string));
-        } catch (_err) {
-            // no-op
-        }
-
-        this.inner = BotFrameworkAuthenticationFactory.create(
-            ChannelService,
-            ValidateAuthority,
-            ToChannelFromBotLoginUrl,
-            ToChannelFromBotOAuthScope,
-            ToBotFromChannelTokenIssuer,
-            OAuthUrl,
-            ToBotFromChannelOpenIdMetadataUrl,
-            ToBotFromEmulatorOpenIdMetadataUrl,
-            CallerId,
-            credentialsFactory ??
-                new ConfigurationServiceClientCredentialFactory(
-                    botFrameworkAuthConfig as ConfigurationServiceClientCredentialFactoryOptions
-                ),
-            authConfiguration ?? ({} as AuthenticationConfiguration),
-            botFrameworkClientFetch,
-            connectorClientOptions
-        );
     }
 
     authenticateChannelRequest(authHeader: string): Promise<ClaimsIdentity> {
@@ -211,6 +212,7 @@ export function createBotFrameworkAuthenticationFromConfiguration(
     connectorClientOptions: ConnectorClientOptions = {}
 ): BotFrameworkAuthentication {
     const botFrameworkAuthConfig = configuration?.get<ConfigurationBotFrameworkAuthenticationOptions>();
+
     return new ConfigurationBotFrameworkAuthentication(
         botFrameworkAuthConfig,
         credentialsFactory,
