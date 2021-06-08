@@ -27,11 +27,6 @@ describe('PasswordServiceClientCredentialFactory', function () {
         assert(await credFactory.isAuthenticationDisabled());
     });
 
-    it('createCredentials() should throw with an invalid appId', async function () {
-        const credFactory = new PasswordServiceClientCredentialFactory(APP_ID, APP_PASSWORD);
-        await assert.rejects(() => credFactory.createCredentials('invalid-app-id'), new Error('appId did not match'));
-    });
-
     it('createCredentials() should work', async function () {
         const credFactory = new PasswordServiceClientCredentialFactory(APP_ID, APP_PASSWORD);
         const testArgs = [

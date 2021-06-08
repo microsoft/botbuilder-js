@@ -42,31 +42,27 @@ export class PasswordServiceClientCredentialFactory implements ServiceClientCred
         loginEndpoint: string,
         validateAuthority: boolean
     ): Promise<ServiceClientCredentials> {
-        if (!(await this.isValidAppId(appId))) {
-            throw new Error('appId did not match');
-        }
-
         let credentials: MicrosoftAppCredentials;
         let normalizedEndpoint = loginEndpoint?.toLowerCase();
         if (normalizedEndpoint?.startsWith(AuthenticationConstants.ToChannelFromBotLoginUrlPrefix)) {
             credentials =
-                this.appId == null
+                appId == null
                     ? MicrosoftAppCredentials.Empty
-                    : new MicrosoftAppCredentials(this.appId, this.password, undefined, audience);
+                    : new MicrosoftAppCredentials(appId, this.password, undefined, audience);
         } else if (normalizedEndpoint == GovernmentConstants.ToChannelFromBotLoginUrl) {
             credentials =
-                this.appId == null
+                appId == null
                     ? new MicrosoftAppCredentials(
                           undefined,
                           undefined,
                           undefined,
                           GovernmentConstants.ToChannelFromBotOAuthScope
                       )
-                    : new MicrosoftAppCredentials(this.appId, this.password, undefined, audience);
+                    : new MicrosoftAppCredentials(appId, this.password, undefined, audience);
             normalizedEndpoint = loginEndpoint;
         } else {
             credentials =
-                this.appId == null
+                appId == null
                     ? new PrivateCloudAppCredentials(
                           undefined,
                           undefined,
@@ -75,7 +71,7 @@ export class PasswordServiceClientCredentialFactory implements ServiceClientCred
                           validateAuthority
                       )
                     : new PrivateCloudAppCredentials(
-                          this.appId,
+                          appId,
                           this.password,
                           audience,
                           normalizedEndpoint,
