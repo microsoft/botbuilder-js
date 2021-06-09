@@ -57,77 +57,77 @@ export interface QnAMakerRecognizerConfiguration extends RecognizerConfiguration
  * A recognizer which uses QnAMaker KB to recognize intents.
  */
 export class QnAMakerRecognizer extends Recognizer implements QnAMakerRecognizerConfiguration {
-    public static $kind = 'Microsoft.QnAMakerRecognizer';
-    public static readonly qnaMatchIntent = 'QnAMatch';
+    static $kind = 'Microsoft.QnAMakerRecognizer';
+    static readonly qnaMatchIntent = 'QnAMatch';
 
     /**
      * Knowledgebase id of your QnA maker knowledgebase.
      */
-    public knowledgeBaseId: StringExpression;
+    knowledgeBaseId: StringExpression;
 
     /**
      * Host name of the QnA maker knowledgebase.
      */
-    public hostname: StringExpression;
+    hostname: StringExpression;
 
     /**
      * Endpoint key for the QnA service.
      */
-    public endpointKey: StringExpression;
+    endpointKey: StringExpression;
 
     /**
      * Number of results you want.
      */
-    public top: IntExpression = new IntExpression(3);
+    top: IntExpression = new IntExpression(3);
 
     /**
      * Threshold for the results.
      */
-    public threshold: NumberExpression = new NumberExpression(0.3);
+    threshold: NumberExpression = new NumberExpression(0.3);
 
     /**
      * A value indicating whether to call test or prod environment of knowledgebase.
      */
-    public isTest: boolean;
+    isTest: boolean;
 
     /**
      * Desired RankerType.
      */
-    public rankerType: StringExpression = new StringExpression(RankerTypes.default);
+    rankerType: StringExpression = new StringExpression(RankerTypes.default);
 
     /**
      * A value used for Join operation of Metadata.
      */
-    public strictFiltersJoinOperator: JoinOperator;
+    strictFiltersJoinOperator: JoinOperator;
 
     /**
      * Whether to include the dialog name metadata for QnA context.
      */
-    public includeDialogNameInMetadata: BoolExpression = new BoolExpression(true);
+    includeDialogNameInMetadata: BoolExpression = new BoolExpression(true);
 
     /**
      * An expression to evaluate to set additional metadata name value pairs.
      */
-    public metadata: ArrayExpression<QnAMakerMetadata>;
+    metadata: ArrayExpression<QnAMakerMetadata>;
 
     /**
      * An expression to evaluate to set the context.
      */
-    public context: ObjectExpression<QnARequestContext>;
+    context: ObjectExpression<QnARequestContext>;
 
     /**
      * An expression to evaluate to set QnAId parameter.
      */
-    public qnaId: IntExpression = new IntExpression(0);
+    qnaId: IntExpression = new IntExpression(0);
 
     /**
      * The flag to indicate if personal information should be logged in telemetry.
      */
-    public logPersonalInformation: BoolExpression = new BoolExpression(
+    logPersonalInformation: BoolExpression = new BoolExpression(
         '=settings.runtimeSettings.telemetry.logPersonalInformation'
     );
 
-    public getConverter(property: keyof QnAMakerRecognizerConfiguration): Converter | ConverterFactory {
+    getConverter(property: keyof QnAMakerRecognizerConfiguration): Converter | ConverterFactory {
         switch (property) {
             case 'knowledgeBaseId':
                 return new StringExpressionConverter();
@@ -163,7 +163,7 @@ export class QnAMakerRecognizer extends Recognizer implements QnAMakerRecognizer
      * @param {string} knowledgeBaseId Id of QnAMaker KB.
      * @param {string} endpointKey Endpoint key of QnAMaker KB.
      */
-    public constructor(hostname?: string, knowledgeBaseId?: string, endpointKey?: string) {
+    constructor(hostname?: string, knowledgeBaseId?: string, endpointKey?: string) {
         super();
         if (hostname) {
             this.hostname = new StringExpression(hostname);
@@ -185,7 +185,7 @@ export class QnAMakerRecognizer extends Recognizer implements QnAMakerRecognizer
      * @param {object} telemetryMetrics Additional metrics to be logged to telemetry.
      * @returns {Promise<RecognizerResult>} A promise resolving to the recognizer result
      */
-    public async recognize(
+    async recognize(
         dc: DialogContext,
         activity: Activity,
         telemetryProperties?: { [key: string]: string },

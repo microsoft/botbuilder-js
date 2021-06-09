@@ -123,6 +123,17 @@
       "rules": {
         "@typescript-eslint/no-var-requires": "off"
       }
-    }
+    },
+    {
+      "files": [
+        "libraries/botbuilder-ai*/**/*.ts",
+        "libraries/botbuilder-applicationinsights/**/*.ts",
+        "libraries/botbuilder-azure*/**/*.ts",
+        "libraries/botbuilder-dialogs-adaptive-runtime*/**/*.ts"
+      ],
+      "rules": {
+          "@typescript-eslint/explicit-member-accessibility": ["error", {"accessibility": "no-public"}]
+      }
+  }
   ]
 }

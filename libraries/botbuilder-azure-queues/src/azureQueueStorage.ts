@@ -17,7 +17,7 @@ export class AzureQueueStorage extends QueueStorage {
      * @param {string} queuesStorageConnectionString Azure storage connection string.
      * @param {string} queueName Name of the storage queue where entities will be queued.
      */
-    public constructor(queuesStorageConnectionString: string, queueName: string) {
+    constructor(queuesStorageConnectionString: string, queueName: string) {
         super();
         if (!queuesStorageConnectionString) {
             throw new Error(`queuesStorageConnectionString cannot be empty`);
@@ -39,7 +39,7 @@ export class AzureQueueStorage extends QueueStorage {
      * @param {number} messageTimeToLive Specifies the time-to-live interval for the message.
      * @returns {Promise<string>} [QueueSendMessageResponse](xref:@azure/storage-queue.QueueSendMessageResponse) as a JSON string.
      */
-    public async queueActivity(
+    async queueActivity(
         activity: Partial<Activity>,
         visibilityTimeout?: number,
         messageTimeToLive?: number

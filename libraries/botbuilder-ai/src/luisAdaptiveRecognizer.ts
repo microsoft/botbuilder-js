@@ -55,17 +55,17 @@ export interface LuisAdaptiveRecognizerConfiguration extends RecognizerConfigura
  * Class that represents an adaptive LUIS recognizer.
  */
 export class LuisAdaptiveRecognizer extends Recognizer implements LuisAdaptiveRecognizerConfiguration {
-    public static $kind = 'Microsoft.LuisRecognizer';
+    static $kind = 'Microsoft.LuisRecognizer';
 
     /**
      * LUIS application ID.
      */
-    public applicationId: StringExpression;
+    applicationId: StringExpression;
 
     /**
      * LUIS application version.
      */
-    public version: StringExpression;
+    version: StringExpression;
 
     /**
      * LUIS endpoint to query.
@@ -73,12 +73,12 @@ export class LuisAdaptiveRecognizer extends Recognizer implements LuisAdaptiveRe
      * @summary
      * For example: "https://westus.api.cognitive.microsoft.com"
      */
-    public endpoint: StringExpression;
+    endpoint: StringExpression;
 
     /**
      * Key used to talk to a LUIS endpoint.
      */
-    public endpointKey: StringExpression;
+    endpointKey: StringExpression;
 
     /**
      * External entity recognizer.
@@ -86,26 +86,26 @@ export class LuisAdaptiveRecognizer extends Recognizer implements LuisAdaptiveRe
      * @summary
      * This recognizer is run before calling LUIS and the results are passed to LUIS.
      */
-    public externalEntityRecognizer: Recognizer;
+    externalEntityRecognizer: Recognizer;
 
     /**
      * LUIS dynamic list.
      */
-    public dynamicLists: ArrayExpression<DynamicList>;
+    dynamicLists: ArrayExpression<DynamicList>;
 
     /**
      * LUIS prediction options.
      */
-    public predictionOptions: LuisAdaptivePredictionOptions;
+    predictionOptions: LuisAdaptivePredictionOptions;
 
     /**
      * The flag to indicate in personal information should be logged in telemetry.
      */
-    public logPersonalInformation: BoolExpression = new BoolExpression(
+    logPersonalInformation: BoolExpression = new BoolExpression(
         '=settings.runtimeSettings.telemetry.logPersonalInformation'
     );
 
-    public getConverter(property: keyof LuisAdaptiveRecognizerConfiguration): Converter | ConverterFactory {
+    getConverter(property: keyof LuisAdaptiveRecognizerConfiguration): Converter | ConverterFactory {
         switch (property) {
             case 'applicationId':
             case 'version':
@@ -132,7 +132,7 @@ export class LuisAdaptiveRecognizer extends Recognizer implements LuisAdaptiveRe
      * @param {object} telemetryMetrics Optional. Additional metrics to be logged to telemetry with event.
      * @returns {Promise<RecognizerResult>} A promise resolving to the recognizer result.
      */
-    public async recognize(
+    async recognize(
         dialogContext: DialogContext,
         activity: Activity,
         telemetryProperties?: Record<string, string>,
@@ -175,7 +175,7 @@ export class LuisAdaptiveRecognizer extends Recognizer implements LuisAdaptiveRe
      * @param {DialogContext} dialogContext Current dialog context.
      * @returns {LuisRecognizerOptionsV3} luis recognizer options
      */
-    public recognizerOptions(dialogContext: DialogContext): LuisRecognizerOptionsV3 {
+    recognizerOptions(dialogContext: DialogContext): LuisRecognizerOptionsV3 {
         const options: LuisRecognizerOptionsV3 = {
             apiVersion: 'v3',
             externalEntityRecognizer: this.externalEntityRecognizer,

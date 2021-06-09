@@ -71,7 +71,7 @@ export class LuisRecognizerV2 extends LuisRecognizerInternal {
         };
     }
 
-    public options: LuisRecognizerOptionsV2;
+    options: LuisRecognizerOptionsV2;
 
     private luisClient: LuisClient;
 
