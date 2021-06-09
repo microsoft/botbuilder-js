@@ -84,8 +84,6 @@ describe('TeamsActivityHandler', () => {
             handleTeamsMessagingExtensionConfigurationSetting() {}
 
             handleTeamsMessagingExtensionCardButtonClicked() {}
-
-            handleAdaptiveCardAction() {}
         }
 
         it('activity.name is not defined. should return status code [501].', async function () {
@@ -241,24 +239,6 @@ describe('TeamsActivityHandler', () => {
                 .startTest();
         });
 
-        
-        it('activity.name is "adaptiveCard/action". should return status code [200] when handleAdaptiveCardAction method is overridden.', async function () {
-            const bot = new InvokeActivityEmptyHandlers();
-
-            const adapter = new TestAdapter(async (context) => {
-                await bot.run(context);
-            });
-
-            const activity = createInvokeActivity('adaptiveCard/action');
-
-            await adapter
-                .send(activity)
-                .assertReply((activity) => {
-                    assert.strictEqual(activity.value.status, 200, 'should be status code 200.');
-                })
-                .startTest();
-        });
-
         it('should throw an error when onInvokeActivity param context is null.', async function () {
             class InvokeActivityHandler extends TeamsActivityHandler {
                 async onInvokeActivity() {
@@ -286,6 +266,28 @@ describe('TeamsActivityHandler', () => {
                         "Cannot read property 'activity' of null",
                         'should have thrown an error.'
                     );
+                })
+                .startTest();
+        });
+
+        it('should call the base ActivityHandler\'s onInvokeActivity if activity.name is unrecognized', async function () {
+            const bot = new InvokeActivityEmptyHandlers();
+
+            bot.onAdaptiveCardInvoke = () => {
+                return { statusCode: 200, value: 'called' }
+            }
+
+            const adapter = new TestAdapter(async (context) => {
+                await bot.run(context);
+            });
+
+            const activity = { type: ActivityTypes.Invoke, name: 'adaptiveCard/action', value: 'Action.Execute' };
+
+            await adapter
+                .send(activity)
+                .assertReply((activity) => {
+                    assert.strictEqual(activity.value.status, 200, 'should be status code 200.');
+                    assert.strictEqual(activity.value.body, 'called');
                 })
                 .startTest();
         });
@@ -779,25 +781,6 @@ describe('TeamsActivityHandler', () => {
                 })
                 .startTest();
         });
-
-        it('handleAdaptiveCardAction is not overridden', async function () {
-            const bot = new TeamsActivityHandler();
-
-            const adapter = new TestAdapter(async (context) => {
-                await bot.run(context);
-            });
-
-            const taskFetchActivity = createInvokeActivity('adaptiveCard/action');
-
-            await adapter
-                .send(taskFetchActivity)
-                .assertReply((activity) => {
-                    assert.strictEqual(activity.type, 'invokeResponse');
-                    assert.strictEqual(activity.value.status, 501);
-                    assert.strictEqual(activity.value.body, undefined);
-                })
-                .startTest();
-        });
     });
 
     describe('should send an OK status code', () => {
@@ -915,7 +898,6 @@ describe('TeamsActivityHandler', () => {
                     this.taskSubmitReturn = { task: { type: 'message', value: 'test' } };
                     this.tabFetchReturn = { tab: { type: 'continue', value: { title: 'test' } } };
                     this.tabSubmitReturn = { task: { type: 'message', value: 'test' } };
-                    this.adaptiveCardActionReturn = { statusCode: 200, type: "application/vnd.microsoft.activity.message", value: "res"}
                 }
 
                 async handleTeamsTaskModuleFetch(context, taskModuleRequest) {
@@ -940,11 +922,6 @@ describe('TeamsActivityHandler', () => {
                     assert(context, 'context not found');
                     assert(tabRequest, 'tabRequest not found');
                     return this.tabSubmitReturn;
-                }
-
-                async handleAdaptiveCardAction(context) {
-                    assert(context, 'context not found');
-                    return this.adaptiveCardActionReturn;
                 }
             }
 
@@ -1040,24 +1017,6 @@ describe('TeamsActivityHandler', () => {
                             status: 200,
                             body: bot.tabSubmitReturn,
                         });
-                    })
-                    .startTest();
-            });
-
-            it('an overridden handleAdaptiveCardAction()', async function () {
-                const bot = new TaskHandler();
-
-                const adapter = new TestAdapter(async (context) => {
-                    await bot.run(context);
-                });
-
-                const taskAdaptiveCardActionActivity = createInvokeActivity('adaptiveCard/action', { data: '' });
-                await adapter
-                    .send(taskAdaptiveCardActionActivity)
-                    .assertReply((activity) => {
-                        assert.strictEqual(activity.type, 'invokeResponse');
-                        assert.strictEqual(activity.value.status, 200);
-                        assert.strictEqual(activity.value.body, bot.adaptiveCardActionReturn);
                     })
                     .startTest();
             });

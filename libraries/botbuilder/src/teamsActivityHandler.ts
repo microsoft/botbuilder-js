@@ -133,9 +133,6 @@ export class TeamsActivityHandler extends ActivityHandler {
                             await this.handleTeamsTabSubmit(context, context.activity.value)
                         );
 
-                    case 'adaptiveCard/action':
-                        return ActivityHandler.createInvokeResponse(await this.handleAdaptiveCardAction(context));
-
                     default:
                         runEvents = false;
                         return super.onInvokeActivity(context);

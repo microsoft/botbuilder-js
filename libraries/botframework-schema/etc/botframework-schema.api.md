@@ -192,10 +192,7 @@ export enum ActivityTypes {
 }
 
 // @public
-export interface AdaptiveCardAuthentication {
-    connectionName: string;
-    id: string;
-    token: string;
+export interface AdaptiveCardAuthentication extends TokenExchangeInvokeRequest {
 }
 
 // @public
