@@ -341,7 +341,7 @@ describe('Memory Scopes', function () {
                 process.env['to_be_overridden'] = 'two';
             });
 
-            assert.deepStrictEqual(_.pick(memory, 'array', 'object', 'simple', 'to_be_overridden'), {
+            assert.deepStrictEqual(_.pick(memory, 'array', 'object', 'simple', 'to_be_overridden', 'MicrosoftAppPassword', 'runtimeSettings.telemetry.options.connectionString', 'BlobsStorage.CONNECTIONSTRING', 'BlobsStorage.connectionString'), {
                 array: ['one', 'two'],
                 object: {
                     array: ['one', 'two'],
@@ -349,6 +349,20 @@ describe('Memory Scopes', function () {
                 },
                 simple: 'test',
                 to_be_overridden: 'two',
+                MicrosoftAppPassword: null,
+                runtimeSettings: {
+                    telemetry: {
+                        options:{
+                            connectionString: null
+                        }
+                    }
+                },
+                BlobsStorage:{
+                    CONNECTIONSTRING: null
+                },
+                BlobsStorage: {
+                    connectionString: null
+                }
             });
         });
 

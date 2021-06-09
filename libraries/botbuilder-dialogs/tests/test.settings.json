@@ -15,5 +15,16 @@
     "3": "three"
   },
   "not_to_be_overridden": "one",
-  "to_be_overridden": "one"
+  "to_be_overridden": "one",
+  "MicrosoftAppPassword": "testpassword",
+  "runtimeSettings": {
+    "telemetry": {
+      "options": {
+        "connectionString": "testConnectionString"
+      }
+    }
+  },
+  "BlobsStorage": {
+    "CONNECTIONSTRING": "testConnectionString"
+  }
 }

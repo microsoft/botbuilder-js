@@ -8,7 +8,7 @@
 import { BoolProperty, DialogProperty, ObjectProperty } from '../properties';
 import { DialogExpression } from '../expressions';
 import { DialogExpressionConverter } from '../converters';
-import { replaceJsonRecursively } from '../jsonExtensions';
+import { evaluateExpression } from '../jsonExtensions';
 
 import {
     ValueExpression,
@@ -141,14 +141,7 @@ export class BaseInvokeDialog<O extends object = {}>
         const boundOptions = {};
 
         for (const key in bindingOptions) {
-            const bindingValue = bindingOptions[key];
-            let value = new ValueExpression(bindingValue).getValue(dc.state);
-
-            if (value) {
-                value = replaceJsonRecursively(dc.state, value);
-            }
-
-            boundOptions[key] = value;
+            boundOptions[key] = evaluateExpression(dc.state, bindingOptions[key]);
         }
 
         return boundOptions;

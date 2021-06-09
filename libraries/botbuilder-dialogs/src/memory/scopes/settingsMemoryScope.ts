@@ -41,6 +41,20 @@ class Node {
  * SettingsMemoryScope maps "settings" -> dc.context.turnState['settings']
  */
 export class SettingsMemoryScope extends MemoryScope {
+
+    private static readonly blockingList = [
+        'MicrosoftAppPassword',
+        'cosmosDb:authKey',
+        'blobStorage:connectionString',
+        'BlobsStorage:connectionString',
+        'CosmosDbPartitionedStorage:authKey',
+        'applicationInsights:connectionString',
+        'applicationInsights:InstrumentationKey',
+        'runtimeSettings:telemetry:options:connectionString',
+        'runtimeSettings:telemetry:options:instrumentationKey',
+        'runtimeSettings:features:blobTranscript:connectionString'
+    ];
+    
     /**
      * Initializes a new instance of the [SettingsMemoryScope](xref:botbuilder-dialogs.SettingsMemoryScope) class.
      *
@@ -92,8 +106,9 @@ export class SettingsMemoryScope extends MemoryScope {
         let settings = {};
 
         if (configuration) {
+            const configurations = Object.entries(configuration).filter(([key, value]) => { !SettingsMemoryScope.blockingList.includes(key) });
             // load configuration into settings
-            const root = this.convertFlattenSettingToNode(Object.entries(configuration));
+            const root = this.convertFlattenSettingToNode(configurations);
             settings = root.children.reduce(
                 (acc, child) => ({ ...acc, [child.value]: this.convertNodeToObject(child) }),
                 settings
