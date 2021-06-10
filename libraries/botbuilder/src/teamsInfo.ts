@@ -83,12 +83,12 @@ export class TeamsInfo {
     }
 
     /**
-     * Gets the details for the given meeting id.
+     * Gets the information for the given meeting id.
      * @param context The [TurnContext](xref:botbuilder-core.TurnContext) for this turn.
      * @param meetingId The BASE64-encoded id of the Teams meeting.
      * @returns The [TeamsMeetingInfo](xref:botbuilder-core.TeamsMeetingInfo) fetched
      */
-    public static async getMeetingDetails(context: TurnContext, meetingId?: string): Promise<TeamsMeetingInfo> {
+    public static async getMeetingInfo(context: TurnContext, meetingId?: string): Promise<TeamsMeetingInfo> {
         if (!context) {
             throw new Error('context is required.');
         }
@@ -104,7 +104,7 @@ export class TeamsInfo {
             throw new Error('meetingId is required.');
         }
 
-        return this.getTeamsConnectorClient(context).teams.fetchMeetingDetails(meetingId);
+        return this.getTeamsConnectorClient(context).teams.fetchMeetingInfo(meetingId);
     }
 
     /**

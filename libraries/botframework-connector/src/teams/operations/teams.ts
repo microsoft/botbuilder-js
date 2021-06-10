@@ -184,14 +184,14 @@ export class Teams {
     }
 
     /**
-     * Fetch meeting details.
+     * Fetch meeting information.
      *
-     * @summary Fetches details of a Teams meeting.
+     * @summary Fetches information of a Teams meeting.
      * @param meetingId Meeting Id, encoded as a BASE64 string.
      * @param [options] The optional parameters
-     * @returns Promise<Models.TeamsFetchMeetingDetailsResponse>
+     * @returns Promise<Models.TeamsFetchMeetingInfoResponse>
      */
-    fetchMeetingDetails(
+    fetchMeetingInfo(
         meetingId: string,
         options?: msRest.RequestOptionsBase | msRest.ServiceCallback<TeamDetails>
     ): Promise<Models.TeamsMeetingInfoResponse>;
@@ -199,7 +199,7 @@ export class Teams {
      * @param meetingId Meeting Id, encoded as a BASE64 string.
      * @param callback The callback
      */
-     fetchMeetingDetails(
+     fetchMeetingInfo(
         meetingId: string,
         callback: msRest.ServiceCallback<TeamsMeetingInfo>
     ): void;
@@ -208,12 +208,12 @@ export class Teams {
      * @param options The optional parameters
      * @param callback The callback
      */
-     fetchMeetingDetails(
+     fetchMeetingInfo(
         meetingId: string,
         options: msRest.RequestOptionsBase | msRest.ServiceCallback<TeamDetails>,
         callback: msRest.ServiceCallback<TeamsMeetingInfo>
     ): void;
-    fetchMeetingDetails(
+    fetchMeetingInfo(
         meetingId: string,
         options?: msRest.RequestOptionsBase | msRest.ServiceCallback<TeamDetails>,
         callback?: msRest.ServiceCallback<TeamsMeetingInfo>
@@ -223,7 +223,7 @@ export class Teams {
                 meetingId,
                 options,
             },
-            fetchMeetingDetailsOperationSpec,
+            fetchMeetingInfoOperationSpec,
             callback
         ) as Promise<Models.TeamsMeetingInfoResponse>;
     }
@@ -271,7 +271,7 @@ const fetchMeetingParticipantOperationSpec: msRest.OperationSpec = {
     serializer,
 };
 
-const fetchMeetingDetailsOperationSpec: msRest.OperationSpec = {
+const fetchMeetingInfoOperationSpec: msRest.OperationSpec = {
     httpMethod: 'GET',
     path: 'v1/meetings/{meetingId}',
     urlParameters: [Parameters.meetingId],

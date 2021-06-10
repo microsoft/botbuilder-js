@@ -101,7 +101,7 @@ export interface TeamsFetchMeetingParticipantOptionalParams extends RequestOptio
 }
 
 /**
- * Contains response data for the fetchMeetingDetails operation.
+ * Contains response data for the fetchMeetingInfo operation.
  */
 export type TeamsMeetingInfoResponse = TeamsMeetingInfo & {
     /**

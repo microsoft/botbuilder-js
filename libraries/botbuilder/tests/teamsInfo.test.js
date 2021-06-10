@@ -661,7 +661,7 @@ describe('TeamsInfo', function () {
         });
     });
 
-    describe('getMeetingDetails', function () {
+    describe('getMeetingInfo', function () {
         const context = new TestContext(teamActivity);
 
         it('should work with correct arguments-meetingId in context', async function () {
@@ -697,7 +697,7 @@ describe('TeamsInfo', function () {
                 .matchHeader('Authorization', expectedAuthHeader)
                 .reply(200, details);
 
-            const fetchedDetails = await TeamsInfo.getMeetingDetails(context);
+            const fetchedDetails = await TeamsInfo.getMeetingInfo(context);
 
             assert(fetchOauthToken.isDone());
             assert(fetchExpectation.isDone());
@@ -738,7 +738,7 @@ describe('TeamsInfo', function () {
                 .matchHeader('Authorization', expectedAuthHeader)
                 .reply(200, details);
 
-            const fetchedDetails = await TeamsInfo.getMeetingDetails(context, details.details.id);
+            const fetchedDetails = await TeamsInfo.getMeetingInfo(context, details.details.id);
 
             assert(fetchOauthToken.isDone());
             assert(fetchExpectation.isDone());
@@ -747,7 +747,7 @@ describe('TeamsInfo', function () {
         });
 
         it('should throw error for missing context', async function () {
-            await assert.rejects(TeamsInfo.getMeetingDetails(), Error('context is required.'));
+            await assert.rejects(TeamsInfo.getMeetingInfo(), Error('context is required.'));
         });
     });
 
