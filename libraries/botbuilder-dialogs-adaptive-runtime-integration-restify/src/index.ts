@@ -120,13 +120,18 @@ export async function makeServer(
     const resolvedOptions = await resolveOptions(options, configuration);
 
     const errorHandler = (err: Error | string, res?: restify.Response): void => {
-        if (options.logErrors) {
+        if (resolvedOptions.logErrors) {
             console.error(err);
         }
 
         if (res && !res.headersSent) {
-            res.status(500);
-            res.json({ message: 'Internal server error' });
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            const statusCode = typeof (err as any)?.statusCode === 'number' ? (err as any).statusCode : 500;
+
+            res.status(statusCode);
+            res.json({
+                message: err instanceof Error ? err.message : err ?? 'Internal server error',
+            });
         }
     };
 

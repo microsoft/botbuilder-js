@@ -2,13 +2,13 @@
 // Licensed under the MIT License.
 
 import { BotFrameworkAuthentication, ClaimsIdentity } from 'botframework-connector';
-import { BotLogic } from '../interfaces';
 import { CloudChannelServiceHandler } from '../cloudChannelServiceHandler';
 import { SkillHandlerImpl } from './skillHandlerImpl';
 
 import {
     Activity,
     BotAdapter,
+    BotLogic,
     ResourceResponse,
     SkillConversationIdFactoryBase,
     SkillConversationReferenceKey,

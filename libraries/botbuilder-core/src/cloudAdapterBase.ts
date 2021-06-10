@@ -1,8 +1,9 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-import { BotCallbackHandlerKey, INVOKE_RESPONSE_KEY } from 'botbuilder-core';
-import { BotLogic, Request, Response } from './interfaces';
+import { BotAdapter } from './botAdapter';
+import { BotCallbackHandlerKey, TurnContext } from './turnContext';
+import { INVOKE_RESPONSE_KEY } from './activityHandlerBase';
 import { delay } from 'botbuilder-stdlib';
 
 import {
@@ -19,21 +20,17 @@ import {
     Activity,
     ActivityEx,
     ActivityTypes,
-    BotAdapter,
     Channels,
     ConversationReference,
     DeliveryModes,
     InvokeResponse,
     ResourceResponse,
     StatusCodes,
-    TurnContext,
-} from 'botbuilder-core';
+} from 'botframework-schema';
 
 export abstract class CloudAdapterBase extends BotAdapter {
     public readonly ConnectorFactoryKey = Symbol('ConnectorFactory');
     public readonly UserTokenClientKey = Symbol('UserTokenClient');
-    public readonly RequestKey = Symbol('Request');
-    public readonly ResponseKey = Symbol('Response');
 
     /**
      * Create a new [CloudAdapterBase](xref:botbuilder.CloudAdapterBase) instance.
@@ -145,7 +142,10 @@ export abstract class CloudAdapterBase extends BotAdapter {
     /**
      * @inheritdoc
      */
-    public async continueConversation(reference: Partial<ConversationReference>, logic: BotLogic): Promise<void> {
+    public async continueConversation(
+        reference: Partial<ConversationReference>,
+        logic: (context: TurnContext) => Promise<void>
+    ): Promise<void> {
         return this.processProactive(
             this.createClaimsIdentity(),
             ActivityEx.getContinuationActivity(reference),
@@ -161,7 +161,7 @@ export abstract class CloudAdapterBase extends BotAdapter {
         claimsIdentity: ClaimsIdentity,
         reference: Partial<ConversationReference>,
         audience: string | undefined,
-        logic: BotLogic
+        logic: (context: TurnContext) => Promise<void>
     ): Promise<void> {
         return this.processProactive(claimsIdentity, ActivityEx.getContinuationActivity(reference), audience, logic);
     }
@@ -172,14 +172,14 @@ export abstract class CloudAdapterBase extends BotAdapter {
      * @param claimsIdentity The [ClaimsIdentity](xref:botframework-connector.ClaimsIdentity) for the conversation.
      * @param continuationActivity The continuation [Activity](xref:botframework-schema.Activity) used to create the [TurnContext](xref:botbuilder-core.TurnContext).
      * @param audience The audience for the call.
-     * @param logic The [BotLogic](xref:botbuilder.BotLogic) to call for the resulting bot turn.
+     * @param logic The function to call for the resulting bot turn.
      * @returns a Promise representing the async operation
      */
     protected async processProactive(
         claimsIdentity: ClaimsIdentity,
         continuationActivity: Partial<Activity>,
         audience: string | undefined,
-        logic: BotLogic
+        logic: (context: TurnContext) => Promise<void>
     ): Promise<void> {
         // Create the connector factory and  the inbound request, extracting parameters and then create a connector for outbound requests.
         const connectorFactory = this.botFrameworkAuthentication.createConnectorFactory(claimsIdentity);
@@ -210,15 +210,13 @@ export abstract class CloudAdapterBase extends BotAdapter {
      *
      * @param authHeader The authorization header from the http request.
      * @param activity The [Activity](xref:botframework-schema.Activity) to process.
-     * @param logic The [BotLogic](xref:botbuilder.BotLogic) to call for the resulting bot turn.
+     * @param logic The function to call for the resulting bot turn.
      * @returns a Promise resolving to an invoke response, or undefined.
      */
     protected processActivity(
         authHeader: string,
         activity: Activity,
-        logic: BotLogic,
-        req?: Request,
-        res?: Response
+        logic: (context: TurnContext) => Promise<void>
     ): Promise<InvokeResponse | undefined>;
 
     /**
@@ -226,15 +224,13 @@ export abstract class CloudAdapterBase extends BotAdapter {
      *
      * @param authenticateRequestResult The [AuthenticateRequestResult](xref:botframework-connector.AuthenticateRequestResult) for this turn.
      * @param activity The [Activity](xref:botframework-schema.Activity) to process.
-     * @param logic The [BotLogic](xref:botbuilder.BotLogic) to call for the resulting bot turn.
+     * @param logic The function to call for the resulting bot turn.
      * @returns a Promise resolving to an invoke response, or undefined.
      */
     protected processActivity(
         authenticateRequestResult: AuthenticateRequestResult,
         activity: Activity,
-        logic: BotLogic,
-        req?: Request,
-        res?: Response
+        logic: (context: TurnContext) => Promise<void>
     ): Promise<InvokeResponse | undefined>;
 
     /**
@@ -243,9 +239,7 @@ export abstract class CloudAdapterBase extends BotAdapter {
     protected async processActivity(
         authHeaderOrAuthenticateRequestResult: string | AuthenticateRequestResult,
         activity: Activity,
-        logic: BotLogic,
-        req?: Request,
-        res?: Response
+        logic: (context: TurnContext) => Promise<void>
     ): Promise<InvokeResponse | undefined> {
         // Authenticate the inbound request, extracting parameters and create a ConnectorFactory for creating a Connector for outbound requests.
         const authenticateRequestResult =
@@ -282,9 +276,7 @@ export abstract class CloudAdapterBase extends BotAdapter {
             connectorClient,
             userTokenClient,
             logic,
-            authenticateRequestResult.connectorFactory,
-            req,
-            res
+            authenticateRequestResult.connectorFactory
         );
 
         // Run the pipeline.
@@ -320,10 +312,8 @@ export abstract class CloudAdapterBase extends BotAdapter {
         oauthScope: string | undefined,
         connectorClient: ConnectorClient,
         userTokenClient: UserTokenClient,
-        logic: BotLogic,
-        connectorFactory: ConnectorFactory,
-        req?: Request,
-        res?: Response
+        logic: (context: TurnContext) => Promise<void>,
+        connectorFactory: ConnectorFactory
     ): TurnContext {
         const context = new TurnContext(this, activity);
 
@@ -335,9 +325,6 @@ export abstract class CloudAdapterBase extends BotAdapter {
 
         context.turnState.set(this.ConnectorFactoryKey, connectorFactory);
         context.turnState.set(this.OAuthScopeKey, oauthScope);
-
-        context.turnState.set(this.RequestKey, req);
-        context.turnState.set(this.ResponseKey, res);
 
         return context;
     }

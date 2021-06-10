@@ -109,7 +109,12 @@ export async function makeApp(
         }
 
         if (res && !res.headersSent) {
-            res.status(500).json({ message: 'Internal server error' });
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            const statusCode = typeof (err as any)?.statusCode === 'number' ? (err as any).statusCode : 500;
+
+            res.status(statusCode).json({
+                message: err instanceof Error ? err.message : err ?? 'Internal server error',
+            });
         }
     };
 

@@ -6,7 +6,9 @@
  * Licensed under the MIT License.
  */
 
+import * as t from 'runtypes';
 import { BotFrameworkHttpAdapter } from './botFrameworkHttpAdapter';
+import { ConnectorClientBuilder, Request, Response, ResponseT, WebRequest, WebResponse } from './interfaces';
 import { HttpClient, userAgentPolicy } from '@azure/ms-rest-js';
 import { INodeBufferT, INodeSocketT } from './runtypes';
 import { arch, release, type } from 'os';
@@ -15,51 +17,52 @@ import { validateAndFixActivity } from './activityValidator';
 
 import {
     Activity,
+    ActivityEventNames,
     ActivityTypes,
-    CallerIdConstants,
-    Channels,
-    CoreAppCredentials,
     BotAdapter,
     BotCallbackHandlerKey,
+    BotLogic,
+    CallerIdConstants,
     ChannelAccount,
+    Channels,
     ConversationParameters,
     ConversationReference,
     ConversationsResult,
+    CoreAppCredentials,
     DeliveryModes,
     ExpectedReplies,
     ExtendedUserTokenProvider,
-    InvokeResponse,
     INVOKE_RESPONSE_KEY,
+    InvokeResponse,
     ResourceResponse,
     StatusCodes,
     TokenResponse,
     TurnContext,
-    ActivityEventNames,
 } from 'botbuilder-core';
 
 import {
+    AppCredentials,
     AuthenticationConfiguration,
     AuthenticationConstants,
+    AuthenticationError,
+    CertificateAppCredentials,
     ChannelValidation,
     Claim,
     ClaimsIdentity,
     ConnectorClient,
     ConnectorClientOptions,
     EmulatorApiClient,
-    GovernmentConstants,
     GovernmentChannelValidation,
+    GovernmentConstants,
     JwtTokenValidation,
     MicrosoftAppCredentials,
-    AppCredentials,
-    CertificateAppCredentials,
-    SimpleCredentialProvider,
-    TokenApiClient,
-    TokenStatus,
-    TokenApiModels,
     SignInUrlResponse,
+    SimpleCredentialProvider,
     SkillValidation,
+    TokenApiClient,
+    TokenApiModels,
     TokenExchangeRequest,
-    AuthenticationError,
+    TokenStatus,
 } from 'botframework-connector';
 
 import {
@@ -86,16 +89,7 @@ import {
     VERSION_PATH,
 } from './streaming';
 
-import {
-    BotLogic,
-    BotLogicT,
-    ConnectorClientBuilder,
-    Request,
-    Response,
-    ResponseT,
-    WebRequest,
-    WebResponse,
-} from './interfaces';
+const BotLogicT = t.Unknown.withGuard<BotLogic>(t.Function.guard, { name: 'BotLogic' });
 
 /**
  * Contains settings used to configure a [BotFrameworkAdapter](xref:botbuilder.BotFrameworkAdapter) instance.

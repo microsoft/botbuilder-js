@@ -6,26 +6,23 @@
  * Licensed under the MIT License.
  */
 import {
+    ActionTypes,
     Activity,
     ActivityTypes,
-    Attachment,
-    CoreAppCredentials,
-    BotAdapter,
     CardFactory,
     Channels,
+    CoreAppCredentials,
     InputHints,
     MessageFactory,
-    OAuthLoginTimeoutKey,
-    TokenResponse,
-    TurnContext,
     OAuthCard,
-    ActionTypes,
-    ExtendedUserTokenProvider,
-    verifyStateOperationName,
+    OAuthLoginTimeoutKey,
     StatusCodes,
     TokenExchangeInvokeRequest,
+    TokenResponse,
+    TurnContext,
     tokenExchangeOperationName,
     tokenResponseEventName,
+    verifyStateOperationName,
 } from 'botbuilder-core';
 import { ClaimsIdentity, JwtTokenValidation, SkillValidation } from 'botframework-connector';
 

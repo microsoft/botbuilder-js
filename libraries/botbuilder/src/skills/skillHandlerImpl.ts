@@ -2,7 +2,6 @@
 // Licensed under the MIT License.
 
 import { BotFrameworkAdapter } from '../botFrameworkAdapter';
-import { BotLogic } from '../interfaces';
 import { ClaimsIdentity, JwtTokenValidation } from 'botframework-connector';
 import { v4 as uuid } from 'uuid';
 
@@ -10,6 +9,7 @@ import {
     Activity,
     ActivityTypes,
     BotAdapter,
+    BotLogic,
     CallerIdConstants,
     ResourceResponse,
     SkillConversationIdFactoryBase,

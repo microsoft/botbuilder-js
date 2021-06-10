@@ -1,7 +1,6 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-import * as t from 'runtypes';
 import { BotFrameworkAuthentication, ClaimsIdentity, SkillValidation } from 'botframework-connector';
 
 import {
@@ -10,16 +9,10 @@ import {
     ConversationState,
     InputHints,
     MessageFactory,
-    Response,
     TurnContext,
     UserState,
     useBotState,
 } from 'botbuilder';
-
-const ErrorT = t.Record({
-    message: t.String,
-    statusCode: t.Optional(t.Number),
-});
 
 export class CoreBotAdapter extends CloudAdapter {
     constructor(
@@ -34,29 +27,11 @@ export class CoreBotAdapter extends CloudAdapter {
         this.onTurnError = async (context, err) => {
             console.error('[onTurnError] unhandled error', err);
 
-            const res = context.turnState.get<Response | undefined>(this.ResponseKey);
+            await this.sendErrorMessage(context, err).catch(() => null);
+            await this.sendEoCToParentIfSkill(context, err).catch(() => null);
+            await this.clearConversationState(context).catch(() => null);
 
-            if (res) {
-                // Try to extract errors wrapped in, for example, DialogContextError
-                let anyErr = err as any; // eslint-disable-line @typescript-eslint/no-explicit-any
-                if (anyErr.error instanceof Error) {
-                    anyErr = anyErr.error;
-                }
-
-                if (ErrorT.guard(anyErr)) {
-                    res.status(anyErr.statusCode ?? 500);
-                    res.send(anyErr.message);
-                } else {
-                    res.status(500);
-                    res.send(anyErr);
-                }
-
-                res.end();
-            }
-
-            await this.sendErrorMessage(context, err);
-            await this.sendEoCToParentIfSkill(context, err);
-            await this.clearConversationState(context);
+            throw err; // re-throw to delegate error handling to integration libraries
         };
     }
 
@@ -77,7 +52,7 @@ export class CoreBotAdapter extends CloudAdapter {
                 'TurnError'
             );
         } catch (err) {
-            console.error('Exception caught in sendErrorMessage', err);
+            console.error('[sendErrorMessage]:', err);
         }
     }
 
@@ -92,7 +67,7 @@ export class CoreBotAdapter extends CloudAdapter {
             endOfConversation.text = error.message;
             await context.sendActivity(endOfConversation);
         } catch (err) {
-            console.error('Exception caught in sendEoCToParentIfSkill', err);
+            console.error('[sendEoCToParentIfSkill]:', err);
         }
     }
 
@@ -100,7 +75,7 @@ export class CoreBotAdapter extends CloudAdapter {
         try {
             await this.conversationState.delete(context);
         } catch (err) {
-            console.error('Exception caught in clearConversationState', err);
+            console.error('[clearConversationState]:', err);
         }
     }
 

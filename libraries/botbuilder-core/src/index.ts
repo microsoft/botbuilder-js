@@ -61,3 +61,6 @@ export {
     SkillConversationReference,
     SkillConversationReferenceKey,
 } from './skills';
+
+export { BotLogic } from './botLogic';
+export { CloudAdapterBase } from './cloudAdapterBase';

@@ -1,8 +1,9 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
+import type { BotLogic } from 'botbuilder-core';
 import type { INodeBuffer, INodeSocket } from 'botframework-streaming';
-import { BotLogic, Request, Response } from './interfaces';
+import type { Request, Response } from './interfaces';
 
 /**
  * BotFrameworkHttpAdapter is the interface that describes a Bot Framework

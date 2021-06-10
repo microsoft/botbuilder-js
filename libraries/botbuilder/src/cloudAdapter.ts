@@ -3,11 +3,10 @@
 
 import * as t from 'runtypes';
 import type { BotFrameworkHttpAdapter } from './botFrameworkHttpAdapter';
-import { Activity, InvokeResponse, StatusCodes } from 'botbuilder-core';
-import { BotLogic, BotLogicT, Request, Response, ResponseT } from './interfaces';
-import { CloudAdapterBase } from './cloudAdapterBase';
+import { Activity, BotLogic, CloudAdapterBase, InvokeResponse, StatusCodes } from 'botbuilder-core';
 import { HttpClient, HttpHeaders, HttpOperationResponse, WebResource } from '@azure/ms-rest-js';
 import { INodeBufferT, INodeSocketT } from './runtypes';
+import { Request, Response, ResponseT } from './interfaces';
 import { retry } from 'botbuilder-stdlib';
 import { validateAndFixActivity } from './activityValidator';
 
@@ -34,6 +33,8 @@ import {
     StreamingResponse,
     WebSocketServer,
 } from 'botframework-streaming';
+
+const BotLogicT = t.Unknown.withGuard<BotLogic>(t.Function.guard, { name: 'BotLogic' });
 
 // TODO(jpg): do better lol
 const ActivityT = t.Unknown.withGuard((val: unknown): val is Activity => t.Dictionary(t.Unknown, t.String).guard(val), {
@@ -91,6 +92,7 @@ export class CloudAdapter extends CloudAdapterBase implements BotFrameworkHttpAd
         }
 
         const res = ResponseT.check(resOrSocket);
+
         const logic = BotLogicT.check(logicOrHead);
 
         const end = (status: StatusCodes, body?: unknown) => {
@@ -125,7 +127,7 @@ export class CloudAdapter extends CloudAdapterBase implements BotFrameworkHttpAd
         const authHeader = t.String.check(req.headers.Authorization ?? req.headers.authorization ?? '');
 
         try {
-            const invokeResponse = await this.processActivity(authHeader, activity, logic, req, res);
+            const invokeResponse = await this.processActivity(authHeader, activity, logic);
             return end(invokeResponse?.status ?? StatusCodes.OK, invokeResponse?.body);
         } catch (err) {
             return end(
