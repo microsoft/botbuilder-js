@@ -24,8 +24,9 @@ import {
     tokenResponseEventName,
     verifyStateOperationName,
 } from 'botbuilder-core';
-import { ClaimsIdentity, JwtTokenValidation, SkillValidation } from 'botframework-connector';
 
+import * as UserTokenAccess from './userTokenAccess';
+import { ClaimsIdentity, JwtTokenValidation, SkillValidation } from 'botframework-connector';
 import { Dialog, DialogTurnResult } from '../dialog';
 import { DialogContext } from '../dialogContext';
 import { PromptOptions, PromptRecognizerResult, PromptValidator } from './prompt';
@@ -170,6 +171,7 @@ export class OAuthPrompt extends Dialog {
 
     /**
      * Called when a prompt dialog is pushed onto the dialog stack and is being activated.
+     *
      * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current
      * turn of the conversation.
      * @param options Optional. [PromptOptions](xref:botbuilder-dialogs.PromptOptions),
@@ -190,23 +192,23 @@ export class OAuthPrompt extends Dialog {
         }
 
         // Initialize prompt state
-        const timeout: number = typeof this.settings.timeout === 'number' ? this.settings.timeout : 900000;
-        const state: OAuthPromptState = dc.activeDialog.state as OAuthPromptState;
+        const timeout = typeof this.settings.timeout === 'number' ? this.settings.timeout : 900000;
+        const state = dc.activeDialog.state as OAuthPromptState;
         state.state = {};
         state.options = o;
         state.expires = new Date().getTime() + timeout;
         state[this.PersistedCaller] = OAuthPrompt.createCallerInfo(dc.context);
 
         // Attempt to get the users token
-        const output: TokenResponse = await this.getUserToken(dc.context);
-        if (output !== undefined) {
+        const output = await UserTokenAccess.getUserToken(dc.context, this.settings, undefined);
+        if (output) {
             // Return token
             return await dc.endDialog(output);
-        } else {
-            // Prompt user to login
-            await OAuthPrompt.sendOAuthCard(this.settings, dc.context, state.options.prompt);
-            return Dialog.EndOfTurn;
         }
+
+        // Prompt user to login
+        await OAuthPrompt.sendOAuthCard(this.settings, dc.context, state.options.prompt);
+        return Dialog.EndOfTurn;
     }
 
     /**
@@ -281,20 +283,7 @@ export class OAuthPrompt extends Dialog {
      * @param code (Optional) login code received from the user.
      */
     public async getUserToken(context: TurnContext, code?: string): Promise<TokenResponse | undefined> {
-        // Validate adapter type
-        if (!('getUserToken' in context.adapter)) {
-            throw new Error(`OAuthPrompt.getUserToken(): not supported for the current adapter.`);
-        }
-
-        // Get the token and call validator
-        const adapter: ExtendedUserTokenProvider = context.adapter as ExtendedUserTokenProvider;
-
-        return await adapter.getUserToken(
-            context,
-            this.settings.connectionName,
-            code,
-            this.settings.oAuthAppCredentials
-        );
+        return UserTokenAccess.getUserToken(context, this.settings, code);
     }
 
     /**
@@ -313,15 +302,7 @@ export class OAuthPrompt extends Dialog {
      * @param context Context referencing the user that's being signed out.
      */
     public async signOutUser(context: TurnContext): Promise<void> {
-        // Validate adapter type
-        if (!('signOutUser' in context.adapter)) {
-            throw new Error(`OAuthPrompt.signOutUser(): not supported for the current adapter.`);
-        }
-
-        // Sign out user
-        const adapter: ExtendedUserTokenProvider = context.adapter as ExtendedUserTokenProvider;
-
-        return adapter.signOutUser(context, this.settings.connectionName, null, this.settings.oAuthAppCredentials);
+        return UserTokenAccess.signOutUser(context, this.settings);
     }
 
     /**
@@ -336,46 +317,28 @@ export class OAuthPrompt extends Dialog {
         turnContext: TurnContext,
         prompt?: string | Partial<Activity>
     ): Promise<void> {
-        // Validate adapter type
-        if (!('getUserToken' in turnContext.adapter)) {
-            throw new Error(`OAuthPrompt.sendOAuthCard(): not supported for the current adapter.`);
-        }
-
-        const adapter: ExtendedUserTokenProvider = turnContext.adapter;
-
         // Initialize outgoing message
         const msg: Partial<Activity> =
             typeof prompt === 'object'
                 ? { ...prompt }
                 : MessageFactory.text(prompt, undefined, InputHints.AcceptingInput);
+
         if (!Array.isArray(msg.attachments)) {
             msg.attachments = [];
         }
 
         // Append appropriate card if missing
         if (!this.isOAuthCardSupported(turnContext)) {
-            if (!msg.attachments.some((a: Attachment) => a.contentType === CardFactory.contentTypes.signinCard)) {
-                // Append signin card
-                const signInResource = await adapter.getSignInResource(
-                    turnContext,
-                    settings.connectionName,
-                    turnContext.activity.from.id,
-                    undefined,
-                    settings.oAuthAppCredentials
-                );
+            if (!msg.attachments.some((a) => a.contentType === CardFactory.contentTypes.signinCard)) {
+                const signInResource = await UserTokenAccess.getSignInResource(turnContext, settings);
                 msg.attachments.push(CardFactory.signinCard(settings.title, signInResource.signInLink, settings.text));
             }
-        } else if (!msg.attachments.some((a: Attachment) => a.contentType === CardFactory.contentTypes.oauthCard)) {
+        } else if (!msg.attachments.some((a) => a.contentType === CardFactory.contentTypes.oauthCard)) {
             let cardActionType = ActionTypes.Signin;
-            const signInResource = await adapter.getSignInResource(
-                turnContext,
-                settings.connectionName,
-                turnContext.activity.from.id,
-                undefined,
-                settings.oAuthAppCredentials
-            );
+            const signInResource = await UserTokenAccess.getSignInResource(turnContext, settings);
+
             let link = signInResource.signInLink;
-            const identity = turnContext.turnState.get<ClaimsIdentity>((turnContext.adapter as BotAdapter).BotIdentityKey);
+            const identity = turnContext.turnState.get<ClaimsIdentity>(turnContext.adapter.BotIdentityKey);
 
             // use the SignInLink when
             //   in speech channel or
@@ -422,50 +385,48 @@ export class OAuthPrompt extends Dialog {
     }
 
     /**
-     * @private
+     * Shared implementation of the RecognizeTokenAsync function. This is intended for internal use, to consolidate
+     * the implementation of the OAuthPrompt and OAuthInput. Application logic should use those dialog classes.
+     *
+     * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of the conversation.
+     * @returns A Promise that resolves to the result
      */
-    private async recognizeToken(dc: DialogContext): Promise<PromptRecognizerResult<TokenResponse>> {
+    public async recognizeToken(dc: DialogContext): Promise<PromptRecognizerResult<TokenResponse>> {
         const context = dc.context;
         let token: TokenResponse | undefined;
+
         if (OAuthPrompt.isTokenResponseEvent(context)) {
             token = context.activity.value as TokenResponse;
 
             // Fix-up the DialogContext's state context if this was received from a skill host caller.
             const state: CallerInfo = dc.activeDialog.state[this.PersistedCaller];
-            if (state !== null) {
+            if (state) {
                 // Set the ServiceUrl to the skill host's Url
-                dc.context.activity.serviceUrl = state.callerServiceUrl;
+                context.activity.serviceUrl = state.callerServiceUrl;
 
-                // Recreate a ConnectorClient and set it in TurnState so replies use the correct one
-                if (!(typeof (context.adapter as any).createConnectorClientWithIdentity === 'function')) {
-                    throw new TypeError(
-                        'OAuthPrompt: ConnectorClientBuilder interface not implemented by the current adapter'
-                    );
-                }
-
-                // The ConnectorClientBuilder interface is currently not browser friendly, and therefore
-                // not availble in botbuilder-dialogs. Instead the context.adapter is cast to any.
-                const connectorClientBuilder: any = context.adapter;
                 const claimsIdentity = context.turnState.get<ClaimsIdentity>(context.adapter.BotIdentityKey);
-                const connectorClient = await (context.adapter as any).createConnectorClientWithIdentity(
-                    dc.context.activity.serviceUrl,
+
+                const connectorClient = await UserTokenAccess.createConnectorClient(
+                    context,
+                    context.activity.serviceUrl,
                     claimsIdentity,
                     state.scope
                 );
 
-                // For JavaScript Maps, set() functions as Add() and Set() in the C# TurnContextStateCollection
-                context.turnState.set(connectorClientBuilder.ConnectorClientKey, connectorClient);
+                context.turnState.set(context.adapter.ConnectorClientKey, connectorClient);
             }
         } else if (OAuthPrompt.isTeamsVerificationInvoke(context)) {
-            const code: any = context.activity.value.state;
+            const magicCode = context.activity.value.state;
+
             try {
-                token = await this.getUserToken(context, code);
-                if (token !== undefined) {
+                token = await UserTokenAccess.getUserToken(context, this.settings, magicCode);
+
+                if (token) {
                     await context.sendActivity({ type: 'invokeResponse', value: { status: StatusCodes.OK } });
                 } else {
                     await context.sendActivity({ type: 'invokeResponse', value: { status: 404 } });
                 }
-            } catch (e) {
+            } catch (_err) {
                 await context.sendActivity({ type: 'invokeResponse', value: { status: 500 } });
             }
         } else if (OAuthPrompt.isTokenExchangeRequestInvoke(context)) {
@@ -483,7 +444,7 @@ export class OAuthPrompt extends Dialog {
                     this.getTokenExchangeInvokeResponse(
                         StatusCodes.BAD_REQUEST,
                         'The bot received an InvokeActivity with a TokenExchangeInvokeRequest containing a ConnectionName that does not match the ConnectionName' +
-                        'expected by the bots active OAuthPrompt. Ensure these names match when sending the InvokeActivityInvalid ConnectionName in the TokenExchangeInvokeRequest'
+                            'expected by the bots active OAuthPrompt. Ensure these names match when sending the InvokeActivityInvalid ConnectionName in the TokenExchangeInvokeRequest'
                     )
                 );
             } else if (!('exchangeToken' in context.adapter)) {
@@ -494,18 +455,15 @@ export class OAuthPrompt extends Dialog {
                         "The bot's BotAdapter does not support token exchange operations. Ensure the bot's Adapter supports the ExtendedUserTokenProvider interface."
                     )
                 );
+
                 throw new Error('OAuthPrompt.recognizeToken(): not supported by the current adapter');
             } else {
-                const extendedUserTokenProvider: ExtendedUserTokenProvider = context.adapter as ExtendedUserTokenProvider;
                 let tokenExchangeResponse: TokenResponse;
                 try {
-                    tokenExchangeResponse = await extendedUserTokenProvider.exchangeToken(
-                        context,
-                        this.settings.connectionName,
-                        context.activity.from.id,
-                        { token: context.activity.value.token }
-                    );
-                } catch (err) {
+                    tokenExchangeResponse = await UserTokenAccess.exchangeToken(context, this.settings, {
+                        token: context.activity.value.token,
+                    });
+                } catch (_err) {
                     // Ignore errors.
                     // If the token exchange failed for any reason, the tokenExchangeResponse stays undefined
                     // and we send back a failure invoke response to the caller.
@@ -531,9 +489,9 @@ export class OAuthPrompt extends Dialog {
                 }
             }
         } else if (context.activity.type === ActivityTypes.Message) {
-            const matched: RegExpExecArray = /(\d{6})/.exec(context.activity.text);
-            if (matched && matched.length > 1) {
-                token = await this.getUserToken(context, matched[1]);
+            const [, magicCode] = /(\d{6})/.exec(context.activity.text) ?? [];
+            if (magicCode) {
+                token = await UserTokenAccess.getUserToken(context, this.settings, magicCode);
             }
         }
 
