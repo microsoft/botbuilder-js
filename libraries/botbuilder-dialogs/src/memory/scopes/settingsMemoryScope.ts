@@ -41,18 +41,17 @@ class Node {
  * SettingsMemoryScope maps "settings" -> dc.context.turnState['settings']
  */
 export class SettingsMemoryScope extends MemoryScope {
-
     private static readonly blockingList = [
         'MicrosoftAppPassword',
-        'cosmosDb:authKey',
-        'blobStorage:connectionString',
-        'BlobsStorage:connectionString',
-        'CosmosDbPartitionedStorage:authKey',
-        'applicationInsights:connectionString',
-        'applicationInsights:InstrumentationKey',
-        'runtimeSettings:telemetry:options:connectionString',
-        'runtimeSettings:telemetry:options:instrumentationKey',
-        'runtimeSettings:features:blobTranscript:connectionString',
+        'cosmosDb.authKey',
+        'blobStorage.connectionString',
+        'BlobsStorage.connectionString',
+        'CosmosDbPartitionedStorage.authKey',
+        'applicationInsights.connectionString',
+        'applicationInsights.InstrumentationKey',
+        'runtimeSettings.telemetry.options.connectionString',
+        'runtimeSettings.telemetry.options.instrumentationKey',
+        'runtimeSettings.features.blobTranscript.connectionString',
     ];
 
     /**

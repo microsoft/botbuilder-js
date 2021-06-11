@@ -141,7 +141,8 @@ export class BaseInvokeDialog<O extends object = {}>
         const boundOptions = {};
 
         for (const key in bindingOptions) {
-            boundOptions[key] = evaluateExpression(dc.state, bindingOptions[key]);
+            const bindingValue = bindingOptions[key];
+            boundOptions[key] = evaluateExpression(dc.state, new ValueExpression(bindingValue));
         }
 
         return boundOptions;

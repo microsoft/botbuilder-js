@@ -96,7 +96,7 @@ export class SetProperties<O extends object = {}> extends Dialog<O> implements S
 
         for (let i = 0; i < this.assignments.length; i++) {
             const assignment = this.assignments[i];
-            
+
             const value = evaluateExpression(dc.state, assignment.value);
 
             const property = assignment.property.getValue(dc.state);
