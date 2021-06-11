@@ -43,15 +43,15 @@ class Node {
 export class SettingsMemoryScope extends MemoryScope {
     private static readonly blockingList = [
         'MicrosoftAppPassword',
-        'cosmosDb.authKey',
-        'blobStorage.connectionString',
-        'BlobsStorage.connectionString',
-        'CosmosDbPartitionedStorage.authKey',
-        'applicationInsights.connectionString',
-        'applicationInsights.InstrumentationKey',
-        'runtimeSettings.telemetry.options.connectionString',
-        'runtimeSettings.telemetry.options.instrumentationKey',
-        'runtimeSettings.features.blobTranscript.connectionString',
+        'cosmosDb:authKey',
+        'blobStorage:connectionString',
+        'BlobsStorage:connectionString',
+        'CosmosDbPartitionedStorage:authKey',
+        'applicationInsights:connectionString',
+        'applicationInsights:InstrumentationKey',
+        'runtimeSettings:telemetry:options:connectionString',
+        'runtimeSettings:telemetry:options:instrumentationKey',
+        'runtimeSettings:features:blobTranscript:connectionString',
     ];
 
     /**
@@ -89,7 +89,9 @@ export class SettingsMemoryScope extends MemoryScope {
 
     public async load(dc: DialogContext): Promise<void> {
         if (this.initialSettings) {
-            dc.context.turnState.set(ScopePath.settings, this.initialSettings);
+            // filter initialSettings
+            const filteredSettings = SettingsMemoryScope.filterSettings(this.initialSettings);
+            dc.context.turnState.set(ScopePath.settings, filteredSettings);
         }
 
         await super.load(dc);
@@ -105,18 +107,16 @@ export class SettingsMemoryScope extends MemoryScope {
         let settings = {};
 
         if (configuration) {
-            const configurations = Object.entries(configuration).filter(
-                ([key]) => !SettingsMemoryScope.blockingList.includes(key)
-            );
             // load configuration into settings
-            const root = this.convertFlattenSettingToNode(configurations);
+            const root = this.convertFlattenSettingToNode(Object.entries(configuration));
             settings = root.children.reduce(
                 (acc, child) => ({ ...acc, [child.value]: this.convertNodeToObject(child) }),
                 settings
             );
         }
 
-        return settings;
+        // filter env configuration settings
+        return SettingsMemoryScope.filterSettings(settings);
     }
 
     /**
@@ -220,5 +220,30 @@ export class SettingsMemoryScope extends MemoryScope {
             result[child.value] = this.convertNodeToObject(child);
             return result;
         }, {});
+    }
+
+    private static filterSettings(settings: Record<string, unknown>): Record<string, unknown> {
+        const result = Object.assign({}, settings);
+        SettingsMemoryScope.blockingList.forEach((path) => SettingsMemoryScope.deletePropertyPath(result, path));
+        return result;
+    }
+
+    private static deletePropertyPath(obj, path: string): void {
+        if (!obj || !path) {
+            return;
+        }
+        const pathArray = path.split(':');
+
+        for (let i = 0; i < pathArray.length - 1; i++) {
+            const realKey = Object.keys(obj).find((key) => key.toLowerCase() === pathArray[i].toLowerCase());
+            obj = obj[realKey];
+
+            if (typeof obj === 'undefined') {
+                return;
+            }
+        }
+        const lastPath = pathArray.pop().toLowerCase();
+        const lastKey = Object.keys(obj).find((key) => key.toLowerCase() === lastPath);
+        delete obj[lastKey];
     }
 }
