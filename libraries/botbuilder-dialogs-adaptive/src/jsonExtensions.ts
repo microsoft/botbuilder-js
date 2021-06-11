@@ -43,13 +43,12 @@ export function replaceJsonRecursively(state: DialogStateManager, unit: object):
     return unit;
 }
 
-
 /**
  * Evaluate ValueExpression according the value type.
  * @param state Input ValueExpression
  * @param valExpr A scope for looking up variables.
  * @returns Deep data binding result.
  */
- export function evaluateExpression(state: DialogStateManager, valExpr: ValueExpression): any {
+export function evaluateExpression(state: DialogStateManager, valExpr: ValueExpression): any {
     return valExpr.expressionText == null ? replaceJsonRecursively(state, valExpr.value) : valExpr.getValue(state);
 }

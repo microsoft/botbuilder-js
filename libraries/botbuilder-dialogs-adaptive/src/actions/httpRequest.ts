@@ -276,7 +276,7 @@ export class HttpRequest<O extends object = {}> extends Dialog<O> implements Htt
         const contentType = this.contentType.getValue(dc.state) || 'application/json';
         instanceHeaders['Content-Type'] = contentType;
 
-        const instanceBody = evaluateExpression(dc.state, this.body).toString();
+        const instanceBody = evaluateExpression(dc.state, this.body)?.toString();
 
         const traceInfo = {
             request: {

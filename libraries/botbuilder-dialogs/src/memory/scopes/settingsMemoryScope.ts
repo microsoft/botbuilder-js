@@ -52,9 +52,9 @@ export class SettingsMemoryScope extends MemoryScope {
         'applicationInsights:InstrumentationKey',
         'runtimeSettings:telemetry:options:connectionString',
         'runtimeSettings:telemetry:options:instrumentationKey',
-        'runtimeSettings:features:blobTranscript:connectionString'
+        'runtimeSettings:features:blobTranscript:connectionString',
     ];
-    
+
     /**
      * Initializes a new instance of the [SettingsMemoryScope](xref:botbuilder-dialogs.SettingsMemoryScope) class.
      *
@@ -106,7 +106,9 @@ export class SettingsMemoryScope extends MemoryScope {
         let settings = {};
 
         if (configuration) {
-            const configurations = Object.entries(configuration).filter(([key, value]) => { !SettingsMemoryScope.blockingList.includes(key) });
+            const configurations = Object.entries(configuration).filter(
+                ([key]) => !SettingsMemoryScope.blockingList.includes(key)
+            );
             // load configuration into settings
             const root = this.convertFlattenSettingToNode(configurations);
             settings = root.children.reduce(
