@@ -1687,3 +1687,57 @@ export type Type3 = MessagingExtensionResultType;
  * @enum {string}
  */
 export type Action = 'accept' | 'decline';
+
+/**
+ * @interface
+ * Specific details of a Teams meeting.
+ */
+export interface MeetingDetails {
+    /**
+     * @member {string} [id] The meeting's Id, encoded as a BASE64 string.
+     */
+    id: string;
+    /**
+     * @member {string} [msGraphResourceId] The MsGraphResourceId, used specifically for MS Graph API calls.
+     */
+    msGraphResourceId: string;
+    /**
+     * @member {Date} [scheduledStartTime] The meeting's scheduled start time, in UTC.
+     */
+    scheduledStartTime: Date;
+    /**
+     * @member {Date} [scheduledEndTime] The meeting's scheduled end time, in UTC.
+     */
+    scheduledEndTime: Date;
+    /**
+     * @member {string} [joinUrl] The URL used to join the meeting.
+     */
+    joinUrl: string;
+    /**
+     * @member {string} [title] The title of the meeting.
+     */
+    title: string;
+    /**
+     * @member {string} [type] The meeting's type.
+     */
+    type: string;
+}
+
+/**
+ * @interface
+ * General information about a Teams meeting.
+ */
+export interface MeetingInfo {
+    /**
+     * @member {MeetingDetails} [details] The specific details of a Teams meeting.
+     */
+    details: MeetingDetails;
+    /**
+     * @member {ConversationAccount} [conversation] The Conversation Account for the meeting.
+     */
+    conversation: ConversationAccount;
+    /**
+     * @member {TeamsChannelAccount} [organizer] The organizer's user information.
+     */
+    organizer: TeamsChannelAccount;
+}

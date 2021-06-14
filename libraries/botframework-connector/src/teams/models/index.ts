@@ -4,7 +4,7 @@
  */
 
 import { HttpResponse, ServiceClientOptions, RequestOptionsBase } from '@azure/ms-rest-js';
-import { ConversationList, TeamDetails, TeamsMeetingParticipant } from 'botframework-schema';
+import { ConversationList, TeamDetails, TeamsMeetingInfo, TeamsMeetingParticipant } from 'botframework-schema';
 
 /**
  * @interface
@@ -99,3 +99,22 @@ export interface TeamsFetchMeetingParticipantOptionalParams extends RequestOptio
      */
     tenantId?: string;
 }
+
+/**
+ * Contains response data for the fetchMeetingInfo operation.
+ */
+export type TeamsMeetingInfoResponse = TeamsMeetingInfo & {
+    /**
+     * The underlying HTTP response.
+     */
+    _response: HttpResponse & {
+        /**
+         * The response body as text (string format)
+         */
+        bodyAsText: string;
+        /**
+         * The response body as parsed JSON or XML
+         */
+        parsedBody: TeamsMeetingParticipant;
+    };
+};

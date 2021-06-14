@@ -661,6 +661,100 @@ describe('TeamsInfo', function () {
         });
     });
 
+    describe('getMeetingInfo', function () {
+        const context = new TestContext(teamActivity);
+
+        it('should work with correct arguments-meetingId in context', async function () {
+            const details = {
+                organizer: {
+                    id: teamActivity.from.id,
+                    name: teamActivity.from.name,
+                    objectId: 'User-One-Object-Id',
+                    givenName: 'User',
+                    surname: 'One',
+                    email: 'User.One@microsoft.com',
+                    userPrincipalName: 'user1@microsoft.com',
+                    tenantId: teamActivity.conversation.tenantId,
+                },
+                details: {
+                    id: 'meeting-id',
+                    msGraphResourceId: 'msGraph-id',
+                    scheduledStartTime: new Date('Thu Jun 10 2021 15:02:32 GMT-0700'),
+                    scheduledEndTime: new Date('Thu Jun 10 2021 16:02:32 GMT-0700'),
+                    joinUrl: 'https://teams.microsoft.com/l/meetup-join/someEncodedMeetingString',
+                    title: 'Fake meeting',
+                    type: 'Scheduled',
+                },
+                conversation: {
+                    id: teamActivity.conversation.id,
+                },
+            };
+
+            const { expectedAuthHeader, expectation: fetchOauthToken } = nockOauth();
+
+            const fetchExpectation = nock('https://smba.trafficmanager.net/amer')
+                .get('/v1/meetings/19%3AmeetingId')
+                .matchHeader('Authorization', expectedAuthHeader)
+                .reply(200, details);
+
+            const fetchedDetails = await TeamsInfo.getMeetingInfo(context);
+
+            assert(fetchOauthToken.isDone());
+            assert(fetchExpectation.isDone());
+
+            assert.deepStrictEqual(fetchedDetails, details);
+        });
+
+        it('should work with correct arguments-meetingId passed in', async function () {
+            const details = {
+                organizer: {
+                    id: teamActivity.from.id,
+                    name: teamActivity.from.name,
+                    objectId: 'User-One-Object-Id',
+                    givenName: 'User',
+                    surname: 'One',
+                    email: 'User.One@microsoft.com',
+                    userPrincipalName: 'user1@microsoft.com',
+                    tenantId: teamActivity.conversation.tenantId,
+                },
+                details: {
+                    id: 'meeting-id',
+                    msGraphResourceId: 'msGraph-id',
+                    scheduledStartTime: new Date('Thu Jun 10 2021 15:02:32 GMT-0700'),
+                    scheduledEndTime: new Date('Thu Jun 10 2021 16:02:32 GMT-0700'),
+                    joinUrl: 'https://teams.microsoft.com/l/meetup-join/someEncodedMeetingString',
+                    title: 'Fake meeting',
+                    type: 'Scheduled',
+                },
+                conversation: {
+                    id: teamActivity.conversation.id,
+                },
+            };
+
+            const { expectedAuthHeader, expectation: fetchOauthToken } = nockOauth();
+
+            const fetchExpectation = nock('https://smba.trafficmanager.net/amer')
+                .get('/v1/meetings/meeting-id')
+                .matchHeader('Authorization', expectedAuthHeader)
+                .reply(200, details);
+
+            const fetchedDetails = await TeamsInfo.getMeetingInfo(context, details.details.id);
+
+            assert(fetchOauthToken.isDone());
+            assert(fetchExpectation.isDone());
+
+            assert.deepStrictEqual(fetchedDetails, details);
+        });
+
+        it('should throw error for missing context', async function () {
+            await assert.rejects(TeamsInfo.getMeetingInfo(), Error('context is required.'));
+        });
+
+        it('should throw error for missing meetingId', async function () {
+            await assert.rejects(TeamsInfo.getMeetingInfo({ activity: {} }), Error('meetingId or TurnContext containing meetingId is required.'));
+        });
+    });
+
     describe('getTeamMembers()', function () {
         it('should error in 1-on-1 chat', async function () {
             const context = new TestContext(oneOnOneActivity);
