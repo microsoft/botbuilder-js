@@ -368,6 +368,7 @@ export function teamsGetTenant(activity: Activity): TenantInfo | null;
 
 // @public
 export class TeamsInfo {
+    static getMeetingInfo(context: TurnContext, meetingId?: string): Promise<TeamsMeetingInfo>;
     static getMeetingParticipant(context: TurnContext, meetingId?: string, participantId?: string, tenantId?: string): Promise<TeamsMeetingParticipant>;
     static getMember(context: TurnContext, userId: string): Promise<TeamsChannelAccount>;
     static getMembers(context: TurnContext): Promise<TeamsChannelAccount[]>;

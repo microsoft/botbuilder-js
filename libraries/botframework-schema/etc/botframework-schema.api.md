@@ -876,6 +876,24 @@ export interface Meeting {
 }
 
 // @public
+export interface MeetingDetails {
+    id: string;
+    joinUrl: string;
+    msGraphResourceId: string;
+    scheduledEndTime: Date;
+    scheduledStartTime: Date;
+    title: string;
+    type: string;
+}
+
+// @public
+export interface MeetingInfo {
+    conversation: ConversationAccount;
+    details: MeetingDetails;
+    organizer: TeamsChannelAccount;
+}
+
+// @public
 export interface Mention {
     mentioned: ChannelAccount;
     text: string;

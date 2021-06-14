@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 /**
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
@@ -8,7 +9,7 @@ import * as Models from '../models';
 import * as Mappers from '../models/teamsMappers';
 import * as Parameters from '../models/parameters';
 import { TeamsConnectorClientContext } from '../';
-import { ConversationList, TeamDetails, TeamsMeetingParticipant } from 'botframework-schema';
+import { ConversationList, TeamDetails, TeamsMeetingInfo, TeamsMeetingParticipant } from 'botframework-schema';
 
 /** Class representing a Teams. */
 export class Teams {
@@ -181,6 +182,51 @@ export class Teams {
             callback
         ) as Promise<Models.TeamsFetchMeetingParticipantResponse>;
     }
+
+    /**
+     * Fetch meeting information.
+     *
+     * @summary Fetches information of a Teams meeting.
+     * @param meetingId Meeting Id, encoded as a BASE64 string.
+     * @param [options] The optional parameters
+     * @returns Promise<Models.TeamsFetchMeetingInfoResponse>
+     */
+    fetchMeetingInfo(
+        meetingId: string,
+        options?: msRest.RequestOptionsBase | msRest.ServiceCallback<TeamDetails>
+    ): Promise<Models.TeamsMeetingInfoResponse>;
+    /**
+     * @param meetingId Meeting Id, encoded as a BASE64 string.
+     * @param callback The callback
+     */
+     fetchMeetingInfo(
+        meetingId: string,
+        callback: msRest.ServiceCallback<TeamsMeetingInfo>
+    ): void;
+    /**
+     * @param meetingId Meeting Id, encoded as a BASE64 string.
+     * @param options The optional parameters
+     * @param callback The callback
+     */
+     fetchMeetingInfo(
+        meetingId: string,
+        options: msRest.RequestOptionsBase | msRest.ServiceCallback<TeamDetails>,
+        callback: msRest.ServiceCallback<TeamsMeetingInfo>
+    ): void;
+    fetchMeetingInfo(
+        meetingId: string,
+        options?: msRest.RequestOptionsBase | msRest.ServiceCallback<TeamDetails>,
+        callback?: msRest.ServiceCallback<TeamsMeetingInfo>
+    ): Promise<Models.TeamsMeetingInfoResponse> {
+        return this.client.sendOperationRequest(
+            {
+                meetingId,
+                options,
+            },
+            fetchMeetingInfoOperationSpec,
+            callback
+        ) as Promise<Models.TeamsMeetingInfoResponse>;
+    }
 }
 
 // Operation Specifications
@@ -219,6 +265,19 @@ const fetchMeetingParticipantOperationSpec: msRest.OperationSpec = {
     responses: {
         200: {
             bodyMapper: Mappers.TeamsMeetingParticipant,
+        },
+        default: {},
+    },
+    serializer,
+};
+
+const fetchMeetingInfoOperationSpec: msRest.OperationSpec = {
+    httpMethod: 'GET',
+    path: 'v1/meetings/{meetingId}',
+    urlParameters: [Parameters.meetingId],
+    responses: {
+        200: {
+            bodyMapper: Mappers.TeamsMeetingInfo,
         },
         default: {},
     },

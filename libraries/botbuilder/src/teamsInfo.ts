@@ -20,6 +20,7 @@ import {
     ConversationParameters,
     ConversationReference,
     TeamsMeetingParticipant,
+    TeamsMeetingInfo,
 } from 'botbuilder-core';
 import { ConnectorClient, TeamsConnectorClient, TeamsConnectorModels } from 'botframework-connector';
 
@@ -53,7 +54,7 @@ export class TeamsInfo {
 
         if (meetingId == null) {
             const meeting = teamsGetTeamMeetingInfo(activity);
-            meetingId = meeting ? meeting.id : undefined;
+            meetingId = meeting?.id;
         }
 
         if (!meetingId) {
@@ -62,7 +63,7 @@ export class TeamsInfo {
 
         if (participantId == null) {
             const from = activity.from;
-            participantId = from ? from.aadObjectId : undefined;
+            participantId = from?.aadObjectId;
         }
 
         if (!participantId) {
@@ -73,12 +74,37 @@ export class TeamsInfo {
         // wants to disable defaulting of tenant ID they can pass `null`.
         if (tenantId === undefined) {
             const tenant = teamsGetTenant(activity);
-            tenantId = tenant ? tenant.id : undefined;
+            tenantId = tenant?.id;
         }
 
         return this.getTeamsConnectorClient(context).teams.fetchMeetingParticipant(meetingId, participantId, {
             tenantId,
         });
+    }
+
+    /**
+     * Gets the information for the given meeting id.
+     * @param context The [TurnContext](xref:botbuilder-core.TurnContext) for this turn.
+     * @param meetingId The BASE64-encoded id of the Teams meeting.
+     * @returns The [TeamsMeetingInfo](xref:botbuilder-core.TeamsMeetingInfo) fetched
+     */
+    public static async getMeetingInfo(context: TurnContext, meetingId?: string): Promise<TeamsMeetingInfo> {
+        if (!context) {
+            throw new Error('context is required.');
+        }
+
+        const activity = context.activity;
+
+        if (meetingId == null) {
+            const meeting = teamsGetTeamMeetingInfo(activity);
+            meetingId = meeting?.id;
+        }
+
+        if (!meetingId) {
+            throw new Error('meetingId or TurnContext containing meetingId is required.');
+        }
+
+        return this.getTeamsConnectorClient(context).teams.fetchMeetingInfo(meetingId);
     }
 
     /**
