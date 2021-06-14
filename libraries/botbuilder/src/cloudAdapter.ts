@@ -4,9 +4,11 @@
 import * as t from 'runtypes';
 import type { BotFrameworkHttpAdapter } from './botFrameworkHttpAdapter';
 import { Activity, BotLogic, CloudAdapterBase, InvokeResponse, StatusCodes } from 'botbuilder-core';
+import { GET, POST, VERSION_PATH } from './streaming';
 import { HttpClient, HttpHeaders, HttpOperationResponse, WebResource } from '@azure/ms-rest-js';
 import { INodeBufferT, INodeSocketT } from './runtypes';
 import { Request, Response, ResponseT } from './interfaces';
+import { USER_AGENT } from './botFrameworkAdapter';
 import { retry } from 'botbuilder-stdlib';
 import { validateAndFixActivity } from './activityValidator';
 
@@ -264,11 +266,22 @@ class StreamingRequestHandler extends RequestHandler {
             );
         }
 
-        if (request.verb.toUpperCase() !== 'POST' && request.verb.toUpperCase() !== 'GET') {
+        if (request.verb.toUpperCase() !== POST && request.verb.toUpperCase() !== GET) {
             return end(
                 StatusCodes.METHOD_NOT_ALLOWED,
                 `Invalid verb received. Only GET and POST are accepted. Verb: ${request.verb}`
             );
+        }
+
+        if (request.path.toLowerCase() === VERSION_PATH) {
+            if (request.verb.toUpperCase() === GET) {
+                return end(StatusCodes.OK, { UserAgent: USER_AGENT });
+            } else {
+                return end(
+                    StatusCodes.METHOD_NOT_ALLOWED,
+                    `Invalid verb received for path: ${request.path}. Only GET is accepted. Verb: ${request.verb}`
+                );
+            }
         }
 
         const [stream] = request.streams;
