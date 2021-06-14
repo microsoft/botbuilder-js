@@ -116,7 +116,7 @@ export class SettingsMemoryScope extends MemoryScope {
         }
 
         // filter env configuration settings
-        return SettingsMemoryScope.filterSettings(settings);
+        return this.filterSettings(settings);
     }
 
     /**
@@ -224,14 +224,15 @@ export class SettingsMemoryScope extends MemoryScope {
 
     private static filterSettings(settings: Record<string, unknown>): Record<string, unknown> {
         const result = Object.assign({}, settings);
-        SettingsMemoryScope.blockingList.forEach((path) => SettingsMemoryScope.deletePropertyPath(result, path));
+        this.blockingList.forEach((path) => this.deletePropertyPath(result, path));
         return result;
     }
 
     private static deletePropertyPath(obj, path: string): void {
-        if (!obj || !path) {
+        if (!obj || !path?.length) {
             return;
         }
+
         const pathArray = path.split(':');
 
         for (let i = 0; i < pathArray.length - 1; i++) {
@@ -242,6 +243,7 @@ export class SettingsMemoryScope extends MemoryScope {
                 return;
             }
         }
+
         const lastPath = pathArray.pop().toLowerCase();
         const lastKey = Object.keys(obj).find((key) => key.toLowerCase() === lastPath);
         delete obj[lastKey];
