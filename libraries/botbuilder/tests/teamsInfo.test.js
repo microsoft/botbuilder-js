@@ -749,6 +749,10 @@ describe('TeamsInfo', function () {
         it('should throw error for missing context', async function () {
             await assert.rejects(TeamsInfo.getMeetingInfo(), Error('context is required.'));
         });
+
+        it('should throw error for missing meetingId', async function () {
+            await assert.rejects(TeamsInfo.getMeetingInfo({ activity: {} }), Error('meetingId or TurnContext containing meetingId is required.'));
+        });
     });
 
     describe('getTeamMembers()', function () {

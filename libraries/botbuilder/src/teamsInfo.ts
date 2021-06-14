@@ -54,7 +54,7 @@ export class TeamsInfo {
 
         if (meetingId == null) {
             const meeting = teamsGetTeamMeetingInfo(activity);
-            meetingId = meeting ? meeting.id : undefined;
+            meetingId = meeting?.id;
         }
 
         if (!meetingId) {
@@ -63,7 +63,7 @@ export class TeamsInfo {
 
         if (participantId == null) {
             const from = activity.from;
-            participantId = from ? from.aadObjectId : undefined;
+            participantId = from?.aadObjectId;
         }
 
         if (!participantId) {
@@ -74,7 +74,7 @@ export class TeamsInfo {
         // wants to disable defaulting of tenant ID they can pass `null`.
         if (tenantId === undefined) {
             const tenant = teamsGetTenant(activity);
-            tenantId = tenant ? tenant.id : undefined;
+            tenantId = tenant?.id;
         }
 
         return this.getTeamsConnectorClient(context).teams.fetchMeetingParticipant(meetingId, participantId, {
@@ -97,11 +97,11 @@ export class TeamsInfo {
 
         if (meetingId == null) {
             const meeting = teamsGetTeamMeetingInfo(activity);
-            meetingId = meeting ? meeting.id : undefined;
+            meetingId = meeting?.id;
         }
 
         if (!meetingId) {
-            throw new Error('meetingId is required.');
+            throw new Error('meetingId or TurnContext containing meetingId is required.');
         }
 
         return this.getTeamsConnectorClient(context).teams.fetchMeetingInfo(meetingId);
