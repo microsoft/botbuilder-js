@@ -10,6 +10,7 @@ import { Expression } from '../expression';
 import { ExpressionEvaluator, ValueWithError } from '../expressionEvaluator';
 import { ExpressionType } from '../expressionType';
 import { FunctionUtils } from '../functionUtils';
+import { InternalFunctionUtils } from '../functionUtils.internal';
 import { MemoryInterface } from '../memory/memoryInterface';
 import { Options } from '../options';
 import { ReturnType } from '../returnType';
@@ -36,7 +37,7 @@ export class Contains extends ExpressionEvaluator {
                 found = (args[0] as Map<string, any>).get(args[1]) !== undefined;
             } else if (typeof args[1] === 'string') {
                 let value: any;
-                ({ value, error } = FunctionUtils.accessProperty(args[0], args[1]));
+                ({ value, error } = InternalFunctionUtils.accessProperty(args[0], args[1]));
                 found = !error && value !== undefined;
             }
         }

@@ -12,6 +12,7 @@ import { Expression } from '../expression';
 import { ExpressionEvaluator, ValueWithError } from '../expressionEvaluator';
 import { ExpressionType } from '../expressionType';
 import { FunctionUtils } from '../functionUtils';
+import { InternalFunctionUtils } from '../functionUtils.internal';
 import { MemoryInterface } from '../memory/memoryInterface';
 import { Options } from '../options';
 import { ReturnType } from '../returnType';
@@ -45,10 +46,10 @@ export class StartOfMonth extends ExpressionEvaluator {
         let result: string;
         let error: string;
         let parsed: any;
-        ({ value: parsed, error } = FunctionUtils.parseTimestamp(timeStamp));
+        ({ value: parsed, error } = InternalFunctionUtils.parseTimestamp(timeStamp));
         if (!error) {
             const startofMonth = moment(parsed).utc().date(1).hours(0).minutes(0).second(0).millisecond(0);
-            ({ value: result, error } = FunctionUtils.returnFormattedTimeStampStr(startofMonth, format));
+            ({ value: result, error } = InternalFunctionUtils.returnFormattedTimeStampStr(startofMonth, format));
         }
 
         return { value: result, error };

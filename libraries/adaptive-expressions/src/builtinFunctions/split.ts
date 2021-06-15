@@ -10,6 +10,7 @@ import { Expression } from '../expression';
 import { EvaluateExpressionDelegate, ExpressionEvaluator } from '../expressionEvaluator';
 import { ExpressionType } from '../expressionType';
 import { FunctionUtils } from '../functionUtils';
+import { InternalFunctionUtils } from '../functionUtils.internal';
 import { ReturnType } from '../returnType';
 
 /**
@@ -21,7 +22,7 @@ export class Split extends ExpressionEvaluator {
     }
 
     private static evaluator(): EvaluateExpressionDelegate {
-        return FunctionUtils.apply((args: any[]): string[] => FunctionUtils.parseStringOrUndefined(args[0]).split(FunctionUtils.parseStringOrUndefined(args[1] || '')), FunctionUtils.verifyStringOrNull);
+        return FunctionUtils.apply((args: any[]): string[] => InternalFunctionUtils.parseStringOrUndefined(args[0]).split(InternalFunctionUtils.parseStringOrUndefined(args[1] || '')), FunctionUtils.verifyStringOrNull);
     }
 
     private static validator(expression: Expression): void {

@@ -87,10 +87,6 @@ steps:
     verbose: false
     customCommand: 'run build'
 
-- task: azure-cosmosdb.emulator-public-preview.run-cosmosdbemulatorcontainer.CosmosDbEmulator@2
-  displayName: 'Run Azure Cosmos DB Emulator container'
-  enabled: false
-
 - task: Npm@1
   displayName: 'npm run test-coverage'
   inputs:
