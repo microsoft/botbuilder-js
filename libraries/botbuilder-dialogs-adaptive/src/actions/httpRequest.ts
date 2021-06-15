@@ -183,7 +183,7 @@ export class HttpRequest<O extends object = {}> extends Dialog<O> implements Con
 
         let instanceBody: any;
         if (this.body) {
-            const body = this.body.expressionText == null ? this.replaceBodyRecursively(dc, Object.assign({}, this.body.value))
+            const body = this.body.expressionText == null ? await this.replaceBodyRecursively(dc, Object.assign({}, this.body.value))
                 : this.body.getValue(dc);
 
             if (typeof body === 'string') {
