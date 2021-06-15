@@ -50,6 +50,10 @@ export class ActivityFactory {
             throw new Error(`${ errors.join('\n') }`);
         }
 
+        if (lgResult == null) {
+            return { type: ActivityTypes.Message };
+        }
+
         if (typeof lgResult === 'string') {
             const structuredLGResult: any = this.parseStructuredLGResult(lgResult.trim());
             return structuredLGResult === undefined ?
@@ -503,7 +507,7 @@ export class ActivityFactory {
         return result;
     }
 
-    
+
     private static checkCardActionPropertyName(input: any): string[] {
         const invalidProperties: string[] = [];
         for (const property of Object.keys(input)) {
@@ -606,7 +610,7 @@ export class ActivityFactory {
         return result.trim().toLowerCase();
     }
 
-    
+
     private static getValidBooleanValue(boolValue: string): boolean{
         if (boolValue.toLowerCase() === 'true')
         {
