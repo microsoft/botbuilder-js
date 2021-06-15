@@ -188,13 +188,15 @@ export class HttpRequest<O extends object = {}> extends Dialog<O> implements Con
 
         let instanceBody: string;
         if (this.body) {
-            let body = this.body.getValue(dc.state);
-            if (body) {
-                if (typeof body === 'string') {
-                    instanceBody = body;
-                } else {
-                    instanceBody = JSON.stringify(this.replaceBodyRecursively(dc, Object.assign({}, body)));
-                }
+            if (this.body.expressionText == null) {
+                instanceBody = this.replaceBodyRecursively(dc, Object.assign({}, this.body.value));
+            } else {
+                instanceBody = this.body.getValue(dc);
+            }
+
+
+            if (instanceBody != null && typeof instanceBody !== 'string') {
+                instanceBody = JSON.stringify(instanceBody);
             }
         }
 
