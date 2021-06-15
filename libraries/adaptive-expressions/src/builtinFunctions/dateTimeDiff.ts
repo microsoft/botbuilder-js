@@ -10,6 +10,7 @@ import { Expression } from '../expression';
 import { ExpressionEvaluator, ValueWithError } from '../expressionEvaluator';
 import { ExpressionType } from '../expressionType';
 import { FunctionUtils } from '../functionUtils';
+import { InternalFunctionUtils } from '../functionUtils.internal';
 import { MemoryInterface } from '../memory/memoryInterface';
 import { Options } from '../options';
 import { ReturnType } from '../returnType';
@@ -30,9 +31,9 @@ export class DateTimeDiff extends ExpressionEvaluator {
         let args: any[];
         ({ args, error } = FunctionUtils.evaluateChildren(expr, state, options));
         if (!error) {
-            ({ value: dateTimeStart, error: error } = FunctionUtils.ticks(args[0]));
+            ({ value: dateTimeStart, error: error } = InternalFunctionUtils.ticks(args[0]));
             if (!error) {
-                ({ value: dateTimeEnd, error: error } = FunctionUtils.ticks(args[1]));
+                ({ value: dateTimeEnd, error: error } = InternalFunctionUtils.ticks(args[1]));
             }
         }
 

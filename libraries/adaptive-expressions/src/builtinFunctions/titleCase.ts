@@ -8,6 +8,7 @@
 
 import { ExpressionType } from '../expressionType';
 import { FunctionUtils } from '../functionUtils';
+import { InternalFunctionUtils } from '../functionUtils.internal';
 import { StringTransformEvaluator } from './stringTransformEvaluator';
 
 /**
@@ -19,7 +20,7 @@ export class TitleCase extends StringTransformEvaluator {
     }
 
     private static evaluator(args: any[]): string {
-        const inputStr = String(FunctionUtils.parseStringOrUndefined(args[0])).toLowerCase();
+        const inputStr = String(InternalFunctionUtils.parseStringOrUndefined(args[0])).toLowerCase();
         if (inputStr === '') {
             return inputStr;
         } else {

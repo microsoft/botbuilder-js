@@ -10,6 +10,7 @@ import { Expression } from '../expression';
 import { ExpressionEvaluator, ValueWithError } from '../expressionEvaluator';
 import { ExpressionType } from '../expressionType';
 import { FunctionUtils } from '../functionUtils';
+import { InternalFunctionUtils } from '../functionUtils.internal';
 import { MemoryInterface } from '../memory/memoryInterface';
 import { Options } from '../options';
 import { ReturnType } from '../returnType';
@@ -37,9 +38,9 @@ export class Element extends ExpressionEvaluator {
             ({ value: idxValue, error } = index.tryEvaluate(state, newOptions));
             if (!error) {
                 if (Number.isInteger(idxValue)) {
-                    ({ value, error } = FunctionUtils.accessIndex(inst, Number(idxValue)));
+                    ({ value, error } = InternalFunctionUtils.accessIndex(inst, Number(idxValue)));
                 } else if (typeof idxValue === 'string') {
-                    ({ value, error } = FunctionUtils.accessProperty(inst, idxValue.toString()));
+                    ({ value, error } = InternalFunctionUtils.accessProperty(inst, idxValue.toString()));
                 } else {
                     error = `Could not coerce ${index} to an int or string.`;
                 }

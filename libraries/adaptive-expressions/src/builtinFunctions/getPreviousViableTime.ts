@@ -11,6 +11,7 @@ import { Expression } from '../expression';
 import { ReturnType } from '../returnType';
 import { ExpressionType } from '../expressionType';
 import { FunctionUtils } from '../functionUtils';
+import { InternalFunctionUtils } from '../functionUtils.internal';
 import { MemoryInterface } from '../memory/memoryInterface';
 import { Options } from '../options';
 import { TimeZoneConverter } from '../timeZoneConverter';
@@ -59,7 +60,7 @@ export class GetPreviousViableTime extends ExpressionEvaluator {
         }
 
         if (!error) {
-            ({timexProperty: parsed, error: error} = FunctionUtils.parseTimexProperty((args[0] as string).replace('XX', '00')));
+            ({timexProperty: parsed, error: error} = InternalFunctionUtils.parseTimexProperty((args[0] as string).replace('XX', '00')));
         }
 
         if (!error) {

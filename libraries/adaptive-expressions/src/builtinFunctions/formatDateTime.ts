@@ -12,6 +12,7 @@ import { Expression } from '../expression';
 import { EvaluateExpressionDelegate, ExpressionEvaluator } from '../expressionEvaluator';
 import { ExpressionType } from '../expressionType';
 import { FunctionUtils } from '../functionUtils';
+import { InternalFunctionUtils } from '../functionUtils.internal';
 import { ReturnType } from '../returnType';
 
 /**
@@ -29,7 +30,7 @@ export class FormatDateTime extends ExpressionEvaluator {
                 let error: string;
                 let arg: any = args[0];
                 if (typeof arg === 'string') {
-                    error = FunctionUtils.verifyTimestamp(arg.toString());
+                    error = InternalFunctionUtils.verifyTimestamp(arg.toString());
                 } else {
                     arg = arg.toString();
                 }

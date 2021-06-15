@@ -5,11 +5,11 @@ steps:
     versionSpec: $(NodeVersion)
 
 - task: Npm@1
-  displayName: 'npm install eslint typescript @typescript-eslint/parser @typescript-eslint/eslint-plugin eslint-plugin-only-warn eslint-plugin-jsdoc'
+  displayName: 'npm install eslint typescript@3.5.3 @typescript-eslint/parser @typescript-eslint/eslint-plugin eslint-plugin-only-warn eslint-plugin-jsdoc'
   inputs:
     command: custom
     verbose: false
-    customCommand: 'install eslint typescript @typescript-eslint/parser @typescript-eslint/eslint-plugin eslint-plugin-only-warn eslint-plugin-jsdoc'
+    customCommand: 'install eslint typescript@3.5.3 @typescript-eslint/parser @typescript-eslint/eslint-plugin eslint-plugin-only-warn eslint-plugin-jsdoc'
 
 - task: Npm@1
   displayName: 'npm run eslint'
