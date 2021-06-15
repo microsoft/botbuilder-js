@@ -25,6 +25,7 @@ import {
     SimpleCredentialProvider,
     allowedCallersClaimsValidator,
     BotFrameworkAuthentication,
+    ServiceClientCredentialsFactory,
 } from 'botframework-connector';
 
 import {
@@ -252,13 +253,19 @@ function addSkills(services: ServiceCollection, configuration: Configuration): v
 }
 
 function addCoreBot(services: ServiceCollection, configuration: Configuration): void {
-    services.addFactory<BotFrameworkAuthentication, { authenticationConfiguration: AuthenticationConfiguration }>(
+    services.addFactory<
+        BotFrameworkAuthentication,
+        {
+            authenticationConfiguration: AuthenticationConfiguration;
+            serviceClientCredentialsFactory: ServiceClientCredentialsFactory;
+        }
+    >(
         'botFrameworkAuthentication',
-        ['authenticationConfiguration'],
+        ['authenticationConfiguration', 'serviceClientCredentialsFactory'],
         (dependencies) =>
             createBotFrameworkAuthenticationFromConfiguration(
                 configuration,
-                undefined,
+                dependencies.serviceClientCredentialsFactory,
                 dependencies.authenticationConfiguration
             )
     );
@@ -496,6 +503,7 @@ export async function getRuntimeServices(
         memoryScopes: [],
         middlewares: new MiddlewareSet(),
         pathResolvers: [],
+        serviceClientCredentialsFactory: undefined,
     });
 
     services.addFactory<ResourceExplorer, { declarativeTypes: ComponentDeclarativeTypes[] }>(
