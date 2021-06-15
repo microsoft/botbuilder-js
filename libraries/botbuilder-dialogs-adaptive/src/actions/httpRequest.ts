@@ -188,16 +188,14 @@ export class HttpRequest<O extends object = {}> extends Dialog<O> implements Con
 
         let instanceBody: string;
         if (this.body) {
-            if (this.body.expressionText == null) {
-                instanceBody = this.replaceBodyRecursively(dc, Object.assign({}, this.body.value));
+            const body = this.body.expressionText == null ? this.replaceBodyRecursively(dc, Object.assign({}, this.body.value))
+                                                            : this.body.getValue(dc);
+
+
+            if (typeof body === 'string') {
+                instanceBody = body;
             } else {
-                instanceBody = this.body.getValue(dc);
-            }
-
-
-            if (instanceBody != null && typeof instanceBody !== 'string') {
-                instanceBody = JSON.stringify(instanceBody);
-            }
+                instanceBody = JSON.stringify(Object.assign({}, body));
         }
 
         const traceInfo = {
