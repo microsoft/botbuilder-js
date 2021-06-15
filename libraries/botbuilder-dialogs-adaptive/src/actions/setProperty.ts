@@ -5,6 +5,8 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
+import { evaluateExpression } from '../jsonExtensions';
+
 import {
     BoolExpression,
     BoolExpressionConverter,
@@ -106,13 +108,8 @@ export class SetProperty<O extends object = {}> extends Dialog<O> implements Set
             throw new Error(`${this.id}: no 'value' expression specified.`);
         }
 
-        // Evaluate expression and save value
         const property = this.property.getValue(dc.state);
-        let value = this.value.getValue(dc.state);
-
-        if (value) {
-            value = replaceJsonRecursively(dc.state, value);
-        }
+        const value = evaluateExpression(dc.state, this.value);
 
         dc.state.setValue(property, value);
 

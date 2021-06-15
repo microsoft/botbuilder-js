@@ -5,6 +5,8 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
+import { evaluateExpression } from '../jsonExtensions';
+
 import {
     BoolExpression,
     BoolExpressionConverter,
@@ -77,11 +79,7 @@ export class EndDialog<O extends object = {}> extends Dialog<O> implements EndDi
         }
 
         if (this.value) {
-            let value = this.value.getValue(dc.state);
-
-            if (value) {
-                value = replaceJsonRecursively(dc.state, value);
-            }
+            const value = evaluateExpression(dc.state, this.value);
 
             return await this.endParentDialog(dc, value);
         }
@@ -92,7 +90,7 @@ export class EndDialog<O extends object = {}> extends Dialog<O> implements EndDi
     /**
      * Ends the parent [Dialog](xref:botbuilder-dialogs.Dialog).
      * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
-     * @param result Optional. Value returned from the dialog that was called. The type 
+     * @param result Optional. Value returned from the dialog that was called. The type
      * of the value returned is dependent on the child dialog.
      * @returns A `Promise` representing the asynchronous operation.
      */

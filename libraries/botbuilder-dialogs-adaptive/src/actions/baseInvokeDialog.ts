@@ -5,6 +5,8 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
+import { evaluateExpression } from '../jsonExtensions';
+
 import {
     ValueExpression,
     BoolExpression,
@@ -140,13 +142,7 @@ export class BaseInvokeDialog<O extends object = {}>
 
         for (const key in bindingOptions) {
             const bindingValue = bindingOptions[key];
-            let value = new ValueExpression(bindingValue).getValue(dc.state);
-
-            if (value) {
-                value = replaceJsonRecursively(dc.state, value);
-            }
-
-            boundOptions[key] = value;
+            boundOptions[key] = evaluateExpression(dc.state, new ValueExpression(bindingValue));
         }
 
         return boundOptions;

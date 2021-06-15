@@ -13,6 +13,8 @@ import {
     Expression,
 } from 'adaptive-expressions';
 import { StringUtils } from 'botbuilder';
+import { evaluateExpression } from '../jsonExtensions';
+
 import {
     Converter,
     ConverterFactory,
@@ -105,11 +107,8 @@ export class SetProperties<O extends object = {}> extends Dialog<O> implements S
 
         for (let i = 0; i < this.assignments.length; i++) {
             const assignment = this.assignments[i];
-            let value = assignment.value.getValue(dc.state);
 
-            if (value) {
-                value = replaceJsonRecursively(dc.state, value);
-            }
+            const value = evaluateExpression(dc.state, assignment.value);
 
             const property = assignment.property.getValue(dc.state);
             dc.state.setValue(property, value);
