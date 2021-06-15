@@ -506,7 +506,7 @@ describe('Memory - Memory Scopes', function () {
         );
         assert.strictEqual(dc.state.getValue('settings.MicrosoftAppPassword'), undefined);
         assert.strictEqual(dc.state.getValue('settings.runtimeSettings.telemetry.options.connectionString'), undefined);
-        assert.strictEqual(dc.state.getValue('ettings.BlobsStorage.CONNECTIONSTRING'), undefined);
+        assert.strictEqual(dc.state.getValue('settings.BlobsStorage.CONNECTIONSTRING'), undefined);
     });
 
     it('ThisMemoryScope should return active dialogs state.', async function () {
