@@ -5,7 +5,6 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { evaluateExpression } from '../jsonExtensions';
 
 import {
     ValueExpression,
@@ -25,7 +24,7 @@ import {
     DialogConfiguration,
 } from 'botbuilder-dialogs';
 import { DialogExpression } from '../expressions';
-import { replaceJsonRecursively } from '../jsonExtensions';
+import { evaluateExpression } from '../jsonExtensions';
 import { DialogExpressionConverter } from '../converters';
 
 export interface BaseInvokeDialogConfiguration extends DialogConfiguration {

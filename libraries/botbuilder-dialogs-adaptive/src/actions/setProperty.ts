@@ -5,7 +5,6 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { evaluateExpression } from '../jsonExtensions';
 
 import {
     BoolExpression,
@@ -24,7 +23,7 @@ import {
     DialogContext,
     DialogTurnResult,
 } from 'botbuilder-dialogs';
-import { replaceJsonRecursively } from '../jsonExtensions';
+import { evaluateExpression } from '../jsonExtensions';
 
 export interface SetPropertyConfiguration extends DialogConfiguration {
     property?: string | Expression | StringExpression;

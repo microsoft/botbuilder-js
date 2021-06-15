@@ -7,7 +7,6 @@
  */
 import fetch from 'node-fetch';
 import { Response, Headers } from 'node-fetch';
-import { evaluateExpression } from '../jsonExtensions';
 
 import {
     BoolExpression,
@@ -29,7 +28,7 @@ import {
     DialogTurnResult,
     DialogConfiguration,
 } from 'botbuilder-dialogs';
-import { replaceJsonRecursively } from '../jsonExtensions';
+import { evaluateExpression } from '../jsonExtensions';
 
 type HeadersInput = Record<string, string>;
 type HeadersOutput = Record<string, StringExpression>;

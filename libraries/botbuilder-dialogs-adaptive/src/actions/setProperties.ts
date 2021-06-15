@@ -13,7 +13,6 @@ import {
     Expression,
 } from 'adaptive-expressions';
 import { StringUtils } from 'botbuilder';
-import { evaluateExpression } from '../jsonExtensions';
 
 import {
     Converter,
@@ -23,7 +22,7 @@ import {
     DialogContext,
     DialogTurnResult,
 } from 'botbuilder-dialogs';
-import { replaceJsonRecursively } from '../jsonExtensions';
+import { evaluateExpression } from '../jsonExtensions';
 
 type AssignmentInput<T> = {
     property: string;
