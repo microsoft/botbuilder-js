@@ -40,6 +40,19 @@ class Node {
  * SettingsMemoryScope maps "settings" -> dc.context.turnState['settings']
  */
 export class SettingsMemoryScope extends MemoryScope {
+    private static readonly blockingList = [
+        'MicrosoftAppPassword',
+        'cosmosDb:authKey',
+        'blobStorage:connectionString',
+        'BlobsStorage:connectionString',
+        'CosmosDbPartitionedStorage:authKey',
+        'applicationInsights:connectionString',
+        'applicationInsights:InstrumentationKey',
+        'runtimeSettings:telemetry:options:connectionString',
+        'runtimeSettings:telemetry:options:instrumentationKey',
+        'runtimeSettings:features:blobTranscript:connectionString',
+    ];
+
     /**
      * Initializes a new instance of the [SettingsMemoryScope](xref:botbuilder-dialogs.SettingsMemoryScope) class.
      */
@@ -84,7 +97,9 @@ export class SettingsMemoryScope extends MemoryScope {
                 return result;
             }, settings);
         }
-        return settings;
+
+        // filter env configuration settings
+        return this.filterSettings(settings);
     }
 
     /**
@@ -188,5 +203,32 @@ export class SettingsMemoryScope extends MemoryScope {
             result[child.value] = this.convertNodeToObject(child);
             return result;
         }, {});
+    }
+
+    private static filterSettings(settings: Record<string, unknown>): Record<string, unknown> {
+        const result = Object.assign({}, settings);
+        this.blockingList.forEach((path) => this.deletePropertyPath(result, path));
+        return result;
+    }
+
+    private static deletePropertyPath(obj, path: string): void {
+        if (!obj || !path?.length) {
+            return;
+        }
+
+        const pathArray = path.split(':');
+
+        for (let i = 0; i < pathArray.length - 1; i++) {
+            const realKey = Object.keys(obj).find((key) => key.toLowerCase() === pathArray[i].toLowerCase());
+            obj = obj[realKey];
+
+            if (typeof obj === 'undefined') {
+                return;
+            }
+        }
+
+        const lastPath = pathArray.pop().toLowerCase();
+        const lastKey = Object.keys(obj).find((key) => key.toLowerCase() === lastPath);
+        delete obj[lastKey];
     }
 }

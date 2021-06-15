@@ -15,9 +15,18 @@ describe('SettingsStateTests', function () {
         true,
         false
     );
-    process.env['MicrosoftAppId'] = 'MICROSOFT_APP_ID';
-    process.env['MicrosoftAppPassword'] = 'MICROSOFT_APP_PASSWORD';
-    process.env['ApplicationInsightsInstrumentationKey'] = '00000000-0000-0000-0000-000000000000';
+
+    beforeEach(() => {
+        process.env['MicrosoftAppId'] = 'MICROSOFT_APP_ID';
+        process.env['MicrosoftAppPassword'] = 'MICROSOFT_APP_PASSWORD';
+        process.env['ApplicationInsights:InstrumentationKey'] = '00000000-0000-0000-0000-000000000000';
+    });
+
+    afterEach(() => {
+        delete process.env['MicrosoftAppId'];
+        delete process.env['MicrosoftAppPassword'];
+        delete process.env['ApplicationInsights:InstrumentationKey'];
+    });
 
     it('SettingsTest', async () => {
         await TestUtils.runTestScript(resourceExplorer, 'SettingsStateTests_SettingsTest');

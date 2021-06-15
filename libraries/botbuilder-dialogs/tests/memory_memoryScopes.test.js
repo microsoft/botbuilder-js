@@ -509,6 +509,9 @@ describe('Memory - Memory Scopes', function () {
             'array:1': 'two',
             'object:array:0': 'one',
             'object:array:1': 'two',
+            MicrosoftAppPassword: 'testpassword',
+            'runtimeSettings:telemetry:options:connectionString': 'testConnectionString',
+            'BlobsStorage:CONNECTIONSTRING': 'testConnectionString',
         };
         dc.context.turnState.set(DialogTurnStateConstants.configuration, configuration);
 
@@ -524,6 +527,9 @@ describe('Memory - Memory Scopes', function () {
         assert(Array.isArray(memory.object.array));
         assert.strictEqual(memory.object.array[0], 'one');
         assert.strictEqual(memory.object.array[1], 'two');
+        assert.strictEqual(memory.MicrosoftAppPassword, undefined);
+        assert.strictEqual(memory.runtimeSettings.telemetry.options.connectionString, undefined);
+        assert.strictEqual(memory.BlobsStorage.CONNECTIONSTRING, undefined);
     });
 
     it('SettingsMemoryScope should get settings from configuration and environment variables.', async function () {
@@ -546,6 +552,9 @@ describe('Memory - Memory Scopes', function () {
         };
         dc.context.turnState.set(DialogTurnStateConstants.configuration, configuration);
         process.env['to_be_overridden'] = 'two';
+        process.env['MicrosoftAppPassword'] = 'testpassword';
+        process.env['runtimeSettings:telemetry:options:connectionString'] = 'testConnectionString';
+        process.env['BlobsStorage:CONNECTIONSTRING'] = 'testConnectionString';
 
         // Run test
         const scope = new SettingsMemoryScope();
@@ -560,6 +569,9 @@ describe('Memory - Memory Scopes', function () {
         assert.strictEqual(memory.object.array[0], 'one');
         assert.strictEqual(memory.object.array[1], 'two');
         assert.strictEqual(memory.to_be_overridden, 'two');
+        assert.strictEqual(memory.MicrosoftAppPassword, undefined);
+        assert.strictEqual(memory.runtimeSettings.telemetry.options.connectionString, undefined);
+        assert.strictEqual(memory.BlobsStorage.CONNECTIONSTRING, undefined);
     });
 
     it('ThisMemoryScope should return active dialogs state.', async function () {
