@@ -7,6 +7,7 @@
  */
 import fetch from 'node-fetch';
 import { Response, Headers } from 'node-fetch';
+
 import {
     BoolExpression,
     BoolExpressionConverter,
@@ -27,7 +28,7 @@ import {
     DialogTurnResult,
     DialogConfiguration,
 } from 'botbuilder-dialogs';
-import { replaceJsonRecursively } from '../jsonExtensions';
+import { evaluateExpression } from '../jsonExtensions';
 
 type HeadersInput = Record<string, string>;
 type HeadersOutput = Record<string, StringExpression>;
@@ -275,14 +276,12 @@ export class HttpRequest<O extends object = {}> extends Dialog<O> implements Htt
         instanceHeaders['Content-Type'] = contentType;
 
         let instanceBody: string;
-        if (this.body) {
-            const body = this.body.getValue(dc.state);
-            if (body) {
-                if (typeof body === 'string') {
-                    instanceBody = body;
-                } else {
-                    instanceBody = JSON.stringify(replaceJsonRecursively(dc.state, Object.assign({}, body)));
-                }
+        const body = evaluateExpression(dc.state, this.body);
+        if (body) {
+            if (typeof body === 'string') {
+                instanceBody = body;
+            } else {
+                instanceBody = JSON.stringify(Object.assign({}, body));
             }
         }
 

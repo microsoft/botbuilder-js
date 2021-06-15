@@ -313,17 +313,29 @@ describe('Memory Scopes', function () {
                     'array:1': 'two',
                     'object:array:0': 'one',
                     'object:array:1': 'two',
+                    MicrosoftAppPassword: 'testpassword',
+                    'runtimeSettings:telemetry:options:connectionString': 'testConnectionString',
+                    'BlobsStorage:CONNECTIONSTRING': 'testConnectionString',
                 });
             });
 
-            assert.deepStrictEqual(_.pick(memory, 'array', 'object', 'simple'), {
-                array: ['one', 'two'],
-                object: {
+            assert.deepStrictEqual(
+                _.pick(memory, 'array', 'object', 'simple', 'MicrosoftAppPassword', 'runtimeSettings', 'BlobsStorage'),
+                {
                     array: ['one', 'two'],
+                    object: {
+                        array: ['one', 'two'],
+                        simple: 'test',
+                    },
                     simple: 'test',
-                },
-                simple: 'test',
-            });
+                    runtimeSettings: {
+                        telemetry: {
+                            options: {},
+                        },
+                    },
+                    BlobsStorage: {},
+                }
+            );
         });
 
         it('gets settings from configuration and environment variables', async function () {
@@ -339,17 +351,38 @@ describe('Memory Scopes', function () {
                 });
 
                 process.env['to_be_overridden'] = 'two';
+                process.env['MicrosoftAppPassword'] = 'testpassword';
+                process.env['runtimeSettings:telemetry:options:connectionString'] = 'testConnectionString';
+                process.env['BlobsStorage:CONNECTIONSTRING'] = 'testConnectionString';
             });
 
-            assert.deepStrictEqual(_.pick(memory, 'array', 'object', 'simple', 'to_be_overridden'), {
-                array: ['one', 'two'],
-                object: {
+            assert.deepStrictEqual(
+                _.pick(
+                    memory,
+                    'array',
+                    'object',
+                    'simple',
+                    'to_be_overridden',
+                    'MicrosoftAppPassword',
+                    'runtimeSettings',
+                    'BlobsStorage'
+                ),
+                {
                     array: ['one', 'two'],
+                    object: {
+                        array: ['one', 'two'],
+                        simple: 'test',
+                    },
                     simple: 'test',
-                },
-                simple: 'test',
-                to_be_overridden: 'two',
-            });
+                    to_be_overridden: 'two',
+                    runtimeSettings: {
+                        telemetry: {
+                            options: {},
+                        },
+                    },
+                    BlobsStorage: {},
+                }
+            );
         });
 
         it('gets settings from initialSettings only', async function () {
@@ -361,6 +394,33 @@ describe('Memory Scopes', function () {
                 },
                 simple: 'test',
                 to_be_overridden: 'two',
+                MicrosoftAppPassword: 'testpassword',
+                runtimeSettings: {
+                    telemetry: {
+                        options: {
+                            connectionString: 'testConnectionString',
+                        },
+                    },
+                },
+                BlobsStorage: {
+                    CONNECTIONSTRING: 'testConnectionString',
+                },
+            };
+
+            const resultConfiguration = {
+                array: ['one', 'two'],
+                object: {
+                    array: ['one', 'two'],
+                    simple: 'test',
+                },
+                simple: 'test',
+                to_be_overridden: 'two',
+                runtimeSettings: {
+                    telemetry: {
+                        options: {},
+                    },
+                },
+                BlobsStorage: {},
             };
 
             const { dc, scope } = await initialize(() => {
@@ -370,7 +430,7 @@ describe('Memory Scopes', function () {
             await scope.load(dc);
             const memory = scope.getMemory(dc);
 
-            assert.deepStrictEqual(memory, initialSettings);
+            assert.deepStrictEqual(memory, resultConfiguration);
         });
     });
 
