@@ -1,0 +1,1 @@
+{"version":3,"file":"configurationResourceExplorer.d.ts","sourceRoot":"","sources":["../src/configurationResourceExplorer.ts"],"names":[],"mappings":"AAGA,OAAO,EAAE,aAAa,EAAE,MAAM,iBAAiB,CAAC;AAChD,OAAO,EAAE,yBAAyB,EAAE,gBAAgB,EAAE,MAAM,gCAAgC,CAAC;AAG7F,qBAAa,4BAA6B,SAAQ,gBAAgB;gBAClD,aAAa,EAAE,aAAa,EAAE,gBAAgB,EAAE,yBAAyB,EAAE;CAY1F"}

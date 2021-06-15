@@ -23,7 +23,7 @@ import {
     DialogConfiguration,
 } from 'botbuilder-dialogs';
 import { DialogExpression } from '../expressions';
-import { replaceJsonRecursively } from '../jsonExtensions';
+import { evaluateExpression } from '../jsonExtensions';
 import { DialogExpressionConverter } from '../converters';
 
 export interface BaseInvokeDialogConfiguration extends DialogConfiguration {
@@ -140,13 +140,7 @@ export class BaseInvokeDialog<O extends object = {}>
 
         for (const key in bindingOptions) {
             const bindingValue = bindingOptions[key];
-            let value = new ValueExpression(bindingValue).getValue(dc.state);
-
-            if (value) {
-                value = replaceJsonRecursively(dc.state, value);
-            }
-
-            boundOptions[key] = value;
+            boundOptions[key] = evaluateExpression(dc.state, new ValueExpression(bindingValue));
         }
 
         return boundOptions;
