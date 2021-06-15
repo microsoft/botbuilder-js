@@ -9,7 +9,7 @@ import fetch from 'node-fetch';
 import { Activity } from 'botbuilder';
 import { BoolProperty, EnumProperty, StringProperty, UnknownProperty } from '../properties';
 import { Response, Headers } from 'node-fetch';
-import { replaceJsonRecursively } from '../jsonExtensions';
+import { evaluateExpression } from '../jsonExtensions';
 
 import {
     BoolExpression,
@@ -277,14 +277,12 @@ export class HttpRequest<O extends object = {}> extends Dialog<O> implements Htt
         instanceHeaders['Content-Type'] = contentType;
 
         let instanceBody: string;
-        if (this.body) {
-            const body = this.body.getValue(dc.state);
-            if (body) {
-                if (typeof body === 'string') {
-                    instanceBody = body;
-                } else {
-                    instanceBody = JSON.stringify(replaceJsonRecursively(dc.state, Object.assign({}, body)));
-                }
+        const body = evaluateExpression(dc.state, this.body);
+        if (body) {
+            if (typeof body === 'string') {
+                instanceBody = body;
+            } else {
+                instanceBody = JSON.stringify(Object.assign({}, body));
             }
         }
 

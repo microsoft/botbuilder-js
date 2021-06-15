@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 import { BoolProperty, UnknownProperty } from '../properties';
-import { replaceJsonRecursively } from '../jsonExtensions';
+import { evaluateExpression } from '../jsonExtensions';
 
 import {
     BoolExpression,
@@ -79,11 +79,7 @@ export class EndDialog<O extends object = {}> extends Dialog<O> implements EndDi
         }
 
         if (this.value) {
-            let value = this.value.getValue(dc.state);
-
-            if (value) {
-                value = replaceJsonRecursively(dc.state, value);
-            }
+            const value = evaluateExpression(dc.state, this.value);
 
             return await this.endParentDialog(dc, value);
         }
