@@ -465,23 +465,7 @@ describe('Memory - Memory Scopes', function() {
                 count++;
             }
         }
-<<<<<<< HEAD
         assert(count > 0, `no settings found.`);
-=======
-
-        // override settings with process.env
-        assert.equal(dc.state.getValue('settings.to_be_overridden'), 'one');
-        process.env['to_be_overridden'] = 'two';
-        process.env['MicrosoftAppPassword'] = 'testpassword';
-        process.env['runtimeSettings:telemetry:options:connectionString'] = 'testConnectionString';
-        process.env['BlobsStorage:CONNECTIONSTRING'] = 'testConnectionString';
-        assert.equal(dc.state.getValue('settings.not_to_be_overridden'), 'one');
-        assert.equal(dc.state.getValue('settings.to_be_overridden'), 'two', 'settings should be overriden by environment variables');
-
-        assert.strictEqual(dc.state.getValue('settings.MicrosoftAppPassword'), undefined);
-        assert.strictEqual(dc.state.getValue('settings.runtimeSettings.telemetry.options.connectionString'), undefined);
-        assert.strictEqual(dc.state.getValue('settings.BlobsStorage.CONNECTIONSTRING'), undefined);
->>>>>>> 7dd1ecc3 (fix conflict)
     });
 
     it('ThisMemoryScope should return active dialogs state.', async function() {

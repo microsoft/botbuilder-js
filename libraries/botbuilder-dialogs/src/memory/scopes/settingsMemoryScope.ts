@@ -32,15 +32,8 @@ export class SettingsMemoryScope extends MemoryScope {
     }
 
     public getMemory(dc: DialogContext): object {
-<<<<<<< HEAD
         // Clone strings from env
         const settings: object = {};
-=======
-        let settings: Record<string, unknown> = {};
-        if (dc.context.turnState.has(ScopePath.settings)) {
-            settings = dc.context.turnState.get(ScopePath.settings);
-        }
->>>>>>> 7dd1ecc3 (fix conflict)
         for (const key in process.env) {
             if (!SettingsMemoryScope.blockingList.some(u => u.toLowerCase() === key.toLowerCase()) && typeof process.env[key] == 'string') {
                 settings[key] = process.env[key];
