@@ -40,7 +40,6 @@ export class SetProperty<O extends object = {}> extends Dialog<O> {
         if (!this.property) { throw new Error(`${ this.id }: no 'property' specified.`); }
         if (!this.value) { throw new Error(`${ this.id }: no 'value' expression specified.`); }
 
-        // Evaluate expression and save value
         const property = this.property.getValue(dc.state);
         const value = this.value.getValue(dc.state);
         dc.state.setValue(property, value);

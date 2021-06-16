@@ -13,11 +13,11 @@
                     },
                     {
                         "$kind": "Microsoft.SendActivity",
-                        "activity": "${settings.MicrosoftAppPassword}"
+                        "activity": "${coalesce(settings.MicrosoftAppPassword, 'no-access')}"
                     },
                     {
                         "$kind": "Microsoft.SendActivity",
-                        "activity": "${settings.ApplicationInsightsInstrumentationKey}"
+                        "activity": "${coalesce(settings.ApplicationInsights.InstrumentationKey, 'no-access')}"
                     }
                 ]
             }
@@ -36,11 +36,11 @@
         },
         {
             "$kind": "Microsoft.Test.AssertReply",
-            "text": "MICROSOFT_APP_PASSWORD"
+            "text": "no-access"
         },
         {
             "$kind": "Microsoft.Test.AssertReply",
-            "text": "00000000-0000-0000-0000-000000000000"
+            "text": "no-access"
         }
     ]
 }
