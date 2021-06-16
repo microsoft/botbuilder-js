@@ -14,6 +14,7 @@ import {
     Channels,
     FileConsentCardResponse,
     InvokeResponse,
+    MeetingEventDetails,
     MeetingStartEventDetails,
     MeetingEndEventDetails,
     MessagingExtensionAction,
@@ -985,7 +986,9 @@ export class TeamsActivityHandler extends ActivityHandler {
         handler: (meeting: MeetingStartEventDetails, context: TurnContext, next: () => Promise<void>) => Promise<void>
     ): this {
         return this.on('TeamsMeetingStart', async (context, next) => {
-            const meeting = context.activity.value as MeetingStartEventDetails;
+            const meeting = this.convertMeetingEventDetailsToCamelCase<MeetingStartEventDetails>(
+                context.activity.value
+            );
             await handler(meeting, context, next);
         });
     }
@@ -1000,8 +1003,27 @@ export class TeamsActivityHandler extends ActivityHandler {
         handler: (meeting: MeetingEndEventDetails, context: TurnContext, next: () => Promise<void>) => Promise<void>
     ): this {
         return this.on('TeamsMeetingEnd', async (context, next) => {
-            const meeting = context.activity.value as MeetingEndEventDetails;
+            const meeting = this.convertMeetingEventDetailsToCamelCase<MeetingEndEventDetails>(context.activity.value);
             await handler(meeting, context, next);
         });
+    }
+
+    private convertMeetingEventDetailsToCamelCase<T extends MeetingStartEventDetails | MeetingEndEventDetails>(
+        meeting: Record<string, string>
+    ): T {
+        const convertedMeeting: MeetingEventDetails = {
+            id: meeting.Id,
+            joinUrl: meeting.JoinUrl,
+            meetingType: meeting.MeetingType,
+            title: meeting.Title,
+        };
+
+        if (meeting.StartTime) {
+            (convertedMeeting as MeetingStartEventDetails).startTime = new Date(meeting.StartTime);
+        } else {
+            (convertedMeeting as MeetingEndEventDetails).endTime = new Date(meeting.EndTime);
+        }
+
+        return convertedMeeting as T;
     }
 }

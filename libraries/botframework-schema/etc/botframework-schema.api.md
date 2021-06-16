@@ -885,11 +885,14 @@ export interface MeetingDetails extends MeetingDetailsBase {
     type: string;
 }
 
-// Warning: (ae-forgotten-export) The symbol "MeetingEventDetails" needs to be exported by the entry point index.d.ts
-//
 // @public
 export interface MeetingEndEventDetails extends MeetingEventDetails {
     endTime: Date;
+}
+
+// @public (undocumented)
+export interface MeetingEventDetails extends MeetingDetailsBase {
+    meetingType: string;
 }
 
 // @public

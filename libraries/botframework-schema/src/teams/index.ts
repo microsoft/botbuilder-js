@@ -1751,7 +1751,7 @@ export interface MeetingInfo {
 /**
  * @interface
  */
-interface MeetingEventDetails extends MeetingDetailsBase {
+export interface MeetingEventDetails extends MeetingDetailsBase {
     /**
      * @member {string} [type] The meeting's type.
      */
