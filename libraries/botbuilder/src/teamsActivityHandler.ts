@@ -11,8 +11,11 @@ import {
     AdaptiveCardInvokeResponse,
     AppBasedLinkQuery,
     ChannelInfo,
+    Channels,
     FileConsentCardResponse,
     InvokeResponse,
+    MeetingStartEventDetails,
+    MeetingEndEventDetails,
     MessagingExtensionAction,
     MessagingExtensionActionResponse,
     MessagingExtensionQuery,
@@ -922,6 +925,83 @@ export class TeamsActivityHandler extends ActivityHandler {
         return this.on('TeamsTeamUnarchived', async (context, next) => {
             const teamsChannelData = context.activity.channelData as TeamsChannelData;
             await handler(teamsChannelData.team, context, next);
+        });
+    }
+
+    /**
+     * Runs the _event_ sub-type handlers, as appropriate, and then continues the event emission process.
+     *
+     * @param context The context object for the current turn.
+     * @returns A promise that represents the work queued.
+     *
+     * @remarks
+     * Overwrite this method to support channel-specific behavior across multiple channels or to add
+     * custom event sub-type events.
+     */
+    protected async dispatchEventActivity(context: TurnContext): Promise<void> {
+        await this.handle(context, 'Event', async () => {
+            if (context.activity.channelId == Channels.Msteams) {
+                switch (context.activity.name) {
+                    case 'application/vnd.microsoft.meetingStart':
+                        return this.onTeamsMeetingStart(context);
+                    case 'application/vnd.microsoft.meetingEnd':
+                        return this.onTeamsMeetingEnd(context);
+                }
+            }
+
+            return super.dispatchEventActivity(context);
+        });
+    }
+
+    /**
+     * Invoked when a Meeting Started event activity is received from the connector.
+     * Override this in a derived class to provide logic for when a meeting is started.
+     *
+     * @param context The context for this turn.
+     * @returns A promise that represents the work queued.
+     */
+    protected async onTeamsMeetingStart(context: TurnContext): Promise<void> {
+        await this.handle(context, 'TeamsMeetingStart', this.defaultNextEvent(context));
+    }
+
+    /**
+     * Invoked when a Meeting End event activity is received from the connector.
+     * Override this in a derived class to provide logic for when a meeting is ended.
+     *
+     * @param context The context for this turn.
+     * @returns A promise that represents the work queued.
+     */
+    protected async onTeamsMeetingEnd(context: TurnContext): Promise<void> {
+        await this.handle(context, 'TeamsMeetingEnd', this.defaultNextEvent(context));
+    }
+
+    /**
+     * Registers a handler for when a Teams meeting starts.
+     *
+     * @param handler A callback that handles Meeting Start events.
+     * @returns A promise that represents the work queued.
+     */
+    public onTeamsMeetingStartEvent(
+        handler: (meeting: MeetingStartEventDetails, context: TurnContext, next: () => Promise<void>) => Promise<void>
+    ): this {
+        return this.on('TeamsMeetingStart', async (context, next) => {
+            const meeting = context.activity.value as MeetingStartEventDetails;
+            await handler(meeting, context, next);
+        });
+    }
+
+    /**
+     * Registers a handler for when a Teams meeting ends.
+     *
+     * @param handler A callback that handles Meeting End events.
+     * @returns A promise that represents the work queued.
+     */
+    public onTeamsMeetingEndEvent(
+        handler: (meeting: MeetingEndEventDetails, context: TurnContext, next: () => Promise<void>) => Promise<void>
+    ): this {
+        return this.on('TeamsMeetingEnd', async (context, next) => {
+            const meeting = context.activity.value as MeetingEndEventDetails;
+            await handler(meeting, context, next);
         });
     }
 }

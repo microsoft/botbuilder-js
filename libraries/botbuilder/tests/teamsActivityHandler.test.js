@@ -1,6 +1,6 @@
 const assert = require('assert');
 const { TeamsActivityHandler, TeamsInfo } = require('../');
-const { ActivityTypes, TestAdapter } = require('botbuilder-core');
+const { ActivityTypes, TestAdapter, Channels } = require('botbuilder-core');
 
 function createInvokeActivity(name, value = {}, channelData = {}) {
     const activity = {
@@ -12,7 +12,7 @@ function createInvokeActivity(name, value = {}, channelData = {}) {
     return activity;
 }
 
-describe('TeamsActivityHandler', () => {
+describe('TeamsActivityHandler', function () {
     describe('onTurnActivity()', () => {
         it('should not override the InvokeResponse on the context.turnState if it is set', async function () {
             class InvokeHandler extends TeamsActivityHandler {
@@ -2154,6 +2154,145 @@ describe('TeamsActivityHandler', () => {
                 .then(() => {
                     assert(onDialogCalled, 'onDialog handler not called');
                     assert(handleTeamsSigninTokenExchangeCalled, 'handleTeamsSigninTokenExchange handler not called');
+                })
+                .startTest();
+        });
+    });
+
+    describe('onEventActivity()', function () {
+        const expectedMeeting = { id: 'meetingId' };
+
+        function createMeetingEventActivity(start = true) {
+            const activity = {
+                channelId: Channels.Msteams,
+                type: 'event',
+                value: expectedMeeting,
+            };
+
+            if (start) {
+                activity.name = 'application/vnd.microsoft.meetingStart';
+                activity.value.startTime = '2021-06-05T00:01:02.0Z';
+            } else {
+                activity.name = 'application/vnd.microsoft.meetingEnd';
+                activity.value.endTime = '2021-06-05T01:02:03.0Z';
+            }
+
+            return activity;
+        }
+
+        let onEventCalled;
+        let onDialogCalled;
+        this.beforeEach(function () {
+            onEventCalled = false;
+            onDialogCalled = false;
+        });
+
+        it('No MS-Teams routed activity', async function () {
+            const bot = new TeamsActivityHandler();
+
+            const activity = { type: ActivityTypes.Event, channelId: 'no-msteams' };
+
+            const adapter = new TestAdapter(async (context) => {
+                await bot.run(context);
+            });
+
+            bot.onDialog(async (context, next) => {
+                onDialogCalled = true;
+                await next();
+            });
+
+            await adapter
+                .send(activity)
+                .then(() => {
+                    assert(onDialogCalled, 'onDialog handler not called');
+                })
+                .startTest();
+        });
+
+        it('onTeamsMeetingStart routed activity', async function () {
+            const bot = new TeamsActivityHandler();
+
+            let onTeamsMeetingStartCalled = false;
+
+            const activity = createMeetingEventActivity(true);
+
+            bot.onEvent(async (context, next) => {
+                assert(context, 'context not found');
+                assert(next, 'next not found');
+                onEventCalled = true;
+                await next();
+            });
+
+            bot.onTeamsMeetingStartEvent(async (meeting, context, next) => {
+                assert(meeting, 'teamsInfo not found');
+                assert(context, 'context not found');
+                assert(next, 'next not found');
+                assert.strictEqual(meeting, expectedMeeting);
+                onTeamsMeetingStartCalled = true;
+                await next();
+            });
+
+            bot.onDialog(async (context, next) => {
+                assert(context, 'context not found');
+                assert(next, 'next not found');
+                onDialogCalled = true;
+                await next();
+            });
+
+            const adapter = new TestAdapter(async (context) => {
+                await bot.run(context);
+            });
+
+            await adapter
+                .send(activity)
+                .then(() => {
+                    assert(onTeamsMeetingStartCalled);
+                    assert(onEventCalled, 'onConversationUpdate handler not called');
+                    assert(onDialogCalled, 'onDialog handler not called');
+                })
+                .startTest();
+        });
+
+        it('onTeamsMeetingEnd routed activity', async function () {
+            const bot = new TeamsActivityHandler();
+
+            let onTeamsMeetingEndCalled = false;
+
+            const activity = createMeetingEventActivity(false);
+
+            bot.onEvent(async (context, next) => {
+                assert(context, 'context not found');
+                assert(next, 'next not found');
+                onEventCalled = true;
+                await next();
+            });
+
+            bot.onTeamsMeetingEndEvent(async (meeting, context, next) => {
+                assert(meeting, 'teamsInfo not found');
+                assert(context, 'context not found');
+                assert(next, 'next not found');
+                assert.strictEqual(meeting, expectedMeeting);
+                onTeamsMeetingEndCalled = true;
+                await next();
+            });
+
+            bot.onDialog(async (context, next) => {
+                assert(context, 'context not found');
+                assert(next, 'next not found');
+                onDialogCalled = true;
+                await next();
+            });
+
+            const adapter = new TestAdapter(async (context) => {
+                await bot.run(context);
+            });
+
+            await adapter
+                .send(activity)
+                .then(() => {
+                    assert(onTeamsMeetingEndCalled);
+                    assert(onEventCalled, 'onConversationUpdate handler not called');
+                    assert(onDialogCalled, 'onDialog handler not called');
                 })
                 .startTest();
         });
