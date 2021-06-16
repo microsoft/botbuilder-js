@@ -13,6 +13,20 @@ import { DialogContext } from '../../dialogContext';
  * SettingsMemoryScope maps "settings" -> process.env
  */
 export class SettingsMemoryScope extends MemoryScope {
+
+    private static readonly blockingList = [
+        'MicrosoftAppPassword',
+        'cosmosDb:authKey',
+        'blobStorage:connectionString',
+        'BlobsStorage:connectionString',
+        'CosmosDbPartitionedStorage:authKey',
+        'applicationInsights:connectionString',
+        'applicationInsights:InstrumentationKey',
+        'runtimeSettings:telemetry:options:connectionString',
+        'runtimeSettings:telemetry:options:instrumentationKey',
+        'runtimeSettings:features:blobTranscript:connectionString',
+    ];
+
     public constructor() {
         super(ScopePath.settings, false);
     }
@@ -21,7 +35,7 @@ export class SettingsMemoryScope extends MemoryScope {
         // Clone strings from env
         const settings: object = {};
         for (const key in process.env) {
-            if (typeof process.env[key] == 'string') {
+            if (!SettingsMemoryScope.blockingList.some(u => u.toLowerCase() === key.toLowerCase()) && typeof process.env[key] == 'string') {
                 settings[key] = process.env[key];
             }
         }

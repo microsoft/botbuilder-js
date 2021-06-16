@@ -277,7 +277,7 @@ describe('Memory - Memory Scopes', function() {
         const scope = new UserMemoryScope();
         let memory = scope.getMemory(dc);
         assert.equal(memory, undefined, `state returned`);
-        
+
         await scope.load(dc);
         memory = scope.getMemory(dc);
         assert.equal(typeof memory, 'object', `state not returned`);

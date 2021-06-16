@@ -183,14 +183,16 @@ export class HttpRequest<O extends object = {}> extends Dialog<O> implements Con
 
         let instanceBody: any;
         if (this.body) {
-            instanceBody = this.body.getValue(dc.state);
+            const body = this.body.expression == null ? await this.replaceBodyRecursively(dc, Object.assign({}, this.body.value))
+                : this.body.getValue(dc);
+
+            if (typeof body === 'string') {
+                instanceBody = body;
+            } else {
+                instanceBody = JSON.stringify(Object.assign({}, body));
+            }
         }
 
-        if (instanceBody) {
-            instanceBody = await this.replaceBodyRecursively(dc, instanceBody);
-        }
-
-        const parsedBody = JSON.stringify(instanceBody);
         const contentType = this.contentType.getValue(dc.state) || 'application/json';
         const parsedHeaders = Object.assign({ 'Content-Type': contentType }, instanceHeaders);
 
@@ -210,7 +212,7 @@ export class HttpRequest<O extends object = {}> extends Dialog<O> implements Con
                 response = await fetch(instanceUrl, {
                     method: this.method.toString(),
                     headers: parsedHeaders,
-                    body: parsedBody,
+                    body: instanceBody,
                 });
                 break;
         }
