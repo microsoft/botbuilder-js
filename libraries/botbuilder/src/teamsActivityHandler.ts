@@ -1008,6 +1008,8 @@ export class TeamsActivityHandler extends ActivityHandler {
         });
     }
 
+    // The payload from Teams comes in with TitleCase keys, so we'll convert them to camelCase
+    // to maintain JSON and JS standard practices.
     private convertMeetingEventDetailsToCamelCase<T extends MeetingStartEventDetails | MeetingEndEventDetails>(
         meeting: Record<string, string>
     ): T {
