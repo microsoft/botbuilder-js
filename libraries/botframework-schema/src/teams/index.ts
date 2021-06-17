@@ -1753,7 +1753,7 @@ export interface MeetingInfo {
  */
 export interface MeetingEventDetails extends MeetingDetailsBase {
     /**
-     * @member {string} [type] The meeting's type.
+     * @member {string} [meetingType] The meeting's type.
      */
     meetingType: string;
 }
