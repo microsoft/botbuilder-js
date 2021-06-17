@@ -1024,8 +1024,12 @@ export class TeamsActivityHandler extends ActivityHandler {
 
         if (meeting.StartTime) {
             (convertedMeeting as MeetingStartEventDetails).startTime = new Date(meeting.StartTime);
-        } else {
+        } else if (meeting.EndTime) {
             (convertedMeeting as MeetingEndEventDetails).endTime = new Date(meeting.EndTime);
+        } else {
+            throw new Error(
+                `Invalid meeting. It does not include StartTime or EndTime: ${JSON.stringify(meeting, null, 2)}`
+            );
         }
 
         return convertedMeeting as T;
