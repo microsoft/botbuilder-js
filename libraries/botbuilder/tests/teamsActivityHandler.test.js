@@ -2160,21 +2160,22 @@ describe('TeamsActivityHandler', function () {
     });
 
     describe('onEventActivity()', function () {
-        const expectedMeeting = { id: 'meetingId' };
+        let meetingPayload = { id: 'meetingId' };
 
+        // Note: Teams payload is TitleCase.
         function createMeetingEventActivity(start = true) {
             const activity = {
                 channelId: Channels.Msteams,
                 type: 'event',
-                value: expectedMeeting,
+                value: meetingPayload,
             };
 
             if (start) {
                 activity.name = 'application/vnd.microsoft.meetingStart';
-                activity.value.startTime = '2021-06-05T00:01:02.0Z';
+                activity.value.StartTime = '2021-06-05T00:01:02.0Z';
             } else {
                 activity.name = 'application/vnd.microsoft.meetingEnd';
-                activity.value.endTime = '2021-06-05T01:02:03.0Z';
+                activity.value.EndTime = '2021-06-05T01:02:03.0Z';
             }
 
             return activity;
@@ -2183,6 +2184,7 @@ describe('TeamsActivityHandler', function () {
         let onEventCalled;
         let onDialogCalled;
         this.beforeEach(function () {
+            meetingPayload = { id: 'meetingId' };
             onEventCalled = false;
             onDialogCalled = false;
         });
@@ -2227,7 +2229,8 @@ describe('TeamsActivityHandler', function () {
                 assert(meeting, 'teamsInfo not found');
                 assert(context, 'context not found');
                 assert(next, 'next not found');
-                assert.strictEqual(meeting, expectedMeeting);
+                assert.strictEqual(meeting.id, meetingPayload.Id);
+                assert.strictEqual(meeting.startTime.toString(), new Date(meetingPayload.StartTime).toString());
                 onTeamsMeetingStartCalled = true;
                 await next();
             });
@@ -2271,7 +2274,8 @@ describe('TeamsActivityHandler', function () {
                 assert(meeting, 'teamsInfo not found');
                 assert(context, 'context not found');
                 assert(next, 'next not found');
-                assert.strictEqual(meeting, expectedMeeting);
+                assert.strictEqual(meeting.id, meetingPayload.Id);
+                assert.strictEqual(meeting.endTime.toString(), new Date(meetingPayload.EndTime).toString());
                 onTeamsMeetingEndCalled = true;
                 await next();
             });
