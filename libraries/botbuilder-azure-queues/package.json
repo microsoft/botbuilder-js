@@ -32,12 +32,14 @@
     "botbuilder-core": "4.1.6"
   },
   "devDependencies": {
-    "ts-essentials": "^7.0.1"
+    "botbuilder-dialogs": "4.1.6",
+    "node-fetch": "^2.6.1"
   },
   "scripts": {
     "build": "tsc -b",
     "build-docs": "typedoc --theme markdown --entryPoint botbuilder-azure-queues --excludePrivate --includeDeclarations --ignoreCompilerErrors --module amd --out ..\\..\\doc\\botbuilder-azure-queues .\\lib\\index.d.ts --hideGenerator --name \"Bot Builder SDK - Azure Queues\" --readme none",
     "clean": "rimraf _ts3.4 lib tsconfig.tsbuildinfo",
+    "depcheck": "depcheck --config ../../.depcheckrc",
     "lint": "eslint . --ext .js,.ts",
     "postbuild": "downlevel-dts lib _ts3.4/lib",
     "test": "yarn build && nyc mocha --check-leaks tests",

@@ -1,5 +1,5 @@
 const assert = require('assert');
-const { ActivityTypes } = require('botbuilder-core');
+const { ActivityTypes } = require('botbuilder');
 const {
     OnActivity,
     OnAssignEntity,

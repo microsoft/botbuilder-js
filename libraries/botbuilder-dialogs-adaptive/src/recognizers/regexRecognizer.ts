@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 import { Culture } from '@microsoft/recognizers-text-suite';
-import { Activity, Entity, RecognizerResult } from 'botbuilder-core';
+import { Activity, Entity, RecognizerResult } from 'botbuilder';
 import { Converter, ConverterFactory, DialogContext } from 'botbuilder-dialogs';
 import { IntentPattern } from './intentPattern';
 import { EntityRecognizer, TextEntity, EntityRecognizerSet } from './entityRecognizers';

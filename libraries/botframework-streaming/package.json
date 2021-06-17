@@ -36,7 +36,6 @@
     "ws": "^7.1.2"
   },
   "devDependencies": {
-    "@types/chai": "^4.1.7",
     "chai": "^4.2.0"
   },
   "scripts": {
@@ -47,6 +46,7 @@
     "build:lib": "tsc -p tsconfig.json",
     "build:rollup": "yarn clean && yarn build && api-extractor run --verbose --local",
     "clean": "rimraf _ts3.4 es5 lib",
+    "depcheck": "depcheck --config ../../.depcheckrc",
     "lint": "eslint . --ext .js,.ts",
     "postbuild": "downlevel-dts lib _ts3.4/lib --checksum",
     "test": "npm-run-all build test:mocha",

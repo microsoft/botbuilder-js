@@ -11,7 +11,7 @@ const {
     IntentPattern,
     TextInput,
     OnIntent,
-} = require('botbuilder-dialogs-adaptive');
+} = require('../');
 
 describe('Memory - Memory Scopes', function () {
     this.timeout(5000);

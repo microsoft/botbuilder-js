@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 
-import { Activity, Entity, RecognizerResult } from 'botbuilder-core';
+import { Activity, Entity, RecognizerResult } from 'botbuilder';
 import { DialogContext } from 'botbuilder-dialogs';
 import { AdaptiveRecognizer } from '../adaptiveRecognizer';
 import { TextEntity } from './textEntity';

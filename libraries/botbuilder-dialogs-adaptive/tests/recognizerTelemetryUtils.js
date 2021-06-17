@@ -1,6 +1,6 @@
 const { ok, strictEqual } = require('assert');
 const sinon = require('sinon');
-const { NullTelemetryClient } = require('botbuilder-core');
+const { NullTelemetryClient } = require('botbuilder');
 const { BoolExpression } = require('adaptive-expressions');
 const { asMessageActivity, createMessageActivity } = require('botframework-schema').ActivityEx;
 const { createContext } = require('./activityUtils');
