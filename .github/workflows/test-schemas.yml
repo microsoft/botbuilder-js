@@ -1,0 +1,45 @@
+name: test-schemas.yml
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+    - main
+    - '4.12'
+    - '4.13'
+  pull_request:
+    branches:
+    - main
+    - '4.12'
+    - '4.13'
+
+jobs:
+  ci:
+    name: test:schemas
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: use node 14.x
+        uses: actions/setup-node@v2-beta
+        with:
+          node-version: 14.x
+
+      - name: yarn cache dir
+        id: yarn-cache-dir
+        run: echo "::set-output name=dir::$(yarn cache dir)"
+
+      - uses: actions/cache@v2
+        with:
+          path: ${{ steps.yarn-cache-dir.outputs.dir }}
+          key: ${{ runner.os }}-node14.x-yarn-${{ hashFiles('**/yarn.lock') }}
+
+      - name: yarn
+        run: yarn --frozen-lockfile
+
+      - name: yarn build
+        run: yarn build
+
+      - name: yarn test:schemas
+        run: yarn test:schemas

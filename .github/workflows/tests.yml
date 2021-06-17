@@ -43,18 +43,6 @@ jobs:
       - name: yarn
         run: yarn --frozen-lockfile
 
-      - name: yarn test:repoutils
-        if: matrix.node-version == '14.x'
-        run: yarn test:repoutils
-
-      - name: yarn lint
-        if: matrix.node-version == '12.x'
-        run: yarn lint
-
-      - name: yarn depcheck
-        if: matrix.node-version == '14.x'
-        run: yarn depcheck
-
       - name: yarn build
         run: yarn build
 
@@ -62,20 +50,8 @@ jobs:
         run: yarn test:github
 
       - name: coveralls
-        if: matrix.node-version == '12.x'
+        if: matrix.node-version == '14.x'
         uses: coverallsapp/github-action@v1.1.2
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           path-to-lcov: .lcov.info
-
-      - name: yarn test:consumer
-        if: matrix.node-version == '14.x'
-        run: yarn test:consumer
-
-      - name: yarn test:schemas
-        if: matrix.node-version == '12.x'
-        run: yarn test:schemas
-
-      - name: yarn test:compat
-        if: matrix.node-version == '14.x'
-        run: yarn test:compat
