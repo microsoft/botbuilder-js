@@ -1,5 +1,5 @@
 const { Culture } = require('@microsoft/recognizers-text-suite');
-const { ActivityTypes, TestAdapter, TurnContext } = require('botbuilder-core');
+const { ActivityTypes, TestAdapter, TurnContext } = require('botbuilder');
 const { DialogContext, DialogSet } = require('botbuilder-dialogs');
 const user = {
     id: process.env['USER_ID'] || 'UK8CH2281:TKGSUQHQE',

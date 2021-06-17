@@ -32,15 +32,12 @@
     "botbuilder-core": "4.1.6",
     "cls-hooked": "^4.2.2"
   },
-  "devDependencies": {
-    "assert": "^1.4.1",
-    "chatdown": "^1.0.2"
-  },
   "scripts": {
     "build": "tsc -b",
     "build-docs": "typedoc --theme markdown --entryPoint botbuilder-applicationinsights --excludePrivate --includeDeclarations --ignoreCompilerErrors --module amd --out ..\\..\\doc\\botbuilder-applicationinsights .\\lib\\index.d.ts --hideGenerator --name \"Bot Builder SDK - Application Insights\" --readme none",
     "build:rollup": "yarn clean && yarn build && api-extractor run --verbose --local",
     "clean": "rimraf _ts3.4 lib tsconfig.tsbuildinfo",
+    "depcheck": "depcheck --config ../../.depcheckrc",
     "lint": "eslint . --ext .js,.ts",
     "postbuild": "downlevel-dts lib _ts3.4/lib --checksum",
     "test": "npm-run-all build test:mocha",

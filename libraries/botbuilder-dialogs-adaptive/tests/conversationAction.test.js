@@ -20,7 +20,7 @@ const {
     ActivityTemplate,
     GetConversationReference,
 } = require('../lib');
-const { AssertCondition } = require('botbuilder-dialogs-adaptive-testing/lib')
+const { AssertCondition } = require('botbuilder-dialogs-adaptive-testing')
 
 class MockQueue extends QueueStorage {
     constructor() {

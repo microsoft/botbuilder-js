@@ -1,5 +1,5 @@
 const { strictEqual, notStrictEqual } = require('assert');
-const { RecognizerResult } = require('botbuilder-core');
+const { RecognizerResult } = require('botbuilder');
 
 /**
  * Validates the codeIntent utterance "intent a1 b2".

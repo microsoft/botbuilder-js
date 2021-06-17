@@ -7,7 +7,7 @@
  */
 import { BoolExpression } from 'adaptive-expressions';
 import { omit } from 'lodash';
-import { getTopScoringIntent, RecognizerResult } from 'botbuilder-core';
+import { getTopScoringIntent, RecognizerResult } from 'botbuilder';
 import { DialogContext, Recognizer } from 'botbuilder-dialogs';
 
 export interface AdaptiveRecognizerConfiguration {

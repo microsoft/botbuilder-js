@@ -51,6 +51,10 @@ jobs:
         if: matrix.node-version == '12.x'
         run: yarn lint
 
+      - name: yarn depcheck
+        if: matrix.node-version == '14.x'
+        run: yarn depcheck
+
       - name: yarn build
         run: yarn build
 

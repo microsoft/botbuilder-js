@@ -28,8 +28,7 @@
     }
   },
   "dependencies": {
-    "dependency-graph": "^0.10.0",
-    "runtypes": "~6.3.0"
+    "dependency-graph": "^0.10.0"
   },
   "devDependencies": {
     "mocha": "^8.2.1",
@@ -38,6 +37,7 @@
   "scripts": {
     "build": "tsc -b",
     "clean": "rimraf _ts3.4 lib tsconfig.tsbuildinfo",
+    "depcheck": "depcheck --config ../../.depcheckrc --ignores dependency-graph",
     "lint": "eslint . --ext .js,.ts",
     "postbuild": "downlevel-dts lib _ts3.4/lib --checksum",
     "test": "nyc mocha",
