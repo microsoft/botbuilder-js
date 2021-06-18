@@ -166,7 +166,7 @@ export class SkillHandlerImpl {
         };
 
         try {
-            await this.adapter.continueConversationWithClaims(
+            await this.adapter.continueConversationAsync(
                 claimsIdentity,
                 ref.conversationReference,
                 ref.oAuthScope,

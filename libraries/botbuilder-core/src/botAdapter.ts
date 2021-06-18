@@ -104,19 +104,57 @@ export abstract class BotAdapter {
     /**
      * Asynchronously resumes a conversation with a user, possibly after some time has gone by.
      *
+     * @param botAppId The application ID of the bot. This parameter is ignored in single tenant the Adapters (Console,Test, etc) but is critical to the BotFrameworkAdapter which is multi-tenant aware.
+     * @param reference A partial [ConversationReference](xref:botframework-schema.ConversationReference) to the conversation to continue.
+     * @param logic The asynchronous method to call after the adapter middleware runs.
+     * @returns a promise representing the async operation
+     */
+    continueConversationAsync(
+        botAppId: string,
+        reference: Partial<ConversationReference>,
+        logic: (context: TurnContext) => Promise<void>
+    ): Promise<void>;
+
+    /**
+     * Asynchronously resumes a conversation with a user, possibly after some time has gone by.
+     *
+     * @param claimsIdentity A [ClaimsIdentity](xref:botframework-connector) for the conversation.
+     * @param reference A partial [ConversationReference](xref:botframework-schema.ConversationReference) to the conversation to continue.
+     * @param logic The asynchronous method to call after the adapter middleware runs.
+     * @returns a promise representing the async operation
+     */
+    continueConversationAsync(
+        claimsIdentity: ClaimsIdentity,
+        reference: Partial<ConversationReference>,
+        logic: (context: TurnContext) => Promise<void>
+    ): Promise<void>;
+
+    /**
+     * Asynchronously resumes a conversation with a user, possibly after some time has gone by.
+     *
      * @param claimsIdentity A [ClaimsIdentity](xref:botframework-connector) for the conversation.
      * @param reference A partial [ConversationReference](xref:botframework-schema.ConversationReference) to the conversation to continue.
      * @param audience A value signifying the recipient of the proactive message.</param>
      * @param logic The asynchronous method to call after the adapter middleware runs.
      * @returns a promise representing the async operation
      */
-    public continueConversationWithClaims(
+    continueConversationAsync(
         claimsIdentity: ClaimsIdentity,
         reference: Partial<ConversationReference>,
-        audience: string | undefined,
+        audience: string,
         logic: (context: TurnContext) => Promise<void>
+    ): Promise<void>;
+
+    /**
+     * @internal
+     */
+    async continueConversationAsync(
+        botAppIdOrClaimsIdentity: string | ClaimsIdentity,
+        reference: Partial<ConversationReference>,
+        logicOrAudience: ((context: TurnContext) => Promise<void>) | string,
+        maybeLogic?: (context: TurnContext) => Promise<void>
     ): Promise<void> {
-        return Promise.reject(new Error('NotImplemented'));
+        throw new Error('NotImplemented');
     }
 
     /**

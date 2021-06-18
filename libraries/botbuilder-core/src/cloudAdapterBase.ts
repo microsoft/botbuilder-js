@@ -29,8 +29,8 @@ import {
 } from 'botframework-schema';
 
 export abstract class CloudAdapterBase extends BotAdapter {
-    public readonly ConnectorFactoryKey = Symbol('ConnectorFactory');
-    public readonly UserTokenClientKey = Symbol('UserTokenClient');
+    readonly ConnectorFactoryKey = Symbol('ConnectorFactory');
+    readonly UserTokenClientKey = Symbol('UserTokenClient');
 
     /**
      * Create a new [CloudAdapterBase](xref:botbuilder.CloudAdapterBase) instance.
@@ -48,7 +48,7 @@ export abstract class CloudAdapterBase extends BotAdapter {
     /**
      * @inheritdoc
      */
-    public sendActivities(context: TurnContext, activities: Partial<Activity>[]): Promise<ResourceResponse[]> {
+    sendActivities(context: TurnContext, activities: Partial<Activity>[]): Promise<ResourceResponse[]> {
         if (!context) {
             throw new TypeError('`context` parameter required');
         }
@@ -96,7 +96,7 @@ export abstract class CloudAdapterBase extends BotAdapter {
     /**
      * @inheritdoc
      */
-    public async updateActivity(context: TurnContext, activity: Partial<Activity>): Promise<ResourceResponse | void> {
+    async updateActivity(context: TurnContext, activity: Partial<Activity>): Promise<ResourceResponse | void> {
         if (!context) {
             throw new TypeError('`context` parameter required');
         }
@@ -122,7 +122,7 @@ export abstract class CloudAdapterBase extends BotAdapter {
     /**
      * @inheritdoc
      */
-    public async deleteActivity(context: TurnContext, reference: Partial<ConversationReference>): Promise<void> {
+    async deleteActivity(context: TurnContext, reference: Partial<ConversationReference>): Promise<void> {
         if (!context) {
             throw new TypeError('`context` parameter required');
         }
@@ -141,28 +141,38 @@ export abstract class CloudAdapterBase extends BotAdapter {
 
     /**
      * @inheritdoc
+     *
+     * @deprecated
      */
-    public async continueConversation(
+    async continueConversation(
         reference: Partial<ConversationReference>,
         logic: (context: TurnContext) => Promise<void>
     ): Promise<void> {
-        return this.processProactive(
-            this.createClaimsIdentity(),
-            ActivityEx.getContinuationActivity(reference),
-            undefined,
-            logic
+        throw new Error(
+            '`CloudAdapterBase.continueConversation` is deprecated, please use `CloudAdapterBase.continueConversationAsync`'
         );
     }
 
     /**
-     * @inheritdoc
+     * @internal
      */
-    public async continueConversationWithClaims(
-        claimsIdentity: ClaimsIdentity,
+    async continueConversationAsync(
+        botAppIdOrClaimsIdentity: string | ClaimsIdentity,
         reference: Partial<ConversationReference>,
-        audience: string | undefined,
-        logic: (context: TurnContext) => Promise<void>
+        logicOrAudience: ((context: TurnContext) => Promise<void>) | string,
+        maybeLogic?: (context: TurnContext) => Promise<void>
     ): Promise<void> {
+        const botAppId = typeof botAppIdOrClaimsIdentity === 'string' ? botAppIdOrClaimsIdentity : undefined;
+
+        const claimsIdentity =
+            typeof botAppIdOrClaimsIdentity !== 'string'
+                ? botAppIdOrClaimsIdentity
+                : this.createClaimsIdentity(botAppId);
+
+        const audience = typeof logicOrAudience === 'string' ? logicOrAudience : undefined;
+
+        const logic = typeof logicOrAudience === 'function' ? logicOrAudience : maybeLogic;
+
         return this.processProactive(claimsIdentity, ActivityEx.getContinuationActivity(reference), audience, logic);
     }
 
