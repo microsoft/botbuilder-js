@@ -159,8 +159,7 @@ export class ForEach<O extends object = {}> extends ActionScope<O> implements Fo
      */
     protected async nextItem(dc: DialogContext): Promise<DialogTurnResult> {
         const itemsProperty = this.itemsProperty.getValue(dc.state);
-        const result = dc.state.getValue(itemsProperty, []);
-        const items = this.convertToList(result);
+        const items = this.convertToList(dc.state.getValue(itemsProperty, []));
 
         if (++this.currentIndex < items.length) {
             dc.state.setValue(this.value.getValue(dc.state), items[this.currentIndex].value);
