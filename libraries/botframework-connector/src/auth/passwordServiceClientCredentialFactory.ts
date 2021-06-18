@@ -42,9 +42,18 @@ export class PasswordServiceClientCredentialFactory implements ServiceClientCred
         loginEndpoint: string,
         validateAuthority: boolean
     ): Promise<ServiceClientCredentials> {
+        if (await this.isAuthenticationDisabled()) {
+            return MicrosoftAppCredentials.Empty;
+        }
+
+        if (!(await this.isValidAppId(appId))) {
+            throw new Error('Invalid appId.');
+        }
+
         let credentials: MicrosoftAppCredentials;
         let normalizedEndpoint = loginEndpoint?.toLowerCase();
         if (normalizedEndpoint?.startsWith(AuthenticationConstants.ToChannelFromBotLoginUrlPrefix)) {
+            // TODO: Unpack necessity of these empty credentials based on the loginEndpoint as no tokens are fetched when auth is disabled.
             credentials =
                 appId == null
                     ? MicrosoftAppCredentials.Empty
@@ -113,14 +122,14 @@ class PrivateCloudAppCredentials extends MicrosoftAppCredentials {
      *
      * @returns The OAuthEndpoint to use.
      */
-    public get oAuthEndpoint(): string {
+    get oAuthEndpoint(): string {
         return this.__oAuthEndpoint;
     }
 
     /**
      * Sets the OAuth endpoint to use.
      */
-    public set oAuthEndpoint(value: string) {
+    set oAuthEndpoint(value: string) {
         // aadApiVersion is set to '1.5' to avoid the "spn:" concatenation on the audience claim
         // For more info, see https://github.com/AzureAD/azure-activedirectory-library-for-nodejs/issues/128
         this.__oAuthEndpoint = value;
