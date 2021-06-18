@@ -163,8 +163,8 @@ export class ForEach<O extends object = {}> extends ActionScope<O> implements Fo
         const items = this.convertToList(result);
 
         if (++this.currentIndex < items.length) {
-            dc.state.setValue(this.index.getValue(dc.state), items[this.currentIndex].index);
             dc.state.setValue(this.value.getValue(dc.state), items[this.currentIndex].value);
+            dc.state.setValue(this.index.getValue(dc.state), items[this.currentIndex].index);
             return await this.beginAction(dc, 0);
         } else {
             return await dc.endDialog();
