@@ -6,7 +6,7 @@ import { ActivityTypes, ChannelAccount, MessageReaction, TurnContext } from '.';
 import { InvokeResponse } from './invokeResponse';
 import { StatusCodes } from './statusCodes';
 
-// This key is exported internally so that subclassed ActivityHandlers and BotAdapters will not overwrite any already set InvokeResponses.
+// This key is exported internally so that subclassed ActivityHandlers and BotAdapters will not override any already set InvokeResponses.
 export const INVOKE_RESPONSE_KEY = Symbol('invokeResponse');
 
 /**
@@ -37,7 +37,7 @@ export class ActivityHandlerBase {
      * @param context The context object for the current turn.
      *
      * @remarks
-     * Overwrite this method to use custom logic for emitting events.
+     * Override this method to use custom logic for emitting events.
      *
      * The default logic is to call any type-specific and sub-type handlers registered via
      * the various _on event_ methods. Type-specific events are defined for:
@@ -97,7 +97,7 @@ export class ActivityHandlerBase {
      * @param context The context object for the current turn.
      *
      * @remarks
-     * Overwrite this method to run registered _message_ handlers and then continue the event
+     * Override this method to run registered _message_ handlers and then continue the event
      * emission process.
      */
     protected async onMessageActivity(context: TurnContext): Promise<void> {
@@ -110,7 +110,7 @@ export class ActivityHandlerBase {
      * @param context The context object for the current turn.
      *
      * @remarks
-     * Overwrite this method to run registered _conversation update_ handlers and then continue the event
+     * Override this method to run registered _conversation update_ handlers and then continue the event
      * emission process.
      *
      * The default logic is:
@@ -145,7 +145,7 @@ export class ActivityHandlerBase {
      * @param context The context object for the current turn.
      *
      * @remarks
-     * Overwrite this method to run registered _message reaction_ handlers and then continue the event
+     * Override this method to run registered _message reaction_ handlers and then continue the event
      * emission process.
      *
      * The default logic is:
@@ -168,7 +168,7 @@ export class ActivityHandlerBase {
      * @param context The context object for the current turn.
      *
      * @remarks
-     * Overwrite this method to run registered _event_ handlers and then continue the event
+     * Override this method to run registered _event_ handlers and then continue the event
      * emission process.
      */
     protected async onEventActivity(context: TurnContext): Promise<void> {
@@ -181,7 +181,7 @@ export class ActivityHandlerBase {
      * @param context The context object for the current turn.
      *
      * @remarks
-     * Overwrite this method to handle particular invoke calls.
+     * Override this method to handle particular invoke calls.
      */
     protected async onInvokeActivity(context: TurnContext): Promise<InvokeResponse> {
         return { status: StatusCodes.NOT_IMPLEMENTED };
@@ -193,7 +193,7 @@ export class ActivityHandlerBase {
      * @param context The context object for the current turn.
      *
      * @remarks
-     * Overwrite this method to run registered _end of conversation_ handlers and then continue the event
+     * Override this method to run registered _end of conversation_ handlers and then continue the event
      * emission process.
      */
     protected async onEndOfConversationActivity(context: TurnContext): Promise<void> {
@@ -206,7 +206,7 @@ export class ActivityHandlerBase {
      * @param context The context object for the current turn.
      *
      * @remarks
-     * Overwrite this method to run registered _typing_ handlers and then continue the event
+     * Override this method to run registered _typing_ handlers and then continue the event
      * emission process.
      */
     protected async onTypingActivity(context: TurnContext): Promise<void> {
@@ -219,7 +219,7 @@ export class ActivityHandlerBase {
      * @param context The context object for the current turn.
      *
      * @remarks
-     * Overwrite this method to run registered _installationupdate_ handlers and then continue the event
+     * Override this method to run registered _installationupdate_ handlers and then continue the event
      * emission process.
      */
     protected async onInstallationUpdateActivity(context: TurnContext): Promise<void> {
@@ -241,7 +241,7 @@ export class ActivityHandlerBase {
      * @param context The context object for the current turn.
      *
      * @remarks
-     * Overwrite this method to run registered _installationupdateadd_ handlers and then continue the event
+     * Override this method to run registered _installationupdateadd_ handlers and then continue the event
      * emission process.
      */
     protected async onInstallationUpdateAddActivity(context: TurnContext): Promise<void> {
@@ -254,7 +254,7 @@ export class ActivityHandlerBase {
      * @param context The context object for the current turn.
      *
      * @remarks
-     * Overwrite this method to run registered _installationupdateremove_ handlers and then continue the event
+     * Override this method to run registered _installationupdateremove_ handlers and then continue the event
      * emission process.
      */
     protected async onInstallationUpdateRemoveActivity(context: TurnContext): Promise<void> {
@@ -267,7 +267,7 @@ export class ActivityHandlerBase {
      * @param context The context object for the current turn.
      *
      * @remarks
-     * Overwrite this method to run registered _unrecognized_ handlers and then continue the event
+     * Override this method to run registered _unrecognized_ handlers and then continue the event
      * emission process.
      */
     protected async onUnrecognizedActivity(context: TurnContext): Promise<void> {
@@ -282,7 +282,7 @@ export class ActivityHandlerBase {
      * @param context The context object for the current turn.
      *
      * @remarks
-     * Overwrite this method to run registered _members added_ handlers and then continue the event
+     * Override this method to run registered _members added_ handlers and then continue the event
      * emission process.
      */
     protected async onMembersAddedActivity(membersAdded: ChannelAccount[], context: TurnContext): Promise<void> {
@@ -297,7 +297,7 @@ export class ActivityHandlerBase {
      * @param context The context object for the current turn.
      *
      * @remarks
-     * Overwrite this method to run registered _members removed_ handlers and then continue the event
+     * Override this method to run registered _members removed_ handlers and then continue the event
      * emission process.
      */
     protected async onMembersRemovedActivity(membersRemoved: ChannelAccount[], context: TurnContext): Promise<void> {
@@ -312,7 +312,7 @@ export class ActivityHandlerBase {
      * @param context The context object for the current turn.
      *
      * @remarks
-     * Overwrite this method to run registered _reactions added_ handlers and then continue the event
+     * Override this method to run registered _reactions added_ handlers and then continue the event
      * emission process.
      */
     protected async onReactionsAddedActivity(reactionsAdded: MessageReaction[], context: TurnContext): Promise<void> {
@@ -327,7 +327,7 @@ export class ActivityHandlerBase {
      * @param context The context object for the current turn.
      *
      * @remarks
-     * Overwrite this method to run registered _reactions removed_ handlers and then continue the event
+     * Override this method to run registered _reactions removed_ handlers and then continue the event
      * emission process.
      */
     protected async onReactionsRemovedActivity(

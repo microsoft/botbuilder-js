@@ -36,6 +36,23 @@ import {
     verifyStateOperationName,
 } from 'botbuilder-core';
 import { TeamsInfo } from './teamsInfo';
+import * as t from 'runtypes';
+
+const TeamsMeetingStartT = t.Record({
+    Id: t.String,
+    JoinUrl: t.String,
+    MeetingType: t.String,
+    Title: t.String,
+    StartTime: t.String,
+});
+
+const TeamsMeetingEndT = t.Record({
+    Id: t.String,
+    JoinUrl: t.String,
+    MeetingType: t.String,
+    Title: t.String,
+    EndTime: t.String,
+});
 
 /**
  * Adds support for Microsoft Teams specific events and interactions.
@@ -936,12 +953,12 @@ export class TeamsActivityHandler extends ActivityHandler {
      * @returns A promise that represents the work queued.
      *
      * @remarks
-     * Overwrite this method to support channel-specific behavior across multiple channels or to add
+     * Override this method to support channel-specific behavior across multiple channels or to add
      * custom event sub-type events.
      */
     protected async dispatchEventActivity(context: TurnContext): Promise<void> {
         await this.handle(context, 'Event', async () => {
-            if (context.activity.channelId == Channels.Msteams) {
+            if (context.activity.channelId === Channels.Msteams) {
                 switch (context.activity.name) {
                     case 'application/vnd.microsoft.meetingStart':
                         return this.onTeamsMeetingStart(context);
@@ -986,10 +1003,18 @@ export class TeamsActivityHandler extends ActivityHandler {
         handler: (meeting: MeetingStartEventDetails, context: TurnContext, next: () => Promise<void>) => Promise<void>
     ): this {
         return this.on('TeamsMeetingStart', async (context, next) => {
-            const meeting = this.convertMeetingEventDetailsToCamelCase<MeetingStartEventDetails>(
-                context.activity.value
+            const meeting = TeamsMeetingStartT.check(context.activity.value);
+            await handler(
+                {
+                    id: meeting.Id,
+                    joinUrl: meeting.JoinUrl,
+                    meetingType: meeting.MeetingType,
+                    startTime: new Date(meeting.StartTime),
+                    title: meeting.Title,
+                },
+                context,
+                next
             );
-            await handler(meeting, context, next);
         });
     }
 
@@ -1003,33 +1028,18 @@ export class TeamsActivityHandler extends ActivityHandler {
         handler: (meeting: MeetingEndEventDetails, context: TurnContext, next: () => Promise<void>) => Promise<void>
     ): this {
         return this.on('TeamsMeetingEnd', async (context, next) => {
-            const meeting = this.convertMeetingEventDetailsToCamelCase<MeetingEndEventDetails>(context.activity.value);
-            await handler(meeting, context, next);
-        });
-    }
-
-    // The payload from Teams comes in with TitleCase keys, so we'll convert them to camelCase
-    // to maintain JSON and JS standard practices.
-    private convertMeetingEventDetailsToCamelCase<T extends MeetingStartEventDetails | MeetingEndEventDetails>(
-        meeting: Record<string, string>
-    ): T {
-        const convertedMeeting: MeetingEventDetails = {
-            id: meeting.Id,
-            joinUrl: meeting.JoinUrl,
-            meetingType: meeting.MeetingType,
-            title: meeting.Title,
-        };
-
-        if (meeting.StartTime) {
-            (convertedMeeting as MeetingStartEventDetails).startTime = new Date(meeting.StartTime);
-        } else if (meeting.EndTime) {
-            (convertedMeeting as MeetingEndEventDetails).endTime = new Date(meeting.EndTime);
-        } else {
-            throw new Error(
-                `Invalid meeting. It does not include StartTime or EndTime: ${JSON.stringify(meeting, null, 2)}`
+            const meeting = TeamsMeetingEndT.check(context.activity.value);
+            await handler(
+                {
+                    id: meeting.Id,
+                    joinUrl: meeting.JoinUrl,
+                    meetingType: meeting.MeetingType,
+                    endTime: new Date(meeting.EndTime),
+                    title: meeting.Title,
+                },
+                context,
+                next
             );
-        }
-
-        return convertedMeeting as T;
+        });
     }
 }

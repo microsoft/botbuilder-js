@@ -2160,7 +2160,7 @@ describe('TeamsActivityHandler', function () {
     });
 
     describe('onEventActivity()', function () {
-        let meetingPayload = { id: 'meetingId' };
+        let meetingPayload;
 
         // Note: Teams payload is TitleCase.
         function createMeetingEventActivity(start = true) {
@@ -2184,7 +2184,7 @@ describe('TeamsActivityHandler', function () {
         let onEventCalled;
         let onDialogCalled;
         this.beforeEach(function () {
-            meetingPayload = { id: 'meetingId' };
+            meetingPayload = { Id: 'meetingId' };
             onEventCalled = false;
             onDialogCalled = false;
         });
