@@ -297,16 +297,11 @@ export class OAuthInput extends InputDialog implements OAuthInputConfiguration {
      * @param context Context reference the user that's being looked up.
      * @param code (Optional) login code received from the user.
      */
-    public async getUserToken(dc: DialogContext, code?: string): Promise<TokenResponse | undefined> {
-        // Validate adapter type
-        if (!('getUserToken' in dc.context.adapter)) {
-            throw new Error(`OAuthPrompt.getUserToken(): not supported for the current adapter.`);
-        }
-
-        // Get the token and call validator
-        const adapter: IUserTokenProvider = dc.context.adapter as IUserTokenProvider;
-
-        return await adapter.getUserToken(dc.context, this.connectionName.getValue(dc.state), code);
+    public getUserToken(dc: DialogContext, code?: string): Promise<TokenResponse | undefined> {
+        return new OAuthPrompt(this.constructor.name, {
+            title: undefined,
+            connectionName: this.connectionName.getValue(dc.state),
+        }).getUserToken(dc.context, code);
     }
 
     /**
@@ -325,15 +320,10 @@ export class OAuthInput extends InputDialog implements OAuthInputConfiguration {
      * @param context Context referencing the user that's being signed out.
      */
     public async signOutUser(dc: DialogContext): Promise<void> {
-        // Validate adapter type
-        if (!('signOutUser' in dc.context.adapter)) {
-            throw new Error(`OAuthPrompt.signOutUser(): not supported for the current adapter.`);
-        }
-
-        // Sign out user
-        const adapter: IUserTokenProvider = dc.context.adapter as IUserTokenProvider;
-
-        return adapter.signOutUser(dc.context, this.connectionName.getValue(dc.state));
+        return new OAuthPrompt(this.constructor.name, {
+            title: undefined,
+            connectionName: this.connectionName.getValue(dc.state),
+        }).signOutUser(dc.context);
     }
 
     protected onComputeId(): string {
@@ -388,131 +378,31 @@ export class OAuthInput extends InputDialog implements OAuthInputConfiguration {
         return OAuthPrompt.sendOAuthCard(settings, dc.context, prompt);
     }
 
-    /**
-     * @private
-     */
     private async recognizeToken(dc: DialogContext): Promise<PromptRecognizerResult<TokenResponse>> {
-        const turnContext = dc.context;
-
-        let token: TokenResponse | undefined;
-        if (this.isTokenResponseEvent(turnContext)) {
-            token = turnContext.activity.value as TokenResponse;
-        } else if (this.isTeamsVerificationInvoke(turnContext)) {
-            const code: any = turnContext.activity.value.state;
-            try {
-                token = await this.getUserToken(dc, code);
-                if (token !== undefined) {
-                    await this.sendInvokeResponse(turnContext, StatusCodes.OK);
-                } else {
-                    await this.sendInvokeResponse(turnContext, StatusCodes.NOT_FOUND);
-                }
-            } catch (e) {
-                await this.sendInvokeResponse(turnContext, StatusCodes.INTERNAL_SERVER_ERROR);
-            }
-        } else if (this.isTokenExchangeRequestInvoke(turnContext)) {
-            const connectionName = this.connectionName.getValue(dc.state);
-            const tokenExchangeRequest = turnContext.activity.value as TokenExchangeInvokeRequest;
-            // Received activity is not a token exchange request
-            if (!(tokenExchangeRequest && this.isTokenExchangeRequest(tokenExchangeRequest))) {
-                const failureDetail =
-                    'The bot received an InvokeActivity that is missing a TokenExchangeInvokeRequest value. This is required to be sent with the InvokeActivity.';
-                await this.sendInvokeResponse(turnContext, StatusCodes.BAD_REQUEST, { connectionName, failureDetail });
-            } else if (tokenExchangeRequest.connectionName != connectionName) {
-                // Connection name on activity does not match that of setting
-                const id = tokenExchangeRequest.id;
-                const failureDetail =
-                    'The bot received an InvokeActivity with a TokenExchangeInvokeRequest containing a ConnectionName that does not match the ConnectionName' +
-                    'expected by the bots active OAuthPrompt. Ensure these names match when sending the InvokeActivityInvalid ConnectionName in the TokenExchangeInvokeRequest';
-                await this.sendInvokeResponse(turnContext, StatusCodes.BAD_REQUEST, {
-                    id,
-                    connectionName,
-                    failureDetail,
-                });
-            } else if (!('exchangeToken' in turnContext.adapter)) {
-                // Token Exchange not supported in the adapter
-                const id = tokenExchangeRequest.id;
-                const failureDetail =
-                    "The bot's BotAdapter does not support token exchange operations. Ensure the bot's Adapter supports the ExtendedUserTokenProvider interface.";
-                await this.sendInvokeResponse(turnContext, StatusCodes.BAD_REQUEST, {
-                    id,
-                    connectionName,
-                    failureDetail,
-                });
-                throw new Error('OAuthPrompt.recognizeToken(): not supported by the current adapter');
-            } else {
-                const extendedUserTokenProvider: ExtendedUserTokenProvider = turnContext.adapter as ExtendedUserTokenProvider;
-                let tokenExchangeResponse: TokenResponse;
-                try {
-                    tokenExchangeResponse = await extendedUserTokenProvider.exchangeToken(
-                        turnContext,
-                        connectionName,
-                        turnContext.activity.from.id,
-                        { token: tokenExchangeRequest.token }
-                    );
-                } catch (err) {
-                    // Ignore errors.
-                    // If the token exchange failed for any reason, the tokenExchangeResponse stays undefined
-                    // and we send back a failure invoke response to the caller.
-                }
-
-                const id = tokenExchangeRequest.id;
-                if (!tokenExchangeResponse || !tokenExchangeResponse.token) {
-                    const failureDetail = 'The bot is unable to exchange token. Proceed with regular login.';
-                    await this.sendInvokeResponse(turnContext, StatusCodes.PRECONDITION_FAILED, {
-                        id,
-                        connectionName,
-                        failureDetail,
-                    });
-                } else {
-                    await this.sendInvokeResponse(turnContext, StatusCodes.OK, { id, connectionName });
-                    token = {
-                        channelId: tokenExchangeResponse.channelId,
-                        connectionName: tokenExchangeResponse.connectionName,
-                        token: tokenExchangeResponse.token,
-                        expiration: undefined,
-                    };
-                }
-            }
-        } else if (turnContext.activity.type === ActivityTypes.Message) {
-            const matched: RegExpExecArray = /(\d{6})/.exec(turnContext.activity.text);
-            if (matched && matched.length > 1) {
-                token = await this.getUserToken(dc, matched[1]);
-            }
-        }
-
-        return token !== undefined ? { succeeded: true, value: token } : { succeeded: false };
+        return new OAuthPrompt(this.constructor.name, {
+            title: undefined,
+            connectionName: this.connectionName.getValue(dc.state),
+        }).recognizeToken(dc);
     }
 
-    /**
-     * @private
-     */
     private isTokenResponseEvent(context: TurnContext): boolean {
         const activity: Activity = context.activity;
 
         return activity.type === ActivityTypes.Event && activity.name === tokenResponseEventName;
     }
 
-    /**
-     * @private
-     */
     private isTeamsVerificationInvoke(context: TurnContext): boolean {
         const activity: Activity = context.activity;
 
         return activity.type === ActivityTypes.Invoke && activity.name === verifyStateOperationName;
     }
 
-    /**
-     * @private
-     */
     private isTokenExchangeRequestInvoke(context: TurnContext): boolean {
         const activity: Activity = context.activity;
 
         return activity.type === ActivityTypes.Invoke && activity.name === tokenExchangeOperationName;
     }
 
-    /**
-     * @private
-     */
     private isTokenExchangeRequest(obj: unknown): obj is TokenExchangeInvokeRequest {
         if (obj.hasOwnProperty('token')) {
             return true;
@@ -520,9 +410,6 @@ export class OAuthInput extends InputDialog implements OAuthInputConfiguration {
         return false;
     }
 
-    /**
-     * @private
-     */
     private async sendInvokeResponse(turnContext: TurnContext, status: StatusCodes, body?: object): Promise<void> {
         await turnContext.sendActivity({
             type: 'invokeResponse',
@@ -534,9 +421,6 @@ export class OAuthInput extends InputDialog implements OAuthInputConfiguration {
     }
 }
 
-/**
- * @private
- */
 interface OAuthPromptState {
     state: any;
     options: PromptOptions;

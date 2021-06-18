@@ -281,12 +281,14 @@ export class DialogContext {
 
 // @public
 export class DialogContextError extends Error {
-    constructor(source: Error | string, dialogContext: DialogContext);
+    constructor(error: Error | string, dialogContext: DialogContext);
     readonly dialogContext: {
         activeDialog?: string;
         parent?: string;
         stack: DialogInstance[];
     };
+    // (undocumented)
+    readonly error: Error | string;
 }
 
 // @public
@@ -522,7 +524,7 @@ export class HashPathResolver extends AliasPathResolver {
 }
 
 // @public (undocumented)
-export function hasMessageFeed(channelId: string): boolean;
+export function hasMessageFeed(_channelId: string): boolean;
 
 // @public
 export function isComponentMemoryScopes(component: unknown): component is ComponentMemoryScopes;
@@ -578,6 +580,7 @@ export class OAuthPrompt extends Dialog {
     beginDialog(dc: DialogContext, options?: PromptOptions): Promise<DialogTurnResult>;
     continueDialog(dc: DialogContext): Promise<DialogTurnResult>;
     getUserToken(context: TurnContext, code?: string): Promise<TokenResponse | undefined>;
+    recognizeToken(dc: DialogContext): Promise<PromptRecognizerResult<TokenResponse>>;
     static sendOAuthCard(settings: OAuthPromptSettings, turnContext: TurnContext, prompt?: string | Partial<Activity>): Promise<void>;
     signOutUser(context: TurnContext): Promise<void>;
     }

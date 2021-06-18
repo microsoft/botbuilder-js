@@ -1,36 +1,22 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-import { ChannelServiceHandler } from '../channelServiceHandler';
+import { BotFrameworkAuthentication, ClaimsIdentity } from 'botframework-connector';
+import { CloudChannelServiceHandler } from '../cloudChannelServiceHandler';
 import { SkillHandlerImpl } from './skillHandlerImpl';
 
 import {
-    AuthenticationConfiguration,
-    AuthenticationConstants,
-    ClaimsIdentity,
-    GovernmentConstants,
-    ICredentialProvider,
-    JwtTokenValidation,
-} from 'botframework-connector';
-
-import {
     Activity,
-    ActivityHandlerBase,
     BotAdapter,
     ResourceResponse,
     SkillConversationIdFactoryBase,
     SkillConversationReferenceKey,
+    TurnContext,
 } from 'botbuilder-core';
 
-/**
- * A Bot Framework Handler for skills.
- */
-export class SkillHandler extends ChannelServiceHandler {
+export class CloudSkillHandler extends CloudChannelServiceHandler {
     /**
      * Used to access the CovnersationReference sent from the Skill to the Parent.
-     *
-     * @remarks
-     * The value is the same as the SkillConversationReferenceKey exported from botbuilder-core.
      */
     public readonly SkillConversationReferenceKey = SkillConversationReferenceKey;
 
@@ -38,31 +24,27 @@ export class SkillHandler extends ChannelServiceHandler {
     private readonly inner: SkillHandlerImpl;
 
     /**
-     * Initializes a new instance of the SkillHandler class.
+     * Initializes a new instance of the CloudSkillHandler class.
      *
      * @param adapter An instance of the BotAdapter that will handle the request.
-     * @param bot The ActivityHandlerBase instance.
+     * @param logic The Bot logic function
      * @param conversationIdFactory A SkillConversationIdFactoryBase to unpack the conversation ID and map it to the calling bot.
-     * @param credentialProvider The credential provider.
-     * @param authConfig The authentication configuration.
-     * @param channelService The string indicating if the bot is working in Public Azure or in Azure Government (https://aka.ms/AzureGovDocs).
+     * @param auth Bot Framework Authentication to use
      */
     public constructor(
         adapter: BotAdapter,
-        bot: ActivityHandlerBase,
+        logic: (context: TurnContext) => Promise<void>,
         conversationIdFactory: SkillConversationIdFactoryBase,
-        credentialProvider: ICredentialProvider,
-        authConfig: AuthenticationConfiguration,
-        channelService?: string
+        auth: BotFrameworkAuthentication
     ) {
-        super(credentialProvider, authConfig, channelService);
+        super(auth);
 
         if (!adapter) {
             throw new Error('missing adapter.');
         }
 
-        if (!bot) {
-            throw new Error('missing bot.');
+        if (!logic) {
+            throw new Error('missing logic.');
         }
 
         if (!conversationIdFactory) {
@@ -72,12 +54,9 @@ export class SkillHandler extends ChannelServiceHandler {
         this.inner = new SkillHandlerImpl(
             this.SkillConversationReferenceKey,
             adapter,
-            (context) => bot.run(context),
+            logic,
             conversationIdFactory,
-            () =>
-                JwtTokenValidation.isGovernment(channelService)
-                    ? GovernmentConstants.ToChannelFromBotOAuthScope
-                    : AuthenticationConstants.ToChannelFromBotOAuthScope
+            () => auth.getOriginatingAudience()
         );
     }
 

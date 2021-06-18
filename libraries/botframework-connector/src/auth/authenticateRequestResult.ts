@@ -20,7 +20,7 @@ export type AuthenticateRequestResult = {
     /**
      * A value for the CallerId.
      */
-    callerId: string;
+    callerId?: string;
     /**
      * A value for the ConnectorFactory.
      */

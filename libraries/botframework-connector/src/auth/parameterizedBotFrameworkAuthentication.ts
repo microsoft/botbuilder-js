@@ -23,13 +23,14 @@ import { UserTokenClientImpl } from './userTokenClientImpl';
 import type { UserTokenClient } from './userTokenClient';
 import { VerifyOptions } from 'jsonwebtoken';
 
-function getAppId(claimsIdentity: ClaimsIdentity): string | null {
+function getAppId(claimsIdentity: ClaimsIdentity): string | undefined {
     // For requests from channel App Id is in Audience claim of JWT token. For emulator it is in AppId claim. For
     // unauthenticated requests we have anonymous claimsIdentity provided auth is disabled.
     // For Activities coming from Emulator AppId claim contains the Bot's AAD AppId.
     return (
         claimsIdentity.getClaimValue(AuthenticationConstants.AudienceClaim) ??
-        claimsIdentity.getClaimValue(AuthenticationConstants.AppIdClaim)
+        claimsIdentity.getClaimValue(AuthenticationConstants.AppIdClaim) ??
+        undefined
     );
 }
 
@@ -57,6 +58,21 @@ export class ParameterizedBotFrameworkAuthentication extends BotFrameworkAuthent
     }
 
     async authenticateChannelRequest(authHeader: string): Promise<ClaimsIdentity> {
+        if (!authHeader.trim()) {
+            const isAuthDisabled = await this.credentialsFactory.isAuthenticationDisabled();
+            if (!isAuthDisabled) {
+                throw new AuthenticationError(
+                    'Unauthorized Access. Request is not authorized',
+                    StatusCodes.UNAUTHORIZED
+                );
+            }
+
+            // In the scenario where auth is disabled, we still want to have the isAuthenticated flag set in the
+            // ClaimsIdentity. To do this requires adding in an empty claim. Since ChannelServiceHandler calls are
+            // always a skill callback call, we set the skill claim too.
+            return SkillValidation.createAnonymousSkillClaim();
+        }
+
         return this.JwtTokenValidation_validateAuthHeader(authHeader, 'unknown', null);
     }
 
@@ -89,11 +105,8 @@ export class ParameterizedBotFrameworkAuthentication extends BotFrameworkAuthent
         authHeader: string,
         channelIdHeader: string
     ): Promise<AuthenticateRequestResult> {
-        if (
-            (typeof channelIdHeader !== 'string' || channelIdHeader.trim() === '') &&
-            !(await this.credentialsFactory.isAuthenticationDisabled())
-        ) {
-            throw new AuthenticationError("'authHeader' required.", StatusCodes.BAD_REQUEST);
+        if (!channelIdHeader?.trim() && !(await this.credentialsFactory.isAuthenticationDisabled())) {
+            throw new AuthenticationError("'channelIdHeader' required.", StatusCodes.UNAUTHORIZED);
         }
 
         const claimsIdentity = await this.JwtTokenValidation_validateAuthHeader(authHeader, channelIdHeader, null);
@@ -149,11 +162,7 @@ export class ParameterizedBotFrameworkAuthentication extends BotFrameworkAuthent
             }
 
             // Check if the activity is for a skill call and is coming from the Emulator.
-            if (
-                activity.channelId === Channels.Emulator &&
-                activity.recipient &&
-                activity.recipient.role === RoleTypes.Skill
-            ) {
+            if (activity.channelId === Channels.Emulator && activity.recipient?.role === RoleTypes.Skill) {
                 return SkillValidation.createAnonymousSkillClaim();
             }
 
@@ -177,10 +186,6 @@ export class ParameterizedBotFrameworkAuthentication extends BotFrameworkAuthent
         channelId: string,
         serviceUrl = ''
     ): Promise<ClaimsIdentity> {
-        if (!authHeader.trim()) {
-            throw new AuthenticationError("'authHeader' required.", StatusCodes.BAD_REQUEST);
-        }
-
         const identity = await this.JwtTokenValidation_authenticateToken(authHeader, channelId, serviceUrl);
 
         await this.JwtTokenValidation_validateClaims(identity.claims);

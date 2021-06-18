@@ -2,6 +2,12 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
+
+import { INVOKE_RESPONSE_KEY } from '.';
+import { BotAdapter } from './botAdapter';
+import { shallowCopy } from './internal';
+import { TurnContextStateCollection } from './turnContextStateCollection';
+
 import {
     Activity,
     ActivityTypes,
@@ -12,10 +18,6 @@ import {
     Mention,
     Channels,
 } from 'botframework-schema';
-import { INVOKE_RESPONSE_KEY } from '.';
-import { BotAdapter } from './botAdapter';
-import { shallowCopy } from './internal';
-import { TurnContextStateCollection } from './turnContextStateCollection';
 
 /**
  * A handler that can participate in send activity events for the current turn.
@@ -142,13 +144,17 @@ export interface TurnContext {}
  * created by a [BotAdapter](xref:botbuilder-core.BotAdapter) and persists for the length of the turn.
  */
 export class TurnContext {
-    private _adapter: BotAdapter | undefined;
-    private _activity: Activity | undefined;
+    private _adapter?: BotAdapter;
+    private _activity?: Activity;
+
     private _respondedRef: { responded: boolean } = { responded: false };
-    private _turnState: TurnContextStateCollection = new TurnContextStateCollection();
+
+    private _turnState = new TurnContextStateCollection();
+
     private _onSendActivities: SendActivitiesHandler[] = [];
     private _onUpdateActivity: UpdateActivityHandler[] = [];
     private _onDeleteActivity: DeleteActivityHandler[] = [];
+
     private readonly _turn = 'turn';
     private readonly _locale = 'locale';
 

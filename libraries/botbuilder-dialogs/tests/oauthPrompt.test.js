@@ -1,4 +1,12 @@
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
+
 const assert = require('assert');
+const { spy } = require('sinon');
+const { ok, strictEqual } = require('assert');
+const { OAuthPrompt, DialogSet, DialogTurnStatus } = require('../');
+const { AuthenticationConstants } = require('botframework-connector');
+
 const {
     ActionTypes,
     ActivityTypes,
@@ -12,14 +20,8 @@ const {
     TurnContext,
     verifyStateOperationName,
 } = require('botbuilder-core');
-const { spy } = require('sinon');
-const { ok, strictEqual } = require('assert');
-const { OAuthPrompt, DialogSet, DialogTurnStatus } = require('../');
-const { AuthenticationConstants } = require('botframework-connector');
 
 describe('OAuthPrompt', function () {
-    this.timeout(60000);
-
     it('should call OAuthPrompt', async function () {
         const connectionName = 'myConnection';
         const token = 'abc123';
@@ -441,6 +443,9 @@ describe('OAuthPrompt', function () {
                         tokenExchangeResource: this.tokenExchangeResource,
                     };
                 }
+
+                async signOutUser() {}
+                async exchangeToken() {}
             }
 
             it(`should fail if adapter does not have 'getUserToken'`, async function () {
@@ -454,7 +459,7 @@ describe('OAuthPrompt', function () {
 
                 await assert.rejects(
                     OAuthPrompt.sendOAuthCard({}, context),
-                    new Error('OAuthPrompt.sendOAuthCard(): not supported for the current adapter.')
+                    new Error('OAuth prompt is not supported by the current adapter')
                 );
             });
 

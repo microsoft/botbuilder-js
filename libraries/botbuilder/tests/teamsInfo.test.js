@@ -871,7 +871,7 @@ describe('TeamsInfo', function () {
             });
 
             it(`should error if the adapter doesn't have a createConnectorClient method`, function () {
-                assert.rejects(
+                assert.throws(
                     () => TeamsInfo.getConnectorClient({ adapter: {} }),
                     new Error('This method requires a connector client.')
                 );

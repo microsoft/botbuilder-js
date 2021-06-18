@@ -10,12 +10,12 @@ const TypedConfig = t.Record({
     /**
      * The ID assigned to your bot in the [Bot Framework Portal](https://dev.botframework.com/).
      */
-    MicrosoftAppId: t.String.nullable().optional(),
+    MicrosoftAppId: t.Optional(t.Union(t.String, t.Null)),
 
     /**
      * The password assigned to your bot in the [Bot Framework Portal](https://dev.botframework.com/).
      */
-    MicrosoftAppPassword: t.String.nullable().optional(),
+    MicrosoftAppPassword: t.Optional(t.Union(t.String, t.Null)),
 });
 
 /**
@@ -37,11 +37,9 @@ export class ConfigurationServiceClientCredentialFactory extends PasswordService
      * @param factoryOptions A [ConfigurationServiceClientCredentialFactoryOptions](xref:botbuilder-core.ConfigurationServiceClientCredentialFactoryOptions) object.
      */
     constructor(factoryOptions: ConfigurationServiceClientCredentialFactoryOptions) {
-        super(null, null);
         try {
-            const { MicrosoftAppId, MicrosoftAppPassword } = TypedConfig.check(factoryOptions);
-            this.appId = MicrosoftAppId ?? this.appId;
-            this.password = MicrosoftAppPassword ?? this.password;
+            const { MicrosoftAppId = null, MicrosoftAppPassword = null } = TypedConfig.check(factoryOptions);
+            super(MicrosoftAppId, MicrosoftAppPassword);
         } catch (err) {
             if (isValidationErrorWithDetails(err)) {
                 const e = new Error(JSON.stringify(err.details, undefined, 2));

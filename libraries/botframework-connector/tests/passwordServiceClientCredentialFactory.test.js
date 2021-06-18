@@ -27,11 +27,6 @@ describe('PasswordServiceClientCredentialFactory', function () {
         assert(await credFactory.isAuthenticationDisabled());
     });
 
-    it('createCredentials() should throw with an invalid appId', async function () {
-        const credFactory = new PasswordServiceClientCredentialFactory(APP_ID, APP_PASSWORD);
-        await assert.rejects(() => credFactory.createCredentials('invalid-app-id'), new Error('appId did not match'));
-    });
-
     it('createCredentials() should work', async function () {
         const credFactory = new PasswordServiceClientCredentialFactory(APP_ID, APP_PASSWORD);
         const testArgs = [
@@ -60,5 +55,23 @@ describe('PasswordServiceClientCredentialFactory', function () {
             assert.strictEqual(cred.oAuthScope, testArgs[idx][1]);
             assert.strictEqual(cred.oAuthEndpoint, testArgs[idx][2].toLowerCase());
         });
+    });
+
+    it('createCredentials() should always return empty credentials when auth is disabled', async function () {
+        const credFactory = new PasswordServiceClientCredentialFactory('', '');
+        let creds = await credFactory.createCredentials();
+
+        // When authentication is disabled, a MicrosoftAppCredentials with empty strings for appId and appPassword is returned.
+        assert.strictEqual(creds.appId, null);
+        assert.strictEqual(creds.appPassword, null);
+
+        creds = await credFactory.createCredentials(APP_ID);
+        assert.strictEqual(creds.appId, null);
+        assert.strictEqual(creds.appPassword, null);
+    });
+
+    it('createCredentials() should throw when appId is invalid', async function () {
+        const credFactory = new PasswordServiceClientCredentialFactory(APP_ID, APP_PASSWORD);
+        await assert.rejects(() => credFactory.createCredentials('badAppId'), new Error('Invalid appId.'));
     });
 });

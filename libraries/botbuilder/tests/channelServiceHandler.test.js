@@ -32,9 +32,10 @@ class NoAuthHandler extends ChannelServiceHandler {
     }
 }
 
-const createDefaultErrorMessage = (methodName) => {
-    return `ChannelServiceHandler.${methodName}(): 501: Not Implemented`;
-};
+const matchStatusCodeError = (methodName) => ({
+    name: 'StatusCodeError',
+    message: `ChannelServiceHandler.${methodName}(): 501: Not Implemented`,
+});
 
 describe('ChannelServiceHandler', function () {
     const handler = new ChannelServiceHandler(CREDENTIALS, AUTH_CONFIG, 'channels');
@@ -69,9 +70,13 @@ describe('ChannelServiceHandler', function () {
         });
 
         it('should fail with invalid credentialProvider or authConfig', function () {
-            assert.throws(() => new NoAuthHandler(), Error('BotFrameworkHttpClient(): missing credentialProvider'));
+            assert.throws(() => new NoAuthHandler(), {
+                message: 'ChannelServiceHandler(): missing credentialProvider',
+            });
 
-            assert.throws(() => new NoAuthHandler(CREDENTIALS), Error('BotFrameworkHttpClient(): missing authConfig'));
+            assert.throws(() => new NoAuthHandler(CREDENTIALS), {
+                message: 'ChannelServiceHandler(): missing authConfig',
+            });
         });
     });
 
@@ -81,7 +86,7 @@ describe('ChannelServiceHandler', function () {
 
             await assert.rejects(
                 handler.handleSendToConversation(AUTH_HEADER, 'convId', { type: ActivityTypes.Message }),
-                new Error(createDefaultErrorMessage('onSendToConversation'))
+                matchStatusCodeError('onSendToConversation')
             );
         });
     });
@@ -92,7 +97,7 @@ describe('ChannelServiceHandler', function () {
 
             await assert.rejects(
                 handler.handleReplyToActivity(AUTH_HEADER, 'convId', ACTIVITY.id, ACTIVITY),
-                new Error(createDefaultErrorMessage('onReplyToActivity'))
+                matchStatusCodeError('onReplyToActivity')
             );
         });
     });
@@ -103,7 +108,7 @@ describe('ChannelServiceHandler', function () {
 
             await assert.rejects(
                 handler.handleUpdateActivity(AUTH_HEADER, 'convId', ACTIVITY.id, ACTIVITY),
-                new Error(createDefaultErrorMessage('onUpdateActivity'))
+                matchStatusCodeError('onUpdateActivity')
             );
         });
     });
@@ -114,7 +119,7 @@ describe('ChannelServiceHandler', function () {
 
             await assert.rejects(
                 handler.handleDeleteActivity(AUTH_HEADER, 'convId', ACTIVITY.id, ACTIVITY),
-                new Error(createDefaultErrorMessage('onDeleteActivity'))
+                matchStatusCodeError('onDeleteActivity')
             );
         });
     });
@@ -125,7 +130,7 @@ describe('ChannelServiceHandler', function () {
 
             await assert.rejects(
                 handler.handleGetActivityMembers(AUTH_HEADER, 'convId', ACTIVITY.id),
-                new Error(createDefaultErrorMessage('onGetActivityMembers'))
+                matchStatusCodeError('onGetActivityMembers')
             );
         });
     });
@@ -136,7 +141,7 @@ describe('ChannelServiceHandler', function () {
 
             await assert.rejects(
                 handler.handleCreateConversation(AUTH_HEADER, { isGroup: false }),
-                new Error(createDefaultErrorMessage('onCreateConversation'))
+                matchStatusCodeError('onCreateConversation')
             );
         });
     });
@@ -147,7 +152,7 @@ describe('ChannelServiceHandler', function () {
 
             await assert.rejects(
                 handler.handleGetConversations(AUTH_HEADER, 'convId'),
-                new Error(createDefaultErrorMessage('onGetConversations'))
+                matchStatusCodeError('onGetConversations')
             );
         });
     });
@@ -158,7 +163,7 @@ describe('ChannelServiceHandler', function () {
 
             await assert.rejects(
                 handler.handleGetConversationMembers(AUTH_HEADER, 'convId'),
-                new Error(createDefaultErrorMessage('onGetConversationMembers'))
+                matchStatusCodeError('onGetConversationMembers')
             );
         });
 
@@ -167,7 +172,7 @@ describe('ChannelServiceHandler', function () {
 
             await assert.rejects(
                 handler.handleGetConversationPagedMembers(AUTH_HEADER, 'convId'),
-                new Error(createDefaultErrorMessage('onGetConversationPagedMembers'))
+                matchStatusCodeError('onGetConversationPagedMembers')
             );
         });
 
@@ -176,7 +181,7 @@ describe('ChannelServiceHandler', function () {
 
             await assert.rejects(
                 handler.handleDeleteConversationMember(AUTH_HEADER, 'convId', 'memberId'),
-                new Error(createDefaultErrorMessage('onDeleteConversationMember'))
+                matchStatusCodeError('onDeleteConversationMember')
             );
         });
     });
@@ -187,7 +192,7 @@ describe('ChannelServiceHandler', function () {
 
             await assert.rejects(
                 handler.handleSendConversationHistory(AUTH_HEADER, 'convId', { ACTIVITY }),
-                new Error(createDefaultErrorMessage('onSendConversationHistory'))
+                matchStatusCodeError('onSendConversationHistory')
             );
         });
     });
@@ -198,7 +203,7 @@ describe('ChannelServiceHandler', function () {
 
             await assert.rejects(
                 handler.handleUploadAttachment(AUTH_HEADER, 'convId', { type: 'string', name: 'attachment' }),
-                new Error(createDefaultErrorMessage('onUploadAttachment'))
+                matchStatusCodeError('onUploadAttachment')
             );
         });
     });

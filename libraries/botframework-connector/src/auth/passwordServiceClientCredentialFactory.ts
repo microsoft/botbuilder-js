@@ -28,7 +28,7 @@ export class PasswordServiceClientCredentialFactory implements ServiceClientCred
         this.password = password;
     }
 
-    async isValidAppId(appId: string): Promise<boolean> {
+    async isValidAppId(appId = ''): Promise<boolean> {
         return appId === this.appId;
     }
 
@@ -42,31 +42,36 @@ export class PasswordServiceClientCredentialFactory implements ServiceClientCred
         loginEndpoint: string,
         validateAuthority: boolean
     ): Promise<ServiceClientCredentials> {
+        if (await this.isAuthenticationDisabled()) {
+            return MicrosoftAppCredentials.Empty;
+        }
+
         if (!(await this.isValidAppId(appId))) {
-            throw new Error('appId did not match');
+            throw new Error('Invalid appId.');
         }
 
         let credentials: MicrosoftAppCredentials;
         let normalizedEndpoint = loginEndpoint?.toLowerCase();
         if (normalizedEndpoint?.startsWith(AuthenticationConstants.ToChannelFromBotLoginUrlPrefix)) {
+            // TODO: Unpack necessity of these empty credentials based on the loginEndpoint as no tokens are fetched when auth is disabled.
             credentials =
-                this.appId == null
+                appId == null
                     ? MicrosoftAppCredentials.Empty
-                    : new MicrosoftAppCredentials(this.appId, this.password, undefined, audience);
+                    : new MicrosoftAppCredentials(appId, this.password, undefined, audience);
         } else if (normalizedEndpoint == GovernmentConstants.ToChannelFromBotLoginUrl) {
             credentials =
-                this.appId == null
+                appId == null
                     ? new MicrosoftAppCredentials(
                           undefined,
                           undefined,
                           undefined,
                           GovernmentConstants.ToChannelFromBotOAuthScope
                       )
-                    : new MicrosoftAppCredentials(this.appId, this.password, undefined, audience);
+                    : new MicrosoftAppCredentials(appId, this.password, undefined, audience);
             normalizedEndpoint = loginEndpoint;
         } else {
             credentials =
-                this.appId == null
+                appId == null
                     ? new PrivateCloudAppCredentials(
                           undefined,
                           undefined,
@@ -75,7 +80,7 @@ export class PasswordServiceClientCredentialFactory implements ServiceClientCred
                           validateAuthority
                       )
                     : new PrivateCloudAppCredentials(
-                          this.appId,
+                          appId,
                           this.password,
                           audience,
                           normalizedEndpoint,
@@ -117,14 +122,14 @@ class PrivateCloudAppCredentials extends MicrosoftAppCredentials {
      *
      * @returns The OAuthEndpoint to use.
      */
-    public get oAuthEndpoint(): string {
+    get oAuthEndpoint(): string {
         return this.__oAuthEndpoint;
     }
 
     /**
      * Sets the OAuth endpoint to use.
      */
-    public set oAuthEndpoint(value: string) {
+    set oAuthEndpoint(value: string) {
         // aadApiVersion is set to '1.5' to avoid the "spn:" concatenation on the audience claim
         // For more info, see https://github.com/AzureAD/azure-activedirectory-library-for-nodejs/issues/128
         this.__oAuthEndpoint = value;

@@ -53,8 +53,9 @@
     "depcheck": "depcheck --config ../../.depcheckrc",
     "lint": "eslint . --ext .js,.ts",
     "postbuild": "downlevel-dts lib _ts3.4/lib --checksum",
-    "test": "yarn build && nyc mocha --recursive \"tests/**/*.test.js\"",
-    "test:compat": "api-extractor run --verbose"
+    "test": "npm-run-all build test:mocha",
+    "test:compat": "api-extractor run --verbose",
+    "test:mocha": "nyc mocha --recursive tests/**/*.test.js"
   },
   "files": [
     "_ts3.4",

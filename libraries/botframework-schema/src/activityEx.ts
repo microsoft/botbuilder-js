@@ -3,6 +3,8 @@
  * Licensed under the MIT License.
  */
 
+import { v4 as uuid } from 'uuid';
+
 import {
     IEndOfConversationActivity,
     IEventActivity,
@@ -19,16 +21,18 @@ import {
     IMessageReactionActivity,
     ISuggestionActivity,
 } from './activityInterfaces';
+
 import {
     Activity,
+    ActivityEventNames,
     ActivityTypes,
     ChannelAccount,
-    ConversationReference,
-    Mention,
+    Channels,
     ConversationAccount,
+    ConversationReference,
     ICommandActivity,
     ICommandResultActivity,
-    Channels,
+    Mention,
 } from './index';
 
 // eslint-disable-next-line @typescript-eslint/no-namespace
@@ -426,6 +430,26 @@ export namespace ActivityEx {
             locale: source.locale,
             serviceUrl: source.serviceUrl,
             user: source.from,
+        };
+    }
+
+    /**
+     * Creates an Activity from conversation reference as it is posted to bot.
+     *
+     * @param reference the conversation reference
+     * @returns the activity
+     */
+    export function getContinuationActivity(reference: Partial<ConversationReference>): Partial<Activity> {
+        return {
+            name: ActivityEventNames.ContinueConversation,
+            id: uuid(),
+            channelId: reference.channelId,
+            locale: reference.locale,
+            serviceUrl: reference.serviceUrl,
+            conversation: reference.conversation,
+            recipient: reference.bot,
+            from: reference.user,
+            relatesTo: reference as ConversationReference,
         };
     }
 
