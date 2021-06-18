@@ -2184,7 +2184,12 @@ describe('TeamsActivityHandler', function () {
         let onEventCalled;
         let onDialogCalled;
         this.beforeEach(function () {
-            meetingPayload = { Id: 'meetingId' };
+            meetingPayload = {
+                Id: 'meetingId',
+                JoinUrl: 'https://joinUrl',
+                MeetingType: 'Scheduled',
+                title: 'someTitle'
+            };
             onEventCalled = false;
             onDialogCalled = false;
         });
