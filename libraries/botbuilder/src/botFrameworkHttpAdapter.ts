@@ -1,9 +1,9 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-import type { BotLogic } from 'botbuilder-core';
 import type { INodeBuffer, INodeSocket } from 'botframework-streaming';
 import type { Request, Response } from './interfaces';
+import type { TurnContext } from 'botbuilder-core';
 
 /**
  * BotFrameworkHttpAdapter is the interface that describes a Bot Framework
@@ -11,13 +11,18 @@ import type { Request, Response } from './interfaces';
  */
 export interface BotFrameworkHttpAdapter {
     /**
-     * Process a web request by applying a [BotLogic](xref:botbuilder.BotLogic) function.
+     * Process a web request by applying a logic callback function.
      */
-    process(req: Request, res: Response, logic: BotLogic): Promise<void>;
+    process(req: Request, res: Response, logic: (context: TurnContext) => Promise<void>): Promise<void>;
 
     /**
-     * Handle a web socket connection by applying a [BotLogic](xref:botbuilder.BotLogic) function to
+     * Handle a web socket connection by applying a logic callback function to
      * each streaming request.
      */
-    process(req: Request, socket: INodeSocket, head: INodeBuffer, logic: BotLogic): Promise<void>;
+    process(
+        req: Request,
+        socket: INodeSocket,
+        head: INodeBuffer,
+        logic: (context: TurnContext) => Promise<void>
+    ): Promise<void>;
 }

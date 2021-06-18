@@ -121,6 +121,7 @@ export namespace ActivityEx {
     export function createTrace(source: Activity, name: string, value?: unknown, valueType?: string, label?: string): ITraceActivity;
     export function createTraceActivity(name: string, valueType?: string, value?: unknown, label?: string): Partial<ITraceActivity>;
     export function createTypingActivity(): Partial<ITypingActivity>;
+    export function getContinuationActivity(reference: Partial<ConversationReference>): Partial<Activity>;
     export function getConversationReference(source: Partial<Activity>): ConversationReference;
     export function getMentions(source: Partial<Activity>): Mention[];
     export function hasContent(source: Partial<Activity>): boolean;
@@ -400,9 +401,9 @@ export interface ChannelInfo {
 // @public
 export enum Channels {
     // (undocumented)
-    Console = "console",
+    Alexa = "alexa",
     // (undocumented)
-    Cortana = "cortana",
+    Console = "console",
     // (undocumented)
     Directline = "directline",
     // (undocumented)
@@ -1455,6 +1456,8 @@ export enum StatusCodes {
     BAD_REQUEST = 400,
     // (undocumented)
     CONFLICT = 409,
+    // (undocumented)
+    CREATED = 201,
     // (undocumented)
     INTERNAL_SERVER_ERROR = 500,
     // (undocumented)

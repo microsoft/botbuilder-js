@@ -26,6 +26,7 @@ import {
     allowedCallersClaimsValidator,
     BotFrameworkAuthentication,
     ServiceClientCredentialsFactory,
+    ConnectorClientOptions,
 } from 'botframework-connector';
 
 import {
@@ -257,16 +258,25 @@ function addCoreBot(services: ServiceCollection, configuration: Configuration): 
         BotFrameworkAuthentication,
         {
             authenticationConfiguration: AuthenticationConfiguration;
-            serviceClientCredentialsFactory: ServiceClientCredentialsFactory;
+            botFrameworkClientFetch?: (input: RequestInfo, init?: RequestInit) => Promise<Response>;
+            connectorClientOptions?: ConnectorClientOptions;
+            serviceClientCredentialsFactory?: ServiceClientCredentialsFactory;
         }
     >(
         'botFrameworkAuthentication',
-        ['authenticationConfiguration', 'serviceClientCredentialsFactory'],
+        [
+            'authenticationConfiguration',
+            'botFrameworkClientFetch',
+            'connectorClientOptions',
+            'serviceClientCredentialsFactory',
+        ],
         (dependencies) =>
             createBotFrameworkAuthenticationFromConfiguration(
                 configuration,
                 dependencies.serviceClientCredentialsFactory,
-                dependencies.authenticationConfiguration
+                dependencies.authenticationConfiguration,
+                dependencies.botFrameworkClientFetch,
+                dependencies.connectorClientOptions
             )
     );
 
@@ -498,6 +508,8 @@ export async function getRuntimeServices(
     }
 
     const services = new ServiceCollection({
+        botFrameworkClientFetch: undefined,
+        connectorClientOptions: undefined,
         customAdapters: new Map(),
         declarativeTypes: [],
         memoryScopes: [],

@@ -449,7 +449,7 @@ export namespace ActivityEx {
             conversation: reference.conversation,
             recipient: reference.bot,
             from: reference.user,
-            relatesTo: reference as ConversationReference, // TODO(jpg)?
+            relatesTo: reference as ConversationReference,
         };
     }
 

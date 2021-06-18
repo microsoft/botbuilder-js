@@ -3,7 +3,7 @@
 
 import * as t from 'runtypes';
 import type { BotFrameworkHttpAdapter } from './botFrameworkHttpAdapter';
-import { Activity, BotLogic, CloudAdapterBase, InvokeResponse, StatusCodes } from 'botbuilder-core';
+import { Activity, CloudAdapterBase, InvokeResponse, StatusCodes, TurnContext } from 'botbuilder-core';
 import { GET, POST, VERSION_PATH } from './streaming';
 import { HttpClient, HttpHeaders, HttpOperationResponse, WebResource } from '@azure/ms-rest-js';
 import { INodeBufferT, INodeSocketT } from './runtypes';
@@ -15,6 +15,7 @@ import { validateAndFixActivity } from './activityValidator';
 import {
     AuthenticateRequestResult,
     AuthenticationError,
+    BotFrameworkAuthentication,
     BotFrameworkAuthenticationFactory,
     ClaimsIdentity,
     ConnectorClient,
@@ -36,9 +37,7 @@ import {
     WebSocketServer,
 } from 'botframework-streaming';
 
-const BotLogicT = t.Unknown.withGuard<BotLogic>(t.Function.guard, { name: 'BotLogic' });
-
-// TODO(jpg): do better lol
+// Note: this is _okay_ because we pass the result through `validateAndFixActivity`. Should not be used otherwise.
 const ActivityT = t.Unknown.withGuard((val: unknown): val is Activity => t.Dictionary(t.Unknown, t.String).guard(val), {
     name: 'Activity',
 });
@@ -49,31 +48,36 @@ export class CloudAdapter extends CloudAdapterBase implements BotFrameworkHttpAd
      *
      * @param botFrameworkAuthentication Optional [BotFrameworkAuthentication](xref:botframework-connector.BotFrameworkAuthentication) instance
      */
-    constructor(botFrameworkAuthentication = BotFrameworkAuthenticationFactory.create()) {
+    constructor(botFrameworkAuthentication: BotFrameworkAuthentication = BotFrameworkAuthenticationFactory.create()) {
         super(botFrameworkAuthentication);
     }
 
     /**
-     * Process a web request by applying a [BotLogic](xref:botbuilder.BotLogic) function.
+     * Process a web request by applying a logic function.
      *
      * @param req An incoming HTTP [Request](xref:botbuilder.Request)
      * @param req The corresponding HTTP [Response](xref:botbuilder.Response)
-     * @param logic The [BotLogic](xref:botbuilder.BotLogic) callback function to apply
+     * @param logic The logic function to apply
      * @returns a promise representing the asynchronous operation.
      */
-    async process(req: Request, res: Response, logic: BotLogic): Promise<void>;
+    async process(req: Request, res: Response, logic: (context: TurnContext) => Promise<void>): Promise<void>;
 
     /**
-     * Handle a web socket connection by applying a [BotLogic](xref:botbuilder.BotLogic) function to
+     * Handle a web socket connection by applying a logic function to
      * each streaming request.
      *
      * @param req An incoming HTTP [Request](xref:botbuilder.Request)
      * @param socket The corresponding [INodeSocket](xref:botframework-streaming.INodeSocket)
      * @param head The corresponding [INodeBuffer](xref:botframework-streaming.INodeBuffer)
-     * @param logic The [BotLogic](xref:botbuilder.BotLogic) callback function to apply
+     * @param logic The logic function to apply
      * @returns a promise representing the asynchronous operation.
      */
-    async process(req: Request, socket: INodeSocket, head: INodeBuffer, logic: BotLogic): Promise<void>;
+    async process(
+        req: Request,
+        socket: INodeSocket,
+        head: INodeBuffer,
+        logic: (context: TurnContext) => Promise<void>
+    ): Promise<void>;
 
     /**
      * @internal
@@ -81,21 +85,21 @@ export class CloudAdapter extends CloudAdapterBase implements BotFrameworkHttpAd
     async process(
         req: Request,
         resOrSocket: Response | INodeSocket,
-        logicOrHead: BotLogic | INodeBuffer,
-        maybeLogic?: BotLogic
+        logicOrHead: ((context: TurnContext) => Promise<void>) | INodeBuffer,
+        maybeLogic?: (context: TurnContext) => Promise<void>
     ): Promise<void> {
         // Early return with web socket handler if function invocation matches that signature
         if (maybeLogic) {
             const socket = INodeSocketT.check(resOrSocket);
             const head = INodeBufferT.check(logicOrHead);
-            const logic = BotLogicT.check(maybeLogic);
+            const logic = t.Function.check(maybeLogic);
 
             return this.connect(req, socket, head, logic);
         }
 
         const res = ResponseT.check(resOrSocket);
 
-        const logic = BotLogicT.check(logicOrHead);
+        const logic = t.Function.check(logicOrHead);
 
         const end = (status: StatusCodes, body?: unknown) => {
             res.status(status);
@@ -143,7 +147,7 @@ export class CloudAdapter extends CloudAdapterBase implements BotFrameworkHttpAd
      * Used to connect the adapter to a named pipe.
      *
      * @param pipeName Pipe name to connect to (note: yields two named pipe servers by appending ".incoming" and ".outgoing" to this name)
-     * @param logic The [BotLogic](xref:botbuilder.BotLogic) to call for resulting bot turns.
+     * @param logic The logic function to call for resulting bot turns.
      * @param appId The Bot application ID
      * @param audience The audience to use for outbound communication. The will vary by cloud environment.
      * @param callerId Optional, the caller ID
@@ -151,7 +155,7 @@ export class CloudAdapter extends CloudAdapterBase implements BotFrameworkHttpAd
      */
     async connectNamedPipe(
         pipeName: string,
-        logic: BotLogic,
+        logic: (context: TurnContext) => Promise<void>,
         appId: string,
         audience: string,
         callerId?: string,
@@ -159,7 +163,7 @@ export class CloudAdapter extends CloudAdapterBase implements BotFrameworkHttpAd
     ): Promise<void> {
         t.Record({
             pipeName: t.String,
-            logic: BotLogicT,
+            logic: t.Function,
             appId: t.String,
             audience: t.String,
             callerId: t.Optional(t.String),
@@ -188,7 +192,12 @@ export class CloudAdapter extends CloudAdapterBase implements BotFrameworkHttpAd
         await retry(() => server.start(), retryCount);
     }
 
-    private async connect(req: Request, socket: INodeSocket, head: INodeBuffer, logic: BotLogic): Promise<void> {
+    private async connect(
+        req: Request,
+        socket: INodeSocket,
+        head: INodeBuffer,
+        logic: (context: TurnContext) => Promise<void>
+    ): Promise<void> {
         // Grab the auth header from the inbound http request
         const authHeader = t.String.check(req.headers.Authorization ?? req.headers.authorization ?? '');
 
@@ -222,8 +231,6 @@ export class CloudAdapter extends CloudAdapterBase implements BotFrameworkHttpAd
 }
 
 /**
- * QUESTION(jpg): why doesn't this already exist? What is IStreamingActivityProcessor
- *
  * @internal
  */
 class StreamingRequestHandler extends RequestHandler {
@@ -326,8 +333,6 @@ class StreamingConnectorFactory implements ConnectorFactory {
 }
 
 /**
- * QUESTION(jpg): is this thing responsible for making calls back to the user? or what?
- *
  * @internal
  */
 class StreamingHttpClient implements HttpClient {

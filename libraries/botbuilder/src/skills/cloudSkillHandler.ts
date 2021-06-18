@@ -8,10 +8,10 @@ import { SkillHandlerImpl } from './skillHandlerImpl';
 import {
     Activity,
     BotAdapter,
-    BotLogic,
     ResourceResponse,
     SkillConversationIdFactoryBase,
     SkillConversationReferenceKey,
+    TurnContext,
 } from 'botbuilder-core';
 
 export class CloudSkillHandler extends CloudChannelServiceHandler {
@@ -33,7 +33,7 @@ export class CloudSkillHandler extends CloudChannelServiceHandler {
      */
     public constructor(
         adapter: BotAdapter,
-        logic: BotLogic,
+        logic: (context: TurnContext) => Promise<void>,
         conversationIdFactory: SkillConversationIdFactoryBase,
         auth: BotFrameworkAuthentication
     ) {

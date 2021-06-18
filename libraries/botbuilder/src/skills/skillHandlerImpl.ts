@@ -1,7 +1,6 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-import { BotFrameworkAdapter } from '../botFrameworkAdapter';
 import { ClaimsIdentity, JwtTokenValidation } from 'botframework-connector';
 import { v4 as uuid } from 'uuid';
 
@@ -9,7 +8,6 @@ import {
     Activity,
     ActivityTypes,
     BotAdapter,
-    BotLogic,
     CallerIdConstants,
     ResourceResponse,
     SkillConversationIdFactoryBase,
@@ -24,7 +22,7 @@ export class SkillHandlerImpl {
     constructor(
         private readonly skillConversationReferenceKey: symbol,
         private readonly adapter: BotAdapter,
-        private readonly logic: BotLogic,
+        private readonly logic: (context: TurnContext) => Promise<void>,
         private readonly conversationIdFactory: SkillConversationIdFactoryBase,
         private readonly getOauthScope: () => string | undefined = () => undefined
     ) {}

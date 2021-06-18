@@ -21,7 +21,6 @@ import {
     ActivityTypes,
     BotAdapter,
     BotCallbackHandlerKey,
-    BotLogic,
     CallerIdConstants,
     ChannelAccount,
     Channels,
@@ -88,8 +87,6 @@ import {
     TokenResolver,
     VERSION_PATH,
 } from './streaming';
-
-const BotLogicT = t.Unknown.withGuard<BotLogic>(t.Function.guard, { name: 'BotLogic' });
 
 /**
  * Contains settings used to configure a [BotFrameworkAdapter](xref:botbuilder.BotFrameworkAdapter) instance.
@@ -360,7 +357,10 @@ export class BotFrameworkAdapter
      * });
      * ```
      */
-    public async continueConversation(reference: Partial<ConversationReference>, logic: BotLogic): Promise<void>;
+    public async continueConversation(
+        reference: Partial<ConversationReference>,
+        logic: (context: TurnContext) => Promise<void>
+    ): Promise<void>;
 
     /**
      * Asynchronously resumes a conversation with a user, possibly after some time has gone by.
@@ -372,7 +372,7 @@ export class BotFrameworkAdapter
     public async continueConversation(
         reference: Partial<ConversationReference>,
         oAuthScope: string,
-        logic: BotLogic
+        logic: (context: TurnContext) => Promise<void>
     ): Promise<void>;
 
     /**
@@ -380,11 +380,11 @@ export class BotFrameworkAdapter
      */
     public async continueConversation(
         reference: Partial<ConversationReference>,
-        oAuthScopeOrlogic: string | BotLogic,
-        maybeLogic?: BotLogic
+        oAuthScopeOrlogic: string | ((context: TurnContext) => Promise<void>),
+        maybeLogic?: (context: TurnContext) => Promise<void>
     ): Promise<void> {
         let audience: string;
-        if (BotLogicT.guard(oAuthScopeOrlogic)) {
+        if (t.Function.guard(oAuthScopeOrlogic)) {
             // Because the OAuthScope parameter was not provided, get the correct value via the channelService.
             // In this scenario, the ConnectorClient for the continued conversation can only communicate with
             // official channels, not with other bots.
@@ -395,7 +395,7 @@ export class BotFrameworkAdapter
             audience = oAuthScopeOrlogic;
         }
 
-        const logic = BotLogicT.guard(oAuthScopeOrlogic) ? oAuthScopeOrlogic : BotLogicT.check(maybeLogic);
+        const logic = t.Function.guard(oAuthScopeOrlogic) ? oAuthScopeOrlogic : t.Function.check(maybeLogic);
 
         let credentials = this.credentials;
 
@@ -473,7 +473,10 @@ export class BotFrameworkAdapter
      * });
      * ```
      */
-    public createConversation(reference: Partial<ConversationReference>, logic: BotLogic): Promise<void>;
+    public createConversation(
+        reference: Partial<ConversationReference>,
+        logic: (context: TurnContext) => Promise<void>
+    ): Promise<void>;
 
     /**
      * Asynchronously creates and starts a conversation with a user on a channel.
@@ -486,7 +489,7 @@ export class BotFrameworkAdapter
     public createConversation(
         reference: Partial<ConversationReference>,
         parameters: Partial<ConversationParameters>,
-        logic: BotLogic
+        logic: (context: TurnContext) => Promise<void>
     ): Promise<void>;
 
     /**
@@ -494,16 +497,16 @@ export class BotFrameworkAdapter
      */
     public async createConversation(
         reference: Partial<ConversationReference>,
-        parametersOrLogic: Partial<ConversationParameters> | BotLogic,
-        maybeLogic?: BotLogic
+        parametersOrLogic: Partial<ConversationParameters> | ((context: TurnContext) => Promise<void>),
+        maybeLogic?: (context: TurnContext) => Promise<void>
     ): Promise<void> {
         if (!reference.serviceUrl) {
             throw new Error(`BotFrameworkAdapter.createConversation(): missing serviceUrl.`);
         }
 
-        const parameters = BotLogicT.guard(parametersOrLogic) ? {} : parametersOrLogic;
+        const parameters = t.Function.guard(parametersOrLogic) ? {} : parametersOrLogic;
 
-        const logic = BotLogicT.guard(parametersOrLogic) ? parametersOrLogic : BotLogicT.check(maybeLogic);
+        const logic = t.Function.guard(parametersOrLogic) ? parametersOrLogic : t.Function.check(maybeLogic);
 
         // Create conversation parameters, taking care to provide defaults that can be
         // overridden by passed in parameters
@@ -1174,7 +1177,11 @@ export class BotFrameworkAdapter
      * });
      * ```
      */
-    public async processActivity(req: WebRequest, res: WebResponse, logic: BotLogic<any>): Promise<void> {
+    public async processActivity(
+        req: WebRequest,
+        res: WebResponse,
+        logic: (context: TurnContext) => Promise<any>
+    ): Promise<void> {
         let body: any;
         let status: number;
         let processError: Error;
@@ -1285,7 +1292,10 @@ export class BotFrameworkAdapter
      * [middleware](https://docs.microsoft.com/azure/bot-service/bot-builder-concept-middleware) articles.
      * Use the adapter's [use](xref:botbuilder-core.BotAdapter.use) method to add middleware to the adapter.
      */
-    public async processActivityDirect(activity: Activity, logic: BotLogic<any>): Promise<void> {
+    public async processActivityDirect(
+        activity: Activity,
+        logic: (context: TurnContext) => Promise<any>
+    ): Promise<void> {
         let processError: Error;
         try {
             // Process activity
@@ -1838,26 +1848,31 @@ export class BotFrameworkAdapter
     }
 
     /**
-     * Process a web request by applying a [BotLogic](xref:botbuilder.BotLogic) function.
+     * Process a web request by applying a logic function.
      *
      * @param req An incoming HTTP [Request](xref:botbuilder.Request)
      * @param req The corresponding HTTP [Response](xref:botbuilder.Response)
-     * @param logic The [BotLogic](xref:botbuilder.BotLogic) callback function to apply
+     * @param logic The logic function to apply
      * @returns a promise representing the asynchronous operation.
      */
-    async process(req: Request, res: Response, logic: BotLogic): Promise<void>;
+    async process(req: Request, res: Response, logic: (context: TurnContext) => Promise<void>): Promise<void>;
 
     /**
-     * Handle a web socket connection by applying a [BotLogic](xref:botbuilder.BotLogic) function to
+     * Handle a web socket connection by applying a logic function to
      * each streaming request.
      *
      * @param req An incoming HTTP [Request](xref:botbuilder.Request)
      * @param socket The corresponding [INodeSocket](xref:botframework-streaming.INodeSocket)
      * @param head The corresponding [INodeBuffer](xref:botframework-streaming.INodeBuffer)
-     * @param logic The [BotLogic](xref:botbuilder.BotLogic) callback function to apply
+     * @param logic The logic function to apply
      * @returns a promise representing the asynchronous operation.
      */
-    async process(req: Request, socket: INodeSocket, head: INodeBuffer, logic: BotLogic): Promise<void>;
+    async process(
+        req: Request,
+        socket: INodeSocket,
+        head: INodeBuffer,
+        logic: (context: TurnContext) => Promise<void>
+    ): Promise<void>;
 
     /**
      * @internal
@@ -1865,18 +1880,18 @@ export class BotFrameworkAdapter
     async process(
         req: Request,
         resOrSocket: Response | INodeSocket,
-        logicOrHead: BotLogic | INodeBuffer,
-        maybeLogic?: BotLogic
+        logicOrHead: ((context: TurnContext) => Promise<void>) | INodeBuffer,
+        maybeLogic?: (context: TurnContext) => Promise<void>
     ): Promise<void> {
         if (maybeLogic) {
             return this.useWebSocket(
                 req,
                 INodeSocketT.check(resOrSocket),
                 INodeBufferT.check(logicOrHead),
-                BotLogicT.check(maybeLogic)
+                t.Function.check(maybeLogic)
             );
         } else {
-            return this.processActivity(req, ResponseT.check(resOrSocket), BotLogicT.check(logicOrHead));
+            return this.processActivity(req, ResponseT.check(resOrSocket), t.Function.check(logicOrHead));
         }
     }
 
@@ -1889,7 +1904,7 @@ export class BotFrameworkAdapter
      * @param onListen Optional callback that fires once when server is listening on both incoming and outgoing pipe
      */
     public async useNamedPipe(
-        logic: BotLogic<any>,
+        logic: (context: TurnContext) => Promise<any>,
         pipeName = defaultPipeName,
         retryCount = 7,
         onListen?: () => void
@@ -1930,7 +1945,7 @@ export class BotFrameworkAdapter
         req: WebRequest,
         socket: INodeSocket,
         head: INodeBuffer,
-        logic: BotLogic<any>
+        logic: (context: TurnContext) => Promise<any>
     ): Promise<void> {
         // Use the provided NodeWebSocketFactoryBase on BotFrameworkAdapter construction,
         // otherwise create a new NodeWebSocketFactory.
