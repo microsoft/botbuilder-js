@@ -10,6 +10,7 @@ import {
     InputHints,
     ResourceResponse,
     Mention,
+    Channels,
 } from 'botframework-schema';
 import { INVOKE_RESPONSE_KEY } from '.';
 import { BotAdapter } from './botAdapter';
@@ -118,6 +119,17 @@ export type DeleteActivityHandler = (
 ) => Promise<void>;
 
 export const BotCallbackHandlerKey = 'botCallbackHandler';
+
+function getAppropriateReplyToId(source: Partial<Activity>): string | undefined {
+    if (
+        source.type !== ActivityTypes.ConversationUpdate ||
+        (source.channelId !== Channels.Directline && source.channelId !== Channels.Webchat)
+    ) {
+        return source.id;
+    }
+
+    return undefined;
+}
 
 // tslint:disable-next-line:no-empty-interface
 export interface TurnContext {}
@@ -279,7 +291,7 @@ export class TurnContext {
      */
     public static getConversationReference(activity: Partial<Activity>): Partial<ConversationReference> {
         return {
-            activityId: activity.id,
+            activityId: getAppropriateReplyToId(activity),
             user: shallowCopy(activity.from),
             bot: shallowCopy(activity.recipient),
             conversation: shallowCopy(activity.conversation),

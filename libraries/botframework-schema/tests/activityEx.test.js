@@ -4,7 +4,7 @@
  */
 
 const { strictEqual } = require('assert');
-const { ActivityEx, ActivityTypes } = require('../');
+const { ActivityEx, ActivityTypes, Channels } = require('../');
 
 describe(`activityValidator`, function () {
     it('should create a Message Activity', function () {
@@ -503,7 +503,7 @@ describe(`activityValidator`, function () {
     it('should get Conversation Reference', function () {
         const activity = CreateActivity();
 
-        const conversationReference = ActivityEx.getConversationReference(activity);
+        let conversationReference = ActivityEx.getConversationReference(activity);
 
         strictEqual(activity.id, conversationReference.activityId);
         strictEqual(activity.from.id, conversationReference.user.id);
@@ -512,6 +512,11 @@ describe(`activityValidator`, function () {
         strictEqual(activity.channelId, conversationReference.channelId);
         strictEqual(activity.locale, conversationReference.locale);
         strictEqual(activity.serviceUrl, conversationReference.serviceUrl);
+
+        activity.type = ActivityTypes.ConversationUpdate;
+        conversationReference = ActivityEx.getConversationReference(activity);
+
+        strictEqual(conversationReference.activityId, undefined);
     });
 
     it('should Create Trace Allows Null Recipient', function () {
@@ -537,6 +542,31 @@ describe(`activityValidator`, function () {
         strictEqual(trace.value, value);
         strictEqual(trace.valueType, valueType);
         strictEqual(trace.label, label);
+    });
+
+    it('should Create Trace for ConversationUpdate activity', function () {
+        const activity = CreateActivity();
+        delete activity.id;
+        const name = 'test-activity';
+
+        const trace = ActivityEx.createTrace(activity, name);
+
+        strictEqual(trace.type, ActivityTypes.Trace);
+        strictEqual(trace.name, name);
+        strictEqual(trace.replyToId, undefined);
+    });
+
+    it('should Create Reply for ConversationUpdate activity', function () {
+        const activity = CreateActivity();
+        activity.type = ActivityTypes.ConversationUpdate;
+        delete activity.id;
+        const name = 'test-activity';
+
+        const trace = ActivityEx.createTrace(activity, name);
+
+        strictEqual(trace.type, ActivityTypes.Trace);
+        strictEqual(trace.name, name);
+        strictEqual(trace.replyToId, undefined);
     });
 
     it('should be Is From Streaming Connection', function () {
@@ -632,7 +662,7 @@ function CreateActivity() {
         from: account1,
         recipient: account2,
         conversation: conversationAccount,
-        channelId: 'ChannelId123',
+        channelId: Channels.Directline,
         locale: 'en-uS', // Intentionally oddly-cased to check that it isn't defaulted somewhere, but tests stay in English
         serviceUrl: 'ServiceUrl123',
     };
