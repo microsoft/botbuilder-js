@@ -28,6 +28,7 @@ import {
     ConversationAccount,
     ICommandActivity,
     ICommandResultActivity,
+    Channels,
 } from './index';
 
 // eslint-disable-next-line @typescript-eslint/no-namespace
@@ -149,7 +150,7 @@ export namespace ActivityEx {
                 id: source.from ? source.from.id : null,
                 name: source.from ? source.from.name : null,
             } as ChannelAccount,
-            replyToId: source.id,
+            replyToId: getAppropriateReplyToId(source),
             serviceUrl: source.serviceUrl,
             channelId: source.channelId,
             conversation: {
@@ -196,7 +197,7 @@ export namespace ActivityEx {
                 id: source.from ? source.from.id : null,
                 name: source.from ? source.from.name : null,
             } as ChannelAccount,
-            replyToId: source.id,
+            replyToId: getAppropriateReplyToId(source),
             serviceUrl: source.serviceUrl,
             channelId: source.channelId,
             conversation: source.conversation,
@@ -418,7 +419,7 @@ export namespace ActivityEx {
      */
     export function getConversationReference(source: Partial<Activity>): ConversationReference {
         return {
-            activityId: source.id,
+            activityId: getAppropriateReplyToId(source),
             bot: source.recipient,
             channelId: source.channelId,
             conversation: source.conversation,
@@ -482,4 +483,15 @@ export namespace ActivityEx {
 
         return result;
     }
+}
+
+function getAppropriateReplyToId(source: Partial<Activity>): string | undefined {
+    if (
+        source.type !== ActivityTypes.ConversationUpdate ||
+        (source.channelId !== Channels.Directline && source.channelId !== Channels.Webchat)
+    ) {
+        return source.id;
+    }
+
+    return undefined;
 }
