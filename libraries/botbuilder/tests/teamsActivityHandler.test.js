@@ -273,8 +273,10 @@ describe('TeamsActivityHandler', () => {
         it('should call the base ActivityHandler\'s onInvokeActivity if activity.name is unrecognized', async function () {
             const bot = new InvokeActivityEmptyHandlers();
 
+            const mockedResponse = { statusCode: 200, value: 'called' };
+
             bot.onAdaptiveCardInvoke = () => {
-                return { statusCode: 200, value: 'called' }
+                return mockedResponse;
             }
 
             const adapter = new TestAdapter(async (context) => {
@@ -287,7 +289,7 @@ describe('TeamsActivityHandler', () => {
                 .send(activity)
                 .assertReply((activity) => {
                     assert.strictEqual(activity.value.status, 200, 'should be status code 200.');
-                    assert.strictEqual(activity.value.body, 'called');
+                    assert.strictEqual(activity.value.body, mockedResponse);
                 })
                 .startTest();
         });
