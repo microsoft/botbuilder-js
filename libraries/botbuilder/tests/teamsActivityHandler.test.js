@@ -281,7 +281,7 @@ describe('TeamsActivityHandler', () => {
                 await bot.run(context);
             });
 
-            const activity = { type: ActivityTypes.Invoke, name: 'adaptiveCard/action', value: 'Action.Execute' };
+            const activity = { type: ActivityTypes.Invoke, name: 'adaptiveCard/action', value: { action: { type: 'Action.Execute' }}};
 
             await adapter
                 .send(activity)
