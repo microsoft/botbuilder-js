@@ -875,15 +875,24 @@ export interface Meeting {
     role?: string;
 }
 
+// Warning: (ae-forgotten-export) The symbol "MeetingDetailsBase" needs to be exported by the entry point index.d.ts
+//
 // @public
-export interface MeetingDetails {
-    id: string;
-    joinUrl: string;
+export interface MeetingDetails extends MeetingDetailsBase {
     msGraphResourceId: string;
     scheduledEndTime: Date;
     scheduledStartTime: Date;
-    title: string;
     type: string;
+}
+
+// @public
+export interface MeetingEndEventDetails extends MeetingEventDetails {
+    endTime: Date;
+}
+
+// @public (undocumented)
+export interface MeetingEventDetails extends MeetingDetailsBase {
+    meetingType: string;
 }
 
 // @public
@@ -891,6 +900,11 @@ export interface MeetingInfo {
     conversation: ConversationAccount;
     details: MeetingDetails;
     organizer: TeamsChannelAccount;
+}
+
+// @public
+export interface MeetingStartEventDetails extends MeetingEventDetails {
+    startTime: Date;
 }
 
 // @public
