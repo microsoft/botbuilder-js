@@ -245,7 +245,10 @@ export abstract class InputDialog extends Dialog implements InputDialogConfigura
             }
             return await dc.endDialog(input);
         } else if (!this.maxTurnCount || turnCount < this.maxTurnCount.getValue(dc.state)) {
-            dc.state.setValue(InputDialog.TURN_COUNT_PROPERTY, turnCount + 1);
+            if (!interrupted) {
+                dc.state.setValue(InputDialog.TURN_COUNT_PROPERTY, turnCount + 1);
+            }
+
             return await this.promptUser(dc, state);
         } else {
             if (this.defaultValue) {
