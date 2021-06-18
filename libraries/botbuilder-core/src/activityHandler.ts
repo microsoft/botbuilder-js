@@ -457,7 +457,7 @@ export class ActivityHandler extends ActivityHandlerBase {
      * @param context The context object for the current turn.
      *
      * @remarks
-     * Overwrite this method to use custom logic for emitting events.
+     * Override this method to use custom logic for emitting events.
      *
      * The default logic is to call any handlers registered via [onTurn](xref:botbuilder-core.ActivityHandler.onTurn),
      * and then continue by calling [ActivityHandlerBase.onTurnActivity](xref:botbuilder-core.ActivityHandlerBase.onTurnActivity).
@@ -474,7 +474,7 @@ export class ActivityHandler extends ActivityHandlerBase {
      * @param context The context object for the current turn.
      *
      * @remarks
-     * Overwrite this method to support channel-specific behavior across multiple channels.
+     * Override this method to support channel-specific behavior across multiple channels.
      *
      * The default logic is to call any handlers registered via
      * [onMessage](xref:botbuilder-core.ActivityHandler.onMessage),
@@ -489,7 +489,7 @@ export class ActivityHandler extends ActivityHandlerBase {
      * @param context The context object for the current turn.
      *
      * @remarks
-     * Overwrite this method to support channel-specific behavior across multiple channels.
+     * Override this method to support channel-specific behavior across multiple channels.
      * The default logic is to check for a signIn invoke and handle that
      * and then continue by calling [defaultNextEvent](xref:botbuilder-core.ActivityHandler.defaultNextEvent).
      */
@@ -531,7 +531,7 @@ export class ActivityHandler extends ActivityHandlerBase {
      * @param context The context object for the current turn.
      *
      * @remarks
-     * Overwrite this method to support channel-specific behavior across multiple channels.
+     * Override this method to support channel-specific behavior across multiple channels.
      */
     protected async onSignInInvoke(context: TurnContext): Promise<void> {
         throw new InvokeException(StatusCodes.NOT_IMPLEMENTED);
@@ -556,7 +556,7 @@ export class ActivityHandler extends ActivityHandlerBase {
      * @param context The context object for the current turn.
      *
      * @remarks
-     * Overwrite this method to support channel-specific behavior across multiple channels.
+     * Override this method to support channel-specific behavior across multiple channels.
      *
      * The default logic is to call any handlers registered via
      * [onEndOfConversationActivity](xref:botbuilder-core.ActivityHandler.onMessage),
@@ -572,7 +572,7 @@ export class ActivityHandler extends ActivityHandlerBase {
      * @param context The context object for the current turn.
      *
      * @remarks
-     * Overwrite this method to support channel-specific behavior across multiple channels.
+     * Override this method to support channel-specific behavior across multiple channels.
      *
      * The default logic is to call any handlers registered via
      * [onTypingActivity](xref:botbuilder-core.ActivityHandler.onTypingActivity),
@@ -588,7 +588,7 @@ export class ActivityHandler extends ActivityHandlerBase {
      * @param context The context object for the current turn.
      *
      * @remarks
-     * Overwrite this method to support channel-specific behavior across multiple channels.
+     * Override this method to support channel-specific behavior across multiple channels.
      *
      * The default logic is to call any handlers registered via
      * [onInstallationUpdateActivity](xref:botbuilder-core.ActivityHandler.onInstallationUpdateActivity),
@@ -624,7 +624,7 @@ export class ActivityHandler extends ActivityHandlerBase {
      * @param context The context object for the current turn.
      *
      * @remarks
-     * Overwrite this method to support channel-specific behavior across multiple channels or to add
+     * Override this method to support channel-specific behavior across multiple channels or to add
      * custom conversation update sub-type events.
      *
      * The default logic is:
@@ -651,7 +651,7 @@ export class ActivityHandler extends ActivityHandlerBase {
      * @param context The context object for the current turn.
      *
      * @remarks
-     * Overwrite this method to support channel-specific behavior across multiple channels.
+     * Override this method to support channel-specific behavior across multiple channels.
      *
      * The default logic is to call any handlers registered via
      * [onInstallationUpdateAdd](xref:botbuilder-core.ActivityHandler.onInstallationUpdateAdd),
@@ -667,7 +667,7 @@ export class ActivityHandler extends ActivityHandlerBase {
      * @param context The context object for the current turn.
      *
      * @remarks
-     * Overwrite this method to support channel-specific behavior across multiple channels.
+     * Override this method to support channel-specific behavior across multiple channels.
      *
      * The default logic is to call any handlers registered via
      * [onInstallationUpdateRemove](xref:botbuilder-core.ActivityHandler.onInstallationUpdateRemove),
@@ -683,7 +683,7 @@ export class ActivityHandler extends ActivityHandlerBase {
      * @param context The context object for the current turn.
      *
      * @remarks
-     * Overwrite this method to support channel-specific behavior across multiple channels.
+     * Override this method to support channel-specific behavior across multiple channels.
      *
      * The default logic is to call any handlers registered via
      * [onUnrecognizedActivityType](xref:botbuilder-core.ActivityHandler.onUnrecognizedActivityType),
@@ -743,7 +743,7 @@ export class ActivityHandler extends ActivityHandlerBase {
      * @param context The context object for the current turn.
      *
      * @remarks
-     * Overwrite this method to support channel-specific behavior across multiple channels.
+     * Override this method to support channel-specific behavior across multiple channels.
      *
      * The default logic is to call any handlers registered via
      * [onConversationUpdate](xref:botbuilder-core.ActivityHandler.onConversationUpdate),
@@ -762,7 +762,7 @@ export class ActivityHandler extends ActivityHandlerBase {
      * @param context The context object for the current turn.
      *
      * @remarks
-     * Overwrite this method to support channel-specific behavior across multiple channels or to add
+     * Override this method to support channel-specific behavior across multiple channels or to add
      * custom conversation update sub-type events.
      *
      * The default logic is:
@@ -786,7 +786,7 @@ export class ActivityHandler extends ActivityHandlerBase {
      * @param context The context object for the current turn.
      *
      * @remarks
-     * Overwrite this method to support channel-specific behavior across multiple channels.
+     * Override this method to support channel-specific behavior across multiple channels.
      *
      * The default logic is to call any handlers registered via
      * [onMessageReaction](xref:botbuilder-core.ActivityHandler.onMessageReaction),
@@ -806,7 +806,7 @@ export class ActivityHandler extends ActivityHandlerBase {
      * @param context The context object for the current turn.
      *
      * @remarks
-     * Overwrite this method to support channel-specific behavior across multiple channels.
+     * Override this method to support channel-specific behavior across multiple channels.
      *
      * The default logic is to call any handlers registered via
      * [onReactionsAdded](xref:botbuilder-core.ActivityHandler.onReactionsAdded),
@@ -823,7 +823,7 @@ export class ActivityHandler extends ActivityHandlerBase {
      * @param context The context object for the current turn.
      *
      * @remarks
-     * Overwrite this method to support channel-specific behavior across multiple channels.
+     * Override this method to support channel-specific behavior across multiple channels.
      *
      * The default logic is to call any handlers registered via
      * [onReactionsRemoved](xref:botbuilder-core.ActivityHandler.onReactionsRemoved),
@@ -842,7 +842,7 @@ export class ActivityHandler extends ActivityHandlerBase {
      * @param context The context object for the current turn.
      *
      * @remarks
-     * Overwrite this method to support channel-specific behavior across multiple channels or to add
+     * Override this method to support channel-specific behavior across multiple channels or to add
      * custom message reaction sub-type events.
      *
      * The default logic is:
@@ -864,7 +864,7 @@ export class ActivityHandler extends ActivityHandlerBase {
      * @param context The context object for the current turn.
      *
      * @remarks
-     * Overwrite this method to support channel-specific behavior across multiple channels.
+     * Override this method to support channel-specific behavior across multiple channels.
      *
      * The default logic is to call any handlers registered via
      * [onEvent](xref:botbuilder-core.ActivityHandler.onEvent),
@@ -883,7 +883,7 @@ export class ActivityHandler extends ActivityHandlerBase {
      * @param context The context object for the current turn.
      *
      * @remarks
-     * Overwrite this method to support channel-specific behavior across multiple channels or to add custom event sub-type events.
+     * Override this method to support channel-specific behavior across multiple channels or to add custom event sub-type events.
      * For certain channels, such as  Web Chat and custom Direct Line clients, developers can emit custom event activities from the client.
      *
      * The default logic is:
@@ -905,7 +905,7 @@ export class ActivityHandler extends ActivityHandlerBase {
      * @param context The context object for the current turn.
      *
      * @remarks
-     * Overwrite this method to use custom logic for emitting events.
+     * Override this method to use custom logic for emitting events.
      *
      * The default logic is to call any handlers registered via [onDialog](xref:botbuilder-core.ActivityHandler.onDialog),
      * and then complete the event emission process.

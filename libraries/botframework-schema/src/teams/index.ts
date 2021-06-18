@@ -1690,13 +1690,27 @@ export type Action = 'accept' | 'decline';
 
 /**
  * @interface
- * Specific details of a Teams meeting.
  */
-export interface MeetingDetails {
+interface MeetingDetailsBase {
     /**
      * @member {string} [id] The meeting's Id, encoded as a BASE64 string.
      */
     id: string;
+    /**
+     * @member {string} [joinUrl] The URL used to join the meeting.
+     */
+    joinUrl: string;
+    /**
+     * @member {string} [title] The title of the meeting.
+     */
+    title: string;
+}
+
+/**
+ * @interface
+ * Specific details of a Teams meeting.
+ */
+export interface MeetingDetails extends MeetingDetailsBase {
     /**
      * @member {string} [msGraphResourceId] The MsGraphResourceId, used specifically for MS Graph API calls.
      */
@@ -1709,14 +1723,6 @@ export interface MeetingDetails {
      * @member {Date} [scheduledEndTime] The meeting's scheduled end time, in UTC.
      */
     scheduledEndTime: Date;
-    /**
-     * @member {string} [joinUrl] The URL used to join the meeting.
-     */
-    joinUrl: string;
-    /**
-     * @member {string} [title] The title of the meeting.
-     */
-    title: string;
     /**
      * @member {string} [type] The meeting's type.
      */
@@ -1740,4 +1746,36 @@ export interface MeetingInfo {
      * @member {TeamsChannelAccount} [organizer] The organizer's user information.
      */
     organizer: TeamsChannelAccount;
+}
+
+/**
+ * @interface
+ */
+export interface MeetingEventDetails extends MeetingDetailsBase {
+    /**
+     * @member {string} [meetingType] The meeting's type.
+     */
+    meetingType: string;
+}
+
+/**
+ * @interface
+ * Specific details of a Teams meeting start event.
+ */
+export interface MeetingStartEventDetails extends MeetingEventDetails {
+    /**
+     * @member {Date} [startTime] Timestamp for meeting start, in UTC.
+     */
+    startTime: Date;
+}
+
+/**
+ * @interface
+ * Specific details of a Teams meeting end event.
+ */
+export interface MeetingEndEventDetails extends MeetingEventDetails {
+    /**
+     * @member {Date} [endTime] Timestamp for meeting end, in UTC.
+     */
+    endTime: Date;
 }

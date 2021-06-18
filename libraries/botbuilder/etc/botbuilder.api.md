@@ -38,6 +38,8 @@ import { INodeSocket } from 'botframework-streaming';
 import { InvokeResponse } from 'botbuilder-core';
 import { IReceiveRequest } from 'botframework-streaming';
 import { IStreamingTransportServer } from 'botframework-streaming';
+import { MeetingEndEventDetails } from 'botbuilder-core';
+import { MeetingStartEventDetails } from 'botbuilder-core';
 import { MessagingExtensionAction } from 'botbuilder-core';
 import { MessagingExtensionActionResponse } from 'botbuilder-core';
 import { MessagingExtensionQuery } from 'botbuilder-core';
@@ -299,6 +301,7 @@ export class StreamingHttpClient implements HttpClient {
 // @public
 export class TeamsActivityHandler extends ActivityHandler {
     protected dispatchConversationUpdateActivity(context: TurnContext): Promise<void>;
+    protected dispatchEventActivity(context: TurnContext): Promise<void>;
     protected handleAdaptiveCardAction(context: TurnContext): Promise<AdaptiveCardInvokeResponse>;
     protected handleTeamsAppBasedLinkQuery(context: TurnContext, query: AppBasedLinkQuery): Promise<MessagingExtensionResponse>;
     protected handleTeamsCardActionInvoke(context: TurnContext): Promise<InvokeResponse>;
@@ -333,6 +336,10 @@ export class TeamsActivityHandler extends ActivityHandler {
     // (undocumented)
     protected onTeamsChannelRestored(context: any): Promise<void>;
     onTeamsChannelRestoredEvent(handler: (channelInfo: ChannelInfo, teamInfo: TeamInfo, context: TurnContext, next: () => Promise<void>) => Promise<void>): this;
+    protected onTeamsMeetingEnd(context: TurnContext): Promise<void>;
+    onTeamsMeetingEndEvent(handler: (meeting: MeetingEndEventDetails, context: TurnContext, next: () => Promise<void>) => Promise<void>): this;
+    protected onTeamsMeetingStart(context: TurnContext): Promise<void>;
+    onTeamsMeetingStartEvent(handler: (meeting: MeetingStartEventDetails, context: TurnContext, next: () => Promise<void>) => Promise<void>): this;
     protected onTeamsMembersAdded(context: TurnContext): Promise<void>;
     onTeamsMembersAddedEvent(handler: (membersAdded: TeamsChannelAccount[], teamInfo: TeamInfo, context: TurnContext, next: () => Promise<void>) => Promise<void>): this;
     protected onTeamsMembersRemoved(context: TurnContext): Promise<void>;
