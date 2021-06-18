@@ -499,7 +499,7 @@ export class ActivityHandler extends ActivityHandlerBase {
                 case 'adaptiveCard/action': {
                     const invokeValue = this.getAdaptiveCardInvokeValue(context.activity);
                     const response = await this.onAdaptiveCardInvoke(context, invokeValue);
-                    return { status: response.statusCode, body: response.value };
+                    return { status: response.statusCode, body: response };
                 }
 
                 case verifyStateOperationName:
@@ -694,12 +694,22 @@ export class ActivityHandler extends ActivityHandlerBase {
     }
 
     private getAdaptiveCardInvokeValue(activity: Activity): AdaptiveCardInvokeValue {
-        const { value } = activity;
+        const { value }: { value?: AdaptiveCardInvokeValue } = activity;
         if (!value) {
             const response = this.createAdaptiveCardInvokeErrorResponse(
                 StatusCodes.BAD_REQUEST,
                 'BadRequest',
                 'Missing value property'
+            );
+
+            throw new InvokeException(StatusCodes.BAD_REQUEST, response);
+        }
+
+        if (value.action.type !== 'Action.Execute') {
+            const response = this.createAdaptiveCardInvokeErrorResponse(
+                StatusCodes.BAD_REQUEST,
+                'NotSupported',
+                `The action '${value.action.type}' is not supported.`
             );
 
             throw new InvokeException(StatusCodes.BAD_REQUEST, response);

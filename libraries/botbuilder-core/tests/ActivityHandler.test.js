@@ -298,7 +298,15 @@ describe('ActivityHandler', function () {
         };
 
         await processActivity(
-            { type: ActivityTypes.Invoke, name: 'adaptiveCard/action', value: 'Action.Execute' },
+            {
+                type: ActivityTypes.Invoke,
+                name: 'adaptiveCard/action',
+                value: {
+                    action: {
+                        type: 'Action.Execute',
+                    },
+                },
+            },
             bot
         );
         assert(onAdpativeCardInvokeCalled);
