@@ -944,11 +944,9 @@ export class TeamsActivityHandler extends ActivityHandler {
             if (context.activity.channelId == Channels.Msteams) {
                 switch (context.activity.name) {
                     case 'application/vnd.microsoft.meetingStart':
-                        await this.onTeamsMeetingStart(context);
-                        break;
+                        return this.onTeamsMeetingStart(context);
                     case 'application/vnd.microsoft.meetingEnd':
-                        await this.onTeamsMeetingEnd(context);
-                        break;
+                        return this.onTeamsMeetingEnd(context);
                 }
             }
 
