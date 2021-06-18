@@ -2188,7 +2188,7 @@ describe('TeamsActivityHandler', function () {
                 Id: 'meetingId',
                 JoinUrl: 'https://joinUrl',
                 MeetingType: 'Scheduled',
-                title: 'someTitle'
+                Title: 'someTitle',
             };
             onEventCalled = false;
             onDialogCalled = false;
