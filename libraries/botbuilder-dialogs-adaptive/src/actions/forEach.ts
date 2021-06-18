@@ -32,6 +32,7 @@ export interface ForEachConfiguration extends ActionScopeConfiguration {
  */
 export class ForEach<O extends object = {}> extends ActionScope<O> implements ForEachPageConfiguration {
     public static $kind = 'Microsoft.Foreach';
+    private currentIndex: number;
 
     public constructor();
 
@@ -110,7 +111,7 @@ export class ForEach<O extends object = {}> extends ActionScope<O> implements Fo
         if (this.disabled && this.disabled.getValue(dc.state)) {
             return await dc.endDialog();
         }
-        dc.state.setValue(this.index.getValue(dc.state), -1);
+        this.currentIndex = -1;
         return await this.nextItem(dc);
     }
 
@@ -158,12 +159,11 @@ export class ForEach<O extends object = {}> extends ActionScope<O> implements Fo
      */
     protected async nextItem(dc: DialogContext): Promise<DialogTurnResult> {
         const itemsProperty = this.itemsProperty.getValue(dc.state);
-        const items: any[] = dc.state.getValue(itemsProperty, []);
-        let index = dc.state.getValue(this.index.getValue(dc.state));
+        const items = this.convertToList(dc.state.getValue(itemsProperty, []));
 
-        if (++index < items.length) {
-            dc.state.setValue(this.value.getValue(dc.state), items[index]);
-            dc.state.setValue(this.index.getValue(dc.state), index);
+        if (++this.currentIndex < items.length) {
+            dc.state.setValue(this.value.getValue(dc.state), items[this.currentIndex].value);
+            dc.state.setValue(this.index.getValue(dc.state), items[this.currentIndex].index);
             return await this.beginAction(dc, 0);
         } else {
             return await dc.endDialog();
@@ -177,5 +177,16 @@ export class ForEach<O extends object = {}> extends ActionScope<O> implements Fo
      */
     protected onComputeId(): string {
         return `ForEach[${this.itemsProperty.toString()}]`;
+    }
+
+    private convertToList(value: unknown) {
+        let result: { index: string | number, value: unknown }[] = [];
+        if (Array.isArray(value)) {
+            value.forEach((item, index) => result.push({ index: index, value: item }));
+        } else if (typeof value === 'object') {
+            Object.entries(value).forEach(([key, value]) => result.push({ index: key, value: value }))
+        }
+
+        return result;
     }
 }
