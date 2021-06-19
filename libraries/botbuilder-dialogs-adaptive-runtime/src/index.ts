@@ -349,20 +349,25 @@ async function addSettingsBotComponents(services: ServiceCollection, configurati
             )
         ) ?? [];
 
-    const errs: Error[] = [];
+    const loadErrors: Array<{ error: Error; name: string }> = [];
 
     for (const { name, settingsPrefix } of components) {
         try {
             const botComponent = await loadBotComponent(name);
 
             botComponent.configureServices(services, configuration.bind([settingsPrefix ?? name]));
-        } catch (err) {
-            errs.push(err);
+        } catch (error) {
+            loadErrors.push({ error, name });
         }
     }
 
-    if (errs.length) {
-        throw new Error(errs.map((err) => `[${err}]`).join(', '));
+    if (loadErrors.length) {
+        loadErrors.forEach(({ name, error }) =>
+            console.warn(
+                `${name} failed to load. Consider removing this component from the list of components in your application settings.`,
+                error
+            )
+        );
     }
 }
 
