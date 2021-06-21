@@ -40,7 +40,7 @@
     "botbuilder-dialogs-declarative": "4.1.6",
     "botframework-connector": "4.1.6",
     "nconf": "0.11.2",
-    "runtypes": "~6.3.0",
+    "runtypes": "~5.1.0",
     "yargs-parser": "^20.2.7"
   },
   "devDependencies": {

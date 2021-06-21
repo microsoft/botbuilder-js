@@ -33,6 +33,6 @@
     "botbuilder-dialogs-adaptive-runtime": "4.1.6",
     "botbuilder-dialogs-adaptive-runtime-core": "4.1.6",
     "express": "^4.17.1",
-    "runtypes": "~6.3.0"
+    "runtypes": "~5.1.0"
   }
 }

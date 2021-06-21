@@ -144,7 +144,7 @@ export async function makeServer(
             t.Array(
                 t.Record({
                     name: t.String,
-                    enabled: t.Boolean.optional(),
+                    enabled: t.Union(t.Boolean, t.Undefined),
                     route: t.String,
                 })
             )

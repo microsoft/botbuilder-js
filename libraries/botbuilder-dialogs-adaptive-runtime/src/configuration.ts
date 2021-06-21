@@ -1,8 +1,8 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-import * as t from 'runtypes';
 import yargs from 'yargs-parser';
+import { Boolean, Runtype, String, Undefined, ValidationError } from 'runtypes';
 import { Configuration as CoreConfiguration } from 'botbuilder-dialogs-adaptive-runtime-core';
 import { Provider } from 'nconf';
 
@@ -133,7 +133,7 @@ export class Configuration implements CoreConfiguration {
      * @returns true or false depending on flag
      */
     bool(path: string[]): boolean {
-        return this.type(path, t.Boolean) === true;
+        return this.type(path, Boolean) === true;
     }
 
     /**
@@ -143,7 +143,7 @@ export class Configuration implements CoreConfiguration {
      * @returns the string or undefined
      */
     string(path: string[]): string | undefined {
-        return this.type(path, t.String);
+        return this.type(path, String);
     }
 
     /**
@@ -153,16 +153,14 @@ export class Configuration implements CoreConfiguration {
      * @param runtype runtype to use for type checking
      * @returns the value, or undefined
      */
-    type<T>(path: string[], runtype: t.Runtype<T>): T | undefined {
+    type<T>(path: string[], runtype: Runtype<T>): T | undefined {
         const value = this.get(path);
 
         try {
-            return runtype.optional().check(value);
+            return runtype.Or(Undefined).check(value);
         } catch (err) {
-            if (err instanceof t.ValidationError) {
-                err.details ??= {
-                    [this.prefix.concat(path).join('.')]: err.message,
-                };
+            if (err instanceof ValidationError) {
+                err.key = JSON.stringify(this.prefix.concat(path));
             }
 
             throw err;
