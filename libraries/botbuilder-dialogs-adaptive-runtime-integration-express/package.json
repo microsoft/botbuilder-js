@@ -17,13 +17,22 @@
   },
   "main": "lib/index.js",
   "types": "./lib/index.d.ts",
+  "typesVersions": {
+    "<3.9": {
+      "*": [
+        "_ts3.4/*"
+      ]
+    }
+  },
   "scripts": {
     "build": "tsc -b",
     "clean": "rimraf _ts3.4 lib tsconfig.tsbuildinfo",
     "depcheck": "depcheck --config ../../.depcheckrc",
-    "lint": "eslint . --ext .js,.ts"
+    "lint": "eslint . --ext .js,.ts",
+    "postbuild": "downlevel-dts lib _ts3.4/lib --checksum"
   },
   "files": [
+    "_ts3.4",
     "lib",
     "src"
   ],
