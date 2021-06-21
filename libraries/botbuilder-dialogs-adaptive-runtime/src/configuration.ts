@@ -154,6 +154,14 @@ export class Configuration implements CoreConfiguration {
      * @returns the value, or undefined
      */
     type<T>(path: string[], t: z.ZodType<T>): T | undefined {
-        return t.optional().parse(this.get(path));
+        try {
+            return t.optional().parse(this.get(path));
+        } catch (err) {
+            if (z.instanceof(z.ZodError).check(err)) {
+                err.errors.forEach((error) => (error.path = [...this.prefix, ...path, ...error.path]));
+            }
+
+            throw err;
+        }
     }
 }
