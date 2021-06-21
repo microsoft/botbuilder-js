@@ -36,22 +36,22 @@ import {
     verifyStateOperationName,
 } from 'botbuilder-core';
 import { TeamsInfo } from './teamsInfo';
-import * as t from 'runtypes';
+import * as z from 'zod';
 
-const TeamsMeetingStartT = t.Record({
-    Id: t.String,
-    JoinUrl: t.String,
-    MeetingType: t.String,
-    Title: t.String,
-    StartTime: t.String,
+const TeamsMeetingStartT = z.object({
+    Id: z.string(),
+    JoinUrl: z.string(),
+    MeetingType: z.string(),
+    Title: z.string(),
+    StartTime: z.string(),
 });
 
-const TeamsMeetingEndT = t.Record({
-    Id: t.String,
-    JoinUrl: t.String,
-    MeetingType: t.String,
-    Title: t.String,
-    EndTime: t.String,
+const TeamsMeetingEndT = z.object({
+    Id: z.string(),
+    JoinUrl: z.string(),
+    MeetingType: z.string(),
+    Title: z.string(),
+    EndTime: z.string(),
 });
 
 /**
@@ -1003,7 +1003,7 @@ export class TeamsActivityHandler extends ActivityHandler {
         handler: (meeting: MeetingStartEventDetails, context: TurnContext, next: () => Promise<void>) => Promise<void>
     ): this {
         return this.on('TeamsMeetingStart', async (context, next) => {
-            const meeting = TeamsMeetingStartT.check(context.activity.value);
+            const meeting = TeamsMeetingStartT.parse(context.activity.value);
             await handler(
                 {
                     id: meeting.Id,
@@ -1028,7 +1028,7 @@ export class TeamsActivityHandler extends ActivityHandler {
         handler: (meeting: MeetingEndEventDetails, context: TurnContext, next: () => Promise<void>) => Promise<void>
     ): this {
         return this.on('TeamsMeetingEnd', async (context, next) => {
-            const meeting = TeamsMeetingEndT.check(context.activity.value);
+            const meeting = TeamsMeetingEndT.parse(context.activity.value);
             await handler(
                 {
                     id: meeting.Id,

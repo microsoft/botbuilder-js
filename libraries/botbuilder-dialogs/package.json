@@ -37,7 +37,7 @@
     "botframework-connector": "4.1.6",
     "globalize": "^1.4.2",
     "lodash": "^4.17.21",
-    "runtypes": "~5.1.0"
+    "zod": "~1.11.17"
   },
   "devDependencies": {
     "@types/globalize": "^1.5.0",

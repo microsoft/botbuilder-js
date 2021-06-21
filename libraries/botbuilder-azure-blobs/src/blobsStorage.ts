@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-import * as t from 'runtypes';
+import * as z from 'zod';
 import getStream from 'get-stream';
 import pmap from 'p-map';
 import { ContainerClient, StoragePipelineOptions } from '@azure/storage-blob';
@@ -36,7 +36,10 @@ export class BlobsStorage implements Storage {
      * @param {BlobsStorageOptions} options Other options for BlobsStorage
      */
     constructor(connectionString: string, containerName: string, options?: BlobsStorageOptions) {
-        t.Record({ connectionString: t.String, containerName: t.String }).check({ connectionString, containerName });
+        z.object({ connectionString: z.string(), containerName: z.string() }).parse({
+            connectionString,
+            containerName,
+        });
 
         this._containerClient = new ContainerClient(connectionString, containerName, options?.storagePipelineOptions);
 
@@ -65,7 +68,7 @@ export class BlobsStorage implements Storage {
      * @returns {Promise<StoreItems>} The fetched [StoreItems](xref:botbuilder-core.StoreItems)
      */
     async read(keys: string[]): Promise<StoreItems> {
-        t.Record({ keys: t.Array(t.String) }).check({ keys });
+        z.object({ keys: z.array(z.string()) }).parse({ keys });
 
         await this._initialize();
 
@@ -109,7 +112,7 @@ export class BlobsStorage implements Storage {
      * @returns {Promise<void>} A promise representing the async operation
      */
     async write(changes: StoreItems): Promise<void> {
-        t.Dictionary(t.Unknown, t.String).withBrand('StoreItems').check(changes);
+        z.record(z.unknown()).parse(changes);
 
         await this._initialize();
 
@@ -136,7 +139,7 @@ export class BlobsStorage implements Storage {
      * @returns {Promise<void>} A promise representing the async operation
      */
     async delete(keys: string[]): Promise<void> {
-        t.Record({ keys: t.Array(t.String) }).check({ keys });
+        z.object({ keys: z.array(z.string()) }).parse({ keys });
 
         await this._initialize();
 

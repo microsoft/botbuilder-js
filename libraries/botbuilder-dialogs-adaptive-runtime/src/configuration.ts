@@ -1,8 +1,8 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
+import * as z from 'zod';
 import yargs from 'yargs-parser';
-import { Boolean, Runtype, String, Undefined, ValidationError } from 'runtypes';
 import { Configuration as CoreConfiguration } from 'botbuilder-dialogs-adaptive-runtime-core';
 import { Provider } from 'nconf';
 
@@ -133,7 +133,7 @@ export class Configuration implements CoreConfiguration {
      * @returns true or false depending on flag
      */
     bool(path: string[]): boolean {
-        return this.type(path, Boolean) === true;
+        return this.type(path, z.boolean()) === true;
     }
 
     /**
@@ -143,27 +143,17 @@ export class Configuration implements CoreConfiguration {
      * @returns the string or undefined
      */
     string(path: string[]): string | undefined {
-        return this.type(path, String);
+        return this.type(path, z.string());
     }
 
     /**
      * Get a typed value from config
      *
      * @param path path to value
-     * @param runtype runtype to use for type checking
+     * @param t zod type to use for type checking
      * @returns the value, or undefined
      */
-    type<T>(path: string[], runtype: Runtype<T>): T | undefined {
-        const value = this.get(path);
-
-        try {
-            return runtype.Or(Undefined).check(value);
-        } catch (err) {
-            if (err instanceof ValidationError) {
-                err.key = JSON.stringify(this.prefix.concat(path));
-            }
-
-            throw err;
-        }
+    type<T>(path: string[], t: z.ZodType<T>): T | undefined {
+        return t.optional().parse(this.get(path));
     }
 }

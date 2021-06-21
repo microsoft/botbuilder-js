@@ -3,7 +3,7 @@
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-import * as t from 'runtypes';
+import * as z from 'zod';
 import fs from 'fs';
 import mime from 'mime';
 import path from 'path';
@@ -19,22 +19,22 @@ import type {
     WebResponse,
 } from 'botbuilder';
 
-const TypedOptions = t.Record({
+const TypedOptions = z.object({
     /**
      * Log errors to stderr
      */
-    logErrors: t.Boolean,
+    logErrors: z.boolean(),
 
     /**
      * Path inside applicationRoot that should be served as static files
      */
-    staticDirectory: t.String.withConstraint((str) => str.length > 0 || 'must be non-empty string'),
+    staticDirectory: z.string().refine((str) => str.length > 0, { message: 'must be non-empty string' }),
 });
 
 /**
  * Options for runtime Azure Functions adapter
  */
-export type Options = t.Static<typeof TypedOptions>;
+export type Options = z.infer<typeof TypedOptions>;
 
 const defaultOptions: Options = {
     logErrors: true,
@@ -70,7 +70,7 @@ export function makeTriggers(
     applicationRoot: string,
     options: Partial<Options> = {}
 ): Record<string, AzureFunction> {
-    const resolvedOptions = TypedOptions.check(Object.assign({}, defaultOptions, options));
+    const resolvedOptions = TypedOptions.parse(Object.assign({}, defaultOptions, options));
 
     const build = memoize(async () => {
         const [services, configuration] = await runtimeServices();
@@ -107,11 +107,11 @@ export function makeTriggers(
                 const adapterSettings =
                     configuration.type(
                         ['runtimeSettings', 'adapters'],
-                        t.Array(
-                            t.Record({
-                                name: t.String,
-                                enabled: t.Union(t.Boolean, t.Undefined),
-                                route: t.String,
+                        z.array(
+                            z.object({
+                                name: z.string(),
+                                enabled: z.boolean().optional(),
+                                route: z.string(),
                             })
                         )
                     ) ?? [];

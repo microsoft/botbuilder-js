@@ -33,7 +33,7 @@
     "botbuilder-dialogs-adaptive-runtime": "4.1.6",
     "botbuilder-dialogs-adaptive-runtime-core": "4.1.6",
     "mime": "^2.5.2",
-    "runtypes": "~5.1.0"
+    "zod": "~1.11.17"
   },
   "scripts": {
     "build": "tsc -b",

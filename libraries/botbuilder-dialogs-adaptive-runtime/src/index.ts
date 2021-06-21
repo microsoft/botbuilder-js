@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-import * as t from 'runtypes';
+import * as z from 'zod';
 import fs from 'fs';
 import path from 'path';
 import { Configuration } from './configuration';
@@ -69,9 +69,9 @@ function addFeatures(services: ServiceCollection, configuration: Configuration):
 
             const setSpeak = configuration.type(
                 ['setSpeak'],
-                t.Record({
-                    voiceFontName: t.String.Or(t.Undefined),
-                    fallbackToTextForSpeechIfEmpty: t.Boolean,
+                z.object({
+                    voiceFontName: z.string().optional(),
+                    fallbackToTextForSpeechIfEmpty: z.boolean(),
                 })
             );
 
@@ -84,9 +84,9 @@ function addFeatures(services: ServiceCollection, configuration: Configuration):
             if (configuration.bool(['traceTranscript'])) {
                 const blobsTranscript = configuration.type(
                     ['blobTranscript'],
-                    t.Record({
-                        connectionString: t.String,
-                        containerName: t.String,
+                    z.object({
+                        connectionString: z.string(),
+                        containerName: z.string(),
                     })
                 );
 
@@ -113,12 +113,12 @@ function addTelemetry(services: ServiceCollection, configuration: Configuration)
     services.addFactory('botTelemetryClient', () => {
         const telemetryOptions = configuration.type(
             ['options'],
-            t
-                .Record({
-                    connectionString: t.String,
-                    instrumentationKey: t.String,
+            z
+                .object({
+                    connectionString: z.string(),
+                    instrumentationKey: z.string(),
                 })
-                .asPartial()
+                .partial()
         );
 
         const setupString = telemetryOptions?.connectionString ?? telemetryOptions?.instrumentationKey;
@@ -147,9 +147,9 @@ function addStorage(services: ServiceCollection, configuration: Configuration): 
             case 'BlobsStorage': {
                 const blobsStorage = configuration.type(
                     ['BlobsStorage'],
-                    t.Record({
-                        connectionString: t.String,
-                        containerName: t.String,
+                    z.object({
+                        connectionString: z.string(),
+                        containerName: z.string(),
                     })
                 );
 
@@ -163,14 +163,14 @@ function addStorage(services: ServiceCollection, configuration: Configuration): 
             case 'CosmosDbPartitionedStorage': {
                 const cosmosOptions = configuration.type(
                     ['CosmosDbPartitionedStorage'],
-                    t.Record({
-                        authKey: t.String.Or(t.Undefined),
-                        compatibilityMode: t.Boolean.Or(t.Undefined),
-                        containerId: t.String,
-                        containerThroughput: t.Number.Or(t.Undefined),
-                        cosmosDBEndpoint: t.String.Or(t.Undefined),
-                        databaseId: t.String,
-                        keySuffix: t.String.Or(t.Undefined),
+                    z.object({
+                        authKey: z.string().optional(),
+                        compatibilityMode: z.boolean().optional(),
+                        containerId: z.string(),
+                        containerThroughput: z.number().optional(),
+                        cosmosDBEndpoint: z.string().optional(),
+                        databaseId: z.string(),
+                        keySuffix: z.string().optional(),
                     })
                 );
 
@@ -213,7 +213,7 @@ function addSkills(services: ServiceCollection, configuration: Configuration): v
 
     services.addFactory('authenticationConfiguration', () => {
         const allowedCallers =
-            configuration.type(['runtimeSettings', 'skills', 'allowedCallers'], t.Array(t.String)) ?? [];
+            configuration.type(['runtimeSettings', 'skills', 'allowedCallers'], z.array(z.string())) ?? [];
 
         return new AuthenticationConfiguration(
             undefined,
@@ -341,10 +341,10 @@ async function addSettingsBotComponents(services: ServiceCollection, configurati
     const components =
         configuration.type(
             ['runtimeSettings', 'components'],
-            t.Array(
-                t.Record({
-                    name: t.String,
-                    settingsPrefix: t.String.Or(t.Undefined),
+            z.array(
+                z.object({
+                    name: z.string(),
+                    settingsPrefix: z.string().optional(),
                 })
             )
         ) ?? [];
