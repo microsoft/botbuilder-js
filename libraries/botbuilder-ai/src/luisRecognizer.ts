@@ -457,16 +457,14 @@ export class LuisRecognizer implements LuisRecognizerTelemetryClient {
         // This type check, when true, logically implies that the function is being invoked as the two-argument string + optional options overload variant.
         if (typeof contextOrUtterance === 'string') {
             const utterance = contextOrUtterance;
-            const options = UnsafeLuisRecognizerUnion.optional().check(maybeTelemetryPropertiesOrOptions);
+            const options = t.Union(UnsafeLuisRecognizerUnion, t.Undefined).check(maybeTelemetryPropertiesOrOptions);
 
             const luisRecognizer = options ? this.buildRecognizer(options) : this.luisRecognizerInternal;
 
             return luisRecognizer.recognizeInternal(utterance);
         } else {
             const telemetryProperties = t
-                .Dictionary(t.String, t.String)
-                .optional()
-                .nullable()
+                .Union(t.Dictionary(t.String, t.String), t.Undefined, t.Null)
                 .check(maybeTelemetryPropertiesOrOptions);
             const turnContext =
                 contextOrUtterance instanceof DialogContext ? contextOrUtterance.context : contextOrUtterance;
