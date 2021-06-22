@@ -1,7 +1,10 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
+import * as z from 'zod';
 import { Activity } from 'botframework-schema';
+import { Configuration } from 'botbuilder-dialogs-adaptive-runtime-core';
+
 import {
     AuthenticateRequestResult,
     AuthenticationConfiguration,
@@ -15,82 +18,83 @@ import {
     ServiceClientCredentialsFactory,
     UserTokenClient,
 } from 'botframework-connector';
-import { Configuration } from 'botbuilder-dialogs-adaptive-runtime-core';
+
 import {
     ConfigurationServiceClientCredentialFactory,
     ConfigurationServiceClientCredentialFactoryOptions,
 } from './configurationServiceClientCredentialFactory';
-import * as t from 'runtypes';
 
-const TypedOptions = t.Record({
-    /**
-     * (Optional) The OAuth URL used to get a token from OAuthApiClient. The "OAuthUrl" member takes precedence over this value.
-     */
-    [AuthenticationConstants.OAuthUrlKey]: t.Optional(t.Union(t.String, t.Null)),
+const TypedOptions = z
+    .object({
+        /**
+         * (Optional) The OAuth URL used to get a token from OAuthApiClient. The "OAuthUrl" member takes precedence over this value.
+         */
+        [AuthenticationConstants.OAuthUrlKey]: z.string(),
 
-    /**
-     * (Optional) The OpenID metadata document used for authenticating tokens coming from the channel. The "ToBotFromChannelOpenIdMetadataUrl" member takes precedence over this value.
-     */
-    [AuthenticationConstants.BotOpenIdMetadataKey]: t.Optional(t.Union(t.String, t.Null)),
+        /**
+         * (Optional) The OpenID metadata document used for authenticating tokens coming from the channel. The "ToBotFromChannelOpenIdMetadataUrl" member takes precedence over this value.
+         */
+        [AuthenticationConstants.BotOpenIdMetadataKey]: z.string(),
 
-    /**
-     * A string used to indicate if which cloud the bot is operating in (e.g. Public Azure or US Government).
-     *
-     * @remarks
-     * A `null` or `''` value indicates Public Azure, whereas [GovernmentConstants.ChannelService](xref:botframework-connector.GovernmentConstants.ChannelService) indicates the bot is operating in the US Government cloud.
-     *
-     * Other values result in a custom authentication configuration derived from the values passed in on the [ConfigurationBotFrameworkAuthenticationOptions](xef:botbuilder-core.ConfigurationBotFrameworkAuthenticationOptions) instance.
-     */
-    [AuthenticationConstants.ChannelService]: t.Optional(t.Union(t.String, t.Null)),
+        /**
+         * A string used to indicate if which cloud the bot is operating in (e.g. Public Azure or US Government).
+         *
+         * @remarks
+         * A `null` or `''` value indicates Public Azure, whereas [GovernmentConstants.ChannelService](xref:botframework-connector.GovernmentConstants.ChannelService) indicates the bot is operating in the US Government cloud.
+         *
+         * Other values result in a custom authentication configuration derived from the values passed in on the [ConfigurationBotFrameworkAuthenticationOptions](xef:botbuilder-core.ConfigurationBotFrameworkAuthenticationOptions) instance.
+         */
+        [AuthenticationConstants.ChannelService]: z.string(),
 
-    /**
-     * Flag indicating whether or not to validate the address.
-     */
-    ValidateAuthority: t.Union(t.String, t.Boolean),
+        /**
+         * Flag indicating whether or not to validate the address.
+         */
+        ValidateAuthority: z.union([z.string(), z.boolean()]),
 
-    /**
-     * The Login URL used to specify the tenant from which the bot should obtain access tokens from.
-     */
-    ToChannelFromBotLoginUrl: t.String,
+        /**
+         * The Login URL used to specify the tenant from which the bot should obtain access tokens from.
+         */
+        ToChannelFromBotLoginUrl: z.string(),
 
-    /**
-     * The Oauth scope to request.
-     *
-     * @remarks
-     * This value is used when fetching a token to indicate the ultimate recipient or `audience` of an activity sent using these credentials.
-     */
-    ToChannelFromBotOAuthScope: t.String,
+        /**
+         * The Oauth scope to request.
+         *
+         * @remarks
+         * This value is used when fetching a token to indicate the ultimate recipient or `audience` of an activity sent using these credentials.
+         */
+        ToChannelFromBotOAuthScope: z.string(),
 
-    /**
-     * The Token issuer for signed requests to the channel.
-     */
-    ToBotFromChannelTokenIssuer: t.String,
+        /**
+         * The Token issuer for signed requests to the channel.
+         */
+        ToBotFromChannelTokenIssuer: z.string(),
 
-    /**
-     * The OAuth URL used to get a token from OAuthApiClient.
-     */
-    OAuthUrl: t.String,
+        /**
+         * The OAuth URL used to get a token from OAuthApiClient.
+         */
+        OAuthUrl: z.string(),
 
-    /**
-     * The OpenID metadata document used for authenticating tokens coming from the channel.
-     */
-    ToBotFromChannelOpenIdMetadataUrl: t.String,
+        /**
+         * The OpenID metadata document used for authenticating tokens coming from the channel.
+         */
+        ToBotFromChannelOpenIdMetadataUrl: z.string(),
 
-    /**
-     * The The OpenID metadata document used for authenticating tokens coming from the Emulator.
-     */
-    ToBotFromEmulatorOpenIdMetadataUrl: t.String,
+        /**
+         * The The OpenID metadata document used for authenticating tokens coming from the Emulator.
+         */
+        ToBotFromEmulatorOpenIdMetadataUrl: z.string(),
 
-    /**
-     * A value for the CallerId.
-     */
-    CallerId: t.String,
-});
+        /**
+         * A value for the CallerId.
+         */
+        CallerId: z.string(),
+    })
+    .partial();
 
 /**
  * Contains settings used to configure a [ConfigurationBotFrameworkAuthentication](xref:botbuilder-core.ConfigurationBotFrameworkAuthentication) instance.
  */
-export type ConfigurationBotFrameworkAuthenticationOptions = t.Static<typeof TypedOptions>;
+export type ConfigurationBotFrameworkAuthenticationOptions = z.infer<typeof TypedOptions>;
 
 /**
  * Creates a [BotFrameworkAuthentication](xref:botframework-connector.BotFrameworkAuthentication) instance from an object with the authentication values or a [Configuration](xref:botbuilder-dialogs-adaptive-runtime-core.Configuration) instance.
@@ -108,7 +112,7 @@ export class ConfigurationBotFrameworkAuthentication extends BotFrameworkAuthent
      * @param connectorClientOptions A [ConnectorClientOptions](xref:botframework-connector.ConnectorClientOptions) object.
      */
     constructor(
-        botFrameworkAuthConfig: Partial<ConfigurationBotFrameworkAuthenticationOptions> = {},
+        botFrameworkAuthConfig: ConfigurationBotFrameworkAuthenticationOptions = {},
         credentialsFactory?: ServiceClientCredentialsFactory,
         authConfiguration?: AuthenticationConfiguration,
         botFrameworkClientFetch?: (input: RequestInfo, init?: RequestInit) => Promise<Response>,
@@ -117,7 +121,7 @@ export class ConfigurationBotFrameworkAuthentication extends BotFrameworkAuthent
         super();
 
         try {
-            const typedBotFrameworkAuthConfig = TypedOptions.asPartial().check(botFrameworkAuthConfig);
+            const typedBotFrameworkAuthConfig = TypedOptions.nonstrict().parse(botFrameworkAuthConfig);
 
             const {
                 CallerId,
@@ -159,8 +163,8 @@ export class ConfigurationBotFrameworkAuthentication extends BotFrameworkAuthent
             );
         } catch (err) {
             // Throw a new error with the validation details prominently featured.
-            if (err instanceof t.ValidationError && err.details) {
-                throw new Error(JSON.stringify(err.details, undefined, 2));
+            if (z.instanceof(z.ZodError).check(err)) {
+                throw new Error(JSON.stringify(err.errors, null, 2));
             }
             throw err;
         }

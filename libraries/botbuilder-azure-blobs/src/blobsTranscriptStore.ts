@@ -34,7 +34,10 @@ function getConversationPrefix(channelId: string, conversationId: string): strin
 
 // Formats an activity as a blob key
 function getBlobKey(activity: Activity): string {
-    const { timestamp } = z.object({ timestamp: z.instanceof(Date) }).parse(activity);
+    const { timestamp } = z
+        .object({ timestamp: z.instanceof(Date) })
+        .nonstrict()
+        .parse(activity);
 
     return sanitizeBlobKey(
         [activity.channelId, activity.conversation.id, `${formatTicks(timestamp)}-${activity.id}.json`].join('/')

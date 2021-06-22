@@ -74,10 +74,12 @@ function addFeatures(services: ServiceCollection, configuration: Configuration):
 
             const setSpeak = configuration.type(
                 ['setSpeak'],
-                z.object({
-                    voiceFontName: z.string().optional(),
-                    fallbackToTextForSpeechIfEmpty: z.boolean(),
-                })
+                z
+                    .object({
+                        voiceFontName: z.string().optional(),
+                        fallbackToTextForSpeechIfEmpty: z.boolean(),
+                    })
+                    .nonstrict()
             );
 
             if (setSpeak) {
@@ -89,10 +91,12 @@ function addFeatures(services: ServiceCollection, configuration: Configuration):
             if (configuration.bool(['traceTranscript'])) {
                 const blobsTranscript = configuration.type(
                     ['blobTranscript'],
-                    z.object({
-                        connectionString: z.string(),
-                        containerName: z.string(),
-                    })
+                    z
+                        .object({
+                            connectionString: z.string(),
+                            containerName: z.string(),
+                        })
+                        .nonstrict()
                 );
 
                 middlewareSet.use(
@@ -124,6 +128,7 @@ function addTelemetry(services: ServiceCollection, configuration: Configuration)
                     instrumentationKey: z.string(),
                 })
                 .partial()
+                .nonstrict()
         );
 
         const setupString = telemetryOptions?.connectionString ?? telemetryOptions?.instrumentationKey;
@@ -152,10 +157,12 @@ function addStorage(services: ServiceCollection, configuration: Configuration): 
             case 'BlobsStorage': {
                 const blobsStorage = configuration.type(
                     ['BlobsStorage'],
-                    z.object({
-                        connectionString: z.string(),
-                        containerName: z.string(),
-                    })
+                    z
+                        .object({
+                            connectionString: z.string(),
+                            containerName: z.string(),
+                        })
+                        .nonstrict()
                 );
 
                 if (!blobsStorage) {
@@ -168,15 +175,17 @@ function addStorage(services: ServiceCollection, configuration: Configuration): 
             case 'CosmosDbPartitionedStorage': {
                 const cosmosOptions = configuration.type(
                     ['CosmosDbPartitionedStorage'],
-                    z.object({
-                        authKey: z.string().optional(),
-                        compatibilityMode: z.boolean().optional(),
-                        containerId: z.string(),
-                        containerThroughput: z.number().optional(),
-                        cosmosDBEndpoint: z.string().optional(),
-                        databaseId: z.string(),
-                        keySuffix: z.string().optional(),
-                    })
+                    z
+                        .object({
+                            authKey: z.string().optional(),
+                            compatibilityMode: z.boolean().optional(),
+                            containerId: z.string(),
+                            containerThroughput: z.number().optional(),
+                            cosmosDBEndpoint: z.string().optional(),
+                            databaseId: z.string(),
+                            keySuffix: z.string().optional(),
+                        })
+                        .nonstrict()
                 );
 
                 if (!cosmosOptions) {
@@ -364,10 +373,12 @@ async function addSettingsBotComponents(services: ServiceCollection, configurati
         configuration.type(
             ['runtimeSettings', 'components'],
             z.array(
-                z.object({
-                    name: z.string(),
-                    settingsPrefix: z.string().optional(),
-                })
+                z
+                    .object({
+                        name: z.string(),
+                        settingsPrefix: z.string().optional(),
+                    })
+                    .nonstrict()
             )
         ) ?? [];
 

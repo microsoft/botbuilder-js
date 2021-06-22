@@ -113,6 +113,7 @@ export class LuisRecognizerV3 extends LuisRecognizerInternal {
                                             if (
                                                 z
                                                     .object({ startIndex: z.number(), endIndex: z.number() })
+                                                    .nonstrict()
                                                     .check(childInstance)
                                             ) {
                                                 const start = childInstance.startIndex;

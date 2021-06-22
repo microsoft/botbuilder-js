@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-import * as t from 'runtypes';
+import * as z from 'zod';
 import { CloudAdapterBase, ExtendedUserTokenProvider, TokenResponse, TurnContext } from 'botbuilder-core';
 import { OAuthPromptSettings } from './oauthPrompt';
 
@@ -14,16 +14,17 @@ import {
     UserTokenClient,
 } from 'botframework-connector';
 
-const ExtendedUserTokenProviderT = t
-    .Record({
-        exchangeToken: t.Function,
-        getSignInResource: t.Function,
-        getUserToken: t.Function,
-        signOutUser: t.Function,
-    })
-    .withGuard<ExtendedUserTokenProvider>((val: unknown): val is ExtendedUserTokenProvider => val != null, {
-        name: 'ExtendedUserTokenProvider',
-    });
+const ExtendedUserTokenProviderT = z.custom<ExtendedUserTokenProvider>(
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (val: any) =>
+        typeof val.exchangeToken === 'function' &&
+        typeof val.getSignInResource === 'function' &&
+        typeof val.getUserToken === 'function' &&
+        typeof val.signOutUser === 'function',
+    {
+        message: 'ExtendedUserTokenProvider',
+    }
+);
 
 type ConnectorClientBuilder = {
     createConnectorClientWithIdentity: (
@@ -33,13 +34,13 @@ type ConnectorClientBuilder = {
     ) => Promise<ConnectorClient>;
 };
 
-const ConnectorClientBuilderT = t
-    .Record({
-        createConnectorClientWithIdentity: t.Function,
-    })
-    .withGuard<ConnectorClientBuilder>((val: unknown): val is ConnectorClientBuilder => val != null, {
-        name: 'ConnectorClientBuilder',
-    });
+const ConnectorClientBuilderT = z.custom<ConnectorClientBuilder>(
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (val: any) => typeof val.createConnectorClientWithIdentity === 'function',
+    {
+        message: 'ConnectorClientBuilder',
+    }
+);
 
 /**
  * @internal
@@ -59,7 +60,7 @@ export async function getUserToken(
             context.activity?.channelId,
             magicCode
         );
-    } else if (ExtendedUserTokenProviderT.guard(context.adapter)) {
+    } else if (ExtendedUserTokenProviderT.check(context.adapter)) {
         return context.adapter.getUserToken(context, settings.connectionName, magicCode, settings.oAuthAppCredentials);
     } else {
         throw new Error('OAuth prompt is not supported by the current adapter');
@@ -78,7 +79,7 @@ export async function getSignInResource(
     );
     if (userTokenClient) {
         return userTokenClient.getSignInResource(settings.connectionName, context.activity, undefined);
-    } else if (ExtendedUserTokenProviderT.guard(context.adapter)) {
+    } else if (ExtendedUserTokenProviderT.check(context.adapter)) {
         return context.adapter.getSignInResource(
             context,
             settings.connectionName,
@@ -104,7 +105,7 @@ export async function signOutUser(context: TurnContext, settings: OAuthPromptSet
             settings.connectionName,
             context.activity?.channelId
         );
-    } else if (ExtendedUserTokenProviderT.guard(context.adapter)) {
+    } else if (ExtendedUserTokenProviderT.check(context.adapter)) {
         await context.adapter.signOutUser(
             context,
             settings.connectionName,
@@ -134,7 +135,7 @@ export async function exchangeToken(
             context.activity?.channelId,
             tokenExchangeRequest
         );
-    } else if (ExtendedUserTokenProviderT.guard(context.adapter)) {
+    } else if (ExtendedUserTokenProviderT.check(context.adapter)) {
         return context.adapter.exchangeToken(
             context,
             settings.connectionName,
@@ -160,7 +161,7 @@ export async function createConnectorClient(
     );
     if (connectorFactory) {
         return connectorFactory.create(serviceUrl, audience);
-    } else if (ConnectorClientBuilderT.guard(context.adapter)) {
+    } else if (ConnectorClientBuilderT.check(context.adapter)) {
         return context.adapter.createConnectorClientWithIdentity(serviceUrl, claimsIdentity, audience);
     } else {
         throw new Error('OAuth prompt is not supported by the current adapter');

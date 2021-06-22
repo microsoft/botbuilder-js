@@ -6,11 +6,11 @@
  * Licensed under the MIT License.
  */
 
-import * as t from 'runtypes';
+import * as z from 'zod';
 import { BotFrameworkHttpAdapter } from './botFrameworkHttpAdapter';
 import { ConnectorClientBuilder, Request, Response, ResponseT, WebRequest, WebResponse } from './interfaces';
 import { HttpClient, userAgentPolicy } from '@azure/ms-rest-js';
-import { INodeBufferT, INodeSocketT } from './runtypes';
+import { INodeBufferT, INodeSocketT, LogicT } from './zod';
 import { arch, release, type } from 'os';
 import { delay, retry } from 'botbuilder-stdlib';
 import { validateAndFixActivity } from './activityValidator';
@@ -384,7 +384,7 @@ export class BotFrameworkAdapter
         maybeLogic?: (context: TurnContext) => Promise<void>
     ): Promise<void> {
         let audience: string;
-        if (t.Function.guard(oAuthScopeOrlogic)) {
+        if (LogicT.check(oAuthScopeOrlogic)) {
             // Because the OAuthScope parameter was not provided, get the correct value via the channelService.
             // In this scenario, the ConnectorClient for the continued conversation can only communicate with
             // official channels, not with other bots.
@@ -392,10 +392,10 @@ export class BotFrameworkAdapter
                 ? GovernmentConstants.ToChannelFromBotOAuthScope
                 : AuthenticationConstants.ToChannelFromBotOAuthScope;
         } else {
-            audience = oAuthScopeOrlogic;
+            audience = z.string().parse(oAuthScopeOrlogic);
         }
 
-        const logic = t.Function.guard(oAuthScopeOrlogic) ? oAuthScopeOrlogic : t.Function.check(maybeLogic);
+        const logic = LogicT.check(oAuthScopeOrlogic) ? oAuthScopeOrlogic : LogicT.parse(maybeLogic);
 
         let credentials = this.credentials;
 
@@ -504,9 +504,9 @@ export class BotFrameworkAdapter
             throw new Error(`BotFrameworkAdapter.createConversation(): missing serviceUrl.`);
         }
 
-        const parameters = t.Function.guard(parametersOrLogic) ? {} : parametersOrLogic;
+        const parameters = LogicT.check(parametersOrLogic) ? {} : parametersOrLogic;
 
-        const logic = t.Function.guard(parametersOrLogic) ? parametersOrLogic : t.Function.check(maybeLogic);
+        const logic = LogicT.check(parametersOrLogic) ? parametersOrLogic : LogicT.parse(maybeLogic);
 
         // Create conversation parameters, taking care to provide defaults that can be
         // overridden by passed in parameters
@@ -1886,12 +1886,12 @@ export class BotFrameworkAdapter
         if (maybeLogic) {
             return this.useWebSocket(
                 req,
-                INodeSocketT.check(resOrSocket),
-                INodeBufferT.check(logicOrHead),
-                t.Function.check(maybeLogic)
+                INodeSocketT.parse(resOrSocket),
+                INodeBufferT.parse(logicOrHead),
+                LogicT.parse(maybeLogic)
             );
         } else {
-            return this.processActivity(req, ResponseT.check(resOrSocket), t.Function.check(logicOrHead));
+            return this.processActivity(req, ResponseT.parse(resOrSocket), LogicT.parse(logicOrHead));
         }
     }
 
