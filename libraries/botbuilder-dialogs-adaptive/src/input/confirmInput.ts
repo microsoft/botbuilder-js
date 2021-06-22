@@ -5,17 +5,20 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import * as Recognizers from '@microsoft/recognizers-text-choice';
+import { Activity } from 'botbuilder';
+import { ChoiceSet } from './choiceSet';
+import { EnumProperty, ObjectProperty, StringProperty } from '../properties';
+import { InputDialog, InputDialogConfiguration, InputState } from './inputDialog';
+
 import {
     EnumExpression,
     EnumExpressionConverter,
-    Expression,
     ObjectExpression,
     ObjectExpressionConverter,
     StringExpression,
     StringExpressionConverter,
 } from 'adaptive-expressions';
-import { Activity } from 'botbuilder';
+
 import {
     Choice,
     ChoiceFactory,
@@ -27,15 +30,16 @@ import {
     PromptCultureModels,
     recognizeChoices,
 } from 'botbuilder-dialogs';
-import { ChoiceSet } from './choiceSet';
-import { InputDialog, InputDialogConfiguration, InputState } from './inputDialog';
+
+// eslint-disable-next-line import/no-extraneous-dependencies
+import * as Recognizers from '@microsoft/recognizers-text-choice';
 
 export interface ConfirmInputConfiguration extends InputDialogConfiguration {
-    defaultLocale?: string | Expression | StringExpression;
-    style?: ListStyle | string | Expression | EnumExpression<ListStyle>;
-    choiceOptions?: ChoiceFactoryOptions | string | Expression | ObjectExpression<ChoiceFactoryOptions>;
-    confirmChoices?: ChoiceSet | string | Expression | ObjectExpression<ChoiceSet>;
-    outputFormat?: string | Expression | StringExpression;
+    defaultLocale?: StringProperty;
+    style?: EnumProperty<ListStyle>;
+    choiceOptions?: ObjectProperty<ChoiceFactoryOptions>;
+    confirmChoices?: ObjectProperty<ChoiceSet>;
+    outputFormat?: StringProperty;
 }
 
 /**
@@ -47,9 +51,10 @@ export class ConfirmInput extends InputDialog implements ConfirmInputConfigurati
     /**
      * Default options for rendering the choices to the user based on locale.
      */
-    private static defaultChoiceOptions: {
-        [locale: string]: { choices: (string | Choice)[]; options: ChoiceFactoryOptions };
-    } = {
+    private static defaultChoiceOptions: Record<
+        string,
+        { choices: Array<Choice | string>; options: ChoiceFactoryOptions }
+    > = {
         'es-es': {
             choices: ['Sí', 'No'],
             options: { inlineSeparator: ', ', inlineOr: ' o ', inlineOrMore: ', o ', includeNumbers: true },
@@ -130,7 +135,7 @@ export class ConfirmInput extends InputDialog implements ConfirmInputConfigurati
         }
     }
 
-     /**
+    /**
      * @protected
      */
     protected onComputeId(): string {

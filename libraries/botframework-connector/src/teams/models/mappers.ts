@@ -315,6 +315,89 @@ export const TeamsMeetingParticipant: msRest.CompositeMapper = {
     },
 };
 
+export const TeamsMeetingInfo: msRest.CompositeMapper = {
+    serializedName: 'TeamsMeetingInfo',
+    type: {
+        name: 'Composite',
+        className: 'TeamsMeetingInfo',
+        modelProperties: {
+            details: {
+                serializedName: 'details',
+                type: {
+                    name: 'Composite',
+                    className: 'TeamsMeetingDetails',
+                },
+            },
+            conversation: {
+                serializedName: 'conversation',
+                type: {
+                    name: 'Composite',
+                    className: 'MessageActionsPayloadConversation',
+                },
+            },
+            organizer: {
+                serializedName: 'organizer',
+                type: {
+                    name: 'Composite',
+                    className: 'TeamsChannelAccount',
+                },
+            },
+        },
+    },
+};
+
+export const TeamsMeetingDetails: msRest.CompositeMapper = {
+    serializedName: 'TeamsMeetingDetails',
+    type: {
+        name: 'Composite',
+        className: 'TeamsMeetingDetails',
+        modelProperties: {
+            id: {
+                serializedName: 'id',
+                type: {
+                    name: 'String',
+                },
+            },
+            msGraphResourceId: {
+                serializedName: 'msGraphResourceId',
+                type: {
+                    name: 'String',
+                },
+            },
+            scheduledStartTime: {
+                serializedName: 'scheduledStartTime',
+                type: {
+                    name: 'DateTime',
+                },
+            },
+            scheduledEndTime: {
+                serializedName: 'scheduledEndTime',
+                type: {
+                    name: 'DateTime',
+                },
+            },
+            joinUrl: {
+                serializedName: 'joinUrl',
+                type: {
+                    name: 'String',
+                },
+            },
+            title: {
+                serializedName: 'title',
+                type: {
+                    name: 'String',
+                },
+            },
+            type: {
+                serializedName: 'type',
+                type: {
+                    name: 'String',
+                },
+            },
+        },
+    },
+};
+
 export const CardAction: msRest.CompositeMapper = {
     serializedName: 'CardAction',
     type: {
@@ -1613,7 +1696,7 @@ export const CacheInfo: msRest.CompositeMapper = {
                 serializedName: 'cacheDuration',
                 type: {
                     name: 'Number',
-                }
+                },
             },
         },
     },

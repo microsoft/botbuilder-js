@@ -5,14 +5,20 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
+import { Activity, ActivityTypes, StringUtils, TurnContext } from 'botbuilder';
+import { ActivityTemplate } from '../templates';
+import { ActivityTemplateConverter } from '../converters';
+import { AdaptiveEvents } from '../adaptiveEvents';
+import { BoolProperty, StringProperty, TemplateInterfaceProperty } from '../properties';
+import { skillClientKey, skillConversationIdFactoryKey } from '../skillExtensions';
+
 import {
     BoolExpression,
     BoolExpressionConverter,
-    Expression,
     StringExpression,
     StringExpressionConverter,
 } from 'adaptive-expressions';
-import { Activity, ActivityTypes, StringUtils, TurnContext } from 'botbuilder';
+
 import {
     BeginSkillDialogOptions,
     Converter,
@@ -29,22 +35,18 @@ import {
     SkillDialogOptions,
     TemplateInterface,
 } from 'botbuilder-dialogs';
-import { skillClientKey, skillConversationIdFactoryKey } from '../skillExtensions';
-import { ActivityTemplate } from '../templates';
-import { ActivityTemplateConverter } from '../converters';
-import { AdaptiveEvents } from '../adaptiveEvents';
 
 export interface BeginSkillConfiguration extends DialogConfiguration {
-    disabled?: boolean | string | Expression | BoolExpression;
-    activityProcessed?: boolean | string | Expression | BoolExpression;
-    resultProperty?: string | Expression | StringExpression;
-    botId?: string | Expression | StringExpression;
-    skillHostEndpoint?: string | Expression | StringExpression;
-    skillAppId?: string | Expression | StringExpression;
-    skillEndpoint?: string | Expression | StringExpression;
-    activity?: string | Partial<Activity> | TemplateInterface<Partial<Activity>, DialogStateManager>;
-    connectionName?: string | Expression | StringExpression;
-    allowInterruptions?: boolean | string | Expression | BoolExpression;
+    disabled?: BoolProperty;
+    activityProcessed?: BoolProperty;
+    resultProperty?: StringProperty;
+    botId?: StringProperty;
+    skillHostEndpoint?: StringProperty;
+    skillAppId?: StringProperty;
+    skillEndpoint?: StringProperty;
+    activity?: TemplateInterfaceProperty<Partial<Activity>, DialogStateManager>;
+    connectionName?: StringProperty;
+    allowInterruptions?: BoolProperty;
 }
 
 /**

@@ -5,14 +5,16 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
+import { ArrayProperty, StringProperty } from '../properties';
+import { SendActivity, SendActivityConfiguration } from '../actions/sendActivity';
 
 import {
     ArrayExpression,
     ArrayExpressionConverter,
-    Expression,
     StringExpression,
     StringExpressionConverter,
 } from 'adaptive-expressions';
+
 import {
     Converter,
     ConverterFactory,
@@ -23,11 +25,12 @@ import {
     DialogTurnStatus,
     TurnPath,
 } from 'botbuilder-dialogs';
-import { SendActivity, SendActivityConfiguration } from '../actions/sendActivity';
+import { StringUtils } from 'botbuilder';
+import { ActivityTemplate } from '..';
 
 export interface AskConfiguration extends SendActivityConfiguration {
-    expectedProperties?: string[] | string | Expression | ArrayExpression<string>;
-    defaultOperation?: string | Expression | StringExpression;
+    expectedProperties?: ArrayProperty<string>;
+    defaultOperation?: StringProperty;
 }
 
 /**
@@ -64,6 +67,7 @@ export class Ask extends SendActivity implements AskConfiguration {
      * Called when the [Dialog](xref:botbuilder-dialogs.Dialog) is started and pushed onto the dialog stack.
      * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
      * @param options Optional, initial information to pass to the [Dialog](xref:botbuilder-dialogs.Dialog).
+     * @param property
      * @returns A [DialogTurnResult](xref:botbuilder-dialogs.DialogTurnResult) `Promise` representing the asynchronous operation.
      */
     public getConverter(property: keyof AskConfiguration): Converter | ConverterFactory {
@@ -111,5 +115,12 @@ export class Ask extends SendActivity implements AskConfiguration {
         const result = await super.beginDialog(dc, options);
         result.status = DialogTurnStatus.completeAndWait;
         return result;
+    }
+
+    protected onComputeId(): string {
+        if (this.activity instanceof ActivityTemplate) {
+            return `Ask[${StringUtils.ellipsis(this.activity.template.trim(), 30)}]`;
+        }
+        return `Ask[${StringUtils.ellipsis(this.activity && this.activity.toString().trim(), 30)}]`;
     }
 }

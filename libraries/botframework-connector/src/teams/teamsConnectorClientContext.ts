@@ -17,6 +17,7 @@ export class TeamsConnectorClientContext extends ServiceClient {
 
     /**
      * Initializes a new instance of the TeamsConnectorClientContext class.
+     *
      * @param credentials Subscription credentials which uniquely identify client subscription.
      * @param [options] The parameter options
      */

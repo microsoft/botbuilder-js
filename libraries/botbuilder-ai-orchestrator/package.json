@@ -3,12 +3,13 @@
   "author": "Microsoft Corp.",
   "description": "Orchestrator recognizer",
   "version": "4.1.6",
-  "preview": true,
   "license": "MIT",
   "keywords": [
     "botbuilder",
     "botframework",
-    "orchestrator"
+    "orchestrator",
+    "msbot-component",
+    "msbot-recognizer"
   ],
   "bugs": {
     "url": "https://github.com/Microsoft/botbuilder-js/issues"
@@ -33,7 +34,7 @@
     "botbuilder-dialogs-adaptive": "4.1.6",
     "botbuilder-dialogs-declarative": "4.1.6",
     "botbuilder-dialogs-adaptive-runtime-core": "4.1.6",
-    "orchestrator-core": "rc",
+    "orchestrator-core": "4.13.1",
     "uuid": "^8.3.2"
   },
   "scripts": {

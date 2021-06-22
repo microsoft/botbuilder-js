@@ -15,6 +15,7 @@ import { isLuisRecognizerOptionsV3, LuisRecognizerV3 } from './luisRecognizerOpt
 import { DynamicList } from './dynamicList';
 import { ExternalEntity } from './externalEntity';
 import { DialogContext, Recognizer } from 'botbuilder-dialogs';
+import * as t from 'runtypes';
 
 /**
  * Description of a LUIS application used for initializing a LuisRecognizer.
@@ -233,6 +234,16 @@ export interface LuisRecognizerOptionsV2 extends LuisRecognizerOptions {
     timezoneOffset?: number;
 }
 
+// This run type is purely used for type assertions in a scenario where we
+// know better than the compiler does that we'll have a value of this type.
+// This is just meant to operate as a simple type assertion.
+const UnsafeLuisRecognizerUnion = t.Guard(
+    (val: unknown): val is LuisRecognizerOptionsV2 | LuisRecognizerOptionsV3 | LuisPredictionOptions => {
+        return t.Dictionary(t.Unknown, t.String).guard(val);
+    },
+    { name: 'LuisRecognizerOptionsV2 | LuisRecognizerOptionsV3 | LuisPredictionOptions' }
+);
+
 /**
  * Recognize intents in a user utterance using a configured LUIS model.
  *
@@ -332,12 +343,12 @@ export class LuisRecognizer implements LuisRecognizerTelemetryClient {
     }
 
     // Gets a value indicating whether determines whether to log personal information that came from the user.
-    public get logPersonalInformation(): boolean {
+    get logPersonalInformation(): boolean {
         return this._logPersonalInformation;
     }
 
     // Gets the currently configured botTelemetryClient that logs the events.
-    public get telemetryClient(): BotTelemetryClient {
+    get telemetryClient(): BotTelemetryClient {
         return this._telemetryClient;
     }
 
@@ -349,7 +360,7 @@ export class LuisRecognizer implements LuisRecognizerTelemetryClient {
      * @param {number} minScore (Optional) minimum score needed for an intent to be considered as a top intent. If all intents in the set are below this threshold then the `defaultIntent` will be returned.  Defaults to a value of `0.0`.
      * @returns {string} the top intent
      */
-    public static topIntent(results?: RecognizerResult, defaultIntent = 'None', minScore = 0): string {
+    static topIntent(results?: RecognizerResult, defaultIntent = 'None', minScore = 0): string {
         const sortedIntents = this.sortedIntents(results, minScore);
         const topIntent = sortedIntents[0];
         return topIntent?.intent || defaultIntent; // Note: `||` is intentionally not `??` and is covered by tests
@@ -363,7 +374,7 @@ export class LuisRecognizer implements LuisRecognizerTelemetryClient {
      * @param {number} minScore minimum score threshold, lower score results will be filtered
      * @returns {Array<{intent: string; score: number}>} sorted result intents
      */
-    public static sortedIntents(result?: RecognizerResult, minScore = 0): Array<{ intent: string; score: number }> {
+    static sortedIntents(result?: RecognizerResult, minScore = 0): Array<{ intent: string; score: number }> {
         return Object.entries(result?.intents ?? {})
             .map(([intent, { score = 0 }]) => ({ intent, score }))
             .filter(({ score }) => score > minScore)
@@ -412,45 +423,89 @@ export class LuisRecognizer implements LuisRecognizerTelemetryClient {
      * @param {LuisRecognizerOptionsV2 | LuisRecognizerOptionsV3 | LuisPredictionOptions} options (Optional) options object used to override control predictions. Should conform to the [LuisRecognizerOptionsV2] or [LuisRecognizerOptionsV3] definition.
      * @returns {Promise<RecognizerResult>} A promise that resolved to the recognizer result.
      */
-    public async recognize(
+    async recognize(
         context: DialogContext | TurnContext,
         telemetryProperties?: Record<string, string>,
         telemetryMetrics?: Record<string, number>,
         options?: LuisRecognizerOptionsV2 | LuisRecognizerOptionsV3 | LuisPredictionOptions
+    ): Promise<RecognizerResult>;
+
+    /**
+     * Calls LUIS to recognize intents and entities in a users utterance.
+     *
+     * @param {string} utterance The utterance to be recognized.
+     * @param {LuisRecognizerOptionsV2 | LuisRecognizerOptionsV3 | LuisPredictionOptions} options (Optional) options object used to override control predictions. Should conform to the [LuisRecognizerOptionsV2] or [LuisRecognizerOptionsV3] definition.
+     */
+    async recognize(
+        utterance: string,
+        options?: LuisRecognizerOptionsV2 | LuisRecognizerOptionsV3 | LuisPredictionOptions
+    ): Promise<RecognizerResult>;
+
+    /**
+     * @internal
+     */
+    async recognize(
+        contextOrUtterance: DialogContext | TurnContext | string,
+        maybeTelemetryPropertiesOrOptions?:
+            | Record<string, string>
+            | LuisRecognizerOptionsV2
+            | LuisRecognizerOptionsV3
+            | LuisPredictionOptions,
+        maybeTelemetryMetrics?: Record<string, number>,
+        maybeOptions?: LuisRecognizerOptionsV2 | LuisRecognizerOptionsV3 | LuisPredictionOptions
     ): Promise<RecognizerResult> {
-        const turnContext = context instanceof DialogContext ? context.context : context;
-        const cached = turnContext.turnState.get(this.cacheKey);
-        const luisRecognizer = options ? this.buildRecognizer(options) : this.luisRecognizerInternal;
-        if (!cached) {
-            const utterance = turnContext.activity.text || '';
-            let recognizerPromise: Promise<RecognizerResult>;
+        // This type check, when true, logically implies that the function is being invoked as the two-argument string + optional options overload variant.
+        if (typeof contextOrUtterance === 'string') {
+            const utterance = contextOrUtterance;
+            const options = UnsafeLuisRecognizerUnion.optional().check(maybeTelemetryPropertiesOrOptions);
 
-            if (!utterance.trim()) {
-                // Bypass LUIS if the activity's text is null or whitespace
-                recognizerPromise = Promise.resolve({
-                    text: utterance,
-                    intents: { '': { score: 1 } },
-                    entities: {},
-                });
-            } else {
-                recognizerPromise = luisRecognizer.recognizeInternal(context);
+            const luisRecognizer = options ? this.buildRecognizer(options) : this.luisRecognizerInternal;
+
+            return luisRecognizer.recognizeInternal(utterance);
+        } else {
+            const telemetryProperties = t
+                .Dictionary(t.String, t.String)
+                .optional()
+                .nullable()
+                .check(maybeTelemetryPropertiesOrOptions);
+            const turnContext =
+                contextOrUtterance instanceof DialogContext ? contextOrUtterance.context : contextOrUtterance;
+            const cached = turnContext.turnState.get(this.cacheKey);
+
+            if (!cached) {
+                const utterance = turnContext.activity.text || '';
+                let recognizerPromise: Promise<RecognizerResult>;
+
+                if (!utterance.trim()) {
+                    // Bypass LUIS if the activity's text is null or whitespace
+                    recognizerPromise = Promise.resolve({
+                        text: utterance,
+                        intents: { '': { score: 1 } },
+                        entities: {},
+                    });
+                } else {
+                    const luisRecognizer = maybeOptions
+                        ? this.buildRecognizer(maybeOptions)
+                        : this.luisRecognizerInternal;
+                    recognizerPromise = luisRecognizer.recognizeInternal(turnContext);
+                }
+
+                try {
+                    const recognizerResult = await recognizerPromise;
+                    // Write to cache
+                    turnContext.turnState.set(this.cacheKey, recognizerResult);
+
+                    // Log telemetry
+                    this.onRecognizerResults(recognizerResult, turnContext, telemetryProperties, maybeTelemetryMetrics);
+                    return recognizerResult;
+                } catch (error) {
+                    this.prepareErrorMessage(error);
+                    throw error;
+                }
             }
 
-            try {
-                const recognizerResult = await recognizerPromise;
-                // Write to cache
-                turnContext.turnState.set(this.cacheKey, recognizerResult);
-
-                // Log telemetry
-                this.onRecognizerResults(recognizerResult, turnContext, telemetryProperties, telemetryMetrics);
-                return recognizerResult;
-            } catch (error) {
-                this.prepareErrorMessage(error);
-                throw error;
-            }
+            return cached;
         }
-
-        return Promise.resolve(cached);
     }
 
     /**

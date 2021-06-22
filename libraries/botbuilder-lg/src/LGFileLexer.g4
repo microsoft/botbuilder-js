@@ -28,9 +28,9 @@ INLINE_MULTILINE: WHITESPACE* '-' WHITESPACE* '```' ~('\r'|'\n')* '```' WHITESPA
 
 MULTILINE_PREFIX: WHITESPACE* '-' WHITESPACE* '```' ~('\r'|'\n')* { this.startTemplate && this._tokenStartCharPositionInLine == 0 }? -> pushMode(MULTILINE_MODE);
 
-TEMPLATE_BODY : ~('\r'|'\n')+ { this.startTemplate }?;
+TEMPLATE_BODY : ~('\r'|'\n') { this.startTemplate }? ~('\r'|'\n')*;
 
-INVALID_LINE :  ~('\r'|'\n')+ { !this.startTemplate }?;
+INVALID_LINE :  ~('\r'|'\n') { !this.startTemplate }? ~('\r'|'\n')*;
 
 
 mode MULTILINE_MODE;

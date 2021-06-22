@@ -62,7 +62,7 @@ export interface LuisAdaptivePredictionOptionsConfiguration {
 
 export class LuisAdaptivePredictionOptionsConverter
     implements Converter<LuisAdaptivePredictionOptionsConfiguration, LuisAdaptivePredictionOptions> {
-    public convert(config: LuisAdaptivePredictionOptionsConfiguration): LuisAdaptivePredictionOptions {
+    convert(config: LuisAdaptivePredictionOptionsConfiguration): LuisAdaptivePredictionOptions {
         const options = Object.entries(config).reduce((options: LuisAdaptivePredictionOptions, [key, value]) => {
             switch (key) {
                 case 'includeAllIntents':

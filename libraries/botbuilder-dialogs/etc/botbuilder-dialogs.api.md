@@ -6,13 +6,17 @@
 
 import { Activity } from 'botbuilder-core';
 import { Attachment } from 'botbuilder-core';
+import { BotComponent } from 'botbuilder-core';
 import { BotFrameworkClient } from 'botbuilder-core';
 import { BotFrameworkSkill } from 'botbuilder-core';
 import { BotState } from 'botbuilder-core';
 import { BotTelemetryClient } from 'botbuilder-core';
 import { CardAction } from 'botbuilder-core';
+import { Configuration } from 'botbuilder-dialogs-adaptive-runtime-core';
 import { ConversationState } from 'botbuilder-core';
 import { CoreAppCredentials } from 'botbuilder-core';
+import { RecognizerResult } from 'botbuilder-core';
+import { ServiceCollection } from 'botbuilder-dialogs-adaptive-runtime-core';
 import { SkillConversationIdFactoryBase } from 'botbuilder-core';
 import { StatePropertyAccessor } from 'botbuilder-core';
 import { TokenResponse } from 'botbuilder-core';
@@ -23,24 +27,17 @@ import { UserState } from 'botbuilder-core';
 // @public
 export class ActivityPrompt extends Dialog {
     constructor(dialogId: string, validator: PromptValidator<Activity>);
-    // (undocumented)
     beginDialog(dc: DialogContext, options: PromptOptions): Promise<DialogTurnResult>;
-    // (undocumented)
     continueDialog(dc: DialogContext): Promise<DialogTurnResult>;
-    // (undocumented)
     protected onPrompt(context: TurnContext, state: object, options: PromptOptions, isRetry: boolean): Promise<void>;
-    // (undocumented)
     protected onRecognize(context: TurnContext, state: object, options: PromptOptions): Promise<PromptRecognizerResult<Activity>>;
-    // (undocumented)
     repromptDialog(context: TurnContext, instance: DialogInstance): Promise<void>;
-    // (undocumented)
     resumeDialog(dc: DialogContext, reason: DialogReason, result?: any): Promise<DialogTurnResult>;
     }
 
 // @public
 export class AliasPathResolver implements PathResolver {
     constructor(alias: string, prefix: string, postfix?: string);
-    // (undocumented)
     transformPath(path: string): string;
 }
 
@@ -52,16 +49,13 @@ export class AtAtPathResolver extends AliasPathResolver {
 // @public
 export class AtPathResolver extends AliasPathResolver {
     constructor();
-    // (undocumented)
     transformPath(path: string): string;
 }
 
 // @public
 export class AttachmentPrompt extends Prompt<Attachment[]> {
     constructor(dialogId: string, validator?: PromptValidator<Attachment[]>);
-    // (undocumented)
     protected onPrompt(context: TurnContext, state: any, options: PromptOptions, isRetry: boolean): Promise<void>;
-    // (undocumented)
     protected onRecognize(context: TurnContext, state: any, options: PromptOptions): Promise<PromptRecognizerResult<Attachment[]>>;
 }
 
@@ -73,12 +67,9 @@ export interface BeginSkillDialogOptions {
 // @public
 export class BotStateMemoryScope extends MemoryScope {
     constructor(name: string);
-    // (undocumented)
     delete(dc: DialogContext): Promise<void>;
     getMemory(dc: DialogContext): object;
-    // (undocumented)
     load(dc: DialogContext, force?: boolean): Promise<void>;
-    // (undocumented)
     saveChanges(dc: DialogContext, force?: boolean): Promise<void>;
     setMemory(dc: DialogContext, memory: object): void;
     // (undocumented)
@@ -95,7 +86,6 @@ export interface Choice {
 // @public
 export class ChoiceFactory {
     static forChannel(channelOrContext: string | TurnContext, choices: (string | Choice)[], text?: string, speak?: string, options?: ChoiceFactoryOptions): Partial<Activity>;
-    // (undocumented)
     static heroCard(choices?: (string | Choice)[], text?: string, speak?: string): Activity;
     static inline(choices: (string | Choice)[], text?: string, speak?: string, options?: ChoiceFactoryOptions): Partial<Activity>;
     static list(choices: (string | Choice)[], text?: string, speak?: string, options?: ChoiceFactoryOptions): Partial<Activity>;
@@ -117,9 +107,7 @@ export class ChoicePrompt extends Prompt<FoundChoice> {
     constructor(dialogId: string, validator?: PromptValidator<FoundChoice>, defaultLocale?: string, choiceDefaults?: ChoiceDefaultsChoicePrompt);
     choiceOptions: ChoiceFactoryOptions | undefined;
     defaultLocale: string | undefined;
-    // (undocumented)
     protected onPrompt(context: TurnContext, state: any, options: PromptOptions, isRetry: boolean): Promise<void>;
-    // (undocumented)
     protected onRecognize(context: TurnContext, state: any, options: PromptOptions): Promise<PromptRecognizerResult<FoundChoice>>;
     recognizerOptions: FindChoicesOptions | undefined;
     style: ListStyle;
@@ -128,7 +116,6 @@ export class ChoicePrompt extends Prompt<FoundChoice> {
 // @public
 export class ClassMemoryScope extends MemoryScope {
     constructor(name?: string);
-    // (undocumented)
     getMemory(dc: DialogContext): object;
     protected onFindDialog(dc: DialogContext): Dialog;
 }
@@ -136,28 +123,37 @@ export class ClassMemoryScope extends MemoryScope {
 // @public
 export class ComponentDialog<O extends object = {}> extends DialogContainer<O> {
     addDialog(dialog: Dialog): this;
-    // (undocumented)
     beginDialog(outerDC: DialogContext, options?: O): Promise<DialogTurnResult>;
-    // (undocumented)
     continueDialog(outerDC: DialogContext): Promise<DialogTurnResult>;
     createChildContext(outerDC: DialogContext): DialogContext;
     protected endComponent(outerDC: DialogContext, result: any): Promise<DialogTurnResult>;
-    // (undocumented)
     endDialog(context: TurnContext, instance: DialogInstance, reason: DialogReason): Promise<void>;
     protected initialDialogId: string;
     protected onBeginDialog(innerDC: DialogContext, options?: O): Promise<DialogTurnResult>;
     protected onContinueDialog(innerDC: DialogContext): Promise<DialogTurnResult>;
     protected onEndDialog(context: TurnContext, instance: DialogInstance, reason: DialogReason): Promise<void>;
     protected onRepromptDialog(context: TurnContext, instance: DialogInstance): Promise<void>;
-    // (undocumented)
     repromptDialog(context: TurnContext, instance: DialogInstance): Promise<void>;
-    // (undocumented)
     resumeDialog(outerDC: DialogContext, reason: DialogReason, result?: any): Promise<DialogTurnResult>;
 }
 
 // @public
+export interface ComponentMemoryScopes {
+    // (undocumented)
+    getMemoryScopes(): MemoryScope[];
+}
+
+// @public
+export interface ComponentPathResolvers {
+    // (undocumented)
+    getPathResolvers(): PathResolver[];
+}
+
+// @public
 export abstract class Configurable {
-    configure(config: object): this;
+    configure(config: Record<string, unknown>): this;
+    // (undocumented)
+    getConverter(_property: string): Converter | ConverterFactory;
 }
 
 // @public
@@ -167,9 +163,7 @@ export class ConfirmPrompt extends Prompt<boolean> {
     choiceOptions: ChoiceFactoryOptions | undefined;
     confirmChoices: (string | Choice)[] | undefined;
     defaultLocale: string | undefined;
-    // (undocumented)
     protected onPrompt(context: TurnContext, state: any, options: PromptOptions, isRetry: boolean): Promise<void>;
-    // (undocumented)
     protected onRecognize(context: TurnContext, state: any, options: PromptOptions): Promise<PromptRecognizerResult<boolean>>;
     style: ListStyle;
 }
@@ -182,12 +176,21 @@ export class ConversationMemoryScope extends BotStateMemoryScope {
 }
 
 // @public
+export interface Converter<From = unknown, To = unknown> {
+    // (undocumented)
+    convert(value: From | To): To;
+}
+
+// @public (undocumented)
+export type ConverterFactory<From = unknown, To = unknown> = {
+    new (...args: unknown[]): Converter<From, To>;
+};
+
+// @public
 export class DateTimePrompt extends Prompt<DateTimeResolution[]> {
     constructor(dialogId: string, validator?: PromptValidator<DateTimeResolution[]>, defaultLocale?: string);
     defaultLocale: string | undefined;
-    // (undocumented)
     protected onPrompt(context: TurnContext, state: any, options: PromptOptions, isRetry: boolean): Promise<void>;
-    // (undocumented)
     protected onRecognize(context: TurnContext, state: any, options: PromptOptions): Promise<PromptRecognizerResult<DateTimeResolution[]>>;
 }
 
@@ -209,15 +212,18 @@ export abstract class Dialog<O extends object = {}> extends Configurable {
     endDialog(context: TurnContext, instance: DialogInstance, reason: DialogReason): Promise<void>;
     static EndOfTurn: DialogTurnResult;
     getVersion(): string;
-    id: string;
+    get id(): string;
+    // Warning: (ae-setter-with-docs) The doc comment for the property "id" must appear on the getter, not the setter.
+    set id(value: string);
     protected onComputeId(): string;
-    // (undocumented)
     onDialogEvent(dc: DialogContext, e: DialogEvent): Promise<boolean>;
     protected onPostBubbleEvent(dc: DialogContext, e: DialogEvent): Promise<boolean>;
     protected onPreBubbleEvent(dc: DialogContext, e: DialogEvent): Promise<boolean>;
     repromptDialog(context: TurnContext, instance: DialogInstance): Promise<void>;
     resumeDialog(dc: DialogContext, reason: DialogReason, result?: any): Promise<DialogTurnResult>;
-    telemetryClient: BotTelemetryClient;
+    get telemetryClient(): BotTelemetryClient;
+    // Warning: (ae-setter-with-docs) The doc comment for the property "telemetryClient" must appear on the getter, not the setter.
+    set telemetryClient(client: BotTelemetryClient);
     protected _telemetryClient: BotTelemetryClient;
 }
 
@@ -234,72 +240,64 @@ export interface DialogConfiguration {
     telemetryClient?: BotTelemetryClient;
 }
 
-// @public (undocumented)
-export interface DialogConfiguration {
-    id?: string;
-    telemetryClient?: BotTelemetryClient;
-}
-
-// @public (undocumented)
-export interface DialogConfiguration {
-    id?: string;
-    telemetryClient?: BotTelemetryClient;
-}
-
-// @public (undocumented)
+// @public
 export abstract class DialogContainer<O extends object = {}> extends Dialog<O> {
     protected checkForVersionChange(dc: DialogContext): Promise<void>;
     abstract createChildContext(dc: DialogContext): DialogContext | undefined;
     readonly dialogs: DialogSet;
     findDialog(dialogId: string): Dialog | undefined;
     protected getInternalVersion(): string;
-    telemetryClient: BotTelemetryClient;
+    onDialogEvent(dc: DialogContext, e: DialogEvent): Promise<boolean>;
+    // Warning: (ae-setter-with-docs) The doc comment for the property "telemetryClient" must appear on the getter, not the setter.
+    set telemetryClient(client: BotTelemetryClient);
+    get telemetryClient(): BotTelemetryClient;
 }
 
 // @public
 export class DialogContext {
-    constructor(dialogContext: DialogContext);
     constructor(dialogs: DialogSet, contextOrDC: TurnContext, state: DialogState);
     constructor(dialogs: DialogSet, contextOrDC: DialogContext, state: DialogState);
-    readonly activeDialog: DialogInstance | undefined;
+    get activeDialog(): DialogInstance | undefined;
     beginDialog(dialogId: string, options?: object): Promise<DialogTurnResult>;
     cancelAllDialogs(cancelParents?: boolean, eventName?: string, eventValue?: any): Promise<DialogTurnResult>;
-    readonly child: DialogContext | undefined;
+    get child(): DialogContext | undefined;
     context: TurnContext;
     continueDialog(): Promise<DialogTurnResult>;
-    readonly dialogManager: DialogManager;
+    get dialogManager(): DialogManager;
     dialogs: DialogSet;
     emitEvent(name: string, value?: any, bubble?: boolean, fromLeaf?: boolean): Promise<boolean>;
     endDialog(result?: any): Promise<DialogTurnResult>;
     findDialog(dialogId: string): Dialog | undefined;
+    getLocale(): string;
     parent: DialogContext | undefined;
     prompt(dialogId: string, promptOrOptions: string | Partial<Activity> | PromptOptions): Promise<DialogTurnResult>;
-    // (undocumented)
     prompt(dialogId: string, promptOrOptions: string | Partial<Activity> | PromptOptions, choices: (string | Choice)[]): Promise<DialogTurnResult>;
     replaceDialog(dialogId: string, options?: object): Promise<DialogTurnResult>;
     repromptDialog(): Promise<void>;
+    services: TurnContextStateCollection;
     stack: DialogInstance[];
-    // (undocumented)
     state: DialogStateManager;
+}
+
+// @public
+export class DialogContextError extends Error {
+    constructor(source: Error | string, dialogContext: DialogContext);
+    readonly dialogContext: {
+        activeDialog?: string;
+        parent?: string;
+        stack: DialogInstance[];
+    };
+}
+
+// @public
+export class DialogContextMemoryScope extends MemoryScope {
+    constructor();
+    getMemory(dc: DialogContext): Record<'stack' | 'activeDialog' | 'parent', unknown>;
 }
 
 // @public (undocumented)
 export interface DialogDependencies {
     getDependencies(): Dialog[];
-}
-
-// @public (undocumented)
-export interface DialogEvent {
-    bubble: boolean;
-    name: string;
-    value?: any;
-}
-
-// @public (undocumented)
-export interface DialogEvent {
-    bubble: boolean;
-    name: string;
-    value?: any;
 }
 
 // @public (undocumented)
@@ -326,17 +324,18 @@ export interface DialogInstance<T = any> {
     version?: string;
 }
 
-// @public (undocumented)
+// @public
 export class DialogManager extends Configurable {
     constructor(rootDialog?: Dialog, dialogStateProperty?: string);
-    // (undocumented)
     configure(config: Partial<DialogManagerConfiguration>): this;
     conversationState: ConversationState;
+    dialogs: DialogSet;
     expireAfter?: number;
-    readonly initialTurnState: TurnContextStateCollection;
-    // (undocumented)
+    get initialTurnState(): TurnContextStateCollection;
     onTurn(context: TurnContext): Promise<DialogManagerResult>;
-    rootDialog: Dialog;
+    // Warning: (ae-setter-with-docs) The doc comment for the property "rootDialog" must appear on the getter, not the setter.
+    set rootDialog(value: Dialog);
+    get rootDialog(): Dialog;
     stateConfiguration?: DialogStateManagerConfiguration;
     userState?: UserState;
 }
@@ -359,14 +358,14 @@ export interface DialogManagerResult {
 // @public
 export class DialogMemoryScope extends MemoryScope {
     constructor();
-    // (undocumented)
     getMemory(dc: DialogContext): object;
-    // (undocumented)
     setMemory(dc: DialogContext, memory: object): void;
 }
 
 // @public
 export class DialogPath {
+    // (undocumented)
+    static readonly defaultOperation = "dialog.defaultOperation";
     // (undocumented)
     static readonly eventCounter = "dialog.eventCounter";
     // (undocumented)
@@ -393,14 +392,23 @@ export enum DialogReason {
     replaceCalled = "replaceCalled"
 }
 
+// @public (undocumented)
+export class DialogsBotComponent extends BotComponent {
+    // (undocumented)
+    configureServices(services: ServiceCollection, configuration: Configuration): void;
+}
+
 // @public
 export class DialogSet {
     constructor(dialogState?: StatePropertyAccessor<DialogState>);
     add<T extends Dialog>(dialog: T): this;
     createContext(context: TurnContext): Promise<DialogContext>;
     find(dialogId: string): Dialog | undefined;
+    getDialogs(): Dialog[];
     getVersion(): string;
-    telemetryClient: BotTelemetryClient;
+    get telemetryClient(): BotTelemetryClient;
+    // Warning: (ae-setter-with-docs) The doc comment for the property "telemetryClient" must appear on the getter, not the setter.
+    set telemetryClient(client: BotTelemetryClient);
     }
 
 // @public
@@ -413,8 +421,6 @@ export class DialogStateManager {
     constructor(dc: DialogContext, configuration?: DialogStateManagerConfiguration);
     anyPathChanged(counter: number, paths: string[]): boolean;
     configuration: DialogStateManagerConfiguration;
-    // (undocumented)
-    static createStandardConfiguration(): DialogStateManagerConfiguration;
     deleteScopesMemory(name: string): Promise<void>;
     deleteValue(pathExpression: string): void;
     getMemorySnapshot(): object;
@@ -425,7 +431,6 @@ export class DialogStateManager {
     setValue(pathExpression: string, value: any): void;
     trackPaths(paths: string[]): string[];
     transformPath(pathExpression: string): string;
-    // (undocumented)
     version(): string;
 }
 
@@ -445,7 +450,13 @@ export interface DialogTurnResult<T = any> {
 // @public
 export class DialogTurnStateConstants {
     // (undocumented)
+    static configuration: symbol;
+    // (undocumented)
     static dialogManager: symbol;
+    // (undocumented)
+    static queueStorage: symbol;
+    // (undocumented)
+    static telemetryClient: symbol;
 }
 
 // @public
@@ -514,6 +525,12 @@ export class HashPathResolver extends AliasPathResolver {
 export function hasMessageFeed(channelId: string): boolean;
 
 // @public
+export function isComponentMemoryScopes(component: unknown): component is ComponentMemoryScopes;
+
+// @public
+export function isComponentPathResolvers(component: unknown): component is ComponentPathResolvers;
+
+// @public
 export enum ListStyle {
     auto = 1,
     heroCard = 5,
@@ -550,27 +567,25 @@ export interface ModelResult<T extends Record<string, any> = {}> {
 // @public
 export class NumberPrompt extends Prompt<number> {
     constructor(dialogId: string, validator?: PromptValidator<number>, defaultLocale?: string);
-    defaultLocale: string | undefined;
-    // (undocumented)
-    protected onPrompt(context: TurnContext, state: any, options: PromptOptions, isRetry: boolean): Promise<void>;
-    // (undocumented)
-    protected onRecognize(context: TurnContext, state: any, options: PromptOptions): Promise<PromptRecognizerResult<number>>;
+    defaultLocale?: string;
+    protected onPrompt(context: TurnContext, state: unknown, options: PromptOptions, isRetry: boolean): Promise<void>;
+    protected onRecognize(context: TurnContext, state: unknown, options: PromptOptions): Promise<PromptRecognizerResult<number>>;
 }
 
 // @public
 export class OAuthPrompt extends Dialog {
     constructor(dialogId: string, settings: OAuthPromptSettings, validator?: PromptValidator<TokenResponse>);
-    // (undocumented)
     beginDialog(dc: DialogContext, options?: PromptOptions): Promise<DialogTurnResult>;
-    // (undocumented)
     continueDialog(dc: DialogContext): Promise<DialogTurnResult>;
     getUserToken(context: TurnContext, code?: string): Promise<TokenResponse | undefined>;
+    static sendOAuthCard(settings: OAuthPromptSettings, turnContext: TurnContext, prompt?: string | Partial<Activity>): Promise<void>;
     signOutUser(context: TurnContext): Promise<void>;
     }
 
 // @public
 export interface OAuthPromptSettings {
     connectionName: string;
+    endOnInvalidMessage?: boolean;
     oAuthAppCredentials?: CoreAppCredentials;
     text?: string;
     timeout?: number;
@@ -591,17 +606,12 @@ export class PercentPathResolver extends AliasPathResolver {
 export abstract class Prompt<T> extends Dialog {
     protected constructor(dialogId: string, validator?: PromptValidator<T>);
     protected appendChoices(prompt: string | Partial<Activity>, channelId: string, choices: (string | Choice)[], style: ListStyle, options?: ChoiceFactoryOptions): Partial<Activity>;
-    // (undocumented)
     beginDialog(dc: DialogContext, options: PromptOptions): Promise<DialogTurnResult>;
-    // (undocumented)
     continueDialog(dc: DialogContext): Promise<DialogTurnResult>;
-    // (undocumented)
     protected onPreBubbleEvent(dc: DialogContext, event: DialogEvent): Promise<boolean>;
     protected abstract onPrompt(context: TurnContext, state: object, options: PromptOptions, isRetry: boolean): Promise<void>;
     protected abstract onRecognize(context: TurnContext, state: object, options: PromptOptions): Promise<PromptRecognizerResult<T>>;
-    // (undocumented)
     repromptDialog(context: TurnContext, instance: DialogInstance): Promise<void>;
-    // (undocumented)
     resumeDialog(dc: DialogContext, reason: DialogReason, result?: any): Promise<DialogTurnResult>;
     }
 
@@ -670,7 +680,27 @@ export interface PromptValidatorContext<T> {
 // @public
 export function recognizeChoices(utterance: string, choices: (string | Choice)[], options?: FindChoicesOptions): ModelResult<FoundChoice>[];
 
+// @public
+export class Recognizer extends Configurable implements RecognizerConfiguration {
+    protected createChooseIntentResult(recognizerResults: Record<string, RecognizerResult>): RecognizerResult;
+    protected fillRecognizerResultTelemetryProperties(recognizerResult: RecognizerResult, telemetryProperties: Record<string, string>, dialogContext?: DialogContext): Record<string, string>;
+    id: string;
+    recognize(dialogContext: DialogContext, activity: Partial<Activity>, telemetryProperties?: Record<string, string>, telemetryMetrics?: Record<string, number>): Promise<RecognizerResult>;
+    // (undocumented)
+    protected stringifyAdditionalPropertiesOfRecognizerResult(recognizerResult: RecognizerResult): string;
+    telemetryClient: BotTelemetryClient;
+    protected trackRecognizerResult(dialogContext: DialogContext, eventName: string, telemetryProperties?: Record<string, string>, telemetryMetrics?: Record<string, number>): void;
+}
+
 // @public (undocumented)
+export interface RecognizerConfiguration {
+    // (undocumented)
+    id?: string;
+    // (undocumented)
+    telemetryClient?: BotTelemetryClient;
+}
+
+// @public
 export function runDialog(dialog: Dialog, context: TurnContext, accessor: StatePropertyAccessor<DialogState>): Promise<void>;
 
 // @public
@@ -679,6 +709,7 @@ export class ScopePath {
     static readonly conversation = "conversation";
     static readonly dialog = "dialog";
     static readonly dialogClass = "dialogClass";
+    static readonly dialogContext = "dialogContext";
     static readonly settings = "settings";
     static readonly this = "this";
     static readonly turn = "turn";
@@ -687,26 +718,23 @@ export class ScopePath {
 
 // @public
 export class SettingsMemoryScope extends MemoryScope {
-    constructor();
+    constructor(initialSettings?: Record<string, unknown>);
+    getMemory(dc: DialogContext): Record<string, unknown>;
     // (undocumented)
-    getMemory(dc: DialogContext): object;
+    load(dc: DialogContext): Promise<void>;
+    protected static loadSettings(configuration: Record<string, string>): Record<string, unknown>;
 }
 
-// @public (undocumented)
+// @public
 export class SkillDialog extends Dialog<Partial<BeginSkillDialogOptions>> {
     constructor(dialogOptions: SkillDialogOptions, dialogId?: string);
-    // (undocumented)
     beginDialog(dc: DialogContext, options: BeginSkillDialogOptions): Promise<DialogTurnResult>;
-    // (undocumented)
     continueDialog(dc: DialogContext): Promise<DialogTurnResult>;
     // (undocumented)
     protected dialogOptions: SkillDialogOptions;
-    // (undocumented)
     endDialog(context: TurnContext, instance: DialogInstance, reason: DialogReason): Promise<void>;
     protected onValidateActivity(activity: Activity): boolean;
-    // (undocumented)
     repromptDialog(context: TurnContext, instance: DialogInstance): Promise<void>;
-    // (undocumented)
     resumeDialog(dc: DialogContext, reason: DialogReason, result?: any): Promise<DialogTurnResult>;
     }
 
@@ -736,22 +764,22 @@ export function supportsCardActions(channelId: string, buttonCnt?: number): bool
 export function supportsSuggestedActions(channelId: string, buttonCnt?: number): boolean;
 
 // @public
+export interface TemplateInterface<T, D = Record<string, unknown>> {
+    bind(dialogContext: DialogContext, data?: D): Promise<T>;
+}
+
+// @public
 export class TextPrompt extends Prompt<string> {
     constructor(dialogId?: string, validator?: PromptValidator<string>);
-    // (undocumented)
     protected onPreBubbleEvent(dc: DialogContext, event: DialogEvent): Promise<boolean>;
-    // (undocumented)
     protected onPrompt(context: TurnContext, state: any, options: PromptOptions, isRetry: boolean): Promise<void>;
-    // (undocumented)
     protected onRecognize(context: TurnContext, state: any, options: PromptOptions): Promise<PromptRecognizerResult<string>>;
 }
 
 // @public
 export class ThisMemoryScope extends MemoryScope {
     constructor();
-    // (undocumented)
     getMemory(dc: DialogContext): object;
-    // (undocumented)
     setMemory(dc: DialogContext, memory: object): void;
 }
 
@@ -774,9 +802,7 @@ export type TokenizerFunction = (text: string, locale?: string) => Token[];
 // @public
 export class TurnMemoryScope extends MemoryScope {
     constructor();
-    // (undocumented)
     getMemory(dc: DialogContext): object;
-    // (undocumented)
     setMemory(dc: DialogContext, memory: object): void;
 }
 
@@ -819,17 +845,12 @@ export class UserMemoryScope extends BotStateMemoryScope {
 export class WaterfallDialog<O extends object = {}> extends Dialog<O> {
     constructor(dialogId: string, steps?: WaterfallStep<O>[]);
     addStep(step: WaterfallStep<O>): this;
-    // (undocumented)
     beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult>;
-    // (undocumented)
     continueDialog(dc: DialogContext): Promise<DialogTurnResult>;
     endDialog(context: TurnContext, instance: DialogInstance, reason: DialogReason): Promise<void>;
-    // (undocumented)
     getVersion(): string;
     protected onStep(step: WaterfallStepContext<O>): Promise<DialogTurnResult>;
-    // (undocumented)
     resumeDialog(dc: DialogContext, reason: DialogReason, result?: any): Promise<DialogTurnResult>;
-    // (undocumented)
     protected runStep(dc: DialogContext, index: number, reason: DialogReason, result?: any): Promise<DialogTurnResult>;
     }
 
@@ -839,12 +860,12 @@ export type WaterfallStep<O extends object = {}> = (step: WaterfallStepContext<O
 // @public
 export class WaterfallStepContext<O extends object = {}> extends DialogContext {
     constructor(dc: DialogContext, info: WaterfallStepInfo<O>);
-    readonly index: number;
+    get index(): number;
     next(result?: any): Promise<DialogTurnResult>;
-    readonly options: O;
-    readonly reason: DialogReason;
-    readonly result: any;
-    readonly values: object;
+    get options(): O;
+    get reason(): DialogReason;
+    get result(): any;
+    get values(): object;
 }
 
 // @public

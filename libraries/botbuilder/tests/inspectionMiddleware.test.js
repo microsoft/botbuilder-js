@@ -346,7 +346,7 @@ describe('InspectionMiddleware', function () {
         assert(stateExpectation.isDone(), 'The expectation of a trace message for the bot state was not met');
     });
 
-    it('should update activity message to trigger turnContext.onUpdateActivity', async () => {
+    it('should update activity message to trigger turnContext.onUpdateActivity', async function () {
         // set up our expectations in nock - each corresponds to a trace message we expect to receive in the emulator
 
         nock('https://test.com')
@@ -427,7 +427,7 @@ describe('InspectionMiddleware', function () {
         assert.strictEqual(adapter.activityBuffer[1].text, activity.text, `invalid update activity text.`);
     });
 
-    it('should delete activity to trigger turnContext.onDeleteActivity', async () => {
+    it('should delete activity to trigger turnContext.onDeleteActivity', async function () {
         // set up our expectations in nock - each corresponds to a trace message we expect to receive in the emulator
 
         nock('https://test.com')
@@ -507,7 +507,7 @@ describe('InspectionMiddleware', function () {
         assert.strictEqual(adapter.activityBuffer.length, 1, `no activities deleted.`);
     });
 
-    it('should throw an error when onTurn next parameter is null', async () => {
+    it('should throw an error when onTurn next parameter is null', async function () {
         // set up our expectations in nock - each corresponds to a trace message we expect to receive in the emulator
 
         nock('https://test.com')
@@ -561,12 +561,10 @@ describe('InspectionMiddleware', function () {
 
         const adapter = new TestAdapter(
             async (turnContext) => {
-                try {
-                    await inspectionMiddleware.onTurn(turnContext, null);
-                    throw new Error('should have thrown an error.');
-                } catch (error) {
-                    assert.strictEqual(error.message, 'next is not a function', 'next function should be null');
-                }
+                await assert.rejects(
+                    inspectionMiddleware.onTurn(turnContext, null),
+                    TypeError('next is not a function', 'next function should be null')
+                );
             },
             null,
             true
@@ -579,7 +577,7 @@ describe('InspectionMiddleware', function () {
         await adapter.receiveActivity('');
     });
 
-    it('should invokeInbound throw an error', async () => {
+    it('should invokeInbound throw an error', async function () {
         const storage = new MemoryStorage();
         const inspectionState = new InspectionState(storage);
         const userState = new UserState(storage);
@@ -597,7 +595,7 @@ describe('InspectionMiddleware', function () {
         warn.restore();
     });
 
-    it('should invokeOutbound throw an error', async () => {
+    it('should invokeOutbound throw an error', async function () {
         const storage = new MemoryStorage();
         const inspectionState = new InspectionState(storage);
         const userState = new UserState(storage);
@@ -615,7 +613,7 @@ describe('InspectionMiddleware', function () {
         warn.restore();
     });
 
-    it('should invokeTraceState throw an error', async () => {
+    it('should invokeTraceState throw an error', async function () {
         const storage = new MemoryStorage();
         const inspectionState = new InspectionState(storage);
         const userState = new UserState(storage);
@@ -633,7 +631,7 @@ describe('InspectionMiddleware', function () {
         warn.restore();
     });
 
-    it('should attachCommand return false', async () => {
+    it('should attachCommand return false', async function () {
         const storage = new MemoryStorage();
         const inspectionState = new InspectionState(storage);
         const userState = new UserState(storage);

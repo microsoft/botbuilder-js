@@ -5,10 +5,16 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
+import { ActivityTemplate, StaticActivityTemplate } from '../templates';
+import { ActivityTemplateConverter } from '../converters';
+import { ActivityTypes, Activity, InputHints, MessageFactory } from 'botbuilder';
+import { AdaptiveEvents } from '../adaptiveEvents';
+import { AttachmentInput } from './attachmentInput';
+import { BoolProperty, IntProperty, StringProperty, TemplateInterfaceProperty, UnknownProperty } from '../properties';
+
 import {
     BoolExpression,
     BoolExpressionConverter,
-    Expression,
     ExpressionParser,
     IntExpression,
     IntExpressionConverter,
@@ -17,7 +23,7 @@ import {
     ValueExpression,
     ValueExpressionConverter,
 } from 'adaptive-expressions';
-import { ActivityTypes, Activity, InputHints, MessageFactory } from 'botbuilder';
+
 import {
     Choice,
     ChoiceFactory,
@@ -36,10 +42,6 @@ import {
     TemplateInterface,
     TurnPath,
 } from 'botbuilder-dialogs';
-import { AdaptiveEvents } from '../adaptiveEvents';
-import { AttachmentInput } from './attachmentInput';
-import { ActivityTemplate, StaticActivityTemplate } from '../templates';
-import { ActivityTemplateConverter } from '../converters';
 
 export enum InputState {
     missing = 'missing',
@@ -49,18 +51,18 @@ export enum InputState {
 }
 
 export interface InputDialogConfiguration extends DialogConfiguration {
-    alwaysPrompt?: boolean | string | Expression | BoolExpression;
-    allowInterruptions?: boolean | string | Expression | BoolExpression;
-    property?: string | Expression | StringExpression;
-    value?: unknown | ValueExpression;
-    prompt?: string | Partial<Activity> | TemplateInterface<Partial<Activity>, DialogStateManager>;
-    unrecognizedPrompt?: string | Partial<Activity> | TemplateInterface<Partial<Activity>, DialogStateManager>;
-    invalidPrompt?: string | Partial<Activity> | TemplateInterface<Partial<Activity>, DialogStateManager>;
-    defaultValueResponse?: string | Partial<Activity> | TemplateInterface<Partial<Activity>, DialogStateManager>;
+    alwaysPrompt?: BoolProperty;
+    allowInterruptions?: BoolProperty;
+    property?: StringProperty;
+    value?: UnknownProperty;
+    prompt?: TemplateInterfaceProperty<Partial<Activity>, DialogStateManager>;
+    unrecognizedPrompt?: TemplateInterfaceProperty<Partial<Activity>, DialogStateManager>;
+    invalidPrompt?: TemplateInterfaceProperty<Partial<Activity>, DialogStateManager>;
+    defaultValueResponse?: TemplateInterfaceProperty<Partial<Activity>, DialogStateManager>;
     validations?: string[];
-    maxTurnCount?: number | string | Expression | IntExpression;
-    defaultValue?: unknown | ValueExpression;
-    disabled?: boolean | string | Expression | BoolExpression;
+    maxTurnCount?: IntProperty;
+    defaultValue?: UnknownProperty;
+    disabled?: BoolProperty;
 }
 
 /**
@@ -243,7 +245,10 @@ export abstract class InputDialog extends Dialog implements InputDialogConfigura
             }
             return await dc.endDialog(input);
         } else if (!this.maxTurnCount || turnCount < this.maxTurnCount.getValue(dc.state)) {
-            dc.state.setValue(InputDialog.TURN_COUNT_PROPERTY, turnCount + 1);
+            if (!interrupted) {
+                dc.state.setValue(InputDialog.TURN_COUNT_PROPERTY, turnCount + 1);
+            }
+
             return await this.promptUser(dc, state);
         } else {
             if (this.defaultValue) {

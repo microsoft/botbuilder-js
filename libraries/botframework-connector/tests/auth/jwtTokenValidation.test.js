@@ -17,15 +17,15 @@ const {
     MicrosoftAppCredentials,
 } = require('../..');
 
-describe('JwtTokenValidation', () => {
-    afterEach(() => {
+describe('JwtTokenValidation', function () {
+    afterEach(function () {
         JwtTokenExtractor.openIdMetadataCache.clear();
     });
 
     jwt.mocha();
     oauth.mocha();
 
-    describe('authenticateRequest', () => {
+    describe('authenticateRequest', function () {
         const authenticateRequest = async ({
             appId = 'appId',
             appPassword = 'password',

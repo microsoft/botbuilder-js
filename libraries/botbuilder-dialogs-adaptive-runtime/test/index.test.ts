@@ -33,6 +33,9 @@ describe('getRuntimeServices', function () {
 
         // Ensure that a setting in a generated file is merged in
         strictEqual(configuration.string(['luis', 'fancySetting']), 'fancyValue');
+
+        // Ensure that a setting in a generated file takes precedence over appsettings
+        strictEqual(configuration.string(['luis', 'override']), 'new value');
     });
 
     it('supports bot components and late binding configuration', async function () {
@@ -94,7 +97,7 @@ describe('getRuntimeServices', function () {
 
             configuration.set(['CosmosDbPartitionedStorage'], {
                 authKey: 'authKey',
-                cosmosDbEndpoint: 'cosmosDbEndpoint',
+                cosmosDBEndpoint: 'cosmosDbEndpoint',
                 containerId: 'containerId',
                 databaseId: 'databaseId',
             });

@@ -282,6 +282,10 @@ describe('ActionTests', function () {
         await TestUtils.runTestScript(resourceExplorer, 'Action_Foreach_Empty');
     });
 
+    it('Foreach_Object', async () => {
+        await TestUtils.runTestScript(resourceExplorer, 'Action_Foreach_Object');
+    });
+
     it('ForeachPage_Empty', async () => {
         await TestUtils.runTestScript(resourceExplorer, 'Action_ForeachPage_Empty');
     });

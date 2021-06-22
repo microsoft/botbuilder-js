@@ -5,8 +5,12 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { BoolExpression, BoolExpressionConverter, Expression } from 'adaptive-expressions';
+import { ActionScope } from './actionScope';
+import { BoolExpression, BoolExpressionConverter } from 'adaptive-expressions';
+import { BoolProperty } from '../properties';
+import { DialogListConverter } from '../converters';
 import { StringUtils } from 'botbuilder';
+
 import {
     Converter,
     ConverterFactory,
@@ -16,14 +20,12 @@ import {
     DialogDependencies,
     DialogTurnResult,
 } from 'botbuilder-dialogs';
-import { ActionScope } from './actionScope';
-import { DialogListConverter } from '../converters';
 
 export interface IfConditionConfiguration extends DialogConfiguration {
-    condition?: boolean | string | Expression | BoolExpression;
+    condition?: BoolProperty;
     actions?: string[] | Dialog[];
     elseActions?: string[] | Dialog[];
-    disabled?: boolean | string | Expression | BoolExpression;
+    disabled?: BoolProperty;
 }
 
 /**
@@ -85,7 +87,7 @@ export class IfCondition<O extends object = {}>
         }
     }
 
-    /**   
+    /**
      * @protected
      * Gets the true scope.
      * @returns An [ActionScope](xref:botbuilder-dialogs-adaptive.ActionScope).

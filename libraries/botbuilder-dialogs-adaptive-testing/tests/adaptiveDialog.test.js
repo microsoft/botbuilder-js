@@ -43,6 +43,10 @@ describe('AdaptiveDialogTests', function () {
         await TestUtils.runTestScript(resourceExplorer, 'AdaptiveDialog_AllowInterruptionNeverWithUnrecognizedInput');
     });
 
+    it('AllowInterruptionWithMaxCount', async function () {
+        await TestUtils.runTestScript(resourceExplorer, 'AdaptiveDialog_AllowInterruptionWithMaxCount');
+    });
+
     it('BeginDialog', async function () {
         await TestUtils.runTestScript(resourceExplorer, 'AdaptiveDialog_BeginDialog');
     });

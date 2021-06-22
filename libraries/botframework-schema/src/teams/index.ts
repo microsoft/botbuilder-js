@@ -614,7 +614,7 @@ export interface MessagingExtensionParameter {
     /**
      * @member {any} [value] Value of the parameter
      */
-    value?: any;
+    value?: any; // eslint-disable-line @typescript-eslint/no-explicit-any
 }
 
 /**
@@ -763,7 +763,7 @@ export interface MessageActionsPayloadAttachment {
      * @member {any} [content] The content of the attachment, in case of a code
      * snippet, email, or file.
      */
-    content?: any;
+    content?: any; // eslint-disable-line @typescript-eslint/no-explicit-any
     /**
      * @member {string} [name] The plaintext display name of the attachment.
      */
@@ -922,7 +922,7 @@ export interface TaskModuleRequest {
     /**
      * @member {any} [data] User input data. Free payload with key-value pairs.
      */
-    data?: any;
+    data?: any; // eslint-disable-line @typescript-eslint/no-explicit-any
     /**
      * @member {TaskModuleRequestContext} [context] Current user context, i.e.,
      * the current theme
@@ -953,7 +953,7 @@ export interface MessagingExtensionAction extends TaskModuleRequest {
      */
     commandContext?: CommandContext;
     /**
-     * @member {BotMessagePreviewAction} [botMessagePreviewAction] Bot message
+     * @member {BotMessagePreviewActionType} [botMessagePreviewAction] Bot message
      * preview action taken by user. Possible values include: 'edit', 'send'
      */
     botMessagePreviewAction?: BotMessagePreviewActionType;
@@ -1120,13 +1120,13 @@ export interface FileConsentCard {
      * consented to upload. This is free flow schema and is sent back in Value
      * field of Activity.
      */
-    acceptContext?: any;
+    acceptContext?: any; // eslint-disable-line @typescript-eslint/no-explicit-any
     /**
      * @member {any} [declineContext] Context sent back to the Bot if user
      * declined. This is free flow schema and is sent back in Value field of
      * Activity.
      */
-    declineContext?: any;
+    declineContext?: any; // eslint-disable-line @typescript-eslint/no-explicit-any
 }
 
 /**
@@ -1151,7 +1151,7 @@ export interface FileDownloadInfo {
     /**
      * @member {any} [etag] ETag for the file.
      */
-    etag?: any;
+    etag?: any; // eslint-disable-line @typescript-eslint/no-explicit-any
 }
 
 /**
@@ -1172,7 +1172,7 @@ export interface FileInfoCard {
     /**
      * @member {any} [etag] ETag for the file.
      */
-    etag?: any;
+    etag?: any; // eslint-disable-line @typescript-eslint/no-explicit-any
 }
 
 /**
@@ -1221,7 +1221,7 @@ export interface FileConsentCardResponse {
     /**
      * @member {any} [context] The context associated with the action.
      */
-    context?: any;
+    context?: any; // eslint-disable-line @typescript-eslint/no-explicit-any
     /**
      * @member {FileUploadInfo} [uploadInfo] If the user accepted the file,
      * contains information about the file to be uploaded.
@@ -1408,7 +1408,7 @@ export interface TaskModuleTaskInfo {
      */
     height?: number | 'small' | 'medium' | 'large';
     /**
-     * @member {number | TeamsTaskModuleSize} [width] This can be a number, representing the task module's
+     * @member {number | 'small' | 'medium' | 'large'} [width] This can be a number, representing the task module's
      * width in pixels, or a string, one of: small, medium, large.
      */
     width?: number | 'small' | 'medium' | 'large';
@@ -1515,6 +1515,7 @@ export interface AppBasedLinkQuery {
 /**
  * Defines values for Type.
  * Possible values include: 'ViewAction', 'OpenUri', 'HttpPOST', 'ActionCard'
+ *
  * @readonly
  * @enum {string}
  */
@@ -1523,6 +1524,7 @@ export type Type = 'ViewAction' | 'OpenUri' | 'HttpPOST' | 'ActionCard';
 /**
  * Defines values for ActivityImageType.
  * Possible values include: 'avatar', 'article'
+ *
  * @readonly
  * @enum {string}
  */
@@ -1531,6 +1533,7 @@ export type ActivityImageType = 'avatar' | 'article';
 /**
  * Defines values for Os.
  * Possible values include: 'default', 'iOS', 'android', 'windows'
+ *
  * @readonly
  * @enum {string}
  */
@@ -1539,6 +1542,7 @@ export type Os = 'default' | 'iOS' | 'android' | 'windows';
 /**
  * Defines values for O365ConnectorCardInputBaseType.
  * Possible values include: 'textInput', 'dateInput', 'multichoiceInput'
+ *
  * @readonly
  * @enum {string}
  */
@@ -1552,6 +1556,7 @@ export type Type1 = O365ConnectorCardInputBaseType;
 /**
  * Defines values for Style.
  * Possible values include: 'compact', 'expanded'
+ *
  * @readonly
  * @enum {string}
  */
@@ -1560,6 +1565,7 @@ export type Style = 'compact' | 'expanded';
 /**
  * Defines values for UserIdentityType.
  * Possible values include: 'aadUser', 'onPremiseAadUser', 'anonymousGuest', 'federatedUser'
+ *
  * @readonly
  * @enum {string}
  */
@@ -1568,6 +1574,7 @@ export type UserIdentityType = 'aadUser' | 'onPremiseAadUser' | 'anonymousGuest'
 /**
  * Defines values for ApplicationIdentityType.
  * Possible values include: 'aadApplication', 'bot', 'tenantBot', 'office365Connector', 'webhook'
+ *
  * @readonly
  * @enum {string}
  */
@@ -1576,6 +1583,7 @@ export type ApplicationIdentityType = 'aadApplication' | 'bot' | 'tenantBot' | '
 /**
  * Defines values for ConversationIdentityType.
  * Possible values include: 'team', 'channel'
+ *
  * @readonly
  * @enum {string}
  */
@@ -1584,6 +1592,7 @@ export type ConversationIdentityType = 'team' | 'channel';
 /**
  * Defines values for ContentType.
  * Possible values include: 'html', 'text'
+ *
  * @readonly
  * @enum {string}
  */
@@ -1592,6 +1601,7 @@ export type ContentType = 'html' | 'text';
 /**
  * Defines values for ReactionType.
  * Possible values include: 'like', 'heart', 'laugh', 'surprised', 'sad', 'angry'
+ *
  * @readonly
  * @enum {string}
  */
@@ -1600,6 +1610,7 @@ export type ReactionType = 'like' | 'heart' | 'laugh' | 'surprised' | 'sad' | 'a
 /**
  * Defines values for MessageType.
  * Possible values include: 'message'
+ *
  * @readonly
  * @enum {string}
  */
@@ -1608,6 +1619,7 @@ export type MessageType = 'message';
 /**
  * Defines values for Importance.
  * Possible values include: 'normal', 'high', 'urgent'
+ *
  * @readonly
  * @enum {string}
  */
@@ -1616,6 +1628,7 @@ export type Importance = 'normal' | 'high' | 'urgent';
 /**
  * Defines values for CommandContext.
  * Possible values include: 'message', 'compose', 'commandbox'
+ *
  * @readonly
  * @enum {string}
  */
@@ -1624,6 +1637,7 @@ export type CommandContext = 'message' | 'compose' | 'commandbox';
 /**
  * Defines values for BotMessagePreviewActionType.
  * Possible values include: 'edit', 'send'
+ *
  * @readonly
  * @enum {string}
  */
@@ -1632,6 +1646,7 @@ export type BotMessagePreviewActionType = 'edit' | 'send';
 /**
  * Defines values for BotMessagePreviewType.
  * Possible values include: 'message', 'continue'
+ *
  * @readonly
  * @enum {string}
  */
@@ -1645,6 +1660,7 @@ export type Type2 = BotMessagePreviewType;
 /**
  * Defines values for AttachmentLayout.
  * Possible values include: 'list', 'grid'
+ *
  * @readonly
  * @enum {string}
  */
@@ -1653,6 +1669,7 @@ export type AttachmentLayout = 'list' | 'grid';
 /**
  * Defines values for MessagingExtensionResultType.
  * Possible values include: 'result', 'auth', 'config', 'message', 'botMessagePreview'
+ *
  * @readonly
  * @enum {string}
  */
@@ -1665,7 +1682,100 @@ export type Type3 = MessagingExtensionResultType;
 /**
  * Defines values for Action.
  * Possible values include: 'accept', 'decline'
+ *
  * @readonly
  * @enum {string}
  */
 export type Action = 'accept' | 'decline';
+
+/**
+ * @interface
+ */
+interface MeetingDetailsBase {
+    /**
+     * @member {string} [id] The meeting's Id, encoded as a BASE64 string.
+     */
+    id: string;
+    /**
+     * @member {string} [joinUrl] The URL used to join the meeting.
+     */
+    joinUrl: string;
+    /**
+     * @member {string} [title] The title of the meeting.
+     */
+    title: string;
+}
+
+/**
+ * @interface
+ * Specific details of a Teams meeting.
+ */
+export interface MeetingDetails extends MeetingDetailsBase {
+    /**
+     * @member {string} [msGraphResourceId] The MsGraphResourceId, used specifically for MS Graph API calls.
+     */
+    msGraphResourceId: string;
+    /**
+     * @member {Date} [scheduledStartTime] The meeting's scheduled start time, in UTC.
+     */
+    scheduledStartTime: Date;
+    /**
+     * @member {Date} [scheduledEndTime] The meeting's scheduled end time, in UTC.
+     */
+    scheduledEndTime: Date;
+    /**
+     * @member {string} [type] The meeting's type.
+     */
+    type: string;
+}
+
+/**
+ * @interface
+ * General information about a Teams meeting.
+ */
+export interface MeetingInfo {
+    /**
+     * @member {MeetingDetails} [details] The specific details of a Teams meeting.
+     */
+    details: MeetingDetails;
+    /**
+     * @member {ConversationAccount} [conversation] The Conversation Account for the meeting.
+     */
+    conversation: ConversationAccount;
+    /**
+     * @member {TeamsChannelAccount} [organizer] The organizer's user information.
+     */
+    organizer: TeamsChannelAccount;
+}
+
+/**
+ * @interface
+ */
+export interface MeetingEventDetails extends MeetingDetailsBase {
+    /**
+     * @member {string} [meetingType] The meeting's type.
+     */
+    meetingType: string;
+}
+
+/**
+ * @interface
+ * Specific details of a Teams meeting start event.
+ */
+export interface MeetingStartEventDetails extends MeetingEventDetails {
+    /**
+     * @member {Date} [startTime] Timestamp for meeting start, in UTC.
+     */
+    startTime: Date;
+}
+
+/**
+ * @interface
+ * Specific details of a Teams meeting end event.
+ */
+export interface MeetingEndEventDetails extends MeetingEventDetails {
+    /**
+     * @member {Date} [endTime] Timestamp for meeting end, in UTC.
+     */
+    endTime: Date;
+}

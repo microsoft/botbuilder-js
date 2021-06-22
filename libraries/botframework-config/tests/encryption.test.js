@@ -1,91 +1,70 @@
-let assert = require('assert');
-let encrypt = require('../lib/encrypt');
+const assert = require('assert');
+const encrypt = require('../lib/encrypt');
 
-describe("EncryptionTests", () => {
-    const secret = "lgCbJPXnfOlatjbBDKMbh0ie6bc8PD/cjqA/2tPgMS0=";
-    const value = "1234567890";
+describe('EncryptionTests', function () {
+    const secret = 'lgCbJPXnfOlatjbBDKMbh0ie6bc8PD/cjqA/2tPgMS0=';
+    const value = '1234567890';
 
-    function encriptDecriptString(value, secret) {
-        let encrypted = encrypt.encryptString(value, secret);
-        assert.ok(value != encrypted, "encryption failed");
+    function encryptDecryptString(value, secret) {
+        const encrypted = encrypt.encryptString(value, secret);
+        assert.ok(value != encrypted, 'encryption failed');
 
-        let decrypted = encrypt.decryptString(encrypted, secret);
-        assert.ok(value === decrypted, "decryption failed");
-    };
+        const decrypted = encrypt.decryptString(encrypted, secret);
+        assert.ok(value === decrypted, 'decryption failed');
+    }
 
-    function encriptDecriptStringDoesNothing(value, secret) {
-        let encrypted = encrypt.encryptString(value, secret);
-        assert.ok(value == encrypted, "encryption failed");
+    function encryptDecryptStringDoesNothing(value, secret) {
+        const encrypted = encrypt.encryptString(value, secret);
+        assert.ok(value == encrypted, 'encryption failed');
 
-        let decrypted = encrypt.decryptString(encrypted, secret);
-        assert.ok(value === decrypted, "decryption failed");
-    };
+        const decrypted = encrypt.decryptString(encrypted, secret);
+        assert.ok(value === decrypted, 'decryption failed');
+    }
 
-    it("EncryptDecrypt", () => {
-        encriptDecriptString(value, secret);
+    it('EncryptDecrypt', function () {
+        encryptDecryptString(value, secret);
     });
 
-    it("EncryptDecryptEmptyDoesNothing", () => {
-        let value = "";
-        encriptDecriptStringDoesNothing(value, secret);
+    it('EncryptDecryptEmptyDoesNothing', function () {
+        const value = '';
+        encryptDecryptStringDoesNothing(value, secret);
     });
 
-    it("EncryptDecryptNullDoesNothing", () => {
-        let value = null;
-        encriptDecriptStringDoesNothing(value, secret);
+    it('EncryptDecryptNullDoesNothing', function () {
+        const value = null;
+        encryptDecryptStringDoesNothing(value, secret);
     });
 
-    it("EncryptDecryptUndefinedDoesNothing", () => {
-        let value = undefined;
-        encriptDecriptStringDoesNothing(value, secret);
+    it('EncryptDecryptUndefinedDoesNothing', function () {
+        const value = undefined;
+        encryptDecryptStringDoesNothing(value, secret);
     });
 
-    it("GenerateKeyWorks", () => {
-        let secret = encrypt.generateKey();
-        encriptDecriptString(value, secret)
+    it('GenerateKeyWorks', function () {
+        const secret = encrypt.generateKey();
+        encryptDecryptString(value, secret);
     });
 
-    it("EncryptWithNullSecretThrows", () => {
-        try {
-            encrypt.encryptString(value);
-            assert.fail("did not throw error or exception");
-        }
-        catch (Error) {
-            assert.ok(true);
-        }
+    it('EncryptWithNullSecretThrows', function () {
+        assert.throws(() => encrypt.encryptString(value), new Error('you must pass a secret'));
     });
 
-    it("DecryptWithNullSecretThrows", () => {
-        let secret = encrypt.generateKey();
-        let encrypted = encrypt.encryptString(value, secret);
+    it('DecryptWithNullSecretThrows', function () {
+        const secret = encrypt.generateKey();
+        const encrypted = encrypt.encryptString(value, secret);
 
-        try {
-            encrypt.decryptString(encrypted, null);
-            assert.fail("did not throw error or exception");
-        }
-        catch (Error) {
-            assert.ok(true);
-        }
+        assert.throws(() => encrypt.decryptString(encrypted, null), new Error('you must pass a secret'));
     });
 
-    it("DecryptWithBadSecretThrows", () => {
-        let secret = encrypt.generateKey();
-        let encrypted = encrypt.encryptString(value, secret);
+    it('DecryptWithBadSecretThrows', function () {
+        const secret = encrypt.generateKey();
+        const encrypted = encrypt.encryptString(value, secret);
 
-        try {
-            encrypt.decryptString(encrypted, "bad");
-            assert.fail("did not throw error or exception");
-        }
-        catch (Error) {
-            assert.ok(true);
-        }
+        assert.throws(() => encrypt.decryptString(encrypted, 'bad'), new Error('The secret is not valid format'));
 
-        try {
-            encrypt.decryptString(encrypted, encrypt.generateKey());
-            assert.fail("Decrypt with different key should throw");
-        }
-        catch (Error) {
-            assert.ok(true);
-        }
+        assert.throws(
+            () => encrypt.decryptString(encrypted, encrypt.generateKey()),
+            new Error('error:06065064:digital envelope routines:EVP_DecryptFinal_ex:bad decrypt')
+        );
     });
 });

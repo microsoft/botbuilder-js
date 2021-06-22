@@ -4,6 +4,9 @@
 
 ```ts
 
+import { Assertion } from 'botbuilder-stdlib';
+import { Test } from 'botbuilder-stdlib';
+
 // @public
 export type Action = 'accept' | 'decline';
 
@@ -60,7 +63,7 @@ export interface Activity {
     localTimezone: string;
     membersAdded?: ChannelAccount[];
     membersRemoved?: ChannelAccount[];
-    name?: string;
+    name?: ActivityEventNames | string;
     reactionsAdded?: MessageReaction[];
     reactionsRemoved?: MessageReaction[];
     recipient: ChannelAccount;
@@ -79,6 +82,50 @@ export interface Activity {
     type: ActivityTypes | string;
     value?: any;
     valueType: string;
+}
+
+// @public
+export enum ActivityEventNames {
+    // (undocumented)
+    ContinueConversation = "ContinueConversation",
+    // (undocumented)
+    CreateConversation = "CreateConversation"
+}
+
+// @public (undocumented)
+export namespace ActivityEx {
+    export function asCommandActivity<T = unknown>(source: Partial<Activity>): Partial<ICommandActivity<T>>;
+    export function asCommandResultActivity<T = unknown>(source: Partial<Activity>): Partial<ICommandResultActivity<T>>;
+    export function asContactRelationUpdateActivity(source: Partial<Activity>): Partial<IContactRelationUpdateActivity>;
+    export function asConversationUpdateActivity(source: Partial<Activity>): Partial<IConversationUpdateActivity>;
+    export function asEndOfConversationActivity(source: Partial<Activity>): Partial<IEndOfConversationActivity>;
+    export function asEventActivity(source: Partial<Activity>): Partial<IEventActivity>;
+    export function asHandoffActivity(source: Partial<Activity>): Partial<IHandoffActivity>;
+    export function asInstallationUpdateActivity(source: Partial<Activity>): Partial<IInstallationUpdateActivity>;
+    export function asInvokeActivity(source: Partial<Activity>): Partial<IInvokeActivity>;
+    export function asMessageActivity(source: Partial<Activity>): Partial<IMessageActivity>;
+    export function asMessageDeleteActivity(source: Partial<Activity>): Partial<IMessageDeleteActivity>;
+    export function asMessageReactionActivity(source: Partial<Activity>): Partial<IMessageReactionActivity>;
+    export function asMessageUpdateActivity(source: Partial<Activity>): Partial<IMessageUpdateActivity>;
+    export function asSuggestionActivity(source: Partial<Activity>): Partial<ISuggestionActivity>;
+    export function asTraceActivity(source: Partial<Activity>): Partial<ITraceActivity>;
+    export function asTypingActivity(source: Partial<Activity>): Partial<ITypingActivity>;
+    export function createContactRelationUpdateActivity(): Partial<IContactRelationUpdateActivity>;
+    export function createConversationUpdateActivity(): Partial<IConversationUpdateActivity>;
+    export function createEndOfConversationActivity(): Partial<IEndOfConversationActivity>;
+    export function createEventActivity(): Partial<IEventActivity>;
+    export function createHandoffActivity(): Partial<IHandoffActivity>;
+    export function createInvokeActivity(): Partial<IInvokeActivity>;
+    export function createMessageActivity(): Partial<IMessageActivity>;
+    export function createReply(source: Activity, text?: string, locale?: string): Activity;
+    export function createTrace(source: Activity, name: string, value?: unknown, valueType?: string, label?: string): ITraceActivity;
+    export function createTraceActivity(name: string, valueType?: string, value?: unknown, label?: string): Partial<ITraceActivity>;
+    export function createTypingActivity(): Partial<ITypingActivity>;
+    export function getConversationReference(source: Partial<Activity>): ConversationReference;
+    export function getMentions(source: Partial<Activity>): Mention[];
+    export function hasContent(source: Partial<Activity>): boolean;
+    export function isActivity(source: Partial<Activity>, activityType: string): boolean;
+    export function isFromStreamingConnection(source: Partial<Activity>): boolean;
 }
 
 // @public
@@ -107,6 +154,10 @@ export interface ActivityTimestamps extends Activity {
 // @public
 export enum ActivityTypes {
     // (undocumented)
+    Command = "command",
+    // (undocumented)
+    CommandResult = "commandResult",
+    // (undocumented)
     ContactRelationUpdate = "contactRelationUpdate",
     // (undocumented)
     ConversationUpdate = "conversationUpdate",
@@ -123,6 +174,8 @@ export enum ActivityTypes {
     // (undocumented)
     Invoke = "invoke",
     // (undocumented)
+    InvokeResponse = "invokeResponse",
+    // (undocumented)
     Message = "message",
     // (undocumented)
     MessageDelete = "messageDelete",
@@ -136,6 +189,32 @@ export enum ActivityTypes {
     Trace = "trace",
     // (undocumented)
     Typing = "typing"
+}
+
+// @public
+export interface AdaptiveCardAuthentication extends TokenExchangeInvokeRequest {
+}
+
+// @public
+export interface AdaptiveCardInvokeAction {
+    data: Record<string, unknown>;
+    id: string;
+    type: string;
+    verb: string;
+}
+
+// @public
+export interface AdaptiveCardInvokeResponse {
+    statusCode: number;
+    type: string;
+    value: Record<string, unknown>;
+}
+
+// @public
+export interface AdaptiveCardInvokeValue {
+    action: AdaptiveCardInvokeAction;
+    authentication: AdaptiveCardAuthentication;
+    state: string;
 }
 
 // @public
@@ -162,6 +241,42 @@ export interface AppBasedLinkQuery {
 
 // @public
 export type ApplicationIdentityType = 'aadApplication' | 'bot' | 'tenantBot' | 'office365Connector' | 'webhook';
+
+// @public (undocumented)
+export const assertActivity: Assertion<Activity>;
+
+// @public (undocumented)
+export const assertAttachment: Assertion<Attachment>;
+
+// @public (undocumented)
+export const assertAttachmentInfo: Assertion<AttachmentInfo>;
+
+// @public (undocumented)
+export const assertAttachmentView: Assertion<AttachmentView>;
+
+// @public (undocumented)
+export const assertCardAction: Assertion<CardAction>;
+
+// @public (undocumented)
+export const assertChannelAccount: Assertion<ChannelAccount>;
+
+// @public (undocumented)
+export const assertConversationAccount: Assertion<ConversationAccount>;
+
+// @public (undocumented)
+export const assertConversationReference: Assertion<ConversationReference>;
+
+// @public (undocumented)
+export const assertEntity: Assertion<Entity>;
+
+// @public (undocumented)
+export const assertMessageReaction: Assertion<MessageReaction>;
+
+// @public (undocumented)
+export const assertSemanticAction: Assertion<SemanticAction>;
+
+// @public (undocumented)
+export const assertSuggestedActions: Assertion<SuggestedActions>;
 
 // @public
 export interface Attachment {
@@ -237,6 +352,12 @@ export type BotMessagePreviewActionType = 'edit' | 'send';
 export type BotMessagePreviewType = 'message' | 'continue';
 
 // @public
+export interface CacheInfo {
+    cacheDuration?: number;
+    cacheType?: string;
+}
+
+// @public
 export class CallerIdConstants {
     static readonly BotToBotPrefix: string;
     static readonly PublicAzureChannel: string;
@@ -248,11 +369,11 @@ export interface CardAction {
     channelData?: any;
     displayText?: string;
     image?: string;
+    imageAltText?: string;
     text?: string;
     title: string;
     type: ActionTypes | string;
     value: any;
-    imageAltText?: string;
 }
 
 // @public
@@ -311,6 +432,8 @@ export enum Channels {
     // (undocumented)
     Telegram = "telegram",
     // (undocumented)
+    Telephony = "telephony",
+    // (undocumented)
     Test = "test",
     // (undocumented)
     Twilio = "twilio-sms",
@@ -320,6 +443,19 @@ export enum Channels {
 
 // @public
 export type CommandContext = 'message' | 'compose' | 'commandbox';
+
+// @public
+export interface CommandResultValue<T = unknown> {
+    commandId: string;
+    data?: T;
+    error?: Error;
+}
+
+// @public
+export interface CommandValue<T = unknown> {
+    commandId: string;
+    data?: T;
+}
 
 // @public
 export enum ContactRelationUpdateActionTypes {
@@ -341,7 +477,7 @@ export interface ConversationAccount {
     name: string;
     properties?: any;
     role?: RoleTypes;
-    tenantId: string;
+    tenantId?: string;
 }
 
 // @public
@@ -423,6 +559,7 @@ export enum EndOfConversationCodes {
 
 // @public
 export interface Entity {
+    [key: string]: any;
     type: string;
 }
 
@@ -501,20 +638,6 @@ export interface GeoCoordinates {
 }
 
 // @public
-export interface HealthCheckResponse {
-    healthResults: HealthResults;
-}
-
-// @public
-export interface HealthResults {
-    "user-agent"?: string;
-    authorization?: string;
-    diagnostics?: any;
-    messages?: string[];
-    success: boolean;
-}
-
-// @public
 export interface HeroCard {
     buttons: CardAction[];
     images: CardImage[];
@@ -538,6 +661,20 @@ export interface IActivity {
     serviceUrl: string;
     timestamp?: Date;
     type: ActivityTypes | string;
+}
+
+// @public
+export interface ICommandActivity<T = unknown> extends IActivity {
+    name: string;
+    value?: CommandValue<T>;
+}
+
+// @public
+export interface ICommandResultActivity<T = unknown> extends IActivity {
+    // (undocumented)
+    name: string;
+    // (undocumented)
+    value?: CommandResultValue<T>;
 }
 
 // @public (undocumented)
@@ -567,8 +704,7 @@ export interface IEventActivity extends IActivity {
 }
 
 // @public (undocumented)
-export interface IHandoffActivity extends IActivity {
-}
+export type IHandoffActivity = IActivity;
 
 // @public (undocumented)
 export interface IInstallationUpdateActivity extends IActivity {
@@ -600,8 +736,7 @@ export interface IMessageActivity extends IActivity {
 }
 
 // @public (undocumented)
-export interface IMessageDeleteActivity extends IActivity {
-}
+export type IMessageDeleteActivity = IActivity;
 
 // @public (undocumented)
 export interface IMessageReactionActivity extends IActivity {
@@ -640,6 +775,48 @@ export enum InstallationUpdateActionTypes {
     Remove = "remove"
 }
 
+// @public
+export interface InvokeResponse<T = any> {
+    body?: T;
+    status: number;
+}
+
+// @public (undocumented)
+export const isActivity: Test<Activity>;
+
+// @public (undocumented)
+export const isAttachment: Test<Attachment>;
+
+// @public (undocumented)
+export const isAttachmentInfo: Test<AttachmentInfo>;
+
+// @public (undocumented)
+export const isAttachmentView: Test<AttachmentView>;
+
+// @public (undocumented)
+export const isCardAction: Test<CardAction>;
+
+// @public (undocumented)
+export const isChannelAccount: Test<ChannelAccount>;
+
+// @public (undocumented)
+export const isConversationAccount: Test<ConversationAccount>;
+
+// @public (undocumented)
+export const isConversationReference: Test<ConversationReference>;
+
+// @public (undocumented)
+export const isEntity: Test<Entity>;
+
+// @public (undocumented)
+export const isMessageReaction: Test<MessageReaction>;
+
+// @public (undocumented)
+export const isSemanticAction: Test<SemanticAction>;
+
+// @public (undocumented)
+export const isSuggestedActions: Test<SuggestedActions>;
+
 // @public (undocumented)
 export interface IStatusCodeError {
     // (undocumented)
@@ -663,8 +840,7 @@ export interface ITraceActivity extends IActivity {
 }
 
 // @public (undocumented)
-export interface ITypingActivity extends IActivity {
-}
+export type ITypingActivity = IActivity;
 
 // @public
 export interface MediaCard {
@@ -694,6 +870,44 @@ export interface MediaUrl {
 }
 
 // @public
+export interface Meeting {
+    inMeeting?: boolean;
+    role?: string;
+}
+
+// Warning: (ae-forgotten-export) The symbol "MeetingDetailsBase" needs to be exported by the entry point index.d.ts
+//
+// @public
+export interface MeetingDetails extends MeetingDetailsBase {
+    msGraphResourceId: string;
+    scheduledEndTime: Date;
+    scheduledStartTime: Date;
+    type: string;
+}
+
+// @public
+export interface MeetingEndEventDetails extends MeetingEventDetails {
+    endTime: Date;
+}
+
+// @public (undocumented)
+export interface MeetingEventDetails extends MeetingDetailsBase {
+    meetingType: string;
+}
+
+// @public
+export interface MeetingInfo {
+    conversation: ConversationAccount;
+    details: MeetingDetails;
+    organizer: TeamsChannelAccount;
+}
+
+// @public
+export interface MeetingStartEventDetails extends MeetingEventDetails {
+    startTime: Date;
+}
+
+// @public
 export interface Mention {
     mentioned: ChannelAccount;
     text: string;
@@ -711,6 +925,7 @@ export interface MessageActionsPayload {
     id?: string;
     importance?: Importance;
     lastModifiedDateTime?: string;
+    linkToMessage?: string;
     locale?: string;
     mentions?: MessageActionsPayloadMention[];
     messageType?: MessageType;
@@ -718,7 +933,6 @@ export interface MessageActionsPayload {
     replyToId?: string;
     subject?: string;
     summary?: string;
-    linkToMessage?: string;
 }
 
 // @public
@@ -807,6 +1021,7 @@ export interface MessagingExtensionAction extends TaskModuleRequest {
 
 // @public
 export interface MessagingExtensionActionResponse {
+    cacheInfo?: CacheInfo;
     composeExtension?: MessagingExtensionResult;
     task?: TaskModuleContinueResponse | TaskModuleMessageResponse;
 }
@@ -838,6 +1053,7 @@ export interface MessagingExtensionQueryOptions {
 
 // @public
 export interface MessagingExtensionResponse {
+    cacheInfo?: CacheInfo;
     composeExtension?: MessagingExtensionResult;
 }
 
@@ -869,6 +1085,8 @@ export interface MicrosoftPayMethodData {
 // @public
 export interface NotificationInfo {
     alert?: boolean;
+    alertInMeeting?: boolean;
+    externalResourceUrl?: string;
 }
 
 // @public
@@ -1008,7 +1226,7 @@ export interface PagedMembersResult {
 }
 
 // @public @deprecated
-export interface PaymentAddress {
+interface PaymentAddress_2 {
     addressLine: string[];
     city: string;
     country: string;
@@ -1022,45 +1240,55 @@ export interface PaymentAddress {
     sortingCode: string;
 }
 
+export { PaymentAddress_2 as PaymentAddress }
+
 // @public @deprecated
-export interface PaymentCurrencyAmount {
+interface PaymentCurrencyAmount_2 {
     currency: string;
     currencySystem: string;
     value: string;
 }
 
+export { PaymentCurrencyAmount_2 as PaymentCurrencyAmount }
+
 // @public @deprecated
 export interface PaymentDetails {
-    displayItems: PaymentItem[];
+    displayItems: PaymentItem_2[];
     error: string;
-    modifiers: PaymentDetailsModifier[];
-    shippingOptions: PaymentShippingOption[];
-    total: PaymentItem;
+    modifiers: PaymentDetailsModifier_2[];
+    shippingOptions: PaymentShippingOption_2[];
+    total: PaymentItem_2;
 }
 
 // @public @deprecated
-export interface PaymentDetailsModifier {
-    additionalDisplayItems: PaymentItem[];
+interface PaymentDetailsModifier_2 {
+    additionalDisplayItems: PaymentItem_2[];
     data: any;
     supportedMethods: string[];
-    total: PaymentItem;
+    total: PaymentItem_2;
 }
 
+export { PaymentDetailsModifier_2 as PaymentDetailsModifier }
+
 // @public @deprecated
-export interface PaymentItem {
-    amount: PaymentCurrencyAmount;
+interface PaymentItem_2 {
+    amount: PaymentCurrencyAmount_2;
     label: string;
     pending: boolean;
 }
 
+export { PaymentItem_2 as PaymentItem }
+
 // @public @deprecated
-export interface PaymentMethodData {
+interface PaymentMethodData_2 {
     data: any;
     supportedMethods: string[];
 }
 
+export { PaymentMethodData_2 as PaymentMethodData }
+
 // @public @deprecated
-export interface PaymentOptions {
+interface PaymentOptions_2 {
     requestPayerEmail: boolean;
     requestPayerName: boolean;
     requestPayerPhone: boolean;
@@ -1068,20 +1296,24 @@ export interface PaymentOptions {
     shippingType: string;
 }
 
+export { PaymentOptions_2 as PaymentOptions }
+
 // @public @deprecated
-export interface PaymentRequest {
+interface PaymentRequest_2 {
     details: PaymentDetails;
     expires: string;
     id: string;
-    methodData: PaymentMethodData[];
-    options: PaymentOptions;
+    methodData: PaymentMethodData_2[];
+    options: PaymentOptions_2;
 }
+
+export { PaymentRequest_2 as PaymentRequest }
 
 // @public @deprecated
 export interface PaymentRequestComplete {
     id: string;
-    paymentRequest: PaymentRequest;
-    paymentResponse: PaymentResponse;
+    paymentRequest: PaymentRequest_2;
+    paymentResponse: PaymentResponse_2;
 }
 
 // @public @deprecated
@@ -1093,7 +1325,7 @@ export interface PaymentRequestCompleteResult {
 export interface PaymentRequestUpdate {
     details: PaymentDetails;
     id: string;
-    shippingAddress: PaymentAddress;
+    shippingAddress: PaymentAddress_2;
     shippingOption: string;
 }
 
@@ -1103,22 +1335,26 @@ export interface PaymentRequestUpdateResult {
 }
 
 // @public @deprecated
-export interface PaymentResponse {
+interface PaymentResponse_2 {
     details: any;
     methodName: string;
     payerEmail: string;
     payerPhone: string;
-    shippingAddress: PaymentAddress;
+    shippingAddress: PaymentAddress_2;
     shippingOption: string;
 }
 
+export { PaymentResponse_2 as PaymentResponse }
+
 // @public @deprecated
-export interface PaymentShippingOption {
-    amount: PaymentCurrencyAmount;
+interface PaymentShippingOption_2 {
+    amount: PaymentCurrencyAmount_2;
     id: string;
     label: string;
     selected: boolean;
 }
+
+export { PaymentShippingOption_2 as PaymentShippingOption }
 
 // @public
 export interface Place {
@@ -1165,6 +1401,8 @@ export enum RoleTypes {
     // (undocumented)
     Bot = "bot",
     // (undocumented)
+    Skill = "skill",
+    // (undocumented)
     User = "user"
 }
 
@@ -1205,6 +1443,11 @@ export interface SignInUrlResponse {
 }
 
 // @public
+export class SpeechConstants {
+    static readonly EmptySpeakTag: string;
+}
+
+// @public
 export enum StatusCodes {
     // (undocumented)
     BAD_GATEWAY = 502,
@@ -1225,6 +1468,8 @@ export enum StatusCodes {
     // (undocumented)
     OK = 200,
     // (undocumented)
+    PRECONDITION_FAILED = 412,
+    // (undocumented)
     UNAUTHORIZED = 401,
     // (undocumented)
     UPGRADE_REQUIRED = 426
@@ -1237,6 +1482,68 @@ export type Style = 'compact' | 'expanded';
 export interface SuggestedActions {
     actions: CardAction[];
     to: string[];
+}
+
+// @public
+export interface TabContext {
+    theme?: string;
+}
+
+// @public
+export interface TabEntityContext {
+    tabEntityId?: string;
+}
+
+// @public
+export interface TabRequest {
+    context?: TabContext;
+    state?: string;
+    tabContext?: TabEntityContext;
+}
+
+// @public
+export interface TabResponse {
+    tab: TabResponsePayload;
+}
+
+// @public
+export interface TabResponseCard {
+    card: Record<string, unknown>;
+}
+
+// @public
+export interface TabResponseCards {
+    cards: TabResponseCard[];
+}
+
+// @public
+export interface TabResponsePayload {
+    suggestedActions?: TabSuggestedActions;
+    type?: 'continue' | 'auth' | 'silentAuth';
+    value?: TabResponseCards;
+}
+
+// @public
+export interface TabSubmit {
+    context?: TabContext;
+    data?: TabSubmitData;
+    tabContext?: TabEntityContext;
+}
+
+// @public
+export interface TabSubmitData {
+    [properties: string]: unknown;
+    type?: string;
+}
+
+// @public
+export interface TabSuggestedActions {
+    actions: CardAction[];
+}
+
+// @public
+export interface TaskModuleCardResponse extends TaskModuleResponseBase {
+    value?: string;
 }
 
 // @public
@@ -1253,6 +1560,7 @@ export interface TaskModuleMessageResponse extends TaskModuleResponseBase {
 export interface TaskModuleRequest {
     context?: TaskModuleRequestContext;
     data?: any;
+    tabContext?: TabEntityContext;
 }
 
 // @public
@@ -1262,12 +1570,13 @@ export interface TaskModuleRequestContext {
 
 // @public
 export interface TaskModuleResponse {
+    cacheInfo?: CacheInfo;
     task?: TaskModuleContinueResponse | TaskModuleMessageResponse;
 }
 
 // @public
 export interface TaskModuleResponseBase {
-    type?: BotMessagePreviewActionType;
+    type?: BotMessagePreviewType;
 }
 
 // @public
@@ -1275,10 +1584,10 @@ export interface TaskModuleTaskInfo {
     card?: Attachment;
     completionBotId?: string;
     fallbackUrl?: string;
-    height?: any;
+    height?: number | 'small' | 'medium' | 'large';
     title?: string;
     url?: string;
-    width?: any;
+    width?: number | 'small' | 'medium' | 'large';
 }
 
 // @public
@@ -1292,9 +1601,9 @@ export interface TeamDetails {
 
 // @public
 export interface TeamInfo {
+    aadGroupId?: string;
     id?: string;
     name?: string;
-    aadGroupId?: string;
 }
 
 // @public (undocumented)
@@ -1317,9 +1626,22 @@ export interface TeamsChannelAccount extends ChannelAccount {
 export interface TeamsChannelData {
     channel?: ChannelInfo;
     eventType?: string;
+    meeting?: TeamsMeetingInfo;
     notification?: NotificationInfo;
     team?: TeamInfo;
     tenant?: TenantInfo;
+}
+
+// @public
+export interface TeamsMeetingInfo {
+    id?: string;
+}
+
+// @public
+export interface TeamsMeetingParticipant {
+    conversation?: ConversationAccount;
+    meeting?: Meeting;
+    user?: TeamsChannelAccount;
 }
 
 // @public (undocumented)
@@ -1379,6 +1701,14 @@ export interface TokenExchangeInvokeRequest {
 }
 
 // @public
+export interface TokenExchangeInvokeResponse {
+    connectionName: string;
+    failureDetail: string;
+    id: string;
+    properties?: Record<string, unknown>;
+}
+
+// @public
 export interface TokenExchangeRequest {
     token?: string;
     uri?: string;
@@ -1390,6 +1720,14 @@ export interface TokenExchangeResource {
     providerId?: string;
     uri?: string;
 }
+
+// @public
+export type TokenExchangeState = {
+    connectionName: string;
+    conversation: ConversationReference;
+    relatesTo: ConversationReference;
+    msAppId: string;
+};
 
 // @public
 export interface TokenRequest {
@@ -1411,6 +1749,14 @@ export interface TokenResponse {
 }
 
 // @public
+export type TokenStatus = {
+    channelId: string;
+    connectionName: string;
+    hasToken: boolean;
+    serviceProviderDisplayName: string;
+};
+
+// @public
 export interface Transcript {
     activities: Activity[];
 }
@@ -1422,7 +1768,7 @@ export type Type = 'ViewAction' | 'OpenUri' | 'HttpPOST' | 'ActionCard';
 export type Type1 = O365ConnectorCardInputBaseType;
 
 // @public @deprecated (undocumented)
-export type Type2 = BotMessagePreviewActionType;
+export type Type2 = BotMessagePreviewType;
 
 // @public @deprecated (undocumented)
 export type Type3 = MessagingExtensionResultType;

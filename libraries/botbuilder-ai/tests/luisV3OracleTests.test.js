@@ -29,7 +29,8 @@ async function TestJson(
     telemetryClient,
     telemetryProperties,
     telemetryMetrics,
-    logPersonalInformation
+    logPersonalInformation,
+    useUtteranceInsteadOfContext = false
 ) {
     if (includeAllIntents === undefined) includeAllIntents = true;
     if (includeInstance === undefined) includeInstance = true;
@@ -48,7 +49,13 @@ async function TestJson(
     const options = oracleOptions ? oracleOptions : { apiVersion: 'v3' };
     const luisRecognizer = GetLuisRecognizer({ applicationId: luisAppId, endpointKey: endpointKey }, options, true);
 
-    const res = await luisRecognizer.recognize(context, telemetryProperties, telemetryMetrics);
+    let res;
+    if (useUtteranceInsteadOfContext) {
+        res = await luisRecognizer.recognize(query);
+    } else {
+        res = await luisRecognizer.recognize(context, telemetryProperties, telemetryMetrics);
+    }
+
     res.v3 = {
         response: res.luisResult,
     };
@@ -119,8 +126,36 @@ describe('LuisRecognizer V3', function () {
         await TestJson('Composite1.json');
     });
 
+    it('Composite1 - using only utterance, no TurnContext', async function () {
+        const useUtteranceInsteadOfContext = true;
+        await TestJson(
+            'Composite1.json',
+            undefined,
+            undefined,
+            undefined,
+            undefined,
+            undefined,
+            undefined,
+            useUtteranceInsteadOfContext
+        );
+    });
+
     it('Composite2', async function () {
         await TestJson('Composite2.json');
+    });
+
+    it('Composite2 - using only utterance, no TurnContext', async function () {
+        const useUtteranceInsteadOfContext = true;
+        await TestJson(
+            'Composite2.json',
+            undefined,
+            undefined,
+            undefined,
+            undefined,
+            undefined,
+            undefined,
+            useUtteranceInsteadOfContext
+        );
     });
 
     it('Composite3', async function () {

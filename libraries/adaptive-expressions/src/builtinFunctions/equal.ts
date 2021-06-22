@@ -20,6 +20,10 @@ export class Equal extends ComparisonEvaluator {
      * Initializes a new instance of the [Equal](xref:adaptive-expressions.Equal) class.
      */
     public constructor() {
-        super(ExpressionType.Equal, InternalFunctionUtils.isEqual, FunctionUtils.validateBinary);
+        super(
+            ExpressionType.Equal,
+            (args) => FunctionUtils.commonEquals(args[0], args[1]),
+            FunctionUtils.validateBinary
+        );
     }
 }

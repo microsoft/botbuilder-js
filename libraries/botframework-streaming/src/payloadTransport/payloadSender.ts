@@ -7,28 +7,29 @@
  */
 
 import { HeaderSerializer } from '../payloads/headerSerializer';
-import { SubscribableStream } from '../subscribableStream';
-import { PayloadConstants } from '../payloads/payloadConstants';
-import { TransportDisconnectedEvent } from './transportDisconnectedEvent';
-import { TransportDisconnectedEventHandler } from './transportDisconnectedEventHandler';
-import { ITransportSender } from '../interfaces/ITransportSender';
 import { IHeader } from '../interfaces/IHeader';
 import { ISendPacket } from '../interfaces/ISendPacket';
+import { ITransportSender } from '../interfaces/ITransportSender';
+import { PayloadConstants } from '../payloads/payloadConstants';
+import { SubscribableStream } from '../subscribableStream';
+import { TransportDisconnectedEvent } from './transportDisconnectedEvent';
+import { TransportDisconnectedEventHandler } from './transportDisconnectedEventHandler';
 
 /**
  * Streaming payload sender.
  */
 export class PayloadSender {
     public disconnected?: TransportDisconnectedEventHandler;
-    private sender: ITransportSender;
+
+    private _sender: ITransportSender;
 
     /**
-     * Tests whether the transport sender is connected.
+     * Get current connected state
      *
      * @returns true if connected to a transport sender.
      */
     public get isConnected(): boolean {
-        return !!this.sender;
+        return this._sender != null;
     }
 
     /**
@@ -37,7 +38,7 @@ export class PayloadSender {
      * @param sender The transport sender to connect this payload sender to.
      */
     public connect(sender: ITransportSender): void {
-        this.sender = sender;
+        this._sender = sender;
     }
 
     /**
@@ -45,7 +46,7 @@ export class PayloadSender {
      *
      * @param header The header to attach to the outgoing payload.
      * @param payload The stream of buffered data to send.
-     * @param sentCalback The function to execute when the send has completed.
+     * @param sentCallback The function to execute when the send has completed.
      */
     public sendPayload(header: IHeader, payload?: SubscribableStream, sentCallback?: () => Promise<void>): void {
         const packet: ISendPacket = { header, payload, sentCallback };
@@ -55,22 +56,23 @@ export class PayloadSender {
     /**
      * Disconnects this payload sender.
      *
-     * @param e The disconnected event arguments to include in the disconnected event broadcast.
+     * @param event The disconnected event arguments to include in the disconnected event broadcast.
      */
-    public disconnect(e?: TransportDisconnectedEvent): void {
-        if (this.isConnected) {
-            this.sender.close();
-            this.sender = null;
+    public disconnect(event = TransportDisconnectedEvent.Empty): void {
+        if (!this.isConnected) {
+            return;
+        }
 
-            if (this.disconnected) {
-                this.disconnected(this, e || TransportDisconnectedEvent.Empty);
-            }
+        try {
+            this._sender.close();
+            this.disconnected?.(this, event);
+        } catch (err) {
+            this.disconnected?.(this, new TransportDisconnectedEvent(err.message));
+        } finally {
+            this._sender = null;
         }
     }
 
-    /**
-     * @private
-     */
     private writePacket(packet: ISendPacket): void {
         try {
             if (packet.header.payloadLength > 0 && packet.payload) {
@@ -88,9 +90,9 @@ export class PayloadSender {
 
                     HeaderSerializer.serialize(header, sendHeaderBuffer);
 
-                    this.sender.send(sendHeaderBuffer);
+                    this._sender.send(sendHeaderBuffer);
 
-                    this.sender.send(chunk);
+                    this._sender.send(chunk);
                     leftOver -= chunk.length;
                 }
 
@@ -98,8 +100,8 @@ export class PayloadSender {
                     packet.sentCallback();
                 }
             }
-        } catch (e) {
-            this.disconnect(new TransportDisconnectedEvent(e.message));
+        } catch (err) {
+            this.disconnect(new TransportDisconnectedEvent(err.message));
         }
     }
 }

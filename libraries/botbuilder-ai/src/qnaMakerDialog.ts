@@ -52,7 +52,7 @@ import { ActiveLearningUtils, BindToActivity } from './qnamaker-utils';
 
 class QnAMakerDialogActivityConverter
     implements Converter<string, TemplateInterface<Partial<Activity>, DialogStateManager>> {
-    public convert(
+    convert(
         value: string | TemplateInterface<Partial<Activity>, DialogStateManager>
     ): TemplateInterface<Partial<Activity>, DialogStateManager> {
         if (typeof value === 'string') {
@@ -137,7 +137,7 @@ const isSuggestionsFactory: Test<QnASuggestionsActivityFactory> = (val): val is 
  * The dialog will also present user with appropriate multi-turn prompt or active learning options.
  */
 export class QnAMakerDialog extends WaterfallDialog implements QnAMakerDialogConfiguration {
-    public static $kind = 'Microsoft.QnAMakerDialog';
+    static $kind = 'Microsoft.QnAMakerDialog';
 
     // state and step value key constants
 
@@ -195,32 +195,32 @@ export class QnAMakerDialog extends WaterfallDialog implements QnAMakerDialogCon
     /**
      * Gets or sets the QnA Maker knowledge base ID to query.
      */
-    public knowledgeBaseId: StringExpression;
+    knowledgeBaseId: StringExpression;
 
     /**
      * Gets or sets the QnA Maker host URL for the knowledge base.
      */
-    public hostname: StringExpression;
+    hostname: StringExpression;
 
     /**
      * Gets or sets the QnA Maker endpoint key to use to query the knowledge base.
      */
-    public endpointKey: StringExpression;
+    endpointKey: StringExpression;
 
     /**
      * Gets or sets the threshold for answers returned, based on score.
      */
-    public threshold: NumberExpression = new NumberExpression(this.defaultThreshold);
+    threshold: NumberExpression = new NumberExpression(this.defaultThreshold);
 
     /**
      * Gets or sets the maximum number of answers to return from the knowledge base.
      */
-    public top: IntExpression = new IntExpression(this.defaultTopN);
+    top: IntExpression = new IntExpression(this.defaultTopN);
 
     /**
      * Gets or sets the template to send to the user when QnA Maker does not find an answer.
      */
-    public noAnswer: TemplateInterface<Partial<Activity>, DialogStateManager> = new BindToActivity(
+    noAnswer: TemplateInterface<Partial<Activity>, DialogStateManager> = new BindToActivity(
         MessageFactory.text(this.defaultNoAnswer)
     );
 
@@ -229,7 +229,7 @@ export class QnAMakerDialog extends WaterfallDialog implements QnAMakerDialogCon
      *
      * _Note: If suggestionsActivityFactory is passed in, this member is unused._
      */
-    public activeLearningCardTitle: StringExpression;
+    activeLearningCardTitle: StringExpression;
 
     /**
      * Gets or sets the button text to use with active learning options, allowing a user to
@@ -237,13 +237,13 @@ export class QnAMakerDialog extends WaterfallDialog implements QnAMakerDialogCon
      *
      * _Note: If suggestionsActivityFactory is passed in, this member is required._
      */
-    public cardNoMatchText: StringExpression;
+    cardNoMatchText: StringExpression;
 
     /**
      * Gets or sets the template to send to the user if they select the no match option on an
      * active learning card.
      */
-    public cardNoMatchResponse: TemplateInterface<Partial<Activity>, DialogStateManager> = new BindToActivity(
+    cardNoMatchResponse: TemplateInterface<Partial<Activity>, DialogStateManager> = new BindToActivity(
         MessageFactory.text(this.defaultCardNoMatchResponse)
     );
 
@@ -251,7 +251,7 @@ export class QnAMakerDialog extends WaterfallDialog implements QnAMakerDialogCon
      * Gets or sets the QnA Maker metadata with which to filter or boost queries to the knowledge base,
      * or null to apply none.
      */
-    public strictFilters: ArrayExpression<QnAMakerMetadata>;
+    strictFilters: ArrayExpression<QnAMakerMetadata>;
 
     /**
      * Gets or sets the flag to determine if personal information should be logged in telemetry.
@@ -260,20 +260,22 @@ export class QnAMakerDialog extends WaterfallDialog implements QnAMakerDialogCon
      * Defaults to a value of `=settings.telemetry.logPersonalInformation`, which retrieves
      * `logPersonalInformation` flag from settings.
      */
-    public logPersonalInformation = new BoolExpression('=settings.telemetry.logPersonalInformation');
+    logPersonalInformation = new BoolExpression('=settings.runtimeSettings.telemetry.logPersonalInformation');
 
     /**
      * Gets or sets a value indicating whether gets or sets environment of knowledgebase to be called.
      */
-    public isTest = false;
+    isTest = false;
 
     /**
      * Gets or sets the QnA Maker ranker type to use.
      */
-    public rankerType: EnumExpression<RankerTypes> = new EnumExpression(RankerTypes.default);
+    rankerType: EnumExpression<RankerTypes> = new EnumExpression(RankerTypes.default);
 
     // TODO: Add Expressions support
     private suggestionsActivityFactory?: QnASuggestionsActivityFactory;
+
+    private normalizedHost: string;
 
     /**
      * Initializes a new instance of the [QnAMakerDialog](xref:QnAMakerDialog) class.
@@ -291,7 +293,7 @@ export class QnAMakerDialog extends WaterfallDialog implements QnAMakerDialogCon
      * @param {string} dialogId (Optional) Id of the created dialog. Default is 'QnAMakerDialog'.
      * @param {string} strictFiltersJoinOperator join operator for strict filters
      */
-    public constructor(
+    constructor(
         knowledgeBaseId?: string,
         endpointKey?: string,
         hostname?: string,
@@ -322,7 +324,7 @@ export class QnAMakerDialog extends WaterfallDialog implements QnAMakerDialogCon
      * @param {string} dialogId (Optional) Id of the created dialog. Default is 'QnAMakerDialog'.
      * @param {string} strictFiltersJoinOperator join operator for strict filters
      */
-    public constructor(
+    constructor(
         knowledgeBaseId?: string,
         endpointKey?: string,
         hostname?: string,
@@ -405,7 +407,7 @@ export class QnAMakerDialog extends WaterfallDialog implements QnAMakerDialogCon
         this.addStep(this.displayQnAResult.bind(this));
     }
 
-    public getConverter(property: keyof QnAMakerDialogConfiguration): Converter | ConverterFactory {
+    getConverter(property: keyof QnAMakerDialogConfiguration): Converter | ConverterFactory {
         switch (property) {
             case 'knowledgeBaseId':
                 return new StringExpressionConverter();
@@ -452,7 +454,7 @@ export class QnAMakerDialog extends WaterfallDialog implements QnAMakerDialogCon
      * @returns {Promise<DialogTurnResult>} A promise resolving to the turn result
      */
     // eslint-disable-next-line @typescript-eslint/ban-types
-    public async beginDialog(dc: DialogContext, options?: object): Promise<DialogTurnResult> {
+    async beginDialog(dc: DialogContext, options?: object): Promise<DialogTurnResult> {
         if (!dc) {
             throw new Error('Missing DialogContext');
         }
@@ -480,7 +482,7 @@ export class QnAMakerDialog extends WaterfallDialog implements QnAMakerDialogCon
      * @param {DialogContext} dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
      * @returns {DialogContext} A Promise representing the asynchronous operation.
      */
-    public continueDialog(dc: DialogContext): Promise<DialogTurnResult> {
+    continueDialog(dc: DialogContext): Promise<DialogTurnResult> {
         const interrupted = dc.state.getValue<boolean>(TurnPath.interrupted, false);
         if (interrupted) {
             // if qnamaker was interrupted then end the qnamaker dialog
@@ -808,35 +810,30 @@ export class QnAMakerDialog extends WaterfallDialog implements QnAMakerDialogCon
     //
     // Template literal to construct v4 API endpoint: `https://${ this.hostName }.azurewebsites.net/qnamaker`
     private getHost(dc: DialogContext): string {
-        let host: string = this.hostname.getValue(dc.state);
-        // If hostName includes 'qnamaker/v5', return the v5 API hostName.
-        if (host.includes('qnamaker/v5')) {
-            return host;
+        let host = this.hostname.getValue(dc.state);
+
+        // Return the memoized host, but allow it to change at runtime.
+        if (this.normalizedHost && this.normalizedHost.includes(host)) {
+            return this.normalizedHost;
         }
 
-        // V4 API logic
-        // If the hostname contains all the necessary information, return it
-        if (/^https:\/\/.*\.azurewebsites\.net\/qnamaker\/?/i.test(host)) {
-            return host;
-        }
-
-        // Otherwise add required components
-        if (!/https?:\/\//i.test(host)) {
+        // Handle no protocol.
+        if (!/^https?:\/\//.test(host)) {
             host = 'https://' + host;
         }
 
-        // Web App Bots provisioned through the QnAMaker portal have "xxx.azurewebsites.net" in their
-        // environment variables
-        if (host.endsWith('.azurewebsites.net')) {
-            // Add the remaining required path
-            return host + '/qnamaker';
+        // Handle no domain.
+        if (!host.includes('.')) {
+            host = host + '.azurewebsites.net';
         }
 
-        // If this.hostName is just the azurewebsite subdomain, finish the remaining V4 API behavior shipped in 4.8.0
-        // e.g. `https://${ this.hostName }.azurewebsites.net/qnamaker`
-        if (!host.endsWith('.azurewebsites.net/qnamaker')) {
-            host = host + '.azurewebsites.net/qnamaker';
+        // Handle no pathname, only for azurewebsites.net domains.
+        if (!host.includes('/qnamaker') && host.includes('azurewebsites.net')) {
+            host = host + '/qnamaker';
         }
+
+        // Memoize the host.
+        this.normalizedHost = host;
 
         return host;
     }

@@ -5,13 +5,42 @@
 ```ts
 
 import { Activity } from 'botbuilder-core';
+import { ArrayExpression } from 'adaptive-expressions';
+import { BoolExpression } from 'adaptive-expressions';
+import { BotComponent } from 'botbuilder-core';
 import { BotTelemetryClient } from 'botbuilder-core';
+import { ComponentDeclarativeTypes } from 'botbuilder-dialogs-declarative';
+import { ComponentRegistration } from 'botbuilder-core';
+import { Configuration } from 'botbuilder-dialogs-adaptive-runtime-core';
+import { Converter } from 'botbuilder-dialogs';
+import { ConverterFactory } from 'botbuilder-dialogs';
+import { DialogConfiguration } from 'botbuilder-dialogs';
 import { DialogContext } from 'botbuilder-dialogs';
+import { DialogEvent } from 'botbuilder-dialogs';
+import { DialogStateManager } from 'botbuilder-dialogs';
 import { DialogTurnResult } from 'botbuilder-dialogs';
+import { EnumExpression } from 'adaptive-expressions';
+import { Expression } from 'adaptive-expressions';
+import { IntExpression } from 'adaptive-expressions';
 import { LUISRuntimeModels } from '@azure/cognitiveservices-luis-runtime';
+import { NumberExpression } from 'adaptive-expressions';
+import { ObjectExpression } from 'adaptive-expressions';
+import { Recognizer } from 'botbuilder-dialogs';
+import { RecognizerConfiguration } from 'botbuilder-dialogs';
 import { RecognizerResult } from 'botbuilder-core';
+import { ServiceCollection } from 'botbuilder-dialogs-adaptive-runtime-core';
+import { StringExpression } from 'adaptive-expressions';
+import { TemplateInterface } from 'botbuilder-dialogs';
 import { TurnContext } from 'botbuilder-core';
 import { WaterfallDialog } from 'botbuilder-dialogs';
+import { WaterfallStepContext } from 'botbuilder-dialogs';
+
+// @public
+export class ActiveLearningUtils {
+    static getLowScoreVariation(qnaSearchResults: QnAMakerResult[]): QnAMakerResult[];
+    static MaximumScoreForLowScoreVariation: number;
+    static MinimumScoreForLowScoreVariation: number;
+}
 
 // @public
 export enum Anchor {
@@ -27,6 +56,20 @@ export enum Anchor {
 export interface DateTimeSpec {
     timex: string[];
     type: string;
+}
+
+// @public
+export interface DynamicList {
+    listEntityName?: string;
+    requestLists?: ListElement[];
+}
+
+// @public
+export interface ExternalEntity<T = unknown> {
+    entityLength?: number;
+    entityName?: string;
+    resolution?: T;
+    startIndex?: number;
 }
 
 // @public
@@ -77,11 +120,82 @@ export interface IntentData {
 }
 
 // @public
+export enum JoinOperator {
+    AND = "AND",
+    OR = "OR"
+}
+
+// @public
+export interface ListElement {
+    canonicalForm?: string;
+    synonyms?: string[];
+}
+
+// @public
+export class LuisAdaptiveRecognizer extends Recognizer implements LuisAdaptiveRecognizerConfiguration {
+    // (undocumented)
+    static $kind: string;
+    applicationId: StringExpression;
+    // Warning: (ae-forgotten-export) The symbol "DynamicList" needs to be exported by the entry point index.d.ts
+    dynamicLists: ArrayExpression<DynamicList_2>;
+    endpoint: StringExpression;
+    endpointKey: StringExpression;
+    externalEntityRecognizer: Recognizer;
+    protected fillRecognizerResultTelemetryProperties(recognizerResult: RecognizerResult, telemetryProperties: {
+        [key: string]: string;
+    }, dialogContext: DialogContext): {
+        [key: string]: string;
+    };
+    // (undocumented)
+    getConverter(property: keyof LuisAdaptiveRecognizerConfiguration): Converter | ConverterFactory;
+    logPersonalInformation: BoolExpression;
+    // Warning: (ae-forgotten-export) The symbol "LuisAdaptivePredictionOptions" needs to be exported by the entry point index.d.ts
+    predictionOptions: LuisAdaptivePredictionOptions;
+    recognize(dialogContext: DialogContext, activity: Activity, telemetryProperties?: Record<string, string>, telemetryMetrics?: Record<string, number>): Promise<RecognizerResult>;
+    recognizerOptions(dialogContext: DialogContext): LuisRecognizerOptionsV3;
+    version: StringExpression;
+}
+
+// @public (undocumented)
+export interface LuisAdaptiveRecognizerConfiguration extends RecognizerConfiguration {
+    // (undocumented)
+    applicationId?: string | Expression | StringExpression;
+    // (undocumented)
+    dynamicLists?: unknown[] | string | Expression | ArrayExpression<unknown>;
+    // (undocumented)
+    endpoint?: string | Expression | StringExpression;
+    // (undocumented)
+    endpointKey?: string | Expression | StringExpression;
+    // (undocumented)
+    externalEntityRecognizer?: string | Recognizer;
+    // (undocumented)
+    logPersonalInformation?: boolean | string | Expression | BoolExpression;
+    // Warning: (ae-forgotten-export) The symbol "LuisAdaptivePredictionOptionsConfiguration" needs to be exported by the entry point index.d.ts
+    //
+    // (undocumented)
+    predictionOptions?: LuisAdaptivePredictionOptionsConfiguration | LuisAdaptivePredictionOptions;
+    // (undocumented)
+    version?: string | Expression | StringExpression;
+}
+
+// @public
 export interface LuisApplication {
     applicationId: string;
     endpoint?: string;
     endpointKey: string;
 }
+
+// @public (undocumented)
+export class LuisBotComponent extends BotComponent {
+    // (undocumented)
+    configureServices(services: ServiceCollection, _configuration: Configuration): void;
+}
+
+// @public
+export class LuisComponentRegistration extends ComponentRegistration {
+    constructor();
+    getDeclarativeTypes(_resourceExplorer: unknown): ComponentDeclarativeTypes[];
+    }
 
 // @public
 export interface LuisPredictionOptions extends LUISRuntimeModels.PredictionResolveOptionalParams {
@@ -106,19 +220,22 @@ export class LuisRecognizer implements LuisRecognizerTelemetryClient {
     }): Promise<{
         [key: string]: string;
     }>;
-    readonly logPersonalInformation: boolean;
+    // (undocumented)
+    get logPersonalInformation(): boolean;
     protected onRecognizerResults(recognizerResult: RecognizerResult, turnContext: TurnContext, telemetryProperties?: {
         [key: string]: string;
     }, telemetryMetrics?: {
         [key: string]: number;
     }): Promise<void>;
-    recognize(context: TurnContext, telemetryProperties?: {
-        [key: string]: string;
-    }, telemetryMetrics?: {
-        [key: string]: number;
-    }, options?: LuisRecognizerOptionsV2 | LuisRecognizerOptionsV3 | LuisPredictionOptions): Promise<RecognizerResult>;
-    readonly telemetryClient: BotTelemetryClient;
-    static topIntent(results: RecognizerResult | undefined, defaultIntent?: string, minScore?: number): string;
+    recognize(context: DialogContext | TurnContext, telemetryProperties?: Record<string, string>, telemetryMetrics?: Record<string, number>, options?: LuisRecognizerOptionsV2 | LuisRecognizerOptionsV3 | LuisPredictionOptions): Promise<RecognizerResult>;
+    recognize(utterance: string, options?: LuisRecognizerOptionsV2 | LuisRecognizerOptionsV3 | LuisPredictionOptions): Promise<RecognizerResult>;
+    static sortedIntents(result?: RecognizerResult, minScore?: number): Array<{
+        intent: string;
+        score: number;
+    }>;
+    // (undocumented)
+    get telemetryClient(): BotTelemetryClient;
+    static topIntent(results?: RecognizerResult, defaultIntent?: string, minScore?: number): string;
     }
 
 // @public (undocumented)
@@ -130,7 +247,7 @@ export interface LuisRecognizerOptions {
 
 // @public (undocumented)
 export interface LuisRecognizerOptionsV2 extends LuisRecognizerOptions {
-    apiVersion: "v2";
+    apiVersion: 'v2';
     bingSpellCheckSubscriptionKey?: string;
     includeAllIntents?: boolean;
     includeInstanceData?: boolean;
@@ -142,10 +259,11 @@ export interface LuisRecognizerOptionsV2 extends LuisRecognizerOptions {
 
 // @public (undocumented)
 export interface LuisRecognizerOptionsV3 extends LuisRecognizerOptions {
-    apiVersion: "v3";
+    apiVersion: 'v3';
     datetimeReference?: string;
-    dynamicLists?: Array<any>;
-    externalEntities?: Array<any>;
+    dynamicLists?: Array<DynamicList>;
+    externalEntities?: Array<ExternalEntity>;
+    externalEntityRecognizer?: Recognizer;
     includeAllIntents?: boolean;
     includeInstanceData?: boolean;
     log?: boolean;
@@ -166,6 +284,34 @@ export interface LuisRecognizerTelemetryClient {
 }
 
 // @public
+export class LuisTelemetryConstants {
+    // (undocumented)
+    static readonly activityIdProperty = "activityId";
+    // (undocumented)
+    static readonly applicationIdProperty = "applicationId";
+    // (undocumented)
+    static readonly entitiesProperty = "entities";
+    // (undocumented)
+    static readonly fromIdProperty = "fromId";
+    // (undocumented)
+    static readonly intent2Property = "intent2";
+    // (undocumented)
+    static readonly intentProperty = "intent";
+    // (undocumented)
+    static readonly intentScore2Property = "intentScore2";
+    // (undocumented)
+    static readonly intentScoreProperty = "intentScore";
+    // (undocumented)
+    static readonly luisResultEvent = "LuisResult";
+    // (undocumented)
+    static readonly questionProperty = "question";
+    // (undocumented)
+    static readonly sentimentLabelProperty = "sentimentLabel";
+    // (undocumented)
+    static readonly sentimentScoreProperty = "sentimentScore";
+}
+
+// @public
 export interface NumberWithUnits {
     number?: number;
     units: string;
@@ -178,21 +324,19 @@ export interface OrdinalV2 {
 }
 
 // @public
-export class QnAMaker implements QnAMakerTelemetryClient {
+export class QnACardBuilder {
+    static getQnAPromptsCard(result: QnAMakerResult): Partial<Activity>;
+    static getSuggestionsCard(suggestionsList: string[], cardTitle: string, cardNoMatchText: string): Partial<Activity>;
+}
+
+// @public
+export class QnAMaker implements QnAMakerClient, QnAMakerTelemetryClient {
     constructor(endpoint: QnAMakerEndpoint, options?: QnAMakerOptions, telemetryClient?: BotTelemetryClient, logPersonalInformation?: boolean);
     // @deprecated
     answer(context: TurnContext): Promise<boolean>;
     protected callService(endpoint: QnAMakerEndpoint, question: string, top: number): Promise<QnAMakerResults>;
-    callTrainAsync(feedbackRecords: FeedbackRecords): Promise<void>;
-    protected fillQnAEvent(qnaResults: QnAMakerResult[], turnContext: TurnContext, telemetryProperties?: {
-        [key: string]: string;
-    }, telemetryMetrics?: {
-        [key: string]: number;
-    }): Promise<[{
-        [key: string]: string;
-    }, {
-        [key: string]: number;
-    }]>;
+    callTrain(feedbackRecords: FeedbackRecords): Promise<void>;
+    protected fillQnAEvent(qnaResults: QnAMakerResult[], turnContext: TurnContext, telemetryProperties?: Record<string, string>, telemetryMetrics?: Record<string, number>): Promise<[Record<string, string>, Record<string, number>]>;
     // @deprecated
     generateAnswer(question: string | undefined, top?: number, scoreThreshold?: number): Promise<QnAMakerResult[]>;
     getAnswers(context: TurnContext, options?: QnAMakerOptions, telemetryProperties?: {
@@ -200,22 +344,21 @@ export class QnAMaker implements QnAMakerTelemetryClient {
     }, telemetryMetrics?: {
         [key: string]: number;
     }): Promise<QnAMakerResult[]>;
-    // Warning: (ae-forgotten-export) The symbol "QnAMakerResults" needs to be exported by the entry point index.d.ts
-    //
-    // (undocumented)
     getAnswersRaw(context: TurnContext, options?: QnAMakerOptions, telemetryProperties?: {
         [key: string]: string;
     }, telemetryMetrics?: {
         [key: string]: number;
     }): Promise<QnAMakerResults>;
-    getLowScoreVariation(queryResult: QnAMakerResult[]): any[];
-    readonly logPersonalInformation: boolean;
+    getLowScoreVariation(queryResult: QnAMakerResult[]): QnAMakerResult[];
+    // (undocumented)
+    get logPersonalInformation(): boolean;
     protected onQnaResults(qnaResults: QnAMakerResult[], turnContext: TurnContext, telemetryProperties?: {
         [key: string]: string;
     }, telemetryMetrics?: {
         [key: string]: number;
     }): Promise<void>;
-    readonly telemetryClient: BotTelemetryClient;
+    // (undocumented)
+    get telemetryClient(): BotTelemetryClient;
     }
 
 // @public (undocumented)
@@ -227,12 +370,65 @@ export const QNAMAKER_TRACE_NAME = "QnAMaker";
 // @public (undocumented)
 export const QNAMAKER_TRACE_TYPE = "https://www.qnamaker.ai/schemas/trace";
 
-// @public
-export class QnAMakerDialog extends WaterfallDialog {
-    constructor(knowledgeBaseId: string, endpointKey: string, hostName: string, noAnswer?: Activity, threshold?: number, activeLearningCardTitle?: string, cardNoMatchText?: string, top?: number, cardNoMatchResponse?: Activity, strictFilters?: QnAMakerMetadata[], dialogId?: string);
+// @public (undocumented)
+export class QnAMakerBotComponent extends BotComponent {
     // (undocumented)
-    beginDialog(dc: DialogContext, options?: object): Promise<DialogTurnResult>;
+    configureServices(services: ServiceCollection, _configuration: Configuration): void;
+}
+
+// @public
+export interface QnAMakerClient {
+    callTrain(feedbackRecords: FeedbackRecords): Promise<void>;
+    getAnswers(turnContext: TurnContext, options?: QnAMakerOptions, telemetryProperties?: Record<string, string>, telemetryMetrics?: Record<string, number>): Promise<QnAMakerResult[]>;
+    getAnswersRaw(turnContext: TurnContext, options?: QnAMakerOptions, telemetryProperties?: Record<string, string>, telemetryMetrics?: Record<string, number>): Promise<QnAMakerResults>;
+    getLowScoreVariation(queryResult: QnAMakerResult[]): QnAMakerResult[];
+}
+
+// @public
+export const QnAMakerClientKey: unique symbol;
+
+// @public
+export class QnAMakerComponentRegistration extends ComponentRegistration {
+    constructor();
+    getDeclarativeTypes(_resourceExplorer: unknown): ComponentDeclarativeTypes[];
     }
+
+// Warning: (ae-forgotten-export) The symbol "QnAMakerDialogConfiguration" needs to be exported by the entry point index.d.ts
+//
+// @public
+export class QnAMakerDialog extends WaterfallDialog implements QnAMakerDialogConfiguration {
+    // (undocumented)
+    static $kind: string;
+    constructor(knowledgeBaseId?: string, endpointKey?: string, hostname?: string, noAnswer?: Activity, threshold?: number, activeLearningCardTitle?: string, cardNoMatchText?: string, top?: number, cardNoMatchResponse?: Activity, strictFilters?: QnAMakerMetadata[], dialogId?: string, strictFiltersJoinOperator?: JoinOperator);
+    constructor(knowledgeBaseId?: string, endpointKey?: string, hostname?: string, noAnswer?: Activity, threshold?: number, suggestionsActivityFactory?: QnASuggestionsActivityFactory, cardNoMatchText?: string, top?: number, cardNoMatchResponse?: Activity, strictFilters?: QnAMakerMetadata[], dialogId?: string, strictFiltersJoinOperator?: JoinOperator);
+    activeLearningCardTitle: StringExpression;
+    beginDialog(dc: DialogContext, options?: object): Promise<DialogTurnResult>;
+    cardNoMatchResponse: TemplateInterface<Partial<Activity>, DialogStateManager>;
+    cardNoMatchText: StringExpression;
+    continueDialog(dc: DialogContext): Promise<DialogTurnResult>;
+    protected defaultThreshold: number;
+    protected defaultTopN: number;
+    protected displayQnAResult(step: WaterfallStepContext): Promise<DialogTurnResult>;
+    endpointKey: StringExpression;
+    // (undocumented)
+    getConverter(property: keyof QnAMakerDialogConfiguration): Converter | ConverterFactory;
+    protected getQnAMakerClient(dc: DialogContext): Promise<QnAMakerClient>;
+    protected getQnAMakerOptions(dc: DialogContext): Promise<QnAMakerOptions>;
+    protected getQnAResponseOptions(dc: DialogContext): Promise<QnAMakerDialogResponseOptions>;
+    hostname: StringExpression;
+    isTest: boolean;
+    knowledgeBaseId: StringExpression;
+    logPersonalInformation: BoolExpression;
+    noAnswer: TemplateInterface<Partial<Activity>, DialogStateManager>;
+    protected onPreBubbleEvent(dc: DialogContext, e: DialogEvent): Promise<boolean>;
+    protected options: string;
+    protected previousQnAId: string;
+    protected qnAContextData: string;
+    rankerType: EnumExpression<RankerTypes>;
+    strictFilters: ArrayExpression<QnAMakerMetadata>;
+    threshold: NumberExpression;
+    top: IntExpression;
+}
 
 // @public
 export interface QnAMakerDialogOptions {
@@ -243,9 +439,9 @@ export interface QnAMakerDialogOptions {
 // @public
 export interface QnAMakerDialogResponseOptions {
     activeLearningCardTitle: string;
-    cardNoMatchResponse: Activity;
+    cardNoMatchResponse: Partial<Activity>;
     cardNoMatchText: string;
-    noAnswer: Activity;
+    noAnswer: Partial<Activity>;
 }
 
 // @public
@@ -270,14 +466,77 @@ export interface QnAMakerOptions {
     rankerType?: string;
     scoreThreshold?: number;
     strictFilters?: QnAMakerMetadata[];
+    strictFiltersJoinOperator?: JoinOperator;
     timeout?: number;
     top?: number;
 }
 
 // @public
+export class QnAMakerRecognizer extends Recognizer implements QnAMakerRecognizerConfiguration {
+    // (undocumented)
+    static $kind: string;
+    constructor(hostname?: string, knowledgeBaseId?: string, endpointKey?: string);
+    context: ObjectExpression<QnARequestContext>;
+    endpointKey: StringExpression;
+    protected fillRecognizerResultTelemetryProperties(recognizerResult: RecognizerResult, telemetryProperties: Record<string, string>, dc: DialogContext): Record<string, string>;
+    // (undocumented)
+    getConverter(property: keyof QnAMakerRecognizerConfiguration): Converter | ConverterFactory;
+    // @deprecated
+    protected getQnAMaker(dc: DialogContext): QnAMaker;
+    protected getQnAMakerClient(dc: DialogContext): QnAMakerClient;
+    hostname: StringExpression;
+    includeDialogNameInMetadata: BoolExpression;
+    isTest: boolean;
+    knowledgeBaseId: StringExpression;
+    logPersonalInformation: BoolExpression;
+    metadata: ArrayExpression<QnAMakerMetadata>;
+    qnaId: IntExpression;
+    // (undocumented)
+    static readonly qnaMatchIntent = "QnAMatch";
+    rankerType: StringExpression;
+    recognize(dc: DialogContext, activity: Activity, telemetryProperties?: {
+        [key: string]: string;
+    }, telemetryMetrics?: {
+        [key: string]: number;
+    }): Promise<RecognizerResult>;
+    strictFiltersJoinOperator: JoinOperator;
+    threshold: NumberExpression;
+    top: IntExpression;
+}
+
+// @public (undocumented)
+export interface QnAMakerRecognizerConfiguration extends RecognizerConfiguration {
+    // (undocumented)
+    context?: QnARequestContext | string | Expression | ObjectExpression<QnARequestContext>;
+    // (undocumented)
+    endpointKey?: string | Expression | StringExpression;
+    // (undocumented)
+    hostname?: string | Expression | StringExpression;
+    // (undocumented)
+    includeDialogNameInMetadata?: boolean | string | Expression | BoolExpression;
+    // (undocumented)
+    isTest?: boolean;
+    // (undocumented)
+    knowledgeBaseId?: string | Expression | StringExpression;
+    // (undocumented)
+    logPersonalInformation?: boolean | string | Expression | BoolExpression;
+    // (undocumented)
+    metadata?: QnAMakerMetadata[] | string | Expression | ArrayExpression<QnAMakerMetadata>;
+    // (undocumented)
+    qnaId?: number | string | Expression | IntExpression;
+    // (undocumented)
+    rankerType?: string | Expression | StringExpression;
+    // (undocumented)
+    strictFiltersJoinOperator?: JoinOperator;
+    // (undocumented)
+    threshold?: number | string | Expression | NumberExpression;
+    // (undocumented)
+    top?: number | string | Expression | IntExpression;
+}
+
+// @public
 export interface QnAMakerResult {
     answer: string;
-    // Warning: (ae-forgotten-export) The symbol "QnAResponseContext" needs to be exported by the entry point index.d.ts
     context?: QnAResponseContext;
     id?: number;
     metadata?: any;
@@ -286,7 +545,13 @@ export interface QnAMakerResult {
     source?: string;
 }
 
-// @public (undocumented)
+// @public
+export interface QnAMakerResults {
+    activeLearningEnabled?: boolean;
+    answers?: QnAMakerResult[];
+}
+
+// @public
 export interface QnAMakerTelemetryClient {
     getAnswers(context: TurnContext, options?: QnAMakerOptions, telemetryProperties?: {
         [key: string]: string;
@@ -317,11 +582,29 @@ export interface QnARequestContext {
 }
 
 // @public
-export class RankerTypes {
-    static readonly autoSuggestQuestion: string;
-    static readonly default: string;
-    static readonly questionOnly: string;
+export interface QnAResponseContext {
+    // Warning: (ae-forgotten-export) The symbol "QnAMakerPrompt" needs to be exported by the entry point index.d.ts
+    prompts: QnAMakerPrompt[];
 }
+
+// @public
+export type QnASuggestionsActivityFactory = (suggestionsList: string[], noMatchesText: string) => Partial<Activity>;
+
+// @public
+export enum RankerTypes {
+    autoSuggestQuestion = "AutoSuggestQuestion",
+    default = "Default",
+    questionOnly = "QuestionOnly"
+}
+
+// @public
+export function validateDynamicList(dynamicList: DynamicList): void;
+
+// @public
+export function validateExternalEntity(entity: ExternalEntity): void;
+
+// @public
+export function validateListElement(element: ListElement): void;
 
 
 // (No @packageDocumentation comment for this package)
