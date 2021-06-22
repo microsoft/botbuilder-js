@@ -37,13 +37,13 @@ import { ServiceClientCredentialsFactory } from 'botframework-connector';
 import { ServiceCollection } from 'botbuilder-dialogs-adaptive-runtime-core';
 import { SignInUrlResponse } from 'botframework-schema';
 import { StatusCodes } from 'botframework-schema';
-import * as t from 'runtypes';
 import { ThumbnailCard } from 'botframework-schema';
 import { TokenExchangeRequest } from 'botframework-schema';
 import { TokenExchangeResource } from 'botframework-schema';
 import { TokenResponse } from 'botframework-schema';
 import { UserTokenClient } from 'botframework-connector';
 import { VideoCard } from 'botframework-schema';
+import * as z from 'zod';
 
 // @public
 export class ActivityFactory {
@@ -321,7 +321,7 @@ export class ComponentRegistration {
 
 // @public
 export class ConfigurationBotFrameworkAuthentication extends BotFrameworkAuthentication {
-    constructor(botFrameworkAuthConfig?: Partial<ConfigurationBotFrameworkAuthenticationOptions>, credentialsFactory?: ServiceClientCredentialsFactory, authConfiguration?: AuthenticationConfiguration, botFrameworkClientFetch?: (input: RequestInfo, init?: RequestInit) => Promise<Response>, connectorClientOptions?: ConnectorClientOptions);
+    constructor(botFrameworkAuthConfig?: ConfigurationBotFrameworkAuthenticationOptions, credentialsFactory?: ServiceClientCredentialsFactory, authConfiguration?: AuthenticationConfiguration, botFrameworkClientFetch?: (input: RequestInfo, init?: RequestInit) => Promise<Response>, connectorClientOptions?: ConnectorClientOptions);
     // (undocumented)
     authenticateChannelRequest(authHeader: string): Promise<ClaimsIdentity>;
     // (undocumented)
@@ -339,17 +339,17 @@ export class ConfigurationBotFrameworkAuthentication extends BotFrameworkAuthent
 // Warning: (ae-forgotten-export) The symbol "TypedOptions" needs to be exported by the entry point index.d.ts
 //
 // @public
-export type ConfigurationBotFrameworkAuthenticationOptions = t.Static<typeof TypedOptions>;
+export type ConfigurationBotFrameworkAuthenticationOptions = z.infer<typeof TypedOptions>;
 
 // @public
 export class ConfigurationServiceClientCredentialFactory extends PasswordServiceClientCredentialFactory {
-    constructor(factoryOptions: ConfigurationServiceClientCredentialFactoryOptions);
+    constructor(factoryOptions?: ConfigurationServiceClientCredentialFactoryOptions);
 }
 
 // Warning: (ae-forgotten-export) The symbol "TypedConfig" needs to be exported by the entry point index.d.ts
 //
 // @public
-export type ConfigurationServiceClientCredentialFactoryOptions = t.Static<typeof TypedConfig>;
+export type ConfigurationServiceClientCredentialFactoryOptions = z.infer<typeof TypedConfig>;
 
 // @public
 export class ConsoleTranscriptLogger implements TranscriptLogger {
