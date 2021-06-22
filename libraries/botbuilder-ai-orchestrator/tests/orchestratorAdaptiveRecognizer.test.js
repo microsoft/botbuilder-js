@@ -11,7 +11,7 @@ const { BotFrameworkAdapter } = require('../../botbuilder/lib');
 const { StringExpression, BoolExpression, NumberExpression } = require('adaptive-expressions');
 const { NumberEntityRecognizer } = require('botbuilder-dialogs-adaptive');
 const sinon = require('sinon');
-const { orchestratorIntentText, getLogPersonalInformation, validateTelemetry } = require('./recognizerTelemetryUtils');
+const { orchestratorIntentText, getLogPersonalInformation, validateTelemetry, validateNoneTelemetry } = require('./recognizerTelemetryUtils');
 
 describe('OrchestratorAdpativeRecognizer tests', function () {
     it('Expect initialize is called when orchestrator obj is null', async function () {
@@ -202,6 +202,45 @@ describe('OrchestratorAdpativeRecognizer tests', function () {
             });
         });
 
+        it('should log telemetry for None intent', async function () {
+            // Set up OrchestratorAdaptiveRecognizer
+            const result = [
+                {
+                    score: 0.3,
+                    label: {
+                        name: 'FOOBAR',
+                    },
+                },
+            ];
+            const mockResolver = new MockResolver(result);
+            const testPaths = 'test';
+            const recognizer = new OrchestratorRecognizer(testPaths, testPaths, mockResolver);
+            OrchestratorRecognizer.orchestrator = 'mock';
+            recognizer.modelFolder = new StringExpression(testPaths);
+            recognizer.snapshotFile = new StringExpression(testPaths);
+
+            //Set up telemetry
+            const { dc, activity } = createTestDcAndActivity(orchestratorIntentText);
+            const telemetryClient = new NullTelemetryClient();
+            const spy = sinon.spy(telemetryClient, 'trackEvent');
+            recognizer.telemetryClient = telemetryClient;
+            recognizer.logPersonalInformation = false;
+            
+            const res = await recognizer.recognize(dc, activity);
+
+            ok(res.text, orchestratorIntentText);
+            ok(res.intents.None.score, 1.0);
+            validateNoneTelemetry({
+                recognizer,
+                dialogContext: dc,
+                spy,
+                activity,
+                result,
+                callCount: 1,
+            });
+        });
+
+
         it('does not log PII when logPersonalInformation is false', async function () {
             // Set up OrchestratorAdaptiveRecognizer
             const result = [
@@ -278,6 +317,8 @@ describe('OrchestratorAdpativeRecognizer tests', function () {
             const res = await recognizerWithDefaultLogPii.recognize(dc, activity);
 
             ok(res.text, orchestratorIntentText);
+
+
             ok(res.intents.mockLabel.score, 0.9);
             ok(!getLogPersonalInformation(recognizerWithDefaultLogPii, dc));
             validateTelemetry({
