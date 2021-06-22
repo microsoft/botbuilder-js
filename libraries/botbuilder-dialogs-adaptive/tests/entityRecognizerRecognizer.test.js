@@ -23,7 +23,7 @@ const {
     RegexEntityRecognizer,
     ChannelMentionEntityRecognizer,
     EntityRecognizer,
-} = require('botbuilder-dialogs-adaptive');
+} = require('../');
 const { getLogPersonalInformation, spyOnTelemetryClientTrackEvent } = require('./recognizerTelemetryUtils');
 
 const user = {

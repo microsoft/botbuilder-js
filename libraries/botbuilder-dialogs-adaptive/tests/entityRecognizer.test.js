@@ -20,7 +20,7 @@ const {
     TemperatureEntityRecognizer,
     UrlEntityRecognizer,
     RegexEntityRecognizer,
-} = require('botbuilder-dialogs-adaptive');
+} = require('../');
 
 const user = {
     id: process.env['USER_ID'] || 'UK8CH2281:TKGSUQHQE',

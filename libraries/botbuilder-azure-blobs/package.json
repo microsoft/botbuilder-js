@@ -33,12 +33,13 @@
     "botbuilder-stdlib": "4.1.6",
     "get-stream": "^6.0.0",
     "p-map": "^4.0.0",
-    "runtypes": "~6.3.0"
+    "zod": "~1.11.17"
   },
   "scripts": {
     "build": "tsc -b",
     "build-docs": "typedoc --theme markdown --entryPoint botbuilder-azure-blobs --excludePrivate --includeDeclarations --ignoreCompilerErrors --module amd --out ..\\..\\doc\\botbuilder-azure-blobs .\\lib\\index.d.ts --hideGenerator --name \"Bot Builder SDK - Azure Blobs\" --readme none",
     "clean": "rimraf _ts3.4 lib tsconfig.tsbuildinfo",
+    "depcheck": "depcheck --config ../../.depcheckrc",
     "lint": "eslint . --ext .js,.ts",
     "postbuild": "downlevel-dts lib _ts3.4/lib --checksum",
     "test": "yarn build && nyc mocha --check-leaks tests",

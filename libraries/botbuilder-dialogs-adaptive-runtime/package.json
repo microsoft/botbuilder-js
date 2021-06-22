@@ -39,10 +39,9 @@
     "botbuilder-dialogs-adaptive-runtime-core": "4.1.6",
     "botbuilder-dialogs-declarative": "4.1.6",
     "botframework-connector": "4.1.6",
-    "dependency-graph": "^0.10.0",
     "nconf": "0.11.2",
-    "runtypes": "~6.3.0",
-    "yargs-parser": "^20.2.7"
+    "yargs-parser": "^20.2.7",
+    "zod": "~1.11.17"
   },
   "devDependencies": {
     "@types/nconf": "0.10.0",
@@ -52,6 +51,7 @@
   "scripts": {
     "build": "tsc -b",
     "clean": "rimraf _ts3.4 lib tsconfig.tsbuildinfo",
+    "depcheck": "depcheck --config ../../.depcheckrc",
     "lint": "eslint . --ext .js,.ts",
     "postbuild": "downlevel-dts lib _ts3.4/lib --checksum",
     "test": "nyc mocha",

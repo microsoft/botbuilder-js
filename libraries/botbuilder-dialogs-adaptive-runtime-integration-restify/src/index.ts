@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-import * as t from 'runtypes';
+import * as z from 'zod';
 import path from 'path';
 import restify from 'restify';
 import type { ActivityHandlerBase, BotFrameworkAdapter, ChannelServiceRoutes } from 'botbuilder';
@@ -9,9 +9,9 @@ import { Configuration, getRuntimeServices } from 'botbuilder-dialogs-adaptive-r
 import type { ServiceCollection } from 'botbuilder-dialogs-adaptive-runtime-core';
 
 // Explicitly fails checks for `""`
-const NonEmptyString = t.String.withConstraint((str) => str.length > 0 || 'must be non-empty string');
+const NonEmptyString = z.string().refine((str) => str.length > 0, { message: 'must be non-empty string' });
 
-const TypedOptions = t.Record({
+const TypedOptions = z.object({
     /**
      * Path that the server will listen to for [Activities](xref:botframework-schema.Activity)
      */
@@ -25,12 +25,12 @@ const TypedOptions = t.Record({
     /**
      * Port that server should listen on
      */
-    port: t.Union(NonEmptyString, t.Number),
+    port: z.union([NonEmptyString, z.number()]),
 
     /**
      * Log errors to stderr
      */
-    logErrors: t.Boolean,
+    logErrors: z.boolean(),
 
     /**
      * Path inside applicationRoot that should be served as static files
@@ -41,7 +41,7 @@ const TypedOptions = t.Record({
 /**
  * Options for runtime restify adapter
  */
-export type Options = t.Static<typeof TypedOptions>;
+export type Options = z.infer<typeof TypedOptions>;
 
 const defaultOptions: Options = {
     logErrors: true,
@@ -59,7 +59,7 @@ async function resolveOptions(options: Partial<Options>, configuration: Configur
         configOverrides.port = port;
     }
 
-    return TypedOptions.check(Object.assign({}, defaultOptions, configOverrides, options));
+    return TypedOptions.parse(Object.assign({}, defaultOptions, configOverrides, options));
 }
 
 /**
@@ -141,11 +141,11 @@ export async function makeServer(
     const adapters =
         configuration.type(
             ['runtimeSettings', 'adapters'],
-            t.Array(
-                t.Record({
-                    name: t.String,
-                    enabled: t.Boolean.optional(),
-                    route: t.String,
+            z.array(
+                z.object({
+                    name: z.string(),
+                    enabled: z.boolean().optional(),
+                    route: z.string(),
                 })
             )
         ) ?? [];

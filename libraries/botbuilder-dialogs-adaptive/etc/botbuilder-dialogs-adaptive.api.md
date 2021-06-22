@@ -5,7 +5,6 @@
 ```ts
 
 import { Activity } from 'botbuilder';
-import { Activity as Activity_2 } from 'botbuilder-core';
 import { ArrayExpression } from 'adaptive-expressions';
 import { BeginSkillDialogOptions } from 'botbuilder-dialogs';
 import { BoolExpression } from 'adaptive-expressions';
@@ -33,8 +32,7 @@ import { DialogSet } from 'botbuilder-dialogs';
 import { DialogState } from 'botbuilder-dialogs';
 import { DialogStateManager } from 'botbuilder-dialogs';
 import { DialogTurnResult } from 'botbuilder-dialogs';
-import { Entity } from 'botbuilder-core';
-import { Entity as Entity_2 } from 'botbuilder';
+import { Entity } from 'botbuilder';
 import { EnumExpression } from 'adaptive-expressions';
 import { Expression } from 'adaptive-expressions';
 import { ExpressionEvaluator } from 'adaptive-expressions';
@@ -52,7 +50,6 @@ import { PromptOptions } from 'botbuilder-dialogs';
 import { Recognizer } from 'botbuilder-dialogs';
 import { RecognizerConfiguration } from 'botbuilder-dialogs';
 import { RecognizerResult } from 'botbuilder';
-import { RecognizerResult as RecognizerResult_2 } from 'botbuilder-core';
 import { Resource } from 'botbuilder-dialogs-declarative';
 import { ResourceExplorer } from 'botbuilder-dialogs-declarative';
 import { ResourceResponse } from 'botbuilder';
@@ -222,7 +219,7 @@ export class AdaptiveEvents extends DialogEvents {
 
 // @public
 export abstract class AdaptiveRecognizer extends Recognizer implements AdaptiveRecognizerConfiguration {
-    protected fillRecognizerResultTelemetryProperties(recognizerResult: RecognizerResult_2, telemetryProperties: Record<string, string>, dialogContext: DialogContext): Record<string, string>;
+    protected fillRecognizerResultTelemetryProperties(recognizerResult: RecognizerResult, telemetryProperties: Record<string, string>, dialogContext: DialogContext): Record<string, string>;
     logPersonalInformation: BoolExpression;
 }
 
@@ -464,7 +461,7 @@ export class Case extends ActionScope {
 export class ChannelMentionEntityRecognizer extends AdaptiveRecognizer {
     // (undocumented)
     static $kind: string;
-    recognize(dialogContext: DialogContext, activity: Partial<Activity_2>, telemetryProperties?: Record<string, string>, telemetryMetrics?: Record<string, number>): Promise<RecognizerResult_2>;
+    recognize(dialogContext: DialogContext, activity: Partial<Activity>, telemetryProperties?: Record<string, string>, telemetryMetrics?: Record<string, number>): Promise<RecognizerResult>;
 }
 
 // @public (undocumented)
@@ -973,7 +970,7 @@ export interface EndTurnConfiguration extends DialogConfiguration {
 
 // @public
 export class EntityRecognizer extends AdaptiveRecognizer {
-    recognize(dialogContext: DialogContext, activity: Partial<Activity_2>, telemetryProperties?: Record<string, string>, telemetryMetrics?: Record<string, number>): Promise<RecognizerResult_2>;
+    recognize(dialogContext: DialogContext, activity: Partial<Activity>, telemetryProperties?: Record<string, string>, telemetryMetrics?: Record<string, number>): Promise<RecognizerResult>;
     recognizeEntities(dialogContext: DialogContext, text: string, locale: string, entities: Entity[]): Promise<Entity[]>;
 }
 
@@ -981,7 +978,7 @@ export class EntityRecognizer extends AdaptiveRecognizer {
 export class EntityRecognizerSet extends Array<EntityRecognizer> {
     // (undocumented)
     static $kind: string;
-    recognizeEntities(dialogContext: DialogContext, text: string, locale: string, entities?: Entity_2[]): Promise<Entity_2[]>;
+    recognizeEntities(dialogContext: DialogContext, text: string, locale: string, entities?: Entity[]): Promise<Entity[]>;
 }
 
 // @public (undocumented)
@@ -1997,11 +1994,11 @@ export class RegexRecognizer extends AdaptiveRecognizer implements RegexRecogniz
     getConverter(property: keyof RegexRecognizerConfiguration): Converter | ConverterFactory;
     intents: IntentPattern[];
     // (undocumented)
-    recognize(dialogContext: DialogContext, activity: Activity_2, telemetryProperties?: {
+    recognize(dialogContext: DialogContext, activity: Activity, telemetryProperties?: {
         [key: string]: string;
     }, telemetryMetrics?: {
         [key: string]: number;
-    }): Promise<RecognizerResult_2>;
+    }): Promise<RecognizerResult>;
 }
 
 // @public (undocumented)
@@ -2343,7 +2340,7 @@ export interface TemplateEngineLanguageGeneratorConfiguration {
 export type TemplateInterfaceProperty<T, D> = T | TemplateInterface<T, D> | string;
 
 // @public
-export class TextEntity implements Entity_2 {
+export class TextEntity implements Entity {
     constructor(text?: string);
     // (undocumented)
     text: string;

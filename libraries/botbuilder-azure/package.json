@@ -33,11 +33,12 @@
     "azure-storage": "2.10.2",
     "botbuilder": "4.1.6",
     "documentdb": "1.14.5",
-    "flat": "^4.0.0",
     "semaphore": "^1.1.0"
   },
   "devDependencies": {
     "@types/semaphore": "^1.1.0",
+    "fs-extra": "^7.0.1",
+    "node-fetch": "^2.6.1",
     "nock": "^11.9.1"
   },
   "scripts": {
@@ -45,6 +46,7 @@
     "build-docs": "typedoc --theme markdown --entryPoint botbuilder-azure --excludePrivate --includeDeclarations --ignoreCompilerErrors --module amd --out ..\\..\\doc\\botbuilder-azure .\\lib\\index.d.ts --hideGenerator --name \"Bot Builder SDK - Azure\" --readme none",
     "build:rollup": "yarn clean && yarn build && api-extractor run --verbose --local",
     "clean": "rimraf _ts3.4 lib tsconfig.tsbuildinfo",
+    "depcheck": "depcheck --config ../../.depcheckrc",
     "lint": "eslint . --ext .js,.ts",
     "postbuild": "downlevel-dts lib _ts3.4/lib --checksum",
     "test": "yarn build && nyc mocha tests/",

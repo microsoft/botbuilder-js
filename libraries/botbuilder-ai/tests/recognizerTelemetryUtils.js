@@ -1,8 +1,7 @@
 const { ok, strictEqual } = require('assert');
 const sinon = require('sinon');
-const { NullTelemetryClient } = require('botbuilder-core');
+const { ActivityEx, NullTelemetryClient } = require('botbuilder-core');
 const { BoolExpression } = require('adaptive-expressions');
-const { asMessageActivity } = require('botframework-schema').ActivityEx;
 
 const qnaIntentText = 'how do I clean the stove?';
 
@@ -99,7 +98,7 @@ const getQnAIntentProps = () => ({
 });
 
 const getExpectedProps = (activity, result, logPersonalInformation) => {
-    const text = asMessageActivity(activity).text;
+    const text = ActivityEx.asMessageActivity(activity).text;
     const expectedProps = text === qnaIntentText ? getQnAIntentProps() : {};
 
     if (logPersonalInformation) {

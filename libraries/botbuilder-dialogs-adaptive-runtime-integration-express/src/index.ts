@@ -1,8 +1,8 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-import * as t from 'runtypes';
-import express from 'express';
+import * as z from 'zod';
+import express, { Application } from 'express';
 import path from 'path';
 import type { Server } from 'http';
 import type { ActivityHandlerBase, BotFrameworkAdapter, ChannelServiceRoutes } from 'botbuilder';
@@ -10,9 +10,9 @@ import { Configuration, getRuntimeServices } from 'botbuilder-dialogs-adaptive-r
 import type { ServiceCollection } from 'botbuilder-dialogs-adaptive-runtime-core';
 
 // Explicitly fails checks for `""`
-const NonEmptyString = t.String.withConstraint((str) => str.length > 0 || 'must be non-empty string');
+const NonEmptyString = z.string().refine((str) => str.length > 0, { message: 'must be non-empty string' });
 
-const TypedOptions = t.Record({
+const TypedOptions = z.object({
     /**
      * Path that the server will listen to for [Activities](xref:botframework-schema.Activity)
      */
@@ -26,12 +26,12 @@ const TypedOptions = t.Record({
     /**
      * Port that server should listen on
      */
-    port: t.Union(NonEmptyString, t.Number),
+    port: z.union([NonEmptyString, z.number()]),
 
     /**
      * Log errors to stderr
      */
-    logErrors: t.Boolean,
+    logErrors: z.boolean(),
 
     /**
      * Path inside applicationRoot that should be served as static files
@@ -42,7 +42,7 @@ const TypedOptions = t.Record({
 /**
  * Options for runtime Express adapter
  */
-export type Options = t.Static<typeof TypedOptions>;
+export type Options = z.infer<typeof TypedOptions>;
 
 const defaultOptions: Options = {
     logErrors: true,
@@ -91,8 +91,8 @@ export async function makeApp(
     configuration: Configuration,
     applicationRoot: string,
     options: Partial<Options> = {},
-    app = express()
-): Promise<[app: express.Application, listen: (callback?: () => void) => Server]> {
+    app: Application = express()
+): Promise<[Application, (callback?: () => void) => Server]> {
     const configOverrides: Partial<Options> = {};
 
     const port = ['port', 'PORT'].map((key) => configuration.string([key])).find((port) => port !== undefined);
@@ -100,7 +100,7 @@ export async function makeApp(
         configOverrides.port = port;
     }
 
-    const resolvedOptions = TypedOptions.check(Object.assign({}, defaultOptions, configOverrides, options));
+    const resolvedOptions = TypedOptions.parse(Object.assign({}, defaultOptions, configOverrides, options));
 
     const errorHandler = (err: Error | string, res?: express.Response): void => {
         if (options.logErrors) {
@@ -145,11 +145,11 @@ export async function makeApp(
     const adapters =
         configuration.type(
             ['runtimeSettings', 'adapters'],
-            t.Array(
-                t.Record({
-                    name: t.String,
-                    enabled: t.Boolean.optional(),
-                    route: t.String,
+            z.array(
+                z.object({
+                    name: z.string(),
+                    enabled: z.boolean().optional(),
+                    route: z.string(),
                 })
             )
         ) ?? [];

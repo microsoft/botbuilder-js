@@ -29,7 +29,6 @@
   "dependencies": {
     "@azure/cognitiveservices-luis-runtime": "2.0.0",
     "@azure/ms-rest-js": "1.9.1",
-    "@microsoft/recognizers-text-date-time": "1.1.4",
     "adaptive-expressions": "4.1.6",
     "botbuilder-core": "4.1.6",
     "botbuilder-dialogs": "4.1.6",
@@ -38,12 +37,11 @@
     "botbuilder-stdlib": "4.1.6",
     "lodash": "^4.17.21",
     "node-fetch": "^2.6.0",
-    "runtypes": "~6.3.0",
-    "url-parse": "^1.5.1"
+    "url-parse": "^1.5.1",
+    "zod": "~1.11.17"
   },
   "devDependencies": {
     "@types/node-fetch": "^2.5.7",
-    "dotenv": "^8.1.0",
     "fs-extra": "^7.0.1",
     "nock": "^11.9.1"
   },
@@ -52,6 +50,7 @@
     "build-docs": "typedoc --theme markdown --entryPoint botbuilder-ai --excludePrivate --includeDeclarations --ignoreCompilerErrors --module amd --out ..\\..\\doc\\botbuilder-ai .\\lib\\index.d.ts --hideGenerator --name \"Bot Builder SDK - AI\" --readme none",
     "build:rollup": "yarn clean && yarn build && api-extractor run --verbose --local",
     "clean": "rimraf _ts3.4 lib tsconfig.tsbuildinfo",
+    "depcheck": "depcheck --config ../../.depcheckrc",
     "lint": "eslint . --ext .js,.ts",
     "postbuild": "downlevel-dts lib _ts3.4/lib --checksum",
     "test": "npm-run-all build test:mocha",

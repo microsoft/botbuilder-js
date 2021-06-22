@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-import * as t from 'runtypes';
+import * as z from 'zod';
 import yargs from 'yargs-parser';
 import { Configuration as CoreConfiguration } from 'botbuilder-dialogs-adaptive-runtime-core';
 import { Provider } from 'nconf';
@@ -133,7 +133,7 @@ export class Configuration implements CoreConfiguration {
      * @returns true or false depending on flag
      */
     bool(path: string[]): boolean {
-        return this.type(path, t.Boolean) === true;
+        return this.type(path, z.boolean()) === true;
     }
 
     /**
@@ -143,26 +143,22 @@ export class Configuration implements CoreConfiguration {
      * @returns the string or undefined
      */
     string(path: string[]): string | undefined {
-        return this.type(path, t.String);
+        return this.type(path, z.string());
     }
 
     /**
      * Get a typed value from config
      *
      * @param path path to value
-     * @param runtype runtype to use for type checking
+     * @param t zod type to use for type checking
      * @returns the value, or undefined
      */
-    type<T>(path: string[], runtype: t.Runtype<T>): T | undefined {
-        const value = this.get(path);
-
+    type<T>(path: string[], t: z.ZodType<T>): T | undefined {
         try {
-            return runtype.optional().check(value);
+            return t.optional().parse(this.get(path));
         } catch (err) {
-            if (err instanceof t.ValidationError) {
-                err.details ??= {
-                    [this.prefix.concat(path).join('.')]: err.message,
-                };
+            if (z.instanceof(z.ZodError).check(err)) {
+                err.errors.forEach((error) => (error.path = [...this.prefix, ...path, ...error.path]));
             }
 
             throw err;

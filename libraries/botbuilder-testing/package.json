@@ -30,18 +30,12 @@
     "botbuilder-core": "4.1.6",
     "botbuilder-dialogs": "4.1.6"
   },
-  "devDependencies": {
-    "assert": "^1.4.1",
-    "chatdown": "^1.0.2",
-    "nock": "^11.9.1",
-    "unzipper": "^0.10.9",
-    "uuid": "^3.4.0"
-  },
   "scripts": {
     "build": "tsc -b",
     "build-docs": "typedoc --theme markdown --entryPoint botbuilder --excludePrivate --includeDeclarations --ignoreCompilerErrors --module amd --out ..\\..\\doc\\botbuilder .\\lib\\index.d.ts ..\\botbuilder-core\\lib\\index.d.ts ..\\botframework-schema\\lib\\index.d.ts --hideGenerator --name \"Bot Builder SDK\" --readme none",
     "build:rollup": "yarn clean && yarn build && api-extractor run --verbose --local",
     "clean": "rimraf _ts3.4 lib tsconfig.tsbuildinfo",
+    "depcheck": "depcheck --config ../../.depcheckrc",
     "lint": "eslint . --ext .js,.ts",
     "postbuild": "downlevel-dts lib _ts3.4/lib --checksum",
     "test": "yarn build && nyc mocha tests/",

@@ -1,8 +1,7 @@
 const { ok, strictEqual } = require('assert');
 const sinon = require('sinon');
-const { NullTelemetryClient } = require('botbuilder-core');
+const { ActivityEx, NullTelemetryClient } = require('botbuilder-core');
 const { BoolExpression } = require('adaptive-expressions');
-const { asMessageActivity, createMessageActivity } = require('botframework-schema').ActivityEx;
 const { createContext } = require('./activityUtils');
 const {
     getCodeIntentProperties,
@@ -85,7 +84,7 @@ async function recognizeIntentAndValidateTelemetry({ text, callCount, recognizer
  */
 async function recognizeIntentAndValidateTelemetry_withCustomActivity({ text, callCount, recognizer, spy: spy }) {
     const dialogContext = createContext(text);
-    const customActivity = createMessageActivity();
+    const customActivity = ActivityEx.createMessageActivity();
     customActivity.text = text;
     customActivity.locale = 'en-us';
 
@@ -142,7 +141,7 @@ const getLogPersonalInformation = (recognizer, dialogContext) => {
 };
 
 const getExpectedProps = (activity, result, logPersonalInformation) => {
-    const text = asMessageActivity(activity).text;
+    const text = ActivityEx.asMessageActivity(activity).text;
     const expectedProps = text in expectedProperties ? expectedProperties[text]() : {};
 
     if (logPersonalInformation) {

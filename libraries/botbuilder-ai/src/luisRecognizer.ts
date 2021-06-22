@@ -15,7 +15,7 @@ import { isLuisRecognizerOptionsV3, LuisRecognizerV3 } from './luisRecognizerOpt
 import { DynamicList } from './dynamicList';
 import { ExternalEntity } from './externalEntity';
 import { DialogContext, Recognizer } from 'botbuilder-dialogs';
-import * as t from 'runtypes';
+import * as z from 'zod';
 
 /**
  * Description of a LUIS application used for initializing a LuisRecognizer.
@@ -234,15 +234,12 @@ export interface LuisRecognizerOptionsV2 extends LuisRecognizerOptions {
     timezoneOffset?: number;
 }
 
-// This run type is purely used for type assertions in a scenario where we
+// This zod type is purely used for type assertions in a scenario where we
 // know better than the compiler does that we'll have a value of this type.
 // This is just meant to operate as a simple type assertion.
-const UnsafeLuisRecognizerUnion = t.Guard(
-    (val: unknown): val is LuisRecognizerOptionsV2 | LuisRecognizerOptionsV3 | LuisPredictionOptions => {
-        return t.Dictionary(t.Unknown, t.String).guard(val);
-    },
-    { name: 'LuisRecognizerOptionsV2 | LuisRecognizerOptionsV3 | LuisPredictionOptions' }
-);
+const UnsafeLuisRecognizerUnion: z.ZodType<
+    LuisRecognizerOptionsV2 | LuisRecognizerOptionsV3 | LuisPredictionOptions
+> = z.record(z.unknown());
 
 /**
  * Recognize intents in a user utterance using a configured LUIS model.
@@ -457,17 +454,19 @@ export class LuisRecognizer implements LuisRecognizerTelemetryClient {
         // This type check, when true, logically implies that the function is being invoked as the two-argument string + optional options overload variant.
         if (typeof contextOrUtterance === 'string') {
             const utterance = contextOrUtterance;
-            const options = UnsafeLuisRecognizerUnion.optional().check(maybeTelemetryPropertiesOrOptions);
+
+            const options = UnsafeLuisRecognizerUnion.optional().nullable().parse(maybeTelemetryPropertiesOrOptions);
 
             const luisRecognizer = options ? this.buildRecognizer(options) : this.luisRecognizerInternal;
 
             return luisRecognizer.recognizeInternal(utterance);
         } else {
-            const telemetryProperties = t
-                .Dictionary(t.String, t.String)
+            const telemetryProperties = z
+                .record(z.string())
                 .optional()
                 .nullable()
-                .check(maybeTelemetryPropertiesOrOptions);
+                .parse(maybeTelemetryPropertiesOrOptions);
+
             const turnContext =
                 contextOrUtterance instanceof DialogContext ? contextOrUtterance.context : contextOrUtterance;
             const cached = turnContext.turnState.get(this.cacheKey);

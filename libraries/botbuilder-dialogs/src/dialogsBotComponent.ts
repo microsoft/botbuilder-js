@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-import * as t from 'runtypes';
+import * as z from 'zod';
 import { BotComponent } from 'botbuilder-core';
 import { Configuration, ServiceCollection } from 'botbuilder-dialogs-adaptive-runtime-core';
 import { MemoryScope, PathResolver } from './memory';
@@ -26,13 +26,13 @@ import {
     PercentPathResolver,
 } from './memory/pathResolvers';
 
-const InitialSettings = t.Dictionary(t.Unknown, t.String);
+const InitialSettings = z.record(z.string());
 
 export class DialogsBotComponent extends BotComponent {
     configureServices(services: ServiceCollection, configuration: Configuration): void {
         services.composeFactory<MemoryScope[]>('memoryScopes', (memoryScopes) => {
             const rootConfiguration = configuration.get([]);
-            const initialSettings = InitialSettings.guard(rootConfiguration) ? rootConfiguration : undefined;
+            const initialSettings = InitialSettings.check(rootConfiguration) ? rootConfiguration : undefined;
 
             return memoryScopes.concat(
                 new TurnMemoryScope(),

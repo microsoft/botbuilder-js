@@ -15,7 +15,7 @@ import { NullTelemetryClient, TurnContext, RecognizerResult } from 'botbuilder-c
 import { DialogContext } from 'botbuilder-dialogs';
 import { ExternalEntity, validateExternalEntity } from './externalEntity';
 import { validateDynamicList } from './dynamicList';
-import * as t from 'runtypes';
+import * as z from 'zod';
 
 const LUIS_TRACE_TYPE = 'https://www.luis.ai/schemas/trace';
 const LUIS_TRACE_NAME = 'LuisRecognizer';
@@ -111,12 +111,12 @@ export class LuisRecognizerV3 extends LuisRecognizerInternal {
                                     if (instances?.length === values?.length) {
                                         instances.forEach((childInstance) => {
                                             if (
-                                                t
-                                                    .Record({ startIndex: t.Number, endIndex: t.Number })
-                                                    .guard(childInstance)
+                                                z
+                                                    .object({ startIndex: z.number(), endIndex: z.number() })
+                                                    .check(childInstance)
                                             ) {
-                                                const start = childInstance['startIndex'];
-                                                const end = childInstance['endIndex'];
+                                                const start = childInstance.startIndex;
+                                                const end = childInstance.endIndex;
                                                 externalEntities.push({
                                                     entityName: key,
                                                     startIndex: start,

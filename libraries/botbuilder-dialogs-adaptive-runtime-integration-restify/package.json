@@ -20,19 +20,29 @@
   },
   "main": "lib/index.js",
   "types": "./lib/index.d.ts",
+  "typesVersions": {
+    "<3.9": {
+      "*": [
+        "_ts3.4/*"
+      ]
+    }
+  },
   "dependencies": {
     "botbuilder": "4.1.6",
     "botbuilder-dialogs-adaptive-runtime": "4.1.6",
     "botbuilder-dialogs-adaptive-runtime-core": "4.1.6",
     "restify": "^8.5.1",
-    "runtypes": "~6.3.0"
+    "zod": "~1.11.17"
   },
   "scripts": {
     "build": "tsc -b",
     "clean": "rimraf _ts3.4 lib tsconfig.tsbuildinfo",
-    "lint": "eslint . --ext .js,.ts"
+    "depcheck": "depcheck --config ../../.depcheckrc",
+    "lint": "eslint . --ext .js,.ts",
+    "postbuild": "downlevel-dts lib _ts3.4/lib --checksum"
   },
   "files": [
+    "_ts3.4",
     "lib",
     "src"
   ]

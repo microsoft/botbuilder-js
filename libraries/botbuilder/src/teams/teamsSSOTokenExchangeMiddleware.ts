@@ -4,22 +4,19 @@
 import { Assertion, assert } from 'botbuilder-stdlib';
 
 import {
-    ExtendedUserTokenProvider,
-    Middleware,
-    Storage,
-    StoreItem,
-    TurnContext,
-    tokenExchangeOperationName,
-} from 'botbuilder-core';
-
-import {
     ActivityTypes,
     Channels,
+    ExtendedUserTokenProvider,
+    Middleware,
     StatusCodes,
+    Storage,
+    StoreItem,
     TokenExchangeInvokeRequest,
     TokenExchangeInvokeResponse,
     TokenResponse,
-} from 'botframework-schema';
+    TurnContext,
+    tokenExchangeOperationName,
+} from 'botbuilder-core';
 
 function getStorageKey(context: TurnContext): string {
     const activity = context.activity;
