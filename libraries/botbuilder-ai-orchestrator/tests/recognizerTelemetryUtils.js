@@ -1,8 +1,7 @@
 const { ok, strictEqual } = require('assert');
 const sinon = require('sinon');
-const { NullTelemetryClient } = require('botbuilder-core');
+const { ActivityEx, NullTelemetryClient } = require('botbuilder-core');
 const { BoolExpression } = require('adaptive-expressions');
-const { asMessageActivity } = require('botframework-schema').ActivityEx;
 
 const orchestratorIntentText = 'Hello, Orc!';
 
@@ -57,7 +56,7 @@ const getOrchestratorIntentProps = () => ({
 });
 
 const getExpectedProps = (activity, result, logPersonalInformation) => {
-    const text = asMessageActivity(activity).text;
+    const text = ActivityEx.asMessageActivity(activity).text;
     const expectedProps = text === orchestratorIntentText ? getOrchestratorIntentProps() : {};
 
     if (logPersonalInformation) {
