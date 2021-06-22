@@ -237,9 +237,13 @@ export interface LuisRecognizerOptionsV2 extends LuisRecognizerOptions {
 // This zod type is purely used for type assertions in a scenario where we
 // know better than the compiler does that we'll have a value of this type.
 // This is just meant to operate as a simple type assertion.
-const UnsafeLuisRecognizerUnion: z.ZodType<
-    LuisRecognizerOptionsV2 | LuisRecognizerOptionsV3 | LuisPredictionOptions
-> = z.record(z.unknown());
+const UnsafeLuisRecognizerUnion = z.custom<LuisRecognizerOptionsV3 | LuisRecognizerOptionsV2 | LuisPredictionOptions>(
+    (val: unknown): val is LuisRecognizerOptionsV3 | LuisRecognizerOptionsV2 | LuisPredictionOptions =>
+        z.record(z.unknown()).check(val),
+    {
+        message: 'LuisRecognizerOptionsV3 | LuisRecognizerOptionsV2 | LuisPredictionOptions',
+    }
+);
 
 /**
  * Recognize intents in a user utterance using a configured LUIS model.

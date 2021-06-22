@@ -26,7 +26,7 @@ import {
     PercentPathResolver,
 } from './memory/pathResolvers';
 
-const InitialSettings = z.record(z.string());
+const InitialSettings = z.record(z.unknown());
 
 export class DialogsBotComponent extends BotComponent {
     configureServices(services: ServiceCollection, configuration: Configuration): void {

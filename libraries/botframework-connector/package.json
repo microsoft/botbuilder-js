@@ -37,8 +37,7 @@
     "botframework-schema": "4.1.6",
     "cross-fetch": "^3.0.5",
     "jsonwebtoken": "8.0.1",
-    "rsa-pem-from-mod-exp": "^0.8.4",
-    "runtypes": "~6.3.0"
+    "rsa-pem-from-mod-exp": "^0.8.4"
   },
   "devDependencies": {
     "botbuilder-test-utils": "0.0.0",

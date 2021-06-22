@@ -6,7 +6,7 @@
  * Compatible with Restify, Express, and Node.js core http.
  */
 
-import * as t from 'runtypes';
+import * as z from 'zod';
 
 export interface Response {
     socket: unknown;
@@ -17,11 +17,14 @@ export interface Response {
     status(code: number): unknown;
 }
 
-export const ResponseT = t
-    .Record({
-        end: t.Function,
-        header: t.Function,
-        send: t.Function,
-        status: t.Function,
-    })
-    .withGuard((val: unknown): val is Response => val != null, { name: 'Response' });
+export const ResponseT = z.custom<Response>(
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (val: any) =>
+        typeof val.end === 'function' &&
+        typeof val.header === 'function' &&
+        typeof val.send === 'function' &&
+        typeof val.status === 'function',
+    {
+        message: 'Response',
+    }
+);

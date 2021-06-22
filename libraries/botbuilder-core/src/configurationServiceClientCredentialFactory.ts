@@ -1,31 +1,28 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
+import * as z from 'zod';
 import { Configuration } from 'botbuilder-dialogs-adaptive-runtime-core';
 import { PasswordServiceClientCredentialFactory } from 'botframework-connector';
-import * as t from 'runtypes';
-import { ValidationError } from 'runtypes';
 
-const TypedConfig = t.Record({
-    /**
-     * The ID assigned to your bot in the [Bot Framework Portal](https://dev.botframework.com/).
-     */
-    MicrosoftAppId: t.Optional(t.Union(t.String, t.Null)),
+const TypedConfig = z
+    .object({
+        /**
+         * The ID assigned to your bot in the [Bot Framework Portal](https://dev.botframework.com/).
+         */
+        MicrosoftAppId: z.string(),
 
-    /**
-     * The password assigned to your bot in the [Bot Framework Portal](https://dev.botframework.com/).
-     */
-    MicrosoftAppPassword: t.Optional(t.Union(t.String, t.Null)),
-});
+        /**
+         * The password assigned to your bot in the [Bot Framework Portal](https://dev.botframework.com/).
+         */
+        MicrosoftAppPassword: z.string(),
+    })
+    .partial();
 
 /**
  * Contains settings used to configure a [ConfigurationServiceClientCredentialFactory](xref:botbuilder-core.ConfigurationServiceClientCredentialFactory) instance.
  */
-export type ConfigurationServiceClientCredentialFactoryOptions = t.Static<typeof TypedConfig>;
-
-const isValidationErrorWithDetails = (val: unknown): val is ValidationError => {
-    return !!(val as ValidationError)?.details;
-};
+export type ConfigurationServiceClientCredentialFactoryOptions = z.infer<typeof TypedConfig>;
 
 /**
  * ServiceClientCredentialsFactory that uses a [ConfigurationServiceClientCredentialFactoryOptions](xref:botbuilder-core.ConfigurationServiceClientCredentialFactoryOptions) or a [Configuration](xref:botbuilder-dialogs-adaptive-runtime-core.Configuration) instance to build ServiceClientCredentials with an AppId and App Password.
@@ -36,13 +33,16 @@ export class ConfigurationServiceClientCredentialFactory extends PasswordService
      *
      * @param factoryOptions A [ConfigurationServiceClientCredentialFactoryOptions](xref:botbuilder-core.ConfigurationServiceClientCredentialFactoryOptions) object.
      */
-    constructor(factoryOptions: ConfigurationServiceClientCredentialFactoryOptions) {
+    constructor(factoryOptions: ConfigurationServiceClientCredentialFactoryOptions = {}) {
         try {
-            const { MicrosoftAppId = null, MicrosoftAppPassword = null } = TypedConfig.check(factoryOptions);
+            const { MicrosoftAppId = null, MicrosoftAppPassword = null } = TypedConfig.nonstrict().parse(
+                factoryOptions
+            );
+
             super(MicrosoftAppId, MicrosoftAppPassword);
         } catch (err) {
-            if (isValidationErrorWithDetails(err)) {
-                const e = new Error(JSON.stringify(err.details, undefined, 2));
+            if (z.instanceof(z.ZodError).check(err)) {
+                const e = new Error(JSON.stringify(err.errors, undefined, 2));
                 e.stack = err.stack;
                 throw e;
             }

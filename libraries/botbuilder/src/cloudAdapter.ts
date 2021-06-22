@@ -1,12 +1,12 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-import * as t from 'runtypes';
+import * as z from 'zod';
 import type { BotFrameworkHttpAdapter } from './botFrameworkHttpAdapter';
 import { Activity, CloudAdapterBase, InvokeResponse, StatusCodes, TurnContext } from 'botbuilder-core';
 import { GET, POST, VERSION_PATH } from './streaming';
 import { HttpClient, HttpHeaders, HttpOperationResponse, WebResource } from '@azure/ms-rest-js';
-import { INodeBufferT, INodeSocketT } from './runtypes';
+import { INodeBufferT, INodeSocketT, LogicT } from './zod';
 import { Request, Response, ResponseT } from './interfaces';
 import { USER_AGENT } from './botFrameworkAdapter';
 import { retry } from 'botbuilder-stdlib';
@@ -38,9 +38,7 @@ import {
 } from 'botframework-streaming';
 
 // Note: this is _okay_ because we pass the result through `validateAndFixActivity`. Should not be used otherwise.
-const ActivityT = t.Unknown.withGuard((val: unknown): val is Activity => t.Dictionary(t.Unknown, t.String).guard(val), {
-    name: 'Activity',
-});
+const ActivityT = z.custom<Activity>((val) => z.record(z.unknown()).check(val), { message: 'Activity' });
 
 export class CloudAdapter extends CloudAdapterBase implements BotFrameworkHttpAdapter {
     /**
@@ -90,16 +88,16 @@ export class CloudAdapter extends CloudAdapterBase implements BotFrameworkHttpAd
     ): Promise<void> {
         // Early return with web socket handler if function invocation matches that signature
         if (maybeLogic) {
-            const socket = INodeSocketT.check(resOrSocket);
-            const head = INodeBufferT.check(logicOrHead);
-            const logic = t.Function.check(maybeLogic);
+            const socket = INodeSocketT.parse(resOrSocket);
+            const head = INodeBufferT.parse(logicOrHead);
+            const logic = LogicT.parse(maybeLogic);
 
             return this.connect(req, socket, head, logic);
         }
 
-        const res = ResponseT.check(resOrSocket);
+        const res = ResponseT.parse(resOrSocket);
 
-        const logic = t.Function.check(logicOrHead);
+        const logic = LogicT.parse(logicOrHead);
 
         const end = (status: StatusCodes, body?: unknown) => {
             res.status(status);
@@ -117,20 +115,20 @@ export class CloudAdapter extends CloudAdapterBase implements BotFrameworkHttpAd
         // Ensure we have a parsed request body already. We rely on express/restify middleware to parse
         // request body and azure functions, which does it for us before invoking our code. Warn the user
         // to update their code and return an error.
-        if (!t.Dictionary(t.Unknown).guard(req.body)) {
+        if (!z.record(z.unknown()).check(req.body)) {
             return end(
                 StatusCodes.BAD_REQUEST,
                 '`req.body` not an object, make sure you are using middleware to parse incoming requests.'
             );
         }
 
-        const activity = validateAndFixActivity(ActivityT.check(req.body));
+        const activity = validateAndFixActivity(ActivityT.parse(req.body));
 
         if (!activity.type) {
             return end(StatusCodes.BAD_REQUEST);
         }
 
-        const authHeader = t.String.check(req.headers.Authorization ?? req.headers.authorization ?? '');
+        const authHeader = z.string().parse(req.headers.Authorization ?? req.headers.authorization ?? '');
 
         try {
             const invokeResponse = await this.processActivity(authHeader, activity, logic);
@@ -161,13 +159,13 @@ export class CloudAdapter extends CloudAdapterBase implements BotFrameworkHttpAd
         callerId?: string,
         retryCount = 7
     ): Promise<void> {
-        t.Record({
-            pipeName: t.String,
-            logic: t.Function,
-            appId: t.String,
-            audience: t.String,
-            callerId: t.Optional(t.String),
-        }).check({ pipeName, logic, appId, audience, callerId });
+        z.object({
+            pipeName: z.string(),
+            logic: LogicT,
+            appId: z.string(),
+            audience: z.string(),
+            callerId: z.string().optional(),
+        }).parse({ pipeName, logic, appId, audience, callerId });
 
         // The named pipe is local and so there is no network authentication to perform: so we can create the result here.
         const authenticateRequestResult: AuthenticateRequestResult = {
@@ -199,10 +197,10 @@ export class CloudAdapter extends CloudAdapterBase implements BotFrameworkHttpAd
         logic: (context: TurnContext) => Promise<void>
     ): Promise<void> {
         // Grab the auth header from the inbound http request
-        const authHeader = t.String.check(req.headers.Authorization ?? req.headers.authorization ?? '');
+        const authHeader = z.string().parse(req.headers.Authorization ?? req.headers.authorization ?? '');
 
         // Grab the channelId which should be in the http headers
-        const channelIdHeader = t.Optional(t.String).check(req.headers.channelid);
+        const channelIdHeader = z.string().optional().parse(req.headers.channelid);
 
         // Authenticate inbound request
         const authenticateRequestResult = await this.botFrameworkAuthentication.authenticateStreamingRequest(
@@ -295,7 +293,7 @@ class StreamingRequestHandler extends RequestHandler {
 
         let activity: Activity;
         try {
-            activity = validateAndFixActivity(ActivityT.check(await stream.readAsJson()));
+            activity = validateAndFixActivity(ActivityT.parse(await stream.readAsJson()));
         } catch (err) {
             return end(StatusCodes.BAD_REQUEST, `Request body missing or malformed: ${err}`);
         }
