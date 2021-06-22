@@ -40,10 +40,8 @@ const validateNoneTelemetry = async ({ recognizer, dialogContext, spy, activity,
 
     strictEqual(spy.callCount, callCount);
     strictEqual(actualTelemetryProps.name, `${recognizer.constructor.name}Result`);
-    
     ok(hasValidTelemetryProps(actualTelemetryProps.properties, expectedTelemetryProps));
 };
-
 
 module.exports = {
     orchestratorIntentText,
@@ -73,7 +71,7 @@ const getNoneIntentProps = () => ({
     TopIntentScore: '1',
     NextIntent: 'FOOBAR',
     NextIntentScore: '0.3',
-    Intents: JSON.stringify({ None: { score: 1.0 }, FOOBAR: {score: 0.3 } }),
+    Intents: JSON.stringify({ None: { score: 1.0 }, FOOBAR: { score: 0.3 } }),
     Entities: '{}',
     AdditionalProperties: JSON.stringify({
         result: [

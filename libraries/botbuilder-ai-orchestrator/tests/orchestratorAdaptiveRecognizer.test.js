@@ -11,7 +11,12 @@ const { BotFrameworkAdapter } = require('../../botbuilder/lib');
 const { StringExpression, BoolExpression, NumberExpression } = require('adaptive-expressions');
 const { NumberEntityRecognizer } = require('botbuilder-dialogs-adaptive');
 const sinon = require('sinon');
-const { orchestratorIntentText, getLogPersonalInformation, validateTelemetry, validateNoneTelemetry } = require('./recognizerTelemetryUtils');
+const {
+    orchestratorIntentText,
+    getLogPersonalInformation,
+    validateTelemetry,
+    validateNoneTelemetry,
+} = require('./recognizerTelemetryUtils');
 
 describe('OrchestratorAdpativeRecognizer tests', function () {
     it('Expect initialize is called when orchestrator obj is null', async function () {
@@ -225,7 +230,6 @@ describe('OrchestratorAdpativeRecognizer tests', function () {
             const spy = sinon.spy(telemetryClient, 'trackEvent');
             recognizer.telemetryClient = telemetryClient;
             recognizer.logPersonalInformation = false;
-            
             const res = await recognizer.recognize(dc, activity);
 
             ok(res.text, orchestratorIntentText);
@@ -239,7 +243,6 @@ describe('OrchestratorAdpativeRecognizer tests', function () {
                 callCount: 1,
             });
         });
-
 
         it('does not log PII when logPersonalInformation is false', async function () {
             // Set up OrchestratorAdaptiveRecognizer
@@ -317,7 +320,6 @@ describe('OrchestratorAdpativeRecognizer tests', function () {
             const res = await recognizerWithDefaultLogPii.recognize(dc, activity);
 
             ok(res.text, orchestratorIntentText);
-
 
             ok(res.intents.mockLabel.score, 0.9);
             ok(!getLogPersonalInformation(recognizerWithDefaultLogPii, dc));
