@@ -244,6 +244,43 @@ describe('OrchestratorAdpativeRecognizer tests', function () {
             });
         });
 
+        it('should log telemetry for None intent with logPersonalInformation', async function () {
+            // Set up OrchestratorAdaptiveRecognizer
+            const result = [
+                {
+                    score: 0.3,
+                    label: {
+                        name: 'FOOBAR',
+                    },
+                },
+            ];
+            const mockResolver = new MockResolver(result);
+            const testPaths = 'test';
+            const recognizer = new OrchestratorRecognizer(testPaths, testPaths, mockResolver);
+            OrchestratorRecognizer.orchestrator = 'mock';
+            recognizer.modelFolder = new StringExpression(testPaths);
+            recognizer.snapshotFile = new StringExpression(testPaths);
+
+            //Set up telemetry
+            const { dc, activity } = createTestDcAndActivity(orchestratorIntentText);
+            const telemetryClient = new NullTelemetryClient();
+            const spy = sinon.spy(telemetryClient, 'trackEvent');
+            recognizer.telemetryClient = telemetryClient;
+            recognizer.logPersonalInformation = true;
+            const res = await recognizer.recognize(dc, activity);
+
+            ok(res.text, orchestratorIntentText);
+            ok(res.intents.None.score, 1.0);
+            validateNoneTelemetry({
+                recognizer,
+                dialogContext: dc,
+                spy,
+                activity,
+                result,
+                callCount: 1,
+            });
+        });
+
         it('does not log PII when logPersonalInformation is false', async function () {
             // Set up OrchestratorAdaptiveRecognizer
             const result = [
