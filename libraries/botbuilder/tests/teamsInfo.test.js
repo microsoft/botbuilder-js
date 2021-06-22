@@ -146,12 +146,12 @@ const teamActivity = {
     },
 };
 
-describe('TeamsInfo', () => {
-    beforeEach(() => {
+describe('TeamsInfo', function () {
+    beforeEach(function () {
         nock.cleanAll();
     });
 
-    afterEach(() => {
+    afterEach(function () {
         nock.cleanAll();
     });
 
@@ -168,8 +168,8 @@ describe('TeamsInfo', () => {
         return { expectedAuthHeader: `${tokenType} ${accessToken}`, expectation };
     };
 
-    describe('sendMessageToTeamsChannel()', () => {
-        it('should work with correct information', async () => {
+    describe('sendMessageToTeamsChannel()', function () {
+        it('should work with correct information', async function () {
             const newConversation = [
                 {
                     activityid: 'activityid123',
@@ -198,74 +198,61 @@ describe('TeamsInfo', () => {
             assert(newConversation[1] == 'resourceresponseid');
         });
 
-        it('should error if context is null', async () => {
-            try {
-                await TeamsInfo.sendMessageToTeamsChannel(null, teamActivity, 'teamID');
-                assert.fail('should have thrown');
-            } catch (err) {
-                assert(err.message === 'TurnContext cannot be null');
-            }
+        it('should error if context is null', async function () {
+            await assert.rejects(
+                TeamsInfo.sendMessageToTeamsChannel(null, teamActivity, 'teamID'),
+                new Error('TurnContext cannot be null')
+            );
         });
 
-        it('should error if activity is null', async () => {
+        it('should error if activity is null', async function () {
             const context = new TestContext(teamActivity);
-            try {
-                await TeamsInfo.sendMessageToTeamsChannel(context, null, 'teamID');
-                assert.fail('should have thrown');
-            } catch (err) {
-                assert(err.message === 'Activity cannot be null');
-            }
+
+            await assert.rejects(
+                TeamsInfo.sendMessageToTeamsChannel(context, null, 'teamID'),
+                new Error('Activity cannot be null')
+            );
         });
 
-        it('should error if teamID is a blank string', async () => {
+        it('should error if teamID is a blank string', async function () {
             const context = new TestContext(teamActivity);
-            try {
-                await TeamsInfo.sendMessageToTeamsChannel(context, teamActivity, '');
-                assert.fail('should have thrown');
-            } catch (err) {
-                assert(err.message === 'The teamsChannelId cannot be null or empty');
-            }
+
+            await assert.rejects(
+                TeamsInfo.sendMessageToTeamsChannel(context, teamActivity, ''),
+                new Error('The teamsChannelId cannot be null or empty')
+            );
         });
 
-        it('should error if teamID is null', async () => {
+        it('should error if teamID is null', async function () {
             const context = new TestContext(teamActivity);
-            try {
-                await TeamsInfo.sendMessageToTeamsChannel(context, teamActivity, null);
-                assert.fail('should have thrown');
-            } catch (err) {
-                assert(err.message === 'The teamsChannelId cannot be null or empty');
-            }
+
+            await assert.rejects(
+                TeamsInfo.sendMessageToTeamsChannel(context, teamActivity, null),
+                new Error('The teamsChannelId cannot be null or empty')
+            );
         });
     });
 
-    describe('getTeamChannels()', () => {
-        it('should error in 1-on-1 chat', async () => {
+    describe('getTeamChannels()', function () {
+        it('should error in 1-on-1 chat', async function () {
             const context = new TestContext(oneOnOneActivity);
-            try {
-                await TeamsInfo.getTeamChannels(context);
-                assert.fail('should have thrown');
-            } catch (err) {
-                assert(
-                    err.message === 'This method is only valid within the scope of a MS Teams Team.',
-                    `unexpected error.message received: ${err.message}`
-                );
-            }
+
+            await assert.rejects(
+                TeamsInfo.getTeamChannels(context),
+                new Error('This method is only valid within the scope of a MS Teams Team.')
+            );
         });
 
-        it('should error in Group chat', async () => {
+        it('should error in Group chat', async function () {
             const context = new TestContext(groupChatActivity);
-            try {
-                await TeamsInfo.getTeamChannels(context);
-                assert.fail('should have thrown');
-            } catch (err) {
-                assert(
-                    err.message === 'This method is only valid within the scope of a MS Teams Team.',
-                    `unexpected error.message received: ${err.message}`
-                );
-            }
+
+            await assert.rejects(
+                TeamsInfo.getTeamChannels(context),
+                new Error('This method is only valid within the scope of a MS Teams Team.')
+            );
         });
 
-        it('should work in a channel in a Team', async () => {
+        it('should work in a channel in a Team', async function () {
             // This is the property on the ConversationList that contains the information about the channels from Teams.
             const conversations = [
                 {
@@ -304,7 +291,7 @@ describe('TeamsInfo', () => {
             );
         });
 
-        it('should work with a teamId passed in', async () => {
+        it('should work with a teamId passed in', async function () {
             // This is the property on the ConversationList that contains the information about the channels from Teams.
             const conversations = [
                 {
@@ -344,34 +331,26 @@ describe('TeamsInfo', () => {
         });
     });
 
-    describe('getTeamDetails()', () => {
-        it('should error in 1-on-1 chat', async () => {
+    describe('getTeamDetails()', function () {
+        it('should error in 1-on-1 chat', async function () {
             const context = new TestContext(oneOnOneActivity);
-            try {
-                await TeamsInfo.getTeamDetails(context);
-                assert.fail('should have thrown');
-            } catch (err) {
-                assert(
-                    err.message === 'This method is only valid within the scope of a MS Teams Team.',
-                    `unexpected error.message received: ${err.message}`
-                );
-            }
+
+            await assert.rejects(
+                TeamsInfo.getTeamDetails(context),
+                new Error('This method is only valid within the scope of a MS Teams Team.')
+            );
         });
 
-        it('should error in Group chat', async () => {
+        it('should error in Group chat', async function () {
             const context = new TestContext(groupChatActivity);
-            try {
-                await TeamsInfo.getTeamDetails(context);
-                assert.fail('should have thrown');
-            } catch (err) {
-                assert(
-                    err.message === 'This method is only valid within the scope of a MS Teams Team.',
-                    `unexpected error.message received: ${err.message}`
-                );
-            }
+
+            await assert.rejects(
+                TeamsInfo.getTeamDetails(context),
+                new Error('This method is only valid within the scope of a MS Teams Team.')
+            );
         });
 
-        it('should work in a channel in a Team', async () => {
+        it('should work in a channel in a Team', async function () {
             const teamDetails = {
                 id: '19:generalChannelIdgeneralChannelId@thread.skype',
                 name: 'TeamName',
@@ -397,7 +376,7 @@ describe('TeamsInfo', () => {
             assert(fetchedTeamDetails.aadGroupId === 'Team-aadGroupId');
         });
 
-        it('should work with a teamId passed in', async () => {
+        it('should work with a teamId passed in', async function () {
             const teamDetails = {
                 id: '19:ChannelIdgeneralChannelId@thread.skype',
                 name: 'TeamName',
@@ -427,8 +406,8 @@ describe('TeamsInfo', () => {
         });
     });
 
-    describe('getMembers()', () => {
-        it('should work in 1-on-1 chat', async () => {
+    describe('getMembers()', function () {
+        it('should work in 1-on-1 chat', async function () {
             const members = [
                 {
                     id: '29:User-One-Id',
@@ -461,7 +440,7 @@ describe('TeamsInfo', () => {
             );
         });
 
-        it('should work in Group chat', async () => {
+        it('should work in Group chat', async function () {
             const members = [
                 {
                     id: '29:User-One-Id',
@@ -514,7 +493,7 @@ describe('TeamsInfo', () => {
             );
         });
 
-        it('should work in a channel in a Team', async () => {
+        it('should work in a channel in a Team', async function () {
             const members = [
                 {
                     id: '29:User-Two-Id',
@@ -557,21 +536,20 @@ describe('TeamsInfo', () => {
             );
         });
 
-        it('should not work if conversationId is falsey', async () => {
+        it('should not work if conversationId is falsey', async function () {
             const context = new TestContext(oneOnOneActivity);
             context.activity.conversation.id = undefined;
-            try {
-                await TeamsInfo.getMembers(context);
-                assert.fail('should have thrown');
-            } catch (err) {
+
+            await assert.rejects(TeamsInfo.getMembers(context), (err) => {
                 assert.strictEqual(err.message, 'The getMembers operation needs a valid conversationId.');
                 oneOnOneActivity.conversation.id = 'a:oneOnOneConversationId';
-            }
+                return true;
+            });
         });
     });
 
-    describe('getMember()', () => {
-        it('should work without a Team', async () => {
+    describe('getMember()', function () {
+        it('should work without a Team', async function () {
             const member = {
                 id: '29:User-One-Id',
                 name: 'User One',
@@ -599,7 +577,7 @@ describe('TeamsInfo', () => {
             assert.deepStrictEqual(fetchedMember, member);
         });
 
-        it('should work with a Team', async () => {
+        it('should work with a Team', async function () {
             const member = {
                 id: '29:User-One-Id',
                 name: 'User One',
@@ -628,22 +606,21 @@ describe('TeamsInfo', () => {
         });
     });
 
-    describe('getTeamMember()', () => {
-        it('should throw error when teamId is not present', async () => {
-            try {
-                const context = new TestContext({ type: ActionTypes.message });
-                await TeamsInfo.getTeamMember(context);
-                assert.fail('should have thrown');
-            } catch (err) {
-                assert.strictEqual(err.message, 'This method is only valid within the scope of a MS Teams Team.');
-            }
+    describe('getTeamMember()', function () {
+        it('should throw error when teamId is not present', async function () {
+            const context = new TestContext({ type: ActionTypes.message });
+
+            await assert.rejects(
+                TeamsInfo.getTeamMember(context),
+                new Error('This method is only valid within the scope of a MS Teams Team.')
+            );
         });
     });
 
-    describe('getMeetingParticipant', () => {
+    describe('getMeetingParticipant', function () {
         const context = new TestContext(teamActivity);
 
-        it('should work with correct arguments', async () => {
+        it('should work with correct arguments', async function () {
             const participant = {
                 user: {
                     id: teamActivity.from.id,
@@ -679,44 +656,125 @@ describe('TeamsInfo', () => {
             assert.deepStrictEqual(fetchedParticipant, participant);
         });
 
-        it('should throw error for missing context', async () => {
-            try {
-                await TeamsInfo.getMeetingParticipant();
-                assert.fail('should have thrown');
-            } catch (err) {
-                assert(err);
-            }
+        it('should throw error for missing context', async function () {
+            await assert.rejects(TeamsInfo.getMeetingParticipant(), Error('context is required.'));
         });
     });
 
-    describe('getTeamMembers()', () => {
-        it('should error in 1-on-1 chat', async () => {
+    describe('getMeetingInfo', function () {
+        const context = new TestContext(teamActivity);
+
+        it('should work with correct arguments-meetingId in context', async function () {
+            const details = {
+                organizer: {
+                    id: teamActivity.from.id,
+                    name: teamActivity.from.name,
+                    objectId: 'User-One-Object-Id',
+                    givenName: 'User',
+                    surname: 'One',
+                    email: 'User.One@microsoft.com',
+                    userPrincipalName: 'user1@microsoft.com',
+                    tenantId: teamActivity.conversation.tenantId,
+                },
+                details: {
+                    id: 'meeting-id',
+                    msGraphResourceId: 'msGraph-id',
+                    scheduledStartTime: new Date('Thu Jun 10 2021 15:02:32 GMT-0700'),
+                    scheduledEndTime: new Date('Thu Jun 10 2021 16:02:32 GMT-0700'),
+                    joinUrl: 'https://teams.microsoft.com/l/meetup-join/someEncodedMeetingString',
+                    title: 'Fake meeting',
+                    type: 'Scheduled',
+                },
+                conversation: {
+                    id: teamActivity.conversation.id,
+                },
+            };
+
+            const { expectedAuthHeader, expectation: fetchOauthToken } = nockOauth();
+
+            const fetchExpectation = nock('https://smba.trafficmanager.net/amer')
+                .get('/v1/meetings/19%3AmeetingId')
+                .matchHeader('Authorization', expectedAuthHeader)
+                .reply(200, details);
+
+            const fetchedDetails = await TeamsInfo.getMeetingInfo(context);
+
+            assert(fetchOauthToken.isDone());
+            assert(fetchExpectation.isDone());
+
+            assert.deepStrictEqual(fetchedDetails, details);
+        });
+
+        it('should work with correct arguments-meetingId passed in', async function () {
+            const details = {
+                organizer: {
+                    id: teamActivity.from.id,
+                    name: teamActivity.from.name,
+                    objectId: 'User-One-Object-Id',
+                    givenName: 'User',
+                    surname: 'One',
+                    email: 'User.One@microsoft.com',
+                    userPrincipalName: 'user1@microsoft.com',
+                    tenantId: teamActivity.conversation.tenantId,
+                },
+                details: {
+                    id: 'meeting-id',
+                    msGraphResourceId: 'msGraph-id',
+                    scheduledStartTime: new Date('Thu Jun 10 2021 15:02:32 GMT-0700'),
+                    scheduledEndTime: new Date('Thu Jun 10 2021 16:02:32 GMT-0700'),
+                    joinUrl: 'https://teams.microsoft.com/l/meetup-join/someEncodedMeetingString',
+                    title: 'Fake meeting',
+                    type: 'Scheduled',
+                },
+                conversation: {
+                    id: teamActivity.conversation.id,
+                },
+            };
+
+            const { expectedAuthHeader, expectation: fetchOauthToken } = nockOauth();
+
+            const fetchExpectation = nock('https://smba.trafficmanager.net/amer')
+                .get('/v1/meetings/meeting-id')
+                .matchHeader('Authorization', expectedAuthHeader)
+                .reply(200, details);
+
+            const fetchedDetails = await TeamsInfo.getMeetingInfo(context, details.details.id);
+
+            assert(fetchOauthToken.isDone());
+            assert(fetchExpectation.isDone());
+
+            assert.deepStrictEqual(fetchedDetails, details);
+        });
+
+        it('should throw error for missing context', async function () {
+            await assert.rejects(TeamsInfo.getMeetingInfo(), Error('context is required.'));
+        });
+
+        it('should throw error for missing meetingId', async function () {
+            await assert.rejects(TeamsInfo.getMeetingInfo({ activity: {} }), Error('meetingId or TurnContext containing meetingId is required.'));
+        });
+    });
+
+    describe('getTeamMembers()', function () {
+        it('should error in 1-on-1 chat', async function () {
             const context = new TestContext(oneOnOneActivity);
-            try {
-                await TeamsInfo.getTeamMembers(context);
-                assert.fail('should have thrown');
-            } catch (err) {
-                assert(
-                    err.message === 'This method is only valid within the scope of a MS Teams Team.',
-                    `unexpected error.message received: ${err.message}`
-                );
-            }
+
+            await assert.rejects(
+                TeamsInfo.getTeamMembers(context),
+                new Error('This method is only valid within the scope of a MS Teams Team.')
+            );
         });
 
-        it('should error in Group chat', async () => {
+        it('should error in Group chat', async function () {
             const context = new TestContext(groupChatActivity);
-            try {
-                await TeamsInfo.getTeamMembers(context);
-                assert.fail('should have thrown');
-            } catch (err) {
-                assert(
-                    err.message === 'This method is only valid within the scope of a MS Teams Team.',
-                    `unexpected error.message received: ${err.message}`
-                );
-            }
+
+            await assert.rejects(
+                TeamsInfo.getTeamMembers(context),
+                new Error('This method is only valid within the scope of a MS Teams Team.')
+            );
         });
 
-        it('should work in a channel in a Team', async () => {
+        it('should work in a channel in a Team', async function () {
             const members = [
                 {
                     id: '29:User-Two-Id',
@@ -759,7 +817,7 @@ describe('TeamsInfo', () => {
             );
         });
 
-        it('should work with a teamId passed in', async () => {
+        it('should work with a teamId passed in', async function () {
             const members = [
                 {
                     id: '29:User-Two-Id',
@@ -803,73 +861,61 @@ describe('TeamsInfo', () => {
         });
     });
 
-    describe('private methods', () => {
-        describe('getConnectorClient()', () => {
+    describe('private methods', function () {
+        describe('getConnectorClient()', function () {
             it(`should error if the context doesn't have an adapter`, function () {
-                try {
-                    TeamsInfo.getConnectorClient({});
-                    assert.fail('should have thrown an error');
-                } catch (err) {
-                    assert.strictEqual(err.message, 'This method requires a connector client.');
-                }
+                assert.throws(
+                    () => TeamsInfo.getConnectorClient({}),
+                    new Error('This method requires a connector client.')
+                );
             });
 
             it(`should error if the adapter doesn't have a createConnectorClient method`, function () {
-                try {
-                    TeamsInfo.getConnectorClient({ adapter: {} });
-                    assert.fail('should have thrown an error');
-                } catch (err) {
-                    assert.strictEqual(err.message, 'This method requires a connector client.');
-                }
+                assert.rejects(
+                    () => TeamsInfo.getConnectorClient({ adapter: {} }),
+                    new Error('This method requires a connector client.')
+                );
             });
         });
 
-        describe('getMembersInternal()', () => {
+        describe('getMembersInternal()', function () {
             it(`should error if an invalid conversationId is passed in.`, async function () {
-                try {
-                    await TeamsInfo.getMembersInternal({}, undefined);
-                    assert.fail('should have thrown');
-                } catch (err) {
-                    assert.strictEqual(err.message, 'The getMembers operation needs a valid conversationId.');
-                }
+                await assert.rejects(
+                    TeamsInfo.getMembersInternal({}, undefined),
+                    new Error('The getMembers operation needs a valid conversationId.')
+                );
             });
 
             it(`should error if an invalid conversationId is passed in.`, async function () {
-                try {
-                    await TeamsInfo.getMemberInternal({}, undefined);
-                    assert.fail('should have thrown');
-                } catch (err) {
-                    assert.strictEqual(err.message, 'The getMember operation needs a valid conversationId.');
-                }
+                await assert.rejects(
+                    TeamsInfo.getMemberInternal({}, undefined),
+                    new Error('The getMember operation needs a valid conversationId.')
+                );
             });
 
-            it(`should error if an invalid userId is passed in.`, async () => {
-                try {
-                    await TeamsInfo.getMemberInternal({}, 'conversationId', undefined);
-                    assert.fail('should have thrown');
-                } catch (err) {
-                    assert.strictEqual(err.message, 'The getMember operation needs a valid userId.');
-                }
+            it(`should error if an invalid userId is passed in.`, async function () {
+                await assert.rejects(
+                    TeamsInfo.getMemberInternal({}, 'conversationId', undefined),
+                    new Error('The getMember operation needs a valid userId.')
+                );
             });
         });
 
-        describe('getPagedMembersInternal()', () => {
+        describe('getPagedMembersInternal()', function () {
             let sandbox;
-            beforeEach(() => {
+            beforeEach(function () {
                 sandbox = sinon.createSandbox();
             });
 
-            afterEach(() => {
+            afterEach(function () {
                 sandbox.restore();
             });
 
-            it(`should error if an invalid conversationId is passed in.`, async () => {
-                try {
-                    await TeamsInfo.getPagedMembersInternal({}, undefined, 'options');
-                    assert.fail('should have thrown');
-                } catch (err) {
-                    assert.strictEqual(err.message, 'The getPagedMembers operation needs a valid conversationId.');
-                }
+            it(`should error if an invalid conversationId is passed in.`, async function () {
+                await assert.rejects(
+                    TeamsInfo.getPagedMembersInternal({}, undefined, 'options'),
+                    new Error('The getPagedMembers operation needs a valid conversationId.')
+                );
             });
 
             it(`should call connectorClient.conversations.getConversationPagedMembers()`, async function () {
@@ -911,23 +957,13 @@ describe('TeamsInfo', () => {
             });
         });
 
-        describe('getTeamId()', () => {
-            it(`should error if an invalid context is passed in.`, async () => {
-                try {
-                    await TeamsInfo.getTeamId(undefined);
-                    assert.fail('should have thrown');
-                } catch (err) {
-                    assert.strictEqual(err.message, 'Missing context parameter');
-                }
+        describe('getTeamId()', function () {
+            it(`should error if an invalid context is passed in.`, function () {
+                assert.throws(() => TeamsInfo.getTeamId(undefined), Error('Missing context parameter'));
             });
 
-            it(`should error if an invalid activity is passed in.`, async () => {
-                try {
-                    await TeamsInfo.getTeamId({ activity: undefined });
-                    assert.fail('should have thrown');
-                } catch (err) {
-                    assert.strictEqual(err.message, 'Missing activity on context');
-                }
+            it(`should error if an invalid activity is passed in.`, function () {
+                assert.throws(() => TeamsInfo.getTeamId({ activity: undefined }), Error('Missing activity on context'));
             });
         });
     });

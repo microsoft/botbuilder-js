@@ -33,7 +33,7 @@ export class HttpRequestUtils {
      * @param {number} timeout (Optional)Timeout for http call
      * @returns {QnAMakerResults} a promise that resolves to the QnAMakerResults
      */
-    public async executeHttpRequest(
+    async executeHttpRequest(
         requestUrl: string,
         payloadBody: string,
         endpoint: QnAMakerEndpoint,

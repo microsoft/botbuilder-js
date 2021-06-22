@@ -6,16 +6,17 @@ import fs from 'fs';
 import path from 'path';
 import { Configuration } from './configuration';
 
-import { DialogsBotComponent, MemoryScope, PathResolver } from 'botbuilder-dialogs';
+import LuisBotComponent from 'botbuilder-ai-luis';
+import QnAMakerBotComponent from 'botbuilder-ai-qna';
 import { AdaptiveBotComponent, LanguageGenerationBotComponent } from 'botbuilder-dialogs-adaptive';
 import { ApplicationInsightsTelemetryClient, TelemetryInitializerMiddleware } from 'botbuilder-applicationinsights';
 import { BlobsStorage, BlobsTranscriptStore } from 'botbuilder-azure-blobs';
+import { ComponentDeclarativeTypes, ResourceExplorer } from 'botbuilder-dialogs-declarative';
 import { ConfigurationResourceExporer } from './configurationResourceExplorer';
 import { CoreBot } from './coreBot';
 import { CoreBotAdapter } from './coreBotAdapter';
 import { CosmosDbPartitionedStorage } from 'botbuilder-azure';
-import { ComponentDeclarativeTypes, ResourceExplorer } from 'botbuilder-dialogs-declarative';
-import { LuisBotComponent, QnAMakerBotComponent } from 'botbuilder-ai';
+import { DialogsBotComponent, MemoryScope, PathResolver } from 'botbuilder-dialogs';
 import { ServiceCollection } from 'botbuilder-dialogs-adaptive-runtime-core';
 
 import {
@@ -32,6 +33,7 @@ import {
     BotFrameworkAdapter,
     BotTelemetryClient,
     ChannelServiceHandler,
+    ChannelServiceRoutes,
     ConsoleTranscriptLogger,
     ConversationState,
     InspectionMiddleware,
@@ -68,7 +70,7 @@ function addFeatures(services: ServiceCollection, configuration: Configuration):
             const setSpeak = configuration.type(
                 ['setSpeak'],
                 t.Record({
-                    voiceFontName: t.String.Or(t.Undefined),
+                    voiceFontName: t.String.optional(),
                     fallbackToTextForSpeechIfEmpty: t.Boolean,
                 })
             );
@@ -162,13 +164,13 @@ function addStorage(services: ServiceCollection, configuration: Configuration): 
                 const cosmosOptions = configuration.type(
                     ['CosmosDbPartitionedStorage'],
                     t.Record({
-                        authKey: t.String.Or(t.Undefined),
-                        compatibilityMode: t.Boolean.Or(t.Undefined),
+                        authKey: t.String.optional(),
+                        compatibilityMode: t.Boolean.optional(),
                         containerId: t.String,
-                        containerThroughput: t.Number.Or(t.Undefined),
-                        cosmosDbEndpoint: t.String.Or(t.Undefined),
+                        containerThroughput: t.Number.optional(),
+                        cosmosDBEndpoint: t.String.optional(),
                         databaseId: t.String,
-                        keySuffix: t.String.Or(t.Undefined),
+                        keySuffix: t.String.optional(),
                     })
                 );
 
@@ -176,7 +178,8 @@ function addStorage(services: ServiceCollection, configuration: Configuration): 
                     throw new TypeError('`CosmosDbPartitionedStorage` missing in configuration');
                 }
 
-                return new CosmosDbPartitionedStorage(cosmosOptions);
+                const { cosmosDBEndpoint, ...rest } = cosmosOptions;
+                return new CosmosDbPartitionedStorage({ ...rest, cosmosDbEndpoint: cosmosDBEndpoint });
             }
 
             default:
@@ -209,7 +212,8 @@ function addSkills(services: ServiceCollection, configuration: Configuration): v
     );
 
     services.addFactory('authenticationConfiguration', () => {
-        const allowedCallers = configuration.type(['allowedCallers'], t.Array(t.String)) ?? [];
+        const allowedCallers =
+            configuration.type(['runtimeSettings', 'skills', 'allowedCallers'], t.Array(t.String)) ?? [];
 
         return new AuthenticationConfiguration(
             undefined,
@@ -237,6 +241,12 @@ function addSkills(services: ServiceCollection, configuration: Configuration): v
                 dependencies.credentialProvider,
                 dependencies.authenticationConfiguration
             )
+    );
+
+    services.addFactory<ChannelServiceRoutes, { channelServiceHandler: ChannelServiceHandler }>(
+        'channelServiceRoutes',
+        ['channelServiceHandler'],
+        (dependencies) => new ChannelServiceRoutes(dependencies.channelServiceHandler)
     );
 }
 
@@ -283,26 +293,31 @@ function addCoreBot(services: ServiceCollection, configuration: Configuration): 
     services.addFactory<
         BotFrameworkAdapter,
         {
+            authenticationConfiguration: AuthenticationConfiguration;
             conversationState: ConversationState;
-            userState: UserState;
             middlewares: MiddlewareSet;
             telemetryMiddleware: Middleware;
+            userState: UserState;
         }
-    >('adapter', ['conversationState', 'userState', 'middlewares', 'telemetryMiddleware'], (dependencies) => {
-        const appId = configuration.string(['MicrosoftAppId']);
-        const appPassword = configuration.string(['MicrosoftAppPassword']);
+    >(
+        'adapter',
+        ['authenticationConfiguration', 'conversationState', 'userState', 'middlewares', 'telemetryMiddleware'],
+        (dependencies) => {
+            const appId = configuration.string(['MicrosoftAppId']);
+            const appPassword = configuration.string(['MicrosoftAppPassword']);
 
-        const adapter = new CoreBotAdapter(
-            { appId, appPassword },
-            dependencies.conversationState,
-            dependencies.userState
-        );
+            const adapter = new CoreBotAdapter(
+                { appId, appPassword, authConfig: dependencies.authenticationConfiguration },
+                dependencies.conversationState,
+                dependencies.userState
+            );
 
-        adapter.use(dependencies.middlewares);
-        adapter.use(dependencies.telemetryMiddleware);
+            adapter.use(dependencies.middlewares);
+            adapter.use(dependencies.telemetryMiddleware);
 
-        return adapter;
-    });
+            return adapter;
+        }
+    );
 }
 
 async function addSettingsBotComponents(services: ServiceCollection, configuration: Configuration): Promise<void> {
@@ -329,55 +344,63 @@ async function addSettingsBotComponents(services: ServiceCollection, configurati
             t.Array(
                 t.Record({
                     name: t.String,
-                    settingsPrefix: t.String.Or(t.Undefined),
+                    settingsPrefix: t.String.optional(),
                 })
             )
         ) ?? [];
 
-    const errs: Error[] = [];
+    const loadErrors: Array<{ error: Error; name: string }> = [];
 
     for (const { name, settingsPrefix } of components) {
         try {
             const botComponent = await loadBotComponent(name);
 
             botComponent.configureServices(services, configuration.bind([settingsPrefix ?? name]));
-        } catch (err) {
-            errs.push(err);
+        } catch (error) {
+            loadErrors.push({ error, name });
         }
     }
 
-    if (errs.length) {
-        throw new Error(errs.map((err) => `[${err}]`).join(', '));
+    if (loadErrors.length) {
+        loadErrors.forEach(({ name, error }) =>
+            console.warn(
+                `${name} failed to load. Consider removing this component from the list of components in your application settings.`,
+                error
+            )
+        );
     }
 }
 
+// Notes:
+// - Liberal `||` needed as many settings are initialized as `""` and should still be overridden
+// - Any generated files take precedence over `appsettings.json`.
 function addComposerConfiguration(configuration: Configuration): void {
-    const botRoot = configuration.string(['bot']) ?? '.';
+    const botRoot = configuration.string(['bot']) || '.';
     configuration.set(['BotRoot'], botRoot);
 
     const luisRegion =
-        configuration.string(['LUIS_AUTHORING_REGION']) ??
-        configuration.string(['luis', 'authoringRegion']) ??
-        configuration.string(['luis', 'region']) ??
+        configuration.string(['LUIS_AUTHORING_REGION']) ||
+        configuration.string(['luis', 'authoringRegion']) ||
+        configuration.string(['luis', 'region']) ||
         'westus';
 
     const luisEndpoint =
-        configuration.string(['luis', 'endpoint']) ?? `https://${luisRegion}.api.cognitive.microsoft.com`;
+        configuration.string(['luis', 'endpoint']) || `https://${luisRegion}.api.cognitive.microsoft.com`;
     configuration.set(['luis', 'endpoint'], luisEndpoint);
 
-    const userName = process.env.USERNAME ?? process.env.USER;
+    const userName = process.env.USERNAME || process.env.USER;
 
-    let environment = configuration.string(['luis', 'environment']) ?? userName;
+    let environment = configuration.string(['luis', 'environment']) || userName;
     if (environment === 'Development') {
         environment = userName;
     }
 
-    configuration.file(path.join(botRoot, 'generated', `luis.settings.${environment}.${luisRegion}.json`));
+    configuration.file(path.join(botRoot, 'generated', `luis.settings.${environment}.${luisRegion}.json`), true);
 
-    const qnaRegion = configuration.string(['qna', 'qnaRegion']) ?? 'westus';
-    configuration.file(path.join(botRoot, 'generated', `qnamaker.settings.${environment}.${qnaRegion}.json`));
+    const qnaRegion = configuration.string(['qna', 'qnaRegion']) || 'westus';
+    configuration.file(path.join(botRoot, 'generated', `qnamaker.settings.${environment}.${qnaRegion}.json`), true);
 
-    configuration.file(path.join(botRoot, 'generated', `orchestrator.settings.json`));
+    configuration.file(path.join(botRoot, 'generated', `orchestrator.settings.json`), true);
 }
 
 async function normalizeConfiguration(configuration: Configuration, applicationRoot: string): Promise<void> {
@@ -459,11 +482,13 @@ export async function getRuntimeServices(
         }
 
         files.forEach((file) => configuration.file(path.join(configurationOrSettingsDirectory, file)));
+
+        await normalizeConfiguration(configuration, applicationRoot);
     } else {
         configuration = configurationOrSettingsDirectory;
-    }
 
-    await normalizeConfiguration(configuration, applicationRoot);
+        await normalizeConfiguration(configuration, applicationRoot);
+    }
 
     const services = new ServiceCollection({
         customAdapters: new Map(),
@@ -488,7 +513,7 @@ export async function getRuntimeServices(
 
     addCoreBot(services, configuration);
     addFeatures(services, runtimeSettings.bind(['features']));
-    addSkills(services, runtimeSettings.bind(['skills']));
+    addSkills(services, configuration);
     addStorage(services, configuration);
     addTelemetry(services, runtimeSettings.bind(['telemetry']));
     await addSettingsBotComponents(services, configuration);

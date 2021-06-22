@@ -83,7 +83,7 @@ import {
 
 import { BotFrameworkHttpAdapter } from './botFrameworkHttpAdapter';
 import { BotLogic, ConnectorClientBuilder, Emitter, Request, Response, WebRequest, WebResponse } from './interfaces';
-import { delay } from 'botbuilder-stdlib';
+import { delay, retry } from 'botbuilder-stdlib';
 import { userAgentPolicy } from '@azure/ms-rest-js';
 import { validateAndFixActivity } from './activityValidator';
 
@@ -1835,12 +1835,17 @@ export class BotFrameworkAdapter
 
     /**
      * Connects the handler to a Named Pipe server and begins listening for incoming requests.
-     * @param pipeName The name of the named pipe to use when creating the server.
+     *
      * @param logic The logic that will handle incoming requests.
+     * @param pipeName The name of the named pipe to use when creating the server.
+     * @param retryCount Number of times to attempt to bind incoming and outgoing pipe
+     * @param onListen Optional callback that fires once when server is listening on both incoming and outgoing pipe
      */
     public async useNamedPipe(
         logic: (context: TurnContext) => Promise<any>,
-        pipeName: string = defaultPipeName
+        pipeName = defaultPipeName,
+        retryCount = 7,
+        onListen?: () => void
     ): Promise<void> {
         if (!logic) {
             throw new Error('Bot logic needs to be provided to `useNamedPipe`');
@@ -1862,7 +1867,8 @@ export class BotFrameworkAdapter
         }
 
         this.logic = logic;
-        await this.startNamedPipeServer(pipeName);
+
+        await retry(() => this.startNamedPipeServer(pipeName, onListen), retryCount);
     }
 
     /**
@@ -1900,12 +1906,12 @@ export class BotFrameworkAdapter
         await this.startWebSocket(nodeWebSocket);
     }
 
-    private async startNamedPipeServer(pipeName: string): Promise<void> {
+    private async startNamedPipeServer(pipeName: string, onListen?: () => void): Promise<void> {
         this.namedPipeName = pipeName;
         this.streamingServer = new NamedPipeServer(pipeName, this);
 
         try {
-            await this.streamingServer.start();
+            await this.streamingServer.start(onListen);
         } finally {
             this.namedPipeName = undefined;
         }

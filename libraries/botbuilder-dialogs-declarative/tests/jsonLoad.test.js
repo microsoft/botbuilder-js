@@ -14,6 +14,7 @@ const {
     TestAdapter,
     useBotState,
     ActivityTypes,
+    Channels,
 } = require('botbuilder-core');
 
 const {
@@ -398,6 +399,34 @@ describe('Json load tests', function () {
             .assertReply('Now try to specify the id of your pet, and I will help your find it out from the store.')
             .send('12121')
             .assertReply('Great! I found your pet named "TestPetName"')
+            .startTest();
+    });
+
+    it('NoReplyToIdForFirstConversationActivityFromBotToUser', async function () {
+        // The ReplyToId should be null if the activity from bot to user is the first one of the conversation.
+        await buildTestFlow(resourceExplorer, 'ReplyToId.main.dialog', this.test.title)
+            .send({
+                type: ActivityTypes.ConversationUpdate,
+                membersAdded: [
+                    {
+                        id: 'bot',
+                    },
+                ],
+                channelId: Channels.Webchat,
+            })
+            .assertReply((activity) => {
+                assert.strictEqual(activity.replyToId, undefined);
+            })
+            .assertReply((activity) => {
+                assert.strictEqual(activity.replyToId, undefined);
+            })
+            .assertReply((activity) => {
+                assert.strictEqual(activity.replyToId, undefined);
+            })
+            .send('Tom')
+            .assertReply((activity) => {
+                assert.notStrictEqual(activity.replyToId, undefined);
+            })
             .startTest();
     });
 

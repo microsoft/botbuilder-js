@@ -10,5 +10,7 @@ export {
     Meeting,
     TeamDetails,
     TeamsChannelAccount,
+    TeamsMeetingDetails,
+    TeamsMeetingInfo,
     TeamsMeetingParticipant,
 } from './mappers';

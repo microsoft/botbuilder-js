@@ -5,7 +5,10 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { BoolExpression, BoolExpressionConverter, Expression } from 'adaptive-expressions';
+import { ActionScopeResult, ActionScopeCommands } from './actionScope';
+import { BoolExpression, BoolExpressionConverter } from 'adaptive-expressions';
+import { BoolProperty } from '../properties';
+
 import {
     Converter,
     ConverterFactory,
@@ -14,10 +17,9 @@ import {
     DialogContext,
     DialogTurnResult,
 } from 'botbuilder-dialogs';
-import { ActionScopeResult, ActionScopeCommands } from './actionScope';
 
 export interface ContinueLoopConfiguration extends DialogConfiguration {
-    disabled?: boolean | string | Expression | BoolExpression;
+    disabled?: BoolProperty;
 }
 
 /**
@@ -57,7 +59,7 @@ export class ContinueLoop<O extends object = {}> extends Dialog<O> implements Co
 
         return await dc.endDialog(actionScopeResult);
     }
-    
+
     /**
      * @protected
      * Builds the compute Id for the [Dialog](xref:botbuilder-dialogs.Dialog).

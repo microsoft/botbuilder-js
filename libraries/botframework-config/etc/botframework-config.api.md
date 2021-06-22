@@ -6,28 +6,24 @@
 
 // Warning: (ae-forgotten-export) The symbol "AzureService" needs to be exported by the entry point index.d.ts
 //
-// @public
+// @public @deprecated
 export class AppInsightsService extends AzureService implements IAppInsightsService {
     constructor(source?: IAppInsightsService);
     apiKeys: {
         [key: string]: string;
     };
     applicationId: string;
-    // (undocumented)
     decrypt(secret: string, decryptString: (value: string, secret: string) => string): void;
-    // (undocumented)
     encrypt(secret: string, encryptString: (value: string, secret: string) => string): void;
     instrumentationKey: string;
 }
 
-// @public
+// @public @deprecated
 export class BlobStorageService extends AzureService implements IBlobStorageService {
     constructor(source?: IBlobStorageService);
     connectionString: string;
     container: string;
-    // (undocumented)
     decrypt(secret: string, decryptString: (value: string, secret: string) => string): void;
-    // (undocumented)
     encrypt(secret: string, encryptString: (value: string, secret: string) => string): void;
 }
 
@@ -74,29 +70,25 @@ export class BotConfigurationBase implements Partial<IBotConfiguration> {
     version: string;
 }
 
-// @public
+// @public @deprecated (undocumented)
 export class BotRecipe {
     constructor();
-    // (undocumented)
     static fromJSON(source?: Partial<BotRecipe>): BotRecipe;
     // (undocumented)
     resources: IResource[];
-    // (undocumented)
     toJSON(): Partial<BotRecipe>;
     version: string;
 }
 
-// @public
+// @public @deprecated
 export class BotService extends AzureService implements IBotService {
     constructor(source?: IBotService);
     appId: string;
-    // (undocumented)
     decrypt(secret: string, decryptString: (value: string, secret: string) => string): void;
-    // (undocumented)
     encrypt(secret: string, encryptString: (value: string, secret: string) => string): void;
 }
 
-// @public
+// @public @deprecated
 export class ConnectedService implements IConnectedService {
     constructor(source?: IConnectedService, type?: ServiceTypes);
     decrypt(secret: string, decryptString: (value: string, secret: string) => string): void;
@@ -108,57 +100,49 @@ export class ConnectedService implements IConnectedService {
     type?: ServiceTypes;
 }
 
-// @public
+// @public @deprecated
 export class CosmosDbService extends AzureService implements ICosmosDBService {
     constructor(source?: ICosmosDBService);
     collection: string;
     database: string;
-    // (undocumented)
     decrypt(secret: string, decryptString: (value: string, secret: string) => string): void;
-    // (undocumented)
     encrypt(secret: string, encryptString: (value: string, secret: string) => string): void;
     endpoint: string;
     key: string;
 }
 
-// @public
+// @public @deprecated
 export class DispatchService extends LuisService implements IDispatchService {
     constructor(source?: IDispatchService);
     serviceIds: string[];
 }
 
-// @public
+// @public @deprecated
 export class EndpointService extends ConnectedService implements IEndpointService {
     constructor(source: IEndpointService);
     appId: string;
     appPassword: string;
     channelService: string;
-    // (undocumented)
     decrypt(secret: string, decryptString: (value: string, secret: string) => string): void;
-    // (undocumented)
     encrypt(secret: string, encryptString: (value: string, secret: string) => string): void;
     endpoint: string;
 }
 
-// @public
+// @public @deprecated
 export class FileService extends ConnectedService implements IFileService {
     constructor(source?: IFileService);
-    // (undocumented)
     decrypt(secret: string, decryptString: (value: string, secret: string) => string): void;
-    // (undocumented)
     encrypt(secret: string, encryptString: (value: string, secret: string) => string): void;
     path: string;
 }
 
-// @public
+// @public @deprecated
 export class GenericService extends ConnectedService implements IGenericService {
     constructor(source?: IGenericService);
     configuration: {
         [key: string]: string;
     };
-    // (undocumented)
     decrypt(secret: string, decryptString: (value: string, secret: string) => string): void;
-    // (undocumented)
     encrypt(secret: string, encryptString: (value: string, secret: string) => string): void;
     url: string;
 }
@@ -180,7 +164,7 @@ export interface IAzureService extends IConnectedService {
     tenantId: string;
 }
 
-// @public (undocumented)
+// @public @deprecated (undocumented)
 export interface IBlobResource extends IResource {
     // (undocumented)
     container: string;
@@ -213,7 +197,7 @@ export interface IConnectedService {
     readonly type?: ServiceTypes;
 }
 
-// @public (undocumented)
+// @public @deprecated (undocumented)
 export interface ICosmosDBResource extends IResource {
     // (undocumented)
     collection: string;
@@ -229,7 +213,7 @@ export interface ICosmosDBService extends IAzureService {
     key: string;
 }
 
-// @public (undocumented)
+// @public @deprecated (undocumented)
 export interface IDispatchResource extends IResource {
     // (undocumented)
     serviceIds: string[];
@@ -248,7 +232,7 @@ export interface IEndpointService extends IConnectedService {
     endpoint: string;
 }
 
-// @public (undocumented)
+// @public @deprecated (undocumented)
 export interface IFileResource extends IResource {
     // (undocumented)
     path: string;
@@ -259,7 +243,7 @@ export interface IFileService extends IConnectedService {
     path: string;
 }
 
-// @public (undocumented)
+// @public @deprecated (undocumented)
 export interface IGenericResource extends IUrlResource {
     // (undocumented)
     configuration: {
@@ -293,7 +277,7 @@ export interface IQnAService extends IConnectedService {
     subscriptionKey: string;
 }
 
-// @public (undocumented)
+// @public @deprecated (undocumented)
 export interface IResource {
     // (undocumented)
     id?: string;
@@ -303,21 +287,19 @@ export interface IResource {
     readonly type: ServiceTypes;
 }
 
-// @public (undocumented)
+// @public @deprecated (undocumented)
 export interface IUrlResource extends IResource {
     // (undocumented)
     url: string;
 }
 
-// @public
+// @public @deprecated
 export class LuisService extends ConnectedService implements ILuisService {
     constructor(source?: ILuisService, serviceType?: ServiceTypes);
     appId: string;
     authoringKey: string;
     customEndpoint: string;
-    // (undocumented)
     decrypt(secret: string, decryptString: (value: string, secret: string) => string): void;
-    // (undocumented)
     encrypt(secret: string, encryptString: (value: string, secret: string) => string): void;
     getEndpoint(): string;
     region: string;
@@ -325,12 +307,10 @@ export class LuisService extends ConnectedService implements ILuisService {
     version: string;
 }
 
-// @public
+// @public @deprecated
 export class QnaMakerService extends ConnectedService implements IQnAService {
     constructor(source?: IQnAService);
-    // (undocumented)
     decrypt(secret: string, decryptString: (value: string, secret: string) => string): void;
-    // (undocumented)
     encrypt(secret: string, encryptString: (value: string, secret: string) => string): void;
     endpointKey: string;
     hostname: string;

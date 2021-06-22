@@ -71,7 +71,7 @@ export class LuisRecognizerV2 extends LuisRecognizerInternal {
         };
     }
 
-    public options: LuisRecognizerOptionsV2;
+    options: LuisRecognizerOptionsV2;
 
     private luisClient: LuisClient;
 
@@ -81,10 +81,29 @@ export class LuisRecognizerV2 extends LuisRecognizerInternal {
      * @param {TurnContext} context The [TurnContext](xref:botbuilder-core.TurnContext).
      * @returns {Promise<RecognizerResult>} Analysis of utterance in form of [RecognizerResult](xref:botbuilder-core.RecognizerResult).
      */
-    async recognizeInternal(context: DialogContext | TurnContext): Promise<RecognizerResult> {
-        context = context instanceof TurnContext ? context : context.context;
-        const luisPredictionOptions = this.options;
-        const utterance: string = context.activity.text || '';
+    async recognizeInternal(context: DialogContext | TurnContext): Promise<RecognizerResult>;
+
+    /**
+     * Calls LUIS to recognize intents and entities in a users utterance.
+     *
+     * @param {string} utterance The utterance to be recognized.
+     * @returns {Promise<RecognizerResult>} Analysis of utterance in form of [RecognizerResult](xref:botbuilder-core.RecognizerResult).
+     */
+    async recognizeInternal(utterance: string): Promise<RecognizerResult>;
+
+    /**
+     * @internal
+     */
+    async recognizeInternal(contextOrUtterance: DialogContext | TurnContext | string): Promise<RecognizerResult> {
+        let utterance: string;
+        let context: TurnContext;
+
+        if (typeof contextOrUtterance === 'string') {
+            utterance = contextOrUtterance;
+        } else {
+            context = contextOrUtterance instanceof TurnContext ? contextOrUtterance : contextOrUtterance.context;
+            utterance = context.activity.text || '';
+        }
 
         if (!utterance.trim()) {
             // Bypass LUIS if the activity's text is null or whitespace
@@ -94,6 +113,8 @@ export class LuisRecognizerV2 extends LuisRecognizerInternal {
                 entities: {},
             };
         }
+
+        const luisPredictionOptions = this.options;
 
         const luisResult: LuisModels.LuisResult = await this.luisClient.prediction.resolve(
             this.application.applicationId,
@@ -121,7 +142,10 @@ export class LuisRecognizerV2 extends LuisRecognizerInternal {
             luisResult: luisPredictionOptions.includeAPIResults ? luisResult : null,
         };
 
-        this.emitTraceInfo(context, luisResult, result);
+        if (context != null) {
+            this.emitTraceInfo(context, luisResult, result);
+        }
+
         return result;
     }
 

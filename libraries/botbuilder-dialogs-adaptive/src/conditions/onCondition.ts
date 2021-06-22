@@ -5,6 +5,15 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
+import { ActionChangeList } from '../actionChangeList';
+import { ActionChangeType } from '../actionChangeType';
+import { ActionContext } from '../actionContext';
+import { ActionScope } from '../actions/actionScope';
+import { ActionState } from '../actionState';
+import { AdaptiveDialog } from '../adaptiveDialog';
+import { BoolProperty, NumberProperty } from '../properties';
+import { DialogListConverter } from '../converters';
+
 import {
     BoolExpression,
     BoolExpressionConverter,
@@ -18,6 +27,7 @@ import {
     NumberExpression,
     NumberExpressionConverter,
 } from 'adaptive-expressions';
+
 import {
     Configurable,
     Converter,
@@ -27,18 +37,11 @@ import {
     DialogPath,
     DialogStateManager,
 } from 'botbuilder-dialogs';
-import { ActionScope } from '../actions/actionScope';
-import { AdaptiveDialog } from '../adaptiveDialog';
-import { ActionContext } from '../actionContext';
-import { ActionChangeList } from '../actionChangeList';
-import { ActionState } from '../actionState';
-import { ActionChangeType } from '../actionChangeType';
-import { DialogListConverter } from '../converters';
 
 export interface OnConditionConfiguration {
-    condition?: boolean | string | Expression | BoolExpression;
+    condition?: BoolProperty;
     actions?: string[] | Dialog[];
-    priority?: number | string | Expression | NumberExpression;
+    priority?: NumberProperty;
     runOnce?: boolean;
     id?: string;
 }

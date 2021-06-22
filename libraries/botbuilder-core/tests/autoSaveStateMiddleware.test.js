@@ -14,7 +14,7 @@ class BotStateMock {
         assert(context, `BotStateMock.load() not passed context.`);
         if (this.assertForce) assert(force, `BotStateMock.load(): force not set.`);
         this.readCalled = true;
-        return new Promise((resolve, reject) => {
+        return new Promise((resolve, _reject) => {
             setTimeout(() => resolve(this.state), Math.random() * 50);
         });
     }
@@ -23,7 +23,7 @@ class BotStateMock {
         assert(context, `BotStateMock.saveChanges() not passed context.`);
         if (this.assertForce) assert(force, `BotStateMock.saveChanges(): force not set.`);
         this.writeCalled = true;
-        return new Promise((resolve, reject) => {
+        return new Promise((resolve, _reject) => {
             setTimeout(() => resolve(), Math.random() * 50);
         });
     }
@@ -88,12 +88,10 @@ describe(`AutoSaveStateMiddleware`, function () {
     });
 
     it(`should throw exception if invalid plugin passed in.`, function () {
-        try {
-            const set = new AutoSaveStateMiddleware(fooState, { read: () => {} });
-            assert.fail('bogus plugin added to set.');
-        } catch (err) {
-            assert.strictEqual(err.message, "BotStateSet: a object was added that isn't an instance of BotState.");
-        }
+        assert.throws(
+            () => new AutoSaveStateMiddleware(fooState, { read: () => {} }),
+            new Error("BotStateSet: a object was added that isn't an instance of BotState.")
+        );
     });
 
     it(`should not add any BotState on construction if none are passed in.`, async function () {

@@ -5,8 +5,12 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { BoolExpression, BoolExpressionConverter, Expression } from 'adaptive-expressions';
 import { Activity, ActivityTypes, ResourceResponse, StringUtils } from 'botbuilder';
+import { ActivityTemplate, StaticActivityTemplate } from '../templates';
+import { ActivityTemplateConverter } from '../converters';
+import { BoolExpression, BoolExpressionConverter } from 'adaptive-expressions';
+import { BoolProperty, TemplateInterfaceProperty } from '../properties';
+
 import {
     Converter,
     ConverterFactory,
@@ -17,16 +21,14 @@ import {
     DialogTurnResult,
     TemplateInterface,
 } from 'botbuilder-dialogs';
-import { ActivityTemplate, StaticActivityTemplate } from '../templates';
-import { ActivityTemplateConverter } from '../converters';
 
 type D = DialogStateManager & {
     utterance: string;
 };
 
 export interface SendActivityConfiguration extends DialogConfiguration {
-    activity?: string | Partial<Activity> | TemplateInterface<Partial<Activity>, D>;
-    disabled?: boolean | string | Expression | BoolExpression;
+    activity?: TemplateInterfaceProperty<Partial<Activity>, D>;
+    disabled?: BoolProperty;
 }
 
 /**
@@ -34,6 +36,7 @@ export interface SendActivityConfiguration extends DialogConfiguration {
  */
 export class SendActivity<O extends object = {}> extends Dialog<O> implements SendActivityConfiguration {
     public static $kind = 'Microsoft.SendActivity';
+
     /**
      * Creates a new [SendActivity](xref:botbuilder-dialogs-adaptive.SendActivity) instance.
      * @param activity [Activity](xref:botframework-schema.Activity) or message text to send the user.

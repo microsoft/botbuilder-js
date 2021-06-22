@@ -5,13 +5,14 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { BoolExpression, BoolExpressionConverter, Expression } from 'adaptive-expressions';
-import { Converter, ConverterFactory, DialogContext, DialogTurnResult, TurnPath } from 'botbuilder-dialogs';
 import { BaseInvokeDialog, BaseInvokeDialogConfiguration } from './baseInvokeDialog';
+import { BoolExpression, BoolExpressionConverter } from 'adaptive-expressions';
+import { BoolProperty } from '../properties';
+import { Converter, ConverterFactory, DialogContext, DialogTurnResult, TurnPath } from 'botbuilder-dialogs';
 
 export interface RepeatDialogConfiguration extends BaseInvokeDialogConfiguration {
-    disabled?: boolean | string | Expression | BoolExpression;
-    allowLoop?: boolean | string | Expression | BoolExpression;
+    disabled?: BoolProperty;
+    allowLoop?: BoolProperty;
 }
 
 /**

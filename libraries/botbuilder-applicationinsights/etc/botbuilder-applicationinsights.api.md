@@ -17,24 +17,17 @@ import { TelemetryPageView } from 'botbuilder-core';
 import { TelemetryTrace } from 'botbuilder-core';
 import { TurnContext } from 'botbuilder-core';
 
-// @public (undocumented)
+// @public
 export class ApplicationInsightsTelemetryClient implements BotTelemetryClient, BotPageViewTelemetryClient {
+    constructor(connectionString: string);
     constructor(instrumentationKey: string);
-    // (undocumented)
-    readonly configuration: appInsights.Configuration;
-    // (undocumented)
-    readonly defaultClient: appInsights.TelemetryClient;
-    // (undocumented)
+    get configuration(): appInsights.Configuration;
+    get defaultClient(): appInsights.TelemetryClient;
     flush(): void;
-    // (undocumented)
     trackDependency(telemetry: TelemetryDependency): void;
-    // (undocumented)
     trackEvent(telemetry: TelemetryEvent): void;
-    // (undocumented)
     trackException(telemetry: TelemetryException): void;
-    // (undocumented)
     trackPageView(telemetry: TelemetryPageView): void;
-    // (undocumented)
     trackTrace(telemetry: TelemetryTrace): void;
 }
 
@@ -44,10 +37,12 @@ export const ApplicationInsightsWebserverMiddleware: any;
 // @public
 export class TelemetryInitializerMiddleware implements Middleware {
     constructor(telemetryLoggerMiddleware: TelemetryLoggerMiddleware, logActivityTelemetry?: boolean);
-    protected appInsightsCorrelationContext: CorrelationContext;
-    readonly logActivityTelemetry: boolean;
+    // Warning: (ae-setter-with-docs) The doc comment for the property "appInsightsCorrelationContext" must appear on the getter, not the setter.
+    protected set appInsightsCorrelationContext(value: CorrelationContext);
+    protected get appInsightsCorrelationContext(): CorrelationContext;
+    get logActivityTelemetry(): boolean;
     onTurn(context: TurnContext, next: () => Promise<void>): Promise<void>;
-    readonly telemetryClient: TelemetryLoggerMiddleware;
+    get telemetryClient(): TelemetryLoggerMiddleware;
     }
 
 

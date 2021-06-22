@@ -56,20 +56,12 @@ export class Analyzer
      * @returns Analyze result including variables and template references.
      */
     public analyzeTemplate(templateName: string): AnalyzerResult {
-        if (!(templateName in this.templateMap)) {
-            throw new Error(TemplateErrors.templateNotExist(templateName));
-        }
-
         if (
+            !(templateName in this.templateMap) ||
             this.evalutationTargetStack.find((u: EvaluationTarget): boolean => u.templateName === templateName) !==
-            undefined
+                undefined
         ) {
-            throw new Error(
-                `${TemplateErrors.loopDetected} ${this.evalutationTargetStack
-                    .reverse()
-                    .map((u: EvaluationTarget): string => u.templateName)
-                    .join(' => ')}`
-            );
+            return new AnalyzerResult();
         }
 
         // Using a stack to track the evalution trace
@@ -234,7 +226,7 @@ export class Analyzer
                 this.templateMap[templateName].parameters.length === 0
             ) {
                 result.union(this.analyzeTemplate(templateName));
-            } else {
+            } else if (!result.TemplateReferences.includes(templateName)) {
                 // if template has params, just get the templateref without variables.
                 result.union(new AnalyzerResult([], this.analyzeTemplate(templateName).TemplateReferences));
             }

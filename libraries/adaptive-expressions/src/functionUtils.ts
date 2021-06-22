@@ -17,6 +17,8 @@ import { ExpressionType } from './expressionType';
 import { MemoryInterface } from './memory';
 import { Options } from './options';
 import { ReturnType } from './returnType';
+// eslint-disable-next-line lodash/import-scope
+import isEqual from 'lodash.isequal';
 
 /**
  * Verify the result of an expression is of the appropriate type and return a string if not.
@@ -760,6 +762,51 @@ export class FunctionUtils {
     }
 
     /**
+     * Equal helper function.
+     * @param args Input args. Compare the first param and second param.
+     */
+    public static commonEquals(obj1: unknown, obj2: unknown): boolean {
+        if (obj1 == null || obj2 == null) {
+            return obj1 == null && obj2 == null;
+        }
+
+        // Array Comparison
+        if (Array.isArray(obj1) && Array.isArray(obj2)) {
+            if (obj1.length !== obj2.length) {
+                return false;
+            }
+
+            return obj1.every((item, i) => FunctionUtils.commonEquals(item, obj2[i]));
+        }
+
+        // Object Comparison
+        const propertyCountOfObj1 = FunctionUtils.getPropertyCount(obj1);
+        const propertyCountOfObj2 = FunctionUtils.getPropertyCount(obj2);
+        if (propertyCountOfObj1 >= 0 && propertyCountOfObj2 >= 0) {
+            if (propertyCountOfObj1 !== propertyCountOfObj2) {
+                return false;
+            }
+            const jsonObj1 = FunctionUtils.convertToObj(obj1);
+            const jsonObj2 = FunctionUtils.convertToObj(obj2);
+
+            return isEqual(jsonObj1, jsonObj2);
+        }
+
+        // Number Comparison
+        if (FunctionUtils.isNumber(obj1) && FunctionUtils.isNumber(obj2)) {
+            if (Math.abs(obj1 - obj2) < Number.EPSILON) {
+                return true;
+            }
+        }
+
+        try {
+            return obj1 === obj2;
+        } catch {
+            return false;
+        }
+    }
+
+    /**
      * @private
      */
     private static buildTypeValidatorError(returnType: ReturnType, childExpr: Expression, expr: Expression): string {
@@ -778,5 +825,37 @@ export class FunctionUtils {
             const typesStr = types.join(', ');
             return `${childExpr} in ${expr} is not any of [${typesStr}].`;
         }
+    }
+
+    /**
+     * Helper function of get the number of properties of an object.
+     * @param obj An object.
+     */
+    private static getPropertyCount(obj: unknown): number {
+        let count = -1;
+        if (obj != null && !Array.isArray(obj)) {
+            if (obj instanceof Map) {
+                count = obj.size;
+            } else if (typeof obj === 'object' && !(obj instanceof Date)) {
+                count = Object.keys(obj).length;
+            }
+        }
+
+        return count;
+    }
+
+    /**
+     * @private
+     */
+    private static convertToObj(instance: unknown) {
+        if (FunctionUtils.getPropertyCount(instance) >= 0) {
+            const entries = instance instanceof Map ? Array.from(instance.entries()) : Object.entries(instance);
+            return entries.reduce((acc, [key, value]) => ({ ...acc, [key]: FunctionUtils.convertToObj(value) }), {});
+        } else if (Array.isArray(instance)) {
+            // Convert Array
+            return instance.map((item) => FunctionUtils.convertToObj(item));
+        }
+
+        return instance;
     }
 }

@@ -73,42 +73,42 @@ class DocumentStoreItem {
      *
      * @returns {string} the partition key path
      */
-    public static get partitionKeyPath(): string {
+    static get partitionKeyPath(): string {
         return '/id';
     }
 
     /**
      * Gets or sets the sanitized Id/Key used as PrimaryKey.
      */
-    public id: string;
+    id: string;
 
     /**
      * Gets or sets the un-sanitized Id/Key.
      *
      */
-    public realId: string;
+    realId: string;
 
     /**
      * Gets or sets the persisted object.
      */
-    public document: object;
+    document: object;
 
     /**
      * Gets or sets the ETag information for handling optimistic concurrency updates.
      */
-    public eTag: string;
+    eTag: string;
 
     /**
      * Gets the PartitionKey value for the document.
      *
      * @returns {string} the partition key
      */
-    public get partitionKey(): string {
+    get partitionKey(): string {
         return this.id;
     }
 
     // We can't make the partitionKey optional AND have it auto-get this.realId, so we'll use a constructor
-    public constructor(storeItem: { id: string; realId: string; document: object; eTag?: string }) {
+    constructor(storeItem: { id: string; realId: string; document: object; eTag?: string }) {
         this.id = storeItem.id;
         this.realId = storeItem.realId;
         this.document = storeItem.document;
@@ -130,7 +130,7 @@ export class CosmosDbPartitionedStorage implements Storage {
      *
      * @param {CosmosDbPartitionedStorageOptions} cosmosDbStorageOptions Cosmos DB partitioned storage configuration options.
      */
-    public constructor(private readonly cosmosDbStorageOptions: CosmosDbPartitionedStorageOptions) {
+    constructor(private readonly cosmosDbStorageOptions: CosmosDbPartitionedStorageOptions) {
         if (!cosmosDbStorageOptions) {
             throw new ReferenceError('CosmosDbPartitionedStorageOptions is required.');
         }
@@ -167,13 +167,18 @@ export class CosmosDbPartitionedStorage implements Storage {
         }
     }
 
+    // Protects against JSON.stringify cycles
+    private toJSON(): unknown {
+        return { name: 'CosmosDbPartitionedStorage' };
+    }
+
     /**
      * Read one or more items with matching keys from the Cosmos DB container.
      *
      * @param {string[]} keys A collection of Ids for each item to be retrieved.
      * @returns {Promise<StoreItems>} The read items.
      */
-    public async read(keys: string[]): Promise<StoreItems> {
+    async read(keys: string[]): Promise<StoreItems> {
         if (!keys) {
             throw new ReferenceError(`Keys are required when reading.`);
         } else if (keys.length === 0) {
@@ -232,7 +237,7 @@ export class CosmosDbPartitionedStorage implements Storage {
      *
      * @param {StoreItems} changes Dictionary of items to be inserted or updated indexed by key.
      */
-    public async write(changes: StoreItems): Promise<void> {
+    async write(changes: StoreItems): Promise<void> {
         if (!changes) {
             throw new ReferenceError(`Changes are required when writing.`);
         } else if (changes.length === 0) {
@@ -282,7 +287,7 @@ export class CosmosDbPartitionedStorage implements Storage {
      *
      * @param {string[]} keys Array of Ids for the items to be deleted.
      */
-    public async delete(keys: string[]): Promise<void> {
+    async delete(keys: string[]): Promise<void> {
         await this.initialize();
 
         await Promise.all(
@@ -311,7 +316,7 @@ export class CosmosDbPartitionedStorage implements Storage {
     /**
      * Connects to the CosmosDB database and creates / gets the container.
      */
-    public async initialize(): Promise<void> {
+    async initialize(): Promise<void> {
         if (!this.container) {
             if (!this.client) {
                 this.client = new CosmosClient({

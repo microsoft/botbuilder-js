@@ -39,6 +39,14 @@ export class DefaultLoader implements CustomDeserializer<Configurable, Record<st
                 }
                 instance[`${key}`] = converter.convert(value);
             } else {
+                if (key === 'schema' && typeof value === 'string' && value.endsWith('.json')) {
+                    try {
+                        value = JSON.parse(this._resourceExplorer.getResource(value).readText());
+                    } catch (_err) {
+                        // no-op. We tried to load a .json file as though it were a link, but it failed
+                        // so don't change `value`.
+                    }
+                }
                 instance[`${key}`] = value;
             }
 

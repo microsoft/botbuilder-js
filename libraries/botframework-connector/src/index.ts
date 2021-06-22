@@ -9,8 +9,9 @@
 export * from './auth';
 export * from './teams';
 export * from './tokenApi/models';
+export { BotFrameworkClient } from './skills';
 export { ConnectorClient } from './connectorApi/connectorClient';
 export { ConnectorClientOptions } from './connectorApi/models/index';
 export { EmulatorApiClient } from './emulatorApiClient';
-export { SignInUrlResponse, TokenExchangeRequest } from 'botframework-schema';
+export { SignInUrlResponse, TokenExchangeRequest, TokenStatus } from 'botframework-schema';
 export { TokenApiClient, TokenApiModels } from './tokenApi/tokenApiClient';

@@ -1,0 +1,44 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/api-extractor/v7/api-extractor.schema.json",
+  "mainEntryPointFilePath": "./libraries/botbuilder-core/lib/index.d.ts",
+  "bundledPackages": [ ],
+  "compiler": {
+  },
+  "apiReport": {
+    "enabled": true
+  },
+  "docModel": {
+    "enabled": false
+  },
+  "dtsRollup": {
+    "enabled": false
+  },
+  "tsdocMetadata": {
+    "enabled": false
+  },
+  "messages": {
+    "compilerMessageReporting": {
+    },
+    "extractorMessageReporting": {
+      "default": {
+        "logLevel": "error"
+      },
+      "ae-missing-release-tag": {
+        "logLevel": "none"
+      },
+      "ae-setter-with-docs": {
+        "logLevel": "warning",
+        "addToApiReportFile": true
+      },
+      "ae-missing-getter": {
+        "logLevel": "warning",
+        "addToApiReportFile": true
+      }
+    },
+    "tsdocMessageReporting": {
+      "default": {
+        "logLevel": "none"
+      }
+    }
+  }
+}

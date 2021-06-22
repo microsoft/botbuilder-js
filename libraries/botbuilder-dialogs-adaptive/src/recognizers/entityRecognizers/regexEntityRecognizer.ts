@@ -42,9 +42,6 @@ export class RegexEntityRecognizer extends TextEntityRecognizer implements Regex
         return this._pattern;
     }
 
-    /**
-     * Sets the regular expression pattern value.
-     */
     public set pattern(value: string) {
         if (value.startsWith('(?i)')) {
             value = value.substr(4);

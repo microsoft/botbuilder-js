@@ -5,6 +5,17 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
+import { InputDialog, InputDialogConfiguration, InputState } from './inputDialog';
+import { IntProperty, StringProperty } from '../properties';
+import { TextTemplate } from '../templates';
+
+import {
+    ConversationState,
+    tokenExchangeOperationName,
+    tokenResponseEventName,
+    verifyStateOperationName,
+} from 'botbuilder';
+
 import {
     Expression,
     IntExpression,
@@ -12,6 +23,7 @@ import {
     StringExpression,
     StringExpressionConverter,
 } from 'adaptive-expressions';
+
 import {
     Activity,
     ActivityTypes,
@@ -23,6 +35,7 @@ import {
     TokenResponse,
     TurnContext,
 } from 'botbuilder';
+
 import {
     Converter,
     ConverterFactory,
@@ -37,11 +50,8 @@ import {
     ThisPath,
     TurnPath,
 } from 'botbuilder-dialogs';
-import { verifyStateOperationName, tokenExchangeOperationName, tokenResponseEventName } from 'botbuilder';
-import { InputDialog, InputDialogConfiguration, InputState } from './inputDialog';
-import { TextTemplate } from '../templates';
 
-export const channels: any = {
+export const channels = {
     console: 'console',
     cortana: 'cortana',
     directline: 'directline',
@@ -66,10 +76,10 @@ const persistedExpires = 'expires';
 const attemptCountKey = 'attemptCount';
 
 export interface OAuthInputConfiguration extends InputDialogConfiguration {
-    connectionName?: string | Expression | StringExpression;
-    title?: string | Expression | StringExpression;
-    text?: string | Expression | StringExpression;
-    timeout?: number | string | Expression | IntExpression;
+    connectionName?: StringProperty;
+    title?: StringProperty;
+    text?: StringProperty;
+    timeout?: IntProperty;
 }
 
 /**
@@ -326,9 +336,6 @@ export class OAuthInput extends InputDialog implements OAuthInputConfiguration {
         return adapter.signOutUser(dc.context, this.connectionName.getValue(dc.state));
     }
 
-    /**
-     * @protected
-     */
     protected onComputeId(): string {
         return `OAuthInput[${this.prompt && this.prompt.toString()}]`;
     }
@@ -343,27 +350,41 @@ export class OAuthInput extends InputDialog implements OAuthInputConfiguration {
         throw new Error('Method not implemented.');
     }
 
-    /**
-     * @private
-     */
     private async sendOAuthCard(dc: DialogContext, prompt?: string | Partial<Activity>): Promise<void> {
-        let title: string =
+        // Save state prior to sending OAuthCard: the invoke response for a token exchange from the root bot could come
+        // in before this method ends or could land in another instance in scale-out scenarios, which means that if the
+        // state is not saved, the OAuthInput would not be at the top of the stack, and the token exchange invoke would
+        // get discarded.
+        const conversationState = dc.context.turnState.get<ConversationState>('ConversationState');
+        if (conversationState) {
+            await conversationState.saveChanges(dc.context, false);
+        }
+
+        // Prepare oauth card
+        let title =
             (await new TextTemplate<DialogStateManager>(this.title.expressionText).bind(dc, dc.state)) ??
             this.title.getValue(dc.state);
+
         if (title?.startsWith('=')) {
             title = Expression.parse(title).tryEvaluate(dc.state)?.value;
         }
-        let text: string =
+
+        let text =
             (await new TextTemplate<DialogStateManager>(this.text.expressionText).bind(dc, dc.state)) ??
             this.text.getValue(dc.state);
+
         if (text?.startsWith('=')) {
             text = Expression.parse(text).tryEvaluate(dc.state)?.value;
         }
+
         const settings: OAuthPromptSettings = {
             connectionName: this.connectionName?.getValue(dc.state),
             title,
             text,
         };
+
+        // Send OAuthCard to root bot. The root bot could attempt to do a token exchange or if it cannot do token
+        // exchange for this connection it will let the card get to the user to allow them to sign in.
         return OAuthPrompt.sendOAuthCard(settings, dc.context, prompt);
     }
 
@@ -437,7 +458,7 @@ export class OAuthInput extends InputDialog implements OAuthInputConfiguration {
                 const id = tokenExchangeRequest.id;
                 if (!tokenExchangeResponse || !tokenExchangeResponse.token) {
                     const failureDetail = 'The bot is unable to exchange token. Proceed with regular login.';
-                    await this.sendInvokeResponse(turnContext, StatusCodes.CONFLICT, {
+                    await this.sendInvokeResponse(turnContext, StatusCodes.PRECONDITION_FAILED, {
                         id,
                         connectionName,
                         failureDetail,

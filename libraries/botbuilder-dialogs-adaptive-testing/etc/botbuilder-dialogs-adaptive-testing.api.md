@@ -5,90 +5,298 @@
 ```ts
 
 import { Activity } from 'botbuilder-core';
+import { BotComponent } from 'botbuilder-core';
+import { ClientRequest } from 'http';
+import { Configurable } from 'botbuilder-dialogs';
+import { Configuration } from 'botbuilder-dialogs-adaptive-runtime-core';
+import { Converter } from 'botbuilder-dialogs';
+import { ConverterFactory } from 'botbuilder-dialogs';
+import { CustomDeserializer } from 'botbuilder-dialogs-declarative';
 import { Dialog } from 'botbuilder-dialogs';
+import { DialogConfiguration } from 'botbuilder-dialogs';
 import { DialogContext } from 'botbuilder-dialogs';
-import { DialogExpression } from 'botbuilder-dialogs-adaptive';
 import { DialogTurnResult } from 'botbuilder-dialogs';
 import { Expression } from 'adaptive-expressions';
+import { LanguagePolicy } from 'botbuilder-dialogs-adaptive';
+import { LuisAdaptiveRecognizer } from 'botbuilder-ai';
+import { LuisAdaptiveRecognizerConfiguration } from 'botbuilder-ai';
+import { Middleware } from 'botbuilder-core';
+import { Newable } from 'botbuilder-stdlib';
+import { PropertyAssignment } from 'botbuilder-dialogs-adaptive';
+import { Recognizer } from 'botbuilder-dialogs';
+import { RecognizerResult } from 'botbuilder-core';
 import { ResourceExplorer } from 'botbuilder-dialogs-declarative';
+import { ServiceCollection } from 'botbuilder-dialogs-adaptive-runtime-core';
 import { StringExpression } from 'adaptive-expressions';
 import { TestAdapter } from 'botbuilder-core';
 import { TurnContext } from 'botbuilder-core';
 
 // @public (undocumented)
-export class AssertCondition<O extends object = {}> extends Dialog<O> {
+export class AdaptiveTestBotComponent extends BotComponent {
     // (undocumented)
+    configureServices(services: ServiceCollection, _configuration: Configuration): void;
+}
+
+// @public
+export class AssertCondition<O extends object = {}> extends Dialog<O> implements AssertConditionConfiguration {
+    // (undocumented)
+    static $kind: string;
     beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult>;
     condition: Expression;
     description: StringExpression;
+    // (undocumented)
+    getConverter(property: keyof AssertConditionConfiguration): Converter | ConverterFactory;
     // (undocumented)
     protected onComputeId(): string;
 }
 
 // @public (undocumented)
-export class AssertReply extends AssertReplyActivity {
-    exact: boolean;
+export interface AssertConditionConfiguration extends DialogConfiguration {
     // (undocumented)
+    condition?: string | Expression;
+    // (undocumented)
+    description?: string | Expression | StringExpression;
+}
+
+// @public
+export class AssertNoActivity extends TestAction implements AssertNoActivityConfiguration {
+    // (undocumented)
+    static $kind: string;
+    description: string;
+    execute(adapter: TestAdapter, callback: (context: TurnContext) => Promise<void>, inspector?: Inspector): Promise<void>;
+    getConditionDescription(): string;
+}
+
+// @public (undocumented)
+export interface AssertNoActivityConfiguration {
+    // (undocumented)
+    description?: string;
+}
+
+// @public
+export class AssertReply extends AssertReplyActivity implements AssertReplyConfiguration {
+    // (undocumented)
+    static $kind: string;
+    exact: boolean;
     getConditionDescription(): string;
     text: string;
-    // (undocumented)
     validateReply(activity: Activity): void;
 }
 
-// @public (undocumented)
-export class AssertReplyActivity implements TestAction {
+// @public
+export class AssertReplyActivity extends TestAction implements AssertReplyActivityConfiguration {
+    // (undocumented)
+    static $kind: string;
     assertions: string[];
     description: string;
-    // (undocumented)
-    execute(testAdapter: TestAdapter, callback: (context: TurnContext) => Promise<any>): Promise<any>;
-    // (undocumented)
+    execute(testAdapter: TestAdapter, callback: (context: TurnContext) => Promise<any>, inspector?: Inspector): Promise<any>;
     getConditionDescription(): string;
     timeout: number;
-    // (undocumented)
     validateReply(activity: Activity): void;
 }
 
 // @public (undocumented)
-export class AssertReplyOneOf extends AssertReplyActivity {
-    exact: boolean;
+export interface AssertReplyActivityConfiguration {
     // (undocumented)
+    assertions?: string[];
+    // (undocumented)
+    description?: string;
+    // (undocumented)
+    timeout?: number;
+}
+
+// @public (undocumented)
+export interface AssertReplyConfiguration extends AssertReplyActivityConfiguration {
+    // (undocumented)
+    exact?: boolean;
+    // (undocumented)
+    text?: string;
+}
+
+// @public
+export class AssertReplyOneOf extends AssertReplyActivity implements AssertReplyOneOfConfiguration {
+    // (undocumented)
+    static $kind: string;
+    exact: boolean;
     getConditionDescription(): string;
     text: string[];
-    // (undocumented)
     validateReply(activity: Activity): void;
 }
 
 // @public (undocumented)
-export interface TestAction {
+export interface AssertReplyOneOfConfiguration extends AssertReplyActivityConfiguration {
     // (undocumented)
-    execute(adapter: TestAdapter, callback: (context: TurnContext) => Promise<any>): any;
+    exact?: boolean;
+    // (undocumented)
+    text?: string[];
 }
 
 // @public (undocumented)
-export class TestRunner {
-    constructor(resourcePath: string);
+class CustomEvent_2<T = unknown> extends TestAction implements CustomEventConfiguration {
     // (undocumented)
-    runTestScript(testName: string): Promise<any>;
-    }
+    static $kind: string;
+    execute(testAdapter: TestAdapter, callback: (context: TurnContext) => Promise<void>, inspector?: Inspector): Promise<void>;
+    name: string;
+    value?: T;
+}
+
+export { CustomEvent_2 as CustomEvent }
 
 // @public (undocumented)
-export class TestScript {
+export interface CustomEventConfiguration {
+    // (undocumented)
+    name: string;
+    // (undocumented)
+    value?: unknown;
+}
+
+// Warning: (ae-forgotten-export) The symbol "HttpResponseMessage" needs to be exported by the entry point index.d.ts
+//
+// @public
+export type FallbackFunc = (request: HttpRequestMessage) => HttpResponseMessage | Promise<HttpResponseMessage>;
+
+// @public
+export type HttpRequestMessage = ClientRequest & {
+    headers: Record<string, string>;
+};
+
+// Warning: (ae-forgotten-export) The symbol "DialogContextInspector" needs to be exported by the entry point index.d.ts
+//
+// @public
+export type Inspector = (inspector: DialogContextInspector) => Promise<void>;
+
+// @public
+export class MemoryAssertions extends TestAction implements MemoryAssertionsConfiguration {
+    // (undocumented)
+    static $kind: string;
+    assertions: string[];
     description: string;
-    dialog: DialogExpression;
-    languagePolicy: LanguagePolicy;
+    execute(adapter: TestAdapter, callback: (context: TurnContext) => Promise<void>, inspector?: Inspector): Promise<void>;
+}
+
+// @public (undocumented)
+export interface MemoryAssertionsConfiguration {
+    // (undocumented)
+    assertions?: string[];
+    // (undocumented)
+    description?: string;
+}
+
+// @public
+export class MockHttpRequestMiddleware implements Middleware {
+    // Warning: (ae-forgotten-export) The symbol "HttpRequestMock" needs to be exported by the entry point index.d.ts
+    constructor(httpRequestMocks?: HttpRequestMock[]);
+    // (undocumented)
+    onTurn(context: TurnContext, next: () => Promise<void>): Promise<void>;
+    setFallback(fallback?: FallbackFunc): void;
+}
+
+// @public
+export const MockHttpRequestMiddlewareKey: unique symbol;
+
+// @public
+export class MockLuisLoader implements CustomDeserializer<MockLuisRecognizer, LuisAdaptiveRecognizerConfiguration> {
+    constructor(_resourceExplorer: ResourceExplorer, _configuration?: Record<string, string>);
+    // (undocumented)
+    load(config: LuisAdaptiveRecognizerConfiguration, type: Newable<MockLuisRecognizer>): MockLuisRecognizer;
+    }
+
+// @public
+export class MockLuisRecognizer extends Recognizer {
+    constructor(recognizer: LuisAdaptiveRecognizer, resourceDir: string, name: string);
+    // (undocumented)
+    recognize(dialogContext: DialogContext, activity: Activity, telemetryProperties?: Record<string, string>, telemetryMetrics?: Record<string, number>): Promise<RecognizerResult>;
+    }
+
+// @public
+export class MockSettingsMiddleware implements Middleware {
+    // Warning: (ae-forgotten-export) The symbol "SettingMock" needs to be exported by the entry point index.d.ts
+    constructor(settingMocks: SettingMock[]);
+    // (undocumented)
+    onTurn(context: TurnContext, next: () => Promise<void>): Promise<void>;
+}
+
+// @public
+export class SetProperties extends TestAction {
+    // (undocumented)
+    static $kind: string;
+    assignments: PropertyAssignment[];
+    execute(adapter: TestAdapter, callback: (context: TurnContext) => Promise<void>, inspector?: Inspector): Promise<void>;
+    // (undocumented)
+    getConverter(property: keyof SetPropertiesConfiguration): Converter | ConverterFactory;
+}
+
+// @public (undocumented)
+export interface SetPropertiesConfiguration {
+    // Warning: (ae-forgotten-export) The symbol "AssignmentInput" needs to be exported by the entry point index.d.ts
+    //
+    // (undocumented)
+    assignments?: AssignmentInput<unknown>[] | PropertyAssignment[];
+}
+
+// @public
+export abstract class TestAction extends Configurable {
+    // (undocumented)
+    abstract execute(adapter: TestAdapter, callback: (context: TurnContext) => Promise<void>, inspector?: Inspector): void;
+}
+
+// @public
+export class TestScript extends Configurable implements TestScriptConfiguration {
+    // (undocumented)
+    static $kind: string;
+    configuration: Record<string, string>;
+    defaultTestAdapter(testName?: string, ...middlewares: Middleware[]): TestAdapter;
+    description: string;
+    dialog: Dialog;
     enableTrace: boolean;
-    execute(resourceExplorer: ResourceExplorer, testName?: string, testAdapter?: TestAdapter): Promise<void>;
+    execute(resourceExplorer: ResourceExplorer, testName?: string, callback?: (context: TurnContext) => Promise<void>, adapter?: TestAdapter, ...middlewares: Middleware[]): Promise<void>;
+    // (undocumented)
+    getConverter(property: keyof TestScriptConfiguration): Converter | ConverterFactory;
+    httpRequestMocks: HttpRequestMock[];
+    languagePolicy: LanguagePolicy;
     locale: string;
     script: TestAction[];
+    settingMocks: SettingMock[];
     // Warning: (ae-forgotten-export) The symbol "UserTokenMock" needs to be exported by the entry point index.d.ts
     userTokenMocks: UserTokenMock[];
 }
 
 // @public (undocumented)
-export class UserActivity implements TestAction {
-    activity: Activity;
+export interface TestScriptConfiguration {
     // (undocumented)
-    execute(testAdapter: TestAdapter, callback: (context: TurnContext) => Promise<any>): Promise<any>;
+    description?: string;
+    // (undocumented)
+    dialog?: string | Dialog;
+    // (undocumented)
+    enableTrace?: boolean;
+    // (undocumented)
+    httpRequestMocks?: string[] | HttpRequestMock[];
+    // (undocumented)
+    languagePolicy?: Record<string, string[]> | LanguagePolicy;
+    // (undocumented)
+    locale?: string;
+    // (undocumented)
+    script?: TestAction[];
+    // (undocumented)
+    settingMocks?: string[] | SettingMock[];
+    // (undocumented)
+    userTokenMocks?: string[] | UserTokenMock[];
+}
+
+// @public
+export class TestUtils {
+    static runTestScript(resourceExplorer: ResourceExplorer, testName?: string, adapter?: TestAdapter, configuration?: Record<string, string>, ...middlewares: Middleware[]): Promise<void>;
+}
+
+// @public
+export function useMockLuisSettings(directory: string, endpoint?: string): Record<string, string>;
+
+// @public
+export class UserActivity extends TestAction implements UserActivityConfiguration {
+    // (undocumented)
+    static $kind: string;
+    activity: Activity;
+    execute(testAdapter: TestAdapter, callback: (context: TurnContext) => Promise<void>, inspector?: Inspector): Promise<void>;
     user: string;
 }
 
@@ -100,34 +308,28 @@ export interface UserActivityConfiguration {
     user?: string;
 }
 
-// @public (undocumented)
-export class CustomEvent<T = unknown> implements TestAction {
-    name: string;
+// @public
+export class UserConversationUpdate extends TestAction implements UserConversationUpdateConfiguration {
     // (undocumented)
-    execute(testAdapter: TestAdapter, callback: (context: TurnContext) => Promise<any>): Promise<any>;
-    value?: unknown;
-}
-
-// @public (undocumented)
-export interface CustomEventConfiguration {
-    // (undocumented)
-    name: string;
-    // (undocumented)
-    value?: unknown;
-}
-
-// @public (undocumented)
-export class UserConversationUpdate implements TestAction {
-    // (undocumented)
-    execute(testAdapter: TestAdapter, callback: (context: TurnContext) => Promise<any>): Promise<any>;
+    static $kind: string;
+    execute(testAdapter: TestAdapter, callback: (context: TurnContext) => Promise<void>, inspector?: Inspector): Promise<void>;
     membersAdded: string[];
     membersRemoved: string[];
 }
 
 // @public (undocumented)
-export class UserDelay implements TestAction {
+export interface UserConversationUpdateConfiguration {
     // (undocumented)
-    execute(_testAdapter: TestAdapter, _callback: (context: TurnContext) => Promise<any>): Promise<any>;
+    membersAdded?: string[];
+    // (undocumented)
+    membersRemoved?: string[];
+}
+
+// @public
+export class UserDelay extends TestAction implements UserDelayConfiguration {
+    // (undocumented)
+    static $kind: string;
+    execute(testAdapter: TestAdapter, callback: (context: TurnContext) => Promise<any>, inspector?: Inspector): Promise<void>;
     timespan: number;
 }
 
@@ -137,19 +339,36 @@ export interface UserDelayConfiguration {
     timespan?: number;
 }
 
-// @public (undocumented)
-export class UserSays implements TestAction {
+// @public
+export class UserSays extends TestAction implements UserSaysConfiguration {
     // (undocumented)
-    execute(testAdapter: TestAdapter, callback: (context: TurnContext) => Promise<any>): Promise<any>;
+    static $kind: string;
+    execute(testAdapter: TestAdapter, callback: (context: TurnContext) => Promise<void>, inspector?: Inspector): Promise<void>;
+    locale: string;
     text: string;
     user: string;
 }
 
 // @public (undocumented)
-export class UserTyping implements TestAction {
+export interface UserSaysConfiguration {
     // (undocumented)
-    execute(testAdapter: TestAdapter, callback: (context: TurnContext) => Promise<any>): Promise<any>;
+    text?: string;
+    // (undocumented)
+    user?: string;
+}
+
+// @public
+export class UserTyping extends Configurable implements TestAction, UserTypingConfiguration {
+    // (undocumented)
+    static $kind: string;
+    execute(testAdapter: TestAdapter, callback: (context: TurnContext) => Promise<any>, inspector?: Inspector): Promise<any>;
     user: string;
+}
+
+// @public (undocumented)
+export interface UserTypingConfiguration {
+    // (undocumented)
+    user?: string;
 }
 
 

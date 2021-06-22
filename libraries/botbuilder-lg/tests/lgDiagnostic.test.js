@@ -296,14 +296,10 @@ describe(`LGExceptionTest`, function () {
 
         assert.throws(
             () => templates.evaluate(`wPhrase`),
-            Error(
+            new Error(
                 `Loop detected: welcome_user => wPhrase [wPhrase]  Error occurred when evaluating '-\${wPhrase()}'. [welcome_user]  Error occurred when evaluating '-\${welcome_user()}'.`
             )
         );
-
-        assert.throws(() => templates.analyzeTemplate(`wPhrase`), Error('Loop detected: welcome_user => wPhrase'));
-
-        assert.throws(() => templates.analyzeTemplate(`shouldFail`), Error('Loop detected: shouldFail'));
     });
 
     it(`AddTextWithWrongId`, function () {
@@ -317,7 +313,7 @@ describe(`LGExceptionTest`, function () {
         const templates = preloaded.ErrorExpression;
         assert.throws(
             () => templates.evaluate(`template1`),
-            Error(
+            new Error(
                 `first(createArray(1, 2)) is neither a string nor a null object. [template1]  Error occurred when evaluating '-\${length(first(createArray(1,2)))}'.`
             )
         );
@@ -328,70 +324,70 @@ describe(`LGExceptionTest`, function () {
 
         assert.throws(
             () => templates.evaluate(`template1`),
-            Error(
+            new Error(
                 `'dialog.abc' evaluated to null. [template1]  Error occurred when evaluating '-I want \${dialog.abc}'.`
             )
         );
 
         assert.throws(
             () => templates.evaluate(`prebuilt1`),
-            Error(
+            new Error(
                 `'dialog.abc' evaluated to null. [prebuilt1]  Error occurred when evaluating '-I want \${foreach(dialog.abc, item, template1())}'.`
             )
         );
 
         assert.throws(
             () => templates.evaluate(`template2`),
-            Error(
+            new Error(
                 `'dialog.abc' evaluated to null. [template1]  Error occurred when evaluating '-I want \${dialog.abc}'. [template2]  Error occurred when evaluating '-With composition \${template1()}'.`
             )
         );
 
         assert.throws(
             () => templates.evaluate('conditionalTemplate1', { dialog: true }),
-            Error(
+            new Error(
                 `'dialog.abc' evaluated to null. [template1]  Error occurred when evaluating '-I want \${dialog.abc}'. [conditionalTemplate1] Condition '\${dialog}':  Error occurred when evaluating '-I want \${template1()}'.`
             )
         );
 
         assert.throws(
             () => templates.evaluate(`conditionalTemplate2`),
-            Error(
+            new Error(
                 `'dialog.abc' evaluated to null. [conditionalTemplate2] Condition '\${dialog.abc}': Error occurred when evaluating '-IF :\${dialog.abc}'.`
             )
         );
 
         assert.throws(
             () => templates.evaluate(`structured1`),
-            Error(
+            new Error(
                 `'dialog.abc' evaluated to null. [structured1] Property 'Text': Error occurred when evaluating 'Text=I want \${dialog.abc}'.`
             )
         );
 
         assert.throws(
             () => templates.evaluate(`structured2`),
-            Error(
+            new Error(
                 `'dialog.abc' evaluated to null. [template1]  Error occurred when evaluating '-I want \${dialog.abc}'. [structured2] Property 'Text': Error occurred when evaluating 'Text=I want \${template1()}'.`
             )
         );
 
         assert.throws(
             () => templates.evaluate(`structured3`),
-            Error(
+            new Error(
                 `'dialog.abc' evaluated to null. [template1]  Error occurred when evaluating '-I want \${dialog.abc}'. [structured2] Property 'Text': Error occurred when evaluating 'Text=I want \${template1()}'. [structured3]  Error occurred when evaluating '\${structured2()}'.`
             )
         );
 
         assert.throws(
             () => templates.evaluate(`switchcase1`, { turn: { testValue: 1 } }),
-            Error(
+            new Error(
                 `'dialog.abc' evaluated to null. [switchcase1] Case '\${1}': Error occurred when evaluating '-I want \${dialog.abc}'.`
             )
         );
 
         assert.throws(
             () => templates.evaluate(`switchcase2`, { turn: { testValue: 0 } }),
-            Error(
+            new Error(
                 `'dialog.abc' evaluated to null. [switchcase2] Case 'Default': Error occurred when evaluating '-I want \${dialog.abc}'.`
             )
         );

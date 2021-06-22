@@ -22,12 +22,12 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 import { Attachment } from '../../';
-import * as teams from '../';
 import { FileDownloadInfo, ContentType } from '../';
 
 /**
  * Defines values for Type.
  * Possible values include: 'ViewAction', 'OpenUri', 'HttpPOST', 'ActionCard'
+ *
  * @readonly
  * @enum {string}
  */
@@ -40,25 +40,26 @@ export type O365ConnectorCardActionType = 'ViewAction' | 'OpenUri' | 'HttpPOST' 
  *
  */
 export interface O365ConnectorCardActionBase {
-  /**
-   * @member {Type} [type] Type of the action. Possible values include:
-   * 'ViewAction', 'OpenUri', 'HttpPOST', 'ActionCard'
-   */
-  '@type'?: O365ConnectorCardActionType;
-  /**
-   * @member {string} [name] Name of the action that will be used as button
-   * title
-   */
-  name?: string;
-  /**
-   * @member {string} [id] Action Id
-   */
-  '@id'?: string;
+    /**
+     * @member {O365ConnectorCardActionType} [type] Type of the action. Possible values include:
+     * 'ViewAction', 'OpenUri', 'HttpPOST', 'ActionCard'
+     */
+    '@type'?: O365ConnectorCardActionType;
+    /**
+     * @member {string} [name] Name of the action that will be used as button
+     * title
+     */
+    name?: string;
+    /**
+     * @member {string} [id] Action Id
+     */
+    '@id'?: string;
 }
 
 /**
  * Defines values for O365ConnectorCardInputType.
  * Possible values include: 'textInput', 'dateInput', 'multichoiceInput'
+ *
  * @readonly
  * @enum {string}
  */
@@ -71,33 +72,33 @@ export type O365ConnectorCardInputType = 'textInput' | 'dateInput' | 'multichoic
  *
  */
 export interface O365ConnectorCardInputBase {
-  /**
-   * @member {O365ConnectorCardInputBaseType} [type] Input type name. Possible values include:
-   * 'textInput', 'dateInput', 'multichoiceInput'
-   */
-  '@type'?: O365ConnectorCardInputType;
-  /**
-   * @member {string} [id] Input Id. It must be unique per entire O365
-   * connector card.
-   */
-  id?: string;
-  /**
-   * @member {boolean} [isRequired] Define if this input is a required field.
-   * Default value is false.
-   */
-  isRequired?: boolean;
-  /**
-   * @member {string} [title] Input title that will be shown as the placeholder
-   */
-  title?: string;
-  /**
-   * @member {string} [value] Default value for this input field
-   */
-  value?: string;
+    /**
+     * @member {O365ConnectorCardInputType} [type] Input type name. Possible values include:
+     * 'textInput', 'dateInput', 'multichoiceInput'
+     */
+    '@type'?: O365ConnectorCardInputType;
+    /**
+     * @member {string} [id] Input Id. It must be unique per entire O365
+     * connector card.
+     */
+    id?: string;
+    /**
+     * @member {boolean} [isRequired] Define if this input is a required field.
+     * Default value is false.
+     */
+    isRequired?: boolean;
+    /**
+     * @member {string} [title] Input title that will be shown as the placeholder
+     */
+    title?: string;
+    /**
+     * @member {string} [value] Default value for this input field
+     */
+    value?: string;
 }
 
 export interface TeamsAttachment<ContentType> extends Attachment {
-  content: ContentType;
+    content: ContentType;
 }
 
 export type FileDownloadInfoAttachment = TeamsAttachment<FileDownloadInfo>;
@@ -109,18 +110,18 @@ export type FileDownloadInfoAttachment = TeamsAttachment<FileDownloadInfo>;
  *
  */
 export interface MessageActionsPayloadBody {
-  /**
-   * @member {ContentType} [contentType] Type of the content. Possible values
-   * include: 'html', 'text'
-   */
-  contentType?: ContentType;
-  /**
-   * @member {string} [content] The content of the body.
-   */
-  content?: string;
-  /**
-   * @member {string} [textContent] The text content of the body after
-   * stripping HTML tags.
-   */
-  textContent?: string;
+    /**
+     * @member {ContentType} [contentType] Type of the content. Possible values
+     * include: 'html', 'text'
+     */
+    contentType?: ContentType;
+    /**
+     * @member {string} [content] The content of the body.
+     */
+    content?: string;
+    /**
+     * @member {string} [textContent] The text content of the body after
+     * stripping HTML tags.
+     */
+    textContent?: string;
 }

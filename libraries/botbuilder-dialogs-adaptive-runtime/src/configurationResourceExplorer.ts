@@ -2,25 +2,20 @@
 // Licensed under the MIT License.
 
 import { Configuration } from './configuration';
-import { ComponentDeclarativeTypes, FolderResourceProvider, ResourceExplorer } from 'botbuilder-dialogs-declarative';
+import { ComponentDeclarativeTypes, ResourceExplorer } from 'botbuilder-dialogs-declarative';
 import { ok } from 'assert';
 
 export class ConfigurationResourceExporer extends ResourceExplorer {
-    private readonly folderResourceProvider: FolderResourceProvider;
-
     constructor(configuration: Configuration, declarativeTypes: ComponentDeclarativeTypes[]) {
         super({ declarativeTypes });
 
         const applicationRoot = configuration.string(['applicationRoot']);
         ok(applicationRoot);
 
-        this.folderResourceProvider = new FolderResourceProvider(
-            this,
+        this.addFolders(
             applicationRoot,
-            true,
+            ['node_modules'], // Composer copies to `dialogs/imported` so `node_modules` will contain dupes
             configuration.string(['NODE_ENV']) === 'dev' // watch in dev only!
         );
-
-        this.addResourceProvider(this.folderResourceProvider);
     }
 }

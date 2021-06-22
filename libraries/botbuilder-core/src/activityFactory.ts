@@ -118,6 +118,10 @@ export class ActivityFactory {
      * @param lgResult string result from languageGenerator.
      */
     public static fromObject(lgResult: any): Partial<Activity> {
+        if (lgResult == null) {
+            return { type: ActivityTypes.Message };
+        }
+
         if (typeof lgResult === 'string') {
             return this.buildActivityFromText(lgResult.trim());
         }

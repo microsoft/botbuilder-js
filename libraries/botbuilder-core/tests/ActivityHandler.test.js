@@ -288,6 +288,30 @@ describe('ActivityHandler', function () {
         assert(onInstallationUpdateRemoveCalled);
     });
 
+    it(`should fire onAdaptiveCardInvoke`, async function () {
+        const bot = new ActivityHandler();
+
+        let onAdpativeCardInvokeCalled = false;
+        bot.onAdaptiveCardInvoke = async () => {
+            onAdpativeCardInvokeCalled = true;
+            return { statusCode: 200, value: 'called' };
+        };
+
+        await processActivity(
+            {
+                type: ActivityTypes.Invoke,
+                name: 'adaptiveCard/action',
+                value: {
+                    action: {
+                        type: 'Action.Execute',
+                    },
+                },
+            },
+            bot
+        );
+        assert(onAdpativeCardInvokeCalled);
+    });
+
     it(`should fire onUnrecognizedActivityType`, async function () {
         const bot = new ActivityHandler();
 

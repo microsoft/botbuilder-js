@@ -31,7 +31,7 @@ export class QnAMakerComponentRegistration extends ComponentRegistration {
      * @param _resourceExplorer resource explorer
      * @returns component registrations
      */
-    public getDeclarativeTypes(_resourceExplorer: unknown): ComponentDeclarativeTypes[] {
+    getDeclarativeTypes(_resourceExplorer: unknown): ComponentDeclarativeTypes[] {
         return this.services.mustMakeInstance<ComponentDeclarativeTypes[]>('declarativeTypes');
     }
 }

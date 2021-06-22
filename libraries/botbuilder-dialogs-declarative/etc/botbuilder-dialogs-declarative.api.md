@@ -4,34 +4,36 @@
 
 ```ts
 
+import { Configurable } from 'botbuilder-dialogs';
 import { FSWatcher } from 'chokidar';
+import { Newable } from 'botbuilder-stdlib';
 
-// @public (undocumented)
-export class BuilderRegistration {
-    constructor(name: string, builder: TypeBuilder);
+// @public
+export interface ComponentDeclarativeTypes {
     // (undocumented)
-    builder: TypeBuilder;
-    // (undocumented)
-    name: string;
-}
-
-// @public (undocumented)
-export interface ComponentRegistration {
-    // (undocumented)
-    getTypeBuilders(): BuilderRegistration[];
+    getDeclarativeTypes(resourceExplorer: ResourceExplorer): DeclarativeType[];
 }
 
 // @public
-export interface Converter {
+export interface CustomDeserializer<T, C> {
     // (undocumented)
-    convert(value: any): any;
+    load(config: C, type: Newable<T, any[]>): T;
 }
 
-// @public (undocumented)
-export class CustomTypeBuilder implements TypeBuilder {
-    constructor(factory: (config: object) => object);
+// @public
+export interface DeclarativeType<T = unknown, C = Record<string, unknown>> {
     // (undocumented)
-    build(config: object): object;
+    kind: string;
+    // (undocumented)
+    loader?: CustomDeserializer<T, C>;
+    // (undocumented)
+    type: Newable<T, any[]>;
+}
+
+// @public
+export class DefaultLoader implements CustomDeserializer<Configurable, Record<string, unknown>> {
+    constructor(_resourceExplorer: ResourceExplorer);
+    load(config: Record<string, unknown>, type: Newable<Configurable>): Configurable;
     }
 
 // @public
@@ -48,15 +50,18 @@ export class FolderResourceProvider extends ResourceProvider {
     getResources(extension: string): Resource[];
     includeSubFolders: boolean;
     refresh(): void;
-    readonly watcher: FSWatcher;
+    get watcher(): FSWatcher;
     }
 
 // @public
+export function isComponentDeclarativeTypes(component: unknown): component is ComponentDeclarativeTypes;
+
+// @public
 export abstract class Resource {
-    readonly fullName: string;
+    get fullName(): string;
     // (undocumented)
     protected _fullname: string;
-    readonly id: string;
+    get id(): string;
     // (undocumented)
     protected _id: string;
     abstract readText(): string;
@@ -74,50 +79,46 @@ export enum ResourceChangeEvent {
 
 // @public
 export class ResourceExplorer {
-    constructor(providers?: ResourceProvider[]);
-    addComponent(component: ComponentRegistration): ResourceExplorer;
+    constructor(providers: ResourceProvider[]);
+    constructor(options?: ResourceExplorerOptions);
     addFolder(folder: string, includeSubFolders?: boolean, monitorChanges?: boolean): ResourceExplorer;
     addFolders(folder: string, ignoreFolders?: string[], monitorChanges?: boolean): ResourceExplorer;
     addResourceProvider(resourceProvider: ResourceProvider): ResourceExplorer;
     addResourceType(type: string): void;
-    buildType(config: object): object;
-    changed: (event: ResourceChangeEvent, resources: Resource[]) => void;
+    buildType<T, C>(kind: string, config: C): T;
+    // Warning: (ae-missing-getter) The property "changed" has a setter but no getter.
+    set changed(callback: (event: ResourceChangeEvent, resources: Resource[]) => void);
     getResource(id: string): Resource;
     getResources(fileExtension: string): Resource[];
-    loadType(resource: string | Resource): object;
-    // (undocumented)
+    loadType<T>(resourceId: string): T;
+    loadType<T>(resource: Resource): T;
     protected onChanged(event: ResourceChangeEvent, resources: Resource[]): void;
     refresh(): void;
+    registerType<T>(kind: string, type: Newable<T>, loader?: CustomDeserializer<T, Record<string, unknown>>): ResourceExplorer;
     readonly resourceProviders: ResourceProvider[];
     readonly resourceTypes: Set<string>;
+    }
+
+// @public
+export interface ResourceExplorerOptions {
+    allowCycles?: boolean;
+    declarativeTypes?: ComponentDeclarativeTypes[];
+    providers?: ResourceProvider[];
 }
 
 // @public
 export abstract class ResourceProvider {
     constructor(resourceExplorer: ResourceExplorer);
-    changed: (event: ResourceChangeEvent, resources: Resource[]) => void;
+    // Warning: (ae-missing-getter) The property "changed" has a setter but no getter.
+    set changed(callback: (event: ResourceChangeEvent, resources: Resource[]) => void);
     abstract getResource(id: string): Resource;
     abstract getResources(extension: string): Resource[];
-    readonly id: string;
+    get id(): string;
     // (undocumented)
     protected _id: string;
-    // (undocumented)
     protected onChanged(event: ResourceChangeEvent, resources: Resource[]): void;
     abstract refresh(): void;
-    readonly resourceExplorer: ResourceExplorer;
-    }
-
-// @public
-export interface TypeBuilder {
-    // (undocumented)
-    build(config: object): object;
-}
-
-// @public
-export class TypeFactory {
-    // (undocumented)
-    build(name: string, config: object): object;
-    register(name: string, builder?: TypeBuilder): void;
+    get resourceExplorer(): ResourceExplorer;
     }
 
 

@@ -5,15 +5,16 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
+import { BoolProperty, StringProperty } from '../properties';
+import { TurnContext } from 'botbuilder';
 
 import {
     BoolExpression,
     BoolExpressionConverter,
-    Expression,
     StringExpression,
     StringExpressionConverter,
 } from 'adaptive-expressions';
-import { TurnContext } from 'botbuilder';
+
 import {
     Converter,
     ConverterFactory,
@@ -24,8 +25,8 @@ import {
 } from 'botbuilder-dialogs';
 
 export interface GetConversationReferenceConfiguration extends DialogConfiguration {
-    property?: string | Expression | StringExpression;
-    disabled?: boolean | string | Expression | BoolExpression;
+    property?: StringProperty;
+    disabled?: BoolProperty;
 }
 
 /**

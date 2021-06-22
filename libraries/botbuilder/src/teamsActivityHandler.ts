@@ -8,10 +8,15 @@
 
 import {
     ActivityHandler,
+    AdaptiveCardInvokeResponse,
     AppBasedLinkQuery,
     ChannelInfo,
+    Channels,
     FileConsentCardResponse,
     InvokeResponse,
+    MeetingEventDetails,
+    MeetingStartEventDetails,
+    MeetingEndEventDetails,
     MessagingExtensionAction,
     MessagingExtensionActionResponse,
     MessagingExtensionQuery,
@@ -31,6 +36,23 @@ import {
     verifyStateOperationName,
 } from 'botbuilder-core';
 import { TeamsInfo } from './teamsInfo';
+import * as t from 'runtypes';
+
+const TeamsMeetingStartT = t.Record({
+    Id: t.String,
+    JoinUrl: t.String,
+    MeetingType: t.String,
+    Title: t.String,
+    StartTime: t.String,
+});
+
+const TeamsMeetingEndT = t.Record({
+    Id: t.String,
+    JoinUrl: t.String,
+    MeetingType: t.String,
+    Title: t.String,
+    EndTime: t.String,
+});
 
 /**
  * Adds support for Microsoft Teams specific events and interactions.
@@ -38,7 +60,7 @@ import { TeamsInfo } from './teamsInfo';
  * Developers may handle Conversation Update activities sent from Microsoft Teams via two methods:
  *  1. Overriding methods starting with `on..` and *not* ending in `..Event()` (e.g. `onTeamsMembersAdded()`), or instead
  *  2. Passing callbacks to methods starting with `on..` *and* ending in `...Event()` (e.g. `onTeamsMembersAddedEvent()`),
- *      to stay in line with older {@link ActivityHandler} implementation.
+ *      to stay in line with older {@see ActivityHandler} implementation.
  *
  * Developers should use either #1 or #2, above for all Conversation Update activities and not *both* #2 and #3 for the same activity. Meaning,
  *   developers should override `onTeamsMembersAdded()` and not use both `onTeamsMembersAdded()` and `onTeamsMembersAddedEvent()`.
@@ -459,6 +481,15 @@ export class TeamsActivityHandler extends ActivityHandler {
         context: TurnContext,
         query: MessagingExtensionQuery
     ): Promise<MessagingExtensionResponse> {
+        throw new Error('NotImplemented');
+    }
+
+    /**
+     * Receives invoke activities with the name 'adaptiveCard/action'
+     * @param context A context object for this turn.
+     * @returns The Messaging Extension Action Response for the query.
+     */
+    protected async handleAdaptiveCardAction(context: TurnContext): Promise<AdaptiveCardInvokeResponse> {
         throw new Error('NotImplemented');
     }
 
@@ -912,6 +943,103 @@ export class TeamsActivityHandler extends ActivityHandler {
         return this.on('TeamsTeamUnarchived', async (context, next) => {
             const teamsChannelData = context.activity.channelData as TeamsChannelData;
             await handler(teamsChannelData.team, context, next);
+        });
+    }
+
+    /**
+     * Runs the _event_ sub-type handlers, as appropriate, and then continues the event emission process.
+     *
+     * @param context The context object for the current turn.
+     * @returns A promise that represents the work queued.
+     *
+     * @remarks
+     * Override this method to support channel-specific behavior across multiple channels or to add
+     * custom event sub-type events.
+     */
+    protected async dispatchEventActivity(context: TurnContext): Promise<void> {
+        await this.handle(context, 'Event', async () => {
+            if (context.activity.channelId === Channels.Msteams) {
+                switch (context.activity.name) {
+                    case 'application/vnd.microsoft.meetingStart':
+                        return this.onTeamsMeetingStart(context);
+                    case 'application/vnd.microsoft.meetingEnd':
+                        return this.onTeamsMeetingEnd(context);
+                }
+            }
+
+            return super.dispatchEventActivity(context);
+        });
+    }
+
+    /**
+     * Invoked when a Meeting Started event activity is received from the connector.
+     * Override this in a derived class to provide logic for when a meeting is started.
+     *
+     * @param context The context for this turn.
+     * @returns A promise that represents the work queued.
+     */
+    protected async onTeamsMeetingStart(context: TurnContext): Promise<void> {
+        await this.handle(context, 'TeamsMeetingStart', this.defaultNextEvent(context));
+    }
+
+    /**
+     * Invoked when a Meeting End event activity is received from the connector.
+     * Override this in a derived class to provide logic for when a meeting is ended.
+     *
+     * @param context The context for this turn.
+     * @returns A promise that represents the work queued.
+     */
+    protected async onTeamsMeetingEnd(context: TurnContext): Promise<void> {
+        await this.handle(context, 'TeamsMeetingEnd', this.defaultNextEvent(context));
+    }
+
+    /**
+     * Registers a handler for when a Teams meeting starts.
+     *
+     * @param handler A callback that handles Meeting Start events.
+     * @returns A promise that represents the work queued.
+     */
+    public onTeamsMeetingStartEvent(
+        handler: (meeting: MeetingStartEventDetails, context: TurnContext, next: () => Promise<void>) => Promise<void>
+    ): this {
+        return this.on('TeamsMeetingStart', async (context, next) => {
+            const meeting = TeamsMeetingStartT.check(context.activity.value);
+            await handler(
+                {
+                    id: meeting.Id,
+                    joinUrl: meeting.JoinUrl,
+                    meetingType: meeting.MeetingType,
+                    startTime: new Date(meeting.StartTime),
+                    title: meeting.Title,
+                },
+                context,
+                next
+            );
+        });
+    }
+
+    /**
+     * Registers a handler for when a Teams meeting ends.
+     *
+     * @param handler A callback that handles Meeting End events.
+     * @returns A promise that represents the work queued.
+     */
+    public onTeamsMeetingEndEvent(
+        handler: (meeting: MeetingEndEventDetails, context: TurnContext, next: () => Promise<void>) => Promise<void>
+    ): this {
+        return this.on('TeamsMeetingEnd', async (context, next) => {
+            const meeting = TeamsMeetingEndT.check(context.activity.value);
+            await handler(
+                {
+                    id: meeting.Id,
+                    joinUrl: meeting.JoinUrl,
+                    meetingType: meeting.MeetingType,
+                    endTime: new Date(meeting.EndTime),
+                    title: meeting.Title,
+                },
+                context,
+                next
+            );
         });
     }
 }

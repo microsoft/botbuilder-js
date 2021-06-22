@@ -5,6 +5,14 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
+import { ActionChangeList } from '../actionChangeList';
+import { ActionChangeType } from '../actionChangeType';
+import { ActionContext } from '../actionContext';
+import { ActionState } from '../actionState';
+import { BoolProperty, EnumProperty } from '../properties';
+import { DialogListConverter } from '../converters';
+import { StringUtils } from 'botbuilder';
+
 import {
     BoolExpression,
     BoolExpressionConverter,
@@ -12,7 +20,7 @@ import {
     EnumExpressionConverter,
     Expression,
 } from 'adaptive-expressions';
-import { StringUtils } from 'botbuilder';
+
 import {
     Converter,
     ConverterFactory,
@@ -22,20 +30,15 @@ import {
     DialogDependencies,
     DialogTurnResult,
 } from 'botbuilder-dialogs';
-import { ActionContext } from '../actionContext';
-import { ActionChangeType } from '../actionChangeType';
-import { ActionState } from '../actionState';
-import { ActionChangeList } from '../actionChangeList';
-import { DialogListConverter } from '../converters';
 
 export interface EditActionsConfiguration extends DialogConfiguration {
     actions?: string[] | Dialog[];
-    changeType?: ActionChangeType | string | Expression | EnumExpression<ActionChangeType>;
-    disabled?: boolean | string | BoolExpression;
+    changeType?: EnumProperty<ActionChangeType>;
+    disabled?: BoolProperty;
 }
 
 /**
- * Class which allows you to edit the current actions. 
+ * Class which allows you to edit the current actions.
  */
 export class EditActions<O extends object = {}>
     extends Dialog<O>

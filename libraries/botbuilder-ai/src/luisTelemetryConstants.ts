@@ -9,16 +9,16 @@
  * The BotTelemetryClient event and property names that logged by default.
  */
 export class LuisTelemetryConstants {
-    public static readonly luisResultEvent = 'LuisResult'; // Event name
-    public static readonly applicationIdProperty = 'applicationId';
-    public static readonly intentProperty = 'intent';
-    public static readonly intentScoreProperty = 'intentScore';
-    public static readonly intent2Property = 'intent2';
-    public static readonly intentScore2Property = 'intentScore2';
-    public static readonly entitiesProperty = 'entities';
-    public static readonly questionProperty = 'question';
-    public static readonly activityIdProperty = 'activityId';
-    public static readonly sentimentLabelProperty = 'sentimentLabel';
-    public static readonly sentimentScoreProperty = 'sentimentScore';
-    public static readonly fromIdProperty = 'fromId';
+    static readonly luisResultEvent = 'LuisResult'; // Event name
+    static readonly applicationIdProperty = 'applicationId';
+    static readonly intentProperty = 'intent';
+    static readonly intentScoreProperty = 'intentScore';
+    static readonly intent2Property = 'intent2';
+    static readonly intentScore2Property = 'intentScore2';
+    static readonly entitiesProperty = 'entities';
+    static readonly questionProperty = 'question';
+    static readonly activityIdProperty = 'activityId';
+    static readonly sentimentLabelProperty = 'sentimentLabel';
+    static readonly sentimentScoreProperty = 'sentimentScore';
+    static readonly fromIdProperty = 'fromId';
 }

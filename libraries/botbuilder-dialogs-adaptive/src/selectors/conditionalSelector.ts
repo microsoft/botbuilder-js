@@ -5,20 +5,21 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import {
-    BoolExpression,
-    BoolExpressionConverter,
-    Expression,
-    ExpressionParser,
-    ExpressionParserInterface,
-} from 'adaptive-expressions';
+import { ActionContext } from '../actionContext';
 import { Converter, ConverterFactory } from 'botbuilder-dialogs';
 import { OnCondition } from '../conditions/onCondition';
 import { TriggerSelector } from '../triggerSelector';
-import { ActionContext } from '../actionContext';
+import { BoolProperty } from '../properties';
+
+import {
+    BoolExpression,
+    BoolExpressionConverter,
+    ExpressionParser,
+    ExpressionParserInterface,
+} from 'adaptive-expressions';
 
 export interface ConditionalSelectorConfiguration {
-    condition?: boolean | string | Expression | BoolExpression;
+    condition?: BoolProperty;
     ifTrue?: TriggerSelector;
     ifFalse?: TriggerSelector;
 }

@@ -76,14 +76,14 @@ describe('ConditionalsTests', function () {
         });
     });
 
-    it('OnCondition with conditioan', function () {
+    it('OnCondition with condition', function () {
         assertExpression(
             new OnActivity('event', [], 'turn.test == 1'),
             "((turn.activity.type == 'event') && ((turn.dialogEvent.name == 'activityReceived') && (turn.test == 1)))"
         );
         assertExpression(
             new OnAssignEntity('property', 'entity', 'operation', [], 'turn.test == 1'),
-            "(((turn.dialogEvent.name == 'assignEntity') && (turn.test == 1)) && (turn.dialogEvent.value.property == 'property') && (turn.dialogEvent.value.entity.name == 'entity') && (turn.dialogEvent.value.operation == 'operation'))"
+            "(((turn.dialogEvent.name == 'assignEntity') && (turn.test == 1)) && (turn.dialogEvent.value.property == 'property') && (turn.dialogEvent.value.value.name == 'entity') && (turn.dialogEvent.value.operation == 'operation'))"
         );
         assertExpression(
             new OnBeginDialog([], 'turn.test == 1'),
@@ -94,8 +94,8 @@ describe('ConditionalsTests', function () {
             "((turn.dialogEvent.name == 'cancelDialog') && (turn.test == 1))"
         );
         assertExpression(
-            new OnChooseEntity('property', 'entity', [], 'turn.test == 1'),
-            "(((turn.dialogEvent.name == 'chooseEntity') && (turn.test == 1)) && (turn.dialogEvent.value.property == 'property') && (turn.dialogEvent.value.entity.name == 'entity'))"
+            new OnChooseEntity('property', 'entity', 'Add()', [], 'turn.test == 1'),
+            "(((turn.dialogEvent.name == 'chooseEntity') && (turn.test == 1)) && (turn.dialogEvent.value.property == 'property') && (turn.dialogEvent.value.value.name == 'entity') && (turn.dialogEvent.value.operation == 'Add()'))"
         );
         assertExpression(
             new OnCommandActivity([], 'turn.test == 1'),

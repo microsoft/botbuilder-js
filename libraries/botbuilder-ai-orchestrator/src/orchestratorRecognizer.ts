@@ -66,55 +66,55 @@ interface Orchestrator {
  * Class that represents an adaptive Orchestrator recognizer.
  */
 export class OrchestratorRecognizer extends AdaptiveRecognizer implements OrchestratorRecognizerConfiguration {
-    public static $kind = 'Microsoft.OrchestratorRecognizer';
+    static $kind = 'Microsoft.OrchestratorRecognizer';
 
     /**
      * Path to Orchestrator base model folder.
      */
-    public modelFolder: StringExpression = new StringExpression('=settings.orchestrator.modelFolder');
+    modelFolder: StringExpression = new StringExpression('=settings.orchestrator.modelFolder');
 
     /**
      * Path to the snapshot (.blu file) to load.
      */
-    public snapshotFile: StringExpression = new StringExpression('=settings.orchestrator.snapshotFile');
+    snapshotFile: StringExpression = new StringExpression('=settings.orchestrator.snapshotFile');
 
     /**
      * Threshold value to use for ambiguous intent detection. Defaults to 0.05.
      * Recognizer returns ChooseIntent (disambiguation) if other intents are classified within this threshold of the top scoring intent.
      */
-    public disambiguationScoreThreshold: NumberExpression = new NumberExpression(0.05);
+    disambiguationScoreThreshold: NumberExpression = new NumberExpression(0.05);
 
     /**
      * Enable ambiguous intent detection. Defaults to false.
      */
-    public detectAmbiguousIntents: BoolExpression = new BoolExpression(false);
+    detectAmbiguousIntents: BoolExpression = new BoolExpression(false);
 
     /**
      * The external entity recognizer.
      */
-    public externalEntityRecognizer: Recognizer;
+    externalEntityRecognizer: Recognizer;
 
     /**
      * Enable entity detection if entity model exists inside modelFolder. Defaults to false.
      */
-    public scoreEntities = false;
+    scoreEntities = false;
 
     /**
      * Intent name if ambiguous intents are detected.
      */
-    public readonly chooseIntent = 'ChooseIntent';
+    readonly chooseIntent = 'ChooseIntent';
 
     /**
      * Full intent recognition results are available under this property
      */
-    public readonly resultProperty = 'result';
+    readonly resultProperty = 'result';
 
     /**
      * Full entity recognition results are available under this property
      */
-    public readonly entityProperty = 'entityResult';
+    readonly entityProperty = 'entityResult';
 
-    public getConverter(property: keyof OrchestratorRecognizerConfiguration): Converter | ConverterFactory {
+    getConverter(property: keyof OrchestratorRecognizerConfiguration): Converter | ConverterFactory {
         switch (property) {
             case 'modelFolder':
                 return new StringExpressionConverter();
@@ -142,7 +142,7 @@ export class OrchestratorRecognizer extends AdaptiveRecognizer implements Orches
      * @param {string} snapshotFile Path to snapshot.
      * @param {any} resolver Orchestrator resolver to use.
      */
-    public constructor(modelFolder?: string, snapshotFile?: string, resolver?: LabelResolver) {
+    constructor(modelFolder?: string, snapshotFile?: string, resolver?: LabelResolver) {
         super();
         if (modelFolder) {
             this._modelFolder = modelFolder;
@@ -162,7 +162,7 @@ export class OrchestratorRecognizer extends AdaptiveRecognizer implements Orches
      * @param {Record<string, number>} telemetryMetrics Additional metrics to be logged to telemetry with event.
      * @returns {Promise<RecognizerResult>} Recognized result.
      */
-    public async recognize(
+    async recognize(
         dc: DialogContext,
         activity: Partial<Activity>,
         telemetryProperties?: Record<string, string>,
@@ -364,9 +364,11 @@ export class OrchestratorRecognizer extends AdaptiveRecognizer implements Orches
 
             const orchestrator = new oc.Orchestrator();
             if (this.scoreEntities && !orchestrator.load(fullModelFolder, entityModelFolder)) {
-                throw new Error(`Model load failed.`);
+                throw new Error(
+                    `Model load failed - model folder ${fullModelFolder}, entity model folder ${entityModelFolder}.`
+                );
             } else if (!orchestrator.load(fullModelFolder)) {
-                throw new Error(`Model load failed.`);
+                throw new Error(`Model load failed - model folder ${fullModelFolder}.`);
             }
             OrchestratorRecognizer.orchestrator = orchestrator;
         }

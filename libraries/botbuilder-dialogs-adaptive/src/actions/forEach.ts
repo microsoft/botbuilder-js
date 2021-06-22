@@ -5,25 +5,26 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
+import { ActionScope, ActionScopeConfiguration, ActionScopeResult } from './actionScope';
+import { BoolProperty, StringProperty } from '../properties';
+import { Converter, ConverterFactory, Dialog, DialogContext, DialogTurnResult } from 'botbuilder-dialogs';
+import { ForEachPageConfiguration } from './forEachPage';
+
 import {
-    StringExpression,
     BoolExpression,
     BoolExpressionConverter,
+    StringExpression,
     StringExpressionConverter,
-    Expression,
 } from 'adaptive-expressions';
-import { Converter, ConverterFactory, Dialog, DialogContext, DialogTurnResult } from 'botbuilder-dialogs';
-import { ActionScope, ActionScopeConfiguration, ActionScopeResult } from './actionScope';
-import { ForEachPageConfiguration } from './forEachPage';
 
 const INDEX = 'dialog.foreach.index';
 const VALUE = 'dialog.foreach.value';
 
 export interface ForEachConfiguration extends ActionScopeConfiguration {
-    itemsProperty?: string | Expression | StringExpression;
-    index?: string | Expression | StringExpression;
-    value?: string | Expression | StringExpression;
-    disabled?: boolean | string | Expression | BoolExpression;
+    itemsProperty?: StringProperty;
+    index?: StringProperty;
+    value?: StringProperty;
+    disabled?: BoolProperty;
 }
 
 /**
@@ -31,6 +32,7 @@ export interface ForEachConfiguration extends ActionScopeConfiguration {
  */
 export class ForEach<O extends object = {}> extends ActionScope<O> implements ForEachPageConfiguration {
     public static $kind = 'Microsoft.Foreach';
+    private currentIndex: number;
 
     public constructor();
 
@@ -109,7 +111,7 @@ export class ForEach<O extends object = {}> extends ActionScope<O> implements Fo
         if (this.disabled && this.disabled.getValue(dc.state)) {
             return await dc.endDialog();
         }
-        dc.state.setValue(this.index.getValue(dc.state), -1);
+        this.currentIndex = -1;
         return await this.nextItem(dc);
     }
 
@@ -141,7 +143,7 @@ export class ForEach<O extends object = {}> extends ActionScope<O> implements Fo
      * @protected
      * Called when the [Dialog](xref:botbuilder-dialogs.Dialog) continues to the next action.
      * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
-     * @param result Optional. Value returned from the dialog that was called. The type 
+     * @param result Optional. Value returned from the dialog that was called. The type
      * of the value returned is dependent on the child dialog.
      * @returns A `Promise` representing the asynchronous operation.
      */
@@ -157,12 +159,11 @@ export class ForEach<O extends object = {}> extends ActionScope<O> implements Fo
      */
     protected async nextItem(dc: DialogContext): Promise<DialogTurnResult> {
         const itemsProperty = this.itemsProperty.getValue(dc.state);
-        const items: any[] = dc.state.getValue(itemsProperty, []);
-        let index = dc.state.getValue(this.index.getValue(dc.state));
+        const items = this.convertToList(dc.state.getValue(itemsProperty, []));
 
-        if (++index < items.length) {
-            dc.state.setValue(this.value.getValue(dc.state), items[index]);
-            dc.state.setValue(this.index.getValue(dc.state), index);
+        if (++this.currentIndex < items.length) {
+            dc.state.setValue(this.value.getValue(dc.state), items[this.currentIndex].value);
+            dc.state.setValue(this.index.getValue(dc.state), items[this.currentIndex].index);
             return await this.beginAction(dc, 0);
         } else {
             return await dc.endDialog();
@@ -176,5 +177,16 @@ export class ForEach<O extends object = {}> extends ActionScope<O> implements Fo
      */
     protected onComputeId(): string {
         return `ForEach[${this.itemsProperty.toString()}]`;
+    }
+
+    private convertToList(value: unknown) {
+        let result: { index: string | number, value: unknown }[] = [];
+        if (Array.isArray(value)) {
+            value.forEach((item, index) => result.push({ index: index, value: item }));
+        } else if (typeof value === 'object') {
+            Object.entries(value).forEach(([key, value]) => result.push({ index: key, value: value }))
+        }
+
+        return result;
     }
 }
