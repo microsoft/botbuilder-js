@@ -31,14 +31,15 @@ export class ProtocolAdapter {
     private readonly streamManager: StreamManager;
     private readonly assemblerManager: PayloadAssemblerManager;
 
-    /// <summary>
-    /// Creates a new instance of the protocol adapter class.
-    /// </summary>
-    /// <param name="requestHandler">The handler that will process incoming requests.</param>
-    /// <param name="requestManager">The manager that will process outgoing requests.</param>
-    /// <param name="sender">The sender for use with outgoing requests.</param>
-    /// <param name="receiver">The receiver for use with incoming requests.</param>
-    public constructor(
+    /**
+     * Creates a new instance of the protocol adapter class.
+     *
+     * @param requestHandler The [RequestHandler](xref:botframework-streaming.RequestHandler) that will process incoming requests.
+     * @param requestManager The [RequestManager](xref:botframework-streaming.RequestManager) that will process outgoing requests.
+     * @param sender The [PayloadSender](xref:botframework-streaming.PayloadSender) for use with outgoing requests.
+     * @param receiver The [PayloadReceiver](xref:botframework-streaming.PayloadReceiver) for use with incoming requests.
+     */
+    constructor(
         requestHandler: RequestHandler,
         requestManager: RequestManager,
         sender: PayloadSender,
@@ -64,10 +65,11 @@ export class ProtocolAdapter {
 
     /**
      * Sends a request over the attached request manager.
+     *
      * @param request The outgoing request to send.
      * @returns The response to the specified request.
      */
-    public async sendRequest(request: StreamingRequest): Promise<IReceiveResponse> {
+    async sendRequest(request: StreamingRequest): Promise<IReceiveResponse> {
         const requestId: string = generateGuid();
         await this.sendOperations.sendRequest(requestId, request);
 
@@ -76,10 +78,11 @@ export class ProtocolAdapter {
 
     /**
      * Executes the receive pipeline when a request comes in.
+     *
      * @param id The id the resources created for the response will be assigned.
      * @param request The incoming request to process.
      */
-    public async onReceiveRequest(id: string, request: IReceiveRequest): Promise<void> {
+    async onReceiveRequest(id: string, request: IReceiveRequest): Promise<void> {
         if (this.requestHandler) {
             const response = await this.requestHandler.processRequest(request);
 
@@ -91,18 +94,20 @@ export class ProtocolAdapter {
 
     /**
      * Executes the receive pipeline when a response comes in.
+     *
      * @param id The id the resources created for the response will be assigned.
      * @param response The incoming response to process.
      */
-    public async onReceiveResponse(id: string, response: IReceiveResponse): Promise<void> {
+    async onReceiveResponse(id: string, response: IReceiveResponse): Promise<void> {
         await this.requestManager.signalResponse(id, response);
     }
 
     /**
      * Executes the receive pipeline when a cancellation comes in.
+     *
      * @param contentStreamAssembler The payload assembler processing the incoming data that this cancellation request targets.
      */
-    public onCancelStream(contentStreamAssembler: PayloadAssembler): void {
+    onCancelStream(contentStreamAssembler: PayloadAssembler): void {
         this.sendOperations.sendCancelStream(contentStreamAssembler.id).catch();
     }
 }

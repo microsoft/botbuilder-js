@@ -5,20 +5,18 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { INodeBuffer } from '../interfaces/INodeBuffer';
-import { ISocket } from '../interfaces/ISocket';
-import { ITransportSender } from '../interfaces/ITransportSender';
-import { ITransportReceiver } from '../interfaces/ITransportReceiver';
+
+import { INodeBuffer, ISocket, ITransportSender, ITransportReceiver } from '../interfaces';
 
 /**
  * Web socket based transport.
  */
 export class WebSocketTransport implements ITransportSender, ITransportReceiver {
-    private _socket: ISocket;
     private readonly _queue: INodeBuffer[];
     private _active: INodeBuffer;
     private _activeOffset: number;
     private _activeReceiveResolve: (resolve: INodeBuffer) => void;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     private _activeReceiveReject: (reason?: any) => void;
     private _activeReceiveCount: number;
 
@@ -27,18 +25,17 @@ export class WebSocketTransport implements ITransportSender, ITransportReceiver 
      *
      * @param ws The ISocket to build this transport on top of.
      */
-    public constructor(ws: ISocket) {
-        this._socket = ws;
+    constructor(private ws: ISocket) {
         this._queue = [];
         this._activeOffset = 0;
         this._activeReceiveCount = 0;
-        this._socket.setOnMessageHandler((data): void => {
+        this.ws.setOnMessageHandler((data): void => {
             this.onReceive(data);
         });
-        this._socket.setOnErrorHandler((err): void => {
+        this.ws.setOnErrorHandler((err): void => {
             this.onError(err);
         });
-        this._socket.setOnCloseHandler((): void => {
+        this.ws.setOnCloseHandler((): void => {
             this.onClose();
         });
     }
@@ -47,10 +44,11 @@ export class WebSocketTransport implements ITransportSender, ITransportReceiver 
      * Sends the given buffer out over the socket's connection.
      *
      * @param buffer The buffered data to send out over the connection.
+     * @returns A number indicating the length of the sent data if the data was successfully sent, otherwise 0.
      */
-    public send(buffer: INodeBuffer): number {
-        if (this._socket && this._socket.isConnected) {
-            this._socket.write(buffer);
+    send(buffer: INodeBuffer): number {
+        if (this.ws && this.ws.isConnected) {
+            this.ws.write(buffer);
 
             return buffer.length;
         }
@@ -60,17 +58,19 @@ export class WebSocketTransport implements ITransportSender, ITransportReceiver 
 
     /**
      * Returns true if the transport is connected to a socket.
+     *
+     * @returns `true` if the the transport is connected and ready to send data, `false` otherwise.
      */
-    public get isConnected(): boolean {
-        return this._socket.isConnected;
+    get isConnected(): boolean {
+        return this.ws.isConnected;
     }
 
     /**
      * Close the socket this transport is connected to.
      */
-    public close(): void {
-        if (this._socket && this._socket.isConnected) {
-            this._socket.close();
+    close(): void {
+        if (this.ws && this.ws.isConnected) {
+            this.ws.close();
         }
     }
 
@@ -80,7 +80,7 @@ export class WebSocketTransport implements ITransportSender, ITransportReceiver 
      * @param count The number of bytes to attempt to receive.
      * @returns A buffer populated with the received data.
      */
-    public async receive(count: number): Promise<INodeBuffer> {
+    async receive(count: number): Promise<INodeBuffer> {
         if (this._activeReceiveResolve) {
             throw new Error('Cannot call receive more than once before it has returned.');
         }
@@ -102,7 +102,7 @@ export class WebSocketTransport implements ITransportSender, ITransportReceiver 
      *
      * @param data A buffer to store incoming data in.
      */
-    public onReceive(data: INodeBuffer): void {
+    onReceive(data: INodeBuffer): void {
         if (this._queue && data && data.byteLength > 0) {
             this._queue.push(Buffer.from(data));
             this.trySignalData();
@@ -122,7 +122,7 @@ export class WebSocketTransport implements ITransportSender, ITransportReceiver 
         this._activeReceiveResolve = null;
         this._activeReceiveReject = null;
         this._activeReceiveCount = 0;
-        this._socket = null;
+        this.ws = null;
     }
 
     /**

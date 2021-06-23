@@ -25,7 +25,7 @@ class FauxSock {
     }
 
     /* Start of `ws` specific methods. */
-    removeListener(event, handler) {
+    removeListener(event, _handler) {
         switch (event) {
             case 'error':
                 return;
@@ -36,11 +36,9 @@ class FauxSock {
 
     setTimeout(value) {
         this.timeoutValue = value;
-        return;
     }
 
-    setNoDelay() {
-    }
+    setNoDelay() {}
     /* End of `ws` specific methods. */
 
     get isConnected() {
@@ -53,7 +51,7 @@ class FauxSock {
 
     send(buffer) {
         return buffer.length;
-    };
+    }
 
     receive(readLength) {
         if (this.contentString[this.position]) {
@@ -63,25 +61,23 @@ class FauxSock {
             return this.buff.slice(0, readLength);
         }
 
-        if (this.receiver.isConnected)
-            this.receiver.disconnect();
+        if (this.receiver.isConnected) this.receiver.disconnect();
     }
-    close() { };
     close() {
         this.connected = false;
-    };
+    }
     end() {
         this.exists = false;
         return true;
-    };
+    }
     destroyed() {
         return this.exists;
-    };
+    }
 
     /** WaterShed Socket Specific? */
     destroy() {
         return true;
-    };
+    }
 
     /** WaterShed Socket Specific? */
     removeAllListeners() {
@@ -89,35 +85,33 @@ class FauxSock {
     }
 
     on(action, handler) {
-        if (action === 'error') {
-            this.errorHandler = handler;
+        switch (action) {
+            case 'error':
+                this.errorHandler = handler;
+                break;
+            case 'data':
+                this.messageHandler = handler;
+                this.dataHandler = handler; // Required for `ws` WebSockets
+                break;
+            case 'close':
+                this.closeHandler = handler;
+                break;
+            case 'end':
+                this.endHandler = handler;
+                break;
+            case 'text':
+                this.textHandler = handler; // Required for `watershed` WebSockets
+                break;
+            case 'binary':
+                this.binaryHandler = handler; // Required for `watershed` WebSockets
+                break;
+            case 'message':
+                this._messageHandler = handler; // Required for `ws` WebSockets
+                break;
+            default:
+                throw new Error(`TestError: Unknown action ("${action}") passed to FauxSock.on()`);
         }
-        if (action === 'data') {
-            this.messageHandler = handler;
-        }
-        if (action === 'close') {
-            this.closeHandler = handler;
-        }
-        if (action === 'end') {
-            this.endHandler = handler;
-        }
-        // Required for `watershed` WebSockets
-        if (action === 'text') {
-            this.textHandler = handler;
-        }
-        // Required for `watershed` WebSockets
-        if (action === 'binary') {
-            this.binaryHandler = handler;
-        }
-        // Required for `ws` WebSockets
-        if (action === 'data') {
-            this.dataHandler = handler;
-        }
-        // Required for `ws` WebSockets
-        if (action === 'message') {
-            this._messageHandler = handler;
-        }
-    };
+    }
 
     setReceiver(receiver) {
         this.receiver = receiver;
@@ -125,13 +119,13 @@ class FauxSock {
 
     setOnMessageHandler(handler) {
         this.messageHandler = handler;
-    };
+    }
     setOnErrorHandler(handler) {
         this.errorHandler = handler;
-    };
+    }
     setOnCloseHandler(handler) {
         this.closeHandler = handler;
-    };
+    }
 }
 
 module.exports.FauxSock = FauxSock;

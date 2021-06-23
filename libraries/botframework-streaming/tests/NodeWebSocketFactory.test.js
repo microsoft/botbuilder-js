@@ -1,14 +1,13 @@
-const { NodeWebSocket, NodeWebSocketFactory } = require('../');
+const { NodeWebSocket, NodeWebSocketFactory } = require('..');
 const { FauxSock, TestRequest } = require('./helpers');
 const { expect } = require('chai');
 const { randomBytes } = require('crypto');
 
-describe('NodeWebSocketFactory', () => {
-    it('createWebSocket() should create a new NodeWebSocket', async () => {
+describe('NodeWebSocketFactory', function () {
+    it('createWebSocket() should create a new NodeWebSocket', async function () {
         const factory = new NodeWebSocketFactory();
         const sock = new FauxSock();
         const request = new TestRequest();
-        request.method = 'GET' // TODO: Fix TestRequest class
         request.setIsUpgradeRequest(true);
         request.headers = [];
         request.headers['upgrade'] = 'websocket';

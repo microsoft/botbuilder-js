@@ -8,20 +8,21 @@
 import { ContentStream } from '../contentStream';
 
 /**
- * Streaming receive request definition
+ * Streaming receive request definition.
  */
 export interface IReceiveRequest {
-    /// Request verb, null on responses
-    /// </summary>
+    /**
+     * Request verb; null on responses.
+     */
     verb?: string;
 
-    /// <summary>
-    /// Request path; null on responses
-    /// </summary>
+    /**
+     * Request path; null on responses.
+     */
     path?: string;
 
-    /// <summary>
-    /// Gets or sets the collection of stream attachments included in this request.
-    /// </summary>
+    /**
+     * Gets or sets the collection of stream attachments included in this request.
+     */
     streams: ContentStream[];
 }

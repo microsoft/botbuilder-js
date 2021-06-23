@@ -8,32 +8,36 @@
 import { SubscribableStream } from '../subscribableStream';
 import { StreamManager, PayloadTypes } from '../payloads';
 import { ContentStream } from '../contentStream';
-import { IAssemblerParams } from '../interfaces/IAssemblerParams';
-import { IHeader } from '../interfaces/IHeader';
-import { IResponsePayload } from '../interfaces/IResponsePayload';
-import { IReceiveResponse, IReceiveRequest } from '../interfaces';
-import { IRequestPayload } from '../interfaces/IRequestPayload';
+import { IHeader, IResponsePayload, IReceiveResponse, IReceiveRequest, IRequestPayload } from '../interfaces';
+
+interface AssemblerParams {
+    header?: IHeader;
+    id?: string;
+    onCompleted?: (id: string, receiveResponse: IReceiveResponse | IReceiveRequest) => Promise<void>;
+}
 
 /**
  * Assembles payloads for streaming library.
+ *
+ * @internal
  */
 export class PayloadAssembler {
-    public id: string;
-    public end: boolean;
-    public contentLength: number;
-    public payloadType: string;
+    id: string;
+    end: boolean;
+    contentLength: number;
+    payloadType: string | PayloadTypes;
     private stream: SubscribableStream;
-    private readonly _onCompleted: Function;
-    private readonly _streamManager: StreamManager;
+    private readonly _onCompleted: (id: string, receiveResponse: IReceiveResponse | IReceiveRequest) => Promise<void>;
     private readonly _byteOrderMark = 0xfeff;
     private readonly _utf: string = 'utf8';
 
     /**
      * Initializes a new instance of the [PayloadAssembler](xref:botframework-streaming.PayloadAssembler) class.
+     *
      * @param streamManager The [StreamManager](xref:botframework-streaming.StreamManager) managing the stream being assembled.
      * @param params Parameters for a streaming assembler.
      */
-    public constructor(streamManager: StreamManager, params: IAssemblerParams) {
+    constructor(private readonly streamManager: StreamManager, params: AssemblerParams) {
         if (params.header) {
             this.id = params.header.id;
             this.payloadType = params.header.payloadType;
@@ -47,15 +51,15 @@ export class PayloadAssembler {
             throw Error('An ID must be supplied when creating an assembler.');
         }
 
-        this._streamManager = streamManager;
         this._onCompleted = params.onCompleted;
     }
 
     /**
      * Retrieves the assembler's payload as a stream.
+     *
      * @returns A [SubscribableStream](xref:botframework-streaming.SubscribableStream) of the assembler's payload.
      */
-    public getPayloadStream(): SubscribableStream {
+    getPayloadStream(): SubscribableStream {
         if (!this.stream) {
             this.stream = this.createPayloadStream();
         }
@@ -65,11 +69,12 @@ export class PayloadAssembler {
 
     /**
      * The action the assembler executes when new bytes are received on the incoming stream.
+     *
      * @param header The stream's Header.
      * @param stream The incoming stream being assembled.
-     * @param contentLength The length of the stream, if finite.
+     * @param _contentLength The length of the stream, if finite.
      */
-    public onReceive(header: IHeader, stream: SubscribableStream, contentLength: number): void {
+    onReceive(header: IHeader, stream: SubscribableStream, _contentLength: number): void {
         this.end = header.end;
 
         if (header.payloadType === PayloadTypes.response || header.payloadType === PayloadTypes.request) {
@@ -82,35 +87,27 @@ export class PayloadAssembler {
     /**
      * Closes the assembler.
      */
-    public close(): void {
-        this._streamManager.closeStream(this.id);
+    close(): void {
+        this.streamManager.closeStream(this.id);
     }
 
     /**
      * Creates a new [SubscribableStream](xref:botframework-streaming.SubscribableStream) instance.
+     *
      * @returns The new stream ready for consumption.
      */
     private createPayloadStream(): SubscribableStream {
         return new SubscribableStream();
     }
 
-    /**
-     * @private
-     */
     private payloadFromJson<T>(json: string): T {
         return JSON.parse(json.charCodeAt(0) === this._byteOrderMark ? json.slice(1) : json) as T;
     }
 
-    /**
-     * @private
-     */
     private stripBOM(input: string): string {
         return input.charCodeAt(0) === this._byteOrderMark ? input.slice(1) : input;
     }
 
-    /**
-     * @private
-     */
     private async process(stream: SubscribableStream): Promise<void> {
         const streamData: Buffer = stream.read(stream.length) as Buffer;
         if (!streamData) {
@@ -126,9 +123,6 @@ export class PayloadAssembler {
         }
     }
 
-    /**
-     * @private
-     */
     private async processResponse(streamDataAsString: string): Promise<void> {
         const responsePayload: IResponsePayload = this.payloadFromJson(this.stripBOM(streamDataAsString));
         const receiveResponse: IReceiveResponse = { streams: [], statusCode: responsePayload.statusCode };
@@ -136,9 +130,6 @@ export class PayloadAssembler {
         await this.processStreams(responsePayload, receiveResponse);
     }
 
-    /**
-     * @private
-     */
     private async processRequest(streamDataAsString: string): Promise<void> {
         const requestPayload: IRequestPayload = this.payloadFromJson(streamDataAsString);
         const receiveRequest: IReceiveRequest = { streams: [], path: requestPayload.path, verb: requestPayload.verb };
@@ -146,13 +137,11 @@ export class PayloadAssembler {
         await this.processStreams(requestPayload, receiveRequest);
     }
 
-    /**
-     * @private
-     */
-    private async processStreams(responsePayload: any, receiveResponse: any) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    private async processStreams(responsePayload: any, receiveResponse: any): Promise<void> {
         if (responsePayload.streams) {
             responsePayload.streams.forEach((responseStream): void => {
-                const contentAssembler: PayloadAssembler = this._streamManager.getPayloadAssembler(responseStream.id);
+                const contentAssembler = this.streamManager.getPayloadAssembler(responseStream.id);
                 contentAssembler.payloadType = responseStream.contentType;
                 contentAssembler.contentLength = responseStream.length;
                 receiveResponse.streams.push(new ContentStream(responseStream.id, contentAssembler));

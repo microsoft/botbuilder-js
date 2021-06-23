@@ -1,29 +1,24 @@
-const Constants = require( '../lib/payloads/payloadConstants');
-const chai = require( 'chai');
-var expect = chai.expect;
-describe('TransportConstants', () => {
+const { PayloadConstants } = require('../lib/payloads/payloadConstants');
+const { expect } = require('chai');
 
-    it('has the proper value for MaxPayloadLength', () => {
-        expect(Constants.PayloadConstants.MaxPayloadLength)
-            .equal(4096);
+describe('PayloadConstants', function () {
+    it('has the proper value for MaxPayloadLength', function () {
+        expect(PayloadConstants.MaxPayloadLength).equal(4096);
     });
 
-    it('has the proper value for MaxHeaderLength', () => {
-        expect(Constants.PayloadConstants.MaxHeaderLength)
-            .equal(48);
-    });
-    it('has the proper value for MaxLength', () => {
-        expect(Constants.PayloadConstants.MaxLength)
-            .equal(999999);
-    });
-    it('has the proper value for MinLength', () => {
-        expect(Constants.PayloadConstants.MinLength)
-            .equal(0);
+    it('has the proper value for MaxHeaderLength', function () {
+        expect(PayloadConstants.MaxHeaderLength).equal(48);
     });
 
-    it('throws when attempting to change value for MaxPayloadLength', () => {
-        expect(Constants.PayloadConstants.MaxPayloadLength)
-            .equal(4096);
+    it('has the proper value for MaxLength', function () {
+        expect(PayloadConstants.MaxLength).equal(999999);
     });
 
+    it('has the proper value for MinLength', function () {
+        expect(PayloadConstants.MinLength).equal(0);
+    });
+
+    it('throws when attempting to change value for MaxPayloadLength', function () {
+        expect(PayloadConstants.MaxPayloadLength).equal(4096);
+    });
 });

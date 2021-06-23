@@ -9,9 +9,10 @@ import { IHeader } from './IHeader';
 
 /**
  * Parameters for a streaming assembler.
+ * @internal
  */
 export interface IAssemblerParams {
     header?: IHeader;
     id?: string;
-    onCompleted?: Function;
+    onCompleted?: (id: string, receiveResponse: unknown) => Promise<void>;
 }

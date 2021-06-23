@@ -1,52 +1,44 @@
-const Disassemblers = require('../lib/disassemblers/requestDisassembler');
-const PayloadSender = require('../lib/payloadTransport/payloadSender');
-const Request = require('../lib/streamingRequest');
-const HttpContentStream = require('../lib/httpContentStream');
-const Stream = require('../lib/subscribableStream');
-const CancelDisassembler = require('../lib/disassemblers/cancelDisassembler');
-const PayloadTypes = require('../lib/payloads/payloadTypes');
-const  chai  = require('chai');
-var expect = chai.expect;
+const { CancelDisassembler, RequestDisassembler } = require('../lib/disassemblers');
+const { HttpContentStream } = require('../lib/httpContentStream');
+const { HttpContent, StreamingRequest, SubscribableStream } = require('..');
+const { PayloadSender } = require('../lib/payloadTransport');
+const { PayloadTypes } = require('../lib/payloads');
+const { expect } = require('chai');
 
-describe('RequestDisassembler', () => {
-
-    it('resolves calls to get stream.', (done) => {
-        let sender = new PayloadSender.PayloadSender();
-        let req = new Request.StreamingRequest();
-        let headers = {contentLength: 40, contentType: 'A'};
-        let stream = new Stream.SubscribableStream();
+describe('RequestDisassembler', function () {
+    it('resolves calls to get stream.', async function () {
+        const sender = new PayloadSender();
+        const req = new StreamingRequest();
+        const headers = { contentLength: 40, contentType: 'A' };
+        const stream = new SubscribableStream();
         stream.write('This is the data inside of the stream.', 'UTF-8');
-        let content = new HttpContentStream.HttpContent(headers, stream);
-        let contentStream = new HttpContentStream.HttpContentStream(content);
+        const content = new HttpContent(headers, stream);
+        const contentStream = new HttpContentStream(content);
         contentStream.content.headers = headers;
 
         req.addStream(contentStream);
-        let rd = new Disassemblers.RequestDisassembler(sender,'42', req);
+        const rd = new RequestDisassembler(sender, '42', req);
 
-        let result = rd.getStream()
-            .then(done());
+        await rd.getStream();
     });
 });
 
-describe('CancelDisassembler', () => {
-
-    it('constructs correctly.', () => {
-        let sender = new PayloadSender.PayloadSender();
-        let payloadType = PayloadTypes.PayloadTypes.cancelStream;
-        let cd = new CancelDisassembler.CancelDisassembler(sender, '42', payloadType);
+describe('CancelDisassembler', function () {
+    it('constructs correctly.', function () {
+        const sender = new PayloadSender();
+        const cd = new CancelDisassembler(sender, '42', PayloadTypes.cancelStream);
 
         expect(cd.id).to.equal('42');
-        expect(cd.payloadType).to.equal(payloadType);
+        expect(cd.payloadType).to.equal(PayloadTypes.cancelStream);
         expect(cd.sender).to.equal(sender);
     });
 
-    it('sends payload without throwing.', () => {
-        let sender = new PayloadSender.PayloadSender();
-        let payloadType = PayloadTypes.PayloadTypes.cancelStream;
-        let cd = new CancelDisassembler.CancelDisassembler(sender, '42', payloadType);
+    it('sends payload without throwing.', function () {
+        const sender = new PayloadSender();
+        const cd = new CancelDisassembler(sender, '42', PayloadTypes.cancelStream);
 
         expect(cd.id).to.equal('42');
-        expect(cd.payloadType).to.equal(payloadType);
+        expect(cd.payloadType).to.equal(PayloadTypes.cancelStream);
         expect(cd.sender).to.equal(sender);
 
         expect(cd.disassemble()).to.not.throw;
