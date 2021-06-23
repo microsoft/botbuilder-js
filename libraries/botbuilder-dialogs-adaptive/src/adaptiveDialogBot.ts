@@ -9,7 +9,7 @@ import { LanguagePolicy } from './languagePolicy';
 import { ResourceExplorer } from 'botbuilder-dialogs-declarative';
 import { languageGeneratorKey, languageGeneratorManagerKey, languagePolicyKey } from './languageGeneratorExtensions';
 import { resourceExplorerKey } from './resourceExtensions';
-import { skillClientKey, skillConversationIdFactoryKey } from './skillExtensions';
+import { skillConversationIdFactoryKey } from './skillExtensions';
 
 import {
     ActivityHandler,
