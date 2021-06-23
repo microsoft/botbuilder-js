@@ -1,9 +1,11 @@
 {
-  "extends": "../tsconfig.json",
   "compilerOptions": {
-    "tsBuildInfoFile": "tsconfig.tsbuildinfo",
-    "rootDir": ".",
-    "skipLibCheck": true
+    "composite": false,
+    "declaration": false,
+    "declarationMap": false,
+    "module": "commonjs",
+    "sourceMap": true,
+    "target": "es6"
   },
   "include": [
     "**/*.test.ts"

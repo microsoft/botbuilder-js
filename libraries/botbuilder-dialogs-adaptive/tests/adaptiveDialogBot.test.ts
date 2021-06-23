@@ -7,6 +7,7 @@ import { Resource, ResourceExplorer, ResourceProvider } from 'botbuilder-dialogs
 
 import {
     Activity,
+    ActivityTypes,
     BotCallbackHandlerKey,
     BotTelemetryClientKey,
     ConversationState,
@@ -51,6 +52,7 @@ describe('AdaptiveDialogBot Tests', function () {
         resourceExplorer.addResourceProvider(resourceProvider);
 
         const activity = {
+            type: ActivityTypes.Message,
             channelId: 'test-channel',
             conversation: {
                 id: 'test-conversation-id',
@@ -103,6 +105,7 @@ describe('AdaptiveDialogBot Tests', function () {
         resourceExplorer.addResourceProvider(resourceProvider);
 
         const activity = {
+            type: ActivityTypes.Message,
             channelId: 'test-channel',
             conversation: {
                 id: 'test-conversation-id',
@@ -131,6 +134,64 @@ describe('AdaptiveDialogBot Tests', function () {
             bot.run(turnContext),
             new Error('The ResourceExplorer could not find a resource with id "main.dialog"')
         );
+    });
+
+    it('setTestOptions', async function () {
+        const storage = new MemoryStorage();
+        const conversationState = new ConversationState(storage);
+        const userState = new UserState(storage);
+        const skillConversationIdFactory = new SkillConversationIdFactory(storage);
+        const languagePolicy = new LanguagePolicy('en-US');
+
+        const resourceExplorer = new ResourceExplorer();
+        resourceExplorer.registerType('Microsoft.AdaptiveDialog', AdaptiveDialog);
+        const resourceProvider = new MockResourceProvider(resourceExplorer);
+        resourceProvider.add(
+            'main.dialog',
+            new MockResource(
+                JSON.stringify({
+                    $kind: 'Microsoft.AdaptiveDialog',
+                })
+            )
+        );
+        resourceExplorer.addResourceProvider(resourceProvider);
+
+        const activity = {
+            type: ActivityTypes.Event,
+            name: 'setTestOptions',
+            channelId: 'test-channel',
+            conversation: {
+                id: 'test-conversation-id',
+            },
+            from: {
+                id: 'test-id',
+            },
+            value: {
+                randomSeed: 123,
+                randomValue: 456,
+            },
+        };
+
+        const turnContext = new TurnContext(new TestAdapter(), activity as Activity);
+        const telemetryClient = new NullTelemetryClient();
+
+        const bot = new AdaptiveDialogBot(
+            'main.dialog',
+            'main.lg',
+            resourceExplorer,
+            conversationState,
+            userState,
+            skillConversationIdFactory,
+            languagePolicy,
+            new MockBotFrameworkAuthentication() as BotFrameworkAuthentication,
+            telemetryClient
+        );
+
+        await bot.run(turnContext);
+
+        const testOptionsAccessor = conversationState.createProperty('testOptions');
+        assert.strictEqual(123, (await testOptionsAccessor.get(turnContext)).randomSeed);
+        assert.strictEqual(456, (await testOptionsAccessor.get(turnContext)).randomValue);
     });
 });
 

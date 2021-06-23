@@ -35,6 +35,7 @@
     "botbuilder-dialogs-adaptive-runtime-core": "4.1.6",
     "botbuilder-dialogs-declarative": "4.1.6",
     "botbuilder-lg": "4.1.6",
+    "botframework-connector": "4.1.6",
     "lodash": "^4.17.21",
     "node-fetch": "^2.6.0"
   },
@@ -45,8 +46,7 @@
     "@microsoft/recognizers-text-number": "~1.1.4",
     "@microsoft/recognizers-text-number-with-unit": "~1.1.4",
     "@microsoft/recognizers-text-sequence": "~1.1.4",
-    "@types/node-fetch": "^2.5.3",
-    "botframework-connector": "4.1.6"
+    "@types/node-fetch": "^2.5.3"
   },
   "scripts": {
     "build": "npm-run-all build:src build:tests",

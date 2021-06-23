@@ -13,6 +13,7 @@ import { skillClientKey, skillConversationIdFactoryKey } from './skillExtensions
 
 import {
     ActivityHandler,
+    ActivityTypes,
     BotCallbackHandlerKey,
     BotTelemetryClient,
     BotTelemetryClientKey,
@@ -55,7 +56,7 @@ export class AdaptiveDialogBot extends ActivityHandler {
             const botFrameworkClient = this.botFrameworkAuthentication.createBotFrameworkClient();
 
             // Set up the TurnState the Dialog is expecting.
-            this.setUpTurnState(context, botFrameworkClient);
+            await this.setUpTurnState(context, botFrameworkClient);
 
             // Load the Dialog from the ResourceExplorer - the actual load should only happen once.
             const rootDialog = this.lazyRootDialog();
@@ -76,10 +77,8 @@ export class AdaptiveDialogBot extends ActivityHandler {
         });
     }
 
-    private setUpTurnState(context: TurnContext, botFrameworkClient: BotFrameworkClient): void {
+    private async setUpTurnState(context: TurnContext, botFrameworkClient: BotFrameworkClient): Promise<void> {
         context.turnState.set(BotFrameworkClientKey, botFrameworkClient);
-        context.turnState.set(skillClientKey, botFrameworkClient);
-
         context.turnState.set(skillConversationIdFactoryKey, this.skillConversationIdFactoryBase);
         context.turnState.set('ConversationState', this.conversationState);
         context.turnState.set('UserState', this.userState);
@@ -103,6 +102,19 @@ export class AdaptiveDialogBot extends ActivityHandler {
 
         context.turnState.set(languagePolicyKey, this.languagePolicy);
         context.turnState.set(BotTelemetryClientKey, this.telemetryClient);
+
+        // Catch "setTestOptions" event and save into "conversation.testOptions".
+        // Note: This is consumed by AdaptiveExpressions Extensions.RandomNext
+        if (context.activity.type === ActivityTypes.Event && context.activity.name === 'setTestOptions') {
+            console.log('setTestOptions received. This could change the behavior of AdaptiveExpressions RandomNext');
+
+            await context.turnState
+                .get('ConversationState')
+                .createProperty('testOptions')
+                .set(context, context.activity.value);
+        }
+
+        // Put this on the TurnState using set because some adapters (like BotFrameworkAdapter and CloudAdapter) will have already added it.
         context.turnState.set(BotCallbackHandlerKey, this.onTurn);
     }
 
