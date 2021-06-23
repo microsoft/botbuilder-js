@@ -6,55 +6,62 @@
  * Licensed under the MIT License.
  */
 
+import * as z from 'zod';
+import { BotFrameworkHttpAdapter } from './botFrameworkHttpAdapter';
+import { ConnectorClientBuilder, Request, Response, ResponseT, WebRequest, WebResponse } from './interfaces';
+import { HttpClient, userAgentPolicy } from '@azure/ms-rest-js';
+import { INodeBufferT, INodeSocketT, LogicT } from './zod';
 import { arch, release, type } from 'os';
+import { delay, retry } from 'botbuilder-stdlib';
+import { validateAndFixActivity } from './activityValidator';
 
 import {
     Activity,
+    ActivityEventNames,
     ActivityTypes,
-    CallerIdConstants,
-    Channels,
-    CoreAppCredentials,
     BotAdapter,
     BotCallbackHandlerKey,
+    CallerIdConstants,
     ChannelAccount,
+    Channels,
     ConversationParameters,
     ConversationReference,
     ConversationsResult,
+    CoreAppCredentials,
     DeliveryModes,
     ExpectedReplies,
     ExtendedUserTokenProvider,
-    InvokeResponse,
     INVOKE_RESPONSE_KEY,
+    InvokeResponse,
     ResourceResponse,
     StatusCodes,
     TokenResponse,
     TurnContext,
-    ActivityEventNames,
 } from 'botbuilder-core';
 
 import {
+    AppCredentials,
     AuthenticationConfiguration,
     AuthenticationConstants,
+    AuthenticationError,
+    CertificateAppCredentials,
     ChannelValidation,
     Claim,
     ClaimsIdentity,
     ConnectorClient,
     ConnectorClientOptions,
     EmulatorApiClient,
-    GovernmentConstants,
     GovernmentChannelValidation,
+    GovernmentConstants,
     JwtTokenValidation,
     MicrosoftAppCredentials,
-    AppCredentials,
-    CertificateAppCredentials,
-    SimpleCredentialProvider,
-    TokenApiClient,
-    TokenStatus,
-    TokenApiModels,
     SignInUrlResponse,
+    SimpleCredentialProvider,
     SkillValidation,
+    TokenApiClient,
+    TokenApiModels,
     TokenExchangeRequest,
-    AuthenticationError,
+    TokenStatus,
 } from 'botframework-connector';
 
 import {
@@ -80,12 +87,6 @@ import {
     TokenResolver,
     VERSION_PATH,
 } from './streaming';
-
-import { BotFrameworkHttpAdapter } from './botFrameworkHttpAdapter';
-import { BotLogic, ConnectorClientBuilder, Emitter, Request, Response, WebRequest, WebResponse } from './interfaces';
-import { delay, retry } from 'botbuilder-stdlib';
-import { userAgentPolicy } from '@azure/ms-rest-js';
-import { validateAndFixActivity } from './activityValidator';
 
 /**
  * Contains settings used to configure a [BotFrameworkAdapter](xref:botbuilder.BotFrameworkAdapter) instance.
@@ -199,7 +200,6 @@ export class BotFrameworkAdapter
     // These keys are public to permit access to the keys from the adapter when it's a being
     // from library that does not have access to static properties off of BotFrameworkAdapter.
     // E.g. botbuilder-dialogs
-    public readonly ConnectorClientKey: symbol = Symbol('ConnectorClient');
     public readonly TokenApiClientCredentialsKey: symbol = Symbol('TokenApiClientCredentials');
 
     protected readonly credentials: AppCredentials;
@@ -361,35 +361,43 @@ export class BotFrameworkAdapter
         reference: Partial<ConversationReference>,
         logic: (context: TurnContext) => Promise<void>
     ): Promise<void>;
+
+    /**
+     * Asynchronously resumes a conversation with a user, possibly after some time has gone by.
+     *
+     * @param reference [ConversationReference](xref:botframework-schema.ConversationReference) of the conversation to continue.
+     * @param oAuthScope The intended recipient of any sent activities or the function to call to continue the conversation.
+     * @param logic Optional. The asynchronous method to call after the adapter middleware runs.
+     */
     public async continueConversation(
         reference: Partial<ConversationReference>,
         oAuthScope: string,
         logic: (context: TurnContext) => Promise<void>
     ): Promise<void>;
+
     /**
-     * Asynchronously resumes a conversation with a user, possibly after some time has gone by.
-     * @param reference [ConversationReference](xref:botframework-schema.ConversationReference) of the conversation to continue.
-     * @param oAuthScopeOrlogic The intended recipient of any sent activities or the function to call to continue the conversation.
-     * @param logic Optional. The asynchronous method to call after the adapter middleware runs.
+     * @internal
      */
     public async continueConversation(
         reference: Partial<ConversationReference>,
         oAuthScopeOrlogic: string | ((context: TurnContext) => Promise<void>),
-        logic?: (context: TurnContext) => Promise<void>
+        maybeLogic?: (context: TurnContext) => Promise<void>
     ): Promise<void> {
-        let audience = oAuthScopeOrlogic as string;
-        const callback = typeof oAuthScopeOrlogic === 'function' ? oAuthScopeOrlogic : logic;
-
-        if (typeof oAuthScopeOrlogic === 'function') {
+        let audience: string;
+        if (LogicT.check(oAuthScopeOrlogic)) {
             // Because the OAuthScope parameter was not provided, get the correct value via the channelService.
             // In this scenario, the ConnectorClient for the continued conversation can only communicate with
             // official channels, not with other bots.
             audience = JwtTokenValidation.isGovernment(this.settings.channelService)
                 ? GovernmentConstants.ToChannelFromBotOAuthScope
                 : AuthenticationConstants.ToChannelFromBotOAuthScope;
+        } else {
+            audience = z.string().parse(oAuthScopeOrlogic);
         }
 
-        let credentials: AppCredentials = this.credentials;
+        const logic = LogicT.check(oAuthScopeOrlogic) ? oAuthScopeOrlogic : LogicT.parse(maybeLogic);
+
+        let credentials = this.credentials;
 
         // For authenticated flows (where the bot has an AppId), the ConversationReference's serviceUrl needs
         // to be trusted for the bot to acquire a token when sending activities to the conversation.
@@ -405,15 +413,19 @@ export class BotFrameworkAdapter
         }
 
         const connectorClient = this.createConnectorClientInternal(reference.serviceUrl, credentials);
-        const request: Partial<Activity> = TurnContext.applyConversationReference(
+
+        const request = TurnContext.applyConversationReference(
             { type: ActivityTypes.Event, name: ActivityEventNames.ContinueConversation },
             reference,
             true
         );
+
         const context = this.createContext(request);
+
         context.turnState.set(this.OAuthScopeKey, audience);
         context.turnState.set(this.ConnectorClientKey, connectorClient);
-        await this.runMiddleware(context, callback);
+
+        await this.runMiddleware(context, logic);
     }
 
     /**
@@ -465,6 +477,7 @@ export class BotFrameworkAdapter
         reference: Partial<ConversationReference>,
         logic: (context: TurnContext) => Promise<void>
     ): Promise<void>;
+
     /**
      * Asynchronously creates and starts a conversation with a user on a channel.
      *
@@ -478,6 +491,10 @@ export class BotFrameworkAdapter
         parameters: Partial<ConversationParameters>,
         logic: (context: TurnContext) => Promise<void>
     ): Promise<void>;
+
+    /**
+     * @internal
+     */
     public async createConversation(
         reference: Partial<ConversationReference>,
         parametersOrLogic: Partial<ConversationParameters> | ((context: TurnContext) => Promise<void>),
@@ -487,8 +504,9 @@ export class BotFrameworkAdapter
             throw new Error(`BotFrameworkAdapter.createConversation(): missing serviceUrl.`);
         }
 
-        const parameters = typeof parametersOrLogic === 'function' ? {} : parametersOrLogic;
-        const logic = typeof parametersOrLogic === 'function' ? parametersOrLogic : maybeLogic;
+        const parameters = LogicT.check(parametersOrLogic) ? {} : parametersOrLogic;
+
+        const logic = LogicT.check(parametersOrLogic) ? parametersOrLogic : LogicT.parse(maybeLogic);
 
         // Create conversation parameters, taking care to provide defaults that can be
         // overridden by passed in parameters
@@ -1482,7 +1500,7 @@ export class BotFrameworkAdapter
         return new ConnectorClient(credentials, clientOptions);
     }
 
-    private getClientOptions(serviceUrl: string, httpClient?: any): ConnectorClientOptions {
+    private getClientOptions(serviceUrl: string, httpClient?: HttpClient): ConnectorClientOptions {
         const { requestPolicyFactories, ...clientOptions } = this.settings.clientOptions ?? {};
 
         const options: ConnectorClientOptions = Object.assign({}, { baseUri: serviceUrl }, clientOptions);
@@ -1829,8 +1847,52 @@ export class BotFrameworkAdapter
         return response;
     }
 
-    process(req: Request & Emitter, res: Response, logic: BotLogic): Promise<void> {
-        return this.processActivity(req, res, logic);
+    /**
+     * Process a web request by applying a logic function.
+     *
+     * @param req An incoming HTTP [Request](xref:botbuilder.Request)
+     * @param req The corresponding HTTP [Response](xref:botbuilder.Response)
+     * @param logic The logic function to apply
+     * @returns a promise representing the asynchronous operation.
+     */
+    async process(req: Request, res: Response, logic: (context: TurnContext) => Promise<void>): Promise<void>;
+
+    /**
+     * Handle a web socket connection by applying a logic function to
+     * each streaming request.
+     *
+     * @param req An incoming HTTP [Request](xref:botbuilder.Request)
+     * @param socket The corresponding [INodeSocket](xref:botframework-streaming.INodeSocket)
+     * @param head The corresponding [INodeBuffer](xref:botframework-streaming.INodeBuffer)
+     * @param logic The logic function to apply
+     * @returns a promise representing the asynchronous operation.
+     */
+    async process(
+        req: Request,
+        socket: INodeSocket,
+        head: INodeBuffer,
+        logic: (context: TurnContext) => Promise<void>
+    ): Promise<void>;
+
+    /**
+     * @internal
+     */
+    async process(
+        req: Request,
+        resOrSocket: Response | INodeSocket,
+        logicOrHead: ((context: TurnContext) => Promise<void>) | INodeBuffer,
+        maybeLogic?: (context: TurnContext) => Promise<void>
+    ): Promise<void> {
+        if (maybeLogic) {
+            return this.useWebSocket(
+                req,
+                INodeSocketT.parse(resOrSocket),
+                INodeBufferT.parse(logicOrHead),
+                LogicT.parse(maybeLogic)
+            );
+        } else {
+            return this.processActivity(req, ResponseT.parse(resOrSocket), LogicT.parse(logicOrHead));
+        }
     }
 
     /**
@@ -1873,6 +1935,7 @@ export class BotFrameworkAdapter
 
     /**
      * Process the initial request to establish a long lived connection via a streaming server.
+     *
      * @param req The connection request.
      * @param socket The raw socket connection between the bot (server) and channel/caller (client).
      * @param head The first packet of the upgraded stream.

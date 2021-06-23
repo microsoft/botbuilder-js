@@ -2,17 +2,26 @@
 // Licensed under the MIT License.
 
 import { Activity, SignInUrlResponse, TokenExchangeRequest, TokenResponse, TokenStatus } from 'botframework-schema';
-import { ServiceClientCredentials } from '@azure/ms-rest-js';
+import type { ServiceClientCredentials } from '@azure/ms-rest-js';
 import { TokenApiClient } from '../tokenApi/tokenApiClient';
 import { UserTokenClient } from './userTokenClient';
 import { assert } from 'botbuilder-stdlib';
+import { ConnectorClientOptions } from '../connectorApi/models';
 
 // Internal
 export class UserTokenClientImpl extends UserTokenClient {
     private readonly client: TokenApiClient;
-    constructor(private readonly appId: string, credentials: ServiceClientCredentials, oauthEndpoint: string) {
+    constructor(
+        private readonly appId: string,
+        credentials: ServiceClientCredentials,
+        oauthEndpoint: string,
+        connectorClientOptions: ConnectorClientOptions = {}
+    ) {
         super();
-        this.client = new TokenApiClient(credentials, { baseUri: oauthEndpoint });
+        this.client = new TokenApiClient(
+            credentials,
+            Object.assign({ baseUri: oauthEndpoint }, connectorClientOptions)
+        );
     }
 
     async getUserToken(
@@ -57,7 +66,10 @@ export class UserTokenClientImpl extends UserTokenClient {
         assert.string(userId, ['userId']);
         assert.string(channelId, ['channelId']);
 
-        const result = await this.client.userToken.getTokenStatus(userId, { channelId, include: includeFilter });
+        const result = await this.client.userToken.getTokenStatus(userId, {
+            channelId,
+            include: includeFilter,
+        });
         return result._response.parsedBody;
     }
 

@@ -2127,7 +2127,7 @@ export enum SemanticActionStateTypes {
 
 /**
  * Defines values for ChannelIds for Channels.
- * Possible values include: 'console', 'cortana', 'directline', 'directlinespeech', 'email',
+ * Possible values include: 'alexa', 'console', 'cortana', 'directline', 'directlinespeech', 'email',
  * 'emulator', 'facebook', 'groupme', 'kik', 'line', 'msteams', 'skype', 'skypeforbusiness',
  * 'slack', 'sms', 'telegram', 'test', 'twilio-sms', 'webchat'
  *
@@ -2135,8 +2135,8 @@ export enum SemanticActionStateTypes {
  * @enum {string}
  */
 export enum Channels {
+    Alexa = 'alexa',
     Console = 'console',
-    Cortana = 'cortana',
     Directline = 'directline',
     DirectlineSpeech = 'directlinespeech',
     Email = 'email',
@@ -2166,6 +2166,7 @@ export enum Channels {
  */
 export enum StatusCodes {
     OK = 200,
+    CREATED = 201,
     MULTIPLE_CHOICES = 300,
     BAD_REQUEST = 400,
     UNAUTHORIZED = 401,

@@ -6,10 +6,9 @@
  * Licensed under the MIT License.
  */
 
-export * from './botLogic';
-export * from './emitter';
 export * from './request';
 export * from './response';
+
 export { ConnectorClientBuilder } from './connectorClientBuilder';
 export { WebRequest } from './webRequest';
 export { WebResponse } from './webResponse';

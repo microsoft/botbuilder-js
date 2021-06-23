@@ -27,7 +27,8 @@
     }
   },
   "dependencies": {
-    "botbuilder-stdlib": "4.1.6"
+    "botbuilder-stdlib": "4.1.6",
+    "uuid": "^8.3.2"
   },
   "scripts": {
     "build": "tsc -b",

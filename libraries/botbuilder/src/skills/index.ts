@@ -8,3 +8,5 @@
 
 export * from './skillHandler';
 export * from './skillHttpClient';
+
+export { CloudSkillHandler } from './cloudSkillHandler';

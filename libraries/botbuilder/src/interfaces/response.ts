@@ -5,6 +5,9 @@
  * Represents a Node.js HTTP Response, including the minimal set of use properties and methods.
  * Compatible with Restify, Express, and Node.js core http.
  */
+
+import * as z from 'zod';
+
 export interface Response {
     socket: unknown;
 
@@ -13,3 +16,15 @@ export interface Response {
     send(...args: unknown[]): unknown;
     status(code: number): unknown;
 }
+
+export const ResponseT = z.custom<Response>(
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (val: any) =>
+        typeof val.end === 'function' &&
+        typeof val.header === 'function' &&
+        typeof val.send === 'function' &&
+        typeof val.status === 'function',
+    {
+        message: 'Response',
+    }
+);

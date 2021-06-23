@@ -4,9 +4,9 @@
 import * as z from 'zod';
 import path from 'path';
 import restify from 'restify';
-import type { ActivityHandlerBase, BotFrameworkAdapter, ChannelServiceRoutes } from 'botbuilder';
-import { Configuration, getRuntimeServices } from 'botbuilder-dialogs-adaptive-runtime';
+import type { ActivityHandlerBase, BotFrameworkHttpAdapter, ChannelServiceRoutes } from 'botbuilder';
 import type { ServiceCollection } from 'botbuilder-dialogs-adaptive-runtime-core';
+import { Configuration, getRuntimeServices } from 'botbuilder-dialogs-adaptive-runtime';
 
 // Explicitly fails checks for `""`
 const NonEmptyString = z.string().refine((str) => str.length > 0, { message: 'must be non-empty string' });
@@ -106,29 +106,38 @@ export async function makeServer(
     options: Partial<Options> = {},
     server = restify.createServer()
 ): Promise<restify.Server> {
+    server.use(restify.plugins.acceptParser(server.acceptable));
+    server.use(restify.plugins.queryParser());
+    server.use(restify.plugins.bodyParser());
+
     const { adapter, bot, channelServiceRoutes, customAdapters } = services.mustMakeInstances<{
-        adapter: BotFrameworkAdapter;
+        adapter: BotFrameworkHttpAdapter;
         bot: ActivityHandlerBase;
         channelServiceRoutes: ChannelServiceRoutes;
-        customAdapters: Map<string, BotFrameworkAdapter>;
+        customAdapters: Map<string, BotFrameworkHttpAdapter>;
     }>('adapter', 'bot', 'channelServiceRoutes', 'customAdapters');
 
     const resolvedOptions = await resolveOptions(options, configuration);
 
     const errorHandler = (err: Error | string, res?: restify.Response): void => {
-        if (options.logErrors) {
+        if (resolvedOptions.logErrors) {
             console.error(err);
         }
 
         if (res && !res.headersSent) {
-            res.status(500);
-            res.json({ message: 'Internal server error' });
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            const statusCode = typeof (err as any)?.statusCode === 'number' ? (err as any).statusCode : 500;
+
+            res.status(statusCode);
+            res.json({
+                message: err instanceof Error ? err.message : err ?? 'Internal server error',
+            });
         }
     };
 
     server.post(resolvedOptions.messagingEndpointPath, async (req, res) => {
         try {
-            await adapter.processActivity(req, res, async (turnContext) => {
+            await adapter.process(req, res, async (turnContext) => {
                 await bot.run(turnContext);
             });
         } catch (err) {
@@ -157,7 +166,7 @@ export async function makeServer(
             if (adapter) {
                 server.post(`/api/${settings.route}`, async (req, res) => {
                     try {
-                        await adapter.processActivity(req, res, async (turnContext) => {
+                        await adapter.process(req, res, async (turnContext) => {
                             await bot.run(turnContext);
                         });
                     } catch (err) {
@@ -182,10 +191,10 @@ export async function makeServer(
     );
 
     server.on('upgrade', async (req, socket, head) => {
-        const adapter = services.mustMakeInstance<BotFrameworkAdapter>('adapter');
+        const adapter = services.mustMakeInstance<BotFrameworkHttpAdapter>('adapter');
 
         try {
-            await adapter.useWebSocket(req, socket, head, async (context) => {
+            await adapter.process(req, socket, head, async (context) => {
                 await bot.run(context);
             });
         } catch (err) {

@@ -1,44 +1,26 @@
-/**
- * @module botbuilder
- */
-/**
- * Copyright (c) Microsoft Corporation. All rights reserved.
- * Licensed under the MIT License.
- */
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
 
-import { v4 as uuidv4 } from 'uuid';
+import { ChannelServiceHandler } from '../channelServiceHandler';
+import { SkillHandlerImpl } from './skillHandlerImpl';
+
+import {
+    AuthenticationConfiguration,
+    AuthenticationConstants,
+    ClaimsIdentity,
+    GovernmentConstants,
+    ICredentialProvider,
+    JwtTokenValidation,
+} from 'botframework-connector';
+
 import {
     Activity,
     ActivityHandlerBase,
-    ActivityTypes,
     BotAdapter,
-    CallerIdConstants,
     ResourceResponse,
     SkillConversationIdFactoryBase,
-    SkillConversationReference,
     SkillConversationReferenceKey,
-    TurnContext,
 } from 'botbuilder-core';
-import {
-    AuthenticationConfiguration,
-    AppCredentials,
-    ICredentialProvider,
-    ClaimsIdentity,
-    JwtTokenValidation,
-    GovernmentConstants,
-    AuthenticationConstants,
-} from 'botframework-connector';
-
-import { ChannelServiceHandler } from '../channelServiceHandler';
-import { BotFrameworkAdapter } from '../botFrameworkAdapter';
-
-/**
- * Casts adapter to BotFrameworkAdapter only if necessary
- * @param adapter adapter to maybe cast as BotFrameworkAdapter
- */
-function maybeCastAdapter(adapter: BotAdapter): BotFrameworkAdapter {
-    return adapter instanceof BotFrameworkAdapter ? adapter : (adapter as BotFrameworkAdapter);
-}
 
 /**
  * A Bot Framework Handler for skills.
@@ -46,13 +28,18 @@ function maybeCastAdapter(adapter: BotAdapter): BotFrameworkAdapter {
 export class SkillHandler extends ChannelServiceHandler {
     /**
      * Used to access the CovnersationReference sent from the Skill to the Parent.
+     *
      * @remarks
      * The value is the same as the SkillConversationReferenceKey exported from botbuilder-core.
      */
     public readonly SkillConversationReferenceKey = SkillConversationReferenceKey;
 
+    // Delegate that implements actual logic
+    private readonly inner: SkillHandlerImpl;
+
     /**
      * Initializes a new instance of the SkillHandler class.
+     *
      * @param adapter An instance of the BotAdapter that will handle the request.
      * @param bot The ActivityHandlerBase instance.
      * @param conversationIdFactory A SkillConversationIdFactoryBase to unpack the conversation ID and map it to the calling bot.
@@ -61,9 +48,9 @@ export class SkillHandler extends ChannelServiceHandler {
      * @param channelService The string indicating if the bot is working in Public Azure or in Azure Government (https://aka.ms/AzureGovDocs).
      */
     public constructor(
-        private readonly adapter: BotAdapter,
-        private readonly bot: ActivityHandlerBase,
-        private readonly conversationIdFactory: SkillConversationIdFactoryBase,
+        adapter: BotAdapter,
+        bot: ActivityHandlerBase,
+        conversationIdFactory: SkillConversationIdFactoryBase,
         credentialProvider: ICredentialProvider,
         authConfig: AuthenticationConfiguration,
         channelService?: string
@@ -81,10 +68,22 @@ export class SkillHandler extends ChannelServiceHandler {
         if (!conversationIdFactory) {
             throw new Error('missing conversationIdFactory.');
         }
+
+        this.inner = new SkillHandlerImpl(
+            this.SkillConversationReferenceKey,
+            adapter,
+            (context) => bot.run(context),
+            conversationIdFactory,
+            () =>
+                JwtTokenValidation.isGovernment(channelService)
+                    ? GovernmentConstants.ToChannelFromBotOAuthScope
+                    : AuthenticationConstants.ToChannelFromBotOAuthScope
+        );
     }
 
     /**
      * sendToConversation() API for Skill.
+     *
      * @remarks
      * This method allows you to send an activity to the end of a conversation.
      *
@@ -103,16 +102,17 @@ export class SkillHandler extends ChannelServiceHandler {
      * @param activity Activity to send.
      * @returns A Promise with a ResourceResponse.
      */
-    protected async onSendToConversation(
+    protected onSendToConversation(
         claimsIdentity: ClaimsIdentity,
         conversationId: string,
         activity: Activity
     ): Promise<ResourceResponse> {
-        return await this.processActivity(claimsIdentity, conversationId, null, activity);
+        return this.inner.onSendToConversation(claimsIdentity, conversationId, activity);
     }
 
     /**
      * replyToActivity() API for Skill.
+     *
      * @remarks
      * This method allows you to reply to an activity.
      *
@@ -132,167 +132,19 @@ export class SkillHandler extends ChannelServiceHandler {
      * @param activity Activity to send.
      * @returns A Promise with a ResourceResponse.
      */
-    protected async onReplyToActivity(
+    protected onReplyToActivity(
         claimsIdentity: ClaimsIdentity,
         conversationId: string,
         activityId: string,
         activity: Activity
     ): Promise<ResourceResponse> {
-        return await this.processActivity(claimsIdentity, conversationId, activityId, activity);
-    }
-
-    /**
-     * @private
-     */
-    private static applyEoCToTurnContextActivity(
-        turnContext: TurnContext,
-        endOfConversationActivity: Partial<Activity>
-    ): void {
-        // transform the turnContext.activity to be an EndOfConversation Activity.
-        turnContext.activity.type = endOfConversationActivity.type;
-        turnContext.activity.text = endOfConversationActivity.text;
-        turnContext.activity.code = endOfConversationActivity.code;
-
-        turnContext.activity.replyToId = endOfConversationActivity.replyToId;
-        turnContext.activity.value = endOfConversationActivity.value;
-        turnContext.activity.entities = endOfConversationActivity.entities;
-        turnContext.activity.locale = endOfConversationActivity.locale;
-        turnContext.activity.localTimestamp = endOfConversationActivity.localTimestamp;
-        turnContext.activity.timestamp = endOfConversationActivity.timestamp;
-        turnContext.activity.channelData = endOfConversationActivity.channelData;
-    }
-
-    /**
-     * @private
-     */
-    private static applyEventToTurnContextActivity(turnContext: TurnContext, eventActivity: Partial<Activity>): void {
-        // transform the turnContext.activity to be an Event Activity.
-        turnContext.activity.type = eventActivity.type;
-        turnContext.activity.name = eventActivity.name;
-        turnContext.activity.value = eventActivity.value;
-        turnContext.activity.relatesTo = eventActivity.relatesTo;
-
-        turnContext.activity.replyToId = eventActivity.replyToId;
-        turnContext.activity.value = eventActivity.value;
-        turnContext.activity.entities = eventActivity.entities;
-        turnContext.activity.locale = eventActivity.locale;
-        turnContext.activity.localTimestamp = eventActivity.localTimestamp;
-        turnContext.activity.timestamp = eventActivity.timestamp;
-        turnContext.activity.channelData = eventActivity.channelData;
-    }
-
-    /**
-     * @private
-     */
-    private async getSkillConversationReference(conversationId: string): Promise<SkillConversationReference> {
-        let skillConversationReference: SkillConversationReference;
-
-        try {
-            skillConversationReference = await this.conversationIdFactory.getSkillConversationReference(conversationId);
-        } catch (err) {
-            // If the factory has overridden getSkillConversationReference, call the deprecated getConversationReference().
-            // In this scenario, the oAuthScope paired with the ConversationReference can only be used for talking with
-            // an official channel, not another bot.
-            if (err.message === 'Not Implemented') {
-                const conversationReference = await this.conversationIdFactory.getConversationReference(conversationId);
-                skillConversationReference = {
-                    conversationReference,
-                    oAuthScope: JwtTokenValidation.isGovernment(this.channelService)
-                        ? GovernmentConstants.ToChannelFromBotOAuthScope
-                        : AuthenticationConstants.ToChannelFromBotOAuthScope,
-                };
-            } else {
-                // Re-throw all other errors.
-                throw err;
-            }
-        }
-
-        if (!skillConversationReference) {
-            throw new Error('skillConversationReference not found');
-        } else if (!skillConversationReference.conversationReference) {
-            throw new Error('conversationReference not found.');
-        }
-
-        return skillConversationReference;
-    }
-
-    /**
-     * Helper method for forwarding a conversation through the adapter
-     */
-    private async continueConversation(
-        claimsIdentity: ClaimsIdentity,
-        conversationId: string,
-        callback: (adapter: BotFrameworkAdapter, ref: SkillConversationReference, context: TurnContext) => Promise<void>
-    ): Promise<void> {
-        const ref = await this.getSkillConversationReference(conversationId);
-
-        return maybeCastAdapter(this.adapter).continueConversation(
-            ref.conversationReference,
-            ref.oAuthScope,
-            async (context: TurnContext): Promise<void> => {
-                const adapter = maybeCastAdapter(context.adapter);
-
-                // Cache the claimsIdentity and conversation reference
-                context.turnState.set(adapter.BotIdentityKey, claimsIdentity);
-                context.turnState.set(this.SkillConversationReferenceKey, ref);
-
-                return callback(adapter, ref, context);
-            }
-        );
-    }
-
-    private async processActivity(
-        claimsIdentity: ClaimsIdentity,
-        conversationId: string,
-        activityId: string,
-        activity: Activity
-    ): Promise<ResourceResponse> {
-        // If an activity is sent, return the ResourceResponse
-        let resourceResponse: ResourceResponse;
-
-        /**
-         * This callback does the following:
-         *  - Applies the correct ConversationReference to the Activity for sending to the user-router conversation.
-         *  - For EndOfConversation Activities received from the Skill, removes the ConversationReference from the
-         *    ConversationIdFactory
-         */
-        await this.continueConversation(claimsIdentity, conversationId, async (adapter, ref, context) => {
-            const newActivity = TurnContext.applyConversationReference(activity, ref.conversationReference);
-            context.activity.id = activityId;
-            context.activity.callerId = `${CallerIdConstants.BotToBotPrefix}${JwtTokenValidation.getAppIdFromClaims(
-                claimsIdentity.claims
-            )}`;
-
-            // Cache connector client in turn context
-            const client = adapter.createConnectorClient(newActivity.serviceUrl);
-            context.turnState.set(adapter.ConnectorClientKey, client);
-
-            switch (newActivity.type) {
-                case ActivityTypes.EndOfConversation:
-                    await this.conversationIdFactory.deleteConversationReference(conversationId);
-                    SkillHandler.applyEoCToTurnContextActivity(context, newActivity);
-                    await this.bot.run(context);
-                    break;
-                case ActivityTypes.Event:
-                    SkillHandler.applyEventToTurnContextActivity(context, newActivity);
-                    await this.bot.run(context);
-                    break;
-                default:
-                    resourceResponse = await context.sendActivity(newActivity);
-                    break;
-            }
-        });
-
-        if (!resourceResponse) {
-            resourceResponse = { id: uuidv4() };
-        }
-
-        return resourceResponse;
+        return this.inner.onReplyToActivity(claimsIdentity, conversationId, activityId, activity);
     }
 
     /**
      *
      * UpdateActivity() API for Skill.
+     *
      * @remarks
      * Edit an existing activity.
      *
@@ -304,32 +156,20 @@ export class SkillHandler extends ChannelServiceHandler {
      * @param conversationId Conversation ID.
      * @param activityId activityId to update.
      * @param activity replacement Activity.
+     * @returns a promise resolving to the underlying resource response
      */
-    protected async onUpdateActivity(
+    protected onUpdateActivity(
         claimsIdentity: ClaimsIdentity,
         conversationId: string,
         activityId: string,
         activity: Activity
     ): Promise<ResourceResponse> {
-        let resourceResponse: ResourceResponse | void;
-
-        await this.continueConversation(claimsIdentity, conversationId, async (adapter, ref, context) => {
-            const newActivity = TurnContext.applyConversationReference(activity, ref.conversationReference);
-
-            context.activity.id = activityId;
-            context.activity.callerId = `${CallerIdConstants.BotToBotPrefix}${JwtTokenValidation.getAppIdFromClaims(
-                claimsIdentity.claims
-            )}`;
-
-            resourceResponse = await context.updateActivity(newActivity);
-        });
-
-        // Due to a backwards-compat function signature, resourceResponse may not be defined.
-        return resourceResponse ? resourceResponse : { id: activityId };
+        return this.inner.onUpdateActivity(claimsIdentity, conversationId, activityId, activity);
     }
 
     /**
      * DeleteActivity() API for Skill.
+     *
      * @remarks
      * Delete an existing activity.
      *
@@ -340,19 +180,13 @@ export class SkillHandler extends ChannelServiceHandler {
      * @param claimsIdentity ClaimsIdentity for the bot, should have AudienceClaim, AppIdClaim and ServiceUrlClaim.
      * @param conversationId Conversation ID.
      * @param activityId activityId to delete.
+     * @returns a promise representing the async operation
      */
     protected async onDeleteActivity(
         claimsIdentity: ClaimsIdentity,
         conversationId: string,
         activityId: string
     ): Promise<void> {
-        // Callback method handles deleting activity
-        return this.continueConversation(
-            claimsIdentity,
-            conversationId,
-            async (adapter, ref, context): Promise<void> => {
-                return context.deleteActivity(activityId);
-            }
-        );
+        return this.inner.onDeleteActivity(claimsIdentity, conversationId, activityId);
     }
 }

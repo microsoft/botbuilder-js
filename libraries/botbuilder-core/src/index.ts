@@ -20,6 +20,8 @@ export * from './botTelemetryClient';
 export * from './browserStorage';
 export * from './cardFactory';
 export * from './componentRegistration';
+export * from './configurationBotFrameworkAuthentication';
+export * from './configurationServiceClientCredentialFactory';
 export * from './conversationState';
 export * from './coreAppCredentials';
 export * from './extendedUserTokenProvider';
@@ -59,3 +61,5 @@ export {
     SkillConversationReference,
     SkillConversationReferenceKey,
 } from './skills';
+
+export { CloudAdapterBase } from './cloudAdapterBase';

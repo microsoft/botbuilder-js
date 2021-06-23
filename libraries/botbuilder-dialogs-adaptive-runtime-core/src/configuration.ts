@@ -11,7 +11,7 @@ export interface Configuration {
      * @param path path to get
      * @returns the value, or undefined
      */
-    get(path: string[]): unknown | undefined;
+    get<T = unknown>(path?: string[]): T | undefined;
 
     /**
      * Set a value by path.
@@ -26,10 +26,10 @@ export interface Configuration {
  * Useful for shimming BotComponents into ComponentRegistrations
  */
 export const noOpConfiguration: Configuration = {
-    get(_path: string[]): unknown | undefined {
+    get(_path) {
         return undefined;
     },
-    set(_path: string[], _value: unknown): void {
+    set(_path, _value) {
         // no-op
     },
 };

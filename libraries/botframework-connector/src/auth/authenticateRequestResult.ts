@@ -1,8 +1,8 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-import { ClaimsIdentity } from './claimsIdentity';
-import { ConnectorFactory } from '../connectorFactory';
+import type { ClaimsIdentity } from './claimsIdentity';
+import type { ConnectorFactory } from './connectorFactory';
 
 // TODO: Make these descriptions more informative in the JS and .NET SDKs.
 /**
@@ -20,9 +20,9 @@ export type AuthenticateRequestResult = {
     /**
      * A value for the CallerId.
      */
-    callerId: string;
+    callerId?: string;
     /**
      * A value for the ConnectorFactory.
      */
-    connectorFactory: ConnectorFactory;
+    connectorFactory?: ConnectorFactory;
 };

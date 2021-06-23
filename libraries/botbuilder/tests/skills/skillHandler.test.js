@@ -12,7 +12,6 @@ const {
 } = require('botbuilder-core');
 
 const {
-    AppCredentials,
     AuthenticationConfiguration,
     AuthenticationConstants,
     ClaimsIdentity,
@@ -46,30 +45,19 @@ describe('SkillHandler', function () {
 
     // Registers expectations that verify a particular skill conversation is returned from the factory
     const expectsFactoryGetSkillConversationReference = (ref) =>
-        sandbox
-            .mock(factory)
-            .expects('getSkillConversationReference')
-            .withArgs('convId')
-            .once()
-            .returns(Promise.resolve(ref));
+        sandbox.mock(factory).expects('getSkillConversationReference').withArgs('convId').once().resolves(ref);
 
     // Mocks the handler get skill conversation reference method to return a particular conversation reference
     const expectsGetSkillConversationReference = (conversationId, serviceUrl = 'http://localhost/api/messages') =>
-        sandbox
-            .mock(handler)
-            .expects('getSkillConversationReference')
-            .withArgs(conversationId)
-            .returns(
-                Promise.resolve({
-                    conversationReference: { serviceUrl },
-                    oAuthScope: 'oAuthScope',
-                })
-            );
+        sandbox.mock(handler.inner).expects('getSkillConversationReference').withArgs(conversationId).resolves({
+            conversationReference: { serviceUrl },
+            oAuthScope: 'oAuthScope',
+        });
 
     // Registers expectation that handler.processActivity is invoked with a particular set of arguments
     const expectsProcessActivity = (...args) =>
         sandbox
-            .mock(handler)
+            .mock(handler.inner)
             .expects('processActivity')
             .withArgs(...args)
             .once();
@@ -166,7 +154,7 @@ describe('SkillHandler', function () {
         });
     });
 
-    describe('private methods', function () {
+    describe('inner SkillHandlerImpl methods', function () {
         describe('continueConversation()', function () {
             const identity = new ClaimsIdentity([{ type: 'aud', value: 'audience' }]);
             const conversationId = 'conversationId';
@@ -174,7 +162,7 @@ describe('SkillHandler', function () {
             it('should cache the ClaimsIdentity, ConnectorClient and SkillConversationReference on the turnState', async function () {
                 expectsGetSkillConversationReference(conversationId);
 
-                await handler.continueConversation(identity, conversationId, async (adapter, ref, context) => {
+                await handler.inner.continueConversation(identity, conversationId, async (context, ref) => {
                     assert.deepStrictEqual(
                         context.turnState.get(adapter.BotIdentityKey),
                         identity,
@@ -197,7 +185,7 @@ describe('SkillHandler', function () {
                 expectsFactoryGetSkillConversationReference(null);
 
                 await assert.rejects(
-                    handler.processActivity({}, 'convId', 'replyId', {}),
+                    handler.inner.processActivity({}, 'convId', 'replyId', {}),
                     new Error('skillConversationReference not found')
                 );
 
@@ -208,7 +196,7 @@ describe('SkillHandler', function () {
                 expectsFactoryGetSkillConversationReference({});
 
                 await assert.rejects(
-                    handler.processActivity({}, 'convId', 'replyId', {}),
+                    handler.inner.processActivity({}, 'convId', 'replyId', {}),
                     new Error('conversationReference not found.')
                 );
 
@@ -234,7 +222,7 @@ describe('SkillHandler', function () {
                 expectsGetSkillConversationReference('convId', skillActivity.serviceUrl);
                 expectsBotRun(skillActivity, identity);
 
-                await handler.processActivity(identity, 'convId', 'replyId', skillActivity);
+                await handler.inner.processActivity(identity, 'convId', 'replyId', skillActivity);
                 sandbox.verify();
             });
 
@@ -264,7 +252,7 @@ describe('SkillHandler', function () {
                 expectsGetSkillConversationReference('convId', skillActivity.serviceUrl);
                 expectsBotRun(skillActivity, identity);
 
-                await handler.processActivity(identity, 'convId', 'replyId', skillActivity);
+                await handler.inner.processActivity(identity, 'convId', 'replyId', skillActivity);
                 sandbox.verify();
             });
 
@@ -286,7 +274,7 @@ describe('SkillHandler', function () {
                     .once()
                     .returns(Promise.resolve([{ id: 'responseId' }]));
 
-                const response = await handler.processActivity(identity, 'convId', 'replyId', skillActivity);
+                const response = await handler.inner.processActivity(identity, 'convId', 'replyId', skillActivity);
                 assert.strictEqual(response.id, 'responseId');
                 sandbox.verify();
             });
@@ -338,7 +326,7 @@ describe('SkillHandler', function () {
                     )
                     .once();
 
-                await handler.processActivity(identity, 'convId', 'replyId', skillActivity);
+                await handler.inner.processActivity(identity, 'convId', 'replyId', skillActivity);
                 sandbox.verify();
             });
         });

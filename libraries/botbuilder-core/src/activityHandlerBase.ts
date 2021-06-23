@@ -4,7 +4,7 @@
  */
 import { ActivityTypes, ChannelAccount, MessageReaction, TurnContext } from '.';
 import { InvokeResponse } from './invokeResponse';
-import { StatusCodes } from './statusCodes';
+import { StatusCodes } from 'botframework-schema';
 
 // This key is exported internally so that subclassed ActivityHandlers and BotAdapters will not override any already set InvokeResponses.
 export const INVOKE_RESPONSE_KEY = Symbol('invokeResponse');

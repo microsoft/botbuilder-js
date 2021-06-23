@@ -34,7 +34,7 @@ export abstract class ServiceClientCredentialsFactory {
      */
     abstract createCredentials(
         appId: string,
-        audience: string,
+        audience: string | undefined,
         loginEndpoint: string,
         validateAuthority: boolean
     ): Promise<ServiceClientCredentials>;

@@ -21,14 +21,14 @@ export class DialogContextError extends Error {
     /**
      * Construct a DialogError.
      *
-     * @param {Error | string} source Source error or error message.
+     * @param {Error | string} error Source error or error message.
      * @param {DialogContext} dialogContext Dialog context that is the source of the error.
      */
-    public constructor(source: Error | string, dialogContext: DialogContext) {
+    public constructor(public readonly error: Error | string, dialogContext: DialogContext) {
         super();
 
-        if (!(source instanceof Error) && typeof source !== 'string') {
-            throw new Error('`source` argument must be an Error or a string');
+        if (!(error instanceof Error) && typeof error !== 'string') {
+            throw new Error('`error` argument must be an Error or a string');
         }
 
         if (!(dialogContext instanceof DialogContext)) {
@@ -36,19 +36,11 @@ export class DialogContextError extends Error {
         }
 
         this.name = 'DialogContextError';
-        if (source instanceof Error) {
-            this.message = source.message;
-            this.stack = source.stack;
-        } else {
-            this.message = source;
-        }
+        this.message = error instanceof Error ? error.message : error;
 
         this.dialogContext = {
-            activeDialog: dialogContext.activeDialog ? dialogContext.activeDialog.id : undefined,
-            parent:
-                dialogContext.parent && dialogContext.parent.activeDialog
-                    ? dialogContext.parent.activeDialog.id
-                    : undefined,
+            activeDialog: dialogContext.activeDialog?.id,
+            parent: dialogContext.parent?.activeDialog?.id,
             stack: dialogContext.stack,
         };
     }

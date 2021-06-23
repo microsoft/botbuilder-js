@@ -38,21 +38,25 @@ import {
 import { TeamsInfo } from './teamsInfo';
 import * as z from 'zod';
 
-const TeamsMeetingStartT = z.object({
-    Id: z.string(),
-    JoinUrl: z.string(),
-    MeetingType: z.string(),
-    Title: z.string(),
-    StartTime: z.string(),
-});
+const TeamsMeetingStartT = z
+    .object({
+        Id: z.string(),
+        JoinUrl: z.string(),
+        MeetingType: z.string(),
+        Title: z.string(),
+        StartTime: z.string(),
+    })
+    .nonstrict();
 
-const TeamsMeetingEndT = z.object({
-    Id: z.string(),
-    JoinUrl: z.string(),
-    MeetingType: z.string(),
-    Title: z.string(),
-    EndTime: z.string(),
-});
+const TeamsMeetingEndT = z
+    .object({
+        Id: z.string(),
+        JoinUrl: z.string(),
+        MeetingType: z.string(),
+        Title: z.string(),
+        EndTime: z.string(),
+    })
+    .nonstrict();
 
 /**
  * Adds support for Microsoft Teams specific events and interactions.

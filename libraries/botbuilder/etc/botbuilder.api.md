@@ -13,12 +13,14 @@ import { AppCredentials } from 'botframework-connector';
 import { AttachmentData } from 'botbuilder-core';
 import { AuthenticationConfiguration } from 'botframework-connector';
 import { BotAdapter } from 'botbuilder-core';
+import { BotFrameworkAuthentication } from 'botframework-connector';
 import { BotFrameworkClient } from 'botbuilder-core';
 import { BotFrameworkSkill } from 'botbuilder-core';
 import { BotState } from 'botbuilder-core';
 import { ChannelAccount } from 'botbuilder-core';
 import { ChannelInfo } from 'botbuilder-core';
 import { ClaimsIdentity } from 'botframework-connector';
+import { CloudAdapterBase } from 'botbuilder-core';
 import { ConnectorClient } from 'botframework-connector';
 import { ConnectorClientOptions } from 'botframework-connector';
 import { ConversationAccount } from 'botbuilder-core';
@@ -82,7 +84,6 @@ import { TurnContext } from 'botbuilder-core';
 import { UserState } from 'botbuilder-core';
 import { WebResource } from '@azure/ms-rest-js';
 
-// Warning: (ae-forgotten-export) The symbol "BotFrameworkHttpAdapter" needs to be exported by the entry point index.d.ts
 // Warning: (ae-forgotten-export) The symbol "ConnectorClientBuilder" needs to be exported by the entry point index.d.ts
 //
 // @public
@@ -92,10 +93,7 @@ export class BotFrameworkAdapter extends BotAdapter implements BotFrameworkHttpA
     // (undocumented)
     protected buildCredentials(appId: string, oAuthScope?: string): Promise<AppCredentials>;
     protected checkEmulatingOAuthCards(context: TurnContext): void;
-    // (undocumented)
-    readonly ConnectorClientKey: symbol;
     continueConversation(reference: Partial<ConversationReference>, logic: (context: TurnContext) => Promise<void>): Promise<void>;
-    // (undocumented)
     continueConversation(reference: Partial<ConversationReference>, oAuthScope: string, logic: (context: TurnContext) => Promise<void>): Promise<void>;
     createConnectorClient(serviceUrl: string): ConnectorClient;
     createConnectorClientWithIdentity(serviceUrl: string, identity: ClaimsIdentity): Promise<ConnectorClient>;
@@ -134,13 +132,8 @@ export class BotFrameworkAdapter extends BotAdapter implements BotFrameworkHttpA
     getUserToken(context: TurnContext, connectionName: string, magicCode?: string, oAuthAppCredentials?: CoreAppCredentials): Promise<TokenResponse>;
     get isStreamingConnectionOpen(): boolean;
     protected oauthApiUrl(contextOrServiceUrl: TurnContext | string): string;
-    // Warning: (ae-forgotten-export) The symbol "Request" needs to be exported by the entry point index.d.ts
-    // Warning: (ae-forgotten-export) The symbol "Emitter" needs to be exported by the entry point index.d.ts
-    // Warning: (ae-forgotten-export) The symbol "Response" needs to be exported by the entry point index.d.ts
-    // Warning: (ae-forgotten-export) The symbol "BotLogic" needs to be exported by the entry point index.d.ts
-    //
-    // (undocumented)
-    process(req: Request_2 & Emitter, res: Response_2, logic: BotLogic): Promise<void>;
+    process(req: Request_2, res: Response_2, logic: (context: TurnContext) => Promise<void>): Promise<void>;
+    process(req: Request_2, socket: INodeSocket, head: INodeBuffer, logic: (context: TurnContext) => Promise<void>): Promise<void>;
     processActivity(req: WebRequest, res: WebResponse, logic: (context: TurnContext) => Promise<any>): Promise<void>;
     processActivityDirect(activity: Activity, logic: (context: TurnContext) => Promise<any>): Promise<void>;
     processRequest(request: IReceiveRequest): Promise<StreamingResponse>;
@@ -173,6 +166,12 @@ export interface BotFrameworkAdapterSettings {
 }
 
 // @public
+export interface BotFrameworkHttpAdapter {
+    process(req: Request_2, res: Response_2, logic: (context: TurnContext) => Promise<void>): Promise<void>;
+    process(req: Request_2, socket: INodeSocket, head: INodeBuffer, logic: (context: TurnContext) => Promise<void>): Promise<void>;
+}
+
+// @public
 export class BotFrameworkHttpClient implements BotFrameworkClient {
     constructor(credentialProvider: ICredentialProvider, channelService?: string);
     protected buildCredentials(appId: string, oAuthScope?: string): Promise<AppCredentials>;
@@ -182,10 +181,17 @@ export class BotFrameworkHttpClient implements BotFrameworkClient {
 }
 
 // @public
-export class ChannelServiceHandler {
+export class ChannelServiceHandler extends ChannelServiceHandlerBase {
     constructor(credentialProvider: ICredentialProvider, authConfig: AuthenticationConfiguration, channelService?: string);
     // (undocumented)
+    protected authenticate(authHeader: string): Promise<ClaimsIdentity>;
+    // (undocumented)
     protected readonly channelService: string;
+    }
+
+// @public
+export abstract class ChannelServiceHandlerBase {
+    protected abstract authenticate(authHeader: string): Promise<ClaimsIdentity>;
     handleCreateConversation(authHeader: string, parameters: ConversationParameters): Promise<ConversationResourceResponse>;
     handleDeleteActivity(authHeader: string, conversationId: string, activityId: string): Promise<void>;
     handleDeleteConversationMember(authHeader: string, conversationId: string, memberId: string): Promise<void>;
@@ -214,8 +220,28 @@ export class ChannelServiceHandler {
 
 // @public
 export class ChannelServiceRoutes {
-    constructor(channelServiceHandler: ChannelServiceHandler);
+    constructor(channelServiceHandler: ChannelServiceHandlerBase);
     register(server: WebServer, basePath?: string): void;
+}
+
+// @public (undocumented)
+export class CloudAdapter extends CloudAdapterBase implements BotFrameworkHttpAdapter {
+    constructor(botFrameworkAuthentication?: BotFrameworkAuthentication);
+    connectNamedPipe(pipeName: string, logic: (context: TurnContext) => Promise<void>, appId: string, audience: string, callerId?: string, retryCount?: number): Promise<void>;
+    process(req: Request_2, res: Response_2, logic: (context: TurnContext) => Promise<void>): Promise<void>;
+    process(req: Request_2, socket: INodeSocket, head: INodeBuffer, logic: (context: TurnContext) => Promise<void>): Promise<void>;
+}
+
+// Warning: (ae-forgotten-export) The symbol "CloudChannelServiceHandler" needs to be exported by the entry point index.d.ts
+//
+// @public (undocumented)
+export class CloudSkillHandler extends CloudChannelServiceHandler {
+    constructor(adapter: BotAdapter, logic: (context: TurnContext) => Promise<void>, conversationIdFactory: SkillConversationIdFactoryBase, auth: BotFrameworkAuthentication);
+    protected onDeleteActivity(claimsIdentity: ClaimsIdentity, conversationId: string, activityId: string): Promise<void>;
+    protected onReplyToActivity(claimsIdentity: ClaimsIdentity, conversationId: string, activityId: string, activity: Activity): Promise<ResourceResponse>;
+    protected onSendToConversation(claimsIdentity: ClaimsIdentity, conversationId: string, activity: Activity): Promise<ResourceResponse>;
+    protected onUpdateActivity(claimsIdentity: ClaimsIdentity, conversationId: string, activityId: string, activity: Activity): Promise<ResourceResponse>;
+    readonly SkillConversationReferenceKey: symbol;
 }
 
 // @public
@@ -257,6 +283,34 @@ export class InspectionState extends BotState {
     constructor(storage: Storage_2);
     protected getStorageKey(turnContext: TurnContext): string;
 }
+
+// @public
+interface Request_2<Body extends Record<string, unknown> = Record<string, unknown>, Headers extends Record<string, string[] | string | undefined> = Record<string, string[] | string | undefined>> {
+    // (undocumented)
+    body?: Body;
+    // (undocumented)
+    headers: Headers;
+    // (undocumented)
+    method?: string;
+}
+
+export { Request_2 as Request }
+
+// @public (undocumented)
+interface Response_2 {
+    // (undocumented)
+    end(...args: unknown[]): unknown;
+    // (undocumented)
+    header(name: string, value: unknown): unknown;
+    // (undocumented)
+    send(...args: unknown[]): unknown;
+    // (undocumented)
+    socket: unknown;
+    // (undocumented)
+    status(code: number): unknown;
+}
+
+export { Response_2 as Response }
 
 // @public (undocumented)
 export type RouteHandler = (request: WebRequest, response: WebResponse) => void;

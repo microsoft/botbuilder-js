@@ -11,11 +11,17 @@ import { AnimationCard } from 'botframework-schema';
 import { Assertion } from 'botbuilder-stdlib';
 import { Attachment } from 'botframework-schema';
 import { AudioCard } from 'botframework-schema';
+import { AuthenticateRequestResult } from 'botframework-connector';
+import { AuthenticationConfiguration } from 'botframework-connector';
+import { BotFrameworkAuthentication } from 'botframework-connector';
 import { BotFrameworkClient } from 'botframework-connector';
 import { CardAction } from 'botframework-schema';
 import { CardImage } from 'botframework-schema';
 import { ChannelAccount } from 'botframework-schema';
+import { ClaimsIdentity } from 'botframework-connector';
 import { Configuration } from 'botbuilder-dialogs-adaptive-runtime-core';
+import { ConnectorClientOptions } from 'botframework-connector';
+import { ConnectorFactory } from 'botframework-connector';
 import { ConversationReference } from 'botframework-schema';
 import { HeroCard } from 'botframework-schema';
 import { InputHints } from 'botframework-schema';
@@ -24,8 +30,10 @@ import { MediaUrl } from 'botframework-schema';
 import { Mention } from 'botframework-schema';
 import { MessageReaction } from 'botframework-schema';
 import { O365ConnectorCard } from 'botframework-schema';
+import { PasswordServiceClientCredentialFactory } from 'botframework-connector';
 import { ReceiptCard } from 'botframework-schema';
 import { ResourceResponse } from 'botframework-schema';
+import { ServiceClientCredentialsFactory } from 'botframework-connector';
 import { ServiceCollection } from 'botbuilder-dialogs-adaptive-runtime-core';
 import { SignInUrlResponse } from 'botframework-schema';
 import { StatusCodes } from 'botframework-schema';
@@ -33,7 +41,9 @@ import { ThumbnailCard } from 'botframework-schema';
 import { TokenExchangeRequest } from 'botframework-schema';
 import { TokenExchangeResource } from 'botframework-schema';
 import { TokenResponse } from 'botframework-schema';
+import { UserTokenClient } from 'botframework-connector';
 import { VideoCard } from 'botframework-schema';
+import * as z from 'zod';
 
 // @public
 export class ActivityFactory {
@@ -135,7 +145,12 @@ export class AutoSaveStateMiddleware implements Middleware {
 export abstract class BotAdapter {
     // (undocumented)
     readonly BotIdentityKey: symbol;
+    // (undocumented)
+    readonly ConnectorClientKey: symbol;
     abstract continueConversation(reference: Partial<ConversationReference>, logic: (revocableContext: TurnContext) => Promise<void>): Promise<void>;
+    continueConversationAsync(botAppId: string, reference: Partial<ConversationReference>, logic: (context: TurnContext) => Promise<void>): Promise<void>;
+    continueConversationAsync(claimsIdentity: ClaimsIdentity, reference: Partial<ConversationReference>, logic: (context: TurnContext) => Promise<void>): Promise<void>;
+    continueConversationAsync(claimsIdentity: ClaimsIdentity, reference: Partial<ConversationReference>, audience: string, logic: (context: TurnContext) => Promise<void>): Promise<void>;
     abstract deleteActivity(context: TurnContext, reference: Partial<ConversationReference>): Promise<void>;
     // (undocumented)
     protected middleware: MiddlewareSet;
@@ -273,11 +288,68 @@ export class CardFactory {
     static videoCard(title: string, media: (MediaUrl | string)[], buttons?: (CardAction | string)[], other?: Partial<VideoCard>): Attachment;
 }
 
+// @public (undocumented)
+export abstract class CloudAdapterBase extends BotAdapter {
+    constructor(botFrameworkAuthentication: BotFrameworkAuthentication);
+    // (undocumented)
+    protected readonly botFrameworkAuthentication: BotFrameworkAuthentication;
+    // (undocumented)
+    readonly ConnectorFactoryKey: symbol;
+    // @deprecated (undocumented)
+    continueConversation(reference: Partial<ConversationReference>, logic: (context: TurnContext) => Promise<void>): Promise<void>;
+    // @internal (undocumented)
+    continueConversationAsync(botAppIdOrClaimsIdentity: string | ClaimsIdentity, reference: Partial<ConversationReference>, logicOrAudience: ((context: TurnContext) => Promise<void>) | string, maybeLogic?: (context: TurnContext) => Promise<void>): Promise<void>;
+    protected createClaimsIdentity(botAppId?: string): ClaimsIdentity;
+    // (undocumented)
+    deleteActivity(context: TurnContext, reference: Partial<ConversationReference>): Promise<void>;
+    protected processActivity(authHeader: string, activity: Activity, logic: (context: TurnContext) => Promise<void>): Promise<InvokeResponse | undefined>;
+    protected processActivity(authenticateRequestResult: AuthenticateRequestResult, activity: Activity, logic: (context: TurnContext) => Promise<void>): Promise<InvokeResponse | undefined>;
+    protected processProactive(claimsIdentity: ClaimsIdentity, continuationActivity: Partial<Activity>, audience: string | undefined, logic: (context: TurnContext) => Promise<void>): Promise<void>;
+    // (undocumented)
+    sendActivities(context: TurnContext, activities: Partial<Activity>[]): Promise<ResourceResponse[]>;
+    // (undocumented)
+    updateActivity(context: TurnContext, activity: Partial<Activity>): Promise<ResourceResponse | void>;
+    // (undocumented)
+    readonly UserTokenClientKey: symbol;
+}
+
 // @public
 export class ComponentRegistration {
     static add(componentRegistration: ComponentRegistration): void;
     static get components(): ComponentRegistration[];
     }
+
+// @public
+export class ConfigurationBotFrameworkAuthentication extends BotFrameworkAuthentication {
+    constructor(botFrameworkAuthConfig?: ConfigurationBotFrameworkAuthenticationOptions, credentialsFactory?: ServiceClientCredentialsFactory, authConfiguration?: AuthenticationConfiguration, botFrameworkClientFetch?: (input: RequestInfo, init?: RequestInit) => Promise<Response>, connectorClientOptions?: ConnectorClientOptions);
+    // (undocumented)
+    authenticateChannelRequest(authHeader: string): Promise<ClaimsIdentity>;
+    // (undocumented)
+    authenticateRequest(activity: Activity, authHeader: string): Promise<AuthenticateRequestResult>;
+    // (undocumented)
+    authenticateStreamingRequest(authHeader: string, channelIdHeader: string): Promise<AuthenticateRequestResult>;
+    // (undocumented)
+    createBotFrameworkClient(): BotFrameworkClient;
+    // (undocumented)
+    createConnectorFactory(claimsIdentity: ClaimsIdentity): ConnectorFactory;
+    // (undocumented)
+    createUserTokenClient(claimsIdentity: ClaimsIdentity): Promise<UserTokenClient>;
+    }
+
+// Warning: (ae-forgotten-export) The symbol "TypedOptions" needs to be exported by the entry point index.d.ts
+//
+// @public
+export type ConfigurationBotFrameworkAuthenticationOptions = z.infer<typeof TypedOptions>;
+
+// @public
+export class ConfigurationServiceClientCredentialFactory extends PasswordServiceClientCredentialFactory {
+    constructor(factoryOptions?: ConfigurationServiceClientCredentialFactoryOptions);
+}
+
+// Warning: (ae-forgotten-export) The symbol "TypedConfig" needs to be exported by the entry point index.d.ts
+//
+// @public
+export type ConfigurationServiceClientCredentialFactoryOptions = z.infer<typeof TypedConfig>;
 
 // @public
 export class ConsoleTranscriptLogger implements TranscriptLogger {
@@ -295,6 +367,12 @@ export interface CoreAppCredentials {
     // Warning: (ae-forgotten-export) The symbol "CoreWebResource" needs to be exported by the entry point index.d.ts
     signRequest(webResource: CoreWebResource): Promise<CoreWebResource>;
 }
+
+// @public
+export function createBotFrameworkAuthenticationFromConfiguration(configuration: Configuration, credentialsFactory?: ServiceClientCredentialsFactory, authConfiguration?: AuthenticationConfiguration, botFrameworkClientFetch?: (input: RequestInfo, init?: RequestInit) => Promise<Response>, connectorClientOptions?: ConnectorClientOptions): BotFrameworkAuthentication;
+
+// @public
+export function createServiceClientCredentialFactoryFromConfiguration(configuration: Configuration): ConfigurationServiceClientCredentialFactory;
 
 // @public
 export type DeleteActivityHandler = (context: TurnContext, reference: Partial<ConversationReference>, next: () => Promise<void>) => Promise<void>;

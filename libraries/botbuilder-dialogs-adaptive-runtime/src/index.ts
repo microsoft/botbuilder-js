@@ -24,16 +24,21 @@ import {
     ICredentialProvider,
     SimpleCredentialProvider,
     allowedCallersClaimsValidator,
+    BotFrameworkAuthentication,
+    ServiceClientCredentialsFactory,
+    ConnectorClientOptions,
 } from 'botframework-connector';
 
 import {
     ActivityHandlerBase,
     BotAdapter,
     BotComponent,
-    BotFrameworkAdapter,
+    BotFrameworkHttpAdapter,
     BotTelemetryClient,
     ChannelServiceHandler,
+    ChannelServiceHandlerBase,
     ChannelServiceRoutes,
+    CloudSkillHandler,
     ConsoleTranscriptLogger,
     ConversationState,
     InspectionMiddleware,
@@ -46,13 +51,13 @@ import {
     ShowTypingMiddleware,
     SkillConversationIdFactory,
     SkillConversationIdFactoryBase,
-    SkillHandler,
     SkillHttpClient,
     Storage,
     TelemetryLoggerMiddleware,
     TranscriptLoggerMiddleware,
     UserState,
     assertBotComponent,
+    createBotFrameworkAuthenticationFromConfiguration,
 } from 'botbuilder';
 
 function addFeatures(services: ServiceCollection, configuration: Configuration): void {
@@ -69,10 +74,12 @@ function addFeatures(services: ServiceCollection, configuration: Configuration):
 
             const setSpeak = configuration.type(
                 ['setSpeak'],
-                z.object({
-                    voiceFontName: z.string().optional(),
-                    fallbackToTextForSpeechIfEmpty: z.boolean(),
-                })
+                z
+                    .object({
+                        voiceFontName: z.string().optional(),
+                        fallbackToTextForSpeechIfEmpty: z.boolean(),
+                    })
+                    .nonstrict()
             );
 
             if (setSpeak) {
@@ -84,10 +91,12 @@ function addFeatures(services: ServiceCollection, configuration: Configuration):
             if (configuration.bool(['traceTranscript'])) {
                 const blobsTranscript = configuration.type(
                     ['blobTranscript'],
-                    z.object({
-                        connectionString: z.string(),
-                        containerName: z.string(),
-                    })
+                    z
+                        .object({
+                            connectionString: z.string(),
+                            containerName: z.string(),
+                        })
+                        .nonstrict()
                 );
 
                 middlewareSet.use(
@@ -119,6 +128,7 @@ function addTelemetry(services: ServiceCollection, configuration: Configuration)
                     instrumentationKey: z.string(),
                 })
                 .partial()
+                .nonstrict()
         );
 
         const setupString = telemetryOptions?.connectionString ?? telemetryOptions?.instrumentationKey;
@@ -147,10 +157,12 @@ function addStorage(services: ServiceCollection, configuration: Configuration): 
             case 'BlobsStorage': {
                 const blobsStorage = configuration.type(
                     ['BlobsStorage'],
-                    z.object({
-                        connectionString: z.string(),
-                        containerName: z.string(),
-                    })
+                    z
+                        .object({
+                            connectionString: z.string(),
+                            containerName: z.string(),
+                        })
+                        .nonstrict()
                 );
 
                 if (!blobsStorage) {
@@ -163,15 +175,17 @@ function addStorage(services: ServiceCollection, configuration: Configuration): 
             case 'CosmosDbPartitionedStorage': {
                 const cosmosOptions = configuration.type(
                     ['CosmosDbPartitionedStorage'],
-                    z.object({
-                        authKey: z.string().optional(),
-                        compatibilityMode: z.boolean().optional(),
-                        containerId: z.string(),
-                        containerThroughput: z.number().optional(),
-                        cosmosDBEndpoint: z.string().optional(),
-                        databaseId: z.string(),
-                        keySuffix: z.string().optional(),
-                    })
+                    z
+                        .object({
+                            authKey: z.string().optional(),
+                            compatibilityMode: z.boolean().optional(),
+                            containerId: z.string(),
+                            containerThroughput: z.number().optional(),
+                            cosmosDBEndpoint: z.string().optional(),
+                            databaseId: z.string(),
+                            keySuffix: z.string().optional(),
+                        })
+                        .nonstrict()
                 );
 
                 if (!cosmosOptions) {
@@ -222,24 +236,22 @@ function addSkills(services: ServiceCollection, configuration: Configuration): v
     });
 
     services.addFactory<
-        ChannelServiceHandler,
+        ChannelServiceHandlerBase,
         {
             adapter: BotAdapter;
-            authenticationConfiguration: AuthenticationConfiguration;
             bot: ActivityHandlerBase;
-            credentialProvider: ICredentialProvider;
+            botFrameworkAuthentication: BotFrameworkAuthentication;
             skillConversationIdFactory: SkillConversationIdFactoryBase;
         }
     >(
         'channelServiceHandler',
-        ['adapter', 'bot', 'skillConversationIdFactory', 'credentialProvider', 'authenticationConfiguration'],
+        ['adapter', 'bot', 'botFrameworkAuthentication', 'skillConversationIdFactory'],
         (dependencies) =>
-            new SkillHandler(
+            new CloudSkillHandler(
                 dependencies.adapter,
-                dependencies.bot,
+                (context) => dependencies.bot.run(context),
                 dependencies.skillConversationIdFactory,
-                dependencies.credentialProvider,
-                dependencies.authenticationConfiguration
+                dependencies.botFrameworkAuthentication
             )
     );
 
@@ -251,6 +263,32 @@ function addSkills(services: ServiceCollection, configuration: Configuration): v
 }
 
 function addCoreBot(services: ServiceCollection, configuration: Configuration): void {
+    services.addFactory<
+        BotFrameworkAuthentication,
+        {
+            authenticationConfiguration: AuthenticationConfiguration;
+            botFrameworkClientFetch?: (input: RequestInfo, init?: RequestInit) => Promise<Response>;
+            connectorClientOptions?: ConnectorClientOptions;
+            serviceClientCredentialsFactory?: ServiceClientCredentialsFactory;
+        }
+    >(
+        'botFrameworkAuthentication',
+        [
+            'authenticationConfiguration',
+            'botFrameworkClientFetch',
+            'connectorClientOptions',
+            'serviceClientCredentialsFactory',
+        ],
+        (dependencies) =>
+            createBotFrameworkAuthenticationFromConfiguration(
+                configuration,
+                dependencies.serviceClientCredentialsFactory,
+                dependencies.authenticationConfiguration,
+                dependencies.botFrameworkClientFetch,
+                dependencies.connectorClientOptions
+            )
+    );
+
     services.addFactory<
         ActivityHandlerBase,
         {
@@ -291,9 +329,9 @@ function addCoreBot(services: ServiceCollection, configuration: Configuration): 
     );
 
     services.addFactory<
-        BotFrameworkAdapter,
+        BotFrameworkHttpAdapter,
         {
-            authenticationConfiguration: AuthenticationConfiguration;
+            botFrameworkAuthentication: BotFrameworkAuthentication;
             conversationState: ConversationState;
             middlewares: MiddlewareSet;
             telemetryMiddleware: Middleware;
@@ -301,22 +339,15 @@ function addCoreBot(services: ServiceCollection, configuration: Configuration): 
         }
     >(
         'adapter',
-        ['authenticationConfiguration', 'conversationState', 'userState', 'middlewares', 'telemetryMiddleware'],
-        (dependencies) => {
-            const appId = configuration.string(['MicrosoftAppId']);
-            const appPassword = configuration.string(['MicrosoftAppPassword']);
-
-            const adapter = new CoreBotAdapter(
-                { appId, appPassword, authConfig: dependencies.authenticationConfiguration },
+        ['botFrameworkAuthentication', 'conversationState', 'userState', 'middlewares', 'telemetryMiddleware'],
+        (dependencies) =>
+            new CoreBotAdapter(
+                dependencies.botFrameworkAuthentication,
                 dependencies.conversationState,
                 dependencies.userState
-            );
-
-            adapter.use(dependencies.middlewares);
-            adapter.use(dependencies.telemetryMiddleware);
-
-            return adapter;
-        }
+            )
+                .use(dependencies.middlewares)
+                .use(dependencies.telemetryMiddleware)
     );
 }
 
@@ -342,10 +373,12 @@ async function addSettingsBotComponents(services: ServiceCollection, configurati
         configuration.type(
             ['runtimeSettings', 'components'],
             z.array(
-                z.object({
-                    name: z.string(),
-                    settingsPrefix: z.string().optional(),
-                })
+                z
+                    .object({
+                        name: z.string(),
+                        settingsPrefix: z.string().optional(),
+                    })
+                    .nonstrict()
             )
         ) ?? [];
 
@@ -491,11 +524,14 @@ export async function getRuntimeServices(
     }
 
     const services = new ServiceCollection({
+        botFrameworkClientFetch: undefined,
+        connectorClientOptions: undefined,
         customAdapters: new Map(),
         declarativeTypes: [],
         memoryScopes: [],
         middlewares: new MiddlewareSet(),
         pathResolvers: [],
+        serviceClientCredentialsFactory: undefined,
     });
 
     services.addFactory<ResourceExplorer, { declarativeTypes: ComponentDeclarativeTypes[] }>(

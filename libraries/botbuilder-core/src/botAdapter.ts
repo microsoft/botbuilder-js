@@ -2,6 +2,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
+import { ClaimsIdentity } from 'botframework-connector';
 import { Activity, ConversationReference, ResourceResponse } from 'botframework-schema';
 import { makeRevocable } from './internal';
 import { Middleware, MiddlewareHandler, MiddlewareSet } from './middlewareSet';
@@ -28,9 +29,12 @@ import { TurnContext } from './turnContext';
  */
 export abstract class BotAdapter {
     protected middleware: MiddlewareSet = new MiddlewareSet();
+
     private turnError: (context: TurnContext, error: Error) => Promise<void>;
-    public readonly BotIdentityKey: symbol = Symbol('BotIdentity');
-    public readonly OAuthScopeKey: symbol = Symbol('OAuthScope');
+
+    public readonly BotIdentityKey = Symbol('BotIdentity');
+    public readonly ConnectorClientKey = Symbol('ConnectorClient');
+    public readonly OAuthScopeKey = Symbol('OAuthScope');
 
     /**
      * Asynchronously sends a set of outgoing activities to a channel server.
@@ -96,6 +100,62 @@ export abstract class BotAdapter {
         reference: Partial<ConversationReference>,
         logic: (revocableContext: TurnContext) => Promise<void>
     ): Promise<void>;
+
+    /**
+     * Asynchronously resumes a conversation with a user, possibly after some time has gone by.
+     *
+     * @param botAppId The application ID of the bot. This parameter is ignored in single tenant the Adapters (Console,Test, etc) but is critical to the BotFrameworkAdapter which is multi-tenant aware.
+     * @param reference A partial [ConversationReference](xref:botframework-schema.ConversationReference) to the conversation to continue.
+     * @param logic The asynchronous method to call after the adapter middleware runs.
+     * @returns a promise representing the async operation
+     */
+    continueConversationAsync(
+        botAppId: string,
+        reference: Partial<ConversationReference>,
+        logic: (context: TurnContext) => Promise<void>
+    ): Promise<void>;
+
+    /**
+     * Asynchronously resumes a conversation with a user, possibly after some time has gone by.
+     *
+     * @param claimsIdentity A [ClaimsIdentity](xref:botframework-connector) for the conversation.
+     * @param reference A partial [ConversationReference](xref:botframework-schema.ConversationReference) to the conversation to continue.
+     * @param logic The asynchronous method to call after the adapter middleware runs.
+     * @returns a promise representing the async operation
+     */
+    continueConversationAsync(
+        claimsIdentity: ClaimsIdentity,
+        reference: Partial<ConversationReference>,
+        logic: (context: TurnContext) => Promise<void>
+    ): Promise<void>;
+
+    /**
+     * Asynchronously resumes a conversation with a user, possibly after some time has gone by.
+     *
+     * @param claimsIdentity A [ClaimsIdentity](xref:botframework-connector) for the conversation.
+     * @param reference A partial [ConversationReference](xref:botframework-schema.ConversationReference) to the conversation to continue.
+     * @param audience A value signifying the recipient of the proactive message.</param>
+     * @param logic The asynchronous method to call after the adapter middleware runs.
+     * @returns a promise representing the async operation
+     */
+    continueConversationAsync(
+        claimsIdentity: ClaimsIdentity,
+        reference: Partial<ConversationReference>,
+        audience: string,
+        logic: (context: TurnContext) => Promise<void>
+    ): Promise<void>;
+
+    /**
+     * @internal
+     */
+    async continueConversationAsync(
+        botAppIdOrClaimsIdentity: string | ClaimsIdentity,
+        reference: Partial<ConversationReference>,
+        logicOrAudience: ((context: TurnContext) => Promise<void>) | string,
+        maybeLogic?: (context: TurnContext) => Promise<void>
+    ): Promise<void> {
+        throw new Error('NotImplemented');
+    }
 
     /**
      * Gets or sets an error handler that can catch exceptions in the middleware or application.
