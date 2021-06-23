@@ -69,8 +69,8 @@ export class AdaptiveDialogBot extends ActivityHandler {
             );
 
             // Save any updates that have been made.
-            await context.turnState.get('ConversationState').saveChanges(context, false);
-            await context.turnState.get('UserState').saveChanges(context, false);
+            await context.turnState.get<ConversationState>('ConversationState').saveChanges(context, false);
+            await context.turnState.get<UserState>('UserState').saveChanges(context, false);
 
             // Delegate to next stage in pipeline
             await next();
@@ -109,7 +109,7 @@ export class AdaptiveDialogBot extends ActivityHandler {
             console.log('setTestOptions received. This could change the behavior of AdaptiveExpressions RandomNext');
 
             await context.turnState
-                .get('ConversationState')
+                .get<ConversationState>('ConversationState')
                 .createProperty('testOptions')
                 .set(context, context.activity.value);
         }
