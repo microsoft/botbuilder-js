@@ -17,16 +17,27 @@ const botbuilder_dialogs_declarative_1 = require("botbuilder-dialogs-declarative
 const botbuilder_1 = require("botbuilder");
 const lib_1 = require("../lib");
 describe('AdaptiveDialogBot Tests', function () {
+    let storage;
+    let conversationState;
+    let userState;
+    let skillConversationIdFactory;
+    let languagePolicy;
+    let resourceExplorer;
+    let telemetryClient;
+    let resourceProvider;
+    this.beforeEach(function () {
+        storage = new botbuilder_1.MemoryStorage();
+        conversationState = new botbuilder_1.ConversationState(storage);
+        userState = new botbuilder_1.UserState(storage);
+        skillConversationIdFactory = new botbuilder_1.SkillConversationIdFactory(storage);
+        languagePolicy = new lib_1.LanguagePolicy('en-US');
+        resourceExplorer = new botbuilder_dialogs_declarative_1.ResourceExplorer();
+        telemetryClient = new botbuilder_1.NullTelemetryClient();
+        resourceExplorer.registerType('Microsoft.AdaptiveDialog', lib_1.AdaptiveDialog);
+        resourceProvider = new MockResourceProvider(resourceExplorer);
+    });
     it('adds the correct parameters to TurnState', function () {
         return __awaiter(this, void 0, void 0, function* () {
-            const storage = new botbuilder_1.MemoryStorage();
-            const conversationState = new botbuilder_1.ConversationState(storage);
-            const userState = new botbuilder_1.UserState(storage);
-            const skillConversationIdFactory = new botbuilder_1.SkillConversationIdFactory(storage);
-            const languagePolicy = new lib_1.LanguagePolicy('en-US');
-            const resourceExplorer = new botbuilder_dialogs_declarative_1.ResourceExplorer();
-            resourceExplorer.registerType('Microsoft.AdaptiveDialog', lib_1.AdaptiveDialog);
-            const resourceProvider = new MockResourceProvider(resourceExplorer);
             resourceProvider.add('main.dialog', new MockResource(JSON.stringify({
                 $kind: 'Microsoft.AdaptiveDialog',
             })));
@@ -42,7 +53,6 @@ describe('AdaptiveDialogBot Tests', function () {
                 },
             };
             const turnContext = new botbuilder_1.TurnContext(new botbuilder_1.TestAdapter(), activity);
-            const telemetryClient = new botbuilder_1.NullTelemetryClient();
             const bot = new lib_1.AdaptiveDialogBot('main.dialog', 'main.lg', resourceExplorer, conversationState, userState, skillConversationIdFactory, languagePolicy, new MockBotFrameworkAuthentication(), telemetryClient);
             yield bot.run(turnContext);
             assert.ok(turnContext.turnState.get(botframework_connector_1.BotFrameworkClientKey));
@@ -61,13 +71,6 @@ describe('AdaptiveDialogBot Tests', function () {
     });
     it('should throw an error when no resource', function () {
         return __awaiter(this, void 0, void 0, function* () {
-            const storage = new botbuilder_1.MemoryStorage();
-            const conversationState = new botbuilder_1.ConversationState(storage);
-            const userState = new botbuilder_1.UserState(storage);
-            const skillConversationIdFactory = new botbuilder_1.SkillConversationIdFactory(storage);
-            const languagePolicy = new lib_1.LanguagePolicy('en-US');
-            const resourceExplorer = new botbuilder_dialogs_declarative_1.ResourceExplorer();
-            const resourceProvider = new MockResourceProvider(resourceExplorer);
             resourceExplorer.addResourceProvider(resourceProvider);
             const activity = {
                 type: botbuilder_1.ActivityTypes.Message,
@@ -87,14 +90,6 @@ describe('AdaptiveDialogBot Tests', function () {
     });
     it('setTestOptions', function () {
         return __awaiter(this, void 0, void 0, function* () {
-            const storage = new botbuilder_1.MemoryStorage();
-            const conversationState = new botbuilder_1.ConversationState(storage);
-            const userState = new botbuilder_1.UserState(storage);
-            const skillConversationIdFactory = new botbuilder_1.SkillConversationIdFactory(storage);
-            const languagePolicy = new lib_1.LanguagePolicy('en-US');
-            const resourceExplorer = new botbuilder_dialogs_declarative_1.ResourceExplorer();
-            resourceExplorer.registerType('Microsoft.AdaptiveDialog', lib_1.AdaptiveDialog);
-            const resourceProvider = new MockResourceProvider(resourceExplorer);
             resourceProvider.add('main.dialog', new MockResource(JSON.stringify({
                 $kind: 'Microsoft.AdaptiveDialog',
             })));
@@ -115,7 +110,6 @@ describe('AdaptiveDialogBot Tests', function () {
                 },
             };
             const turnContext = new botbuilder_1.TurnContext(new botbuilder_1.TestAdapter(), activity);
-            const telemetryClient = new botbuilder_1.NullTelemetryClient();
             const bot = new lib_1.AdaptiveDialogBot('main.dialog', 'main.lg', resourceExplorer, conversationState, userState, skillConversationIdFactory, languagePolicy, new MockBotFrameworkAuthentication(), telemetryClient);
             yield bot.run(turnContext);
             const testOptionsAccessor = conversationState.createProperty('testOptions');

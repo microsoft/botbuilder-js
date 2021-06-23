@@ -31,16 +31,27 @@ import {
 } from '../lib';
 
 describe('AdaptiveDialogBot Tests', function () {
-    it('adds the correct parameters to TurnState', async function () {
-        const storage = new MemoryStorage();
-        const conversationState = new ConversationState(storage);
-        const userState = new UserState(storage);
-        const skillConversationIdFactory = new SkillConversationIdFactory(storage);
-        const languagePolicy = new LanguagePolicy('en-US');
-
-        const resourceExplorer = new ResourceExplorer();
+    let storage: MemoryStorage;
+    let conversationState: ConversationState;
+    let userState: UserState;
+    let skillConversationIdFactory: SkillConversationIdFactory;
+    let languagePolicy: LanguagePolicy;
+    let resourceExplorer: ResourceExplorer;
+    let telemetryClient: NullTelemetryClient;
+    let resourceProvider: MockResourceProvider;
+    this.beforeEach(function () {
+        storage = new MemoryStorage();
+        conversationState = new ConversationState(storage);
+        userState = new UserState(storage);
+        skillConversationIdFactory = new SkillConversationIdFactory(storage);
+        languagePolicy = new LanguagePolicy('en-US');
+        resourceExplorer = new ResourceExplorer();
+        telemetryClient = new NullTelemetryClient();
         resourceExplorer.registerType('Microsoft.AdaptiveDialog', AdaptiveDialog);
-        const resourceProvider = new MockResourceProvider(resourceExplorer);
+        resourceProvider = new MockResourceProvider(resourceExplorer);
+    });
+
+    it('adds the correct parameters to TurnState', async function () {
         resourceProvider.add(
             'main.dialog',
             new MockResource(
@@ -63,7 +74,6 @@ describe('AdaptiveDialogBot Tests', function () {
         };
 
         const turnContext = new TurnContext(new TestAdapter(), activity as Activity);
-        const telemetryClient = new NullTelemetryClient();
 
         const bot = new AdaptiveDialogBot(
             'main.dialog',
@@ -94,14 +104,6 @@ describe('AdaptiveDialogBot Tests', function () {
     });
 
     it('should throw an error when no resource', async function () {
-        const storage = new MemoryStorage();
-        const conversationState = new ConversationState(storage);
-        const userState = new UserState(storage);
-        const skillConversationIdFactory = new SkillConversationIdFactory(storage);
-        const languagePolicy = new LanguagePolicy('en-US');
-
-        const resourceExplorer = new ResourceExplorer();
-        const resourceProvider = new MockResourceProvider(resourceExplorer);
         resourceExplorer.addResourceProvider(resourceProvider);
 
         const activity = {
@@ -137,15 +139,6 @@ describe('AdaptiveDialogBot Tests', function () {
     });
 
     it('setTestOptions', async function () {
-        const storage = new MemoryStorage();
-        const conversationState = new ConversationState(storage);
-        const userState = new UserState(storage);
-        const skillConversationIdFactory = new SkillConversationIdFactory(storage);
-        const languagePolicy = new LanguagePolicy('en-US');
-
-        const resourceExplorer = new ResourceExplorer();
-        resourceExplorer.registerType('Microsoft.AdaptiveDialog', AdaptiveDialog);
-        const resourceProvider = new MockResourceProvider(resourceExplorer);
         resourceProvider.add(
             'main.dialog',
             new MockResource(
@@ -173,7 +166,6 @@ describe('AdaptiveDialogBot Tests', function () {
         };
 
         const turnContext = new TurnContext(new TestAdapter(), activity as Activity);
-        const telemetryClient = new NullTelemetryClient();
 
         const bot = new AdaptiveDialogBot(
             'main.dialog',
