@@ -155,9 +155,11 @@ export class ActivityHandlerBase {
      *   call [onReactionsRemovedActivity](xref:botbuilder-core.ActivityHandlerBase.onReactionsRemovedActivity).
      */
     protected async onMessageReactionActivity(context: TurnContext): Promise<void> {
-        if (context.activity.reactionsAdded && context.activity.reactionsAdded.length > 0) {
+        if (context.activity.reactionsAdded?.length) {
             await this.onReactionsAddedActivity(context.activity.reactionsAdded, context);
-        } else if (context.activity.reactionsRemoved && context.activity.reactionsRemoved.length > 0) {
+        }
+
+        if (context.activity.reactionsRemoved?.length) {
             await this.onReactionsRemovedActivity(context.activity.reactionsRemoved, context);
         }
     }

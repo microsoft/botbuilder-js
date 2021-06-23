@@ -317,5 +317,20 @@ describe('ActivityHandlerBase', function () {
             assert(onMessageReactionActivityCalled, 'onMessageReactionActivity was not called');
             assert(onReactionsRemovedActivityCalled, 'onReactionsRemovedActivity was not called');
         });
+
+        it(`should call onReactionsAddedActivity if reactionsAdded and onReactionsRemovedActivity if reactionsRemoved if they both exist and have items`, async function () {
+            const bot = new MessageReactionActivityHandler();
+            const activity = createMsgReactActivity('bot', {
+                reactionsAdded: [{ type: 'laugh' }],
+                reactionsRemoved: [{ type: 'like' }],
+            });
+
+            await processActivity(activity, bot);
+
+            assert(onTurnActivityCalled, 'onTurnActivity was not called');
+            assert(onMessageReactionActivityCalled, 'onMessageReactionActivity was not called');
+            assert(onReactionsAddedActivityCalled, 'onReactionsAddedActivity was not called');
+            assert(onReactionsRemovedActivityCalled, 'onReactionsRemovedActivity was not called');
+        });
     });
 });
