@@ -34,20 +34,8 @@ export class ConfigurationServiceClientCredentialFactory extends PasswordService
      * @param factoryOptions A [ConfigurationServiceClientCredentialFactoryOptions](xref:botbuilder-core.ConfigurationServiceClientCredentialFactoryOptions) object.
      */
     constructor(factoryOptions: ConfigurationServiceClientCredentialFactoryOptions = {}) {
-        try {
-            const { MicrosoftAppId = null, MicrosoftAppPassword = null } = TypedConfig.nonstrict().parse(
-                factoryOptions
-            );
-
-            super(MicrosoftAppId, MicrosoftAppPassword);
-        } catch (err) {
-            if (z.instanceof(z.ZodError).check(err)) {
-                const e = new Error(JSON.stringify(err.errors, undefined, 2));
-                e.stack = err.stack;
-                throw e;
-            }
-            throw err;
-        }
+        const { MicrosoftAppId = null, MicrosoftAppPassword = null } = TypedConfig.nonstrict().parse(factoryOptions);
+        super(MicrosoftAppId, MicrosoftAppPassword);
     }
 }
 

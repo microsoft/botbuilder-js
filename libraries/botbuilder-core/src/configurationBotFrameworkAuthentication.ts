@@ -34,7 +34,7 @@ const TypedOptions = z
         /**
          * (Optional) The OpenID metadata document used for authenticating tokens coming from the channel. The "ToBotFromChannelOpenIdMetadataUrl" member takes precedence over this value.
          */
-        [AuthenticationConstants.BotOpenIdMetadataKey]: z.string(),
+        [AuthenticationConstants.BotOpenIdMetadataKey]: z.string().nullable(),
 
         /**
          * A string used to indicate if which cloud the bot is operating in (e.g. Public Azure or US Government).

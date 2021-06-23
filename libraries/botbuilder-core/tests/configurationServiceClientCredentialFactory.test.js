@@ -53,9 +53,14 @@ describe('ConfigurationServiceClientCredentialFactory', function () {
             MicrosoftAppId: 1,
             MicrosoftAppPassword: true,
         });
+
         assert.throws(
             () => createServiceClientCredentialFactoryFromConfiguration(config),
-            /(?:MicrosoftAppId).*\s.*(?:MicrosoftAppPassword)/
+            (err) => {
+                assert(err.message.includes('MicrosoftAppId'));
+                assert(err.message.includes('MicrosoftAppPassword'));
+                return true;
+            }
         );
     });
 });

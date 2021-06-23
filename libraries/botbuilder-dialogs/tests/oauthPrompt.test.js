@@ -678,15 +678,11 @@ describe('OAuthPrompt', function () {
 
                 setActiveDialog(dc, oAuthPrompt);
 
-                await assert.rejects(oAuthPrompt.recognizeToken(dc), (err) => {
-                    ok(isTokenResponseEventSpy.calledOnce, 'isTokenResponseEventSpy called more than once');
-                    ok(err instanceof TypeError, `unexpected error: ${err.toString()}`);
-                    strictEqual(
-                        err.message,
-                        'OAuthPrompt: ConnectorClientBuilder interface not implemented by the current adapter'
-                    );
-                    return true;
+                await assert.rejects(oAuthPrompt.recognizeToken(dc), {
+                    message: 'OAuth prompt is not supported by the current adapter',
                 });
+
+                ok(isTokenResponseEventSpy.calledOnce, 'isTokenResponseEventSpy called more than once');
             });
         });
     });
