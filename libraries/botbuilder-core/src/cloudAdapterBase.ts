@@ -190,6 +190,13 @@ export abstract class CloudAdapterBase extends BotAdapter {
         conversationParameters: ConversationParameters,
         logic: (context: TurnContext) => Promise<void>
     ): Promise<void> {
+        if (typeof serviceUrl !== 'string' || !serviceUrl) {
+            throw new TypeError('`serviceUrl` must be a non-empty string');
+        }
+
+        if (!conversationParameters) throw new TypeError('`conversationParameters` must be defined');
+        if (!logic) throw new TypeError('`logic` must be defined');
+
         // Create a ClaimsIdentity, to create the connector and for adding to the turn context.
         const claimsIdentity = this.createClaimsIdentity(botAppId);
         claimsIdentity.claims.push({ type: AuthenticationConstants.ServiceUrlClaim, value: serviceUrl });
