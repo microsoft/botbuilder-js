@@ -195,6 +195,8 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> im
 // @public (undocumented)
 export class AdaptiveDialogBot extends ActivityHandler {
     constructor(adaptiveDialogId: string, languageGeneratorId: string, resourceExplorer: ResourceExplorer, conversationState: ConversationState, userState: UserState, skillConversationIdFactoryBase: SkillConversationIdFactoryBase, languagePolicy: LanguagePolicy, botFrameworkAuthentication: BotFrameworkAuthentication, telemetryClient: BotTelemetryClient, memoryScopes?: MemoryScope[], pathResolvers?: PathResolver[], dialogs?: Dialog[]);
+    // (undocumented)
+    protected onTurnActivity(context: TurnContext): Promise<void>;
     }
 
 // @public (undocumented)
