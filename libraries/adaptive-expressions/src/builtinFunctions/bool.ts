@@ -26,6 +26,10 @@ export class Bool extends ComparisonEvaluator {
      * @private
      */
     private static func(args: any[]): boolean {
+        if (FunctionUtils.isNumber(args[0])) {
+            return args[0] !== 0;
+        }
+
         return InternalFunctionUtils.isLogicTrue(args[0]);
     }
 }
