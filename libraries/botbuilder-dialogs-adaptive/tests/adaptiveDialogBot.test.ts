@@ -10,6 +10,7 @@ import {
     ActivityTypes,
     BotCallbackHandlerKey,
     BotTelemetryClientKey,
+    Channels,
     ConversationState,
     MemoryStorage,
     NullTelemetryClient,
@@ -28,7 +29,7 @@ import {
     languagePolicyKey,
     resourceExplorerKey,
     skillConversationIdFactoryKey,
-} from '../lib';
+} from '..';
 
 describe('AdaptiveDialogBot Tests', function () {
     let storage: MemoryStorage;
@@ -64,7 +65,7 @@ describe('AdaptiveDialogBot Tests', function () {
 
         const activity = {
             type: ActivityTypes.Message,
-            channelId: 'test-channel',
+            channelId: Channels.Test,
             conversation: {
                 id: 'test-conversation-id',
             },
@@ -108,7 +109,7 @@ describe('AdaptiveDialogBot Tests', function () {
 
         const activity = {
             type: ActivityTypes.Message,
-            channelId: 'test-channel',
+            channelId: Channels.Test,
             conversation: {
                 id: 'test-conversation-id',
             },
@@ -152,7 +153,7 @@ describe('AdaptiveDialogBot Tests', function () {
         const activity = {
             type: ActivityTypes.Event,
             name: 'setTestOptions',
-            channelId: 'test-channel',
+            channelId: Channels.Test,
             conversation: {
                 id: 'test-conversation-id',
             },

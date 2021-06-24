@@ -51,30 +51,27 @@ export class AdaptiveDialogBot extends ActivityHandler {
         super();
 
         this.lazyRootDialog = memoize(() => this.createDialog());
+    }
 
-        this.onTurn(async (context, next) => {
-            const botFrameworkClient = this.botFrameworkAuthentication.createBotFrameworkClient();
+    protected async onTurnActivity(context: TurnContext): Promise<void> {
+        const botFrameworkClient = this.botFrameworkAuthentication.createBotFrameworkClient();
 
-            // Set up the TurnState the Dialog is expecting.
-            await this.setUpTurnState(context, botFrameworkClient);
+        // Set up the TurnState the Dialog is expecting.
+        await this.setUpTurnState(context, botFrameworkClient);
 
-            // Load the Dialog from the ResourceExplorer - the actual load should only happen once.
-            const rootDialog = this.lazyRootDialog();
+        // Load the Dialog from the ResourceExplorer - the actual load should only happen once.
+        const rootDialog = this.lazyRootDialog();
 
-            // Run the dialog.
-            await runDialog(
-                rootDialog,
-                context,
-                context.turnState.get<ConversationState>('ConversationState').createProperty('dialogState')
-            );
+        // Run the dialog.
+        await runDialog(
+            rootDialog,
+            context,
+            context.turnState.get<ConversationState>('ConversationState').createProperty('dialogState')
+        );
 
-            // Save any updates that have been made.
-            await context.turnState.get<ConversationState>('ConversationState').saveChanges(context, false);
-            await context.turnState.get<UserState>('UserState').saveChanges(context, false);
-
-            // Delegate to next stage in pipeline
-            await next();
-        });
+        // Save any updates that have been made.
+        await context.turnState.get<ConversationState>('ConversationState').saveChanges(context);
+        await context.turnState.get<UserState>('UserState').saveChanges(context);
     }
 
     private async setUpTurnState(context: TurnContext, botFrameworkClient: BotFrameworkClient): Promise<void> {

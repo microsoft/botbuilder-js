@@ -15,7 +15,7 @@ const assert = require("assert");
 const botframework_connector_1 = require("botframework-connector");
 const botbuilder_dialogs_declarative_1 = require("botbuilder-dialogs-declarative");
 const botbuilder_1 = require("botbuilder");
-const lib_1 = require("../lib");
+const __1 = require("..");
 describe('AdaptiveDialogBot Tests', function () {
     let storage;
     let conversationState;
@@ -30,10 +30,10 @@ describe('AdaptiveDialogBot Tests', function () {
         conversationState = new botbuilder_1.ConversationState(storage);
         userState = new botbuilder_1.UserState(storage);
         skillConversationIdFactory = new botbuilder_1.SkillConversationIdFactory(storage);
-        languagePolicy = new lib_1.LanguagePolicy('en-US');
+        languagePolicy = new __1.LanguagePolicy('en-US');
         resourceExplorer = new botbuilder_dialogs_declarative_1.ResourceExplorer();
         telemetryClient = new botbuilder_1.NullTelemetryClient();
-        resourceExplorer.registerType('Microsoft.AdaptiveDialog', lib_1.AdaptiveDialog);
+        resourceExplorer.registerType('Microsoft.AdaptiveDialog', __1.AdaptiveDialog);
         resourceProvider = new MockResourceProvider(resourceExplorer);
     });
     it('adds the correct parameters to TurnState', function () {
@@ -44,7 +44,7 @@ describe('AdaptiveDialogBot Tests', function () {
             resourceExplorer.addResourceProvider(resourceProvider);
             const activity = {
                 type: botbuilder_1.ActivityTypes.Message,
-                channelId: 'test-channel',
+                channelId: botbuilder_1.Channels.Test,
                 conversation: {
                     id: 'test-conversation-id',
                 },
@@ -53,16 +53,16 @@ describe('AdaptiveDialogBot Tests', function () {
                 },
             };
             const turnContext = new botbuilder_1.TurnContext(new botbuilder_1.TestAdapter(), activity);
-            const bot = new lib_1.AdaptiveDialogBot('main.dialog', 'main.lg', resourceExplorer, conversationState, userState, skillConversationIdFactory, languagePolicy, new MockBotFrameworkAuthentication(), telemetryClient);
+            const bot = new __1.AdaptiveDialogBot('main.dialog', 'main.lg', resourceExplorer, conversationState, userState, skillConversationIdFactory, languagePolicy, new MockBotFrameworkAuthentication(), telemetryClient);
             yield bot.run(turnContext);
             assert.ok(turnContext.turnState.get(botframework_connector_1.BotFrameworkClientKey));
-            assert.ok(turnContext.turnState.get(lib_1.skillConversationIdFactoryKey));
+            assert.ok(turnContext.turnState.get(__1.skillConversationIdFactoryKey));
             assert.ok(turnContext.turnState.get('ConversationState'));
             assert.ok(turnContext.turnState.get('UserState'));
-            assert.ok(turnContext.turnState.get(lib_1.resourceExplorerKey));
-            assert.ok(turnContext.turnState.get(lib_1.languageGeneratorKey));
-            assert.ok(turnContext.turnState.get(lib_1.languageGeneratorManagerKey));
-            assert.ok(turnContext.turnState.get(lib_1.languagePolicyKey));
+            assert.ok(turnContext.turnState.get(__1.resourceExplorerKey));
+            assert.ok(turnContext.turnState.get(__1.languageGeneratorKey));
+            assert.ok(turnContext.turnState.get(__1.languageGeneratorManagerKey));
+            assert.ok(turnContext.turnState.get(__1.languagePolicyKey));
             assert.ok(turnContext.turnState.get('memoryScopes'));
             assert.ok(turnContext.turnState.get('pathResolvers'));
             assert.ok(turnContext.turnState.get(botbuilder_1.BotTelemetryClientKey));
@@ -74,7 +74,7 @@ describe('AdaptiveDialogBot Tests', function () {
             resourceExplorer.addResourceProvider(resourceProvider);
             const activity = {
                 type: botbuilder_1.ActivityTypes.Message,
-                channelId: 'test-channel',
+                channelId: botbuilder_1.Channels.Test,
                 conversation: {
                     id: 'test-conversation-id',
                 },
@@ -84,7 +84,7 @@ describe('AdaptiveDialogBot Tests', function () {
             };
             const turnContext = new botbuilder_1.TurnContext(new botbuilder_1.TestAdapter(), activity);
             const telemetryClient = new botbuilder_1.NullTelemetryClient();
-            const bot = new lib_1.AdaptiveDialogBot('main.dialog', 'main.lg', resourceExplorer, conversationState, userState, skillConversationIdFactory, languagePolicy, new MockBotFrameworkAuthentication(), telemetryClient);
+            const bot = new __1.AdaptiveDialogBot('main.dialog', 'main.lg', resourceExplorer, conversationState, userState, skillConversationIdFactory, languagePolicy, new MockBotFrameworkAuthentication(), telemetryClient);
             yield assert.rejects(bot.run(turnContext), new Error('The ResourceExplorer could not find a resource with id "main.dialog"'));
         });
     });
@@ -97,7 +97,7 @@ describe('AdaptiveDialogBot Tests', function () {
             const activity = {
                 type: botbuilder_1.ActivityTypes.Event,
                 name: 'setTestOptions',
-                channelId: 'test-channel',
+                channelId: botbuilder_1.Channels.Test,
                 conversation: {
                     id: 'test-conversation-id',
                 },
@@ -110,7 +110,7 @@ describe('AdaptiveDialogBot Tests', function () {
                 },
             };
             const turnContext = new botbuilder_1.TurnContext(new botbuilder_1.TestAdapter(), activity);
-            const bot = new lib_1.AdaptiveDialogBot('main.dialog', 'main.lg', resourceExplorer, conversationState, userState, skillConversationIdFactory, languagePolicy, new MockBotFrameworkAuthentication(), telemetryClient);
+            const bot = new __1.AdaptiveDialogBot('main.dialog', 'main.lg', resourceExplorer, conversationState, userState, skillConversationIdFactory, languagePolicy, new MockBotFrameworkAuthentication(), telemetryClient);
             yield bot.run(turnContext);
             const testOptionsAccessor = conversationState.createProperty('testOptions');
             assert.strictEqual(123, (yield testOptionsAccessor.get(turnContext)).randomSeed);
