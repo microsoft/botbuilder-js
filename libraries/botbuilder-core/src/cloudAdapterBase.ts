@@ -5,6 +5,7 @@ import { BotAdapter } from './botAdapter';
 import { BotCallbackHandlerKey, TurnContext } from './turnContext';
 import { INVOKE_RESPONSE_KEY } from './activityHandlerBase';
 import { delay } from 'botbuilder-stdlib';
+import { v4 as uuid } from 'uuid';
 
 import {
     AuthenticateRequestResult,
@@ -18,9 +19,11 @@ import {
 
 import {
     Activity,
+    ActivityEventNames,
     ActivityEx,
     ActivityTypes,
     Channels,
+    ConversationParameters,
     ConversationReference,
     DeliveryModes,
     InvokeResponse,
@@ -174,6 +177,82 @@ export abstract class CloudAdapterBase extends BotAdapter {
         const logic = typeof logicOrAudience === 'function' ? logicOrAudience : maybeLogic;
 
         return this.processProactive(claimsIdentity, ActivityEx.getContinuationActivity(reference), audience, logic);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    async createConversationAsync(
+        botAppId: string,
+        channelId: string,
+        serviceUrl: string,
+        audience: string,
+        conversationParameters: ConversationParameters,
+        logic: (context: TurnContext) => Promise<void>
+    ): Promise<void> {
+        // Create a ClaimsIdentity, to create the connector and for adding to the turn context.
+        const claimsIdentity = this.createClaimsIdentity(botAppId);
+        claimsIdentity.claims.push({ type: AuthenticationConstants.ServiceUrlClaim, value: serviceUrl });
+
+        // Create the connector factory.
+        const connectorFactory = this.botFrameworkAuthentication.createConnectorFactory(claimsIdentity);
+
+        // Create the connector client to use for outbound requests.
+        const connectorClient = await connectorFactory.create(serviceUrl, audience);
+
+        // Make the actual create conversation call using the connector.
+        const createConversationResult = await connectorClient.conversations.createConversation(conversationParameters);
+
+        // Create the create activity to communicate the results to the application.
+        const createActivity = this.createCreateActivity(
+            createConversationResult.id,
+            channelId,
+            serviceUrl,
+            conversationParameters
+        );
+
+        // Create a UserTokenClient instance for the application to use. (For example, in the OAuthPrompt.)
+        const userTokenClient = await this.botFrameworkAuthentication.createUserTokenClient(claimsIdentity);
+
+        // Create a turn context and run the pipeline.
+        const context = this.createTurnContext(
+            createActivity,
+            claimsIdentity,
+            undefined,
+            connectorClient,
+            userTokenClient,
+            logic,
+            connectorFactory
+        );
+
+        // Run the pipeline.
+        await this.runMiddleware(context, logic);
+    }
+
+    private createCreateActivity(
+        createdConversationId: string | undefined,
+        channelId: string,
+        serviceUrl: string,
+        conversationParameters: ConversationParameters
+    ): Partial<Activity> {
+        // Create a conversation update activity to represent the result.
+        const activity = ActivityEx.createEventActivity();
+
+        activity.name = ActivityEventNames.CreateConversation;
+        activity.channelId = channelId;
+        activity.serviceUrl = serviceUrl;
+        activity.id = createdConversationId ?? uuid();
+        activity.conversation = {
+            conversationType: undefined,
+            id: createdConversationId,
+            isGroup: conversationParameters.isGroup,
+            name: undefined,
+            tenantId: conversationParameters.tenantId,
+        };
+        activity.channelData = conversationParameters.channelData;
+        activity.recipient = conversationParameters.bot;
+
+        return activity;
     }
 
     /**
