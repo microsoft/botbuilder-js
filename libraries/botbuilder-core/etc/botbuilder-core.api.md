@@ -22,6 +22,7 @@ import { ClaimsIdentity } from 'botframework-connector';
 import { Configuration } from 'botbuilder-dialogs-adaptive-runtime-core';
 import { ConnectorClientOptions } from 'botframework-connector';
 import { ConnectorFactory } from 'botframework-connector';
+import { ConversationParameters } from 'botframework-schema';
 import { ConversationReference } from 'botframework-schema';
 import { HeroCard } from 'botframework-schema';
 import { InputHints } from 'botframework-schema';
@@ -151,6 +152,7 @@ export abstract class BotAdapter {
     continueConversationAsync(botAppId: string, reference: Partial<ConversationReference>, logic: (context: TurnContext) => Promise<void>): Promise<void>;
     continueConversationAsync(claimsIdentity: ClaimsIdentity, reference: Partial<ConversationReference>, logic: (context: TurnContext) => Promise<void>): Promise<void>;
     continueConversationAsync(claimsIdentity: ClaimsIdentity, reference: Partial<ConversationReference>, audience: string, logic: (context: TurnContext) => Promise<void>): Promise<void>;
+    createConversationAsync(botAppId: string, channelId: string, serviceUrl: string, audience: string, conversationParameters: ConversationParameters, logic: (context: TurnContext) => Promise<void>): Promise<void>;
     abstract deleteActivity(context: TurnContext, reference: Partial<ConversationReference>): Promise<void>;
     // (undocumented)
     protected middleware: MiddlewareSet;
@@ -300,6 +302,8 @@ export abstract class CloudAdapterBase extends BotAdapter {
     // @internal (undocumented)
     continueConversationAsync(botAppIdOrClaimsIdentity: string | ClaimsIdentity, reference: Partial<ConversationReference>, logicOrAudience: ((context: TurnContext) => Promise<void>) | string, maybeLogic?: (context: TurnContext) => Promise<void>): Promise<void>;
     protected createClaimsIdentity(botAppId?: string): ClaimsIdentity;
+    // (undocumented)
+    createConversationAsync(botAppId: string, channelId: string, serviceUrl: string, audience: string, conversationParameters: ConversationParameters, logic: (context: TurnContext) => Promise<void>): Promise<void>;
     // (undocumented)
     deleteActivity(context: TurnContext, reference: Partial<ConversationReference>): Promise<void>;
     protected processActivity(authHeader: string, activity: Activity, logic: (context: TurnContext) => Promise<void>): Promise<InvokeResponse | undefined>;
