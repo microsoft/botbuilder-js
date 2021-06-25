@@ -58,7 +58,7 @@ export class PasswordServiceClientCredentialFactory implements ServiceClientCred
                 appId == null
                     ? MicrosoftAppCredentials.Empty
                     : new MicrosoftAppCredentials(appId, this.password, undefined, audience);
-        } else if (normalizedEndpoint == GovernmentConstants.ToChannelFromBotLoginUrl.toLowerCase()) {
+        } else if (normalizedEndpoint === GovernmentConstants.ToChannelFromBotLoginUrl.toLowerCase()) {
             credentials =
                 appId == null
                     ? new MicrosoftAppCredentials(
