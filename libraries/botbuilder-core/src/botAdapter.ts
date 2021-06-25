@@ -3,7 +3,7 @@
  * Licensed under the MIT License.
  */
 import { ClaimsIdentity } from 'botframework-connector';
-import { Activity, ConversationReference, ResourceResponse } from 'botframework-schema';
+import { Activity, ConversationParameters, ConversationReference, ResourceResponse } from 'botframework-schema';
 import { makeRevocable } from './internal';
 import { Middleware, MiddlewareHandler, MiddlewareSet } from './middlewareSet';
 import { TurnContext } from './turnContext';
@@ -153,6 +153,39 @@ export abstract class BotAdapter {
         reference: Partial<ConversationReference>,
         logicOrAudience: ((context: TurnContext) => Promise<void>) | string,
         maybeLogic?: (context: TurnContext) => Promise<void>
+    ): Promise<void> {
+        throw new Error('NotImplemented');
+    }
+
+    /**
+     * Creates a conversation on the specified channel.
+     *
+     * @param botAppId The application ID of the bot.
+     * @param channelId The ID for the channel.
+     * @param serviceUrl The ID for the channel.
+     * @param audience The audience for the connector.
+     * <param name="conversationParameters">
+     * @param conversationParameters The conversation information to use to create the conversation
+     * @param logic The method to call for the resulting bot turn.
+     * @returns A promise that represents the asynchronous operation
+     *
+     * @remarks
+     * To start a conversation, your bot must know its account information and the user's account information on that
+     * channel.  Most _channels only support initiating a direct message (non-group) conversation.
+     *
+     * The adapter attempts to create a new conversation on the channel, and then sends a `conversationUpdate` activity
+     * through its middleware pipeline to the logic method.
+     *
+     * If the conversation is established with the specified users, the ID of the activity's converstion will contain
+     * the ID of the new conversation.
+     */
+    async createConversationAsync(
+        botAppId: string,
+        channelId: string,
+        serviceUrl: string,
+        audience: string,
+        conversationParameters: ConversationParameters,
+        logic: (context: TurnContext) => Promise<void>
     ): Promise<void> {
         throw new Error('NotImplemented');
     }
