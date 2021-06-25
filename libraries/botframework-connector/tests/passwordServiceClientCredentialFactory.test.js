@@ -53,7 +53,7 @@ describe('PasswordServiceClientCredentialFactory', function () {
             // The PasswordServiceClientCredentialFactory generates subclasses of the AppCredentials class.
             assert.strictEqual(cred.appId, APP_ID);
             assert.strictEqual(cred.oAuthScope, testArgs[idx][1]);
-            assert.strictEqual(cred.oAuthEndpoint, testArgs[idx][2].toLowerCase());
+            assert.strictEqual(cred.oAuthEndpoint, testArgs[idx][2]);
         });
     });
 
