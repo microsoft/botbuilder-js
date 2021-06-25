@@ -229,10 +229,34 @@ function addSkills(services: ServiceCollection, configuration: Configuration): v
         const allowedCallers =
             configuration.type(['runtimeSettings', 'skills', 'allowedCallers'], z.array(z.string())) ?? [];
 
-        return new AuthenticationConfiguration(
-            undefined,
-            allowedCallers.length ? allowedCallersClaimsValidator(allowedCallers) : undefined
+        const skills = Object.values(
+            configuration.type(
+                ['skills'],
+                z.record(
+                    z
+                        .object({
+                            msAppId: z.string(),
+                        })
+                        .nonstrict()
+                )
+            ) ?? {}
         );
+
+        if (skills.length) {
+            // If the config entry for "skills" is present then we are a consumer and the entries under
+            // runtimeSettings.sills are ignored
+            return new AuthenticationConfiguration(
+                undefined,
+                allowedCallersClaimsValidator(skills.map((skill) => skill.msAppId))
+            );
+        } else {
+            // If the config entry for runtimeSettings.skills.allowedCallers contains entries, then we are a skill and
+            // we validate caller against this list
+            return new AuthenticationConfiguration(
+                undefined,
+                allowedCallers.length ? allowedCallersClaimsValidator(allowedCallers) : undefined
+            );
+        }
     });
 
     services.addFactory<
