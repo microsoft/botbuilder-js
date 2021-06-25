@@ -55,7 +55,12 @@
     "postbuild": "downlevel-dts lib _ts3.4/lib --checksum",
     "test": "npm-run-all build test:mocha",
     "test:compat": "api-extractor run --verbose",
-    "test:mocha": "nyc mocha --recursive tests/**/*.test.js"
+    "test:mocha": "nyc mocha tests"
+  },
+  "mocha": {
+    "checkLeaks": true,
+    "exit": true,
+    "recursive": true
   },
   "files": [
     "_ts3.4",
