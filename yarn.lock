@@ -1278,6 +1278,16 @@
     source-map "~0.6.1"
     typescript "~4.2.4"
 
+"@microsoft/orchestrator-core@4.14.0":
+  version "4.14.0"
+  resolved "https://registry.yarnpkg.com/@microsoft/orchestrator-core/-/orchestrator-core-4.14.0.tgz#a8f9097a43dda32904979e416e01f1a485f072c3"
+  integrity sha512-EwVuEkBGRMKAdHaVPKhHHXtKjQDtWFGpdHRJX6WEVf6bek2Jwa8WRr7SpA3YoOgNyabR2oSMW92mNI6W/TFdsA==
+  dependencies:
+    "@mapbox/node-pre-gyp" "^1.0.3"
+    bindings "1.2.1"
+    node-addon-api "^3.1.0"
+    node-gyp "^8.0.0"
+
 "@microsoft/recognizers-text-choice@1.1.4", "@microsoft/recognizers-text-choice@~1.1.4":
   version "1.1.4"
   resolved "https://registry.yarnpkg.com/@microsoft/recognizers-text-choice/-/recognizers-text-choice-1.1.4.tgz#8e9ae8f804ae49bd57dd6bbf227a2ab0e14a9041"
@@ -9843,16 +9853,6 @@ ora@^4.0.3:
     mute-stream "0.0.8"
     strip-ansi "^6.0.0"
     wcwidth "^1.0.1"
-
-orchestrator-core@4.13.1:
-  version "4.13.1"
-  resolved "https://registry.yarnpkg.com/orchestrator-core/-/orchestrator-core-4.13.1.tgz#87246cedd1377d9f7854f0c301254279f35c3f37"
-  integrity sha512-3V4Rzlc5uogicxjkdv6HryouFsT8koPzXtxGPFwmNPIF4HQXVQl93EIefF3uu8deuaoVeu6uKl6BJwSafLhssQ==
-  dependencies:
-    "@mapbox/node-pre-gyp" "^1.0.3"
-    bindings "1.2.1"
-    node-addon-api "^3.1.0"
-    node-gyp "^8.0.0"
 
 orchestrator@^0.3.0:
   version "0.3.8"
