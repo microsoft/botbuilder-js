@@ -1,17 +1,23 @@
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
+
 const assert = require('assert');
+const nock = require('nock');
 const { BotFrameworkHttpClient } = require('../');
+
 const {
     AuthenticationConstants,
+    ConversationConstants,
     GovernmentConstants,
-    SimpleCredentialProvider,
     MicrosoftAppCredentials,
+    SimpleCredentialProvider,
 } = require('botframework-connector');
-const nock = require('nock');
 
 class TestBotFrameworkHttpClient extends BotFrameworkHttpClient {
     constructor(credentialProvider, channelService) {
         super(credentialProvider, channelService);
     }
+
     async buildCredentials() {
         return new MicrosoftAppCredentials('', '');
     }
@@ -21,13 +27,13 @@ class TestBotFrameworkHttpClientWithNoCredentials extends BotFrameworkHttpClient
     constructor(credentialProvider, channelService) {
         super(credentialProvider, channelService);
     }
+
     async buildCredentials() {
         return null;
     }
 }
 
 describe('BotFrameworkHttpClient', function () {
-    this.timeout(3000);
     describe('constructor()', function () {
         it('should succeed with correct parameters', function () {
             new BotFrameworkHttpClient(new SimpleCredentialProvider('', ''));
@@ -54,7 +60,10 @@ describe('BotFrameworkHttpClient', function () {
         });
 
         it('should succeed to make call', async function () {
-            nock('http://skillUrl').post('/api/good').reply(200, { id: 'some-id' });
+            nock('http://skillUrl')
+                .post('/api/good')
+                .matchHeader(ConversationConstants.ConversationIdHttpHeaderName, 'conversationId')
+                .reply(200, { id: 'some-id' });
 
             const credentialProvider = new SimpleCredentialProvider('', '');
             const client = new BotFrameworkHttpClient(credentialProvider, 'channels');
@@ -71,7 +80,10 @@ describe('BotFrameworkHttpClient', function () {
         });
 
         it('should return status code for a failed call', async function () {
-            nock('http://skillUrl').post('/api/bad').reply(404, { id: 'some-id' });
+            nock('http://skillUrl')
+                .post('/api/bad')
+                .matchHeader(ConversationConstants.ConversationIdHttpHeaderName, 'conversationId')
+                .reply(404, { id: 'some-id' });
 
             const credentialProvider = new SimpleCredentialProvider('', '');
             const client = new BotFrameworkHttpClient(credentialProvider, 'channels');
@@ -88,7 +100,10 @@ describe('BotFrameworkHttpClient', function () {
         });
 
         it('should succeed to make call using override buildCredentials', async function () {
-            nock('http://skillUrl').post('/api/good').reply(200, { id: 'some-id' });
+            nock('http://skillUrl')
+                .post('/api/good')
+                .matchHeader(ConversationConstants.ConversationIdHttpHeaderName, 'conversationId')
+                .reply(200, { id: 'some-id' });
 
             const credentialProvider = new SimpleCredentialProvider('this-is-not-the-app-id-your-looking-for', '1');
             const client = new TestBotFrameworkHttpClient(credentialProvider, 'channels');
@@ -105,7 +120,10 @@ describe('BotFrameworkHttpClient', function () {
         });
 
         it('should fail to make call with wrong credentials', async function () {
-            nock('http://skillUrl').post('/api/good').reply(200, { id: 'some-id' });
+            nock('http://skillUrl')
+                .post('/api/good')
+                .matchHeader(ConversationConstants.ConversationIdHttpHeaderName, 'conversationId')
+                .reply(200, { id: 'some-id' });
 
             const credentialProvider = new SimpleCredentialProvider('test-app-id', 'test-app-Secret');
             const client = new TestBotFrameworkHttpClientWithNoCredentials(credentialProvider, 'channels');
@@ -126,6 +144,7 @@ describe('BotFrameworkHttpClient', function () {
         it('should fail to make call when no activity is provided', async function () {
             nock('http://skillUrl')
                 .post('/api/good', (body) => body.recipient)
+                .matchHeader(ConversationConstants.ConversationIdHttpHeaderName, 'conversationId')
                 .reply(200, { id: 'some-id' });
 
             const credentialProvider = new SimpleCredentialProvider('this-is-not-the-app-id-your-looking-for', '1');
@@ -141,6 +160,7 @@ describe('BotFrameworkHttpClient', function () {
         it('should fail to make call when activity.conversation is undefined', async function () {
             nock('http://skillUrl')
                 .post('/api/good', (body) => body.recipient)
+                .matchHeader(ConversationConstants.ConversationIdHttpHeaderName, 'conversationId')
                 .reply(200, { id: 'some-id' });
 
             const credentialProvider = new SimpleCredentialProvider('this-is-not-the-app-id-your-looking-for', '1');
@@ -164,6 +184,7 @@ describe('BotFrameworkHttpClient', function () {
         it('should add empty recipient if missing from activity', async function () {
             nock('http://skillUrl')
                 .post('/api/good', (body) => body.recipient)
+                .matchHeader(ConversationConstants.ConversationIdHttpHeaderName, 'conversationId')
                 .reply(200, { id: 'some-id' });
 
             const credentialProvider = new SimpleCredentialProvider('this-is-not-the-app-id-your-looking-for', '1');
@@ -183,7 +204,10 @@ describe('BotFrameworkHttpClient', function () {
         });
 
         it(`should restore sent activity's relatesTo to original value`, async function () {
-            nock('http://skillUrl').post('/api/good').reply(200, { id: 'some-id' });
+            nock('http://skillUrl')
+                .post('/api/good')
+                .matchHeader(ConversationConstants.ConversationIdHttpHeaderName, 'conversationId')
+                .reply(200, { id: 'some-id' });
 
             const credentialProvider = new SimpleCredentialProvider('', '');
             const client = new BotFrameworkHttpClient(credentialProvider, 'channels');

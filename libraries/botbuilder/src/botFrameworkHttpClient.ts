@@ -8,9 +8,11 @@
 
 import axios from 'axios';
 import { Activity, BotFrameworkClient, ChannelAccount, InvokeResponse, RoleTypes } from 'botbuilder-core';
+
 import {
-    AuthenticationConstants,
     AppCredentials,
+    AuthenticationConstants,
+    ConversationConstants,
     GovernmentConstants,
     ICredentialProvider,
     JwtTokenValidation,
@@ -120,6 +122,7 @@ export class BotFrameworkHttpClient implements BotFrameworkClient {
             const config: { headers: Record<string, string>; validateStatus: () => boolean } = {
                 headers: {
                     Accept: 'application/json',
+                    [ConversationConstants.ConversationIdHttpHeaderName]: conversationId,
                     'Content-Type': 'application/json',
                     'User-Agent': USER_AGENT,
                 },
