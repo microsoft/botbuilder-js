@@ -1,12 +1,14 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
+import sinon from 'sinon';
+import { AuthenticationConfiguration, AuthenticationConstants, SkillValidation } from 'botframework-connector';
 import { BlobsStorage } from 'botbuilder-azure-blobs';
 import { BotComponent, BotFrameworkAdapter, MemoryStorage } from 'botbuilder';
 import { Configuration, getRuntimeServices } from '../src';
 import { CosmosDbPartitionedStorage } from 'botbuilder-azure';
-import { ok, strictEqual } from 'assert';
 import { ServiceCollection, Configuration as CoreConfiguration } from 'botbuilder-dialogs-adaptive-runtime-core';
+import { ok, rejects, strictEqual } from 'assert';
 
 describe('getRuntimeServices', function () {
     it('works', async function () {
@@ -107,6 +109,95 @@ describe('getRuntimeServices', function () {
 
             const storage = services.mustMakeInstance('storage');
             ok(storage instanceof CosmosDbPartitionedStorage);
+        });
+    });
+
+    describe('skills', function () {
+        let sandbox: sinon.SinonSandbox;
+        beforeEach(function () {
+            sandbox = sinon.createSandbox();
+            sandbox.stub(SkillValidation, 'isSkillClaim').returns(true);
+        });
+
+        afterEach(function () {
+            sandbox.restore();
+        });
+
+        it('supports .runtimeSettings.skills', async function () {
+            const configuration = new Configuration();
+
+            configuration.set(['runtimeSettings', 'skills'], {
+                allowedCallers: ['AppId'],
+            });
+
+            const [services] = await getRuntimeServices(__dirname, configuration);
+            const authenticationConfiguration = services.mustMakeInstance<AuthenticationConfiguration>(
+                'authenticationConfiguration'
+            );
+
+            const { validateClaims } = authenticationConfiguration;
+            ok(validateClaims);
+
+            await validateClaims([
+                {
+                    type: AuthenticationConstants.AppIdClaim,
+                    value: 'AppId',
+                },
+            ]);
+
+            await rejects(
+                validateClaims([
+                    {
+                        type: AuthenticationConstants.AppIdClaim,
+                        value: 'BadAppId',
+                    },
+                ])
+            );
+        });
+
+        it('supports .skills', async function () {
+            const configuration = new Configuration();
+
+            configuration.set(['skills'], {
+                a: {
+                    msAppId: 'AppA',
+                },
+                b: {
+                    msAppId: 'AppB',
+                },
+            });
+
+            const [services] = await getRuntimeServices(__dirname, configuration);
+            const authenticationConfiguration = services.mustMakeInstance<AuthenticationConfiguration>(
+                'authenticationConfiguration'
+            );
+
+            const { validateClaims } = authenticationConfiguration;
+            ok(validateClaims);
+
+            await Promise.all([
+                validateClaims([
+                    {
+                        type: AuthenticationConstants.AppIdClaim,
+                        value: 'AppA',
+                    },
+                ]),
+                validateClaims([
+                    {
+                        type: AuthenticationConstants.AppIdClaim,
+                        value: 'AppB',
+                    },
+                ]),
+            ]);
+
+            await rejects(
+                validateClaims([
+                    {
+                        type: AuthenticationConstants.AppIdClaim,
+                        value: 'AppC',
+                    },
+                ])
+            );
         });
     });
 });
