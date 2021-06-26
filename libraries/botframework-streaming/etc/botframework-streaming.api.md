@@ -13,7 +13,8 @@ export class ContentStream {
     // Warning: (ae-forgotten-export) The symbol "PayloadAssembler" needs to be exported by the entry point index.d.ts
     constructor(id: string, assembler: PayloadAssembler);
     cancel(): void;
-    get contentType(): string;
+    // Warning: (ae-forgotten-export) The symbol "PayloadTypes" needs to be exported by the entry point index.d.ts
+    get contentType(): string | PayloadTypes;
     getStream(): SubscribableStream;
     // (undocumented)
     id: string;
@@ -370,11 +371,8 @@ export interface INodeSocket {
 
 // @public
 export interface IReceiveRequest {
-    // (undocumented)
     path?: string;
-    // (undocumented)
     streams: ContentStream[];
-    // (undocumented)
     verb?: string;
 }
 
@@ -447,7 +445,7 @@ export class NamedPipeServer implements IStreamingTransportServer {
 export class NodeWebSocket implements ISocket {
     constructor(wsSocket?: WebSocket_2);
     close(code?: number, data?: string): void;
-    connect(serverAddress: any, port?: number): Promise<void>;
+    connect(serverAddress: string, port?: number): Promise<void>;
     create(req: INodeIncomingMessage, socket: INodeSocket, head: INodeBuffer): Promise<void>;
     get isConnected(): boolean;
     setOnCloseHandler(handler: (x: any) => void): void;
@@ -504,15 +502,15 @@ export class SubscribableStream extends Duplex {
     length: number;
     _read(size: number): void;
     subscribe(onData: (chunk: any) => void): void;
-    _write(chunk: any, encoding: string, callback: (error?: Error | null) => void): void;
+    _write(chunk: any, _encoding: string, callback: (error?: Error | null) => void): void;
 }
 
 // @public
 export class WebSocketClient implements IStreamingTransportClient {
-    constructor({ url, requestHandler, disconnectionHandler }: {
-        url: any;
-        requestHandler: any;
-        disconnectionHandler?: any;
+    constructor({ url, requestHandler, disconnectionHandler, }: {
+        url: string;
+        requestHandler: RequestHandler;
+        disconnectionHandler: (message: string) => void;
     });
     connect(): Promise<void>;
     disconnect(): void;
