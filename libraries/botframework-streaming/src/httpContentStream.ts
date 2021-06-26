@@ -25,8 +25,8 @@ export class HttpContentStream {
         this.id = generateGuid();
         this.description = {
             id: this.id,
-            type: this.content?.headers ? this.content?.headers.type : 'unknown',
-            length: this.content?.headers ? this.content?.headers.contentLength : 0,
+            type: this.content?.headers?.type ?? 'unknown',
+            length: this.content?.headers?.contentLength ?? 0,
         };
     }
 }

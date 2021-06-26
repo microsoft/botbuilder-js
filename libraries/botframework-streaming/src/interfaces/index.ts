@@ -16,6 +16,7 @@ export * from './IStreamingTransportClient';
 export * from './IStreamingTransportServer';
 
 // Internal
+export * from './IAssemblerParams';
 export * from './IBrowserFileReader';
 export * from './IBrowserWebSocket';
 export * from './IEventEmitter';

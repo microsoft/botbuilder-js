@@ -5,16 +5,18 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
+
 import { SubscribableStream } from '../subscribableStream';
 import { StreamManager, PayloadTypes } from '../payloads';
 import { ContentStream } from '../contentStream';
-import { IHeader, IResponsePayload, IReceiveResponse, IReceiveRequest, IRequestPayload } from '../interfaces';
-
-interface AssemblerParams {
-    header?: IHeader;
-    id?: string;
-    onCompleted?: (id: string, receiveResponse: IReceiveResponse | IReceiveRequest) => Promise<void>;
-}
+import {
+    IAssemblerParams,
+    IHeader,
+    IResponsePayload,
+    IReceiveResponse,
+    IReceiveRequest,
+    IRequestPayload,
+} from '../interfaces';
 
 /**
  * Assembles payloads for streaming library.
@@ -37,7 +39,7 @@ export class PayloadAssembler {
      * @param streamManager The [StreamManager](xref:botframework-streaming.StreamManager) managing the stream being assembled.
      * @param params Parameters for a streaming assembler.
      */
-    constructor(private readonly streamManager: StreamManager, params: AssemblerParams) {
+    constructor(private readonly streamManager: StreamManager, params: IAssemblerParams) {
         if (params.header) {
             this.id = params.header.id;
             this.payloadType = params.header.payloadType;

@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 
-import { IRequestPayload, IStreamWrapper } from '../interfaces';
+import { IStreamWrapper } from '../interfaces';
 import { PayloadTypes } from '../payloads/payloadTypes';
 import type { PayloadSender } from '../payloadTransport/payloadSender';
 import type { StreamingRequest } from '../streamingRequest';
@@ -35,12 +35,11 @@ export class RequestDisassembler extends PayloadDisassembler {
      * @returns An [IStreamWrapper](xref:botframework-streaming.IStreamWrapper) with a Subscribable Stream.
      */
     async getStream(): Promise<IStreamWrapper> {
-        const payload: IRequestPayload = { verb: this.request?.verb, path: this.request?.path, streams: [] };
-        if (this.request?.streams) {
-            this.request.streams.forEach(function (stream) {
-                payload.streams.push(stream.description);
-            });
-        }
+        const payload = { verb: this.request?.verb, path: this.request?.path, streams: [] };
+        this.request?.streams?.forEach(function (stream) {
+            payload.streams.push(stream.description);
+        });
+
         return PayloadDisassembler.serialize(payload);
     }
 }

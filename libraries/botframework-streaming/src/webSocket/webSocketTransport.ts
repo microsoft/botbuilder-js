@@ -12,13 +12,13 @@ import { INodeBuffer, ISocket, ITransportSender, ITransportReceiver } from '../i
  * Web socket based transport.
  */
 export class WebSocketTransport implements ITransportSender, ITransportReceiver {
-    private readonly _queue: INodeBuffer[];
+    private readonly _queue: INodeBuffer[] = [];
     private _active: INodeBuffer;
-    private _activeOffset: number;
+    private _activeOffset = 0;
     private _activeReceiveResolve: (resolve: INodeBuffer) => void;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     private _activeReceiveReject: (reason?: any) => void;
-    private _activeReceiveCount: number;
+    private _activeReceiveCount = 0;
 
     /**
      * Creates a new instance of the [WebSocketTransport](xref:botframework-streaming.WebSocketTransport) class.
@@ -26,9 +26,6 @@ export class WebSocketTransport implements ITransportSender, ITransportReceiver 
      * @param ws The ISocket to build this transport on top of.
      */
     constructor(private ws: ISocket) {
-        this._queue = [];
-        this._activeOffset = 0;
-        this._activeReceiveCount = 0;
         this.ws.setOnMessageHandler((data): void => {
             this.onReceive(data);
         });
@@ -47,7 +44,7 @@ export class WebSocketTransport implements ITransportSender, ITransportReceiver 
      * @returns A number indicating the length of the sent data if the data was successfully sent, otherwise 0.
      */
     send(buffer: INodeBuffer): number {
-        if (this.ws && this.ws.isConnected) {
+        if (this.ws?.isConnected) {
             this.ws.write(buffer);
 
             return buffer.length;
@@ -62,14 +59,14 @@ export class WebSocketTransport implements ITransportSender, ITransportReceiver 
      * @returns `true` if the the transport is connected and ready to send data, `false` otherwise.
      */
     get isConnected(): boolean {
-        return this.ws.isConnected;
+        return this.ws?.isConnected;
     }
 
     /**
      * Close the socket this transport is connected to.
      */
     close(): void {
-        if (this.ws && this.ws.isConnected) {
+        if (this.ws?.isConnected) {
             this.ws.close();
         }
     }
@@ -109,9 +106,6 @@ export class WebSocketTransport implements ITransportSender, ITransportReceiver 
         }
     }
 
-    /**
-     * @private
-     */
     private onClose(): void {
         if (this._activeReceiveReject) {
             this._activeReceiveReject(new Error('Socket was closed.'));
@@ -125,9 +119,6 @@ export class WebSocketTransport implements ITransportSender, ITransportReceiver 
         this.ws = null;
     }
 
-    /**
-     * @private
-     */
     private onError(err: Error): void {
         if (this._activeReceiveReject) {
             this._activeReceiveReject(err);
@@ -135,9 +126,6 @@ export class WebSocketTransport implements ITransportSender, ITransportReceiver 
         this.onClose();
     }
 
-    /**
-     * @private
-     */
     private trySignalData(): void {
         if (this._activeReceiveResolve) {
             if (!this._active && this._queue.length > 0) {
