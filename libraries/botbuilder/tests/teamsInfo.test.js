@@ -4,7 +4,7 @@ const sinon = require('sinon');
 const { BotFrameworkAdapter, TeamsInfo } = require('../');
 const { Conversations } = require('botframework-connector/lib/connectorApi/operations');
 const { MicrosoftAppCredentials, ConnectorClient } = require('botframework-connector');
-const { TurnContext, MessageFactory, ActionTypes } = require('botbuilder-core');
+const { TurnContext, MessageFactory, ActionTypes, BotAdapter, Channels } = require('botbuilder-core');
 
 class TeamsInfoAdapter extends BotFrameworkAdapter {
     constructor() {
@@ -13,8 +13,43 @@ class TeamsInfoAdapter extends BotFrameworkAdapter {
 }
 
 class TestContext extends TurnContext {
-    constructor(activity) {
-        super(new TeamsInfoAdapter(), activity);
+    constructor(activity, adapter) {
+        super(adapter || new TeamsInfoAdapter(), activity);
+    }
+}
+
+class TestCreateConversationAdapter extends BotAdapter {
+    appId;
+    channelId;
+    serviceUrl;
+    audience;
+    conversationParameters;
+
+    constructor(activityId, conversationId) {
+        super();
+        this.activityId = activityId;
+        this.conversationId = conversationId;
+    }
+
+    async createConversationAsync(botAppId, channelId, serviceUrl, audience, conversationParameters, callback) {
+        this.appId = botAppId;
+        this.channelId = channelId;
+        this.serviceUrl = serviceUrl;
+        this.audience = audience;
+        this.conversationParameters = conversationParameters;
+
+        const activity = {
+            id: this.activityId,
+            conversation: {
+                id: this.conversationId,
+            },
+        };
+
+        const mockTurnContext = {
+            activity,
+        };
+
+        callback(mockTurnContext);
     }
 }
 
@@ -196,6 +231,37 @@ describe('TeamsInfo', function () {
             assert(Array.isArray(response));
             assert(newConversation[0]['activityid'] == 'activityid123');
             assert(newConversation[1] == 'resourceresponseid');
+        });
+
+        it('should work with correct information when using botAppId', async function () {
+            const adapter = new TestCreateConversationAdapter(teamActivity.id, teamActivity.conversation.id);
+            const expectedAppId = '1234-5678-1234-5678';
+
+            const context = new TestContext(teamActivity, adapter);
+            const msg = MessageFactory.text('test message');
+            msg.channelId = Channels.Msteams;
+            msg.channelData = {
+                team: {
+                    id: 'team-id',
+                },
+            };
+            const teamChannelId = '19%3AgeneralChannelIdgeneralChannelId%40thread.skype';
+
+            const response = await TeamsInfo.sendMessageToTeamsChannel(context, msg, teamChannelId, expectedAppId);
+
+            assert(Array.isArray(response));
+            assert.strictEqual(response[0].conversation.id, teamActivity.conversation.id);
+            assert.strictEqual(response[1], teamActivity.id);
+            assert.strictEqual(adapter.appId, expectedAppId);
+            assert.strictEqual(adapter.channelId, Channels.Msteams);
+            assert.strictEqual(adapter.serviceUrl, teamActivity.serviceUrl);
+            assert.strictEqual(adapter.audience, null);
+
+            const channelData = adapter.conversationParameters.channelData;
+            const id = channelData.channel.id;
+
+            assert.strictEqual(id, teamChannelId);
+            assert.deepStrictEqual(msg, adapter.conversationParameters.activity);
         });
 
         it('should error if context is null', async function () {
