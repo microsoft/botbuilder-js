@@ -5,10 +5,6 @@
 
 class TestRequest {
     constructor() {
-        let headers = [];
-    }
-
-    setMethod(verb) {
         this.method = 'GET';
     }
 
@@ -22,46 +18,45 @@ class TestRequest {
         this.upgradeRequestVal = value;
     }
 
-    status() {
+    get status() {
         return this.statusVal;
     }
 
-    status(value) {
+    set status(value) {
         this.statusVal = value;
     }
 
-    path(value) {
+    set path(value) {
         this.pathVal = value;
     }
 
-    path() {
+    get path() {
         return this.pathVal;
     }
 
-    verb(value) {
+    set verb(value) {
         this.verbVal = value;
     }
 
-    verb() {
+    get verb() {
         return this.verbVal;
     }
 
-    streams(value) {
+    set streams(value) {
         this.streamsVal = value;
     }
 
-    streams() {
+    get streams() {
         return this.streamsVal;
     }
 
-    setHeaders() {
+    get setHeaders() {
         return this.headersVal;
     }
 
-    setHeaders(value) {
+    set setHeaders(value) {
         this.headers = value;
     }
-
 }
 
 module.exports.TestRequest = TestRequest;

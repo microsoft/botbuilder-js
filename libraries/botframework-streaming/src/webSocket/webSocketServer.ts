@@ -10,9 +10,8 @@ import { RequestHandler } from '../requestHandler';
 import { StreamingRequest } from '../streamingRequest';
 import { RequestManager } from '../payloads';
 import { PayloadReceiver, PayloadSender, TransportDisconnectedEvent } from '../payloadTransport';
-import { ISocket } from '../interfaces/ISocket';
 import { WebSocketTransport } from './webSocketTransport';
-import { IStreamingTransportServer, IReceiveResponse } from '../interfaces';
+import { ISocket, IStreamingTransportServer, IReceiveResponse } from '../interfaces';
 
 /**
  * Web socket based server to be used as streaming transport.
@@ -34,7 +33,7 @@ export class WebSocketServer implements IStreamingTransportServer {
      * @param socket The underlying web socket.
      * @param requestHandler Optional [RequestHandler](xref:botframework-streaming.RequestHandler) to process incoming messages received by this server.
      */
-    public constructor(socket: ISocket, requestHandler?: RequestHandler) {
+    constructor(socket: ISocket, requestHandler?: RequestHandler) {
         if (!socket) {
             throw new TypeError('WebSocketServer: Missing socket parameter');
         }
@@ -63,9 +62,11 @@ export class WebSocketServer implements IStreamingTransportServer {
     }
 
     /**
-     * Examines the stored ISocket and returns true if the socket connection is open.
+     * Examines the stored [ISocket](xref:botframework-streaming.ISocket) and returns `true` if the socket connection is open.
+     *
+     * @returns `true` if the underlying websocket is ready and availble to send messages, otherwise `false`.
      */
-    public get isConnected(): boolean {
+    get isConnected(): boolean {
         return this._socket.isConnected;
     }
 
@@ -74,7 +75,7 @@ export class WebSocketServer implements IStreamingTransportServer {
      *
      * @returns A promise to handle the server listen operation. This task will not resolve as long as the server is running.
      */
-    public async start(): Promise<string> {
+    async start(): Promise<string> {
         this._sender.connect(this._webSocketTransport);
         this._receiver.connect(this._webSocketTransport);
 
@@ -87,14 +88,14 @@ export class WebSocketServer implements IStreamingTransportServer {
      * @param request The streaming request to send.
      * @returns A promise that will produce an instance of receive response on completion of the send operation.
      */
-    public async send(request: StreamingRequest): Promise<IReceiveResponse> {
+    async send(request: StreamingRequest): Promise<IReceiveResponse> {
         return this._protocolAdapter.sendRequest(request);
     }
 
     /**
      * Stop this server.
      */
-    public disconnect(): void {
+    disconnect(): void {
         this._sender.disconnect(new TransportDisconnectedEvent('Disconnect was called.'));
         this._receiver.disconnect(new TransportDisconnectedEvent('Disconnect was called.'));
     }

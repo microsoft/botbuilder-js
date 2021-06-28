@@ -32,7 +32,7 @@ export class NamedPipeServer implements IStreamingTransportServer {
      * @param requestHandler Optional [RequestHandler](xref:botframework-streaming.RequestHandler) to process incoming messages received by this client.
      * @param autoReconnect Deprecated: Automatic reconnection is the default behavior.
      */
-    public constructor(private readonly baseName: string, requestHandler?: RequestHandler, autoReconnect?: boolean) {
+    constructor(private readonly baseName: string, requestHandler?: RequestHandler, autoReconnect?: boolean) {
         if (!baseName) {
             throw new TypeError('NamedPipeServer: Missing baseName parameter');
         }
@@ -51,7 +51,7 @@ export class NamedPipeServer implements IStreamingTransportServer {
      *
      * @returns true if currently connected.
      */
-    public get isConnected(): boolean {
+    get isConnected(): boolean {
         return this._receiver.isConnected && this._sender.isConnected;
     }
 
@@ -61,7 +61,7 @@ export class NamedPipeServer implements IStreamingTransportServer {
      * @param onListen Optional callback that fires once when server is listening on both incoming and outgoing pipe
      * @returns A promised string that will not resolve as long as the server is running.
      */
-    public async start(onListen?: () => void): Promise<string> {
+    async start(onListen?: () => void): Promise<string> {
         const { PipePath, ServerIncomingPath, ServerOutgoingPath } = NamedPipeTransport;
 
         // The first promise resolves as soon as the server is listening. The second resolves when the server
@@ -128,7 +128,7 @@ export class NamedPipeServer implements IStreamingTransportServer {
     /**
      * Allows for manually disconnecting the server.
      */
-    public disconnect(): void {
+    disconnect(): void {
         this._receiver.disconnect();
         this._incomingServer?.close();
         this._incomingServer = null;
@@ -144,7 +144,7 @@ export class NamedPipeServer implements IStreamingTransportServer {
      * @param request The [StreamingRequest](xref:botframework-streaming.StreamingRequest) to send.
      * @returns A promise for an instance of [IReceiveResponse](xref:botframework-streaming.IReceiveResponse) on completion of the send operation.
      */
-    public async send(request: StreamingRequest): Promise<IReceiveResponse> {
+    async send(request: StreamingRequest): Promise<IReceiveResponse> {
         return this._protocolAdapter.sendRequest(request);
     }
 }

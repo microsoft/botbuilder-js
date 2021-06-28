@@ -17,25 +17,24 @@ const NONCE_LENGTH = 16;
  * An implementation of [ISocket](xref:botframework-streaming.ISocket) to use with a [NodeWebSocketFactory](xref:botframework-streaming.NodeWebSocketFactory) to create a WebSocket server.
  */
 export class NodeWebSocket implements ISocket {
-    private wsSocket: WebSocket;
     protected wsServer: WebSocket.Server;
 
     /**
-     * Creates a new instance of the [NodeWebSocket](xref:botframework-streaming.NodeWebSocket) class.
+     * Creates a new [NodeWebSocket](xref:botframework-streaming.NodeWebSocket) instance.
      *
-     * @param socket The `ws` WebSocket instance to build this connection on.
+     * @param wsSocket The `ws` WebSocket instance to build this connection on.
      */
-    public constructor(wsSocket?: WebSocket) {
-        this.wsSocket = wsSocket;
-    }
+    constructor(private wsSocket?: WebSocket) {}
 
     /**
      * Create and set a `ws` WebSocket with an HTTP Request, Socket and Buffer.
-     * @param req INodeIncomingMessage
-     * @param socket INodeSocket
-     * @param head INodeBuffer
+     *
+     * @param req An HTTP Request matching the [INodeIncomingMessage](xref:botframework-streaming.INodeIncomingMessage) interface.
+     * @param socket A Socket [INodeSocket](xref:botframework-streaming.INodeSocket) interface.
+     * @param head A Buffer [INodeBuffer](xref:botframework-streaming.INodeBuffer) interface.
+     * @returns A Promise that resolves after the WebSocket upgrade has been handled, otherwise rejects with a thrown error.
      */
-    public async create(req: INodeIncomingMessage, socket: INodeSocket, head: INodeBuffer): Promise<void> {
+    async create(req: INodeIncomingMessage, socket: INodeSocket, head: INodeBuffer): Promise<void> {
         this.wsServer = new WebSocket.Server({ noServer: true });
         return new Promise<void>((resolve, reject) => {
             try {
@@ -55,9 +54,11 @@ export class NodeWebSocket implements ISocket {
     }
 
     /**
-     * True if the 'ws' WebSocket is currently connected.
+     * Indicates if the 'ws' WebSocket is currently connected and ready to send messages.
+     *
+     * @returns `true` if the underlying websocket is ready and availble to send messages, otherwise `false`.
      */
-    public get isConnected(): boolean {
+    get isConnected(): boolean {
         return this.wsSocket && this.wsSocket.readyState === WebSocket.OPEN;
     }
 
@@ -66,7 +67,7 @@ export class NodeWebSocket implements ISocket {
      *
      * @param buffer The buffer of data to send across the connection.
      */
-    public write(buffer: INodeBuffer): void {
+    write(buffer: INodeBuffer): void {
         this.wsSocket.send(buffer);
     }
 
@@ -75,8 +76,9 @@ export class NodeWebSocket implements ISocket {
      *
      * @param serverAddress The address the server is listening on.
      * @param port The port the server is listening on, defaults to 8082.
+     * @returns A Promise that resolves when the websocket connection is closed, or rejects on an error.
      */
-    public async connect(serverAddress, port = 8082): Promise<void> {
+    async connect(serverAddress: string, port = 8082): Promise<void> {
         this.wsServer = new WebSocket.Server({ noServer: true });
         // Key generation per https://tools.ietf.org/html/rfc6455#section-1.3 (pg. 7)
         const wskey = crypto.randomBytes(NONCE_LENGTH).toString('base64');
@@ -94,6 +96,7 @@ export class NodeWebSocket implements ISocket {
         req.on('upgrade', (res, socket, head): void => {
             // @types/ws does not contain the signature for completeUpgrade
             // https://github.com/websockets/ws/blob/0a612364e69fc07624b8010c6873f7766743a8e3/lib/websocket-server.js#L269
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             (this.wsServer as any).completeUpgrade(wskey, undefined, res, socket, head, (websocket): void => {
                 this.wsSocket = websocket;
             });
@@ -107,34 +110,44 @@ export class NodeWebSocket implements ISocket {
 
     /**
      * Set the handler for `'data'` and `'message'` events received on the socket.
+     *
+     * @param handler The callback to handle the "message" event.
      */
-    public setOnMessageHandler(handler: (x: any) => void): void {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    setOnMessageHandler(handler: (x: any) => void): void {
         this.wsSocket.on('data', handler);
         this.wsSocket.on('message', handler);
     }
 
     /**
      * Close the socket.
+     *
      * @remarks
      * Optionally pass in a status code and string explaining why the connection is closing.
-     * @param code
-     * @param data
+     * @param code Optional status code to explain why the connection has closed.
+     * @param data Optional additional data to explain why the connection has closed.
      */
-    public close(code?: number, data?: string): void {
-        return this.wsSocket.close(code, data);
+    close(code?: number, data?: string): void {
+        this.wsSocket.close(code, data);
     }
 
     /**
      * Set the callback to call when encountering socket closures.
+     *
+     * @param handler The callback to handle the "close" event.
      */
-    public setOnCloseHandler(handler: (x: any) => void): void {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    setOnCloseHandler(handler: (x: any) => void): void {
         this.wsSocket.on('close', handler);
     }
 
     /**
      * Set the callback to call when encountering errors.
+     *
+     * @param handler The callback to handle the "error" event.
      */
-    public setOnErrorHandler(handler: (x: any) => void): void {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    setOnErrorHandler(handler: (x: any) => void): void {
         this.wsSocket.on('error', (error): void => {
             if (error) {
                 handler(error);

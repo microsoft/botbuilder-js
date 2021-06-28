@@ -5,45 +5,39 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { INodeBuffer } from '../interfaces/INodeBuffer';
-import { INodeSocket } from '../interfaces/INodeSocket';
-import { ITransportSender } from '../interfaces/ITransportSender';
-import { ITransportReceiver } from '../interfaces/ITransportReceiver';
+import { INodeBuffer, INodeSocket, ITransportSender, ITransportReceiver } from '../interfaces';
 
 /**
  * Named pipes based transport sender and receiver abstraction
  */
 export class NamedPipeTransport implements ITransportSender, ITransportReceiver {
-    public static readonly PipePath: string = '\\\\.\\pipe\\';
-    public static readonly ServerIncomingPath: string = '.incoming';
-    public static readonly ServerOutgoingPath: string = '.outgoing';
+    static readonly PipePath: string = '\\\\.\\pipe\\';
+    static readonly ServerIncomingPath: string = '.incoming';
+    static readonly ServerOutgoingPath: string = '.outgoing';
 
-    private _socket: INodeSocket;
     private readonly _queue: INodeBuffer[];
     private _active: INodeBuffer;
-    private _activeOffset: number;
+    private _activeOffset = 0;
+    private _activeReceiveCount = 0;
     private _activeReceiveResolve: (resolve: INodeBuffer) => void;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     private _activeReceiveReject: (reason?: any) => void;
-    private _activeReceiveCount: number;
 
     /**
      * Creates a new instance of the [NamedPipeTransport](xref:botframework-streaming.NamedPipeTransport) class.
      *
      * @param socket The socket object to build this connection on.
      */
-    public constructor(socket: INodeSocket) {
-        this._socket = socket;
+    constructor(private socket: INodeSocket) {
         this._queue = [];
-        this._activeOffset = 0;
-        this._activeReceiveCount = 0;
         if (socket) {
-            this._socket.on('data', (data): void => {
+            this.socket.on('data', (data): void => {
                 this.socketReceive(data);
             });
-            this._socket.on('close', (): void => {
+            this.socket.on('close', (): void => {
                 this.socketClose();
             });
-            this._socket.on('error', (err): void => {
+            this.socket.on('error', (err): void => {
                 this.socketError(err);
             });
         }
@@ -53,10 +47,11 @@ export class NamedPipeTransport implements ITransportSender, ITransportReceiver 
      * Writes to the pipe and sends.
      *
      * @param buffer The buffer full of data to send out across the socket.
+     * @returns A number indicating the length of the sent data if the data was successfully sent, otherwise 0.
      */
-    public send(buffer: INodeBuffer): number {
-        if (this._socket && !this._socket.connecting && this._socket.writable) {
-            this._socket.write(buffer);
+    send(buffer: INodeBuffer): number {
+        if (this.socket && !this.socket.connecting && this.socket.writable) {
+            this.socket.write(buffer);
 
             return buffer.length;
         }
@@ -65,26 +60,31 @@ export class NamedPipeTransport implements ITransportSender, ITransportReceiver 
     }
 
     /**
-     * Returns true if currently connected.
+     * Returns `true` if currently connected.
+     *
+     * @returns `true` if the the transport is connected and ready to send data, `false` otherwise.
      */
-    public get isConnected(): boolean {
-        return !(!this._socket || this._socket.destroyed || this._socket.connecting);
+    get isConnected(): boolean {
+        return !(!this.socket || this.socket.destroyed || this.socket.connecting);
     }
 
     /**
      * Closes the transport.
      */
-    public close(): void {
-        if (this._socket) {
-            this._socket.end('end');
-            this._socket = null;
+    close(): void {
+        if (this.socket) {
+            this.socket.end('end');
+            this.socket = null;
         }
     }
 
     /**
      * Receive from the transport into the buffer.
+     *
+     * @param count The maximum amount of bytes to write to the buffer.
+     * @returns The buffer containing the data from the transport.
      */
-    public receive(count: number): Promise<INodeBuffer> {
+    receive(count: number): Promise<INodeBuffer> {
         if (this._activeReceiveResolve) {
             throw new Error('Cannot call receive more than once before it has returned.');
         }
@@ -101,9 +101,6 @@ export class NamedPipeTransport implements ITransportSender, ITransportReceiver 
         return promise;
     }
 
-    /**
-     * @private
-     */
     private socketReceive(data: INodeBuffer): void {
         if (this._queue && data && data.length > 0) {
             this._queue.push(data);
@@ -111,9 +108,6 @@ export class NamedPipeTransport implements ITransportSender, ITransportReceiver 
         }
     }
 
-    /**
-     * @private
-     */
     private socketClose(): void {
         if (this._activeReceiveReject) {
             this._activeReceiveReject(new Error('Socket was closed.'));
@@ -124,12 +118,9 @@ export class NamedPipeTransport implements ITransportSender, ITransportReceiver 
         this._activeReceiveResolve = null;
         this._activeReceiveReject = null;
         this._activeReceiveCount = 0;
-        this._socket = null;
+        this.socket = null;
     }
 
-    /**
-     * @private
-     */
     private socketError(err: Error): void {
         if (this._activeReceiveReject) {
             this._activeReceiveReject(err);
@@ -137,9 +128,6 @@ export class NamedPipeTransport implements ITransportSender, ITransportReceiver 
         this.socketClose();
     }
 
-    /**
-     * @private
-     */
     private trySignalData(): void {
         if (this._activeReceiveResolve) {
             if (!this._active && this._queue.length > 0) {

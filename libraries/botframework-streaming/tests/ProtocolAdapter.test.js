@@ -1,4 +1,4 @@
-const PayloadAssembler = require('../lib/assemblers/payloadAssembler');
+const PayloadAssembler = require('../lib/assemblers');
 const ProtocolAdapter = require('../lib/protocolAdapter');
 const RequestManager = require('../lib/payloads/requestManager');
 const PayloadSender = require('../lib/payloadTransport/payloadSender');
@@ -9,9 +9,8 @@ const RequestHandler = require('../lib/requestHandler');
 const Response = require('../lib/streamingResponse');
 const Request = require('../lib/streamingRequest');
 const StreamManager = require('../lib/payloads/streamManager');
-const chai = require('chai');
+const { expect } = require('chai');
 const sinon = require('sinon');
-const expect = chai.expect;
 
 class TestRequestHandler extends RequestHandler.RequestHandler {
     constructor() {

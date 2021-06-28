@@ -5,15 +5,16 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { IReceiveResponse } from '../interfaces/IReceiveResponse';
+import { IReceiveResponse } from '../interfaces';
 
 /**
  * A streaming pending request.
  */
 class PendingRequest {
-    public requestId: string;
-    public resolve: (response: IReceiveResponse) => void;
-    public reject: (reason?: any) => void;
+    requestId: string;
+    resolve: (response: IReceiveResponse) => void;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    reject: (reason?: any) => void;
 }
 
 /**
@@ -24,18 +25,21 @@ export class RequestManager {
 
     /**
      * Gets the count of the pending requests.
+     *
      * @returns Number with the pending requests count.
      */
-    public pendingRequestCount(): number {
+    pendingRequestCount(): number {
         return Object.keys(this._pendingRequests).length;
     }
 
     /**
      * Signal fired when all response tasks have completed.
+     *
      * @param requestId The ID of the StreamingRequest.
      * @param response The [IReceiveResponse](xref:botframework-streaming.IReceiveResponse) in response to the request.
+     * @returns A Promise that when completed returns `true` if the `requestId`'s pending response task was completed, otherwise `false`.
      */
-    public async signalResponse(requestId: string, response: IReceiveResponse): Promise<boolean> {
+    async signalResponse(requestId: string, response: IReceiveResponse): Promise<boolean> {
         const pendingRequest = this._pendingRequests[requestId];
 
         if (pendingRequest) {
@@ -50,10 +54,11 @@ export class RequestManager {
 
     /**
      * Constructs and returns a response for this request.
+     *
      * @param requestId The ID of the StreamingRequest being responded to.
      * @returns The response to the specified request.
      */
-    public getResponse(requestId: string): Promise<IReceiveResponse> {
+    getResponse(requestId: string): Promise<IReceiveResponse> {
         let pendingRequest = this._pendingRequests[requestId];
 
         if (pendingRequest) {

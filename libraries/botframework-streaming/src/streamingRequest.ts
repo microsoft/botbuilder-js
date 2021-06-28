@@ -15,17 +15,17 @@ export class StreamingRequest {
     /**
      * Request verb, null on responses.
      */
-    public verb: string;
+    verb: string;
 
     /**
      * Request path; null on responses.
      */
-    public path: string;
+    path: string;
 
     /**
      * List of associated streams.
      */
-    public streams: HttpContentStream[] = [];
+    streams: HttpContentStream[] = [];
 
     /**
      * Creates a streaming request with the passed in method, path, and body.
@@ -35,7 +35,7 @@ export class StreamingRequest {
      * @param body Optional body to send to the remote server.
      * @returns On success returns a streaming request with appropriate status code and body.
      */
-    public static create(method: string, path?: string, body?: HttpContent): StreamingRequest {
+    static create(method: string, path?: string, body?: HttpContent): StreamingRequest {
         const request = new StreamingRequest();
         request.verb = method;
         request.path = path;
@@ -51,7 +51,7 @@ export class StreamingRequest {
      *
      * @param content The Http content to include in the new stream attachment.
      */
-    public addStream(content: HttpContent): void {
+    addStream(content: HttpContent): void {
         if (!content) {
             throw new Error('Argument Undefined Exception: content undefined.');
         }
@@ -64,7 +64,8 @@ export class StreamingRequest {
      *
      * @param body The JSON text to write to the body of the streamingRequest.
      */
-    public setBody(body: any): void {
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/no-explicit-any
+    setBody(body: any): void {
         if (typeof body === 'string') {
             const stream = new SubscribableStream();
             stream.write(body, 'utf8');
