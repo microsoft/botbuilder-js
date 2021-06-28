@@ -170,9 +170,9 @@ export class TeamsInfo {
                 context.activity.serviceUrl,
                 null,
                 convoParams,
-                async (t: TurnContext): Promise<void> => {
+                async (turnContext) => {
                     conversationReference = TurnContext.getConversationReference(context.activity);
-                    newActivityId = t.activity.id;
+                    newActivityId = turnContext.activity.id;
                 }
             );
         } else {
