@@ -26,6 +26,7 @@ import {
 import { ConnectorClient, TeamsConnectorClient, TeamsConnectorModels } from 'botframework-connector';
 
 import { BotFrameworkAdapter } from './botFrameworkAdapter';
+import { CloudAdapter } from './cloudAdapter';
 import { teamsGetTeamMeetingInfo, teamsGetTenant } from './teamsActivityHelpers';
 
 /**
@@ -128,7 +129,7 @@ export class TeamsInfo {
      * @param context The [TurnContext](xref:botbuilder-core.TurnContext) for this turn.
      * @param activity The [Activity](xref:botframework-schema.Activity) to send.
      * @param teamsChannelId The Team's Channel ID, note this is distinct from the Bot Framework activity property with same name.
-     * @param botAppId The bot's appId.
+     * @param botAppId The bot's appId. This is only used when context.adapter is an instance of CloudAdapter.
      * @returns The [ConversationReference](xref:botframework-schema.ConversationReference) and the id of the [Activity](xref:botframework-schema.Activity) (if sent).
      */
     public static async sendMessageToTeamsChannel(
@@ -162,7 +163,7 @@ export class TeamsInfo {
         let conversationReference: Partial<ConversationReference>;
         let newActivityId: string;
 
-        if (botAppId) {
+        if (botAppId && context.adapter instanceof CloudAdapter) {
             await context.adapter.createConversationAsync(
                 botAppId,
                 Channels.Msteams,

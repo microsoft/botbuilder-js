@@ -1,7 +1,7 @@
 const assert = require('assert');
 const nock = require('nock');
 const sinon = require('sinon');
-const { BotFrameworkAdapter, TeamsInfo } = require('../');
+const { BotFrameworkAdapter, TeamsInfo, CloudAdapter } = require('../');
 const { Conversations } = require('botframework-connector/lib/connectorApi/operations');
 const { MicrosoftAppCredentials, ConnectorClient } = require('botframework-connector');
 const { TurnContext, MessageFactory, ActionTypes, BotAdapter, Channels } = require('botbuilder-core');
@@ -18,7 +18,7 @@ class TestContext extends TurnContext {
     }
 }
 
-class TestCreateConversationAdapter extends BotAdapter {
+class TestCreateConversationAdapter extends CloudAdapter {
     appId;
     channelId;
     serviceUrl;
