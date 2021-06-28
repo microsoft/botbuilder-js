@@ -1,7 +1,8 @@
 {
   "name": "botbuilder-ai-orchestrator",
   "author": "Microsoft Corp.",
-  "description": "Orchestrator recognizer",
+  "description": "The Orchestrator package contains Bot Framework recognizer for detecting and routing user intents.",
+  "homepage": "https://aka.ms/bf-orchestrator-package-readme",
   "version": "4.1.6",
   "license": "MIT",
   "keywords": [
