@@ -439,7 +439,7 @@ export class TeamsInfo {
     static getTeamDetails(context: TurnContext, teamId?: string): Promise<TeamDetails>;
     static getTeamMember(context: TurnContext, teamId?: string, userId?: string): Promise<TeamsChannelAccount>;
     static getTeamMembers(context: TurnContext, teamId?: string): Promise<TeamsChannelAccount[]>;
-    static sendMessageToTeamsChannel(context: TurnContext, activity: Activity, teamsChannelId: string): Promise<[ConversationReference, string]>;
+    static sendMessageToTeamsChannel(context: TurnContext, activity: Activity, teamsChannelId: string, botAppId?: string): Promise<[ConversationReference, string]>;
 }
 
 // @public
