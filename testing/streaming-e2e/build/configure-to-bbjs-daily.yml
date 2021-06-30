@@ -2,14 +2,14 @@
 steps:
   - task: Npm@1
     displayName: 'npm install'
-    inputs: 
+    inputs:
       workingDir: '$(TargetProjectDir)'
-      
+
   - task: PowerShell@2
     displayName: 'Get latest daily version of $(PackageName)'
     inputs:
       targetType: 'filePath'
-      filePath: $(System.DefaultWorkingDirectory)/libraries/streaming-e2e-tests/build/get-latest-daily-ver.ps1
+      filePath: $(System.DefaultWorkingDirectory)/testing/streaming-e2e/build/get-latest-daily-ver.ps1
       arguments:
         -PackageName $(PackageName)
         -WorkingDir $(TargetProjectDir)
@@ -25,4 +25,4 @@ steps:
     condition: eq(variables.PackageName, 'botframework-streaming')
     inputs:
       tags: 'Using $(PackageName) version $(LatestVersion_streaming)'
-  
+
