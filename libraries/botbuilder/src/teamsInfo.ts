@@ -414,11 +414,15 @@ export class TeamsInfo {
      * @private
      */
     private static getConnectorClient(context: TurnContext): ConnectorClient {
-        if (!context.adapter || !('createConnectorClient' in context.adapter)) {
+        const client =
+            context.adapter && 'createConnectorClient' in context.adapter
+                ? (context.adapter as BotFrameworkAdapter).createConnectorClient(context.activity.serviceUrl)
+                : context.turnState?.get<ConnectorClient>(context.adapter.ConnectorClientKey);
+        if (!client) {
             throw new Error('This method requires a connector client.');
         }
 
-        return (context.adapter as BotFrameworkAdapter).createConnectorClient(context.activity.serviceUrl);
+        return client;
     }
 
     /**
