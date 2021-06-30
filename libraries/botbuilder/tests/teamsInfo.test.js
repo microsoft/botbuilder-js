@@ -961,7 +961,7 @@ describe('TeamsInfo', function () {
                 const context = new TurnContext({});
                 context.turnState.set(context.adapter.ConnectorClientKey, connectorClient);
                 const result = TeamsInfo.getConnectorClient(context);
-                assert.deepStrictEqual(result, connectorClient);
+                assert.strictEqual(result, connectorClient);
             });
         });
 
