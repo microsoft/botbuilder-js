@@ -13,7 +13,7 @@ const FakeBuffer = () => Buffer.from([]);
 const FakeNodeSocket = () => new net.Socket();
 const noop = () => null;
 
-describe.only('CloudAdapter', function () {
+describe('CloudAdapter', function () {
     let sandbox;
     beforeEach(function () {
         sandbox = sinon.createSandbox({ useFakeTimers: true });
@@ -29,7 +29,10 @@ describe.only('CloudAdapter', function () {
 
     describe('constructor', function () {
         it('throws for bad args', function () {
-            assert.throws(() => new CloudAdapter(null), { name: 'TypeError' });
+            assert.throws(() => new CloudAdapter(null), {
+                name: 'TypeError',
+                message: '`botFrameworkAuthentication` parameter required',
+            });
         });
 
         it('succeeds', function () {
@@ -88,11 +91,35 @@ describe.only('CloudAdapter', function () {
 
     describe('connectNamedPipe', function () {
         it('throws for bad args', async function () {
-            await assert.rejects(adapter.connectNamedPipe(undefined, noop, 'appId', 'audience', 'callerId'));
-            await assert.rejects(adapter.connectNamedPipe('pipeName', undefined, 'appId', 'audience', 'callerId'));
-            await assert.rejects(adapter.connectNamedPipe('pipeName', noop, undefined, 'audience', 'callerId'));
-            await assert.rejects(adapter.connectNamedPipe('pipeName', noop, 'appId', undefined, 'callerId'));
-            await assert.rejects(adapter.connectNamedPipe('pipeName', noop, 'appId', 'audience', 10));
+            const includesParam = (param) => (err) => {
+                assert(err.message.includes(`at ${param}`), err.message);
+                return true;
+            };
+
+            await assert.rejects(
+                adapter.connectNamedPipe(undefined, noop, 'appId', 'audience', 'callerId'),
+                includesParam('pipeName')
+            );
+
+            await assert.rejects(
+                adapter.connectNamedPipe('pipeName', undefined, 'appId', 'audience', 'callerId'),
+                includesParam('logic')
+            );
+
+            await assert.rejects(
+                adapter.connectNamedPipe('pipeName', noop, undefined, 'audience', 'callerId'),
+                includesParam('appId')
+            );
+
+            await assert.rejects(
+                adapter.connectNamedPipe('pipeName', noop, 'appId', undefined, 'callerId'),
+                includesParam('audience')
+            );
+
+            await assert.rejects(
+                adapter.connectNamedPipe('pipeName', noop, 'appId', 'audience', 10),
+                includesParam('callerId')
+            );
         });
 
         it('succeeds', async function () {

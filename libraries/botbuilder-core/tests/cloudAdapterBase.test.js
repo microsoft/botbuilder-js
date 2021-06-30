@@ -52,7 +52,10 @@ describe('CloudAdapterBase', function () {
 
     describe('constructor', function () {
         it('throws for bad args', function () {
-            assert.throws(() => new TestAdapter(), { name: 'TypeError' });
+            assert.throws(() => new TestAdapter(), {
+                name: 'TypeError',
+                message: '`botFrameworkAuthentication` parameter required',
+            });
         });
 
         it('succeeds', function () {
@@ -61,10 +64,21 @@ describe('CloudAdapterBase', function () {
     });
 
     describe('sendActivities', function () {
-        it('throws for bad args', function () {
-            assert.throws(() => adapter.sendActivities(undefined, []), { name: 'TypeError' });
-            assert.throws(() => adapter.sendActivities(new TurnContext(adapter), undefined), { name: 'TypeError' });
-            assert.throws(() => adapter.sendActivities(new TurnContext(adapter), []), { name: 'Error' });
+        it('throws for bad args', async function () {
+            await assert.rejects(adapter.sendActivities(undefined, []), {
+                name: 'TypeError',
+                message: '`context` parameter required',
+            });
+
+            await assert.rejects(adapter.sendActivities(new TurnContext(adapter), undefined), {
+                name: 'TypeError',
+                message: '`activities` parameter required',
+            });
+
+            await assert.rejects(adapter.sendActivities(new TurnContext(adapter), []), {
+                name: 'Error',
+                message: 'Expecting one or more activities, but the array was empty.',
+            });
         });
 
         it('delays activities', async function () {
@@ -153,9 +167,15 @@ describe('CloudAdapterBase', function () {
 
     describe('updateActivity', function () {
         it('throws for bad args', async function () {
-            await assert.rejects(adapter.updateActivity(undefined, {}), { name: 'TypeError' });
+            await assert.rejects(adapter.updateActivity(undefined, {}), {
+                name: 'TypeError',
+                message: '`context` parameter required',
+            });
 
-            await assert.rejects(adapter.updateActivity(new TurnContext(adapter), undefined), { name: 'TypeError' });
+            await assert.rejects(adapter.updateActivity(new TurnContext(adapter), undefined), {
+                name: 'TypeError',
+                message: '`activity` parameter required',
+            });
         });
 
         it('works', async function () {
@@ -184,9 +204,15 @@ describe('CloudAdapterBase', function () {
 
     describe('deleteActivity', function () {
         it('throws for bad args', async function () {
-            await assert.rejects(adapter.deleteActivity(undefined, {}), { name: 'TypeError' });
+            await assert.rejects(adapter.deleteActivity(undefined, {}), {
+                name: 'TypeError',
+                message: '`context` parameter required',
+            });
 
-            await assert.rejects(adapter.deleteActivity(new TurnContext(adapter), undefined), { name: 'TypeError' });
+            await assert.rejects(adapter.deleteActivity(new TurnContext(adapter), undefined), {
+                name: 'TypeError',
+                message: '`reference` parameter required',
+            });
         });
 
         it('works', async function () {
