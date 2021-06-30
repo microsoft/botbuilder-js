@@ -182,7 +182,9 @@ const teamActivity = {
 };
 
 describe('TeamsInfo', function () {
-    const connectorClient = new ConnectorClient(new MicrosoftAppCredentials('abc', '123'), { baseUri: 'https://smba.trafficmanager.net/amer' });
+    const connectorClient = new ConnectorClient(new MicrosoftAppCredentials('abc', '123'), {
+        baseUri: 'https://smba.trafficmanager.net/amer/',
+    });
 
     beforeEach(function () {
         nock.cleanAll();
@@ -955,12 +957,11 @@ describe('TeamsInfo', function () {
                 );
             });
 
-            it(`should error if the turnState doesn't have a ConnectorClient`, function () {
-                const context = new TestContext(teamActivity);
-                assert.throws(
-                    () => TeamsInfo.getConnectorClient(context),
-                    new Error('This method requires a connector client.')
-                );
+            it(`should fallback to the connectorClient on turnState if adapter doesn't exist in context.adapter`, function () {
+                const context = new TurnContext({});
+                context.turnState.set(context.adapter.ConnectorClientKey, connectorClient);
+                const result = TeamsInfo.getConnectorClient(context);
+                assert.deepStrictEqual(result, connectorClient);
             });
         });
 
