@@ -3,7 +3,7 @@ const nock = require('nock');
 const sinon = require('sinon');
 const { BotFrameworkAdapter, TeamsInfo, CloudAdapter } = require('../');
 const { Conversations } = require('botframework-connector/lib/connectorApi/operations');
-const { MicrosoftAppCredentials, ConnectorClient } = require('botframework-connector');
+const { MicrosoftAppCredentials, ConnectorClient, ServiceClientCredentialsFactory, PasswordServiceClientCredentialFactory } = require('botframework-connector');
 const { TurnContext, MessageFactory, ActionTypes, BotAdapter, Channels } = require('botbuilder-core');
 
 class TeamsInfoAdapter extends BotFrameworkAdapter {
@@ -182,6 +182,8 @@ const teamActivity = {
 };
 
 describe('TeamsInfo', function () {
+    const connectorClient = new ConnectorClient(new MicrosoftAppCredentials('abc', '123'), { baseUri: 'https://smba.trafficmanager.net/amer' });
+
     beforeEach(function () {
         nock.cleanAll();
     });
@@ -342,6 +344,7 @@ describe('TeamsInfo', function () {
                 .reply(200, { conversations });
 
             const context = new TestContext(teamActivity);
+            context.turnState.set(context.adapter.ConnectorClientKey, connectorClient);
             const channels = await TeamsInfo.getTeamChannels(context);
 
             assert(fetchOauthToken.isDone());
@@ -381,6 +384,7 @@ describe('TeamsInfo', function () {
                 .reply(200, { conversations });
 
             const context = new TestContext(teamActivity);
+            context.turnState.set(context.adapter.ConnectorClientKey, connectorClient);
             const channels = await TeamsInfo.getTeamChannels(context, '19:ChannelIdgeneralChannelId@thread.skype');
 
             assert(fetchOauthToken.isDone());
@@ -431,6 +435,7 @@ describe('TeamsInfo', function () {
                 .reply(200, teamDetails);
 
             const context = new TestContext(teamActivity);
+            context.turnState.set(context.adapter.ConnectorClientKey, connectorClient);
             const fetchedTeamDetails = await TeamsInfo.getTeamDetails(context);
 
             assert(fetchOauthToken.isDone());
@@ -457,6 +462,7 @@ describe('TeamsInfo', function () {
                 .reply(200, teamDetails);
 
             const context = new TestContext(teamActivity);
+            context.turnState.set(context.adapter.ConnectorClientKey, connectorClient);
             const fetchedTeamDetails = await TeamsInfo.getTeamDetails(
                 context,
                 '19:ChannelIdgeneralChannelId@thread.skype'
@@ -495,6 +501,7 @@ describe('TeamsInfo', function () {
                 .reply(200, members);
 
             const context = new TestContext(oneOnOneActivity);
+            context.turnState.set(context.adapter.ConnectorClientKey, connectorClient);
             const fetchedMembers = await TeamsInfo.getMembers(context);
 
             assert(fetchOauthToken.isDone());
@@ -548,6 +555,7 @@ describe('TeamsInfo', function () {
                 .reply(200, members);
 
             const context = new TestContext(groupChatActivity);
+            context.turnState.set(context.adapter.ConnectorClientKey, connectorClient);
             const fetchedMembers = await TeamsInfo.getMembers(context);
 
             assert(fetchOauthToken.isDone());
@@ -591,6 +599,7 @@ describe('TeamsInfo', function () {
                 .reply(200, members);
 
             const context = new TestContext(teamActivity);
+            context.turnState.set(context.adapter.ConnectorClientKey, connectorClient);
             const fetchedMembers = await TeamsInfo.getMembers(context);
 
             assert(fetchOauthToken.isDone());
@@ -604,6 +613,7 @@ describe('TeamsInfo', function () {
 
         it('should not work if conversationId is falsey', async function () {
             const context = new TestContext(oneOnOneActivity);
+            context.turnState.set(context.adapter.ConnectorClientKey, connectorClient);
             context.activity.conversation.id = undefined;
 
             await assert.rejects(TeamsInfo.getMembers(context), (err) => {
@@ -635,6 +645,7 @@ describe('TeamsInfo', function () {
                 .reply(200, member);
 
             const context = new TestContext(oneOnOneActivity);
+            context.turnState.set(context.adapter.ConnectorClientKey, connectorClient);
             const fetchedMember = await TeamsInfo.getMember(context, oneOnOneActivity.from.id);
 
             assert(fetchOauthToken.isDone());
@@ -663,6 +674,7 @@ describe('TeamsInfo', function () {
                 .reply(200, member);
 
             const context = new TestContext(teamActivity);
+            context.turnState.set(context.adapter.ConnectorClientKey, connectorClient);
             const fetchedMember = await TeamsInfo.getMember(context, teamActivity.from.id);
 
             assert(fetchOauthToken.isDone());
@@ -685,6 +697,7 @@ describe('TeamsInfo', function () {
 
     describe('getMeetingParticipant', function () {
         const context = new TestContext(teamActivity);
+        context.turnState.set(context.adapter.ConnectorClientKey, connectorClient);
 
         it('should work with correct arguments', async function () {
             const participant = {
@@ -729,6 +742,7 @@ describe('TeamsInfo', function () {
 
     describe('getMeetingInfo', function () {
         const context = new TestContext(teamActivity);
+        context.turnState.set(context.adapter.ConnectorClientKey, connectorClient);
 
         it('should work with correct arguments-meetingId in context', async function () {
             const details = {
@@ -772,6 +786,9 @@ describe('TeamsInfo', function () {
         });
 
         it('should work with correct arguments-meetingId passed in', async function () {
+            const context = new TestContext(teamActivity);
+            context.turnState.set(context.adapter.ConnectorClientKey, connectorClient);
+
             const details = {
                 organizer: {
                     id: teamActivity.from.id,
@@ -872,6 +889,7 @@ describe('TeamsInfo', function () {
                 .reply(200, members);
 
             const context = new TestContext(teamActivity);
+            context.turnState.set(context.adapter.ConnectorClientKey, connectorClient);
             const fetchedMembers = await TeamsInfo.getTeamMembers(context);
 
             assert(fetchOauthToken.isDone());
@@ -915,6 +933,7 @@ describe('TeamsInfo', function () {
                 .reply(200, members);
 
             const context = new TestContext(teamActivity);
+            context.turnState.set(context.adapter.ConnectorClientKey, connectorClient);
             const fetchedMembers = await TeamsInfo.getTeamMembers(context, '19:ChannelIdgeneralChannelId@thread.skype');
 
             assert(fetchOauthToken.isDone());
@@ -932,13 +951,6 @@ describe('TeamsInfo', function () {
             it(`should error if the context doesn't have an adapter`, function () {
                 assert.throws(
                     () => TeamsInfo.getConnectorClient({}),
-                    new Error('This method requires a connector client.')
-                );
-            });
-
-            it(`should error if the adapter doesn't have a createConnectorClient method`, function () {
-                assert.throws(
-                    () => TeamsInfo.getConnectorClient({ adapter: {} }),
                     new Error('This method requires a connector client.')
                 );
             });
