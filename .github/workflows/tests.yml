@@ -7,11 +7,13 @@ on:
     - main
     - '4.12'
     - '4.13'
+    - '4.14'
   pull_request:
     branches:
     - main
     - '4.12'
     - '4.13'
+    - '4.14'
 
 jobs:
   ci:
