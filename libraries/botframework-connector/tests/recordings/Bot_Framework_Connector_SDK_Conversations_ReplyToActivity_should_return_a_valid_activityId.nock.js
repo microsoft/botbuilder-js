@@ -64,6 +64,7 @@ var result =
 nock('https://slack.botframework.com:443', {"encodedQueryParams":true})
   .filteringRequestBody(function (path) { return '*';})
 .post('/v3/conversations/BKGSYSTFG%3ATKGSUQHQE%3ADKE8NUG92/activities/1560983022.002200', '*')
+  .matchHeader('x-ms-conversation-id', 'BKGSYSTFG:TKGSUQHQE:DKE8NUG92')
   .reply(200, {"id":"1560983022.002300"}, [ 'Cache-Control',
   'no-cache',
   'Pragma',

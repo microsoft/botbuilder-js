@@ -1,6 +1,7 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
+import { BotFrameworkAuthentication } from 'botframework-connector';
 import { DialogManager, MemoryScope, PathResolver } from 'botbuilder-dialogs';
 import { ResourceExplorer } from 'botbuilder-dialogs-declarative';
 
@@ -9,7 +10,6 @@ import {
     BotTelemetryClient,
     ConversationState,
     SkillConversationIdFactoryBase,
-    SkillHttpClient,
     UserState,
 } from 'botbuilder';
 
@@ -27,7 +27,7 @@ export class CoreBot extends ActivityHandler {
         resourceExplorer: ResourceExplorer,
         userState: UserState,
         conversationState: ConversationState,
-        skillClient: SkillHttpClient,
+        botFrameworkAuthentication: BotFrameworkAuthentication,
         skillConversationIdFactory: SkillConversationIdFactoryBase,
         botTelemetryClient: BotTelemetryClient,
         defaultLocale: string,
@@ -39,6 +39,7 @@ export class CoreBot extends ActivityHandler {
 
         const rootResource = resourceExplorer.getResource(defaultRootDialog);
         const rootDialog = resourceExplorer.loadType<AdaptiveDialog>(rootResource);
+        const skillClient = botFrameworkAuthentication.createBotFrameworkClient();
 
         const dialogManager = new DialogManager(rootDialog).configure({
             conversationState,

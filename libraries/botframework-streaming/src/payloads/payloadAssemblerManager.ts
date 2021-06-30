@@ -8,36 +8,35 @@
 import { SubscribableStream } from '../subscribableStream';
 import { PayloadAssembler } from '../assemblers/payloadAssembler';
 import { StreamManager } from './streamManager';
-import { IHeader } from '../interfaces/IHeader';
+import { IHeader, IReceiveResponse, IReceiveRequest } from '../interfaces';
 import { PayloadTypes } from './payloadTypes';
 
 /**
- * Orchestrates assemly of payloads
+ * Orchestrates assembly of payloads.
  */
 export class PayloadAssemblerManager {
-    private readonly onReceiveRequest;
-    private readonly onReceiveResponse;
-    private readonly streamManager: StreamManager;
     private readonly activeAssemblers: { [id: string]: PayloadAssembler } = {};
 
     /**
      * Initializes a new instance of the [PayloadAssemblerManager](xref:botframework-streaming.PayloadAssemblerManager) class.
+     *
      * @param streamManager The [StreamManager](xref:botframework-streaming.StreamManager) managing the stream being assembled.
      * @param onReceiveResponse Function that executes when new bytes are received on a `response` stream.
      * @param onReceiveRequest Function that executes when new bytes are received on a `request` stream.
      */
-    public constructor(streamManager: StreamManager, onReceiveResponse: Function, onReceiveRequest: Function) {
-        this.streamManager = streamManager;
-        this.onReceiveRequest = onReceiveRequest;
-        this.onReceiveResponse = onReceiveResponse;
-    }
+    constructor(
+        private readonly streamManager: StreamManager,
+        private readonly onReceiveResponse: (id: string, receiveResponse: IReceiveResponse) => Promise<void>,
+        private readonly onReceiveRequest: (id: string, receiveRequest: IReceiveRequest) => Promise<void>
+    ) {}
 
     /**
      * Retrieves the assembler's payload as a stream.
+     *
      * @param header The Header of the Stream to retrieve.
      * @returns A [SubscribableStream](xref:botframework-streaming.SubscribableStream) of the assembler's payload.
      */
-    public getPayloadStream(header: IHeader): SubscribableStream {
+    getPayloadStream(header: IHeader): SubscribableStream {
         if (header.payloadType === PayloadTypes.stream) {
             return this.streamManager.getPayloadStream(header);
         } else if (!this.activeAssemblers[header.id]) {
@@ -52,11 +51,12 @@ export class PayloadAssemblerManager {
 
     /**
      * The action the assembler executes when new bytes are received on the incoming stream.
+     *
      * @param header The stream's Header.
      * @param contentStream The incoming stream being assembled.
      * @param contentLength The length of the stream, if finite.
      */
-    public onReceive(header: IHeader, contentStream: SubscribableStream, contentLength: number): void {
+    onReceive(header: IHeader, contentStream: SubscribableStream, contentLength: number): void {
         if (header.payloadType === PayloadTypes.stream) {
             this.streamManager.onReceive(header, contentStream, contentLength);
         } else {
@@ -70,14 +70,17 @@ export class PayloadAssemblerManager {
         }
     }
 
-    /**
-     * @private
-     */
     private createPayloadAssembler(header: IHeader): PayloadAssembler {
         if (header.payloadType === PayloadTypes.request) {
-            return new PayloadAssembler(this.streamManager, { header: header, onCompleted: this.onReceiveRequest });
+            return new PayloadAssembler(this.streamManager, {
+                header,
+                onCompleted: this.onReceiveRequest,
+            });
         } else if (header.payloadType === PayloadTypes.response) {
-            return new PayloadAssembler(this.streamManager, { header: header, onCompleted: this.onReceiveResponse });
+            return new PayloadAssembler(this.streamManager, {
+                header,
+                onCompleted: this.onReceiveResponse,
+            });
         }
     }
 }

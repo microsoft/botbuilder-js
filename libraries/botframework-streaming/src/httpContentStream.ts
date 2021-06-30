@@ -5,30 +5,28 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { SubscribableStream } from './subscribableStream';
 import { generateGuid } from './utilities/protocol-base';
-import { IHttpContentHeaders } from './interfaces/IHttpContentHeaders';
+import { IHttpContentHeaders } from './interfaces';
+import type { SubscribableStream } from './subscribableStream';
 
 /**
- * An attachment contained within a StreamingRequest's stream collection,
- * which itself contains any form of media item.
+ * An attachment contained within a StreamingRequest's stream collection, which itself contains any form of media item.
  */
 export class HttpContentStream {
-    public readonly id: string;
-    public readonly content: HttpContent;
-    public description: { id: string; type: string; length: number };
+    readonly id: string;
+    description: { id: string; type: string; length: number };
 
     /**
      * Initializes a new instance of the [HttpContentStream](xref:botframework-streaming.HttpContentStream) class.
+     *
      * @param content The [HttpContent](xref:botframework-streaming.HttpContent) to assign to the [HttpContentStream](xref:botframework-streaming.HttpContentStream).
      */
-    public constructor(content: HttpContent) {
+    constructor(readonly content: HttpContent) {
         this.id = generateGuid();
-        this.content = content;
         this.description = {
             id: this.id,
-            type: this.content.headers ? this.content.headers.type : 'unknown',
-            length: this.content.headers ? this.content.headers.contentLength : 0,
+            type: this.content?.headers?.type ?? 'unknown',
+            length: this.content?.headers?.contentLength ?? 0,
         };
     }
 }
@@ -37,23 +35,20 @@ export class HttpContentStream {
  * The HttpContent class that contains a [SubscribableStream](xref:botframework-streaming.SubscribableStream).
  */
 export class HttpContent {
-    public headers: IHttpContentHeaders;
-    private readonly stream: SubscribableStream;
-
     /**
      * Initializes a new instance of the [HttpContent](xref:botframework-streaming.HttpContent) class.
+     *
      * @param headers The Streaming Http content header definition.
      * @param stream The stream of buffered data.
      */
-    public constructor(headers: IHttpContentHeaders, stream: SubscribableStream) {
-        this.headers = headers;
-        this.stream = stream;
-    }
+    constructor(public headers: IHttpContentHeaders, private readonly stream: SubscribableStream) {}
 
     /**
      * Gets the data contained within this [HttpContent](xref:botframework-streaming.HttpContent).
+     *
+     * @returns This [HttpContent's](xref:botframework-streaming.HttpContent) [SubscribableStream](xref:botframework-streaming.SubscribableStream) member.
      */
-    public getStream(): SubscribableStream {
+    getStream(): SubscribableStream {
         return this.stream;
     }
 }

@@ -5,29 +5,28 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { IHeader } from '../interfaces/IHeader';
+import { IHeader, INodeBuffer } from '../interfaces';
 import { PayloadConstants } from './payloadConstants';
-import { INodeBuffer } from '../interfaces/INodeBuffer';
 
 /**
  * Streaming header serializer
  */
 export class HeaderSerializer {
-    public static readonly Delimiter = '.';
-    public static readonly Terminator = '\n';
-    public static readonly End = '1';
-    public static readonly NotEnd = '0';
-    public static readonly TypeOffset: number = 0;
-    public static readonly TypeDelimiterOffset = 1;
-    public static readonly LengthOffset = 2;
-    public static readonly LengthLength = 6;
-    public static readonly LengthDelimeterOffset = 8;
-    public static readonly IdOffset = 9;
-    public static readonly IdLength = 36;
-    public static readonly IdDelimeterOffset = 45;
-    public static readonly EndOffset = 46;
-    public static readonly TerminatorOffset = 47;
-    public static readonly Encoding = 'utf8';
+    static readonly Delimiter = '.';
+    static readonly Terminator = '\n';
+    static readonly End = '1';
+    static readonly NotEnd = '0';
+    static readonly TypeOffset: number = 0;
+    static readonly TypeDelimiterOffset = 1;
+    static readonly LengthOffset = 2;
+    static readonly LengthLength = 6;
+    static readonly LengthDelimeterOffset = 8;
+    static readonly IdOffset = 9;
+    static readonly IdLength = 36;
+    static readonly IdDelimeterOffset = 45;
+    static readonly EndOffset = 46;
+    static readonly TerminatorOffset = 47;
+    static readonly Encoding = 'utf8';
 
     /**
      * Serializes the header into a buffer
@@ -35,7 +34,7 @@ export class HeaderSerializer {
      * @param header The header to serialize.
      * @param buffer The buffer into which to serialize the header.
      */
-    public static serialize(header: IHeader, buffer: INodeBuffer): void {
+    static serialize(header: IHeader, buffer: INodeBuffer): void {
         buffer.write(header.payloadType, this.TypeOffset, 1, this.Encoding);
         buffer.write(this.Delimiter, this.TypeDelimiterOffset, 1, this.Encoding);
         buffer.write(
@@ -57,7 +56,7 @@ export class HeaderSerializer {
      * @param buffer The buffer from which to obtain the data to deserialize.
      * @returns The deserialized header from the buffer.
      */
-    public static deserialize(buffer: INodeBuffer): IHeader {
+    static deserialize(buffer: INodeBuffer): IHeader {
         const jsonBuffer = buffer.toString(this.Encoding);
         const headerArray = jsonBuffer.split(this.Delimiter);
 
@@ -102,11 +101,13 @@ export class HeaderSerializer {
 
     /**
      * Creates a padded string based on a length and character to be padded to.
+     *
      * @param lengthValue The value to be assingned on the result.
      * @param totalLength The length of the padded string result.
      * @param padChar The character value to use as filling.
+     * @returns The padded string.
      */
-    public static headerLengthPadder(lengthValue: number, totalLength: number, padChar: string): string {
+    static headerLengthPadder(lengthValue: number, totalLength: number, padChar: string): string {
         const result = Array(totalLength + 1).join(padChar);
 
         const lengthString = lengthValue.toString();

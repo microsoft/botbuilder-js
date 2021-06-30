@@ -74,3 +74,9 @@ ${city} ${template5()}
 # addEntry(object, entry)
 > Add an {index, value} entry to object
 - ${addProperty(object, entry.index, entry.value)}
+
+# sortNumber(number, divisor)
+> Return a string with leading zeros out to divisor
+- ${if(divisor == 1,
+    string(number),
+    concat(string(div(number, divisor)), sortNumber(mod(number, divisor), div(divisor, 10))))}

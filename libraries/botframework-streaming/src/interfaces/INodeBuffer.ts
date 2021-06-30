@@ -26,9 +26,11 @@ export type BufferEncoding =
  * This interface supports the framework and is not intended to be called directly for your code.
  */
 export interface INodeBuffer extends Uint8Array {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     constructor: any;
     write(string: string, offset?: number, length?: number, encoding?: string): number;
     toString(encoding?: string, start?: number, end?: number): string;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     toJSON(): { type: 'Buffer'; data: any[] };
     equals(otherBuffer: Uint8Array): boolean;
     compare(
@@ -90,6 +92,7 @@ export interface INodeBuffer extends Uint8Array {
     writeDoubleLE(value: number, offset: number, noAssert?: boolean): number;
     writeDoubleBE(value: number, offset: number, noAssert?: boolean): number;
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     fill(value: any, offset?: number, end?: number): this;
     indexOf(value: string | number | Uint8Array, byteOffset?: number, encoding?: string): number;
     lastIndexOf(value: string | number | Uint8Array, byteOffset?: number, encoding?: string): number;

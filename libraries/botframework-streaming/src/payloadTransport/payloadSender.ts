@@ -7,9 +7,7 @@
  */
 
 import { HeaderSerializer } from '../payloads/headerSerializer';
-import { IHeader } from '../interfaces/IHeader';
-import { ISendPacket } from '../interfaces/ISendPacket';
-import { ITransportSender } from '../interfaces/ITransportSender';
+import { IHeader, ISendPacket, ITransportSender } from '../interfaces';
 import { PayloadConstants } from '../payloads/payloadConstants';
 import { SubscribableStream } from '../subscribableStream';
 import { TransportDisconnectedEvent } from './transportDisconnectedEvent';
@@ -19,7 +17,7 @@ import { TransportDisconnectedEventHandler } from './transportDisconnectedEventH
  * Streaming payload sender.
  */
 export class PayloadSender {
-    public disconnected?: TransportDisconnectedEventHandler;
+    disconnected?: TransportDisconnectedEventHandler;
 
     private _sender: ITransportSender;
 
@@ -28,7 +26,7 @@ export class PayloadSender {
      *
      * @returns true if connected to a transport sender.
      */
-    public get isConnected(): boolean {
+    get isConnected(): boolean {
         return this._sender != null;
     }
 
@@ -37,7 +35,7 @@ export class PayloadSender {
      *
      * @param sender The transport sender to connect this payload sender to.
      */
-    public connect(sender: ITransportSender): void {
+    connect(sender: ITransportSender): void {
         this._sender = sender;
     }
 
@@ -48,7 +46,7 @@ export class PayloadSender {
      * @param payload The stream of buffered data to send.
      * @param sentCallback The function to execute when the send has completed.
      */
-    public sendPayload(header: IHeader, payload?: SubscribableStream, sentCallback?: () => Promise<void>): void {
+    sendPayload(header: IHeader, payload?: SubscribableStream, sentCallback?: () => Promise<void>): void {
         const packet: ISendPacket = { header, payload, sentCallback };
         this.writePacket(packet);
     }
@@ -58,7 +56,7 @@ export class PayloadSender {
      *
      * @param event The disconnected event arguments to include in the disconnected event broadcast.
      */
-    public disconnect(event = TransportDisconnectedEvent.Empty): void {
+    disconnect(event = TransportDisconnectedEvent.Empty): void {
         if (!this.isConnected) {
             return;
         }

@@ -13,12 +13,13 @@
  * This interface supports the framework and is not intended to be called directly for your code.
  */
 export interface IBrowserWebSocket {
+    /* eslint-disable @typescript-eslint/no-explicit-any */
     onclose: (event: any) => void;
     onerror: (event: any) => void;
     onmessage: (event: any) => void;
     onopen: (event: any) => void;
-    readyState: number;
-
-    close(): void;
     send(buffer: any): void;
+    /* eslint-enable @typescript-eslint/no-explicit-any */
+    readyState: number;
+    close(): void;
 }

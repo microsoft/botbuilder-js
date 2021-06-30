@@ -438,6 +438,11 @@ describe('LG', function () {
                 variableOptions: ['object', 'entries'],
                 templateRefOptions: ['addEntry', 'addEntries'],
             },
+            {
+                name: 'sortNumber',
+                variableOptions: ['number', 'divisor'],
+                templateRefOptions: ['sortNumber'],
+            },
         ];
 
         const templates = preloaded.Analyzer;

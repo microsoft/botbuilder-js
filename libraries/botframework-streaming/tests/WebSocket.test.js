@@ -110,7 +110,7 @@ describe('Streaming Extensions WebSocket Library Tests', function () {
             expect(transport._active).to.be.null;
             expect(transport._activeReceiveResolve).to.be.null;
             expect(transport._activeReceiveReject).to.be.null;
-            expect(transport._socket).to.be.null;
+            expect(transport.ws).to.be.null;
             expect(transport._activeOffset).to.equal(0);
             expect(transport._activeReceiveCount).to.equal(0);
         });
@@ -126,7 +126,7 @@ describe('Streaming Extensions WebSocket Library Tests', function () {
             expect(transport._active).to.be.null;
             expect(transport._activeReceiveResolve).to.be.null;
             expect(transport._activeReceiveReject).to.be.null;
-            expect(transport._socket).to.be.null;
+            expect(transport.ws).to.be.null;
             expect(transport._activeOffset).to.equal(0);
             expect(transport._activeReceiveCount).to.equal(0);
         });

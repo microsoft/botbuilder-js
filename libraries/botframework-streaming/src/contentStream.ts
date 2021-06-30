@@ -5,24 +5,27 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { SubscribableStream } from './subscribableStream';
-import { PayloadAssembler } from './assemblers';
+
 import { INodeBuffer } from './interfaces/INodeBuffer';
+import type { PayloadAssembler } from './assemblers';
+import { PayloadTypes } from './payloads';
+import type { SubscribableStream } from './subscribableStream';
 
 /**
  * A stream of fixed or infinite length containing content to be decoded.
  */
 export class ContentStream {
-    public id: string;
+    id: string;
     private readonly assembler: PayloadAssembler;
     private stream: SubscribableStream;
 
     /**
      * Initializes a new instance of the [ContentStream](xref:botframework-streaming.ContentStream) class.
+     *
      * @param id The ID assigned to this instance.
      * @param assembler The [PayloadAssembler](xref:botframework-streaming.PayloadAssembler) assigned to this instance.
      */
-    public constructor(id: string, assembler: PayloadAssembler) {
+    constructor(id: string, assembler: PayloadAssembler) {
         if (!assembler) {
             throw Error('Null Argument Exception');
         }
@@ -32,22 +35,28 @@ export class ContentStream {
 
     /**
      * Gets the name of the type of the object contained within this [ContentStream](xref:botframework-streaming.ContentStream).
+     *
+     * @returns The [PayloadType](xref:botframework-streaming.PayloadType) of this [ContentStream](xref:botframework-streaming.ContentStream).
      */
-    public get contentType(): string {
+    get contentType(): string | PayloadTypes {
         return this.assembler.payloadType;
     }
 
     /**
      * Gets the length of this [ContentStream](xref:botframework-streaming.ContentStream).
+     *
+     * @returns A number representing the length of this [ContentStream](xref:botframework-streaming.ContentStream).
      */
-    public get length(): number {
+    get length(): number {
         return this.assembler.contentLength;
     }
 
     /**
      * Gets the data contained within this [ContentStream](xref:botframework-streaming.ContentStream).
+     *
+     * @returns This [ContentStream's](xref:botframework-streaming.ContentStream) [SubscribableStream](xref:botframework-streaming.SubscribableStream).
      */
-    public getStream(): SubscribableStream {
+    getStream(): SubscribableStream {
         if (!this.stream) {
             this.stream = this.assembler.getPayloadStream();
         }
@@ -58,35 +67,31 @@ export class ContentStream {
     /**
      * Closes the assembler.
      */
-    public cancel(): void {
+    cancel(): void {
         this.assembler.close();
     }
 
     /**
      * Gets the [SubscribableStream](xref:botframework-streaming.SubscribableStream) content as a string.
+     *
      * @returns A string Promise with [SubscribableStream](xref:botframework-streaming.SubscribableStream) content.
      */
-    public async readAsString(): Promise<string> {
+    async readAsString(): Promise<string> {
         const { bufferArray } = await this.readAll();
         return (bufferArray || []).map((result) => result.toString('utf8')).join('');
     }
 
     /**
      * Gets the [SubscribableStream](xref:botframework-streaming.SubscribableStream) content as a typed JSON object.
+     *
      * @returns A typed object Promise with `SubscribableStream` content.
      */
-    public async readAsJson<T>(): Promise<T> {
+    async readAsJson<T>(): Promise<T> {
         const stringToParse = await this.readAsString();
-        try {
-            return <T>JSON.parse(stringToParse);
-        } catch (error) {
-            throw error;
-        }
+        return <T>JSON.parse(stringToParse);
     }
 
-    /**
-     * @private
-     */
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     private async readAll(): Promise<Record<string, any>> {
         // do a read-all
         const allData: INodeBuffer[] = [];
@@ -102,6 +107,7 @@ export class ContentStream {
 
         if (count < this.length) {
             const readToEnd = new Promise<boolean>((resolve): void => {
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
                 const callback = (cs: ContentStream) => (chunk: any): void => {
                     allData.push(chunk);
                     count += (chunk as INodeBuffer).length;

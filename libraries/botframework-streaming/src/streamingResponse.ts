@@ -12,8 +12,8 @@ import { SubscribableStream } from './subscribableStream';
  * The basic response type sent over Bot Framework Protocol 3 with Streaming Extensions transports, equivalent to HTTP response messages.
  */
 export class StreamingResponse {
-    public statusCode: number;
-    public streams: HttpContentStream[] = [];
+    statusCode: number;
+    streams: HttpContentStream[] = [];
 
     /**
      * Creates a streaming response with the passed in method, path, and body.
@@ -22,7 +22,7 @@ export class StreamingResponse {
      * @param body Optional body containing additional information.
      * @returns A streaming response with the appropriate statuscode and passed in body.
      */
-    public static create(statusCode: number, body?: HttpContent): StreamingResponse {
+    static create(statusCode: number, body?: HttpContent): StreamingResponse {
         const response = new StreamingResponse();
         response.statusCode = statusCode;
         if (body) {
@@ -37,7 +37,7 @@ export class StreamingResponse {
      *
      * @param content The Http content to include in the new stream attachment.
      */
-    public addStream(content: HttpContent): void {
+    addStream(content: HttpContent): void {
         this.streams.push(new HttpContentStream(content));
     }
 
@@ -46,7 +46,8 @@ export class StreamingResponse {
      *
      * @param body The JSON text to write to the body of the streaming response.
      */
-    public setBody(body: any): void {
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/no-explicit-any
+    setBody(body: any): void {
         const stream = new SubscribableStream();
         stream.write(JSON.stringify(body), 'utf8');
         this.addStream(

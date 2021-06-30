@@ -1,9 +1,8 @@
 const assert = require('assert');
-const chai = require('chai');
-const expect = chai.expect;
-const np = require('../lib');
-const npt = require('../lib/namedPipe/namedPipeTransport');
-const protocol = require('../lib');
+const { expect } = require('chai');
+const { NamedPipeClient, NamedPipeServer, StreamingRequest } = require('../lib');
+const { NamedPipeTransport } = require('../lib/namedPipe');
+const { RequestHandler } = require('../lib');
 const { createNodeServer, getServerFactory } = require('../lib/utilities/createNodeServer');
 
 class FauxSock {
@@ -66,7 +65,7 @@ class TestClient {
 
     connect() {
         const socket = new FauxSock();
-        this.transport = new npt.NamedPipeTransport(socket, '');
+        this.transport = new NamedPipeTransport(socket, '');
 
         return Promise.resolve();
     }
@@ -82,16 +81,14 @@ class TestClient {
 describe('Streaming Extensions NamedPipe Library Tests', function () {
     describe('NamedPipe Transport Tests', function () {
         it('Client connect', function () {
-            const pipeName = 't1';
-            const c = new TestClient(pipeName);
+            const c = new TestClient('pipeName');
             const t = c.connect();
             expect(t).to.not.be.undefined;
             c.disconnect();
         });
 
         it('Client cannot send while connecting', async function (done) {
-            const pipeName = 't1';
-            const c = new TestClient(pipeName);
+            const c = new TestClient('pipeName');
             c.connect();
 
             const b = Buffer.from('12345', 'utf8');
@@ -109,8 +106,8 @@ describe('Streaming Extensions NamedPipe Library Tests', function () {
             sock.destroyed = false;
             sock.connecting = false;
             sock.writable = true;
-            const transport = new npt.NamedPipeTransport(sock, 'fakeSocket1');
-            expect(transport).to.be.instanceOf(npt.NamedPipeTransport);
+            const transport = new NamedPipeTransport(sock, 'fakeSocket1');
+            expect(transport).to.be.instanceOf(NamedPipeTransport);
             expect(() => transport.close()).to.not.throw;
         });
 
@@ -119,8 +116,8 @@ describe('Streaming Extensions NamedPipe Library Tests', function () {
             sock.destroyed = false;
             sock.connecting = false;
             sock.writable = true;
-            const transport = new npt.NamedPipeTransport(sock, 'fakeSocket2');
-            expect(transport).to.be.instanceOf(npt.NamedPipeTransport);
+            const transport = new NamedPipeTransport(sock, 'fakeSocket2');
+            expect(transport).to.be.instanceOf(NamedPipeTransport);
             expect(transport.isConnected).to.be.true;
             expect(() => transport.close()).to.not.throw;
         });
@@ -130,8 +127,8 @@ describe('Streaming Extensions NamedPipe Library Tests', function () {
             sock.destroyed = false;
             sock.connecting = false;
             sock.writable = true;
-            const transport = new npt.NamedPipeTransport(sock, 'fakeSocket3');
-            expect(transport).to.be.instanceOf(npt.NamedPipeTransport);
+            const transport = new NamedPipeTransport(sock, 'fakeSocket3');
+            expect(transport).to.be.instanceOf(NamedPipeTransport);
             expect(transport.close()).to.not.throw;
             expect(transport.isConnected).to.be.false;
         });
@@ -141,8 +138,8 @@ describe('Streaming Extensions NamedPipe Library Tests', function () {
             sock.destroyed = false;
             sock.connecting = false;
             sock.writable = true;
-            const transport = new npt.NamedPipeTransport(sock, 'fakeSocket4');
-            expect(transport).to.be.instanceOf(npt.NamedPipeTransport);
+            const transport = new NamedPipeTransport(sock, 'fakeSocket4');
+            expect(transport).to.be.instanceOf(NamedPipeTransport);
             expect(transport.isConnected).to.be.true;
             const buff = Buffer.from('hello', 'utf8');
             const sent = transport.send(buff);
@@ -155,8 +152,8 @@ describe('Streaming Extensions NamedPipe Library Tests', function () {
             sock.destroyed = false;
             sock.connecting = false;
             sock.writable = true;
-            const transport = new npt.NamedPipeTransport(sock, 'fakeSocket5');
-            expect(transport).to.be.instanceOf(npt.NamedPipeTransport);
+            const transport = new NamedPipeTransport(sock, 'fakeSocket5');
+            expect(transport).to.be.instanceOf(NamedPipeTransport);
             expect(transport.isConnected).to.be.true;
             sock.writable = false;
             const buff = Buffer.from('hello', 'utf8');
@@ -170,8 +167,8 @@ describe('Streaming Extensions NamedPipe Library Tests', function () {
             sock.destroyed = false;
             sock.connecting = false;
             sock.writable = true;
-            const transport = new npt.NamedPipeTransport(sock, 'fakeSocket5');
-            expect(transport).to.be.instanceOf(npt.NamedPipeTransport);
+            const transport = new NamedPipeTransport(sock, 'fakeSocket5');
+            expect(transport).to.be.instanceOf(NamedPipeTransport);
             expect(transport.isConnected).to.be.true;
             expect(transport.receive(5)).to.throw;
             expect(() => transport.close()).to.not.throw;
@@ -182,8 +179,8 @@ describe('Streaming Extensions NamedPipe Library Tests', function () {
             sock.destroyed = false;
             sock.connecting = false;
             sock.writable = true;
-            const transport = new npt.NamedPipeTransport(sock);
-            expect(transport).to.be.instanceOf(npt.NamedPipeTransport);
+            const transport = new NamedPipeTransport(sock);
+            expect(transport).to.be.instanceOf(NamedPipeTransport);
             expect(transport.isConnected).to.be.true;
             transport.receive(12).catch();
             transport.socketReceive(Buffer.from('Hello World!', 'utf8'));
@@ -196,14 +193,14 @@ describe('Streaming Extensions NamedPipe Library Tests', function () {
             sock.destroyed = false;
             sock.connecting = false;
             sock.writable = true;
-            const transport = new npt.NamedPipeTransport(sock, 'fakeSocket6');
-            expect(transport).to.be.instanceOf(npt.NamedPipeTransport);
+            const transport = new NamedPipeTransport(sock, 'fakeSocket6');
+            expect(transport).to.be.instanceOf(NamedPipeTransport);
             expect(transport.isConnected).to.be.true;
             transport.socketClose();
             expect(transport._active).to.be.null;
             expect(transport._activeReceiveResolve).to.be.null;
             expect(transport._activeReceiveReject).to.be.null;
-            expect(transport._socket).to.be.null;
+            expect(transport.socket).to.be.null;
             expect(transport._activeOffset).to.equal(0);
             expect(transport._activeReceiveCount).to.equal(0);
         });
@@ -213,14 +210,14 @@ describe('Streaming Extensions NamedPipe Library Tests', function () {
             sock.destroyed = false;
             sock.connecting = false;
             sock.writable = true;
-            const transport = new npt.NamedPipeTransport(sock, 'fakeSocket6');
-            expect(transport).to.be.instanceOf(npt.NamedPipeTransport);
+            const transport = new NamedPipeTransport(sock, 'fakeSocket6');
+            expect(transport).to.be.instanceOf(NamedPipeTransport);
             expect(transport.isConnected).to.be.true;
             transport.socketError();
             expect(transport._active).to.be.null;
             expect(transport._activeReceiveResolve).to.be.null;
             expect(transport._activeReceiveReject).to.be.null;
-            expect(transport._socket).to.be.null;
+            expect(transport.socket).to.be.null;
             expect(transport._activeOffset).to.equal(0);
             expect(transport._activeReceiveCount).to.equal(0);
         });
@@ -230,8 +227,8 @@ describe('Streaming Extensions NamedPipe Library Tests', function () {
             sock.destroyed = false;
             sock.connecting = false;
             sock.writable = true;
-            const transport = new npt.NamedPipeTransport(sock, 'fakeSocket6');
-            expect(transport).to.be.instanceOf(npt.NamedPipeTransport);
+            const transport = new NamedPipeTransport(sock, 'fakeSocket6');
+            expect(transport).to.be.instanceOf(NamedPipeTransport);
             expect(transport.isConnected).to.be.true;
             const buff = Buffer.from('hello', 'utf8');
             expect(transport.socketReceive(buff)).to.not.throw;
@@ -239,10 +236,10 @@ describe('Streaming Extensions NamedPipe Library Tests', function () {
     });
 
     describe('NamedPipe Client Tests', function () {
-        const client = new np.NamedPipeClient('pipeA', new protocol.RequestHandler(), false);
+        const client = new NamedPipeClient('pipeA', new RequestHandler(), false);
 
         it('creates a new client', function () {
-            expect(client).to.be.instanceOf(np.NamedPipeClient);
+            expect(client).to.be.instanceOf(NamedPipeClient);
             expect(client.disconnect()).to.not.throw;
         });
 
@@ -256,7 +253,7 @@ describe('Streaming Extensions NamedPipe Library Tests', function () {
         });
 
         it('sends without throwing', function (done) {
-            const req = new protocol.StreamingRequest();
+            const req = new StreamingRequest();
             req.Verb = 'POST';
             req.Path = 'some/path';
             req.setBody('Hello World!');
@@ -271,32 +268,32 @@ describe('Streaming Extensions NamedPipe Library Tests', function () {
 
     describe('NamedPipe Server Tests', function () {
         it('creates a new server', function () {
-            const server = new np.NamedPipeServer('pipeA', new protocol.RequestHandler(), false);
-            expect(server).to.be.instanceOf(np.NamedPipeServer);
+            const server = new NamedPipeServer('pipeA', new RequestHandler());
+            expect(server).to.be.instanceOf(NamedPipeServer);
             expect(server.disconnect()).to.not.throw;
         });
 
         it('throws a TypeError during construction if missing the "baseName" parameter', function () {
-            expect(() => new np.NamedPipeServer()).to.throw('NamedPipeServer: Missing baseName parameter');
+            expect(() => new NamedPipeServer()).to.throw('NamedPipeServer: Missing baseName parameter');
         });
 
         it('starts the server without throwing', function () {
-            const server = new np.NamedPipeServer('pipeA', new protocol.RequestHandler(), false);
-            expect(server).to.be.instanceOf(np.NamedPipeServer);
+            const server = new NamedPipeServer('pipeA', new RequestHandler());
+            expect(server).to.be.instanceOf(NamedPipeServer);
 
             expect(server.start()).to.not.throw;
             expect(server.disconnect()).to.not.throw;
         });
 
         it('disconnects without throwing', function () {
-            const server = new np.NamedPipeServer('pipeA', new protocol.RequestHandler(), false);
-            expect(server).to.be.instanceOf(np.NamedPipeServer);
+            const server = new NamedPipeServer('pipeA', new RequestHandler());
+            expect(server).to.be.instanceOf(NamedPipeServer);
             expect(server.start()).to.not.throw;
             expect(server.disconnect()).to.not.throw;
         });
 
         it('returns true if isConnected === true on _receiver & _sender', function () {
-            const server = new np.NamedPipeServer('pipeisConnected', new protocol.RequestHandler(), false);
+            const server = new NamedPipeServer('pipeisConnected', new RequestHandler());
 
             expect(server.isConnected).to.be.false;
             server._receiver = { isConnected: true };
@@ -305,8 +302,8 @@ describe('Streaming Extensions NamedPipe Library Tests', function () {
         });
 
         it('sends without throwing', function (done) {
-            const server = new np.NamedPipeServer('pipeA', new protocol.RequestHandler(), false);
-            expect(server).to.be.instanceOf(np.NamedPipeServer);
+            const server = new NamedPipeServer('pipeA', new RequestHandler());
+            expect(server).to.be.instanceOf(NamedPipeServer);
             expect(server.start()).to.not.throw;
             const req = { verb: 'POST', path: '/api/messages', streams: [] };
             server
@@ -319,16 +316,16 @@ describe('Streaming Extensions NamedPipe Library Tests', function () {
         });
 
         it('handles being disconnected', function () {
-            const server = new np.NamedPipeServer('pipeA', new protocol.RequestHandler(), false);
-            expect(server).to.be.instanceOf(np.NamedPipeServer);
+            const server = new NamedPipeServer('pipeA', new RequestHandler());
+            expect(server).to.be.instanceOf(NamedPipeServer);
             server.start();
             expect(server.disconnect()).to.not.throw;
         });
 
         it('ensures that two servers cannot get into a split brain scenario', async function () {
             const servers = [
-                new np.NamedPipeServer('pipeA', new protocol.RequestHandler()),
-                new np.NamedPipeServer('pipeA', new protocol.RequestHandler()),
+                new NamedPipeServer('pipeA', new RequestHandler()),
+                new NamedPipeServer('pipeA', new RequestHandler()),
             ];
 
             try {

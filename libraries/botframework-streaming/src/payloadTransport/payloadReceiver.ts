@@ -11,15 +11,13 @@ import { HeaderSerializer } from '../payloads/headerSerializer';
 import { SubscribableStream } from '../subscribableStream';
 import { PayloadConstants } from '../payloads/payloadConstants';
 import { TransportDisconnectedEvent } from './transportDisconnectedEvent';
-import { ITransportReceiver } from '../interfaces/ITransportReceiver';
-import { IHeader } from '../interfaces/IHeader';
-import { INodeBuffer } from '../interfaces/INodeBuffer';
+import { IHeader, INodeBuffer, ITransportReceiver } from '../interfaces';
 
 /**
  * Payload receiver for streaming.
  */
 export class PayloadReceiver {
-    public disconnected?: TransportDisconnectedEventHandler;
+    disconnected?: TransportDisconnectedEventHandler;
 
     private _receiver: ITransportReceiver;
     private _receiveHeaderBuffer: INodeBuffer;
@@ -33,7 +31,7 @@ export class PayloadReceiver {
      *
      * @returns true if connected to a transport sender.
      */
-    public get isConnected(): boolean {
+    get isConnected(): boolean {
         return this._receiver != null;
     }
 
@@ -43,7 +41,7 @@ export class PayloadReceiver {
      * @param receiver The [ITransportReceiver](xref:botframework-streaming.ITransportReceiver) object to pull incoming data from.
      * @returns a promise that resolves when the receiver is complete
      */
-    public connect(receiver: ITransportReceiver): Promise<void> {
+    connect(receiver: ITransportReceiver): Promise<void> {
         this._receiver = receiver;
         return this.receivePackets();
     }
@@ -54,7 +52,7 @@ export class PayloadReceiver {
      * @param getStream Callback when a new stream has been received.
      * @param receiveAction Callback when a new message has been received.
      */
-    public subscribe(
+    subscribe(
         getStream: (header: IHeader) => SubscribableStream,
         receiveAction: (header: IHeader, stream: SubscribableStream, count: number) => void
     ): void {
@@ -67,7 +65,7 @@ export class PayloadReceiver {
      *
      * @param event Event arguments to include when broadcasting disconnection event.
      */
-    public disconnect(event = TransportDisconnectedEvent.Empty): void {
+    disconnect(event = TransportDisconnectedEvent.Empty): void {
         if (!this.isConnected) {
             return;
         }
