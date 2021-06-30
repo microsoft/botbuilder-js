@@ -28,7 +28,7 @@ describe('LuisAdaptiveRecognizerTests', function () {
         await TestUtils.runTestScript(explorer, 'ExternalEntities', undefined, config);
     });
 
-    it.only('Cached Luis Result', async () => {
+    it('Cached Luis Result', async () => {
         const resourceDir = path.join(__dirname, 'resources/LuisAdaptiveRecognizerTests');
         const config = useMockLuisSettings(resourceDir);
         const explorer = makeResourceExplorer('LuisAdaptiveRecognizerTests', LuisBotComponent);
