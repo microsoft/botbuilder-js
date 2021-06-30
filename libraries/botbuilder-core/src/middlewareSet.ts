@@ -66,8 +66,9 @@ export type MiddlewareHandler = (context: TurnContext, next: () => Promise<void>
  * });
  * ```
  */
-export class MiddlewareSet implements Middleware {
+export class MiddlewareSet implements Middleware, Iterable<MiddlewareHandler> {
     private middleware: MiddlewareHandler[] = [];
+    private count = 0;
 
     /**
      * Creates a new MiddlewareSet instance.
@@ -75,6 +76,15 @@ export class MiddlewareSet implements Middleware {
      */
     constructor(...middlewares: (MiddlewareHandler | Middleware)[]) {
         this.use(...middlewares);
+    }
+
+    [Symbol.iterator]() {
+        return {
+            next(): IteratorResult<MiddlewareHandler> {
+                this.count++;
+                return this.middleware[this.count];
+            },
+        };
     }
 
     /**

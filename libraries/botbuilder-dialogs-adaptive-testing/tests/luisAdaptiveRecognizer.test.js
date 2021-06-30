@@ -1,6 +1,6 @@
 const path = require('path');
 const { LuisAdaptiveRecognizer, LuisBotComponent } = require('botbuilder-ai');
-const { MockLuisLoader, MockLuisRecognizer, TestUtils, useMockLuisSettings } = require('../lib');
+const { MockLuisLoader, MockLuisRecognizer, TestUtils, useMockLuisSettings, AssertTelemetryContains } = require('../lib');
 const { makeResourceExplorer } = require('./utils');
 
 describe('LuisAdaptiveRecognizerTests', function () {
@@ -26,5 +26,13 @@ describe('LuisAdaptiveRecognizerTests', function () {
         const explorer = makeResourceExplorer('LuisAdaptiveRecognizerTests', LuisBotComponent);
         explorer.registerType(LuisAdaptiveRecognizer.$kind, MockLuisRecognizer, new MockLuisLoader(explorer, config));
         await TestUtils.runTestScript(explorer, 'ExternalEntities', undefined, config);
+    });
+
+    it.only('Cached Luis Result', async () => {
+        const resourceDir = path.join(__dirname, 'resources/LuisAdaptiveRecognizerTests');
+        const config = useMockLuisSettings(resourceDir);
+        const explorer = makeResourceExplorer('LuisAdaptiveRecognizerTests', LuisBotComponent);
+        explorer.registerType(LuisAdaptiveRecognizer.$kind, MockLuisRecognizer, new MockLuisLoader(explorer, config));
+        await TestUtils.runTestScript(explorer, 'CacheLuisRecognizer', undefined, config);
     });
 });

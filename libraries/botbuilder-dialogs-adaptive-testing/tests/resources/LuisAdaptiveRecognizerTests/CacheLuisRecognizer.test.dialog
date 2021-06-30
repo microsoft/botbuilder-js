@@ -1,0 +1,69 @@
+{
+    "$schema": "../../../tests.schema",
+    "$kind": "Microsoft.Test.Script",
+    "dialog": {
+        "$kind": "Microsoft.AdaptiveDialog",
+        "recognizer": {
+            "$kind": "Microsoft.LuisRecognizer",
+            "applicationId": "=settings.luis.ExternalEntities_test_en_us_lu.appId",
+            "endpoint": "=settings.luis.endpoint",
+            "endpointKey": "=settings.luis.endpointKey",
+            "externalEntityRecognizer": "ExternalEntities.Recognizer",
+            "predictionOptions": {
+                "preferExternalEntities": true
+            }
+        },
+        "triggers": [
+            {
+                "$kind": "Microsoft.OnIntent",
+                "intent": "intent",
+                "entities": [
+                    "alphaEntity"
+                ],
+                "actions": [
+                    {
+                      "$kind": "Microsoft.BeginDialog",
+                      "options": {},
+                      "dialog": "AskName"
+                    }
+                ]
+            },
+            {
+                "$kind": "Microsoft.OnIntent",
+                "intent": "intent",
+                "entities": [
+                    "numberEntity"
+                ],
+                "actions": [
+                    {
+                        "$kind": "Microsoft.SendActivity",
+                        "activity": "numberEntity"
+                    }
+                ]
+            }
+        ]
+    },
+    "locale": "en-us",
+    "script": [
+        {
+            "$kind": "Microsoft.Test.UserSays",
+            "text": "word1"
+        },
+        {
+            "$kind": "Microsoft.Test.AssertReply",
+            "text": "What is your name?"
+        },
+        {
+            "$kind": "Microsoft.Test.UserSays",
+            "text": "word1"
+        },
+        {
+          "$kind": "Microsoft.Test.AssertTelemetryContains",
+          "events": [
+            "Luis result cached",
+            "Read from cached Luis result"
+          ],
+          "description": "Ensure telemetry log contains cached Luis info"
+        }
+    ]
+}

@@ -82,6 +82,7 @@ export class TelemetryLoggerMiddleware implements Middleware {
             throw new Error('context is null');
         }
 
+        context.turnState.set('telemetryClient', this.telemetryClient);
         // log incoming activity at beginning of turn
         if (context.activity !== null) {
             const activity: Activity = context.activity;
