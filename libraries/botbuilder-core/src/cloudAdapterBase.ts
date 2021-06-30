@@ -51,7 +51,7 @@ export abstract class CloudAdapterBase extends BotAdapter {
     /**
      * @inheritdoc
      */
-    sendActivities(context: TurnContext, activities: Partial<Activity>[]): Promise<ResourceResponse[]> {
+    async sendActivities(context: TurnContext, activities: Partial<Activity>[]): Promise<ResourceResponse[]> {
         if (!context) {
             throw new TypeError('`context` parameter required');
         }
