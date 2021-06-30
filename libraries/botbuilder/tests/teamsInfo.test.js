@@ -954,6 +954,14 @@ describe('TeamsInfo', function () {
                     new Error('This method requires a connector client.')
                 );
             });
+
+            it(`should error if the turnState doesn't have a ConnectorClient`, function () {
+                const context = new TestContext(teamActivity);
+                assert.throws(
+                    () => TeamsInfo.getConnectorClient(context),
+                    new Error('This method requires a connector client.')
+                );
+            });
         });
 
         describe('getMembersInternal()', function () {
