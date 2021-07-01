@@ -120,7 +120,7 @@ function addFeatures(services: ServiceCollection, configuration: Configuration):
 }
 
 function addTelemetry(services: ServiceCollection, configuration: Configuration): void {
-    services.addFactory('botTelemetryClient', () => {
+    services.addFactory<BotTelemetryClient>('botTelemetryClient', () => {
         const telemetryOptions = configuration.type(
             ['options'],
             z
@@ -136,7 +136,12 @@ function addTelemetry(services: ServiceCollection, configuration: Configuration)
         return setupString ? new ApplicationInsightsTelemetryClient(setupString) : new NullTelemetryClient();
     });
 
-    services.addFactory(
+    services.addFactory<
+        Middleware,
+        {
+            botTelemetryClient: BotTelemetryClient;
+        }
+    >(
         'telemetryMiddleware',
         ['botTelemetryClient'],
         ({ botTelemetryClient }) =>
@@ -148,10 +153,19 @@ function addTelemetry(services: ServiceCollection, configuration: Configuration)
 }
 
 function addStorage(services: ServiceCollection, configuration: Configuration): void {
-    services.addFactory('conversationState', ['storage'], ({ storage }) => new ConversationState(storage));
-    services.addFactory('userState', ['storage'], ({ storage }) => new UserState(storage));
+    services.addFactory<ConversationState, { storage: Storage }>(
+        'conversationState',
+        ['storage'],
+        ({ storage }) => new ConversationState(storage)
+    );
 
-    services.addFactory('storage', () => {
+    services.addFactory<UserState, { storage: Storage }>(
+        'userState',
+        ['storage'],
+        ({ storage }) => new UserState(storage)
+    );
+
+    services.addFactory<Storage>('storage', () => {
         const storage = configuration.string(['runtimeSettings', 'storage']);
 
         switch (storage) {
@@ -207,13 +221,13 @@ function addStorage(services: ServiceCollection, configuration: Configuration): 
 }
 
 function addSkills(services: ServiceCollection, configuration: Configuration): void {
-    services.addFactory(
+    services.addFactory<SkillConversationIdFactoryBase, { storage: Storage }>(
         'skillConversationIdFactory',
         ['storage'],
         ({ storage }) => new SkillConversationIdFactory(storage)
     );
 
-    services.addFactory('authenticationConfiguration', () => {
+    services.addFactory<AuthenticationConfiguration>('authenticationConfiguration', () => {
         const allowedCallers =
             configuration.type(['runtimeSettings', 'skills', 'allowedCallers'], z.array(z.string())) ?? [];
 
@@ -487,24 +501,58 @@ function registerQnAComponents(services: ServiceCollection, configuration: Confi
  * Construct all runtime services.
  *
  * @param applicationRoot absolute path to root of application
- * @param configuration a fully initialized configuration instance to use
+ * @param settingsDirectory directory where settings files are located
  * @returns service collection and configuration
+ *
+ * @remarks
+ * While the full set of dependencies is designed to be sufficient to run Adaptiev Dialogs,
+ * the `"bot"` dependency can actually be any [ActivityHandler](xref:botbuilder-core.ActivityHandler)
+ * implementation and is not constrained to one that uses Adaptive Dialogs. Any Bot Framework project
+ * can therefore be simplified by just using this function along with a custom
+ * [ActivityHandler](xref:botbuilder-core.ActivityHandler) implementation.
+ *
+ * Aspects of the behavior of a number of these dependencies, including those that can be overriden,
+ * can be controlled through configuration.
+ *
+ * The default [ResourceExplorer](xref:botbuilder-dialogs-declarative.ResourceExplorer) uses the file
+ * system. The `applicationRoot` folder is used as the root directory.
+ *
+ * If not overriden, the exact type of [Storage](xref:botbuilder-core.Storage) added depends on configuration.
+ * With no configuration, the default is memory storage. It should be noted that
+ * [MemoryStorage](xref:botbuilder-core.MemoryStorage) is designed primarily for testing with a single host
+ * running the bot and no durable storage.
+ *
+ * The default Skills implementation can be constrained in terms of allowed callers through configuration.
+ * Refer to the product documentation for further details.
+ *
+ * The default [BotTelemetryClient](xref:botbuilder-core.BotTelemetryClient) implementation uses AppInsights
+ * and aspects of what is included in the telemetry data recorded can be controller through configuration.
+ * Refer to the product documentation for further details.
+ *
+ * A number of the features of the runtime are implemented through middleware. Various feature flags in
+ * configuration determine whether these middleware are added at runtime, the settings include:
+ * UseInspection, ShowTyping and SetSpeak.
+ *
+ * These control the addition of:
+ * [InspectionMiddleware](xref:botbuilder.InspectionMiddleware),
+ * [ShowTypingMiddleware](xref:botbuilder-core.ShowTypingMiddleware), and
+ * [SetSpeakMiddleware](xref:botbuilder.SetSpeakMiddleware) respectively.
  */
 export async function getRuntimeServices(
     applicationRoot: string,
-    configuration: Configuration
+    settingsDirectory: string
 ): Promise<[ServiceCollection, Configuration]>;
 
 /**
  * Construct all runtime services.
  *
  * @param applicationRoot absolute path to root of application
- * @param settingsDirectory directory where settings files are located
+ * @param configuration a fully initialized configuration instance to use
  * @returns service collection and configuration
  */
 export async function getRuntimeServices(
     applicationRoot: string,
-    settingsDirectory: string
+    configuration: Configuration
 ): Promise<[ServiceCollection, Configuration]>;
 
 /**
