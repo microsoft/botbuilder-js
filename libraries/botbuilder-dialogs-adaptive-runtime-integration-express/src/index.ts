@@ -5,7 +5,7 @@ import * as z from 'zod';
 import express, { Application } from 'express';
 import path from 'path';
 import type { Server } from 'http';
-import type { ActivityHandlerBase, BotFrameworkHttpAdapter, ChannelServiceRoutes } from 'botbuilder';
+import type { Bot, BotFrameworkHttpAdapter, ChannelServiceRoutes } from 'botbuilder';
 import { Configuration, ConfigurationConstants, getRuntimeServices } from 'botbuilder-dialogs-adaptive-runtime';
 import type { ServiceCollection } from 'botbuilder-dialogs-adaptive-runtime-core';
 import { json, urlencoded } from 'body-parser';
@@ -120,7 +120,7 @@ export async function makeApp(
 
     const { adapter, bot, channelServiceRoutes, customAdapters } = services.mustMakeInstances<{
         adapter: BotFrameworkHttpAdapter;
-        bot: ActivityHandlerBase;
+        bot: Bot;
         channelServiceRoutes: ChannelServiceRoutes;
         customAdapters: Map<string, BotFrameworkHttpAdapter>;
     }>('adapter', 'bot', 'channelServiceRoutes', 'customAdapters');
@@ -141,9 +141,7 @@ export async function makeApp(
 
     app.post(resolvedOptions.messagingEndpointPath, async (req, res) => {
         try {
-            await adapter.process(req, res, async (turnContext) => {
-                await bot.run(turnContext);
-            });
+            await adapter.process(req, res, (context) => bot.onTurn(context));
         } catch (err) {
             return errorHandler(err, res);
         }
@@ -170,9 +168,7 @@ export async function makeApp(
             if (adapter) {
                 app.post(`/api/${settings.route}`, async (req, res) => {
                     try {
-                        await adapter.process(req, res, async (turnContext) => {
-                            await bot.run(turnContext);
-                        });
+                        await adapter.process(req, res, (context) => bot.onTurn(context));
                     } catch (err) {
                         return errorHandler(err, res);
                     }
@@ -197,9 +193,7 @@ export async function makeApp(
                 const adapter = services.mustMakeInstance<BotFrameworkHttpAdapter>('adapter');
 
                 try {
-                    await adapter.process(req, socket, head, async (context) => {
-                        await bot.run(context);
-                    });
+                    await adapter.process(req, socket, head, (context) => bot.onTurn(context));
                 } catch (err) {
                     return errorHandler(err);
                 }

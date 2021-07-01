@@ -88,7 +88,7 @@ describe('AdaptiveDialogBot Tests', function () {
             telemetryClient
         );
 
-        await bot.run(turnContext);
+        await bot.onTurn(turnContext);
 
         assert.ok(turnContext.turnState.get(BotFrameworkClientKey));
         assert.ok(turnContext.turnState.get(skillConversationIdFactoryKey));
@@ -134,7 +134,7 @@ describe('AdaptiveDialogBot Tests', function () {
         );
 
         await assert.rejects(
-            bot.run(turnContext),
+            bot.onTurn(turnContext),
             new Error('The ResourceExplorer could not find a resource with id "main.dialog"')
         );
     });
@@ -180,7 +180,7 @@ describe('AdaptiveDialogBot Tests', function () {
             telemetryClient
         );
 
-        await bot.run(turnContext);
+        await bot.onTurn(turnContext);
 
         const testOptionsAccessor = conversationState.createProperty('testOptions');
         assert.strictEqual(123, (await testOptionsAccessor.get(turnContext)).randomSeed);

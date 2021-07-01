@@ -30,7 +30,7 @@ import {
 } from 'botframework-connector';
 
 import {
-    ActivityHandlerBase,
+    Bot,
     BotAdapter,
     BotComponent,
     BotFrameworkHttpAdapter,
@@ -269,7 +269,7 @@ function addSkills(services: ServiceCollection, configuration: Configuration): v
         ChannelServiceHandlerBase,
         {
             adapter: BotAdapter;
-            bot: ActivityHandlerBase;
+            bot: Bot;
             botFrameworkAuthentication: BotFrameworkAuthentication;
             skillConversationIdFactory: SkillConversationIdFactoryBase;
         }
@@ -279,7 +279,7 @@ function addSkills(services: ServiceCollection, configuration: Configuration): v
         (dependencies) =>
             new CloudSkillHandler(
                 dependencies.adapter,
-                (context) => dependencies.bot.run(context),
+                (context) => dependencies.bot.onTurn(context),
                 dependencies.skillConversationIdFactory,
                 dependencies.botFrameworkAuthentication
             )
@@ -323,7 +323,7 @@ function addCoreBot(services: ServiceCollection, configuration: Configuration): 
     );
 
     services.addFactory<
-        ActivityHandlerBase,
+        Bot,
         {
             botFrameworkAuthentication: BotFrameworkAuthentication;
             botTelemetryClient: BotTelemetryClient;

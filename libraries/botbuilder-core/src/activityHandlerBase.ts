@@ -5,6 +5,7 @@
 import { ActivityTypes, ChannelAccount, MessageReaction, TurnContext } from '.';
 import { InvokeResponse } from './invokeResponse';
 import { StatusCodes } from 'botframework-schema';
+import { Bot } from './bot';
 
 // This key is exported internally so that subclassed ActivityHandlers and BotAdapters will not override any already set InvokeResponses.
 export const INVOKE_RESPONSE_KEY = Symbol('invokeResponse');
@@ -404,5 +405,16 @@ export class ActivityHandlerBase {
         // List of all Activity Types:
         // https://github.com/Microsoft/botbuilder-js/blob/main/libraries/botframework-schema/src/index.ts#L1627
         await this.onTurnActivity(context);
+    }
+
+    /**
+     * Adapt to the Bot interface.
+     *
+     * @returns an object conforming to the Bot interface.
+     */
+    asBot(): Bot {
+        return {
+            onTurn: (context) => this.run(context),
+        };
     }
 }

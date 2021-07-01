@@ -12,8 +12,8 @@ import { resourceExplorerKey } from './resourceExtensions';
 import { skillConversationIdFactoryKey } from './skillExtensions';
 
 import {
-    ActivityHandler,
     ActivityTypes,
+    Bot,
     BotCallbackHandlerKey,
     BotTelemetryClient,
     BotTelemetryClientKey,
@@ -29,7 +29,7 @@ import {
     TemplateEngineLanguageGenerator,
 } from './generators';
 
-export class AdaptiveDialogBot extends ActivityHandler {
+export class AdaptiveDialogBot implements Bot {
     private static readonly languageGeneratorManagers = new Map<ResourceExplorer, LanguageGeneratorManager>();
 
     private readonly lazyRootDialog: () => Dialog;
@@ -48,12 +48,10 @@ export class AdaptiveDialogBot extends ActivityHandler {
         private readonly pathResolvers: PathResolver[] = [],
         private readonly dialogs: Dialog[] = []
     ) {
-        super();
-
         this.lazyRootDialog = memoize(() => this.createDialog());
     }
 
-    protected async onTurnActivity(context: TurnContext): Promise<void> {
+    async onTurn(context: TurnContext): Promise<void> {
         const botFrameworkClient = this.botFrameworkAuthentication.createBotFrameworkClient();
 
         // Set up the TurnState the Dialog is expecting.
@@ -112,7 +110,7 @@ export class AdaptiveDialogBot extends ActivityHandler {
         }
 
         // Put this on the TurnState using set because some adapters (like BotFrameworkAdapter and CloudAdapter) will have already added it.
-        context.turnState.set(BotCallbackHandlerKey, this.onTurn);
+        context.turnState.set(BotCallbackHandlerKey, this.onTurn.bind(this));
     }
 
     private createDialog(): Dialog {
@@ -124,9 +122,7 @@ export class AdaptiveDialogBot extends ActivityHandler {
         const adaptiveDialog = this.resourceExplorer.loadType<AdaptiveDialog>(adaptiveDialogResource);
 
         // If we were passed any Dialogs then add them to the AdaptiveDialog's DialogSet so they can be invoked from any other Dialog.
-        this.dialogs.forEach((dialog) => {
-            adaptiveDialog.dialogs.add(dialog);
-        });
+        this.dialogs.forEach((dialog) => adaptiveDialog.dialogs.add(dialog));
 
         return adaptiveDialog;
     }
