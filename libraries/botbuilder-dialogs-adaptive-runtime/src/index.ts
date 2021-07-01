@@ -505,7 +505,7 @@ function registerQnAComponents(services: ServiceCollection, configuration: Confi
  * @returns service collection and configuration
  *
  * @remarks
- * While the full set of dependencies is designed to be sufficient to run Adaptiev Dialogs,
+ * While the full set of dependencies is designed to be sufficient to run Adaptive Dialogs,
  * the `"bot"` dependency can actually be any [ActivityHandler](xref:botbuilder-core.ActivityHandler)
  * implementation and is not constrained to one that uses Adaptive Dialogs. Any Bot Framework project
  * can therefore be simplified by just using this function along with a custom
@@ -517,7 +517,7 @@ function registerQnAComponents(services: ServiceCollection, configuration: Confi
  * The default [ResourceExplorer](xref:botbuilder-dialogs-declarative.ResourceExplorer) uses the file
  * system. The `applicationRoot` folder is used as the root directory.
  *
- * If not overriden, the exact type of [Storage](xref:botbuilder-core.Storage) added depends on configuration.
+ * If not overridden, the exact type of [Storage](xref:botbuilder-core.Storage) added depends on configuration.
  * With no configuration, the default is memory storage. It should be noted that
  * [MemoryStorage](xref:botbuilder-core.MemoryStorage) is designed primarily for testing with a single host
  * running the bot and no durable storage.
