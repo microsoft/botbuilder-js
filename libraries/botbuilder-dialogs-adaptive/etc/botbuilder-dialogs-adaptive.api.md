@@ -5,10 +5,10 @@
 ```ts
 
 import { Activity } from 'botbuilder';
-import { ActivityHandler } from 'botbuilder';
 import { ArrayExpression } from 'adaptive-expressions';
 import { BeginSkillDialogOptions } from 'botbuilder-dialogs';
 import { BoolExpression } from 'adaptive-expressions';
+import { Bot } from 'botbuilder';
 import { BotComponent } from 'botbuilder';
 import { BotFrameworkAuthentication } from 'botframework-connector';
 import { BotFrameworkClient } from 'botbuilder';
@@ -193,10 +193,10 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> im
     }
 
 // @public (undocumented)
-export class AdaptiveDialogBot extends ActivityHandler {
+export class AdaptiveDialogBot implements Bot {
     constructor(adaptiveDialogId: string, languageGeneratorId: string, resourceExplorer: ResourceExplorer, conversationState: ConversationState, userState: UserState, skillConversationIdFactoryBase: SkillConversationIdFactoryBase, languagePolicy: LanguagePolicy, botFrameworkAuthentication: BotFrameworkAuthentication, telemetryClient: BotTelemetryClient, memoryScopes?: MemoryScope[], pathResolvers?: PathResolver[], dialogs?: Dialog[]);
     // (undocumented)
-    protected onTurnActivity(context: TurnContext): Promise<void>;
+    onTurn(context: TurnContext): Promise<void>;
     }
 
 // @public (undocumented)

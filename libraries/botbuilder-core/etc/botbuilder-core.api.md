@@ -106,6 +106,7 @@ export class ActivityHandler extends ActivityHandlerBase {
 
 // @public
 export class ActivityHandlerBase {
+    asBot(): Bot;
     protected onCommandActivity(context: TurnContext): Promise<void>;
     protected onCommandResultActivity(context: TurnContext): Promise<void>;
     protected onConversationUpdateActivity(context: TurnContext): Promise<void>;
@@ -143,6 +144,11 @@ export class AutoSaveStateMiddleware implements Middleware {
     add(...botStates: BotState[]): this;
     botStateSet: BotStateSet;
     onTurn(context: TurnContext, next: () => Promise<void>): Promise<void>;
+}
+
+// @public
+export interface Bot {
+    onTurn(context: TurnContext): Promise<void>;
 }
 
 // @public
