@@ -12,6 +12,11 @@ const packageVersion = "4.0.0";
 export class TokenApiClientContext extends msRest.ServiceClient {
   credentials: msRest.ServiceClientCredentials;
 
+  // Protects against JSON.stringify leaking secrets
+  private toJSON(): unknown {
+      return { name: this.constructor.name };
+  }
+
   /**
    * Initializes a new instance of the TokenApiClientContext class.
    * @param credentials Subscription credentials which uniquely identify client subscription.
