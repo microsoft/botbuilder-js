@@ -166,6 +166,23 @@
     uuid "^3.2.1"
     xml2js "^0.4.19"
 
+"@azure/msal-common@^4.4.0":
+  version "4.4.0"
+  resolved "https://registry.yarnpkg.com/@azure/msal-common/-/msal-common-4.4.0.tgz#818526042f78838ebc332fb735e7de64d8bccb45"
+  integrity sha512-Qrs33Ctt2KM7NxArFPIUKc8UbIcm7zYxJFdJeQ9k7HKBhVk3e88CUz1Mw33cS/Jr+YA1H02OAzHg++bJ+4SFyQ==
+  dependencies:
+    debug "^4.1.1"
+
+"@azure/msal-node@^1.2.0":
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/@azure/msal-node/-/msal-node-1.2.0.tgz#d08a5fb3391436715cb37c6eb44816013bdfa11e"
+  integrity sha512-79o5n483vslc7Qegh9+0BsxODRmlk6YYjVdl9jvwmAuF+i+oylq57e7RVhTVocKCbLCIMOKARI14JyKdDbW0WA==
+  dependencies:
+    "@azure/msal-common" "^4.4.0"
+    axios "^0.21.1"
+    jsonwebtoken "^8.5.1"
+    uuid "^8.3.0"
+
 "@azure/storage-blob@^12.2.1":
   version "12.2.1"
   resolved "https://registry.yarnpkg.com/@azure/storage-blob/-/storage-blob-12.2.1.tgz#8397a492b44f0771d671880a841a8c8c0cd45b60"
@@ -8005,6 +8022,22 @@ jsonwebtoken@8.0.1:
     ms "^2.0.0"
     xtend "^4.0.1"
 
+jsonwebtoken@^8.5.1:
+  version "8.5.1"
+  resolved "https://registry.yarnpkg.com/jsonwebtoken/-/jsonwebtoken-8.5.1.tgz#00e71e0b8df54c2121a1f26137df2280673bcc0d"
+  integrity sha512-XjwVfRS6jTMsqYs0EsuJ4LGxXV14zQybNd4L2r0UvbVnSF9Af8x7p5MzbJ90Ioz/9TI41/hTCvznF/loiSzn8w==
+  dependencies:
+    jws "^3.2.2"
+    lodash.includes "^4.3.0"
+    lodash.isboolean "^3.0.3"
+    lodash.isinteger "^4.0.4"
+    lodash.isnumber "^3.0.3"
+    lodash.isplainobject "^4.0.6"
+    lodash.isstring "^4.0.1"
+    lodash.once "^4.0.0"
+    ms "^2.1.1"
+    semver "^5.6.0"
+
 jspath@^0.4.0:
   version "0.4.0"
   resolved "https://registry.yarnpkg.com/jspath/-/jspath-0.4.0.tgz#2f5fd1808ff2249a88a3c45e642288a226f85e1d"
@@ -8034,7 +8067,7 @@ jwa@^1.4.1:
     ecdsa-sig-formatter "1.0.11"
     safe-buffer "^5.0.1"
 
-jws@3.x.x, jws@^3.1.4:
+jws@3.x.x, jws@^3.1.4, jws@^3.2.2:
   version "3.2.2"
   resolved "https://registry.yarnpkg.com/jws/-/jws-3.2.2.tgz#001099f3639468c9414000e99995fa52fb478304"
   integrity sha512-YHlZCB6lMTllWDtSPHz/ZXTsi8S00usEV6v1tjq8tOUZzw7DpSDWVXjXDre6ed1w/pd495ODpHZYSdkRTsa0HA==

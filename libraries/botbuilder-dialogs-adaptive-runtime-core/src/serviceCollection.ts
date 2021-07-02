@@ -69,6 +69,10 @@ export class ServiceCollection {
      * @returns this for chaining
      */
     addInstance<InstanceType>(key: string, instance: InstanceType): this {
+        if (this.graph.hasNode(key)) {
+            this.graph.removeNode(key);
+        }
+
         this.graph.addNode(key, [() => instance]);
         return this;
     }
