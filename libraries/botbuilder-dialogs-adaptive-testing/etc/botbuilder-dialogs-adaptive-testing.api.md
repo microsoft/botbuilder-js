@@ -131,6 +131,23 @@ export interface AssertReplyOneOfConfiguration extends AssertReplyActivityConfig
     text?: string[];
 }
 
+// @public
+export class AssertTelemetryContains extends TestAction implements AssertTelemetryContainsConfiguration {
+    // (undocumented)
+    static $kind: string;
+    description: string;
+    events: string[];
+    execute(adapter: TestAdapter, callback: (context: TurnContext) => Promise<void>, inspector?: Inspector): Promise<void>;
+}
+
+// @public (undocumented)
+export interface AssertTelemetryContainsConfiguration {
+    // (undocumented)
+    description?: string;
+    // (undocumented)
+    events?: string[];
+}
+
 // @public (undocumented)
 class CustomEvent_2<T = unknown> extends TestAction implements CustomEventConfiguration {
     // (undocumented)

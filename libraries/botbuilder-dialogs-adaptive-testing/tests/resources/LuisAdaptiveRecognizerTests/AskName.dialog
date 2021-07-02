@@ -1,0 +1,32 @@
+{
+  "$schema": "../../../tests.schema",
+  "$kind": "Microsoft.AdaptiveDialog",
+  "recognizer": {
+            "$kind": "Microsoft.LuisRecognizer",
+            "applicationId": "=settings.luis.ExternalEntities_test_en_us_lu.appId",
+            "endpoint": "=settings.luis.endpoint",
+            "endpointKey": "=settings.luis.endpointKey",
+            "externalEntityRecognizer": "ExternalEntities.Recognizer",
+            "predictionOptions": {
+                "preferExternalEntities": true
+            }
+        },
+  "triggers": [
+    {
+      "$kind": "Microsoft.OnBeginDialog",
+      "actions": [
+        {
+          "$kind": "Microsoft.TextInput",
+          "disabled": false,
+          "maxTurnCount": 3,
+          "alwaysPrompt": false,
+          "allowInterruptions": true,
+          "unrecognizedPrompt": "",
+          "invalidPrompt": "",
+          "prompt": "What is your name?"
+        }
+      ]
+    }
+  ],
+  "id": "AskName"
+}
