@@ -30,8 +30,8 @@ export class Configuration implements CoreConfiguration {
         return configuration;
     }
 
-    private key(path: string[]): string {
-        return this.prefix.concat(path).join(':');
+    private key(path: string[] | null): string {
+        return this.prefix.concat(path ?? []).join(':');
     }
 
     /**
@@ -40,12 +40,7 @@ export class Configuration implements CoreConfiguration {
      * @param path path to value
      * @returns the value, or undefined
      */
-    get<T = unknown>(path?: string[]): T | undefined {
-        // Note: empty path should yield the entire configuration
-        if (!path?.length) {
-            return this.provider.get();
-        }
-
+    get<T = unknown>(path: string[] = []): T | undefined {
         return this.provider.get(this.key(path));
     }
 
