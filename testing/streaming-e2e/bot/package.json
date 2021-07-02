@@ -15,7 +15,8 @@
     "url": "https://github.com/microsoft/botbuilder-js"
   },
   "dependencies": {
-    "botbuilder": "~4.13.0",
+    "botbuilder": "~4.14.0-rc0",
+    "botframework-connector": "~4.14.0-rc0",
     "cross-fetch": "^3.1.4",
     "dotenv": "^10.0.0",
     "math-random": "^2.0.1",
