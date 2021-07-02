@@ -80,7 +80,7 @@ describe('updateVersions', function () {
                 label: 'preview package with date, commitSha, and build label',
                 pkg: previewPackage,
                 options: { ...defaultOptions, buildLabel: 'BUILD', commitSha: 'COMMIT', date: 'DATE' },
-                expected: `${newVersion}-PREVIEW.BUILD.COMMIT+date-DATE`,
+                expected: `${newVersion}-BUILD.PREVIEW.COMMIT+date-DATE`,
             },
             {
                 label: 'deprecated package with defaults',
@@ -110,7 +110,7 @@ describe('updateVersions', function () {
                 label: 'deprecated package with date, commitSha, and buildLabel',
                 pkg: deprecatedPackage,
                 options: { ...defaultOptions, buildLabel: 'BUILD', commitSha: 'COMMIT', date: 'DATE' },
-                expected: `${newVersion}-DEPRECATED.BUILD.COMMIT+date-DATE`,
+                expected: `${newVersion}-BUILD.DEPRECATED.COMMIT+date-DATE`,
             },
         ];
 
@@ -288,12 +288,12 @@ describe('updateVersions', function () {
             const expectedVersion = new PackageVersion(`${packageVersion}-dev.COMMIT`, `date-${formattedDate}`);
 
             const expectedPreviewVersion = new PackageVersion(
-                `${packageVersion}-preview.dev.COMMIT`,
+                `${packageVersion}-dev.preview.COMMIT`,
                 `date-${formattedDate}`
             );
 
             const expectedDeprecatedVersion = new PackageVersion(
-                `${packageVersion}-deprecated.dev.COMMIT`,
+                `${packageVersion}-dev.deprecated.COMMIT`,
                 `date-${formattedDate}`
             );
 
