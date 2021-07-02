@@ -8,11 +8,18 @@
  */
 
 import * as path from 'path';
-import { v4 as uuidv4 } from 'uuid';
-import * as lp from './generated/LGTemplateParser';
 import { ParserRuleContext } from 'antlr4ts';
-import { Range } from './range';
 import { Position } from './position';
+import { Range } from './range';
+import { v4 as uuidv4 } from 'uuid';
+
+import {
+    IfConditionRuleContext,
+    KeyValueStructureValueContext,
+    NormalTemplateStringContext,
+    SwitchCaseRuleContext,
+} from './generated/LGTemplateParser';
+
 /**
  * Extension methods for LG.
  */
@@ -60,10 +67,10 @@ export class TemplateExtensions {
      * @param context Normal template sting context.
      * @returns Prefix error message.
      */
-    public static getPrefixErrorMessage(context: lp.NormalTemplateStringContext): string {
+    public static getPrefixErrorMessage(context: NormalTemplateStringContext): string {
         let errorPrefix = '';
         if (context.parent && context.parent.parent && context.parent.parent.parent) {
-            if (context.parent.parent.parent instanceof lp.IfConditionRuleContext) {
+            if (context.parent.parent.parent instanceof IfConditionRuleContext) {
                 const conditionContext = context.parent.parent.parent;
                 let tempMsg = '';
                 if (conditionContext.ifCondition() && conditionContext.ifCondition().expression().length > 0) {
@@ -71,7 +78,7 @@ export class TemplateExtensions {
                     errorPrefix = `Condition '` + tempMsg + `': `;
                 }
             } else {
-                if (context.parent.parent.parent instanceof lp.SwitchCaseRuleContext) {
+                if (context.parent.parent.parent instanceof SwitchCaseRuleContext) {
                     const switchCaseContext = context.parent.parent.parent;
                     const state = switchCaseContext.switchCaseStat();
                     if (state && state.DEFAULT()) {
@@ -100,7 +107,7 @@ export class TemplateExtensions {
      * If a value is pure Expression.
      * @param ctx Key value structure value context.
      */
-    public static isPureExpression(ctx: lp.KeyValueStructureValueContext): boolean {
+    public static isPureExpression(ctx: KeyValueStructureValueContext): boolean {
         if (ctx.expressionInStructure() === undefined || ctx.expressionInStructure().length != 1) {
             return false;
         }
