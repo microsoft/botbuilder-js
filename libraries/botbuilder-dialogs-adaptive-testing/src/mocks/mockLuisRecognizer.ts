@@ -25,7 +25,6 @@ import {
     MockHttpRequestMiddlewareKey,
 } from './mockHttpRequestMiddleware';
 import { HttpResponseMessage } from '../httpRequestMocks/httpResponseMock';
-import { TestTelemetryClient } from '../testTelemetryClient';
 
 /**
  * Wrap murmurhash v3.
