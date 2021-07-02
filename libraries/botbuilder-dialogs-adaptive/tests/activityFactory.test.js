@@ -530,6 +530,8 @@ function assertActivityWithHeroCardAttachment(activity) {
 function assertCustomizedActivityType(activity) {
     assert.strictEqual(activity.type, 'xxx');
     assert.strictEqual(activity.name, 'hi');
+    assert.strictEqual(activity.text, '{"a":"b"}');
+    assert.strictEqual(activity.speak, '{"c":"d"}');
 }
 
 function assertHandoffActivity(activity) {
