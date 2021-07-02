@@ -43,7 +43,8 @@
   "devDependencies": {
     "chai": "^4.2.0",
     "lodash": "^4.17.20",
-    "nock": "^11.9.1"
+    "nock": "^11.9.1",
+    "node-mocks-http": "^1.10.1"
   },
   "scripts": {
     "build": "tsc -b",
