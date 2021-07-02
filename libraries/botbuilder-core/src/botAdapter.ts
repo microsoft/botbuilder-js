@@ -28,7 +28,7 @@ import { TurnContext } from './turnContext';
  * [Middleware](https://docs.microsoft.com/azure/bot-service/bot-builder-concept-middleware).
  */
 export abstract class BotAdapter {
-    public middleware: MiddlewareSet = new MiddlewareSet();
+    protected middleware: MiddlewareSet = new MiddlewareSet();
 
     private turnError: (context: TurnContext, error: Error) => Promise<void>;
 

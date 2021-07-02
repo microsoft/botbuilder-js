@@ -1,6 +1,6 @@
 const path = require('path');
 const { LuisAdaptiveRecognizer, LuisBotComponent } = require('botbuilder-ai');
-const { MockLuisLoader, MockLuisRecognizer, TestUtils, useMockLuisSettings, AssertTelemetryContains } = require('../lib');
+const { MockLuisLoader, MockLuisRecognizer, TestUtils, useMockLuisSettings } = require('../lib');
 const { makeResourceExplorer } = require('./utils');
 
 describe('LuisAdaptiveRecognizerTests', function () {

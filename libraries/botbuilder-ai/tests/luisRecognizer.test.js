@@ -669,7 +669,7 @@ describe('LuisRecognizer', function () {
             trackEvent: (telemetry) => {
                 assert(telemetry, 'telemetry is null');
                 switch (++callCount) {
-                    case 1:
+                    case 2:
                         // console.log('Call number:' + callCount);
                         // console.log(telemetry);
                         assert.strictEqual(telemetry.name, 'LuisResult');

@@ -78,15 +78,6 @@ export class MiddlewareSet implements Middleware, Iterable<MiddlewareHandler> {
         this.use(...middlewares);
     }
 
-    [Symbol.iterator]() {
-        return {
-            next(): IteratorResult<MiddlewareHandler> {
-                this.count++;
-                return this.middleware[this.count];
-            },
-        };
-    }
-
     /**
      * Processes an incoming activity.
      * @param context [TurnContext](xref:botbuilder-core.TurnContext) object for this turn.
