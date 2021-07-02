@@ -185,6 +185,12 @@ export class ActivityFactory {
             const value: any = messageValue[key];
 
             switch (property.toLowerCase()) {
+                case 'text':
+                    activity.text = typeof value === 'string' ? value : JSON.stringify(value);
+                    break;
+                case 'speak':
+                    activity.speak = typeof value === 'string' ? value : JSON.stringify(value);
+                    break;
                 case 'attachments':
                     activity.attachments = this.getAttachments(value);
                     break;
