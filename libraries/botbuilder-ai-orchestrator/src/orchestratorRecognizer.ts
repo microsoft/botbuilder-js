@@ -197,7 +197,7 @@ export class OrchestratorRecognizer extends AdaptiveRecognizer implements Orches
         // Score with orchestrator
         const results = await this._resolver?.score(text);
 
-        if (results && results.length) {
+        if (results?.length) {
             // Add full recognition result as a 'result' property
             recognizerResult[this.resultProperty] = results;
 
