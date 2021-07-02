@@ -13,7 +13,9 @@
             "title": "Events name should be included in telemetry log",
             "description": "A string array contains event names.",
             "items": {
-                "type": "string"
+                "type": "string",
+                "title": "Event name.",
+                "description": "The name of event to test whether it is included in the telemetry"
             }
         },
         "description": {
