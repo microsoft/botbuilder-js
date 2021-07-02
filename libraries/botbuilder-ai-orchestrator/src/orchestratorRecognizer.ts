@@ -189,7 +189,7 @@ export class OrchestratorRecognizer extends AdaptiveRecognizer implements Orches
             entities: {},
         };
 
-        if (!text || text === '') {
+        if (!text) {
             // nothing to recognize, return empty result.
             return recognizerResult;
         }
@@ -419,7 +419,7 @@ export class OrchestratorRecognizer extends AdaptiveRecognizer implements Orches
         }
 
         // The following check is necessary to ensure that the _resolver object
-        // is capable of entity exttraction. However, this check does not apply to
+        // is capable of entity extraction. However, this check does not apply to
         // an external, mock-up _resolver.
         if (!this._isResolverExternal) {
             if (!this._orchestrator || !this._orchestrator.isEntityExtractionCapable) {
