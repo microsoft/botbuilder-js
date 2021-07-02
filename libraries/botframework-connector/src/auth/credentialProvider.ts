@@ -58,6 +58,11 @@ export class SimpleCredentialProvider implements ICredentialProvider {
     private readonly appId: string;
     private readonly appPassword: string;
 
+    // Protects against JSON.stringify leaking secrets
+    private toJSON(): unknown {
+        return { name: this.constructor.name, appId: this.appId };
+    }
+
     /**
      * Initializes a new instance of the [SimpleCredentialProvider](xref:botframework-connector.SimpleCredentialProvider) class with the provided credentials.
      *
