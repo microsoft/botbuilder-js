@@ -23,6 +23,14 @@ export class PasswordServiceClientCredentialFactory implements ServiceClientCred
      */
     password: string | null;
 
+    // Protects against JSON.stringify leaking secrets
+    private toJSON(): unknown {
+        return {
+            name: this.constructor.name,
+            appId: this.appId,
+        };
+    }
+
     constructor(appId: string, password: string) {
         this.appId = appId;
         this.password = password;

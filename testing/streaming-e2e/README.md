@@ -17,7 +17,7 @@ The project consists of two projects that get deployed (the [bot](#the-bot) and 
 ### The React App
 - To test the compatibility of using streaming in the browser with a [webpack](https://webpack.js.org/)ed project, the DevOps Pipeline uses a React app (created through `npx create-react-app`) that uses a customized a DirectLineJS (DLJS).
     - We customize DLJS to use the latest version botframework-streaming
-- Additionally, related to security-conscientious customers, the React App also contains Content Security Policy directives in `react-app/public/index.html`. 
+- Additionally, related to security-conscientious customers, the React App also contains Content Security Policy directives in `react-app/public/index.html`.
     - See [Web Chat docs on Content Security Policy](https://github.com/microsoft/BotFramework-WebChat/blob/v4.10.1/docs/CONTENT_SECURITY_POLICY.md) and [botbuilder-js issue: Add CSP to E2E DL ASE Streaming Tests #2762](https://github.com/microsoft/botbuilder-js/issues/2762) for more details.
 - The React App is then built and served on localhost:3000 in the pipeline
 
@@ -36,7 +36,7 @@ Running the pipeline will:
 - **Run Tests**
     - Uses the browser-appropriate Driver necessary for Selenium WebDriver to automate testing in a browser (Chrome)
     - Runs the tests that have React and bot talk to each other
-    
+
 **Note**: In order for Selenium WebDriver to automate testing in a browser, you would normally have to install the reciprocating, browser-appropriate Driver manually (i.e. ChromeDriver for Chrome), however Azure Pipelines can handle downloading the appropriate browsers and driver pairs automatically, which this pipeline takes advantage of, offloading the maintenance of having up-to-date drivers and browsers to Azure Pipelines.
 
 # How to Run the Tests
@@ -51,32 +51,32 @@ The following steps guide you through the configuration of a build pipeline base
 
 ### Prerequisites
 - Azure DevOps organization. You can find documentation [here](https://docs.microsoft.com/en-us/azure/devops/organizations/accounts/create-organization?view=azure-devops).
-- Azure subscription. 
+- Azure subscription.
 
 1. Create a pipeline in Azure DevOps.
-    
+
     ![new pipeline](./media/new-pipeline.png)
 
 2. Select GitHub YAML for code source.
-    
+
     ![GitHub YAML](./media/github-yaml.png)
 
-3. Configure the repository and branch. Use [`botbuilder-js/libaries/streaming-e2e-tests/streaming-e2e-tests-build.yml`](https://github.com/microsoft/botbuilder-js/blob/Zerryth/streaming-e2e-tests/libraries/streaming-e2e-tests/build/streaming-e2e-tests-build.yml) as the root YAML of this pipeline.
+3. Configure the repository and branch. Use [`botbuilder-js/testing/streaming-e2e/streaming-e2e-tests-build.yml`](https://github.com/microsoft/botbuilder-js/blob/main/testing/streaming-e2e/build/streaming-e2e-tests-build.yml) as the root YAML of this pipeline.
     <details>
         <summary>Configuration Screen Shots</summary>
-    
+
     - Select a GitHub repo that your Azure Pipeline will sync with. ![Select Repo](./media/select-repo.png)
-    
-    
+
+
     - Select the option of "Existing Azure Pipelines YAML file" ![Configure Your Pipeline](./media/configure-your-pipeline.png)
-    
-    - Select branch of the repo you want to sync with. For "Path" write the path to the [`streaming-e2e-tests-build.yml`](https://github.com/Zerryth/botbuilder-js/blob/Zerryth/streaming-e2e-tests/libraries/streaming-e2e-tests/build/streaming-e2e-tests-build.yml) file, which will be the "root"/"main" YAML to this testing pipeline. ![Select an Existing YAML File](./media/select-an-existing-yaml-file.png)
+
+    - Select branch of the repo you want to sync with. For "Path" write the path to the [`streaming-e2e-tests-build.yml`](https://github.com/microsoft/botbuilder-js/blob/main/testing/streaming-e2e/build/streaming-e2e-tests-build.yml) file, which will be the "root"/"main" YAML to this testing pipeline. ![Select an Existing YAML File](./media/select-an-existing-yaml-file.png)
     </details>
 
 4. Add pipeline variables.
     - ![Add Pipeline Variables](./media/add-pipeline-variables.png)
     - Add the following variables to your pipeline, with the appropriate values.
-        - <details> 
+        - <details>
             <summary>Variables to Include in Pipeline</summary>
 
             - **BotName**: name of bot
@@ -97,4 +97,4 @@ From here, you can see the pipeline running in Azure DevOps.
 As you push changes to the repo/branch that the pipeline is connected to, you may manually run pipeline to test your changes.
 ___
 
-*Note: ChromeDriver is the Driver specific to Chrome. For automated tests in other browsers, you will need to pair it to the appropriate Driver specific to that browser. Most Drivers are created by the browser vendors themselves. See Selenium [Driver requirements](https://www.selenium.dev/documentation/en/webdriver/driver_requirements/) for more details. 
+*Note: ChromeDriver is the Driver specific to Chrome. For automated tests in other browsers, you will need to pair it to the appropriate Driver specific to that browser. Most Drivers are created by the browser vendors themselves. See Selenium [Driver requirements](https://www.selenium.dev/documentation/en/webdriver/driver_requirements/) for more details.
