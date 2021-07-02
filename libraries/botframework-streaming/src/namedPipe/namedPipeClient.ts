@@ -34,7 +34,7 @@ export class NamedPipeClient implements IStreamingTransportClient {
      * @param requestHandler Optional [RequestHandler](xref:botframework-streaming.RequestHandler) to process incoming messages received by this client.
      * @param autoReconnect Optional setting to determine if the client sould attempt to reconnect automatically on disconnection events. Defaults to true.
      */
-    public constructor(baseName: string, requestHandler?: RequestHandler, autoReconnect = true) {
+    constructor(baseName: string, requestHandler?: RequestHandler, autoReconnect = true) {
         this._baseName = baseName;
         this._requestHandler = requestHandler;
         this._autoReconnect = autoReconnect;
@@ -54,7 +54,7 @@ export class NamedPipeClient implements IStreamingTransportClient {
     /**
      * Establish a connection with no custom headers.
      */
-    public async connect(): Promise<void> {
+    async connect(): Promise<void> {
         const outgoingPipeName: string =
             NamedPipeTransport.PipePath + this._baseName + NamedPipeTransport.ServerIncomingPath;
         const outgoing = connect(outgoingPipeName);
@@ -68,7 +68,7 @@ export class NamedPipeClient implements IStreamingTransportClient {
     /**
      * Disconnect the client.
      */
-    public disconnect(): void {
+    disconnect(): void {
         this._sender.disconnect();
         this._receiver.disconnect();
     }
@@ -79,14 +79,12 @@ export class NamedPipeClient implements IStreamingTransportClient {
      * @param request The [StreamingRequest](xref:botframework-streaming.StreamingRequest) to send.
      * @returns A promise for an instance of [IReceiveResponse](xref:botframework-streaming.IReceiveResponse) on completion of the send operation.
      */
-    public async send(request: StreamingRequest): Promise<IReceiveResponse> {
+    async send(request: StreamingRequest): Promise<IReceiveResponse> {
         return this._protocolAdapter.sendRequest(request);
     }
 
-    /**
-     * @private
-     */
-    private onConnectionDisconnected(sender: object, args: any): void {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    private onConnectionDisconnected(sender: Record<string, unknown>, args: any): void {
         if (!this._isDisconnecting) {
             this._isDisconnecting = true;
             try {

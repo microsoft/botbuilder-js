@@ -21,8 +21,6 @@ import { ServiceCollection } from 'botbuilder-dialogs-adaptive-runtime-core';
 
 import {
     AuthenticationConfiguration,
-    ICredentialProvider,
-    SimpleCredentialProvider,
     allowedCallersClaimsValidator,
     BotFrameworkAuthentication,
     ServiceClientCredentialsFactory,
@@ -51,7 +49,6 @@ import {
     ShowTypingMiddleware,
     SkillConversationIdFactory,
     SkillConversationIdFactoryBase,
-    SkillHttpClient,
     Storage,
     TelemetryLoggerMiddleware,
     TranscriptLoggerMiddleware,
@@ -63,7 +60,11 @@ import {
 function addFeatures(services: ServiceCollection, configuration: Configuration): void {
     services.composeFactory<
         MiddlewareSet,
-        { conversationState: ConversationState; storage: Storage; userState: UserState }
+        {
+            conversationState: ConversationState;
+            storage: Storage;
+            userState: UserState;
+        }
     >(
         'middlewares',
         ['storage', 'conversationState', 'userState'],
@@ -193,7 +194,10 @@ function addStorage(services: ServiceCollection, configuration: Configuration): 
                 }
 
                 const { cosmosDBEndpoint, ...rest } = cosmosOptions;
-                return new CosmosDbPartitionedStorage({ ...rest, cosmosDbEndpoint: cosmosDBEndpoint });
+                return new CosmosDbPartitionedStorage({
+                    ...rest,
+                    cosmosDbEndpoint: cosmosDBEndpoint,
+                });
             }
 
             default:
@@ -209,30 +213,38 @@ function addSkills(services: ServiceCollection, configuration: Configuration): v
         ({ storage }) => new SkillConversationIdFactory(storage)
     );
 
-    services.addFactory<ICredentialProvider>(
-        'credentialProvider',
-        () =>
-            new SimpleCredentialProvider(
-                configuration.string(['MicrosoftAppId']) ?? '',
-                configuration.string(['MicrosoftAppPassword']) ?? ''
-            )
-    );
-
-    services.addFactory(
-        'skillClient',
-        ['credentialProvider', 'skillConversationIdFactory'],
-        ({ credentialProvider, skillConversationIdFactory }) =>
-            new SkillHttpClient(credentialProvider, skillConversationIdFactory)
-    );
-
     services.addFactory('authenticationConfiguration', () => {
         const allowedCallers =
             configuration.type(['runtimeSettings', 'skills', 'allowedCallers'], z.array(z.string())) ?? [];
 
-        return new AuthenticationConfiguration(
-            undefined,
-            allowedCallers.length ? allowedCallersClaimsValidator(allowedCallers) : undefined
+        const skills = Object.values(
+            configuration.type(
+                ['skills'],
+                z.record(
+                    z
+                        .object({
+                            msAppId: z.string(),
+                        })
+                        .nonstrict()
+                )
+            ) ?? {}
         );
+
+        if (skills.length) {
+            // If the config entry for "skills" is present then we are a consumer and the entries under
+            // runtimeSettings.sills are ignored
+            return new AuthenticationConfiguration(
+                undefined,
+                allowedCallersClaimsValidator(skills.map((skill) => skill.msAppId))
+            );
+        } else {
+            // If the config entry for runtimeSettings.skills.allowedCallers contains entries, then we are a skill and
+            // we validate caller against this list
+            return new AuthenticationConfiguration(
+                undefined,
+                allowedCallers.length ? allowedCallersClaimsValidator(allowedCallers) : undefined
+            );
+        }
     });
 
     services.addFactory<
@@ -297,7 +309,7 @@ function addCoreBot(services: ServiceCollection, configuration: Configuration): 
             memoryScopes: MemoryScope[];
             pathResolvers: PathResolver[];
             resourceExplorer: ResourceExplorer;
-            skillClient: SkillHttpClient;
+            botFrameworkAuthentication: BotFrameworkAuthentication;
             skillConversationIdFactory: SkillConversationIdFactoryBase;
             userState: UserState;
         }
@@ -309,7 +321,7 @@ function addCoreBot(services: ServiceCollection, configuration: Configuration): 
             'memoryScopes',
             'pathResolvers',
             'resourceExplorer',
-            'skillClient',
+            'botFrameworkAuthentication',
             'skillConversationIdFactory',
             'userState',
         ],
@@ -318,7 +330,7 @@ function addCoreBot(services: ServiceCollection, configuration: Configuration): 
                 dependencies.resourceExplorer,
                 dependencies.userState,
                 dependencies.conversationState,
-                dependencies.skillClient,
+                dependencies.botFrameworkAuthentication,
                 dependencies.skillConversationIdFactory,
                 dependencies.botTelemetryClient,
                 configuration.string(['defaultLocale']) ?? 'en-us',

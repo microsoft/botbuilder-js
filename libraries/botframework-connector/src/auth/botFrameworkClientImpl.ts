@@ -4,6 +4,7 @@
 import axios from 'axios';
 import { Activity, ChannelAccount, InvokeResponse, RoleTypes } from 'botframework-schema';
 import { BotFrameworkClient } from '../skills';
+import { ConversationIdHttpHeaderName } from '../conversationConstants';
 import { ServiceClientCredentialsFactory } from './serviceClientCredentialsFactory';
 import { USER_AGENT } from './connectorFactoryImpl';
 import { WebResource } from '@azure/ms-rest-js';
@@ -96,6 +97,7 @@ export class BotFrameworkClientImpl implements BotFrameworkClient {
 
             const webRequest = new WebResource(toUrl, 'POST', JSON.stringify(activity), undefined, {
                 Accept: 'application/json',
+                [ConversationIdHttpHeaderName]: conversationId,
                 'Content-Type': 'application/json',
                 'User-Agent': USER_AGENT,
             });

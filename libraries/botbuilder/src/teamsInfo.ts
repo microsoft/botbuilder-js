@@ -21,10 +21,12 @@ import {
     ConversationReference,
     TeamsMeetingParticipant,
     TeamsMeetingInfo,
+    Channels,
 } from 'botbuilder-core';
 import { ConnectorClient, TeamsConnectorClient, TeamsConnectorModels } from 'botframework-connector';
 
 import { BotFrameworkAdapter } from './botFrameworkAdapter';
+import { CloudAdapter } from './cloudAdapter';
 import { teamsGetTeamMeetingInfo, teamsGetTenant } from './teamsActivityHelpers';
 
 /**
@@ -126,13 +128,15 @@ export class TeamsInfo {
      * Creates a new thread in a Teams chat and sends an [Activity](xref:botframework-schema.Activity) to that new thread.
      * @param context The [TurnContext](xref:botbuilder-core.TurnContext) for this turn.
      * @param activity The [Activity](xref:botframework-schema.Activity) to send.
-     * @param teamsChannelId Id of the Teams channel.
+     * @param teamsChannelId The Team's Channel ID, note this is distinct from the Bot Framework activity property with same name.
+     * @param botAppId The bot's appId. This is only used when context.adapter is an instance of CloudAdapter.
      * @returns The [ConversationReference](xref:botframework-schema.ConversationReference) and the id of the [Activity](xref:botframework-schema.Activity) (if sent).
      */
     public static async sendMessageToTeamsChannel(
         context: TurnContext,
         activity: Activity,
-        teamsChannelId: string
+        teamsChannelId: string,
+        botAppId?: string
     ): Promise<[ConversationReference, string]> {
         if (!context) {
             throw new Error('TurnContext cannot be null');
@@ -155,13 +159,33 @@ export class TeamsInfo {
             },
             activity: activity,
         } as ConversationParameters;
-        const connectorClient = (context.adapter as BotFrameworkAdapter).createConnectorClient(
-            context.activity.serviceUrl
-        );
-        const conversationResourceResponse = await connectorClient.conversations.createConversation(convoParams);
-        const conversationReference = TurnContext.getConversationReference(context.activity);
-        conversationReference.conversation.id = conversationResourceResponse.id;
-        return [conversationReference as ConversationReference, conversationResourceResponse.activityId];
+
+        let conversationReference: Partial<ConversationReference>;
+        let newActivityId: string;
+
+        if (botAppId && context.adapter instanceof CloudAdapter) {
+            await context.adapter.createConversationAsync(
+                botAppId,
+                Channels.Msteams,
+                context.activity.serviceUrl,
+                null,
+                convoParams,
+                async (turnContext) => {
+                    conversationReference = TurnContext.getConversationReference(context.activity);
+                    newActivityId = turnContext.activity.id;
+                }
+            );
+        } else {
+            const connectorClient = (context.adapter as BotFrameworkAdapter).createConnectorClient(
+                context.activity.serviceUrl
+            );
+            const conversationResourceResponse = await connectorClient.conversations.createConversation(convoParams);
+            conversationReference = TurnContext.getConversationReference(context.activity);
+            conversationReference.conversation.id = conversationResourceResponse.id;
+            newActivityId = conversationResourceResponse.activityId;
+        }
+
+        return [conversationReference as ConversationReference, newActivityId];
     }
 
     /**
@@ -390,11 +414,15 @@ export class TeamsInfo {
      * @private
      */
     private static getConnectorClient(context: TurnContext): ConnectorClient {
-        if (!context.adapter || !('createConnectorClient' in context.adapter)) {
+        const client =
+            context.adapter && 'createConnectorClient' in context.adapter
+                ? (context.adapter as BotFrameworkAdapter).createConnectorClient(context.activity.serviceUrl)
+                : context.turnState?.get<ConnectorClient>(context.adapter.ConnectorClientKey);
+        if (!client) {
             throw new Error('This method requires a connector client.');
         }
 
-        return (context.adapter as BotFrameworkAdapter).createConnectorClient(context.activity.serviceUrl);
+        return client;
     }
 
     /**

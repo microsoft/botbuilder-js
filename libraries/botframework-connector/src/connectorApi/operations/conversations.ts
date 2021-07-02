@@ -3,11 +3,12 @@
  * Licensed under the MIT License.
  */
 
+import * as Mappers from "../models/conversationsMappers";
+import * as Models from "../models";
+import * as Parameters from "../models/parameters";
 import * as msRest from "@azure/ms-rest-js";
 import { ConnectorClientContext } from "../connectorClientContext";
-import * as Models from "../models";
-import * as Mappers from "../models/conversationsMappers";
-import * as Parameters from "../models/parameters";
+import { ConversationIdHttpHeaderName } from "../../conversationConstants";
 
 /** Class representing a Conversations. */
 export class Conversations {
@@ -661,6 +662,15 @@ const replyToActivityOperationSpec: msRest.OperationSpec = {
     Parameters.conversationId,
     Parameters.activityId
   ],
+  headerParameters: [{
+    parameterPath: 'conversationId',
+    mapper: {
+      serializedName: ConversationIdHttpHeaderName,
+      type: {
+        name: 'String'
+      }
+    },
+  }],
   requestBody: {
     parameterPath: "activity",
     mapper: {
