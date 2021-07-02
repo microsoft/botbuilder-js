@@ -26,6 +26,17 @@ export abstract class AppCredentials implements msrest.ServiceClientCredentials 
     protected refreshingToken: Promise<adal.TokenResponse> | null = null;
     protected authenticationContext: adal.AuthenticationContext;
 
+    // Protects against JSON.stringify leaking secrets
+    private toJSON(): unknown {
+        return {
+            name: this.constructor.name,
+            appId: this.appId,
+            tenant: this.tenant,
+            oAuthEndpoint: this.oAuthEndpoint,
+            oAuthScope: this.oAuthScope,
+        };
+    }
+
     /**
      * Initializes a new instance of the [AppCredentials](xref:botframework-connector.AppCredentials) class.
      *
