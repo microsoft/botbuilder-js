@@ -357,12 +357,16 @@ export class OrchestratorRecognizer extends AdaptiveRecognizer implements Orches
             this.scoreEntities = existsSync(entityModelFolder);
 
             const orchestrator = new oc.Orchestrator();
-            if (this.scoreEntities && !orchestrator.load(fullModelFolder, entityModelFolder)) {
-                throw new Error(
-                    `Model load failed - model folder ${fullModelFolder}, entity model folder ${entityModelFolder}.`
-                );
-            } else if (!orchestrator.load(fullModelFolder)) {
-                throw new Error(`Model load failed - model folder ${fullModelFolder}.`);
+            if (this.scoreEntities) {
+                if (!orchestrator.load(fullModelFolder, entityModelFolder)) {
+                    throw new Error(
+                        `Model load failed - model folder ${fullModelFolder}, entity model folder ${entityModelFolder}.`
+                    );
+                }
+            } else {
+                if (!orchestrator.load(fullModelFolder)) {
+                    throw new Error(`Model load failed - model folder ${fullModelFolder}.`);
+                }
             }
             OrchestratorRecognizer.orchestrator = orchestrator;
         }
