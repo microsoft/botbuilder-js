@@ -849,7 +849,7 @@ describe('LuisRecognizer', function () {
 
                         break;
 
-                    case 2:
+                    case 3:
                         // console.log('Call number:' + callCount);
                         // console.log(telemetry);
                         assert.strictEqual(telemetry.name, 'MySecondEvent');
@@ -928,7 +928,7 @@ describe('LuisRecognizer', function () {
                         assert.strictEqual(telemetry.metrics['boo'], 2.11);
                         break;
 
-                    case 2:
+                    case 3:
                         // console.log('Call number:' + callCount);
                         // console.log(telemetry);
                         assert.strictEqual(telemetry.name, 'MySecondEvent');
