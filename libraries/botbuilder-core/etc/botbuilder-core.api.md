@@ -377,6 +377,9 @@ export class ConversationState extends BotState {
     getStorageKey(context: TurnContext): string | undefined;
     }
 
+// @public (undocumented)
+export const ConversationStateKey = "ConversationState";
+
 // @public
 export interface CoreAppCredentials {
     // Warning: (ae-forgotten-export) The symbol "CoreWebResource" needs to be exported by the entry point index.d.ts
@@ -912,6 +915,9 @@ export class UserState extends BotState {
     constructor(storage: Storage_2, namespace?: string);
     getStorageKey(context: TurnContext): string | undefined;
     }
+
+// @public (undocumented)
+export const UserStateKey = "UserState";
 
 // @public
 export const verifyStateOperationName = "signin/verifyState";
