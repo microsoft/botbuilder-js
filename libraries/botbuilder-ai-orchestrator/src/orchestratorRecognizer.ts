@@ -136,10 +136,7 @@ export class OrchestratorRecognizer extends AdaptiveRecognizer implements Orches
     }
 
     private readonly unknownIntentFilterScore = 0.4;
-    private static orchestratorMap: Map<string, OrchestratorDictionaryEntry> = new Map<
-        string,
-        OrchestratorDictionaryEntry
-    >();
+    private static orchestratorMap = new Map<string, OrchestratorDictionaryEntry>();
     private _orchestrator?: OrchestratorDictionaryEntry = undefined;
     private _resolver?: LabelResolver = undefined;
     private _isResolverExternal = false;
