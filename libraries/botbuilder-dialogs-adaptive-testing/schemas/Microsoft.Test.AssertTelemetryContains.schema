@@ -1,0 +1,27 @@
+{
+    "$schema": "https://schemas.botframework.com/schemas/component/v1.0/component.schema",
+    "$role": "implements(Microsoft.Test.ITestAction)",
+    "title": "Assert telemetry contains",
+    "description": "Checks whether telemetry log contsain specific events.",
+    "type": "object",
+    "required": [
+        "events"
+    ],
+    "properties": {
+        "events": {
+            "type": "array",
+            "title": "Events name should be included in telemetry log",
+            "description": "A string array contains event names.",
+            "items": {
+                "type": "string",
+                "title": "Event name.",
+                "description": "The name of event to test whether it is included in the telemetry"
+            }
+        },
+        "description": {
+            "type": "string",
+            "title": "Description",
+            "description": "The description of which events should be included"
+        }
+    }
+}

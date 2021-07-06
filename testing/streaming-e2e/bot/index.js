@@ -9,7 +9,13 @@ dotenv.config({ path: ENV_FILE });
 
 // Import required bot services.
 // See https://aka.ms/bot-services to learn more about the different parts of a bot.
-const { BotFrameworkAdapter } = require('botbuilder');
+const { CallerIdConstants, CloudAdapter } = require('botbuilder');
+
+const {
+    AuthenticationConstants,
+    BotFrameworkAuthenticationFactory,
+    PasswordServiceClientCredentialFactory,
+} = require('botframework-connector');
 
 const generateDirectLineToken = require('./utils/generateDirectLineToken');
 const renewDirectLineToken = require('./utils/renewDirectLineToken');
@@ -21,29 +27,42 @@ const restify = require('restify');
 // Create HTTP server
 const server = restify.createServer();
 server.listen(process.env.port || process.env.PORT || 3978, () => {
-    console.log(`\n${ server.name } listening to ${ server.url }`);
+    console.log(`\n${server.name} listening to ${server.url}`);
     console.log('\nGet Bot Framework Emulator: https://aka.ms/botframework-emulator');
     console.log('\nTo talk to your bot, open the emulator select "Open Bot"');
 });
 
+const appId = process.env.MicrosoftAppId || '';
+const appPassword = process.env.MicrosoftAppPassword || '';
+
+const botFrameworkAuthentication = BotFrameworkAuthenticationFactory.create(
+    '',
+    true,
+    AuthenticationConstants.ToChannelFromBotLoginUrl,
+    AuthenticationConstants.ToChannelFromBotOAuthScope,
+    AuthenticationConstants.ToBotFromChannelTokenIssuer,
+    AuthenticationConstants.OAuthUrl,
+    AuthenticationConstants.ToBotFromChannelOpenIdMetadataUrl,
+    AuthenticationConstants.ToBotFromEmulatorOpenIdMetadataUrl,
+    CallerIdConstants.PublicAzureChannel,
+    new PasswordServiceClientCredentialFactory(appId, appPassword)
+);
+
 // Create adapter.
 // See https://aka.ms/about-bot-adapter to learn more about how bots work.
-const adapter = new BotFrameworkAdapter({
-    appId: process.env.MicrosoftAppId,
-    appPassword: process.env.MicrosoftAppPassword
-});
+const adapter = new CloudAdapter(botFrameworkAuthentication);
 
 // Catch-all for errors.
 const onTurnErrorHandler = async (context, error) => {
     // This check writes out errors to console log .vs. app insights.
     // NOTE: In production environment, you should consider logging this to Azure
     //       application insights.
-    console.error(`\n [onTurnError] unhandled error: ${ error }`);
+    console.error(`\n [onTurnError] unhandled error: ${error}`);
 
     // Send a trace activity, which will be displayed in Bot Framework Emulator
     await context.sendTraceActivity(
         'OnTurnError Trace',
-        `${ error }`,
+        `${error}`,
         'https://www.botframework.com/schemas/error',
         'TurnError'
     );
@@ -61,33 +80,25 @@ const myBot = new EchoBot();
 
 // Listen for incoming requests.
 server.post('/api/messages', (req, res) => {
-    adapter.processActivity(req, res, async (context) => {
-        // Route to main dialog.
-        await myBot.run(context);
-    });
+    adapter.process(req, res, (context) => myBot.run(context));
 });
 
-adapter.useNamedPipe(async (context) => {
-    await myBot.run(context);
-    },
-    process.env.APPSETTING_WEBSITE_SITE_NAME + '.directline'
+adapter.connectNamedPipe(
+    `${process.env.APPSETTING_WEBSITE_SITE_NAME}.directline`,
+    (context) => myBot.run(context),
+    appId,
+    AuthenticationConstants.ToChannelFromBotOAuthScope
 );
 
 // Listen for Upgrade requests for Streaming.
-server.on('upgrade', (req, socket, head) => {
+server.on('upgrade', async (req, socket, head) => {
     // Create an adapter scoped to this WebSocket connection to allow storing session data.
-    const streamingAdapter = new BotFrameworkAdapter({
-        appId: process.env.MicrosoftAppId,
-        appPassword: process.env.MicrosoftAppPassword
-    });
+    const streamingAdapter = new CloudAdapter(botFrameworkAuthentication);
+
     // Set onTurnError for the BotFrameworkAdapter created for each connection.
     streamingAdapter.onTurnError = onTurnErrorHandler;
 
-    streamingAdapter.useWebSocket(req, socket, head, async (context) => {
-        // After connecting via WebSocket, run this logic for every request sent over
-        // the WebSocket connection.
-        await myBot.run(context);
-    });
+    await streamingAdapter.process(req, socket, head, (context) => myBot.run(context));
 });
 
 // Token Server, to ensure DL secret is not visible to client
@@ -108,7 +119,7 @@ server.post('/api/token/directlinease', async (req, res) => {
 
             res.sendRaw(JSON.stringify(result, null, 2), {
                 'Access-Control-Allow-Origin': '*',
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
             });
         } catch (err) {
             res.send(500, err.message);
@@ -119,8 +130,8 @@ server.post('/api/token/directlinease', async (req, res) => {
         } else {
             console.log(
                 `Requesting Direct Line ASE token using secret "${DIRECT_LINE_SECRET.substr(
-                0,
-                3
+                    0,
+                    3
                 )}...${DIRECT_LINE_SECRET.substr(-3)}"`
             );
         }

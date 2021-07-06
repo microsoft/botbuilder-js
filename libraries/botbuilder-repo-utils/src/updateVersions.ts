@@ -44,16 +44,16 @@ export const getPackageVersion = (
 ): PackageVersion => {
     const prerelease = [];
 
+    if (options.buildLabel) {
+        prerelease.push(options.buildLabel);
+    }
+
     if (pkg.deprecated) {
         prerelease.push(options.deprecated);
     } else if (pkg.internal) {
         prerelease.push(options.internal);
     } else if (pkg.preview) {
         prerelease.push(options.preview);
-    }
-
-    if (options.buildLabel) {
-        prerelease.push(options.buildLabel);
     }
 
     if (options.commitSha) {

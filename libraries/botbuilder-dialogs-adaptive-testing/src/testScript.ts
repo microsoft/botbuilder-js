@@ -16,6 +16,7 @@ import {
     TurnContext,
     ActivityTypes,
     RegisterClassMiddleware,
+    TelemetryLoggerMiddleware,
 } from 'botbuilder-core';
 import {
     Configurable,
@@ -40,6 +41,7 @@ import { HttpRequestMock, HttpRequestMocksConverter } from './httpRequestMocks/h
 import { MockHttpRequestMiddleware } from './mocks/mockHttpRequestMiddleware';
 import { MockSettingsMiddleware } from './mocks/mockSettingsMiddleware';
 import { SettingMock, SettingMocksConverter } from './settingMocks/settingMock';
+import { TestTelemetryClient } from './testTelemetryClient';
 
 class DialogConverter implements Converter<string, Dialog> {
     public constructor(private readonly _resourceExplorer: ResourceExplorer) { }
@@ -200,6 +202,8 @@ export class TestScript extends Configurable implements TestScriptConfiguration 
         adapter.locale = this.locale;
         adapter.use(new MockHttpRequestMiddleware(this.httpRequestMocks));
         adapter.use(new MockSettingsMiddleware(this.settingMocks));
+        const client = new TestTelemetryClient();
+        adapter.use(new TelemetryLoggerMiddleware(client, true));
 
         this.userTokenMocks.forEach((userTokenMock) => {
             userTokenMock.setup(adapter);

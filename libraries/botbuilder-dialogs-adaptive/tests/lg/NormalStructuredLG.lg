@@ -22,7 +22,7 @@
 ]
 
 # HeroCardTemplate(type)
-[HeroCard 
+[HeroCard
         title=Cheese gromit!
         subtitle=${type}
         text=This is some text describing the card, it's cool because it's cool
@@ -32,7 +32,7 @@
 ]
 
 # ThumbnailCardTemplate(type)
-[ThumbnailCard 
+[ThumbnailCard
         title=Cheese gromit!
         subtitle=${type}
         text=This is some text describing the card, it's cool because it's cool
@@ -95,7 +95,7 @@
 # AnimationCardTemplate
 [AnimationCard
         Title=Animation Card
-        Subtitle=look at it animate 
+        Subtitle=look at it animate
         autostart=true
         autoloop=${true}
         Image= ${{url:'https://docs.microsoft.com/en-us/bot-framework/media/how-it-works/architecture-resize.png'}}
@@ -117,6 +117,8 @@
 
 # customizedActivityType
 [Activity
+    text = ${{a:'b'}}
+    speak= ${{c:'d'}}
     type = xxx
     Name = hi
 ]
@@ -224,7 +226,7 @@
 ]
 
 # SuggestedActionsReference(text)
-[  Activity 
+[  Activity
     Text = ${text}
     ${WelcomeActions()}
 ]
