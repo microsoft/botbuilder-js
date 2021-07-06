@@ -272,11 +272,7 @@ export class OrchestratorRecognizer extends AdaptiveRecognizer implements Orches
         this.trackRecognizerResult(
             dc,
             'OrchestratorRecognizerResult',
-            this.fillRecognizerResultTelemetryProperties(
-                recognizerResult,
-                telemetryProperties as Record<string, string>,
-                dc
-            ),
+            this.fillRecognizerResultTelemetryProperties(recognizerResult, telemetryProperties, dc),
             telemetryMetrics
         );
 
@@ -289,7 +285,11 @@ export class OrchestratorRecognizer extends AdaptiveRecognizer implements Orches
         }
         const intents = Object.entries(result.intents)
             .map((intent) => {
-                return { name: intent[0], score: +(intent[1].score as number) };
+                let score = 0;
+                if (intent[1].score) {
+                    score = intent[1].score;
+                }
+                return { name: intent[0], score: +score };
             })
             .sort((a, b) => b.score - a.score);
         intents.length = 2;
@@ -307,7 +307,7 @@ export class OrchestratorRecognizer extends AdaptiveRecognizer implements Orches
      */
     protected fillRecognizerResultTelemetryProperties(
         recognizerResult: RecognizerResult,
-        telemetryProperties: Record<string, string>,
+        telemetryProperties?: Record<string, string>,
         dialogContext?: DialogContext
     ): Record<string, string> {
         const topTwo = this.getTopTwoIntents(recognizerResult);
@@ -328,13 +328,13 @@ export class OrchestratorRecognizer extends AdaptiveRecognizer implements Orches
 
         let logPersonalInformation =
             this.logPersonalInformation instanceof BoolExpression
-                ? this.logPersonalInformation.getValue((dialogContext as DialogContext).state)
+                ? this.logPersonalInformation.getValue(dialogContext.state)
                 : this.logPersonalInformation;
         if (logPersonalInformation == undefined) logPersonalInformation = false;
 
         if (logPersonalInformation) {
             properties['Text'] = recognizerResult.text;
-            properties['AlteredText'] = recognizerResult.alteredText as string;
+            properties['AlteredText'] = recognizerResult.alteredText;
         }
 
         // Additional Properties can override "stock" properties.
