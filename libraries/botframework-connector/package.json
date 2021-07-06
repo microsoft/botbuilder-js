@@ -34,7 +34,6 @@
     "adal-node": "0.2.2",
     "axios": "^0.21.1",
     "base64url": "^3.0.0",
-    "botbuilder-dialogs-adaptive-runtime-core": "4.1.6",
     "botbuilder-stdlib": "4.1.6",
     "botframework-schema": "4.1.6",
     "cross-fetch": "^3.0.5",

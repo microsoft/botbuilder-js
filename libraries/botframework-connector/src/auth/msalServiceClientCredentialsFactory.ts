@@ -2,7 +2,6 @@
 // Licensed under the MIT License.
 
 import { ConfidentialClientApplication } from '@azure/msal-node';
-import { Configuration } from 'botbuilder-dialogs-adaptive-runtime-core';
 import { MsalAppCredentials } from './msalAppCredentials';
 import { ServiceClientCredentials } from '@azure/ms-rest-js';
 import { ServiceClientCredentialsFactory } from './serviceClientCredentialsFactory';
@@ -19,15 +18,10 @@ export class MsalServiceClientCredentialsFactory implements ServiceClientCredent
      * Create an MsalServiceClientCredentialsFactory instance using runtime configuration and an
      * `@azure/msal-node` `ConfidentialClientApplication`.
      *
-     * @param configuration Runtime configuration.
+     * @param appId App ID for validation.
      * @param clientApplication An `@azure/msal-node` `ConfidentialClientApplication` instance.
      */
-    constructor(configuration: Configuration, private readonly clientApplication: ConfidentialClientApplication) {
-        const appId = configuration.get(['MicrosoftAppId']) ?? '';
-        if (typeof appId !== 'string') {
-            throw new Error('Invalid appId');
-        }
-
+    constructor(appId: string, private readonly clientApplication: ConfidentialClientApplication) {
         this.appId = appId;
     }
 
