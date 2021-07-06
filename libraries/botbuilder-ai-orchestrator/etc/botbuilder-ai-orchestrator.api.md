@@ -51,7 +51,7 @@ export class OrchestratorRecognizer extends AdaptiveRecognizer implements Orches
     disambiguationScoreThreshold: NumberExpression;
     readonly entityProperty = "entityResult";
     externalEntityRecognizer?: Recognizer;
-    protected fillRecognizerResultTelemetryProperties(recognizerResult: RecognizerResult, telemetryProperties: Record<string, string>, dialogContext?: DialogContext): Record<string, string>;
+    protected fillRecognizerResultTelemetryProperties(recognizerResult: RecognizerResult, telemetryProperties?: Record<string, string>, dialogContext?: DialogContext): Record<string, string>;
     // (undocumented)
     getConverter(property: keyof OrchestratorRecognizerConfiguration): Converter | ConverterFactory;
     modelFolder: StringExpression;
