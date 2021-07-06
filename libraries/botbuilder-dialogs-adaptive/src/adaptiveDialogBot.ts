@@ -4,7 +4,7 @@
 import memoize from 'lodash/memoize';
 import { AdaptiveDialog } from './adaptiveDialog';
 import { BotFrameworkAuthentication, BotFrameworkClient, BotFrameworkClientKey } from 'botframework-connector';
-import { Dialog, MemoryScope, PathResolver, runDialog } from 'botbuilder-dialogs';
+import { Dialog, MemoryScope, MemoryScopeKey, PathResolver, PathResolverKey, runDialog } from 'botbuilder-dialogs';
 import { LanguagePolicy } from './languagePolicy';
 import { ResourceExplorer } from 'botbuilder-dialogs-declarative';
 import { languageGeneratorKey, languageGeneratorManagerKey, languagePolicyKey } from './languageGeneratorExtensions';
@@ -18,9 +18,11 @@ import {
     BotTelemetryClient,
     BotTelemetryClientKey,
     ConversationState,
+    ConversationStateKey,
     SkillConversationIdFactoryBase,
     TurnContext,
     UserState,
+    UserStateKey,
 } from 'botbuilder';
 
 import {
@@ -64,22 +66,22 @@ export class AdaptiveDialogBot implements Bot {
         await runDialog(
             rootDialog,
             context,
-            context.turnState.get<ConversationState>('ConversationState').createProperty('dialogState')
+            context.turnState.get<ConversationState>(ConversationStateKey).createProperty('dialogState')
         );
 
         // Save any updates that have been made.
-        await context.turnState.get<ConversationState>('ConversationState').saveChanges(context);
-        await context.turnState.get<UserState>('UserState').saveChanges(context);
+        await context.turnState.get<ConversationState>(ConversationStateKey).saveChanges(context);
+        await context.turnState.get<UserState>(UserStateKey).saveChanges(context);
     }
 
     private async setUpTurnState(context: TurnContext, botFrameworkClient: BotFrameworkClient): Promise<void> {
         context.turnState.set(BotFrameworkClientKey, botFrameworkClient);
         context.turnState.set(skillConversationIdFactoryKey, this.skillConversationIdFactoryBase);
-        context.turnState.set('ConversationState', this.conversationState);
-        context.turnState.set('UserState', this.userState);
+        context.turnState.set(ConversationStateKey, this.conversationState);
+        context.turnState.set(UserStateKey, this.userState);
         context.turnState.set(resourceExplorerKey, this.resourceExplorer);
-        context.turnState.set('memoryScopes', this.memoryScopes);
-        context.turnState.set('pathResolvers', this.pathResolvers);
+        context.turnState.set(MemoryScopeKey, this.memoryScopes);
+        context.turnState.set(PathResolverKey, this.pathResolvers);
 
         const languageGenerator = this.resourceExplorer.getResource(this.languageGeneratorId)
             ? new ResourceMultiLanguageGenerator(this.languageGeneratorId)
@@ -104,7 +106,7 @@ export class AdaptiveDialogBot implements Bot {
             console.log('setTestOptions received. This could change the behavior of AdaptiveExpressions RandomNext');
 
             await context.turnState
-                .get<ConversationState>('ConversationState')
+                .get<ConversationState>(ConversationStateKey)
                 .createProperty('testOptions')
                 .set(context, context.activity.value);
         }

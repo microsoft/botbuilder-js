@@ -10,6 +10,9 @@ import { BotState } from './botState';
 import { Storage } from './storage';
 import { TurnContext } from './turnContext';
 
+// Turn State key for User State
+export const UserStateKey = 'UserState';
+
 const NO_KEY = `UserState: overridden getStorageKey method did not return a key.`;
 
 /**

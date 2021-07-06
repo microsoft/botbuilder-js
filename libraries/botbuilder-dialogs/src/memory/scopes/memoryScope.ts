@@ -7,6 +7,9 @@
  */
 import { DialogContext } from '../../dialogContext';
 
+// Turn State key for MemoryScope
+export const MemoryScopeKey = 'memoryScopes';
+
 /**
  * Abstract base class for all memory scopes.
  */

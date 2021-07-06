@@ -4,6 +4,7 @@
 import * as assert from 'assert';
 import { BotFrameworkAuthentication, BotFrameworkClientKey } from 'botframework-connector';
 import { Resource, ResourceExplorer, ResourceProvider } from 'botbuilder-dialogs-declarative';
+import { MemoryScopeKey, PathResolverKey } from 'botbuilder-dialogs';
 
 import {
     Activity,
@@ -12,12 +13,14 @@ import {
     BotTelemetryClientKey,
     Channels,
     ConversationState,
+    ConversationStateKey,
     MemoryStorage,
     NullTelemetryClient,
     SkillConversationIdFactory,
     TestAdapter,
     TurnContext,
     UserState,
+    UserStateKey,
 } from 'botbuilder';
 
 import {
@@ -92,14 +95,14 @@ describe('AdaptiveDialogBot Tests', function () {
 
         assert.ok(turnContext.turnState.get(BotFrameworkClientKey));
         assert.ok(turnContext.turnState.get(skillConversationIdFactoryKey));
-        assert.ok(turnContext.turnState.get('ConversationState'));
-        assert.ok(turnContext.turnState.get('UserState'));
+        assert.ok(turnContext.turnState.get(ConversationStateKey));
+        assert.ok(turnContext.turnState.get(UserStateKey));
         assert.ok(turnContext.turnState.get(resourceExplorerKey));
         assert.ok(turnContext.turnState.get(languageGeneratorKey));
         assert.ok(turnContext.turnState.get(languageGeneratorManagerKey));
         assert.ok(turnContext.turnState.get(languagePolicyKey));
-        assert.ok(turnContext.turnState.get('memoryScopes'));
-        assert.ok(turnContext.turnState.get('pathResolvers'));
+        assert.ok(turnContext.turnState.get(MemoryScopeKey));
+        assert.ok(turnContext.turnState.get(PathResolverKey));
         assert.ok(turnContext.turnState.get(BotTelemetryClientKey));
         assert.ok(turnContext.turnState.get(BotCallbackHandlerKey));
     });

@@ -2,17 +2,17 @@
 // Licensed under the MIT License.
 
 import { BotFrameworkAuthentication } from 'botframework-connector';
-import { CloudAdapter, ConversationState, UserState, useBotState } from 'botbuilder';
+import { CloudAdapter, ConversationState, Middleware } from 'botbuilder';
 
 export class CoreBotAdapter extends CloudAdapter {
     constructor(
         botFrameworkAuthentication: BotFrameworkAuthentication,
         private readonly conversationState: ConversationState,
-        userState: UserState
+        middleware: Middleware[]
     ) {
         super(botFrameworkAuthentication);
 
-        useBotState(this, userState, conversationState);
+        this.use(...middleware);
 
         this.onTurnError = async (context, err) => {
             console.error('[onTurnError] unhandled error', err);

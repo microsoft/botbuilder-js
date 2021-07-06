@@ -379,13 +379,10 @@ function addCoreBot(services: ServiceCollection, configuration: Configuration): 
         'adapter',
         ['botFrameworkAuthentication', 'conversationState', 'userState', 'middlewares', 'telemetryMiddleware'],
         (dependencies) =>
-            new CoreBotAdapter(
-                dependencies.botFrameworkAuthentication,
-                dependencies.conversationState,
-                dependencies.userState
-            )
-                .use(dependencies.middlewares)
-                .use(dependencies.telemetryMiddleware)
+            new CoreBotAdapter(dependencies.botFrameworkAuthentication, dependencies.conversationState, [
+                dependencies.middlewares,
+                dependencies.telemetryMiddleware,
+            ])
     );
 }
 

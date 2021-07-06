@@ -12,8 +12,8 @@ import { ComponentRegistration } from 'botbuilder-core';
 import { DialogContext } from '../dialogContext';
 import { DialogPath } from './dialogPath';
 import { DialogsComponentRegistration } from '../dialogsComponentRegistration';
-import { MemoryScope } from './scopes';
-import { PathResolver } from './pathResolvers';
+import { MemoryScope, MemoryScopeKey } from './scopes';
+import { PathResolver, PathResolverKey } from './pathResolvers';
 
 export interface DialogStateManagerConfiguration {
     /**
@@ -65,7 +65,7 @@ export class DialogStateManager {
                 });
 
             // merge in turn state memory scopes
-            const memoryScopes = dc.context.turnState.get<MemoryScope[]>('memoryScopes') ?? [];
+            const memoryScopes = dc.context.turnState.get<MemoryScope[]>(MemoryScopeKey) ?? [];
             this.configuration.memoryScopes.push(...memoryScopes);
 
             // get all of the component path resolvers.
@@ -76,7 +76,7 @@ export class DialogStateManager {
                 });
 
             // merge in turn state ones path resolvers
-            const pathResolvers = dc.context.turnState.get<PathResolver[]>('pathResolvers') ?? [];
+            const pathResolvers = dc.context.turnState.get<PathResolver[]>(PathResolverKey) ?? [];
             this.configuration.pathResolvers.push(...pathResolvers);
 
             // cache for any other new dialogStateManager instances in this turn

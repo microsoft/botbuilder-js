@@ -1,5 +1,14 @@
 const assert = require('assert');
-const { ConversationState, UserState, MemoryStorage, TurnContext, TestAdapter } = require('botbuilder-core');
+
+const {
+    ConversationState,
+    ConversationStatekey,
+    UserState,
+    UserStateKey,
+    MemoryStorage,
+    TurnContext,
+    TestAdapter,
+} = require('botbuilder-core');
 
 const {
     ConversationMemoryScope,
@@ -96,8 +105,8 @@ async function createTestDc(storage = new MemoryStorage()) {
     dialogs.add(container);
 
     const context = new TurnContext(new TestAdapter(), beginMessage);
-    context.turnState.set('ConversationState', convoState);
-    context.turnState.set('UserState', userState);
+    context.turnState.set(ConversationStatekey, convoState);
+    context.turnState.set(UserStateKey, userState);
     const dc = await dialogs.createContext(context);
 
     await dc.beginDialog('container');
