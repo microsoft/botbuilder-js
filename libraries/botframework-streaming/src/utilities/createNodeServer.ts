@@ -41,7 +41,7 @@ export function getServerFactory(): (callback?: ConnectionListener) => INodeServ
     }
 
     throw TypeError(
-        `require is undefined. Must be in a Node module to require 'net' dynamically in order to fetch Server factory.`
+        "require is undefined. Must be in a Node module to require 'net' dynamically in order to fetch Server factory."
     );
 }
 

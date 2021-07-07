@@ -418,6 +418,7 @@ export namespace ActivityEx {
 
     /**
      * Creates a ConversationReference based on the source activity.
+     *
      * @param source The source activity.
      * @returns A conversation reference for the conversation that contains the activity.
      */

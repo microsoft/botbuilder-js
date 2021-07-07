@@ -15,13 +15,13 @@ describe('SimpleCredentialProvider', function () {
     it('isValidAppId() should resolve true if appId matches appId from construction', async function () {
         const credentials = new SimpleCredentialProvider(APP_ID, APP_PASSWORD);
         const isValidAppId = await credentials.isValidAppId(APP_ID);
-        assert(isValidAppId, `should have validated provided appId`);
+        assert(isValidAppId, 'should have validated provided appId');
     });
 
-    it(`isValidAppId() should resolve false if appId doesn't match appId from construction`, async function () {
+    it("isValidAppId() should resolve false if appId doesn't match appId from construction", async function () {
         const credentials = new SimpleCredentialProvider(APP_ID, APP_PASSWORD);
         const isValidAppId = await credentials.isValidAppId(NOT_APP_ID);
-        assert(!isValidAppId, `should have validated provided appId`);
+        assert(!isValidAppId, 'should have validated provided appId');
     });
 
     it('getAppPassword() should resolve appPassword if appId matches appId from construction', async function () {
@@ -30,7 +30,7 @@ describe('SimpleCredentialProvider', function () {
         strictEqual(appPassword, APP_PASSWORD);
     });
 
-    it(`getAppPassword() should resolve null if appId doesn't matches appId from construction`, async function () {
+    it("getAppPassword() should resolve null if appId doesn't matches appId from construction", async function () {
         const credentials = new SimpleCredentialProvider(APP_ID, APP_PASSWORD);
         const appPassword = await credentials.getAppPassword(NOT_APP_ID);
         strictEqual(appPassword, null);
@@ -42,7 +42,7 @@ describe('SimpleCredentialProvider', function () {
         strictEqual(isAuthDisabled, false);
     });
 
-    it(`isAuthenticationDisabled() should resolve false if appId wasn't passed in during construction`, async function () {
+    it("isAuthenticationDisabled() should resolve false if appId wasn't passed in during construction", async function () {
         const credentials = new SimpleCredentialProvider();
         strictEqual(credentials.appId, undefined);
         const isAuthDisabled = await credentials.isAuthenticationDisabled();

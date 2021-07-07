@@ -20,11 +20,11 @@ export class AzureQueueStorage extends QueueStorage {
     constructor(queuesStorageConnectionString: string, queueName: string) {
         super();
         if (!queuesStorageConnectionString) {
-            throw new Error(`queuesStorageConnectionString cannot be empty`);
+            throw new Error('queuesStorageConnectionString cannot be empty');
         }
 
         if (!queueName) {
-            throw new Error(`queueName cannot be empty`);
+            throw new Error('queueName cannot be empty');
         }
 
         this._queueClient = new QueueClient(queuesStorageConnectionString, queueName);

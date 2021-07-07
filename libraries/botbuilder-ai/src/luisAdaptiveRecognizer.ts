@@ -144,7 +144,7 @@ export class LuisAdaptiveRecognizer extends Recognizer implements LuisAdaptiveRe
             !activity || (context.activity.type === activity.type && context.activity.text === activity.text);
 
         if (!utteranceMatches) {
-            throw new Error(`TurnContext is different than text`);
+            throw new Error('TurnContext is different than text');
         }
 
         // Initialize application info

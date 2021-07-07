@@ -600,7 +600,7 @@ describe('QnAMaker', function () {
             const qna = new QnAMaker(endpoint, { top: 1 });
             const answer = 'BaseCamp: You can use a damp rag to clean around the Power Pack';
 
-            let results = await qna.generateAnswer(`how do I clean the stove?`);
+            let results = await qna.generateAnswer('how do I clean the stove?');
 
             assert(results);
             assert.strictEqual(results.length, 1);
@@ -617,7 +617,7 @@ describe('QnAMaker', function () {
             const qna = new QnAMaker(endpoint, { top: 1 });
             const answer = 'BaseCamp: You can use a damp rag to clean around the Power Pack';
 
-            let results = await qna.generateAnswer(`how do I clean the stove?`);
+            let results = await qna.generateAnswer('how do I clean the stove?');
 
             assert(results);
             assert.strictEqual(results.length, 1);
@@ -644,13 +644,13 @@ describe('QnAMaker', function () {
 
         it('returns 0 answers for questions without an answer', async function () {
             const qna = new QnAMaker(endpoint, { top: 1 });
-            const results = await qna.generateAnswer(`foo`);
+            const results = await qna.generateAnswer('foo');
 
             assert.deepStrictEqual(results, []);
         });
 
         it('emits trace info once per call to Answer', async function () {
-            const context = new TestContext({ text: `how do I clean the stove?`, type: 'message' });
+            const context = new TestContext({ text: 'how do I clean the stove?', type: 'message' });
             const qna = new QnAMaker(endpoint, { top: 1 });
 
             const found = await qna.answer(context);
@@ -678,7 +678,7 @@ describe('QnAMaker', function () {
         });
 
         it('returns false from answer if no good answers found', async function () {
-            const context = new TestContext({ text: `foo`, type: 'message' });
+            const context = new TestContext({ text: 'foo', type: 'message' });
             const qna = new QnAMaker(endpoint, { top: 1 });
 
             assert.strictEqual(await qna.answer(context), false);

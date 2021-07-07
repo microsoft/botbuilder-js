@@ -353,11 +353,11 @@ export class OrchestratorRecognizer extends AdaptiveRecognizer implements Orches
         }
 
         if (!modelFolder) {
-            throw new Error(`Missing "ModelFolder" information.`);
+            throw new Error('Missing "ModelFolder" information.');
         }
 
         if (!snapshotFile) {
-            throw new Error(`Missing "ShapshotFile" information.`);
+            throw new Error('Missing "ShapshotFile" information.');
         }
 
         // Create orchestrator core

@@ -76,7 +76,7 @@ export class WebSocketClient implements IStreamingTransportClient {
             this._sender.connect(transport);
             this._receiver.connect(transport);
         } catch (_error) {
-            throw new Error(`Unable to connect client to Node transport.`);
+            throw new Error('Unable to connect client to Node transport.');
         }
     }
 

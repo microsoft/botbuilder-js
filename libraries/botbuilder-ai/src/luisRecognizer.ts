@@ -612,32 +612,34 @@ export class LuisRecognizer implements LuisRecognizerTelemetryClient {
             switch (response.status) {
                 case 400:
                     error.message = [
-                        `Response 400: The request's body or parameters are incorrect,`,
-                        `meaning they are missing, malformed, or too large.`,
+                        "Response 400: The request's body or parameters are incorrect,",
+                        'meaning they are missing, malformed, or too large.',
                     ].join(' ');
                     break;
                 case 401:
-                    error.message = `Response 401: The key used is invalid, malformed, empty, or doesn't match the region.`;
+                    error.message =
+                        "Response 401: The key used is invalid, malformed, empty, or doesn't match the region.";
                     break;
                 case 403:
-                    error.message = `Response 403: Total monthly key quota limit exceeded.`;
+                    error.message = 'Response 403: Total monthly key quota limit exceeded.';
                     break;
                 case 409:
-                    error.message = `Response 409: Application loading in progress, please try again.`;
+                    error.message = 'Response 409: Application loading in progress, please try again.';
                     break;
                 case 410:
-                    error.message = `Response 410: Please retrain and republish your application.`;
+                    error.message = 'Response 410: Please retrain and republish your application.';
                     break;
                 case 414:
-                    error.message = `Response 414: The query is too long. Please reduce the query length to 500 or less characters.`;
+                    error.message =
+                        'Response 414: The query is too long. Please reduce the query length to 500 or less characters.';
                     break;
                 case 429:
-                    error.message = `Response 429: Too many requests.`;
+                    error.message = 'Response 429: Too many requests.';
                     break;
                 default:
                     error.message = [
                         `Response ${response.status}: Unexpected status code received.`,
-                        `Please verify that your LUIS application is properly setup.`,
+                        'Please verify that your LUIS application is properly setup.',
                     ].join(' ');
             }
         }

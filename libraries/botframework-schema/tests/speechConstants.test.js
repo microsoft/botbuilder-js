@@ -9,7 +9,7 @@ describe('SpeechConstants', function () {
         // Expected value derived from https://github.com/microsoft/botframework-obi/blame/5c2542115b110a1dae8e597473271abc8e67c30d/protocols/botframework-activity/botframework-activity.md#L353
         strictEqual(
             SpeechConstants.EmptySpeakTag,
-            `<speak version="1.0" xmlns="https://www.w3.org/2001/10/synthesis" xml:lang="en-US" />`
+            '<speak version="1.0" xmlns="https://www.w3.org/2001/10/synthesis" xml:lang="en-US" />'
         );
     });
 });

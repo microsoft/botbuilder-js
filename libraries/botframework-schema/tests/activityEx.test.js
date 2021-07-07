@@ -6,7 +6,7 @@
 const { strictEqual } = require('assert');
 const { ActivityEx, ActivityTypes, Channels } = require('../');
 
-describe(`activityValidator`, function () {
+describe('activityValidator', function () {
     it('should create a Message Activity', function () {
         const activity = ActivityEx.createMessageActivity();
 
