@@ -42,7 +42,7 @@ export class AuthenticationError extends Error implements IStatusCodeError {
     public static determineStatusCodeAndBuildMessage(err: any): string {
         const errMessage: string = err && err.message ? err.message : 'Internal Server Error';
         const code: number = AuthenticationError.determineStatusCode(errMessage);
-        const connectionHeader = `Connection: 'close'\r\n`;
+        const connectionHeader = "Connection: 'close'\r\n";
 
         return `HTTP/1.1 ${code} ${StatusCodes[code]}\r\n${errMessage}\r\n${connectionHeader}\r\n`;
     }
@@ -54,7 +54,7 @@ export class AuthenticationError extends Error implements IStatusCodeError {
         if (typeof message === 'string') {
             if (message.toLowerCase().startsWith('unauthorized')) {
                 return StatusCodes.UNAUTHORIZED;
-            } else if (message.toLowerCase().startsWith(`'authheader'`)) {
+            } else if (message.toLowerCase().startsWith("'authheader'")) {
                 return StatusCodes.BAD_REQUEST;
             }
         }

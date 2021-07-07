@@ -21,7 +21,7 @@ const ENDPOINT_KEY = process.env.QNAENDPOINTKEY;
 const HOSTNAME = process.env.QNAHOSTNAME || 'test-qna-app';
 const isMockQna = false || !(KB_ID && ENDPOINT_KEY);
 
-const beginMessage = { text: `begin`, type: 'message' };
+const beginMessage = { text: 'begin', type: 'message' };
 
 describe('QnAMakerDialog', function () {
     this.timeout(3000);

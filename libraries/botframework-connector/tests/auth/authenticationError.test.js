@@ -12,14 +12,14 @@ describe('AuthenticationError', function () {
     });
 
     it('should return false if it is not an error that implements IStatusCodeError', function () {
-        const nonStatusCodeError = new Error(`I'm just a vanilla Error`);
+        const nonStatusCodeError = new Error("I'm just a vanilla Error");
         const isStatusCodeErr = AuthenticationError.isStatusCodeError(nonStatusCodeError);
 
         assert.strictEqual(isStatusCodeErr, false);
     });
 
     it('should be able to assign a 400 statusCode if none was provided and build correct error message', function () {
-        const errMessage = `'authHeader' is required.`;
+        const errMessage = "'authHeader' is required.";
         const code = StatusCodes.BAD_REQUEST;
         const expectedMessage = `HTTP/1.1 ${code} ${StatusCodes[code]}\r\n${errMessage}\r\nConnection: 'close'\r\n\r\n`;
 

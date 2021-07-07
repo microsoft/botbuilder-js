@@ -459,7 +459,7 @@ function addComposerConfiguration(configuration: Configuration): void {
     const qnaRegion = configuration.string(['qna', 'qnaRegion']) || 'westus';
     configuration.file(path.join(botRoot, 'generated', `qnamaker.settings.${environment}.${qnaRegion}.json`), true);
 
-    configuration.file(path.join(botRoot, 'generated', `orchestrator.settings.json`), true);
+    configuration.file(path.join(botRoot, 'generated', 'orchestrator.settings.json'), true);
 }
 
 async function normalizeConfiguration(configuration: Configuration, applicationRoot: string): Promise<void> {
