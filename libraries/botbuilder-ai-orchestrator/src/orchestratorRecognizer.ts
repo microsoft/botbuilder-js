@@ -62,6 +62,11 @@ interface Orchestrator {
     createLabelResolver(snapshot: Uint8Array): LabelResolver;
 }
 
+interface OrchestratorDictionaryEntry {
+    orchestrator: Orchestrator;
+    isEntityExtractionCapable: boolean;
+}
+
 /**
  * Class that represents an adaptive Orchestrator recognizer.
  */
@@ -92,12 +97,13 @@ export class OrchestratorRecognizer extends AdaptiveRecognizer implements Orches
     /**
      * The external entity recognizer.
      */
-    externalEntityRecognizer: Recognizer;
+    externalEntityRecognizer?: Recognizer = undefined;
 
     /**
-     * Enable entity detection if entity model exists inside modelFolder. Defaults to false.
+     * Enable entity detection if entity model exists inside modelFolder. Defaults to true.
+     * NOTE: SHOULD consider removing this flag in the next major SDK release (V5).
      */
-    scoreEntities = false;
+    scoreEntities = true;
 
     /**
      * Intent name if ambiguous intents are detected.
@@ -130,27 +136,24 @@ export class OrchestratorRecognizer extends AdaptiveRecognizer implements Orches
     }
 
     private readonly unknownIntentFilterScore = 0.4;
-    private static orchestrator: Orchestrator;
-    private _resolver: LabelResolver;
-    private _modelFolder: string;
-    private _snapshotFile: string;
+    private static orchestratorMap = new Map<string, OrchestratorDictionaryEntry>();
+    private _orchestrator?: OrchestratorDictionaryEntry = undefined;
+    private _resolver?: LabelResolver = undefined;
+    private _isResolverExternal = false;
 
     /**
      * Returns an OrchestratorRecognizer instance.
      *
      * @param {string} modelFolder Path to NLR model.
      * @param {string} snapshotFile Path to snapshot.
-     * @param {any} resolver Orchestrator resolver to use.
+     * @param {any} resolverExternal Orchestrator resolver to use.
      */
-    constructor(modelFolder?: string, snapshotFile?: string, resolver?: LabelResolver) {
+    constructor(modelFolder?: string, snapshotFile?: string, resolverExternal?: LabelResolver) {
         super();
-        if (modelFolder) {
-            this._modelFolder = modelFolder;
+
+        if ((modelFolder && snapshotFile) || resolverExternal) {
+            this._initializeModel(modelFolder, snapshotFile, resolverExternal);
         }
-        if (snapshotFile) {
-            this._snapshotFile = snapshotFile;
-        }
-        this._resolver = resolver;
     }
 
     /**
@@ -168,17 +171,13 @@ export class OrchestratorRecognizer extends AdaptiveRecognizer implements Orches
         telemetryProperties?: Record<string, string>,
         telemetryMetrics?: Record<string, number>
     ): Promise<RecognizerResult> {
-        if (!this.modelFolder) {
-            throw new Error(`Missing "ModelFolder" information.`);
-        }
-
-        if (!this.snapshotFile) {
-            throw new Error(`Missing "SnapshotFile" information.`);
+        if (!this._resolver) {
+            const modelFolder: string = this.modelFolder.getValue(dc.state);
+            const snapshotFile: string = this.snapshotFile.getValue(dc.state);
+            this._initializeModel(modelFolder, snapshotFile, undefined);
         }
 
         const text = activity.text ?? '';
-        this._modelFolder = this.modelFolder.getValue(dc.state);
-        this._snapshotFile = this.snapshotFile.getValue(dc.state);
         const detectAmbiguity = this.detectAmbiguousIntents.getValue(dc.state);
 
         let recognizerResult: RecognizerResult = {
@@ -187,31 +186,18 @@ export class OrchestratorRecognizer extends AdaptiveRecognizer implements Orches
             entities: {},
         };
 
-        if (text === '') {
+        if (!text) {
             // nothing to recognize, return empty result.
             return recognizerResult;
         }
 
-        this._initializeModel();
-
-        if (this.externalEntityRecognizer) {
-            // Run external recognition
-            const externalResults = await this.externalEntityRecognizer.recognize(
-                dc,
-                activity,
-                telemetryProperties,
-                telemetryMetrics
-            );
-            recognizerResult.entities = externalResults.entities;
-        }
-
         // Score with orchestrator
-        const results = await this._resolver.score(text);
+        const results = await this._resolver?.score(text);
 
-        // Add full recognition result as a 'result' property
-        recognizerResult[this.resultProperty] = results;
+        if (results?.length) {
+            // Add full recognition result as a 'result' property
+            recognizerResult[this.resultProperty] = results;
 
-        if (results.length) {
             const topScore = results[0].score;
 
             // if top scoring intent is less than threshold, return None
@@ -219,10 +205,14 @@ export class OrchestratorRecognizer extends AdaptiveRecognizer implements Orches
                 recognizerResult.intents.None = { score: 1.0 };
             } else {
                 // add all scores
-                recognizerResult.intents = results.reduce(function (intents, result) {
+                recognizerResult.intents = results.reduce(function (
+                    intents: { [index: string]: { score: number } },
+                    result
+                ) {
                     intents[result.label.name] = { score: result.score };
                     return intents;
-                }, {});
+                },
+                {});
 
                 // disambiguate
                 if (detectAmbiguity) {
@@ -257,7 +247,18 @@ export class OrchestratorRecognizer extends AdaptiveRecognizer implements Orches
             recognizerResult.intents.None = { score: 1.0 };
         }
 
-        await this.tryScoreEntities(text, recognizerResult);
+        if (this.externalEntityRecognizer) {
+            // Run external recognition
+            const externalResults = await this.externalEntityRecognizer.recognize(
+                dc,
+                activity,
+                telemetryProperties,
+                telemetryMetrics
+            );
+            recognizerResult.entities = externalResults.entities;
+        }
+
+        await this.tryScoreEntitiesAsync(text, recognizerResult);
 
         await dc.context.sendTraceActivity(
             'OrchestratorRecognizer',
@@ -281,7 +282,11 @@ export class OrchestratorRecognizer extends AdaptiveRecognizer implements Orches
         }
         const intents = Object.entries(result.intents)
             .map((intent) => {
-                return { name: intent[0], score: +intent[1].score };
+                let score = 0;
+                if (intent[1].score) {
+                    score = intent[1].score;
+                }
+                return { name: intent[0], score: +score };
             })
             .sort((a, b) => b.score - a.score);
         intents.length = 2;
@@ -299,7 +304,7 @@ export class OrchestratorRecognizer extends AdaptiveRecognizer implements Orches
      */
     protected fillRecognizerResultTelemetryProperties(
         recognizerResult: RecognizerResult,
-        telemetryProperties: Record<string, string>,
+        telemetryProperties?: Record<string, string>,
         dialogContext?: DialogContext
     ): Record<string, string> {
         const topTwo = this.getTopTwoIntents(recognizerResult);
@@ -309,12 +314,12 @@ export class OrchestratorRecognizer extends AdaptiveRecognizer implements Orches
         // eslint-disable-next-line  @typescript-eslint/no-unused-vars
         const { text, alteredText, intents, entities, ...customRecognizerProps } = recognizerResult;
         const properties: Record<string, string> = {
-            TopIntent: intent.length > 0 ? topTwo[0].name : undefined,
-            TopIntentScore: intent.length > 0 ? topTwo[0].score.toString() : undefined,
-            NextIntent: intent.length > 1 ? topTwo[1].name : undefined,
-            NextIntentScore: intent.length > 1 ? topTwo[1].score.toString() : undefined,
-            Intents: intent.length > 0 ? JSON.stringify(recognizerResult.intents) : undefined,
-            Entities: recognizerResult.entities ? JSON.stringify(recognizerResult.entities) : undefined,
+            TopIntent: intent.length > 0 ? topTwo[0].name : '',
+            TopIntentScore: intent.length > 0 ? topTwo[0].score.toString() : '',
+            NextIntent: intent.length > 1 ? topTwo[1].name : '',
+            NextIntentScore: intent.length > 1 ? topTwo[1].score.toString() : '',
+            Intents: intent.length > 0 ? JSON.stringify(recognizerResult.intents) : '',
+            Entities: recognizerResult.entities ? JSON.stringify(recognizerResult.entities) : '',
             AdditionalProperties: JSON.stringify(customRecognizerProps),
         };
 
@@ -337,100 +342,136 @@ export class OrchestratorRecognizer extends AdaptiveRecognizer implements Orches
         return properties;
     }
 
-    private _initializeModel() {
-        if (!this._modelFolder) {
+    private _initializeModel(modelFolder?: string, snapshotFile?: string, resolverExternal?: LabelResolver): void {
+        if (this._resolver) {
+            return;
+        }
+        if (resolverExternal) {
+            this._resolver = resolverExternal;
+            this._isResolverExternal = true;
+            return;
+        }
+
+        if (!modelFolder) {
             throw new Error(`Missing "ModelFolder" information.`);
         }
 
-        if (!this._snapshotFile) {
+        if (!snapshotFile) {
             throw new Error(`Missing "ShapshotFile" information.`);
         }
 
-        if (!OrchestratorRecognizer.orchestrator && !this._resolver) {
-            // Create orchestrator core
-            const fullModelFolder = resolve(this._modelFolder);
-            if (!existsSync(fullModelFolder)) {
-                throw new Error(`Model folder does not exist at ${fullModelFolder}.`);
-            }
+        // Create orchestrator core
+        const fullModelFolder: string = resolve(modelFolder);
 
-            const entityModelFolder = resolve(this._modelFolder, 'entity');
-            this.scoreEntities = existsSync(entityModelFolder);
+        this._orchestrator = OrchestratorRecognizer.orchestratorMap.has(fullModelFolder)
+            ? OrchestratorRecognizer.orchestratorMap.get(fullModelFolder)
+            : ((): OrchestratorDictionaryEntry => {
+                  if (!existsSync(fullModelFolder)) {
+                      throw new Error(`Model folder does not exist at ${fullModelFolder}.`);
+                  }
+                  const entityModelFolder: string = resolve(modelFolder, 'entity');
+                  const isEntityExtractionCapable: boolean = existsSync(entityModelFolder);
+                  const orchestrator = new oc.Orchestrator();
+                  if (isEntityExtractionCapable) {
+                      if (!orchestrator.load(fullModelFolder, entityModelFolder)) {
+                          throw new Error(
+                              `Model load failed - model folder ${fullModelFolder}, entity model folder ${entityModelFolder}.`
+                          );
+                      }
+                  } else {
+                      if (!orchestrator.load(fullModelFolder)) {
+                          throw new Error(`Model load failed - model folder ${fullModelFolder}.`);
+                      }
+                  }
+                  const orchestratorDictionaryEntry: OrchestratorDictionaryEntry = {
+                      orchestrator,
+                      isEntityExtractionCapable,
+                  };
+                  OrchestratorRecognizer.orchestratorMap.set(fullModelFolder, orchestratorDictionaryEntry);
+                  return orchestratorDictionaryEntry;
+              })();
 
-            const orchestrator = new oc.Orchestrator();
-            if (this.scoreEntities) {
-                if (!orchestrator.load(fullModelFolder, entityModelFolder)) {
-                    throw new Error(
-                        `Model load failed - model folder ${fullModelFolder}, entity model folder ${entityModelFolder}.`
-                    );
-                }
-            } else {
-                if (!orchestrator.load(fullModelFolder)) {
-                    throw new Error(`Model load failed - model folder ${fullModelFolder}.`);
-                }
-            }
-            OrchestratorRecognizer.orchestrator = orchestrator;
+        const fullSnapshotPath = resolve(snapshotFile);
+        if (!existsSync(fullSnapshotPath)) {
+            throw new Error(`Snapshot file does not exist at ${fullSnapshotPath}.`);
         }
 
-        if (!this._resolver) {
-            const fullSnapshotPath = resolve(this._snapshotFile);
-            if (!existsSync(fullSnapshotPath)) {
-                throw new Error(`Snapshot file does not exist at ${fullSnapshotPath}.`);
-            }
-            // Load the snapshot
-            const snapshot: Uint8Array = readFileSync(fullSnapshotPath);
+        // Load the snapshot
+        const snapshot: Uint8Array = readFileSync(fullSnapshotPath);
 
-            // Load snapshot and create resolver
-            this._resolver = OrchestratorRecognizer.orchestrator.createLabelResolver(snapshot);
-        }
+        // Load snapshot and create resolver
+        this._resolver = this._orchestrator?.orchestrator.createLabelResolver(snapshot);
     }
 
-    private async tryScoreEntities(text: string, recognizerResult: RecognizerResult) {
+    private async tryScoreEntitiesAsync(text: string, recognizerResult: RecognizerResult) {
+        // It's impossible to extract entities without a _resolver object.
+        if (!this._resolver) {
+            return;
+        }
+
+        // Entity extraction can be controlled by the ScoreEntities flag.
+        // NOTE: SHOULD consider removing this flag in the next major SDK release (V5).
         if (!this.scoreEntities) {
             return;
         }
 
-        const results = await this._resolver.score(text, LabelType.Entity);
-        if (!results) {
-            throw new Error(`Failed scoring entities for: ${text}`);
+        // The following check is necessary to ensure that the _resolver object
+        // is capable of entity extraction. However, this check does not apply to
+        // an external, mock-up _resolver.
+        if (!this._isResolverExternal) {
+            if (!this._orchestrator || !this._orchestrator.isEntityExtractionCapable) {
+                return;
+            }
         }
 
-        // Add full entity recognition result as a 'entityResult' property
-        recognizerResult[this.entityProperty] = results;
-        if (results.length) {
-            recognizerResult.entities ??= {};
+        // As this method is TryScoreEntities, so it's best effort only, there should
+        // not be any exception thrown out of this method.
+        try {
+            const results = await this._resolver.score(text, LabelType.Entity);
+            if (!results) {
+                throw new Error(`Failed scoring entities for: ${text}`);
+            }
 
-            results.forEach((result: Result) => {
-                const entityType = result.label.name;
+            // Add full entity recognition result as a 'entityResult' property
+            recognizerResult[this.entityProperty] = results;
+            if (results.length) {
+                recognizerResult.entities ??= {};
 
-                // add value
-                const values = recognizerResult.entities[entityType] ?? [];
-                recognizerResult.entities[entityType] = values;
+                results.forEach((result: Result) => {
+                    const entityType = result.label.name;
 
-                const span = result.label.span;
-                const entityText = text.substr(span.offset, span.length);
-                values.push({
-                    type: entityType,
-                    score: result.score,
-                    text: entityText,
-                    start: span.offset,
-                    end: span.offset + span.length,
+                    // add value
+                    const values = recognizerResult.entities[entityType] ?? [];
+                    recognizerResult.entities[entityType] = values;
+
+                    const span = result.label.span;
+                    const entityText = text.substr(span.offset, span.length);
+                    values.push({
+                        type: entityType,
+                        score: result.score,
+                        text: entityText,
+                        start: span.offset,
+                        end: span.offset + span.length,
+                    });
+
+                    // get/create $instance
+                    recognizerResult.entities['$instance'] ??= {};
+                    const instanceRoot = recognizerResult.entities['$instance'];
+
+                    // add instanceData
+                    instanceRoot[entityType] ??= [];
+                    const instanceData = instanceRoot[entityType];
+                    instanceData.push({
+                        startIndex: span.offset,
+                        endIndex: span.offset + span.length,
+                        score: result.score,
+                        text: entityText,
+                        type: entityType,
+                    });
                 });
-
-                // get/create $instance
-                recognizerResult.entities['$instance'] ??= {};
-                const instanceRoot = recognizerResult.entities['$instance'];
-
-                // add instanceData
-                instanceRoot[entityType] ??= [];
-                const instanceData = instanceRoot[entityType];
-                instanceData.push({
-                    startIndex: span.offset,
-                    endIndex: span.offset + span.length,
-                    score: result.score,
-                    text: entityText,
-                    type: entityType,
-                });
-            });
+            }
+        } catch {
+            return;
         }
     }
 }

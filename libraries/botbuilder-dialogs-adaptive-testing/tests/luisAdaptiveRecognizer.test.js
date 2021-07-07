@@ -27,4 +27,12 @@ describe('LuisAdaptiveRecognizerTests', function () {
         explorer.registerType(LuisAdaptiveRecognizer.$kind, MockLuisRecognizer, new MockLuisLoader(explorer, config));
         await TestUtils.runTestScript(explorer, 'ExternalEntities', undefined, config);
     });
+
+    it('Cached Luis Result', async () => {
+        const resourceDir = path.join(__dirname, 'resources/LuisAdaptiveRecognizerTests');
+        const config = useMockLuisSettings(resourceDir);
+        const explorer = makeResourceExplorer('LuisAdaptiveRecognizerTests', LuisBotComponent);
+        explorer.registerType(LuisAdaptiveRecognizer.$kind, MockLuisRecognizer, new MockLuisLoader(explorer, config));
+        await TestUtils.runTestScript(explorer, 'CacheLuisRecognizer', undefined, config);
+    });
 });

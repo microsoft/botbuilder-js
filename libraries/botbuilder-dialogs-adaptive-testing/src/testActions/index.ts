@@ -18,3 +18,4 @@ export * from './userConversationUpdate';
 export * from './userDelay';
 export * from './userSays';
 export * from './userTyping';
+export * from './assertTelemetryContains';

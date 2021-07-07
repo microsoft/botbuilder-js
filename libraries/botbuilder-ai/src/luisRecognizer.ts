@@ -261,7 +261,7 @@ export class LuisRecognizer implements LuisRecognizerTelemetryClient {
     private application: LuisApplication;
     private options: LuisPredictionOptions;
 
-    private cacheKey = Symbol('results');
+    private cacheKey: string;
     private luisRecognizerInternal: LuisRecognizerV2 | LuisRecognizerV3;
 
     /**
@@ -318,7 +318,7 @@ export class LuisRecognizer implements LuisRecognizerTelemetryClient {
             };
         }
         this.validateLuisApplication();
-
+        this.cacheKey = this.application.endpoint + this.application.applicationId;
         this._telemetryClient = (options && options.telemetryClient) || new NullTelemetryClient();
         this._logPersonalInformation = (options && options.logPersonalInformation) || false;
 
@@ -497,7 +497,11 @@ export class LuisRecognizer implements LuisRecognizerTelemetryClient {
                     const recognizerResult = await recognizerPromise;
                     // Write to cache
                     turnContext.turnState.set(this.cacheKey, recognizerResult);
-
+                    this._telemetryClient.trackEvent({
+                        name: 'Luis result cached',
+                        properties: telemetryProperties,
+                        metrics: maybeTelemetryMetrics,
+                    });
                     // Log telemetry
                     this.onRecognizerResults(recognizerResult, turnContext, telemetryProperties, maybeTelemetryMetrics);
                     return recognizerResult;
@@ -507,6 +511,11 @@ export class LuisRecognizer implements LuisRecognizerTelemetryClient {
                 }
             }
 
+            this._telemetryClient.trackEvent({
+                name: 'Read from cached Luis result',
+                properties: telemetryProperties,
+                metrics: maybeTelemetryMetrics,
+            });
             return cached;
         }
     }

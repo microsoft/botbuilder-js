@@ -670,8 +670,9 @@ describe('LuisRecognizer', function () {
                 assert(telemetry, 'telemetry is null');
                 switch (++callCount) {
                     case 1:
-                        // console.log('Call number:' + callCount);
-                        // console.log(telemetry);
+                        assert.strictEqual(telemetry.name, 'Luis result cached');
+                        break;
+                    case 2:
                         assert.strictEqual(telemetry.name, 'LuisResult');
                         assert(telemetry.properties);
                         assert('applicationId' in telemetry.properties);
@@ -685,7 +686,6 @@ describe('LuisRecognizer', function () {
                         assert('question' in telemetry.properties);
                         assert.strictEqual(telemetry.properties.question, 'My name is Emad');
                         break;
-
                     default:
                         // console.log('Call number:' + callCount);
                         // console.log(telemetry);
@@ -722,6 +722,9 @@ describe('LuisRecognizer', function () {
                 assert(telemetry, 'telemetry is null');
                 switch (++callCount) {
                     case 1:
+                        assert.strictEqual(telemetry.name, 'Luis result cached');
+                        break;
+                    case 2:
                         // console.log('Call number:' + callCount);
                         // console.log(telemetry);
                         assert.strictEqual(telemetry.name, 'LuisResult');
@@ -776,6 +779,9 @@ describe('LuisRecognizer', function () {
                 assert(telemetry, 'telemetry is null');
                 switch (++callCount) {
                     case 1:
+                        assert.strictEqual(telemetry.name, 'Luis result cached');
+                        break;
+                    case 2:
                         // console.log('Call number:' + callCount);
                         // console.log(telemetry);
                         assert.strictEqual(telemetry.name, 'LuisResult');
@@ -836,6 +842,9 @@ describe('LuisRecognizer', function () {
                 assert(telemetry, 'telemetry is null');
                 switch (++callCount) {
                     case 1:
+                        assert.strictEqual(telemetry.name, 'Luis result cached');
+                        break;
+                    case 2:
                         // console.log('Call number:' + callCount);
                         // console.log(telemetry);
                         assert.strictEqual(telemetry.name, 'LuisResult');
@@ -849,7 +858,7 @@ describe('LuisRecognizer', function () {
 
                         break;
 
-                    case 2:
+                    case 3:
                         // console.log('Call number:' + callCount);
                         // console.log(telemetry);
                         assert.strictEqual(telemetry.name, 'MySecondEvent');
@@ -912,6 +921,9 @@ describe('LuisRecognizer', function () {
                 assert(telemetry, 'telemetry is null');
                 switch (++callCount) {
                     case 1:
+                        assert.strictEqual(telemetry.name, 'Luis result cached');
+                        break;
+                    case 2:
                         // console.log('Call number:' + callCount);
                         // console.log(telemetry);
                         assert.strictEqual(telemetry.name, 'LuisResult');
@@ -928,7 +940,7 @@ describe('LuisRecognizer', function () {
                         assert.strictEqual(telemetry.metrics['boo'], 2.11);
                         break;
 
-                    case 2:
+                    case 3:
                         // console.log('Call number:' + callCount);
                         // console.log(telemetry);
                         assert.strictEqual(telemetry.name, 'MySecondEvent');

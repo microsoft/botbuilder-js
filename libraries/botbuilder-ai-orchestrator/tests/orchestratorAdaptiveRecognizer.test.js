@@ -14,7 +14,7 @@ const sinon = require('sinon');
 const { orchestratorIntentText, getLogPersonalInformation, validateTelemetry } = require('./recognizerTelemetryUtils');
 
 describe('OrchestratorAdpativeRecognizer tests', function () {
-    it('Expect initialize is called when orchestrator obj is null', async function () {
+    it('Expect initialize is called when labelresolver is not null', async function () {
         const result = [
             {
                 score: 0.9,
@@ -27,28 +27,22 @@ describe('OrchestratorAdpativeRecognizer tests', function () {
         const testPaths = 'test';
 
         const rec = new OrchestratorRecognizer(testPaths, testPaths, mockResolver);
-        OrchestratorRecognizer.orchestrator = null;
-        rec._initializeModel = sinon.fake();
 
         const { dc, activity } = createTestDcAndActivity('hello');
         const res = await rec.recognize(dc, activity);
 
         strictEqual(res.text, 'hello');
         strictEqual(res.intents.mockLabel.score, 0.9);
-        ok(rec._initializeModel.calledOnce);
     });
 
     it('Expect initialize is called when labelresolver is null', async function () {
-        const testPaths = 'test';
-        const rec = new OrchestratorRecognizer(testPaths, testPaths, null);
-        OrchestratorRecognizer.orchestrator = null;
+        rejects(async () => {
+            const testPaths = 'test';
+            const rec = new OrchestratorRecognizer(testPaths, testPaths, null);
 
-        rec._initializeModel = sinon.fake();
-
-        const { dc, activity } = createTestDcAndActivity('hello');
-        rejects(async () => await rec.recognize(dc, activity));
-
-        ok(rec._initializeModel.calledOnce);
+            const { dc, activity } = createTestDcAndActivity('hello');
+            await rec.recognize(dc, activity);
+        });
     });
 
     it('Test intent recognition', async function () {
@@ -63,7 +57,6 @@ describe('OrchestratorAdpativeRecognizer tests', function () {
         const mockResolver = new MockResolver(result);
         const testPaths = 'test';
         const rec = new OrchestratorRecognizer(testPaths, testPaths, mockResolver);
-        OrchestratorRecognizer.orchestrator = 'mock';
         rec.modelFolder = new StringExpression(testPaths);
         rec.snapshotFile = new StringExpression(testPaths);
         const { dc, activity } = createTestDcAndActivity('hello');
@@ -99,7 +92,6 @@ describe('OrchestratorAdpativeRecognizer tests', function () {
         const testPaths = 'test';
         const rec = new OrchestratorRecognizer(testPaths, testPaths, mockResolver);
         rec.scoreEntities = true;
-        OrchestratorRecognizer.orchestrator = 'mock';
         rec.modelFolder = new StringExpression(testPaths);
         rec.snapshotFile = new StringExpression(testPaths);
         rec.externalEntityRecognizer = new NumberEntityRecognizer();
@@ -177,7 +169,6 @@ describe('OrchestratorAdpativeRecognizer tests', function () {
             const mockResolver = new MockResolver(result);
             const testPaths = 'test';
             const recognizer = new OrchestratorRecognizer(testPaths, testPaths, mockResolver);
-            OrchestratorRecognizer.orchestrator = 'mock';
             recognizer.modelFolder = new StringExpression(testPaths);
             recognizer.snapshotFile = new StringExpression(testPaths);
 
@@ -221,7 +212,6 @@ describe('OrchestratorAdpativeRecognizer tests', function () {
             const mockResolver = new MockResolver(result);
             const testPaths = 'test';
             const recognizer = new OrchestratorRecognizer(testPaths, testPaths, mockResolver);
-            OrchestratorRecognizer.orchestrator = 'mock';
             recognizer.modelFolder = new StringExpression(testPaths);
             recognizer.snapshotFile = new StringExpression(testPaths);
 
@@ -265,7 +255,6 @@ describe('OrchestratorAdpativeRecognizer tests', function () {
             const mockResolver = new MockResolver(result);
             const testPaths = 'test';
             const recognizerWithDefaultLogPii = new OrchestratorRecognizer(testPaths, testPaths, mockResolver);
-            OrchestratorRecognizer.orchestrator = 'mock';
             recognizerWithDefaultLogPii.modelFolder = new StringExpression(testPaths);
             recognizerWithDefaultLogPii.snapshotFile = new StringExpression(testPaths);
 

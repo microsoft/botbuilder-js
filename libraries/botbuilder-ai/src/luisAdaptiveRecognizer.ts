@@ -179,7 +179,7 @@ export class LuisAdaptiveRecognizer extends Recognizer implements LuisAdaptiveRe
         const options: LuisRecognizerOptionsV3 = {
             apiVersion: 'v3',
             externalEntityRecognizer: this.externalEntityRecognizer,
-            telemetryClient: this.telemetryClient,
+            telemetryClient: dialogContext.context.turnState.get('telemetryClient'),
             includeAllIntents: false,
             includeInstanceData: false,
             includeAPIResults: false,

@@ -45,13 +45,13 @@ export class OrchestratorRecognizer extends AdaptiveRecognizer implements Orches
     // (undocumented)
     static $kind: string;
     // Warning: (ae-forgotten-export) The symbol "LabelResolver" needs to be exported by the entry point index.d.ts
-    constructor(modelFolder?: string, snapshotFile?: string, resolver?: LabelResolver);
+    constructor(modelFolder?: string, snapshotFile?: string, resolverExternal?: LabelResolver);
     readonly chooseIntent = "ChooseIntent";
     detectAmbiguousIntents: BoolExpression;
     disambiguationScoreThreshold: NumberExpression;
     readonly entityProperty = "entityResult";
-    externalEntityRecognizer: Recognizer;
-    protected fillRecognizerResultTelemetryProperties(recognizerResult: RecognizerResult, telemetryProperties: Record<string, string>, dialogContext?: DialogContext): Record<string, string>;
+    externalEntityRecognizer?: Recognizer;
+    protected fillRecognizerResultTelemetryProperties(recognizerResult: RecognizerResult, telemetryProperties?: Record<string, string>, dialogContext?: DialogContext): Record<string, string>;
     // (undocumented)
     getConverter(property: keyof OrchestratorRecognizerConfiguration): Converter | ConverterFactory;
     modelFolder: StringExpression;

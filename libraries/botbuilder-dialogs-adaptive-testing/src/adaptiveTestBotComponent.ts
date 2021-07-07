@@ -20,6 +20,7 @@ import {
     UserDelay,
     UserSays,
     UserTyping,
+    AssertTelemetryContains,
 } from './testActions';
 
 import { HttpRequestSequenceMock } from './httpRequestMocks/httpRequestSequenceMock';
@@ -50,6 +51,7 @@ export class AdaptiveTestBotComponent extends BotComponent {
                         { kind: UserTyping.$kind, type: UserTyping },
                         { kind: TestScript.$kind, type: TestScript },
                         { kind: UserTokenBasicMock.$kind, type: UserTokenBasicMock },
+                        { kind: AssertTelemetryContains.$kind, type: AssertTelemetryContains },
                     ];
                 },
             })
