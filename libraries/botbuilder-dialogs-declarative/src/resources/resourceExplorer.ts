@@ -14,7 +14,7 @@ import { ResourceProvider, ResourceChangeEvent } from './resourceProvider';
 import { FolderResourceProvider } from './folderResourceProvider';
 import { Resource } from './resource';
 import { PathUtil } from '../pathUtil';
-import { ComponentDeclarativeTypes, isComponentDeclarativeTypes } from '../componentDeclarativeTypes';
+import { ComponentDeclarativeTypes } from '../componentDeclarativeTypes';
 import { DeclarativeType } from '../declarativeType';
 import { CustomDeserializer } from '../customDeserializer';
 import { DefaultLoader } from '../defaultLoader';

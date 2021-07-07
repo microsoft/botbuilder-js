@@ -4,16 +4,17 @@ const { UserTokenClient } = require('../..');
 describe('UserTokenClient', function () {
     describe('createTokenExchangeState', function () {
         const paramsValidation = [
-            { paramName: 'appId', values: [null, null, null] },
-            { paramName: 'connectionName', values: ['appId', null, null] },
+            { paramName: 'appId', values: [null, 'connectionName', {}] },
+            { paramName: 'connectionName', values: ['appId', null, {}] },
             { paramName: 'activity', values: ['appId', 'connectionName', null] },
         ];
 
-        paramsValidation.forEach((testConfig) => {
-            it(`should throw with null ${testConfig.paramName}`, function () {
-                assert.throws(() => UserTokenClient.createTokenExchangeState(...testConfig.values), {
-                    message: `\`${testConfig.paramName}\` must be defined`,
-                });
+        paramsValidation.forEach(({ paramName, values }) => {
+            it(`should throw with null ${paramName}`, function () {
+                assert.throws(
+                    () => UserTokenClient.createTokenExchangeState(...values),
+                    (thrown) => thrown.message.includes(paramName) && thrown.message.includes('received null')
+                );
             });
         });
     });

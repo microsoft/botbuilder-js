@@ -1,6 +1,8 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
+import * as z from 'zod';
+
 import {
     Activity,
     ActivityEx,
@@ -10,7 +12,6 @@ import {
     TokenResponse,
     TokenStatus,
 } from 'botframework-schema';
-import { assert } from 'botbuilder-stdlib';
 
 /**
  * Client for access user token service.
@@ -106,9 +107,15 @@ export abstract class UserTokenClient {
      * @returns Base64 encoded token exchange state.
      */
     protected static createTokenExchangeState(appId: string, connectionName: string, activity: Activity): string {
-        assert.string(appId, ['appId']);
-        assert.string(connectionName, ['connectionName']);
-        assert.object(activity, ['activity']);
+        z.object({
+            appId: z.string(),
+            connectionName: z.string(),
+            activity: z.record(z.unknown()),
+        }).parse({
+            appId,
+            connectionName,
+            activity,
+        });
 
         const tokenExchangeState: TokenExchangeState = {
             connectionName,

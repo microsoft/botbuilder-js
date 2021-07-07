@@ -5,7 +5,7 @@ import * as z from 'zod';
 import getStream from 'get-stream';
 import pmap from 'p-map';
 import { Activity, PagedResult, TranscriptInfo, TranscriptStore } from 'botbuilder-core';
-import { maybeCast } from 'botbuilder-stdlib/lib/maybeCast';
+import { maybeCast } from 'botbuilder-stdlib';
 import { sanitizeBlobKey } from './sanitizeBlobKey';
 
 import {
