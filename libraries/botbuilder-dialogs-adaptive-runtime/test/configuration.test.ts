@@ -54,4 +54,53 @@ describe('Configuration', function () {
             assert.strictEqual(layered.get(['root', 'key']), 'layer');
         });
     });
+
+    describe('keys', function () {
+        const configuration = new Configuration({
+            key: 'value',
+            one: {
+                key: 'value-one',
+                two: {
+                    key: 'value-two',
+                },
+            },
+        });
+
+        describe('non-prefixed', function () {
+            it('yields a value for a key', function () {
+                assert.strictEqual(configuration.get(['key']), 'value');
+                assert.strictEqual(configuration.get(['one', 'key']), 'value-one');
+            });
+
+            it('yields all values for a key', function () {
+                assert.deepStrictEqual(configuration.get(['one']), { key: 'value-one', two: { key: 'value-two' } });
+            });
+
+            it('yields all values for no key', function () {
+                assert.deepStrictEqual(configuration.get(), {
+                    key: 'value',
+                    one: { key: 'value-one', two: { key: 'value-two' } },
+                });
+            });
+        });
+
+        describe('prefixed', function () {
+            it('yields a value for a key', function () {
+                assert.strictEqual(configuration.bind(['one']).get(['key']), 'value-one');
+            });
+
+            it('yields all values for a key', function () {
+                assert.deepStrictEqual(configuration.bind(['one']).get(['two']), {
+                    key: 'value-two',
+                });
+            });
+
+            it('yields all values for no key', function () {
+                assert.deepStrictEqual(configuration.bind(['one']).get(), {
+                    key: 'value-one',
+                    two: { key: 'value-two' },
+                });
+            });
+        });
+    });
 });
