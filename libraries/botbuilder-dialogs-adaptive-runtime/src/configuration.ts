@@ -54,8 +54,8 @@ export class Configuration implements CoreConfiguration {
      * @returns the value, or undefined
      */
     get<T = unknown>(path: string[] = []): T | undefined {
-        // Note: `|| undefined` ensures that empty string yields "undefined" as
-        // this ensures nconf returns the entire merged configuration.
+        // Note: `|| undefined` ensures that empty string is coerced to undefined
+        // which ensures nconf returns the entire merged configuration.
         return this.provider.get(this.key(path) || undefined);
     }
 
