@@ -9,10 +9,23 @@ import { Provider } from 'nconf';
 /**
  * Configuration implements the [IConfiguration](xref:botbuilder-dialogs-adaptive-runtime-core.IConfiguration)
  * interface and adds helper methods for setting values, layering sources, and getting type checked values.
+ *
+ * @internal
  */
 export class Configuration implements CoreConfiguration {
     private prefix: string[] = [];
     private provider = new Provider().use('memory');
+
+    /**
+     * Create a configuration instance
+     *
+     * @param initialValues Optional set of default values to provide
+     */
+    constructor(initialValues?: Record<string, unknown>) {
+        if (initialValues) {
+            Object.entries(initialValues).forEach(([key, value]) => this.provider.set(key, value));
+        }
+    }
 
     /**
      * Bind a path to a Configuration instance such that calls to get or set will
@@ -41,7 +54,9 @@ export class Configuration implements CoreConfiguration {
      * @returns the value, or undefined
      */
     get<T = unknown>(path: string[] = []): T | undefined {
-        return this.provider.get(this.key(path));
+        // Note: `|| undefined` ensures that empty string yields "undefined" as
+        // this ensures nconf returns the entire merged configuration.
+        return this.provider.get(this.key(path) || undefined);
     }
 
     /**
@@ -51,6 +66,10 @@ export class Configuration implements CoreConfiguration {
      * @param value value to set
      */
     set(path: string[], value: unknown): void {
+        if (!path.length) {
+            throw new Error('`path` must be non-empty');
+        }
+
         this.provider.set(this.key(path), value);
     }
 
