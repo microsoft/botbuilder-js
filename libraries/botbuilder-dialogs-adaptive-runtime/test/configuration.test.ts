@@ -96,7 +96,10 @@ describe('Configuration', function () {
             });
 
             it('yields all values for no key', function () {
-                assert.deepStrictEqual(configuration.bind(['one']).get(), { key: 'value-one', two: { key: 'value-two' } });
+                assert.deepStrictEqual(configuration.bind(['one']).get(), {
+                    key: 'value-one',
+                    two: { key: 'value-two' },
+                });
             });
         });
     });
