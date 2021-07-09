@@ -1,6 +1,6 @@
 {
-    "private": true,
     "name": "transcript-tests",
+    "private": true,
     "version": "1.0.0",
     "description": "Bot Builder tests using transcripts.",
     "scripts": {

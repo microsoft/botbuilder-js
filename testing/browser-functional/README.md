@@ -4,11 +4,11 @@ The library **browser-functional-tests** is a suite of tests running with **Nigh
 
 ## Run the test locally
 
-_Note: The tests are configured to run in two-terminals, one for the webpack-dev-server which runs the bot, another for running the tests._ 
+_Note: The tests are configured to run in two-terminals, one for the webpack-dev-server which runs the bot, another for running the tests._
 
 1. In the `botbuilder-js` root directory, open a terminal and run `yarn`
 
-2. Go to `libraries/browser-functional-tests/browser-echo-bot`, open a terminal and run the following commands:
+2. Go to `testing/browser-functional/browser-echo-bot`, open a terminal and run the following commands:
    * `yarn`
    * `yarn start`
 This command will start the browser bot using `webpack-dev-server`.
@@ -23,7 +23,7 @@ The next steps will guide you thought the configuration of a Build pipeline base
 
 - Azure DevOps organization. You can find documentation [here](https://docs.microsoft.com/en-us/azure/devops/organizations/accounts/create-organization?view=azure-devops).
 - Azure subscription. Required to create and delete Azure resources.
-    
+
 ### Step by step
 
 1. Create a pipeline using the classic editor, this options allows to us select the YAML file to configure the pipeline.
