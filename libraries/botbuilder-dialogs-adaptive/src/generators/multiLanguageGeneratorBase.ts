@@ -10,6 +10,7 @@ import { Configurable, Converter, ConverterFactory, DialogContext } from 'botbui
 import { LanguageGenerator } from '../languageGenerator';
 import { LanguagePolicy, LanguagePolicyConverter } from '../languagePolicy';
 import { languagePolicyKey } from '../languageGeneratorExtensions';
+import { MemoryInterface, Options } from '../../../adaptive-expressions/lib';
 
 export interface MultiLanguageGeneratorBaseConfiguration {
     languagePolicy?: Record<string, string[]> | LanguagePolicy;
@@ -104,5 +105,54 @@ export abstract class MultiLanguageGeneratorBase<
         }
 
         throw Error(errors.join(',\n'));
+    }
+
+    public missingProperties(dialogContext: DialogContext, template: string, state: D, options: Options): string[] {
+        throw new Error('Method not implemented.');
+    }
+
+    private getLanguagePolicy(dialogContext: DialogContext, memory: MemoryInterface): LanguagePolicy {
+        // priority
+        // 1. local policy
+        // 2. turn.languagePolicy
+        // 2. shared policy in turnContext
+        // 3. default policy
+        if (this.languagePolicy) {
+            return this.languagePolicy;
+        }
+
+        if (memory) {
+            const lpInTurn = memory.getValue(TurnPath.LanguagePolicy);
+            if (lpInTurn != null) {
+                return lpInTurn;
+            }
+        }
+
+        const lpInDc = dialogContext.services.get(languagePolicyKey);
+        if (lpInDc) {
+            return lpInDc;
+        }
+
+        return new LanguagePolicy();
+    }
+
+    private getCurrentLocale(dialogContext: DialogContext, memory: MemoryInterface, options: Options) {
+        // order
+        // 1. turn.locale
+        // 2. options.locale
+        // 3. Context.Activity.Locale
+        // 4. Thread.CurrentThread.CurrentCulture.Name
+        let currentLocale: string;
+        if (memory) {
+            memory.getValue()
+        }
+    }
+
+    private getFallbackLocales(languagePolicy: LanguagePolicy, targetLocale: string): string[] {
+
+    }
+
+    private getGenerators(dialogContext: DialogContext, fallbackLocales: string[]) {
+
     }
 }
