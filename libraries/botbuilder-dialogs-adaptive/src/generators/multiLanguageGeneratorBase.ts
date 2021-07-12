@@ -11,6 +11,7 @@ import { LanguageGenerator } from '../languageGenerator';
 import { LanguagePolicy, LanguagePolicyConverter } from '../languagePolicy';
 import { languagePolicyKey } from '../languageGeneratorExtensions';
 import { MemoryInterface, Options } from '../../../adaptive-expressions/lib';
+import { TemplateEngineLanguageGenerator } from './templateEngineLanguageGenerator';
 
 export interface MultiLanguageGeneratorBaseConfiguration {
     languagePolicy?: Record<string, string[]> | LanguagePolicy;
@@ -56,40 +57,10 @@ export abstract class MultiLanguageGeneratorBase<
      * @param data Data to bind to.
      */
     public async generate(dialogContext: DialogContext, template: string, data: D): Promise<T> {
-        // priority
-        // 1. local policy
-        // 2. shared policy in turnContext
-        // 3. default policy
-        if (!this.languagePolicy) {
-            this.languagePolicy = dialogContext.services.get(languagePolicyKey);
-            if (!this.languagePolicy) {
-                this.languagePolicy = new LanguagePolicy();
-            }
-        }
-
-        // see if we have any locales that match
-        const fallbackLocales = [];
-        const targetLocale = dialogContext.getLocale().toLowerCase();
-        if (this.languagePolicy.has(targetLocale)) {
-            this.languagePolicy.get(targetLocale).forEach((u: string): number => fallbackLocales.push(u));
-        }
-
-        // append empty as fallback to end
-        if (targetLocale !== '' && this.languagePolicy.has('')) {
-            this.languagePolicy.get('').forEach((u: string): number => fallbackLocales.push(u));
-        }
-
-        if (fallbackLocales.length === 0) {
-            throw Error(`No supported language found for ${targetLocale}`);
-        }
-
-        const generators: LanguageGenerator<T, D>[] = [];
-        for (const locale of fallbackLocales) {
-            const result = this.tryGetGenerator(dialogContext, locale);
-            if (result.exist) {
-                generators.push(result.result);
-            }
-        }
+        const languagePolicy = this.getLanguagePolicy(dialogContext);
+        const targetLocale = this.getCurrentLocale(dialogContext);
+        const fallbackLocales = this.getFallbackLocales(languagePolicy, targetLocale);
+        const generators = this.getGenerators(dialogContext, fallbackLocales);
 
         if (generators.length === 0) {
             throw Error(`No generator found for language ${targetLocale}`);
@@ -107,11 +78,29 @@ export abstract class MultiLanguageGeneratorBase<
         throw Error(errors.join(',\n'));
     }
 
-    public missingProperties(dialogContext: DialogContext, template: string, state: D, options: Options): string[] {
-        throw new Error('Method not implemented.');
+    public missingProperties(dialogContext: DialogContext, template: string, state?: MemoryInterface, options?: Options): string[] {
+        const currentLocale = this.getCurrentLocale(dialogContext, state, options);
+        const languagePolicy = this.getLanguagePolicy(dialogContext, state);
+        const fallbackLocales = this.getFallbackLocales(languagePolicy, currentLocale);
+        const generators = this.getGenerators(dialogContext, fallbackLocales);
+        
+        if (generators.length === 0) {
+            generators.push(new TemplateEngineLanguageGenerator());
+        }
+
+        const errors: string[] = [];
+        for (const generator of generators) {
+            try {
+                return generator.missingProperties(dialogContext, template, state, options);
+            } catch (e) {
+                errors.push(e);
+            }
+        }
+
+        return [];
     }
 
-    private getLanguagePolicy(dialogContext: DialogContext, memory: MemoryInterface): LanguagePolicy {
+    private getLanguagePolicy(dialogContext: DialogContext, memory?: MemoryInterface): LanguagePolicy {
         // priority
         // 1. local policy
         // 2. turn.languagePolicy
@@ -136,23 +125,48 @@ export abstract class MultiLanguageGeneratorBase<
         return new LanguagePolicy();
     }
 
-    private getCurrentLocale(dialogContext: DialogContext, memory: MemoryInterface, options: Options) {
+    private getCurrentLocale(dialogContext: DialogContext, memory?: MemoryInterface, options?: Options): string {
         // order
         // 1. turn.locale
         // 2. options.locale
         // 3. Context.Activity.Locale
         // 4. Thread.CurrentThread.CurrentCulture.Name
-        let currentLocale: string;
         if (memory) {
-            memory.getValue()
+            const localeInTurn = memory.getValue(TurnPath.Locale);
+            if (localeInTurn) {
+                return localeInTurn.toString();
+            }
         }
+
+        if (options && options.locale) {
+            return options.locale;
+        }
+
+        return dialogContext.getLocale();
     }
 
     private getFallbackLocales(languagePolicy: LanguagePolicy, targetLocale: string): string[] {
+        const fallbackLocales = [];
+        targetLocale = targetLocale.toLowerCase();
+        if (languagePolicy.has(targetLocale)) {
+            languagePolicy.get(targetLocale).forEach((u: string): number => fallbackLocales.push(u));
+        }
 
+        // append empty as fallback to end
+        if (targetLocale !== '' && languagePolicy.has('')) {
+            languagePolicy.get('').forEach((u: string): number => fallbackLocales.push(u));
+        }
+        return fallbackLocales;
     }
 
-    private getGenerators(dialogContext: DialogContext, fallbackLocales: string[]) {
-
+    private getGenerators(dialogContext: DialogContext, fallbackLocales: string[]): LanguageGenerator<T, D>[] {
+        const generators: LanguageGenerator<T, D>[] = [];
+        for (const locale of fallbackLocales) {
+            const result = this.tryGetGenerator(dialogContext, locale);
+            if (result.exist) {
+                generators.push(result.result);
+            }
+        }
+        return generators;
     }
 }

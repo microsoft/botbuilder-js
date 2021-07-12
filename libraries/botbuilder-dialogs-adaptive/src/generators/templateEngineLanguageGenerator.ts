@@ -9,7 +9,7 @@
 import { Configurable, DialogContext } from 'botbuilder-dialogs';
 import { Resource } from 'botbuilder-dialogs-declarative';
 import { Templates, LGResource, EvaluationOptions } from 'botbuilder-lg';
-import { Options } from '../../../adaptive-expressions/lib';
+import { MemoryInterface, Options } from '../../../adaptive-expressions/lib';
 import { LanguageGenerator } from '../languageGenerator';
 import { LanguageResourceLoader } from '../languageResourceLoader';
 import { LanguageGeneratorManager } from './languageGeneratorManager';
@@ -87,7 +87,7 @@ export class TemplateEngineLanguageGenerator<T = unknown, D extends Record<strin
      * @param _options Options.
      * @returns Property list.
      */
-    public missingProperties(dialogContext: DialogContext, template: string, _state: D, _options: Options): string[] {
+    public missingProperties(dialogContext: DialogContext, template: string, _state?: MemoryInterface, _options?: Options): string[] {
         const tempTemplateName = `${Templates.inlineTemplateIdPrefix}${uuidv4().split('-').join('')}`;
 
         // wrap inline string with "# name and -" to align the evaluation process

@@ -7,7 +7,7 @@
  */
 
 import { DialogContext } from 'botbuilder-dialogs';
-import { Options } from '../../adaptive-expressions/lib';
+import { MemoryInterface, Options } from '../../adaptive-expressions/lib';
 
 /**
  * Defines interface for a Language Generator system to bind to text.
@@ -31,5 +31,5 @@ export interface LanguageGenerator<T = unknown, D = Record<string, unknown>> {
      * @param options Options.
      * @returns Property list.
      */
-    missingProperties(dialogContext: DialogContext, template: string, state: D, options: Options): string[];
+    missingProperties(dialogContext: DialogContext, template: string, state?: MemoryInterface, options?: Options): string[];
 }

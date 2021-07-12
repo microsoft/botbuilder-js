@@ -835,6 +835,10 @@ export class TurnPath {
     static readonly topScore = "turn.recognized.score";
     // (undocumented)
     static readonly unrecognizedText = "turn.unrecognizedText";
+    // (undocumented)
+    static readonly languagePolicy = "turn.languagePolicy";
+    // (undocumented)
+    static readonly locale = "turn.locale";
 }
 
 // @public
