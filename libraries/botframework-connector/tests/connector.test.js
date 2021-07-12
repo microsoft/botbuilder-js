@@ -193,7 +193,7 @@ describe('Bot Framework Connector SDK', function () {
                 activity.entities = [
                     {
                         type: 'mention',
-                        text: `<at>User1</at>`,
+                        text: '<at>User1</at>',
                         mentioned: {
                             name: 'User1',
                             id: `${user.id}_1`,
@@ -201,7 +201,7 @@ describe('Bot Framework Connector SDK', function () {
                     },
                     {
                         type: 'mention',
-                        text: `<at>User2</at>`,
+                        text: '<at>User2</at>',
                         mentioned: {
                             name: 'User2',
                             id: `${user.id}_2`,

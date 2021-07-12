@@ -470,9 +470,8 @@ const badExpressions = [
             ['jPath(hello)', 'should have two params'],
             ['jPath(hello, \'.key\')', 'bad json'],
             ['jPath(json(\'{"key1":"value1","key2":"value2"}\'), \'getTotal\')', 'bad path'],
-            ['merge(json(\'{"key1":"value1","key2":"value2"}\'))', 'should have at least 2 arguments'],
-            ['merge(json2, jarray1)', 'should only have JSON object arguments'],
-            ['merge(jarray1, json2)', 'should only have JSON object arguments'],
+            ['merge(1, jarray1)', 'should only have JSON object or array arguments'],
+            ['merge([jarray1])', 'not support nested array'],
             ['xml("invalid json string")'],
             //['xPath(invalidXml, "sum(/produce/item/count)")'], currently, this test did not throw error correctly
             ['xPath(invalidXml)'],

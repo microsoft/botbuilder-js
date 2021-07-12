@@ -69,7 +69,7 @@ export namespace SkillValidation {
      */
     export function isSkillClaim(claims: Claim[]): boolean {
         if (!claims) {
-            throw new TypeError(`SkillValidation.isSkillClaim(): missing claims.`);
+            throw new TypeError('SkillValidation.isSkillClaim(): missing claims.');
         }
 
         // Group claims by type for fast lookup

@@ -762,6 +762,9 @@ const testCases = [
             ['jPath(jsonStr, \'.automobiles[0].maker\' )', ['Nissan']],
             ['string(merge(json1, json2))', '{"FirstName":"John","LastName":"Smith","Enabled":true,"Roles":["Customer","Admin"]}'],
             ['string(merge(json1, json2, json3))', '{"FirstName":"John","LastName":"Smith","Enabled":true,"Roles":["Customer","Admin"],"age":36}'],
+            ['merge(callstack[1], callstack[2]).z', 1],
+            ['merge(callstack).z', 1],
+            ['string(merge({k1:\'v1\'}, [{k2:\'v2\'}, {k3: \'v3\'}], {k4:\'v4\'}))', '{"k1":"v1","k2":"v2","k3":"v3","k4":"v4"}'],
             [
                 'xml(\'{"person": {"name": "Sophia Owen", "city": "Seattle"}}\')',
                 '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n<person>\n  <name>Sophia Owen</name>\n  <city>Seattle</city>\n</person>',
@@ -1009,6 +1012,32 @@ const scope = {
     doubleNestedItems: [[{ x: 1 }, { x: 2 }], [{ x: 3 }]],
     xmlStr:
         "<?xml version='1.0'?> <produce> <item> <name>Gala</name> <type>apple</type> <count>20</count> </item> <item> <name>Honeycrisp</name> <type>apple</type> <count>10</count> </item> </produce>",
+    callStack: [
+        {
+            x: 3,
+            instance: {
+                xxx: 'instance',
+                yyy: {
+                    instanceY: 'instanceY',
+                },
+            },
+            options: {
+                xxx: 'options',
+                yyy: ['optionY1', 'optionY2'],
+            },
+            title: 'Dialog Title',
+            subTitle: 'Dialog Sub Title',
+        },
+        {
+            x: 2,
+            y: 2,
+        },
+        {
+            x: 1,
+            y: 1,
+            z: 1,
+        },
+    ],
 };
 
 const generateParseTest = (input, expectedOutput, expectedRefs) => () => {

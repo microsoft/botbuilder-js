@@ -227,7 +227,7 @@ export namespace JwtTokenValidation {
      */
     export function getAppIdFromClaims(claims: Claim[]): string {
         if (!claims) {
-            throw new TypeError(`JwtTokenValidation.getAppIdFromClaims(): missing claims.`);
+            throw new TypeError('JwtTokenValidation.getAppIdFromClaims(): missing claims.');
         }
 
         let appId: string;
