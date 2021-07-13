@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 
-import { Configurable, Converter, ConverterFactory, DialogContext } from 'botbuilder-dialogs';
+import { Configurable, Converter, ConverterFactory, DialogContext, TurnPath } from 'botbuilder-dialogs';
 import { LanguageGenerator } from '../languageGenerator';
 import { LanguagePolicy, LanguagePolicyConverter } from '../languagePolicy';
 import { languagePolicyKey } from '../languageGeneratorExtensions';
@@ -78,12 +78,17 @@ export abstract class MultiLanguageGeneratorBase<
         throw Error(errors.join(',\n'));
     }
 
-    public missingProperties(dialogContext: DialogContext, template: string, state?: MemoryInterface, options?: Options): string[] {
+    public missingProperties(
+        dialogContext: DialogContext,
+        template: string,
+        state?: MemoryInterface,
+        options?: Options
+    ): string[] {
         const currentLocale = this.getCurrentLocale(dialogContext, state, options);
         const languagePolicy = this.getLanguagePolicy(dialogContext, state);
         const fallbackLocales = this.getFallbackLocales(languagePolicy, currentLocale);
         const generators = this.getGenerators(dialogContext, fallbackLocales);
-        
+
         if (generators.length === 0) {
             generators.push(new TemplateEngineLanguageGenerator());
         }
@@ -111,7 +116,7 @@ export abstract class MultiLanguageGeneratorBase<
         }
 
         if (memory) {
-            const lpInTurn = memory.getValue(TurnPath.LanguagePolicy);
+            const lpInTurn = memory.getValue(TurnPath.languagePolicy);
             if (lpInTurn != null) {
                 return lpInTurn;
             }
@@ -132,7 +137,7 @@ export abstract class MultiLanguageGeneratorBase<
         // 3. Context.Activity.Locale
         // 4. Thread.CurrentThread.CurrentCulture.Name
         if (memory) {
-            const localeInTurn = memory.getValue(TurnPath.Locale);
+            const localeInTurn = memory.getValue(TurnPath.locale);
             if (localeInTurn) {
                 return localeInTurn.toString();
             }

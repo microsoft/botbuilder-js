@@ -776,7 +776,10 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> im
     protected onSetScopedServices(dialogContext: DialogContext): void {
         if (this.generator) {
             dialogContext.services.set(languageGeneratorKey, this.generator);
-            Expression.functions.set(MissingPropertiesFunction.name, new MissingPropertiesFunction(dialogContext));
+            Expression.functions.set(
+                MissingPropertiesFunction.functionName,
+                new MissingPropertiesFunction(dialogContext)
+            );
         }
     }
 

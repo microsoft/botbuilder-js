@@ -41,13 +41,13 @@ export class MissingPropertiesFunction extends ExpressionEvaluator {
      */
     public constructor(context: DialogContext) {
         super(
-            MissingProperties.functionName,
-            MissingProperties.function,
+            MissingPropertiesFunction.functionName,
+            MissingPropertiesFunction.function,
             ReturnType.Array,
             FunctionUtils.validateUnaryString
         );
 
-        MissingProperties.dialogContext = context;
+        MissingPropertiesFunction.dialogContext = context;
     }
 
     private static function(expression: Expression, state: MemoryInterface, options: Options): ValueWithError {
@@ -57,10 +57,18 @@ export class MissingPropertiesFunction extends ExpressionEvaluator {
         }
 
         const templateBody = args[0].toString();
-        const lgGenerator = state.getValue(MissingProperties.generatorPath);
+        const lgGenerator = state.getValue(MissingPropertiesFunction.generatorPath);
         if (lgGenerator) {
             const generator = lgGenerator as LanguageGenerator;
-            return { value: generator.missingProperties(MissingProperties.dialogContext, templateBody, state, options), error: undefined };
+            return {
+                value: generator.missingProperties(
+                    MissingPropertiesFunction.dialogContext,
+                    templateBody,
+                    state,
+                    options
+                ),
+                error: undefined,
+            };
         }
         return { value: undefined, error: undefined };
     }

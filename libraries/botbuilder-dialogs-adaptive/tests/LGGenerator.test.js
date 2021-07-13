@@ -86,11 +86,11 @@ describe('LGLanguageGenerator', function() {
 
             it('should throw for missing template: "${greeting()}", no data', async () => {
                 assert.throws(() => {generator.generate(getDialogContext(), '${greeting()}', undefined);});
-            });       
+            });
         });
-        
-        describe('Test Multi-Language Import with no locale', function() {   
-            let generator; 
+
+        describe('Test Multi-Language Import with no locale', function() {
+            let generator;
             this.beforeAll(async function() {
                 const resource = resourceExplorer.getResource('a.lg');
                 generator = new TemplateEngineLanguageGenerator(resource, lgResourceGroup);
@@ -114,7 +114,7 @@ describe('LGLanguageGenerator', function() {
             it('"${greeting()}", no data', async () => {
                 const result = await generator.generate(getDialogContext(), '${greeting()}', undefined);
                 assert.strictEqual(result, 'hi');
-            });    
+            });
         });
     });
 
@@ -125,22 +125,22 @@ describe('LGLanguageGenerator', function() {
             const multiLanguageResources = await LanguageResourceLoader.groupByLocale(resourceExplorer);
 
             //Should have a setup for the threadLocale here.
-        
+
             let resource = resourceExplorer.getResource('test.lg');
             lg.languageGenerators.set('', new TemplateEngineLanguageGenerator(resource, multiLanguageResources));
-        
+
             resource = resourceExplorer.getResource('test.de.lg');
             lg.languageGenerators.set('de', new TemplateEngineLanguageGenerator(resource, multiLanguageResources));
-        
+
             resource = resourceExplorer.getResource('test.en.lg');
             lg.languageGenerators.set('en', new TemplateEngineLanguageGenerator(resource, multiLanguageResources));
-        
+
             resource = resourceExplorer.getResource('test.en-US.lg');
             lg.languageGenerators.set('en-us', new TemplateEngineLanguageGenerator(resource, multiLanguageResources));
-        
+
             resource = resourceExplorer.getResource('test.en-GB.lg');
             lg.languageGenerators.set('en-gb', new TemplateEngineLanguageGenerator(resource, multiLanguageResources));
-        
+
             resource = resourceExplorer.getResource('test.fr.lg');
             lg.languageGenerators.set('fr', new TemplateEngineLanguageGenerator(resource, multiLanguageResources));
         });
@@ -264,14 +264,14 @@ describe('LGLanguageGenerator', function() {
 
         it('empty TemplateEngineLanguageGenerator', () => {
             const generator = new TemplateEngineLanguageGenerator();
-            const properties = generator.missingProperties(getDialogContext(''), '${user,name} and ${user.age}');
+            const properties = generator.missingProperties(getDialogContext(''), '${user.name} and ${user.age}');
             assert.deepStrictEqual(properties, ['user.name', 'user.age']);
         });
-        
+
         it('TemplateEngineLanguageGenerator', () => {
             const resource = resourceExplorer.getResource('properties.lg');
             const generator = new TemplateEngineLanguageGenerator(resource, lgResourceGroup);
-            
+
             const properties = generator.missingProperties(getDialogContext(''), '${nameAndAge()}');
             assert.deepStrictEqual(properties, ['user.name', 'user.age']);
         });

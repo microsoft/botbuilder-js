@@ -9,7 +9,6 @@
             {
                 "$kind": "Microsoft.OnBeginDialog",
                 "actions": [
-                    // normal template
                     {
                         "$kind": "Microsoft.SetProperty",
                         "property": "user.missingProperties",
@@ -36,7 +35,6 @@
                         "$kind": "Microsoft.SendActivity",
                         "activity": "You finish all slot filling. And get result: ${dialog.first} and ${dialog.second}"
                     },
-                    // template with reference
                     {
                         "$kind": "Microsoft.SetProperty",
                         "property": "user.missingProperties",
@@ -63,7 +61,6 @@
                         "$kind": "Microsoft.SendActivity",
                         "activity": "You finish all slot filling. And get result: ${nameAndAge()}"
                     },
-                    // nested dialog
                     {
                         "$kind": "Microsoft.SetProperty",
                         "property": "user.missingProperties",
