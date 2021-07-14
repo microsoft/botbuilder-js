@@ -33,6 +33,11 @@ describe('CloudAdapter', function () {
                 name: 'TypeError',
                 message: '`botFrameworkAuthentication` parameter required',
             });
+
+            assert.throws(() => new CloudAdapter(BotFrameworkAuthenticationFactory.create(), null), {
+                name: 'TypeError',
+                message: '`webSocketFactory` parameter required',
+            });
         });
 
         it('succeeds', function () {
