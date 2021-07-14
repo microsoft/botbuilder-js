@@ -45,9 +45,13 @@ export class CloudAdapter extends CloudAdapterBase implements BotFrameworkHttpAd
      * Initializes a new instance of the [CloudAdapter](xref:botbuilder:CloudAdapter) class.
      *
      * @param botFrameworkAuthentication Optional [BotFrameworkAuthentication](xref:botframework-connector.BotFrameworkAuthentication) instance
+     * @param allowTraceActivities A flag to turn on sending trace activities to clients.
      */
-    constructor(botFrameworkAuthentication: BotFrameworkAuthentication = BotFrameworkAuthenticationFactory.create()) {
-        super(botFrameworkAuthentication);
+    constructor(
+        botFrameworkAuthentication: BotFrameworkAuthentication = BotFrameworkAuthenticationFactory.create(),
+        allowTraceActivities: boolean = false
+    ) {
+        super(botFrameworkAuthentication, allowTraceActivities);
     }
 
     /**

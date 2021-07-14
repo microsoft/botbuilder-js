@@ -292,7 +292,9 @@ export class CardFactory {
 
 // @public (undocumented)
 export abstract class CloudAdapterBase extends BotAdapter {
-    constructor(botFrameworkAuthentication: BotFrameworkAuthentication);
+    constructor(botFrameworkAuthentication: BotFrameworkAuthentication, allowTraceActivities?: boolean);
+    // (undocumented)
+    protected readonly allowTraceActivities: boolean;
     // (undocumented)
     protected readonly botFrameworkAuthentication: BotFrameworkAuthentication;
     // (undocumented)

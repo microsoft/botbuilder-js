@@ -36,6 +36,7 @@ describe('CloudAdapter', function () {
         });
 
         it('succeeds', function () {
+            new CloudAdapter(BotFrameworkAuthenticationFactory.create(), true);
             new CloudAdapter(BotFrameworkAuthenticationFactory.create());
             new CloudAdapter();
         });

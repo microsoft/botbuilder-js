@@ -39,8 +39,12 @@ export abstract class CloudAdapterBase extends BotAdapter {
      * Create a new [CloudAdapterBase](xref:botbuilder.CloudAdapterBase) instance.
      *
      * @param botFrameworkAuthentication A [BotFrameworkAuthentication](xref:botframework-connector.BotFrameworkAuthentication) used for validating and creating tokens.
+     * @param allowTraceActivities A flag to turn on sending trace activities to clients.
      */
-    constructor(protected readonly botFrameworkAuthentication: BotFrameworkAuthentication) {
+    constructor(
+        protected readonly botFrameworkAuthentication: BotFrameworkAuthentication,
+        protected readonly allowTraceActivities: boolean = false
+    ) {
         super();
 
         if (!botFrameworkAuthentication) {
@@ -72,7 +76,11 @@ export abstract class CloudAdapterBase extends BotAdapter {
                     await delay(typeof activity.value === 'number' ? activity.value : 1000);
                 } else if (activity.type === ActivityTypes.InvokeResponse) {
                     context.turnState.set(INVOKE_RESPONSE_KEY, activity);
-                } else if (activity.type === ActivityTypes.Trace && activity.channelId !== Channels.Emulator) {
+                } else if (
+                    !this.allowTraceActivities &&
+                    activity.type === ActivityTypes.Trace &&
+                    activity.channelId !== Channels.Emulator
+                ) {
                     // no-op
                 } else {
                     const connectorClient = context.turnState.get<ConnectorClient>(this.ConnectorClientKey);

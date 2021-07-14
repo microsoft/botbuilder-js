@@ -60,6 +60,7 @@ describe('CloudAdapterBase', function () {
 
         it('succeeds', function () {
             new TestAdapter(BotFrameworkAuthenticationFactory.create());
+            new TestAdapter(BotFrameworkAuthenticationFactory.create(), true);
         });
     });
 
@@ -112,6 +113,48 @@ describe('CloudAdapterBase', function () {
             await adapter.sendActivities(context, [invokeResponse]);
 
             assert.deepStrictEqual(context.turnState.get(INVOKE_RESPONSE_KEY), invokeResponse);
+        });
+
+        it('drops trace activity', async function () {
+            const adapter = new TestAdapter(authentication, false);
+            const context = new TurnContext(adapter);
+            const { mock } = mockConnectorClient(context);
+
+            const activity = {
+                type: ActivityTypes.Trace,
+                conversation: {
+                    id: 'conversationId',
+                },
+            };
+
+            mock.expects('replyToActivity').never();
+            mock.expects('sendToConversation').never();
+
+            assert.deepStrictEqual(await adapter.sendActivities(context, [activity]), [{ id: '' }]);
+
+            sandbox.verify();
+        });
+
+        it('sends a trace to a conversation', async function () {
+            const adapter = new TestAdapter(authentication, true);
+            const context = new TurnContext(adapter);
+            const { mock } = mockConnectorClient(context);
+
+            const activity = {
+                type: ActivityTypes.Trace,
+                conversation: {
+                    id: 'conversationId',
+                },
+            };
+
+            mock.expects('sendToConversation')
+                .withArgs(activity.conversation.id, activity)
+                .once()
+                .resolves({ id: 'id' });
+
+            assert.deepStrictEqual(await adapter.sendActivities(context, [activity]), [{ id: 'id' }]);
+
+            sandbox.verify();
         });
 
         it('replies to an activity', async function () {
