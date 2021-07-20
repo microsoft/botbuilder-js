@@ -442,6 +442,7 @@ export namespace ActivityEx {
      */
     export function getContinuationActivity(reference: Partial<ConversationReference>): Partial<Activity> {
         return {
+            type: ActivityTypes.Event,
             name: ActivityEventNames.ContinueConversation,
             id: uuid(),
             channelId: reference.channelId,
