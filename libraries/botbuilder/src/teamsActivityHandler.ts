@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 
-import {
+ import {
     ActivityHandler,
     AdaptiveCardInvokeResponse,
     AppBasedLinkQuery,
@@ -21,6 +21,8 @@ import {
     MessagingExtensionActionResponse,
     MessagingExtensionQuery,
     MessagingExtensionResponse,
+    MeetingParticipantsAddedEventDetails,
+    MeetingParticipantsRemovedEventDetails,
     O365ConnectorCardActionQuery,
     SigninStateVerificationQuery,
     TabRequest,
@@ -55,6 +57,52 @@ const TeamsMeetingEndT = z
         MeetingType: z.string(),
         Title: z.string(),
         EndTime: z.string(),
+    })
+    .nonstrict();
+
+const TeamsMeetingParticipantsAddedT = z
+    .object({
+        Id: z.string(),
+        JoinUrl: z.string(),
+        MeetingType: z.string(),
+        Title: z.string(),
+        ParticipantsAdded: z.array(
+            z.object({
+                Id: z.string(),
+                Name: z.string(),
+                AadObjectId: z.string().optional(),
+                Role: z.string().optional(),
+                GivenName: z.string().optional(),
+                Surname: z.string().optional(),
+                Email: z.string().optional(),
+                UserPrincipalName: z.string().optional(),
+                TenantId: z.string().optional(),
+                UserRole: z.string().optional(),
+            })
+        ),
+    })
+    .nonstrict();
+
+const TeamsMeetingParticipantsRemovedT = z
+    .object({
+        Id: z.string(),
+        JoinUrl: z.string(),
+        MeetingType: z.string(),
+        Title: z.string(),
+        ParticipantsRemoved: z.array(
+            z.object({
+                Id: z.string(),
+                Name: z.string(),
+                AadObjectId: z.string().optional(),
+                Role: z.string().optional(),
+                GivenName: z.string().optional(),
+                Surname: z.string().optional(),
+                Email: z.string().optional(),
+                UserPrincipalName: z.string().optional(),
+                TenantId: z.string().optional(),
+                UserRole: z.string().optional(),
+            })
+        ),
     })
     .nonstrict();
 
@@ -968,6 +1016,10 @@ export class TeamsActivityHandler extends ActivityHandler {
                         return this.onTeamsMeetingStart(context);
                     case 'application/vnd.microsoft.meetingEnd':
                         return this.onTeamsMeetingEnd(context);
+                    case 'application/vnd.microsoft.meetingParticipantsAdded':
+                        return this.onTeamsMeetingParticipantsAdded(context);
+                    case 'application/vnd.microsoft.meetingParticipantsRemoved':
+                        return this.onTeamsMeetingParticipantsRemoved(context);
                 }
             }
 
@@ -995,6 +1047,28 @@ export class TeamsActivityHandler extends ActivityHandler {
      */
     protected async onTeamsMeetingEnd(context: TurnContext): Promise<void> {
         await this.handle(context, 'TeamsMeetingEnd', this.defaultNextEvent(context));
+    }
+
+    /**
+     * Invoked when a Meeting Participants Added event activity is received from the connector.
+     * Override this in a derived class to provide logic for when meeting participants are added.
+     *
+     * @param context The context for this turn.
+     * @returns A promise that represents the work queued.
+     */
+    protected async onTeamsMeetingParticipantsAdded(context: TurnContext): Promise<void> {
+        await this.handle(context, 'TeamsMeetingParticipantsAdded', this.defaultNextEvent(context));
+    }
+
+    /**
+     * Invoked when a Meeting Participants Removed event activity is received from the connector.
+     * Override this in a derived class to provide logic for when meeting participants are removed.
+     *
+     * @param context The context for this turn.
+     * @returns A promise that represents the work queued.
+     */
+    protected async onTeamsMeetingParticipantsRemoved(context: TurnContext): Promise<void> {
+        await this.handle(context, 'TeamsMeetingParticipantsRemoved', this.defaultNextEvent(context));
     }
 
     /**
@@ -1039,6 +1113,84 @@ export class TeamsActivityHandler extends ActivityHandler {
                     joinUrl: meeting.JoinUrl,
                     meetingType: meeting.MeetingType,
                     endTime: new Date(meeting.EndTime),
+                    title: meeting.Title,
+                },
+                context,
+                next
+            );
+        });
+    }
+
+    /**
+     * Registers a handler for when Teams meeting participants are added.
+     *
+     * @param handler A callback that handles Meeting Participants Added events.
+     * @returns A promise that represents the work queued.
+     */
+    public onTeamsMeetingParticipantsAddedEvent(
+        handler: (
+            meeting: MeetingParticipantsAddedEventDetails,
+            context: TurnContext,
+            next: () => Promise<void>
+        ) => Promise<void>
+    ): this {
+        return this.on('TeamsMeetingParticipantsAdded', async (context, next) => {
+            const meeting = TeamsMeetingParticipantsAddedT.parse(context.activity.value);
+            await handler(
+                {
+                    id: meeting.Id,
+                    joinUrl: meeting.JoinUrl,
+                    meetingType: meeting.MeetingType,
+                    participantsAdded: meeting.ParticipantsAdded.map((participant) => ({
+                        id: participant.Id,
+                        name: participant.Name,
+                        aadObjectId: participant.AadObjectId,
+                        givenName: participant.GivenName,
+                        surname: participant.Surname,
+                        email: participant.Email,
+                        userPrincipalName: participant.UserPrincipalName,
+                        tenantId: participant.TenantId,
+                        userRole: participant.UserRole,
+                    })),
+                    title: meeting.Title,
+                },
+                context,
+                next
+            );
+        });
+    }
+
+    /**
+     * Registers a handler for when Teams meeting participants are removed.
+     *
+     * @param handler A callback that handles Meeting Participants Removed events.
+     * @returns A promise that represents the work queued.
+     */
+    public onTeamsMeetingParticipantsRemovedEvent(
+        handler: (
+            meeting: MeetingParticipantsRemovedEventDetails,
+            context: TurnContext,
+            next: () => Promise<void>
+        ) => Promise<void>
+    ): this {
+        return this.on('TeamsMeetingParticipantsRemoved', async (context, next) => {
+            const meeting = TeamsMeetingParticipantsRemovedT.parse(context.activity.value);
+            await handler(
+                {
+                    id: meeting.Id,
+                    joinUrl: meeting.JoinUrl,
+                    meetingType: meeting.MeetingType,
+                    participantsRemoved: meeting.ParticipantsRemoved.map((participant) => ({
+                        id: participant.Id,
+                        name: participant.Name,
+                        aadObjectId: participant.AadObjectId,
+                        givenName: participant.GivenName,
+                        surname: participant.Surname,
+                        email: participant.Email,
+                        userPrincipalName: participant.UserPrincipalName,
+                        tenantId: participant.TenantId,
+                        userRole: participant.UserRole,
+                    })),
                     title: meeting.Title,
                 },
                 context,

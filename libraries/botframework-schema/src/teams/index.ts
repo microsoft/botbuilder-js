@@ -1779,3 +1779,19 @@ export interface MeetingEndEventDetails extends MeetingEventDetails {
      */
     endTime: Date;
 }
+
+/**
+ * @interface
+ * Specific details of a Teams meeting participants added.
+ */
+export interface MeetingParticipantsAddedEventDetails extends MeetingEventDetails {
+    participantsAdded: TeamsChannelAccount[];
+}
+
+/**
+ * @interface
+ * Specific details of a Teams meeting participants removed.
+ */
+export interface MeetingParticipantsRemovedEventDetails extends MeetingEventDetails {
+    participantsRemoved: TeamsChannelAccount[];
+}
