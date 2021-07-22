@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 
- import {
+import {
     ActivityHandler,
     AdaptiveCardInvokeResponse,
     AppBasedLinkQuery,
