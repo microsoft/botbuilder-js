@@ -60,26 +60,28 @@ const TeamsMeetingEndT = z
     })
     .nonstrict();
 
+const ParticipantT = z
+    .object({
+        Id: z.string(),
+        Name: z.string(),
+        AadObjectId: z.string().optional(),
+        Role: z.string().optional(),
+        GivenName: z.string().optional(),
+        Surname: z.string().optional(),
+        Email: z.string().optional(),
+        UserPrincipalName: z.string().optional(),
+        TenantId: z.string().optional(),
+        UserRole: z.string().optional(),
+    })
+    .nonstrict();
+
 const TeamsMeetingParticipantsAddedT = z
     .object({
         Id: z.string(),
         JoinUrl: z.string(),
         MeetingType: z.string(),
         Title: z.string(),
-        ParticipantsAdded: z.array(
-            z.object({
-                Id: z.string(),
-                Name: z.string(),
-                AadObjectId: z.string().optional(),
-                Role: z.string().optional(),
-                GivenName: z.string().optional(),
-                Surname: z.string().optional(),
-                Email: z.string().optional(),
-                UserPrincipalName: z.string().optional(),
-                TenantId: z.string().optional(),
-                UserRole: z.string().optional(),
-            })
-        ),
+        ParticipantsAdded: z.array(ParticipantT),
     })
     .nonstrict();
 
@@ -89,20 +91,7 @@ const TeamsMeetingParticipantsRemovedT = z
         JoinUrl: z.string(),
         MeetingType: z.string(),
         Title: z.string(),
-        ParticipantsRemoved: z.array(
-            z.object({
-                Id: z.string(),
-                Name: z.string(),
-                AadObjectId: z.string().optional(),
-                Role: z.string().optional(),
-                GivenName: z.string().optional(),
-                Surname: z.string().optional(),
-                Email: z.string().optional(),
-                UserPrincipalName: z.string().optional(),
-                TenantId: z.string().optional(),
-                UserRole: z.string().optional(),
-            })
-        ),
+        ParticipantsRemoved: z.array(ParticipantT),
     })
     .nonstrict();
 

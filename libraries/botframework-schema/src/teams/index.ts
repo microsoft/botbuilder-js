@@ -1782,16 +1782,22 @@ export interface MeetingEndEventDetails extends MeetingEventDetails {
 
 /**
  * @interface
- * Specific details of a Teams meeting participants added.
+ * Specific details of a Teams meeting participants added event.
  */
 export interface MeetingParticipantsAddedEventDetails extends MeetingEventDetails {
+    /**
+     * @member {TeamsChannelAccount} [participantsAdded] The added participant accounts.
+     */
     participantsAdded: TeamsChannelAccount[];
 }
 
 /**
  * @interface
- * Specific details of a Teams meeting participants removed.
+ * Specific details of a Teams meeting participants removed event.
  */
 export interface MeetingParticipantsRemovedEventDetails extends MeetingEventDetails {
+    /**
+     * @member {TeamsChannelAccount} [participantsRemoved] The removed participant accounts.
+     */
     participantsRemoved: TeamsChannelAccount[];
 }
