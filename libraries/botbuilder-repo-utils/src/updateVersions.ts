@@ -48,12 +48,12 @@ export const getPackageVersion = (
         prerelease.push(options.preview);
     }
 
-    if (options.commitSha) {
-        prerelease.push(options.commitSha);
-    }
-
     if (options.date) {
         prerelease.push(options.date);
+    }
+
+    if (options.commitSha) {
+        prerelease.push(options.commitSha);
     }
 
     return compact([newVersion, compact(prerelease).join('.')]).join('-');
