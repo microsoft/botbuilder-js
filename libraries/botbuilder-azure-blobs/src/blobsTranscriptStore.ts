@@ -141,8 +141,7 @@ export class BlobsTranscriptStore implements TranscriptStore {
             const fromIdx =
                 startDate != null
                     ? blobItems.findIndex(
-                          (blobItem) =>
-                              blobItem?.metadata?.timestamp && new Date(blobItem.metadata.timestamp) >= startDate
+                          (blobItem) => blobItem?.properties?.createdOn && blobItem?.properties?.createdOn >= startDate
                       )
                     : 0;
 

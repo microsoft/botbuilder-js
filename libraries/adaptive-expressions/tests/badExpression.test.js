@@ -126,7 +126,6 @@ const badExpressions = [
             ['startsWith(hello)', 'should have two params'],
             ['countWord(hello, 1)', 'should have one param'],
             ['countWord(one)', 'should have string param'],
-            ['countWord(one)', 'should have string param'],
             ['addOrdinal(one + 0.5)', 'should have Integer param'],
             ['addOrdinal(one, two)', 'should have one param'],
             ['newGuid(one)', 'should have no parameters'],

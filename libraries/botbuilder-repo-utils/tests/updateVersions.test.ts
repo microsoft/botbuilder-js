@@ -7,9 +7,10 @@ import * as workspace from '../src/workspace';
 import assert from 'assert';
 import dayjs from 'dayjs';
 import path from 'path';
+import semver from 'semver';
 import sinon from 'sinon';
-import { PackageVersion, command, getPackageVersion } from '../src/updateVersions';
 import { Package } from '../src/package';
+import { command, getPackageVersion } from '../src/updateVersions';
 import { isSuccess } from '../src/run';
 
 describe('updateVersions', function () {
@@ -35,7 +36,7 @@ describe('updateVersions', function () {
             {
                 label: 'standard package with date',
                 options: { ...defaultOptions, date: 'DATE' },
-                expected: `${newVersion}+date-DATE`,
+                expected: `${newVersion}-DATE`,
             },
             {
                 label: 'standard package with commitSha',
@@ -45,12 +46,12 @@ describe('updateVersions', function () {
             {
                 label: 'standard package with date and commitSha',
                 options: { ...defaultOptions, commitSha: 'COMMIT', date: 'DATE' },
-                expected: `${newVersion}-COMMIT+date-DATE`,
+                expected: `${newVersion}-DATE.COMMIT`,
             },
             {
                 label: 'standard package with date, commitSha, and buildLabel',
                 options: { ...defaultOptions, buildLabel: 'BUILD', commitSha: 'COMMIT', date: 'DATE' },
-                expected: `${newVersion}-BUILD.COMMIT+date-DATE`,
+                expected: `${newVersion}-BUILD.DATE.COMMIT`,
             },
             {
                 label: 'preview package with defaults',
@@ -62,7 +63,7 @@ describe('updateVersions', function () {
                 label: 'preview package with date',
                 pkg: previewPackage,
                 options: { ...defaultOptions, date: 'DATE' },
-                expected: `${newVersion}-PREVIEW+date-DATE`,
+                expected: `${newVersion}-PREVIEW.DATE`,
             },
             {
                 label: 'preview package with commitSha',
@@ -74,13 +75,13 @@ describe('updateVersions', function () {
                 label: 'preview package with date and commitSha',
                 pkg: previewPackage,
                 options: { ...defaultOptions, commitSha: 'COMMIT', date: 'DATE' },
-                expected: `${newVersion}-PREVIEW.COMMIT+date-DATE`,
+                expected: `${newVersion}-PREVIEW.DATE.COMMIT`,
             },
             {
                 label: 'preview package with date, commitSha, and build label',
                 pkg: previewPackage,
                 options: { ...defaultOptions, buildLabel: 'BUILD', commitSha: 'COMMIT', date: 'DATE' },
-                expected: `${newVersion}-BUILD.PREVIEW.COMMIT+date-DATE`,
+                expected: `${newVersion}-BUILD.PREVIEW.DATE.COMMIT`,
             },
             {
                 label: 'deprecated package with defaults',
@@ -92,7 +93,7 @@ describe('updateVersions', function () {
                 label: 'deprecated package with date',
                 pkg: deprecatedPackage,
                 options: { ...defaultOptions, date: 'DATE' },
-                expected: `${newVersion}-DEPRECATED+date-DATE`,
+                expected: `${newVersion}-DEPRECATED.DATE`,
             },
             {
                 label: 'deprecated package with commitSha',
@@ -104,13 +105,13 @@ describe('updateVersions', function () {
                 label: 'deprecated package with date and commitSha',
                 pkg: deprecatedPackage,
                 options: { ...defaultOptions, commitSha: 'COMMIT', date: 'DATE' },
-                expected: `${newVersion}-DEPRECATED.COMMIT+date-DATE`,
+                expected: `${newVersion}-DEPRECATED.DATE.COMMIT`,
             },
             {
                 label: 'deprecated package with date, commitSha, and buildLabel',
                 pkg: deprecatedPackage,
                 options: { ...defaultOptions, buildLabel: 'BUILD', commitSha: 'COMMIT', date: 'DATE' },
-                expected: `${newVersion}-BUILD.DEPRECATED.COMMIT+date-DATE`,
+                expected: `${newVersion}-BUILD.DEPRECATED.DATE.COMMIT`,
             },
         ];
 
@@ -119,6 +120,28 @@ describe('updateVersions', function () {
                 const actual = getPackageVersion(testCase.pkg ?? {}, newVersion, testCase.options);
                 assert.strictEqual(actual.toString(), testCase.expected);
             });
+        });
+
+        it('semver sorting prioritizes date over commitSha', function () {
+            const newVersion = '1.0.1';
+
+            const pkg: Package = {
+                name: 'sort',
+                version: '1.0.0',
+            };
+
+            const earlier = getPackageVersion(pkg, newVersion, {
+                date: '20210722',
+                commitSha: 'abcdef',
+            });
+
+            const later = getPackageVersion(pkg, newVersion, {
+                date: '20210723',
+                commitSha: 'abcdef',
+            });
+
+            assert(semver.satisfies(later, `^${earlier}`), 'later satisfies ^earlier');
+            assert(!semver.satisfies(earlier, `^${later}`), 'earlier does not satisfy ^later');
         });
     });
 
@@ -285,39 +308,31 @@ describe('updateVersions', function () {
             const dateFormat = 'YYYYMM';
             const formattedDate = dayjs().format(dateFormat);
 
-            const expectedVersion = new PackageVersion(`${packageVersion}-dev.COMMIT`, `date-${formattedDate}`);
+            const expectedPreviewVersion = `${packageVersion}-dev.preview.${formattedDate}.COMMIT`;
 
-            const expectedPreviewVersion = new PackageVersion(
-                `${packageVersion}-dev.preview.COMMIT`,
-                `date-${formattedDate}`
-            );
-
-            const expectedDeprecatedVersion = new PackageVersion(
-                `${packageVersion}-dev.deprecated.COMMIT`,
-                `date-${formattedDate}`
-            );
+            const expectedDeprecatedVersion = `${packageVersion}-dev.deprecated.${formattedDate}.COMMIT`;
 
             await runAndVerify(
                 [
                     {
                         name: 'a',
                         dependsOn: ['b', 'c'],
-                        expectedVersion: expectedVersion.toString(),
+                        expectedVersion: `${packageVersion}-dev.${formattedDate}.COMMIT`,
                         expectedDependencies: {
-                            b: expectedPreviewVersion.version,
-                            c: expectedDeprecatedVersion.version,
+                            b: expectedPreviewVersion,
+                            c: expectedDeprecatedVersion,
                         },
                     },
                     {
                         name: 'b',
                         preview: true,
-                        expectedVersion: expectedPreviewVersion.toString(),
+                        expectedVersion: expectedPreviewVersion,
                     },
                     {
                         name: 'c',
                         deprecated: true,
                         dependsOn: ['d'],
-                        expectedVersion: expectedDeprecatedVersion.toString(),
+                        expectedVersion: expectedDeprecatedVersion,
                         expectedDependencies: {
                             d: dummyVersion,
                         },
