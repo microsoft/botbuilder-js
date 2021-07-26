@@ -1,9 +1,9 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-import * as R from 'remeda';
-import minimist from 'minimist';
+import compact from 'lodash/compact';
 import dayjs from 'dayjs';
+import minimist from 'minimist';
 import path from 'path';
 import { Package } from './package';
 import { collectWorkspacePackages } from './workspace';
@@ -21,14 +21,6 @@ export interface PackageVersionOptions {
     preview?: string;
 }
 
-export class PackageVersion {
-    constructor(readonly version: string, readonly metadata: string) {}
-
-    toString(): string {
-        return R.compact([this.version, this.metadata]).join('+');
-    }
-}
-
 /**
  * Computes the final version identifier components for a package.
  *
@@ -41,7 +33,7 @@ export const getPackageVersion = (
     pkg: Partial<Package>,
     newVersion: string,
     options: PackageVersionOptions
-): PackageVersion => {
+): string => {
     const prerelease = [];
 
     if (options.buildLabel) {
@@ -56,20 +48,15 @@ export const getPackageVersion = (
         prerelease.push(options.preview);
     }
 
+    if (options.date) {
+        prerelease.push(options.date);
+    }
+
     if (options.commitSha) {
         prerelease.push(options.commitSha);
     }
 
-    const metadata = [];
-
-    if (options.date) {
-        metadata.push(`date-${options.date}`);
-    }
-
-    return new PackageVersion(
-        R.compact([newVersion, R.compact(prerelease).join('.')]).join('-'),
-        R.compact(metadata).join('.')
-    );
+    return compact([newVersion, compact(prerelease).join('.')]).join('-');
 };
 
 export const command = (argv: string[], quiet = false) => async (): Promise<Result> => {
@@ -111,7 +98,7 @@ export const command = (argv: string[], quiet = false) => async (): Promise<Resu
     const workspaces = await collectWorkspacePackages(repoRoot, packageFile.workspaces, { noPrivate: true });
 
     // Build an object mapping a package name to its new, updated version
-    const workspaceVersions = workspaces.reduce<Record<string, PackageVersion>>(
+    const workspaceVersions = workspaces.reduce<Record<string, string>>(
         (acc, { pkg }) => ({
             ...acc,
             [pkg.name]: getPackageVersion(pkg, newVersion, {
@@ -128,7 +115,12 @@ export const command = (argv: string[], quiet = false) => async (): Promise<Resu
 
     // Rewrites the version for any dependencies found in `workspaceVersions`
     const rewriteWithNewVersions = (dependencies: Record<string, string>) =>
-        R.mapValues(dependencies, (value, key) => workspaceVersions[key]?.version ?? value);
+        Object.entries(dependencies)
+            .map(([dependency, version]) => [dependency, workspaceVersions[dependency] ?? version])
+            .reduce<Record<string, string>>((acc, [dependency, version]) => {
+                acc[dependency] = version;
+                return acc;
+            }, {});
 
     // Rewrite package.json files by updating version as well as dependencies and devDependencies.
     const results = await Promise.all<Result>(

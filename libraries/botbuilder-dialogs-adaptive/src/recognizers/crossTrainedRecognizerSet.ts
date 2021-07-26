@@ -186,7 +186,7 @@ export class CrossTrainedRecognizerSet extends AdaptiveRecognizer implements Cro
      * @returns {boolean} Boolean result of whether or not an intent begins with the `DeferToRecognizer_` prefix.
      */
     private isRedirect(intent: string): boolean {
-        return intent.startsWith(deferPrefix);
+        return intent?.startsWith(deferPrefix) ?? false;
     }
 
     /**

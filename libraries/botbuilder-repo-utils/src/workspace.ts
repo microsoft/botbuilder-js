@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-import * as R from 'remeda';
+import compact from 'lodash/compact';
 import globby from 'globby';
 import minimatch from 'minimatch';
 import path from 'path';
@@ -94,5 +94,5 @@ export async function collectWorkspacePackages(
         )
     );
 
-    return R.compact(maybeWorkspaces);
+    return compact(maybeWorkspaces);
 }
