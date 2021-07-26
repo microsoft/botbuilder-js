@@ -5,7 +5,7 @@ import * as z from 'zod';
 import getStream from 'get-stream';
 import pmap from 'p-map';
 import { Activity, PagedResult, TranscriptInfo, TranscriptStore } from 'botbuilder-core';
-import { maybeCast } from 'botbuilder-stdlib/lib/maybeCast';
+import { maybeCast } from 'botbuilder-stdlib';
 import { sanitizeBlobKey } from './sanitizeBlobKey';
 
 import {
@@ -141,8 +141,7 @@ export class BlobsTranscriptStore implements TranscriptStore {
             const fromIdx =
                 startDate != null
                     ? blobItems.findIndex(
-                          (blobItem) =>
-                              blobItem?.metadata?.timestamp && new Date(blobItem.metadata.timestamp) >= startDate
+                          (blobItem) => blobItem?.properties?.createdOn && blobItem?.properties?.createdOn >= startDate
                       )
                     : 0;
 

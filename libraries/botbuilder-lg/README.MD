@@ -1,4 +1,4 @@
-# Language Generation ***_[PREVIEW]_***
+# Language Generation
 
 Learning from our customers experiences and bringing together capabilities first implemented by Cortana and Cognition teams, we are introducing Language Generation; which allows the developer to extract the embedded strings from their code and resource files and manage them through a Language Generation runtime and file format.  Language Generation enable customers to define multiple variations on a phrase, execute simple expressions based on context, refer to conversational memory, and over time will enable us to bring additional capabilities all leading to a more natural conversational experience.
 
@@ -78,7 +78,7 @@ the result could be:
 the structured name would be placed into property 'lgType'.
 See more tests here : [structured LG test][4]
 
-By this, You can use the `ActivityFactory.fromObject(lgResult)` method to transform the lg output into a Bot Framework activity to post back to the user. 
+By this, You can use the `ActivityFactory.fromObject(lgResult)` method to transform the lg output into a Bot Framework activity to post back to the user.
 
 see more samples here: [Structured LG to Activity][5]
 
