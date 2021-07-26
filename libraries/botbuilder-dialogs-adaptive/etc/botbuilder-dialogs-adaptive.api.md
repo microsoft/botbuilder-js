@@ -1364,6 +1364,9 @@ export class LanguageGenerationBotComponent extends BotComponent {
 // @public
 export interface LanguageGenerator<T = unknown, D = Record<string, unknown>> {
     generate(dialogContext: DialogContext, template: string, data: D): Promise<T>;
+    // Warning: (ae-forgotten-export) The symbol "MemoryInterface" needs to be exported by the entry point index.d.ts
+    // Warning: (ae-forgotten-export) The symbol "Options" needs to be exported by the entry point index.d.ts
+    missingProperties(dialogContext: DialogContext, template: string, state?: MemoryInterface, options?: Options): string[];
 }
 
 // @public
@@ -1445,6 +1448,12 @@ export class MentionEntityRecognizer extends TextEntityRecognizer {
     protected _recognize(text: string, culture: string): ModelResult[];
 }
 
+// @public
+export class MissingPropertiesFunction extends ExpressionEvaluator {
+    constructor(context: DialogContext);
+    static readonly functionName = "missingProperties";
+    }
+
 // @public (undocumented)
 export class MostSpecificSelector extends TriggerSelector implements MostSpecificSelectorConfiguration {
     // (undocumented)
@@ -1480,6 +1489,8 @@ export abstract class MultiLanguageGeneratorBase<T = unknown, D extends Record<s
     // (undocumented)
     getConverter(property: keyof MultiLanguageGeneratorBaseConfiguration): Converter | ConverterFactory;
     languagePolicy: LanguagePolicy;
+    // (undocumented)
+    missingProperties(dialogContext: DialogContext, template: string, state?: MemoryInterface, options?: Options): string[];
     abstract tryGetGenerator(dialogContext: DialogContext, locale: string): {
         exist: boolean;
         result: LanguageGenerator<T, D>;
@@ -2328,7 +2339,8 @@ export class TemplateEngineLanguageGenerator<T = unknown, D extends Record<strin
     generate(dialogContext: DialogContext, template: string, data: D): Promise<T>;
     // (undocumented)
     id: string;
-    }
+    missingProperties(dialogContext: DialogContext, template: string, _state?: MemoryInterface, _options?: Options): string[];
+}
 
 // @public (undocumented)
 export interface TemplateEngineLanguageGeneratorConfiguration {
