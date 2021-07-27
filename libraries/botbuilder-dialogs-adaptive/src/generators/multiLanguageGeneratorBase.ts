@@ -10,7 +10,7 @@ import { Configurable, Converter, ConverterFactory, DialogContext, TurnPath } fr
 import { LanguageGenerator } from '../languageGenerator';
 import { LanguagePolicy, LanguagePolicyConverter } from '../languagePolicy';
 import { languagePolicyKey } from '../languageGeneratorExtensions';
-import { MemoryInterface, Options } from '../../../adaptive-expressions/lib';
+import { MemoryInterface, Options } from 'adaptive-expressions';
 import { TemplateEngineLanguageGenerator } from './templateEngineLanguageGenerator';
 
 export interface MultiLanguageGeneratorBaseConfiguration {
@@ -93,12 +93,11 @@ export abstract class MultiLanguageGeneratorBase<
             generators.push(new TemplateEngineLanguageGenerator());
         }
 
-        const errors: string[] = [];
         for (const generator of generators) {
             try {
                 return generator.missingProperties(dialogContext, template, state, options);
-            } catch (e) {
-                errors.push(e);
+            } catch {
+                // retry the next generator
             }
         }
 
@@ -143,18 +142,14 @@ export abstract class MultiLanguageGeneratorBase<
             }
         }
 
-        if (options && options.locale) {
-            return options.locale;
-        }
-
-        return dialogContext.getLocale();
+        return options?.locale ?? dialogContext.getLocale();
     }
 
     private getFallbackLocales(languagePolicy: LanguagePolicy, targetLocale: string): string[] {
         const fallbackLocales = [];
         targetLocale = targetLocale.toLowerCase();
         if (languagePolicy.has(targetLocale)) {
-            languagePolicy.get(targetLocale).forEach((u: string): number => fallbackLocales.push(u));
+            fallbackLocales.push(...languagePolicy.get(targetLocale));
         }
 
         // append empty as fallback to end

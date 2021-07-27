@@ -17,7 +17,7 @@ import {
 } from 'adaptive-expressions';
 import { LanguageGenerator } from '../languageGenerator';
 
-import { DialogContext } from 'botbuilder-dialogs';
+import { DialogContext, DialogStateManager } from 'botbuilder-dialogs';
 /**
  * Defines missingProperties(template) expression function.
  * This expression will get all variables the template contains.
@@ -57,9 +57,9 @@ export class MissingPropertiesFunction extends ExpressionEvaluator {
         }
 
         const templateBody = args[0].toString();
-        const lgGenerator = state.getValue(MissingPropertiesFunction.generatorPath);
-        if (lgGenerator) {
-            const generator = lgGenerator as LanguageGenerator;
+
+        const generator = (state as DialogStateManager).getValue<LanguageGenerator>(MissingPropertiesFunction.generatorPath);
+        if (generator) {
             return {
                 value: generator.missingProperties(
                     MissingPropertiesFunction.dialogContext,

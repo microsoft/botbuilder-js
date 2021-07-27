@@ -9,7 +9,7 @@
 import { Configurable, DialogContext } from 'botbuilder-dialogs';
 import { Resource } from 'botbuilder-dialogs-declarative';
 import { Templates, LGResource, EvaluationOptions } from 'botbuilder-lg';
-import { MemoryInterface, Options } from '../../../adaptive-expressions/lib';
+import { MemoryInterface, Options } from 'adaptive-expressions';
 import { LanguageGenerator } from '../languageGenerator';
 import { LanguageResourceLoader } from '../languageResourceLoader';
 import { LanguageGeneratorManager } from './languageGeneratorManager';
@@ -88,7 +88,7 @@ export class TemplateEngineLanguageGenerator<T = unknown, D extends Record<strin
      * @returns Property list.
      */
     public missingProperties(dialogContext: DialogContext, template: string, _state?: MemoryInterface, _options?: Options): string[] {
-        const tempTemplateName = `${Templates.inlineTemplateIdPrefix}${uuidv4().split('-').join('')}`;
+        const tempTemplateName = `${Templates.inlineTemplateIdPrefix}${uuidv4().replace(/-/g, '')}`;
 
         // wrap inline string with "# name and -" to align the evaluation process
         const multiLineMark = '```';

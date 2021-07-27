@@ -7,7 +7,7 @@
  */
 
 import { DialogContext } from 'botbuilder-dialogs';
-import { MemoryInterface, Options } from '../../adaptive-expressions/lib';
+import { MemoryInterface, Options } from 'adaptive-expressions';
 
 /**
  * Defines interface for a Language Generator system to bind to text.
