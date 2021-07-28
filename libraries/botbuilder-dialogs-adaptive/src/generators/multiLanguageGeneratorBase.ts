@@ -154,7 +154,7 @@ export abstract class MultiLanguageGeneratorBase<
 
         // append empty as fallback to end
         if (targetLocale !== '' && languagePolicy.has('')) {
-            languagePolicy.get('').forEach((u: string): number => fallbackLocales.push(u));
+            fallbackLocales.push(...languagePolicy.get(''));
         }
         return fallbackLocales;
     }
