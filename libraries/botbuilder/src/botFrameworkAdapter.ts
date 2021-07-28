@@ -37,6 +37,7 @@ import {
     StatusCodes,
     TokenResponse,
     TurnContext,
+    Attachment,
 } from 'botbuilder-core';
 
 import {
@@ -2011,8 +2012,15 @@ export class BotFrameworkAdapter
     }
 
     private async readRequestBodyAsString(request: IReceiveRequest): Promise<Activity> {
-        const contentStream = request.streams[0];
-        return await contentStream.readAsJson<Activity>();
+        const [activityStream, ...attachmentStreams] = request.streams;
+
+        const activity = await activityStream.readAsJson<Activity>();
+
+        activity.attachments = await Promise.all(
+            attachmentStreams.map((attachmentStream) => attachmentStream.readAsJson<Attachment>())
+        );
+
+        return activity;
     }
 
     private async handleVersionRequest(

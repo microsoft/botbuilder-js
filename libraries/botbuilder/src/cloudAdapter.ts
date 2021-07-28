@@ -3,7 +3,7 @@
 
 import * as z from 'zod';
 import type { BotFrameworkHttpAdapter } from './botFrameworkHttpAdapter';
-import { Activity, CloudAdapterBase, InvokeResponse, StatusCodes, TurnContext } from 'botbuilder-core';
+import { Activity, Attachment, CloudAdapterBase, InvokeResponse, StatusCodes, TurnContext } from 'botbuilder-core';
 import { GET, POST, VERSION_PATH } from './streaming';
 import { HttpClient, HttpHeaders, HttpOperationResponse, WebResource } from '@azure/ms-rest-js';
 import { INodeBufferT, INodeSocketT, LogicT } from './zod';
@@ -289,11 +289,15 @@ class StreamingRequestHandler extends RequestHandler {
             }
         }
 
-        const [stream] = request.streams;
+        const [activityStream, ...attachmentStreams] = request.streams;
 
         let activity: Activity;
         try {
-            activity = validateAndFixActivity(ActivityT.parse(await stream.readAsJson()));
+            activity = validateAndFixActivity(ActivityT.parse(await activityStream.readAsJson()));
+
+            activity.attachments = await Promise.all(
+                attachmentStreams.map((attachmentStream) => attachmentStream.readAsJson<Attachment>())
+            );
         } catch (err) {
             return end(StatusCodes.BAD_REQUEST, `Request body missing or malformed: ${err}`);
         }
