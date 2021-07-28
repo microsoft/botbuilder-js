@@ -37,11 +37,15 @@ export class ResponseDisassembler extends PayloadDisassembler {
      */
     async getStream(): Promise<IStreamWrapper> {
         const payload: IResponsePayload = { statusCode: this.response.statusCode, streams: [] };
-        if (this.response.streams) {
-            this.response.streams.forEach(function (stream) {
-                payload.streams.push(stream.description);
+
+        this.response.streams?.forEach(({ description }) => {
+            payload.streams.push({
+                id: description.id,
+                contentType: description.type,
+                length: description.length,
             });
-        }
+        });
+
         return PayloadDisassembler.serialize(payload);
     }
 }

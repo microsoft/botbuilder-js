@@ -296,7 +296,16 @@ class StreamingRequestHandler extends RequestHandler {
             activity = validateAndFixActivity(ActivityT.parse(await activityStream.readAsJson()));
 
             activity.attachments = await Promise.all(
-                attachmentStreams.map((attachmentStream) => attachmentStream.readAsJson<Attachment>())
+                attachmentStreams.map(async (attachmentStream) => {
+                    const contentType = attachmentStream.contentType;
+
+                    const content =
+                        contentType === 'application/json'
+                            ? await attachmentStream.readAsJson()
+                            : await attachmentStream.readAsString();
+
+                    return { contentType, content };
+                })
             );
         } catch (err) {
             return end(StatusCodes.BAD_REQUEST, `Request body missing or malformed: ${err}`);
