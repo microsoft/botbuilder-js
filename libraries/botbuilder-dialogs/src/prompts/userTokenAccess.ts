@@ -157,7 +157,7 @@ export async function createConnectorClient(
     audience: string
 ): Promise<ConnectorClient> {
     const connectorFactory = context.turnState.get<ConnectorFactory>(
-        (context.adapter as CloudAdapterBase).UserTokenClientKey
+        (context.adapter as CloudAdapterBase).ConnectorFactoryKey
     );
     if (connectorFactory) {
         return connectorFactory.create(serviceUrl, audience);
