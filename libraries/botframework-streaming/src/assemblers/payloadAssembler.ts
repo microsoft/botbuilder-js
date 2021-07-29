@@ -149,7 +149,7 @@ export class PayloadAssembler {
             // to resolve this inconsistency.
             //
             // .NET code:
-            // https://github.com/microsoft/botbuilder-dotnet/blob/main/libraries/Microsoft.Bot.Streaming/Payloads/Models/StreamDescription.cs#L28-L29
+            // https://github.com/microsoft/botbuilder-dotnet/blob/a79036ddf6625ec3fd68a6f7295886eb7831bc1c/libraries/Microsoft.Bot.Streaming/Payloads/Models/StreamDescription.cs#L28-L29
             const contentType =
                 ((responseStream as unknown) as Record<string, string>).type ?? responseStream.contentType;
 
