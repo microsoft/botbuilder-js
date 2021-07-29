@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-import { Assertion, assert } from 'botbuilder-stdlib';
+import * as z from 'zod';
 import { Configuration, ServiceCollection } from 'botbuilder-dialogs-adaptive-runtime-core';
 
 /**
@@ -12,10 +12,19 @@ import { Configuration, ServiceCollection } from 'botbuilder-dialogs-adaptive-ru
  * gets called automatically on the components by the bot runtime, as long as the components are registered in the configuration.
  */
 export abstract class BotComponent {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    static z = z.custom<BotComponent>((val: any) => typeof val.configureServices === 'function', {
+        message: 'BotComponent',
+    });
+
     abstract configureServices(services: ServiceCollection, configuration: Configuration): void;
 }
 
-export const assertBotComponent: Assertion<BotComponent> = (val, path) => {
-    assert.unsafe.castObjectAs<BotComponent>(val, path);
-    assert.func(val.configureServices, path.concat('configureServices'));
-};
+/**
+ * @internal
+ *
+ * @deprecated Use `BotComponent.z.parse()` instead.
+ */
+export function assertBotComponent(val: unknown, ..._args: unknown[]): asserts val is BotComponent {
+    BotComponent.z.parse(val);
+}

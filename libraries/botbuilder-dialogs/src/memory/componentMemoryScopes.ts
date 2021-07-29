@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 
-import { tests } from 'botbuilder-stdlib';
+import * as z from 'zod';
 import { MemoryScope } from './scopes';
 
 /**
@@ -16,6 +16,10 @@ export interface ComponentMemoryScopes {
     getMemoryScopes(): MemoryScope[];
 }
 
+const componentMemoryScopes = z.custom<ComponentMemoryScopes>((val: any) => typeof val.getMemoryScopes === 'function', {
+    message: 'ComponentMemoryScopes',
+});
+
 /**
  * Check if a [ComponentRegistration](xref:botbuilder-core.ComponentRegistration) is
  * [ComponentMemoryScopes](xref:botbuilder-dialogs.ComponentMemoryScopes) or not.
@@ -24,5 +28,5 @@ export interface ComponentMemoryScopes {
  * @returns {boolean} Type check result.
  */
 export function isComponentMemoryScopes(component: unknown): component is ComponentMemoryScopes {
-    return tests.unsafe.isObjectAs<ComponentMemoryScopes>(component) && tests.isFunc(component.getMemoryScopes);
+    return componentMemoryScopes.check(component);
 }

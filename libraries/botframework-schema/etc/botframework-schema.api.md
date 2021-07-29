@@ -4,9 +4,6 @@
 
 ```ts
 
-import { Assertion } from 'botbuilder-stdlib';
-import { Test } from 'botbuilder-stdlib';
-
 // @public
 export type Action = 'accept' | 'decline';
 
@@ -243,41 +240,65 @@ export interface AppBasedLinkQuery {
 // @public
 export type ApplicationIdentityType = 'aadApplication' | 'bot' | 'tenantBot' | 'office365Connector' | 'webhook';
 
-// @public (undocumented)
-export const assertActivity: Assertion<Activity>;
+// Warning: (ae-internal-missing-underscore) The name "assertActivity" should be prefixed with an underscore because the declaration is marked as @internal
+//
+// @internal (undocumented)
+export function assertActivity(val: unknown, ..._args: unknown[]): asserts val is Activity;
 
-// @public (undocumented)
-export const assertAttachment: Assertion<Attachment>;
+// Warning: (ae-internal-missing-underscore) The name "assertAttachment" should be prefixed with an underscore because the declaration is marked as @internal
+//
+// @internal (undocumented)
+export function assertAttachment(val: unknown, ..._args: unknown[]): asserts val is Attachment;
 
-// @public (undocumented)
-export const assertAttachmentInfo: Assertion<AttachmentInfo>;
+// Warning: (ae-internal-missing-underscore) The name "assertAttachmentInfo" should be prefixed with an underscore because the declaration is marked as @internal
+//
+// @internal (undocumented)
+export function assertAttachmentInfo(val: unknown, ..._args: unknown[]): asserts val is AttachmentInfo;
 
-// @public (undocumented)
-export const assertAttachmentView: Assertion<AttachmentView>;
+// Warning: (ae-internal-missing-underscore) The name "assertAttachmentView" should be prefixed with an underscore because the declaration is marked as @internal
+//
+// @internal (undocumented)
+export function assertAttachmentView(val: unknown, ..._args: unknown[]): asserts val is AttachmentView;
 
-// @public (undocumented)
-export const assertCardAction: Assertion<CardAction>;
+// Warning: (ae-internal-missing-underscore) The name "assertCardAction" should be prefixed with an underscore because the declaration is marked as @internal
+//
+// @internal (undocumented)
+export function assertCardAction(val: unknown, ..._args: unknown[]): asserts val is CardAction;
 
-// @public (undocumented)
-export const assertChannelAccount: Assertion<ChannelAccount>;
+// Warning: (ae-internal-missing-underscore) The name "assertChannelAccount" should be prefixed with an underscore because the declaration is marked as @internal
+//
+// @internal (undocumented)
+export function assertChannelAccount(val: unknown, ..._args: unknown[]): asserts val is ChannelAccount;
 
-// @public (undocumented)
-export const assertConversationAccount: Assertion<ConversationAccount>;
+// Warning: (ae-internal-missing-underscore) The name "assertConversationAccount" should be prefixed with an underscore because the declaration is marked as @internal
+//
+// @internal (undocumented)
+export function assertConversationAccount(val: unknown, ..._args: unknown[]): asserts val is ConversationAccount;
 
-// @public (undocumented)
-export const assertConversationReference: Assertion<ConversationReference>;
+// Warning: (ae-internal-missing-underscore) The name "assertConversationReference" should be prefixed with an underscore because the declaration is marked as @internal
+//
+// @internal (undocumented)
+export function assertConversationReference(val: unknown, ..._args: unknown[]): asserts val is ConversationReference;
 
-// @public (undocumented)
-export const assertEntity: Assertion<Entity>;
+// Warning: (ae-internal-missing-underscore) The name "assertEntity" should be prefixed with an underscore because the declaration is marked as @internal
+//
+// @internal (undocumented)
+export function assertEntity(val: unknown, ..._args: unknown[]): asserts val is Entity;
 
-// @public (undocumented)
-export const assertMessageReaction: Assertion<MessageReaction>;
+// Warning: (ae-internal-missing-underscore) The name "assertMessageReaction" should be prefixed with an underscore because the declaration is marked as @internal
+//
+// @internal (undocumented)
+export function assertMessageReaction(val: unknown, ..._args: unknown[]): asserts val is MessageReaction;
 
-// @public (undocumented)
-export const assertSemanticAction: Assertion<SemanticAction>;
+// Warning: (ae-internal-missing-underscore) The name "assertSemanticAction" should be prefixed with an underscore because the declaration is marked as @internal
+//
+// @internal (undocumented)
+export function assertSemanticAction(val: unknown, ..._args: unknown[]): asserts val is SemanticAction;
 
-// @public (undocumented)
-export const assertSuggestedActions: Assertion<SuggestedActions>;
+// Warning: (ae-internal-missing-underscore) The name "assertSuggestedActions" should be prefixed with an underscore because the declaration is marked as @internal
+//
+// @internal (undocumented)
+export function assertSuggestedActions(val: unknown, ..._args: unknown[]): asserts val is SuggestedActions;
 
 // @public
 export interface Attachment {
@@ -782,41 +803,65 @@ export interface InvokeResponse<T = any> {
     status: number;
 }
 
-// @public (undocumented)
-export const isActivity: Test<Activity>;
+// Warning: (ae-internal-missing-underscore) The name "isActivity" should be prefixed with an underscore because the declaration is marked as @internal
+//
+// @internal (undocumented)
+export function isActivity(val: unknown): val is Activity;
 
-// @public (undocumented)
-export const isAttachment: Test<Attachment>;
+// Warning: (ae-internal-missing-underscore) The name "isAttachment" should be prefixed with an underscore because the declaration is marked as @internal
+//
+// @internal (undocumented)
+export function isAttachment(val: unknown): val is Attachment;
 
-// @public (undocumented)
-export const isAttachmentInfo: Test<AttachmentInfo>;
+// Warning: (ae-internal-missing-underscore) The name "isAttachmentInfo" should be prefixed with an underscore because the declaration is marked as @internal
+//
+// @internal (undocumented)
+export function isAttachmentInfo(val: unknown): val is AttachmentInfo;
 
-// @public (undocumented)
-export const isAttachmentView: Test<AttachmentView>;
+// Warning: (ae-internal-missing-underscore) The name "isAttachmentView" should be prefixed with an underscore because the declaration is marked as @internal
+//
+// @internal (undocumented)
+export function isAttachmentView(val: unknown): val is AttachmentView;
 
-// @public (undocumented)
-export const isCardAction: Test<CardAction>;
+// Warning: (ae-internal-missing-underscore) The name "isCardAction" should be prefixed with an underscore because the declaration is marked as @internal
+//
+// @internal (undocumented)
+export function isCardAction(val: unknown): val is CardAction;
 
-// @public (undocumented)
-export const isChannelAccount: Test<ChannelAccount>;
+// Warning: (ae-internal-missing-underscore) The name "isChannelAccount" should be prefixed with an underscore because the declaration is marked as @internal
+//
+// @internal (undocumented)
+export function isChannelAccount(val: unknown): val is ChannelAccount;
 
-// @public (undocumented)
-export const isConversationAccount: Test<ConversationAccount>;
+// Warning: (ae-internal-missing-underscore) The name "isConversationAccount" should be prefixed with an underscore because the declaration is marked as @internal
+//
+// @internal (undocumented)
+export function isConversationAccount(val: unknown): val is ConversationAccount;
 
-// @public (undocumented)
-export const isConversationReference: Test<ConversationReference>;
+// Warning: (ae-internal-missing-underscore) The name "isConversationReference" should be prefixed with an underscore because the declaration is marked as @internal
+//
+// @internal (undocumented)
+export function isConversationReference(val: unknown): val is ConversationReference;
 
-// @public (undocumented)
-export const isEntity: Test<Entity>;
+// Warning: (ae-internal-missing-underscore) The name "isEntity" should be prefixed with an underscore because the declaration is marked as @internal
+//
+// @internal (undocumented)
+export function isEntity(val: unknown): val is Entity;
 
-// @public (undocumented)
-export const isMessageReaction: Test<MessageReaction>;
+// Warning: (ae-internal-missing-underscore) The name "isMessageReaction" should be prefixed with an underscore because the declaration is marked as @internal
+//
+// @internal (undocumented)
+export function isMessageReaction(val: unknown): val is MessageReaction;
 
-// @public (undocumented)
-export const isSemanticAction: Test<SemanticAction>;
+// Warning: (ae-internal-missing-underscore) The name "isSemanticAction" should be prefixed with an underscore because the declaration is marked as @internal
+//
+// @internal (undocumented)
+export function isSemanticAction(val: unknown): val is SemanticAction;
 
-// @public (undocumented)
-export const isSuggestedActions: Test<SuggestedActions>;
+// Warning: (ae-internal-missing-underscore) The name "isSuggestedActions" should be prefixed with an underscore because the declaration is marked as @internal
+//
+// @internal (undocumented)
+export function isSuggestedActions(val: unknown): val is SuggestedActions;
 
 // @public (undocumented)
 export interface IStatusCodeError {
