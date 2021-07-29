@@ -3,11 +3,12 @@
  * Licensed under the MIT License.
  */
 
-import { Assertion, Nil, assert, Test } from 'botbuilder-stdlib';
+import * as z from 'zod';
 import { TokenExchangeInvokeRequest } from './tokenExchangeInvokeRequest';
 
 export * from './activityInterfaces';
 export * from './activityEx';
+
 export { CallerIdConstants } from './callerIdConstants';
 export { SpeechConstants } from './speechConstants';
 export { TokenExchangeInvokeRequest } from './tokenExchangeInvokeRequest';
@@ -30,15 +31,24 @@ export interface AttachmentView {
     size: number;
 }
 
-export const assertAttachmentView: Assertion<AttachmentView> = (value, path) => {
-    assert.unsafe.castObjectAs<AttachmentView>(value, path);
-    assert.string(value.viewId, path.concat('viewId'));
-    assert.number(value.size, path.concat('size'));
-};
+const attachmentView = z.object({
+    viewId: z.string(),
+    size: z.number(),
+});
 
-const assertAttachmentViewArray: Assertion<Array<AttachmentView>> = assert.arrayOf(assertAttachmentView);
+/**
+ * @internal
+ */
+export function assertAttachmentView(val: unknown, ..._args: unknown[]): asserts val is AttachmentView {
+    attachmentView.parse(val);
+}
 
-export const isAttachmentView: Test<AttachmentView> = assert.toTest(assertAttachmentView);
+/**
+ * @internal
+ */
+export function isAttachmentView(val: unknown): val is AttachmentView {
+    return attachmentView.check(val);
+}
 
 /**
  * Metadata for an attachment
@@ -58,14 +68,25 @@ export interface AttachmentInfo {
     views: AttachmentView[];
 }
 
-export const assertAttachmentInfo: Assertion<AttachmentInfo> = (value, path) => {
-    assert.unsafe.castObjectAs<AttachmentInfo>(value, path);
-    assert.string(value.name, path.concat('name'));
-    assert.array(value.views, path.concat('views'));
-    assertAttachmentViewArray(value.views, path.concat('views'));
-};
+const attachmentInfo = z.object({
+    name: z.string(),
+    type: z.string(),
+    views: z.array(attachmentView),
+});
 
-export const isAttachmentInfo = assert.toTest(assertAttachmentInfo);
+/**
+ * @internal
+ */
+export function assertAttachmentInfo(val: unknown, ..._args: unknown[]): asserts val is AttachmentInfo {
+    attachmentInfo.parse(val);
+}
+
+/**
+ * @internal
+ */
+export function isAttachmentInfo(val: unknown): val is AttachmentInfo {
+    return attachmentInfo.check(val);
+}
 
 /**
  * Object representing inner http error
@@ -133,18 +154,26 @@ export interface ChannelAccount {
     role?: RoleTypes | string;
 }
 
-export const assertChannelAccount: Assertion<ChannelAccount> = (value, path) => {
-    assert.unsafe.castObjectAs<ChannelAccount>(value, path);
-    assert.string(value.id, path.concat('id'));
-    assert.string(value.name, path.concat('name'));
-    assert.maybeString(value.aadObjectId, path.concat('aadObjectId'));
-    assert.maybeString(value.role, path.concat('role'));
-};
+const channelAccount = z.object({
+    id: z.string(),
+    name: z.string(),
+    aadObjectId: z.string().optional(),
+    role: z.string().optional(),
+});
 
-const assertChannelAccountArray: Assertion<Array<ChannelAccount>> = assert.arrayOf(assertChannelAccount);
-const assertMaybeChannelAccount: Assertion<ChannelAccount | Nil> = assert.makeMaybe(assertChannelAccount);
+/**
+ * @internal
+ */
+export function assertChannelAccount(val: unknown, ..._args: unknown[]): asserts val is ChannelAccount {
+    channelAccount.parse(val);
+}
 
-export const isChannelAccount = assert.toTest(assertChannelAccount);
+/**
+ * @internal
+ */
+export function isChannelAccount(val: unknown): val is ChannelAccount {
+    return channelAccount.check(val);
+}
 
 /**
  * Channel account information for a conversation
@@ -187,19 +216,30 @@ export interface ConversationAccount {
     properties?: any; // eslint-disable-line @typescript-eslint/no-explicit-any
 }
 
-export const assertConversationAccount: Assertion<ConversationAccount> = (value, path) => {
-    assert.unsafe.castObjectAs<ConversationAccount>(value, path);
-    assert.boolean(value.isGroup, path.concat('isGroup'));
-    assert.string(value.conversationType, path.concat('conversationType'));
-    assert.maybeString(value.tenantId, path.concat('tenantId'));
-    assert.string(value.id, path.concat('id'));
-    assert.string(value.name, path.concat('name'));
-    assert.maybeString(value.aadObjectId, path.concat('aadObjectId'));
-    assert.maybeString(value.role, path.concat('role'));
-    assert.any(value.properties, path.concat('properties'));
-};
+const conversationAccount = z.object({
+    isGroup: z.boolean(),
+    conversationType: z.string(),
+    tenantId: z.string().optional(),
+    id: z.string(),
+    name: z.string(),
+    aadObjectId: z.string().optional(),
+    role: z.string().optional(),
+    properties: z.unknown().optional(),
+});
 
-export const isConversationAccount = assert.toTest(assertConversationAccount);
+/**
+ * @internal
+ */
+export function assertConversationAccount(val: unknown, ..._args: unknown[]): asserts val is ConversationAccount {
+    conversationAccount.parse(val);
+}
+
+/**
+ * @internal
+ */
+export function isConversationAccount(val: unknown): val is ConversationAccount {
+    return conversationAccount.check(val);
+}
 
 /**
  * Message reaction object
@@ -211,17 +251,23 @@ export interface MessageReaction {
     type: MessageReactionTypes | string;
 }
 
-export const assertMessageReaction: Assertion<MessageReaction> = (value, path) => {
-    assert.unsafe.castObjectAs<MessageReaction>(value, path);
-    assert.string(value.type, path.concat('type'));
-};
+const messageReaction = z.object({
+    type: z.string(),
+});
 
-const assertMessageReactionArray: Assertion<MessageReaction[]> = (value, path) => {
-    assert.array(value, path);
-    value.forEach((item, idx) => assertMessageReaction(item, path.concat(`[${idx}]`)));
-};
+/**
+ * @internal
+ */
+export function assertMessageReaction(val: unknown, ..._args: unknown[]): asserts val is MessageReaction {
+    messageReaction.parse(val);
+}
 
-export const isMessageReaction = assert.toTest(assertMessageReaction);
+/**
+ * @internal
+ */
+export function isMessageReaction(val: unknown): val is MessageReaction {
+    return messageReaction.check(val);
+}
 
 /**
  * A clickable action
@@ -263,21 +309,30 @@ export interface CardAction {
     imageAltText?: string;
 }
 
-export const assertCardAction: Assertion<CardAction> = (value, path) => {
-    assert.unsafe.castObjectAs<CardAction>(value, path);
-    assert.string(value.type, path.concat('type'));
-    assert.string(value.title, path.concat('title'));
-    assert.maybeString(value.image, path.concat('image'));
-    assert.maybeString(value.text, path.concat('text'));
-    assert.maybeString(value.displayText, path.concat('displayText'));
-    assert.any(value.value, path.concat('value'));
-    assert.maybeAny(value.channelData, path.concat('channelData'));
-    assert.maybeString(value.imageAltText, path.concat('imageAltText'));
-};
+const cardAction = z.object({
+    type: z.string(),
+    title: z.string(),
+    image: z.string().optional(),
+    text: z.string().optional(),
+    displayText: z.string().optional(),
+    value: z.unknown(),
+    channelData: z.unknown(),
+    imageAltText: z.string().optional(),
+});
 
-const assertCardActionArray: Assertion<Array<CardAction>> = assert.arrayOf(assertCardAction);
+/**
+ * @internal
+ */
+export function assertCardAction(val: unknown, ..._args: unknown[]): asserts val is CardAction {
+    cardAction.parse(val);
+}
 
-export const isCardAction = assert.toTest(assertCardAction);
+/**
+ * @internal
+ */
+export function isCardAction(val: unknown): val is CardAction {
+    return cardAction.check(val);
+}
 
 /**
  * SuggestedActions that can be performed
@@ -294,13 +349,24 @@ export interface SuggestedActions {
     actions: CardAction[];
 }
 
-export const assertSuggestedActions: Assertion<SuggestedActions> = (value, path) => {
-    assert.unsafe.castObjectAs<SuggestedActions>(value, path);
-    assert.arrayOfString(value.to, path.concat('to'));
-    assertCardActionArray(value.actions, path.concat('actions'));
-};
+const suggestedActions = z.object({
+    to: z.array(z.string()),
+    actions: z.array(cardAction),
+});
 
-export const isSuggestedActions = assert.toTest(assertSuggestedActions);
+/**
+ * @internal
+ */
+export function assertSuggestedActions(val: unknown, ..._args: unknown[]): asserts val is SuggestedActions {
+    suggestedActions.parse(val);
+}
+
+/**
+ * @internal
+ */
+export function isSuggestedActions(val: unknown): val is SuggestedActions {
+    return suggestedActions.check(val);
+}
 
 /**
  * An attachment within an activity
@@ -328,19 +394,27 @@ export interface Attachment {
     thumbnailUrl?: string;
 }
 
-export const assertAttachment: Assertion<Attachment> = (value, path) => {
-    assert.unsafe.castObjectAs<Attachment>(value, path);
-    assert.string(value.contentType, path.concat('contentType'));
-    assert.maybeString(value.contentUrl, path.concat('contentUrl'));
-    assert.maybeAny(value.content, path.concat('content'));
-    assert.maybeString(value.name, path.concat('name'));
-    assert.maybeString(value.thumbnailUrl, path.concat('thumbnailUrl'));
-};
+const attachment = z.object({
+    contentType: z.string(),
+    contentUrl: z.string().optional(),
+    content: z.unknown().optional(),
+    name: z.string().optional(),
+    thumbnailUrl: z.string().optional(),
+});
 
-const assertAttachmentArray: Assertion<Array<Attachment>> = assert.arrayOf(assertAttachment);
-const assertMaybeAttachmentArray: Assertion<Array<Attachment> | Nil> = assert.makeMaybe(assertAttachmentArray);
+/**
+ * @internal
+ */
+export function assertAttachment(val: unknown, ..._args: unknown[]): asserts val is Attachment {
+    attachment.parse(val);
+}
 
-export const isAttachment = assert.toTest(assertAttachment);
+/**
+ * @internal
+ */
+export function isAttachment(val: unknown): val is Attachment {
+    return attachment.check(val);
+}
 
 /**
  * Metadata object pertaining to an activity
@@ -356,15 +430,21 @@ export interface Entity {
     [key: string]: any; // eslint-disable-line @typescript-eslint/no-explicit-any
 }
 
-export const assertEntity: Assertion<Entity> = (value, path) => {
-    assert.dictionary(value, path);
-    assert.string(value.type, path.concat('type'));
-};
+const entity = z.record(z.unknown()).refine((val) => typeof val.type === 'string');
 
-const assertEntityArray: Assertion<Array<Entity>> = assert.arrayOf(assertEntity);
-const assertMaybeEntityArray: Assertion<Array<Entity> | Nil> = assert.makeMaybe(assertEntityArray);
+/**
+ * @internal
+ */
+export function assertEntity(val: unknown, ..._args: unknown[]): asserts val is Entity {
+    entity.parse(val);
+}
 
-export const isEntity = assert.toTest(assertEntity);
+/**
+ * @internal
+ */
+export function isEntity(val: unknown): val is Entity {
+    return entity.check(val);
+}
 
 /**
  * An object relating to a particular point in a conversation
@@ -404,21 +484,29 @@ export interface ConversationReference {
     serviceUrl: string;
 }
 
-export const assertConversationReference: Assertion<ConversationReference> = (value, path) => {
-    assert.unsafe.castObjectAs<ConversationReference>(value, path);
-    assert.maybeString(value.activityId, path.concat('activityId'));
-    assertMaybeChannelAccount(value.user, path.concat('user'));
-    assert.maybeString(value.locale, path.concat('locale'));
-    assertChannelAccount(value.bot, path.concat('bot'));
-    assert.string(value.channelId, path.concat('channelId'));
-    assert.string(value.serviceUrl, path.concat('serviceUrl'));
-};
+const conversationReference = z.object({
+    ActivityId: z.string().optional(),
+    user: channelAccount.optional(),
+    locale: z.string().optional(),
+    bot: channelAccount,
+    conversation: conversationAccount,
+    channelId: z.string(),
+    serviceUrl: z.string(),
+});
 
-const assertMaybeConversationReference: Assertion<ConversationReference | Nil> = assert.makeMaybe(
-    assertConversationReference
-);
+/**
+ * @internal
+ */
+export function assertConversationReference(val: unknown, ..._args: unknown[]): asserts val is ConversationReference {
+    conversationReference.parse(val);
+}
 
-export const isConversationReference = assert.toTest(assertConversationReference);
+/**
+ * @internal
+ */
+export function isConversationReference(val: unknown): val is ConversationReference {
+    return conversationReference.check(val);
+}
 
 /**
  * Refers to a substring of content within another field
@@ -433,6 +521,11 @@ export interface TextHighlight {
      */
     occurrence: number;
 }
+
+const textHighlight = z.object({
+    text: z.string(),
+    occurrence: z.number(),
+});
 
 /**
  * Represents a reference to a programmatic action
@@ -452,16 +545,25 @@ export interface SemanticAction {
     entities: { [propertyName: string]: Entity };
 }
 
-export const assertSemanticAction: Assertion<SemanticAction> = (value, path) => {
-    assert.unsafe.castObjectAs<SemanticAction>(value, path);
-    assert.string(value.id, path.concat('id'));
-    assert.string(value.state, path.concat('state'));
-    assert.dictionary(value.entities, path.concat('entities'));
-};
+const semanticAction = z.object({
+    id: z.string(),
+    state: z.string(),
+    entities: z.record(entity),
+});
 
-const assertMaybeSemanticAction: Assertion<SemanticAction | Nil> = assert.makeMaybe(assertSemanticAction);
+/**
+ * @internal
+ */
+export function assertSemanticAction(val: unknown, ..._args: unknown[]): asserts val is SemanticAction {
+    semanticAction.parse(val);
+}
 
-export const isSemanticAction = assert.toTest(assertSemanticAction);
+/**
+ * @internal
+ */
+export function isSemanticAction(val: unknown): val is SemanticAction {
+    return semanticAction.check(val);
+}
 
 /**
  * An Activity is the basic communication type for the Bot Framework 3.0 protocol.
@@ -656,55 +758,63 @@ export interface Activity {
     semanticAction?: SemanticAction;
 }
 
-export const assertActivity: Assertion<Activity> = (value, path) => {
-    assert.unsafe.castObjectAs<Activity>(value, path);
-    assert.string(value.type, path.concat('type'));
-    assert.maybeString(value.id, path.concat('id'));
-    assert.maybeDate(value.timestamp, path.concat('timestamp'));
-    assert.maybeDate(value.localTimestamp, path.concat('localTimestamp'));
-    assert.string(value.localTimezone, path.concat('localTimezone'));
-    assert.maybeString(value.callerId, path.concat('callerId'));
-    assert.string(value.serviceUrl, path.concat('serviceUrl'));
-    assert.string(value.channelId, path.concat('channelId'));
-    assertChannelAccount(value.from, path.concat('from'));
-    assertConversationAccount(value.conversation, path.concat('conversation'));
-    assertChannelAccount(value.recipient, path.concat('recipient'));
-    assert.maybeString(value.textFormat, path.concat('textFormat'));
-    assert.maybeString(value.attachmentLayout, path.concat('attachmentLayout'));
-    assertChannelAccountArray(value.membersAdded, path.concat('membersAdded'));
-    assertChannelAccountArray(value.membersRemoved, path.concat('membersRemoved'));
-    assertMessageReactionArray(value.reactionsAdded, path.concat('reactionsAdded'));
-    assertMessageReactionArray(value.reactionsRemoved, path.concat('reactionsRemoved'));
-    assert.maybeString(value.topicName, path.concat('topicName'));
-    assert.maybeBoolean(value.historyDisclosed, path.concat('historyDisclosed'));
-    assert.maybeString(value.locale, path.concat('locale'));
-    assert.string(value.text, path.concat('text'));
-    assert.maybeString(value.speak, path.concat('speak'));
-    assert.maybeString(value.inputHint, path.concat('inputHint'));
-    assert.maybeString(value.summary, path.concat('summary'));
-    assertSuggestedActions(value.suggestedActions, path.concat('suggestedActions'));
-    assertMaybeAttachmentArray(value.attachments, path.concat('attachments'));
-    assertMaybeEntityArray(value.entities, path.concat('entities'));
-    assert.maybeAny(value.channelData, path.concat('channelData'));
-    assert.maybeString(value.action, path.concat('action'));
-    assert.maybeString(value.replyToId, path.concat('replyToId'));
-    assert.string(value.label, path.concat('label'));
-    assert.string(value.valueType, path.concat('valueType'));
-    assert.maybeAny(value.value, path.concat('value'));
-    assert.maybeString(value.name, path.concat('name'));
-    assertMaybeConversationReference(value.relatesTo, path.concat('relatesTo'));
-    assert.maybeString(value.code, path.concat('code'));
-    assert.maybeDate(value.expiration, path.concat('expiration'));
-    assert.maybeString(value.importance, path.concat('importance'));
-    assert.maybeString(value.deliveryMode, path.concat('deliveryMode'));
+const activity = z.object({
+    type: z.string(),
+    id: z.string().optional(),
+    timestamp: z.instanceof(Date).optional(),
+    localTimestamp: z.instanceof(Date).optional(),
+    localTimezone: z.string(),
+    callerId: z.string(),
+    serviceUrl: z.string(),
+    channelId: z.string(),
+    from: channelAccount,
+    conversation: conversationAccount,
+    recipient: channelAccount,
+    textFormat: z.string().optional(),
+    attachmentLayout: z.string().optional(),
+    membersAdded: z.array(channelAccount).optional(),
+    membersRemoved: z.array(channelAccount).optional(),
+    reactionsAdded: z.array(messageReaction).optional(),
+    reactionsRemoved: z.array(messageReaction).optional(),
+    topicName: z.string().optional(),
+    historyDisclosed: z.boolean().optional(),
+    locale: z.string().optional(),
+    text: z.string(),
+    speak: z.string().optional(),
+    inputHint: z.string().optional(),
+    summary: z.string().optional(),
+    suggestedActions: suggestedActions.optional(),
+    attachments: z.array(attachment).optional(),
+    entities: z.array(entity).optional(),
+    channelData: z.unknown().optional(),
+    action: z.string().optional(),
+    replyToId: z.string().optional(),
+    label: z.string(),
+    valueType: z.string(),
+    value: z.unknown().optional(),
+    name: z.string().optional(),
+    relatesTo: conversationReference.optional(),
+    code: z.string().optional(),
+    importance: z.string().optional(),
+    deliveryMode: z.string().optional(),
+    listenFor: z.array(z.string()).optional(),
+    textHighlights: z.array(textHighlight).optional(),
+    semanticAction: semanticAction.optional(),
+});
 
-    const assertArrayOfStrings: Assertion<Array<string>> = assert.arrayOf(assert.string);
-    assertArrayOfStrings(value.listenFor, path.concat('listenFor'));
+/**
+ * @internal
+ */
+export function assertActivity(val: unknown, ..._args: unknown[]): asserts val is Activity {
+    activity.parse(val);
+}
 
-    assertMaybeSemanticAction(value.semanticAction, path.concat('semanticAction'));
-};
-
-export const isActivity = assert.toTest(assertActivity);
+/**
+ * @internal
+ */
+export function isActivity(val: unknown): val is Activity {
+    return activity.check(val);
+}
 
 /**
  * This interface is used to preserve the original string values of dates on Activities.

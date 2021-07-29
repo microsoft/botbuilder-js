@@ -1,9 +1,9 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
+import * as z from 'zod';
 import { ActivityTypes, Channels, Middleware, TurnContext } from 'botbuilder-core';
 import { parseDocument } from 'htmlparser2';
-import { tests } from 'botbuilder-stdlib';
 
 const supportedChannels = new Set<string>([Channels.DirectlineSpeech, Channels.Emulator, Channels.Telephony]);
 
@@ -12,12 +12,18 @@ function hasTag(tag: string, nodes: unknown[]): boolean {
     while (nodes.length) {
         const item = nodes.shift();
 
-        if (tests.isDictionary(item)) {
+        if (
+            z
+                .object({ tagName: z.string(), children: z.array(z.unknown()) })
+                .partial()
+                .nonstrict()
+                .check(item)
+        ) {
             if (item.tagName === tag) {
                 return true;
             }
 
-            if (tests.isArray(item.children)) {
+            if (item.children) {
                 nodes.push(...item.children);
             }
         }

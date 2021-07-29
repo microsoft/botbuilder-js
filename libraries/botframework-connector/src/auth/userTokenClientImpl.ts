@@ -1,12 +1,12 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-import { Activity, SignInUrlResponse, TokenExchangeRequest, TokenResponse, TokenStatus } from 'botframework-schema';
+import * as z from 'zod';
 import type { ServiceClientCredentials } from '@azure/ms-rest-js';
+import { Activity, SignInUrlResponse, TokenExchangeRequest, TokenResponse, TokenStatus } from 'botframework-schema';
+import { ConnectorClientOptions } from '../connectorApi/models';
 import { TokenApiClient } from '../tokenApi/tokenApiClient';
 import { UserTokenClient } from './userTokenClient';
-import { assert } from 'botbuilder-stdlib';
-import { ConnectorClientOptions } from '../connectorApi/models';
 
 // Internal
 export class UserTokenClientImpl extends UserTokenClient {
@@ -30,9 +30,15 @@ export class UserTokenClientImpl extends UserTokenClient {
         channelId: string,
         magicCode: string
     ): Promise<TokenResponse> {
-        assert.string(userId, ['userId']);
-        assert.string(connectionName, ['connectionName']);
-        assert.string(channelId, ['channelId']);
+        z.object({
+            userId: z.string(),
+            connectionName: z.string(),
+            channelId: z.string(),
+        }).parse({
+            userId,
+            connectionName,
+            channelId,
+        });
 
         const result = await this.client.userToken.getToken(userId, connectionName, { channelId, code: magicCode });
         return result._response.parsedBody;
@@ -43,8 +49,13 @@ export class UserTokenClientImpl extends UserTokenClient {
         activity: Activity,
         finalRedirect: string
     ): Promise<SignInUrlResponse> {
-        assert.string(connectionName, ['connectionName']);
-        assert.object(activity, ['activity']);
+        z.object({
+            activity: z.record(z.unknown()),
+            connectionName: z.string(),
+        }).parse({
+            activity,
+            connectionName,
+        });
 
         const result = await this.client.botSignIn.getSignInResource(
             UserTokenClient.createTokenExchangeState(this.appId, connectionName, activity),
@@ -55,16 +66,27 @@ export class UserTokenClientImpl extends UserTokenClient {
     }
 
     async signOutUser(userId: string, connectionName: string, channelId: string): Promise<void> {
-        assert.string(userId, ['userId']);
-        assert.string(connectionName, ['connectionName']);
-        assert.string(channelId, ['channelId']);
+        z.object({
+            userId: z.string(),
+            connectionName: z.string(),
+            channelId: z.string(),
+        }).parse({
+            userId,
+            connectionName,
+            channelId,
+        });
 
         await this.client.userToken.signOut(userId, { channelId, connectionName });
     }
 
     async getTokenStatus(userId: string, channelId: string, includeFilter: string): Promise<TokenStatus[]> {
-        assert.string(userId, ['userId']);
-        assert.string(channelId, ['channelId']);
+        z.object({
+            userId: z.string(),
+            channelId: z.string(),
+        }).parse({
+            userId,
+            channelId,
+        });
 
         const result = await this.client.userToken.getTokenStatus(userId, {
             channelId,
@@ -79,9 +101,15 @@ export class UserTokenClientImpl extends UserTokenClient {
         resourceUrls: string[],
         channelId: string
     ): Promise<Record<string, TokenResponse>> {
-        assert.string(userId, ['userId']);
-        assert.string(connectionName, ['connectionName']);
-        assert.string(channelId, ['channelId']);
+        z.object({
+            userId: z.string(),
+            connectionName: z.string(),
+            channelId: z.string(),
+        }).parse({
+            userId,
+            connectionName,
+            channelId,
+        });
 
         const result = await this.client.userToken.getAadTokens(
             userId,
@@ -98,9 +126,15 @@ export class UserTokenClientImpl extends UserTokenClient {
         channelId: string,
         exchangeRequest: TokenExchangeRequest
     ): Promise<TokenResponse> {
-        assert.string(userId, ['userId']);
-        assert.string(connectionName, ['connectionName']);
-        assert.string(channelId, ['channelId']);
+        z.object({
+            userId: z.string(),
+            connectionName: z.string(),
+            channelId: z.string(),
+        }).parse({
+            userId,
+            connectionName,
+            channelId,
+        });
 
         const result = await this.client.userToken.exchangeAsync(userId, connectionName, channelId, exchangeRequest);
         return result._response.parsedBody;

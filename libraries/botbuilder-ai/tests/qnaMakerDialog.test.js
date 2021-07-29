@@ -1,9 +1,12 @@
 const fs = require('fs');
 const nock = require('nock');
 const sinon = require('sinon');
-const { ok, rejects, strictEqual, throws } = require('assert');
-const { join } = require('path');
 const { BoolExpression } = require('adaptive-expressions');
+const { Dialog, DialogSet, DialogTurnStatus, DialogManager, ScopePath } = require('botbuilder-dialogs');
+const { QnAMakerDialog, QnAMaker, QnACardBuilder } = require('..');
+const { join } = require('path');
+const { ok, rejects, strictEqual, throws } = require('assert');
+
 const {
     ActionTypes,
     ActivityTypes,
@@ -13,8 +16,6 @@ const {
     MessageFactory,
     TestAdapter,
 } = require('botbuilder-core');
-const { Dialog, DialogSet, DialogTurnStatus, DialogManager, ScopePath } = require('botbuilder-dialogs');
-const { QnAMakerDialog, QnAMaker, QnACardBuilder } = require('../lib');
 
 const KB_ID = process.env.QNAKNOWLEDGEBASEID;
 const ENDPOINT_KEY = process.env.QNAENDPOINTKEY;
@@ -439,7 +440,9 @@ describe('QnAMakerDialog', function () {
 
             await rejects(
                 adapter.send('QnaMaker_TopNAnswer.json').startTest(),
-                (thrown) => thrown.message === '`suggestionsActivity` must be of type "object"'
+                (thrown) =>
+                    thrown.message.includes('invalid_type at message') &&
+                    thrown.message.includes('Expected object, received number')
             );
         });
 
@@ -477,7 +480,7 @@ describe('QnAMakerDialog', function () {
 
             await rejects(
                 adapter.send('QnaMaker_TopNAnswer.json').startTest(),
-                (thrown) => thrown.message === '`suggestionsActivity` must be defined'
+                (thrown) => thrown.message.includes('invalid_type at message') && thrown.message.includes('Required')
             );
 
             sandbox.verify();
