@@ -6,9 +6,9 @@
  * Licensed under the MIT License.
  */
 
+import * as z from 'zod';
 import { Activity, TurnContext, TestAdapter } from 'botbuilder-core';
 import { Inspector, TestAction } from '../testAction';
-import { tests } from 'botbuilder-stdlib';
 
 export interface UserActivityConfiguration {
     activity?: Activity;
@@ -33,15 +33,16 @@ export class UserActivity extends TestAction implements UserActivityConfiguratio
 
     /**
      * Execute the test.
+     *
      * @param testAdapter Adapter to execute against.
      * @param callback Logic for the bot to use.
-     * @param inspector Inspector for dialog context.
+     * @param _inspector Inspector for dialog context.
      * @returns A Promise that represents the work queued to execute.
      */
     public async execute(
         testAdapter: TestAdapter,
         callback: (context: TurnContext) => Promise<void>,
-        inspector?: Inspector
+        _inspector?: Inspector
     ): Promise<void> {
         if (!this.activity) {
             throw new Error('You must define one of Text of Activity properties');
@@ -62,7 +63,7 @@ export class UserActivity extends TestAction implements UserActivityConfiguratio
             activity.from = { ...activity.from };
             activity.from.id = this.user;
             activity.from.name = this.user;
-        } else if (tests.isObject(this.activity?.from)) {
+        } else if (z.record(z.unknown()).check(this.activity?.from)) {
             activity.from = { ...this.activity.from };
         }
 

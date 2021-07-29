@@ -8,7 +8,6 @@ import { Activity } from 'botframework-schema';
 import { AdaptiveCardInvokeResponse } from 'botframework-schema';
 import { AdaptiveCardInvokeValue } from 'botframework-schema';
 import { AnimationCard } from 'botframework-schema';
-import { Assertion } from 'botbuilder-stdlib';
 import { Attachment } from 'botframework-schema';
 import { AudioCard } from 'botframework-schema';
 import { AuthenticateRequestResult } from 'botframework-connector';
@@ -128,11 +127,15 @@ export class ActivityHandlerBase {
     run(context: TurnContext): Promise<void>;
 }
 
-// @public (undocumented)
-export const assertBotComponent: Assertion<BotComponent>;
+// Warning: (ae-internal-missing-underscore) The name "assertBotComponent" should be prefixed with an underscore because the declaration is marked as @internal
+//
+// @internal @deprecated (undocumented)
+export function assertBotComponent(val: unknown, ..._args: unknown[]): asserts val is BotComponent;
 
-// @public (undocumented)
-export const assertStoreItems: Assertion<StoreItems>;
+// Warning: (ae-internal-missing-underscore) The name "assertStoreItems" should be prefixed with an underscore because the declaration is marked as @internal
+//
+// @internal @deprecated (undocumented)
+export function assertStoreItems(val: unknown, ..._args: unknown[]): asserts val is StoreItem;
 
 // @public
 export class AutoSaveStateMiddleware implements Middleware {
@@ -174,6 +177,8 @@ export const BotCallbackHandlerKey = "botCallbackHandler";
 export abstract class BotComponent {
     // (undocumented)
     abstract configureServices(services: ServiceCollection, configuration: Configuration): void;
+    // (undocumented)
+    static z: z.ZodType<BotComponent, z.ZodTypeDef>;
 }
 
 export { BotFrameworkClient }

@@ -3,11 +3,11 @@
 
 import * as adal from 'adal-node';
 import type { ServiceClientCredentials } from '@azure/ms-rest-js';
-import { tests } from 'botbuilder-stdlib';
-import { MicrosoftAppCredentials } from './microsoftAppCredentials';
-import { ServiceClientCredentialsFactory } from './serviceClientCredentialsFactory';
 import { AuthenticationConstants } from './authenticationConstants';
 import { GovernmentConstants } from './governmentConstants';
+import { MicrosoftAppCredentials } from './microsoftAppCredentials';
+import { ServiceClientCredentialsFactory } from './serviceClientCredentialsFactory';
+import { stringExt } from 'botbuilder-stdlib';
 
 /**
  * A simple implementation of the [ServiceClientCredentialsFactory](xref:botframework-connector.ServiceClientCredentialsFactory) interface.
@@ -41,7 +41,7 @@ export class PasswordServiceClientCredentialFactory implements ServiceClientCred
     }
 
     async isAuthenticationDisabled(): Promise<boolean> {
-        return tests.isStringNullOrEmpty(this.appId);
+        return stringExt.isNilOrEmpty(this.appId);
     }
 
     async createCredentials(

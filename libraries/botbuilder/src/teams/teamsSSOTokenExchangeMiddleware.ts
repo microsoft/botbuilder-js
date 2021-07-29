@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-import { Assertion, assert } from 'botbuilder-stdlib';
+import * as z from 'zod';
 
 import {
     ActivityTypes,
@@ -46,10 +46,10 @@ async function sendInvokeResponse(context: TurnContext, body: unknown = null, st
     });
 }
 
-const assertExchangeToken: Assertion<Pick<ExtendedUserTokenProvider, 'exchangeToken'>> = (val, path) => {
-    assert.unsafe.castObjectAs<ExtendedUserTokenProvider>(val, path);
-    assert.func(val.exchangeToken, path.concat('exchangeToken'));
-};
+const ExchangeToken = z.custom<Pick<ExtendedUserTokenProvider, 'exchangeToken'>>(
+    (val: any) => typeof val.exchangeToken === 'function',
+    { message: 'ExtendedUserTokenProvider' }
+);
 
 /**
  * If the activity name is signin/tokenExchange, this middleware will attempt to
@@ -138,8 +138,7 @@ export class TeamsSSOTokenExchangeMiddleware implements Middleware {
         let tokenExchangeResponse: TokenResponse;
         const tokenExchangeRequest: TokenExchangeInvokeRequest = context.activity.value;
 
-        const tokenProvider = context.adapter;
-        assertExchangeToken(tokenProvider, ['context', 'adapter']);
+        const tokenProvider = ExchangeToken.parse(context.adapter);
 
         // TODO(jgummersall) convert to new user token client provider when available
         try {

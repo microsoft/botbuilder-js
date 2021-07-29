@@ -1,11 +1,11 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
+import * as z from 'zod';
 import forge from 'node-forge';
 import jwt from 'jsonwebtoken'; // eslint-disable-line import/no-extraneous-dependencies
 import nock from 'nock'; // eslint-disable-line import/no-extraneous-dependencies
 import url from 'url';
-import { assert } from 'botbuilder-stdlib';
 import { nanoid } from 'nanoid';
 import { ok } from 'assert';
 
@@ -82,20 +82,20 @@ export function stub(options: Partial<Options> = {}): Result {
     const hostURL = url.parse(host);
 
     const metadataURL = Object.assign({}, hostURL, metadata);
-    assert.string(metadataURL.path, ['metadata', 'path']);
+    const metadataPath = z.string().parse(metadataURL.path);
 
     const jwksURL = Object.assign({}, hostURL, jwks);
-    assert.string(jwksURL.path, ['jwks', 'path']);
+    const jwksPath = z.string().parse(jwksURL.path);
 
     const openIdExpectation = nock(formatHost(metadataURL))
-        .get(metadataURL.path)
+        .get(metadataPath)
         .reply(200, {
             issuer,
             jwks_uri: `${formatHost(jwksURL)}${jwksURL.path}`,
         });
 
     const jwksExpectation = nock(formatHost(jwksURL))
-        .get(jwksURL.path)
+        .get(jwksPath)
         .reply(200, {
             keys: [
                 {
