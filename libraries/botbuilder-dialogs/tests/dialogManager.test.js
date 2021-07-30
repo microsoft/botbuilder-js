@@ -6,6 +6,7 @@ const {
     ActivityTypes,
     AutoSaveStateMiddleware,
     ConversationState,
+    ConversationStateKey,
     EndOfConversationCodes,
     InputHints,
     MemoryStorage,
@@ -418,7 +419,7 @@ describe('DialogManager', function () {
             },
         });
 
-        turnContext.turnState.set('ConversationState', new ConversationState(new MemoryStorage()));
+        turnContext.turnState.set(ConversationStateKey, new ConversationState(new MemoryStorage()));
         await dialogManager.onTurn(turnContext);
         const actual = turnContext.turnState.get(DialogTurnStateConstants.dialogManager);
 

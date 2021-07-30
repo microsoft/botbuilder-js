@@ -557,6 +557,9 @@ export abstract class MemoryScope {
     setMemory(dc: DialogContext, memory: object): void;
 }
 
+// @public (undocumented)
+export const MemoryScopeKey = "memoryScopes";
+
 // @public
 export interface ModelResult<T extends Record<string, any> = {}> {
     end: number;
@@ -595,10 +598,13 @@ export interface OAuthPromptSettings {
     title: string;
 }
 
-// @public
+// @public (undocumented)
 export interface PathResolver {
     transformPath(path: string): string;
 }
+
+// @public
+export const PathResolverKey = "pathResolvers";
 
 // @public
 export class PercentPathResolver extends AliasPathResolver {

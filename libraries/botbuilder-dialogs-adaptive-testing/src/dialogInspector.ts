@@ -5,8 +5,20 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
+import { LanguageGeneratorManager, languageGeneratorManagerKey } from 'botbuilder-dialogs-adaptive';
+import { ResourceExplorer } from 'botbuilder-dialogs-declarative';
+import { getActiveDialogContext } from 'botbuilder-dialogs/lib/dialogHelper';
 
-import { BotStateSet, ConversationState, TurnContext, TurnContextStateCollection, UserState } from 'botbuilder-core';
+import {
+    BotStateSet,
+    ConversationState,
+    ConversationStateKey,
+    TurnContext,
+    TurnContextStateCollection,
+    UserState,
+    UserStateKey,
+} from 'botbuilder-core';
+
 import {
     Dialog,
     DialogContext,
@@ -15,12 +27,6 @@ import {
     DialogStateManager,
     DialogStateManagerConfiguration,
 } from 'botbuilder-dialogs';
-import { LanguageGeneratorManager, languageGeneratorManagerKey } from 'botbuilder-dialogs-adaptive';
-import { ResourceExplorer } from 'botbuilder-dialogs-declarative';
-import { getActiveDialogContext } from 'botbuilder-dialogs/lib/dialogHelper';
-
-const CONVERSATION_STATE = 'ConversationState';
-const USER_STATE = 'UserState';
 
 export type DialogContextInspector = (dc: DialogContext) => void;
 
@@ -121,9 +127,9 @@ export class DialogInspector {
 
         // At a minimum you need ConversationState. UserState is optional.
         if (!this.conversationState) {
-            this.conversationState = context.turnState.get(CONVERSATION_STATE);
+            this.conversationState = context.turnState.get(ConversationStateKey);
         } else {
-            context.turnState.set(CONVERSATION_STATE, this.conversationState);
+            context.turnState.set(ConversationStateKey, this.conversationState);
         }
 
         if (!this.conversationState) {
@@ -132,9 +138,9 @@ export class DialogInspector {
         botStateSet.add(this.conversationState);
 
         if (!this.userState) {
-            this.userState = context.turnState.get(USER_STATE);
+            this.userState = context.turnState.get(UserStateKey);
         } else {
-            context.turnState.set(USER_STATE, this.userState);
+            context.turnState.set(UserStateKey, this.userState);
         }
 
         if (this.userState) {

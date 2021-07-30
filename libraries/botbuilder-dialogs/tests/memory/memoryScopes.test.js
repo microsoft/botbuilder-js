@@ -1,6 +1,15 @@
 const _ = require('lodash');
 const assert = require('assert');
-const { ConversationState, UserState, MemoryStorage, TurnContext, TestAdapter } = require('botbuilder-core');
+
+const {
+    ConversationState,
+    ConversationStateKey,
+    UserState,
+    UserStateKey,
+    MemoryStorage,
+    TurnContext,
+    TestAdapter,
+} = require('botbuilder-core');
 
 const {
     ClassMemoryScope,
@@ -143,7 +152,7 @@ describe('Memory Scopes', function () {
             dialogs.add(new TestDialog('test', 'test message'));
 
             const context = new TurnContext(new TestAdapter(), beginMessage);
-            context.turnState.set('ConversationState', convoState);
+            context.turnState.set(ConversationStateKey, convoState);
 
             await convoState.createProperty('conversation').set(context, { foo: 'bar' });
             await convoState.saveChanges(context);
@@ -161,7 +170,7 @@ describe('Memory Scopes', function () {
 
             let context = new TurnContext(new TestAdapter(), beginMessage);
             let userState = new UserState(storage);
-            context.turnState.set('UserState', userState);
+            context.turnState.set(UserStateKey, userState);
 
             await userState.createProperty('user').set(context, { foo: 'bar' });
             await userState.saveChanges(context);
@@ -169,7 +178,7 @@ describe('Memory Scopes', function () {
             // Replace context and convoState with new instances
             context = new TurnContext(new TestAdapter(), beginMessage);
             userState = new UserState(storage);
-            context.turnState.set('UserState', userState);
+            context.turnState.set(UserStateKey, userState);
 
             // Create a DialogState property, DialogSet and register the dialogs.
             const convoState = new ConversationState(storage);

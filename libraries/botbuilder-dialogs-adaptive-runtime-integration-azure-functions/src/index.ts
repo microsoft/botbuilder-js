@@ -7,11 +7,10 @@ import * as z from 'zod';
 import fs from 'fs';
 import mime from 'mime';
 import path from 'path';
+import type { Activity, Bot, BotFrameworkHttpAdapter, ChannelServiceHandler, Response } from 'botbuilder';
 import type { AzureFunction, Context, HttpRequest } from '@azure/functions';
-import { Configuration, getRuntimeServices } from 'botbuilder-dialogs-adaptive-runtime';
+import { Configuration, ConfigurationConstants, getRuntimeServices } from 'botbuilder-dialogs-adaptive-runtime';
 import { ServiceCollection } from 'botbuilder-dialogs-adaptive-runtime-core';
-import type { Activity, ActivityHandlerBase, BotFrameworkHttpAdapter, ChannelServiceHandler } from 'botbuilder';
-import type { Response } from 'botbuilder/lib/interfaces';
 
 const TypedOptions = z.object({
     /**
@@ -71,7 +70,7 @@ export function makeTriggers(
 
         const instances = services.mustMakeInstances<{
             adapter: BotFrameworkHttpAdapter;
-            bot: ActivityHandlerBase;
+            bot: Bot;
             channelServiceHandler: ChannelServiceHandler;
             customAdapters: Map<string, BotFrameworkHttpAdapter>;
         }>('adapter', 'bot', 'channelServiceHandler', 'customAdapters');
@@ -100,7 +99,7 @@ export function makeTriggers(
 
                 const adapterSettings =
                     configuration.type(
-                        ['runtimeSettings', 'adapters'],
+                        [ConfigurationConstants.RuntimeSettingsKey, 'adapters'],
                         z.array(
                             z.object({
                                 name: z.string(),
@@ -135,9 +134,7 @@ export function makeTriggers(
                         method: req.method ?? undefined,
                     },
                     res,
-                    async (turnContext) => {
-                        await bot.run(turnContext);
-                    }
+                    (context) => bot.onTurn(context)
                 );
             } catch (err) {
                 if (resolvedOptions.logErrors) {

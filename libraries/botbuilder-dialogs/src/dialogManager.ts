@@ -7,12 +7,14 @@
  */
 
 import {
-    TurnContext,
     BotState,
-    ConversationState,
-    UserState,
     BotStateSet,
+    ConversationState,
+    ConversationStateKey,
+    TurnContext,
     TurnContextStateCollection,
+    UserState,
+    UserStateKey,
 } from 'botbuilder-core';
 
 import { Configurable } from './configurable';
@@ -25,8 +27,6 @@ import { Dialog, DialogTurnResult } from './dialog';
 import { DialogStateManagerConfiguration } from './memory';
 
 const LAST_ACCESS = '_lastAccess';
-const CONVERSATION_STATE = 'ConversationState';
-const USER_STATE = 'UserState';
 
 export interface DialogManagerResult {
     turnResult: DialogTurnResult;
@@ -168,9 +168,9 @@ export class DialogManager extends Configurable {
         const botStateSet = new BotStateSet();
 
         if (!this.conversationState) {
-            this.conversationState = context.turnState.get(CONVERSATION_STATE);
+            this.conversationState = context.turnState.get(ConversationStateKey);
         } else {
-            context.turnState.set(CONVERSATION_STATE, this.conversationState);
+            context.turnState.set(ConversationStateKey, this.conversationState);
         }
 
         if (!this.conversationState) {
@@ -179,9 +179,9 @@ export class DialogManager extends Configurable {
         botStateSet.add(this.conversationState);
 
         if (!this.userState) {
-            this.userState = context.turnState.get(USER_STATE);
+            this.userState = context.turnState.get(UserStateKey);
         } else {
-            context.turnState.set(USER_STATE, this.userState);
+            context.turnState.set(UserStateKey, this.userState);
         }
 
         if (this.userState) {

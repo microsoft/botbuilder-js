@@ -22,7 +22,7 @@
     "lint": "wsrun -m -l lint --quiet",
     "package": "wsrun -e -t -l --if is-not-private --bin yarn pack",
     "test": "npm-run-all build test:mocha test:runtime test:runtime test:nyc:report",
-    "test:compat": "wsrun -e -m -t test:compat",
+    "test:compat": "wsrun -m -t test:compat",
     "test:consumer": "yarn workspace consumer-test test",
     "test:devops": "npm-run-all test:mocha:junit test:nyc:cobertura",
     "test:github": "npm-run-all test:mocha:min test:runtime:min test:nyc:lcov",

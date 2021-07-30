@@ -5,7 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { Activity, ActivityTypes, StringUtils, TurnContext } from 'botbuilder';
+import { Activity, ActivityTypes, ConversationStateKey, StringUtils, TurnContext } from 'botbuilder';
 import { ActivityTemplate } from '../templates';
 import { ActivityTemplateConverter } from '../converters';
 import { AdaptiveEvents } from '../adaptiveEvents';
@@ -184,7 +184,7 @@ export class BeginSkill extends SkillDialog implements BeginSkillConfiguration {
             this.dialogOptions.connectionName = this.connectionName.getValue(dcState);
         }
         if (!this.dialogOptions.conversationState) {
-            this.dialogOptions.conversationState = dc.context.turnState.get('ConversationState');
+            this.dialogOptions.conversationState = dc.context.turnState.get(ConversationStateKey);
         }
         if (!this.dialogOptions.skillClient) {
             this.dialogOptions.skillClient = dc.context.turnState.get(skillClientKey);

@@ -11,6 +11,7 @@ import { TextTemplate } from '../templates';
 
 import {
     ConversationState,
+    ConversationStateKey,
     tokenExchangeOperationName,
     tokenResponseEventName,
     verifyStateOperationName,
@@ -345,7 +346,7 @@ export class OAuthInput extends InputDialog implements OAuthInputConfiguration {
         // in before this method ends or could land in another instance in scale-out scenarios, which means that if the
         // state is not saved, the OAuthInput would not be at the top of the stack, and the token exchange invoke would
         // get discarded.
-        const conversationState = dc.context.turnState.get<ConversationState>('ConversationState');
+        const conversationState = dc.context.turnState.get<ConversationState>(ConversationStateKey);
         if (conversationState) {
             await conversationState.saveChanges(dc.context, false);
         }

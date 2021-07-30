@@ -6,6 +6,9 @@
  * Licensed under the MIT License.
  */
 
+// Turn State key for PathResolver
+export const PathResolverKey = 'pathResolvers';
+
 export interface PathResolver {
     /**
      * Transform the path

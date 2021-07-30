@@ -62,4 +62,5 @@ export {
     SkillConversationReferenceKey,
 } from './skills';
 
+export { Bot } from './bot';
 export { CloudAdapterBase } from './cloudAdapterBase';

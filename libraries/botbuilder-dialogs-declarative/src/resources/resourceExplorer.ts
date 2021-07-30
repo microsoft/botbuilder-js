@@ -24,7 +24,7 @@ import { ResourceExplorerOptions } from './resourceExplorerOptions';
  * Class which gives standard access to content resources.
  */
 export class ResourceExplorer {
-    private _declarativeTypes: ComponentDeclarativeTypes[];
+    private _declarativeTypes: ComponentDeclarativeTypes[] = [];
     private _kindToType: Map<string, Newable<unknown>> = new Map();
     private _kindDeserializer: Map<string, CustomDeserializer<unknown, unknown>> = new Map();
     private _eventEmitter: EventEmitter = new EventEmitter();

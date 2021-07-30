@@ -3,6 +3,8 @@
 
 import { Activity, InvokeResponse } from 'botframework-schema';
 
+export const BotFrameworkClientKey = Symbol('BotFrameworkClient');
+
 export interface BotFrameworkClient {
     /**
      * Forwards an activity to a another bot.

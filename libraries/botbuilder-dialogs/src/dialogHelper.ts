@@ -55,7 +55,8 @@ export async function runDialog(
     }
 
     const dialogSet = new DialogSet(accessor);
-    dialogSet.telemetryClient = context.turnState.get<BotTelemetryClient>(BotTelemetryClientKey) ?? dialog.telemetryClient;
+    dialogSet.telemetryClient =
+        context.turnState.get<BotTelemetryClient>(BotTelemetryClientKey) ?? dialog.telemetryClient;
 
     dialogSet.add(dialog);
 
@@ -63,6 +64,9 @@ export async function runDialog(
 
     await internalRun(context, dialog.id, dialogContext);
 }
+
+// Turn State key for Dialog State Manager
+export const DialogStateManagerKey = 'DialogStateManager';
 
 export async function internalRun(
     context: TurnContext,
@@ -78,7 +82,7 @@ export async function internalRun(
     const dialogStateManager = new DialogStateManager(dialogContext, dialogStateManagerConfiguration);
 
     await dialogStateManager.loadAllScopes();
-    dialogContext.context.turnState.push('DialogStateManager', dialogStateManager);
+    dialogContext.context.turnState.push(DialogStateManagerKey, dialogStateManager);
     let dialogTurnResult: DialogTurnResult = null;
 
     // Loop as long as we are getting valid OnError handled we should continue executing the actions for the turn.
@@ -241,7 +245,8 @@ export function isFromParentToSkill(context: TurnContext): boolean {
 const sendStateSnapshotTrace = async (dialogContext: DialogContext): Promise<void> => {
     const adapter = dialogContext.context.adapter;
     const claimIdentity = dialogContext.context.turnState.get<ClaimsIdentity>(adapter.BotIdentityKey);
-    const traceLabel = claimIdentity && SkillValidation.isSkillClaim(claimIdentity.claims) ? 'Skill State' : 'Bot State';
+    const traceLabel =
+        claimIdentity && SkillValidation.isSkillClaim(claimIdentity.claims) ? 'Skill State' : 'Bot State';
 
     // Send trace of memory
     const snapshot = getActiveDialogContext(dialogContext).state.getMemorySnapshot();
