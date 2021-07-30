@@ -37,7 +37,6 @@ import {
     StatusCodes,
     TokenResponse,
     TurnContext,
-    Attachment,
 } from 'botbuilder-core';
 
 import {

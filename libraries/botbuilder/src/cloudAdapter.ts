@@ -3,7 +3,7 @@
 
 import * as z from 'zod';
 import type { BotFrameworkHttpAdapter } from './botFrameworkHttpAdapter';
-import { Activity, Attachment, CloudAdapterBase, InvokeResponse, StatusCodes, TurnContext } from 'botbuilder-core';
+import { Activity, CloudAdapterBase, InvokeResponse, StatusCodes, TurnContext } from 'botbuilder-core';
 import { GET, POST, VERSION_PATH } from './streaming';
 import { HttpClient, HttpHeaders, HttpOperationResponse, WebResource } from '@azure/ms-rest-js';
 import { INodeBufferT, INodeSocketT, LogicT } from './zod';
