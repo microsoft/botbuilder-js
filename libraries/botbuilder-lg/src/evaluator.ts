@@ -6,34 +6,51 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
+import * as fs from 'fs';
+import * as path from 'path';
 import { AbstractParseTreeVisitor, TerminalNode } from 'antlr4ts/tree';
+import { CustomizedMemory } from './customizedMemory';
+import { EvaluationOptions, LGCacheScope } from './evaluationOptions';
+import { EvaluationTarget } from './evaluationTarget';
+import { LGTemplateParserVisitor } from './generated/LGTemplateParserVisitor';
 import { ParserRuleContext } from 'antlr4ts/ParserRuleContext';
+import { Template } from './template';
+import { TemplateErrors } from './templateErrors';
+import { TemplateExtensions } from './templateExtensions';
+import { Templates } from './templates';
+import { keyBy } from 'lodash';
+
 import {
     Constant,
     EvaluatorLookup,
     Expression,
-    ExpressionParser,
     ExpressionEvaluator,
+    ExpressionParser,
     ExpressionType,
     Extensions,
-    ReturnType,
-    SimpleObjectMemory,
-    Options,
     FunctionUtils,
     MemoryInterface,
+    Options,
+    ReturnType,
+    SimpleObjectMemory,
 } from 'adaptive-expressions';
-import { keyBy } from 'lodash';
-import { CustomizedMemory } from './customizedMemory';
-import { EvaluationTarget } from './evaluationTarget';
-import * as lp from './generated/LGTemplateParser';
-import { LGTemplateParserVisitor } from './generated/LGTemplateParserVisitor';
-import { Template } from './template';
-import * as path from 'path';
-import * as fs from 'fs';
-import { TemplateExtensions } from './templateExtensions';
-import { TemplateErrors } from './templateErrors';
-import { EvaluationOptions, LGCacheScope } from './evaluationOptions';
-import { Templates } from './templates';
+
+import {
+    ExpressionContext,
+    ExpressionInStructureContext,
+    IfConditionContext,
+    IfConditionRuleContext,
+    IfElseBodyContext,
+    KeyValueStructureLineContext,
+    LGTemplateParser,
+    NormalBodyContext,
+    NormalTemplateBodyContext,
+    NormalTemplateStringContext,
+    StructuredTemplateBodyContext,
+    SwitchCaseBodyContext,
+    SwitchCaseRuleContext,
+    TemplateStringContext,
+} from './generated/LGTemplateParser';
 
 /**
  * Filr formats.
@@ -84,7 +101,6 @@ export class Evaluator extends AbstractParseTreeVisitor<unknown> implements LGTe
     public static readonly isTemplateFunctionName = 'isTemplate';
     public static readonly expandTextFunctionName = 'expandText';
     public static readonly ReExecuteSuffix = '!';
-
 
     /**
      * Creates a new instance of the [Evaluator](xref:botbuilder-lg.Evaluator) class.
@@ -180,7 +196,7 @@ export class Evaluator extends AbstractParseTreeVisitor<unknown> implements LGTe
      * @param ctx The parse tree.
      * @returns The result of visiting the structured template body.
      */
-    public visitStructuredTemplateBody(ctx: lp.StructuredTemplateBodyContext): unknown {
+    public visitStructuredTemplateBody(ctx: StructuredTemplateBodyContext): unknown {
         const result: Record<string, unknown> = {};
         const typeName: string = ctx.structuredBodyNameLine().STRUCTURE_NAME().text;
         result[Evaluator.LGType] = typeName;
@@ -220,7 +236,7 @@ export class Evaluator extends AbstractParseTreeVisitor<unknown> implements LGTe
     /**
      * @private
      */
-    private visitStructureValue(ctx: lp.KeyValueStructureLineContext): unknown {
+    private visitStructureValue(ctx: KeyValueStructureLineContext): unknown {
         const values = ctx.keyValueStructureValue();
 
         const result = [];
@@ -232,13 +248,13 @@ export class Evaluator extends AbstractParseTreeVisitor<unknown> implements LGTe
             } else {
                 let itemStringResult = '';
                 for (const child of item.children) {
-                    if (child instanceof lp.ExpressionInStructureContext) {
+                    if (child instanceof ExpressionInStructureContext) {
                         const errorPrefix = `Property '` + ctx.STRUCTURE_IDENTIFIER().text + `':`;
                         itemStringResult += this.evalExpression(child.text, child, ctx.text, errorPrefix);
                     } else {
                         const node = child as TerminalNode;
                         switch ((node as TerminalNode).symbol.type) {
-                            case lp.LGTemplateParser.ESCAPE_CHARACTER_IN_STRUCTURE_BODY:
+                            case LGTemplateParser.ESCAPE_CHARACTER_IN_STRUCTURE_BODY:
                                 itemStringResult += TemplateExtensions.evalEscape(node.text.replace(/\\\|/g, '|'));
                                 break;
                             default:
@@ -260,7 +276,7 @@ export class Evaluator extends AbstractParseTreeVisitor<unknown> implements LGTe
      * @param ctx The parse tree.
      * @returns The result of visiting the normal body.
      */
-    public visitNormalBody(ctx: lp.NormalBodyContext): unknown {
+    public visitNormalBody(ctx: NormalBodyContext): unknown {
         return this.visit(ctx.normalTemplateBody());
     }
 
@@ -269,8 +285,8 @@ export class Evaluator extends AbstractParseTreeVisitor<unknown> implements LGTe
      * @param ctx The parse tree.
      * @returns The result of visiting the normal template body.
      */
-    public visitNormalTemplateBody(ctx: lp.NormalTemplateBodyContext): unknown {
-        const normalTemplateStrs: lp.TemplateStringContext[] = ctx.templateString();
+    public visitNormalTemplateBody(ctx: NormalTemplateBodyContext): unknown {
+        const normalTemplateStrs: TemplateStringContext[] = ctx.templateString();
         const randomNumber = Extensions.randomNext(this.currentTarget().scope, 0, normalTemplateStrs.length);
 
         return this.visit(normalTemplateStrs[randomNumber].normalTemplateString());
@@ -280,8 +296,8 @@ export class Evaluator extends AbstractParseTreeVisitor<unknown> implements LGTe
      * Visit a parse tree produced by the ifElseBody labeled alternative in LGTemplateParser.body.
      * @param ctx The parse tree.
      */
-    public visitIfElseBody(ctx: lp.IfElseBodyContext): unknown {
-        const ifRules: lp.IfConditionRuleContext[] = ctx.ifElseTemplateBody().ifConditionRule();
+    public visitIfElseBody(ctx: IfElseBodyContext): unknown {
+        const ifRules: IfConditionRuleContext[] = ctx.ifElseTemplateBody().ifConditionRule();
         for (const ifRule of ifRules) {
             if (this.evalCondition(ifRule.ifCondition()) && ifRule.normalTemplateBody() !== undefined) {
                 return this.visit(ifRule.normalTemplateBody());
@@ -296,20 +312,20 @@ export class Evaluator extends AbstractParseTreeVisitor<unknown> implements LGTe
      * @param ctx The parse tree.
      * @returns The string result of visiting the normal template string.
      */
-    public visitNormalTemplateString(ctx: lp.NormalTemplateStringContext): unknown {
+    public visitNormalTemplateString(ctx: NormalTemplateStringContext): unknown {
         const prefixErrorMsg = TemplateExtensions.getPrefixErrorMessage(ctx);
         const result: unknown[] = [];
         for (const child of ctx.children) {
-            if (child instanceof lp.ExpressionContext) {
+            if (child instanceof ExpressionContext) {
                 result.push(this.evalExpression(child.text, child, ctx.text, prefixErrorMsg));
             } else {
                 const node = child as TerminalNode;
                 switch (node.symbol.type) {
-                    case lp.LGTemplateParser.MULTILINE_SUFFIX:
-                    case lp.LGTemplateParser.MULTILINE_PREFIX:
-                    case lp.LGTemplateParser.DASH:
+                    case LGTemplateParser.MULTILINE_SUFFIX:
+                    case LGTemplateParser.MULTILINE_PREFIX:
+                    case LGTemplateParser.DASH:
                         break;
-                    case lp.LGTemplateParser.ESCAPE_CHARACTER:
+                    case LGTemplateParser.ESCAPE_CHARACTER:
                         result.push(TemplateExtensions.evalEscape(node.text));
                         break;
                     default: {
@@ -375,10 +391,10 @@ export class Evaluator extends AbstractParseTreeVisitor<unknown> implements LGTe
      * @param ctx The parse tree.
      * @returns The string result of visiting the switch case body.
      */
-    public visitSwitchCaseBody(ctx: lp.SwitchCaseBodyContext): unknown {
-        const switchcaseNodes: lp.SwitchCaseRuleContext[] = ctx.switchCaseTemplateBody().switchCaseRule();
+    public visitSwitchCaseBody(ctx: SwitchCaseBodyContext): unknown {
+        const switchcaseNodes: SwitchCaseRuleContext[] = ctx.switchCaseTemplateBody().switchCaseRule();
         const length: number = switchcaseNodes.length;
-        const switchNode: lp.SwitchCaseRuleContext = switchcaseNodes[0];
+        const switchNode: SwitchCaseRuleContext = switchcaseNodes[0];
         const switchExprs = switchNode.switchCaseStat().expression();
         const switchErrorPrefix = `Switch '` + switchExprs[0].text + `': `;
         const switchExprResult = this.evalExpression(
@@ -394,7 +410,7 @@ export class Evaluator extends AbstractParseTreeVisitor<unknown> implements LGTe
                 continue; //skip the first node which is a switch statement
             }
             if (idx === length - 1 && caseNode.switchCaseStat().DEFAULT() !== undefined) {
-                const defaultBody: lp.NormalTemplateBodyContext = caseNode.normalTemplateBody();
+                const defaultBody: NormalTemplateBodyContext = caseNode.normalTemplateBody();
                 if (defaultBody !== undefined) {
                     return this.visit(defaultBody);
                 } else {
@@ -511,7 +527,7 @@ export class Evaluator extends AbstractParseTreeVisitor<unknown> implements LGTe
     /**
      * @private
      */
-    private evalCondition(condition: lp.IfConditionContext): boolean {
+    private evalCondition(condition: IfConditionContext): boolean {
         const expression = condition.expression()[0]; // Here ts is diff with C#, C# use condition.EXPRESSION(0) == null
         // to judge ELSE condition. But in ts lib this action would throw
         // Error

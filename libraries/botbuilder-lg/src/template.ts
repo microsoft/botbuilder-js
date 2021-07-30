@@ -5,8 +5,8 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
+import { BodyContext } from './generated/LGTemplateParser';
 import { SourceRange } from './sourceRange';
-import * as lp from './generated/LGTemplateParser';
 
 /**
  * Here is a data model that can easily understanded and used as the context or all kinds of visitors
@@ -36,7 +36,7 @@ export class Template {
     /**
      * Parse tree of this template.
      */
-    public templateBodyParseTree: lp.BodyContext;
+    public templateBodyParseTree: BodyContext;
 
     /**
      * The extended properties for the object.

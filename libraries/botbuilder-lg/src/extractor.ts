@@ -7,9 +7,19 @@
  */
 import { AbstractParseTreeVisitor, TerminalNode } from 'antlr4ts/tree';
 import { keyBy } from 'lodash';
-import * as lp from './generated/LGTemplateParser';
 import { LGTemplateParserVisitor } from './generated/LGTemplateParserVisitor';
 import { Template } from './template';
+
+import {
+    IfConditionContext,
+    IfConditionRuleContext,
+    IfElseBodyContext,
+    NormalTemplateBodyContext,
+    StructuredBodyContext,
+    SwitchCaseBodyContext,
+    SwitchCaseRuleContext,
+    SwitchCaseStatContext,
+} from './generated/LGTemplateParser';
 
 /**
  * Lg template extracter.
@@ -67,7 +77,7 @@ export class Extractor
      * @param context The parse tree.
      * @returns The result of visiting the normal template body.
      */
-    public visitNormalTemplateBody(context: lp.NormalTemplateBodyContext): Map<string, string[]> {
+    public visitNormalTemplateBody(context: NormalTemplateBodyContext): Map<string, string[]> {
         const result = new Map<string, string[]>();
         for (const templateStr of context.templateString()) {
             result.set(templateStr.normalTemplateString().text, undefined);
@@ -81,7 +91,7 @@ export class Extractor
      * @param context The parse tree.
      * @returns The result of visiting the structured body.
      */
-    public visitStructuredBody(context: lp.StructuredBodyContext): Map<string, string[]> {
+    public visitStructuredBody(context: StructuredBodyContext): Map<string, string[]> {
         const result = new Map<string, string[]>();
         const lineStart = '    ';
         const structName = context.structuredTemplateBody().structuredBodyNameLine().text;
@@ -101,12 +111,12 @@ export class Extractor
      * @param context The parse tree.
      * @returns The result of visiting the if else body.
      */
-    public visitIfElseBody(context: lp.IfElseBodyContext): Map<string, string[]> {
+    public visitIfElseBody(context: IfElseBodyContext): Map<string, string[]> {
         const result = new Map<string, string[]>();
-        const ifRules: lp.IfConditionRuleContext[] = context.ifElseTemplateBody().ifConditionRule();
+        const ifRules: IfConditionRuleContext[] = context.ifElseTemplateBody().ifConditionRule();
         for (const ifRule of ifRules) {
             const expressions = ifRule.ifCondition().expression();
-            const conditionNode: lp.IfConditionContext = ifRule.ifCondition();
+            const conditionNode: IfConditionContext = ifRule.ifCondition();
             const ifExpr: boolean = conditionNode.IF() !== undefined;
             const elseIfExpr: boolean = conditionNode.ELSEIF() !== undefined;
 
@@ -139,12 +149,12 @@ export class Extractor
      * @param context The parse tree.
      * @returns The result of visiting the switch case body.
      */
-    public visitSwitchCaseBody(context: lp.SwitchCaseBodyContext): Map<string, string[]> {
+    public visitSwitchCaseBody(context: SwitchCaseBodyContext): Map<string, string[]> {
         const result = new Map<string, string[]>();
-        const switchCaseNodes: lp.SwitchCaseRuleContext[] = context.switchCaseTemplateBody().switchCaseRule();
+        const switchCaseNodes: SwitchCaseRuleContext[] = context.switchCaseTemplateBody().switchCaseRule();
         for (const iterNode of switchCaseNodes) {
             const expressions = iterNode.switchCaseStat().expression();
-            const switchCaseStat: lp.SwitchCaseStatContext = iterNode.switchCaseStat();
+            const switchCaseStat: SwitchCaseStatContext = iterNode.switchCaseStat();
             const switchExpr: boolean = switchCaseStat.SWITCH() !== undefined;
             const caseExpr: boolean = switchCaseStat.CASE() !== undefined;
 

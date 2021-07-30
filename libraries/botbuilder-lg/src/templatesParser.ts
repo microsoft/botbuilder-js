@@ -6,30 +6,43 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { ANTLRInputStream } from 'antlr4ts/ANTLRInputStream';
-import { CommonTokenStream } from 'antlr4ts/CommonTokenStream';
-import { ErrorListener } from './errorListener';
-import { LGFileLexer } from './generated/LGFileLexer';
-import { FileContext, LGFileParser } from './generated/LGFileParser';
-import { TemplateImport } from './templateImport';
-import { Template } from './template';
-import { Templates } from './templates';
-import { StaticChecker } from './staticChecker';
-import { TemplateExtensions } from './templateExtensions';
-import { TemplateException } from './templateException';
-import * as path from 'path';
 import * as fs from 'fs';
-import { Diagnostic, DiagnosticSeverity } from './diagnostic';
-import { ParserRuleContext } from 'antlr4ts';
-import { ExpressionParser } from 'adaptive-expressions';
+import * as path from 'path';
+import { ANTLRInputStream } from 'antlr4ts/ANTLRInputStream';
 import { AbstractParseTreeVisitor, ParseTree } from 'antlr4ts/tree';
-import { LGTemplateParserVisitor } from './generated/LGTemplateParserVisitor';
-import * as lp from './generated/LGFileParser';
-import { TemplateErrors } from './templateErrors';
-import { SourceRange } from './sourceRange';
-import { LGTemplateLexer } from './generated/LGTemplateLexer';
-import { LGTemplateParser, BodyContext, StructuredTemplateBodyContext, KeyValueStructureValueContext } from './generated/LGTemplateParser';
+import { CommonTokenStream } from 'antlr4ts/CommonTokenStream';
+import { Diagnostic, DiagnosticSeverity } from './diagnostic';
+import { ErrorListener } from './errorListener';
+import { ExpressionParser } from 'adaptive-expressions';
+import { FileContext, LGFileParser } from './generated/LGFileParser';
+import { LGFileLexer } from './generated/LGFileLexer';
 import { LGResource } from './lgResource';
+import { LGTemplateLexer } from './generated/LGTemplateLexer';
+import { LGTemplateParserVisitor } from './generated/LGTemplateParserVisitor';
+import { ParserRuleContext } from 'antlr4ts';
+import { SourceRange } from './sourceRange';
+import { StaticChecker } from './staticChecker';
+import { Template } from './template';
+import { TemplateErrors } from './templateErrors';
+import { TemplateException } from './templateException';
+import { TemplateExtensions } from './templateExtensions';
+import { TemplateImport } from './templateImport';
+import { Templates } from './templates';
+
+import {
+    BodyContext,
+    KeyValueStructureValueContext,
+    LGTemplateParser,
+    StructuredTemplateBodyContext,
+} from './generated/LGTemplateParser';
+
+import {
+    ErrorDefinitionContext,
+    ImportDefinitionContext,
+    OptionDefinitionContext,
+    TemplateBodyContext,
+    TemplateDefinitionContext,
+} from './generated/LGFileParser';
 
 export declare type ImportResolverDelegate = (lgResource: LGResource, resourceId: string) => LGResource;
 
@@ -382,7 +395,7 @@ export class TemplatesTransformer extends AbstractParseTreeVisitor<void> impleme
      * Visit a parse tree produced by `LGFileParser.errorDefinition`.
      * @param context The parse tree.
      */
-    public visitErrorDefinition(context: lp.ErrorDefinitionContext): void {
+    public visitErrorDefinition(context: ErrorDefinitionContext): void {
         const lineContent = context.INVALID_LINE().text;
         if (lineContent === undefined || lineContent.trim() === '') {
             this.templates.diagnostics.push(
@@ -398,7 +411,7 @@ export class TemplatesTransformer extends AbstractParseTreeVisitor<void> impleme
      * Visit a parse tree produced by `LGFileParser.importDefinition`.
      * @param context The parse tree.
      */
-    public visitImportDefinition(context: lp.ImportDefinitionContext): void {
+    public visitImportDefinition(context: ImportDefinitionContext): void {
         const importStr = context.IMPORT().text;
         const groups = importStr.match(TemplatesParser.importRegex);
         if (!groups || (groups.length !== 3 && groups.length !== 4)) {
@@ -433,7 +446,7 @@ export class TemplatesTransformer extends AbstractParseTreeVisitor<void> impleme
      * Visit a parse tree produced by `LGFileParser.optionDefinition`.
      * @param context The parse tree.
      */
-    public visitOptionDefinition(context: lp.OptionDefinitionContext): void {
+    public visitOptionDefinition(context: OptionDefinitionContext): void {
         const optionStr = context.OPTION().text;
         let result = '';
         if (optionStr != undefined && optionStr.trim() !== '') {
@@ -452,7 +465,7 @@ export class TemplatesTransformer extends AbstractParseTreeVisitor<void> impleme
      * Visit a parse tree produced by `LGFileParser.templateDefinition`.
      * @param context The parse tree.
      */
-    public visitTemplateDefinition(context: lp.TemplateDefinitionContext): void {
+    public visitTemplateDefinition(context: TemplateDefinitionContext): void {
         const startLine = context.start.line;
 
         const templateNameLine = context.templateNameLine().TEMPLATE_NAME_LINE().text;
@@ -472,11 +485,7 @@ export class TemplatesTransformer extends AbstractParseTreeVisitor<void> impleme
 
             this.checkTemplateName(templateName, context.templateNameLine());
             this.checkTemplateParameters(parameters, context.templateNameLine());
-            this.checkTemplateBody(
-                template,
-                context.templateBody(),
-                startLine
-            );
+            this.checkTemplateBody(template, context.templateBody(), startLine);
 
             this.templates.push(template);
         }
@@ -514,11 +523,7 @@ export class TemplatesTransformer extends AbstractParseTreeVisitor<void> impleme
     /**
      * @private
      */
-    private checkTemplateBody(
-        template: Template,
-        context: lp.TemplateBodyContext,
-        startLine: number
-    ): BodyContext {
+    private checkTemplateBody(template: Template, context: TemplateBodyContext, startLine: number): BodyContext {
         if (template.body === undefined || template.body.trim() === '') {
             const diagnostic = this.buildTemplatesDiagnostic(
                 TemplateErrors.noTemplateBody(template.name),
@@ -625,9 +630,7 @@ class TemplateBodyTransformer extends AbstractParseTreeVisitor<void> implements 
         this._template = template;
     }
 
-    protected defaultResult(): void {
-
-    }
+    protected defaultResult(): void {}
 
     public transform(): Template {
         this.visit(this._template.templateBodyParseTree);
@@ -635,10 +638,12 @@ class TemplateBodyTransformer extends AbstractParseTreeVisitor<void> implements 
     }
 
     public visitStructuredTemplateBody(context: StructuredTemplateBodyContext): void {
-        if (!context.structuredBodyNameLine().errorStructuredName()
-         && context.structuredBodyEndLine()
-         && (!context.errorStructureLine() || context.errorStructureLine().length === 0)
-         && (context.structuredBodyContentLine() && context.structuredBodyContentLine().length > 0)
+        if (
+            !context.structuredBodyNameLine().errorStructuredName() &&
+            context.structuredBodyEndLine() &&
+            (!context.errorStructureLine() || context.errorStructureLine().length === 0) &&
+            context.structuredBodyContentLine() &&
+            context.structuredBodyContentLine().length > 0
         ) {
             const bodys = context.structuredBodyContentLine();
             for (const body of bodys) {
@@ -661,7 +666,7 @@ class TemplateBodyTransformer extends AbstractParseTreeVisitor<void> implements 
         if (structureValues.length === 1) {
             this._template.properties[key] = structureValues[0].text;
         } else if (structureValues.length > 1) {
-            this._template.properties[key] = structureValues.map(u => u.text);
+            this._template.properties[key] = structureValues.map((u) => u.text);
         }
     }
 }

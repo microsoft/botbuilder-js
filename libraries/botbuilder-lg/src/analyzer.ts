@@ -7,18 +7,28 @@
  * Licensed under the MIT License.
  */
 import { AbstractParseTreeVisitor } from 'antlr4ts/tree';
-import { keyBy } from 'lodash';
-import { Expression, ExpressionParserInterface } from 'adaptive-expressions';
+import { AnalyzerResult } from './analyzerResult';
+import { EvaluationOptions } from './evaluationOptions';
 import { EvaluationTarget } from './evaluationTarget';
 import { Evaluator } from './evaluator';
-import * as lp from './generated/LGTemplateParser';
+import { Expression, ExpressionParserInterface } from 'adaptive-expressions';
 import { LGTemplateParserVisitor } from './generated/LGTemplateParserVisitor';
-import { TemplateExtensions } from './templateExtensions';
-import { AnalyzerResult } from './analyzerResult';
-import { TemplateErrors } from './templateErrors';
-import { Templates } from './templates';
-import { EvaluationOptions } from './evaluationOptions';
 import { Template } from './template';
+import { TemplateExtensions } from './templateExtensions';
+import { Templates } from './templates';
+import { keyBy } from 'lodash';
+
+import {
+    IfConditionRuleContext,
+    IfElseBodyContext,
+    KeyValueStructureLineContext,
+    NormalBodyContext,
+    NormalTemplateBodyContext,
+    NormalTemplateStringContext,
+    StructuredTemplateBodyContext,
+    SwitchCaseBodyContext,
+    SwitchCaseRuleContext,
+} from './generated/LGTemplateParser';
 
 /**
  * Analyzer engine. To get the static analyzer results.
@@ -82,7 +92,7 @@ export class Analyzer
      * @param ctx The parse tree.
      * @returns The [AnalyzerResult](xref:botbuilder-lg.AnalyzerResult) instance.
      */
-    public visitNormalBody(ctx: lp.NormalBodyContext): AnalyzerResult {
+    public visitNormalBody(ctx: NormalBodyContext): AnalyzerResult {
         return this.visit(ctx.normalTemplateBody());
     }
 
@@ -91,7 +101,7 @@ export class Analyzer
      * @param ctx The parse tree.
      * @returns The [AnalyzerResult](xref:botbuilder-lg.AnalyzerResult) instance.
      */
-    public visitNormalTemplateBody(ctx: lp.NormalTemplateBodyContext): AnalyzerResult {
+    public visitNormalTemplateBody(ctx: NormalTemplateBodyContext): AnalyzerResult {
         const result: AnalyzerResult = new AnalyzerResult();
         for (const templateStr of ctx.templateString()) {
             result.union(this.visit(templateStr.normalTemplateString()));
@@ -105,7 +115,7 @@ export class Analyzer
      * @param ctx The parse tree.
      * @returns The [AnalyzerResult](xref:botbuilder-lg.AnalyzerResult) instance.
      */
-    public visitStructuredTemplateBody(ctx: lp.StructuredTemplateBodyContext): AnalyzerResult {
+    public visitStructuredTemplateBody(ctx: StructuredTemplateBodyContext): AnalyzerResult {
         const result: AnalyzerResult = new AnalyzerResult();
 
         const bodys = ctx.structuredBodyContentLine();
@@ -126,7 +136,7 @@ export class Analyzer
      * @param ctx The parse tree.
      * @returns The [AnalyzerResult](xref:botbuilder-lg.AnalyzerResult) instance.
      */
-    public visitStructureValue(ctx: lp.KeyValueStructureLineContext): AnalyzerResult {
+    public visitStructureValue(ctx: KeyValueStructureLineContext): AnalyzerResult {
         const result: AnalyzerResult = new AnalyzerResult();
 
         const values = ctx.keyValueStructureValue();
@@ -149,10 +159,10 @@ export class Analyzer
      * @param ctx The parse tree.
      * @returns The [AnalyzerResult](xref:botbuilder-lg.AnalyzerResult) instance.
      */
-    public visitIfElseBody(ctx: lp.IfElseBodyContext): AnalyzerResult {
+    public visitIfElseBody(ctx: IfElseBodyContext): AnalyzerResult {
         const result: AnalyzerResult = new AnalyzerResult();
 
-        const ifRules: lp.IfConditionRuleContext[] = ctx.ifElseTemplateBody().ifConditionRule();
+        const ifRules: IfConditionRuleContext[] = ctx.ifElseTemplateBody().ifConditionRule();
         for (const ifRule of ifRules) {
             const expressions = ifRule.ifCondition().expression();
             if (expressions !== undefined && expressions.length > 0) {
@@ -171,9 +181,9 @@ export class Analyzer
      * @param ctx The parse tree.
      * @returns The [AnalyzerResult](xref:botbuilder-lg.AnalyzerResult) instance.
      */
-    public visitSwitchCaseBody(ctx: lp.SwitchCaseBodyContext): AnalyzerResult {
+    public visitSwitchCaseBody(ctx: SwitchCaseBodyContext): AnalyzerResult {
         const result: AnalyzerResult = new AnalyzerResult();
-        const switchCaseNodes: lp.SwitchCaseRuleContext[] = ctx.switchCaseTemplateBody().switchCaseRule();
+        const switchCaseNodes: SwitchCaseRuleContext[] = ctx.switchCaseTemplateBody().switchCaseRule();
         for (const iterNode of switchCaseNodes) {
             const expressions = iterNode.switchCaseStat().expression();
             if (expressions.length > 0) {
@@ -192,7 +202,7 @@ export class Analyzer
      * @param ctx The parse tree.
      * @returns The [AnalyzerResult](xref:botbuilder-lg.AnalyzerResult) instance.
      */
-    public visitNormalTemplateString(ctx: lp.NormalTemplateStringContext): AnalyzerResult {
+    public visitNormalTemplateString(ctx: NormalTemplateStringContext): AnalyzerResult {
         const result: AnalyzerResult = new AnalyzerResult();
 
         for (const expression of ctx.expression()) {
