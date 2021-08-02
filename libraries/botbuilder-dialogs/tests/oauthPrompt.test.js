@@ -5,13 +5,20 @@ const assert = require('assert');
 const { spy } = require('sinon');
 const { ok, strictEqual } = require('assert');
 const { OAuthPrompt, DialogSet, DialogTurnStatus } = require('../');
-const { AuthenticationConstants } = require('botframework-connector');
+const {
+    AuthenticationConstants,
+    BotFrameworkAuthenticationFactory,
+    PasswordServiceClientCredentialFactory,
+    SkillValidation,
+    ConnectorClient,
+} = require('botframework-connector');
 
 const {
     ActionTypes,
     ActivityTypes,
     CardFactory,
     Channels,
+    CloudAdapterBase,
     ConversationState,
     InputHints,
     MemoryStorage,
@@ -642,6 +649,8 @@ describe('OAuthPrompt', function () {
         });
 
         describe('recognizeToken()', function () {
+            class TestCloudAdapter extends CloudAdapterBase {}
+
             it('should throw an error during a Token Response Event and adapter is missing "createConnectorClientWithIdentity"', async function () {
                 const oAuthPrompt = new OAuthPrompt('OAuthPrompt');
                 // Create spy for private instance method called during recognizeToken
@@ -683,6 +692,125 @@ describe('OAuthPrompt', function () {
                 });
 
                 ok(isTokenResponseEventSpy.calledOnce, 'isTokenResponseEventSpy called more than once');
+            });
+
+            it('should return the correct ConnectorClient instance', async function () {
+                const credsFactory = new PasswordServiceClientCredentialFactory('', '');
+                const botFrameworkAuthentication = BotFrameworkAuthenticationFactory.create(
+                    '',
+                    undefined,
+                    undefined,
+                    undefined,
+                    undefined,
+                    undefined,
+                    undefined,
+                    undefined,
+                    undefined,
+                    credsFactory,
+                    { requiredEndorsements: [] }
+                );
+                const adapter = new TestCloudAdapter(botFrameworkAuthentication);
+                const oAuthPrompt = new OAuthPrompt('OAuthPrompt');
+
+                const context = new TurnContext(adapter, {
+                    type: ActivityTypes.Event,
+                    name: tokenResponseEventName,
+                    conversation: { id: 'conversationId' },
+                    channelId: Channels.Test,
+                });
+
+                // Assign ConnectorFactory to the context state.
+                const claimsIdentity = SkillValidation.createAnonymousSkillClaim();
+                const connectorFactory = botFrameworkAuthentication.createConnectorFactory(claimsIdentity);
+                context.turnState.set(adapter.ConnectorFactoryKey, connectorFactory);
+
+                // Create DialogContext
+                const conversationState = new ConversationState(new MemoryStorage());
+                const dialogState = conversationState.createProperty('DialogState');
+                const dialogSet = new DialogSet(dialogState);
+                const dc = await dialogSet.createContext(context);
+
+                function setActiveDialog(dc, dialog) {
+                    // Create stack if not already there.
+                    dc.stack = dc.stack || [];
+                    dc.stack.unshift({
+                        id: dialog.id,
+                        state: {
+                            state: {},
+                            [dialog.PersistedCaller]: {
+                                callerServiceUrl: 'https://test1',
+                                scope: 'parent-appId',
+                            },
+                            options: { prompt: 'Login time' },
+                            expires: new Date().getTime() + 900000,
+                        },
+                    });
+                }
+
+                setActiveDialog(dc, oAuthPrompt);
+                await oAuthPrompt.recognizeToken(dc);
+                const connectorClient = dc.context.turnState.get(adapter.ConnectorClientKey);
+
+                assert.ok(connectorClient instanceof ConnectorClient, 'ConnectorClient was not created properly');
+            });
+
+            it('should throw when UserTokenClient is found instead of ConnectorFactory in the context.turnState', async function () {
+                const credsFactory = new PasswordServiceClientCredentialFactory('', '');
+                const botFrameworkAuthentication = BotFrameworkAuthenticationFactory.create(
+                    '',
+                    undefined,
+                    undefined,
+                    undefined,
+                    undefined,
+                    undefined,
+                    undefined,
+                    undefined,
+                    undefined,
+                    credsFactory,
+                    { requiredEndorsements: [] }
+                );
+                const adapter = new TestCloudAdapter(botFrameworkAuthentication);
+                const oAuthPrompt = new OAuthPrompt('OAuthPrompt');
+
+                const context = new TurnContext(adapter, {
+                    type: ActivityTypes.Event,
+                    name: tokenResponseEventName,
+                    conversation: { id: 'conversationId' },
+                    channelId: Channels.Test,
+                });
+
+                // Assign UserTokenClient to the context state.
+                const claimsIdentity = SkillValidation.createAnonymousSkillClaim();
+                const userTokenClient = await botFrameworkAuthentication.createUserTokenClient(claimsIdentity);
+                context.turnState.set(adapter.UserTokenClientKey, userTokenClient);
+
+                // Create DialogContext
+                const conversationState = new ConversationState(new MemoryStorage());
+                const dialogState = conversationState.createProperty('DialogState');
+                const dialogSet = new DialogSet(dialogState);
+                const dc = await dialogSet.createContext(context);
+
+                function setActiveDialog(dc, dialog) {
+                    // Create stack if not already there.
+                    dc.stack = dc.stack || [];
+                    dc.stack.unshift({
+                        id: dialog.id,
+                        state: {
+                            state: {},
+                            [dialog.PersistedCaller]: {
+                                callerServiceUrl: 'https://test1',
+                                scope: 'parent-appId',
+                            },
+                            options: { prompt: 'Login time' },
+                            expires: new Date().getTime() + 900000,
+                        },
+                    });
+                }
+
+                setActiveDialog(dc, oAuthPrompt);
+                await assert.rejects(oAuthPrompt.recognizeToken(dc), {
+                    message: 'OAuth prompt is not supported by the current adapter',
+                });
             });
         });
     });
