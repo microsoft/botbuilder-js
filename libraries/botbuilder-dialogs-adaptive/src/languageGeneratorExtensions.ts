@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 
-import { DialogManager } from 'botbuilder-dialogs';
+import { DialogManager, TurnPath } from 'botbuilder-dialogs';
 import { ResourceExplorer } from 'botbuilder-dialogs-declarative';
 import {
     LanguageGeneratorManager,
@@ -78,6 +78,14 @@ export class LanguageGeneratorExtensions {
      */
     public static useLanguagePolicy(dialogManager: DialogManager, policy: LanguagePolicy): DialogManager {
         dialogManager.initialTurnState.set(languagePolicyKey, policy);
+
+        const turnScope = dialogManager.initialTurnState.get('turn');
+        if (turnScope) {
+            turnScope.languagePolicy = policy;
+        } else {
+            dialogManager.initialTurnState.set('turn', { languagePolicy: policy });
+        }
+
         return dialogManager;
     }
 }

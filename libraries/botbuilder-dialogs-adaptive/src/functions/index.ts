@@ -8,3 +8,4 @@
 
 export * from './hasPendingActionsFunction';
 export * from './isDialogActiveFunction';
+export * from './missingPropertiesFunction';
