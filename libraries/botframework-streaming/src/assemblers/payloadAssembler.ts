@@ -126,29 +126,41 @@ export class PayloadAssembler {
     }
 
     private async processResponse(streamDataAsString: string): Promise<void> {
-        const responsePayload: IResponsePayload = this.payloadFromJson(this.stripBOM(streamDataAsString));
+        const responsePayload = this.payloadFromJson<IResponsePayload>(this.stripBOM(streamDataAsString));
         const receiveResponse: IReceiveResponse = { streams: [], statusCode: responsePayload.statusCode };
 
         await this.processStreams(responsePayload, receiveResponse);
     }
 
     private async processRequest(streamDataAsString: string): Promise<void> {
-        const requestPayload: IRequestPayload = this.payloadFromJson(streamDataAsString);
+        const requestPayload = this.payloadFromJson<IRequestPayload>(streamDataAsString);
         const receiveRequest: IReceiveRequest = { streams: [], path: requestPayload.path, verb: requestPayload.verb };
 
         await this.processStreams(requestPayload, receiveRequest);
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    private async processStreams(responsePayload: any, receiveResponse: any): Promise<void> {
-        if (responsePayload.streams) {
-            responsePayload.streams.forEach((responseStream): void => {
-                const contentAssembler = this.streamManager.getPayloadAssembler(responseStream.id);
-                contentAssembler.payloadType = responseStream.contentType;
-                contentAssembler.contentLength = responseStream.length;
-                receiveResponse.streams.push(new ContentStream(responseStream.id, contentAssembler));
-            });
-        }
+    private async processStreams(
+        responsePayload: IResponsePayload | IRequestPayload,
+        receiveResponse: IReceiveResponse | IReceiveRequest
+    ): Promise<void> {
+        responsePayload.streams?.forEach((responseStream) => {
+            // There was a bug in how streams were handled. In .NET, the StreamDescription definiton mapped the
+            // "type" JSON property to `contentType`, but in Typescript there was no mapping. This is a workaround
+            // to resolve this inconsistency.
+            //
+            // .NET code:
+            // https://github.com/microsoft/botbuilder-dotnet/blob/a79036ddf6625ec3fd68a6f7295886eb7831bc1c/libraries/Microsoft.Bot.Streaming/Payloads/Models/StreamDescription.cs#L28-L29
+            const contentType =
+                ((responseStream as unknown) as Record<string, string>).type ?? responseStream.contentType;
+
+            const contentAssembler = this.streamManager.getPayloadAssembler(responseStream.id);
+
+            contentAssembler.payloadType = contentType;
+            contentAssembler.contentLength = responseStream.length;
+
+            receiveResponse.streams.push(new ContentStream(responseStream.id, contentAssembler));
+        });
+
         await this._onCompleted(this.id, receiveResponse);
     }
 }
