@@ -808,7 +808,7 @@ describe('OAuthPrompt', function () {
                 }
 
                 setActiveDialog(dc, oAuthPrompt);
-                assert.rejects(oAuthPrompt.recognizeToken(dc), {
+                await assert.rejects(oAuthPrompt.recognizeToken(dc), {
                     message: 'OAuth prompt is not supported by the current adapter',
                 });
             });
