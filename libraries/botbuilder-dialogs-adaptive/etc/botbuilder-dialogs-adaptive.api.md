@@ -43,9 +43,11 @@ import { Headers as Headers_2 } from 'node-fetch';
 import { ImportResolverDelegate } from 'botbuilder-lg';
 import { IntExpression } from 'adaptive-expressions';
 import { ListStyle } from 'botbuilder-dialogs';
+import { MemoryInterface } from 'adaptive-expressions';
 import { ModelResult } from 'botbuilder-dialogs';
 import { NumberExpression } from 'adaptive-expressions';
 import { ObjectExpression } from 'adaptive-expressions';
+import { Options } from 'adaptive-expressions';
 import { PromptOptions } from 'botbuilder-dialogs';
 import { Recognizer } from 'botbuilder-dialogs';
 import { RecognizerConfiguration } from 'botbuilder-dialogs';
@@ -1364,8 +1366,6 @@ export class LanguageGenerationBotComponent extends BotComponent {
 // @public
 export interface LanguageGenerator<T = unknown, D = Record<string, unknown>> {
     generate(dialogContext: DialogContext, template: string, data: D): Promise<T>;
-    // Warning: (ae-forgotten-export) The symbol "MemoryInterface" needs to be exported by the entry point index.d.ts
-    // Warning: (ae-forgotten-export) The symbol "Options" needs to be exported by the entry point index.d.ts
     missingProperties(dialogContext: DialogContext, template: string, state?: MemoryInterface, options?: Options): string[];
 }
 
