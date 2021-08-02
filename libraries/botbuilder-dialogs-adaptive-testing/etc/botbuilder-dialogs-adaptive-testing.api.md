@@ -313,7 +313,7 @@ export class UserActivity extends TestAction implements UserActivityConfiguratio
     // (undocumented)
     static $kind: string;
     activity: Activity;
-    execute(testAdapter: TestAdapter, callback: (context: TurnContext) => Promise<void>, inspector?: Inspector): Promise<void>;
+    execute(testAdapter: TestAdapter, callback: (context: TurnContext) => Promise<void>, _inspector?: Inspector): Promise<void>;
     user: string;
 }
 

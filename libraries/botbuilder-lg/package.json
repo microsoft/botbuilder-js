@@ -35,7 +35,8 @@
     "clean": "rimraf lib tsconfig.tsbuildinfo",
     "depcheck": "depcheck --config ../../.depcheckrc",
     "lint": "eslint . --ext .js,.ts",
-    "test": "yarn build && mocha tests/ --timeout 60000"
+    "test": "yarn build && mocha tests/ --timeout 60000",
+    "test:compat": "api-extractor run --verbose"
   },
   "files": [
     "lib",

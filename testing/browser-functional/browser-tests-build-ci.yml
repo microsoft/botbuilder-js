@@ -32,15 +32,15 @@ steps:
   inputs:
     versionSpec: 12.x
 
-- script: cd libraries/browser-functional-tests/browser-echo-bot && yarn && yarn build
+- script: cd testing/browser-functional/browser-echo-bot && yarn && yarn build
   displayName: yarn install and build browser-echo-bot
 
 - powershell: |
    # Compress Bot Source Code
-   cd $(System.DefaultWorkingDirectory)/libraries/browser-functional-tests/browser-echo-bot/dist
-   $DirToCompress = "$(System.DefaultWorkingDirectory)/libraries/browser-functional-tests/browser-echo-bot/dist"
+   cd $(System.DefaultWorkingDirectory)/testing/browser-functional/browser-echo-bot/dist
+   $DirToCompress = "$(System.DefaultWorkingDirectory)/testing/browser-functional/browser-echo-bot/dist"
    $files = Get-ChildItem -Path $DirToCompress
-   $ZipFileResult="$(System.DefaultWorkingDirectory)/libraries/browser-functional-tests/browser-echo-bot/browser-echo-bot.zip"
+   $ZipFileResult="$(System.DefaultWorkingDirectory)/testing/browser-functional/browser-echo-bot/browser-echo-bot.zip"
    Compress-Archive -Path $files -DestinationPath $ZipFileResult
   displayName: 'Compress Bot Source Code'
 
@@ -52,15 +52,15 @@ steps:
     inlineScript: |
      echo "# Create resource group"
      call az group create -l westus -n "$(TestResourceGroup)" --tags buildName="$(Build.DefinitionName)" cause=automation date="$(DateTimeTag)" product="$(Build.Repository.Name)" sourceBranch="$(Build.SourceBranch)"
-     
+
      echo "# Create app service plan"
      call az appservice plan create -g "$(TestResourceGroup)" -n "$(TestAppServicePlan)" --number-of-workers 4 --sku S1
-     
+
      echo "# Create web app"
      call az webapp create -g "$(TestResourceGroup)" -p "$(TestAppServicePlan)" -n "$(TestWebApp)"
-     
+
      echo "# Deploy source code"
-     call az webapp deployment source config-zip --resource-group "$(TestResourceGroup)" --name "$(TestWebApp)" --src "$(System.DefaultWorkingDirectory)/libraries/browser-functional-tests/browser-echo-bot/browser-echo-bot.zip"
+     call az webapp deployment source config-zip --resource-group "$(TestResourceGroup)" --name "$(TestWebApp)" --src "$(System.DefaultWorkingDirectory)/testing/browser-functional/browser-echo-bot/browser-echo-bot.zip"
 
 - script: yarn
   displayName: yarn install

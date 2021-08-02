@@ -5,18 +5,30 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { ParserRuleContext } from 'antlr4ts';
 import { AbstractParseTreeVisitor, TerminalNode } from 'antlr4ts/tree';
-import { ExpressionParser, ExpressionParserInterface } from 'adaptive-expressions';
 import { Diagnostic, DiagnosticSeverity } from './diagnostic';
 import { Evaluator } from './evaluator';
-import * as lp from './generated/LGTemplateParser';
+import { ExpressionParserInterface } from 'adaptive-expressions';
 import { LGTemplateParserVisitor } from './generated/LGTemplateParserVisitor';
-import { Templates } from './templates';
-import { TemplateErrors } from './templateErrors';
+import { ParserRuleContext } from 'antlr4ts';
 import { Range } from './range';
-import { TemplateExtensions } from './templateExtensions';
 import { Template } from './template';
+import { TemplateErrors } from './templateErrors';
+import { TemplateExtensions } from './templateExtensions';
+import { Templates } from './templates';
+
+import {
+    ErrorTemplateStringContext,
+    IfConditionContext,
+    IfConditionRuleContext,
+    IfElseBodyContext,
+    NormalTemplateBodyContext,
+    NormalTemplateStringContext,
+    StructuredTemplateBodyContext,
+    SwitchCaseBodyContext,
+    SwitchCaseRuleContext,
+    SwitchCaseStatContext,
+} from './generated/LGTemplateParser';
 
 /**
  * LG managed code checker.
@@ -105,10 +117,10 @@ export class StaticChecker
      * Visit a parse tree produced by `LGTemplateParser.normalTemplateBody`.
      * @param context The parse tree.
      */
-    public visitNormalTemplateBody(context: lp.NormalTemplateBodyContext): Diagnostic[] {
+    public visitNormalTemplateBody(context: NormalTemplateBodyContext): Diagnostic[] {
         let result: Diagnostic[] = [];
         for (const templateStr of context.templateString()) {
-            const errorTemplateStr: lp.ErrorTemplateStringContext = templateStr.errorTemplateString();
+            const errorTemplateStr: ErrorTemplateStringContext = templateStr.errorTemplateString();
 
             if (errorTemplateStr) {
                 result.push(this.buildLGDiagnostic(TemplateErrors.invalidTemplateBody, undefined, errorTemplateStr));
@@ -124,7 +136,7 @@ export class StaticChecker
      * Visit a parse tree produced by `LGTemplateParser.structuredTemplateBody`.
      * @param context The parse tree.
      */
-    public visitStructuredTemplateBody(context: lp.StructuredTemplateBodyContext): Diagnostic[] {
+    public visitStructuredTemplateBody(context: StructuredTemplateBodyContext): Diagnostic[] {
         let result: Diagnostic[] = [];
 
         const errorName = context.structuredBodyNameLine().errorStructuredName();
@@ -175,13 +187,13 @@ export class StaticChecker
      * Visit a parse tree produced by the `ifElseBody` labeled alternative in `LGTemplateParser.body`.
      * @param context The parse tree.
      */
-    public visitIfElseBody(context: lp.IfElseBodyContext): Diagnostic[] {
+    public visitIfElseBody(context: IfElseBodyContext): Diagnostic[] {
         let result: Diagnostic[] = [];
-        const ifRules: lp.IfConditionRuleContext[] = context.ifElseTemplateBody().ifConditionRule();
+        const ifRules: IfConditionRuleContext[] = context.ifElseTemplateBody().ifConditionRule();
 
         let idx = 0;
         for (const ifRule of ifRules) {
-            const conditionNode: lp.IfConditionContext = ifRule.ifCondition();
+            const conditionNode: IfConditionContext = ifRule.ifCondition();
             const ifExpr: boolean = conditionNode.IF() !== undefined;
             const elseIfExpr: boolean = conditionNode.ELSEIF() !== undefined;
             const elseExpr: boolean = conditionNode.ELSE() !== undefined;
@@ -260,14 +272,14 @@ export class StaticChecker
      * Visit a parse tree produced by the `switchCaseBody` labeled alternative in `LGTemplateParser.body`.
      * @param context The parse tree.
      */
-    public visitSwitchCaseBody(context: lp.SwitchCaseBodyContext): Diagnostic[] {
+    public visitSwitchCaseBody(context: SwitchCaseBodyContext): Diagnostic[] {
         let result: Diagnostic[] = [];
-        const switchCaseNodes: lp.SwitchCaseRuleContext[] = context.switchCaseTemplateBody().switchCaseRule();
+        const switchCaseNodes: SwitchCaseRuleContext[] = context.switchCaseTemplateBody().switchCaseRule();
         let idx = 0;
         const length: number = switchCaseNodes.length;
 
         for (const iterNode of switchCaseNodes) {
-            const switchCaseStat: lp.SwitchCaseStatContext = iterNode.switchCaseStat();
+            const switchCaseStat: SwitchCaseStatContext = iterNode.switchCaseStat();
             const switchExpr: boolean = switchCaseStat.SWITCH() !== undefined;
             const caseExpr: boolean = switchCaseStat.CASE() !== undefined;
             const defaultExpr: boolean = switchCaseStat.DEFAULT() !== undefined;
@@ -365,7 +377,7 @@ export class StaticChecker
      * Visit a parse tree produced by `LGTemplateParser.normalTemplateString`.
      * @param context The parse tree.
      */
-    public visitNormalTemplateString(context: lp.NormalTemplateStringContext): Diagnostic[] {
+    public visitNormalTemplateString(context: NormalTemplateStringContext): Diagnostic[] {
         const prefixErrorMsg = TemplateExtensions.getPrefixErrorMessage(context);
         let result: Diagnostic[] = [];
 

@@ -1,15 +1,15 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
+import type { AuthenticationConfiguration } from './authenticationConfiguration';
+import type { BotFrameworkAuthentication } from './botFrameworkAuthentication';
+import type { ServiceClientCredentialsFactory } from './serviceClientCredentialsFactory';
+import { AuthenticationConstants } from './authenticationConstants';
 import { CallerIdConstants } from 'botframework-schema';
 import { ConnectorClientOptions } from '../connectorApi/models';
-import type { AuthenticationConfiguration } from './authenticationConfiguration';
-import { AuthenticationConstants } from './authenticationConstants';
-import type { BotFrameworkAuthentication } from './botFrameworkAuthentication';
 import { GovernmentConstants } from './governmentConstants';
 import { ParameterizedBotFrameworkAuthentication } from './parameterizedBotFrameworkAuthentication';
-import type { ServiceClientCredentialsFactory } from './serviceClientCredentialsFactory';
-import { tests } from 'botbuilder-stdlib';
+import { stringExt } from 'botbuilder-stdlib';
 
 /**
  * A factory for [BotFrameworkAuthentication](xref:botframework-connector.BotFrameworkAuthentication) which encapsulates the environment specific Bot Framework Protocol auth code.
@@ -71,13 +71,13 @@ export class BotFrameworkAuthenticationFactory {
         maybeConnectorClientOptions: ConnectorClientOptions = {}
     ): BotFrameworkAuthentication {
         if (
-            !tests.isStringNullOrEmpty(maybeToChannelFromBotLoginUrl) ||
-            !tests.isStringNullOrEmpty(maybeToChannelFromBotOAuthScope) ||
-            !tests.isStringNullOrEmpty(maybeToBotFromChannelTokenIssuer) ||
-            !tests.isStringNullOrEmpty(maybeOAuthUrl) ||
-            !tests.isStringNullOrEmpty(maybeToBotFromChannelOpenIdMetadataUrl) ||
-            !tests.isStringNullOrEmpty(maybeToBotFromEmulatorOpenIdMetadataUrl) ||
-            !tests.isStringNullOrEmpty(maybeCallerId)
+            !stringExt.isNilOrEmpty(maybeToChannelFromBotLoginUrl) ||
+            !stringExt.isNilOrEmpty(maybeToChannelFromBotOAuthScope) ||
+            !stringExt.isNilOrEmpty(maybeToBotFromChannelTokenIssuer) ||
+            !stringExt.isNilOrEmpty(maybeOAuthUrl) ||
+            !stringExt.isNilOrEmpty(maybeToBotFromChannelOpenIdMetadataUrl) ||
+            !stringExt.isNilOrEmpty(maybeToBotFromEmulatorOpenIdMetadataUrl) ||
+            !stringExt.isNilOrEmpty(maybeCallerId)
         ) {
             // If any of the 'parameterized' properties are defined, assume all parameters are intentional.
             return new ParameterizedBotFrameworkAuthentication(
@@ -96,7 +96,7 @@ export class BotFrameworkAuthenticationFactory {
             );
         } else {
             // else apply the built in default behavior, which is either the public cloud or the gov cloud depending on whether we have a channelService value present
-            if (tests.isStringNullOrEmpty(maybeChannelService)) {
+            if (stringExt.isNilOrEmpty(maybeChannelService)) {
                 return new ParameterizedBotFrameworkAuthentication(
                     true,
                     AuthenticationConstants.ToChannelFromBotLoginUrl,
