@@ -5,6 +5,14 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
+
+import * as z from 'zod';
+import { ActiveLearningUtils, BindToActivity } from './qnamaker-utils';
+import { Activity, ActivityTypes, MessageFactory } from 'botbuilder-core';
+import { QnACardBuilder } from './qnaCardBuilder';
+import { QnAMaker, QnAMakerResult } from './';
+import { QnAMakerClient, QnAMakerClientKey } from './qnaMaker';
+
 import {
     ArrayExpression,
     ArrayExpressionConverter,
@@ -20,7 +28,7 @@ import {
     StringExpression,
     StringExpressionConverter,
 } from 'adaptive-expressions';
-import { Activity, ActivityTypes, MessageFactory } from 'botbuilder-core';
+
 import {
     Converter,
     ConverterFactory,
@@ -36,10 +44,7 @@ import {
     TurnPath,
     WaterfallStepContext,
 } from 'botbuilder-dialogs';
-import { assert, Test, tests } from 'botbuilder-stdlib';
-import { QnAMaker, QnAMakerResult } from './';
-import { QnACardBuilder } from './qnaCardBuilder';
-import { QnAMakerClient, QnAMakerClientKey } from './qnaMaker';
+
 import {
     FeedbackRecord,
     FeedbackRecords,
@@ -48,7 +53,6 @@ import {
     QnAMakerOptions,
     RankerTypes,
 } from './qnamaker-interfaces';
-import { ActiveLearningUtils, BindToActivity } from './qnamaker-utils';
 
 class QnAMakerDialogActivityConverter
     implements Converter<string, TemplateInterface<Partial<Activity>, DialogStateManager>> {
@@ -124,9 +128,9 @@ export interface QnAMakerDialogConfiguration extends DialogConfiguration {
  */
 export type QnASuggestionsActivityFactory = (suggestionsList: string[], noMatchesText: string) => Partial<Activity>;
 
-const isSuggestionsFactory: Test<QnASuggestionsActivityFactory> = (val): val is QnASuggestionsActivityFactory => {
-    return tests.isFunc(val);
-};
+const qnaSuggestionsActivityFactory = z.custom<QnASuggestionsActivityFactory>((val) => typeof val === 'function', {
+    message: 'QnASuggestionsActivityFactory',
+});
 
 /**
  * A dialog that supports multi-step and adaptive-learning QnA Maker services.
@@ -375,7 +379,7 @@ export class QnAMakerDialog extends WaterfallDialog implements QnAMakerDialogCon
         if (top) {
             this.top = new IntExpression(top);
         }
-        if (isSuggestionsFactory(activeLearningTitleOrFactory)) {
+        if (qnaSuggestionsActivityFactory.check(activeLearningTitleOrFactory)) {
             if (!cardNoMatchText) {
                 // Without a developer-provided cardNoMatchText, the end user will not be able to tell the convey to the bot and QnA Maker that the suggested alternative questions were not correct.
                 // When the user's reply to a suggested alternatives Activity matches the cardNoMatchText, the QnAMakerDialog sends this information to the QnA Maker service for active learning.
@@ -710,7 +714,7 @@ export class QnAMakerDialog extends WaterfallDialog implements QnAMakerDialogCon
                         dialogOptions.qnaDialogResponseOptions.cardNoMatchText
                     );
 
-                assert.object(message, ['suggestionsActivity']);
+                z.record(z.unknown()).parse(message, { path: ['message'] });
                 await step.context.sendActivity(message);
 
                 step.activeDialog.state[this.options] = dialogOptions;

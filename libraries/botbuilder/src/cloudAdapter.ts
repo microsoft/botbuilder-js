@@ -289,11 +289,24 @@ class StreamingRequestHandler extends RequestHandler {
             }
         }
 
-        const [stream] = request.streams;
+        const [activityStream, ...attachmentStreams] = request.streams;
 
         let activity: Activity;
         try {
-            activity = validateAndFixActivity(ActivityT.parse(await stream.readAsJson()));
+            activity = validateAndFixActivity(ActivityT.parse(await activityStream.readAsJson()));
+
+            activity.attachments = await Promise.all(
+                attachmentStreams.map(async (attachmentStream) => {
+                    const contentType = attachmentStream.contentType;
+
+                    const content =
+                        contentType === 'application/json'
+                            ? await attachmentStream.readAsJson()
+                            : await attachmentStream.readAsString();
+
+                    return { contentType, content };
+                })
+            );
         } catch (err) {
             return end(StatusCodes.BAD_REQUEST, `Request body missing or malformed: ${err}`);
         }

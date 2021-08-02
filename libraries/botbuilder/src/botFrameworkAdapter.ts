@@ -2011,8 +2011,23 @@ export class BotFrameworkAdapter
     }
 
     private async readRequestBodyAsString(request: IReceiveRequest): Promise<Activity> {
-        const contentStream = request.streams[0];
-        return await contentStream.readAsJson<Activity>();
+        const [activityStream, ...attachmentStreams] = request.streams;
+
+        const activity = await activityStream.readAsJson<Activity>();
+
+        activity.attachments = await Promise.all(
+            attachmentStreams.map(async (attachmentStream) => {
+                const contentType = attachmentStream.contentType;
+
+                const content = contentType === 'application/json'
+                    ? await attachmentStream.readAsJson()
+                    : await attachmentStream.readAsString();
+
+                return { contentType, content };
+            })
+        );
+
+        return activity;
     }
 
     private async handleVersionRequest(

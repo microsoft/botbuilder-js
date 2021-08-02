@@ -5,8 +5,9 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
+
+import * as z from 'zod';
 import { TurnContext } from './turnContext';
-import { Assertion, assert } from 'botbuilder-stdlib';
 
 /**
  * Callback to calculate a storage key.
@@ -14,7 +15,9 @@ import { Assertion, assert } from 'botbuilder-stdlib';
  * ```TypeScript
  * type StorageKeyFactory = (context: TurnContext) => Promise<string>;
  * ```
+ *
  * @param StorageKeyFactory.context Context for the current turn of conversation with a user.
+ * @returns A promise resolving to the storage key string
  */
 export type StorageKeyFactory = (context: TurnContext) => Promise<string>;
 
@@ -71,7 +74,7 @@ export interface StoreItem {
     /**
      * Key/value pairs.
      */
-    [key: string]: any;
+    [key: string]: any; // eslint-disable-line @typescript-eslint/no-explicit-any
 
     /**
      * (Optional) eTag field for stores that support optimistic concurrency.
@@ -86,12 +89,19 @@ export interface StoreItems {
     /**
      * List of store items indexed by key.
      */
-    [key: string]: any;
+    [key: string]: any; // eslint-disable-line @typescript-eslint/no-explicit-any
 }
 
-export const assertStoreItems: Assertion<StoreItems> = (val, path) => {
-    assert.object(val, path);
-};
+const storeItems = z.record(z.unknown());
+
+/**
+ * @internal
+ *
+ * @deprecated Use `zod.record(zod.unknown())` instead.
+ */
+export function assertStoreItems(val: unknown, ..._args: unknown[]): asserts val is StoreItem {
+    storeItems.parse(val);
+}
 
 /**
  * Utility function to calculate a change hash for a `StoreItem`.
@@ -112,10 +122,12 @@ export const assertStoreItems: Assertion<StoreItems> = (val, path) => {
  *    await storage.write({ 'botState': state });
  * }
  * ```
+ *
  * @param item Item to calculate the change hash for.
+ * @returns change hash string
  */
 export function calculateChangeHash(item: StoreItem): string {
-    const cpy: any = { ...item };
+    const cpy = { ...item };
     if (cpy.eTag) {
         delete cpy.eTag;
     }

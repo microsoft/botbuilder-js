@@ -6,36 +6,55 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
+import * as fs from 'fs';
+import * as path from 'path';
 import { AbstractParseTreeVisitor, TerminalNode } from 'antlr4ts/tree';
+import { CustomizedMemory } from './customizedMemory';
+import { EvaluationOptions } from './evaluationOptions';
+import { EvaluationTarget } from './evaluationTarget';
+import { Evaluator, FileFormat } from './evaluator';
+import { LGTemplateParserVisitor } from './generated/LGTemplateParserVisitor';
 import { ParserRuleContext } from 'antlr4ts/ParserRuleContext';
+import { Template } from './template';
+import { TemplateErrors } from './templateErrors';
+import { TemplateExtensions } from './templateExtensions';
+import { Templates } from './templates';
+import { keyBy } from 'lodash';
+
 import {
+    Constant,
     EvaluatorLookup,
     Expression,
-    ExpressionParser,
     ExpressionEvaluator,
-    ReturnType,
+    ExpressionParser,
     ExpressionType,
     Extensions,
-    Constant,
     FunctionUtils,
-    Options,
     MemoryInterface,
+    Options,
+    ReturnType,
     SimpleObjectMemory,
     ValueWithError,
 } from 'adaptive-expressions';
-import { keyBy } from 'lodash';
-import { EvaluationTarget } from './evaluationTarget';
-import { Evaluator, FileFormat } from './evaluator';
-import * as path from 'path';
-import * as fs from 'fs';
-import * as lp from './generated/LGTemplateParser';
-import { LGTemplateParserVisitor } from './generated/LGTemplateParserVisitor';
-import { Template } from './template';
-import { TemplateExtensions } from './templateExtensions';
-import { CustomizedMemory } from './customizedMemory';
-import { TemplateErrors } from './templateErrors';
-import { EvaluationOptions } from './evaluationOptions';
-import { Templates } from './templates';
+
+import {
+    ExpressionContext,
+    ExpressionInStructureContext,
+    IfConditionContext,
+    IfConditionRuleContext,
+    IfElseBodyContext,
+    KeyValueStructureLineContext,
+    LGTemplateParser,
+    NormalBodyContext,
+    NormalTemplateBodyContext,
+    NormalTemplateStringContext,
+    StructuredBodyContext,
+    StructuredTemplateBodyContext,
+    SwitchCaseBodyContext,
+    SwitchCaseRuleContext,
+    TemplateStringContext,
+} from './generated/LGTemplateParser';
+
 /**
  * LG template expander.
  */
@@ -120,7 +139,7 @@ export class Expander extends AbstractParseTreeVisitor<unknown[]> implements LGT
      * @param ctx The parse tree.
      * @returns The result of visiting the normal body.
      */
-    public visitNormalBody(ctx: lp.NormalBodyContext): unknown[] {
+    public visitNormalBody(ctx: NormalBodyContext): unknown[] {
         return this.visit(ctx.normalTemplateBody());
     }
 
@@ -129,8 +148,8 @@ export class Expander extends AbstractParseTreeVisitor<unknown[]> implements LGT
      * @param ctx The parse tree.
      * @returns The result of visiting the normal template body.
      */
-    public visitNormalTemplateBody(ctx: lp.NormalTemplateBodyContext): unknown[] {
-        const normalTemplateStrs: lp.TemplateStringContext[] = ctx.templateString();
+    public visitNormalTemplateBody(ctx: NormalTemplateBodyContext): unknown[] {
+        const normalTemplateStrs: TemplateStringContext[] = ctx.templateString();
         let result: unknown[] = [];
         for (const normalTemplateStr of normalTemplateStrs) {
             result = result.concat(this.visit(normalTemplateStr.normalTemplateString()));
@@ -143,8 +162,8 @@ export class Expander extends AbstractParseTreeVisitor<unknown[]> implements LGT
      * Visit a parse tree produced by the ifElseBody labeled alternative in LGTemplateParser.body.
      * @param ctx The parse tree.
      */
-    public visitIfElseBody(ctx: lp.IfElseBodyContext): unknown[] {
-        const ifRules: lp.IfConditionRuleContext[] = ctx.ifElseTemplateBody().ifConditionRule();
+    public visitIfElseBody(ctx: IfElseBodyContext): unknown[] {
+        const ifRules: IfConditionRuleContext[] = ctx.ifElseTemplateBody().ifConditionRule();
         for (const ifRule of ifRules) {
             if (this.evalCondition(ifRule.ifCondition()) && ifRule.normalTemplateBody() !== undefined) {
                 return this.visit(ifRule.normalTemplateBody());
@@ -159,9 +178,9 @@ export class Expander extends AbstractParseTreeVisitor<unknown[]> implements LGT
      * @param ctx The parse tree.
      * @returns The result of visiting the structured body.
      */
-    public visitStructuredBody(ctx: lp.StructuredBodyContext): unknown[] {
+    public visitStructuredBody(ctx: StructuredBodyContext): unknown[] {
         const templateRefValues: Map<string, unknown[]> = new Map<string, unknown[]>();
-        const stb: lp.StructuredTemplateBodyContext = ctx.structuredTemplateBody();
+        const stb: StructuredTemplateBodyContext = ctx.structuredTemplateBody();
         const result: Record<string, unknown> = {};
         const typeName: string = stb.structuredBodyNameLine().STRUCTURE_NAME().text.trim();
         result.lgType = typeName;
@@ -255,7 +274,7 @@ export class Expander extends AbstractParseTreeVisitor<unknown[]> implements LGT
     /**
      * @private
      */
-    private visitStructureValue(ctx: lp.KeyValueStructureLineContext): unknown[][] {
+    private visitStructureValue(ctx: KeyValueStructureLineContext): unknown[][] {
         const values = ctx.keyValueStructureValue();
 
         const result: unknown[][] = [];
@@ -267,7 +286,7 @@ export class Expander extends AbstractParseTreeVisitor<unknown[]> implements LGT
             } else {
                 let itemStringResult: unknown[] = [''];
                 for (const child of item.children) {
-                    if (child instanceof lp.ExpressionInStructureContext) {
+                    if (child instanceof ExpressionInStructureContext) {
                         const errorPrefix = `Property '${ctx.STRUCTURE_IDENTIFIER().text}':`;
                         itemStringResult = this.stringArrayConcat(
                             itemStringResult,
@@ -276,7 +295,7 @@ export class Expander extends AbstractParseTreeVisitor<unknown[]> implements LGT
                     } else {
                         const node = child as TerminalNode;
                         switch (node.symbol.type) {
-                            case lp.LGTemplateParser.ESCAPE_CHARACTER_IN_STRUCTURE_BODY:
+                            case LGTemplateParser.ESCAPE_CHARACTER_IN_STRUCTURE_BODY:
                                 itemStringResult = this.stringArrayConcat(itemStringResult, [
                                     TemplateExtensions.evalEscape(node.text.replace(/\\\|/g, '|')),
                                 ]);
@@ -300,10 +319,10 @@ export class Expander extends AbstractParseTreeVisitor<unknown[]> implements LGT
      * @param ctx The parse tree.
      * @returns The result of visiting the switch case body.
      */
-    public visitSwitchCaseBody(ctx: lp.SwitchCaseBodyContext): unknown[] {
-        const switchcaseNodes: lp.SwitchCaseRuleContext[] = ctx.switchCaseTemplateBody().switchCaseRule();
+    public visitSwitchCaseBody(ctx: SwitchCaseBodyContext): unknown[] {
+        const switchcaseNodes: SwitchCaseRuleContext[] = ctx.switchCaseTemplateBody().switchCaseRule();
         const length: number = switchcaseNodes.length;
-        const switchNode: lp.SwitchCaseRuleContext = switchcaseNodes[0];
+        const switchNode: SwitchCaseRuleContext = switchcaseNodes[0];
         const switchExprs = switchNode.switchCaseStat().expression();
         const switchErrorPrefix = `Switch '${switchExprs[0].text}': `;
         const switchExprResult = this.evalExpression(
@@ -320,7 +339,7 @@ export class Expander extends AbstractParseTreeVisitor<unknown[]> implements LGT
             }
 
             if (idx === length - 1 && caseNode.switchCaseStat().DEFAULT()) {
-                const defaultBody: lp.NormalTemplateBodyContext = caseNode.normalTemplateBody();
+                const defaultBody: NormalTemplateBodyContext = caseNode.normalTemplateBody();
                 if (defaultBody) {
                     return this.visit(defaultBody);
                 } else {
@@ -350,11 +369,11 @@ export class Expander extends AbstractParseTreeVisitor<unknown[]> implements LGT
      * Visit a parse tree produced by LGTemplateParser.normalTemplateString.
      * @param ctx The parse tree.
      */
-    public visitNormalTemplateString(ctx: lp.NormalTemplateStringContext): unknown[] {
+    public visitNormalTemplateString(ctx: NormalTemplateStringContext): unknown[] {
         const prefixErrorMsg = TemplateExtensions.getPrefixErrorMessage(ctx);
         let result: unknown[] = [undefined];
         for (const child of ctx.children) {
-            if (child instanceof lp.ExpressionContext) {
+            if (child instanceof ExpressionContext) {
                 result = this.stringArrayConcat(
                     result,
                     this.evalExpression(child.text, child, ctx.text, prefixErrorMsg)
@@ -362,11 +381,11 @@ export class Expander extends AbstractParseTreeVisitor<unknown[]> implements LGT
             } else {
                 const node = child as TerminalNode;
                 switch (node.symbol.type) {
-                    case lp.LGTemplateParser.MULTILINE_PREFIX:
-                    case lp.LGTemplateParser.MULTILINE_SUFFIX:
-                    case lp.LGTemplateParser.DASH:
+                    case LGTemplateParser.MULTILINE_PREFIX:
+                    case LGTemplateParser.MULTILINE_SUFFIX:
+                    case LGTemplateParser.DASH:
                         break;
-                    case lp.LGTemplateParser.ESCAPE_CHARACTER:
+                    case LGTemplateParser.ESCAPE_CHARACTER:
                         result = this.stringArrayConcat(result, [TemplateExtensions.evalEscape(node.text)]);
                         break;
                     default: {
@@ -432,7 +451,7 @@ export class Expander extends AbstractParseTreeVisitor<unknown[]> implements LGT
     /**
      * @private
      */
-    private evalCondition(condition: lp.IfConditionContext): boolean {
+    private evalCondition(condition: IfConditionContext): boolean {
         const expression = condition.expression()[0];
         if (!expression) {
             return true; // no expression means it's else

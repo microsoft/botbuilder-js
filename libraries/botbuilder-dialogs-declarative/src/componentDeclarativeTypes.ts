@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 
-import { tests } from 'botbuilder-stdlib';
+import * as z from 'zod';
 import { DeclarativeType } from './declarativeType';
 import { ResourceExplorer } from './resources';
 
@@ -17,6 +17,11 @@ export interface ComponentDeclarativeTypes {
     getDeclarativeTypes(resourceExplorer: ResourceExplorer): DeclarativeType[];
 }
 
+const componentDeclarativeTypes = z.custom<ComponentDeclarativeTypes>(
+    (val: any) => typeof val.getDeclarativeTypes === 'function',
+    { message: 'ComponentDeclarativeTypes' }
+);
+
 /**
  * Check if a [ComponentRegistration](xref:botbuilder-core.ComponentRegistration) is
  * [ComponentDeclarativeTypes](xref:botbuilder-dialogs-declarative.ComponentDeclarativeTypes) or not.
@@ -25,5 +30,5 @@ export interface ComponentDeclarativeTypes {
  * @returns {boolean} Type check result.
  */
 export function isComponentDeclarativeTypes(component: unknown): component is ComponentDeclarativeTypes {
-    return tests.unsafe.isObjectAs<ComponentDeclarativeTypes>(component) && tests.isFunc(component.getDeclarativeTypes);
+    return componentDeclarativeTypes.check(component);
 }

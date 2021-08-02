@@ -1,6 +1,7 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
+import * as z from 'zod';
 import axios from 'axios';
 import { Activity, ChannelAccount, InvokeResponse, RoleTypes } from 'botframework-schema';
 import { BotFrameworkClient } from '../skills';
@@ -8,19 +9,17 @@ import { ConversationIdHttpHeaderName } from '../conversationConstants';
 import { ServiceClientCredentialsFactory } from './serviceClientCredentialsFactory';
 import { USER_AGENT } from './connectorFactoryImpl';
 import { WebResource } from '@azure/ms-rest-js';
-import { assert } from 'botbuilder-stdlib';
+import { ok } from 'assert';
 
-const botFrameworkClientFetchImpl = async (input: RequestInfo, init?: RequestInit): Promise<Response> => {
-    const config = {
-        headers: init.headers as Record<string, string>,
-        validateStatus: (): boolean => true,
-    };
+const botFrameworkClientFetchImpl: typeof fetch = async (input, init) => {
+    const url = z.string().parse(input);
+    const { body } = z.object({ body: z.string() }).parse(init);
 
-    assert.string(input, ['input']);
-    assert.string(init.body, ['init']);
-    const activity = JSON.parse(init.body) as Activity;
+    const response = await axios.post(url, JSON.parse(body), {
+        headers: z.record(z.string()).parse(init.headers ?? {}),
+        validateStatus: () => true,
+    });
 
-    const response = await axios.post(input, activity, config);
     return {
         status: response.status,
         json: async () => response.data,
@@ -32,12 +31,9 @@ export class BotFrameworkClientImpl implements BotFrameworkClient {
     constructor(
         private readonly credentialsFactory: ServiceClientCredentialsFactory,
         private readonly loginEndpoint: string,
-        private readonly botFrameworkClientFetch: (
-            input: RequestInfo,
-            init?: RequestInit
-        ) => Promise<Response> = botFrameworkClientFetchImpl
+        private readonly botFrameworkClientFetch = botFrameworkClientFetchImpl
     ) {
-        assert.maybeFunc(botFrameworkClientFetch, ['botFrameworkClientFetch']);
+        ok(typeof botFrameworkClientFetch === 'function');
     }
 
     async postActivity<T>(
@@ -48,12 +44,21 @@ export class BotFrameworkClientImpl implements BotFrameworkClient {
         conversationId: string,
         activity: Activity
     ): Promise<InvokeResponse<T>> {
-        assert.maybeString(fromBotId, ['fromBotId']);
-        assert.maybeString(toBotId, ['toBotId']);
-        assert.string(toUrl, ['toUrl']);
-        assert.string(serviceUrl, ['serviceUrl']);
-        assert.string(conversationId, ['conversationId']);
-        assert.object(activity, ['activity']);
+        z.object({
+            fromBotId: z.string().optional(),
+            toBotId: z.string().optional(),
+            toUrl: z.string(),
+            serviceUrl: z.string(),
+            conversationId: z.string(),
+            activity: z.record(z.unknown()),
+        }).parse({
+            fromBotId,
+            toBotId,
+            toUrl,
+            serviceUrl,
+            conversationId,
+            activity,
+        });
 
         const credentials = await this.credentialsFactory.createCredentials(
             fromBotId,

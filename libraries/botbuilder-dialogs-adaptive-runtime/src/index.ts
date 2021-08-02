@@ -53,7 +53,6 @@ import {
     TelemetryLoggerMiddleware,
     TranscriptLoggerMiddleware,
     UserState,
-    assertBotComponent,
     createBotFrameworkAuthenticationFromConfiguration,
 } from 'botbuilder';
 
@@ -390,9 +389,12 @@ async function addSettingsBotComponents(services: ServiceCollection, configurati
         }
 
         const instance = new DefaultExport();
-        assertBotComponent(instance, [`import(${name})`, 'default']);
 
-        return instance;
+        try {
+            return BotComponent.z.parse(instance);
+        } catch (err) {
+            throw new Error(`${name} does not extend BotComponent: ${err}`);
+        }
     };
 
     const components =
