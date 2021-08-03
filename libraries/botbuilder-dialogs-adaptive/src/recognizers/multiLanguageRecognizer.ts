@@ -51,13 +51,13 @@ export class MultiLanguageRecognizer extends AdaptiveRecognizer implements Multi
         }
 
         const locale = (activity.locale ?? '').toLowerCase();
-
         const policy: string[] = [];
         if (languagepolicy.has(locale)) {
             policy.push(...languagepolicy.get(locale));
         }
 
         if (locale !== '' && languagepolicy.has('')) {
+            // we now explictly add defaultPolicy instead of coding that into target's policy
             policy.push(...languagepolicy.get(''));
         }
 
