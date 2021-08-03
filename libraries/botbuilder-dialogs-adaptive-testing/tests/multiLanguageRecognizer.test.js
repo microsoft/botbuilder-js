@@ -60,6 +60,10 @@ describe('MultiLanguageRecognizerTests', function () {
         await TestUtils.runTestScript(resourceExplorer, 'MultiLanguageRecognizerTest_LocaleCaseInsensitivity');
     });
 
+    it('Recognizer case insensitivity', async () => {
+        await TestUtils.runTestScript(resourceExplorer, 'MultiLanguageRecognizerTest_RecognizerCaseInsensitivity');
+    });
+
     describe('Telemetry', () => {
         const recognizer = createRecognizer();
         let spy;
