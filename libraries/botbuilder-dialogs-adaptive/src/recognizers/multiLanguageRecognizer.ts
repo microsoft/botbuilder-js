@@ -53,18 +53,23 @@ export class MultiLanguageRecognizer extends AdaptiveRecognizer implements Multi
         const locale = (activity.locale ?? '').toLowerCase();
         const policy: string[] = [];
         if (languagepolicy.has(locale)) {
-            languagepolicy.get(locale).forEach((u: string): number => policy.push(u));
+            policy.push(...languagepolicy.get(locale));
         }
 
         if (locale !== '' && languagepolicy.has('')) {
             // we now explictly add defaultPolicy instead of coding that into target's policy
-            languagepolicy.get('').forEach((u: string): number => policy.push(u));
+            policy.push(...languagepolicy.get(''));
         }
 
-        for (let i = 0; i < policy.length; i++) {
-            const option = policy[i];
-            if (this.recognizers.hasOwnProperty(option)) {
-                const recognizer = this.recognizers[option];
+        const lowercaseRecognizerKeyLookup = Object.keys(this.recognizers).reduce((acc, key) => {
+            acc[key.toLowerCase()] = key;
+            return acc;
+        }, {});
+
+        for (const option of policy) {
+            const recognizerKey = lowercaseRecognizerKeyLookup[option.toLowerCase()];
+            if (recognizerKey !== undefined) {
+                const recognizer = this.recognizers[recognizerKey];
                 const result = await recognizer.recognize(
                     dialogContext,
                     activity,
