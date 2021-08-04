@@ -61,11 +61,13 @@ export class MultiLanguageRecognizer extends AdaptiveRecognizer implements Multi
             policy.push(...languagepolicy.get(''));
         }
 
-        for (let i = 0; i < policy.length; i++) {
-            const option = policy[i];
-            const recognizerKey = Object.keys(this.recognizers).find(
-                (key) => key.toLowerCase() === option.toLowerCase()
-            );
+        const lowercaseRecognizerKeyLookup = Object.keys(this.recognizers).reduce((acc, key) => {
+            acc[key.toLowerCase()] = key;
+            return acc;
+        }, {});
+
+        for (const option of policy) {
+            const recognizerKey = lowercaseRecognizerKeyLookup[option.toLowerCase()];
             if (recognizerKey !== undefined) {
                 const recognizer = this.recognizers[recognizerKey];
                 const result = await recognizer.recognize(
