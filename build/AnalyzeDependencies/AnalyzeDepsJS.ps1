@@ -22,8 +22,6 @@ Param(
   [Parameter(Mandatory = $false)][string]$DumpPath
 )
 
-Set-PSDebug -Trace 1 
-
 Add-Type -AssemblyName System.IO.Compression.FileSystem
 
 Function Get-PackageJson($NupkgPath) {
@@ -123,19 +121,21 @@ Function Get-PackageExport($Pkgs, $Internal) {
 # Main
 #################
 
-Set-PSDebug -Trace 1
-
 # Analyze package dependencies
 $Pkgs = @{ }
 $Deps = @{ }
 Resolve-Path $PackagesPath
+
+"PackagesPath=[$PackagesPath]";
 
 foreach ($PkgFile in Resolve-Path $PackagesPath) {
   $PackageJson = Get-PackageJson $PkgFile
   $LibraryName = $PackageJson.name
   $LibraryVer = $PackageJson.version
 
-  Write-Host $LibraryName
+  "PkgFile=[$PkgFile]";
+  "LibraryName=[$LibraryName]";
+  "LibraryVer=[$LibraryVer]";
 
   $Pkgs[$LibraryName] = @{ Ver = $LibraryVer; Src = $PkgFile; Deps = New-Object System.Collections.ArrayList }
   $PkgDeps = @{ }
@@ -205,5 +205,4 @@ if ($DumpPath) {
   "const data = " + (ConvertTo-Json -InputObject $DumpData -Compress -Depth 10) + ";" | Out-File -FilePath $DumpPath
 }
 
-Set-PSDebug -Trace 0
 exit $ExitCode
