@@ -126,16 +126,14 @@ $Pkgs = @{ }
 $Deps = @{ }
 Resolve-Path $PackagesPath
 
-"PackagesPath=[$PackagesPath]";
+" ";
 
 foreach ($PkgFile in Resolve-Path $PackagesPath) {
   $PackageJson = Get-PackageJson $PkgFile
   $LibraryName = $PackageJson.name
   $LibraryVer = $PackageJson.version
 
-  "PkgFile=[$PkgFile]";
-  "LibraryName=[$LibraryName]";
-  "LibraryVer=[$LibraryVer]";
+  "Library: $LibraryName $LibraryVer";
 
   $Pkgs[$LibraryName] = @{ Ver = $LibraryVer; Src = $PkgFile; Deps = New-Object System.Collections.ArrayList }
   $PkgDeps = @{ }
@@ -170,7 +168,8 @@ foreach ($PkgFile in Resolve-Path $PackagesPath) {
   }
 }
 
-Write-Host "Analyzing $($Pkgs.Count) packages..."
+Write-Host " ";
+Write-Host "Analyzing $($Pkgs.Count) packages...";
 
 # Precompute some derived data for the template
 $External = $Deps.Keys | Where-Object { -not ($Pkgs.ContainsKey($_)) }
