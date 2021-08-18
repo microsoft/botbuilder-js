@@ -46,7 +46,7 @@ Function Get-PackageJson($NupkgPath) {
 
 Function Expand-Tar($tarFile, $dest) {
     if (-not (Get-Command Expand-7Zip -ErrorAction Ignore)) {
-        Install-Package -Scope CurrentUser -Force 7Zip4PowerShell > $null
+        Install-Package -Scope CurrentUser -Force 7Zip4PowerShell -RequiredVersion "2.0.0" > $null
     }
     Expand-7Zip $tarFile $dest
     # Expand the inner tar file
