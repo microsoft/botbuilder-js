@@ -54,7 +54,7 @@ For more information jump to a section below.
 | botframework-schema                                               | [![BotBuilder Badge](https://img.shields.io/npm/dt/botframework-schema.svg?logo=npm&label=botframework-schema)](https://www.npmjs.com/package/botframework-schema/)                                                                                                                                       |
 | botframework-streaming                                            | [![BotBuilder Badge](https://img.shields.io/npm/dt/botframework-streaming.svg?logo=npm&label=botframework-streaming)](https://www.npmjs.com/package/botframework-streaming/)                                                                                                                              |
 
-To view package interdependencies, see the [dependency graph](https://botbuildersdkblobstorage.blob.core.windows.net/sdk-js-dependency-reports/latest/InterdependencyGraph.html).
+To view package interdependencies, see the [dependency graph](https://botbuildersdkblobstorag2.blob.core.windows.net/sdk-js-dependency-reports/latest/InterdependencyGraph.html).
 
 ## Getting Started
 
