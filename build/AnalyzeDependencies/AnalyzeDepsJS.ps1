@@ -4,7 +4,7 @@
 
 <#
   .SYNOPSIS
-  Generate a dependency report for a set of .tgz files
+  Generate a dependency report for a set of .tgz files.
   .PARAMETER PackagesPath
   The path to the package(s) to analyze. Globs are supported.
   .PARAMETER LockfilePath
@@ -44,7 +44,7 @@ Function Get-PackageJson($NupkgPath) {
 
 Function Expand-Tar($tarFile, $dest) {
     if (-not (Get-Command Expand-7Zip -ErrorAction Ignore)) {
-        Install-Package -Scope CurrentUser -Force 7Zip4PowerShell > $null
+        Install-Package -Scope CurrentUser -Force 7Zip4PowerShell -RequiredVersion "2.0.0" > $null
     }
     Expand-7Zip $tarFile $dest
     # Expand the inner tar file
@@ -126,12 +126,14 @@ $Pkgs = @{ }
 $Deps = @{ }
 Resolve-Path $PackagesPath
 
+" ";
+
 foreach ($PkgFile in Resolve-Path $PackagesPath) {
   $PackageJson = Get-PackageJson $PkgFile
   $LibraryName = $PackageJson.name
   $LibraryVer = $PackageJson.version
 
-  Write-Host $LibraryName
+  "Library: $LibraryName $LibraryVer";
 
   $Pkgs[$LibraryName] = @{ Ver = $LibraryVer; Src = $PkgFile; Deps = New-Object System.Collections.ArrayList }
   $PkgDeps = @{ }
@@ -166,7 +168,8 @@ foreach ($PkgFile in Resolve-Path $PackagesPath) {
   }
 }
 
-Write-Host "Analyzing $($Pkgs.Count) packages..."
+Write-Host " ";
+Write-Host "Analyzing $($Pkgs.Count) packages...";
 
 # Precompute some derived data for the template
 $External = $Deps.Keys | Where-Object { -not ($Pkgs.ContainsKey($_)) }
