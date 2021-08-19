@@ -202,7 +202,13 @@ export class OrchestratorRecognizer extends AdaptiveRecognizer implements Orches
 
             // if top scoring intent is less than threshold, return None
             if (topScore < this.unknownIntentFilterScore) {
-                recognizerResult.intents.None = { score: 1.0 };
+                recognizerResult.intents['None'] = { score: 1.0 };
+                // add all scores
+                results.reduce(function (intents, result) {
+                    recognizerResult.intents[result.label.name] = { score: result.score };
+                    return intents;
+                }, {});
+                recognizerResult[this.resultProperty].unshift({ score: 1.0, label: { name: 'None' } });
             } else {
                 // add all scores
                 recognizerResult.intents = results.reduce(function (
@@ -244,7 +250,7 @@ export class OrchestratorRecognizer extends AdaptiveRecognizer implements Orches
             }
         } else {
             // Return 'None' if no intent matched.
-            recognizerResult.intents.None = { score: 1.0 };
+            recognizerResult.intents['None'] = { score: 1.0 };
         }
 
         if (this.externalEntityRecognizer) {

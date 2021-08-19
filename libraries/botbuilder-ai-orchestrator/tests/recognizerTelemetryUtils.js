@@ -32,11 +32,22 @@ const validateTelemetry = async ({ recognizer, dialogContext, spy, activity, res
     ok(hasValidTelemetryProps(actualTelemetryProps.properties, expectedTelemetryProps));
 };
 
+const validateNoneTelemetry = async ({ recognizer, dialogContext, spy, activity, result, callCount }) => {
+    const logPii = getLogPersonalInformation(recognizer, dialogContext);
+    const expectedTelemetryProps = getNoneExpectedProps(activity, result, logPii);
+    const actualTelemetryProps = spy.getCall(callCount - 1).args[0];
+
+    strictEqual(spy.callCount, callCount);
+    strictEqual(actualTelemetryProps.name, `${recognizer.constructor.name}Result`);
+    ok(hasValidTelemetryProps(actualTelemetryProps.properties, expectedTelemetryProps));
+};
+
 module.exports = {
     orchestratorIntentText,
     getLogPersonalInformation,
     spyOnTelemetryClientTrackEvent,
     validateTelemetry,
+    validateNoneTelemetry,
 };
 
 // **** PRIVATE **** //
@@ -54,6 +65,32 @@ const getOrchestratorIntentProps = () => ({
         ],
     }),
 });
+const getNoneIntentProps = () => ({
+    TopIntent: 'None',
+    TopIntentScore: '1',
+    NextIntent: 'FOOBAR',
+    NextIntentScore: '0.3',
+    Intents: JSON.stringify({ None: { score: 1.0 }, FOOBAR: { score: 0.3 } }),
+    Entities: '{}',
+    AdditionalProperties: JSON.stringify({
+        result: [
+            { score: 1.0, label: { name: 'None' } },
+            { score: 0.3, label: { name: 'FOOBAR' } },
+        ],
+    }),
+});
+
+const getNoneExpectedProps = (activity, result, logPersonalInformation) => {
+    const text = asMessageActivity(activity).text;
+    const expectedProps = text === orchestratorIntentText ? getNoneIntentProps() : {};
+
+    if (logPersonalInformation) {
+        expectedProps['Text'] = text;
+        expectedProps['AlteredText'] = result.alteredText;
+    }
+
+    return expectedProps;
+};
 
 const getExpectedProps = (activity, result, logPersonalInformation) => {
     const text = ActivityEx.asMessageActivity(activity).text;
