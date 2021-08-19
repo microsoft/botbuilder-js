@@ -4,7 +4,7 @@
 
 <#
   .SYNOPSIS
-  Generate a dependency report for a set of .tgz files
+  Generate a dependency report for a set of .tgz files.
   .PARAMETER PackagesPath
   The path to the package(s) to analyze. Globs are supported.
   .PARAMETER LockfilePath
