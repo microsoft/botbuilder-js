@@ -226,7 +226,7 @@ export class ChannelServiceRoutes {
 
 // @public (undocumented)
 export class CloudAdapter extends CloudAdapterBase implements BotFrameworkHttpAdapter {
-    constructor(botFrameworkAuthentication?: BotFrameworkAuthentication);
+    constructor(botFrameworkAuthentication?: BotFrameworkAuthentication, allowTraceActivities?: boolean);
     connectNamedPipe(pipeName: string, logic: (context: TurnContext) => Promise<void>, appId: string, audience: string, callerId?: string, retryCount?: number): Promise<void>;
     process(req: Request_2, res: Response_2, logic: (context: TurnContext) => Promise<void>): Promise<void>;
     process(req: Request_2, socket: INodeSocket, head: INodeBuffer, logic: (context: TurnContext) => Promise<void>): Promise<void>;
