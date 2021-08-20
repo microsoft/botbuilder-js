@@ -31,6 +31,7 @@ import {
     IStreamingTransportServer,
     NamedPipeServer,
     NodeWebSocketFactory,
+    NodeWebSocketFactoryBase,
     RequestHandler,
     StreamingRequest,
     StreamingResponse,
@@ -41,13 +42,25 @@ import {
 const ActivityT = z.custom<Activity>((val) => z.record(z.unknown()).check(val), { message: 'Activity' });
 
 export class CloudAdapter extends CloudAdapterBase implements BotFrameworkHttpAdapter {
+    protected readonly webSocketFactory: NodeWebSocketFactoryBase;
+
     /**
      * Initializes a new instance of the [CloudAdapter](xref:botbuilder:CloudAdapter) class.
      *
      * @param botFrameworkAuthentication Optional [BotFrameworkAuthentication](xref:botframework-connector.BotFrameworkAuthentication) instance
+     * @param webSocketFactory Optional [NodeWebSocketFactoryBase](xref:botframework-streaming.NodeWebSocketFactoryBase) instance
      */
-    constructor(botFrameworkAuthentication: BotFrameworkAuthentication = BotFrameworkAuthenticationFactory.create()) {
+    constructor(
+        botFrameworkAuthentication: BotFrameworkAuthentication = BotFrameworkAuthenticationFactory.create(),
+        webSocketFactory: NodeWebSocketFactoryBase = new NodeWebSocketFactory()
+    ) {
         super(botFrameworkAuthentication);
+
+        if (!webSocketFactory) {
+            throw new TypeError('`webSocketFactory` parameter required');
+        }
+
+        this.webSocketFactory = webSocketFactory;
     }
 
     /**
@@ -216,7 +229,7 @@ export class CloudAdapter extends CloudAdapterBase implements BotFrameworkHttpAd
 
         // Create server
         const server = new WebSocketServer(
-            await new NodeWebSocketFactory().createWebSocket(req, socket, head),
+            await this.webSocketFactory.createWebSocket(req, socket, head),
             requestHandler
         );
 
