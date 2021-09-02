@@ -14,6 +14,11 @@ import { Claim } from './claimsIdentity';
 export type ValidateClaims = (claims: Claim[]) => Promise<void>;
 
 /**
+ * Used to contain a collection of valid JWT token issuers.
+ */
+export type ValidTokenIssuers = string[];
+
+/**
  * General configuration settings for authentication.
  */
 export class AuthenticationConfiguration {
@@ -23,6 +28,11 @@ export class AuthenticationConfiguration {
      * @param {string[]} requiredEndorsements An array of JWT endorsements.
      * @param {(claims: Claim[]) => Promise<void>} validateClaims Function that validates a list of Claims
      * and should throw an exception if the validation fails.
+     * @param {string[]} validTokenIssuers An arrat of valid JWT token issuers.
      */
-    constructor(public requiredEndorsements: string[] = [], public validateClaims?: ValidateClaims) {}
+    constructor(
+        public requiredEndorsements: string[] = [],
+        public validateClaims?: ValidateClaims,
+        public validTokenIssuers?: string[]
+    ) {}
 }

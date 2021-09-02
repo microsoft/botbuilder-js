@@ -30,3 +30,5 @@ export * from './passwordServiceClientCredentialFactory';
 export * from './skillValidation';
 export * from './serviceClientCredentialsFactory';
 export * from './userTokenClient';
+export * from './managedIdentityServiceClientCredentialsFactory';
+export * from './jwtTokenProviderFactory';

@@ -136,6 +136,12 @@ export namespace SkillValidation {
             ? GovernmentConstants.ToBotFromEmulatorOpenIdMetadataUrl
             : AuthenticationConstants.ToBotFromEmulatorOpenIdMetadataUrl;
 
+        // Add allowed token issuers from configuration (if present)
+        if (authConfig.validTokenIssuers?.length > 0) {
+            const validIssuers = Array.from(ToBotFromBotOrEmulatorTokenValidationParameters.issuer);
+            validIssuers.push(...authConfig.validTokenIssuers);
+            ToBotFromBotOrEmulatorTokenValidationParameters.issuer = validIssuers;
+        }
         const tokenExtractor = new JwtTokenExtractor(
             ToBotFromBotOrEmulatorTokenValidationParameters,
             openIdMetadataUrl,

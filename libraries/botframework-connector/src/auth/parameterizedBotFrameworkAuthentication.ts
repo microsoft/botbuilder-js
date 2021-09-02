@@ -227,6 +227,13 @@ export class ParameterizedBotFrameworkAuthentication extends BotFrameworkAuthent
         authHeader: string,
         channelId: string
     ): Promise<ClaimsIdentity> {
+        // Add allowed token issuers from configuration (if present)
+        if (this.authConfiguration.validTokenIssuers?.length > 0) {
+            const validIssuers = Array.from(ToBotFromBotOrEmulatorTokenValidationParameters.issuer);
+            validIssuers.push(...this.authConfiguration.validTokenIssuers);
+            ToBotFromBotOrEmulatorTokenValidationParameters.issuer = validIssuers;
+        }
+
         const tokenExtractor = new JwtTokenExtractor(
             ToBotFromBotOrEmulatorTokenValidationParameters,
             this.toBotFromEmulatorOpenIdMetadataUrl,
@@ -304,6 +311,13 @@ export class ParameterizedBotFrameworkAuthentication extends BotFrameworkAuthent
         authHeader: string,
         channelId: string
     ): Promise<ClaimsIdentity> {
+        // Add allowed token issuers from configuration (if present)
+        if (this.authConfiguration.validTokenIssuers?.length > 0) {
+            const validIssuers = Array.from(ToBotFromBotOrEmulatorTokenValidationParameters.issuer);
+            validIssuers.push(...this.authConfiguration.validTokenIssuers);
+            ToBotFromBotOrEmulatorTokenValidationParameters.issuer = validIssuers;
+        }
+
         const tokenExtractor: JwtTokenExtractor = new JwtTokenExtractor(
             ToBotFromBotOrEmulatorTokenValidationParameters,
             this.toBotFromEmulatorOpenIdMetadataUrl,

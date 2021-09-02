@@ -1,3 +1,6 @@
+/**
+ * @module botframework-connector
+ */
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
@@ -23,6 +26,11 @@ export class PasswordServiceClientCredentialFactory implements ServiceClientCred
      */
     password: string | null;
 
+    /**
+     * The tenant ID of the Azure AD tenant where the bot is created.
+     */
+    tenantId: string | null;
+
     // Protects against JSON.stringify leaking secrets
     private toJSON(): unknown {
         return {
@@ -31,9 +39,10 @@ export class PasswordServiceClientCredentialFactory implements ServiceClientCred
         };
     }
 
-    constructor(appId: string, password: string) {
+    constructor(appId: string, password: string, tenantId: string) {
         this.appId = appId;
         this.password = password;
+        this.tenantId = tenantId;
     }
 
     async isValidAppId(appId = ''): Promise<boolean> {
@@ -65,7 +74,7 @@ export class PasswordServiceClientCredentialFactory implements ServiceClientCred
             credentials =
                 appId == null
                     ? MicrosoftAppCredentials.Empty
-                    : new MicrosoftAppCredentials(appId, this.password, undefined, audience);
+                    : new MicrosoftAppCredentials(appId, this.password, this.tenantId, audience);
         } else if (normalizedEndpoint === GovernmentConstants.ToChannelFromBotLoginUrl.toLowerCase()) {
             credentials =
                 appId == null
@@ -75,12 +84,13 @@ export class PasswordServiceClientCredentialFactory implements ServiceClientCred
                           undefined,
                           GovernmentConstants.ToChannelFromBotOAuthScope
                       )
-                    : new MicrosoftAppCredentials(appId, this.password, undefined, audience);
+                    : new MicrosoftAppCredentials(appId, this.password, this.tenantId, audience);
             normalizedEndpoint = loginEndpoint;
         } else {
             credentials =
                 appId == null
                     ? new PrivateCloudAppCredentials(
+                          undefined,
                           undefined,
                           undefined,
                           undefined,
@@ -90,6 +100,7 @@ export class PasswordServiceClientCredentialFactory implements ServiceClientCred
                     : new PrivateCloudAppCredentials(
                           appId,
                           this.password,
+                          this.tenantId,
                           audience,
                           normalizedEndpoint,
                           validateAuthority
@@ -107,11 +118,12 @@ class PrivateCloudAppCredentials extends MicrosoftAppCredentials {
     constructor(
         appId: string,
         password: string,
+        tenantId: string,
         oAuthScope: string,
         oAuthEndpoint: string,
         validateAuthority: boolean
     ) {
-        super(appId, password, undefined, oAuthScope);
+        super(appId, password, tenantId, oAuthScope);
         this.oAuthEndpoint = oAuthEndpoint;
         this._validateAuthority = validateAuthority;
     }

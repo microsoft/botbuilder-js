@@ -21,6 +21,7 @@ import { ServiceCollection } from 'botbuilder-dialogs-adaptive-runtime-core';
 
 import {
     AuthenticationConfiguration,
+    AuthenticationConstants,
     allowedCallersClaimsValidator,
     BotFrameworkAuthentication,
     ServiceClientCredentialsFactory,
@@ -226,6 +227,20 @@ function addSkills(services: ServiceCollection, configuration: Configuration): v
         ({ storage }) => new SkillConversationIdFactory(storage)
     );
 
+    // If TenantId is specified in config, add the tenant as a valid JWT token issuer for Bot to Skill conversation.
+    // The token issuer for MSI and single tenant scenarios will be the tenant where the bot is registered.
+    const validTokenIssuers: string[] = [];
+    const tenantId = configuration.type(['runtimeSettings', 'MicrosoftAppTenantIdKey'], z.string()) ?? '';
+
+    if (tenantId) {
+        // For SingleTenant/MSI auth, the JWT tokens will be issued from the bot's home tenant.
+        // So, these issuers need to be added to the list of valid token issuers for authenticating activity requests.
+        validTokenIssuers.push(`${AuthenticationConstants.ValidTokenIssuerUrlTemplateV1}${tenantId}/`);
+        validTokenIssuers.push(`${AuthenticationConstants.ValidTokenIssuerUrlTemplateV2}${tenantId}/v2.0`);
+        validTokenIssuers.push(`${AuthenticationConstants.ValidGovernmentTokenIssuerUrlTemplateV1}${tenantId}{0}/`);
+        validTokenIssuers.push(`${AuthenticationConstants.ValidGovernmentTokenIssuerUrlTemplateV2}${tenantId}/v2.0`);
+    }
+
     services.addFactory<AuthenticationConfiguration>('authenticationConfiguration', () => {
         const allowedCallers =
             configuration.type(['runtimeSettings', 'skills', 'allowedCallers'], z.array(z.string())) ?? [];
@@ -248,14 +263,16 @@ function addSkills(services: ServiceCollection, configuration: Configuration): v
             // runtimeSettings.sills are ignored
             return new AuthenticationConfiguration(
                 undefined,
-                allowedCallersClaimsValidator(skills.map((skill) => skill.msAppId))
+                allowedCallersClaimsValidator(skills.map((skill) => skill.msAppId)),
+                validTokenIssuers
             );
         } else {
             // If the config entry for runtimeSettings.skills.allowedCallers contains entries, then we are a skill and
             // we validate caller against this list
             return new AuthenticationConfiguration(
                 undefined,
-                allowedCallers.length ? allowedCallersClaimsValidator(allowedCallers) : undefined
+                allowedCallers.length ? allowedCallersClaimsValidator(allowedCallers) : undefined,
+                validTokenIssuers
             );
         }
     });
