@@ -25,6 +25,31 @@ describe('ConfigurationServiceClientCredentialFactory', function () {
         set(_path, _val) {}
     }
 
+    class SingleTenantConfig {
+        static Config = {
+            MicrosoftAppId: 'singleAppId',
+            MicrosoftAppPassword: 'singleAppPassword',
+            MicrosoftAppType: 'SingleTenant',
+            MicrosoftAppTenantId: 'singleAppTenantId',
+        };
+
+        constructor(config = {}) {
+            this.configuration = Object.assign({}, SingleTenantConfig.Config, config);
+        }
+
+        get(_path) {
+            return this.configuration;
+        }
+
+        set(_path, _val) {}
+    }
+
+    const MSIConfig = {
+        MicrosoftAppId: 'msiAppId',
+        MicrosoftAppType: 'UserAssignedMsi',
+        MicrosoftAppTenantId: 'msiAppTenantId',
+    };
+
     it('constructor should work', function () {
         const bfAuth = new ConfigurationServiceClientCredentialFactory(TestConfiguration.DefaultConfig);
         assert.strictEqual(bfAuth.appId, TestConfiguration.DefaultConfig.MicrosoftAppId);
@@ -62,5 +87,94 @@ describe('ConfigurationServiceClientCredentialFactory', function () {
                 return true;
             }
         );
+    });
+
+    it('createServiceClientCredentialFactory with singleTenant config should work', function () {
+        const config = new SingleTenantConfig();
+        const bfAuth = createServiceClientCredentialFactoryFromConfiguration(config);
+        assert.strictEqual(bfAuth.appId, SingleTenantConfig.Config.MicrosoftAppId);
+        assert.strictEqual(bfAuth.password, SingleTenantConfig.Config.MicrosoftAppPassword);
+        assert.strictEqual(bfAuth.tenantId, SingleTenantConfig.Config.MicrosoftAppTenantId);
+    });
+
+    it('createServiceClientCredentialFactory singleTenant without tenantId should throw', function () {
+        const config = new SingleTenantConfig({
+            MicrosoftAppId: 'singleAppId',
+            MicrosoftAppPassword: 'singleAppPassword',
+            MicrosoftAppType: 'SingleTenant',
+            MicrosoftAppTenantId: undefined,
+        });
+
+        assert.throws(
+            () => createServiceClientCredentialFactoryFromConfiguration(config),
+            (err) => {
+                console.log('Error: ', err.message);
+                assert(err.message === 'MicrosoftAppTenantId is required for SingleTenant in configuration.');
+                return true;
+            }
+        );
+        // assert.throws(() => createServiceClientCredentialFactoryFromConfiguration(config), {
+        //     name: Error,
+        //     message: 'MicrosoftAppTenantId is required for SingleTenant in configuration.',
+        // });
+        // const bfAuth = createServiceClientCredentialFactoryFromConfiguration(config);
+        // assert.strictEqual('tenantId', bfAuth.tenantId);
+    });
+
+    it('createServiceClientCredentialFactory with singleTenant without appId should throw', function () {
+        const config = new TestConfiguration(singleTenantConfig);
+        config.MicrosoftAppId = undefined;
+
+        assert.throws(() => createServiceClientCredentialFactoryFromConfiguration(config), {
+            name: Error,
+            message: 'MicrosoftAppId is required for SingleTenant in configuration.',
+        });
+    });
+
+    it('createServiceClientCredentialFactory with singleTenant without appPassword should throw', function () {
+        const config = new TestConfiguration(singleTenantConfig);
+        config.MicrosoftAppPassword = undefined;
+
+        assert.throws(() => createServiceClientCredentialFactoryFromConfiguration(config), {
+            name: Error,
+            message: 'MicrosoftAppPassword is required for SingleTenant in configuration.',
+        });
+    });
+
+    it('createServiceClientCredentialFactory with manageIdentityApp config should work', function () {
+        const config = new TestConfiguration(MSIConfig);
+        const bfAuth = createServiceClientCredentialFactoryFromConfiguration(config);
+        assert.strictEqual(bfAuth.appId, MSIConfig.MicrosoftAppId);
+        assert.strictEqual(bfAuth.tenantId, MSIConfig.MicrosoftAppTenantId);
+    });
+
+    it('createServiceClientCredentialFactory manageIdentityApp without tenantId should throw', function () {
+        const config = new TestConfiguration(MSIConfig);
+        config.MicrosoftAppTenantId = undefined;
+
+        assert.throws(() => createServiceClientCredentialFactoryFromConfiguration(config), {
+            name: Error,
+            message: 'MicrosoftAppTenantId is required for MSI in configuration.',
+        });
+    });
+
+    it('createServiceClientCredentialFactory manageIdentityApp without appId should throw', function () {
+        const config = new TestConfiguration(MSIConfig);
+        config.MicrosoftAppId = undefined;
+
+        assert.throws(() => createServiceClientCredentialFactoryFromConfiguration(config), {
+            name: Error,
+            message: 'MicrosoftAppId is required for MSI in configuration.',
+        });
+    });
+
+    it('createServiceClientCredentialFactory manageIdentityApp with appPassword should throw', function () {
+        const config = new TestConfiguration(MSIConfig);
+        config.MicrosoftAppPassword = 'msiAppPassword';
+
+        assert.throws(() => createServiceClientCredentialFactoryFromConfiguration(config), {
+            name: Error,
+            message: 'MicrosoftAppPassword must not be set for MSI in configuration.',
+        });
     });
 });

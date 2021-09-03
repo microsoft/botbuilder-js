@@ -2,14 +2,18 @@
   "private": true,
   "name": "botbuilder-js",
   "version": "4.13.0",
-  "workspaces": [
+  "workspaces": {
+    "packages": [
     "libraries/*",
     "libraries/functional-tests/dialogToDialog/*",
     "libraries/testskills/*",
     "testing/*",
     "tools",
     "transcripts"
-  ],
+    ],
+    "nohoist": ["**@azure-identity"]
+  },
+
   "scripts": {
     "browser-functional-test": "yarn workspace browser-functional-tests test",
     "build": "wsrun -e -m -t build",
