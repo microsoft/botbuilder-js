@@ -11,7 +11,7 @@ import { EvaluateExpressionDelegate, ExpressionEvaluator } from '../expressionEv
 import { ExpressionType } from '../expressionType';
 import { FunctionUtils } from '../functionUtils';
 import { ReturnType } from '../returnType';
-
+import { j2xParser } from 'fast-xml-parser';
 /**
  * Return the newline string according to the environment.
  */
@@ -28,48 +28,24 @@ export class XML extends ExpressionEvaluator {
     }
 
     private static platformSpecificXML(args: unknown[]): { value: unknown; error: string } {
-        if (typeof window !== 'undefined' || typeof self !== 'undefined') {
-            // this is for evaluating in browser environment, however it is not covered by any test currently
-            // fast-xml-parser package can run on browser environment, see ref: https://www.npmjs.com/package/fast-xml-parser
-            // eslint-disable-next-line @typescript-eslint/no-var-requires
-            const FastXmlParser = require('fast-xml-parser').j2xParser;
-            let result: unknown;
-            let error: string;
-            let obj: unknown;
-            try {
-                if (typeof args[0] === 'string') {
-                    obj = JSON.parse(args[0] as string);
-                } else if (typeof args[0] === 'object') {
-                    obj = args[0];
-                }
-                const parser = new FastXmlParser();
-                result = parser.parse(obj);
-            } catch (err) {
-                error = `${args[0]} is not a valid json`;
+        let result: unknown;
+        let error: string;
+        let obj: unknown;
+        try {
+            if (typeof args[0] === 'string') {
+                obj = JSON.parse(args[0] as string);
+            } else if (typeof args[0] === 'object') {
+                obj = args[0];
             }
-
-            return { value: result, error: error };
-        } else {
-            // xml2js only support node environment, see ref: https://github.com/Leonidas-from-XIV/node-xml2js
-            let result: unknown;
-            let error: string;
-            // eslint-disable-next-line @typescript-eslint/no-var-requires
-            const xml2js = require('xml2js');
-            let obj: unknown;
-            try {
-                if (typeof args[0] === 'string') {
-                    obj = JSON.parse(args[0] as string);
-                } else if (typeof args[0] === 'object') {
-                    obj = args[0];
-                }
-
-                const builder = new xml2js.Builder();
-                result = builder.buildObject(obj);
-            } catch (err) {
-                error = `${args[0]} is not a valid json`;
-            }
-
-            return { value: result, error: error };
+            const parser = new j2xParser({
+                indentBy: '  ',
+                format: true,
+            });
+            result = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n' + parser.parse(obj).trim('\n');
+        } catch (err) {
+            error = `${args[0]} is not a valid json`;
         }
+
+        return { value: result, error: error };
     }
 }
