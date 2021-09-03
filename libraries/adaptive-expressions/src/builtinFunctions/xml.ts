@@ -30,7 +30,7 @@ export class XML extends ExpressionEvaluator {
     private static platformSpecificXML(args: unknown[]): { value: unknown; error: string } {
         if (typeof window !== 'undefined' || typeof self !== 'undefined') {
             // this is for evaluating in browser environment, however it is not covered by any test currently
-            // xml-js package can run on browser environment, see ref: https://www.npmjs.com/package/x2js
+            // xml-js package can run on browser environment, see ref: https://www.npmjs.com/package/xml-js
             // eslint-disable-next-line @typescript-eslint/no-var-requires
             const XMLJS = require('xml-js');
             let result: unknown;
