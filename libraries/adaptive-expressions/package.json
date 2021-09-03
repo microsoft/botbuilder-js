@@ -36,7 +36,7 @@
     "lodash.isequal": "^4.5.0",
     "lru-cache": "^5.1.1",
     "uuid": "^8.3.2",
-    "xml-js": "^1.6.11",
+    "fast-xml-parser": "^3.19.0",
     "xml2js": "^0.4.23",
     "@xmldom/xmldom": "^0.7.4",
     "xpath": "^0.0.32"

@@ -30,9 +30,9 @@ export class XML extends ExpressionEvaluator {
     private static platformSpecificXML(args: unknown[]): { value: unknown; error: string } {
         if (typeof window !== 'undefined' || typeof self !== 'undefined') {
             // this is for evaluating in browser environment, however it is not covered by any test currently
-            // xml-js package can run on browser environment, see ref: https://www.npmjs.com/package/xml-js
+            // fast-xml-parser package can run on browser environment, see ref: https://www.npmjs.com/package/fast-xml-parser
             // eslint-disable-next-line @typescript-eslint/no-var-requires
-            const XMLJS = require('xml-js');
+            const FastXmlParser = require('fast-xml-parser').j2xParser;
             let result: unknown;
             let error: string;
             let obj: unknown;
@@ -42,8 +42,8 @@ export class XML extends ExpressionEvaluator {
                 } else if (typeof args[0] === 'object') {
                     obj = args[0];
                 }
-
-                result = new XMLJS.json2xml(obj);
+                const parser = new FastXmlParser();
+                result = parser.parse(obj);
             } catch (err) {
                 error = `${args[0]} is not a valid json`;
             }
