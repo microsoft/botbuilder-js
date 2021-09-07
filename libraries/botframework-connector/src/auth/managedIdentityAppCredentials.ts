@@ -9,12 +9,14 @@
 import { TokenResponse } from 'adal-node';
 import { AppCredentials } from './appCredentials';
 import { JwtTokenProviderFactoryInterface } from './jwtTokenProviderFactoryInterface';
+import { ManagedIdentityAuthenticator } from './managedIdentityAuthenticator';
 
 /**
  * Managed Service Identity auth implementation.
  */
 export class ManagedIdentityAppCredentials extends AppCredentials {
     private readonly tokenProviderFactory: JwtTokenProviderFactoryInterface;
+    private authenticator: ManagedIdentityAuthenticator;
 
     /**
      * Managed Identity for AAD credentials auth and caching.
@@ -41,7 +43,22 @@ export class ManagedIdentityAppCredentials extends AppCredentials {
     /**
      * @inheritdoc
      */
-    protected refreshToken(): Promise<TokenResponse> {
-        throw new Error('ManagedIdentityAppCredentials.refreshToken: Method not implemented.');
+    protected async refreshToken(): Promise<TokenResponse> {
+        if (!this.authenticator) {
+            this.authenticator = new ManagedIdentityAuthenticator(
+                this.appId,
+                this.oAuthScope,
+                this.tokenProviderFactory
+            );
+        }
+
+        const token = await this.authenticator.getToken();
+        return {
+            accessToken: token.token,
+            expiresOn: new Date(token.expiresOnTimestamp),
+            tokenType: 'Bearer',
+            expiresIn: (token.expiresOnTimestamp - Date.now()) / 1000,
+            resource: this.oAuthScope,
+        };
     }
 }

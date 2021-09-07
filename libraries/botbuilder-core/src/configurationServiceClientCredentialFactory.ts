@@ -78,7 +78,7 @@ export class ConfigurationServiceClientCredentialFactory extends PasswordService
         } = TypedConfig.nonstrict().parse(factoryOptions);
         super(MicrosoftAppId, MicrosoftAppPassword, MicrosoftAppTenantId);
 
-        const appType = MicrosoftAppType ?? MicrosoftAppTypes.MultiTenant;
+        const appType = MicrosoftAppTypes[MicrosoftAppType] ?? MicrosoftAppTypes.MultiTenant;
 
         switch (appType) {
             case MicrosoftAppTypes.UserAssignedMsi:

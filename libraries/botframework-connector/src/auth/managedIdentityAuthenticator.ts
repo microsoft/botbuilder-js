@@ -6,9 +6,8 @@
  * Licensed under the MIT License.
  */
 
-import { AccessToken, AuthenticationError, DefaultAzureCredential } from '@azure/identity';
+import { AccessToken, DefaultAzureCredential } from '@azure/identity';
 import { retry } from '../../../botbuilder-stdlib/lib';
-import * as adal from 'adal-node';
 import { JwtTokenProviderFactoryInterface } from './jwtTokenProviderFactoryInterface';
 
 /**
@@ -43,27 +42,12 @@ export class ManagedIdentityAuthenticator {
     }
 
     /**
-     * ..
+     * Acquires the security token.
      *
-     * @param forceRefresh ..
-     * @returns ...
+     * @returns {Promise<AccessToken>} An [AccessToken](xref:botframework-connector.AccessToken).
      */
-    // public async getToken(): Promise<AccessToken> {
-    //     const result = await retry(() => this.acquireToken(), this.handleTokenProviderException());
-    //     const result2 = adal.ac
-    //     return result;
-    // }
-
-    // private async acquireToken(): Promise<AccessToken> {
-    //     const authResult = await this.tokenProvider.getToken(this.resource);
-    //     return authResult;
-    // }
-
-    // private handleTokenProviderException(error: Error, retryCount: number): number {
-    //     if (error.name === 'AuthenticationError') {
-    //         return 0;
-    //     } else {
-    //         retryCount;
-    //     }
-    // }
+    public async getToken(): Promise<AccessToken> {
+        // Retry gradually, starting from 10 ms up to 5 times.
+        return retry(() => this.tokenProvider.getToken(this.resource), 5, 10);
+    }
 }
