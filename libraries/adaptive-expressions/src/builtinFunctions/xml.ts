@@ -41,7 +41,7 @@ export class XML extends ExpressionEvaluator {
                 indentBy: '  ',
                 format: true,
             });
-            result = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n' + parser.parse(obj).trim('\n');
+            result = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n${parser.parse(obj)}`.trim();
         } catch (err) {
             error = `${args[0]} is not a valid json`;
         }
