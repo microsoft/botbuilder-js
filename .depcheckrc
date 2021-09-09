@@ -1,2 +1,2 @@
-ignores: ["mocha", "rimraf", "sinon", "@types/xmldom"]
+ignores: ["mocha", "rimraf", "sinon"]
 ignorePatterns: [".eslintrc.json", "lib"]
