@@ -55,7 +55,7 @@
     "build:browserify:run": "browserify -s BFC --debug lib/browser.js | exorcist lib/browser.js.map | sponge lib/browser.js",
     "build:downlevel-dts": "downlevel-dts lib _ts3.4/lib --checksum",
     "clean": "rimraf _ts3.4 lib tsconfig.tsbuildinfo",
-    "depcheck": "depcheck --config ../../.depcheckrc --ignores azure",
+    "depcheck": "depcheck --config ../../.depcheckrc --ignores azure,sinon",
     "lint": "eslint . --ext .js,.ts",
     "postbuild": "npm-run-all -p build:browserify build:downlevel-dts",
     "test": "yarn build && yarn test:mocha",
