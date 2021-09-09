@@ -39,6 +39,7 @@
     "cross-fetch": "^3.0.5",
     "jsonwebtoken": "8.0.1",
     "rsa-pem-from-mod-exp": "^0.8.4",
+    "sinon": "^11.1.2",
     "zod": "~1.11.17"
   },
   "devDependencies": {
