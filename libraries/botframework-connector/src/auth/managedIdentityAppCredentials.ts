@@ -10,6 +10,7 @@ import { TokenResponse } from 'adal-node';
 import { AppCredentials } from './appCredentials';
 import { JwtTokenProviderFactoryInterface } from './jwtTokenProviderFactoryInterface';
 import { ManagedIdentityAuthenticator } from './managedIdentityAuthenticator';
+import * as assert from 'assert';
 
 /**
  * Managed Service Identity auth implementation.
@@ -28,13 +29,8 @@ export class ManagedIdentityAppCredentials extends AppCredentials {
     constructor(appId: string, oAuthScope: string, tokenProviderFactory: JwtTokenProviderFactoryInterface) {
         super(appId, null, oAuthScope);
 
-        if (!appId || appId.trim() === '') {
-            throw new Error('ManagedIdentityAppCredentials.constructor(): missing appid.');
-        }
-
-        if (!tokenProviderFactory) {
-            throw new Error('ManagedIdentityAppCredentials.constructor(): missing tokenProviderFactory.');
-        }
+        assert(appId?.trim(), 'ManagedIdentityAppCredentials.constructor(): missing appid.');
+        assert(tokenProviderFactory, 'ManagedIdentityAppCredentials.constructor(): missing tokenProviderFactory.');
 
         this.tokenProviderFactory = tokenProviderFactory;
         super.appId = appId;
@@ -44,13 +40,11 @@ export class ManagedIdentityAppCredentials extends AppCredentials {
      * @inheritdoc
      */
     protected async refreshToken(): Promise<TokenResponse> {
-        if (!this.authenticator) {
-            this.authenticator = new ManagedIdentityAuthenticator(
-                this.appId,
-                this.oAuthScope,
-                this.tokenProviderFactory
-            );
-        }
+        this.authenticator ??= new ManagedIdentityAuthenticator(
+            this.appId,
+            this.oAuthScope,
+            this.tokenProviderFactory
+        );
 
         const token = await this.authenticator.getToken();
         return {

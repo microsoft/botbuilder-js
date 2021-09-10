@@ -14,11 +14,6 @@ import { Claim } from './claimsIdentity';
 export type ValidateClaims = (claims: Claim[]) => Promise<void>;
 
 /**
- * Used to contain a collection of valid JWT token issuers.
- */
-export type ValidTokenIssuers = string[];
-
-/**
  * General configuration settings for authentication.
  */
 export class AuthenticationConfiguration {

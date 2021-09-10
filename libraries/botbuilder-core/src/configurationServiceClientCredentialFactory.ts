@@ -2,6 +2,7 @@
 // Licensed under the MIT License.
 
 import * as z from 'zod';
+import assert from 'assert';
 import { Configuration } from 'botbuilder-dialogs-adaptive-runtime-core';
 import {
     ManagedIdentityServiceClientCredentialsFactory,
@@ -82,17 +83,9 @@ export class ConfigurationServiceClientCredentialFactory extends PasswordService
 
         switch (appType) {
             case MicrosoftAppTypes.UserAssignedMsi:
-                if (!MicrosoftAppId || MicrosoftAppId.trim() === '') {
-                    throw new Error('MicrosoftAppId is required for MSI in configuration.');
-                }
-
-                if (!MicrosoftAppTenantId || MicrosoftAppTenantId.trim() === '') {
-                    throw new Error('MicrosoftAppTenantId is required for MSI in configuration.');
-                }
-
-                if (MicrosoftAppPassword && MicrosoftAppPassword.trim() !== '') {
-                    throw new Error('MicrosoftAppPassword must not be set for MSI in configuration.');
-                }
+                assert(MicrosoftAppId?.trim(), 'MicrosoftAppId is required for MSI in configuration.');
+                assert(MicrosoftAppTenantId?.trim(), 'MicrosoftAppTenantId is required for MSI in configuration.');
+                assert(!MicrosoftAppPassword?.trim(), 'MicrosoftAppPassword must not be set for MSI in configuration.');
 
                 this.inner = new ManagedIdentityServiceClientCredentialsFactory(
                     MicrosoftAppId,
@@ -100,17 +93,9 @@ export class ConfigurationServiceClientCredentialFactory extends PasswordService
                 );
                 break;
             case MicrosoftAppTypes.SingleTenant:
-                if (!MicrosoftAppId || MicrosoftAppId.trim() === '') {
-                    throw new Error('MicrosoftAppId is required for SingleTenant in configuration.');
-                }
-
-                if (!MicrosoftAppTenantId || MicrosoftAppTenantId.trim() === '') {
-                    throw new Error('MicrosoftAppTenantId is required for SingleTenant in configuration.');
-                }
-
-                if (!MicrosoftAppPassword || MicrosoftAppPassword.trim() === '') {
-                    throw new Error('MicrosoftAppPassword is required for SingleTenant in configuration.');
-                }
+                assert(MicrosoftAppId?.trim(), 'MicrosoftAppId is required for SingleTenant in configuration.');
+                assert(MicrosoftAppPassword?.trim(), 'MicrosoftAppPassword is required for SingleTenant in configuration.');
+                assert(MicrosoftAppTenantId?.trim(), 'MicrosoftAppTenantId is required for SingleTenant in configuration.');
 
                 this.inner = new PasswordServiceClientCredentialFactory(
                     MicrosoftAppId,
