@@ -68,45 +68,22 @@ export class PasswordServiceClientCredentialFactory implements ServiceClientCred
         }
 
         let credentials: MicrosoftAppCredentials;
-        let normalizedEndpoint = loginEndpoint?.toLowerCase();
+        const normalizedEndpoint = loginEndpoint?.toLowerCase();
+
         if (normalizedEndpoint?.startsWith(AuthenticationConstants.ToChannelFromBotLoginUrlPrefix)) {
-            // TODO: Unpack necessity of these empty credentials based on the loginEndpoint as no tokens are fetched when auth is disabled.
-            credentials =
-                appId == null
-                    ? MicrosoftAppCredentials.Empty
-                    : new MicrosoftAppCredentials(appId, this.password, this.tenantId, audience);
+            credentials = new MicrosoftAppCredentials(appId, this.password, this.tenantId, audience);
         } else if (normalizedEndpoint === GovernmentConstants.ToChannelFromBotLoginUrl.toLowerCase()) {
-            credentials =
-                appId == null
-                    ? new MicrosoftAppCredentials(
-                          undefined,
-                          undefined,
-                          undefined,
-                          GovernmentConstants.ToChannelFromBotOAuthScope
-                      )
-                    : new MicrosoftAppCredentials(appId, this.password, this.tenantId, audience);
-            normalizedEndpoint = loginEndpoint;
+            credentials = new MicrosoftAppCredentials(appId, this.password, this.tenantId, audience);
         } else {
-            credentials =
-                appId == null
-                    ? new PrivateCloudAppCredentials(
-                          undefined,
-                          undefined,
-                          undefined,
-                          undefined,
-                          normalizedEndpoint,
-                          validateAuthority
-                      )
-                    : new PrivateCloudAppCredentials(
-                          appId,
-                          this.password,
-                          this.tenantId,
-                          audience,
-                          normalizedEndpoint,
-                          validateAuthority
-                      );
+            credentials = new PrivateCloudAppCredentials(
+                appId,
+                this.password,
+                this.tenantId,
+                audience,
+                normalizedEndpoint,
+                validateAuthority
+            );
         }
-        credentials.oAuthEndpoint = normalizedEndpoint;
         return credentials;
     }
 }
