@@ -231,8 +231,8 @@ export class ParameterizedBotFrameworkAuthentication extends BotFrameworkAuthent
         if (this.authConfiguration.validTokenIssuers?.length > 0) {
             ToBotFromBotOrEmulatorTokenValidationParameters.issuer = [
                 ...ToBotFromBotOrEmulatorTokenValidationParameters.issuer,
-                ...this.authConfiguration.validTokenIssuers
-            ]
+                ...this.authConfiguration.validTokenIssuers,
+            ];
         }
 
         const tokenExtractor = new JwtTokenExtractor(

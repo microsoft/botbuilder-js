@@ -39,7 +39,7 @@ describe('ManagedIdentityAuthenticator', function () {
         testInput.forEach(({ name, value }) => {
             it(`should throw if appId is ${name}`, function () {
                 assert.throws(() => new ManagedIdentityAuthenticator(value, testAudience, tokenProvider), {
-                    name: 'Error',
+                    name: 'AssertionError',
                     message: errorMsgAppId,
                 });
             });
@@ -48,7 +48,7 @@ describe('ManagedIdentityAuthenticator', function () {
         testInput.forEach(({ name, value }) => {
             it(`should throw if audience is ${name}`, function () {
                 assert.throws(() => new ManagedIdentityAuthenticator(testAppId, value, tokenProvider), {
-                    name: 'Error',
+                    name: 'AssertionError',
                     message: errorMsgAudience,
                 });
             });
@@ -56,7 +56,7 @@ describe('ManagedIdentityAuthenticator', function () {
 
         it('should throw with null tokenProviderFactory', function () {
             assert.throws(() => new ManagedIdentityAuthenticator(testAppId, testAudience, null), {
-                name: 'Error',
+                name: 'AssertionError',
                 message: errorMsgToken,
             });
         });

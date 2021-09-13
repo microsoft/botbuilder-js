@@ -25,7 +25,7 @@ describe('JwtTokenProviderFactory', function () {
             it(`should throw if appId is ${name}`, function () {
                 const sut = new JwtTokenProviderFactory();
                 assert.throws(() => sut.createAzureServiceTokenProvider(value), {
-                    name: 'Error',
+                    name: 'AssertionError',
                     message: errorMsg,
                 });
             });

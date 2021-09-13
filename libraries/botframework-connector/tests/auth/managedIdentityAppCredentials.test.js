@@ -39,7 +39,7 @@ describe('ManagedIdentityAppCredentials', function () {
             it(`should throw if appId is ${name}`, function () {
                 const tokenProvider = new JwtTokenProviderFactory();
                 assert.throws(() => new ManagedIdentityAppCredentials(value, testAudience, tokenProvider), {
-                    name: 'Error',
+                    name: 'AssertionError',
                     message: errorMsgAppId,
                 });
             });
@@ -47,7 +47,7 @@ describe('ManagedIdentityAppCredentials', function () {
 
         it('should throw with null tokenProviderFactory', function () {
             assert.throws(() => new ManagedIdentityAppCredentials(testAppId, testAudience, null), {
-                name: 'Error',
+                name: 'AssertionError',
                 message: errorMsgToken,
             });
         });

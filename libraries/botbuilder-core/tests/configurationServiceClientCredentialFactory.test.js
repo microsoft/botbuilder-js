@@ -92,7 +92,7 @@ describe('ConfigurationServiceClientCredentialFactory', function () {
         const config = new TestConfiguration({ ...SingleTenantConfig, MicrosoftAppTenantId: undefined });
 
         assert.throws(() => createServiceClientCredentialFactoryFromConfiguration(config), {
-            name: 'Error',
+            name: 'AssertionError',
             message: 'MicrosoftAppTenantId is required for SingleTenant in configuration.',
         });
     });
@@ -101,7 +101,7 @@ describe('ConfigurationServiceClientCredentialFactory', function () {
         const config = new TestConfiguration({ ...SingleTenantConfig, MicrosoftAppId: undefined });
 
         assert.throws(() => createServiceClientCredentialFactoryFromConfiguration(config), {
-            name: 'Error',
+            name: 'AssertionError',
             message: 'MicrosoftAppId is required for SingleTenant in configuration.',
         });
     });
@@ -110,7 +110,7 @@ describe('ConfigurationServiceClientCredentialFactory', function () {
         const config = new TestConfiguration({ ...SingleTenantConfig, MicrosoftAppPassword: undefined });
 
         assert.throws(() => createServiceClientCredentialFactoryFromConfiguration(config), {
-            name: 'Error',
+            name: 'AssertionError',
             message: 'MicrosoftAppPassword is required for SingleTenant in configuration.',
         });
     });
@@ -127,7 +127,7 @@ describe('ConfigurationServiceClientCredentialFactory', function () {
         const config = new TestConfiguration({ ...MSIConfig, MicrosoftAppTenantId: undefined });
 
         assert.throws(() => createServiceClientCredentialFactoryFromConfiguration(config), {
-            name: 'Error',
+            name: 'AssertionError',
             message: 'MicrosoftAppTenantId is required for MSI in configuration.',
         });
     });
@@ -136,7 +136,7 @@ describe('ConfigurationServiceClientCredentialFactory', function () {
         const config = new TestConfiguration({ ...MSIConfig, MicrosoftAppId: undefined });
 
         assert.throws(() => createServiceClientCredentialFactoryFromConfiguration(config), {
-            name: 'Error',
+            name: 'AssertionError',
             message: 'MicrosoftAppId is required for MSI in configuration.',
         });
     });
@@ -145,7 +145,7 @@ describe('ConfigurationServiceClientCredentialFactory', function () {
         const config = new TestConfiguration({ ...MSIConfig, MicrosoftAppPassword: 'msiAppPassword' });
 
         assert.throws(() => createServiceClientCredentialFactoryFromConfiguration(config), {
-            name: 'Error',
+            name: 'AssertionError',
             message: 'MicrosoftAppPassword must not be set for MSI in configuration.',
         });
     });
