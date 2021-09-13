@@ -67,7 +67,7 @@ export class XPath extends ExpressionEvaluator {
             // eslint-disable-next-line @typescript-eslint/no-var-requires
             const xpath = require('xpath');
             // eslint-disable-next-line @typescript-eslint/no-var-requires
-            const { DOMParser } = require('xmldom');
+            const { DOMParser } = require('@xmldom/xmldom');
             let doc: XMLDocument;
             try {
                 doc = new DOMParser().parseFromString(args[0], 'text/xml');
