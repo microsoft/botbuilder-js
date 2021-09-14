@@ -59,7 +59,7 @@ export class ManagedIdentityServiceClientCredentialsFactory extends ServiceClien
      * @inheritdoc
      */
     public async createCredentials(appId: string, audience: string): Promise<ServiceClientCredentials> {
-        if (!await this.isValidAppId(appId)) {
+        if (!(await this.isValidAppId(appId))) {
             throw new Error('ManagedIdentityServiceClientCredentialsFactory.createCredentials(): Invalid Managed ID.');
         }
 

@@ -40,11 +40,7 @@ export class ManagedIdentityAppCredentials extends AppCredentials {
      * @inheritdoc
      */
     protected async refreshToken(): Promise<TokenResponse> {
-        this.authenticator ??= new ManagedIdentityAuthenticator(
-            this.appId,
-            this.oAuthScope,
-            this.tokenProviderFactory
-        );
+        this.authenticator ??= new ManagedIdentityAuthenticator(this.appId, this.oAuthScope, this.tokenProviderFactory);
 
         const token = await this.authenticator.getToken();
         return {

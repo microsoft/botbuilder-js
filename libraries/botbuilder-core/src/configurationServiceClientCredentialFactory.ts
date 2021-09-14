@@ -28,7 +28,7 @@ const TypedConfig = z
         /**
          * The type of app id assigned to your bot in the [Bot Framework Portal](https://dev.botframework.com/).
          */
-        MicrosoftAppType: z.string(),
+        MicrosoftAppType: z.enum(["MultiTenant", "SingleTenant", "UserAssignedMsi"]),
 
         /**
          * The tenant id assigned to your bot in the [Bot Framework Portal](https://dev.botframework.com/).
@@ -36,23 +36,6 @@ const TypedConfig = z
         MicrosoftAppTenantId: z.string(),
     })
     .partial();
-
-enum MicrosoftAppTypes {
-    /*
-     * MultiTenant app which uses botframework.com tenant to acquire tokens.
-     */
-    MultiTenant,
-
-    /*
-     * SingleTenant app which uses the bot's host tenant to acquire tokens.
-     */
-    SingleTenant,
-
-    /*
-     * App with a user assigned Managed Identity (MSI), which will be used as the AppId for token acquisition.
-     */
-    UserAssignedMsi,
-}
 
 /**
  * Contains settings used to configure a [ConfigurationServiceClientCredentialFactory](xref:botbuilder-core.ConfigurationServiceClientCredentialFactory) instance.
@@ -79,10 +62,14 @@ export class ConfigurationServiceClientCredentialFactory extends PasswordService
         } = TypedConfig.nonstrict().parse(factoryOptions);
         super(MicrosoftAppId, MicrosoftAppPassword, MicrosoftAppTenantId);
 
-        const appType = MicrosoftAppTypes[MicrosoftAppType] ?? MicrosoftAppTypes.MultiTenant;
+        const MultiTenant = TypedConfig.shape.MicrosoftAppType.parse('MultiTenant');
+        const SingleTenant = TypedConfig.shape.MicrosoftAppType.parse('SingleTenant');
+        const UserAssignedMsi = TypedConfig.shape.MicrosoftAppType.parse('UserAssignedMsi');
+
+        const appType = TypedConfig.shape.MicrosoftAppType.parse(MicrosoftAppType) ?? MultiTenant;
 
         switch (appType) {
-            case MicrosoftAppTypes.UserAssignedMsi:
+            case UserAssignedMsi:
                 assert(MicrosoftAppId?.trim(), 'MicrosoftAppId is required for MSI in configuration.');
                 assert(MicrosoftAppTenantId?.trim(), 'MicrosoftAppTenantId is required for MSI in configuration.');
                 assert(!MicrosoftAppPassword?.trim(), 'MicrosoftAppPassword must not be set for MSI in configuration.');
@@ -92,7 +79,7 @@ export class ConfigurationServiceClientCredentialFactory extends PasswordService
                     new JwtTokenProviderFactory()
                 );
                 break;
-            case MicrosoftAppTypes.SingleTenant:
+            case SingleTenant:
                 assert(MicrosoftAppId?.trim(), 'MicrosoftAppId is required for SingleTenant in configuration.');
                 assert(MicrosoftAppPassword?.trim(), 'MicrosoftAppPassword is required for SingleTenant in configuration.');
                 assert(MicrosoftAppTenantId?.trim(), 'MicrosoftAppTenantId is required for SingleTenant in configuration.');
