@@ -237,7 +237,7 @@ function addSkills(services: ServiceCollection, configuration: Configuration): v
         // So, these issuers need to be added to the list of valid token issuers for authenticating activity requests.
         validTokenIssuers.push(`${AuthenticationConstants.ValidTokenIssuerUrlTemplateV1}${tenantId}/`);
         validTokenIssuers.push(`${AuthenticationConstants.ValidTokenIssuerUrlTemplateV2}${tenantId}/v2.0`);
-        validTokenIssuers.push(`${AuthenticationConstants.ValidGovernmentTokenIssuerUrlTemplateV1}${tenantId}{0}/`);
+        validTokenIssuers.push(`${AuthenticationConstants.ValidGovernmentTokenIssuerUrlTemplateV1}${tenantId}/`);
         validTokenIssuers.push(`${AuthenticationConstants.ValidGovernmentTokenIssuerUrlTemplateV2}${tenantId}/v2.0`);
     }
 

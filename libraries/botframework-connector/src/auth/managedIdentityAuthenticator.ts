@@ -9,7 +9,7 @@
 import { AccessToken, DefaultAzureCredential } from '@azure/identity';
 import { retry } from 'botbuilder-stdlib';
 import { JwtTokenProviderFactoryInterface } from './jwtTokenProviderFactoryInterface';
-import * as assert from 'assert';
+import {ok} from 'assert';
 
 /**
  * Abstraction to acquire tokens from a Managed Service Identity.
@@ -26,9 +26,9 @@ export class ManagedIdentityAuthenticator {
      * @param tokenProviderFactory The JWT token provider factory to use.
      */
     constructor(appId: string, resource: string, tokenProviderFactory: JwtTokenProviderFactoryInterface) {
-        assert(appId?.trim(), 'ManagedIdentityAuthenticator.constructor(): missing appid.');
-        assert(resource?.trim(), 'ManagedIdentityAuthenticator.constructor(): missing resource.');
-        assert(tokenProviderFactory, 'ManagedIdentityAuthenticator.constructor(): missing tokenProviderFactory.');
+        ok(appId?.trim(), 'ManagedIdentityAuthenticator.constructor(): missing appid.');
+        ok(resource?.trim(), 'ManagedIdentityAuthenticator.constructor(): missing resource.');
+        ok(tokenProviderFactory, 'ManagedIdentityAuthenticator.constructor(): missing tokenProviderFactory.');
 
         this.resource = resource;
         this.tokenProvider = tokenProviderFactory.createAzureServiceTokenProvider(appId);

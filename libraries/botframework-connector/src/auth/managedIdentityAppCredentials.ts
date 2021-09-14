@@ -10,7 +10,7 @@ import { TokenResponse } from 'adal-node';
 import { AppCredentials } from './appCredentials';
 import { JwtTokenProviderFactoryInterface } from './jwtTokenProviderFactoryInterface';
 import { ManagedIdentityAuthenticator } from './managedIdentityAuthenticator';
-import * as assert from 'assert';
+import {ok} from 'assert';
 
 /**
  * Managed Service Identity auth implementation.
@@ -29,8 +29,8 @@ export class ManagedIdentityAppCredentials extends AppCredentials {
     constructor(appId: string, oAuthScope: string, tokenProviderFactory: JwtTokenProviderFactoryInterface) {
         super(appId, null, oAuthScope);
 
-        assert(appId?.trim(), 'ManagedIdentityAppCredentials.constructor(): missing appid.');
-        assert(tokenProviderFactory, 'ManagedIdentityAppCredentials.constructor(): missing tokenProviderFactory.');
+        ok(appId?.trim(), 'ManagedIdentityAppCredentials.constructor(): missing appid.');
+        ok(tokenProviderFactory, 'ManagedIdentityAppCredentials.constructor(): missing tokenProviderFactory.');
 
         this.tokenProviderFactory = tokenProviderFactory;
         super.appId = appId;
