@@ -8,7 +8,7 @@
 
 import { DefaultAzureCredential } from '@azure/identity';
 import { JwtTokenProviderFactoryInterface } from './jwtTokenProviderFactoryInterface';
-import {ok} from 'assert';
+import { ok } from 'assert';
 
 /**
  * @inheritdoc

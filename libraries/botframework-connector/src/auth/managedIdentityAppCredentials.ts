@@ -10,7 +10,7 @@ import { TokenResponse } from 'adal-node';
 import { AppCredentials } from './appCredentials';
 import { JwtTokenProviderFactoryInterface } from './jwtTokenProviderFactoryInterface';
 import { ManagedIdentityAuthenticator } from './managedIdentityAuthenticator';
-import {ok} from 'assert';
+import { ok } from 'assert';
 
 /**
  * Managed Service Identity auth implementation.

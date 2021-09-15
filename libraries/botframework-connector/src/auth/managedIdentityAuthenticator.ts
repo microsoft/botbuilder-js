@@ -9,7 +9,7 @@
 import { AccessToken, DefaultAzureCredential } from '@azure/identity';
 import { retry } from 'botbuilder-stdlib';
 import { JwtTokenProviderFactoryInterface } from './jwtTokenProviderFactoryInterface';
-import {ok} from 'assert';
+import { ok } from 'assert';
 
 /**
  * Abstraction to acquire tokens from a Managed Service Identity.
