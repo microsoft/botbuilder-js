@@ -74,6 +74,7 @@ export class PasswordServiceClientCredentialFactory implements ServiceClientCred
             credentials = new MicrosoftAppCredentials(appId, this.password, this.tenantId, audience);
         } else if (normalizedEndpoint === GovernmentConstants.ToChannelFromBotLoginUrl.toLowerCase()) {
             credentials = new MicrosoftAppCredentials(appId, this.password, this.tenantId, audience);
+            credentials.oAuthEndpoint = loginEndpoint;
         } else {
             credentials = new PrivateCloudAppCredentials(
                 appId,

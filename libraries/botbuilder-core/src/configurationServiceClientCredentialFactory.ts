@@ -62,14 +62,11 @@ export class ConfigurationServiceClientCredentialFactory extends PasswordService
         } = TypedConfig.nonstrict().parse(factoryOptions);
         super(MicrosoftAppId, MicrosoftAppPassword, MicrosoftAppTenantId);
 
-        const MultiTenant = TypedConfig.shape.MicrosoftAppType.parse('MultiTenant');
         const SingleTenant = TypedConfig.shape.MicrosoftAppType.parse('SingleTenant');
         const UserAssignedMsi = TypedConfig.shape.MicrosoftAppType.parse('UserAssignedMsi');
 
-        const appType = TypedConfig.shape.MicrosoftAppType.parse(MicrosoftAppType) ?? MultiTenant;
-
-        switch (appType) {
-            case UserAssignedMsi:
+        switch (String(MicrosoftAppType).toLocaleLowerCase()) {
+            case UserAssignedMsi.toLocaleLowerCase():
                 assert(MicrosoftAppId?.trim(), 'MicrosoftAppId is required for MSI in configuration.');
                 assert(MicrosoftAppTenantId?.trim(), 'MicrosoftAppTenantId is required for MSI in configuration.');
                 assert(!MicrosoftAppPassword?.trim(), 'MicrosoftAppPassword must not be set for MSI in configuration.');
@@ -79,7 +76,7 @@ export class ConfigurationServiceClientCredentialFactory extends PasswordService
                     new JwtTokenProviderFactory()
                 );
                 break;
-            case SingleTenant:
+                case SingleTenant.toLocaleLowerCase():
                 assert(MicrosoftAppId?.trim(), 'MicrosoftAppId is required for SingleTenant in configuration.');
                 assert(MicrosoftAppPassword?.trim(), 'MicrosoftAppPassword is required for SingleTenant in configuration.');
                 assert(MicrosoftAppTenantId?.trim(), 'MicrosoftAppTenantId is required for SingleTenant in configuration.');
