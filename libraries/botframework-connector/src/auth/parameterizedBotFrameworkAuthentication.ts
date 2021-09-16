@@ -314,9 +314,10 @@ export class ParameterizedBotFrameworkAuthentication extends BotFrameworkAuthent
     ): Promise<ClaimsIdentity> {
         // Add allowed token issuers from configuration (if present)
         if (this.authConfiguration.validTokenIssuers?.length > 0) {
-            const validIssuers = Array.from(ToBotFromBotOrEmulatorTokenValidationParameters.issuer);
-            validIssuers.push(...this.authConfiguration.validTokenIssuers);
-            ToBotFromBotOrEmulatorTokenValidationParameters.issuer = validIssuers;
+            ToBotFromBotOrEmulatorTokenValidationParameters.issuer = [
+                ...ToBotFromBotOrEmulatorTokenValidationParameters.issuer,
+                ...this.authConfiguration.validTokenIssuers,
+            ];
         }
 
         const tokenExtractor: JwtTokenExtractor = new JwtTokenExtractor(

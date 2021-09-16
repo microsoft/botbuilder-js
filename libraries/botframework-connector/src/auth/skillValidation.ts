@@ -138,9 +138,10 @@ export namespace SkillValidation {
 
         // Add allowed token issuers from configuration (if present)
         if (authConfig.validTokenIssuers?.length > 0) {
-            const validIssuers = Array.from(ToBotFromBotOrEmulatorTokenValidationParameters.issuer);
-            validIssuers.push(...authConfig.validTokenIssuers);
-            ToBotFromBotOrEmulatorTokenValidationParameters.issuer = validIssuers;
+            ToBotFromBotOrEmulatorTokenValidationParameters.issuer = [
+                ...ToBotFromBotOrEmulatorTokenValidationParameters.issuer,
+                ...this.authConfiguration.validTokenIssuers,
+            ];
         }
         const tokenExtractor = new JwtTokenExtractor(
             ToBotFromBotOrEmulatorTokenValidationParameters,
