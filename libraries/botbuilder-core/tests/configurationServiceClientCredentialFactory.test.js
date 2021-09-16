@@ -80,6 +80,28 @@ describe('ConfigurationServiceClientCredentialFactory', function () {
         );
     });
 
+    it('non-defined MicrosoftAppType configuration should work', function () {
+        const config = new TestConfiguration();
+
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const { MicrosoftAppType, ...configuration } = config.configuration;
+        config.configuration = configuration;
+
+        createServiceClientCredentialFactoryFromConfiguration(config);
+    });
+
+    it('empty-string MicrosoftAppType configuration should work', function () {
+        const config = new TestConfiguration({ MicrosoftAppType: '' });
+
+        createServiceClientCredentialFactoryFromConfiguration(config);
+    });
+
+    it('casing-string MicrosoftAppType configuration should work', function () {
+        const config = new TestConfiguration({ ...SingleTenantConfig, MicrosoftAppType: 'singletenant' });
+
+        createServiceClientCredentialFactoryFromConfiguration(config);
+    });
+
     it('createServiceClientCredentialFactory with singleTenant config should work', function () {
         const config = new TestConfiguration(SingleTenantConfig);
         const bfAuth = createServiceClientCredentialFactoryFromConfiguration(config);
