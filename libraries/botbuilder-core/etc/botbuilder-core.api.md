@@ -33,7 +33,7 @@ import { O365ConnectorCard } from 'botframework-schema';
 import { PasswordServiceClientCredentialFactory } from 'botframework-connector';
 import { ReceiptCard } from 'botframework-schema';
 import { ResourceResponse } from 'botframework-schema';
-import type { ServiceClientCredentials } from '@azure/ms-rest-js';
+import { ServiceClientCredentials } from 'botframework-connector';
 import { ServiceClientCredentialsFactory } from 'botframework-connector';
 import { ServiceCollection } from 'botbuilder-dialogs-adaptive-runtime-core';
 import { SignInUrlResponse } from 'botframework-schema';

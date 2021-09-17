@@ -3,6 +3,9 @@
 
 import { ServiceClientCredentials } from '@azure/ms-rest-js';
 
+// Export underlying type for convenience
+export { ServiceClientCredentials };
+
 /**
  * The ServiceClientCredentialsFactory abstract class that allows Bots to provide their own
  * ServiceClientCredentials for bot to bot channel or skill bot to parent bot calls.

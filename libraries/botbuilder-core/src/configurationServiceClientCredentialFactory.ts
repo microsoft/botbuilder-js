@@ -5,13 +5,12 @@ import * as z from 'zod';
 import assert from 'assert';
 import { Configuration } from 'botbuilder-dialogs-adaptive-runtime-core';
 import {
-    ManagedIdentityServiceClientCredentialsFactory,
     JwtTokenProviderFactory,
+    ManagedIdentityServiceClientCredentialsFactory,
     PasswordServiceClientCredentialFactory,
+    ServiceClientCredentials,
     ServiceClientCredentialsFactory,
 } from 'botframework-connector';
-
-import type { ServiceClientCredentials } from '@azure/ms-rest-js';
 
 const MultiTenant = 'MultiTenant';
 const SingleTenant = 'SingleTenant';
