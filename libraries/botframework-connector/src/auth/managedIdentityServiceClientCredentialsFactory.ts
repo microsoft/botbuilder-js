@@ -10,6 +10,7 @@ import { JwtTokenProviderFactoryInterface } from './jwtTokenProviderFactoryInter
 import { ServiceClientCredentials } from '@azure/ms-rest-js';
 import { ServiceClientCredentialsFactory } from './serviceClientCredentialsFactory';
 import { ManagedIdentityAppCredentials } from './managedIdentityAppCredentials';
+import { ok } from 'assert';
 
 /*
  * A Managed Identity implementation of the [ServiceClientCredentialsFactory](xref:botframework-connector.ServiceClientCredentialsFactory) abstract class.
@@ -26,15 +27,11 @@ export class ManagedIdentityServiceClientCredentialsFactory extends ServiceClien
      */
     constructor(appId: string, tokenProviderFactory: JwtTokenProviderFactoryInterface) {
         super();
-        if (!appId || appId.trim() === '') {
-            throw new Error('ManagedIdentityServiceClientCredentialsFactory.constructor(): missing appid.');
-        }
-
-        if (!tokenProviderFactory) {
-            throw new Error(
-                'ManagedIdentityServiceClientCredentialsFactory.constructor(): missing tokenProviderFactory.'
-            );
-        }
+        ok(appId?.trim(), 'ManagedIdentityServiceClientCredentialsFactory.constructor(): missing appid.');
+        ok(
+            tokenProviderFactory,
+            'ManagedIdentityServiceClientCredentialsFactory.constructor(): missing tokenProviderFactory.'
+        );
 
         this.appId = appId;
         this.tokenProviderFactory = tokenProviderFactory;
@@ -59,9 +56,10 @@ export class ManagedIdentityServiceClientCredentialsFactory extends ServiceClien
      * @inheritdoc
      */
     public async createCredentials(appId: string, audience: string): Promise<ServiceClientCredentials> {
-        if (!(await this.isValidAppId(appId))) {
-            throw new Error('ManagedIdentityServiceClientCredentialsFactory.createCredentials(): Invalid Managed ID.');
-        }
+        ok(
+            await this.isValidAppId(appId),
+            'ManagedIdentityServiceClientCredentialsFactory.createCredentials(): Invalid Managed ID.'
+        );
 
         return new ManagedIdentityAppCredentials(this.appId, audience, this.tokenProviderFactory);
     }

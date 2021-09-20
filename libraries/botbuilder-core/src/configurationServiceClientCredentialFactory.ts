@@ -2,7 +2,7 @@
 // Licensed under the MIT License.
 
 import * as z from 'zod';
-import assert from 'assert';
+import { ok } from 'assert';
 import { Configuration } from 'botbuilder-dialogs-adaptive-runtime-core';
 import {
     JwtTokenProviderFactory,
@@ -31,7 +31,7 @@ const TypedConfig = z
         /**
          * The type of app id assigned to your bot in the [Bot Framework Portal](https://dev.botframework.com/).
          */
-        MicrosoftAppType: z.enum([MultiTenant, SingleTenant, UserAssignedMsi]),
+        MicrosoftAppType: z.string(),
 
         /**
          * The tenant id assigned to your bot in the [Bot Framework Portal](https://dev.botframework.com/).
@@ -57,25 +57,21 @@ export class ConfigurationServiceClientCredentialFactory extends PasswordService
      * @param factoryOptions A [ConfigurationServiceClientCredentialFactoryOptions](xref:botbuilder-core.ConfigurationServiceClientCredentialFactoryOptions) object.
      */
     constructor(factoryOptions: ConfigurationServiceClientCredentialFactoryOptions = {}) {
-        // Exclude MicrosoftAppType from Zod to ignore-casing comparison.
-        // .NET code:
-        // https://github.com/microsoft/botbuilder-dotnet/blob/d84c6a1f76a56dbee0d18a16adf5d678e5b30035/libraries/integration/Microsoft.Bot.Builder.Integration.AspNet.Core/ConfigurationServiceClientCredentialFactory.cs#L53-L55
-        const { MicrosoftAppType, ...options } = factoryOptions;
-
         const {
             MicrosoftAppId = null,
             MicrosoftAppPassword = null,
+            MicrosoftAppType = null,
             MicrosoftAppTenantId = null,
-        } = TypedConfig.nonstrict().parse(options);
+        } = TypedConfig.nonstrict().parse(factoryOptions);
         super(MicrosoftAppId, MicrosoftAppPassword, MicrosoftAppTenantId);
 
-        const appType = MicrosoftAppType || MultiTenant;
+        const appType = MicrosoftAppType?.trim() || MultiTenant;
 
         switch (appType.toLocaleLowerCase()) {
             case UserAssignedMsi.toLocaleLowerCase():
-                assert(MicrosoftAppId?.trim(), 'MicrosoftAppId is required for MSI in configuration.');
-                assert(MicrosoftAppTenantId?.trim(), 'MicrosoftAppTenantId is required for MSI in configuration.');
-                assert(!MicrosoftAppPassword?.trim(), 'MicrosoftAppPassword must not be set for MSI in configuration.');
+                ok(MicrosoftAppId?.trim(), 'MicrosoftAppId is required for MSI in configuration.');
+                ok(MicrosoftAppTenantId?.trim(), 'MicrosoftAppTenantId is required for MSI in configuration.');
+                ok(!MicrosoftAppPassword?.trim(), 'MicrosoftAppPassword must not be set for MSI in configuration.');
 
                 this.inner = new ManagedIdentityServiceClientCredentialsFactory(
                     MicrosoftAppId,
@@ -83,15 +79,9 @@ export class ConfigurationServiceClientCredentialFactory extends PasswordService
                 );
                 break;
             case SingleTenant.toLocaleLowerCase():
-                assert(MicrosoftAppId?.trim(), 'MicrosoftAppId is required for SingleTenant in configuration.');
-                assert(
-                    MicrosoftAppPassword?.trim(),
-                    'MicrosoftAppPassword is required for SingleTenant in configuration.'
-                );
-                assert(
-                    MicrosoftAppTenantId?.trim(),
-                    'MicrosoftAppTenantId is required for SingleTenant in configuration.'
-                );
+                ok(MicrosoftAppId?.trim(), 'MicrosoftAppId is required for SingleTenant in configuration.');
+                ok(MicrosoftAppPassword?.trim(), 'MicrosoftAppPassword is required for SingleTenant in configuration.');
+                ok(MicrosoftAppTenantId?.trim(), 'MicrosoftAppTenantId is required for SingleTenant in configuration.');
 
                 this.inner = new PasswordServiceClientCredentialFactory(
                     MicrosoftAppId,

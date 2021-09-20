@@ -39,10 +39,30 @@ export class PasswordServiceClientCredentialFactory implements ServiceClientCred
         };
     }
 
-    constructor(appId: string, password: string, tenantId: string) {
+    /**
+     * Initializes a new instance of the [PasswordServiceClientCredentialFactory](xref:botframework-connector.PasswordServiceClientCredentialFactory) class.
+     *
+     * @param appId The app ID.
+     * @param password The app password.
+     */
+    constructor(appId: string, password: string);
+
+    /**
+     * Initializes a new instance of the [PasswordServiceClientCredentialFactory](xref:botframework-connector.PasswordServiceClientCredentialFactory) class.
+     *
+     * @param appId The app ID.
+     * @param password The app password.
+     * @param tenantId Tenant ID of the Azure AD tenant where the bot is created.
+     */
+    constructor(appId: string, password: string, tenantId: string);
+
+    /**
+     * @internal
+     */
+    constructor(appId: string, password: string, tenantId?: string) {
         this.appId = appId;
         this.password = password;
-        this.tenantId = tenantId;
+        this.tenantId = tenantId ?? null;
     }
 
     async isValidAppId(appId = ''): Promise<boolean> {

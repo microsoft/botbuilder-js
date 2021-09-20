@@ -30,7 +30,7 @@ describe('ManagedIdentityServiceClientCredentialsFactory', function () {
         testInput.forEach(({ name, value }) => {
             it(`should throw if appId is ${name}`, function () {
                 assert.throws(() => new ManagedIdentityServiceClientCredentialsFactory(value, testTokenProvider), {
-                    name: 'Error',
+                    name: 'AssertionError',
                     message: errorMsgAppId,
                 });
             });
@@ -38,7 +38,7 @@ describe('ManagedIdentityServiceClientCredentialsFactory', function () {
 
         it('should throw with null tokenProviderFactory', function () {
             assert.throws(() => new ManagedIdentityServiceClientCredentialsFactory(testAppId, null), {
-                name: 'Error',
+                name: 'AssertionError',
                 message: errorMsgToken,
             });
         });
@@ -72,10 +72,10 @@ describe('ManagedIdentityServiceClientCredentialsFactory', function () {
 
         it('should throw with invalid appId', async function () {
             const sut = new ManagedIdentityServiceClientCredentialsFactory(testAppId, testTokenProvider);
-            await assert.rejects(
-                sut.createCredentials('invalidAppId', testAudience),
-                new Error('ManagedIdentityServiceClientCredentialsFactory.createCredentials(): Invalid Managed ID.')
-            );
+            await assert.rejects(sut.createCredentials('invalidAppId', testAudience), {
+                name: 'AssertionError',
+                message: 'ManagedIdentityServiceClientCredentialsFactory.createCredentials(): Invalid Managed ID.',
+            });
         });
     });
 });

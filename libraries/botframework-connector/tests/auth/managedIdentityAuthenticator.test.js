@@ -105,13 +105,10 @@ describe('ManagedIdentityAuthenticator', function () {
 
             const sut = new ManagedIdentityAuthenticator(testAppId, testAudience, tokenProvider);
 
-            try {
-                await sut.getToken();
-            } catch (error) {
-                assert.strictEqual(error.message, 'AuthError');
-            } finally {
-                assert.strictEqual(callsToAcquireToken, maxRetries);
-            }
+            await assert.rejects(sut.getToken(), {
+                message: 'AuthError',
+            });
+            assert.strictEqual(callsToAcquireToken, maxRetries);
         });
     });
 });
