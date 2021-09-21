@@ -141,7 +141,7 @@ export namespace SkillValidation {
             ...ToBotFromBotOrEmulatorTokenValidationParameters,
             issuer: [
                 ...ToBotFromBotOrEmulatorTokenValidationParameters.issuer,
-                ...(authConfig.validTokenIssuers || []),
+                ...(authConfig.validTokenIssuers ?? []),
             ],
         };
 

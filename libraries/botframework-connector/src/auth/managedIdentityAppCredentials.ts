@@ -17,7 +17,7 @@ import { ok } from 'assert';
  */
 export class ManagedIdentityAppCredentials extends AppCredentials {
     private readonly tokenProviderFactory: JwtTokenProviderFactoryInterface;
-    private authenticator: ManagedIdentityAuthenticator;
+    private readonly authenticator: ManagedIdentityAuthenticator;
 
     /**
      * Managed Identity for AAD credentials auth and caching.

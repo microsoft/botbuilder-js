@@ -232,7 +232,7 @@ export class ParameterizedBotFrameworkAuthentication extends BotFrameworkAuthent
             ...ToBotFromBotOrEmulatorTokenValidationParameters,
             issuer: [
                 ...ToBotFromBotOrEmulatorTokenValidationParameters.issuer,
-                ...(this.authConfiguration.validTokenIssuers || []),
+                ...(this.authConfiguration.validTokenIssuers ?? []),
             ],
         };
 
@@ -318,7 +318,7 @@ export class ParameterizedBotFrameworkAuthentication extends BotFrameworkAuthent
             ...ToBotFromBotOrEmulatorTokenValidationParameters,
             issuer: [
                 ...ToBotFromBotOrEmulatorTokenValidationParameters.issuer,
-                ...(this.authConfiguration.validTokenIssuers || []),
+                ...(this.authConfiguration.validTokenIssuers ?? []),
             ],
         };
 
