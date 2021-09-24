@@ -41,20 +41,20 @@ describe('ConfigurationServiceClientCredentialFactory', function () {
         MicrosoftAppPassword: undefined,
     };
 
-    it('constructor should work', function () {
+    it('constructor() should work', function () {
         const bfAuth = new ConfigurationServiceClientCredentialFactory(TestConfiguration.DefaultConfig);
         assert.strictEqual(bfAuth.appId, TestConfiguration.DefaultConfig.MicrosoftAppId);
         assert.strictEqual(bfAuth.password, TestConfiguration.DefaultConfig.MicrosoftAppPassword);
     });
 
-    it('createServiceClientCredentialFactoryFromConfiguration should work', function () {
+    it('createServiceClientCredentialFactoryFromConfiguration() should work', function () {
         const config = new TestConfiguration();
         const bfAuth = createServiceClientCredentialFactoryFromConfiguration(config);
         assert.strictEqual(bfAuth.appId, TestConfiguration.DefaultConfig.MicrosoftAppId);
         assert.strictEqual(bfAuth.password, TestConfiguration.DefaultConfig.MicrosoftAppPassword);
     });
 
-    it('undefined or null configuration values should result in null values', function () {
+    it('createServiceClientCredentialFactoryFromConfiguration() with undefined or null configuration values should result in null values', function () {
         const config = new TestConfiguration({
             MicrosoftAppId: undefined,
             MicrosoftAppPassword: undefined,
@@ -64,7 +64,7 @@ describe('ConfigurationServiceClientCredentialFactory', function () {
         assert.strictEqual(bfAuth.password, null);
     });
 
-    it('non-string values should fail', function () {
+    it('createServiceClientCredentialFactoryFromConfiguration() with non-string values should fail', function () {
         const config = new TestConfiguration({
             MicrosoftAppId: 1,
             MicrosoftAppPassword: true,
@@ -80,7 +80,7 @@ describe('ConfigurationServiceClientCredentialFactory', function () {
         );
     });
 
-    it('non-defined MicrosoftAppType configuration should work', function () {
+    it('createServiceClientCredentialFactoryFromConfiguration() with non-defined MicrosoftAppType configuration should work', function () {
         const config = new TestConfiguration();
 
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -90,19 +90,19 @@ describe('ConfigurationServiceClientCredentialFactory', function () {
         createServiceClientCredentialFactoryFromConfiguration(config);
     });
 
-    it('empty-string MicrosoftAppType configuration should work', function () {
+    it('createServiceClientCredentialFactoryFromConfiguration() with empty-string MicrosoftAppType configuration should work', function () {
         const config = new TestConfiguration({ MicrosoftAppType: '' });
 
         createServiceClientCredentialFactoryFromConfiguration(config);
     });
 
-    it('casing-string MicrosoftAppType configuration should work', function () {
+    it('createServiceClientCredentialFactoryFromConfiguration() with casing-string MicrosoftAppType configuration should work', function () {
         const config = new TestConfiguration({ ...SingleTenantConfig, MicrosoftAppType: 'singletenant' });
 
         createServiceClientCredentialFactoryFromConfiguration(config);
     });
 
-    it('createServiceClientCredentialFactory with singleTenant config should work', function () {
+    it('createServiceClientCredentialFactoryFromConfiguration() singleTenant with config should work', function () {
         const config = new TestConfiguration(SingleTenantConfig);
         const bfAuth = createServiceClientCredentialFactoryFromConfiguration(config);
         assert.strictEqual(bfAuth.appId, config.configuration.MicrosoftAppId);
@@ -110,7 +110,7 @@ describe('ConfigurationServiceClientCredentialFactory', function () {
         assert.strictEqual(bfAuth.tenantId, config.configuration.MicrosoftAppTenantId);
     });
 
-    it('createServiceClientCredentialFactory singleTenant without tenantId should throw', function () {
+    it('createServiceClientCredentialFactoryFromConfiguration() singleTenant without tenantId should throw', function () {
         const config = new TestConfiguration({ ...SingleTenantConfig, MicrosoftAppTenantId: undefined });
 
         assert.throws(() => createServiceClientCredentialFactoryFromConfiguration(config), {
@@ -119,7 +119,7 @@ describe('ConfigurationServiceClientCredentialFactory', function () {
         });
     });
 
-    it('createServiceClientCredentialFactory with singleTenant without appId should throw', function () {
+    it('createServiceClientCredentialFactoryFromConfiguration() singleTenant without appId should throw', function () {
         const config = new TestConfiguration({ ...SingleTenantConfig, MicrosoftAppId: undefined });
 
         assert.throws(() => createServiceClientCredentialFactoryFromConfiguration(config), {
@@ -128,7 +128,7 @@ describe('ConfigurationServiceClientCredentialFactory', function () {
         });
     });
 
-    it('createServiceClientCredentialFactory with singleTenant without appPassword should throw', function () {
+    it('createServiceClientCredentialFactoryFromConfiguration() singleTenant without appPassword should throw', function () {
         const config = new TestConfiguration({ ...SingleTenantConfig, MicrosoftAppPassword: undefined });
 
         assert.throws(() => createServiceClientCredentialFactoryFromConfiguration(config), {
@@ -137,7 +137,7 @@ describe('ConfigurationServiceClientCredentialFactory', function () {
         });
     });
 
-    it('createServiceClientCredentialFactory with manageIdentityApp config should work', function () {
+    it('createServiceClientCredentialFactoryFromConfiguration() manageIdentityApp with config should work', function () {
         const config = new TestConfiguration(MSIConfig);
         const bfAuth = createServiceClientCredentialFactoryFromConfiguration(config);
 
@@ -145,7 +145,7 @@ describe('ConfigurationServiceClientCredentialFactory', function () {
         assert.strictEqual(bfAuth.tenantId, config.configuration.MicrosoftAppTenantId);
     });
 
-    it('createServiceClientCredentialFactory manageIdentityApp without tenantId should throw', function () {
+    it('createServiceClientCredentialFactoryFromConfiguration() manageIdentityApp without tenantId should throw', function () {
         const config = new TestConfiguration({ ...MSIConfig, MicrosoftAppTenantId: undefined });
 
         assert.throws(() => createServiceClientCredentialFactoryFromConfiguration(config), {
@@ -154,7 +154,7 @@ describe('ConfigurationServiceClientCredentialFactory', function () {
         });
     });
 
-    it('createServiceClientCredentialFactory manageIdentityApp without appId should throw', function () {
+    it('createServiceClientCredentialFactoryFromConfiguration() manageIdentityApp without appId should throw', function () {
         const config = new TestConfiguration({ ...MSIConfig, MicrosoftAppId: undefined });
 
         assert.throws(() => createServiceClientCredentialFactoryFromConfiguration(config), {
@@ -163,7 +163,7 @@ describe('ConfigurationServiceClientCredentialFactory', function () {
         });
     });
 
-    it('createServiceClientCredentialFactory manageIdentityApp with appPassword should throw', function () {
+    it('createServiceClientCredentialFactoryFromConfiguration() manageIdentityApp with appPassword should throw', function () {
         const config = new TestConfiguration({ ...MSIConfig, MicrosoftAppPassword: 'msiAppPassword' });
 
         assert.throws(() => createServiceClientCredentialFactoryFromConfiguration(config), {

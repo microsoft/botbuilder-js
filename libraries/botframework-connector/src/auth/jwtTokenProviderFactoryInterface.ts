@@ -6,16 +6,17 @@
  * Licensed under the MIT License.
  */
 
-import { DefaultAzureCredential } from '@azure/identity';
+import type { DefaultAzureCredential } from '@azure/identity';
 
 /*
  * A factory that can create OAuth token providers for generating JWT auth tokens.
  */
 export interface JwtTokenProviderFactoryInterface {
-    /*
-     * Creates a new instance of the <see cref="DefaultAzureCredential"/> class.
+    /**
+     * Creates a new instance of the `DefaultAzureCredential` class provided by the `@azure/identity` library.
+     *
      * @param appId Client id for the managed identity to be used for acquiring tokens.
-     * @returns A new instance of the <see cref="DefaultAzureCredential"/> class.
+     * @returns A new instance of the `DefaultAzureCredential` class provided by the `@azure/identity` library.
      */
     createAzureServiceTokenProvider(appId: string): DefaultAzureCredential;
 }

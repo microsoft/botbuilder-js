@@ -3,9 +3,10 @@
 
 const assert = require('assert');
 const {
+    JwtTokenProviderFactory,
+    ManagedIdentityAppCredentials,
     ManagedIdentityServiceClientCredentialsFactory,
-} = require('../../lib/auth/managedIdentityServiceClientCredentialsFactory');
-const { JwtTokenProviderFactory } = require('../../lib/auth/jwtTokenProviderFactory');
+} = require('../../lib');
 
 const testAppId = 'foo';
 const testAudience = 'bar';
@@ -16,66 +17,58 @@ const testInput = [
     { name: 'empty', value: '' },
     { name: 'blank', value: ' ' },
 ];
-const errorMsgAppId = 'ManagedIdentityServiceClientCredentialsFactory.constructor(): missing appid.';
+const errorMsgAppId = 'ManagedIdentityServiceClientCredentialsFactory.constructor(): missing appId.';
 const errorMsgToken = 'ManagedIdentityServiceClientCredentialsFactory.constructor(): missing tokenProviderFactory.';
 
 describe('ManagedIdentityServiceClientCredentialsFactory', function () {
-    describe('Constructor', function () {
-        it('succeeds with appId and tokenProvider', async function () {
-            const sut = new ManagedIdentityServiceClientCredentialsFactory(testAppId, testTokenProvider);
-            assert.strictEqual(testAppId, sut.appId);
-            assert.strictEqual(testTokenProvider, sut.tokenProviderFactory);
-        });
+    it('constructor() succeeds with appId and tokenProvider', async function () {
+        const sut = new ManagedIdentityServiceClientCredentialsFactory(testAppId, testTokenProvider);
+        assert.strictEqual(testAppId, sut.appId);
+        assert.strictEqual(testTokenProvider, sut.tokenProviderFactory);
+    });
 
-        testInput.forEach(({ name, value }) => {
-            it(`should throw if appId is ${name}`, function () {
-                assert.throws(() => new ManagedIdentityServiceClientCredentialsFactory(value, testTokenProvider), {
-                    name: 'AssertionError',
-                    message: errorMsgAppId,
-                });
-            });
-        });
-
-        it('should throw with null tokenProviderFactory', function () {
-            assert.throws(() => new ManagedIdentityServiceClientCredentialsFactory(testAppId, null), {
+    testInput.forEach(({ name, value }) => {
+        it(`constructor() should throw if appId is ${name}`, function () {
+            assert.throws(() => new ManagedIdentityServiceClientCredentialsFactory(value, testTokenProvider), {
                 name: 'AssertionError',
-                message: errorMsgToken,
+                message: errorMsgAppId,
             });
         });
     });
 
-    describe('IsValidAppId', function () {
-        it('should be valid', async function () {
-            const sut = new ManagedIdentityServiceClientCredentialsFactory(testAppId, testTokenProvider);
-            assert.strictEqual(true, await sut.isValidAppId(testAppId));
-        });
-
-        it('should not be valid', async function () {
-            const sut = new ManagedIdentityServiceClientCredentialsFactory(testAppId, testTokenProvider);
-            assert.strictEqual(false, await sut.isValidAppId('invalidAppId'));
+    it('constructor() should throw with null tokenProviderFactory', function () {
+        assert.throws(() => new ManagedIdentityServiceClientCredentialsFactory(testAppId, null), {
+            name: 'AssertionError',
+            message: errorMsgToken,
         });
     });
 
-    describe('IsAuthenticationDisabled', function () {
-        it('should not be disabled', async function () {
-            const sut = new ManagedIdentityServiceClientCredentialsFactory(testAppId, testTokenProvider);
-            assert.strictEqual(false, await sut.isAuthenticationDisabled());
-        });
+    it('isValidAppId() should be valid', async function () {
+        const sut = new ManagedIdentityServiceClientCredentialsFactory(testAppId, testTokenProvider);
+        assert.strictEqual(true, await sut.isValidAppId(testAppId));
     });
 
-    describe('CreateCredentials', function () {
-        it('should create credentials', async function () {
-            const sut = new ManagedIdentityServiceClientCredentialsFactory(testAppId, testTokenProvider);
-            const credentials = await sut.createCredentials(testAppId, testAudience);
-            assert.notStrictEqual(null, credentials);
-        });
+    it('isValidAppId() should not be valid', async function () {
+        const sut = new ManagedIdentityServiceClientCredentialsFactory(testAppId, testTokenProvider);
+        assert.strictEqual(false, await sut.isValidAppId('invalidAppId'));
+    });
 
-        it('should throw with invalid appId', async function () {
-            const sut = new ManagedIdentityServiceClientCredentialsFactory(testAppId, testTokenProvider);
-            await assert.rejects(sut.createCredentials('invalidAppId', testAudience), {
-                name: 'AssertionError',
-                message: 'ManagedIdentityServiceClientCredentialsFactory.createCredentials(): Invalid Managed ID.',
-            });
+    it('isAuthenticationDisabled() should not be disabled', async function () {
+        const sut = new ManagedIdentityServiceClientCredentialsFactory(testAppId, testTokenProvider);
+        assert.strictEqual(false, await sut.isAuthenticationDisabled());
+    });
+
+    it('createCredentials() should create credentials', async function () {
+        const sut = new ManagedIdentityServiceClientCredentialsFactory(testAppId, testTokenProvider);
+        const credentials = await sut.createCredentials(testAppId, testAudience);
+        assert(credentials instanceof ManagedIdentityAppCredentials);
+    });
+
+    it('createCredentials() should throw with invalid appId', async function () {
+        const sut = new ManagedIdentityServiceClientCredentialsFactory(testAppId, testTokenProvider);
+        await assert.rejects(sut.createCredentials('invalidAppId', testAudience), {
+            name: 'AssertionError',
+            message: 'ManagedIdentityServiceClientCredentialsFactory.createCredentials(): Invalid Managed ID.',
         });
     });
 });

@@ -7,8 +7,8 @@
  */
 
 import { DefaultAzureCredential } from '@azure/identity';
-import { JwtTokenProviderFactoryInterface } from './jwtTokenProviderFactoryInterface';
 import { ok } from 'assert';
+import type { JwtTokenProviderFactoryInterface } from './jwtTokenProviderFactoryInterface';
 
 /**
  * @inheritdoc
@@ -18,7 +18,7 @@ export class JwtTokenProviderFactory implements JwtTokenProviderFactoryInterface
      * @inheritdoc
      */
     createAzureServiceTokenProvider(appId: string): DefaultAzureCredential {
-        ok(appId?.trim(), 'jwtTokenProviderFactory.createAzureServiceTokenProvider(): missing appid.');
+        ok(appId?.trim(), 'jwtTokenProviderFactory.createAzureServiceTokenProvider(): missing appId.');
 
         return new DefaultAzureCredential({ managedIdentityClientId: appId });
     }
