@@ -3,7 +3,6 @@
   "author": "Microsoft Corp.",
   "description": "BotBuilder storage bindings for Azure Blobs services",
   "version": "4.1.6",
-  "preview": true,
   "license": "MIT",
   "keywords": [
     "botbuilder",
