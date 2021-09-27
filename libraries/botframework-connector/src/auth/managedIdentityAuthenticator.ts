@@ -26,7 +26,7 @@ export class ManagedIdentityAuthenticator {
      * @param tokenProviderFactory The JWT token provider factory to use.
      */
     constructor(appId: string, resource: string, tokenProviderFactory: IJwtTokenProviderFactory) {
-        ok(appId?.trim(), 'ManagedIdentityAuthenticator.constructor(): missing appid.');
+        ok(appId?.trim(), 'ManagedIdentityAuthenticator.constructor(): missing appId.');
         ok(resource?.trim(), 'ManagedIdentityAuthenticator.constructor(): missing resource.');
         ok(tokenProviderFactory, 'ManagedIdentityAuthenticator.constructor(): missing tokenProviderFactory.');
 
