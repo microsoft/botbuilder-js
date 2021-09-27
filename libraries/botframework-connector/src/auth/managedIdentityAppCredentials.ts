@@ -6,18 +6,18 @@
  * Licensed under the MIT License.
  */
 
-import type { TokenResponse } from 'adal-node';
-import { ok } from 'assert';
 import { AppCredentials } from './appCredentials';
-import type { JwtTokenProviderFactoryInterface } from './jwtTokenProviderFactoryInterface';
+import type { IJwtTokenProviderFactory } from './jwtTokenProviderFactory';
 import { ManagedIdentityAuthenticator } from './managedIdentityAuthenticator';
+import { TokenResponse } from 'adal-node';
+import { ok } from 'assert';
 
 /**
  * Managed Service Identity auth implementation.
  */
 export class ManagedIdentityAppCredentials extends AppCredentials {
-    private readonly tokenProviderFactory: JwtTokenProviderFactoryInterface;
-    private readonly authenticator: ManagedIdentityAuthenticator;
+    private readonly tokenProviderFactory: IJwtTokenProviderFactory;
+    private authenticator: ManagedIdentityAuthenticator;
 
     /**
      * Managed Identity for AAD credentials auth and caching.
@@ -26,7 +26,7 @@ export class ManagedIdentityAppCredentials extends AppCredentials {
      * @param oAuthScope The scope for the token.
      * @param tokenProviderFactory The JWT token provider factory to use.
      */
-    constructor(appId: string, oAuthScope: string, tokenProviderFactory: JwtTokenProviderFactoryInterface) {
+    constructor(appId: string, oAuthScope: string, tokenProviderFactory: IJwtTokenProviderFactory) {
         super(appId, null, oAuthScope);
 
         ok(appId?.trim(), 'ManagedIdentityAppCredentials.constructor(): missing appId.');

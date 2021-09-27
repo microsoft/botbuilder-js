@@ -25,7 +25,6 @@ export * from './enterpriseChannelValidation';
 export * from './governmentChannelValidation';
 export * from './governmentConstants';
 export * from './jwtTokenProviderFactory';
-export * from './jwtTokenProviderFactoryInterface';
 export * from './jwtTokenValidation';
 export * from './managedIdentityAppCredentials';
 export * from './managedIdentityAuthenticator';

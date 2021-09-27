@@ -8,12 +8,23 @@
 
 import { DefaultAzureCredential } from '@azure/identity';
 import { ok } from 'assert';
-import type { JwtTokenProviderFactoryInterface } from './jwtTokenProviderFactoryInterface';
+
+/*
+ * A factory that can create OAuth token providers for generating JWT auth tokens.
+ */
+export interface IJwtTokenProviderFactory {
+    /*
+     * Creates a new instance of the <see cref="DefaultAzureCredential"/> class.
+     * @param appId Client id for the managed identity to be used for acquiring tokens.
+     * @returns A new instance of the <see cref="DefaultAzureCredential"/> class.
+     */
+    createAzureServiceTokenProvider(appId: string): DefaultAzureCredential;
+}
 
 /**
  * @inheritdoc
  */
-export class JwtTokenProviderFactory implements JwtTokenProviderFactoryInterface {
+export class JwtTokenProviderFactory implements IJwtTokenProviderFactory {
     /**
      * @inheritdoc
      */

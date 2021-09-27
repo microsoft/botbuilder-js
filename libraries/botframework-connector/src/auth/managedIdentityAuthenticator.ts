@@ -7,9 +7,9 @@
  */
 
 import type { AccessToken, DefaultAzureCredential } from '@azure/identity';
+import type { IJwtTokenProviderFactory } from './jwtTokenProviderFactory';
 import { ok } from 'assert';
 import { retry } from 'botbuilder-stdlib';
-import type { JwtTokenProviderFactoryInterface } from './jwtTokenProviderFactoryInterface';
 
 /**
  * Abstraction to acquire tokens from a Managed Service Identity.
@@ -25,8 +25,8 @@ export class ManagedIdentityAuthenticator {
      * @param resource Resource for which to acquire the token.
      * @param tokenProviderFactory The JWT token provider factory to use.
      */
-    constructor(appId: string, resource: string, tokenProviderFactory: JwtTokenProviderFactoryInterface) {
-        ok(appId?.trim(), 'ManagedIdentityAuthenticator.constructor(): missing appId.');
+    constructor(appId: string, resource: string, tokenProviderFactory: IJwtTokenProviderFactory) {
+        ok(appId?.trim(), 'ManagedIdentityAuthenticator.constructor(): missing appid.');
         ok(resource?.trim(), 'ManagedIdentityAuthenticator.constructor(): missing resource.');
         ok(tokenProviderFactory, 'ManagedIdentityAuthenticator.constructor(): missing tokenProviderFactory.');
 
@@ -37,7 +37,7 @@ export class ManagedIdentityAuthenticator {
     /**
      * Acquires the security token.
      *
-     * @returns {Promise<AccessToken>} A promise with the `AccessToken` provided by the [JwtTokenProviderFactoryInterface](xref:botframework-connector.JwtTokenProviderFactoryInterface) class.
+     * @returns {Promise<AccessToken>} A promise with the `AccessToken` provided by the [IJwtTokenProviderFactory](xref:botframework-connector.IJwtTokenProviderFactory) class.
      */
     async getToken(): Promise<AccessToken> {
         // Retry gradually, starting from 10 ms up to 5 times.

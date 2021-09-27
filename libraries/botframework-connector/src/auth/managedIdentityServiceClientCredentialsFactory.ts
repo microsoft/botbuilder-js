@@ -6,18 +6,18 @@
  * Licensed under the MIT License.
  */
 
+import type { IJwtTokenProviderFactory } from './jwtTokenProviderFactory';
 import type { ServiceClientCredentials } from '@azure/ms-rest-js';
-import { ok } from 'assert';
-import type { JwtTokenProviderFactoryInterface } from './jwtTokenProviderFactoryInterface';
 import { ManagedIdentityAppCredentials } from './managedIdentityAppCredentials';
 import { ServiceClientCredentialsFactory } from './serviceClientCredentialsFactory';
+import { ok } from 'assert';
 
 /*
  * A Managed Identity implementation of the [ServiceClientCredentialsFactory](xref:botframework-connector.ServiceClientCredentialsFactory) abstract class.
  */
 export class ManagedIdentityServiceClientCredentialsFactory extends ServiceClientCredentialsFactory {
     private readonly appId: string;
-    private readonly tokenProviderFactory: JwtTokenProviderFactoryInterface;
+    private readonly tokenProviderFactory: IJwtTokenProviderFactory;
 
     /**
      * Initializes a new instance of the ManagedIdentityServiceClientCredentialsFactory class.
@@ -25,7 +25,7 @@ export class ManagedIdentityServiceClientCredentialsFactory extends ServiceClien
      * @param appId Client ID for the managed identity assigned to the bot.
      * @param tokenProviderFactory The JWT token provider factory to use.
      */
-    constructor(appId: string, tokenProviderFactory: JwtTokenProviderFactoryInterface) {
+    constructor(appId: string, tokenProviderFactory: IJwtTokenProviderFactory) {
         super();
         ok(appId?.trim(), 'ManagedIdentityServiceClientCredentialsFactory.constructor(): missing appId.');
         ok(
