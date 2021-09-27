@@ -33,6 +33,7 @@ import { O365ConnectorCard } from 'botframework-schema';
 import { PasswordServiceClientCredentialFactory } from 'botframework-connector';
 import { ReceiptCard } from 'botframework-schema';
 import { ResourceResponse } from 'botframework-schema';
+import { ServiceClientCredentials } from 'botframework-connector';
 import { ServiceClientCredentialsFactory } from 'botframework-connector';
 import { ServiceCollection } from 'botbuilder-dialogs-adaptive-runtime-core';
 import { SignInUrlResponse } from 'botframework-schema';
@@ -353,6 +354,12 @@ export type ConfigurationBotFrameworkAuthenticationOptions = z.infer<typeof Type
 // @public
 export class ConfigurationServiceClientCredentialFactory extends PasswordServiceClientCredentialFactory {
     constructor(factoryOptions?: ConfigurationServiceClientCredentialFactoryOptions);
+    // (undocumented)
+    createCredentials(microsoftAppId: string, audience: string, loginEndpoint: string, validateAuthority: boolean): Promise<ServiceClientCredentials>;
+    // (undocumented)
+    isAuthenticationDisabled(): Promise<boolean>;
+    // (undocumented)
+    isValidAppId(microsoftAppId: string): Promise<boolean>;
 }
 
 // Warning: (ae-forgotten-export) The symbol "TypedConfig" needs to be exported by the entry point index.d.ts

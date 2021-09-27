@@ -18,7 +18,7 @@ import { JwtTokenExtractor } from './jwtTokenExtractor';
 import { JwtTokenValidation } from './jwtTokenValidation';
 import { StatusCodes } from 'botframework-schema';
 import { ToBotFromBotOrEmulatorTokenValidationParameters } from './tokenValidationParameters';
-import { decode } from 'jsonwebtoken';
+import { decode, VerifyOptions } from 'jsonwebtoken';
 
 /**
  * Validates JWT tokens sent to and from a Skill.
@@ -136,8 +136,17 @@ export namespace SkillValidation {
             ? GovernmentConstants.ToBotFromEmulatorOpenIdMetadataUrl
             : AuthenticationConstants.ToBotFromEmulatorOpenIdMetadataUrl;
 
+        // Add allowed token issuers from configuration.
+        const verifyOptions: VerifyOptions = {
+            ...ToBotFromBotOrEmulatorTokenValidationParameters,
+            issuer: [
+                ...ToBotFromBotOrEmulatorTokenValidationParameters.issuer,
+                ...(authConfig.validTokenIssuers ?? []),
+            ],
+        };
+
         const tokenExtractor = new JwtTokenExtractor(
-            ToBotFromBotOrEmulatorTokenValidationParameters,
+            verifyOptions,
             openIdMetadataUrl,
             AuthenticationConstants.AllowedSigningAlgorithms
         );
