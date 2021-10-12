@@ -45,6 +45,42 @@ describe('OrchestratorAdpativeRecognizer tests', function () {
         });
     });
 
+    it('Test none intent recognition', async function () {
+        const result = [
+            {
+                score: 0.3,
+                label: {
+                    name: 'mockLabel',
+                },
+            },
+            {
+                score: 0.8,
+                label: {
+                    name: 'None',
+                },
+            },
+            {
+                score: 0.6,
+                label: {
+                    name: 'mockLabel2',
+                },
+            },
+        ];
+        const mockResolver = new MockResolver(result);
+        const testPaths = 'test';
+        const rec = new OrchestratorRecognizer(testPaths, testPaths, mockResolver);
+        rec.modelFolder = new StringExpression(testPaths);
+        rec.snapshotFile = new StringExpression(testPaths);
+        const { dc, activity } = createTestDcAndActivity('hey hey');
+
+        const res = await rec.recognize(dc, activity);
+        strictEqual(res.text, 'hey hey');
+        strictEqual(Object.keys(res.intents).length, 3);
+        strictEqual(res.intents.mockLabel.score, 0.3);
+        strictEqual(res.intents.mockLabel2.score, 0.6);
+        strictEqual(res.intents.None.score, 1.0);
+    });
+
     it('Test intent recognition', async function () {
         const result = [
             {

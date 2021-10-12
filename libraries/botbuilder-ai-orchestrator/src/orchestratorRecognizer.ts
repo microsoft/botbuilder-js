@@ -202,6 +202,15 @@ export class OrchestratorRecognizer extends AdaptiveRecognizer implements Orches
 
             // if top scoring intent is less than threshold, return None
             if (topScore < this.unknownIntentFilterScore) {
+                // add all scores
+                recognizerResult.intents = results.reduce(function (
+                    intents: { [index: string]: { score: number } },
+                    result
+                ) {
+                    intents[result.label.name] = { score: result.score };
+                    return intents;
+                },
+                {});
                 recognizerResult.intents.None = { score: 1.0 };
             } else {
                 // add all scores
