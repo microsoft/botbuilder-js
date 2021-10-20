@@ -13,10 +13,10 @@ import { ok } from 'assert';
 
 const botFrameworkClientFetchImpl: typeof fetch = async (input, init) => {
     const url = z.string().parse(input);
-    const { body } = z.object({ body: z.string() }).parse(init);
+    const { body, headers } = z.object({ body: z.string(), headers: z.record(z.string()) }).parse(init);
 
     const response = await axios.post(url, JSON.parse(body), {
-        headers: z.record(z.string()).parse(init.headers ?? {}),
+        headers: z.record(z.string()).parse(headers ?? {}),
         validateStatus: () => true,
     });
 
