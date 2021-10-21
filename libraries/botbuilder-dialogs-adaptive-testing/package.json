@@ -13,6 +13,11 @@
     "test:mocha": "mocha tests/*.test.js",
     "test:compat": "api-extractor run --verbose"
   },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/microsoft/botbuilder-js.git",
+    "directory":"libraries/botbuilder-dialogs-adaptive-testing"
+  },
   "main": "./lib/index.js",
   "types": "./lib/index.d.ts",
   "typesVersions": {
