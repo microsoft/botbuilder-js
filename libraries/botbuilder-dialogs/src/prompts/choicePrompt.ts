@@ -148,7 +148,7 @@ export class ChoicePrompt extends Prompt<FoundChoice> {
         const choices =
             (this.style === ListStyle.suggestedAction ? ChoiceFactory.toChoices(options.choices) : options.choices) ||
             [];
-        const opt = this.recognizerOptions || {};
+        const opt = Object.assign({}, this.recognizerOptions, options.recognizerOptions);
         opt.locale = this.determineCulture(activity, opt);
         const results = recognizeChoices(utterance, choices, opt);
         if (Array.isArray(results) && results.length > 0) {

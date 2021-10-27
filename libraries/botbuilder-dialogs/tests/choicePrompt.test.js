@@ -5,6 +5,7 @@ const assert = require('assert');
 
 const answerMessage = { text: `red`, type: 'message' };
 const invalidMessage = { text: `purple`, type: 'message' };
+const thirdOptionMessage = { text: `3`, type: 'message' };
 
 const stringChoices = ['red', 'green', 'blue'];
 
@@ -69,6 +70,74 @@ describe('ChoicePrompt', function () {
 
         await adapter
             .send('Hello')
+            .assertReply('Please choose a color.')
+            .send(answerMessage)
+            .assertReply('red')
+            .startTest();
+    });
+
+    it('should send a prompt and choices with default recognizerOptions.', async function () {
+        const adapter = new TestAdapter(async (turnContext) => {
+            const dc = await dialogs.createContext(turnContext);
+
+            const results = await dc.continueDialog();
+            if (results.status === DialogTurnStatus.empty) {
+                await dc.prompt('prompt', { prompt: 'Please choose a color.', choices: stringChoices });
+            } else if (results.status === DialogTurnStatus.complete) {
+                const selectedChoice = results.result;
+                await turnContext.sendActivity(selectedChoice.value);
+            }
+            await convoState.saveChanges(turnContext);
+        });
+        const convoState = new ConversationState(new MemoryStorage());
+
+        const dialogState = convoState.createProperty('dialogState');
+        const dialogs = new DialogSet(dialogState);
+        const choicePrompt = new ChoicePrompt('prompt');
+        choicePrompt.style = ListStyle.none;
+
+        dialogs.add(choicePrompt);
+
+        await adapter
+            .send('Hello')
+            .assertReply('Please choose a color.')
+            .send(thirdOptionMessage)
+            .assertReply('blue')
+            .startTest();
+    });
+
+    it('should send a prompt and choices with custom recognizerOptions in PromptOptions.', async function () {
+        const adapter = new TestAdapter(async (turnContext) => {
+            const dc = await dialogs.createContext(turnContext);
+
+            const results = await dc.continueDialog();
+            if (results.status === DialogTurnStatus.empty) {
+                await dc.prompt('prompt',{
+                    prompt: 'Please choose a color.',
+                    choices: stringChoices,
+                    recognizerOptions: {
+                        recognizeNumbers: false
+                    }
+                });
+            } else if (results.status === DialogTurnStatus.complete) {
+                const selectedChoice = results.result;
+                await turnContext.sendActivity(selectedChoice.value);
+            }
+            await convoState.saveChanges(turnContext);
+        });
+        const convoState = new ConversationState(new MemoryStorage());
+
+        const dialogState = convoState.createProperty('dialogState');
+        const dialogs = new DialogSet(dialogState);
+        const choicePrompt = new ChoicePrompt('prompt');
+        choicePrompt.style = ListStyle.none;
+
+        dialogs.add(choicePrompt);
+
+        await adapter
+            .send('Hello')
+            .assertReply('Please choose a color.')
+            .send(thirdOptionMessage)
             .assertReply('Please choose a color.')
             .send(answerMessage)
             .assertReply('red')

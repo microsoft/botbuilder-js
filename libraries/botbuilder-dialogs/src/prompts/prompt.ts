@@ -6,7 +6,8 @@
  * Licensed under the MIT License.
  */
 import { Activity, ActivityTypes, InputHints, MessageFactory, TurnContext } from 'botbuilder-core';
-import { Choice, ChoiceFactory, ChoiceFactoryOptions } from '../choices';
+import { Choice, ChoiceFactory, ChoiceFactoryOptions, FindChoicesOptions } from '../choices';
+
 import { Dialog, DialogInstance, DialogReason, DialogTurnResult, DialogEvent } from '../dialog';
 import { DialogContext } from '../dialogContext';
 
@@ -75,6 +76,11 @@ export interface PromptOptions {
      * (Optional) Additional validation rules to pass the prompts validator routine.
      */
     validations?: object;
+
+    /**
+     * (Optional) Additional options passed to the underlying `recognizeChoices()` function.
+     */
+    recognizerOptions?: FindChoicesOptions;
 }
 
 /**
