@@ -45,10 +45,4 @@ export class TurnPath {
 
     /// This is a bool which if set means that the turncontext.activity has been consumed by some component in the system.
     public static readonly activityProcessed = 'turn.activityProcessed';
-
-    // Language Policy.
-    static readonly languagePolicy = "turn.languagePolicy";
-    
-    /// Locale.
-    static readonly locale = "turn.locale";
 }

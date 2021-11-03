@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 
-import { BoolExpression, BoolExpressionConverter, Expression, IntExpression } from 'adaptive-expressions';
+import { BoolExpression, BoolExpressionConverter, IntExpression } from 'adaptive-expressions';
 import {
     Activity,
     ActivityTypes,
@@ -48,7 +48,6 @@ import { EntityAssignment } from './entityAssignment';
 import { EntityAssignmentComparer } from './entityAssignmentComparer';
 import { EntityAssignments } from './entityAssignments';
 import { EntityInfo, NormalizedEntityInfos } from './entityInfo';
-import { MissingPropertiesFunction } from './functions';
 import { LanguageGenerator } from './languageGenerator';
 import { languageGeneratorKey } from './languageGeneratorExtensions';
 import { BoolProperty } from './properties';
@@ -776,10 +775,6 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> im
     protected onSetScopedServices(dialogContext: DialogContext): void {
         if (this.generator) {
             dialogContext.services.set(languageGeneratorKey, this.generator);
-            Expression.functions.set(
-                MissingPropertiesFunction.functionName,
-                new MissingPropertiesFunction(dialogContext)
-            );
         }
     }
 

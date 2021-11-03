@@ -43,22 +43,22 @@ describe('LGLanguageGenerator', function() {
             it('assert empty locale', async () => {
                 assert(lgResourceGroup.has(''));
                 var resourceNames = lgResourceGroup.get('').map(u => u.id);
-                assert.equal(resourceNames.length, 8);
-                assert.deepStrictEqual(new Set(resourceNames), new Set(['properties.lg', 'a.lg', 'b.lg', 'c.lg', 'NormalStructuredLG.lg','root.lg', 'subDialog.lg', 'test.lg']));
+                assert.equal(resourceNames.length, 7);
+                assert.deepStrictEqual(new Set(resourceNames), new Set(['a.lg', 'b.lg', 'c.lg', 'NormalStructuredLG.lg','root.lg', 'subDialog.lg', 'test.lg']));
             });
 
             it('assert en-us locale', async () => {
                 assert(lgResourceGroup.has('en-us'));
                 var resourceNames = lgResourceGroup.get('en-us').map(u => u.id);
-                assert.equal(resourceNames.length, 8);
-                assert.deepStrictEqual(new Set(resourceNames), new Set(['properties.lg', 'a.en-US.lg', 'b.en-us.lg', 'test.en-US.lg', 'c.en.lg', 'NormalStructuredLG.lg','root.lg', 'subDialog.lg']));
+                assert.equal(resourceNames.length, 7);
+                assert.deepStrictEqual(new Set(resourceNames), new Set(['a.en-US.lg', 'b.en-us.lg', 'test.en-US.lg', 'c.en.lg', 'NormalStructuredLG.lg','root.lg', 'subDialog.lg']));
             });
 
             it('assert en locale', async () => {
                 assert(lgResourceGroup.has('en'));
                 var resourceNames = lgResourceGroup.get('en').map(u => u.id);
-                assert.equal(resourceNames.length, 8);
-                assert.deepStrictEqual(new Set(resourceNames), new Set(['properties.lg', 'c.en.lg', 'test.en.lg', 'a.lg', 'b.lg', 'NormalStructuredLG.lg','root.lg', 'subDialog.lg']));
+                assert.equal(resourceNames.length, 7);
+                assert.deepStrictEqual(new Set(resourceNames), new Set(['c.en.lg', 'test.en.lg', 'a.lg', 'b.lg', 'NormalStructuredLG.lg','root.lg', 'subDialog.lg']));
             });
         });
 
@@ -86,11 +86,11 @@ describe('LGLanguageGenerator', function() {
 
             it('should throw for missing template: "${greeting()}", no data', async () => {
                 assert.throws(() => {generator.generate(getDialogContext(), '${greeting()}', undefined);});
-            });
+            });       
         });
-
-        describe('Test Multi-Language Import with no locale', function() {
-            let generator;
+        
+        describe('Test Multi-Language Import with no locale', function() {   
+            let generator; 
             this.beforeAll(async function() {
                 const resource = resourceExplorer.getResource('a.lg');
                 generator = new TemplateEngineLanguageGenerator(resource, lgResourceGroup);
@@ -114,7 +114,7 @@ describe('LGLanguageGenerator', function() {
             it('"${greeting()}", no data', async () => {
                 const result = await generator.generate(getDialogContext(), '${greeting()}', undefined);
                 assert.strictEqual(result, 'hi');
-            });
+            });    
         });
     });
 
@@ -125,22 +125,22 @@ describe('LGLanguageGenerator', function() {
             const multiLanguageResources = await LanguageResourceLoader.groupByLocale(resourceExplorer);
 
             //Should have a setup for the threadLocale here.
-
+        
             let resource = resourceExplorer.getResource('test.lg');
             lg.languageGenerators.set('', new TemplateEngineLanguageGenerator(resource, multiLanguageResources));
-
+        
             resource = resourceExplorer.getResource('test.de.lg');
             lg.languageGenerators.set('de', new TemplateEngineLanguageGenerator(resource, multiLanguageResources));
-
+        
             resource = resourceExplorer.getResource('test.en.lg');
             lg.languageGenerators.set('en', new TemplateEngineLanguageGenerator(resource, multiLanguageResources));
-
+        
             resource = resourceExplorer.getResource('test.en-US.lg');
             lg.languageGenerators.set('en-us', new TemplateEngineLanguageGenerator(resource, multiLanguageResources));
-
+        
             resource = resourceExplorer.getResource('test.en-GB.lg');
             lg.languageGenerators.set('en-gb', new TemplateEngineLanguageGenerator(resource, multiLanguageResources));
-
+        
             resource = resourceExplorer.getResource('test.fr.lg');
             lg.languageGenerators.set('fr', new TemplateEngineLanguageGenerator(resource, multiLanguageResources));
         });
@@ -254,32 +254,5 @@ describe('LGLanguageGenerator', function() {
             assert.equal(result11, 'english-US');
         });
 */
-    });
-
-    describe('TestMissingPropertiesInGenerator', () => {
-        let lgResourceGroup;
-        this.beforeAll(async function() {
-            lgResourceGroup = await LanguageResourceLoader.groupByLocale(resourceExplorer);
-        });
-
-        it('empty TemplateEngineLanguageGenerator', () => {
-            const generator = new TemplateEngineLanguageGenerator();
-            const properties = generator.missingProperties(getDialogContext(''), '${user.name} and ${user.age}');
-            assert.deepStrictEqual(properties, ['user.name', 'user.age']);
-        });
-
-        it('TemplateEngineLanguageGenerator', () => {
-            const resource = resourceExplorer.getResource('properties.lg');
-            const generator = new TemplateEngineLanguageGenerator(resource, lgResourceGroup);
-
-            const properties = generator.missingProperties(getDialogContext(''), '${nameAndAge()}');
-            assert.deepStrictEqual(properties, ['user.name', 'user.age']);
-        });
-
-        it('ResourceMultiLanguageGenerator', () => {
-            const generator = new ResourceMultiLanguageGenerator('properties.lg');
-            const properties = generator.missingProperties(getDialogContext(''), '${nameAndAge()}');
-            assert.deepStrictEqual(properties, ['user.name', 'user.age']);
-        });
     });
 });
