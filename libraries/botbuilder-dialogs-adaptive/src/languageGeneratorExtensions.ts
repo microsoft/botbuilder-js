@@ -79,12 +79,8 @@ export class LanguageGeneratorExtensions {
     public static useLanguagePolicy(dialogManager: DialogManager, policy: LanguagePolicy): DialogManager {
         dialogManager.initialTurnState.set(languagePolicyKey, policy);
 
-        const turnScope = dialogManager.initialTurnState.get('turn');
-        if (turnScope) {
-            turnScope.languagePolicy = policy;
-        } else {
-            dialogManager.initialTurnState.set('turn', { languagePolicy: policy });
-        }
+        // put global language policy into turn scope for lg functions fallback
+        dialogManager.initialTurnState.set(TurnPath.languagePolicy, policy);
 
         return dialogManager;
     }
