@@ -9,9 +9,11 @@
 import { Configurable, DialogContext } from 'botbuilder-dialogs';
 import { Resource } from 'botbuilder-dialogs-declarative';
 import { Templates, LGResource, EvaluationOptions } from 'botbuilder-lg';
+import { MemoryInterface, Options } from 'adaptive-expressions';
 import { LanguageGenerator } from '../languageGenerator';
 import { LanguageResourceLoader } from '../languageResourceLoader';
 import { LanguageGeneratorManager } from './languageGeneratorManager';
+import { v4 as uuidv4 } from 'uuid';
 
 export interface TemplateEngineLanguageGeneratorConfiguration {
     id?: string;
@@ -31,7 +33,7 @@ export class TemplateEngineLanguageGenerator<T = unknown, D extends Record<strin
     private lg: Templates;
 
     public id = '';
- 
+
     /**
      * Initializes a new instance of the [TemplateEngineLanguageGenerator](xref:botbuilder-dialogs-adaptive.TemplateEngineLanguageGenerator) class.
      * @param arg1 Optional. An LG [Templates](xref:botbuilder-lg.Templates) or a [Resource](xref:botbuilder-dialogs-declarative.Resource).
@@ -74,5 +76,32 @@ export class TemplateEngineLanguageGenerator<T = unknown, D extends Record<strin
 
             throw Error(e);
         }
+    }
+
+    /**
+     * Method to get missing properties.
+     *
+     * @param dialogContext DialogContext.
+     * @param template Template.
+     * @param _state Memory state.
+     * @param _options Options.
+     * @returns Property list.
+     */
+    public missingProperties(dialogContext: DialogContext, template: string, _state?: MemoryInterface, _options?: Options): string[] {
+        const tempTemplateName = `${Templates.inlineTemplateIdPrefix}${uuidv4().replace(/-/g, '')}`;
+
+        // wrap inline string with "# name and -" to align the evaluation process
+        const multiLineMark = '```';
+
+        template =
+            !template.trim().startsWith(multiLineMark) && template.includes('\n')
+                ? `${multiLineMark}${template}${multiLineMark}`
+                : template;
+        this.lg.addTemplate(tempTemplateName, undefined, `- ${template}`);
+        const analyzerResults = this.lg.analyzeTemplate(tempTemplateName);
+
+        // Delete it after the analyzer
+        this.lg.deleteTemplate(tempTemplateName);
+        return analyzerResults.Variables;
     }
 }
