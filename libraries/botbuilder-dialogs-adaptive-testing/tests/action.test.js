@@ -390,10 +390,6 @@ describe('ActionTests', function () {
         await TestUtils.runTestScript(resourceExplorer, 'Action_SetProperties');
     });
 
-    it('MissingProperty', async () => {
-        await TestUtils.runTestScript(resourceExplorer, 'Action_MissingProperty');
-    });
-
     it('SetProperty', async () => {
         await TestUtils.runTestScript(resourceExplorer, 'Action_SetProperty');
     });
