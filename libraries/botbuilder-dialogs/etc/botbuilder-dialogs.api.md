@@ -820,11 +820,7 @@ export class TurnPath {
     // (undocumented)
     static readonly interrupted = "turn.interrupted";
     // (undocumented)
-    static readonly languagePolicy = "turn.languagePolicy";
-    // (undocumented)
     static readonly lastResult = "turn.lastresult";
-    // (undocumented)
-    static readonly locale = "turn.locale";
     // (undocumented)
     static readonly recognized = "turn.recognized";
     // (undocumented)
