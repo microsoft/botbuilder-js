@@ -194,7 +194,9 @@ export class DialogContext {
      * @returns a locale string.
      */
     public getLocale(): string {
-        const turnLocaleValue = this.state.getValue(TurnPath.locale);
+        const _turnLocaleProperty = 'turn.locale';
+
+        const turnLocaleValue = this.state.getValue(_turnLocaleProperty);
         if (turnLocaleValue) {
             return turnLocaleValue;
         }
