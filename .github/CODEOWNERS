@@ -13,23 +13,3 @@
 
 # Global rule:
 * @microsoft/botframework-sdk
-
-# Adaptive/LG
-libraries/adaptive-expressions*/**                                      @microsoft/bf-adaptive @microsoft/botframework-sdk
-libraries/botbuilder-dialogs*/**                                        @microsoft/bf-adaptive @microsoft/botframework-sdk
-libraries/botbuilder-lg/**                                              @microsoft/bf-adaptive @microsoft/botframework-sdk
-
-# Ownership by specific files or file types
-# This section MUST stay at the bottom of the CODEOWNERS file. For more information, see
-# https://docs.github.com/en/github/creating-cloning-and-archiving-repositories/about-code-owners#example-of-a-codeowners-file
-
-
-# Critical monorepo/package/typescript files
-yarn.lock                                                               @stevengum @joshgummersall
-package.json                                                            @stevengum @joshgummersall
-**/package.json                                                         @stevengum @joshgummersall
-tsconfig.json                                                           @stevengum @joshgummersall
-**/tsconfig.json                                                        @stevengum @joshgummersall
-
-# .schema files
-**/*.schema                                                             @chrimc62 @tomlm @microsoft/botframework-sdk
