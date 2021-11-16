@@ -172,6 +172,30 @@ export abstract class Prompt<T> extends Dialog {
      */
     protected constructor(dialogId: string, private validator?: PromptValidator<T>) {
         super(dialogId);
+
+        if (!validator) validator = async (prompt) => prompt.recognized.succeeded;
+
+        this.validator = async (prompt) => {
+            const context = prompt.context;
+            
+            const hasRespondedBeforeValidator = context.responded;
+            // Making the validator *only* consider as "responded" if responded has been set during a turn
+            // @ts-expect-error 
+            context._respondedRef.responded = false;
+            try {
+                const result = await validator(prompt);
+                const shouldReprompt = context.turnState.get(Prompt.repromptOnRetry);
+
+                // Set reprompt retry status based on whether the bot responded or not while on a validator
+                Prompt.setRepromptRetry(context, this.shouldRepromptOnRetry(context));
+                return result;
+            } finally {
+                if (hasRespondedBeforeValidator) prompt.context.responded = true;
+            }
+        }
+        
+
+
     }
 
     /**
@@ -207,6 +231,38 @@ export abstract class Prompt<T> extends Dialog {
     }
 
     /**
+     * By default the bot re-prompts on retries if there has not been any message sent to this user in this turn
+     * 
+     * However, that might be undesirable. You can set here whether you want it to reprompt or not.
+     * 
+     * To reset to the default status, you can set it back to undefined or null.
+     * @param context 
+     * @param shouldReprompt Defaults to {true}. Set to undefined/null to allow the default behaviour.
+     */
+    static setRepromptRetry(context:TurnContext, shouldReprompt: boolean | undefined | null = true) {
+        context.turnState.set(this.repromptOnRetry, shouldReprompt);
+    }
+
+    /**
+     * Determined whether to re-prompt on retry, by default it checks whether the context.responded is false or not
+     * 
+     * You can change that behaviour by either (a) extending this function on your base class or (b) using Prompt.setRepromptRetry
+     * @param context 
+     * @returns 
+     */
+    protected shouldRepromptOnRetry(context: TurnContext): boolean {
+        const shouldReprompt: null | undefined | boolean = context.turnState.get(Prompt.repromptOnRetry);
+        if (shouldReprompt == null) return !context.responded;
+        return shouldReprompt;
+    }
+
+
+    /**
+     * Optional symbol to be used to *force* the context whether to reprompt the retry or not based on this flag
+     */
+    private static repromptOnRetry = Symbol('repromptOnRetry');
+
+    /**
      * Called when a prompt dialog is the active dialog and the user replied with a new activity.
      * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
      * @returns A `Promise` representing the asynchronous operation.
@@ -238,28 +294,26 @@ export abstract class Prompt<T> extends Dialog {
 
         // Validate the return value
         let isValid = false;
-        if (this.validator) {
-            if (state.state['attemptCount'] === undefined) {
-                state.state['attemptCount'] = 0;
-            }
-            isValid = await this.validator({
-                context: dc.context,
-                recognized: recognized,
-                state: state.state,
-                options: state.options,
-                attemptCount: ++state.state['attemptCount'],
-            });
-        } else if (recognized.succeeded) {
-            isValid = true;
+
+        if (state.state['attemptCount'] === undefined) {
+            state.state['attemptCount'] = 0;
         }
+        isValid = await this.validator({
+            context: dc.context,
+            recognized: recognized,
+            state: state.state,
+            options: state.options,
+            attemptCount: ++state.state['attemptCount'],
+        });
+
 
         // Return recognized value or re-prompt
         if (isValid) {
             return await dc.endDialog(recognized.value);
         } else {
-            if (!dc.context.responded) {
+            if (this.shouldRepromptOnRetry(dc.context)) {
                 await this.onPrompt(dc.context, state.state, state.options, true);
-            }
+            } 
 
             return Dialog.EndOfTurn;
         }
