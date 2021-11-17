@@ -51,7 +51,7 @@ export class ConnectorFactoryImpl extends ConnectorFactory {
         });
         
         const acceptHeader: RequestPolicyFactory = {
-            create:(nextPolicy)=>({
+            create:(nextPolicy) => ({
                 sendRequest: (httpRequest)=>{
                     if(!httpRequest.headers.contains('accept')) {
                         httpRequest.headers.set('accept', '*/*');

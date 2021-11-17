@@ -1515,7 +1515,7 @@ export class BotFrameworkAdapter
         });
 
         const acceptHeader: RequestPolicyFactory = {
-            create:(nextPolicy)=>({
+            create:(nextPolicy) => ({
                 sendRequest: (httpRequest)=>{
                     if(!httpRequest.headers.contains('accept')) {
                         httpRequest.headers.set('accept', '*/*');
