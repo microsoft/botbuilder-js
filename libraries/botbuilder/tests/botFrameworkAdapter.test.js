@@ -525,7 +525,6 @@ describe('BotFrameworkAdapter', function () {
         });
 
         it('ConnectorClient should add requestPolicyFactory for accept header', async function () {
-            const adapter = new BotFrameworkAdapter();
             let hasAcceptHeader = false;
             const mockNextPolicy = {
                 create: (innerPolicy) => ({
@@ -534,24 +533,21 @@ describe('BotFrameworkAdapter', function () {
                     return {};
                 }
             };
+            const client = new BotFrameworkAdapter().createConnectorClient('https://localhost')
+            var length = client._requestPolicyFactories.length;
+            for (var i = 0; i < length; i++) {
+                var mockHttp = { 
+                    headers: new HttpHeaders()
+                };
 
-            await adapter.continueConversation(reference, async (turnContext) => {
-                const connectorClient = turnContext.turnState.get(turnContext.adapter.ConnectorClientKey);
-                var length = connectorClient._requestPolicyFactories.length;
-                for (var i = 0; i < length; i++) {
-                    var mockHttp = { 
-                        headers: new HttpHeaders()
-                    };
+                var result = client._requestPolicyFactories[i].create(mockNextPolicy);
 
-                    var result = connectorClient._requestPolicyFactories[i].create(mockNextPolicy);
-
-                    result.sendRequest(mockHttp);
-                    if(mockHttp.headers.get("accept") == "*/*") {
-                        hasAcceptHeader = true;
-                        break;
-                    }
+                result.sendRequest(mockHttp);
+                if(mockHttp.headers.get("accept") == "*/*") {
+                    hasAcceptHeader = true;
+                    break;
                 }
-            });
+            }
 
             assert(hasAcceptHeader, 'adapter should set the accept header to */*');
         });
