@@ -529,10 +529,10 @@ describe('BotFrameworkAdapter', function () {
             let hasAcceptHeader = false;
             const mockNextPolicy = {
                 create: (innerPolicy) => ({
-                    sendRequest: (httpRequest) => {
-                        return innerPolicy.sendRequest(httpRequest);
-                    }
-                })
+                }),
+                sendRequest: (httpRequest) => {
+                    return {};
+                }
             };
 
             await adapter.continueConversation(reference, async (turnContext) => {
@@ -540,8 +540,7 @@ describe('BotFrameworkAdapter', function () {
                 var length = connectorClient._requestPolicyFactories.length;
                 for (var i = 0; i < length; i++) {
                     var mockHttp = { 
-                        headers: new HttpHeaders(), 
-                        sendRequest: (httpRequest) => ({}) 
+                        headers: new HttpHeaders()
                     };
 
                     var result = connectorClient._requestPolicyFactories[i].create(mockNextPolicy);
@@ -549,11 +548,12 @@ describe('BotFrameworkAdapter', function () {
                     result.sendRequest(mockHttp);
                     if(mockHttp.headers.get("accept") == "*/*") {
                         hasAcceptHeader = true;
+                        break;
                     }
                 }
             });
 
-            assert(hasAcceptHeader);
+            assert(hasAcceptHeader, 'adapter should set the accept header to */*');
         });
 
         it('createConnectorClientWithIdentity should throw without identity', async function () {
