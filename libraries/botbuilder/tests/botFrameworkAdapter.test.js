@@ -549,7 +549,7 @@ describe('BotFrameworkAdapter', function () {
                 }
             }
 
-            assert(hasAcceptHeader, 'adapter should set the accept header to */*');
+            assert(hasAcceptHeader, 'accept header from connector client should be */*');
         });
 
         it('createConnectorClientWithIdentity should throw without identity', async function () {
