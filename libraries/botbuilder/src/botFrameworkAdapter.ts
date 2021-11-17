@@ -9,7 +9,7 @@
 import * as z from 'zod';
 import { BotFrameworkHttpAdapter } from './botFrameworkHttpAdapter';
 import { ConnectorClientBuilder, Request, Response, ResponseT, WebRequest, WebResponse } from './interfaces';
-import { HttpClient, userAgentPolicy } from '@azure/ms-rest-js';
+import { HttpClient, RequestPolicyFactory, userAgentPolicy } from '@azure/ms-rest-js';
 import { INodeBufferT, INodeSocketT, LogicT } from './zod';
 import { arch, release, type } from 'os';
 import { delay, retry } from 'botbuilder-stdlib';
@@ -1514,6 +1514,17 @@ export class BotFrameworkAdapter
             value: `${USER_AGENT}${userAgent ?? ''}`,
         });
 
+        const acceptHeader: RequestPolicyFactory = {
+            create:(nextPolicy)=>({
+                sendRequest: (httpRequest)=>{
+                    if(!httpRequest.headers.contains('accept')) {
+                        httpRequest.headers.set('accept', '*/*');
+                    }
+                    return nextPolicy.sendRequest(httpRequest);
+                }
+            })
+        };
+
         // Resolve any user request policy factories, then include our user agent via a factory policy
         options.requestPolicyFactories = (defaultRequestPolicyFactories) => {
             let defaultFactories = [];
@@ -1530,11 +1541,11 @@ export class BotFrameworkAdapter
 
                 // If the user has supplied custom factories, allow them to optionally set user agent
                 // before we do.
-                defaultFactories = [...defaultFactories, setUserAgent];
+                defaultFactories = [...defaultFactories, acceptHeader, setUserAgent];
             } else {
                 // In the case that there are no user supplied factories, inject our user agent as
                 // the first policy to ensure none of the default policies override it.
-                defaultFactories = [setUserAgent, ...defaultRequestPolicyFactories];
+                defaultFactories = [acceptHeader, setUserAgent, ...defaultRequestPolicyFactories];
             }
 
             return defaultFactories;
