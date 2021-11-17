@@ -49,16 +49,16 @@ export class ConnectorFactoryImpl extends ConnectorFactory {
         const setUserAgent = userAgentPolicy({
             value: `${USER_AGENT}${userAgent ?? ''}`,
         });
-        
+
         const acceptHeader: RequestPolicyFactory = {
-            create:(nextPolicy) => ({
-                sendRequest: (httpRequest)=>{
-                    if(!httpRequest.headers.contains('accept')) {
+            create: (nextPolicy) => ({
+                sendRequest: (httpRequest) => {
+                    if (!httpRequest.headers.contains('accept')) {
                         httpRequest.headers.set('accept', '*/*');
                     }
                     return nextPolicy.sendRequest(httpRequest);
-                }
-            })
+                },
+            }),
         };
 
         // Resolve any user request policy factories, then include our user agent via a factory policy

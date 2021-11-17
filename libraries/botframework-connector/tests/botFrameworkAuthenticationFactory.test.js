@@ -138,23 +138,22 @@ describe('BotFrameworkAuthenticationFactory', function () {
     function assertHasAcceptHeader(client) {
         let hasAcceptHeader = false;
         const mockNextPolicy = {
-            create: (innerPolicy) => ({
-            }),
-            sendRequest: (httpRequest) => {
+            create: (_) => ({}),
+            sendRequest: (_) => {
                 return {};
-            }
+            },
         };
-       
-        var length = client._requestPolicyFactories.length;
-        for (var i = 0; i < length; i++) {
-            var mockHttp = { 
-                headers: new HttpHeaders()
+
+        const length = client._requestPolicyFactories.length;
+        for (let i = 0; i < length; i++) {
+            const mockHttp = {
+                headers: new HttpHeaders(),
             };
 
-            var result = client._requestPolicyFactories[i].create(mockNextPolicy);
+            const result = client._requestPolicyFactories[i].create(mockNextPolicy);
 
             result.sendRequest(mockHttp);
-            if(mockHttp.headers.get("accept") == "*/*") {
+            if (mockHttp.headers.get('accept') == '*/*') {
                 hasAcceptHeader = true;
                 break;
             }
