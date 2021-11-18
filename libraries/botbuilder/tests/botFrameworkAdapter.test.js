@@ -524,6 +524,34 @@ describe('BotFrameworkAdapter', function () {
             });
         });
 
+        it('ConnectorClient should add requestPolicyFactory for accept header', async function () {
+            let hasAcceptHeader = false;
+            const mockNextPolicy = {
+                create: (innerPolicy) => ({
+                }),
+                sendRequest: (httpRequest) => {
+                    return {};
+                }
+            };
+            const client = new BotFrameworkAdapter().createConnectorClient('https://localhost')
+            var length = client._requestPolicyFactories.length;
+            for (var i = 0; i < length; i++) {
+                var mockHttp = { 
+                    headers: new HttpHeaders()
+                };
+
+                var result = client._requestPolicyFactories[i].create(mockNextPolicy);
+
+                result.sendRequest(mockHttp);
+                if(mockHttp.headers.get("accept") == "*/*") {
+                    hasAcceptHeader = true;
+                    break;
+                }
+            }
+
+            assert(hasAcceptHeader, 'accept header from connector client should be */*');
+        });
+
         it('createConnectorClientWithIdentity should throw without identity', async function () {
             const adapter = new BotFrameworkAdapter();
             await assert.rejects(
