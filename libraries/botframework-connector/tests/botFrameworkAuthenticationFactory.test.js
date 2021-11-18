@@ -11,6 +11,7 @@ const {
     PasswordServiceClientCredentialFactory,
     SkillValidation,
 } = require('..');
+const { HttpHeaders } = require('@azure/ms-rest-js');
 
 describe('BotFrameworkAuthenticationFactory', function () {
     it('should create anonymous BotFrameworkAuthentication', function () {
@@ -122,6 +123,7 @@ describe('BotFrameworkAuthenticationFactory', function () {
             assert.strictEqual(connectorFactory.credentialFactory, credsFactory);
 
             const connectorClient = await connectorFactory.create(HOST_SERVICE_URL, HOST_AUDIENCE);
+            assertHasAcceptHeader(connectorClient);
             assert.strictEqual(connectorClient.credentials.appId, APP_ID);
             assert.strictEqual(connectorClient.credentials.appPassword, APP_PASSWORD);
             assert.strictEqual(connectorClient.credentials.oAuthScope, HOST_AUDIENCE);
@@ -132,4 +134,31 @@ describe('BotFrameworkAuthenticationFactory', function () {
             assert.strictEqual(userTokenClient.client.credentials.appPassword, APP_PASSWORD);
         });
     });
+
+    function assertHasAcceptHeader(client) {
+        let hasAcceptHeader = false;
+        const mockNextPolicy = {
+            create: (_) => ({}),
+            sendRequest: (_) => {
+                return {};
+            },
+        };
+
+        const length = client._requestPolicyFactories.length;
+        for (let i = 0; i < length; i++) {
+            const mockHttp = {
+                headers: new HttpHeaders(),
+            };
+
+            const result = client._requestPolicyFactories[i].create(mockNextPolicy);
+
+            result.sendRequest(mockHttp);
+            if (mockHttp.headers.get('accept') == '*/*') {
+                hasAcceptHeader = true;
+                break;
+            }
+        }
+
+        assert(hasAcceptHeader, 'accept header from connector client should be */*');
+    }
 });
