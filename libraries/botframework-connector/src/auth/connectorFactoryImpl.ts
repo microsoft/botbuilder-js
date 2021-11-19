@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-import { getDefaultUserAgentValue, userAgentPolicy } from '@azure/ms-rest-js';
+import { getDefaultUserAgentValue, RequestPolicyFactory, userAgentPolicy } from '@azure/ms-rest-js';
 import { ConnectorClient } from '../connectorApi/connectorClient';
 import { ConnectorClientOptions } from '../connectorApi/models';
 import { ConnectorFactory } from './connectorFactory';
@@ -50,6 +50,17 @@ export class ConnectorFactoryImpl extends ConnectorFactory {
             value: `${USER_AGENT}${userAgent ?? ''}`,
         });
 
+        const acceptHeader: RequestPolicyFactory = {
+            create: (nextPolicy) => ({
+                sendRequest: (httpRequest) => {
+                    if (!httpRequest.headers.contains('accept')) {
+                        httpRequest.headers.set('accept', '*/*');
+                    }
+                    return nextPolicy.sendRequest(httpRequest);
+                },
+            }),
+        };
+
         // Resolve any user request policy factories, then include our user agent via a factory policy
         options.requestPolicyFactories = (defaultRequestPolicyFactories) => {
             let defaultFactories = [];
@@ -66,11 +77,11 @@ export class ConnectorFactoryImpl extends ConnectorFactory {
 
                 // If the user has supplied custom factories, allow them to optionally set user agent
                 // before we do.
-                defaultFactories = [...defaultFactories, setUserAgent];
+                defaultFactories = [...defaultFactories, setUserAgent, acceptHeader];
             } else {
                 // In the case that there are no user supplied factories, inject our user agent as
                 // the first policy to ensure none of the default policies override it.
-                defaultFactories = [setUserAgent, ...defaultRequestPolicyFactories];
+                defaultFactories = [acceptHeader, setUserAgent, ...defaultRequestPolicyFactories];
             }
 
             return defaultFactories;
