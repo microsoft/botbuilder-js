@@ -657,6 +657,7 @@ export class PromptCultureModels {
 export interface PromptOptions {
     choices?: (string | Choice)[];
     prompt?: string | Partial<Activity>;
+    recognizerOptions?: FindChoicesOptions;
     retryPrompt?: string | Partial<Activity>;
     style?: ListStyle;
     validations?: object;
