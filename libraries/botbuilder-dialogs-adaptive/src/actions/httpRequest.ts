@@ -268,7 +268,7 @@ export class HttpRequest<O extends object = {}> extends Dialog<O> implements Htt
 
         const instanceHeaders = {};
         for (let key in this.headers) {
-            if (key.toLowerCase() === 'Content-Type') {
+            if (key.toLowerCase() === 'content-type') {
                 key = 'Content-Type';
             }
             instanceHeaders[key] = this.headers[key].getValue(dc.state);
