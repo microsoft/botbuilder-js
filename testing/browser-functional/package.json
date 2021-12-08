@@ -5,10 +5,10 @@
   "description": "Test to check browser compatibility",
   "main": "",
   "devDependencies": {
-    "chromedriver": "^94.0.0",
+    "chromedriver": "^96.0.0",
     "dotenv": "^8.2.0",
     "geckodriver": "^1.19.1",
-    "nightwatch": "^1.6.3",
+    "nightwatch": "^1.7.12",
     "selenium-server": "^3.141.59"
   },
   "directories": {

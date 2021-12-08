@@ -16,6 +16,7 @@ module.exports = {
         selenium: {
             selenium: {
                 start_process: true,
+                check_process_delay: 5000,
                 port: 9515,
                 server_path: seleniumServer.path,
                 cli_args: {
