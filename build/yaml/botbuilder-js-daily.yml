@@ -29,7 +29,7 @@ steps:
     flattenFolders: true
 
 - task: AzureArtifacts.manifest-generator-task.manifest-generator-task.ManifestGeneratorTask@0
-  displayName: 'Generate Software Bill of Materials'
+  displayName: 'generate software bill of materials'
   inputs:
     BuildDropPath: '$(Build.ArtifactStagingDirectory)'
 
