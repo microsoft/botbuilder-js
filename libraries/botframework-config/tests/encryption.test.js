@@ -2,7 +2,7 @@ const assert = require('assert');
 const encrypt = require('../lib/encrypt');
 
 describe('EncryptionTests', function () {
-    // [SuppressMessage("Microsoft.Security", "CS002:SecretInNextLine", Justification="This is a fake secret.")]
+    //[SuppressMessage("Microsoft.Security", "CS002:SecretInNextLine", Justification="This is a fake secret.")]
     const secret = 'lgCbJPXnfOlatjbBDKMbh0ie6bc8PD/cjqA/2tPgMS0=';
     const value = '1234567890';
 
