@@ -98,6 +98,27 @@ export function findValues(
         return -1;
     }
 
+    function findExactMatch(utterance: string, values: SortedValue[]) {
+        return values
+            .filter((entry) => entry.value.toLowerCase() === utterance.toLowerCase())
+            .map((entry) => ({
+                text: utterance,
+                start: 0,
+                end: utterance.length - 1,
+                typeName: 'value',
+                resolution: {
+                    value: entry.value,
+                    index: entry.index,
+                    score: 1,
+                },
+            }));
+    }
+
+    const exactMatch = findExactMatch(utterance, values);
+    if (exactMatch?.length) {
+        return exactMatch;
+    }
+
     function matchValue(
         index: number,
         value: string,
