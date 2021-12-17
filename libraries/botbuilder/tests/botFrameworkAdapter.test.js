@@ -668,6 +668,7 @@ describe('BotFrameworkAdapter', function () {
 
         it(`createConnectorClientWithIdentity should create a ConnectorClient with MicrosoftAppCredentials when certificateThumbprint and certificatePrivatekey are absent and ClaimsIdenity has AppIdClaim`, async function () {
             const appId = '01234567-4242-aaaa-bbbb-cccccccccccc';
+            // [SuppressMessage("Microsoft.Security", "CS002:SecretInNextLine", Justification="This is a fake password.")]
             const appPassword = 'password123';
             const adapter = new BotFrameworkAdapter({ appId, appPassword });
 
@@ -686,7 +687,7 @@ describe('BotFrameworkAdapter', function () {
 
         it(`createConnectorClientWithIdentity should create a ConnectorClient with MicrosoftAppCredentials when certificateThumbprint and certificatePrivatekey are absent and ClaimsIdenity has AudienceClaim`, async function () {
             const appId = '01234567-4242-aaaa-bbbb-cccccccccccc';
-            //[SuppressMessage("Microsoft.Security", "CS002:SecretInNextLine", Justification="This is a fake password.")]
+            // [SuppressMessage("Microsoft.Security", "CS002:SecretInNextLine", Justification="This is a fake password.")]
             const appPassword = 'password123';
             const adapter = new BotFrameworkAdapter({ appId, appPassword });
 
