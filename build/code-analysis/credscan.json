@@ -2,7 +2,7 @@
     "tool": "Credential Scanner",
     "suppressions": [
     {
-        "file": "../../libraries/botframework-config/etc/botframework-config.api.md", 
+        "file": "botframework-config.api.md", 
         "_justification": "No credentials are exposed in MD files"
     }
   ]
