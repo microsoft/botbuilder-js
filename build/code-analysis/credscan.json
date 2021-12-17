@@ -1,0 +1,9 @@
+{
+    "tool": "Credential Scanner",
+    "suppressions": [
+    {
+        "file": "../../libraries/botbuilder-config/etc/botframework-config.api.md", 
+        "_justification": "No credentials are exposed in MD files"
+    }
+  ]
+}
