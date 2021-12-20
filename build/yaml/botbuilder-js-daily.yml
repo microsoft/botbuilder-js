@@ -7,6 +7,7 @@ pool:
 
 variables:
   NodeVersion: 12.x
+  Packaging.EnableSBOMSigning: true
   YARN_CACHE_FOLDER: $(Pipeline.Workspace)/.yarn
 
 steps:
@@ -27,6 +28,13 @@ steps:
     Contents: '*/*.tgz'
     TargetFolder: '$(Build.ArtifactStagingDirectory)'
     flattenFolders: true
+
+- task: AzureArtifacts.manifest-generator-task.manifest-generator-task.ManifestGeneratorTask@0
+  displayName: 'generate software bill of materials'
+  inputs:
+    BuildDropPath: '$(Build.ArtifactStagingDirectory)'
+    PackageName: 'Microsoft Bot Framework SDK for Node.js'
+    PackageVersion: $(PackageVersion)
 
 - task: PublishBuildArtifacts@1
   displayName: publish staging artifacts
