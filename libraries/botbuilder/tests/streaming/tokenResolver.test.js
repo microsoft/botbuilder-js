@@ -42,8 +42,8 @@ function createOAuthCardActivity() {
     return activity;
 }
 
-describe(`TokenResolver`, function () {
-    it(`should throw on empty connectionName`, async function () {
+describe('TokenResolver', function () {
+    it('should throw on empty connectionName', async function () {
         const returnTokenResponse = () => {
             return { token: '1234', connectionName: 'foo' };
         };
@@ -63,7 +63,7 @@ describe(`TokenResolver`, function () {
         );
     });
 
-    it(`no attachments is a no-op`, async function () {
+    it('no attachments is a no-op', async function () {
         let fail = false;
         const returnTokenResponse = () => {
             fail = true;
@@ -84,7 +84,7 @@ describe(`TokenResolver`, function () {
         assert(log.length === 0, 'logged actions, should be zero');
     });
 
-    it(`should get the token`, async function () {
+    it('should get the token', async function () {
         let gotToken = false;
         const returnTokenResponse = () => {
             return { token: '1234', connectionName: 'foo' };
@@ -114,7 +114,7 @@ describe(`TokenResolver`, function () {
         assert(gotToken, 'did not receive token');
     });
 
-    it(`should call onTurnError with process throw Error`, async function () {
+    it('should call onTurnError with process throw Error', async function () {
         let calledOnTurnError = false;
         const returnTokenResponse = () => {
             return { token: '1234', connectionName: 'foo' };
@@ -147,7 +147,7 @@ describe(`TokenResolver`, function () {
         assert(calledOnTurnError, 'did not receive error');
     });
 
-    it(`should call onTurnError with process throw other`, async function () {
+    it('should call onTurnError with process throw other', async function () {
         let calledOnTurnError = false;
         const returnTokenResponse = () => {
             return { token: '1234', connectionName: 'foo' };
@@ -180,7 +180,7 @@ describe(`TokenResolver`, function () {
         assert(calledOnTurnError, 'did not receive error');
     });
 
-    it(`should get the token on the second try`, async function () {
+    it('should get the token on the second try', async function () {
         this.timeout(10000);
 
         let gotToken = false;
@@ -214,7 +214,7 @@ describe(`TokenResolver`, function () {
         assert(gotToken, 'did not receive token');
     });
 
-    it(`should end polling`, async function () {
+    it('should end polling', async function () {
         let doneResolve, doneReject;
         const done = new Promise((resolve, reject) => {
             doneResolve = resolve;
@@ -238,7 +238,7 @@ describe(`TokenResolver`, function () {
         assert(log.indexOf('End polling') !== -1, 'did not end polling');
     });
 
-    it(`should change interval polling`, async function () {
+    it('should change interval polling', async function () {
         let doneResolve, doneReject;
         const done = new Promise((resolve, reject) => {
             doneResolve = resolve;

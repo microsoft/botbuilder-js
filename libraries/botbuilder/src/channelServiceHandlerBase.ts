@@ -291,6 +291,7 @@ export abstract class ChannelServiceHandlerBase {
 
     /**
      * UpdateActivity() API for Skill.
+     *
      * @remarks
      * Edit an existing activity.
      *
@@ -500,6 +501,7 @@ export abstract class ChannelServiceHandlerBase {
 
     /**
      * DeleteConversationMember() API for Skill.
+     *
      * @remarks
      * Deletes a member from a conversation.
      *
@@ -525,6 +527,7 @@ export abstract class ChannelServiceHandlerBase {
 
     /**
      * SendConversationHistory() API for Skill.
+     *
      * @remarks
      * This method allows you to upload the historic activities to the
      * conversation.
@@ -552,6 +555,7 @@ export abstract class ChannelServiceHandlerBase {
 
     /**
      * UploadAttachment() API for Skill.
+     *
      * @remarks
      * Upload an attachment directly into a channel's blob storage.
      *

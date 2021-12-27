@@ -31,6 +31,7 @@ export class TokenResolver {
 
     /**
      * Checks if we have token responses from OAuth cards.
+     *
      * @param adapter The [BotFrameworkAdapter](xref:botbuilder.BotFrameworkAdapter).
      * @param context The [TurnContext](xref:botbuilder-core.TurnContext) for this turn.
      * @param activity The [Activity](xref:botframework-schema.Activity) to be checked.
@@ -50,7 +51,7 @@ export class TokenResolver {
             if (attachment.contentType == CardFactory.contentTypes.oauthCard) {
                 const oauthCard = <OAuthCard>attachment.content;
                 if (!oauthCard.connectionName) {
-                    throw new Error(`The OAuthPrompt's ConnectionName property is missing a value.`);
+                    throw new Error("The OAuthPrompt's ConnectionName property is missing a value.");
                 }
 
                 let pollingTimeoutMs = context.turnState.get(TokenPollingSettingsKey);
@@ -131,6 +132,11 @@ export class TokenResolver {
         }
     }
 
+    /**
+     * @param relatesTo
+     * @param token
+     * @param connectionName
+     */
     private static createTokenResponseActivity(
         relatesTo: Partial<ConversationReference>,
         token: string,

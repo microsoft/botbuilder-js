@@ -7,9 +7,9 @@ const assert = require('assert');
 const { StatusCodeError } = require('../');
 const { StatusCodes } = require('botbuilder-core');
 
-describe(`StatusCodeError`, function () {
-    describe('constructor()', () => {
-        it(`should work with a message.`, function () {
+describe('StatusCodeError', function () {
+    describe('constructor()', function () {
+        it('should work with a message.', function () {
             const message = 'This is an error message';
             const error = new StatusCodeError(StatusCodes.NOT_FOUND, message);
 
@@ -21,7 +21,7 @@ describe(`StatusCodeError`, function () {
             );
         });
 
-        it(`should work without a message.`, function () {
+        it('should work without a message.', function () {
             const error = new StatusCodeError(StatusCodes.NOT_FOUND);
 
             assert.strictEqual(error.message, '', 'message should be empty.');
@@ -32,7 +32,7 @@ describe(`StatusCodeError`, function () {
             );
         });
 
-        it(`should statusCode be undefined if not passed as a parameter.`, function () {
+        it('should statusCode be undefined if not passed as a parameter.', function () {
             const error = new StatusCodeError();
 
             assert.strictEqual(error.statusCode, undefined, 'statusCode should be undefined.');

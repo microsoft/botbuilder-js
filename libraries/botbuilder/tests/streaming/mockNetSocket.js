@@ -7,14 +7,13 @@ class MockNetSocket {
         this.writable = writable;
     }
 
-    write(response) { }
+    write(response) {}
 
-    destroy(err) { }
+    destroy(err) {}
 }
 
 MockNetSocket.createNonSuccessResponse = (code, message) => {
     return `HTTP/1.1 ${code} ${StatusCodes[code]}\r\n${message}\r\nConnection: 'close'\r\n\r\n`;
 };
-
 
 module.exports.MockNetSocket = MockNetSocket;

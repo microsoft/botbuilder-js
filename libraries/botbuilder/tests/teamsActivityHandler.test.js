@@ -13,14 +13,14 @@ function createInvokeActivity(name, value = {}, channelData = {}) {
 }
 
 describe('TeamsActivityHandler', function () {
-    describe('onTurnActivity()', () => {
+    describe('onTurnActivity()', function () {
         it('should not override the InvokeResponse on the context.turnState if it is set', async function () {
             class InvokeHandler extends TeamsActivityHandler {
                 async onInvokeActivity(context) {
                     assert(context, 'context not found');
                     await context.sendActivity({
                         type: 'invokeResponse',
-                        value: { status: 200, body: `I'm a teapot.` },
+                        value: { status: 200, body: "I'm a teapot." },
                     });
                     return { status: 418 };
                 }
@@ -37,7 +37,7 @@ describe('TeamsActivityHandler', function () {
                     assert.strictEqual(activity.type, 'invokeResponse');
                     assert(activity.value, 'activity.value not found');
                     assert.strictEqual(activity.value.status, 200);
-                    assert.strictEqual(activity.value.body, `I'm a teapot.`);
+                    assert.strictEqual(activity.value.body, "I'm a teapot.");
                 })
                 .startTest();
         });
@@ -63,7 +63,7 @@ describe('TeamsActivityHandler', function () {
         });
     });
 
-    describe('onInvokeActivity()', () => {
+    describe('onInvokeActivity()', function () {
         class InvokeActivityEmptyHandlers extends TeamsActivityHandler {
             constructor() {
                 super();
@@ -270,20 +270,24 @@ describe('TeamsActivityHandler', function () {
                 .startTest();
         });
 
-        it('should call the base ActivityHandler\'s onInvokeActivity if activity.name is unrecognized', async function () {
+        it("should call the base ActivityHandler's onInvokeActivity if activity.name is unrecognized", async function () {
             const bot = new InvokeActivityEmptyHandlers();
 
             const mockedResponse = { statusCode: 200, value: 'called' };
 
             bot.onAdaptiveCardInvoke = () => {
                 return mockedResponse;
-            }
+            };
 
             const adapter = new TestAdapter(async (context) => {
                 await bot.run(context);
             });
 
-            const activity = { type: ActivityTypes.Invoke, name: 'adaptiveCard/action', value: { action: { type: 'Action.Execute' }}};
+            const activity = {
+                type: ActivityTypes.Invoke,
+                name: 'adaptiveCard/action',
+                value: { action: { type: 'Action.Execute' } },
+            };
 
             await adapter
                 .send(activity)
@@ -295,7 +299,7 @@ describe('TeamsActivityHandler', function () {
         });
     });
 
-    describe('should send a BadRequest status code if', () => {
+    describe('should send a BadRequest status code if', function () {
         it('a bad BotMessagePreview.action is received by the bot', async function () {
             const bot = new TeamsActivityHandler();
 
@@ -359,7 +363,7 @@ describe('TeamsActivityHandler', function () {
         });
     });
 
-    describe('should send a NotImplemented status code if', () => {
+    describe('should send a NotImplemented status code if', function () {
         it('handleTeamsMessagingExtensionSubmitAction is not overridden', async function () {
             const bot = new TeamsActivityHandler();
 
@@ -785,7 +789,7 @@ describe('TeamsActivityHandler', function () {
         });
     });
 
-    describe('should send an OK status code', () => {
+    describe('should send an OK status code', function () {
         class OKFileConsent extends TeamsActivityHandler {
             async handleTeamsFileConsentAccept(context, fileConsentCardResponse) {
                 assert(context, 'context not found');
@@ -891,7 +895,7 @@ describe('TeamsActivityHandler', function () {
                 .startTest();
         });
 
-        describe('and the return value from', () => {
+        describe('and the return value from', function () {
             class TaskHandler extends TeamsActivityHandler {
                 constructor() {
                     super();
@@ -1025,7 +1029,7 @@ describe('TeamsActivityHandler', function () {
         });
     });
 
-    describe('should send a BadRequest status code when', () => {
+    describe('should send a BadRequest status code when', function () {
         it('handleTeamsFileConsent() receives an unexpected action value', async function () {
             const bot = new TeamsActivityHandler();
             const adapter = new TestAdapter(async (context) => {
@@ -1063,7 +1067,7 @@ describe('TeamsActivityHandler', function () {
         });
     });
 
-    describe('should dispatch through a registered', () => {
+    describe('should dispatch through a registered', function () {
         let fileConsentAcceptCalled = false;
         let fileConsentDeclineCalled = false;
         let fileConsentCalled = false;
@@ -1097,13 +1101,13 @@ describe('TeamsActivityHandler', function () {
             }
         }
 
-        beforeEach(() => {
+        beforeEach(function () {
             fileConsentAcceptCalled = false;
             fileConsentDeclineCalled = false;
             fileConsentCalled = false;
         });
 
-        afterEach(() => {
+        afterEach(function () {
             fileConsentAcceptCalled = false;
             fileConsentDeclineCalled = false;
             fileConsentCalled = false;
@@ -1174,7 +1178,7 @@ describe('TeamsActivityHandler', function () {
         });
     });
 
-    describe('should call onDialog handlers after successfully handling an activity', () => {
+    describe('should call onDialog handlers after successfully handling an activity', function () {
         function createConvUpdateActivity(channelData) {
             const activity = {
                 type: ActivityTypes.ConversationUpdate,
@@ -1205,12 +1209,12 @@ describe('TeamsActivityHandler', function () {
         let onConversationUpdateCalled = false;
         let onDialogCalled = false;
 
-        beforeEach(() => {
+        beforeEach(function () {
             onConversationUpdateCalled = false;
             onDialogCalled = false;
         });
 
-        afterEach(() => {
+        afterEach(function () {
             onConversationUpdateCalled = true;
             onDialogCalled = true;
         });

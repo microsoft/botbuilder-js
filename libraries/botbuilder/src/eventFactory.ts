@@ -4,7 +4,15 @@
  */
 
 import { v4 as uuidv4 } from 'uuid';
-import { Activity, ActivityTypes, Attachment, ConversationAccount, ConversationReference, Transcript, TurnContext } from 'botbuilder-core';
+import {
+    Activity,
+    ActivityTypes,
+    Attachment,
+    ConversationAccount,
+    ConversationReference,
+    Transcript,
+    TurnContext,
+} from 'botbuilder-core';
 import * as dayjs from 'dayjs';
 import * as timezone from 'dayjs/plugin/timezone';
 dayjs.extend(timezone);
@@ -16,6 +24,7 @@ import { HandoffEventNames } from './handoffEventNames';
 export class EventFactory {
     /**
      * Create handoff initiation event.
+     *
      * @param context The context object for the turn.
      * @param handoffContext Agent hub-specific context.
      * @param transcript Transcript of the conversation.
@@ -55,6 +64,7 @@ export class EventFactory {
 
     /**
      * Create handoff status event.
+     *
      * @param conversation Conversation being handed over.
      * @param state State, possible values are: "accepted", "failed", "completed".
      * @param message Additional message for failed handoff.

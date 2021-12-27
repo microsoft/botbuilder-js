@@ -41,6 +41,9 @@ export class ChannelServiceHandler extends ChannelServiceHandlerBase {
         }
     }
 
+    /**
+     * @param authHeader
+     */
     protected async authenticate(authHeader: string): Promise<ClaimsIdentity> {
         if (!authHeader) {
             const isAuthDisabled = await this.credentialProvider.isAuthenticationDisabled();

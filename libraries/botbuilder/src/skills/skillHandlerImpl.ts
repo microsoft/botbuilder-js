@@ -19,6 +19,13 @@ import {
  * @internal
  */
 export class SkillHandlerImpl {
+    /**
+     * @param skillConversationReferenceKey
+     * @param adapter
+     * @param logic
+     * @param conversationIdFactory
+     * @param getOauthScope
+     */
     constructor(
         private readonly skillConversationReferenceKey: symbol,
         private readonly adapter: BotAdapter,
@@ -27,6 +34,11 @@ export class SkillHandlerImpl {
         private readonly getOauthScope: () => string | undefined = () => undefined
     ) {}
 
+    /**
+     * @param claimsIdentity
+     * @param conversationId
+     * @param activity
+     */
     onSendToConversation(
         claimsIdentity: ClaimsIdentity,
         conversationId: string,
@@ -35,6 +47,12 @@ export class SkillHandlerImpl {
         return this.processActivity(claimsIdentity, conversationId, null, activity);
     }
 
+    /**
+     * @param claimsIdentity
+     * @param conversationId
+     * @param activityId
+     * @param activity
+     */
     onReplyToActivity(
         claimsIdentity: ClaimsIdentity,
         conversationId: string,
@@ -44,6 +62,12 @@ export class SkillHandlerImpl {
         return this.processActivity(claimsIdentity, conversationId, activityId, activity);
     }
 
+    /**
+     * @param claimsIdentity
+     * @param conversationId
+     * @param activityId
+     * @param activity
+     */
     async onUpdateActivity(
         claimsIdentity: ClaimsIdentity,
         conversationId: string,
@@ -66,12 +90,20 @@ export class SkillHandlerImpl {
         return resourceResponse ? resourceResponse : { id: activityId };
     }
 
+    /**
+     * @param claimsIdentity
+     * @param conversationId
+     * @param activityId
+     */
     async onDeleteActivity(claimsIdentity: ClaimsIdentity, conversationId: string, activityId: string): Promise<void> {
         return this.continueConversation(claimsIdentity, conversationId, (context) =>
             context.deleteActivity(activityId)
         );
     }
 
+    /**
+     * @param conversationId
+     */
     private async getSkillConversationReference(conversationId: string): Promise<SkillConversationReference> {
         let skillConversationReference: SkillConversationReference;
 
@@ -100,6 +132,12 @@ export class SkillHandlerImpl {
         return skillConversationReference;
     }
 
+    /**
+     * @param claimsIdentity
+     * @param conversationId
+     * @param replyToActivityId
+     * @param activity
+     */
     private async processActivity(
         claimsIdentity: ClaimsIdentity,
         conversationId: string,
@@ -151,6 +189,11 @@ export class SkillHandlerImpl {
         return resourceResponse;
     }
 
+    /**
+     * @param claimsIdentity
+     * @param conversationId
+     * @param callback
+     */
     private async continueConversation(
         claimsIdentity: ClaimsIdentity,
         conversationId: string,
@@ -187,6 +230,10 @@ export class SkillHandlerImpl {
     // adapter.continueConversation() sends an event activity with continueConversation in the name.
     // this warms up the incoming middlewares but once that's done and we hit the custom callback,
     // we need to swap the values back to the ones received from the skill so the bot gets the actual activity.
+    /**
+     * @param context
+     * @param activity
+     */
     private applySkillActivityToTurnContext(context: TurnContext, activity: Partial<Activity>): void {
         context.activity.channelData = activity.channelData;
         context.activity.code = activity.code;

@@ -20,6 +20,7 @@ function validateActivity(activity: Activity): void {
 
 /**
  * Gets the TeamsMeetingInfo object from the current [Activity](xref:botframework-schema.Activity).
+ *
  * @param activity The current [Activity](xref:botframework-schema.Activity).
  * @returns The current [Activity](xref:botframework-schema.Activity)'s team meeting info, or null.
  */
@@ -35,6 +36,7 @@ export function teamsGetTeamMeetingInfo(activity: Activity): TeamsMeetingInfo | 
 
 /**
  * Gets the TenantInfo object from the current [Activity](xref:botframework-schema.Activity).
+ *
  * @param activity The current [Activity](xref:botframework-schema.Activity).
  * @returns The current [Activity](xref:botframework-schema.Activity)'s tenant info, or null.
  */
@@ -50,6 +52,7 @@ export function teamsGetTenant(activity: Activity): TenantInfo | null {
 
 /**
  * Gets the TeamsInfo object from the current [Activity](xref:botframework-schema.Activity).
+ *
  * @param activity The current [Activity](xref:botframework-schema.Activity).
  * @returns The current [Activity](xref:botframework-schema.Activity)'s team's info, or null.
  */
@@ -67,6 +70,7 @@ export function teamsGetTeamInfo(activity: Activity): TeamInfo | null {
 
 /**
  * Gets the Team Id from the current [Activity](xref:botframework-schema.Activity).
+ *
  * @param activity The current [Activity](xref:botframework-schema.Activity).
  * @returns The current [Activity](xref:botframework-schema.Activity)'s team's Id, or null.
  */
@@ -77,6 +81,8 @@ export function teamsGetTeamId(activity: Activity): string | null {
 
 /**
  * Activity helper methods for Teams.	 * Activity helper methods for Teams.
+ *
+ * @param activity
  */
 export function teamsGetChannelId(activity: Activity): string | null {
     validateActivity(activity);
@@ -92,7 +98,10 @@ export function teamsGetChannelId(activity: Activity): string | null {
 
 /**
  * Configures the current [Activity](xref:botframework-schema.Activity) to generate a notification within Teams.
+ *
  * @param activity The current [Activity](xref:botframework-schema.Activity).
+ * @param alertInMeeting
+ * @param externalResourceUrl
  */
 export function teamsNotifyUser(activity: Activity, alertInMeeting?: boolean, externalResourceUrl?: string): void {
     validateActivity(activity);

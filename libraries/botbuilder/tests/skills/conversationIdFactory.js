@@ -13,7 +13,7 @@ class ConversationIdFactory extends SkillConversationIdFactoryBase {
         if (this.disableCreateWithOptions) super.createSkillConversationIdWithOptions();
         this.refs[this.skillId] = {
             conversationReference: TurnContext.getConversationReference(options.activity),
-            oAuthScope: options.fromBotOAuthScope
+            oAuthScope: options.fromBotOAuthScope,
         };
         return this.skillId;
     }
@@ -24,7 +24,7 @@ class ConversationIdFactory extends SkillConversationIdFactoryBase {
     }
 
     // Deprecated method
-    async createSkillConversationId(convRef = { conversation: { id: undefined }}) {
+    async createSkillConversationId(convRef = { conversation: { id: undefined } }) {
         this.refs[this.skillId] = convRef;
         return this.skillId;
     }

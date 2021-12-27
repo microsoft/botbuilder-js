@@ -14,6 +14,9 @@ import {
     TurnContext,
 } from 'botbuilder-core';
 
+/**
+ *
+ */
 export class CloudSkillHandler extends CloudChannelServiceHandler {
     /**
      * Used to access the CovnersationReference sent from the Skill to the Parent.

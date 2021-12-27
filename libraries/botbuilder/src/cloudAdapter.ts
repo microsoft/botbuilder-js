@@ -40,6 +40,9 @@ import {
 // Note: this is _okay_ because we pass the result through `validateAndFixActivity`. Should not be used otherwise.
 const ActivityT = z.custom<Activity>((val) => z.record(z.unknown()).check(val), { message: 'Activity' });
 
+/**
+ *
+ */
 export class CloudAdapter extends CloudAdapterBase implements BotFrameworkHttpAdapter {
     /**
      * Initializes a new instance of the [CloudAdapter](xref:botbuilder:CloudAdapter) class.
@@ -190,6 +193,12 @@ export class CloudAdapter extends CloudAdapterBase implements BotFrameworkHttpAd
         await retry(() => server.start(), retryCount);
     }
 
+    /**
+     * @param req
+     * @param socket
+     * @param head
+     * @param logic
+     */
     private async connect(
         req: Request,
         socket: INodeSocket,

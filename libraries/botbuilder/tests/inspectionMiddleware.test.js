@@ -37,7 +37,7 @@ describe('InspectionMiddleware', function () {
 
         assert(adapter.activityBuffer.length === 1, 'expected a single adapter response');
         assert(adapter.activityBuffer[0].type === 'message', 'expected a message activity');
-        assert(adapter.activityBuffer[0].text === 'hi', `expected text saying 'hi'`);
+        assert(adapter.activityBuffer[0].text === 'hi', "expected text saying 'hi'");
     });
     it('should replicate activity data to listening emulator following open and attach', async function () {
         // set up our expectations in nock - each corresponds to a trace message we expect to receive in the emulator
@@ -423,8 +423,8 @@ describe('InspectionMiddleware', function () {
         assert.strictEqual(adapter.activityBuffer.length, 2);
         await adapter.receiveActivity(activity);
 
-        assert.strictEqual(adapter.activityBuffer.length, 2, `no activities updated.`);
-        assert.strictEqual(adapter.activityBuffer[1].text, activity.text, `invalid update activity text.`);
+        assert.strictEqual(adapter.activityBuffer.length, 2, 'no activities updated.');
+        assert.strictEqual(adapter.activityBuffer[1].text, activity.text, 'invalid update activity text.');
     });
 
     it('should delete activity to trigger turnContext.onDeleteActivity', async function () {
@@ -504,7 +504,7 @@ describe('InspectionMiddleware', function () {
         assert.strictEqual(adapter.activityBuffer.length, 2);
 
         await adapter.receiveActivity(activity);
-        assert.strictEqual(adapter.activityBuffer.length, 1, `no activities deleted.`);
+        assert.strictEqual(adapter.activityBuffer.length, 1, 'no activities deleted.');
     });
 
     it('should throw an error when onTurn next parameter is null', async function () {
