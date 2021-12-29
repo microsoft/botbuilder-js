@@ -11,7 +11,7 @@
  */
 export class TelemetryLoggerConstants {
     /**
-     * The generic name of the event when an binding completes. When this event is logged, the context property will contain a more descriptive constant.
+     * The generic name of the event when a binding completes. When this event is logged, the context property will contain a more descriptive constant.
      */
     public static readonly GeneratorResultEvent: string = 'GeneratorResult';
 
