@@ -1,5 +1,4 @@
-const { STATUS_CODES } = require('http');
-const { AuthenticationError, StatusCodes } = require('botbuilder-core');
+const { StatusCodes } = require('botbuilder-core');
 
 class MockNetSocket {
     constructor(readable = true, writable = true) {
@@ -7,9 +6,9 @@ class MockNetSocket {
         this.writable = writable;
     }
 
-    write(response) {}
+    write(_response) {}
 
-    destroy(err) {}
+    destroy(_err) {}
 }
 
 MockNetSocket.createNonSuccessResponse = (code, message) => {

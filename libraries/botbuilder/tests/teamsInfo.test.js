@@ -3,13 +3,8 @@ const nock = require('nock');
 const sinon = require('sinon');
 const { BotFrameworkAdapter, TeamsInfo, CloudAdapter } = require('../');
 const { Conversations } = require('botframework-connector/lib/connectorApi/operations');
-const {
-    MicrosoftAppCredentials,
-    ConnectorClient,
-    ServiceClientCredentialsFactory,
-    PasswordServiceClientCredentialFactory,
-} = require('botframework-connector');
-const { TurnContext, MessageFactory, ActionTypes, BotAdapter, Channels } = require('botbuilder-core');
+const { MicrosoftAppCredentials, ConnectorClient } = require('botframework-connector');
+const { TurnContext, MessageFactory, ActionTypes, Channels } = require('botbuilder-core');
 
 class TeamsInfoAdapter extends BotFrameworkAdapter {
     constructor() {

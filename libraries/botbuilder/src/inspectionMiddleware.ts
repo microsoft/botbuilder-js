@@ -84,8 +84,7 @@ abstract class InterceptionMiddleware implements Middleware {
     /**
      * Implement middleware signature
      *
-     * @param context {TurnContext} An incoming TurnContext object.
-     * @param turnContext
+     * @param turnContext {TurnContext} An incoming TurnContext object.
      * @param next {function} The next delegate function.
      */
     public async onTurn(turnContext: TurnContext, next: () => Promise<void>): Promise<void> {
@@ -183,10 +182,10 @@ export class InspectionMiddleware extends InterceptionMiddleware {
     /**
      * Create the Inspection middleware for sending trace activities out to an emulator session
      *
-     * @param inspectionState
-     * @param userState
-     * @param conversationState
-     * @param credentials
+     * @param inspectionState A state management object for inspection state.
+     * @param userState A state management object for user state.
+     * @param conversationState A state management object for conversation state.
+     * @param credentials The authentication credentials.
      */
     constructor(
         inspectionState: InspectionState,
@@ -239,6 +238,7 @@ export class InspectionMiddleware extends InterceptionMiddleware {
      *
      * @param turnContext The [TurnContext](xref:botbuilder-core.TurnContext) for this turn.
      * @param traceActivity The trace activity.
+     * @returns {Promise<any>} A promise representing the asynchronous operation.
      */
     protected async inbound(turnContext: TurnContext, traceActivity: Partial<Activity>): Promise<any> {
         if (await this.processCommand(turnContext)) {
@@ -421,7 +421,7 @@ class InspectionSession {
 
         try {
             await this.connectorClient.conversations.sendToConversation(activity.conversation.id, activity as Activity);
-        } catch (err) {
+        } catch {
             return false;
         }
 
@@ -460,9 +460,10 @@ export class InspectionState extends BotState {
     /**
      * Gets the key to use when reading and writing state to and from storage.
      *
-     * @param turnContext The [TurnContext](xref:botbuilder-core.TurnContext) for this turn.
+     * @param _turnContext The [TurnContext](xref:botbuilder-core.TurnContext) for this turn.
+     * @returns The storage key.
      */
-    protected getStorageKey(turnContext: TurnContext) {
+    protected getStorageKey(_turnContext: TurnContext) {
         return 'InspectionState';
     }
 }

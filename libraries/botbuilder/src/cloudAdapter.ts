@@ -41,7 +41,7 @@ import {
 const ActivityT = z.custom<Activity>((val) => z.record(z.unknown()).check(val), { message: 'Activity' });
 
 /**
- *
+ * An adapter that implements the Bot Framework Protocol and can be hosted in different cloud environmens both public and private.
  */
 export class CloudAdapter extends CloudAdapterBase implements BotFrameworkHttpAdapter {
     /**
@@ -193,12 +193,6 @@ export class CloudAdapter extends CloudAdapterBase implements BotFrameworkHttpAd
         await retry(() => server.start(), retryCount);
     }
 
-    /**
-     * @param req
-     * @param socket
-     * @param head
-     * @param logic
-     */
     private async connect(
         req: Request,
         socket: INodeSocket,

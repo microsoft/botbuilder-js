@@ -236,14 +236,14 @@ export abstract class ChannelServiceHandlerBase {
      * conversation.
      *
      * Use SendToConversation in all other cases.
-     * @param claimsIdentity ClaimsIdentity for the bot, should have AudienceClaim, AppIdClaim and ServiceUrlClaim.
-     * @param conversationId Conversation identifier
-     * @param activity Activity to send
+     * @param _claimsIdentity ClaimsIdentity for the bot, should have AudienceClaim, AppIdClaim and ServiceUrlClaim.
+     * @param _conversationId Conversation identifier
+     * @param _activity Activity to send
      */
     protected async onSendToConversation(
-        claimsIdentity: ClaimsIdentity,
-        conversationId: string,
-        activity: Activity
+        _claimsIdentity: ClaimsIdentity,
+        _conversationId: string,
+        _activity: Activity
     ): Promise<ResourceResponse> {
         throw new StatusCodeError(
             StatusCodes.NOT_IMPLEMENTED,
@@ -270,16 +270,16 @@ export abstract class ChannelServiceHandlerBase {
      * conversation.
      *
      * Use SendToConversation in all other cases.
-     * @param claimsIdentity ClaimsIdentity for the bot, should have AudienceClaim, AppIdClaim and ServiceUrlClaim.
-     * @param conversationId Conversation ID.
-     * @param activityId activityId the reply is to (OPTIONAL).
-     * @param activity Activity to send.
+     * @param _claimsIdentity ClaimsIdentity for the bot, should have AudienceClaim, AppIdClaim and ServiceUrlClaim.
+     * @param _conversationId Conversation ID.
+     * @param _activityId activityId the reply is to (OPTIONAL).
+     * @param _activity Activity to send.
      */
     protected async onReplyToActivity(
-        claimsIdentity: ClaimsIdentity,
-        conversationId: string,
-        activityId: string,
-        activity: Activity
+        _claimsIdentity: ClaimsIdentity,
+        _conversationId: string,
+        _activityId: string,
+        _activity: Activity
     ): Promise<ResourceResponse> {
         throw new StatusCodeError(
             StatusCodes.NOT_IMPLEMENTED,
@@ -299,16 +299,16 @@ export abstract class ChannelServiceHandlerBase {
      * state of a bot conversation.
      *
      * For example, you can remove buttons after someone has clicked "Approve" button.
-     * @param claimsIdentity ClaimsIdentity for the bot, should have AudienceClaim, AppIdClaim and ServiceUrlClaim.
-     * @param conversationId Conversation ID.
-     * @param activityId activityId to update.
-     * @param activity replacement Activity.
+     * @param _claimsIdentity ClaimsIdentity for the bot, should have AudienceClaim, AppIdClaim and ServiceUrlClaim.
+     * @param _conversationId Conversation ID.
+     * @param _activityId activityId to update.
+     * @param _activity replacement Activity.
      */
     protected async onUpdateActivity(
-        claimsIdentity: ClaimsIdentity,
-        conversationId: string,
-        activityId: string,
-        activity: Activity
+        _claimsIdentity: ClaimsIdentity,
+        _conversationId: string,
+        _activityId: string,
+        _activity: Activity
     ): Promise<ResourceResponse> {
         throw new StatusCodeError(
             StatusCodes.NOT_IMPLEMENTED,
@@ -328,14 +328,14 @@ export abstract class ChannelServiceHandlerBase {
      * this method will remove the specified activity.
      *
      *
-     * @param claimsIdentity ClaimsIdentity for the bot, should have AudienceClaim, AppIdClaim and ServiceUrlClaim.
-     * @param conversationId Conversation ID.
-     * @param activityId activityId to delete.
+     * @param _claimsIdentity ClaimsIdentity for the bot, should have AudienceClaim, AppIdClaim and ServiceUrlClaim.
+     * @param _conversationId Conversation ID.
+     * @param _activityId activityId to delete.
      */
     protected async onDeleteActivity(
-        claimsIdentity: ClaimsIdentity,
-        conversationId: string,
-        activityId: string
+        _claimsIdentity: ClaimsIdentity,
+        _conversationId: string,
+        _activityId: string
     ): Promise<void> {
         throw new StatusCodeError(
             StatusCodes.NOT_IMPLEMENTED,
@@ -354,14 +354,14 @@ export abstract class ChannelServiceHandlerBase {
      * This REST API takes a ConversationId and a ActivityId, returning an array
      * of ChannelAccount objects representing the members of the particular
      * activity in the conversation.
-     * @param claimsIdentity ClaimsIdentity for the bot, should have AudienceClaim, AppIdClaim and ServiceUrlClaim.
-     * @param conversationId Conversation ID.
-     * @param activityId Activity ID.
+     * @param _claimsIdentity ClaimsIdentity for the bot, should have AudienceClaim, AppIdClaim and ServiceUrlClaim.
+     * @param _conversationId Conversation ID.
+     * @param _activityId Activity ID.
      */
     protected async onGetActivityMembers(
-        claimsIdentity: ClaimsIdentity,
-        conversationId: string,
-        activityId: string
+        _claimsIdentity: ClaimsIdentity,
+        _conversationId: string,
+        _activityId: string
     ): Promise<ChannelAccount[]> {
         throw new StatusCodeError(
             StatusCodes.NOT_IMPLEMENTED,
@@ -388,12 +388,12 @@ export abstract class ChannelServiceHandlerBase {
      * Most channels only support the semantics of bots initiating a direct
      * message conversation.
      *
-     * @param claimsIdentity ClaimsIdentity for the bot, should have AudienceClaim, AppIdClaim and ServiceUrlClaim.
-     * @param parameters Parameters to create the conversation from.
+     * @param _claimsIdentity ClaimsIdentity for the bot, should have AudienceClaim, AppIdClaim and ServiceUrlClaim.
+     * @param _parameters Parameters to create the conversation from.
      */
     protected async onCreateConversation(
-        claimsIdentity: ClaimsIdentity,
-        parameters: ConversationParameters
+        _claimsIdentity: ClaimsIdentity,
+        _parameters: ConversationParameters
     ): Promise<ConversationResourceResponse> {
         throw new StatusCodeError(
             StatusCodes.NOT_IMPLEMENTED,
@@ -419,14 +419,14 @@ export abstract class ChannelServiceHandlerBase {
      * Each ConversationMembers object contains the ID of the conversation and an
      * array of ChannelAccounts that describe the members of the conversation.
      *
-     * @param claimsIdentity ClaimsIdentity for the bot, should have AudienceClaim, AppIdClaim and ServiceUrlClaim.
-     * @param conversationId Conversation ID.
-     * @param continuationToken Skip or continuation token.
+     * @param _claimsIdentity ClaimsIdentity for the bot, should have AudienceClaim, AppIdClaim and ServiceUrlClaim.
+     * @param _conversationId Conversation ID.
+     * @param _continuationToken Skip or continuation token.
      */
     protected async onGetConversations(
-        claimsIdentity: ClaimsIdentity,
-        conversationId: string,
-        continuationToken?: string
+        _claimsIdentity: ClaimsIdentity,
+        _conversationId: string,
+        _continuationToken?: string
     ): Promise<ConversationsResult> {
         throw new StatusCodeError(
             StatusCodes.NOT_IMPLEMENTED,
@@ -444,12 +444,12 @@ export abstract class ChannelServiceHandlerBase {
      *
      * This REST API takes a ConversationId and returns an array of ChannelAccount
      * objects representing the members of the conversation.
-     * @param claimsIdentity ClaimsIdentity for the bot, should have AudienceClaim, AppIdClaim and ServiceUrlClaim.
-     * @param conversationId Conversation ID.
+     * @param _claimsIdentity ClaimsIdentity for the bot, should have AudienceClaim, AppIdClaim and ServiceUrlClaim.
+     * @param _conversationId Conversation ID.
      */
     protected async onGetConversationMembers(
-        claimsIdentity: ClaimsIdentity,
-        conversationId: string
+        _claimsIdentity: ClaimsIdentity,
+        _conversationId: string
     ): Promise<ChannelAccount[]> {
         throw new StatusCodeError(
             StatusCodes.NOT_IMPLEMENTED,
@@ -480,16 +480,16 @@ export abstract class ChannelServiceHandlerBase {
      *
      * A response to a request that has a continuation token from a prior request
      * may rarely return members from a previous request.
-     * @param claimsIdentity ClaimsIdentity for the bot, should have AudienceClaim, AppIdClaim and ServiceUrlClaim.
-     * @param conversationId Conversation ID.
-     * @param pageSize Suggested page size.
-     * @param continuationToken Continuation Token.
+     * @param _claimsIdentity ClaimsIdentity for the bot, should have AudienceClaim, AppIdClaim and ServiceUrlClaim.
+     * @param _conversationId Conversation ID.
+     * @param _pageSize Suggested page size.
+     * @param _continuationToken Continuation Token.
      */
     protected async onGetConversationPagedMembers(
-        claimsIdentity: ClaimsIdentity,
-        conversationId: string,
-        pageSize = -1,
-        continuationToken?: string
+        _claimsIdentity: ClaimsIdentity,
+        _conversationId: string,
+        _pageSize = -1,
+        _continuationToken?: string
     ): Promise<PagedMembersResult> {
         throw new StatusCodeError(
             StatusCodes.NOT_IMPLEMENTED,
@@ -508,14 +508,14 @@ export abstract class ChannelServiceHandlerBase {
      * This REST API takes a ConversationId and a memberId (of type string) and
      * removes that member from the conversation. If that member was the last member
      * of the conversation, the conversation will also be deleted.
-     * @param claimsIdentity ClaimsIdentity for the bot, should have AudienceClaim, AppIdClaim and ServiceUrlClaim.
-     * @param conversationId Conversation ID.
-     * @param memberId ID of the member to delete from this conversation.
+     * @param _claimsIdentity ClaimsIdentity for the bot, should have AudienceClaim, AppIdClaim and ServiceUrlClaim.
+     * @param _conversationId Conversation ID.
+     * @param _memberId ID of the member to delete from this conversation.
      */
     protected async onDeleteConversationMember(
-        claimsIdentity: ClaimsIdentity,
-        conversationId: string,
-        memberId: string
+        _claimsIdentity: ClaimsIdentity,
+        _conversationId: string,
+        _memberId: string
     ): Promise<void> {
         throw new StatusCodeError(
             StatusCodes.NOT_IMPLEMENTED,
@@ -536,14 +536,14 @@ export abstract class ChannelServiceHandlerBase {
      * appropriate timestamps. The ids are used by the client to deal with
      * duplicate activities and the timestamps are used by the client to render
      * the activities in the right order.
-     * @param claimsIdentity ClaimsIdentity for the bot, should have AudienceClaim, AppIdClaim and ServiceUrlClaim.
-     * @param conversationId Conversation ID.
-     * @param transcript Transcript of activities.
+     * @param _claimsIdentity ClaimsIdentity for the bot, should have AudienceClaim, AppIdClaim and ServiceUrlClaim.
+     * @param _conversationId Conversation ID.
+     * @param _transcript Transcript of activities.
      */
     protected async onSendConversationHistory(
-        claimsIdentity: ClaimsIdentity,
-        conversationId: string,
-        transcript: Transcript
+        _claimsIdentity: ClaimsIdentity,
+        _conversationId: string,
+        _transcript: Transcript
     ): Promise<ResourceResponse> {
         throw new StatusCodeError(
             StatusCodes.NOT_IMPLEMENTED,
@@ -564,14 +564,14 @@ export abstract class ChannelServiceHandlerBase {
      *
      * The response is a ResourceResponse which contains an AttachmentId which is
      * suitable for using with the attachments API.
-     * @param claimsIdentity ClaimsIdentity for the bot, should have AudienceClaim, AppIdClaim and ServiceUrlClaim.
-     * @param conversationId Conversation ID.
-     * @param attachmentUpload Attachment data.
+     * @param _claimsIdentity ClaimsIdentity for the bot, should have AudienceClaim, AppIdClaim and ServiceUrlClaim.
+     * @param _conversationId Conversation ID.
+     * @param _attachmentUpload Attachment data.
      */
     protected async onUploadAttachment(
-        claimsIdentity: ClaimsIdentity,
-        conversationId: string,
-        attachmentUpload: AttachmentData
+        _claimsIdentity: ClaimsIdentity,
+        _conversationId: string,
+        _attachmentUpload: AttachmentData
     ): Promise<ResourceResponse> {
         throw new StatusCodeError(
             StatusCodes.NOT_IMPLEMENTED,

@@ -14,7 +14,6 @@ import {
     Channels,
     FileConsentCardResponse,
     InvokeResponse,
-    MeetingEventDetails,
     MeetingStartEventDetails,
     MeetingEndEventDetails,
     MessagingExtensionAction,
@@ -182,10 +181,10 @@ export class TeamsActivityHandler extends ActivityHandler {
     /**
      * Handles a Teams Card Action Invoke activity.
      *
-     * @param context A context object for this turn.
+     * @param _context A context object for this turn.
      * @returns An Invoke Response for the activity.
      */
-    protected async handleTeamsCardActionInvoke(context: TurnContext): Promise<InvokeResponse> {
+    protected async handleTeamsCardActionInvoke(_context: TurnContext): Promise<InvokeResponse> {
         throw new Error('NotImplemented');
     }
 
@@ -218,13 +217,13 @@ export class TeamsActivityHandler extends ActivityHandler {
      *
      * @remarks
      * This type of invoke activity occur during the File Consent flow.
-     * @param context A context object for this turn.
-     * @param fileConsentCardResponse Represents the value of the invoke activity sent when the user acts on a file consent card.
+     * @param _context A context object for this turn.
+     * @param _fileConsentCardResponse Represents the value of the invoke activity sent when the user acts on a file consent card.
      * @returns A promise that represents the work queued.
      */
     protected async handleTeamsFileConsentAccept(
-        context: TurnContext,
-        fileConsentCardResponse: FileConsentCardResponse
+        _context: TurnContext,
+        _fileConsentCardResponse: FileConsentCardResponse
     ): Promise<void> {
         throw new Error('NotImplemented');
     }
@@ -234,13 +233,13 @@ export class TeamsActivityHandler extends ActivityHandler {
      *
      * @remarks
      * This type of invoke activity occur during the File Consent flow.
-     * @param context A context object for this turn.
-     * @param fileConsentCardResponse Represents the value of the invoke activity sent when the user acts on a file consent card.
+     * @param _context A context object for this turn.
+     * @param _fileConsentCardResponse Represents the value of the invoke activity sent when the user acts on a file consent card.
      * @returns A promise that represents the work queued.
      */
     protected async handleTeamsFileConsentDecline(
-        context: TurnContext,
-        fileConsentCardResponse: FileConsentCardResponse
+        _context: TurnContext,
+        _fileConsentCardResponse: FileConsentCardResponse
     ): Promise<void> {
         throw new Error('NotImplemented');
     }
@@ -248,13 +247,13 @@ export class TeamsActivityHandler extends ActivityHandler {
     /**
      * Receives invoke activities with Activity name of 'actionableMessage/executeAction'.
      *
-     * @param context A context object for this turn.
-     * @param query The O365 connector card HttpPOST invoke query.
-     * @returnsa A promise that represents the work queued.
+     * @param _context A context object for this turn.
+     * @param _query The O365 connector card HttpPOST invoke query.
+     * @returns A promise that represents the work queued.
      */
     protected async handleTeamsO365ConnectorCardAction(
-        context: TurnContext,
-        query: O365ConnectorCardActionQuery
+        _context: TurnContext,
+        _query: O365ConnectorCardActionQuery
     ): Promise<void> {
         throw new Error('NotImplemented');
     }
@@ -277,13 +276,13 @@ export class TeamsActivityHandler extends ActivityHandler {
     /**
      * Receives invoke activities with Activity name of 'signin/verifyState'.
      *
-     * @param context A context object for this turn.
-     * @param query Signin state (part of signin action auth flow) verification invoke query.
+     * @param _context A context object for this turn.
+     * @param _query Signin state (part of signin action auth flow) verification invoke query.
      * @returns A promise that represents the work queued.
      */
     protected async handleTeamsSigninVerifyState(
-        context: TurnContext,
-        query: SigninStateVerificationQuery
+        _context: TurnContext,
+        _query: SigninStateVerificationQuery
     ): Promise<void> {
         throw new Error('NotImplemented');
     }
@@ -291,13 +290,13 @@ export class TeamsActivityHandler extends ActivityHandler {
     /**
      * Receives invoke activities with Activity name of 'signin/tokenExchange'
      *
-     * @param context A context object for this turn.
-     * @param query Signin state (part of signin action auth flow) verification invoke query
+     * @param _context A context object for this turn.
+     * @param _query Signin state (part of signin action auth flow) verification invoke query
      * @returns A promise that represents the work queued.
      */
     protected async handleTeamsSigninTokenExchange(
-        context: TurnContext,
-        query: SigninStateVerificationQuery
+        _context: TurnContext,
+        _query: SigninStateVerificationQuery
     ): Promise<void> {
         throw new Error('NotImplemented');
     }
@@ -305,24 +304,27 @@ export class TeamsActivityHandler extends ActivityHandler {
     /**
      * Receives invoke activities with Activity name of 'composeExtension/onCardButtonClicked'
      *
-     * @param context A context object for this turn.
-     * @param cardData Object representing the card data.
+     * @param _context A context object for this turn.
+     * @param _cardData Object representing the card data.
      * @returns A promise that represents the work queued.
      */
-    protected async handleTeamsMessagingExtensionCardButtonClicked(context: TurnContext, cardData: any): Promise<void> {
+    protected async handleTeamsMessagingExtensionCardButtonClicked(
+        _context: TurnContext,
+        _cardData: any
+    ): Promise<void> {
         throw new Error('NotImplemented');
     }
 
     /**
      * Receives invoke activities with Activity name of 'task/fetch'
      *
-     * @param context A context object for this turn.
-     * @param taskModuleRequest The task module invoke request value payload.
+     * @param _context A context object for this turn.
+     * @param _taskModuleRequest The task module invoke request value payload.
      * @returns A Task Module Response for the request.
      */
     protected async handleTeamsTaskModuleFetch(
-        context: TurnContext,
-        taskModuleRequest: TaskModuleRequest
+        _context: TurnContext,
+        _taskModuleRequest: TaskModuleRequest
     ): Promise<TaskModuleResponse> {
         throw new Error('NotImplemented');
     }
@@ -330,13 +332,13 @@ export class TeamsActivityHandler extends ActivityHandler {
     /**
      * Receives invoke activities with Activity name of 'task/submit'
      *
-     * @param context A context object for this turn.
-     * @param taskModuleRequest The task module invoke request value payload.
+     * @param _context A context object for this turn.
+     * @param _taskModuleRequest The task module invoke request value payload.
      * @returns A Task Module Response for the request.
      */
     protected async handleTeamsTaskModuleSubmit(
-        context: TurnContext,
-        taskModuleRequest: TaskModuleRequest
+        _context: TurnContext,
+        _taskModuleRequest: TaskModuleRequest
     ): Promise<TaskModuleResponse> {
         throw new Error('NotImplemented');
     }
@@ -344,22 +346,22 @@ export class TeamsActivityHandler extends ActivityHandler {
     /**
      * Receives invoke activities with Activity name of 'tab/fetch'
      *
-     * @param context A context object for this turn.
-     * @param tabRequest The tab invoke request value payload.
+     * @param _context A context object for this turn.
+     * @param _tabRequest The tab invoke request value payload.
      * @returns A Tab Response for the request.
      */
-    protected async handleTeamsTabFetch(context: TurnContext, tabRequest: TabRequest): Promise<TabResponse> {
+    protected async handleTeamsTabFetch(_context: TurnContext, _tabRequest: TabRequest): Promise<TabResponse> {
         throw new Error('NotImplemented');
     }
 
     /**
      * Receives invoke activities with Activity name of 'tab/submit'
      *
-     * @param context A context object for this turn.
-     * @param tabSubmit The tab submit invoke request value payload.
+     * @param _context A context object for this turn.
+     * @param _tabSubmit The tab submit invoke request value payload.
      * @returns A Tab Response for the request.
      */
-    protected async handleTeamsTabSubmit(context: TurnContext, tabSubmit: TabSubmit): Promise<TabResponse> {
+    protected async handleTeamsTabSubmit(_context: TurnContext, _tabSubmit: TabSubmit): Promise<TabResponse> {
         throw new Error('NotImplemented');
     }
 
@@ -368,13 +370,13 @@ export class TeamsActivityHandler extends ActivityHandler {
      *
      * @remarks
      * Used in creating a Search-based Message Extension.
-     * @param context A context object for this turn.
-     * @param query he invoke request body type for app-based link query.
+     * @param _context A context object for this turn.
+     * @param _query he invoke request body type for app-based link query.
      * @returns The Messaging Extension Response for the query.
      */
     protected async handleTeamsAppBasedLinkQuery(
-        context: TurnContext,
-        query: AppBasedLinkQuery
+        _context: TurnContext,
+        _query: AppBasedLinkQuery
     ): Promise<MessagingExtensionResponse> {
         throw new Error('NotImplemented');
     }
@@ -384,13 +386,13 @@ export class TeamsActivityHandler extends ActivityHandler {
      *
      * @remarks
      * Used in creating a Search-based Message Extension.
-     * @param context A context object for this turn.
-     * @param query The query for the search command.
+     * @param _context A context object for this turn.
+     * @param _query The query for the search command.
      * @returns The Messaging Extension Response for the query.
      */
     protected async handleTeamsMessagingExtensionQuery(
-        context: TurnContext,
-        query: MessagingExtensionQuery
+        _context: TurnContext,
+        _query: MessagingExtensionQuery
     ): Promise<MessagingExtensionResponse> {
         throw new Error('NotImplemented');
     }
@@ -400,13 +402,13 @@ export class TeamsActivityHandler extends ActivityHandler {
      *
      * @remarks
      * Used in creating a Search-based Message Extension.
-     * @param context A context object for this turn.
-     * @param query he object representing the query.
+     * @param _context A context object for this turn.
+     * @param _query he object representing the query.
      * @returns The Messaging Extension Response for the query.
      */
     protected async handleTeamsMessagingExtensionSelectItem(
-        context: TurnContext,
-        query: any
+        _context: TurnContext,
+        _query: any
     ): Promise<MessagingExtensionResponse> {
         throw new Error('NotImplemented');
     }
@@ -443,13 +445,13 @@ export class TeamsActivityHandler extends ActivityHandler {
     /**
      * Receives invoke activities with the name 'composeExtension/submitAction'.
      *
-     * @param context A context object for this turn.
-     * @param action The messaging extension action.
+     * @param _context A context object for this turn.
+     * @param _action The messaging extension action.
      * @returns The Messaging Extension Action Response for the action.
      */
     protected async handleTeamsMessagingExtensionSubmitAction(
-        context: TurnContext,
-        action: MessagingExtensionAction
+        _context: TurnContext,
+        _action: MessagingExtensionAction
     ): Promise<MessagingExtensionActionResponse> {
         throw new Error('NotImplemented');
     }
@@ -458,13 +460,13 @@ export class TeamsActivityHandler extends ActivityHandler {
      * Receives invoke activities with the name 'composeExtension/submitAction' with the 'botMessagePreview' property present on activity.value.
      * The value for 'botMessagePreview' is 'edit'.
      *
-     * @param context A context object for this turn.
-     * @param action The messaging extension action.
+     * @param _context A context object for this turn.
+     * @param _action The messaging extension action.
      * @returns The Messaging Extension Action Response for the action.
      */
     protected async handleTeamsMessagingExtensionBotMessagePreviewEdit(
-        context: TurnContext,
-        action: MessagingExtensionAction
+        _context: TurnContext,
+        _action: MessagingExtensionAction
     ): Promise<MessagingExtensionActionResponse> {
         throw new Error('NotImplemented');
     }
@@ -473,13 +475,13 @@ export class TeamsActivityHandler extends ActivityHandler {
      * Receives invoke activities with the name 'composeExtension/submitAction' with the 'botMessagePreview' property present on activity.value.
      * The value for 'botMessagePreview' is 'send'.
      *
-     * @param context A context object for this turn.
-     * @param action The messaging extension action.
+     * @param _context A context object for this turn.
+     * @param _action The messaging extension action.
      * @returns The Messaging Extension Action Response for the action.
      */
     protected async handleTeamsMessagingExtensionBotMessagePreviewSend(
-        context: TurnContext,
-        action: MessagingExtensionAction
+        _context: TurnContext,
+        _action: MessagingExtensionAction
     ): Promise<MessagingExtensionActionResponse> {
         throw new Error('NotImplemented');
     }
@@ -487,13 +489,13 @@ export class TeamsActivityHandler extends ActivityHandler {
     /**
      * Receives invoke activities with the name 'composeExtension/fetchTask'
      *
-     * @param context A context object for this turn.
-     * @param action The messaging extension action.
+     * @param _context A context object for this turn.
+     * @param _action The messaging extension action.
      * @returns The Messaging Extension Action Response for the action.
      */
     protected async handleTeamsMessagingExtensionFetchTask(
-        context: TurnContext,
-        action: MessagingExtensionAction
+        _context: TurnContext,
+        _action: MessagingExtensionAction
     ): Promise<MessagingExtensionActionResponse> {
         throw new Error('NotImplemented');
     }
@@ -501,13 +503,13 @@ export class TeamsActivityHandler extends ActivityHandler {
     /**
      * Receives invoke activities with the name 'composeExtension/querySettingUrl'
      *
-     * @param context A context object for this turn.
-     * @param query The Messaging extension query.
+     * @param _context A context object for this turn.
+     * @param _query The Messaging extension query.
      * @returns The Messaging Extension Action Response for the query.
      */
     protected async handleTeamsMessagingExtensionConfigurationQuerySettingUrl(
-        context: TurnContext,
-        query: MessagingExtensionQuery
+        _context: TurnContext,
+        _query: MessagingExtensionQuery
     ): Promise<MessagingExtensionResponse> {
         throw new Error('NotImplemented');
     }
@@ -515,21 +517,20 @@ export class TeamsActivityHandler extends ActivityHandler {
     /**
      * Receives invoke activities with the name 'adaptiveCard/action'
      *
-     * @param context A context object for this turn.
+     * @param _context A context object for this turn.
      * @returns The Messaging Extension Action Response for the query.
      */
-    protected async handleAdaptiveCardAction(context: TurnContext): Promise<AdaptiveCardInvokeResponse> {
+    protected async handleAdaptiveCardAction(_context: TurnContext): Promise<AdaptiveCardInvokeResponse> {
         throw new Error('NotImplemented');
     }
 
     /**
      * Receives invoke activities with the name 'composeExtension/setting'
      *
-     * @param context A context object for this turn.
-     * @param settings Object representing the configuration settings.
-     * @returns A promise that represents the work queued.
+     * @param _context A context object for this turn.
+     * @param _settings Object representing the configuration settings.
      */
-    protected handleTeamsMessagingExtensionConfigurationSetting(context: TurnContext, settings: any): Promise<void> {
+    protected handleTeamsMessagingExtensionConfigurationSetting(_context: TurnContext, _settings: any): Promise<void> {
         throw new Error('NotImplemented');
     }
 
@@ -741,10 +742,10 @@ export class TeamsActivityHandler extends ActivityHandler {
 
     /**
      *
-     * @param context
      * Invoked when a Channel Restored event activity is received from the connector.
      * Channel Restored corresponds to the user restoring a previously deleted channel.
      * Override this in a derived class to provide logic for when a channel is restored.
+     *
      * @param context The context for this turn.
      * @returns A promise that represents the work queued.
      */
@@ -792,7 +793,7 @@ export class TeamsActivityHandler extends ActivityHandler {
      * Registers a handler for TeamsMembersAdded events, such as for when members other than the bot
      * join the channel, such as your bot's welcome logic.
      *
-     * @param handler
+     * @param handler A callback to handle the teams members added event.
      * @returns A promise that represents the work queued.
      */
     public onTeamsMembersAddedEvent(
@@ -813,7 +814,7 @@ export class TeamsActivityHandler extends ActivityHandler {
      * Registers a handler for TeamsMembersRemoved events, such as for when members other than the bot
      * leave the channel, such as your bot's good-bye logic.
      *
-     * @param handler
+     * @param handler A callback to handle the teams members removed event.
      * @returns A promise that represents the work queued.
      */
     public onTeamsMembersRemovedEvent(
@@ -833,7 +834,7 @@ export class TeamsActivityHandler extends ActivityHandler {
     /**
      * Registers a handler for TeamsChannelCreated events, such as for when a channel is created.
      *
-     * @param handler
+     * @param handler A callback to handle the teams channel created event.
      * @returns A promise that represents the work queued.
      */
     public onTeamsChannelCreatedEvent(
@@ -853,7 +854,7 @@ export class TeamsActivityHandler extends ActivityHandler {
     /**
      * Registers a handler for TeamsChannelDeleted events, such as for when a channel is deleted.
      *
-     * @param handler
+     * @param handler A callback to handle the teams channel deleted event.
      * @returns A promise that represents the work queued.
      */
     public onTeamsChannelDeletedEvent(
@@ -873,7 +874,7 @@ export class TeamsActivityHandler extends ActivityHandler {
     /**
      * Registers a handler for TeamsChannelRenamed events, such as for when a channel is renamed.
      *
-     * @param handler
+     * @param handler A callback to handle the teams channel renamed event.
      * @returns A promise that represents the work queued.
      */
     public onTeamsChannelRenamedEvent(
@@ -893,7 +894,7 @@ export class TeamsActivityHandler extends ActivityHandler {
     /**
      * Registers a handler for TeamsTeamArchived events, such as for when a team is archived.
      *
-     * @param handler
+     * @param handler A callback to handle the teams team archived event.
      * @returns A promise that represents the work queued.
      */
     public onTeamsTeamArchivedEvent(
@@ -908,7 +909,7 @@ export class TeamsActivityHandler extends ActivityHandler {
     /**
      * Registers a handler for TeamsTeamDeleted events, such as for when a team is deleted.
      *
-     * @param handler
+     * @param handler A callback to handle the teams team deleted event.
      * @returns A promise that represents the work queued.
      */
     public onTeamsTeamDeletedEvent(
@@ -923,7 +924,7 @@ export class TeamsActivityHandler extends ActivityHandler {
     /**
      * Registers a handler for TeamsTeamHardDeleted events, such as for when a team is hard-deleted.
      *
-     * @param handler
+     * @param handler A callback to handle the teams team hard deleted event.
      * @returns A promise that represents the work queued.
      */
     public onTeamsTeamHardDeletedEvent(
@@ -938,7 +939,7 @@ export class TeamsActivityHandler extends ActivityHandler {
     /**
      * Registers a handler for TeamsChannelRestored events, such as for when a channel is restored.
      *
-     * @param handler
+     * @param handler A callback to handle the teams channel restored event.
      * @returns A promise that represents the work queued.
      */
     public onTeamsChannelRestoredEvent(
@@ -958,7 +959,7 @@ export class TeamsActivityHandler extends ActivityHandler {
     /**
      * Registers a handler for TeamsTeamRenamed events, such as for when a team is renamed.
      *
-     * @param handler
+     * @param handler A callback to handle the teams team renamed event.
      * @returns A promise that represents the work queued.
      */
     public onTeamsTeamRenamedEvent(
@@ -973,7 +974,7 @@ export class TeamsActivityHandler extends ActivityHandler {
     /**
      * Registers a handler for TeamsTeamRestored events, such as for when a team is restored.
      *
-     * @param handler
+     * @param handler A callback to handle the teams team restored event.
      * @returns A promise that represents the work queued.
      */
     public onTeamsTeamRestoredEvent(
@@ -988,7 +989,7 @@ export class TeamsActivityHandler extends ActivityHandler {
     /**
      * Registers a handler for TeamsTeamUnarchived events, such as for when a team is unarchived.
      *
-     * @param handler
+     * @param handler A callback to handle the teams team unarchived event.
      * @returns A promise that represents the work queued.
      */
     public onTeamsTeamUnarchivedEvent(

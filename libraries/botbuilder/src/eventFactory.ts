@@ -28,6 +28,7 @@ export class EventFactory {
      * @param context The context object for the turn.
      * @param handoffContext Agent hub-specific context.
      * @param transcript Transcript of the conversation.
+     * @returns The handoff event activity.
      */
     public static createHandoffInitiation<T = unknown>(
         context: TurnContext,
@@ -68,6 +69,7 @@ export class EventFactory {
      * @param conversation Conversation being handed over.
      * @param state State, possible values are: "accepted", "failed", "completed".
      * @param message Additional message for failed handoff.
+     * @returns The handoff event activity.
      */
     public static createHandoffStatus(conversation: ConversationAccount, state: string, message?: string): Activity {
         if (!conversation) {

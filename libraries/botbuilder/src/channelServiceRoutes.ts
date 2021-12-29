@@ -37,7 +37,7 @@ export interface WebServer {
  */
 export class ChannelServiceRoutes {
     /**
-     * @param channelServiceHandler
+     * @param channelServiceHandler The channel service handler.
      */
     constructor(private readonly channelServiceHandler: ChannelServiceHandlerBase) {}
 
@@ -280,7 +280,7 @@ export class ChannelServiceRoutes {
         const authHeader = req.headers.authorization || req.headers.Authorization || '';
         this.channelServiceHandler
             .handleDeleteConversationMember(authHeader, req.params.conversationId, req.params.memberId)
-            .then((resourceResponse) => {
+            .then(() => {
                 res.status(200);
                 res.end();
             })

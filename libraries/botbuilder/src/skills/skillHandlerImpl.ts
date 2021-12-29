@@ -20,11 +20,7 @@ import {
  */
 export class SkillHandlerImpl {
     /**
-     * @param skillConversationReferenceKey
-     * @param adapter
-     * @param logic
-     * @param conversationIdFactory
-     * @param getOauthScope
+     * @internal
      */
     constructor(
         private readonly skillConversationReferenceKey: symbol,
@@ -35,9 +31,7 @@ export class SkillHandlerImpl {
     ) {}
 
     /**
-     * @param claimsIdentity
-     * @param conversationId
-     * @param activity
+     * @internal
      */
     onSendToConversation(
         claimsIdentity: ClaimsIdentity,
@@ -48,10 +42,7 @@ export class SkillHandlerImpl {
     }
 
     /**
-     * @param claimsIdentity
-     * @param conversationId
-     * @param activityId
-     * @param activity
+     * @internal
      */
     onReplyToActivity(
         claimsIdentity: ClaimsIdentity,
@@ -63,10 +54,7 @@ export class SkillHandlerImpl {
     }
 
     /**
-     * @param claimsIdentity
-     * @param conversationId
-     * @param activityId
-     * @param activity
+     * @internal
      */
     async onUpdateActivity(
         claimsIdentity: ClaimsIdentity,
@@ -91,9 +79,7 @@ export class SkillHandlerImpl {
     }
 
     /**
-     * @param claimsIdentity
-     * @param conversationId
-     * @param activityId
+     * @internal
      */
     async onDeleteActivity(claimsIdentity: ClaimsIdentity, conversationId: string, activityId: string): Promise<void> {
         return this.continueConversation(claimsIdentity, conversationId, (context) =>
@@ -101,9 +87,6 @@ export class SkillHandlerImpl {
         );
     }
 
-    /**
-     * @param conversationId
-     */
     private async getSkillConversationReference(conversationId: string): Promise<SkillConversationReference> {
         let skillConversationReference: SkillConversationReference;
 
@@ -132,12 +115,6 @@ export class SkillHandlerImpl {
         return skillConversationReference;
     }
 
-    /**
-     * @param claimsIdentity
-     * @param conversationId
-     * @param replyToActivityId
-     * @param activity
-     */
     private async processActivity(
         claimsIdentity: ClaimsIdentity,
         conversationId: string,
@@ -189,11 +166,6 @@ export class SkillHandlerImpl {
         return resourceResponse;
     }
 
-    /**
-     * @param claimsIdentity
-     * @param conversationId
-     * @param callback
-     */
     private async continueConversation(
         claimsIdentity: ClaimsIdentity,
         conversationId: string,
@@ -230,10 +202,6 @@ export class SkillHandlerImpl {
     // adapter.continueConversation() sends an event activity with continueConversation in the name.
     // this warms up the incoming middlewares but once that's done and we hit the custom callback,
     // we need to swap the values back to the ones received from the skill so the bot gets the actual activity.
-    /**
-     * @param context
-     * @param activity
-     */
     private applySkillActivityToTurnContext(context: TurnContext, activity: Partial<Activity>): void {
         context.activity.channelData = activity.channelData;
         context.activity.code = activity.code;

@@ -2,7 +2,7 @@ const assert = require('assert');
 const sinon = require('sinon');
 const { ActivityTypes, StatusCodes } = require('botbuilder-core');
 const { ChannelServiceHandler } = require('../');
-const { isEmpty } = require('lodash');
+const isEmpty = require('lodash/isEmpty');
 
 const {
     AuthenticationConfiguration,

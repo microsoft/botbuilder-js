@@ -15,7 +15,7 @@ import {
 } from 'botbuilder-core';
 
 /**
- *
+ * A Bot Framework Handler for skills.
  */
 export class CloudSkillHandler extends CloudChannelServiceHandler {
     /**

@@ -27,6 +27,7 @@ class MockHttpRequest {
         this.streamsVal = value;
     }
 
+    // eslint-disable-next-line no-dupe-class-members
     streams() {
         return this.streamsVal;
     }

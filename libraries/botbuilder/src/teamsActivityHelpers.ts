@@ -80,9 +80,10 @@ export function teamsGetTeamId(activity: Activity): string | null {
 }
 
 /**
- * Activity helper methods for Teams.	 * Activity helper methods for Teams.
+ * Activity helper methods for Teams.
  *
- * @param activity
+ * @param activity The current [Activity](xref:botframework-schema.Activity).
+ * @returns The current [Activity](xref:botframework-schema.Activity)'s team's channel id, or null.
  */
 export function teamsGetChannelId(activity: Activity): string | null {
     validateActivity(activity);
@@ -100,8 +101,8 @@ export function teamsGetChannelId(activity: Activity): string | null {
  * Configures the current [Activity](xref:botframework-schema.Activity) to generate a notification within Teams.
  *
  * @param activity The current [Activity](xref:botframework-schema.Activity).
- * @param alertInMeeting
- * @param externalResourceUrl
+ * @param alertInMeeting Sent to a meeting chat, this will cause the Teams client to render it in a notification popup as well as in the chat thread.
+ * @param externalResourceUrl Url to external resource. Must be included in manifest's valid domains.
  */
 export function teamsNotifyUser(activity: Activity, alertInMeeting?: boolean, externalResourceUrl?: string): void {
     validateActivity(activity);

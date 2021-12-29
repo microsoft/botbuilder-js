@@ -527,8 +527,8 @@ describe('BotFrameworkAdapter', function () {
         it('ConnectorClient should add requestPolicyFactory for accept header', async function () {
             let hasAcceptHeader = false;
             const mockNextPolicy = {
-                create: (innerPolicy) => ({}),
-                sendRequest: (httpRequest) => {
+                create: () => ({}),
+                sendRequest: () => {
                     return {};
                 },
             };
