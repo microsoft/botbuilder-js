@@ -8,7 +8,7 @@ const {
     MessageFactory,
 } = require('botbuilder');
 const { DialogSet } = require('botbuilder-dialogs');
-const { UpdateActivity } = require('../lib')
+const { UpdateActivity, TelemetryLoggerConstants } = require('../lib')
 
 
 describe('UpdateActivity', function () {
@@ -43,7 +43,7 @@ describe('UpdateActivity', function () {
             await dialog.beginDialog(dc);
 
             // assert telemetry result
-            strictEqual(telemetryName, 'GeneratorResult');
+            strictEqual(telemetryName, TelemetryLoggerConstants.GeneratorResultEvent);
             strictEqual(telemetryProperties.result.text, 'test');
             strictEqual(telemetryProperties.template.activity.text, 'test');
 
