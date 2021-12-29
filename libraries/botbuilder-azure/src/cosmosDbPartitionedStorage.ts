@@ -357,7 +357,7 @@ export class CosmosDbPartitionedStorage implements Storage {
                     this.compatibilityModePartitionKey = true;
                 }
                 return container;
-            } catch (err) {
+            } catch {
                 createIfNotExists = true;
             }
         }
