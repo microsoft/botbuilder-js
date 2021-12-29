@@ -79,7 +79,7 @@ const cleanup = async () => {
     const settings = getSettings();
 
     if (canConnectToEmulator) {
-        let client = new CosmosClient({
+        const client = new CosmosClient({
             endpoint: settings.cosmosDbEndpoint,
             key: settings.authKey,
             agent: new https.Agent({ rejectUnauthorized: false }),
@@ -95,7 +95,7 @@ const prep = async () => {
     nock.cleanAll();
     await checkEmulator();
 
-    let settings = getSettings();
+    const settings = getSettings();
 
     if (mode !== MockMode.lockdown) {
         nock.enableNetConnect();
@@ -104,7 +104,7 @@ const prep = async () => {
     }
 
     if (canConnectToEmulator) {
-        let client = new CosmosClient({
+        const client = new CosmosClient({
             endpoint: settings.cosmosDbEndpoint,
             key: settings.authKey,
             agent: new https.Agent({ rejectUnauthorized: false }),
@@ -125,14 +125,14 @@ const options = {
 };
 
 describe('CosmosDbPartitionedStorage - Constructor Tests', function () {
-    it('throws when provided with null options', () => {
+    it('throws when provided with null options', function () {
         assert.throws(
             () => new CosmosDbPartitionedStorage(null),
             ReferenceError('CosmosDbPartitionedStorageOptions is required.')
         );
     });
 
-    it('throws when no endpoint provided', () => {
+    it('throws when no endpoint provided', function () {
         const noEndpoint = getSettings();
         noEndpoint.cosmosDbEndpoint = null;
         assert.throws(
@@ -141,7 +141,7 @@ describe('CosmosDbPartitionedStorage - Constructor Tests', function () {
         );
     });
 
-    it('throws when no authKey provided', () => {
+    it('throws when no authKey provided', function () {
         const noAuthKey = getSettings();
         noAuthKey.authKey = null;
         assert.throws(
@@ -150,7 +150,7 @@ describe('CosmosDbPartitionedStorage - Constructor Tests', function () {
         );
     });
 
-    it('throws when no databaseId provided', () => {
+    it('throws when no databaseId provided', function () {
         const noDatabaseId = getSettings();
         noDatabaseId.databaseId = null;
         assert.throws(
@@ -159,7 +159,7 @@ describe('CosmosDbPartitionedStorage - Constructor Tests', function () {
         );
     });
 
-    it('throws when no containerId provided', () => {
+    it('throws when no containerId provided', function () {
         const noContainerId = getSettings();
         noContainerId.containerId = null;
         assert.throws(
@@ -305,7 +305,7 @@ describe('CosmosDbPartitionedStorage - Base Storage Tests', function () {
 
         // cosmosDbPartitionedStorage requires the user creates the db,
         // so we need to create it for the test
-        let dbCreateClient = new CosmosClient({
+        const dbCreateClient = new CosmosClient({
             endpoint: settingsWithNewDb.cosmosDbEndpoint,
             key: settingsWithNewDb.authKey,
             agent: new https.Agent({ rejectUnauthorized: false }),

@@ -180,7 +180,7 @@ export class CosmosDbPartitionedStorage implements Storage {
      */
     async read(keys: string[]): Promise<StoreItems> {
         if (!keys) {
-            throw new ReferenceError(`Keys are required when reading.`);
+            throw new ReferenceError('Keys are required when reading.');
         } else if (keys.length === 0) {
             return {};
         }
@@ -239,7 +239,7 @@ export class CosmosDbPartitionedStorage implements Storage {
      */
     async write(changes: StoreItems): Promise<void> {
         if (!changes) {
-            throw new ReferenceError(`Changes are required when writing.`);
+            throw new ReferenceError('Changes are required when writing.');
         } else if (changes.length === 0) {
             return;
         }

@@ -22,8 +22,8 @@ const reset = (done) => {
     nock.cleanAll();
     nock.enableNetConnect();
     if (mode !== MockMode.lockdown) {
-        let settings = getSettings();
-        let client = azure.createBlobService(settings.storageAccountOrConnectionString, settings.storageAccessKey);
+        const settings = getSettings();
+        const client = azure.createBlobService(settings.storageAccountOrConnectionString, settings.storageAccessKey);
         client.deleteContainerIfExists(settings.containerName, (err, result) => done());
     } else {
         done();

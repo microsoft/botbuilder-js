@@ -36,8 +36,8 @@ const reset = (done) => {
     nock.cleanAll();
     nock.enableNetConnect();
     if (mode !== MockMode.lockdown) {
-        let settings = getSettings();
-        let client = new DocumentClient(settings.serviceEndpoint, { masterKey: settings.authKey });
+        const settings = getSettings();
+        const client = new DocumentClient(settings.serviceEndpoint, { masterKey: settings.authKey });
         client.deleteDatabase(UriFactory.createDatabaseUri(settings.databaseId), (err, response) => done());
     } else {
         done();
@@ -54,7 +54,7 @@ const storage = new CosmosDbStorage(getSettings(), policyConfigurator);
 const partitionKey = 'ARG';
 
 // item to test the read and delete operations with partitionkey
-let changes = {};
+const changes = {};
 changes['001'] = {
     Location: partitionKey,
     MessageList: ['Hi', 'how are u'],
@@ -70,7 +70,7 @@ describe('CosmosDbStorage - Constructor Tests', function () {
     });
 
     it('missing settings endpoint should be thrown - null value', function () {
-        let testSettings = {
+        const testSettings = {
             serviceEndpoint: null,
             authKey: 'testKey',
             databaseId: 'testDataBaseID',
@@ -85,7 +85,7 @@ describe('CosmosDbStorage - Constructor Tests', function () {
     });
 
     it('missing settings endpoint should be thrown - empty value', function () {
-        let testSettings = {
+        const testSettings = {
             serviceEndpoint: '',
             authKey: 'testKey',
             databaseId: 'testDataBaseID',
@@ -100,7 +100,7 @@ describe('CosmosDbStorage - Constructor Tests', function () {
     });
 
     it('missing settings endpoint should be thrown - white spaces', function () {
-        let testSettings = {
+        const testSettings = {
             serviceEndpoint: '   ',
             authKey: 'testKey',
             databaseId: 'testDataBaseID',
@@ -115,7 +115,7 @@ describe('CosmosDbStorage - Constructor Tests', function () {
     });
 
     it('missing settings authKey should be thrown - null value', function () {
-        let testSettings = {
+        const testSettings = {
             serviceEndpoint: 'testEndpoint',
             authKey: null,
             databaseId: 'testDataBaseID',
@@ -130,7 +130,7 @@ describe('CosmosDbStorage - Constructor Tests', function () {
     });
 
     it('missing settings authKey should be thrown - empty value', function () {
-        let testSettings = {
+        const testSettings = {
             serviceEndpoint: 'testEndpoint',
             authKey: '',
             databaseId: 'testDataBaseID',
@@ -145,7 +145,7 @@ describe('CosmosDbStorage - Constructor Tests', function () {
     });
 
     it('missing settings authKey should be thrown - white spaces', function () {
-        let testSettings = {
+        const testSettings = {
             serviceEndpoint: 'testEndpoint',
             authKey: '   ',
             databaseId: 'testDataBaseID',
@@ -160,7 +160,7 @@ describe('CosmosDbStorage - Constructor Tests', function () {
     });
 
     it('missing settings databaseId should be thrown - null value', function () {
-        let testSettings = {
+        const testSettings = {
             serviceEndpoint: 'testEndpoint',
             authKey: 'testKey',
             databaseId: null,
@@ -175,7 +175,7 @@ describe('CosmosDbStorage - Constructor Tests', function () {
     });
 
     it('missing settings databaseId should be thrown - empty value', function () {
-        let testSettings = {
+        const testSettings = {
             serviceEndpoint: 'testEndpoint',
             authKey: 'testKey',
             databaseId: '',
@@ -190,7 +190,7 @@ describe('CosmosDbStorage - Constructor Tests', function () {
     });
 
     it('missing settings databaseId should be thrown - white spaces', function () {
-        let testSettings = {
+        const testSettings = {
             serviceEndpoint: 'testEndpoint',
             authKey: 'testKey',
             databaseId: '    ',
@@ -205,7 +205,7 @@ describe('CosmosDbStorage - Constructor Tests', function () {
     });
 
     it('missing settings collectionId should be thrown - null value', function () {
-        let testSettings = {
+        const testSettings = {
             serviceEndpoint: 'testEndpoint',
             authKey: 'testKey',
             databaseId: 'testDataBaseID',
@@ -220,7 +220,7 @@ describe('CosmosDbStorage - Constructor Tests', function () {
     });
 
     it('missing settings collectionId should be thrown - empty value', function () {
-        let testSettings = {
+        const testSettings = {
             serviceEndpoint: 'testEndpoint',
             authKey: 'testKey',
             databaseId: 'testDataBaseID',
@@ -235,7 +235,7 @@ describe('CosmosDbStorage - Constructor Tests', function () {
     });
 
     it('missing settings collectionId should be thrown - white spaces', function () {
-        let testSettings = {
+        const testSettings = {
             serviceEndpoint: 'testEndpoint',
             authKey: 'testKey',
             databaseId: 'testDataBaseID',
