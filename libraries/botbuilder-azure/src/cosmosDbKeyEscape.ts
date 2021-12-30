@@ -5,7 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import crypto = require('crypto');
+import * as crypto from 'crypto';
 
 // eslint-disable-next-line @typescript-eslint/no-namespace
 export namespace CosmosDbKeyEscape {

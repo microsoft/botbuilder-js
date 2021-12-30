@@ -144,7 +144,7 @@ export class AzureBlobTranscriptStore implements TranscriptStore {
      *
      * @param channelId Channel Id.
      * @param continuationToken ContinuationToken token to page through results.
-     * @returns A promise representation of [PagedResult<TranscriptInfo>](xref:botbuilder-core.PagedResult<T>)
+     * @returns A promise representation of [PagedResult<TranscriptInfo>](xref:botbuilder-core.PagedResult)
      */
     async listTranscripts(channelId: string, continuationToken?: string): Promise<PagedResult<TranscriptInfo>> {
         if (!channelId) {
