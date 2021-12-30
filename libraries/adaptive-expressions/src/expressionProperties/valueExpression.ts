@@ -10,6 +10,7 @@ import { Expression } from '../expression';
 
 /**
  * Represents a property which is an object of any kind or a string expression.
+ *
  * @remarks
  * If the value is
  * - a string with '=' prefix then the string is treated as an expression to resolve to a string.
@@ -24,6 +25,7 @@ import { Expression } from '../expression';
 export class ValueExpression extends ExpressionProperty<any> {
     /**
      * Initializes a new instance of the [ValueExpression](xref:adaptive-expressions.ValueExpression) class.
+     *
      * @param value An object of `any` kind or a `string` expression.
      */
     public constructor(value?: any | string | Expression) {
@@ -32,6 +34,7 @@ export class ValueExpression extends ExpressionProperty<any> {
 
     /**
      * Set value as value expression.
+     *
      * @param value Value to set.
      */
     public setValue(value: any | string | Expression): void {

@@ -10,12 +10,14 @@ import { Expression } from '../expression';
 
 /**
  * Represents a property which is either a boolean or a string expression which resolves to a boolean.
+ *
  * @remarks
  * String values are always interpreted as an expression, whether it has '=' prefix or not.
  */
 export class BoolExpression extends ExpressionProperty<boolean> {
     /**
      * Initializes a new instance of the [BoolExpression](xref:adaptive-expressions.BoolExpression) class.
+     *
      * @param value A `boolean` or a `string` expression which resolves to a `boolean`.
      */
     public constructor(value?: boolean | string | Expression) {
@@ -24,6 +26,7 @@ export class BoolExpression extends ExpressionProperty<boolean> {
 
     /**
      * Set a boolean value.
+     *
      * @param value Value to set.
      */
     public setValue(value: boolean | string | Expression): void {

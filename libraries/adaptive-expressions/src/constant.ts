@@ -19,6 +19,8 @@ export class Constant extends Expression {
     private readonly singleQuotRegex: RegExp = new RegExp(/'(?!\\)/g);
     /**
      * Constant value.
+     *
+     * @returns The value.
      */
     public get value(): any {
         return this._value;
@@ -47,6 +49,7 @@ export class Constant extends Expression {
     /**
      * Initializes a new instance of the [Constant](xref:adaptive-expressions.Constant) class.
      * Constructs an expression constant.
+     *
      * @param value Constant value.
      */
     public constructor(value: any) {
@@ -64,6 +67,7 @@ export class Constant extends Expression {
 
     /**
      * Determines if the current [Expression](xref:adaptive-expressions.Expression) instance is deep equal to another one.
+     *
      * @param other The other [Expression](xref:adaptive-expressions.Expression) instance to compare.
      * @returns A boolean value indicating whether the two expressions are deep equal (`true`) or not (`false`).
      */
@@ -81,6 +85,7 @@ export class Constant extends Expression {
 
     /**
      * Returns a string that represents the current constant object.
+     *
      * @returns A string that represents the current constant object.
      */
     public toString(): string {
