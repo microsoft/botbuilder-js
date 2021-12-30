@@ -2976,7 +2976,7 @@ export class ParseContext extends ParserRuleContext {
 export class ParseErrorListener implements ANTLRErrorListener<any> {
     // (undocumented)
     static readonly Instance: ParseErrorListener;
-    syntaxError<T>(_recognizer: Recognizer<T, any>, _offendingSymbol: T, line: number, charPositionInLine: number, _msg: string, _e: RecognitionException | undefined): void;
+    syntaxError<T>(_recognizer: Recognizer<T, any>, _offendingSymbol: T, line: number, charPositionInLine: number, msg: string, _e: RecognitionException | undefined): void;
 }
 
 // @public
