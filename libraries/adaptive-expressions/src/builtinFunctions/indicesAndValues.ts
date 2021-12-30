@@ -1,4 +1,3 @@
-/* eslint-disable security/detect-object-injection */
 /**
  * @module adaptive-expressions
  */
@@ -36,6 +35,7 @@ export class IndicesAndValues extends ExpressionEvaluator {
      * @private
      */
     private static evaluator(expression: Expression, state: any, options: Options): ValueWithError {
+        // eslint-disable-next-line @typescript-eslint/ban-types
         let result: object = undefined;
         let error: string = undefined;
         let value: any = undefined;

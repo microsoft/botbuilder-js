@@ -6,12 +6,10 @@
  * Licensed under the MIT License.
  */
 
-import { Expression } from '../expression';
 import { ExpressionType } from '../expressionType';
 import { FunctionUtils } from '../functionUtils';
 import { InternalFunctionUtils } from '../functionUtils.internal';
 import { Options } from '../options';
-import { ReturnType } from '../returnType';
 import { StringTransformEvaluator } from './stringTransformEvaluator';
 
 /**
