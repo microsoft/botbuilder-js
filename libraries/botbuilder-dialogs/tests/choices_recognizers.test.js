@@ -53,6 +53,12 @@ const similarValues = [
     { value: 'option C', index: 2 },
 ];
 
+const valuesWithSpecialCharacters = [
+    { value: 'A < B', index: 0 },
+    { value: 'A >= B', index: 1 },
+    { value: 'A ??? B', index: 2 },
+];
+
 describe('findValues()', function () {
     this.timeout(5000);
 
@@ -90,6 +96,14 @@ describe('findValues()', function () {
         const found = findValues(`option B`, similarValues, { allowPartialMatches: true });
         assert(found.length === 1, `Invalid token count of '${found.length}' returned.`);
         assertValue(found[0], 'option B', 1, 1.0);
+    });
+
+    it('should prefer exact match.', function () {
+        const index = 1;
+        const utterance = valuesWithSpecialCharacters[index].value;
+        const found = findValues(utterance, valuesWithSpecialCharacters);
+        assert(found.length === 1, `Invalid token count of '${found.length}' returned.`);
+        assertValue(found[0], utterance, index, 1);
     });
 });
 
