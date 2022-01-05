@@ -68,7 +68,10 @@ describe('ComponentDialog', function () {
         const adapter = new TestAdapter(async (turnContext) => {
             const dc = await dialogs.createContext(turnContext);
             await assert.rejects(async () => await dc.beginDialog('composite'), {
-                message: `Cannot read property 'status' of undefined`,
+                message:
+                    process.versions.node.split('.')[0] >= 16
+                        ? "Cannot read properties of undefined (reading 'status')"
+                        : "Cannot read property 'status' of undefined",
             });
         });
         await adapter.send('Hi').startTest();

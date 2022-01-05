@@ -15,7 +15,10 @@ describe('DialogSet', function () {
     it('should throw on createContext(undefined)', async function () {
         const dialogSet = new DialogSet(dialogState);
         await assert.rejects(async () => await dialogSet.createContext(undefined), {
-            message: "Cannot read property 'turnState' of undefined",
+            message:
+                process.versions.node.split('.')[0] >= 16
+                    ? "Cannot read properties of undefined (reading 'turnState')"
+                    : "Cannot read property 'turnState' of undefined",
         });
     });
 
