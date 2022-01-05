@@ -113,8 +113,7 @@ steps:
      ./testing/*
      ./tools/*
      ./package.json
-     
-#./node_modules/*
+     ./node_modules/*
 
 - task: ms.vss-governance-buildtask.governance-build-task-component-detection.ComponentGovernanceComponentDetection@0
   displayName: 'Component Detection'
