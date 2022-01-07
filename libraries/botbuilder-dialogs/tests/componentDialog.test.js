@@ -1,5 +1,5 @@
 const { ConversationState, MemoryStorage, TestAdapter, Severity } = require('botbuilder-core');
-const { Dialog, DialogReason, DialogSet, DialogTurnStatus, ComponentDialog, WaterfallDialog } = require('../');
+const { Dialog, DialogReason, DialogSet, DialogTurnStatus, DialogContextError, ComponentDialog, WaterfallDialog } = require('../');
 const assert = require('assert');
 
 function simpleStepContextCheck(step) {
@@ -67,12 +67,7 @@ describe('ComponentDialog', function () {
 
         const adapter = new TestAdapter(async (turnContext) => {
             const dc = await dialogs.createContext(turnContext);
-            await assert.rejects(async () => await dc.beginDialog('composite'), {
-                message:
-                    process.versions.node.split('.')[0] >= 16
-                        ? "Cannot read properties of undefined (reading 'status')"
-                        : "Cannot read property 'status' of undefined",
-            });
+            await assert.rejects(async () => await dc.beginDialog('composite'), DialogContextError);
         });
         await adapter.send('Hi').startTest();
     });
