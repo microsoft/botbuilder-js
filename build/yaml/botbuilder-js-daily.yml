@@ -114,9 +114,10 @@ steps:
      ./tools/*
      ./package.json
      ./node_modules/*
+  enabled: false
 
 - task: ms.vss-governance-buildtask.governance-build-task-component-detection.ComponentGovernanceComponentDetection@0
   displayName: 'Component Detection'
   inputs:
-    failOnAlert: true
+    failOnAlert: false
 
