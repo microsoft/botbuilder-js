@@ -30,7 +30,6 @@
     }
   },
   "dependencies": {
-    "botbuilder-ai": "4.1.6"
   },
   "scripts": {
     "build": "tsc -b",

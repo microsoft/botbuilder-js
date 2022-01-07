@@ -28,11 +28,6 @@
     }
   },
   "dependencies": {
-    "botbuilder": "4.1.6",
-    "botbuilder-dialogs-adaptive-runtime": "4.1.6",
-    "botbuilder-dialogs-adaptive-runtime-core": "4.1.6",
-    "restify": "^8.5.1",
-    "zod": "~1.11.17"
   },
   "scripts": {
     "build": "tsc -b",

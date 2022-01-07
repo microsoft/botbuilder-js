@@ -29,10 +29,7 @@
   },
   "dependencies": {
     "botbuilder-core": "4.1.6",
-    "botbuilder-dialogs": "4.1.6",
-    "botbuilder-stdlib": "4.1.6",
-    "chokidar": "^3.4.0",
-    "zod": "~1.11.17"
+    "botbuilder-dialogs": "4.1.6"
   },
   "devDependencies": {
     "adaptive-expressions": "4.1.6",

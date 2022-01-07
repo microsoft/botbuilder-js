@@ -24,22 +24,16 @@
   },
   "dependencies": {
     "adaptive-expressions": "4.1.6",
-    "bitwise": "^2.0.4",
     "botbuilder-ai": "4.1.6",
     "botbuilder-core": "4.1.6",
     "botbuilder-dialogs": "4.1.6",
     "botbuilder-dialogs-adaptive": "4.1.6",
     "botbuilder-dialogs-adaptive-runtime-core": "4.1.6",
     "botbuilder-dialogs-declarative": "4.1.6",
-    "botbuilder-stdlib": "4.1.6",
-    "murmurhash-js": "^1.0.0",
-    "nock": "^11.9.1",
-    "url-parse": "^1.5.1",
-    "zod": "~1.11.17"
+    "nock": "^11.9.1"
   },
   "devDependencies": {
-    "@microsoft/recognizers-text-suite": "1.1.4",
-    "@types/nock": "^11.1.0"
+    "@microsoft/recognizers-text-suite": "1.1.4"
   },
   "author": "Microsoft",
   "license": "MIT",

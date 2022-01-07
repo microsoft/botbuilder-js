@@ -28,23 +28,8 @@
     }
   },
   "dependencies": {
-    "botbuilder": "4.1.6",
-    "botbuilder-ai-luis": "4.1.6",
-    "botbuilder-ai-qna": "4.1.6",
-    "botbuilder-applicationinsights": "4.1.6",
-    "botbuilder-azure": "4.1.6",
-    "botbuilder-azure-blobs": "4.1.6",
-    "botbuilder-dialogs": "4.1.6",
-    "botbuilder-dialogs-adaptive": "4.1.6",
-    "botbuilder-dialogs-adaptive-runtime-core": "4.1.6",
-    "botbuilder-dialogs-declarative": "4.1.6",
-    "botframework-connector": "4.1.6",
-    "nconf": "0.11.2",
-    "yargs-parser": "^20.2.7",
-    "zod": "~1.11.17"
   },
   "devDependencies": {
-    "@types/nconf": "0.10.0",
     "mocha": "^8.2.1",
     "nyc": "^15.1.0"
   },

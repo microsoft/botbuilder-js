@@ -28,17 +28,12 @@
   },
   "dependencies": {
     "@azure/ms-rest-js": "2.6.0",
-    "axios": "^0.21.2",
     "botbuilder-core": "4.1.6",
-    "botbuilder-stdlib": "4.1.6",
     "botframework-connector": "4.1.6",
     "botframework-streaming": "4.1.6",
     "dayjs": "^1.10.3",
-    "filenamify": "^4.1.0",
     "fs-extra": "^7.0.1",
-    "htmlparser2": "^6.0.1",
-    "uuid": "^8.3.2",
-    "zod": "~1.11.17"
+    "uuid": "^8.3.2"
   },
   "devDependencies": {
     "chai": "^4.2.0",

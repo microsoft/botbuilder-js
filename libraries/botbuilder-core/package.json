@@ -27,12 +27,7 @@
     }
   },
   "dependencies": {
-    "botbuilder-dialogs-adaptive-runtime-core": "4.1.6",
-    "botbuilder-stdlib": "4.1.6",
-    "botframework-connector": "4.1.6",
-    "botframework-schema": "4.1.6",
-    "uuid": "^8.3.2",
-    "zod": "~1.11.17"
+    "botframework-connector": "4.1.6"
   },
   "devDependencies": {
     "chatdown": "^1.2.4",

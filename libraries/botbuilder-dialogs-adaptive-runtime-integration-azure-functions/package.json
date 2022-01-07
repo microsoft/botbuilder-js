@@ -28,12 +28,6 @@
     }
   },
   "dependencies": {
-    "@azure/functions": "^1.2.3",
-    "botbuilder": "4.1.6",
-    "botbuilder-dialogs-adaptive-runtime": "4.1.6",
-    "botbuilder-dialogs-adaptive-runtime-core": "4.1.6",
-    "mime": "^2.5.2",
-    "zod": "~1.11.17"
   },
   "scripts": {
     "build": "tsc -b",

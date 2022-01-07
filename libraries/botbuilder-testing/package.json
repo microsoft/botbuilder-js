@@ -27,7 +27,6 @@
     }
   },
   "dependencies": {
-    "botbuilder-core": "4.1.6",
     "botbuilder-dialogs": "4.1.6"
   },
   "scripts": {
