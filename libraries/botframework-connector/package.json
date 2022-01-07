@@ -28,7 +28,7 @@
   },
   "dependencies": {
     "@azure/identity": "2.0.0-beta.6",
-    "@azure/ms-rest-js": "1.9.1",
+    "@azure/ms-rest-js": "2.6.0",
     "@types/jsonwebtoken": "7.2.8",
     "@types/node": "^10.17.27",
     "adal-node": "0.2.3",
