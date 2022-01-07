@@ -261,20 +261,7 @@ describe('TeamsActivityHandler', function () {
             await adapter
                 .send(activity)
                 .assertReply((activity) => {
-                    if (process.versions.node.split('.')[0] >= 16){
-                        assert.strictEqual(
-                            activity.value.message,
-                            "Cannot read properties of null (reading 'activity')",
-                            'should have thrown an error.'
-                        );
-                    }
-                    else{
-                        assert.strictEqual(
-                            activity.value.message,
-                            "Cannot read property 'activity' of null",
-                            'should have thrown an error.'
-                        );
-                    }
+                    assert(activity.value instanceof TypeError, 'should have thrown an error.');
                 })
                 .startTest();
         });
