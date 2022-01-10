@@ -111,5 +111,5 @@ steps:
   inputs:
     sourceScanPath: './libraries'
     ignoreDirectories: './testing,./tools'
-    failOnAlert: true
+    failOnAlert: false
 
