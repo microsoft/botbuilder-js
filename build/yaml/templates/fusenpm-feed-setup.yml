@@ -8,7 +8,7 @@ steps:
     registry=https://pkgs.dev.azure.com/FuseLabs/_packaging/FuseNPM/npm/registry/
     "@;
 
-    New-Item -Path . -Name ".npmrc" -ItemType "file" -Value $content;
+    New-Item -Path . -Name ".npmrc" -ItemType "file" -Value $content -Force;
 
     '-------------'; get-content ".npmrc"; '===================';
   displayName: Create .npmrc for FuseNPM feed
