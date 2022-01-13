@@ -8,7 +8,6 @@ pool:
 variables:
   NodeVersion: 12.x
   Packaging.EnableSBOMSigning: true
-  system_accesstoken: $(System.AccessToken)
   YARN_CACHE_FOLDER: $(Pipeline.Workspace)/.yarn
 
 steps:

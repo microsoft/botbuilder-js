@@ -1,0 +1,18 @@
+steps:
+- powershell: |
+    # Create .npmrc for FuseNPM feed
+
+    Set-Location -Path "$(Build.SourcesDirectory)";
+
+    $content = @"
+    registry=https://pkgs.dev.azure.com/FuseLabs/_packaging/FuseNPM/npm/registry/
+    "@;
+
+    New-Item -Path . -Name ".npmrc" -ItemType "file" -Value $content;
+
+    '-------------'; get-content ".npmrc"; '===================';
+  displayName: Create nuget.config for SDK_Dotnet_V4_org feed
+
+  - task: npmAuthenticate@0
+  inputs:
+    workingFile: .npmrc
