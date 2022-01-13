@@ -1,0 +1,19 @@
+steps:
+- powershell: |
+    # Create .npmrc for SDK_JS_org feed
+
+    Set-Location -Path "$(Build.SourcesDirectory)";
+
+    $content = @"
+    registry=https://pkgs.dev.azure.com/FuseLabs/_packaging/SDK_JS_org/npm/registry/
+    "@;
+
+    New-Item -Path . -Name ".npmrc" -ItemType "file" -Value $content -Force;
+
+    '-------------'; get-content ".npmrc"; '===================';
+  displayName: Create .npmrc for SDK_JS_org feed
+
+- task: npmAuthenticate@0
+  inputs:
+    workingFile: .npmrc
+    customEndpoint: 'SDK_JS_org feed read service connection'
