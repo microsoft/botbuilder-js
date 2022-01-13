@@ -11,8 +11,9 @@ steps:
     New-Item -Path . -Name ".npmrc" -ItemType "file" -Value $content;
 
     '-------------'; get-content ".npmrc"; '===================';
-  displayName: Create nuget.config for SDK_Dotnet_V4_org feed
+  displayName: Create .npmrc for FuseNPM feed
 
 - task: npmAuthenticate@0
   inputs:
     workingFile: .npmrc
+    customEndpoint: 'FuseNPM service connection'
