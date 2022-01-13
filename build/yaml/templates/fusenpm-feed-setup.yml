@@ -13,6 +13,6 @@ steps:
     '-------------'; get-content ".npmrc"; '===================';
   displayName: Create nuget.config for SDK_Dotnet_V4_org feed
 
-  - task: npmAuthenticate@0
+- task: npmAuthenticate@0
   inputs:
     workingFile: .npmrc
