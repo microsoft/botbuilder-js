@@ -106,9 +106,11 @@ steps:
      $(PKG18)
   continueOnError: true
 
+steps:
 - powershell: |
-    'Get-ChildItem .. -ErrorAction Continue -Recurse -Force | Where {$_.FullName -notlike "*node_modules*"}'
-  displayName: 'Dir workspace except node_modules'
+   cd ..
+   ls -R | Where {$_ -notlike "*node_modules*"}
+  displayName: 'Dir workspace - no node_modules'
   continueOnError: true
   condition: succeededOrFailed()
 
