@@ -106,7 +106,6 @@ steps:
      $(PKG18)
   continueOnError: true
 
-steps:
 - powershell: |
    cd ..
    ls -R | Where {$_ -notlike "*node_modules*"}
