@@ -13,7 +13,7 @@ steps:
   inputs:
     versionSpec: $(NodeVersion)
 
-- script: yarn
+- script: yarn --frozen-lockfile
   displayName: yarn install
 
 - script: yarn build
