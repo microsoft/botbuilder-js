@@ -13,6 +13,9 @@ steps:
   inputs:
     versionSpec: $(NodeVersion)
 
+- script: yarn set version 2.4.3
+  displayName: yarn set version 2.4.3
+
 - script: yarn
   displayName: yarn install
 
