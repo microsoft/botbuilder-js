@@ -10,6 +10,7 @@ variables:
   Packaging.EnableSBOMSigning: true
   system_accesstoken: $(System.AccessToken)
   YARN_CACHE_FOLDER: $(Pipeline.Workspace)/.yarn
+#  SDK_JS_org_registry_Url: define this in Azure
 
 steps:
 - template: templates/build.yml

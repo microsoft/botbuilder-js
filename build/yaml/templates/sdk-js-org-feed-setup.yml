@@ -5,7 +5,7 @@ steps:
     Set-Location -Path "$(Build.SourcesDirectory)";
 
     $content = @"
-    registry=https://pkgs.dev.azure.com/FuseLabs/_packaging/SDK_JS_org/npm/registry/
+    registry=$(SDK_JS_org_registry_Url)
     "@;
 
     New-Item -Path . -Name ".npmrc" -ItemType "file" -Value $content -Force;
@@ -21,5 +21,5 @@ steps:
 
 - script: |
     ren yarn.lock yarn_ORIGINAL.lock
-    type yarn_ORIGINAL.lock | node build\scripts\rebaseYarnLock.js https://pkgs.dev.azure.com/FuseLabs/_packaging/SDK_JS_org/npm/registry/ > yarn.lock
+    type yarn_ORIGINAL.lock | node build\scripts\rebaseYarnLock.js $(SDK_JS_org_registry_Url) > yarn.lock
   displayName: rebase yarn.lock to pull from SDK_JS_org feed
