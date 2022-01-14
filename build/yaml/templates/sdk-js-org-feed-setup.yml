@@ -19,7 +19,7 @@ steps:
     customEndpoint: 'SDK_JS_org feed read service connection'
   displayName: authenticate for SDK_JS_org feed
 
-- script: |
-    mv yarn.lock yarn_ORIGINAL.lock
-    cat yarn_ORIGINAL.lock | node build/scripts/rebaseYarnLock.js $(SDK_JS_org_registry_Url) > yarn.lock
+- powershell: |
+    ren yarn.lock yarn_ORIGINAL.lock
+    type yarn_ORIGINAL.lock | node build/scripts/rebaseYarnLock.js $(SDK_JS_org_registry_Url) > yarn.lock
   displayName: rebase yarn.lock to pull from SDK_JS_org feed
