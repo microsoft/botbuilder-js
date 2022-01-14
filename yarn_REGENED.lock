@@ -5378,7 +5378,7 @@ eslint-plugin-jsdoc@^30.7.7:
 
 eslint-plugin-lodash@^7.1.0:
   version "7.3.0"
-  resolved "https://pkgs.dev.azure.com/FuseLabs/SDK_v4/_packaging/SDK_JS/npm/registry/eslint-plugin-lodash/-/eslint-plugin-lodash-7.3.0.tgz#02bbb2c39a8b28f73daf01f99b2d83bcc7f11a79"
+  resolved "https://registry.yarnpkg.com/eslint-plugin-lodash/-/eslint-plugin-lodash-7.3.0.tgz#02bbb2c39a8b28f73daf01f99b2d83bcc7f11a79"
   integrity sha512-FQM8HklruJzulPawX3uZqWbeyN3bQT4hjVCpFYMrWo0Hdz1qDCwp1v3JS4zjhdssAXdwCxdnyrNMCZJK70GeUQ==
   dependencies:
     lodash "^4.17.21"
@@ -13819,7 +13819,7 @@ ws@^7.1.2:
 
 wsrun@^5.2.4:
   version "5.2.4"
-  resolved "https://pkgs.dev.azure.com/FuseLabs/SDK_v4/_packaging/SDK_JS/npm/registry/wsrun/-/wsrun-5.2.4.tgz#6eb6c3ccd3327721a8df073a5e3578fb0dea494e"
+  resolved "https://registry.yarnpkg.com/wsrun/-/wsrun-5.2.4.tgz#6eb6c3ccd3327721a8df073a5e3578fb0dea494e"
   integrity sha512-akv3WtKBohdHsD/5uqhYRHw6GXeCXe87FsSg28Szq+2cpoqRW2SY4yPfm1D0za1cS6MgNy5hPgzS5SqYJaGUxg==
   dependencies:
     bluebird "^3.5.1"
@@ -14090,4 +14090,3 @@ zod@~1.11.17:
   version "1.11.17"
   resolved "https://pkgs.dev.azure.com/FuseLabs/SDK_v4/_packaging/SDK_JS/npm/registry/zod/-/zod-1.11.17.tgz#2aae9e91fc66128116ae9844e8f416a95f453f8e"
   integrity sha512-UzIwO92D0dSFwIRyyqAfRXICITLjF0IP8tRbEK/un7adirMssWZx8xF/1hZNE7t61knWZ+lhEuUvxlu2MO8qqA==
-
