@@ -6,17 +6,17 @@ steps:
   continueOnError: true
   condition: and(succeeded(), eq(variables['System.PullRequest.IsFork'], 'false'))
 
-- template: sdk-js-feed-setup.yml
+- template: sdk-js-org-feed-setup.yml
 
 - task: NodeTool@0
   displayName: use node $(NodeVersion)
   inputs:
     versionSpec: $(NodeVersion)
 
-- script: yarn set version 2.4.3
-  displayName: yarn set version 2.4.3
+# - script: yarn set version 2.4.3
+#   displayName: yarn set version 2.4.3
 
-- script: yarn
+- script: yarn --frozen-lockfile
   displayName: yarn install
 
 - script: yarn build
