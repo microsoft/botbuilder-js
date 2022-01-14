@@ -106,7 +106,10 @@ steps:
      $(PKG18)
   continueOnError: true
 
-- template: templates/list-files.yml
+- powershell: 'Get-ChildItem .. -ErrorAction Continue -Recurse -Force | Where {$_.FullName -notlike "*node_modules*"}'
+  displayName: 'Dir workspace except node_modules'
+  continueOnError: true
+  condition: succeededOrFailed()
 
 - task: ms.vss-governance-buildtask.governance-build-task-component-detection.ComponentGovernanceComponentDetection@0
   displayName: 'Component Detection'
