@@ -5376,6 +5376,11 @@ eslint-plugin-jsdoc@^30.7.7:
     semver "^7.3.2"
     spdx-expression-parse "^3.0.1"
 
+eslint-plugin-lodash@^7.1.0:
+  version "7.1.0"
+  resolved "https://pkgs.dev.azure.com/FuseLabs/SDK_v4/_packaging/SDK_JS/npm/registry/eslint-plugin-lodash/-/eslint-plugin-lodash-7.1.0.tgz#5ad9bf1240a01c6c3f94e956213e2d6422af3192"
+  integrity sha512-BRkEI/+ZjmeDCM1DfzR+NVwYkC/+ChJhaOSm3Xm7rer/fs89TKU6AMtkQiDdqQel1wZ4IJM+B6hlep9xwVKaMQ==
+
 eslint-plugin-mocha@^8.1.0:
   version "8.1.0"
   resolved "https://pkgs.dev.azure.com/FuseLabs/SDK_v4/_packaging/SDK_JS/npm/registry/eslint-plugin-mocha/-/eslint-plugin-mocha-8.1.0.tgz#b9aebbede46a808e46e622c8fd99d2a2f353e725"
