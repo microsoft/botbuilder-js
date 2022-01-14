@@ -21,5 +21,5 @@ steps:
 
 - script: |
     ren yarn.lock yarn_ORIGINAL.lock
-    type yarn_ORIGINAL.lock | node build\scripts\rebaseYarnLock.js $(SDK_JS_org_registry_Url) > yarn.lock
+    type yarn_ORIGINAL.lock | node build/scripts/rebaseYarnLock.js $(SDK_JS_org_registry_Url) > yarn.lock
   displayName: rebase yarn.lock to pull from SDK_JS_org feed
