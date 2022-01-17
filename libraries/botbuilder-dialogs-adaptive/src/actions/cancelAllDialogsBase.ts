@@ -44,6 +44,7 @@ export class CancelAllDialogsBase<O extends object = {}>
 
     /**
      * Initializes a new instance of the [CancelAllDialogsBase](xref:botbuilder-dialogs-adaptive.CancelAllDialogsBase) class.
+     *
      * @param eventName Expression for event name.
      * @param eventValue Optional. Expression for event value.
      * @param isCancelAll Set to `true` to cancel all dialogs; `false` otherwise.
@@ -52,6 +53,7 @@ export class CancelAllDialogsBase<O extends object = {}>
 
     /**
      * Initializes a new instance of the [CancelAllDialogsBase](xref:botbuilder-dialogs-adaptive.CancelAllDialogsBase) class.
+     *
      * @param eventName Optional. Expression for event name.
      * @param eventValue Optional. Expression for event value.
      * @param isCancelAll Set to `true` to cancel all [Dialogs](xref:botbuilder-dialogs.Dialog); `false` otherwise.
@@ -89,6 +91,10 @@ export class CancelAllDialogsBase<O extends object = {}>
 
     private _cancelAll: boolean;
 
+    /**
+     * @param property The key of the conditional selector configuration.
+     * @returns The converter for the selector configuration.
+     */
     public getConverter(property: keyof CancelAllDialogsBaseConfiguration): Converter | ConverterFactory {
         switch (property) {
             case 'eventName':
@@ -106,11 +112,12 @@ export class CancelAllDialogsBase<O extends object = {}>
 
     /**
      * Called when the [Dialog](xref:botbuilder-dialogs.Dialog) is started and pushed onto the dialog stack.
+     *
      * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
-     * @param options Optional. Initial information to pass to the dialog.
+     * @param _options Optional. Initial information to pass to the dialog.
      * @returns A `Promise` representing the asynchronous operation.
      */
-    public async beginDialog(dc: DialogContext, options: O): Promise<DialogTurnResult> {
+    public async beginDialog(dc: DialogContext, _options: O): Promise<DialogTurnResult> {
         if (this.disabled && this.disabled.getValue(dc.state)) {
             return await dc.endDialog();
         }

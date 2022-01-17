@@ -38,6 +38,7 @@ export class ForEach<O extends object = {}> extends ActionScope<O> implements Fo
 
     /**
      * Initializes a new instance of the [Foreach](xref:botbuilder-dialogs-adaptive.Foreach) class.
+     *
      * @param itemsProperty Property path expression to the collection of items.
      * @param actions The actions to execute.
      */
@@ -45,6 +46,7 @@ export class ForEach<O extends object = {}> extends ActionScope<O> implements Fo
 
     /**
      * Initializes a new instance of the [Foreach](xref:botbuilder-dialogs-adaptive.Foreach) class.
+     *
      * @param itemsProperty Optional. Property path expression to the collection of items.
      * @param actions Optional. The actions to execute.
      */
@@ -78,6 +80,10 @@ export class ForEach<O extends object = {}> extends ActionScope<O> implements Fo
      */
     public disabled?: BoolExpression;
 
+    /**
+     * @param property The key of the conditional selector configuration.
+     * @returns The converter for the selector configuration.
+     */
     public getConverter(property: keyof ForEachConfiguration): Converter | ConverterFactory {
         switch (property) {
             case 'itemsProperty':
@@ -95,6 +101,7 @@ export class ForEach<O extends object = {}> extends ActionScope<O> implements Fo
 
     /**
      * Gets the child [Dialog](xref:botbuilder-dialogs.Dialog) dependencies so they can be added to the containers [Dialog](xref:botbuilder-dialogs.Dialog) set.
+     *
      * @returns The child [Dialog](xref:botbuilder-dialogs.Dialog) dependencies.
      */
     public getDependencies(): Dialog[] {
@@ -103,11 +110,12 @@ export class ForEach<O extends object = {}> extends ActionScope<O> implements Fo
 
     /**
      * Starts a new [Dialog](xref:botbuilder-dialogs.Dialog) and pushes it onto the dialog stack.
+     *
      * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
-     * @param options Optional. Initial information to pass to the dialog.
+     * @param _options Optional. Initial information to pass to the dialog.
      * @returns A `Promise` representing the asynchronous operation.
      */
-    public async beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult> {
+    public async beginDialog(dc: DialogContext, _options?: O): Promise<DialogTurnResult> {
         if (this.disabled && this.disabled.getValue(dc.state)) {
             return await dc.endDialog();
         }
@@ -120,10 +128,10 @@ export class ForEach<O extends object = {}> extends ActionScope<O> implements Fo
      * Called when returning control to this [Dialog](xref:botbuilder-dialogs.Dialog) with an [ActionScopeResult](xref:botbuilder-dialogs-adaptive.ActionScopeResult)
      * with the property `ActionCommand` set to `BreakLoop`.
      * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
-     * @param actionScopeResult The [ActionScopeResult](xref:botbuilder-dialogs-adaptive.ActionScopeResult).
+     * @param _actionScopeResult The [ActionScopeResult](xref:botbuilder-dialogs-adaptive.ActionScopeResult).
      * @returns A `Promise` representing the asynchronous operation.
      */
-    protected async onBreakLoop(dc: DialogContext, actionScopeResult: ActionScopeResult): Promise<DialogTurnResult> {
+    protected async onBreakLoop(dc: DialogContext, _actionScopeResult: ActionScopeResult): Promise<DialogTurnResult> {
         return await dc.endDialog();
     }
 
@@ -132,10 +140,13 @@ export class ForEach<O extends object = {}> extends ActionScope<O> implements Fo
      * Called when returning control to this [Dialog](xref:botbuilder-dialogs.Dialog) with an [ActionScopeResult](xref:botbuilder-dialogs-adaptive.ActionScopeResult)
      * with the property `ActionCommand` set to `ContinueLoop`.
      * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
-     * @param actionScopeResult The [ActionScopeResult](xref:botbuilder-dialogs-adaptive.ActionScopeResult).
+     * @param _actionScopeResult The [ActionScopeResult](xref:botbuilder-dialogs-adaptive.ActionScopeResult).
      * @returns A `Promise` representing the asynchronous operation.
      */
-    protected async onContinueLoop(dc: DialogContext, actionScopeResult: ActionScopeResult): Promise<DialogTurnResult> {
+    protected async onContinueLoop(
+        dc: DialogContext,
+        _actionScopeResult: ActionScopeResult
+    ): Promise<DialogTurnResult> {
         return await this.nextItem(dc);
     }
 
@@ -143,11 +154,11 @@ export class ForEach<O extends object = {}> extends ActionScope<O> implements Fo
      * @protected
      * Called when the [Dialog](xref:botbuilder-dialogs.Dialog) continues to the next action.
      * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
-     * @param result Optional. Value returned from the dialog that was called. The type
+     * @param _result Optional. Value returned from the dialog that was called. The type
      * of the value returned is dependent on the child dialog.
      * @returns A `Promise` representing the asynchronous operation.
      */
-    protected async onEndOfActions(dc: DialogContext, result?: any): Promise<DialogTurnResult> {
+    protected async onEndOfActions(dc: DialogContext, _result?: any): Promise<DialogTurnResult> {
         return await this.nextItem(dc);
     }
 
@@ -180,11 +191,11 @@ export class ForEach<O extends object = {}> extends ActionScope<O> implements Fo
     }
 
     private convertToList(value: unknown) {
-        let result: { index: string | number, value: unknown }[] = [];
+        const result: { index: string | number; value: unknown }[] = [];
         if (Array.isArray(value)) {
             value.forEach((item, index) => result.push({ index: index, value: item }));
         } else if (typeof value === 'object') {
-            Object.entries(value).forEach(([key, value]) => result.push({ index: key, value: value }))
+            Object.entries(value).forEach(([key, value]) => result.push({ index: key, value: value }));
         }
 
         return result;

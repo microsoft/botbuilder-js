@@ -40,6 +40,7 @@ type HeadersOutput = Record<string, StringExpression>;
 class HttpHeadersConverter implements Converter<HeadersInput, HeadersOutput> {
     /**
      * Converts a [HeadersInput](xref:botbuilder-dialogs-adaptive.HeadersInput) or [HeadersOutput](xref:botbuilder-dialogs-adaptive.HeadersOutput) to [HttpHeader](xref:botbuilder-dialogs-adaptive.HttpHeader).
+     *
      * @param value [HeadersInput](xref:botbuilder-dialogs-adaptive.HeadersInput) or [HeadersOutput](xref:botbuilder-dialogs-adaptive.HeadersOutput) to convert.
      * @returns The [HttpHeader](xref:botbuilder-dialogs-adaptive.HttpHeader).
      */
@@ -113,6 +114,7 @@ export enum HttpMethod {
 export class Result {
     /**
      * Initialize a new instance of Result class.
+     *
      * @param headers Response headers.
      */
     public constructor(headers?: Headers) {
@@ -165,6 +167,7 @@ export class HttpRequest<O extends object = {}> extends Dialog<O> implements Htt
 
     /**
      * Initializes a new instance of the [HttpRequest](xref:botbuilder-dialogs-adaptive.HttpRequest) class.
+     *
      * @param method The [HttpMethod](xref:botbuilder-dialogs-adaptive.HttpMethod), for example POST, GET, DELETE or PUT.
      * @param url URL for the request.
      * @param headers The headers of the request.
@@ -174,6 +177,7 @@ export class HttpRequest<O extends object = {}> extends Dialog<O> implements Htt
 
     /**
      * Initializes a new instance of the [HttpRequest](xref:botbuilder-dialogs-adaptive.HttpRequest) class.
+     *
      * @param method Optional. The [HttpMethod](xref:botbuilder-dialogs-adaptive.HttpMethod), for example POST, GET, DELETE or PUT.
      * @param url Optional. URL for the request.
      * @param headers Optional. The headers of the request.
@@ -231,6 +235,10 @@ export class HttpRequest<O extends object = {}> extends Dialog<O> implements Htt
      */
     public disabled?: BoolExpression;
 
+    /**
+     * @param property The key of the conditional selector configuration.
+     * @returns The converter for the selector configuration.
+     */
     public getConverter(property: keyof HttpRequestConfiguration): Converter | ConverterFactory {
         switch (property) {
             case 'contentType':
@@ -254,11 +262,12 @@ export class HttpRequest<O extends object = {}> extends Dialog<O> implements Htt
 
     /**
      * Starts a new [Dialog](xref:botbuilder-dialogs.Dialog) and pushes it onto the dialog stack.
+     *
      * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
-     * @param options Optional. Initial information to pass to the dialog.
+     * @param _options Optional. Initial information to pass to the dialog.
      * @returns A `Promise` representing the asynchronous operation.
      */
-    public async beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult> {
+    public async beginDialog(dc: DialogContext, _options?: O): Promise<DialogTurnResult> {
         if (this.disabled && this.disabled.getValue(dc.state)) {
             return await dc.endDialog();
         }
@@ -330,7 +339,7 @@ export class HttpRequest<O extends object = {}> extends Dialog<O> implements Htt
                 result.content = await response.json();
                 dc.context.sendActivities(result.content as Activity[]);
                 break;
-            case ResponsesTypes.Json:
+            case ResponsesTypes.Json: {
                 const content = await response.text();
                 try {
                     result.content = JSON.parse(content);
@@ -338,10 +347,12 @@ export class HttpRequest<O extends object = {}> extends Dialog<O> implements Htt
                     result.content = content;
                 }
                 break;
-            case ResponsesTypes.Binary:
+            }
+            case ResponsesTypes.Binary: {
                 const buffer = await response.arrayBuffer();
                 result.content = new Uint8Array(buffer);
                 break;
+            }
             case ResponsesTypes.None:
             default:
                 break;

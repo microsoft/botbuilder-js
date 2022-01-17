@@ -22,6 +22,7 @@ export class ReplaceDialog<O extends object = {}> extends BaseInvokeDialog<O> im
 
     /**
      * Creates a new [ReplaceDialog](xref:botbuilder-dialogs-adaptive.ReplaceDialog) instance.
+     *
      * @param dialogId ID of the [Dialog](xref:botbuilder-dialogs.Dialog) to goto.
      * @param options Optional, static options to pass the [Dialog](xref:botbuilder-dialogs.Dialog).
      */
@@ -29,7 +30,8 @@ export class ReplaceDialog<O extends object = {}> extends BaseInvokeDialog<O> im
 
     /**
      * Creates a new [ReplaceDialog](xref:botbuilder-dialogs-adaptive.ReplaceDialog) instance.
-     * @param dialogId Optional. ID of the [Dialog](xref:botbuilder-dialogs.Dialog) to goto.
+     *
+     * @param dialogIdToCall Optional. ID of the [Dialog](xref:botbuilder-dialogs.Dialog) to goto.
      * @param options Optional. Static options to pass the [Dialog](xref:botbuilder-dialogs.Dialog).
      */
     public constructor(dialogIdToCall?: string, options?: O) {
@@ -41,6 +43,10 @@ export class ReplaceDialog<O extends object = {}> extends BaseInvokeDialog<O> im
      */
     public disabled?: BoolExpression;
 
+    /**
+     * @param property The key of the conditional selector configuration.
+     * @returns The converter for the selector configuration.
+     */
     public getConverter(property: keyof ReplaceDialogConfiguration): Converter | ConverterFactory {
         switch (property) {
             case 'disabled':
@@ -52,6 +58,7 @@ export class ReplaceDialog<O extends object = {}> extends BaseInvokeDialog<O> im
 
     /**
      * Starts a new [Dialog](xref:botbuilder-dialogs.Dialog) and pushes it onto the dialog stack.
+     *
      * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
      * @param options Optional. Initial information to pass to the dialog.
      * @returns A `Promise` representing the asynchronous operation.
