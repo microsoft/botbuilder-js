@@ -20,6 +20,7 @@ export class ActionContext extends DialogContext {
 
     /**
      * Initializes a new instance of the [ActionContext](xref:botbuilder-dialogs-adaptive.ActionContext) class
+     *
      * @param dialogs The dialog set to create the action context for.
      * @param parentDialogContext Parent dialog context.
      * @param state Current dialog state.
@@ -45,6 +46,8 @@ export class ActionContext extends DialogContext {
 
     /**
      * Gets list of changes that are queued to be applied.
+     *
+     * @returns The list of changes queued.
      */
     public get changes(): ActionChangeList[] {
         return this.context.turnState.get(this._changeKey) || [];
@@ -52,6 +55,7 @@ export class ActionContext extends DialogContext {
 
     /**
      * Queues up a set of changes that will be applied when applyChanges() is called.
+     *
      * @param changes Plan changes to queue up.
      */
     public queueChanges(changes: ActionChangeList): void {
@@ -62,6 +66,8 @@ export class ActionContext extends DialogContext {
 
     /**
      * Applies any queued up changes.
+     *
+     * @returns True if succeed otherwise false
      */
     public async applyChanges(): Promise<boolean> {
         // Retrieve queued change list

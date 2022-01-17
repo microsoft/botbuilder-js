@@ -22,6 +22,7 @@ export interface ActionChangeList {
 
     /**
      * Turn state associated with the change.
+     *
      * @remarks
      * The current turn state will be update when the plan change is applied.
      */

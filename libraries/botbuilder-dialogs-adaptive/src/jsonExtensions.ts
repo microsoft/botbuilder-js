@@ -11,6 +11,7 @@ import { ValueExpression } from 'adaptive-expressions';
 
 /**
  * Replaces the binding paths in a JSON value with the evaluated results recursively.
+ *
  * @param state A scope for looking up variables.
  * @param unit An object.
  * @returns Deep data binding result.
@@ -45,6 +46,7 @@ export function replaceJsonRecursively(state: DialogStateManager, unit: object):
 
 /**
  * Evaluate ValueExpression according the value type.
+ *
  * @param state Input ValueExpression
  * @param valExpr A scope for looking up variables.
  * @returns Deep data binding result.

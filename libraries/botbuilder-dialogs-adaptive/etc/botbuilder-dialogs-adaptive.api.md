@@ -180,6 +180,7 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> im
     recognizer?: Recognizer;
     repromptDialog(context: DialogContext | TurnContext, instance: DialogInstance): Promise<void>;
     resumeDialog(dc: DialogContext, _reason?: DialogReason, _result?: any): Promise<DialogTurnResult>;
+    // Warning: (ae-setter-with-docs) The doc comment for the property "schema" must appear on the getter, not the setter.
     set schema(value: object);
     get schema(): object;
     selector: TriggerSelector;
@@ -1635,7 +1636,7 @@ export class OnBeginDialog extends OnDialogEvent {
 export class OnCancelDialog extends OnDialogEvent {
     // (undocumented)
     static $kind: string;
-    constructor(actions?: Dialog[], condtion?: string);
+    constructor(actions?: Dialog[], condition?: string);
 }
 
 // @public
@@ -1926,7 +1927,9 @@ export class PropertySchema {
     get children(): PropertySchema[];
     get entities(): string[];
     get expectedOnly(): string[];
+    // (undocumented)
     isArray(): boolean;
+    // (undocumented)
     isEnum(): boolean;
     get name(): string;
     get parent(): PropertySchema | undefined;

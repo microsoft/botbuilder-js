@@ -8,6 +8,9 @@
 import { AdaptiveEvents } from './adaptiveEvents';
 import { EntityAssignment } from './entityAssignment';
 
+/**
+ *
+ */
 export class EntityAssignmentComparer {
     private static eventPreference = [
         AdaptiveEvents.assignEntity,
@@ -15,8 +18,16 @@ export class EntityAssignmentComparer {
         AdaptiveEvents.chooseEntity,
     ];
 
+    /**
+     * @param operationPreference The operation preference.
+     */
     constructor(private operationPreference: string[]) {}
 
+    /**
+     * @param x First entity assigment to compare.
+     * @param y Second entity assigment to compare.
+     * @returns Result of the comparison.
+     */
     public compare(x: Partial<EntityAssignment>, y: Partial<EntityAssignment>): number {
         // Order by event.
         let comparison: number =

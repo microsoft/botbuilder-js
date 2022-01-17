@@ -11,6 +11,7 @@ import { OnDialogEvent } from './onDialogEvent';
 
 /**
  * Actions triggered when a UnknownIntent event has been emitted by the recognizer.
+ *
  * @remarks
  * A message is considered unhandled if there were no other conditions triggered by the message and
  * there is no active plan being executed.
@@ -25,6 +26,7 @@ export class OnUnknownIntent extends OnDialogEvent {
 
     /**
      * Creates a new `OnUnknownIntent` instance.
+     *
      * @param actions (Optional) The actions to add to the plan when the rule constraints are met.
      * @param condition (Optional) The condition which needs to be met for the actions to be executed.
      */

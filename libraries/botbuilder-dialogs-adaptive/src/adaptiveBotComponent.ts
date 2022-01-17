@@ -121,7 +121,14 @@ import {
     UrlEntityRecognizer,
 } from './recognizers';
 
+/**
+ *
+ */
 export class AdaptiveBotComponent extends BotComponent {
+    /**
+     * @param services A list of services.
+     * @param _configuration The configuration.
+     */
     configureServices(services: ServiceCollection, _configuration: Configuration): void {
         Expression.functions.add(IsDialogActiveFunction.functionName, new IsDialogActiveFunction());
         Expression.functions.add(IsDialogActiveFunction.functionAlias, new IsDialogActiveFunction());

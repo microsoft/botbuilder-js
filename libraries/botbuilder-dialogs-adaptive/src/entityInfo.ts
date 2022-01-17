@@ -89,7 +89,9 @@ export interface NormalizedEntityInfos {
 export class EntityInfo {
     /**
      * Print an entity as a string.
+     *
      * @param source Source entity.
+     * @returns A string representing the entity.
      */
     public static toString(source: Partial<EntityInfo>): string {
         return `${source.name}:${source.value} P${source.priority} ${source.score} ${source.coverage}`;
@@ -97,8 +99,10 @@ export class EntityInfo {
 
     /**
      * Returns true if entities share text in utterance.
+     *
      * @param source Source entity.
      * @param entity Entity to compare.
+     * @returns True if entities share text in utterance, otherwise false.
      */
     public static overlaps(source: Partial<EntityInfo>, entity: Partial<EntityInfo>): boolean {
         return source.start <= entity.end && source.end >= entity.start;
@@ -106,8 +110,10 @@ export class EntityInfo {
 
     /**
      * Returns true if entities come from exactly the same text in the utterance.
+     *
      * @param source Source entity.
      * @param entity Entity to compare.
+     * @returns True if entities come from the exactly same text in utterance, otherwise false.
      */
     public static alternative(source: Partial<EntityInfo>, entity: Partial<EntityInfo>): boolean {
         return source.start == entity.start && source.end == entity.end;
@@ -115,8 +121,10 @@ export class EntityInfo {
 
     /**
      * Returns true entity text completely includes another entity text.
+     *
      * @param source Source entity.
      * @param entity Entity to compare.
+     * @returns True if the entity text completely includes another entity text, otherwise false.
      */
     public static covers(source: Partial<EntityInfo>, entity: Partial<EntityInfo>): boolean {
         return (
@@ -128,19 +136,23 @@ export class EntityInfo {
 
     /**
      * Returns true if entities share the same root.
+     *
      * @param source Source entity.
      * @param entity Entity to compare.
+     * @returns True if entities share the same root, otherwise false.
      */
-     public static sharesRoot(source: Partial<EntityInfo>, entity: Partial<EntityInfo>): boolean {
+    public static sharesRoot(source: Partial<EntityInfo>, entity: Partial<EntityInfo>): boolean {
         return source.rootEntity === entity.rootEntity;
     }
 
     /**
      * Returns true if entities are the same.
+     *
      * @param source Source entity.
      * @param entity Entity to compare.
+     * @returns True if entities are the same, otherwise false.
      */
-     public static isSameEntity(source: Partial<EntityInfo>, entity: Partial<EntityInfo>): boolean {
+    public static isSameEntity(source: Partial<EntityInfo>, entity: Partial<EntityInfo>): boolean {
         return EntityInfo.sharesRoot(source, entity) && EntityInfo.alternative(source, entity);
     }
 

@@ -20,6 +20,7 @@ export const resourceExplorerKey = Symbol('ResourceExplorer');
 export class ResourceExtensions {
     /**
      * Register ResourceExplorer into DialogManager.
+     *
      * @param dialogManager The dialog manager to add resource explorer to.
      * @param resourceExplorer The resource explorer to be added.
      * @returns dialog manager with resource explorer.

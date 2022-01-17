@@ -17,15 +17,21 @@ export interface EntityAssignmentsConfiguration {
 
 /**
  * Tracks entity related events to surface.
+ *
  * @remarks When processing entities possible ambiguities are identified and when resolved they turn into assign events.
  * This tracking persists across multiple input utterances.
  */
 export class EntityAssignments implements EntityAssignmentsConfiguration {
+    /**
+     * @param assignments Entities to assign.
+     */
     constructor(public assignments: EntityAssignment[] = []) {}
 
     /**
      * Read entity event queue from memory.
+     *
      * @param actionContext Memory context.
+     * @returns The entity assigments.
      */
     public static read(actionContext: ActionContext): EntityAssignments {
         const queuesObject = actionContext.state.getValue(events, new EntityAssignments());
@@ -37,6 +43,7 @@ export class EntityAssignments implements EntityAssignmentsConfiguration {
 
     /**
      * Write state into memory.
+     *
      * @param actionContext Memory context.
      */
     public write(actionContext: ActionContext): void {
@@ -44,7 +51,7 @@ export class EntityAssignments implements EntityAssignmentsConfiguration {
     }
 
     /**
-     * Returns the next entity event to surface.
+     * @returns The next entity event to surface.
      */
     public get nextAssignment(): EntityAssignment {
         if (this.assignments.length > 0) {
@@ -56,7 +63,9 @@ export class EntityAssignments implements EntityAssignmentsConfiguration {
 
     /**
      * Remove the current event and update the memory.
+     *
      * @param actionContext Memory context.
+     * @returns The assigment.
      */
     public dequeue(actionContext: ActionContext): EntityAssignment {
         const assignment = this.assignments.shift();

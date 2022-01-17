@@ -26,6 +26,7 @@ export class OnDialogEvent extends OnCondition implements OnDialogEventConfigura
 
     /**
      * Creates a new `OnDialogEvent` instance.
+     *
      * @param event (Optional) The event to fire on.
      * @param actions (Optional) The actions to add to the plan when the rule constraints are met.
      * @param condition (Optional) The condition which needs to be met for the actions to be executed.
