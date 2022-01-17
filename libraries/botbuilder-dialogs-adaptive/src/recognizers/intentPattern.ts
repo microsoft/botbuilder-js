@@ -9,6 +9,12 @@ export class IntentPattern {
     private _intent: string;
     private _pattern: string;
 
+    /**
+     * Initializes a new instance of the [IntentPattern](xref:botbuilder-dialogs-adaptive.IntentPattern) class.
+     *
+     * @param intent The intent.
+     * @param pattern The regex pattern to match..
+     */
     public constructor(intent?: string, pattern?: string) {
         if (intent && pattern) {
             this.intent = intent;
@@ -16,22 +22,42 @@ export class IntentPattern {
         }
     }
 
+    /**
+     * @returns An instance of RegExp with the given pattern.
+     */
     public get regex(): RegExp {
+        // eslint-disable-next-line security/detect-non-literal-regexp
         return new RegExp(this._pattern, 'ig');
     }
 
+    /**
+     * Gets the intent.
+     *
+     * @returns The intent.
+     */
     public get intent(): string {
         return this._intent;
     }
 
+    /**
+     * Sets the intent.
+     */
     public set intent(value: string) {
         this._intent = value[0] == '#' ? value.substr(1) : value;
     }
 
+    /**
+     * Gets the pattern.
+     *
+     * @returns The pattern.
+     */
     public get pattern(): string {
         return this._pattern;
     }
 
+    /**
+     * Sets the pattern
+     */
     public set pattern(value: string) {
         this._pattern = value.startsWith('(?i)') ? value.substr(4) : value;
     }

@@ -19,6 +19,7 @@ export class EntityRecognizerSet extends Array<EntityRecognizer> {
 
     /**
      * Implement [EntityRecognizer.recognizeEntities](xref:botbuilder-dialogs-adaptive.EntityRecognizer.recognizeEntities) by iterating against the Recognizer pool.
+     *
      * @param dialogContext [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
      * @param text Text to recognize.
      * @param locale Locale to use.

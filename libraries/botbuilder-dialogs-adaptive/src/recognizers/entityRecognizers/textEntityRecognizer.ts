@@ -12,6 +12,9 @@ import { DialogContext, ModelResult } from 'botbuilder-dialogs';
 import { EntityRecognizer } from './entityRecognizer';
 import { TextEntity } from './textEntity';
 
+/**
+ * TextEntityRecognizer - base class for Text.Recogizers from the text recognizer library.
+ */
 export abstract class TextEntityRecognizer extends EntityRecognizer {
     /**
      * Recognizes entities from an [Entity](xref:botframework-schema.Entity) list.
