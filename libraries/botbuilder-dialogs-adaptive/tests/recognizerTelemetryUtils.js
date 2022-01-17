@@ -45,7 +45,7 @@ async function recognizeIntentAndValidateTelemetry({ text, callCount, recognizer
     const dialogContext = createContext(text);
     const activity = dialogContext.context.activity;
 
-    let result = await recognizer.recognize(dialogContext, activity);
+    const result = await recognizer.recognize(dialogContext, activity);
 
     validateIntent(text, result);
     validateTelemetry({
@@ -70,7 +70,7 @@ async function recognizeIntentAndValidateTelemetry_withCustomActivity({ text, ca
     customActivity.text = text;
     customActivity.locale = 'en-us';
 
-    let result = await recognizer.recognize(dialogContext, customActivity);
+    const result = await recognizer.recognize(dialogContext, customActivity);
 
     validateIntent(text, result);
     validateTelemetry({
