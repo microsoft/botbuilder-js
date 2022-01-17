@@ -15,6 +15,7 @@ import { TextTemplate } from '../templates';
 export class TextTemplateConverter implements Converter<string, TextTemplate> {
     /**
      * Converts a string to a [TextTemplate](xref:botbuilder-dialogs-adaptive.TextTemplate) instance.
+     *
      * @param value The template to evaluate to create text.
      * @returns A new [TextTemplate](xref:botbuilder-dialogs-adaptive.TextTemplate) instance.
      */

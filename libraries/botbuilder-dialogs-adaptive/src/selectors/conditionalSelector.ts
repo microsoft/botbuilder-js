@@ -53,6 +53,12 @@ export class ConditionalSelector extends TriggerSelector implements ConditionalS
      */
     public parser: ExpressionParserInterface = new ExpressionParser();
 
+    /**
+     * Gets the converter for the selector configuration.
+     *
+     * @param property The key of the conditional selector configuration.
+     * @returns The converter for the selector configuration.
+     */
     public getConverter(property: keyof ConditionalSelectorConfiguration): Converter | ConverterFactory {
         switch (property) {
             case 'condition':
@@ -64,6 +70,7 @@ export class ConditionalSelector extends TriggerSelector implements ConditionalS
 
     /**
      * Initialize the selector with the set of rules.
+     *
      * @param conditionals Possible rules to match.
      * @param evaluate True if rules should be evaluated on select.
      */
@@ -74,6 +81,7 @@ export class ConditionalSelector extends TriggerSelector implements ConditionalS
 
     /**
      * Select the best rule to execute.
+     *
      * @param actionContext Dialog context for evaluation.
      * @returns A Promise with a number array.
      */
