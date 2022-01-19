@@ -243,7 +243,7 @@ describe('LGLanguageGenerator', function () {
             const result3 = await lg.generate(await getTurnContext('en-gb', lg), '${test()}', undefined);
             assert.equal(result3, 'english-gb');
         });
-*/
+        */
         it('en, "${test()}", no data', async function () {
             const result4 = await lg.generate(getDialogContext('en', lg), '${test()}', undefined);
             assert.equal(result4, 'english');
