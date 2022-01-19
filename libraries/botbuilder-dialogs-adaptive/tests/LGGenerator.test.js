@@ -283,6 +283,6 @@ describe('LGLanguageGenerator', function () {
             const result11 = await lg.generate(await getTurnContext('en-us', lg), '${test2()}', {country: 'US'});
             assert.equal(result11, 'english-US');
         });
-*/
+        */
     });
 });
