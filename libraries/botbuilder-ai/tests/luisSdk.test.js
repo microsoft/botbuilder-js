@@ -4,16 +4,16 @@ const nock = require('nock');
 const { LUISRuntimeClient } = require('@azure/cognitiveservices-luis-runtime');
 const msRest = require('@azure/ms-rest-js');
 
-const applicationId = '756de20e-f1e6-4dca-b80a-406a31d7054b';
+const applicationId = '00000000-0000-0000-0000-000000000000';
 // This can be any endpoint key for calling LUIS
-const endpointKey = process.env.LUISAPPKEY || '77fe817cc79f48bd9323a0b4eafef9fa';
+const k = process.env.LUISAPPKEY || 'test';
 
 // If this is true, then LUIS responses will come from oracle files.
 // If it is false, the LUIS service will be called and if there are changes you will get a new oracle file.
 const mockLuis = true;
 
 const baseUrl = 'https://westus.api.cognitive.microsoft.com';
-const creds = new msRest.TokenCredentials(endpointKey);
+const creds = new msRest.TokenCredentials(k);
 
 function ExpectedPath(file) {
     return __dirname + '/TestData/LuisSdk/' + file;
@@ -31,8 +31,8 @@ function GetExpected(oracle) {
 
     if (mockLuis) {
         nock('https://westus.api.cognitive.microsoft.com')
-            .matchHeader('ocp-apim-subscription-key', endpointKey)
-            .matchHeader('authorization', `Bearer ${endpointKey}`)
+            .matchHeader('ocp-apim-subscription-key', k)
+            .matchHeader('authorization', `Bearer ${k}`)
             .post(uri, requestContent)
             .reply(200, responseBody);
     }
@@ -84,7 +84,7 @@ async function TestJson(file, includeAllIntents = true, includeInstance = true) 
         includeInstance: includeInstance,
         verbose: true,
         customHeaders: {
-            'Ocp-Apim-Subscription-Key': endpointKey,
+            'Ocp-Apim-Subscription-Key': k,
             'User-Agent': 'botbuilder',
         },
     });
@@ -143,7 +143,7 @@ function findCompositeByParentType(key, data) {
 
 describe('LuisPredict', function () {
     this.timeout(10000);
-    if (!mockLuis && endpointKey === 'MockedKey') {
+    if (!mockLuis && k === 'MockedKey') {
         console.warn(
             'WARNING: skipping LuisRecognizer test suite because the LUISAPPKEY environment variable is not defined'
         );
