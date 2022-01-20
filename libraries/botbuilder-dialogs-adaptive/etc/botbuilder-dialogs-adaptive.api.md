@@ -142,7 +142,7 @@ export interface ActivityTemplateConguration {
     template?: string;
 }
 
-// @public (undocumented)
+// @public
 export class AdaptiveBotComponent extends BotComponent {
     // (undocumented)
     configureServices(services: ServiceCollection, _configuration: Configuration): void;
@@ -1356,7 +1356,7 @@ export class IsDialogActiveFunction extends ExpressionEvaluator {
     static readonly functionName = "isDialogActive";
 }
 
-// @public (undocumented)
+// @public
 export class LanguageGenerationBotComponent extends BotComponent {
     // (undocumented)
     configureServices(services: ServiceCollection, _configuration: Configuration): void;
@@ -1703,7 +1703,6 @@ export class OnCondition extends Configurable implements DialogDependencies, OnC
     static $kind: string;
     constructor(condition?: string, actions?: Dialog[]);
     actions: Dialog[];
-    // (undocumented)
     protected get actionScope(): ActionScope;
     addExternalCondition(condition: string): void;
     condition: BoolExpression;
