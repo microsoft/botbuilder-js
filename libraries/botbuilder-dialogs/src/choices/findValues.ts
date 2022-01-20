@@ -98,6 +98,28 @@ export function findValues(
         return -1;
     }
 
+    function findExactMatch(utterance: string, values: SortedValue[]): ModelResult<FoundValue> {
+        const entry = values.find(({ value }) => value.toLowerCase() === utterance.toLowerCase());
+        if (!entry) {
+            return null;
+        }
+        return {
+            text: utterance,
+            start: 0,
+            end: utterance.length - 1,
+            typeName: 'value',
+            resolution: {
+                value: entry.value,
+                index: entry.index,
+                score: 1,
+            },
+        };
+    }
+    const exactMatch = findExactMatch(utterance, values);
+    if (exactMatch) {
+        return [exactMatch];
+    }
+
     function matchValue(
         index: number,
         value: string,
