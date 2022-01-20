@@ -28,7 +28,7 @@ export class SkillExtensions {
      *
      * @param dialogManager The dialog manager to add skill client to.
      * @param skillClient The skill client to be added.
-     * @returns The dialog manager based on the skill client.
+     * @returns The existing dialog manager object with the new skill client state.
      */
     public static useSkillClient(dialogManager: DialogManager, skillClient: BotFrameworkClient): DialogManager {
         dialogManager.initialTurnState.set(skillClientKey, skillClient);
@@ -40,7 +40,7 @@ export class SkillExtensions {
      *
      * @param dialogManager The dialog manager to add skill conversation id factory to.
      * @param skillConversationIdFactory The skill conversation id factory to be added.
-     * @returns The dialog manager based on the skill factory.
+     * @returns The existing dialog manager object with the new skill conversation factory state.
      */
     public static useSkillConversationIdFactory(
         dialogManager: DialogManager,

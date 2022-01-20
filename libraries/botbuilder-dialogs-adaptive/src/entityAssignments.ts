@@ -23,7 +23,9 @@ export interface EntityAssignmentsConfiguration {
  */
 export class EntityAssignments implements EntityAssignmentsConfiguration {
     /**
-     * @param assignments Entities to assign.
+     * Initializes a new instance of the [EntityAssignments](xref:botbuilder-dialogs-adaptive.EntityAssignments) class.
+     *
+     * @param assignments A list of [EntityAssignments](xref:botbuilder-dialogs-adaptive.EntityAssignments) to use.
      */
     constructor(public assignments: EntityAssignment[] = []) {}
 
@@ -31,7 +33,7 @@ export class EntityAssignments implements EntityAssignmentsConfiguration {
      * Read entity event queue from memory.
      *
      * @param actionContext Memory context.
-     * @returns The entity assigments.
+     * @returns Entity event queue.
      */
     public static read(actionContext: ActionContext): EntityAssignments {
         const queuesObject = actionContext.state.getValue(events, new EntityAssignments());
@@ -51,6 +53,8 @@ export class EntityAssignments implements EntityAssignmentsConfiguration {
     }
 
     /**
+     * Gets the next entity event to surface.
+     *
      * @returns The next entity event to surface.
      */
     public get nextAssignment(): EntityAssignment {
@@ -65,7 +69,7 @@ export class EntityAssignments implements EntityAssignmentsConfiguration {
      * Remove the current event and update the memory.
      *
      * @param actionContext Memory context.
-     * @returns The assigment.
+     * @returns Removed event.
      */
     public dequeue(actionContext: ActionContext): EntityAssignment {
         const assignment = this.assignments.shift();

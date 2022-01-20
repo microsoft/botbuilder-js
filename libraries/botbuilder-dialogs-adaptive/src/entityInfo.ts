@@ -91,7 +91,7 @@ export class EntityInfo {
      * Print an entity as a string.
      *
      * @param source Source entity.
-     * @returns A string representing the entity.
+     * @returns A string that represents the current object.
      */
     public static toString(source: Partial<EntityInfo>): string {
         return `${source.name}:${source.value} P${source.priority} ${source.score} ${source.coverage}`;

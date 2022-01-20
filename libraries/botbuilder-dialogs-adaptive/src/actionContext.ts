@@ -67,7 +67,7 @@ export class ActionContext extends DialogContext {
     /**
      * Applies any queued up changes.
      *
-     * @returns True if succeed otherwise false
+     * @returns True if there were any changes to apply.
      */
     public async applyChanges(): Promise<boolean> {
         // Retrieve queued change list

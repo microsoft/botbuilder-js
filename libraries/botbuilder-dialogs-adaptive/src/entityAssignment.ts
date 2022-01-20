@@ -95,7 +95,9 @@ export class EntityAssignment implements EntityAssignmentConfiguration {
     public expectedProperties: string[];
 
     /**
-     * @param assignment The assigment
+     * Initializes a new instance of the [EntityAssignment](xref:botbuilder-dialogs-adaptive.EntityAssignment) class.
+     *
+     * @param assignment The entity assignment properties to set for this instance.
      */
     constructor(assignment: Partial<EntityAssignmentConfiguration>) {
         // Some properties are defined by `<prop> ?? undefined` in order to pass object equality checks.
@@ -151,7 +153,7 @@ export class EntityAssignment implements EntityAssignmentConfiguration {
     /**
      * Print an assignment as a string.
      *
-     * @returns The assigment as string.
+     * @returns A string that represents the current object.
      */
     public toString(): string {
         return `${this.isExpected ? '+' : ''}${this.event}: ${this.property} = ${this.operation}(${EntityInfo.toString(

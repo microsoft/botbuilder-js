@@ -9,7 +9,14 @@ import { AdaptiveEvents } from './adaptiveEvents';
 import { EntityAssignment } from './entityAssignment';
 
 /**
- *
+ * Compare two entity assignments to determine their relative priority.
+
+ * @remarks
+ * Compare by event: assignEntity, chooseProperty, chooseEntity
+ * Then by operations in order from schema (usually within assignEntity).
+ * Then by unexpected before expected.
+ * Then by oldest turn first.
+ * Then by minimum position in utterance.
  */
 export class EntityAssignmentComparer {
     private static eventPreference = [
@@ -19,14 +26,18 @@ export class EntityAssignmentComparer {
     ];
 
     /**
-     * @param operationPreference The operation preference.
+     * Initializes a new instance of the [EntityAssignmentComparer](xref:botbuilder-dialogs-adaptive.EntityAssignmentComparer) class.
+     *
+     * @param operationPreference Preference on operations.
      */
     constructor(private operationPreference: string[]) {}
 
     /**
+     * Compares [EntityAssignment](xref:botbuilder-dialogs-adaptive.EntityAssignment) x against y to determine its relative priority.
+     *
      * @param x First entity assigment to compare.
      * @param y Second entity assigment to compare.
-     * @returns Result of the comparison.
+     * @returns Numerical value representing x's relative priority.
      */
     public compare(x: Partial<EntityAssignment>, y: Partial<EntityAssignment>): number {
         // Order by event.

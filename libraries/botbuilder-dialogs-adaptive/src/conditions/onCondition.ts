@@ -92,7 +92,9 @@ export class OnCondition extends Configurable implements DialogDependencies, OnC
 
     /**
      * @protected
-     * @returns The action scope.
+     * Gets the action scope.
+     *
+     * @returns The scope obtained from the action.
      */
     protected get actionScope(): ActionScope {
         if (!this._actionScope) {
@@ -191,7 +193,7 @@ export class OnCondition extends Configurable implements DialogDependencies, OnC
     /**
      * Get child dialog dependencies so they can be added to the containers dialogset.
      *
-     * @returns The dependencies.
+     * @returns A list of [Dialog](xref:botbuilder-dialogs.Dialog).
      */
     public getDependencies(): Dialog[] {
         return [this.actionScope];

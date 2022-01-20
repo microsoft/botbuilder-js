@@ -122,12 +122,12 @@ import {
 } from './recognizers';
 
 /**
- *
+ * [BotComponent](xref:botbuilder-core.BotComponent) for adaptive components.
  */
 export class AdaptiveBotComponent extends BotComponent {
     /**
-     * @param services A list of services.
-     * @param _configuration The configuration.
+     * @param services Services Collection to register.
+     * @param _configuration Configuration for the bot component.
      */
     configureServices(services: ServiceCollection, _configuration: Configuration): void {
         Expression.functions.add(IsDialogActiveFunction.functionName, new IsDialogActiveFunction());

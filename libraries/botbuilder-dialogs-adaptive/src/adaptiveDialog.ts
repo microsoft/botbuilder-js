@@ -148,14 +148,14 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> im
     public defaultResultProperty = 'dialog.result';
 
     /**
-     *
+     * Sets the JSON Schema for the dialog.
      */
     public set schema(value: object) {
         this.dialogSchema = new SchemaHelper(value);
     }
 
     /**
-     * JSON Schema for the dialog.
+     * Gets the JSON Schema for the dialog.
      *
      * @returns The dialog schema.
      */
