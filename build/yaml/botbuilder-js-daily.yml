@@ -7,7 +7,9 @@ pool:
 
 variables:
   NodeVersion: 12.x
+  Packaging.EnableSBOMSigning: true
   YARN_CACHE_FOLDER: $(Pipeline.Workspace)/.yarn
+#  SDK_JS_org_registry_Url: define this in Azure
 
 steps:
 - template: templates/build.yml
@@ -27,6 +29,13 @@ steps:
     Contents: '*/*.tgz'
     TargetFolder: '$(Build.ArtifactStagingDirectory)'
     flattenFolders: true
+
+- task: AzureArtifacts.manifest-generator-task.manifest-generator-task.ManifestGeneratorTask@0
+  displayName: 'generate software bill of materials'
+  inputs:
+    BuildDropPath: '$(Build.ArtifactStagingDirectory)'
+    PackageName: 'Microsoft Bot Framework SDK for Node.js'
+    PackageVersion: $(PackageVersion)
 
 - task: PublishBuildArtifacts@1
   displayName: publish staging artifacts
@@ -96,4 +105,17 @@ steps:
      $(PKG18)
   continueOnError: true
 
-- template: templates/list-files.yml
+- powershell: |
+   cd ..
+   ls -R
+  displayName: 'Dir workspace'
+  continueOnError: true
+  condition: succeededOrFailed()
+
+- task: ms.vss-governance-buildtask.governance-build-task-component-detection.ComponentGovernanceComponentDetection@0
+  displayName: 'Component Detection'
+  inputs:
+    sourceScanPath: './libraries'
+    ignoreDirectories: './testing,./tools'
+    failOnAlert: false
+
