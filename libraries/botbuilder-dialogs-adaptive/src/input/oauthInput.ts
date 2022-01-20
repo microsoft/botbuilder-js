@@ -319,8 +319,8 @@ export class OAuthInput extends InputDialog implements OAuthInputConfiguration {
      *
      * ```JavaScript
      * const prompt = new OAuthPrompt({
-     * connectionName: 'GitConnection',
-     * title: 'Login To GitHub'
+     *     connectionName: 'GitConnection',
+     *     title: 'Login To GitHub'
      * });
      * await prompt.signOutUser(context);
      * ```
