@@ -6,6 +6,8 @@ steps:
   continueOnError: true
   condition: and(succeeded(), eq(variables['System.PullRequest.IsFork'], 'false'))
 
+- template: sdk-js-org-feed-setup.yml
+
 - task: NodeTool@0
   displayName: use node $(NodeVersion)
   inputs:
