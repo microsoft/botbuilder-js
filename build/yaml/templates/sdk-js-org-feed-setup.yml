@@ -1,0 +1,25 @@
+steps:
+- powershell: |
+    # Create .npmrc for SDK_JS_org feed
+
+    Set-Location -Path "$(Build.SourcesDirectory)";
+
+    $content = @"
+    registry=$(SDK_JS_org_registry_Url)
+    "@;
+
+    New-Item -Path . -Name ".npmrc" -ItemType "file" -Value $content -Force;
+
+    '-------------'; get-content ".npmrc"; '===================';
+  displayName: Create .npmrc for SDK_JS_org feed
+
+- task: npmAuthenticate@0
+  inputs:
+    workingFile: .npmrc
+    customEndpoint: 'SDK_JS_org feed read service connection'
+  displayName: authenticate for SDK_JS_org feed
+
+- powershell: |
+    ren yarn.lock yarn_ORIGINAL.lock
+    type yarn_ORIGINAL.lock | node build/scripts/rebaseYarnLock.js $(SDK_JS_org_registry_Url) > yarn.lock
+  displayName: rebase yarn.lock to pull from SDK_JS_org feed
