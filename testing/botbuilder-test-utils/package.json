@@ -19,7 +19,7 @@
     "@types/node-forge": "^0.9.5"
   },
   "dependencies": {
-    "nanoid": "^3.1.20",
+    "nanoid": "^3.1.31",
     "node-forge": "^0.10.0",
     "zod": "~1.11.17"
   }
