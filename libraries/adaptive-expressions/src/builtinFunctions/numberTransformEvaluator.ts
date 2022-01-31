@@ -16,6 +16,7 @@ import { ReturnType } from '../returnType';
 export class NumberTransformEvaluator extends ExpressionEvaluator {
     /**
      * Initializes a new instance of the [NumberTransformEvaluator](xref:adaptive-expressions.NumberTransformEvaluator) class.
+     *
      * @param type Name of the built-in function.
      * @param func The evaluation function, it takes a list of objects and returns a number.
      */
