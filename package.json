@@ -39,9 +39,12 @@
     "test:schemas": "mocha libraries/botbuilder-dialogs-declarative/tests/schemaMergeTest.js --exit --bail",
     "update-versions": "yarn workspace botbuilder-repo-utils update-versions"
   },
+  "resolutions": {
+    "mixme": "0.5.2"
+  },
   "devDependencies": {
     "@azure/logger": "^1.0.2",
-    "@azure/ms-rest-js": "1.9.1",
+    "@azure/ms-rest-js": "2.6.0",
     "@microsoft/api-extractor": "^7.15.1",
     "@standardlabs/downlevel-dts": "^0.7.5",
     "@standardlabs/is-private": "^1.0.1",

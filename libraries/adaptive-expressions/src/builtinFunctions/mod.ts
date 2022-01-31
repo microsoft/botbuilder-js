@@ -30,7 +30,7 @@ export class Mod extends ExpressionEvaluator {
             let error: string;
             let value: any;
             if (Number(args[1]) === 0) {
-                error = `Cannot mod by 0.`;
+                error = 'Cannot mod by 0.';
             } else {
                 value = args[0] % args[1];
             }

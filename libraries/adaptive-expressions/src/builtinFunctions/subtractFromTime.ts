@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 
-import dayjs, { OpUnitType } from 'dayjs';
+import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 dayjs.extend(utc);
 import { Expression } from '../expression';
@@ -54,7 +54,6 @@ export class SubtractFromTime extends ExpressionEvaluator {
                     error = InternalFunctionUtils.verifyISOTimestamp(args[0]);
                     if (!error) {
                         value = dayjs(args[0]).locale(locale).utc().subtract(dur, tsStr).format(format);
-
                     }
                 }
             } else {

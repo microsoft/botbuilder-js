@@ -7,7 +7,7 @@
  */
 
 import { Expression } from '..';
-import { ExpressionEvaluator, ValueWithError } from '../expressionEvaluator';
+import { ExpressionEvaluator } from '../expressionEvaluator';
 import { FunctionUtils } from '../functionUtils';
 import { Options } from '../options';
 import { ReturnType } from '../returnType';
@@ -18,8 +18,10 @@ import { ReturnType } from '../returnType';
 export class StringTransformEvaluator extends ExpressionEvaluator {
     /**
      * Initializes a new instance of the [StringTransformEvaluator](xref:adaptive-expressions.StringTransformEvaluator) class.
+     *
      * @param type Name of the built-in function.
      * @param func The string transformation function, it takes a list of objects and returns an string.
+     * @param validator The validation function.
      */
     public constructor(
         type: string,

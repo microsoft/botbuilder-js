@@ -24,7 +24,12 @@ export class StringOrValue extends ExpressionEvaluator {
      * Initializes a new instance of the [StringOrValue](xref:adaptive-expressions.StringOrValue) class.
      */
     public constructor() {
-        super(ExpressionType.StringOrValue, StringOrValue.evaluator, ReturnType.Object, FunctionUtils.validateUnaryString);
+        super(
+            ExpressionType.StringOrValue,
+            StringOrValue.evaluator,
+            ReturnType.Object,
+            FunctionUtils.validateUnaryString
+        );
     }
 
     /**
@@ -47,11 +52,13 @@ export class StringOrValue extends ExpressionEvaluator {
                 // If the Expression follows this format:
                 // concat('', childExpression)
                 // return the childExpression result directly.
-                if (firstChild instanceof Constant
-                    && firstChild.value.toString() === ''
-                    && !(secondChild instanceof Constant)) {
-                        return secondChild.tryEvaluate(state, options);
-                    }
+                if (
+                    firstChild instanceof Constant &&
+                    firstChild.value.toString() === '' &&
+                    !(secondChild instanceof Constant)
+                ) {
+                    return secondChild.tryEvaluate(state, options);
+                }
             }
 
             return expr.tryEvaluate(state, options);
