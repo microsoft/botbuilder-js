@@ -27,17 +27,13 @@ export class DayOfMonth extends ExpressionEvaluator {
      * @private
      */
     private static evaluator(): EvaluateExpressionDelegate {
-        return FunctionUtils.applyWithError(
-            (args: any[]): any =>
-            {
-                const error = InternalFunctionUtils.verifyISOTimestamp(args[0]);
-                if (!error) {
-                    return {value: new Date(args[0]).getUTCDate(), error}
-                }
+        return FunctionUtils.applyWithError((args: any[]): any => {
+            const error = InternalFunctionUtils.verifyISOTimestamp(args[0]);
+            if (!error) {
+                return { value: new Date(args[0]).getUTCDate(), error };
+            }
 
-                return {value: undefined, error}
-            },
-            FunctionUtils.verifyString
-        );
+            return { value: undefined, error };
+        }, FunctionUtils.verifyString);
     }
 }

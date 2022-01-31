@@ -16,6 +16,7 @@ import { RelationshipType } from './relationshipType';
 export interface Optimizer {
     /**
      * Optionally rewrite a clause.
+     *
      * @param clause Original clause.
      * @returns Optimized clause.
      */
@@ -33,6 +34,7 @@ export interface PredicateComparer {
 
     /**
      * Identify the relationship between two predicates.
+     *
      * @param predicate First predicate.
      * @param other Second predicate.
      * @returns Relationship between predicates.

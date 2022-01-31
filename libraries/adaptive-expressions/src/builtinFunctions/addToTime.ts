@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 
-import dayjs, { OpUnitType } from 'dayjs';
+import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 dayjs.extend(utc);
 import { Expression } from '../expression';

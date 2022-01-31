@@ -24,6 +24,7 @@ import { ReturnType } from '../returnType';
 export class ComparisonEvaluator extends ExpressionEvaluator {
     /**
      * Initializes a new instance of the [ComparisonEvaluator](xref:adaptive-expressions.ComparisonEvaluator) class.
+     *
      * @param type Name of the built-in function.
      * @param func The comparison function, it takes a list of objects and returns a boolean.
      * @param validator [ValidateExpressionDelegate](xref:adaptive-expressions.ValidateExpressionDelegate) for input arguments.
