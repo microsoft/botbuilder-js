@@ -17,10 +17,13 @@ export class AddHours extends TimeTransformEvaluator {
      * Initializes a new instance of the [AddHours](xref:adaptive-expressions.AddHours) class.
      */
     public constructor() {
-        super(ExpressionType.AddHours, (ts: Date, num: number): Date => {
-            const newDate = new Date(ts);
-            newDate.setHours(ts.getHours() + num);
-            return newDate;
-        });
+        super(
+            ExpressionType.AddHours,
+            (ts: Date, num: number): Date => {
+                const newDate = new Date(ts);
+                newDate.setHours(ts.getHours() + num);
+                return newDate;
+            }
+        );
     }
 }

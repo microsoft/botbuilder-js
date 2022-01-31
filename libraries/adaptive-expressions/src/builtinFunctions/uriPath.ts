@@ -54,7 +54,7 @@ export class UriPath extends ExpressionEvaluator {
             try {
                 const uriObj: URL = new URL(uri);
                 result = uriObj.pathname;
-            } catch (e) {
+            } catch {
                 error = 'invalid operation, input uri should be an absolute URI';
             }
         }

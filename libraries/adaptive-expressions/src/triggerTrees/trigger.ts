@@ -18,13 +18,17 @@ import { TriggerTree } from './triggerTree';
 
 /**
  * Rewrite the expression by pushing not down to the leaves.
+ *
+ * @param expression Expression to rewrite.
+ * @param inNot .
+ * @returns The rewritten expression.
  */
 const pushDownNot = (expression: Expression, inNot = false): Expression => {
     let newExpr = expression;
     const negation = expression.evaluator.negation;
     switch (expression.type) {
         case ExpressionType.And:
-        case ExpressionType.Or:
+        case ExpressionType.Or: {
             const children = expression.children.map((child) => pushDownNot(child, inNot));
             if (children.length === 1) {
                 newExpr = children[0];
@@ -42,6 +46,7 @@ const pushDownNot = (expression: Expression, inNot = false): Expression => {
                 );
             }
             break;
+        }
         case ExpressionType.Not:
             newExpr = pushDownNot(expression.children[0], !inNot);
             break;
@@ -80,6 +85,7 @@ export class Trigger {
 
     /**
      * Intializes a new instance of the `Trigger` class.
+     *
      * @param tree Trigger tree that contains this trigger.
      * @param expression Expression for when the trigger action is possible.
      * @param action Action to take when a trigger matches.
@@ -117,6 +123,8 @@ export class Trigger {
     /**
      * Gets list of expressions converted into Disjunctive Normal Form where ! is pushed to the leaves and
      * there is an implicit || between clauses and && within a clause.
+     *
+     * @returns The list of clauses.
      */
     public get clauses(): Clause[] {
         return this._clauses;
@@ -124,6 +132,7 @@ export class Trigger {
 
     /**
      * Determines the relationship between current instance and another `Trigger` instance.
+     *
      * @param other The other Trigger instance.
      * @param comparers The comparer dictionary.
      * @returns A `RelationshipType` value.
@@ -155,6 +164,7 @@ export class Trigger {
 
     /**
      * Determines whether there is a member in the current `Clause` that matches the nodeClause parameter.
+     *
      * @param nodeClause The other Clause instance to match.
      * @param state The scope for looking up variables.
      * @returns A boolean value inidicating whether there is a member matches.
@@ -165,8 +175,10 @@ export class Trigger {
 
     /**
      * Gets a string that represents the current trigger.
+     *
      * @param builder An array of string to build the string of trigger.
      * @param indent An integer represents the number of spaces at the start of a line.
+     * @returns A string that represents the current trigger.
      */
     public toString(builder: string[] = [], indent = 0): string {
         builder.push(' '.repeat(indent));
@@ -229,7 +241,7 @@ export class Trigger {
 
     private _generateClauses(expression: Expression): Clause[] {
         switch (expression.type) {
-            case ExpressionType.And:
+            case ExpressionType.And: {
                 // Need to combine every combination of clauses
                 let soFar: Clause[] = [];
                 let first = true;
@@ -259,13 +271,15 @@ export class Trigger {
                     }
                 }
                 return soFar;
-            case ExpressionType.Or:
+            }
+            case ExpressionType.Or: {
                 const clauses: Clause[] = [];
                 for (let i = 0; i < expression.children.length; i++) {
                     const child = expression.children[i];
                     clauses.push(...this._generateClauses(child));
                 }
                 return clauses;
+            }
             case ExpressionType.Optional:
                 return [new Clause(), ...this._generateClauses(expression.children[0])];
             default:
