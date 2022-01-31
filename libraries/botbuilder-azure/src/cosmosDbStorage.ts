@@ -15,7 +15,8 @@ import { Storage, StoreItems } from 'botbuilder';
 const _semaphore: semaphore.Semaphore = semaphore(1);
 
 // @types/documentdb does not have DocumentBase definition
-const DocumentBase: any = require('documentdb').DocumentBase; // tslint:disable-line no-require-imports no-var-requires
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const DocumentBase: any = require('documentdb').DocumentBase;
 
 /**
  * Additional settings for configuring an instance of `CosmosDbStorage`.
@@ -223,6 +224,7 @@ export class CosmosDbStorage implements Storage {
      * Write storage items to storage.
      *
      * @param changes Items to write to storage, indexed by key.
+     * @returns A promise representing the asynchronous operation.
      */
     write(changes: StoreItems): Promise<void> {
         if (!changes || Object.keys(changes).length === 0) {
@@ -284,6 +286,7 @@ export class CosmosDbStorage implements Storage {
      * Delete storage items from storage.
      *
      * @param keys Keys of the items to remove from the store.
+     * @returns A promise representing the asynchronous operation.
      */
     delete(keys: string[]): Promise<void> {
         if (!keys || keys.length === 0) {
@@ -324,9 +327,12 @@ export class CosmosDbStorage implements Storage {
 
     /**
      * Delayed Database and Collection creation if they do not exist.
+     *
+     * @returns A promise representing the asynchronous operation.
      */
     private ensureCollectionExists(): Promise<string> {
         if (!this.collectionExists) {
+            // eslint-disable-next-line @typescript-eslint/ban-types
             this.collectionExists = new Promise((resolve: Function): void => {
                 _semaphore.take(() => {
                     const result: Promise<string> = this.collectionExists

@@ -5,8 +5,9 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-const crypto = require('crypto');
+import * as crypto from 'crypto';
 
+// eslint-disable-next-line @typescript-eslint/no-namespace
 export namespace CosmosDbKeyEscape {
     // Older libraries had a max key length of 255.
     // The limit is now 1023. In this library, 255 remains the default for backwards compat.
@@ -32,6 +33,7 @@ export namespace CosmosDbKeyEscape {
      * @param keySuffix The string to add a the end of all RowKeys.
      * @param compatibilityMode True if keys should be truncated in order to support previous CosmosDb
      * max key length of 255.  This behavior can be overridden by setting cosmosDbPartitionedStorageOptions.compatibilityMode to false.
+     * @returns An escaped key that can be used safely with CosmosDB.
      */
     export function escapeKey(key: string, keySuffix?: string, compatibilityMode?: boolean): string {
         if (!key) {
@@ -56,20 +58,28 @@ export namespace CosmosDbKeyEscape {
         );
 
         return truncateKey(`${sanitizedKey}${keySuffix || ''}`, compatibilityMode);
-    }
 
-    function truncateKey(key: string, truncateKeysForCompatibility?: boolean): string {
-        if (truncateKeysForCompatibility === false) {
+        /**
+         * Truncates the key if it exceeds the max key length to have backwards compatibility with older libraries.
+         *
+         * @param key The key to be truncated.
+         * @param truncateKeysForCompatibility True if keys should be truncated in order to support previous CosmosDb
+         * max key length of 255. False to override this behavior using the longer limit.
+         * @returns The resulting key.
+         */
+        function truncateKey(key: string, truncateKeysForCompatibility?: boolean): string {
+            if (truncateKeysForCompatibility === false) {
+                return key;
+            }
+
+            if (key.length > maxKeyLength) {
+                const hash = crypto.createHash('sha256');
+                hash.update(key);
+                // combine truncated key with hash of self for extra uniqueness
+                const hex = hash.digest('hex');
+                key = key.substr(0, maxKeyLength - hex.length) + hex;
+            }
             return key;
         }
-
-        if (key.length > maxKeyLength) {
-            const hash = crypto.createHash('sha256');
-            hash.update(key);
-            // combine truncated key with hash of self for extra uniqueness
-            const hex = hash.digest('hex');
-            key = key.substr(0, maxKeyLength - hex.length) + hex;
-        }
-        return key;
     }
 }
