@@ -5,6 +5,7 @@ const { DocumentClient, UriFactory } = require('documentdb');
 const { MockMode, usingNock } = require('./mockHelper');
 const nock = require('nock');
 const fs = require('fs');
+const flow = require('lodash/fp/flow');
 
 /**
  * @param mode controls the nock mode used for the tests. Available options found in ./mockHelper.js.
@@ -36,9 +37,9 @@ const reset = (done) => {
     nock.cleanAll();
     nock.enableNetConnect();
     if (mode !== MockMode.lockdown) {
-        let settings = getSettings();
-        let client = new DocumentClient(settings.serviceEndpoint, { masterKey: settings.authKey });
-        client.deleteDatabase(UriFactory.createDatabaseUri(settings.databaseId), (err, response) => done());
+        const settings = getSettings();
+        const client = new DocumentClient(settings.serviceEndpoint, { masterKey: settings.authKey });
+        client.deleteDatabase(UriFactory.createDatabaseUri(settings.databaseId), (_err, _response) => done());
     } else {
         done();
     }
@@ -54,7 +55,7 @@ const storage = new CosmosDbStorage(getSettings(), policyConfigurator);
 const partitionKey = 'ARG';
 
 // item to test the read and delete operations with partitionkey
-let changes = {};
+const changes = {};
 changes['001'] = {
     Location: partitionKey,
     MessageList: ['Hi', 'how are u'],
@@ -70,7 +71,7 @@ describe('CosmosDbStorage - Constructor Tests', function () {
     });
 
     it('missing settings endpoint should be thrown - null value', function () {
-        let testSettings = {
+        const testSettings = {
             serviceEndpoint: null,
             authKey: 'testKey',
             databaseId: 'testDataBaseID',
@@ -85,7 +86,7 @@ describe('CosmosDbStorage - Constructor Tests', function () {
     });
 
     it('missing settings endpoint should be thrown - empty value', function () {
-        let testSettings = {
+        const testSettings = {
             serviceEndpoint: '',
             authKey: 'testKey',
             databaseId: 'testDataBaseID',
@@ -100,7 +101,7 @@ describe('CosmosDbStorage - Constructor Tests', function () {
     });
 
     it('missing settings endpoint should be thrown - white spaces', function () {
-        let testSettings = {
+        const testSettings = {
             serviceEndpoint: '   ',
             authKey: 'testKey',
             databaseId: 'testDataBaseID',
@@ -115,7 +116,7 @@ describe('CosmosDbStorage - Constructor Tests', function () {
     });
 
     it('missing settings authKey should be thrown - null value', function () {
-        let testSettings = {
+        const testSettings = {
             serviceEndpoint: 'testEndpoint',
             authKey: null,
             databaseId: 'testDataBaseID',
@@ -130,7 +131,7 @@ describe('CosmosDbStorage - Constructor Tests', function () {
     });
 
     it('missing settings authKey should be thrown - empty value', function () {
-        let testSettings = {
+        const testSettings = {
             serviceEndpoint: 'testEndpoint',
             authKey: '',
             databaseId: 'testDataBaseID',
@@ -145,7 +146,7 @@ describe('CosmosDbStorage - Constructor Tests', function () {
     });
 
     it('missing settings authKey should be thrown - white spaces', function () {
-        let testSettings = {
+        const testSettings = {
             serviceEndpoint: 'testEndpoint',
             authKey: '   ',
             databaseId: 'testDataBaseID',
@@ -160,7 +161,7 @@ describe('CosmosDbStorage - Constructor Tests', function () {
     });
 
     it('missing settings databaseId should be thrown - null value', function () {
-        let testSettings = {
+        const testSettings = {
             serviceEndpoint: 'testEndpoint',
             authKey: 'testKey',
             databaseId: null,
@@ -175,7 +176,7 @@ describe('CosmosDbStorage - Constructor Tests', function () {
     });
 
     it('missing settings databaseId should be thrown - empty value', function () {
-        let testSettings = {
+        const testSettings = {
             serviceEndpoint: 'testEndpoint',
             authKey: 'testKey',
             databaseId: '',
@@ -190,7 +191,7 @@ describe('CosmosDbStorage - Constructor Tests', function () {
     });
 
     it('missing settings databaseId should be thrown - white spaces', function () {
-        let testSettings = {
+        const testSettings = {
             serviceEndpoint: 'testEndpoint',
             authKey: 'testKey',
             databaseId: '    ',
@@ -205,7 +206,7 @@ describe('CosmosDbStorage - Constructor Tests', function () {
     });
 
     it('missing settings collectionId should be thrown - null value', function () {
-        let testSettings = {
+        const testSettings = {
             serviceEndpoint: 'testEndpoint',
             authKey: 'testKey',
             databaseId: 'testDataBaseID',
@@ -220,7 +221,7 @@ describe('CosmosDbStorage - Constructor Tests', function () {
     });
 
     it('missing settings collectionId should be thrown - empty value', function () {
-        let testSettings = {
+        const testSettings = {
             serviceEndpoint: 'testEndpoint',
             authKey: 'testKey',
             databaseId: 'testDataBaseID',
@@ -235,7 +236,7 @@ describe('CosmosDbStorage - Constructor Tests', function () {
     });
 
     it('missing settings collectionId should be thrown - white spaces', function () {
-        let testSettings = {
+        const testSettings = {
             serviceEndpoint: 'testEndpoint',
             authKey: 'testKey',
             databaseId: 'testDataBaseID',
@@ -251,8 +252,10 @@ describe('CosmosDbStorage - Constructor Tests', function () {
 });
 
 describe('CosmosDbStorage - Base Storage Tests', function () {
-    before('cleanup', reset);
-    before('check emulator', checkEmulator);
+    before(
+        'cleanup',
+        flow(() => reset, checkEmulator)
+    );
     after('cleanup', reset);
 
     it('return empty object when reading unknown key', async function () {
@@ -260,7 +263,7 @@ describe('CosmosDbStorage - Base Storage Tests', function () {
         const testRan = await StorageBaseTests.returnEmptyObjectWhenReadingUnknownKey(storage);
 
         assert.strictEqual(testRan, true);
-        return nockDone();
+        nockDone();
     });
 
     it('throws when reading null keys', async function () {
@@ -268,7 +271,7 @@ describe('CosmosDbStorage - Base Storage Tests', function () {
         const testRan = await StorageBaseTests.handleNullKeysWhenReading(storage);
 
         assert.strictEqual(testRan, true);
-        return nockDone();
+        nockDone();
     });
 
     it('throws when writing null keys', async function () {
@@ -276,7 +279,7 @@ describe('CosmosDbStorage - Base Storage Tests', function () {
         const testRan = await StorageBaseTests.handleNullKeysWhenWriting(storage);
 
         assert.strictEqual(testRan, true);
-        return nockDone();
+        nockDone();
     });
 
     it('does not throw when writing no items', async function () {
@@ -284,7 +287,7 @@ describe('CosmosDbStorage - Base Storage Tests', function () {
         const testRan = await StorageBaseTests.doesNotThrowWhenWritingNoItems(storage);
 
         assert.strictEqual(testRan, true);
-        return nockDone();
+        nockDone();
     });
 
     it('create an object', async function () {
@@ -292,7 +295,7 @@ describe('CosmosDbStorage - Base Storage Tests', function () {
         const testRan = await StorageBaseTests.createObject(storage);
 
         assert.strictEqual(testRan, true);
-        return nockDone();
+        nockDone();
     });
 
     it('handle crazy keys', async function () {
@@ -300,7 +303,7 @@ describe('CosmosDbStorage - Base Storage Tests', function () {
         const testRan = await StorageBaseTests.handleCrazyKeys(storage);
 
         assert.strictEqual(testRan, true);
-        return nockDone();
+        nockDone();
     });
 
     it('update an object', async function () {
@@ -308,7 +311,7 @@ describe('CosmosDbStorage - Base Storage Tests', function () {
         const testRan = await StorageBaseTests.updateObject(storage);
 
         assert.strictEqual(testRan, true);
-        return nockDone();
+        nockDone();
     });
 
     it('delete an object', async function () {
@@ -316,7 +319,7 @@ describe('CosmosDbStorage - Base Storage Tests', function () {
         const testRan = await StorageBaseTests.deleteObject(storage);
 
         assert.strictEqual(testRan, true);
-        return nockDone();
+        nockDone();
     });
 
     it('does not throw when deleting an unknown object', async function () {
@@ -324,7 +327,7 @@ describe('CosmosDbStorage - Base Storage Tests', function () {
         const testRan = await StorageBaseTests.deleteUnknownObject(storage);
 
         assert.strictEqual(testRan, true);
-        return nockDone();
+        nockDone();
     });
 
     it('performs batch operations', async function () {
@@ -332,7 +335,7 @@ describe('CosmosDbStorage - Base Storage Tests', function () {
         const testRan = await StorageBaseTests.performBatchOperations(storage);
 
         assert.strictEqual(testRan, true);
-        return nockDone();
+        nockDone();
     });
 
     it('proceeds through a waterfall dialog', async function () {
@@ -340,7 +343,7 @@ describe('CosmosDbStorage - Base Storage Tests', function () {
         const testRan = await StorageBaseTests.proceedsThroughWaterfall(storage);
 
         assert.strictEqual(testRan, true);
-        return nockDone();
+        nockDone();
     });
 
     it('should call connectionPolicyConfigurator', function () {
@@ -353,8 +356,10 @@ describe('CosmosDbStorage - Base Storage Tests', function () {
 
 // PartitionKeys are deprecated. Tests are here to ensure backwards compatibility of changes
 describe('CosmosDbStorage - PartitionKey Tests', function () {
-    before('cleanup', reset);
-    before('check emulator', checkEmulator);
+    before(
+        'cleanup',
+        flow(() => reset, checkEmulator)
+    );
     after('cleanup', reset);
 
     it('create and read an object with partitionKey', async function () {
@@ -364,7 +369,7 @@ describe('CosmosDbStorage - PartitionKey Tests', function () {
         const result = await storage.read(['001']);
 
         assert.ok(result['001']);
-        return nockDone();
+        nockDone();
     });
 
     it('update an object with partitionKey', async function () {
@@ -382,7 +387,7 @@ describe('CosmosDbStorage - PartitionKey Tests', function () {
         assert.strictEqual(updated.keyUpdate.count, 2);
         assert.notStrictEqual(updated.keyUpdate.eTag, result.keyUpdate.eTag);
 
-        return nockDone();
+        nockDone();
     });
 
     it('delete an object with partitionKey', async function () {
@@ -396,7 +401,7 @@ describe('CosmosDbStorage - PartitionKey Tests', function () {
         result = await storage.read(['001']);
 
         assert.strictEqual(Object.keys(result).length, 0);
-        return nockDone();
+        nockDone();
     });
 });
 
