@@ -59,7 +59,7 @@ export class UriPathAndQuery extends ExpressionEvaluator {
         if (!error) {
             try {
                 result = parsed.pathname + parsed.search;
-            } catch (e) {
+            } catch {
                 error = 'invalid operation, input uri should be an absolute URI';
             }
         }

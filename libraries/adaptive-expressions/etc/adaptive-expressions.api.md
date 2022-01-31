@@ -3017,6 +3017,7 @@ export class Quantifier {
     constructor(variable: string, type: QuantifierType, bindings: string[]);
     // (undocumented)
     readonly bindings: string[];
+    // (undocumented)
     toString(): string;
     // (undocumented)
     readonly type: QuantifierType;
@@ -3339,6 +3340,7 @@ export class TriggerTree {
     readonly optimizers: Optimizer[];
     removeTrigger(trigger: Trigger): boolean;
     root: Node_2;
+    // (undocumented)
     toString(): string;
     totalTriggers: number;
     treeToString(indent?: number): string;
