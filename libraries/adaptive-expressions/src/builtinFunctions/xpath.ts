@@ -38,7 +38,7 @@ export class XPath extends ExpressionEvaluator {
             try {
                 const parser = new DOMParser();
                 xmlDoc = parser.parseFromString(args[0] as string, 'text/xml');
-            } catch (err) {
+            } catch {
                 error = error = `${args[0]} is not valid xml input`;
             }
 
@@ -71,7 +71,7 @@ export class XPath extends ExpressionEvaluator {
             let doc: XMLDocument;
             try {
                 doc = new DOMParser().parseFromString(args[0], 'text/xml');
-            } catch (err) {
+            } catch {
                 error = `${args[0]} is not valid xml input`;
             }
 

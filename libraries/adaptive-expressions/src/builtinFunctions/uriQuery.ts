@@ -54,7 +54,7 @@ export class UriQuery extends ExpressionEvaluator {
         if (!error) {
             try {
                 result = parsed.search;
-            } catch (e) {
+            } catch {
                 error = 'invalid operation, input uri should be an absolute URI';
             }
         }

@@ -49,7 +49,6 @@ export class GetTimeOfDay extends ExpressionEvaluator {
                     } else {
                         return { value, error };
                     }
-
                 }
             } else {
                 // utc iso format
