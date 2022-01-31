@@ -34,6 +34,7 @@ export class Rand extends ExpressionEvaluator {
 
         const [maybeMinValue, maybeMaxValue] = expression.children;
 
+        // eslint-disable-next-line prefer-const
         ({ value: minValue, error } = maybeMinValue.tryEvaluate(state, options));
         if (error) {
             return { value: undefined, error };
@@ -42,6 +43,7 @@ export class Rand extends ExpressionEvaluator {
             return { value: undefined, error: `${minValue} is not an integer.` };
         }
 
+        // eslint-disable-next-line prefer-const
         ({ value: maxValue, error } = maybeMaxValue.tryEvaluate(state, options));
         if (error) {
             return { value: undefined, error };
