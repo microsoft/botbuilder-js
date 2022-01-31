@@ -65,7 +65,12 @@ export class ConvertToUTC extends ExpressionEvaluator {
     /**
      * @private
      */
-    private static evalConvertToUTC(timeStamp: string, sourceTimezone: string, format?: string, locale?: string): ValueWithError {
+    private static evalConvertToUTC(
+        timeStamp: string,
+        sourceTimezone: string,
+        format?: string,
+        locale?: string
+    ): ValueWithError {
         let result: string;
         let error: string;
         let formattedSourceTime: string;
@@ -80,14 +85,14 @@ export class ConvertToUTC extends ExpressionEvaluator {
                 try {
                     const sourceTime = dayjs.tz(timeStamp, timeZone);
                     formattedSourceTime = sourceTime.format();
-                } catch (e) {
+                } catch {
                     error = `${timeStamp} with ${timeZone} is not a valid timestamp with specified timeZone:`;
                 }
 
                 if (!error) {
                     try {
                         result = dayjs(formattedSourceTime).locale(locale).tz('Etc/UTC').format(format);
-                    } catch (e) {
+                    } catch {
                         error = `${format} is not a valid timestamp format`;
                     }
                 }
