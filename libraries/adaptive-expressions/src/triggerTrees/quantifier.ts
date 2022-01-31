@@ -27,6 +27,7 @@ export enum QuantifierType {
 export class Quantifier {
     /**
      * Initializes a new instance of the `Quantifier` class.
+     *
      * @param variable Name of variable to replace.
      * @param type Type of quantifier.
      * @param bindings Possible bindings for variable.
@@ -34,7 +35,7 @@ export class Quantifier {
     public constructor(readonly variable: string, readonly type: QuantifierType, readonly bindings: string[]) {}
 
     /**
-     * Returns a string that represents the quantifier.
+     * @returns A string that represents the quantifier.
      */
     public toString(): string {
         return `${this.type} ${this.variable} ${this.bindings.length}`;

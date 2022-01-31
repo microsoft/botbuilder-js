@@ -43,6 +43,7 @@ export class ReplaceIgnoreCase extends ExpressionEvaluator {
 
             if (!error) {
                 result = InternalFunctionUtils.parseStringOrUndefined(args[0]).replace(
+                    // eslint-disable-next-line security/detect-non-literal-regexp
                     new RegExp(InternalFunctionUtils.parseStringOrUndefined(args[1]), 'gi'),
                     InternalFunctionUtils.parseStringOrUndefined(args[2])
                 );

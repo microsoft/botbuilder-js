@@ -54,7 +54,7 @@ export class UriHost extends ExpressionEvaluator {
         if (!error) {
             try {
                 result = parsed.hostname;
-            } catch (e) {
+            } catch {
                 error = 'invalid operation, input uri should be an absolute URI';
             }
         }
