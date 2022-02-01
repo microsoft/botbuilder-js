@@ -40,7 +40,8 @@
     "update-versions": "yarn workspace botbuilder-repo-utils update-versions"
   },
   "resolutions": {
-    "mixme": "0.5.2"
+    "mixme": "0.5.2",
+    "underscore": "1.13.1"
   },
   "devDependencies": {
     "@azure/logger": "^1.0.2",
