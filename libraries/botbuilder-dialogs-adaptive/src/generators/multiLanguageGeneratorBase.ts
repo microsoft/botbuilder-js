@@ -29,6 +29,10 @@ export abstract class MultiLanguageGeneratorBase<
      */
     public languagePolicy: LanguagePolicy;
 
+    /**
+     * @param property The key of the conditional selector configuration.
+     * @returns The converter for the selector configuration.
+     */
     public getConverter(property: keyof MultiLanguageGeneratorBaseConfiguration): Converter | ConverterFactory {
         switch (property) {
             case 'languagePolicy':
@@ -40,6 +44,7 @@ export abstract class MultiLanguageGeneratorBase<
 
     /**
      * Abstract method to get a language generator by locale.
+     *
      * @param dialogContext DialogContext.
      * @param locale Locale to lookup.
      */
@@ -50,9 +55,11 @@ export abstract class MultiLanguageGeneratorBase<
 
     /**
      * Find a language generator that matches the current context locale.
+     *
      * @param dialogContext Context for the current turn of conversation.
      * @param template Template to use.
      * @param data Data to bind to.
+     * @returns A promise representing the asynchronous operation.
      */
     public async generate(dialogContext: DialogContext, template: string, data: D): Promise<T> {
         // priority

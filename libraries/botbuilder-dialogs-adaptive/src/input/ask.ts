@@ -45,6 +45,7 @@ export class Ask extends SendActivity implements AskConfiguration {
 
     /**
      *Initializes a new instance of the [Ask](xref:botbuilder-dialogs-adaptive.Ask) class.
+     *
      * @param text Optional, text value.
      * @param expectedProperties Optional, [ArrayExpression](xref:adaptive-expressions.ArrayExpression) of expected properties.
      */
@@ -65,10 +66,9 @@ export class Ask extends SendActivity implements AskConfiguration {
 
     /**
      * Called when the [Dialog](xref:botbuilder-dialogs.Dialog) is started and pushed onto the dialog stack.
-     * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
-     * @param options Optional, initial information to pass to the [Dialog](xref:botbuilder-dialogs.Dialog).
-     * @param property
-     * @returns A [DialogTurnResult](xref:botbuilder-dialogs.DialogTurnResult) `Promise` representing the asynchronous operation.
+     *
+     * @param property The key of the conditional selector configuration.
+     * @returns The converter for the selector configuration.
      */
     public getConverter(property: keyof AskConfiguration): Converter | ConverterFactory {
         switch (property) {
@@ -81,6 +81,21 @@ export class Ask extends SendActivity implements AskConfiguration {
         }
     }
 
+    /**
+     * Called when the dialog is started and pushed onto the dialog stack.
+     *
+     * @summary
+     * If the task is successful, the result indicates whether the dialog is still
+     * active after the turn has been processed by the dialog.
+     *
+     * You can use the [options](#options) parameter to include the QnA Maker context data,
+     * which represents context from the previous query. To do so, the value should include a
+     * `context` property of type [QnAResponseContext](#QnAResponseContext).
+     *
+     * @param {DialogContext} dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
+     * @param {object} options (Optional) Initial information to pass to the dialog.
+     * @returns {Promise<DialogTurnResult>} A promise resolving to the turn result
+     */
     public async beginDialog(dc: DialogContext, options?: object): Promise<DialogTurnResult> {
         // get number of retries from memory
         let retries: number = dc.state.getValue<number>(DialogPath.retries, 0);

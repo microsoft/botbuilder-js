@@ -118,6 +118,10 @@ export class ConfirmInput extends InputDialog implements ConfirmInputConfigurati
      */
     public outputFormat: StringExpression;
 
+    /**
+     * @param property The key of the conditional selector configuration.
+     * @returns The converter for the selector configuration.
+     */
     public getConverter(property: keyof ConfirmInputConfiguration): Converter | ConverterFactory {
         switch (property) {
             case 'defaultLocale':
@@ -137,6 +141,7 @@ export class ConfirmInput extends InputDialog implements ConfirmInputConfigurati
 
     /**
      * @protected
+     * @returns A `string` representing the compute Id.
      */
     protected onComputeId(): string {
         return `ConfirmInput[${this.prompt && this.prompt.toString()}]`;
@@ -193,7 +198,7 @@ export class ConfirmInput extends InputDialog implements ConfirmInputConfigurati
      */
     protected async onRenderPrompt(dc: DialogContext, state: InputState): Promise<Partial<Activity>> {
         // Determine locale
-        let locale = this.determineCulture(dc);
+        const locale = this.determineCulture(dc);
         const defaults = ConfirmInput.defaultChoiceOptions[locale].choices;
         // Format choices
         const confirmChoices = await this.getConfirmChoices(dc, defaults);
@@ -215,7 +220,7 @@ export class ConfirmInput extends InputDialog implements ConfirmInputConfigurati
          */
         const candidateLocale = dc.getLocale() ?? this.defaultLocale?.getValue(dc.state);
         let culture = PromptCultureModels.mapToNearestLanguage(candidateLocale);
-        if (!(culture && ConfirmInput.defaultChoiceOptions.hasOwnProperty(culture))) {
+        if (!(culture && Object.hasOwnProperty.call(ConfirmInput.defaultChoiceOptions, culture))) {
             culture = PromptCultureModels.English.locale;
         }
 

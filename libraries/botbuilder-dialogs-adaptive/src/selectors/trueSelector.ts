@@ -20,6 +20,7 @@ export class TrueSelector extends TriggerSelector {
 
     /**
      * Initialize the selector with the set of rules.
+     *
      * @param conditionals Possible rules to match.
      * @param evaluate True if rules should be evaluated on select.
      */
@@ -30,6 +31,7 @@ export class TrueSelector extends TriggerSelector {
 
     /**
      * Select the best rule to execute.
+     *
      * @param actionContext Dialog context for evaluation.
      * @returns A Promise with a number array.
      */

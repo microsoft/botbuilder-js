@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 
-import { Activity, ActivityFactory, MessageFactory } from 'botbuilder';
+import { Activity, ActivityFactory } from 'botbuilder';
 import {
     Configurable,
     Converter,
@@ -33,6 +33,7 @@ export class ActivityTemplate
 
     /**
      * Initialize a new instance of ActivityTemplate class.
+     *
      * @param template The template to evaluate to create the activity.
      */
     public constructor(template?: string) {
@@ -44,10 +45,18 @@ export class ActivityTemplate
      */
     public template: string;
 
+    /**
+     * @param _property The key of the conditional selector configuration.
+     * @returns The converter for the selector configuration.
+     */
     public getConverter(_property: keyof ActivityTemplateConguration): Converter | ConverterFactory {
         return undefined;
     }
 
+    /**
+     * @param config The configuration.
+     * @returns A object with the given configuration.
+     */
     public configure(config: ActivityTemplateConguration): this {
         const { template } = config;
         this.template = template;
@@ -56,8 +65,10 @@ export class ActivityTemplate
 
     /**
      * Bind data to template.
+     *
      * @param dialogContext DialogContext
      * @param data Data to bind to.
+     * @returns A promise representing the asynchronous operation.
      */
     public async bind(dialogContext: DialogContext, data: DialogStateManager): Promise<Partial<Activity>> {
         if (this.template) {

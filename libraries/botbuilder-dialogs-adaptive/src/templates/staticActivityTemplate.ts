@@ -22,6 +22,7 @@ export class StaticActivityTemplate
 
     /**
      * Intialize a new instance of StaticActivityTemplate class.
+     *
      * @param activity Activity as a template.
      */
     public constructor(activity?: Partial<Activity>) {
@@ -33,10 +34,18 @@ export class StaticActivityTemplate
      */
     public activity: Partial<Activity>;
 
+    /**
+     * @param _property The key of the conditional selector configuration.
+     * @returns The converter for the selector configuration.
+     */
     public getConverter(_property: keyof StaticActivityTemplateConfiguration): Converter | ConverterFactory {
         return undefined;
     }
 
+    /**
+     * @param config The configuration.
+     * @returns A object with the given configuration.
+     */
     public configure(config: StaticActivityTemplateConfiguration): this {
         const { activity } = config;
         this.activity = activity;
@@ -45,10 +54,14 @@ export class StaticActivityTemplate
 
     /**
      * Get predefined activity.
+     *
      * @param dialogContext DialogContext.
      * @param data Data to bind to (not working with static activity template).
      */
     public async bind(dialogContext: DialogContext, data: unknown): Promise<Partial<Activity>>;
+    /**
+     * @returns A promise representing the asynchronous operation.
+     */
     public async bind(): Promise<Partial<Activity>> {
         return Promise.resolve(this.activity);
     }
