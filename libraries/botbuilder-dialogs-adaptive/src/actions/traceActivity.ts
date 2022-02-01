@@ -44,6 +44,7 @@ export class TraceActivity<O extends object = {}> extends Dialog<O> implements T
 
     /**
      * Initializes a new instance of the [TraceActivity](xref:botbuilder-dialogs-adaptive.TraceActivity) class.
+     *
      * @param name Name of the trace activity.
      * @param valueType Value type of the trace activity.
      * @param value Value expression to send as the value.
@@ -53,6 +54,7 @@ export class TraceActivity<O extends object = {}> extends Dialog<O> implements T
 
     /**
      * Initializes a new instance of the [TraceActivity](xref:botbuilder-dialogs-adaptive.TraceActivity) class.
+     *
      * @param name Optional. Name of the trace activity.
      * @param valueType Optional. Value type of the trace activity.
      * @param value Optional. Value expression to send as the value.
@@ -99,6 +101,10 @@ export class TraceActivity<O extends object = {}> extends Dialog<O> implements T
      */
     public disabled?: BoolExpression;
 
+    /**
+     * @param property The key of the conditional selector configuration.
+     * @returns The converter for the selector configuration.
+     */
     public getConverter(property: keyof TraceActivityConfiguration): Converter | ConverterFactory {
         switch (property) {
             case 'name':
@@ -118,11 +124,12 @@ export class TraceActivity<O extends object = {}> extends Dialog<O> implements T
 
     /**
      * Starts a new [Dialog](xref:botbuilder-dialogs.Dialog) and pushes it onto the dialog stack.
+     *
      * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
-     * @param options Optional. Initial information to pass to the dialog.
+     * @param _options Optional. Initial information to pass to the dialog.
      * @returns A `Promise` representing the asynchronous operation.
      */
-    public async beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult> {
+    public async beginDialog(dc: DialogContext, _options?: O): Promise<DialogTurnResult> {
         if (this.disabled && this.disabled.getValue(dc.state)) {
             return await dc.endDialog();
         }

@@ -40,6 +40,10 @@ export class SendHandoffActivity extends Dialog implements SendHandoffActivityCo
      */
     public transcript: ObjectExpression<Transcript>;
 
+    /**
+     * @param property The key of the conditional selector configuration.
+     * @returns The converter for the selector configuration.
+     */
     public getConverter(property: keyof SendHandoffActivityConfiguration): Converter | ConverterFactory {
         switch (property) {
             case 'context':

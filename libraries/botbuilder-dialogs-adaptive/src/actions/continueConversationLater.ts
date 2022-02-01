@@ -62,6 +62,10 @@ export class ContinueConversationLater extends Dialog implements ContinueConvers
      */
     public value: ValueExpression;
 
+    /**
+     * @param property The key of the conditional selector configuration.
+     * @returns The converter for the selector configuration.
+     */
     public getConverter(property: keyof ContinueConversationLaterConfiguration): Converter | ConverterFactory {
         switch (property) {
             case 'disabled':
@@ -79,10 +83,10 @@ export class ContinueConversationLater extends Dialog implements ContinueConvers
      * Called when the [Dialog](xref:botbuilder-dialogs.Dialog) is started and pushed onto the dialog stack.
      *
      * @param {DialogContext} dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
-     * @param {object} options Optional. Initial information to pass to the dialog.
+     * @param {object} _options Optional. Initial information to pass to the dialog.
      * @returns {Promise<DialogTurnResult>} A `Promise` representing the asynchronous operation.
      */
-    public async beginDialog(dc: DialogContext, options?: Record<string, unknown>): Promise<DialogTurnResult> {
+    public async beginDialog(dc: DialogContext, _options?: Record<string, unknown>): Promise<DialogTurnResult> {
         if (this.disabled && this.disabled.getValue(dc.state)) {
             return dc.endDialog();
         }

@@ -81,7 +81,7 @@ export class ActionScope<O extends object = {}> extends Dialog<O> implements Dia
     constructor(actions?: Dialog[]);
     actions: Dialog[];
     protected beginAction(dc: DialogContext, offset: number): Promise<DialogTurnResult>;
-    beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult>;
+    beginDialog(dc: DialogContext, _options?: O): Promise<DialogTurnResult>;
     continueDialog(dc: DialogContext): Promise<DialogTurnResult>;
     // (undocumented)
     getConverter(property: keyof ActionScopeConfiguration): Converter | ConverterFactory;
@@ -307,7 +307,7 @@ export enum AttachmentOutputFormat {
 export class BaseInvokeDialog<O extends object = {}> extends Dialog<O> implements DialogDependencies, BaseInvokeDialogConfiguration {
     constructor(dialogIdToCall?: string, bindingOptions?: O);
     activityProcessed: BoolExpression;
-    beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult<any>>;
+    beginDialog(_dc: DialogContext, _options?: O): Promise<DialogTurnResult<any>>;
     protected bindOptions(dc: DialogContext, options: object): object;
     dialog: DialogExpression;
     // (undocumented)
@@ -407,7 +407,7 @@ export type BoolProperty = boolean | BoolExpression | Property;
 export class BreakLoop<O extends object = {}> extends Dialog<O> implements BreakLoopConfiguration {
     // (undocumented)
     static $kind: string;
-    beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult>;
+    beginDialog(dc: DialogContext, _options?: O): Promise<DialogTurnResult>;
     disabled?: BoolExpression;
     // (undocumented)
     getConverter(property: keyof BreakLoopConfiguration): Converter | ConverterFactory;
@@ -646,7 +646,7 @@ export interface ContinueConversationConfiguration extends DialogConfiguration {
 export class ContinueConversationLater extends Dialog implements ContinueConversationLaterConfiguration {
     // (undocumented)
     static $kind: string;
-    beginDialog(dc: DialogContext, options?: Record<string, unknown>): Promise<DialogTurnResult>;
+    beginDialog(dc: DialogContext, _options?: Record<string, unknown>): Promise<DialogTurnResult>;
     date: StringExpression;
     disabled?: BoolExpression;
     // (undocumented)
@@ -670,7 +670,7 @@ export interface ContinueConversationLaterConfiguration extends DialogConfigurat
 export class ContinueLoop<O extends object = {}> extends Dialog<O> implements ContinueLoopConfiguration {
     // (undocumented)
     static $kind: string;
-    beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult>;
+    beginDialog(dc: DialogContext, _options?: O): Promise<DialogTurnResult>;
     disabled?: BoolExpression;
     // (undocumented)
     getConverter(property: keyof ContinueLoopConfiguration): Converter | ConverterFactory;
@@ -742,7 +742,7 @@ export class DeleteActivity<O extends object = {}> extends Dialog<O> implements 
     static $kind: string;
     constructor();
     activityId: StringExpression;
-    beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult>;
+    beginDialog(dc: DialogContext, _options?: O): Promise<DialogTurnResult>;
     disabled?: BoolExpression;
     // (undocumented)
     getConverter(property: keyof DeleteActivityConfiguration): Converter | ConverterFactory;
@@ -762,7 +762,7 @@ export class DeleteProperties<O extends object = {}> extends Dialog<O> implement
     // (undocumented)
     static $kind: string;
     constructor();
-    beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult>;
+    beginDialog(dc: DialogContext, _options?: O): Promise<DialogTurnResult>;
     disabled?: BoolExpression;
     // (undocumented)
     getConverter(property: keyof DeletePropertiesConfiguration): Converter | ConverterFactory;
@@ -783,7 +783,7 @@ export class DeleteProperty<O extends object = {}> extends Dialog<O> implements 
     // (undocumented)
     static $kind: string;
     constructor(property?: string);
-    beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult>;
+    beginDialog(dc: DialogContext, _options?: O): Promise<DialogTurnResult>;
     disabled?: BoolExpression;
     // (undocumented)
     getConverter(property: keyof DeletePropertyConfiguration): Converter | ConverterFactory;
@@ -863,7 +863,7 @@ export class EditArray<O extends object = {}> extends Dialog<O> implements EditA
     static $kind: string;
     constructor();
     constructor(changeType: ArrayChangeType, itemsProperty: string, value?: any, resultProperty?: string);
-    beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult>;
+    beginDialog(dc: DialogContext, _options?: O): Promise<DialogTurnResult>;
     changeType: EnumExpression<ArrayChangeType>;
     disabled?: BoolExpression;
     // (undocumented)
@@ -901,7 +901,7 @@ export class EmitEvent<O extends object = {}> extends Dialog<O> implements EmitE
     static $kind: string;
     constructor();
     constructor(eventName: string, eventValue?: string, bubbleEvent?: boolean);
-    beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult>;
+    beginDialog(dc: DialogContext, _options?: O): Promise<DialogTurnResult>;
     bubbleEvent: BoolExpression;
     disabled?: BoolExpression;
     eventName: StringExpression;
@@ -931,7 +931,7 @@ export class EndDialog<O extends object = {}> extends Dialog<O> implements EndDi
     // (undocumented)
     static $kind: string;
     constructor(value?: any);
-    beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult>;
+    beginDialog(dc: DialogContext, _options?: O): Promise<DialogTurnResult>;
     disabled?: BoolExpression;
     protected endParentDialog(dc: DialogContext, result?: any): Promise<DialogTurnResult>;
     // (undocumented)
@@ -952,7 +952,7 @@ export interface EndDialogConfiguration extends DialogConfiguration {
 export class EndTurn<O extends object = {}> extends Dialog<O> implements EndTurnConfiguration {
     // (undocumented)
     static $kind: string;
-    beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult>;
+    beginDialog(dc: DialogContext, _options?: O): Promise<DialogTurnResult>;
     continueDialog(dc: DialogContext): Promise<DialogTurnResult>;
     disabled?: BoolExpression;
     // (undocumented)
@@ -996,7 +996,7 @@ export class ForEach<O extends object = {}> extends ActionScope<O> implements Fo
     static $kind: string;
     constructor();
     constructor(itemsProperty: string, actions: Dialog[]);
-    beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult>;
+    beginDialog(dc: DialogContext, _options?: O): Promise<DialogTurnResult>;
     disabled?: BoolExpression;
     // (undocumented)
     getConverter(property: keyof ForEachConfiguration): Converter | ConverterFactory;
@@ -1004,10 +1004,10 @@ export class ForEach<O extends object = {}> extends ActionScope<O> implements Fo
     index: StringExpression;
     itemsProperty: StringExpression;
     protected nextItem(dc: DialogContext): Promise<DialogTurnResult>;
-    protected onBreakLoop(dc: DialogContext, actionScopeResult: ActionScopeResult): Promise<DialogTurnResult>;
+    protected onBreakLoop(dc: DialogContext, _actionScopeResult: ActionScopeResult): Promise<DialogTurnResult>;
     protected onComputeId(): string;
-    protected onContinueLoop(dc: DialogContext, actionScopeResult: ActionScopeResult): Promise<DialogTurnResult>;
-    protected onEndOfActions(dc: DialogContext, result?: any): Promise<DialogTurnResult>;
+    protected onContinueLoop(dc: DialogContext, _actionScopeResult: ActionScopeResult): Promise<DialogTurnResult>;
+    protected onEndOfActions(dc: DialogContext, _result?: any): Promise<DialogTurnResult>;
     value: StringExpression;
 }
 
@@ -1028,16 +1028,16 @@ export class ForEachPage<O extends object = {}> extends ActionScope<O> implement
     // (undocumented)
     static $kind: string;
     constructor();
-    beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult>;
+    beginDialog(dc: DialogContext, _options?: O): Promise<DialogTurnResult>;
     disabled?: BoolExpression;
     // (undocumented)
     getConverter(property: keyof ForEachPageConfiguration): Converter | ConverterFactory;
     getDependencies(): Dialog[];
     itemsProperty: StringExpression;
-    protected onBreakLoop(dc: DialogContext, actionScopeResult: ActionScopeResult): Promise<DialogTurnResult>;
+    protected onBreakLoop(dc: DialogContext, _actionScopeResult: ActionScopeResult): Promise<DialogTurnResult>;
     protected onComputeId(): string;
-    protected onContinueLoop(dc: DialogContext, actionScopeResult: ActionScopeResult): Promise<DialogTurnResult>;
-    protected onEndOfActions(dc: DialogContext, result?: any): Promise<DialogTurnResult>;
+    protected onContinueLoop(dc: DialogContext, _actionScopeResult: ActionScopeResult): Promise<DialogTurnResult>;
+    protected onEndOfActions(dc: DialogContext, _result?: any): Promise<DialogTurnResult>;
     page: StringExpression;
     pageIndex: StringExpression;
     pageSize: IntExpression;
@@ -1063,7 +1063,7 @@ export class GetActivityMembers<O extends object = {}> extends Dialog implements
     static $kind: string;
     constructor();
     activityId: StringExpression;
-    beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult>;
+    beginDialog(dc: DialogContext, _options?: O): Promise<DialogTurnResult>;
     disabled?: BoolExpression;
     // (undocumented)
     getConverter(property: keyof GetActivityMembersConfiguration): Converter | ConverterFactory;
@@ -1086,7 +1086,7 @@ export class GetConversationMembers<O extends object = {}> extends Dialog<O> imp
     // (undocumented)
     static $kind: string;
     constructor();
-    beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult>;
+    beginDialog(dc: DialogContext, _options?: O): Promise<DialogTurnResult>;
     disabled?: BoolExpression;
     // (undocumented)
     getConverter(property: keyof GetConversationMembersConfiguration): Converter | ConverterFactory;
@@ -1128,7 +1128,7 @@ export class GotoAction<O extends object = {}> extends Dialog<O> implements Goto
     static $kind: string;
     constructor();
     actionId: StringExpression;
-    beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult>;
+    beginDialog(dc: DialogContext, _options?: O): Promise<DialogTurnResult>;
     disabled?: BoolExpression;
     // (undocumented)
     getConverter(property: keyof GotoActionConfiguration): Converter | ConverterFactory;
@@ -1180,7 +1180,7 @@ export class HttpRequest<O extends object = {}> extends Dialog<O> implements Htt
     constructor(method: HttpMethod, url: string, headers: {
         [key: string]: string;
     }, body: any);
-    beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult>;
+    beginDialog(dc: DialogContext, _options?: O): Promise<DialogTurnResult>;
     body?: ValueExpression;
     contentType?: StringExpression;
     disabled?: BoolExpression;
@@ -1225,7 +1225,7 @@ export class IfCondition<O extends object = {}> extends Dialog<O> implements Dia
     static $kind: string;
     constructor();
     actions: Dialog[];
-    beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult>;
+    beginDialog(dc: DialogContext, _options?: O): Promise<DialogTurnResult>;
     condition: BoolExpression;
     disabled?: BoolExpression;
     elseActions: Dialog[];
@@ -1414,7 +1414,7 @@ export class LogAction<O extends object = {}> extends Dialog<O> implements LogAc
     // (undocumented)
     static $kind: string;
     constructor(text: string);
-    beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult>;
+    beginDialog(dc: DialogContext, _options?: O): Promise<DialogTurnResult>;
     disabled?: BoolExpression;
     // (undocumented)
     getConverter(property: keyof LogActionConfiguration): Converter | ConverterFactory;
@@ -2144,7 +2144,7 @@ export class SetProperties<O extends object = {}> extends Dialog<O> implements S
     static $kind: string;
     constructor();
     assignments: PropertyAssignment[];
-    beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult>;
+    beginDialog(dc: DialogContext, _options?: O): Promise<DialogTurnResult>;
     disabled?: BoolExpression;
     // (undocumented)
     getConverter(property: keyof SetPropertiesConfiguration): Converter | ConverterFactory;
@@ -2167,7 +2167,7 @@ export class SetProperty<O extends object = {}> extends Dialog<O> implements Set
     static $kind: string;
     constructor();
     constructor(property: string, value: any);
-    beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult>;
+    beginDialog(dc: DialogContext, _options?: O): Promise<DialogTurnResult>;
     disabled?: BoolExpression;
     // (undocumented)
     getConverter(property: keyof SetPropertyConfiguration): Converter | ConverterFactory;
@@ -2191,7 +2191,7 @@ export class SignOutUser<O extends object = {}> extends Dialog<O> implements Sig
     // (undocumented)
     static $kind: string;
     constructor();
-    beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult>;
+    beginDialog(dc: DialogContext, _options?: O): Promise<DialogTurnResult>;
     connectionName: StringExpression;
     disabled?: BoolExpression;
     // (undocumented)
@@ -2246,13 +2246,13 @@ export interface StaticActivityTemplateConfiguration {
 // @public (undocumented)
 export type StringProperty = StringExpression | Property;
 
-// @public (undocumented)
+// @public
 export class SwitchCondition<O extends object = {}> extends Dialog<O> implements DialogDependencies, SwitchConditionConfiguration {
     // (undocumented)
     static $kind: string;
     constructor();
     constructor(condition: string, defaultDialogs: Dialog[], cases: Case[]);
-    beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult>;
+    beginDialog(dc: DialogContext, _options?: O): Promise<DialogTurnResult>;
     cases: Case[];
     condition: Expression;
     default: Dialog[];
@@ -2285,7 +2285,7 @@ export class TelemetryTrackEventAction<O extends object = {}> extends Dialog imp
     constructor(eventName: string, properties: {
         [name: string]: string;
     });
-    beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult>;
+    beginDialog(dc: DialogContext, _options?: O): Promise<DialogTurnResult>;
     disabled: BoolExpression;
     eventName: StringExpression;
     // (undocumented)
@@ -2389,7 +2389,7 @@ export class ThrowException extends Dialog implements ThrowExceptionConfiguratio
     // (undocumented)
     static $kind: string;
     constructor(errorValue: unknown);
-    beginDialog(dc: DialogContext, options?: Record<string, unknown>): Promise<DialogTurnResult>;
+    beginDialog(dc: DialogContext, _options?: Record<string, unknown>): Promise<DialogTurnResult>;
     disabled?: BoolExpression;
     errorValue?: ValueExpression;
     // (undocumented)
@@ -2411,7 +2411,7 @@ export class TraceActivity<O extends object = {}> extends Dialog<O> implements T
     static $kind: string;
     constructor();
     constructor(name: string, valueType: string, value: any, label: string);
-    beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult>;
+    beginDialog(dc: DialogContext, _options?: O): Promise<DialogTurnResult>;
     disabled?: BoolExpression;
     // (undocumented)
     getConverter(property: keyof TraceActivityConfiguration): Converter | ConverterFactory;

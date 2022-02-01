@@ -45,6 +45,10 @@ export class GetConversationReference extends Dialog implements GetConversationR
      */
     public property: StringExpression;
 
+    /**
+     * @param property The key of the conditional selector configuration.
+     * @returns The converter for the selector configuration.
+     */
     public getConverter(property: keyof GetConversationReferenceConfiguration): Converter | ConverterFactory {
         switch (property) {
             case 'disabled':

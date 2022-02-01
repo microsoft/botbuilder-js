@@ -38,6 +38,7 @@ export class DeleteProperties<O extends object = {}> extends Dialog<O> implement
 
     /**
      * Initializes a new instance of the [DeleteProperties](xref:botbuilder-dialogs-adaptive.DeleteProperties) class.
+     *
      * @param properties Optional. Collection of property paths to remove.
      */
     public constructor(properties?: string[]) {
@@ -57,6 +58,10 @@ export class DeleteProperties<O extends object = {}> extends Dialog<O> implement
      */
     public disabled?: BoolExpression;
 
+    /**
+     * @param property The key of the conditional selector configuration.
+     * @returns The converter for the selector configuration.
+     */
     public getConverter(property: keyof DeletePropertiesConfiguration): Converter | ConverterFactory {
         switch (property) {
             case 'properties':
@@ -70,11 +75,12 @@ export class DeleteProperties<O extends object = {}> extends Dialog<O> implement
 
     /**
      * Called when the [Dialog](xref:botbuilder-dialogs.Dialog) is started and pushed onto the dialog stack.
+     *
      * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
-     * @param options Optional. Initial information to pass to the dialog.
+     * @param _options Optional. Initial information to pass to the dialog.
      * @returns A `Promise` representing the asynchronous operation.
      */
-    public async beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult> {
+    public async beginDialog(dc: DialogContext, _options?: O): Promise<DialogTurnResult> {
         if (this.disabled && this.disabled.getValue(dc.state)) {
             return await dc.endDialog();
         }

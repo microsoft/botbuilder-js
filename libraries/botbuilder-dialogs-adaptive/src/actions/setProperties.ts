@@ -53,6 +53,7 @@ export class SetProperties<O extends object = {}> extends Dialog<O> implements S
 
     /**
      * Initializes a new instance of the [SetProperties](xref:botbuilder-dialogs-adaptive.SetProperties) class.
+     *
      * @param assignments Optional. [PropertyAssignment](xref:botbuilder-dialogs-adaptive.PropertyAssignment), additional property settings as property/value pairs.
      */
     public constructor(assignments?: PropertyAssignment[]) {
@@ -72,6 +73,10 @@ export class SetProperties<O extends object = {}> extends Dialog<O> implements S
      */
     public disabled?: BoolExpression;
 
+    /**
+     * @param property The key of the conditional selector configuration.
+     * @returns The converter for the selector configuration.
+     */
     public getConverter(property: keyof SetPropertiesConfiguration): Converter | ConverterFactory {
         switch (property) {
             case 'assignments':
@@ -85,11 +90,12 @@ export class SetProperties<O extends object = {}> extends Dialog<O> implements S
 
     /**
      * Starts a new [Dialog](xref:botbuilder-dialogs.Dialog) and pushes it onto the dialog stack.
+     *
      * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
-     * @param options Optional. Initial information to pass to the dialog.
+     * @param _options Optional. Initial information to pass to the dialog.
      * @returns A `Promise` representing the asynchronous operation.
      */
-    public async beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult> {
+    public async beginDialog(dc: DialogContext, _options?: O): Promise<DialogTurnResult> {
         if (this.disabled && this.disabled.getValue(dc.state)) {
             return await dc.endDialog();
         }

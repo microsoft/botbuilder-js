@@ -19,7 +19,7 @@ import {
     ValueExpression,
 } from 'adaptive-expressions';
 
-import {BoolProperty, Property} from '../properties';
+import { BoolProperty, Property } from '../properties';
 
 import {
     Converter,
@@ -54,6 +54,9 @@ export interface SwitchConditionConfiguration extends DialogConfiguration {
     disabled?: BoolProperty;
 }
 
+/**
+ * Conditional branch with multiple cases.
+ */
 export class SwitchCondition<O extends object = {}>
     extends Dialog<O>
     implements DialogDependencies, SwitchConditionConfiguration {
@@ -63,6 +66,7 @@ export class SwitchCondition<O extends object = {}>
 
     /**
      * Initializes a new instance of the [SwitchCondition](xref:botbuilder-dialogs-adaptive.SwitchCondition) class
+     *
      * @param condition Condition expression against memory.
      * @param defaultDialogs Default [Dialog](xref:botbuilder-dialogs.Dialog) array.
      * @param cases Cases.
@@ -71,6 +75,7 @@ export class SwitchCondition<O extends object = {}>
 
     /**
      * Initializes a new instance of the [SwitchCondition](xref:botbuilder-dialogs-adaptive.SwitchCondition) class
+     *
      * @param condition Optional. Condition expression against memory.
      * @param defaultDialogs Optional. Default [Dialog](xref:botbuilder-dialogs.Dialog) array.
      * @param cases Optional. Cases.
@@ -108,6 +113,10 @@ export class SwitchCondition<O extends object = {}>
      */
     public disabled?: BoolExpression;
 
+    /**
+     * @param property The key of the conditional selector configuration.
+     * @returns The converter for the selector configuration.
+     */
     public getConverter(property: keyof SwitchConditionConfiguration): Converter | ConverterFactory {
         switch (property) {
             case 'condition':
@@ -129,6 +138,7 @@ export class SwitchCondition<O extends object = {}>
 
     /**
      * Gets the child [Dialog](xref:botbuilder-dialogs.Dialog) dependencies so they can be added to the containers [Dialog](xref:botbuilder-dialogs.Dialog) set.
+     *
      * @returns The child [Dialog](xref:botbuilder-dialogs.Dialog) dependencies.
      */
     public getDependencies(): Dialog[] {
@@ -145,11 +155,12 @@ export class SwitchCondition<O extends object = {}>
 
     /**
      * Starts a new [Dialog](xref:botbuilder-dialogs.Dialog) and pushes it onto the dialog stack.
+     *
      * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
-     * @param options Optional. Initial information to pass to the dialog.
+     * @param _options Optional. Initial information to pass to the dialog.
      * @returns A `Promise` representing the asynchronous operation.
      */
-    public async beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult> {
+    public async beginDialog(dc: DialogContext, _options?: O): Promise<DialogTurnResult> {
         if (this.disabled && this.disabled.getValue(dc.state)) {
             return await dc.endDialog();
         }
