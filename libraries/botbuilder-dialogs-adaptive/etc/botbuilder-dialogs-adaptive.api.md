@@ -260,7 +260,6 @@ export class Ask extends SendActivity implements AskConfiguration {
     // (undocumented)
     static $kind: string;
     constructor(text?: string, expectedProperties?: ArrayExpression<string>);
-    // (undocumented)
     beginDialog(dc: DialogContext, options?: object): Promise<DialogTurnResult>;
     defaultOperation: StringExpression;
     expectedProperties: ArrayExpression<string>;
@@ -564,7 +563,6 @@ export class ConditionalSelector extends TriggerSelector implements ConditionalS
     // (undocumented)
     static $kind: string;
     condition: BoolExpression;
-    // (undocumented)
     getConverter(property: keyof ConditionalSelectorConfiguration): Converter | ConverterFactory;
     ifFalse: TriggerSelector;
     ifTrue: TriggerSelector;
@@ -1266,7 +1264,7 @@ export abstract class InputDialog extends Dialog implements InputDialogConfigura
     getConverter(property: keyof InputDialogConfiguration): Converter | ConverterFactory;
     invalidPrompt: TemplateInterface<Partial<Activity>, DialogStateManager>;
     maxTurnCount?: IntExpression;
-    protected onInitializeOptions(dc: DialogContext, options: any): Promise<any>;
+    protected onInitializeOptions(_dc: DialogContext, options: any): Promise<any>;
     protected onPreBubbleEvent(dc: DialogContext, event: DialogEvent): Promise<boolean>;
     // (undocumented)
     protected abstract onRecognizeInput(dc: DialogContext): Promise<InputState>;
@@ -1275,7 +1273,7 @@ export abstract class InputDialog extends Dialog implements InputDialogConfigura
     static OPTIONS_PROPERTY: string;
     prompt: TemplateInterface<Partial<Activity>, DialogStateManager>;
     property: StringExpression;
-    resumeDialog(dc: DialogContext, reason: DialogReason, result?: any): Promise<DialogTurnResult>;
+    resumeDialog(dc: DialogContext, _reason: DialogReason, _result?: any): Promise<DialogTurnResult>;
     // (undocumented)
     static TURN_COUNT_PROPERTY: string;
     unrecognizedPrompt: TemplateInterface<Partial<Activity>, DialogStateManager>;
@@ -1445,13 +1443,11 @@ export class MentionEntityRecognizer extends TextEntityRecognizer {
     protected _recognize(text: string, culture: string): ModelResult[];
 }
 
-// @public (undocumented)
+// @public
 export class MostSpecificSelector extends TriggerSelector implements MostSpecificSelectorConfiguration {
     // (undocumented)
     static $kind: string;
-    // (undocumented)
     initialize(conditionals: OnCondition[], _evaluate: boolean): void;
-    // (undocumented)
     select(context: ActionContext): Promise<OnCondition[]>;
     // (undocumented)
     selector: TriggerSelector;
@@ -1566,7 +1562,7 @@ export class OAuthInput extends InputDialog implements OAuthInputConfiguration {
     getUserToken(dc: DialogContext, code?: string): Promise<TokenResponse | undefined>;
     // (undocumented)
     protected onComputeId(): string;
-    protected onRecognizeInput(dc: DialogContext): Promise<InputState>;
+    protected onRecognizeInput(_dc: DialogContext): Promise<InputState>;
     signOutUser(dc: DialogContext): Promise<void>;
     text?: StringExpression;
     timeout?: IntExpression;
@@ -2054,7 +2050,7 @@ export class ResourceExtensions {
     static useResourceExplorer(dialogManager: DialogManager, resourceExplorer: ResourceExplorer): DialogManager;
 }
 
-// @public (undocumented)
+// @public
 export class ResourceMultiLanguageGenerator<T = unknown, D extends Record<string, unknown> = Record<string, unknown>> extends MultiLanguageGeneratorBase<T, D> implements ResourceMultiLanguageGeneratorConfiguration {
     // (undocumented)
     static $kind: string;
@@ -2348,7 +2344,7 @@ export class TextEntity implements Entity {
     type: string;
 }
 
-// @public (undocumented)
+// @public
 export class TextInput extends InputDialog implements TextInputConfiguration {
     // (undocumented)
     static $kind: string;

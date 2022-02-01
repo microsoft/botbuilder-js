@@ -1,4 +1,3 @@
-/* eslint-disable security/detect-object-injection */
 /**
  * @module adaptive-expressions
  */
@@ -18,7 +17,7 @@ import { EvaluateExpressionDelegate, ValueWithError } from './expressionEvaluato
 import { MemoryInterface, SimpleObjectMemory, StackedMemory } from './memory';
 import { TimexProperty } from '@microsoft/recognizers-text-data-types-timex-expression';
 import bigInt = require('big-integer');
-import { FunctionUtils } from './functionUtils';
+import util = require('util');
 
 /**
  * Utility functions only used internal
@@ -36,6 +35,7 @@ export class InternalFunctionUtils {
 
     /**
      * Parse timex funcition.
+     *
      * @param timexExpr String or TimexProperty input.
      * @returns TimexProperty and error.
      */
@@ -60,7 +60,9 @@ export class InternalFunctionUtils {
 
     /**
      * Sort helper function.
+     *
      * @param isDescending Descending flag.
+     * @returns The sorted array.
      */
     public static sortBy(isDescending: boolean): EvaluateExpressionDelegate {
         return (expression: Expression, state: any, options: Options): ValueWithError => {
@@ -102,12 +104,13 @@ export class InternalFunctionUtils {
 
     /**
      * Lookup a string or number index of an Object.
+     *
      * @param instance Instance with property.
-     * @param property Property to lookup.
+     * @param index Property to lookup.
      * @returns Value and error information if any.
      */
     public static accessIndex(instance: any, index: number): ValueWithError {
-        // NOTE: This returns undefined rather than an error if property is not present
+        // NOTE: This returns undefined rather than an error if instance is not present
         if (instance == null) {
             return { value: undefined, error: undefined };
         }
@@ -130,6 +133,7 @@ export class InternalFunctionUtils {
 
     /**
      * Verify a timestamp string is valid timestamp format.
+     *
      * @param value Timestamp string to check.
      * @returns Error or undefined if invalid.
      */
@@ -140,7 +144,7 @@ export class InternalFunctionUtils {
             if (Number.isNaN(parsedData.getTime())) {
                 error = `${value} is not a valid datetime string.`;
             }
-        } catch (e) {
+        } catch {
             error = `${value} is not a valid datetime string.`;
         }
 
@@ -149,6 +153,7 @@ export class InternalFunctionUtils {
 
     /**
      * Verify a timestamp string is valid ISO timestamp format.
+     *
      * @param value Timestamp string to check.
      * @returns Error or undefined if invalid.
      */
@@ -161,7 +166,7 @@ export class InternalFunctionUtils {
             } else if (parsedData.toISOString() !== value) {
                 error = `${value} is not a ISO format datetime string.`;
             }
-        } catch (e) {
+        } catch {
             error = `${value} is not a valid datetime string.`;
         }
 
@@ -170,7 +175,9 @@ export class InternalFunctionUtils {
 
     /**
      * Convert a string input to ticks number.
+     *
      * @param timeStamp String timestamp input.
+     * @returns The string converted in ticks.
      */
     public static ticks(timeStamp: string): ValueWithError {
         let result: bigInt.BigInteger;
@@ -187,6 +194,7 @@ export class InternalFunctionUtils {
 
     /**
      * Lookup a property in Map or Object.
+     *
      * @param instance Instance with property.
      * @param property Property to lookup.
      * @returns Value and error information if any.
@@ -223,10 +231,12 @@ export class InternalFunctionUtils {
     }
 
     /**
-     * Get the value of a path from a memory
+     * Get the value of a path from a memory.
+     *
      * @param state Memory.
      * @param path Path string.
      * @param options Options.
+     * @returns The value of a path from a memory.
      */
     public static wrapGetValue(state: MemoryInterface, path: string, options: Options): any {
         const result = state.getValue(path);
@@ -243,7 +253,9 @@ export class InternalFunctionUtils {
 
     /**
      * Wrap string or undefined into string. Default to empty string.
+     *
      * @param input Input string
+     * @returns The wrapped string.
      */
     public static parseStringOrUndefined(input: string | undefined): string {
         if (typeof input === 'string') {
@@ -255,6 +267,7 @@ export class InternalFunctionUtils {
 
     /**
      * Test result to see if True in logical comparison functions.
+     *
      * @param instance Computed value.
      * @returns True if boolean true or non-null.
      */
@@ -272,9 +285,11 @@ export class InternalFunctionUtils {
 
     /**
      * Evaluator for foreach and select functions.
+     *
      * @param expression Expression.
      * @param state Memory scope.
      * @param options Options.
+     * @returns The evaluated list.
      */
     public static foreach(expression: Expression, state: MemoryInterface, options: Options): ValueWithError {
         let result: any[];
@@ -307,13 +322,20 @@ export class InternalFunctionUtils {
 
     /**
      * Lambda evaluator.
+     *
      * @param expression expression.
      * @param state memory state.
      * @param options options.
      * @param list item list.
      * @param callback call back. return the should break flag.
      */
-    public static lambdaEvaluator<T = unknown, U = unknown>(expression: Expression, state: MemoryInterface, options: Options, list: T[], callback: (currentItem: T, result: U, error: string) => boolean): void{
+    public static lambdaEvaluator<T = unknown, U = unknown>(
+        expression: Expression,
+        state: MemoryInterface,
+        options: Options,
+        list: T[],
+        callback: (currentItem: T, result: U, error: string) => boolean
+    ): void {
         const firstChild = expression.children[1].children[0];
         if (!(firstChild instanceof Constant) || typeof firstChild.value !== 'string') {
             return;
@@ -342,9 +364,11 @@ export class InternalFunctionUtils {
      * If the instance is array, return itself.
      * If the instance is object, return {key, value} pair list.
      * Else return undefined.
+     *
      * @param instance input instance.
+     * @returns The generated list.
      */
-    public static convertToList(instance: unknown) : unknown[] | undefined {
+    public static convertToList(instance: unknown): unknown[] | undefined {
         let arr: unknown[] | undefined;
         if (Array.isArray(instance)) {
             arr = instance;
@@ -358,7 +382,8 @@ export class InternalFunctionUtils {
 
     /**
      * Validator for foreach, select, and where functions.
-     * @param expression
+     *
+     * @param expression The expression to validate.
      */
     public static ValidateLambdaExpression(expression: Expression): void {
         if (expression.children.length !== 3) {
@@ -373,14 +398,16 @@ export class InternalFunctionUtils {
 
     /**
      * Parse string into URL object.
+     *
      * @param uri Input string uri.
+     * @returns The parsed URL object.
      */
     public static parseUri(uri: string): ValueWithError {
         let result: URL;
         let error: string;
         try {
             result = new URL(uri);
-        } catch (e) {
+        } catch {
             error = `Invalid URI: ${uri}`;
         }
 
@@ -388,9 +415,11 @@ export class InternalFunctionUtils {
     }
 
     /**
-     * Transform C# period and unit into js period and unit
-     * @param duration C# duration
+     * Transform C# period and unit into js period and unit.
+     *
+     * @param duration C# duration.
      * @param cSharpStr C# unit.
+     * @returns The transformed timeUnit.
      */
     public static timeUnitTransformer(duration: number, cSharpStr: string): { duration: number; tsStr: OpUnitType } {
         switch (cSharpStr) {
@@ -415,31 +444,34 @@ export class InternalFunctionUtils {
 
     /**
      * TextEncoder helper function.
+     *
+     * @returns The text encoder.
      */
     public static getTextEncoder(): TextEncoder {
         if (typeof window !== 'undefined' || typeof self !== 'undefined') {
             return new TextEncoder();
         }
-        // eslint-disable-next-line @typescript-eslint/no-var-requires
-        const util = require('util');
         return new util.TextEncoder();
     }
 
     /**
      * TextDecoder helper function.
+     *
+     * @param code The encoding format.
+     * @returns The text decoder.
      */
     public static getTextDecoder(code = 'utf-8'): TextDecoder {
         if (typeof window !== 'undefined' || typeof self !== 'undefined') {
             return new TextDecoder(code);
         }
-        // eslint-disable-next-line @typescript-eslint/no-var-requires
-        const util = require('util');
         return new util.TextDecoder(code);
     }
 
     /**
-     * Common Stringfy an object.
+     * Common Stringify an object.
+     *
      * @param input input object.
+     * @returns the stringified object.
      */
     public static commonStringify(input: unknown): string {
         if (input == null) {

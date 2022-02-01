@@ -204,6 +204,7 @@ export class BlobStorage implements Storage {
      * Store a new entity in the configured blob container.
      *
      * @param changes The changes to write to storage.
+     * @returns A promise representing the asynchronous operation.
      */
     write(changes: StoreItems): Promise<void> {
         if (!changes) {
@@ -268,6 +269,7 @@ export class BlobStorage implements Storage {
      * Delete entity blobs from the configured container.
      *
      * @param keys An array of entity keys.
+     * @returns A promise representing the asynchronous operation.
      */
     delete(keys: string[]): Promise<void> {
         if (!keys) {
@@ -296,6 +298,7 @@ export class BlobStorage implements Storage {
      * Get a blob name validated representation of an entity to be used as a key.
      *
      * @param key The key used to identify the entity.
+     * @returns An appropriately escaped version of the key.
      */
     private sanitizeKey(key: string): string {
         if (!key || key.length < 1) {
@@ -326,6 +329,8 @@ export class BlobStorage implements Storage {
 
     /**
      * Delay Container creation if it does not exist.
+     *
+     * @returns A promise representing the asynchronous operation.
      */
     private ensureContainerExists(): Promise<azure.BlobService.ContainerResult> {
         const key: string = this.settings.containerName;
@@ -373,6 +378,7 @@ export class BlobStorage implements Storage {
      * @private
      * Turn a cb based azure method into a Promisified one.
      */
+    // eslint-disable-next-line @typescript-eslint/ban-types
     private denodeify<T>(thisArg: any, fn: Function): (...args: any[]) => Promise<T> {
         return (...args: any[]): Promise<T> => {
             return new Promise<T>((resolve: any, reject: any): void => {

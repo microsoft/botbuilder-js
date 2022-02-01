@@ -10,6 +10,7 @@ import { Expression } from '../expression';
 
 /**
  * Represents a property which is either a string value or a string expression.
+ *
  * @remarks
  * If the value is
  * - a string with '=' prefix then the string is treated as an expression to resolve to a string.
@@ -24,6 +25,7 @@ import { Expression } from '../expression';
 export class StringExpression extends ExpressionProperty<string> {
     /**
      * Initializes a new instance of the [StringExpression](xref:adaptive-expressions.StringExpression) class.
+     *
      * @param value A `string` value or a `string` expression.
      */
     public constructor(value?: string | Expression) {
@@ -32,6 +34,7 @@ export class StringExpression extends ExpressionProperty<string> {
 
     /**
      * Set a string value.
+     *
      * @param value Value to set.
      */
     public setValue(value: string | Expression): void {

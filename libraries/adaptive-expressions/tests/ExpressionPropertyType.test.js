@@ -1,7 +1,7 @@
 const { ArrayExpression, BoolExpression, IntExpression, NumberExpression, StringExpression } = require('../lib');
 const assert = require('assert');
 
-describe('expressionProperty type exception tests', () => {
+describe('expressionProperty type exception tests', function () {
     it('array expression with error type', function () {
         const errorMsg = 'ArrayExpression accepts string, array or Expression as the value.';
         assert.throws(() => new ArrayExpression(1), Error(errorMsg));

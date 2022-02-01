@@ -17,6 +17,7 @@ export class ChoiceSet extends Array<Choice> implements TemplateInterface<Choice
 
     /**
      * Initializes a new instance of the [ChoiceSet](xref:botbuilder-dialogs-adaptive.ChoiceSet) class.
+     *
      * @param obj Choice values.
      */
     public constructor(obj: any) {

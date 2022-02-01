@@ -9,9 +9,21 @@
 import { Converter, Dialog } from 'botbuilder-dialogs';
 import { ResourceExplorer } from 'botbuilder-dialogs-declarative';
 
+/**
+ * Converter which allows json to be expression to object or static object.
+ */
 export class DialogListConverter implements Converter<string[], Dialog[]> {
+    /**
+     * Initializes a new instance of the [DialogListConverter](xref:botbuilder-dialogs-adaptive.DialogListConverter) class.
+     *
+     * @param _resourceExplorer Resource explorer to use for resolving references.
+     */
     public constructor(private readonly _resourceExplorer: ResourceExplorer) {}
 
+    /**
+     * @param value A list of strings representing dialogs, or a list of dialogs.
+     * @returns A new list of [Dialog](xref:botbuilder-dialogs.Dialog) instance.
+     */
     public convert(value: string[] | Dialog[]): Dialog[] {
         const results: Dialog[] = [];
 

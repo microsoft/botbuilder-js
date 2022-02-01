@@ -20,6 +20,7 @@ export class Clause extends Expression {
 
     /**
      * Initializes a new instance of the `Clause` class.
+     *
      * @param clauseOrExpression A clause, expression or an array of expressions to initialize a `Clause`.
      */
     public constructor(clauseOrExpression?: Clause | Expression | Expression[]) {
@@ -53,8 +54,10 @@ export class Clause extends Expression {
 
     /**
      * Gets a string that represents the current clause.
+     *
      * @param builder An array of string to build the string of clause.
      * @param indent An integer represents the number of spaces at the start of a line.
+     * @returns A string that represents the current clause.
      */
     public toString(builder: string[] = [], indent = 0): string {
         builder.push(' '.repeat(indent));
@@ -88,6 +91,7 @@ export class Clause extends Expression {
 
     /**
      * Compares the current `Clause` with another `Clause`.
+     *
      * @param other The other `Clause` to compare.
      * @param comparers A comparer, which is a dictionary of `PredicateComparer` with string keys.
      * @returns A `RelationshipType` value between two `Clause` instances.
@@ -172,6 +176,7 @@ export class Clause extends Expression {
 
     /**
      * Determines whether the current `Clause` matches with another `Clause`.
+     *
      * @param clause The other `Clause` instance to compare with.
      * @param memory The scope for looking up variables.
      * @returns A boolean value indicating whether the two clauses are matches.

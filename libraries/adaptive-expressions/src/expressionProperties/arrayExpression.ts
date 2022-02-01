@@ -11,6 +11,7 @@ import { Expression } from '../expression';
 /**
  * Represents a property which is either a value of array of T or a string expression to bind to a
  * array of T.
+ *
  * @remarks
  * String values are always interpreted as an expression, whether it has '=' prefix or not.
  * @param T Type of object in the array.
@@ -18,6 +19,7 @@ import { Expression } from '../expression';
 export class ArrayExpression<T> extends ExpressionProperty<T[]> {
     /**
      * Initializes a new instance of the [ArrayExpression<T>](xref:adaptive-expressions.ArrayExpression) class.
+     *
      * @param value Value of `T[]` or a `string` expression to bind to a `T[]`.
      */
     public constructor(value?: T[] | string | Expression) {
@@ -26,6 +28,7 @@ export class ArrayExpression<T> extends ExpressionProperty<T[]> {
 
     /**
      * Set an array value.
+     *
      * @param value Value to set.
      */
     public setValue(value: T[] | string | Expression): void {

@@ -5,6 +5,7 @@ const azure = require('azure-storage');
 const { MockMode, usingNock } = require('./mockHelper.js');
 const nock = require('nock');
 const fs = require('fs');
+const flow = require('lodash/fp/flow');
 
 /**
  * @param mode controls the nock mode used for the tests. Available options found in ./mockHelper.js.
@@ -22,9 +23,9 @@ const reset = (done) => {
     nock.cleanAll();
     nock.enableNetConnect();
     if (mode !== MockMode.lockdown) {
-        let settings = getSettings();
-        let client = azure.createBlobService(settings.storageAccountOrConnectionString, settings.storageAccessKey);
-        client.deleteContainerIfExists(settings.containerName, (err, result) => done());
+        const settings = getSettings();
+        const client = azure.createBlobService(settings.storageAccountOrConnectionString, settings.storageAccessKey);
+        client.deleteContainerIfExists(settings.containerName, (_err, _result) => done());
     } else {
         done();
     }
@@ -59,8 +60,10 @@ describe('BlobStorage - Constructor', function () {
 });
 
 describe('BlobStorage - Base Storage Tests', function () {
-    before('cleanup', reset);
-    before('check emulator', checkEmulator);
+    before(
+        'cleanup',
+        flow(() => reset, checkEmulator)
+    );
     after('cleanup', reset);
 
     it('return empty object when reading unknown key', async function () {
@@ -68,7 +71,7 @@ describe('BlobStorage - Base Storage Tests', function () {
         const testRan = await StorageBaseTests.returnEmptyObjectWhenReadingUnknownKey(storage);
 
         assert.strictEqual(testRan, true);
-        return nockDone();
+        nockDone();
     });
 
     it('throws when reading null keys', async function () {
@@ -76,7 +79,7 @@ describe('BlobStorage - Base Storage Tests', function () {
         const testRan = await StorageBaseTests.handleNullKeysWhenReading(storage);
 
         assert.strictEqual(testRan, true);
-        return nockDone();
+        nockDone();
     });
 
     it('throws when writing null keys', async function () {
@@ -84,7 +87,7 @@ describe('BlobStorage - Base Storage Tests', function () {
         const testRan = await StorageBaseTests.handleNullKeysWhenWriting(storage);
 
         assert.strictEqual(testRan, true);
-        return nockDone();
+        nockDone();
     });
 
     it('does not throw when writing no items', async function () {
@@ -92,7 +95,7 @@ describe('BlobStorage - Base Storage Tests', function () {
         const testRan = await StorageBaseTests.doesNotThrowWhenWritingNoItems(storage);
 
         assert.strictEqual(testRan, true);
-        return nockDone();
+        nockDone();
     });
 
     it('create an object', async function () {
@@ -100,7 +103,7 @@ describe('BlobStorage - Base Storage Tests', function () {
         const testRan = await StorageBaseTests.createObject(storage);
 
         assert.strictEqual(testRan, true);
-        return nockDone();
+        nockDone();
     });
 
     it('handle crazy keys', async function () {
@@ -108,7 +111,7 @@ describe('BlobStorage - Base Storage Tests', function () {
         const testRan = await StorageBaseTests.handleCrazyKeys(storage);
 
         assert.strictEqual(testRan, true);
-        return nockDone();
+        nockDone();
     });
 
     it('update an object', async function () {
@@ -116,7 +119,7 @@ describe('BlobStorage - Base Storage Tests', function () {
         const testRan = await StorageBaseTests.updateObject(storage);
 
         assert.strictEqual(testRan, true);
-        return nockDone();
+        nockDone();
     });
 
     it('delete an object', async function () {
@@ -124,7 +127,7 @@ describe('BlobStorage - Base Storage Tests', function () {
         const testRan = await StorageBaseTests.deleteObject(storage);
 
         assert.strictEqual(testRan, true);
-        return nockDone();
+        nockDone();
     });
 
     it('does not throw when deleting an unknown object', async function () {
@@ -132,7 +135,7 @@ describe('BlobStorage - Base Storage Tests', function () {
         const testRan = await StorageBaseTests.deleteUnknownObject(storage);
 
         assert.strictEqual(testRan, true);
-        return nockDone();
+        nockDone();
     });
 
     it('performs batch operations', async function () {
@@ -140,7 +143,7 @@ describe('BlobStorage - Base Storage Tests', function () {
         const testRan = await StorageBaseTests.performBatchOperations(storage);
 
         assert.strictEqual(testRan, true);
-        return nockDone();
+        nockDone();
     });
 
     it('proceeds through a waterfall dialog', async function () {
@@ -148,6 +151,6 @@ describe('BlobStorage - Base Storage Tests', function () {
         const testRan = await StorageBaseTests.proceedsThroughWaterfall(storage);
 
         assert.strictEqual(testRan, true);
-        return nockDone();
+        nockDone();
     });
 });

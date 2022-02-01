@@ -47,7 +47,7 @@ export class TriggerTree {
     public totalTriggers = 0;
 
     /**
-     * Returns a string the represents the current object.
+     * @returns A string the represents the current object.
      */
     public toString(): string {
         return `TriggerTree with ${this.totalTriggers} triggers`;
@@ -55,6 +55,7 @@ export class TriggerTree {
 
     /**
      * Add a trigger expression to the tree.
+     *
      * @param stringOrExpression Trigger to add.
      * @param action Action when triggered.
      * @param quantifiers Quantifiers to use when expanding expressions.
@@ -83,6 +84,7 @@ export class TriggerTree {
 
     /**
      * Remove trigger from tree.
+     *
      * @param trigger Trigger to remove.
      * @returns True if removed trigger.
      */
@@ -96,6 +98,7 @@ export class TriggerTree {
 
     /**
      * Generates a string describing the tree.
+     *
      * @param indent Current indent level.
      * @returns String describing the tree.
      */
@@ -107,6 +110,7 @@ export class TriggerTree {
 
     /**
      * Return the possible matches given the current state.
+     *
      * @param state State to evaluate against.
      * @returns List of possible matches.
      */
@@ -116,6 +120,7 @@ export class TriggerTree {
 
     /**
      * Verify the tree meets specialization/generalization invariants.
+     *
      * @returns Bad node if found.
      */
     public verifyTree(): Node {

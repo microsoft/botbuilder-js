@@ -33,13 +33,14 @@
     "azure-storage": "2.10.2",
     "botbuilder": "4.1.6",
     "documentdb": "1.14.5",
+    "lodash": "^4.17.20",
     "semaphore": "^1.1.0"
   },
   "devDependencies": {
     "@types/semaphore": "^1.1.0",
     "fs-extra": "^7.0.1",
-    "node-fetch": "^2.6.7",
-    "nock": "^11.9.1"
+    "nock": "^11.9.1",
+    "node-fetch": "^2.6.7"
   },
   "scripts": {
     "build": "tsc -b",
