@@ -3,13 +3,16 @@ const { LanguageGeneratorConverter } = require('../lib/converters');
 const { ok, strictEqual } = require('assert');
 
 describe('LanguageGeneratorConverter', function () {
-    it('convert() should return new ResourceMultiLanguageGenerator with string param', () => {
+    it('convert() should return new ResourceMultiLanguageGenerator with string param', function () {
         const converter = new LanguageGeneratorConverter();
         const newGenerator = converter.convert('');
-        ok(newGenerator instanceof ResourceMultiLanguageGenerator, 'expected newGenerator to be instance of ResourceMultiLanguageGenerator');
+        ok(
+            newGenerator instanceof ResourceMultiLanguageGenerator,
+            'expected newGenerator to be instance of ResourceMultiLanguageGenerator'
+        );
     });
 
-    it('convert() should return param if param type is not string', () => {
+    it('convert() should return param if param type is not string', function () {
         const firstGenerator = new ResourceMultiLanguageGenerator('resourceId');
         const converter = new LanguageGeneratorConverter();
         const newGenerator = converter.convert(firstGenerator);
@@ -21,6 +24,5 @@ describe('LanguageGeneratorConverter', function () {
 
         const numberGenerator = converter.convert(2);
         strictEqual(numberGenerator, 2);
-
     });
 });

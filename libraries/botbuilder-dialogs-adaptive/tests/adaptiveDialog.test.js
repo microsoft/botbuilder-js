@@ -58,7 +58,7 @@ const createDialogWithCustomInput = () => {
 };
 
 describe('AdaptiveDialog', function () {
-    it('Replace parent', async () => {
+    it('Replace parent', async function () {
         const root = new AdaptiveDialog('root').configure({
             autoEndDialog: false,
             triggers: [
@@ -98,7 +98,7 @@ describe('AdaptiveDialog', function () {
             .startTest();
     });
 
-    it('Replace parent complex verify post replace', async () => {
+    it('Replace parent complex verify post replace', async function () {
         const outerDialog = new AdaptiveDialog('outer').configure({
             autoEndDialog: false,
             recognizer: new RegexRecognizer().configure({
@@ -178,7 +178,7 @@ describe('AdaptiveDialog', function () {
             .startTest();
     });
 
-    it('Custom AttachmentInput dialog with no file', async () => {
+    it('Custom AttachmentInput dialog with no file', async function () {
         const dm = new DialogManager(createDialogWithCustomInput());
         const adapter = new TestAdapter(async (context) => {
             await dm.onTurn(context);
@@ -189,7 +189,7 @@ describe('AdaptiveDialog', function () {
         await adapter.send('hello').assertReply('Upload picture').send('skip').assertReply('passed').startTest();
     });
 
-    it('Custom AttachmentInput dialog with file', async () => {
+    it('Custom AttachmentInput dialog with file', async function () {
         const dm = new DialogManager(createDialogWithCustomInput());
         const adapter = new TestAdapter(async (context) => {
             await dm.onTurn(context);

@@ -14,7 +14,6 @@ import { TextEntityRecognizer } from './textEntityRecognizer';
  * Recognizes hashtag input.
  */
 export class HashtagEntityRecognizer extends TextEntityRecognizer {
-
     public static $kind = 'Microsoft.HashtagEntityRecognizer';
 
     /**

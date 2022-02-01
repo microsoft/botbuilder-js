@@ -13,13 +13,7 @@ import { BoolProperty, EnumProperty } from '../properties';
 import { DialogListConverter } from '../converters';
 import { StringUtils } from 'botbuilder';
 
-import {
-    BoolExpression,
-    BoolExpressionConverter,
-    EnumExpression,
-    EnumExpressionConverter,
-    Expression,
-} from 'adaptive-expressions';
+import { BoolExpression, BoolExpressionConverter, EnumExpression, EnumExpressionConverter } from 'adaptive-expressions';
 
 import {
     Converter,
@@ -49,6 +43,7 @@ export class EditActions<O extends object = {}>
 
     /**
      * Initializes a new instance of the [EditActions](xref:botbuilder-dialogs-adaptive.EditActions) class.
+     *
      * @param changeType [ActionChangeType](xref:botbuilder-dialogs-adaptive.ActionChangeType), type of change to apply to the active actions.
      * @param actions Optional. Child [Dialog](xref:botbuilder-dialogs.Dialog) dependencies so they can be added to the containers dialogset.
      */
@@ -57,6 +52,7 @@ export class EditActions<O extends object = {}>
 
     /**
      * Initializes a new instance of the [EditActions](xref:botbuilder-dialogs-adaptive.EditActions) class.
+     *
      * @param changeType Optional. [ActionChangeType](xref:botbuilder-dialogs-adaptive.ActionChangeType), type of change to apply to the active actions.
      * @param actions Optional. Child [Dialog](xref:botbuilder-dialogs.Dialog) dependencies so they can be added to the containers dialogset.
      */
@@ -85,6 +81,10 @@ export class EditActions<O extends object = {}>
      */
     public disabled?: BoolExpression;
 
+    /**
+     * @param property The key of the conditional selector configuration.
+     * @returns The converter for the selector configuration.
+     */
     public getConverter(property: keyof EditActionsConfiguration): Converter | ConverterFactory {
         switch (property) {
             case 'actions':
@@ -100,6 +100,7 @@ export class EditActions<O extends object = {}>
 
     /**
      * Gets the child [Dialog](xref:botbuilder-dialogs.Dialog) dependencies so they can be added to the containers [Dialog](xref:botbuilder-dialogs.Dialog) set.
+     *
      * @returns The child [Dialog](xref:botbuilder-dialogs.Dialog) dependencies.
      */
     public getDependencies(): Dialog[] {
@@ -108,6 +109,7 @@ export class EditActions<O extends object = {}>
 
     /**
      * Starts a new [Dialog](xref:botbuilder-dialogs.Dialog) and pushes it onto the dialog stack.
+     *
      * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
      * @param options Optional. Initial information to pass to the dialog.
      * @returns A `Promise` representing the asynchronous operation.
@@ -136,7 +138,7 @@ export class EditActions<O extends object = {}>
             dc.parent.queueChanges(changes);
             return await dc.endDialog();
         } else {
-            throw new Error(`EditActions should only be used in the context of an adaptive dialog.`);
+            throw new Error('EditActions should only be used in the context of an adaptive dialog.');
         }
     }
 

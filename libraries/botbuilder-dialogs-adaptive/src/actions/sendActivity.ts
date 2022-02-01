@@ -39,6 +39,7 @@ export class SendActivity<O extends object = {}> extends Dialog<O> implements Se
 
     /**
      * Creates a new [SendActivity](xref:botbuilder-dialogs-adaptive.SendActivity) instance.
+     *
      * @param activity [Activity](xref:botframework-schema.Activity) or message text to send the user.
      */
     public constructor(activity?: Partial<Activity> | string) {
@@ -62,6 +63,10 @@ export class SendActivity<O extends object = {}> extends Dialog<O> implements Se
      */
     public disabled?: BoolExpression;
 
+    /**
+     * @param property The key of the conditional selector configuration.
+     * @returns The converter for the selector configuration.
+     */
     public getConverter(property: keyof SendActivityConfiguration): Converter | ConverterFactory {
         switch (property) {
             case 'activity':
@@ -75,6 +80,7 @@ export class SendActivity<O extends object = {}> extends Dialog<O> implements Se
 
     /**
      * Starts a new [Dialog](xref:botbuilder-dialogs.Dialog) and pushes it onto the dialog stack.
+     *
      * @param dc The `DialogContext` for the current turn of conversation.
      * @param options Optional. Initial information to pass to the dialog.
      * @returns A `Promise` representing the asynchronous operation.
@@ -86,7 +92,7 @@ export class SendActivity<O extends object = {}> extends Dialog<O> implements Se
 
         if (!this.activity) {
             // throw new Error(`SendActivity: no activity assigned for action '${this.id}'.`)
-            throw new Error(`SendActivity: no activity assigned for action.`);
+            throw new Error('SendActivity: no activity assigned for action.');
         }
 
         // Send activity and return result

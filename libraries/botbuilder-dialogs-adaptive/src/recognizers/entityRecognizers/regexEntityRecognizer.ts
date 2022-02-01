@@ -14,12 +14,16 @@ export interface RegexEntityRecognizerConfiguration {
     pattern?: string;
 }
 
+/**
+ * Matches input against a regular expression.
+ */
 export class RegexEntityRecognizer extends TextEntityRecognizer implements RegexEntityRecognizerConfiguration {
     public static $kind = 'Microsoft.RegexEntityRecognizer';
 
     public constructor();
     /**
      * Initializes a new instance of the [RegexEntityRecognizer](xref:botbuilder-dialogs-adaptive.RegexEntityRecognizer) class.
+     *
      * @param name The name match result `typeName` value.
      * @param pattern The regular expression pattern value.
      */
@@ -37,11 +41,16 @@ export class RegexEntityRecognizer extends TextEntityRecognizer implements Regex
 
     /**
      * Gets the regular expression pattern value.
+     *
+     * @returns The pattern.
      */
     public get pattern(): string {
         return this._pattern;
     }
 
+    /**
+     * Sets the pattern.
+     */
     public set pattern(value: string) {
         if (value.startsWith('(?i)')) {
             value = value.substr(4);
@@ -55,14 +64,15 @@ export class RegexEntityRecognizer extends TextEntityRecognizer implements Regex
      * @protected
      * Match recognizing implementation.
      * @param text Text to match.
-     * @param culture Culture to use.
+     * @param _culture Culture to use.
      * @returns The matched [ModelResult](xref:botbuilder-dialogs.ModelResult) list.
      */
-    protected _recognize(text: string, culture: string): ModelResult[] {
+    protected _recognize(text: string, _culture: string): ModelResult[] {
         const results: ModelResult[] = [];
 
         const matches = [];
         let matched: RegExpExecArray;
+        // eslint-disable-next-line security/detect-non-literal-regexp
         const regexp = new RegExp(this._pattern, 'ig');
         while ((matched = regexp.exec(text))) {
             matches.push(matched);

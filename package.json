@@ -41,7 +41,8 @@
   },
   "resolutions": {
     "mixme": "0.5.2",
-    "node-fetch": "2.6.7"
+    "node-fetch": "2.6.7",
+    "underscore": "1.13.1"
   },
   "devDependencies": {
     "@azure/logger": "^1.0.2",
