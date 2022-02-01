@@ -38,7 +38,7 @@
   "devDependencies": {
     "@types/semaphore": "^1.1.0",
     "fs-extra": "^7.0.1",
-    "node-fetch": "^2.6.1",
+    "node-fetch": "^2.6.7",
     "nock": "^11.9.1"
   },
   "scripts": {
