@@ -2,8 +2,8 @@
 import * as assert from 'assert';
 import { DialogExpression, AdaptiveDialog } from '../';
 
-describe('expressionProperty tests', () => {
-    it('DialogExpression', () => {
+describe('expressionProperty tests', function () {
+    it('DialogExpression', function () {
         const dialog = new AdaptiveDialog('AskNameDialog');
         const data = { test: dialog };
         let val = new DialogExpression('=test');
@@ -18,5 +18,4 @@ describe('expressionProperty tests', () => {
         result = val.getValue(data);
         assert.equal(result, dialog);
     });
-
 });
