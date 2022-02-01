@@ -460,7 +460,7 @@ export class Case extends ActionScope {
 export class ChannelMentionEntityRecognizer extends AdaptiveRecognizer {
     // (undocumented)
     static $kind: string;
-    recognize(dialogContext: DialogContext, activity: Partial<Activity>, telemetryProperties?: Record<string, string>, telemetryMetrics?: Record<string, number>): Promise<RecognizerResult>;
+    recognize(_dialogContext: DialogContext, activity: Partial<Activity>, _telemetryProperties?: Record<string, string>, _telemetryMetrics?: Record<string, number>): Promise<RecognizerResult>;
 }
 
 // @public (undocumented)
@@ -968,8 +968,8 @@ export interface EndTurnConfiguration extends DialogConfiguration {
 
 // @public
 export class EntityRecognizer extends AdaptiveRecognizer {
-    recognize(dialogContext: DialogContext, activity: Partial<Activity>, telemetryProperties?: Record<string, string>, telemetryMetrics?: Record<string, number>): Promise<RecognizerResult>;
-    recognizeEntities(dialogContext: DialogContext, text: string, locale: string, entities: Entity[]): Promise<Entity[]>;
+    recognize(dialogContext: DialogContext, activity: Partial<Activity>, _telemetryProperties?: Record<string, string>, _telemetryMetrics?: Record<string, number>): Promise<RecognizerResult>;
+    recognizeEntities(_dialogContext: DialogContext, _text: string, _locale: string, _entities: Entity[]): Promise<Entity[]>;
 }
 
 // @public
@@ -1326,11 +1326,11 @@ export enum InputState {
 // @public
 export class IntentPattern {
     constructor(intent?: string, pattern?: string);
-    // (undocumented)
     get intent(): string;
+    // Warning: (ae-setter-with-docs) The doc comment for the property "intent" must appear on the getter, not the setter.
     set intent(value: string);
-    // (undocumented)
     get pattern(): string;
+    // Warning: (ae-setter-with-docs) The doc comment for the property "pattern" must appear on the getter, not the setter.
     set pattern(value: string);
     // (undocumented)
     get regex(): RegExp;
@@ -1488,7 +1488,7 @@ export interface MultiLanguageGeneratorBaseConfiguration {
     languagePolicy?: Record<string, string[]> | LanguagePolicy;
 }
 
-// @public (undocumented)
+// @public
 export class MultiLanguageRecognizer extends AdaptiveRecognizer implements MultiLanguageRecognizerConfiguration {
     // (undocumented)
     static $kind: string;
@@ -1496,7 +1496,6 @@ export class MultiLanguageRecognizer extends AdaptiveRecognizer implements Multi
     getConverter(property: keyof MultiLanguageRecognizerConfiguration): Converter | ConverterFactory;
     // (undocumented)
     languagePolicy: LanguagePolicy;
-    // (undocumented)
     recognize(dialogContext: DialogContext, activity: Activity, telemetryProperties?: {
         [key: string]: string;
     }, telemetryMetrics?: {
@@ -1945,7 +1944,6 @@ export class RecognizerSet extends AdaptiveRecognizer implements RecognizerSetCo
     static $kind: string;
     // (undocumented)
     getConverter(property: keyof RecognizerSetConfiguration): Converter | ConverterFactory;
-    // (undocumented)
     recognize(dialogContext: DialogContext, activity: Activity, telemetryProperties?: {
         [key: string]: string;
     }, telemetryMetrics?: {
@@ -1961,7 +1959,7 @@ export interface RecognizerSetConfiguration extends RecognizerConfiguration {
     recognizers?: string[] | Recognizer[];
 }
 
-// @public (undocumented)
+// @public
 export class RegexEntityRecognizer extends TextEntityRecognizer implements RegexEntityRecognizerConfiguration {
     // (undocumented)
     static $kind: string;
@@ -1969,8 +1967,9 @@ export class RegexEntityRecognizer extends TextEntityRecognizer implements Regex
     // (undocumented)
     name: string;
     get pattern(): string;
+    // Warning: (ae-setter-with-docs) The doc comment for the property "pattern" must appear on the getter, not the setter.
     set pattern(value: string);
-    protected _recognize(text: string, culture: string): ModelResult[];
+    protected _recognize(text: string, _culture: string): ModelResult[];
 }
 
 // @public
@@ -1981,7 +1980,7 @@ export interface RegexEntityRecognizerConfiguration {
     pattern?: string;
 }
 
-// @public (undocumented)
+// @public
 export class RegexRecognizer extends AdaptiveRecognizer implements RegexRecognizerConfiguration {
     // (undocumented)
     static $kind: string;
@@ -1989,7 +1988,6 @@ export class RegexRecognizer extends AdaptiveRecognizer implements RegexRecogniz
     // (undocumented)
     getConverter(property: keyof RegexRecognizerConfiguration): Converter | ConverterFactory;
     intents: IntentPattern[];
-    // (undocumented)
     recognize(dialogContext: DialogContext, activity: Activity, telemetryProperties?: {
         [key: string]: string;
     }, telemetryMetrics?: {
