@@ -13,6 +13,7 @@ export interface MemoryInterface {
     /**
      * get value from a given path, it can be a simple indenfiter like "a", or
      * a combined path like "a.b", "a.b[2]", "a.b[2].c", inside [] is guranteed to be a int number or a string.
+     *
      * @param path memory path.
      * @returns value.
      */
@@ -20,6 +21,7 @@ export interface MemoryInterface {
 
     /**
      * Set value to a given path.
+     *
      * @param path memory path.
      * @param value value to set.
      * @returns value
