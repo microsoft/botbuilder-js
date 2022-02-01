@@ -14,6 +14,7 @@ import { ClaimsIdentity, ConnectorClient } from 'botframework-connector';
 export interface ConnectorClientBuilder {
     /**
      * Creates the connector client asynchronous.
+     *
      * @param serviceUrl The service URL.
      * @param claimsIdentity The claims claimsIdentity.
      * @param audience The target audience for the ConnectorClient.

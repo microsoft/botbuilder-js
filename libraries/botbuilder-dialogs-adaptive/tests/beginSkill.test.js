@@ -10,12 +10,11 @@ const {
     SkillConversationIdFactoryBase,
     StatusCodes,
     TurnContext,
-    MessageFactory
+    MessageFactory,
 } = require('botbuilder');
 const { BoolExpression, StringExpression } = require('adaptive-expressions');
 const { DialogManager, DialogTurnStatus, DialogEvents, DialogSet } = require('botbuilder-dialogs');
 const { BeginSkill, SkillExtensions, StaticActivityTemplate } = require('../lib');
-
 
 class SimpleConversationIdFactory extends SkillConversationIdFactoryBase {
     constructor(opts = { useCreateSkillConversationId: false }) {
@@ -28,35 +27,45 @@ class SimpleConversationIdFactory extends SkillConversationIdFactoryBase {
         if (this.useCreateSkillConversationId) {
             return super.createSkillConversationIdWithOptions();
         }
-        const key = createHash('md5').update(opts.activity.conversation.id + opts.activity.serviceUrl).digest('hex');
+        const key = createHash('md5')
+            .update(opts.activity.conversation.id + opts.activity.serviceUrl)
+            .digest('hex');
 
         const ref = this._conversationRefs.has(key);
         if (!ref) {
             this._conversationRefs.set(key, {
                 conversationReference: TurnContext.getConversationReference(opts.activity),
-                oAuthScope: opts.fromBotOAuthScope
+                oAuthScope: opts.fromBotOAuthScope,
             });
         }
         return key;
     }
 
     async createSkillConversationId(convRef) {
-        const key = createHash('md5').update(convRef.conversation.id + convRef.serviceUrl).digest('hex');
+        const key = createHash('md5')
+            .update(convRef.conversation.id + convRef.serviceUrl)
+            .digest('hex');
 
         const ref = this._conversationRefs.has(key);
         if (!ref) {
             this._conversationRefs.set(key, {
-                conversationReference: convRef
+                conversationReference: convRef,
             });
         }
         return key;
     }
 
-    async getConversationReference(skillConversationId) { return this._conversationRefs.get(skillConversationId) }
+    async getConversationReference(skillConversationId) {
+        return this._conversationRefs.get(skillConversationId);
+    }
 
-    async getSkillConversationReference(skillConversationId) { return this.getConversationReference(skillConversationId) }
+    async getSkillConversationReference(skillConversationId) {
+        return this.getConversationReference(skillConversationId);
+    }
 
-    async deleteConversationReference() { /* not used in BeginSkill */ }
+    async deleteConversationReference() {
+        /* not used in BeginSkill */
+    }
 }
 
 describe('BeginSkill', function () {
@@ -105,7 +114,7 @@ describe('BeginSkill', function () {
     setSkillDialogOptions(dialog);
     dm.rootDialog = dialog;
 
-    it('should call skill via beginDialog()', async () => {
+    it('should call skill via beginDialog()', async function () {
         // Send initial activity
         const adapter = new TestAdapter(async (context) => {
             const { turnResult } = await dm.onTurn(context);
@@ -128,16 +137,16 @@ describe('BeginSkill', function () {
 
         await adapter.send('test').startTest();
     });
-    
-    it('should respect allow interruptions settings', async () => {
+
+    it('should respect allow interruptions settings', async function () {
         dialog.allowInterruptions = new BoolExpression(false);
         const adapter = new TestAdapter(async (context) => {
             const dc = await dialogs.createContext(context);
-            
+
             const bubbling = await dialog.onDialogEvent(dc, { name: DialogEvents.activityReceived });
             strictEqual(bubbling, true);
         });
-        
+
         await adapter.send('test').startTest();
     });
 });
@@ -155,7 +164,7 @@ function setSkillDialogOptions(dialog) {
  * @remarks
  * captureAction should match the below signature:
  * `(fromBotId: string, toBotId: string, toUrl: string, serviceUrl: string, conversationId: string, activity: Activity) => void`
- * @param {Function} captureAction 
+ * @param {Function} captureAction A function to capture the action.
  * @param {StatusCodes} returnStatusCode Defaults to StatusCodes.OK
  * @returns [BotFrameworkHttpClient, postActivityStub]
  */
@@ -164,7 +173,9 @@ function createSkillClientAndStub(captureAction, returnStatusCode = StatusCodes.
     const { BotFrameworkHttpClient } = require('../../botbuilder/lib');
 
     if (captureAction && typeof captureAction !== 'function') {
-        throw new TypeError(`Failed test arrangement - createSkillClientAndStub() received ${typeof captureAction} instead of undefined or a function.`);
+        throw new TypeError(
+            `Failed test arrangement - createSkillClientAndStub() received ${typeof captureAction} instead of undefined or a function.`
+        );
     }
 
     // Create ExpectedReplies object for response body

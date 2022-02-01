@@ -33,6 +33,10 @@ export class ContinueLoop<O extends object = {}> extends Dialog<O> implements Co
      */
     public disabled?: BoolExpression;
 
+    /**
+     * @param property The key of the conditional selector configuration.
+     * @returns The converter for the selector configuration.
+     */
     public getConverter(property: keyof ContinueLoopConfiguration): Converter | ConverterFactory {
         switch (property) {
             case 'disabled':
@@ -44,11 +48,12 @@ export class ContinueLoop<O extends object = {}> extends Dialog<O> implements Co
 
     /**
      * Called when the [Dialog](xref:botbuilder-dialogs.Dialog) is started and pushed onto the dialog stack.
+     *
      * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
-     * @param options Optional. Initial information to pass to the dialog.
+     * @param _options Optional. Initial information to pass to the dialog.
      * @returns A `Promise` representing the asynchronous operation.
      */
-    public async beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult> {
+    public async beginDialog(dc: DialogContext, _options?: O): Promise<DialogTurnResult> {
         if (this.disabled && this.disabled.getValue(dc.state)) {
             return await dc.endDialog();
         }
@@ -66,6 +71,6 @@ export class ContinueLoop<O extends object = {}> extends Dialog<O> implements Co
      * @returns A `string` representing the compute Id.
      */
     protected onComputeId(): string {
-        return `ContinueLoop[]`;
+        return 'ContinueLoop[]';
     }
 }

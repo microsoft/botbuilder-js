@@ -26,21 +26,17 @@ export class Sqrt extends ExpressionEvaluator {
      * @private
      */
     private static evaluator(): EvaluateExpressionDelegate {
-        return FunctionUtils.applyWithError(
-            (args: any[]): any =>
-            {
-                let error: string;
-                let value: any;
-                const originalNumber = Number(args[0]);
-                if (originalNumber < 0) {
-                    error = 'Do not support square root extraction of negative numbers.';
-                } else {
-                    value = Math.sqrt(originalNumber);
-                }
+        return FunctionUtils.applyWithError((args: any[]): any => {
+            let error: string;
+            let value: any;
+            const originalNumber = Number(args[0]);
+            if (originalNumber < 0) {
+                error = 'Do not support square root extraction of negative numbers.';
+            } else {
+                value = Math.sqrt(originalNumber);
+            }
 
-                return {value, error}
-            },
-            FunctionUtils.verifyNumber
-        );
+            return { value, error };
+        }, FunctionUtils.verifyNumber);
     }
 }

@@ -54,7 +54,7 @@ export class UriPort extends ExpressionEvaluator {
         if (!error) {
             try {
                 result = parseInt(parsed.port);
-            } catch (e) {
+            } catch {
                 error = 'invalid operation, input uri should be an absolute URI';
             }
         }

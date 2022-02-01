@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
 import 'mocha';
-import {ObjectExpression} from 'adaptive-expressions';
+import { ObjectExpression } from 'adaptive-expressions';
 import * as assert from 'assert';
 import { Choice } from 'botbuilder-dialogs';
 import { ChoiceSet } from '../';
@@ -9,36 +9,34 @@ interface Bar {
     choices: ChoiceSet;
 }
 
-function assertValues(value){
+function assertValues(value) {
     assert.equal('test1', value[0].value);
     assert.equal('test2', value[1].value);
     assert.equal('test3', value[2].value);
 }
 
-describe('ChoiceSetTests', function() {
+describe('ChoiceSetTests', function () {
     this.timeout(10000);
 
-    it('TestExpression', async () => {
+    it('TestExpression', async function () {
         const state = {
-            choices: [
-                { value: 'test1' } as Choice,
-                { value: 'test2' } as Choice,
-                { value: 'test3' } as Choice,
-            ]
+            choices: [{ value: 'test1' } as Choice, { value: 'test2' } as Choice, { value: 'test3' } as Choice],
         };
         const ep = new ObjectExpression<ChoiceSet>('choices');
         const { value } = ep.tryGetValue(state);
         assertValues(value);
     });
 
-    it('TestValue', async () => {
+    it('TestValue', async function () {
         const state = {};
-        const ep = new ObjectExpression<ChoiceSet>(new ChoiceSet([{ value: 'test1' }, { value: 'test2' }, { value: 'test3' }]));
+        const ep = new ObjectExpression<ChoiceSet>(
+            new ChoiceSet([{ value: 'test1' }, { value: 'test2' }, { value: 'test3' }])
+        );
         const { value } = ep.tryGetValue(state);
         assertValues(value);
     });
 
-    it('TestStringArrayAccess', async () => {
+    it('TestStringArrayAccess', async function () {
         const state = {};
         const stringArr = ['test1', 'test2', 'test3'];
         const ep = new ObjectExpression<ChoiceSet>(new ChoiceSet(stringArr));
@@ -46,17 +44,13 @@ describe('ChoiceSetTests', function() {
         assertValues(value);
     });
 
-    it('TestConverterExpressionAccess', async () => {
+    it('TestConverterExpressionAccess', async function () {
         const state = {
-            test: [
-                { value: 'test1' } as Choice,
-                { value: 'test2' } as Choice,
-                { value: 'test3' } as Choice,
-            ]
+            test: [{ value: 'test1' } as Choice, { value: 'test2' } as Choice, { value: 'test3' } as Choice],
         };
 
         const sample = {
-            choices: 'test'
+            choices: 'test',
         };
 
         const ep = new ObjectExpression<ChoiceSet>(sample.choices);
@@ -64,35 +58,27 @@ describe('ChoiceSetTests', function() {
         assertValues(value);
     });
 
-    it('TestConvertObjectAccess', async () => {
+    it('TestConvertObjectAccess', async function () {
         const state = {};
 
         const sample = {
-            choices: [
-                { value: 'test1' },
-                { value: 'test2' },
-                { value: 'test3' }
-            ]
+            choices: [{ value: 'test1' }, { value: 'test2' }, { value: 'test3' }],
         };
 
         const json = JSON.stringify(sample);
         const bar = JSON.parse(json) as Bar;
-        
+
         // TS doesn't run 'new' automatically unlike C#
         const choicesBar = new ObjectExpression<ChoiceSet>(bar.choices);
         const { value } = choicesBar.tryGetValue(state);
         assertValues(value);
     });
 
-    it('TestConvertStringAccess', async () => {
+    it('TestConvertStringAccess', async function () {
         const state = {};
 
         const sample = {
-            choices: [
-                'test1',
-                'test2',
-                'test3',
-            ]
+            choices: ['test1', 'test2', 'test3'],
         };
 
         const json = JSON.stringify(sample);
@@ -105,7 +91,7 @@ describe('ChoiceSetTests', function() {
         assertValues(value);
     });
 
-    it('TestConvertStringArray', async () => {
+    it('TestConvertStringArray', async function () {
         const sample = [];
         sample.push('test1');
         sample.push('test2');

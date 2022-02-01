@@ -33,7 +33,7 @@ class TelemetryPropertiesConverter implements Converter<PropertiesInput, Propert
     /**
      * Converts a [PropertiesInput](xref:botbuilder-dialogs-adaptive.PropertiesInput) or [PropertiesOutput](xref:botbuilder-dialogs-adaptive.PropertiesOutput) into telemetry [PropertiesOutput](xref:botbuilder-dialogs-adaptive.PropertiesOutput).
      *
-     * @param properties The [PropertiesInput](xref:botbuilder-dialogs-adaptive.PropertiesInput) or [PropertiesOutput](xref:botbuilder-dialogs-adaptive.PropertiesOutput) to convert.
+     * @param value The [PropertiesInput](xref:botbuilder-dialogs-adaptive.PropertiesInput) or [PropertiesOutput](xref:botbuilder-dialogs-adaptive.PropertiesOutput) to convert.
      * @returns The converted [StringExpression](xref:adaptive-expressions.StringExpression).
      */
     public convert(value: PropertiesInput | PropertiesOutput): PropertiesOutput {
@@ -60,6 +60,7 @@ export class TelemetryTrackEventAction<O extends object = {}>
 
     /**
      * Initializes a new instance of the [TelemetryTrackEventAction](xref:botbuilder-dialogs-adaptive.TelemetryTrackEventAction) class.
+     *
      * @param eventName Name to use for the event.
      * @param properties Properties to attach to the tracked event.
      */
@@ -67,6 +68,7 @@ export class TelemetryTrackEventAction<O extends object = {}>
 
     /**
      * Initializes a new instance of the [TelemetryTrackEventAction](xref:botbuilder-dialogs-adaptive.TelemetryTrackEventAction) class.
+     *
      * @param eventName Optional. Name to use for the event.
      * @param properties Optional. Properties to attach to the tracked event.
      */
@@ -98,6 +100,10 @@ export class TelemetryTrackEventAction<O extends object = {}>
      */
     public properties: { [name: string]: StringExpression };
 
+    /**
+     * @param property The key of the conditional selector configuration.
+     * @returns The converter for the selector configuration.
+     */
     public getConverter(property: keyof TelemetryTrackEventActionConfiguration): Converter | ConverterFactory {
         switch (property) {
             case 'eventName':
@@ -113,11 +119,12 @@ export class TelemetryTrackEventAction<O extends object = {}>
 
     /**
      * Starts a new [Dialog](xref:botbuilder-dialogs.Dialog) and pushes it onto the dialog stack.
+     *
      * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
-     * @param options Optional. Initial information to pass to the dialog.
+     * @param _options Optional. Initial information to pass to the dialog.
      * @returns A `Promise` representing the asynchronous operation.
      */
-    public async beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult> {
+    public async beginDialog(dc: DialogContext, _options?: O): Promise<DialogTurnResult> {
         if (this.disabled && this.disabled.getValue(dc.state)) {
             return await dc.endDialog();
         }

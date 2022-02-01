@@ -266,6 +266,7 @@ export class ExpressionParser implements ExpressionParserInterface {
 
     /**
      * Initializes a new instance of the [ExpressionParser](xref:adaptive-expressions.ExpressionParser) class.
+     *
      * @param lookup [EvaluatorLookup](xref:adaptive-expressions.EvaluatorLookup) for information from type string.
      */
     public constructor(lookup?: EvaluatorLookup) {
@@ -304,6 +305,7 @@ export class ExpressionParser implements ExpressionParserInterface {
 
     /**
      * Parse the input into an expression.
+     *
      * @param expression Expression to parse.
      * @returns Expression tree.
      */

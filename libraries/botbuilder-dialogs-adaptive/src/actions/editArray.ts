@@ -53,6 +53,7 @@ export class EditArray<O extends object = {}> extends Dialog<O> implements EditA
 
     /**
      * Initializes a new instance of the [EditArray](xref:botbuilder-dialogs-adaptive.EditArray) class.
+     *
      * @param changeType [ArrayChangeType](xref:botbuilder-dialogs-adaptive.ArrayChangeType), change type.
      * @param itemsProperty Array property.
      * @param value Optional. Value to insert.
@@ -62,6 +63,7 @@ export class EditArray<O extends object = {}> extends Dialog<O> implements EditA
 
     /**
      * Initializes a new instance of the [EditArray](xref:botbuilder-dialogs-adaptive.EditArray) class.
+     *
      * @param changeType Optional. [ArrayChangeType](xref:botbuilder-dialogs-adaptive.ArrayChangeType), change type.
      * @param itemsProperty Optional. Array property.
      * @param value Optional. Value to insert.
@@ -115,6 +117,10 @@ export class EditArray<O extends object = {}> extends Dialog<O> implements EditA
      */
     public disabled?: BoolExpression;
 
+    /**
+     * @param property The key of the conditional selector configuration.
+     * @returns The converter for the selector configuration.
+     */
     public getConverter(property: keyof EditArrayConfiguration): Converter | ConverterFactory {
         switch (property) {
             case 'changeType':
@@ -134,11 +140,12 @@ export class EditArray<O extends object = {}> extends Dialog<O> implements EditA
 
     /**
      * Starts a new [Dialog](xref:botbuilder-dialogs.Dialog) and pushes it onto the dialog stack.
+     *
      * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
-     * @param options Optional. Initial information to pass to the dialog.
+     * @param _options Optional. Initial information to pass to the dialog.
      * @returns A `Promise` representing the asynchronous operation.
      */
-    public async beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult> {
+    public async beginDialog(dc: DialogContext, _options?: O): Promise<DialogTurnResult> {
         if (this.disabled && this.disabled.getValue(dc.state)) {
             return await dc.endDialog();
         }

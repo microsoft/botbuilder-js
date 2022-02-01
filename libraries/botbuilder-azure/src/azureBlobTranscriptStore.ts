@@ -97,6 +97,7 @@ export class AzureBlobTranscriptStore implements TranscriptStore {
      * @param conversationId Conversation Id.
      * @param continuationToken Continuation token to page through results.
      * @param startDate Earliest time to include.
+     * @returns The PagedResult of activities.
      */
     async getTranscriptActivities(
         channelId: string,
@@ -143,6 +144,7 @@ export class AzureBlobTranscriptStore implements TranscriptStore {
      *
      * @param channelId Channel Id.
      * @param continuationToken ContinuationToken token to page through results.
+     * @returns A promise representation of [PagedResult<TranscriptInfo>](xref:botbuilder-core.PagedResult)
      */
     async listTranscripts(channelId: string, continuationToken?: string): Promise<PagedResult<TranscriptInfo>> {
         if (!channelId) {
@@ -391,6 +393,8 @@ export class AzureBlobTranscriptStore implements TranscriptStore {
 
     /**
      * Delay Container creation if it does not exist.
+     *
+     * @returns A promise representing the asynchronous operation.
      */
     private ensureContainerExists(): Promise<azure.BlobService.ContainerResult> {
         const key: string = this.settings.containerName;
@@ -431,6 +435,7 @@ export class AzureBlobTranscriptStore implements TranscriptStore {
             },
         }) as BlobServiceAsync;
 
+        // eslint-disable-next-line @typescript-eslint/ban-types
         function denodeify<T>(thisArg: any, fn: Function): (...args: any[]) => Promise<T> {
             return (...args: any[]): Promise<T> => {
                 return new Promise<T>((resolve: any, reject: any): void => {

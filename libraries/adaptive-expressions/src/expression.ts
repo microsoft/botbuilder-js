@@ -1,4 +1,3 @@
-/* eslint-disable security/detect-object-injection */
 /**
  * @module adaptive-expressions
  */
@@ -28,7 +27,9 @@ import { ReturnType } from './returnType';
  */
 export class Expression {
     /**
-     * Expected result of evaluating expression.
+     * Expected result of evaluating the expression.
+     *
+     * @returns The expected result of evaluating the expression.
      */
     public get returnType(): ReturnType {
         return this.evaluator.returnType;
@@ -36,6 +37,8 @@ export class Expression {
 
     /**
      * Type of expression.
+     *
+     * @returns The type of the expression.
      */
     public get type(): string {
         return this.evaluator.type;
@@ -60,6 +63,7 @@ export class Expression {
 
     /**
      * expression constructor.
+     *
      * @param type Type of expression from ExpressionType
      * @param evaluator Information about how to validate and evaluate expression.
      * @param children Child expressions.
@@ -80,6 +84,7 @@ export class Expression {
 
     /**
      * Do a deep equality between expressions.
+     *
      * @param other Other expression.
      * @returns True if expressions are the same.
      */
@@ -117,7 +122,7 @@ export class Expression {
      * Return the static reference paths to memory.
      * Return all static paths to memory.  If there is a computed element index, then the path is terminated there,
      * but you might get other paths from the computed part as well.
-     * @param expression Expression to get references from.
+     *
      * @returns List of the static reference paths.
      */
     public references(): string[] {
@@ -130,8 +135,8 @@ export class Expression {
 
     /**
      * Walking function for identifying static memory references in an expression.
+     *
      * @param expression Expression to analyze.
-     * @param references Tracking for references found.
      * @param extension If present, called to override lookup for things like template expansion.
      * @returns Accessor path of expression.
      */
@@ -222,6 +227,7 @@ export class Expression {
 
     /**
      * Parse an expression string into an [Expression](xref:adaptive-expressions.Expression) object.
+     *
      * @param expression Expression string.
      * @param lookup Optional. [EvaluatorLookup](xref:adaptive-expressions.EvaluatorLookup) function lookup when parsing the expression. Default is [Expression.lookup](xref:adaptive-expressions.Expression.lookup) which uses [Expression.functions](xref:adaptive-expressions.Expression.functions) table.
      * @returns The expression object.
@@ -232,6 +238,7 @@ export class Expression {
 
     /**
      * Lookup an [ExpressionEvaluator](xref:adaptive-expressions.ExpressionEvaluator) function by name.
+     *
      * @param functionName Name of function to lookup.
      * @returns An [ExpressionEvaluator](xref:adaptive-expressions.ExpressionEvaluator) corresponding to the function name.
      */
@@ -246,9 +253,11 @@ export class Expression {
 
     /**
      * Make an expression and validate it.
+     *
      * @param type Type of expression from ExpressionType.
      * @param evaluator Information about how to validate and evaluate expression.
      * @param children Child expressions.
+     * @returns The new expression.
      */
     public static makeExpression(type: string, evaluator: ExpressionEvaluator, ...children: Expression[]): Expression {
         const expr: Expression = new Expression(type, evaluator, ...children);
@@ -259,7 +268,9 @@ export class Expression {
 
     /**
      * Construct an expression from a EvaluateExpressionDelegate
+     *
      * @param func Function to create an expression from.
+     * @returns The new expression.
      */
     public static lambaExpression(func: EvaluateExpressionDelegate): Expression {
         return new Expression(ExpressionType.Lambda, new ExpressionEvaluator(ExpressionType.Lambda, func));
@@ -268,6 +279,7 @@ export class Expression {
     /**
      * Construct an expression from a lamba expression over the state.
      * Exceptions will be caught and surfaced as an error string.
+     *
      * @param func ambda expression to evaluate.
      * @returns New expression.
      */
@@ -276,7 +288,6 @@ export class Expression {
             ExpressionType.Lambda,
             new ExpressionEvaluator(
                 ExpressionType.Lambda,
-                // eslint-disable-next-line @typescript-eslint/no-unused-vars
                 (_expression: Expression, state: any, _: Options): ValueWithError => {
                     let value: any;
                     let error: string;
@@ -294,6 +305,7 @@ export class Expression {
 
     /**
      * Construct and validate an Set a property expression to a value expression.
+     *
      * @param property property expression.
      * @param value value expression.
      * @returns New expression.
@@ -308,6 +320,7 @@ export class Expression {
 
     /**
      * Construct and validate an Equals expression.
+     *
      * @param children Child clauses.
      * @returns New expression.
      */
@@ -317,6 +330,7 @@ export class Expression {
 
     /**
      * Construct and validate an And expression.
+     *
      * @param children Child clauses.
      * @returns New expression.
      */
@@ -330,6 +344,7 @@ export class Expression {
 
     /**
      * Construct and validate an Or expression.
+     *
      * @param children Child clauses.
      * @returns New expression.
      */
@@ -343,7 +358,8 @@ export class Expression {
 
     /**
      * Construct and validate an Not expression.
-     * @param children Child clauses.
+     *
+     * @param child Child clauses.
      * @returns New expression.
      */
     public static notExpression(child: Expression): Expression {
@@ -352,8 +368,9 @@ export class Expression {
 
     /**
      * Validate immediate expression.
+     *
+     * @returns The validated expression.
      */
-    // tslint:disable-next-line: no-void-expression
     public validate = (): void => this.evaluator.validateExpression(this);
 
     /**
@@ -368,8 +385,10 @@ export class Expression {
 
     /**
      * Evaluate the expression.
-     * Global state to evaluate accessor expressions against.  Can Dictionary be otherwise reflection is used to access property and then indexer.
-     * @param state
+     *
+     * @param state Global state to evaluate accessor expressions against. Can be Dictionary, otherwise reflection is used to access property and then indexer.
+     * @param options Options used in the evaluation.
+     * @returns Computed value and an error string. If the string is non-null, then there was an evaluation error.
      */
     public tryEvaluate(state: MemoryInterface | any, options: Options = undefined): ValueWithError {
         if (!Extensions.isMemoryInterface(state)) {
@@ -382,6 +401,7 @@ export class Expression {
 
     /**
      * Returns a string that represents the current [Expression](xref:adaptive-expressions.Expression) object.
+     *
      * @returns A string that represents the current [Expression](xref:adaptive-expressions.Expression) object.
      */
     public toString(): string {

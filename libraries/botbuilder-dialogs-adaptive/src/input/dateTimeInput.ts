@@ -29,6 +29,10 @@ export class DateTimeInput extends InputDialog implements DateTimeInputConfigura
 
     public outputFormat: StringExpression;
 
+    /**
+     * @param property The key of the conditional selector configuration.
+     * @returns The converter for the selector configuration.
+     */
     public getConverter(property: keyof DateTimeInputConfiguration): Converter | ConverterFactory {
         switch (property) {
             case 'defaultLocale':
@@ -42,6 +46,7 @@ export class DateTimeInput extends InputDialog implements DateTimeInputConfigura
 
     /**
      * @protected
+     * @returns A `string` representing the compute Id.
      */
     protected onComputeId(): string {
         return `DateTimeInput[${this.prompt && this.prompt.toString()}]`;

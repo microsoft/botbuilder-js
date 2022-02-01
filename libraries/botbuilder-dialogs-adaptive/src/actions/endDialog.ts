@@ -37,6 +37,7 @@ export class EndDialog<O extends object = {}> extends Dialog<O> implements EndDi
 
     /**
      * Creates a new `EndDialog` instance.
+     *
      * @param value Optional, a value expression for the result to be returned to the caller.
      */
     public constructor(value?: any) {
@@ -56,6 +57,10 @@ export class EndDialog<O extends object = {}> extends Dialog<O> implements EndDi
      */
     public disabled?: BoolExpression;
 
+    /**
+     * @param property The key of the conditional selector configuration.
+     * @returns The converter for the selector configuration.
+     */
     public getConverter(property: keyof EndDialogConfiguration): Converter | ConverterFactory {
         switch (property) {
             case 'value':
@@ -69,11 +74,12 @@ export class EndDialog<O extends object = {}> extends Dialog<O> implements EndDi
 
     /**
      * Starts a new [Dialog](xref:botbuilder-dialogs.Dialog) and pushes it onto the dialog stack.
+     *
      * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
-     * @param options Optional. Initial information to pass to the dialog.
+     * @param _options Optional. Initial information to pass to the dialog.
      * @returns A `Promise` representing the asynchronous operation.
      */
-    public async beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult> {
+    public async beginDialog(dc: DialogContext, _options?: O): Promise<DialogTurnResult> {
         if (this.disabled && this.disabled.getValue(dc.state)) {
             return await dc.endDialog();
         }
@@ -89,6 +95,7 @@ export class EndDialog<O extends object = {}> extends Dialog<O> implements EndDi
 
     /**
      * Ends the parent [Dialog](xref:botbuilder-dialogs.Dialog).
+     *
      * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
      * @param result Optional. Value returned from the dialog that was called. The type
      * of the value returned is dependent on the child dialog.

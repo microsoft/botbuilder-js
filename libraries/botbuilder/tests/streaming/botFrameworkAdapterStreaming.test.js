@@ -55,7 +55,7 @@ describe('BotFrameworkAdapter Streaming tests', function () {
         expect(adapter.streamingServer.disconnect()).to.not.throw;
     });
 
-    it(`throws exception when trying to connect to a different named pipe than it's connected to`, async function () {
+    it("throws exception when trying to connect to a different named pipe than it's connected to", async function () {
         const adapter = new ConnectionTestAdapter();
 
         await adapter.useNamedPipe(async (_) => {}, 'NamedPipeTest');
@@ -70,7 +70,7 @@ describe('BotFrameworkAdapter Streaming tests', function () {
         );
     });
 
-    it(`doesn't throw while trying to connect to named pipe it's connected to`, async function () {
+    it("doesn't throw while trying to connect to named pipe it's connected to", async function () {
         const adapter = new ConnectionTestAdapter();
         const namedPipeName = 'NamedPipeTest';
 
@@ -101,7 +101,9 @@ describe('BotFrameworkAdapter Streaming tests', function () {
 
         await assert.rejects(
             adapter.sendActivities(new TurnContext(adapter, activity), [reply]),
-            new Error('BotFrameworkAdapter.sendActivities(): Unable to send activity as Streaming connection is closed.')
+            new Error(
+                'BotFrameworkAdapter.sendActivities(): Unable to send activity as Streaming connection is closed.'
+            )
         );
     });
 

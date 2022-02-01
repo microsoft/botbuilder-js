@@ -40,6 +40,7 @@ export class IfCondition<O extends object = {}>
 
     /**
      * Initializes a new instance of the [IfCondition](xref:botbuilder-dialogs-adaptive.IfCondition) class.
+     *
      * @param condition Optional. Conditional expression to evaluate.
      * @param elseActions Optional. The actions to run if [condition](#condition) returns false.
      */
@@ -73,6 +74,10 @@ export class IfCondition<O extends object = {}>
      */
     public disabled?: BoolExpression;
 
+    /**
+     * @param property The key of the conditional selector configuration.
+     * @returns The converter for the selector configuration.
+     */
     public getConverter(property: keyof IfConditionConfiguration): Converter | ConverterFactory {
         switch (property) {
             case 'condition':
@@ -119,6 +124,7 @@ export class IfCondition<O extends object = {}>
 
     /**
      * Gets the child [Dialog](xref:botbuilder-dialogs.Dialog) dependencies so they can be added to the containers [Dialog](xref:botbuilder-dialogs.Dialog) set.
+     *
      * @returns The child [Dialog](xref:botbuilder-dialogs.Dialog) dependencies.
      */
     public getDependencies(): Dialog[] {
@@ -127,11 +133,12 @@ export class IfCondition<O extends object = {}>
 
     /**
      * Starts a new [Dialog](xref:botbuilder-dialogs.Dialog) and pushes it onto the dialog stack.
+     *
      * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
-     * @param options Optional. Initial information to pass to the dialog.
+     * @param _options Optional. Initial information to pass to the dialog.
      * @returns A `Promise` representing the asynchronous operation.
      */
-    public async beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult> {
+    public async beginDialog(dc: DialogContext, _options?: O): Promise<DialogTurnResult> {
         if (this.disabled && this.disabled.getValue(dc.state)) {
             return await dc.endDialog();
         }

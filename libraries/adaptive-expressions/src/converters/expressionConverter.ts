@@ -14,6 +14,7 @@ import { Expression } from '../expression';
 export class ExpressionConverter {
     /**
      * Converts a `string` into an [Expression](xref:adaptive-expressions.Expression).
+     *
      * @param value `string` to convert.
      * @returns The [Expression](xref:adaptive-expressions.Expression).
      */

@@ -13,6 +13,7 @@ import { Expression } from './expression';
 export interface ExpressionParserInterface {
     /**
      * Parse a string into an Expression
+     *
      * @param expression Expression to parse.
      * @returns The resulting expression.
      */

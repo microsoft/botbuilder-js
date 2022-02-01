@@ -24,8 +24,10 @@ export class MultiLanguageGenerator extends MultiLanguageGeneratorBase {
 
     /**
      * Implementation of lookup by locale.
+     *
      * @param dialogContext Context for the current turn of conversation with the user.
      * @param locale Locale to lookup.
+     * @returns An object with a boolean showing existence and the language generator.
      */
     public tryGetGenerator(
         dialogContext: DialogContext,

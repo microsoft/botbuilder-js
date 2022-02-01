@@ -10,7 +10,24 @@ import { Activity, ActivityTypes, RecognizerResult } from 'botbuilder';
 import { DialogContext } from 'botbuilder-dialogs';
 import { AdaptiveRecognizer } from './adaptiveRecognizer';
 
+/**
+ * ValueRecognizer - Recognizer for mapping message activity. Value payload into intent/entities.
+ * 
+ * @remarks
+ * This recognizer will map MessageActivity Value payloads into intents and entities.
+ *      activity.Value.intent => RecognizerResult.Intents.
+ *      activity.Value.properties => RecognizerResult.Entities.
+ */
 export class ValueRecognizer extends AdaptiveRecognizer {
+    /**
+     * Runs current DialogContext.TurnContext.Activity through a recognizer and returns a [RecognizerResult](xref:botbuilder-core.RecognizerResult).
+     *
+     * @param dialogContext The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
+     * @param activity [Activity](xref:botframework-schema.Activity) to recognize.
+     * @param telemetryProperties Optional, additional properties to be logged to telemetry with the LuisResult event.
+     * @param telemetryMetrics Optional, additional metrics to be logged to telemetry with the LuisResult event.
+     * @returns {Promise<RecognizerResult>} Analysis of utterance.
+     */
     public async recognize(
         dialogContext: DialogContext,
         activity: Activity,
@@ -30,7 +47,7 @@ export class ValueRecognizer extends AdaptiveRecognizer {
                     if (property.toLowerCase() == 'intent') {
                         recognizerResult.intents[value[property]] = { score: 1.0 };
                     } else {
-                        if (!recognizerResult.entities.hasOwnProperty(property)) {
+                        if (!Object.hasOwnProperty.call(recognizerResult.entities, property)) {
                             recognizerResult.entities[property] = [];
                         }
                         recognizerResult.entities[property].push(value[property]);

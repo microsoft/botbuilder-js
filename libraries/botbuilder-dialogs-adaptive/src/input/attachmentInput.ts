@@ -30,7 +30,8 @@ export class AttachmentInput extends InputDialog implements AttachmentInputConfi
     );
 
     /**
-     * @protected
+     * @param property The key of the conditional selector configuration.
+     * @returns The converter for the selector configuration.
      */
     public getConverter(property: keyof AttachmentInputConfiguration): Converter | ConverterFactory {
         switch (property) {

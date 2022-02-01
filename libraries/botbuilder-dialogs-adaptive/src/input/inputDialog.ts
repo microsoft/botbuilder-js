@@ -133,6 +133,10 @@ export abstract class InputDialog extends Dialog implements InputDialogConfigura
      */
     public disabled?: BoolExpression;
 
+    /**
+     * @param property The key of the conditional selector configuration.
+     * @returns The converter for the selector configuration.
+     */
     public getConverter(property: keyof InputDialogConfiguration): Converter | ConverterFactory {
         switch (property) {
             case 'alwaysPrompt':
@@ -164,6 +168,7 @@ export abstract class InputDialog extends Dialog implements InputDialogConfigura
 
     /**
      * Initializes a new instance of the [InputDialog](xref:botbuilder-dialogs-adaptive.InputDialog) class
+     *
      * @param property Optional. The value expression which the input will be bound to.
      * @param prompt Optional. The [Activity](xref:botframework-schema.Activity) to send to the user,
      * if a string is specified it will instantiates an [ActivityTemplate](xref:botbuilder-dialogs-adaptive.ActivityTemplate).
@@ -184,6 +189,7 @@ export abstract class InputDialog extends Dialog implements InputDialogConfigura
 
     /**
      * Called when the [Dialog](xref:botbuilder-dialogs.Dialog) is started and pushed onto the dialog stack.
+     *
      * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
      * @param options Optional. Initial information to pass to the [Dialog](xref:botbuilder-dialogs.Dialog).
      * @returns A [DialogTurnResult](xref:botbuilder-dialogs.DialogTurnResult) `Promise` representing the asynchronous operation.
@@ -223,6 +229,7 @@ export abstract class InputDialog extends Dialog implements InputDialogConfigura
 
     /**
      * Called when the [Dialog](xref:botbuilder-dialogs.Dialog) is _continued_, where it is the active dialog and the user replies with a new activity.
+     *
      * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
      * @returns A [DialogTurnResult](xref:botbuilder-dialogs.DialogTurnResult) `Promise` representing the asynchronous operation.
      */
@@ -279,13 +286,14 @@ export abstract class InputDialog extends Dialog implements InputDialogConfigura
 
     /**
      * Called when a child [Dialog](xref:botbuilder-dialogs.Dialog) completes its turn, returning control to this dialog.
+     *
      * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
-     * @param reason [DialogReason](xref:botbuilder-dialogs.DialogReason), reason why the dialog resumed.
-     * @param result Optional. Value returned from the [Dialog](xref:botbuilder-dialogs.Dialog) that was called.
+     * @param _reason [DialogReason](xref:botbuilder-dialogs.DialogReason), reason why the dialog resumed.
+     * @param _result Optional. Value returned from the [Dialog](xref:botbuilder-dialogs.Dialog) that was called.
      * The type of the value returned is dependent on the child dialog.
      * @returns A [DialogTurnResult](xref:botbuilder-dialogs.DialogTurnResult) `Promise` representing the asynchronous operation.
      */
-    public async resumeDialog(dc: DialogContext, reason: DialogReason, result?: any): Promise<DialogTurnResult> {
+    public async resumeDialog(dc: DialogContext, _reason: DialogReason, _result?: any): Promise<DialogTurnResult> {
         // Re-send initial prompt
         return await this.promptUser(dc, InputState.missing);
     }
@@ -322,10 +330,11 @@ export abstract class InputDialog extends Dialog implements InputDialogConfigura
     /**
      * @protected
      * Method which processes options.
-     * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
+     * @param _dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
      * @param options Initial information to pass to the dialog.
+     * @returns A promise representing the asynchronous operation.
      */
-    protected onInitializeOptions(dc: DialogContext, options: any): Promise<any> {
+    protected onInitializeOptions(_dc: DialogContext, options: any): Promise<any> {
         return Promise.resolve(Object.assign({}, options));
     }
 
@@ -384,11 +393,13 @@ export abstract class InputDialog extends Dialog implements InputDialogConfigura
 
     /**
      * Helper function to compose an output activity containing a set of choices.
+     *
      * @param prompt The prompt to append the users choices to.
      * @param channelId ID of the channel the prompt is being sent to.
      * @param choices List of choices to append.
      * @param style Configured style for the list of choices.
      * @param options (Optional) options to configure the underlying ChoiceFactory call.
+     * @returns A bound activity ready to send to the user.
      */
     protected appendChoices(
         prompt: Partial<Activity>,

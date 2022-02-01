@@ -37,6 +37,7 @@ export class ThrowException extends Dialog implements ThrowExceptionConfiguratio
 
     /**
      * Initializes a new instance of the [ThrowException](xref:botbuilder-dialogs-adaptive.ThrowException) class.
+     *
      * @param errorValue Optional. Memory property path to use to get the error value to throw.
      */
     public constructor(errorValue: unknown) {
@@ -56,6 +57,10 @@ export class ThrowException extends Dialog implements ThrowExceptionConfiguratio
      */
     public errorValue?: ValueExpression;
 
+    /**
+     * @param property The key of the conditional selector configuration.
+     * @returns The converter for the selector configuration.
+     */
     getConverter(property: keyof ThrowExceptionConfiguration): Converter | ConverterFactory {
         switch (property) {
             case 'disabled':
@@ -71,10 +76,10 @@ export class ThrowException extends Dialog implements ThrowExceptionConfiguratio
      * Starts a new [Dialog](xref:botbuilder-dialogs.Dialog) and pushes it onto the dialog stack.
      *
      * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
-     * @param options Optional. Initial information to pass to the dialog.
+     * @param _options Optional. Initial information to pass to the dialog.
      * @returns A `Promise` representing the asynchronous operation.
      */
-    public async beginDialog(dc: DialogContext, options?: Record<string, unknown>): Promise<DialogTurnResult> {
+    public async beginDialog(dc: DialogContext, _options?: Record<string, unknown>): Promise<DialogTurnResult> {
         if (this.disabled && this.disabled.getValue(dc.state)) {
             return dc.endDialog();
         }

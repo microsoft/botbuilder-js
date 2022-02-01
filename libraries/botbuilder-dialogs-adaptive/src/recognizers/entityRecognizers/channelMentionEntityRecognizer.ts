@@ -19,17 +19,17 @@ export class ChannelMentionEntityRecognizer extends AdaptiveRecognizer {
     /**
      * To recognize intents and entities in a users utterance.
      *
-     * @param {DialogContext} dialogContext Dialog Context.
+     * @param {DialogContext} _dialogContext Dialog Context.
      * @param {Partial<Activity>} activity Activity.
-     * @param {object} telemetryProperties Additional properties to be logged to telemetry with event.
-     * @param {object} telemetryMetrics Additional metrics to be logged to telemetry with event.
+     * @param {object} _telemetryProperties Additional properties to be logged to telemetry with event.
+     * @param {object} _telemetryMetrics Additional metrics to be logged to telemetry with event.
      * @returns {Promise<RecognizerResult>} Analysis of utterance.
      */
     public async recognize(
-        dialogContext: DialogContext,
+        _dialogContext: DialogContext,
         activity: Partial<Activity>,
-        telemetryProperties?: Record<string, string>,
-        telemetryMetrics?: Record<string, number>
+        _telemetryProperties?: Record<string, string>,
+        _telemetryMetrics?: Record<string, number>
     ): Promise<RecognizerResult> {
         const result: RecognizerResult = {
             text: '',

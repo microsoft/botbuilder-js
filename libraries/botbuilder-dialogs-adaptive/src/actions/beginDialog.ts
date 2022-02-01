@@ -37,6 +37,7 @@ export class BeginDialog<O extends object = {}> extends BaseInvokeDialog<O> impl
 
     /**
      * Creates a new `BeginDialog` instance.
+     *
      * @param dialogIdToCall ID of the dialog to call.
      * @param options (Optional) static options to pass the called dialog.
      */
@@ -44,6 +45,7 @@ export class BeginDialog<O extends object = {}> extends BaseInvokeDialog<O> impl
 
     /**
      * Creates a new [BeginDialog](xref:botbuilder-dialogs-adaptive.BeginDialog) instance.
+     *
      * @param dialogIdToCall Optional. ID of the [Dialog](xref:botbuilder-dialogs.Dialog) to call.
      * @param options Optional. Static options to pass the called dialog.
      */
@@ -61,6 +63,10 @@ export class BeginDialog<O extends object = {}> extends BaseInvokeDialog<O> impl
      */
     public disabled?: BoolExpression;
 
+    /**
+     * @param property The key of the conditional selector configuration.
+     * @returns The converter for the selector configuration.
+     */
     public getConverter(property: keyof BeginDialogConfiguration): Converter | ConverterFactory {
         switch (property) {
             case 'resultProperty':
@@ -74,6 +80,7 @@ export class BeginDialog<O extends object = {}> extends BaseInvokeDialog<O> impl
 
     /**
      * Called when the [Dialog](xref:botbuilder-dialogs.Dialog) is started and pushed onto the dialog stack.
+     *
      * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
      * @param options Optional. Initial information to pass to the dialog.
      * @returns A `Promise` representing the asynchronous operation.
@@ -95,6 +102,7 @@ export class BeginDialog<O extends object = {}> extends BaseInvokeDialog<O> impl
 
     /**
      * Called when a child [Dialog](xref:botbuilder-dialogs.Dialog) completed its turn, returning control to this dialog.
+     *
      * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
      * @param reason [DialogReason](xref:botbuilder-dialogs.DialogReason), reason why the dialog resumed.
      * @param result Optional. Value returned from the dialog that was called. The type

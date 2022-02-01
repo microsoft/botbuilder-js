@@ -1,23 +1,22 @@
 // this test would be migrated to adaptive dialog package
 
 const { Templates } = require('botbuilder-lg');
-const {ActivityFactory, ActivityTypes } = require('botbuilder');
+const { ActivityFactory, ActivityTypes } = require('botbuilder');
 const assert = require('assert');
 
-function getTemplates(){
-    const filePath =  `${ __dirname }/lg/NormalStructuredLG.lg`;
+function getTemplates() {
+    const filePath = `${__dirname}/lg/NormalStructuredLG.lg`;
     return Templates.parseFile(filePath);
 }
 
 const templates = getTemplates();
-function getActivity(templateName, data){
+function getActivity(templateName, data) {
     const lgResult = templates.evaluate(templateName, data);
     return ActivityFactory.fromObject(lgResult);
 }
 
-describe('ActivityFactoryTest', function() {
-
-    it('inlineActivityFactory', function() {
+describe('ActivityFactoryTest', function () {
+    it('inlineActivityFactory', function () {
         let result = ActivityFactory.fromObject('text');
         assert(result.text === 'text');
         assert(result.speak === 'text');
@@ -25,216 +24,218 @@ describe('ActivityFactoryTest', function() {
 
         const data = {
             title: 'titleContent',
-            text: 'textContent'
+            text: 'textContent',
         };
 
         const cardActionLgResult = templates.evaluateText('${HerocardWithCardAction()}', data);
         result = ActivityFactory.fromObject(cardActionLgResult);
         assertCardActionActivity(result);
-
     });
 
-    it('NotSupportStructuredType', function() {
+    it('NotSupportStructuredType', function () {
         const result = getActivity('notSupport', undefined);
         assert.strictEqual(result.attachments, undefined);
-        assert.strictEqual(result.text.replace(/\r\n/g, '\n').replace(/\n/g, '').replace(/\s+/g, ''), '{"lgType":"Acti","key":"value"}');
+        assert.strictEqual(
+            result.text.replace(/\r\n/g, '\n').replace(/\n/g, '').replace(/\s+/g, ''),
+            '{"lgType":"Acti","key":"value"}'
+        );
     });
 
-    it('HerocardWithCardAction', function() {
-        let data = {
+    it('HerocardWithCardAction', function () {
+        const data = {
             title: 'titleContent',
-            text: 'textContent'
+            text: 'textContent',
         };
-        let result = getActivity('HerocardWithCardAction', data);
+        const result = getActivity('HerocardWithCardAction', data);
         assertCardActionActivity(result);
     });
 
-    it('adaptivecardActivity', function() {
-        let data = {
-            adaptiveCardTitle: 'test'
+    it('adaptivecardActivity', function () {
+        const data = {
+            adaptiveCardTitle: 'test',
         };
-        let result = getActivity('adaptivecardActivity', data);
+        const result = getActivity('adaptivecardActivity', data);
         assertAdaptiveCardActivity(result);
     });
 
-    it('externalAdaptiveCardActivity', function() {
-        let data = {
-            adaptiveCardTitle: 'test'
+    it('externalAdaptiveCardActivity', function () {
+        const data = {
+            adaptiveCardTitle: 'test',
         };
-        let result = getActivity('externalAdaptiveCardActivity', data);
+        const result = getActivity('externalAdaptiveCardActivity', data);
         assertAdaptiveCardActivity(result);
     });
 
-    it('multiExternalAdaptiveCardActivity', function() {
-        let data = {titles: ['test0', 'test1', 'test2']};
-        let result = getActivity('multiExternalAdaptiveCardActivity', data);
+    it('multiExternalAdaptiveCardActivity', function () {
+        const data = { titles: ['test0', 'test1', 'test2'] };
+        const result = getActivity('multiExternalAdaptiveCardActivity', data);
         assertMultiAdaptiveCardActivity(result);
     });
 
-    it('adaptivecardActivityWithAttachmentStructure', function() {
-        let data = {
-            adaptiveCardTitle: 'test'
+    it('adaptivecardActivityWithAttachmentStructure', function () {
+        const data = {
+            adaptiveCardTitle: 'test',
         };
-        let result = getActivity('adaptivecardActivityWithAttachmentStructure', data);
+        const result = getActivity('adaptivecardActivityWithAttachmentStructure', data);
         assertAdaptiveCardActivity(result);
     });
 
-    it('externalHeroCardActivity', function() {
-        let data = {
+    it('externalHeroCardActivity', function () {
+        const data = {
             type: 'imBack',
             title: 'taptitle',
-            value: 'tapvalue'
+            value: 'tapvalue',
         };
-        let result = getActivity('externalHeroCardActivity', data);
+        const result = getActivity('externalHeroCardActivity', data);
         assertActivityWithHeroCardAttachment(result);
     });
 
-    it('eventActivity', function() {
-        let data = {
-            text: 'textContent'
+    it('eventActivity', function () {
+        const data = {
+            text: 'textContent',
         };
-        let result = getActivity('eventActivity', data);
+        const result = getActivity('eventActivity', data);
         assertEventActivity(result);
     });
 
-    it('customizedActivityType', function() {
-        let result = getActivity('customizedActivityType', undefined);
+    it('customizedActivityType', function () {
+        const result = getActivity('customizedActivityType', undefined);
         assertCustomizedActivityType(result);
     });
 
-    it('handoffActivity', function() {
-        let data = {
-            text: 'textContent'
+    it('handoffActivity', function () {
+        const data = {
+            text: 'textContent',
         };
-        let result = getActivity('handoffActivity', data);
+        const result = getActivity('handoffActivity', data);
         assertHandoffActivity(result);
     });
 
-    it('activityWithHeroCardAttachment', function() {
-        let data = {
+    it('activityWithHeroCardAttachment', function () {
+        const data = {
             title: 'titleContent',
-            text: 'textContent'
+            text: 'textContent',
         };
-        let result = getActivity('activityWithHeroCardAttachment', data);
+        const result = getActivity('activityWithHeroCardAttachment', data);
         assertActivityWithHeroCardAttachment(result);
     });
 
-    it('herocardAttachment', function() {
-        let data = {
+    it('herocardAttachment', function () {
+        const data = {
             type: 'imBack',
             title: 'taptitle',
-            value: 'tapvalue'
+            value: 'tapvalue',
         };
-        let result = getActivity('herocardAttachment', data);
+        const result = getActivity('herocardAttachment', data);
         assertActivityWithHeroCardAttachment(result);
     });
 
-    it('activityWithMultiAttachments', function() {
-        let data = {
+    it('activityWithMultiAttachments', function () {
+        const data = {
             title: 'titleContent',
-            text: 'textContent'
+            text: 'textContent',
         };
-        let result = getActivity('activityWithMultiAttachments', data);
+        const result = getActivity('activityWithMultiAttachments', data);
         assertActivityWithMultiAttachments(result);
     });
 
-    it('activityWithSuggestionActions', function() {
-        let data = {
+    it('activityWithSuggestionActions', function () {
+        const data = {
             title: 'titleContent',
-            text: 'textContent'
+            text: 'textContent',
         };
-        let result = getActivity('activityWithSuggestionActions', data);
+        const result = getActivity('activityWithSuggestionActions', data);
         assertActivityWithSuggestionActions(result);
     });
 
-    it('messageActivityAll', function() {
-        let data = {
+    it('messageActivityAll', function () {
+        const data = {
             title: 'titleContent',
-            text: 'textContent'
+            text: 'textContent',
         };
-        let result = getActivity('messageActivityAll', data);
+        const result = getActivity('messageActivityAll', data);
         assertMessageActivityAll(result);
     });
 
-    it('activityWithMultiStructuredSuggestionActions', function() {
-        let data = {
-            text: 'textContent'
+    it('activityWithMultiStructuredSuggestionActions', function () {
+        const data = {
+            text: 'textContent',
         };
-        let result = getActivity('activityWithMultiStructuredSuggestionActions', data);
+        const result = getActivity('activityWithMultiStructuredSuggestionActions', data);
         assertActivityWithMultiStructuredSuggestionActions(result);
     });
 
-    it('activityWithMultiStringSuggestionActions', function() {
-        let data = {
-            text: 'textContent'
+    it('activityWithMultiStringSuggestionActions', function () {
+        const data = {
+            text: 'textContent',
         };
-        let result = getActivity('activityWithMultiStringSuggestionActions', data);
+        const result = getActivity('activityWithMultiStringSuggestionActions', data);
         assertActivityWithMultiStringSuggestionActions(result);
     });
 
-    it('HeroCardTemplate', function() {
-        let data = {
-            type: 'herocard'
+    it('HeroCardTemplate', function () {
+        const data = {
+            type: 'herocard',
         };
-        let result = getActivity('HeroCardTemplate', data);
+        const result = getActivity('HeroCardTemplate', data);
         assertHeroCardActivity(result);
     });
 
-    it('CustomizedCardTemplate', function() {
-        let result = getActivity('customizedCardActionActivity', undefined);
+    it('CustomizedCardTemplate', function () {
+        const result = getActivity('customizedCardActionActivity', undefined);
         assertCustomizedCardActivity(result);
     });
 
-    it('ThumbnailCardTemplate', function() {
-        let data = {
-            type: 'thumbnailcard'
+    it('ThumbnailCardTemplate', function () {
+        const data = {
+            type: 'thumbnailcard',
         };
-        let result = getActivity('ThumbnailCardTemplate', data);
+        const result = getActivity('ThumbnailCardTemplate', data);
         assertThumbnailCardActivity(result);
     });
 
-    it('AudioCardTemplate', function() {
-        let data = {
-            type: 'audiocard'
+    it('AudioCardTemplate', function () {
+        const data = {
+            type: 'audiocard',
         };
-        let result = getActivity('AudioCardTemplate', data);
+        const result = getActivity('AudioCardTemplate', data);
         assertAudioCardActivity(result);
     });
 
-    it('VideoCardTemplate', function() {
-        let data = {
-            type: 'videocard'
+    it('VideoCardTemplate', function () {
+        const data = {
+            type: 'videocard',
         };
-        let result = getActivity('VideoCardTemplate', data);
+        const result = getActivity('VideoCardTemplate', data);
         assertVideoCardActivity(result);
     });
 
-    it('SigninCardTemplate', function() {
-        let data = {
+    it('SigninCardTemplate', function () {
+        const data = {
             signinlabel: 'Sign in',
-            url: 'https://login.microsoftonline.com/'
+            url: 'https://login.microsoftonline.com/',
         };
-        let result = getActivity('SigninCardTemplate', data);
+        const result = getActivity('SigninCardTemplate', data);
         assertSigninCardActivity(result);
     });
 
-    it('OAuthCardTemplate', function() {
-        let data = {
+    it('OAuthCardTemplate', function () {
+        const data = {
             connectionName: 'MyConnection',
             signinlabel: 'Sign in',
-            url: 'https://login.microsoftonline.com/'
+            url: 'https://login.microsoftonline.com/',
         };
-        let result = getActivity('OAuthCardTemplate', data);
+        const result = getActivity('OAuthCardTemplate', data);
         assertOAuthCardActivity(result);
     });
 
-    it('AnimationCardTemplate', function() {
-        let result = getActivity('AnimationCardTemplate', undefined);
+    it('AnimationCardTemplate', function () {
+        const result = getActivity('AnimationCardTemplate', undefined);
         assertAnimationCardActivity(result);
     });
 
-    it('ReceiptCardTemplate', function() {
-        let data = {
+    it('ReceiptCardTemplate', function () {
+        const data = {
             type: 'ReceiptCard',
             receiptItems: [
                 {
@@ -242,28 +243,28 @@ describe('ActivityFactoryTest', function() {
                     price: '$ 38.45',
                     quantity: '368',
                     image: {
-                        url: 'https://github.com/amido/azure-vector-icons/raw/master/renders/traffic-manager.png'
-                    }
+                        url: 'https://github.com/amido/azure-vector-icons/raw/master/renders/traffic-manager.png',
+                    },
                 },
                 {
                     title: 'App Service',
                     price: '$ 45.00',
                     quantity: '720',
                     image: {
-                        url: 'https://github.com/amido/azure-vector-icons/raw/master/renders/cloud-service.png'
-                    }
-                }
-            ]
+                        url: 'https://github.com/amido/azure-vector-icons/raw/master/renders/cloud-service.png',
+                    },
+                },
+            ],
         };
-        let result = getActivity('ReceiptCardTemplate', data);
+        const result = getActivity('ReceiptCardTemplate', data);
         assertReceiptCardActivity(result);
     });
 
-    it('SuggestedActionsReference', function() {
-        let data = {
-            text: 'textContent'
+    it('SuggestedActionsReference', function () {
+        const data = {
+            text: 'textContent',
         };
-        let result = getActivity('SuggestedActionsReference', data);
+        const result = getActivity('SuggestedActionsReference', data);
         assertSuggestedActionsReferenceActivity(result);
     });
 });
@@ -287,7 +288,7 @@ function assertOAuthCardActivity(activity) {
     assert.strictEqual(activity.attachments[0].contentType, 'application/vnd.microsoft.card.oauth');
     const card = activity.attachments[0].content;
     assert(card);
-    assert.strictEqual(card.text, 'This is some text describing the card, it\'s cool because it\'s cool');
+    assert.strictEqual(card.text, "This is some text describing the card, it's cool because it's cool");
     assert.strictEqual(card.connectionName, 'MyConnection');
     assert.strictEqual(card.buttons.length, 1);
     assert.strictEqual(card.buttons[0].title, 'Sign in');
@@ -319,7 +320,7 @@ function assertVideoCardActivity(activity) {
     assert(card);
     assert.strictEqual(card.title, 'Cheese gromit!');
     assert.strictEqual(card.subtitle, 'videocard');
-    assert.strictEqual(card.text, 'This is some text describing the card, it\'s cool because it\'s cool');
+    assert.strictEqual(card.text, "This is some text describing the card, it's cool because it's cool");
     assert.strictEqual(card.image.url, 'https://memegenerator.net/img/instances/500x/73055378/cheese-gromit.jpg');
     assert.strictEqual(card.media[0].url, 'https://youtu.be/530FEFogfBQ');
     assert.strictEqual(card.shareable, false);
@@ -329,7 +330,7 @@ function assertVideoCardActivity(activity) {
     assert.strictEqual(card.buttons.length, 3);
 
     for (let i = 0; i < card.buttons.length; i++) {
-        assert.strictEqual(card.buttons[i].title, `Option ${ i + 1 }`);
+        assert.strictEqual(card.buttons[i].title, `Option ${i + 1}`);
     }
 }
 
@@ -343,7 +344,7 @@ function assertAudioCardActivity(activity) {
     assert(card);
     assert.strictEqual(card.title, 'Cheese gromit!');
     assert.strictEqual(card.subtitle, 'audiocard');
-    assert.strictEqual(card.text, 'This is some text describing the card, it\'s cool because it\'s cool');
+    assert.strictEqual(card.text, "This is some text describing the card, it's cool because it's cool");
     assert.strictEqual(card.image.url, 'https://memegenerator.net/img/instances/500x/73055378/cheese-gromit.jpg');
     assert.strictEqual(card.media[0].url, 'https://contoso.com/media/AllegrofromDuetinCMajor.mp3');
     assert.strictEqual(card.shareable, false);
@@ -353,7 +354,7 @@ function assertAudioCardActivity(activity) {
     assert.strictEqual(card.buttons.length, 3);
 
     for (let i = 0; i < card.buttons.length; i++) {
-        assert.strictEqual(card.buttons[i].title, `Option ${ i + 1 }`);
+        assert.strictEqual(card.buttons[i].title, `Option ${i + 1}`);
     }
 }
 
@@ -381,13 +382,13 @@ function assertThumbnailCardActivity(activity) {
     assert(card);
     assert.strictEqual(card.title, 'Cheese gromit!');
     assert.strictEqual(card.subtitle, 'thumbnailcard');
-    assert.strictEqual(card.text, 'This is some text describing the card, it\'s cool because it\'s cool');
+    assert.strictEqual(card.text, "This is some text describing the card, it's cool because it's cool");
     assert.strictEqual(card.images[0].url, 'https://memegenerator.net/img/instances/500x/73055378/cheese-gromit.jpg');
     assert.strictEqual(card.images[1].url, 'https://memegenerator.net/img/instances/500x/73055378/cheese-gromit.jpg');
     assert.strictEqual(card.buttons.length, 3);
 
     for (let i = 0; i < card.buttons.length; i++) {
-        assert.strictEqual(card.buttons[i].title, `Option ${ i + 1 }`);
+        assert.strictEqual(card.buttons[i].title, `Option ${i + 1}`);
     }
 }
 
@@ -401,13 +402,13 @@ function assertHeroCardActivity(activity) {
     assert(card);
     assert.strictEqual(card.title, 'Cheese gromit!');
     assert.strictEqual(card.subtitle, 'herocard');
-    assert.strictEqual(card.text, 'This is some text describing the card, it\'s cool because it\'s cool');
+    assert.strictEqual(card.text, "This is some text describing the card, it's cool because it's cool");
     assert.strictEqual(card.images[0].url, 'https://memegenerator.net/img/instances/500x/73055378/cheese-gromit.jpg');
     assert.strictEqual(card.images[1].url, 'https://memegenerator.net/img/instances/500x/73055378/cheese-gromit.jpg');
     assert.strictEqual(card.buttons.length, 3);
 
     for (let i = 0; i < card.buttons.length; i++) {
-        assert.strictEqual(card.buttons[i].title, `Option ${ i + 1 }`);
+        assert.strictEqual(card.buttons[i].title, `Option ${i + 1}`);
     }
 }
 
@@ -494,13 +495,13 @@ function assertActivityWithMultiAttachments(activity) {
     assert(card);
     assert.strictEqual(card.title, 'Cheese gromit!');
     assert.strictEqual(card.subtitle, 'type');
-    assert.strictEqual(card.text, 'This is some text describing the card, it\'s cool because it\'s cool');
+    assert.strictEqual(card.text, "This is some text describing the card, it's cool because it's cool");
     assert.strictEqual(card.images[0].url, 'https://memegenerator.net/img/instances/500x/73055378/cheese-gromit.jpg');
     assert.strictEqual(card.images[1].url, 'https://memegenerator.net/img/instances/500x/73055378/cheese-gromit.jpg');
     assert.strictEqual(card.buttons.length, 3);
 
     for (let i = 0; i < card.buttons.length; i++) {
-        assert.strictEqual(card.buttons[i].title, `Option ${ i + 1 }`);
+        assert.strictEqual(card.buttons[i].title, `Option ${i + 1}`);
     }
 }
 
@@ -562,7 +563,11 @@ function assertAdaptiveCardActivity(activity) {
     assert(activity.text === undefined);
     assert(activity.speak === undefined);
     assert.strictEqual(activity.attachments.length, 1, 'should have one attachment');
-    assert.strictEqual(activity.attachments[0].contentType, 'application/vnd.microsoft.card.adaptive', 'attachment type should be adaptivecard');
+    assert.strictEqual(
+        activity.attachments[0].contentType,
+        'application/vnd.microsoft.card.adaptive',
+        'attachment type should be adaptivecard'
+    );
     assert.strictEqual(activity.attachments[0].content.body[0].text, 'test', 'text of first body should have value');
 }
 
@@ -572,8 +577,8 @@ function assertMultiAdaptiveCardActivity(activity) {
     assert(activity.speak === undefined);
     assert.strictEqual(activity.attachments.length, 3);
     for (let i = 0; i < activity.attachments.length; i++) {
-        assert.strictEqual(activity.attachments[i].contentType, `application/vnd.microsoft.card.adaptive`);
-        assert.strictEqual(activity.attachments[i].content.body[0].text, `test${ i }`);
+        assert.strictEqual(activity.attachments[i].contentType, 'application/vnd.microsoft.card.adaptive');
+        assert.strictEqual(activity.attachments[i].content.body[0].text, `test${i}`);
     }
 }
 
@@ -595,7 +600,10 @@ function assertAnimationCardActivity(activity) {
     assert.strictEqual(card.title, 'Animation Card');
     assert.strictEqual(card.subtitle, 'look at it animate');
     assert.strictEqual(card.autostart, true);
-    assert.strictEqual(card.image.url, 'https://docs.microsoft.com/en-us/bot-framework/media/how-it-works/architecture-resize.png');
+    assert.strictEqual(
+        card.image.url,
+        'https://docs.microsoft.com/en-us/bot-framework/media/how-it-works/architecture-resize.png'
+    );
     assert.strictEqual(card.media[0].url, 'http://oi42.tinypic.com/1rchlx.jpg');
 }
 
@@ -616,7 +624,10 @@ function assertReceiptCardActivity(activity) {
     assert.strictEqual(button.title, 'More information');
     assert.strictEqual(button.type, 'openUrl');
     assert.strictEqual(button.value, 'https://azure.microsoft.com/en-us/pricing/');
-    assert.strictEqual(button.image, 'https://account.windowsazure.com/content/6.10.1.38-.8225.160809-1618/aux-pre/images/offer-icon-freetrial.png');
+    assert.strictEqual(
+        button.image,
+        'https://account.windowsazure.com/content/6.10.1.38-.8225.160809-1618/aux-pre/images/offer-icon-freetrial.png'
+    );
 
     const facts = card.facts;
     assert.strictEqual(facts.length, 2);
@@ -628,11 +639,17 @@ function assertReceiptCardActivity(activity) {
     const items = card.items;
     assert.strictEqual(items.length, 2);
     assert.strictEqual(items[0].title, 'Data Transfer');
-    assert.strictEqual(items[0].image.url, 'https://github.com/amido/azure-vector-icons/raw/master/renders/traffic-manager.png');
+    assert.strictEqual(
+        items[0].image.url,
+        'https://github.com/amido/azure-vector-icons/raw/master/renders/traffic-manager.png'
+    );
     assert.strictEqual(items[0].price, '$ 38.45');
     assert.strictEqual(items[0].quantity, '368');
     assert.strictEqual(items[1].title, 'App Service');
-    assert.strictEqual(items[1].image.url, 'https://github.com/amido/azure-vector-icons/raw/master/renders/cloud-service.png');
+    assert.strictEqual(
+        items[1].image.url,
+        'https://github.com/amido/azure-vector-icons/raw/master/renders/cloud-service.png'
+    );
     assert.strictEqual(items[1].price, '$ 45.00');
     assert.strictEqual(items[1].quantity, '720');
 }

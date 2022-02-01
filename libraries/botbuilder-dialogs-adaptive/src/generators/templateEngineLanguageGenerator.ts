@@ -20,7 +20,6 @@ export interface TemplateEngineLanguageGeneratorConfiguration {
 /**
  * [LanguageGenerator](xref:botbuilder-dialogs-adaptive.LanguageGenerator) implementation which uses LGFile.
  */
-
 export class TemplateEngineLanguageGenerator<T = unknown, D extends Record<string, unknown> = Record<string, unknown>>
     extends Configurable
     implements LanguageGenerator<T, D>, TemplateEngineLanguageGeneratorConfiguration {
@@ -31,9 +30,10 @@ export class TemplateEngineLanguageGenerator<T = unknown, D extends Record<strin
     private lg: Templates;
 
     public id = '';
- 
+
     /**
      * Initializes a new instance of the [TemplateEngineLanguageGenerator](xref:botbuilder-dialogs-adaptive.TemplateEngineLanguageGenerator) class.
+     *
      * @param arg1 Optional. An LG [Templates](xref:botbuilder-lg.Templates) or a [Resource](xref:botbuilder-dialogs-declarative.Resource).
      * @param arg2 Optional. A `Map` object with a `Resource` array for each key.
      */
@@ -56,6 +56,7 @@ export class TemplateEngineLanguageGenerator<T = unknown, D extends Record<strin
 
     /**
      * Method to generate text from given template and data.
+     *
      * @param dialogContext Context for the current turn of conversation.
      * @param template Template to evaluate.
      * @param data Data to bind to.

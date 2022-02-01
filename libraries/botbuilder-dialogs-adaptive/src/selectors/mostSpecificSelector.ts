@@ -14,6 +14,9 @@ export interface MostSpecificSelectorConfiguration {
     selector?: TriggerSelector;
 }
 
+/**
+ * Select the most specific true rule implementation of [TriggerSelector](xref:botbuilder-dialogs-adaptive.TriggerSelector).
+ */
 export class MostSpecificSelector extends TriggerSelector implements MostSpecificSelectorConfiguration {
     public static $kind = 'Microsoft.MostSpecificSelector';
 
@@ -21,12 +24,24 @@ export class MostSpecificSelector extends TriggerSelector implements MostSpecifi
 
     public selector: TriggerSelector;
 
+    /**
+     * Initializes the selector with the set of rules.
+     *
+     * @param conditionals Possible rules to match.
+     * @param _evaluate True by default if rules should be evaluated on select.
+     */
     public initialize(conditionals: OnCondition[], _evaluate: boolean): void {
         for (const conditional of conditionals) {
             this._tree.addTrigger(conditional.getExpression(), conditional);
         }
     }
 
+    /**
+     * Selects the best rule to execute.
+     *
+     * @param context The context for the current turn of conversation.
+     * @returns The best rule in original list to execute.
+     */
     public async select(context: ActionContext): Promise<OnCondition[]> {
         const triggers = this._tree.matches(context.state);
         const matches: OnCondition[] = triggers.map((trigger: Trigger) => trigger.action);

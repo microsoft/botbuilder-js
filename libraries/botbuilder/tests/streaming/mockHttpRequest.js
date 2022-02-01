@@ -2,15 +2,18 @@ const { randomBytes } = require('crypto');
 
 class MockHttpRequest {
     constructor(options = {}) {
-        const config = Object.assign({
-            method: 'GET',
-            headers: {
-                'upgrade': 'websocket',
-                'sec-websocket-key': randomBytes(16).toString('base64'),
-                'sec-websocket-version': '13',
-                'sec-websocket-protocol': ''
-            }
-        }, options);
+        const config = Object.assign(
+            {
+                method: 'GET',
+                headers: {
+                    upgrade: 'websocket',
+                    'sec-websocket-key': randomBytes(16).toString('base64'),
+                    'sec-websocket-version': '13',
+                    'sec-websocket-protocol': '',
+                },
+            },
+            options
+        );
 
         this.method = config.method;
         this.headers = config.headers;
@@ -24,6 +27,7 @@ class MockHttpRequest {
         this.streamsVal = value;
     }
 
+    // eslint-disable-next-line no-dupe-class-members
     streams() {
         return this.streamsVal;
     }

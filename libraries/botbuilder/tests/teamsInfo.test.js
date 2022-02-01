@@ -3,8 +3,8 @@ const nock = require('nock');
 const sinon = require('sinon');
 const { BotFrameworkAdapter, TeamsInfo, CloudAdapter } = require('../');
 const { Conversations } = require('botframework-connector/lib/connectorApi/operations');
-const { MicrosoftAppCredentials, ConnectorClient, ServiceClientCredentialsFactory, PasswordServiceClientCredentialFactory } = require('botframework-connector');
-const { TurnContext, MessageFactory, ActionTypes, BotAdapter, Channels } = require('botbuilder-core');
+const { MicrosoftAppCredentials, ConnectorClient } = require('botframework-connector');
+const { TurnContext, MessageFactory, ActionTypes, Channels } = require('botbuilder-core');
 
 class TeamsInfoAdapter extends BotFrameworkAdapter {
     constructor() {
@@ -836,7 +836,10 @@ describe('TeamsInfo', function () {
         });
 
         it('should throw error for missing meetingId', async function () {
-            await assert.rejects(TeamsInfo.getMeetingInfo({ activity: {} }), Error('meetingId or TurnContext containing meetingId is required.'));
+            await assert.rejects(
+                TeamsInfo.getMeetingInfo({ activity: {} }),
+                Error('meetingId or TurnContext containing meetingId is required.')
+            );
         });
     });
 
@@ -950,14 +953,14 @@ describe('TeamsInfo', function () {
 
     describe('private methods', function () {
         describe('getConnectorClient()', function () {
-            it(`should error if the context doesn't have an adapter`, function () {
+            it("should error if the context doesn't have an adapter", function () {
                 assert.throws(
                     () => TeamsInfo.getConnectorClient({}),
                     new Error('This method requires a connector client.')
                 );
             });
 
-            it(`should fallback to the connectorClient on turnState if adapter doesn't exist in context.adapter`, function () {
+            it("should fallback to the connectorClient on turnState if adapter doesn't exist in context.adapter", function () {
                 const context = new TurnContext({});
                 context.turnState.set(context.adapter.ConnectorClientKey, connectorClient);
                 const result = TeamsInfo.getConnectorClient(context);
@@ -966,21 +969,21 @@ describe('TeamsInfo', function () {
         });
 
         describe('getMembersInternal()', function () {
-            it(`should error if an invalid conversationId is passed in.`, async function () {
+            it('should error if an invalid conversationId is passed in.', async function () {
                 await assert.rejects(
                     TeamsInfo.getMembersInternal({}, undefined),
                     new Error('The getMembers operation needs a valid conversationId.')
                 );
             });
 
-            it(`should error if an invalid conversationId is passed in.`, async function () {
+            it('should error if an invalid conversationId is passed in.', async function () {
                 await assert.rejects(
                     TeamsInfo.getMemberInternal({}, undefined),
                     new Error('The getMember operation needs a valid conversationId.')
                 );
             });
 
-            it(`should error if an invalid userId is passed in.`, async function () {
+            it('should error if an invalid userId is passed in.', async function () {
                 await assert.rejects(
                     TeamsInfo.getMemberInternal({}, 'conversationId', undefined),
                     new Error('The getMember operation needs a valid userId.')
@@ -998,14 +1001,14 @@ describe('TeamsInfo', function () {
                 sandbox.restore();
             });
 
-            it(`should error if an invalid conversationId is passed in.`, async function () {
+            it('should error if an invalid conversationId is passed in.', async function () {
                 await assert.rejects(
                     TeamsInfo.getPagedMembersInternal({}, undefined, 'options'),
                     new Error('The getPagedMembers operation needs a valid conversationId.')
                 );
             });
 
-            it(`should call connectorClient.conversations.getConversationPagedMembers()`, async function () {
+            it('should call connectorClient.conversations.getConversationPagedMembers()', async function () {
                 const members = [
                     {
                         id: '29:User-One-Id',
@@ -1039,17 +1042,17 @@ describe('TeamsInfo', function () {
                 assert.strictEqual(
                     getPagedMembers.calledOnce,
                     true,
-                    `should have called conversations.getConversationPagedMembers`
+                    'should have called conversations.getConversationPagedMembers'
                 );
             });
         });
 
         describe('getTeamId()', function () {
-            it(`should error if an invalid context is passed in.`, function () {
+            it('should error if an invalid context is passed in.', function () {
                 assert.throws(() => TeamsInfo.getTeamId(undefined), Error('Missing context parameter'));
             });
 
-            it(`should error if an invalid activity is passed in.`, function () {
+            it('should error if an invalid activity is passed in.', function () {
                 assert.throws(() => TeamsInfo.getTeamId({ activity: undefined }), Error('Missing activity on context'));
             });
         });
