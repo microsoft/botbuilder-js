@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 
-import { Converter, ConverterFactory, Configurable, DialogContext, TemplateInterface, DialogStateManager } from 'botbuilder-dialogs';
+import { Converter, ConverterFactory, Configurable, DialogContext, TemplateInterface } from 'botbuilder-dialogs';
 import { TemplateEngineLanguageGenerator } from '../generators/templateEngineLanguageGenerator';
 import { LanguageGenerator } from '../languageGenerator';
 import { languageGeneratorKey } from '../languageGeneratorExtensions';
@@ -25,6 +25,7 @@ export class TextTemplate<D = Record<string, unknown>>
 
     /**
      * Initialize a new instance of TextTemplate class.
+     *
      * @param template The template to evaluate to create text.
      */
     public constructor(template?: string) {
@@ -36,10 +37,18 @@ export class TextTemplate<D = Record<string, unknown>>
      */
     public template: string;
 
+    /**
+     * @param _property The key of the conditional selector configuration.
+     * @returns The converter for the selector configuration.
+     */
     public getConverter(_property: keyof TextTemplateConfiguration): Converter | ConverterFactory {
         return undefined;
     }
 
+    /**
+     * @param config The configuration.
+     * @returns A object with the given configuration.
+     */
     public configure(config: TextTemplateConfiguration): this {
         const { template } = config;
         this.template = template;
@@ -48,8 +57,10 @@ export class TextTemplate<D = Record<string, unknown>>
 
     /**
      * Bind data to template.
+     *
      * @param dialogContext DialogContext.
      * @param data Data to bind to.
+     * @returns A promise representing the asynchronous operation.
      */
     public async bind(dialogContext: DialogContext, data: D): Promise<string> {
         if (!this.template) {

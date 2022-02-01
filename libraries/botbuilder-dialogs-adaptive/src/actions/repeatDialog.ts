@@ -25,6 +25,7 @@ export class RepeatDialog<O extends object = {}> extends BaseInvokeDialog<O> imp
 
     /**
      * Initializes a new instance of the [RepeatDialog](xref:botbuilder-dialogs-adaptive.RepeatDialog) class.
+     *
      * @param options Optional. Object with additional options.
      */
     public constructor(options?: O) {
@@ -41,6 +42,10 @@ export class RepeatDialog<O extends object = {}> extends BaseInvokeDialog<O> imp
      */
     public allowLoop?: BoolExpression;
 
+    /**
+     * @param property The key of the conditional selector configuration.
+     * @returns The converter for the selector configuration.
+     */
     public getConverter(property: keyof RepeatDialogConfiguration): Converter | ConverterFactory {
         switch (property) {
             case 'disabled':
@@ -54,6 +59,7 @@ export class RepeatDialog<O extends object = {}> extends BaseInvokeDialog<O> imp
 
     /**
      * Starts a new [Dialog](xref:botbuilder-dialogs.Dialog) and pushes it onto the dialog stack.
+     *
      * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
      * @param options Optional. Initial information to pass to the dialog.
      * @returns A `Promise` representing the asynchronous operation.

@@ -14,6 +14,7 @@ import { ValueExpression } from '../expressionProperties';
 export class ValueExpressionConverter {
     /**
      * Converts `any` value into a [ValueExpression](xref:adaptive-expressions.ValueExpression).
+     *
      * @param value `any` value to convert.
      * @returns The [ValueExpression](xref:adaptive-expressions.ValueExpression).
      */

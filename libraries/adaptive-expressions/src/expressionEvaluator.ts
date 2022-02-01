@@ -57,6 +57,7 @@ export class ExpressionEvaluator {
 
     /**
      * Initializes a new instance of the <see cref="ExpressionEvaluator"/> class.
+     *
      * @param type Expression type.
      * @param evaluator Delegate to evaluate an expression.
      * @param returnType Type expected from evaluation.
@@ -73,7 +74,6 @@ export class ExpressionEvaluator {
         this.returnType = returnType;
         this._validator =
             validator ||
-            // eslint-disable-next-line @typescript-eslint/no-unused-vars
             ((_expr: Expression): any => {
                 //noop
             });
@@ -81,6 +81,8 @@ export class ExpressionEvaluator {
 
     /**
      * Gets the evaluator that is a negation of this one.
+     *
+     * @returns The evaluator that is a negation of this one.
      */
     public get negation(): ExpressionEvaluator {
         return this._negation;
@@ -96,14 +98,20 @@ export class ExpressionEvaluator {
 
     /**
      * Evaluate an expression.
+     *
      * @param expression Expression to evaluate.
      * @param state Global state information.
+     * @param options Options used in the evaluation.
+     * @returns The value and error string that is non-null if there is an error.
      */
     public tryEvaluate = (expression: Expression, state: MemoryInterface, options: Options): ValueWithError =>
         this._evaluator(expression, state, options);
+
     /**
      * Validate an expression.
+     *
      * @param expression Expression to validate.
+     * @returns The validated expression.
      */
     public validateExpression = (expression: Expression): void => this._validator(expression);
 }

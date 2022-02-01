@@ -32,6 +32,10 @@ export class NumberInput extends InputDialog implements NumberInputConfiguration
 
     public outputFormat?: NumberExpression;
 
+    /**
+     * @param property The key of the conditional selector configuration.
+     * @returns The converter for the selector configuration.
+     */
     public getConverter(property: keyof NumberInputConfiguration): Converter | ConverterFactory {
         switch (property) {
             case 'defaultLocale':
@@ -45,6 +49,7 @@ export class NumberInput extends InputDialog implements NumberInputConfiguration
 
     /**
      * @protected
+     * @returns A `string` representing the compute Id.
      */
     protected onComputeId(): string {
         return `NumberInput[${this.prompt && this.prompt.toString()}]`;

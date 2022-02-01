@@ -107,15 +107,13 @@ steps:
 
 - powershell: |
    cd ..
-   ls -R
-  displayName: 'Dir workspace'
+   tree -a -f -s -i -I node_modules
+  displayName: 'Dir workspace except node_modules'
   continueOnError: true
   condition: succeededOrFailed()
 
 - task: ms.vss-governance-buildtask.governance-build-task-component-detection.ComponentGovernanceComponentDetection@0
   displayName: 'Component Detection'
   inputs:
-    sourceScanPath: './libraries'
-    ignoreDirectories: './testing,./tools'
+    ignoreDirectories: './testing,./tools,./generators'
     failOnAlert: false
-

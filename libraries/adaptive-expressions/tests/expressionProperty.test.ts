@@ -10,8 +10,8 @@ import {
     ExpressionParser,
 } from '../lib';
 
-describe('expressionProperty tests', () => {
-    it('ArrayExpression string', () => {
+describe('expressionProperty tests', function () {
+    it('ArrayExpression string', function () {
         class ArrFoo {
             public strings: string[];
         }
@@ -31,7 +31,7 @@ describe('expressionProperty tests', () => {
         assert.strictEqual(result, data.test.strings);
     });
 
-    it('ArrayExpression object', () => {
+    it('ArrayExpression object', function () {
         class Foo {
             public age: number;
             public name: string;
@@ -56,7 +56,7 @@ describe('expressionProperty tests', () => {
         assert.strictEqual(result, data.test.objects);
     });
 
-    it('BoolExpression', () => {
+    it('BoolExpression', function () {
         const data = { test: true };
 
         let val = new BoolExpression('true');
@@ -86,7 +86,7 @@ describe('expressionProperty tests', () => {
         assert.strictEqual(val.toExpression().toString(), 'test');
     });
 
-    it('EnumExpression', () => {
+    it('EnumExpression', function () {
         enum TestEnum {
             One,
             Two,
@@ -135,7 +135,7 @@ describe('expressionProperty tests', () => {
         assert.strictEqual(result, 3.14);
     });
 
-    it('ObjectExpression', () => {
+    it('ObjectExpression', function () {
         class Foo {
             public age: number;
             public name: string;
@@ -160,7 +160,7 @@ describe('expressionProperty tests', () => {
         assert(val.toExpression().toString().startsWith('json'));
     });
 
-    it('StringExpression', () => {
+    it('StringExpression', function () {
         const data = { test: 'joe' };
 
         let str = new StringExpression('test');
@@ -209,7 +209,7 @@ describe('expressionProperty tests', () => {
         assert.strictEqual(result, '[test](./test)\n*');
     });
 
-    it('ValueExpression', () => {
+    it('ValueExpression', function () {
         const data = { test: { x: 13 } };
 
         let val = new ValueExpression('test');

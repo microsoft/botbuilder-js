@@ -16,14 +16,16 @@ type Input = string | Record<string, unknown>;
  * Dialog expression converter that implements [Converter](xref:botbuilder-dialogs-declarative.Converter).
  */
 export class DialogExpressionConverter implements Converter<Input, DialogExpression> {
-     /**
+    /**
      * Initializes a new instance of the [DialogExpressionConverter](xref:botbuilder-dialogs-adaptive.DialogExpressionConverter) class.
-     * @param resouceExplorer Resource explorer to use for resolving references.
+     *
+     * @param _resourceExplorer Resource explorer to use for resolving references.
      */
     public constructor(private readonly _resourceExplorer: ResourceExplorer) {}
-  
+
     /**
      * Converts an object or string to a [DialogExpression](xref:botbuilder-dialogs-adaptive.DialogExpression) instance.
+     *
      * @param value An object or string value.
      * @returns A new [DialogExpression](xref:botbuilder-dialogs-adaptive.DialogExpression) instance.
      */

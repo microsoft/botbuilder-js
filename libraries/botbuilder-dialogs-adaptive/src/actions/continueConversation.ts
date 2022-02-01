@@ -62,6 +62,10 @@ export class ContinueConversation extends Dialog implements ContinueConversation
      */
     public value: ValueExpression;
 
+    /**
+     * @param property The key of the conditional selector configuration.
+     * @returns The converter for the selector configuration.
+     */
     public getConverter(property: keyof ContinueConversationConfiguration): Converter | ConverterFactory {
         switch (property) {
             case 'disabled':

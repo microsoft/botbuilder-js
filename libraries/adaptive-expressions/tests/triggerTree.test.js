@@ -458,10 +458,10 @@ const verifyTree = (tree) => {
     assert.strictEqual(badNode, undefined);
 };
 
-describe('TriggerTree', () => {
+describe('TriggerTree', function () {
     const generator = new Generator();
 
-    it('Test Root', () => {
+    it('Test Root', function () {
         const tree = new TriggerTree();
         tree.addTrigger('true', 'root');
         const matches = tree.matches({});
@@ -469,7 +469,7 @@ describe('TriggerTree', () => {
         assert.strictEqual(matches[0].action, 'root');
     });
 
-    it('Test Ignore', () => {
+    it('Test Ignore', function () {
         const tree = new TriggerTree();
         tree.addTrigger('ignore(!exists(foo)) && exists(blah)', 1);
         tree.addTrigger('exists(blah) && ignore(!exists(foo2)) && woof == 3', 2);
@@ -482,7 +482,7 @@ describe('TriggerTree', () => {
         assert.strictEqual(matches[1].action, 3);
     });
 
-    it('Test Or', () => {
+    it('Test Or', function () {
         const tree = new TriggerTree();
         tree.addTrigger('exists(woof) || exists(blah)', 1);
         tree.addTrigger('exists(blah)', 2);
@@ -494,7 +494,7 @@ describe('TriggerTree', () => {
         assert.strictEqual(matches[1].action, 2);
     });
 
-    it('Test TrueFalse', () => {
+    it('Test TrueFalse', function () {
         const tree = new TriggerTree();
         tree.addTrigger('exists(blah) && true', 1);
         tree.addTrigger('exists(blah) && false', 2);
@@ -513,7 +513,7 @@ describe('TriggerTree', () => {
         assert.strictEqual(matches[1].action, 3);
     });
 
-    it.skip('Test Tree', () => {
+    it.skip('Test Tree', function () {
         const numPredicates = 50;
         const numSingletons = 25;
         const numConjunctions = 50;

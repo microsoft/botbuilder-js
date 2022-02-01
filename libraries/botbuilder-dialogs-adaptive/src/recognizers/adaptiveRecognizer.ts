@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 import { BoolExpression } from 'adaptive-expressions';
-import { omit } from 'lodash';
+import omit from 'lodash/omit';
 import { getTopScoringIntent, RecognizerResult } from 'botbuilder';
 import { DialogContext, Recognizer } from 'botbuilder-dialogs';
 

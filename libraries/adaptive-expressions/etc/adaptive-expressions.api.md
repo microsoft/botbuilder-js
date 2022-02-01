@@ -2976,7 +2976,7 @@ export class ParseContext extends ParserRuleContext {
 export class ParseErrorListener implements ANTLRErrorListener<any> {
     // (undocumented)
     static readonly Instance: ParseErrorListener;
-    syntaxError<T>(_recognizer: Recognizer<T, any>, _offendingSymbol: T, line: number, charPositionInLine: number, msg: string, _e: RecognitionException | undefined): void;
+    syntaxError<T>(_recognizer: Recognizer<T, any>, _offendingSymbol: T, line: number, charPositionInLine: number, _msg: string, _e: RecognitionException | undefined): void;
 }
 
 // @public
@@ -3017,6 +3017,7 @@ export class Quantifier {
     constructor(variable: string, type: QuantifierType, bindings: string[]);
     // (undocumented)
     readonly bindings: string[];
+    // (undocumented)
     toString(): string;
     // (undocumented)
     readonly type: QuantifierType;
@@ -3339,6 +3340,7 @@ export class TriggerTree {
     readonly optimizers: Optimizer[];
     removeTrigger(trigger: Trigger): boolean;
     root: Node_2;
+    // (undocumented)
     toString(): string;
     totalTriggers: number;
     treeToString(indent?: number): string;

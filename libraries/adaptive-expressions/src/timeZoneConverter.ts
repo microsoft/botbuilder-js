@@ -531,6 +531,7 @@ export class TimeZoneConverter {
 
     /**
      * convert IANA timezone format to windows timezone format.
+     *
      * @param ianaTimeZoneId IANA timezone format.
      * @returns windows timezone format.
      */
@@ -545,6 +546,7 @@ export class TimeZoneConverter {
 
     /**
      * Convert windows timezone to iana timezone.
+     *
      * @param windowsTimeZoneId Windows timezone format.
      * @returns Iana timezone format.
      */
@@ -559,6 +561,7 @@ export class TimeZoneConverter {
 
     /**
      * Verify the string is windows timezone or iana string
+     *
      * @param timezoneStr time zone string
      * @returns is the string is time zone string
      */

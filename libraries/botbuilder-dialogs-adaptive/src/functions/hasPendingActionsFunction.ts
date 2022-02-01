@@ -32,7 +32,7 @@ export class HasPendingActionsFunction extends ExpressionEvaluator {
         super(HasPendingActionsFunction.functionName, HasPendingActionsFunction.function, ReturnType.Boolean);
     }
 
-    private static function(expression: Expression, state: MemoryInterface, options: Options): ValueWithError {
+    private static function(expression: Expression, state: MemoryInterface, _options: Options): ValueWithError {
         const actions: unknown[] = state.getValue('dialog._adaptive.actions');
         if (actions) {
             return {

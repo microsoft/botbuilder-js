@@ -17,6 +17,7 @@ type Input = boolean | string | Expression;
 export class BoolExpressionConverter {
     /**
      * Converts `any` value into a [BoolExpression](xref:adaptive-expressions.BoolExpression).
+     *
      * @param value `any` value to convert.
      * @returns The [BoolExpression](xref:adaptive-expressions.BoolExpression).
      */

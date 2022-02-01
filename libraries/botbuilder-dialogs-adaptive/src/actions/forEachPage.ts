@@ -45,6 +45,7 @@ export class ForEachPage<O extends object = {}> extends ActionScope<O> implement
 
     /**
      * Initializes a new instance of the [ForeachPage](xref:botbuilder-dialogs-adaptive.ForeachPage) class.
+     *
      * @param itemsProperty Optional. Expression used to compute the list that should be enumerated.
      * @param pageSize Default = `10`. Page size.
      */
@@ -81,6 +82,10 @@ export class ForEachPage<O extends object = {}> extends ActionScope<O> implement
      */
     public disabled?: BoolExpression;
 
+    /**
+     * @param property The key of the conditional selector configuration.
+     * @returns The converter for the selector configuration.
+     */
     public getConverter(property: keyof ForEachPageConfiguration): Converter | ConverterFactory {
         switch (property) {
             case 'itemsProperty':
@@ -100,6 +105,7 @@ export class ForEachPage<O extends object = {}> extends ActionScope<O> implement
 
     /**
      * Gets the child [Dialog](xref:botbuilder-dialogs.Dialog) dependencies so they can be added to the containers [Dialog](xref:botbuilder-dialogs.Dialog) set.
+     *
      * @returns The child [Dialog](xref:botbuilder-dialogs.Dialog) dependencies.
      */
     public getDependencies(): Dialog[] {
@@ -108,11 +114,12 @@ export class ForEachPage<O extends object = {}> extends ActionScope<O> implement
 
     /**
      * Starts a new [Dialog](xref:botbuilder-dialogs.Dialog) and pushes it onto the dialog stack.
+     *
      * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
-     * @param options Optional. Initial information to pass to the dialog.
+     * @param _options Optional. Initial information to pass to the dialog.
      * @returns A `Promise` representing the asynchronous operation.
      */
-    public async beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult> {
+    public async beginDialog(dc: DialogContext, _options?: O): Promise<DialogTurnResult> {
         if (this.disabled && this.disabled.getValue(dc.state)) {
             return await dc.endDialog();
         }
@@ -125,11 +132,11 @@ export class ForEachPage<O extends object = {}> extends ActionScope<O> implement
      * @protected
      * Called when the [Dialog](xref:botbuilder-dialogs.Dialog) continues to the next action.
      * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
-     * @param result Optional. Value returned from the dialog that was called. The type
+     * @param _result Optional. Value returned from the dialog that was called. The type
      * of the value returned is dependent on the child dialog.
      * @returns A `Promise` representing the asynchronous operation.
      */
-    protected async onEndOfActions(dc: DialogContext, result?: any): Promise<DialogTurnResult> {
+    protected async onEndOfActions(dc: DialogContext, _result?: any): Promise<DialogTurnResult> {
         return await this.nextPage(dc);
     }
 
@@ -138,10 +145,10 @@ export class ForEachPage<O extends object = {}> extends ActionScope<O> implement
      * Called when returning control to this [Dialog](xref:botbuilder-dialogs.Dialog) with an [ActionScopeResult](xref:botbuilder-dialogs-adaptive.ActionScopeResult)
      * with the property `ActionCommand` set to `BreakLoop`.
      * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
-     * @param actionScopeResult [ActionScopeResult](xref:botbuilder-dialogs-adaptive.ActionScopeResult), contains the actions scope result.
+     * @param _actionScopeResult [ActionScopeResult](xref:botbuilder-dialogs-adaptive.ActionScopeResult), contains the actions scope result.
      * @returns A `Promise` representing the asynchronous operation.
      */
-    protected async onBreakLoop(dc: DialogContext, actionScopeResult: ActionScopeResult): Promise<DialogTurnResult> {
+    protected async onBreakLoop(dc: DialogContext, _actionScopeResult: ActionScopeResult): Promise<DialogTurnResult> {
         return await dc.endDialog();
     }
 
@@ -150,10 +157,13 @@ export class ForEachPage<O extends object = {}> extends ActionScope<O> implement
      * Called when returning control to this [Dialog](xref:botbuilder-dialogs.Dialog) with an [ActionScopeResult](xref:botbuilder-dialogs-adaptive.ActionScopeResult)
      * with the property `ActionCommand` set to `ContinueLoop`.
      * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
-     * @param actionScopeResult [ActionScopeResult](xref:botbuilder-dialogs-adaptive.ActionScopeResult), contains the actions scope result.
+     * @param _actionScopeResult [ActionScopeResult](xref:botbuilder-dialogs-adaptive.ActionScopeResult), contains the actions scope result.
      * @returns A `Promise` representing the asynchronous operation.
      */
-    protected async onContinueLoop(dc: DialogContext, actionScopeResult: ActionScopeResult): Promise<DialogTurnResult> {
+    protected async onContinueLoop(
+        dc: DialogContext,
+        _actionScopeResult: ActionScopeResult
+    ): Promise<DialogTurnResult> {
         return await this.nextPage(dc);
     }
 
@@ -202,7 +212,7 @@ export class ForEachPage<O extends object = {}> extends ActionScope<O> implement
         } else if (typeof list === 'object') {
             let i = index;
             for (const key in list) {
-                if (list.hasOwnProperty(key)) {
+                if (Object.hasOwnProperty.call(list, key)) {
                     if (i < end) {
                         page.push(list[key]);
                     }

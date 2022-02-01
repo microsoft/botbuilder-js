@@ -52,7 +52,7 @@ export class FormatDateTime extends ExpressionEvaluator {
                 } else {
                     try {
                         dateString = new Date(`${arg}Z`).toISOString();
-                    } catch (err) {
+                    } catch {
                         dateString = new Date(arg).toISOString();
                     }
                 }

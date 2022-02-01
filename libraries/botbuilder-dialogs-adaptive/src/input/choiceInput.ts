@@ -106,6 +106,10 @@ export class ChoiceInput extends InputDialog implements ChoiceInputConfiguration
      */
     public recognizerOptions?: ObjectExpression<FindChoicesOptions> = new ObjectExpression();
 
+    /**
+     * @param property The key of the conditional selector configuration.
+     * @returns The converter for the selector configuration.
+     */
     public getConverter(property: keyof ChoiceInputConfiguration): Converter | ConverterFactory {
         switch (property) {
             case 'choices':
@@ -204,6 +208,7 @@ export class ChoiceInput extends InputDialog implements ChoiceInputConfiguration
 
     /**
      * @protected
+     * @returns A `string` representing the compute Id.
      */
     protected onComputeId(): string {
         return `ChoiceInput[${this.prompt && this.prompt.toString()}]`;
@@ -227,7 +232,7 @@ export class ChoiceInput extends InputDialog implements ChoiceInputConfiguration
         const candidateLocale = dc.getLocale() ?? opt?.locale ?? this.defaultLocale?.getValue(dc.state);
         let culture = PromptCultureModels.mapToNearestLanguage(candidateLocale);
 
-        if (!(culture && ChoiceInput.defaultChoiceOptions.hasOwnProperty(culture))) {
+        if (!(culture && Object.hasOwnProperty.call(ChoiceInput.defaultChoiceOptions, culture))) {
             culture = PromptCultureModels.English.locale;
         }
 

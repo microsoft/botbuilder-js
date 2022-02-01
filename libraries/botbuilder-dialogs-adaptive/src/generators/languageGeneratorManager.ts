@@ -33,6 +33,7 @@ export class LanguageGeneratorManager<T = unknown, D extends Record<string, unkn
 
     /**
      * Initialize a new instance of [LanguageResourceManager](xref:botbuilder-dialogs-adaptive.LanguageResourceManager) class.
+     *
      * @param resourceManager Resource explorer to manager LG files.
      */
     public constructor(resourceManager: ResourceExplorer) {
@@ -66,6 +67,7 @@ export class LanguageGeneratorManager<T = unknown, D extends Record<string, unkn
 
     /**
      * Returns the resolver to resolve LG import id to template text based on language and a template resource loader delegate.
+     *
      * @param locale Locale to identify language.
      * @param resourceMapping Template resource loader delegate.
      * @returns The delegate to resolve the resource.
