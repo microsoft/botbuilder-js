@@ -204,18 +204,18 @@ export abstract class ChannelServiceHandlerBase {
     handleSendToConversation(authHeader: string, conversationId: string, activity: Activity): Promise<ResourceResponse>;
     handleUpdateActivity(authHeader: string, conversationId: string, activityId: string, activity: Activity): Promise<ResourceResponse>;
     handleUploadAttachment(authHeader: string, conversationId: string, attachmentUpload: AttachmentData): Promise<ResourceResponse>;
-    protected onCreateConversation(claimsIdentity: ClaimsIdentity, parameters: ConversationParameters): Promise<ConversationResourceResponse>;
-    protected onDeleteActivity(claimsIdentity: ClaimsIdentity, conversationId: string, activityId: string): Promise<void>;
-    protected onDeleteConversationMember(claimsIdentity: ClaimsIdentity, conversationId: string, memberId: string): Promise<void>;
-    protected onGetActivityMembers(claimsIdentity: ClaimsIdentity, conversationId: string, activityId: string): Promise<ChannelAccount[]>;
-    protected onGetConversationMembers(claimsIdentity: ClaimsIdentity, conversationId: string): Promise<ChannelAccount[]>;
-    protected onGetConversationPagedMembers(claimsIdentity: ClaimsIdentity, conversationId: string, pageSize?: number, continuationToken?: string): Promise<PagedMembersResult>;
-    protected onGetConversations(claimsIdentity: ClaimsIdentity, conversationId: string, continuationToken?: string): Promise<ConversationsResult>;
-    protected onReplyToActivity(claimsIdentity: ClaimsIdentity, conversationId: string, activityId: string, activity: Activity): Promise<ResourceResponse>;
-    protected onSendConversationHistory(claimsIdentity: ClaimsIdentity, conversationId: string, transcript: Transcript): Promise<ResourceResponse>;
-    protected onSendToConversation(claimsIdentity: ClaimsIdentity, conversationId: string, activity: Activity): Promise<ResourceResponse>;
-    protected onUpdateActivity(claimsIdentity: ClaimsIdentity, conversationId: string, activityId: string, activity: Activity): Promise<ResourceResponse>;
-    protected onUploadAttachment(claimsIdentity: ClaimsIdentity, conversationId: string, attachmentUpload: AttachmentData): Promise<ResourceResponse>;
+    protected onCreateConversation(_claimsIdentity: ClaimsIdentity, _parameters: ConversationParameters): Promise<ConversationResourceResponse>;
+    protected onDeleteActivity(_claimsIdentity: ClaimsIdentity, _conversationId: string, _activityId: string): Promise<void>;
+    protected onDeleteConversationMember(_claimsIdentity: ClaimsIdentity, _conversationId: string, _memberId: string): Promise<void>;
+    protected onGetActivityMembers(_claimsIdentity: ClaimsIdentity, _conversationId: string, _activityId: string): Promise<ChannelAccount[]>;
+    protected onGetConversationMembers(_claimsIdentity: ClaimsIdentity, _conversationId: string): Promise<ChannelAccount[]>;
+    protected onGetConversationPagedMembers(_claimsIdentity: ClaimsIdentity, _conversationId: string, _pageSize?: number, _continuationToken?: string): Promise<PagedMembersResult>;
+    protected onGetConversations(_claimsIdentity: ClaimsIdentity, _conversationId: string, _continuationToken?: string): Promise<ConversationsResult>;
+    protected onReplyToActivity(_claimsIdentity: ClaimsIdentity, _conversationId: string, _activityId: string, _activity: Activity): Promise<ResourceResponse>;
+    protected onSendConversationHistory(_claimsIdentity: ClaimsIdentity, _conversationId: string, _transcript: Transcript): Promise<ResourceResponse>;
+    protected onSendToConversation(_claimsIdentity: ClaimsIdentity, _conversationId: string, _activity: Activity): Promise<ResourceResponse>;
+    protected onUpdateActivity(_claimsIdentity: ClaimsIdentity, _conversationId: string, _activityId: string, _activity: Activity): Promise<ResourceResponse>;
+    protected onUploadAttachment(_claimsIdentity: ClaimsIdentity, _conversationId: string, _attachmentUpload: AttachmentData): Promise<ResourceResponse>;
 }
 
 // @public
@@ -224,7 +224,7 @@ export class ChannelServiceRoutes {
     register(server: WebServer, basePath?: string): void;
 }
 
-// @public (undocumented)
+// @public
 export class CloudAdapter extends CloudAdapterBase implements BotFrameworkHttpAdapter {
     constructor(botFrameworkAuthentication?: BotFrameworkAuthentication);
     connectNamedPipe(pipeName: string, logic: (context: TurnContext) => Promise<void>, appId: string, audience: string, callerId?: string, retryCount?: number): Promise<void>;
@@ -234,7 +234,7 @@ export class CloudAdapter extends CloudAdapterBase implements BotFrameworkHttpAd
 
 // Warning: (ae-forgotten-export) The symbol "CloudChannelServiceHandler" needs to be exported by the entry point index.d.ts
 //
-// @public (undocumented)
+// @public
 export class CloudSkillHandler extends CloudChannelServiceHandler {
     constructor(adapter: BotAdapter, logic: (context: TurnContext) => Promise<void>, conversationIdFactory: SkillConversationIdFactoryBase, auth: BotFrameworkAuthentication);
     protected onDeleteActivity(claimsIdentity: ClaimsIdentity, conversationId: string, activityId: string): Promise<void>;
@@ -281,7 +281,7 @@ export class InspectionMiddleware extends InterceptionMiddleware {
 // @public
 export class InspectionState extends BotState {
     constructor(storage: Storage_2);
-    protected getStorageKey(turnContext: TurnContext): string;
+    protected getStorageKey(_turnContext: TurnContext): string;
 }
 
 // @public
@@ -356,29 +356,29 @@ export class StreamingHttpClient implements HttpClient {
 export class TeamsActivityHandler extends ActivityHandler {
     protected dispatchConversationUpdateActivity(context: TurnContext): Promise<void>;
     protected dispatchEventActivity(context: TurnContext): Promise<void>;
-    protected handleAdaptiveCardAction(context: TurnContext): Promise<AdaptiveCardInvokeResponse>;
-    protected handleTeamsAppBasedLinkQuery(context: TurnContext, query: AppBasedLinkQuery): Promise<MessagingExtensionResponse>;
-    protected handleTeamsCardActionInvoke(context: TurnContext): Promise<InvokeResponse>;
+    protected handleAdaptiveCardAction(_context: TurnContext): Promise<AdaptiveCardInvokeResponse>;
+    protected handleTeamsAppBasedLinkQuery(_context: TurnContext, _query: AppBasedLinkQuery): Promise<MessagingExtensionResponse>;
+    protected handleTeamsCardActionInvoke(_context: TurnContext): Promise<InvokeResponse>;
     protected handleTeamsFileConsent(context: TurnContext, fileConsentCardResponse: FileConsentCardResponse): Promise<void>;
-    protected handleTeamsFileConsentAccept(context: TurnContext, fileConsentCardResponse: FileConsentCardResponse): Promise<void>;
-    protected handleTeamsFileConsentDecline(context: TurnContext, fileConsentCardResponse: FileConsentCardResponse): Promise<void>;
-    protected handleTeamsMessagingExtensionBotMessagePreviewEdit(context: TurnContext, action: MessagingExtensionAction): Promise<MessagingExtensionActionResponse>;
-    protected handleTeamsMessagingExtensionBotMessagePreviewSend(context: TurnContext, action: MessagingExtensionAction): Promise<MessagingExtensionActionResponse>;
-    protected handleTeamsMessagingExtensionCardButtonClicked(context: TurnContext, cardData: any): Promise<void>;
-    protected handleTeamsMessagingExtensionConfigurationQuerySettingUrl(context: TurnContext, query: MessagingExtensionQuery): Promise<MessagingExtensionResponse>;
-    protected handleTeamsMessagingExtensionConfigurationSetting(context: TurnContext, settings: any): Promise<void>;
-    protected handleTeamsMessagingExtensionFetchTask(context: TurnContext, action: MessagingExtensionAction): Promise<MessagingExtensionActionResponse>;
-    protected handleTeamsMessagingExtensionQuery(context: TurnContext, query: MessagingExtensionQuery): Promise<MessagingExtensionResponse>;
-    protected handleTeamsMessagingExtensionSelectItem(context: TurnContext, query: any): Promise<MessagingExtensionResponse>;
-    protected handleTeamsMessagingExtensionSubmitAction(context: TurnContext, action: MessagingExtensionAction): Promise<MessagingExtensionActionResponse>;
+    protected handleTeamsFileConsentAccept(_context: TurnContext, _fileConsentCardResponse: FileConsentCardResponse): Promise<void>;
+    protected handleTeamsFileConsentDecline(_context: TurnContext, _fileConsentCardResponse: FileConsentCardResponse): Promise<void>;
+    protected handleTeamsMessagingExtensionBotMessagePreviewEdit(_context: TurnContext, _action: MessagingExtensionAction): Promise<MessagingExtensionActionResponse>;
+    protected handleTeamsMessagingExtensionBotMessagePreviewSend(_context: TurnContext, _action: MessagingExtensionAction): Promise<MessagingExtensionActionResponse>;
+    protected handleTeamsMessagingExtensionCardButtonClicked(_context: TurnContext, _cardData: any): Promise<void>;
+    protected handleTeamsMessagingExtensionConfigurationQuerySettingUrl(_context: TurnContext, _query: MessagingExtensionQuery): Promise<MessagingExtensionResponse>;
+    protected handleTeamsMessagingExtensionConfigurationSetting(_context: TurnContext, _settings: any): Promise<void>;
+    protected handleTeamsMessagingExtensionFetchTask(_context: TurnContext, _action: MessagingExtensionAction): Promise<MessagingExtensionActionResponse>;
+    protected handleTeamsMessagingExtensionQuery(_context: TurnContext, _query: MessagingExtensionQuery): Promise<MessagingExtensionResponse>;
+    protected handleTeamsMessagingExtensionSelectItem(_context: TurnContext, _query: any): Promise<MessagingExtensionResponse>;
+    protected handleTeamsMessagingExtensionSubmitAction(_context: TurnContext, _action: MessagingExtensionAction): Promise<MessagingExtensionActionResponse>;
     protected handleTeamsMessagingExtensionSubmitActionDispatch(context: TurnContext, action: MessagingExtensionAction): Promise<MessagingExtensionActionResponse>;
-    protected handleTeamsO365ConnectorCardAction(context: TurnContext, query: O365ConnectorCardActionQuery): Promise<void>;
-    protected handleTeamsSigninTokenExchange(context: TurnContext, query: SigninStateVerificationQuery): Promise<void>;
-    protected handleTeamsSigninVerifyState(context: TurnContext, query: SigninStateVerificationQuery): Promise<void>;
-    protected handleTeamsTabFetch(context: TurnContext, tabRequest: TabRequest): Promise<TabResponse>;
-    protected handleTeamsTabSubmit(context: TurnContext, tabSubmit: TabSubmit): Promise<TabResponse>;
-    protected handleTeamsTaskModuleFetch(context: TurnContext, taskModuleRequest: TaskModuleRequest): Promise<TaskModuleResponse>;
-    protected handleTeamsTaskModuleSubmit(context: TurnContext, taskModuleRequest: TaskModuleRequest): Promise<TaskModuleResponse>;
+    protected handleTeamsO365ConnectorCardAction(_context: TurnContext, _query: O365ConnectorCardActionQuery): Promise<void>;
+    protected handleTeamsSigninTokenExchange(_context: TurnContext, _query: SigninStateVerificationQuery): Promise<void>;
+    protected handleTeamsSigninVerifyState(_context: TurnContext, _query: SigninStateVerificationQuery): Promise<void>;
+    protected handleTeamsTabFetch(_context: TurnContext, _tabRequest: TabRequest): Promise<TabResponse>;
+    protected handleTeamsTabSubmit(_context: TurnContext, _tabSubmit: TabSubmit): Promise<TabResponse>;
+    protected handleTeamsTaskModuleFetch(_context: TurnContext, _taskModuleRequest: TaskModuleRequest): Promise<TaskModuleResponse>;
+    protected handleTeamsTaskModuleSubmit(_context: TurnContext, _taskModuleRequest: TaskModuleRequest): Promise<TaskModuleResponse>;
     protected onInvokeActivity(context: TurnContext): Promise<InvokeResponse>;
     protected onSignInInvoke(context: TurnContext): Promise<void>;
     protected onTeamsChannelCreated(context: any): Promise<void>;
@@ -387,7 +387,6 @@ export class TeamsActivityHandler extends ActivityHandler {
     onTeamsChannelDeletedEvent(handler: (channelInfo: ChannelInfo, teamInfo: TeamInfo, context: TurnContext, next: () => Promise<void>) => Promise<void>): this;
     protected onTeamsChannelRenamed(context: any): Promise<void>;
     onTeamsChannelRenamedEvent(handler: (channelInfo: ChannelInfo, teamInfo: TeamInfo, context: TurnContext, next: () => Promise<void>) => Promise<void>): this;
-    // (undocumented)
     protected onTeamsChannelRestored(context: any): Promise<void>;
     onTeamsChannelRestoredEvent(handler: (channelInfo: ChannelInfo, teamInfo: TeamInfo, context: TurnContext, next: () => Promise<void>) => Promise<void>): this;
     protected onTeamsMeetingEnd(context: TurnContext): Promise<void>;

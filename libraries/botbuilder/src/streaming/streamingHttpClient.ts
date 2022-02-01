@@ -22,7 +22,7 @@ export class StreamingHttpClient implements HttpClient {
      */
     public constructor(server: IStreamingTransportServer) {
         if (!server) {
-            throw new Error(`StreamingHttpClient: Expected server.`);
+            throw new Error('StreamingHttpClient: Expected server.');
         }
         this.server = server;
     }
@@ -33,7 +33,7 @@ export class StreamingHttpClient implements HttpClient {
      * and converting it to a form that can be sent over a streaming transport.
      *
      * @param httpRequest The outgoing request created by the BotframeworkAdapter.
-     * @return The streaming transport compatible response to send back to the client.
+     * @returns The streaming transport compatible response to send back to the client.
      */
     public async sendRequest(httpRequest: WebResource): Promise<HttpOperationResponse> {
         if (!httpRequest) {

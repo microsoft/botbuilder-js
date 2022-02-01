@@ -8,7 +8,7 @@ describe('EventFactory', function () {
 
     describe('createHandoffInitiation', function () {
         it('should succeed', function () {
-            const adapter = new TestAdapter(async (context) => {
+            const adapter = new TestAdapter(async () => {
                 /* no op */
             });
             const fromId = 'test';
@@ -62,7 +62,7 @@ describe('EventFactory', function () {
             strictEqual(messageFormEvent, message);
 
             const status = JSON.stringify(handoffEvent.value);
-            strictEqual(status, `{\"state\":\"${state}\",\"message\":\"${message}\"}`);
+            strictEqual(status, `{"state":"${state}","message":"${message}"}`);
             assert(handoffEvent.attachments, 'handoffEvent.attachments should not be undefined.');
             assert(handoffEvent.id, 'handoffEvent.id should not be undefined.');
             strictEqual(handoffEvent.localTimezone, dayjs.tz.guess());

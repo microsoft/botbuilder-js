@@ -203,7 +203,7 @@ describe('BotFrameworkHttpClient', function () {
             assert.strictEqual(activity.recipient, undefined);
         });
 
-        it(`should restore sent activity's relatesTo to original value`, async function () {
+        it("should restore sent activity's relatesTo to original value", async function () {
             nock('http://skillUrl')
                 .post('/api/good')
                 .matchHeader(ConversationConstants.ConversationIdHttpHeaderName, 'conversationId')
