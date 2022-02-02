@@ -37,12 +37,13 @@ export interface WebServer {
  */
 export class ChannelServiceRoutes {
     /**
-     * @param channelServiceHandler
+     * @param channelServiceHandler The channel service handler.
      */
     constructor(private readonly channelServiceHandler: ChannelServiceHandlerBase) {}
 
     /**
      * Registers all Channel Service paths on the provided WebServer.
+     *
      * @param server WebServer
      * @param basePath Optional basePath which is appended before the service's REST API is configured on the WebServer.
      */
@@ -279,7 +280,7 @@ export class ChannelServiceRoutes {
         const authHeader = req.headers.authorization || req.headers.Authorization || '';
         this.channelServiceHandler
             .handleDeleteConversationMember(authHeader, req.params.conversationId, req.params.memberId)
-            .then((resourceResponse) => {
+            .then(() => {
                 res.status(200);
                 res.end();
             })

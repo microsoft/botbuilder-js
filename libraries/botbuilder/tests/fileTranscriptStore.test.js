@@ -53,7 +53,7 @@ describe('The FileTranscriptStore', function () {
     describe('should log activities', function () {
         const conversationId = 'logActivitySpec';
         let activities;
-        before(async function () {
+        before(function () {
             activities = createActivities(conversationId, startDate);
             return Promise.all(activities.map((activity) => storage.logActivity(activity)));
         });
@@ -156,7 +156,7 @@ describe('The FileTranscriptStore', function () {
     describe('should retrieve activities', function () {
         const conversationId = 'retrieveActivitiesSpec';
         let activities;
-        before(async function () {
+        before(function () {
             activities = createActivities(conversationId, startDate, 60);
             storage = new FileTranscriptStore(workingFolder);
             return Promise.all(activities.map((activity) => storage.logActivity(activity)));
@@ -182,7 +182,6 @@ describe('The FileTranscriptStore', function () {
 
         it('as expected when a startDate is provided', async function () {
             let pagedResult = {};
-            const i = activities.length / FileTranscriptStore.PageSize;
             let continuationToken;
             const seen = new Proxy(
                 {},
@@ -246,7 +245,7 @@ describe('The FileTranscriptStore', function () {
 
     describe('should list transcripts', function () {
         let activities;
-        before(async function () {
+        before(function () {
             activities = [];
             let ct = 100;
             while (ct--) {

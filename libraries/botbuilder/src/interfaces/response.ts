@@ -18,7 +18,6 @@ export interface Response {
 }
 
 export const ResponseT = z.custom<Response>(
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (val: any) =>
         typeof val.end === 'function' &&
         typeof val.header === 'function' &&

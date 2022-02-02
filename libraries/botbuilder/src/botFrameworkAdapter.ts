@@ -306,6 +306,8 @@ export class BotFrameworkAdapter
 
     /**
      * Used in streaming contexts to check if the streaming connection is still open for the bot to send activities.
+     *
+     * @returns True if the streaming connection is open, otherwise false.
      */
     public get isStreamingConnectionOpen(): boolean {
         return this.streamingServer?.isConnected ?? false;
@@ -501,7 +503,7 @@ export class BotFrameworkAdapter
         maybeLogic?: (context: TurnContext) => Promise<void>
     ): Promise<void> {
         if (!reference.serviceUrl) {
-            throw new Error(`BotFrameworkAdapter.createConversation(): missing serviceUrl.`);
+            throw new Error('BotFrameworkAdapter.createConversation(): missing serviceUrl.');
         }
 
         const parameters = LogicT.check(parametersOrLogic) ? {} : parametersOrLogic;
@@ -576,13 +578,13 @@ export class BotFrameworkAdapter
      */
     public async deleteActivity(context: TurnContext, reference: Partial<ConversationReference>): Promise<void> {
         if (!reference.serviceUrl) {
-            throw new Error(`BotFrameworkAdapter.deleteActivity(): missing serviceUrl`);
+            throw new Error('BotFrameworkAdapter.deleteActivity(): missing serviceUrl');
         }
         if (!reference.conversation || !reference.conversation.id) {
-            throw new Error(`BotFrameworkAdapter.deleteActivity(): missing conversation or conversation.id`);
+            throw new Error('BotFrameworkAdapter.deleteActivity(): missing conversation or conversation.id');
         }
         if (!reference.activityId) {
-            throw new Error(`BotFrameworkAdapter.deleteActivity(): missing activityId`);
+            throw new Error('BotFrameworkAdapter.deleteActivity(): missing activityId');
         }
         const client: ConnectorClient = this.getOrCreateConnectorClient(
             context,
@@ -605,10 +607,10 @@ export class BotFrameworkAdapter
      */
     public async deleteConversationMember(context: TurnContext, memberId: string): Promise<void> {
         if (!context.activity.serviceUrl) {
-            throw new Error(`BotFrameworkAdapter.deleteConversationMember(): missing serviceUrl`);
+            throw new Error('BotFrameworkAdapter.deleteConversationMember(): missing serviceUrl');
         }
         if (!context.activity.conversation || !context.activity.conversation.id) {
-            throw new Error(`BotFrameworkAdapter.deleteConversationMember(): missing conversation or conversation.id`);
+            throw new Error('BotFrameworkAdapter.deleteConversationMember(): missing conversation or conversation.id');
         }
         const serviceUrl: string = context.activity.serviceUrl;
         const conversationId: string = context.activity.conversation.id;
@@ -637,14 +639,14 @@ export class BotFrameworkAdapter
             activityId = context.activity.id;
         }
         if (!context.activity.serviceUrl) {
-            throw new Error(`BotFrameworkAdapter.getActivityMembers(): missing serviceUrl`);
+            throw new Error('BotFrameworkAdapter.getActivityMembers(): missing serviceUrl');
         }
         if (!context.activity.conversation || !context.activity.conversation.id) {
-            throw new Error(`BotFrameworkAdapter.getActivityMembers(): missing conversation or conversation.id`);
+            throw new Error('BotFrameworkAdapter.getActivityMembers(): missing conversation or conversation.id');
         }
         if (!activityId) {
             throw new Error(
-                `BotFrameworkAdapter.getActivityMembers(): missing both activityId and context.activity.id`
+                'BotFrameworkAdapter.getActivityMembers(): missing both activityId and context.activity.id'
             );
         }
         const serviceUrl: string = context.activity.serviceUrl;
@@ -671,10 +673,10 @@ export class BotFrameworkAdapter
      */
     public async getConversationMembers(context: TurnContext): Promise<ChannelAccount[]> {
         if (!context.activity.serviceUrl) {
-            throw new Error(`BotFrameworkAdapter.getConversationMembers(): missing serviceUrl`);
+            throw new Error('BotFrameworkAdapter.getConversationMembers(): missing serviceUrl');
         }
         if (!context.activity.conversation || !context.activity.conversation.id) {
-            throw new Error(`BotFrameworkAdapter.getConversationMembers(): missing conversation or conversation.id`);
+            throw new Error('BotFrameworkAdapter.getConversationMembers(): missing conversation or conversation.id');
         }
         const serviceUrl: string = context.activity.serviceUrl;
         const conversationId: string = context.activity.conversation.id;
@@ -743,6 +745,7 @@ export class BotFrameworkAdapter
     ): Promise<TokenResponse>;
     /**
      * Asynchronously attempts to retrieve the token for a user that's in a login flow.
+     *
      * @param context The [TurnContext](xref:botbuilder-core.TurnContext) for the turn.
      * @param connectionName The name of the auth connection to use.
      * @param magicCode Optional. The validation code the user entered.
@@ -757,7 +760,7 @@ export class BotFrameworkAdapter
         oAuthAppCredentials?: AppCredentials
     ): Promise<TokenResponse> {
         if (!context.activity.from || !context.activity.from.id) {
-            throw new Error(`BotFrameworkAdapter.getUserToken(): missing from or from.id`);
+            throw new Error('BotFrameworkAdapter.getUserToken(): missing from or from.id');
         }
         if (!connectionName) {
             throw new Error('getUserToken() requires a connectionName but none was provided.');
@@ -810,7 +813,7 @@ export class BotFrameworkAdapter
         oAuthAppCredentials?: AppCredentials
     ): Promise<void> {
         if (!context.activity.from || !context.activity.from.id) {
-            throw new Error(`BotFrameworkAdapter.signOutUser(): missing from or from.id`);
+            throw new Error('BotFrameworkAdapter.signOutUser(): missing from or from.id');
         }
         if (!userId) {
             userId = context.activity.from.id;
@@ -871,7 +874,7 @@ export class BotFrameworkAdapter
     ): Promise<string> {
         if (userId && userId != context.activity.from.id) {
             throw new ReferenceError(
-                `cannot retrieve OAuth signin link for a user that's different from the conversation`
+                "cannot retrieve OAuth signin link for a user that's different from the conversation"
             );
         }
 
@@ -931,7 +934,7 @@ export class BotFrameworkAdapter
         oAuthAppCredentials?: AppCredentials
     ): Promise<TokenStatus[]> {
         if (!userId && (!context.activity.from || !context.activity.from.id)) {
-            throw new Error(`BotFrameworkAdapter.getTokenStatus(): missing from or from.id`);
+            throw new Error('BotFrameworkAdapter.getTokenStatus(): missing from or from.id');
         }
         this.checkEmulatingOAuthCards(context);
         userId = userId || context.activity.from.id;
@@ -985,7 +988,7 @@ export class BotFrameworkAdapter
         oAuthAppCredentials?: AppCredentials
     ): Promise<{ [propertyName: string]: TokenResponse }> {
         if (!context.activity.from || !context.activity.from.id) {
-            throw new Error(`BotFrameworkAdapter.getAadTokens(): missing from or from.id`);
+            throw new Error('BotFrameworkAdapter.getAadTokens(): missing from or from.id');
         }
         this.checkEmulatingOAuthCards(context);
         const userId: string = context.activity.from.id;
@@ -1010,7 +1013,7 @@ export class BotFrameworkAdapter
      * @param connectionName The name of the auth connection to use.
      * @param userId The user id that will be associated with the token.
      * @param finalRedirect The final URL that the OAuth flow will redirect to.
-     *
+     * @param appCredentials Optional. The CoreAppCredentials for OAuth.
      * @returns The [BotSignInGetSignInResourceResponse](xref:botframework-connector.BotSignInGetSignInResourceResponse) object.
      */
     public async getSignInResource(
@@ -1025,7 +1028,7 @@ export class BotFrameworkAdapter
         }
 
         if (!context.activity.from || !context.activity.from.id) {
-            throw new Error(`BotFrameworkAdapter.getSignInResource(): missing from or from.id`);
+            throw new Error('BotFrameworkAdapter.getSignInResource(): missing from or from.id');
         }
 
         // The provided userId doesn't match the from.id on the activity. (same for finalRedirect)
@@ -1054,6 +1057,7 @@ export class BotFrameworkAdapter
 
     /**
      * Asynchronously Performs a token exchange operation such as for single sign-on.
+     *
      * @param context Context for the current turn of conversation with the user.
      * @param connectionName Name of the auth connection to use.
      * @param userId The user id that will be associated with the token.
@@ -1069,6 +1073,7 @@ export class BotFrameworkAdapter
     ): Promise<TokenResponse>;
     /**
      * Asynchronously Performs a token exchange operation such as for single sign-on.
+     *
      * @param context The [TurnContext](xref:botbuilder-core.TurnContext) for the turn.
      * @param connectionName Name of the auth connection to use.
      * @param userId The user id that will be associated with the token.
@@ -1311,7 +1316,7 @@ export class BotFrameworkAdapter
             if (processError && (processError as Error).stack) {
                 throw new Error(`BotFrameworkAdapter.processActivityDirect(): ERROR\n ${processError.stack}`);
             } else {
-                throw new Error(`BotFrameworkAdapter.processActivityDirect(): ERROR`);
+                throw new Error('BotFrameworkAdapter.processActivityDirect(): ERROR');
             }
         }
     }
@@ -1347,12 +1352,12 @@ export class BotFrameworkAdapter
                     context.turnState.set(INVOKE_RESPONSE_KEY, activity);
                     responses.push({} as ResourceResponse);
                     break;
-                default:
+                default: {
                     if (!activity.serviceUrl) {
-                        throw new Error(`BotFrameworkAdapter.sendActivity(): missing serviceUrl.`);
+                        throw new Error('BotFrameworkAdapter.sendActivity(): missing serviceUrl.');
                     }
                     if (!activity.conversation || !activity.conversation.id) {
-                        throw new Error(`BotFrameworkAdapter.sendActivity(): missing conversation id.`);
+                        throw new Error('BotFrameworkAdapter.sendActivity(): missing conversation id.');
                     }
                     if (activity && BotFrameworkAdapter.isStreamingServiceUrl(activity.serviceUrl)) {
                         if (!this.isStreamingConnectionOpen) {
@@ -1380,6 +1385,7 @@ export class BotFrameworkAdapter
                         );
                     }
                     break;
+                }
             }
         }
         return responses;
@@ -1394,19 +1400,19 @@ export class BotFrameworkAdapter
      *
      * @param context The context object for the turn.
      * @param activity The updated version of the activity to replace.
-     *
+     * @returns A `Promise` representing the [ResourceResponse](xref:botframework-schema.ResourceResponse) for the operation.
      * @remarks
      * Not all channels support this operation. For channels that don't, this call may throw an exception.
      */
     public async updateActivity(context: TurnContext, activity: Partial<Activity>): Promise<ResourceResponse | void> {
         if (!activity.serviceUrl) {
-            throw new Error(`BotFrameworkAdapter.updateActivity(): missing serviceUrl`);
+            throw new Error('BotFrameworkAdapter.updateActivity(): missing serviceUrl');
         }
         if (!activity.conversation || !activity.conversation.id) {
-            throw new Error(`BotFrameworkAdapter.updateActivity(): missing conversation or conversation.id`);
+            throw new Error('BotFrameworkAdapter.updateActivity(): missing conversation or conversation.id');
         }
         if (!activity.id) {
-            throw new Error(`BotFrameworkAdapter.updateActivity(): missing activity.id`);
+            throw new Error('BotFrameworkAdapter.updateActivity(): missing activity.id');
         }
 
         const client = this.getOrCreateConnectorClient(context, activity.serviceUrl, this.credentials);
@@ -1417,7 +1423,7 @@ export class BotFrameworkAdapter
      * Creates a connector client.
      *
      * @param serviceUrl The client's service URL.
-     *
+     * @returns The [ConnectorClient](xref:botbuilder-connector.ConnectorClient) instance.
      * @remarks
      * Override this in a derived class to create a mock connector client for unit testing.
      */
@@ -1427,6 +1433,7 @@ export class BotFrameworkAdapter
 
     /**
      * Create a ConnectorClient with a ClaimsIdentity.
+     *
      * @remarks
      * If the ClaimsIdentity contains the claims for a Skills request, create a ConnectorClient for use with Skills.
      * Derives the correct audience from the ClaimsIdentity, or the instance's credentials property.
@@ -1439,6 +1446,7 @@ export class BotFrameworkAdapter
     ): Promise<ConnectorClient>;
     /**
      * Create a ConnectorClient with a ClaimsIdentity and an explicit audience.
+     *
      * @remarks
      * If the trimmed audience is not a non-zero length string, the audience will be derived from the ClaimsIdentity or
      * the instance's credentials property.
@@ -1453,6 +1461,7 @@ export class BotFrameworkAdapter
     ): Promise<ConnectorClient>;
     /**
      * Create a [ConnectorClient](xref:botbuilder-connector.ConnectorClient) with a [ClaimsIdentity](xref:botbuilder-connector.ClaimsIdentity).
+     *
      * @remarks
      * If the [ClaimsIdentity](xref:botbuilder-connector.ClaimsIdentity) contains the claims for a Skills request, create a [ConnectorClient](xref:botbuilder-connector.ConnectorClient) for use with Skills.
      * Derives the correct audience from the [ClaimsIdentity](xref:botbuilder-connector.ClaimsIdentity), or the instance's credentials property.
@@ -1515,14 +1524,14 @@ export class BotFrameworkAdapter
         });
 
         const acceptHeader: RequestPolicyFactory = {
-            create:(nextPolicy) => ({
-                sendRequest: (httpRequest)=>{
-                    if(!httpRequest.headers.contains('accept')) {
+            create: (nextPolicy) => ({
+                sendRequest: (httpRequest) => {
+                    if (!httpRequest.headers.contains('accept')) {
                         httpRequest.headers.set('accept', '*/*');
                     }
                     return nextPolicy.sendRequest(httpRequest);
-                }
-            })
+                },
+            }),
         };
 
         // Resolve any user request policy factories, then include our user agent via a factory policy
@@ -1575,6 +1584,7 @@ export class BotFrameworkAdapter
 
     /**
      * Returns the correct [OAuthScope](xref:botframework-connector.AppCredentials.OAuthScope) for [AppCredentials](xref:botframework-connector.AppCredentials).
+     *
      * @param botAppId The bot's AppId.
      * @param claims The [Claim](xref:botbuilder-connector.Claim) list to check.
      *
@@ -1595,8 +1605,9 @@ export class BotFrameworkAdapter
      *
      * @remarks
      * When building credentials for bot-to-bot communication, oAuthScope must be passed in.
-     * @param appId
-     * @param oAuthScope
+     * @param appId The application id.
+     * @param oAuthScope The optional OAuth scope.
+     * @returns The app credentials to be used to acquire tokens.
      */
     protected async buildCredentials(appId: string, oAuthScope?: string): Promise<AppCredentials> {
         // There is no cache for AppCredentials in JS as opposed to C#.
@@ -1652,6 +1663,7 @@ export class BotFrameworkAdapter
 
     /**
      * Allows for the overriding of authentication in unit tests.
+     *
      * @param request Received request.
      * @param authHeader Received authentication header.
      */
@@ -1688,7 +1700,9 @@ export class BotFrameworkAdapter
     /**
      * Generates the CallerId property for the activity based on
      * https://github.com/microsoft/botframework-obi/blob/main/protocols/botframework-activity/botframework-activity.md#appendix-v---caller-id-values.
-     * @param identity
+     *
+     * @param identity The inbound claims.
+     * @returns {Promise<string>} a promise representing the generated callerId.
      */
     private async generateCallerId(identity: ClaimsIdentity): Promise<string> {
         if (!identity) {
@@ -1728,7 +1742,7 @@ export class BotFrameworkAdapter
      * a [TurnContext](xref:botbuilder-core.TurnContext). For a turn context, the context's
      * [activity](xref:botbuilder-core.TurnContext.activity).[serviceUrl](xref:botframework-schema.Activity.serviceUrl)
      * is used for the URL.
-     *
+     * @returns The endpoint used for the API requests.
      * @remarks
      * Override this in a derived class to create a mock OAuth API endpoint for unit testing.
      */
@@ -1762,7 +1776,7 @@ export class BotFrameworkAdapter
      * Creates a turn context.
      *
      * @param request An incoming request body.
-     *
+     * @returns A new [TurnContext](xref:botbuilder-core.TurnContext) instance.
      * @remarks
      * Override this in a derived class to modify how the adapter creates a turn context.
      */
@@ -1773,6 +1787,7 @@ export class BotFrameworkAdapter
     /**
      * Checks the validity of the request and attempts to map it the correct virtual endpoint,
      * then generates and returns a response if appropriate.
+     *
      * @param request A ReceiveRequest from the connected channel.
      * @returns A response created by the BotAdapter to be sent to the client that originated the request.
      */
@@ -1781,7 +1796,7 @@ export class BotFrameworkAdapter
 
         if (!request) {
             response.statusCode = StatusCodes.BAD_REQUEST;
-            response.setBody(`No request provided.`);
+            response.setBody('No request provided.');
             return response;
         }
 
@@ -1934,7 +1949,7 @@ export class BotFrameworkAdapter
                 // Each BotFrameworkAdapter instance is scoped to a stream, so switching streams
                 // results in dropped conversations that the bot cannot reconnect to.
                 throw new Error(
-                    `This BotFrameworkAdapter instance is already connected to a different stream. Use a new instance to connect to the provided pipeName.`
+                    'This BotFrameworkAdapter instance is already connected to a different stream. Use a new instance to connect to the provided pipeName.'
                 );
             }
         }
@@ -2014,6 +2029,7 @@ export class BotFrameworkAdapter
 
     /**
      * Connects the handler to a WebSocket server and begins listening for incoming requests.
+     *
      * @param socket The socket to use when creating the server.
      */
     private async startWebSocket(socket: ISocket): Promise<void> {
@@ -2030,9 +2046,10 @@ export class BotFrameworkAdapter
             attachmentStreams.map(async (attachmentStream) => {
                 const contentType = attachmentStream.contentType;
 
-                const content = contentType === 'application/json'
-                    ? await attachmentStream.readAsJson()
-                    : await attachmentStream.readAsString();
+                const content =
+                    contentType === 'application/json'
+                        ? await attachmentStream.readAsJson()
+                        : await attachmentStream.readAsString();
 
                 return { contentType, content };
             })
@@ -2082,7 +2099,9 @@ export class BotFrameworkAdapter
      * This can be determined by looking at the ServiceUrl property:
      *   (1) All channels that send messages via http/https are not streaming
      *   (2) Channels that send messages via streaming have a ServiceUrl that does not begin with http/https.
+     *
      * @param serviceUrl the serviceUrl provided in the resquest.
+     * @returns True if the serviceUrl is a streaming url, otherwise false.
      */
     private static isStreamingServiceUrl(serviceUrl: string): boolean {
         return serviceUrl && !serviceUrl.toLowerCase().startsWith('http');
@@ -2129,7 +2148,7 @@ function parseRequest(req: WebRequest): Promise<Activity> {
  */
 function abortWebSocketUpgrade(socket: INodeSocket, err: any): void {
     if (socket.writable) {
-        const connectionHeader = `Connection: 'close'\r\n`;
+        const connectionHeader = "Connection: 'close'\r\n";
 
         let message = '';
         AuthenticationError.isStatusCodeError(err)
