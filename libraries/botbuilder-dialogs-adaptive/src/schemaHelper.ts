@@ -13,6 +13,7 @@ import { PropertySchema } from './propertySchema';
 export class SchemaHelper {
     /**
      * Creates a new `SchemaHelper` instance.
+     *
      * @param schema JSON schema to parse.
      */
     public constructor(schema: object) {
@@ -32,6 +33,8 @@ export class SchemaHelper {
 
     /**
      * List of required property names.
+     *
+     * @returns The list of required property names.
      */
     public get required(): string[] {
         return this.schema['required'] || [];
@@ -39,7 +42,9 @@ export class SchemaHelper {
 
     /**
      * Returns the schema object for a given property path.
+     *
      * @param path Path of the properties schema to return.
+     * @returns the schema object for a given property path.
      */
     public pathToSchema(path: string): PropertySchema | undefined {
         let property: PropertySchema = undefined;
@@ -70,7 +75,7 @@ export class SchemaHelper {
             } else if (typeof items == 'object') {
                 // Copy parent $ properties like $entities
                 for (const name in schema) {
-                    if (schema.hasOwnProperty(name) && name.startsWith('$')) {
+                    if (Object.prototype.hasOwnProperty.call(schema, name) && name.startsWith('$')) {
                         items[name] = schema[name];
                     }
                 }
@@ -87,7 +92,7 @@ export class SchemaHelper {
         if (type == 'object') {
             const properties = schema['properties'] || {};
             for (const name in properties) {
-                if (properties.hasOwnProperty(name) && !name.startsWith('$')) {
+                if (Object.prototype.hasOwnProperty.call(properties, name) && !name.startsWith('$')) {
                     const newPath = path == '' ? name : `${path}.${name}`;
                     children.push(this.createProperty(properties[name], newPath));
                 }

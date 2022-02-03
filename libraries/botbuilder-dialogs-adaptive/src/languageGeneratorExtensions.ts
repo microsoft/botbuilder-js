@@ -40,6 +40,7 @@ export class LanguageGeneratorExtensions {
 
     /**
      * Register default LG file or a language generator as default language generator.
+     *
      * @param dialogManager The dialog manager to add language generator to.
      * @param lg LG resource id (default: main.lg) or language generator to be added.
      * @returns dialog manager with language generator.
@@ -72,6 +73,7 @@ export class LanguageGeneratorExtensions {
 
     /**
      * Register language policy as default policy.
+     *
      * @param dialogManager The dialog manager to add language policy to.
      * @param policy Policy to use.
      * @returns dialog manager with language policy.
