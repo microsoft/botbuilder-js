@@ -142,7 +142,7 @@ export interface ActivityTemplateConguration {
     template?: string;
 }
 
-// @public (undocumented)
+// @public
 export class AdaptiveBotComponent extends BotComponent {
     // (undocumented)
     configureServices(services: ServiceCollection, _configuration: Configuration): void;
@@ -180,6 +180,7 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> im
     recognizer?: Recognizer;
     repromptDialog(context: DialogContext | TurnContext, instance: DialogInstance): Promise<void>;
     resumeDialog(dc: DialogContext, _reason?: DialogReason, _result?: any): Promise<DialogTurnResult>;
+    // Warning: (ae-setter-with-docs) The doc comment for the property "schema" must appear on the getter, not the setter.
     set schema(value: object);
     get schema(): object;
     selector: TriggerSelector;
@@ -1353,7 +1354,7 @@ export class IsDialogActiveFunction extends ExpressionEvaluator {
     static readonly functionName = "isDialogActive";
 }
 
-// @public (undocumented)
+// @public
 export class LanguageGenerationBotComponent extends BotComponent {
     // (undocumented)
     configureServices(services: ServiceCollection, _configuration: Configuration): void;
@@ -1630,7 +1631,7 @@ export class OnBeginDialog extends OnDialogEvent {
 export class OnCancelDialog extends OnDialogEvent {
     // (undocumented)
     static $kind: string;
-    constructor(actions?: Dialog[], condtion?: string);
+    constructor(actions?: Dialog[], condition?: string);
 }
 
 // @public
@@ -1697,7 +1698,6 @@ export class OnCondition extends Configurable implements DialogDependencies, OnC
     static $kind: string;
     constructor(condition?: string, actions?: Dialog[]);
     actions: Dialog[];
-    // (undocumented)
     protected get actionScope(): ActionScope;
     addExternalCondition(condition: string): void;
     condition: BoolExpression;
@@ -1921,7 +1921,9 @@ export class PropertySchema {
     get children(): PropertySchema[];
     get entities(): string[];
     get expectedOnly(): string[];
+    // (undocumented)
     isArray(): boolean;
+    // (undocumented)
     isEnum(): boolean;
     get name(): string;
     get parent(): PropertySchema | undefined;

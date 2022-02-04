@@ -6,7 +6,14 @@ import { BotComponent } from 'botbuilder';
 import { ComponentDeclarativeTypes } from 'botbuilder-dialogs-declarative';
 import { Configuration, ServiceCollection } from 'botbuilder-dialogs-adaptive-runtime-core';
 
+/**
+ * ComponentRegistration class for language generation resources.
+ */
 export class LanguageGenerationBotComponent extends BotComponent {
+    /**
+     * @param services Services Collection to register.
+     * @param _configuration Configuration for the bot component.
+     */
     configureServices(services: ServiceCollection, _configuration: Configuration): void {
         services.composeFactory<ComponentDeclarativeTypes[]>('declarativeTypes', (declarativeTypes) =>
             declarativeTypes.concat({

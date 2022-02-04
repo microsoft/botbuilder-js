@@ -21,7 +21,9 @@ export class LanguageResourceLoader {
 
     /**
      * Group LG resource by locale.
+     *
      * @param resourceExplorer The resource explorer to use.
+     * @returns The dictionary of grouped locale.
      */
     public static groupByLocale(resourceExplorer: ResourceExplorer): Map<string, Resource[]> {
         const resourceMapping: Map<string, Resource[]> = new Map<string, Resource[]>();
@@ -73,7 +75,9 @@ export class LanguageResourceLoader {
 
     /**
      * Parse LG file name into prefix and language.
+     *
      * @param lgFileName LG input file name.
+     * @returns The name and language.
      */
     public static parseLGFileName(lgFileName: string): { prefix: string; language: string } {
         if (lgFileName === undefined || !lgFileName.endsWith('.' + this.lgSuffix)) {
@@ -91,8 +95,10 @@ export class LanguageResourceLoader {
 
     /**
      * Get the fallback locale from optional locales.
+     *
      * @param locale Current locale
      * @param optionalLocales Optional locales.
+     * @returns The final locale.
      */
     public static fallbackLocale(locale: string, optionalLocales: string[]): string {
         if (optionalLocales === undefined) {

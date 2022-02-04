@@ -17,6 +17,7 @@ export class DynamicBeginDialogDeserializer
     implements CustomDeserializer<DynamicBeginDialog, BeginDialogConfiguration> {
     /**
      * Intializes an instance of `DynamicBeginDialogDeserializer`.
+     *
      * @param _resourceExplorer The `ResourceExplorer` used by the deserializer.
      * @param _resourceId The resource id of the dynamic dialog.
      */
@@ -24,6 +25,7 @@ export class DynamicBeginDialogDeserializer
 
     /**
      * The method that loads the configuration object to a `DynamicBeginDialog` object.
+     *
      * @param config The configuration object to deserialize.
      * @param type The object type that the configuration will be deserialized to.
      * @returns A `DynamicBeginDialog` object created from the configuration.

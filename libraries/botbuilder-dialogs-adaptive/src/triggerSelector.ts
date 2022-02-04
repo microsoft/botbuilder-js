@@ -15,6 +15,7 @@ import { OnCondition } from './conditions';
 export abstract class TriggerSelector extends Configurable {
     /**
      * Initialize the selector with the set of rules.
+     *
      * @param conditionHandlers Possible rules to match.
      * @param evaluate True if rules should be evaluated on select.
      */
@@ -22,6 +23,7 @@ export abstract class TriggerSelector extends Configurable {
 
     /**
      * Select the best rule to execute.
+     *
      * @param actionContext Dialog context for evaluation.
      */
     public abstract select(actionContext: ActionContext): Promise<OnCondition[]>;
