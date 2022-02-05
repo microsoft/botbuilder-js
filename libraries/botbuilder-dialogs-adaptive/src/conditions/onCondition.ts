@@ -55,6 +55,7 @@ export class OnCondition extends Configurable implements DialogDependencies, OnC
     /**
      * Evaluates the rule and returns a predicted set of changes that should be applied to the
      * current plan.
+     *
      * @param planning Planning context object for the current conversation.
      * @param event The current event being evaluated.
      * @param preBubble If `true`, the leading edge of the event is being evaluated.
@@ -91,6 +92,9 @@ export class OnCondition extends Configurable implements DialogDependencies, OnC
 
     /**
      * @protected
+     * Gets the action scope.
+     *
+     * @returns The scope obtained from the action.
      */
     protected get actionScope(): ActionScope {
         if (!this._actionScope) {
@@ -101,6 +105,7 @@ export class OnCondition extends Configurable implements DialogDependencies, OnC
 
     /**
      * Create a new `OnCondition` instance.
+     *
      * @param condition (Optional) The condition which needs to be met for the actions to be executed.
      * @param actions (Optional) The actions to add to the plan when the rule constraints are met.
      */
@@ -110,6 +115,10 @@ export class OnCondition extends Configurable implements DialogDependencies, OnC
         this.actions = actions;
     }
 
+    /**
+     * @param property The key of the conditional selector configuration.
+     * @returns The converter for the selector configuration.
+     */
     public getConverter(property: keyof OnConditionConfiguration): Converter | ConverterFactory {
         switch (property) {
             case 'condition':
@@ -138,6 +147,7 @@ export class OnCondition extends Configurable implements DialogDependencies, OnC
 
     /**
      * Compute the current value of the priority expression and return it.
+     *
      * @param actionContext Context to use for evaluation.
      * @returns Computed priority.
      */
@@ -151,6 +161,7 @@ export class OnCondition extends Configurable implements DialogDependencies, OnC
 
     /**
      * Add external condition to the OnCondition
+     *
      * @param condition External constraint to add, it will be AND'ed to all other constraints.
      */
     public addExternalCondition(condition: string): void {
@@ -167,6 +178,7 @@ export class OnCondition extends Configurable implements DialogDependencies, OnC
 
     /**
      * Method called to execute the condition's actions.
+     *
      * @param actionContext Context.
      * @returns A promise with plan change list.
      */
@@ -180,6 +192,8 @@ export class OnCondition extends Configurable implements DialogDependencies, OnC
 
     /**
      * Get child dialog dependencies so they can be added to the containers dialogset.
+     *
+     * @returns A list of [Dialog](xref:botbuilder-dialogs.Dialog).
      */
     public getDependencies(): Dialog[] {
         return [this.actionScope];

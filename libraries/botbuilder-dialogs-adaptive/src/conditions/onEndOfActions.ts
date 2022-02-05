@@ -17,7 +17,7 @@ export class OnEndOfActions extends OnDialogEvent {
 
     /**
      * Creates a new `OnEndOfActions` instance.
-     * @param event (Optional) The event to fire on.
+     *
      * @param actions (Optional) The actions to add to the plan when the rule constraints are met.
      * @param condition (Optional) The condition which needs to be met for the actions to be executed.
      */

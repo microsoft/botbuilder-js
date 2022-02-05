@@ -39,6 +39,7 @@ export class OnIntent extends OnDialogEvent implements OnIntentConfiguration {
 
     /**
      * Creates a new `OnIntent` instance.
+     *
      * @param intent (Optional) Intent to match on.
      * @param entities (Optional) Entities which must be recognized for this rule to trigger.
      * @param actions (Optional) The actions to add to the plan when the rule constraints are met.
