@@ -27,7 +27,7 @@
     }
   },
   "dependencies": {
-    "@azure/cognitiveservices-luis-runtime": "5.0.0",
+    "@azure/cognitiveservices-luis-runtime": "2.0.0",
     "@azure/ms-rest-js": "1.9.1",
     "adaptive-expressions": "4.1.6",
     "botbuilder-core": "4.1.6",
@@ -38,6 +38,9 @@
     "node-fetch": "^2.6.0",
     "url-parse": "^1.5.1",
     "zod": "~1.11.17"
+  },
+  "resolutions": {
+    "follow-redirects": "1.14.7"
   },
   "devDependencies": {
     "@types/node-fetch": "^2.5.7",
