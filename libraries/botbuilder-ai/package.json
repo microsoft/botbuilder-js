@@ -39,6 +39,9 @@
     "url-parse": "^1.5.1",
     "zod": "~1.11.17"
   },
+  "resolutions": {
+    "follow-redirects": "1.14.7"
+  },
   "devDependencies": {
     "@types/node-fetch": "^2.5.7",
     "fs-extra": "^7.0.1",
