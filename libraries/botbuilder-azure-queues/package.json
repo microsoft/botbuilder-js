@@ -33,7 +33,7 @@
   },
   "devDependencies": {
     "botbuilder-dialogs": "4.1.6",
-    "node-fetch": "^2.6.1"
+    "node-fetch": "^2.6.7"
   },
   "scripts": {
     "build": "tsc -b",
