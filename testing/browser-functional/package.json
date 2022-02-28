@@ -6,9 +6,9 @@
   "main": "",
   "devDependencies": {
     "chromedriver": "^98.0.0",
-    "dotenv": "^8.2.0",
+    "dotenv": "^8.6.0",
     "geckodriver": "^1.19.1",
-    "nightwatch": "^2.0.7",
+    "nightwatch": "^1.7.13",
     "selenium-server": "^3.141.59"
   },
   "directories": {
