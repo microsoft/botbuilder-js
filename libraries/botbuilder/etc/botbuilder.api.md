@@ -431,12 +431,14 @@ export class TeamsInfo {
     static getMeetingInfo(context: TurnContext, meetingId?: string): Promise<TeamsMeetingInfo>;
     static getMeetingParticipant(context: TurnContext, meetingId?: string, participantId?: string, tenantId?: string): Promise<TeamsMeetingParticipant>;
     static getMember(context: TurnContext, userId: string): Promise<TeamsChannelAccount>;
+    // @deprecated
     static getMembers(context: TurnContext): Promise<TeamsChannelAccount[]>;
     static getPagedMembers(context: TurnContext, pageSize?: number, continuationToken?: string): Promise<TeamsPagedMembersResult>;
     static getPagedTeamMembers(context: TurnContext, teamId?: string, pageSize?: number, continuationToken?: string): Promise<TeamsPagedMembersResult>;
     static getTeamChannels(context: TurnContext, teamId?: string): Promise<ChannelInfo[]>;
     static getTeamDetails(context: TurnContext, teamId?: string): Promise<TeamDetails>;
     static getTeamMember(context: TurnContext, teamId?: string, userId?: string): Promise<TeamsChannelAccount>;
+    // @deprecated
     static getTeamMembers(context: TurnContext, teamId?: string): Promise<TeamsChannelAccount[]>;
     static sendMessageToTeamsChannel(context: TurnContext, activity: Activity, teamsChannelId: string, botAppId?: string): Promise<[ConversationReference, string]>;
 }
