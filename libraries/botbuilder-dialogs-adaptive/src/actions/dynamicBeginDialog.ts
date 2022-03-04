@@ -20,7 +20,8 @@ export class DynamicBeginDialog extends BeginDialog {
      * @protected
      * Evaluates expressions in options.
      * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
-     * @param options The options to bind.
+     * @param _options The options to bind.
+     * @returns An object with the binded options
      */
     protected bindOptions(dc: DialogContext, _options: object): object {
         const options = {};

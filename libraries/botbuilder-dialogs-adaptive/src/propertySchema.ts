@@ -17,6 +17,7 @@ export class PropertySchema {
 
     /**
      * Creates a new `PropertySchema` instance.
+     *
      * @param path Path to this property.
      * @param schema JSON schema fragment for this property.
      * @param children Optional. Child properties.
@@ -32,6 +33,7 @@ export class PropertySchema {
 
     /**
      * Path to schema.
+     *
      * @remarks
      * Contains `[]` for arrays and `.` for path segments.
      */
@@ -44,6 +46,8 @@ export class PropertySchema {
 
     /**
      * Parent property schema if any.
+     *
+     * @returns The parent property schema if any.
      */
     public get parent(): PropertySchema | undefined {
         return this._parent;
@@ -51,6 +55,8 @@ export class PropertySchema {
 
     /**
      * Child properties if there are any.
+     *
+     * @returns The child properties if there are any.
      */
     public get children(): PropertySchema[] {
         return this._children;
@@ -58,6 +64,8 @@ export class PropertySchema {
 
     /**
      * List of entity names.
+     *
+     * @returns A list of entity names.
      */
     public get entities(): string[] {
         return this._entities;
@@ -65,6 +73,8 @@ export class PropertySchema {
 
     /**
      * List of expected only entity names.
+     *
+     * @returns A List of expected only entity names.
      */
     public get expectedOnly(): string[] {
         return this._expectedOnly;
@@ -72,8 +82,10 @@ export class PropertySchema {
 
     /**
      * Name for this property.
+     *
      * @remarks
      * Array brackets `[]` will have been removed.
+     * @returns The name for this property.
      */
     public get name(): string {
         const segments = this.path.split('.');
@@ -82,20 +94,22 @@ export class PropertySchema {
 
     /**
      * JSON Schema type.
+     *
+     * @returns The JSON Schema type.
      */
     public get type(): string {
         return this.schema['type'];
     }
 
     /**
-     * Returns `true` if the property is an array.
+     * @returns `true` if the property is an array.
      */
     public isArray(): boolean {
         return this.path.endsWith('[]');
     }
 
     /**
-     * Returns `true` if the property is an enum.
+     * @returns `true` if the property is an enum.
      */
     public isEnum(): boolean {
         return !!this.schema['enum'];

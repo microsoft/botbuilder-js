@@ -17,6 +17,7 @@ type Input = number | string | Expression;
 export class NumberExpressionConverter {
     /**
      * Converts a `string` or `number` into a [NumberExpression](xref:adaptive-expressions.NumberExpression).
+     *
      * @param value `string` or `number` to convert.
      * @returns The [NumberExpression](xref:adaptive-expressions.NumberExpression).
      */

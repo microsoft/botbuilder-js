@@ -148,12 +148,15 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> im
      */
     public defaultResultProperty = 'dialog.result';
 
+    /**
+     * Sets the JSON Schema for the dialog.
+     */
     public set schema(value: object) {
         this.dialogSchema = new SchemaHelper(value);
     }
 
     /**
-     * JSON Schema for the dialog.
+     * Gets the JSON Schema for the dialog.
      *
      * @returns The dialog schema.
      */
@@ -161,6 +164,10 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> im
         return this.dialogSchema ? this.dialogSchema.schema : undefined;
     }
 
+    /**
+     * @param property The key of the conditional selector configuration.
+     * @returns The converter for the selector configuration.
+     */
     public getConverter(property: keyof AdaptiveDialogConfiguration): Converter | ConverterFactory {
         switch (property) {
             case 'recognizer':
@@ -250,7 +257,7 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> im
     }
 
     protected onComputeId(): string {
-        return `AdaptiveDialog[]`;
+        return 'AdaptiveDialog[]';
     }
 
     /**

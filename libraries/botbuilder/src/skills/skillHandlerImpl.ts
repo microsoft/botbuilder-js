@@ -19,6 +19,9 @@ import {
  * @internal
  */
 export class SkillHandlerImpl {
+    /**
+     * @internal
+     */
     constructor(
         private readonly skillConversationReferenceKey: symbol,
         private readonly adapter: BotAdapter,
@@ -27,6 +30,9 @@ export class SkillHandlerImpl {
         private readonly getOauthScope: () => string | undefined = () => undefined
     ) {}
 
+    /**
+     * @internal
+     */
     onSendToConversation(
         claimsIdentity: ClaimsIdentity,
         conversationId: string,
@@ -35,6 +41,9 @@ export class SkillHandlerImpl {
         return this.processActivity(claimsIdentity, conversationId, null, activity);
     }
 
+    /**
+     * @internal
+     */
     onReplyToActivity(
         claimsIdentity: ClaimsIdentity,
         conversationId: string,
@@ -44,6 +53,9 @@ export class SkillHandlerImpl {
         return this.processActivity(claimsIdentity, conversationId, activityId, activity);
     }
 
+    /**
+     * @internal
+     */
     async onUpdateActivity(
         claimsIdentity: ClaimsIdentity,
         conversationId: string,
@@ -66,6 +78,9 @@ export class SkillHandlerImpl {
         return resourceResponse ? resourceResponse : { id: activityId };
     }
 
+    /**
+     * @internal
+     */
     async onDeleteActivity(claimsIdentity: ClaimsIdentity, conversationId: string, activityId: string): Promise<void> {
         return this.continueConversation(claimsIdentity, conversationId, (context) =>
             context.deleteActivity(activityId)

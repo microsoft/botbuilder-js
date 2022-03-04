@@ -33,6 +33,9 @@ export interface RegexRecognizerConfiguration extends RecognizerSetConfiguration
     intents?: IntentPatternInput[] | IntentPattern[];
 }
 
+/**
+ * Recognizer implementation which uses regex expressions to identify intents.
+ */
 export class RegexRecognizer extends AdaptiveRecognizer implements RegexRecognizerConfiguration {
     public static $kind = 'Microsoft.RegexRecognizer';
 
@@ -46,6 +49,10 @@ export class RegexRecognizer extends AdaptiveRecognizer implements RegexRecogniz
      */
     public entities: EntityRecognizer[] = [];
 
+    /**
+     * @param property The key of the conditional selector configuration.
+     * @returns The converter for the selector configuration.
+     */
     public getConverter(property: keyof RegexRecognizerConfiguration): Converter | ConverterFactory {
         switch (property) {
             case 'intents':
@@ -55,6 +62,15 @@ export class RegexRecognizer extends AdaptiveRecognizer implements RegexRecogniz
         }
     }
 
+    /**
+     * Runs current DialogContext.TurnContext.Activity through a recognizer and returns a [RecognizerResult](xref:botbuilder-core.RecognizerResult).
+     *
+     * @param dialogContext The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
+     * @param activity [Activity](xref:botframework-schema.Activity) to recognize.
+     * @param telemetryProperties Optional, additional properties to be logged to telemetry with the LuisResult event.
+     * @param telemetryMetrics Optional, additional metrics to be logged to telemetry with the LuisResult event.
+     * @returns {Promise<RecognizerResult>} Analysis of utterance.
+     */
     public async recognize(
         dialogContext: DialogContext,
         activity: Activity,

@@ -45,6 +45,8 @@ export class ActionScope<O extends object = {}>
     implements DialogDependencies, ActionScopeConfiguration {
     /**
      * Creates a new `ActionScope` instance.
+     *
+     * @param actions The actions for the scope.
      */
     public constructor(actions: Dialog[] = []) {
         super();
@@ -56,6 +58,10 @@ export class ActionScope<O extends object = {}>
      */
     public actions: Dialog[] = [];
 
+    /**
+     * @param property The key of the conditional selector configuration.
+     * @returns The converter for the selector configuration.
+     */
     public getConverter(property: keyof ActionScopeConfiguration): Converter | ConverterFactory {
         switch (property) {
             case 'actions':
@@ -66,9 +72,10 @@ export class ActionScope<O extends object = {}>
     }
 
     /**
-     * Gets a unique `string` which represents the version of this dialog. If the version 
+     * Gets a unique `string` which represents the version of this dialog. If the version
      * changes between turns the dialog system will emit a DialogChanged event.
-     * @returns Unique `string` which should only change when dialog has changed in a 
+     *
+     * @returns Unique `string` which should only change when dialog has changed in a
      * way that should restart the dialog.
      */
     public getVersion(): string {
@@ -78,6 +85,7 @@ export class ActionScope<O extends object = {}>
 
     /**
      * Gets the child [Dialog](xref:botbuilder-dialogs.Dialog) dependencies so they can be added to the containers [Dialog](xref:botbuilder-dialogs.Dialog) set.
+     *
      * @returns The child [Dialog](xref:botbuilder-dialogs.Dialog) dependencies.
      */
     public getDependencies(): Dialog[] {
@@ -86,11 +94,12 @@ export class ActionScope<O extends object = {}>
 
     /**
      * Called when the [Dialog](xref:botbuilder-dialogs.Dialog) is started and pushed onto the dialog stack.
+     *
      * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
-     * @param options Optional. Initial information to pass to the dialog.
+     * @param _options Optional. Initial information to pass to the dialog.
      * @returns A `Promise` representing the asynchronous operation.
      */
-    public async beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult> {
+    public async beginDialog(dc: DialogContext, _options?: O): Promise<DialogTurnResult> {
         if (this.actions && this.actions.length > 0) {
             return await this.beginAction(dc, 0);
         } else {
@@ -99,8 +108,9 @@ export class ActionScope<O extends object = {}>
     }
 
     /**
-     * Called when the [Dialog](xref:botbuilder-dialogs.Dialog) is _continued_, where it is the active dialog and the 
+     * Called when the [Dialog](xref:botbuilder-dialogs.Dialog) is _continued_, where it is the active dialog and the
      * user replies with a new activity.
+     *
      * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
      * @returns A `Promise` representing the asynchronous operation.
      */
@@ -110,14 +120,15 @@ export class ActionScope<O extends object = {}>
 
     /**
      * Called when a child [Dialog](xref:botbuilder-dialogs.Dialog) completed its turn, returning control to this dialog.
+     *
      * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
      * @param _reason [DialogReason](xref:botbuilder-dialogs.DialogReason), reason why the dialog resumed.
-     * @param result Optional. Value returned from the dialog that was called. The type 
+     * @param result Optional. Value returned from the dialog that was called. The type
      * of the value returned is dependent on the child dialog.
      * @returns A `Promise` representing the asynchronous operation.
      */
     public async resumeDialog(dc: DialogContext, _reason: DialogReason, result?: any): Promise<DialogTurnResult> {
-        if (result && typeof result === 'object' && result.hasOwnProperty('actionScopeCommand')) {
+        if (result && typeof result === 'object' && Object.hasOwnProperty.call(result, 'actionScopeCommand')) {
             return await this.onActionScopeResult(dc, result as ActionScopeResult);
         }
 
@@ -196,7 +207,7 @@ export class ActionScope<O extends object = {}>
      * @protected
      * Called when the [Dialog](xref:botbuilder-dialogs.Dialog) continues to the next action.
      * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
-     * @param result Optional. Value returned from the dialog that was called. The type 
+     * @param result Optional. Value returned from the dialog that was called. The type
      * of the value returned is dependent on the child dialog.
      * @returns A `Promise` representing the asynchronous operation.
      */
@@ -235,7 +246,7 @@ export class ActionScope<O extends object = {}>
      * @protected
      * Called when the [Dialog](xref:botbuilder-dialogs.Dialog)'s action ends.
      * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
-     * @param result Optional. Value returned from the dialog that was called. The type 
+     * @param result Optional. Value returned from the dialog that was called. The type
      * of the value returned is dependent on the child dialog.
      * @returns A `Promise` representing the asynchronous operation.
      */
@@ -247,7 +258,7 @@ export class ActionScope<O extends object = {}>
      * @protected
      * Starts a new [Dialog](xref:botbuilder-dialogs.Dialog) and pushes it onto the dialog stack.
      * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
-     * @param offset Optional, value returned from the dialog that was called. The type 
+     * @param offset Optional, value returned from the dialog that was called. The type
      * of the value returned is dependent on the child dialog.
      * @returns A `Promise` representing the asynchronous operation.
      */

@@ -18,6 +18,7 @@ export class OnQnAMatch extends OnIntent {
 
     /**
      * Initializes a new instance of the [OnQnAMatch](xref:botbuilder-dialogs-adaptive.OnQnAMatch) class.
+     *
      * @param actions Optional. A [Dialog](xref:botbuilder-dialogs.Dialog) list containing the actions to add to the plan when the rule constraints are met.
      * @param condition Optional. Condition which needs to be met for the actions to be executed.
      */

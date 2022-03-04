@@ -11,12 +11,14 @@ import { FunctionUtils } from '../functionUtils';
 
 /**
  * Represents a property which is either a float or a string expression which resolves to a float.
+ *
  * @remarks
  * String values are always interpreted as an expression, whether it has '=' prefix or not.
  */
 export class NumberExpression extends ExpressionProperty<number> {
     /**
      * Initializes a new instance of the [NumberExpression](xref:adaptive-expressions.NumberExpression) class.
+     *
      * @param value A float `number` or `string` expression which resolves to a float `number`.
      */
     public constructor(value?: number | string | Expression) {
@@ -25,6 +27,7 @@ export class NumberExpression extends ExpressionProperty<number> {
 
     /**
      * Set a number value.
+     *
      * @param value Value to set.
      */
     public setValue(value: number | string | Expression): void {

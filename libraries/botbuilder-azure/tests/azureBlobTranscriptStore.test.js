@@ -204,7 +204,7 @@ function createActivity(conversationId, ts) {
         id: 1,
         text: 'testMessage',
         channelId: 'test',
-        from: { id: `User1` },
+        from: { id: 'User1' },
         conversation: { id: conversationId },
         recipient: { id: 'Bot1', name: '2' },
         serviceUrl: 'http://foo.com/api/messages',

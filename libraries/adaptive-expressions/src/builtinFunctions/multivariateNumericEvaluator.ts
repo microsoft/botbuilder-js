@@ -16,6 +16,7 @@ import { ReturnType } from '../returnType';
 export class MultivariateNumericEvaluator extends ExpressionEvaluator {
     /**
      * Initializes a new instance of the [MultivariateNumericEvaluator](xref:adaptive-expressions.MultivariateNumericEvaluator) class.
+     *
      * @param type Name of the built-in function.
      * @param func The evaluation function, it takes a list of objects and returns a number.
      * @param verify Optional. [VerifyExpression](xref:adaptive-expressions.VerifyExpression) function to verify each child's result.

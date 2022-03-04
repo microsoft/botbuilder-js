@@ -34,7 +34,7 @@ const { createContext, createMessageActivity } = require('./activityUtils');
 const { validateCodeIntent, validateColorIntent } = require('./intentValidations');
 const { Culture } = require('@microsoft/recognizers-text-suite');
 
-describe('RegexRecognizer Tests', () => {
+describe('RegexRecognizer Tests', function () {
     const recognizer = new RegexRecognizer().configure({
         intents: [
             new IntentPattern('codeIntent', '(?<code>[a-z][0-9])'),
@@ -107,14 +107,14 @@ describe('RegexRecognizer Tests', () => {
         validateColorIntent(result);
     });
 
-    describe('telemetry', () => {
+    describe('telemetry', function () {
         let spy;
 
-        beforeEach(() => {
+        beforeEach(function () {
             spy = spyOnTelemetryClientTrackEvent(recognizer);
         });
 
-        afterEach(() => {
+        afterEach(function () {
             spy.restore();
         });
 
@@ -397,8 +397,8 @@ describe('RegexRecognizer Tests', () => {
         assert.strictEqual(result.entities.title, undefined);
     });
 
-    it('basic telemetry test', () => {
-        let properties = {};
+    it('basic telemetry test', function () {
+        const properties = {};
         properties['test'] = 'testvalue';
         properties['foo'] = 'foovalue';
         const metrics = {};
@@ -406,7 +406,7 @@ describe('RegexRecognizer Tests', () => {
         const activity = {};
 
         let callCount = 0;
-        let telemetryClient = {
+        const telemetryClient = {
             trackEvent: (telemetry) => {
                 assert(telemetry, 'telemetry is null');
                 switch (++callCount) {
@@ -437,13 +437,13 @@ describe('RegexRecognizer Tests', () => {
             },
         };
 
-        let recognizer = new MockTelemetryInRecognizer();
+        const recognizer = new MockTelemetryInRecognizer();
         recognizer.telemetryClient = telemetryClient;
         recognizer.recognize(context, activity, properties, metrics);
     });
 
-    it('check fillRecognizerResultTelemetryProperties', () => {
-        let recognizer = new Recognizer();
+    it('check fillRecognizerResultTelemetryProperties', function () {
+        const recognizer = new Recognizer();
         const telemetryProperties = {
             TelemetryPropertiesKey1: 'TelemetryPropertiesValue1',
             TelemetryPropertiesKey2: 'TelemetryPropertiesValue2',

@@ -116,6 +116,10 @@ export class BeginSkill extends SkillDialog implements BeginSkillConfiguration {
      */
     public allowInterruptions: BoolExpression;
 
+    /**
+     * @param property The key of the conditional selector configuration.
+     * @returns The converter for the selector configuration.
+     */
     public getConverter(property: keyof BeginSkillConfiguration): Converter | ConverterFactory {
         switch (property) {
             case 'disabled':
@@ -148,6 +152,7 @@ export class BeginSkill extends SkillDialog implements BeginSkillConfiguration {
 
     /**
      * Creates a new `BeginSkillDialog instance.
+     *
      * @param options Optional options used to configure the skill dialog.
      */
     constructor(options?: SkillDialogOptions) {
@@ -156,6 +161,7 @@ export class BeginSkill extends SkillDialog implements BeginSkillConfiguration {
 
     /**
      * Called when the [Dialog](xref:botbuilder-dialogs.Dialog) is started and pushed onto the dialog stack.
+     *
      * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
      * @param options Optional. Initial information to pass to the dialog.
      * @returns A `Promise` representing the asynchronous operation.
@@ -224,6 +230,7 @@ export class BeginSkill extends SkillDialog implements BeginSkillConfiguration {
     /**
      * Called when the [Dialog](xref:botbuilder-dialogs.Dialog) is _continued_, where it is the active dialog and the
      * user replies with a new activity.
+     *
      * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
      * @returns A `Promise` representing the asynchronous operation.
      */
@@ -243,6 +250,7 @@ export class BeginSkill extends SkillDialog implements BeginSkillConfiguration {
 
     /**
      * Called when the [Dialog](xref:botbuilder-dialogs.Dialog) should re-prompt the user for input.
+     *
      * @param turnContext [TurnContext](xref:botbuilder-core.TurnContext), the context object for this turn.
      * @param instance [DialogInstance](xref:botbuilder-dialogs.DialogInstance), state information for this dialog.
      * @returns A `Promise` representing the asynchronous operation.
@@ -254,6 +262,7 @@ export class BeginSkill extends SkillDialog implements BeginSkillConfiguration {
 
     /**
      * Called when a child [Dialog](xref:botbuilder-dialogs.Dialog) completed its turn, returning control to this dialog.
+     *
      * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
      * @param reason [DialogReason](xref:botbuilder-dialogs.DialogReason), reason why the dialog resumed.
      * @param result Optional. Value returned from the dialog that was called. The type
@@ -267,6 +276,7 @@ export class BeginSkill extends SkillDialog implements BeginSkillConfiguration {
 
     /**
      * Called when the [Dialog](xref:botbuilder-dialogs.Dialog) is ending.
+     *
      * @param turnContext [TurnContext](xref:botbuilder-core.TurnContext), the context object for this turn.
      * @param instance [DialogInstance](xref:botbuilder-dialogs.DialogInstance), state information associated with the instance of this dialog on the dialog stack.
      * @param reason [DialogReason](xref:botbuilder-dialogs.DialogReason), reason why the dialog ended.

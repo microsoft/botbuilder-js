@@ -44,7 +44,7 @@ const getDialogContext = (testName, text, locale = 'en-us') => {
     );
 };
 
-describe('EntityRecognizer Tests', () => {
+describe('EntityRecognizer Tests', function () {
     const recognizers = new EntityRecognizerSet(
         new AgeEntityRecognizer(),
         new ConfirmationEntityRecognizer(),

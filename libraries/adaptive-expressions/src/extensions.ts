@@ -6,7 +6,7 @@
  * Licensed under the MIT License.
  */
 
-import { MemoryInterface } from "./memory/memoryInterface";
+import { MemoryInterface } from './memory/memoryInterface';
 
 /**
  * Some util and extension functions
@@ -16,6 +16,9 @@ export class Extensions {
      * Patch method
      * TODO: is there any better solution?
      * To judge if an object is implements MemoryInterface. Same with 'is MemoryInterface' in C#
+     *
+     * @param obj The object to evaluate.
+     * @returns True if the object implements MemoryInterface; False if it isn't.
      */
     public static isMemoryInterface(obj: any): boolean {
         if (obj === undefined) {
@@ -39,6 +42,7 @@ export class Extensions {
     /**
      * Generator random seed and value from properties.
      * If value is not null, the mock random value result would be: min + (value % (max - min)).
+     *
      * @param memory memory state.
      * @param min The inclusive lower bound of the random number returned.
      * @param max The exclusive upper bound of the random number returned. max must be greater than or equal to min.

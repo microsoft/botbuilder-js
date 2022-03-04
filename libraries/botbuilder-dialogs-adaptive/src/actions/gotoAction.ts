@@ -39,6 +39,7 @@ export class GotoAction<O extends object = {}> extends Dialog<O> implements Goto
 
     /**
      * Initializes a new instance of the [GotoAction](xref:botbuilder-dialogs-adaptive.GotoAction) class.
+     *
      * @param actionId Optional. Action's unique identifier.
      */
     public constructor(actionId?: string) {
@@ -58,6 +59,10 @@ export class GotoAction<O extends object = {}> extends Dialog<O> implements Goto
      */
     public disabled?: BoolExpression;
 
+    /**
+     * @param property The key of the conditional selector configuration.
+     * @returns The converter for the selector configuration.
+     */
     public getConverter(property: keyof GotoActionConfiguration): Converter | ConverterFactory {
         switch (property) {
             case 'actionId':
@@ -71,17 +76,18 @@ export class GotoAction<O extends object = {}> extends Dialog<O> implements Goto
 
     /**
      * Starts a new [Dialog](xref:botbuilder-dialogs.Dialog) and pushes it onto the dialog stack.
+     *
      * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
-     * @param options Optional. Initial information to pass to the dialog.
+     * @param _options Optional. Initial information to pass to the dialog.
      * @returns A `Promise` representing the asynchronous operation.
      */
-    public async beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult> {
+    public async beginDialog(dc: DialogContext, _options?: O): Promise<DialogTurnResult> {
         if (this.disabled && this.disabled.getValue(dc.state)) {
             return await dc.endDialog();
         }
 
         if (!this.actionId) {
-            throw new Error(`Action id cannot be null.`);
+            throw new Error('Action id cannot be null.');
         }
 
         const actionScopeResult: ActionScopeResult = {

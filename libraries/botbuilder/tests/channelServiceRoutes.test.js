@@ -31,16 +31,16 @@ class MockResponse {
 
 describe('channelServiceRoutes', function () {
     let sandbox;
-    beforeEach(() => {
+    beforeEach(function () {
         sandbox = sinon.createSandbox();
     });
 
-    afterEach(() => {
+    afterEach(function () {
         sandbox.restore();
     });
 
-    describe('constructor()', () => {
-        it('should succeed with correct parameters', () => {
+    describe('constructor()', function () {
+        it('should succeed with correct parameters', function () {
             const testHandler = sandbox.mock(ChannelServiceHandler);
             const channelServiceRoutes = new ChannelServiceRoutes(testHandler);
 
@@ -48,9 +48,9 @@ describe('channelServiceRoutes', function () {
         });
     });
 
-    describe('register()', () => {
+    describe('register()', function () {
         let channel, server;
-        beforeEach(() => {
+        beforeEach(function () {
             const testHandler = sandbox.mock(ChannelServiceHandler);
             channel = new ChannelServiceRoutes(testHandler);
             server = {
@@ -61,7 +61,7 @@ describe('channelServiceRoutes', function () {
             };
         });
 
-        it('should register webservers', () => {
+        it('should register webservers', function () {
             channel.register(server, 'test');
 
             assert(server.post.calledWith('test/v3/conversations/:conversationId/activities'));
@@ -79,7 +79,7 @@ describe('channelServiceRoutes', function () {
         });
     });
 
-    describe('private functions', () => {
+    describe('private functions', function () {
         const handlers = {};
         const req = {
             body: {
@@ -102,18 +102,18 @@ describe('channelServiceRoutes', function () {
         let readActivityStub;
         let readBodyStub;
 
-        afterEach(() => {
+        afterEach(function () {
             ChannelServiceRoutes.handleError = errorHandler;
-            if (!!readActivityStub) {
+            if (readActivityStub) {
                 readActivityStub.restore();
             }
-            if (!!readBodyStub) {
+            if (readBodyStub) {
                 readBodyStub.restore();
             }
         });
 
-        describe('processSendToConversation()', () => {
-            it('should end successfully', (done) => {
+        describe('processSendToConversation()', function () {
+            it('should end successfully', function (done) {
                 try {
                     const res = new MockResponse(
                         {
@@ -133,7 +133,7 @@ describe('channelServiceRoutes', function () {
                 }
             });
 
-            it('should throw a handleSendToConversation error', (done) => {
+            it('should throw a handleSendToConversation error', function (done) {
                 try {
                     const resourceResponse = { error: 'handleSendToConversation error' };
                     const res = new MockResponse(
@@ -162,7 +162,7 @@ describe('channelServiceRoutes', function () {
                 }
             });
 
-            it('should throw a readActivity error', (done) => {
+            it('should throw a readActivity error', function (done) {
                 try {
                     const resourceResponse = { error: 'readActivity error' };
                     const res = new MockResponse(
@@ -195,8 +195,8 @@ describe('channelServiceRoutes', function () {
             });
         });
 
-        describe('processReplyToActivity()', () => {
-            it('should end successfully', (done) => {
+        describe('processReplyToActivity()', function () {
+            it('should end successfully', function (done) {
                 try {
                     const res = new MockResponse(
                         {
@@ -216,7 +216,7 @@ describe('channelServiceRoutes', function () {
                 }
             });
 
-            it('should throw a handleReplyToActivity error', (done) => {
+            it('should throw a handleReplyToActivity error', function (done) {
                 try {
                     const resourceResponse = { error: 'handleReplyToActivity error' };
                     const res = new MockResponse(
@@ -246,7 +246,7 @@ describe('channelServiceRoutes', function () {
                 }
             });
 
-            it('should throw a readActivity error', (done) => {
+            it('should throw a readActivity error', function (done) {
                 try {
                     const resourceResponse = { error: 'readActivity error' };
                     const res = new MockResponse(
@@ -279,8 +279,8 @@ describe('channelServiceRoutes', function () {
             });
         });
 
-        describe('processUpdateActivity()', () => {
-            it('should end successfully', (done) => {
+        describe('processUpdateActivity()', function () {
+            it('should end successfully', function (done) {
                 try {
                     const res = new MockResponse(
                         {
@@ -300,7 +300,7 @@ describe('channelServiceRoutes', function () {
                 }
             });
 
-            it('should throw a handleUpdateActivity error', (done) => {
+            it('should throw a handleUpdateActivity error', function (done) {
                 try {
                     const resourceResponse = { error: 'handleUpdateActivity error' };
                     const res = new MockResponse(
@@ -330,7 +330,7 @@ describe('channelServiceRoutes', function () {
                 }
             });
 
-            it('should throw a readActivity error', (done) => {
+            it('should throw a readActivity error', function (done) {
                 try {
                     const resourceResponse = { error: 'readActivity error' };
                     const res = new MockResponse(
@@ -363,8 +363,8 @@ describe('channelServiceRoutes', function () {
             });
         });
 
-        describe('processDeleteActivity()', () => {
-            it('should end successfully', (done) => {
+        describe('processDeleteActivity()', function () {
+            it('should end successfully', function (done) {
                 try {
                     const res = new MockResponse(
                         {
@@ -384,7 +384,7 @@ describe('channelServiceRoutes', function () {
                 }
             });
 
-            it('should throw a handleDeleteActivity error', (done) => {
+            it('should throw a handleDeleteActivity error', function (done) {
                 try {
                     const resourceResponse = { error: 'handleDeleteActivity error' };
                     const res = new MockResponse(
@@ -415,8 +415,8 @@ describe('channelServiceRoutes', function () {
             });
         });
 
-        describe('processGetActivityMembers()', () => {
-            it('should end successfully', (done) => {
+        describe('processGetActivityMembers()', function () {
+            it('should end successfully', function (done) {
                 try {
                     const res = new MockResponse(
                         {
@@ -436,7 +436,7 @@ describe('channelServiceRoutes', function () {
                 }
             });
 
-            it('should throw a handleGetActivityMembers error', (done) => {
+            it('should throw a handleGetActivityMembers error', function (done) {
                 try {
                     const resourceResponse = { error: 'handleGetActivityMembers error' };
                     const res = new MockResponse(
@@ -467,8 +467,8 @@ describe('channelServiceRoutes', function () {
             });
         });
 
-        describe('processCreateConversation()', () => {
-            it('should end successfully', (done) => {
+        describe('processCreateConversation()', function () {
+            it('should end successfully', function (done) {
                 try {
                     const res = new MockResponse(
                         {
@@ -488,7 +488,7 @@ describe('channelServiceRoutes', function () {
                 }
             });
 
-            it('should throw a handleCreateConversation error', (done) => {
+            it('should throw a handleCreateConversation error', function (done) {
                 try {
                     const resourceResponse = { error: 'handleCreateConversation error' };
                     const res = new MockResponse(
@@ -519,8 +519,8 @@ describe('channelServiceRoutes', function () {
             });
         });
 
-        describe('processGetConversations()', () => {
-            it('should end successfully', (done) => {
+        describe('processGetConversations()', function () {
+            it('should end successfully', function (done) {
                 try {
                     const res = new MockResponse(
                         {
@@ -540,7 +540,7 @@ describe('channelServiceRoutes', function () {
                 }
             });
 
-            it('should throw a handleGetConversations error', (done) => {
+            it('should throw a handleGetConversations error', function (done) {
                 try {
                     const resourceResponse = { error: 'handleGetConversations error' };
                     const res = new MockResponse(
@@ -571,8 +571,8 @@ describe('channelServiceRoutes', function () {
             });
         });
 
-        describe('processGetConversationMembers()', () => {
-            it('should end successfully', (done) => {
+        describe('processGetConversationMembers()', function () {
+            it('should end successfully', function (done) {
                 try {
                     const res = new MockResponse(
                         {
@@ -592,7 +592,7 @@ describe('channelServiceRoutes', function () {
                 }
             });
 
-            it('should throw a handleGetConversationMembers error', (done) => {
+            it('should throw a handleGetConversationMembers error', function (done) {
                 try {
                     const resourceResponse = { error: 'handleGetConversationMembers error' };
                     const res = new MockResponse(
@@ -623,8 +623,8 @@ describe('channelServiceRoutes', function () {
             });
         });
 
-        describe('processGetConversationPagedMembers()', () => {
-            it('should end successfully', (done) => {
+        describe('processGetConversationPagedMembers()', function () {
+            it('should end successfully', function (done) {
                 try {
                     const res = new MockResponse(
                         {
@@ -644,7 +644,7 @@ describe('channelServiceRoutes', function () {
                 }
             });
 
-            it('should throw a handleGetConversationPagedMembers error', (done) => {
+            it('should throw a handleGetConversationPagedMembers error', function (done) {
                 try {
                     const resourceResponse = { error: 'handleGetConversationPagedMembers error' };
                     const res = new MockResponse(
@@ -675,8 +675,8 @@ describe('channelServiceRoutes', function () {
             });
         });
 
-        describe('processDeleteConversationMember()', () => {
-            it('should end successfully', (done) => {
+        describe('processDeleteConversationMember()', function () {
+            it('should end successfully', function (done) {
                 try {
                     const res = new MockResponse(
                         {
@@ -696,7 +696,7 @@ describe('channelServiceRoutes', function () {
                 }
             });
 
-            it('should throw a handleDeleteConversationMember error', (done) => {
+            it('should throw a handleDeleteConversationMember error', function (done) {
                 try {
                     const resourceResponse = { error: 'handleDeleteConversationMember error' };
                     const res = new MockResponse(
@@ -727,8 +727,8 @@ describe('channelServiceRoutes', function () {
             });
         });
 
-        describe('processSendConversationHistory()', () => {
-            it('should end successfully', (done) => {
+        describe('processSendConversationHistory()', function () {
+            it('should end successfully', function (done) {
                 try {
                     const res = new MockResponse(
                         {
@@ -748,7 +748,7 @@ describe('channelServiceRoutes', function () {
                 }
             });
 
-            it('should throw a handleSendConversationHistory error', (done) => {
+            it('should throw a handleSendConversationHistory error', function (done) {
                 try {
                     const resourceResponse = { error: 'handleSendConversationHistory error' };
                     const res = new MockResponse(
@@ -778,7 +778,7 @@ describe('channelServiceRoutes', function () {
                 }
             });
 
-            it('should throw a readBody error', (done) => {
+            it('should throw a readBody error', function (done) {
                 try {
                     const resourceResponse = { error: 'readBody error' };
                     const res = new MockResponse(
@@ -811,8 +811,8 @@ describe('channelServiceRoutes', function () {
             });
         });
 
-        describe('processUploadAttachment()', () => {
-            it('should end successfully', (done) => {
+        describe('processUploadAttachment()', function () {
+            it('should end successfully', function (done) {
                 try {
                     const res = new MockResponse(
                         {
@@ -832,7 +832,7 @@ describe('channelServiceRoutes', function () {
                 }
             });
 
-            it('should throw a handleUploadAttachment error', (done) => {
+            it('should throw a handleUploadAttachment error', function (done) {
                 try {
                     const resourceResponse = { error: 'handleUploadAttachment error' };
                     const res = new MockResponse(
@@ -862,7 +862,7 @@ describe('channelServiceRoutes', function () {
                 }
             });
 
-            it('should throw a readBody error', (done) => {
+            it('should throw a readBody error', function (done) {
                 try {
                     const resourceResponse = { error: 'readBody error' };
                     const res = new MockResponse(
@@ -895,8 +895,8 @@ describe('channelServiceRoutes', function () {
             });
         });
 
-        describe('readActivity()', async () => {
-            it('should throw with invalid body', async () => {
+        describe('readActivity()', function () {
+            it('should throw with invalid body', async function () {
                 const req = sandbox.mock(WebRequest);
                 req.body = {};
 
@@ -905,7 +905,7 @@ describe('channelServiceRoutes', function () {
                 });
             });
 
-            it('should return activity', async () => {
+            it('should return activity', async function () {
                 const req = sandbox.mock(WebRequest);
                 req.body = {
                     type: 'testactivity',
@@ -920,8 +920,8 @@ describe('channelServiceRoutes', function () {
             });
         });
 
-        describe('readBody()', () => {
-            it('should return request.body from "on" events', (done) => {
+        describe('readBody()', function () {
+            it('should return request.body from "on" events', function (done) {
                 const source = { test: true };
 
                 const request = {

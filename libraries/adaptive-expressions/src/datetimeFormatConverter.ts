@@ -48,6 +48,7 @@ enum State {
 
 /**
  * Convert a CSharp style datetime format string to a Day.js style datetime format string. Ref: https://docs.microsoft.com/en-us/dotnet/standard/base-types/custom-date-and-time-format-strings
+ *
  * @param fmtString A CSharp style datetime format string. Ref: https://day.js.org/docs/en/display/format
  * @returns A Momengt.js style datetime format string.
  */
@@ -62,15 +63,15 @@ export function convertCSharpDateTimeToDayjs(fmtString: string): string {
         switch (fmtString) {
             case 'R':
             case 'r':
-                throw Error(`RFC 1123 not supported  in Day.js`);
+                throw Error('RFC 1123 not supported  in Day.js');
             case 'O':
             case 'o':
                 fmtString = 'YYYY-MM-DDTHH:mm:ss.SSS0000Z';
                 break;
             case 'U':
-                throw new Error(`Universal Fulll Format not supported in Day.js`);
+                throw new Error('Universal Fulll Format not supported in Day.js');
             case 'u':
-                throw new Error(`Universal Sortable Format not supported in Day.js`);
+                throw new Error('Universal Sortable Format not supported in Day.js');
         }
     }
 
@@ -391,7 +392,7 @@ export function convertCSharpDateTimeToDayjs(fmtString: string): string {
         fmtState === State.InDoubleQuoteLiteral ||
         fmtState === State.InSingleQuoteLiteral
     ) {
-        throw Error(`Invalid Format String`);
+        throw Error('Invalid Format String');
     }
 
     changeState(State.None);

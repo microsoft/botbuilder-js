@@ -4,7 +4,13 @@
 import { BotFrameworkAuthentication, ClaimsIdentity } from 'botframework-connector';
 import { ChannelServiceHandlerBase } from './channelServiceHandlerBase';
 
+/**
+ * A class to help with the implementation of the Bot Framework protocol using [BotFrameworkAuthentication](xref:botframework-connector.BotFrameworkAuthentication).
+ */
 export class CloudChannelServiceHandler extends ChannelServiceHandlerBase {
+    /**
+     * @param auth Bot framework authentication
+     */
     constructor(private readonly auth: BotFrameworkAuthentication) {
         super();
     }

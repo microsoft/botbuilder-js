@@ -14,11 +14,18 @@ export interface TextInputConfiguration extends InputDialogConfiguration {
     outputFormat?: StringProperty;
 }
 
+/**
+ * Declarative text input to gather text data from users.
+ */
 export class TextInput extends InputDialog implements TextInputConfiguration {
     public static $kind = 'Microsoft.TextInput';
 
     public outputFormat: StringExpression;
 
+    /**
+     * @param property The key of the conditional selector configuration.
+     * @returns The converter for the selector configuration.
+     */
     public getConverter(property: keyof TextInputConfiguration): Converter | ConverterFactory {
         switch (property) {
             case 'outputFormat':
@@ -30,6 +37,7 @@ export class TextInput extends InputDialog implements TextInputConfiguration {
 
     /**
      * @protected
+     * @returns A `string` representing the compute Id.
      */
     protected onComputeId(): string {
         return `TextInput[${this.prompt && this.prompt.toString()}]`;

@@ -20,7 +20,7 @@ const {
     ActivityTemplate,
     GetConversationReference,
 } = require('../lib');
-const { AssertCondition } = require('botbuilder-dialogs-adaptive-testing')
+const { AssertCondition } = require('botbuilder-dialogs-adaptive-testing');
 
 class MockQueue extends QueueStorage {
     constructor() {
@@ -62,7 +62,7 @@ class MockQueue extends QueueStorage {
 describe('ConversationAction', function () {
     this.timeout(5000);
 
-    it('ContinueConverationLater', async () => {
+    it('ContinueConverationLater', async function () {
         const storage = new MemoryStorage();
         const queueStorage = new MockQueue();
         const dm = new DialogManager(
@@ -99,7 +99,7 @@ describe('ConversationAction', function () {
         assert.deepStrictEqual(cr, cr2);
     });
 
-    it('ContinueConversation', async () => {
+    it('ContinueConversation', async function () {
         const storage = new MemoryStorage();
         const queueStorage = new MockQueue();
         const cr = TestAdapter.createConversation('ContinueConversationTests');
@@ -146,7 +146,7 @@ describe('ConversationAction', function () {
         assert.deepStrictEqual(cr, cr2);
     });
 
-    it('GetConversationReference', async () => {
+    it('GetConversationReference', async function () {
         const storage = new MemoryStorage();
         const queueStorage = new MockQueue();
         const dm = new DialogManager(

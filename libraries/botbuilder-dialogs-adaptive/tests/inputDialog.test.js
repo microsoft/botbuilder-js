@@ -1,15 +1,8 @@
 const { ok, strictEqual } = require('assert');
 const { createTelemetryClientAndStub } = require('./telemetryUtils');
-const {
-    ConversationState,
-    MemoryStorage,
-    TestAdapter,
-    MessageFactory,
-    InputHints,
-} = require('botbuilder');
+const { ConversationState, MemoryStorage, TestAdapter, InputHints } = require('botbuilder');
 const { DialogSet } = require('botbuilder-dialogs');
 const { InputDialog, StaticActivityTemplate, TelemetryLoggerConstants } = require('../lib')
-
 
 describe('InputDialog', function () {
     this.timeout(3000);
@@ -32,10 +25,10 @@ describe('InputDialog', function () {
 
     // Setup inputDialog dialog
     const dialog = new InputDialog();
-    dialog.prompt = new StaticActivityTemplate({text:'test', type: 'message', inputHint:InputHints.AcceptingInput});
+    dialog.prompt = new StaticActivityTemplate({ text: 'test', type: 'message', inputHint: InputHints.AcceptingInput });
     dialog._telemetryClient = telemetryClient;
 
-    it('eval promptUser()', async () => {
+    it('eval promptUser()', async function () {
         // Send initial activity
         const adapter = new TestAdapter(async (context) => {
             const dc = await dialogs.createContext(context);

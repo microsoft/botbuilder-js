@@ -1,4 +1,3 @@
-/* eslint-disable security/detect-object-injection */
 /**
  * @module adaptive-expressions
  */
@@ -6,8 +5,6 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-
-/* eslint-disable @typescript-eslint/no-unused-vars */
 
 import { Constant } from './constant';
 import { convertCSharpDateTimeToDayjs } from './datetimeFormatConverter';
@@ -22,6 +19,7 @@ import isEqual from 'lodash.isequal';
 
 /**
  * Verify the result of an expression is of the appropriate type and return a string if not.
+ *
  * @param value Value to verify.
  * @param expression Expression that produced value.
  * @param child Index of child expression.
@@ -39,6 +37,7 @@ export class FunctionUtils {
 
     /**
      * Validate that expression has a certain number of children that are of any of the supported types.
+     *
      * @param expression Expression to validate.
      * @param minArity Minimum number of children.
      * @param maxArity Maximum number of children.
@@ -69,6 +68,7 @@ export class FunctionUtils {
 
     /**
      * Validate the number and type of arguments to a function.
+     *
      * @param expression Expression to validate.
      * @param optional Optional types in order.
      * @param types Expected types in order.
@@ -118,6 +118,7 @@ export class FunctionUtils {
 
     /**
      * Validate at least 1 argument of any type.
+     *
      * @param expression Expression to validate.
      */
     public static validateAtLeastOne(expression: Expression): void {
@@ -126,6 +127,7 @@ export class FunctionUtils {
 
     /**
      * Validate 1 or more numeric arguments.
+     *
      * @param expression Expression to validate.
      */
     public static validateNumber(expression: Expression): void {
@@ -134,6 +136,7 @@ export class FunctionUtils {
 
     /**
      * Validate 1 or more string arguments.
+     *
      * @param expression Expression to validate.
      */
     public static validateString(expression: Expression): void {
@@ -142,6 +145,7 @@ export class FunctionUtils {
 
     /**
      * Validate there are two children.
+     *
      * @param expression Expression to validate.
      */
     public static validateBinary(expression: Expression): void {
@@ -150,6 +154,7 @@ export class FunctionUtils {
 
     /**
      * Validate 2 numeric arguments.
+     *
      * @param expression Expression to validate.
      */
     public static validateBinaryNumber(expression: Expression): void {
@@ -158,6 +163,7 @@ export class FunctionUtils {
 
     /**
      * Validate 1 or 2 numeric arguments.
+     *
      * @param expression Expression to validate.
      */
     public static validateUnaryOrBinaryNumber(expression: Expression): void {
@@ -166,6 +172,7 @@ export class FunctionUtils {
 
     /**
      * Validate 2 or more than 2 numeric arguments.
+     *
      * @param expression Expression to validate.
      */
     public static validateTwoOrMoreThanTwoNumbers(expression: Expression): void {
@@ -174,6 +181,7 @@ export class FunctionUtils {
 
     /**
      * Validate there are 2 numeric or string arguments.
+     *
      * @param expression Expression to validate.
      */
     public static validateBinaryNumberOrString(expression: Expression): void {
@@ -182,6 +190,7 @@ export class FunctionUtils {
 
     /**
      * Validate there is a single argument.
+     *
      * @param expression Expression to validate.
      */
     public static validateUnary(expression: Expression): void {
@@ -190,6 +199,7 @@ export class FunctionUtils {
 
     /**
      * Validate there is a single argument.
+     *
      * @param expression Expression to validate.
      */
     public static validateUnaryNumber(expression: Expression): void {
@@ -198,6 +208,7 @@ export class FunctionUtils {
 
     /**
      * Validate there is a single string argument.
+     *
      * @param expression Expression to validate.
      */
     public static validateUnaryString(expression: Expression): void {
@@ -206,6 +217,7 @@ export class FunctionUtils {
 
     /**
      * Validate there is one or two string arguments.
+     *
      * @param expression Expression to validate.
      */
     public static validateUnaryOrBinaryString(expression: Expression): void {
@@ -214,6 +226,7 @@ export class FunctionUtils {
 
     /**
      * Validate there is a single boolean argument.
+     *
      * @param expression Expression to validate.
      */
     public static validateUnaryBoolean(expression: Expression): void {
@@ -222,8 +235,10 @@ export class FunctionUtils {
 
     /**
      * Verify value is numeric.
+     *
      * @param value Value to check.
      * @param expression Expression that led to value.
+     * @param _ No function.
      * @returns Error or undefined if invalid.
      */
     public static verifyNumber(value: any, expression: Expression, _: number): string | undefined {
@@ -237,8 +252,10 @@ export class FunctionUtils {
 
     /**
      * Verify value is numeric.
+     *
      * @param value Value to check.
      * @param expression Expression that led to value.
+     * @param _ No function.
      * @returns Error or undefined if invalid.
      */
     public static verifyNumberOrNumericList(value: any, expression: Expression, _: number): string | undefined {
@@ -263,8 +280,10 @@ export class FunctionUtils {
 
     /**
      * Verify value is numeric list.
+     *
      * @param value Value to check.
      * @param expression Expression that led to value.
+     * @param _ No function.
      * @returns Error or undefined if invalid.
      */
     public static verifyNumericList(value: any, expression: Expression, _: number): string | undefined {
@@ -285,8 +304,10 @@ export class FunctionUtils {
 
     /**
      * Verify value contains elements.
+     *
      * @param value Value to check.
      * @param expression Expression that led to value.
+     * @param _ No function.
      * @returns Error or undefined if invalid.
      */
     public static verifyContainer(value: any, expression: Expression, _: number): string | undefined {
@@ -305,8 +326,10 @@ export class FunctionUtils {
 
     /**
      * Verify value contains elements or null.
+     *
      * @param value Value to check.
      * @param expression Expression that led to value.
+     * @param _ No function.
      * @returns Error or undefined if invalid.
      */
     public static verifyContainerOrNull(value: unknown, expression: Expression, _: number): string | undefined {
@@ -326,8 +349,10 @@ export class FunctionUtils {
 
     /**
      * Verify value is not null or undefined.
+     *
      * @param value Value to check.
      * @param expression Expression that led to value.
+     * @param _ No function.
      * @returns Error or undefined if valid.
      */
     public static verifyNotNull(value: any, expression: Expression, _: number): string | undefined {
@@ -341,8 +366,10 @@ export class FunctionUtils {
 
     /**
      * Verify value is an integer.
+     *
      * @param value Value to check.
      * @param expression Expression that led to value.
+     * @param _ No function.
      * @returns Error or undefined if invalid.
      */
     public static verifyInteger(value: any, expression: Expression, _: number): string | undefined {
@@ -356,6 +383,7 @@ export class FunctionUtils {
 
     /**
      * Verify value is an list.
+     *
      * @param value Value to check.
      * @param expression Expression that led to value.
      * @returns Error or undefined if invalid.
@@ -371,8 +399,10 @@ export class FunctionUtils {
 
     /**
      * Verify value is a string.
+     *
      * @param value Value to check.
      * @param expression Expression that led to value.
+     * @param _ No function.
      * @returns Error or undefined if invalid.
      */
     public static verifyString(value: any, expression: Expression, _: number): string | undefined {
@@ -386,8 +416,10 @@ export class FunctionUtils {
 
     /**
      * Verify an object is neither a string nor null.
+     *
      * @param value Value to check.
      * @param expression Expression that led to value.
+     * @param _ No function.
      * @returns Error or undefined if invalid.
      */
     public static verifyStringOrNull(value: any, expression: Expression, _: number): string | undefined {
@@ -401,8 +433,10 @@ export class FunctionUtils {
 
     /**
      * Verify value is a number or string or null.
+     *
      * @param value Value to check.
      * @param expression Expression that led to value.
+     * @param _ No function.
      * @returns Error or undefined if invalid.
      */
     public static verifyNumberOrStringOrNull(value: any, expression: Expression, _: number): string | undefined {
@@ -416,8 +450,10 @@ export class FunctionUtils {
 
     /**
      * Verify value is a number or string.
+     *
      * @param value Value to check.
      * @param expression Expression that led to value.
+     * @param _ No function.
      * @returns Error or undefined if invalid.
      */
     public static verifyNumberOrString(value: any, expression: Expression, _: number): string | undefined {
@@ -431,8 +467,10 @@ export class FunctionUtils {
 
     /**
      * Verify value is boolean.
+     *
      * @param value Value to check.
      * @param expression Expression that led to value.
+     * @param _ No function.
      * @returns Error or undefined if invalid.
      */
     public static verifyBoolean(value: any, expression: Expression, _: number): string | undefined {
@@ -446,8 +484,10 @@ export class FunctionUtils {
 
     /**
      * Evaluate expression children and return them.
+     *
      * @param expression Expression with children.
      * @param state Global state.
+     * @param options Options used in evaluation.
      * @param verify Optional function to verify each child's result.
      * @returns List of child values or error message.
      */
@@ -481,6 +521,7 @@ export class FunctionUtils {
 
     /**
      * Generate an expression delegate that applies function after verifying all children.
+     *
      * @param func Function to apply.
      * @param verify Function to check each arg for validity.
      * @returns Delegate for evaluating an expression.
@@ -504,6 +545,7 @@ export class FunctionUtils {
 
     /**
      * Generate an expression delegate that applies function after verifying all children.
+     *
      * @param func Function to apply.
      * @param verify Function to check each arg for validity.
      * @returns Delegate for evaluating an expression.
@@ -530,6 +572,7 @@ export class FunctionUtils {
 
     /**
      * Generate an expression delegate that applies function after verifying all children.
+     *
      * @param func Function to apply.
      * @param verify Function to check each arg for validity.
      * @returns Delegate for evaluating an expression.
@@ -556,6 +599,7 @@ export class FunctionUtils {
 
     /**
      * Generate an expression delegate that applies function after verifying all children.
+     *
      * @param func Function to apply.
      * @param verify Function to check each arg for validity.
      * @returns Delegate for evaluating an expression.
@@ -582,6 +626,7 @@ export class FunctionUtils {
 
     /**
      * Generate an expression delegate that applies function on the accumulated value after verifying all children.
+     *
      * @param func Function to apply.
      * @param verify Function to check each arg for validity.
      * @returns Delegate for evaluating an expression.
@@ -602,6 +647,7 @@ export class FunctionUtils {
 
     /**
      * Generate an expression delegate that applies function on the accumulated value after verifying all children.
+     *
      * @param func Function to apply.
      * @param verify Function to check each arg for validity.
      * @returns Delegate for evaluating an expression.
@@ -633,8 +679,9 @@ export class FunctionUtils {
     /**
      *
      * @param args An array of arguments.
-     * @param locale A locale string
      * @param maxArgsLength The max length of a given function.
+     * @param locale A locale string
+     * @returns The last item from the args param, otherwise the locale string.
      */
     public static determineLocale(args: unknown[], maxArgsLength: number, locale = 'en-us'): string {
         if (args.length === maxArgsLength) {
@@ -650,9 +697,10 @@ export class FunctionUtils {
     /**
      *
      * @param args An array of arguments.
+     * @param maxArgsLength The max length of a given function.
      * @param format A format string.
      * @param locale A locale string.
-     * @param maxArgsLength The max length of a given function.
+     * @returns The format and the locale from the args param, otherwise the locale and format strings.
      */
     public static determineFormatAndLocale(
         args: unknown[],
@@ -684,7 +732,9 @@ export class FunctionUtils {
 
     /**
      * Timestamp formatter, convert C# datetime to day.js format.
+     *
      * @param formatter C# datetime format
+     * @returns The formated datetime.
      */
     public static timestampFormatter(formatter: string): string {
         if (!formatter) {
@@ -693,7 +743,7 @@ export class FunctionUtils {
         let result = formatter;
         try {
             result = convertCSharpDateTimeToDayjs(formatter);
-        } catch (e) {
+        } catch {
             // do nothing
         }
 
@@ -702,6 +752,7 @@ export class FunctionUtils {
 
     /**
      * State object for resolving memory paths.
+     *
      * @param expression Expression.
      * @param state Scope.
      * @param options Options used in evaluation.
@@ -754,6 +805,7 @@ export class FunctionUtils {
 
     /**
      * Is number helper function.
+     *
      * @param instance Input.
      * @returns True if the input is a number.
      */
@@ -763,7 +815,11 @@ export class FunctionUtils {
 
     /**
      * Equal helper function.
-     * @param args Input args. Compare the first param and second param.
+     * Compare the first param and second param.
+     *
+     * @param obj1 The first value to compare.
+     * @param obj2 The second value to compare.
+     * @returns A boolean based on the comparison.
      */
     public static commonEquals(obj1: unknown, obj2: unknown): boolean {
         if (obj1 == null || obj2 == null) {
@@ -829,7 +885,9 @@ export class FunctionUtils {
 
     /**
      * Helper function of get the number of properties of an object.
+     *
      * @param obj An object.
+     * @returns The number of properties.
      */
     private static getPropertyCount(obj: unknown): number {
         let count = -1;

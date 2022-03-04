@@ -54,7 +54,7 @@ export class UriScheme extends ExpressionEvaluator {
         if (!error) {
             try {
                 result = parsed.protocol.replace(':', '');
-            } catch (e) {
+            } catch {
                 error = 'invalid operation, input uri should be an absolute URI';
             }
         }

@@ -24,6 +24,10 @@ export class RecognizerSet extends AdaptiveRecognizer implements RecognizerSetCo
 
     public recognizers: Recognizer[] = [];
 
+    /**
+     * @param property The key of the conditional selector configuration.
+     * @returns The converter for the selector configuration.
+     */
     public getConverter(property: keyof RecognizerSetConfiguration): Converter | ConverterFactory {
         switch (property) {
             case 'recognizers':
@@ -33,6 +37,15 @@ export class RecognizerSet extends AdaptiveRecognizer implements RecognizerSetCo
         }
     }
 
+    /**
+     * Runs current DialogContext.TurnContext.Activity through a recognizer and returns a [RecognizerResult](xref:botbuilder-core.RecognizerResult).
+     *
+     * @param dialogContext The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
+     * @param activity [Activity](xref:botframework-schema.Activity) to recognize.
+     * @param telemetryProperties Optional, additional properties to be logged to telemetry with the LuisResult event.
+     * @param telemetryMetrics Optional, additional metrics to be logged to telemetry with the LuisResult event.
+     * @returns {Promise<RecognizerResult>} Analysis of utterance.
+     */
     public async recognize(
         dialogContext: DialogContext,
         activity: Activity,
@@ -82,7 +95,7 @@ export class RecognizerSet extends AdaptiveRecognizer implements RecognizerSetCo
                 // merge intents
                 for (const [intentName, intent] of Object.entries(result.intents)) {
                     const intentScore = intent.score ?? 0;
-                    if (mergedRecognizerResult.intents.hasOwnProperty(intentName)) {
+                    if (Object.hasOwnProperty.call(mergedRecognizerResult.intents, intentName)) {
                         if (intentScore < mergedRecognizerResult.intents[intentName].score) {
                             // we already have a higher score for this intent
                             continue;
@@ -112,7 +125,7 @@ export class RecognizerSet extends AdaptiveRecognizer implements RecognizerSetCo
                         }
                     } else {
                         const mergedEntities = (mergedRecognizerResult.entities[propertyName] ??= []);
-                        mergedEntities.push(...propertyVal as any);
+                        mergedEntities.push(...(propertyVal as any));
                     }
                 }
             }

@@ -20,15 +20,15 @@ export class EntityRecognizer extends AdaptiveRecognizer {
      *
      * @param {DialogContext} dialogContext Dialog Context.
      * @param {Partial<Activity>} activity Activity.
-     * @param {object} telemetryProperties Additional properties to be logged to telemetry with event.
-     * @param {object} telemetryMetrics Additional metrics to be logged to telemetry with event.
+     * @param {object} _telemetryProperties Additional properties to be logged to telemetry with event.
+     * @param {object} _telemetryMetrics Additional metrics to be logged to telemetry with event.
      * @returns {Promise<RecognizerResult>} Analysis of utterance.
      */
     public async recognize(
         dialogContext: DialogContext,
         activity: Partial<Activity>,
-        telemetryProperties?: Record<string, string>,
-        telemetryMetrics?: Record<string, number>
+        _telemetryProperties?: Record<string, string>,
+        _telemetryMetrics?: Record<string, number>
     ): Promise<RecognizerResult> {
         // Identify matched intents
         const text = activity.text ?? '';
@@ -99,17 +99,17 @@ export class EntityRecognizer extends AdaptiveRecognizer {
     /**
      * Recognizes entities from an [Entity](xref:botbuilder-core.Entity) list.
      *
-     * @param {DialogContext} dialogContext The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
-     * @param {string} text Text to recognize.
-     * @param {string} locale Locale to use.
-     * @param {Entity[]} entities The [Entity](xref:botbuilder-core.Entity) list to be recognized.
+     * @param {DialogContext} _dialogContext The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
+     * @param {string} _text Text to recognize.
+     * @param {string} _locale Locale to use.
+     * @param {Entity[]} _entities The [Entity](xref:botbuilder-core.Entity) list to be recognized.
      * @returns {Promise<Entity[]>} Recognized [Entity](xref:botbuilder-core.Entity) list.
      */
     public async recognizeEntities(
-        dialogContext: DialogContext,
-        text: string,
-        locale: string,
-        entities: Entity[]
+        _dialogContext: DialogContext,
+        _text: string,
+        _locale: string,
+        _entities: Entity[]
     ): Promise<Entity[]> {
         return [];
     }

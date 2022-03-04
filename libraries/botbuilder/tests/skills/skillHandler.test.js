@@ -279,7 +279,7 @@ describe('SkillHandler', function () {
                 sandbox.verify();
             });
 
-            it(`should use the skill's appId to set the callback's activity.callerId`, async function () {
+            it("should use the skill's appId to set the callback's activity.callerId", async function () {
                 const skillAppId = '00000000-0000-0000-0000-000000000000';
                 const skillConsumerAppId = '00000000-0000-0000-0000-000000000001';
 

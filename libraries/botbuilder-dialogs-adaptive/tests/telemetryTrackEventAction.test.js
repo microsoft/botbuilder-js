@@ -1,13 +1,8 @@
 const { ok, strictEqual } = require('assert');
 const { createTelemetryClientAndStub } = require('./telemetryUtils');
-const {
-    ConversationState,
-    MemoryStorage,
-    TestAdapter
-} = require('botbuilder');
+const { ConversationState, MemoryStorage, TestAdapter } = require('botbuilder');
 const { DialogSet } = require('botbuilder-dialogs');
 const { TelemetryTrackEventAction } = require('../lib');
-
 
 describe('TelemetryTrackEventAction', function () {
     this.timeout(3000);
@@ -29,10 +24,10 @@ describe('TelemetryTrackEventAction', function () {
     const dialogs = new DialogSet(dialogState);
 
     // Setup sendActivity dialog
-    const dialog = new TelemetryTrackEventAction('testEvent', {'test': 'test123'});
+    const dialog = new TelemetryTrackEventAction('testEvent', { test: 'test123' });
     dialog._telemetryClient = telemetryClient;
 
-    it('eval beginDialog()', async () => {
+    it('eval beginDialog()', async function () {
         // Send initial activity
         const adapter = new TestAdapter(async (context) => {
             const dc = await dialogs.createContext(context);

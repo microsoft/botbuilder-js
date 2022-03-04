@@ -5,7 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { isEqual } from 'lodash';
+import isEqual from 'lodash/isEqual';
 import { EntityInfo } from './entityInfo';
 
 export interface EntityAssignmentConfiguration {
@@ -94,6 +94,11 @@ export class EntityAssignment implements EntityAssignmentConfiguration {
      */
     public expectedProperties: string[];
 
+    /**
+     * Initializes a new instance of the [EntityAssignment](xref:botbuilder-dialogs-adaptive.EntityAssignment) class.
+     *
+     * @param assignment The entity assignment properties to set for this instance.
+     */
     constructor(assignment: Partial<EntityAssignmentConfiguration>) {
         // Some properties are defined by `<prop> ?? undefined` in order to pass object equality checks.
         // Specifically, lodash's isEqual() will treat `{ a: undefined }` as not equal to `{ }`, so we explicitly add
@@ -113,6 +118,8 @@ export class EntityAssignment implements EntityAssignmentConfiguration {
 
     /**
      * Gets the alternative entity assignments.
+     *
+     * @returns The alternative entity assigment.
      */
     public get alternatives(): EntityAssignment[] {
         const alternatives = [];
@@ -145,6 +152,8 @@ export class EntityAssignment implements EntityAssignmentConfiguration {
 
     /**
      * Print an assignment as a string.
+     *
+     * @returns A string that represents the current object.
      */
     public toString(): string {
         return `${this.isExpected ? '+' : ''}${this.event}: ${this.property} = ${this.operation}(${EntityInfo.toString(

@@ -36,6 +36,7 @@ export class BotFrameworkHttpClient implements BotFrameworkClient {
 
     /**
      * Creates a new instance of the [BotFrameworkHttpClient](xref:botbuilder.BotFrameworkHttpClient) class
+     *
      * @param credentialProvider An instance of [ICredentialProvider](xref:botframework-connector.ICredentialProvider).
      * @param channelService Optional. The channel service.
      */
@@ -50,8 +51,8 @@ export class BotFrameworkHttpClient implements BotFrameworkClient {
 
     /**
      * Forwards an activity to another bot.
-     * @remarks
      *
+     * @remarks
      * @template T The type of body in the InvokeResponse.
      * @param fromBotId The MicrosoftAppId of the bot sending the activity.
      * @param toBotId The MicrosoftAppId of the bot receiving the activity.
@@ -59,6 +60,7 @@ export class BotFrameworkHttpClient implements BotFrameworkClient {
      * @param serviceUrl The callback Url for the skill host.
      * @param conversationId A conversation ID to use for the conversation with the skill.
      * @param activity Activity to forward.
+     * @returns {Promise<InvokeResponse<T>>} A promise representing the asynchronous operation.
      */
     public async postActivity<T = any>(
         fromBotId: string,
@@ -146,9 +148,10 @@ export class BotFrameworkHttpClient implements BotFrameworkClient {
 
     /**
      * Logic to build an [AppCredentials](xref:botframework-connector.AppCredentials) to be used to acquire tokens for this `HttpClient`.
+     *
      * @param appId The application id.
      * @param oAuthScope Optional. The OAuth scope.
-     * 
+     *
      * @returns The app credentials to be used to acquire tokens.
      */
     protected async buildCredentials(appId: string, oAuthScope?: string): Promise<AppCredentials> {

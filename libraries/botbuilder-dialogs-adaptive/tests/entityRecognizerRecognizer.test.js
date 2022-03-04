@@ -48,7 +48,7 @@ const getDialogContext = (testName, text, locale = 'en-us') => {
     );
 };
 
-describe('EntityRecognizer Recognizer Tests', () => {
+describe('EntityRecognizer Recognizer Tests', function () {
     const recognizers = new RecognizerSet().configure({
         recognizers: [
             new AgeEntityRecognizer(),
@@ -314,8 +314,8 @@ describe('EntityRecognizer Recognizer Tests', () => {
         strictEqual(results.entities.color[1], 'Blue');
     });
 
-    describe('Telemetry', () => {
-        it('ChannelMentionEntityRecognizer does not log telemetry by default', async () => {
+    describe('Telemetry', function () {
+        it('ChannelMentionEntityRecognizer does not log telemetry by default', async function () {
             const recognizer = new ChannelMentionEntityRecognizer();
             const spy = spyOnTelemetryClientTrackEvent(recognizer);
             const dialogContext = getDialogContext('ChannelMentionEntityRecognizer - no telemetry', 'gobble gobble');
@@ -330,7 +330,7 @@ describe('EntityRecognizer Recognizer Tests', () => {
             strictEqual(Object.entries(result.entities).length, 0);
         });
 
-        it('EntityRecognizer does not log telemetry by default', async () => {
+        it('EntityRecognizer does not log telemetry by default', async function () {
             const recognizer = new EntityRecognizer();
             const spy = spyOnTelemetryClientTrackEvent(recognizer);
             const dialogContext = getDialogContext('EntityRecognizer - no telemetry', 'gobble gobble');

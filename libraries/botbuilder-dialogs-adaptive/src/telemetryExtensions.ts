@@ -12,6 +12,7 @@ import { DialogManager, DialogTurnStateConstants } from 'botbuilder-dialogs';
 /**
  * Extension methods for telemetry.
  * Configures the telemetry client to use.
+ *
  * @param dialogManager DialogManager to configure.
  * @param telemetryClient BotTelemetryClient instance to use.
  * @returns DialogManager.
