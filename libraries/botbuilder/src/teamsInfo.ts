@@ -175,7 +175,7 @@ export class TeamsInfo {
                 null,
                 convoParams,
                 async (turnContext) => {
-                    conversationReference = TurnContext.getConversationReference(context.activity);
+                    conversationReference = TurnContext.getConversationReference(turnContext.activity);
                     newActivityId = turnContext.activity.id;
                 }
             );
