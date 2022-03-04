@@ -2,7 +2,7 @@ const { ok, strictEqual } = require('assert');
 const { createTelemetryClientAndStub } = require('./telemetryUtils');
 const { ConversationState, MemoryStorage, TestAdapter, MessageFactory } = require('botbuilder');
 const { DialogSet } = require('botbuilder-dialogs');
-const { LogAction, StaticActivityTemplate, TelemetryLoggerConstants } = require('../lib')
+const { LogAction, StaticActivityTemplate, TelemetryLoggerConstants } = require('../lib');
 
 describe('LogAction', function () {
     this.timeout(3000);

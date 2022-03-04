@@ -3,7 +3,7 @@ const { stub } = require('sinon');
 const { createTelemetryClientAndStub } = require('./telemetryUtils');
 const { ConversationState, MemoryStorage, TestAdapter, MessageFactory } = require('botbuilder');
 const { DialogSet } = require('botbuilder-dialogs');
-const { UpdateActivity, TelemetryLoggerConstants } = require('../lib')
+const { UpdateActivity, TelemetryLoggerConstants } = require('../lib');
 
 describe('UpdateActivity', function () {
     this.timeout(3000);

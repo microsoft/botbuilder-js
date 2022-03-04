@@ -2,7 +2,7 @@ const { ok, strictEqual } = require('assert');
 const { createTelemetryClientAndStub } = require('./telemetryUtils');
 const { ConversationState, MemoryStorage, TestAdapter, InputHints } = require('botbuilder');
 const { DialogSet } = require('botbuilder-dialogs');
-const { InputDialog, StaticActivityTemplate, TelemetryLoggerConstants } = require('../lib')
+const { InputDialog, StaticActivityTemplate, TelemetryLoggerConstants } = require('../lib');
 
 describe('InputDialog', function () {
     this.timeout(3000);
