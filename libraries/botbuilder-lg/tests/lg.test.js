@@ -1675,7 +1675,8 @@ describe('LG', function () {
     });
 
     it('TestFileOperation', function () {
-        const templates = preloaded.FileOperation;
+        Templates.enableFromFile = true;
+        const templates = Templates.parseFile(GetExampleFilePath('FileOperation.lg'));
         let evaled = templates.evaluate('FromFileWithoutEvaluation');
         assert.strictEqual(evaled, 'hi ${name}');
 
@@ -1687,6 +1688,12 @@ describe('LG', function () {
 
         evaled = templates.evaluate('FromFileBinary');
         assert.strictEqual(evaled, 'hi ${name}');
+    });
+
+    it('TestFileOperationDisabled', function () {
+        Templates.enableFromFile = false;
+        const templates = Templates.parseFile(GetExampleFilePath('FileOperation.lg'));
+        assert.throws(() => templates.evaluate('FromFileWithoutEvaluation'), { name: 'Error' });
     });
 
     it('TestImportAlias', function () {
