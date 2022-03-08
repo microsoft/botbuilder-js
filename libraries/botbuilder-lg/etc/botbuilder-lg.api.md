@@ -1669,6 +1669,7 @@ export class Templates implements Iterable<Template> {
     content: string;
     deleteTemplate(templateName: string): Templates;
     diagnostics: Diagnostic[];
+    static enableFromFile: boolean;
     evaluate(templateName: string, scope?: object, opt?: EvaluationOptions): any;
     evaluateText(inlineStr: string, scope?: object, opt?: EvaluationOptions): any;
     expandTemplate(templateName: string, scope?: object, opt?: EvaluationOptions): any[];
