@@ -88,26 +88,22 @@ export class GetConversationMembers<O extends object = {}>
         if (this.disabled && this.disabled.getValue(dc.state)) {
             return await dc.endDialog();
         }
-        const result = await this.GetMembers(dc.context);
+        const result = await this.getMembers(dc.context);
         dc.state.setValue(this.property.getValue(dc.state), result);
         return await dc.endDialog(result);
     }
 
-    private async GetMembers(context: TurnContext) {
-        var conversationId = context.activity?.conversation?.id;
-        if (conversationId == null) {
-            throw new Error('The GetMembersAsync operation needs a valid conversation Id.');
+    private async getMembers(context: TurnContext) {
+        const conversationId = context.activity?.conversation?.id;
+        if (!conversationId) {
+            throw new Error('[GetConversationMembers]: The getMembers operation needs a valid conversation id.');
         }
 
         const connectorClient = this.getConnectorClient(context);
-
-        var teamMembers = await connectorClient.conversations.getConversationMembers(conversationId);
+        const teamMembers = await connectorClient.conversations.getConversationMembers(conversationId);
         return teamMembers;
     }
 
-    /**
-     * @private
-     */
     private getConnectorClient(context: TurnContext): ConnectorClient {
         const client =
             context.adapter && 'createConnectorClient' in context.adapter

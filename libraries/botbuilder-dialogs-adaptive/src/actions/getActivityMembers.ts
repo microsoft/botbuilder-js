@@ -117,22 +117,19 @@ export class GetActivityMembers<O extends object = {}> extends Dialog implements
         }
 
         if (!context.activity.conversation) {
-            throw new Error('{nameof(GetActivityMembers)}.{nameof(GetActivityMembersAsync) : missing conversation');
+            throw new Error('[GetActivityMembers]: Missing conversation');
         }
-        var conversationId = context.activity.conversation.id;
+        const conversationId = context.activity.conversation.id;
 
-        if (typeof conversationId === 'undefined' || conversationId == null) {
-            throw new Error('{nameof(GetActivityMembers)}.{nameof(GetActivityMembersAsync) : missing conversation.id');
+        if (!conversationId || conversationId.trim() === '') {
+            throw new Error('[GetActivityMembers]: Missing conversation.id');
         }
 
         const connectorClient = this.getConnectorClient(context);
-        var accounts = await connectorClient.conversations.getActivityMembers(conversationId, activityId);
+        const accounts = await connectorClient.conversations.getActivityMembers(conversationId, activityId);
         return accounts;
     }
 
-    /**
-     * @private
-     */
     private getConnectorClient(context: TurnContext): ConnectorClient {
         const client =
             context.adapter && 'createConnectorClient' in context.adapter
@@ -144,6 +141,7 @@ export class GetActivityMembers<O extends object = {}> extends Dialog implements
 
         return client;
     }
+
     /**
      * @protected
      * Builds the compute Id for the [Dialog](xref:botbuilder-dialogs.Dialog).
