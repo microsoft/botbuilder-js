@@ -2256,6 +2256,7 @@ export enum Channels {
     Kik = 'kik',
     Line = 'line',
     Msteams = 'msteams',
+    Omni = 'omnichannel',
     Skype = 'skype',
     Skypeforbusiness = 'skypeforbusiness',
     Slack = 'slack',
