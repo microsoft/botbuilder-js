@@ -4,7 +4,7 @@
 const assert = require('assert');
 const { spy } = require('sinon');
 const { ok, strictEqual } = require('assert');
-const { OAuthPrompt, DialogSet, DialogTurnStatus } = require('../');
+const { OAuthPrompt, DialogSet, DialogTurnStatus, OAuthPromptSettings } = require('../');
 const {
     AuthenticationConstants,
     BotFrameworkAuthenticationFactory,
@@ -1010,6 +1010,72 @@ describe('OAuthPrompt', function () {
                     assert(a.value.body.failureDetail);
                 })
                 .startTest();
+        });
+    });
+
+    describe('OAuthPrompt signin link settings', function () {
+        let adapter;
+        const connectionName = 'myConnection';
+        const exchangeToken = 'exch123';
+        const token = 'abc123';
+        this.beforeEach(function () {
+            // Initialize TestAdapter
+            adapter = new TestAdapter(async (turnContext) => {
+                const dc = await dialogs.createContext(turnContext);
+                const results = await dc.continueDialog();
+                if (results.status === DialogTurnStatus.empty) {
+                    await dc.prompt('OAuthPrompt', {});
+                } else if (results.status === DialogTurnStatus.complete) {
+                    if (results.result.token) {
+                        await turnContext.sendActivity(`Logged in.`);
+                    } else {
+                        await turnContext.sendActivity('Failed');
+                    }
+                }
+                await convoState.saveChanges(turnContext);
+            });
+
+            //Create new ConversationState with MemoryStorage
+            const convoState = new ConversationState(new MemoryStorage());
+
+            //Create a DialogState property, DialogSet and OAuthPrompt
+            const dialogState = convoState.createProperty('dialogState');
+            const dialogs = new DialogSet(dialogState);
+
+            dialogs.add(
+                new OAuthPrompt('OAuthPrompt', {
+                    connectionName,
+                    title: 'Sign in',
+                    timeout: 30000,
+                    text: 'Please sign in',
+                })
+            );
+        });
+
+        it('Should not show sign in link', async function () {
+            const oAuthPromptSettings = new OAuthPromptSettings({
+                showSignInLinkValue: false,
+                channelId: activity.channelId,
+            });
+
+            dialogs.Add(new OAuthPrompt('OAuthPrompt', oAuthPromptSettings));
+            var dc = await dialogs.CreateContextAsync(turnContext, cancellationToken);
+            var results = await dc.ContinueDialogAsync(cancellationToken);
+            if (results.Status == DialogTurnStatus.Empty) {
+                await dc.PromptAsync('OAuthPrompt', new PromptOptions());
+            }
+
+            var initialActivity = new Activity();
+            {
+                (ChannelId = channelId), (Text = 'hello');
+            }
+            await adapter.send(initialActivity).assertReply((activity) => {
+                assert.single(activity.attachments);
+                assert.equal(OAuthCard.ContentType, activity.attachments[0].contentType);
+                var oAuthCard = activity.attachments[0].content;
+                var cardAction = oAuthCard.Buttons[0];
+                Assert.Equal(false, cardAction.Value != null);
+            });
         });
     });
 });

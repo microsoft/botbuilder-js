@@ -85,6 +85,12 @@ export interface OAuthPromptSettings {
      * by default for backwards compatibility.
      */
     endOnInvalidMessage?: boolean;
+
+    /**
+     * (Optional)Gets or sets an optional boolean value to force
+     * the display of a Sign In link overriding the default behavior.
+     */
+    showSignInLink?: boolean;
 }
 
 /**
@@ -352,7 +358,10 @@ export class OAuthPrompt extends Dialog {
                 if (turnContext.activity.channelId === Channels.Emulator) {
                     cardActionType = ActionTypes.OpenUrl;
                 }
-            } else if (!this.channelRequiresSignInLink(turnContext.activity.channelId)) {
+            } else if (
+                (settings.showSignInLink != null && settings.showSignInLink == false) ||
+                (settings.showSignInLink == null && !this.channelRequiresSignInLink(turnContext.activity.channelId))
+            ) {
                 link = undefined;
             }
 
