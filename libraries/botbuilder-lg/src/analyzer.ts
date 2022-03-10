@@ -29,6 +29,8 @@ import {
     SwitchCaseBodyContext,
     SwitchCaseRuleContext,
 } from './generated/LGTemplateParser';
+import { AnalyzerOptions } from './analyzerOptions';
+import { TemplateErrors } from './templateErrors';
 
 /**
  * Analyzer engine. To get the static analyzer results.
@@ -44,16 +46,20 @@ export class Analyzer
     private readonly templateMap: { [name: string]: Template };
     private readonly evalutationTargetStack: EvaluationTarget[] = [];
     private readonly _expressionParser: ExpressionParserInterface;
+    private readonly _analyzerOptions: AnalyzerOptions;
 
     /**
      * Creates a new instance of the [Analyzer](xref:botbuilder-lg.Analyzer) class.
+     *
      * @param templates Templates.
      * @param opt Options for LG.
+     * @param analyzerOptions Options for the analyzer.
      */
-    public constructor(templates: Templates, opt?: EvaluationOptions) {
+    public constructor(templates: Templates, opt?: EvaluationOptions, analyzerOptions?: AnalyzerOptions) {
         super();
         this.templates = templates;
         this.templateMap = keyBy(templates.allTemplates, (t: Template): string => t.name);
+        this._analyzerOptions = analyzerOptions;
 
         // create an evaluator to leverage its customized function look up for checking
         const evaluator: Evaluator = new Evaluator(this.templates, opt);
@@ -66,11 +72,24 @@ export class Analyzer
      * @returns Analyze result including variables and template references.
      */
     public analyzeTemplate(templateName: string): AnalyzerResult {
-        if (
-            !(templateName in this.templateMap) ||
-            this.evalutationTargetStack.find((u: EvaluationTarget): boolean => u.templateName === templateName) !==
-                undefined
-        ) {
+        const missingName = !this.templateMap[templateName];
+        const stackHasName = this.evalutationTargetStack.some((e) => e.templateName === templateName);
+
+        if (this._analyzerOptions && this._analyzerOptions.ThrowOnRecursive === true) {
+            if (missingName) {
+                throw new Error(TemplateErrors.templateNotExist(templateName));
+            }
+
+            if (stackHasName) {
+                throw new Error(
+                    `${TemplateErrors.loopDetected} ${this.evalutationTargetStack
+                        .reverse()
+                        .map((e) => e.templateName)} => ${templateName}`
+                );
+            }
+        }
+
+        if (missingName || stackHasName) {
             return new AnalyzerResult();
         }
 
@@ -236,7 +255,10 @@ export class Analyzer
                 this.templateMap[templateName].parameters.length === 0
             ) {
                 result.union(this.analyzeTemplate(templateName));
-            } else if (!result.TemplateReferences.includes(templateName)) {
+            } else if (
+                (this._analyzerOptions && this._analyzerOptions.ThrowOnRecursive === true) ||
+                !result.TemplateReferences.includes(templateName)
+            ) {
                 // if template has params, just get the templateref without variables.
                 result.union(new AnalyzerResult([], this.analyzeTemplate(templateName).TemplateReferences));
             }
