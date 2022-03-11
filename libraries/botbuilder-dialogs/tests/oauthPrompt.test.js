@@ -4,7 +4,7 @@
 const assert = require('assert');
 const { spy } = require('sinon');
 const { ok, strictEqual } = require('assert');
-const { OAuthPrompt, DialogSet, DialogTurnStatus, OAuthPromptSettings } = require('../');
+const { OAuthPrompt, DialogSet, DialogTurnStatus } = require('../');
 const {
     AuthenticationConstants,
     BotFrameworkAuthenticationFactory,
@@ -1015,66 +1015,55 @@ describe('OAuthPrompt', function () {
 
     describe('OAuthPrompt signin link settings', function () {
         let adapter;
-        const connectionName = 'myConnection';
-        const exchangeToken = 'exch123';
-        const token = 'abc123';
-        this.beforeEach(function () {
-            // Initialize TestAdapter
-            adapter = new TestAdapter(async (turnContext) => {
-                const dc = await dialogs.createContext(turnContext);
-                const results = await dc.continueDialog();
-                if (results.status === DialogTurnStatus.empty) {
-                    await dc.prompt('OAuthPrompt', {});
-                } else if (results.status === DialogTurnStatus.complete) {
-                    if (results.result.token) {
-                        await turnContext.sendActivity(`Logged in.`);
-                    } else {
-                        await turnContext.sendActivity('Failed');
+        const testCases = [
+            { showSignInLinkValue: null, channelId: Channels.Test, shouldHaveSignInLink: false },
+            { showSignInLinkValue: null, channelId: Channels.Msteams, shouldHaveSignInLink: true },
+            { showSignInLinkValue: false, channelId: Channels.Test, shouldHaveSignInLink: false },
+            { showSignInLinkValue: true, channelId: Channels.Test, shouldHaveSignInLink: true },
+            { showSignInLinkValue: false, channelId: Channels.Msteams, shouldHaveSignInLink: false },
+            { showSignInLinkValue: true, channelId: Channels.Msteams, shouldHaveSignInLink: true },
+        ];
+
+        testCases.forEach((testCase) => {
+            const test = testCase.shouldHaveSignInLink ? 'show sign in link' : 'not show sign in link';
+            it(`Should ${test} for '${testCase.channelId}' channel and showSignInLink set to ${testCase.showSignInLinkValue}`, async function () {
+                const oAuthPromptSettings = {
+                    showSignInLink: testCase.showSignInLinkValue,
+                };
+
+                adapter = new TestAdapter(async (turnContext) => {
+                    const dc = await dialogs.createContext(turnContext);
+                    const results = await dc.continueDialog();
+                    if (results.status === DialogTurnStatus.empty) {
+                        await dc.prompt('OAuthPrompt', {});
                     }
-                }
-                await convoState.saveChanges(turnContext);
-            });
+                    await convoState.saveChanges(turnContext);
+                });
 
-            //Create new ConversationState with MemoryStorage
-            const convoState = new ConversationState(new MemoryStorage());
+                //Create new ConversationState with MemoryStorage
+                const convoState = new ConversationState(new MemoryStorage());
 
-            //Create a DialogState property, DialogSet and OAuthPrompt
-            const dialogState = convoState.createProperty('dialogState');
-            const dialogs = new DialogSet(dialogState);
+                //Create a DialogState property, DialogSet and OAuthPrompt
+                const dialogState = convoState.createProperty('dialogState');
+                const dialogs = new DialogSet(dialogState);
 
-            dialogs.add(
-                new OAuthPrompt('OAuthPrompt', {
-                    connectionName,
-                    title: 'Sign in',
-                    timeout: 30000,
-                    text: 'Please sign in',
-                })
-            );
-        });
+                dialogs.add(new OAuthPrompt('OAuthPrompt', oAuthPromptSettings));
 
-        it('Should not show sign in link', async function () {
-            const oAuthPromptSettings = new OAuthPromptSettings({
-                showSignInLinkValue: false,
-                channelId: activity.channelId,
-            });
+                const initialActivity = {
+                    channelId: testCase.channelId,
+                    text: 'hello',
+                };
 
-            dialogs.Add(new OAuthPrompt('OAuthPrompt', oAuthPromptSettings));
-            var dc = await dialogs.CreateContextAsync(turnContext, cancellationToken);
-            var results = await dc.ContinueDialogAsync(cancellationToken);
-            if (results.Status == DialogTurnStatus.Empty) {
-                await dc.PromptAsync('OAuthPrompt', new PromptOptions());
-            }
-
-            var initialActivity = new Activity();
-            {
-                (ChannelId = channelId), (Text = 'hello');
-            }
-            await adapter.send(initialActivity).assertReply((activity) => {
-                assert.single(activity.attachments);
-                assert.equal(OAuthCard.ContentType, activity.attachments[0].contentType);
-                var oAuthCard = activity.attachments[0].content;
-                var cardAction = oAuthCard.Buttons[0];
-                Assert.Equal(false, cardAction.Value != null);
+                await adapter
+                    .send(initialActivity)
+                    .assertReply((activity) => {
+                        assert.strictEqual(activity.attachments.length, 1);
+                        assert.strictEqual(activity.attachments[0].contentType, CardFactory.contentTypes.oauthCard);
+                        const oAuthCard = activity.attachments[0].content;
+                        const cardAction = oAuthCard.buttons[0];
+                        assert.strictEqual(testCase.shouldHaveSignInLink, cardAction.value != null);
+                    })
+                    .startTest();
             });
         });
     });
