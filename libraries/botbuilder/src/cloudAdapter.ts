@@ -128,6 +128,7 @@ export class CloudAdapter extends CloudAdapterBase implements BotFrameworkHttpAd
         const activity = validateAndFixActivity(ActivityT.parse(req.body));
 
         if (!activity.type) {
+            console.warn('BadRequest: Missing activity or activity type.');
             return end(StatusCodes.BAD_REQUEST);
         }
 

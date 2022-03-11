@@ -25,6 +25,41 @@ describe(`TestAdapter`, function () {
         await adapter.receiveActivity('test');
     });
 
+    it(`should reject on unhandled error.`, async function () {
+        const err = new Error('Intentional');
+        const adapter = new TestAdapter(() => {
+            throw err;
+        });
+        await assert.rejects(async () => {
+            await adapter.send('Message');
+        }, err);
+    });
+
+    it(`should call finally when no error happens`, async function () {
+        const adapter = new TestAdapter(async () => undefined);
+        let runFinally = false;
+
+        await adapter.send('Message').finally(() => {
+            runFinally = true;
+        });
+        assert(runFinally, 'Finally was not called');
+    });
+
+    it(`should call finally when an error happens`, async function () {
+        const err = new Error('Intentional');
+        const adapter = new TestAdapter(() => {
+            throw err;
+        });
+        let runFinally = false;
+
+        await assert.rejects(async () => {
+            await adapter.send('Message').finally(() => {
+                runFinally = true;
+            });
+        }, err);
+        assert(runFinally, 'Finally was not called');
+    });
+
     it(`should support receiveActivity() called with an Activity.`, async function () {
         const adapter = new TestAdapter((context) => {
             assert(context.activity.type === ActivityTypes.Message, `wrong type.`);
