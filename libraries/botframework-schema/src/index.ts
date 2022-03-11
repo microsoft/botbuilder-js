@@ -2238,7 +2238,7 @@ export enum SemanticActionStateTypes {
 /**
  * Defines values for ChannelIds for Channels.
  * Possible values include: 'alexa', 'console', 'cortana', 'directline', 'directlinespeech', 'email',
- * 'emulator', 'facebook', 'groupme', 'kik', 'line', 'msteams', 'skype', 'skypeforbusiness',
+ * 'emulator', 'facebook', 'groupme', 'kik', 'line', 'msteams', 'onmichannel', 'skype', 'skypeforbusiness',
  * 'slack', 'sms', 'telegram', 'test', 'twilio-sms', 'webchat'
  *
  * @readonly
@@ -2256,6 +2256,7 @@ export enum Channels {
     Kik = 'kik',
     Line = 'line',
     Msteams = 'msteams',
+    Omni = 'omnichannel',
     Skype = 'skype',
     Skypeforbusiness = 'skypeforbusiness',
     Slack = 'slack',
