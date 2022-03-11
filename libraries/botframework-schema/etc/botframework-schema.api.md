@@ -444,6 +444,8 @@ export enum Channels {
     // (undocumented)
     Msteams = "msteams",
     // (undocumented)
+    Omni = "omnichannel",
+    // (undocumented)
     Skype = "skype",
     // (undocumented)
     Skypeforbusiness = "skypeforbusiness",

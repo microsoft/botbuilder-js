@@ -590,6 +590,7 @@ export interface OAuthPromptSettings {
     connectionName: string;
     endOnInvalidMessage?: boolean;
     oAuthAppCredentials?: CoreAppCredentials;
+    showSignInLink?: boolean;
     text?: string;
     timeout?: number;
     title: string;
