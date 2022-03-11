@@ -456,16 +456,6 @@ export class OAuthPrompt extends Dialog {
                             'expected by the bots active OAuthPrompt. Ensure these names match when sending the InvokeActivityInvalid ConnectionName in the TokenExchangeInvokeRequest'
                     )
                 );
-            } else if (!('exchangeToken' in context.adapter)) {
-                // Token Exchange not supported in the adapter
-                await context.sendActivity(
-                    this.getTokenExchangeInvokeResponse(
-                        StatusCodes.BAD_GATEWAY,
-                        "The bot's BotAdapter does not support token exchange operations. Ensure the bot's Adapter supports the ExtendedUserTokenProvider interface."
-                    )
-                );
-
-                throw new Error('OAuthPrompt.recognizeToken(): not supported by the current adapter');
             } else {
                 let tokenExchangeResponse: TokenResponse;
                 try {
