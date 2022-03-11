@@ -214,6 +214,8 @@ export class TeamsInfo {
      *
      * @param context The [TurnContext](xref:botbuilder-core.TurnContext) for this turn.
      * @returns The list of [TeamsChannelAccount](xref:botframework-schema.TeamsChannelAccount).
+     *
+     * @deprecated Use `getPagedTeamMembers` instead.
      */
     public static async getMembers(context: TurnContext): Promise<TeamsChannelAccount[]> {
         const teamId = this.getTeamId(context);
@@ -277,6 +279,8 @@ export class TeamsInfo {
      * @param context The [TurnContext](xref:botbuilder-core.TurnContext) for this turn.
      * @param teamId ID of the Teams team.
      * @returns The list of [TeamsChannelAccount](xref:botframework-schema.TeamsChannelAccount) of the members.
+     *
+     * @deprecated Use `getPagedTeamMembers` instead.
      */
     public static async getTeamMembers(context: TurnContext, teamId?: string): Promise<TeamsChannelAccount[]> {
         const t = teamId || this.getTeamId(context);
