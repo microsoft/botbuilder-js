@@ -461,7 +461,7 @@ describe('BotFrameworkAdapter', function () {
             const userAgent = 'test user agent';
 
             nock(reference.serviceUrl)
-                .matchHeader('user-agent', (val) => val.endsWith(userAgent))
+                .matchHeader('user-agent', ([val]) => val.endsWith(userAgent))
                 .post('/v3/conversations/convo1/activities/1234')
                 .reply(200, { id: 'abc123id' });
 
@@ -1363,7 +1363,7 @@ describe('BotFrameworkAdapter', function () {
 
     it('should create a User-Agent header with the same info as the host machine.', async function () {
         nock(reference.serviceUrl)
-            .matchHeader('user-agent', (val) => val.endsWith(userAgent))
+            .matchHeader('user-agent', ([val]) => val.endsWith(userAgent))
             .post('/v3/conversations/convo1/activities/1234')
             .reply(200, { id: 'abc123id' });
 
@@ -1376,7 +1376,7 @@ describe('BotFrameworkAdapter', function () {
 
     it('should still add Botbuilder User-Agent header when custom requestPolicyFactories are provided.', async function () {
         nock(reference.serviceUrl)
-            .matchHeader('user-agent', (val) => val.endsWith(userAgent))
+            .matchHeader('user-agent', ([val]) => val.endsWith(userAgent))
             .post('/v3/conversations/convo1/activities/1234')
             .reply(200, { id: 'abc123id' });
 

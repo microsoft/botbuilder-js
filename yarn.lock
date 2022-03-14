@@ -233,20 +233,6 @@
   dependencies:
     tslib "^2.0.0"
 
-"@azure/ms-rest-js@1.9.1":
-  version "1.9.1"
-  resolved "https://registry.yarnpkg.com/@azure/ms-rest-js/-/ms-rest-js-1.9.1.tgz#93aef111b00bfdcc470a6bcb4520a13b36f21788"
-  integrity sha512-F1crHKhmsvFLM9fsnDyCGFd2E2KR9GEZm5oBVV5D5k2EBQ7u7idtSJlSF6RDLDIrGWtc4NnFdYwsoiW8NLlBQg==
-  dependencies:
-    "@types/tunnel" "0.0.0"
-    axios "^0.21.1"
-    form-data "^2.3.2"
-    tough-cookie "^2.4.3"
-    tslib "^1.9.2"
-    tunnel "0.0.6"
-    uuid "^3.2.1"
-    xml2js "^0.4.19"
-
 "@azure/ms-rest-js@2.6.0":
   version "2.6.0"
   resolved "https://registry.yarnpkg.com/@azure/ms-rest-js/-/ms-rest-js-2.6.0.tgz#ec06e6a0b704567ea9b2c8044821cf47148c586b"
@@ -274,6 +260,21 @@
     tslib "^1.9.2"
     tunnel "0.0.6"
     uuid "^3.2.1"
+    xml2js "^0.4.19"
+
+"@azure/ms-rest-js@^2.6.1":
+  version "2.6.1"
+  resolved "https://registry.yarnpkg.com/@azure/ms-rest-js/-/ms-rest-js-2.6.1.tgz#4f94688a750d51afcbab4b55d6ecb9d3df4ddd94"
+  integrity sha512-LLi4jRe/qy5IM8U2CkoDgSZp2OH+MgDe2wePmhz8uY84Svc53EhHaamVyoU6BjjHBxvCRh1vcD1urJDccrxqIw==
+  dependencies:
+    "@azure/core-auth" "^1.1.4"
+    abort-controller "^3.0.0"
+    form-data "^2.5.0"
+    node-fetch "^2.6.7"
+    tough-cookie "^3.0.1"
+    tslib "^1.10.0"
+    tunnel "0.0.6"
+    uuid "^8.3.2"
     xml2js "^0.4.19"
 
 "@azure/msal-browser@^2.16.0":
@@ -2028,13 +2029,6 @@
   version "4.0.0"
   resolved "https://registry.yarnpkg.com/@types/tough-cookie/-/tough-cookie-4.0.0.tgz#fef1904e4668b6e5ecee60c52cc6a078ffa6697d"
   integrity sha512-I99sngh224D0M7XgW1s120zxCt3VYQ3IQsuw3P3jbq5GG4yc79+ZjyKznyOGIQrflfylLgcfekeZW/vk0yng6A==
-
-"@types/tunnel@0.0.0":
-  version "0.0.0"
-  resolved "https://registry.yarnpkg.com/@types/tunnel/-/tunnel-0.0.0.tgz#c2a42943ee63c90652a5557b8c4e56cda77f944e"
-  integrity sha512-FGDp0iBRiBdPjOgjJmn1NH0KDLN+Z8fRmo+9J7XGBhubq1DPrGrbmG4UTlGzrpbCpesMqD0sWkzi27EYkOMHyg==
-  dependencies:
-    "@types/node" "*"
 
 "@types/tunnel@^0.0.1":
   version "0.0.1"
