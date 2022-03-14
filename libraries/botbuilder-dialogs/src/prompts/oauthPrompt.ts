@@ -85,6 +85,12 @@ export interface OAuthPromptSettings {
      * by default for backwards compatibility.
      */
     endOnInvalidMessage?: boolean;
+
+    /**
+     * (Optional) value to force the display of a Sign In link overriding the default behavior.
+     * True to display the SignInLink.
+     */
+    showSignInLink?: boolean;
 }
 
 /**
@@ -352,7 +358,10 @@ export class OAuthPrompt extends Dialog {
                 if (turnContext.activity.channelId === Channels.Emulator) {
                     cardActionType = ActionTypes.OpenUrl;
                 }
-            } else if (!this.channelRequiresSignInLink(turnContext.activity.channelId)) {
+            } else if (
+                settings.showSignInLink === false ||
+                (!settings.showSignInLink && !this.channelRequiresSignInLink(turnContext.activity.channelId))
+            ) {
                 link = undefined;
             }
 
@@ -447,16 +456,6 @@ export class OAuthPrompt extends Dialog {
                             'expected by the bots active OAuthPrompt. Ensure these names match when sending the InvokeActivityInvalid ConnectionName in the TokenExchangeInvokeRequest'
                     )
                 );
-            } else if (!('exchangeToken' in context.adapter)) {
-                // Token Exchange not supported in the adapter
-                await context.sendActivity(
-                    this.getTokenExchangeInvokeResponse(
-                        StatusCodes.BAD_GATEWAY,
-                        "The bot's BotAdapter does not support token exchange operations. Ensure the bot's Adapter supports the ExtendedUserTokenProvider interface."
-                    )
-                );
-
-                throw new Error('OAuthPrompt.recognizeToken(): not supported by the current adapter');
             } else {
                 let tokenExchangeResponse: TokenResponse;
                 try {
