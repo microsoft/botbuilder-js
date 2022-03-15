@@ -17,6 +17,9 @@ import { AuthenticationError } from './authenticationError';
 import { StatusCodes } from 'botframework-schema';
 
 // eslint-disable-next-line @typescript-eslint/no-namespace
+/**
+ * @deprecated Use `ConfigurationBotFrameworkAuthentication` instead to perform enterprise channel validation.
+ */
 export namespace EnterpriseChannelValidation {
     /**
      * TO BOT FROM CHANNEL: Token validation parameters when connecting to a bot

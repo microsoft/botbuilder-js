@@ -21,6 +21,9 @@ import { GovernmentConstants } from './governmentConstants';
 import { SkillValidation } from './skillValidation';
 
 // eslint-disable-next-line @typescript-eslint/no-namespace
+/**
+ * @deprecated Use `ConfigurationBotFrameworkAuthentication` instead to perform JWT token validation.
+ */
 export namespace JwtTokenValidation {
     /**
      * Authenticates the request and sets the service url in the set of trusted urls.

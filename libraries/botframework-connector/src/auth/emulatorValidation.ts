@@ -21,6 +21,7 @@ import { StatusCodes } from 'botframework-schema';
 import { ToBotFromBotOrEmulatorTokenValidationParameters } from './tokenValidationParameters';
 
 /**
+ * @deprecated Use `ConfigurationBotFrameworkAuthentication` instead to perform emulator validation.
  * Validates and Examines JWT tokens from the Bot Framework Emulator
  */
 export namespace EmulatorValidation {
