@@ -35,12 +35,12 @@
     "botbuilder-stdlib": "4.1.6",
     "botframework-schema": "4.1.6",
     "cross-fetch": "^3.0.5",
-    "jsonwebtoken": "^8.0.1",
+    "jsonwebtoken": "^8.5.1",
     "rsa-pem-from-mod-exp": "^0.8.4",
     "zod": "~1.11.17"
   },
   "devDependencies": {
-    "@types/jsonwebtoken": "7.2.8",
+    "@types/jsonwebtoken": "^8.5.1",
     "@types/node": "^10.17.27",
     "botbuilder-test-utils": "0.0.0",
     "dotenv": "^6.2.0",
