@@ -40,7 +40,7 @@
     "zod": "~1.11.17"
   },
   "devDependencies": {
-    "@types/jsonwebtoken": "^8.5.1",
+    "@types/jsonwebtoken": "8.3.5",
     "@types/node": "^10.17.27",
     "botbuilder-test-utils": "0.0.0",
     "dotenv": "^6.2.0",
