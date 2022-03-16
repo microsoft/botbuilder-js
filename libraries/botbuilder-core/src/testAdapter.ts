@@ -978,8 +978,17 @@ export class TestFlow {
      * Adds a `then()` step to the tests promise chain.
      * @param onFulfilled Code to run if the test is currently passing.
      */
-    public then(onFulfilled?: () => void): TestFlow {
-        return new TestFlow(this.previous.then(onFulfilled), this.adapter, this.callback);
+    public then(onFulfilled?: () => void, onRejected?: (err) => void): TestFlow {
+        return new TestFlow(this.previous.then(onFulfilled, onRejected), this.adapter, this.callback);
+    }
+
+    /**
+     * Adds a finally clause. Note that you can't keep chaining afterwards.
+     * @param onFinally 
+     * @returns 
+     */
+    public finally(onFinally: () => void): Promise<void> {
+        return Promise.resolve(this.previous.finally(onFinally));
     }
 
     /**
