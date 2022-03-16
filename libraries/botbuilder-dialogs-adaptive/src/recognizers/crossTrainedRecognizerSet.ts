@@ -12,6 +12,7 @@ import { Activity, RecognizerResult, getTopScoringIntent } from 'botbuilder';
 import { Converter, ConverterFactory, DialogContext, Recognizer, RecognizerConfiguration } from 'botbuilder-dialogs';
 import { RecognizerListConverter } from '../converters';
 import { AdaptiveRecognizer } from './adaptiveRecognizer';
+import { TelemetryLoggerConstants } from '../telemetryLoggerConstants';
 
 /**
  * Standard cross trained intent name prefix.
@@ -89,7 +90,7 @@ export class CrossTrainedRecognizerSet extends AdaptiveRecognizer implements Cro
         const result = this.processResults(results);
         this.trackRecognizerResult(
             dialogContext,
-            'CrossTrainedRecognizerSetResult',
+            TelemetryLoggerConstants.CrossTrainedRecognizerSetResultEvent,
             this.fillRecognizerResultTelemetryProperties(result, telemetryProperties, dialogContext),
             telemetryMetrics
         );

@@ -12,6 +12,7 @@ import { IntentPattern } from './intentPattern';
 import { EntityRecognizer, TextEntity, EntityRecognizerSet } from './entityRecognizers';
 import { RecognizerSetConfiguration } from './recognizerSet';
 import { AdaptiveRecognizer } from './adaptiveRecognizer';
+import { TelemetryLoggerConstants } from '../telemetryLoggerConstants';
 
 type IntentPatternInput = {
     intent: string;
@@ -181,7 +182,7 @@ export class RegexRecognizer extends AdaptiveRecognizer implements RegexRecogniz
         );
         this.trackRecognizerResult(
             dialogContext,
-            'RegexRecognizerResult',
+            TelemetryLoggerConstants.RegexRecognizerResultEvent,
             this.fillRecognizerResultTelemetryProperties(recognizerResult, telemetryProperties, dialogContext),
             telemetryMetrics
         );
