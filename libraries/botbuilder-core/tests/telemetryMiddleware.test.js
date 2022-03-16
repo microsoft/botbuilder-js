@@ -45,6 +45,7 @@ describe(`TelemetryMiddleware`, () => {
             expectExactEvent(name, {
                 conversationName: sinon.match.string,
                 recipientId: sinon.match.string,
+                type: sinon.match.string,
                 ...properties,
             });
         };
@@ -96,9 +97,10 @@ describe(`TelemetryMiddleware`, () => {
             fromName: sinon.match.string,
             recipientName: sinon.match.string,
             text: 'foo',
+            type: ActivityTypes.Message
         });
 
-        expectSendEvent({ conversationId: sinon.match.string });
+        expectSendEvent({ conversationId: sinon.match.string, type: ActivityTypes.Typing });
         expectSendEvent({ conversationId: sinon.match.string, text: 'echo:foo' });
 
         expectReceiveEvent({
@@ -106,9 +108,10 @@ describe(`TelemetryMiddleware`, () => {
             fromName: sinon.match.string,
             recipientName: sinon.match.string,
             text: 'bar',
+            type: ActivityTypes.Message
         });
 
-        expectSendEvent({ conversationId: sinon.match.string });
+        expectSendEvent({ conversationId: sinon.match.string, type: ActivityTypes.Typing });
         expectSendEvent({ conversationId: sinon.match.string, text: 'echo:bar' });
 
         const adapter = makeAdapter({
@@ -167,13 +170,14 @@ describe(`TelemetryMiddleware`, () => {
     it(`telemetry should log update activities`, async () => {
         const { client, expectReceiveEvent, expectSendEvent, expectTrackEvent } = makeTelemetryClient();
 
-        expectReceiveEvent({ text: 'foo' });
+        expectReceiveEvent({ text: 'foo', type: ActivityTypes.Message });
         expectSendEvent();
 
         expectReceiveEvent({ text: 'update' });
         expectTrackEvent(TelemetryLoggerMiddleware.botMsgUpdateEvent, {
             conversationId: sinon.match.string,
             text: 'new response',
+            type: ActivityTypes.Message
         });
 
         const adapter = makeAdapter({
@@ -196,11 +200,11 @@ describe(`TelemetryMiddleware`, () => {
     it(`telemetry should log delete activities`, async () => {
         const { client, expectReceiveEvent, expectSendEvent, expectTrackEvent } = makeTelemetryClient();
 
-        expectReceiveEvent({ text: 'foo' });
+        expectReceiveEvent({ text: 'foo', type: ActivityTypes.Message });
         expectSendEvent({ text: 'response' });
 
         expectReceiveEvent({ text: 'delete' });
-        expectTrackEvent(TelemetryLoggerMiddleware.botMsgDeleteEvent);
+        expectTrackEvent(TelemetryLoggerMiddleware.botMsgDeleteEvent, { type: ActivityTypes.MessageDelete });
 
         let response;
         const adapter = makeAdapter({

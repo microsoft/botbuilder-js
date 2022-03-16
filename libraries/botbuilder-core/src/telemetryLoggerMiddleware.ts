@@ -215,6 +215,7 @@ export class TelemetryLoggerMiddleware implements Middleware {
             properties[TelemetryConstants.localeProperty] = activity.locale ?? '';
             properties[TelemetryConstants.recipientIdProperty] = activity.recipient?.id ?? '';
             properties[TelemetryConstants.recipientNameProperty] = activity.recipient?.name ?? '';
+            properties[TelemetryConstants.activityTypeProperty] = activity.type ?? '';
 
             // Use the LogPersonalInformation flag to toggle logging PII data, text and user name are common examples
             if (this.logPersonalInformation) {
@@ -269,6 +270,7 @@ export class TelemetryLoggerMiddleware implements Middleware {
             properties[TelemetryConstants.conversationIdProperty] = activity.conversation?.id ?? '';
             properties[TelemetryConstants.conversationNameProperty] = activity.conversation?.name ?? '';
             properties[TelemetryConstants.localeProperty] = activity.locale ?? '';
+            properties[TelemetryConstants.activityTypeProperty] = activity.type ?? '';
 
             // Use the LogPersonalInformation flag to toggle logging PII data, text and user name are common examples
             if (this.logPersonalInformation) {
@@ -321,6 +323,7 @@ export class TelemetryLoggerMiddleware implements Middleware {
             properties[TelemetryConstants.conversationIdProperty] = activity.conversation?.id ?? '';
             properties[TelemetryConstants.conversationNameProperty] = activity.conversation?.name ?? '';
             properties[TelemetryConstants.localeProperty] = activity.locale ?? '';
+            properties[TelemetryConstants.activityTypeProperty] = activity.type ?? '';
 
             // Use the LogPersonalInformation flag to toggle logging PII data, text is a common example
             if (this.logPersonalInformation) {
@@ -357,6 +360,7 @@ export class TelemetryLoggerMiddleware implements Middleware {
             properties[TelemetryConstants.recipientIdProperty] = activity.recipient?.id ?? '';
             properties[TelemetryConstants.conversationIdProperty] = activity.conversation?.id ?? '';
             properties[TelemetryConstants.conversationNameProperty] = activity.conversation?.name ?? '';
+            properties[TelemetryConstants.activityTypeProperty] = activity.type ?? '';
 
             // Additional Properties can override "stock" properties.
             if (telemetryProperties) {

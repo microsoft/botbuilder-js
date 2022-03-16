@@ -29,6 +29,7 @@ export * from './schemaHelper';
 export * from './selectors';
 export * from './skillExtensions';
 export * from './telemetryExtensions';
+export * from './telemetryLoggerConstants';
 export * from './templates';
 export * from './triggerSelector';
 

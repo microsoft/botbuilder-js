@@ -18,6 +18,7 @@ import {
 } from 'botbuilder-dialogs';
 import { ActionContext } from '../actionContext';
 import { DialogListConverter } from '../converters';
+import { TelemetryLoggerConstants } from '../telemetryLoggerConstants';
 
 const OFFSET_KEY = 'this.offset';
 
@@ -276,7 +277,7 @@ export class ActionScope<O extends object = {}>
             Kind: `Microsoft.${actionName}`,
             ActionId: `Microsoft.${action.id}`,
         };
-        this.telemetryClient.trackEvent({ name: 'AdaptiveDialogAction', properties: properties });
+        this.telemetryClient.trackEvent({ name: TelemetryLoggerConstants.DialogActionEvent, properties: properties });
 
         return await dc.beginDialog(action.id);
     }

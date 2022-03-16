@@ -11,6 +11,7 @@ import { ActivityTypes, Activity, InputHints, MessageFactory } from 'botbuilder'
 import { AdaptiveEvents } from '../adaptiveEvents';
 import { AttachmentInput } from './attachmentInput';
 import { BoolProperty, IntProperty, StringProperty, TemplateInterfaceProperty, UnknownProperty } from '../properties';
+import { TelemetryLoggerConstants } from '../telemetryLoggerConstants';
 
 import {
     BoolExpression,
@@ -262,10 +263,11 @@ export abstract class InputDialog extends Dialog implements InputDialogConfigura
                 if (this.defaultValueResponse) {
                     const response = await this.defaultValueResponse.bind(dc, dc.state);
                     this.telemetryClient.trackEvent({
-                        name: 'GeneratorResult',
+                        name: TelemetryLoggerConstants.GeneratorResultEvent,
                         properties: {
                             template: this.defaultValueResponse,
                             result: response || '',
+                            context: TelemetryLoggerConstants.InputDialogResultEvent,
                         },
                     });
 
@@ -381,10 +383,11 @@ export abstract class InputDialog extends Dialog implements InputDialogConfigura
         }
 
         this.telemetryClient.trackEvent({
-            name: 'GeneratorResult',
+            name: TelemetryLoggerConstants.GeneratorResultEvent,
             properties: {
                 template: template,
                 result: msg,
+                context: TelemetryLoggerConstants.InputDialogResultEvent,
             },
         });
 
