@@ -35,8 +35,8 @@
     "botbuilder-dialogs-adaptive-runtime-core": "4.14.1-preview",
     "botbuilder-dialogs-declarative": "4.14.1-preview",
     "lodash": "^4.17.21",
-    "node-fetch": "^2.6.0",
-    "url-parse": "^1.5.1",
+    "node-fetch": "^2.6.7",
+    "url-parse": "^1.5.9",
     "zod": "~1.11.17"
   },
   "resolutions": {

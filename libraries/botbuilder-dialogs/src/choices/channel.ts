@@ -41,8 +41,9 @@ export function supportsCardActions(channelId: string, buttonCnt = 100): boolean
     switch (channelId) {
         case Channels.Facebook:
         case Channels.Skype:
-        case Channels.Msteams:
             return buttonCnt <= 3;
+        case Channels.Msteams:
+            return buttonCnt <= 50;
         case Channels.Line:
             return buttonCnt <= 99;
         case Channels.Slack:
