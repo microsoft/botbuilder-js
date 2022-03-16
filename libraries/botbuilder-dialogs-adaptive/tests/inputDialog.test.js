@@ -2,7 +2,7 @@ const { ok, strictEqual } = require('assert');
 const { createTelemetryClientAndStub } = require('./telemetryUtils');
 const { ConversationState, MemoryStorage, TestAdapter, InputHints } = require('botbuilder');
 const { DialogSet } = require('botbuilder-dialogs');
-const { InputDialog, StaticActivityTemplate } = require('../lib');
+const { InputDialog, StaticActivityTemplate, TelemetryLoggerConstants } = require('../lib');
 
 describe('InputDialog', function () {
     this.timeout(3000);
@@ -35,7 +35,7 @@ describe('InputDialog', function () {
             await dialog.promptUser(dc, undefined);
 
             // assert telemetry result
-            strictEqual(telemetryName, 'GeneratorResult');
+            strictEqual(telemetryName, TelemetryLoggerConstants.GeneratorResultEvent);
             strictEqual(telemetryProperties.result.text, 'test');
             strictEqual(telemetryProperties.template.activity.text, 'test');
             strictEqual(telemetryProperties.template.activity.inputHint, InputHints.AcceptingInput);

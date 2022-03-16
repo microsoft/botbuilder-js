@@ -10,6 +10,7 @@ import { Activity, RecognizerResult, getTopScoringIntent } from 'botbuilder';
 import { Converter, ConverterFactory, DialogContext, Recognizer, RecognizerConfiguration } from 'botbuilder-dialogs';
 import { RecognizerListConverter } from '../converters';
 import { AdaptiveRecognizer } from './adaptiveRecognizer';
+import { TelemetryLoggerConstants } from '../telemetryLoggerConstants';
 
 export interface RecognizerSetConfiguration extends RecognizerConfiguration {
     recognizers?: string[] | Recognizer[];
@@ -63,7 +64,7 @@ export class RecognizerSet extends AdaptiveRecognizer implements RecognizerSetCo
 
         this.trackRecognizerResult(
             dialogContext,
-            'RecognizerSetResult',
+            TelemetryLoggerConstants.RecognizerSetResultEvent,
             this.fillRecognizerResultTelemetryProperties(recognizerResult, telemetryProperties, dialogContext),
             telemetryMetrics
         );
