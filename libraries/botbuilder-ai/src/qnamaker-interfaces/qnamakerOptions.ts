@@ -9,6 +9,7 @@
 import { JoinOperator } from './joinOperator';
 import { QnAMakerMetadata } from './qnamakerMetadata';
 import { QnARequestContext } from './qnaRequestContext';
+import { Filters } from './filters';
 
 /**
  * Additional settings used to configure a `QnAMaker` instance.
@@ -35,6 +36,7 @@ export interface QnAMakerOptions {
      */
     strictFilters?: QnAMakerMetadata[];
 
+    filters?: Filters;
     /**
      * (Optional) Metadata related to query.
      */
@@ -71,4 +73,14 @@ export interface QnAMakerOptions {
      * A value indicating choice for Strict Filters Join Operation.
      */
     strictFiltersJoinOperator?: JoinOperator;
+
+    /**
+     * A value indicating user's choice to receive PreciseAnswer or not.
+     */
+    enablePreciseAnswer?: boolean;
+
+    /**
+     * includeUnstructuredSources - option to fetch answers from unsrtuctured sources
+     */
+    includeUnstructuredSources?: boolean;
 }

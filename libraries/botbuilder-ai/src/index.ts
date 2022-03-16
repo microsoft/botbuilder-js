@@ -45,6 +45,8 @@ export {
     QnAMaker,
 } from './qnaMaker';
 
+export { CustomQuestionAnswering } from './customQuestionAnswering';
+
 export {
     FeedbackRecord,
     FeedbackRecords,

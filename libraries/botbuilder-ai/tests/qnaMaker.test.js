@@ -12,11 +12,10 @@ const { TrainUtils } = require('../lib/qnamaker-utils/trainUtils');
 const { getFetch } = require('../lib/globals');
 
 // Save test keys
-const knowledgeBaseId = process.env.QNAKNOWLEDGEBASEID;
-const endpointKey = process.env.QNAENDPOINTKEY;
+const knowledgeBaseId = process.env.QNAKNOWLEDGEBASEID || 'dummy-id';
+const endpointKey = process.env.QNAENDPOINTKEY || 'dummy-key';
 const hostname = process.env.QNAHOSTNAME || 'botbuilder-test-app';
-const forceMockQnA = false;
-const mockQnA = forceMockQnA || !(knowledgeBaseId && endpointKey);
+const mockQnA = true;
 
 class TestContext extends TurnContext {
     constructor(request) {

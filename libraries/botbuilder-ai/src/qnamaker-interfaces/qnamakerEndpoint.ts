@@ -25,4 +25,9 @@ export interface QnAMakerEndpoint {
      * The host path. For example: `https://testqnamaker.azurewebsites.net/qnamaker`
      */
     host: string;
+
+    /**
+     * QnA service type '' - legacy, 'v2', 'language'
+     */
+    qnaServiceType?: string;
 }

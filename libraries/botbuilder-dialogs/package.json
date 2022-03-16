@@ -31,9 +31,9 @@
     "@microsoft/recognizers-text-date-time": "1.1.4",
     "@microsoft/recognizers-text-number": "1.1.4",
     "@microsoft/recognizers-text-suite": "1.1.4",
-    "botbuilder-core": "4.1.6",
-    "botbuilder-dialogs-adaptive-runtime-core": "4.1.6",
-    "botframework-connector": "4.1.6",
+    "botbuilder-core": "4.14.1",
+    "botbuilder-dialogs-adaptive-runtime-core": "4.14.1-preview",
+    "botframework-connector": "4.14.1",
     "globalize": "^1.4.2",
     "lodash": "^4.17.21",
     "zod": "~1.11.17"

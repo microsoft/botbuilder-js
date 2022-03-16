@@ -1,0 +1,12 @@
+{
+    "answers": [
+      {
+        "questions": ["Anything changes when isTest is true?"],
+        "answer": "Nothing changes. You still get the results.",
+        "confidenceScore": 1.0,
+        "id": 55,
+        "source": null,
+        "metadata": {}
+      }
+    ]
+  }

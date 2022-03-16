@@ -127,6 +127,8 @@ export class QnAMakerRecognizer extends Recognizer implements QnAMakerRecognizer
         '=settings.runtimeSettings.telemetry.logPersonalInformation'
     );
 
+    qnaServiceType: string;
+
     getConverter(property: keyof QnAMakerRecognizerConfiguration): Converter | ConverterFactory {
         switch (property) {
             case 'knowledgeBaseId':
@@ -162,8 +164,9 @@ export class QnAMakerRecognizer extends Recognizer implements QnAMakerRecognizer
      * @param {string} hostname Hostname of QnAMaker KB.
      * @param {string} knowledgeBaseId Id of QnAMaker KB.
      * @param {string} endpointKey Endpoint key of QnAMaker KB.
+     * @param qnaServiceType
      */
-    constructor(hostname?: string, knowledgeBaseId?: string, endpointKey?: string) {
+    constructor(hostname?: string, knowledgeBaseId?: string, endpointKey?: string, qnaServiceType?: string) {
         super();
         if (hostname) {
             this.hostname = new StringExpression(hostname);
@@ -173,6 +176,10 @@ export class QnAMakerRecognizer extends Recognizer implements QnAMakerRecognizer
         }
         if (endpointKey) {
             this.endpointKey = new StringExpression(endpointKey);
+        }
+
+        if (qnaServiceType) {
+            this.qnaServiceType = qnaServiceType;
         }
     }
 
@@ -293,7 +300,7 @@ export class QnAMakerRecognizer extends Recognizer implements QnAMakerRecognizer
             return value;
         });
 
-        const endpoint: QnAMakerEndpoint = { endpointKey, host, knowledgeBaseId };
+        const endpoint: QnAMakerEndpoint = { endpointKey, host, knowledgeBaseId, qnaServiceType: this.qnaServiceType };
         const logPersonalInfo = this.getLogPersonalInformation(dc);
         return new QnAMaker(endpoint, {}, this.telemetryClient, logPersonalInfo);
     }
@@ -324,7 +331,7 @@ export class QnAMakerRecognizer extends Recognizer implements QnAMakerRecognizer
             return value;
         });
 
-        const endpoint: QnAMakerEndpoint = { endpointKey, host, knowledgeBaseId };
+        const endpoint: QnAMakerEndpoint = { endpointKey, host, knowledgeBaseId, qnaServiceType: this.qnaServiceType };
         const logPersonalInfo = this.getLogPersonalInformation(dc);
         return new QnAMaker(endpoint, {}, this.telemetryClient, logPersonalInfo);
     }

@@ -1,3 +1,4 @@
+/* eslint-disable mocha/no-mocha-arrows */
 const assert = require('assert');
 const path = require('path');
 const { ResourceExplorer } = require('../lib');
@@ -69,6 +70,47 @@ class MockQnAMakerClient {
             ];
         }
 
+        // Output for enablePreciseAnswer and displayPreciseAnswerOnly enabled
+        if (query === 'Which answer will I get?' && options.enablePreciseAnswer) {
+            result.answers = [
+                {
+                    answer: 'You will get the shorter answer in this case.',
+                    id: 26,
+                    confidenceScore: 0.8,
+                    questions: ['Price range for surface laptop'],
+                    source: 'Editorial',
+                    answerSpan: {
+                        text: 'This is the short answer.',
+                        confidenceScore: 0.3,
+                        offset: 33,
+                        length: 50,
+                    },
+                },
+            ];
+        }
+        if (query === 'Which answer will I get?' && !options.enablePreciseAnswer) {
+            result.answers = [
+                {
+                    answer: 'This is the long answer',
+                    id: 26,
+                    confidenceScore: 0.8,
+                    questions: ['Price range for surface laptop'],
+                    source: 'Editorial',
+                },
+            ];
+        }
+
+        if (query === 'You cannot find answer to this question.') {
+            result.answers = [
+                {
+                    answer: 'No QnAMaker Answers found, you might want to surf the net.',
+                    id: -1,
+                    confidenceScore: 0,
+                    source: 'Editorial',
+                },
+            ];
+        }
+
         return result;
     }
 
@@ -133,6 +175,20 @@ const buildQnAMakerTestFlowRankerTypeQuestionOnly = (resourceExplorer, testName)
     const adapter = initializeAdapter(testName);
     const dialog = resourceExplorer.loadType('QnAMakerBot.main.dialog');
     dialog.triggers[0].actions[0].rankerType = new StringExpression(RankerTypes.questionOnly);
+    return getTestFlow(resourceExplorer, dialog, adapter);
+};
+
+const buildQnAMakerTestFlowPreciseAnswer = (
+    resourceExplorer,
+    testName,
+    enablePreciseAnswer,
+    displayPreciseAnswerOnly
+) => {
+    const adapter = initializeAdapter(testName);
+    const dialog = resourceExplorer.loadType('QnAMakerBot.main.dialog');
+    dialog.triggers[0].actions[0].enablePreciseAnswer = enablePreciseAnswer;
+    dialog.triggers[0].actions[0].displayPreciseAnswerOnly = displayPreciseAnswerOnly;
+    dialog.triggers[0].actions[0].answerSpanRequest = enablePreciseAnswer;
     return getTestFlow(resourceExplorer, dialog, adapter);
 };
 
@@ -455,7 +511,7 @@ describe('Json load tests', function () {
             'Did you mean:',
             'None of the above.'
         );
-        const noAnswerActivity = 'Answers not found in kb.';
+        const noAnswerActivity = 'No QnAMaker answers found.';
         await buildQnAMakerTestFlow(resourceExplorer, this.fullTitle())
             .send('Q11')
             .assertReply((reply, _description) => {
@@ -496,6 +552,91 @@ describe('Json load tests', function () {
         await buildQnAMakerTestFlowRankerTypeQuestionOnly(resourceExplorer, this.fullTitle())
             .send('What ranker do you want to use?')
             .assertReply('We are using QuestionOnly ranker.')
+            .startTest();
+    });
+
+    it('QnaMakerDialog_enablePreciseAnswerEnabled_displayPreciseAnswerOnlyEnabled', async () => {
+        const expected = {
+            answers: [
+                {
+                    answer: 'You will get the shorter answer in this case.',
+                    id: 26,
+                    confidenceScore: 0.8,
+                    questions: ['Price range for surface laptop'],
+                    source: 'Editorial',
+                    answerSpan: {
+                        text: 'This is the short answer.',
+                        confidenceScore: 0.3,
+                        offset: 33,
+                        length: 50,
+                    },
+                },
+            ],
+        };
+        const cardWhenDisplayPreciseAnswerOnlyEnabled = QnACardBuilder.getQnAAnswerCard(expected.answers[0], true);
+        await buildQnAMakerTestFlowPreciseAnswer(resourceExplorer, this.fullTitle(), true, true)
+            .send('Which answer will I get?')
+            .assertReply((reply, _description) => {
+                assert.deepStrictEqual(reply.text, cardWhenDisplayPreciseAnswerOnlyEnabled.text);
+                assert.deepStrictEqual(reply.attachments, cardWhenDisplayPreciseAnswerOnlyEnabled.attachments);
+            })
+            .startTest();
+    });
+
+    it('QnaMakerDialog_enablePreciseAnswerEnabled_displayPreciseAnswerOnlyNotEnabled', async () => {
+        const expected = {
+            answers: [
+                {
+                    answer: 'You will get the shorter answer in this case.',
+                    id: 26,
+                    confidenceScore: 0.8,
+                    questions: ['Price range for surface laptop'],
+                    source: 'Editorial',
+                    answerSpan: {
+                        text: 'This is the short answer.',
+                        confidenceScore: 0.3,
+                        offset: 33,
+                        length: 50,
+                    },
+                },
+            ],
+        };
+        const cardWhenDisplayPreciseAnswerOnlyDisabled = QnACardBuilder.getQnAAnswerCard(expected.answers[0], false);
+        await buildQnAMakerTestFlowPreciseAnswer(resourceExplorer, this.fullTitle(), true, false)
+            .send('Which answer will I get?')
+            .assertReply((reply, _description) => {
+                assert.deepStrictEqual(reply.text, cardWhenDisplayPreciseAnswerOnlyDisabled.text);
+                assert.deepStrictEqual(reply.attachments, cardWhenDisplayPreciseAnswerOnlyDisabled.attachments);
+            })
+            .startTest();
+    });
+
+    it('QnaMakerDialog_enablePreciseAnswerDisabled_displayPreciseAnswerOnlyEnabled', async () => {
+        const expected = {
+            answers: [
+                {
+                    answer: 'This is the long answer',
+                    id: 26,
+                    confidenceScore: 0.8,
+                    questions: ['Price range for surface laptop'],
+                    source: 'Editorial',
+                },
+            ],
+        };
+        const cardWhenDisplayPreciseAnswerOnlyEnabled = QnACardBuilder.getQnAAnswerCard(expected.answers[0], true);
+        await buildQnAMakerTestFlowPreciseAnswer(resourceExplorer, this.fullTitle(), false, true)
+            .send('Which answer will I get?')
+            .assertReply((reply, _description) => {
+                assert.deepStrictEqual(reply.text, cardWhenDisplayPreciseAnswerOnlyEnabled.text);
+                assert.deepStrictEqual(reply.attachments, cardWhenDisplayPreciseAnswerOnlyEnabled.attachments);
+            })
+            .startTest();
+    });
+
+    it('QnaMakerDialog_noAnswerActivity', async () => {
+        await buildQnAMakerTestFlow(resourceExplorer, this.fullTitle())
+            .send('You cannot find answer to this question.')
+            .assertReply('Default Answer from configuration.')
             .startTest();
     });
 });

@@ -5,7 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import { Activity, MessageFactory, CardAction, CardFactory } from 'botbuilder-core';
+import { Activity, MessageFactory, CardAction, CardFactory, ActivityTypes } from 'botbuilder-core';
 import { QnAMakerResult } from './';
 
 /**
@@ -63,16 +63,18 @@ export class QnACardBuilder {
      * Returns an [activity](xref:botframework-schema.Activity) with answer text and a hero card attachment, containing buttons for multi turn prompts.
      *
      * @param {QnAMakerResult} result QnAMaker result containing the answer text and multi turn prompts to be displayed.
+     * @param {boolean} displayPreciseAnswerOnly whether to display PreciseAnswer Only or along with source Answer text. .
      * @returns {Partial<Activity>} Activity representing the prompts as a card
      */
-    static getQnAPromptsCard(result: QnAMakerResult): Partial<Activity> {
+    static getQnAAnswerCard(result: QnAMakerResult, displayPreciseAnswerOnly: boolean): Partial<Activity> {
         if (!result) {
             throw new Error('Missing QnAMaker result');
         }
 
+        const chatActivity: Partial<Activity> = { type: ActivityTypes.Message };
         const buttonList: CardAction[] = [];
 
-        result.context.prompts.forEach((prompt) => {
+        result.context?.prompts?.forEach((prompt) => {
             buttonList.push({
                 value: prompt.displayText,
                 type: 'imBack',
@@ -80,9 +82,23 @@ export class QnACardBuilder {
             });
         });
 
-        const promptsCard = CardFactory.heroCard('', undefined, buttonList);
-        const message = MessageFactory.attachment(promptsCard, result.answer);
+        let heroCardText = '';
+        chatActivity.text = result.answer;
+        if (result.answerSpan && result.answerSpan.text.length > 0) {
+            // When the configuration is set to display precise answer only
+            if (!displayPreciseAnswerOnly) {
+                heroCardText = result.answer;
+            }
 
-        return message;
+            chatActivity.text = result.answerSpan.text;
+        }
+
+        if (buttonList.length > 0 || heroCardText.length > 0) {
+            // Create the attachment.
+            const prompt = CardFactory.heroCard('', heroCardText, undefined, buttonList);
+            chatActivity.attachments = [prompt];
+        }
+
+        return chatActivity;
     }
 }

@@ -8,12 +8,6 @@
 
 import { QnAMakerResult } from '../qnamaker-interfaces';
 
-/** Previous Low Score Variation Multiplier. */
-const PreviousLowScoreVariationMultiplier = 0.7;
-
-/** Max Low Score Variation Multiplier. */
-const MaxLowScoreVariationMultiplier = 1.0;
-
 /**
  * Generate Answer api utils class.
  *
@@ -22,14 +16,20 @@ const MaxLowScoreVariationMultiplier = 1.0;
  */
 export class ActiveLearningUtils {
     /** Minimum Score For Low Score Variation. */
-    static MinimumScoreForLowScoreVariation = 20;
+    static readonly MinimumScoreForLowScoreVariation = 20;
 
     /** Maximum Score For Low Score Variation. */
-    static MaximumScoreForLowScoreVariation = 95.0;
+    static readonly MaximumScoreForLowScoreVariation = 95.0;
+
+    /** Previous Low Score Variation Multiplier. */
+    static readonly PreviousLowScoreVariationMultiplier = 0.7;
+
+    /** Max Low Score Variation Multiplier. */
+    static readonly MaxLowScoreVariationMultiplier = 1.0;
 
     /**
      * Returns list of qnaSearch results which have low score variation.
-     *
+     
      * @param {QnAMakerResult[]} qnaSearchResults A list of results returned from the QnA getAnswer call.
      * @returns {QnAMakerResult[]} List of filtered qnaSearch results.
      */
@@ -49,7 +49,6 @@ export class ActiveLearningUtils {
             filteredQnaSearchResult.push(qnaSearchResults[0]);
             return filteredQnaSearchResult;
         }
-
         let prevScore = topAnswerScore;
 
         if (topAnswerScore > ActiveLearningUtils.MinimumScoreForLowScoreVariation) {
@@ -60,12 +59,12 @@ export class ActiveLearningUtils {
                     ActiveLearningUtils.includeForClustering(
                         prevScore,
                         qnaSearchResults[i].score * 100,
-                        PreviousLowScoreVariationMultiplier
+                        ActiveLearningUtils.PreviousLowScoreVariationMultiplier
                     ) &&
                     this.includeForClustering(
                         topAnswerScore,
                         qnaSearchResults[i].score * 100,
-                        MaxLowScoreVariationMultiplier
+                        ActiveLearningUtils.MaxLowScoreVariationMultiplier
                     )
                 ) {
                     prevScore = qnaSearchResults[i].score * 100;
