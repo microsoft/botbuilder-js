@@ -20,7 +20,7 @@
   },
   "dependencies": {
     "nanoid": "^3.1.31",
-    "node-forge": "^0.10.0",
+    "node-forge": "^1.0.0",
     "zod": "~1.11.17"
   }
 }

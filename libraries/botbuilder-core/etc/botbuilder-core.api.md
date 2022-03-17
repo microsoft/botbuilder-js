@@ -810,13 +810,14 @@ export class TestFlow {
     assertReplyOneOf(candidates: string[], description?: string, timeout?: number): TestFlow;
     catch(onRejected?: (reason: any) => void): TestFlow;
     delay(ms: number): TestFlow;
+    finally(onFinally: () => void): Promise<void>;
     // (undocumented)
     previous: Promise<void>;
     send(userSays: string | Partial<Activity>): TestFlow;
     sendConversationUpdate(): TestFlow;
     startTest(): Promise<void>;
     test(userSays: string | Partial<Activity>, expected: string | Partial<Activity> | ((activity: Partial<Activity>, description?: string) => void), description?: string, timeout?: number): TestFlow;
-    then(onFulfilled?: () => void): TestFlow;
+    then(onFulfilled?: () => void, onRejected?: (err: any) => void): TestFlow;
 }
 
 // @public (undocumented)

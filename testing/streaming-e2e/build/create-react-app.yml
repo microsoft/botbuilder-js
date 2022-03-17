@@ -14,8 +14,8 @@ steps:
     condition: ne(variables.CacheRestored, 'true')
     workingDirectory: $(ReactProjectDir)
 
-  - powershell: npm install react-scripts@latest
-    displayName: npm install react-scripts@latest
+  - powershell: npm install react-scripts@4.0.3
+    displayName: npm install react-scripts@4.0.3
     workingDirectory: $(ReactProjectDir)
 
   - template: customize-dljs.yml
