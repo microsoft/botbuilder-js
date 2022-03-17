@@ -31,7 +31,7 @@
     "@azure/ms-rest-js": "1.9.1",
     "adaptive-expressions": "4.9.0",
     "botbuilder-core": "4.14.1",
-    "botbuilder-dialogs": "file:../../../node_modules/botbuilder-dialogs/lib/index.d.ts",
+    "botbuilder-dialogs": "file:../botbuilder-dialogs",
     "botbuilder-dialogs-adaptive-runtime-core": "4.14.1-preview",
     "botbuilder-dialogs-declarative": "4.14.1-preview",
     "lodash": "^4.17.21",
