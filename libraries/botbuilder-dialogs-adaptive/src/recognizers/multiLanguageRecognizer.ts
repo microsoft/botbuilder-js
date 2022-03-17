@@ -12,6 +12,7 @@ import { LanguagePolicy, LanguagePolicyConverter } from '../languagePolicy';
 import { MultiLanguageRecognizerConverter } from '../converters';
 import { languagePolicyKey } from '../languageGeneratorExtensions';
 import { AdaptiveRecognizer } from './adaptiveRecognizer';
+import { TelemetryLoggerConstants } from '../telemetryLoggerConstants';
 
 export interface MultiLanguageRecognizerConfiguration extends RecognizerConfiguration {
     languagePolicy?: Record<string, string[]> | LanguagePolicy;
@@ -94,7 +95,7 @@ export class MultiLanguageRecognizer extends AdaptiveRecognizer implements Multi
                 );
                 this.trackRecognizerResult(
                     dialogContext,
-                    'MultiLanguageRecognizerResult',
+                    TelemetryLoggerConstants.MultiLanguageRecognizerResultEvent,
                     this.fillRecognizerResultTelemetryProperties(result, telemetryProperties, dialogContext),
                     telemetryMetrics
                 );
@@ -109,7 +110,7 @@ export class MultiLanguageRecognizer extends AdaptiveRecognizer implements Multi
         };
         this.trackRecognizerResult(
             dialogContext,
-            'MultiLanguagesRecognizerResult',
+            TelemetryLoggerConstants.MultiLanguageRecognizerResultEvent,
             this.fillRecognizerResultTelemetryProperties(recognizerResult, telemetryProperties, dialogContext),
             telemetryMetrics
         );

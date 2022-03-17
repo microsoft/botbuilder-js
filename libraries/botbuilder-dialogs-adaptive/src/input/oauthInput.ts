@@ -8,6 +8,7 @@
 import { InputDialog, InputDialogConfiguration, InputState } from './inputDialog';
 import { IntProperty, StringProperty } from '../properties';
 import { TextTemplate } from '../templates';
+import { TelemetryLoggerConstants } from '../telemetryLoggerConstants';
 
 import {
     ConversationState,
@@ -279,9 +280,10 @@ export class OAuthInput extends InputDialog implements OAuthInputConfiguration {
                         const properties = {
                             template: JSON.stringify(this.defaultValueResponse),
                             result: response ? JSON.stringify(response) : '',
+                            context: TelemetryLoggerConstants.OAuthInputResultEvent,
                         };
                         this.telemetryClient.trackEvent({
-                            name: 'GeneratorResult',
+                            name: TelemetryLoggerConstants.GeneratorResultEvent,
                             properties,
                         });
                         await dc.context.sendActivity(response);
