@@ -382,16 +382,31 @@ export abstract class InputDialog extends Dialog implements InputDialogConfigura
             msg.inputHint = InputHints.ExpectingInput;
         }
 
+        this.TrackGeneratorResultEvent(dc, template, msg);
+
+        return msg;
+    }
+
+    /**
+     * @protected
+     * Track GeneratorResultEvent telemetry event with InputDialogResultEvent context.
+     * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
+     * @param activityTemplate used to create the Activity.
+     * @param msg The [IMessageActivity](xref:botframework-schema.IMessageActivity) which will be sent.
+     */
+    protected TrackGeneratorResultEvent(
+        dc: DialogContext,
+        activityTemplate: TemplateInterface<Partial<Activity>, DialogStateManager>,
+        msg: Partial<Activity>
+    ): void {
         this.telemetryClient.trackEvent({
             name: TelemetryLoggerConstants.GeneratorResultEvent,
             properties: {
-                template: template,
+                activityTemplate: activityTemplate,
                 result: msg,
                 context: TelemetryLoggerConstants.InputDialogResultEvent,
             },
         });
-
-        return msg;
     }
 
     /**
