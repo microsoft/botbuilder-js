@@ -11,6 +11,8 @@ import { TokenResponse } from 'botframework-schema';
 
 /**
  * Interface for User Token OAuth APIs for BotAdapters
+ *
+ * @obsolete Use `UserTokenClient` instead.
  */
 export interface IUserTokenProvider {
     /**
