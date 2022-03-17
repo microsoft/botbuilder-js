@@ -56,6 +56,7 @@ import { ValueRecognizer } from './recognizers/valueRecognizer';
 import { SchemaHelper } from './schemaHelper';
 import { FirstSelector, MostSpecificSelector } from './selectors';
 import { TriggerSelector } from './triggerSelector';
+import { TelemetryLoggerConstants } from './telemetryLoggerConstants';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function isDialogDependencies(val: any): val is DialogDependencies {
@@ -308,9 +309,10 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> im
         const properties: { [key: string]: string } = {
             DialogId: this.id,
             Kind: 'Microsoft.AdaptiveDialog',
+            context: TelemetryLoggerConstants.DialogStartEvent,
         };
         this.telemetryClient.trackEvent({
-            name: 'AdaptiveDialogStart',
+            name: TelemetryLoggerConstants.GeneratorResultEvent,
             properties: properties,
         });
         telemetryTrackDialogView(this.telemetryClient, this.id);
@@ -354,13 +356,13 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> im
         };
         if (reason === DialogReason.cancelCalled) {
             this.telemetryClient.trackEvent({
-                name: 'AdaptiveDialogCancel',
-                properties: properties,
+                name: TelemetryLoggerConstants.GeneratorResultEvent,
+                properties: { ...properties, context: TelemetryLoggerConstants.DialogCancelEvent },
             });
         } else if (reason === DialogReason.endCalled) {
             this.telemetryClient.trackEvent({
-                name: 'AdaptiveDialogComplete',
-                properties: properties,
+                name: TelemetryLoggerConstants.GeneratorResultEvent,
+                properties: { ...properties, context: TelemetryLoggerConstants.CompleteEvent },
             });
         }
         await super.endDialog(turnContext, instance, reason);
@@ -674,9 +676,10 @@ export class AdaptiveDialog<O extends object = {}> extends DialogContainer<O> im
                 Expression: evt.getExpression().toString(),
                 Kind: `Microsoft.${evt.constructor.name}`,
                 ConditionId: evt.id,
+                context: TelemetryLoggerConstants.TriggerEvent,
             };
             this.telemetryClient.trackEvent({
-                name: 'AdaptiveDialogTrigger',
+                name: TelemetryLoggerConstants.GeneratorResultEvent,
                 properties: properties,
             });
 
