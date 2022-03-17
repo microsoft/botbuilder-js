@@ -12,7 +12,7 @@ function isTeamsChannelData(channelData: unknown): channelData is TeamsChannelDa
     return typeof channelData === 'object';
 }
 
-function validateActivity(activity: Activity): void {
+function validateActivity(activity: Partial<Activity>): void {
     if (!activity) {
         throw new Error('Missing activity parameter');
     }
@@ -104,7 +104,11 @@ export function teamsGetChannelId(activity: Activity): string | null {
  * @param alertInMeeting Sent to a meeting chat, this will cause the Teams client to render it in a notification popup as well as in the chat thread.
  * @param externalResourceUrl Url to external resource. Must be included in manifest's valid domains.
  */
-export function teamsNotifyUser(activity: Activity, alertInMeeting?: boolean, externalResourceUrl?: string): void {
+export function teamsNotifyUser(
+    activity: Partial<Activity>,
+    alertInMeeting?: boolean,
+    externalResourceUrl?: string
+): void {
     validateActivity(activity);
 
     if (!isTeamsChannelData(activity.channelData)) {

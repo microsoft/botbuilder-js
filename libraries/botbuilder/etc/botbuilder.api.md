@@ -444,7 +444,7 @@ export class TeamsInfo {
 }
 
 // @public
-export function teamsNotifyUser(activity: Activity, alertInMeeting?: boolean, externalResourceUrl?: string): void;
+export function teamsNotifyUser(activity: Partial<Activity>, alertInMeeting?: boolean, externalResourceUrl?: string): void;
 
 // @public
 export class TeamsSSOTokenExchangeMiddleware implements Middleware {
