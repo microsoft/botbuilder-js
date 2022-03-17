@@ -5,6 +5,7 @@ const { ActivityFactory, ActivityTypes } = require('botbuilder');
 const assert = require('assert');
 
 function getTemplates() {
+    Templates.enableFromFile = true;
     const filePath = `${__dirname}/lg/NormalStructuredLG.lg`;
     return Templates.parseFile(filePath);
 }

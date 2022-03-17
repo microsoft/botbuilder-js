@@ -42,6 +42,10 @@ export class Templates implements Iterable<Template> {
      * Temp Template ID for inline content.
      */
     public static readonly inlineTemplateIdPrefix: string = '__temp__';
+    /**
+     * Indicates whether fromFile is allowed in LG templates.
+     */
+    public static enableFromFile: boolean = false;
     private readonly newLineRegex = /(\r?\n)/g;
     private readonly newLine: string = '\r\n';
     private readonly namespaceKey = '@namespace';
