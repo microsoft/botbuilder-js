@@ -72,7 +72,6 @@ export class LanguageServiceUtils {
     /**
      * Called to query the Language service.
      *
-     * @param {QnAMakerEndpoint} endpoint The endpoint of the knowledge base to query.
      * @param {string} question Question which need to be queried.
      * @param {QnAMakerOptions} options (Optional) The options for the QnA Maker knowledge base. If null, constructor option is used for this instance.
      * @returns {Promise<QnAMakerResult[]>} a promise that resolves to the raw query results
@@ -157,7 +156,7 @@ export class LanguageServiceUtils {
      * @param {QnAMakerOptions} options The options for the QnA Maker knowledge base. If null, constructor option is used for this instance.
      */
     validateOptions(options: QnAMakerOptions): void {
-        const { scoreThreshold, top, rankerType } = options;
+        const { scoreThreshold, top } = options;
 
         if (scoreThreshold) {
             this.validateScoreThreshold(scoreThreshold);

@@ -33,7 +33,6 @@ import { TurnPath } from './memory/turnPath';
 
 /**
  * A specialized Dialog that can wrap remote calls to a skill.
- *
  * @remarks
  * The options parameter in beginDialog must be a BeginSkillDialogOptions instance
  * with the initial parameters for the dialog.
@@ -65,7 +64,6 @@ export class SkillDialog extends Dialog<Partial<BeginSkillDialogOptions>> {
 
     /**
      * Called when the skill dialog is started and pushed onto the dialog stack.
-     *
      * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
      * @param options Initial information to pass to the dialog.
      * @returns A Promise representing the asynchronous operation.
@@ -103,7 +101,6 @@ export class SkillDialog extends Dialog<Partial<BeginSkillDialogOptions>> {
     /**
      * Called when the skill dialog is _continued_, where it is the active dialog and the
      * user replies with a new [Activity](xref:botframework-schema.Activity).
-     *
      * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
      * @returns A Promise representing the asynchronous operation.
      * @remarks
@@ -147,7 +144,6 @@ export class SkillDialog extends Dialog<Partial<BeginSkillDialogOptions>> {
 
     /**
      * Called when the skill dialog is ending.
-     *
      * @param context The [TurnContext](xref:botbuilder-core.TurnContext) object for this turn.
      * @param instance State information associated with the instance of this dialog on the dialog stack.
      * @param reason [Reason](xref:botbuilder-dialogs.DialogReason) why the dialog ended.
@@ -176,7 +172,6 @@ export class SkillDialog extends Dialog<Partial<BeginSkillDialogOptions>> {
 
     /**
      * Called when the skill dialog should re-prompt the user for input.
-     *
      * @param context The [TurnContext](xref:botbuilder-core.TurnContext) object for this turn.
      * @param instance State information for this dialog.
      * @returns A Promise representing the asynchronous operation.
@@ -197,7 +192,6 @@ export class SkillDialog extends Dialog<Partial<BeginSkillDialogOptions>> {
 
     /**
      * Called when a child skill dialog completed its turn, returning control to this dialog.
-     *
      * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of the conversation.
      * @param reason [Reason](xref:botbuilder-dialogs.DialogReason) why the dialog resumed.
      * @param result Optional, value returned from the dialog that was called. The type

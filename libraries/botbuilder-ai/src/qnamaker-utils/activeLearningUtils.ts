@@ -29,7 +29,7 @@ export class ActiveLearningUtils {
 
     /**
      * Returns list of qnaSearch results which have low score variation.
-     
+     *
      * @param {QnAMakerResult[]} qnaSearchResults A list of results returned from the QnA getAnswer call.
      * @returns {QnAMakerResult[]} List of filtered qnaSearch results.
      */
