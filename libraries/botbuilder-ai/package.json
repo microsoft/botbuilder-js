@@ -29,9 +29,6 @@
   "dependencies": {
     "@azure/cognitiveservices-luis-runtime": "2.0.0",
     "@azure/ms-rest-js": "^2.6.1",
-    "adaptive-expressions": "4.1.6",
-    "botbuilder-core": "4.1.6",
-    "botbuilder-dialogs": "4.1.6",
     "botbuilder-dialogs-adaptive-runtime-core": "4.1.6",
     "botbuilder-dialogs-declarative": "4.1.6",
     "lodash": "^4.17.21",
