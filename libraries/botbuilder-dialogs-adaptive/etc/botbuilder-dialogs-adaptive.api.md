@@ -2279,6 +2279,26 @@ export interface SwitchConditionConfiguration extends DialogConfiguration {
 }
 
 // @public
+export class TelemetryLoggerConstants {
+    static readonly CompleteEvent: string;
+    static readonly CrossTrainedRecognizerSetResultEvent: string;
+    static readonly DialogActionEvent: string;
+    static readonly DialogCancelEvent: string;
+    static readonly DialogStartEvent: string;
+    static readonly GeneratorResultEvent: string;
+    static readonly InputDialogResultEvent: string;
+    static readonly LogActionResultEvent: string;
+    static readonly MultiLanguageRecognizerResultEvent: string;
+    static readonly OAuthInputResultEvent: string;
+    static readonly RecognizerSetResultEvent: string;
+    static readonly RegexRecognizerResultEvent: string;
+    static readonly SendActivityResultEvent: string;
+    static readonly TriggerEvent: string;
+    static readonly UpdateActivityResultEvent: string;
+    static readonly ValueRecognizerResultEvent: string;
+}
+
+// @public
 export class TelemetryTrackEventAction<O extends object = {}> extends Dialog implements TelemetryTrackEventActionConfiguration {
     // (undocumented)
     static $kind: string;

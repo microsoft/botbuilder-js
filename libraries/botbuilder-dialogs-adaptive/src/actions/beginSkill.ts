@@ -11,6 +11,7 @@ import { ActivityTemplateConverter } from '../converters';
 import { AdaptiveEvents } from '../adaptiveEvents';
 import { BoolProperty, StringProperty, TemplateInterfaceProperty } from '../properties';
 import { skillClientKey, skillConversationIdFactoryKey } from '../skillExtensions';
+import { TelemetryLoggerConstants } from '../telemetryLoggerConstants';
 
 import {
     BoolExpression,
@@ -209,7 +210,7 @@ export class BeginSkill extends SkillDialog implements BeginSkillConfiguration {
             const activity = await this.activity.bind(dc, dcState);
 
             this.telemetryClient.trackEvent({
-                name: 'GeneratorResult',
+                name: TelemetryLoggerConstants.GeneratorResultEvent,
                 properties: {
                     template: this.activity,
                     result: activity || '',

@@ -14,7 +14,7 @@ const {
 } = require('botbuilder');
 const { BoolExpression, StringExpression } = require('adaptive-expressions');
 const { DialogManager, DialogTurnStatus, DialogEvents, DialogSet } = require('botbuilder-dialogs');
-const { BeginSkill, SkillExtensions, StaticActivityTemplate } = require('../lib');
+const { BeginSkill, SkillExtensions, StaticActivityTemplate, TelemetryLoggerConstants } = require('../lib');
 
 class SimpleConversationIdFactory extends SkillConversationIdFactoryBase {
     constructor(opts = { useCreateSkillConversationId: false }) {
@@ -127,7 +127,7 @@ describe('BeginSkill', function () {
             strictEqual(turnResult.status, DialogTurnStatus.waiting);
 
             // assert telemetry result
-            strictEqual(telemetryName, 'GeneratorResult');
+            strictEqual(telemetryName, TelemetryLoggerConstants.GeneratorResultEvent);
             strictEqual(telemetryProperties.result.text, 'test');
             strictEqual(telemetryProperties.template.activity.text, 'test');
 

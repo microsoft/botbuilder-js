@@ -9,6 +9,7 @@ import { Activity, ActivityTypes } from 'botbuilder';
 import { BoolProperty, StringProperty } from '../properties';
 import { TextTemplate } from '../templates';
 import { TextTemplateConverter } from '../converters/textTemplateConverter';
+import { TelemetryLoggerConstants } from '../telemetryLoggerConstants';
 
 import {
     BoolExpression,
@@ -118,10 +119,11 @@ export class LogAction<O extends object = {}> extends Dialog<O> implements LogAc
 
         const msg = await this.text.bind(dc, dc.state);
         this.telemetryClient.trackEvent({
-            name: 'GeneratorResult',
+            name: TelemetryLoggerConstants.GeneratorResultEvent,
             properties: {
                 template: this.text,
                 result: msg || '',
+                context: TelemetryLoggerConstants.LogActionResultEvent,
             },
         });
 

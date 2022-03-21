@@ -10,6 +10,7 @@ import { ActivityTemplate, StaticActivityTemplate } from '../templates';
 import { ActivityTemplateConverter } from '../converters';
 import { BoolExpression, BoolExpressionConverter } from 'adaptive-expressions';
 import { BoolProperty, TemplateInterfaceProperty } from '../properties';
+import { TelemetryLoggerConstants } from '../telemetryLoggerConstants';
 
 import {
     Converter,
@@ -107,10 +108,11 @@ export class SendActivity<O extends object = {}> extends Dialog<O> implements Se
         const activityResult = await this.activity.bind(dc, data);
 
         this.telemetryClient.trackEvent({
-            name: 'GeneratorResult',
+            name: TelemetryLoggerConstants.GeneratorResultEvent,
             properties: {
                 template: this.activity,
                 result: activityResult || '',
+                context: TelemetryLoggerConstants.SendActivityResultEvent,
             },
         });
 
