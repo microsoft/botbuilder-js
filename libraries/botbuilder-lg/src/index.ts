@@ -29,3 +29,4 @@ export * from './expander';
 export * from './multiLanguageLG';
 export * from './evaluationOptions';
 export * from './lgResource';
+export * from './analyzerOptions';

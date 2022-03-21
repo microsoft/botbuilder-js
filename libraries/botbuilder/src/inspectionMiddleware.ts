@@ -169,6 +169,7 @@ abstract class InterceptionMiddleware implements Middleware {
  * @remarks
  * InspectionMiddleware for emulator inspection of runtime Activities and BotState.
  *
+ * @obsolete This class will be removed in a future version of the framework.
  */
 export class InspectionMiddleware extends InterceptionMiddleware {
     private static readonly command = '/INSPECT';
@@ -444,6 +445,7 @@ class InspectionSessionsByStatus {
  * @remarks
  * InspectionState for use by the InspectionMiddleware for emulator inspection of runtime Activities and BotState.
  *
+ * @obsolete This class will be removed in a future version of the framework.
  */
 export class InspectionState extends BotState {
     /**

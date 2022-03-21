@@ -300,6 +300,26 @@ describe(`LGExceptionTest`, function () {
                 `Loop detected: welcome_user => wPhrase [wPhrase]  Error occurred when evaluating '-\${wPhrase()}'. [welcome_user]  Error occurred when evaluating '-\${welcome_user()}'.`
             )
         );
+
+        // Without ThrowOnRecursive does not throw exception when loop is detected
+        const wPhraseResult = templates.analyzeTemplate('wPhrase');
+        assert.strictEqual('welcome_user', wPhraseResult.TemplateReferences[0]);
+        assert.strictEqual('wPhrase', wPhraseResult.TemplateReferences[1]);
+
+        const selfLoopResult = templates.analyzeTemplate('selfLoop');
+        assert.strictEqual('selfLoop', selfLoopResult.TemplateReferences[0]);
+        assert.strictEqual('x', selfLoopResult.Variables[0]);
+
+        // ThrowOnRecursive throws InvalidOperationException
+        assert.throws(
+            () => templates.analyzeTemplate('wPhrase', { ThrowOnRecursive: true }),
+            new Error('Loop detected: welcome_user,wPhrase => wPhrase')
+        );
+
+        assert.throws(
+            () => templates.analyzeTemplate('selfLoop', { ThrowOnRecursive: true }),
+            new Error('Loop detected: selfLoop => selfLoop')
+        );
     });
 
     it(`AddTextWithWrongId`, function () {

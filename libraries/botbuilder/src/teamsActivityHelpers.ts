@@ -106,7 +106,7 @@ export function teamsGetChannelId(activity: Activity): string | null {
  */
 export function teamsNotifyUser(
     activity: Partial<Activity>,
-    alertInMeeting?: boolean,
+    alertInMeeting: boolean = false,
     externalResourceUrl?: string
 ): void {
     validateActivity(activity);
@@ -116,6 +116,6 @@ export function teamsNotifyUser(
     }
 
     if (isTeamsChannelData(activity.channelData)) {
-        activity.channelData.notification = { alert: true, alertInMeeting, externalResourceUrl };
+        activity.channelData.notification = { alert: !alertInMeeting, alertInMeeting, externalResourceUrl };
     }
 }
