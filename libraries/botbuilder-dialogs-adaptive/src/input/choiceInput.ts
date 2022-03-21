@@ -196,6 +196,7 @@ export class ChoiceInput extends InputDialog implements ChoiceInputConfiguration
      * @returns An [Activity](xref:botframework-schema.Activity) `Promise` representing the asynchronous operation.
      */
     protected async onRenderPrompt(dc: DialogContext, state: InputState): Promise<Partial<Activity>> {
+        const options = dc.state.getValue(ChoiceInput.OPTIONS_PROPERTY);
         // Determine locale
         const locale = this.determineCulture(dc);
 
@@ -205,14 +206,13 @@ export class ChoiceInput extends InputDialog implements ChoiceInputConfiguration
         const choiceOptions =
             (this.choiceOptions && this.choiceOptions.getValue(dc.state)) || ChoiceInput.defaultChoiceOptions[locale];
         const style = this.style.getValue(dc.state);
-        const options = dc.state.getValue(ChoiceInput.OPTIONS_PROPERTY);
         return this.appendChoices(prompt, channelId, options.choices, style, choiceOptions);
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc InputDialog.trackGeneratorResultEvent}
      */
-    protected TrackGeneratorResultEvent(
+    protected trackGeneratorResultEvent(
         dc: DialogContext,
         activityTemplate: TemplateInterface<Partial<Activity>, DialogStateManager>,
         msg: Partial<Activity>

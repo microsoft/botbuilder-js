@@ -37,8 +37,8 @@ describe('InputDialog', function () {
             // assert telemetry result
             strictEqual(telemetryName, TelemetryLoggerConstants.GeneratorResultEvent);
             strictEqual(telemetryProperties.result.text, 'test');
-            strictEqual(telemetryProperties.template.activity.text, 'test');
-            strictEqual(telemetryProperties.template.activity.inputHint, InputHints.AcceptingInput);
+            strictEqual(telemetryProperties.activityTemplate.activity.text, 'test');
+            strictEqual(telemetryProperties.activityTemplate.activity.inputHint, InputHints.AcceptingInput);
 
             ok(trackEventStub.calledOnce);
         });

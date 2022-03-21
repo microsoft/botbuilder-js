@@ -382,7 +382,7 @@ export abstract class InputDialog extends Dialog implements InputDialogConfigura
             msg.inputHint = InputHints.ExpectingInput;
         }
 
-        this.TrackGeneratorResultEvent(dc, template, msg);
+        this.trackGeneratorResultEvent(dc, template, msg);
 
         return msg;
     }
@@ -394,7 +394,7 @@ export abstract class InputDialog extends Dialog implements InputDialogConfigura
      * @param activityTemplate used to create the Activity.
      * @param msg The [IMessageActivity](xref:botframework-schema.IMessageActivity) which will be sent.
      */
-    protected TrackGeneratorResultEvent(
+    protected trackGeneratorResultEvent(
         dc: DialogContext,
         activityTemplate: TemplateInterface<Partial<Activity>, DialogStateManager>,
         msg: Partial<Activity>
