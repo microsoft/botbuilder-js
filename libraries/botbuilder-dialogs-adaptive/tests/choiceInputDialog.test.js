@@ -3,7 +3,13 @@ const { createTelemetryClientAndStub } = require('./telemetryUtils');
 const { ConversationState, MemoryStorage, TestAdapter, InputHints } = require('botbuilder');
 const { DialogManager, DialogSet } = require('botbuilder-dialogs');
 
-const { ChoiceInput, StaticActivityTemplate, TelemetryLoggerConstants, ActivityTemplate } = require('../lib');
+const {
+    ChoiceInput,
+    StaticActivityTemplate,
+    TelemetryLoggerConstants,
+    ActivityTemplate,
+    ChoiceSet,
+} = require('../lib');
 const { ObjectExpression } = require('adaptive-expressions');
 
 describe('ChoiceInput', function () {
@@ -25,8 +31,12 @@ describe('ChoiceInput', function () {
     dialog.prompt = new ActivityTemplate('testtempl');
     dialog.alwaysPrompt = true;
 
-    const promptChoices = new ObjectExpression([{ value: 'test' }, { value: 'test2' }, { value: 'test3' }]);
-    dialog.choices = promptChoices;
+    const state = {};
+    const ep = new ObjectExpression(new ChoiceSet([{ value: 'test1' }, { value: 'test2' }, { value: 'test3' }]));
+    const { value } = ep.tryGetValue(state);
+
+    const promptChoices = ep;
+    dialog.choices = value;
 
     dialog._telemetryClient = telemetryClient;
 
@@ -42,6 +52,7 @@ describe('ChoiceInput', function () {
         // Send initial activity
         const adapter = new TestAdapter(async (context) => {
             const dc = await dialogs.createContext(context);
+            dc.state = true;
             await dialog.promptUser(dc, undefined);
 
             var vv = telemetryProperties;
