@@ -312,6 +312,29 @@ describe('ActivityHandler', function () {
         assert(onAdpativeCardInvokeCalled);
     });
 
+    it(`should fire onSearchInvoke`, async function () {
+        const bot = new ActivityHandler();
+
+        let onSearchInvokeCalled = false;
+        bot.onSearchInvoke = async () => {
+            onSearchInvokeCalled = true;
+            return { statusCode: 200, value: 'called' };
+        };
+
+        await processActivity(
+            {
+                type: ActivityTypes.Invoke,
+                name: 'application/search',
+                value: {
+                    kind: 'search',
+                    queryText: 'test bot'
+                },
+            },
+            bot
+        );
+        assert(onSearchInvokeCalled);
+    });
+
     it(`should fire onUnrecognizedActivityType`, async function () {
         const bot = new ActivityHandler();
 
