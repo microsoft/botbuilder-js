@@ -77,7 +77,8 @@ export class LanguageServiceUtils {
      * @returns {Promise<QnAMakerResult[]>} a promise that resolves to the raw query results
      */
     async queryKnowledgebaseRaw(question: string, options?: QnAMakerOptions): Promise<QnAMakerResults> {
-        const url = `${this.endpoint.host}/language/:query-knowledgebases?projectName=${this.endpoint.knowledgeBaseId}&deploymentName=production&${ApiVersionQueryParam}`;
+        const deploymentName = options.isTest ? 'test' : 'production';
+        const url = `${this.endpoint.host}/language/:query-knowledgebases?projectName=${this.endpoint.knowledgeBaseId}&deploymentName=${deploymentName}&${ApiVersionQueryParam}`;
         const queryOptions: QnAMakerOptions = { ...this._options, ...options } as QnAMakerOptions;
 
         queryOptions.rankerType = !queryOptions.rankerType ? RankerTypes.default : queryOptions.rankerType;

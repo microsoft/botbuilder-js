@@ -126,6 +126,7 @@ export interface QnAMakerDialogConfiguration extends DialogConfiguration {
     rankerType?: RankerTypes | string | Expression | EnumExpression<RankerTypes>;
     displayPreciseAnswerOnly?: boolean;
     strictFiltersJoinOperator?: JoinOperator;
+    includeUnstructuredSources?: boolean;
 }
 
 /**
@@ -290,7 +291,7 @@ export class QnAMakerDialog extends WaterfallDialog implements QnAMakerDialogCon
     /**
      * Enable precise answer
      */
-    enablePreciseAnswer = this.isNotLegacyService();
+    enablePreciseAnswer = true;
 
     /**
      * Gets or sets a value indicating whether a precise answer only needs to be displayed
@@ -311,6 +312,11 @@ export class QnAMakerDialog extends WaterfallDialog implements QnAMakerDialogCon
      * Language service query filters
      */
     filters: Filters;
+
+    /**
+     * Gets or sets a value - True or False - to include unstructured sources in search for answers.
+     */
+    includeUnstructuredSources = true;
 
     // TODO: Add Expressions support
     private suggestionsActivityFactory?: QnASuggestionsActivityFactory;
@@ -343,6 +349,7 @@ export class QnAMakerDialog extends WaterfallDialog implements QnAMakerDialogCon
         cardNoMatchText?: string,
         top?: number,
         cardNoMatchResponse?: Activity,
+        rankerType?: RankerTypes,
         strictFilters?: QnAMakerMetadata[],
         dialogId?: string,
         strictFiltersJoinOperator?: JoinOperator,
@@ -377,6 +384,7 @@ export class QnAMakerDialog extends WaterfallDialog implements QnAMakerDialogCon
         cardNoMatchText?: string,
         top?: number,
         cardNoMatchResponse?: Activity,
+        rankerType?: RankerTypes,
         strictFilters?: QnAMakerMetadata[],
         dialogId?: string,
         strictFiltersJoinOperator?: JoinOperator,
@@ -398,6 +406,7 @@ export class QnAMakerDialog extends WaterfallDialog implements QnAMakerDialogCon
         cardNoMatchText?: string,
         top?: number,
         cardNoMatchResponse?: Activity,
+        rankerType?: RankerTypes,
         strictFilters?: QnAMakerMetadata[],
         dialogId = 'QnAMakerDialog',
         // TODO: Should member exist in QnAMakerDialogConfiguration?
@@ -466,6 +475,9 @@ export class QnAMakerDialog extends WaterfallDialog implements QnAMakerDialogCon
 
         if (displayPreciseAnswerOnly != undefined) {
             this.displayPreciseAnswerOnly = displayPreciseAnswerOnly;
+        }
+        if (rankerType != undefined) {
+            this.rankerType = new EnumExpression(rankerType);
         }
         this.qnaServiceType = qnaServiceType;
 
@@ -666,7 +678,7 @@ export class QnAMakerDialog extends WaterfallDialog implements QnAMakerDialogCon
             isTest: this.isTest,
             strictFiltersJoinOperator: this.strictFiltersJoinOperator,
             enablePreciseAnswer: this.enablePreciseAnswer,
-            includeUnstructuredSources: this.isNotLegacyService(),
+            includeUnstructuredSources: this.includeUnstructuredSources,
         };
     }
 
@@ -678,10 +690,10 @@ export class QnAMakerDialog extends WaterfallDialog implements QnAMakerDialogCon
      */
     protected async getQnAResponseOptions(dc: DialogContext): Promise<QnAMakerDialogResponseOptions> {
         return {
-            activeLearningCardTitle: this.activeLearningCardTitle?.getValue(dc.state) ?? this.defaultCardTitle,
-            cardNoMatchResponse: this.cardNoMatchResponse && (await this.cardNoMatchResponse.bind(dc, dc.state)),
-            cardNoMatchText: this.cardNoMatchText?.getValue(dc.state) ?? this.defaultCardNoMatchText,
-            noAnswer: await this.noAnswer?.bind(dc, dc.state),
+            activeLearningCardTitle: this.activeLearningCardTitle?.getValue(dc?.state) ?? this.defaultCardTitle,
+            cardNoMatchResponse: this.cardNoMatchResponse && (await this.cardNoMatchResponse.bind(dc, dc?.state)),
+            cardNoMatchText: this.cardNoMatchText?.getValue(dc?.state) ?? this.defaultCardNoMatchText,
+            noAnswer: await this.noAnswer?.bind(dc, dc?.state),
             displayPreciseAnswerOnly: this.displayPreciseAnswerOnly,
         };
     }
@@ -949,9 +961,5 @@ export class QnAMakerDialog extends WaterfallDialog implements QnAMakerDialogCon
         this.normalizedHost = host;
 
         return host;
-    }
-
-    private isNotLegacyService() {
-        return this.qnaServiceType?.toLowerCase() === 'v2' || this.qnaServiceType?.toLowerCase() === 'language';
     }
 }
