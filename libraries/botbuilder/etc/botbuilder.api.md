@@ -86,7 +86,7 @@ import { WebResource } from '@azure/ms-rest-js';
 
 // Warning: (ae-forgotten-export) The symbol "ConnectorClientBuilder" needs to be exported by the entry point index.d.ts
 //
-// @public
+// @public @deprecated (undocumented)
 export class BotFrameworkAdapter extends BotAdapter implements BotFrameworkHttpAdapter, ConnectorClientBuilder, ExtendedUserTokenProvider, RequestHandler {
     constructor(settings?: Partial<BotFrameworkAdapterSettings>);
     protected authenticateRequest(request: Partial<Activity>, authHeader: string): Promise<void>;
@@ -150,7 +150,7 @@ export class BotFrameworkAdapter extends BotAdapter implements BotFrameworkHttpA
     useWebSocket(req: WebRequest, socket: INodeSocket, head: INodeBuffer, logic: (context: TurnContext) => Promise<any>): Promise<void>;
     }
 
-// @public
+// @public @deprecated (undocumented)
 export interface BotFrameworkAdapterSettings {
     appId: string;
     appPassword: string;
@@ -165,13 +165,13 @@ export interface BotFrameworkAdapterSettings {
     webSocketFactory?: NodeWebSocketFactoryBase;
 }
 
-// @public
+// @public @deprecated (undocumented)
 export interface BotFrameworkHttpAdapter {
     process(req: Request_2, res: Response_2, logic: (context: TurnContext) => Promise<void>): Promise<void>;
     process(req: Request_2, socket: INodeSocket, head: INodeBuffer, logic: (context: TurnContext) => Promise<void>): Promise<void>;
 }
 
-// @public
+// @public @deprecated (undocumented)
 export class BotFrameworkHttpClient implements BotFrameworkClient {
     constructor(credentialProvider: ICredentialProvider, channelService?: string);
     protected buildCredentials(appId: string, oAuthScope?: string): Promise<AppCredentials>;
@@ -180,7 +180,7 @@ export class BotFrameworkHttpClient implements BotFrameworkClient {
     postActivity<T = any>(fromBotId: string, toBotId: string, toUrl: string, serviceUrl: string, conversationId: string, activity: Activity): Promise<InvokeResponse<T>>;
 }
 
-// @public
+// @public @deprecated (undocumented)
 export class ChannelServiceHandler extends ChannelServiceHandlerBase {
     constructor(credentialProvider: ICredentialProvider, authConfig: AuthenticationConfiguration, channelService?: string);
     // (undocumented)
@@ -321,7 +321,7 @@ export class SetSpeakMiddleware implements Middleware {
     onTurn(turnContext: TurnContext, next: () => Promise<void>): Promise<void>;
     }
 
-// @public
+// @public @deprecated (undocumented)
 export class SkillHandler extends ChannelServiceHandler {
     constructor(adapter: BotAdapter, bot: ActivityHandlerBase, conversationIdFactory: SkillConversationIdFactoryBase, credentialProvider: ICredentialProvider, authConfig: AuthenticationConfiguration, channelService?: string);
     protected onDeleteActivity(claimsIdentity: ClaimsIdentity, conversationId: string, activityId: string): Promise<void>;
