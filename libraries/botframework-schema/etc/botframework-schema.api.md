@@ -1455,6 +1455,24 @@ export enum RoleTypes {
 }
 
 // @public
+export interface SearchInvokeOptions {
+    skip: number;
+    top: number;
+}
+
+// @public
+export interface SearchInvokeResponse extends AdaptiveCardInvokeResponse {
+}
+
+// @public
+export interface SearchInvokeValue {
+    context: any;
+    kind: string;
+    queryOptions: SearchInvokeOptions;
+    queryText: string;
+}
+
+// @public
 export interface SemanticAction {
     entities: {
         [propertyName: string]: Entity;
