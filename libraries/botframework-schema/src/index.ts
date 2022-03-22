@@ -2411,7 +2411,7 @@ export interface SearchInvokeOptions {
 
 /**
  * Defines the structure that is returned as the result of an Invoke activity with
- * Name of 'pplication/search'.
+ * Name of 'application/search'.
  */
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface SearchInvokeResponse extends AdaptiveCardInvokeResponse {}
