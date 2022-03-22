@@ -402,7 +402,7 @@ export abstract class InputDialog extends Dialog implements InputDialogConfigura
         this.telemetryClient.trackEvent({
             name: TelemetryLoggerConstants.GeneratorResultEvent,
             properties: {
-                activityTemplate: activityTemplate,
+                template: activityTemplate,
                 result: msg,
                 context: TelemetryLoggerConstants.InputDialogResultEvent,
             },
