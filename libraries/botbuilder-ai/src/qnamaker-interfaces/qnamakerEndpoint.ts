@@ -6,6 +6,8 @@
  * Licensed under the MIT License.
  */
 
+import { ServiceType } from './serviceType';
+
 /**
  * Defines an endpoint used to connect to a QnA Maker Knowledge base.
  */
@@ -27,7 +29,7 @@ export interface QnAMakerEndpoint {
     host: string;
 
     /**
-     * QnA service type '' - legacy, 'v2', 'language'
+     * QnA service type '' - qnamaker, language
      */
-    qnaServiceType?: string;
+    qnaServiceType?: ServiceType;
 }

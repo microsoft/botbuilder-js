@@ -56,6 +56,7 @@ import {
 
 import { Filters } from './qnamaker-interfaces/filters';
 import { CustomQuestionAnswering } from './customQuestionAnswering';
+import { ServiceType } from './qnamaker-interfaces/serviceType';
 
 class QnAMakerDialogActivityConverter
     implements Converter<string, TemplateInterface<Partial<Activity>, DialogStateManager>> {
@@ -299,9 +300,9 @@ export class QnAMakerDialog extends WaterfallDialog implements QnAMakerDialogCon
     displayPreciseAnswerOnly = false;
 
     /**
-     * Question answering service type - '' - Legacy, 'v2' or 'language'
+     * Question answering service type - qnaMaker or language
      */
-    qnaServiceType = '';
+    qnaServiceType = ServiceType.qnaMaker;
 
     /**
      * Gets or sets a value - AND or OR - logical operation on list of metadata
@@ -355,7 +356,7 @@ export class QnAMakerDialog extends WaterfallDialog implements QnAMakerDialogCon
         strictFiltersJoinOperator?: JoinOperator,
         enablePreciseAnswer?: boolean,
         displayPreciseAnswerOnly?: boolean,
-        qnaServiceType?: string
+        qnaServiceType?: ServiceType
     );
 
     /**
@@ -390,7 +391,7 @@ export class QnAMakerDialog extends WaterfallDialog implements QnAMakerDialogCon
         strictFiltersJoinOperator?: JoinOperator,
         enablePreciseAnswer?: boolean,
         displayPreciseAnswerOnly?: boolean,
-        qnaServiceType?: string
+        qnaServiceType?: ServiceType
     );
 
     /**
@@ -414,7 +415,7 @@ export class QnAMakerDialog extends WaterfallDialog implements QnAMakerDialogCon
         strictFiltersJoinOperator?: JoinOperator,
         enablePreciseAnswer?: boolean,
         displayPreciseAnswerOnly?: boolean,
-        qnaServiceType?: string
+        qnaServiceType?: ServiceType
     ) {
         super(dialogId);
         if (knowledgeBaseId) {
@@ -635,8 +636,7 @@ export class QnAMakerDialog extends WaterfallDialog implements QnAMakerDialogCon
         const endpoint = {
             knowledgeBaseId: this.knowledgeBaseId.getValue(dc.state),
             endpointKey: this.endpointKey.getValue(dc.state),
-            host:
-                this.qnaServiceType?.toLowerCase() === 'language' ? this.hostname.getValue(dc.state) : this.getHost(dc),
+            host: this.qnaServiceType === ServiceType.language ? this.hostname.getValue(dc.state) : this.getHost(dc),
             qnaServiceType: this.qnaServiceType,
         };
 
@@ -644,7 +644,7 @@ export class QnAMakerDialog extends WaterfallDialog implements QnAMakerDialogCon
             this.logPersonalInformation instanceof BoolExpression
                 ? this.logPersonalInformation.getValue(dc.state)
                 : this.logPersonalInformation;
-        if (endpoint.qnaServiceType === 'language') {
+        if (endpoint.qnaServiceType === ServiceType.language) {
             return new CustomQuestionAnswering(
                 endpoint,
                 await this.getQnAMakerOptions(dc),

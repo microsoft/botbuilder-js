@@ -5,6 +5,7 @@ const nock = require('nock');
 const path = require('path');
 const sinon = require('sinon');
 const { HttpRequestUtils } = require('../lib/qnamaker-utils/httpRequestUtils');
+const { ServiceType } = require('../lib/qnamaker-interfaces/ServiceType');
 const { CustomQuestionAnswering } = require('../');
 const { TestAdapter, TurnContext, NullTelemetryClient } = require('botbuilder-core');
 const { getFetch } = require('../lib/globals');
@@ -45,7 +46,7 @@ describe('LanguageService', function () {
         knowledgeBaseId,
         endpointKey,
         host: `https://${hostname}.cognitiveservices.azure.com`,
-        qnaServiceType: 'language',
+        qnaServiceType: ServiceType.language,
     };
 
     let sandbox;
@@ -297,16 +298,6 @@ describe('LanguageService', function () {
 
             assert.strictEqual(results.length, 2);
             assert(results[0].score < 1);
-        });
-
-        it('calls qnamaker with isTest true', async function () {
-            const qna = new CustomQuestionAnswering(endpoint);
-            const context = new TestContext({ text: 'Anything changes when isTest is true?' });
-            const options = { top: 1, context: null, isTest: true };
-
-            const results = await qna.getAnswers(context, options);
-
-            assert.strictEqual(results.length, 1);
         });
 
         it('calls qnamaker with rankerType questionOnly', async function () {
@@ -604,7 +595,7 @@ describe('LanguageService', function () {
             const filePath = `${__dirname}/TestData/Languageservice/`;
             const trainApi = `/language/query-knowledgebases/projects/${endpoint.knowledgeBaseId}/feedback?api-version=2021-10-01`;
             nock(endpoint.host).post(trainApi).replyWithFile(200, `${filePath}${fileName}`);
-            const options = { qnaServiceType: 'language' };
+            const options = { qnaServiceType: ServiceType.language };
             const qna = new CustomQuestionAnswering(endpoint, options);
 
             await qna.callTrain({
@@ -689,7 +680,7 @@ describe('LanguageService', function () {
         describe('callTrain', function () {
             it('sends correct payload body to Train API', async function () {
                 nock(endpoint.host).post(trainApi).reply(204);
-                const options = { qnaServiceType: 'language' };
+                const options = { qnaServiceType: ServiceType.language };
                 const qna = new CustomQuestionAnswering(endpoint, options);
                 await qna.callTrain(feedbackRecords);
             });

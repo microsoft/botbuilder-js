@@ -636,7 +636,7 @@ describe('Json load tests', function () {
     it('QnaMakerDialog_noAnswerActivity', async () => {
         await buildQnAMakerTestFlow(resourceExplorer, this.fullTitle())
             .send('You cannot find answer to this question.')
-            .assertReply('Default Answer from configuration.')
+            .assertReply('Answers not found in kb.')
             .startTest();
     });
 });
