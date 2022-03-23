@@ -144,7 +144,7 @@ export class ChoiceInput extends InputDialog implements ChoiceInputConfiguration
         const properties: { [key: string]: string } = {
             template: JSON.stringify(activityTemplate),
             result: JSON.stringify(msg),
-            choices: options.choices == null ? '' : JSON.stringify(options.choices),
+            choices: options?.choices ? JSON.stringify(options.choices) : '',
             context: TelemetryLoggerConstants.InputDialogResultEvent,
         };
 

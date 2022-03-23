@@ -501,9 +501,6 @@ export class ChoiceInput extends InputDialog implements ChoiceInputConfiguration
     outputFormat: EnumExpression<ChoiceOutputFormat>;
     recognizerOptions?: ObjectExpression<FindChoicesOptions>;
     style: EnumExpression<ListStyle>;
-    // Warning: (ae-unresolved-inheritdoc-base) The @inheritDoc tag needs a TSDoc declaration reference; signature matching is not supported yet
-    //
-    // (undocumented)
     protected trackGeneratorResultEvent(dc: DialogContext, activityTemplate: TemplateInterface<Partial<Activity>, DialogStateManager>, msg: Partial<Activity>): void;
 }
 
