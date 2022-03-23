@@ -1,8 +1,14 @@
 const { ok, strictEqual } = require('assert');
 const { createTelemetryClientAndStub } = require('./telemetryUtils');
-const { ConversationState, MemoryStorage, TestAdapter, InputHints } = require('botbuilder');
-const { DialogManager, DialogSet } = require('botbuilder-dialogs');
-
+const {
+    ConversationState,
+    MemoryStorage,
+    UserState,
+    AutoSaveStateMiddleware,
+    TestAdapter,
+    InputHints,
+} = require('botbuilder');
+const { DialogManager, DialogSet, ChoicePrompt, ListStyle, DialogTurnStatus } = require('botbuilder-dialogs');
 const {
     ChoiceInput,
     StaticActivityTemplate,
@@ -10,9 +16,9 @@ const {
     ActivityTemplate,
     ChoiceSet,
 } = require('../lib');
-const { ObjectExpression, ExpressionParser } = require('adaptive-expressions');
+const { ObjectExpression } = require('adaptive-expressions');
 
-describe('ChoiceInput', function () {
+describe('ChoiceInput test by Ram', function () {
     this.timeout(3000);
 
     let telemetryName;
@@ -27,40 +33,55 @@ describe('ChoiceInput', function () {
     const [telemetryClient, trackEventStub] = createTelemetryClientAndStub(captureTelemetryAction);
 
     // Setup dialog manager
-    const conversationState = new ConversationState(new MemoryStorage());
-    const dm = new DialogManager();
+    const storage = new MemoryStorage();
+    const conversationState = new ConversationState(storage);
     const dialogState = conversationState.createProperty('dialog');
     const dialogs = new DialogSet(dialogState);
+
+    const choicePrompt = new ChoicePrompt('prompt');
+    choicePrompt.style = ListStyle.none;
+    dialogs.add(choicePrompt);
+
+    const dm = new DialogManager();
     dm.conversationState = conversationState;
 
     // Setup inputDialog dialog
     const dialog = new ChoiceInput();
-    dialog.prompt = new ActivityTemplate('testtempl');
+    dialog.prompt = new ActivityTemplate('testTemplate');
     dialog.alwaysPrompt = true;
 
+    // set up prompt choices
     const state = {
         choices: [{ value: 'test1' }, { value: 'test2' }, { value: 'test3' }],
     };
-    const ep = new ObjectExpression('choices');
-    const { value } = ep.tryGetValue(state);
 
-    dialog.choices = ep;
+    const choiceSet = new ChoiceSet([{ value: 'test1' }, { value: 'test2' }, { value: 'test3' }]);
+    const choiceObjExpression = new ObjectExpression(choiceSet);
+    const { value } = choiceObjExpression.tryGetValue(state);
+
+    dialog.choices = choiceObjExpression.setValue(ChoiceInput);
 
     dialog._telemetryClient = telemetryClient;
     dm.rootDialog = dialog;
 
     it('eval promptUser()', async function () {
         // Send initial activity
-        const adapter = new TestAdapter(async (context) => {
-            const dc = await dialogs.createContext(context);
-            dc.state.setValue(value);
-            await dialog.promptUser(dc, undefined);
-            // await dialog.beginDialog(dc);
+        const adapter = new TestAdapter(async (turnContext) => {
+            const dc = await dialogs.createContext(turnContext);
 
-            var vv = telemetryProperties;
+            const opts = await dialog.onInitializeOptions(dc, {
+                choices: [{ value: 'test1' }, { value: 'test2' }, { value: 'test3' }],
+            });
+
+            dc.state.setValue(ChoiceInput.OPTIONS_PROPERTY, opts);
+
+            await dialog.promptUser(dc, undefined);
+
+            var testProperties = telemetryProperties;
 
             // assert telemetry result
             strictEqual(telemetryName, TelemetryLoggerConstants.GeneratorResultEvent);
+            // asert test1, test1
 
             ok(trackEventStub.calledOnce);
         });

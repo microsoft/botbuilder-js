@@ -133,6 +133,28 @@ export class ChoiceInput extends InputDialog implements ChoiceInputConfiguration
     }
 
     /**
+     * {@inheritDoc InputDialog.trackGeneratorResultEvent}
+     */
+    protected trackGeneratorResultEvent(
+        dc: DialogContext,
+        activityTemplate: TemplateInterface<Partial<Activity>, DialogStateManager>,
+        msg: Partial<Activity>
+    ): void {
+        const options = dc.state.getValue(ChoiceInput.OPTIONS_PROPERTY);
+        const properties: { [key: string]: string } = {
+            template: JSON.stringify(activityTemplate),
+            result: JSON.stringify(msg),
+            choices: options.choices == null ? '' : JSON.stringify(options.choices),
+            context: TelemetryLoggerConstants.InputDialogResultEvent,
+        };
+
+        this.telemetryClient.trackEvent({
+            name: TelemetryLoggerConstants.GeneratorResultEvent,
+            properties: properties,
+        });
+    }
+
+    /**
      * @protected
      * Method which processes options.
      * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
@@ -207,28 +229,6 @@ export class ChoiceInput extends InputDialog implements ChoiceInputConfiguration
         const style = this.style.getValue(dc.state);
         const options = dc.state.getValue(ChoiceInput.OPTIONS_PROPERTY);
         return this.appendChoices(prompt, channelId, options.choices, style, choiceOptions);
-    }
-
-    /**
-     * {@inheritDoc InputDialog.trackGeneratorResultEvent}
-     */
-    protected trackGeneratorResultEvent(
-        dc: DialogContext,
-        activityTemplate: TemplateInterface<Partial<Activity>, DialogStateManager>,
-        msg: Partial<Activity>
-    ): void {
-        const options = dc.state.getValue(ChoiceInput.OPTIONS_PROPERTY);
-        const properties: { [key: string]: string } = {
-            template: JSON.stringify(activityTemplate),
-            result: JSON.stringify(msg),
-            choices: options.choices == null ? '' : JSON.stringify(options.choices),
-            context: TelemetryLoggerConstants.InputDialogResultEvent,
-        };
-
-        this.telemetryClient.trackEvent({
-            name: TelemetryLoggerConstants.GeneratorResultEvent,
-            properties: properties,
-        });
     }
 
     /**
