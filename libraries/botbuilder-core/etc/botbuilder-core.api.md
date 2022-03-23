@@ -33,6 +33,8 @@ import { O365ConnectorCard } from 'botframework-schema';
 import { PasswordServiceClientCredentialFactory } from 'botframework-connector';
 import { ReceiptCard } from 'botframework-schema';
 import { ResourceResponse } from 'botframework-schema';
+import { SearchInvokeResponse } from 'botframework-schema';
+import { SearchInvokeValue } from 'botframework-schema';
 import { ServiceClientCredentials } from 'botframework-connector';
 import { ServiceClientCredentialsFactory } from 'botframework-connector';
 import { ServiceCollection } from 'botbuilder-dialogs-adaptive-runtime-core';
@@ -94,6 +96,7 @@ export class ActivityHandler extends ActivityHandlerBase {
     protected onReactionsAddedActivity(reactionsAdded: MessageReaction[], context: TurnContext): Promise<void>;
     onReactionsRemoved(handler: BotHandler): this;
     protected onReactionsRemovedActivity(reactionsRemoved: MessageReaction[], context: TurnContext): Promise<void>;
+    protected onSearchInvoke(context: TurnContext, invokeValue: SearchInvokeValue): Promise<SearchInvokeResponse>;
     protected onSignInInvoke(context: TurnContext): Promise<void>;
     onTokenResponseEvent(handler: BotHandler): this;
     onTurn(handler: BotHandler): this;
