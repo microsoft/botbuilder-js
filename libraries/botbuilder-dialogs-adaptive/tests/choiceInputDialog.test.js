@@ -52,7 +52,7 @@ describe('ChoiceInput multi-choices properties', function () {
     dialog._telemetryClient = telemetryClient;
     dm.rootDialog = dialog;
 
-    it('eval promptUser()', async function () {
+    it('Log telemetryClient ChoiceInput chooices properties', async function () {
         // Send initial activity
         const adapter = new TestAdapter(async (turnContext) => {
             await dm.onTurn(turnContext);
