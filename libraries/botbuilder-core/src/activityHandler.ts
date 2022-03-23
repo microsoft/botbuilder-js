@@ -729,7 +729,7 @@ export class ActivityHandler extends ActivityHandlerBase {
         if (!value.kind) {
             const response = this.createAdaptiveCardInvokeErrorResponse(
                 StatusCodes.BAD_REQUEST,
-                'NotSupported',
+                'BadRequest',
                 `Missing kind property for search.`
             );
 
@@ -739,8 +739,8 @@ export class ActivityHandler extends ActivityHandlerBase {
         if (!value.queryText) {
             const response = this.createAdaptiveCardInvokeErrorResponse(
                 StatusCodes.BAD_REQUEST,
-                'NotSupported',
-                `Missing kind queryText for search.`
+                'BadRequest',
+                `Missing queryText for search.`
             );
 
             throw new InvokeException(StatusCodes.BAD_REQUEST, response);
