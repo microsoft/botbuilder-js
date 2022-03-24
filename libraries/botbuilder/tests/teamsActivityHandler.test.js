@@ -261,11 +261,7 @@ describe('TeamsActivityHandler', function () {
             await adapter
                 .send(activity)
                 .assertReply((activity) => {
-                    assert.strictEqual(
-                        activity.value.message,
-                        "Cannot read property 'activity' of null",
-                        'should have thrown an error.'
-                    );
+                    assert(activity.value instanceof TypeError, 'should have thrown an error.');
                 })
                 .startTest();
         });

@@ -21,6 +21,7 @@ import { ToBotFromBotOrEmulatorTokenValidationParameters } from './tokenValidati
 import { decode, VerifyOptions } from 'jsonwebtoken';
 
 /**
+ * @deprecated Use `ConfigurationBotFrameworkAuthentication` instead to perform skill validation.
  * Validates JWT tokens sent to and from a Skill.
  */
 export namespace SkillValidation {

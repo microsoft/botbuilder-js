@@ -407,7 +407,6 @@ describe('ActivityHandler', function () {
             await assertSearchResultError(activity, 'Missing queryText for search.');
         });
 
-        
         async function assertonSearchInvoke(activity, expectedKind) {
             const bot = new ActivityHandler();
             const testAdapter = new TestAdapter();
@@ -673,7 +672,7 @@ describe('ActivityHandler', function () {
             });
 
             bot.onMessageReaction(async (context, next) => {
-                assertContextAndNext(context, next);
+                assertContextAndNext(context, next
                 assertTrueFlag(onTurnCalled, 'onTurn');
                 assertFalseFlag(onMessageReactionCalled, 'onMessageReaction', 'onTurn');
                 onMessageReactionCalled = true;
