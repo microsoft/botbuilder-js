@@ -1,5 +1,5 @@
 const assert = require('assert');
-const { ActivityHandler, ActivityTypes, TestAdapter, tokenResponseEventName, TurnContext } = require('../lib');
+const { ActivityHandler, ActivityTypes, Channels, TestAdapter, tokenResponseEventName, TurnContext } = require('../lib');
 
 describe('ActivityHandler', function () {
     const adapter = new TestAdapter();
@@ -340,16 +340,6 @@ describe('ActivityHandler', function () {
 
     describe('ActivityHandler.onSearchInvoke', function () {
         it(`should fire onSearchInvoke`, async function () {
-            const bot = new ActivityHandler();
-
-            let onSearchInvokeCalled = false;
-            let value = null;
-            bot.onSearchInvoke = async (context, invokeValue) => {
-                onSearchInvokeCalled = true;
-                value = invokeValue;
-                return { statusCode: 200, value: 'called' };
-            };
-
             const activity = {
                 type: ActivityTypes.Invoke,
                 name: 'application/search',
@@ -364,17 +354,7 @@ describe('ActivityHandler', function () {
                 },
             };
 
-            await processActivity(
-                activity,
-                bot
-            );
-
-            assert(onSearchInvokeCalled);
-            assert.equal(activity.value.queryText, value.queryText, 'missing query text');
-            assert.equal(activity.value.kind, value.kind, 'missing kind');
-            assert.equal(activity.value.queryOptions.skip, value.queryOptions.skip, 'missing skip');
-            assert.equal(activity.value.queryOptions.top, value.queryOptions.top, 'missing top');
-            assert.equal(activity.value.context, value.context, 'missing context');
+            await assertonSearchInvoke(activity, activity.value.kind);
         });
 
         it(`should throw on onSearchInvoke activity missing value`, async function () {
@@ -392,10 +372,27 @@ describe('ActivityHandler', function () {
                 name: 'application/search',
                 value: {
                     queryText: 'test bot'
-                },
+                }
             };
 
             await assertSearchResultError(activity, 'Missing kind property for search.');
+        });
+
+        it(`should not throw on onSearchInvoke activity missing kind when channel is msTeams`, async function () {
+            const activity = {
+                type: ActivityTypes.Invoke,
+                name: 'application/search',
+                channelId: Channels.Msteams,
+                value: {
+                    queryText: 'test bot',
+                    queryOptions: {
+                        skip: 5,
+                        top: 10
+                    }
+                }
+            };
+
+            await assertonSearchInvoke(activity, 'search');
         });
 
         it(`should throw on onSearchInvoke activity missing queryText`, async function () {
@@ -404,11 +401,35 @@ describe('ActivityHandler', function () {
                 name: 'application/search',
                 value: {
                     kind: 'search'
-                },
+                }
             };
 
             await assertSearchResultError(activity, 'Missing queryText for search.');
         });
+
+        
+        async function assertonSearchInvoke(activity, expectedKind) {
+            const bot = new ActivityHandler();
+            const testAdapter = new TestAdapter();
+
+            let onSearchInvokeCalled = false;
+            let value = null;
+            bot.onSearchInvoke = async (context, invokeValue) => {
+                onSearchInvokeCalled = true;
+                value = invokeValue;
+                return { statusCode: 200, value: 'called' };
+            };
+
+            const context = new TurnContext(testAdapter, activity);
+            await bot.run(context);
+
+            assert(onSearchInvokeCalled);
+            assert.equal(activity.value.queryText, value.queryText, 'missing query text');
+            assert.equal(expectedKind, value.kind, 'missing kind');
+            assert.equal(activity.value.queryOptions.skip, value.queryOptions.skip, 'missing skip');
+            assert.equal(activity.value.queryOptions.top, value.queryOptions.top, 'missing top');
+            assert.equal(activity.value.context, value.context, 'missing context');
+        }
 
         async function assertSearchResultError(activity, errorMessage) {
             const bot = new ActivityHandler();
