@@ -1,21 +1,8 @@
 const { ok, strictEqual } = require('assert');
 const { createTelemetryClientAndStub } = require('./telemetryUtils');
-const {
-    ConversationState,
-    MemoryStorage,
-    UserState,
-    AutoSaveStateMiddleware,
-    TestAdapter,
-    InputHints,
-} = require('botbuilder');
-const { DialogManager, DialogSet, ChoicePrompt, ListStyle, DialogTurnStatus } = require('botbuilder-dialogs');
-const {
-    ChoiceInput,
-    StaticActivityTemplate,
-    TelemetryLoggerConstants,
-    ActivityTemplate,
-    ChoiceSet,
-} = require('../lib');
+const { ConversationState, MemoryStorage, TestAdapter } = require('botbuilder');
+const { DialogManager, DialogSet, ChoicePrompt, ListStyle } = require('botbuilder-dialogs');
+const { ChoiceInput, TelemetryLoggerConstants, ActivityTemplate, ChoiceSet } = require('../lib');
 const { ObjectExpression, BoolExpression } = require('adaptive-expressions');
 
 describe('ChoiceInput multi-choices properties', function () {
@@ -59,7 +46,7 @@ describe('ChoiceInput multi-choices properties', function () {
 
             // assert telemetry result
             strictEqual(telemetryName, TelemetryLoggerConstants.GeneratorResultEvent);
-            strictEqual(telemetryProperties.choices, JSON.stringify(choiceSet));
+            strictEqual(telemetryProperties.choices, choiceSet);
             ok(trackEventStub.calledOnce);
         });
         await adapter.send('test').sendConversationUpdate().startTest();

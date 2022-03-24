@@ -141,10 +141,10 @@ export class ChoiceInput extends InputDialog implements ChoiceInputConfiguration
         msg: Partial<Activity>
     ): void {
         const options = dc.state.getValue(ChoiceInput.OPTIONS_PROPERTY);
-        const properties: { [key: string]: string } = {
-            template: JSON.stringify(activityTemplate),
-            result: JSON.stringify(msg),
-            choices: options?.choices ? JSON.stringify(options.choices) : '',
+        const properties = {
+            template: activityTemplate,
+            result: msg,
+            choices: options?.choices ? options.choices : '',
             context: TelemetryLoggerConstants.InputDialogResultEvent,
         };
 
