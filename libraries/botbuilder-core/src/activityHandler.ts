@@ -13,6 +13,7 @@ import {
     Activity,
     AdaptiveCardInvokeResponse,
     AdaptiveCardInvokeValue,
+    Channels,
     SearchInvokeResponse,
     SearchInvokeValue,
     MessageReaction,
@@ -727,20 +728,24 @@ export class ActivityHandler extends ActivityHandlerBase {
         }
 
         if (!value.kind) {
-            const response = this.createAdaptiveCardInvokeErrorResponse(
-                StatusCodes.BAD_REQUEST,
-                'BadRequest',
-                `Missing kind property for search.`
-            );
+            if (activity.channelId === Channels.Msteams) {
+                value.kind = 'search';
+            } else {
+                const response = this.createAdaptiveCardInvokeErrorResponse(
+                    StatusCodes.BAD_REQUEST,
+                    'BadRequest',
+                    'Missing kind property for search.'
+                );
 
-            throw new InvokeException(StatusCodes.BAD_REQUEST, response);
+                throw new InvokeException(StatusCodes.BAD_REQUEST, response);
+            }
         }
 
         if (!value.queryText) {
             const response = this.createAdaptiveCardInvokeErrorResponse(
                 StatusCodes.BAD_REQUEST,
                 'BadRequest',
-                `Missing queryText for search.`
+                'Missing queryText for search.'
             );
 
             throw new InvokeException(StatusCodes.BAD_REQUEST, response);
