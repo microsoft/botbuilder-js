@@ -672,7 +672,7 @@ describe('ActivityHandler', function () {
             });
 
             bot.onMessageReaction(async (context, next) => {
-                assertContextAndNext(context, next
+                assertContextAndNext(context, next);
                 assertTrueFlag(onTurnCalled, 'onTurn');
                 assertFalseFlag(onMessageReactionCalled, 'onMessageReaction', 'onTurn');
                 onMessageReactionCalled = true;
