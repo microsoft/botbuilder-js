@@ -26,11 +26,14 @@ import {
     Converter,
     ConverterFactory,
     DialogContext,
+    DialogStateManager,
     FindChoicesOptions,
     ListStyle,
     PromptCultureModels,
     recognizeChoices,
+    TemplateInterface,
 } from 'botbuilder-dialogs';
+import { TelemetryLoggerConstants } from '../telemetryLoggerConstants';
 
 export enum ChoiceOutputFormat {
     value = 'value',
@@ -127,6 +130,28 @@ export class ChoiceInput extends InputDialog implements ChoiceInputConfiguration
             default:
                 return super.getConverter(property);
         }
+    }
+
+    /**
+     * {@inheritDoc InputDialog.trackGeneratorResultEvent}
+     */
+    protected trackGeneratorResultEvent(
+        dc: DialogContext,
+        activityTemplate: TemplateInterface<Partial<Activity>, DialogStateManager>,
+        msg: Partial<Activity>
+    ): void {
+        const options = dc.state.getValue(ChoiceInput.OPTIONS_PROPERTY);
+        const properties = {
+            template: activityTemplate,
+            result: msg,
+            choices: options?.choices ? options.choices : '',
+            context: TelemetryLoggerConstants.InputDialogResultEvent,
+        };
+
+        this.telemetryClient.trackEvent({
+            name: TelemetryLoggerConstants.GeneratorResultEvent,
+            properties: properties,
+        });
     }
 
     /**
