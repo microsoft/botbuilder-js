@@ -92,7 +92,7 @@ export interface QnAMakerDialogResponseOptions {
     cardNoMatchResponse: Partial<Activity>;
 
     /**
-     * Whether to display PreciseAnswer Only or along with source Answer text.
+     * Indicates whether the dialog response should display only precise answers.
      */
     displayPreciseAnswerOnly: boolean;
 }
@@ -290,12 +290,12 @@ export class QnAMakerDialog extends WaterfallDialog implements QnAMakerDialogCon
     rankerType: EnumExpression<RankerTypes> = new EnumExpression(RankerTypes.default);
 
     /**
-     * Enable precise answer
+     * Gets or sets a value indicating whether to include precise answer in response.
      */
     enablePreciseAnswer = true;
 
     /**
-     * Gets or sets a value indicating whether a precise answer only needs to be displayed
+     * Gets or sets a value indicating whether the dialog response should display only precise answers.
      */
     displayPreciseAnswerOnly = false;
 
@@ -310,12 +310,12 @@ export class QnAMakerDialog extends WaterfallDialog implements QnAMakerDialogCon
     strictFiltersJoinOperator: JoinOperator;
 
     /**
-     * Language service query filters
+     * Gets or sets the metadata and sources used to filter results.
      */
     filters: Filters;
 
     /**
-     * Gets or sets a value - True or False - to include unstructured sources in search for answers.
+     * Gets or sets a value indicating whether to include unstructured sources in search for answers.
      */
     includeUnstructuredSources = true;
 

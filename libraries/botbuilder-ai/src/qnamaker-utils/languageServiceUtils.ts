@@ -53,11 +53,12 @@ export class LanguageServiceUtils {
     }
 
     /**
+     * Send feedback to the knowledge base.
      *
-     * @param feedbackRecords
-     * @returns
+     * @param feedbackRecords A list of Feedback Records for Active Learning.
+     * @returns {Promise<void>} A promise representing the async operation.
      */
-    async addFeedback(feedbackRecords: FeedbackRecords) {
+    async addFeedback(feedbackRecords: FeedbackRecords): Promise<void> {
         if (!feedbackRecords) {
             throw new TypeError('Feedback records can not be null.');
         }
@@ -107,18 +108,18 @@ export class LanguageServiceUtils {
         );
 
         if (Array.isArray(qnaResults?.answers)) {
-            return this.formatQnaResult(qnaResults);
+            return this.formatQnaResult(qnaResults as KnowledgeBaseAnswers);
         }
 
         throw new Error(`Failed to query knowledgebase: ${qnaResults}`);
     }
 
     /**
-     * Emits a trace event detailing a QnA Maker call and its results.
+     * Emits a trace event detailing a Custom Question Answering call and its results.
      *
      * @param {TurnContext} turnContext Turn Context for the current turn of conversation with the user.
-     * @param {QnAMakerResult[]} answers Answers returned by QnA Maker.
-     * @param {QnAMakerOptions} queryOptions (Optional) The options for the QnA Maker knowledge base. If null, constructor option is used for this instance.
+     * @param {QnAMakerResult[]} answers Answers returned by Language Service.
+     * @param {QnAMakerOptions} queryOptions (Optional) The options for the Custom Question Answering knowledge base. If null, constructor option is used for this instance.
      * @returns {Promise<any>} a promise representing the async operation
      */
     async emitTraceInfo(
@@ -154,7 +155,7 @@ export class LanguageServiceUtils {
     /**
      * Validate qna maker options
      *
-     * @param {QnAMakerOptions} options The options for the QnA Maker knowledge base. If null, constructor option is used for this instance.
+     * @param {QnAMakerOptions} options The options for the Custom Question Answering knowledge base. If null, constructor option is used for this instance.
      */
     validateOptions(options: QnAMakerOptions): void {
         const { scoreThreshold, top } = options;
@@ -168,7 +169,7 @@ export class LanguageServiceUtils {
         }
     }
 
-    private formatQnaResult(kbAnswers: KnowledgeBaseAnswers | any): QnAMakerResults {
+    private formatQnaResult(kbAnswers: KnowledgeBaseAnswers): QnAMakerResults {
         const qnaResultsAnswers = kbAnswers.answers?.map((kbAnswer: KnowledgeBaseAnswer) => {
             const qnaResult: QnAMakerResult = {
                 answer: kbAnswer.answer,
