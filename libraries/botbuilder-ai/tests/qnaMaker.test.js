@@ -176,6 +176,25 @@ describe('QnAMaker', function () {
     });
 
     describe('getAnswers', function () {
+        it('returns answer with strictFilters specified', async function () {
+            const qna = new QnAMaker(endpoint);
+            const context = new TestContext({ text: 'where are the unicorns?' });
+            const strictFilters = [
+                {
+                    name: 'name1',
+                    value: 'filter1',
+                },
+                {
+                    name: 'name2',
+                    value: 'filter2',
+                },
+            ];
+            const options = { top: 5, strictFilters: strictFilters };
+
+            const results = await qna.getAnswers(context, options);
+
+            assert.deepStrictEqual(results[0].metadata, strictFilters);
+        });
         it('returns answer without any options specified', async function () {
             const qna = new QnAMaker(endpoint);
             const context = new TestContext({ text: 'where are the unicorns?' });
