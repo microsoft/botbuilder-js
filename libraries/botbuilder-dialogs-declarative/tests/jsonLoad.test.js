@@ -85,6 +85,25 @@ class MockQnAMakerClient {
                         offset: 33,
                         length: 50,
                     },
+                    context: {
+                        prompts: [
+                            {
+                                displayOrder: 0,
+                                qnaId: 552,
+                                displayText: 'First Prompt',
+                            },
+                            {
+                                displayOrder: 1,
+                                qnaId: 553,
+                                displayText: 'Second Prompt',
+                            },
+                            {
+                                displayOrder: 2,
+                                qnaId: 554,
+                                displayText: 'Third Prompt',
+                            },
+                        ],
+                    },
                 },
             ];
         }
@@ -570,6 +589,25 @@ describe('Json load tests', function () {
                         offset: 33,
                         length: 50,
                     },
+                    context: {
+                        prompts: [
+                            {
+                                displayOrder: 0,
+                                qnaId: 552,
+                                displayText: 'First Prompt',
+                            },
+                            {
+                                displayOrder: 1,
+                                qnaId: 553,
+                                displayText: 'Second Prompt',
+                            },
+                            {
+                                displayOrder: 2,
+                                qnaId: 554,
+                                displayText: 'Third Prompt',
+                            },
+                        ],
+                    },
                 },
             ],
         };
@@ -597,6 +635,25 @@ describe('Json load tests', function () {
                         confidenceScore: 0.3,
                         offset: 33,
                         length: 50,
+                    },
+                    context: {
+                        prompts: [
+                            {
+                                displayOrder: 0,
+                                qnaId: 552,
+                                displayText: 'First Prompt',
+                            },
+                            {
+                                displayOrder: 1,
+                                qnaId: 553,
+                                displayText: 'Second Prompt',
+                            },
+                            {
+                                displayOrder: 2,
+                                qnaId: 554,
+                                displayText: 'Third Prompt',
+                            },
+                        ],
                     },
                 },
             ],
