@@ -26,7 +26,7 @@ import { Vocabulary } from 'antlr4ts/Vocabulary';
 
 // @public
 export class Analyzer extends AbstractParseTreeVisitor<AnalyzerResult> implements LGTemplateParserVisitor<AnalyzerResult> {
-    constructor(templates: Templates, opt?: EvaluationOptions);
+    constructor(templates: Templates, opt?: EvaluationOptions, analyzerOptions?: AnalyzerOptions);
     analyzeTemplate(templateName: string): AnalyzerResult;
     protected defaultResult(): AnalyzerResult;
     readonly templates: Templates;
@@ -38,6 +38,13 @@ export class Analyzer extends AbstractParseTreeVisitor<AnalyzerResult> implement
     visitStructureValue(ctx: KeyValueStructureLineContext): AnalyzerResult;
     visitSwitchCaseBody(ctx: SwitchCaseBodyContext): AnalyzerResult;
 }
+
+// @public
+export class AnalyzerOptions {
+    constructor(options?: AnalyzerOptions | string[]);
+    Merge(opt: AnalyzerOptions): AnalyzerOptions;
+    ThrowOnRecursive?: boolean;
+    }
 
 // @public
 export class AnalyzerResult {
@@ -1665,10 +1672,11 @@ export class Templates implements Iterable<Template> {
     addTemplate(templateName: string, parameters: string[], templateBody: string): Templates;
     readonly allDiagnostics: Diagnostic[];
     readonly allTemplates: Template[];
-    analyzeTemplate(templateName: string): AnalyzerResult;
+    analyzeTemplate(templateName: string, analyzerOptions?: AnalyzerOptions): AnalyzerResult;
     content: string;
     deleteTemplate(templateName: string): Templates;
     diagnostics: Diagnostic[];
+    static enableFromFile: boolean;
     evaluate(templateName: string, scope?: object, opt?: EvaluationOptions): any;
     evaluateText(inlineStr: string, scope?: object, opt?: EvaluationOptions): any;
     expandTemplate(templateName: string, scope?: object, opt?: EvaluationOptions): any[];

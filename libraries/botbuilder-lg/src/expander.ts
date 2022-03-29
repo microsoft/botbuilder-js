@@ -613,13 +613,15 @@ export class Expander extends AbstractParseTreeVisitor<unknown[]> implements LGT
             );
         }
 
-        if (name === Evaluator.fromFileFunctionName) {
-            return new ExpressionEvaluator(
-                Evaluator.fromFileFunctionName,
-                FunctionUtils.apply(this.fromFile()),
-                ReturnType.Object,
-                (expr): void => FunctionUtils.validateOrder(expr, [ReturnType.String], ReturnType.String)
-            );
+        if (Templates.enableFromFile) {
+            if (name === Evaluator.fromFileFunctionName) {
+                return new ExpressionEvaluator(
+                    Evaluator.fromFileFunctionName,
+                    FunctionUtils.apply(this.fromFile()),
+                    ReturnType.Object,
+                    (expr): void => FunctionUtils.validateOrder(expr, [ReturnType.String], ReturnType.String)
+                );
+            }
         }
 
         if (name === Evaluator.activityAttachmentFunctionName) {

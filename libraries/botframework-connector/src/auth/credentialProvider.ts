@@ -7,6 +7,7 @@
  */
 
 /**
+ * @deprecated Use `ConfigurationBotFrameworkAuthentication` instead to configure credentials.
  * CredentialProvider interface. This interface allows Bots to provide their own
  * implementation of what is, and what is not, a valid appId and password. This is
  * useful in the case of multi-tenant bots, where the bot may need to call
@@ -52,6 +53,7 @@ export interface ICredentialProvider {
 }
 
 /**
+ * @deprecated Use `ConfigurationBotFrameworkAuthentication` instead to configure credentials.
  * A simple implementation of the [ICredentialProvider](xref:botframework-connector.ICredentialProvider) interface.
  */
 export class SimpleCredentialProvider implements ICredentialProvider {

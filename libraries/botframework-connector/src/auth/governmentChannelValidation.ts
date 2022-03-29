@@ -18,6 +18,9 @@ import { JwtTokenExtractor } from './jwtTokenExtractor';
 import { AuthenticationError } from './authenticationError';
 import { StatusCodes } from 'botframework-schema';
 
+/**
+ * @deprecated Use `ConfigurationBotFrameworkAuthentication` instead to perform government channel validation.
+ */
 export namespace GovernmentChannelValidation {
     export let OpenIdMetadataEndpoint: string;
 

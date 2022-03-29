@@ -501,6 +501,7 @@ export class ChoiceInput extends InputDialog implements ChoiceInputConfiguration
     outputFormat: EnumExpression<ChoiceOutputFormat>;
     recognizerOptions?: ObjectExpression<FindChoicesOptions>;
     style: EnumExpression<ListStyle>;
+    protected trackGeneratorResultEvent(dc: DialogContext, activityTemplate: TemplateInterface<Partial<Activity>, DialogStateManager>, msg: Partial<Activity>): void;
 }
 
 // @public (undocumented)
@@ -1275,6 +1276,7 @@ export abstract class InputDialog extends Dialog implements InputDialogConfigura
     prompt: TemplateInterface<Partial<Activity>, DialogStateManager>;
     property: StringExpression;
     resumeDialog(dc: DialogContext, _reason: DialogReason, _result?: any): Promise<DialogTurnResult>;
+    protected trackGeneratorResultEvent(dc: DialogContext, activityTemplate: TemplateInterface<Partial<Activity>, DialogStateManager>, msg: Partial<Activity>): void;
     // (undocumented)
     static TURN_COUNT_PROPERTY: string;
     unrecognizedPrompt: TemplateInterface<Partial<Activity>, DialogStateManager>;

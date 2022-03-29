@@ -6,6 +6,7 @@ import type { Request, Response } from './interfaces';
 import type { TurnContext } from 'botbuilder-core';
 
 /**
+ * @deprecated Use `CloudAdapter` instead.
  * BotFrameworkHttpAdapter is the interface that describes a Bot Framework
  * adapter that operates on HTTP requests.
  */

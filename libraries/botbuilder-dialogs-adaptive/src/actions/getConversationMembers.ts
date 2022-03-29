@@ -5,7 +5,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-import type { TurnContext } from 'botbuilder';
+import type { BotFrameworkAdapter, TurnContext } from 'botbuilder';
 import { BoolProperty, StringProperty } from '../properties';
 
 import {
@@ -23,14 +23,7 @@ import {
     DialogContext,
     DialogTurnResult,
 } from 'botbuilder-dialogs';
-
-interface CompatibleAdapter {
-    getConversationMembers(context: TurnContext): unknown;
-}
-
-function isCompatibleAdapter(adapter: unknown): adapter is CompatibleAdapter {
-    return adapter && typeof (adapter as CompatibleAdapter).getConversationMembers === 'function';
-}
+import { ConnectorClient } from 'botframework-connector';
 
 export interface GetConversationMembersConfiguration extends DialogConfiguration {
     property?: StringProperty;
@@ -95,15 +88,32 @@ export class GetConversationMembers<O extends object = {}>
         if (this.disabled && this.disabled.getValue(dc.state)) {
             return await dc.endDialog();
         }
+        const result = await this.getMembers(dc.context);
+        dc.state.setValue(this.property.getValue(dc.state), result);
+        return await dc.endDialog(result);
+    }
 
-        const adapter = dc.context.adapter;
-        if (isCompatibleAdapter(adapter)) {
-            const result = await adapter.getConversationMembers(dc.context);
-            dc.state.setValue(this.property.getValue(dc.state), result);
-            return await dc.endDialog(result);
-        } else {
-            throw new Error('getConversationMembers() not supported by the current adapter.');
+    private async getMembers(context: TurnContext) {
+        const conversationId = context.activity?.conversation?.id;
+        if (!conversationId) {
+            throw new Error('[GetConversationMembers]: The getMembers operation needs a valid conversation id.');
         }
+
+        const connectorClient = this.getConnectorClient(context);
+        const teamMembers = await connectorClient.conversations.getConversationMembers(conversationId);
+        return teamMembers;
+    }
+
+    private getConnectorClient(context: TurnContext): ConnectorClient {
+        const client =
+            context.adapter && 'createConnectorClient' in context.adapter
+                ? (context.adapter as BotFrameworkAdapter).createConnectorClient(context.activity.serviceUrl)
+                : context.turnState?.get<ConnectorClient>(context.adapter.ConnectorClientKey);
+        if (!client) {
+            throw new Error('This method requires a connector client.');
+        }
+
+        return client;
     }
 
     /**

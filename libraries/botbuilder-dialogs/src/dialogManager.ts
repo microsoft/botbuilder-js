@@ -61,6 +61,8 @@ export interface DialogManagerConfiguration {
 
 /**
  * Class which runs the dialog system.
+ *
+ * @obsolete This class will be deprecated.
  */
 export class DialogManager extends Configurable {
     private _rootDialogId: string;

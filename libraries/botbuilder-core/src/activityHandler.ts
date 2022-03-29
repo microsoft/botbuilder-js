@@ -13,6 +13,9 @@ import {
     Activity,
     AdaptiveCardInvokeResponse,
     AdaptiveCardInvokeValue,
+    Channels,
+    SearchInvokeResponse,
+    SearchInvokeValue,
     MessageReaction,
     StatusCodes,
 } from 'botframework-schema';
@@ -496,6 +499,12 @@ export class ActivityHandler extends ActivityHandlerBase {
     protected async onInvokeActivity(context: TurnContext): Promise<InvokeResponse> {
         try {
             switch (context.activity.name) {
+                case 'application/search': {
+                    const invokeValue = this.getSearchInvokeValue(context.activity);
+                    const response = await this.onSearchInvoke(context, invokeValue);
+                    return { status: response.statusCode, body: response };
+                }
+
                 case 'adaptiveCard/action': {
                     const invokeValue = this.getAdaptiveCardInvokeValue(context.activity);
                     const response = await this.onAdaptiveCardInvoke(context, invokeValue);
@@ -547,6 +556,19 @@ export class ActivityHandler extends ActivityHandlerBase {
         context: TurnContext,
         invokeValue: AdaptiveCardInvokeValue
     ): Promise<AdaptiveCardInvokeResponse> {
+        return Promise.reject(new InvokeException(StatusCodes.NOT_IMPLEMENTED));
+    }
+
+    /**
+     * Invoked when the bot is sent an invoke activity with name of 'application/search'.
+     *
+     * @param context the context object for the current turn
+     * @param invokeValue incoming activity value
+     */
+    protected onSearchInvoke(
+        context: TurnContext,
+        invokeValue: SearchInvokeValue
+    ): Promise<SearchInvokeResponse> {
         return Promise.reject(new InvokeException(StatusCodes.NOT_IMPLEMENTED));
     }
 
@@ -691,6 +713,45 @@ export class ActivityHandler extends ActivityHandlerBase {
      */
     protected async onUnrecognizedActivity(context: TurnContext): Promise<void> {
         await this.handle(context, 'UnrecognizedActivityType', this.defaultNextEvent(context));
+    }
+
+    private getSearchInvokeValue(activity: Activity): SearchInvokeValue {
+        const { value }: { value?: SearchInvokeValue } = activity;
+        if (!value) {
+            const response = this.createAdaptiveCardInvokeErrorResponse(
+                StatusCodes.BAD_REQUEST,
+                'BadRequest',
+                'Missing value property for search'
+            );
+
+            throw new InvokeException(StatusCodes.BAD_REQUEST, response);
+        }
+
+        if (!value.kind) {
+            if (activity.channelId === Channels.Msteams) {
+                value.kind = 'search';
+            } else {
+                const response = this.createAdaptiveCardInvokeErrorResponse(
+                    StatusCodes.BAD_REQUEST,
+                    'BadRequest',
+                    'Missing kind property for search.'
+                );
+
+                throw new InvokeException(StatusCodes.BAD_REQUEST, response);
+            }
+        }
+
+        if (!value.queryText) {
+            const response = this.createAdaptiveCardInvokeErrorResponse(
+                StatusCodes.BAD_REQUEST,
+                'BadRequest',
+                'Missing queryText for search.'
+            );
+
+            throw new InvokeException(StatusCodes.BAD_REQUEST, response);
+        }
+
+        return value;
     }
 
     private getAdaptiveCardInvokeValue(activity: Activity): AdaptiveCardInvokeValue {

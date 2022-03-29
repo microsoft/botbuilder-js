@@ -33,6 +33,7 @@ import { basename } from 'path';
 import { StaticChecker } from './staticChecker';
 import { LGResource } from './lgResource';
 import { CustomizedMemory } from './customizedMemory';
+import { AnalyzerOptions } from './analyzerOptions';
 
 /**
  * LG entrance, including properties that LG file has, and evaluate functions.
@@ -42,6 +43,10 @@ export class Templates implements Iterable<Template> {
      * Temp Template ID for inline content.
      */
     public static readonly inlineTemplateIdPrefix: string = '__temp__';
+    /**
+     * Indicates whether fromFile is allowed in LG templates.
+     */
+    public static enableFromFile: boolean = false;
     private readonly newLineRegex = /(\r?\n)/g;
     private readonly newLine: string = '\r\n';
     private readonly namespaceKey = '@namespace';
@@ -292,10 +297,10 @@ export class Templates implements Iterable<Template> {
      * @param templateName Template name to be evaluated.
      * @returns Analyzer result.
      */
-    public analyzeTemplate(templateName: string): AnalyzerResult {
+    public analyzeTemplate(templateName: string, analyzerOptions?: AnalyzerOptions): AnalyzerResult {
         this.checkErrors();
 
-        const analyzer = new Analyzer(this);
+        const analyzer = new Analyzer(this, this.lgOptions, analyzerOptions);
         return analyzer.analyzeTemplate(templateName);
     }
 
