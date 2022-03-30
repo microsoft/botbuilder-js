@@ -101,4 +101,14 @@ export class QnACardBuilder {
 
         return chatActivity;
     }
+
+    /**
+     * Returns an [activity](xref:botframework-schema.Activity) with answer text and a hero card attachment, containing buttons for multi turn prompts.
+     *
+     * @param {QnAMakerResult} result QnAMaker result containing the answer text and multi turn prompts to be displayed.
+     * @returns {Partial<Activity>} Activity representing the prompts as a card
+     */
+    static getQnAPromptsCard(result: QnAMakerResult): Partial<Activity> {
+        return this.getQnAAnswerCard(result, true);
+    }
 }
