@@ -592,7 +592,7 @@ describe('LanguageService', function () {
     describe('trainAPI', function () {
         it('calls train async function', async function () {
             const fileName = 'calls_train_async_function.json';
-            const filePath = `${__dirname}/TestData/Languageservice/`;
+            const filePath = `${__dirname}/TestData/LanguageService/`;
             const trainApi = `/language/query-knowledgebases/projects/${endpoint.knowledgeBaseId}/feedback?api-version=2021-10-01`;
             nock(endpoint.host).post(trainApi).replyWithFile(200, `${filePath}${fileName}`);
             const options = { qnaServiceType: ServiceType.language };

@@ -38,8 +38,10 @@ import { WaterfallStepContext } from 'botbuilder-dialogs';
 // @public
 export class ActiveLearningUtils {
     static getLowScoreVariation(qnaSearchResults: QnAMakerResult[]): QnAMakerResult[];
-    static MaximumScoreForLowScoreVariation: number;
-    static MinimumScoreForLowScoreVariation: number;
+    static readonly MaximumScoreForLowScoreVariation = 95;
+    static readonly MaxLowScoreVariationMultiplier = 1;
+    static readonly MinimumScoreForLowScoreVariation = 20;
+    static readonly PreviousLowScoreVariationMultiplier = 0.7;
 }
 
 // @public
@@ -51,6 +53,41 @@ export enum Anchor {
     // (undocumented)
     Start = "start"
 }
+
+// Warning: (ae-forgotten-export) The symbol "QnAMakerClient" needs to be exported by the entry point index.d.ts
+// Warning: (ae-forgotten-export) The symbol "QnAMakerTelemetryClient" needs to be exported by the entry point index.d.ts
+//
+// @public
+export class CustomQuestionAnswering implements QnAMakerClient_2, QnAMakerTelemetryClient_2 {
+    constructor(endpoint: QnAMakerEndpoint, options?: QnAMakerOptions, telemetryClient?: BotTelemetryClient, logPersonalInformation?: boolean);
+    callTrain(feedbackRecords: FeedbackRecords): Promise<void>;
+    protected fillQnAEvent(qnaResults: QnAMakerResult[], turnContext: TurnContext, telemetryProperties?: Record<string, string>, telemetryMetrics?: Record<string, number>): Promise<[Record<string, string>, Record<string, number>]>;
+    getAnswers(context: TurnContext, options?: QnAMakerOptions, telemetryProperties?: {
+        [key: string]: string;
+    }, telemetryMetrics?: {
+        [key: string]: number;
+    }): Promise<QnAMakerResult[]>;
+    getAnswersRaw(context: TurnContext, options: QnAMakerOptions, telemetryProperties: {
+        [key: string]: string;
+    }, telemetryMetrics: {
+        [key: string]: number;
+    }): Promise<QnAMakerResults>;
+    getKnowledgebaseAnswersRaw(context: TurnContext, options: QnAMakerOptions, telemetryProperties: {
+        [key: string]: string;
+    }, telemetryMetrics: {
+        [key: string]: number;
+    }): Promise<QnAMakerResults>;
+    getLowScoreVariation(queryResult: QnAMakerResult[]): QnAMakerResult[];
+    // (undocumented)
+    get logPersonalInformation(): boolean;
+    protected onQnaResults(qnaResults: QnAMakerResult[], turnContext: TurnContext, telemetryProperties?: {
+        [key: string]: string;
+    }, telemetryMetrics?: {
+        [key: string]: number;
+    }): Promise<void>;
+    // (undocumented)
+    get telemetryClient(): BotTelemetryClient;
+    }
 
 // @public
 export interface DateTimeSpec {
@@ -325,6 +362,7 @@ export interface OrdinalV2 {
 
 // @public
 export class QnACardBuilder {
+    static getQnAAnswerCard(result: QnAMakerResult, displayPreciseAnswerOnly: boolean): Partial<Activity>;
     static getQnAPromptsCard(result: QnAMakerResult): Partial<Activity>;
     static getSuggestionsCard(suggestionsList: string[], cardTitle: string, cardNoMatchText: string): Partial<Activity>;
 }
@@ -338,13 +376,18 @@ export class QnAMaker implements QnAMakerClient, QnAMakerTelemetryClient {
     callTrain(feedbackRecords: FeedbackRecords): Promise<void>;
     protected fillQnAEvent(qnaResults: QnAMakerResult[], turnContext: TurnContext, telemetryProperties?: Record<string, string>, telemetryMetrics?: Record<string, number>): Promise<[Record<string, string>, Record<string, number>]>;
     // @deprecated
-    generateAnswer(question: string | undefined, top?: number, scoreThreshold?: number): Promise<QnAMakerResult[]>;
+    generateAnswer(question: string | undefined, top?: number, _scoreThreshold?: number): Promise<QnAMakerResult[]>;
     getAnswers(context: TurnContext, options?: QnAMakerOptions, telemetryProperties?: {
         [key: string]: string;
     }, telemetryMetrics?: {
         [key: string]: number;
     }): Promise<QnAMakerResult[]>;
-    getAnswersRaw(context: TurnContext, options?: QnAMakerOptions, telemetryProperties?: {
+    getAnswersRaw(context: TurnContext, options: QnAMakerOptions, telemetryProperties: {
+        [key: string]: string;
+    }, telemetryMetrics: {
+        [key: string]: number;
+    }): Promise<QnAMakerResults>;
+    getLegacyAnswersRaw(context: TurnContext, options?: QnAMakerOptions, telemetryProperties?: {
         [key: string]: string;
     }, telemetryMetrics?: {
         [key: string]: number;
@@ -399,8 +442,8 @@ export class QnAMakerComponentRegistration extends ComponentRegistration {
 export class QnAMakerDialog extends WaterfallDialog implements QnAMakerDialogConfiguration {
     // (undocumented)
     static $kind: string;
-    constructor(knowledgeBaseId?: string, endpointKey?: string, hostname?: string, noAnswer?: Activity, threshold?: number, activeLearningCardTitle?: string, cardNoMatchText?: string, top?: number, cardNoMatchResponse?: Activity, strictFilters?: QnAMakerMetadata[], dialogId?: string, strictFiltersJoinOperator?: JoinOperator);
-    constructor(knowledgeBaseId?: string, endpointKey?: string, hostname?: string, noAnswer?: Activity, threshold?: number, suggestionsActivityFactory?: QnASuggestionsActivityFactory, cardNoMatchText?: string, top?: number, cardNoMatchResponse?: Activity, strictFilters?: QnAMakerMetadata[], dialogId?: string, strictFiltersJoinOperator?: JoinOperator);
+    constructor(knowledgeBaseId?: string, endpointKey?: string, hostname?: string, noAnswer?: Activity, threshold?: number, activeLearningCardTitle?: string, cardNoMatchText?: string, top?: number, cardNoMatchResponse?: Activity, rankerType?: RankerTypes, strictFilters?: QnAMakerMetadata[], dialogId?: string, strictFiltersJoinOperator?: JoinOperator, enablePreciseAnswer?: boolean, displayPreciseAnswerOnly?: boolean, qnaServiceType?: ServiceType);
+    constructor(knowledgeBaseId?: string, endpointKey?: string, hostname?: string, noAnswer?: Activity, threshold?: number, suggestionsActivityFactory?: QnASuggestionsActivityFactory, cardNoMatchText?: string, top?: number, cardNoMatchResponse?: Activity, rankerType?: RankerTypes, strictFilters?: QnAMakerMetadata[], dialogId?: string, strictFiltersJoinOperator?: JoinOperator, enablePreciseAnswer?: boolean, displayPreciseAnswerOnly?: boolean, qnaServiceType?: ServiceType);
     activeLearningCardTitle: StringExpression;
     beginDialog(dc: DialogContext, options?: object): Promise<DialogTurnResult>;
     cardNoMatchResponse: TemplateInterface<Partial<Activity>, DialogStateManager>;
@@ -408,14 +451,19 @@ export class QnAMakerDialog extends WaterfallDialog implements QnAMakerDialogCon
     continueDialog(dc: DialogContext): Promise<DialogTurnResult>;
     protected defaultThreshold: number;
     protected defaultTopN: number;
+    displayPreciseAnswerOnly: boolean;
     protected displayQnAResult(step: WaterfallStepContext): Promise<DialogTurnResult>;
+    enablePreciseAnswer: boolean;
     endpointKey: StringExpression;
+    // Warning: (ae-forgotten-export) The symbol "Filters" needs to be exported by the entry point index.d.ts
+    filters: Filters;
     // (undocumented)
     getConverter(property: keyof QnAMakerDialogConfiguration): Converter | ConverterFactory;
     protected getQnAMakerClient(dc: DialogContext): Promise<QnAMakerClient>;
     protected getQnAMakerOptions(dc: DialogContext): Promise<QnAMakerOptions>;
     protected getQnAResponseOptions(dc: DialogContext): Promise<QnAMakerDialogResponseOptions>;
     hostname: StringExpression;
+    includeUnstructuredSources: boolean;
     isTest: boolean;
     knowledgeBaseId: StringExpression;
     logPersonalInformation: BoolExpression;
@@ -424,11 +472,14 @@ export class QnAMakerDialog extends WaterfallDialog implements QnAMakerDialogCon
     protected options: string;
     protected previousQnAId: string;
     protected qnAContextData: string;
+    // Warning: (ae-forgotten-export) The symbol "ServiceType" needs to be exported by the entry point index.d.ts
+    qnaServiceType: ServiceType;
     rankerType: EnumExpression<RankerTypes>;
-    strictFilters: ArrayExpression<QnAMakerMetadata>;
+    strictFilters: QnAMakerMetadata[];
+    strictFiltersJoinOperator: JoinOperator;
     threshold: NumberExpression;
     top: IntExpression;
-}
+    }
 
 // @public
 export interface QnAMakerDialogOptions {
@@ -441,6 +492,7 @@ export interface QnAMakerDialogResponseOptions {
     activeLearningCardTitle: string;
     cardNoMatchResponse: Partial<Activity>;
     cardNoMatchText: string;
+    displayPreciseAnswerOnly: boolean;
     noAnswer: Partial<Activity>;
 }
 
@@ -449,6 +501,7 @@ export interface QnAMakerEndpoint {
     endpointKey: string;
     host: string;
     knowledgeBaseId: string;
+    qnaServiceType?: ServiceType;
 }
 
 // @public
@@ -460,6 +513,10 @@ export interface QnAMakerMetadata {
 // @public
 export interface QnAMakerOptions {
     context?: QnARequestContext;
+    enablePreciseAnswer?: boolean;
+    // (undocumented)
+    filters?: Filters;
+    includeUnstructuredSources?: boolean;
     isTest?: boolean;
     metadataBoost?: QnAMakerMetadata[];
     qnaId?: number;
@@ -537,6 +594,8 @@ export interface QnAMakerRecognizerConfiguration extends RecognizerConfiguration
 // @public
 export interface QnAMakerResult {
     answer: string;
+    // Warning: (ae-forgotten-export) The symbol "AnswerSpanResponse" needs to be exported by the entry point index.d.ts
+    answerSpan?: AnswerSpanResponse;
     context?: QnAResponseContext;
     id?: number;
     metadata?: any;
