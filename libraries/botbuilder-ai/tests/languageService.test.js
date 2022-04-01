@@ -179,15 +179,19 @@ describe('LanguageService', function () {
     });
 
     describe('getAnswers', function () {
-        it('returns answer for question with answer with options.strictFilters applied', async function () {
+        it('returns answer for question with answer with options.filters applied', async function () {
             const qna = new CustomQuestionAnswering(endpoint);
             const context = new TestContext({ text: 'what happens when you hug a procupine?' });
-            const filters = [
-                {
-                    key: 'animal',
-                    value: 'procupine',
+            const filters = {
+                metadataFilter: {
+                    metadata: [
+                        {
+                            key: 'animal',
+                            value: 'procupine',
+                        },
+                    ],
                 },
-            ];
+            };
             const options = {
                 filters: {
                     filters,
@@ -201,20 +205,18 @@ describe('LanguageService', function () {
         it('returns answer for question with answer with two options.strictFilters applied', async function () {
             const qna = new CustomQuestionAnswering(endpoint);
             const context = new TestContext({ text: 'what happens when you hug a procupine?' });
-            const filters = [
+            const strictFilters = [
                 {
-                    key: 'animal',
+                    name: 'animal',
                     value: 'procupine',
                 },
                 {
-                    key: 'animal2',
+                    name: 'animal2',
                     value: 'tiger',
                 },
             ];
             const options = {
-                filters: {
-                    filters,
-                },
+                strictFilters: strictFilters,
             };
             const results = await qna.getAnswers(context, options);
             assert.strictEqual(results.length, 1);
@@ -698,9 +700,7 @@ describe('LanguageService', function () {
                     value: 'Value2',
                 },
             ];
-            const qnaDialog = new QnAMakerDialog(knowledgeBaseId, endpointKey, hostname, {
-                rankerType: RankerTypes.default,
-            });
+            const qnaDialog = new QnAMakerDialog(knowledgeBaseId, endpointKey, hostname);
             qnaDialog.strictFilters = strictFilters;
             qnaDialog.qnaServiceType = ServiceType.language;
             qnaDialog.strictFiltersJoinOperator = JoinOperator.AND;

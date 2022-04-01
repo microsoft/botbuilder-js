@@ -221,7 +221,7 @@ export class GenerateAnswerUtils {
             return { metadata: strictFilters, compoundOperation: operator ? operator : JoinOperator.AND };
         }
 
-        if (!!filters && !!filters.metadataFilter && filters.metadataFilter?.metadata?.length > 0) {
+        if (filters?.metadataFilter?.metadata?.length > 0) {
             return {
                 metadata: filters.metadataFilter.metadata.map((kv) => {
                     return { name: kv.key, value: kv.value };

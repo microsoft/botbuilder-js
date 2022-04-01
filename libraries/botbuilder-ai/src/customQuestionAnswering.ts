@@ -153,7 +153,7 @@ export class CustomQuestionAnswering implements QnAMakerClient, QnAMakerTelemetr
             top = 1,
             strictFilters = [] as QnAMakerMetadata[],
             metadataBoost = [] as QnAMakerMetadata[],
-            filters = { metadataFilter: { metadata: [] }, sourceFilter: [] },
+            filters = undefined,
             timeout = 100000,
             rankerType = RankerTypes.default,
             enablePreciseAnswer = true,
