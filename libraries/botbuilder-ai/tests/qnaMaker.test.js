@@ -582,12 +582,20 @@ describe('QnAMaker', function () {
     });
 
     describe('emitTraceInfo', function () {
-        it('throws TypeError if context is undefined', async function () {
+        it('throws TypeError if context is undefined in getAnswers', async function () {
             const qna = new QnAMaker(endpoint);
 
             await assert.rejects(qna.getAnswers(undefined), {
                 name: 'TypeError',
                 message: 'QnAMaker.getAnswers() requires a TurnContext.',
+            });
+        });
+        it('throws TypeError if context is undefined in getAnswersRaw', async function () {
+            const qna = new QnAMaker(endpoint);
+
+            await assert.rejects(qna.getAnswersRaw(undefined), {
+                name: 'TypeError',
+                message: 'QnAMaker.getAnswersRaw() requires a TurnContext.',
             });
         });
     });

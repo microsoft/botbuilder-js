@@ -6,7 +6,7 @@ const path = require('path');
 const sinon = require('sinon');
 const { HttpRequestUtils } = require('../lib/qnamaker-utils/httpRequestUtils');
 const { ServiceType } = require('../lib/qnamaker-interfaces/serviceType');
-const { CustomQuestionAnswering } = require('../');
+const { CustomQuestionAnswering, QnAMakerDialog, JoinOperator, RankerTypes } = require('../');
 const { TestAdapter, TurnContext, NullTelemetryClient } = require('botbuilder-core');
 const { getFetch } = require('../lib/globals');
 
@@ -684,6 +684,37 @@ describe('LanguageService', function () {
                 const qna = new CustomQuestionAnswering(endpoint, options);
                 await qna.callTrain(feedbackRecords);
             });
+        });
+    });
+    describe('QnAMakerDialog', function () {
+        it('Construct QnAMakerDialog constructor with new LanguageService parameters', async function () {
+            const strictFilters = [
+                {
+                    name: 'Name1',
+                    value: 'Value1',
+                },
+                {
+                    name: 'Name2',
+                    value: 'Value2',
+                },
+            ];
+            const qnaDialog = new QnAMakerDialog(knowledgeBaseId, endpointKey, hostname, {
+                rankerType: RankerTypes.default,
+            });
+            qnaDialog.strictFilters = strictFilters;
+            qnaDialog.qnaServiceType = ServiceType.language;
+            qnaDialog.strictFiltersJoinOperator = JoinOperator.AND;
+            qnaDialog.enablePreciseAnswer = true;
+            qnaDialog.displayPreciseAnswerOnly = true;
+
+            const fixedClient = await qnaDialog.getQnAMakerClient({ state: {} });
+            assert.strictEqual(fixedClient.endpoint.knowledgeBaseId, knowledgeBaseId);
+            assert.strictEqual(fixedClient.endpoint.endpointKey, endpointKey);
+            assert.strictEqual(fixedClient.endpoint.host, hostname);
+            assert.strictEqual(fixedClient.endpoint.qnaServiceType, ServiceType.language);
+            assert.strictEqual(fixedClient._options.strictFilters, strictFilters);
+            assert.strictEqual(fixedClient._options.enablePreciseAnswer, true);
+            assert.strictEqual(fixedClient._options.rankerType, RankerTypes.default);
         });
     });
 });
