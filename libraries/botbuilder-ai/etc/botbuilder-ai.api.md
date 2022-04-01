@@ -54,6 +54,14 @@ export enum Anchor {
     Start = "start"
 }
 
+// @public
+export interface AnswerSpanResponse {
+    endIndex?: number;
+    score: number;
+    startIndex?: number;
+    text: string;
+}
+
 // Warning: (ae-forgotten-export) The symbol "QnAMakerClient" needs to be exported by the entry point index.d.ts
 // Warning: (ae-forgotten-export) The symbol "QnAMakerTelemetryClient" needs to be exported by the entry point index.d.ts
 //
@@ -122,6 +130,16 @@ export interface FeedbackRecords {
 }
 
 // @public
+export interface Filters {
+    // (undocumented)
+    logicalOperation: string;
+    // (undocumented)
+    metadataFilter: MetadataFilter;
+    // (undocumented)
+    sourceFilter: Array<string>;
+}
+
+// @public
 export interface GeographyV2 {
     location: string;
     type: GeographyV2Type;
@@ -160,6 +178,44 @@ export interface IntentData {
 export enum JoinOperator {
     AND = "AND",
     OR = "OR"
+}
+
+// @public
+export interface KnowledgeBaseAnswer {
+    // (undocumented)
+    answer: string;
+    // (undocumented)
+    answerSpan: KnowledgeBaseAnswerSpan;
+    // (undocumented)
+    confidenceScore: number;
+    // (undocumented)
+    dialog: QnAResponseContext;
+    // (undocumented)
+    id: number;
+    // (undocumented)
+    metadata: Map<string, string>;
+    // (undocumented)
+    questions: string[];
+    // (undocumented)
+    source: string;
+}
+
+// @public
+export interface KnowledgeBaseAnswers {
+    // (undocumented)
+    answers: KnowledgeBaseAnswer[];
+}
+
+// @public
+export interface KnowledgeBaseAnswerSpan {
+    // (undocumented)
+    confidenceScore: number;
+    // (undocumented)
+    length: number;
+    // (undocumented)
+    offset: number;
+    // (undocumented)
+    text: string;
 }
 
 // @public
@@ -349,6 +405,17 @@ export class LuisTelemetryConstants {
 }
 
 // @public
+export interface MetadataFilter {
+    // (undocumented)
+    logicalOperation: string;
+    // (undocumented)
+    metadata: Array<{
+        key: string;
+        value: string;
+    }>;
+}
+
+// @public
 export interface NumberWithUnits {
     number?: number;
     units: string;
@@ -455,7 +522,6 @@ export class QnAMakerDialog extends WaterfallDialog implements QnAMakerDialogCon
     protected displayQnAResult(step: WaterfallStepContext): Promise<DialogTurnResult>;
     enablePreciseAnswer: boolean;
     endpointKey: StringExpression;
-    // Warning: (ae-forgotten-export) The symbol "Filters" needs to be exported by the entry point index.d.ts
     filters: Filters;
     // (undocumented)
     getConverter(property: keyof QnAMakerDialogConfiguration): Converter | ConverterFactory;
@@ -472,7 +538,6 @@ export class QnAMakerDialog extends WaterfallDialog implements QnAMakerDialogCon
     protected options: string;
     protected previousQnAId: string;
     protected qnAContextData: string;
-    // Warning: (ae-forgotten-export) The symbol "ServiceType" needs to be exported by the entry point index.d.ts
     qnaServiceType: ServiceType;
     rankerType: EnumExpression<RankerTypes>;
     strictFilters: QnAMakerMetadata[];
@@ -526,6 +591,14 @@ export interface QnAMakerOptions {
     strictFiltersJoinOperator?: JoinOperator;
     timeout?: number;
     top?: number;
+}
+
+// @public
+export interface QnAMakerPrompt {
+    displayOrder: number;
+    displayText: string;
+    qna?: object;
+    qnaId: number;
 }
 
 // @public
@@ -594,7 +667,6 @@ export interface QnAMakerRecognizerConfiguration extends RecognizerConfiguration
 // @public
 export interface QnAMakerResult {
     answer: string;
-    // Warning: (ae-forgotten-export) The symbol "AnswerSpanResponse" needs to be exported by the entry point index.d.ts
     answerSpan?: AnswerSpanResponse;
     context?: QnAResponseContext;
     id?: number;
@@ -642,7 +714,6 @@ export interface QnARequestContext {
 
 // @public
 export interface QnAResponseContext {
-    // Warning: (ae-forgotten-export) The symbol "QnAMakerPrompt" needs to be exported by the entry point index.d.ts
     prompts: QnAMakerPrompt[];
 }
 
@@ -654,6 +725,12 @@ export enum RankerTypes {
     autoSuggestQuestion = "AutoSuggestQuestion",
     default = "Default",
     questionOnly = "QuestionOnly"
+}
+
+// @public
+export enum ServiceType {
+    language = "Language",
+    qnaMaker = "QnAMaker"
 }
 
 // @public
