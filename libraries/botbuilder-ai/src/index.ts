@@ -48,16 +48,24 @@ export {
 export { CustomQuestionAnswering } from './customQuestionAnswering';
 
 export {
+    AnswerSpanResponse,
     FeedbackRecord,
     FeedbackRecords,
+    Filters,
     JoinOperator,
+    KnowledgeBaseAnswer,
+    KnowledgeBaseAnswers,
+    KnowledgeBaseAnswerSpan,
+    MetadataFilter,
     QnAMakerEndpoint,
     QnAMakerMetadata,
     QnAMakerOptions,
+    QnAMakerPrompt,
     QnAMakerResult,
     QnAMakerResults,
     QnAMakerTraceInfo,
     QnARequestContext,
     QnAResponseContext,
     RankerTypes,
+    ServiceType,
 } from './qnamaker-interfaces';
