@@ -17,27 +17,24 @@ import {
     QnAMakerResults,
     RankerTypes,
 } from './qnamaker-interfaces';
-import { ActiveLearningUtils, GenerateAnswerUtils, TrainUtils } from './qnamaker-utils';
+import { ActiveLearningUtils } from './qnamaker-utils';
+import { LanguageServiceUtils } from './qnamaker-utils/languageServiceUtils';
 import { QnATelemetryConstants } from './qnaTelemetryConstants';
-
-export const QNAMAKER_TRACE_TYPE = 'https://www.qnamaker.ai/schemas/trace';
-export const QNAMAKER_TRACE_NAME = 'QnAMaker';
-export const QNAMAKER_TRACE_LABEL = 'QnAMaker Trace';
 
 /**
  * Turn state key for QnAMakerClient.
  */
-export const QnAMakerClientKey = Symbol('QnAMakerClient');
+export const CQAClientKey = Symbol('QnAMakerClient');
 
 /**
- * Client to access a QnA Maker knowledge base.
+ * Client to access a Custom Question Answering knowledge base.
  */
 export interface QnAMakerClient {
     /**
-     * Generates an answer from the knowledge base.
+     * Generates an answer from the project.
      *
      * @param {TurnContext} turnContext The Turn Context that contains the user question to be queried against your knowledge base.
-     * @param {QnAMakerOptions} options The options for the QnA Maker knowledge base. If null, constructor option is used for this instance.
+     * @param {QnAMakerOptions} options The options for the Custom Question Answering Knowledge Base. If null, constructor option is used for this instance.
      * @param {Record<string, string>} telemetryProperties Additional properties to be logged to telemetry with the QnaMessage event.
      * @param {Record<string, number>} telemetryMetrics Additional metrics to be logged to telemetry with the QnaMessage event.
      * @returns {Promise<QnAMakerResult[]>} A list of answers for the user query, sorted in decreasing order of ranking score.
@@ -53,7 +50,7 @@ export interface QnAMakerClient {
      * Generates an answer from the knowledge base.
      *
      * @param {TurnContext} turnContext The Turn Context that contains the user question to be queried against your knowledge base.
-     * @param {QnAMakerOptions} options The options for the QnA Maker knowledge base. If null, constructor option is used for this instance.
+     * @param {QnAMakerOptions} options The options for the Custom Question Answering knowledge base. If null, constructor option is used for this instance.
      * @param {Record<string, string>} telemetryProperties Additional properties to be logged to telemetry with the QnaMessage event.
      * @param {Record<string, number>} telemetryMetrics Additional metrics to be logged to telemetry with the QnaMessage event.
      * @returns {Promise<QnAMakerResults>} A list of answers for the user query, sorted in decreasing order of ranking score.
@@ -76,7 +73,7 @@ export interface QnAMakerClient {
     /**
      * Send feedback to the knowledge base.
      *
-     * @param {FeedbackRecords} feedbackRecords Feedback records.
+     * @param {FeedbackRecords} feedbackRecords A list of Feedback Records for Active Learning.
      */
     callTrain(feedbackRecords: FeedbackRecords): Promise<void>;
 }
@@ -119,23 +116,22 @@ export interface QnAMakerTelemetryClient {
 }
 
 /**
- * Query a QnA Maker knowledge base for answers and provide feedbacks.
+ * Query a Custom Question Answering knowledge base for answers and provide feedbacks.
  *
  * @summary
  * This class is used to make queries to a single QnA Maker knowledge base and return the result.
  *
  * Use this to process incoming messages with the [getAnswers()](#getAnswers) method.
  */
-export class QnAMaker implements QnAMakerClient, QnAMakerTelemetryClient {
+export class CustomQuestionAnswering implements QnAMakerClient, QnAMakerTelemetryClient {
     private readonly _logPersonalInformation: boolean;
     private readonly _telemetryClient: BotTelemetryClient;
 
     private readonly _options: QnAMakerOptions;
-    private readonly generateAnswerUtils: GenerateAnswerUtils;
-    private readonly trainUtils: TrainUtils;
+    private readonly languageServiceUtils: LanguageServiceUtils;
 
     /**
-     * Creates a new QnAMaker instance.
+     * Creates a new CustomQuestionAnswering instance.
      *
      * @param {QnAMakerEndpoint} endpoint The endpoint of the knowledge base to query.
      * @param {QnAMakerOptions} options (Optional) additional settings used to configure the instance.
@@ -157,9 +153,11 @@ export class QnAMaker implements QnAMakerClient, QnAMakerTelemetryClient {
             top = 1,
             strictFilters = [] as QnAMakerMetadata[],
             metadataBoost = [] as QnAMakerMetadata[],
-            filters = { metadataFilter: { metadata: [] }, sourceFilter: [] },
+            filters = undefined,
             timeout = 100000,
             rankerType = RankerTypes.default,
+            enablePreciseAnswer = true,
+            includeUnstructuredSources = true,
         } = options;
 
         this._options = {
@@ -170,10 +168,11 @@ export class QnAMaker implements QnAMakerClient, QnAMakerTelemetryClient {
             filters,
             timeout,
             rankerType,
+            enablePreciseAnswer,
+            includeUnstructuredSources,
         } as QnAMakerOptions;
 
-        this.generateAnswerUtils = new GenerateAnswerUtils(this._options, this.endpoint);
-        this.trainUtils = new TrainUtils(this.endpoint);
+        this.languageServiceUtils = new LanguageServiceUtils(this._options, this.endpoint);
 
         this._telemetryClient = telemetryClient || new NullTelemetryClient();
         this._logPersonalInformation = logPersonalInformation || false;
@@ -190,16 +189,16 @@ export class QnAMaker implements QnAMakerClient, QnAMakerTelemetryClient {
     }
 
     /**
-     * Calls the QnA Maker service to generate answer(s) for a question.
+     * Calls the Language service to generate answer(s) for a question.
      *
      * @summary
      * Returns an array of answers sorted by score with the top scoring answer returned first.
      *
-     * In addition to returning the results from QnA Maker, [getAnswers()](#getAnswers) will also
-     * emit a trace activity that contains the QnA Maker results.
+     * In addition to returning the results from Language service, [getAnswers()](#getAnswers) will also
+     * emit a trace activity that contains the query results.
      *
      * @param {TurnContext} context The Turn Context that contains the user question to be queried against your knowledge base.
-     * @param {QnAMakerOptions} options (Optional) The options for the QnA Maker knowledge base. If null, constructor option is used for this instance.
+     * @param {QnAMakerOptions} options (Optional) The options for the Custom Question Answering knowledge base. If null, constructor option is used for this instance.
      * @param {object} telemetryProperties Additional properties to be logged to telemetry with the QnaMessage event.
      * @param {object} telemetryMetrics Additional metrics to be logged to telemetry with the QnaMessage event.
      * @returns {Promise<QnAMakerResult>} A promise resolving to the QnAMaker result
@@ -227,7 +226,7 @@ export class QnAMaker implements QnAMakerClient, QnAMakerTelemetryClient {
      * Generates an answer from the knowledge base.
      *
      * @param {TurnContext} context The [TurnContext](xref:botbuilder-core.TurnContext) that contains the user question to be queried against your knowledge base.
-     * @param {QnAMakerOptions} options Optional. The [QnAMakerOptions](xref:botbuilder-ai.QnAMakerOptions) for the QnA Maker knowledge base. If null, constructor option is used for this instance.
+     * @param {QnAMakerOptions} options Optional. The [QnAMakerOptions](xref:botbuilder-ai.QnAMakerOptions) for the Custom Question Answering knowledge base. If null, constructor option is used for this instance.
      * @param {object} telemetryProperties Optional. Additional properties to be logged to telemetry with the QnaMessage event.
      * @param {object} telemetryMetrics Optional. Additional metrics to be logged to telemetry with the QnaMessage event.
      * @returns {Promise<QnAMakerResults>} A list of answers for the user query, sorted in decreasing order of ranking score.
@@ -239,125 +238,49 @@ export class QnAMaker implements QnAMakerClient, QnAMakerTelemetryClient {
         telemetryMetrics: { [key: string]: number }
     ): Promise<QnAMakerResults> {
         if (!context) {
-            throw new TypeError('QnAMaker.getAnswersRaw() requires a TurnContext.');
+            throw new TypeError('CustomQuestionAnswering.getAnswersRaw() requires a TurnContext.');
         }
 
-        return await this.getLegacyAnswersRaw(context, options, telemetryProperties, telemetryMetrics);
+        const response = await this.getKnowledgebaseAnswersRaw(context, options, telemetryProperties, telemetryMetrics);
+        return response;
     }
 
     /**
-     * Generates an answer from the QnA Maker knowledge base.
+     * Queries for answers from the Language Service project's knowledge base.
      *
      * @param {TurnContext} context The [TurnContext](xref:botbuilder-core.TurnContext) that contains the user question to be queried against your knowledge base.
-     * @param {QnAMakerOptions} options Optional. The [QnAMakerOptions](xref:botbuilder-ai.QnAMakerOptions) for the QnA Maker knowledge base. If null, constructor option is used for this instance.
+     * @param {QnAMakerOptions} options Optional. The [QnAMakerOptions](xref:botbuilder-ai.QnAMakerOptions) for the Language Service project's knowledge base. If null, constructor option is used for this instance.
      * @param {object} telemetryProperties Optional. Additional properties to be logged to telemetry with the QnaMessage event.
      * @param {object} telemetryMetrics Optional. Additional metrics to be logged to telemetry with the QnaMessage event.
      * @returns {Promise<QnAMakerResults>} A list of answers for the user query, sorted in decreasing order of ranking score.
      */
-    async getLegacyAnswersRaw(
+    async getKnowledgebaseAnswersRaw(
         context: TurnContext,
-        options?: QnAMakerOptions,
-        telemetryProperties?: { [key: string]: string },
-        telemetryMetrics?: { [key: string]: number }
+        options: QnAMakerOptions,
+        telemetryProperties: { [key: string]: string },
+        telemetryMetrics: { [key: string]: number }
     ): Promise<QnAMakerResults> {
-        const queryResult: QnAMakerResult[] = [] as QnAMakerResult[];
         const question: string = this.getTrimmedMessageText(context);
         const queryOptions: QnAMakerOptions = { ...this._options, ...options } as QnAMakerOptions;
-
-        this.generateAnswerUtils.validateOptions(queryOptions);
 
         let result: QnAMakerResults;
 
         if (question.length > 0) {
-            result = await this.generateAnswerUtils.queryQnaServiceRaw(this.endpoint, question, queryOptions);
-
-            const sortedQnaAnswers: QnAMakerResult[] = GenerateAnswerUtils.sortAnswersWithinThreshold(
-                result.answers,
-                queryOptions
-            );
-            queryResult.push(...sortedQnaAnswers);
+            result = await this.languageServiceUtils.queryKnowledgebaseRaw(question, queryOptions);
+        } else {
+            throw new RangeError('Question cannot be null or empty text');
         }
-
         if (!result) {
             return result;
         }
 
         await Promise.all([
             // Log telemetry
-            this.onQnaResults(queryResult, context, telemetryProperties, telemetryMetrics),
-            this.generateAnswerUtils.emitTraceInfo(context, queryResult, queryOptions),
+            this.onQnaResults(result.answers, context, telemetryProperties, telemetryMetrics),
+            this.languageServiceUtils.emitTraceInfo(context, result.answers, queryOptions),
         ]);
 
-        const qnaResponse: QnAMakerResults = {
-            activeLearningEnabled: result.activeLearningEnabled,
-            answers: queryResult,
-        };
-
-        return qnaResponse;
-    }
-
-    /**
-     * Calls [generateAnswer()](#generateanswer) and sends the resulting answer as a reply to the user.
-     *
-     * @deprecated Instead, favor using [QnAMaker.getAnswers()](#getAnswers) to generate answers for a question.
-     *
-     * @summary
-     * Returns a value of `true` if an answer was found and sent. If multiple answers are
-     * returned the first one will be delivered.
-     * @param {TurnContext} context Context for the current turn of conversation with the user.
-     * @returns {Promise<boolean>} A promise resolving to true if an answer was sent
-     */
-    async answer(context: TurnContext): Promise<boolean> {
-        if (!context) {
-            throw new TypeError('QnAMaker.answer() requires a TurnContext.');
-        }
-
-        const { top, scoreThreshold } = this._options;
-        const question: string = this.getTrimmedMessageText(context);
-        const answers: QnAMakerResult[] = await this.generateAnswer(question, top, scoreThreshold);
-
-        await this.generateAnswerUtils.emitTraceInfo(context, answers, this._options);
-
-        if (answers.length > 0) {
-            await context.sendActivity({ text: answers[0].answer, type: 'message' });
-
-            return true;
-        }
-
-        return false;
-    }
-
-    /**
-     * Calls the QnA Maker service to generate answer(s) for a question.
-     *
-     * @deprecated Instead, favor using [QnAMaker.getAnswers()](#getAnswers) to generate answers for a question.
-     *
-     * @summary
-     * Returns an array of answers sorted by score with the top scoring answer returned first.
-     *
-     * @param {string | undefined} question The question to answer.
-     * @param {number} top (Optional) number of answers to return. Defaults to a value of `1`.
-     * @param {number} _scoreThreshold (Optional) minimum answer score needed to be considered a match to questions. Defaults to a value of `0.001`.
-     * @returns {Promise<QnAMakerResult[]>} A promise resolving to the QnAMaker results
-     */
-    async generateAnswer(
-        question: string | undefined,
-        top?: number,
-        _scoreThreshold?: number
-    ): Promise<QnAMakerResult[]> {
-        const trimmedAnswer: string = question ? question.trim() : '';
-
-        if (trimmedAnswer.length > 0) {
-            const result: QnAMakerResults = await this.callService(
-                this.endpoint,
-                question,
-                typeof top === 'number' ? top : 1
-            );
-
-            return result.answers.sort((a: QnAMakerResult, b: QnAMakerResult) => b.score - a.score);
-        }
-
-        return [] as QnAMakerResult[];
+        return result;
     }
 
     /**
@@ -375,25 +298,11 @@ export class QnAMaker implements QnAMakerClient, QnAMakerTelemetryClient {
     /**
      * Send feedback to the knowledge base.
      *
-     * @param {FeedbackRecords} feedbackRecords Feedback records.
-     * @returns {Promise<void>} A promise representing the async operation
+     * @param feedbackRecords  FeedbackRecords for Active Learning.
+     * @returns {Promise<void>} A promise representing the async operation.
      */
     async callTrain(feedbackRecords: FeedbackRecords): Promise<void> {
-        return await this.trainUtils.callTrain(feedbackRecords);
-    }
-
-    /**
-     * Called internally to query the QnA Maker service.
-     *
-     * @summary This is exposed to enable better unit testing of the service.
-     *
-     * @param {QnAMakerEndpoint} endpoint the qna maker endpoint
-     * @param {string} question the question
-     * @param {number} top number of results to return
-     * @returns {Promise<QnAMakerResult>} a promise resolving to the qna maker results
-     */
-    protected async callService(endpoint: QnAMakerEndpoint, question: string, top: number): Promise<QnAMakerResults> {
-        return this.generateAnswerUtils.queryQnaServiceRaw(endpoint, question, { top } as QnAMakerOptions);
+        return await this.languageServiceUtils.addFeedback(feedbackRecords);
     }
 
     /**

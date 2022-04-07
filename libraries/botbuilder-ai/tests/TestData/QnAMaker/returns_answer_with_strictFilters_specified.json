@@ -1,0 +1,20 @@
+{
+    "answers": [{
+        "score": 38.54820341616869,
+        "Id": 22,
+        "answer": "Why do you ask?",
+        "source": "Custom Editorial",
+        "questions": [
+            "what happens when you hug a procupine?"
+        ],
+        "metadata": [{
+                "name": "name1",
+                "value": "filter1"
+            },
+            {
+                "name": "name2",
+                "value": "filter2"
+            }
+        ]
+    }]
+}

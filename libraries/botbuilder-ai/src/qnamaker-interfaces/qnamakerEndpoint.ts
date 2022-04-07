@@ -6,6 +6,8 @@
  * Licensed under the MIT License.
  */
 
+import { ServiceType } from './serviceType';
+
 /**
  * Defines an endpoint used to connect to a QnA Maker Knowledge base.
  */
@@ -25,4 +27,9 @@ export interface QnAMakerEndpoint {
      * The host path. For example: `https://testqnamaker.azurewebsites.net/qnamaker`
      */
     host: string;
+
+    /**
+     * QnA service type '' - qnamaker, language
+     */
+    qnaServiceType?: ServiceType;
 }
