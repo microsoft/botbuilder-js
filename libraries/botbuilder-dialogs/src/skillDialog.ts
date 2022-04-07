@@ -234,7 +234,7 @@ export class SkillDialog extends Dialog<Partial<BeginSkillDialogOptions>> {
         }
 
         if (!options.activity) {
-            throw new TypeError('"activity" is undefined or null in options.');
+            throw new TypeError(`"activity" is undefined or null in options.`);
         }
 
         return options;
