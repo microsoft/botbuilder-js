@@ -14,5 +14,5 @@ export function sanitizeBlobKey(key: string): string {
     }
 
     const sanitized = key.split('/').reduce((acc, part, idx) => (part ? [acc, part].join(idx < 255 ? '/' : '') : acc));
-    return encodeURIComponent(sanitized).substr(0, 1024);
+    return decodeURIComponent(sanitized).substr(0, 1024);
 }
