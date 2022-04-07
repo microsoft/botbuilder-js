@@ -176,28 +176,28 @@ export class LanguageServiceUtils {
                 score: kbAnswer.confidenceScore,
                 metadata: kbAnswer.metadata
                     ? Array.from(kbAnswer.metadata)?.map((nv) => {
-                        return { name: nv[0], value: nv[1] };
-                    })
+                          return { name: nv[0], value: nv[1] };
+                      })
                     : null,
                 answerSpan: kbAnswer?.answerSpan
                     ? {
-                        text: kbAnswer.answerSpan.text,
-                        score: kbAnswer.answerSpan.confidenceScore,
-                        startIndex: kbAnswer.answerSpan.offset,
-                        endIndex: kbAnswer.answerSpan.offset + kbAnswer.answerSpan.length - 1,
-                    }
+                          text: kbAnswer.answerSpan.text,
+                          score: kbAnswer.answerSpan.confidenceScore,
+                          startIndex: kbAnswer.answerSpan.offset,
+                          endIndex: kbAnswer.answerSpan.offset + kbAnswer.answerSpan.length - 1,
+                      }
                     : null,
                 context: kbAnswer?.dialog
                     ? {
-                        prompts: kbAnswer.dialog?.prompts?.map((p) => {
-                            return {
-                                displayOrder: p.displayOrder,
-                                displayText: p.displayText,
-                                qna: null,
-                                qnaId: p.qnaId,
-                            };
-                        }),
-                    }
+                          prompts: kbAnswer.dialog?.prompts?.map((p) => {
+                              return {
+                                  displayOrder: p.displayOrder,
+                                  displayText: p.displayText,
+                                  qna: null,
+                                  qnaId: p.qnaId,
+                              };
+                          }),
+                      }
                     : null,
                 id: kbAnswer.id,
                 questions: kbAnswer.questions,
