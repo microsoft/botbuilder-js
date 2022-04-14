@@ -35,7 +35,7 @@
     "botframework-connector": "4.1.6",
     "botframework-schema": "4.1.6",
     "botframework-streaming": "4.1.6",
-    "minimist": "^1.2.5",
+    "minimist": "^1.2.6",
     "p-map": "^4.0.0"
   },
   "devDependencies": {
