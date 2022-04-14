@@ -41,7 +41,7 @@
   },
   "devDependencies": {
     "adal-node": "^0.1.28",
-    "async": "^2.6.1",
+    "async": "^2.6.4",
     "colors": "1.1.2",
     "fs-extra": "^5.0.0",
     "glob": "^7.1.3",
