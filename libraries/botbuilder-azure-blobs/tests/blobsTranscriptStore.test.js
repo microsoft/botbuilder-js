@@ -24,6 +24,11 @@ describe('BlobsStorage', function () {
         timestamp: new Date(),
     };
 
+    // Options for BlobsTranscriptStore.
+    const blobTranscriptOptions = {
+        decodeTranscriptKey: false,
+    };
+
     // Constructs a random channel ID and set of activities, and then handles preloading
     // and clearing them with beforeEach/afterEach IFF client is defined
     const maybePreload = () => {
@@ -77,7 +82,7 @@ describe('BlobsStorage', function () {
         });
 
         maybeIt('should log an activity', async () => {
-            await client.logActivity(activity);
+            await client.logActivity(activity, blobTranscriptOptions);
         });
     });
 
