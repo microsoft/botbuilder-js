@@ -94,14 +94,14 @@ export const command = (argv: string[], quiet = false) => async (): Promise<Resu
     // Read git commit sha if instructed (JSON.parse properly coerces strings to boolean)
     const commitSha = JSON.parse(flags.git) ? await gitSha('HEAD') : undefined;
 
-    // Collect all non-private workspaces from the repo root. Returns workspaces with absolute paths.
-    const workspaces = await collectWorkspacePackages(repoRoot, packageFile.workspaces, { noPrivate: true });
+    // Collect all workspaces from the repo root. Returns workspaces with absolute paths.
+    const workspaces = await collectWorkspacePackages(repoRoot, packageFile.workspaces);
 
     // Build an object mapping a package name to its new, updated version
     const workspaceVersions = workspaces.reduce<Record<string, string>>(
         (acc, { pkg }) => ({
             ...acc,
-            [pkg.name]: getPackageVersion(pkg, newVersion, {
+            [pkg.name]: getPackageVersion(pkg, pkg.private ? pkg.version : newVersion, {
                 buildLabel: flags.buildLabel,
                 commitSha,
                 date,
@@ -122,7 +122,7 @@ export const command = (argv: string[], quiet = false) => async (): Promise<Resu
                 return acc;
             }, {});
 
-    // Rewrite package.json files by updating version as well as dependencies and devDependencies.
+    // Rewrite package.json files by updating version as well as dependencies, devDependencies and peerDependencies.
     const results = await Promise.all<Result>(
         workspaces.map(async ({ absPath, pkg }) => {
             const newVersion = workspaceVersions[pkg.name];
@@ -140,6 +140,10 @@ export const command = (argv: string[], quiet = false) => async (): Promise<Resu
 
             if (pkg.devDependencies) {
                 pkg.devDependencies = rewriteWithNewVersions(pkg.devDependencies);
+            }
+
+            if (pkg.peerDependencies) {
+                pkg.peerDependencies = rewriteWithNewVersions(pkg.peerDependencies);
             }
 
             try {
