@@ -3,15 +3,8 @@
     "contentVersion": "1.0.0.0",
     "parameters": {
         "botName": {
-            "type": "string",
+            "type": "string",            
             "minLength": 2
-        },
-        "botSku": {
-        "defaultValue": "F0",
-        "type": "string",
-        "metadata": {
-            "description": "The pricing tier of the Bot Service Registration. Acceptable values are F0 and S1."
-        }
         },
         "sku": {
             "defaultValue": {
@@ -58,7 +51,7 @@
             "properties": {
                 "name": "[parameters('botName')]",
                 "reserved": true,
-                "perSiteScaling": false,
+                "perSiteScaling": false,                
                 "targetWorkerCount": 0,
                 "targetWorkerSizeId": 0
             }
@@ -112,7 +105,7 @@
                 "containerSize": 0,
                 "dailyMemoryTimeQuota": 0,
                 "httpsOnly": false
-            }
+            }        
         },
         {
             "type": "Microsoft.Web/sites/config",
@@ -211,7 +204,7 @@
 			"location": "global",
 			"kind": "bot",
 			"sku": {
-				"name": "[parameters('botSku')]"
+				"name": "[parameters('botName')]"
 			},
 			"properties": {
 				"name": "[parameters('botName')]",
