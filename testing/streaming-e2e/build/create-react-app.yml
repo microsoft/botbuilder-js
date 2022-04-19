@@ -19,24 +19,27 @@ steps:
     workingDirectory: $(ReactProjectDir)
 
   - template: customize-dljs.yml
-  
+
   - powershell: npm install $(DLJSDir)/botframework-directlinejs.tgz
     displayName: 'npm install botframework-directlinejs.tgz'
     workingDirectory: $(ReactProjectDir)
-  
+
   - powershell: |
       Rename-Item ./botframework-directlinejs botframework-directlinejs.old
       Rename-Item ./botframework-streaming botframework-streaming.old
       ls
     displayName: Rename DLJS node modules
     workingDirectory: $(ReactProjectDir)/node_modules/botframework-webchat/node_modules
-  
+
   - powershell: npm run build
     displayName: Build React App
     workingDirectory: $(ReactProjectDir)
-  
+
   - task: PublishPipelineArtifact@1
     displayName: 'Publish Artifact: ReactApp'
     inputs:
       targetPath: $(ReactProjectDir)/build
       artifactName: 'ReactApp'
+
+  - task: ms.vss-governance-buildtask.governance-build-task-component-detection.ComponentGovernanceComponentDetection@0
+    displayName: 'Component Detection'
