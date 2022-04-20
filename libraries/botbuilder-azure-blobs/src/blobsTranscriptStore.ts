@@ -33,14 +33,15 @@ function getConversationPrefix(channelId: string, conversationId: string): strin
 }
 
 // Formats an activity as a blob key
-function getBlobKey(activity: Activity): string {
+function getBlobKey(activity: Activity, options?: BlobsTranscriptStoreOptions): string {
     const { timestamp } = z
         .object({ timestamp: z.instanceof(Date) })
         .nonstrict()
         .parse(activity);
 
     return sanitizeBlobKey(
-        [activity.channelId, activity.conversation.id, `${formatTicks(timestamp)}-${activity.id}.json`].join('/')
+        [activity.channelId, activity.conversation.id, `${formatTicks(timestamp)}-${activity.id}.json`].join('/'),
+        options
     );
 }
 
@@ -56,6 +57,12 @@ export interface BlobsTranscriptStoreOptions {
      * storage client
      */
     storagePipelineOptions?: StoragePipelineOptions;
+
+    /**
+     * Optional setting to return a new string representing the decoded version of the given encoded blob transcript key.
+     * This remains the default behavior to false, but can be overridden by setting decodeTranscriptKey to true.
+     */
+    decodeTranscriptKey?: boolean;
 }
 
 /**
@@ -70,6 +77,7 @@ export class BlobsTranscriptStore implements TranscriptStore {
     private readonly _containerClient: ContainerClient;
     private readonly _concurrency = Infinity;
     private _initializePromise?: Promise<unknown>;
+    private _isDecodeTranscriptKey?: boolean = false;
 
     /**
      * Constructs a BlobsTranscriptStore instance.
@@ -85,6 +93,8 @@ export class BlobsTranscriptStore implements TranscriptStore {
         });
 
         this._containerClient = new ContainerClient(connectionString, containerName, options?.storagePipelineOptions);
+
+        this._isDecodeTranscriptKey = options?.decodeTranscriptKey;
 
         // At most one promise at a time to be friendly to local emulator users
         if (connectionString.trim() === 'UseDevelopmentStorage=true;') {
@@ -253,14 +263,15 @@ export class BlobsTranscriptStore implements TranscriptStore {
      * Log an activity to the transcript.
      *
      * @param {Activity} activity activity to log
+     * @param {BlobsTranscriptStoreOptions} options Optional settings for BlobsTranscriptStore
      * @returns {Promise<void>} A promise representing the async operation.
      */
-    async logActivity(activity: Activity): Promise<void> {
+    async logActivity(activity: Activity, options?: BlobsTranscriptStoreOptions): Promise<void> {
         z.object({ activity: z.record(z.unknown()) }).parse({ activity });
 
         await this._initialize();
 
-        const blob = this._containerClient.getBlockBlobClient(getBlobKey(activity));
+        const blob = this._containerClient.getBlockBlobClient(getBlobKey(activity, options));
         const serialized = JSON.stringify(activity);
 
         const metadata: Record<string, string> = {

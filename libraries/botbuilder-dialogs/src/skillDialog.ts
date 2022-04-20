@@ -335,7 +335,7 @@ export class SkillDialog extends Dialog<Partial<BeginSkillDialogOptions>> {
             (c) => c.contentType === CardFactory.contentTypes.oauthCard
         );
         if (oAuthCardAttachment) {
-            const tokenExchangeProvider: ExtendedUserTokenProvider = context.adapter as ExtendedUserTokenProvider;
+            const tokenExchangeProvider: ExtendedUserTokenProvider = (context.adapter as unknown) as ExtendedUserTokenProvider;
             const oAuthCard: OAuthCard = oAuthCardAttachment.content;
 
             const uri = oAuthCard && oAuthCard.tokenExchangeResource && oAuthCard.tokenExchangeResource.uri;

@@ -1,5 +1,5 @@
 const assert = require('assert');
-const { ActivityHandler, ActivityTypes, TestAdapter, tokenResponseEventName, TurnContext } = require('../lib');
+const { ActivityHandler, ActivityTypes, Channels, TestAdapter, tokenResponseEventName, TurnContext } = require('../lib');
 
 describe('ActivityHandler', function () {
     const adapter = new TestAdapter();
@@ -336,6 +336,120 @@ describe('ActivityHandler', function () {
 
         await processActivity({ type: 'foo' }, bot);
         assert(onDialogCalled);
+    });
+
+    describe('ActivityHandler.onSearchInvoke', function () {
+        it(`should fire onSearchInvoke`, async function () {
+            const activity = {
+                type: ActivityTypes.Invoke,
+                name: 'application/search',
+                value: {
+                    kind: 'search',
+                    queryText: 'test bot',
+                    queryOptions: {
+                        skip: 5,
+                        top: 10
+                    },
+                    context: "bot framework"
+                },
+            };
+
+            await assertonSearchInvoke(activity, activity.value.kind);
+        });
+
+        it(`should throw on onSearchInvoke activity missing value`, async function () {
+            const activity = {
+                type: ActivityTypes.Invoke,
+                name: 'application/search'
+            };
+
+            await assertSearchResultError(activity, 'Missing value property for search');
+        });
+
+        it(`should throw on onSearchInvoke activity missing kind`, async function () {
+            const activity = {
+                type: ActivityTypes.Invoke,
+                name: 'application/search',
+                value: {
+                    queryText: 'test bot'
+                }
+            };
+
+            await assertSearchResultError(activity, 'Missing kind property for search.');
+        });
+
+        it(`should not throw on onSearchInvoke activity missing kind when channel is msTeams`, async function () {
+            const activity = {
+                type: ActivityTypes.Invoke,
+                name: 'application/search',
+                channelId: Channels.Msteams,
+                value: {
+                    queryText: 'test bot',
+                    queryOptions: {
+                        skip: 5,
+                        top: 10
+                    }
+                }
+            };
+
+            await assertonSearchInvoke(activity, 'search');
+        });
+
+        it(`should throw on onSearchInvoke activity missing queryText`, async function () {
+            const activity = {
+                type: ActivityTypes.Invoke,
+                name: 'application/search',
+                value: {
+                    kind: 'search'
+                }
+            };
+
+            await assertSearchResultError(activity, 'Missing queryText for search.');
+        });
+
+        async function assertonSearchInvoke(activity, expectedKind) {
+            const bot = new ActivityHandler();
+            const testAdapter = new TestAdapter();
+
+            let onSearchInvokeCalled = false;
+            let value = null;
+            bot.onSearchInvoke = async (context, invokeValue) => {
+                onSearchInvokeCalled = true;
+                value = invokeValue;
+                return { statusCode: 200, value: 'called' };
+            };
+
+            const context = new TurnContext(testAdapter, activity);
+            await bot.run(context);
+
+            assert(onSearchInvokeCalled);
+            assert.equal(activity.value.queryText, value.queryText, 'missing query text');
+            assert.equal(expectedKind, value.kind, 'missing kind');
+            assert.equal(activity.value.queryOptions.skip, value.queryOptions.skip, 'missing skip');
+            assert.equal(activity.value.queryOptions.top, value.queryOptions.top, 'missing top');
+            assert.equal(activity.value.context, value.context, 'missing context');
+        }
+
+        async function assertSearchResultError(activity, errorMessage) {
+            const bot = new ActivityHandler();
+            const testAdapter = new TestAdapter();
+
+            let onSearchInvokeCalled = false;
+            bot.onSearchInvoke = async (context, invokeValue) => {
+                onSearchInvokeCalled = true;
+                return { statusCode: 200, value: 'called' };
+            };
+
+            const context = new TurnContext(testAdapter, activity);
+            await bot.run(context);
+
+            assert(!onSearchInvokeCalled, 'Search should fail to be called due to invalid activity.value');
+            const responseValue = testAdapter.activeQueue[0].value;
+            assert.equal(400, responseValue.status);
+            assert.equal('application/vnd.microsoft.error', responseValue.body.type);
+            assert.equal('BadRequest', responseValue.body.value.code);
+            assert.equal(errorMessage, responseValue.body.value.message);
+        }
     });
 
     describe('should by default', function () {

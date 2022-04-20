@@ -1,0 +1,12 @@
+{
+  "answers": [
+    {
+      "questions": ["Will QuestionOnly ranker type return an answer?"],
+      "answer": "Yes, only the behavior of ranker changes..",
+      "confidenceScore": 1.0,
+      "id": 35,
+      "source": null,
+      "metadata": {}
+    }
+  ]
+}

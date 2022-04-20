@@ -23,6 +23,7 @@ import {
 } from 'botbuilder-core';
 
 /**
+ * @deprecated Use `CloudSkillHandler` instead.
  * A Bot Framework Handler for skills.
  */
 export class SkillHandler extends ChannelServiceHandler {

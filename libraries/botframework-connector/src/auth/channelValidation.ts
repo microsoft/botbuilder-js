@@ -15,6 +15,9 @@ import { JwtTokenExtractor } from './jwtTokenExtractor';
 import { AuthenticationError } from './authenticationError';
 import { StatusCodes } from 'botframework-schema';
 
+/**
+ * @deprecated Use `ConfigurationBotFrameworkAuthentication` instead to perform channel validation.
+ */
 // eslint-disable-next-line @typescript-eslint/no-namespace
 export namespace ChannelValidation {
     export let OpenIdMetadataEndpoint: string;

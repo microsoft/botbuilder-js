@@ -20,6 +20,9 @@ import { GovernmentChannelValidation } from './governmentChannelValidation';
 import { GovernmentConstants } from './governmentConstants';
 import { SkillValidation } from './skillValidation';
 
+/**
+ * @deprecated Use `ConfigurationBotFrameworkAuthentication` instead to perform JWT token validation.
+ */
 // eslint-disable-next-line @typescript-eslint/no-namespace
 export namespace JwtTokenValidation {
     /**

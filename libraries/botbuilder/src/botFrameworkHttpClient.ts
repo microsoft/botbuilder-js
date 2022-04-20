@@ -22,6 +22,7 @@ import {
 import { USER_AGENT } from './botFrameworkAdapter';
 
 /**
+ * @deprecated Use `BotFrameworkAuthentication.createBotFrameworkClient()` to obtain a client and perform the operations that were accomplished through `BotFrameworkHttpClient`.
  * HttpClient for calling skills from a Node.js BotBuilder V4 SDK bot.
  */
 export class BotFrameworkHttpClient implements BotFrameworkClient {

@@ -1,0 +1,18 @@
+{
+    "answers": [
+      {
+        "questions": [
+          "What happens if I include unstructured sources?"
+        ],
+        "answer": "It checks for the answer in unstructured sources as well.",
+        "confidenceScore": 0.80,
+        "id": 15,
+        "source": "Editorial",
+        "metadata": 
+          {
+            "name": "topic",
+            "value": "value"
+          }
+      }
+    ]
+  }

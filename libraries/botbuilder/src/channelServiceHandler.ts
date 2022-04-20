@@ -15,6 +15,7 @@ import {
 } from 'botframework-connector';
 
 /**
+ * @deprecated Use `CloudChannelServiceHandler` instead.
  * The ChannelServiceHandler implements API to forward activity to a skill and
  * implements routing ChannelAPI calls from the Skill up through the bot/adapter.
  */

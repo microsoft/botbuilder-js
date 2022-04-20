@@ -8,6 +8,7 @@
 
 import * as os from 'os';
 
+import { KnowledgeBaseAnswers } from '../qnamaker-interfaces/knowledgeBaseAnswers';
 import { QnAMakerEndpoint } from '../qnamaker-interfaces/qnamakerEndpoint';
 import { QnAMakerResults } from '../qnamaker-interfaces/qnamakerResults';
 
@@ -16,7 +17,6 @@ const fetch = getFetch();
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const pjson: Record<'name' | 'version', string> = require('../../package.json');
-
 /**
  * Http request utils class.
  *
@@ -38,7 +38,7 @@ export class HttpRequestUtils {
         payloadBody: string,
         endpoint: QnAMakerEndpoint,
         timeout?: number
-    ): Promise<QnAMakerResults | undefined> {
+    ): Promise<QnAMakerResults | KnowledgeBaseAnswers | undefined> {
         if (!requestUrl) {
             throw new TypeError('Request url cannot be null.');
         }

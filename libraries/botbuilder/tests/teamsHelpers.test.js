@@ -111,33 +111,37 @@ describe('TeamsActivityHelpers method', function () {
             const activity = createActivityTeamId();
             teamsNotifyUser(activity);
             assert(activity.channelData.notification.alert === true);
+            assert(activity.channelData.notification.alertInMeeting === false);
         });
 
         it('should add notify with no channelData', async function () {
             const activity = createActivityNoChannelData();
             teamsNotifyUser(activity);
             assert(activity.channelData.notification.alert === true);
+            assert(activity.channelData.notification.alertInMeeting === false);
         });
 
         it('should throw an error if no activity is passed in', function () {
             assert.throws(() => teamsNotifyUser(undefined), Error('Missing activity parameter'));
         });
 
-        it('should add notify with no notification in channelData', async function () {
+        it('should add notify with no notification in channelData, and externalUrl', async function () {
             const activity = createActivityTeamId();
             teamsNotifyUser(activity, true, 'externalUrl');
+            assert(activity.channelData.notification.alert === false);
             assert(activity.channelData.notification.alertInMeeting === true);
             assert(activity.channelData.notification.externalResourceUrl === 'externalUrl');
         });
 
-        it('should add notify with no channelData', async function () {
+        it('should add notify with no channelData, and externalUrl', async function () {
             const activity = createActivityNoChannelData();
             teamsNotifyUser(activity, true, 'externalUrl');
+            assert(activity.channelData.notification.alert === false);
             assert(activity.channelData.notification.alertInMeeting === true);
             assert(activity.channelData.notification.externalResourceUrl === 'externalUrl');
         });
 
-        it('should throw an error if no activity is passed in', function () {
+        it('should throw an error if no activity is passed in, and externalUrl', function () {
             assert.throws(() => teamsNotifyUser(undefined, true, 'externalUrl'), Error('Missing activity parameter'));
         });
     });

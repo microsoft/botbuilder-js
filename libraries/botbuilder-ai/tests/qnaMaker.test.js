@@ -12,11 +12,10 @@ const { TrainUtils } = require('../lib/qnamaker-utils/trainUtils');
 const { getFetch } = require('../lib/globals');
 
 // Save test keys
-const knowledgeBaseId = process.env.QNAKNOWLEDGEBASEID;
-const endpointKey = process.env.QNAENDPOINTKEY;
+const knowledgeBaseId = process.env.QNAKNOWLEDGEBASEID || 'dummy-id';
+const endpointKey = process.env.QNAENDPOINTKEY || 'dummy-key';
 const hostname = process.env.QNAHOSTNAME || 'botbuilder-test-app';
-const forceMockQnA = false;
-const mockQnA = forceMockQnA || !(knowledgeBaseId && endpointKey);
+const mockQnA = true;
 
 class TestContext extends TurnContext {
     constructor(request) {
@@ -177,6 +176,44 @@ describe('QnAMaker', function () {
     });
 
     describe('getAnswers', function () {
+        it('returns answer with filters specified', async function () {
+            const context = new TestContext({ text: 'where are the unicorns?' });
+            const qna = new QnAMaker(endpoint);
+            const filters = {
+                metadataFilter: {
+                    metadata: [
+                        {
+                            key: 'animal',
+                            value: 'procupine',
+                        },
+                    ],
+                },
+            };
+            const options = { top: 5, filters: filters };
+
+            const results = await qna.getAnswers(context, options);
+
+            assert.deepStrictEqual(results[0].metadata, filters.metadataFilter.metadata);
+        });
+        it('returns answer with strictFilters specified', async function () {
+            const qna = new QnAMaker(endpoint);
+            const context = new TestContext({ text: 'where are the unicorns?' });
+            const strictFilters = [
+                {
+                    name: 'name1',
+                    value: 'filter1',
+                },
+                {
+                    name: 'name2',
+                    value: 'filter2',
+                },
+            ];
+            const options = { top: 5, strictFilters: strictFilters };
+
+            const results = await qna.getAnswers(context, options);
+
+            assert.deepStrictEqual(results[0].metadata, strictFilters);
+        });
         it('returns answer without any options specified', async function () {
             const qna = new QnAMaker(endpoint);
             const context = new TestContext({ text: 'where are the unicorns?' });
@@ -564,12 +601,20 @@ describe('QnAMaker', function () {
     });
 
     describe('emitTraceInfo', function () {
-        it('throws TypeError if context is undefined', async function () {
+        it('throws TypeError if context is undefined in getAnswers', async function () {
             const qna = new QnAMaker(endpoint);
 
             await assert.rejects(qna.getAnswers(undefined), {
                 name: 'TypeError',
                 message: 'QnAMaker.getAnswers() requires a TurnContext.',
+            });
+        });
+        it('throws TypeError if context is undefined in getAnswersRaw', async function () {
+            const qna = new QnAMaker(endpoint);
+
+            await assert.rejects(qna.getAnswersRaw(undefined), {
+                name: 'TypeError',
+                message: 'QnAMaker.getAnswersRaw() requires a TurnContext.',
             });
         });
     });

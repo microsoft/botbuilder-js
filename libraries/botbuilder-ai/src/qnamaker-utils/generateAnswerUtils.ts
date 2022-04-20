@@ -15,8 +15,9 @@ import { QnAMakerOptions } from '../qnamaker-interfaces/qnamakerOptions';
 import { QnAMakerTraceInfo } from '../qnamaker-interfaces/qnamakerTraceInfo';
 import { HttpRequestUtils } from './httpRequestUtils';
 
-import { QNAMAKER_TRACE_TYPE, QNAMAKER_TRACE_LABEL, QNAMAKER_TRACE_NAME } from '..';
+import { QNAMAKER_TRACE_TYPE, QNAMAKER_TRACE_LABEL, QNAMAKER_TRACE_NAME, JoinOperator, QnAMakerMetadata } from '..';
 import { RankerTypes } from '../qnamaker-interfaces/rankerTypes';
+import { Filters } from '../qnamaker-interfaces/filters';
 
 /**
  * Generate Answer api utils class.
@@ -45,8 +46,8 @@ export class GenerateAnswerUtils {
      * @param {QnAMakerEndpoint} endpoint The endpoint of the knowledge base to query.
      * @param {string} question Question which need to be queried.
      * @param {QnAMakerOptions} options (Optional) The options for the QnA Maker knowledge base. If null, constructor option is used for this instance.
-     * @returns {Promise<QnAMakerResult[]>} a promise that resolves to the query results
-     */
+     * @returns {Promise<QnAMakerResult[]>} a promise that resolves to the query results.
+    .*/
     async queryQnaService(
         endpoint: QnAMakerEndpoint,
         question: string,
@@ -72,13 +73,20 @@ export class GenerateAnswerUtils {
     ): Promise<QnAMakerResults> {
         const url = `${endpoint.host}/knowledgebases/${endpoint.knowledgeBaseId}/generateanswer`;
         const queryOptions: QnAMakerOptions = { ...this._options, ...options } as QnAMakerOptions;
-
         queryOptions.rankerType = !queryOptions.rankerType ? RankerTypes.default : queryOptions.rankerType;
+        const legacyMetadata = this.getMetadata(
+            queryOptions.strictFilters,
+            queryOptions.strictFiltersJoinOperator,
+            queryOptions.filters
+        );
+        queryOptions.strictFilters = legacyMetadata.metadata;
+        queryOptions.filters = null;
+
         this.validateOptions(queryOptions);
 
         const payloadBody = JSON.stringify({
             question: question,
-            strictFiltersCompoundOperationType: queryOptions.strictFiltersJoinOperator,
+            strictFiltersCompoundOperationType: JoinOperator[legacyMetadata.compoundOperation],
             ...queryOptions,
         });
 
@@ -93,7 +101,7 @@ export class GenerateAnswerUtils {
             return this.formatQnaResult(qnaResults);
         }
 
-        throw new Error(`Failed to generate answers: ${qnaResults}`);
+        throw new Error(`Failed to generate answers: ${JSON.stringify(qnaResults)}`);
     }
 
     /**
@@ -170,7 +178,8 @@ export class GenerateAnswerUtils {
             .sort((a: QnAMakerResult, b: QnAMakerResult) => b.score - a.score);
     }
 
-    private formatQnaResult(qnaResult: QnAMakerResults): QnAMakerResults {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    private formatQnaResult(qnaResult: QnAMakerResults | any): QnAMakerResults {
         qnaResult.answers = qnaResult.answers.map((answer: QnAMakerResult & { qnaId?: number }) => {
             answer.score = answer.score / 100;
 
@@ -201,5 +210,28 @@ export class GenerateAnswerUtils {
                 `"${qnaOptionTop}" is an invalid top value. QnAMakerOptions.top must be an integer greater than 0.`
             );
         }
+    }
+
+    private getMetadata(
+        strictFilters: QnAMakerMetadata[],
+        operator: JoinOperator,
+        filters: Filters
+    ): { metadata: QnAMakerMetadata[]; compoundOperation: JoinOperator } {
+        if (!strictFilters) {
+            return { metadata: strictFilters, compoundOperation: operator ? operator : JoinOperator.AND };
+        }
+
+        if (filters?.metadataFilter?.metadata?.length > 0) {
+            return {
+                metadata: filters.metadataFilter.metadata.map((kv) => {
+                    return { name: kv.key, value: kv.value };
+                }),
+                compoundOperation: filters.metadataFilter.logicalOperation
+                    ? JoinOperator[filters.metadataFilter.logicalOperation]
+                    : JoinOperator,
+            };
+        }
+
+        return { metadata: null, compoundOperation: JoinOperator.AND };
     }
 }

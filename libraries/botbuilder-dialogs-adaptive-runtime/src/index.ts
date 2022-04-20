@@ -96,6 +96,7 @@ function addFeatures(services: ServiceCollection, configuration: Configuration):
                         .object({
                             connectionString: z.string(),
                             containerName: z.string(),
+                            decodeTranscriptKey: z.boolean().optional(),
                         })
                         .nonstrict()
                 );

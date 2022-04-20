@@ -89,6 +89,7 @@ import {
 } from './streaming';
 
 /**
+ * @deprecated Use `CloudAdapter` with `ConfigurationBotFrameworkAuthentication` instead to configure bot runtime.
  * Contains settings used to configure a [BotFrameworkAdapter](xref:botbuilder.BotFrameworkAdapter) instance.
  */
 export interface BotFrameworkAdapterSettings {
@@ -193,6 +194,10 @@ const US_GOV_OAUTH_ENDPOINT = 'https://api.botframework.azure.us';
  *     // Catch-all logic for errors.
  * };
  * ```
+ */
+
+/**
+ * @deprecated Use `CloudAdapter` instead.
  */
 export class BotFrameworkAdapter
     extends BotAdapter

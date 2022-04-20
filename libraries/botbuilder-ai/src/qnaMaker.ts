@@ -157,6 +157,7 @@ export class QnAMaker implements QnAMakerClient, QnAMakerTelemetryClient {
             top = 1,
             strictFilters = [] as QnAMakerMetadata[],
             metadataBoost = [] as QnAMakerMetadata[],
+            filters = { metadataFilter: { metadata: [] }, sourceFilter: [] },
             timeout = 100000,
             rankerType = RankerTypes.default,
         } = options;
@@ -166,6 +167,7 @@ export class QnAMaker implements QnAMakerClient, QnAMakerTelemetryClient {
             top,
             strictFilters,
             metadataBoost,
+            filters,
             timeout,
             rankerType,
         } as QnAMakerOptions;
@@ -232,14 +234,32 @@ export class QnAMaker implements QnAMakerClient, QnAMakerTelemetryClient {
      */
     async getAnswersRaw(
         context: TurnContext,
+        options: QnAMakerOptions,
+        telemetryProperties: { [key: string]: string },
+        telemetryMetrics: { [key: string]: number }
+    ): Promise<QnAMakerResults> {
+        if (!context) {
+            throw new TypeError('QnAMaker.getAnswersRaw() requires a TurnContext.');
+        }
+
+        return await this.getLegacyAnswersRaw(context, options, telemetryProperties, telemetryMetrics);
+    }
+
+    /**
+     * Generates an answer from the QnA Maker knowledge base.
+     *
+     * @param {TurnContext} context The [TurnContext](xref:botbuilder-core.TurnContext) that contains the user question to be queried against your knowledge base.
+     * @param {QnAMakerOptions} options Optional. The [QnAMakerOptions](xref:botbuilder-ai.QnAMakerOptions) for the QnA Maker knowledge base. If null, constructor option is used for this instance.
+     * @param {object} telemetryProperties Optional. Additional properties to be logged to telemetry with the QnaMessage event.
+     * @param {object} telemetryMetrics Optional. Additional metrics to be logged to telemetry with the QnaMessage event.
+     * @returns {Promise<QnAMakerResults>} A list of answers for the user query, sorted in decreasing order of ranking score.
+     */
+    async getLegacyAnswersRaw(
+        context: TurnContext,
         options?: QnAMakerOptions,
         telemetryProperties?: { [key: string]: string },
         telemetryMetrics?: { [key: string]: number }
     ): Promise<QnAMakerResults> {
-        if (!context) {
-            throw new TypeError('QnAMaker.getAnswers() requires a TurnContext.');
-        }
-
         const queryResult: QnAMakerResult[] = [] as QnAMakerResult[];
         const question: string = this.getTrimmedMessageText(context);
         const queryOptions: QnAMakerOptions = { ...this._options, ...options } as QnAMakerOptions;
@@ -317,13 +337,13 @@ export class QnAMaker implements QnAMakerClient, QnAMakerTelemetryClient {
      *
      * @param {string | undefined} question The question to answer.
      * @param {number} top (Optional) number of answers to return. Defaults to a value of `1`.
-     * @param {number} scoreThreshold (Optional) minimum answer score needed to be considered a match to questions. Defaults to a value of `0.001`.
+     * @param {number} _scoreThreshold (Optional) minimum answer score needed to be considered a match to questions. Defaults to a value of `0.001`.
      * @returns {Promise<QnAMakerResult[]>} A promise resolving to the QnAMaker results
      */
     async generateAnswer(
         question: string | undefined,
         top?: number,
-        scoreThreshold?: number
+        _scoreThreshold?: number
     ): Promise<QnAMakerResult[]> {
         const trimmedAnswer: string = question ? question.trim() : '';
 
@@ -333,11 +353,8 @@ export class QnAMaker implements QnAMakerClient, QnAMakerTelemetryClient {
                 question,
                 typeof top === 'number' ? top : 1
             );
-            const minScore: number = typeof scoreThreshold === 'number' ? scoreThreshold : 0.001;
 
-            return result.answers
-                .filter((ans: QnAMakerResult) => ans.score >= minScore)
-                .sort((a: QnAMakerResult, b: QnAMakerResult) => b.score - a.score);
+            return result.answers.sort((a: QnAMakerResult, b: QnAMakerResult) => b.score - a.score);
         }
 
         return [] as QnAMakerResult[];
@@ -361,8 +378,8 @@ export class QnAMaker implements QnAMakerClient, QnAMakerTelemetryClient {
      * @param {FeedbackRecords} feedbackRecords Feedback records.
      * @returns {Promise<void>} A promise representing the async operation
      */
-    callTrain(feedbackRecords: FeedbackRecords): Promise<void> {
-        return this.trainUtils.callTrain(feedbackRecords);
+    async callTrain(feedbackRecords: FeedbackRecords): Promise<void> {
+        return await this.trainUtils.callTrain(feedbackRecords);
     }
 
     /**
