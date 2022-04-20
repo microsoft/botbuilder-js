@@ -6,6 +6,9 @@
     "lint": "eslint . --ext .js,.ts",
     "test": "ts-node run.ts"
   },
+  "resolutions": {
+    "minimist": "^1.2.6"
+  },
   "dependencies": {
     "adaptive-expressions": "4.1.6",
     "adaptive-expressions-ie11": "4.1.6",
