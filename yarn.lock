@@ -1404,10 +1404,10 @@
     source-map "~0.6.1"
     typescript "~4.2.4"
 
-"@microsoft/orchestrator-core@~4.14.0":
-  version "4.14.0"
-  resolved "https://registry.yarnpkg.com/@microsoft/orchestrator-core/-/orchestrator-core-4.14.0.tgz#a8f9097a43dda32904979e416e01f1a485f072c3"
-  integrity sha512-EwVuEkBGRMKAdHaVPKhHHXtKjQDtWFGpdHRJX6WEVf6bek2Jwa8WRr7SpA3YoOgNyabR2oSMW92mNI6W/TFdsA==
+"@microsoft/orchestrator-core@~4.14.3":
+  version "4.14.3"
+  resolved "https://registry.yarnpkg.com/@microsoft/orchestrator-core/-/orchestrator-core-4.14.3.tgz#272faf13e3de05ef2b36499004c5abb36b88f8dd"
+  integrity sha512-36sddLqH8lEG7AkZur+6r73FLHlbj638YWupERyw3uFAClb/1c0o/DdRBNs+NdezLiLXAxn3RB4i0ew3xVF4ZQ==
   dependencies:
     "@mapbox/node-pre-gyp" "^1.0.3"
     bindings "1.2.1"
