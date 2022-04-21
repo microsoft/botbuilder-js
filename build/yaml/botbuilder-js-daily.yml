@@ -151,6 +151,13 @@ steps:
   continueOnError: true
   condition: succeededOrFailed()
 
+- powershell: |
+   cd $(Build.SourcesDirectory)\node_modules\@microsoft\orchestrator-core
+   tree -a -f -s -i
+  displayName: 'Dir node_modules\@microsoft\orchestrator-core'
+  continueOnError: true
+  condition: succeededOrFailed()
+
 - task: ms.vss-governance-buildtask.governance-build-task-component-detection.ComponentGovernanceComponentDetection@0
   displayName: 'Component Detection'
   inputs:
