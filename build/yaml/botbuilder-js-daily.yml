@@ -145,16 +145,16 @@ steps:
   condition: succeededOrFailed()
 
 - powershell: |
-    Set-Location -Path "$(Build.SourcesDirectory)\node_modules\@microsoft\orchestrator-core"
+    Set-Location -Path "$(Build.SourcesDirectory)/node_modules/@microsoft/orchestrator-core"
     Get-ChildItem -Path 'package*.json' -Recurse | % {$_.FullName; '-------------'; get-content $_; '==================='}
-  displayName: 'Type out package*.json files in node_modules\@microsoft\orchestrator-core'
+  displayName: 'Type out package*.json files in node_modules/@microsoft/orchestrator-core'
   continueOnError: true
   condition: succeededOrFailed()
 
 - powershell: |
-   cd $(Build.SourcesDirectory)\node_modules\@microsoft\orchestrator-core
+   Set-Location -Path "$(Build.SourcesDirectory)/node_modules/@microsoft/orchestrator-core"
    tree -a -f -s -i
-  displayName: 'Dir node_modules\@microsoft\orchestrator-core'
+  displayName: 'Dir node_modules/@microsoft/orchestrator-core'
   continueOnError: true
   condition: succeededOrFailed()
 
