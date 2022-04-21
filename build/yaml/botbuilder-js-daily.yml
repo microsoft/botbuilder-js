@@ -144,6 +144,13 @@ steps:
   continueOnError: true
   condition: succeededOrFailed()
 
+- powershell: |
+    Set-Location -Path "$(Build.SourcesDirectory)\node_modules\@microsoft\orchestrator-core"
+    Get-ChildItem -Path 'package*.json' -Recurse | % {$_.FullName; '-------------'; get-content $_; '==================='}
+  displayName: 'Type out package*.json files in node_modules\@microsoft\orchestrator-core'
+  continueOnError: true
+  condition: succeededOrFailed()
+
 - task: ms.vss-governance-buildtask.governance-build-task-component-detection.ComponentGovernanceComponentDetection@0
   displayName: 'Component Detection'
   inputs:
