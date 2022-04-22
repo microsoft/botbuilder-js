@@ -2,9 +2,6 @@
   "name": "react-app",
   "private": true,
   "version": "0.1.0",
-  "overrides": {
-    "minimist": "1.2.6"
-  },
   "dependencies": {
     "@testing-library/jest-dom": "^4.2.4",
     "@testing-library/react": "^9.3.2",
