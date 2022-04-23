@@ -112,52 +112,6 @@ steps:
   continueOnError: true
   condition: succeededOrFailed()
 
-- powershell: |
-    $PackageName = "minimist";
-
-    $LibrariesFolder = ".\libraries";
-
-    Function Get-DependencyTreesFromLibraries($PackageName) {
-        Get-ChildItem $LibrariesFolder -Directory |
-            ForEach-Object {
-                Write-Host -NoNewline "`r$_                        ";
-                pushd $_.FullName
-                Get-DependencyTree $PackageName;
-                popd;
-            }
-            Write-Host -NoNewline "`r                             ";
-    }
-
-    Function Get-DependencyTree($PackageName) {
-        $output = npm ls $PackageName;
-        if (-not ($output -like "*(empty)*")) {
-            Write-Host;
-            Write-Output $output;
-        }
-    }
-
-    Write-Host "Getting dependency trees for $PackageName"":";
-    Write-Host -NoNewline "`rRoot                        ";
-    Get-DependencyTree $PackageName;
-    Get-DependencyTreesFromLibraries $PackageName;
-  displayName: 'Show minimist dependencies'
-  continueOnError: true
-  condition: succeededOrFailed()
-
-- powershell: |
-    Set-Location -Path "$(Build.SourcesDirectory)/node_modules"
-    Get-ChildItem -Path 'package*.json' -Recurse | % {$_.FullName; '-------------'; get-content $_; '==================='}
-  displayName: 'Type out package*.json files in node_modules'
-  continueOnError: true
-  condition: succeededOrFailed()
-
-- powershell: |
-   Set-Location -Path "$(Build.SourcesDirectory)/node_modules"
-   tree -a -f -s -i
-  displayName: 'Dir node_modules'
-  continueOnError: true
-  condition: succeededOrFailed()
-
 - task: ms.vss-governance-buildtask.governance-build-task-component-detection.ComponentGovernanceComponentDetection@0
   displayName: 'Component Detection'
   inputs:
