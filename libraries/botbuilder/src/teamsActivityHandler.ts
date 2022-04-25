@@ -1012,18 +1012,16 @@ export class TeamsActivityHandler extends ActivityHandler {
      * custom event sub-type events.
      */
     protected async dispatchEventActivity(context: TurnContext): Promise<void> {
-        await this.handle(context, 'Event', async () => {
-            if (context.activity.channelId === Channels.Msteams) {
-                switch (context.activity.name) {
-                    case 'application/vnd.microsoft.meetingStart':
-                        return this.onTeamsMeetingStart(context);
-                    case 'application/vnd.microsoft.meetingEnd':
-                        return this.onTeamsMeetingEnd(context);
-                }
+        if (context.activity.channelId === Channels.Msteams) {
+            switch (context.activity.name) {
+                case 'application/vnd.microsoft.meetingStart':
+                    return this.onTeamsMeetingStart(context);
+                case 'application/vnd.microsoft.meetingEnd':
+                    return this.onTeamsMeetingEnd(context);
             }
+        }
 
-            return super.dispatchEventActivity(context);
-        });
+        return super.dispatchEventActivity(context);
     }
 
     /**

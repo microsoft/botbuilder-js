@@ -2307,5 +2307,28 @@ describe('TeamsActivityHandler', function () {
                 })
                 .startTest();
         });
+
+        it('should not call middleware handler twice', async function () {
+            const bot = new TeamsActivityHandler();
+
+            const activity = createMeetingEventActivity(false);
+            let ncalls = 0;
+
+            bot.onEvent(async (context, next) => {
+                ncalls++;
+                await next();
+            });
+
+            const adapter = new TestAdapter(async (context) => {
+                await bot.run(context);
+            });
+
+            await adapter
+                .send(activity)
+                .then(() => {
+                    assert(ncalls === 1, 'On Event should only be called once, times called: ' + ncalls.toString());
+                })
+                .startTest();
+        });
     });
 });
