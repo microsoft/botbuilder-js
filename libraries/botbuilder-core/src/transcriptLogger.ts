@@ -40,7 +40,7 @@ export class TranscriptLoggerMiddleware implements Middleware {
      * @param context Context for the current turn of conversation with the user.
      * @param next Function to call at the end of the middleware chain.
      */
-    public async onTurn(context: TurnContext, next: () => Promise<void>): Promise<void> {
+    async onTurn(context: TurnContext, next: () => Promise<void>): Promise<void> {
         const transcript: Activity[] = [];
 
         // log incoming activity at beginning of turn
@@ -190,7 +190,7 @@ export class ConsoleTranscriptLogger implements TranscriptLogger {
      * Log an activity to the transcript.
      * @param activity Activity being logged.
      */
-    public logActivity(activity: Activity): void | Promise<void> {
+    logActivity(activity: Activity): void | Promise<void> {
         if (!activity) {
             throw new Error('Activity is required.');
         }

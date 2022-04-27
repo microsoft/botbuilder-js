@@ -388,7 +388,7 @@ export class ActivityHandlerBase {
      * **See also**
      * - [BotFrameworkAdapter.processActivity](xref:botbuilder.BotFrameworkAdapter.processActivity)
      */
-    public async run(context: TurnContext): Promise<void> {
+    async run(context: TurnContext): Promise<void> {
         if (!context) {
             throw new Error(`Missing TurnContext parameter`);
         }

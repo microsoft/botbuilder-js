@@ -62,7 +62,7 @@ export class TestAdapter extends BotAdapter implements ExtendedUserTokenProvider
      * @param logicOrConversation The bots logic that's under test.
      * @param template (Optional) activity containing default values to assign to all test messages received.
      */
-    public constructor(
+    constructor(
         logicOrConversation?: ((context: TurnContext) => Promise<void>) | ConversationReference,
         template?: Partial<Activity>,
         sendTraceActivity = false
@@ -94,38 +94,38 @@ export class TestAdapter extends BotAdapter implements ExtendedUserTokenProvider
      * @private
      * INTERNAL: used to drive the promise chain forward when running tests.
      */
-    public get activityBuffer(): Partial<Activity>[] {
+    get activityBuffer(): Partial<Activity>[] {
         return this.activeQueue;
     }
 
     /**
      * Gets a value indicating whether to send trace activities.
      */
-    public get enableTrace(): boolean {
+    get enableTrace(): boolean {
         return this._sendTraceActivity;
     }
 
     /**
      * Sets a value inidicating whether to send trace activities.
      */
-    public set enableTrace(value: boolean) {
+    set enableTrace(value: boolean) {
         this._sendTraceActivity = value;
     }
 
     /**
      * Gets or sets the locale for the conversation.
      */
-    public locale = 'en-us';
+    locale = 'en-us';
 
     /**
      * Gets the queue of responses from the bot.
      */
-    public readonly activeQueue: Partial<Activity>[] = [];
+    readonly activeQueue: Partial<Activity>[] = [];
 
     /**
      * Gets or sets a reference to the current conversation.
      */
-    public conversation: ConversationReference;
+    conversation: ConversationReference;
 
     /**
      * Create a ConversationReference.
@@ -133,7 +133,7 @@ export class TestAdapter extends BotAdapter implements ExtendedUserTokenProvider
      * @param user name of the user (also id) default: User1.
      * @param bot name of the bot (also id) default: Bot.
      */
-    public static createConversation(name: string, user = 'User1', bot = 'Bot'): ConversationReference {
+    static createConversation(name: string, user = 'User1', bot = 'Bot'): ConversationReference {
         const conversationReference: ConversationReference = {
             channelId: Channels.Test,
             serviceUrl: 'https://test.com',
@@ -148,7 +148,7 @@ export class TestAdapter extends BotAdapter implements ExtendedUserTokenProvider
     /**
      * Dequeues and returns the next bot response from the activeQueue
      */
-    public getNextReply(): Partial<Activity> {
+    getNextReply(): Partial<Activity> {
         if (this.activeQueue.length > 0) {
             return this.activeQueue.shift();
         }
@@ -159,7 +159,7 @@ export class TestAdapter extends BotAdapter implements ExtendedUserTokenProvider
      * Creates a message activity from text and the current conversational context.
      * @param text The message text.
      */
-    public makeActivity(text?: string): Partial<Activity> {
+    makeActivity(text?: string): Partial<Activity> {
         const activity: Partial<Activity> = {
             type: ActivityTypes.Message,
             locale: this.locale,
@@ -178,14 +178,14 @@ export class TestAdapter extends BotAdapter implements ExtendedUserTokenProvider
      * @param userSays The text of the user's message.
      * @param callback The bot logic to invoke.
      */
-    public sendTextToBot(userSays: string, callback: (context: TurnContext) => Promise<any>): Promise<any> {
+    sendTextToBot(userSays: string, callback: (context: TurnContext) => Promise<any>): Promise<any> {
         return this.processActivity(this.makeActivity(userSays), callback);
     }
 
     /**
      * `Activity` template that will be merged with all activities sent to the logic under test.
      */
-    public readonly template: Partial<Activity>;
+    readonly template: Partial<Activity>;
 
     private _logic: (context: TurnContext) => Promise<void>;
     private _sendTraceActivity = false;
@@ -198,7 +198,7 @@ export class TestAdapter extends BotAdapter implements ExtendedUserTokenProvider
      * @param activity The activity to process.
      * @param callback The bot logic to invoke.
      */
-    public async processActivity(
+    async processActivity(
         activity: string | Partial<Activity>,
         callback?: (context: TurnContext) => Promise<any>
     ): Promise<any> {
@@ -232,7 +232,7 @@ export class TestAdapter extends BotAdapter implements ExtendedUserTokenProvider
      * @param context Context object for the current turn of conversation with the user.
      * @param activities Set of activities sent by logic under test.
      */
-    public async sendActivities(context: TurnContext, activities: Partial<Activity>[]): Promise<ResourceResponse[]> {
+    async sendActivities(context: TurnContext, activities: Partial<Activity>[]): Promise<ResourceResponse[]> {
         if (!context) {
             throw new Error('TurnContext cannot be null.');
         }
@@ -282,7 +282,7 @@ export class TestAdapter extends BotAdapter implements ExtendedUserTokenProvider
      * @param activity Activity being updated.
      * @returns promise representing async operation
      */
-    public updateActivity(context: TurnContext, activity: Partial<Activity>): Promise<ResourceResponse | void> {
+    updateActivity(context: TurnContext, activity: Partial<Activity>): Promise<ResourceResponse | void> {
         if (activity.id) {
             const idx = this.activeQueue.findIndex((a) => a.id === activity.id);
             if (idx !== -1) {
@@ -300,7 +300,7 @@ export class TestAdapter extends BotAdapter implements ExtendedUserTokenProvider
      * @param context Context object for the current turn of conversation with the user.
      * @param reference `ConversationReference` for activity being deleted.
      */
-    public deleteActivity(context: TurnContext, reference: Partial<ConversationReference>): Promise<void> {
+    deleteActivity(context: TurnContext, reference: Partial<ConversationReference>): Promise<void> {
         if (reference.activityId) {
             const idx = this.activeQueue.findIndex((a) => a.id === reference.activityId);
             if (idx !== -1) {
@@ -317,7 +317,7 @@ export class TestAdapter extends BotAdapter implements ExtendedUserTokenProvider
      * This will cause the adapters middleware pipe to be run and it's logic to be called.
      * @param activity Text or activity from user. The current conversation reference [template](#template) will be merged the passed in activity to properly address the activity. Fields specified in the activity override fields in the template.
      */
-    public receiveActivity(activity: string | Partial<Activity>): Promise<void> {
+    receiveActivity(activity: string | Partial<Activity>): Promise<void> {
         return this.processActivity(activity);
     }
 
@@ -325,7 +325,7 @@ export class TestAdapter extends BotAdapter implements ExtendedUserTokenProvider
      * The `TestAdapter` doesn't implement `continueConversation()` and will return an error if it's
      * called.
      */
-    public continueConversation(
+    continueConversation(
         reference: Partial<ConversationReference>,
         logic: (revocableContext: TurnContext) => Promise<void>
     ): Promise<void> {
@@ -357,7 +357,7 @@ export class TestAdapter extends BotAdapter implements ExtendedUserTokenProvider
      * ```
      * @param userSays Text or activity simulating user input.
      */
-    public send(userSays: string | Partial<Activity>): TestFlow {
+    send(userSays: string | Partial<Activity>): TestFlow {
         return new TestFlow(this.processActivity(userSays), this);
     }
 
@@ -377,7 +377,7 @@ export class TestAdapter extends BotAdapter implements ExtendedUserTokenProvider
      * @param description (Optional) Description of the test case. If not provided one will be generated.
      * @param timeout (Optional) number of milliseconds to wait for a response from bot. Defaults to a value of `3000`.
      */
-    public test(
+    test(
         userSays: string | Partial<Activity>,
         expected: string | Partial<Activity> | ((activity: Partial<Activity>, description?: string) => void),
         description?: string,
@@ -396,7 +396,7 @@ export class TestAdapter extends BotAdapter implements ExtendedUserTokenProvider
      * @param description (Optional) Description of the test case. If not provided one will be generated.
      * @param timeout (Optional) number of milliseconds to wait for a response from bot. Defaults to a value of `3000`.
      */
-    public testActivities(activities: Partial<Activity>[], description?: string, timeout?: number): TestFlow {
+    testActivities(activities: Partial<Activity>[], description?: string, timeout?: number): TestFlow {
         if (!activities) {
             throw new Error('Missing array of activities');
         }
@@ -428,7 +428,7 @@ export class TestAdapter extends BotAdapter implements ExtendedUserTokenProvider
      * @param token The token to store.
      * @param magicCode (Optional) The optional magic code to associate with this token.
      */
-    public addUserToken(connectionName: string, channelId: string, userId: string, token: string, magicCode?: string) {
+    addUserToken(connectionName: string, channelId: string, userId: string, token: string, magicCode?: string) {
         const key: UserToken = new UserToken();
         key.channelId = channelId;
         key.connectionName = connectionName;
@@ -457,7 +457,7 @@ export class TestAdapter extends BotAdapter implements ExtendedUserTokenProvider
      *
      * @returns The [TokenStatus](xref:botframework-connector.TokenStatus) objects retrieved.
      */
-    public async getTokenStatus(
+    async getTokenStatus(
         context: TurnContext,
         userId: string,
         includeFilter?: string,
@@ -496,7 +496,7 @@ export class TestAdapter extends BotAdapter implements ExtendedUserTokenProvider
      * @param connectionName Name of the auth connection to use.
      * @param magicCode (Optional) Optional user entered code to validate.
      */
-    public async getUserToken(
+    async getUserToken(
         context: TurnContext,
         connectionName: string,
         magicCode?: string
@@ -530,7 +530,7 @@ export class TestAdapter extends BotAdapter implements ExtendedUserTokenProvider
      * @param connectionName Name of the auth connection to use.
      * @param userId User ID to sign out.
      */
-    public async signOutUser(context: TurnContext, connectionName?: string, userId?: string): Promise<void> {
+    async signOutUser(context: TurnContext, connectionName?: string, userId?: string): Promise<void> {
         const channelId = context.activity.channelId;
         userId = userId || context.activity.from.id;
         this._userTokens = this._userTokens.filter(
@@ -545,7 +545,7 @@ export class TestAdapter extends BotAdapter implements ExtendedUserTokenProvider
      * @param context Context for the current turn of conversation with the user.
      * @param connectionName Name of the auth connection to use.
      */
-    public async getSignInLink(context: TurnContext, connectionName: string): Promise<string> {
+    async getSignInLink(context: TurnContext, connectionName: string): Promise<string> {
         return `https://fake.com/oauthsignin/${connectionName}/${context.activity.channelId}/${context.activity.from.id}`;
     }
 
@@ -554,7 +554,7 @@ export class TestAdapter extends BotAdapter implements ExtendedUserTokenProvider
      * @param context Context for the current turn of conversation with the user.
      * @param connectionName Name of the auth connection to use.
      */
-    public async getAadTokens(
+    async getAadTokens(
         context: TurnContext,
         connectionName: string,
         resourceUrls: string[]
@@ -574,7 +574,7 @@ export class TestAdapter extends BotAdapter implements ExtendedUserTokenProvider
      * @param exchangeableItem Exchangeable token or resource URI.
      * @param token Token to store.
      */
-    public addExchangeableToken(
+    addExchangeableToken(
         connectionName: string,
         channelId: string,
         userId: string,
@@ -598,7 +598,7 @@ export class TestAdapter extends BotAdapter implements ExtendedUserTokenProvider
      * @param finalRedirect Final redirect URL.
      * @returns A `Promise` with a new [SignInUrlResponse](xref:botframework-schema.SignInUrlResponse) object.
      */
-    public async getSignInResource(
+    async getSignInResource(
         context: TurnContext,
         connectionName: string,
         userId?: string,
@@ -622,7 +622,7 @@ export class TestAdapter extends BotAdapter implements ExtendedUserTokenProvider
      * @param tokenExchangeRequest Exchange request details, either a token to exchange or a uri to exchange.
      * @returns If the promise completes, the exchanged token is returned.
      */
-    public async exchangeToken(
+    async exchangeToken(
         context: TurnContext,
         connectionName: string,
         userId: string,
@@ -659,7 +659,7 @@ export class TestAdapter extends BotAdapter implements ExtendedUserTokenProvider
      * @param userId The user id.
      * @param exchangeableItem The exchangeable token or resource URI.
      */
-    public throwOnExchangeRequest(
+    throwOnExchangeRequest(
         connectionName: string,
         channelId: string,
         userId: string,
@@ -694,12 +694,12 @@ export class TestAdapter extends BotAdapter implements ExtendedUserTokenProvider
 }
 
 class UserToken {
-    public connectionName: string;
-    public userId: string;
-    public channelId: string;
-    public token: string;
+    connectionName: string;
+    userId: string;
+    channelId: string;
+    token: string;
 
-    public equalsKey(rhs: UserToken): boolean {
+    equalsKey(rhs: UserToken): boolean {
         return (
             rhs &&
             this.connectionName === rhs.connectionName &&
@@ -710,18 +710,18 @@ class UserToken {
 }
 
 class TokenMagicCode {
-    public key: UserToken;
-    public magicCode: string;
+    key: UserToken;
+    magicCode: string;
 }
 
 class ExchangeableToken extends UserToken {
-    public exchangeableItem: string;
+    exchangeableItem: string;
 
-    public equalsKey(rhs: ExchangeableToken): boolean {
+    equalsKey(rhs: ExchangeableToken): boolean {
         return rhs != null && this.exchangeableItem === rhs.exchangeableItem && super.equalsKey(rhs);
     }
 
-    public toKey(): string {
+    toKey(): string {
         return this.exchangeableItem;
     }
 }
@@ -772,7 +772,7 @@ export class TestFlow {
      * @param description (Optional) Description of the test case. If not provided one will be generated.
      * @param timeout (Optional) number of milliseconds to wait for a response from bot. Defaults to a value of `3000`.
      */
-    public test(
+    test(
         userSays: string | Partial<Activity>,
         expected: string | Partial<Activity> | ((activity: Partial<Activity>, description?: string) => void),
         description?: string,
@@ -785,7 +785,7 @@ export class TestFlow {
      * Sends something to the bot.
      * @param userSays Text or activity simulating user input.
      */
-    public send(userSays: string | Partial<Activity>): TestFlow {
+    send(userSays: string | Partial<Activity>): TestFlow {
         return new TestFlow(
             this.previous.then(() => this.adapter.processActivity(userSays, this.callback)),
             this.adapter,
@@ -798,7 +798,7 @@ export class TestFlow {
      *
      * @returns {TestFlow} A new TestFlow object.
      */
-    public sendConversationUpdate(): TestFlow {
+    sendConversationUpdate(): TestFlow {
         return new TestFlow(
             this.previous.then(() => {
                 const cu = ActivityEx.createConversationUpdateActivity();
@@ -817,7 +817,7 @@ export class TestFlow {
      * @param description (Optional) Description of the test case. If not provided one will be generated.
      * @param timeout (Optional) number of milliseconds to wait for a response from bot. Defaults to a value of `3000`.
      */
-    public assertReply(
+    assertReply(
         expected: string | Partial<Activity> | TestActivityInspector,
         description?: string,
         timeout?: number
@@ -896,7 +896,7 @@ export class TestFlow {
      * @param description (Optional) Description of the test case. If not provided one will be generated.
      * @param timeout (Optional) number of milliseconds to wait for a response from bot. Defaults to a value of `3000`.
      */
-    public assertNoReply(description?: string, timeout?: number): TestFlow {
+    assertNoReply(description?: string, timeout?: number): TestFlow {
         return new TestFlow(
             this.previous.then(() => {
                 // tslint:disable-next-line:promise-must-complete
@@ -939,7 +939,7 @@ export class TestFlow {
      * @param description (Optional) Description of the test case. If not provided one will be generated.
      * @param timeout (Optional) number of milliseconds to wait for a response from bot. Defaults to a value of `3000`.
      */
-    public assertReplyOneOf(candidates: string[], description?: string, timeout?: number): TestFlow {
+    assertReplyOneOf(candidates: string[], description?: string, timeout?: number): TestFlow {
         return this.assertReply(
             (activity: Partial<Activity>, description2: string) => {
                 for (const candidate of candidates) {
@@ -962,7 +962,7 @@ export class TestFlow {
      * Inserts a delay before continuing.
      * @param ms ms to wait
      */
-    public delay(ms: number): TestFlow {
+    delay(ms: number): TestFlow {
         return new TestFlow(
             this.previous.then(() => {
                 return new Promise<void>((resolve: any, reject: any): void => {
@@ -978,16 +978,16 @@ export class TestFlow {
      * Adds a `then()` step to the tests promise chain.
      * @param onFulfilled Code to run if the test is currently passing.
      */
-    public then(onFulfilled?: () => void, onRejected?: (err) => void): TestFlow {
+    then(onFulfilled?: () => void, onRejected?: (err) => void): TestFlow {
         return new TestFlow(this.previous.then(onFulfilled, onRejected), this.adapter, this.callback);
     }
 
     /**
      * Adds a finally clause. Note that you can't keep chaining afterwards.
-     * @param onFinally 
-     * @returns 
+     * @param onFinally
+     * @returns
      */
-    public finally(onFinally: () => void): Promise<void> {
+    finally(onFinally: () => void): Promise<void> {
         return Promise.resolve(this.previous.finally(onFinally));
     }
 
@@ -995,14 +995,14 @@ export class TestFlow {
      * Adds a `catch()` clause to the tests promise chain.
      * @param onRejected Code to run if the test has thrown an error.
      */
-    public catch(onRejected?: (reason: any) => void): TestFlow {
+    catch(onRejected?: (reason: any) => void): TestFlow {
         return new TestFlow(this.previous.catch(onRejected), this.adapter, this.callback);
     }
 
     /**
      * Start the test sequence, returning a promise to await
      */
-    public startTest(): Promise<void> {
+    startTest(): Promise<void> {
         return this.previous;
     }
 }

@@ -117,7 +117,7 @@ export class ActivityFactory {
      * Generate the activity.
      * @param lgResult string result from languageGenerator.
      */
-    public static fromObject(lgResult: any): Partial<Activity> {
+    static fromObject(lgResult: any): Partial<Activity> {
         if (lgResult == null) {
             return { type: ActivityTypes.Message };
         }

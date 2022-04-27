@@ -207,7 +207,7 @@ export class TurnContext {
      * **See also**
      * - [removeMentionText](xref:botbuilder-core.TurnContext.removeMentionText)
      */
-    public static removeRecipientMention(activity: Partial<Activity>): string {
+    static removeRecipientMention(activity: Partial<Activity>): string {
         return TurnContext.removeMentionText(activity, activity.recipient.id);
     }
 
@@ -241,7 +241,7 @@ export class TurnContext {
      * **See also**
      * - [removeRecipientMention](xref:botbuilder-core.TurnContext.removeRecipientMention)
      */
-    public static removeMentionText(activity: Partial<Activity>, id: string): string {
+    static removeMentionText(activity: Partial<Activity>, id: string): string {
         const mentions = TurnContext.getMentions(activity);
         const mentionsFiltered = mentions.filter((mention): boolean => mention.mentioned.id === id);
         if (mentionsFiltered.length) {
@@ -266,7 +266,7 @@ export class TurnContext {
      * const mentions = TurnContext.getMentions(turnContext.request);
      * ```
      */
-    public static getMentions(activity: Partial<Activity>): Mention[] {
+    static getMentions(activity: Partial<Activity>): Mention[] {
         const result: Mention[] = [];
         if (activity.entities !== undefined) {
             for (let i = 0; i < activity.entities.length; i++) {
@@ -295,7 +295,7 @@ export class TurnContext {
      *
      * - [BotAdapter.continueConversation](xref:botbuilder-core.BotAdapter.continueConversation)
      */
-    public static getConversationReference(activity: Partial<Activity>): Partial<ConversationReference> {
+    static getConversationReference(activity: Partial<Activity>): Partial<ConversationReference> {
         return {
             activityId: getAppropriateReplyToId(activity),
             user: shallowCopy(activity.from),
@@ -321,7 +321,7 @@ export class TurnContext {
      * method on an incoming activity to get a conversation reference that you can then use
      * to update an outgoing activity with the correct delivery information.
      */
-    public static applyConversationReference(
+    static applyConversationReference(
         activity: Partial<Activity>,
         reference: Partial<ConversationReference>,
         isIncoming = false
@@ -369,7 +369,7 @@ export class TurnContext {
      * - [deleteActivity](xref:botbuilder-core.TurnContext.deleteActivity)
      * - [updateActivity](xref:botbuilder-core.TurnContext.updateActivity)
      */
-    public static getReplyConversationReference(
+    static getReplyConversationReference(
         activity: Partial<Activity>,
         reply: ResourceResponse
     ): Partial<ConversationReference> {
@@ -384,7 +384,7 @@ export class TurnContext {
     /**
      * List of activities to send when `context.activity.deliveryMode == 'expectReplies'`.
      */
-    public readonly bufferedReplyActivities: Partial<Activity>[] = [];
+    readonly bufferedReplyActivities: Partial<Activity>[] = [];
 
     /**
      * Asynchronously sends an activity to the sender of the incoming activity.
@@ -406,7 +406,7 @@ export class TurnContext {
      *
      * - [sendActivities](xref:botbuilder-core.TurnContext.sendActivities)
      */
-    public sendTraceActivity(
+    sendTraceActivity(
         name: string,
         value?: any,
         valueType?: string,
@@ -453,7 +453,7 @@ export class TurnContext {
      * - [updateActivity](xref:botbuilder-core.TurnContext.updateActivity)
      * - [deleteActivity](xref:botbuilder-core.TurnContext.deleteActivity)
      */
-    public async sendActivity(
+    async sendActivity(
         activityOrText: string | Partial<Activity>,
         speak?: string,
         inputHint?: string
@@ -500,7 +500,7 @@ export class TurnContext {
      * - [updateActivity](xref:botbuilder-core.TurnContext.updateActivity)
      * - [deleteActivity](xref:botbuilder-core.TurnContext.deleteActivity)
      */
-    public sendActivities(activities: Partial<Activity>[]): Promise<ResourceResponse[]> {
+    sendActivities(activities: Partial<Activity>[]): Promise<ResourceResponse[]> {
         let sentNonTraceActivity = false;
         const ref = TurnContext.getConversationReference(this.activity);
         const output = activities.map((activity) => {
@@ -580,7 +580,7 @@ export class TurnContext {
      * - [deleteActivity](xref:botbuilder-core.TurnContext.deleteActivity)
      * - [getReplyConversationReference](xref:botbuilder-core.TurnContext.getReplyConversationReference)
      */
-    public updateActivity(activity: Partial<Activity>): Promise<ResourceResponse | void> {
+    updateActivity(activity: Partial<Activity>): Promise<ResourceResponse | void> {
         const ref: Partial<ConversationReference> = TurnContext.getConversationReference(this.activity);
         const a: Partial<Activity> = TurnContext.applyConversationReference(activity, ref);
         return this.emit(this._onUpdateActivity, a, () => this.adapter.updateActivity(this, a));
@@ -610,7 +610,7 @@ export class TurnContext {
      * - [updateActivity](xref:botbuilder-core.TurnContext.updateActivity)
      * - [getReplyConversationReference](xref:botbuilder-core.TurnContext.getReplyConversationReference)
      */
-    public deleteActivity(idOrReference: string | Partial<ConversationReference>): Promise<void> {
+    deleteActivity(idOrReference: string | Partial<ConversationReference>): Promise<void> {
         let reference: Partial<ConversationReference>;
         if (typeof idOrReference === 'string') {
             reference = TurnContext.getConversationReference(this.activity);
@@ -647,7 +647,7 @@ export class TurnContext {
      * });
      * ```
      */
-    public onSendActivities(handler: SendActivitiesHandler): this {
+    onSendActivities(handler: SendActivitiesHandler): this {
         this._onSendActivities.push(handler);
 
         return this;
@@ -677,7 +677,7 @@ export class TurnContext {
      * });
      * ```
      */
-    public onUpdateActivity(handler: UpdateActivityHandler): this {
+    onUpdateActivity(handler: UpdateActivityHandler): this {
         this._onUpdateActivity.push(handler);
 
         return this;
@@ -707,7 +707,7 @@ export class TurnContext {
      * });
      * ```
      */
-    public onDeleteActivity(handler: DeleteActivityHandler): this {
+    onDeleteActivity(handler: DeleteActivityHandler): this {
         this._onDeleteActivity.push(handler);
 
         return this;
@@ -740,7 +740,7 @@ export class TurnContext {
     /**
      * Gets the bot adapter that created this context object.
      */
-    public get adapter(): BotAdapter {
+    get adapter(): BotAdapter {
         return this._adapter as BotAdapter;
     }
 
@@ -754,7 +754,7 @@ export class TurnContext {
      * const utterance = (context.activity.text || '').trim();
      * ```
      */
-    public get activity(): Activity {
+    get activity(): Activity {
         return this._activity as Activity;
     }
 
@@ -775,14 +775,14 @@ export class TurnContext {
      * }
      * ```
      */
-    public get responded(): boolean {
+    get responded(): boolean {
         return this._respondedRef.responded;
     }
 
     /**
      * Gets the locale stored in the turnState.
      */
-    public get locale(): string | undefined {
+    get locale(): string | undefined {
         const turnObj = this._turnState[this._turn];
         const locale = turnObj[this._locale];
         if (typeof locale === 'string') {
@@ -795,7 +795,7 @@ export class TurnContext {
     /**
      * Sets the locale stored in the turnState.
      */
-    public set locale(value: string | undefined) {
+    set locale(value: string | undefined) {
         const turnObj = this._turnState[this._turn];
         if (turnObj) {
             turnObj[this._locale] = value;
@@ -813,7 +813,7 @@ export class TurnContext {
      * update the responded flag. You can call this method directly to indicate that your bot has
      * responded appropriately to the incoming activity.
      */
-    public set responded(value: boolean) {
+    set responded(value: boolean) {
         if (!value) {
             throw new Error(`TurnContext: cannot set 'responded' to a value of 'false'.`);
         }
@@ -839,7 +839,7 @@ export class TurnContext {
      * > When creating middleware or a third-party component, use a unique symbol for your cache key
      * > to avoid state naming collisions with the bot or other middleware or components.
      */
-    public get turnState(): TurnContextStateCollection {
+    get turnState(): TurnContextStateCollection {
         return this._turnState;
     }
 

@@ -20,7 +20,7 @@ export abstract class QueueStorage {
      * @param {number} visibilityTimeout Visibility timeout in seconds. Optional with a default value of 0. Cannot be larger than 7 days.
      * @param {number} timeToLive Specifies the time-to-live interval for the message in seconds.
      */
-    public abstract queueActivity(
+    abstract queueActivity(
         activity: Partial<Activity>,
         visibilityTimeout?: number,
         timeToLive?: number
