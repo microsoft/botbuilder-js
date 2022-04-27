@@ -18,7 +18,7 @@ export class Sqrt extends ExpressionEvaluator {
     /**
      * Initializes a new instance of the [SortBy](xref:adaptive-expressions.Sqrt) class.
      */
-    public constructor() {
+    constructor() {
         super(ExpressionType.Sqrt, Sqrt.evaluator(), ReturnType.Number, FunctionUtils.validateUnaryNumber);
     }
 

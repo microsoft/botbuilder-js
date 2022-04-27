@@ -18,7 +18,7 @@ export class JsonStringify extends ExpressionEvaluator {
     /**
      * Initializes a new instance of the [JsonStringify](xref:adaptive-expressions.JsonStringify) class.
      */
-    public constructor() {
+    constructor() {
         super(ExpressionType.JsonStringify, JsonStringify.evaluator(), ReturnType.String, FunctionUtils.validateUnary);
     }
 

@@ -23,7 +23,7 @@ export class Not extends ExpressionEvaluator {
     /**
      * Initializes a new instance of the [Not](xref:adaptive-expressions.Not) class.
      */
-    public constructor() {
+    constructor() {
         super(ExpressionType.Not, Not.evaluator, ReturnType.Boolean, FunctionUtils.validateUnary);
     }
 

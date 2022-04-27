@@ -20,7 +20,7 @@ export class SubArray extends ExpressionEvaluator {
     /**
      * Initializes a new instance of the [SubArray](xref:adaptive-expressions.SubArray) class.
      */
-    public constructor() {
+    constructor() {
         super(ExpressionType.SubArray, SubArray.evaluator, ReturnType.Array, SubArray.validator);
     }
 

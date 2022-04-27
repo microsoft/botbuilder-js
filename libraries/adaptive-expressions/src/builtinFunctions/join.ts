@@ -21,7 +21,7 @@ export class Join extends ExpressionEvaluator {
     /**
      * Initializes a new instance of the Join class.
      */
-    public constructor() {
+    constructor() {
         super(ExpressionType.Join, Join.evaluator, ReturnType.String, Join.validator);
     }
 

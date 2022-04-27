@@ -18,7 +18,7 @@ export class Min extends ExpressionEvaluator {
     /**
      * Initializes a new instance of the [Min](xref:adaptive-expressions.Min) class.
      */
-    public constructor() {
+    constructor() {
         super(ExpressionType.Min, Min.evaluator(), ReturnType.Number, FunctionUtils.validateAtLeastOne);
     }
 
