@@ -25,7 +25,7 @@ export class AddToTime extends ExpressionEvaluator {
     /**
      * Initializes a new instance of the [AddToTime](xref:adaptive-expressions.AddToTime) class.
      */
-    public constructor() {
+    constructor() {
         super(ExpressionType.AddToTime, AddToTime.evaluator, ReturnType.String, AddToTime.validator);
     }
 

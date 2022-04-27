@@ -19,7 +19,7 @@ export class First extends ExpressionEvaluator {
     /**
      * Initializes a new instance of the [First](xref:adaptive-expressions.First) class.
      */
-    public constructor() {
+    constructor() {
         super(ExpressionType.First, First.evaluator(), ReturnType.Object, FunctionUtils.validateUnary);
     }
 

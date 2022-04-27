@@ -19,7 +19,7 @@ export class DayOfMonth extends ExpressionEvaluator {
     /**
      * Initializes a new instance of the [DayOfMonth](xref:adaptive-expressions.DayOfMonth) class.
      */
-    public constructor() {
+    constructor() {
         super(ExpressionType.DayOfMonth, DayOfMonth.evaluator(), ReturnType.Number, FunctionUtils.validateUnaryString);
     }
 

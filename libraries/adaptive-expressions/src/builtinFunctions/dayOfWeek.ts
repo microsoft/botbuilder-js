@@ -19,7 +19,7 @@ export class DayOfWeek extends ExpressionEvaluator {
     /**
      * Initializes a new instance of the [DayOfWeek](xref:adaptive-expressions.DayOfWeek) class.
      */
-    public constructor() {
+    constructor() {
         super(ExpressionType.DayOfWeek, DayOfWeek.evaluator(), ReturnType.Number, FunctionUtils.validateUnaryString);
     }
 

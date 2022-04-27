@@ -24,7 +24,7 @@ export class IsDateRange extends ExpressionEvaluator {
     /**
      * Initializes a new instance of the [IsDateRange](xref:adaptive-expressions.IsDateRange) class.
      */
-    public constructor() {
+    constructor() {
         super(ExpressionType.IsDateRange, IsDateRange.evaluator, ReturnType.Boolean, FunctionUtils.validateUnary);
     }
 

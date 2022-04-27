@@ -18,7 +18,7 @@ export class IsArray extends ExpressionEvaluator {
     /**
      * Initializes a new instance of the [IsArray](xref:adaptive-expressions.IsArray) class.
      */
-    public constructor() {
+    constructor() {
         super(ExpressionType.IsArray, IsArray.evaluator(), ReturnType.Boolean, FunctionUtils.validateUnary);
     }
 
