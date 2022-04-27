@@ -85,7 +85,7 @@ export class SimpleCredentialProvider implements ICredentialProvider {
      * @param {string} appId bot appid
      * @returns {Promise<boolean>} true if it is a valid AppId
      */
-    public isValidAppId(appId: string): Promise<boolean> {
+    isValidAppId(appId: string): Promise<boolean> {
         return Promise.resolve(this.appId === appId);
     }
 
@@ -98,7 +98,7 @@ export class SimpleCredentialProvider implements ICredentialProvider {
      * @param {string} appId bot appid
      * @returns {Promise<string|null>} password or null for invalid appid
      */
-    public getAppPassword(appId: string): Promise<string | null> {
+    getAppPassword(appId: string): Promise<string | null> {
         return Promise.resolve(this.appId === appId ? this.appPassword : null);
     }
 
@@ -111,7 +111,7 @@ export class SimpleCredentialProvider implements ICredentialProvider {
      *
      * @returns {Promise<boolean>} true if bot authentication is disabled.
      */
-    public isAuthenticationDisabled(): Promise<boolean> {
+    isAuthenticationDisabled(): Promise<boolean> {
         return Promise.resolve(!this.appId);
     }
 }

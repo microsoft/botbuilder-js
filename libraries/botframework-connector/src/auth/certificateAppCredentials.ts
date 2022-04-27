@@ -13,8 +13,8 @@ import { AppCredentials } from './appCredentials';
  * CertificateAppCredentials auth implementation
  */
 export class CertificateAppCredentials extends AppCredentials {
-    public certificateThumbprint: string;
-    public certificatePrivateKey: string;
+    certificateThumbprint: string;
+    certificatePrivateKey: string;
 
     /**
      * Initializes a new instance of the [CertificateAppCredentials](xref:botframework-connector.CertificateAppCredentials) class.
