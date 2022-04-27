@@ -23,7 +23,7 @@ import { teamsGetTeamId } from './teamsActivityHelpers';
 
 /** @private */
 class TraceActivity {
-    public static makeCommandActivity(command: string): Partial<Activity> {
+    static makeCommandActivity(command: string): Partial<Activity> {
         return {
             type: ActivityTypes.Trace,
             timestamp: new Date(),
@@ -34,7 +34,7 @@ class TraceActivity {
         };
     }
 
-    public static fromActivity(activity: Activity | Partial<Activity>, name: string, label: string): Partial<Activity> {
+    static fromActivity(activity: Activity | Partial<Activity>, name: string, label: string): Partial<Activity> {
         return {
             type: ActivityTypes.Trace,
             timestamp: new Date(),
@@ -45,7 +45,7 @@ class TraceActivity {
         };
     }
 
-    public static fromState(botState: BotState): Partial<Activity> {
+    static fromState(botState: BotState): Partial<Activity> {
         return {
             type: ActivityTypes.Trace,
             timestamp: new Date(),
@@ -56,7 +56,7 @@ class TraceActivity {
         };
     }
 
-    public static fromConversationReference(conversationReference: Partial<ConversationReference>): Partial<Activity> {
+    static fromConversationReference(conversationReference: Partial<ConversationReference>): Partial<Activity> {
         return {
             type: ActivityTypes.Trace,
             timestamp: new Date(),
@@ -67,7 +67,7 @@ class TraceActivity {
         };
     }
 
-    public static fromError(errorMessage: string): Partial<Activity> {
+    static fromError(errorMessage: string): Partial<Activity> {
         return {
             type: ActivityTypes.Trace,
             timestamp: new Date(),
@@ -87,7 +87,7 @@ abstract class InterceptionMiddleware implements Middleware {
      * @param turnContext {TurnContext} An incoming TurnContext object.
      * @param next {function} The next delegate function.
      */
-    public async onTurn(turnContext: TurnContext, next: () => Promise<void>): Promise<void> {
+    async onTurn(turnContext: TurnContext, next: () => Promise<void>): Promise<void> {
         const { shouldForwardToApplication, shouldIntercept } = await this.invokeInbound(
             turnContext,
             TraceActivity.fromActivity(turnContext.activity, 'ReceivedActivity', 'Received Activity')
@@ -210,7 +210,7 @@ export class InspectionMiddleware extends InterceptionMiddleware {
      * @param turnContext The [TurnContext](xref:botbuilder-core.TurnContext) for this turn.
      * @returns True if the command is open or attached, otherwise false.
      */
-    public async processCommand(turnContext: TurnContext): Promise<any> {
+    async processCommand(turnContext: TurnContext): Promise<any> {
         if (turnContext.activity.type == ActivityTypes.Message && turnContext.activity.text !== undefined) {
             const originalText = turnContext.activity.text;
             TurnContext.removeRecipientMention(turnContext.activity);
@@ -417,7 +417,7 @@ class InspectionSession {
         this.connectorClient = new ConnectorClient(credentials, { baseUri: conversationReference.serviceUrl });
     }
 
-    public async send(activity: Partial<Activity>): Promise<any> {
+    async send(activity: Partial<Activity>): Promise<any> {
         TurnContext.applyConversationReference(activity, this.conversationReference);
 
         try {
@@ -432,11 +432,11 @@ class InspectionSession {
 
 /** @private */
 class InspectionSessionsByStatus {
-    public static DefaultValue: InspectionSessionsByStatus = new InspectionSessionsByStatus();
+    static DefaultValue: InspectionSessionsByStatus = new InspectionSessionsByStatus();
 
-    public openedSessions: { [id: string]: Partial<ConversationReference> } = {};
+    openedSessions: { [id: string]: Partial<ConversationReference> } = {};
 
-    public attachedSessions: { [id: string]: Partial<ConversationReference> } = {};
+    attachedSessions: { [id: string]: Partial<ConversationReference> } = {};
 }
 
 /**

@@ -43,7 +43,7 @@ export class TeamsInfo {
      * @param tenantId The tenant ID to use when scoping the request
      * @returns The [TeamsMeetingParticipant](xref:botbuilder-core.TeamsMeetingParticipant) fetched
      */
-    public static async getMeetingParticipant(
+    static async getMeetingParticipant(
         context: TurnContext,
         meetingId?: string,
         participantId?: string,
@@ -92,7 +92,7 @@ export class TeamsInfo {
      * @param meetingId The BASE64-encoded id of the Teams meeting.
      * @returns The [TeamsMeetingInfo](xref:botbuilder-core.TeamsMeetingInfo) fetched
      */
-    public static async getMeetingInfo(context: TurnContext, meetingId?: string): Promise<TeamsMeetingInfo> {
+    static async getMeetingInfo(context: TurnContext, meetingId?: string): Promise<TeamsMeetingInfo> {
         if (!context) {
             throw new Error('context is required.');
         }
@@ -118,7 +118,7 @@ export class TeamsInfo {
      * @param teamId The id of the Teams team.
      * @returns The [TeamDetails](xref:botbuilder-core.TeamDetails) fetched
      */
-    public static async getTeamDetails(context: TurnContext, teamId?: string): Promise<TeamDetails> {
+    static async getTeamDetails(context: TurnContext, teamId?: string): Promise<TeamDetails> {
         const t = teamId || this.getTeamId(context);
         if (!t) {
             throw new Error('This method is only valid within the scope of a MS Teams Team.');
@@ -136,7 +136,7 @@ export class TeamsInfo {
      * @param botAppId The bot's appId. This is only used when context.adapter is an instance of CloudAdapter.
      * @returns The [ConversationReference](xref:botframework-schema.ConversationReference) and the id of the [Activity](xref:botframework-schema.Activity) (if sent).
      */
-    public static async sendMessageToTeamsChannel(
+    static async sendMessageToTeamsChannel(
         context: TurnContext,
         activity: Activity,
         teamsChannelId: string,
@@ -199,7 +199,7 @@ export class TeamsInfo {
      * @param teamId ID of the Teams team.
      * @returns The list of [ChannelInfo](xref:botframework-schema.ChannelInfo) objects with the conversations.
      */
-    public static async getTeamChannels(context: TurnContext, teamId?: string): Promise<ChannelInfo[]> {
+    static async getTeamChannels(context: TurnContext, teamId?: string): Promise<ChannelInfo[]> {
         const t = teamId || this.getTeamId(context);
         if (!t) {
             throw new Error('This method is only valid within the scope of a MS Teams Team.');
@@ -217,7 +217,7 @@ export class TeamsInfo {
      *
      * @deprecated Use `getPagedTeamMembers` instead.
      */
-    public static async getMembers(context: TurnContext): Promise<TeamsChannelAccount[]> {
+    static async getMembers(context: TurnContext): Promise<TeamsChannelAccount[]> {
         const teamId = this.getTeamId(context);
         if (teamId) {
             return await this.getTeamMembers(context, teamId);
@@ -236,7 +236,7 @@ export class TeamsInfo {
      * @param continuationToken A continuation token.
      * @returns The [TeamsPagedMembersResult](xref:botframework-schema.TeamsPagedMembersResult) with the list of members.
      */
-    public static async getPagedMembers(
+    static async getPagedMembers(
         context: TurnContext,
         pageSize?: number,
         continuationToken?: string
@@ -262,7 +262,7 @@ export class TeamsInfo {
      * @param userId ID of the user in question.
      * @returns The [TeamsChannelAccount](xref:botframework-schema.TeamsChannelAccount) of the member.
      */
-    public static async getMember(context: TurnContext, userId: string): Promise<TeamsChannelAccount> {
+    static async getMember(context: TurnContext, userId: string): Promise<TeamsChannelAccount> {
         const teamId = this.getTeamId(context);
         if (teamId) {
             return await this.getTeamMember(context, teamId, userId);
@@ -282,7 +282,7 @@ export class TeamsInfo {
      *
      * @deprecated Use `getPagedTeamMembers` instead.
      */
-    public static async getTeamMembers(context: TurnContext, teamId?: string): Promise<TeamsChannelAccount[]> {
+    static async getTeamMembers(context: TurnContext, teamId?: string): Promise<TeamsChannelAccount[]> {
         const t = teamId || this.getTeamId(context);
         if (!t) {
             throw new Error('This method is only valid within the scope of a MS Teams Team.');
@@ -299,7 +299,7 @@ export class TeamsInfo {
      * @param continuationToken The continuationToken token.
      * @returns A [TeamsPagedMembersResult](xref:botframework-schema.TeamsPagedMembersResult) with the list of members.
      */
-    public static async getPagedTeamMembers(
+    static async getPagedTeamMembers(
         context: TurnContext,
         teamId?: string,
         pageSize?: number,
@@ -325,7 +325,7 @@ export class TeamsInfo {
      * @param userId ID of the Teams user.
      * @returns The [TeamsChannelAccount](xref:botframework-schema.TeamsChannelAccount) of the member.
      */
-    public static async getTeamMember(
+    static async getTeamMember(
         context: TurnContext,
         teamId?: string,
         userId?: string

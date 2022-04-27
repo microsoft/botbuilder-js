@@ -21,7 +21,7 @@ export class CloudSkillHandler extends CloudChannelServiceHandler {
     /**
      * Used to access the CovnersationReference sent from the Skill to the Parent.
      */
-    public readonly SkillConversationReferenceKey = SkillConversationReferenceKey;
+    readonly SkillConversationReferenceKey = SkillConversationReferenceKey;
 
     // Delegate that implements actual logic
     private readonly inner: SkillHandlerImpl;
@@ -34,7 +34,7 @@ export class CloudSkillHandler extends CloudChannelServiceHandler {
      * @param conversationIdFactory A SkillConversationIdFactoryBase to unpack the conversation ID and map it to the calling bot.
      * @param auth Bot Framework Authentication to use
      */
-    public constructor(
+    constructor(
         adapter: BotAdapter,
         logic: (context: TurnContext) => Promise<void>,
         conversationIdFactory: SkillConversationIdFactoryBase,

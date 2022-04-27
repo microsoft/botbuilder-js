@@ -118,7 +118,7 @@ export class FileTranscriptStore implements TranscriptStore {
      * @param activity Activity being logged.
      * @returns {Promise<void>} a promise representing the asynchronous operation.
      */
-    public async logActivity(activity: Activity): Promise<void> {
+    async logActivity(activity: Activity): Promise<void> {
         if (!activity) {
             throw new Error('activity cannot be null for logActivity()');
         }
@@ -138,7 +138,7 @@ export class FileTranscriptStore implements TranscriptStore {
      * @param startDate (Optional) Earliest time to include.
      * @returns {Promise<PagedResult<Activity>>} PagedResult of activities.
      */
-    public async getTranscriptActivities(
+    async getTranscriptActivities(
         channelId: string,
         conversationId: string,
         continuationToken?: string,
@@ -189,7 +189,7 @@ export class FileTranscriptStore implements TranscriptStore {
      * @param continuationToken (Optional) Continuation token to page through results.
      * @returns {Promise<PagedResult<TranscriptInfo>>} PagedResult of transcripts.
      */
-    public async listTranscripts(channelId: string, continuationToken?: string): Promise<PagedResult<TranscriptInfo>> {
+    async listTranscripts(channelId: string, continuationToken?: string): Promise<PagedResult<TranscriptInfo>> {
         if (!channelId) {
             throw new Error('Missing channelId');
         }
@@ -221,7 +221,7 @@ export class FileTranscriptStore implements TranscriptStore {
      * @param conversationId Id of the conversation to delete.
      * @returns {Promise<void>} A promise representing the asynchronous operation.
      */
-    public async deleteTranscript(channelId: string, conversationId: string): Promise<void> {
+    async deleteTranscript(channelId: string, conversationId: string): Promise<void> {
         if (!channelId) {
             throw new Error('Missing channelId');
         }

@@ -796,7 +796,7 @@ export class TeamsActivityHandler extends ActivityHandler {
      * @param handler A callback to handle the teams members added event.
      * @returns A promise that represents the work queued.
      */
-    public onTeamsMembersAddedEvent(
+    onTeamsMembersAddedEvent(
         handler: (
             membersAdded: TeamsChannelAccount[],
             teamInfo: TeamInfo,
@@ -817,7 +817,7 @@ export class TeamsActivityHandler extends ActivityHandler {
      * @param handler A callback to handle the teams members removed event.
      * @returns A promise that represents the work queued.
      */
-    public onTeamsMembersRemovedEvent(
+    onTeamsMembersRemovedEvent(
         handler: (
             membersRemoved: TeamsChannelAccount[],
             teamInfo: TeamInfo,
@@ -837,7 +837,7 @@ export class TeamsActivityHandler extends ActivityHandler {
      * @param handler A callback to handle the teams channel created event.
      * @returns A promise that represents the work queued.
      */
-    public onTeamsChannelCreatedEvent(
+    onTeamsChannelCreatedEvent(
         handler: (
             channelInfo: ChannelInfo,
             teamInfo: TeamInfo,
@@ -857,7 +857,7 @@ export class TeamsActivityHandler extends ActivityHandler {
      * @param handler A callback to handle the teams channel deleted event.
      * @returns A promise that represents the work queued.
      */
-    public onTeamsChannelDeletedEvent(
+    onTeamsChannelDeletedEvent(
         handler: (
             channelInfo: ChannelInfo,
             teamInfo: TeamInfo,
@@ -877,7 +877,7 @@ export class TeamsActivityHandler extends ActivityHandler {
      * @param handler A callback to handle the teams channel renamed event.
      * @returns A promise that represents the work queued.
      */
-    public onTeamsChannelRenamedEvent(
+    onTeamsChannelRenamedEvent(
         handler: (
             channelInfo: ChannelInfo,
             teamInfo: TeamInfo,
@@ -897,7 +897,7 @@ export class TeamsActivityHandler extends ActivityHandler {
      * @param handler A callback to handle the teams team archived event.
      * @returns A promise that represents the work queued.
      */
-    public onTeamsTeamArchivedEvent(
+    onTeamsTeamArchivedEvent(
         handler: (teamInfo: TeamInfo, context: TurnContext, next: () => Promise<void>) => Promise<void>
     ): this {
         return this.on('TeamsTeamArchived', async (context, next) => {
@@ -912,7 +912,7 @@ export class TeamsActivityHandler extends ActivityHandler {
      * @param handler A callback to handle the teams team deleted event.
      * @returns A promise that represents the work queued.
      */
-    public onTeamsTeamDeletedEvent(
+    onTeamsTeamDeletedEvent(
         handler: (teamInfo: TeamInfo, context: TurnContext, next: () => Promise<void>) => Promise<void>
     ): this {
         return this.on('TeamsTeamDeleted', async (context, next) => {
@@ -927,7 +927,7 @@ export class TeamsActivityHandler extends ActivityHandler {
      * @param handler A callback to handle the teams team hard deleted event.
      * @returns A promise that represents the work queued.
      */
-    public onTeamsTeamHardDeletedEvent(
+    onTeamsTeamHardDeletedEvent(
         handler: (teamInfo: TeamInfo, context: TurnContext, next: () => Promise<void>) => Promise<void>
     ): this {
         return this.on('TeamsTeamHardDeleted', async (context, next) => {
@@ -942,7 +942,7 @@ export class TeamsActivityHandler extends ActivityHandler {
      * @param handler A callback to handle the teams channel restored event.
      * @returns A promise that represents the work queued.
      */
-    public onTeamsChannelRestoredEvent(
+    onTeamsChannelRestoredEvent(
         handler: (
             channelInfo: ChannelInfo,
             teamInfo: TeamInfo,
@@ -962,7 +962,7 @@ export class TeamsActivityHandler extends ActivityHandler {
      * @param handler A callback to handle the teams team renamed event.
      * @returns A promise that represents the work queued.
      */
-    public onTeamsTeamRenamedEvent(
+    onTeamsTeamRenamedEvent(
         handler: (teamInfo: TeamInfo, context: TurnContext, next: () => Promise<void>) => Promise<void>
     ): this {
         return this.on('TeamsTeamRenamed', async (context, next) => {
@@ -977,7 +977,7 @@ export class TeamsActivityHandler extends ActivityHandler {
      * @param handler A callback to handle the teams team restored event.
      * @returns A promise that represents the work queued.
      */
-    public onTeamsTeamRestoredEvent(
+    onTeamsTeamRestoredEvent(
         handler: (teamInfo: TeamInfo, context: TurnContext, next: () => Promise<void>) => Promise<void>
     ): this {
         return this.on('TeamsTeamRestored', async (context, next) => {
@@ -992,7 +992,7 @@ export class TeamsActivityHandler extends ActivityHandler {
      * @param handler A callback to handle the teams team unarchived event.
      * @returns A promise that represents the work queued.
      */
-    public onTeamsTeamUnarchivedEvent(
+    onTeamsTeamUnarchivedEvent(
         handler: (teamInfo: TeamInfo, context: TurnContext, next: () => Promise<void>) => Promise<void>
     ): this {
         return this.on('TeamsTeamUnarchived', async (context, next) => {
@@ -1054,7 +1054,7 @@ export class TeamsActivityHandler extends ActivityHandler {
      * @param handler A callback that handles Meeting Start events.
      * @returns A promise that represents the work queued.
      */
-    public onTeamsMeetingStartEvent(
+    onTeamsMeetingStartEvent(
         handler: (meeting: MeetingStartEventDetails, context: TurnContext, next: () => Promise<void>) => Promise<void>
     ): this {
         return this.on('TeamsMeetingStart', async (context, next) => {
@@ -1079,7 +1079,7 @@ export class TeamsActivityHandler extends ActivityHandler {
      * @param handler A callback that handles Meeting End events.
      * @returns A promise that represents the work queued.
      */
-    public onTeamsMeetingEndEvent(
+    onTeamsMeetingEndEvent(
         handler: (meeting: MeetingEndEventDetails, context: TurnContext, next: () => Promise<void>) => Promise<void>
     ): this {
         return this.on('TeamsMeetingEnd', async (context, next) => {
