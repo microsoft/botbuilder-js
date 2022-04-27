@@ -32,7 +32,7 @@ export class AliasPathResolver implements PathResolver {
      * @param path Path to inspect.
      * @returns The transformed path.
      */
-    public transformPath(path: string): string {
+    transformPath(path: string): string {
         const start = path.indexOf(this.alias);
         if (start == 0) {
             // here we only deals with trailing alias, alias in middle be handled in further breakdown

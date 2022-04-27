@@ -16,7 +16,7 @@ export abstract class Configurable {
      * Fluent method for configuring the object.
      * @param config Configuration settings to apply.
      */
-    public configure(config: Record<string, unknown>): this {
+    configure(config: Record<string, unknown>): this {
         for (const key in config) {
             if (Object.prototype.hasOwnProperty.call(config, key)) {
                 const setting = config[`${key}`];
@@ -46,7 +46,7 @@ export abstract class Configurable {
         return this;
     }
 
-    public getConverter(_property: string): Converter | ConverterFactory {
+    getConverter(_property: string): Converter | ConverterFactory {
         return undefined;
     }
 }
