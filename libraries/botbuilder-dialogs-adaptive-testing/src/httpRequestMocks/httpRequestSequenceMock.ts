@@ -50,32 +50,32 @@ export class HttpRequestSequenceMock extends HttpRequestMock implements HttpRequ
     /**
      * Gets or sets the http method to match. Match to any method if not defined.
      */
-    public method: HttpMethod;
+    method: HttpMethod;
 
     /**
      * Gets or sets the url to match.
      */
-    public url: string;
+    url: string;
 
     /**
      * Gets or sets the match type for body.
      */
-    public matchType = BodyMatchType.Partial;
+    matchType = BodyMatchType.Partial;
 
     /**
      * Gets or sets the body to match against request's body.
      */
-    public body = '';
+    body = '';
 
     /**
      * Gets the sequence of responses to reply. The last one will be repeated.
      */
-    public responses: HttpResponseMock[] = [];
+    responses: HttpResponseMock[] = [];
 
     /**
      * Configures the initial conditions.
      */
-    public setup(): void {
+    setup(): void {
         if (this.body && (this.method === HttpMethod.DELETE || this.method === HttpMethod.GET)) {
             throw new Error("GET and DELETE don't support matching body!");
         }

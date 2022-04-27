@@ -25,19 +25,19 @@ export interface AssertConditionConfiguration extends DialogConfiguration {
  * Dialog action which allows you to add assertions into your dialog flow.
  */
 export class AssertCondition<O extends object = {}> extends Dialog<O> implements AssertConditionConfiguration {
-    public static $kind = 'Microsoft.Test.AssertCondition';
+    static $kind = 'Microsoft.Test.AssertCondition';
 
     /**
      * Condition which must be true.
      */
-    public condition: Expression;
+    condition: Expression;
 
     /**
      * Description of assertion.
      */
-    public description: StringExpression;
+    description: StringExpression;
 
-    public getConverter(property: keyof AssertConditionConfiguration): Converter | ConverterFactory {
+    getConverter(property: keyof AssertConditionConfiguration): Converter | ConverterFactory {
         switch (property) {
             case 'condition':
                 return new ExpressionConverter();
@@ -54,7 +54,7 @@ export class AssertCondition<O extends object = {}> extends Dialog<O> implements
      * @param options Additional information to pass to the prompt being started.
      * @returns A Promise representing the asynchronous operation.
      */
-    public async beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult> {
+    async beginDialog(dc: DialogContext, options?: O): Promise<DialogTurnResult> {
         const { value } = this.condition.tryEvaluate(dc.state);
         if (!value) {
             let desc = this.description && this.description.getValue(dc.state);

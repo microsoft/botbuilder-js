@@ -21,7 +21,7 @@ export class TestUtils {
      * @param configuration Test configuration.
      * @param middlewares Middlewares to be added in test.
      */
-    public static async runTestScript(
+    static async runTestScript(
         resourceExplorer: ResourceExplorer,
         testName?: string,
         adapter?: TestAdapter,
