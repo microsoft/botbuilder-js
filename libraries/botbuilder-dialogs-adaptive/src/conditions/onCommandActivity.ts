@@ -14,7 +14,7 @@ import { OnActivity } from './onActivity';
  * Actions triggered when a Command activity is received.
  */
 export class OnCommandActivity extends OnActivity {
-    public static $kind = 'Microsoft.OnCommandActivity';
+    static $kind = 'Microsoft.OnCommandActivity';
 
     /**
      * Intiializes a new instance of the [OnCommandActivity](xref:botbuilder-dialogs-adaptive.OnCommandActivity) class.
@@ -22,7 +22,7 @@ export class OnCommandActivity extends OnActivity {
      * @param actions Optional, list of actions.
      * @param condition Optional, condition which needs to be met for the actions to be executed.
      */
-    public constructor(actions?: Dialog[], condition?: string) {
+    constructor(actions?: Dialog[], condition?: string) {
         super(ActivityTypes.Command, actions, condition);
     }
 }

@@ -57,7 +57,7 @@ export interface ChoiceInputConfiguration extends InputDialogConfiguration {
  * ChoiceInput - Declarative input to gather choices from user.
  */
 export class ChoiceInput extends InputDialog implements ChoiceInputConfiguration {
-    public static $kind = 'Microsoft.ChoiceInput';
+    static $kind = 'Microsoft.ChoiceInput';
 
     /**
      * Default options for rendering the choices to the user based on locale.
@@ -76,7 +76,7 @@ export class ChoiceInput extends InputDialog implements ChoiceInputConfiguration
     /**
      * List of choices to present to user.
      */
-    public choices: ObjectExpression<ChoiceSet> = new ObjectExpression();
+    choices: ObjectExpression<ChoiceSet> = new ObjectExpression();
 
     /**
      * Style of the "yes" and "no" choices rendered to the user when prompting.
@@ -84,17 +84,17 @@ export class ChoiceInput extends InputDialog implements ChoiceInputConfiguration
      * @remarks
      * Defaults to `ListStyle.auto`.
      */
-    public style: EnumExpression<ListStyle> = new EnumExpression<ListStyle>(ListStyle.auto);
+    style: EnumExpression<ListStyle> = new EnumExpression<ListStyle>(ListStyle.auto);
 
     /**
      * The prompts default locale that should be recognized.
      */
-    public defaultLocale?: StringExpression;
+    defaultLocale?: StringExpression;
 
     /**
      * Control the format of the response (value or index of the choice).
      */
-    public outputFormat: EnumExpression<ChoiceOutputFormat> = new EnumExpression<ChoiceOutputFormat>(
+    outputFormat: EnumExpression<ChoiceOutputFormat> = new EnumExpression<ChoiceOutputFormat>(
         ChoiceOutputFormat.value
     );
 
@@ -102,18 +102,18 @@ export class ChoiceInput extends InputDialog implements ChoiceInputConfiguration
      * Additional options passed to the `ChoiceFactory` and used to tweak the style of choices
      * rendered to the user.
      */
-    public choiceOptions?: ObjectExpression<ChoiceFactoryOptions> = new ObjectExpression();
+    choiceOptions?: ObjectExpression<ChoiceFactoryOptions> = new ObjectExpression();
 
     /**
      * Additional options passed to the underlying `recognizeChoices()` function.
      */
-    public recognizerOptions?: ObjectExpression<FindChoicesOptions> = new ObjectExpression();
+    recognizerOptions?: ObjectExpression<FindChoicesOptions> = new ObjectExpression();
 
     /**
      * @param property The key of the conditional selector configuration.
      * @returns The converter for the selector configuration.
      */
-    public getConverter(property: keyof ChoiceInputConfiguration): Converter | ConverterFactory {
+    getConverter(property: keyof ChoiceInputConfiguration): Converter | ConverterFactory {
         switch (property) {
             case 'choices':
                 return new ObjectExpressionConverter<ChoiceSet>();

@@ -13,7 +13,7 @@ import { OnEventActivity } from './onEventActivity';
  * Actions triggered when an EventActivity is received.
  */
 export class OnContinueConversation extends OnEventActivity {
-    public static $kind = 'Microsoft.OnContinueConversation';
+    static $kind = 'Microsoft.OnContinueConversation';
 
     /**
      * Initializes a new instance of the [OnContinueConversation](xref:botbuilder-dialogs-adaptive.OnContinueConversation) class.
@@ -21,7 +21,7 @@ export class OnContinueConversation extends OnEventActivity {
      * @param {Dialog[]} actions Optional, actions to add to the plan when the rule constraints are met.
      * @param {string} condition Optional, ondition which needs to be met for the actions to be executed.
      */
-    public constructor(actions: Dialog[] = [], condition?: string) {
+    constructor(actions: Dialog[] = [], condition?: string) {
         super(actions, condition);
     }
 

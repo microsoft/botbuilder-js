@@ -23,13 +23,13 @@ export interface TemplateEngineLanguageGeneratorConfiguration {
 export class TemplateEngineLanguageGenerator<T = unknown, D extends Record<string, unknown> = Record<string, unknown>>
     extends Configurable
     implements LanguageGenerator<T, D>, TemplateEngineLanguageGeneratorConfiguration {
-    public static $kind = 'Microsoft.TemplateEngineLanguageGenerator';
+    static $kind = 'Microsoft.TemplateEngineLanguageGenerator';
 
     private readonly DEFAULTLABEL: string = 'Unknown';
 
     private lg: Templates;
 
-    public id = '';
+    id = '';
 
     /**
      * Initializes a new instance of the [TemplateEngineLanguageGenerator](xref:botbuilder-dialogs-adaptive.TemplateEngineLanguageGenerator) class.
@@ -37,7 +37,7 @@ export class TemplateEngineLanguageGenerator<T = unknown, D extends Record<strin
      * @param arg1 Optional. An LG [Templates](xref:botbuilder-lg.Templates) or a [Resource](xref:botbuilder-dialogs-declarative.Resource).
      * @param arg2 Optional. A `Map` object with a `Resource` array for each key.
      */
-    public constructor(arg1?: Templates | Resource, arg2?: Map<string, Resource[]>) {
+    constructor(arg1?: Templates | Resource, arg2?: Map<string, Resource[]>) {
         super();
 
         if (arguments.length === 0) {
@@ -62,7 +62,7 @@ export class TemplateEngineLanguageGenerator<T = unknown, D extends Record<strin
      * @param data Data to bind to.
      * @returns A Promise string with the evaluated result.
      */
-    public generate(dialogContext: DialogContext, template: string, data: D): Promise<T> {
+    generate(dialogContext: DialogContext, template: string, data: D): Promise<T> {
         try {
             const lgOptions = new EvaluationOptions();
             lgOptions.locale = dialogContext.getLocale();
