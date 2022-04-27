@@ -39,7 +39,7 @@ export class EntityAssignmentComparer {
      * @param y Second entity assigment to compare.
      * @returns Numerical value representing x's relative priority.
      */
-    public compare(x: Partial<EntityAssignment>, y: Partial<EntityAssignment>): number {
+    compare(x: Partial<EntityAssignment>, y: Partial<EntityAssignment>): number {
         // Order by event.
         let comparison: number =
             EntityAssignmentComparer.eventPreference.indexOf(x.event) -

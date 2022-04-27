@@ -27,7 +27,7 @@ export class ActionContext extends DialogContext {
      * @param actions Current list of remaining actions to execute.
      * @param changeKey TurnState key for where to persist any changes.
      */
-    public constructor(
+    constructor(
         dialogs: DialogSet,
         parentDialogContext: DialogContext,
         state: DialogState,
@@ -42,14 +42,14 @@ export class ActionContext extends DialogContext {
     /**
      * List of actions being executed.
      */
-    public actions: ActionState[];
+    actions: ActionState[];
 
     /**
      * Gets list of changes that are queued to be applied.
      *
      * @returns The list of changes queued.
      */
-    public get changes(): ActionChangeList[] {
+    get changes(): ActionChangeList[] {
         return this.context.turnState.get(this._changeKey) || [];
     }
 
@@ -58,7 +58,7 @@ export class ActionContext extends DialogContext {
      *
      * @param changes Plan changes to queue up.
      */
-    public queueChanges(changes: ActionChangeList): void {
+    queueChanges(changes: ActionChangeList): void {
         const queue = this.changes;
         queue.push(changes);
         this.context.turnState.set(this._changeKey, queue);
@@ -69,7 +69,7 @@ export class ActionContext extends DialogContext {
      *
      * @returns True if there were any changes to apply.
      */
-    public async applyChanges(): Promise<boolean> {
+    async applyChanges(): Promise<boolean> {
         // Retrieve queued change list
         const changes = this.changes;
         if (changes.length > 0) {
