@@ -22,7 +22,7 @@ export class ArrayExpression<T> extends ExpressionProperty<T[]> {
      *
      * @param value Value of `T[]` or a `string` expression to bind to a `T[]`.
      */
-    public constructor(value?: T[] | string | Expression) {
+    constructor(value?: T[] | string | Expression) {
         super(value);
     }
 
@@ -31,7 +31,7 @@ export class ArrayExpression<T> extends ExpressionProperty<T[]> {
      *
      * @param value Value to set.
      */
-    public setValue(value: T[] | string | Expression): void {
+    setValue(value: T[] | string | Expression): void {
         if (value != null && !Array.isArray(value) && typeof value !== 'string' && !(value instanceof Expression)) {
             throw new Error('ArrayExpression accepts string, array or Expression as the value.');
         }
