@@ -541,60 +541,58 @@ export class TeamsActivityHandler extends ActivityHandler {
      * @returns A promise that represents the work queued.
      */
     protected async dispatchConversationUpdateActivity(context: TurnContext): Promise<void> {
-        await this.handle(context, 'ConversationUpdate', async () => {
-            if (context.activity.channelId == 'msteams') {
-                const channelData = context.activity.channelData as TeamsChannelData;
+        if (context.activity.channelId == 'msteams') {
+            const channelData = context.activity.channelData as TeamsChannelData;
 
-                if (context.activity.membersAdded && context.activity.membersAdded.length > 0) {
-                    return await this.onTeamsMembersAdded(context);
-                }
+            if (context.activity.membersAdded && context.activity.membersAdded.length > 0) {
+                return await this.onTeamsMembersAdded(context);
+            }
 
-                if (context.activity.membersRemoved && context.activity.membersRemoved.length > 0) {
-                    return await this.onTeamsMembersRemoved(context);
-                }
+            if (context.activity.membersRemoved && context.activity.membersRemoved.length > 0) {
+                return await this.onTeamsMembersRemoved(context);
+            }
 
-                if (!channelData || !channelData.eventType) {
-                    return await super.dispatchConversationUpdateActivity(context);
-                }
-
-                switch (channelData.eventType) {
-                    case 'channelCreated':
-                        return await this.onTeamsChannelCreated(context);
-
-                    case 'channelDeleted':
-                        return await this.onTeamsChannelDeleted(context);
-
-                    case 'channelRenamed':
-                        return await this.onTeamsChannelRenamed(context);
-
-                    case 'teamArchived':
-                        return await this.onTeamsTeamArchived(context);
-
-                    case 'teamDeleted':
-                        return await this.onTeamsTeamDeleted(context);
-
-                    case 'teamHardDeleted':
-                        return await this.onTeamsTeamHardDeleted(context);
-
-                    case 'channelRestored':
-                        return await this.onTeamsChannelRestored(context);
-
-                    case 'teamRenamed':
-                        return await this.onTeamsTeamRenamed(context);
-
-                    case 'teamRestored':
-                        return await this.onTeamsTeamRestored(context);
-
-                    case 'teamUnarchived':
-                        return await this.onTeamsTeamUnarchived(context);
-
-                    default:
-                        return await super.dispatchConversationUpdateActivity(context);
-                }
-            } else {
+            if (!channelData || !channelData.eventType) {
                 return await super.dispatchConversationUpdateActivity(context);
             }
-        });
+
+            switch (channelData.eventType) {
+                case 'channelCreated':
+                    return await this.onTeamsChannelCreated(context);
+
+                case 'channelDeleted':
+                    return await this.onTeamsChannelDeleted(context);
+
+                case 'channelRenamed':
+                    return await this.onTeamsChannelRenamed(context);
+
+                case 'teamArchived':
+                    return await this.onTeamsTeamArchived(context);
+
+                case 'teamDeleted':
+                    return await this.onTeamsTeamDeleted(context);
+
+                case 'teamHardDeleted':
+                    return await this.onTeamsTeamHardDeleted(context);
+
+                case 'channelRestored':
+                    return await this.onTeamsChannelRestored(context);
+
+                case 'teamRenamed':
+                    return await this.onTeamsTeamRenamed(context);
+
+                case 'teamRestored':
+                    return await this.onTeamsTeamRestored(context);
+
+                case 'teamUnarchived':
+                    return await this.onTeamsTeamUnarchived(context);
+
+                default:
+                    return await super.dispatchConversationUpdateActivity(context);
+            }
+        } else {
+            return await super.dispatchConversationUpdateActivity(context);
+        }
     }
 
     /**

@@ -2159,6 +2159,26 @@ describe('TeamsActivityHandler', function () {
                 })
                 .startTest();
         });
+
+        it('should not call ConversationUpdate twice', async function () {
+            let ncalls = 0;
+            const activity = createConvUpdateActivity();
+            const bot = new TeamsActivityHandler();
+            bot.onConversationUpdate((context, next) => {
+                ncalls++;
+                return next();
+            });
+            const adapter = new TestAdapter(async (context) => bot.run(context));
+            await adapter
+                .send(activity)
+                .then(() => {
+                    assert(
+                        ncalls === 1,
+                        'On ConversationUpdate handler should only be called once, times called: ' + ncalls.toString()
+                    );
+                })
+                .startTest();
+        });
     });
 
     describe('onEventActivity()', function () {
