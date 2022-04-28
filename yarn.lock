@@ -1404,10 +1404,10 @@
     source-map "~0.6.1"
     typescript "~4.2.4"
 
-"@microsoft/orchestrator-core@~4.14.0":
-  version "4.14.0"
-  resolved "https://registry.yarnpkg.com/@microsoft/orchestrator-core/-/orchestrator-core-4.14.0.tgz#a8f9097a43dda32904979e416e01f1a485f072c3"
-  integrity sha512-EwVuEkBGRMKAdHaVPKhHHXtKjQDtWFGpdHRJX6WEVf6bek2Jwa8WRr7SpA3YoOgNyabR2oSMW92mNI6W/TFdsA==
+"@microsoft/orchestrator-core@~4.14.3":
+  version "4.14.3"
+  resolved "https://pkgs.dev.azure.com/FuseLabs/_packaging/SDK_JS_org/npm/registry/@microsoft/orchestrator-core/-/orchestrator-core-4.14.3.tgz#272faf13e3de05ef2b36499004c5abb36b88f8dd"
+  integrity sha1-Jy+vE+PeBe8rNkmQBMWrs2uI+N0=
   dependencies:
     "@mapbox/node-pre-gyp" "^1.0.3"
     bindings "1.2.1"
@@ -3874,10 +3874,10 @@ chrome-trace-event@^1.0.2:
   dependencies:
     tslib "^1.9.0"
 
-chromedriver@^98.0.0:
-  version "98.0.1"
-  resolved "https://registry.yarnpkg.com/chromedriver/-/chromedriver-98.0.1.tgz#ccb1e36a003b4c6af0b184caa00fca8370d88f2a"
-  integrity sha512-/04KkHHE/K/lfwdPTQr5fxi1dWvM83p8T/IkYbyGK2PBlH7K49Dd71A9jrS+aWgXlZYkuHhbwiy2PA2QqZ5qQw==
+chromedriver@^100.0.0:
+  version "100.0.0"
+  resolved "https://pkgs.dev.azure.com/FuseLabs/_packaging/SDK_JS_org/npm/registry/chromedriver/-/chromedriver-100.0.0.tgz#1b4bf5c89cea12c79f53bc94d8f5bb5aa79ed7be"
+  integrity sha1-G0v1yJzqEsefU7yU2PW7Wqee174=
   dependencies:
     "@testim/chrome-version" "^1.1.2"
     axios "^0.24.0"
@@ -9149,17 +9149,7 @@ minimatch@~0.2.11:
     lru-cache "2"
     sigmund "~1.0.0"
 
-minimist@0.0.5:
-  version "0.0.5"
-  resolved "https://registry.yarnpkg.com/minimist/-/minimist-0.0.5.tgz#d7aa327bcecf518f9106ac6b8f003fa3bcea8566"
-  integrity sha1-16oye87PUY+RBqxrjwA/o7zqhWY=
-
-minimist@0.0.8:
-  version "0.0.8"
-  resolved "https://registry.yarnpkg.com/minimist/-/minimist-0.0.8.tgz#857fcabfc3397d2625b8228262e86aa7a011b05d"
-  integrity sha1-hX/Kv8M5fSYluCKCYuhqp6ARsF0=
-
-minimist@^1.1.0, minimist@^1.1.1, minimist@^1.2.0, minimist@^1.2.3, minimist@^1.2.5, minimist@^1.2.6:
+minimist@0.0.5, minimist@0.0.8, minimist@^1.1.0, minimist@^1.1.1, minimist@^1.2.0, minimist@^1.2.3, minimist@^1.2.5, minimist@^1.2.6:
   version "1.2.6"
   resolved "https://registry.yarnpkg.com/minimist/-/minimist-1.2.6.tgz#8637a5b759ea0d6e98702cfb3a9283323c93af44"
   integrity sha512-Jsjnk4bw3YJqYzbdyBiNsPWHPfO++UGG749Cxs6peCu5Xg4nrena6OVxOYxrQTqww0Jmwt+Ref8rggumkTLz9Q==
@@ -9569,10 +9559,10 @@ natural-compare@^1.4.0:
   resolved "https://registry.yarnpkg.com/natural-compare/-/natural-compare-1.4.0.tgz#4abebfeed7541f2c27acfb29bdbbd15c8d5ba4f7"
   integrity sha1-Sr6/7tdUHywnrPspvbvRXI1bpPc=
 
-nconf@0.11.2:
-  version "0.11.2"
-  resolved "https://registry.yarnpkg.com/nconf/-/nconf-0.11.2.tgz#707fa9db383e85ad7e8f1a17be1b053d1bd751c4"
-  integrity sha512-gDmn0Fgt0U0esRE8OCF72tO8AA9dtlG9eZhW4/Ex5hozNC2/LgdhWO4vKLGHNfTxcvsv6Aoxk/ROVYJD2SAdyg==
+nconf@0.11.4:
+  version "0.11.4"
+  resolved "https://pkgs.dev.azure.com/FuseLabs/_packaging/SDK_JS_org/npm/registry/nconf/-/nconf-0.11.4.tgz#7f925d27569738a2a10c3ba4b56310c8821b308b"
+  integrity sha1-f5JdJ1aXOKKhDDuktWMQyIIbMIs=
   dependencies:
     async "^1.4.0"
     ini "^2.0.0"
