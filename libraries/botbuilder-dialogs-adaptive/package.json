@@ -35,6 +35,9 @@
     "@microsoft/recognizers-text-choice": "~1.1.4",
     "@microsoft/recognizers-text-date-time": "~1.1.4",
     "@microsoft/recognizers-text-suite": "1.1.4",
+    "adaptive-expressions": "4.1.6",
+    "botbuilder": "4.1.6",
+    "botbuilder-dialogs": "4.1.6",
     "botbuilder-dialogs-adaptive-runtime-core": "4.1.6",
     "botbuilder-dialogs-declarative": "4.1.6",
     "botbuilder-lg": "4.1.6",
@@ -43,10 +46,7 @@
     "node-fetch": "^2.6.7"
   },
   "devDependencies": {
-    "@types/node-fetch": "^2.5.3",
-    "adaptive-expressions": "4.1.6",
-    "botbuilder": "4.1.6",
-    "botbuilder-dialogs": "4.1.6"
+    "@types/node-fetch": "^2.5.3"
   },
   "scripts": {
     "build": "npm-run-all build:src build:tests",

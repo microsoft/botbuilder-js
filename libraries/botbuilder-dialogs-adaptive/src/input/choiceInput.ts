@@ -134,6 +134,10 @@ export class ChoiceInput extends InputDialog implements ChoiceInputConfiguration
 
     /**
      * {@inheritDoc InputDialog.trackGeneratorResultEvent}
+     *
+     * @param dc The [DialogContext](xref:botbuilder-dialogs.DialogContext) for the current turn of conversation.
+     * @param activityTemplate Used to create the Activity.
+     * @param msg The Partial [Activity](xref:botframework-schema.Activity) which will be sent.
      */
     protected trackGeneratorResultEvent(
         dc: DialogContext,

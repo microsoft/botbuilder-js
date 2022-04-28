@@ -13,7 +13,7 @@ import { TelemetryLoggerConstants } from '../telemetryLoggerConstants';
 
 /**
  * ValueRecognizer - Recognizer for mapping message activity. Value payload into intent/entities.
- * 
+ *
  * @remarks
  * This recognizer will map MessageActivity Value payloads into intents and entities.
  *      activity.Value.intent => RecognizerResult.Intents.
