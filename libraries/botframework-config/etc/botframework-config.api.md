@@ -84,15 +84,15 @@ export class BotRecipe {
 export class BotService extends AzureService implements IBotService {
     constructor(source?: IBotService);
     appId: string;
-    decrypt(secret: string, decryptString: (value: string, secret: string) => string): void;
-    encrypt(secret: string, encryptString: (value: string, secret: string) => string): void;
+    decrypt(_secret: string, _decryptString: (value: string, secret: string) => string): void;
+    encrypt(_secret: string, _encryptString: (value: string, secret: string) => string): void;
 }
 
 // @public @deprecated
 export class ConnectedService implements IConnectedService {
     constructor(source?: IConnectedService, type?: ServiceTypes);
-    decrypt(secret: string, decryptString: (value: string, secret: string) => string): void;
-    encrypt(secret: string, encryptString: (value: string, secret: string) => string): void;
+    decrypt(_secret: string, _decryptString: (value: string, secret: string) => string): void;
+    encrypt(_secret: string, _encryptString: (value: string, secret: string) => string): void;
     id: string;
     name: string;
     toJSON(): IConnectedService;
@@ -131,8 +131,8 @@ export class EndpointService extends ConnectedService implements IEndpointServic
 // @public @deprecated
 export class FileService extends ConnectedService implements IFileService {
     constructor(source?: IFileService);
-    decrypt(secret: string, decryptString: (value: string, secret: string) => string): void;
-    encrypt(secret: string, encryptString: (value: string, secret: string) => string): void;
+    decrypt(_secret: string, _decryptString: (value: string, secret: string) => string): void;
+    encrypt(_secret: string, _encryptString: (value: string, secret: string) => string): void;
     path: string;
 }
 
