@@ -917,12 +917,16 @@ export class QnAMakerDialog extends WaterfallDialog implements QnAMakerDialogCon
                     step.activeDialog.state[this.qnAContextData] = previousContextData;
                     step.activeDialog.state[this.previousQnAId] = answer.id;
                     step.activeDialog.state[this.options] = dialogOptions;
+                    const message = QnACardBuilder.getQnAAnswerCard(answer, this.displayPreciseAnswerOnly);
+                    await step.context.sendActivity(message);
+                    return Dialog.EndOfTurn;
+                }
+                else {
+                    const message = QnACardBuilder.getQnAAnswerCard(answer, this.displayPreciseAnswerOnly);
+                    await step.context.sendActivity(message);
+                    return step.endDialog();
                 }
 
-                const message = QnACardBuilder.getQnAAnswerCard(answer, this.displayPreciseAnswerOnly);
-                await step.context.sendActivity(message);
-
-                return Dialog.EndOfTurn;
             }
         }
 
